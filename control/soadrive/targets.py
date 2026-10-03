@@ -499,6 +499,22 @@ class Run:
         self.shot_names.append(name)
         return "shot:" + self.layout.shot_path(name)
 
+    def tap_until_changed(self, name, xy, before, wait_ms=4000, tries=4, limit=0.02):
+        """Taps xy until the screen differs from the screenshot `before` (RMSE above `limit`): for a
+        tap with no log line to wait for, dropped while a screen fades in. Records PASS / FAIL."""
+        probe = self.scratch(".changed-probe.png")
+        for i in range(tries):
+            self.ctl("tap:" + xy, "wait:%d" % wait_ms)
+            self.send(["shot:" + probe])
+            if os.path.exists(probe) and screens.rmse(before, probe) > limit:
+                self.ok(name)
+                return True
+            if not self.alive():
+                break
+            self.note("%s: the screen didn't change; tapping again (%d)" % (name, i + 1))
+        self.miss(name if self.alive() else "%s (%s)" % (name, self.gone()))
+        return False
+
     def keep_shot(self, name, src):
         dst = self.layout.shot_path(name)
         if os.path.exists(src):

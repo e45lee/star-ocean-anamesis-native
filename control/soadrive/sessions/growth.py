@@ -118,7 +118,10 @@ def main(o):
         # (the limit-break result's 閉じる first: the footer doesn't take taps under it)
         c("tap:364:910", "wait:3000")
         s.tap_log(mission.phase(9), 60, 20, 3, "tap:300:1250", name="アイテム -> the item menu", fatal=False)
-        c("wait:5000", s.shot_cmd("22-item-menu"), "tap:364:570", "wait:6000", s.shot_cmd("23-custom"))
+        c("wait:5000", s.shot_cmd("22-item-menu"))
+        # 武器カスタム (no log line: resent until the screen changes; once dropped under load)
+        s.tap_until_changed("武器カスタム", "364:570", s.layout.shot_path("22-item-menu"), wait_ms=6000)
+        c(s.shot_cmd("23-custom"))
         c("tap:364:400", "wait:4000", s.shot_cmd("24-custom-gears"), "tap:300:610", "wait:3000", s.shot_cmd("25-custom-selected"))
         c("tap:620:1120", "wait:3000", s.shot_cmd("26-custom-detail"), "tap:515:1012", "wait:3000", s.shot_cmd("27-custom-confirm"),
           "tap:515:712")

@@ -1,5 +1,7 @@
 # Plan: rationalize the local server's state schema
 
+**Multiplayer comes after this plan (the user, 2026-10-03):** the schema changes multiplayer needs are planned separately in [`PLAN-multiplayer-schema.md`](PLAN-multiplayer-schema.md) (steps M1…) and run **strictly after S12** (and R12, R17, S11+R19) have landed, starting from this plan's final schema. Nothing here is changed for them: S3–S12 proceed as written; where one makes an M step costlier, the M step says so.
+
 Status: plan only (2026-10-02, agent `schema-plan`, branch `port/schema-plan` off `linux-port` ec4354c). No server code is changed by this plan; the first commit that implements it is step S1 below.
 
 **Scope.** The local server's persistent state, `DATA/server.sqlite3` (soa's in-process route; `soa-server --db`), created and used by the server library in `server/` (and `server/net/game.cpp` for soa-server's `wire_device`). The master DB (`data/basmaster-3.7.0.sqlite3`) and the gacha pools DB (`data/gacha_pools.sqlite3`) are read-only inputs and out of scope, except as the targets of references.

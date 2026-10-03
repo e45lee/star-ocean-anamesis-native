@@ -20,7 +20,7 @@ using ext::Row;
 // favor items). (d) Other types (gear 15, gear lottery 98, item sets 99, stamps, titles,
 // deco) aren't granted yet and are logged.
 void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& chars) {
-    u32 pid = player_id(ctx);
+    const PlayerId pid = player_id(ctx);
     if (d.type == 1) {
         for (u32 k = 0; k < d.num; k++) {
             const ItemUid uid = next_item_uid(ctx);
@@ -28,7 +28,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
             ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, d.id, itype, clock_now()});
             Value e = Value::object();
             e["id"] = uid.v;
-            e["player_id"] = pid;
+            e["player_id"] = pid.v;
             e["master_item_id"] = d.id;
             e["item_type"] = itype;
             e["content_type"] = d.type;
@@ -38,7 +38,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
             items.push(e);
         }
     } else if (d.type == 2) {
-        Added a = add_character(ctx, d.id);
+        Added a = add_character(ctx, RoleId(d.id));
         if (!a.dup && a.uid.v) {
             Value e = Value::object();
             e["id"] = a.uid.v;
@@ -62,7 +62,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
         ext::add_stock(ctx, d.id, d.num);  // (a) capped at master_global item_stock_max_num
         Value e = Value::object();
         e["id"] = d.id;
-        e["player_id"] = pid;
+        e["player_id"] = pid.v;
         e["master_item_id"] = d.id;
         e["item_type"] = itype;
         e["use_count"] = (u32)ctx.st.one("select count from stock where master_item_id = ?", {d.id});
@@ -79,7 +79,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
 // minus one (CParameterUtility::CalcMasterRole2LimitBreakMax); beyond it, (a)+(c) the
 // master_role_duplication_item material (by the role's limitbreak_id, else its rank) goes to
 // the stack items.
-Added add_character(ext::Ctx& ctx, u32 role) {
+Added add_character(ext::Ctx& ctx, RoleId role) {
     Added a;
     int64_t have = -1;
     ctx.st.q("select uid, role_id, limit_break from roster where role_id = ? limit 1", {role}, [&](const Row& r) {

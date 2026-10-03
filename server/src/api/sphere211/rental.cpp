@@ -35,7 +35,7 @@ bool floor_rentals_used_up(Ctx& ctx) { return ctx.st.one("select count(*) from s
 
 void put_rental(Ctx& ctx, u32 floor, Value& data) {
     Value lenders = rental::follow_map(ctx);
-    u32 player_id = ctx.player_id();
+    u32 player_id = ctx.player_id().v;  // the wire's number
     bool full = floor_rentals_used_up(ctx);
     Value info_map = Value::object(), follow_ids = Value::array(), floors = Value::array();
     int64_t t = ctx.now();

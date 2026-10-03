@@ -125,7 +125,7 @@ void ranking_mission_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
 
 // One EventRankingInfo row (b: EventRankingInfo::Initialize): the player's best, rank 1.
 Value event_ranking_info(Ctx& ctx, const Row& score_row) {
-    u32 player = ctx.player_id();
+    u32 player = ctx.player_id().v;  // the wire's number
     Value info = Value::object();
     info["player_id"] = player;
     info["rank"] = kOnlyRank;
@@ -179,7 +179,7 @@ std::vector<u8> get_event_ranking_info(Ctx& ctx, const Request& req) {
     std::string name;
     ctx.st.q("select name from player", {}, [&](const Row& player_row) { name = player_row.s("name"); });
     player["name"] = name;
-    players[std::to_string(ctx.player_id())] = player;
+    players[std::to_string(ctx.player_id().v)] = player;
     info["EventRankingPlayerInfoMap"] = players;
     Value data = ctx.base_data();
     data["GetEventRankingResultInfo"] = info;
@@ -317,7 +317,7 @@ std::vector<u8> get_player_detail_info(Ctx& ctx, const Request& req) {
     const auto args = args::GetPlayerDetailInfoArgs::from(req);
     Value data = ctx.base_data();
     Value search_result = Value::object();
-    search_result[std::to_string(ctx.player_id())] = rental::own_follow_entry(ctx);
+    search_result[std::to_string(ctx.player_id().v)] = rental::own_follow_entry(ctx);
     data["SearchResult"] = search_result;
     LOGI("server", "GetPlayerDetailInfo %u: the player", args.player_id);
     return body(data);

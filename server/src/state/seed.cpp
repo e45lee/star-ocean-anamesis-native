@@ -58,14 +58,14 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
          9u, ~0ull, ~0ull});
     // Roster: person_master_role_id_N (master_role ids), deduplicated (the client cache
     // lists some roles twice).
-    std::vector<u32> roles;
+    std::vector<RoleId> roles;
     std::set<u32> seen;
     u32 n = kv_u32(kv, "person_size", 0);
     for (u32 i = 0; i < n; i++) {
         u32 r = kv_u32(kv, "person_master_role_id_" + std::to_string(i));
-        if (r && seen.insert(r).second && ctx.m.one("select count(*) from master_role where id = ?", {r})) roles.push_back(r);
+        if (r && seen.insert(r).second && ctx.m.one("select count(*) from master_role where id = ?", {r})) roles.push_back(RoleId(r));
     }
-    u32 home_role = kv_u32(kv, "player_home_pc_roleid");
+    const RoleId home_role(kv_u32(kv, "player_home_pc_roleid"));
     std::optional<CharacterUid> home_uid;  // none: NULL
     for (size_t i = 0; i < roles.size(); i++) {
         const CharacterUid uid(kRosterUid0 + i);

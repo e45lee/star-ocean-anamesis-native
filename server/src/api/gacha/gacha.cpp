@@ -221,7 +221,7 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {item_uid, unit.content_id, item_type, clock_now()});
     Value item = Value::object();  // CItemInfo
     item["id"] = item_uid.v;
-    item["player_id"] = player_id(ctx);
+    item["player_id"] = player_id(ctx).v;
     item["master_item_id"] = unit.content_id;
     item["item_type"] = item_type;
     item["boosted_point"] = 0u;
@@ -281,7 +281,7 @@ void add_chips(ext::Ctx& ctx, GachaDraw& draw, u32 role, CharacterUid uid) {
 // 4b. A drawn character: new, or a duplicate (limit break, its material, character chips); the
 // result entry and the history row.
 void add_drawn_role(ext::Ctx& ctx, GachaDraw& draw, u32 role, int rank, u32 k, bool chip_gacha) {
-    Added added = add_character(ctx, role);
+    Added added = add_character(ctx, RoleId(role));
     bool duplicate = added.dup;
     const CharacterUid uid = added.uid;
     if (duplicate && added.lb_after > added.lb_before) {

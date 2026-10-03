@@ -33,6 +33,6 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
 void grant_with_item_sets(ext::Ctx& ctx, u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& chars, u32* free_coins = nullptr);
 // A new character, or (c) a duplicate raises the owned one's limit break by one, up to
 // (a) master_character_limit_break.target_limitbreak_max (10).
-Added add_character(ext::Ctx& ctx, u32 role);
+Added add_character(ext::Ctx& ctx, RoleId role);
 
 }  // namespace soa::server

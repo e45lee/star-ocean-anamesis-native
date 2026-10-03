@@ -45,7 +45,7 @@ std::vector<u32> thresholds(sqlite3* m) {
 // (a) master_favor_schedule: the character's maximum level (favor_max_level, or
 // next_favor_max_level from next_opened_at on). 0 = no schedule: favor isn't enabled for it (the
 // client's GetEnableFavorability returns false for it too (b)).
-u32 max_level(sqlite3* m, int64_t now, u32 same_role_id) {
+u32 max_level(sqlite3* m, int64_t now, SameRoleId same_role_id) {
     u32 max = 0;
     Sql{m}.q("select favor_max_level, next_favor_max_level, next_opened_at from master_favor_schedule where id = ?", {same_role_id},
              [&](const Row& schedule_row) {
@@ -64,7 +64,7 @@ struct State {
     int64_t tapped_at = 0;
     std::string event_drop_at;  // added_event_drop_at, as sent
 };
-State load(sqlite3* st, u32 same_role_id) {
+State load(sqlite3* st, SameRoleId same_role_id) {
     State state;
     Sql{st}.q("select point, tap_count, tapped_at, event_drop_at from favor where same_role_id = ?", {same_role_id}, [&](const Row& favor_row) {
         state.point = (u32)favor_row.i("point");
@@ -74,7 +74,7 @@ State load(sqlite3* st, u32 same_role_id) {
     });
     return state;
 }
-void save(sqlite3* st, u32 same_role_id, const State& state) {
+void save(sqlite3* st, SameRoleId same_role_id, const State& state) {
     Sql{st}.q(
         "insert into favor (same_role_id, point, tap_count, tapped_at, event_drop_at) values (?,?,?,?,?)"
         " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
@@ -89,9 +89,9 @@ u32 taps_today(sqlite3* m, const State& state, int64_t now) {
 }
 
 // The CPlayerCharacterFavorInfoElement of one character (property names from its Initialize (b)).
-Value element(sqlite3* m, int64_t now, u32 same_role_id, const State& state, u32 level) {
+Value element(sqlite3* m, int64_t now, SameRoleId same_role_id, const State& state, u32 level) {
     Value e = Value::object();
-    e["master_role_same_role_id"] = same_role_id;
+    e["master_role_same_role_id"] = same_role_id.v;
     e["favor_point"] = state.point;
     e["favor_level"] = level;
     e["added_event_drop_at"] = state.event_drop_at;
@@ -107,7 +107,7 @@ struct Gain {
     u32 level_before = 1, level_after = 1;
     bool ok = false;
 };
-Gain add_points(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, u32 points) {
+Gain add_points(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id, u32 points) {
     Gain gain;
     u32 max = max_level(m, now, same_role_id);
     if (!max) return gain;
@@ -149,7 +149,7 @@ int64_t favor_day(int64_t t, int reset_hour) {
 
 }  // namespace rules
 
-u32 level_of(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id) {
+u32 level_of(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id) {
     u32 max = max_level(m, now, same_role_id);
     if (!max) return 1;
     return rules::level(load(st, same_role_id).point, thresholds(m), max);
@@ -160,7 +160,7 @@ u32 level_of(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id) {
 // (3.7.0 CParameterUtility::GetFavorDropIconImageName: the icon returns after the next
 // login_bonus_reset_hour); (a) master_global favor_event_drop_bonus_limit uses a day, (d) counted
 // in characters.
-bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id) {
+bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id) {
     std::string at = load(st, same_role_id).event_drop_at;
     if (at.empty()) return false;
     int reset_hour = (int)global_u32(m, "login_bonus_reset_hour", 4);
@@ -168,51 +168,51 @@ bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_i
 }
 u32 event_drop_remaining(sqlite3* st, sqlite3* m, int64_t now) {
     u32 limit = global_u32(m, "favor_event_drop_bonus_limit", 3), used = 0;
-    std::vector<u32> same_role_ids;
+    std::vector<SameRoleId> same_role_ids;
     Sql{st}.q("select same_role_id from favor where event_drop_at != ''", {},
-              [&](const Row& favor_row) { same_role_ids.push_back((u32)favor_row.i("same_role_id")); });
-    for (u32 same_role_id : same_role_ids)
+              [&](const Row& favor_row) { same_role_ids.push_back(favor_row.id<SameRoleId>("same_role_id")); });
+    for (SameRoleId same_role_id : same_role_ids)
         if (event_drop_used_today(st, m, now, same_role_id)) used++;
     return limit > used ? limit - used : 0;
 }
-std::string mark_event_drop(sqlite3* st, u32 same_role_id, int64_t now) {
+std::string mark_event_drop(sqlite3* st, SameRoleId same_role_id, int64_t now) {
     State state = load(st, same_role_id);
     state.event_drop_at = format_time_or_empty(now);
     save(st, same_role_id, state);
     return state.event_drop_at;
 }
 
-void add_player_state(sqlite3* st, sqlite3* m, int64_t now, u32 home_same_role_id, Value& data) {
+void add_player_state(sqlite3* st, sqlite3* m, int64_t now, SameRoleId home_same_role_id, Value& data) {
     // Every owned character's same_role_id (roster role -> master_role.same_role_id).
-    std::set<u32> same_role_ids;
+    std::set<SameRoleId> same_role_ids;
     {
         std::vector<u32> roles;
         Sql{st}.q("select distinct role_id from roster", {}, [&](const Row& roster_row) { roles.push_back((u32)roster_row.i("role_id")); });
         for (u32 role : roles)
             Sql{m}.q("select same_role_id from master_role where id = ?", {role},
-                     [&](const Row& role_row) { same_role_ids.insert((u32)role_row.i("same_role_id")); });
+                     [&](const Row& role_row) { same_role_ids.insert(role_row.id<SameRoleId>("same_role_id")); });
     }
     auto next = thresholds(m);
     Value map = Value::object();
-    for (u32 same_role_id : same_role_ids) {
+    for (SameRoleId same_role_id : same_role_ids) {
         u32 max = max_level(m, now, same_role_id);
         if (!max) continue;  // (a) no schedule: no favor
         State state = load(st, same_role_id);
-        map[std::to_string(same_role_id)] = element(m, now, same_role_id, state, rules::level(state.point, next, max));
+        map[std::to_string(same_role_id.v)] = element(m, now, same_role_id, state, rules::level(state.point, next, max));
     }
     data["PlayerCharacterFavorMap"] = map;
     // (a) master_global.favor_tap_bonus_limit taps per character per day; (d) the load reports the
     // home character's remaining count (the client keeps one number, CParameterManager +0xb660,
     // and checks it for the home character's tap, CHome::IsAddFavorPointByTap (b)).
     u32 limit = global_u32(m, "favor_tap_bonus_limit", 5);
-    u32 used = home_same_role_id ? taps_today(m, load(st, home_same_role_id), now) : 0;
+    u32 used = home_same_role_id.v ? taps_today(m, load(st, home_same_role_id), now) : 0;
     data["RemainingUpdateFavorCountByTap"] = limit > used ? limit - used : 0u;
     // (a) master_global.favor_event_drop_bonus_limit less today's uses (the event drop bonus above)
     data["RemainingEventDropBonusCountByFavor"] = event_drop_remaining(st, m, now);
     LOGI("server", "favor: %zu characters in PlayerCharacterFavorMap", map.map.size());
 }
 
-Value mission_gain(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, u32 stamina, double rate) {
+Value mission_gain(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id, u32 stamina, double rate) {
     // (a) master_favor_battle_effect: favor_up_point for the mission's use_stamina, play_type 0
     // (single play; 1 = multiplay host, 2 = guest). (d) a stamina with no row gives the row of
     // the largest use_stamina below it.
@@ -227,26 +227,26 @@ Value mission_gain(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, u32 s
     Gain gain = add_points(st, m, now, same_role_id, points);
     if (!gain.ok) return Value();
     Value result = Value::object();
-    result["id"] = same_role_id;
-    result["master_role_same_role_id"] = same_role_id;
+    result["id"] = same_role_id.v;
+    result["master_role_same_role_id"] = same_role_id.v;
     result["before_favor_level"] = gain.level_before;
     result["before_favor_point"] = gain.before.point;
     result["after_favor_level"] = gain.level_after;
     result["after_favor_point"] = gain.after.point;
     result["added_event_drop_at"] = gain.after.event_drop_at;
     // read by port/scripts/restore_favor_session.sh ("favor: mission (stamina N) same_role")
-    LOGI("server", "favor: mission (stamina %u) same_role %u +%u: %u -> %u (level %u -> %u)", stamina, same_role_id, points, gain.before.point,
+    LOGI("server", "favor: mission (stamina %u) same_role %u +%u: %u -> %u (level %u -> %u)", stamina, same_role_id.v, points, gain.before.point,
          gain.after.point, gain.level_before, gain.level_after);
     return result;
 }
 
-void tap(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, Value& data) {
+void tap(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id, Value& data) {
     u32 limit = global_u32(m, "favor_tap_bonus_limit", 5);  // (a) 5 a day
     u32 points = global_u32(m, "favor_tap_bonus_point", 50);  // (a) 50 points a tap
     State state = load(st, same_role_id);
     u32 used = taps_today(m, state, now);
     Value result = Value::object();
-    result["same_role_id"] = same_role_id;
+    result["same_role_id"] = same_role_id.v;
     if (used < limit && max_level(m, now, same_role_id)) {
         Gain gain = add_points(st, m, now, same_role_id, points);
         gain.after.taps = used + 1;
@@ -256,7 +256,7 @@ void tap(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, Value& data) {
         result["favor_level"] = gain.level_after;
         result["favor_point"] = gain.after.point;
         // read by port/scripts/restore_favor_session.sh ("favor: tap same_role N +50: A -> B (level ...)")
-        LOGI("server", "favor: tap same_role %u +%u: %u -> %u (level %u -> %u), %u taps left", same_role_id, points, gain.before.point,
+        LOGI("server", "favor: tap same_role %u +%u: %u -> %u (level %u -> %u), %u taps left", same_role_id.v, points, gain.before.point,
              gain.after.point, gain.level_before, gain.level_after, limit - used);
     } else {
         // (d) past the limit, or a character without favor: nothing changes
@@ -267,7 +267,7 @@ void tap(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, Value& data) {
     data["UpdateFavorByTapResultInfo"] = result;
 }
 
-void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 count, u32 same_role_id, Value& data) {
+void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 count, SameRoleId same_role_id, Value& data) {
     // (a) master_favor_item_effect: favor_up_point per item; target_type 0 = any character,
     // otherwise only master_role_same_role_id ((d) reading of target_type).
     u32 points_per_item = 0;
@@ -276,7 +276,7 @@ void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 coun
              [&](const Row& effect_row) {
                  if (!first) return;
                  first = false;
-                 if (effect_row.i("target_type") == 0 || (u32)effect_row.i("master_role_same_role_id") == same_role_id)
+                 if (effect_row.i("target_type") == 0 || effect_row.id<SameRoleId>("master_role_same_role_id") == same_role_id)
                      points_per_item = (u32)effect_row.i("favor_up_point");
              });
     // (d) the count is capped by the stack held; the stack is debited
@@ -285,11 +285,11 @@ void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 coun
     Gain gain = add_points(st, m, now, same_role_id, points_per_item * count);
     if (count) Sql{st}.q("update stock set count = count - ? where master_item_id = ?", {count, master_item_id});
     Value result = Value::object();
-    result["same_role_id"] = same_role_id;
+    result["same_role_id"] = same_role_id.v;
     result["favor_level"] = gain.ok ? gain.level_after : 1u;
     result["favor_point"] = gain.ok ? gain.after.point : 0u;
     data["UseFavorResultInfo"] = result;
-    LOGI("server", "favor: item %u x%u on same_role %u: +%u", master_item_id, count, same_role_id, points_per_item * count);
+    LOGI("server", "favor: item %u x%u on same_role %u: +%u", master_item_id, count, same_role_id.v, points_per_item * count);
 }
 
 }  // namespace soa::server::favor

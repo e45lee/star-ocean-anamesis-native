@@ -78,9 +78,9 @@ struct Ctx {
     Value roster();                                // Character (CPersonInfo list)
     Value stock();                                 // StockItem (CStackItemInfo list)
     Value items();                                 // Item (CItemInfo list)
-    u32 player_id();
-    std::vector<u32> role_next(u32 role);          // per-level next EXP of a role
-    u32 role_level_cap(u32 role);
+    PlayerId player_id();
+    std::vector<u32> role_next(RoleId role);          // per-level next EXP of a role
+    u32 role_level_cap(RoleId role);
     u32 stamina_max(u32 level);
     void tick_stamina();
     u32 global_u32(const char* key, u32 dflt);

@@ -12,17 +12,20 @@ namespace {
 // UpdateFavorByTap(u32 same_role_id): the home character's same_role_id when missing.
 struct UpdateFavorByTapArgs {
     bool has_same_role_id = false;
-    u32 same_role_id = 0;
+    SameRoleId same_role_id;
     static UpdateFavorByTapArgs from(const Request& req) {
         if (req.ints.empty()) return {};
-        return {true, (u32)req.ints[0]};
+        return {true, SameRoleId((u32)req.ints[0])};
     }
 };
 
 // UseFavorItem(u32 master_item_id, u32 count, u32 same_role_id) (docs/api.md); 0 when missing.
 struct UseFavorItemArgs {
-    u32 master_item_id = 0, count = 0, same_role_id = 0;
-    static UseFavorItemArgs from(const Request& req) { return {(u32)args::int_at(req, 0), (u32)args::int_at(req, 1), (u32)args::int_at(req, 2)}; }
+    u32 master_item_id = 0, count = 0;
+    SameRoleId same_role_id;
+    static UseFavorItemArgs from(const Request& req) {
+        return {(u32)args::int_at(req, 0), (u32)args::int_at(req, 1), SameRoleId((u32)args::int_at(req, 2))};
+    }
 };
 
 // (b) the favor achievements follow the favor: the `Achievement` state (ext::achievement_state;

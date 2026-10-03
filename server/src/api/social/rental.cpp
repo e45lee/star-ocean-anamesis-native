@@ -242,7 +242,7 @@ Value own_follow_entry(Ctx& ctx) {
         if (character || !want) continue;
         character = roster_entry(roster, *want);
     }
-    u32 player_id = ctx.player_id();
+    u32 player_id = ctx.player_id().v;  // the wire's number
     Value entry = Value::object();
     entry["order"] = 1u;
     entry["player"] = follow_player_info(ctx, player_id);

@@ -19,7 +19,8 @@ void tick_stamina(ext::Ctx& ctx);
 Value player_info(ext::Ctx& ctx);
 // data.Wallet (CWalletInfo, CParameterManager+0x1f20): the free and paid coins.
 Value wallet_info(ext::Ctx& ctx);
-u32 player_id(ext::Ctx& ctx);
+// The player's id (player.id: CHash32 of the search id; id 0 without a player).
+PlayerId player_id(ext::Ctx& ctx);
 Value stack_item_info_list(ext::Ctx& ctx);      // StockItem (CStackItemInfo list)
 // Item (CItemInfo list); `where` narrows the items (an SQL where clause).
 Value item_info_list(ext::Ctx& ctx, const std::string& where = "");
@@ -35,7 +36,7 @@ enum class CdnKeys {
 // Wallet, the roster, the party sets, the stocks and items, the favor state and the modules'
 // OnPlayerLoad keys (docs/server-rules.md "Player load"). Stamps last_login_at.
 std::vector<u8> full_player_state(ext::Ctx& ctx, const Request& req, CdnKeys cdn = CdnKeys::kNone);
-// The home character's master_role.same_role_id (0 when none).
-u32 home_same_role(ext::Ctx& ctx);
+// The home character's master_role.same_role_id (id 0 when none: the favor module's "none").
+SameRoleId home_same_role(ext::Ctx& ctx);
 
 }  // namespace soa::server

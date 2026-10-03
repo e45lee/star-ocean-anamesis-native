@@ -11,12 +11,12 @@ using ext::Row;
 
 // One owned character (CPersonInfo; the client keeps them at CParameterManager+0x1178, by uid).
 // The keys are CPersonInfo's fields (b: port/fakeapi/fields.txt); `id` is the character's uid.
-Value person_info(ext::Ctx& ctx, const Row& roster_row, u32 owner_player_id) {
+Value person_info(ext::Ctx& ctx, const Row& roster_row, PlayerId owner_player_id) {
     Value info = Value::object();
     const CharacterUid uid = roster_row.id<CharacterUid>("uid");
     const RoleId role = roster_row.id<RoleId>("role_id");
     info["id"] = uid.v;
-    info["player_id"] = owner_player_id;
+    info["player_id"] = owner_player_id.v;
     info["master_role_id"] = role.v;
     info["level"] = (u32)roster_row.i("level");
     info["exp"] = (u32)roster_row.i("exp");
@@ -66,7 +66,7 @@ bool owns_character(ext::Ctx& ctx, CharacterUid uid) { return uid.v && ctx.st.on
 // Character: every owned character (CPersonInfo), by uid.
 Value roster_info(ext::Ctx& ctx) {
     Value characters = Value::array();
-    u32 owner = player_id(ctx);
+    const PlayerId owner = player_id(ctx);
     ctx.st.q("select * from roster order by uid", {}, [&](const Row& roster_row) { characters.push(person_info(ctx, roster_row, owner)); });
     return characters;
 }

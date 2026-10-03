@@ -32,10 +32,10 @@ std::string present_deadline(ext::Ctx& ctx, int64_t created_at) {
     return format_time(created_at + (int64_t)ctx.global_u32("present_deadline_day", 30) * 86400);
 }
 
-Value present_box_info(ext::Ctx& ctx, const Row& present_row, u32 player) {
+Value present_box_info(ext::Ctx& ctx, const Row& present_row, PlayerId player) {
     Value info = Value::object();
     info["id"] = (u64)present_row.i("id");
-    info["player_id"] = player;
+    info["player_id"] = player.v;
     info["content_type"] = (u32)present_row.i("content_type");
     info["content_id"] = (u32)present_row.i("content_id");
     info["num"] = (u32)present_row.i("num");
@@ -50,7 +50,7 @@ Value present_box_info(ext::Ctx& ctx, const Row& present_row, u32 player) {
 // The unreceived presents, oldest first: PresentList's PresentBox and GetPresent's "add".
 Value present_box(ext::Ctx& ctx) {
     Value box = Value::array();
-    u32 player = player_id(ctx);
+    const PlayerId player = player_id(ctx);
     ctx.st.q("select * from presents where received_at is null order by id", {},
              [&](const Row& present_row) { box.push(present_box_info(ctx, present_row, player)); });
     return box;

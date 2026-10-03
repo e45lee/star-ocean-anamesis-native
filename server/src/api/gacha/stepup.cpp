@@ -87,7 +87,7 @@ ChainState chain_state(ext::Ctx& ctx, u32 head) {
 // only_head: just that chain (the draw's UpdateStepUpGacha), whether open or not.
 Value stepup_gacha_info(ext::Ctx& ctx, u32 only_head) {
     Value info = Value::object();
-    u32 player = player_id(ctx);
+    const PlayerId player = player_id(ctx);
     int64_t t = clock_now();
     std::vector<u32> heads;
     if (only_head) heads.push_back(only_head);
@@ -104,7 +104,7 @@ Value stepup_gacha_info(ext::Ctx& ctx, u32 only_head) {
         bool closed = stepup_closed(ctx, state.current, state.restarts);
         for (u32 step : stepup_chain(ctx, head)) {
             Value entry = Value::object();
-            entry["player_id"] = player;
+            entry["player_id"] = player.v;
             entry["master_gacha_id"] = step;
             entry["try_count"] = step == state.current ? state.tries : 0u;
             entry["is_close"] = step == state.current ? closed : true;

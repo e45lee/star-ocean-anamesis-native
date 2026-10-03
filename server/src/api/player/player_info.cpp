@@ -129,16 +129,16 @@ Value wallet_info(ext::Ctx& ctx) {
     return wallet;
 }
 
-u32 player_id(ext::Ctx& ctx) { return (u32)ctx.st.one("select id from player", {}); }
+PlayerId player_id(ext::Ctx& ctx) { return ctx.st.one_id<PlayerId>("select id from player", {}); }
 
 // StockItem: every stack item held (CStackItemInfo, one per master item with a count).
 Value stack_item_info_list(ext::Ctx& ctx) {
     Value list = Value::array();
-    u32 pid = player_id(ctx);
+    const PlayerId pid = player_id(ctx);
     ctx.st.q("select * from stock where count > 0 order by master_item_id", {}, [&](const Row& stock_row) {
         Value info = Value::object();
         info["id"] = (u32)stock_row.i("master_item_id");
-        info["player_id"] = pid;
+        info["player_id"] = pid.v;
         info["master_item_id"] = (u32)stock_row.i("master_item_id");
         info["item_type"] = (u32)stock_row.i("item_type");
         info["use_count"] = (u32)stock_row.i("count");
@@ -155,12 +155,12 @@ Value stack_item_info_list(ext::Ctx& ctx) {
 // a weapon's AttachedGearInfoList, api/items/gear.cpp).
 Value item_info_list(ext::Ctx& ctx, const std::string& where) {
     Value list = Value::array();
-    u32 pid = player_id(ctx);
+    const PlayerId pid = player_id(ctx);
     ext::Sql state{ctx.st.h}, master{ctx.m.h};
     ctx.st.q("select * from items " + where + " order by uid", {}, [&](const Row& item_row) {
         Value info = Value::object();
         info["id"] = (u64)item_row.i("uid");
-        info["player_id"] = pid;
+        info["player_id"] = pid.v;
         info["master_item_id"] = (u32)item_row.i("master_item_id");
         info["item_type"] = (u32)item_row.i("item_type");
         info["boosted_point"] = (u32)item_row.i("exp");
@@ -207,9 +207,9 @@ std::vector<u8> full_player_state(ext::Ctx& ctx, const Request& req, CdnKeys cdn
 }
 
 // The home character's master_role.same_role_id (0 when none).
-u32 home_same_role(ext::Ctx& ctx) {
-    u32 role_id = (u32)ctx.st.one("select r.role_id from player p join roster r on r.uid = p.home_uid", {});
-    return role_id ? (u32)ctx.m.one("select same_role_id from master_role where id = ?", {role_id}) : 0u;
+SameRoleId home_same_role(ext::Ctx& ctx) {
+    const RoleId role_id = ctx.st.one_id<RoleId>("select r.role_id from player p join roster r on r.uid = p.home_uid", {});
+    return role_id.v ? ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role_id}) : SameRoleId(0);
 }
 
 namespace {

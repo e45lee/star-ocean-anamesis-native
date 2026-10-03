@@ -385,7 +385,8 @@ void grant_character_exp(Ctx& ctx, const Ship& ship, Expedition& done) {
     u32 order = 0;
     for (u64 uid : parse_uids(ship.uids))
         ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
-            u32 role_id = (u32)roster_row.i("role_id"), level_before = (u32)roster_row.i("level"), exp_before = (u32)roster_row.i("exp");
+            const RoleId role_id = roster_row.id<RoleId>("role_id");
+            u32 level_before = (u32)roster_row.i("level"), exp_before = (u32)roster_row.i("exp");
             auto [level_after, exp_after] =
                 rules::add_exp(level_before, exp_before, done.character_exp, ctx.role_next(role_id), ctx.role_level_cap(role_id));
             ctx.st.q("update roster set level = ?, exp = ? where uid = ?", {level_after, exp_after, uid});

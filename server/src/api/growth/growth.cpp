@@ -40,7 +40,8 @@ const char* const kLimitBreakColumnOfRank[] = {"", "people", "guest", "party", "
 struct Character {
     bool found = false;
     CharacterUid uid;
-    u32 role_id = 0, level = 1, exp = 0, limit_break = 0, awaken_level = 0;
+    RoleId role_id;
+    u32 level = 1, exp = 0, limit_break = 0, awaken_level = 0;
     u32 rank = 0, rarity = 0, category_type = 0;
     std::string category_label;  // master_role.role_category_id_label
     int64_t limitbreak_id = 0;   // master_role.limitbreak_id
@@ -53,7 +54,7 @@ Character load_character(Ctx& ctx, CharacterUid uid) {
     ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
         chara.found = true;
         chara.uid = uid;
-        chara.role_id = (u32)roster_row.i("role_id");
+        chara.role_id = roster_row.id<RoleId>("role_id");
         chara.level = (u32)roster_row.i("level");
         chara.exp = (u32)roster_row.i("exp");
         chara.limit_break = (u32)roster_row.i("limit_break");
@@ -110,10 +111,10 @@ Value take_cost_items(Ctx& ctx, const ItemCost& cost) {
 Value update_character_info(Ctx& ctx, CharacterUid uid, bool equipped_skills) {
     Value info = Value::object();
     ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
-        u32 role = (u32)roster_row.i("role_id");
+        const RoleId role = roster_row.id<RoleId>("role_id");
         info["id"] = uid.v;
-        info["player_id"] = ctx.player_id();
-        info["master_role_id"] = role;
+        info["player_id"] = ctx.player_id().v;
+        info["master_role_id"] = role.v;
         info["level"] = (u32)roster_row.i("level");
         info["exp"] = (u32)roster_row.i("exp");
         info["weapon_item_id"] = or_zero(roster_row.opt<ItemUid>("weapon_uid"));  // NULL: none
@@ -271,9 +272,9 @@ std::vector<u8> limit_break_character(Ctx& ctx, const Request& req) {
     Value data = ctx.base_data();
     Value result = Value::object(), entry = Value::object();
     entry["id"] = uid.v;
-    entry["master_role_id"] = chara.role_id;
-    entry["before_master_role_id"] = chara.role_id;
-    entry["after_master_role_id"] = chara.role_id;
+    entry["master_role_id"] = chara.role_id.v;
+    entry["before_master_role_id"] = chara.role_id.v;
+    entry["after_master_role_id"] = chara.role_id.v;
     entry["before_limit_break_count"] = chara.limit_break;
     entry["after_limit_break_count"] = chara.limit_break + 1;
     result[std::to_string(uid.v)] = entry;
@@ -307,9 +308,10 @@ std::vector<u8> evolution_character(Ctx& ctx, const Request& req) {
     // (b) the level must be at the cap (CPartyCompositionEvolution enables the button only then)
     if (chara.level < ctx.role_level_cap(chara.role_id)) return refuse(ctx, "EvolutionCharacter", "not at the level cap", ErrorCode::kLevelCap);
     // (b) the evolved role: same role_category_id_label, the next higher rarity (CUIUtility::MaxEvolution)
-    u32 next_role = (u32)ctx.m.one("select id from master_role where role_category_id_label = ? and rarity > ? order by rarity, id limit 1",
-                                   {chara.category_label, chara.rarity});
-    if (!next_role) return refuse(ctx, "EvolutionCharacter", "no evolution", ErrorCode::kItemUnusable);
+    const RoleId next_role =
+        ctx.m.one_id<RoleId>("select id from master_role where role_category_id_label = ? and rarity > ? order by rarity, id limit 1",
+                             {chara.category_label, chara.rarity});
+    if (!next_role.v) return refuse(ctx, "EvolutionCharacter", "no evolution", ErrorCode::kItemUnusable);
     // (a)+(b) the cost: master_role_evolution(rank, rarity, category_type)
     // (CParameterUtility::FindRoleEvolution)
     ItemCost cost;
@@ -334,16 +336,16 @@ std::vector<u8> evolution_character(Ctx& ctx, const Request& req) {
     result["use_fol"] = cost.fol;
     result["UseStockItem"] = use;
     character["id"] = uid.v;
-    character["before_master_role_id"] = chara.role_id;
-    character["after_master_role_id"] = next_role;
+    character["before_master_role_id"] = chara.role_id.v;
+    character["after_master_role_id"] = next_role.v;
     character["level"] = 1u;
     character["is_rarity_7"] = next_rarity >= 7 ? 1u : 0u;
     result["UpdatePlayerCharacter"] = character;
     data["EvolutionResult"] = result;
     data["StockItem"] = ctx.stock();
     // read by growth_session.sh
-    LOGI("server", "EvolutionCharacter %llx: role %u (rarity %u) -> %u (rarity %u), FOL -%u", (unsigned long long)uid.v, chara.role_id, chara.rarity,
-         next_role, next_rarity, cost.fol);
+    LOGI("server", "EvolutionCharacter %llx: role %u (rarity %u) -> %u (rarity %u), FOL -%u", (unsigned long long)uid.v, chara.role_id.v,
+         chara.rarity, next_role.v, next_rarity, cost.fol);
     return body(data);
 }
 
@@ -440,7 +442,7 @@ std::vector<u8> add_status_character(Ctx& ctx, const Request& req) {
     Value data = ctx.base_data();
     Value result = Value::object();
     result["player_character_id"] = uid.v;
-    result["player_id"] = ctx.player_id();
+    result["player_id"] = ctx.player_id().v;
     for (int k = 0; k < 7; k++) {
         result["before_add_" + std::string(kSeedStats[k])] = before[k];
         result["after_add_" + std::string(kSeedStats[k])] = after[k];

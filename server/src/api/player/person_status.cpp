@@ -21,7 +21,7 @@ const char* const kStatKeys[6] = {"hp", "attack", "intelligence", "defence", "hi
 const char* const kEquipmentSlots[2] = {"weapon", "accessory"};
 
 // The role's stats at `level`, its rank and its skills (person_status_info, step 1).
-void base_stats(ext::Ctx& ctx, const Row& roster_row, u32 role, u32 level, Value& status) {
+void base_stats(ext::Ctx& ctx, const Row& roster_row, RoleId role, u32 level, Value& status) {
     // (b) stats as the client's status screen computes them (PersonModel::
     // CalculateParameter -> tCharaData::CalcStatus, docs/server-rules.md section 3):
     // round_half_away(master_role.<stat> x master_character_common_parameter[level].<stat>
@@ -98,10 +98,11 @@ void equipment_stats(ext::Ctx& ctx, const Row& roster_row, Value& status) {
 }
 
 // The favor level's AP bonus and the awakening's rush skill (step 3).
-void favor_and_awakening(ext::Ctx& ctx, const Row& roster_row, u32 role, Value& status) {
+void favor_and_awakening(ext::Ctx& ctx, const Row& roster_row, RoleId role, Value& status) {
     // (a) master_favor_level.ap_bonus of the character's favor level (b: GetFavorApBonus);
     // (d) added to the base AP 100
-    u32 favor_level = favor::level_of(ctx.st.h, ctx.m.h, clock_now(), (u32)ctx.m.one("select same_role_id from master_role where id = ?", {role}));
+    u32 favor_level =
+        favor::level_of(ctx.st.h, ctx.m.h, clock_now(), ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role}));
     status["ap"] = status["ap"].f + (double)ctx.m.one("select ifnull(ap_bonus, 0) from master_favor_level where id = ?", {favor_level});
     // (a) awakening: the master_awaken row of the role's category at its awaken_level replaces
     // the rush skill and gauge (docs/server-rules.md 3); its talents (factors) aren't added (d)
@@ -140,7 +141,7 @@ void seed_stats(const Row& roster_row, Value& status) {
 // computed stats. Its four steps are above.
 Value person_status_info(ext::Ctx& ctx, u64 uid) {
     Value status = Value::object();
-    u32 owner = player_id(ctx);
+    const PlayerId owner = player_id(ctx);
     std::string player_name;
     u32 player_level = 1;
     ctx.st.q("select name, level from player", {}, [&](const Row& player_row) {
@@ -148,7 +149,8 @@ Value person_status_info(ext::Ctx& ctx, u64 uid) {
         player_level = (u32)player_row.i("level");
     });
     ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
-        u32 role = (u32)roster_row.i("role_id"), level = (u32)roster_row.i("level");
+        const RoleId role = roster_row.id<RoleId>("role_id");
+        u32 level = (u32)roster_row.i("level");
         status = person_info(ctx, roster_row, owner);
         status["player_level"] = player_level;
         status["player_name"] = player_name;

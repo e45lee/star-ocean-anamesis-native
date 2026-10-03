@@ -47,6 +47,9 @@ bool enabled();
 // is one, with its text in *text. The port shows it in the game's web-view popup
 // (native/ui/webview_local.cpp), since the desktop has no web view.
 bool web_page(const std::string& url, std::string* text);
+// The same page as an HTML document (*content_type "text/html; charset=utf-8"), for a real web view
+// (docs/webview.md: the litehtml renderer, webview/; the port's --webview prototype).
+bool web_document(const std::string& url, std::string* content_type, std::string* body);
 
 // ---- clocks ------------------------------------------------------------------------------
 // clock_now(): the server clock: the real time, or --clock "YYYY-MM-DD HH:MM:SS" / SOA_CLOCK and

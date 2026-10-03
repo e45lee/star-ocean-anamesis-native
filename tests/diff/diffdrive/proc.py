@@ -32,15 +32,18 @@ def free_ports(n):
 
 class Proc:
     """A program started in its own process group under `timeout -k 10 LIMIT`; stop() ends the
-    group (TERM, up to 10 s, then KILL). Only this PID's group is ever signalled."""
+    group (TERM, up to 10 s, then KILL). Only this PID's group is ever signalled. slot_fd: the
+    client's slot of the pool (control/soaslot.py), inherited so the slot stays taken while the
+    client lives, even if the driver dies first."""
 
-    def __init__(self, name, argv, log, limit=3600, env=None, cwd=REPO):
+    def __init__(self, name, argv, log, limit=3600, env=None, cwd=REPO, slot_fd=-1):
         self.name, self.log = name, log
         e = dict(os.environ)
         e.update(env or {})
         self.f = open(log, "ab")
         self.p = subprocess.Popen(["timeout", "-k", "10", str(limit)] + list(argv), stdout=self.f, stderr=subprocess.STDOUT,
-                                  env=e, cwd=cwd, start_new_session=True)
+                                  env=e, cwd=cwd, start_new_session=True,
+                                  pass_fds=(slot_fd,) if slot_fd >= 0 else ())
         self.pid = self.p.pid
 
     def running(self):

@@ -13,6 +13,7 @@ from ..targets import Abort
 from . import launch
 
 NAME = "tutorial"
+EST = 840
 CLOCK = "2026-10-01 12:00:05"
 PLAYER = "Claire"
 
@@ -46,7 +47,9 @@ def tut(s, k):
     return lambda: s.in_packets(r"> UpdateTutorial .*args: %d$" % k)
 
 
-def run(s):
+def entry(s):
+    """The title -> Login refused (19001) -> the terms -> the name -> CreatePlayer -> Login -> the
+    data check -> the opening scene (MissionTalk); auto mode and fast-forward on."""
     launch.title(s)
     s.tap_until("TAP TO START -> Login", 120, ui370.TITLE, lambda: s.in_packets(r"> Login "))
     s.wait_for("Login -> ProtocolError 19001 (no player)", 60, lambda: s.in_packets(r"< ProtocolError .*status=19001"))
@@ -70,28 +73,43 @@ def run(s):
     launch.data_check(s, lambda: s.in_packets(r"> MissionTalk"), "the opening scene (MissionTalk)")
     s.ctl("wait:15000")
     s.shot("04-opening", settle=False)
-    # Auto mode and fast-forward, then rounds of taps until the mission-menu step (UpdateTutorial 4).
+    auto_mode(s)
+
+
+def auto_mode(s):
+    """A scene's auto mode and fast-forward (the opening scene's buttons)."""
     s.ctl("tap:612:1240", "wait:1000", "tap:115:45", "wait:1000")
+
+
+def rounds(s, k, limit=150):
+    """Rounds of taps (one every ~9 s, paced by a screenshot) through the scenes and the battle
+    until UpdateTutorial(k)."""
     i = 0
-    while i < 150 and not tut(s, 4)():
+    while i < limit and not tut(s, k)():
         if not s.alive():
             s.miss("tutorial (the client exited)")
             raise Abort("tutorial")
         # (the shot paces the rounds: send() returns once it is written, after the wait)
         s.send(["wait:6000", "shot:" + s.scratch("round.png")] + TUTORIAL_TAPS)
         i += 1
-    for k in (1, 2, 3):
-        s.check("UpdateTutorial(%d)" % k, tut(s, k)())
-    s.check("battle tutorial: MissionStart -> MissionStartRes", s.in_packets(r"< MissionStartRes"))
-    s.check("battle tutorial: MissionEnd -> MissionEndRes", s.in_packets(r"< MissionEndRes"))
-    s.wait_for("UpdateTutorial(4) (the mission menu)", 30, tut(s, 4))
-    # Planet Mere's map, 1-01 (ここをタップ) -> ストーリー開始 -> the story, skipped -> UpdateTutorial(6)
-    # -> "summoned companions" 次へ -> ホーム.
+
+
+def home_part(s):
+    """From the mission-menu step (UpdateTutorial 4): planet Mere's map, 1-01 (ここをタップ) ->
+    ストーリー開始 -> the story, skipped -> UpdateTutorial(6) -> "summoned companions" 次へ -> ホーム
+    -> the home tutorial -> UpdateTutorial(9) -> the notice board and the LOGIN BONUS -> home."""
     s.ctl("wait:10000")
     s.shot("05-tutorial-map")
     s.ctl("tap:360:640", "wait:3000", "tap:515:714")
-    s.ctl("wait:20000", "tap:" + ui370.STORY_SKIP, "wait:2000", "tap:" + ui370.STORY_SKIP_YES)
-    s.wait_for("UpdateTutorial(6) (the story of 1-01)", 180, tut(s, 6))
+    s.wait_for("1-01's story starts (MissionTalk mc01_010)", 90, lambda: s.in_packets(r"> MissionTalk .* 3991905094 "))
+    # スキップ, then はい, until the story ends: either tap is lost while its dialog fades in (seen
+    # under load: the skip dialog open, はい never tapped), so the pair is repeated.
+    s.ctl("wait:12000")
+    end = time.monotonic() + 120
+    while not s.in_packets(r"> EndMissionTalk .* 3991905094 ") and s.alive() and time.monotonic() < end:
+        s.ctl("tap:" + ui370.STORY_SKIP, "wait:2500", "tap:" + ui370.STORY_SKIP_YES)
+        s.poll(8, lambda: s.in_packets(r"> EndMissionTalk .* 3991905094 "))
+    s.wait_for("UpdateTutorial(6) (the story of 1-01)", 120, tut(s, 6))
     s.ctl("wait:8000")
     s.shot("06-companions")
     s.ctl("tap:527:1090", "wait:3000", "tap:60:1240")
@@ -108,6 +126,18 @@ def run(s):
     launch.popups(s, "08c-notice", "08d-login-bonus")
     s.ctl("wait:3000")
     s.shot("09-home")
+
+
+def run(s):
+    entry(s)
+    # Rounds of taps until the mission-menu step (UpdateTutorial 4).
+    rounds(s, 4)
+    for k in (1, 2, 3):
+        s.check("UpdateTutorial(%d)" % k, tut(s, k)())
+    s.check("battle tutorial: MissionStart -> MissionStartRes", s.in_packets(r"< MissionStartRes"))
+    s.check("battle tutorial: MissionEnd -> MissionEndRes", s.in_packets(r"< MissionEndRes"))
+    s.wait_for("UpdateTutorial(4) (the mission menu)", 30, tut(s, 4))
+    home_part(s)
     st = s.state("newplayer")
     s.check('server state: the new player "%s"' % PLAYER, ("(%s," % PLAYER) in st)
     s.check("no communication-error ProtocolError", not s.in_packets(r"< ProtocolError .*status=1[0-9]{3}\b"))

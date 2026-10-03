@@ -11,6 +11,16 @@ from ..targets import Abort
 sys.path.insert(0, os.path.join(REPO, "control"))
 import flowctl  # noqa: E402  (control/flowctl.py: login_popups)
 
+# The screens title() and login_to_home() take (RMSE limits against the emulator's; None: shown,
+# not gated). Home: the still parts at the still limit, the character masked.
+HOME = (0.08, (screens.HOME_CHARACTER,))
+SCREENS = {
+    "01-title": 0.08,
+    "02a-notice": None,
+    "02b-login-bonus": 0.08,
+    "02-home": HOME,
+}
+
 
 def title(s):
     """Boot -> the title's NoLoginStart answered (a communication-error dialog's リトライ, where TAP
@@ -40,7 +50,11 @@ def data_check(s, until, name):
     """After Login: the phone has the data, so the client only checks its manifests and goes on to
     `until`; when it lacks something (e.g. the master the server edited for the run's clock) its
     dialogs' buttons (決定, ダウンロード, 完了) are tapped in turn until `until`."""
-    if s.poll(90, until):
+    # The dialog comes (or the client goes on) a few seconds after the manifests: wait for those
+    # (the last, version_latest_Individual.bin), then 12 s, not a blind 90 s (the master the server
+    # edits for the run's clock is on no phone: every run of every flow shows the dialog).
+    manifests = lambda: s.in_client(r"I/http: GET \S*/version_latest_Individual\.bin")
+    if s.poll(90, lambda: until() or manifests()) and s.poll(12, until):
         s.ok(name)
         return
     s.note("a data dialog: tapping 決定 / ダウンロード / 完了 in turn")

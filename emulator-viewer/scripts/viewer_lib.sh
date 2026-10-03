@@ -30,6 +30,8 @@ start_viewer() {
     mkdir -p "$phone" "$out/shots"
     log=$out/viewer.log fifo=$out/fifo
     rm -f "$fifo"
+    # the machine-wide game slot pool (control/soaslot.sh): held until the script exits
+    SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take soa-viewer
     timeout -k 10 "${VIEWER_TIMEOUT:-1800}" "$bin" --data "$phone" --headless --size ${W}x$H --control "$fifo" "$@" > "$log" 2>&1 &
     vpid=$!
     trap cleanup EXIT

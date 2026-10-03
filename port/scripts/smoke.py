@@ -84,8 +84,12 @@ def main():
     # The phone (phone370_prepare: the shared phone linked, SOA_PHONE's, or empty; no local KVS)
     # and the client save.
     # (phone370_client_save: the committed save with no episode pack on its books.)
+    # The machine-wide game slot pool (control/soaslot.py): queued here; soa inherits the slot.
+    sys.path.insert(0, os.path.join(REPO, "control"))
+    import soaslot
+    slot = soaslot.acquire("smoke")
     subprocess.run(["sh", "-c", '. port/scripts/phone370.sh && phone370_prepare "$1" && phone370_client_save "$1/data/shared_prefs"', "sh", data],
-                   cwd=REPO, check=True)
+                   cwd=REPO, check=True, env=dict(os.environ, SOA_SLOT_HELD="1"))
     fifo = os.path.join(out, "control.fifo")
     if os.path.exists(fifo):
         os.remove(fifo)  # soa creates it
@@ -93,7 +97,7 @@ def main():
     log = open(logpath, "w")
     env = dict(os.environ, SOA_SERVER_SEED_RNG=os.environ.get("SOA_SERVER_SEED_RNG", "1"))
     proc = subprocess.Popen([soa, "--data", data, "--size", "729x1296", "--clock", CLOCK, "--control", fifo] + extra,
-                            cwd=REPO, stdout=log, stderr=subprocess.STDOUT, env=env)
+                            cwd=REPO, stdout=log, stderr=subprocess.STDOUT, env=env, pass_fds=(slot,) if slot >= 0 else ())
 
     for _ in range(1200):
         if os.path.exists(fifo) or proc.poll() is not None:

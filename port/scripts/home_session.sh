@@ -88,10 +88,11 @@ checkt set-title 'I/server: SetTitle [1-9]' 30 10 2 -- tap:364:600
 c wait:3000 shot:$S/24b-title-set.png tap:364:800 wait:2000
 checkt remove-title 'I/server: SetTitle 0$' 30 10 2 -- tap:515:1053
 c wait:3000 shot:$S/24c-title-removed.png tap:364:800 wait:2000 tap:213:1053 wait:2000
-# お知らせ: the notice board from the menu shows the local server's page (server/src/api/player/notice.cpp,
-# native/ui/webview_local.cpp), as the login's notice board did.
+# お知らせ: the notice board from the menu shows the local server's page (server/src/api/player/notice.cpp):
+# drawn by the web view ("webview: page http..."; native/ui/webview_page_view.cpp), or as text in the popup
+# when it can't ("webview: local page shown"; native/ui/webview_local.cpp), as the login's notice board did.
 # (the ≡ menu may still be open after the title list: resent, the pair opens it the second time)
-checkt notice 'webview: local page shown' 40 12 3 -- tap:668:200 wait:2000 tap:335:200
+checkt notice 'webview: (local page shown|page http)' 40 12 3 -- tap:668:200 wait:2000 tap:335:200
 c wait:4000 shot:$S/24d-notice.png tap:364:1133 wait:3000
 c tap:668:315; check present 'request PresentList'
 c wait:4000 shot:$S/25-present.png tap:100:1120; check present-back 'port_debug: phase 4 ' 30

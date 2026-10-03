@@ -1,0 +1,33 @@
+# soa-server replay corpus (server/tests/replay/README.md): profile, hand-written (agent fast-tests,
+# 2026-10-03; tools/replay_coverage.py's gaps): the entry / player / presents / favor / social APIs
+# with real arguments on the seeded state (items-party's options).
+# tz: America/Toronto
+req 1 1790841485 Login a01c67ef - - - -
+req 2 1790841490 SimpleLogin 447fafb8 - - - -
+req 3 1790841495 UpdateView a2eb69ba 1,5 - - -
+req 4 1790841500 UpdateKiyakuVersion e5af488c - 312e302e33 - -
+req 5 1790841505 UpdatePlayerName e8e5c4da - 52656e61 - -
+req 6 1790841510 UpdatePlayerName e8e5c4da - _ - -
+req 7 1790841515 UpdateHome 46e0807c 2113929217 - - -
+req 8 1790841520 UpdateHome 46e0807c 12345 - - -
+req 9 1790841525 SetTitle 4332363c 2371511671 - - -
+req 10 1790841530 SetTitle 4332363c 5571910 - - -
+req 11 1790841535 SetTitle 4332363c 0 - - -
+req 12 1790841540 PresentList fa782a45 - - - -
+req 13 1790841545 AchievementActiveList d0b25cb6 - - - -
+req 14 1790841550 UpdateFavorByTap e06ec7b3 - - - -
+req 15 1790841555 UpdateFavorByTap e06ec7b3 0 - - -
+req 16 1790841560 StaminaHealByFavor 960546a3 - - - -
+req 17 1790841565 LockItemArray - - - 2097152001,2097152002 -
+req 18 1790841570 UnlockItem 2f9569e5 - - 2097152001 -
+req 19 1790841575 Blacklist 36ed89b2 - - - -
+req 20 1790841580 GetRecentlyPlayedList c5316c8e - - - -
+req 21 1790841585 SearchPlayer 5e598152 - 4c4f43414c3030303031 - -
+req 22 1790841590 SearchPlayer 5e598152 - 4e4f424f445930303030 - -
+req 23 1790841595 PresentList fa782a45 - - - -
+req 24 1790841600 GetPresent 4072d7e1 1 - - -
+req 25 1790841605 GetPresentArray - - - 2,3,4 -
+req 26 1790841610 PresentList fa782a45 - - - -
+req 27 1790841615 AchievementReceive 47e9dee6 2282065 - - -
+req 28 1790841620 UseFavorItem 88af959e 555097489,1,0 - - -
+req 29 1790841625 GetPlayer 9a056905 - - - -

@@ -18,6 +18,7 @@ __pycache__/
 /.claude/worktrees/
 # Game files too big for GitHub (a file over 100 MB), kept locally; README.md "Game files" says where
 # each comes from. The 3.7.0 APK, the master DBs and gacha_pools.sqlite3 are in git (no LFS).
-/apk/*.xapk
+/apk/*apk
+!/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk
 /ghidra/quick/
 /ghidra/quick-v370/

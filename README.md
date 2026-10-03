@@ -124,7 +124,7 @@ Each script has `--help` and works from any directory.
 - **Use a fresh data folder** (`--data`, `--home`): an existing server state keeps its player.
 
 ### Game files
-The scripts check for these and say which is missing. **In git** (plain git, no LFS; each under GitHub's 100 MB limit): the 3.7.0 APK, the three master DBs in `data/` and `port/server-data/gacha_pools.sqlite3`. **Local only** (too big for GitHub, or derived): the 3.8.0 XAPK, the Ghidra quick projects, and everything under `work/`. A checksummed copy of all of them is in `work/backup-lfs/`.
+The scripts check for these and say which is missing. **In git** (plain git, no LFS; each under GitHub's 100 MB limit): the 3.7.0 APK, the three master DBs in `data/` and `port/server-data/gacha_pools.sqlite3`. **Local only** (too big for GitHub, or derived): the 3.8.0 XAPK, the Ghidra quick projects, and everything under `work/`. A checksummed copy of all of them is in `work/backup-lfs/`. <!-- 380-ok: names the viewer's XAPK -->
 
 | File | Used by |
 |---|---|

@@ -46,7 +46,7 @@
      "covers": "soa_save's unit tests (no game)"},
     {"name": "soa-selftest", "tier": "T0", "secs": 70, "kind": "selftest", "apis": false, "game": 1,
      "cmd": "port/scripts/selftest_resilient.sh {out}",
-     "covers": "every port selftest (natives off; 106 tests, one boot; carried past a crashing test)"},
+     "covers": "every port selftest (natives off; every registered test, one boot; carried past a crashing test)"},
     {"name": "impact-map", "tier": "T0", "secs": 3, "kind": "check", "game": 0,
      "cmd": "python3 tools/tests_for.py --check",
      "covers": "tests/impact.json knows every API soa-server answers and every test of tests/tiers.json"},

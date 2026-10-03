@@ -51,7 +51,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T0 | `no-380` | 1 s | - | no reference to the offline build outside the allowed places (tools/check_no_380.sh) | `tools/check_no_380.sh` |
 | T0 | `pytest-control` | 10 s | - | the slot pool and tools/tests_for.py's path rules (no game) | `.venv/bin/python -m pytest -q control/tests` |
 | T0 | `pytest-soa-save` | 5 s | - | soa_save's unit tests (no game) **Known failure:** tests/test_kvs.py::test_unlock_all_keeps_existing needs the offline game's package in apk/, which a worktree lacks (untracked); passes in the main checkout | `.venv/bin/python -m pytest -q tests` |
-| T0 | `soa-selftest` | 70 s | 1 | every port selftest (natives off; 106 tests, one boot; carried past a crashing test) | `port/scripts/selftest_resilient.sh {out}` |
+| T0 | `soa-selftest` | 70 s | 1 | every port selftest (natives off; every registered test, one boot; carried past a crashing test) | `port/scripts/selftest_resilient.sh {out}` |
 | T0 | `impact-map` | 3 s | - | tests/impact.json knows every API soa-server answers and every test of tests/tiers.json | `python3 tools/tests_for.py --check` |
 | T1 | `replay-parent` | 60 s | - | RG4: every corpus replayed by the parent commit's server and this one, compared byte for byte | `tools/server_build_at.sh {base} {tmp}/parent && tools/server_replay_diff.sh {tmp}/parent/soa-server build/server/soa-server` |
 | T1 | `shard:login` | 2.2 min | 3 | title, Login, the data check, the notice board and LOGIN BONUS, home; 3 targets compared | `tests/diff/run.sh login --out {out}` |

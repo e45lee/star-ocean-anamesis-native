@@ -86,7 +86,7 @@ std::vector<u64> add_starters(ext::Ctx& ctx, int64_t now) {
             " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
             "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
             "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
-            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, favor = excluded.favor, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, "
             "created_at = excluded.created_at",
             {uid, role_id, 1u, 0u, now});
         party.push_back(uid);

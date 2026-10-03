@@ -52,7 +52,7 @@ void favor_start(Ctx& ctx, const MissionInfo& mission, Value& param, Value&) {
         if (!same_role || !seen.insert(same_role).second) continue;
         u32 lots = bonus_of_level(ctx, favor::level_of(ctx.st.h, ctx.m.h, now, same_role));
         if (!lots || favor::event_drop_used_today(ctx.st.h, ctx.m.h, now, same_role)) continue;
-        ctx.st.q("insert into favor_drop_play values (?, ?)", {same_role, lots});
+        ctx.st.q("insert into favor_drop_play (same_role_id, lots) values (?, ?)", {same_role, lots});
         left--;
     }
     int64_t characters = ctx.st.one("select count(*) from favor_drop_play", {});

@@ -109,7 +109,7 @@ NATIVE_TEST("gacha/stepup-box") {
     u32 coin = (u32)sv.m.one("select ticket_item_id from master_gacha where id = ?", {box});
     u32 slots = (u32)sv.m.one("select sum(box_count) from master_box_gacha where master_gacha_id = ?", {box});
     t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 3}, {}, {}}), 10206u, "no event coins");
-    sv.st.q("insert or replace into stock values (?, 9, 100000)", {coin});
+    sv.st.q("insert or replace into stock (master_item_id, item_type, count) values (?, 9, 100000)", {coin});
     t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 3}, {}, {}}), 0u, "3 draws");
     t.expect_eq((u32)sv.st.one("select sum(drawn) from box_slots where gacha_id = ?", {box}), 3u, "3 slots drawn");
     t.expect_eq((u32)sv.st.one("select count from stock where master_item_id = ?", {coin}), 100000u - 15u, "15 coins");

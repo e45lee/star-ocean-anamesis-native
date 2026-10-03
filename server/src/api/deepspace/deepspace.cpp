@@ -185,8 +185,8 @@ void set_ship_bonuses(Ctx& ctx, u32 ship_id, u32 set_id, u32 item_id, const std:
             }
         });
     for (auto& [bonus_id, value] : party_bonuses(ctx, set_id, party))
-        ctx.st.q("insert into ds_bonus values (?,?,?)", {ship_id, bonus_id, (double)value * all_mul});
-    if (item_bonus) ctx.st.q("insert or replace into ds_bonus values (?,?,?)", {ship_id, item_bonus, item_value});
+        ctx.st.q("insert into ds_bonus (ship_id, bonus_id, value) values (?,?,?)", {ship_id, bonus_id, (double)value * all_mul});
+    if (item_bonus) ctx.st.q("insert or replace into ds_bonus (ship_id, bonus_id, value) values (?,?,?)", {ship_id, item_bonus, item_value});
 }
 
 // DeepSpaceMissionStart(u32 mission_id, u32 item_id, vector<u64> uids) -> DeepSpaceMissionStartRes   fid 63c9927a
@@ -299,7 +299,7 @@ bool pay_quick_return(Ctx& ctx, const Ship& ship, int64_t t, QuickReturnPaid& pa
     if (!wallet::covers(have, cost.coins)) return false;
     if (cost.items) ext::add_stock(ctx, item_id, -(int64_t)cost.items);
     wallet::take(ctx.st.h, wallet::split(have, cost.coins));  // (a) free coins first (core/wallet.h)
-    ctx.st.q("insert or replace into meta values ('ds_time_saving_count', ?)", {std::to_string(used_today + 1)});
+    ctx.st.q("insert or replace into meta (key, value) values ('ds_time_saving_count', ?)", {std::to_string(used_today + 1)});
     paid.items = cost.items;
     paid.coins = cost.coins;
     return true;

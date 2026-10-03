@@ -180,7 +180,7 @@ NATIVE_TEST("sphere211/season") {
         info = call(c, "GetSphere211Info", {});
         t.expect_eq((u32)num(info, "Sphere211EndResult", "previous_season_id"), 0u, "end result sent once");
         // a battle won in the season: rank 1 and the season's rank-1 ranking reward (a), into the items
-        c.st.q("insert or replace into sphere_meta values ('season_wins', 2)", {});
+        c.st.q("insert or replace into sphere_meta (key, value) values ('season_wins', 2)", {});
         u32 group = (u32)c.m.one("select coalesce(nullif(master_sphere211_ranking_reward_id, ''), 0) from master_sphere211 where id = ?", {ss[2].id});
         u32 set_id = 0, set_type = 0;
         c.m.q(
@@ -210,7 +210,7 @@ NATIVE_TEST("sphere211/season") {
         // (d) the repeated last season: each cycle is a new season
         evc = last.b + 3 * period + 3600;
         call(c, "GetSphere211Info", {});
-        c.st.q("insert or replace into sphere_meta values ('season_wins', 1)", {});
+        c.st.q("insert or replace into sphere_meta (key, value) values ('season_wins', 1)", {});
         evc += period;
         info = call(c, "GetSphere211Info", {});
         t.expect_eq((u32)num(info.find("Sphere211CurrentId")), last.id, "still the last season");
@@ -554,7 +554,8 @@ NATIVE_TEST("sphere211/rental") {
         call(c, "Sphere211MissionStart", {next, 0, party2[0], party2[1], party2[2], lenders[0].second, lenders[0].first});
         t.expect_eq(code, 10208u, "(d) a lender lends once per floor");
         // (a) three rentals a floor: then every lender counts as used
-        c.st.q("insert into sphere_rental values (?, 1, ?), (?, 1, ?)", {lenders[1].first, clock, lenders[2].first, clock});
+        c.st.q("insert into sphere_rental (follow_player_id, used, updated_at) values (?, 1, ?), (?, 1, ?)",
+               {lenders[1].first, clock, lenders[2].first, clock});
         d = call(c, "GetSphere211Info", {});
         t.expect_eq(used(d, lenders[3].first), true, "three rentals: the floor's rentals are used up");
         code = 0;
@@ -703,7 +704,7 @@ NATIVE_TEST("sphere211/items") {
         code = 0;
         call(c, "Sphere211StaminaHeal", {});
         t.expect_eq(code, 10206u, "no heal item: 10206");
-        c.st.q("insert or replace into stock values (?, 10, 2)", {heal});
+        c.st.q("insert or replace into stock (master_item_id, item_type, count) values (?, 10, 2)", {heal});
         code = 0;
         d = call(c, "Sphere211StaminaHeal", {});
         t.expect_eq(code, 0u, "heal accepted");
@@ -717,7 +718,7 @@ NATIVE_TEST("sphere211/items") {
         code = 0;
         call(c, "Sphere211UseRerollItem", {});
         t.expect_eq(code, 10206u, "no reroll item: 10206");
-        c.st.q("insert or replace into stock values (?, 10, 1)", {reroll});
+        c.st.q("insert or replace into stock (master_item_id, item_type, count) values (?, 10, 1)", {reroll});
         code = 0;
         d = call(c, "Sphere211UseRerollItem", {});
         t.expect_eq(code, 0u, "reroll accepted");

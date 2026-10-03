@@ -209,7 +209,7 @@ std::vector<u8> update_support(Ctx& ctx, const Request& req) {
         LOGW("server", "UpdateSupport %llu refused: not an owned character", (unsigned long long)args.character_uid);
         return {};
     }
-    ctx.st.q("insert or replace into meta values ('support_uid', ?)", {std::to_string(args.character_uid)});
+    ctx.st.q("insert or replace into meta (key, value) values ('support_uid', ?)", {std::to_string(args.character_uid)});
     LOGI("server", "UpdateSupport: support character %llu", (unsigned long long)args.character_uid);
     return with_player_state(ctx);
 }

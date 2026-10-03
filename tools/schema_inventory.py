@@ -499,7 +499,7 @@ def main():
             code = l.split("//")[0]
             name, is_test = ctx[k]
             where = "%s:%d %s%s" % (r, k, name, " (test)" if is_test or is_test_file else "")
-            for m in re.finditer(r"into (meta|sphere_meta|counters) values \('(\w+)'", code):
+            for m in re.finditer(r"into (meta|sphere_meta|counters) (?:\(key, value\) )?values \('(\w+)'", code):
                 kv[m.group(1)][m.group(2)]["w"].add(where)
             for m in re.finditer(r"from (meta|sphere_meta|counters) where key = '(\w+)'", code):
                 kv[m.group(1)][m.group(2)]["r"].add(where)

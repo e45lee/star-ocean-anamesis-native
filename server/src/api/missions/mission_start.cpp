@@ -379,10 +379,13 @@ void drop_npc_party(ext::Ctx& ctx, MissionStart& start) {
 // 11. The play record and the mission's play count.
 void record_play(ext::Ctx& ctx, MissionStart& start) {
     const u32 mission = start.args.mission;
-    ctx.st.q("insert or replace into play values (1,?,?,?,?,?)", {mission, start.party_id, clock_now(), start.stamina_cost, start.play_uids});
+    ctx.st.q("insert or replace into play (id, mission_id, party_id, started_at, stamina_cost, uids) values (1,?,?,?,?,?)",
+             {mission, start.party_id, clock_now(), start.stamina_cost, start.play_uids});
     if (!start.restarting)
-        ctx.st.q("insert or replace into play_ext values (1,?,?,?,?,?,?)", {start.mission_ref.type, start.surprise ? 1 : 0, start.helper_uid,
-                                                                            (u32)start.helper_kind, start.args.npc_helper_id, start.campaign_lots});
+        ctx.st.q(
+            "insert or replace into play_ext (id, mission_type, surprise, helper_uid, helper_kind, npc_id, campaign_lots) values (1,?,?,?,?,?,?)",
+            {start.mission_ref.type, start.surprise ? 1 : 0, start.helper_uid, (u32)start.helper_kind, start.args.npc_helper_id,
+             start.campaign_lots});
     ctx.st.q("insert into mission (mission_id) values (?) on conflict(mission_id) do nothing", {mission});
     if (!start.restarting) ctx.st.q("update mission set play_count = play_count + 1 where mission_id = ?", {mission});
 }

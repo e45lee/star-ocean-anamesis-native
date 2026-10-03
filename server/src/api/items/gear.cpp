@@ -286,7 +286,7 @@ Barney barney_current(Ctx& ctx, bool redraw = false) {
         for (auto& b : open_group)
             if (b.type == type) return b;
     Barney b = barney_draw(ctx, open_group);
-    ctx.st.q("insert or replace into gear_barney values (1, ?, ?)", {b.group, b.type});
+    ctx.st.q("insert or replace into gear_barney (id, group_id, type) values (1, ?, ?)", {b.group, b.type});
     return b;
 }
 Value barney_chance_info(const Barney& b) {  // (b) CGearBarneyChanceInfo's fields

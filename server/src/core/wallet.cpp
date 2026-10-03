@@ -57,7 +57,7 @@ void add_stock(sqlite3* st, sqlite3* m, u32 item, int64_t delta) {
     int64_t cap = master::global_u32(m, "item_stock_max_num", 100000000u);  // (a) master_global item_stock_max_num
     Sql mdb{m}, db{st};
     u32 type = (u32)mdb.one("select type from master_item where id = ?", {item});
-    db.q("insert into stock values (?,?,0) on conflict(master_item_id) do nothing", {item, type});
+    db.q("insert into stock (master_item_id, item_type, count) values (?,?,0) on conflict(master_item_id) do nothing", {item, type});
     db.q("update stock set count = max(0, min(count + ?, ?)) where master_item_id = ?", {delta, cap, item});
 }
 

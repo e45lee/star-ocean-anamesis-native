@@ -37,7 +37,8 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     u32 smax = ctx.stamina_max(level);
     int64_t t = clock_now();
     ctx.st.q(
-        "insert or replace into player values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "insert or replace into player (id, search_id, name, level, exp, fol, stamina, stamina_at, free_coin, pay_coin, home_uid, party_id, "
+        "created_at, last_login_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         {pid, search, name, level, exp, fol, smax /* (d) full stamina */, t, config().start_coins /* (d) free coin, --start-coins */, 0, 0, 1, t, t});
     // Roster: person_master_role_id_N (master_role ids), deduplicated (the client cache
     // lists some roles twice).
@@ -67,12 +68,12 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     std::stable_sort(by_rarity.begin(), by_rarity.end(), [](auto& a, auto& b) { return a.first < b.first; });
     for (auto& [r, i] : by_rarity)
         if (party.size() < 4 && kRosterUid0 + i != home_uid) party.push_back(kRosterUid0 + i);
-    for (size_t s = 0; s < party.size(); s++) ctx.st.q("insert or replace into party values (1,?,?)", {s, party[s]});
+    for (size_t s = 0; s < party.size(); s++) ctx.st.q("insert or replace into party (party_id, slot, uid) values (1,?,?)", {s, party[s]});
     for (auto& [k, v] : kv)
-        if (k.rfind("BAS:PlanetOpen_", 0) == 0) ctx.st.q("insert or replace into planets values (?,?)", {k.substr(15), (int)(u8)v[0]});
-    ctx.st.q("insert or replace into meta values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
-    ctx.st.q("insert or replace into meta values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
-    ctx.st.q("insert or replace into meta values ('seed', ?)", {seedp});
+        if (k.rfind("BAS:PlanetOpen_", 0) == 0) ctx.st.q("insert or replace into planets (label, open) values (?,?)", {k.substr(15), (int)(u8)v[0]});
+    ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
+    ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
+    ctx.st.q("insert or replace into meta (key, value) values ('seed', ?)", {seedp});
     // (b) the seeded (3.7.0) player finished the tutorial: tutorial_status = 9, the client's
     // last tutorial step (CPhase_TutorialNext::LastMemId; CParameterUtility::IsTutorialClear
     // is status >= it). (d) every UI tutorial seen (view_status / view_status2 all ones):

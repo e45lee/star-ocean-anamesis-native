@@ -244,7 +244,7 @@ bool receive_achievement(Ctx& ctx, int64_t id, Value& added) {
             added.push(present);
         }
     });
-    ctx.st.q("insert or replace into achievements values (?, ?, ?)", {id, 0, ctx.now()});
+    ctx.st.q("insert or replace into achievements (id, progress, received_at) values (?, ?, ?)", {id, 0, ctx.now()});
     count(ctx, "achievement_received");
     return true;
 }

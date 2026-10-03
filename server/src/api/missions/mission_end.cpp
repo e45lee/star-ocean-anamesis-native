@@ -160,7 +160,8 @@ void unlocks(ext::Ctx& ctx, MissionEnd& end) {
     if (!end.first_clear) return;
     ctx.m.q("select id, id_label from " + end.mission_ref.table + " where unlock_mission_id = ? order by id", {end.mission},
             [&](const Row& unlocked_row) {
-                ctx.st.q("insert or ignore into unlocks values (?,?,?,?)", {unlocked_row.i("id"), end.mission_ref.type, end.mission, clock_now()});
+                ctx.st.q("insert or ignore into unlocks (mission_id, mission_type, by_mission, at) values (?,?,?,?)",
+                         {unlocked_row.i("id"), end.mission_ref.type, end.mission, clock_now()});
                 end.unlocked.push_back(unlocked_row.s("id_label"));
             });
 }

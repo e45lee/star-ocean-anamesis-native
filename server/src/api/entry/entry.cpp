@@ -58,9 +58,11 @@ std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args,
     char search_id[16];
     snprintf(search_id, sizeof search_id, kSearchIdFormat, hash % kSearchIdModulo);
     u32 player_id = chash32(search_id);
-    ctx.st.q("insert or replace into player values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-             {player_id, std::string(search_id), args.name, 1u, 0u, 0u, ctx.stamina_max(1), now,
-              config().start_coins /* (d) free coin, --start-coins */, 0u, 0u, 1u, now, now});
+    ctx.st.q(
+        "insert or replace into player (id, search_id, name, level, exp, fol, stamina, stamina_at, free_coin, pay_coin, home_uid, party_id, "
+        "created_at, last_login_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        {player_id, std::string(search_id), args.name, 1u, 0u, 0u, ctx.stamina_max(1), now, config().start_coins /* (d) free coin, --start-coins */,
+         0u, 0u, 1u, now, now});
     return search_id;
 }
 
@@ -76,7 +78,8 @@ std::vector<u64> add_starters(ext::Ctx& ctx, int64_t now) {
         party.push_back(uid);
     }
     if (!party.empty()) ctx.st.q("update player set home_uid = ?", {party[0]});
-    for (size_t slot = 0; slot < party.size(); slot++) ctx.st.q("insert or replace into party values (?,?,?)", {kStarterPartyId, slot, party[slot]});
+    for (size_t slot = 0; slot < party.size(); slot++)
+        ctx.st.q("insert or replace into party (party_id, slot, uid) values (?,?,?)", {kStarterPartyId, slot, party[slot]});
     return party;
 }
 
@@ -112,8 +115,8 @@ std::vector<u8> create_player(ext::Ctx& ctx, const Request& req) {
     int64_t now = clock_now();
     std::string search_id = insert_new_player(ctx, args, now);
     std::vector<u64> party = add_starters(ctx, now);
-    ctx.st.q("insert or replace into meta values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
-    ctx.st.q("insert or replace into meta values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
+    ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
+    ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
     set_meta(ctx, "tutorial_status", "0");
     set_meta(ctx, "view_status", "0");
     set_meta(ctx, "view_status2", "0");

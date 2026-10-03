@@ -163,9 +163,11 @@ State load(Ctx& ctx, const Boss& boss, u32 area) {
     return state;
 }
 void save(Ctx& ctx, const Boss& boss, const State& state) {
-    ctx.st.q("insert or replace into wboss values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-             {boss.id, state.area, state.wave, state.n[0], state.n[1], state.n[2], state.a[0], state.a[1], state.a[2], state.required, state.started,
-              state.last_clear, state.hunt_until, state.hunt_new ? 1 : 0});
+    ctx.st.q(
+        "insert or replace into wboss (boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until, "
+        "hunt_new) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        {boss.id, state.area, state.wave, state.n[0], state.n[1], state.n[2], state.a[0], state.a[1], state.a[2], state.required, state.started,
+         state.last_clear, state.hunt_until, state.hunt_new ? 1 : 0});
 }
 bool hunting(Ctx& ctx, const State& state) { return state.hunt_until && ctx.now() <= state.hunt_until; }
 
@@ -182,7 +184,7 @@ void contribute(Ctx& ctx, const Boss& boss, State& state, const u64 add[3]) {
         Wave info = wave_of(ctx, boss.id, state.wave);
         if (!info.found) break;
         if (ctx.st.one("select count(*) from wboss_clear where boss_id = ? and wave = ?", {boss.id, state.wave})) break;  // the last wave, done
-        ctx.st.q("insert into wboss_clear values (?,?,?,0)", {boss.id, state.wave, ctx.now()});
+        ctx.st.q("insert into wboss_clear (boss_id, wave, cleared_at, notified) values (?,?,?,0)", {boss.id, state.wave, ctx.now()});
         if (info.type) add_present(ctx, info.type, info.id, std::max<u32>(1, info.num), kPresentMissionClear, 0, text(ctx.m, info.message));
         state.hunt_until = ctx.now() + (int64_t)boss.bighunt_minutes * 60;
         state.hunt_new = true;

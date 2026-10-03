@@ -40,7 +40,7 @@ std::vector<u8> update_party(ext::Ctx& ctx, const Request& req) {
     for (int slot = 0; slot < (int)std::size(args.member_uid); slot++) {
         u64 uid = args.member_uid[slot];
         if (uid && !owned_character(ctx, uid)) uid = 0;  // (d) only owned characters
-        ctx.st.q("insert or replace into party values (?,?,?)", {party_id, slot, uid});
+        ctx.st.q("insert or replace into party (party_id, slot, uid) values (?,?,?)", {party_id, slot, uid});
         party_update["player_character_id" + std::to_string(slot + 1)] = uid;
     }
     ctx.st.q("update player set party_id = ?", {party_id});  // (d) the party last edited is the current one
@@ -119,16 +119,18 @@ std::vector<u8> update_party_set(ext::Ctx& ctx, const Request& req) {
         LOGW("server", "UpdatePartySet: party id %u outside 1..%u", party_id, max);
         return {};
     }
-    ctx.st.q("insert or replace into party_set values (?,?,?)", {party_id, set.icon_id, set.is_lock ? 1 : 0});
+    ctx.st.q("insert or replace into party_set (party_id, icon_id, is_lock) values (?,?,?)", {party_id, set.icon_id, set.is_lock ? 1 : 0});
     ctx.st.q("delete from party where party_id = ?", {party_id});
     ctx.st.q("delete from party_member where party_id = ?", {party_id});
     for (const auto& member : set.members) {
         u64 uid = member.character_uid;
         if (uid && !owned_character(ctx, uid)) uid = 0;  // only owned characters (d)
-        ctx.st.q("insert or replace into party values (?,?,?)", {party_id, member.slot, uid});
-        ctx.st.q("insert or replace into party_member values (?,?,?,?,?,?,?,?)",
-                 {party_id, member.slot, member.weapon_uid, member.accessory_uid, member.skill_id[0], member.skill_id[1], member.skill_id[2],
-                  member.assist_uid});
+        ctx.st.q("insert or replace into party (party_id, slot, uid) values (?,?,?)", {party_id, member.slot, uid});
+        ctx.st.q(
+            "insert or replace into party_member (party_id, slot, weapon_uid, accessory_uid, skill1, skill2, skill3, assist_uid) "
+            "values (?,?,?,?,?,?,?,?)",
+            {party_id, member.slot, member.weapon_uid, member.accessory_uid, member.skill_id[0], member.skill_id[1], member.skill_id[2],
+             member.assist_uid});
     }
     // (d) the saved set becomes the player's current party (Player.party_id, which the party
     // screen opens on (CParameterUtility::GetPatyIndex) and MissionStart uses).

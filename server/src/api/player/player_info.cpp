@@ -39,11 +39,10 @@ namespace {
 //       Player.support_pc_id): UpdateSupport's owned character (player.support_uid, api/social/rental.cpp).
 //   (d) Unset or no longer owned: the highest-level character (ties by uid), the first of the
 //       rental list's lenders (api/social/rental.cpp).
-u64 support_uid(ext::Ctx& ctx, const Row& player_row) {
-    u64 uid = (u64)player_row.i("support_uid");  // NULL: unset (0)
-    if (!uid || !ctx.st.one("select count(*) from roster where uid = ?", {uid}))
-        uid = (u64)ctx.st.one("select uid from roster order by level desc, uid limit 1", {}, 0);
-    return uid;
+CharacterUid support_uid(ext::Ctx& ctx, const Row& player_row) {
+    std::optional<CharacterUid> chosen = player_row.opt<CharacterUid>("support_uid");  // NULL: unset
+    if (chosen && owns_character(ctx, *chosen)) return *chosen;
+    return ctx.st.one_id<CharacterUid>("select uid from roster order by level desc, uid limit 1", {});  // none: 0
 }
 
 // The stock caps of Player (player_info, step 2).
@@ -73,7 +72,7 @@ void add_domain_state(const Row& player_row, Value& player) {
     player["time_saving_use_count"] = (u32)player_row.i("time_saving_count");
     // Titles (api/player/titles.cpp): the selected master_title id, which the status bar's plate
     // shows (b: CCommon::UpdateMyStatus -> CParameterUtility::SetPlayerTitle, +0xed8).
-    player["title"] = (u32)player_row.i("title_id");  // NULL: none (0)
+    player["title"] = or_zero(player_row.opt<TitleId>("title_id"));  // NULL: none (0)
 }
 
 }  // namespace
@@ -99,9 +98,9 @@ Value player_info(ext::Ctx& ctx) {
         // (Player.home_pc_id), and finds it among the owned characters by CPersonInfo uid; with
         // no match it shows party 1's first member. (The client before the rebase read a role
         // id here; docs/server-rules.md "Home character".)
-        player["home_pc_id"] = (u64)player_row.i("home_uid");
+        player["home_pc_id"] = or_zero(player_row.opt<CharacterUid>("home_uid"));  // NULL: none (0)
         player["party_id"] = (u32)player_row.i("party_id");
-        player["support_pc_id"] = support_uid(ctx, player_row);
+        player["support_pc_id"] = support_uid(ctx, player_row).v;
         // 2. the stock caps
         add_stock_caps(ctx, player);
         // 3. the times; (d) updated_at is the answer's time
@@ -170,7 +169,7 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
         // compose level and the lock flag are api/items/'s
         info["level"] = (u32)std::max<int64_t>(1, item_row.i("level"));
         info["is_lock"] = item_row.i("locked") != 0;
-        info["is_equip"] = item_equipped(ctx, (u64)item_row.i("uid"));
+        info["is_equip"] = item_equipped(ctx, item_row.id<ItemUid>("uid"));
         info["num"] = 1u;
         ext::item_extra(state, master, (u64)item_row.i("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
         list.push(info);

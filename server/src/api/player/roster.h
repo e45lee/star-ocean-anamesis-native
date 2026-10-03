@@ -16,5 +16,7 @@ Value roster_info(ext::Ctx& ctx);
 // this reads differently from that row: one whose seeds and skills are all 0 (EquipSkill(0,0,0),
 // or a seed at its cap on a character without growth) sent them as 0, and now leaves them out.
 bool has_growth(const ext::Row& roster_row);
+// Whether the player owns the character `uid` (has its roster row; id 0 never).
+bool owns_character(ext::Ctx& ctx, CharacterUid uid);
 
 }  // namespace soa::server

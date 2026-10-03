@@ -2,6 +2,7 @@
 // rule carries its source label (docs/server-rules.md "Home character").
 #include "api/player/home.h"
 
+#include "api/player/roster.h"  // owns_character
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/response.h"
@@ -23,13 +24,13 @@ using ext::with_player_state;
 //       Load_PlayerInfo doesn't read).
 // Answers: the player state.
 std::vector<u8> update_home(ext::Ctx& ctx, const Request& req) {
-    u64 uid = args::UpdateHomeArgs::from(req).character_uid;
-    if (!uid || !ctx.st.one("select count(*) from roster where uid = ?", {uid})) {
-        LOGW("server", "UpdateHome %llu refused (not owned)", (unsigned long long)uid);
+    const CharacterUid uid = args::UpdateHomeArgs::from(req).character_uid;
+    if (!owns_character(ctx, uid)) {
+        LOGW("server", "UpdateHome %llu refused (not owned)", (unsigned long long)uid.v);
         return {};
     }
     ctx.st.q("update player set home_uid = ?", {uid});
-    LOGI("server", "UpdateHome: %llu", (unsigned long long)uid);  // read by port/scripts/party_session.sh
+    LOGI("server", "UpdateHome: %llu", (unsigned long long)uid.v);  // read by port/scripts/party_session.sh
     return with_player_state(ctx);
 }
 

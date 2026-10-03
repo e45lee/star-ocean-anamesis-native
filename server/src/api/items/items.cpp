@@ -15,7 +15,7 @@
 
 namespace soa::server {
 
-bool item_equipped(ext::Ctx& ctx, u64 item_uid) {
+bool item_equipped(ext::Ctx& ctx, ItemUid item_uid) {
     return ctx.st.one("select count(*) from roster where weapon_uid = ? or accessory_uid = ?", {item_uid, item_uid}) > 0;
 }
 
@@ -51,7 +51,7 @@ Item find_item(Ctx& ctx, u64 uid) {
         item.rarity = (u32)master_row.i("rarity");
         item.sale_fol = (u32)master_row.i("sale_fol");
     });
-    item.equipped = item_equipped(ctx, uid);
+    item.equipped = item_equipped(ctx, ItemUid(uid));
     return item;
 }
 // The compose table of an item type: accessories have their own (a).

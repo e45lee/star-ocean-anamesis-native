@@ -66,9 +66,9 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
         if (r && seen.insert(r).second && ctx.m.one("select count(*) from master_role where id = ?", {r})) roles.push_back(r);
     }
     u32 home_role = kv_u32(kv, "player_home_pc_roleid");
-    u64 home_uid = 0;
+    std::optional<CharacterUid> home_uid;  // none: NULL
     for (size_t i = 0; i < roles.size(); i++) {
-        u64 uid = kRosterUid0 + i;
+        const CharacterUid uid(kRosterUid0 + i);
         u32 cap = ctx.role_level_cap(roles[i]);
         // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
         // every other column's default (excluded.<col>), as the REPLACE gave it
@@ -85,17 +85,18 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
             {uid, roles[i], cap > 10 ? cap - 10 : 1u /* (d) seed level: 10 below the cap */, 0, t});
         if (roles[i] == home_role) home_uid = uid;
     }
-    if (!home_uid && !roles.empty()) home_uid = kRosterUid0;
-    if (home_uid) ctx.st.q("update player set home_uid = ?", {home_uid});  // (none: NULL)
+    if (!home_uid && !roles.empty()) home_uid = CharacterUid(kRosterUid0);
+    if (home_uid) ctx.st.q("update player set home_uid = ?", {*home_uid});  // (none: NULL)
     add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents
     // (d) party 1 = the home character + the three highest-rarity other roster members
     // (first in roster order among equals); parties 2..10 empty
-    std::vector<u64> party = {home_uid};
+    // (party keeps its 0 sentinel until PLAN-schema S6: no home character is slot 0's uid 0)
+    std::vector<u64> party = {or_zero(home_uid)};
     std::vector<std::pair<int, size_t>> by_rarity;
     for (size_t i = 0; i < roles.size(); i++) by_rarity.emplace_back(-(int)ctx.m.one("select rarity from master_role where id = ?", {roles[i]}), i);
     std::stable_sort(by_rarity.begin(), by_rarity.end(), [](auto& a, auto& b) { return a.first < b.first; });
     for (auto& [r, i] : by_rarity)
-        if (party.size() < 4 && kRosterUid0 + i != home_uid) party.push_back(kRosterUid0 + i);
+        if (party.size() < 4 && kRosterUid0 + i != or_zero(home_uid)) party.push_back(kRosterUid0 + i);
     for (size_t s = 0; s < party.size(); s++)
         ctx.st.q(
             "insert into party (party_id, slot, uid) values (1,?,?)"

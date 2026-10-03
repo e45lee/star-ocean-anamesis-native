@@ -22,6 +22,6 @@ inline std::vector<u64> uid_list(const Request& req) { return req.vecs.empty() ?
 
 // Whether a character wears the item (roster.weapon_uid / accessory_uid). A party set's own
 // equipment (party_member) isn't looked at: PLAN-schema S5/S6.
-bool item_equipped(ext::Ctx& ctx, u64 item_uid);
+bool item_equipped(ext::Ctx& ctx, ItemUid item_uid);
 
 }  // namespace soa::server

@@ -353,7 +353,7 @@ Weapon find_weapon(Ctx& ctx, u64 uid) {
             weapon.slots = (u32)item_row.i("max_gear_slot_num");
             weapon.kind = (u32)item_row.i("master_weapon_kind_id");
         });
-    weapon.equipped = item_equipped(ctx, uid);
+    weapon.equipped = item_equipped(ctx, ItemUid(uid));
     return weapon;
 }
 // The weapon kind a gear fits: a gear item's master_gear kind (a), a factor gear's weapon's (d).

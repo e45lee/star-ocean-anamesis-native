@@ -6,9 +6,11 @@
 // FakeApiCaller methods). The modules get theirs in their domain steps (server/PLAN-readability.md
 // R10-R18).
 #include <algorithm>
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "soaserver/ids.h"
 #include "soaserver/server.h"
 
 namespace soa::server::args {
@@ -73,14 +75,15 @@ struct UpdatePartySetArgs {
 
 // SetAssist(u64 character_uid, u64 assist_uid).
 struct SetAssistArgs {
-    u64 character_uid = 0, assist_uid = 0;
-    static SetAssistArgs from(const Request& r) { return {int_at(r, 0), int_at(r, 1)}; }
+    CharacterUid character_uid;
+    std::optional<CharacterUid> assist_uid;  // 0: none (take the assist off)
+    static SetAssistArgs from(const Request& r) { return {CharacterUid(int_at(r, 0)), nonzero<CharacterUid>(int_at(r, 1))}; }
 };
 
 // UpdateHome(u64 character_uid).
 struct UpdateHomeArgs {
-    u64 character_uid = 0;
-    static UpdateHomeArgs from(const Request& r) { return {int_at(r, 0)}; }
+    CharacterUid character_uid;
+    static UpdateHomeArgs from(const Request& r) { return {CharacterUid(int_at(r, 0))}; }
 };
 
 // MissionStart(u32 type, u32 mission, u32 helper index + 1, u64 own helper uid, u32 NPC helper id,

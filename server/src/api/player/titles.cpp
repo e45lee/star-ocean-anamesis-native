@@ -37,8 +37,8 @@ namespace args {
 // SetTitle(u32 master_title_id): 0 takes the title off (also when the argument is missing). The
 // module's own args struct (core/request_args.h holds the core handlers').
 struct SetTitleArgs {
-    u32 title_id = 0;
-    static SetTitleArgs from(const Request& req) { return {req.ints.empty() ? 0 : (u32)req.ints[0]}; }
+    std::optional<TitleId> title;  // none: take it off
+    static SetTitleArgs from(const Request& req) { return {nonzero<TitleId>(req.ints.empty() ? 0 : (u32)req.ints[0])}; }
 };
 }  // namespace args
 
@@ -49,9 +49,9 @@ using ext::Row;
 // (a) docs/api.md "Content types": master_achievement.content_type 13 is a master_title id.
 constexpr u32 kContentTypeTitle = 13;
 
-bool is_title(ext::Ctx& ctx, int64_t title_id) { return title_id && ctx.m.one("select count(*) from master_title where id = ?", {title_id}) > 0; }
+bool is_title(ext::Ctx& ctx, TitleId title) { return title.v && ctx.m.one("select count(*) from master_title where id = ?", {title}) > 0; }
 
-bool owns_title(ext::Ctx& ctx, u32 title_id) { return ctx.st.one("select count(*) from titles where id = ?", {title_id}) > 0; }
+bool owns_title(ext::Ctx& ctx, TitleId title) { return ctx.st.one("select count(*) from titles where id = ?", {title}) > 0; }
 
 // (a) is_default = 1 titles are every player's; (d) the server lists them as owned (the client
 // lists only TitleList ids, so without them a new player's list would be empty).
@@ -71,16 +71,14 @@ Value title_list(ext::Ctx& ctx) {
 // The selected title (player.title_id; NULL: none, Player.title 0). (d) A new player wears the
 // first default title (lowest order_id, title_other_0001; new_player_titles, at creation):
 // 3.7.0's choice for a new player isn't known, and with 0 the status bar's plate stays hidden.
-u32 selected_title(ext::Ctx& ctx) { return (u32)ctx.st.one("select title_id from player", {}); }
+std::optional<TitleId> selected_title(ext::Ctx& ctx) { return ctx.st.one_opt<TitleId>("select title_id from player", {}); }
 
-// SetTitle's choice; 0 (taken off) is stored as NULL.
-void select_title(ext::Ctx& ctx, u32 title_id) {
-    if (title_id) ctx.st.q("update player set title_id = ?", {title_id});
-    else ctx.st.q("update player set title_id = null", {});
-}
+// SetTitle's choice; none (taken off) is stored as NULL.
+void select_title(ext::Ctx& ctx, std::optional<TitleId> title) { ctx.st.q("update player set title_id = ?", {title}); }
 
-void set_player_title(Value& data, u32 title_id) {
-    if (Value* player = data.find_mut("Player"); player && player->type == Value::Map) (*player)["title"] = title_id;
+// Player.title: the selected id, 0 for none.
+void set_player_title(Value& data, std::optional<TitleId> title) {
+    if (Value* player = data.find_mut("Player"); player && player->type == Value::Map) (*player)["title"] = or_zero(title);
 }
 
 // Grant (content type 13): a title                        from the present box (achievement rewards)
@@ -91,15 +89,16 @@ void set_player_title(Value& data, u32 title_id) {
 //       logged and skipped.
 //   (d) The title joins the owned list; a title owned already changes nothing.
 // Adds: the id to the request's titles_added, which report_added_titles answers.
-void grant_title(ext::Ctx& ctx, u32 title_id, u32, Value&, Value&, Value&) {
-    if (!is_title(ctx, title_id)) {
-        LOGW("server", "title %u: not in master_title", title_id);
+void grant_title(ext::Ctx& ctx, u32 content_id, u32, Value&, Value&, Value&) {
+    const TitleId title(content_id);
+    if (!is_title(ctx, title)) {
+        LOGW("server", "title %u: not in master_title", title.v);
         return;
     }
-    if (owns_title(ctx, title_id)) return;
-    ctx.st.q("insert into titles (id, got_at) values (?, ?)", {title_id, ctx.now()});
-    ctx.request->titles_added.push_back(title_id);  // for AddTitleList / PresentGetResult.result.Title (OnResponse)
-    LOGI("server", "title %u granted", title_id);
+    if (owns_title(ctx, title)) return;
+    ctx.st.q("insert into titles (id, got_at) values (?, ?)", {title, ctx.now()});
+    ctx.request->titles_added.push_back(title);  // for AddTitleList / PresentGetResult.result.Title (OnResponse)
+    LOGI("server", "title %u granted", title.v);
 }
 
 // OnPlayerLoad: TitleList, Player.title                   on Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart
@@ -128,12 +127,12 @@ void load_titles(ext::Ctx& ctx, const Request&, Value& data) {
 std::vector<u8> set_title(ext::Ctx& ctx, const Request& req) {
     const auto args = args::SetTitleArgs::from(req);
     ensure_default_titles(ctx);
-    if (args.title_id && !owns_title(ctx, args.title_id)) return ext::refuse(ctx, req.method.c_str(), "title not owned", ErrorCode::kItemUnusable);
-    select_title(ctx, args.title_id);
+    if (args.title && !owns_title(ctx, *args.title)) return ext::refuse(ctx, req.method.c_str(), "title not owned", ErrorCode::kItemUnusable);
+    select_title(ctx, args.title);
     Value data = ctx.base_data();
-    set_player_title(data, args.title_id);
+    set_player_title(data, args.title);
     data["TitleList"] = title_list(ctx);
-    LOGI("server", "SetTitle %u", args.title_id);  // read by port/scripts/home_session.sh
+    LOGI("server", "SetTitle %u", or_zero(args.title));  // read by port/scripts/home_session.sh
     return ext::body(data);
 }
 
@@ -146,20 +145,20 @@ std::vector<u8> set_title(ext::Ctx& ctx, const Request& req) {
 //       every Player the core sends (api/player/player_info.cpp player_info, meta "title").
 // Adds: those keys when grant_title added a title during the request; nothing otherwise.
 bool report_added_titles(ext::Ctx& ctx, const Request&, Value& data) {
-    std::vector<u32> added;
+    std::vector<TitleId> added;
     added.swap(ctx.request->titles_added);
     if (added.empty()) return false;
     data["TitleList"] = title_list(ctx);
     Value added_list = Value::array();
-    for (u32 title_id : added) added_list.push(title_id);
+    for (TitleId title : added) added_list.push(title.v);
     data["AddTitleList"] = added_list;
     if (Value* present_result = data.find_mut("PresentGetResult"); present_result && present_result->type == Value::Map) {
         Value& result = (*present_result)["result"];
         if (result.type != Value::Map) result = Value::object();
         Value titles = Value::array();
-        for (u32 title_id : added) {
+        for (TitleId title : added) {
             Value entry = Value::object();
-            entry["master_title_id"] = title_id;
+            entry["master_title_id"] = title.v;
             titles.push(entry);
         }
         result["Title"] = titles;
@@ -253,8 +252,8 @@ NATIVE_TEST("player/titles") {
 // Before PLAN-schema S3 both happened at the player's first load; the first answer is the same.
 void new_player_titles(ext::Ctx& ctx) {
     ensure_default_titles(ctx);
-    u32 first_default = (u32)ctx.m.one("select id from master_title where is_default = 1 order by order_id, id limit 1", {});
-    select_title(ctx, first_default);
+    // (none when the master has no default title: NULL, as before)
+    select_title(ctx, nonzero<TitleId>((u32)ctx.m.one("select id from master_title where is_default = 1 order by order_id, id limit 1", {})));
 }
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md

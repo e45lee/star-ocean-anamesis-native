@@ -13,23 +13,24 @@ using ext::Row;
 // The keys are CPersonInfo's fields (b: port/fakeapi/fields.txt); `id` is the character's uid.
 Value person_info(ext::Ctx& ctx, const Row& roster_row, u32 owner_player_id) {
     Value info = Value::object();
-    u32 role = (u32)roster_row.i("role_id");
-    info["id"] = (u64)roster_row.i("uid");
+    const CharacterUid uid = roster_row.id<CharacterUid>("uid");
+    const RoleId role = roster_row.id<RoleId>("role_id");
+    info["id"] = uid.v;
     info["player_id"] = owner_player_id;
-    info["master_role_id"] = role;
+    info["master_role_id"] = role.v;
     info["level"] = (u32)roster_row.i("level");
     info["exp"] = (u32)roster_row.i("exp");
     info["limit_break_count"] = (u32)roster_row.i("limit_break");
     info["awaken_level"] = (u32)roster_row.i("awaken");
     // the equipped weapon's and accessory's item uids (EquipWeapon / EquipAccessory; 0 = none)
-    info["weapon_item_id"] = (u64)roster_row.i("weapon_uid");
-    info["accessory_item_id"] = (u64)roster_row.i("accessory_uid");
+    info["weapon_item_id"] = or_zero(roster_row.opt<ItemUid>("weapon_uid"));
+    info["accessory_item_id"] = or_zero(roster_row.opt<ItemUid>("accessory_uid"));
     // The assist pair (SetAssist, api/player/assist.cpp): whom this character has as assist
     // (roster.assist_uid; NULL: none, 0), and whom it assists (the character whose assist_uid it
     // is) (b: the CPersonInfo keys), so the pairs survive a restart and reach MissionStart's party
     // status.
-    info["assist_character_id"] = (u64)roster_row.i("assist_uid");
-    info["assisting_character_id"] = (u64)ctx.st.one("select uid from roster where assist_uid = ?", {roster_row.i("uid")}, 0);
+    info["assist_character_id"] = or_zero(roster_row.opt<CharacterUid>("assist_uid"));
+    info["assisting_character_id"] = or_zero(ctx.st.one_opt<CharacterUid>("select uid from roster where assist_uid = ?", {uid}));
     // (a) the role's three skills (master_role master_skillN_id_label) at the character's skill
     // levels, and its rush skill and gauge
     ctx.m.q("select * from master_role where id = ?", {role}, [&](const Row& role_row) {
@@ -59,6 +60,8 @@ bool has_growth(const Row& roster_row) {
         if (!roster_row.null(k)) return true;
     return false;
 }
+
+bool owns_character(ext::Ctx& ctx, CharacterUid uid) { return uid.v && ctx.st.one("select count(*) from roster where uid = ?", {uid}) > 0; }
 
 // Character: every owned character (CPersonInfo), by uid.
 Value roster_info(ext::Ctx& ctx) {

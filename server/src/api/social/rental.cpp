@@ -27,6 +27,7 @@
 #include "core/time.h"
 #include "soaserver/ext.h"
 #include "core/response.h"
+#include "api/player/roster.h"  // owns_character
 #include "api/social/rental.h"
 #include "core/modules.h"
 
@@ -43,13 +44,13 @@ constexpr u32 kRentalPlayerBase = 0x7d000000;  // (d) synthetic player ids (rost
 
 // UpdateSupport(u64 character_uid) (b: docs/api.md); 0 when missing.
 struct UpdateSupportArgs {
-    u64 character_uid = 0;
-    static UpdateSupportArgs from(const Request& req) { return {args::int_at(req, 0)}; }
+    CharacterUid character_uid;
+    static UpdateSupportArgs from(const Request& req) { return {CharacterUid(args::int_at(req, 0))}; }
 };
 
 // A lent character: its roster uid and its place in the list (1-based).
 struct Lender {
-    u64 uid;
+    CharacterUid uid;
     u32 order;
 };
 
@@ -61,7 +62,7 @@ std::vector<Lender> lenders(Ctx& ctx) {
         u32 role = (u32)roster_row.i("role_id");
         if (std::find(roles.begin(), roles.end(), role) != roles.end()) return;
         roles.push_back(role);
-        out.push_back({(u64)roster_row.i("uid"), (u32)out.size() + 1});
+        out.push_back({roster_row.id<CharacterUid>("uid"), (u32)out.size() + 1});
     });
     return out;
 }
@@ -71,10 +72,10 @@ const Value* field(const Value& v, const char* key) { return v.type == Value::Ma
 
 // The roster entry (CPersonInfo) whose id is `uid`; nullptr when none. The last match wins, as the
 // list has one per uid.
-const Value* roster_entry(const Value& roster, u64 uid) {
+const Value* roster_entry(const Value& roster, CharacterUid uid) {
     const Value* found = nullptr;
     for (auto& entry : roster.arr)
-        if (field(entry, "id") && field(entry, "id")->u == uid) found = &entry;
+        if (field(entry, "id") && field(entry, "id")->u == uid.v) found = &entry;
     return found;
 }
 
@@ -200,12 +201,12 @@ std::vector<u8> follow_list(Ctx& ctx, const Request&) {
 // Answers: the player state (Player.support_pc_id).
 std::vector<u8> update_support(Ctx& ctx, const Request& req) {
     const auto args = UpdateSupportArgs::from(req);
-    if (!args.character_uid || !ctx.st.one("select count(*) from roster where uid = ?", {args.character_uid})) {
-        LOGW("server", "UpdateSupport %llu refused: not an owned character", (unsigned long long)args.character_uid);
+    if (!owns_character(ctx, args.character_uid)) {
+        LOGW("server", "UpdateSupport %llu refused: not an owned character", (unsigned long long)args.character_uid.v);
         return {};
     }
     ctx.st.q("update player set support_uid = ?", {args.character_uid});
-    LOGI("server", "UpdateSupport: support character %llu", (unsigned long long)args.character_uid);
+    LOGI("server", "UpdateSupport: support character %llu", (unsigned long long)args.character_uid.v);
     return with_player_state(ctx);
 }
 
@@ -232,14 +233,14 @@ Value follow_map(Ctx& ctx) {
 // GetPlayerDetailInfo's SearchResult entry for the player (api/events/ranking.cpp).
 Value own_follow_entry(Ctx& ctx) {
     Value roster = ctx.roster();
-    u64 home_uid = (u64)ctx.st.one("select home_uid from player", {}, 0);
+    std::optional<CharacterUid> home_uid = ctx.st.one_opt<CharacterUid>("select home_uid from player", {});  // NULL: none
     std::vector<Lender> lent = lenders(ctx);
     // (d) the character shown: the home character (the player's own pick), else the one the
     // rental list lends first (the highest level)
     const Value* character = nullptr;
-    for (u64 want : {home_uid, lent.empty() ? (u64)0 : lent[0].uid}) {
+    for (std::optional<CharacterUid> want : {home_uid, lent.empty() ? std::nullopt : std::optional(lent[0].uid)}) {
         if (character || !want) continue;
-        character = roster_entry(roster, want);
+        character = roster_entry(roster, *want);
     }
     u32 player_id = ctx.player_id();
     Value entry = Value::object();

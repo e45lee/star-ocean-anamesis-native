@@ -55,7 +55,7 @@ bool Server::init() {
     bool fresh = !file_exists(path);
     if (!open_state(path, seed_rng, "")) return false;
     if (pools.open()) LOGI("server", "gacha pools %s", pools.path().c_str());
-    else LOGW("server", "gacha pools (port/server-data/gacha_pools.sqlite3) not found; drawing by rarity");
+    else LOGW("server", "gacha pools (data/gacha_pools.sqlite3) not found; drawing by rarity");
     LOGI("server", "local server state %s (master %s)%s", path.c_str(), master.c_str(), fresh ? ", seeded" : "");
     return true;
 }

@@ -3,7 +3,7 @@
 //
 // The live server drew from tables (master_gacha.table_name = master_gacha_item_*) that the
 // client never had. tools/build_gacha_pools.py rebuilds a pool per gacha from the 3.7.0 master
-// data and writes port/server-data/gacha_pools.sqlite3; this is its read-only accessor. The
+// data and writes data/gacha_pools.sqlite3; this is its read-only accessor. The
 // rules and their sources are in docs/server-rules.md, "Gacha pools (reconstructed)", and in the
 // file's own `rule` table.
 //
@@ -72,7 +72,7 @@ public:
     Pools& operator=(const Pools&) = delete;
 
     // Opens the file read-only. An empty path searches $SOA_GACHA_POOLS, then
-    // port/server-data/gacha_pools.sqlite3 in the repo (core/paths.h).
+    // data/gacha_pools.sqlite3 in the repo (core/paths.h).
     bool open(const std::string& path = "");
     bool is_open() const { return db_ != nullptr; }
     const std::string& path() const { return path_; }

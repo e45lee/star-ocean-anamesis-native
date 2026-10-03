@@ -158,7 +158,7 @@ The generator in `tools/fakeapi_responses.py` uses an invented formula; replace 
 - **Ranks → rarity:**
   - character gachas: S and A are ★5 (S the pick-up characters of the banner, A the rest; without pick-ups S the aces, A the other ★5s), B ★4, C ★3 (a+text: the common row is 4 / 2 / 26.1 / 67.9 and banners split the 6 % as 3/3, 4.5/1.5, 5.5/2.5 while B and C stay; titles such as ★5以上1体確定キャラガチャ ("one ★5 or higher guaranteed") have `bonus_s_rank_rate` 100; the rate dialog prints `★5:%.5f%%` per rarity, `gacha_tilte_message_0002`) (c: the live game's ★5 6 %). **Rarity-6 roles are not drawn:** they are evolutions of the rarity-5 role of the same `role_category_id` (`master_role_evolution`), and a banner image shows the rarity-6 form of its rarity-5 pick-up (a; 4.5, R-BASE).
   - weapon gachas: A ★5 (8–8.5 %), B ★4, C ★3, S = the banner's pick-up weapons (a: rates; text: ticket names ★3/★4/★5武器ガチャチケット and the ★4～5 fill tickets' A 29.44 / B 70.56) (d: S).
-- **The pool is not in the database.** `master_gacha.table_name` names a server table (`master_gacha_item_old`, `_role`, `_weapon`, `_20210610_valentine2021`, ...) that the client never had: the DB has no `master_gacha_item*` table (a). **It is reconstructed** in `port/server-data/gacha_pools.sqlite3`; 4.5 gives the rules, the format, and the server and client sides.
+- **The pool is not in the database.** `master_gacha.table_name` names a server table (`master_gacha_item_old`, `_role`, `_weapon`, `_20210610_valentine2021`, ...) that the client never had: the DB has no `master_gacha_item*` table (a). **It is reconstructed** in `data/gacha_pools.sqlite3`; 4.5 gives the rules, the format, and the server and client sides.
   - The rate dialog (`GetGachaRate` → `GachaRateInfoList`) must show the pools and per-unit rates the server really uses; 4.5 builds both from the same file (b: schema).
   - The pool reconstruction is in the UI-visible register: it is the largest (d) in the gacha.
 - **Result:** each draw → `GachaItems` entry {master_role_id / master_item_id, player_character_id / player_item_id, duplication, is_mutation}; new characters → `AddCharacter` (a map keyed by uid string), new items → `AddItem` (a: schema, notes).
@@ -179,7 +179,7 @@ The generator in `tools/fakeapi_responses.py` uses an invented formula; replace 
   - progress per player: `BoxGachaList` {total_count, reset_count, next_master_gacha_id} and `BoxGacha` (remaining slots) (a: schema).
 
 ### 4.5 Gacha pools (reconstructed)
-The live server drew from its `master_gacha_item_*` tables, which neither master DB has (4.3). `tools/build_gacha_pools.py` rebuilds a pool for each of the 2,281 gachas from the 3.7.0 master data and writes **`port/server-data/gacha_pools.sqlite3`** (in git, like `data/*.sqlite3`; deterministic for a given master, so the tool can regenerate it). Rebuild with `tools/build_gacha_pools.py [--master data/basmaster-3.7.0.sqlite3] [--report FILE]`; it prints the sanity checks below. The local server reads it through **`server/src/master/gacha_pools.{h,cpp}`**. Every rule carries a code (R-…), stored with its label in the file's `rule` table and in comments of the script.
+The live server drew from its `master_gacha_item_*` tables, which neither master DB has (4.3). `tools/build_gacha_pools.py` rebuilds a pool for each of the 2,281 gachas from the 3.7.0 master data and writes **`data/gacha_pools.sqlite3`** (in git, like `data/*.sqlite3`; deterministic for a given master, so the tool can regenerate it). Rebuild with `tools/build_gacha_pools.py [--master data/basmaster-3.7.0.sqlite3] [--report FILE]`; it prints the sanity checks below. The local server reads it through **`server/src/master/gacha_pools.{h,cpp}`**. Every rule carries a code (R-…), stored with its label in the file's `rule` table and in comments of the script.
 
 **What is drawn (ranks).**
 
@@ -224,7 +224,7 @@ A pick-up released after its banner opened (but before it closed) is drawn from 
 - Box gachas (`gacha_type` 2) have `gacha` rows only: their contents are `master_box_gacha` (4.4).
 
 **Server side** (`soa::server::gacha_pools::Pools`, for the draws (`gacha`) and `GetGachaRate` (`get_gacha_rate`) in `server/src/api/gacha/`):
-- `open()` finds the file (`$SOA_GACHA_POOLS`, `server-data/`, `port/server-data/`, `../port/server-data/`), rejecting an un-fetched git-lfs pointer.
+- `open()` finds the file (`$SOA_GACHA_POOLS`, then `data/gacha_pools.sqlite3` in the checkout), rejecting a file that isn't a pool file (e.g. an old git-lfs pointer).
 - `draw(gacha_id, bonus, now, r1, r2, rank, unit)`: rank by the master rates (the bonus rates for the bonus draw of a bulk draw), skipping ranks with nothing released at `now` (d), then a unit by weight among those released at `now`. `now` is the server clock as "YYYY-MM-DD HH:MM:SS" (the clock that `GetGachaInData` uses).
 - `units()`, `all_units()`, `rank_weights()`, `gacha()`, `id_of()` for anything else.
 - `rate_info(gacha_id, now)` → the `GachaRateInfoList` entries (one per step of a step-up, following `next_stepup_gacha_id`; the last step loops back to step 1 in 167 of 168 chains (a)), each with `rate_lines()`.
@@ -521,7 +521,7 @@ Where the evidence above pins down something the first implementation assumed. E
 - **Favor per battle** (2.3, 8): `master_favor_battle_effect` by stamina cost (a) rather than a flat +100.
 - **Stamina** (1): partial regeneration progress, the refill / item amounts (b), the halving campaigns (a).
 - **Player level table** (1): levels missing from `master_player_level` are interpolated (b); a plain row lookup breaks above level 255.
-- **Gacha** (4.3, 4.5): draw from `port/server-data/gacha_pools.sqlite3` through `server/gacha_pools.h` (S/A by pick-up, rarity 6 never drawn, weapon banners draw weapons, units only from their release time), and answer `GetGachaRate` from the same file; box gacha rules (4.4).
+- **Gacha** (4.3, 4.5): draw from `data/gacha_pools.sqlite3` through `server/gacha_pools.h` (S/A by pick-up, rarity 6 never drawn, weapon banners draw weapons, units only from their release time), and answer `GetGachaRate` from the same file; box gacha rules (4.4).
 - **Surprise enemies and drops** (2.2, 2.3, 2.4): `surprise_rate` per mission (a); the result screen lists `DropList` / `CommonDropList` / `RareDropList` / `ClearPresentList`, and shows a first-clear item only when it matches a `master_mission_clear_present` row (b).
 - **Stocks** (1): the master data gives 500 for item / gear stock (`item_stock_max`, `gear_stock_max`).
 
@@ -710,7 +710,7 @@ The 3.7.0 party screen saves a party set with `UpdatePartySet` when the player l
   **(a)** The draw count for `GachaTicket` is its second argument. **(d)**
 - **Currency:** free coins are spent first, then paid. **(a)** (master_text `uimsg_buy_history_explan`, "Stocks and wallet"). Rows with `is_pay_coin` take only paid coins. **(a)** Without enough currency the draw returns no items and debits nothing. **(d)**
 - **Rank per draw:** by `s/a/b/c/d_rank_rate`. The last draw of a bulk draw uses the `bonus_*_rank_rate` columns when `is_bulk_bonus` is set. **(a)** for the rates; **(d)** for which draw gets the bonus.
-- **Pool:** the reconstructed pools of 4.5 (`port/server-data/gacha_pools.sqlite3`, `gacha_pools::Pools::draw` at the server clock) decide the rank and the unit. Weapons become unique items (`AddItem`, `GachaItems.player_item_id`).
+- **Pool:** the reconstructed pools of 4.5 (`data/gacha_pools.sqlite3`, `gacha_pools::Pools::draw` at the server clock) decide the rank and the unit. Weapons become unique items (`AddItem`, `GachaItems.player_item_id`).
   - `GetGachaRate` answers `GachaRateInfoList` from `Pools::rate_info`, so the rate dialog shows what is drawn.
   - Without the pools file, the fallback is the server's own rarity pools (`draw_role`). Their method is **(d)**, following 4.3 above:
   - S and A: ★5 and up = rarity 5 and 6, role ranks 3..5. S draws from the banner's `master_gacha_pickup` group when it has one. **(a)+(c)**

@@ -13,7 +13,7 @@ docs/server-rules.md, "Gacha pools (reconstructed)".
 
 Usage:
   tools/build_gacha_pools.py [--master data/basmaster-3.7.0.sqlite3]
-                             [--out port/server-data/gacha_pools.sqlite3] [--report FILE]
+                             [--out data/gacha_pools.sqlite3] [--report FILE]
 
 Output format (SQLite; see docs/server-rules.md for how the server uses it):
   gacha(gacha_id, id_label, name, gacha_type, kind, opened_at, closed_at, banner_id,
@@ -733,7 +733,7 @@ def default_master():
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("--master", default=default_master())
-    ap.add_argument("--out", default=os.path.join(ROOT, "port", "server-data", "gacha_pools.sqlite3"))
+    ap.add_argument("--out", default=os.path.join(ROOT, "data", "gacha_pools.sqlite3"))
     ap.add_argument("--report", help="write the sanity-check report (markdown) here")
     a = ap.parse_args()
     if not os.path.exists(a.master):

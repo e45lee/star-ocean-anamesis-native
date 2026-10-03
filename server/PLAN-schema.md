@@ -2,7 +2,7 @@
 
 Status: plan only (2026-10-02, agent `schema-plan`, branch `port/schema-plan` off `linux-port` ec4354c). No server code is changed by this plan; the first commit that implements it is step S1 below.
 
-**Scope.** The local server's persistent state, `DATA/server.sqlite3` (soa's in-process route; `soa-server --db`), created and used by the server library in `server/` (and `server/net/game.cpp` for soa-server's `wire_device`). The master DB (`data/basmaster-3.7.0.sqlite3`) and the gacha pools DB (`port/server-data/gacha_pools.sqlite3`) are read-only inputs and out of scope, except as the targets of references.
+**Scope.** The local server's persistent state, `DATA/server.sqlite3` (soa's in-process route; `soa-server --db`), created and used by the server library in `server/` (and `server/net/game.cpp` for soa-server's `wire_device`). The master DB (`data/basmaster-3.7.0.sqlite3`) and the gacha pools DB (`data/gacha_pools.sqlite3`) are read-only inputs and out of scope, except as the targets of references.
 
 **Trigger.** Favor is stored in two places: `roster.favor` (server/src/server.cpp:415, in the first server commit 0802915, never read or written by the server) and the real `favor` table (server/src/favor.cpp:193, keyed by `same_role_id`). The inventory below shows this is one of several dead or duplicated facts, and that the schema has no versioning, no foreign keys, and module tables created lazily from 10 call sites.
 

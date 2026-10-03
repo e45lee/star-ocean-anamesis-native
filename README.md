@@ -9,7 +9,7 @@ Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_google
   - how IDs are derived (`CHash32`)
 - `docs/online-server.md`: how the online game server (shut down in 2021) worked, reconstructed from the client: hosts, the TCP RPC protocol and its encryption, the SQEX BRIDGE session handshake, asset delivery, multiplayer and payments.
 - `docs/history/`: finished plans and comparisons, e.g. [`docs/history/libsoa-3.7.0-vs-3.8.0.md`](docs/history/libsoa-3.7.0-vs-3.8.0.md), what the offline build changed against 3.7.0.
-- `docs/environment.md`: every environment variable `soa`, `soa-server`, `soa-emu` and `soa-viewer` read, their command-line equivalents, and an audit of the gaps.
+- `docs/environment.md`: the environment rule (settings are command-line flags; the environment holds diagnostics and test switches only), the removed `SOA_*` settings and their flags, and the variables the programs and scripts still read.
 - `docs/api.md`: every API the client calls, with the wire format of each request and reply. `docs/ason.md`: ASON, the engine's MessagePack (reply bodies, request payloads). `docs/server-rules.md`: the game rules the port's local server applies.
 - `soa_save/`: Python library and CLI for reading, editing and writing saves, and for decoding the event scripts ([`soa_save/README.md`](soa_save/README.md)).
 - `tools/`: helpers used for the reverse engineering: Ghidra headless scripts, ELF/PLT resolver, xref/caller scanners, unicorn emulator harness.
@@ -67,7 +67,7 @@ sudo apt install libwayland-dev libxkbcommon-dev libegl-dev libdecor-0-dev
 # EGL / GLES 2 at run time (Mesa): SDL creates the GLES contexts through EGL, on X11 or Wayland
 sudo apt install libegl1 libgles2 libegl-mesa0 libgl1-mesa-dri
 # a font with Japanese glyphs for the text box shown while the game asks for text (a name): any one of
-# fonts-ipaexfont-gothic / fonts-noto-cjk / fonts-droid-fallback, or --font PATH / SOA_FONT; fontconfig's
+# fonts-ipaexfont-gothic / fonts-noto-cjk / fonts-droid-fallback, or --font PATH; fontconfig's
 # fc-match finds others. Without one the text shows in the window title only.
 sudo apt install fonts-ipaexfont-gothic fontconfig
 ```
@@ -161,7 +161,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 
 `.venv/bin/python -m pytest tests`. They use the sanitized saves committed in `data/saves/` (`data/saves/README.md`); your own saves stay in the ignored `samples/`.
 
-The port's tests (`build/port/soa --selftest`, `port/scripts/smoke.sh`, the `port/scripts/*_session.sh` sessions; `port/README.md`) and the emulator's (`emulator/scripts/`) run headless: the game renders into a hidden window, so no window opens, but they still need an X display. `SOA_HEADLESS=0` shows the port's window while a script runs; `soa --headless` / `--windowed` choose by hand. The session scripts of both start from the shared pre-downloaded 3.7.0 phone `work/phone-3.7.0` (build it once with `scripts/make-phone-370.sh`, verify it with `scripts/check-phone-370.sh`; `SOA_PHONE=none` runs the full download instead; `port/README.md` "The shared pre-downloaded phone").
+The port's tests (`build/port/soa --selftest`, `port/scripts/smoke.sh`, the `port/scripts/*_session.sh` sessions; `port/README.md`) and the emulator's (`emulator/scripts/`) run headless: the game renders into a hidden window, so no window opens, but they still need an X display. `WATCH=1` shows the port's window while a script runs (the scripts pass `--windowed` instead of `--headless`); `soa --headless` / `--windowed` choose by hand. The session scripts of both start from the shared pre-downloaded 3.7.0 phone `work/phone-3.7.0` (build it once with `scripts/make-phone-370.sh`, verify it with `scripts/check-phone-370.sh`; `SOA_PHONE=none` runs the full download instead; `port/README.md` "The shared pre-downloaded phone").
 
 ## Credits
 

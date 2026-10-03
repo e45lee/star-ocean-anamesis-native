@@ -52,7 +52,7 @@ The same in text, with the functions to look up:
               -> EndMissionTalk: end_mission_talk(mission) (events, else the campaign), then GetPlayMission's answer
               -> submit(): pending[fid] = Request; campaign::on_request(r)
               -> handle(fid): Server::handle: a RequestContext for the request (its battle log); ext::Ctx = Server::make_ctx
-                   -> Server::handle_request: "begin"; forced_error (--fail / SOA_SERVER_FAIL)
+                   -> Server::handle_request: "begin"; forced_error (--fail)
                    -> Server::dispatch: ext::find(method) (37 core methods, 69 module methods)
                         core handler and module handler alike: (ext::Ctx&, const Request&) -> body
                    -> RequestContext::refusal != 0: "rollback", errors[fid] = code, body = {Time, Player, Wallet}
@@ -70,7 +70,7 @@ The same in text, with the functions to look up:
 - **Opening the state.** `Server::open_state` (both hosts, the scratch servers) brings the file to this build's schema (`state::open_and_migrate`: each migration step in its own transaction, `foreign_key_check` before its commit), switches foreign keys on, seeds a state without a player in one transaction, and logs the references into the master that don't resolve (`state::report_master_refs`, report-only).
 - **One transaction per request.** `Server::handle_request` opens it before dispatching and commits it after the response hooks; a response and the state it reports are written together. A commit the DB refuses (a deferred foreign key a request violated) is rolled back and answered as a refusal (10208).
 - **A refusal** (`ext::refuse(ctx, method, why, code)` or its printf-style `ext::refusef` in any handler, core or module, or `--fail Method:code`) rolls the transaction back, records `errors[fid] = code`, logs `fid … (Method): refused with error N` (scripts read this line) and answers only the player state `{Time, Player, Wallet}`. `error_code(fid)` reports the code: soa's FakeApiCaller hooks answer the client's `IsSuccess` / `ErrorCode` with it; soa-server sends a ProtocolError with the code as its status. The client then shows `master_text error_message_text_<code>`. The codes in use are named in `src/core/errors.h` (`ErrorCode`, generated from the client's texts by `tools/gen_error_codes.py`; `ext.h` "refuse" lists them too).
-- **Not handled** (no handler, or a handler that returns an empty body): `handle` returns false. soa then answers the file of its fake-server directory (`SOA_FAKE_SERVER`), or `{}` when there is none; soa-server answers `{data: {Time}}`. Both add the campaign's data.
+- **Not handled** (no handler, or a handler that returns an empty body): `handle` returns false. soa then answers the file of its fake-server directory (`--fake-server`), or `{}` when there is none; soa-server answers `{data: {Time}}`. Both add the campaign's data.
 - Handlers don't throw.
 
 ## One handler shape
@@ -85,7 +85,7 @@ Every handler, the core's and the modules', is `std::vector<u8> handler(ext::Ctx
 
 Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp`):
 
-- **`clock_now()`, the server clock**: the real time, or `--clock "YYYY-MM-DD HH:MM:SS"` (soa: `SOA_CLOCK`) running on from there. Stamina, login days, wallets, rentals and every `*_at` the server stores use it.
+- **`clock_now()`, the server clock**: the real time, or `--clock "YYYY-MM-DD HH:MM:SS"` running on from there. Stamina, login days, wallets, rentals and every `*_at` the server stores use it.
 - **`event_now()`, the event calendar**: for dated content (event terms, deep-space missions, the Sphere 211 season). With `--clock` it is the clock; without, today's month-day and time mapped onto the most recent year in which some `master_event_term` covers that day (`src/core/clock.cpp`; docs/server-rules.md "Clocks"), so the service's calendar replays year after year.
 - **Formats**: every time the server sends or reads is local `YYYY-MM-DD HH:MM:SS`; `src/core/time.h` has the one formatter (`format_time`), the parsers, the reset day (`day_start`, at master_global `login_bonus_reset_hour`) and the opened_at..closed_at window (`open_at`).
 - **Test seam**: `set_clock_source(fn)` replaces the wall-clock read under `clock_now()` (`time(nullptr)` by default); the replay sets it to each recorded request's time. `set_server_clock(t)` is the tests' `--clock`.
@@ -115,7 +115,7 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 
 | Data | Where | Who writes it |
 |---|---|---|
-| The player state | SQLite: `--db` (soa: `SOA_SERVER_DB`), else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (58) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
+| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (58) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
 | The story campaign's progress | `<data_root>/server_campaign.txt` (a text file: cleared missions, the last one) | `src/api/campaign/progress.cpp` only; outside the state DB (PLAN-readability section 6) |
 | The master data | `data/basmaster-3.7.0.sqlite3` (read-only; `--master`) | nobody: the server reads it |
 | The client's master copy | the CDN's `basmaster-served.sqlite3` (`<scratch>`), the 3.7.0 master with `apply_client_master` | `cdn::Tree::build` (`src/cdn/tree.cpp`), `make_served_master` (`src/cdn/served_master.cpp`) |

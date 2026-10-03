@@ -27,20 +27,21 @@ control/soactl.py /tmp/viewer.fifo tap:364:1000 wait:3000 shot:/tmp/viewer.png
 |---|---|
 | `--apk-dir DIR` | The unpacked 3.8.0 XAPK. Default `<repo>/work/extracted/xapk` (`tools/extract.sh`). The viewer reads the base APK (`com.square_enix.android_googleplay.StarOceanj.apk`) and the install-time asset pack (`assetinstalltime.apk`), both indexed in place, and takes the library from `config.arm64_v8a.apk`. `assetfastfollow.apk` / `assetondemand1.apk` (or `split_*.apk`), when present, are installed as Play Asset Delivery packs (BGM and talk-scene sounds; the APKPure XAPK lacks them). |
 | `--apk FILE` | Also read assets from FILE, after the XAPK's. Repeatable; a later one wins. |
-| `--download-dir DIR` | Serve `builtin_data/` assets missing from the APKs from DIR, an online asset tree such as `work/download-3.7.0`: the same option as `soa` and `soa-emu` (env `SOA_DOWNLOAD_DIR`). Off by default. It doesn't fill in the missing Play Asset Delivery packs (`assetfastfollow` / `assetondemand1`), which aren't `builtin_data/`. |
-| `--download-prefer` | With `--download-dir`: DIR wins over the APKs (env `SOA_DOWNLOAD_PREFER=1`). |
+| `--download-dir DIR` | Serve `builtin_data/` assets missing from the APKs from DIR, an online asset tree such as `work/download-3.7.0`: the same option as `soa` and `soa-emu`. Off by default. It doesn't fill in the missing Play Asset Delivery packs (`assetfastfollow` / `assetondemand1`), which aren't `builtin_data/`. |
+| `--download-prefer` | With `--download-dir`: DIR wins over the APKs (as `soa` and `soa-emu`). |
 | `--lib PATH` | The client library. Default: `lib/arm64-v8a/libSOA.so` from `DIR/config.arm64_v8a.apk`, extracted into the data dir (again when its size differs), as the package manager installs it. |
 | `--data DIR` | The emulated phone's storage: the save (`data/shared_prefs/`), the extracted library, asset packs. Default `~/.local/share/soa-viewer-380`, beside the port's `~/.local/share/soa-linux`. Never the port's data dir: the port's save and cached library are its own. |
 | (window title) | `[EMULATED] STAR OCEAN -anamnesis- 3.8.0 offline client (soa-viewer)`. |
 | (app version) | `3.8.0`, the XAPK's versionName (what the client sends in NoLoginStart). |
 | `--repo DIR` | The source checkout, for the defaults. Default: found upwards from the executable; in a git worktree, files it lacks are looked up in the main checkout `work/` links to. |
 | `--guest-cpus N` / `host` | CPUs the game sees. Default 8. |
-| `--headless` | Don't show the window. It still renders: screenshots and the control FIFO work. |
+| `--headless` / `--windowed` | Don't show the window. It still renders: screenshots and the control FIFO work. `--windowed` (the default) undoes an earlier `--headless`, as in `soa`. |
+| `--font PATH` | The keyboard text box's font (`none`: no box), as in `soa`. |
 | `--size WxH`, `--landscape`, `--render-size S`, `--fullscreen` | Window and screen size, as in `soa`. The game picks its own back-buffer size (an 810x1440 screen gives `default framebuffer emulated at 720x1280` in the log), scaled to the window; the port's sharper rendering is a native option. |
 | `--shot S:PATH`, `--do S:ACTION`, `--control FIFO` | Scripted input and screenshots, as in `soa`: `tap`, `drag`, `wheel`, `back`, `text`, `shot`, `resize`, `fullscreen`, `quit` (`control/soactl.py`). `soa`'s `phase:` / `call:` debug commands need natives and don't exist here. |
 | `-v` / `-vv` | Verbose / trace logging. |
 
-The runtime's environment switches work too: `SOA_TRACE`, `SOA_PROFILE` / `SOA_COVERAGE`, `SOA_WATCHDOG`.
+Settings are flags only (a `SOA_*` variable that was a setting prints one warning naming its flag; `docs/environment.md`). The runtime's diagnostic switches work too (`SOA_TRACE`, `SOA_PROFILE` / `SOA_COVERAGE`, `SOA_WATCHDOG`, ...): [`runtime/README.md`](../runtime/README.md) "Environment".
 
 ## What is viewer-specific
 

@@ -34,6 +34,9 @@ elapsed() { awk -v a="$t0" -v b="$(date +%s%N)" 'BEGIN { printf "%.1f", (b - a) 
 # No server: the client's server address (soa-emu --server, default 127.0.0.1:44300) is moved to a
 # free port nothing listens on, so a soa-server another session runs can't answer.
 free_port=$(python3 -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')
+# The machine-wide game slot pool (control/soaslot.sh): one slot for this script's client, held
+# until the script exits; queued here when the machine is full.
+SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take "emulator_boot.sh"
 timeout -k 10 600 "$bin" --data "$out/data" --headless --size ${W}x$H --control "$fifo" --server 127.0.0.1:$free_port "$@" > "$log" 2>&1 &
 pid=$!
 cleanup() {

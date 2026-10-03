@@ -13,6 +13,8 @@ out=${1:?usage: selftest_resilient.sh OUT [FILTER]}; filter=${2:-}
 repo=$(cd "$(dirname "$0")/../.." && pwd)
 soa=${SOA:-$repo/build/port/soa}
 mkdir -p "$out"; : > "$out/results.txt"
+# The machine-wide game slot pool (control/soaslot.sh): one slot for the boots, held until the end.
+SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take selftest_resilient.sh
 skip="" n=0
 while [ $n -lt "${MAX_RUNS:-100}" ]; do
     n=$((n + 1)); rm -rf "${out:?}/data"; mkdir -p "$out/data"

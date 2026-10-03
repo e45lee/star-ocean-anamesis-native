@@ -147,6 +147,9 @@ fi
 
 # soa-server.
 if [ "$mode" = on ]; then sa=$standins; else sa=off; fi
+# The machine-wide game slot pool (control/soaslot.sh): one slot for this script's client, held
+# until the script exits; queued here when the machine is full.
+SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take "standin_fetch_test.sh"
 timeout -k 10 2400 "$srv" --listen 127.0.0.1:$game_port --http 127.0.0.1:$http_port --data "$out/server" --master "$master" \
     --download-dir "$download" --standin-assets "$sa" --log-packets "$out/packets" > "$slog" 2>&1 &
 spid=$!

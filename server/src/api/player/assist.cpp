@@ -20,7 +20,7 @@ namespace {
 //   (b) CApiNotify::OnSetAssistRes applies SetAssistResult {character_id, assist_id,
 //       old_assist_id} to the client's characters: a character has one assist, and an assist
 //       character assists one character (it's taken off whoever had it). The server keeps the
-//       same pairs (table assist; Character's assist keys, api/player/roster.cpp).
+//       same pairs (roster.assist_uid; Character's assist keys, api/player/roster.cpp).
 //   (d) both must be owned and differ; else nothing changes and the request isn't handled (no
 //       body: the host's fallback answer, no error code). The level-70 requirement is the
 //       client's (b: its assist list refuses lower levels).
@@ -33,10 +33,14 @@ std::vector<u8> set_assist(ext::Ctx& ctx, const Request& req) {
         LOGW("server", "SetAssist %llu <- %llu refused", (unsigned long long)character_uid, (unsigned long long)assist_uid);
         return {};
     }
-    u64 old_assist_uid = (u64)ctx.st.one("select assist_uid from assist where uid = ?", {character_uid}, 0);
-    if (assist_uid) ctx.st.q("delete from assist where assist_uid = ?", {assist_uid});  // it leaves whoever it assisted
-    if (assist_uid) ctx.st.q("insert or replace into assist (uid, assist_uid) values (?,?)", {character_uid, assist_uid});
-    else ctx.st.q("delete from assist where uid = ?", {character_uid});
+    u64 old_assist_uid = (u64)ctx.st.one("select assist_uid from roster where uid = ?", {character_uid}, 0);  // NULL: none (0)
+    if (assist_uid) {
+        // it leaves whoever it assisted first (roster_assist: one character per assist)
+        ctx.st.q("update roster set assist_uid = null where assist_uid = ?", {assist_uid});
+        ctx.st.q("update roster set assist_uid = ? where uid = ?", {assist_uid, character_uid});
+    } else {
+        ctx.st.q("update roster set assist_uid = null where uid = ?", {character_uid});
+    }
     Value result = Value::object();
     result["character_id"] = character_uid;
     result["assist_id"] = assist_uid;

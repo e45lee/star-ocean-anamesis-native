@@ -64,7 +64,7 @@ bool Server::open_state(const std::string& path, u64 seed_rng, const std::string
     if (!st.open(path, false)) return false;
     // The schema (state/schema.cpp): every table, at this build's version; a newer file isn't
     // opened (and isn't touched: the journal mode below writes the file).
-    if (!state::open_and_migrate(st.h, path)) {
+    if (!state::open_and_migrate(st.h, path, state::kSchemaVersion, m.h)) {
         st.close();
         return false;
     }
@@ -78,7 +78,13 @@ bool Server::open_state(const std::string& path, u64 seed_rng, const std::string
         // one transaction: a seed is all there or not at all (PLAN-schema S1)
         st.exec("begin immediate");
         seed(ctx, seed_save);
-        st.exec("commit");
+        // the deferred foreign keys (player.home_uid, party_id) are checked here
+        if (!st.exec("commit")) {
+            st.exec("rollback");
+            LOGE("server", "state DB %s: the seed's transaction was refused (rolled back): not opened", path.c_str());
+            st.close();
+            return false;
+        }
     }
     state::report_master_refs(st.h, m.h);
     return true;

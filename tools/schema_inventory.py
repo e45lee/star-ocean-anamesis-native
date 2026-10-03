@@ -34,6 +34,13 @@ columns, and no future FK parent (LINT_UPSERT_ONLY) is written with INSERT OR RE
 plus an insert: with foreign keys on, it would run the children's ON DELETE actions); use
 `insert ... on conflict(pk) do update set` instead. Checks server/ (the joined literals) and the
 consumers' SQL (port/scripts, emulator/scripts, tools, tests: line by line). Exit 1 on a finding.
+
+    tools/schema_inventory.py --check STATE_DB [MASTER_DB]
+
+Gate G9 of server/PLAN-schema.md (from S4): a state DB's `pragma foreign_key_check` is empty
+(every declared foreign key holds), and its references into the master resolve (the `m:` rows of
+RELS, reported; a master can change under a saved state, so they don't fail it). Exit 1 on a
+foreign key violation.
 """
 import argparse
 import collections
@@ -257,12 +264,13 @@ def parse_creates(text, create_re=CREATE_RE):
     return out
 
 
-# The migration steps' drops, added columns and new tables (applied to the parsed creates;
-# PLAN-schema 4.3 S2, S3).
+# The migration steps' drops, added columns, new tables and renames (applied to the parsed creates;
+# PLAN-schema 4.3 S2, S3, S4).
 SCHEMA_STEPS = "server/src/state/schema.cpp"
 DROP_TABLE_RE = re.compile(r"^drop table (?:if exists )?(\w+)$", re.I)
 DROP_COLUMN_RE = re.compile(r"^alter table (\w+) drop column (\w+)$", re.I)
 ADD_COLUMN_RE = re.compile(r"^alter table (\w+) add column (\w+) (.*)$", re.I)
+RENAME_TABLE_RE = re.compile(r"^alter table (\w+) rename to (\w+)$", re.I)
 STEP_CREATE_RE = re.compile(r"create\s+table\s+(?!if\s)(\w+)\s*\(", re.I)
 WRITE_RE = re.compile(r"\b(insert(?:\s+or\s+\w+)?\s+into|replace\s+into|update|delete\s+from)\s+(\w+)", re.I)
 READ_RE = re.compile(r"\b(from|join)\s+(\w+)", re.I)
@@ -344,12 +352,12 @@ def analyse(stmt, tables, star=lambda col: True):
 # several "m:" tables separated by "|" = the id is one of them (a union of id spaces). A column
 # holding "a,b,c" lists is checked element-wise with a "list:" prefix on the column.
 RELS = [
-    ("player", "home_uid", "roster", "uid", 0, "SET NULL", "home character (the client falls back to party 1's leader)"),
-    ("player", "party_id", "party_set", "party_id", 0, "NO ACTION, deferred", "current party set (party has no unique party_id)"),
+    ("player", "home_uid", "roster", "uid", None, "SET NULL, deferred (S4)", "home character (the client falls back to party 1's leader; 0 before S4)"),
+    ("player", "party_id", "party_set", "party_id", None, "NO ACTION, deferred (S4)", "current party set (the sets 1..party_set_max have rows from S4)"),
     ("roster", "role_id", "m:master_role", "id", None, "-", ""),
-    ("roster", "weapon_uid", "items", "uid", 0, "SET NULL", "equipped weapon"),
-    ("roster", "accessory_uid", "items", "uid", 0, "SET NULL", "equipped accessory"),
-    ("roster_ext", "uid", "roster", "uid", None, "merged (S4)", "1:1 extension"),
+    ("roster", "weapon_uid", "items", "uid", None, "SET NULL (S4)", "equipped weapon (0 before S4)"),
+    ("roster", "accessory_uid", "items", "uid", None, "SET NULL (S4)", "equipped accessory (0 before S4)"),
+    ("roster", "assist_uid", "roster", "uid", None, "SET NULL (S4)", "the character's assist (table assist before S4; roster_ext merged too)"),
     ("items", "master_item_id", "m:master_item", "id", None, "-", ""),
     ("stock", "master_item_id", "m:master_item", "id", None, "-", ""),
     ("gear_items", "item_uid", "items", "uid", 0, "CASCADE", "gear attached to a weapon (0: in the gear box)"),
@@ -359,8 +367,6 @@ RELS = [
     ("party_member", "weapon_uid", "items", "uid", 0, "SET NULL", ""),
     ("party_member", "accessory_uid", "items", "uid", 0, "SET NULL", ""),
     ("party_member", "assist_uid", "roster", "uid", 0, "SET NULL", ""),
-    ("assist", "uid", "roster", "uid", None, "merged (S4): roster.assist_uid", ""),
-    ("assist", "assist_uid", "roster", "uid", None, "SET NULL (roster.assist_uid)", ""),
     ("mission", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-",
      "four disjoint id spaces (the tower's floors too: S0 found them in the tower replay)"),
     ("unlocks", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-", ""),
@@ -403,6 +409,20 @@ RELS = [
     ("player", "support_uid", "roster", "uid", None, "SET NULL (S4)", "Player.support_pc_id (meta support_uid before S3)"),
     ("player", "title_id", "titles", "id", None, "SET NULL (S4)", "Player.title (meta title before S3)"),
 ]
+
+
+def check(st_path, master_path):
+    """Gate G9: the state's foreign_key_check rows (fatal) and its master references (reported)."""
+    c = sqlite3.connect("file:%s?mode=ro" % st_path, uri=True)
+    bad = [tuple(r) for r in c.execute("pragma foreign_key_check")]
+    for table, rowid, parent, fkid in bad:
+        print("foreign key violation: %s rowid %s -> %s" % (table, rowid, parent))
+    for ch, col, par, pcol, none, act, n, nnull, nzero, dangling in fk_report(st_path, master_path):
+        if par.startswith("m:") and isinstance(dangling, list) and dangling:
+            print("master reference: %s.%s -> %s.%s: %d dangling (%s)" % (ch, col, par[2:], pcol, len(dangling),
+                                                                        ", ".join(str(v) for v in dangling[:5])))
+    print("schema_inventory --check %s: %s" % (st_path, "%d foreign key violation(s)" % len(bad) if bad else "foreign keys hold"))
+    return not bad
 
 
 def fk_report(st_path, master_path):
@@ -497,6 +517,8 @@ def lint():
 
 
 def main():
+    if sys.argv[1:2] == ["--check"] and len(sys.argv) in (3, 4):
+        sys.exit(0 if check(sys.argv[2], sys.argv[3] if len(sys.argv) == 4 else os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3")) else 1)
     if sys.argv[1:] == ["--lint"]:
         found = lint()
         for f in found:
@@ -545,6 +567,11 @@ def main():
             m_ = DROP_COLUMN_RE.match(st)
             if m_ and m_.group(1) in tables:
                 tables[m_.group(1)]["cols"] = [c for c in tables[m_.group(1)]["cols"] if c[0] != m_.group(2)]
+                continue
+            # a rebuild (PLAN-schema 4.1, S4 on): create new_X, drop X, rename new_X to X
+            m_ = RENAME_TABLE_RE.match(st)
+            if m_ and m_.group(1) in tables:
+                tables[m_.group(2)] = tables.pop(m_.group(1))
     for path, src in src_cache.items():
         if rel(path) in OTHER_DB:
             continue

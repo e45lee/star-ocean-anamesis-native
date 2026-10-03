@@ -16,8 +16,8 @@
 | EquipWeapon, EquipAccessory | `equip_item` | "Character growth" |
 | EquipSkill | `equip_skill` | "Character growth" |
 
-- **Hooks:** none; the module registers its table (`roster_ext`) and its APIs (`register_growth`, in `core/modules.cpp`'s order).
+- **Hooks:** none; the module registers its APIs (`register_growth`, in `core/modules.cpp`'s order). Its state is the core's `roster` (`state/schema.cpp`).
 - **Pure rules:** `rules/growth_rules.{h,cpp}` (`growth_rules::boost_exp`, `stat_seed_gain`; tested by `rules/growth`), `rules::add_exp` (the EXP curve and cap).
-- **State:** `roster` (level, exp, limit break, awakening, role, equipment: the core's table), `roster_ext` (this module's: the seed-raised `add_*` and the equipped skills; PLAN-schema S4 merges it into `roster`), `stock` and the player's FOL (`core/wallet`), `counters` (boosts, limit breaks, evolutions, seeds: the achievements read them).
+- **State:** `roster` (level, exp, limit break, awakening, role, equipment: the core's table), the seed-raised `add_*` and the equipped skills `equip_skill1..3` (`roster` columns since PLAN-schema S4 merged the module's `roster_ext`; NULL: no skill), `stock` and the player's FOL (`core/wallet`), `counters` (boosts, limit breaks, evolutions, seeds: the achievements read them).
 - **What reads it back:** `Character` (`api/player/roster.cpp`: `add_*`), the battle status (`api/player/person_status.cpp`: level, limit break, awakening, equipment, seeds).
 - **Proof and sessions:** the replay corpus `server/tests/replay/growth` (every API, accepted and refused); `port/scripts/growth_session.sh` (the growth screens on 3.7.0: strengthening, evolution, limit break; it reads the BoostCharacter / EvolutionCharacter / LimitBreakCharacter log lines).

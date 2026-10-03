@@ -129,7 +129,7 @@ NATIVE_TEST("growth/apis") {
         add_stock(c, seed, 3);
         call(c, "AddStatusCharacter", {uid, seed, 3});
         u32 hp_max = (u32)c.m.one("select hp_add_max from master_role where id = ?", {role});
-        t.expect_eq((u32)c.st.one("select add_hp from roster_ext where uid = ?", {uid}), std::min(15u, hp_max), "seed hp");
+        t.expect_eq((u32)c.st.one("select add_hp from roster where uid = ?", {uid}), std::min(15u, hp_max), "seed hp");
         c.st.exec("commit");
     });
     if (!ran) return;  // no 3.7.0 master or save

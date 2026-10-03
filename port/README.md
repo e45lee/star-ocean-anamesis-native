@@ -172,7 +172,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | Option | |
 |---|---|
 | `--server inproc\|HOST[:PORT]` | The game server: in-process (default) or `soa-server` (`--listen`, default port 44300). |
-| `--db FILE`, `--master FILE`, `--seed FILE`, `--game-xml FILE`, `--seed-rng N`, `--new-player` | The state DB (default `DATA/server.sqlite3`), the 3.7.0 master DB, the save a new state is seeded from (3.7.0 or offline-game `Game.xml`; an existing state keeps its player), the last seed fallback (default `DATA/data/shared_prefs/Game.xml`), a fixed RNG seed, no player (the new-player tutorial) |
+| `--db FILE`, `--master FILE`, `--gacha-pools FILE`, `--seed FILE`, `--game-xml FILE`, `--seed-rng N`, `--new-player` | The state DB (default `DATA/server.sqlite3`), the 3.7.0 master DB, the reconstructed gacha pools (default `data/gacha_pools.sqlite3`), the save a new state is seeded from (3.7.0 or offline-game `Game.xml`; an existing state keeps its player), the last seed fallback (default `DATA/data/shared_prefs/Game.xml`), a fixed RNG seed, no player (the new-player tutorial) |
 | `--clock "YYYY-MM-DD HH:MM:SS"` | The server's clock starts there and runs on; without it event terms replay the calendar |
 | `--start-coins N`, `--galaxy-pass` | Free coins of a new local player (default 300000); the Galaxy Pass, renewed when it runs out |
 | `--enable-events`, `--event-keywords "a,b,!c"` | Also open, all year, every event area and gacha banner whose name matches the keywords (default the summer events `水着,夏,サマー,!福袋`), assets permitting |
@@ -214,6 +214,7 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 | `--new-player` | `SOA_RESTORE_NEW_PLAYER=1` | `new_player` |
 | `--db FILE` (inproc: `DATA/server.sqlite3`) | `SOA_SERVER_DB` | `db` |
 | `--master FILE` | `SOA_SERVER_MASTER` | `master` |
+| `--gacha-pools FILE` | `SOA_GACHA_POOLS` | `gacha_pools` |
 | `--seed FILE` | `SOA_SERVER_SEED` | `seed` |
 | `--game-xml FILE` (inproc: `DATA/data/shared_prefs/Game.xml`) | `SOA_SERVER_GAME_XML` | `game_xml` |
 | `--seed-rng N` | `SOA_SERVER_SEED_RNG` | `has_seed_rng`, `seed_rng` |

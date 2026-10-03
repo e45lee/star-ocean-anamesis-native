@@ -33,7 +33,7 @@ import subprocess
 import sys
 import time
 
-from . import fifo, milestones, prepared, proc, screens
+from . import fifo, gdb, milestones, prepared, proc, screens
 from .proc import REPO
 
 sys.path.insert(0, os.path.join(REPO, "control"))
@@ -67,11 +67,13 @@ class Config:
       fresh_kvs     delete the phone's local KVS (Aska.xml: the client makes a new device UUID)
       phone         a phone directory to use as it is (EMU_DATA): never prepared nor deleted
       binary        the client binary (default by target: SOA / SOA_EMU), server_binary (SOA_SERVER)
+      gdb           the runtime's GDB stub on a free port (--gdb 127.0.0.1:PORT; Run.gdb() attaches:
+                    soadrive/gdb.py)
     """
 
     def __init__(self, server_args=(), clock=None, client_save=False, new_player=False, prepared=None, seed=None,
                  seed_rng=1, client_args=(), env=None, limit=3600, windowed=False, explicit_data=True, log_packets=True,
-                 state_master=True, fresh_kvs=True, phone=None, binary=None, server_binary=None):
+                 state_master=True, fresh_kvs=True, phone=None, binary=None, server_binary=None, gdb=False):
         self.server_args, self.clock, self.client_save, self.new_player = list(server_args), clock, client_save, new_player
         # a prepared server state (soadrive/prepared.py: a state DB every target starts from a
         # copy of), or None: a fresh state
@@ -79,7 +81,7 @@ class Config:
         self.seed, self.seed_rng, self.client_args, self.env = seed, seed_rng, list(client_args), dict(env or {})
         self.limit, self.windowed, self.explicit_data, self.log_packets = limit, windowed, explicit_data, log_packets
         self.state_master, self.fresh_kvs, self.phone = state_master, fresh_kvs, phone
-        self.binary, self.server_binary = binary, server_binary
+        self.binary, self.server_binary, self.gdb = binary, server_binary, gdb
 
 
 def binaries():
@@ -138,6 +140,7 @@ class Layout:
         self.packets, self.state_db, self.shots, self.phone, self.state_dir = packets, state_db, shots, phone, state_dir
         self.steps, self.style, self.shot_names, self.flat_shots = steps, style, dict(shot_names or {}), flat_shots
         self.phone_cleanup, self.state_end, self.inproc_db_default = phone_cleanup, state_end, inproc_db_default
+        self.name, self.continued = None, False
 
     @staticmethod
     def diff(rdir, target):
@@ -148,15 +151,20 @@ class Layout:
                       phone_cleanup=os.path.join(rdir, "phone"))
 
     @staticmethod
-    def port_session(out, tmp, target="port-inproc", shot_names=None):
-        phone = os.path.join(tmp, "data")
+    def port_session(out, tmp, target="port-inproc", shot_names=None, name=None):
+        """name: one of a session's several boots (OUT/NAME.log, OUT/NAME/ the shots,
+        OUT/packets-NAME/, TMP/NAME/data the phone, TMP/NAME/fifo; newplayer / tutorial sessions)."""
+        sub = (lambda p: os.path.join(tmp, name, p)) if name else (lambda p: os.path.join(tmp, p))
+        phone = sub("data")
         inproc = target == "port-inproc"
-        return Layout("port-session", out, os.path.join(tmp, "fifo"), os.path.join(out, "log.txt"),
-                      os.path.join(out, "log.txt") if inproc else os.path.join(out, "server.log"),
-                      os.path.join(out, "packets", "packets.log"),
-                      os.path.join(phone, "server.sqlite3") if inproc else os.path.join(tmp, "server", "server.sqlite3"),
-                      os.path.join(out, "shots"), phone, out, os.path.join(out, "steps.txt"), style="steps",
-                      shot_names=shot_names, state_end=False, inproc_db_default=inproc)
+        log = os.path.join(out, name + ".log" if name else "log.txt")
+        lay = Layout("port-session", out, sub("fifo"), log, log if inproc else os.path.join(out, (name + "-" if name else "") + "server.log"),
+                     os.path.join(out, "packets-" + name if name else "packets", "packets.log"),
+                     os.path.join(phone, "server.sqlite3") if inproc else sub(os.path.join("server", "server.sqlite3")),
+                     os.path.join(out, name or "shots"), phone, out, os.path.join(out, (name + "-" if name else "") + "steps.txt"),
+                     style="steps", shot_names=shot_names, state_end=False, inproc_db_default=inproc)
+        lay.name = name
+        return lay
 
     @staticmethod
     def emu_session(out, phone=None, target="emu", shot_names=None):
@@ -173,9 +181,24 @@ class Layout:
     def prepare(self):
         """A fresh start: tests/diff's run dir is recreated; a session's own files are removed
         (other files in OUT stay, as the shell sessions left them)."""
-        if self.kind == "diff":
+        if getattr(self, "continued", False):
+            # a later boot of the same session: only its own log, packet log and FIFO are new
+            for p in (self.fifo, self.client_log, self.client_log + ".pos"):
+                if os.path.lexists(p):
+                    os.remove(p)
+            if os.path.isdir(os.path.dirname(self.packets)):
+                shutil.rmtree(os.path.dirname(self.packets))
+        elif self.kind == "diff":
             if os.path.isdir(self.out):
                 shutil.rmtree(self.out)
+        elif getattr(self, "name", None) and self.kind == "port-session":
+            # a named boot: its scratch dir and its outputs (OUT/NAME/, OUT/NAME.log, ...)
+            for d in (os.path.dirname(self.phone), self.shots, os.path.dirname(self.packets)):
+                if os.path.isdir(d):
+                    shutil.rmtree(d)
+            for p in (self.client_log, self.client_log + ".pos", self.steps):
+                if os.path.lexists(p):
+                    os.remove(p)
         else:
             for p in (self.fifo, self.client_log, self.client_log + ".pos", self.steps):
                 if os.path.lexists(p):
@@ -281,6 +304,11 @@ class Run:
             srv += ["--seed", cfg.seed]
         client = ["--data", self.phone, "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H),
                   "--control", self.fifo]
+        if cfg.gdb:
+            if not gdb.available():
+                raise Abort("a GDB stub was asked for, but control/gdbclient.py (the runtime's --gdb) isn't in this checkout")
+            self.gdb_port = proc.free_ports(1)[0]
+            client += gdb.client_args(self.gdb_port)
         if cfg.clock:
             client += ["--device-clock", cfg.clock]
         env = {"SDL_AUDIODRIVER": os.environ.get("SDL_AUDIODRIVER", "dummy")}
@@ -343,8 +371,26 @@ class Run:
         with open(self.layout.steps, "w") as f:
             f.write("\n".join(self.results) + "\n" + ("FAIL" if self.failed else "PASS") + "\n")
 
+    CRASH = re.compile(rb"Unhandled SIG|\*\*\* host signal")
+
+    def crashed(self):
+        """The client logged a crash (its signal handler's lines): it may hang on after them
+        (a wedged GL driver), so it counts as gone. Reads only what the log gained since the last call."""
+        if getattr(self, "_crashed", False):
+            return True
+        try:
+            with open(self.client_log, "rb") as f:
+                f.seek(max(0, getattr(self, "_crash_pos", 0) - 64))
+                data = f.read()
+                self._crash_pos = f.tell()
+        except FileNotFoundError:
+            return False
+        self._crashed = self.CRASH.search(data) is not None
+        return self._crashed
+
     def alive(self):
-        return self.client is not None and self.client.alive() and (self.server is None or self.server.running())
+        return (self.client is not None and self.client.alive() and (self.server is None or self.server.running())
+                and not self.crashed())
 
     # ---- recording ----------------------------------------------------------------------------
     def elapsed(self):
@@ -379,7 +425,8 @@ class Run:
 
     # ---- driving ------------------------------------------------------------------------------
     def send(self, cmds, timeout=None):
-        return fifo.send(self.fifo, cmds, self.ctl_timeout if timeout is None else timeout)
+        return fifo.send(self.fifo, cmds, self.ctl_timeout if timeout is None else timeout,
+                         alive=self.alive if self.client is not None else None)
 
     def ctl(self, *cmds):
         return self.send(list(cmds))
@@ -430,6 +477,10 @@ class Run:
 
     def in_server(self, rx):
         return self.grep(self.server_log, rx)
+
+    def last_line(self, rx, path=None):
+        """The last line of the client log (or path) matching rx; None when none does."""
+        return milestones.last(path or self.client_log, rx)
 
     def poll(self, secs, pred):
         return milestones.poll(secs, pred, alive=self.alive)
@@ -499,6 +550,14 @@ class Run:
         if fatal:
             raise Abort(name or rx)
         return None
+
+    # ---- the guest debugger (soadrive/gdb.py) ----------------------------------------------------
+    def gdb(self, timeout=30.0):
+        """A GdbClient attached to this run's client (Config(gdb=True)), as a context manager: the
+        guest is stopped inside the block and runs on after it (detached)."""
+        if not getattr(self, "gdb_port", None):
+            raise gdb.GdbUnavailable("this run wasn't started with Config(gdb=True)")
+        return gdb.attach(self.gdb_port, timeout)
 
     # ---- the server's state -----------------------------------------------------------------------
     def state(self, tag):

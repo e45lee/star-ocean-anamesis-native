@@ -115,3 +115,25 @@ def test_ui370_points_are_window_coordinates():
         assert re.fullmatch(r"\d{1,3}:\d{1,4}", v), k
         x, y = map(int, v.split(":"))
         assert 0 <= x < 729 and 0 <= y < 1296, k
+
+
+def test_gdb_needs_a_run_started_with_it(tmp_path):
+    import pytest
+    from soadrive import gdb, targets
+    r = targets.Run("port-inproc", targets.Layout.port_session(str(tmp_path / "out"), str(tmp_path / "tmp")), targets.Config())
+    with pytest.raises(gdb.GdbUnavailable):
+        r.gdb()
+    assert gdb.client_args(1234) == ["--gdb", "127.0.0.1:1234"]
+
+
+def test_every_session_module_declares_its_interface():
+    import importlib
+    import pkgutil
+    from soadrive import sessions, targets
+    names = [m.name for m in pkgutil.iter_modules(sessions.__path__) if not m.name.startswith("_") and m.name != "common"]
+    assert len(names) >= 20
+    for n in names:
+        m = importlib.import_module("soadrive.sessions." + n)
+        assert m.TARGETS and set(m.TARGETS) <= set(targets.TARGETS), n
+        assert callable(m.options) and callable(m.main), n
+        assert os.path.exists(os.path.join(proc.REPO, m.WRAPPER.split()[0])), n

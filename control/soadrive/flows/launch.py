@@ -105,13 +105,13 @@ def data_check(s, until, name, dialog_shot=None, done_shot=None, first_tap=ui370
     s.ok(name + " (after a download)")
 
 
-def popups(s, notice, bonus, home="-"):
+def popups(s, notice, bonus, home="-", bonus_wait=None):
     """The notice board (閉じる until its web view closes) and the LOGIN BONUS popup
     (soadrive/popups.py login_popups), with a screenshot of each (None: not kept). Returns the
     summary line ('ok popups closed (notice yes, login bonus x1)')."""
     sh = lambda n: s.layout.shot_path(n) if n and n != "-" else "-"
     try:
-        line = _popups.login_popups(s.fifo, s.client_log, sh(notice), sh(bonus), sh(home))
+        line = _popups.login_popups(s.fifo, s.client_log, sh(notice), sh(bonus), sh(home), bonus_wait=bonus_wait)
     except Failed as e:
         s.miss("login popups (FAIL: %s)" % e)
         raise Abort("login popups")
@@ -123,13 +123,14 @@ def tap_to_start(s):
     s.tap_until("TAP TO START -> Login", 120, ui370.TITLE, lambda: s.in_packets(r"> Login "))
 
 
-def login_to_home(s, notice="02a-notice", bonus="02b-login-bonus", home="02-home", dialog_shot=None, done_shot=None):
+def login_to_home(s, notice="02a-notice", bonus="02b-login-bonus", home="02-home", dialog_shot=None, done_shot=None,
+                  bonus_wait=None):
     """TAP TO START -> Login -> LoginResult -> the data check -> the notice board -> the popups ->
     the home shot. Returns the popups' summary line."""
     tap_to_start(s)
     s.wait_for("Login -> LoginResult", 60, lambda: s.in_packets(r"< LoginResult"))
     data_check(s, lambda: s.in_client(r"ShowWebView\(http"), "home (the notice board)", dialog_shot, done_shot)
-    line = popups(s, notice, bonus)
+    line = popups(s, notice, bonus, bonus_wait=bonus_wait)
     s.ctl("wait:3000")
     if home:
         s.shot(home)

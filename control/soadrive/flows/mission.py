@@ -78,15 +78,18 @@ def battle_shots(s, first, last, every_ms, fmt="%d-battle", ended=r"mission_end\
     return i
 
 
-def results_until(s, done_rx, first, last, wait_ms, fmt="%d-result", name="the result pages -> back"):
+def results_until(s, done_rx, first, last, wait_ms, fmt="%d-result", name="the result pages -> back", fatal=True):
     """The Mission Result pages, each closed with OK (ui370.RESULT_OK: the spot all of them cover)
-    and screenshotted, until the client logs done_rx (the cursor: after the battle's end). FAIL
-    after `last`."""
+    and screenshotted (fmt None: not), until the client logs done_rx (the cursor: after the
+    battle's end). FAIL after `last` (fatal: and stop). Returns the next index."""
     i = first
     while s.cursor.wait(done_rx, 4, alive=s.alive) is None:
         if i >= last or not s.alive():
-            s.fail(name)
-        s.ctl("tap:" + ui370.RESULT_OK, "wait:%d" % wait_ms, s.shot_cmd(fmt % i))
+            if fatal:
+                s.fail(name)
+            s.miss(name)
+            return i
+        s.ctl("tap:" + ui370.RESULT_OK, "wait:%d" % wait_ms, *([s.shot_cmd(fmt % i)] if fmt else []))
         i += 1
     s.ok(name)
     return i

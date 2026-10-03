@@ -81,13 +81,13 @@ def auto_mode(s):
     s.ctl("tap:612:1240", "wait:1000", "tap:115:45", "wait:1000")
 
 
-def rounds(s, k, limit=150, shot_fmt=None, on_round=None):
+def rounds(s, k, limit=150, shot_fmt=None, on_round=None, stop=None):
     """Rounds of taps (one every ~9 s, paced by a screenshot) through the scenes and the battle
     until UpdateTutorial(k). shot_fmt (e.g. "tutorial-%03d"): every round's screenshot kept under
     that name (tools/compare_tutorial.py aligns them); on_round(i, path) after each shot. Returns
-    the number of rounds."""
+    the number of rounds. stop: another predicate that ends the rounds (e.g. home reached)."""
     i = 0
-    while i < limit and not tut(s, k)():
+    while i < limit and not tut(s, k)() and not (stop and stop()):
         if not s.alive():
             s.miss("tutorial (the client exited)")
             raise Abort("tutorial")

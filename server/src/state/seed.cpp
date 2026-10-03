@@ -90,17 +90,20 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents
     // (d) party 1 = the home character + the three highest-rarity other roster members
     // (first in roster order among equals); parties 2..10 empty
-    // (party keeps its 0 sentinel until PLAN-schema S6: no home character is slot 0's uid 0)
-    std::vector<u64> party = {or_zero(home_uid)};
+    // (no home character: slot 0 is empty, NULL)
+    std::vector<std::optional<CharacterUid>> party = {home_uid};
     std::vector<std::pair<int, size_t>> by_rarity;
     for (size_t i = 0; i < roles.size(); i++) by_rarity.emplace_back(-(int)ctx.m.one("select rarity from master_role where id = ?", {roles[i]}), i);
     std::stable_sort(by_rarity.begin(), by_rarity.end(), [](auto& a, auto& b) { return a.first < b.first; });
     for (auto& [r, i] : by_rarity)
-        if (party.size() < 4 && kRosterUid0 + i != or_zero(home_uid)) party.push_back(kRosterUid0 + i);
-    for (size_t s = 0; s < party.size(); s++)
+        if (party.size() < 4 && kRosterUid0 + i != or_zero(home_uid)) party.push_back(CharacterUid(kRosterUid0 + i));
+    for (size_t s = 0; s < party.size(); s++)  // the slot's equipment, skills and assist: none (the character's own)
         ctx.st.q(
-            "insert into party (party_id, slot, uid) values (1,?,?)"
-            " on conflict(party_id, slot) do update set uid = excluded.uid",
+            "insert into party_member (party_id, slot, uid, weapon_uid, accessory_uid, skill_id1, skill_id2, skill_id3, assist_uid)"
+            " values (1,?,?,null,null,null,null,null,null)"
+            " on conflict(party_id, slot) do update set uid = excluded.uid, weapon_uid = excluded.weapon_uid,"
+            " accessory_uid = excluded.accessory_uid, skill_id1 = excluded.skill_id1, skill_id2 = excluded.skill_id2,"
+            " skill_id3 = excluded.skill_id3, assist_uid = excluded.assist_uid",
             {s, party[s]});
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
     ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});

@@ -13,61 +13,43 @@ namespace {
 
 using PartySets = std::map<u32, Value>;  // party id -> PartySetInfo
 
-// One saved member (PartySetCharacter) of a `party` row: its uid in the slot, and the equipment,
-// skills and assist of the set.
-Value party_set_character(ext::Ctx& ctx, u32 party_id, const Row& party_row) {
+// One saved member (PartySetCharacter) of a `party_member` row: its uid in the slot, and the
+// equipment, skills and assist of the set (NULL: none, sent as 0). (b) The equipment is the set's
+// for the member (PartySetCharacterInfo's weapon_item_id / accessory_item_id), not the character's
+// own (CPersonInfo's, EquipWeapon): a slot the party screen never saved (the seed's, CreatePlayer's,
+// UpdateParty's) has none. (PLAN-schema S6: before, such a slot sent the character's own, d.)
+Value party_set_character(const Row& member_row) {
     Value member = Value::object();
-    member["party_index"] = (u32)party_row.i("slot");
-    member["character_id"] = (u64)party_row.i("uid");
-    // plain numbers, 0 = none: party_member keeps its 0 sentinels until PLAN-schema S6
-    u64 weapon_uid = 0, accessory_uid = 0, assist_uid = 0;
-    u32 skill[3] = {0, 0, 0};
-    // (d) the character's own equipment when the set saved none
-    ctx.st.q("select weapon_uid, accessory_uid from roster where uid = ?", {party_row.i("uid")}, [&](const Row& roster_row) {
-        weapon_uid = or_zero(roster_row.opt<ItemUid>("weapon_uid"));  // NULL: none
-        accessory_uid = or_zero(roster_row.opt<ItemUid>("accessory_uid"));
-    });
-    // What the party screen saved with UpdatePartySet (the member's equipment, skills and
-    // assist in this set), when there is a row.
-    ctx.st.q("select * from party_member where party_id = ? and slot = ?", {party_id, party_row.i("slot")}, [&](const Row& member_row) {
-        weapon_uid = (u64)member_row.i("weapon_uid");
-        accessory_uid = (u64)member_row.i("accessory_uid");
-        skill[0] = (u32)member_row.i("skill1");
-        skill[1] = (u32)member_row.i("skill2");
-        skill[2] = (u32)member_row.i("skill3");
-        assist_uid = (u64)member_row.i("assist_uid");
-    });
-    member["weapon_item_id"] = weapon_uid;
-    member["accessory_item_id"] = accessory_uid;
-    member["skill_id1"] = skill[0];
-    member["skill_id2"] = skill[1];
-    member["skill_id3"] = skill[2];
-    member["assist_character_id"] = assist_uid;
+    member["party_index"] = (u32)member_row.i("slot");
+    member["character_id"] = or_zero(member_row.opt<CharacterUid>("uid"));  // NULL: an empty slot
+    member["weapon_item_id"] = or_zero(member_row.opt<ItemUid>("weapon_uid"));
+    member["accessory_item_id"] = or_zero(member_row.opt<ItemUid>("accessory_uid"));
+    member["skill_id1"] = or_zero(member_row.opt<SkillId>("skill_id1"));
+    member["skill_id2"] = or_zero(member_row.opt<SkillId>("skill_id2"));
+    member["skill_id3"] = or_zero(member_row.opt<SkillId>("skill_id3"));
+    member["assist_character_id"] = or_zero(member_row.opt<CharacterUid>("assist_uid"));
     return member;
 }
 
-// The saved sets (step 1): every `party` row, in party and slot order, as its set's member.
+// The saved sets (step 1): every `party_member` row, in party and slot order, as its set's member,
+// with the set's icon and lock (b: as UpdatePartySet stored them, PartySetInfo's serializer). A
+// set is sent when it has members (its party_set row alone, icon 0 and unlocked for a set never
+// saved, doesn't make it saved: fill_unsaved_sets).
 PartySets saved_party_sets(ext::Ctx& ctx) {
     PartySets sets;
-    ctx.st.q("select * from party order by party_id, slot", {}, [&](const Row& party_row) {
-        u32 party_id = (u32)party_row.i("party_id");
-        Value& set = sets[party_id];
-        if (set.type != Value::Map) {
-            set = Value::object();
-            set["party_id"] = party_id;
-            set["icon_id"] = 0u;     // (d) until the set's party_set row says otherwise
-            set["is_lock"] = false;  // (d)
-            set["PartySetCharacter"] = Value::array();
-        }
-        set["PartySetCharacter"].push(party_set_character(ctx, party_id, party_row));
-    });
-    // (b) the set's icon and lock, as UpdatePartySet stored them (PartySetInfo's serializer)
-    ctx.st.q("select * from party_set", {}, [&](const Row& set_row) {
-        auto it = sets.find((u32)set_row.i("party_id"));
-        if (it == sets.end()) return;
-        it->second["icon_id"] = (u32)set_row.i("icon_id");
-        it->second["is_lock"] = set_row.i("is_lock") != 0;
-    });
+    ctx.st.q("select m.*, s.icon_id, s.is_lock from party_member m join party_set s on s.party_id = m.party_id order by m.party_id, m.slot", {},
+             [&](const Row& member_row) {
+                 u32 party_id = (u32)member_row.i("party_id");
+                 Value& set = sets[party_id];
+                 if (set.type != Value::Map) {
+                     set = Value::object();
+                     set["party_id"] = party_id;
+                     set["icon_id"] = (u32)member_row.i("icon_id");
+                     set["is_lock"] = member_row.i("is_lock") != 0;
+                     set["PartySetCharacter"] = Value::array();
+                 }
+                 set["PartySetCharacter"].push(party_set_character(member_row));
+             });
     return sets;
 }
 
@@ -113,10 +95,10 @@ void ensure_party_set(ext::Ctx& ctx, u32 party_id) {
 }
 
 // The owned uids of party `party_id`, in slot order (its empty slots left out).
-std::vector<u64> party_member_uids(ext::Ctx& ctx, u32 party_id) {
-    std::vector<u64> uids;
-    ctx.st.q("select uid from party where party_id = ? and uid != 0 order by slot", {party_id},
-             [&](const Row& party_row) { uids.push_back((u64)party_row.i("uid")); });
+std::vector<CharacterUid> party_member_uids(ext::Ctx& ctx, u32 party_id) {
+    std::vector<CharacterUid> uids;
+    ctx.st.q("select uid from party_member where party_id = ? and uid is not null order by slot", {party_id},
+             [&](const Row& member_row) { uids.push_back(member_row.id<CharacterUid>("uid")); });
     return uids;
 }
 

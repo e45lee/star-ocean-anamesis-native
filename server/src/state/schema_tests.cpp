@@ -31,7 +31,7 @@ struct TempDb {
     ~TempDb() { remove_all(); }
     void remove_all() {
         for (const char* suffix : {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal", ".bak-v1", ".bak-v1-journal", ".bak-v2",
-                                   ".bak-v2-journal", ".bak-v3", ".bak-v3-journal", ".bak-v4", ".bak-v4-journal"})
+                                   ".bak-v2-journal", ".bak-v3", ".bak-v3-journal", ".bak-v4", ".bak-v4-journal", ".bak-v5", ".bak-v5-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -128,14 +128,14 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)52,
-                "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4)");
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51,
+                "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
                 "gear_items' slot index (S5)");
     t.expect_eq(a.one("select count(*) from party_set", {}), (int64_t)0, "no player: no party set rows (the seed / CreatePlayer add them)");
-    for (const char* gone : {"view_flags", "gear", "box_gacha", "planets", "sphere_meta", "roster_ext", "assist"})
+    for (const char* gone : {"view_flags", "gear", "box_gacha", "planets", "sphere_meta", "roster_ext", "assist", "party"})
         t.expect_eq(a.one("select count(*) from sqlite_master where name = ?", {gone}), (int64_t)0, (std::string(gone) + " not there").c_str());
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'ds_state'", {}), (int64_t)1, "ds_state there");
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'wire_device'", {}), (int64_t)1, "wire_device on every route");
@@ -657,7 +657,7 @@ NATIVE_TEST("server/schema-migrate-v5") {
     if (!f.open(v4.path, false)) return t.fail("reopen v4");
     t.expect_eq(state::user_version(f.h), 4, "a version 4 file");
     int64_t weapons = f.one("select count(*) from items", {});
-    t.expect_eq(state::open_and_migrate(f.h, v4.path), true, "v4 -> v5");
+    t.expect_eq(state::open_and_migrate(f.h, v4.path, 5), true, "v4 -> v5");
     t.expect_eq(state::user_version(f.h), 5, "user_version 5");
     t.expect_eq(f.one("select count(*) from items", {}), weapons, "every item kept");
     t.expect_eq(rows_over(f, "gear_items", "uid, item_uid"), (std::vector<std::string>{"1:2080374785|1:2097152004|", "1:2080374787|5:|"}),
@@ -668,6 +668,100 @@ NATIVE_TEST("server/schema-migrate-v5") {
     if (!bak.open(v4.path + ".bak-v4", true)) return t.fail("no %s.bak-v4", v4.path.c_str());
     t.expect_eq(state::user_version(bak.h), 4, "the backup is version 4");
     t.expect_eq(bak.one("select count(*) from gear_items where item_uid = 0", {}), (int64_t)1, "the backup keeps the 0 sentinel");
+    bak.close();
+}
+
+// Version 6 (PLAN-schema S6: parties). The fixture has S6's dirt (set 2's slot 0 names a sold
+// weapon; slot 2 is an empty uid 0; every detail is 0); the test plants the rest. (1) v0 -> v6 at
+// once: party_member rebuilt from party ⟕ party_member, one row per party row (uid 0 or dangling ->
+// NULL, weapon / accessory 0 or not an item -> NULL, skillN -> skill_idN with 0 -> NULL, assist 0
+// or dangling -> NULL; a slot without a party_member row: all NULL; a party_member row without a
+// party row, a slot outside 0..3 and a set id < 1 dropped), party_set rebuilt (is_lock 5 -> 1, set
+// 0 dropped, set 15 that had only party rows gets its row), party gone; every other table equal to
+// the same file migrated to 5. (2) v5 -> v6 (backed up as .bak-v5, without the master): a
+// player.party_id 0 with its set 0 row (UpdateParty(0) after S4) -> 1. foreign_key_check is empty
+// after each.
+NATIVE_TEST("server/schema-migrate-v6") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v6 -------------------------------------------------------------------------------
+    TempDb ref_file("v6-ref"), old("v6");
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    t.expect_eq(db.one("select count(*) from party", {}), (int64_t)4, "the fixture's four party rows");
+    t.expect_eq(db.one("select count(*) from party_member where weapon_uid = 2097152029", {}), (int64_t)1, "the fixture's sold weapon in set 2");
+    t.expect_eq(db.one("select count(*) from items where uid = 2097152029", {}), (int64_t)0, "(sold)");
+    // the S6 dirt, in both files
+    for (Sql* d : {&ref, &db})
+        d->exec(
+            "insert into party (party_id, slot, uid) values (1, 1, 9999), (15, 0, 2113929217), (2, 7, 2113929217), (0, 0, 2113929216);"
+            "insert into party_member (party_id, slot, weapon_uid, accessory_uid, skill1, skill2, skill3, assist_uid) values "
+            "(2, 7, 2097152004, 0, 1, 1, 1, 0), (3, 0, 2097152004, 0, 1, 1, 1, 0);"
+            "update party_member set accessory_uid = 2097152004, skill1 = 21, skill2 = 0, skill3 = 23, assist_uid = 9999 where party_id = 2 and slot = 1;"
+            "insert into party_set (party_id, icon_id, is_lock) values (3, 7, 5), (0, 0, 0)");
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 5, m), true, "the reference: migrated to 5");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 6, m), true, "migrated to 6");
+    t.expect_eq(state::user_version(db.h), 6, "user_version 6");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
+    // every other table: its rows as they were at version 5
+    std::vector<std::string> tables;
+    ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+          [&](const Row& r) { tables.push_back(r.s("name")); });
+    auto ref_rows = rows_of(ref), db_rows = rows_of(db);
+    for (const std::string& table : tables) {
+        if (table == "party" || table == "party_member" || table == "party_set") continue;
+        if (ref_rows[table] != db_rows[table]) t.fail("%s: rows changed", table.c_str());
+    }
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51, "51 tables");
+    t.expect_eq(db.one("select count(*) from sqlite_master where name in ('party') or name like 'new_%'", {}), (int64_t)0, "party gone, no new_X");
+    // party_member: (party_id, slot, uid, weapon_uid, accessory_uid, skill_id1..3, assist_uid)
+    t.expect_eq(rows_over(db, "party_member", "*"),
+                (std::vector<std::string>{"1:15|1:0|1:2113929217|5:|5:|5:|5:|5:|5:|",                               // set 15: party rows only
+                                          "1:1|1:0|1:2113929218|5:|5:|5:|5:|5:|5:|",                                // all 0 -> NULL
+                                          "1:1|1:1|5:|5:|5:|5:|5:|5:|5:|",                                          // dangling uid; no member row
+                                          "1:2|1:0|1:2113929216|5:|5:|1:11|1:12|1:13|1:2113929218|",                // the sold weapon -> NULL
+                                          "1:2|1:1|1:2113929217|5:|1:2097152004|1:21|5:|1:23|5:|",                  // skill 0, dangling assist
+                                          "1:2|1:2|5:|5:|5:|5:|5:|5:|5:|"}),                                        // uid 0 -> NULL
+                "party_member mapped; slot 7, set 0 and the member row without a party row dropped");
+    // party_set: the saved sets kept, is_lock 5 -> 1, set 0 dropped, set 15 added
+    t.expect_eq(rows_over(db, "party_set", "*", "party_id in (0, 2, 3, 15)"),
+                (std::vector<std::string>{"1:15|1:0|1:0|", "1:2|1:3|1:1|", "1:3|1:7|1:1|"}), "party_set mapped");
+    t.expect_eq(rows_over(db, "party_set", "*", "party_id not in (0, 2, 3, 15)"), rows_over(ref, "party_set", "*", "party_id not in (0, 2, 3, 15)"),
+                "the other sets kept");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    if (m)
+        for (const auto& d : state::check(db.h, m)) t.fail("%s", state::describe(d).c_str());
+    ref.close();
+    db.close();
+
+    // ---- (2) v5 -> v6, without the master: player.party_id 0 -> 1 ------------------------------------
+    TempDb v5("v6-from-v5");
+    if (!write_fixture(t, v5.path)) return;
+    Sql f;
+    if (!f.open(v5.path, false)) return t.fail("open v5");
+    t.expect_eq(state::open_and_migrate(f.h, v5.path, 5, m), true, "migrated to 5");
+    f.close();
+    unlink((v5.path + ".bak-v0").c_str());
+    if (!f.open(v5.path, false)) return t.fail("reopen v5");
+    t.expect_eq(state::user_version(f.h), 5, "a version 5 file");
+    // UpdateParty(0) at version 5: set 0's row and party rows, the current party 0
+    t.expect_eq(f.exec("pragma foreign_keys = off; insert into party_set (party_id) values (0);"
+                       "insert into party (party_id, slot, uid) values (0, 0, 2113929216); update player set party_id = 0"),
+                true, "UpdateParty(0) planted");
+    t.expect_eq(state::open_and_migrate(f.h, v5.path), true, "v5 -> v6");
+    t.expect_eq(state::user_version(f.h), 6, "user_version 6");
+    t.expect_eq(f.one("select party_id from player", {}, -1), (int64_t)1, "party_id 0 -> 1");
+    t.expect_eq(f.one("select count(*) from party_set where party_id = 0", {}), (int64_t)0, "set 0 dropped");
+    t.expect_eq(f.one("select count(*) from party_member where party_id = 0", {}), (int64_t)0, "set 0's member dropped");
+    t.expect_eq(f.one("select count(*) from party_member", {}), (int64_t)4, "the fixture's four slots");
+    t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+    f.close();
+    Sql bak;
+    if (!bak.open(v5.path + ".bak-v5", true)) return t.fail("no %s.bak-v5", v5.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 5, "the backup is version 5");
+    t.expect_eq(bak.one("select count(*) from party", {}), (int64_t)5, "the backup keeps party");
     bak.close();
 }
 
@@ -682,9 +776,13 @@ NATIVE_TEST("server/schema-migrate-v5") {
 //   player.party_id -> party_set                 NO ACTION, deferred: deleting the current set (or
 //                                                a dangling write) fails at commit
 //   gear_items.item_uid -> items                 ON DELETE CASCADE (S5); a dangling write fails at once
+//   party_member.party_id -> party_set           ON DELETE CASCADE (S6); a dangling write fails at once
+//   party_member.uid / assist_uid -> roster      ON DELETE SET NULL (S6); a dangling write fails at once
+//   party_member.weapon_uid / accessory_uid -> items  ON DELETE SET NULL (S6); likewise
 //   no ON UPDATE action: changing a referenced key fails (at once, or at commit for a deferred child)
 // Plus the unique indexes (one character per item, one assisted character per assist, one gear per
-// weapon slot), STRICT and the 0 / 1 checks (items.locked, gear_items.is_new).
+// weapon slot), STRICT and the checks (items.locked, gear_items.is_new, party_set.is_lock 0 / 1;
+// party_set.party_id >= 1; party_member.slot 0..3).
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;
@@ -723,6 +821,10 @@ NATIVE_TEST("server/schema-fk-actions") {
                    "update player set home_uid = " +
                    c + ", support_uid = " + b + ", title_id = " + title),
                 SQLITE_OK, "the references set");
+    // set 3's slot 0: a, wearing item1 and item2 in the set, b as its assist
+    t.expect_eq(rc("insert into party_member (party_id, slot, uid, weapon_uid, accessory_uid, assist_uid) values (3, 0, " + a + ", " + item1 + ", " +
+                   item2 + ", " + b + "), (4, 0, " + b + ", null, null, null)"),
+                SQLITE_OK, "set 3's and set 4's members");
     // the free gear set in item1's slot 1 (the other gear stays in its weapon's slot 0)
     t.expect_eq(rc("update gear_items set item_uid = " + item1 + ", slot = 1 where uid = " + gear_free), SQLITE_OK, "a gear set in item1");
 
@@ -731,6 +833,20 @@ NATIVE_TEST("server/schema-fk-actions") {
                                    "update roster set assist_uid = 9999 where uid = " + b, std::string("update player set support_uid = 9999"),
                                    std::string("update player set title_id = 9999"), "update gear_items set item_uid = 9999 where uid = " + gear_set})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once").c_str());
+    for (const std::string& sql : {std::string("update party_member set uid = 9999 where party_id = 3"),
+                                   std::string("update party_member set weapon_uid = 9999 where party_id = 3"),
+                                   std::string("update party_member set accessory_uid = 9999 where party_id = 3"),
+                                   std::string("update party_member set assist_uid = 9999 where party_id = 3"),
+                                   std::string("insert into party_member (party_id, slot) values (99, 0)")})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once").c_str());
+    t.expect_eq(rc("insert into party_member (party_id, slot, uid) values (3, 1, null)"), SQLITE_OK, "an empty slot (NULL uid)");
+    t.expect_eq(rc("insert into party_member (party_id, slot) values (3, 4)"), SQLITE_CONSTRAINT_CHECK, "slot 4: refused");
+    t.expect_eq(rc("insert into party_set (party_id) values (0)"), SQLITE_CONSTRAINT_CHECK, "set 0: refused");
+    t.expect_eq(rc("update party_set set is_lock = 2 where party_id = 3"), SQLITE_CONSTRAINT_CHECK, "party_set.is_lock 0 / 1");
+    t.expect_eq(rc("update party_member set skill_id1 = 'x' where party_id = 3"), SQLITE_CONSTRAINT_DATATYPE, "STRICT party_member");
+    t.expect_eq(rc("update party_set set icon_id = 'x' where party_id = 3"), SQLITE_CONSTRAINT_DATATYPE, "STRICT party_set");
+    t.expect_eq(rc("delete from party_set where party_id = 4"), SQLITE_OK, "set 4 deleted");
+    t.expect_eq(db.one("select count(*) from party_member where party_id = 4", {}), (int64_t)0, "ON DELETE CASCADE: its members are gone");
     for (const std::string& sql : {std::string("update player set home_uid = 9999"), std::string("update player set party_id = 99"),
                                    std::string("delete from party_set where party_id = (select party_id from player)")})
         t.expect_eq(txn(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at commit").c_str());
@@ -765,11 +881,21 @@ NATIVE_TEST("server/schema-fk-actions") {
                 (int64_t)1, "its wearer's weapon_uid -> NULL");
     t.expect_eq(db.one("select count(*) from gear_items where uid in (" + gear_set + ", " + gear_free + ")", {}), (int64_t)0,
                 "ON DELETE CASCADE: the gears set in it are gone");
+    t.expect_eq(
+        db.one("select count(*) from party_member where party_id = 3 and slot = 0 and weapon_uid is null and accessory_uid = ?", {std::stoll(item2)}),
+        (int64_t)1, "the set's weapon_uid -> NULL");
     t.expect_eq(rc("delete from items where uid = " + item2), SQLITE_OK, "the accessory deleted");
+    t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and accessory_uid is null", {}), (int64_t)1,
+                "the set's accessory_uid -> NULL");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and accessory_uid is null", {std::stoll(a)}), (int64_t)1, "accessory_uid -> NULL");
     t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_OK, "the assist and support character deleted");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and assist_uid is null", {std::stoll(a)}), (int64_t)1, "assist_uid -> NULL");
     t.expect_eq(db.one("select count(*) from player where support_uid is null", {}), (int64_t)1, "support_uid -> NULL");
+    t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and assist_uid is null", {}), (int64_t)1,
+                "the set's assist_uid -> NULL");
+    t.expect_eq(rc("delete from roster where uid = " + a), SQLITE_OK, "set 3's member deleted");
+    t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and uid is null", {}), (int64_t)1,
+                "party_member.uid -> NULL (an empty slot)");
     t.expect_eq(txn("delete from roster where uid = " + c), SQLITE_OK, "the home character deleted");
     t.expect_eq(db.one("select count(*) from player where home_uid is null", {}), (int64_t)1,
                 "home_uid -> NULL (the deferred FK's action is at once)");

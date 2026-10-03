@@ -42,7 +42,7 @@ def main():
         return r[0] if r and r[0] is not None else 0
 
     for slot, uid, role, lv, exp, lb in st.execute(
-            "select p.slot, p.uid, r.role_id, r.level, r.exp, r.limit_break from party p "
+            "select p.slot, p.uid, r.role_id, r.level, r.exp, r.limit_break from party_member p "
             "join roster r on r.uid = p.uid where p.party_id = 1 order by p.slot"):
         fav = favor(role)
         print("  party 1 slot %d: %#x %s level %d exp %d favor %d limit break %d" % (slot, uid, label("master_role", role), lv, exp, fav, lb))

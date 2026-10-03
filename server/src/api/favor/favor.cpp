@@ -16,50 +16,16 @@
 #include "core/log.h"
 #include "core/time.h"
 #include "master/master.h"
+#include "soaserver/sql.h"
 
 namespace soa::server::favor {
 
 namespace {
 
-// ---- a small SQLite statement wrapper on the raw handles favor.h's callers pass (PLAN-schema S1
-// replaces it with the one SQL wrapper) --------------------------------------------------------
-struct Q {
-    sqlite3_stmt* s = nullptr;
-    Q(sqlite3* db, const char* sql) {
-        if (sqlite3_prepare_v2(db, sql, -1, &s, nullptr) != SQLITE_OK) {
-            LOGE("server", "favor: sql error %s in %s", sqlite3_errmsg(db), sql);
-            s = nullptr;
-        }
-    }
-    ~Q() {
-        if (s) sqlite3_finalize(s);
-    }
-    Q& bind(int i, int64_t v) {
-        if (s) sqlite3_bind_int64(s, i, v);
-        return *this;
-    }
-    Q& bind(int i, const std::string& v) {
-        if (s) sqlite3_bind_text(s, i, v.c_str(), -1, SQLITE_TRANSIENT);
-        return *this;
-    }
-    bool step() { return s && sqlite3_step(s) == SQLITE_ROW; }
-    int64_t i(int c) { return sqlite3_column_int64(s, c); }
-    std::string t(int c) {
-        const unsigned char* p = sqlite3_column_text(s, c);
-        return p ? (const char*)p : "";
-    }
-    bool null(int c) { return sqlite3_column_type(s, c) == SQLITE_NULL; }
-    void run() {
-        if (s) sqlite3_step(s);
-    }
-};
-
-// The first column of the first row of `sql` (one optional integer argument), 0 without a row.
-int64_t one(sqlite3* db, const char* sql, int64_t arg = 0, bool bind = false) {
-    Q q(db, sql);
-    if (bind) q.bind(1, arg);
-    return q.step() ? q.i(0) : 0;
-}
+// The handles favor.h's callers pass, through the one SQL wrapper (soaserver/sql.h). A NULL
+// value reads as 0 / "" (Row), and a lookup by key reads its one row.
+using sql::Row;
+using sql::Sql;
 
 // master_global (a): an empty value reads as the default (master::global_u32_unless_empty).
 u32 global_u32(sqlite3* m, const char* key, u32 dflt) { return master::global_u32_unless_empty(m, key, dflt); }
@@ -67,13 +33,12 @@ u32 global_u32(sqlite3* m, const char* key, u32 dflt) { return master::global_u3
 // (a) master_favor_level.next_favor_point, by level id (1..5).
 std::vector<u32> thresholds(sqlite3* m) {
     std::vector<u32> next;
-    Q q(m, "select id, next_favor_point from master_favor_level order by id");
-    while (q.step()) {
-        size_t level_id = (size_t)q.i(0);
-        if (level_id == 0) continue;
+    Sql{m}.q("select id, next_favor_point from master_favor_level order by id", {}, [&](const Row& level_row) {
+        size_t level_id = (size_t)level_row.i("id");
+        if (level_id == 0) return;
         if (next.size() < level_id) next.resize(level_id, 0);
-        next[level_id - 1] = (u32)q.i(1);
-    }
+        next[level_id - 1] = (u32)level_row.i("next_favor_point");
+    });
     return next;
 }
 
@@ -81,12 +46,15 @@ std::vector<u32> thresholds(sqlite3* m) {
 // next_favor_max_level from next_opened_at on). 0 = no schedule: favor isn't enabled for it (the
 // client's GetEnableFavorability returns false for it too (b)).
 u32 max_level(sqlite3* m, int64_t now, u32 same_role_id) {
-    Q q(m, "select favor_max_level, next_favor_max_level, next_opened_at from master_favor_schedule where id = ?");
-    q.bind(1, (int64_t)same_role_id);
-    if (!q.step()) return 0;
-    u32 max = (u32)q.i(0);
-    std::string next_opened_at = q.t(2);
-    if (q.i(1) > max && !next_opened_at.empty() && parse_time_strict(next_opened_at) <= now) max = (u32)q.i(1);  // (a)+(b) as GetEnableFavorability
+    u32 max = 0;
+    Sql{m}.q("select favor_max_level, next_favor_max_level, next_opened_at from master_favor_schedule where id = ?", {same_role_id},
+             [&](const Row& schedule_row) {
+                 max = (u32)schedule_row.i("favor_max_level");
+                 std::string next_opened_at = schedule_row.s("next_opened_at");
+                 int64_t next_max = schedule_row.i("next_favor_max_level");
+                 if (next_max > max && !next_opened_at.empty() && parse_time_strict(next_opened_at) <= now)
+                     max = (u32)next_max;  // (a)+(b) as GetEnableFavorability
+             });
     return max;
 }
 
@@ -98,20 +66,20 @@ struct State {
 };
 State load(sqlite3* st, u32 same_role_id) {
     State state;
-    Q q(st, "select point, tap_count, tapped_at, event_drop_at from favor where same_role_id = ?");
-    q.bind(1, (int64_t)same_role_id);
-    if (q.step()) {
-        state.point = (u32)q.i(0);
-        state.taps = (u32)q.i(1);
-        state.tapped_at = q.i(2);
-        state.event_drop_at = q.t(3);
-    }
+    Sql{st}.q("select point, tap_count, tapped_at, event_drop_at from favor where same_role_id = ?", {same_role_id}, [&](const Row& favor_row) {
+        state.point = (u32)favor_row.i("point");
+        state.taps = (u32)favor_row.i("tap_count");
+        state.tapped_at = favor_row.i("tapped_at");
+        state.event_drop_at = favor_row.s("event_drop_at");
+    });
     return state;
 }
 void save(sqlite3* st, u32 same_role_id, const State& state) {
-    Q q(st, "insert or replace into favor (same_role_id, point, tap_count, tapped_at, event_drop_at) values (?,?,?,?,?)");
-    q.bind(1, (int64_t)same_role_id).bind(2, (int64_t)state.point).bind(3, (int64_t)state.taps).bind(4, state.tapped_at).bind(5, state.event_drop_at);
-    q.run();
+    Sql{st}.q(
+        "insert into favor (same_role_id, point, tap_count, tapped_at, event_drop_at) values (?,?,?,?,?)"
+        " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
+        "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at",
+        {same_role_id, state.point, state.taps, state.tapped_at, state.event_drop_at});
 }
 
 // Today's taps of a character: the count resets at the favor day boundary.
@@ -181,18 +149,6 @@ int64_t favor_day(int64_t t, int reset_hour) {
 
 }  // namespace rules
 
-void schema(sqlite3* st) {
-    char* err = nullptr;
-    sqlite3_exec(st,
-                 "create table if not exists favor (same_role_id integer primary key, point integer default 0, "
-                 "tap_count integer default 0, tapped_at integer default 0, event_drop_at text default '')",
-                 nullptr, nullptr, &err);
-    if (err) {
-        LOGE("server", "favor: schema: %s", err);
-        sqlite3_free(err);
-    }
-}
-
 u32 level_of(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id) {
     u32 max = max_level(m, now, same_role_id);
     if (!max) return 1;
@@ -213,10 +169,8 @@ bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_i
 u32 event_drop_remaining(sqlite3* st, sqlite3* m, int64_t now) {
     u32 limit = global_u32(m, "favor_event_drop_bonus_limit", 3), used = 0;
     std::vector<u32> same_role_ids;
-    {
-        Q q(st, "select same_role_id from favor where event_drop_at != ''");
-        while (q.step()) same_role_ids.push_back((u32)q.i(0));
-    }
+    Sql{st}.q("select same_role_id from favor where event_drop_at != ''", {},
+              [&](const Row& favor_row) { same_role_ids.push_back((u32)favor_row.i("same_role_id")); });
     for (u32 same_role_id : same_role_ids)
         if (event_drop_used_today(st, m, now, same_role_id)) used++;
     return limit > used ? limit - used : 0;
@@ -233,13 +187,10 @@ void add_player_state(sqlite3* st, sqlite3* m, int64_t now, u32 home_same_role_i
     std::set<u32> same_role_ids;
     {
         std::vector<u32> roles;
-        Q q(st, "select distinct role_id from roster");
-        while (q.step()) roles.push_back((u32)q.i(0));
-        for (u32 role : roles) {
-            Q role_q(m, "select same_role_id from master_role where id = ?");
-            role_q.bind(1, (int64_t)role);
-            if (role_q.step()) same_role_ids.insert((u32)role_q.i(0));
-        }
+        Sql{st}.q("select distinct role_id from roster", {}, [&](const Row& roster_row) { roles.push_back((u32)roster_row.i("role_id")); });
+        for (u32 role : roles)
+            Sql{m}.q("select same_role_id from master_role where id = ?", {role},
+                     [&](const Row& role_row) { same_role_ids.insert((u32)role_row.i("same_role_id")); });
     }
     auto next = thresholds(m);
     Value map = Value::object();
@@ -266,13 +217,10 @@ Value mission_gain(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, u32 s
     // (single play; 1 = multiplay host, 2 = guest). (d) a stamina with no row gives the row of
     // the largest use_stamina below it.
     u32 points = 0;
-    {
-        Q q(m,
-            "select favor_up_point from master_favor_battle_effect where play_type = 0 and use_stamina <= ? "
-            "order by use_stamina desc limit 1");
-        q.bind(1, (int64_t)stamina);
-        if (q.step()) points = (u32)q.i(0);
-    }
+    Sql{m}.q(
+        "select favor_up_point from master_favor_battle_effect where play_type = 0 and use_stamina <= ? "
+        "order by use_stamina desc limit 1",
+        {stamina}, [&](const Row& effect_row) { points = (u32)effect_row.i("favor_up_point"); });
     // (a)+(b) a running type-8 campaign (友好, ×1.5) multiplies the battle favor (api/missions/
     // mission_end.cpp); (d) truncated
     if (rate != 1.0) points = (u32)((double)points * rate);
@@ -323,20 +271,19 @@ void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 coun
     // (a) master_favor_item_effect: favor_up_point per item; target_type 0 = any character,
     // otherwise only master_role_same_role_id ((d) reading of target_type).
     u32 points_per_item = 0;
-    {
-        Q q(m, "select favor_up_point, target_type, master_role_same_role_id from master_favor_item_effect where master_item_id = ?");
-        q.bind(1, (int64_t)master_item_id);
-        if (q.step() && (q.i(1) == 0 || (u32)q.i(2) == same_role_id)) points_per_item = (u32)q.i(0);
-    }
+    bool first = true;  // the item's first effect row only
+    Sql{m}.q("select favor_up_point, target_type, master_role_same_role_id from master_favor_item_effect where master_item_id = ?", {master_item_id},
+             [&](const Row& effect_row) {
+                 if (!first) return;
+                 first = false;
+                 if (effect_row.i("target_type") == 0 || (u32)effect_row.i("master_role_same_role_id") == same_role_id)
+                     points_per_item = (u32)effect_row.i("favor_up_point");
+             });
     // (d) the count is capped by the stack held; the stack is debited
-    u32 have = (u32)one(st, "select count from stock where master_item_id = ?", master_item_id, true);
+    u32 have = (u32)Sql{st}.one("select count from stock where master_item_id = ?", {master_item_id});
     count = std::min(count, have);
     Gain gain = add_points(st, m, now, same_role_id, points_per_item * count);
-    if (count) {
-        Q q(st, "update stock set count = count - ? where master_item_id = ?");
-        q.bind(1, (int64_t)count).bind(2, (int64_t)master_item_id);
-        q.run();
-    }
+    if (count) Sql{st}.q("update stock set count = count - ? where master_item_id = ?", {count, master_item_id});
     Value result = Value::object();
     result["same_role_id"] = same_role_id;
     result["favor_level"] = gain.ok ? gain.level_after : 1u;

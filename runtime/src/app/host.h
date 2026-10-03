@@ -2,8 +2,8 @@
 // The desktop host loop: what a program running libSOA.so needs around the runtime to be an
 // Android NativeActivity on a Linux desktop. SDL2 window and GLES contexts (X11 or Wayland; the
 // guest's EGL is emulated over them: app/sdl_gl.h, hle/egl.cpp), presentation and screenshots,
-// mouse/keyboard -> touch/key input (wheel = pinch), text entry, the audio device (and the null
-// sink), movies, the scripted/remote control commands (--do, --shot, --control FIFO:
+// mouse/keyboard -> touch/key input (wheel = pinch), text entry (an on-screen box:
+// app/text_overlay.h), the audio device (and the null sink), movies, the scripted/remote control commands (--do, --shot, --control FIFO:
 // control/soactl.py), the ANativeActivity bring-up (JNI_OnLoad, onCreate and the start-up
 // callbacks) and the main loop.
 //
@@ -35,6 +35,8 @@ struct HostConfig {
     std::vector<std::string> shots;                 // "S:PATH": a screenshot S seconds after start
     std::vector<std::string> actions;               // "S:COMMAND": a control command S seconds after start
     std::string control_path;                       // read control commands from this FIFO
+    std::string font;                               // the text box's font (app/text_overlay.h): a path,
+                                                    // "none", or "" (SOA_FONT, then a system CJK font)
 
     // Hooks (optional):
     // a control command the host loop doesn't know; return true when handled

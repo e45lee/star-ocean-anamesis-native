@@ -160,7 +160,8 @@ void unlocks(ext::Ctx& ctx, MissionEnd& end) {
     if (!end.first_clear) return;
     ctx.m.q("select id, id_label from " + end.mission_ref.table + " where unlock_mission_id = ? order by id", {end.mission},
             [&](const Row& unlocked_row) {
-                ctx.st.q("insert or ignore into unlocks values (?,?,?,?)", {unlocked_row.i("id"), end.mission_ref.type, end.mission, clock_now()});
+                ctx.st.q("insert or ignore into unlocks (mission_id, mission_type, by_mission, at) values (?,?,?,?)",
+                         {unlocked_row.i("id"), end.mission_ref.type, end.mission, clock_now()});
                 end.unlocked.push_back(unlocked_row.s("id_label"));
             });
 }
@@ -266,10 +267,8 @@ Value mission_end_data(ext::Ctx& ctx, MissionEnd& end) {
     end.mission_time = ctx.live() ? battle_log_u32(ctx, "mission_time", 0) : 0;
     end_result["mission_time"] = end.mission_time;
     data["MissionEndResult"] = end_result;
-    {  // (b) the favor achievements follow the battle favor (ext::achievement_state)
-        ext::ensure_schema(ctx.st);
-        data["Achievement"] = ext::achievement_state(ctx);
-    }
+    // (b) the favor achievements follow the battle favor (ext::achievement_state)
+    data["Achievement"] = ext::achievement_state(ctx);
     data["DropList"] = drop_list_info(end);
     if (end.first_clear) data["ClearPresentList"] = clear_present_list_info(end);
     if (!end.added_items.arr.empty()) data["AddItem"] = end.added_items;

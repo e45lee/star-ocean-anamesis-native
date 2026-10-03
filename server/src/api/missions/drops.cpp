@@ -5,7 +5,6 @@
 
 #include <algorithm>
 
-#include "core/server.h"  // one_null_as_zero
 #include "rules/mission_rules.h"
 
 namespace soa::server {

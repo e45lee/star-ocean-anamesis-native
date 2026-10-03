@@ -1,13 +1,13 @@
 #pragma once
 // The favorability (bond, 好感度) rules (api/favor/favor.cpp). Port code, not guest behaviour.
-// Called from: the schema (core/server.cpp), the player load and the battle status
+// Called from: the player load and the battle status
 // (api/player/player_info.cpp), MissionEnd (api/missions/mission_end.cpp), the favor APIs
 // (api/favor/favor_api.cpp), and the favor login bonus and event drops (api/daily/,
 // api/events/favor_drop.cpp). Every rule carries its source label, also listed in
 // docs/server-rules.md "8. Favor":
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
-// State: table `favor` in the server DB, one row per same_role_id (the client keys its favor map,
+// State: table `favor` in the server DB (state/schema.cpp), one row per same_role_id (the client keys its favor map,
 // CParameterManager +0x8410 map<u64, CPlayerCharacterFavorInfoElement>, by same_role_id (b)).
 #include <cstdint>
 #include <string>
@@ -19,9 +19,6 @@
 struct sqlite3;
 
 namespace soa::server::favor {
-
-// Creates the `favor` table (idempotent).
-void schema(sqlite3* st);
 
 // Adds the player-load keys: `PlayerCharacterFavorMap` (every owned character's same_role_id with a
 // master_favor_schedule row), `RemainingUpdateFavorCountByTap` and

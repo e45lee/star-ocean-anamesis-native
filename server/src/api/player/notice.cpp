@@ -15,8 +15,10 @@
 // state when it is opened: the event areas open now (events::open_areas, the same list the
 // event menu shows), the login bonus's day and the present box.
 #include <cstdio>
+#include <cstdlib>
 #include <ctime>
 #include <string>
+#include <vector>
 
 #include "core/log.h"
 #include "core/time.h"
@@ -86,11 +88,79 @@ std::string format_local(int64_t t, const char* fmt) {
     return b;
 }
 
-// The page being built: wrapped lines.
+// The page being built: its lines, unwrapped (text() wraps them for the label, html() marks them up
+// for a web view).
 struct Page {
-    std::string text;
-    void line(const std::string& s) { text += wrap(s, kPageColumns) + "\n"; }
+    std::vector<std::string> lines;
+    void line(const std::string& s) { lines.push_back(s); }
+    std::string text() const {
+        std::string t;
+        for (auto& l : lines) t += wrap(l, kPageColumns) + "\n";
+        return t;
+    }
+    std::string html() const;
 };
+
+std::string html_escape(const std::string& s) {
+    std::string o;
+    for (char ch : s) {
+        if (ch == '&') o += "&amp;";
+        else if (ch == '<') o += "&lt;";
+        else if (ch == '>') o += "&gt;";
+        else if (ch == '"') o += "&quot;";
+        else o += ch;
+    }
+    return o;
+}
+
+// (d) The HTML form of the page: the same lines, marked up by their leading mark ("【...】" the
+// title, "■" a section heading, "・" a list item, the rest paragraphs), in the look of the game's
+// own local pages (the 3.8.0 APK's assets/*.html: a 640-px viewport, white text on dark grey, a (380-ok)
+// dark heading bar), with inline CSS only (no resources to fetch).
+std::string Page::html() const {
+    std::string h =
+        "<!DOCTYPE html>\n<html lang=\"ja\"><head><meta charset=\"utf-8\"><title>お知らせ</title>\n"
+        "<meta name=\"viewport\" content=\"width=640, user-scalable=no\">\n<style>\n"
+        "body{margin:0;padding:24px 28px;background:#2a2c33;color:#f2f2f2;font-size:26px;line-height:1.5}\n"
+        "h1{margin:0 0 16px;padding:8px 0;background:#3c3c3c;border-top:2px solid #6aa7d8;border-bottom:2px solid #6aa7d8;"
+        "color:#fff;font-size:30px;text-align:center;font-weight:bold}\n"
+        "h2{margin:22px 0 6px;padding:4px 12px;border-left:8px solid #6aa7d8;background:#383b45;font-size:27px}\n"
+        "ul{margin:0;padding:0 0 0 1.2em}li{margin:2px 0}p{margin:4px 0}.clock{color:#c8d4e0}\n"
+        "</style></head><body>\n";
+    bool in_list = false;
+    auto close_list = [&] {
+        if (in_list) h += "</ul>\n";
+        in_list = false;
+    };
+    auto starts = [](const std::string& l, const char* p) { return l.rfind(p, 0) == 0; };
+    for (auto& l : lines) {
+        if (l.empty()) {
+            close_list();
+            continue;
+        }
+        if (starts(l, "【")) {
+            close_list();
+            std::string t = l.substr(3);
+            if (t.size() >= 3 && t.compare(t.size() - 3, 3, "】") == 0) t.resize(t.size() - 3);
+            h += "<h1>" + html_escape(t) + "</h1>\n";
+        } else if (starts(l, "■")) {
+            close_list();
+            std::string t = l.substr(3);
+            while (!t.empty() && t[0] == ' ') t.erase(0, 1);
+            h += "<h2>" + html_escape(t) + "</h2>\n";
+        } else if (starts(l, "・")) {
+            if (!in_list) h += "<ul>\n";
+            in_list = true;
+            h += "<li>" + html_escape(l.substr(3)) + "</li>\n";
+        } else {
+            close_list();
+            bool clock = starts(l, "日時") || starts(l, "イベントカレンダー");
+            h += std::string(clock ? "<p class=\"clock\">" : "<p>") + html_escape(l) + "</p>\n";
+        }
+    }
+    close_list();
+    return h + "</body></html>\n";
+}
 
 // (a) The open event areas, named by master_event_area.name_message_id (notice_page, step 2).
 void add_event_areas(ext::Ctx& ctx, int64_t now, int64_t event_now, Page& page) {
@@ -125,8 +195,8 @@ void add_login_bonuses(ext::Ctx& ctx, int64_t now, Page& page) {
     if (!bonuses) page.line("・なし");
 }
 
-// The notice page's text: (d) what it lists is the server's choice.
-std::string notice_page(ext::Ctx& ctx) {
+// The notice page: (d) what it lists is the server's choice.
+Page notice_lines(ext::Ctx& ctx) {
     Page page;
     int64_t now = ctx.now(), event_now = ctx.event_now();
     // 1. the clocks
@@ -144,8 +214,11 @@ std::string notice_page(ext::Ctx& ctx) {
     // 4. the present box
     int64_t presents = ctx.st.one("select count(*) from presents where received_at is null", {});
     page.line("■ プレゼントBOX: " + std::to_string(presents) + " 件");
-    return page.text;
+    return page;
 }
+
+// The notice page's text (the label of webview_local.cpp).
+std::string notice_page(ext::Ctx& ctx) { return notice_lines(ctx).text(); }
 
 }  // namespace
 
@@ -159,6 +232,18 @@ bool web_page(const std::string& url, std::string* out) {
     if (!ok) return false;
     LOGI("server", "web page %s: %zu bytes", url.c_str(), page.size());
     if (out) *out = page;
+    return true;
+}
+
+// soaserver/server.h: the notice page as HTML, for a real web view (docs/webview.md).
+bool web_document(const std::string& url, std::string* content_type, std::string* body) {
+    if (url.rfind(kNoticeUrl, 0) != 0) return false;
+    std::string page;
+    bool ok = ext::with_live_server([&](ext::Ctx& ctx) { page = notice_lines(ctx).html(); });
+    if (!ok) return false;
+    LOGI("server", "web document %s: %zu bytes of HTML", url.c_str(), page.size());
+    if (content_type) *content_type = "text/html; charset=utf-8";
+    if (body) *body = page;
     return true;
 }
 
@@ -200,6 +285,17 @@ NATIVE_TEST("player/notice") {
             start = e + 1;
         }
         t.expect_eq(wrap("abc", 2), std::string("ab\n  c"), "wrap");
+        // the HTML form: the same lines, marked up
+        std::string h = notice_lines(ctx).html();
+        t.expect_eq(h.find("<h1>お知らせ</h1>") != std::string::npos, true, "html title");
+        t.expect_eq(h.find("<h2>開催中のイベント (" + std::to_string(n) + ")</h2>") != std::string::npos, true, "html events heading");
+        t.expect_eq(h.find("<h2>プレゼントBOX: ") != std::string::npos, true, "html present box heading");
+        if (const char* dump = getenv("SOA_NOTICE_HTML_DUMP")) {  // docs/webview.md: the page for soa-webview-render
+            if (FILE* f = fopen(dump, "wb")) {
+                fwrite(h.data(), 1, h.size(), f);
+                fclose(f);
+            }
+        }
         ctx.st.exec("rollback");
     });
     if (!ran) t.fail("needs the 3.7.0 master (data/basmaster-3.7.0.sqlite3) and the seed save (data/saves/seed/Game.xml)");

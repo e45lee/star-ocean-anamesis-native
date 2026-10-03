@@ -31,6 +31,7 @@ phone370_client_save "$TMP/data/data/shared_prefs"
 import sqlite3, sys
 m = sqlite3.connect("work/../data/basmaster-3.7.0.sqlite3")
 st = sqlite3.connect(sys.argv[1])
+st.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
 st.execute("create table stock (master_item_id integer primary key, item_type integer, count integer)")
 st.execute("create table items (uid integer primary key, master_item_id integer, item_type integer, level integer default 1, "
            "exp integer default 0, limit_break integer default 0, locked integer default 0, created_at integer)")
@@ -38,7 +39,8 @@ st.execute("create table if not exists gear_items (uid integer primary key, type
            "param2 integer default 0, item_uid integer default 0, slot integer default 0, is_new integer default 1, created_at integer)")
 def add(i, n):
     t = m.execute("select type from master_item where id = ?", (i,)).fetchone()[0]
-    st.execute("insert or replace into stock values (?,?,?)", (i, t, n))
+    st.execute("insert into stock (master_item_id, item_type, count) values (?,?,?) "
+               "on conflict(master_item_id) do update set item_type = excluded.item_type, count = excluded.count", (i, t, n))
 def label(l): return m.execute("select id from master_item where id_label = ?", (l,)).fetchone()[0]
 for l in ["item_exp_all_05", "item_exp_all_04"]: add(label(l), 200)
 for (i,) in m.execute("select id from master_item where id_label like 'item_limitbreak_%'"): add(i, 200)

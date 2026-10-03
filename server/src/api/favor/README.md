@@ -7,7 +7,7 @@
 
 The core's APIs register with `ext::add_core_api`, before the modules. `favor.cpp` reads and writes through a small SQLite wrapper of its own on raw handles (its callers pass `sqlite3*`); PLAN-schema S1 replaces it with the one SQL wrapper.
 
-**State**: `favor` (one row per same_role_id: point, tap_count, tapped_at, event_drop_at; `favor::schema`, created with the core's tables).
+**State**: `favor` (one row per same_role_id: point, tap_count, tapped_at, event_drop_at; created with every other table in `../../state/schema.cpp`).
 
 **Rules**: docs/server-rules.md "8. Favor" (State, Levels, Gains, Responses), "Favor achievements", "Type-8 campaigns", "Event extras" (the event drop bonus).
 

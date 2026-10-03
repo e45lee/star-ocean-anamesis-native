@@ -185,7 +185,6 @@ bool achievement_open(Ctx& ctx, const std::string& opened_at, const std::string&
     return lo <= t && t <= hi;
 }
 int64_t achievement_progress(Ctx& ctx, int type, const std::string& opened_at, const std::string& closed_at) {
-    if (!ctx.st.one("select count(*) from sqlite_master where name = 'sphere_log'", {})) return 0;
     int64_t lo, hi;
     moved_window(ctx, opened_at, closed_at, lo, hi);
     if (type == (int)AchievementType::kBattlesWon)

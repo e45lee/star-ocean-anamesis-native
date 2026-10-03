@@ -296,7 +296,8 @@ if [ $mode = newplayer ]; then
         poll 6 in_elog "StartKeyboardActivity(" && break
     done
     pass "terms (同意する) -> name entry (keyboard)"
-    # While the keyboard is open the game renders no frames: the text first, then a screenshot.
+    # The game renders no frames while its keyboard is open (the host repaints the last one with its
+    # text box); text: finishes the entry at once, then a screenshot of the filled field.
     ctl wait:500 "text:$name" wait:1500 "shot:$out/name-typed.png"
     tap_until "決定 -> CreatePlayer -> CreatePlayerRes" 60 364:790 in_plog "< CreatePlayerRes" || finish
     in_plog "> CreatePlayer .*\"$name\"" && pass "CreatePlayer carries the name \"$name\"" || miss "CreatePlayer without the name \"$name\""

@@ -51,8 +51,8 @@ std::shared_ptr<cdn::Tree> make_tree(soa::server::testing::Context& t, const std
     mkdir(root.c_str(), 0755);
     sqlite3* db = nullptr;
     sqlite3_open(master.c_str(), &db);
-    sqlite3_exec(db, "create table master_global (key text, value text); insert into master_global values ('service_stop_day', 'x');", nullptr,
-                 nullptr, nullptr);
+    sqlite3_exec(db, "create table master_global (key text, value text); insert into master_global (key, value) values ('service_stop_day', 'x');",
+                 nullptr, nullptr, nullptr);
     sqlite3_close(db);
     auto entry = [](uint64_t size, uint32_t enc) {
         Value e = Value::object();

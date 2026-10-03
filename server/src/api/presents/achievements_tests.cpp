@@ -34,7 +34,11 @@ NATIVE_TEST("presents/favor-achievements") {
             c.st.exec("rollback");
             return;
         }
-        c.st.q("insert or replace into favor (same_role_id, point) values (?, ?)", {same, goal});
+        c.st.q(
+            "insert into favor (same_role_id, point) values (?, ?)"
+            " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
+            "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at",
+            {same, goal});
         Value d = player_load_data(c);
         const Value* list = d.find("Achievement");
         bool goal_seen = false;

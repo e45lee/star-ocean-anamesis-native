@@ -39,10 +39,6 @@ namespace soa::server::events {
 namespace {
 using namespace ext;
 
-// (d) our state: the last event mission started (is_last_play). Clears are the core's `mission`
-// table (MissionEnd / MissionTalk / end_mission_talk).
-const char* const kSchema = "create table if not exists event_last (id integer primary key check (id = 1), mission_id integer, area_id integer)";
-
 // ---- assets ------------------------------------------------------------------------------
 // The one asset gate (core/assets.h): the tests' override, else everything when there is no asset
 // source at all (outside the game: nothing is gated rather than everything), else the index.
@@ -397,7 +393,7 @@ bool clear_story(Ctx& ctx, u32 mission) {
         "first_clear_at = ifnull(first_clear_at, ?) where mission_id = ?",
         {ctx.now(), mission});
     u32 area = (u32)ctx.m.one("select master_event_area_id from master_event_mission where id = ?", {mission});
-    ctx.st.q("insert or replace into event_last values (1, ?, ?)", {mission, area});
+    ctx.st.q("insert or replace into event_last (id, mission_id, area_id) values (1, ?, ?)", {mission, area});
     // (a) master_mission_clear_present rows of the mission go to the present box on the first
     // clear, as the core does for a battle (d: first clear only)
     int presents = 0;
@@ -452,7 +448,7 @@ bool event_response_keys(Ctx& ctx, const Request& req, Value& data) {
     if (req.method == "MissionStart" && req.ints.size() > 1) {
         u32 mission = (u32)req.ints[1];  // MissionStart(type, mission, ...): core/request_args.h MissionStartArgs
         u32 area = (u32)ctx.m.one("select master_event_area_id from master_event_mission where id = ?", {mission});
-        if (area) ctx.st.q("insert or replace into event_last values (1, ?, ?)", {mission, area});
+        if (area) ctx.st.q("insert or replace into event_last (id, mission_id, area_id) values (1, ?, ?)", {mission, area});
     }
     if (!list_methods().count(req.method)) return false;
     int64_t now = ctx.now(), event_now = ctx.event_now();
@@ -532,7 +528,6 @@ bool end_mission_talk(u32 mission) {
 // "The module registry and its order").
 void register_event() {
     using namespace ext;
-    add_schema(kSchema);
     add_player_load(load_events);
     add_response_hook(event_response_keys);
     add_client_master(client_master_events);

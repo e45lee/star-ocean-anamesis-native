@@ -52,16 +52,6 @@ constexpr int64_t kEventTypeWorldBoss = 1;
 // to the first (hotspring: wave 1 3,100,000 -> 1,500, wave 2 5,780,000 -> 2,797).
 constexpr u64 kFirstWave = 1500;
 
-// (d) our layout: one row per world boss the player met.
-const char* const kSchemaBoss = R"(
-create table if not exists wboss (boss_id integer primary key, area_id integer, wave integer default 1, n1 integer default 0,
-  n2 integer default 0, n3 integer default 0, a1 integer default 0, a2 integer default 0, a3 integer default 0,
-  required integer default 0, wave_started_at integer, last_clear_secs integer default 0, hunt_until integer default 0,
-  hunt_new integer default 0);
-create table if not exists wboss_clear (boss_id integer, wave integer, cleared_at integer, notified integer default 0,
-  primary key (boss_id, wave));
-)";
-
 struct Boss {
     u32 id = 0, items[3] = {0, 0, 0};
     u32 bonus_rate = 0, bighunt_minutes = 0;
@@ -163,9 +153,16 @@ State load(Ctx& ctx, const Boss& boss, u32 area) {
     return state;
 }
 void save(Ctx& ctx, const Boss& boss, const State& state) {
-    ctx.st.q("insert or replace into wboss values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-             {boss.id, state.area, state.wave, state.n[0], state.n[1], state.n[2], state.a[0], state.a[1], state.a[2], state.required, state.started,
-              state.last_clear, state.hunt_until, state.hunt_new ? 1 : 0});
+    ctx.st.q(
+        "insert into wboss (boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until, "
+        "hunt_new) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        " on conflict(boss_id) do update set area_id = excluded.area_id, wave = excluded.wave, "
+        "n1 = excluded.n1, n2 = excluded.n2, n3 = excluded.n3, a1 = excluded.a1, a2 = excluded.a2, "
+        "a3 = excluded.a3, required = excluded.required, wave_started_at = excluded.wave_started_at, "
+        "last_clear_secs = excluded.last_clear_secs, hunt_until = excluded.hunt_until, "
+        "hunt_new = excluded.hunt_new",
+        {boss.id, state.area, state.wave, state.n[0], state.n[1], state.n[2], state.a[0], state.a[1], state.a[2], state.required, state.started,
+         state.last_clear, state.hunt_until, state.hunt_new ? 1 : 0});
 }
 bool hunting(Ctx& ctx, const State& state) { return state.hunt_until && ctx.now() <= state.hunt_until; }
 
@@ -182,7 +179,7 @@ void contribute(Ctx& ctx, const Boss& boss, State& state, const u64 add[3]) {
         Wave info = wave_of(ctx, boss.id, state.wave);
         if (!info.found) break;
         if (ctx.st.one("select count(*) from wboss_clear where boss_id = ? and wave = ?", {boss.id, state.wave})) break;  // the last wave, done
-        ctx.st.q("insert into wboss_clear values (?,?,?,0)", {boss.id, state.wave, ctx.now()});
+        ctx.st.q("insert into wboss_clear (boss_id, wave, cleared_at, notified) values (?,?,?,0)", {boss.id, state.wave, ctx.now()});
         if (info.type) add_present(ctx, info.type, info.id, std::max<u32>(1, info.num), kPresentMissionClear, 0, text(ctx.m, info.message));
         state.hunt_until = ctx.now() + (int64_t)boss.bighunt_minutes * 60;
         state.hunt_new = true;
@@ -399,7 +396,6 @@ void world_boss_mission_result(Ctx& ctx, const MissionInfo& mission, Value& data
 // "The module registry and its order").
 void register_worldboss() {
     using namespace ext;
-    add_schema(kSchemaBoss);
     add_api({"GetWorldBossInfo"}, get_world_boss_info);
     events::add_area_extra(big_hunt_area_extra);
     add_player_load(load_world_boss);

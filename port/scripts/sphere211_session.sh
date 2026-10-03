@@ -57,6 +57,7 @@ tapw() { python3 $FLOW tap-until "$TMP/fifo" "$L" "$@"; }
 sql() { .venv/bin/python - "$TMP/data/server.sqlite3" "$@" <<'PY'
 import sqlite3, sys
 c = sqlite3.connect(sys.argv[1], timeout=60)
+c.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
 for q in sys.argv[2:]: c.execute(q)
 c.commit()
 PY
@@ -107,11 +108,12 @@ master=$(grep -o '(master [^)]*basmaster-3.7.0.sqlite3' "$L" | head -1 | cut -c9
 .venv/bin/python - "$TMP/data/server.sqlite3" "$season" "$master" <<'PY'
 import sqlite3, sys, time
 c = sqlite3.connect(sys.argv[1], timeout=60)
+c.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
 m = sqlite3.connect("file:%s?mode=ro" % sys.argv[3], uri=True)
 for i, t in m.execute("select id, type from master_item where id_label like 'item_sphere_stamina_%' or id_label like 'item_sphere_re_%'"):
-    c.execute("insert into stock values (?, ?, 2) on conflict(master_item_id) do update set count = 2", (i, t))
+    c.execute("insert into stock (master_item_id, item_type, count) values (?, ?, 2) on conflict(master_item_id) do update set count = 2", (i, t))
 c.execute("create table if not exists sphere_rental_day (day integer primary key, season_id integer, count integer default 0, paid integer default 0)")
-c.execute("insert or replace into sphere_rental_day values (?, ?, 5, 0)", (int(time.time()) - 2 * 86400, int(sys.argv[2])))
+c.execute("insert or replace into sphere_rental_day (day, season_id, count, paid) values (?, ?, 5, 0)", (int(time.time()) - 2 * 86400, int(sys.argv[2])))
 c.commit()
 PY
 # TAP TO START -> Login -> the data check (or the download) -> home (phase 4).
@@ -157,7 +159,7 @@ return_dive() {
 # cell 6 and the level-90 boss were lost in some runs (the defeat dialog times out: "制限時間に
 # 達しました"). The session checks the flow, not the balance, so the enemies are set to level 30
 # with the server's test hook (sphere_meta test_enemy_level) for the whole dive.
-sql "insert or replace into sphere_meta values ('test_enemy_level', 30)"
+sql "insert or replace into sphere_meta (key, value) values ('test_enemy_level', 30)"
 # The path: the start cell, 2, 3 (on the start view), then 6 (scrolled). The auto party takes the
 # strongest characters first, so by the boss only level-50 ones are left, which lose to its
 # level 90: 帰還 first (the characters come back, the boxes so far are analysed, the dive stays

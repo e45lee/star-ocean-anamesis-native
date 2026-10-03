@@ -185,8 +185,8 @@ void set_ship_bonuses(Ctx& ctx, u32 ship_id, u32 set_id, u32 item_id, const std:
             }
         });
     for (auto& [bonus_id, value] : party_bonuses(ctx, set_id, party))
-        ctx.st.q("insert into ds_bonus values (?,?,?)", {ship_id, bonus_id, (double)value * all_mul});
-    if (item_bonus) ctx.st.q("insert or replace into ds_bonus values (?,?,?)", {ship_id, item_bonus, item_value});
+        ctx.st.q("insert into ds_bonus (ship_id, bonus_id, value) values (?,?,?)", {ship_id, bonus_id, (double)value * all_mul});
+    if (item_bonus) ctx.st.q("insert or replace into ds_bonus (ship_id, bonus_id, value) values (?,?,?)", {ship_id, item_bonus, item_value});
 }
 
 // DeepSpaceMissionStart(u32 mission_id, u32 item_id, vector<u64> uids) -> DeepSpaceMissionStartRes   fid 63c9927a
@@ -299,7 +299,7 @@ bool pay_quick_return(Ctx& ctx, const Ship& ship, int64_t t, QuickReturnPaid& pa
     if (!wallet::covers(have, cost.coins)) return false;
     if (cost.items) ext::add_stock(ctx, item_id, -(int64_t)cost.items);
     wallet::take(ctx.st.h, wallet::split(have, cost.coins));  // (a) free coins first (core/wallet.h)
-    ctx.st.q("insert or replace into meta values ('ds_time_saving_count', ?)", {std::to_string(used_today + 1)});
+    ctx.st.q("insert or replace into meta (key, value) values ('ds_time_saving_count', ?)", {std::to_string(used_today + 1)});
     paid.items = cost.items;
     paid.coins = cost.coins;
     return true;
@@ -522,19 +522,6 @@ std::vector<u8> deep_space_mission_end(Ctx& ctx, const Request& req) {
     return ext::body(data);
 }
 
-// (d) our layout (PLAN-schema S10): explored areas, the offers with their play counts, the ships
-// out or back with their members (uids as "uid,uid,..."), a ship's bonus values, every departure.
-const char* const kSchema =
-    "create table if not exists ds_area (area_id integer primary key, exp integer default 0, is_new integer default 0, "
-    "last_play integer default 0);"
-    "create table if not exists ds_offer (mission_id integer primary key, area_id integer, bonus_set_id integer, closed_at integer default 0, "
-    "ship_id integer default 0, is_new integer default 0, play_count integer default 0, play_count_daily integer default 0, "
-    "play_count_weekly integer default 0, updated_at integer default 0);"
-    "create table if not exists ds_ship (ship_id integer primary key, area_id integer, mission_id integer, bonus_set_id integer, "
-    "item_id integer default 0, uids text, started_at integer, closed_at integer);"
-    "create table if not exists ds_bonus (ship_id integer, bonus_id integer, value real, primary key (ship_id, bonus_id));"
-    "create table if not exists ds_log (mission_id integer, started_at integer);";
-
 }  // namespace
 }  // namespace deepspace
 
@@ -542,7 +529,6 @@ const char* const kSchema =
 // "The module registry and its order").
 void register_deepspace() {
     using namespace deepspace;
-    ext::add_schema(kSchema);
     ext::add_api({"DeepSpaceActiveList"}, deep_space_active_list);
     ext::add_api({"DeepSpaceAutoMemberSelect"}, deep_space_auto_member_select);
     ext::add_api({"DeepSpaceMissionStart"}, deep_space_mission_start);

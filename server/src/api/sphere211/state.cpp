@@ -14,7 +14,9 @@ namespace soa::server::sphere211 {
 int64_t sphere_meta(Ctx& ctx, const char* key, int64_t dflt) {
     return ctx.st.one("select ifnull((select value from sphere_meta where key = ?), ?)", {key, dflt});
 }
-void set_sphere_meta(Ctx& ctx, const char* key, int64_t value) { ctx.st.q("insert or replace into sphere_meta values (?, ?)", {key, value}); }
+void set_sphere_meta(Ctx& ctx, const char* key, int64_t value) {
+    ctx.st.q("insert or replace into sphere_meta (key, value) values (?, ?)", {key, value});
+}
 void log_event(Ctx& ctx, LogKind kind, u32 value) {
     ctx.st.q("insert into sphere_log (kind, value, at) values (?, ?, ?)", {(int)kind, value, ctx.now()});
 }

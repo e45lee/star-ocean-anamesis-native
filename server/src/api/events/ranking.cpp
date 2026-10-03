@@ -58,14 +58,6 @@ constexpr u32 kOnlyRank = 1;
 // (b) EventRankingInfo's party slots party_*1..4.
 constexpr int kPartySlots = 4;
 
-// (d) our layout: the best score per ranking, the party that made it, and the groups whose result
-// was received; `fresh` = updated since the ranking screen last cleared it (UpdatedEventRankingIdList).
-const char* const kSchemaRank = R"(
-create table if not exists event_rank_score (ranking_id integer primary key, group_id integer, score integer, roles text,
-  created_at integer, fresh integer default 1);
-create table if not exists event_rank_received (group_id integer primary key, received_at integer);
-)";
-
 struct Group {
     u32 id = 0;
     int64_t opened = 0, closed = 0, ranking_closed = 0, result_closed = 0;
@@ -119,7 +111,8 @@ void ranking_mission_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
             if (score < 0 || (type == kRankingTypeClearTime && score == 0)) return;
             int64_t best = ctx.st.one("select score from event_rank_score where ranking_id = ?", {ranking}, -1);
             if (best >= 0 && !better(type, score, best)) return;
-            ctx.st.q("insert or replace into event_rank_score values (?,?,?,?,?,1)", {ranking, group.id, score, party_roles(mission), ctx.now()});
+            ctx.st.q("insert or replace into event_rank_score (ranking_id, group_id, score, roles, created_at, fresh) values (?,?,?,?,?,1)",
+                     {ranking, group.id, score, party_roles(mission), ctx.now()});
             updated.push_back(ranking);
             LOGI("server", "event ranking %u (type %u): best score %lld", ranking, type, (long long)score);
         });
@@ -293,7 +286,7 @@ std::vector<u8> receive_event_ranking_result(Ctx& ctx, const Request&) {
             if (reward.type) grant_with_item_sets(ctx, reward.type, reward.id, reward.num, items, stocks, characters);
             LOGI("server", "ReceiveEventRankingResult: ranking %u rank 1 -> content %u/%u x%u", ranking, reward.type, reward.id, reward.num);
         }
-        ctx.st.q("insert or replace into event_rank_received values (?, ?)", {group, ctx.now()});
+        ctx.st.q("insert or replace into event_rank_received (group_id, received_at) values (?, ?)", {group, ctx.now()});
     }
     Value data = ctx.base_data();
     data["CheckEventRankingResultInfo"] = info;
@@ -336,7 +329,6 @@ std::vector<u8> get_player_detail_info(Ctx& ctx, const Request& req) {
 // "The module registry and its order").
 void register_event_ranking() {
     using namespace ext;
-    add_schema(kSchemaRank);
     add_mission_result_extra(ranking_mission_result);
     add_api({"GetEventRankingInfo"}, get_event_ranking_info);
     add_api({"ClearNewEventRanking"}, clear_new_event_ranking);

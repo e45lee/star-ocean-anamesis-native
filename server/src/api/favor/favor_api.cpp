@@ -26,12 +26,8 @@ struct UseFavorItemArgs {
 };
 
 // (b) the favor achievements follow the favor: the `Achievement` state (ext::achievement_state;
-// docs/server-rules.md "Favor achievements"). A core handler gets no ext::ensure_schema before it
-// runs, so it is made sure of here.
-void add_achievements(ext::Ctx& ctx, Value& data) {
-    ext::ensure_schema(ctx.st);
-    data["Achievement"] = ext::achievement_state(ctx);
-}
+// docs/server-rules.md "Favor achievements").
+void add_achievements(ext::Ctx& ctx, Value& data) { data["Achievement"] = ext::achievement_state(ctx); }
 
 // UpdateFavorByTap(u32 same_role_id) -> UpdateFavorByTapRes                fid e06ec7b3
 // API: docs/api.md#updatefavorbytap   Rules: docs/server-rules.md#gains, docs/server-rules.md#responses

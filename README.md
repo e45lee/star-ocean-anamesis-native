@@ -65,6 +65,10 @@ sudo apt install libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev l
 sudo apt install libwayland-dev libxkbcommon-dev libegl-dev libdecor-0-dev
 # EGL / GLES 2 at run time (Mesa): SDL creates the GLES contexts through EGL, on X11 or Wayland
 sudo apt install libegl1 libgles2 libegl-mesa0 libgl1-mesa-dri
+# a font with Japanese glyphs for the text box shown while the game asks for text (a name): any one of
+# fonts-ipaexfont-gothic / fonts-noto-cjk / fonts-droid-fallback, or --font PATH / SOA_FONT; fontconfig's
+# fc-match finds others. Without one the text shows in the window title only.
+sudo apt install fonts-ipaexfont-gothic fontconfig
 ```
 
 **Sound:** vcpkg's SDL2 here has the PulseAudio backend (plus sndio/OSS), not ALSA or PipeWire
@@ -124,7 +128,7 @@ Each script has `--help` and works from any directory.
 - **Use a fresh data folder** (`--data`, `--home`): an existing server state keeps its player.
 
 ### Game files
-The scripts check for these and say which is missing. **In git** (plain git, no LFS; each under GitHub's 100 MB limit): the 3.7.0 APK, the three master DBs in `data/` and `port/server-data/gacha_pools.sqlite3`. **Local only** (too big for GitHub, or derived): the 3.8.0 XAPK, the Ghidra quick projects, and everything under `work/`. A checksummed copy of all of them is in `work/backup-lfs/`.
+The scripts check for these and say which is missing. **In git** (plain git, no LFS; each under GitHub's 100 MB limit): the 3.7.0 APK, the three master DBs in `data/` and `port/server-data/gacha_pools.sqlite3`. **Local only** (too big for GitHub, or derived): the 3.8.0 XAPK, the Ghidra quick projects, and everything under `work/`. A checksummed copy of all of them is in `work/backup-lfs/`. <!-- 380-ok: names the viewer's XAPK -->
 
 | File | Used by |
 |---|---|
@@ -133,8 +137,11 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 | `work/extracted/xapk/` (the offline XAPK, unpacked by `tools/extract.sh`) | only the viewer (`emulator-viewer/`, `soa-viewer`) |
 | `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (through `work/extracted/xapk/`), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
 | `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`) | <!-- 380-ok: the viewer's game file -->
+| `data/version-3.7.0.bin` (in git; a copy of `work/download-3.7.0/version.bin`: the original CDN's index of the 3.7.0 download, revision 1471, 26,268 assets, MessagePack; the server's CDN serves a rebuilt revision 1472) | the reference for checking a download (`tools/check_download.py`) and for the CDN's rebuild |
 | `port/server-data/gacha_pools.sqlite3` (the reconstructed gacha pools, made by `tools/build_gacha_pools.py`) | the local server's gacha draws (`docs/server-rules.md` 4.3) |
 | `ghidra/quick-v370/`, `ghidra/quick/` (Ghidra quick projects; imported by `tools/common.sh` when missing) | `tools/decomp.sh`, `scripts/ghidra-mcp.sh` |
+
+**Verifying the download.** `.venv/bin/python tools/check_download.py work/download-3.7.0` checks the folder against its own manifests and `version.bin`: every listed member present, its size and SHA-1 (of the ADLD-decrypted plaintext, as the manifests record it), the ADLD header against `e`, `parentHash`, the `.version` ids and totalSizes, duplicates and unlisted extra files, and `version.bin` against the canonical `data/version-3.7.0.bin`. It prints a summary per manifest and PASS / FAIL (exit 0 / 1); `--quick` checks existence, sizes and headers only, `--manifest ep1` one manifest, `--json OUT` every finding. The same layout is a client's storage, so it also checks a phone's `data/files/download` (e.g. `work/phone-3.7.0/data/files/download`, whose `version.bin` is the client's own revision-1472 record: reported as a note). On the 3.7.0 download: PASS with one warning, `Sound/TS_C121_Common_SE.spk`, which `version.bin` lists and no manifest does; about 5 s with the files in the page cache (`--quick` 2 s).
 
 ## Reverse-engineering tools
 

@@ -59,7 +59,7 @@ NATIVE_TEST("server/add-exp") {
     t.expect_eq(r, std::make_pair(4u, 0u), "capped by the table");
     r = rules::add_exp(1, 0, 1000, next, 2);
     t.expect_eq(r, std::make_pair(2u, 0u), "capped by the level cap");
-    Db* m = test_master();
+    ext::Sql* m = test_master();
     if (!m) return;  // no 3.7.0 master DB: the table checks are skipped
     // (a) the player's EXP curve: level 87 with 1048 EXP + mf01_001's 24 EXP stays at 87
     std::vector<u32> pn(1, 0);
@@ -84,7 +84,7 @@ NATIVE_TEST("server/level-interpolation") {
     t.expect_eq(rules::interpolate_level(rows, 999), 13500u, "above the table");
     t.expect_eq(rules::round_half_away(2.5), 3.0, "half up");
     t.expect_eq(rules::round_half_away(-2.5), -3.0, "half away");
-    Db* m = test_master();
+    ext::Sql* m = test_master();
     if (!m) return;
     std::vector<std::pair<u32, u32>> st;
     m->q("select level, stamina from master_player_level order by level", {},
@@ -104,7 +104,7 @@ NATIVE_TEST("server/stamina") {
     t.expect_eq(r, std::make_pair(134u, (u64)0), "capped");
     r = rules::regen_stamina(140, 134, 180 * 50, 180);
     t.expect_eq(r, std::make_pair(140u, (u64)0), "over max isn't cut");
-    Db* m = test_master();
+    ext::Sql* m = test_master();
     if (!m) return;
     t.expect_eq(master::global_str(m->h, "stamina_heal_time"), std::string("180"), "master_global stamina_heal_time");
     t.expect_eq((u32)m->one("select stamina from master_player_level where level = 87", {}), 134u, "stamina max at 87");

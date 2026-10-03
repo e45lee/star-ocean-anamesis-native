@@ -109,6 +109,7 @@ void usage() {
             "  --render-size S the window's surface: 'desktop' (default: the window's aspect ratio scaled to fill the\n"
             "                  desktop, so resizing/fullscreen stays sharp), 'window' (the initial window size) or WxH\n"
             "  --fullscreen    start in (desktop) fullscreen\n"
+            "  --font PATH     the on-screen text box's font (env SOA_FONT; default: a system Japanese font; 'none': off)\n"
             "  --headless      don't show the window; it still renders at the same size, so screenshots, --shot/--do\n"
             "                  and --control work the same (env SOA_HEADLESS=1; --selftest is headless by default)\n"
             "  --windowed      show the window even with SOA_HEADLESS=1 or --selftest (env SOA_HEADLESS=0)\n"
@@ -183,6 +184,7 @@ int main(int argc, char** argv) {
     int width = 0, height = 0;  // default: portrait, sized from the desktop
     bool landscape = false;
     std::string render_size = "desktop";
+    std::string font;  // --font
     bool fullscreen = false;
     int headless = -1;  // -1: not given (SOA_HEADLESS, else headless only for --selftest)
     std::vector<std::string> shots, actions;
@@ -248,6 +250,7 @@ int main(int argc, char** argv) {
         else if (a == "--hires") {}  // no effect (kept for compatibility; see usage)
         else if (a == "--legacy-res") LOGW("main", "--legacy-res has no effect: the game renders at its own resolution (no --hires natives since the rebase's revision 2)");
         else if (a == "--render-size") render_size = next();
+        else if (a == "--font") font = next();
         else if (a == "--fullscreen") fullscreen = true;
         else if (a == "--headless") headless = 1;
         else if (a == "--windowed") headless = 0;
@@ -500,6 +503,7 @@ int main(int argc, char** argv) {
     host.hidden = headless != 0;
     if (host.hidden) LOGI("main", "headless: the window isn't shown");
     host.render_size = render_size;
+    host.font = font;
     host.size_note = " (the game's own resolution: 720 wide, a 0.75 back buffer, upscaled)";
     host.shots = shots;
     host.actions = actions;

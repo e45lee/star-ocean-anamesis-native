@@ -58,9 +58,16 @@ std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args,
     char search_id[16];
     snprintf(search_id, sizeof search_id, kSearchIdFormat, hash % kSearchIdModulo);
     u32 player_id = chash32(search_id);
-    ctx.st.q("insert or replace into player values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-             {player_id, std::string(search_id), args.name, 1u, 0u, 0u, ctx.stamina_max(1), now,
-              config().start_coins /* (d) free coin, --start-coins */, 0u, 0u, 1u, now, now});
+    ctx.st.q(
+        "insert into player (id, search_id, name, level, exp, fol, stamina, stamina_at, free_coin, pay_coin, home_uid, party_id, "
+        "created_at, last_login_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        " on conflict(id) do update set search_id = excluded.search_id, name = excluded.name, "
+        "level = excluded.level, exp = excluded.exp, fol = excluded.fol, stamina = excluded.stamina, "
+        "stamina_at = excluded.stamina_at, free_coin = excluded.free_coin, pay_coin = excluded.pay_coin, "
+        "home_uid = excluded.home_uid, party_id = excluded.party_id, created_at = excluded.created_at, "
+        "last_login_at = excluded.last_login_at",
+        {player_id, std::string(search_id), args.name, 1u, 0u, 0u, ctx.stamina_max(1), now, config().start_coins /* (d) free coin, --start-coins */,
+         0u, 0u, 1u, now, now});
     return search_id;
 }
 
@@ -72,11 +79,24 @@ std::vector<u64> add_starters(ext::Ctx& ctx, int64_t now) {
         u32 role_id = (u32)ctx.m.one("select id from master_role where id_label = ?", {role_label});
         if (!role_id) continue;
         u64 uid = kRosterUid0 + (k - 1);
-        ctx.st.q("insert or replace into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)", {uid, role_id, 1u, 0u, now});
+        // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
+        // every other column's default (excluded.<col>), as the REPLACE gave it
+        ctx.st.q(
+            "insert into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)"
+            " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
+            "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
+            "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, favor = excluded.favor, "
+            "created_at = excluded.created_at",
+            {uid, role_id, 1u, 0u, now});
         party.push_back(uid);
     }
     if (!party.empty()) ctx.st.q("update player set home_uid = ?", {party[0]});
-    for (size_t slot = 0; slot < party.size(); slot++) ctx.st.q("insert or replace into party values (?,?,?)", {kStarterPartyId, slot, party[slot]});
+    for (size_t slot = 0; slot < party.size(); slot++)
+        ctx.st.q(
+            "insert into party (party_id, slot, uid) values (?,?,?)"
+            " on conflict(party_id, slot) do update set uid = excluded.uid",
+            {kStarterPartyId, slot, party[slot]});
     return party;
 }
 
@@ -112,8 +132,8 @@ std::vector<u8> create_player(ext::Ctx& ctx, const Request& req) {
     int64_t now = clock_now();
     std::string search_id = insert_new_player(ctx, args, now);
     std::vector<u64> party = add_starters(ctx, now);
-    ctx.st.q("insert or replace into meta values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
-    ctx.st.q("insert or replace into meta values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
+    ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
+    ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
     set_meta(ctx, "tutorial_status", "0");
     set_meta(ctx, "view_status", "0");
     set_meta(ctx, "view_status2", "0");

@@ -48,8 +48,6 @@ using ext::Row;
 // (a) docs/api.md "Content types": master_achievement.content_type 13 is a master_title id.
 constexpr u32 kContentTypeTitle = 13;
 
-const char* const kSchema = "create table if not exists titles (id integer primary key, got_at integer)";
-
 bool is_title(ext::Ctx& ctx, int64_t title_id) { return title_id && ctx.m.one("select count(*) from master_title where id = ?", {title_id}) > 0; }
 
 bool owns_title(ext::Ctx& ctx, u32 title_id) { return ctx.st.one("select count(*) from titles where id = ?", {title_id}) > 0; }
@@ -58,7 +56,7 @@ bool owns_title(ext::Ctx& ctx, u32 title_id) { return ctx.st.one("select count(*
 // lists only TitleList ids, so without them a new player's list would be empty).
 void ensure_default_titles(ext::Ctx& ctx) {
     ctx.m.q("select id from master_title where is_default = 1", {},
-            [&](const Row& title_row) { ctx.st.q("insert or ignore into titles values (?, 0)", {title_row.i("id")}); });
+            [&](const Row& title_row) { ctx.st.q("insert or ignore into titles (id, got_at) values (?, 0)", {title_row.i("id")}); });
 }
 
 // TitleList: the owned master_title ids, the default ones included.
@@ -77,11 +75,13 @@ u32 selected_title(ext::Ctx& ctx) {
     ctx.st.q("select value from meta where key = 'title'", {}, [&](const Row& meta_row) { stored = std::stoll(meta_row.s("value")); });
     if (stored >= 0) return (u32)stored;
     u32 first_default = (u32)ctx.m.one("select id from master_title where is_default = 1 order by order_id, id limit 1", {});
-    ctx.st.q("insert or replace into meta values ('title', ?)", {std::to_string(first_default)});
+    ctx.st.q("insert or replace into meta (key, value) values ('title', ?)", {std::to_string(first_default)});
     return first_default;
 }
 
-void select_title(ext::Ctx& ctx, u32 title_id) { ctx.st.q("insert or replace into meta values ('title', ?)", {std::to_string(title_id)}); }
+void select_title(ext::Ctx& ctx, u32 title_id) {
+    ctx.st.q("insert or replace into meta (key, value) values ('title', ?)", {std::to_string(title_id)});
+}
 
 void set_player_title(Value& data, u32 title_id) {
     if (Value* player = data.find_mut("Player"); player && player->type == Value::Map) (*player)["title"] = title_id;
@@ -101,7 +101,7 @@ void grant_title(ext::Ctx& ctx, u32 title_id, u32, Value&, Value&, Value&) {
         return;
     }
     if (owns_title(ctx, title_id)) return;
-    ctx.st.q("insert into titles values (?, ?)", {title_id, ctx.now()});
+    ctx.st.q("insert into titles (id, got_at) values (?, ?)", {title_id, ctx.now()});
     ctx.request->titles_added.push_back(title_id);  // for AddTitleList / PresentGetResult.result.Title (OnResponse)
     LOGI("server", "title %u granted", title_id);
 }
@@ -251,7 +251,6 @@ NATIVE_TEST("player/titles") {
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").
 void register_title() {
-    ext::add_schema(kSchema);
     ext::add_grant(kContentTypeTitle, grant_title);
     ext::add_player_load(load_titles);
     ext::add_api({"SetTitle"}, set_title);

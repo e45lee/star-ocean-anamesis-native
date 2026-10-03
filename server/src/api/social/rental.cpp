@@ -34,11 +34,6 @@ namespace soa::server {
 namespace {
 using namespace ext;
 
-const char* const kSchema =
-    // Rentals the player took, per rental day (the daily reset), and whether the bonus was paid.
-    "create table if not exists follow_rental (day integer primary key, count integer not null default 0,"
-    " paid integer not null default 0)";
-
 // (d) The synthetic rental players: there are no other players on a local server, so the list is
 // made of clones of the player's own roster: the kRentalMax highest-level characters (one per
 // role, ties by uid), each lent by a "player" with the player's own name and level. Their ids are
@@ -209,7 +204,7 @@ std::vector<u8> update_support(Ctx& ctx, const Request& req) {
         LOGW("server", "UpdateSupport %llu refused: not an owned character", (unsigned long long)args.character_uid);
         return {};
     }
-    ctx.st.q("insert or replace into meta values ('support_uid', ?)", {std::to_string(args.character_uid)});
+    ctx.st.q("insert or replace into meta (key, value) values ('support_uid', ?)", {std::to_string(args.character_uid)});
     LOGI("server", "UpdateSupport: support character %llu", (unsigned long long)args.character_uid);
     return with_player_state(ctx);
 }
@@ -264,7 +259,6 @@ Value own_follow_entry(Ctx& ctx) {
 // "The module registry and its order").
 void register_follow() {
     using namespace ext;
-    add_schema(kSchema);
     add_player_load(load_follow);
     add_api({"FollowList"}, follow_list);
     add_api({"UpdateSupport"}, update_support);

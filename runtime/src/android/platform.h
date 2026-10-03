@@ -11,13 +11,19 @@ struct Platform {
     // Surface size reported to the game (Display.getRealSize etc.)
     std::atomic<int> width{1280}, height{720};
 
-    // KeyboardActivity emulation (SOAActivity.StartKeyboardActivity / GetEditText).
+    // KeyboardActivity emulation (SOAActivity.StartKeyboardActivity / GetEditText). The host edits
+    // text_editing through frontend/text_entry.h and draws it (app/text_overlay.h); the strings and
+    // the cursor are guarded by text_mutex.
     std::mutex text_mutex;
     std::atomic<bool> text_active{false};
     std::string text_value;     // result once finished
     std::string text_editing;   // in-progress text
-    int text_max_len = 0;
-    bool text_numeric = false;
+    int text_max_len = 0;       // code points; <= 0: no limit
+    bool text_numeric = false;  // type 1: digits only
+    size_t text_cursor = 0;     // byte offset into text_editing, on a code point boundary
+    std::string text_composition;  // the IME's uncommitted text (SDL_TEXTEDITING), shown at the cursor
+    size_t text_comp_cursor = 0;   // byte offset of the IME's caret in text_composition
+    std::atomic<unsigned> text_serial{0};  // bumped on every change (the overlay redraws, the caret shows)
 
     // MoviePlayerActivity emulation.
     std::atomic<bool> movie_playing{false};

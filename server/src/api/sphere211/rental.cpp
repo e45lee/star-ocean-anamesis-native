@@ -95,13 +95,12 @@ int64_t rental_day(Ctx& ctx, int64_t t) {
 
 // (d) a rented character doesn't depart; its lender has lent on this floor; the day's rentals count.
 void record_rental(Ctx& ctx, const Season& season, u32 lender, int64_t t) {
-    ctx.st.q("insert or replace into sphere_rental values (?, 1, ?)", {lender, t});
+    ctx.st.q("insert or replace into sphere_rental (follow_player_id, used, updated_at) values (?, 1, ?)", {lender, t});
     ctx.st.q("insert into sphere_rental_day (day, season_id, count) values (?, ?, 1) on conflict(day) do update set count = count + 1",
              {rental_day(ctx, t), season.id});
 }
 
 void rental_bonus(Ctx& ctx, Value& data) {
-    if (!ctx.st.one("select count(*) from sqlite_master where name = 'sphere_rental_day'", {})) return;
     int64_t today = rental_day(ctx, ctx.now());
     std::vector<std::tuple<int64_t, u32, u32>> due;  // day, season, count
     ctx.st.q("select day, season_id, count from sphere_rental_day where paid = 0 and day < ? order by day", {today},

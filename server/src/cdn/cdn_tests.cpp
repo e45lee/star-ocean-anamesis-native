@@ -262,8 +262,10 @@ NATIVE_TEST("cdn/tree") {
     {
         sqlite3* db = nullptr;
         sqlite3_open(master.c_str(), &db);
-        sqlite3_exec(db, "create table master_global (key text, value text); insert into master_global values ('service_stop_day', 'x'), ('a', 'b');",
-                     nullptr, nullptr, nullptr);
+        sqlite3_exec(
+            db,
+            "create table master_global (key text, value text); insert into master_global (key, value) values ('service_stop_day', 'x'), ('a', 'b');",
+            nullptr, nullptr, nullptr);
         sqlite3_close(db);
     }
     auto entry = [](const char* md5, uint64_t size, uint32_t enc, uint32_t flags = 0) {

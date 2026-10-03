@@ -20,6 +20,7 @@
 #include <EGL/eglext.h>
 
 #include <atomic>
+#include <chrono>
 #include <cstring>
 #include <mutex>
 #include <set>
@@ -37,6 +38,15 @@ namespace soa {
 namespace {
 
 GfxHooks* g_hooks = nullptr;
+
+// Idle presenting (gfx.h).
+std::atomic<bool> g_idle_present{false};
+std::atomic<s64> g_last_present_ns{0};  // the last window present (the guest's or an idle one)
+s64 steady_ns() { return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(); }
+bool window_current() {
+    egl_emu::Surface* s = egl_emu::current_draw();
+    return s && s->kind == egl_emu::Surface::Window && !s->destroyed;
+}
 
 // ---- objects
 
@@ -414,6 +424,7 @@ void th_eglSwapBuffers(Cpu& c) {
     if (s != t_draw) return ret(c, fail(EGL_BAD_SURFACE, EGL_FALSE));
     t_error = EGL_SUCCESS;
     if (s->kind != egl_emu::Surface::Window) return ret(c, EGL_TRUE);  // a pbuffer: no-op
+    g_last_present_ns.store(steady_ns(), std::memory_order_relaxed);
     if (!gles::present_and_swap()) {
         static std::atomic<int> logged{0};
         if (logged.fetch_add(1) < 4) LOGW("egl", "swap failed: %s", g_hooks->last_error());
@@ -458,6 +469,24 @@ GfxHooks* hooks() { return g_hooks; }
 }  // namespace egl_emu
 
 void set_gfx_hooks(GfxHooks* h) { g_hooks = h; }
+
+
+bool present_again() {
+    if (!window_current()) return false;
+    g_last_present_ns.store(steady_ns(), std::memory_order_relaxed);
+    return gles::present_and_swap();
+}
+
+void set_idle_present(bool on) { g_idle_present.store(on, std::memory_order_relaxed); }
+
+bool idle_present_on() { return g_idle_present.load(std::memory_order_relaxed); }
+
+bool window_thread() { return window_current(); }
+
+void idle_present() {
+    if (steady_ns() - g_last_present_ns.load(std::memory_order_relaxed) < (s64)kIdlePresentMs * 1000000) return;
+    present_again();
+}
 
 void register_egl(Hle& h) {
     h.fn("eglGetDisplay", th_eglGetDisplay);

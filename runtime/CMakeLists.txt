@@ -5,7 +5,7 @@
 # it uses (cmake/deps.cmake):
 #   dynarmic          the `dynarmic` target (FetchContent)
 #   soa::EGL, soa::GLESv2  Mesa's libEGL / libGLESv2 with the Khronos headers from vcpkg
-#   ZLIB::ZLIB, soa::SDL2 (vcpkg)
+#   ZLIB::ZLIB, soa::SDL2, Freetype::Freetype (vcpkg)
 #
 # Targets:
 #   soaruntime_iface  INTERFACE: include dir (runtime/src, so `#include "core/cpu.h"`), definitions
@@ -18,7 +18,8 @@
 #   soaruntime_tests  the runtime's extension-point tests (tests/), linked against soaruntime alone,
 #                     which also proves the runtime links without any port code.
 #   soaruntime_app    STATIC: the desktop host loop (src/app/: SDL2 window and GL contexts, input,
-#                     audio device, control FIFO, activity bring-up, main loop). Kept out of
+#                     audio device, control FIFO, activity bring-up, main loop, the text-entry
+#                     box: FreeType, privately). Kept out of
 #                     soaruntime because it links SDL2; a host program that uses it links it as a
 #                     plain library.
 
@@ -73,5 +74,5 @@ target_compile_options(soaruntime_tests PRIVATE -Wall -Wno-unused-parameter -fno
 # The desktop host loop (src/app/host.h), on SDL2 (X11 or Wayland: SDL picks).
 file(GLOB SOA_RUNTIME_APP_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/app/*.cpp)
 add_library(soaruntime_app STATIC ${SOA_RUNTIME_APP_SOURCES})
-target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2)
+target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2 PRIVATE Freetype::Freetype)
 target_compile_options(soaruntime_app PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing -mcx16)

@@ -64,7 +64,8 @@ def entry(s):
         s.ctl("tap:" + ui370.TERMS_AGREE, "wait:2500", "tap:" + ui370.NAME_FIELD)
         s.poll(6, lambda: s.in_client(r"StartKeyboardActivity\("))
     s.ok("terms (同意する) -> name entry (keyboard)")
-    # While the keyboard is open the game renders no frames: the text first, then a screenshot.
+    # The game renders no frames while its keyboard is open (the host repaints the last one with its
+    # text box); text: finishes the entry at once, then a screenshot of the filled field.
     s.send(["wait:500", "text:" + PLAYER, "wait:1500", "shot:" + os.path.join(s.shots, "03-name-typed.png")])
     s.tap_until("決定 -> CreatePlayer -> CreatePlayerRes", 60, ui370.NAME_DECIDE, lambda: s.in_packets(r"< CreatePlayerRes"))
     s.check('CreatePlayer carries "%s"' % PLAYER, s.in_packets(r'> CreatePlayer .*"%s"' % PLAYER))

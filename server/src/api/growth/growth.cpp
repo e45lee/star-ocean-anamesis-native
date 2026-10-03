@@ -523,21 +523,12 @@ std::vector<u8> equip_skill(Ctx& ctx, const Request& req) {
     return body(data);
 }
 
-// roster_ext: what growth adds to an owned character (one row per character, created on its first
-// seed or skill change): the seed-raised stats add_* and the equipped skills (PLAN-schema S4
-// merges it into roster).
-const char* const kSchema =
-    "create table if not exists roster_ext (uid integer primary key, add_hp integer default 0, add_attack integer default 0, "
-    "add_intelligence integer default 0, add_defence integer default 0, add_hit integer default 0, add_guard integer default 0, "
-    "add_ap integer default 0, equip_skill1 integer default 0, equip_skill2 integer default 0, equip_skill3 integer default 0)";
-
 }  // namespace
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").
 void register_growth() {
     using namespace ext;
-    add_schema(kSchema);
     add_api({"BoostCharacter"}, boost_character);
     add_api({"LimitBreakCharacter", "LimitBreakCharacter_Legacy"}, limit_break_character);
     add_api({"EvolutionCharacter"}, evolution_character);

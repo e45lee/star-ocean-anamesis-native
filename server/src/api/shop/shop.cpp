@@ -138,7 +138,8 @@ Refusal buy_item_shop_row(Ctx& ctx, const Row& shop_row, int64_t t) {
     u32 price = (u32)shop_row.i("price");
     if (!wallet::spend_coins(ctx.st.h, price)) return {"not enough coins", ErrorCode::kCoinsShort};
     ctx.st.q(
-        "insert into shop_counts values (?, ?, ?, 1) on conflict(id) do update set num = excluded.num, period = excluded.period, "
+        "insert into shop_counts (id, num, period, total) values (?, ?, ?, 1) "
+        "on conflict(id) do update set num = excluded.num, period = excluded.period, "
         "total = total + 1",
         {id, bought + 1, shop_period(shop_row, t)});
     return {};
@@ -288,7 +289,7 @@ std::vector<u8> exshop_exchange(Ctx& ctx, const Request& req) {
             u32 ex_item = (u32)contents_row.i("ex_item_id");
             u64 pay = (u64)contents_row.i("ex_num") * count;
             add_stock(ctx, ex_item, -(int64_t)pay);
-            ctx.st.q("insert into exchange_counts values (?, ?, ?) on conflict(id) do update set num = num + excluded.num",
+            ctx.st.q("insert into exchange_counts (id, shop_id, num) values (?, ?, ?) on conflict(id) do update set num = num + excluded.num",
                      {id, (u32)contents_row.i("master_exchange_shop_id"), count});
             Value items = Value::array(), stocks = Value::array(), characters = Value::array();
             u32 free_coins = 0;
@@ -303,12 +304,6 @@ std::vector<u8> exshop_exchange(Ctx& ctx, const Request& req) {
     if (!found) return refuse(ctx, "ExshopExchange", "unknown exchange row", ErrorCode::kItemUnusable);
     return out;
 }
-
-// (d) our state: the item-shop counts per row (this period's, the period, ever) and the exchange
-// counts per contents row.
-const char* const kSchema =
-    "create table if not exists shop_counts (id integer primary key, num integer, period integer, total integer default 0);"
-    "create table if not exists exchange_counts (id integer primary key, shop_id integer, num integer);";
 
 // ClientMaster hook (the served master's override). The client's master copy: the exchange shops
 // the event calendar has open but the clock hasn't move by the calendar's whole years
@@ -351,7 +346,6 @@ void load_shops(Ctx& ctx, const Request&, Value& data) {
 // "The module registry and its order").
 void register_shop() {
     using namespace ext;
-    add_schema(kSchema);
     add_api({"ItemShopList"}, item_shop_list_api);
     add_api({"ExItemShop"}, ex_item_shop);
     add_api({"ExshopExchangeList"}, exshop_exchange_list);

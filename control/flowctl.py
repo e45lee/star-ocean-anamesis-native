@@ -175,7 +175,9 @@ def login_popups(fifo, log, notice_shot, bonus_shot, home_shot):
     if opened is None:
         print("note: no notice board opened", file=sys.stderr)
     else:
-        closed = re.compile(r"ShowWebView\(\) not supported")
+        # closed: the runtime's "ShowWebView() not supported" (the text-label fallback, soa-emu) or the
+        # port's web view ("webview: closed")
+        closed = re.compile(r"ShowWebView\(\) not supported|I/webview: closed")
         cmds = ["wait:8000", "shot:" + keep(notice_shot), "tap:364:1133"]
         for n in range(10):
             send(fifo, *cmds, timeout=400)
@@ -240,7 +242,8 @@ def name_entry(fifo, log, name, typed_shot):
             send(fifo, "tap:364:689", "wait:2500", timeout=400)
     else:
         sys.exit("FAIL: the name field never opened the keyboard (StartKeyboardActivity)")
-    # While the keyboard is open the game renders no frames, so no screenshot before the text.
+    # The game renders no frames while its keyboard is open (the host repaints the last one with its
+    # text box, so a shot: then shows the box); text: finishes the entry at once.
     send(fifo, "wait:500", "text:" + name, "wait:1500", "shot:" + typed_shot, timeout=400)
     cp = re.compile(r"request CreatePlayer \(fid [0-9a-f]+\): (.*)$")
     line = None

@@ -133,6 +133,7 @@ int main() {
     // The runtime tests of the guest CPU and the JNI layer (core/cpu_tests.cpp, jni/jvm_tests.cpp).
     run_runtime_tests("cpu/");
     run_runtime_tests("jni/");
+    run_runtime_tests("frontend/text-");  // the text-entry editor (frontend/text_entry_tests.cpp)
     std::string rm = std::string("rm -rf '") + dir + "'";
     if (system(rm.c_str()) != 0) fprintf(stderr, "couldn't remove %s\n", dir);
 

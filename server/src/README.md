@@ -26,7 +26,7 @@ The local server's code (libsoaserver): the core, the extension modules, the pur
 
 - **An API's handler**: `../API-INDEX.md` section 1 (`soa-server --list-apis` prints what answers each method).
 - **A hook's run order**: `../API-INDEX.md` section 2 (`soa-server --list-hooks`); the order is `core/modules.cpp`'s module list, pinned by the test `server/module-order` (`../src/core/modules_tests.cpp`).
-- **The state tables**: the core's in `Server::schema()` (core/server.cpp), the modules' in their `add_schema` calls; `../PLAN-schema.md` section 1 is the inventory.
+- **The state tables**: all of them in `state/schema.cpp` (the migration steps; `state/README.md` says how a file is opened and upgraded); `../PLAN-schema.md` section 1 is the inventory.
 - **The tests**: beside their code (`*_tests.cpp`, or at the end of a few files), and in `../tests/` (its README). Run them with `build/server/soa-server --selftest [FILTER]`.
 - **The sessions that exercise a domain**: `../PLAN-readability.md` section 4.3's table (e.g. `port/scripts/growth_session.sh` for growth and items).
 

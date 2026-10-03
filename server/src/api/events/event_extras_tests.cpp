@@ -357,7 +357,12 @@ NATIVE_TEST("events/favor-drop") {
         std::vector<u32> sames;
         c.st.q("select distinct role_id from roster", {},
                [&](const Row& r) { sames.push_back((u32)c.m.one("select same_role_id from master_role where id = ?", {r.i("role_id")})); });
-        for (u32 s : sames) c.st.q("insert or replace into favor (same_role_id, point) values (?, ?)", {s, pts});
+        for (u32 s : sames)
+            c.st.q(
+                "insert into favor (same_role_id, point) values (?, ?)"
+                " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
+                "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at",
+                {s, pts});
         Request rs;
         rs.method = "MissionStart";
         rs.ints = {1, mission, 0, 0, 0, 0, 0};

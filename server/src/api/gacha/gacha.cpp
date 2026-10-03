@@ -15,7 +15,7 @@
 #include "core/request_args.h"
 #include "core/response.h"
 #include "core/rewards.h"  // add_character
-#include "core/server.h"   // next_uid, one_null_as_zero
+#include "core/server.h"   // next_uid
 #include "core/time.h"     // open_at
 #include "core/wallet.h"
 #include "master/gacha_pools.h"
@@ -173,6 +173,8 @@ bool check_stepup(ext::Ctx& ctx, const Request& req, const Row& gacha_row, Gacha
     // current step can be drawn ((d) another step is refused with 10403 不正なデータ処理).
     if (gacha_row.i("is_stepup")) {
         draw.chain = stepup_chain(ctx, draw.id);
+        // No stepup row = the chain's head. (next_id is never NULL: advance_stepup always writes a
+        // chain id, so the NULL-as-0 read and plain one() agree; kept by name, PLAN-readability 1.5.)
         draw.step = mission_rules::stepup_index(
             draw.chain, (u32)one_null_as_zero(ctx.st, "select next_id from stepup where head = ?", {draw.chain[0]}, draw.chain[0]));
         if (draw.chain[draw.step] != draw.id ||
@@ -358,7 +360,8 @@ void advance_stepup(ext::Ctx& ctx, const Request& req, GachaDraw& draw, Value& d
     u32 limit = (u32)std::max<int64_t>(1, ctx.m.one("select ifnull(stepup_limit_count, 1) from master_gacha where id = ?", {draw.id}));
     auto [next, restarted] = tries >= limit ? mission_rules::stepup_advance(draw.chain, draw.step) : std::pair<int, u32>{draw.step, 0};
     ctx.st.q(
-        "insert into stepup values (?, ?, ?, ?) on conflict(head) do update set try_count = excluded.try_count, "
+        "insert into stepup (head, try_count, restart_count, next_id) values (?, ?, ?, ?) "
+        "on conflict(head) do update set try_count = excluded.try_count, "
         "restart_count = restart_count + excluded.restart_count, next_id = excluded.next_id",
         {draw.chain[0], tries >= limit ? 0u : tries, restarted, draw.chain[next]});
     data["UpdateStepUpGacha"] = stepup_gacha_info(ctx, draw.chain[0]);  // (b) merged by key: this chain's steps

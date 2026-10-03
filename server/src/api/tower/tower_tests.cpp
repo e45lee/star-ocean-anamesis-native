@@ -125,7 +125,12 @@ NATIVE_TEST("tower/lists") {
         u32 first = (u32)num(missions->map.front().second.arr[0].find("id"));
         u32 next =
             (u32)c.m.one("select id from master_tower_mission where unlock_mission_id = ? and master_tower_area_id = ?", {first, std::stoll(area)});
-        c.st.q("insert or replace into mission (mission_id, cleared) values (?, 1)", {first});
+        c.st.q(
+            "insert into mission (mission_id, cleared) values (?, 1)"
+            " on conflict(mission_id) do update set cleared = excluded.cleared, best_rank = excluded.best_rank, "
+            "play_count = excluded.play_count, clear_count = excluded.clear_count, "
+            "first_clear_at = excluded.first_clear_at",
+            {first});
         Value d2 = Value::object();
         tower::lists(c, d2);
         const Value* l = d2.find("ActiveTowerMissionList")->find("TowerMission")->find(area);

@@ -35,7 +35,7 @@ std::vector<u8> set_assist(ext::Ctx& ctx, const Request& req) {
     }
     u64 old_assist_uid = (u64)ctx.st.one("select assist_uid from assist where uid = ?", {character_uid}, 0);
     if (assist_uid) ctx.st.q("delete from assist where assist_uid = ?", {assist_uid});  // it leaves whoever it assisted
-    if (assist_uid) ctx.st.q("insert or replace into assist values (?,?)", {character_uid, assist_uid});
+    if (assist_uid) ctx.st.q("insert or replace into assist (uid, assist_uid) values (?,?)", {character_uid, assist_uid});
     else ctx.st.q("delete from assist where uid = ?", {character_uid});
     Value result = Value::object();
     result["character_id"] = character_uid;

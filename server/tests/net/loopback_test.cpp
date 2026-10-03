@@ -2,7 +2,7 @@
 // server behind it, and the wire client (net/client.h) doing what the game does: StartBridge ->
 // the HTTP bridge -> UpdateSession -> Login -> GetPlayer -> MissionStart -> MissionEnd with a battle
 // log, plus a refusal, a corrupted packet, a request before the bridge and NoLoginStart.
-#include <sys/socket.h>
+#include "net/sock.h"
 #include <atomic>
 #include <thread>
 
@@ -157,7 +157,7 @@ NATIVE_TEST("net/loopback") {
     {
         // the server closes the connection after a ProtocolError (game.cpp on_data)
         uint8_t b;
-        int n = (int)::recv(c.fd(), &b, 1, 0);
+        int n = (int)net::sock::recv(c.fd(), &b, 1);
         t.expect_eq(n, 0, "connection closed after the ProtocolError");
     }
     // a reconnect continues the session without StartBridge / UpdateSession (the logged-in

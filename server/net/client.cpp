@@ -1,20 +1,13 @@
 // The wire client (client.h). Our code.
 #include "client.h"
 
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <unistd.h>
-
 #include <cerrno>
 #include <cstring>
 
 #include "game.h"
 #include "http.h"
 #include "ninja/ninja_ref.h"
+#include "sock.h"
 
 namespace soa::server::net {
 
@@ -31,15 +24,13 @@ int connect_to(const std::string& host, uint16_t port, std::string* err) {
     sockaddr_in a = *(sockaddr_in*)res->ai_addr;
     freeaddrinfo(res);
     a.sin_port = htons(port);
-    int fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-    timeval tv = {10, 0};
-    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
-    setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
-    int one = 1;
-    setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof one);
+    int fd = sock::tcp_socket(false);
+    if (fd < 0) return *err = "socket: " + sock::last_error(), -1;
+    sock::set_timeouts(fd, 10);
+    sock::set_nodelay(fd);
     if (::connect(fd, (sockaddr*)&a, sizeof a) != 0) {
-        *err = "connect " + host + ":" + std::to_string(port) + ": " + strerror(errno);
-        ::close(fd);
+        *err = "connect " + host + ":" + std::to_string(port) + ": " + sock::last_error();
+        sock::close(fd);
         return -1;
     }
     return fd;
@@ -48,7 +39,7 @@ int connect_to(const std::string& host, uint16_t port, std::string* err) {
 bool send_all(int fd, const void* p, size_t n) {
     const char* c = (const char*)p;
     while (n) {
-        ssize_t k = send(fd, c, n, MSG_NOSIGNAL);
+        ssize_t k = sock::send(fd, c, n);
         if (k <= 0) return false;
         c += k, n -= (size_t)k;
     }
@@ -72,7 +63,7 @@ bool split_url(const std::string& url, std::string* host, uint16_t* port, std::s
 }  // namespace
 
 WireClient::~WireClient() {
-    if (fd_ >= 0) ::close(fd_);
+    if (fd_ >= 0) sock::close(fd_);
 }
 
 bool WireClient::connect(const std::string& host, uint16_t port, std::string* err) {
@@ -91,9 +82,9 @@ bool WireClient::read_reply(WireReply* out, std::string* err) {
             return false;
         }
         uint8_t buf[65536];
-        ssize_t k = recv(fd_, buf, sizeof buf, 0);
+        ssize_t k = sock::recv(fd_, buf, sizeof buf);
         if (k <= 0) {
-            *err = k == 0 ? "connection closed" : std::string("recv: ") + strerror(errno);
+            *err = k == 0 ? "connection closed" : std::string("recv: ") + sock::last_error();
             return false;
         }
         rd.feed(buf, (size_t)k);
@@ -184,9 +175,9 @@ bool http_post(const std::string& url, const std::string& body, int* status, std
     if (send_all(fd, req.data(), req.size())) {
         char buf[16384];
         ssize_t k;
-        while ((k = recv(fd, buf, sizeof buf, 0)) > 0) resp.append(buf, (size_t)k);
+        while ((k = sock::recv(fd, buf, sizeof buf)) > 0) resp.append(buf, (size_t)k);
     }
-    ::close(fd);
+    sock::close(fd);
     size_t e = resp.find("\r\n\r\n");
     if (resp.rfind("HTTP/1.", 0) != 0 || e == std::string::npos) return *err = "no HTTP response from " + url, false;
     *status = atoi(resp.c_str() + 9);
@@ -205,9 +196,9 @@ bool http_get(const std::string& url, int* status, std::string* reply, std::stri
     if (send_all(fd, req.data(), req.size())) {
         char buf[65536];
         ssize_t k;
-        while ((k = recv(fd, buf, sizeof buf, 0)) > 0) resp.append(buf, (size_t)k);
+        while ((k = sock::recv(fd, buf, sizeof buf)) > 0) resp.append(buf, (size_t)k);
     }
-    ::close(fd);
+    sock::close(fd);
     size_t e = resp.find("\r\n\r\n");
     if (resp.rfind("HTTP/1.", 0) != 0 || e == std::string::npos) return *err = "no HTTP response from " + url, false;
     *status = atoi(resp.c_str() + 9);

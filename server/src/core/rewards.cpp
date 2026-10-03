@@ -23,11 +23,11 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
     u32 pid = player_id(ctx);
     if (d.type == 1) {
         for (u32 k = 0; k < d.num; k++) {
-            u64 uid = next_uid(ctx, "next_item_uid");
+            const ItemUid uid = next_item_uid(ctx);
             u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {d.id});
             ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, d.id, itype, clock_now()});
             Value e = Value::object();
-            e["id"] = uid;
+            e["id"] = uid.v;
             e["player_id"] = pid;
             e["master_item_id"] = d.id;
             e["item_type"] = itype;
@@ -39,10 +39,9 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
         }
     } else if (d.type == 2) {
         Added a = add_character(ctx, d.id);
-        u64 uid = a.dup ? 0 : a.uid;
-        if (uid) {
+        if (!a.dup && a.uid.v) {
             Value e = Value::object();
-            e["id"] = uid;
+            e["id"] = a.uid.v;
             e["master_role_id"] = d.id;
             e["drop_type"] = d.drop_type;
             chars.push(e);
@@ -102,12 +101,12 @@ Added add_character(ext::Ctx& ctx, u32 role) {
         });
     }
     if (have < 0) {
-        a.uid = next_uid(ctx, "next_char_uid");
+        a.uid = next_character_uid(ctx);
         ctx.st.q("insert into roster (uid, role_id, level, exp, created_at) values (?,?,1,0,?)", {a.uid, role, clock_now()});
         return a;
     }
     a.dup = true;
-    a.uid = (u64)have;
+    a.uid = CharacterUid((u64)have);
     int64_t rank = ctx.m.one("select rank from master_role where id = ?", {a.owned_role});
     u32 max = (u32)std::max<int64_t>(0, ctx.m.one("select count(*) from master_rank where rank = ?", {rank}) - 1);
     if (a.lb_before < max) {

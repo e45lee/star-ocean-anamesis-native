@@ -13,8 +13,9 @@ namespace {
 using namespace ext;
 
 NATIVE_TEST("social/follow-rental") {
-    t.expect_eq(rental::source_uid(rental::id_of(0x7e00000eull)), 0x7e00000eull, "rental id round trip");
-    t.expect_eq(rental::source_uid(0x7e00000eull), 0ull, "a roster uid isn't a rental id");
+    t.expect_eq((u64)or_zero(rental::source_uid(rental::id_of(CharacterUid(0x7e00000eull)))), (u64)0x7e00000eull, "rental id round trip");
+    t.expect_eq(rental::source_uid(0x7e00000eull).has_value(), false, "a roster uid isn't a rental id");
+    t.expect_eq(rental::source_uid(rental::kRentalBit).has_value(), false, "the bit alone names no character");
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
         c.st.exec("begin");
         Request lr;
@@ -37,8 +38,8 @@ NATIVE_TEST("social/follow-rental") {
                 continue;
             }
             u64 id = pc->get_u("id");
-            u64 src = rental::source_uid(id);
-            if (!src || !c.st.one("select count(*) from roster where uid = ?", {src}))
+            std::optional<CharacterUid> src = rental::source_uid(id);
+            if (!src || !c.st.one("select count(*) from roster where uid = ?", {*src}))
                 t.fail("pc id %llx isn't a roster clone", (unsigned long long)id);
             if (std::to_string(pl->get_u("id")) != key) t.fail("key %s != player id", key.c_str());
             if (pc->get_u("player_id") != pl->get_u("id")) t.fail("pc player_id");

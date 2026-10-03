@@ -58,11 +58,11 @@ struct UpdatePlayerNameArgs {
 // UpdateParty(u32 party_id, u64 uid1, u64 uid2, u64 uid3): the party id defaults to 1.
 struct UpdatePartyArgs {
     u32 party_id = 1;
-    u64 member_uid[3] = {0, 0, 0};  // the three members' owned uids (0 = empty)
+    CharacterUid member_uid[3];  // the three members' owned uids (0 = empty)
     static UpdatePartyArgs from(const Request& r) {
         UpdatePartyArgs a;
         a.party_id = r.ints.size() > 0 ? (u32)r.ints[0] : 1;
-        for (size_t k = 0; k < 3; k++) a.member_uid[k] = int_at(r, k + 1);
+        for (size_t k = 0; k < 3; k++) a.member_uid[k] = CharacterUid(int_at(r, k + 1));
         return a;
     }
 };

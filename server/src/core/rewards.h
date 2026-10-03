@@ -17,7 +17,7 @@ struct Drop {
 
 // What adding a character did (a duplicate raises the owned one's limit break).
 struct Added {
-    u64 uid = 0;         // the new character, or the owned one for a duplicate
+    CharacterUid uid;    // the new character, or the owned one for a duplicate
     bool dup = false;
     u32 owned_role = 0;  // the owned role a duplicate counted against
     u32 lb_before = 0, lb_after = 0;

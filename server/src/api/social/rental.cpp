@@ -85,7 +85,7 @@ const Value* roster_entry(const Value& roster, CharacterUid uid) {
 Value follow_person_info(Ctx& ctx, const Value& character, u32 lender_player_id) {
     Value person = character;
     u64 uid = field(character, "id") ? field(character, "id")->u : 0;
-    person["id"] = rental::id_of(uid);
+    person["id"] = rental::id_of(CharacterUid(uid));
     person["player_id"] = lender_player_id;
     for (const char* slot : {"weapon", "accessory"}) {
         const Value* item_uid_value = field(character, (std::string(slot) + "_item_id").c_str());  // a uid (CPersonInfo)

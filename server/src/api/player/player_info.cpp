@@ -171,7 +171,7 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
         info["is_lock"] = item_row.i("locked") != 0;
         info["is_equip"] = item_equipped(ctx, item_row.id<ItemUid>("uid"));
         info["num"] = 1u;
-        ext::item_extra(state, master, (u64)item_row.i("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
+        ext::item_extra(state, master, item_row.id<ItemUid>("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
         list.push(info);
     });
     return list;

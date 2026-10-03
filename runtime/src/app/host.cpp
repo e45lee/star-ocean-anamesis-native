@@ -39,6 +39,7 @@
 #include "core/vfs.h"
 #include "frontend/movie.h"
 #include "frontend/text_entry.h"
+#include "frontend/touch_script.h"
 #include "hle/audio.h"
 #include "hle/gfx.h"
 #include "jni/jvm.h"
@@ -91,7 +92,9 @@ struct Gfx final : GfxHooks {
     }
     void write_screenshot(int w, int h, unsigned fbo);
     std::atomic<u64> total_frames{0};
+    std::atomic<int> frame_delay_ms{0};  // the test hook frame-delay:MS (run_command)
     void after_swap() override {
+        if (int d = frame_delay_ms.load(std::memory_order_relaxed)) std::this_thread::sleep_for(std::chrono::milliseconds(d));
         total_frames.fetch_add(1, std::memory_order_relaxed);
         frames++;
         auto now = std::chrono::steady_clock::now();
@@ -292,8 +295,9 @@ namespace {
 
 s64 now_ns() { return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(); }
 
-void push_touch(int action, float x, float y) {
-    if (app::page_overlay::touch(action, x, y)) return;  // a touch on a host-drawn page (app/page_overlay.h)
+// Returns the event's sequence number in the input queue, 0 when a host-drawn page took it.
+u64 push_touch(int action, float x, float y) {
+    if (app::page_overlay::touch(action, x, y)) return 0;  // a touch on a host-drawn page (app/page_overlay.h)
     InputEvent e;
     e.type = 2;          // AINPUT_EVENT_TYPE_MOTION
     e.source = 0x1002;   // AINPUT_SOURCE_TOUCHSCREEN
@@ -301,7 +305,7 @@ void push_touch(int action, float x, float y) {
     e.time_ns = now_ns();
     e.pointer_count = 1;
     e.pointers[0] = {0, x, y, action == 1 ? 0.0f : 1.0f};
-    input_queue().push(e);
+    return input_queue().push(e);
 }
 
 // ---------------------------------------------------------------------------
@@ -377,14 +381,14 @@ struct Pinch {
 };
 Pinch g_pinch;
 
-void push_key(int action, int keycode) {
+u64 push_key(int action, int keycode) {
     InputEvent e;
     e.type = 1;          // AINPUT_EVENT_TYPE_KEY
     e.source = 0x101;    // AINPUT_SOURCE_KEYBOARD
     e.action = action;   // AKEY_EVENT_ACTION_DOWN / UP
     e.keycode = keycode;
     e.time_ns = now_ns();
-    input_queue().push(e);
+    return input_queue().push(e);
 }
 
 // Window coordinates -> the game's screen coordinates, through the letterboxed viewport.
@@ -580,34 +584,54 @@ void command_key(const std::string& name) {
 std::mutex g_control_mutex;
 std::vector<std::string> g_control_cmds;
 
+// tap:, drag: and back as input sequences paced by the game's frames (frontend/touch_script.h): the
+// main loop polls it and runs no further command while one is in flight, so the command after a
+// tap (a wait:, a shot:, the next tap) starts only once the touch was released.
+touch_script::Player g_input_script;
+touch_script::Clock input_clock() {
+    touch_script::Clock c;
+    c.now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+    c.frames = g_gfx.total_frames.load(std::memory_order_relaxed);
+    c.consumed = input_queue().consumed();
+    return c;
+}
+u64 send_input(const touch_script::Step& s) {
+    return s.kind == touch_script::Step::Key ? push_key(s.action, s.keycode) : push_touch(s.action, s.x, s.y);
+}
+void poll_input_script() {
+    if (!g_input_script.active()) return;
+    g_input_script.poll(input_clock(), send_input);
+    if (!g_input_script.active())
+        LOGI("control", "released after %llu frames, %lld ms", (unsigned long long)g_input_script.last_frames(), (long long)g_input_script.last_ms());
+}
+
 void run_command(const std::string& cmd) {
     LOGI("control", "%s", cmd.c_str());
     // tap/drag coordinates are window pixels, mapped like the mouse.
     float tx, ty, tx2, ty2;
+    int n;
     if (sscanf(cmd.c_str(), "tap:%f:%f", &tx, &ty) == 2) {
+        // touch down; up once the game has seen it (touch_script::tap: 3 frames, at least 80 ms)
         map_mouse((int)tx, (int)ty, tx, ty);
-        push_touch(0, tx, ty);
-        std::this_thread::sleep_for(std::chrono::milliseconds(80));
-        push_touch(1, tx, ty);
+        g_input_script.start(touch_script::tap(tx, ty), input_clock(), send_input);
     } else if (float ms = 300; sscanf(cmd.c_str(), "drag:%f:%f:%f:%f:%f", &tx, &ty, &tx2, &ty2, &ms) >= 4) {
         // drag:X1:Y1:X2:Y2[:MS]: MS (default 300) is the drag's duration, in 30 ms steps; a slow
-        // drag reaches the game as a drag even when it renders few frames (machine load).
+        // drag reaches the game as a drag even when it renders few frames (machine load). Its
+        // ends are paced by frames like a tap's (touch_script::drag).
         map_mouse((int)tx, (int)ty, tx, ty);
         map_mouse((int)tx2, (int)ty2, tx2, ty2);
-        push_touch(0, tx, ty);
-        int steps = std::max(10, (int)(ms / 30));
-        for (int i = 1; i <= steps; i++) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(30));
-            push_touch(2, tx + (tx2 - tx) * i / steps, ty + (ty2 - ty) * i / steps);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(ms > 300 ? 200 : 0));
-        push_touch(1, tx2, ty2);
+        g_input_script.start(touch_script::drag(tx, ty, tx2, ty2, ms), input_clock(), send_input);
+    } else if (sscanf(cmd.c_str(), "frame-delay:%d", &n) == 1) {
+        // test hook: every presented frame takes N ms longer (0: off); reproduces a slow client
+        g_gfx.frame_delay_ms = std::max(0, n);
+    } else if (sscanf(cmd.c_str(), "input-pacing:%d", &n) == 1) {
+        // test hook: 0 = taps held a fixed time again (80 ms), as before frame pacing; 1 = paced
+        g_input_script.set_paced(n != 0);
     } else if (sscanf(cmd.c_str(), "wheel:%f:%f:%f", &tx, &ty, &tx2) == 3) {  // wheel:X:Y:DY
         map_mouse((int)tx, (int)ty, tx, ty);
         if (!app::page_overlay::wheel(tx, ty, tx2)) g_pinch.wheel(tx, ty, tx2);
     } else if (cmd == "back") {
-        push_key(0, 4);
-        push_key(1, 4);
+        g_input_script.start(touch_script::key(4 /*AKEYCODE_BACK*/), input_clock(), send_input);
     } else if (cmd.rfind("text:", 0) == 0) {
         auto& p = platform();
         std::lock_guard lk(p.text_mutex);
@@ -922,9 +946,11 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
             platform().movie_playing = false;
         }
         auto now = std::chrono::steady_clock::now();
-        // Remote commands run in order; "wait:MS" holds the rest of the queue for that long.
+        // Remote commands run in order; "wait:MS" holds the rest of the queue for that long, and so
+        // does a tap / drag / back until its last event is sent.
         static auto control_resume = std::chrono::steady_clock::now();
-        while (now >= control_resume) {
+        poll_input_script();
+        while (now >= control_resume && !g_input_script.active()) {
             std::string c;
             {
                 std::lock_guard lk(g_control_mutex);
@@ -936,7 +962,7 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
             if (sscanf(c.c_str(), "wait:%d", &ms) == 1) control_resume = now + std::chrono::milliseconds(ms);
             else run_command(c);
         }
-        while (!actions.empty()) {
+        while (!actions.empty() && !g_input_script.active()) {
             std::string act = actions.front();
             auto c1 = act.find(':');
             if (std::chrono::duration<double>(now - start_time).count() < atof(act.substr(0, c1).c_str())) break;

@@ -372,10 +372,11 @@ void th_android_log_print(Cpu& c) {
 
 InputQueue::InputQueue() { efd_ = hostfd::make_event(); }
 
-void InputQueue::push(const InputEvent& e) {
+u64 InputQueue::push(const InputEvent& e) {
     std::lock_guard lk(m_);
     q_.push_back(new InputEvent(e));
     hostfd::event_signal(efd_);
+    return ++pushed_;
 }
 
 bool InputQueue::pop(InputEvent*& out) {
@@ -386,6 +387,7 @@ bool InputQueue::pop(InputEvent*& out) {
     }
     out = q_.front();
     q_.pop_front();
+    popped_.fetch_add(1, std::memory_order_release);
     if (q_.empty()) hostfd::event_drain(efd_);
     return true;
 }

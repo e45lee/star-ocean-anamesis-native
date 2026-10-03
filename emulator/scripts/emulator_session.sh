@@ -123,11 +123,6 @@ if [ "${FRESH_KVS:-0}" = 1 ]; then rm -f "$phone/data/shared_prefs/Aska.xml"; fi
 elog=$out/emu.log slog=$out/server.log plog=$out/packets/packets.log fifo=$out/fifo
 W=729 H=1296            # the window; tap coordinates are window pixels
 MAX_RSS_KB=$((6 * 1024 * 1024))
-read -r game_port http_port < <(python3 -c '
-import socket
-s = [socket.socket() for _ in range(2)]
-for x in s: x.bind(("127.0.0.1", 0))
-print(*[x.getsockname()[1] for x in s])')
 
 t0=$(date +%s%N)
 elapsed() { awk -v a="$t0" -v b="$(date +%s%N)" 'BEGIN { printf "%.0f", (b - a) / 1e9 }'; }
@@ -154,6 +149,12 @@ if [ $mode = newplayer ]; then srv_args+=(--new-player); else srv_args+=(--campa
 # The machine-wide game slot pool (control/soaslot.sh): one slot for this script's client, held
 # until the script exits; queued here when the machine is full.
 SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take "emulator_session.sh"
+# Free ports, picked after the slot wait (a long queue could otherwise see them taken meanwhile).
+read -r game_port http_port < <(python3 -c '
+import socket
+s = [socket.socket() for _ in range(2)]
+for x in s: x.bind(("127.0.0.1", 0))
+print(*[x.getsockname()[1] for x in s])')
 timeout -k 10 3000 "$srv" --listen 127.0.0.1:$game_port --http 127.0.0.1:$http_port --data "$out/server" --master "$master" \
     --download-dir "$download" --log-packets "$out/packets" "${srv_args[@]}" > "$slog" 2>&1 &
 spid=$!

@@ -31,6 +31,7 @@
 #include "android/platform.h"
 #include "core/cpu.h"
 #include "core/device.h"
+#include "core/gdbstub.h"
 #include "core/hle.h"
 #include "core/loader.h"
 #include "core/log.h"
@@ -125,6 +126,8 @@ void usage() {
             "                  wheel:X:Y:DY (pinch), back, text:STRING, shot:PATH, quit\n"
             "  --control FIFO  read the same commands, one per line, from a named pipe (plus the port's\n"
             "                  phase:/call:/mission:/uiset:/clock:/debugwin:/memstats commands, port_debug.cpp)\n"
+            "  --gdb HOST:PORT serve the GDB remote protocol for the guest (gdb-multiarch -x control/gdbinit-soa,\n"
+            "                  control/gdbclient.py; runtime/README.md \"Debugging the guest with gdb\")\n"
             "  --selftest [F]  the self-tests (tests matching F) on the booted game, no natives installed\n"
             "  --smoke         load the library, run a quick self-test and exit\n"
             "  --list-native   print the native replacements (symbol, note) and exit\n"
@@ -205,6 +208,7 @@ int main(int argc, char** argv) {
     int headless = -1;  // -1: not given (headless only for --selftest)
     std::vector<std::string> shots, actions;
     std::string control_path;
+    std::string gdb_addr;  // --gdb HOST:PORT (core/gdbstub.h)
     RunOptions& opt = mutable_options();  // from the command line only
     ServerOptions& srv = opt.server;
     std::vector<std::string> server_flags;  // server options given on the command line (for the --server HOST warning)
@@ -273,6 +277,7 @@ int main(int argc, char** argv) {
         else if (a == "--shot") shots.push_back(next() );
         else if (a == "--do") actions.push_back(next());
         else if (a == "--control") control_path = next();
+        else if (a == "--gdb") gdb_addr = next();
         else if (a == "--download-dir") opt.client.download_dir = next();
         else if (a == "--download-prefer") opt.client.download_prefer = true;
         else if (a == "--fake-server") opt.client.fake_server_dir = next();
@@ -487,6 +492,13 @@ int main(int argc, char** argv) {
          selftest ? "none (--selftest)" : native_set_name(natives));
 
     cpu_global_init();
+    if (!gdb_addr.empty()) {  // --gdb: the debugger hooks go on before any guest code runs
+        std::string err;
+        if (!gdb_listen(gdb_addr, &err)) {
+            fprintf(stderr, "%s\n", err.c_str());
+            return 2;
+        }
+    }
     hle_init();
     auto& vm = jni::Vm::get();
     vm.init();

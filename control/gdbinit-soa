@@ -1,0 +1,19 @@
+# gdb-multiarch setup for the runtime's GDB stub (`--gdb HOST:PORT` on soa / soa-emu / soa-viewer;
+# runtime/README.md "Debugging the guest with gdb"):
+#   gdb-multiarch -x control/gdbinit-soa -ex 'target remote 127.0.0.1:1234'
+# The stub describes an aarch64 target (osabi none) and lists the loaded images
+# (qXfer:libraries:read), so gdb loads the game library's symbols at its load base itself
+# (`info sharedlibrary`). When that file isn't readable here, `monitor base` prints the load base and
+# the add-symbol-file line for work/libSOA-3.7.0.so.
+set architecture aarch64
+set osabi none
+set pagination off
+set confirm off
+set print asm-demangle on
+set print demangle on
+set breakpoint pending on
+# Detaching leaves the client running (breakpoints removed); `kill` detaches too.
+# gdb lists the images on connect but reads their symbols only on request: do it right away.
+define target hookpost-remote
+sharedlibrary
+end

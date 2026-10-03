@@ -12,7 +12,7 @@
 # One slot per script: the port's session scripts and the emulator's run one client at a time.
 soaslot_take() {
     _ss_lib=${SOASLOT_PY:-control/soaslot.py}
-    case ${SOA_SLOT_SOFTWARE_GL:-} in 1|on|yes|true) [ -f "$_ss_lib" ] && eval "$(python3 "$_ss_lib" gl-env)" ;; esac
+    [ -n "${SOA_SLOT_SOFTWARE_GL:-}" ] && [ -f "$_ss_lib" ] && eval "$(python3 "$_ss_lib" gl-env)"  # prints nothing when off
     [ -n "${SOA_SLOT_HELD:-}" ] && return 0
     [ -f "$_ss_lib" ] || { echo "soaslot: $_ss_lib not found (run from the repo root or set SOASLOT_PY)"; return 1; }
     while :; do

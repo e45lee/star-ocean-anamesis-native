@@ -69,7 +69,9 @@ SOFTWARE_GL_DEFAULTS = {"LP_NUM_THREADS": "4"}
 
 
 def software_gl():
-    return os.environ.get("SOA_SLOT_SOFTWARE_GL", "").lower() in ("1", "on", "yes", "true")
+    """docs/environment.md's on/off rule: unset or empty = off (the default), 0/false/no/off = off."""
+    v = os.environ.get("SOA_SLOT_SOFTWARE_GL", "").strip().lower()
+    return v not in ("", "0", "false", "no", "off")
 
 
 def apply_software_gl():

@@ -74,8 +74,13 @@ def main(o):
         c("wait:5000", s.shot_cmd("10-returned"))
         c("tap:360:680", "wait:4000", s.shot_cmd("11-area"), "tap:360:790")
         w(r"DeepSpaceMissionEnd ship", 30, name="DeepSpaceMissionEnd")
-        c("wait:6000", s.shot_cmd("12-result-items"), "tap:364:1050", "wait:5000", s.shot_cmd("13-result-characters"))
-        c("tap:364:1050", "wait:5000", s.shot_cmd("14-after"))
+        sp = s.layout.shot_path
+        # the result pages' OK, resent until the page changes (a dropped OK shifted every later tap)
+        c("wait:6000", s.shot_cmd("12-result-items"))
+        s.tap_until_changed("the result's items page closed", "364:1050", sp("12-result-items"), wait_ms=5000)
+        c(s.shot_cmd("13-result-characters"))
+        s.tap_until_changed("the result's characters page closed", "364:1050", sp("13-result-characters"), wait_ms=5000)
+        c(s.shot_cmd("14-after"))
         st[2] = ds_state(s, "2-collected")
         # A second expedition, returned at once (今すぐ帰還: DeepSpaceMissionEndNow for coins), collected.
         c("tap:360:790", "wait:5000", "tap:350:790")
@@ -88,7 +93,11 @@ def main(o):
         c("wait:5000", s.shot_cmd("17-quick-returned"), "tap:364:800", "wait:5000", s.shot_cmd("18-returned-2"))
         c("tap:360:790")
         w(r"DeepSpaceMissionEnd ship", 30, name="DeepSpaceMissionEnd (2)")
-        c("wait:6000", s.shot_cmd("19-result-2"), "tap:364:1050", "wait:5000", "tap:364:1050", "wait:5000", s.shot_cmd("20-after-2"))
+        c("wait:6000", s.shot_cmd("19-result-2"))
+        s.tap_until_changed("the second result's items page closed", "364:1050", sp("19-result-2"), wait_ms=5000)
+        c(s.shot_cmd("19b-result-2-characters"))
+        s.tap_until_changed("the second result's characters page closed", "364:1050", sp("19b-result-2-characters"), wait_ms=5000)
+        c(s.shot_cmd("20-after-2"))
         st[3] = ds_state(s, "3-quick")
         # Two expeditions at once: the 0.5H mission (ship 1), then the 1H mission (ship 2, a pass ship).
         c("tap:360:790", "wait:5000", "tap:350:790")

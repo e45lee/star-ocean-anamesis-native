@@ -363,7 +363,7 @@ class Run:
         if self.grep(self.client_log, r"Unhandled SIG|\*\*\* host signal"):
             # a crash whose backtrace is in the host's GPU driver (WSL's NVIDIA GL, seen once with
             # many clients at once) is the host's, not the game's: labelled so
-            host = self.grep(self.client_log, r"^/usr/lib/wsl/drivers/|libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri")
+            host = self.grep(self.client_log, r"^/usr/lib/wsl/drivers/|libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri|libgallium-")
             self.miss("the client crashed%s (see %s)" % (" in the host GPU driver" if host else "", self.client_log))
         elif self.death and self.death.startswith("host GPU") and not self.failed:
             self.miss("the client lost the host GPU: %s (see %s)" % (self.death, self.client_log))
@@ -383,7 +383,7 @@ class Run:
     # driver) -- the host's problem, not the game's: labelled "host GPU" so a gate can say so.
     CRASH = re.compile(rb"Unhandled SIG|\*\*\* host signal")
     HOST_GPU = re.compile(rb"D3D12: Removing Device|glx: failed to create|X Error of failed request|^/usr/lib/wsl/drivers/|"
-                          rb"libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri", re.M)
+                          rb"libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri|libgallium-", re.M)
     # no frame-rate line (the host loop logs "I/perf: N fps" every 10 s) for this long, after one was
     # seen: the client's main loop is stuck
     STALL_SECS = 120
@@ -499,7 +499,7 @@ class Run:
         self.shot_names.append(name)
         return "shot:" + self.layout.shot_path(name)
 
-    def tap_until_changed(self, name, xy, before, wait_ms=4000, tries=4, limit=0.02):
+    def tap_until_changed(self, name, xy, before, wait_ms=4000, tries=4, limit=0.05):
         """Taps xy until the screen differs from the screenshot `before` (RMSE above `limit`): for a
         tap with no log line to wait for, dropped while a screen fades in. Records PASS / FAIL."""
         probe = self.scratch(".changed-probe.png")

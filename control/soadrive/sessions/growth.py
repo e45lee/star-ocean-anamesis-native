@@ -103,10 +103,16 @@ def main(o):
           s.shot_cmd("11-evolve"))
         c("tap:620:1120", "wait:3000", s.shot_cmd("12-evolve-confirm"), "tap:515:810")
         s.wait_log(r"EvolutionCharacter [0-9a-f]+: role", 30, name="EvolutionCharacter")
-        c("wait:11000", s.shot_cmd("13-evolve-result"), "tap:364:910", "wait:2500", s.shot_cmd("14-evolve-skill"), "tap:364:800", "wait:3000",
-          s.shot_cmd("15-evolve-level1"))
-        # "進化したため、レベルが1になりました" -> 閉じる -> 戻る to the menu
-        c("tap:212:712", "wait:2500", "tap:100:1120", "wait:3000", s.shot_cmd("16-character-menu"))
+        # the result, the new skill, "進化したため、レベルが1になりました": each closed, resent until the
+        # screen changes (a close dropped under load left the next taps on the wrong dialog), then 戻る
+        sp = s.layout.shot_path
+        c("wait:11000", s.shot_cmd("13-evolve-result"))
+        s.tap_until_changed("the evolution result closed", "364:910", sp("13-evolve-result"), wait_ms=2500)
+        c(s.shot_cmd("14-evolve-skill"))
+        s.tap_until_changed("the new skill's dialog closed", "364:800", sp("14-evolve-skill"), wait_ms=3000)
+        c(s.shot_cmd("15-evolve-level1"))
+        s.tap_until_changed("the level-1 dialog closed", "212:712", sp("15-evolve-level1"), wait_ms=2500)
+        c("tap:100:1120", "wait:3000", s.shot_cmd("16-character-menu"))
         # ---- 限界突破: the first ★5 of the second row, the first material (×1), 実行
         c("tap:364:658", "wait:5000", s.shot_cmd("17-limitbreak-select"), "tap:95:460", "wait:4000", s.shot_cmd("18-limitbreak"))
         # the material, then 実行; resent when the server saw nothing (a tap on the material while

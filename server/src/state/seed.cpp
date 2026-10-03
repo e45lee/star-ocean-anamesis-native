@@ -37,8 +37,13 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     u32 smax = ctx.stamina_max(level);
     int64_t t = clock_now();
     ctx.st.q(
-        "insert or replace into player (id, search_id, name, level, exp, fol, stamina, stamina_at, free_coin, pay_coin, home_uid, party_id, "
-        "created_at, last_login_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "insert into player (id, search_id, name, level, exp, fol, stamina, stamina_at, free_coin, pay_coin, home_uid, party_id, "
+        "created_at, last_login_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        " on conflict(id) do update set search_id = excluded.search_id, name = excluded.name, "
+        "level = excluded.level, exp = excluded.exp, fol = excluded.fol, stamina = excluded.stamina, "
+        "stamina_at = excluded.stamina_at, free_coin = excluded.free_coin, pay_coin = excluded.pay_coin, "
+        "home_uid = excluded.home_uid, party_id = excluded.party_id, created_at = excluded.created_at, "
+        "last_login_at = excluded.last_login_at",
         {pid, search, name, level, exp, fol, smax /* (d) full stamina */, t, config().start_coins /* (d) free coin, --start-coins */, 0, 0, 1, t, t});
     // Roster: person_master_role_id_N (master_role ids), deduplicated (the client cache
     // lists some roles twice).
@@ -54,8 +59,16 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     for (size_t i = 0; i < roles.size(); i++) {
         u64 uid = kRosterUid0 + i;
         u32 cap = ctx.role_level_cap(roles[i]);
-        ctx.st.q("insert or replace into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)",
-                 {uid, roles[i], cap > 10 ? cap - 10 : 1u /* (d) seed level: 10 below the cap */, 0, t});
+        // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
+        // every other column's default (excluded.<col>), as the REPLACE gave it
+        ctx.st.q(
+            "insert into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)"
+            " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
+            "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
+            "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, favor = excluded.favor, "
+            "created_at = excluded.created_at",
+            {uid, roles[i], cap > 10 ? cap - 10 : 1u /* (d) seed level: 10 below the cap */, 0, t});
         if (roles[i] == home_role) home_uid = uid;
     }
     if (!home_uid && !roles.empty()) home_uid = kRosterUid0;
@@ -68,7 +81,11 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     std::stable_sort(by_rarity.begin(), by_rarity.end(), [](auto& a, auto& b) { return a.first < b.first; });
     for (auto& [r, i] : by_rarity)
         if (party.size() < 4 && kRosterUid0 + i != home_uid) party.push_back(kRosterUid0 + i);
-    for (size_t s = 0; s < party.size(); s++) ctx.st.q("insert or replace into party (party_id, slot, uid) values (1,?,?)", {s, party[s]});
+    for (size_t s = 0; s < party.size(); s++)
+        ctx.st.q(
+            "insert into party (party_id, slot, uid) values (1,?,?)"
+            " on conflict(party_id, slot) do update set uid = excluded.uid",
+            {s, party[s]});
     for (auto& [k, v] : kv)
         if (k.rfind("BAS:PlanetOpen_", 0) == 0) ctx.st.q("insert or replace into planets (label, open) values (?,?)", {k.substr(15), (int)(u8)v[0]});
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});

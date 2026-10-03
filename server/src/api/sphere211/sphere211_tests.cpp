@@ -704,7 +704,10 @@ NATIVE_TEST("sphere211/items") {
         code = 0;
         call(c, "Sphere211StaminaHeal", {});
         t.expect_eq(code, 10206u, "no heal item: 10206");
-        c.st.q("insert or replace into stock (master_item_id, item_type, count) values (?, 10, 2)", {heal});
+        c.st.q(
+            "insert into stock (master_item_id, item_type, count) values (?, 10, 2)"
+            " on conflict(master_item_id) do update set item_type = excluded.item_type, count = excluded.count",
+            {heal});
         code = 0;
         d = call(c, "Sphere211StaminaHeal", {});
         t.expect_eq(code, 0u, "heal accepted");
@@ -718,7 +721,10 @@ NATIVE_TEST("sphere211/items") {
         code = 0;
         call(c, "Sphere211UseRerollItem", {});
         t.expect_eq(code, 10206u, "no reroll item: 10206");
-        c.st.q("insert or replace into stock (master_item_id, item_type, count) values (?, 10, 1)", {reroll});
+        c.st.q(
+            "insert into stock (master_item_id, item_type, count) values (?, 10, 1)"
+            " on conflict(master_item_id) do update set item_type = excluded.item_type, count = excluded.count",
+            {reroll});
         code = 0;
         d = call(c, "Sphere211UseRerollItem", {});
         t.expect_eq(code, 0u, "reroll accepted");

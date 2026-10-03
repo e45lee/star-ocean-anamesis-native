@@ -164,8 +164,13 @@ State load(Ctx& ctx, const Boss& boss, u32 area) {
 }
 void save(Ctx& ctx, const Boss& boss, const State& state) {
     ctx.st.q(
-        "insert or replace into wboss (boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until, "
-        "hunt_new) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "insert into wboss (boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until, "
+        "hunt_new) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        " on conflict(boss_id) do update set area_id = excluded.area_id, wave = excluded.wave, "
+        "n1 = excluded.n1, n2 = excluded.n2, n3 = excluded.n3, a1 = excluded.a1, a2 = excluded.a2, "
+        "a3 = excluded.a3, required = excluded.required, wave_started_at = excluded.wave_started_at, "
+        "last_clear_secs = excluded.last_clear_secs, hunt_until = excluded.hunt_until, "
+        "hunt_new = excluded.hunt_new",
         {boss.id, state.area, state.wave, state.n[0], state.n[1], state.n[2], state.a[0], state.a[1], state.a[2], state.required, state.started,
          state.last_clear, state.hunt_until, state.hunt_new ? 1 : 0});
 }

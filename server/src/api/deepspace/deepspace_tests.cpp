@@ -115,8 +115,16 @@ NATIVE_TEST("deepspace/expedition") {
         t.expect_eq((u32)c.st.one("select count(*) from ds_area where area_id = ?", {locked}), 0u, "locked at first");
         u32 max1 = (u32)c.m.one("select max_exp from master_deep_space_area where id = ?", {r1});
         u32 max2 = (u32)c.m.one("select max_exp from master_deep_space_area where id = ?", {r2});
-        c.st.q("insert or replace into ds_area (area_id, exp) values (?, ?)", {r1, (u32)std::ceil(max1 * p1 / 100)});
-        c.st.q("insert or replace into ds_area (area_id, exp) values (?, ?)", {r2, (u32)std::ceil(max2 * p2 / 100) - 1});
+        c.st.q(
+            "insert into ds_area (area_id, exp) values (?, ?)"
+            " on conflict(area_id) do update set exp = excluded.exp, is_new = excluded.is_new, "
+            "last_play = excluded.last_play",
+            {r1, (u32)std::ceil(max1 * p1 / 100)});
+        c.st.q(
+            "insert into ds_area (area_id, exp) values (?, ?)"
+            " on conflict(area_id) do update set exp = excluded.exp, is_new = excluded.is_new, "
+            "last_play = excluded.last_play",
+            {r2, (u32)std::ceil(max2 * p2 / 100) - 1});
         call(c, "DeepSpaceActiveList", {});
         t.expect_eq((u32)c.st.one("select count(*) from ds_area where area_id = ?", {locked}), 0u, "one condition short");
         c.st.q("update ds_area set exp = exp + 1 where area_id = ?", {r2});
@@ -189,7 +197,11 @@ NATIVE_TEST("deepspace/extras") {
         t.expect_eq(count_of(ac45), (int64_t)1, "type 45: the expeditions (goal 1: capped)");
         t.expect_eq(c.st.one("select count(*) from ds_log", {}), (int64_t)3, "three departures logged");
         u32 max = (u32)c.m.one("select max_exp from master_deep_space_area where id = ?", {area44});
-        c.st.q("insert or replace into ds_area (area_id, exp) values (?, ?)", {area44, max / 2});
+        c.st.q(
+            "insert into ds_area (area_id, exp) values (?, ?)"
+            " on conflict(area_id) do update set exp = excluded.exp, is_new = excluded.is_new, "
+            "last_play = excluded.last_play",
+            {area44, max / 2});
         t.expect_eq(count_of(ac44), (int64_t)(max / 2 * 100 / max), "type 44: the exploration rate");
         c.st.q("update ds_area set exp = ? where area_id = ?", {max, area44});
         t.expect_eq(count_of(ac44), (int64_t)100, "type 44: 100 %");

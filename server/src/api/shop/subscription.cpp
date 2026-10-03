@@ -55,8 +55,11 @@ void grant_plan(Ctx& ctx, u32 plan, u32 days, int64_t t) {
     int64_t closed = ctx.st.one("select ifnull(max(closed_at), 0) from subscription where plan_id = ?", {plan});
     int64_t from = closed > t ? closed : t;
     int64_t opened = closed > t ? ctx.st.one("select opened_at from subscription where plan_id = ?", {plan}) : t;
-    ctx.st.q("insert or replace into subscription (plan_id, opened_at, closed_at, updated_at) values (?, ?, ?, ?)",
-             {plan, opened, from + (int64_t)days * 86400, t});
+    ctx.st.q(
+        "insert into subscription (plan_id, opened_at, closed_at, updated_at) values (?, ?, ?, ?)"
+        " on conflict(plan_id) do update set opened_at = excluded.opened_at, closed_at = excluded.closed_at, "
+        "updated_at = excluded.updated_at",
+        {plan, opened, from + (int64_t)days * 86400, t});
     LOGI("server", "pass %u granted: %u days, until %s", plan, days, ctx.fmt_time(from + (int64_t)days * 86400).c_str());
 }
 

@@ -8,26 +8,29 @@
 #   battle-gacha   the port's restore session (port/scripts/restore_session.sh): soa.exe in process
 #   seeded         the emulator's session (emulator/scripts/emulator_session.sh): soa-emu.exe + soa-server.exe
 #   viewer-boot    the viewer's boot (emulator-viewer/scripts/viewer_boot.sh): soa-viewer.exe
+#   shard-login    the tests/diff shard `login` on the three Windows targets (soa-emu.exe +
+#                  soa-server.exe, soa.exe --server + soa-server.exe, soa.exe in process); OUT/login/report.txt
 # Needs: build-win/ (scripts/build.sh --windows) and the stage's data, once:
 #   scripts/windows-stage.sh --phone --viewer     (C:\soa-win; SOA_WIN_STAGE=/mnt/X/DIR elsewhere)
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
-[ $# -eq 3 ] || { sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+[ $# -eq 3 ] || { sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 test=$1 out=$2 tmp=$3
 stage=${SOA_WIN_STAGE:-/mnt/c/soa-win}
 case $test in
   battle-gacha) targets="soa" need="work/download-3.7.0 work/phone-3.7.0/PHONE.txt" ;;
   seeded) targets="soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   viewer-boot) targets="soa-viewer" need="work/extracted/xapk" ;;
+  shard-login) targets="soa soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   *) echo "windows-test: unknown test $test" >&2; exit 2 ;;
 esac
 [ -f build-win/CMakeCache.txt ] || { echo "FAIL: no build-win/ (scripts/build.sh --windows)"; exit 1; }
 for n in $need; do
   [ -e "$stage/$n" ] || { echo "FAIL: $stage/$n isn't staged (scripts/windows-stage.sh --phone --viewer)"; exit 1; }
 done
-# shellcheck disable=SC2086
 mkdir -p "$out"
+# shellcheck disable=SC2086
 scripts/build.sh --windows --target $targets > "$out/build-win.log" 2>&1 ||
   { tail -20 "$out/build-win.log"; echo "FAIL: the Windows build (see $out/build-win.log)"; exit 1; }
 scripts/windows-stage.sh --quick "$stage" > /dev/null
@@ -35,4 +38,9 @@ case $test in
   battle-gacha) exec control/run.py battle-gacha build-win/port/soa.exe "$out" "$tmp" ;;
   seeded) exec control/run.py seeded build-win/emulator/soa-emu.exe build-win/server/soa-server.exe "$out" ;;
   viewer-boot) exec emulator-viewer/scripts/viewer_boot.sh build-win/emulator-viewer/soa-viewer.exe "$out" ;;
+  shard-login)
+    # its three clients take their own slots (the gate's one is the driver's)
+    unset SOA_SLOT_HELD
+    SOA=$repo/build-win/port/soa.exe SOA_EMU=$repo/build-win/emulator/soa-emu.exe SOA_SERVER=$repo/build-win/server/soa-server.exe \
+      exec tests/diff/run.sh login --out "$out" ;;
 esac

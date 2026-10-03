@@ -117,7 +117,8 @@ A cross build from Linux (or WSL) with **llvm-mingw** (clang, libc++, the UCRT) 
 `soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop):
 `soa-server.exe --selftest`, `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests
 `win:battle-gacha` (the port's restore session, in process), `win:seeded` (`soa-emu.exe` against
-`soa-server.exe`: login, battle, gacha) and `win:viewer-boot` (`port/PLAN.md` 5b, "As built").
+`soa-server.exe`: login, battle, gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff
+shard on the three Windows targets) (`port/PLAN.md` 5b, "As built").
 
 ```sh
 # once: llvm-mingw (any recent ucrt ubuntu-x86_64 release of github.com/mstorsjo/llvm-mingw)
@@ -187,6 +188,9 @@ dirs) and the shared pre-downloaded phone hard-linked there by `scripts/windows/
 scripts/windows-test.sh battle-gacha OUT TMP     # = tools/gate.sh win:battle-gacha (T2; SKIP without build-win/)
 scripts/windows-test.sh seeded OUT TMP           # win:seeded
 scripts/windows-test.sh viewer-boot OUT TMP      # win:viewer-boot
+scripts/windows-test.sh shard-login OUT TMP      # win:shard-login: tests/diff's login, every target a .exe
+SOA=$PWD/build-win/port/soa.exe SOA_EMU=$PWD/build-win/emulator/soa-emu.exe \
+  SOA_SERVER=$PWD/build-win/server/soa-server.exe tests/diff/run.sh FLOW --out OUT   # any flow
 control/run.py battle-gacha build-win/port/soa.exe OUT TMP     # any session, given the .exe files
 control/run.py seeded build-win/emulator/soa-emu.exe build-win/server/soa-server.exe OUT
 emulator-viewer/scripts/viewer_boot.sh build-win/emulator-viewer/soa-viewer.exe OUT

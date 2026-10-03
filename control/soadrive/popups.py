@@ -47,6 +47,17 @@ def _signature_match(shot, crop, size, ref):
     return sum(abs(a - b) for a, b in zip(f, ref)) / len(f) / 255 < 0.06
 
 
+# The gacha result screen's title band (ガチャリザルト, the 600x60+65+250 crop scaled to 12x2 RGB): the
+# same on both of its pages (the characters, the chips) and on every target, 2026-10-03.
+GACHA_RESULT_TITLE = bytes.fromhex(
+    "1a4d801f70c41f6fc11a6dc3417ab54e7dae537fad3876b81b6dc31f6fc11f70c51a4e82152836153044153044163044152f43142f43142f43"
+    "153044163044153044153145152837")
+
+
+def is_gacha_result(shot):
+    return _signature_match(shot, "600x60+65+250", "12x2", GACHA_RESULT_TITLE)
+
+
 def is_login_bonus(shot):
     return _signature_match(shot, "560x170+85+120", "12x12", LOGIN_BONUS_TITLE)
 

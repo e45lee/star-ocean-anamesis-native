@@ -182,3 +182,10 @@ def test_the_gate_labels_host_gpu_failures(tmp_path):
     assert gate.host_gpu({"log": str(log)})
     log.write_text("FAIL: a step (not within 60s)\n")
     assert not gate.host_gpu({"log": str(log)})
+
+
+def test_gacha_result_probe(tmp_path):
+    from soadrive import popups
+    plain = str(tmp_path / "plain.png")
+    subprocess.run(["convert", "-size", "729x1296", "xc:#3060a0", plain], check=True)
+    assert not popups.is_gacha_result(plain)

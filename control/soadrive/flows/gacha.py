@@ -1,9 +1,10 @@
 """The gacha from home (PLAN-consolidate's flows/gacha.py): the footer's ガチャ -> the recommended
 tab's first banner -> 10連ガチャ -> 決定 -> SaleGacha -> the summon -> the results -> home. Used by
 the `seeded` flow and the `gacha` shard."""
+import os
 import re
 
-from .. import screens, ui370
+from .. import popups as _popups, screens, ui370
 
 HOME = (0.08, (screens.HOME_CHARACTER,))
 SCREENS = {
@@ -24,6 +25,22 @@ def open_gacha(s, shot="12-gacha"):
     s.shot(shot)
 
 
+def close_result(s, tries=6):
+    """The result list: 次へ, then 閉じる at the same spot, tapped (with a look in between) until the
+    result screen is gone (a tap on it is sometimes dropped: tests/diff shard:gacha's 17-gacha-closed
+    stayed on the chips page on one target in some runs, 2026-10-03)."""
+    probe = s.scratch("gacha-result-probe.png")
+    s.ctl("tap:" + ui370.GACHA_RESULT_NEXT, "wait:4000", "tap:" + ui370.GACHA_RESULT_NEXT, "wait:3000")
+    for i in range(tries):
+        s.send(["shot:" + probe])
+        if not (os.path.exists(probe) and _popups.is_gacha_result(probe)):
+            return True
+        s.note("the gacha result is still open: 閉じる again (%d)" % (i + 1))
+        s.ctl("tap:" + ui370.GACHA_RESULT_NEXT, "wait:3000")
+    s.miss("the gacha result didn't close")
+    return False
+
+
 def ten_draw(s, st_before, opened=False):
     """A 10-draw of the first recommended banner; checks the coins debited (against st_before, the
     state text before) and the ten draws recorded. opened: the gacha screen is open already."""
@@ -39,7 +56,7 @@ def ten_draw(s, st_before, opened=False):
     s.ctl("tap:" + ui370.SUMMON_START, "wait:12000", "tap:" + ui370.SUMMON_REVEAL, "wait:4000", "tap:" + ui370.SUMMON_REVEAL,
           "wait:4000", "tap:" + ui370.SUMMON_ALL_SKIP, "wait:5000")
     s.shot("16-gacha-result")
-    s.ctl("tap:" + ui370.GACHA_RESULT_NEXT, "wait:4000", "tap:" + ui370.GACHA_RESULT_NEXT, "wait:3000")
+    close_result(s)
     s.shot("17-gacha-closed")
     st3 = s.state("3-after-gacha")
     c2 = re.search(r" coins free (\d+) ", st_before)

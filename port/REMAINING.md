@@ -13,7 +13,6 @@ P3 + H (battle log from the client's own serializer, `InGameHooks` dropped), P4 
 | **P5b: `tests/diff/`** | port-vs-emulator flows compared by packets, server state and screenshots | task 3 |
 
 ## Next
-- **Paused (2026-10-03): an on-screen text box for the game's keyboard** (text entry, e.g. the new-player name), replacing the window-title-only feedback: `runtime/HANDOFF-text-overlay.md` has the spec, what the game does while its keyboard is open (the render thread waits, so the overlay must repaint from that thread), the design, the discarded WIP diff in its appendix, and ~5-7 h of remaining steps.
 1. **Control-script consolidation:** review `control/PLAN-consolidate.md`, then carry it out (the plan includes the runtime's GDB stub, step 7).
 2. **Rebuild tooling:** `decomp.sh --into <subsystem>` writing to `port/decomp/<subsystem>/`; per-subsystem scaffolding; a fresh profile ranking subsystems by guest time. (task 5)
 3. **W: a native Windows runner** (before N, the user 2026-10-02) **for the port, the emulator and the viewer** (and `soa-server`), each passing its checks on Windows. MinGW-w64 clang, vcpkg, ANGLE; port the HLE libc layer and guest memory/fault handling; audit `long`; runtime tests under Wine.

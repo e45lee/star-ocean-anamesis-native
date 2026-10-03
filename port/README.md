@@ -161,6 +161,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | `--size WxH`, `--landscape` | Initial window size. Default: portrait 9:16 at 90% of the desktop height (the game is a portrait phone game). `--landscape`: 16:9 instead. |
 | `--render-size S` | The window surface: `desktop` (default: the window's aspect ratio, scaled up to fill the desktop), `window` (the initial window size) or `WxH`. The game itself renders at its own resolution (720 wide, a 0.75 back buffer: the `--hires` natives went with revision 2; `--hires` / `--legacy-res` are accepted and do nothing). |
 | `--fullscreen` | Start in desktop fullscreen |
+| `--font PATH` | The keyboard text box's font (env `SOA_FONT`; default: IPAex Gothic, Noto Sans CJK, Droid Sans Fallback or `fc-match :lang=ja`; `none`: no box, the window title only); `runtime/README.md`, "Text entry" |
 | `--headless` / `--windowed` | `--headless`: don't show the window (env `SOA_HEADLESS=1`). It is the runtime's hidden host window (`app::HostConfig::hidden`, as in `soa-emu --headless`): it still renders at the same `--size` / `--render-size`, so screenshots, `--do` and `--control` work and the frames are the same. `--selftest` is headless unless `--windowed` / `SOA_HEADLESS=0`. |
 | `--shot S:PATH`, `--do S:CMD`, `--control FIFO` | Scripted screenshots and input (see `soa --help`). Drive a `--control` instance with `control/soactl.py FIFO tap:X:Y wait:MS wheel:X:Y:DY shot:PATH ...`; the port's own commands are in "Control commands". |
 | `--selftest [F]`, `--smoke`, `--list-native` | The self-tests (tests matching F), a quick library check, the native list |
@@ -189,7 +190,7 @@ Controls:
 | F11 | Fullscreen |
 | F12 | Screenshot, saved to the data directory |
 
-When the game asks for text (e.g. a name), type it: it shows in the window title. Enter confirms and Esc cancels. A click or Esc skips a movie.
+When the game asks for text (e.g. a name), type it: a text box at the bottom of the game image shows it (and so does the window title), with a counter against the field's maximum. Left / Right / Home / End move the cursor, Backspace / Delete delete, Ctrl+V pastes (cut to the field's maximum and, in a numeric field, to digits), an IME composes in the box (its candidate window opens next to it). Enter confirms and Esc cancels. The box needs a font with Japanese glyphs (README.md, "Setup"; `--font PATH` or `SOA_FONT` picks one, `--font none` turns the box off). A click or Esc skips a movie.
 
 ## Run options
 
@@ -240,7 +241,7 @@ Some content in the 3.7.0 master data refers to images that no longer exist anyw
 
 ## Control commands
 
-Port-only commands for `--control` (none is game behaviour), besides the shared ones (`tap:`, `drag:X1:Y1:X2:Y2[:MS]`, `wheel:`, `back`, `text:`, `shot:`, `wait:`, `quit`; `control/README.md`):
+Port-only commands for `--control` (none is game behaviour), besides the shared ones (`tap:`, `drag:X1:Y1:X2:Y2[:MS]`, `wheel:`, `back`, `text:`, `type:`, `compose:`, `key:`, `shot:`, `wait:`, `quit`; `control/README.md`; the text-entry ones: `runtime/README.md`, "Text entry"):
 
 | Command | What it does |
 |---|---|

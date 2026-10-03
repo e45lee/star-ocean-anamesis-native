@@ -39,9 +39,16 @@ if(SOA_NEED_RUNTIME)  # the JIT host runtime and what links it (not for a server
   find_path(SOA_EGL_INCLUDE_DIR EGL/egl.h REQUIRED)
   find_path(SOA_GLES_INCLUDE_DIR GLES2/gl2.h REQUIRED)
 
-  # ---- system libraries: libEGL / libGLESv2 (Mesa), by soname too, so the -dev packages aren't needed
-  find_library(SOA_EGL_LIBRARY NAMES EGL libEGL.so.1 REQUIRED)
-  find_library(SOA_GLESV2_LIBRARY NAMES GLESv2 libGLESv2.so.2 REQUIRED)
+  if(WIN32)
+    # ---- Windows: ANGLE from vcpkg (vcpkg.json feature "angle"; scripts/build.sh --windows)
+    find_package(unofficial-angle CONFIG REQUIRED)
+    set(SOA_EGL_LIBRARY unofficial::angle::libEGL)
+    set(SOA_GLESV2_LIBRARY unofficial::angle::libGLESv2)
+  else()
+    # ---- system libraries: libEGL / libGLESv2 (Mesa), by soname too, so the -dev packages aren't needed
+    find_library(SOA_EGL_LIBRARY NAMES EGL libEGL.so.1 REQUIRED)
+    find_library(SOA_GLESV2_LIBRARY NAMES GLESv2 libGLESv2.so.2 REQUIRED)
+  endif()
   add_library(soa::EGL INTERFACE IMPORTED)
   target_include_directories(soa::EGL INTERFACE ${SOA_EGL_INCLUDE_DIR})
   target_link_libraries(soa::EGL INTERFACE ${SOA_EGL_LIBRARY})

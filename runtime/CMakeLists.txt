@@ -57,7 +57,9 @@ target_link_libraries(soaruntime_iface INTERFACE
   soa::EGL
   soa::GLESv2
   ZLIB::ZLIB
-  pthread dl)
+  soa_compat
+  pthread
+  $<IF:$<PLATFORM_ID:Windows>,synchronization,dl>)  # Windows: WaitOnAddress (the guest's futex)
 
 add_library(soaruntime_objs OBJECT ${SOA_RUNTIME_SOURCES})
 target_link_libraries(soaruntime_objs PUBLIC soaruntime_iface)

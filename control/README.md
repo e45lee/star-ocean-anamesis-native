@@ -4,7 +4,7 @@
 
 | Tool | What |
 |---|---|
-| `soactl.py FIFO CMD...` | Sends commands to a running instance: `tap:X:Y`, `drag:X1:Y1:X2:Y2`, `wheel:X:Y:DY`, `back`, `text:STRING`, `shot:PATH`, `wait:MS`, `quit`; while the game's keyboard is open, test-only `type:TEXT`, `compose:TEXT` and `key:enter|escape|backspace|delete|left|right|home|end` drive the text box's editor (`runtime/README.md`, "Text entry"). The port also has native debug commands (`phase:`, `call:`, `uiset:`, `debugwin:`, `mission:`, `clock:`) that the emulators lack. (`soadrive/fifo.py`) |
+| `soactl.py FIFO CMD...` | (or `soactl.py [--windows-paths] tcp:HOST:PORT CMD...`, the TCP channel) Sends commands to a running instance: `tap:X:Y`, `drag:X1:Y1:X2:Y2`, `wheel:X:Y:DY`, `back`, `text:STRING`, `shot:PATH`, `wait:MS`, `quit`; while the game's keyboard is open, test-only `type:TEXT`, `compose:TEXT` and `key:enter|escape|backspace|delete|left|right|home|end` drive the text box's editor (`runtime/README.md`, "Text entry"). The port also has native debug commands (`phase:`, `call:`, `uiset:`, `debugwin:`, `mission:`, `clock:`) that the emulators lack. (`soadrive/fifo.py`) |
 | `flowctl.py` | The waits and flows as commands for shell scripts: `wait-log`, `tap-until` (tap until a log line appears), `wait-screen`, `login-popups` (closes the notice board and the LOGIN BONUS popup), `name-entry`. (`soadrive/milestones.py`, `popups.py`) |
 | `run.py [--target T] SESSION ARGS...` | Runs a named session (`soadrive/sessions/`); `run.py --list` lists them with their targets and the scripts that wrap them. |
 | `gdbclient.py`, `gdbinit-soa` | The guest's GDB stub (`--gdb HOST:PORT`; runtime/README.md "Debugging the guest with gdb"): `gdbclient.py` is a small protocol client for tests and scripts (stop, registers, memory, breakpoints by symbol, step, continue, detach; also a one-shot CLI), `gdbinit-soa` the gdb-multiarch setup. Tests: `control/tests/test_gdbclient.py`. Sessions attach it at a milestone through `soadrive/gdb.py` (`Config(gdb=True)`, `Run.gdb()`). |
@@ -18,7 +18,8 @@ One package for the port (`soa`, in-process server or `--server`) and the emulat
 
 | Module | What |
 |---|---|
-| `fifo.py` | the control FIFO: one write per batch, the screenshots waited for (and given up when the client died) |
+| `fifo.py` | the control FIFO: one write per batch, the screenshots waited for (and given up when the client died); a `tcp:HOST:PORT` address is the TCP channel instead (`--control tcp:...`, one connection per batch; `CLIENT_PATH`: the client's spelling of the shot paths) |
+| `winhost.py` | Windows clients from WSL (README.md "Windows"): a target given a `.exe` (`build-win/...`) runs the staged copy in `C:\soa-win` (`SOA_WIN_STAGE`), from there, with Windows paths, the TCP control channel (port 0, read from the log), its phone and server state on the Windows drive (linked back into the run's dirs), the shared phone hard-linked by `scripts/windows/link-phone.ps1`, the server's state read from a snapshot (SQLite can't share its locks across the drive), the client's environment through `WSLENV`. `Proc`'s RSS cap sees only the interop process for a `.exe` |
 | `proc.py` | a program under `timeout -k` in its own process group, stopped by PID (TERM, 10 s, KILL), the 6 GB RSS cap; free ports; `repo_file` (a worktree falls back to the main checkout's untracked files) |
 | `milestones.py` | the one wait implementation: whole-file predicates (`grep`, `count`), the `LOG.pos` cursor (`LogCursor`: what `flowctl.py wait-log` chains), `poll`, `tap_until_log` (no resend once another phase began) |
 | `screens.py`, `popups.py` | RMSE, probes, settled shots; the login popups (the LOGIN BONUS fingerprint) and the name dialog |

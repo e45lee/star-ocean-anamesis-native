@@ -10,11 +10,14 @@ interop. What differs from a Linux client:
   - the control channel is TCP (`--control tcp:127.0.0.1:PORT`, runtime/src/app/host.cpp): WSL's
     mirrored networking shares 127.0.0.1 with Windows (the FIFO is Linux-only; a named pipe can't be
     opened from WSL);
+  - its ports (`free_ports`) come from outside WSL's own ephemeral range (ip_local_port_range): in
+    mirrored networking Windows can't bind those (WSAEADDRINUSE);
   - its stdout / stderr come through the interop pipe into the log as on Linux; ending the interop
     process (TERM / KILL of the group) ends the Windows process.
 """
 import hashlib
 import os
+import random
 import shutil
 
 from .proc import REPO
@@ -64,9 +67,18 @@ def staged_binary(binary):
         rel = b[i + 1:]
     dst = os.path.join(STAGE, rel)
     if os.path.exists(b):
-        if not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(b) or os.path.getsize(dst) != os.path.getsize(b):
+        # (whole seconds: the drive keeps no finer mtimes through WSL)
+        if not os.path.exists(dst) or int(os.path.getmtime(dst)) < int(os.path.getmtime(b)) or os.path.getsize(dst) != os.path.getsize(b):
             os.makedirs(os.path.dirname(dst), exist_ok=True)
-            shutil.copy2(b, dst)
+            try:
+                shutil.copy2(b, dst)
+            except OSError:
+                # Windows refuses to replace a program that is running (another run's): this build
+                # goes beside it under its own name (same directory: the repository is found upwards)
+                st = os.stat(b)
+                dst = os.path.splitext(dst)[0] + ".%x-%x.exe" % (int(st.st_mtime), st.st_size)
+                if not os.path.exists(dst):
+                    shutil.copy2(b, dst)
     if not os.path.exists(dst):
         raise FileNotFoundError("%s: not built (scripts/build.sh --windows) nor staged (scripts/windows-stage.sh)" % binary)
     return dst
@@ -91,3 +103,78 @@ def local_dir(p):
     os.makedirs(os.path.dirname(a), exist_ok=True)
     os.symlink(d, a)
     return d
+
+
+def free_ports(n, lo=30000, hi=44000):
+    """n ports for a Windows program to listen on: random, below WSL's ephemeral range (mirrored
+    networking reserves that for WSL's sockets), not listened on here. Not tried with a bind: in
+    mirrored networking a port bound and closed in WSL stays refused to Windows for a while
+    (WSAEADDRINUSE), so a caller retries on that instead (a Windows program's listeners don't
+    show here). A control channel takes port 0 instead (control_port)."""
+    try:
+        with open("/proc/sys/net/ipv4/ip_local_port_range") as f:
+            hi = min(hi, int(f.read().split()[0]) - 1)
+    except (OSError, ValueError, IndexError):
+        pass
+    used = set()
+    for t in ("/proc/net/tcp", "/proc/net/tcp6"):
+        try:
+            with open(t) as f:
+                for line in f.readlines()[1:]:
+                    used.add(int(line.split()[1].rsplit(":", 1)[1], 16))
+        except (OSError, ValueError, IndexError):
+            pass
+    out = []
+    while len(out) < n:
+        p = random.randint(lo, hi)
+        if p not in used and p not in out:
+            out.append(p)
+    return out
+
+
+IN_USE = "Only one usage of each socket address"
+
+
+def control_port(log):
+    """The port a Windows program's `--control tcp:127.0.0.1:0` listens on, from its log line
+    ("I/control: listening on tcp:127.0.0.1:PORT"); None until it is there."""
+    try:
+        with open(log, errors="replace") as f:
+            for line in f:
+                if line.startswith("I/control: listening on tcp:"):
+                    return int(line.rsplit(":", 1)[1])
+    except (OSError, ValueError):
+        pass
+    return None
+
+
+def make_phone(dst, env):
+    """A Windows run's phone (targets.make_phone): SOA_PHONE resolved as scripts/shared-phone.sh does
+    (the stage's shared phone by default); a stamped phone linked by scripts/windows/link-phone.ps1
+    (Windows hard links: seconds, where cp -al through WSL takes minutes), any other one copied
+    (shared_phone_link). Returns (a note, whether the data is on it)."""
+    import subprocess
+    from .targets import Abort
+    r = subprocess.run(["bash", "-c", '. scripts/shared-phone.sh; shared_phone_resolve "$1" >&2; echo "$SOA_PHONE"; '
+                        'echo "$SHARED_PHONE_COPY"', "-", REPO], cwd=REPO, capture_output=True, text=True, env=env)
+    lines = r.stdout.splitlines()
+    src, copy = (lines[0] if lines else ""), (lines[1].split() if len(lines) > 1 else [])
+    if r.returncode != 0:
+        raise Abort("preparing the phone: " + (r.stdout + r.stderr).strip()[-300:])
+    if not src:
+        os.makedirs(os.path.join(dst, "data", "shared_prefs"), exist_ok=True)
+        return "empty (the client downloads)" + (": " + r.stderr.strip()[-200:] if r.stderr.strip() else ""), False
+    if os.path.isfile(os.path.join(src, "PHONE.txt")) and on_drive(src) and on_drive(os.path.dirname(dst)):
+        ps = os.path.join(REPO, "scripts", "windows", "link-phone.ps1")
+        r = subprocess.run(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", winpath(ps), winpath(src),
+                            winpath(dst)] + copy, capture_output=True, text=True)
+        if r.returncode != 0:
+            raise Abort("linking the phone (link-phone.ps1): " + (r.stdout + r.stderr).strip()[-400:])
+        os.makedirs(os.path.join(dst, "data", "shared_prefs"), exist_ok=True)
+        return "linked from %s (%s)" % (src, r.stdout.strip().splitlines()[-1] if r.stdout.strip() else "?"), True
+    r = subprocess.run(["bash", "-c", '. scripts/shared-phone.sh; shared_phone_link "$1" "$2"', "-", src, dst], cwd=REPO,
+                       capture_output=True, text=True, env=env)
+    if r.returncode != 0:
+        raise Abort("preparing the phone: " + (r.stdout + r.stderr).strip()[-300:])
+    return "copied from %s" % src, True
+

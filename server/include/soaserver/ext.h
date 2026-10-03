@@ -231,8 +231,12 @@ Value achievement_state(Ctx& c);
 bool subscription_active(Ctx& c, u32 type, int64_t t);
 Value subscription_state(Ctx& c);
 // A present in the box (the core's presents table). `text` is the line the box shows for it
-// (sent as free_text_message_id; empty = built from the reason, see present_text).
+// (sent as free_text_message_id; empty = built from the reason, see present_text), stored in the
+// present's `text` column (NULL when empty).
 void add_present(Ctx& c, u32 type, u32 id, u32 num, u32 reason_type, u32 reason_param, const std::string& text = "");
+// A present's content_id as stored: NULL for a wallet type's 0 (3 FOL, 4 free coins: no content),
+// else the id. Every writer of `presents` binds it (add_present, MissionEnd's clear presents).
+Arg present_content_id(u32 type, u32 id);
 // ---- present texts (present_texts.cpp) ----------------------------------------------------
 // (b) The present box shows each present's free_text_message_id string verbatim as its line
 // (CPresentbox::CreateAllPresentList copies it into PresentParameter+0x68, the cell sets it as
@@ -249,8 +253,9 @@ enum PresentReason : u32 {
 std::string text(Sql& m, const std::string& message_id);
 // "%s" / "%d" in a Present_box template replaced in order.
 std::string format_present(const std::string& tmpl, const std::string& s, int64_t d = -1);
-// The line of present `id`: its stored text, else one built from reason_type / reason_param.
-std::string present_text(Sql& st, Sql& m, int64_t id, u32 reason_type, u32 reason_param);
+// A present's line: its stored text (the row's `text`), else one built from reason_type /
+// reason_param.
+std::string present_text(Sql& m, const std::string& stored, u32 reason_type, u32 reason_param);
 // A request refused (not enough materials, FOL, ...): nothing changes; the core's error path
 // (agent server-missions) rolls the request back, answers the player state only and the client
 // shows its own error dialog, master_text error_message_text_<code>. Codes (b: the texts):

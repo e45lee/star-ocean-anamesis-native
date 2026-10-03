@@ -30,9 +30,17 @@ struct TempDb {
     explicit TempDb(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
     ~TempDb() { remove_all(); }
     void remove_all() {
-        for (const char* suffix :
-             {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal", ".bak-v1", ".bak-v1-journal", ".bak-v2", ".bak-v2-journal", ".bak-v3",
-              ".bak-v3-journal", ".bak-v4", ".bak-v4-journal", ".bak-v5", ".bak-v5-journal", ".bak-v6", ".bak-v6-journal"})
+        for (const char* suffix : {"",        "-wal",
+                                   "-shm",    "-journal",
+                                   ".bak-v0", ".bak-v0-journal",
+                                   ".bak-v1", ".bak-v1-journal",
+                                   ".bak-v2", ".bak-v2-journal",
+                                   ".bak-v3", ".bak-v3-journal",
+                                   ".bak-v4", ".bak-v4-journal",
+                                   ".bak-v5", ".bak-v5-journal",
+                                   ".bak-v6", ".bak-v6-journal",
+                                   ".bak-v7", ".bak-v7-journal",
+                                   ".bak-v8", ".bak-v8-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -129,15 +137,16 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)52,
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51,
                 "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
-                "less play_ext, plus play_member and ds_ship_member (S7)");
+                "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
                 "gear_items' slot index (S5)");
     t.expect_eq(a.one("select count(*) from party_set", {}), (int64_t)0, "no player: no party set rows (the seed / CreatePlayer add them)");
-    for (const char* gone : {"view_flags", "gear", "box_gacha", "planets", "sphere_meta", "roster_ext", "assist", "party", "play_ext"})
+    for (const char* gone :
+         {"view_flags", "gear", "box_gacha", "planets", "sphere_meta", "roster_ext", "assist", "party", "play_ext", "present_texts"})
         t.expect_eq(a.one("select count(*) from sqlite_master where name = ?", {gone}), (int64_t)0, (std::string(gone) + " not there").c_str());
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'ds_state'", {}), (int64_t)1, "ds_state there");
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'wire_device'", {}), (int64_t)1, "wire_device on every route");
@@ -890,6 +899,83 @@ NATIVE_TEST("server/schema-migrate-v7") {
     bak.close();
 }
 
+// Version 8 (PLAN-schema S8: presents). (1) v0 -> v8 at once, against the same file migrated to 7,
+// with planted cases: present_texts merged as `text` (the fixture's two login-bonus lines; '' ->
+// NULL; an orphan line dropped), a wallet type's content_id 0 -> NULL (the fixture's coins; a FOL
+// present; a coin present naming 5 keeps it), an item's content_id kept, a NULL num -> 0, the
+// AUTOINCREMENT counter kept above max(id); every other table's rows equal. (2) v7 -> v8 without
+// the master (.bak-v7).
+NATIVE_TEST("server/schema-migrate-v8") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v8 -------------------------------------------------------------------------------
+    TempDb ref_file("v8-ref"), old("v8");
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    t.expect_eq(rows_over(db, "presents", "id, content_type, content_id"), (std::vector<std::string>{"1:1|1:4|1:0|", "1:2|1:4|1:0|"}),
+                "the fixture's presents: two coin presents");
+    // the S8 dirt, in both files
+    for (Sql* d : {&ref, &db})
+        d->exec(
+            "insert into presents (id, content_type, content_id, num, reason_type, reason_param, created_at, received_at) values "
+            "(3, 1, 1234, 1, 2, 77, 1790841700, 1790841800), (4, 3, 0, null, 3, 5, 1790841701, null), (5, 4, 5, 10, 7, 6, 1790841702, null);"
+            "insert into present_texts (id, text) values (3, ''), (99, 'orphan');"
+            "update sqlite_sequence set seq = 50 where name = 'presents'");
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 7, m), true, "the reference: migrated to 7");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 8, m), true, "migrated to 8");
+    t.expect_eq(state::user_version(db.h), 8, "user_version 8");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
+    std::vector<std::string> tables;
+    ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+          [&](const Row& r) { tables.push_back(r.s("name")); });
+    auto ref_rows = rows_of(ref), db_rows = rows_of(db);
+    for (const std::string& table : tables) {
+        if (table == "presents" || table == "present_texts") continue;
+        if (ref_rows[table] != db_rows[table]) t.fail("%s: rows changed", table.c_str());
+    }
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51, "51 tables");
+    t.expect_eq(db.one("select count(*) from sqlite_master where name = 'present_texts' or name like 'new_%'", {}), (int64_t)0,
+                "present_texts gone, no new_X");
+    // presents: (id, content_type, content_id, num, reason_type, reason_param, text, created_at, received_at)
+    t.expect_eq(rows_over(db, "presents", "*"),
+                (std::vector<std::string>{"1:1|1:4|5:|1:500|1:1|1:3511586374|3:通常ログインボーナス 1日目|1:1790841480|5:|",
+                                          "1:2|1:4|5:|1:250|1:1|1:3511586374|3:通常ログインボーナス 2日目|1:1790841675|5:|",
+                                          "1:3|1:1|1:1234|1:1|1:2|1:77|5:|1:1790841700|1:1790841800|", "1:4|1:3|5:|1:0|1:3|1:5|5:|1:1790841701|5:|",
+                                          "1:5|1:4|1:5|1:10|1:7|1:6|5:|1:1790841702|5:|"}),
+                "presents ⟕ present_texts");
+    t.expect_eq(db.one("select seq from sqlite_sequence where name = 'presents'", {}), (int64_t)50, "the AUTOINCREMENT counter kept");
+    t.expect_eq(db.exec("insert into presents (content_type, num, reason_type, created_at) values (4, 1, 1, 0)"), true, "a new present");
+    t.expect_eq(db.one("select max(id) from presents", {}), (int64_t)51, "its id follows the counter");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    if (m)
+        for (const auto& d : state::check(db.h, m)) t.fail("%s", state::describe(d).c_str());
+    ref.close();
+    db.close();
+
+    // ---- (2) v7 -> v8, without the master -------------------------------------------------------------
+    TempDb v7("v8-from-v7");
+    if (!write_fixture(t, v7.path)) return;
+    Sql f;
+    if (!f.open(v7.path, false)) return t.fail("open v7");
+    t.expect_eq(state::open_and_migrate(f.h, v7.path, 7, m), true, "migrated to 7");
+    f.close();
+    unlink((v7.path + ".bak-v0").c_str());
+    if (!f.open(v7.path, false)) return t.fail("reopen v7");
+    t.expect_eq(state::user_version(f.h), 7, "a version 7 file");
+    t.expect_eq(state::open_and_migrate(f.h, v7.path, 8), true, "v7 -> v8");
+    t.expect_eq(state::user_version(f.h), 8, "user_version 8");
+    t.expect_eq(f.one("select count(*) from presents where text is not null and content_id is null", {}), (int64_t)2, "the two lines merged");
+    t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+    f.close();
+    Sql bak;
+    if (!bak.open(v7.path + ".bak-v7", true)) return t.fail("no %s.bak-v7", v7.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 7, "the backup is version 7");
+    t.expect_eq(bak.one("select count(*) from present_texts", {}), (int64_t)2, "the backup keeps present_texts");
+    bak.close();
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;
@@ -1004,6 +1090,9 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(rc("update player set level = 'high'"), SQLITE_CONSTRAINT_DATATYPE, "STRICT player");
     t.expect_eq(rc("update items set level = 'high' where uid = " + item1), SQLITE_CONSTRAINT_DATATYPE, "STRICT items");
     t.expect_eq(rc("update gear_items set slot = 'high' where uid = " + gear_set), SQLITE_CONSTRAINT_DATATYPE, "STRICT gear_items");
+    t.expect_eq(rc("update presents set num = 'many'"), SQLITE_CONSTRAINT_DATATYPE, "STRICT presents (S8)");
+    t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
+                "a present has its created_at (S8)");
 
     // ON DELETE SET NULL
     t.expect_eq(rc("delete from items where uid = " + item1), SQLITE_OK, "an item deleted");

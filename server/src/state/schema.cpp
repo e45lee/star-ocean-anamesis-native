@@ -980,6 +980,59 @@ where p.id = 1 and ifnull(p.mission_id, 0) != 0)");
     return ok;
 }
 
+// ---- step 8: presents (PLAN-schema S8, finding F3) ---------------------------------------------
+// A present's box line was a table of its own (`present_texts`, keyed by the present's id, written
+// by ext::add_present only when it had a line: the module couldn't add a column to the core's
+// table). It is the present's `text` column now (NULL: built from the reason when the box is
+// read); `present_texts` is gone. `presents` is rebuilt STRICT (3.2): the wallet types (content
+// type 3 FOL, 4 free coins: docs/api.md "Content types") name no content, so their content_id 0 is
+// NULL ("none" is NULL, 3.1; the readers read it as 0). No foreign key: content_id is a master
+// reference of the type's table (polymorphic), and nothing references a present.
+const char* const kPresents[] = {
+    // CPresentBoxInfo (b): a present in the box (received_at NULL) or received; its line
+    // (free_text_message_id) when stored
+    R"(create table new_presents (
+  id integer primary key autoincrement,
+  content_type integer not null,
+  content_id integer,
+  num integer not null,
+  reason_type integer not null,
+  reason_param integer,
+  text text,
+  created_at integer not null,
+  received_at integer
+) strict)",
+};
+
+// Step 8's data mapping (PLAN-schema S8), with the conventions of 4.1 (each case logged with its
+// count):
+//   presents ⟕ present_texts -> new_presents: text from present_texts ('' -> NULL: the reader
+//     built the line for an empty one, as for none); content_id of a wallet type (3, 4) 0 ->
+//     NULL; a NULL in a not-null column (content_type, num, reason_type, created_at) -> 0 (what
+//     the readers read); a present_texts row without a present -> dropped (nothing read it). The
+//     AUTOINCREMENT counter is kept (sqlite_sequence: a present's id is never reused).
+bool rebuild_presents(sqlite3* db, sqlite3*) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from present_texts where id not in (select id from presents)", "present_texts", "no present -> dropped", 8);
+    log_count(db, "select count(*) from presents where content_type in (3, 4) and content_id = 0", "presents.content_id",
+              "0 of a wallet type -> NULL", 8);
+    log_count(db, "select count(*) from presents where content_type is null or num is null or reason_type is null or created_at is null", "presents",
+              "NULL in a not-null column -> 0", 8);
+    const int64_t seq = count_of(db, "select ifnull(max(seq), 0) from sqlite_sequence where name = 'presents'");
+
+    bool ok = run(db, R"(
+insert into new_presents (id, content_type, content_id, num, reason_type, reason_param, text, created_at, received_at)
+select p.id, ifnull(p.content_type, 0),
+  case when p.content_type in (3, 4) then nullif(p.content_id, 0) else p.content_id end,
+  ifnull(p.num, 0), ifnull(p.reason_type, 0), p.reason_param, nullif(t.text, ''), ifnull(p.created_at, 0), p.received_at
+from presents p left join present_texts t on t.id = p.id order by p.id)");
+    for (const char* sql : {"drop table present_texts", "drop table presents", "alter table new_presents rename to presents"})
+        ok = ok && run(db, sql);
+    // the counter: at least the old one (the inserts set it to the largest id)
+    if (ok && seq) ok = run(db, "update sqlite_sequence set seq = max(seq, ?) where name = 'presents'", {Bound::integer(seq)});
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1011,6 +1064,10 @@ const std::vector<Step>& steps() {
          "ds_log with its id (PLAN-schema S7)",
          {std::begin(kPlay), std::end(kPlay)},
          rebuild_play},
+        {8,
+         "presents: present_texts merged into presents (text), presents rebuilt STRICT, a wallet present's content_id NULL (PLAN-schema S8)",
+         {std::begin(kPresents), std::end(kPresents)},
+         rebuild_presents},
     };
     return s;
 }

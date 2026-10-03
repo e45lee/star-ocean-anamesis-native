@@ -9,7 +9,7 @@ The achievements are `../presents/achievements.cpp`.
 
 **Hooks and their order** (`../../core/modules.cpp`; `soa-server --list-hooks`): `login_bonus`'s player-load hook is the first module hook (so its default `Player.tutorial_status` is set before the others read the Player map), then `achievements`', then `daily`'s.
 
-**State**: `login_bonus` (id, day = the last page granted, last_at; the core's schema), `player.login_bonus_popup_pending` (a counters key before PLAN-schema S3), `premium_pass` and `favor_bonus_state` (`daily`'s schema); the presents go to `presents` / `present_texts` (`../presents/`). The favor levels come from `../favor/favor.h`.
+**State**: `login_bonus` (id, day = the last page granted, last_at; the core's schema), `player.login_bonus_popup_pending` (a counters key before PLAN-schema S3), `premium_pass` and `favor_bonus_state` (`daily`'s schema); the presents go to `presents` (with their line in `text`; `../presents/`). The favor levels come from `../favor/favor.h`.
 
 **Rules**: docs/server-rules.md "7. Login bonus", "Login bonus" (under "Growth and economy"), "Premium and favor login bonuses".
 

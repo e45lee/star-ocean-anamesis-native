@@ -40,8 +40,7 @@ NATIVE_TEST("daily/premium-favor-bonus") {
             c.m.one("select count(*) from master_premium_login_bonus_contents where master_premium_login_bonus_id = ? and order_idx = 1", {pass});
         t.expect_eq(c.st.one("select count(*) from presents", {}) - n0, day1, "day-1 presents");
         std::string line;
-        c.st.q("select t.text from present_texts t join presents p on p.id = t.id where p.reason_type = 6", {},
-               [&](const Row& r) { line = r.s("text"); });
+        c.st.q("select text from presents where reason_type = 6", {}, [&](const Row& r) { line = r.s("text"); });
         t.expect_eq(line, std::string("プレミアムログインボーナス 1日目"), "premium present line");
         // same day: no second page
         d = player_load_data(c);

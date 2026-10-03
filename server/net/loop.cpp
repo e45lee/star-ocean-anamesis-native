@@ -5,10 +5,12 @@
 
 #include <cstring>
 
-#include "sock.h"
+#include "soa_compat/sock.h"
 #include "soaserver/log.h"
 
 namespace soa::server::net {
+
+namespace sock = soa::compat::sock;
 
 #define NLOG(level, ...)                                                                  \
     do {                                                                                  \

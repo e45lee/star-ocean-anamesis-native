@@ -20,8 +20,6 @@ set(CMAKE_RANLIB "${_soa_llvm_mingw}/bin/llvm-ranlib" CACHE FILEPATH "")
 # One self-contained .exe: libc++, libunwind and winpthreads linked in (only Windows' own DLLs,
 # UCRT included, stay dynamic), so it runs from anywhere, WSL interop included.
 set(CMAKE_EXE_LINKER_FLAGS_INIT "-static")
-set(CMAKE_FIND_ROOT_PATH "${_soa_llvm_mingw}/x86_64-w64-mingw32")
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+# The target's own files (cmake/compat.cmake finds MinGW's binmode.o there). Packages come from
+# vcpkg's installed tree, which its toolchain adds to the search paths.
+set(SOA_MINGW_SYSROOT "${_soa_llvm_mingw}/x86_64-w64-mingw32" CACHE PATH "")

@@ -1,5 +1,5 @@
-// sock.h: BSD sockets on Linux, Winsock on Windows. Our code.
-#include "sock.h"
+// soa_compat/sock.h: BSD sockets on Linux, Winsock on Windows.
+#include "soa_compat/sock.h"
 
 #include <cerrno>
 #include <cstring>
@@ -10,7 +10,7 @@
 #include <unistd.h>
 #endif
 
-namespace soa::server::net::sock {
+namespace soa::compat::sock {
 
 #ifdef _WIN32
 
@@ -22,18 +22,21 @@ bool started() {
     }();
     return ok;
 }
-bool set_nonblocking(SOCKET s) {
-    u_long one = 1;
-    return ioctlsocket(s, FIONBIO, &one) == 0;
-}
 }  // namespace
 
-int tcp_socket(bool nonblocking) {
+bool startup() { return started(); }
+
+bool set_nonblocking(int fd, bool on) {
+    u_long v = on;
+    return ioctlsocket((SOCKET)fd, FIONBIO, &v) == 0;
+}
+
+int tcp_socket(bool nonblocking, int family) {
     if (!started()) return -1;
     // WSA_FLAG_NO_HANDLE_INHERIT: close-on-exec
-    SOCKET s = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, nullptr, 0, WSA_FLAG_OVERLAPPED | WSA_FLAG_NO_HANDLE_INHERIT);
+    SOCKET s = WSASocketW(family, SOCK_STREAM, IPPROTO_TCP, nullptr, 0, WSA_FLAG_OVERLAPPED | WSA_FLAG_NO_HANDLE_INHERIT);
     if (s == INVALID_SOCKET) return -1;
-    if (nonblocking && !set_nonblocking(s)) {
+    if (nonblocking && !set_nonblocking((int)s, true)) {
         closesocket(s);
         return -1;
     }
@@ -43,7 +46,7 @@ int tcp_socket(bool nonblocking) {
 int accept_nonblocking(int listen_fd) {
     SOCKET s = ::accept((SOCKET)listen_fd, nullptr, nullptr);
     if (s == INVALID_SOCKET) return -1;
-    set_nonblocking(s);
+    set_nonblocking((int)s, true);
     set_nodelay((int)s);
     return (int)s;
 }
@@ -67,6 +70,7 @@ ssize_t recv(int fd, void* buf, size_t n) { return ::recv((SOCKET)fd, (char*)buf
 ssize_t send(int fd, const void* buf, size_t n) { return ::send((SOCKET)fd, (const char*)buf, (int)(n > 0x7fffffff ? 0x7fffffff : n), 0); }
 
 bool would_block() { return WSAGetLastError() == WSAEWOULDBLOCK; }
+bool connect_in_progress() { return WSAGetLastError() == WSAEWOULDBLOCK; }
 bool interrupted() { return WSAGetLastError() == WSAEINTR; }
 
 std::string last_error() {
@@ -89,7 +93,14 @@ int poll(PollFd* fds, size_t n, int timeout_ms) {
 
 #else
 
-int tcp_socket(bool nonblocking) { return ::socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC | (nonblocking ? SOCK_NONBLOCK : 0), 0); }
+bool startup() { return true; }
+
+int tcp_socket(bool nonblocking, int family) { return ::socket(family, SOCK_STREAM | SOCK_CLOEXEC | (nonblocking ? SOCK_NONBLOCK : 0), 0); }
+
+bool set_nonblocking(int fd, bool on) {
+    int f = fcntl(fd, F_GETFL);
+    return f >= 0 && fcntl(fd, F_SETFL, on ? f | O_NONBLOCK : f & ~O_NONBLOCK) == 0;
+}
 
 int accept_nonblocking(int listen_fd) {
     int fd = accept4(listen_fd, nullptr, nullptr, SOCK_NONBLOCK | SOCK_CLOEXEC);
@@ -119,6 +130,7 @@ ssize_t recv(int fd, void* buf, size_t n) { return ::recv(fd, buf, n, 0); }
 ssize_t send(int fd, const void* buf, size_t n) { return ::send(fd, buf, n, MSG_NOSIGNAL); }
 
 bool would_block() { return errno == EAGAIN || errno == EWOULDBLOCK; }
+bool connect_in_progress() { return errno == EINPROGRESS; }
 bool interrupted() { return errno == EINTR; }
 std::string last_error() { return strerror(errno); }
 
@@ -129,4 +141,4 @@ int poll(PollFd* fds, size_t n, int timeout_ms) {
 
 #endif
 
-}  // namespace soa::server::net::sock
+}  // namespace soa::compat::sock

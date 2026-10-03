@@ -239,6 +239,9 @@ int main(int argc, char** argv) {
     if (selftest) {
         // The unit tests use their own scratch servers; the live server stays off.
         fprintf(stderr, "soa-server: repo %s\n", c.repo_roots.empty() ? "(not found)" : c.repo_roots[0].c_str());
+#ifdef _WIN32
+        mkdir("/tmp", 0755);  // the tests' scratch files are /tmp/...: \tmp on the current drive here
+#endif
         auto [ran, failed] = soa::server::testing::run_tests(filter, 1, true, shuffle);
         return failed ? 1 : 0;
     }

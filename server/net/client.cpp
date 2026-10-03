@@ -7,9 +7,11 @@
 #include "game.h"
 #include "http.h"
 #include "ninja/ninja_ref.h"
-#include "sock.h"
+#include "soa_compat/sock.h"
 
 namespace soa::server::net {
+
+namespace sock = soa::compat::sock;
 
 namespace {
 

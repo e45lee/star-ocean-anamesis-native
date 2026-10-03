@@ -46,23 +46,25 @@ void th_time(Cpu& c) {
     if (out) *(s64*)out = t;
 }
 
+// (the guest's timeval / timespec start with a 64-bit tv_sec: written as such, not through the
+// host's struct, whose tv_sec is 32-bit in a Windows timeval)
 void th_gettimeofday(Cpu& c) {
     u64 tv = c.x(0);
     g_gettimeofday(c);
-    if ((s32)c.x(0) == 0 && tv) ((timeval*)tv)->tv_sec += g_offset.load(std::memory_order_relaxed);
+    if ((s32)c.x(0) == 0 && tv) *(s64*)tv += g_offset.load(std::memory_order_relaxed);
 }
 
 void th_clock_gettime(Cpu& c) {
     u64 clk = c.x(0), ts = c.x(1);
     g_clock_gettime(c);
-    if ((s32)c.x(0) == 0 && ts && is_realtime(clk)) ((timespec*)ts)->tv_sec += g_offset.load(std::memory_order_relaxed);
+    if ((s32)c.x(0) == 0 && ts && is_realtime(clk)) *(s64*)ts += g_offset.load(std::memory_order_relaxed);
 }
 
 void th_syscall(Cpu& c) {
     u64 nr = c.x(0), clk = c.x(1), ts = c.x(2);
     g_syscall(c);
     if (nr == 113 /* arm64 clock_gettime */ && (s64)c.x(0) == 0 && ts && is_realtime(clk))
-        ((timespec*)ts)->tv_sec += g_offset.load(std::memory_order_relaxed);
+        *(s64*)ts += g_offset.load(std::memory_order_relaxed);
 }
 
 }  // namespace

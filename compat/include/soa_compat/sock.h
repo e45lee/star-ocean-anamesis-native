@@ -1,5 +1,7 @@
-// The socket calls of the wire layer (loop.cpp, client.cpp), portable: BSD sockets on Linux,
-// Winsock on Windows (port/PLAN.md 5b, W). Sockets are ints on both (a Winsock SOCKET handle fits).
+// Host TCP sockets, portable: BSD sockets on Linux, Winsock on Windows (port/PLAN.md 5b, W).
+// Used by soa-server's wire layer (server/net: loop.cpp, client.cpp) and the 3.7.0 platform's HTTP
+// client (platform370/src/http_370.cpp). Sockets are ints on both (a Winsock SOCKET handle fits).
+// Not the guest's sockets: those are the runtime's HLE (runtime/src/hle/net_win32.cpp on Windows).
 #pragma once
 
 #ifdef _WIN32
@@ -19,10 +21,13 @@
 #include <string>
 #include <sys/types.h>
 
-namespace soa::server::net::sock {
+namespace soa::compat::sock {
 
-// A TCP/IPv4 socket, close-on-exec, non-blocking if asked; -1 on failure. Starts Winsock first.
-int tcp_socket(bool nonblocking);
+// Starts Winsock (once; nothing on Linux): before getaddrinfo and the like. tcp_socket does it too.
+bool startup();
+// A TCP socket (IPv4 unless `family` says otherwise), close-on-exec, non-blocking if asked; -1 on
+// failure. Starts Winsock first.
+int tcp_socket(bool nonblocking, int family = AF_INET);
 // accept() on a listening socket; the new socket non-blocking, close-on-exec, TCP_NODELAY. -1: none.
 int accept_nonblocking(int listen_fd);
 int close(int fd);
@@ -34,8 +39,12 @@ void set_nodelay(int fd);
 void set_reuse_addr(int fd);
 ssize_t recv(int fd, void* buf, size_t n);
 ssize_t send(int fd, const void* buf, size_t n);  // never raises SIGPIPE
-// The last call failed only because it would block / was interrupted.
+// fcntl(O_NONBLOCK) / FIONBIO.
+bool set_nonblocking(int fd, bool on);
+// The last call failed only because it would block / was interrupted / a non-blocking connect is
+// under way (EINPROGRESS; WSAEWOULDBLOCK on Windows).
 bool would_block();
+bool connect_in_progress();
 bool interrupted();
 std::string last_error();
 
@@ -46,4 +55,4 @@ struct PollFd {
 // poll(): POLLIN / POLLOUT / POLLERR / POLLHUP / POLLNVAL as <poll.h> (WSAPoll on Windows).
 int poll(PollFd* fds, size_t n, int timeout_ms);
 
-}  // namespace soa::server::net::sock
+}  // namespace soa::compat::sock

@@ -24,8 +24,9 @@ foreach(_f ${_p370_check})
   foreach(_l ${_incs})
     string(REGEX REPLACE "^[ \t]*#[ \t]*include[ \t]*\"([^\"]*)\".*$" "\\1" _inc "${_l}")
     if(_inc MATCHES "\\.\\." OR NOT (EXISTS ${SOA_PLATFORM370_DIR}/src/${_inc} OR EXISTS ${SOA_PLATFORM370_DIR}/include/${_inc}
-                                     OR EXISTS ${SOA_REPO_DIR}/runtime/src/${_inc} OR EXISTS ${_dir}/${_inc}))
-      message(FATAL_ERROR "platform370/ must not include \"${_inc}\" (${_f}): it includes only platform370/ and runtime/src")
+                                     OR EXISTS ${SOA_REPO_DIR}/runtime/src/${_inc} OR EXISTS ${SOA_REPO_DIR}/compat/include/${_inc}
+                                     OR EXISTS ${_dir}/${_inc}))
+      message(FATAL_ERROR "platform370/ must not include \"${_inc}\" (${_f}): it includes only platform370/, runtime/src and compat/include")
     endif()
   endforeach()
 endforeach()

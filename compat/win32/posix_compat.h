@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <time.h>
 
 #ifndef O_CLOEXEC
 #define O_CLOEXEC _O_NOINHERIT
@@ -45,6 +46,10 @@ char* soa_realpath(const char* path, char* resolved);
 int soa_rename(const char* from, const char* to);
 // gettid: the Win32 thread id.
 int soa_gettid(void);
+// pread: a positional read (ReadFile with an offset; the descriptor's position is left alone).
+ssize_t soa_pread(int fd, void* buf, size_t n, long long offset);
+// strptime for the numeric directives our code uses (%Y %m %d %H %M %S %y %e %j %%, whitespace).
+char* soa_strptime(const char* s, const char* fmt, struct tm* tm);
 // setenv / unsetenv over _putenv_s.
 int soa_setenv(const char* name, const char* value, int overwrite);
 int soa_unsetenv(const char* name);
@@ -53,6 +58,8 @@ int soa_unsetenv(const char* name);
 #endif
 
 #define realpath soa_realpath
+#define pread soa_pread
+#define strptime soa_strptime
 #define rename soa_rename
 #define gettid soa_gettid
 #define setenv soa_setenv
@@ -63,6 +70,8 @@ int soa_unsetenv(const char* name);
 // mkdir(path, mode): MinGW's mkdir takes the path only.
 inline int mkdir(const char* path, int /*mode*/) { return _mkdir(path); }
 #endif
+// No users: everything runs as uid 0.
+static inline int getuid(void) { return 0; }
 // glibc's malloc_usable_size: the CRT heap's block size.
 static inline size_t malloc_usable_size(void* p) { return _msize(p); }
 

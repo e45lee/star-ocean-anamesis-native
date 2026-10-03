@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "soaserver/server.h"
+#include "soaserver/sql.h"
 
 namespace soa::server {
 struct RequestContext;  // src/core/request_context.h
@@ -35,36 +36,12 @@ class Pools;  // src/master/gacha_pools.h
 
 namespace soa::server::ext {
 
-// ---- SQLite on a borrowed handle (the state or master DB server.cpp opened) --------------
-struct Row {
-    std::map<std::string, sqlite3_value*> v;  // valid only during the callback
-    int64_t i(const char* k) const;
-    double f(const char* k) const;
-    std::string s(const char* k) const;
-    bool null(const char* k) const;
-};
-struct Arg {
-    enum { I, S, N, F } t;
-    int64_t i = 0;
-    double d = 0;
-    std::string s;
-    Arg(int v) : t(I), i(v) {}
-    Arg(unsigned v) : t(I), i(v) {}
-    Arg(long v) : t(I), i(v) {}
-    Arg(unsigned long v) : t(I), i((int64_t)v) {}
-    Arg(long long v) : t(I), i(v) {}
-    Arg(unsigned long long v) : t(I), i((int64_t)v) {}
-    Arg(double v) : t(F), d(v) {}
-    Arg(const char* v) : t(S), s(v) {}
-    Arg(std::string v) : t(S), s(std::move(v)) {}
-    Arg(std::nullptr_t) : t(N) {}
-};
-struct Sql {
-    sqlite3* h = nullptr;
-    void exec(const std::string& sql);
-    int q(const std::string& sql, std::initializer_list<Arg> args, const std::function<void(const Row&)>& fn = {});
-    int64_t one(const std::string& sql, std::initializer_list<Arg> args, int64_t dflt = 0);
-};
+// ---- SQLite on a borrowed handle (the state or master DB the server opened) ----------------
+// The one wrapper, soaserver/sql.h; its names here are the ones every handler uses.
+using Row = sql::Row;
+using Arg = sql::Arg;
+using Sql = sql::Sql;
+using sql::one_null_as_zero;
 
 // A module's changes to the core mission flow (api/sphere211/sphere211.cpp: Sphere 211 battles are event
 // missions played through the core MissionStart / MissionEnd). Port code; the rules are the

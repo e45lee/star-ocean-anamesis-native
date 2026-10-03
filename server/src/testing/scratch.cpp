@@ -15,8 +15,8 @@
 
 namespace soa::server {
 
-Db* test_master() {
-    static Db m;
+ext::Sql* test_master() {
+    static ext::Sql m;
     static bool tried = false;
     if (!tried) {
         tried = true;
@@ -57,10 +57,8 @@ ScratchServer::ScratchServer(u64 seed, Options opt) : own_test_options_(opt.own_
     if (opt.pools) sv.pools.open();
 }
 ScratchServer::~ScratchServer() {
-    if (sv.st.h) sqlite3_close(sv.st.h);
-    sv.st.h = nullptr;
-    if (sv.m.h) sqlite3_close(sv.m.h);
-    sv.m.h = nullptr;
+    sv.st.close();
+    sv.m.close();
     if (!db.empty())
         for (const char* suffix : {"", "-wal", "-shm"}) unlink((db + suffix).c_str());
     if (own_test_options_) {

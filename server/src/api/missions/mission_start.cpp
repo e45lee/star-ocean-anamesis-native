@@ -15,7 +15,6 @@
 #include "core/request_args.h"
 #include "core/response.h"
 #include "core/time.h"  // day_start
-#include "core/server.h"  // one_null_as_zero
 #include "rules/mission_rules.h"
 #include "soaserver/chash32.h"
 #include "soaserver/config.h"

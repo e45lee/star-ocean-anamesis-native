@@ -23,28 +23,8 @@
 
 namespace soa::server {
 
-// ---- SQLite helpers ------------------------------------------------------------------------
-// The handlers use ext::Sql (ext.h) on the request's ext::Ctx; the server object's Db is
-// core/server.h's.
 using Row = ext::Row;
 using Arg = ext::Arg;
-
-int64_t one_null_as_zero(ext::Sql& db, const std::string& sql, std::initializer_list<Arg> args, int64_t dflt) {
-    int64_t v = dflt;
-    db.q(sql, args, [&](const Row& r) { v = r.v.begin()->second ? sqlite3_value_int64(r.v.begin()->second) : dflt; });
-    return v;
-}
-
-bool Db::open(const std::string& path, bool ro) {
-    int fl = ro ? SQLITE_OPEN_READONLY : (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    if (sqlite3_open_v2(path.c_str(), &h, fl, nullptr) != SQLITE_OK) {
-        LOGE("server", "can't open %s: %s", path.c_str(), h ? sqlite3_errmsg(h) : "?");
-        if (h) sqlite3_close(h);
-        h = nullptr;
-        return false;
-    }
-    return true;
-}
 
 bool file_exists(const std::string& p) {
     struct stat st;

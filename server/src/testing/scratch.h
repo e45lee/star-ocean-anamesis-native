@@ -19,7 +19,7 @@ namespace soa::server {
 // passing). Returns false when one is missing.
 bool scratch_inputs(std::string& master, std::string& save);
 // The 3.7.0 master, read-only, for the tests that only read master data; nullptr without it.
-Db* test_master();
+ext::Sql* test_master();
 
 // A scratch server (a unit-test one: live = false). `ok` is false (and the running test failed)
 // when the 3.7.0 master or the seed save is missing.

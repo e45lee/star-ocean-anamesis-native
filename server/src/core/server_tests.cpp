@@ -27,7 +27,7 @@ using ext::Row;
 NATIVE_TEST("server/session-invariants") {
     std::string master, save;
     if (!scratch_inputs(master, save)) return;  // (fails the test)
-    Db* mm = test_master();
+    ext::Sql* mm = test_master();
     if (!mm) return t.fail("master");
     Server sv;
     sv.live = false;

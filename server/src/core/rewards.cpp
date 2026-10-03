@@ -7,7 +7,7 @@
 
 #include "api/player/player_info.h"  // player_id
 #include "core/log.h"
-#include "core/server.h"  // next_uid, one_null_as_zero
+#include "core/server.h"  // next_uid
 #include "core/wallet.h"
 
 namespace soa::server {
@@ -90,6 +90,8 @@ Added add_character(ext::Ctx& ctx, u32 role) {
         a.lb_before = (u32)r.i("limit_break");
     });
     if (have < 0) {
+        // (master_role has no NULL role_category_id in 3.7.0, so the NULL-as-0 reads below and
+        // plain one() agree; kept by name, server/PLAN-readability.md 1.5)
         int64_t cat = one_null_as_zero(ctx.m, "select role_category_id from master_role where id = ?", {role}, -1);
         std::vector<std::pair<u64, u32>> owned;
         ctx.st.q("select uid, role_id, limit_break from roster order by uid", {}, [&](const Row& r) {

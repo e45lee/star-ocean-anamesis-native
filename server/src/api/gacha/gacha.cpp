@@ -15,7 +15,7 @@
 #include "core/request_args.h"
 #include "core/response.h"
 #include "core/rewards.h"  // add_character
-#include "core/server.h"   // next_uid, one_null_as_zero
+#include "core/server.h"   // next_uid
 #include "core/time.h"     // open_at
 #include "core/wallet.h"
 #include "master/gacha_pools.h"
@@ -173,6 +173,8 @@ bool check_stepup(ext::Ctx& ctx, const Request& req, const Row& gacha_row, Gacha
     // current step can be drawn ((d) another step is refused with 10403 不正なデータ処理).
     if (gacha_row.i("is_stepup")) {
         draw.chain = stepup_chain(ctx, draw.id);
+        // No stepup row = the chain's head. (next_id is never NULL: advance_stepup always writes a
+        // chain id, so the NULL-as-0 read and plain one() agree; kept by name, PLAN-readability 1.5.)
         draw.step = mission_rules::stepup_index(
             draw.chain, (u32)one_null_as_zero(ctx.st, "select next_id from stepup where head = ?", {draw.chain[0]}, draw.chain[0]));
         if (draw.chain[draw.step] != draw.id ||

@@ -58,6 +58,9 @@ void register_gles(Hle&);
 void register_egl(Hle&);
 void register_android(Hle&);
 void register_opensles(Hle&);
+#ifdef _WIN32
+void register_libc_win32(Hle&);  // hle/libc_win32.cpp: what differs on a Windows host
+#endif
 
 // pthread_getspecific of a guest key on the calling thread (libc_thread.cpp), for native code.
 u64 guest_getspecific(u32 key);

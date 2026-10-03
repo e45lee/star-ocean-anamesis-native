@@ -1,14 +1,19 @@
 // Bionic libc: time, sysconf/syscall, dynamic linker, sockets.
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h>
-#include <errno.h>
 #include <linux/futex.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <sys/syscall.h>
+#endif
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
@@ -24,6 +29,7 @@
 namespace soa {
 namespace {
 
+#ifndef _WIN32  // Windows: libc_win32.cpp (time structs, sysconf, syscall)
 // ---- time ----
 locale_t fixloc(u64 l) {
     static locale_t c = newlocale(LC_ALL_MASK, "C", (locale_t)0);
@@ -79,6 +85,7 @@ void th_syscall(Cpu& c) {
     }
     ret(c, (u64)r);
 }
+#endif
 
 // ---- dynamic linker ----
 constexpr u64 kHandleSelf = 0x1000, kHandleSystem = 0x2000;
@@ -195,6 +202,7 @@ void th_freeaddrinfo(Cpu& c) {
 }  // namespace
 
 void register_libc_misc(Hle& h) {
+#ifndef _WIN32
     HLE_WRAP(h, clock_gettime);
     HLE_WRAP(h, gettimeofday);
     HLE_WRAP(h, time);
@@ -208,6 +216,7 @@ void register_libc_misc(Hle& h) {
     h.fn("sysconf", th_sysconf);
     h.fn("syscall", th_syscall);
     h.fn("getrlimit", [](Cpu& c) { ret(c, (u64)(s64)getrlimit((__rlimit_resource_t)c.x(0), (rlimit*)c.x(1))); });
+#endif
 
     h.fn("dlopen", th_dlopen);
     h.fn("dlsym", th_dlsym);
@@ -215,6 +224,7 @@ void register_libc_misc(Hle& h) {
     h.fn("dlerror", th_dlerror);
     h.fn("dl_iterate_phdr", th_dl_iterate_phdr);
 
+#ifndef _WIN32  // Windows: guest fds are a table there (libc_win32.cpp)
     HLE_WRAP(h, socket);
     HLE_WRAP(h, bind);
     HLE_WRAP(h, connect);
@@ -234,6 +244,7 @@ void register_libc_misc(Hle& h) {
     HLE_WRAP(h, gethostbyaddr);
     HLE_WRAP(h, getnameinfo);
     HLE_WRAP(h, inet_addr);
+#endif
     h.fn("getaddrinfo", th_getaddrinfo);
     h.fn("freeaddrinfo", th_freeaddrinfo);
 }

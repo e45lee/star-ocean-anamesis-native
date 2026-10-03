@@ -5,7 +5,9 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 #include <unistd.h>
 #include <wchar.h>
 #include <wctype.h>
@@ -18,6 +20,7 @@
 namespace soa {
 namespace {
 
+#ifndef _WIN32  // Windows: hle/libc_win32.cpp (no glibc locale_t; wchar_t is 16-bit there)
 // ---- locale ----
 // Guest locale_t values are host glibc locale_t objects. LC_GLOBAL_LOCALE is -1 on both.
 locale_t c_locale() {
@@ -98,6 +101,7 @@ void th_wcscoll_l(Cpu& c) { ret(c, (u64)(s64)wcscoll_l((const wchar_t*)c.x(0), (
 void th_wcsxfrm_l(Cpu& c) { ret(c, wcsxfrm_l((wchar_t*)c.x(0), (const wchar_t*)c.x(1), c.x(2), fixloc(c.x(3)))); }
 void th_strtoll_l(Cpu& c) { ret(c, (u64)strtoll_l(arg_str(c, 0), (char**)c.x(1), (int)c.x(2), fixloc(c.x(3)))); }
 void th_strtoull_l(Cpu& c) { ret(c, (u64)strtoull_l(arg_str(c, 0), (char**)c.x(1), (int)c.x(2), fixloc(c.x(3)))); }
+#endif
 
 // long double on AArch64 is IEEE binary128, returned in q0.
 void set_ldouble(Cpu& c, long double v) {
@@ -107,8 +111,10 @@ void set_ldouble(Cpu& c, long double v) {
     c.set_v(0, r);
 }
 void th_strtold(Cpu& c) { set_ldouble(c, strtold(arg_str(c, 0), (char**)c.x(1))); }
+#ifndef _WIN32
 void th_strtold_l(Cpu& c) { set_ldouble(c, strtold_l(arg_str(c, 0), (char**)c.x(1), fixloc(c.x(2)))); }
 void th_wcstold(Cpu& c) { set_ldouble(c, wcstold((const wchar_t*)c.x(0), (wchar_t**)c.x(1))); }
+#endif
 
 void th_ctype_get_mb_cur_max(Cpu& c) { ret(c, MB_CUR_MAX); }
 
@@ -177,9 +183,11 @@ void register_libc(Hle& h) {
     HLE_WRAP(h, free);
     HLE_WRAP(h, calloc);
     HLE_WRAP(h, realloc);
+#ifndef _WIN32
     HLE_WRAP(h, mmap);
     HLE_WRAP(h, munmap);
     h.fn("mremap", [](Cpu& c) { ret_ptr(c, mremap((void*)c.x(0), c.x(1), c.x(2), (int)c.x(3), (void*)c.x(4))); });
+#endif
 
     // strings (identical ABI)
     HLE_WRAP_T(h, "memchr", const void* (*)(const void*, int, size_t), memchr);
@@ -199,6 +207,7 @@ void register_libc(Hle& h) {
     HLE_WRAP(h, strcasecmp);
     HLE_WRAP(h, strtok);
     HLE_WRAP(h, strerror);
+#ifndef _WIN32  // the wide-character functions (guest wchar_t is 32-bit) and the long conversions (guest long is 64-bit): libc_win32.cpp
     HLE_WRAP(h, wcscpy);
     HLE_WRAP(h, wcslen);
     HLE_WRAP_T(h, "wmemchr", const wchar_t* (*)(const wchar_t*, wchar_t, size_t), wmemchr);
@@ -215,34 +224,46 @@ void register_libc(Hle& h) {
     HLE_WRAP(h, mbtowc);
     HLE_WRAP(h, wcrtomb);
     HLE_WRAP(h, wcsnrtombs);
+#endif
 
     // conversions
     HLE_WRAP(h, atof);
     HLE_WRAP(h, atoi);
+#ifndef _WIN32
     HLE_WRAP(h, atol);
+#endif
     HLE_WRAP(h, strtod);
     HLE_WRAP(h, strtof);
+#ifndef _WIN32
     HLE_WRAP(h, strtol);
+#endif
     HLE_WRAP(h, strtoll);
+#ifndef _WIN32
     HLE_WRAP(h, strtoul);
+#endif
     HLE_WRAP(h, strtoull);
+#ifndef _WIN32
     HLE_WRAP(h, wcstod);
     HLE_WRAP(h, wcstof);
     HLE_WRAP(h, wcstol);
     HLE_WRAP(h, wcstoll);
     HLE_WRAP(h, wcstoul);
     HLE_WRAP(h, wcstoull);
+#endif
     h.fn("strtold", th_strtold);
+#ifndef _WIN32
     h.fn("strtold_l", th_strtold_l);
     h.fn("wcstold", th_wcstold);
     h.fn("strtoll_l", th_strtoll_l);
     h.fn("strtoull_l", th_strtoull_l);
+#endif
 
     // ctype / locale
     HLE_WRAP(h, isupper);
     HLE_WRAP(h, isxdigit);
     HLE_WRAP(h, tolower);
     HLE_WRAP(h, toupper);
+#ifndef _WIN32
     h.fn("isdigit_l", th_isdigit_l);
     h.fn("islower_l", th_islower_l);
     h.fn("isupper_l", th_isupper_l);
@@ -269,6 +290,7 @@ void register_libc(Hle& h) {
     h.fn("freelocale", th_freelocale);
     h.fn("uselocale", th_uselocale);
     h.fn("setlocale", th_setlocale);
+#endif
     h.fn("localeconv", th_localeconv);
     h.fn("__ctype_get_mb_cur_max", th_ctype_get_mb_cur_max);
 
@@ -287,9 +309,11 @@ void register_libc(Hle& h) {
     h.fn("getenv", th_getenv);
     h.fn("qsort", th_qsort);
     h.fn("rand", th_rand);
+#ifndef _WIN32
     HLE_WRAP(h, getpid);
     HLE_WRAP(h, gettid);
     HLE_WRAP(h, geteuid);
+#endif
 }
 
 }  // namespace soa

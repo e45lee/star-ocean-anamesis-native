@@ -6,11 +6,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _WIN32
 #include <sys/ioctl.h>
 #include <sys/select.h>
+#include <syslog.h>
+#endif
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <syslog.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -165,6 +167,7 @@ void th_syslog(Cpu& c) {
     LOGI("syslog", "%s", s.c_str());
 }
 
+#ifndef _WIN32  // Windows: libc_win32.cpp (Linux open flags translated; guest fds are a table there)
 // ---- file descriptors ----
 // open(2) flag bits that differ between arm64 and x86-64.
 constexpr int A64_O_DIRECTORY = 040000, A64_O_NOFOLLOW = 0100000, A64_O_DIRECT = 0200000, A64_O_LARGEFILE = 0400000;
@@ -201,6 +204,7 @@ void th_fcntl(Cpu& c) {
     ret(c, (u64)(s64)r);
 }
 void th_ioctl(Cpu& c) { ret(c, (u64)(s64)ioctl((int)c.x(0), (unsigned long)c.x(1), (void*)c.x(2))); }
+#endif
 
 // ---- stat ----
 struct BionicStat {
@@ -224,6 +228,13 @@ void to_bionic(const struct stat& s, u64 dst) {
     b.st_gid = s.st_gid;
     b.st_rdev = s.st_rdev;
     b.st_size = s.st_size;
+#ifdef _WIN32  // no block size or nanoseconds in the CRT's stat
+    b.st_blksize = 4096;
+    b.st_blocks = (s.st_size + 511) / 512;
+    b.atime = s.st_atime;
+    b.mtime = s.st_mtime;
+    b.ctime = s.st_ctime;
+#else
     b.st_blksize = (s32)s.st_blksize;
     b.st_blocks = s.st_blocks;
     b.atime = s.st_atim.tv_sec;
@@ -232,6 +243,7 @@ void to_bionic(const struct stat& s, u64 dst) {
     b.mtime_ns = s.st_mtim.tv_nsec;
     b.ctime = s.st_ctim.tv_sec;
     b.ctime_ns = s.st_ctim.tv_nsec;
+#endif
     memcpy((void*)dst, &b, sizeof b);
 }
 void th_stat(Cpu& c) {
@@ -247,12 +259,14 @@ void th_lstat(Cpu& c) {
     if (r == 0) to_bionic(s, c.x(1));
     ret(c, (u64)(s64)r);
 }
+#ifndef _WIN32
 void th_fstat(Cpu& c) {
     struct stat s;
     int r = fstat((int)c.x(0), &s);
     if (r == 0) to_bionic(s, c.x(1));
     ret(c, (u64)(s64)r);
 }
+#endif
 
 #define PATH1(name, expr)                                  \
     void th_##name(Cpu& c) {                               \
@@ -266,15 +280,19 @@ PATH1(mkdir, mkdir(p0.c_str(), (mode_t)c.x(1)))
 PATH1(rmdir, rmdir(p0.c_str()))
 PATH1(unlink, unlink(p0.c_str()))
 PATH1(remove, remove(p0.c_str()))
+#ifndef _WIN32
 PATH1(utimes, utimes(p0.c_str(), (const struct timeval*)c.x(1)))
+#endif
 void th_rename(Cpu& c) {
     std::string a = host_path(arg_str(c, 0)), b = host_path(arg_str(c, 1));
     ret(c, (u64)(s64)rename(a.c_str(), b.c_str()));
 }
+#ifndef _WIN32
 void th_readlink(Cpu& c) {
     std::string a = host_path(arg_str(c, 0));
     ret(c, (u64)readlink(a.c_str(), (char*)c.x(1), c.x(2)));
 }
+#endif
 void th_getcwd(Cpu& c) {
     char* buf = (char*)c.x(0);
     size_t n = c.x(1);
@@ -387,6 +405,7 @@ void th_fts_close(Cpu& c) {
 }  // namespace
 
 void* bionic_sF() { return g_sF; }
+void to_bionic_stat(const struct stat& s, u64 dst) { to_bionic(s, dst); }
 
 void register_libc_stdio(Hle& h) {
     h.data("__sF", g_sF);
@@ -418,6 +437,7 @@ void register_libc_stdio(Hle& h) {
     h.fn("openlog", [](Cpu&) {});
     h.fn("closelog", [](Cpu&) {});
 
+#ifndef _WIN32
     h.fn("open", th_open);
     h.fn("fcntl", th_fcntl);
     h.fn("ioctl", th_ioctl);
@@ -431,17 +451,24 @@ void register_libc_stdio(Hle& h) {
     HLE_WRAP(h, fchown);
     HLE_WRAP(h, pipe);
     HLE_WRAP(h, select);
+#endif
     h.fn("stat", th_stat);
     h.fn("lstat", th_lstat);
+#ifndef _WIN32
     h.fn("fstat", th_fstat);
+#endif
     h.fn("access", th_access);
     h.fn("mkdir", th_mkdir);
     h.fn("rmdir", th_rmdir);
     h.fn("unlink", th_unlink);
     h.fn("remove", th_remove);
+#ifndef _WIN32
     h.fn("utimes", th_utimes);
+#endif
     h.fn("rename", th_rename);
+#ifndef _WIN32
     h.fn("readlink", th_readlink);
+#endif
     h.fn("getcwd", th_getcwd);
     h.fn("fts_open", th_fts_open);
     h.fn("fts_read", th_fts_read);

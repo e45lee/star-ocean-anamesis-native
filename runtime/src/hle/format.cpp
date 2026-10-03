@@ -1,3 +1,5 @@
+#include <cstring>
+#include <mutex>
 #include "hle/format.h"
 
 #include <cstdio>
@@ -281,6 +283,79 @@ std::vector<u64> scanf_args(const char* fmt, VaSource& va) {
     }
     out.resize(32, 0);
     return out;
+}
+
+std::string host_scanf_format(const char* fmt, bool win) {
+    std::string out;
+    if (!fmt) return out;
+    if (!win) return fmt;
+    const char* p = fmt;
+    while (*p) {
+        if (*p != '%') {
+            out.push_back(*p++);
+            continue;
+        }
+        out.push_back(*p++);
+        if (*p == '%') {
+            out.push_back(*p++);
+            continue;
+        }
+        if (*p == '*') out.push_back(*p++);
+        while (*p >= '0' && *p <= '9') out.push_back(*p++);
+        if (*p == 'l' && p[1] != 'l' && p[1] && std::strchr("dioxXun", p[1])) {
+            out += "ll";
+            p++;
+        }
+        while (*p == 'h' || *p == 'l' || *p == 'L' || *p == 'q' || *p == 'j' || *p == 'z' || *p == 't' || *p == 'm') out.push_back(*p++);
+        if (*p == '[') {
+            out.push_back(*p++);
+            if (*p == '^') out.push_back(*p++);
+            if (*p == ']') out.push_back(*p++);
+            while (*p && *p != ']') out.push_back(*p++);
+            if (*p) out.push_back(*p++);
+        } else if (*p) {
+            out.push_back(*p++);
+        }
+    }
+    return out;
+}
+
+// glibc's random() (random_r.c, TYPE_3: x**31 + x**3 + 1, seeded with 1 as an unseeded rand()):
+// r[i] = r[i-3] + r[i-31], the first 310 outputs dropped, each output the sum >> 1.
+s32 glibc_random(bool reset) {
+    static std::mutex m;
+    static u32 r[34];
+    static int i = -1;
+    std::lock_guard lk(m);
+    if (reset || i < 0) {
+        s32 w[34];
+        w[0] = 1;
+        for (int k = 1; k < 31; k++) {
+            w[k] = (s32)((16807LL * w[k - 1]) % 2147483647);
+            if (w[k] < 0) w[k] += 2147483647;
+        }
+        for (int k = 31; k < 34; k++) w[k] = w[k - 31];
+        for (int k = 0; k < 34; k++) r[k] = (u32)w[k];
+        i = 34;
+        for (int k = 0; k < 310; k++) {
+            r[i % 34] = r[(i - 31) % 34] + r[(i - 3) % 34];
+            i++;
+        }
+        if (reset) return 0;
+    }
+    u32 v = r[(i - 31) % 34] + r[(i - 3) % 34];
+    r[i % 34] = v;
+    i++;
+    if (i >= 34 * 1000000) i = i % 34 + 34;
+    return (s32)(v >> 1);
+}
+
+s32 guest_rand() {
+#ifdef _WIN32
+    return glibc_random();
+#else
+    return (s32)rand();
+#endif
 }
 
 }  // namespace soa

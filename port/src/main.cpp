@@ -363,8 +363,8 @@ int main(int argc, char** argv) {
         else if (a == "--start-coins") {
             std::string c = next();
             char* end = nullptr;
-            unsigned long v = strtoul(c.c_str(), &end, 10);
-            if (c.empty() || *end || v > 0xffffffffUL) {
+            unsigned long long v = strtoull(c.c_str(), &end, 10);  // (not strtoul: 32-bit long on Windows)
+            if (c.empty() || *end || c[0] == '-' || v > 0xffffffffULL) {
                 fprintf(stderr, "--start-coins: expected a number, got \"%s\"\n", c.c_str());
                 return 2;
             }

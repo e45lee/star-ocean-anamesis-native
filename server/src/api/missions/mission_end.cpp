@@ -56,8 +56,9 @@ std::vector<u64> split_play_uids(const std::string& play_uids) {
     return uids;
 }
 
-// 1. The play this ends: the mission, its party, its stamina and surprise roll.
-void read_play(ext::Ctx& ctx, const Request& req, MissionEnd& end) {
+// 1. The play this ends: the mission, its party, its stamina and surprise roll. False when the
+// request names no mission the master knows (below): MissionEnd isn't answered.
+bool read_play(ext::Ctx& ctx, const Request& req, MissionEnd& end) {
     // MissionEnd(u32 mission (+0x54), u32 (+0x5c)); the party and mission come from the
     // MissionStart this ends.
     end.mission = args::MissionEndArgs::from(req).mission;
@@ -71,7 +72,19 @@ void read_play(ext::Ctx& ctx, const Request& req, MissionEnd& end) {
     u32 played_type = (u32)ctx.st.one("select mission_type from play_ext where id = 1", {}, 0);
     end.surprise = ctx.st.one("select surprise from play_ext where id = 1", {}, 0) != 0;
     end.mission_ref = find_mission(ctx, played_type, end.mission);
-    if (!end.mission_ref.found) end.mission_ref.table = "master_mission";
+    // An id that is 0 (no argument and no play) or in none of the mission tables isn't a mission
+    // to end: (d) not answered, nothing granted or recorded, as MissionStart doesn't answer an
+    // unknown mission. Until 2026-10-03 it was recorded as cleared (mission 0 from the api-sweep
+    // replay corpus, found by S0). Why not a refusal: (b) the client has no MissionEnd row in its
+    // error-kind table (CErrorHandlerWrap::ErrKind, Ghidra 0x2cc5b70), and its handling table
+    // (ELF 0x2714360, read by CErrorHandlerWrap::HndlType) gives MissionEnd type 0 where
+    // MissionStart has 2 (back to the title) and the other APIs 1 (give up); (d) type 0 is read as
+    // the resend, which a refusal would repeat. What the online server answered isn't known.
+    if (!end.mission || !end.mission_ref.found) {
+        LOGW("server", "MissionEnd: unknown mission %u (type %u), not answered", end.mission, played_type);
+        return false;
+    }
+    return true;
 }
 
 // 2. The mission's rewards: player EXP, EXP per member, FOL, the favor campaigns.
@@ -342,13 +355,14 @@ void mission_result_extras(ext::Ctx& ctx, const MissionEnd& end, Value& data) {
 //   (a) the first clear's master_mission_clear_present rows to the present box (d: first clear
 //       only) and the missions whose unlock_mission_id is this one, recorded in `unlocks`;
 //   (b) the mission is the request's, else the play's; the party is the play's.
+//   (d) a mission id that is 0 or in no mission table isn't answered (read_play).
 // Answers: the player state with MissionEndResult (the battle log's mission_time), Achievement,
 // DropList, ClearPresentList (first clear), BattleEvaluationResultInfoList (evaluations reached),
 // AddItem / StockItem / AddCharacter, MissionResultCharacter(Favor), PresentBoxCount, and the
 // modules' MissionResultExtra additions.
 std::vector<u8> mission_end(ext::Ctx& ctx, const Request& req) {
     MissionEnd end;
-    read_play(ctx, req, end);
+    if (!read_play(ctx, req, end)) return {};
     mission_rewards(ctx, end);
     player_exp(ctx, end);
     characters_exp_and_favor(ctx, end);

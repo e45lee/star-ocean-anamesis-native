@@ -232,6 +232,7 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
 // Rules: docs/server-rules.md "Sphere 211"
 //
 // A won battle.
+//   (d) without a cell (the request's, else the one playing) it isn't answered.
 //   (a) the core MissionEnd of the event mission (EXP, FOL, drops, first-clear presents).
 //   The cell is cleared, the clear streak grows; (d) a win is logged for the achievements (type 62)
 //   and the season's ranking.
@@ -248,7 +249,12 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
 std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
     Season season = load_dive(ctx);
     u32 asset_id = 0, mission_id = 0;
-    find_cell(ctx, req, asset_id, mission_id);
+    // (d) no cell with a battle (the request's, else the one playing): not answered, as the core
+    // MissionEnd doesn't answer an unknown mission (and the same handling type 0, mission_end.cpp)
+    if (!find_cell(ctx, req, asset_id, mission_id) || !mission_id) {
+        LOGW("server", "Sphere211MissionEnd: no such cell, not answered");
+        return {};
+    }
     Request core{"MissionEnd", kFidMissionEnd, {mission_id, 0}, {}, {}};
     Value data = ctx.core_mission(core, nullptr);
     if (data.type != Value::Map) data = ctx.base_data();

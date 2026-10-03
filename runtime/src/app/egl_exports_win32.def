@@ -1,0 +1,48 @@
+; The EGL 1.5 entry points of the statically linked ANGLE (cmake/deps.cmake), exported from the
+; Windows programs that create SDL windows (runtime/CMakeLists.txt, soaruntime_app), so SDL can load
+; EGL from the program itself (runtime/src/app/sdl_gl.cpp: SDL_VIDEO_EGL_DRIVER = the .exe).
+EXPORTS
+    eglChooseConfig
+    eglCopyBuffers
+    eglCreateContext
+    eglCreatePbufferSurface
+    eglCreatePixmapSurface
+    eglCreateWindowSurface
+    eglDestroyContext
+    eglDestroySurface
+    eglGetConfigAttrib
+    eglGetConfigs
+    eglGetCurrentDisplay
+    eglGetCurrentSurface
+    eglGetDisplay
+    eglGetError
+    eglGetProcAddress
+    eglInitialize
+    eglMakeCurrent
+    eglQueryContext
+    eglQueryString
+    eglQuerySurface
+    eglSwapBuffers
+    eglTerminate
+    eglWaitGL
+    eglWaitNative
+    eglBindTexImage
+    eglReleaseTexImage
+    eglSurfaceAttrib
+    eglSwapInterval
+    eglBindAPI
+    eglQueryAPI
+    eglCreatePbufferFromClientBuffer
+    eglReleaseThread
+    eglWaitClient
+    eglGetCurrentContext
+    eglCreateSync
+    eglDestroySync
+    eglClientWaitSync
+    eglGetSyncAttrib
+    eglCreateImage
+    eglDestroyImage
+    eglGetPlatformDisplay
+    eglCreatePlatformWindowSurface
+    eglCreatePlatformPixmapSurface
+    eglWaitSync

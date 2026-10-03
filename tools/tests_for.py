@@ -23,8 +23,10 @@ How a path becomes tests (the rules, in order):
     every shard (the broad server set) and the replay against the parent build.
   * runtime/, platform370/, port/src/, emulator/src/, the root build files: the broad set: every
     shard, smoke, and the emulator / viewer gates where the user's gate scope says so.
-  * tests/diff/, control/: every shard (the drivers changed) and the slot pool's tests.
-  * a test script itself (port/scripts/X.sh, emulator/scripts/X.sh, ...): that test.
+  * tests/diff/, control/: every shard (the drivers changed), smoke, one port session and one
+    emulator session (DRIVER_SESSIONS), and the slot pool's tests.
+  * a test script itself (port/scripts/X.sh, emulator/scripts/X.sh, ...), or the session module
+    behind a wrapper (control/soadrive/sessions/X.py, its WRAPPER line): that test.
 Everything also runs T0 (tools/gate.sh T0) first.
 
 tests/impact.json (generated, committed): {"apis": {API: file}, "hooks": {file: [kinds]},
@@ -61,6 +63,9 @@ BROAD_SERVER = ("server/", "tools/server_")
 BROAD_CLIENT = ("runtime/", "platform370/", "port/src/", "emulator/src/", "emulator-viewer/src/", "CMakeLists.txt", "cmake/",
                 "vcpkg.json", "scripts/build.sh")
 DRIVERS = ("tests/diff/", "control/", "scripts/shared-phone.sh", "port/scripts/phone370.sh")
+# a change to the drivers (control/soadrive, control/run.py) also runs these sessions (the port's
+# session layout and the emulator's), besides every shard and smoke
+DRIVER_SESSIONS = ("session:rebase-inproc", "emu:seeded")
 DOC = re.compile(r"(\.md$|^docs/|^LICENSE$|\.png$|\.jpg$|\.txt$)")
 CODE_TXT = ("tests/tutorial_milestones.txt", "tools/server_log_patterns.txt", "requirements.txt")
 
@@ -118,12 +123,38 @@ def corpus_apis(name, apis):
     return seen
 
 
-def declared(cmd, apis):
-    """API names written in the test's script (when no run of it has been seen)."""
+SESSIONS = os.path.join(REPO, "control/soadrive/sessions")
+
+
+def session_modules():
+    """{session module path (repo-relative): the wrapper scripts it serves} from each module's WRAPPER
+    line (control/run.py's sessions; a wrapper like port/scripts/x_session.sh execs control/run.py)."""
+    out = {}
+    if not os.path.isdir(SESSIONS):
+        return out
+    for f in sorted(os.listdir(SESSIONS)):
+        if f.endswith(".py") and not f.startswith("_"):
+            m = re.search(r'^WRAPPER = "([^" ]+)', open(os.path.join(SESSIONS, f), errors="replace").read(), re.M)
+            if m:
+                out["control/soadrive/sessions/" + f] = m.group(1)
+    return out
+
+
+def test_script(cmd):
     m = re.search(r"([\w./-]+\.(?:sh|py))", cmd)
-    if not m or not os.path.exists(os.path.join(REPO, m.group(1))):
+    return m.group(1) if m else None
+
+
+def declared(cmd, apis):
+    """API names written in the test's script (when no run of it has been seen); for a wrapper of
+    control/run.py, also in the session modules it runs."""
+    script = test_script(cmd)
+    if not script or not os.path.exists(os.path.join(REPO, script)):
         return set()
-    text = open(os.path.join(REPO, m.group(1)), errors="replace").read()
+    text = open(os.path.join(REPO, script), errors="replace").read()
+    for mod, wrapper in session_modules().items():
+        if wrapper == script:
+            text += open(os.path.join(REPO, mod), errors="replace").read()
     return {a for a in apis if re.search(r"\b%s\b" % re.escape(a), text)} | set(LOGIN)
 
 
@@ -203,7 +234,12 @@ def affected(paths, data, tiers):
         m = re.search(r"([\w./-]+\.(?:sh|py))", t["cmd"])
         if m:
             scripts.setdefault(m.group(1), []).append(t["name"])
+    sessions = session_modules()
     for p in paths:
+        if p in sessions and sessions[p] in scripts:
+            direct.update(scripts[sessions[p]])
+            reasons.append("%s: the session behind %s" % (p, sessions[p]))
+            continue
         if p in scripts and (p.startswith(("port/scripts/", "emulator/scripts/", "emulator-viewer/scripts/"))):
             direct.update(scripts[p])
             reasons.append("%s: the test script itself" % p)
@@ -287,6 +323,10 @@ def select(paths, all_tests=False):
             add("replay-parent", "server core")
         if bc or drv:
             add("smoke", "client / drivers")
+        if drv:
+            # the session runner and the shared flows: one port session and one emulator session
+            for n in DRIVER_SESSIONS:
+                add(n, "drivers")
         if bc:
             for t in tiers:
                 if t["tier"] == "T2" and t.get("area") and t["kind"] == "session" and any(

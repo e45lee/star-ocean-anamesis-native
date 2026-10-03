@@ -1,19 +1,52 @@
 # Control layer (shared by the port, the 3.7.0 emulator and the viewer, `emulator-viewer/`)
 
-`soa`, `soa-emu` and `soa-viewer` all read the same control commands. The FIFO lives in the shared host loop (`runtime/src/app/host.cpp`, `--control FIFO`). These two tools drive any of them.
+`soa`, `soa-emu` and `soa-viewer` all read the same control commands. The FIFO lives in the shared host loop (`runtime/src/app/host.cpp`, `--control FIFO`). Everything that drives them is one library, `soadrive/`, with thin CLIs and runners over it.
 
 | Tool | What |
 |---|---|
-| `soactl.py FIFO CMD...` | Sends commands to a running instance: `tap:X:Y`, `drag:X1:Y1:X2:Y2`, `wheel:X:Y:DY`, `back`, `text:STRING`, `shot:PATH`, `wait:MS`, `quit`; while the game's keyboard is open, test-only `type:TEXT`, `compose:TEXT` and `key:enter|escape|backspace|delete|left|right|home|end` drive the text box's editor (`runtime/README.md`, "Text entry"). The port also has native debug commands (`phase:`, `call:`, `uiset:`, `debugwin:`) that the emulators lack. |
-| `flowctl.py` | Higher-level flows built on `soactl.py`: `wait-log`, `tap-until` (tap until a log line appears), `login-popups` (closes the notice board and the LOGIN BONUS popup), `name-entry`. |
-| `gdbclient.py`, `gdbinit-soa` | The guest's GDB stub (`--gdb HOST:PORT`; runtime/README.md "Debugging the guest with gdb"): `gdbclient.py` is a small protocol client for tests and scripts (stop, registers, memory, breakpoints by symbol, step, continue, detach; also a one-shot CLI), `gdbinit-soa` the gdb-multiarch setup. Tests: `control/tests/test_gdbclient.py`. |
+| `soactl.py FIFO CMD...` | Sends commands to a running instance: `tap:X:Y`, `drag:X1:Y1:X2:Y2`, `wheel:X:Y:DY`, `back`, `text:STRING`, `shot:PATH`, `wait:MS`, `quit`; while the game's keyboard is open, test-only `type:TEXT`, `compose:TEXT` and `key:enter|escape|backspace|delete|left|right|home|end` drive the text box's editor (`runtime/README.md`, "Text entry"). The port also has native debug commands (`phase:`, `call:`, `uiset:`, `debugwin:`, `mission:`, `clock:`) that the emulators lack. (`soadrive/fifo.py`) |
+| `flowctl.py` | The waits and flows as commands for shell scripts: `wait-log`, `tap-until` (tap until a log line appears), `wait-screen`, `login-popups` (closes the notice board and the LOGIN BONUS popup), `name-entry`. (`soadrive/milestones.py`, `popups.py`) |
+| `run.py [--target T] SESSION ARGS...` | Runs a named session (`soadrive/sessions/`); `run.py --list` lists them with their targets and the scripts that wrap them. |
+| `gdbclient.py`, `gdbinit-soa` | The guest's GDB stub (`--gdb HOST:PORT`; runtime/README.md "Debugging the guest with gdb"): `gdbclient.py` is a small protocol client for tests and scripts (stop, registers, memory, breakpoints by symbol, step, continue, detach; also a one-shot CLI), `gdbinit-soa` the gdb-multiarch setup. Tests: `control/tests/test_gdbclient.py`. Sessions attach it at a milestone through `soadrive/gdb.py` (`Config(gdb=True)`, `Run.gdb()`). |
+| `soaslot.py`, `soaslot.sh` | The machine-wide game slot pool (below). |
 
-**Used by:**
-- the port's sessions and smoke test (`port/scripts/`);
-- `emulator/scripts/emulator_session.sh` and `emulator_boot.sh`;
-- `emulator-viewer/scripts/viewer_lib.sh`.
+**Used by:** the port's sessions and smoke test (`port/scripts/`), the emulator's (`emulator/scripts/`), tests/diff (`tests/diff/difftest.py`), `emulator-viewer/scripts/viewer_lib.sh`. The old `port/scripts/soactl.py` and `flowctl.py` are forwarding stubs, kept for branches that still use those paths.
 
-The old `port/scripts/soactl.py` and `flowctl.py` are forwarding stubs, kept for branches that still use those paths.
+## soadrive: the driver library
+
+One package for the port (`soa`, in-process server or `--server`) and the emulator (`soa-emu` + `soa-server`), the plan's layout (`PLAN-consolidate.md`):
+
+| Module | What |
+|---|---|
+| `fifo.py` | the control FIFO: one write per batch, the screenshots waited for (and given up when the client died) |
+| `proc.py` | a program under `timeout -k` in its own process group, stopped by PID (TERM, 10 s, KILL), the 6 GB RSS cap; free ports; `repo_file` (a worktree falls back to the main checkout's untracked files) |
+| `milestones.py` | the one wait implementation: whole-file predicates (`grep`, `count`), the `LOG.pos` cursor (`LogCursor`: what `flowctl.py wait-log` chains), `poll`, `tap_until_log` (no resend once another phase began) |
+| `screens.py`, `popups.py` | RMSE, probes, settled shots; the login popups (the LOGIN BONUS fingerprint) and the name dialog |
+| `state.py` | the server state DB as data (tests/diff's comparison) |
+| `ui370.py` | the 3.7.0 UI's tap points at 729x1296, by name |
+| `targets.py` | `Run`: one client (+ its server) started fresh: the targets `emu`, `port-server`, `port-inproc`; the layouts (tests/diff's run dir, the port sessions' `OUT/log.txt` + `TMP/data`, the emulator session's `OUT/emu.log`); its waits (`wait_for`, `tap_until` on predicates; `wait_log`, `tap_log` on the cursor), shots, state dumps. **Fail fast:** every wait, FIFO send and popup loop checks `Run.alive()` (the client and its soa-server running, and the client's log showing no crash, no host GPU failure and frame-rate lines at least every 2 minutes), so a dead client fails the step within seconds, named: `the client is gone: host GPU (D3D12: Removing Device)` with a `HOST-GPU-FAILURE:` line (the host's GPU dropped out: WSL's D3D12 device removed, no GLX context, a crash in the NVIDIA driver; rerun), `crashed (...)`, `exited (status N)`, `stuck (...)`; `tools/gate.sh` marks such failures `[host GPU failure: rerun]` |
+| `gdb.py` | `Config(gdb=True)` starts the client with the runtime's GDB stub (`--gdb 127.0.0.1:PORT`); `Run.gdb()` attaches `control/gdbclient.py` at a milestone (read guest registers and memory, breakpoints) and detaches after |
+| `prepared.py` | prepared server states (a replay corpus cut at a request: the tests/diff shards) |
+| `flows/` | named flows every target runs: `launch` (title, Login, the data check or download, home, popups), `mission` (the campaign's 1-05; the port's `mission:` shortcut and result pages), `gacha`, `event`, `tutorial`; tests/diff's flows and shards |
+| `sessions/` | the named sessions behind the scripts (each: `TARGETS`, its wrapper `WRAPPER`, `options`, `main`); `common.py` their command lines, layouts and verdicts |
+
+**Sessions** (`control/run.py --list`; the first target is the default, the one its script always ran):
+
+| Session | Script | Targets |
+|---|---|---|
+| `login` | `port/scripts/rebase_inproc_session.sh` | port-inproc |
+| `battle-gacha` | `port/scripts/restore_session.sh` | port-inproc |
+| `battle`, `party`, `favor`, `missions` | `battle_session.sh`, `party_session.sh`, `restore_favor_session.sh`, `restore_missions.sh` | port-inproc (the `mission:` / `phase:0xf` shortcut) |
+| `gacha` | `gacha_session.sh` | port-inproc, port-server, emu |
+| `campaign`, `rental`, `events`, `tower`, `home`, `growth`, `deepspace`, `sphere211`, `sphere211-continue`, `episode-movie` | `<name>_session.sh` | port-inproc (the phase lines, the in-process server's lines) |
+| `tutorial`, `entry` | `tutorial_session.sh`, `newplayer_session.sh` | port-inproc |
+| `seeded`, `newplayer` | `emulator/scripts/emulator_session.sh [--new-player]` | emu, port-server, port-inproc |
+| `summer-demo` | `emulator/scripts/summer_demo.sh` | emu, port-server, port-inproc |
+| `gdb-probe` | (`control/run.py gdb-probe SOA OUT TMP`; T3) | port-inproc, port-server, emu: the guest debugger at home (attach, a breakpoint, registers and memory, a step, detach) |
+
+A session refuses a target it doesn't list, with the reason (`TARGETS_WHY`): most port sessions use the port's own commands and log lines (`phase:`, `mission:`, `clock:`, `port_debug: phase N`), which soa-emu lacks. The scripts keep their names, arguments, environment knobs, output files and exit codes. Not converted (one program's own tools, PLAN-consolidate.md "Stays"): `smoke.sh`, the selftests, the debug-window sessions, `profile_extra.sh`, `smoke_vs_emu.sh`, `rebase_server_diff.sh` (it runs `emulator_session.sh`), `emulator_boot.sh`, `nier_demo.sh`, `standin_fetch_test.sh`, the viewer's scripts.
+
+**Tests without a game:** `control/tests/` (pytest; T0's `pytest-control`): the cursor and its LOG.pos contract with flowctl.py, the resend rules, the FIFO, ui370's points, every session module's interface, the slot pool, tools/tests_for.py's rules (a session module maps to its script's tests).
 
 ## The slot pool (`soaslot.py`, `soaslot.sh`): parallel runs queue instead of overloading the machine
 
@@ -21,10 +54,11 @@ Every game client a test starts (`soa`, `soa-emu`, `soa-viewer`) first takes one
 
 | Who | How |
 |---|---|
-| `tests/diff` (`diffdrive/targets.py`) | each target's run takes a slot before it starts anything (`soaslot.acquire`), passes it to the client, frees it at the end; the time a run queued is noted and not counted in its time |
-| `port/scripts/*_session.sh` | `phone370_prepare` (every session calls it) takes one slot for the script's lifetime (`soaslot_take`, fd 9); the sessions run one client at a time |
+| `tests/diff` and `control/run.py` (`control/soadrive/targets.py`) | each target's run takes a slot before it starts anything (`soaslot.acquire`), passes it to the client, frees it at the end; the time a run queued is noted and not counted in its time |
+| the sessions (`control/run.py`: `port/scripts/*_session.sh`, `emulator_session.sh`, `summer_demo.sh`) | one slot for the session's lifetime, its clients (one at a time) under it; a TERM / HUP to run.py stops them first |
+| the remaining shell scripts (`port/scripts/debug_*session.sh`, `profile_extra.sh`) | `phone370_prepare` takes one slot for the script's lifetime (`soaslot_take`, fd 9) |
 | `port/scripts/smoke.py`, `selftest_resilient.sh` | one slot for the run |
-| `emulator/scripts/emulator_session.sh`, `summer_demo.sh`, `nier_demo.sh`, `emulator_boot.sh`, `standin_fetch_test.sh`, `emulator-viewer/scripts/viewer_lib.sh` | one slot, taken before the server starts |
+| `emulator/scripts/nier_demo.sh`, `emulator_boot.sh`, `standin_fetch_test.sh`, `emulator-viewer/scripts/viewer_lib.sh` | one slot, taken before the server starts |
 | anything else | `control/soaslot.py run [--name N] -- timeout -k 10 600 build/port/soa ...` (execs the command: `$!` stays the game's PID), or in a shell script `. control/soaslot.sh; soaslot_take NAME` |
 
 Only clients take slots, never `soa-server` (a server waits for its client; servers holding slots while their clients queue would deadlock). A script started under a slot (`SOA_SLOT_HELD=1`) doesn't take a second one.

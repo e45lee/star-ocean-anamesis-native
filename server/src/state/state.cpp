@@ -75,7 +75,7 @@ int user_version(sqlite3* db) {
     return v;
 }
 
-bool open_and_migrate(sqlite3* db, const std::string& path, int target) {
+bool open_and_migrate(sqlite3* db, const std::string& path, int target, sqlite3* master) {
     int version = user_version(db);
     if (version > kSchemaVersion) {
         LOGE("server",
@@ -96,7 +96,7 @@ bool open_and_migrate(sqlite3* db, const std::string& path, int target) {
         if (!exec(db, "begin immediate", "begin")) return false;
         bool ok = true;
         for (const char* sql : step.sql) ok = ok && exec(db, sql, step.what);
-        if (ok && step.fn) ok = step.fn(db);
+        if (ok && step.fn) ok = step.fn(db, master);
         if (ok) {
             for (const std::string& v : foreign_key_violations(db)) {
                 LOGE("server", "state schema: version %d: foreign key violation: %s", step.version, v.c_str());
@@ -134,6 +134,8 @@ u64 next_uid(ext::Ctx& ctx, const char* key) {
     ctx.st.q("insert or replace into meta (key, value) values (?, ?)", {key, std::to_string(v + 1)});
     return v;
 }
+CharacterUid next_character_uid(ext::Ctx& ctx) { return CharacterUid(next_uid(ctx, "next_char_uid")); }
+ItemUid next_item_uid(ext::Ctx& ctx) { return ItemUid(next_uid(ctx, "next_item_uid")); }
 std::string meta(ext::Ctx& ctx, const char* key, const char* dflt) {
     std::string v = dflt;
     ctx.st.q("select value from meta where key = ?", {key}, [&](const Row& r) { v = r.s("value"); });

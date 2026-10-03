@@ -21,6 +21,7 @@
 // They run from the CPhase::Progress wrapper below (a port native: not with --natives none).
 #include "native/common/port_debug.h"
 
+#include <cinttypes>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -92,12 +93,12 @@ void run(const std::string& cmd, u64 phase_mgr) {
         static u64 pm = guest::sym("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE");
         static u64 ui_fn = guest::sym("_ZNK17CParameterManager12pParameterUIEv");
         u64 ui = guest_call(ui_fn, {*(u64*)pm});
-        unsigned long off = 0, val = 0;
+        u64 off = 0, val = 0;
         char* e;
-        off = strtoul(cmd.c_str() + 6, &e, 0);
-        if (*e == ':') val = strtoul(e + 1, nullptr, 0);
+        off = strtoull(cmd.c_str() + 6, &e, 0);
+        if (*e == ':') val = strtoull(e + 1, nullptr, 0);
         if (ui && off < 0x10000) {
-            LOGI("port_debug", "CParameterUI+%#lx = %#lx (was %#x)", off, val, *(u32*)(ui + off));
+            LOGI("port_debug", "CParameterUI+%#" PRIx64 " = %#" PRIx64 " (was %#x)", off, val, *(u32*)(ui + off));
             *(u32*)(ui + off) = (u32)val;
         }
         return;

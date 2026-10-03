@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "soaserver/ids.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/server.h"
 
@@ -23,33 +24,33 @@ namespace soa::server::favor {
 // Adds the player-load keys: `PlayerCharacterFavorMap` (every owned character's same_role_id with a
 // master_favor_schedule row), `RemainingUpdateFavorCountByTap` and
 // `RemainingEventDropBonusCountByFavor`.
-void add_player_state(sqlite3* st, sqlite3* m, int64_t now, u32 home_same_role_id, Value& data);
+void add_player_state(sqlite3* st, sqlite3* m, int64_t now, SameRoleId home_same_role_id, Value& data);
 
 // The favor level of `same_role_id` as the server holds it (1 when it has no favor).
-u32 level_of(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id);
+u32 level_of(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id);
 
 // MissionEnd: adds the battle favor for a mission that cost `stamina` to `same_role_id` and
 // returns its `MissionResultCharacterFavor` element (CMissionResultCharacterFavorInfo). Nil when
 // the character has no favor schedule.
 // `rate` multiplies the gain (a type-8 friendship campaign, docs/server-rules.md "Type-8 campaigns").
-Value mission_gain(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, u32 stamina, double rate = 1.0);
+Value mission_gain(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id, u32 stamina, double rate = 1.0);
 
 // UpdateFavorByTap's rule: (a) master_global favor_tap_bonus_point (50) points, at most
 // favor_tap_bonus_limit (5) taps per character per favor day. Adds UpdateFavorByTapResultInfo
 // {same_role_id, favor_level, favor_point, RemainingUpdateFavorCountByTap} to `data`.
-void tap(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id, Value& data);
+void tap(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id, Value& data);
 
 // UseFavorItem's rule: `count` (capped by the stack held, which is debited) of master item
 // `master_item_id` on `same_role_id`, (a) master_favor_item_effect.favor_up_point each. Adds
 // UseFavorResultInfo {same_role_id, favor_level, favor_point} to `data`.
-void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 count, u32 same_role_id, Value& data);
+void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 count, SameRoleId same_role_id, Value& data);
 
 // The favor event drop bonus (docs/server-rules.md "Event extras"): whether a character's bonus is
 // spent for the favor day, today's remaining uses (RemainingEventDropBonusCountByFavor), and
 // spending one (returns the added_event_drop_at text stored).
-bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id);
+bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id);
 u32 event_drop_remaining(sqlite3* st, sqlite3* m, int64_t now);
-std::string mark_event_drop(sqlite3* st, u32 same_role_id, int64_t now);
+std::string mark_event_drop(sqlite3* st, SameRoleId same_role_id, int64_t now);
 
 // ---- pure rules (unit-tested: api/favor/favor_tests.cpp) ------------------------------------
 namespace rules {

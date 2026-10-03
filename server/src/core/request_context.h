@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "soaserver/battle_log.h"
+#include "soaserver/ids.h"
 #include "soaserver/server.h"
 
 namespace soa::server {
@@ -29,7 +30,7 @@ struct RequestContext {
     bool logged_in = false;
     // The titles this request granted (api/player/titles.cpp: a Grant adds them, its OnResponse hook
     // reports them as AddTitleList).
-    std::vector<u32> titles_added;
+    std::vector<TitleId> titles_added;
 
     // The request's battle log, or an empty one (every value its default).
     const BattleLog& log() const {

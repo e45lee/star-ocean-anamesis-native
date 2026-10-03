@@ -41,7 +41,7 @@ Env:
 Only clients take slots, never soa-server: a server waits for its client, and N servers holding
 the N slots while their clients queue would deadlock.
 
-Used by tests/diff (diffdrive/targets.py), port/scripts/*_session.sh, smoke.sh,
+Used by tests/diff and the sessions (control/soadrive/targets.py), port/scripts/*_session.sh, smoke.sh,
 emulator/scripts/*.sh and emulator-viewer/scripts/viewer_lib.sh (control/README.md).
 """
 import fcntl

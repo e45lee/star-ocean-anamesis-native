@@ -72,16 +72,22 @@ std::string lookup(TestContext& t, const server::cdn::Tree& tree, const std::str
     return std::string(b.begin(), b.end());
 }
 
-// The inodes of the sockets this process has open, and those of them that are TCP sockets.
+// The inodes of the sockets this process has open, and those of them that are TCP sockets
+// (Linux's /proc; none found on Windows, where the check below proves nothing).
 std::set<std::string> tcp_sockets_open() {
     std::set<std::string> mine, tcp;
+#ifdef _WIN32
+    return tcp;
+#endif
     if (DIR* d = opendir("/proc/self/fd")) {
         while (dirent* e = readdir(d)) {
             char link[256];
+#ifndef _WIN32
             ssize_t n = readlink(("/proc/self/fd/" + std::string(e->d_name)).c_str(), link, sizeof link - 1);
             if (n <= 0) continue;
             link[n] = 0;
             if (!strncmp(link, "socket:[", 8)) mine.insert(std::string(link + 8, strcspn(link + 8, "]")));
+#endif
         }
         closedir(d);
     }

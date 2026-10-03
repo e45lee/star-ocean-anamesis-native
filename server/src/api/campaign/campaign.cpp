@@ -6,6 +6,7 @@
 //
 // Rule sources: (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 // docs/server-rules.md "Campaign progression" lists the same rules.
+#include <cinttypes>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -76,7 +77,7 @@ u32 mission_arg(const Request& req, int n) {
 }
 // Integer argument k (1-based, as the registers x1..: every argument of these methods is an
 // integer); 0 when absent. For the log lines.
-unsigned long arg(const Request& req, size_t k) { return k >= 1 && k <= req.ints.size() ? (unsigned long)req.ints[k - 1] : 0; }
+uint64_t arg(const Request& req, size_t k) { return k >= 1 && k <= req.ints.size() ? (uint64_t)req.ints[k - 1] : 0; }
 
 // The keys the campaign adds to the response of `fid`, in their order.
 std::vector<std::pair<std::string, Value>> campaign_keys(u32 fid, const State& s) {
@@ -117,18 +118,20 @@ void on_request(const Request& req) {
     State& s = state();
     if (fid == kMissionStart) {
         s.playing = mission_arg(req, 7);
-        LOGI("server", "campaign: MissionStart(%lu, %lu, %lu, ...) -> mission %u", arg(req, 1), arg(req, 2), arg(req, 3), s.playing);
+        LOGI("server", "campaign: MissionStart(%" PRIu64 ", %" PRIu64 ", %" PRIu64 ", ...) -> mission %u", arg(req, 1), arg(req, 2), arg(req, 3),
+             s.playing);
     } else if (fid == kMissionEnd) {
         // (b) CApiCaller::MissionEnd is only sent for a finished (won) mission; a lost one sends
         // MissionFailed / MissionLose. The mission is the one started, unless an argument names one.
         u32 id = mission_arg(req, 2);
         if (!id) id = s.playing;
-        LOGI("server", "campaign: MissionEnd(%lu, %lu) -> mission %u", arg(req, 1), arg(req, 2), id);
+        LOGI("server", "campaign: MissionEnd(%" PRIu64 ", %" PRIu64 ") -> mission %u", arg(req, 1), arg(req, 2), id);
         clear_mission(s, id, "cleared");
     } else if (fid == kMissionTalk) {
         // (b) MissionTalk is sent when a story-scene mission (master_mission.talk_event_id) is played.
         u32 id = mission_arg(req, 3);
-        LOGI("server", "campaign: MissionTalk(%lu, %lu, %lu, %lu) -> mission %u", arg(req, 1), arg(req, 2), arg(req, 3), arg(req, 4) & 0xff, id);
+        LOGI("server", "campaign: MissionTalk(%" PRIu64 ", %" PRIu64 ", %" PRIu64 ", %" PRIu64 ") -> mission %u", arg(req, 1), arg(req, 2),
+             arg(req, 3), arg(req, 4) & 0xff, id);
         clear_mission(s, id, "story scene played:");
     } else if (fid == kGetWorldMapInfoList) {
         // (b) GetWorldMapInfoList(u32): CWorldMapMenu::CallReceiveApi passes the episode
@@ -136,7 +139,7 @@ void on_request(const Request& req) {
         s.wm_episode = (u32)arg(req, 1);
         LOGI("server", "campaign: GetWorldMapInfoList(%u)", s.wm_episode);
     } else if (fid == kMissionFailed) {
-        LOGI("server", "campaign: MissionFailed(%lu, %lu)", arg(req, 1), arg(req, 2));
+        LOGI("server", "campaign: MissionFailed(%" PRIu64 ", %" PRIu64 ")", arg(req, 1), arg(req, 2));
     }
 }
 

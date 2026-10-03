@@ -39,11 +39,10 @@ namespace {
 //       Player.support_pc_id): UpdateSupport's owned character (player.support_uid, api/social/rental.cpp).
 //   (d) Unset or no longer owned: the highest-level character (ties by uid), the first of the
 //       rental list's lenders (api/social/rental.cpp).
-u64 support_uid(ext::Ctx& ctx, const Row& player_row) {
-    u64 uid = (u64)player_row.i("support_uid");  // NULL: unset (0)
-    if (!uid || !ctx.st.one("select count(*) from roster where uid = ?", {uid}))
-        uid = (u64)ctx.st.one("select uid from roster order by level desc, uid limit 1", {}, 0);
-    return uid;
+CharacterUid support_uid(ext::Ctx& ctx, const Row& player_row) {
+    std::optional<CharacterUid> chosen = player_row.opt<CharacterUid>("support_uid");  // NULL: unset
+    if (chosen && owns_character(ctx, *chosen)) return *chosen;
+    return ctx.st.one_id<CharacterUid>("select uid from roster order by level desc, uid limit 1", {});  // none: 0
 }
 
 // The stock caps of Player (player_info, step 2).
@@ -55,7 +54,7 @@ void add_stock_caps(ext::Ctx& ctx, Value& player) {
     // count of the gear screens) = the free gears (api/items/gear.cpp's table; d: attached gears
     // don't count). Before PLAN-schema S1 it was sent only once the module's table existed, so a
     // new state's first player load lacked it (but on soa-server, whose bridge made the tables).
-    player["gear_num"] = (u32)ctx.st.one("select count(*) from gear_items where item_uid = 0", {});
+    player["gear_num"] = (u32)ctx.st.one("select count(*) from gear_items where item_uid is null", {});  // the gear box
     player["follow_max"] = ctx.global_u32("follow_default", 30);  // (a) master_global follow_default
 }
 
@@ -73,7 +72,7 @@ void add_domain_state(const Row& player_row, Value& player) {
     player["time_saving_use_count"] = (u32)player_row.i("time_saving_count");
     // Titles (api/player/titles.cpp): the selected master_title id, which the status bar's plate
     // shows (b: CCommon::UpdateMyStatus -> CParameterUtility::SetPlayerTitle, +0xed8).
-    player["title"] = (u32)player_row.i("title_id");  // NULL: none (0)
+    player["title"] = or_zero(player_row.opt<TitleId>("title_id"));  // NULL: none (0)
 }
 
 }  // namespace
@@ -99,9 +98,9 @@ Value player_info(ext::Ctx& ctx) {
         // (Player.home_pc_id), and finds it among the owned characters by CPersonInfo uid; with
         // no match it shows party 1's first member. (The client before the rebase read a role
         // id here; docs/server-rules.md "Home character".)
-        player["home_pc_id"] = (u64)player_row.i("home_uid");
+        player["home_pc_id"] = or_zero(player_row.opt<CharacterUid>("home_uid"));  // NULL: none (0)
         player["party_id"] = (u32)player_row.i("party_id");
-        player["support_pc_id"] = support_uid(ctx, player_row);
+        player["support_pc_id"] = support_uid(ctx, player_row).v;
         // 2. the stock caps
         add_stock_caps(ctx, player);
         // 3. the times; (d) updated_at is the answer's time
@@ -130,16 +129,16 @@ Value wallet_info(ext::Ctx& ctx) {
     return wallet;
 }
 
-u32 player_id(ext::Ctx& ctx) { return (u32)ctx.st.one("select id from player", {}); }
+PlayerId player_id(ext::Ctx& ctx) { return ctx.st.one_id<PlayerId>("select id from player", {}); }
 
 // StockItem: every stack item held (CStackItemInfo, one per master item with a count).
 Value stack_item_info_list(ext::Ctx& ctx) {
     Value list = Value::array();
-    u32 pid = player_id(ctx);
+    const PlayerId pid = player_id(ctx);
     ctx.st.q("select * from stock where count > 0 order by master_item_id", {}, [&](const Row& stock_row) {
         Value info = Value::object();
         info["id"] = (u32)stock_row.i("master_item_id");
-        info["player_id"] = pid;
+        info["player_id"] = pid.v;
         info["master_item_id"] = (u32)stock_row.i("master_item_id");
         info["item_type"] = (u32)stock_row.i("item_type");
         info["use_count"] = (u32)stock_row.i("count");
@@ -156,12 +155,12 @@ Value stack_item_info_list(ext::Ctx& ctx) {
 // a weapon's AttachedGearInfoList, api/items/gear.cpp).
 Value item_info_list(ext::Ctx& ctx, const std::string& where) {
     Value list = Value::array();
-    u32 pid = player_id(ctx);
+    const PlayerId pid = player_id(ctx);
     ext::Sql state{ctx.st.h}, master{ctx.m.h};
     ctx.st.q("select * from items " + where + " order by uid", {}, [&](const Row& item_row) {
         Value info = Value::object();
         info["id"] = (u64)item_row.i("uid");
-        info["player_id"] = pid;
+        info["player_id"] = pid.v;
         info["master_item_id"] = (u32)item_row.i("master_item_id");
         info["item_type"] = (u32)item_row.i("item_type");
         info["boosted_point"] = (u32)item_row.i("exp");
@@ -170,9 +169,9 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
         // compose level and the lock flag are api/items/'s
         info["level"] = (u32)std::max<int64_t>(1, item_row.i("level"));
         info["is_lock"] = item_row.i("locked") != 0;
-        info["is_equip"] = item_equipped(ctx, (u64)item_row.i("uid"));
+        info["is_equip"] = item_equipped(ctx, item_row.id<ItemUid>("uid"));
         info["num"] = 1u;
-        ext::item_extra(state, master, (u64)item_row.i("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
+        ext::item_extra(state, master, item_row.id<ItemUid>("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
         list.push(info);
     });
     return list;
@@ -208,9 +207,9 @@ std::vector<u8> full_player_state(ext::Ctx& ctx, const Request& req, CdnKeys cdn
 }
 
 // The home character's master_role.same_role_id (0 when none).
-u32 home_same_role(ext::Ctx& ctx) {
-    u32 role_id = (u32)ctx.st.one("select r.role_id from player p join roster r on r.uid = p.home_uid", {});
-    return role_id ? (u32)ctx.m.one("select same_role_id from master_role where id = ?", {role_id}) : 0u;
+SameRoleId home_same_role(ext::Ctx& ctx) {
+    const RoleId role_id = ctx.st.one_id<RoleId>("select r.role_id from player p join roster r on r.uid = p.home_uid", {});
+    return role_id.v ? ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role_id}) : SameRoleId(0);
 }
 
 namespace {

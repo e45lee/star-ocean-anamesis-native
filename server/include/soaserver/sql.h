@@ -12,7 +12,10 @@
 #include <functional>
 #include <initializer_list>
 #include <map>
+#include <optional>
 #include <string>
+
+#include "soaserver/ids.h"
 
 namespace soa::server::sql {
 
@@ -24,6 +27,18 @@ struct Row {
     double f(const char* k) const;
     std::string s(const char* k) const;
     bool null(const char* k) const;
+    // A typed id (soaserver/ids.h): `row.id<CharacterUid>("uid")`. NULL or missing reads as id 0,
+    // as i() does (the columns that still say "none" with 0).
+    template <class T>
+    T id(const char* k) const {
+        return T((typename T::rep)i(k));
+    }
+    // A nullable reference column (NULL = none, PLAN-schema S4): `row.opt<ItemUid>("weapon_uid")`.
+    template <class T>
+    std::optional<T> opt(const char* k) const {
+        if (null(k)) return std::nullopt;
+        return T((typename T::rep)i(k));
+    }
 };
 
 // A bound argument: an integer (unsigned 64-bit values keep their bits), a double, a text or NULL.
@@ -42,6 +57,11 @@ struct Arg {
     Arg(const char* v) : t(S), s(v) {}
     Arg(std::string v) : t(S), s(std::move(v)) {}
     Arg(std::nullptr_t) : t(N) {}
+    // A typed id binds its number; an empty optional reference binds NULL (soaserver/ids.h).
+    template <class Tag, class Rep>
+    Arg(Id<Tag, Rep> id) : t(I), i((int64_t)id.v) {}
+    template <class Tag, class Rep>
+    Arg(const std::optional<Id<Tag, Rep>>& id) : t(id ? I : N), i(id ? (int64_t)id->v : 0) {}
 };
 
 // A handle (borrowed: copying it doesn't copy the connection; the server object closes it).
@@ -58,6 +78,18 @@ struct Sql {
     int q(const std::string& sql, std::initializer_list<Arg> args, const std::function<void(const Row&)>& fn = {});
     // The first column of the last row: `dflt` when there is no row or its value is NULL.
     int64_t one(const std::string& sql, std::initializer_list<Arg> args, int64_t dflt = 0);
+    // one() as a typed id: id 0 when there is no row or its value is NULL.
+    template <class T>
+    T one_id(const std::string& sql, std::initializer_list<Arg> args) {
+        return T((typename T::rep)one(sql, args, 0));
+    }
+    // one() as a nullable reference: none when there is no row or its value is NULL.
+    template <class T>
+    std::optional<T> one_opt(const std::string& sql, std::initializer_list<Arg> args) {
+        std::optional<T> v;
+        q(sql, args, [&](const Row& r) { v = r.opt<T>(r.v.begin()->first.c_str()); });
+        return v;
+    }
 };
 
 // one() as the core's former Db::one read it: `dflt` when there is no row, but a NULL value reads

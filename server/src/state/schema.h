@@ -11,13 +11,15 @@
 namespace soa::server::state {
 
 // The version this build writes and reads; a file with a higher user_version isn't opened.
-constexpr int kSchemaVersion = 3;
+constexpr int kSchemaVersion = 5;
 
 struct Step {
     int version;                    // user_version after the step
     const char* what;               // one line for the log and the tests
     std::vector<const char*> sql;   // DDL (and data mapping), run in order
-    bool (*fn)(sqlite3* db);        // C++ after the SQL (data mapping, repairs); nullptr: none. False fails the step
+    // C++ after the SQL (data mapping, repairs); nullptr: none. False fails the step. `master` is the
+    // master DB (read-only; nullptr in the tests that migrate without one: the step's default).
+    bool (*fn)(sqlite3* db, sqlite3* master);
 };
 
 // The steps, version 1 .. kSchemaVersion, in order.

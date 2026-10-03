@@ -16,10 +16,13 @@ import threading
 import time
 import traceback
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from diffdrive import compare, targets  # noqa: E402
-from diffdrive.targets import soaslot  # noqa: E402
-from diffdrive.flows import event, seeded, shard_battle, shard_gacha, shard_login, shard_tutorial, tutorial  # noqa: E402
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "control"))
+import compare  # noqa: E402  (tests/diff/compare.py: the report)
+from soadrive import targets  # noqa: E402  (control/soadrive: the driver library)
+from soadrive.targets import soaslot  # noqa: E402
+from soadrive.flows import event, seeded, shard_battle, shard_gacha, shard_login, shard_tutorial, tutorial  # noqa: E402
 
 # The full flows (the end-of-batch gate: `run.sh` with no flow names) and the shards (short flows
 # for per-change gating: tools/tests_for.py picks them; tests/diff/README.md "Shards").

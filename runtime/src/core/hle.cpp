@@ -88,6 +88,9 @@ void hle_init() {
     register_egl(h);
     register_android(h);
     register_opensles(h);
+#ifdef _WIN32
+    register_libc_win32(h);
+#endif
     for (auto& fn : registrars()) fn(h);  // the host's (hle_add_registrar)
 }
 

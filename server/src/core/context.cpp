@@ -22,9 +22,9 @@ Value ext::Ctx::base_data() { return server::base_data(*this); }
 Value ext::Ctx::roster() { return roster_info(*this); }
 Value ext::Ctx::stock() { return stack_item_info_list(*this); }
 Value ext::Ctx::items() { return item_info_list(*this); }
-u32 ext::Ctx::player_id() { return server::player_id(*this); }
-std::vector<u32> ext::Ctx::role_next(u32 role) { return master::role_next(m.h, role); }
-u32 ext::Ctx::role_level_cap(u32 role) { return master::role_level_cap(m.h, role); }
+PlayerId ext::Ctx::player_id() { return server::player_id(*this); }
+std::vector<u32> ext::Ctx::role_next(RoleId role) { return master::role_next(m.h, role); }
+u32 ext::Ctx::role_level_cap(RoleId role) { return master::role_level_cap(m.h, role); }
 u32 ext::Ctx::stamina_max(u32 level) { return master::stamina_max(m.h, level); }
 void ext::Ctx::tick_stamina() { server::tick_stamina(*this); }
 u32 ext::Ctx::global_u32(const char* key, u32 dflt) { return master::global_u32(m.h, key, dflt); }

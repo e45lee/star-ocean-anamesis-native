@@ -43,7 +43,7 @@ bool npc_status(sqlite3* master, uint32_t mission_npc_id, Value& e) {
         });
     if (!role) return false;
     const char* keys[6] = {"hp", "attack", "intelligence", "defence", "hit", "guard"};
-    auto rnd = [](float x) { return (float)(u32)(int)(long)(x > 0.0f ? x + 0.5f : x - 0.5f); };
+    auto rnd = [](float x) { return (float)(u32)(int)(int64_t)(x > 0.0f ? x + 0.5f : x - 0.5f); };
     float common[6] = {0}, rankm[6] = {100, 100, 100, 100, 100, 100}, st6[6] = {0};
     u32 rolev[6] = {0}, rank = 0;
     std::vector<u32> factors;

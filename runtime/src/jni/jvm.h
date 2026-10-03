@@ -22,13 +22,23 @@ struct Class;
 // past a 16-aligned block: its address ends in 8, its low byte is never zero. All of them are
 // created with `new` (Vm::str / new_array / instance / boolean / integer / find_class, NewObject,
 // AllocObject, Method / Field); none is static, embedded or made by make_shared (asserted in the
-// tests: jni/references-low-byte). 8-byte alignment is all these types need.
+// tests: jni/references-low-byte). 8-byte alignment is all these types need with libstdc++.
+// With libc++ (the Windows build) std::function is 16-aligned (Instance::on_destroy), so there the
+// block is 256-aligned and the object at 16 past it: 16-aligned, its low byte 0x10.
 struct TaggedAlloc {
-    static constexpr size_t kTag = 8;
+#ifdef _LIBCPP_VERSION
+    static constexpr size_t kAlign = 256, kTag = 16;
+    static void* operator new(size_t n) { return static_cast<char*>(::operator new(n + kAlign, std::align_val_t(kAlign))) + kTag; }
+    static void operator delete(void* p) {
+        if (p) ::operator delete(static_cast<char*>(p) - kTag, std::align_val_t(kAlign));
+    }
+#else
+    static constexpr size_t kAlign = 16, kTag = 8;
     static void* operator new(size_t n) { return static_cast<char*>(::operator new(n + 16)) + kTag; }
     static void operator delete(void* p) {
         if (p) ::operator delete(static_cast<char*>(p) - kTag);
     }
+#endif
     static void* operator new[](size_t) = delete;  // the offset trick isn't wired for arrays
     static void operator delete[](void*) = delete;
 };

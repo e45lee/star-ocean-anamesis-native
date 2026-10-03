@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "core/log.h"
+#include "master/master.h"  // global_u32 (party_set_max)
 
 namespace soa::server::state {
 
@@ -223,7 +224,7 @@ std::vector<std::pair<std::string, Column>> columns(sqlite3* db, const std::stri
 // Step 1's repair: a baseline column a table of the file lacks is added with its baseline type and
 // default (`alter table add column`; LOGW per column). The reference is the baseline built in a
 // scratch in-memory DB, so the columns come from the same statements, not a second listing.
-bool repair_columns(sqlite3* db) {
+bool repair_columns(sqlite3* db, sqlite3*) {
     sqlite3* ref = nullptr;
     if (sqlite3_open(":memory:", &ref) != SQLITE_OK) {
         sqlite3_close(ref);
@@ -324,7 +325,7 @@ struct Bound {
 bool run(sqlite3* db, const char* sql, const std::vector<Bound>& args = {}) {
     sqlite3_stmt* s = nullptr;
     if (sqlite3_prepare_v2(db, sql, -1, &s, nullptr) != SQLITE_OK) {
-        LOGE("server", "state schema: version 3: %s: %s", sql, sqlite3_errmsg(db));
+        LOGE("server", "state schema: migration: %s: %s", sql, sqlite3_errmsg(db));
         sqlite3_finalize(s);
         return false;
     }
@@ -337,7 +338,7 @@ bool run(sqlite3* db, const char* sql, const std::vector<Bound>& args = {}) {
     int rc;
     while ((rc = sqlite3_step(s)) == SQLITE_ROW) {}
     sqlite3_finalize(s);
-    if (rc != SQLITE_DONE) LOGE("server", "state schema: version 3: %s: %s", sql, sqlite3_errmsg(db));
+    if (rc != SQLITE_DONE) LOGE("server", "state schema: migration: %s: %s", sql, sqlite3_errmsg(db));
     return rc == SQLITE_DONE;
 }
 
@@ -400,7 +401,7 @@ Bound value_or_null(const std::optional<int64_t>& v) { return v ? Bound::integer
 //   sphere_meta cycle, season_wins, end_pending (!= 0 -> 1), test_enemy_level (0: off -> NULL)
 //     -> the sphere row's columns. Without a sphere row there is no dive for them to belong to
 //     (load_dive creates the row with the season's cycle): dropped, logged.
-bool move_keys(sqlite3* db) {
+bool move_keys(sqlite3* db, sqlite3*) {
     auto meta = key_values(db, "select key, value from meta");
     auto sphere_meta = key_values(db, "select key, value from sphere_meta");
     auto counters = key_values(db, "select key, value from counters where key = 'login_bonus_popup_pending'");
@@ -452,6 +453,261 @@ bool move_keys(sqlite3* db) {
     return ok;
 }
 
+// ---- step 4: the roster (PLAN-schema S4, findings F2, F3, F5) ----------------------------------
+// One row per owned character: roster_ext (the seeds' add_* and the equipped skills, a table of
+// its own only because the growth module couldn't add columns) and assist (a 1:1 relation on the
+// roster) merge into roster, which is rebuilt STRICT with its foreign keys and the three unique
+// indexes (one character per equipped item, one assisted character per assist); skill1..3 are
+// renamed skill1..3_level (they are levels; party_member.skill1..3 are skill ids). player is
+// rebuilt STRICT in the same step, since roster is its parent: home_uid, support_uid, title_id and
+// party_id become declared references. "None" is NULL in every reference column (0 before). The
+// tables are created as new_X, filled by rebuild_roster_and_player (below), and renamed X after
+// the old X is dropped (PLAN-schema 4.1: the old table is dropped, never renamed away).
+//
+// The foreign keys and their actions (PLAN-schema 3.1):
+//   roster.weapon_uid, accessory_uid -> items.uid   ON DELETE SET NULL (immediate)
+//   roster.assist_uid                -> roster.uid  ON DELETE SET NULL (immediate)
+//   player.home_uid                  -> roster.uid  ON DELETE SET NULL, deferred (seed / CreatePlayer
+//                                                   write the player before the roster)
+//   player.party_id                  -> party_set.party_id  NO ACTION, deferred (the sets are
+//                                                   seeded in the player's transaction)
+//   player.title_id                  -> titles.id   ON DELETE SET NULL (immediate)
+//   player.support_uid               -> roster.uid  ON DELETE SET NULL (immediate)
+// No ON UPDATE action: a parent key never changes (uids and ids are allocated once).
+const char* const kRoster[] = {
+    // CPersonInfo (b): the character's levels and growth, its equipment (owned items), its assist
+    R"(create table new_roster (
+  uid integer primary key,
+  role_id integer not null,
+  level integer not null, exp integer not null default 0,
+  limit_break integer not null default 0, awaken integer not null default 0,
+  skill1_level integer not null default 1, skill2_level integer not null default 1, skill3_level integer not null default 1,
+  equip_skill1 integer, equip_skill2 integer, equip_skill3 integer,
+  add_hp integer not null default 0, add_attack integer not null default 0, add_intelligence integer not null default 0,
+  add_defence integer not null default 0, add_hit integer not null default 0, add_guard integer not null default 0,
+  add_ap integer not null default 0,
+  weapon_uid integer references items(uid) on delete set null,
+  accessory_uid integer references items(uid) on delete set null,
+  assist_uid integer references roster(uid) on delete set null,
+  created_at integer not null
+) strict)",
+    // CPlayerInfo (b): the one player of the file
+    R"(create table new_player (
+  id integer primary key,
+  search_id text not null unique,
+  name text not null,
+  level integer not null, exp integer not null, fol integer not null,
+  stamina integer not null, stamina_at integer not null,
+  free_coin integer not null default 0, pay_coin integer not null default 0,
+  home_uid integer references roster(uid) on delete set null deferrable initially deferred,
+  party_id integer not null default 1 references party_set(party_id) deferrable initially deferred,
+  created_at integer not null, last_login_at integer,
+  tutorial_status integer not null default 0,
+  view_status integer not null default 0,
+  view_status2 integer not null default 0,
+  kiyaku_version text not null default '',
+  title_id integer references titles(id) on delete set null,
+  support_uid integer references roster(uid) on delete set null,
+  time_saving_count integer not null default 0,
+  time_saving_day integer,
+  login_bonus_popup_pending integer not null default 0 check (login_bonus_popup_pending in (0, 1))
+) strict)",
+};
+
+// The indexes of the rebuilt roster (created after the rename).
+const char* const kRosterIndexes[] = {
+    "create unique index roster_weapon on roster(weapon_uid) where weapon_uid is not null",
+    "create unique index roster_accessory on roster(accessory_uid) where accessory_uid is not null",
+    "create unique index roster_assist on roster(assist_uid) where assist_uid is not null",
+};
+
+// LOGW "migrate v<version>: <what>: N <how>" when the count of `sql` is non-zero.
+void log_count(sqlite3* db, const char* sql, const char* what, const char* how, int version = 4) {
+    if (int64_t n = count_of(db, sql)) LOGW("server", "migrate v%d: %s: %lld %s", version, what, (long long)n, how);
+}
+
+// Step 4's data mapping (PLAN-schema S4), with the conventions of 4.1 (0 -> NULL; a dangling
+// reference -> its declared action: NULL for SET NULL, dropped for a CASCADE child; each logged):
+//   roster ⟕ roster_ext ⟕ assist -> new_roster:
+//     skill1..3 -> skill1..3_level; roster_ext's add_* (no row: 0) and equip_skill1..3 (0 -> NULL);
+//     weapon_uid / accessory_uid 0 -> NULL, not an item -> NULL, an item two characters wear ->
+//       kept by the lowest uid (the unique index);
+//     assist.assist_uid where both are owned (and differ), an assist two characters have -> kept
+//       by the lowest uid;
+//     a roster_ext or assist row of no character -> dropped;
+//     a NULL in a not-null column -> 0 (what the readers read for it).
+//   player -> new_player: home_uid 0 or not owned -> NULL; title_id not an owned title -> NULL;
+//     support_uid not owned -> NULL; party_id NULL or < 1 -> 1; NULLs in not-null columns -> 0 / ''.
+//   party_set: with a player, a row per set 1..master_global.party_set_max (icon 0, unlocked:
+//     what PartySet sends for a set without one) and for the player's party_id (UpdateParty takes
+//     any id), so player.party_id has its parent. A file without a player gets them at its
+//     creation (seed / CreatePlayer).
+bool rebuild_roster_and_player(sqlite3* db, sqlite3* master) {
+    bool has_player = count_of(db, "select count(*) from player") > 0;
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from roster where weapon_uid != 0 and weapon_uid not in (select uid from items)", "roster.weapon_uid",
+              "dangling -> NULL");
+    log_count(db, "select count(*) from roster where accessory_uid != 0 and accessory_uid not in (select uid from items)", "roster.accessory_uid",
+              "dangling -> NULL");
+    log_count(db,
+              "select count(*) from roster r where weapon_uid in (select uid from items) and "
+              "exists (select 1 from roster o where o.weapon_uid = r.weapon_uid and o.uid < r.uid)",
+              "roster.weapon_uid", "worn by a second character -> NULL (kept by the lowest uid)");
+    log_count(db,
+              "select count(*) from roster r where accessory_uid in (select uid from items) and "
+              "exists (select 1 from roster o where o.accessory_uid = r.accessory_uid and o.uid < r.uid)",
+              "roster.accessory_uid", "worn by a second character -> NULL (kept by the lowest uid)");
+    log_count(db, "select count(*) from roster_ext where uid not in (select uid from roster)", "roster_ext.uid", "dangling -> dropped");
+    log_count(db, "select count(*) from assist where uid not in (select uid from roster)", "assist.uid", "dangling -> dropped");
+    log_count(db, "select count(*) from assist where uid in (select uid from roster) and assist_uid not in (select uid from roster)",
+              "assist.assist_uid", "dangling -> NULL");
+    log_count(db, "select count(*) from assist where uid = assist_uid", "assist.assist_uid", "the character itself -> NULL");
+    log_count(
+        db,
+        "select count(*) from assist a where uid in (select uid from roster) and assist_uid in (select uid from roster) and "
+        "exists (select 1 from assist o where o.assist_uid = a.assist_uid and o.uid < a.uid and o.uid != o.assist_uid and o.uid in (select uid from roster))",
+        "assist.assist_uid", "assisting a second character -> NULL (kept by the lowest uid)");
+    log_count(db, "select count(*) from player where home_uid != 0 and home_uid not in (select uid from roster)", "player.home_uid",
+              "dangling -> NULL");
+    log_count(db, "select count(*) from player where title_id is not null and title_id not in (select id from titles)", "player.title_id",
+              "dangling -> NULL");
+    log_count(db, "select count(*) from player where support_uid is not null and support_uid not in (select uid from roster)", "player.support_uid",
+              "dangling -> NULL");
+    log_count(db, "select count(*) from player where party_id is null or party_id < 1", "player.party_id", "none -> 1");
+
+    // the roster: owned items only, each worn by one character; assists of owned characters only,
+    // each assisting one character
+    bool ok = run(db, R"(
+insert into new_roster (uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level,
+  equip_skill1, equip_skill2, equip_skill3, add_hp, add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap,
+  weapon_uid, accessory_uid, assist_uid, created_at)
+select r.uid, ifnull(r.role_id, 0), ifnull(r.level, 0), ifnull(r.exp, 0), ifnull(r.limit_break, 0), ifnull(r.awaken, 0),
+  ifnull(r.skill1, 0), ifnull(r.skill2, 0), ifnull(r.skill3, 0),
+  nullif(e.equip_skill1, 0), nullif(e.equip_skill2, 0), nullif(e.equip_skill3, 0),
+  ifnull(e.add_hp, 0), ifnull(e.add_attack, 0), ifnull(e.add_intelligence, 0), ifnull(e.add_defence, 0), ifnull(e.add_hit, 0),
+  ifnull(e.add_guard, 0), ifnull(e.add_ap, 0),
+  case when r.weapon_uid in (select uid from items)
+        and not exists (select 1 from roster o where o.weapon_uid = r.weapon_uid and o.uid < r.uid) then r.weapon_uid end,
+  case when r.accessory_uid in (select uid from items)
+        and not exists (select 1 from roster o where o.accessory_uid = r.accessory_uid and o.uid < r.uid) then r.accessory_uid end,
+  case when a.assist_uid in (select uid from roster) and a.assist_uid != r.uid
+        and not exists (select 1 from assist o where o.assist_uid = a.assist_uid and o.uid < a.uid and o.uid != o.assist_uid and o.uid in (select uid from roster))
+       then a.assist_uid end,
+  ifnull(r.created_at, 0)
+from roster r left join roster_ext e on e.uid = r.uid left join assist a on a.uid = r.uid)");
+    // the player's sets (before the player, whose party_id names one)
+    if (ok && has_player) {
+        u32 max = master ? master::global_u32(master, "party_set_max", 10) : 10;  // (a) master_global party_set_max
+        if (!master) LOGW("server", "migrate v4: no master DB: the party sets 1..%u", max);
+        for (u32 party_id = 1; ok && party_id <= max; party_id++)
+            ok = run(db, "insert into party_set (party_id) values (?) on conflict(party_id) do nothing", {Bound::integer(party_id)});
+        ok = ok && run(db,
+                       "insert into party_set (party_id) select party_id from player where party_id >= 1 "
+                       "on conflict(party_id) do nothing");
+    }
+    ok = ok && run(db, R"(
+insert into new_player (id, search_id, name, level, exp, fol, stamina, stamina_at, free_coin, pay_coin, home_uid, party_id,
+  created_at, last_login_at, tutorial_status, view_status, view_status2, kiyaku_version, title_id, support_uid,
+  time_saving_count, time_saving_day, login_bonus_popup_pending)
+select id, ifnull(search_id, ''), ifnull(name, ''), ifnull(level, 0), ifnull(exp, 0), ifnull(fol, 0), ifnull(stamina, 0),
+  ifnull(stamina_at, 0), ifnull(free_coin, 0), ifnull(pay_coin, 0),
+  case when home_uid in (select uid from roster) then home_uid end,
+  case when party_id >= 1 then party_id else 1 end,
+  ifnull(created_at, 0), last_login_at, tutorial_status, view_status, view_status2, kiyaku_version,
+  case when title_id in (select id from titles) then title_id end,
+  case when support_uid in (select uid from roster) then support_uid end,
+  time_saving_count, time_saving_day, login_bonus_popup_pending
+from player)");
+    for (const char* sql : {"drop table roster", "drop table roster_ext", "drop table assist", "alter table new_roster rename to roster",
+                            "drop table player", "alter table new_player rename to player"})
+        ok = ok && run(db, sql);
+    for (const char* sql : kRosterIndexes) ok = ok && run(db, sql);
+    return ok;
+}
+
+// ---- step 5: items and gear (PLAN-schema S5, findings F2, F3) ----------------------------------
+// The owned weapons and accessories (items) and the owned gears (gear_items) are rebuilt STRICT:
+// items gets its `locked` check, gear_items its reference to the weapon it is set in (NULL: in the
+// gear box; 0 before) with ON DELETE CASCADE, its `is_new` check and one gear per weapon slot (the
+// unique index). The cascade is the rule the gear module applied by hand at every gear list read
+// before (gear.cpp gear_info_list: `delete from gear_items where item_uid != 0 and item_uid not in
+// (select uid from items)`): (d) gear set in a weapon that is gone (sold, used as a material, the
+// base of a GenerateGear) goes with it, now at the weapon's delete. As in step 4 the tables are
+// created as new_X (gear_items' reference names the final `items`), filled by rebuild_items_and_gear
+// and renamed X after the old X is dropped; roster's weapon_uid / accessory_uid references keep
+// naming `items`, which is the new table after the rename.
+//
+// The foreign key and its action (PLAN-schema 3.1):
+//   gear_items.item_uid -> items.uid   ON DELETE CASCADE (immediate)
+// No ON UPDATE action: an item's uid never changes.
+const char* const kItemsGear[] = {
+    // CItemInfo (b): an owned weapon or accessory
+    R"(create table new_items (
+  uid integer primary key,
+  master_item_id integer not null,
+  item_type integer not null, level integer not null default 1, exp integer not null default 0,
+  limit_break integer not null default 0,
+  locked integer not null default 0 check (locked in (0, 1)),
+  created_at integer not null
+) strict)",
+    // CGearInfo (b): an owned gear, in the gear box (item_uid NULL) or set in a weapon's slot
+    R"(create table new_gear_items (
+  uid integer primary key,
+  type integer not null default 0,
+  master_item_id integer not null,
+  param2 integer not null default 0,
+  item_uid integer references items(uid) on delete cascade,
+  slot integer not null default 0,
+  is_new integer not null default 1 check (is_new in (0, 1)),
+  created_at integer not null
+) strict)",
+};
+
+// The index of the rebuilt gear_items (created after the rename): one gear per weapon slot.
+const char* const kGearIndexes[] = {
+    "create unique index gear_items_slot on gear_items(item_uid, slot) where item_uid is not null",
+};
+
+// Step 5's data mapping (PLAN-schema S5), with the conventions of 4.1:
+//   items -> new_items: a NULL in a not-null column -> 0 (what the readers read for it); locked
+//     not 0 -> 1 (the readers test `locked != 0`).
+//   gear_items -> new_gear_items: item_uid 0 -> NULL (the gear box); item_uid naming no item ->
+//     the row dropped (the CASCADE child: the rule gear_info_list applied at the next read); a
+//     second gear in an occupied weapon slot -> the gear box (item_uid NULL, slot 0, as RemoveGear
+//     leaves a gear), the slot kept by the lowest uid; is_new not 0 -> 1 (read as `is_new != 0`);
+//     a NULL in a not-null column -> 0.
+bool rebuild_items_and_gear(sqlite3* db, sqlite3*) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from items where locked is not null and locked not in (0, 1)", "items.locked", "not 0 / 1 -> 1", 5);
+    log_count(db, "select count(*) from gear_items where item_uid != 0 and item_uid not in (select uid from items)", "gear_items.item_uid",
+              "dangling -> dropped", 5);
+    log_count(db,
+              "select count(*) from gear_items g where item_uid in (select uid from items) and "
+              "exists (select 1 from gear_items o where o.item_uid = g.item_uid and ifnull(o.slot, 0) = ifnull(g.slot, 0) and o.uid < g.uid)",
+              "gear_items.item_uid", "a second gear in a weapon slot -> the gear box (kept by the lowest uid)", 5);
+    log_count(db, "select count(*) from gear_items where is_new is not null and is_new not in (0, 1)", "gear_items.is_new", "not 0 / 1 -> 1", 5);
+
+    bool ok = run(db, R"(
+insert into new_items (uid, master_item_id, item_type, level, exp, limit_break, locked, created_at)
+select uid, ifnull(master_item_id, 0), ifnull(item_type, 0), ifnull(level, 0), ifnull(exp, 0), ifnull(limit_break, 0),
+  case when ifnull(locked, 0) != 0 then 1 else 0 end, ifnull(created_at, 0)
+from items)");
+    ok = ok && run(db, R"(
+insert into new_gear_items (uid, type, master_item_id, param2, item_uid, slot, is_new, created_at)
+select g.uid, ifnull(g.type, 0), ifnull(g.master_item_id, 0), ifnull(g.param2, 0),
+  case when g.item_uid != 0 and exists (select 1 from gear_items o where o.item_uid = g.item_uid and ifnull(o.slot, 0) = ifnull(g.slot, 0) and o.uid < g.uid) then null
+       else nullif(g.item_uid, 0) end,
+  case when g.item_uid != 0 and exists (select 1 from gear_items o where o.item_uid = g.item_uid and ifnull(o.slot, 0) = ifnull(g.slot, 0) and o.uid < g.uid) then 0
+       else ifnull(g.slot, 0) end,
+  case when ifnull(g.is_new, 0) != 0 then 1 else 0 end, ifnull(g.created_at, 0)
+from gear_items g where ifnull(g.item_uid, 0) = 0 or g.item_uid in (select uid from items))");
+    for (const char* sql :
+         {"drop table gear_items", "drop table items", "alter table new_items rename to items", "alter table new_gear_items rename to gear_items"})
+        ok = ok && run(db, sql);
+    for (const char* sql : kGearIndexes) ok = ok && run(db, sql);
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -466,6 +722,14 @@ const std::vector<Step>& steps() {
         {1, "the baseline (the 58 tables as before PLAN-schema S1), plus missing columns", baseline_sql(), repair_columns},
         {2, "drop the dead tables and columns (PLAN-schema S2)", {std::begin(kDropDead), std::end(kDropDead)}, nullptr},
         {3, "keys out of meta, sphere_meta and counters (PLAN-schema S3)", {std::begin(kKeysOut), std::end(kKeysOut)}, move_keys},
+        {4,
+         "the roster: roster_ext and assist merged, roster and player rebuilt with their foreign keys (PLAN-schema S4)",
+         {std::begin(kRoster), std::end(kRoster)},
+         rebuild_roster_and_player},
+        {5,
+         "items and gear: items and gear_items rebuilt STRICT, gear set in a weapon references it (PLAN-schema S5)",
+         {std::begin(kItemsGear), std::end(kItemsGear)},
+         rebuild_items_and_gear},
     };
     return s;
 }

@@ -23,7 +23,7 @@ Member member(Ctx& ctx, u64 uid) {
     Member m;
     m.uid = uid;
     ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
-        m.role_id = (u32)roster_row.i("role_id");
+        m.role_id = roster_row.id<RoleId>("role_id");
         m.level = (u32)roster_row.i("level");
         m.limit_break = (u32)roster_row.i("limit_break");
         m.awaken = (u32)roster_row.i("awaken");

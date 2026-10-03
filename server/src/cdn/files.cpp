@@ -39,7 +39,11 @@ bool stat_file(const std::string& path, uint64_t* size, int64_t* mtime_ns) {
     struct stat st;
     if (stat(path.c_str(), &st) != 0 || !S_ISREG(st.st_mode)) return false;
     if (size) *size = (uint64_t)st.st_size;
+#ifdef _WIN32  // (whole seconds in the CRT's stat)
+    if (mtime_ns) *mtime_ns = (int64_t)st.st_mtime * 1000000000;
+#else
     if (mtime_ns) *mtime_ns = (int64_t)st.st_mtim.tv_sec * 1000000000 + st.st_mtim.tv_nsec;
+#endif
     return true;
 }
 bool is_dir(const std::string& path) {

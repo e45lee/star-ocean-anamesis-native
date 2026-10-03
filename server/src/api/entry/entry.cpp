@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "api/player/party_set.h"    // add_party_sets
 #include "api/player/player_info.h"  // full_player_state, base_data: the player state answers
 #include "api/player/titles.h"       // new_player_titles
 #include "core/errors.h"
@@ -71,31 +72,35 @@ std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args,
         "support_uid = excluded.support_uid, time_saving_count = excluded.time_saving_count, "
         "time_saving_day = excluded.time_saving_day, login_bonus_popup_pending = excluded.login_bonus_popup_pending",
         {player_id, std::string(search_id), args.name, 1u, 0u, 0u, ctx.stamina_max(1), now, config().start_coins /* (d) free coin, --start-coins */,
-         0u, 0u, 1u, now, now});
+         0u, nullptr /* home_uid: add_starters */, kStarterPartyId, now, now});
     return search_id;
 }
 
 // The starter characters, party 1 and the home character (create_player, step 3): returns their uids.
-std::vector<u64> add_starters(ext::Ctx& ctx, int64_t now) {
-    std::vector<u64> party;
+std::vector<CharacterUid> add_starters(ext::Ctx& ctx, int64_t now) {
+    std::vector<CharacterUid> party;
     for (int k = 1; k <= kStarterCharacters; k++) {
         std::string role_label = master::global_str(ctx.m.h, ("Default_Character_" + std::to_string(k)).c_str());
         u32 role_id = (u32)ctx.m.one("select id from master_role where id_label = ?", {role_label});
         if (!role_id) continue;
-        u64 uid = kRosterUid0 + (k - 1);
+        const CharacterUid uid(kRosterUid0 + (k - 1));
         // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
         // every other column's default (excluded.<col>), as the REPLACE gave it
         ctx.st.q(
             "insert into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)"
             " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
             "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
-            "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
-            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, "
+            "skill1_level = excluded.skill1_level, skill2_level = excluded.skill2_level, skill3_level = excluded.skill3_level, "
+            "equip_skill1 = excluded.equip_skill1, equip_skill2 = excluded.equip_skill2, equip_skill3 = excluded.equip_skill3, "
+            "add_hp = excluded.add_hp, add_attack = excluded.add_attack, add_intelligence = excluded.add_intelligence, "
+            "add_defence = excluded.add_defence, add_hit = excluded.add_hit, add_guard = excluded.add_guard, add_ap = excluded.add_ap, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, assist_uid = excluded.assist_uid, "
             "created_at = excluded.created_at",
             {uid, role_id, 1u, 0u, now});
         party.push_back(uid);
     }
     if (!party.empty()) ctx.st.q("update player set home_uid = ?", {party[0]});
+    add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents (PLAN-schema S4)
     for (size_t slot = 0; slot < party.size(); slot++)
         ctx.st.q(
             "insert into party (party_id, slot, uid) values (?,?,?)"
@@ -136,7 +141,7 @@ std::vector<u8> create_player(ext::Ctx& ctx, const Request& req) {
     }
     int64_t now = clock_now();
     std::string search_id = insert_new_player(ctx, args, now);
-    std::vector<u64> party = add_starters(ctx, now);
+    std::vector<CharacterUid> party = add_starters(ctx, now);
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
     ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
     // tutorial_status, view_status and view_status2 are 0: the new row's defaults

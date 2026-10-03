@@ -15,7 +15,7 @@
 
 namespace soa::server {
 
-bool item_equipped(ext::Ctx& ctx, u64 item_uid) {
+bool item_equipped(ext::Ctx& ctx, ItemUid item_uid) {
     return ctx.st.one("select count(*) from roster where weapon_uid = ? or accessory_uid = ?", {item_uid, item_uid}) > 0;
 }
 
@@ -31,16 +31,17 @@ constexpr int kRecipeIngredients = 5;
 // One owned weapon or accessory (an `items` row) with its master_item fields.
 struct Item {
     bool ok = false;
-    u64 uid = 0;
-    u32 id = 0, type = 0, points = 0, lb = 0, rarity = 0, sale_fol = 0;  // points: boosted points (`exp`); lb: limit break
+    ItemUid uid;
+    MasterItemId id;
+    u32 type = 0, points = 0, lb = 0, rarity = 0, sale_fol = 0;  // points: boosted points (`exp`); lb: limit break
     bool locked = false, equipped = false;
 };
-Item find_item(Ctx& ctx, u64 uid) {
+Item find_item(Ctx& ctx, ItemUid uid) {
     Item item;
     ctx.st.q("select * from items where uid = ?", {uid}, [&](const Row& item_row) {
         item.ok = true;
         item.uid = uid;
-        item.id = (u32)item_row.i("master_item_id");
+        item.id = item_row.id<MasterItemId>("master_item_id");
         item.type = (u32)item_row.i("item_type");
         item.points = (u32)item_row.i("exp");
         item.lb = (u32)item_row.i("limit_break");
@@ -120,9 +121,9 @@ LimitBreakItem limit_break_item(Ctx& ctx, const Item& base, const Item& material
 
 // The arguments of ItemCompose(Array) and ItemGradeUp(Array): (u64 base uid, vector<u64> materials).
 struct BaseAndMaterialsArgs {
-    u64 base_uid = 0;
-    std::vector<u64> material_uids;
-    static BaseAndMaterialsArgs from(const Request& req) { return {req.ints.size() > 0 ? req.ints[0] : 0, uid_list(req)}; }
+    ItemUid base_uid;
+    std::vector<ItemUid> material_uids;
+    static BaseAndMaterialsArgs from(const Request& req) { return {ItemUid(req.ints.size() > 0 ? req.ints[0] : 0), item_uid_list(req)}; }
 };
 
 // What one ItemCompose changes, for its answer.
@@ -137,7 +138,7 @@ struct Composed {
 std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
     Value data = ctx.base_data();
     Value result = Value::object();
-    result["id"] = composed.base.uid;
+    result["id"] = composed.base.uid.v;
     result["before_level"] = composed.level_before;
     result["before_boosted_point"] = composed.base.points;
     result["before_limit_break_count"] = composed.base.lb;
@@ -173,7 +174,7 @@ std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
 // Answers: the player state, ComposeResult and Item.
 std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     const auto args = BaseAndMaterialsArgs::from(req);
-    u64 base_uid = args.base_uid;
+    const ItemUid base_uid = args.base_uid;
     const auto& materials = args.material_uids;
     Composed composed;
     Item& base = composed.base;
@@ -186,7 +187,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     u32 lb_max = (u32)ctx.m.one("select max(limit_break) from master_item_limit_break_level_max where type = ?", {base.type}, 5);
     u64 gain = 0;
     u32 lb = base.lb;
-    for (u64 material_uid : materials) {
+    for (ItemUid material_uid : materials) {
         Item material = find_item(ctx, material_uid);
         // (d) locked or equipped items and the base itself can't be fed
         if (!material.ok || material.locked || material.equipped || material_uid == base_uid)
@@ -223,9 +224,9 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     after.points = (u32)points;
     composed.level_before = item_level_of(ctx, base), composed.level_after = item_level_of(ctx, after);
     ctx.st.q("update items set exp = ?, limit_break = ?, level = ? where uid = ?", {after.points, lb, composed.level_after, base_uid});
-    for (u64 material_uid : materials) {
-        ctx.st.q("delete from items where uid = ?", {material_uid});
-        composed.lost.push(material_uid);
+    for (ItemUid material_uid : materials) {
+        ctx.st.q("delete from items where uid = ?", {material_uid});  // its gear goes with it (ON DELETE CASCADE)
+        composed.lost.push(material_uid.v);
     }
     add_fol(ctx, -(int64_t)composed.cost);
     count(ctx, base.type == item_type::kAccessory ? "accessory_boost" : "weapon_boost");
@@ -238,7 +239,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     // applied above (lb - base.lb), so nothing is counted past the cap.
     if (lb > base.lb) count(ctx, base.type == item_type::kAccessory ? "accessory_limit_break" : "weapon_limit_break", (int64_t)(lb - base.lb));
     std::vector<u8> response = compose_response(ctx, composed);
-    LOGI("server", "ItemCompose %llx: +%llu points%s, level %u -> %u, limit break %u -> %u, FOL -%llu", (unsigned long long)base_uid,
+    LOGI("server", "ItemCompose %llx: +%llu points%s, level %u -> %u, limit break %u -> %u, FOL -%llu", (unsigned long long)base_uid.v,
          (unsigned long long)gain, composed.big ? " (big success)" : "", composed.level_before, composed.level_after, base.lb, lb,
          (unsigned long long)composed.cost);
     return response;
@@ -258,7 +259,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
 // Answers: the player state, GradeUpResult and Item.
 std::vector<u8> item_grade_up(Ctx& ctx, const Request& req) {
     const auto args = BaseAndMaterialsArgs::from(req);
-    u64 base_uid = args.base_uid;
+    const ItemUid base_uid = args.base_uid;
     const auto& materials = args.material_uids;
     Item base = find_item(ctx, base_uid);
     if (!base.ok || base.type != item_type::kWeapon) return refuse(ctx, "ItemGradeUp", "no base weapon", ErrorCode::kItemUnusable);
@@ -269,7 +270,7 @@ std::vector<u8> item_grade_up(Ctx& ctx, const Request& req) {
         cost = (u32)grade_up_row.i("use_fol");
     });
     if (!need || materials.size() != need) return refuse(ctx, "ItemGradeUp", "wrong number of materials", ErrorCode::kItemUnusable);
-    for (u64 material_uid : materials) {
+    for (ItemUid material_uid : materials) {
         Item material = find_item(ctx, material_uid);
         if (!material.ok || material.locked || material.equipped || material_uid == base_uid)
             return refuse(ctx, "ItemGradeUp", "a material is locked, equipped or missing", ErrorCode::kLockedItem);
@@ -295,22 +296,22 @@ std::vector<u8> item_grade_up(Ctx& ctx, const Request& req) {
     // (d) the base becomes the new weapon, fresh (level 1, no limit break); materials are lost
     ctx.st.q("update items set master_item_id = ?, item_type = (select 1), exp = 0, limit_break = 0, level = 1 where uid = ?", {got, base_uid});
     Value lost = Value::array();
-    for (u64 material_uid : materials) {
-        ctx.st.q("delete from items where uid = ?", {material_uid});
-        lost.push(material_uid);
+    for (ItemUid material_uid : materials) {
+        ctx.st.q("delete from items where uid = ?", {material_uid});  // its gear goes with it (ON DELETE CASCADE)
+        lost.push(material_uid.v);
     }
     add_fol(ctx, -(int64_t)cost);
     count(ctx, "weapon_grade_up");
     Value data = ctx.base_data();
     Value result = Value::object();
     result["grade_up_m_item_id"] = got;
-    result["base_item_id"] = base_uid;
+    result["base_item_id"] = base_uid.v;
     result["use_fol"] = cost;
     result["lost_item_ids"] = lost;
     result["UpdateGearList"] = Value::array();
     data["GradeUpResult"] = result;
     data["Item"] = ctx.items();
-    LOGI("server", "ItemGradeUp %llx: item %u -> %u, FOL -%u", (unsigned long long)base_uid, base.id, got, cost);
+    LOGI("server", "ItemGradeUp %llx: item %u -> %u, FOL -%u", (unsigned long long)base_uid.v, base.id.v, got, cost);
     return body(data);
 }
 
@@ -402,12 +403,12 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
         entry["use_count"] = stock_count(ctx, sold_item);
         stock_map[std::to_string(sold_item)] = entry;
     } else {
-        for (u64 uid : uid_list(req)) {
+        for (ItemUid uid : item_uid_list(req)) {
             Item item = find_item(ctx, uid);
             if (!item.ok || item.locked || item.equipped)
                 return refuse(ctx, req.method.c_str(), "an item is locked, equipped or missing", ErrorCode::kLockedItem);
         }
-        for (u64 uid : uid_list(req)) {
+        for (ItemUid uid : item_uid_list(req)) {
             Item item = find_item(ctx, uid);
             // (b) weapons: round(sale_fol x master_item_sale_rate[level].sale_rate); others sale_fol
             double rate = 1.0;
@@ -417,8 +418,8 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
                         [&](const Row& rate_row) { rate = rate_row.f("sale_rate"); });
             }
             total += growth_rules::sell_price(item.sale_fol, rate);
-            ctx.st.q("delete from items where uid = ?", {uid});
-            ids.push(uid);
+            ctx.st.q("delete from items where uid = ?", {uid});  // its gear goes with it (ON DELETE CASCADE)
+            ids.push(uid.v);
         }
     }
     add_fol(ctx, (int64_t)total);
@@ -446,7 +447,7 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
 // Answers: the player state and Item.
 std::vector<u8> lock_item(Ctx& ctx, const Request& req) {
     bool on = req.method.rfind("Lock", 0) == 0;
-    for (u64 uid : uid_list(req)) ctx.st.q("update items set locked = ? where uid = ?", {on ? 1 : 0, uid});
+    for (ItemUid uid : item_uid_list(req)) ctx.st.q("update items set locked = ? where uid = ?", {on ? 1 : 0, uid});
     Value data = ctx.base_data();
     data["Item"] = ctx.items();
     return body(data);

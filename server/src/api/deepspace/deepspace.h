@@ -73,8 +73,9 @@ Value deep_mission_player(Ctx& ctx, int64_t t, bool level_up);  // DeepMissionPl
 constexpr size_t kMaxMembers = 8;  // (b) uimsg_deep_space_select_num "%d / ８"
 // What the bonus conditions read of a character.
 struct Member {
-    u64 uid = 0;
-    u32 role_id = 0, level = 0, limit_break = 0, awaken = 0, category = 0;
+    u64 uid = 0;  // (the ships' uid lists stay plain until PLAN-schema S7)
+    RoleId role_id;
+    u32 level = 0, limit_break = 0, awaken = 0, category = 0;
     std::string weapon_kind;
     float battle_power = 0;
 };

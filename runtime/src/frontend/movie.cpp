@@ -2,10 +2,15 @@
 
 #include <GLES3/gl3.h>
 #include <fcntl.h>
+#include <unistd.h>
+#ifdef _WIN32
+#include <io.h>
+#include <windows.h>
+#else
 #include <signal.h>
 #include <spawn.h>
 #include <sys/wait.h>
-#include <unistd.h>
+#endif
 
 #include <atomic>
 #include <chrono>
@@ -21,15 +26,81 @@
 #include "core/log.h"
 #include "core/vfs.h"
 
+#ifndef _WIN32
 extern char** environ;
+#endif
 
 namespace soa {
 
 namespace {
 
+#ifdef _WIN32
+// ffmpeg as a Windows process, its stdout on a pipe (a CRT descriptor, read like the POSIX one).
+struct Proc {
+    HANDLE process = nullptr;
+    int fd = -1;
+    bool running() const { return process != nullptr; }
+};
+
+std::string quote_arg(const std::string& a) {  // CommandLineToArgvW's rules
+    if (!a.empty() && a.find_first_of(" \t\"") == std::string::npos) return a;
+    std::string q = "\"";
+    size_t bs = 0;
+    for (char ch : a) {
+        if (ch == '\\') {
+            bs++;
+            continue;
+        }
+        q.append(ch == '"' ? bs * 2 + 1 : bs, '\\');
+        bs = 0;
+        q += ch;
+    }
+    q.append(bs * 2, '\\');
+    return q + "\"";
+}
+
+Proc spawn_reader(const std::vector<std::string>& args) {
+    SECURITY_ATTRIBUTES sa{sizeof sa, nullptr, TRUE};
+    HANDLE rd, wr;
+    if (!CreatePipe(&rd, &wr, &sa, 1 << 16)) return {};
+    SetHandleInformation(rd, HANDLE_FLAG_INHERIT, 0);
+    std::string cmd;
+    for (auto& a : args) cmd += (cmd.empty() ? "" : " ") + quote_arg(a);
+    STARTUPINFOA si{};
+    si.cb = sizeof si;
+    si.dwFlags = STARTF_USESTDHANDLES;
+    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    si.hStdOutput = wr;
+    si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+    PROCESS_INFORMATION pi{};
+    BOOL ok = CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi);
+    CloseHandle(wr);
+    if (!ok) {
+        CloseHandle(rd);
+        return {};
+    }
+    CloseHandle(pi.hThread);
+    return {pi.hProcess, _open_osfhandle((intptr_t)rd, _O_RDONLY | _O_BINARY)};
+}
+
+void wait_proc(Proc& p) {
+    if (p.process) {
+        WaitForSingleObject(p.process, INFINITE);
+        CloseHandle(p.process);
+    }
+}
+
+void kill_proc(Proc& p) {
+    if (p.fd >= 0) close(p.fd);
+    if (p.process) TerminateProcess(p.process, 1);
+    wait_proc(p);
+    p = {};
+}
+#else
 struct Proc {
     pid_t pid = -1;
     int fd = -1;
+    bool running() const { return pid > 0; }
 };
 
 // Runs argv with stdout on a pipe.
@@ -55,6 +126,8 @@ Proc spawn_reader(const std::vector<std::string>& args) {
     return {pid, p[0]};
 }
 
+void wait_proc(Proc& p) { waitpid(p.pid, nullptr, 0); }
+
 void kill_proc(Proc& p) {
     if (p.fd >= 0) close(p.fd);
     if (p.pid > 0) {
@@ -63,6 +136,7 @@ void kill_proc(Proc& p) {
     }
     p = {};
 }
+#endif
 
 std::string run_capture(const std::vector<std::string>& args) {
     Proc p = spawn_reader(args);
@@ -72,7 +146,7 @@ std::string run_capture(const std::vector<std::string>& args) {
     ssize_t n;
     while ((n = read(p.fd, buf, sizeof buf)) > 0) out.append(buf, n);
     close(p.fd);
-    waitpid(p.pid, nullptr, 0);
+    wait_proc(p);
     return out;
 }
 

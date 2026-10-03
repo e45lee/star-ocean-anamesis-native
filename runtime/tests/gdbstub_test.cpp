@@ -10,6 +10,15 @@
 // address 0x10: the SIGSEGV is reported to the attached debugger before the process dies.
 #include "gdbstub_test.h"
 
+#ifdef _WIN32  // the stub isn't on Windows yet (core/gdbstub.cpp)
+#include <cstdio>
+void run_gdbstub_tests(void (*)(bool, const char*)) { fprintf(stderr, "skip  gdb: the GDB stub isn't on Windows yet\n"); }
+int run_gdb_demo(const char*, bool) {
+    fprintf(stderr, "--gdb-demo: the GDB stub isn't on Windows yet\n");
+    return 1;
+}
+#else
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -224,3 +233,4 @@ int run_gdb_demo(const char* addr, bool fault) {
     gdb_shutdown();
     return 0;
 }
+#endif

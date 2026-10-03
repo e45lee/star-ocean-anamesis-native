@@ -129,7 +129,8 @@ void characters_exp_and_favor(ext::Ctx& ctx, MissionEnd& end) {
     end.result_favor = Value::object();
     for (u64 uid : split_play_uids(end.play_uids)) {
         ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
-            u32 role = (u32)roster_row.i("role_id"), level_before = (u32)roster_row.i("level"), exp_before = (u32)roster_row.i("exp");
+            const RoleId role = roster_row.id<RoleId>("role_id");
+            u32 level_before = (u32)roster_row.i("level"), exp_before = (u32)roster_row.i("exp");
             auto next_exp = ctx.role_next(role);
             auto [level_after, exp_after] = rules::add_exp(level_before, exp_before, end.character_exp, next_exp, ctx.role_level_cap(role));
             ctx.st.q("update roster set level = ?, exp = ? where uid = ?", {level_after, exp_after, uid});
@@ -141,10 +142,10 @@ void characters_exp_and_favor(ext::Ctx& ctx, MissionEnd& end) {
             result["after_exp"] = exp_after;
             end.result_characters[std::to_string(uid)] = result;
             // Favor per same_role_id: server/src/api/favor/favor.cpp (master_favor_battle_effect).
-            u32 same_role_id = (u32)ctx.m.one("select same_role_id from master_role where id = ?", {role});
-            if (!end.result_favor.find(std::to_string(same_role_id))) {
+            const SameRoleId same_role_id = ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role});
+            if (!end.result_favor.find(std::to_string(same_role_id.v))) {
                 Value favor = favor::mission_gain(ctx.st.h, ctx.m.h, clock_now(), same_role_id, end.play_stamina_cost, end.favor_rate);
-                if (favor.type == Value::Map) end.result_favor[std::to_string(same_role_id)] = favor;
+                if (favor.type == Value::Map) end.result_favor[std::to_string(same_role_id.v)] = favor;
             }
         });
     }

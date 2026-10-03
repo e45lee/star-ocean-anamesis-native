@@ -101,7 +101,7 @@ void premium_login_bonus(Ctx& ctx, Value& data, int& granted) {
         // is_updated (PremiumLoginBonusModel::GetList, CPopupManager::CheckStart case 1);
         // (d) is_next false (no follow-up pass)
         Value info = Value::object();
-        info["player_id"] = ctx.player_id();
+        info["player_id"] = ctx.player_id().v;
         info["master_premium_login_bonus_id"] = pass_id;
         info["current_idx"] = day;
         info["created_at"] = ctx.fmt_time(pass_row.i("granted_at"));
@@ -134,10 +134,10 @@ struct FavorTier {
 // same_role_id.
 FavorTier favor_tier(Ctx& ctx, std::vector<u64>* lot_uids = nullptr) {
     int64_t t = ctx.now();
-    std::map<u32, u64> uid_by_same_role;  // same_role_id -> a character
+    std::map<SameRoleId, u64> uid_by_same_role;  // same_role_id -> a character (lot_uid: plain until S10)
     ctx.st.q("select uid, role_id from roster order by uid", {}, [&](const Row& roster_row) {
-        u32 same_role_id = (u32)ctx.m.one("select same_role_id from master_role where id = ?", {roster_row.i("role_id")});
-        if (same_role_id && !uid_by_same_role.count(same_role_id)) uid_by_same_role[same_role_id] = (u64)roster_row.i("uid");
+        const SameRoleId same_role_id = ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {roster_row.i("role_id")});
+        if (same_role_id.v && !uid_by_same_role.count(same_role_id)) uid_by_same_role[same_role_id] = (u64)roster_row.i("uid");
     });
     FavorTier best;
     u32 best_count = 0;

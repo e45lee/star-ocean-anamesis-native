@@ -348,7 +348,7 @@ struct TreeBuilder {
     // Login's r_ver differs from the revision it saw; d: the ids only need to differ); each
     // manifest's .bin and .version with the bundles' new md5 / size.
     void renew_ids() {
-        unsigned long old_revision = strtoul(revision->s.c_str(), nullptr, 10);
+        uint64_t old_revision = strtoull(revision->s.c_str(), nullptr, 10);
         t->revision_ = std::to_string(old_revision + 1);
         std::string all_shas;
         for (auto& [name, bundle] : t->bundles_) all_shas += bundle.sha1;

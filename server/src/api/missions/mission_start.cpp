@@ -9,6 +9,7 @@
 #include "api/player/party_set.h"      // party_member_uids
 #include "api/player/person_status.h"  // person_status_info
 #include "api/player/player_info.h"    // base_data, stack_item_info_list
+#include "api/player/roster.h"         // owns_character
 #include "api/social/rental.h"       // rental helper ids
 #include "core/errors.h"
 #include "core/log.h"
@@ -252,8 +253,8 @@ void event_npc_status(ext::Ctx& ctx, MissionStart& start) {
     // (d) as the tutorial's NPCs: the stats rules of a roster character, no limit break
     ctx.st.exec("create temp table roster as select * from main.roster where 0");
     ctx.st.q(
-        "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1, skill2, skill3, weapon_uid, accessory_uid, "
-        "created_at) values (?,?,?,0,0,0,1,1,1,0,0,?)",
+        "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level, add_hp, "
+        "add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap, created_at) values (?,?,?,0,0,0,1,1,1,0,0,0,0,0,0,0,?)",
         {kNpcPartyUid0 + 1, start.npcs[0].role_id, start.npcs[0].level, clock_now()});
     start.event_npc_status = person_status_info(ctx, kNpcPartyUid0 + 1);
     ctx.st.exec("drop table temp.roster");
@@ -274,8 +275,8 @@ void npc_party(ext::Ctx& ctx, MissionStart& start) {
     ctx.st.exec("create temp table roster as select * from main.roster where 0");
     for (size_t k = 0; k < start.npcs.size(); k++)
         ctx.st.q(
-            "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1, skill2, skill3, weapon_uid, accessory_uid, "
-            "created_at) values (?,?,?,0,0,0,1,1,1,0,0,?)",
+            "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level, add_hp, "
+            "add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap, created_at) values (?,?,?,0,0,0,1,1,1,0,0,0,0,0,0,0,?)",
             {kNpcPartyUid0 + k + 1, start.npcs[k].role_id, start.npcs[k].level, clock_now()});
     start.party_uids.clear();
     for (size_t k = 0; k < start.npcs.size(); k++) start.party_uids.push_back(kNpcPartyUid0 + k + 1);
@@ -314,10 +315,10 @@ bool rental_helper(ext::Ctx& ctx, MissionStart& start) {
     // and CPartyManager::InitializePlayer builds exactly four slots.
     const u64 own_helper_uid = start.args.own_helper_uid, rental_uid = start.args.rental_uid;
     u64 rental_id = rental::source_uid(own_helper_uid) ? own_helper_uid : rental::source_uid(rental_uid) ? rental_uid : 0;
-    u64 rental_source = rental_id ? rental::source_uid(rental_id) : 0;
-    if (rental_source && !ctx.st.one("select count(*) from roster where uid = ?", {rental_source})) rental_source = 0;
+    std::optional<CharacterUid> rental_source = rental::source_uid(rental_id);  // (rental id 0: none)
+    if (rental_source && !owns_character(ctx, *rental_source)) rental_source.reset();
     if (!(start.args.helper_index_plus_1 && rental_source && start.npcs.empty())) return false;
-    Value helper_status = person_status_info(ctx, rental_source);
+    Value helper_status = person_status_info(ctx, rental_source->v);
     helper_status["id"] = rental_id;
     Value& members = start.player_characters;
     if (members.arr.size() >= 4) members.arr[3] = helper_status;
@@ -329,7 +330,7 @@ bool rental_helper(ext::Ctx& ctx, MissionStart& start) {
              {day_start(clock_now(), (int)ctx.global_u32("login_bonus_reset_hour", 4))});
     LOGI("server", "MissionStart: rental helper %llu (a clone of roster uid %llu) as member 4",
          (unsigned long long)rental_id,  // read by rental_session.sh
-         (unsigned long long)rental_source);
+         (unsigned long long)rental_source->v);
     return true;
 }
 

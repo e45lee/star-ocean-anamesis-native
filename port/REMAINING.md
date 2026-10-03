@@ -13,10 +13,10 @@ P3 + H (battle log from the client's own serializer, `InGameHooks` dropped), P4 
 | **P5b: `tests/diff/`** | port-vs-emulator flows compared by packets, server state and screenshots | task 3 |
 
 ## Next
-1. **Control-script consolidation, with the rebuild tooling (task 5; approved 2026-10-03):** carry out `control/PLAN-consolidate.md` (the plan includes the runtime's GDB stub, step 7).
-2. **Rebuild tooling:** `decomp.sh --into <subsystem>` writing to `port/decomp/<subsystem>/`; per-subsystem scaffolding; a fresh profile ranking subsystems by guest time. (task 5)
-3. **W: a native Windows runner** (before N, the user 2026-10-02) **for the port, the emulator and the viewer** (and `soa-server`), each passing its checks on Windows. MinGW-w64 clang, vcpkg, ANGLE; port the HLE libc layer and guest memory/fault handling; audit `long`; runtime tests under Wine.
-4. **N: rebuild the natives.** Readable C++ from the Ghidra decompile, types first, hottest subsystems first, each with differential tests and live checks at 0 mismatches; well-known libraries called from the host via vcpkg. (task 6)
+(Updated 2026-10-03; PLAN.md has the order.)
+1. **4b, the server schema:** S0–S4 and R12 are done; S5 (items and gear) is running; then S6, S7 (fixes the two mission play-state bugs), S8, S9 + R17, S10, S11 + R19, S12.
+2. **W phase 2 (5b):** a control channel on Windows (named pipe or TCP) so the sessions, tests/diff and smoke drive the .exe files; the full download and the viewer on Windows; the known gaps (port/PLAN.md 5b "As built").
+3. **N: rebuild the natives** after all of W, in parallel waves from `port/REBUILD-QUEUE.md`; the tooling (decomp --into, tools/subsystem.py, NATIVE_METHOD, the GDB stub) is on main.
    - **Bullet version pin:** build Bullet 2.76–2.79 with NDK r16b / r11c (`work/toolchains/`) and compare with the game's to choose a host build or a rewrite.
    - **`Framework::Cocos`** is tri-Ace's own UI framework: a Ghidra rewrite, with cocos2d-x only as a reference.
 

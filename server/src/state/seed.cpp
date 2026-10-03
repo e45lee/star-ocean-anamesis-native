@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <set>
 
-#include "api/player/titles.h"  // new_player_titles
+#include "api/player/party_set.h"  // add_party_sets
+#include "api/player/titles.h"     // new_player_titles
 #include "core/ids.h"
 #include "core/log.h"
 #include "core/server.h"  // first_existing
@@ -48,7 +49,8 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
         "view_status2 = excluded.view_status2, kiyaku_version = excluded.kiyaku_version, title_id = excluded.title_id, "
         "support_uid = excluded.support_uid, time_saving_count = excluded.time_saving_count, "
         "time_saving_day = excluded.time_saving_day, login_bonus_popup_pending = excluded.login_bonus_popup_pending",
-        {pid, search, name, level, exp, fol, smax /* (d) full stamina */, t, config().start_coins /* (d) free coin, --start-coins */, 0, 0, 1, t, t,
+        {pid, search, name, level, exp, fol, smax /* (d) full stamina */, t, config().start_coins /* (d) free coin, --start-coins */, 0,
+         nullptr /* home_uid: below */, 1, t, t,
          // (b) the seeded (3.7.0) player finished the tutorial: tutorial_status = 9, the client's
          // last tutorial step (CPhase_TutorialNext::LastMemId; CParameterUtility::IsTutorialClear
          // is status >= it). (d) every UI tutorial seen (view_status / view_status2 all ones, as
@@ -56,17 +58,17 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
          9u, ~0ull, ~0ull});
     // Roster: person_master_role_id_N (master_role ids), deduplicated (the client cache
     // lists some roles twice).
-    std::vector<u32> roles;
+    std::vector<RoleId> roles;
     std::set<u32> seen;
     u32 n = kv_u32(kv, "person_size", 0);
     for (u32 i = 0; i < n; i++) {
         u32 r = kv_u32(kv, "person_master_role_id_" + std::to_string(i));
-        if (r && seen.insert(r).second && ctx.m.one("select count(*) from master_role where id = ?", {r})) roles.push_back(r);
+        if (r && seen.insert(r).second && ctx.m.one("select count(*) from master_role where id = ?", {r})) roles.push_back(RoleId(r));
     }
-    u32 home_role = kv_u32(kv, "player_home_pc_roleid");
-    u64 home_uid = 0;
+    const RoleId home_role(kv_u32(kv, "player_home_pc_roleid"));
+    std::optional<CharacterUid> home_uid;  // none: NULL
     for (size_t i = 0; i < roles.size(); i++) {
-        u64 uid = kRosterUid0 + i;
+        const CharacterUid uid(kRosterUid0 + i);
         u32 cap = ctx.role_level_cap(roles[i]);
         // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
         // every other column's default (excluded.<col>), as the REPLACE gave it
@@ -74,22 +76,27 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
             "insert into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)"
             " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
             "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
-            "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
-            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, "
+            "skill1_level = excluded.skill1_level, skill2_level = excluded.skill2_level, skill3_level = excluded.skill3_level, "
+            "equip_skill1 = excluded.equip_skill1, equip_skill2 = excluded.equip_skill2, equip_skill3 = excluded.equip_skill3, "
+            "add_hp = excluded.add_hp, add_attack = excluded.add_attack, add_intelligence = excluded.add_intelligence, "
+            "add_defence = excluded.add_defence, add_hit = excluded.add_hit, add_guard = excluded.add_guard, add_ap = excluded.add_ap, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, assist_uid = excluded.assist_uid, "
             "created_at = excluded.created_at",
             {uid, roles[i], cap > 10 ? cap - 10 : 1u /* (d) seed level: 10 below the cap */, 0, t});
         if (roles[i] == home_role) home_uid = uid;
     }
-    if (!home_uid && !roles.empty()) home_uid = kRosterUid0;
-    ctx.st.q("update player set home_uid = ?", {home_uid});
+    if (!home_uid && !roles.empty()) home_uid = CharacterUid(kRosterUid0);
+    if (home_uid) ctx.st.q("update player set home_uid = ?", {*home_uid});  // (none: NULL)
+    add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents
     // (d) party 1 = the home character + the three highest-rarity other roster members
     // (first in roster order among equals); parties 2..10 empty
-    std::vector<u64> party = {home_uid};
+    // (party keeps its 0 sentinel until PLAN-schema S6: no home character is slot 0's uid 0)
+    std::vector<u64> party = {or_zero(home_uid)};
     std::vector<std::pair<int, size_t>> by_rarity;
     for (size_t i = 0; i < roles.size(); i++) by_rarity.emplace_back(-(int)ctx.m.one("select rarity from master_role where id = ?", {roles[i]}), i);
     std::stable_sort(by_rarity.begin(), by_rarity.end(), [](auto& a, auto& b) { return a.first < b.first; });
     for (auto& [r, i] : by_rarity)
-        if (party.size() < 4 && kRosterUid0 + i != home_uid) party.push_back(kRosterUid0 + i);
+        if (party.size() < 4 && kRosterUid0 + i != or_zero(home_uid)) party.push_back(kRosterUid0 + i);
     for (size_t s = 0; s < party.size(); s++)
         ctx.st.q(
             "insert into party (party_id, slot, uid) values (1,?,?)"

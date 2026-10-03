@@ -13,7 +13,7 @@ OUT_DIR/NN-name.png, with a side-by-side strip in OUT_DIR/strip.png.
   popups (control/flowctl.py login-popups), in both modes.
 - Without a baseline, each later step waits a fixed time, generously, and the screenshots become
   a new baseline.
-- With a baseline (an earlier run's OUT_DIR, normally work/port-test/smoke-base), each step polls
+- With a baseline (an earlier run's OUT_DIR, normally tests/smoke-base), each step polls
   screenshots until the screen matches the baseline's (ImageMagick RMSE on a downscaled copy <=
   SMOKE_MAX_RMSE, default 0.08; the home character animates and the mascot's line changes, so the
   home screens get 0.12) and only then taps. That keeps the run independent of machine load. A

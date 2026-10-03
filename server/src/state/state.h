@@ -25,7 +25,9 @@ int user_version(sqlite3* db);
 // Each step runs in its own `begin immediate` transaction and commits only when `pragma
 // foreign_key_check` is empty. Must be called outside any transaction. `target` stops at an older
 // version (the tests' per-step migrations, schema-migrate-vN); the server always takes this build's.
-bool open_and_migrate(sqlite3* db, const std::string& path, int target = kSchemaVersion);
+// `master` (the read-only master DB) gives a step the master's values it maps with (S4: the party
+// sets 1..master_global.party_set_max); without it a step uses its default (10).
+bool open_and_migrate(sqlite3* db, const std::string& path, int target = kSchemaVersion, sqlite3* master = nullptr);
 
 // Runs state::check (the master references; check.h) and logs each dangling reference (LOGW).
 // Report-only: a master can change under a saved state. The number of dangling references.
@@ -39,6 +41,10 @@ namespace soa::server {
 std::string meta(ext::Ctx& ctx, const char* key, const char* dflt);
 // The meta counter `key`'s value, counted up (uids of new characters and items).
 u64 next_uid(ext::Ctx& ctx, const char* key);
+// next_uid's two counters as typed ids: a new character's uid (next_char_uid), a new unique item's
+// (next_item_uid).
+CharacterUid next_character_uid(ext::Ctx& ctx);
+ItemUid next_item_uid(ext::Ctx& ctx);
 bool has_player(ext::Ctx& ctx);
 
 }  // namespace soa::server

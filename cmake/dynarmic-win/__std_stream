@@ -1,0 +1,15 @@
+// For dynarmic's bundled fmt 10.1 on Windows with libc++ (llvm-mingw; cmake/deps.cmake): its
+// <fmt/ostream.h> includes libc++'s internal <__std_stream> there to reach std::__stdoutbuf's FILE*,
+// a header newer libc++ no longer has. This stand-in declares the class; fmt only dynamic_casts a
+// stream buffer to it (never true here: fmt then writes through the stream as everywhere else).
+#pragma once
+#include <cstdio>
+#include <streambuf>
+
+_LIBCPP_BEGIN_NAMESPACE_STD
+template <class _CharT>
+class __stdoutbuf : public basic_streambuf<_CharT, char_traits<_CharT>> {
+public:
+    FILE* __file_ = nullptr;
+};
+_LIBCPP_END_NAMESPACE_STD

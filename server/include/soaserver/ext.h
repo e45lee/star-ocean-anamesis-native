@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+#include "soaserver/ids.h"
 #include "soaserver/server.h"
 #include "soaserver/sql.h"
 
@@ -77,9 +78,9 @@ struct Ctx {
     Value roster();                                // Character (CPersonInfo list)
     Value stock();                                 // StockItem (CStackItemInfo list)
     Value items();                                 // Item (CItemInfo list)
-    u32 player_id();
-    std::vector<u32> role_next(u32 role);          // per-level next EXP of a role
-    u32 role_level_cap(u32 role);
+    PlayerId player_id();
+    std::vector<u32> role_next(RoleId role);          // per-level next EXP of a role
+    u32 role_level_cap(RoleId role);
     u32 stamina_max(u32 level);
     void tick_stamina();
     u32 global_u32(const char* key, u32 dflt);
@@ -127,7 +128,7 @@ using GrantFn = std::function<void(Ctx&, u32 id, u32 num, Value& items, Value& s
 void add_grant(u32 content_type, GrantFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 // `ext::add_item_extra(fn)`: adds keys to each owned item (CItemInfo) the core lists in `Item`
 // (e.g. its attached gear); st / m are the state and master DBs.
-using ItemExtraFn = std::function<void(Sql& st, Sql& m, u64 uid, Value& item)>;
+using ItemExtraFn = std::function<void(Sql& st, Sql& m, ItemUid uid, Value& item)>;
 void add_item_extra(ItemExtraFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 
 // What the core MissionStart / MissionEnd played (agent events-extras), for modules that add to
@@ -192,7 +193,7 @@ void player_load(Ctx& c, const Request& r, Value& data);
 bool has_response_hooks();
 bool on_response(Ctx& c, const Request& r, Value& data);  // true: data changed
 const GrantFn* find_grant(u32 content_type);
-void item_extra(Sql& st, Sql& m, u64 uid, Value& item);
+void item_extra(Sql& st, Sql& m, ItemUid uid, Value& item);
 void client_master(sqlite3* db, int64_t now, int64_t event_now);
 
 // The file of the master DB the live server reads (the 3.7.0 master), "" without a server.

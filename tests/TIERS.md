@@ -49,7 +49,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T0 | `server-format` | 6 s | - | server/ C++ formatted (clang-format 18) | `tools/format_server.sh --check` |
 | T0 | `schema-inventory` | 1 s | - | the state schema inventory parses (server/PLAN-schema.md) | `python3 tools/schema_inventory.py` |
 | T0 | `no-380` | 1 s | - | no reference to the offline build outside the allowed places (tools/check_no_380.sh) | `tools/check_no_380.sh` |
-| T0 | `pytest-control` | 10 s | - | the slot pool and tools/tests_for.py's path rules (no game) | `.venv/bin/python -m pytest -q control/tests` |
+| T0 | `pytest-control` | 50 s | - | the slot pool, the driver library control/soadrive (log cursor, FIFO, resend rules) and tools/tests_for.py's path rules (no game) | `.venv/bin/python -m pytest -q control/tests` |
 | T0 | `pytest-soa-save` | 5 s | - | soa_save's unit tests (no game) **Known failure:** tests/test_kvs.py::test_unlock_all_keeps_existing needs the offline game's package in apk/, which a worktree lacks (untracked); passes in the main checkout | `.venv/bin/python -m pytest -q tests` |
 | T0 | `soa-selftest` | 70 s | 1 | every port selftest (natives off; every registered test, one boot; carried past a crashing test) | `port/scripts/selftest_resilient.sh {out}` |
 | T0 | `impact-map` | 3 s | - | tests/impact.json knows every API soa-server answers and every test of tests/tiers.json | `python3 tools/tests_for.py --check` |
@@ -62,7 +62,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T1 | `shard:tutorial-battle` | 5.5 min | 3 | from tutorial_status 2 (prepared): the battle tutorial ms00_001, its NPC party, MissionEnd, UpdateTutorial(3) | `tests/diff/run.sh tutorial-battle --out {out}` |
 | T1 | `shard:tutorial-home` | 5.7 min | 3 | from tutorial_status 3 (prepared): the third scene, the mission menu, 1-01's story, home, the home tutorial, UpdateTutorial(9) | `tests/diff/run.sh tutorial-home --out {out}` |
 | T1 | `flow:event` | 5.5 min | 3 | the summer event (--enable-events): the board, story mc99_565, battle me99_1054, drops (a full flow, shard-sized) | `tests/diff/run.sh event --out {out}` |
-| T1 | `smoke` | 4.0 min | 1 | the port's screens against the baselines (title, home, character list, detail, other) | `port/scripts/smoke.sh build/port/soa {out} work/port-test/smoke-base` |
+| T1 | `smoke` | 4.0 min | 1 | the port's screens against the baselines (title, home, character list, detail, other) | `port/scripts/smoke.sh build/port/soa {out} tests/smoke-base` |
 | T2 | `diff-full` | 17.5 min | 9 | the full flows seeded, tutorial, event on emu / port-server / port-inproc, all at once | `tests/diff/run.sh --out {out}` |
 | T2 | `session:battle` | 3.8 min | 1 | ミッション, mf01_001's battle, MissionEnd, the results, home; the player's EXP in the state | `port/scripts/battle_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:gacha` | 3.8 min | 1 | the gacha screen, its tabs, a 10-draw (SaleGacha), the presentation; the coins debited | `port/scripts/gacha_session.sh build/port/soa {out} {tmp}` |
@@ -90,10 +90,11 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T3 | `session:sphere211-continue` | 7.0 min | 1 | a lost Sphere 211 battle continued and retired, the stamina healed, the achievements | `port/scripts/sphere211_continue_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:episode-movie` | 8.0 min | 1 | an episode pack downloaded, the opening movie | `port/scripts/episode_movie_session.sh build/port/soa {out} {tmp} 2` |
 | T3 | `session:newplayer-download` | 15.0 min | 1 | the full 3 GB download from the in-process CDN, then the new player | `SOA_PHONE=none port/scripts/newplayer_session.sh build/port/soa {out} {tmp}` |
+| T3 | `session:gdb-probe` | 2.2 min | 1 | the guest debugger at a milestone (soadrive/gdb.py over the runtime's --gdb stub): attach at home, a breakpoint hit, x0 and memory read, a step, detach, the client runs on | `control/run.py gdb-probe build/port/soa {out} {tmp}` |
 | T3 | `session:debug` | 2.0 min | 1 | the framework's debug windows | `port/scripts/debug_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:debug-input` | 2.0 min | 1 | the debug windows' input | `port/scripts/debug_input_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:profile-extra` | 5.0 min | 1 | the profiling flow over the screens the others don't visit | `port/scripts/profile_extra.sh build/port/soa {out} {tmp}` |
-| T3 | `smoke-vs-emu` | 5.0 min | 1 | the smoke baselines against soa-emu | `port/scripts/smoke_vs_emu.sh {out} work/port-test/smoke-base` |
+| T3 | `smoke-vs-emu` | 5.0 min | 1 | the smoke baselines against soa-emu | `port/scripts/smoke_vs_emu.sh {out} tests/smoke-base` |
 | T3 | `emu:boot` | 2.0 min | 1 | the emulator's no-server boot | `emulator/scripts/emulator_boot.sh build/emulator/soa-emu {out}` |
 | T3 | `emu:nier` | 10.0 min | 1 | the NieR collaboration demo on the emulator | `emulator/scripts/nier_demo.sh {out}` |
 | T3 | `emu:standin-fetch` | 10.0 min | 1 | the stand-in assets fetched through the CDN | `emulator/scripts/standin_fetch_test.sh build/emulator/soa-emu build/server/soa-server {out}` |

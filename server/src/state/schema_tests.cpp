@@ -30,8 +30,8 @@ struct TempDb {
     explicit TempDb(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
     ~TempDb() { remove_all(); }
     void remove_all() {
-        for (const char* suffix :
-             {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal", ".bak-v1", ".bak-v1-journal", ".bak-v2", ".bak-v2-journal"})
+        for (const char* suffix : {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal", ".bak-v1", ".bak-v1-journal", ".bak-v2",
+                                   ".bak-v2-journal", ".bak-v3", ".bak-v3-journal", ".bak-v4", ".bak-v4-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -128,9 +128,14 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54,
-                "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3)");
-    for (const char* gone : {"view_flags", "gear", "box_gacha", "planets", "sphere_meta"})
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)52,
+                "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4)");
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
+                "roster's three unique indexes (S4)");
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
+                "gear_items' slot index (S5)");
+    t.expect_eq(a.one("select count(*) from party_set", {}), (int64_t)0, "no player: no party set rows (the seed / CreatePlayer add them)");
+    for (const char* gone : {"view_flags", "gear", "box_gacha", "planets", "sphere_meta", "roster_ext", "assist"})
         t.expect_eq(a.one("select count(*) from sqlite_master where name = ?", {gone}), (int64_t)0, (std::string(gone) + " not there").c_str());
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'ds_state'", {}), (int64_t)1, "ds_state there");
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'wire_device'", {}), (int64_t)1, "wire_device on every route");
@@ -321,7 +326,7 @@ NATIVE_TEST("server/schema-migrate-v3") {
     if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
     t.expect_eq(ref.exec(kDirt) && db.exec(kDirt), true, "the S3 dirt planted");
     t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 2), true, "the reference: migrated to 2");
-    t.expect_eq(state::open_and_migrate(db.h, old.path), true, "migrated to 3");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 3), true, "migrated to 3");
     t.expect_eq(state::user_version(db.h), 3, "user_version 3");
     t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
     t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
@@ -388,7 +393,7 @@ NATIVE_TEST("server/schema-migrate-v3") {
     unlink((v2.path + ".bak-v0").c_str());
     if (!f.open(v2.path, false)) return t.fail("reopen v2");
     t.expect_eq(state::user_version(f.h), 2, "a version 2 file");
-    t.expect_eq(state::open_and_migrate(f.h, v2.path), true, "v2 -> v3");
+    t.expect_eq(state::open_and_migrate(f.h, v2.path, 3), true, "v2 -> v3");
     t.expect_eq(state::user_version(f.h), 3, "user_version 3");
     f.q("select * from player", {}, [&](const Row& p) {
         t.expect_eq(p.i("title_id"), (int64_t)340997325, "a selected title kept");
@@ -408,6 +413,370 @@ NATIVE_TEST("server/schema-migrate-v3") {
     t.expect_eq(state::user_version(bak.h), 2, "the backup is version 2");
     t.expect_eq(bak.one("select count(*) from sphere_meta", {}) > 0, true, "the backup keeps sphere_meta");
     bak.close();
+}
+
+// `table`'s rows over the columns `cols` ("a, b, ..."), as text, in the order `cols` lists them
+// (sorted).
+std::vector<std::string> rows_over(Sql& db, const std::string& table, const std::string& cols, const std::string& where = "") {
+    std::vector<std::string> out;
+    sqlite3_stmt* s = nullptr;
+    sqlite3_prepare_v2(db.h, ("select " + cols + " from \"" + table + "\"" + (where.empty() ? "" : " where " + where)).c_str(), -1, &s, nullptr);
+    while (s && sqlite3_step(s) == SQLITE_ROW) {
+        std::string row;
+        for (int c = 0; c < sqlite3_column_count(s); c++) {
+            const unsigned char* v = sqlite3_column_text(s, c);
+            row += std::to_string(sqlite3_column_type(s, c)) + ":" + (v ? (const char*)v : "") + "|";
+        }
+        out.push_back(row);
+    }
+    sqlite3_finalize(s);
+    std::sort(out.begin(), out.end());
+    return out;
+}
+
+// Version 4 (PLAN-schema S4: the roster). The fixture has S4's dirt (a roster weapon_uid naming a
+// missing item, an orphan roster_ext row, an assist pair, player.party_id 1 without a party_set
+// row); the test plants the rest. (1) v0 -> v4 at once: roster_ext and assist merged into roster
+// (add_*, equip_skillN 0 -> NULL, assist_uid), the orphans dropped, a dangling weapon -> NULL, an
+// item two characters wear and an assist two characters have -> kept by the lowest uid, a NULL in a
+// not-null column -> 0, the party sets 1..party_set_max added (the saved set 2 kept), every other
+// row of every table equal to the same file migrated to 3. (2) v3 -> v4 (a S3 state, backed up as
+// .bak-v3, migrated without the master: the default 10 sets): a party_id outside 1..max keeps its
+// set (a row added), a dangling home_uid and title_id -> NULL, an owned support character kept.
+// (3) a NULL party_id -> 1. foreign_key_check is empty after each.
+NATIVE_TEST("server/schema-migrate-v4") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v4 -------------------------------------------------------------------------------
+    TempDb ref_file("v4-ref"), old("v4");
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    const int64_t r0 = db.one("select min(uid) from roster", {});  // the fixture's roster: r0, r0 + 1, ...
+    const int64_t r1 = r0 + 1, r2 = r0 + 2, r3 = r0 + 3, r4 = r0 + 4;
+    const int64_t item = db.one("select min(uid) from items", {});
+    t.expect_eq(db.one("select count(*) from roster where uid in (?, ?, ?, ?, ?)", {r0, r1, r2, r3, r4}), (int64_t)5, "the fixture's first uids");
+    t.expect_eq(db.one("select count(*) from roster where uid = ? and weapon_uid != 0 and weapon_uid not in (select uid from items)", {r1}),
+                (int64_t)1, "the fixture's dangling weapon (r1)");
+    t.expect_eq(db.one("select count(*) from assist where uid = ? and assist_uid = ?", {r0, r1}), (int64_t)1, "the fixture's assist pair");
+    // the S4 dirt, in both files
+    for (Sql* d : {&ref, &db}) {
+        d->q("update roster_ext set equip_skill1 = 11, equip_skill2 = 0, equip_skill3 = 33 where uid = ?", {r0});
+        d->q("update roster set weapon_uid = ? where uid in (?, ?)", {item, r2, r3});  // one item worn twice
+        d->q("update roster set accessory_uid = 0 where uid = ?", {r2});
+        d->q("insert into assist (uid, assist_uid) values (?, ?)", {r2, r1});    // r1 assists r0 and r2
+        d->q("insert into assist (uid, assist_uid) values (?, 9999)", {r3});     // an assist not owned
+        d->q("insert into assist (uid, assist_uid) values (9998, ?)", {r0});     // no such character
+        d->q("update roster set created_at = null where uid = ?", {r4});         // a NULL in a not-null column
+    }
+    t.expect_eq(db.one("select count(*) from assist", {}), (int64_t)4, "the S4 dirt planted");
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 3, m), true, "the reference: migrated to 3");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 4, m), true, "migrated to 4");
+    t.expect_eq(state::user_version(db.h), 4, "user_version 4");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
+    // every other table: its rows as they were at version 3
+    static const std::set<std::string> kChanged = {"roster", "roster_ext", "assist", "player", "party_set"};
+    std::vector<std::string> tables;
+    ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+          [&](const Row& r) { tables.push_back(r.s("name")); });
+    for (const std::string& table : tables) {
+        if (kChanged.count(table)) continue;
+        if (rows_of(ref)[table] != rows_of(db)[table]) t.fail("%s: rows changed", table.c_str());
+    }
+    for (const char* gone : {"roster_ext", "assist"})
+        t.expect_eq(db.one("select count(*) from sqlite_master where name = ?", {gone}), (int64_t)0, (std::string(gone) + " dropped").c_str());
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'index' and tbl_name = 'roster' and name like 'roster_%'", {}), (int64_t)3,
+                "roster's unique indexes");
+    // the player row: unchanged (its references resolve), at its version-3 columns
+    t.expect_eq(rows_over(db, "player", "*"), rows_over(ref, "player", "*"), "player kept");
+    // the roster: its own columns kept (skillN -> skillN_level; a NULL created_at -> 0)
+    t.expect_eq(rows_over(db, "roster", "uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level, created_at"),
+                rows_over(ref, "roster", "uid, role_id, level, exp, limit_break, awaken, skill1, skill2, skill3, ifnull(created_at, 0)"),
+                "roster: every character, its levels kept");
+    t.expect_eq(db.one("select created_at from roster where uid = ?", {r4}, -1), (int64_t)0, "a NULL created_at -> 0");
+    // roster_ext merged: r0's seeds and skills; everyone else 0 / NULL; the orphan gone
+    t.expect_eq(rows_over(db, "roster",
+                          "add_hp, add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap, equip_skill1, equip_skill2, equip_skill3",
+                          "uid = " + std::to_string(r0)),
+                std::vector<std::string>{"1:5|1:1|1:0|1:0|1:0|1:0|1:0|1:11|5:|1:33|"}, "r0: roster_ext's add_* and skills (0 -> NULL)");
+    t.expect_eq(db.one("select count(*) from roster where uid != ? and (add_hp + add_attack + add_intelligence + add_defence + add_hit + add_guard + "
+                       "add_ap != 0 or equip_skill1 is not null or equip_skill2 is not null or equip_skill3 is not null)",
+                       {r0}),
+                (int64_t)0, "no growth elsewhere: 0 / NULL");
+    t.expect_eq(db.one("select count(*) from roster where uid = 2114977791", {}), (int64_t)0, "the orphan roster_ext row isn't a character");
+    // equipment: 0 -> NULL, dangling -> NULL, worn twice -> the lowest uid
+    t.expect_eq(db.one("select count(*) from roster where weapon_uid = 0 or accessory_uid = 0", {}), (int64_t)0, "no 0 sentinel left");
+    t.expect_eq(db.one("select count(*) from roster where uid = ? and weapon_uid is null", {r1}), (int64_t)1, "r1's dangling weapon -> NULL");
+    t.expect_eq(db.one("select weapon_uid from roster where uid = ?", {r2}), item, "the item worn twice: kept by the lowest uid (r2)");
+    t.expect_eq(db.one("select count(*) from roster where uid = ? and weapon_uid is null", {r3}), (int64_t)1, "and taken off r3");
+    // assist: the pair kept; r1 assisting a second character, a missing assist, a missing character: gone
+    t.expect_eq(db.one("select assist_uid from roster where uid = ?", {r0}), r1, "r0's assist r1 kept");
+    t.expect_eq(db.one("select count(*) from roster where uid in (?, ?) and assist_uid is null", {r2, r3}), (int64_t)2,
+                "r1 assisting a second character (r2), an assist not owned (r3): NULL");
+    t.expect_eq(db.one("select count(*) from roster where assist_uid is not null", {}), (int64_t)1, "one assist pair");
+    // the party sets: 1..party_set_max added (icon 0, unlocked), the saved set 2 kept
+    u32 max = m ? (u32)ext::Sql{m}.one("select value from master_global where key = 'party_set_max'", {}, 10) : 10;
+    t.expect_eq(db.one("select count(*) from party_set", {}), (int64_t)max, "a row per set 1..party_set_max");
+    t.expect_eq(db.one("select count(*) from party_set where party_id between 1 and ?", {max}), (int64_t)max, "the sets 1..max");
+    t.expect_eq(rows_over(db, "party_set", "party_id, icon_id, is_lock", "party_id in (1, 2)"),
+                (std::vector<std::string>{"1:1|1:0|1:0|", "1:2|1:3|1:1|"}), "set 1 added (icon 0, unlocked), set 2 kept");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    if (m)
+        for (const auto& d : state::check(db.h, m)) t.fail("%s", state::describe(d).c_str());
+    ref.close();
+    db.close();
+
+    // ---- (2) v3 -> v4, without the master ------------------------------------------------------------
+    TempDb v3("v4-from-v3");
+    if (!write_fixture(t, v3.path)) return;
+    Sql f;
+    if (!f.open(v3.path, false)) return t.fail("open v3");
+    t.expect_eq(state::open_and_migrate(f.h, v3.path, 3), true, "migrated to 3");
+    f.close();
+    unlink((v3.path + ".bak-v0").c_str());
+    if (!f.open(v3.path, false)) return t.fail("reopen v3");
+    t.expect_eq(f.exec("pragma foreign_keys = off;"
+                       "delete from party_set;"
+                       "update player set party_id = 12, home_uid = 9999, title_id = 12345, support_uid = (select min(uid) from roster);"),
+                true, "the v3 cases planted");
+    int64_t support = f.one("select min(uid) from roster", {});
+    t.expect_eq(state::user_version(f.h), 3, "a version 3 file");
+    t.expect_eq(state::open_and_migrate(f.h, v3.path, 4), true, "v3 -> v4");
+    t.expect_eq(state::user_version(f.h), 4, "user_version 4");
+    f.q("select * from player", {}, [&](const Row& p) {
+        t.expect_eq(p.i("party_id"), (int64_t)12, "a party id outside 1..max kept");
+        t.expect_eq(p.null("home_uid"), true, "a dangling home_uid -> NULL");
+        t.expect_eq(p.null("title_id"), true, "a title not owned -> NULL");
+        t.expect_eq(p.i("support_uid"), support, "an owned support character kept");
+    });
+    t.expect_eq(f.one("select count(*) from party_set", {}), (int64_t)11, "the default 10 sets (no master) and set 12");
+    t.expect_eq(f.one("select count(*) from party_set where party_id = 12 and icon_id = 0 and is_lock = 0", {}), (int64_t)1, "set 12's row");
+    t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+    f.close();
+    Sql bak;
+    if (!bak.open(v3.path + ".bak-v3", true)) return t.fail("no %s.bak-v3", v3.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 3, "the backup is version 3");
+    t.expect_eq(bak.one("select count(*) from roster_ext", {}) > 0, true, "the backup keeps roster_ext");
+    bak.close();
+
+    // ---- (3) a NULL party_id -> 1 --------------------------------------------------------------------
+    TempDb nul("v4-null-party");
+    if (!write_fixture(t, nul.path)) return;
+    Sql g;
+    if (!g.open(nul.path, false)) return t.fail("open (3)");
+    t.expect_eq(g.exec("update player set party_id = null"), true, "a NULL party_id planted");
+    t.expect_eq(state::open_and_migrate(g.h, nul.path, 4, m), true, "v0 -> v4");
+    t.expect_eq(g.one("select party_id from player", {}), (int64_t)1, "NULL party_id -> 1");
+    t.expect_eq(fk_violations(g), 0, "foreign_key_check");
+    g.close();
+}
+
+// Version 5 (PLAN-schema S5: items and gear). The fixture has S5's dirt (a gear set in a sold
+// weapon, a free gear with item_uid 0); the test plants the rest. (1) v0 -> v5 at once: items
+// rebuilt (locked 2 -> 1, a NULL created_at -> 0), gear_items rebuilt (item_uid 0 -> NULL, the
+// gear on the missing weapon dropped, a second gear in an occupied slot -> the gear box with slot 0,
+// kept by the lowest uid; a free gear keeps its slot; is_new 5 -> 1; a NULL item_uid stays the
+// box), every other row of every table equal to the same file migrated to 4. (2) v4 -> v5 (an S4
+// state, backed up as .bak-v4, without the master). foreign_key_check is empty after each.
+NATIVE_TEST("server/schema-migrate-v5") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v5 -------------------------------------------------------------------------------
+    TempDb ref_file("v5-ref"), old("v5");
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    const int64_t worn = 2097152004, sold = 2097152029;  // the fixture's weapon with a gear, the sold one
+    t.expect_eq(db.one("select count(*) from items where uid = ?", {worn}), (int64_t)1, "the fixture's weapon with a gear");
+    t.expect_eq(db.one("select count(*) from items where uid = ?", {sold}), (int64_t)0, "the fixture's sold weapon");
+    t.expect_eq(db.one("select count(*) from gear_items where uid = 2081423359 and item_uid = ?", {sold}), (int64_t)1,
+                "the fixture's gear on the sold weapon");
+    t.expect_eq(db.one("select count(*) from gear_items where uid = 2080374787 and item_uid = 0", {}), (int64_t)1, "the fixture's free gear");
+    const int64_t locked = db.one("select min(uid) from items", {}), no_time = db.one("select max(uid) from items", {});
+    // the S5 dirt, in both files
+    for (Sql* d : {&ref, &db}) {
+        d->q("update items set locked = 2 where uid = ?", {locked});
+        d->q("update items set created_at = null where uid = ?", {no_time});
+        d->q(
+            "insert into gear_items (uid, type, master_item_id, param2, item_uid, slot, is_new, created_at) values "
+            "(2080374790, 0, 88449980, 0, ?, 0, 0, 1), (2080374791, 0, 88449980, 0, ?, 1, 0, 1), "
+            "(2080374792, 0, 88449980, 0, 0, 2, 5, 1), (2080374793, 0, 88449980, 0, null, 0, 1, null)",
+            {worn, worn});
+    }
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 4, m), true, "the reference: migrated to 4");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 5, m), true, "migrated to 5");
+    t.expect_eq(state::user_version(db.h), 5, "user_version 5");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
+    // every other table: its rows as they were at version 4
+    std::vector<std::string> tables;
+    ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+          [&](const Row& r) { tables.push_back(r.s("name")); });
+    auto ref_rows = rows_of(ref), db_rows = rows_of(db);
+    for (const std::string& table : tables) {
+        if (table == "items" || table == "gear_items") continue;
+        if (ref_rows[table] != db_rows[table]) t.fail("%s: rows changed", table.c_str());
+    }
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)52, "52 tables");
+    t.expect_eq(db.one("select count(*) from sqlite_master where name like 'new_%'", {}), (int64_t)0, "no new_X table left");
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1, "the slot index");
+    // items: every row kept; locked 2 -> 1, a NULL created_at -> 0
+    t.expect_eq(rows_over(db, "items", "uid, master_item_id, item_type, level, exp, limit_break"),
+                rows_over(ref, "items", "uid, master_item_id, item_type, level, exp, limit_break"), "items: every item, its fields kept");
+    t.expect_eq(db.one("select locked from items where uid = ?", {locked}, -1), (int64_t)1, "locked 2 -> 1");
+    t.expect_eq(db.one("select count(*) from items where uid != ? and locked != 0", {locked}), (int64_t)0, "the others unlocked, as they were");
+    t.expect_eq(db.one("select created_at from items where uid = ?", {no_time}, -1), (int64_t)0, "a NULL created_at -> 0");
+    t.expect_eq(rows_over(db, "items", "uid, created_at", "uid != " + std::to_string(no_time)),
+                rows_over(ref, "items", "uid, created_at", "uid != " + std::to_string(no_time)), "created_at kept");
+    // gear_items: uid, item_uid, slot, is_new, created_at
+    t.expect_eq(rows_over(db, "gear_items", "uid, item_uid, slot, is_new, created_at"),
+                (std::vector<std::string>{"1:2080374785|1:2097152004|1:0|1:0|1:1790841550|",  // set in slot 0: kept (the lowest uid)
+                                          "1:2080374787|5:|1:0|1:1|1:1790841555|",            // free: item_uid 0 -> NULL
+                                          "1:2080374790|5:|1:0|1:0|1:1|",                     // the second gear in slot 0 -> the box
+                                          "1:2080374791|1:2097152004|1:1|1:0|1:1|",           // slot 1: kept
+                                          "1:2080374792|5:|1:2|1:1|1:1|",                     // free, its slot kept, is_new 5 -> 1
+                                          "1:2080374793|5:|1:0|1:1|1:0|"}),                   // NULL: the box; NULL created_at -> 0
+                "gear_items mapped; the gear on the sold weapon (2081423359) dropped");
+    t.expect_eq(rows_over(db, "gear_items", "uid, type, master_item_id, param2"),
+                rows_over(ref, "gear_items", "uid, type, master_item_id, param2", "uid != 2081423359"), "the gears' kinds kept");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    if (m)
+        for (const auto& d : state::check(db.h, m)) t.fail("%s", state::describe(d).c_str());
+    ref.close();
+    db.close();
+
+    // ---- (2) v4 -> v5, without the master ------------------------------------------------------------
+    TempDb v4("v5-from-v4");
+    if (!write_fixture(t, v4.path)) return;
+    Sql f;
+    if (!f.open(v4.path, false)) return t.fail("open v4");
+    t.expect_eq(state::open_and_migrate(f.h, v4.path, 4, m), true, "migrated to 4");
+    f.close();
+    unlink((v4.path + ".bak-v0").c_str());
+    if (!f.open(v4.path, false)) return t.fail("reopen v4");
+    t.expect_eq(state::user_version(f.h), 4, "a version 4 file");
+    int64_t weapons = f.one("select count(*) from items", {});
+    t.expect_eq(state::open_and_migrate(f.h, v4.path), true, "v4 -> v5");
+    t.expect_eq(state::user_version(f.h), 5, "user_version 5");
+    t.expect_eq(f.one("select count(*) from items", {}), weapons, "every item kept");
+    t.expect_eq(rows_over(f, "gear_items", "uid, item_uid"), (std::vector<std::string>{"1:2080374785|1:2097152004|", "1:2080374787|5:|"}),
+                "the set gear kept, the free one NULL, the one on the sold weapon dropped");
+    t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+    f.close();
+    Sql bak;
+    if (!bak.open(v4.path + ".bak-v4", true)) return t.fail("no %s.bak-v4", v4.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 4, "the backup is version 4");
+    t.expect_eq(bak.one("select count(*) from gear_items where item_uid = 0", {}), (int64_t)1, "the backup keeps the 0 sentinel");
+    bak.close();
+}
+
+// The foreign keys' actions on a migrated state (PLAN-schema 3.1, 4.2; the FKs of versions 4 and 5):
+// what a delete or an update of a parent does to each child, and what a dangling write does.
+//   roster.weapon_uid / accessory_uid -> items   ON DELETE SET NULL; a dangling write fails at once
+//   roster.assist_uid -> roster                  ON DELETE SET NULL; a dangling write fails at once
+//   player.home_uid -> roster                    ON DELETE SET NULL; deferred: a dangling write
+//                                                fails at commit
+//   player.support_uid -> roster                 ON DELETE SET NULL; a dangling write fails at once
+//   player.title_id -> titles                    ON DELETE SET NULL; a dangling write fails at once
+//   player.party_id -> party_set                 NO ACTION, deferred: deleting the current set (or
+//                                                a dangling write) fails at commit
+//   gear_items.item_uid -> items                 ON DELETE CASCADE (S5); a dangling write fails at once
+//   no ON UPDATE action: changing a referenced key fails (at once, or at commit for a deferred child)
+// Plus the unique indexes (one character per item, one assisted character per assist, one gear per
+// weapon slot), STRICT and the 0 / 1 checks (items.locked, gear_items.is_new).
+NATIVE_TEST("server/schema-fk-actions") {
+    TempDb file("fk");
+    if (!write_fixture(t, file.path)) return;
+    Sql db;
+    if (!db.open(file.path, false)) return t.fail("open");
+    ext::Sql* master = test_master();
+    t.expect_eq(state::open_and_migrate(db.h, file.path, state::kSchemaVersion, master ? master->h : nullptr), true, "migrated");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    // a statement's result: SQLITE_OK, or its extended error code (not logged: failures are expected)
+    auto rc = [&](const std::string& sql) {
+        int r = sqlite3_exec(db.h, sql.c_str(), nullptr, nullptr, nullptr);
+        return r == SQLITE_OK ? SQLITE_OK : sqlite3_extended_errcode(db.h);
+    };
+    // a transaction of `sql`: the commit's result (rolled back when refused)
+    auto txn = [&](const std::string& sql) {
+        if (rc("begin immediate") != SQLITE_OK) return -1;
+        int r = rc(sql);
+        if (r == SQLITE_OK) r = rc("commit");
+        if (r != SQLITE_OK) rc("rollback");
+        return r;
+    };
+    const std::string a = std::to_string(db.one("select min(uid) from roster", {}));
+    const std::string b = std::to_string(db.one("select min(uid) from roster where uid > ?", {std::stoll(a)}));
+    const std::string c = std::to_string(db.one("select min(uid) from roster where uid > ?", {std::stoll(b)}));
+    const std::string item1 = std::to_string(db.one("select min(uid) from items", {}));
+    const std::string item2 = std::to_string(db.one("select min(uid) from items where uid > ?", {std::stoll(item1)}));
+    const std::string title = std::to_string(db.one("select min(id) from titles", {}));
+    const std::string gear_set = std::to_string(db.one("select min(uid) from gear_items where item_uid is not null", {}));
+    const std::string gear_free = std::to_string(db.one("select min(uid) from gear_items where item_uid is null", {}));
+    t.expect_eq(gear_set != "0" && gear_free != "0", true, "a set and a free gear (the fixture's)");
+    // the references: a wears item1 and item2, has b as assist; the player's home c, support b, title
+    t.expect_eq(rc("update roster set weapon_uid = null, accessory_uid = null, assist_uid = null;"
+                   "update roster set weapon_uid = " +
+                   item1 + ", accessory_uid = " + item2 + ", assist_uid = " + b + " where uid = " + a +
+                   ";"
+                   "update player set home_uid = " +
+                   c + ", support_uid = " + b + ", title_id = " + title),
+                SQLITE_OK, "the references set");
+    // the free gear set in item1's slot 1 (the other gear stays in its weapon's slot 0)
+    t.expect_eq(rc("update gear_items set item_uid = " + item1 + ", slot = 1 where uid = " + gear_free), SQLITE_OK, "a gear set in item1");
+
+    // dangling writes: the immediate ones fail at the statement, the deferred ones at commit
+    for (const std::string& sql : {"update roster set weapon_uid = 9999 where uid = " + b, "update roster set accessory_uid = 9999 where uid = " + b,
+                                   "update roster set assist_uid = 9999 where uid = " + b, std::string("update player set support_uid = 9999"),
+                                   std::string("update player set title_id = 9999"), "update gear_items set item_uid = 9999 where uid = " + gear_set})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once").c_str());
+    for (const std::string& sql : {std::string("update player set home_uid = 9999"), std::string("update player set party_id = 99"),
+                                   std::string("delete from party_set where party_id = (select party_id from player)")})
+        t.expect_eq(txn(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at commit").c_str());
+    t.expect_eq(txn("update player set home_uid = 9999; update player set home_uid = " + c), SQLITE_OK, "deferred: fixed before commit");
+    t.expect_eq(txn("delete from party_set where party_id = 9"), SQLITE_OK, "a set that isn't current can go");
+    // no ON UPDATE: a referenced key doesn't change
+    t.expect_eq(rc("update roster set uid = 1 where uid = " + b), SQLITE_CONSTRAINT_FOREIGNKEY, "a referenced roster uid: refused at once");
+    t.expect_eq(rc("update items set uid = 1 where uid = " + item1), SQLITE_CONSTRAINT_FOREIGNKEY, "a worn item's uid: refused");
+    t.expect_eq(txn("update party_set set party_id = 99 where party_id = (select party_id from player)"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "the current set's id: refused at commit");
+    // the unique indexes: one character per item, one assisted character per assist
+    t.expect_eq(rc("update roster set weapon_uid = " + item1 + " where uid = " + b), SQLITE_CONSTRAINT_UNIQUE, "an item worn twice: refused");
+    t.expect_eq(rc("update roster set assist_uid = " + b + " where uid = " + c), SQLITE_CONSTRAINT_UNIQUE, "an assist of two characters: refused");
+    t.expect_eq(rc("update gear_items set item_uid = " + item1 + ", slot = 1 where uid = " + gear_set), SQLITE_CONSTRAINT_UNIQUE,
+                "two gears in one weapon slot: refused");
+    t.expect_eq(rc("update gear_items set item_uid = " + item1 + ", slot = 0 where uid = " + gear_set), SQLITE_OK, "another slot of it: fine");
+    t.expect_eq(rc("insert into gear_items (uid, master_item_id, item_uid, slot, created_at) values (1, 1, null, 0, 0), (2, 1, null, 0, 0)"),
+                SQLITE_OK, "gears in the box share slot 0");
+    t.expect_eq(rc("delete from gear_items where uid in (1, 2)"), SQLITE_OK, "(removed again)");
+    // the 0 / 1 checks
+    t.expect_eq(rc("update items set locked = 2 where uid = " + item1), SQLITE_CONSTRAINT_CHECK, "items.locked 0 / 1");
+    t.expect_eq(rc("update gear_items set is_new = 2 where uid = " + gear_set), SQLITE_CONSTRAINT_CHECK, "gear_items.is_new 0 / 1");
+    // STRICT: a value of the wrong type is refused, not stored
+    t.expect_eq(rc("update roster set level = 'high' where uid = " + a), SQLITE_CONSTRAINT_DATATYPE, "STRICT roster");
+    t.expect_eq(rc("update player set level = 'high'"), SQLITE_CONSTRAINT_DATATYPE, "STRICT player");
+    t.expect_eq(rc("update items set level = 'high' where uid = " + item1), SQLITE_CONSTRAINT_DATATYPE, "STRICT items");
+    t.expect_eq(rc("update gear_items set slot = 'high' where uid = " + gear_set), SQLITE_CONSTRAINT_DATATYPE, "STRICT gear_items");
+
+    // ON DELETE SET NULL
+    t.expect_eq(rc("delete from items where uid = " + item1), SQLITE_OK, "an item deleted");
+    t.expect_eq(db.one("select count(*) from roster where uid = ? and weapon_uid is null and accessory_uid = ?", {std::stoll(a), std::stoll(item2)}),
+                (int64_t)1, "its wearer's weapon_uid -> NULL");
+    t.expect_eq(db.one("select count(*) from gear_items where uid in (" + gear_set + ", " + gear_free + ")", {}), (int64_t)0,
+                "ON DELETE CASCADE: the gears set in it are gone");
+    t.expect_eq(rc("delete from items where uid = " + item2), SQLITE_OK, "the accessory deleted");
+    t.expect_eq(db.one("select count(*) from roster where uid = ? and accessory_uid is null", {std::stoll(a)}), (int64_t)1, "accessory_uid -> NULL");
+    t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_OK, "the assist and support character deleted");
+    t.expect_eq(db.one("select count(*) from roster where uid = ? and assist_uid is null", {std::stoll(a)}), (int64_t)1, "assist_uid -> NULL");
+    t.expect_eq(db.one("select count(*) from player where support_uid is null", {}), (int64_t)1, "support_uid -> NULL");
+    t.expect_eq(txn("delete from roster where uid = " + c), SQLITE_OK, "the home character deleted");
+    t.expect_eq(db.one("select count(*) from player where home_uid is null", {}), (int64_t)1,
+                "home_uid -> NULL (the deferred FK's action is at once)");
+    t.expect_eq(rc("delete from titles where id = " + title), SQLITE_OK, "the worn title deleted");
+    t.expect_eq(db.one("select count(*) from player where title_id is null", {}), (int64_t)1, "title_id -> NULL");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    db.close();
 }
 
 // A file newer than this build isn't opened, and isn't modified (PLAN-schema 4.1: no

@@ -19,12 +19,13 @@ Value party_set_character(ext::Ctx& ctx, u32 party_id, const Row& party_row) {
     Value member = Value::object();
     member["party_index"] = (u32)party_row.i("slot");
     member["character_id"] = (u64)party_row.i("uid");
+    // plain numbers, 0 = none: party_member keeps its 0 sentinels until PLAN-schema S6
     u64 weapon_uid = 0, accessory_uid = 0, assist_uid = 0;
     u32 skill[3] = {0, 0, 0};
     // (d) the character's own equipment when the set saved none
     ctx.st.q("select weapon_uid, accessory_uid from roster where uid = ?", {party_row.i("uid")}, [&](const Row& roster_row) {
-        weapon_uid = (u64)roster_row.i("weapon_uid");
-        accessory_uid = (u64)roster_row.i("accessory_uid");
+        weapon_uid = or_zero(roster_row.opt<ItemUid>("weapon_uid"));  // NULL: none
+        accessory_uid = or_zero(roster_row.opt<ItemUid>("accessory_uid"));
     });
     // What the party screen saved with UpdatePartySet (the member's equipment, skills and
     // assist in this set), when there is a row.
@@ -98,6 +99,17 @@ Value party_set_info(ext::Ctx& ctx) {
     Value party_set = Value::object();
     for (auto& [party_id, set] : sets) party_set[std::to_string(party_id)] = set;
     return party_set;
+}
+
+// (a) the sets 1..master_global.party_set_max (the party screen pages through them); (d) a row
+// with icon 0, unlocked: what PartySet sends for a set without one (saved_party_sets), so the
+// rows change no reply.
+void add_party_sets(ext::Ctx& ctx) {
+    for (u32 party_id = 1, max = ctx.global_u32("party_set_max", 10); party_id <= max; party_id++) ensure_party_set(ctx, party_id);
+}
+
+void ensure_party_set(ext::Ctx& ctx, u32 party_id) {
+    ctx.st.q("insert into party_set (party_id) values (?) on conflict(party_id) do nothing", {party_id});
 }
 
 // The owned uids of party `party_id`, in slot order (its empty slots left out).

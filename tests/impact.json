@@ -727,7 +727,13 @@
     "Login",
     "NoLoginStart"
    ],
-   "source": "declared"
+   "source": "observed",
+   "observed": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ]
   },
   "diff-full": {
    "apis": [
@@ -970,6 +976,7 @@
    "apis": [
     "AchievementActiveList",
     "AchievementListReceive",
+    "AchievementReceive",
     "DeepSpaceActiveList",
     "DeepSpaceAutoMemberSelect",
     "DeepSpaceMissionEnd",
@@ -1164,7 +1171,6 @@
   "emu:seeded": {
    "apis": [
     "CreatePlayer",
-    "EndMissionTalk",
     "GetGachaInData",
     "GetMissionList",
     "GetPlayer",
@@ -1198,7 +1204,6 @@
    "apis": [
     "CreatePlayer",
     "EndMissionTalk",
-    "GetGachaInData",
     "GetMissionList",
     "GetPlayMission",
     "GetPlayer",
@@ -1272,22 +1277,38 @@
     "GetServerTime",
     "GetSphere211Info",
     "Login",
+    "MissionEnd",
     "MissionStart",
     "NoLoginStart",
     "ReturnSphere211",
     "Sphere211AutoMemberSelect",
     "Sphere211FloorClear",
     "Sphere211MissionEnd",
-    "Sphere211MissionFailed",
     "Sphere211MissionStart",
     "Sphere211SelectedFloor",
     "Sphere211StaminaHeal",
     "Sphere211UseRerollItem"
    ],
-   "source": "declared"
+   "source": "observed+declared",
+   "observed": [
+    "GetPlayer",
+    "GetServerTime",
+    "GetSphere211Info",
+    "Login",
+    "NoLoginStart",
+    "ReturnSphere211",
+    "Sphere211AutoMemberSelect",
+    "Sphere211FloorClear",
+    "Sphere211MissionEnd",
+    "Sphere211MissionStart",
+    "Sphere211SelectedFloor",
+    "Sphere211StaminaHeal",
+    "Sphere211UseRerollItem"
+   ]
   },
   "session:sphere211-continue": {
    "apis": [
+    "AchievementActiveList",
     "GetPlayer",
     "GetServerTime",
     "GetSphere211Info",
@@ -1296,23 +1317,47 @@
     "NoLoginStart",
     "Sphere211AutoMemberSelect",
     "Sphere211MissionContinue",
-    "Sphere211MissionEnd",
     "Sphere211MissionFailed",
     "Sphere211MissionStart",
     "Sphere211StaminaHeal"
    ],
-   "source": "declared"
+   "source": "observed+declared",
+   "observed": [
+    "AchievementActiveList",
+    "GetPlayer",
+    "GetServerTime",
+    "GetSphere211Info",
+    "Login",
+    "NoLoginStart",
+    "Sphere211AutoMemberSelect",
+    "Sphere211MissionContinue",
+    "Sphere211MissionFailed",
+    "Sphere211MissionStart",
+    "Sphere211StaminaHeal"
+   ]
   },
   "session:episode-movie": {
    "apis": [
     "EndMissionTalk",
+    "GetPlayMission",
     "GetPlayer",
     "GetServerTime",
     "GetWorldMapInfoList",
     "Login",
+    "MissionTalk",
     "NoLoginStart"
    ],
-   "source": "declared"
+   "source": "observed",
+   "observed": [
+    "EndMissionTalk",
+    "GetPlayMission",
+    "GetPlayer",
+    "GetServerTime",
+    "GetWorldMapInfoList",
+    "Login",
+    "MissionTalk",
+    "NoLoginStart"
+   ]
   },
   "session:newplayer-download": {
    "apis": [
@@ -1327,6 +1372,23 @@
     "UpdateTutorial"
    ],
    "source": "declared"
+  },
+  "session:gdb-probe": {
+   "apis": [
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "observed",
+   "observed": [
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ]
   },
   "session:debug": {
    "apis": [

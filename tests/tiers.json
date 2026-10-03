@@ -37,7 +37,7 @@
     {"name": "no-380", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "tools/check_no_380.sh",
      "covers": "no reference to the offline build outside the allowed places (tools/check_no_380.sh)"},
-    {"name": "pytest-control", "tier": "T0", "secs": 10, "kind": "check", "game": 0,
+    {"name": "pytest-control", "tier": "T0", "secs": 50, "kind": "check", "game": 0,
      "cmd": ".venv/bin/python -m pytest -q control/tests",
      "covers": "the slot pool, the driver library control/soadrive (log cursor, FIFO, resend rules) and tools/tests_for.py's path rules (no game)"},
     {"name": "pytest-soa-save", "tier": "T0", "secs": 5, "kind": "check", "game": 0,

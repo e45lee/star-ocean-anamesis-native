@@ -559,13 +559,15 @@ The implementation's own rules, as the code applies them, with labels. Where the
   - With `--server HOST`, none of this runs: the client's own NetworkApiCaller talks to soa-server.
 - **State.** A SQLite file, `DATA/server.sqlite3` (`--db`). Tables:
   - `player`: id, search id, name, level, exp, fol, stamina and its timestamp, free and paid coins, home character, party;
-  - `roster`: uid, role, level, exp, limit break, awakening, skill levels, equipped weapon and accessory, favor points (unused: favor lives in `favor`, section 8);
+  - `roster`: uid, role, level, exp, limit break, awakening, skill levels, equipped weapon and accessory (favor isn't a roster column: it lives in `favor`, section 8);
   - `favor`: per same_role_id favor points and today's taps (section 8);
-  - `items` (unique items: weapons, accessories), `stock` (stack items), `gear`;
+  - `items` (unique items: weapons, accessories), `stock` (stack items);
   - `party` (party set, slot, uid);
-  - `mission` (cleared, best rank, play and clear counts, first clear), `play` (the mission in progress);
-  - `gacha_history`, `box_gacha`;
-  - `presents`, `login_bonus`, `achievements`, `planets`, `meta`.
+  - `mission` (cleared, play and clear counts, first clear), `play` (the mission in progress);
+  - `gacha_history`;
+  - `presents`, `login_bonus`, `achievements`, `meta`.
+
+  The modules' tables (favor, gear, growth, shops, Sphere 211, deep space, events, …) and the schema's versions are `server/src/state/` (`schema.cpp`; `server/PLAN-schema.md`). Schema version 2 (PLAN-schema S2) dropped what nothing read: `roster.favor`, `mission.best_rank`, `exchange_counts.shop_id` and the tables `view_flags`, `gear`, `box_gacha` and `planets`.
 
   `tools/server_state.py DATA/server.sqlite3` prints it.
 - **Clock.** `--clock "YYYY-MM-DD HH:MM:SS"` starts the server's clock at that time, so past banners can be replayed. Times are local time strings.
@@ -592,7 +594,7 @@ The seed is `--seed`, else the real 3.7.0 save in the repo (`work/Game-3.7.0.xml
 | items, stack items, gear | none | (d) |
 | home character | `player_home_pc_roleid` | seed save |
 | party 1 | the home character, then the three highest-rarity other characters (roster order among equals); parties 2..10 empty | (d) |
-| planets | `BAS:PlanetOpen_*` flags | seed save |
+| planets | not stored (the seed wrote the save's `BAS:PlanetOpen_*` flags into a `planets` table nothing read, dropped in schema version 2): the open planets are the campaign's `ActiveMissionList` | (d) |
 
 #### The game's save is not synced (removed 2026-10-01)
 The game's save keeps a summary of the player (`player_name`, `player_level`, `player_exp`, `player_fol`, `player_stamina_max`, `player_home_pc_roleid`, `person_size`, `person_master_role_id_N`; `CUserDataUtility::Save_PlayerInfo` / `Save_PartyInfo`). The client before the rebase read it back at boot and showed it over the boot response, so the server used to write its own state into it before every boot (`sync_save`). **3.7.0 never reads it back (b):** the only functions that read those keys from the local KVS are `CUserDataUtility::Load_PlayerInfo` and `Load_PartyInfo` (string xrefs in `libSOA-3.7.0.so`), both called only from `CUserDataUtility::LoadFromLocalKVS` (@01f5a788), which has no caller: no BL/B, no address taken (ADRP/ADD), no pointer in any table or relocation. The 3.7.0 client takes the summary from `Login`'s `data.Player` and the roster from the responses only, so the sync was dead and is gone (agent open-issues). The server still *reads* the client's `Game.xml` as the last seed fallback ("Seed").
@@ -643,7 +645,7 @@ The 3.7.0 party screen saves a party set with `UpdatePartySet` when the player l
 
 #### UI tutorial flags (`UpdateView(ViewFlagType kind, u64 flags)`, agent `restore-party`)
 - The screens' UI tutorials (the equipment screen's, for example) end with `CTutorialManager::ST_Net_Tutoflag`, which sends the word that `CParameterUtility::AddTutorialViewStatus` returns (the old word with the tutorial's bit set), with kind = bit index >> 6. **(b)**
-- The server stores the word per kind (`meta` keys `view_status` / `view_status2`; the `view_flags` table is created but unused) and sends it as `Player.view_status` (kind 0) / `view_status2` (kind 1). The client reads them at CParameterManager+0xe08 / +0xe38 (`GetTutorialViewStatus`, `IsTutorialViewStatus`). **(b)** Any other kind is stored as `view_status2`. **(d)**
+- The server stores the word per kind (`meta` keys `view_status` / `view_status2`; the unused `view_flags` table was dropped in schema version 2) and sends it as `Player.view_status` (kind 0) / `view_status2` (kind 1). The client reads them at CParameterManager+0xe08 / +0xe38 (`GetTutorialViewStatus`, `IsTutorialViewStatus`). **(b)** Any other kind is stored as `view_status2`. **(d)**
 - A new account has seen no UI tutorial. **(d)** The seed save doesn't record them, although the seeded veteran player would have seen them all.
 - The main tutorial's `UpdateTutorial` is the entry flow's ("Tutorial progress").
 
@@ -1042,7 +1044,7 @@ All lots pick one row by `rate_weigh`, with replacement (d, as before).
 - The log line `MissionEnd mission N drops: surprise …, campaign …, character bonus …, evaluation …` shows each source.
 - **Unlocks:** on the first clear, the missions of the same table whose `unlock_mission_id` is this mission are recorded in the state's `unlocks` table and logged (a). Example: `mf01_001` → `mc01_030`, `mf01_003` → `mf01_004`.
   - The menus learn about them through `ActiveMissionList`. Agent `campaign`'s server (`server/src/api/campaign/campaign.cpp`, branch `port/campaign`) builds that list from the same rule, adds it to every response and keeps its own clear record. When both are merged, the campaign code should read the server's `mission` / `unlocks` tables, so there's one clear record (d: integration left to the merge).
-  - Mission ranks: the only per-mission rank data are the evaluation ranks above; `mission.best_rank` stays 0 (d).
+  - Mission ranks: the only per-mission rank data are the evaluation ranks above; the server keeps no per-mission rank (the never-written `mission.best_rank` was dropped in schema version 2) (d).
 
 #### Battle status additions (`CPersonStatusInfo`)
 - **Equipment:** an equipped weapon or accessory (`roster.weapon_uid` / `accessory_uid` → `items`) adds its `master_item` hp, attack, intelligence, defence, hit, guard and ap (a: columns; b: `CalcStatus` adds equipment).

@@ -31,9 +31,20 @@ def main():
           (p[1], p[2], p[0], p[3], p[4], p[5], p[6], p[7], p[8]))
     n = st.execute("select count(*) from roster").fetchone()[0]
     print("roster: %d characters" % n)
-    for slot, uid, role, lv, exp, fav, lb in st.execute(
-            "select p.slot, p.uid, r.role_id, r.level, r.exp, r.favor, r.limit_break from party p "
+    def favor(role):
+        """The character's favor points: the favor table keys them by the master's same_role_id (0
+        without a row, or without the master)."""
+        same = m.execute("select same_role_id from master_role where id = ?", (role,)).fetchone() if m else None
+        try:
+            r = st.execute("select point from favor where same_role_id = ?", (same[0],)).fetchone() if same else None
+        except sqlite3.OperationalError:  # a state from before the favor table
+            r = None
+        return r[0] if r and r[0] is not None else 0
+
+    for slot, uid, role, lv, exp, lb in st.execute(
+            "select p.slot, p.uid, r.role_id, r.level, r.exp, r.limit_break from party p "
             "join roster r on r.uid = p.uid where p.party_id = 1 order by p.slot"):
+        fav = favor(role)
         print("  party 1 slot %d: %#x %s level %d exp %d favor %d limit break %d" % (slot, uid, label("master_role", role), lv, exp, fav, lb))
     for mid, cnt in st.execute("select master_item_id, count from stock where count > 0 order by master_item_id"):
         print("  stock %s x%d" % (label("master_item", mid), cnt))

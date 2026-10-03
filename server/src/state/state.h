@@ -23,8 +23,9 @@ int user_version(sqlite3* db);
 //   - the backup or a step fails (the file stays at the last good version).
 // An older file that has a player is first copied to `<path>.bak-v<version>` (sqlite3_backup).
 // Each step runs in its own `begin immediate` transaction and commits only when `pragma
-// foreign_key_check` is empty. Must be called outside any transaction.
-bool open_and_migrate(sqlite3* db, const std::string& path);
+// foreign_key_check` is empty. Must be called outside any transaction. `target` stops at an older
+// version (the tests' per-step migrations, schema-migrate-vN); the server always takes this build's.
+bool open_and_migrate(sqlite3* db, const std::string& path, int target = kSchemaVersion);
 
 // Runs state::check (the master references; check.h) and logs each dangling reference (LOGW).
 // Report-only: a master can change under a saved state. The number of dangling references.

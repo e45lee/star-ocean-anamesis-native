@@ -30,7 +30,8 @@ struct TempDb {
     explicit TempDb(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
     ~TempDb() { remove_all(); }
     void remove_all() {
-        for (const char* suffix : {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal"}) unlink((path + suffix).c_str());
+        for (const char* suffix : {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal", ".bak-v1", ".bak-v1-journal"})
+            unlink((path + suffix).c_str());
     }
 };
 
@@ -126,8 +127,8 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)58,
-                "the 58 baseline tables");
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54,
+                "the 58 baseline tables less the 4 S2 drops");
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'wire_device'", {}), (int64_t)1, "wire_device on every route");
     // the new file has no player: nothing to back up
     t.expect_eq(access((fresh.path + ".bak-v0").c_str(), F_OK) != 0, true, "no backup of a new file");
@@ -135,7 +136,7 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
     b.close();
 }
 
-// Version 1 (the baseline) on the v0 fixture: no data mapping, so every row stays as it was, the
+// Version 1 (the baseline) on the v0 fixture (migrated to 1 only): no data mapping, so every row stays as it was, the
 // dirt included (the later steps clean it); the file is backed up first; foreign keys are on; the
 // master references resolve. A table missing a baseline column gets it, with its default.
 NATIVE_TEST("server/schema-migrate-v1") {
@@ -147,7 +148,7 @@ NATIVE_TEST("server/schema-migrate-v1") {
     t.expect_eq(before.size(), (size_t)58, "the fixture has every table");
     for (auto& [table, rows] : before)
         if (rows.empty()) t.fail("the fixture's %s is empty", table.c_str());
-    t.expect_eq(state::open_and_migrate(db.h, old.path), true, "migrated");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 1), true, "migrated");
     t.expect_eq(state::user_version(db.h), 1, "user_version 1");
     t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
     t.expect_eq(rows_of(db) == before, true, "every row kept");
@@ -171,7 +172,7 @@ NATIVE_TEST("server/schema-migrate-v1") {
     Sql again;
     if (!again.open(old.path, false)) return t.fail("reopen");
     unlink((old.path + ".bak-v0").c_str());
-    t.expect_eq(state::open_and_migrate(again.h, old.path), true, "a current file opens");
+    t.expect_eq(state::open_and_migrate(again.h, old.path, 1), true, "a current file opens");
     t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) != 0, true, "no backup of a current file");
     again.close();
 
@@ -182,13 +183,81 @@ NATIVE_TEST("server/schema-migrate-v1") {
     if (!l.open(legacy.path, false)) return t.fail("open legacy");
     l.exec("alter table roster_ext drop column equip_skill3; alter table follow_rental drop column paid");
     t.expect_eq(columns_of(l, "roster_ext").count("equip_skill3"), (size_t)0, "the legacy table lacks the column");
-    t.expect_eq(state::open_and_migrate(l.h, legacy.path), true, "repaired");
+    t.expect_eq(state::open_and_migrate(l.h, legacy.path, 1), true, "repaired");
     t.expect_eq(columns_of(l, "roster_ext").count("equip_skill3"), (size_t)1, "roster_ext.equip_skill3 added");
     t.expect_eq(columns_of(l, "follow_rental").count("paid"), (size_t)1, "follow_rental.paid added");
     t.expect_eq(l.one("select count(*) from roster_ext where equip_skill3 is not 0", {}), (int64_t)0, "with its default 0");
     t.expect_eq(l.one("select count(*) from follow_rental where paid is not 0", {}), (int64_t)0, "not null default 0");
     t.expect_eq(state::user_version(l.h), 1, "repaired: version 1");
     l.close();
+}
+
+// Version 2 (PLAN-schema S2: drop the dead) on the v0 fixture: the four dead tables and three
+// dead columns are gone, every other row is kept (the three tables' rows less the dropped column),
+// and a version 1 file (the path an S1 state takes) is backed up as .bak-v1 first.
+NATIVE_TEST("server/schema-migrate-v2") {
+    static const std::set<std::string> kDroppedTables = {"view_flags", "gear", "box_gacha", "planets"};
+    static const std::map<std::string, std::string> kDroppedColumns = {{"roster", "favor"}, {"mission", "best_rank"}, {"exchange_counts", "shop_id"}};
+    // every table's rows as text, without the dropped tables and columns
+    auto kept_rows = [](Sql& db) {
+        std::map<std::string, std::vector<std::string>> out;
+        std::vector<std::string> tables;
+        db.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+             [&](const Row& r) { tables.push_back(r.s("name")); });
+        for (const std::string& table : tables) {
+            if (kDroppedTables.count(table)) continue;
+            std::string cols;
+            db.q("select name from pragma_table_info(?) order by cid", {table}, [&](const Row& r) {
+                auto d = kDroppedColumns.find(table);
+                if (d != kDroppedColumns.end() && d->second == r.s("name")) return;
+                cols += (cols.empty() ? "\"" : ", \"") + r.s("name") + "\"";
+            });
+            std::vector<std::string>& rows = out[table];
+            sqlite3_stmt* s = nullptr;
+            sqlite3_prepare_v2(db.h, ("select " + cols + " from \"" + table + "\"").c_str(), -1, &s, nullptr);
+            while (s && sqlite3_step(s) == SQLITE_ROW) {
+                std::string row;
+                for (int c = 0; c < sqlite3_column_count(s); c++) {
+                    const unsigned char* v = sqlite3_column_text(s, c);
+                    row += std::to_string(sqlite3_column_type(s, c)) + ":" + (v ? (const char*)v : "") + "|";
+                }
+                rows.push_back(row);
+            }
+            sqlite3_finalize(s);
+            std::sort(rows.begin(), rows.end());
+        }
+        return out;
+    };
+    TempDb old("v2");
+    if (!write_fixture(t, old.path)) return;
+    Sql db;
+    if (!db.open(old.path, false)) return t.fail("open");
+    auto before = kept_rows(db);
+    for (const std::string& table : kDroppedTables)
+        t.expect_eq(db.one("select count(*) from \"" + table + "\"", {}) > 0, true, ("the fixture has rows in " + table).c_str());
+    // v0 -> v1, then (as an S1 state upgraded by this build) v1 -> v2
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 1), true, "migrated to 1");
+    db.close();
+    unlink((old.path + ".bak-v0").c_str());
+    if (!db.open(old.path, false)) return t.fail("reopen");
+    t.expect_eq(state::open_and_migrate(db.h, old.path), true, "migrated to 2");
+    t.expect_eq(state::user_version(db.h), 2, "user_version 2");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    for (const std::string& table : kDroppedTables)
+        t.expect_eq(db.one("select count(*) from sqlite_master where name = ?", {table}), (int64_t)0, (table + " dropped").c_str());
+    for (const auto& [table, column] : kDroppedColumns)
+        t.expect_eq(columns_of(db, table).count(column), (size_t)0, (table + "." + column + " dropped").c_str());
+    t.expect_eq(kept_rows(db) == before, true, "every other row and column kept");
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54, "54 tables");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    if (ext::Sql* m = test_master())
+        for (const auto& d : state::check(db.h, m->h)) t.fail("%s", state::describe(d).c_str());
+    db.close();
+    Sql bak;
+    if (!bak.open(old.path + ".bak-v1", true)) return t.fail("no %s.bak-v1", old.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 1, "the backup is version 1");
+    t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'planets'", {}), (int64_t)1, "the backup keeps the v1 tables");
+    bak.close();
 }
 
 // A file newer than this build isn't opened, and isn't modified (PLAN-schema 4.1: no

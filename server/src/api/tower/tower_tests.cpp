@@ -127,7 +127,7 @@ NATIVE_TEST("tower/lists") {
             (u32)c.m.one("select id from master_tower_mission where unlock_mission_id = ? and master_tower_area_id = ?", {first, std::stoll(area)});
         c.st.q(
             "insert into mission (mission_id, cleared) values (?, 1)"
-            " on conflict(mission_id) do update set cleared = excluded.cleared, best_rank = excluded.best_rank, "
+            " on conflict(mission_id) do update set cleared = excluded.cleared, "
             "play_count = excluded.play_count, clear_count = excluded.clear_count, "
             "first_clear_at = excluded.first_clear_at",
             {first});

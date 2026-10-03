@@ -66,7 +66,7 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
             " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
             "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
             "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
-            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, favor = excluded.favor, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, "
             "created_at = excluded.created_at",
             {uid, roles[i], cap > 10 ? cap - 10 : 1u /* (d) seed level: 10 below the cap */, 0, t});
         if (roles[i] == home_role) home_uid = uid;
@@ -86,8 +86,6 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
             "insert into party (party_id, slot, uid) values (1,?,?)"
             " on conflict(party_id, slot) do update set uid = excluded.uid",
             {s, party[s]});
-    for (auto& [k, v] : kv)
-        if (k.rfind("BAS:PlanetOpen_", 0) == 0) ctx.st.q("insert or replace into planets (label, open) values (?,?)", {k.substr(15), (int)(u8)v[0]});
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
     ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
     ctx.st.q("insert or replace into meta (key, value) values ('seed', ?)", {seedp});

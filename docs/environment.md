@@ -233,10 +233,10 @@ runtime/, emulator/ and viewer READMEs but not in `port/README.md`, soa's main d
 
 ### Stale docs (documented, no longer read)
 
-- **`soa-server --help`** marks `--db`, `--master`, `--seed`, `--game-xml`, `--seed-rng`, `--new-player`,
+- **`soa-server --help`** marks `--master`, `--seed`, `--game-xml`, `--seed-rng`, `--new-player`,
   `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise` with soa's variable names
   (`(SOA_SERVER_MASTER; default …)`, `(SOA_RESTORE_NEW_PLAYER=1)`), which read as if soa-server honoured
-  them; it doesn't. `server/app/main.cpp:208`'s comment "the same environment fallbacks as soa" is true
+  them; it doesn't (only `--db` says `(soa: SOA_SERVER_DB)`). `server/app/main.cpp:208`'s comment "the same environment fallbacks as soa" is true
   only for the two event variables. `server/README.md:107` ("`--data` for soa's `SOA_SERVER_*`
   variables") says it right but tersely. `server/include/soaserver/config.h`'s field comments name the
   `SOA_*` variables too, and its header says "the server reads nothing else", which the library's own

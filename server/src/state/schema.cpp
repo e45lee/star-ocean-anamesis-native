@@ -562,10 +562,11 @@ bool rebuild_roster_and_player(sqlite3* db, sqlite3* master) {
     log_count(db, "select count(*) from assist where uid in (select uid from roster) and assist_uid not in (select uid from roster)",
               "assist.assist_uid", "dangling -> NULL");
     log_count(db, "select count(*) from assist where uid = assist_uid", "assist.assist_uid", "the character itself -> NULL");
-    log_count(db,
-              "select count(*) from assist a where uid in (select uid from roster) and assist_uid in (select uid from roster) and "
-              "exists (select 1 from assist o where o.assist_uid = a.assist_uid and o.uid < a.uid and o.uid in (select uid from roster))",
-              "assist.assist_uid", "assisting a second character -> NULL (kept by the lowest uid)");
+    log_count(
+        db,
+        "select count(*) from assist a where uid in (select uid from roster) and assist_uid in (select uid from roster) and "
+        "exists (select 1 from assist o where o.assist_uid = a.assist_uid and o.uid < a.uid and o.uid != o.assist_uid and o.uid in (select uid from roster))",
+        "assist.assist_uid", "assisting a second character -> NULL (kept by the lowest uid)");
     log_count(db, "select count(*) from player where home_uid != 0 and home_uid not in (select uid from roster)", "player.home_uid",
               "dangling -> NULL");
     log_count(db, "select count(*) from player where title_id is not null and title_id not in (select id from titles)", "player.title_id",
@@ -590,7 +591,7 @@ select r.uid, ifnull(r.role_id, 0), ifnull(r.level, 0), ifnull(r.exp, 0), ifnull
   case when r.accessory_uid in (select uid from items)
         and not exists (select 1 from roster o where o.accessory_uid = r.accessory_uid and o.uid < r.uid) then r.accessory_uid end,
   case when a.assist_uid in (select uid from roster) and a.assist_uid != r.uid
-        and not exists (select 1 from assist o where o.assist_uid = a.assist_uid and o.uid < a.uid and o.uid in (select uid from roster))
+        and not exists (select 1 from assist o where o.assist_uid = a.assist_uid and o.uid < a.uid and o.uid != o.assist_uid and o.uid in (select uid from roster))
        then a.assist_uid end,
   ifnull(r.created_at, 0)
 from roster r left join roster_ext e on e.uid = r.uid left join assist a on a.uid = r.uid)");

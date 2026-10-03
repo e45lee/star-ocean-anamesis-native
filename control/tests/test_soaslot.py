@@ -68,3 +68,28 @@ def test_starts_are_staggered(tmp_path):
     for _ in range(3):
         subprocess.run([sys.executable, os.path.join(CONTROL, "soaslot.py"), "run", "--", "true"], env=e, check=True)
     assert time.monotonic() - t0 >= 3.0  # the 2nd and 3rd start waited 1.5 s each
+
+
+def test_software_gl(tmp_path):
+    """SOA_SLOT_SOFTWARE_GL (or run --software-gl) puts the clients on llvmpipe; off by default."""
+    e = env(tmp_path, 1)
+    for k in ("SOA_SLOT_SOFTWARE_GL", "GALLIUM_DRIVER", "LIBGL_ALWAYS_SOFTWARE", "SOA_SLOT_HELD"):
+        e.pop(k, None)
+    # a WSL profile's GALLIUM_DRIVER=d3d12 (the host GPU) is overridden when the switch is on
+    r = subprocess.run([sys.executable, os.path.join(CONTROL, "soaslot.py"), "run", "--software-gl", "--", "sh", "-c",
+                        'echo "[$GALLIUM_DRIVER]"'], env=dict(e, GALLIUM_DRIVER="d3d12"), capture_output=True, text=True)
+    assert r.stdout.strip() == "[llvmpipe]"
+    py = [sys.executable, os.path.join(CONTROL, "soaslot.py"), "run"]
+    show = ["--", "sh", "-c", 'echo "[$GALLIUM_DRIVER][$LIBGL_ALWAYS_SOFTWARE]"']
+    assert subprocess.run(py + show, env=e, capture_output=True, text=True).stdout.strip() == "[][]"
+    assert subprocess.run(py + ["--software-gl"] + show, env=e, capture_output=True, text=True).stdout.strip() == "[llvmpipe][1]"
+    r = subprocess.run(py + show, env=dict(e, SOA_SLOT_SOFTWARE_GL="1"), capture_output=True, text=True)
+    assert r.stdout.strip() == "[llvmpipe][1]"
+    # the shell side, also when the slot is already held (a script started by a holder)
+    script = '. control/soaslot.sh; soaslot_take t; echo "[$GALLIUM_DRIVER][$LIBGL_ALWAYS_SOFTWARE]"'
+    for held in ("", "1"):
+        e2 = dict(e, SOA_SLOT_SOFTWARE_GL="1", **({"SOA_SLOT_HELD": held} if held else {}))
+        r = subprocess.run(["sh", "-c", script], env=e2, cwd=os.path.dirname(CONTROL), capture_output=True, text=True, timeout=20)
+        assert r.stdout.strip() == "[llvmpipe][1]", (held, r.stdout, r.stderr)
+    r = subprocess.run(["sh", "-c", script], env=e, cwd=os.path.dirname(CONTROL), capture_output=True, text=True, timeout=20)
+    assert r.stdout.strip() == "[][]"

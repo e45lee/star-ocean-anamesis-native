@@ -7,10 +7,13 @@
 #                       itself when the last one exits (no release needed; killing works as before).
 #                       Exports SOA_SLOT_HELD=1 so that a script it starts doesn't take a second
 #                       slot. A no-op with SOA_SLOTS=0 or when SOA_SLOT_HELD is already set.
+#                       With SOA_SLOT_SOFTWARE_GL=1 it also exports the variables that put the
+#                       clients on Mesa's llvmpipe (soaslot.py SOFTWARE_GL_ENV), held or not.
 # One slot per script: the port's session scripts and the emulator's run one client at a time.
 soaslot_take() {
-    [ -n "${SOA_SLOT_HELD:-}" ] && return 0
     _ss_lib=${SOASLOT_PY:-control/soaslot.py}
+    case ${SOA_SLOT_SOFTWARE_GL:-} in 1|on|yes|true) [ -f "$_ss_lib" ] && eval "$(python3 "$_ss_lib" gl-env)" ;; esac
+    [ -n "${SOA_SLOT_HELD:-}" ] && return 0
     [ -f "$_ss_lib" ] || { echo "soaslot: $_ss_lib not found (run from the repo root or set SOASLOT_PY)"; return 1; }
     while :; do
         _ss_f=$(python3 "$_ss_lib" pick "${1:-game}") || return 0  # pool off

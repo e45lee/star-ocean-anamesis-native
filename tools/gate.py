@@ -152,8 +152,13 @@ def main():
     ap.add_argument("--no-t0", action="store_true")
     ap.add_argument("--keep", action="store_true")
     ap.add_argument("--jobs", type=int, default=4)
+    ap.add_argument("--software-gl", action="store_true",
+                    help="every game client of this run renders on Mesa's llvmpipe, not the host GPU "
+                         "(SOA_SLOT_SOFTWARE_GL=1: control/soaslot.py; docs/testing-software-gl.md)")
     ap.add_argument("--markdown", action="store_true", help="print tests/TIERS.md's table from tests/tiers.json")
     a = ap.parse_args()
+    if a.software_gl:
+        os.environ["SOA_SLOT_SOFTWARE_GL"] = "1"  # the tests inherit it; the slot pool applies it
     if a.markdown:
         return markdown()
     tests = plan(a)

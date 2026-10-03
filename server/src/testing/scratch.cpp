@@ -90,7 +90,6 @@ bool ext::with_scratch_server(u64 seed, const std::function<void(ext::Ctx&)>& fn
     if (!s.ok) return false;
     RequestContext rc = s.sv.new_request();
     ext::Ctx c = s.sv.make_ctx(rc);
-    ext::ensure_schema(c.st);
     fn(c);
     return true;
 }

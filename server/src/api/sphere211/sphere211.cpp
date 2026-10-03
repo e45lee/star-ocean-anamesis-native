@@ -520,33 +520,6 @@ void load_sphere211(Ctx& ctx, const Request&, Value& data) {
     rental_bonus(ctx, data);
 }
 
-// ---- state ----------------------------------------------------------------------------------------
-// (d) our layout: one dive per player; the cells of the current floor; the characters that
-// sortied on this floor; the boxes gathered in this dive; the local ranking's best floors.
-const char* const kSchemaSphere = R"(
-create table if not exists sphere (id integer primary key check (id = 1), season_id integer, floor_level integer default 0,
-  asset_group integer default 0, streak integer default 0, treasure_total integer default 0, stamina integer, stamina_at integer,
-  revive_count integer default 0, best_floor integer default 0, entered_at integer, clear_asset integer default 0,
-  lot_floor_num integer default 0, reroll_count integer default 0, prev_season integer default 0, prev_floor integer default 0,
-  prev_treasure integer default 0, prev_rank integer default 0);
-create table if not exists sphere_cell (asset_id integer primary key, floor_level integer, mission_box_id integer, mission_id integer,
-  overwrite_enemy_level integer default 0, cleared integer default 0, playing integer default 0, created_at integer, updated_at integer);
-create table if not exists sphere_departed (uid integer primary key);
-create table if not exists sphere_box (id integer primary key autoincrement, floor_level integer, rank integer);
-create table if not exists sphere_rank (season_id integer primary key, floor_level integer, entered_at integer);
-)";
-// (d) For the rental slot, the Sphere 211 rental bonus, the achievements and the season end: small
-// keyed values (sphere_meta: the season's cycle, its battles won, whether the season-end result is
-// still to be shown); the rental slot's lenders of the current floor and whether each was rented;
-// the Sphere 211 rentals per rental day; a log of battles won (kind 1) and floors entered (kind 2,
-// value = the floor) on the server clock, for the achievements.
-const char* const kSchemaSphereExtra = R"(
-create table if not exists sphere_meta (key text primary key, value integer);
-create table if not exists sphere_rental (follow_player_id integer primary key, used integer default 0, updated_at integer);
-create table if not exists sphere_rental_day (day integer primary key, season_id integer, count integer default 0, paid integer default 0);
-create table if not exists sphere_log (id integer primary key autoincrement, kind integer, value integer, at integer);
-)";
-
 }  // namespace
 }  // namespace sphere211
 
@@ -554,8 +527,6 @@ create table if not exists sphere_log (id integer primary key autoincrement, kin
 // "The module registry and its order").
 void register_sphere211() {
     using namespace sphere211;
-    ext::add_schema(kSchemaSphere);
-    ext::add_schema(kSchemaSphereExtra);
     ext::add_client_master(client_seasons);
     ext::add_client_master(client_ranking_groups);
     ext::add_api({"GetSphere211Info"}, get_sphere211_info);

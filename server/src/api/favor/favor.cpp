@@ -184,18 +184,6 @@ int64_t favor_day(int64_t t, int reset_hour) {
 
 }  // namespace rules
 
-void schema(sqlite3* st) {
-    char* err = nullptr;
-    sqlite3_exec(st,
-                 "create table if not exists favor (same_role_id integer primary key, point integer default 0, "
-                 "tap_count integer default 0, tapped_at integer default 0, event_drop_at text default '')",
-                 nullptr, nullptr, &err);
-    if (err) {
-        LOGE("server", "favor: schema: %s", err);
-        sqlite3_free(err);
-    }
-}
-
 u32 level_of(sqlite3* st, sqlite3* m, int64_t now, u32 same_role_id) {
     u32 max = max_level(m, now, same_role_id);
     if (!max) return 1;

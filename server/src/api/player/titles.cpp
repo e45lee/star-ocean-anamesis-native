@@ -48,8 +48,6 @@ using ext::Row;
 // (a) docs/api.md "Content types": master_achievement.content_type 13 is a master_title id.
 constexpr u32 kContentTypeTitle = 13;
 
-const char* const kSchema = "create table if not exists titles (id integer primary key, got_at integer)";
-
 bool is_title(ext::Ctx& ctx, int64_t title_id) { return title_id && ctx.m.one("select count(*) from master_title where id = ?", {title_id}) > 0; }
 
 bool owns_title(ext::Ctx& ctx, u32 title_id) { return ctx.st.one("select count(*) from titles where id = ?", {title_id}) > 0; }
@@ -253,7 +251,6 @@ NATIVE_TEST("player/titles") {
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").
 void register_title() {
-    ext::add_schema(kSchema);
     ext::add_grant(kContentTypeTitle, grant_title);
     ext::add_player_load(load_titles);
     ext::add_api({"SetTitle"}, set_title);

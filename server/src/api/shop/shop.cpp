@@ -305,12 +305,6 @@ std::vector<u8> exshop_exchange(Ctx& ctx, const Request& req) {
     return out;
 }
 
-// (d) our state: the item-shop counts per row (this period's, the period, ever) and the exchange
-// counts per contents row.
-const char* const kSchema =
-    "create table if not exists shop_counts (id integer primary key, num integer, period integer, total integer default 0);"
-    "create table if not exists exchange_counts (id integer primary key, shop_id integer, num integer);";
-
 // ClientMaster hook (the served master's override). The client's master copy: the exchange shops
 // the event calendar has open but the clock hasn't move by the calendar's whole years
 // (events::year_shift), with their contents' opened_at (d).
@@ -352,7 +346,6 @@ void load_shops(Ctx& ctx, const Request&, Value& data) {
 // "The module registry and its order").
 void register_shop() {
     using namespace ext;
-    add_schema(kSchema);
     add_api({"ItemShopList"}, item_shop_list_api);
     add_api({"ExItemShop"}, ex_item_shop);
     add_api({"ExshopExchangeList"}, exshop_exchange_list);

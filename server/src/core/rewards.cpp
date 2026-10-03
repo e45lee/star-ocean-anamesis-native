@@ -54,7 +54,6 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
     } else if (!((d.type >= 5 && d.type <= 10) || d.type == 16)) {
         // content types an extension module grants (ext::Grant, e.g. gear 15 / 98 in api/items/gear.cpp)
         if (const ext::GrantFn* g = ext::find_grant(d.type)) {
-            ext::ensure_schema(ctx.st);
             (*g)(ctx, d.id, d.num, items, stocks, chars);
             return;
         }

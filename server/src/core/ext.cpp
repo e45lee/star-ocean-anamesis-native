@@ -30,10 +30,6 @@ std::vector<std::function<void(Sql&, int64_t, int64_t)>>& client_masters() {
     static std::vector<std::function<void(Sql&, int64_t, int64_t)>> v;
     return v;
 }
-std::vector<const char*>& schemas() {
-    static std::vector<const char*> v;
-    return v;
-}
 std::map<u32, GrantFn>& grants() {
     static std::map<u32, GrantFn> m;
     return m;
@@ -121,11 +117,11 @@ void add_mission_result_extra(MissionResultFn fn, const char* file, int line) {
     record_hook("MissionResultExtra", file, line);
 }
 void mission_start_extra(Ctx& c, const MissionInfo& mi, Value& param, Value& data) {
-    ensure_schema(c.st);
+    modules::register_all();
     for (auto& f : start_extras()) f(c, mi, param, data);
 }
 void mission_result_extra(Ctx& c, const MissionInfo& mi, Value& data) {
-    ensure_schema(c.st);
+    modules::register_all();
     for (auto& f : result_extras()) f(c, mi, data);
 }
 void add_drop(Ctx& c, Value& d, u32 type, u32 id, u32 num, u32 drop_type) {
@@ -188,20 +184,7 @@ void add_api(std::initializer_list<const char*> methods, Handler h, const char* 
         apis()[m] = h, api_files()[m] = file;
     }
 }
-namespace {
-std::set<std::string>& core_apis() {
-    static std::set<std::string> s;
-    return s;
-}
-}  // namespace
-void add_core_api(std::initializer_list<const char*> methods, Handler h, const char* file, int line) {
-    add_api(methods, h, file, line);
-    for (const char* m : methods) core_apis().insert(m);
-}
-bool is_core_api(const std::string& method) {
-    modules::register_all();
-    return core_apis().count(method) > 0;
-}
+void add_core_api(std::initializer_list<const char*> methods, Handler h, const char* file, int line) { add_api(methods, h, file, line); }
 std::map<std::string, std::string> api_sources() {
     modules::register_all();
     return api_files();
@@ -209,18 +192,6 @@ std::map<std::string, std::string> api_sources() {
 void add_player_load(PlayerLoadFn fn, const char* file, int line) {
     loads().push_back(std::move(fn));
     record_hook("OnPlayerLoad", file, line);
-}
-void add_schema(const char* sql, const char* file, int line) {
-    schemas().push_back(sql);
-    // the detail: the first table it creates
-    std::string s = sql, t;
-    size_t p = s.find("exists ");
-    if (p != std::string::npos) {
-        p += 7;
-        size_t e = s.find_first_of(" (", p);
-        t = s.substr(p, e == std::string::npos ? std::string::npos : e - p);
-    }
-    record_hook("Schema", file, line, t);
 }
 void add_response_hook(ResponseFn fn, const char* file, int line) {
     responses().push_back(std::move(fn));
@@ -231,7 +202,7 @@ bool has_response_hooks() {
     return !responses().empty();
 }
 bool on_response(Ctx& c, const Request& r, Value& data) {
-    ensure_schema(c.st);
+    modules::register_all();
     bool changed = false;
     for (auto& f : responses()) changed |= f(c, r, data);
     return changed;
@@ -253,13 +224,8 @@ const Handler* find(const std::string& method) {
     return it == apis().end() ? nullptr : &it->second;
 }
 void player_load(Ctx& c, const Request& r, Value& data) {
-    ensure_schema(c.st);
-    for (auto& f : loads()) f(c, r, data);
-}
-void ensure_schema(Sql& st) {
     modules::register_all();
-    if (!st.h) return;
-    for (const char* s : schemas()) st.exec(s);
+    for (auto& f : loads()) f(c, r, data);
 }
 
 double global_f(Ctx& c, const char* key, double dflt) { return master::global_f(c.m.h, key, dflt); }
@@ -282,10 +248,5 @@ void add_present(Ctx& c, u32 type, u32 id, u32 num, u32 reason_type, u32 reason_
             " on conflict(id) do update set text = excluded.text",
             {text});
 }
-const char* const kSchemaCounters = "create table if not exists counters (key text primary key, value integer)";
-
-// The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
-// "The module registry and its order").
-void register_counters() { add_schema(kSchemaCounters); }
 
 }  // namespace soa::server::ext

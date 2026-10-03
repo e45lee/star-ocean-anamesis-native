@@ -7,12 +7,9 @@
 // therefore sent the finished line. The server builds it from the master_text templates
 // Present_box_1..10 / 99, Present_favor_1 (a), picked per reason as in ext.h (d).
 #include "soaserver/ext.h"
-#include "core/modules.h"
 #include "master/master.h"
 
 namespace soa::server::ext {
-
-const char* const kSchemaPresentTexts = "create table if not exists present_texts (id integer primary key, text text)";
 
 std::string text(Sql& master_db, const std::string& message_id) { return master::text(master_db.h, message_id); }
 
@@ -78,9 +75,5 @@ std::string present_text(Sql& state, Sql& master_db, int64_t id, u32 reason_type
             return text(master_db, "Present_box_99");
     }
 }
-
-// The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
-// "The module registry and its order").
-void register_present_texts() { add_schema(kSchemaPresentTexts); }
 
 }  // namespace soa::server::ext

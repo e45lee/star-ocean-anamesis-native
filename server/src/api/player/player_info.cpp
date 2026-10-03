@@ -53,9 +53,9 @@ void add_stock_caps(ext::Ctx& ctx, Value& player) {
     player["gear_stock"] = ctx.global_u32("gear_stock_max", 500);  // (a) master_global gear_stock_max
     // (b) CPlayerInfo gear_num (+0x978, CParameterUtility::NowGearItemCount: the ギア所持
     // count of the gear screens) = the free gears (api/items/gear.cpp's table; d: attached gears
-    // don't count)
-    if (ctx.st.one("select count(*) from sqlite_master where name = 'gear_items'", {}))
-        player["gear_num"] = (u32)ctx.st.one("select count(*) from gear_items where item_uid = 0", {});
+    // don't count). Before PLAN-schema S1 it was sent only once the module's table existed, so a
+    // new state's first player load lacked it (but on soa-server, whose bridge made the tables).
+    player["gear_num"] = (u32)ctx.st.one("select count(*) from gear_items where item_uid = 0", {});
     player["follow_max"] = ctx.global_u32("follow_default", 30);  // (a) master_global follow_default
 }
 
@@ -157,7 +157,6 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
     Value list = Value::array();
     u32 pid = player_id(ctx);
     ext::Sql state{ctx.st.h}, master{ctx.m.h};
-    ext::ensure_schema(state);
     ctx.st.q("select * from items " + where + " order by uid", {}, [&](const Row& item_row) {
         Value info = Value::object();
         info["id"] = (u64)item_row.i("uid");

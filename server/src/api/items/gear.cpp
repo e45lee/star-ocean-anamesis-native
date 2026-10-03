@@ -58,12 +58,6 @@ constexpr u32 kMaxGearBonuses = 3;
 constexpr size_t kMaxGenerateMaterials = 5;
 constexpr int kMaxGearRarity = 5;
 
-const char* const kSchema =
-    "create table if not exists gear_items (uid integer primary key, type integer default 0, master_item_id integer, "
-    "param2 integer default 0, item_uid integer default 0, slot integer default 0, is_new integer default 1, created_at integer);"
-    // the current barney chance (Barney's "mood"): the group it was drawn from and its type
-    "create table if not exists gear_barney (id integer primary key check (id = 1), group_id integer, type integer)";
-
 // One owned gear (a gear_items row).
 struct Gear {
     bool ok = false;
@@ -856,7 +850,6 @@ std::vector<u8> generate_gear(Ctx& ctx, const Request& req) {
 // "The module registry and its order").
 void register_gear() {
     using namespace ext;
-    add_schema(kSchema);
     add_item_extra(attached_gear_extra);
     add_grant(kContentGearItem, grant_gear_content);
     add_grant(kContentGearLottery, grant_gear_lottery);

@@ -51,15 +51,13 @@ namespace soa::server::tower {
 void register_tower();  // api/tower/tower.cpp
 }
 namespace soa::server::ext {
-void register_counters();       // core/ext.cpp: the achievement counters table
-void register_present_texts();  // api/presents/present_texts.cpp
 // The module register_all is running (recorded with each hook, ext::hook_order); nullptr after.
 void set_registering_module(const char* name);
 }  // namespace soa::server::ext
 
 namespace soa::server::modules {
 // Registers every module, in the list's order; only the first call does anything (thread-safe).
-// Called by the registry's readers (ext::find, ext::player_load, ext::ensure_schema, ...), so
+// Called by the registry's readers (ext::find, ext::player_load, ext::client_master, ...), so
 // neither host calls it.
 void register_all();
 }  // namespace soa::server::modules

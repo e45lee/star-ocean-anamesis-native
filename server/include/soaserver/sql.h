@@ -52,7 +52,8 @@ struct Sql {
     // (logged) when it can't.
     bool open(const std::string& path, bool ro);
     void close();
-    void exec(const std::string& sql);
+    // Runs `sql` (any number of statements); false (logged) when it fails.
+    bool exec(const std::string& sql);
     // Runs `sql` with `args`, calling `fn` per row; the number of rows.
     int q(const std::string& sql, std::initializer_list<Arg> args, const std::function<void(const Row&)>& fn = {});
     // The first column of the last row: `dflt` when there is no row or its value is NULL.

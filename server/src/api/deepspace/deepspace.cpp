@@ -522,19 +522,6 @@ std::vector<u8> deep_space_mission_end(Ctx& ctx, const Request& req) {
     return ext::body(data);
 }
 
-// (d) our layout (PLAN-schema S10): explored areas, the offers with their play counts, the ships
-// out or back with their members (uids as "uid,uid,..."), a ship's bonus values, every departure.
-const char* const kSchema =
-    "create table if not exists ds_area (area_id integer primary key, exp integer default 0, is_new integer default 0, "
-    "last_play integer default 0);"
-    "create table if not exists ds_offer (mission_id integer primary key, area_id integer, bonus_set_id integer, closed_at integer default 0, "
-    "ship_id integer default 0, is_new integer default 0, play_count integer default 0, play_count_daily integer default 0, "
-    "play_count_weekly integer default 0, updated_at integer default 0);"
-    "create table if not exists ds_ship (ship_id integer primary key, area_id integer, mission_id integer, bonus_set_id integer, "
-    "item_id integer default 0, uids text, started_at integer, closed_at integer);"
-    "create table if not exists ds_bonus (ship_id integer, bonus_id integer, value real, primary key (ship_id, bonus_id));"
-    "create table if not exists ds_log (mission_id integer, started_at integer);";
-
 }  // namespace
 }  // namespace deepspace
 
@@ -542,7 +529,6 @@ const char* const kSchema =
 // "The module registry and its order").
 void register_deepspace() {
     using namespace deepspace;
-    ext::add_schema(kSchema);
     ext::add_api({"DeepSpaceActiveList"}, deep_space_active_list);
     ext::add_api({"DeepSpaceAutoMemberSelect"}, deep_space_auto_member_select);
     ext::add_api({"DeepSpaceMissionStart"}, deep_space_mission_start);

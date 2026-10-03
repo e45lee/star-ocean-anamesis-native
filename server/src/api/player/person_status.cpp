@@ -123,14 +123,13 @@ void favor_and_awakening(ext::Ctx& ctx, const Row& roster_row, u32 role, Value& 
 void seed_stats(ext::Ctx& ctx, u64 uid, Value& status) {
     // (b) the seeds (roster_ext add_*, raised by AddStatusCharacter) are added to the stats
     // (PersonModel::CalculateParameter adds CPersonInfo add_*) and reported in add_*
-    if (ctx.st.one("select count(*) from sqlite_master where name = 'roster_ext'", {}))
-        ctx.st.q("select * from roster_ext where uid = ?", {uid}, [&](const Row& ext_row) {
-            for (const char* k : {"hp", "attack", "intelligence", "defence", "hit", "guard", "ap"}) {
-                std::string add_column = std::string("add_") + k;
-                status[add_column] = (u32)ext_row.i(add_column.c_str());
-                status[k] = status[k].f + (double)ext_row.i(add_column.c_str());
-            }
-        });
+    ctx.st.q("select * from roster_ext where uid = ?", {uid}, [&](const Row& ext_row) {
+        for (const char* k : {"hp", "attack", "intelligence", "defence", "hit", "guard", "ap"}) {
+            std::string add_column = std::string("add_") + k;
+            status[add_column] = (u32)ext_row.i(add_column.c_str());
+            status[k] = status[k].f + (double)ext_row.i(add_column.c_str());
+        }
+    });
 }
 
 }  // namespace

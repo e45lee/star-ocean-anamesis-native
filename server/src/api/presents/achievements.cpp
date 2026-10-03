@@ -51,10 +51,8 @@ constexpr u32 kStatusInProgress = 0, kStatusAchieved = 1;
 
 // Type 44: the exploration rate of deep-space area `area_id`, in percent (a: target_id_label
 // ds_area01_At = master_deep_space_area id_label, goal_count 100, text "探査率１００％";
-// (d) rounded down), from the deep space module's ds_area exp / max_exp. 0 before that module
-// made its tables.
+// (d) rounded down), from the deep space module's ds_area exp / max_exp.
 int64_t deep_space_exploration_rate(Ctx& ctx, int64_t area_id) {
-    if (!ctx.st.one("select count(*) from sqlite_master where name = 'ds_area'", {})) return 0;
     int64_t max = ctx.m.one("select ifnull(max_exp, 0) from master_deep_space_area where id = ?", {area_id});
     int64_t exp = ctx.st.one("select ifnull(max(exp), 0) from ds_area where area_id = ?", {area_id});
     return max > 0 ? exp * 100 / max : 0;
@@ -64,7 +62,6 @@ int64_t deep_space_exploration_rate(Ctx& ctx, int64_t area_id) {
 // counts (api/deepspace/deepspace.cpp ds_log). (d) Rows with is_unlimited count every
 // expedition; the others (the campaign rows) only those inside their opened_at .. closed_at.
 int64_t deep_space_expeditions(Ctx& ctx, const Row& achievement_row) {
-    if (!ctx.st.one("select count(*) from sqlite_master where name = 'ds_log'", {})) return 0;
     if (!achievement_row.null("is_unlimited") && achievement_row.i("is_unlimited")) return ctx.st.one("select count(*) from ds_log", {});
     std::string opened_at = achievement_row.s("opened_at"), closed_at = achievement_row.s("closed_at");
     int64_t from = opened_at.empty() ? 0 : ctx.parse_time(opened_at), to = closed_at.empty() ? INT64_MAX : ctx.parse_time(closed_at);
@@ -73,9 +70,8 @@ int64_t deep_space_expeditions(Ctx& ctx, const Row& achievement_row) {
 
 // Type 52: favor points with a character: (a) target_id is a same_role_id (target_id_label
 // role_cc0035 = master_role.same_role_id_label; it used to be looked up as a role id and never
-// matched), the favor module's per-same_role_id points. 0 before the favor table exists.
+// matched), the favor module's per-same_role_id points.
 int64_t favor_points(Ctx& ctx, int64_t same_role_id) {
-    if (!ctx.st.one("select count(*) from sqlite_master where name = 'favor'", {})) return 0;
     return ctx.st.one("select ifnull(max(point), 0) from favor where same_role_id = ?", {same_role_id});
 }
 

@@ -1,8 +1,8 @@
 #pragma once
 // The server object and the core's internals its other files use (port code, not guest
-// behaviour): files and the state's meta table. The object's request lifecycle and dispatcher
-// are defined in core/server.cpp (ARCHITECTURE.md); the tests' scratch servers are
-// testing/scratch.h's. The meta helpers move to state/ with PLAN-schema S1.
+// behaviour): files and the clock. The object's request lifecycle and dispatcher are defined in
+// core/server.cpp (ARCHITECTURE.md); the tests' scratch servers are testing/scratch.h's. The
+// state DB's schema and its meta helpers are the state module's (state/state.h, included here).
 #include <sqlite3.h>
 
 #include <initializer_list>
@@ -15,19 +15,13 @@
 #include "core/request_context.h"
 #include "master/gacha_pools.h"
 #include "soaserver/ext.h"
+#include "state/state.h"  // meta, set_meta, next_uid, has_player (the state module)
 
 namespace soa::server {
 
 bool file_exists(const std::string& p);
 // The first of `c` that names an existing file, "" when none does.
 std::string first_existing(std::initializer_list<std::string> c);
-
-// ---- the state's meta table (key -> text; PLAN-schema S1 moves these to state/) ------------
-std::string meta(ext::Ctx& ctx, const char* key, const char* dflt);
-void set_meta(ext::Ctx& ctx, const char* key, const std::string& v);
-// The meta counter `key`'s value, counted up (uids of new characters and items).
-u64 next_uid(ext::Ctx& ctx, const char* key);
-bool has_player(ext::Ctx& ctx);
 
 // ---- the server clock (core/clock.cpp; clock_now / set_server_clock are server.h's) --------
 // --clock's offset from the real time (Server::init, from config()).
@@ -58,10 +52,10 @@ struct Server {
     // Opens the master, the state DB (seeding a new one) and the gacha pools as config() says
     // (the live server).
     bool init();
-    // Opens (creating and seeding when new) the state DB; the master must be open.
+    // Opens the state DB at this build's schema version (state::open_and_migrate: false for a file
+    // newer than the build), seeds it when it has no player (one transaction), and reports its
+    // references into the master (state::report_master_refs); the master must be open.
     bool open_state(const std::string& path, u64 seed_rng, const std::string& seed_save);
-    // The core's state tables (create table if not exists; PLAN-schema S1 moves them to state/).
-    void schema();
 
     // A request's fresh state, and the context its handlers get.
     RequestContext new_request() const;

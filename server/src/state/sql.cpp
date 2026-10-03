@@ -39,12 +39,12 @@ void Sql::close() {
     h = nullptr;
 }
 
-void Sql::exec(const std::string& sql) {
+bool Sql::exec(const std::string& sql) {
     char* err = nullptr;
-    if (sqlite3_exec(h, sql.c_str(), nullptr, nullptr, &err) != SQLITE_OK) {
-        LOGE("server", "sql error: %s in %s", err ? err : "?", sql.c_str());
-        sqlite3_free(err);
-    }
+    if (sqlite3_exec(h, sql.c_str(), nullptr, nullptr, &err) == SQLITE_OK) return true;
+    LOGE("server", "sql error: %s in %s", err ? err : "?", sql.c_str());
+    sqlite3_free(err);
+    return false;
 }
 int Sql::q(const std::string& sql, std::initializer_list<Arg> args, const std::function<void(const Row&)>& fn) {
     sqlite3_stmt* st = nullptr;

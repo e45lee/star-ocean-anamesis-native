@@ -20,11 +20,6 @@ namespace soa::server {
 namespace {
 using namespace ext;
 
-const char* const kSchema =
-    "create table if not exists premium_pass (id integer primary key, granted_at integer, day integer default 0, last_at integer default 0);"
-    "create table if not exists favor_bonus_state (id integer primary key check (id = 1), day_at integer, bonus_id integer, "
-    "lot_uid integer, healed_at integer default 0)";
-
 // (a) content type 11 = a premium login bonus pass, content_id = its master_premium_login_bonus
 // (docs/api.md "Content types").
 constexpr u32 kContentPremiumPass = 11;
@@ -295,7 +290,6 @@ std::vector<u8> stamina_heal_by_favor(Ctx& ctx, const Request&) {
 // "The module registry and its order").
 void register_daily() {
     using namespace ext;
-    add_schema(kSchema);
     add_grant(kContentPremiumPass, grant_premium_pass);
     add_player_load(load_daily_bonuses);
     add_api({"StaminaHealByFavor"}, stamina_heal_by_favor);

@@ -145,15 +145,13 @@ std::string fc_match(const char* pattern) {
     return file_exists(out) ? out : "";
 }
 
-// The font to use: the request (HostConfig::font), SOA_FONT, known paths, fc-match. "" = none.
+// The font to use: the request (HostConfig::font: --font), known paths, fc-match. "" = none.
 std::string find_font(std::string& how) {
     std::string req;
     {
         std::lock_guard lk(g_req_m);
         req = g_font_request;
     }
-    if (req.empty())
-        if (const char* e = getenv("SOA_FONT")) req = e;
     if (req == "none") {
         how = "turned off";
         return "";
@@ -189,7 +187,7 @@ void init_font() {
     std::string path = find_font(how);
     if (path.empty()) {
         LOGW("text", "no font (%s), the keyboard shows in the title bar only (README.md, Setup: fonts-ipaexfont)",
-             how.empty() ? "none found; SOA_FONT=PATH picks one" : how.c_str());
+             how.empty() ? "none found; --font PATH picks one" : how.c_str());
         return;
     }
     if (FT_Init_FreeType(&g_font.lib) != 0 || !g_font.add_face(path)) {

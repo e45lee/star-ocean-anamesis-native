@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include <soa/env.h>
+
 #include "net/cdn_http.h"
 #include "net/game.h"
 #include "net/http.h"
@@ -51,20 +53,19 @@ void usage() {
             "  --repo DIR           the source checkout (master DBs, seed saves, port/server-data); default: found\n"
             "                       upwards from the executable, then the working directory\n"
             "  --data DIR           the server's data dir (state DB default DIR/server.sqlite3, side files)\n"
-            "  --db FILE            the state DB (soa: SOA_SERVER_DB)\n"
-            "  --master FILE        the 3.7.0 master DB (SOA_SERVER_MASTER; default data/basmaster-3.7.0.sqlite3)\n"
-            "  --gacha-pools FILE   the reconstructed gacha pools (SOA_GACHA_POOLS; default data/gacha_pools.sqlite3)\n"
-            "  --seed FILE          the save a new state is seeded from (SOA_SERVER_SEED)\n"
-            "  --game-xml FILE      the last seed fallback (SOA_SERVER_GAME_XML)\n"
-            "  --seed-rng N         fixed RNG seed (SOA_SERVER_SEED_RNG)\n"
-            "  --new-player         start without a player (SOA_RESTORE_NEW_PLAYER=1)\n"
+            "  --db FILE            the state DB (default DATA/server.sqlite3, without --data ./server.sqlite3)\n"
+            "  --master FILE        the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3)\n"
+            "  --gacha-pools FILE   the reconstructed gacha pools (default data/gacha_pools.sqlite3)\n"
+            "  --seed FILE          the save a new state is seeded from\n"
+            "  --game-xml FILE      the last seed fallback\n"
+            "  --seed-rng N         fixed RNG seed (default the time)\n"
+            "  --new-player         start without a player\n"
             "  --clock \"YYYY-MM-DD HH:MM:SS\"  the server clock starts there (as soa --clock)\n"
             "  --start-coins N      free coins of a new player (as soa --start-coins)\n"
             "  --galaxy-pass        the Galaxy Pass as bought (as soa --galaxy-pass)\n"
             "  --enable-events      open the events matching --event-keywords all year, as soa\n"
-            "                       (env SOA_ENABLE_EVENTS=1)\n"
             "  --event-keywords L   names to match, comma list (\"!\" excludes); default, as soa: the summer\n"
-            "                       events \"水着,夏,サマー,!福袋\" (env SOA_EVENT_KEYWORDS)\n"
+            "                       events \"水着,夏,サマー,!福袋\"\n"
             "  --restore-tower      serve the tower (as soa --restore-tower)\n"
             "  --download-dir DIR   the 3.7.0 download (work/download-3.7.0): content is gated on it (as soa\n"
             "                       --download-dir) and the CDN serves it (server/README.md \"CDN\")\n"
@@ -77,9 +78,12 @@ void usage() {
             "  --standin-assets DIR|off  stand-in assets the CDN adds and content is gated on (default standin-assets)\n"
             "  --cdn-scratch DIR    where the served master and the bundle-hash cache go (default DATA/cdn)\n"
             "  --cdn-check [PATH..] build the CDN content, print it and the answers for PATHs (URL paths), exit\n"
-            "  --campaign-master-db FILE, --campaign-seed LABEL, --fail M:CODE[,..], --surprise  (SOA_MASTER_DB,\n"
-            "                       SOA_CAMPAIGN_SEED, SOA_SERVER_FAIL, SOA_SERVER_SURPRISE)\n"
-            "  -v                   debug log\n");
+            "  --campaign-master-db FILE  the campaign module's master DB; --campaign-seed LABEL  seed the campaign\n"
+            "                       progress up to a mission; --fail M:CODE[,..]  force error replies; --surprise\n"
+            "                       force surprise missions (test hooks, as soa's)\n"
+            "  -v                   debug log\n"
+            "Settings are flags only; the environment variables that were settings print a warning\n"
+            "(docs/environment.md).\n");
 }
 
 bool exists(const std::string& p) {
@@ -135,6 +139,7 @@ bool log_enabled(soa::server::LogLevel l) { return l >= (g_verbose ? soa::server
 }  // namespace
 
 int main(int argc, char** argv) {
+    soa::env::warn_removed_env("soa-server", soa::env::kServer);  // SOA_* settings that are flags now
     if (argc >= 2 && !strcmp(argv[1], "--wire-tool")) return soa::server::net::wire_tool(argc - 2, argv + 2);
     ServerConfig& c = soa::server::config();
     std::string repo, data, download_dir, filter;
@@ -204,15 +209,6 @@ int main(int argc, char** argv) {
             usage();
             return a == "-h" || a == "--help" ? 0 : 2;
         }
-    }
-    // The same environment fallbacks as soa (port/src/core/options.cpp): a flag wins.
-    if (!c.enable_events) {
-        const char* e = getenv("SOA_ENABLE_EVENTS");
-        c.enable_events = e && *e && strcmp(e, "0") != 0;
-    }
-    if (c.event_keywords.empty()) {
-        const char* e = getenv("SOA_EVENT_KEYWORDS");
-        if (e && *e) c.event_keywords = e;
     }
     soa::server::set_log_sink(nullptr, log_enabled);
     c.repo_roots = repo_roots(repo);

@@ -61,8 +61,8 @@ NATIVE_TEST("server/options") {
     if (o.clock_offset > off + 5 || o.clock_offset < off - 5) t.fail("clock offset");
 }
 
-// The port keeps game and run state in RunOptions, never in the environment: the only setenv in
-// port/src is SDL's video-driver hint (checked over the sources when they're next to the build).
+// The port keeps game and run state in RunOptions, never in the environment: no setenv in port/src
+// (checked over the sources when they're next to the build).
 NATIVE_TEST("server/no-setenv-state") {
     std::filesystem::path src;
     if (std::string p = find_repo_file("port/src/core/options.h"); !p.empty()) src = repo_path("port/src");
@@ -83,7 +83,6 @@ NATIVE_TEST("server/no-setenv-state") {
             if (p == std::string::npos) continue;
             size_t c = line.find("//");
             if (c != std::string::npos && c < p) continue;  // a comment
-            if (line.find("\"SDL_VIDEODRIVER\"") != std::string::npos) continue;
             t.fail("%s:%d: setenv (use core/options.h RunOptions): %s", e.path().c_str(), n, line.c_str());
         }
     }

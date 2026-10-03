@@ -8,13 +8,14 @@
 #include <cstdlib>
 
 #include "api/player/player_info.h"  // full_player_state, base_data: the player state answers
+#include "api/player/titles.h"       // new_player_titles
 #include "core/errors.h"
 #include "core/ids.h"
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/request_context.h"
 #include "core/response.h"
-#include "core/server.h"  // has_player, set_meta
+#include "core/server.h"  // has_player
 #include "master/master.h"
 #include "soaserver/chash32.h"
 #include "soaserver/config.h"
@@ -65,7 +66,10 @@ std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args,
         "level = excluded.level, exp = excluded.exp, fol = excluded.fol, stamina = excluded.stamina, "
         "stamina_at = excluded.stamina_at, free_coin = excluded.free_coin, pay_coin = excluded.pay_coin, "
         "home_uid = excluded.home_uid, party_id = excluded.party_id, created_at = excluded.created_at, "
-        "last_login_at = excluded.last_login_at",
+        "last_login_at = excluded.last_login_at, tutorial_status = excluded.tutorial_status, view_status = excluded.view_status, "
+        "view_status2 = excluded.view_status2, kiyaku_version = excluded.kiyaku_version, title_id = excluded.title_id, "
+        "support_uid = excluded.support_uid, time_saving_count = excluded.time_saving_count, "
+        "time_saving_day = excluded.time_saving_day, login_bonus_popup_pending = excluded.login_bonus_popup_pending",
         {player_id, std::string(search_id), args.name, 1u, 0u, 0u, ctx.stamina_max(1), now, config().start_coins /* (d) free coin, --start-coins */,
          0u, 0u, 1u, now, now});
     return search_id;
@@ -115,6 +119,7 @@ std::vector<u64> add_starters(ext::Ctx& ctx, int64_t now) {
 //       character = the first.
 //   (b) tutorial status 0 (not started): CTutorialManager then runs the tutorial from the start;
 //       view_status / view_status2 0.
+//   (a)+(d) the default titles owned, the first worn (api/player/titles.cpp new_player_titles).
 //   (d) search id "LOCAL" + 5 digits of the uuid hash; free coins --start-coins (300,000 by
 //       default: the user's request); the name as sent (the online server's name checks, errors
 //       10501..10503 in the client, aren't known).
@@ -134,9 +139,8 @@ std::vector<u8> create_player(ext::Ctx& ctx, const Request& req) {
     std::vector<u64> party = add_starters(ctx, now);
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
     ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
-    set_meta(ctx, "tutorial_status", "0");
-    set_meta(ctx, "view_status", "0");
-    set_meta(ctx, "view_status2", "0");
+    // tutorial_status, view_status and view_status2 are 0: the new row's defaults
+    new_player_titles(ctx);
     // read by port/scripts/tutorial_session.sh, newplayer_session.sh
     LOGI("server", "CreatePlayer: %s (%s) with %zu starter characters", search_id.c_str(), args.name.c_str(), party.size());
     return full_player_state(ctx, req, CdnKeys::kAppVersionOnly);
@@ -154,7 +158,7 @@ namespace {
 // Answers: the player state.
 std::vector<u8> update_tutorial(ext::Ctx& ctx, const Request& req) {
     u64 status = args::UpdateTutorialArgs::from(req).status;
-    set_meta(ctx, "tutorial_status", std::to_string((u32)status));
+    ctx.st.q("update player set tutorial_status = ?", {(u32)status});
     LOGI("server", "UpdateTutorial: tutorial_status = %u", (u32)status);
     return with_player_state(ctx);
 }
@@ -170,7 +174,8 @@ std::vector<u8> update_tutorial(ext::Ctx& ctx, const Request& req) {
 // Answers: the player state.
 std::vector<u8> update_view(ext::Ctx& ctx, const Request& req) {
     const auto args = args::UpdateViewArgs::from(req);
-    set_meta(ctx, args.kind ? "view_status2" : "view_status", std::to_string(args.flags));
+    // the u64 word as its int64 bits (Arg keeps them)
+    ctx.st.q(args.kind ? "update player set view_status2 = ?" : "update player set view_status = ?", {args.flags});
     return with_player_state(ctx);
 }
 
@@ -184,7 +189,7 @@ std::vector<u8> update_view(ext::Ctx& ctx, const Request& req) {
 //       (docs/api.md); update_kiyaku_string "".
 // Answers: the player state and MasterKiyakuVersion.
 std::vector<u8> update_kiyaku_version(ext::Ctx& ctx, const Request& req) {
-    set_meta(ctx, "kiyaku_version", args::UpdateKiyakuVersionArgs::from(req).version);
+    ctx.st.q("update player set kiyaku_version = ?", {args::UpdateKiyakuVersionArgs::from(req).version});
     Value data = base_data(ctx);
     Value kiyaku = Value::object();
     kiyaku["kiyaku_version"] = master::global_str(ctx.m.h, "kiyaku_version");

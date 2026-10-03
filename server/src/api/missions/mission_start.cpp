@@ -149,7 +149,7 @@ void roll_surprise(ext::Ctx& ctx, MissionStart& start) {
     // (d) a restart (MissionRestart) replays the stored surprise roll
     if (start.restarting) start.surprise = ctx.st.one("select surprise from play_ext where id = 1", {}) != 0;
     else if (start.surprise_possible) start.surprise = mission_rules::roll_percent(start.surprise_rate, (*ctx.rng)());
-    // SOA_SERVER_SURPRISE=1 (port test option): a mission with a surprise enemy always meets it
+    // --surprise (a test option): a mission with a surprise enemy always meets it
     if (!start.restarting && start.surprise_possible && config().surprise) start.surprise = true;
     start.mission_parameter["is_surprise"] = start.surprise;
 }

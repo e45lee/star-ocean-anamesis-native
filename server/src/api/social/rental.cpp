@@ -9,7 +9,7 @@
 //     master data alone: nothing to serve;
 //   - otherwise CParameterUtility::CreateRentalList walks the `BattleRental` info
 //     (CBattleRentalInfoList at CParameterManager+0x62c8, its map at +0x6300; the live schema
-//     dump, SOA_FAKE_SERVER_SCHEMA) and makes one tCharaData::InitializeRental(player, pc) per
+//     dump, --fake-server-schema) and makes one tCharaData::InitializeRental(player, pc) per
 //     entry, skipping players in BlacklistID (+0x6638) and flagging those in FollowID (+0x6350).
 //     The entries are CFollowInfo = {order, player: CFollowPlayerInfo, pc: CFollowPersonInfo} (the
 //     child names are the classes' pParseName; b), keyed by id as a string like the other ...Map
@@ -195,7 +195,7 @@ std::vector<u8> follow_list(Ctx& ctx, const Request&) {
 //       the character is a uid (CRentalBonus::Setup shows support_pc_id's card through
 //       tCharaData::Initialize(uid)).
 //   (d) it must be owned; otherwise refused (no body) like SetAssist.
-//   Stored as meta support_uid; the core's Player sends it (api/player/player_info.cpp
+//   Stored as player.support_uid; the core's Player sends it (api/player/player_info.cpp
 //   player_info, with the default there).
 // Answers: the player state (Player.support_pc_id).
 std::vector<u8> update_support(Ctx& ctx, const Request& req) {
@@ -204,7 +204,7 @@ std::vector<u8> update_support(Ctx& ctx, const Request& req) {
         LOGW("server", "UpdateSupport %llu refused: not an owned character", (unsigned long long)args.character_uid);
         return {};
     }
-    ctx.st.q("insert or replace into meta (key, value) values ('support_uid', ?)", {std::to_string(args.character_uid)});
+    ctx.st.q("update player set support_uid = ?", {args.character_uid});
     LOGI("server", "UpdateSupport: support character %llu", (unsigned long long)args.character_uid);
     return with_player_state(ctx);
 }

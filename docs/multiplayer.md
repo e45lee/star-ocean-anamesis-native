@@ -4,6 +4,8 @@ STAR OCEAN: anamnesis had real-time co-op: up to four players, each bringing one
 
 Written 2026-10-02 by agent `multiplayer-study`, as an investigation: no production code changed. It extends [online-server.md](online-server.md), whose multiplayer lines (§2 table, §3 "Pushes", §8 "Multiplayer") were written before this study; where they disagree, this document wins (see "Corrections" at the end).
 
+**Server state for multiplayer:** the database changes (several real players in one state, co-op plays, shared rewards) are sketched in [`server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md) (steps M1…): future work, a plan for review, not queued. If queued, it comes only after the single-player schema rewrite [`server/PLAN-schema.md`](../server/PLAN-schema.md) S0–S12 has landed (the user, 2026-10-03).
+
 **Labels**, as in online-server.md:
 - **[confirmed]**: read from the 3.7.0 decompile, strings or data.
 - **[run]**: also observed with the unmodified 3.7.0 client (soa-emu) against a prototype lobby and relay (§5).

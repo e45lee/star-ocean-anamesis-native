@@ -1,3 +1,4 @@
+#include <soa/env.h>
 #include "native/common/test.h"
 
 #include <cstdlib>
@@ -50,7 +51,7 @@ bool register_test_hook(const TestHook& h) {
 void install_test_hooks(LoadedLib& lib) {
     // SOA_TEST_HOOKS_SKIP=sym1,sym2 (or "all"): leave these test hooks out (their tests then fail);
     // for finding a hook that breaks the boot of a new guest build (the 3.7.0 rebase).
-    const char* skip_env = getenv("SOA_TEST_HOOKS_SKIP");
+    const char* skip_env = env::env_str("SOA_TEST_HOOKS_SKIP");
     std::string skip = skip_env ? std::string(",") + skip_env + "," : "";
     // The 3.7.0 rebase (P1, natives off): hooks that run a native (a2c transcription with the old lib's
     // constants) in the game's own frame from boot on crash the 3.7.0 guest before any test runs
@@ -62,7 +63,7 @@ void install_test_hooks(LoadedLib& lib) {
         "_ZN9Framework5Cocos23CCocosTimelineAnimation4PlayERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEEjjbNS2_8functionIFvvEEE",
         "_ZNK9Framework5Cocos23CCocosTimelineAnimation9GetHandleERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE",
     };
-    if (!getenv("SOA_TEST_HOOKS_ALL"))  // SOA_TEST_HOOKS_ALL=1: install them anyway (P2)
+    if (!env::env_on("SOA_TEST_HOOKS_ALL"))  // SOA_TEST_HOOKS_ALL=1: install them anyway (P2)
         for (const char* h : kRebaseSkippedHooks) skip += std::string(",") + h + ",";
     for (auto& h : test_hooks()) {
         if (!skip.empty() && (skip == ",all," || skip.find(std::string(",") + h.symbol + ",") != std::string::npos)) {
@@ -139,7 +140,7 @@ int run_native_tests(LoadedLib& lib, const std::string& filter) {
         }
         // SOA_SELFTEST_SKIP=name1,name2: tests left out by exact name (e.g. ones that crash the
         // process on a new guest build; the 3.7.0 rebase).
-        static const std::string skip_tests = getenv("SOA_SELFTEST_SKIP") ? std::string(",") + getenv("SOA_SELFTEST_SKIP") + "," : "";
+        static const std::string skip_tests = env::env_str("SOA_SELFTEST_SKIP") ? std::string(",") + env::env_str("SOA_SELFTEST_SKIP") + "," : "";
         if (!skip_tests.empty() && skip_tests.find(std::string(",") + t.name + ",") != std::string::npos) {
             fprintf(stderr, "skip  %s (SOA_SELFTEST_SKIP)\n", t.name);
             continue;
@@ -149,7 +150,7 @@ int run_native_tests(LoadedLib& lib, const std::string& filter) {
         g_current_test = t.name;
         // SOA_SELFTEST_REPEAT=N runs each matching test N times (same seed), to shake out
         // flakiness (races with the game threads).
-        static const int repeat = getenv("SOA_SELFTEST_REPEAT") ? std::max(1, atoi(getenv("SOA_SELFTEST_REPEAT"))) : 1;
+        static const int repeat = (int)env::env_int("SOA_SELFTEST_REPEAT", 1, 10000, 1);
         for (int rep = 0; rep < repeat; rep++) {
             // Seeded by name, so adding or filtering tests doesn't change another test's inputs.
             u64 seed = 0x5eed0000;
@@ -174,7 +175,7 @@ int run_native_tests(LoadedLib& lib, const std::string& filter) {
     for (const server::testing::Test& t : server::testing::tests()) {
         if (!server::testing::filter_match(filter, t.name)) continue;
         g_current_test = t.name;
-        static const int repeat = getenv("SOA_SELFTEST_REPEAT") ? std::max(1, atoi(getenv("SOA_SELFTEST_REPEAT"))) : 1;
+        static const int repeat = (int)env::env_int("SOA_SELFTEST_REPEAT", 1, 10000, 1);
         for (int rep = 0; rep < repeat; rep++) {
             server::testing::Context ctx(t.name, server::testing::seed_for(t.name));
             double ms = server::testing::run_one(t, ctx);

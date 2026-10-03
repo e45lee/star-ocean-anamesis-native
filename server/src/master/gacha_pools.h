@@ -71,7 +71,7 @@ public:
     Pools(const Pools&) = delete;
     Pools& operator=(const Pools&) = delete;
 
-    // Opens the file read-only. An empty path searches $SOA_GACHA_POOLS, then
+    // Opens the file read-only. An empty path searches
     // data/gacha_pools.sqlite3 in the repo (core/paths.h).
     bool open(const std::string& path = "");
     bool is_open() const { return db_ != nullptr; }

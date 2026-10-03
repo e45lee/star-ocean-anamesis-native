@@ -102,7 +102,7 @@ void invalidate_guest_code_this_thread(u64 addr, u64 size);
 // This host thread's guest_call nesting depth (the first level invalidate_guest_code_this_thread
 // reaches).
 size_t guest_depth_this_thread();
-// Guest CPU context bookkeeping (core/memstats.cpp, SOA_MEMSTATS): live contexts (each one a
+// Guest CPU context bookkeeping (core/memstats.cpp, soa --memstats): live contexts (each one a
 // dynarmic JIT with its own code cache), the highest processor id + 1 ever used, the limit, and
 // per host thread that holds contexts: its tid, nesting levels allocated, and the guest function
 // of its last outermost guest_call (the thread entry for guest threads).

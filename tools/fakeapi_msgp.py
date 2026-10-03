@@ -1,4 +1,4 @@
-"""Build FakeApiCaller response files (port option SOA_FAKE_SERVER=DIR) from JSON.
+"""Build FakeApiCaller response files (port option --fake-server DIR) from JSON.
 
     tools/fakeapi_msgp.py IN.json OUT.msgp     # one file
     tools/fakeapi_msgp.py SRC_DIR DIR          # every SRC_DIR/<name>.json -> DIR/<name>.msgp

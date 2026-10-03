@@ -24,6 +24,8 @@
 #include <string>
 #include <thread>
 
+#include <soa/env.h>
+
 #include "android/ndk.h"
 #include "app/host.h"
 #include "android/platform.h"
@@ -38,10 +40,12 @@
 #include "core/profile.h"
 #include "core/vfs.h"
 #include "jni/jvm.h"
+#include "native/common/live_check.h"
 #include "native/common/native.h"
 #include "native/common/port_debug.h"
 #include "native/common/test.h"
 #include "platform370/platform370.h"
+#include "soawebview/page.h"
 
 using namespace soa;
 namespace soa {
@@ -76,7 +80,7 @@ void usage() {
             "General:\n"
             "  -h, --help      this text\n"
             "  --repo DIR      the source checkout to read repo files from (master DBs, seed saves, gacha pools,\n"
-            "                  fakeapi responses, work/...; env SOA_REPO); default: found from the executable\n"
+            "                  fakeapi responses, work/...); default: found from the executable\n"
             "  -v / -vv        verbose / trace logging\n"
             "\n"
             "Client options (the 3.7.0 client and its emulated phone):\n"
@@ -86,18 +90,18 @@ void usage() {
             "  --data DIR      the phone's data dir: game data, saves, and in-process the server's state\n"
             "                  (default ~/.local/share/soa-linux-370)\n"
             "  --download-dir DIR  the client's asset fallback for builtin_data/ files the APK lacks (the online\n"
-            "                  game's downloaded tree; env SOA_DOWNLOAD_DIR, SOA_DOWNLOAD_PREFER=1). Required with\n"
-            "                  --server inproc, whose CDN serves it too (default <repo>/work/download-3.7.0); off by\n"
-            "                  default with --server HOST, whose client downloads from soa-server's CDN\n"
+            "                  game's downloaded tree). Required with --server inproc, whose CDN serves it too\n"
+            "                  (default <repo>/work/download-3.7.0); off by default with --server HOST, whose\n"
+            "                  client downloads from soa-server's CDN\n"
+            "  --download-prefer  with --download-dir: DIR wins over the APK (as soa-emu / soa-viewer)\n"
             "  --standin-assets DIR|off  made-up stand-in files (e.g. lost gacha banners) for builtin_data/ assets\n"
             "                  that neither the APK nor --download-dir have; --server inproc defaults it to\n"
-            "                  standin-assets and its CDN serves them (env SOA_STANDIN_ASSETS; off / 0 = none)\n"
+            "                  standin-assets and its CDN serves them (off / 0 = none)\n"
             "  --device-clock \"YYYY-MM-DD HH:MM:SS\"|host  the phone's clock (default host; platform370)\n"
             "  --no-patch      no service_stop_day patch (platform370/src/patch_370.cpp)\n"
             "  --guest-cpus N|host  CPUs the game sees (sysconf, /sys/devices/system/cpu/present; default 8, an\n"
             "                  octa-core phone); the engine starts N - 2 dynamics and N resource workers\n"
-            "                  (env SOA_GUEST_CPUS)\n"
-            "  --natives route|none  native replacements (env SOA_NATIVES; default route: every registered one,\n"
+            "  --natives route|none  native replacements (default route: every registered one,\n"
             "                  i.e. the in-process route's FakeApiCaller hooks (not with --server HOST) and the\n"
             "                  port's own hooks; \"all\" is a synonym). none = --no-native\n"
             "  --no-native     the same as --natives none\n"
@@ -110,10 +114,11 @@ void usage() {
             "  --render-size S the window's surface: 'desktop' (default: the window's aspect ratio scaled to fill the\n"
             "                  desktop, so resizing/fullscreen stays sharp), 'window' (the initial window size) or WxH\n"
             "  --fullscreen    start in (desktop) fullscreen\n"
-            "  --font PATH     the on-screen text box's font (env SOA_FONT; default: a system Japanese font; 'none': off)\n"
+            "  --font PATH     the font of the on-screen text box and of the web view's pages (a Japanese one;\n"
+            "                  default: a system Japanese font; 'none': no text box, the web view searches)\n"
             "  --headless      don't show the window; it still renders at the same size, so screenshots, --shot/--do\n"
-            "                  and --control work the same (env SOA_HEADLESS=1; --selftest is headless by default)\n"
-            "  --windowed      show the window even with SOA_HEADLESS=1 or --selftest (env SOA_HEADLESS=0)\n"
+            "                  and --control work the same (--selftest is headless by default)\n"
+            "  --windowed      show the window (the default, except with --selftest)\n"
             "  --hires, --legacy-res  no effect (the game renders at its own resolution)\n"
             "  Driving and testing:\n"
             "  --shot S:PATH   save a screenshot S seconds after start (repeatable; F12 saves one any time)\n"
@@ -127,6 +132,16 @@ void usage() {
             "  --smoke         load the library, run a quick self-test and exit\n"
             "  --list-native   print the native replacements (symbol, note) and exit\n"
             "  --apk-dir DIR   ignored (kept for old scripts; the port runs the 3.7.0 APK, --apk)\n"
+            "  Diagnostics:\n"
+            "  --fake-server DIR  the FakeApiCaller route's canned responses (default <repo>/port/fakeapi/responses;\n"
+            "                  --server inproc only)\n"
+            "  --fake-server-schema FILE  write the response key schema there at CGame::OnInitialize\n"
+            "  --memstats [S]  a memory snapshot in the log at every phase change; with S (> 1) also every S\n"
+            "                  seconds (control \"memstats\" takes one on demand)\n"
+            "  --live-check FAMILY[,FAMILY..][:KEY[=VALUE]..]  check a native family against the guest in the run\n"
+            "                  (port/src/native/README.md \"Live checks\"; no family is registered now)\n"
+            "  Diagnostic and test switches are environment variables (SOA_TRACE, SOA_PROFILE, SOA_WATCHDOG,\n"
+            "  SOA_SELFTEST_*, ...: port/README.md \"Environment\"); settings are flags only.\n"
             "\n"
             "Server options (the local server's rules and state; only with --server inproc: with --server HOST\n"
             "give them to soa-server, which takes the same flags):\n"
@@ -135,30 +150,30 @@ void usage() {
             "                  DATA/server.sqlite3); HOST[:PORT]: the client's own NetworkApiCaller talks to\n"
             "                  soa-server's --listen (default port 44300), production-game.so-ana.com resolving to\n"
             "                  HOST (platform370's network glue)\n"
-            "  --db FILE       the state DB (default DATA/server.sqlite3; env SOA_SERVER_DB)\n"
-            "  --master FILE   the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3; env SOA_SERVER_MASTER)\n"
-            "  --gacha-pools FILE  the reconstructed gacha pools (default data/gacha_pools.sqlite3; env SOA_GACHA_POOLS)\n"
+            "  --db FILE       the state DB (default DATA/server.sqlite3)\n"
+            "  --master FILE   the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3)\n"
+            "  --gacha-pools FILE  the reconstructed gacha pools (default data/gacha_pools.sqlite3)\n"
             "  --seed FILE     the save a new state is seeded from, e.g. a 3.7.0 or offline Game.xml; an existing\n"
-            "                  state DB keeps its player (env SOA_SERVER_SEED)\n"
-            "  --game-xml FILE the last seed fallback (default DATA/data/shared_prefs/Game.xml; env SOA_SERVER_GAME_XML)\n"
-            "  --seed-rng N    fixed RNG seed (default the time; env SOA_SERVER_SEED_RNG)\n"
-            "  --new-player    start without a player: the new-player tutorial (env SOA_RESTORE_NEW_PLAYER=1)\n"
-            "  --clock \"YYYY-MM-DD HH:MM:SS\"  the server's clock starts at that time and runs on (env SOA_CLOCK);\n"
-            "                  without it, event terms replay the calendar (server::event_now)\n"
-            "  --start-coins N free coins a new local player starts with (default 300000; env SOA_START_COINS);\n"
-            "                  an existing state DB keeps its balance\n"
-            "  --galaxy-pass   the local player has the Galaxy Pass, renewed when it runs out (+2 deep space\n"
-            "                  ships; env SOA_GALAXY_PASS=1)\n"
+            "                  state DB keeps its player\n"
+            "  --game-xml FILE the last seed fallback (default DATA/data/shared_prefs/Game.xml)\n"
+            "  --seed-rng N    fixed RNG seed (default the time)\n"
+            "  --new-player    start without a player: the new-player tutorial\n"
+            "  --clock \"YYYY-MM-DD HH:MM:SS\"  the server's clock starts at that time and runs on; without it,\n"
+            "                  event terms replay the calendar (server::event_now)\n"
+            "  --start-coins N free coins a new local player starts with (default 300000); an existing state DB\n"
+            "                  keeps its balance\n"
+            "  --galaxy-pass   the local player has the Galaxy Pass, renewed when it runs out (+2 deep space ships)\n"
             "  --enable-events also open, all year, every event area and gacha banner whose name matches\n"
-            "                  --event-keywords, assets permitting (env SOA_ENABLE_EVENTS=1)\n"
+            "                  --event-keywords, assets permitting\n"
             "  --event-keywords \"a,b,!c\"  names to match (\"!\" excludes); default: the summer events\n"
-            "                  \"水着,夏,サマー,!福袋\" (env SOA_EVENT_KEYWORDS)\n"
+            "                  \"水着,夏,サマー,!福袋\"\n"
             "  --restore-tower open the tower mode, which 3.7.0 had closed: the server serves it and the client's\n"
-            "                  tower hooks open the menu (env SOA_RESTORE_TOWER=1)\n"
-            "  --campaign-master-db FILE, --campaign-seed LABEL, --fail M:CODE[,..], --surprise  (env SOA_MASTER_DB,\n"
-            "                  SOA_CAMPAIGN_SEED, SOA_SERVER_FAIL, SOA_SERVER_SURPRISE=1)\n"
+            "                  tower hooks open the menu\n"
+            "  --campaign-master-db FILE  the campaign module's master DB; --campaign-seed LABEL  seed the campaign\n"
+            "                  progress up to a mission; --fail M:CODE[,..]  force error replies; --surprise  force\n"
+            "                  surprise missions\n"
             "  --log-packets DIR  log every request and reply as soa-server --log-packets does (DIR/packets.log,\n"
-            "                  the reply bodies and battle logs as DIR/<n>-<name>.*; env SOA_LOG_PACKETS)\n");
+            "                  the reply bodies and battle logs as DIR/<n>-<name>.*)\n");
 }
 
 }  // namespace
@@ -169,6 +184,7 @@ bool start_inproc_cdn(std::string* err);                // native/api/server_cdn
 }
 
 int main(int argc, char** argv) {
+    env::warn_removed_env("soa", env::kSoa);  // SOA_* settings that are flags now: one line each
     signal(SIGPIPE, SIG_IGN);
     const char* home = getenv("HOME");
     // A data dir of its own: the old offline-build port's ~/.local/share/soa-linux holds a cached
@@ -176,9 +192,8 @@ int main(int argc, char** argv) {
     std::string data_dir = std::string(home ? home : ".") + "/.local/share/soa-linux-370";
     std::string apk_path, lib_path;
     bool smoke = false, selftest = false;
-    // --natives (SOA_NATIVES): route (every registered native) or none.
+    // --natives: route (every registered native) or none.
     NativeSet natives = NativeSet::Route;
-    bool natives_given = false;
     // --server: "inproc" (default) or HOST[:PORT].
     std::string server_mode;
     bool server_given = false;
@@ -190,11 +205,11 @@ int main(int argc, char** argv) {
     std::string render_size = "desktop";
     std::string font;  // --font
     bool fullscreen = false;
-    int headless = -1;  // -1: not given (SOA_HEADLESS, else headless only for --selftest)
+    int headless = -1;  // -1: not given (headless only for --selftest)
     std::vector<std::string> shots, actions;
     std::string control_path;
     std::string gdb_addr;  // --gdb HOST:PORT (core/gdbstub.h)
-    RunOptions& opt = mutable_options();  // CLI first, then the SOA_* env vars as fallback inputs
+    RunOptions& opt = mutable_options();  // from the command line only
     ServerOptions& srv = opt.server;
     std::vector<std::string> server_flags;  // server options given on the command line (for the --server HOST warning)
     // The runtime's calls into this frontend (runtime/src/android/platform.h).
@@ -241,7 +256,6 @@ int main(int argc, char** argv) {
                 fprintf(stderr, "--natives: expected route or none, got \"%s\"\n", v.c_str());
                 return 2;
             }
-            natives_given = true;
         }
         else if (a == "--lib") lib_path = next();
         else if (a == "--data") data_dir = next();
@@ -251,7 +265,7 @@ int main(int argc, char** argv) {
             selftest = true;
             if (i + 1 < argc && argv[i + 1][0] != '-') test_filter = argv[++i];
         }
-        else if (a == "--no-native") natives = NativeSet::None, natives_given = true;
+        else if (a == "--no-native") natives = NativeSet::None;
         else if (a == "--hires") {}  // no effect (kept for compatibility; see usage)
         else if (a == "--legacy-res") LOGW("main", "--legacy-res has no effect: the game renders at its own resolution (no --hires natives since the rebase's revision 2)");
         else if (a == "--render-size") render_size = next();
@@ -265,6 +279,30 @@ int main(int argc, char** argv) {
         else if (a == "--control") control_path = next();
         else if (a == "--gdb") gdb_addr = next();
         else if (a == "--download-dir") opt.client.download_dir = next();
+        else if (a == "--download-prefer") opt.client.download_prefer = true;
+        else if (a == "--fake-server") opt.client.fake_server_dir = next();
+        else if (a == "--fake-server-schema") opt.client.fake_server_schema = next();
+        else if (a == "--memstats") {
+            // an optional S: the next argument when it is a number
+            opt.client.memstats = 1;
+            if (i + 1 < argc && argv[i + 1][0] != '-') {
+                std::string c = argv[++i];
+                char* end = nullptr;
+                long v = strtol(c.c_str(), &end, 10);
+                if (c.empty() || *end || v < 1 || v > 86400) {
+                    fprintf(stderr, "--memstats: expected seconds 1..86400, got \"%s\"\n", c.c_str());
+                    return 2;
+                }
+                opt.client.memstats = (int)v;
+            }
+        }
+        else if (a == "--live-check") {
+            std::string v = next(), err;
+            if (!live::parse_live_check(v, &err)) {
+                fprintf(stderr, "--live-check %s: %s\n", v.c_str(), err.c_str());
+                return 2;
+            }
+        }
         else if (a == "--repo") opt.repo_dir = next();
         else if (a == "--standin-assets") {
             std::string d = next();
@@ -344,11 +382,15 @@ int main(int argc, char** argv) {
             return a == "-h" || a == "--help" ? 0 : 2;
         }
     }
-    options_from_env(opt);
-    if (getenv("SOA_RESTORE")) LOGW("main", "SOA_RESTORE is gone and ignored: the in-process server is the default (--server inproc)");
-    if (!natives_given) {
-        if (const char* e = getenv("SOA_NATIVES"); e && *e && !parse_native_set(e, natives)) fatal("SOA_NATIVES: expected route or none, got \"%s\"", e);
+    {
+        std::string err;
+        if (!live::apply_live_check(&err)) {
+            fprintf(stderr, "--live-check: %s\n", err.c_str());
+            return 2;
+        }
     }
+    // --font: the keyboard's text box (host.font below) and the web view's pages (one Japanese font).
+    if (!font.empty()) webview::set_font(font);
     // --server inproc|HOST[:PORT].
     if (!server_given) server_mode = "inproc";
     const bool inproc = server_mode == "inproc";
@@ -508,12 +550,9 @@ int main(int argc, char** argv) {
     host.width = width, host.height = height;
     host.landscape = landscape;
     host.fullscreen = fullscreen;
-    // --headless / --windowed, else SOA_HEADLESS=1/0, else headless for --selftest only. The hidden
-    // window renders like a shown one (runtime/src/app/host.h: HostConfig::hidden).
-    if (headless < 0) {
-        const char* e = getenv("SOA_HEADLESS");
-        headless = e && *e ? atoi(e) != 0 : selftest;
-    }
+    // --headless / --windowed, else headless for --selftest only. The hidden window renders like a
+    // shown one (runtime/src/app/host.h: HostConfig::hidden).
+    if (headless < 0) headless = selftest;
     host.hidden = headless != 0;
     if (host.hidden) LOGI("main", "headless: the window isn't shown");
     host.render_size = render_size;
@@ -534,9 +573,9 @@ int main(int argc, char** argv) {
             if (ready && ready_since == std::chrono::steady_clock::time_point{}) ready_since = std::chrono::steady_clock::now();
             // SOA_SELFTEST_DELAY=S waits S seconds instead of 10; SOA_SELFTEST_START_FILE=F waits
             // until file F exists (e.g. to drive the game to a scene through --control first, for
-            // tests on live game objects).
-            static const int delay = getenv("SOA_SELFTEST_DELAY") ? atoi(getenv("SOA_SELFTEST_DELAY")) : 10;
-            static const char* start_file = getenv("SOA_SELFTEST_START_FILE");
+            // tests on live game objects). Test-harness switches: environment (port/README.md).
+            static const int delay = (int)env::env_int("SOA_SELFTEST_DELAY", 0, 3600, 10);
+            static const char* start_file = env::env_str("SOA_SELFTEST_START_FILE");
             bool go = start_file ? access(start_file, F_OK) == 0 : std::chrono::steady_clock::now() - ready_since > std::chrono::seconds(delay);
             if (ready && go) {
                 int failed = run_native_tests(*lib, test_filter);

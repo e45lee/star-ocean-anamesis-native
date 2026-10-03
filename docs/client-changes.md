@@ -41,7 +41,7 @@ These change data the unmodified client code reads, as the online server's data 
 - **Guest behaviour:** the client shows an event area only while one of its `master_event_term` rows covers its clock, a gacha only inside its master window, and an exchange shop only inside its `master_exchange_shop` window; every summer event, banner and coin shop ended by 2021 (and the replayed calendar opens them only in July–September).
 - **Change:** with `--enable-events`, after the year shift above, the local server gives every area and gacha whose name matches the keyword list (`docs/server-rules.md` "Enabling events by keyword"; default: the summer events) the window `2016-01-01 00:00:00`..`2037-12-31 23:59:59`: all `master_event_term` rows of the area (opened_day / opened_time .. closed_day / closed_time), the non-empty `opened_at` / `closed_at` of the area and its `master_event_mission` rows, the gacha's `master_gacha.opened_at` / `closed_at`, the `master_banner` rows those areas (`master_banner_id`) and gachas (`banner_id`) name, and the enabled events' exchange shops (`master_exchange_shop.opened_at` / `closed_at`, and their contents' non-empty `opened_at`; a shop belongs to the enabled events when its currency is a coin only their missions drop, `docs/server-rules.md` "Enabling events by keyword") (`enable_events::client_master`, called from the `ext::ClientMaster` in `api/events/event_missions.cpp`). The ids come from the server's 3.7.0 master (its texts). Other rows and all code are unchanged. The event list then shows "2037/12/31(木)23:59まで" for these areas and banners.
 - **Why not in a response:** the tables are the client's own master copy; the server lists the same areas, gachas and shops (`ActiveEventMissionList`, `GetGachaInData`, `ExchangeShopExCount`).
-- **Switch:** `--enable-events` / `SOA_ENABLE_EVENTS=1` (with the in-process server), keywords `--event-keywords` / `SOA_EVENT_KEYWORDS`; off by default.
+- **Switch:** `--enable-events` (with the in-process server), keywords `--event-keywords`; off by default.
 
 ### Event exchange shops moved in the client's master copy (agent `events-extras`)
 - **Symbols affected:** the readers of `master_exchange_shop.opened_at` / `closed_at` and `master_exchange_shop_contents.opened_at`: `CUIUtility::CollectMasterItemExchangeShop` / `CShop::Progress` (the exchange tab lists the master shops open by the client clock that the server's `ExchangeShopExCount` names).
@@ -55,14 +55,14 @@ These change data the unmodified client code reads, as the online server's data 
 - **Without them (the 3.7.0 download alone):** images the online server had removed are missing: the gacha list shows an empty frame for such a banner and the detail page empty pick-up panels, so `--enable-events` doesn't open those gachas (docs/server-rules.md "Enabling events by keyword").
 - **Change:** with the in-process server, an overlay directory of **made-up stand-in images** (not the original art) is searched after the APKs and the download dir, for assets no real source has (`AssetManager::find_download`, `runtime/src/android/ndk.cpp`). Today: the Summer '17 pick-up gachas `gacha_pickup_role_0054` / `_0056`: list banners `banner_gacha_pickup_role_0054` / `_0056` and pick-up panels `pickup_img_chara_1707_002` / `_003` / `_005` / `_006`, drawn by `tools/make_standin_banners.py` (beach gradient, the pick-up names from `master_text`, the characters' universe-chip portraits from the download, a "STAND-IN" tag) and encoded in the game's own format; and the NieR:Automata rerun `gacha_pickup_role_0283`: list banner `20200227_chara_002` and pick-up panels `pickup_img_chara_0015` / `_0016` / `_0017` (a beige YoRHa-style backdrop, the gacha title, ２Ｂ / ９Ｓ / Ａ２ with their chip portraits and full-figure art `cc0015_fv01a` etc. from the download). They are labelled as stand-ins in the image itself.
 - **Why not in a response:** images are the client's own files (the online game downloaded them from the asset server); providing the files is the asset server's side. The originals are gone, so the content is invented.
-- **Switch:** the in-process server (`--server inproc`, the default; default `standin-assets`); `--standin-assets DIR|off` / `SOA_STANDIN_ASSETS` (`0` / `off` = none). Off with `--server HOST`.
+- **Switch:** the in-process server (`--server inproc`, the default; default `standin-assets`); `--standin-assets DIR|off` (`0` / `off` = none). Off with `--server HOST`.
 
 ### Tower banner rows added to the client's master copy (`--restore-tower`; agent `a11-tower`)
 - **Symbols affected:** none changed. `MissionUtility::GetEventAreaList` (mission type 2) and `MissionUtility::tAreaInfo::tAreaInfo` read `master_banner` through `CUIUtility::CollectMasterBanner` (`SELECT * FROM master_banner`).
 - **Guest behaviour (3.7.0 master data):** `tAreaInfo`'s constructor zeroes the area id when the area's `master_banner_id` isn't among the `master_banner` rows, and `GetEventAreaList` drops such areas. The 3.7.0 master no longer has `banner801`..`banner805`, the banners of the five permanent tower areas `tower_01`..`05` that `master_tower_area` still names, so the tower's floor list is empty even when the server lists the areas.
 - **Change:** under `--restore-tower`, the local server adds a stand-in row for each such banner to the client's in-memory master copy: `id` / `id_label` from `master_tower_area.master_banner_id(_label)`, `image` = the first of `banner_TrialSpace_<NNN>`, `_<NNN>_002`, `_<NNN>_001` (NNN = the area's tower number) whose image the port can load, the area's dates, empty `url`. No image, no row. Code: `tower::client_banners` (`server/src/api/tower/tower.cpp`, an `ext::ClientMaster`). The images `banner_TrialSpace_001`..`005` are in the 3.7.0 download; the naming follows the 16 surviving tower banner rows (docs/server-rules.md "Tower").
 - **Why not in a response:** the master DB is client data the online game downloaded; the client's copy is the server-side equivalent (as for the other master overrides above).
-- **Switch:** `--restore-tower` (`SOA_RESTORE_TOWER=1`). Off by default.
+- **Switch:** `--restore-tower`. Off by default.
 
 ## Code changes
 The server core made none: in-process every other behaviour is the local server answering on the port's `FakeApiCaller` route (`--server inproc`).
@@ -83,9 +83,8 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Switch:** the in-process server (`--server inproc`, the default). Without it, `server::error_code` is always 0 and the queries return 1 / 0 / 0 as before.
 - **Evidence:** `work/decomp/server-missions-err-{ehw,b,cb,g}.resolved.c`; docs/server-rules.md "Server missions: what agent `server-missions` added", "Refusals and error codes".
 
-### `req:Name:args` in the fake server's drive file (port test option)
-- `SOA_FAKE_SERVER_DRIVE`'s `req:` command now takes integer arguments (`req:Gacha:478440451`). With the in-process server they're passed to the local server as the request's arguments.
-- Test tooling only (`port/scripts/restore_missions.sh`). It issues requests no screen made; it isn't game behaviour.
+### `req:Name:args` in the fake server's drive file (port test option; removed)
+- The drive file and its `req:` command went with the drive hook on 2026-10-01 (`port/README.md` "Removed with the natives"); `restore_missions.sh` drives the screens instead. What is left is `fakeapi.cpp`'s `request_by_name`, which still parses `Name:arg1:arg2` (integer arguments passed to the local server as the request's arguments) for the requests the port queues itself (EndMissionTalk's `GetPlayMission`, no arguments). Test tooling, not game behaviour.
 
 ## Port-specific code changes
 
@@ -102,7 +101,7 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Guest behaviour:** all three return status 0 and send nothing, so a saved party set, a new assist character or a finished UI tutorial ("already seen" flag, from `CTutorialManager::ST_Net_Tutoflag`) would be dropped, and the tutorial shows again after a restart. `NetworkApiCaller` overrides them: it sends `PartySetInfo::Serialize()`, the two character ids, or the flag kind and word.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp`):** with the in-process server, when the caller is the FakeApiCaller, the request is queued like the other FakeApiCaller requests. The local server gets the `Serialize()` text, the two ids, or the kind and flag word. The responses go to `CApiNotify::OnUpdatePartySetRes` / `OnSetAssistRes` / `OnUpdateViewRes`. Otherwise all three keep the guest behaviour.
 - **Why not server-side:** this *is* the route to the server. `FakeApiCaller` never implemented these requests, so without the change the client never sends them.
-- **Switch:** the in-process server (`--server inproc`, the default; it sets `SOA_FAKE_SERVER`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
 
 ### `IApiCaller::GetMissionList` on the FakeApiCaller route (agent `p5b-tests-diff`)
 - **Symbol:** `IApiCaller::GetMissionList()`: a base-class stub that `FakeApiCaller` inherits.
@@ -122,14 +121,14 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Guest behaviour:** returns status 0 and queues nothing, so the deep space screen (`CDeepSpace::Progress`, state 0 → `CErrorHandlerWrap::Auto` on fid `a7a82ef5`) never receives its area, ship and bonus lists: every area shows as "？？？？？" and no mission can be chosen. `NetworkApiCaller` sends the request.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp`):** with the in-process server, on the FakeApiCaller, the request is queued like the base-class methods above, answered by `CApiNotify::OnDeepSpaceActiveListRes` (the handler `NetworkApiCaller`'s response goes to) with the local server's body (`server/src/api/deepspace/deepspace.cpp`). The other four deep-space requests (`DeepSpaceAutoMemberSelect`, `DeepSpaceMissionStart`, `DeepSpaceMissionEnd`, `DeepSpaceMissionEndNow`) are ordinary FakeApiCaller requests and need no change. The deep space client code (`CDeepSpace*`, `CPhase_DeepSpace`, the dialogs and the three guest response handlers) is unchanged.
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
-- **Switch:** the in-process server (`--server inproc`, the default; it sets `SOA_FAKE_SERVER`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
 
 ### The Sphere 211 requests on the FakeApiCaller route (agent `sphere211`)
 - **Symbols:** the base-class stubs `IApiCaller::GetSphere211Info()`, `GetSphere211RankingInfo(bool)`, `Sphere211AutoMemberSelect(u32, u32, u32)`, `Sphere211EquipAuto(u32, u32, vector<u64>)`, `Sphere211MissionContinue(u32, u32, bool)`, `Sphere211MissionEnd(u32, u32)`, `Sphere211MissionFailed(u32, u32)`, `Sphere211MissionStart(u32, u32, u64, u64, u64, u64, u32)`, which `FakeApiCaller` inherits, and `FakeApiCaller`'s own status-only overrides `ReturnSphere211()`, `Sphere211StaminaHeal()`, `Sphere211UseRerollItem()`, `Sphere211FloorClear(u32)`, `Sphere211SelectedFloor(u32)`: the 13 Sphere211 APIs.
 - **Guest behaviour:** each returns a Status and sends nothing, so the Sphere 211 board (`CPhase_Mission` with mission type 5, `CSphere*`) never gets its floor, cells, stamina or results. `NetworkApiCaller` sends them.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp` `kSphere`):** with the in-process server, on the FakeApiCaller, each request's arguments go to the local server (`server_port::capture`, port/src/native/api/server_adapters.cpp) and the request is queued with NetworkApiCaller's FunctionID, answered by the `CApiNotify::On*Res` handler NetworkApiCaller's response goes to, with the body of `server/src/api/sphere211/sphere211.cpp`. Otherwise (`--server HOST`, or another caller) the guest behaviour. The Sphere 211 client code (`CSphere*`, `MissionUtility::*Sphere211*`, `CStageManager`'s type-5 path, the handlers) is unchanged.
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented these requests.
-- **Switch:** the in-process server (`--server inproc`, the default; it sets `SOA_FAKE_SERVER`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
 - **Tooling, not a change:** the control command `uiset:OFF:VAL` (`port/src/native/common/port_debug.cpp`, port/README.md) writes a `CParameterUI` field for scripted sessions (`uiset:0x140:5 phase:5` opens the Sphere 211 menu without the home button). It runs only when a `--control` FIFO sends it.
 
 ### Event ranking and world-boss requests on the FakeApiCaller route (agent `events-extras`)
@@ -137,7 +136,7 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Guest behaviour:** each returns Status 0 and sends nothing, so the event menu's ranking results, the ranking screen (`CEventRanking`), the ranking detail dialog and the world-boss event board (`CEventMissionBoard`) never get their data. `NetworkApiCaller` sends them.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp` `kEventApi`):** with the in-process server, on the FakeApiCaller, each request's arguments go to the local server (`server_port::capture`, port/src/native/api/server_adapters.cpp) and the request is queued with NetworkApiCaller's FunctionID, answered by the `CApiNotify::On*Res` handler NetworkApiCaller's response goes to (all plain apply; the two ranking results also `AddItem` / `UpdateStackItem`), with the bodies of `server/src/api/events/ranking.cpp` and `api/events/world_boss.cpp`. Otherwise (`--server HOST`, or another caller) the guest behaviour. The client code of those screens and the handlers are unchanged.
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented these requests.
-- **Switch:** the in-process server (`--server inproc`, the default; it sets `SOA_FAKE_SERVER`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
 
 ### `IApiCaller::EndMissionTalk` on the FakeApiCaller route (agent `r3-dump-natives`, `port/rebase-370`)
 - **Symbol:** the base-class stub `IApiCaller::EndMissionTalk(u32 type, u32 mission, u8, u32)`, which `FakeApiCaller` inherits.

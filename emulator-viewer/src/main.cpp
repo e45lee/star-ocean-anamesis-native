@@ -4,6 +4,7 @@
 // the install-time asset pack). The runtime was built for this build's imports and Java methods
 // (incl. Play Asset Delivery: jni/java_playcore.cpp), so the viewer adds only one platform
 // answer: the dead service's host names don't resolve (net_offline.cpp). emulator-viewer/README.md.
+#include <soa/env.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -132,9 +133,9 @@ void usage() {
             "                  (default <repo>/work/extracted/xapk)\n"
             "  --apk FILE      read assets from FILE too (after the XAPK's; repeatable, later wins)\n"
             "  --download-dir DIR  serve builtin_data/ assets missing from the APKs from DIR, an online\n"
-            "                  asset tree such as work/download-3.7.0 (as soa / soa-emu --download-dir;\n"
-            "                  env SOA_DOWNLOAD_DIR); off by default\n"
-            "  --download-prefer  with --download-dir: DIR wins over the APKs (env SOA_DOWNLOAD_PREFER=1)\n"
+            "                  asset tree such as work/download-3.7.0 (as soa / soa-emu --download-dir); off by\n"
+            "                  default\n"
+            "  --download-prefer  with --download-dir: DIR wins over the APKs (as soa / soa-emu)\n"
             "  --lib PATH      the client library (default: extracted from DIR/config.arm64_v8a.apk into the data dir)\n"
             "  --data DIR      the emulated device's data (saves, prefs, asset packs; default\n"
             "                  ~/.local/share/soa-viewer-380, like the port's ~/.local/share/soa-linux;\n"
@@ -145,15 +146,18 @@ void usage() {
             "  --landscape     default to a 16:9 landscape window\n"
             "  --render-size S the game's screen size: 'desktop' (default), 'window' or WxH\n"
             "  --fullscreen    start in (desktop) fullscreen\n"
-            "  --font PATH     the on-screen text box's font (env SOA_FONT; default: a system Japanese font; 'none': off)\n"
+            "  --font PATH     the on-screen text box's font (default: a system Japanese font; 'none': off)\n"
             "  --headless      don't show the window (it still renders; screenshots and the control FIFO work)\n"
+            "  --windowed      show the window (the default; undoes an earlier --headless)\n"
             "  --shot S:PATH   save a screenshot S seconds after start (repeatable; F12 any time)\n"
             "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
             "                  wheel:X:Y:DY, back, text:STRING, shot:PATH, quit\n"
             "  --control FIFO  read the same commands, one per line, from a named pipe (control/soactl.py)\n"
             "  --gdb HOST:PORT serve the GDB remote protocol for the guest (gdb-multiarch -x control/gdbinit-soa,\n"
             "                  control/gdbclient.py; runtime/README.md \"Debugging the guest with gdb\")\n"
-            "  -v / -vv        verbose / trace logging\n",
+            "  -v / -vv        verbose / trace logging\n"
+            "Diagnostic switches are environment variables (SOA_TRACE, SOA_PROFILE, SOA_WATCHDOG, ...:\n"
+            "runtime/README.md \"Environment\"); settings are flags only.\n",
             kBaseApk);
 }
 
@@ -161,6 +165,7 @@ void usage() {
 
 int main(int argc, char** argv) {
     std::string gdb_addr;  // --gdb HOST:PORT (core/gdbstub.h)
+    env::warn_removed_env("soa-viewer", env::kViewer);  // SOA_* settings that are flags now
     signal(SIGPIPE, SIG_IGN);
     app::install_host_hooks();
     std::string apk_dir, lib_path, data_dir, repo_arg;
@@ -204,6 +209,7 @@ int main(int argc, char** argv) {
         else if (a == "--font") host.font = next();
         else if (a == "--fullscreen") host.fullscreen = true;
         else if (a == "--headless") host.hidden = true;
+        else if (a == "--windowed") host.hidden = false;
         else if (a == "--shot") host.shots.push_back(next());
         else if (a == "--do") host.actions.push_back(next());
         else if (a == "--control") host.control_path = next();
@@ -273,11 +279,7 @@ int main(int argc, char** argv) {
     }
     for (auto& f : extra_apks)
         if (!am.add_apk(f)) fatal("--apk: cannot open %s", f.c_str());
-    // The same option as soa / soa-emu (runtime AssetManager::set_download_dir); a flag wins over the env.
-    if (download_dir.empty())
-        if (const char* e = getenv("SOA_DOWNLOAD_DIR"); e && *e) download_dir = e;
-    if (!download_prefer)
-        if (const char* e = getenv("SOA_DOWNLOAD_PREFER"); e && *e && strcmp(e, "0") != 0) download_prefer = true;
+    // The same option as soa / soa-emu (runtime AssetManager::set_download_dir).
     if (!download_dir.empty()) {
         if (!exists(download_dir)) fatal("--download-dir %s: no such directory", download_dir.c_str());
         am.set_download_dir(download_dir, download_prefer);

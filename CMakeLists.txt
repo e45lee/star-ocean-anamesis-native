@@ -88,6 +88,8 @@ else()
 endif()
 include(cmake/deps.cmake)
 
+add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests
+
 # ---- the parts, in dependency order
 if(SOA_BUILD_PORT OR SOA_BUILD_EMULATOR OR SOA_BUILD_VIEWER OR SOA_BUILD_PLATFORM370)
   add_subdirectory(runtime)   # libsoaruntime, soaruntime_app, soaruntime_tests

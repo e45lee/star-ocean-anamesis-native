@@ -5,7 +5,7 @@
 // knowledge, (d) assumption.
 //
 // State: table `login_bonus` (id = master_login_bonus id, day = the last page granted, last_at),
-// and the counters key login_bonus_popup_pending (a day NoLoginStart granted, to report again).
+// and player.login_bonus_popup_pending (a day NoLoginStart granted, to report again).
 #include <ctime>
 
 #include "core/log.h"
@@ -78,7 +78,7 @@ void login_bonus(Ctx& ctx, const Request& req, Value& data) {
     // player again: a day granted by NoLoginStart is reported as received-now once more on that
     // Login, so the popup the login arms (CPopupManager::AddPopup) finds it.
     bool login = req.method == "Login" || req.method == "SimpleLogin";
-    bool pending = login && counter(ctx, "login_bonus_popup_pending") > 0;
+    bool pending = login && ctx.st.one("select login_bonus_popup_pending from player", {}) != 0;
     ctx.m.q("select * from master_login_bonus order by order_id", {}, [&](const Row& bonus_row) {
         if (!open_at(bonus_row.s("opened_at"), bonus_row.s("closed_at"), t)) return;
         u32 id = (u32)bonus_row.i("id");
@@ -106,8 +106,8 @@ void login_bonus(Ctx& ctx, const Request& req, Value& data) {
         list.push(info);
     });
     data["LoginBonus"] = list;
-    if (pending) ctx.st.q("update counters set value = 0 where key = 'login_bonus_popup_pending'", {});
-    else if (granted && req.method == "NoLoginStart") count(ctx, "login_bonus_popup_pending", 1);
+    if (pending) ctx.st.q("update player set login_bonus_popup_pending = 0", {});
+    else if (granted && req.method == "NoLoginStart") ctx.st.q("update player set login_bonus_popup_pending = 1", {});
     if (granted) data["PresentBoxCount"] = (u32)ctx.st.one("select count(*) from presents where received_at is null", {});
 }
 

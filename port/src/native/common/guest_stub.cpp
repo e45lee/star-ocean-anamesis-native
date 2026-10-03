@@ -1,4 +1,5 @@
 // Test helper: stubbing guest callees for differential tests (see guest_stub.h).
+#include <soa/env.h>
 #include "native/common/guest_stub.h"
 
 #include <sys/mman.h>
@@ -201,7 +202,7 @@ void StubSession::record(const char* name, Cpu& c) {
         e += b;
     }
     e += ")";
-    static bool trace = getenv("SOA_STUB_TRACE") != nullptr;
+    static bool trace = env::env_on("SOA_STUB_TRACE");
     if (trace) fprintf(stderr, "stub: %s\n", e.c_str());
     log.push_back(e);
 }

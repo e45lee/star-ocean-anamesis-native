@@ -18,11 +18,15 @@
 // 2. Run both (particles, dynamics): the family runs the original and the native from the same
 //    state and compares; they share the switches, the chosen-set filter and the Budget counters.
 //
-// Every family keeps its own switches: <ENV>_CHECK (on, or a count), <ENV>_CHECK_EVERY=n (every
-// n-th call per function), <ENV>_CHECK_OUT=file (per-function counts, record / replay families),
-// <ENV>_CHECK_ONLY=a,b,.. (check only functions whose symbol contains one of these: the others
-// run natively without a check, so the chosen ones are checked also where they are nested
-// callees of other natives), <ENV>_CHECK_TRACE / _DUMP (debugging).
+// Switched on per family from the command line (soa --live-check, parse_live_check below):
+//   --live-check FAMILY[,FAMILY..][:KEY[=VALUE]..]   (repeatable; FAMILY = the family's tag)
+// keys: every=N (every n-th call per function; default the family's), budget=N (checks per
+// function at most), out=FILE (per-function counts, record / replay families), only=SUB[|SUB..]
+// (check only functions whose symbol contains one of these: the others run natively without a
+// check, so the chosen ones are checked also where they are nested callees of other natives),
+// trace, dump (debugging). E.g. --live-check arena:every=4:only=Alloc|Free. No family is registered
+// now (the natives were rebuilt on 3.7.0, docs/history/PLAN-rebase-370.md): the harness waits for
+// the next ported family, and --live-check names none until then.
 #include <atomic>
 #include <cstdio>
 #include <cstring>
@@ -45,16 +49,26 @@ using a2c::Body;
 using a2c::V4;
 using a2c::a2c_gcall;
 
-// ---- switches ----
+// ---- switches (soa --live-check) ----
 
-// Set, non-empty and not "0".
-bool env_on(const char* name);
-// `s` is in the comma-separated list in env var `env` (or the list says "all" when all_word).
-bool env_listed(const char* env, const char* s, bool all_word = false);
-// <ENV>_CHECK_ONLY: the chosen set (substrings of symbols). Empty = every function.
+// One family's --live-check options.
+struct CheckOptions {
+    int every = 0;   // 0: the family's default
+    int budget = 0;  // 0: no limit
+    std::string out;
+    std::vector<std::string> only;
+    bool trace = false, dump = false;
+};
+// Parses one --live-check value (main.cpp) into the process-wide table; false (and *err) when it
+// is malformed. Families are checked against the registered ones by apply_live_check.
+bool parse_live_check(const std::string& spec, std::string* err);
+// After the natives are registered (before they are installed): false (and *err, naming the
+// registered families) when --live-check named a family that doesn't exist; else every family
+// named takes its options and is switched on.
+bool apply_live_check(std::string* err);
+// The chosen set (only=): substrings of symbols. Empty = every function.
 struct Only {
     std::vector<std::string> subs;
-    explicit Only(const char* env_var);
     bool any() const { return !subs.empty(); }
     bool match(const char* sym) const;
 };
@@ -220,23 +234,22 @@ struct Entry;
 // objects they return, out-parameters they write whole) are shared (live_check.cpp).
 class Family {
 public:
-    // tag: log tag (I/<tag>_check) and registration label; env: switch prefix ("SOA_ARENA");
-    // every: default of <env>_CHECK_EVERY; sret_marked: the generator marks x8 = sret calls
+    // tag: log tag (I/<tag>_check), registration label and --live-check name ("arena");
+    // every: the default of --live-check's every=; sret_marked: the generator marks x8 = sret calls
     // (gcall_sret); otherwise any 8-aligned stack x8 is treated as one (its first 16 bytes are
     // always replayed).
-    Family(const char* tag, const char* env, int every, bool sret_marked);
+    Family(const char* tag, int every, bool sret_marked);
     virtual ~Family() = default;
 
     const char* tag;
     std::string log_tag;  // "<tag>_check"
-    const char* env;
-    std::atomic<bool> on;  // <env>_CHECK (a test may switch it at run time)
+    std::atomic<bool> on{false};  // --live-check <tag> (a test may switch it at run time)
     int every;
     int budget = 0;  // checks per function at most (0: no limit)
     bool sret_marked;
     Only only;
-    std::string out_path;  // <env>_CHECK_OUT
-    bool trace, dump;
+    std::string out_path;  // --live-check <tag>:out=FILE
+    bool trace = false, dump = false;
 
     // Regions to snapshot besides the object at x0 (obj_bytes): globals, out-parameters, the
     // nodes of structures the call links or unlinks. `has_obj`: x0's object is regions.r[0].
@@ -251,7 +264,7 @@ public:
     virtual void on_mismatch(const Entry&, const std::string&) {}
     virtual void on_skip(const Entry&, const std::string&) {}
 
-    // Registers a native at `sym` (hooked through the check when <env>_CHECK is on): a
+    // Registers a native at `sym` (hooked through the check when the family is on): a
     // hand-written host function (run) or a transcribed body (body). `enabled`: the family's
     // on switch; `label`: the registry's description.
     int add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label);
@@ -273,7 +286,7 @@ public:
     const std::unordered_map<u64, Body>& own_bodies();
 
     void summary(FILE* f);  // per-function counts
-    void summary_file();    // to <env>_CHECK_OUT
+    void summary_file();    // to out_path
 
     struct Stats {
         std::atomic<u64> checks{0}, ok{0}, bad{0}, skipped{0}, races{0};

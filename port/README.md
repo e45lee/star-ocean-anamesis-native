@@ -35,7 +35,7 @@ build/port/soa --server 127.0.0.1:44300 --http 127.0.0.1:44380   # against a run
 - **Platform:** `soa` links `platform370/` (`platform370/README.md`): `platform370::install` before `hle_init` (the 25 Java answers, `fmod`, the device clock, `app_version` "3.7.0"), `install_patches` (the `service_stop_day` patch) before the natives. `--device-clock`, `--no-patch` as in `soa-emu`.
 - **`--server inproc` (default):** the local server library answers in-process through the FakeApiCaller route (`src/native/api/fakeapi.cpp`, its table generated for 3.7.0 by `tools/gen_fakeapi_tables.py`). The client's own `CGame::OnInitialize` still builds its `NetworkApiCaller`; the route's hook then puts a `FakeApiCaller` in `TSingleton<CApiCaller>`. The server's **CDN runs in-process too** (`src/native/api/server_cdn.cpp`): the library's CDN tree from `--download-dir` (required in this mode; default `work/download-3.7.0`) plus the stand-ins, mounted on soa-server's own HTTP router (`net::mount_cdn`), which is platform370's **HTTP backend** (`platform370::set_http_backend`). **No sockets in-process:** each of the client's HTTP requests to `production-game.so-ana.com` is a call to `HttpRouter::handle`, its body streamed. Login carries the CDN keys (`AssetPath`, `MasterPath`, `r_ver`) and `LatestEpisodeVersion` (3: the episode packs; docs/server-rules.md "Episode data"), and the client downloads or checks its game data from it as `soa-emu` does from `soa-server`. An empty data dir downloads the 3.8 GB once (about 3-4 minutes: 1,446 GETs, the episode packs EP1-3 included when the client save has them, as the committed one does); a data dir with the data checks five manifests (Bulk, Individual, ep1-3) and fetches the packs it is missing. The server computes party and NPC statuses with its own master-data rules, as `soa-server` does (no client status provider since revision 2).
 - **`--server HOST[:PORT]`:** no FakeApiCaller hooks: the client's own `NetworkApiCaller` talks GameRPC to soa-server's `--listen` and HTTP to `--http HOST:PORT` (default `<host>:44380`) through platform370's network glue (`--lobby`, `--map-host` as in `soa-emu`). The data download is real, from soa-server's CDN. `--download-dir` is off unless given. The local server library isn't used; server options given to `soa` then only log a warning (give them to `soa-server`, which takes the same flags).
-- **Natives: `--natives route|none` (`SOA_NATIVES`), default `route`** (`all` is a synonym): every registered native, i.e. the FakeApiCaller hooks (left out with `--server HOST`) and the port's own hooks: the `CPhase::Progress` wrapper of the control commands and of the `port_debug: phase N` log lines the scripts wait on (`src/native/common/port_debug.cpp`), the tower opt-in (`--restore-tower`) and the notice board's local page (in-process). `none` is `--no-native`.
+- **Natives: `--natives route|none`, default `route`** (`all` is a synonym): every registered native, i.e. the FakeApiCaller hooks (left out with `--server HOST`) and the port's own hooks: the `CPhase::Progress` wrapper of the control commands and of the `port_debug: phase N` log lines the scripts wait on (`src/native/common/port_debug.cpp`), the tower opt-in (`--restore-tower`) and the notice board's local page (in-process). `none` is `--no-native`.
 - **Saves:** the committed client save `data/saves/client/Game.xml` (an offline-game KVS) is read by 3.7.0 as it is; the local KVS (`Aska.xml`) is left to the client to create. `--seed FILE` seeds a new server state from a save.
 - **Gates:** `port/scripts/rebase_inproc_session.sh` (in-process: title, Login, the data check or download, home, the login popups; `SOA_PHONE=none` for the full download) and `port/scripts/rebase_server_diff.sh [PHONE]` (soa `--server` and `soa-emu` run `emulator_session.sh`'s seeded flow to home against fresh soa-servers with `--seed-rng 1`; `tools/compare_packets.py` requires their request sequences to be equal). `emulator/scripts/emulator_session.sh` runs with `build/port/soa` as its client as well. The smoke test and every session script run on the 3.7.0 port and start from the shared pre-downloaded phone by default (P5a; "Tests and session scripts" below).
 - **Selftest:** `build/port/soa --selftest` boots the 3.7.0 guest with no natives installed and runs the runtime's tests, the route's (`fakeapi/*`, `wire/*`), the port's server tests (`server/*`) and the server library's: 95 tests.
@@ -102,7 +102,7 @@ port/scripts/profile_report.py work/profile/smoke > work/profile/report.txt
 
 ## Memory diagnostics
 
-`SOA_MEMSTATS=1` logs a snapshot (`I/memstats`) at every `CPhase` change, and `SOA_MEMSTATS=S` also logs one every S seconds. The `--control` command `memstats[:TAG]` logs one on demand (`port/src/native/common/memstats.cpp`). Each snapshot has:
+`--memstats` logs a snapshot (`I/memstats`) at every `CPhase` change, and `--memstats S` also logs one every S seconds. The `--control` command `memstats[:TAG]` logs one on demand (`port/src/native/common/memstats.cpp`). Each snapshot has:
 - RSS and host threads by name;
 - guest CPU contexts, grouped by each thread's guest entry function, with the nesting levels each thread holds;
 - the dynarmic code caches' RSS;
@@ -115,6 +115,43 @@ What a context costs: every host thread keeps one guest CPU context, a dynarmic 
 PLAN-next D7 measured this on `sphere211_session.sh`:
 - **Before** (the guest saw 32 host CPUs): 62 engine workers; the dynamics workers reached 4-6 levels each. The run went from 95 contexts / 2.6 GB at home to 230 contexts / 6.4 GB after four battles.
 - **After** (8 guest CPUs, so 14 workers, and the fast-dispatch tables released): the full session passes at 56 contexts / 0.7 GB at boot, 91 / 1.9 GB after the first battle and 102 / 2.3 GB at the end (6 battles and floor 2). Each later battle adds 0-6 contexts, about 70 MB, as threads reach new depths.
+
+## Environment: diagnostics and test switches
+
+Settings are command-line flags (`soa --help`). The environment carries only diagnostics and the
+test harness's switches, read with one rule (`common/include/soa/env.h`): a switch is off when unset,
+empty, `0`, `false`, `no` or `off` (any case) and on otherwise; a number out of its range (or not a
+number) is warned about and its default used. A variable that was a setting prints one line naming
+its flag ("... is gone: use --clock") and is ignored: the table of removed variables and their flags
+is in `docs/environment.md`.
+
+The runtime's switches (the same in soa, soa-emu and soa-viewer: `SOA_TRACE`, `SOA_COVERAGE`,
+`SOA_PROFILE`, `SOA_PROFILE_HZ`, `SOA_PROFILE_HOST`, `SOA_WATCHDOG`, `SOA_AUDIO_DUMP`, `SOA_TRACE_RT`,
+the `SOA_GL_*` escape hatches, `SOA_OFFSCREEN_PRESENT`, `SOA_DIRECT_CALLS`) are listed in
+[`runtime/README.md`](../runtime/README.md) "Environment"; "Profiling" above shows them at work.
+soa's own:
+
+| Variable | Effect |
+|---|---|
+| `SOA_SELFTEST_DELAY=S` | `--selftest` waits S seconds (0..3600, default 10) after the memory and parameter managers exist |
+| `SOA_SELFTEST_START_FILE=F` | `--selftest` waits until file F exists instead (drive the game to a scene through `--control` first) |
+| `SOA_SELFTEST_SKIP=a,b` | tests left out by exact name (`port/scripts/selftest_resilient.sh` sets it after a crash) |
+| `SOA_SELFTEST_REPEAT=N` | run each matching test N times (1..10000), the port's and the server library's |
+| `SOA_TEST_HOOKS_SKIP=sym,..\|all` | test hooks (`NATIVE_TEST_HOOK`) not installed, to find one that breaks the boot |
+| `SOA_TEST_HOOKS_ALL=1` | also install the hooks the 3.7.0 rebase leaves out (`native/common/test.cpp`) |
+| `SOA_STUB_TRACE=1` | print each call a recording stub answers (`native/common/guest_stub.cpp`) |
+| `SOA_WIRE_DUMP=FILE` | the wire self-tests append their dumps to FILE (`tools/api_wire.py`) |
+| `SOA_NOTICE_HTML_DUMP=FILE` | the self-test `player/notice` writes the notice page's HTML there (also `soa-server --selftest player/notice`; `docs/webview.md`) |
+| `SOA_WEBVIEW_DUMP_CSS=FILE` | the web view appends each stylesheet as litehtml gets it (also soa-webview-render) |
+
+Not built now, emitted by the a2c generators for a regenerated family: `SOA_ASKA_MATH_OFF` /
+`SOA_ASKA_MATH_SKIP` (tools/gen_aska_math_a2c.py; groups and symbols left to the guest, for
+bisecting). Host variables: `HOME` (the default `--data`), `TZ` (the local time `--clock` and
+`--device-clock` are read in; with `HOME` and `TMPDIR` the only host variables the guest's `getenv`
+sees), and SDL's own: `SDL_VIDEODRIVER`, `SDL_AUDIODRIVER` (`dummy` / `disk`), and any `SDL_*` hint.
+The runtime sets two hints at normal priority (`SDL_HINT_VIDEO_X11_FORCE_EGL`,
+`SDL_HINT_IME_SUPPORT_EXTENDED_TEXT`), so the environment can override them; leave
+`SDL_VIDEO_X11_FORCE_EGL` alone (the EGL emulation assumes SDL's X11 contexts are EGL ones).
 
 ## Building
 
@@ -143,7 +180,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | Option | |
 |---|---|
 | `-h`, `--help` | The options |
-| `--repo DIR` | The source checkout that repo files are read from (env `SOA_REPO`). By default it is found from the executable: `/proc/self/exe` is `build/port/soa`, so the root is two levels up. The first directory upwards holding `port/CMakeLists.txt` wins; failing that, the working directory is searched the same way. |
+| `--repo DIR` | The source checkout that repo files are read from. By default it is found from the executable: `/proc/self/exe` is `build/port/soa`, so the root is two levels up. The first directory upwards holding `port/CMakeLists.txt` wins; failing that, the working directory is searched the same way. |
 | `-v`, `-vv` | Debug / trace logging |
 
 **Client options**
@@ -152,20 +189,22 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 |---|---|
 | `--apk FILE`, `--lib PATH` | The 3.7.0 APK (default `<repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk`) and its `libSOA.so` (default: extracted once into `DATA/libSOA-3.7.0.so`) |
 | `--data DIR` | The phone's data dir: game data, saves, and in-process the server's state (default `~/.local/share/soa-linux-370`) |
-| `--download-dir DIR` | The client's asset fallback: `builtin_data/<rel>` assets the APK lacks from `DIR/<rel>` (the online game's downloaded tree). Env `SOA_DOWNLOAD_DIR`; `SOA_DOWNLOAD_PREFER=1` makes `DIR` win over the APK. Required with `--server inproc`, whose CDN serves it (default `work/download-3.7.0`); off by default with `--server HOST`. |
-| `--standin-assets DIR\|off` | Made-up **stand-in** files for `builtin_data/<rel>` assets that no real source has, after the APK and `--download-dir` (see "Stand-in assets"); `--server inproc` defaults it to `standin-assets` and its CDN serves them. Env `SOA_STANDIN_ASSETS` (`0` / `off` = none). |
+| `--download-dir DIR` | The client's asset fallback: `builtin_data/<rel>` assets the APK lacks from `DIR/<rel>` (the online game's downloaded tree); `--download-prefer` makes `DIR` win over the APK. Required with `--server inproc`, whose CDN serves it (default `work/download-3.7.0`); off by default with `--server HOST`. |
+| `--standin-assets DIR\|off` | Made-up **stand-in** files for `builtin_data/<rel>` assets that no real source has, after the APK and `--download-dir` (see "Stand-in assets"); `--server inproc` defaults it to `standin-assets` and its CDN serves them (`off` / `0` = none). |
 | `--device-clock "YYYY-MM-DD HH:MM:SS"\|host`, `--no-patch` | The phone's clock; no `service_stop_day` patch (platform370) |
-| `--guest-cpus N\|host` | The CPU count the game sees (default 8; env `SOA_GUEST_CPUS`); see "Memory diagnostics" |
-| `--natives route\|none`, `--no-native` | Native replacements (env `SOA_NATIVES`): `route` (default, `all` is a synonym) = every registered one; `none` = pure JIT |
+| `--guest-cpus N\|host` | The CPU count the game sees (default 8); see "Memory diagnostics" |
+| `--natives route\|none`, `--no-native` | Native replacements: `route` (default, `all` is a synonym) = every registered one; `none` = pure JIT |
 | `--http HOST:PORT`, `--lobby HOST:PORT`, `--map-host NAME[=ADDR]` | With `--server HOST`: soa-server's HTTP address (default `<host>:44380`), where lobby connections go, extra host names to resolve |
 | `--size WxH`, `--landscape` | Initial window size. Default: portrait 9:16 at 90% of the desktop height (the game is a portrait phone game). `--landscape`: 16:9 instead. |
 | `--render-size S` | The window surface: `desktop` (default: the window's aspect ratio, scaled up to fill the desktop), `window` (the initial window size) or `WxH`. The game itself renders at its own resolution (720 wide, a 0.75 back buffer: the `--hires` natives went with revision 2; `--hires` / `--legacy-res` are accepted and do nothing). |
 | `--fullscreen` | Start in desktop fullscreen |
-| `--font PATH` | The keyboard text box's font (env `SOA_FONT`; default: IPAex Gothic, Noto Sans CJK, Droid Sans Fallback or `fc-match :lang=ja`; `none`: no box, the window title only); `runtime/README.md`, "Text entry" |
-| `--headless` / `--windowed` | `--headless`: don't show the window (env `SOA_HEADLESS=1`). It is the runtime's hidden host window (`app::HostConfig::hidden`, as in `soa-emu --headless`): it still renders at the same `--size` / `--render-size`, so screenshots, `--do` and `--control` work and the frames are the same. `--selftest` is headless unless `--windowed` / `SOA_HEADLESS=0`. |
+| `--font PATH` | The font of the keyboard's text box and of the web view's pages, a Japanese one (default: IPAex Gothic, Noto Sans CJK, Droid Sans Fallback or `fc-match :lang=ja` for the box, `docs/webview.md` "Fonts" for the pages; `none`: no box, the window title only, and the pages search as by default); `runtime/README.md`, "Text entry". One flag for both (they were two environment variables): both want the same Japanese font, as `docs/webview.md` planned. |
+| `--headless` / `--windowed` | `--headless`: don't show the window. It is the runtime's hidden host window (`app::HostConfig::hidden`, as in `soa-emu --headless`): it still renders at the same `--size` / `--render-size`, so screenshots, `--do` and `--control` work and the frames are the same. `--selftest` is headless unless `--windowed`. |
 | `--shot S:PATH`, `--do S:CMD`, `--control FIFO` | Scripted screenshots and input (see `soa --help`). Drive a `--control` instance with `control/soactl.py FIFO tap:X:Y wait:MS wheel:X:Y:DY shot:PATH ...`; the port's own commands are in "Control commands". |
 | `--selftest [F]`, `--smoke`, `--list-native` | The self-tests (tests matching F), a quick library check, the native list |
-| `SOA_AUDIO_DUMP=DIR` (env) | Write the PCM each OpenSL ES player enqueues to `DIR/playerN.wav`, before mixing and resampling. With `SDL_AUDIODRIVER=disk` audio runs in real time without a sound device. |
+| `--fake-server DIR`, `--fake-server-schema FILE` | The FakeApiCaller route's canned responses (default `port/fakeapi/responses`; `--server inproc` only) and a dump of the response key schema at `CGame::OnInitialize` (`docs/api.md`) |
+| `--memstats [S]` | Memory snapshots in the log at every phase change, and every S seconds (see "Memory diagnostics") |
+| `--live-check FAMILY[,..][:KEY[=VALUE]..]` | Check a native family against the guest during the run (`src/native/README.md` "Live checks"; no family is registered now) |
 
 **Server options** (the same flags as `soa-server`; only with `--server inproc`)
 
@@ -190,42 +229,42 @@ Controls:
 | F11 | Fullscreen |
 | F12 | Screenshot, saved to the data directory |
 
-When the game asks for text (e.g. a name), type it: a text box at the bottom of the game image shows it (and so does the window title), with a counter against the field's maximum. Left / Right / Home / End move the cursor, Backspace / Delete delete, Ctrl+V pastes (cut to the field's maximum and, in a numeric field, to digits), an IME composes in the box (its candidate window opens next to it). Enter confirms and Esc cancels. The box needs a font with Japanese glyphs (README.md, "Setup"; `--font PATH` or `SOA_FONT` picks one, `--font none` turns the box off). A click or Esc skips a movie.
+When the game asks for text (e.g. a name), type it: a text box at the bottom of the game image shows it (and so does the window title), with a counter against the field's maximum. Left / Right / Home / End move the cursor, Backspace / Delete delete, Ctrl+V pastes (cut to the field's maximum and, in a numeric field, to digits), an IME composes in the box (its candidate window opens next to it). Enter confirms and Esc cancels. The box needs a font with Japanese glyphs (README.md, "Setup"; `--font PATH` picks one, `--font none` turns the box off). A click or Esc skips a movie.
 
 ## Run options
 
-Every option that changes what a run does lives in one typed struct, `RunOptions` (`port/src/core/options.h`): `repo_dir`, `ClientOptions client` and `ServerOptions server`. `main` fills it once, before the game starts: from the command line first, then from the `SOA_*` environment variables for anything the command line left unset. The environment variables are **inputs only**: the port never `setenv()`s game or run state (selftest `server/no-setenv-state`). Code reads them through `options()`. The window, the data dir, `--natives` and the control / test flags stay in `main`.
+Every option that changes what a run does lives in one typed struct, `RunOptions` (`port/src/core/options.h`): `repo_dir`, `ClientOptions client` and `ServerOptions server`. `main` fills it once, before the game starts, from the command line: settings are flags only (the `SOA_*` variables that were settings print one warning line naming their flag and are ignored; `docs/environment.md`), and the port never `setenv()`s game or run state (selftest `server/no-setenv-state`). Code reads them through `options()`. The window, the data dir, `--natives` and the control / test flags stay in `main`.
 
 **`ClientOptions`**
 
-| Command line | Environment input | Field |
-|---|---|---|
-| `--download-dir DIR` | `SOA_DOWNLOAD_DIR`, `SOA_DOWNLOAD_PREFER=1` | `download_dir`, `download_prefer` |
-| `--standin-assets DIR\|off` (inproc: `standin-assets`) | `SOA_STANDIN_ASSETS` (`0` / `off` = none) | `standin_dir`, `standin_off` |
-| (inproc: `port/fakeapi/responses`) | `SOA_FAKE_SERVER`, `SOA_FAKE_SERVER_SCHEMA` | `fake_server_dir`, `fake_server_schema` (the FakeApiCaller route) |
-| `--guest-cpus N\|host` (default 8) | `SOA_GUEST_CPUS` | `guest_cpus` (0 = host), `has_guest_cpus` |
-| | `SOA_MEMSTATS=1` (or `=S` seconds) | `memstats` |
+| Command line | Field |
+|---|---|
+| `--download-dir DIR`, `--download-prefer` | `download_dir`, `download_prefer` |
+| `--standin-assets DIR\|off` (inproc: `standin-assets`; `0` / `off` = none) | `standin_dir`, `standin_off` |
+| `--fake-server DIR` (inproc: `port/fakeapi/responses`), `--fake-server-schema FILE` | `fake_server_dir`, `fake_server_schema` (the FakeApiCaller route) |
+| `--guest-cpus N\|host` (default 8) | `guest_cpus` (0 = host), `has_guest_cpus` |
+| `--memstats [S]` | `memstats` (1 = at every phase change, S > 1 also every S seconds) |
 
 **`ServerOptions`**: one field per `server::ServerConfig` field (`server/include/soaserver/config.h`), copied 1:1 by `config_from_options` (`src/native/api/server_adapters.cpp`), plus the CDN's source from `ClientOptions` (`download_dir`, `standin_dir` / `standin_off`), the repo roots and the data dir.
 
-| Command line (= `soa-server`'s) | Environment input | Field |
-|---|---|---|
-| `--server inproc` | | `enabled` |
-| `--new-player` | `SOA_RESTORE_NEW_PLAYER=1` | `new_player` |
-| `--db FILE` (inproc: `DATA/server.sqlite3`) | `SOA_SERVER_DB` | `db` |
-| `--master FILE` | `SOA_SERVER_MASTER` | `master` |
-| `--gacha-pools FILE` | `SOA_GACHA_POOLS` | `gacha_pools` |
-| `--seed FILE` | `SOA_SERVER_SEED` | `seed` |
-| `--game-xml FILE` (inproc: `DATA/data/shared_prefs/Game.xml`) | `SOA_SERVER_GAME_XML` | `game_xml` |
-| `--seed-rng N` | `SOA_SERVER_SEED_RNG` | `has_seed_rng`, `seed_rng` |
-| `--start-coins N` (default 300000) | `SOA_START_COINS` | `has_start_coins`, `start_coins`: free coins (紋章石) of a new local player; an existing state keeps its balance |
-| `--clock "YYYY-MM-DD HH:MM:SS"` | `SOA_CLOCK` (same format, or Unix seconds) | `has_clock`, `clock`, `clock_offset` |
-| `--galaxy-pass` | `SOA_GALAXY_PASS=1` | `galaxy_pass`: the local player holds the Galaxy Pass (`pshop_galaxypass_001`), granted again whenever a player load finds it expired (`docs/server-rules.md` "Deep space") |
-| `--enable-events`, `--event-keywords "a,b,!c"` | `SOA_ENABLE_EVENTS=1`, `SOA_EVENT_KEYWORDS` | `enable_events`, `event_keywords` (empty = `kDefaultEventKeywords`; `docs/server-rules.md` "Enabling events by keyword") |
-| `--restore-tower` | `SOA_RESTORE_TOWER=1` | `restore_tower` |
-| `--campaign-master-db FILE`, `--campaign-seed LABEL` | `SOA_MASTER_DB`, `SOA_CAMPAIGN_SEED` | `campaign_master_db`, `campaign_seed` |
-| `--fail M:CODE[,..]`, `--surprise` (test hooks) | `SOA_SERVER_FAIL`, `SOA_SERVER_SURPRISE=1` | `fail`, `surprise` |
-| `--log-packets DIR` | `SOA_LOG_PACKETS` | `log_packets` (port-side: `packet_log::open`, not a ServerConfig field) |
+| Command line (= `soa-server`'s) | Field |
+|---|---|
+| `--server inproc` | `enabled` |
+| `--new-player` | `new_player` |
+| `--db FILE` (inproc: `DATA/server.sqlite3`) | `db` |
+| `--master FILE` | `master` |
+| `--gacha-pools FILE` | `gacha_pools` |
+| `--seed FILE` | `seed` |
+| `--game-xml FILE` (inproc: `DATA/data/shared_prefs/Game.xml`) | `game_xml` |
+| `--seed-rng N` | `has_seed_rng`, `seed_rng` |
+| `--start-coins N` (default 300000) | `has_start_coins`, `start_coins`: free coins (紋章石) of a new local player; an existing state keeps its balance |
+| `--clock "YYYY-MM-DD HH:MM:SS"` | `has_clock`, `clock`, `clock_offset` |
+| `--galaxy-pass` | `galaxy_pass`: the local player holds the Galaxy Pass (`pshop_galaxypass_001`), granted again whenever a player load finds it expired (`docs/server-rules.md` "Deep space") |
+| `--enable-events`, `--event-keywords "a,b,!c"` | `enable_events`, `event_keywords` (empty = `kDefaultEventKeywords`; `docs/server-rules.md` "Enabling events by keyword") |
+| `--restore-tower` | `restore_tower` |
+| `--campaign-master-db FILE`, `--campaign-seed LABEL` | `campaign_master_db`, `campaign_seed` |
+| `--fail M:CODE[,..]`, `--surprise` (test hooks) | `fail`, `surprise` |
+| `--log-packets DIR` | `log_packets` (port-side: `packet_log::open`, not a ServerConfig field) |
 
 The local server is the library in the top-level `server/` (`server/README.md`). It reads no run options itself: `main` calls `config_from_options` once the options are final.
 
@@ -235,8 +274,8 @@ The local server has two clocks (`docs/server-rules.md` "Time" and "Clock"): `cl
 
 Some content in the 3.7.0 master data refers to images that no longer exist anywhere: the online server had removed them before the last download, and the APKs never had them (e.g. the 2017 swimsuit pick-up gachas' banners). `standin-assets/` is an overlay of **made-up** replacements, laid out like the game's logical paths (`Image/etc2/<name>.aif` for `builtin_data/Image/etc2/<name>.aif`).
 
-- **Lookup order:** the APKs, then `--download-dir`, then the overlay (`AssetManager::find_download`, `runtime/src/android/ndk.cpp`). A file in the overlay is used only when no real source has that asset, so real assets always win, even with `SOA_DOWNLOAD_PREFER=1`. The same lookup serves the client's `AAssetManager_open` / directory listings and the local server's asset checks (`events::asset_exists`: event maps, Sphere 211, deep space, and `--enable-events`' banner gating), so content becomes visible exactly when its files are present. Nothing in the code names the content.
-- **Switch:** on with `--server inproc` (default dir `standin-assets`; the in-process CDN serves them too), `--standin-assets DIR|off`, `SOA_STANDIN_ASSETS`. Listed in `docs/client-changes.md` as a data override: these are not the original art.
+- **Lookup order:** the APKs, then `--download-dir`, then the overlay (`AssetManager::find_download`, `runtime/src/android/ndk.cpp`). A file in the overlay is used only when no real source has that asset, so real assets always win, even with `--download-prefer`. The same lookup serves the client's `AAssetManager_open` / directory listings and the local server's asset checks (`events::asset_exists`: event maps, Sphere 211, deep space, and `--enable-events`' banner gating), so content becomes visible exactly when its files are present. Nothing in the code names the content.
+- **Switch:** on with `--server inproc` (default dir `standin-assets`; the in-process CDN serves them too), `--standin-assets DIR|off`. Listed in `docs/client-changes.md` as a data override: these are not the original art.
 - **Contents today:** the Summer '17 pick-up gachas `gacha_pickup_role_0054` (常夏のミキ / 常夏のミュリア, `banner303`) and `gacha_pickup_role_0056` (常夏のレイミ / 常夏のソフィア, `banner310`): their list banners `banner_gacha_pickup_role_0054` / `_0056` (512×128) and pick-up panels `pickup_img_chara_1707_002`, `_003`, `_005`, `_006` (1024×512), all ETC2 RGBA8 like the real ones. With `--enable-events` both gachas are listed and can be drawn (their pools are in `data/gacha_pools.sqlite3`). Also the NieR:Automata rerun `gacha_pickup_role_0283` (２Ｂ / ９Ｓ / Ａ２, `banner_20200227_1002`): its list banner `20200227_chara_002` (512×128) and pick-up panels `pickup_img_chara_0015` / `_0016` / `_0017` (1024×512), opened by `--enable-events --event-keywords NieR` (`emulator/scripts/nier_demo.sh`).
 - **Regenerating / adding more:** `tools/make_standin_banners.py [gacha id_label ...]` (needs Pillow, numpy and zstandard, e.g. in a scratch venv: `python3 -m venv /tmp/v && /tmp/v/bin/pip install pillow numpy zstandard`, and the IPAex Gothic font). For each gacha it draws every referenced banner / pick-up image that no real source has: a summer beach gradient, the pick-up names from the gacha title (`master_text`), rarity and role type, the dates, the characters' universe-chip portraits (`Image/etc2/u_chip_<cp>.aif` from the download) and a "STAND-IN" tag. It encodes them to the game's format (ETC2 RGBA8 into the AIF container of a real image of the same kind, with fresh GUIDs and a distinct texture id: the image header's +0x10 u32, by which the client caches textures, so two files sharing it show the same picture; then SLZ codec 5 and ADLD XOR, the inverse of `tools/aif2png`) and checks each file by decoding it again. Output is deterministic.
 
@@ -260,7 +299,7 @@ They run from the port's `CPhase::Progress` wrapper (`src/native/common/port_deb
 
 **Which tests to run (tests/TIERS.md):** `tools/gate.sh T0` on every commit (the build and the fast checks, about a minute); `tools/gate.sh T1 --git-diff main` per change (T0, then what `tools/tests_for.py` picks for the changed paths: the replay corpora, the cheapest tests/diff shards and sessions that exercise the touched APIs; docs-only changes pick nothing); `tools/gate.sh T2` before reporting a batch (the full tests/diff, the broad session set, smoke, the emulator and viewer gates). `tools/tests_for.py PATH...` prints the selection and why. Every game client runs under the machine-wide slot pool (control/README.md "The slot pool"), so parallel runs queue instead of slowing each other down.
 
-Every test script drives `soa` through `--control` (`control/soactl.py`, `control/flowctl.py`), runs headless (`SOA_HEADLESS=1` unless set; `SOA_HEADLESS=0` shows the window), takes `<soa> <out-dir> <scratch-dir>` (the smoke test: `<soa> <out-dir> [baseline-dir]`) from any directory (the scripts cd to the repo root), and ends with a PASS or FAIL line and a matching exit status. They run the 3.7.0 client with the in-process local server (the default `--server inproc`) and check milestones in the log (phase changes, the server's request lines), in the server's state (`tools/server_state.py`, or SQL on `<scratch-dir>/data/server.sqlite3`) and in screenshots (`<out-dir>/shots`).
+Every test script drives `soa` through `--control` (`control/soactl.py`, `control/flowctl.py`), runs headless (`--headless`; `WATCH=1` in the script's environment passes `--windowed` and shows the window), fixes the server's RNG with `--seed-rng` (`SEED_RNG` overrides the script's seed), takes `<soa> <out-dir> <scratch-dir>` (the smoke test: `<soa> <out-dir> [baseline-dir]`) from any directory (the scripts cd to the repo root), and ends with a PASS or FAIL line and a matching exit status. They run the 3.7.0 client with the in-process local server (the default `--server inproc`) and check milestones in the log (phase changes, the server's request lines), in the server's state (`tools/server_state.py`, or SQL on `<scratch-dir>/data/server.sqlite3`) and in screenshots (`<out-dir>/shots`).
 
 **The phone:** each script starts from the shared pre-downloaded phone (`work/phone-3.7.0`, linked into the run's data dir by `port/scripts/phone370.sh`; "The shared pre-downloaded phone" above). `SOA_PHONE=DIR` picks another phone, `SOA_PHONE=none` an empty one (the client downloads its 3 GB from the in-process CDN first, 4 GB with the episode packs: 3-4 minutes more). The client checks its manifests (Bulk, Individual and the episode packs ep1-3), and downloads what the phone lacks, e.g. the master the server edited for the run's options or clock (a 35 MB dialog the scripts answer), The scripts install the client save through `phone370_client_save`, which clears its `BAS:DownloadEpisodeFlag` (7 = Episodes 1-3) to 0, so they never fetch the episode packs (the shared phone carries them since 2026-10-02; with flag 0 the client ignores them); `SOA_EPISODE_PACKS=1` keeps the 7 (the client then downloads EP1-3, ~705 MB, 408 bundles, at its first data phase on a phone without them: the same dialog; on the shared phone it finds them and downloads nothing).
 
@@ -283,13 +322,13 @@ port/scripts/battle_session.sh build/port/soa /tmp/battle /tmp/battle-tmp
 | `gacha_session.sh` | the footer's ガチャ (GetGachaInData), its tabs, a 10-draw (SaleGacha), the presentation and the result; the coins debited in the server state | 3 min |
 | `campaign_session.sh` | Episode 1 -> planet Mere -> 1-05 (mf01_001) through the mission map's UI, its battle, then the story mission it unlocks (mc01_030) played | 4 min |
 | `party_session.sh` | the character menu's party sets 1 and 2 edited (UpdatePartySet), the home character (UpdateHome), a battle whose MissionStart takes set 2 | 4 min |
-| `rental_session.sh` | a rental helper picked for 1-05 and fought as member 4; a second boot a day later (`SOA_CLOCK`): the rental bonus paid and its popup | 6 min |
+| `rental_session.sh` | a rental helper picked for 1-05 and fought as member 4; a second boot a day later (`--clock`): the rental bonus paid and its popup | 6 min |
 | `growth_session.sh` | status strengthening to the level cap, evolution to ★6, limit break, weapon custom (a gear set, taken off, purified); the materials are written into the state DB before boot | 5 min |
 | `deepspace_session.sh` (`--galaxy-pass`) | deep-space expeditions: started, returned (`clock:+1900`), collected, a quick return, two ships at once, the achievements' rewards | 5 min |
-| `sphere211_session.sh` | Sphere 211 from the home button (`SOA_SERVER_SEED_RNG=605`: the map its taps are for): five battles with a rental, 帰還, the boss, floor 1 cleared, the reroll, floor 2, 帰還 | 17 min |
+| `sphere211_session.sh` | Sphere 211 from the home button (`--seed-rng 605`: the map its taps are for): five battles with a rental, 帰還, the boss, floor 1 cleared, the reroll, floor 2, 帰還 | 17 min |
 | `sphere211_continue_session.sh` | a lost Sphere 211 battle continued (100 coins) and retired, the stamina healed, the achievements | 7 min |
 | `restore_favor_session.sh` | favor points set in the state DB between two boots; two taps on the home character (UpdateFavorByTap, level 1 -> 2), a battle's favor | 5 min |
-| `restore_missions.sh` (`SOA_CLOCK=2021-05-25`) | a surprise-enemy battle (`SOA_SERVER_SURPRISE=1`: its drops, the next mission unlocked), two steps of the step-up gacha gacha_pickup_role_1011 through the gacha screen, MissionStart refused at stamina 0 (the 10004 dialog) | 7 min |
+| `restore_missions.sh` (`--clock 2021-05-25`) | a surprise-enemy battle (`--surprise`: its drops, the next mission unlocked), two steps of the step-up gacha gacha_pickup_role_1011 through the gacha screen, MissionStart refused at stamina 0 (the 10004 dialog) | 7 min |
 | `episode_movie_session.sh [2\|3]` | Episode 2's (or 3's) pack downloaded through the client's own flow (episode list -> はい -> title -> TAP TO START -> the data phase: `version_latest_ep<n>` and its bundles; `SOA_EPISODE_PACKS=1`: the committed save's flag, at the login; on the shared phone, which carries the packs, the ask flow fetches the pack's bundles again and the save flow none), Episodeデータ管理, then the opening story through the world map: its movie plays to its end, EndMissionTalk | 7-8 min |
 | `debug_session.sh`, `debug_input_session.sh` | the framework's debug windows (`debugwin:`, `call:`): created, dragged, tapped, activated in turn, closed; checked by the windows' ids and screenshot regions | 2 min |
 | `profile_extra.sh` | a profiling flow over screens the others don't visit (the settings' six popups, help, titles, the character list end to end, a detail, shop, items, presents), each by its phase or request; `SOA_COVERAGE` / `SOA_PROFILE` into the out dir | 5 min |
@@ -300,11 +339,11 @@ port/scripts/battle_session.sh build/port/soa /tmp/battle /tmp/battle-tmp
 
 `port/scripts/coverage_diff.py RUN` ranks the families a run executes that the smoke and profiling sessions don't. `port/scripts/selftest_resilient.sh` runs the full `--selftest` past crashing tests.
 
-**Removed with the natives (P5a, 2026-10-01):** `apinotify_live.sh` (it compared the native CApiNotify handlers with the guest's through the `SOA_FAKE_SERVER_DRIVE` hook; both are gone), `growth_drive.sh` (the same drive hook; `growth_session.sh` reaches the growth APIs through the real screens, which the offline build lacked), `selftest_battle.sh`, `selftest_home.py` and `selftest_screens.py` (they ran the live selftests of the dumped natives, `battle-ui/`, `models/` and `screen/a2c-live`, on a live screen; and in `--selftest` no natives are installed, so there is no in-process server route, no phase log and no control commands: the client can't get past the title). `SOA_SELFTEST_START_FILE` (the selftests start once that file exists) stays in `main.cpp` for the rebuilt natives' live tests.
+**Removed with the natives (P5a, 2026-10-01):** `apinotify_live.sh` (it compared the native CApiNotify handlers with the guest's through a FakeApiCaller drive hook; both are gone), `growth_drive.sh` (the same drive hook; `growth_session.sh` reaches the growth APIs through the real screens, which the offline build lacked), `selftest_battle.sh`, `selftest_home.py` and `selftest_screens.py` (they ran the live selftests of the dumped natives, `battle-ui/`, `models/` and `screen/a2c-live`, on a live screen; and in `--selftest` no natives are installed, so there is no in-process server route, no phase log and no control commands: the client can't get past the title). `SOA_SELFTEST_START_FILE` (the selftests start once that file exists) stays in `main.cpp` for the rebuilt natives' live tests.
 
 ### The smoke baselines
 
-`smoke.py` compares each screen with `work/port-test/smoke-base/NN-name.png` (untracked; ImageMagick RMSE on a 182x324 copy, at most 0.08, and 0.12 for the home screens: the home character animates and the mascot says a random line). The run is otherwise deterministic: the shared phone, the committed client save, the local server seeded from `data/saves/seed/Game.xml` with `SOA_SERVER_SEED_RNG=1` and its clock at `SMOKE_CLOCK` (default 2026-09-30 12:00:00, so the stamina, the login bonus day and the open events are the same every run). The way from the title to home is driven by log lines (the notice board and the LOGIN BONUS popup between them aren't compared); the screens from home on are. Without a baseline argument the run's screenshots become a new baseline.
+`smoke.py` compares each screen with `work/port-test/smoke-base/NN-name.png` (untracked; ImageMagick RMSE on a 182x324 copy, at most 0.08, and 0.12 for the home screens: the home character animates and the mascot says a random line). The run is otherwise deterministic: the shared phone, the committed client save, the local server seeded from `data/saves/seed/Game.xml` with `--seed-rng 1` and its clock at `SMOKE_CLOCK` (default 2026-09-30 12:00:00, so the stamina, the login bonus day and the open events are the same every run). The way from the title to home is driven by log lines (the notice board and the LOGIN BONUS popup between them aren't compared); the screens from home on are. Without a baseline argument the run's screenshots become a new baseline.
 
 - **The 3.7.0 baselines** (2026-10-01, P5a) were made that way from `build/port/soa` (the 3.7.0 client, `--natives route`) and checked with `port/scripts/smoke_vs_emu.sh OUT`, which drives `soa-emu` (the same client with no natives, against `soa-server` with the same seed, RNG seed and clock) through the same screens with the same taps. Every screen matches. soa-emu's RMSE against the baseline (two runs): 01-title 0.025 / 0.019, 02-home 0.109 / 0.116, 03-charmenu 0, 04-charlist 0, 05-chardetail 0.011, 06-closed 0, 07-home 0.097 / 0.119, 08-other 0.039 / 0.032 (the title's TAP TO START blinks; the home character's pose and the mascot's line differ). Four smoke runs against them: 01-title 0.014-0.018, 02-home 0.084-0.111, 03-charmenu 0-0.021, 04-charlist 0, 05-chardetail 0.010-0.012, 06-closed 0, 07-home 0.030-0.090, 08-other 0.031.
 - **The offline port's baselines** (its title -> character list -> detail -> other flow) are kept in `work/port-test/smoke-base-380/` (380-ok: the pre-rebase baselines' directory).

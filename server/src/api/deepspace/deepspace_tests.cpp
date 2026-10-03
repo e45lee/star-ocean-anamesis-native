@@ -98,7 +98,7 @@ NATIVE_TEST("deepspace/expedition") {
         t.expect_eq(code, 0u, "collected after the quick return");
         t.expect_eq((u32)c.st.one("select count(*) from ds_ship", {}), 0u, "ship collected");
         t.expect_eq(fol(c), fol1 + (u32)c.m.one("select fol from master_deep_space_mission where id = ?", {m2}), "rewards at MissionEnd");
-        t.expect_eq(c.st.one("select cast(value as integer) from meta where key = 'ds_time_saving_count'", {}), (int64_t)1, "use counted");
+        t.expect_eq(c.st.one("select time_saving_count from player", {}), (int64_t)1, "use counted");
         // (a) an area needing others opens once their exploration rates reach required_exp_rateN
         u32 locked = 0, r1 = 0, r2 = 0;
         double p1 = 0, p2 = 0;

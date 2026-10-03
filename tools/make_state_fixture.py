@@ -23,6 +23,8 @@ The dirt (PLAN-schema 4.2): a roster.weapon_uid naming a missing item; a party_m
 naming a sold item (deleted from items); an orphan roster_ext row; a gear_items row on that sold
 weapon; favor.event_drop_at both '' and a time string; meta view_status = 18446744073709551615;
 a titles.got_at = 0; player.party_id = 1 with no party_set row; wire_device with player_id 0.
+S3's key cases (meta title '0', a dangling support_uid, the deep-space keys, the counters popup
+flag, sphere_meta's other keys) are planted by the test server/schema-migrate-v3 itself.
 """
 import argparse
 import os

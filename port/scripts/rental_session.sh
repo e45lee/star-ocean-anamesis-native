@@ -8,7 +8,7 @@
 # The phone: the shared pre-downloaded one, linked (port/scripts/phone370.sh); SOA_PHONE=DIR another,
 # SOA_PHONE=none an empty one (the client then downloads its 3 GB from the in-process CDN after Login).
 # Usage: port/scripts/rental_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
-# Runs as a returning player (SOA_CAMPAIGN_SEED, default mf01_001; see campaign_session.sh).
+# Runs as a returning player (--campaign-seed CAMPAIGN_SEED, default mf01_001; see campaign_session.sh).
 # Then (RENTAL_DAY2=1, the default) the rental bonus: a second boot on the same data a day later
 # (the first at --clock RENTAL_CLOCK, default 2026-09-30 12:00:00; the second 24 h on) pays the
 # day's rental into the present box, and the home shows the CRentalBonus popup (レンタルボーナス
@@ -18,7 +18,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos"
 mkdir -p "$OUT/shots"
@@ -27,9 +27,9 @@ mkdir -p "$OUT/shots"
 . port/scripts/phone370.sh
 phone370_prepare "$TMP/data"
 phone370_client_save "$TMP/data/data/shared_prefs"
-export SOA_CAMPAIGN_SEED=${SOA_CAMPAIGN_SEED:-mf01_001}
+CAMPAIGN_SEED=${CAMPAIGN_SEED:-mf01_001}
 CLOCK1=${RENTAL_CLOCK:-2026-09-30 12:00:00}
-SOA_CLOCK="$CLOCK1" timeout -k 10 2400 "$SOA" --data "$TMP/data" --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
+timeout -k 10 2400 "$SOA" $HEADLESS --campaign-seed "$CAMPAIGN_SEED" --clock "$CLOCK1" --data "$TMP/data" --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null || true' EXIT
 while [ ! -p "$TMP/fifo" ]; do sleep 1; done
@@ -75,7 +75,7 @@ echo "PASS: rental helper listed, picked, fought as member 4"
 CLOCK2=$(date -d "$CLOCK1 24 hours" '+%Y-%m-%d %H:%M:%S')
 L=$OUT/log-day2.txt
 rm -f "$TMP/fifo" "$L" "$L.pos"
-SOA_CLOCK="$CLOCK2" SOA_TRACE="_ZN12CRentalBonus5SetupEv" timeout -k 10 2400 "$SOA" --data "$TMP/data" \
+SOA_TRACE="_ZN12CRentalBonus5SetupEv" timeout -k 10 2400 "$SOA" $HEADLESS --campaign-seed "$CAMPAIGN_SEED" --clock "$CLOCK2" --data "$TMP/data" \
   --size 729x1296 --control "$TMP/fifo" > "$L" 2>&1 &
 pid=$!
 while [ ! -p "$TMP/fifo" ]; do sleep 1; done

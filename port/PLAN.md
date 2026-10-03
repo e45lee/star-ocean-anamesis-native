@@ -162,6 +162,9 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 
 **Proof:** a per-API check that the override's `Request` equals what `soa-server` decodes from the 3.7.0 client's packet.
 
+## Future work (not queued; needs the user's review)
+- **Multiplayer state: the schema for several players** ([`server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md), steps M1…): a plan only, written for review (agent mp-schema, 2026-10-03). Not a task until the user has reviewed it and queued it; if queued, it starts only after 4b's S0–S12 have landed.
+
 ## Working rules
 - **Branches:** commits go on `main` (since 2026-10-03; until then on `linux-port`, which was squash-merged into main as one commit on 2026-10-03); each agent gets a worktree on `port/<name>` off main, merged back into main.
 - **Gates:**

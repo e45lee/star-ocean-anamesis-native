@@ -3,7 +3,7 @@
 //
 // This game's pages are Japanese, as on the phone, where Android's WebView draws them with the
 // system's Japanese font (Noto Sans CJK JP): so the regular face is a Japanese font found on the
-// host (SOA_WEBVIEW_FONT, then IPAex Gothic, Noto Sans CJK, the Debian "fonts-japanese-gothic"
+// host (set_font: --font, then IPAex Gothic, Noto Sans CJK, the Debian "fonts-japanese-gothic"
 // alternative, IPA Gothic, Droid Sans Fallback), with a Latin family (DejaVu, Liberation, ...) as
 // a fallback for glyphs it lacks (Droid Sans Fallback has no Latin). Bold: Noto Sans CJK Bold if
 // installed, else drawn twice (synthetic bold). The text box of the game's keyboard
@@ -58,6 +58,12 @@ FontFace* load_face(const std::string& path) {
 
 }  // namespace
 
+namespace {
+std::string g_font_request;  // set_font
+}
+
+void set_font(const std::string& path) { g_font_request = path == "none" ? "" : path; }
+
 FontLib& fonts() {
     static FontLib lib;
     static std::once_flag once;
@@ -71,7 +77,7 @@ FontLib& fonts() {
                                           u + "liberation/LiberationSans-Regular.ttf", u + "noto/NotoSans-Regular.ttf", u + "freefont/FreeSans.ttf"};
         std::vector<std::string> mono = {u + "dejavu/DejaVuSansMono.ttf", u + "liberation2/LiberationMono-Regular.ttf",
                                          u + "liberation/LiberationMono-Regular.ttf", u + "noto/NotoSansMono-Regular.ttf"};
-        if (const char* e = getenv("SOA_WEBVIEW_FONT"); e && *e) ja.insert(ja.begin(), e);
+        if (!g_font_request.empty()) ja.insert(ja.begin(), g_font_request);
         for (auto& p : ja)
             if ((lib.faces[kRegular] = load_face(p))) break;
         for (auto& p : ja_bold)
@@ -91,7 +97,7 @@ FontLib& fonts() {
             WV_LOGI("fonts: %s (bold %s), %zu fallback(s)", lib.faces[kRegular]->path.c_str(),
                     lib.faces[kBold] == lib.faces[kRegular] ? "synthetic" : lib.faces[kBold]->path.c_str(), lib.fallbacks.size());
         else
-            WV_LOGW("no font found (install fonts-ipaexfont or fonts-noto-cjk, or set SOA_WEBVIEW_FONT=/path/to/font.ttf): pages draw no text");
+            WV_LOGW("no font found (install fonts-ipaexfont or fonts-noto-cjk, or give --font /path/to/font.ttf): pages draw no text");
     });
     return lib;
 }

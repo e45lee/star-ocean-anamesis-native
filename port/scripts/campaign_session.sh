@@ -8,12 +8,13 @@
 #   -> result -> back on the mission map: 1-05 CLEAR, the next story mission (mc01_030) unlocked
 #   -> its story scene (MissionTalk) -> the mission after it (ms01_002) unlocked.
 #
-# The player is a returning one: SOA_CAMPAIGN_SEED=mf01_001 counts every mission on the unlock
+# The player is a returning one: --campaign-seed mf01_001 counts every mission on the unlock
 # chain before 1-05 as cleared (server/campaign.cpp), and the one-time menu tutorials as seen.
 # Every step waits for its screen or log line, then screenshots (<out>/shots).
 #
 # Usage: port/scripts/campaign_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
-# Env: SOA_CAMPAIGN_SEED (default mf01_001); SOA_MASTER_DB (default data/basmaster-3.7.0.sqlite3).
+# Env: CAMPAIGN_SEED (soa --campaign-seed; default mf01_001); CAMPAIGN_MASTER_DB (soa
+# --campaign-master-db; default the server's, data/basmaster-3.7.0.sqlite3).
 # The phone: the shared pre-downloaded one, linked (port/scripts/phone370.sh); SOA_PHONE=DIR another,
 # SOA_PHONE=none an empty one (the client then downloads its 3 GB from the in-process CDN after Login).
 # The in-process server takes its CDN from work/download-3.7.0.
@@ -22,7 +23,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos"
 mkdir -p "$OUT/shots"
@@ -31,9 +32,9 @@ mkdir -p "$OUT/shots"
 . port/scripts/phone370.sh
 phone370_prepare "$TMP/data"
 phone370_client_save "$TMP/data/data/shared_prefs"
-export SOA_CAMPAIGN_SEED=${SOA_CAMPAIGN_SEED:-mf01_001}
+CAMPAIGN_SEED=${CAMPAIGN_SEED:-mf01_001}
 # The in-process local server (server core + campaign) on the FakeApiCaller route.
-timeout -k 10 2400 "$SOA" --data "$TMP/data" --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
+timeout -k 10 2400 "$SOA" $HEADLESS --campaign-seed "$CAMPAIGN_SEED" ${CAMPAIGN_MASTER_DB:+--campaign-master-db "$CAMPAIGN_MASTER_DB"} --data "$TMP/data" --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null || true' EXIT
 while [ ! -p "$TMP/fifo" ]; do sleep 1; done
@@ -99,6 +100,6 @@ wait $pid || true
 trap - EXIT
 grep -E 'restore:|campaign:' "$L" | sed 's/^/  /'
 ok=1
-grep -q "campaign: cleared ${SOA_CAMPAIGN_SEED}" "$L" || { echo "FAIL: ${SOA_CAMPAIGN_SEED} wasn't cleared"; ok=0; }
+grep -q "campaign: cleared ${CAMPAIGN_SEED}" "$L" || { echo "FAIL: ${CAMPAIGN_SEED} wasn't cleared"; ok=0; }
 grep -q 'campaign: story scene played: mc01_030' "$L" || { echo "FAIL: the story scene mc01_030 wasn't recorded"; ok=0; }
-[ $ok = 1 ] && echo "PASS: episode 1 -> ${SOA_CAMPAIGN_SEED} cleared -> mc01_030 played" || exit 1
+[ $ok = 1 ] && echo "PASS: episode 1 -> ${CAMPAIGN_SEED} cleared -> mc01_030 played" || exit 1

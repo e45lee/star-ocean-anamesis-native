@@ -21,7 +21,7 @@ int64_t parse_time(const std::string& s);
 // The same, strict: the whole "%Y-%m-%d %H:%M:%S" form (strptime) or 0, "" included (api/favor/).
 int64_t parse_time_strict(const std::string& s);
 // parse_time, or else a plain positive number of seconds since the epoch; 0 when neither
-// (--clock / SOA_CLOCK: config.h parse_clock).
+// (--clock: config.h parse_clock).
 int64_t parse_time_or_epoch(const std::string& s);
 // A day "YYYY-MM-DD" (all three fields, else -1) and a time "HH:MM:SS" (missing fields 0) as one
 // local time (the master's *_day + *_time column pairs, e.g. master_campaign).

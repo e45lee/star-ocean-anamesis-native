@@ -34,7 +34,7 @@ void query(sqlite3* db, const char* sql, F&& f) {
 // (d) a file below this size isn't a master DB (an un-fetched git-lfs pointer, say).
 constexpr long kMinMasterBytes = 1000000;
 
-// The master DB the server reads: SOA_MASTER_DB, else the decrypted 3.7.0 DB, else the offline
+// The master DB the server reads: --campaign-master-db, else the decrypted 3.7.0 DB, else the offline
 // build's (the campaign tables are identical in both; a last resort when the 3.7.0 DB is missing).
 sqlite3* open_master() {
     std::vector<std::string> paths;
@@ -54,7 +54,7 @@ sqlite3* open_master() {
         }
         if (db) sqlite3_close(db);
     }
-    LOGW("server", "campaign: no master DB found (set SOA_MASTER_DB)");
+    LOGW("server", "campaign: no master DB found (give --campaign-master-db)");
     return nullptr;
 }
 

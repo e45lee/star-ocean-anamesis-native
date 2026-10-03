@@ -151,6 +151,9 @@ srv_args=(--seed-rng 1)
 if [ $mode = newplayer ]; then srv_args+=(--new-player); else srv_args+=(--campaign-seed mf01_001); fi
 # shellcheck disable=SC2206
 [ -n "${SERVER_ARGS:-}" ] && srv_args+=($SERVER_ARGS)
+# The machine-wide game slot pool (control/soaslot.sh): one slot for this script's client, held
+# until the script exits; queued here when the machine is full.
+SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take "emulator_session.sh"
 timeout -k 10 3000 "$srv" --listen 127.0.0.1:$game_port --http 127.0.0.1:$http_port --data "$out/server" --master "$master" \
     --download-dir "$download" --log-packets "$out/packets" "${srv_args[@]}" > "$slog" 2>&1 &
 spid=$!

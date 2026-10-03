@@ -36,6 +36,10 @@ differences (unified diff of the normalized sequences) and exits 1.
                          same arguments, nothing in between) counts once: the title sometimes
                          sends it twice within a second (seen on soa-emu in 1 run of 2;
                          tests/diff/README.md); the first exchange is kept
+    --float-time-sync    GetServerTime exchanges are compared by count, not by position: the client
+                         asks for the time when a timer and a screen change meet, so under load a
+                         slower client sends it a request earlier or later (seen in the tutorial's
+                         mission menu on soa-emu at 20 clients, 2026-10-03); it changes no state
 """
 import argparse
 import collections
@@ -121,6 +125,21 @@ def collapse_title_repeat(seq):
     return out
 
 
+def float_time_sync(seq):
+    """(the sequence without GetServerTime requests and their replies, how many there were)"""
+    out, n, skip = [], 0, False
+    for x in seq:
+        if x.startswith("> GetServerTime "):
+            n, skip = n + 1, True
+            continue
+        if skip and x.startswith("< GetServerTimeRes"):
+            skip = False
+            continue
+        skip = False
+        out.append(x)
+    return out, n
+
+
 def mask_battle_log(seq):
     return [re.sub(r"\bbattle_log\[\d+\]", "battle_log[<n>]", x) for x in seq]
 
@@ -144,6 +163,7 @@ def main():
     ap.add_argument("--transport-neutral", action="store_true", help="compare only what the in-process route and the wire both carry")
     ap.add_argument("--mask-battle-log", action="store_true", help="mask the battle log's length")
     ap.add_argument("--collapse-title-repeat", action="store_true", help="a repeated NoLoginStart counts once")
+    ap.add_argument("--float-time-sync", action="store_true", help="GetServerTime compared by count, not position")
     o = ap.parse_args()
     la, lb = o.labels
     pa, pb = packets(o.a), packets(o.b)
@@ -154,6 +174,13 @@ def main():
     if o.collapse_title_repeat:
         pa, pb = collapse_title_repeat(pa), collapse_title_repeat(pb)
     ok = True
+    if o.float_time_sync:
+        (pa, ta), (pb, tb) = float_time_sync(pa), float_time_sync(pb)
+        if ta != tb:
+            ok = False
+            print("FAIL  GetServerTime count differs (%s: %d, %s: %d)" % (la, ta, lb, tb))
+        else:
+            print("ok    %d GetServerTime exchanges on each side (compared by count)" % ta)
     if o.v:
         for x in pa:
             print("%s  %s" % (la, x))

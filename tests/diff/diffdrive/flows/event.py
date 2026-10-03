@@ -10,6 +10,7 @@ from ..targets import Abort
 from . import launch
 
 NAME = "event"
+EST = 330
 # summer_demo.sh's calendar (the event list's rows depend on it), a few seconds past the hour.
 CLOCK = "2026-10-01 12:00:05"
 

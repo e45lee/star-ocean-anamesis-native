@@ -40,11 +40,16 @@
 #                             after a Login: the data check (SOA_PHONE) or the download with its
 #                             dialogs, until the log matches UNTIL (default home, 'port_debug:
 #                             phase 4 '; a new player: 'port_debug: phase 3 ', the opening scene).
+#
+# phone370_prepare also takes the script's game slot (control/soaslot.sh: the machine-wide pool;
+# held until the script exits, so parallel sessions queue instead of overloading the machine).
 # Needs control/soactl.py and control/flowctl.py (run from the repo root).
 . scripts/shared-phone.sh
 shared_phone_resolve "$PWD"
+. control/soaslot.sh
 
 phone370_prepare() {
+    soaslot_take "${0##*/}"
     rm -rf "${1:?}"
     if [ -n "${SOA_PHONE:-}" ]; then
         shared_phone_link "$SOA_PHONE" "$1" || { echo "FAIL: preparing the phone $1 from SOA_PHONE=$SOA_PHONE"; exit 1; }

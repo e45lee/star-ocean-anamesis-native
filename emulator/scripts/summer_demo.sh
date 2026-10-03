@@ -139,6 +139,9 @@ trap 'echo "interrupted"; exit 130' INT TERM
 echo "summer_demo: OUT $out; clock ${clock}; soa-emu $(readlink -f "$emu"); soa-server $(readlink -f "$srv")"
 clock_srv=() clock_emu=()
 if [ "$clock" != host ]; then clock_srv=(--clock "$clock"); clock_emu=(--device-clock "$clock"); fi
+# The machine-wide game slot pool (control/soaslot.sh): one slot for this script's client, held
+# until the script exits; queued here when the machine is full.
+SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take "summer_demo.sh"
 timeout -k 10 3600 "$srv" --listen 127.0.0.1:$game_port --http 127.0.0.1:$http_port --data "$scratch/server" \
     --master "$master" --seed "$seed" --download-dir "$download" --log-packets "$scratch/packets" \
     --seed-rng 1 --enable-events "${clock_srv[@]}" > "$slog" 2>&1 &

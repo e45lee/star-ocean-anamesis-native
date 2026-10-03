@@ -112,7 +112,7 @@ void put_end_result(Ctx& ctx, const DiveRow& dive, Value& data) {
 // keyed by the id as a string.
 void put_state(Ctx& ctx, const Season& season, Value& data) {
     DiveRow dive = read_dive(ctx);
-    u32 player_id = ctx.player_id();
+    u32 player_id = ctx.player_id().v;  // the wire's number
     data["Sphere211CurrentId"] = season.id;
     data["Sphere211NeedsReset"] = 0u;  // (d)
     Value floor_info = Value::object();

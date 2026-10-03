@@ -93,7 +93,7 @@ const GrantFn* find_grant(u32 content_type) {
     auto it = grants().find(content_type);
     return it == grants().end() ? nullptr : &it->second;
 }
-void item_extra(Sql& st, Sql& m, u64 uid, Value& item) {
+void item_extra(Sql& st, Sql& m, ItemUid uid, Value& item) {
     modules::register_all();
     for (auto& f : item_extras()) f(st, m, uid, item);
 }

@@ -41,6 +41,10 @@ namespace soa::server {
 std::string meta(ext::Ctx& ctx, const char* key, const char* dflt);
 // The meta counter `key`'s value, counted up (uids of new characters and items).
 u64 next_uid(ext::Ctx& ctx, const char* key);
+// next_uid's two counters as typed ids: a new character's uid (next_char_uid), a new unique item's
+// (next_item_uid).
+CharacterUid next_character_uid(ext::Ctx& ctx);
+ItemUid next_item_uid(ext::Ctx& ctx);
 bool has_player(ext::Ctx& ctx);
 
 }  // namespace soa::server

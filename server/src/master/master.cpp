@@ -52,14 +52,14 @@ std::vector<u32> player_next(sqlite3* m) {
     return v;
 }
 
-u32 role_level_cap(sqlite3* m, u32 role) {
+u32 role_level_cap(sqlite3* m, RoleId role) {
     Sql db{m};
     u32 cap = 40;
     db.q("select l.level_max from master_role r join master_role_level_max l on l.rarity = r.rarity where r.id = ?", {role},
          [&](const Row& r) { cap = (u32)r.i("level_max"); });  // NULL reads as 0 (Row::i)
     return cap;
 }
-std::vector<u32> role_next(sqlite3* m, u32 role) {
+std::vector<u32> role_next(sqlite3* m, RoleId role) {
     Sql db{m};
     double rate = 1.0;
     db.q("select b.exp_rate from master_role r join master_role_boosted b on b.rank = r.rank and b.rarity = r.rarity where r.id = ?", {role},

@@ -75,7 +75,7 @@ NATIVE_TEST("deepspace/expedition") {
         t.expect_eq(fol(c), fol0 + (u32)c.m.one("select fol from master_deep_space_mission where id = ?", {mission}), "FOL");
         u32 lv1 = (u32)c.st.one("select level from player", {}), exp1 = (u32)c.st.one("select exp from player", {});
         if (lv1 == lv0 && exp1 <= exp0 && lv0 < c.player_level_max()) t.fail("no player EXP (%u/%u -> %u/%u)", lv0, exp0, lv1, exp1);
-        u32 role = (u32)c.st.one("select role_id from roster where uid = ?", {party[0]});
+        RoleId role = c.st.one_id<RoleId>("select role_id from roster where uid = ?", {party[0]});
         auto want = rules::add_exp(l_before, e_before, cexp, c.role_next(role), c.role_level_cap(role));
         t.expect_eq((u32)c.st.one("select exp from roster where uid = ?", {party[0]}), want.second, "character EXP");
         t.expect_eq(area_exp(c, area), (u32)c.m.one("select exp from master_deep_space_mission where id = ?", {mission}), "area exp");

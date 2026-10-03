@@ -6,6 +6,7 @@
 #include <tuple>
 #include <vector>
 
+#include "api/player/roster.h"  // owns_character
 #include "api/social/rental.h"
 #include "api/sphere211/dive.h"
 #include "core/log.h"
@@ -34,7 +35,7 @@ bool floor_rentals_used_up(Ctx& ctx) { return ctx.st.one("select count(*) from s
 
 void put_rental(Ctx& ctx, u32 floor, Value& data) {
     Value lenders = rental::follow_map(ctx);
-    u32 player_id = ctx.player_id();
+    u32 player_id = ctx.player_id().v;  // the wire's number
     bool full = floor_rentals_used_up(ctx);
     Value info_map = Value::object(), follow_ids = Value::array(), floors = Value::array();
     int64_t t = ctx.now();
@@ -72,7 +73,8 @@ bool rental_available(Ctx& ctx, u32 lender, u64 rental_id) {
     bool listed = rental::follow_map(ctx).find(std::to_string(lender)) != nullptr;
     bool used = ctx.st.one("select count(*) from sphere_rental where follow_player_id = ? and used = 1", {lender}) > 0;
     bool full = floor_rentals_used_up(ctx);
-    return listed && !used && !full && ctx.st.one("select count(*) from roster where uid = ?", {rental::source_uid(rental_id)});
+    std::optional<CharacterUid> source = rental::source_uid(rental_id);
+    return listed && !used && !full && source && owns_character(ctx, *source);
 }
 
 // The Sphere 211 rental bonus (a: master_sphere211_rental_bonus, one row per season: rental_count

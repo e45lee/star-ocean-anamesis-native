@@ -161,7 +161,7 @@ NATIVE_TEST("events/ranking") {
         else {
             t.expect_eq(num(rows->arr[0].find("score")), (u64)7000, "best score kept (higher is better)");
             t.expect_eq(num(rows->arr[0].find("rank_ui")), (u64)1, "rank 1");
-            t.expect_eq(num(rows->arr[0].find("party_player_id1")), (u64)c.player_id(), "own row");
+            t.expect_eq(num(rows->arr[0].find("party_player_id1")), (u64)c.player_id().v, "own row");
         }
         // a win outside the group's window scores nothing
         int64_t late = c.parse_time(cl) + 60;
@@ -405,7 +405,7 @@ NATIVE_TEST("events/favor-drop") {
 // (CParameterUtility::CreateSearchFriendData -> tCharaData::InitializeFollow).
 NATIVE_TEST("events/player-detail") {
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
-        u32 pid = c.player_id();
+        u32 pid = c.player_id().v;
         Value d = call(c, "GetPlayerDetailInfo", {pid});
         const Value* sr = d.find("SearchResult");
         if (!sr || sr->type != Value::Map || sr->map.size() != 1) {

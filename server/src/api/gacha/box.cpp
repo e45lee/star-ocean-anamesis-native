@@ -55,7 +55,7 @@ std::vector<BoxSlot> box_slots(ext::Ctx& ctx, u32 gacha) {
 // master_gacha_id is the box, with order_id, content_type, box_num and num ("×%u") (b).
 Value box_gacha_info(ext::Ctx& ctx, u32 gacha, Value* into) {
     Value info = Value::object();
-    u32 player = player_id(ctx);
+    const PlayerId player = player_id(ctx);
     std::map<u32, u32> order, num;
     ctx.m.q("select id, order_id, num from master_box_gacha where master_gacha_id = ?", {gacha}, [&](const Row& slot_row) {
         order[(u32)slot_row.i("id")] = (u32)slot_row.i("order_id");
@@ -63,7 +63,7 @@ Value box_gacha_info(ext::Ctx& ctx, u32 gacha, Value* into) {
     });
     for (auto& slot : box_slots(ctx, gacha)) {
         Value entry = Value::object();
-        entry["player_id"] = player;
+        entry["player_id"] = player.v;
         entry["master_gacha_id"] = gacha;
         entry["master_box_gacha_id"] = slot.id;
         entry["max_box_count"] = slot.copies;
@@ -145,7 +145,7 @@ std::vector<u32> listed_series_heads(ext::Ctx& ctx, u32 only, int64_t t) {
 // only: just the series of that box (the draw's update), whether open or not.
 Value box_gacha_list_info(ext::Ctx& ctx, u32 only, Value* slots) {
     Value info = Value::object();
-    u32 player = player_id(ctx);
+    const PlayerId player = player_id(ctx);
     int64_t t = clock_now();
     for (u32 head : listed_series_heads(ctx, only, t)) {
         auto series = box_series(ctx, head);
@@ -155,7 +155,7 @@ Value box_gacha_list_info(ext::Ctx& ctx, u32 only, Value* slots) {
         for (size_t k = 0; k <= current; k++) {
             u32 id = series[k];
             Value entry = Value::object();
-            entry["player_id"] = player;
+            entry["player_id"] = player.v;
             entry["master_gacha_id"] = id;
             entry["box_num"] = box_left(ctx, id);  // (b) the copies left (the detail's ボックス残数)
             entry["total_count"] = (u32)ctx.st.one("select total_count from box_state where gacha_id = ?", {id});

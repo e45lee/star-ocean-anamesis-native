@@ -207,6 +207,7 @@ bool pay_draw(ext::Ctx& ctx, const Request& req, const Row& gacha_row, GachaDraw
 }
 
 // The gacha_history row of one unit: the coins of the whole draw on its first unit (k == 0).
+// (gacha_history.uid is an item's or a character's uid, a plain number until PLAN-schema S10)
 void record_history(ext::Ctx& ctx, const GachaDraw& draw, u32 role, u64 uid, int rank, bool duplicate, u32 k) {
     ctx.st.q("insert into gacha_history (gacha_id, at, role_id, uid, rank, duplicate, cost_free, cost_pay) values (?,?,?,?,?,?,?,?)",
              {draw.id, clock_now(), role, uid, std::string(1, kRankLetters[rank]), duplicate ? 1 : 0, k == 0 ? draw.use_free : 0u,
@@ -215,12 +216,12 @@ void record_history(ext::Ctx& ctx, const GachaDraw& draw, u32 role, u64 uid, int
 
 // 4a. A drawn weapon: a new unique item (AddItem) and the history row.
 void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, int rank, u32 k) {
-    u64 item_uid = next_uid(ctx, "next_item_uid");
+    const ItemUid item_uid = next_item_uid(ctx);
     u32 item_type = (u32)ctx.m.one("select type from master_item where id = ?", {unit.content_id});
     ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {item_uid, unit.content_id, item_type, clock_now()});
     Value item = Value::object();  // CItemInfo
-    item["id"] = item_uid;
-    item["player_id"] = player_id(ctx);
+    item["id"] = item_uid.v;
+    item["player_id"] = player_id(ctx).v;
     item["master_item_id"] = unit.content_id;
     item["item_type"] = item_type;
     item["boosted_point"] = 0u;
@@ -228,22 +229,22 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     draw.new_items.push(item);
     Value result = Value::object();  // the GachaItems entry
     result["master_item_id"] = unit.content_id;
-    result["player_item_id"] = item_uid;
+    result["player_item_id"] = item_uid.v;
     result["master_role_id"] = 0u;
     result["player_character_id"] = 0u;
     result["duplication"] = 0u;
     result["is_mutation"] = false;
     draw.items.push(result);
-    record_history(ctx, draw, 0, item_uid, rank, false, k);
+    record_history(ctx, draw, 0, item_uid.v, rank, false, k);
 }
 
 // (b) LimitBreakCharacter: map uid -> CLimitBreakInfo; the result screen assigns the steps to the
 // duplicates in draw order, AddLimitBreak syncs it.
 void add_limit_break(GachaDraw& draw, const Added& added) {
-    Value& limit_break = draw.limit_breaks[std::to_string(added.uid)];
+    Value& limit_break = draw.limit_breaks[std::to_string(added.uid.v)];
     if (limit_break.type != Value::Map) {
         limit_break = Value::object();
-        limit_break["id"] = added.uid;
+        limit_break["id"] = added.uid.v;
         limit_break["master_role_id"] = added.owned_role;
         limit_break["before_master_role_id"] = added.owned_role;
         limit_break["after_master_role_id"] = added.owned_role;
@@ -258,7 +259,7 @@ void add_limit_break(GachaDraw& draw, const Added& added) {
 // master_item_id, num}} (b: the element is a CLimitBreakItemInfo {id, master_role_id,
 // master_item_id, num}; CLimitOverCharacter::CountCharaChip splits num over the duplicates of
 // that character) and added to the stack items.
-void add_chips(ext::Ctx& ctx, GachaDraw& draw, u32 role, u64 uid) {
+void add_chips(ext::Ctx& ctx, GachaDraw& draw, u32 role, CharacterUid uid) {
     u32 chip_item = (u32)ctx.m.one("select ifnull(universe_chip_item_id, 0) from master_role where id = ?", {role});
     u32 chips = (u32)ctx.m.one(
         "select cast(chip * chip_rate / 100 as integer) from master_universe_chip_gacha_exchange where rank = "
@@ -266,10 +267,10 @@ void add_chips(ext::Ctx& ctx, GachaDraw& draw, u32 role, u64 uid) {
         {role});
     if (!chip_item || !chips) return;
     ext::add_stock(ctx, chip_item, chips);  // (a) capped at master_global item_stock_max_num
-    Value& chip_info = draw.chips[std::to_string(uid)];
+    Value& chip_info = draw.chips[std::to_string(uid.v)];
     if (chip_info.type != Value::Map) {
         chip_info = Value::object();
-        chip_info["id"] = uid;
+        chip_info["id"] = uid.v;
         chip_info["master_role_id"] = role;
         chip_info["master_item_id"] = chip_item;
         chip_info["num"] = 0u;
@@ -280,9 +281,9 @@ void add_chips(ext::Ctx& ctx, GachaDraw& draw, u32 role, u64 uid) {
 // 4b. A drawn character: new, or a duplicate (limit break, its material, character chips); the
 // result entry and the history row.
 void add_drawn_role(ext::Ctx& ctx, GachaDraw& draw, u32 role, int rank, u32 k, bool chip_gacha) {
-    Added added = add_character(ctx, role);
+    Added added = add_character(ctx, RoleId(role));
     bool duplicate = added.dup;
-    u64 uid = added.uid;
+    const CharacterUid uid = added.uid;
     if (duplicate && added.lb_after > added.lb_before) {
         add_limit_break(draw, added);
     } else if (duplicate && added.item) {
@@ -296,21 +297,21 @@ void add_drawn_role(ext::Ctx& ctx, GachaDraw& draw, u32 role, int rank, u32 k, b
     result["master_item_id"] = 0u;
     result["player_item_id"] = 0u;
     result["master_role_id"] = role;
-    result["player_character_id"] = uid;
+    result["player_character_id"] = uid.v;
     result["duplication"] = duplicate ? 1u : 0u;
     result["is_mutation"] = false;
     draw.items.push(result);
     if (!duplicate) {
         Value character = Value::object();  // the AddCharacter entry
-        character["id"] = uid;
+        character["id"] = uid.v;
         character["master_role_id"] = role;
         character["level"] = 1u;
         character["exp"] = 0u;
         character["limit_break_count"] = 0u;
         character["awaken_level"] = 0u;
-        draw.added_characters[std::to_string(uid)] = character;
+        draw.added_characters[std::to_string(uid.v)] = character;
     }
-    record_history(ctx, draw, role, uid, rank, duplicate, k);
+    record_history(ctx, draw, role, uid.v, rank, duplicate, k);
 }
 
 // 4. The draws: a rank by the rates, a unit from the pools (or by rarity), duplicates, limit

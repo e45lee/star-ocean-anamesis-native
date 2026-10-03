@@ -6,7 +6,7 @@
 namespace soa::server {
 
 // One owned character (CPersonInfo) from its `roster` row; `owner_player_id` is its player_id key.
-Value person_info(ext::Ctx& ctx, const ext::Row& roster_row, u32 owner_player_id);
+Value person_info(ext::Ctx& ctx, const ext::Row& roster_row, PlayerId owner_player_id);
 // Character: every owned character (CPersonInfo), by uid.
 Value roster_info(ext::Ctx& ctx);
 // Whether the character of `roster_row` has growth: a seed's add_* raised (AddStatusCharacter) or
@@ -16,5 +16,7 @@ Value roster_info(ext::Ctx& ctx);
 // this reads differently from that row: one whose seeds and skills are all 0 (EquipSkill(0,0,0),
 // or a seed at its cap on a character without growth) sent them as 0, and now leaves them out.
 bool has_growth(const ext::Row& roster_row);
+// Whether the player owns the character `uid` (has its roster row; id 0 never).
+bool owns_character(ext::Ctx& ctx, CharacterUid uid);
 
 }  // namespace soa::server

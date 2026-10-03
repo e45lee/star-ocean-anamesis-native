@@ -43,11 +43,11 @@ void favor_start(Ctx& ctx, const MissionInfo& mission, Value& param, Value&) {
     if (mission.type != kMissionTypeEvent || mission.table != "master_event_mission") return;
     int64_t now = ctx.now();
     u32 left = favor::event_drop_remaining(ctx.st.h, ctx.m.h, now);
-    std::set<u32> seen;
+    std::set<SameRoleId> seen;
     for (u32 role : mission.roles) {
         if (!left) break;
-        u32 same_role = (u32)ctx.m.one("select same_role_id from master_role where id = ?", {role});
-        if (!same_role || !seen.insert(same_role).second) continue;
+        const SameRoleId same_role = ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role});
+        if (!same_role.v || !seen.insert(same_role).second) continue;
         u32 lots = bonus_of_level(ctx, favor::level_of(ctx.st.h, ctx.m.h, now, same_role));
         if (!lots || favor::event_drop_used_today(ctx.st.h, ctx.m.h, now, same_role)) continue;
         ctx.st.q("insert into favor_drop_play (same_role_id, lots) values (?, ?)", {same_role, lots});
@@ -65,9 +65,9 @@ void favor_start(Ctx& ctx, const MissionInfo& mission, Value& param, Value&) {
 // the characters' bonus is spent (added_event_drop_at = now, sent in MissionResultCharacterFavor)
 // and the day's remaining count follows.
 void favor_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
-    std::vector<std::pair<u32, u32>> used;  // (same_role_id, lots)
+    std::vector<std::pair<SameRoleId, u32>> used;  // (same_role_id, lots)
     ctx.st.q("select same_role_id, lots from favor_drop_play", {},
-             [&](const Row& play_row) { used.emplace_back((u32)play_row.i("same_role_id"), (u32)play_row.i("lots")); });
+             [&](const Row& play_row) { used.emplace_back(play_row.id<SameRoleId>("same_role_id"), (u32)play_row.i("lots")); });
     ctx.st.exec("delete from favor_drop_play");
     if (used.empty()) return;
     struct DropRow {
@@ -102,7 +102,7 @@ void favor_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
         // (d) left alone otherwise: a partial element would reset the client's favor level
         Value& favor_map = data["MissionResultCharacterFavor"];
         for (auto& [key, entry] : favor_map.map)
-            if (key == std::to_string(same_role) && entry.type == Value::Map) entry["added_event_drop_at"] = at;
+            if (key == std::to_string(same_role.v) && entry.type == Value::Map) entry["added_event_drop_at"] = at;
     }
     data["RemainingEventDropBonusCountByFavor"] = favor::event_drop_remaining(ctx.st.h, ctx.m.h, now);
     LOGI("server", "MissionEnd mission %u: favor event drop bonus, %zu characters, %u lots", mission.mission, used.size(), lots);

@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "soaserver/ids.h"
 #include "soaserver/server.h"
 
 namespace soa::server::master {
@@ -43,11 +44,11 @@ std::vector<u32> player_next(sqlite3* m);
 // ---- roles ----------------------------------------------------------------------------------
 // (a) master_role_level_max by the role's rarity: 40 when the role has no row; a NULL level_max
 // reads as 0 (the core's Db::one reading, kept until PLAN-schema S1 / R11 look at it).
-u32 role_level_cap(sqlite3* m, u32 role);
+u32 role_level_cap(sqlite3* m, RoleId role);
 // (a) master_character_common_parameter.next_exp x (b) master_role_boosted.exp_rate for the
 // role's rank and rarity, rounded (PersonModel::GetNextLevelExp(float rate, rank, rarity):
 // (int)(rate * base + 0.5)), indexed by level.
-std::vector<u32> role_next(sqlite3* m, u32 role);
+std::vector<u32> role_next(sqlite3* m, RoleId role);
 
 // ---- texts ----------------------------------------------------------------------------------
 // master_text (lang ja) of a message id; "" when missing.

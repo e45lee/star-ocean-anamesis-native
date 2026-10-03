@@ -178,7 +178,7 @@ Value achievement_info(Ctx& ctx, int64_t id, bool* goal = nullptr) {
         int64_t count = progress(ctx, achievement_row), goal_count = achievement_row.i("goal_count");
         bool done = count >= goal_count && goal_count > 0;
         info["id"] = (u32)id;
-        info["player_id"] = ctx.player_id();
+        info["player_id"] = ctx.player_id().v;
         info["master_achievement_id"] = (u32)id;
         info["count"] = (u32)std::min(count, goal_count);
         info["is_goal"] = done;

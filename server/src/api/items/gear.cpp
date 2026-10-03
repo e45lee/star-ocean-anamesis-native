@@ -144,9 +144,9 @@ Value attached_gear_info_list(Sql& state, Sql& master, u64 item_uid) {
 
 // Hook (ext::add_item_extra): every owned weapon with gear lists it in its CItemInfo.
 //   (b) CItemInfo's child AttachedGearInfoList (+0x2e0); sent only when the weapon has gear.
-void attached_gear_extra(Sql& state, Sql& master, u64 uid, Value& item) {
+void attached_gear_extra(Sql& state, Sql& master, ItemUid uid, Value& item) {
     if (state.one("select count(*) from gear_items where item_uid = ?", {uid}) == 0) return;
-    item["AttachedGearInfoList"] = attached_gear_info_list(state, master, uid);
+    item["AttachedGearInfoList"] = attached_gear_info_list(state, master, uid.v);  // (gear_items stays plain: S5)
 }
 
 u64 new_gear(Ctx& ctx, u32 type, u32 master_item, u32 param2) {
@@ -353,7 +353,7 @@ Weapon find_weapon(Ctx& ctx, u64 uid) {
             weapon.slots = (u32)item_row.i("max_gear_slot_num");
             weapon.kind = (u32)item_row.i("master_weapon_kind_id");
         });
-    weapon.equipped = item_equipped(ctx, uid);
+    weapon.equipped = item_equipped(ctx, ItemUid(uid));
     return weapon;
 }
 // The weapon kind a gear fits: a gear item's master_gear kind (a), a factor gear's weapon's (d).

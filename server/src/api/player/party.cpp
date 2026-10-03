@@ -9,6 +9,7 @@
 
 #include "api/player/party_set.h"    // party_set_info, ensure_party_set
 #include "api/player/player_info.h"  // base_data
+#include "api/player/roster.h"       // owns_character
 #include "core/log.h"
 #include "core/request_args.h"
 
@@ -16,12 +17,7 @@ namespace soa::server {
 
 using ext::body;
 
-namespace {
-
-// Whether `uid` is an owned character (a roster row).
-bool owned_character(ext::Ctx& ctx, u64 uid) { return ctx.st.one("select count(*) from roster where uid = ?", {uid}) != 0; }
-
-}  // namespace
+namespace {}  // namespace
 
 // UpdateParty(u32 party_id, u64 uid1, u64 uid2, u64 uid3) -> UpdatePartyRes  fid ef02dd83
 // API: docs/api.md#updateparty   Rules: docs/server-rules.md "Party"
@@ -38,13 +34,13 @@ std::vector<u8> update_party(ext::Ctx& ctx, const Request& req) {
     Value party_update = Value::object();
     party_update["party_id"] = party_id;
     for (int slot = 0; slot < (int)std::size(args.member_uid); slot++) {
-        u64 uid = args.member_uid[slot];
-        if (uid && !owned_character(ctx, uid)) uid = 0;  // (d) only owned characters
+        CharacterUid uid = args.member_uid[slot];
+        if (!owns_character(ctx, uid)) uid = CharacterUid(0);  // (d) only owned characters (party's 0: empty, until S6)
         ctx.st.q(
             "insert into party (party_id, slot, uid) values (?,?,?)"
             " on conflict(party_id, slot) do update set uid = excluded.uid",
             {party_id, slot, uid});
-        party_update["player_character_id" + std::to_string(slot + 1)] = uid;
+        party_update["player_character_id" + std::to_string(slot + 1)] = uid.v;
     }
     ensure_party_set(ctx, party_id);  // (d) any id: its party_set row (player.party_id's parent, PLAN-schema S4)
     ctx.st.q("update player set party_id = ?", {party_id});  // (d) the party last edited is the current one
@@ -130,8 +126,8 @@ std::vector<u8> update_party_set(ext::Ctx& ctx, const Request& req) {
     ctx.st.q("delete from party where party_id = ?", {party_id});
     ctx.st.q("delete from party_member where party_id = ?", {party_id});
     for (const auto& member : set.members) {
-        u64 uid = member.character_uid;
-        if (uid && !owned_character(ctx, uid)) uid = 0;  // only owned characters (d)
+        u64 uid = member.character_uid;  // (party / party_member stay plain, 0 = empty: PLAN-schema S6)
+        if (uid && !owns_character(ctx, CharacterUid(uid))) uid = 0;  // only owned characters (d)
         ctx.st.q(
             "insert into party (party_id, slot, uid) values (?,?,?)"
             " on conflict(party_id, slot) do update set uid = excluded.uid",

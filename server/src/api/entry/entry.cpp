@@ -77,13 +77,13 @@ std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args,
 }
 
 // The starter characters, party 1 and the home character (create_player, step 3): returns their uids.
-std::vector<u64> add_starters(ext::Ctx& ctx, int64_t now) {
-    std::vector<u64> party;
+std::vector<CharacterUid> add_starters(ext::Ctx& ctx, int64_t now) {
+    std::vector<CharacterUid> party;
     for (int k = 1; k <= kStarterCharacters; k++) {
         std::string role_label = master::global_str(ctx.m.h, ("Default_Character_" + std::to_string(k)).c_str());
         u32 role_id = (u32)ctx.m.one("select id from master_role where id_label = ?", {role_label});
         if (!role_id) continue;
-        u64 uid = kRosterUid0 + (k - 1);
+        const CharacterUid uid(kRosterUid0 + (k - 1));
         // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
         // every other column's default (excluded.<col>), as the REPLACE gave it
         ctx.st.q(
@@ -141,7 +141,7 @@ std::vector<u8> create_player(ext::Ctx& ctx, const Request& req) {
     }
     int64_t now = clock_now();
     std::string search_id = insert_new_player(ctx, args, now);
-    std::vector<u64> party = add_starters(ctx, now);
+    std::vector<CharacterUid> party = add_starters(ctx, now);
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
     ctx.st.q("insert or replace into meta (key, value) values ('next_item_uid', ?)", {std::to_string(kItemUid0)});
     // tutorial_status, view_status and view_status2 are 0: the new row's defaults

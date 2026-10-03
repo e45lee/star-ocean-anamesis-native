@@ -1,5 +1,7 @@
 # soa-server replay corpus (server/tests/replay/README.md): items-party, hand-written for
 # PLAN-readability R13/R14: the item, gear and party APIs with real arguments on the seeded state.
+# R12 appended 41-46: a weapon equipped, moved to another character (its previous owner's slot
+# emptied), refused as an accessory, taken off.
 # tz: America/Toronto
 req 1 1790841480 Login a01c67ef - - - -
 req 2 1790841485 Gacha a0a1940b 2201696395,0 - - -
@@ -41,3 +43,9 @@ req 37 1790841660 UpdatePartySet c119d0d8 - 31312c302c302f302c302c32313133393239
 req 38 1790841665 UpdatePartySet c119d0d8 - 78 - -
 req 39 1790841670 UpdatePartySet c119d0d8 - 312c302c302f302c302c323131333932393231382c302c302c302c302c302c302f302c312c323131333932393231372c302c302c302c302c302f - -
 req 40 1790841675 GetPlayer 9a056905 - - - -
+req 41 1790841680 EquipWeapon 1f3c9eca 2113929216,2097152004 - - -
+req 42 1790841685 EquipWeapon 1f3c9eca 2113929217,2097152004 - - -
+req 43 1790841690 EquipAccessory 99750e8d 2113929217,2097152004 - - -
+req 44 1790841695 EquipWeapon 1f3c9eca 2113929216,2097152009 - - -
+req 45 1790841700 EquipWeapon 1f3c9eca 2113929216,0 - - -
+req 46 1790841705 GetPlayer 9a056905 - - - -

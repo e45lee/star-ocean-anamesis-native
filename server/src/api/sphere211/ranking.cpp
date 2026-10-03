@@ -62,7 +62,7 @@ void ranking_reward(Ctx& ctx, u32 season_id, u32 rank) {
 // {player id: {player_id, floor_level, entered_at, rank}}), rank 1.
 Value ranking_info_map(Ctx& ctx, const Season& season) {
     Value map = Value::object();
-    u32 player_id = ctx.player_id();
+    u32 player_id = ctx.player_id().v;  // the wire's number
     ctx.st.q("select * from sphere_rank where season_id = ?", {season.id}, [&](const Row& rank_row) {
         Value info = Value::object();
         info["player_id"] = player_id;

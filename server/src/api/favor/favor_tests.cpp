@@ -40,8 +40,8 @@ NATIVE_TEST("favor/favor-rules") {
 NATIVE_TEST("favor/friendship-campaign") {
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
         c.st.exec("begin");
-        u32 same = (u32)c.m.one("select id from master_favor_schedule where favor_max_level >= 4 order by id limit 1", {});
-        if (!same) {
+        const SameRoleId same = c.m.one_id<SameRoleId>("select id from master_favor_schedule where favor_max_level >= 4 order by id limit 1", {});
+        if (!same.v) {
             t.fail("no favor schedule");
             c.st.exec("rollback");
             return;

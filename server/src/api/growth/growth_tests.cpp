@@ -32,7 +32,7 @@ NATIVE_TEST("growth/apis") {
         c.st.exec("begin");
         // ---- BoostCharacter: EXP by the rule, items and FOL debited
         u64 uid = (u64)c.st.one("select uid from roster where level > 1 order by uid limit 1", {});
-        u32 role = (u32)c.st.one("select role_id from roster where uid = ?", {uid});
+        RoleId role = c.st.one_id<RoleId>("select role_id from roster where uid = ?", {uid});
         u32 cat = (u32)c.m.one("select category_type from master_role where id = ?", {role});
         u32 rank = (u32)c.m.one("select rank from master_role where id = ?", {role});
         u32 rar = (u32)c.m.one("select rarity from master_role where id = ?", {role});
@@ -86,7 +86,7 @@ NATIVE_TEST("growth/apis") {
             t.expect_eq((u32)c.st.one("select limit_break from roster where uid = ?", {uid}), 2u, "limit break by row id");
             c.st.q("update roster set limit_break = 1 where uid = ?", {uid});
         } else {
-            t.fail("no limit-break row for role %u", role);
+            t.fail("no limit-break row for role %u", role.v);
         }
 
         // ---- EvolutionCharacter: a ★5 with a ★6 of its category, at its cap, gets the ★6 role
@@ -103,7 +103,7 @@ NATIVE_TEST("growth/apis") {
             }
         });
         if (euid) {
-            u32 cap = c.role_level_cap(erole);
+            u32 cap = c.role_level_cap(RoleId(erole));
             c.st.q("update roster set level = ? where uid = ?", {cap, euid});
             c.m.q(
                 "select * from master_role_evolution where rank = (select rank from master_role where id = ?) and rarity = 5 and "
@@ -119,7 +119,7 @@ NATIVE_TEST("growth/apis") {
             t.expect_eq((u32)c.m.one("select rarity from master_role where id = ?", {after}), 6u, "evolved to rarity 6");
             // (b) back to level 1 (uimsg_next_strongth; agent server-rules)
             t.expect_eq((u32)c.st.one("select level from roster where uid = ?", {euid}), 1u, "level 1 after evolution");
-            if (c.role_level_cap(after) <= cap) t.fail("the cap didn't rise");
+            if (c.role_level_cap(RoleId(after)) <= cap) t.fail("the cap didn't rise");
         } else {
             t.fail("no ★5 with a ★6 evolution in the roster");
         }

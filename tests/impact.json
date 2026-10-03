@@ -117,38 +117,26 @@
   ],
   "server/src/api/daily/premium_and_favor_bonus.cpp": [
    "Grant",
-   "OnPlayerLoad",
-   "Schema"
-  ],
-  "server/src/api/deepspace/deepspace.cpp": [
-   "Schema"
+   "OnPlayerLoad"
   ],
   "server/src/api/events/event_missions.cpp": [
    "ClientMaster",
    "OnPlayerLoad",
-   "OnResponse",
-   "Schema"
+   "OnResponse"
   ],
   "server/src/api/events/ranking.cpp": [
-   "MissionResultExtra",
-   "Schema"
+   "MissionResultExtra"
   ],
   "server/src/api/events/favor_drop.cpp": [
-   "MissionStartExtra",
-   "Schema"
+   "MissionStartExtra"
   ],
   "server/src/api/social/rental.cpp": [
-   "OnPlayerLoad",
-   "Schema"
+   "OnPlayerLoad"
   ],
   "server/src/api/items/gear.cpp": [
    "Grant",
    "ItemExtra",
-   "OnPlayerLoad",
-   "Schema"
-  ],
-  "server/src/api/growth/growth.cpp": [
-   "Schema"
+   "OnPlayerLoad"
   ],
   "server/src/api/player/home_footer.cpp": [
    "OnPlayerLoad"
@@ -158,24 +146,20 @@
   ],
   "server/src/api/shop/shop.cpp": [
    "ClientMaster",
-   "OnPlayerLoad",
-   "Schema"
+   "OnPlayerLoad"
   ],
   "server/src/api/sphere211/sphere211.cpp": [
    "ClientMaster",
-   "OnPlayerLoad",
-   "Schema"
+   "OnPlayerLoad"
   ],
   "server/src/api/shop/subscription.cpp": [
    "Grant",
-   "OnPlayerLoad",
-   "Schema"
+   "OnPlayerLoad"
   ],
   "server/src/api/player/titles.cpp": [
    "Grant",
    "OnPlayerLoad",
-   "OnResponse",
-   "Schema"
+   "OnResponse"
   ],
   "server/src/api/tower/tower.cpp": [
    "ClientMaster",
@@ -186,14 +170,7 @@
    "AreaExtra",
    "MissionResultExtra",
    "MissionStartExtra",
-   "OnPlayerLoad",
-   "Schema"
-  ],
-  "server/src/core/ext.cpp": [
-   "Schema"
-  ],
-  "server/src/api/presents/present_texts.cpp": [
-   "Schema"
+   "OnPlayerLoad"
   ]
  },
  "tests": {
@@ -811,7 +788,15 @@
     "NoLoginStart",
     "SaleGacha"
    ],
-   "source": "declared"
+   "source": "observed+declared",
+   "observed": [
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SaleGacha"
+   ]
   },
   "session:campaign": {
    "apis": [
@@ -902,12 +887,23 @@
     "GetPlayer",
     "GetServerTime",
     "Login",
+    "MissionEnd",
     "MissionStart",
     "NoLoginStart",
     "UpdateHome",
     "UpdatePartySet"
    ],
-   "source": "declared"
+   "source": "observed",
+   "observed": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "MissionEnd",
+    "MissionStart",
+    "NoLoginStart",
+    "UpdateHome",
+    "UpdatePartySet"
+   ]
   },
   "session:rental": {
    "apis": [
@@ -936,6 +932,7 @@
     "BoostCharacter",
     "EvolutionCharacter",
     "GenerateGear",
+    "GetGearInfo",
     "GetPlayer",
     "GetServerTime",
     "LimitBreakCharacter",
@@ -943,19 +940,25 @@
     "NoLoginStart",
     "RemoveGear"
    ],
-   "source": "observed+declared",
+   "source": "observed",
    "observed": [
+    "AttachGear",
     "BoostCharacter",
     "EvolutionCharacter",
+    "GenerateGear",
+    "GetGearInfo",
     "GetPlayer",
     "GetServerTime",
+    "LimitBreakCharacter",
     "Login",
-    "NoLoginStart"
+    "NoLoginStart",
+    "RemoveGear"
    ]
   },
   "session:deepspace": {
    "apis": [
     "AchievementActiveList",
+    "AchievementListReceive",
     "DeepSpaceActiveList",
     "DeepSpaceAutoMemberSelect",
     "DeepSpaceMissionEnd",
@@ -970,8 +973,12 @@
    ],
    "source": "observed+declared",
    "observed": [
+    "AchievementActiveList",
+    "AchievementListReceive",
     "DeepSpaceActiveList",
     "DeepSpaceAutoMemberSelect",
+    "DeepSpaceMissionEnd",
+    "DeepSpaceMissionEndNow",
     "DeepSpaceMissionStart",
     "GetPlayer",
     "GetServerTime",
@@ -1135,9 +1142,10 @@
     "Login",
     "NoLoginStart"
    ],
-   "source": "observed+declared",
+   "source": "observed",
    "observed": [
     "GetPlayer",
+    "GetServerTime",
     "Login",
     "NoLoginStart"
    ]

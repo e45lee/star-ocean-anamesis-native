@@ -521,9 +521,9 @@ const char* const kRosterIndexes[] = {
     "create unique index roster_assist on roster(assist_uid) where assist_uid is not null",
 };
 
-// LOGW "migrate v4: <what>: N <how>" when the count of `sql` is non-zero.
-void log_count(sqlite3* db, const char* sql, const char* what, const char* how) {
-    if (int64_t n = count_of(db, sql)) LOGW("server", "migrate v4: %s: %lld %s", what, (long long)n, how);
+// LOGW "migrate v<version>: <what>: N <how>" when the count of `sql` is non-zero.
+void log_count(sqlite3* db, const char* sql, const char* what, const char* how, int version = 4) {
+    if (int64_t n = count_of(db, sql)) LOGW("server", "migrate v%d: %s: %lld %s", version, what, (long long)n, how);
 }
 
 // Step 4's data mapping (PLAN-schema S4), with the conventions of 4.1 (0 -> NULL; a dangling
@@ -625,6 +625,89 @@ from player)");
     return ok;
 }
 
+// ---- step 5: items and gear (PLAN-schema S5, findings F2, F3) ----------------------------------
+// The owned weapons and accessories (items) and the owned gears (gear_items) are rebuilt STRICT:
+// items gets its `locked` check, gear_items its reference to the weapon it is set in (NULL: in the
+// gear box; 0 before) with ON DELETE CASCADE, its `is_new` check and one gear per weapon slot (the
+// unique index). The cascade is the rule the gear module applied by hand at every gear list read
+// before (gear.cpp gear_info_list: `delete from gear_items where item_uid != 0 and item_uid not in
+// (select uid from items)`): (d) gear set in a weapon that is gone (sold, used as a material, the
+// base of a GenerateGear) goes with it, now at the weapon's delete. As in step 4 the tables are
+// created as new_X (gear_items' reference names the final `items`), filled by rebuild_items_and_gear
+// and renamed X after the old X is dropped; roster's weapon_uid / accessory_uid references keep
+// naming `items`, which is the new table after the rename.
+//
+// The foreign key and its action (PLAN-schema 3.1):
+//   gear_items.item_uid -> items.uid   ON DELETE CASCADE (immediate)
+// No ON UPDATE action: an item's uid never changes.
+const char* const kItemsGear[] = {
+    // CItemInfo (b): an owned weapon or accessory
+    R"(create table new_items (
+  uid integer primary key,
+  master_item_id integer not null,
+  item_type integer not null, level integer not null default 1, exp integer not null default 0,
+  limit_break integer not null default 0,
+  locked integer not null default 0 check (locked in (0, 1)),
+  created_at integer not null
+) strict)",
+    // CGearInfo (b): an owned gear, in the gear box (item_uid NULL) or set in a weapon's slot
+    R"(create table new_gear_items (
+  uid integer primary key,
+  type integer not null default 0,
+  master_item_id integer not null,
+  param2 integer not null default 0,
+  item_uid integer references items(uid) on delete cascade,
+  slot integer not null default 0,
+  is_new integer not null default 1 check (is_new in (0, 1)),
+  created_at integer not null
+) strict)",
+};
+
+// The index of the rebuilt gear_items (created after the rename): one gear per weapon slot.
+const char* const kGearIndexes[] = {
+    "create unique index gear_items_slot on gear_items(item_uid, slot) where item_uid is not null",
+};
+
+// Step 5's data mapping (PLAN-schema S5), with the conventions of 4.1:
+//   items -> new_items: a NULL in a not-null column -> 0 (what the readers read for it); locked
+//     not 0 -> 1 (the readers test `locked != 0`).
+//   gear_items -> new_gear_items: item_uid 0 -> NULL (the gear box); item_uid naming no item ->
+//     the row dropped (the CASCADE child: the rule gear_info_list applied at the next read); a
+//     second gear in an occupied weapon slot -> the gear box (item_uid NULL, slot 0, as RemoveGear
+//     leaves a gear), the slot kept by the lowest uid; is_new not 0 -> 1 (read as `is_new != 0`);
+//     a NULL in a not-null column -> 0.
+bool rebuild_items_and_gear(sqlite3* db, sqlite3*) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from items where locked is not null and locked not in (0, 1)", "items.locked", "not 0 / 1 -> 1", 5);
+    log_count(db, "select count(*) from gear_items where item_uid != 0 and item_uid not in (select uid from items)", "gear_items.item_uid",
+              "dangling -> dropped", 5);
+    log_count(db,
+              "select count(*) from gear_items g where item_uid in (select uid from items) and "
+              "exists (select 1 from gear_items o where o.item_uid = g.item_uid and ifnull(o.slot, 0) = ifnull(g.slot, 0) and o.uid < g.uid)",
+              "gear_items.item_uid", "a second gear in a weapon slot -> the gear box (kept by the lowest uid)", 5);
+    log_count(db, "select count(*) from gear_items where is_new is not null and is_new not in (0, 1)", "gear_items.is_new", "not 0 / 1 -> 1", 5);
+
+    bool ok = run(db, R"(
+insert into new_items (uid, master_item_id, item_type, level, exp, limit_break, locked, created_at)
+select uid, ifnull(master_item_id, 0), ifnull(item_type, 0), ifnull(level, 0), ifnull(exp, 0), ifnull(limit_break, 0),
+  case when ifnull(locked, 0) != 0 then 1 else 0 end, ifnull(created_at, 0)
+from items)");
+    ok = ok && run(db, R"(
+insert into new_gear_items (uid, type, master_item_id, param2, item_uid, slot, is_new, created_at)
+select g.uid, ifnull(g.type, 0), ifnull(g.master_item_id, 0), ifnull(g.param2, 0),
+  case when g.item_uid != 0 and exists (select 1 from gear_items o where o.item_uid = g.item_uid and ifnull(o.slot, 0) = ifnull(g.slot, 0) and o.uid < g.uid) then null
+       else nullif(g.item_uid, 0) end,
+  case when g.item_uid != 0 and exists (select 1 from gear_items o where o.item_uid = g.item_uid and ifnull(o.slot, 0) = ifnull(g.slot, 0) and o.uid < g.uid) then 0
+       else ifnull(g.slot, 0) end,
+  case when ifnull(g.is_new, 0) != 0 then 1 else 0 end, ifnull(g.created_at, 0)
+from gear_items g where ifnull(g.item_uid, 0) = 0 or g.item_uid in (select uid from items))");
+    for (const char* sql :
+         {"drop table gear_items", "drop table items", "alter table new_items rename to items", "alter table new_gear_items rename to gear_items"})
+        ok = ok && run(db, sql);
+    for (const char* sql : kGearIndexes) ok = ok && run(db, sql);
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -643,6 +726,10 @@ const std::vector<Step>& steps() {
          "the roster: roster_ext and assist merged, roster and player rebuilt with their foreign keys (PLAN-schema S4)",
          {std::begin(kRoster), std::end(kRoster)},
          rebuild_roster_and_player},
+        {5,
+         "items and gear: items and gear_items rebuilt STRICT, gear set in a weapon references it (PLAN-schema S5)",
+         {std::begin(kItemsGear), std::end(kItemsGear)},
+         rebuild_items_and_gear},
     };
     return s;
 }

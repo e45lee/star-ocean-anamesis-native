@@ -54,7 +54,7 @@ void add_stock_caps(ext::Ctx& ctx, Value& player) {
     // count of the gear screens) = the free gears (api/items/gear.cpp's table; d: attached gears
     // don't count). Before PLAN-schema S1 it was sent only once the module's table existed, so a
     // new state's first player load lacked it (but on soa-server, whose bridge made the tables).
-    player["gear_num"] = (u32)ctx.st.one("select count(*) from gear_items where item_uid = 0", {});
+    player["gear_num"] = (u32)ctx.st.one("select count(*) from gear_items where item_uid is null", {});  // the gear box
     player["follow_max"] = ctx.global_u32("follow_default", 30);  // (a) master_global follow_default
 }
 

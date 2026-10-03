@@ -474,10 +474,10 @@ def fk_report(st_path, master_path):
 
 # Tables written only by upsert (S0): the parents of the target schema's foreign keys (section 3.2:
 # player, roster, items, titles, party_set, mission, box_state, presents, ds_area, ds_ship, wboss)
-# and the other tables of F9's REPLACE list (party, party_member, favor, stock, subscription,
-# present_texts).
+# and the other tables of F9's REPLACE list (party_member (party merged in, S6), favor, stock,
+# subscription, present_texts).
 LINT_UPSERT_ONLY = ("player", "roster", "items", "titles", "party_set", "mission", "box_state", "presents", "ds_area", "ds_ship",
-                    "wboss", "party", "party_member", "favor", "stock", "subscription", "present_texts")
+                    "wboss", "party_member", "favor", "stock", "subscription", "present_texts")
 # Consumers whose SQL runs on another DB: the pools DB's builder (its own meta table).
 LINT_OTHER_DB = ("tools/build_gacha_pools.py",)
 POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(?:temp\.)?(\w+)\s+values\b", re.I)

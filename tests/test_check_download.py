@@ -85,11 +85,12 @@ def test_corrupted_member(download):
 
 def test_missing_extra_and_sizes(download):
     (download / PLAIN_NAME).unlink()
+    (download / XOR_NAME).write_bytes((download / XOR_NAME).read_bytes() + b"!")  # one byte too many
     (download / "Sound/stray.bin").write_bytes(b"x")
     (download / "manifest/etc2/hi/version_latest_Bulk.version").write_bytes(f"version:{VERSION_ID}\r\ntotalSize:1\r\n".encode())
     res = check_download.check(str(download), jobs=2, quick=True)
-    assert kinds(res) == ["extra", "missing", "version-file"]
-    assert res["manifests"]["Bulk"]["status"] == "FAIL" and res["manifests"]["Bulk"]["bad_files"] == 1
+    assert kinds(res) == ["extra", "missing", "size", "version-file"]
+    assert res["manifests"]["Bulk"]["status"] == "FAIL" and res["manifests"]["Bulk"]["bad_files"] == 2
 
 
 def test_header_and_parent_hash(download):

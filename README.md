@@ -133,6 +133,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 | `work/extracted/xapk/` (the offline XAPK, unpacked by `tools/extract.sh`) | only the viewer (`emulator-viewer/`, `soa-viewer`) |
 | `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (through `work/extracted/xapk/`), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
 | `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`) | <!-- 380-ok: the viewer's game file -->
+| `data/version-3.7.0.bin` (in git; a copy of `work/download-3.7.0/version.bin`: the original CDN's index of the 3.7.0 download, revision 1471, 26,268 assets, MessagePack; the server's CDN serves a rebuilt revision 1472) | the reference for checking a download (`tools/check_download.py`) and for the CDN's rebuild |
 | `port/server-data/gacha_pools.sqlite3` (the reconstructed gacha pools, made by `tools/build_gacha_pools.py`) | the local server's gacha draws (`docs/server-rules.md` 4.3) |
 | `ghidra/quick-v370/`, `ghidra/quick/` (Ghidra quick projects; imported by `tools/common.sh` when missing) | `tools/decomp.sh`, `scripts/ghidra-mcp.sh` |
 

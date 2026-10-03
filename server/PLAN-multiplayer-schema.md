@@ -22,9 +22,7 @@ Status: **plan for review only, not queued (future work); if queued, starts only
   - a world boss shared by all players.
 
   Rooms, slots, barriers, the relay's forwarding and stamps stay in memory. The friend gauge is a dead feature in 3.7.0 (no caller reads it, (b)) and gets no table.
-- **Two routes** (section 2, open question Q1):
-  - **B**: one state DB with a `player_id` on every per-player table;
-  - **A**: one state file per player plus a small shared hub DB.
+- **Route: B, decided** (the user, 2026-10-03: "put all players into one state database"): one state DB with a `player_id` on every per-player table. Route A (one state file per player plus a shared hub DB) was considered and rejected; section 2 keeps both for the record.
 
   **Recommended: B.** The client's multiplayer surface is mostly cross-player reads (follows, rentals, rankings, co-op parties, follow floors), and under B those are joins with foreign keys and one atomic commit.
 - **The M steps (route B):**
@@ -113,6 +111,8 @@ A co-op battle record is written at StartMultiplay and kept: the ranking's `batt
 ---
 
 ## 2. The two routes
+
+**Decided: route B** (the user, 2026-10-03). Route A below is kept for the record only.
 
 ### 2.1 Route A: one state file per player
 
@@ -505,7 +505,7 @@ PLAN-schema S3 … S12 (+ R12, R17, S11 + R19)        unchanged (the user)
 
 | # | Question | Recommendation |
 |---|---|---|
-| **Q1** | Route B (one DB, `player_id` everywhere) or route A (one file per player + a shared hub)? | **B** (section 2.4). Its price is M1's second rebuild (section 4) and M3's scoping. If only two-player co-op is wanted and nothing social, A is cheaper. Don't do A first and B later (two data migrations) |
+| **Q1** | Route B (one DB, `player_id` everywhere) or route A (one file per player + a shared hub)? | **Decided: B** (the user, 2026-10-03: "put all players into one state database"). Recommendation was B (section 2.4). Its price is M1's second rebuild (section 4) and M3's scoping. If only two-player co-op is wanted and nothing social, A is cheaper. Don't do A first and B later (two data migrations) |
 | **Q2** | Which player does the in-process port (`soa --server inproc`, no uuid) serve once a state has several? | The first player (lowest `created_at`), with an optional `--player SEARCH_ID` later. Co-op stays a soa-server feature (docs/multiplayer.md 4(d)) |
 | **Q3** | Keep the synthetic rental clones (the player's own roster) once real players exist? | Keep them as a fill-up when fewer than 10 real lenders are available (d), so a lone player still has helpers. Label the mix in docs/server-rules.md |
 | **Q4** | Is multiplayer opened per server (`--multiplay`) or per player (a `player` column)? | Per server, off by default (HANDOFF.md 6): no column. `is_open_multiplay` also needs `view_status` bit 4 for the tutorial (b), which the player's own flags already carry |

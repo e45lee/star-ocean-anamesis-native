@@ -112,6 +112,8 @@ std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
 // Feeds weapons / accessories to a base item: boosted points, levels and limit breaks.
 //   (b) each material adds growth_rules::compose_points (CItemStrengtheningPotal::GetAddBoostedPoint).
 //   (a) a copy of the base's own item raises its limit break (master_item_limit_break_level_max);
+//   (b) one raise per copy, counted as `weapon_limit_break` / `accessory_limit_break` (achievement
+//   type 6); every compose counts `weapon_boost` / `accessory_boost` (types 5 / 38).
 //   use_fol_one per material; weapon_compose_up_rate / weapon_compose_bonus_rate.
 //   (d) locked or equipped materials and the base itself can't be fed; FOL at the base's rarity;
 //   points stop at the cap level's threshold.
@@ -164,6 +166,14 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     }
     add_fol(ctx, -(int64_t)composed.cost);
     count(ctx, base.type == item_type::kAccessory ? "accessory_boost" : "weapon_boost");
+    // The limit-break raises of this compose, one per raise (achievement type 6, 武器を N回上限解放する:
+    // api/presents/achievements.cpp). (b) A compose raises the limit break once per qualifying
+    // material: CItemStrengtheningPotal::GetAddLimitReleaseWeaponNum (@01b899d8) adds 1 for each
+    // material of the base's item id (or a limit-break item), and WarningLimitbreak (@01b8a810)
+    // warns when the current limit break plus that sum reaches 6; (a) the cap is
+    // master_item_limit_break_level_max's highest limit_break (5). The raises counted are the ones
+    // applied above (lb - base.lb), so nothing is counted past the cap.
+    if (lb > base.lb) count(ctx, base.type == item_type::kAccessory ? "accessory_limit_break" : "weapon_limit_break", (int64_t)(lb - base.lb));
     std::vector<u8> response = compose_response(ctx, composed);
     LOGI("server", "ItemCompose %llx: +%llu points%s, level %u -> %u, limit break %u -> %u, FOL -%llu", (unsigned long long)base_uid,
          (unsigned long long)gain, composed.big ? " (big success)" : "", composed.level_before, composed.level_after, base.lb, lb,

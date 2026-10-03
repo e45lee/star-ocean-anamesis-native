@@ -32,6 +32,7 @@
 #include "core/errors.h"
 #include "core/log.h"
 #include "core/modules.h"
+#include "core/response.h"
 #include "core/wallet.h"
 
 namespace soa::server {
@@ -112,6 +113,23 @@ void own_party(Ctx& ctx, const args::Sphere211MissionStartArgs& args, ext::Missi
     if (args.slot4 && ctx.st.one("select count(*) from roster where uid = ?", {args.slot4})) override_.helper = args.slot4;
 }
 
+// EX characters (master_role.rank 5; b: CParameterUtility::IsRoleDeity @01820c3c is rank == 5).
+// (b) CSphereMissionDetail::NextPhase (@01c1989c) checks the four slots, the own characters only
+// (tCharaData::Type() 0; a rental is never checked), and with an EX character among them opens
+// CDialogManager::OpenSphere211SallyDialogWithDeity with master_global max_revive_count (3, a) minus
+// CParameterManager+0xf48 (CPlayerInfo+0x910, Player.sphere211_revive_count) as "使用可能回数 残り
+// %d 回" (uimsg_sphere211_mission_start_with_deity).
+constexpr u32 kRankDeity = 5;
+std::vector<u64> ex_members(Ctx& ctx, const ext::MissionOverride& override_, bool rented_helper) {
+    std::vector<u64> members = override_.party;
+    if (override_.helper && !rented_helper) members.push_back(override_.helper);
+    std::vector<u64> ex;
+    for (u64 uid : members)
+        if (ctx.m.one("select rank from master_role where id = ?", {ctx.st.one("select role_id from roster where uid = ?", {uid})}) == kRankDeity)
+            ex.push_back(uid);
+    return ex;
+}
+
 // The cell's enemy level: (a) overwrite_enemy_level of the cell, else base_enemy_level + the cell's
 // add_enemy_level (d: their sum).
 // Port test hook (not a game rule): sphere_meta 'test_enemy_level', when a session script sets
@@ -143,6 +161,14 @@ u32 enemy_level(Ctx& ctx, const Floor& floor, u32 asset_id) {
 //   (b) the cell is marked playing, the party as departed (a character sorties once per dive,
 //       until 帰還: uimsg_sphere211_return_dialog "帰還をすることで全てのキャラが再度出撃できるように
 //       なり"; the departed stay across floors); (d) a rented character doesn't depart.
+//   EX characters (ex_members): a sortie with one uses one of master_global max_revive_count (3)
+//       uses until 帰還 (sphere.revive_count, sent as Player.sphere211_revive_count; b: the sally
+//       dialog shows max minus it, and UpdateMissionStartPlayerInfo takes the Player answered
+//       here); (a) uimsg_sphere211_mission_start_with_deity: the characters sortieing with an EX
+//       character don't become 出撃済み, the EX character does. (d) Departing happens at the start,
+//       as for every sortie (the text says "on a clear"), and one use per sortie however many EX
+//       characters it has; with no uses left the start is refused with 10208 (kItemUnusable) (d:
+//       the code; the client's dialog then says 残り 0 回 and doesn't stop the start itself).
 //   (d) the gauge's regeneration starts when it leaves full.
 // Answers: the core MissionStart's keys (MissionParameter with the enemy level, PlayMission,
 // BattleParameter) and the dive state.
@@ -169,6 +195,11 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
     }
     override_.overwrite_enemy_level = enemy_level(ctx, floor, asset_id);
     override_.add_enemy_level = 0;
+    const std::vector<u64> ex = ex_members(ctx, override_, lender != 0);
+    u32 revive_count = (u32)ctx.st.one("select revive_count from sphere where id = 1", {});
+    u32 revive_max = ctx.global_u32("max_revive_count", 3);
+    if (!ex.empty() && revive_count >= revive_max)
+        return ext::refusef(ctx, method, ErrorCode::kItemUnusable, "EX sorties used up (%u of %u)", revive_count, revive_max);
     // 3. the core battle
     Request core{"MissionStart", kFidMissionStart, {kMissionTypeEvent, mission_id, 0, 0, 0, 0, 0}, {}, {}};
     Value data = ctx.core_mission(core, &override_);
@@ -178,8 +209,15 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
     if (stamina >= stamina_max(ctx)) ctx.st.q("update sphere set stamina_at = ?", {t});  // (d) regen starts when leaving full
     ctx.st.q("update sphere set stamina = stamina - ?", {floor.use_stamina});
     ctx.st.q("update sphere_cell set playing = case when asset_id = ? then 1 else 0 end, updated_at = ?", {asset_id, t});
-    for (u64 uid : override_.party) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {uid});
-    if (override_.helper && !lender) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {override_.helper});
+    if (ex.empty()) {
+        for (u64 uid : override_.party) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {uid});
+        if (override_.helper && !lender) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {override_.helper});
+    } else {  // an EX sortie: only the EX characters depart; one use
+        for (u64 uid : ex) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {uid});
+        ctx.st.q("update sphere set revive_count = revive_count + 1 where id = 1", {});
+        LOGI("server", "Sphere211MissionStart: %zu EX character(s), the others stay; EX sorties %u -> %u of %u", ex.size(), revive_count,
+             revive_count + 1, revive_max);
+    }
     if (lender) record_rental(ctx, season, lender, t);
     put_state(ctx, season, data);
     LOGI("server", "Sphere211MissionStart: floor %u cell %u mission %u, %zu members, enemy level %u, sphere stamina %u -> %u", level, asset_id,
@@ -194,6 +232,7 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
 // Rules: docs/server-rules.md "Sphere 211"
 //
 // A won battle.
+//   (d) without a cell (the request's, else the one playing) it isn't answered.
 //   (a) the core MissionEnd of the event mission (EXP, FOL, drops, first-clear presents).
 //   The cell is cleared, the clear streak grows; (d) a win is logged for the achievements (type 62)
 //   and the season's ranking.
@@ -210,7 +249,12 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
 std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
     Season season = load_dive(ctx);
     u32 asset_id = 0, mission_id = 0;
-    find_cell(ctx, req, asset_id, mission_id);
+    // (d) no cell with a battle (the request's, else the one playing): not answered, as the core
+    // MissionEnd doesn't answer an unknown mission (and the same handling type 0, mission_end.cpp)
+    if (!find_cell(ctx, req, asset_id, mission_id) || !mission_id) {
+        LOGW("server", "Sphere211MissionEnd: no such cell, not answered");
+        return {};
+    }
     Request core{"MissionEnd", kFidMissionEnd, {mission_id, 0}, {}, {}};
     Value data = ctx.core_mission(core, nullptr);
     if (data.type != Value::Map) data = ctx.base_data();
@@ -407,7 +451,8 @@ std::vector<u8> sphere211_stamina_heal(Ctx& ctx, const Request&) {
 //       uimsg_sphere211_return_finished; OnReturnSphere211Res clears the client's Sphere211
 //       character map) and the gathered treasure data is analysed: the boxes' ranks are lotted and
 //       the boxes open (rewards.cpp).
-//   (b) the dialog: returning resets the clear streak bonus.
+//   (b) the dialog: returning resets the clear streak bonus; (a)+(b) the EX sorties' uses come back
+//       (revive_count 0).
 //   (d) the dive stays on its floor; nothing is charged.
 //   (b) Sphere211TreasureResultLotInfoMap {key: {lot_num}}: the box counts
 //       CSphereBoxResult::Initialize reads for keys 0..4; the screen shows key 4 as S and 3 as A
@@ -430,7 +475,9 @@ std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
     open_boxes(ctx, season, &items, &stocks, &characters, &result);
     u32 back = (u32)ctx.st.one("select count(*) from sphere_departed", {});
     ctx.st.exec("delete from sphere_departed");
-    ctx.st.q("update sphere set streak = 0", {});
+    // (a) "※使用可能回数は帰還することで回復します" (uimsg_sphere211_mission_start_with_deity); (b)
+    // CApiNotify::OnReturnSphere211Res (@014e343c) zeroes CParameterManager+0xf48 itself
+    ctx.st.q("update sphere set streak = 0, revive_count = 0", {});
     data["Sphere211TreasureResultInfoMap"] = result;
     data["StockItem"] = ctx.stock();
     if (!items.arr.empty()) data["Item"] = ctx.items();

@@ -45,7 +45,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
   - emulator and viewer boots (D11 changes the root build).
 
 ### 2. P5a: the test baseline on 3.7.0
-- **Smoke:** new baselines (screenshots) from the 3.7.0 port, checked screen by screen against `soa-emu`'s. They stay untracked in `work/port-test/smoke-base`; the pre-rebase ones are kept beside them.
+- **Smoke:** new baselines (screenshots) from the 3.7.0 port, checked screen by screen against `soa-emu`'s. They are committed in `tests/smoke-base/` (since 2026-10-03; were untracked in work/port-test/); the pre-rebase ones stay local (untracked; see port/README.md).
 - **Adapt the session scripts not yet on 3.7.0:** battle, gacha, campaign, party, rental, growth, deepspace, sphere211 (+continue), debug, debug_input, episode_movie, restore_favor, restore_missions, apinotify_live, profile_extra, `selftest_*`. Use the `SOA_PHONE` pre-downloaded phone (`port/scripts/phone370.sh`), log-line waits, and tap flows where they relied on deleted debug natives. Delete scripts whose purpose went with the dump, with a note.
 - **Gate:** every adapted script passes twice, headless, run in parallel.
 

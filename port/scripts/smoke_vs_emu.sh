@@ -1,6 +1,6 @@
 #!/bin/bash
 # The smoke test's screens on the 3.7.0 emulator: the reference check of the port's smoke
-# baselines (port/scripts/smoke.py, work/port-test/smoke-base). soa-emu runs the same 3.7.0 client
+# baselines (port/scripts/smoke.py, tests/smoke-base). soa-emu runs the same 3.7.0 client
 # under the JIT with no natives against a soa-server with the same state (the seed save,
 # --seed-rng 1, the clock at SMOKE_CLOCK), and is driven through the same screens with the same
 # taps: title -> Login -> the data check -> the notice board and the LOGIN BONUS -> home ->
@@ -19,7 +19,7 @@ set -u
 out=${1:?usage: smoke_vs_emu.sh OUT [BASELINE]}
 repo=$(cd "$(dirname "$0")/../.." && pwd)
 case $out in /*) ;; *) out=$PWD/$out ;; esac
-base=${2:-$repo/work/port-test/smoke-base}
+base=${2:-$repo/tests/smoke-base}
 case $base in /*) ;; *) base=$PWD/$base ;; esac
 cd "$repo"
 emu=$repo/build/emulator/soa-emu srv=$repo/build/server/soa-server

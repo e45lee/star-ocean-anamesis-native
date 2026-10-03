@@ -119,17 +119,17 @@ void favor_and_awakening(ext::Ctx& ctx, const Row& roster_row, u32 role, Value& 
     status["favor_level"] = favor_level;
 }
 
-// The seeds (roster_ext add_*) (step 4).
-void seed_stats(ext::Ctx& ctx, u64 uid, Value& status) {
-    // (b) the seeds (roster_ext add_*, raised by AddStatusCharacter) are added to the stats
-    // (PersonModel::CalculateParameter adds CPersonInfo add_*) and reported in add_*
-    ctx.st.q("select * from roster_ext where uid = ?", {uid}, [&](const Row& ext_row) {
-        for (const char* k : {"hp", "attack", "intelligence", "defence", "hit", "guard", "ap"}) {
-            std::string add_column = std::string("add_") + k;
-            status[add_column] = (u32)ext_row.i(add_column.c_str());
-            status[k] = status[k].f + (double)ext_row.i(add_column.c_str());
-        }
-    });
+// The seeds (roster add_*) (step 4).
+void seed_stats(const Row& roster_row, Value& status) {
+    // (b) the seeds (roster add_*, raised by AddStatusCharacter) are added to the stats
+    // (PersonModel::CalculateParameter adds CPersonInfo add_*) and reported in add_*, for a
+    // character with growth (has_growth, as person_info sends them)
+    if (!has_growth(roster_row)) return;
+    for (const char* k : {"hp", "attack", "intelligence", "defence", "hit", "guard", "ap"}) {
+        std::string add_column = std::string("add_") + k;
+        status[add_column] = (u32)roster_row.i(add_column.c_str());
+        status[k] = status[k].f + (double)roster_row.i(add_column.c_str());
+    }
 }
 
 }  // namespace
@@ -163,7 +163,7 @@ Value person_status_info(ext::Ctx& ctx, u64 uid) {
         status["is_multi_main_character"] = false;
         status["parent_master_role_id"] = 0u;
         status["mastery_talent_id"] = 0u;
-        seed_stats(ctx, uid, status);
+        seed_stats(roster_row, status);
     });
     return status;
 }

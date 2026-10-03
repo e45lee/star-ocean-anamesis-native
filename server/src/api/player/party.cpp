@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <iterator>
 
-#include "api/player/party_set.h"    // party_set_info
+#include "api/player/party_set.h"    // party_set_info, ensure_party_set
 #include "api/player/player_info.h"  // base_data
 #include "core/log.h"
 #include "core/request_args.h"
@@ -46,6 +46,7 @@ std::vector<u8> update_party(ext::Ctx& ctx, const Request& req) {
             {party_id, slot, uid});
         party_update["player_character_id" + std::to_string(slot + 1)] = uid;
     }
+    ensure_party_set(ctx, party_id);  // (d) any id: its party_set row (player.party_id's parent, PLAN-schema S4)
     ctx.st.q("update player set party_id = ?", {party_id});  // (d) the party last edited is the current one
     Value data = base_data(ctx);
     data["PartyUpdate"] = party_update;

@@ -25,7 +25,9 @@ int user_version(sqlite3* db);
 // Each step runs in its own `begin immediate` transaction and commits only when `pragma
 // foreign_key_check` is empty. Must be called outside any transaction. `target` stops at an older
 // version (the tests' per-step migrations, schema-migrate-vN); the server always takes this build's.
-bool open_and_migrate(sqlite3* db, const std::string& path, int target = kSchemaVersion);
+// `master` (the read-only master DB) gives a step the master's values it maps with (S4: the party
+// sets 1..master_global.party_set_max); without it a step uses its default (10).
+bool open_and_migrate(sqlite3* db, const std::string& path, int target = kSchemaVersion, sqlite3* master = nullptr);
 
 // Runs state::check (the master references; check.h) and logs each dangling reference (LOGW).
 // Report-only: a master can change under a saved state. The number of dangling references.

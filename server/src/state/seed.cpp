@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <set>
 
-#include "api/player/titles.h"  // new_player_titles
+#include "api/player/party_set.h"  // add_party_sets
+#include "api/player/titles.h"     // new_player_titles
 #include "core/ids.h"
 #include "core/log.h"
 #include "core/server.h"  // first_existing
@@ -48,7 +49,8 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
         "view_status2 = excluded.view_status2, kiyaku_version = excluded.kiyaku_version, title_id = excluded.title_id, "
         "support_uid = excluded.support_uid, time_saving_count = excluded.time_saving_count, "
         "time_saving_day = excluded.time_saving_day, login_bonus_popup_pending = excluded.login_bonus_popup_pending",
-        {pid, search, name, level, exp, fol, smax /* (d) full stamina */, t, config().start_coins /* (d) free coin, --start-coins */, 0, 0, 1, t, t,
+        {pid, search, name, level, exp, fol, smax /* (d) full stamina */, t, config().start_coins /* (d) free coin, --start-coins */, 0,
+         nullptr /* home_uid: below */, 1, t, t,
          // (b) the seeded (3.7.0) player finished the tutorial: tutorial_status = 9, the client's
          // last tutorial step (CPhase_TutorialNext::LastMemId; CParameterUtility::IsTutorialClear
          // is status >= it). (d) every UI tutorial seen (view_status / view_status2 all ones, as
@@ -74,14 +76,18 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
             "insert into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)"
             " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
             "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
-            "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
-            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, "
+            "skill1_level = excluded.skill1_level, skill2_level = excluded.skill2_level, skill3_level = excluded.skill3_level, "
+            "equip_skill1 = excluded.equip_skill1, equip_skill2 = excluded.equip_skill2, equip_skill3 = excluded.equip_skill3, "
+            "add_hp = excluded.add_hp, add_attack = excluded.add_attack, add_intelligence = excluded.add_intelligence, "
+            "add_defence = excluded.add_defence, add_hit = excluded.add_hit, add_guard = excluded.add_guard, add_ap = excluded.add_ap, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, assist_uid = excluded.assist_uid, "
             "created_at = excluded.created_at",
             {uid, roles[i], cap > 10 ? cap - 10 : 1u /* (d) seed level: 10 below the cap */, 0, t});
         if (roles[i] == home_role) home_uid = uid;
     }
     if (!home_uid && !roles.empty()) home_uid = kRosterUid0;
-    ctx.st.q("update player set home_uid = ?", {home_uid});
+    if (home_uid) ctx.st.q("update player set home_uid = ?", {home_uid});  // (none: NULL)
+    add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents
     // (d) party 1 = the home character + the three highest-rarity other roster members
     // (first in roster order among equals); parties 2..10 empty
     std::vector<u64> party = {home_uid};

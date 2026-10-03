@@ -22,6 +22,7 @@
 #include <time.h>
 #include <windows.h>
 
+#include <algorithm>
 #include <atomic>
 #include <cmath>
 #include <cstring>
@@ -94,6 +95,24 @@ void th_mmap(Cpu& c) {
 void th_munmap(Cpu& c) {
     hostmem::unmap((void*)c.x(0), c.x(1));
     ret(c, 0);
+}
+// mremap(old, old_size, new_size, MREMAP_MAYMOVE): a new mapping, the contents copied (VirtualAlloc
+// regions can't grow in place); without MAYMOVE it fails, as Linux may.
+void th_mremap(Cpu& c) {
+    void* old = (void*)c.x(0);
+    u64 old_size = c.x(1), new_size = c.x(2);
+    if (!((int)c.x(3) & 1)) {
+        errno = ENOMEM;
+        return ret(c, ~0ull);
+    }
+    void* p = hostmem::map_rw(new_size, true);
+    if (!p) {
+        errno = ENOMEM;
+        return ret(c, ~0ull);
+    }
+    memcpy(p, old, std::min(old_size, new_size));
+    hostmem::unmap(old, old_size);
+    ret(c, (u64)p);
 }
 
 // ---- locale: one "C" locale ----
@@ -620,6 +639,7 @@ void th_readlink(Cpu& c) {
 void register_libc_win32(Hle& h) {
     h.fn("mmap", th_mmap);
     h.fn("munmap", th_munmap);
+    h.fn("mremap", th_mremap);
 
     h.fn("newlocale", th_newlocale);
     h.fn("freelocale", th_freelocale);

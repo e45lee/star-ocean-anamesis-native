@@ -47,6 +47,17 @@ FILE* gfile(u64 p) {
 void th_fopen(Cpu& c) {
     std::string hp = host_path(arg_str(c, 0));
     FILE* f = fopen(hp.c_str(), arg_str(c, 1));
+#ifdef _WIN32
+    // Linux opens a directory for reading (reads then fail with EISDIR); the client tests its
+    // download directory that way before the data check (fopen(".../files/", "rb")). Windows' CRT
+    // refuses: a stream on NUL (reads: EOF) stands in.
+    if (!f && !strpbrk(arg_str(c, 1), "wa+")) {
+        std::string d = hp;
+        while (d.size() > 3 && (d.back() == '/' || d.back() == '\\')) d.pop_back();  // (the CRT's stat refuses a trailing slash)
+        struct stat st;
+        if (stat(d.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) f = fopen("NUL", "rb");
+    }
+#endif
     LOGD("io", "fopen(%s -> %s, %s) = %p", arg_str(c, 0), hp.c_str(), arg_str(c, 1), (void*)f);
     ret_ptr(c, f);
 }
@@ -142,21 +153,21 @@ void th_swprintf(Cpu& c) {
 void th_sscanf(Cpu& c) {
     RegVa va(c, 2);
     auto a = scanf_args(arg_str(c, 1), va);
-    int r = sscanf(arg_str(c, 0), arg_str(c, 1), a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17],
+    int r = sscanf(arg_str(c, 0), host_scanf_format(arg_str(c, 1)).c_str(), a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17],
                    a[18], a[19], a[20], a[21], a[22], a[23], a[24], a[25], a[26], a[27], a[28], a[29], a[30], a[31]);
     ret(c, (u64)(s64)r);
 }
 void th_vsscanf(Cpu& c) {
     GuestVaList va(c.x(2));
     auto a = scanf_args(arg_str(c, 1), va);
-    int r = sscanf(arg_str(c, 0), arg_str(c, 1), a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17],
+    int r = sscanf(arg_str(c, 0), host_scanf_format(arg_str(c, 1)).c_str(), a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17],
                    a[18], a[19], a[20], a[21], a[22], a[23], a[24], a[25], a[26], a[27], a[28], a[29], a[30], a[31]);
     ret(c, (u64)(s64)r);
 }
 void th_fscanf(Cpu& c) {
     RegVa va(c, 2);
     auto a = scanf_args(arg_str(c, 1), va);
-    int r = fscanf(gfile(c.x(0)), arg_str(c, 1), a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17],
+    int r = fscanf(gfile(c.x(0)), host_scanf_format(arg_str(c, 1)).c_str(), a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17],
                    a[18], a[19], a[20], a[21], a[22], a[23], a[24], a[25], a[26], a[27], a[28], a[29], a[30], a[31]);
     ret(c, (u64)(s64)r);
 }

@@ -2,6 +2,8 @@
 """Drive a running `soa --control FIFO` instance.
 
 Usage: soactl.py FIFO COMMAND...
+       soactl.py tcp:HOST:PORT COMMAND...   (--control tcp:HOST:PORT; e.g. a Windows .exe from WSL;
+                                             add --windows-paths to send shot:PATH as a Windows path)
 
 Commands (coordinates are window pixels):
   tap:X:Y  drag:X1:Y1:X2:Y2[:MS]  wheel:X:Y:DY  back  text:STRING
@@ -29,9 +31,13 @@ def main():
     ap.add_argument("fifo")
     ap.add_argument("commands", nargs="+")
     ap.add_argument("--timeout", type=float, default=300)
+    ap.add_argument("--windows-paths", action="store_true", help="shot:PATH as the Windows spelling (soadrive/winhost.py)")
     a = ap.parse_args()
-    if not os.path.exists(a.fifo):
-        sys.exit(f"{a.fifo} doesn't exist; start soa with --control {a.fifo}")
+    if a.windows_paths:
+        from soadrive import winhost
+        fifo.CLIENT_PATH[a.fifo] = winhost.winpath
+    if not fifo.listening(a.fifo):
+        sys.exit(f"{a.fifo} isn't there; start soa with --control {a.fifo}")
     sent, pending = fifo.deliver(a.fifo, a.commands, a.timeout, on_shot=lambda p: print(p, flush=True))
     if not sent:
         sys.exit(f"no reader on {a.fifo} (is soa still running?)")

@@ -114,9 +114,11 @@ time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWE
 
 A cross build from Linux (or WSL) with **llvm-mingw** (clang, libc++, the UCRT) into `build-win/`
 (`port/PLAN.md` 5b, "W"): every part, as `.exe` files (`soa.exe`, `soa-server.exe`, `soa-emu.exe`,
-`soa-viewer.exe`, the tests and tools). Checked on Windows so far: `soa-server.exe --selftest`,
-`soaruntime_tests.exe`, `soa.exe --selftest` and `soa-emu.exe` up to the login against
-`soa-server.exe`; the sessions and the viewer are next (`port/PLAN.md` 5b, "As built").
+`soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop):
+`soa-server.exe --selftest`, `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests
+`win:battle-gacha` (the port's restore session, in process), `win:seeded` (`soa-emu.exe` against
+`soa-server.exe`: login, battle, gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff
+shard on the three Windows targets) (`port/PLAN.md` 5b, "As built").
 
 ```sh
 # once: llvm-mingw (any recent ucrt ubuntu-x86_64 release of github.com/mstorsjo/llvm-mingw)
@@ -160,7 +162,56 @@ cd /mnt/c/soa-win && ./build-win/server/soa-server.exe --listen 127.0.0.1:39300 
 cd /mnt/c/soa-win && ./build-win/emulator/soa-emu.exe --data run/phone --server 127.0.0.1:39300 --http 127.0.0.1:39380
 ```
 
-`--control NAME` is a named pipe there (`\\.\pipe\NAME`): `cmd.exe /c "echo tap:405:1000> \\.\pipe\NAME"`.
+**Playing on Windows:** the launchers in `scripts/windows/` are the `scripts/run-*.sh` twins, run from
+the checkout (or the stage `C:\soa-win`) in `cmd.exe` or PowerShell, saves under `%LOCALAPPDATA%`:
+
+| Launcher | Runs |
+|---|---|
+| `scripts\windows\run-port.cmd [soa options]` | the port: the 3.7.0 client with its in-process server (saves: `%LOCALAPPDATA%\soa\port-370` unless `--data`) |
+| `scripts\windows\run-emulator-370.cmd [options]` | the 3.7.0 client in the emulator against `soa-server.exe`, which it starts and stops (`run-emulator-370.ps1`; `%LOCALAPPDATA%\soa\emulator-370`: `phone\`, `server\`, `server.log`; `--new-player`, `--enable-events`, `--port`, `--home`) |
+| `scripts\windows\run-viewer-380.cmd [soa-viewer options]` | the offline 3.8.0 client in the viewer (saves: `%LOCALAPPDATA%\soa\viewer-380`; needs `work\extracted\xapk`) |
+
+The programs' own default data dirs on Windows are these (`common/include/soa/paths.h`; on Linux
+`~/.local/share/...`, as below); `--data DIR` overrides them. Builds before 2026-10-03 put them under
+`<the launch directory>\.local\share\` (`soa-linux-370`, `soa-emulator-370\phone`, `soa-viewer-380`):
+they aren't moved automatically; to keep such a save, move the directory while the program isn't
+running, e.g. `move .local\share\soa-linux-370 "%LOCALAPPDATA%\soa\port-370"` (create
+`%LOCALAPPDATA%\soa` first), or keep using it with `--data`.
+
+**The control channel:** `--control NAME` is a named pipe on Windows (`\\.\pipe\NAME`:
+`cmd.exe /c "echo tap:405:1000> \\.\pipe\NAME"`); `--control tcp:127.0.0.1:PORT` (both platforms; PORT 0:
+any, logged as `I/control: listening on tcp:...`) is what the drivers use from WSL, whose mirrored
+networking shares 127.0.0.1 with Windows (`networkingMode=Mirrored` in `.wslconfig`):
+`control/soactl.py --windows-paths tcp:127.0.0.1:PORT tap:364:1000 shot:/tmp/a.png`.
+
+**Tests on Windows from WSL** (`control/soadrive/winhost.py`): a session given a `.exe` runs the
+staged copy from `C:\soa-win` (refreshed from `build-win/` when newer), with Windows paths, the TCP
+control channel, the phone and the server's state on the Windows drive (linked back into the run's
+dirs) and the shared pre-downloaded phone hard-linked there by `scripts/windows/link-phone.ps1`
+(seconds; `cp -al` through WSL takes about ten minutes). Once: `scripts/windows-stage.sh --phone
+--viewer` (the shared phone, 4 GB, and the soa-viewer package). Then:
+
+```sh
+scripts/windows-test.sh battle-gacha OUT TMP     # = tools/gate.sh win:battle-gacha (T2; SKIP without build-win/)
+scripts/windows-test.sh seeded OUT TMP           # win:seeded
+scripts/windows-test.sh viewer-boot OUT TMP      # win:viewer-boot
+scripts/windows-test.sh shard-login OUT TMP      # win:shard-login: tests/diff's login, every target a .exe
+SOA=$PWD/build-win/port/soa.exe SOA_EMU=$PWD/build-win/emulator/soa-emu.exe \
+  SOA_SERVER=$PWD/build-win/server/soa-server.exe tests/diff/run.sh FLOW --out OUT   # any flow
+control/run.py battle-gacha build-win/port/soa.exe OUT TMP     # any session, given the .exe files
+control/run.py seeded build-win/emulator/soa-emu.exe build-win/server/soa-server.exe OUT
+emulator-viewer/scripts/viewer_boot.sh build-win/emulator-viewer/soa-viewer.exe OUT
+```
+
+The stage is one per machine: two checkouts running Windows tests at once would test each other's
+files and `.exe` files; give each its own: `scripts/windows-stage.sh --phone --viewer
+/mnt/c/soa-win-NAME` once, then `SOA_WIN_STAGE=/mnt/c/soa-win-NAME` for its tests.
+
+Windows ports: in mirrored networking a port WSL has bound (even briefly, to test it) stays refused
+to Windows for a while, and WSL's ephemeral range is reserved for WSL; the drivers give Windows
+programs port 0 (the control channel) or untested ports below that range (`soa-server.exe`, retried
+when refused). Environment variables reach a `.exe` only through `WSLENV` (soadrive adds the
+client's).
 
 On a Windows machine, clone the repository and run the same `.exe` files from there.
 

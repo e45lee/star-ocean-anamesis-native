@@ -33,7 +33,7 @@ import subprocess
 import sys
 import time
 
-from . import fifo, gdb, milestones, prepared, proc, screens
+from . import fifo, gdb, milestones, prepared, proc, screens, winhost
 from .proc import REPO
 
 sys.path.insert(0, os.path.join(REPO, "control"))
@@ -92,16 +92,26 @@ def binaries():
     }
 
 
-def make_phone(dst, fresh_kvs=True):
+def make_phone(dst, fresh_kvs=True, win=False):
     """The run's phone: the shared pre-downloaded phone linked (SOA_PHONE as the session scripts
     take it: unset = the shared phone, none = empty, DIR = that phone). Returns (a note, whether the
-    data is on it)."""
+    data is on it). win: a Windows client's (the stage's shared phone, work/phone-3.7.0 there,
+    unless SOA_SHARED_PHONE says otherwise: hard links within the Windows drive)."""
     if os.path.isdir(dst):
         shutil.rmtree(dst)
+    env = dict(os.environ)
+    if win and "SOA_SHARED_PHONE" not in env:
+        env["SOA_SHARED_PHONE"] = os.path.join(winhost.STAGE, "work", "phone-3.7.0")
+    if win:
+        note, linked = winhost.make_phone(dst, env)
+        aska = os.path.join(dst, "data", "shared_prefs", "Aska.xml")
+        if fresh_kvs and os.path.exists(aska):
+            os.remove(aska)
+        return note, linked
     r = subprocess.run(["bash", "-c", '. scripts/shared-phone.sh; shared_phone_resolve "$1"; '
                         'if [ -n "$SOA_PHONE" ]; then shared_phone_link "$SOA_PHONE" "$2" && echo "linked from $SOA_PHONE"; '
                         'else mkdir -p "$2"; echo "empty (the client downloads)"; fi', "-", REPO, dst],
-                       cwd=REPO, capture_output=True, text=True)
+                       cwd=REPO, capture_output=True, text=True, env=env)
     if r.returncode != 0:
         raise Abort("preparing the phone: " + (r.stdout + r.stderr).strip()[-300:])
     os.makedirs(os.path.join(dst, "data", "shared_prefs"), exist_ok=True)
@@ -235,6 +245,7 @@ class Run:
         self.results, self.failed, self.t0 = [], False, time.monotonic()
         self.shot_names = []
         self.predownloaded = False
+        self.win = False  # a Windows client (start(): soadrive/winhost.py)
         self.ctl_timeout = 120 if lay.kind == "diff" else 400
         self._cursor = None
         # called after the phone and the client save are in place, before anything starts (a
@@ -262,9 +273,36 @@ class Run:
         if self.queued:
             self.note("waited %ds for a game slot (control/soaslot.py)" % self.queued)
         b = binaries()
-        master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
-        download = proc.repo_file("work/download-3.7.0")
         server_side = self.target != "port-inproc"
+        binary = cfg.binary or (b["soa"] if self.target != "emu" else b["emu"])
+        # A Windows client (build-win/*.exe; soadrive/winhost.py): the staged programs and data, Windows
+        # paths, the TCP control channel, the phone and the server's state on the Windows drive.
+        self.win = winhost.is_windows(binary)
+        if self.win:
+            built, binary = binary, winhost.staged_binary(binary)
+            # its soa-server: the Windows one too (a Linux server given with it, e.g. a session's default,
+            # is replaced by the build-win sibling of the client)
+            server_binary = winhost.staged_binary(cfg.server_binary if winhost.is_windows(cfg.server_binary) else
+                                                  os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(built))), "server", "soa-server.exe"))
+            master, download = winhost.stage_file("data/basmaster-3.7.0.sqlite3"), winhost.stage_file("work/download-3.7.0")
+            if not master or not download:
+                raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not staged in %s (scripts/windows-stage.sh)"
+                            % winhost.STAGE)
+            wp, cwd = winhost.winpath, winhost.STAGE
+            if not cfg.phone:
+                inside = os.path.dirname(self.state_db) == self.phone or self.state_db.startswith(self.phone + os.sep)
+                self.phone = winhost.local_dir(self.phone)
+                if inside:
+                    self.state_db = os.path.join(self.phone, os.path.relpath(self.layout.state_db, self.layout.phone))
+            if not winhost.on_drive(os.path.dirname(self.state_db)):
+                self.state_db = os.path.join(winhost.local_dir(os.path.dirname(self.state_db)), os.path.basename(self.state_db))
+            # port 0: the client picks it and logs it (winhost.control_port), see below
+            self.fifo = "tcp:127.0.0.1:0"
+        else:
+            master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
+            download = proc.repo_file("work/download-3.7.0")
+            server_binary = cfg.server_binary or b["server"]
+            wp, cwd = (lambda p: p), REPO
         if (cfg.explicit_data or server_side) and (not master or not download):
             raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not found")
         if cfg.phone:
@@ -275,7 +313,7 @@ class Run:
             self.note("phone: %s (as it is)" % self.phone)
         else:
             t = time.monotonic()
-            note, self.predownloaded = make_phone(self.phone, cfg.fresh_kvs)
+            note, self.predownloaded = make_phone(self.phone, cfg.fresh_kvs, self.win)
             self.note("phone: %s (%d ms)" % (note, int((time.monotonic() - t) * 1000)))
         if cfg.prepared:
             shutil.copyfile(cfg.prepared, self.state_db)
@@ -294,17 +332,17 @@ class Run:
             self.before_client()
         srv = []
         if cfg.explicit_data or server_side:
-            srv += ["--master", master]
+            srv += ["--master", wp(master)]
         if cfg.seed_rng is not None:
             srv += ["--seed-rng", str(cfg.seed_rng)]
         if cfg.clock:
             srv += ["--clock", cfg.clock]
         srv += cfg.server_args
         if cfg.seed is None and not cfg.new_player:
-            srv += ["--seed", os.path.join(REPO, "data/saves/seed/Game.xml")]
+            srv += ["--seed", wp(os.path.join(winhost.STAGE if self.win else REPO, "data/saves/seed/Game.xml"))]
         elif cfg.seed:
-            srv += ["--seed", cfg.seed]
-        client = ["--data", self.phone, "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H),
+            srv += ["--seed", wp(cfg.seed)]
+        client = ["--data", wp(self.phone), "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H),
                   "--control", self.fifo]
         if cfg.gdb:
             if not gdb.available():
@@ -321,35 +359,56 @@ class Run:
             self.note("software GL: " + " ".join("%s=%s" % kv for kv in sorted(gl.items())))
         env.update(gl)
         env.update(cfg.env)
-        pkt = ["--log-packets", os.path.dirname(self.packets)] if cfg.log_packets else []
+        if self.win:
+            # the client's environment reaches a Windows program only through WSLENV
+            names = [k for k in env if k not in os.environ.get("WSLENV", "").split(":")]
+            env["WSLENV"] = ":".join([x for x in os.environ.get("WSLENV", "").split(":") if x] + names)
+        pkt = ["--log-packets", wp(os.path.dirname(self.packets))] if cfg.log_packets else []
         if self.target == "port-inproc":
             extra = []
             if cfg.explicit_data or not self.layout.inproc_db_default:
-                extra += ["--db", self.state_db]
+                extra += ["--db", wp(self.state_db)]
             if cfg.explicit_data:
-                extra += ["--download-dir", download]
-            binary = cfg.binary or b["soa"]
+                extra += ["--download-dir", wp(download)]
             self.client = proc.Proc("soa", [binary] + client + cfg.client_args + srv + extra + pkt, self.client_log,
-                                    limit=cfg.limit, env=env, slot_fd=self.slot)
+                                    limit=cfg.limit, env=env, slot_fd=self.slot, cwd=cwd)
         else:
-            gp, hp = proc.free_ports(2)
-            self.server = proc.Proc("soa-server", [cfg.server_binary or b["server"], "--listen", "127.0.0.1:%d" % gp,
-                                                   "--http", "127.0.0.1:%d" % hp, "--data", os.path.dirname(self.state_db),
-                                                   "--download-dir", download] + pkt + srv, self.server_log, limit=cfg.limit)
-            end = time.monotonic() + 120
-            while not self.grep(self.server_log, r"^soa-server: game"):
-                if not self.server.running() or time.monotonic() > end:
+            for attempt in range(4):
+                gp, hp = (winhost.free_ports if self.win else proc.free_ports)(2)
+                self.server = proc.Proc("soa-server", [server_binary, "--listen", "127.0.0.1:%d" % gp,
+                                                       "--http", "127.0.0.1:%d" % hp, "--data", wp(os.path.dirname(self.state_db)),
+                                                       "--download-dir", wp(download)] + pkt + srv, self.server_log,
+                                        limit=cfg.limit, cwd=cwd)
+                end = time.monotonic() + 120
+                while not self.grep(self.server_log, r"^soa-server: game"):
+                    if not self.server.running() or time.monotonic() > end:
+                        break
+                    time.sleep(0.5)
+                if self.grep(self.server_log, r"^soa-server: game"):
+                    break
+                self.server.stop()
+                # a Windows soa-server whose ports Windows refused (winhost.free_ports): other ports
+                if not (self.win and self.grep(self.server_log, re.escape(winhost.IN_USE))) or attempt == 3:
                     raise Abort("soa-server didn't start (see %s)" % self.server_log)
-                time.sleep(0.5)
-            binary = cfg.binary or (b["emu"] if self.target == "emu" else b["soa"])
+                self.note("soa-server: ports %d/%d in use on Windows; trying others" % (gp, hp))
             self.client = proc.Proc(os.path.basename(binary), [binary] + client + cfg.client_args +
                                     ["--server", "127.0.0.1:%d" % gp, "--http", "127.0.0.1:%d" % hp], self.client_log, env=env,
-                                    limit=cfg.limit, slot_fd=self.slot)
+                                    limit=cfg.limit, slot_fd=self.slot, cwd=cwd)
         emu_link = os.path.join(self.dir, "emu.log")
         if self.layout.kind == "diff" and not os.path.lexists(emu_link):
             os.symlink("client.log", emu_link)
         end = time.monotonic() + 120
-        while not os.path.exists(self.fifo):
+        while self.win and self.fifo.endswith(":0"):
+            port = winhost.control_port(self.client_log)
+            if port:
+                self.fifo = "tcp:127.0.0.1:%d" % port
+                fifo.CLIENT_PATH[self.fifo] = wp
+                break
+            if not self.alive() or time.monotonic() > end:
+                raise Abort("the client didn't open its control channel (%s; see %s)" % (
+                    self.gone() if not self.alive() else "not within 120s", self.client_log))
+            time.sleep(0.5)
+        while not fifo.listening(self.fifo):
             if not self.alive() or time.monotonic() > end:
                 raise Abort("the client didn't open its control FIFO (%s; see %s)" % (
                     self.gone() if not self.alive() else "not within 120s", self.client_log))
@@ -378,7 +437,11 @@ class Run:
         if self.layout.state_end and os.path.exists(self.state_db):
             self.state("end")
         cleanup = self.layout.phone_cleanup
-        if cleanup and not self.keep and os.path.isdir(cleanup):
+        if cleanup and not self.keep and os.path.islink(cleanup):
+            # a Windows run's phone: on the Windows drive (winhost.local_dir), linked here
+            shutil.rmtree(os.path.realpath(cleanup), ignore_errors=True)
+            os.remove(cleanup)
+        elif cleanup and not self.keep and os.path.isdir(cleanup):
             shutil.rmtree(cleanup, ignore_errors=True)
         with open(self.layout.steps, "w") as f:
             f.write("\n".join(self.results) + "\n" + ("FAIL" if self.failed else "PASS") + "\n")
@@ -389,7 +452,9 @@ class Run:
     # driver) -- the host's problem, not the game's: labelled "host GPU" so a gate can say so.
     CRASH = re.compile(rb"Unhandled SIG|\*\*\* host signal")
     HOST_GPU = re.compile(rb"D3D12: Removing Device|glx: failed to create|X Error of failed request|^/usr/lib/wsl/drivers/|"
-                          rb"libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri|libgallium-", re.M)
+                          rb"libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri|libgallium-|"
+                          # a Windows client: ANGLE's D3D11 device lost (winhost.py)
+                          rb"D3D11 device was (removed|reset)|Device lost in SwapChain11", re.M)
     # no frame-rate line (the host loop logs "I/perf: N fps" every 10 s) for this long, after one was
     # seen: the client's main loop is stuck
     STALL_SECS = 120
@@ -634,8 +699,26 @@ class Run:
         out = os.path.join(self.layout.state_dir, "state-%s.txt" % tag)
         db = proc.repo_file("data/basmaster-3.7.0.sqlite3") if self.cfg.state_master else None
         py = os.path.join(REPO, ".venv/bin/python")
-        r = subprocess.run([py if os.path.exists(py) else sys.executable, os.path.join(REPO, "tools/server_state.py"),
-                            self.state_db] + (["--db", db] if db else []), capture_output=True, text=True, cwd=REPO)
+        state_db, snap = self.state_db, None
+        if self.win and os.path.exists(state_db):
+            # a Windows server's live WAL database: SQLite here can't share its locks across the
+            # drive, so a snapshot (the file and its WAL, checkpointed in the copy) is what's read
+            import sqlite3
+            import tempfile
+            snap = tempfile.mkdtemp(prefix="soadrive-state.")
+            state_db = os.path.join(snap, "server.sqlite3")
+            shutil.copyfile(self.state_db, state_db)
+            if os.path.exists(self.state_db + "-wal"):
+                shutil.copyfile(self.state_db + "-wal", state_db + "-wal")
+            con = sqlite3.connect(state_db)
+            con.execute("pragma wal_checkpoint(TRUNCATE)")
+            con.close()
+        try:
+            r = subprocess.run([py if os.path.exists(py) else sys.executable, os.path.join(REPO, "tools/server_state.py"),
+                                state_db] + (["--db", db] if db else []), capture_output=True, text=True, cwd=REPO)
+        finally:
+            if snap:
+                shutil.rmtree(snap, ignore_errors=True)
         with open(out, "w") as f:
             f.write(r.stdout + r.stderr)
         return r.stdout

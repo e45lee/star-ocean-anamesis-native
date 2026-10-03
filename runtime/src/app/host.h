@@ -34,7 +34,7 @@ struct HostConfig {
     std::string size_note;                          // appended to the "window ..." log line
     std::vector<std::string> shots;                 // "S:PATH": a screenshot S seconds after start
     std::vector<std::string> actions;               // "S:COMMAND": a control command S seconds after start
-    std::string control_path;                       // read control commands from this FIFO
+    std::string control_path;                       // read control commands from this FIFO (Windows: named pipe), or "tcp:HOST:PORT"
     std::string font;                               // the text box's font (app/text_overlay.h): a path,
                                                     // "none", or "" (a system CJK font)
 

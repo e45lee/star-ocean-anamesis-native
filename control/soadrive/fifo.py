@@ -1,7 +1,30 @@
 """The control FIFO (runtime/src/app/host.cpp; control/soactl.py is its CLI): one write of
-newline-separated commands; screenshots are waited for."""
+newline-separated commands; screenshots are waited for. An address "tcp:HOST:PORT" is the TCP
+control channel instead (`--control tcp:...`: the Windows programs from WSL, soadrive/winhost.py):
+one connection per batch."""
 import os
+import socket
 import time
+
+# address -> a function giving the client's spelling of a local path (the shot:PATH commands): set
+# for a Windows client (winhost.winpath); the screenshot is still waited for at the local path
+CLIENT_PATH = {}
+
+
+def _open_tcp(addr):
+    host, _, port = addr[4:].rpartition(":")
+    return socket.create_connection((host or "127.0.0.1", int(port)), timeout=5)
+
+
+def listening(addr):
+    """The client's channel is there: the FIFO exists, or the TCP port accepts a connection."""
+    if not addr.startswith("tcp:"):
+        return os.path.exists(addr)
+    try:
+        _open_tcp(addr).close()
+        return True
+    except OSError:
+        return False
 
 
 def deliver(fifo, cmds, timeout=120, on_shot=None, alive=None):
@@ -13,8 +36,20 @@ def deliver(fifo, cmds, timeout=120, on_shot=None, alive=None):
     cmds = ["shot:" + os.path.abspath(c[5:]) if c.startswith("shot:") else c for c in cmds]
     shots = {c[5:]: (os.path.getmtime(c[5:]) if os.path.exists(c[5:]) else None) for c in cmds if c.startswith("shot:")}
     deadline = time.monotonic() + timeout
+    conv = CLIENT_PATH.get(fifo)
+    if conv:
+        cmds = ["shot:" + conv(c[5:]) if c.startswith("shot:") else c for c in cmds]
     data = ("\n".join(cmds) + "\n").encode()
-    while True:
+    while fifo.startswith("tcp:"):
+        try:
+            with _open_tcp(fifo) as c:
+                c.sendall(data)
+            break
+        except OSError:
+            if time.monotonic() > deadline or (alive is not None and not alive()):
+                return False, list(shots)
+            time.sleep(0.2)
+    while not fifo.startswith("tcp:"):
         # Open without blocking forever: with no reader (the client exited, or isn't listening
         # yet) a plain open() would hang.
         try:

@@ -23,6 +23,10 @@ t0=$(date +%s)
 elapsed() { echo $(( $(date +%s) - t0 )); }
 
 # start_viewer BIN [extra soa-viewer args...]: headless, its own data dir, the control FIFO.
+# A Windows BIN (build-win/emulator-viewer/soa-viewer.exe; README.md "Windows") runs the staged copy
+# in $SOA_WIN_STAGE (default /mnt/c/soa-win: scripts/windows-stage.sh --viewer stages the XAPK) from
+# there, with its phone on the Windows drive and the TCP control channel (control/soadrive/winhost.py).
+win=0
 start_viewer() {
     local bin=$1; shift
     [ -x "$bin" ] || { echo "FAIL: $bin not built (cmake -S . -B build && cmake --build build --target soa-viewer)"; exit 1; }
@@ -32,8 +36,30 @@ start_viewer() {
     rm -f "$fifo"
     # the machine-wide game slot pool (control/soaslot.sh): held until the script exits
     SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take soa-viewer
-    timeout -k 10 "${VIEWER_TIMEOUT:-1800}" "$bin" --data "$phone" --headless --size ${W}x$H --control "$fifo" "$@" > "$log" 2>&1 &
-    vpid=$!
+    if [[ $bin == *.exe ]]; then
+        win=1
+        local py=(python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); from soadrive import winhost as w; print(eval(sys.argv[2]))' "$repo/control")
+        bin=$("${py[@]}" "w.staged_binary('$bin')") || { echo "FAIL: $bin not staged"; exit 1; }
+        [ -d "${SOA_WIN_STAGE:-/mnt/c/soa-win}/work/extracted/xapk" ] ||
+            { echo "FAIL: the XAPK isn't staged (scripts/windows-stage.sh --viewer)"; exit 1; }
+        [ -n "${VIEWER_DATA:-}" ] || phone=$("${py[@]}" "w.local_dir('$phone')")
+        # port 0: the viewer picks one and logs it (in mirrored networking a port tried from WSL
+        # stays refused to Windows for a while: soadrive/winhost.py free_ports)
+        (cd "${SOA_WIN_STAGE:-/mnt/c/soa-win}" && exec timeout -k 10 "${VIEWER_TIMEOUT:-1800}" "$bin" --data "$(wslpath -w "$phone")" \
+            --headless --size ${W}x$H --control tcp:127.0.0.1:0 "$@") > "$log" 2>&1 &
+        vpid=$!
+        local port=
+        for _ in $(seq 1 240); do
+            port=$("${py[@]}" "w.control_port('$log') or ''")
+            [ -n "$port" ] && break
+            kill -0 "$vpid" 2>/dev/null || break
+            sleep 0.5
+        done
+        fifo=tcp:127.0.0.1:${port:-0}
+    else
+        timeout -k 10 "${VIEWER_TIMEOUT:-1800}" "$bin" --data "$phone" --headless --size ${W}x$H --control "$fifo" "$@" > "$log" 2>&1 &
+        vpid=$!
+    fi
     trap cleanup EXIT
 }
 cleanup() {
@@ -42,7 +68,11 @@ cleanup() {
         for _ in 1 2 3 4 5 6 7 8 9 10; do kill -0 "$vpid" 2>/dev/null || break; sleep 1; done
         kill -9 "$vpid" 2>/dev/null
     fi
-    if [ -z "${VIEWER_DATA:-}" ] && [ "${KEEP_DATA:-0}" != 1 ] && [ -d "$out/phone" ]; then rm -rf "${out:?}/phone"; fi
+    if [ -z "${VIEWER_DATA:-}" ] && [ "${KEEP_DATA:-0}" != 1 ] && [ -d "$out/phone" ]; then
+        # (a Windows run's phone: $out/phone links to it on the Windows drive)
+        [ -L "$out/phone" ] && rm -rf "$(readlink -f "$out/phone")" && rm -f "$out/phone"
+        rm -rf "${out:?}/phone"
+    fi
 }
 alive() {
     kill -0 "$vpid" 2>/dev/null || { echo "soa-viewer exited"; return 1; }
@@ -50,7 +80,10 @@ alive() {
     rss=$(ps -o rss= --ppid "$vpid" 2>/dev/null | sort -n | tail -1)
     [ -z "$rss" ] || [ "$rss" -le $MAX_RSS_KB ] || { echo "soa-viewer above 6 GB RSS"; return 1; }
 }
-ctl() { python3 "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
+ctl() {
+    if [ "$win" = 1 ]; then python3 "$soactl" --timeout 60 --windows-paths "$fifo" "$@" > /dev/null 2>&1
+    else python3 "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; fi
+}
 in_log() { grep -q -- "$1" "$log" 2>/dev/null; }
 pass() { results+=("PASS  $1 ($(elapsed)s)"); echo "PASS  $1 ($(elapsed)s)"; }
 miss() { results+=("FAIL  $1"); echo "FAIL  $1"; failed=1; }

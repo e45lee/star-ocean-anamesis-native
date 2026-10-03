@@ -5,6 +5,12 @@
 
 #include "core/abi.h"
 
+#ifdef _WIN32
+#define WIN_HOST true
+#else
+#define WIN_HOST false
+#endif
+
 namespace soa {
 
 class VaSource {
@@ -81,5 +87,16 @@ std::string guest_format(const char* fmt, VaSource& va);
 std::wstring guest_wformat(const wchar_t* fmt, VaSource& va);
 // Collects the pointer arguments of a scanf format (at most 32).
 std::vector<u64> scanf_args(const char* fmt, VaSource& va);
+// The guest's scanf format for the host's scanf: the guest's `long` is 64-bit (LP64); on Windows
+// (LLP64) an `l` integer conversion (%ld %li %lo %lu %lx %lX %ln) becomes `ll`. Unchanged elsewhere
+// (`win`: force the translation, for the tests on Linux).
+std::string host_scanf_format(const char* fmt, bool win = WIN_HOST);
+// The guest's rand(): bionic's RAND_MAX is 0x7fffffff. Linux: the host's (glibc: the same
+// TYPE_3 additive generator, seed 1). Windows, whose rand() is 15-bit: that generator here (the
+// same sequence as Linux's while no host code there calls rand() in between: on Linux the guest
+// shares glibc's state with the host). glibc_random: the generator itself; reset: back to seed 1,
+// returning 0.
+s32 guest_rand();
+s32 glibc_random(bool reset = false);
 
 }  // namespace soa

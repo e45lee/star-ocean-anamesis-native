@@ -6,7 +6,7 @@ Every gate test is listed once, in [`tiers.json`](tiers.json) (the single source
 |---|---|---|---|
 | **T0** | every commit | the incremental build, then the fast deterministic checks in parallel: the server and runtime unit tests, every port selftest (one boot), every replay corpus, the docs / format / evidence / no-380 / schema checks, pytest, the coverage and impact maps current | about 1.5 minutes (the port selftest's boot is the long pole: 92 s; without it 43 s) |
 | **T1** | per change | T0, then what `tools/tests_for.py` selects for the changed paths: the replay against the parent build, the tests/diff shards and port sessions that exercise the touched APIs (the cheapest set covering them), smoke for client changes, the emulator / viewer gates when their scope is touched | 2-6 minutes for one area (the shards run in parallel) |
-| **T2** | per batch, before merging to main | T0, the full tests/diff (all flows, all targets, parallel), the broad port session set, the emulator and viewer sessions, the CDN check | about 25 minutes (the full tests/diff and the sessions share the 12 slots) |
+| **T2** | per batch, before merging to main | T0, the full tests/diff (all flows, all targets, parallel), the broad port session set, the emulator and viewer sessions, the CDN check; with a `build-win/`, the Windows tests `win:*` (else SKIP) | about 25 minutes (the full tests/diff and the sessions share the 12 slots; the `win:*` tests add about 7) |
 | **T3** | occasional (nightly, before a release) | the slow or rarely affected: Sphere 211's long runs, the episode download, the full new-player download, the demos, smoke vs the emulator, the stand-in fetch, the debug-window sessions | |
 
 ```sh
@@ -30,6 +30,7 @@ tools/gate.sh T1 --git-diff main --software-gl   # the clients on llvmpipe, not 
 - `server/src/rules/<x>_rules*`: the API folder of that name; the rest of `server/` and `tools/server_*`: every corpus and every shard;
 - `runtime/`, `platform370/`, `port/src/`, `emulator/src/`, the build: the broad set (every shard, smoke, the gate-scope sessions);
 - `tests/diff/`, `control/`, `phone370.sh`: every shard; a test script itself: that test.
+- never the Windows tests (`win:*`, kind `platform`, no impact entry): T2 runs them when `build-win/` exists (their `requires`; else SKIP), or by name (`tools/gate.sh win:seeded`).
 
 Regenerate the map after adding a test or a corpus: `tools/gate.sh T2 --out /tmp/g && tools/tests_for.py --regen --observed /tmp/g` (T0's `impact-map` check fails when an API or a test is missing from it).
 
@@ -86,6 +87,10 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `emu:summer` | 6.1 min | 1 | the summer event demo on the emulator (emulator gate scope) | `emulator/scripts/summer_demo.sh {out}` |
 | T2 | `viewer:boot` | 40 s | 1 | soa-viewer boots (viewer gate scope) | `emulator-viewer/scripts/viewer_boot.sh build/emulator-viewer/soa-viewer {out}` |
 | T2 | `viewer:session` | 4.6 min | 1 | soa-viewer's session (viewer gate scope) | `emulator-viewer/scripts/viewer_session.sh build/emulator-viewer/soa-viewer {out}` |
+| T2 | `win:battle-gacha` | 5.2 min | 1 | Windows (soa.exe from WSL through interop, staged in C:\soa-win): the restore session: home, a battle, a 10-draw, the server state after each | `scripts/windows-test.sh battle-gacha {out} {tmp}` |
+| T2 | `win:seeded` | 5.8 min | 1 | Windows: soa-emu.exe against soa-server.exe: login, battle, gacha (the emulator's seeded session) | `scripts/windows-test.sh seeded {out} {tmp}` |
+| T2 | `win:viewer-boot` | 45 s | 1 | Windows: soa-viewer.exe boots to the title and the terms prompt (the viewer's boot) | `scripts/windows-test.sh viewer-boot {out} {tmp}` |
+| T2 | `win:shard-login` | 5.0 min | 3 | Windows: the tests/diff shard login on the three Windows targets (soa-emu.exe, soa.exe --server, soa.exe in process), compared as on Linux | `scripts/windows-test.sh shard-login {out} {tmp}` |
 | T2 | `server-cdn` | 4.0 min | - | the CDN's answers byte-identical with the parent build **Known failure:** the two builds' logs list the same CDN lines in a different order, so it reports DIFFERENT even for identical server sources (2026-10-03: HEAD~1 and HEAD with no server change) | `tools/server_build_at.sh {base} {tmp}/parent && tools/server_cdn_check.sh {tmp}/parent/soa-server build/server/soa-server {out}` |
 | T3 | `session:sphere211` | 17.0 min | 1 | Sphere 211: five battles with a rental, the boss, floor 1 cleared, the reroll, floor 2 | `port/scripts/sphere211_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:sphere211-continue` | 7.0 min | 1 | a lost Sphere 211 battle continued and retired, the stamina healed, the achievements | `port/scripts/sphere211_continue_session.sh build/port/soa {out} {tmp}` |

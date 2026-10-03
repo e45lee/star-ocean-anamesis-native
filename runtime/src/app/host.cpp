@@ -2,6 +2,7 @@
 // ANativeActivity bring-up and the main loop. Moved from port/src/main.cpp unchanged; the port's
 // own pieces (its debug commands, --selftest) plug in through HostConfig's hooks.
 #include <soa/env.h>
+#include <soa/sock.h>
 #include <GLES3/gl3.h>
 #include <SDL.h>
 #include <zlib.h>
@@ -654,6 +655,50 @@ void control_push(std::string l) {
     g_control_cmds.push_back(l);
 }
 
+// "--control tcp:HOST:PORT" (both platforms): a TCP listener instead of the FIFO / named pipe; each
+// client connects, writes lines and disconnects (control/soadrive/fifo.py). The one channel a driver
+// on Linux can reach a Windows program through (WSL in mirrored networking shares 127.0.0.1;
+// port/PLAN.md 5b, W). PORT 0: any free port (the log line names it).
+void control_tcp_thread(std::string spec) {
+    std::string addr = spec.substr(4);
+    size_t colon = addr.rfind(':');
+    std::string host = colon == std::string::npos ? "127.0.0.1" : addr.substr(0, colon);
+    int port = atoi(colon == std::string::npos ? addr.c_str() : addr.c_str() + colon + 1);
+    int ls = soa::sock::tcp_socket(false);
+    if (ls < 0) {
+        LOGE("control", "%s: no socket (%s)", spec.c_str(), soa::sock::last_error().c_str());
+        return;
+    }
+    soa::sock::set_reuse_addr(ls);
+    sockaddr_in sa{};
+    sa.sin_family = AF_INET;
+    sa.sin_port = htons((u16)port);
+    if (inet_pton(AF_INET, host.c_str(), &sa.sin_addr) != 1 || ::bind(ls, (sockaddr*)&sa, sizeof sa) != 0 || ::listen(ls, 4) != 0) {
+        LOGE("control", "%s: can't listen (%s)", spec.c_str(), soa::sock::last_error().c_str());
+        soa::sock::close(ls);
+        return;
+    }
+    socklen_t len = sizeof sa;
+    getsockname(ls, (sockaddr*)&sa, &len);
+    LOGI("control", "listening on tcp:%s:%d", host.c_str(), (int)ntohs(sa.sin_port));
+    for (;;) {
+        int c = (int)::accept(ls, nullptr, nullptr);
+        if (c < 0) {
+            if (soa::sock::interrupted()) continue;
+            LOGE("control", "%s: accept failed (%s)", spec.c_str(), soa::sock::last_error().c_str());
+            return;
+        }
+        std::string pending;
+        char buf[1024];
+        for (ssize_t n; (n = soa::sock::recv(c, buf, sizeof buf)) > 0;) {
+            pending.append(buf, (size_t)n);
+            for (size_t e; (e = pending.find('\n')) != std::string::npos; pending.erase(0, e + 1)) control_push(pending.substr(0, e));
+        }
+        control_push(pending);
+        soa::sock::close(c);
+    }
+}
+
 #ifdef _WIN32
 // Windows: a named pipe instead of the FIFO, \\.\pipe\<the path's file name> (or the path itself
 // when it is already \\.\pipe\...); each writer connects, writes lines and disconnects.
@@ -833,7 +878,10 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
     activity_cb(onContentRectChanged, {(u64)rect});
     activity_cb(onWindowFocusChanged, {1});
     LOGI("main", "activity started");
-    if (!control_path.empty()) std::thread(control_thread, control_path).detach();
+    if (control_path.rfind("tcp:", 0) == 0)
+        std::thread(control_tcp_thread, control_path).detach();
+    else if (!control_path.empty())
+        std::thread(control_thread, control_path).detach();
 
     // ---- event loop ----
     bool mouse_down = false;

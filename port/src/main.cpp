@@ -25,6 +25,7 @@
 #include <thread>
 
 #include <soa/env.h>
+#include <soa/paths.h>
 
 #include "android/ndk.h"
 #include "app/host.h"
@@ -88,7 +89,7 @@ void usage() {
             "  --lib PATH      the libSOA.so (default: lib/arm64-v8a/libSOA.so of the APK, extracted once into\n"
             "                  DATA/libSOA-3.7.0.so; else <repo>/work/libSOA-3.7.0.so)\n"
             "  --data DIR      the phone's data dir: game data, saves, and in-process the server's state\n"
-            "                  (default ~/.local/share/soa-linux-370)\n"
+            "                  (default ~/.local/share/soa-linux-370; Windows %%LOCALAPPDATA%%\\soa\\port-370)\n"
             "  --download-dir DIR  the client's asset fallback for builtin_data/ files the APK lacks (the online\n"
             "                  game's downloaded tree). Required with --server inproc, whose CDN serves it too\n"
             "                  (default <repo>/work/download-3.7.0); off by default with --server HOST, whose\n"
@@ -125,7 +126,8 @@ void usage() {
             "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
             "                  wheel:X:Y:DY (pinch), back, text:STRING, shot:PATH, quit\n"
             "  --control FIFO  read the same commands, one per line, from a named pipe (plus the port's\n"
-            "                  phase:/call:/mission:/uiset:/clock:/debugwin:/memstats commands, port_debug.cpp)\n"
+            "                  phase:/call:/mission:/uiset:/clock:/debugwin:/memstats commands, port_debug.cpp;\n"
+            "                  Windows: \\\\.\\pipe\\NAME); --control tcp:HOST:PORT: from TCP connections\n"
             "  --gdb HOST:PORT serve the GDB remote protocol for the guest (gdb-multiarch -x control/gdbinit-soa,\n"
             "                  control/gdbclient.py; runtime/README.md \"Debugging the guest with gdb\")\n"
             "  --selftest [F]  the self-tests (tests matching F) on the booted game, no natives installed\n"
@@ -186,10 +188,10 @@ bool start_inproc_cdn(std::string* err);                // native/api/server_cdn
 int main(int argc, char** argv) {
     env::warn_removed_env("soa", env::kSoa);  // SOA_* settings that are flags now: one line each
     signal(SIGPIPE, SIG_IGN);
-    const char* home = getenv("HOME");
-    // A data dir of its own: the old offline-build port's ~/.local/share/soa-linux holds a cached
-    // libSOA.so of that build and its save.
-    std::string data_dir = std::string(home ? home : ".") + "/.local/share/soa-linux-370";
+    // A data dir of its own (soa/paths.h): ~/.local/share/soa-linux-370 (the old offline-build port's
+    // ~/.local/share/soa-linux holds a cached libSOA.so of that build and its save), on Windows
+    // %LOCALAPPDATA%\soa\port-370.
+    std::string data_dir = soa::default_data_dir("soa-linux-370", "port-370");
     std::string apk_path, lib_path;
     bool smoke = false, selftest = false;
     // --natives: route (every registered native) or none.
@@ -362,8 +364,8 @@ int main(int argc, char** argv) {
         else if (a == "--start-coins") {
             std::string c = next();
             char* end = nullptr;
-            unsigned long v = strtoul(c.c_str(), &end, 10);
-            if (c.empty() || *end || v > 0xffffffffUL) {
+            unsigned long long v = strtoull(c.c_str(), &end, 10);  // (not strtoul: 32-bit long on Windows)
+            if (c.empty() || *end || c[0] == '-' || v > 0xffffffffULL) {
                 fprintf(stderr, "--start-coins: expected a number, got \"%s\"\n", c.c_str());
                 return 2;
             }
@@ -424,7 +426,7 @@ int main(int argc, char** argv) {
         }
     }
     if (!file_exists(apk_path)) fatal("--apk: %s not found", apk_path.c_str());
-    mkdir(data_dir.c_str(), 0755);
+    soa::make_dir_tree(data_dir);
     if (lib_path.empty()) {
         lib_path = data_dir + "/libSOA-3.7.0.so";
         if (!file_exists(lib_path)) {

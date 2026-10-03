@@ -6,6 +6,7 @@
 // client runs on the real date. This file maps the command line onto platform370::Config and
 // brings the runtime up. emulator/README.md, platform370/README.md.
 #include <soa/env.h>
+#include <soa/paths.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -88,8 +89,9 @@ void usage() {
             "  --apk FILE      the APK whose assets the client reads (default\n"
             "                  <repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk; repeatable, later wins)\n"
             "  --data DIR      the emulated device's data (saves, prefs, downloads; default\n"
-            "                  ~/.local/share/soa-emulator-370/phone, beside the port's ~/.local/share/soa-linux;\n"
-            "                  never the port's: its cached libSOA.so and save don't belong here)\n"
+            "                  ~/.local/share/soa-emulator-370/phone, beside the port's ~/.local/share/soa-linux-370;\n"
+            "                  Windows %%LOCALAPPDATA%%\\soa\\emulator-370\\phone; never the port's: its cached\n"
+            "                  libSOA.so and save don't belong here)\n"
             "  --download-dir DIR  temporary stand-in for the CDN: serve assets missing from the APK from DIR\n"
             "                  (e.g. work/download-3.7.0); off by default\n"
             "  --download-prefer  with --download-dir: DIR wins over the APK (as soa / soa-viewer)\n"
@@ -116,7 +118,8 @@ void usage() {
             "  --shot S:PATH   save a screenshot S seconds after start (repeatable; F12 any time)\n"
             "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
             "                  wheel:X:Y:DY, back, text:STRING, shot:PATH, quit\n"
-            "  --control FIFO  read the same commands, one per line, from a named pipe (control/soactl.py)\n"
+            "  --control FIFO  read the same commands, one per line, from a named pipe (control/soactl.py;\n"
+            "                  Windows: \\\\.\\pipe\\NAME); --control tcp:HOST:PORT: from TCP connections\n"
             "  --gdb HOST:PORT serve the GDB remote protocol for the guest (gdb-multiarch -x control/gdbinit-soa,\n"
             "                  control/gdbclient.py; runtime/README.md \"Debugging the guest with gdb\")\n"
             "  -v / -vv        verbose / trace logging\n"
@@ -221,12 +224,11 @@ int main(int argc, char** argv) {
         if (apk.empty()) fatal("apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk not found (give --apk)");
         apks.push_back(apk);
     }
-    if (data_dir.empty()) {
-        // Beside the port's ~/.local/share/soa-linux; scripts/run-emulator-370.sh uses the same phone/.
-        const char* h = getenv("HOME");
-        data_dir = std::string(h ? h : ".") + "/.local/share/soa-emulator-370/phone";
-    }
-    mkdir(data_dir.c_str(), 0755);
+    // Beside the port's (soa/paths.h): ~/.local/share/soa-emulator-370/phone, on Windows
+    // %LOCALAPPDATA%\soa\emulator-370\phone; scripts/run-emulator-370.sh (and the Windows
+    // launcher) use the same phone/.
+    if (data_dir.empty()) data_dir = soa::default_data_dir("soa-emulator-370/phone", "emulator-370\\phone");
+    soa::make_dir_tree(data_dir);
     LOGI("emu", "3.7.0 client %s, data %s, pure JIT + one native patch (platform370)", lib_path.c_str(), data_dir.c_str());
 
     // The emulated device: a phone with the 3.7.0 app installed (app_version "3.7.0", the APK's

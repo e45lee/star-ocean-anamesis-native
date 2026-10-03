@@ -16,6 +16,7 @@
 
 #include "core/hle.h"
 #include "core/log.h"
+#include "hle/format.h"
 
 namespace soa {
 namespace {
@@ -173,7 +174,7 @@ void th_qsort(Cpu& c) {
     t_qsort_cmp = saved;
 }
 
-void th_rand(Cpu& c) { ret(c, (u64)rand()); }
+void th_rand(Cpu& c) { ret(c, (u64)(u32)guest_rand()); }  // bionic RAND_MAX 0x7fffffff on both hosts
 
 }  // namespace
 

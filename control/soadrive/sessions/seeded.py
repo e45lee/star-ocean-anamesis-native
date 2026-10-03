@@ -93,7 +93,7 @@ def emu_run(o, server_args, env=None, shots=None):
                  explicit_data=False, state_master=False, fresh_kvs=common.env_on("FRESH_KVS"), phone=phone, env=env,
                  # the given client for emu (soa-emu, or soa on the wire: rebase_server_diff.sh); the port
                  # targets take it only when it is a soa
-                 binary=o.client if o.target == "emu" or os.path.basename(o.client) == "soa" else None,
+                 binary=o.client if o.target == "emu" or os.path.basename(o.client) in ("soa", "soa.exe") else None,
                  server_binary=o.server)
     return Run(o.target, Layout.emu_session(o.out, phone, o.target, shots), cfg, keep=common.env_on("KEEP_DATA"), slot=o.slot)
 

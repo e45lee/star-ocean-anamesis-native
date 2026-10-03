@@ -5,7 +5,7 @@
 # Usage: tools/check_no_380.sh [-c]   (-c: print per-file counts instead of the lines)
 #
 # A reference is a tracked text line matching REGEX (the pattern of the P4 inventory). Allowed:
-#   - the paths in ALLOW: the viewer (emulator-viewer/, its run script, tools/extract.sh, which
+#   - the paths in ALLOW: the viewer (emulator-viewer/, its run scripts (Linux, Windows), tools/extract.sh, which
 #     unpacks its XAPK; runtime/src/jni/java_playcore.cpp + its install call in jvm.*, the Play Core
 #     classes only the viewer's lib uses, kept in the shared runtime), the history (docs/history/,
 #     the verdiff / rebase / restore370 history tools), the Ghidra projects, apk/, the offline
@@ -29,6 +29,7 @@ REGEX='3\.8\.0|[xX][aA][pP][kK]|config\.arm64_v8a|assetinstalltime|playcore|home
 ALLOW="
 :!emulator-viewer
 :!scripts/run-viewer-380.sh
+:!scripts/windows/run-viewer-380.cmd
 :!docs/history
 :!ghidra
 :!apk

@@ -6,7 +6,7 @@ Answered by the library: 106. Covered: 92. Only refused or not handled: 12. Only
 
 ## Gaps: only refused (or not handled) outside the sweep
 
-- `EquipAccessory` (server/src/api/growth/growth.cpp): growth (10208)
+- `EquipAccessory` (server/src/api/growth/growth.cpp): growth (10208); items-party (10208)
 - `EvolutionCharacter` (server/src/api/growth/growth.cpp): growth (10206,11002)
 - `ItemGradeUpArray` (server/src/api/items/items.cpp): items-party (10208)
 - `MaterialCompose` (server/src/api/items/items.cpp): items-party (10206)
@@ -47,7 +47,7 @@ Answered by the library: 106. Covered: 92. Only refused or not handled: 12. Only
 - `DeepSpaceMissionEndNow` (server/src/api/deepspace/deepspace.cpp): deepspace
 - `DeepSpaceMissionStart` (server/src/api/deepspace/deepspace.cpp): deepspace
 - `EquipSkill` (server/src/api/growth/growth.cpp): growth
-- `EquipWeapon` (server/src/api/growth/growth.cpp): growth
+- `EquipWeapon` (server/src/api/growth/growth.cpp): growth, items-party
 - `ExItemShop` (server/src/api/shop/shop.cpp): economy, growth, hammers
 - `ExshopExchange` (server/src/api/shop/shop.cpp): economy
 - `ExshopExchangeList` (server/src/api/shop/shop.cpp): economy

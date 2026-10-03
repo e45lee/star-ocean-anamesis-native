@@ -75,7 +75,7 @@ int user_version(sqlite3* db) {
     return v;
 }
 
-bool open_and_migrate(sqlite3* db, const std::string& path) {
+bool open_and_migrate(sqlite3* db, const std::string& path, int target) {
     int version = user_version(db);
     if (version > kSchemaVersion) {
         LOGE("server",
@@ -84,16 +84,15 @@ bool open_and_migrate(sqlite3* db, const std::string& path) {
              path.c_str(), version, kSchemaVersion, path.c_str());
         return false;
     }
-    if (version < kSchemaVersion && has_player_row(db)) {
+    if (version < target && has_player_row(db)) {
         std::string copy = path + ".bak-v" + std::to_string(version);
         if (!backup(db, copy)) return false;
-        LOGI("server", "state DB %s: schema version %d -> %d (the version %d file kept as %s)", path.c_str(), version, kSchemaVersion, version,
-             copy.c_str());
+        LOGI("server", "state DB %s: schema version %d -> %d (the version %d file kept as %s)", path.c_str(), version, target, version, copy.c_str());
     }
     // (outside any transaction: the pragma is a no-op inside one)
     if (!exec(db, "pragma foreign_keys = off", "pragma foreign_keys = off")) return false;
     for (const Step& step : steps()) {
-        if (step.version <= version) continue;
+        if (step.version <= version || step.version > target) continue;
         if (!exec(db, "begin immediate", "begin")) return false;
         bool ok = true;
         for (const char* sql : step.sql) ok = ok && exec(db, sql, step.what);

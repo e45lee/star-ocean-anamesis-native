@@ -289,8 +289,7 @@ std::vector<u8> exshop_exchange(Ctx& ctx, const Request& req) {
             u32 ex_item = (u32)contents_row.i("ex_item_id");
             u64 pay = (u64)contents_row.i("ex_num") * count;
             add_stock(ctx, ex_item, -(int64_t)pay);
-            ctx.st.q("insert into exchange_counts (id, shop_id, num) values (?, ?, ?) on conflict(id) do update set num = num + excluded.num",
-                     {id, (u32)contents_row.i("master_exchange_shop_id"), count});
+            ctx.st.q("insert into exchange_counts (id, num) values (?, ?) on conflict(id) do update set num = num + excluded.num", {id, count});
             Value items = Value::array(), stocks = Value::array(), characters = Value::array();
             u32 free_coins = 0;
             grant_with_item_sets(ctx, (u32)contents_row.i("content_type"), (u32)contents_row.i("content_id"),

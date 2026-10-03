@@ -11,7 +11,7 @@ namespace soa::server::rental {
 
 constexpr uint64_t kRentalBit = 1ull << 40;
 // A rental id stays a plain number: it travels in the uid arguments of MissionStart and
-// Sphere211MissionStart beside owned uids (the play / party lists: PLAN-schema S6, S7).
+// Sphere211MissionStart beside owned uids (the battle party list and the play record: PLAN-schema S7).
 inline uint64_t id_of(CharacterUid roster_uid) { return roster_uid.v | kRentalBit; }
 // The roster uid behind a rental id; none for an id that isn't one of ours (or names uid 0).
 inline std::optional<CharacterUid> source_uid(uint64_t rental_id) {

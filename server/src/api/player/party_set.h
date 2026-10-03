@@ -14,7 +14,8 @@ void add_party_sets(ext::Ctx& ctx);
 // The party_set row of `party_id` (icon 0, unlocked) when it has none: UpdateParty takes any id,
 // and player.party_id must name a set (PLAN-schema S4).
 void ensure_party_set(ext::Ctx& ctx, u32 party_id);
-// The owned uids of party `party_id`, in slot order.
-std::vector<u64> party_member_uids(ext::Ctx& ctx, u32 party_id);
+// The owned uids of party `party_id`, in slot order (party_member.uid; its empty slots, NULL,
+// left out).
+std::vector<CharacterUid> party_member_uids(ext::Ctx& ctx, u32 party_id);
 
 }  // namespace soa::server

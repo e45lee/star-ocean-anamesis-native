@@ -16,8 +16,13 @@
 namespace soa::server {
 
 bool item_equipped(ext::Ctx& ctx, ItemUid item_uid) {
-    return ctx.st.one("select count(*) from roster where weapon_uid = ? or accessory_uid = ?", {item_uid, item_uid}) > 0;
+    return ctx.st.one(
+               "select exists (select 1 from roster where weapon_uid = ?1 or accessory_uid = ?1)"
+               " or exists (select 1 from party_member where weapon_uid = ?1 or accessory_uid = ?1)",
+               {item_uid}) > 0;
 }
+
+bool owns_item(ext::Ctx& ctx, ItemUid item_uid) { return ctx.st.one("select count(*) from items where uid = ?", {item_uid}) > 0; }
 
 namespace {
 using namespace ext;

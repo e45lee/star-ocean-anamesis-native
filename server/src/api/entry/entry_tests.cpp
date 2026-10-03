@@ -52,7 +52,7 @@ NATIVE_TEST("entry/create-player-references") {
     ScratchServer S(t.rand_u64());
     if (!S.ok) return;
     Server& sv = S.sv;
-    sv.st.exec("delete from player; delete from party_set; delete from party; delete from titles");
+    sv.st.exec("delete from player; delete from party_member; delete from party_set; delete from titles");
     t.expect_eq(S.call(Request{"CreatePlayer", 0xe3e463ad, {}, {"Tester", "uuid-test"}, {}}), 0u, "CreatePlayer");
     t.expect_eq((u32)sv.st.one("select count(*) from player", {}), 1u, "created (the transaction committed)");
     t.expect_eq((u32)sv.st.one("select count(*) from party_set", {}), 10u, "the party sets 1..party_set_max (10)");

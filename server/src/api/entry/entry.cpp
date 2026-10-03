@@ -103,8 +103,11 @@ std::vector<CharacterUid> add_starters(ext::Ctx& ctx, int64_t now) {
     add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents (PLAN-schema S4)
     for (size_t slot = 0; slot < party.size(); slot++)
         ctx.st.q(
-            "insert into party (party_id, slot, uid) values (?,?,?)"
-            " on conflict(party_id, slot) do update set uid = excluded.uid",
+            "insert into party_member (party_id, slot, uid, weapon_uid, accessory_uid, skill_id1, skill_id2, skill_id3, assist_uid)"
+            " values (?,?,?,null,null,null,null,null,null)"
+            " on conflict(party_id, slot) do update set uid = excluded.uid, weapon_uid = excluded.weapon_uid,"
+            " accessory_uid = excluded.accessory_uid, skill_id1 = excluded.skill_id1, skill_id2 = excluded.skill_id2,"
+            " skill_id3 = excluded.skill_id3, assist_uid = excluded.assist_uid",
             {kStarterPartyId, slot, party[slot]});
     return party;
 }

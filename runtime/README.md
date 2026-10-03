@@ -120,6 +120,60 @@ A host can replace a guest function, or filter its calls, with host code:
 build/runtime/soaruntime_tests     # prints ok/FAIL per check, PASS/FAIL at the end
 ```
 
+## Debugging the guest with gdb (`core/gdbstub.h`)
+
+`--gdb HOST:PORT` (soa, soa-emu, soa-viewer; `:PORT` / `PORT` = 127.0.0.1; off by default) serves the GDB
+remote serial protocol for the **guest**: gdb-multiarch, or `control/gdbclient.py` from a test, attaches to
+the running client, stops every guest thread, reads and writes registers and memory, sets breakpoints,
+single-steps and continues; after `detach` the client keeps running (breakpoints removed).
+
+```sh
+build/port/soa --gdb 127.0.0.1:1234 ...                 # or soa-emu / soa-viewer
+gdb-multiarch -x control/gdbinit-soa -ex 'target remote 127.0.0.1:1234'
+(gdb) break Framework::CMutex::Lock                       # the game library's symbols are loaded at its base
+(gdb) continue
+(gdb) bt 5
+(gdb) x/4gx $x0
+(gdb) stepi
+(gdb) detach
+control/gdbclient.py :1234 --break _ZN9Framework6CMutex4LockEv --regs --read x0:0x40   # one shot from a script
+```
+
+- **Registers:** the target description (`qXfer:features:read`) is gdb's `aarch64.core` (x0-x30, sp, pc,
+  cpsr) and `aarch64.fpu` (v0-v31, fpsr, fpcr), read from and written to the JIT state of the thread's
+  innermost guest_call level. **Memory:** `m` / `M` / `X` on guest memory through
+  `process_vm_readv/writev` (an unmapped address answers `E14`; the data top byte is ignored as on the
+  phone); a write invalidates the JIT's translations of the range.
+- **Threads:** each host thread that runs guest code is a gdb thread (its kernel tid; `info threads` shows its
+  entry function). **All-stop:** a stop halts every guest CPU at its next block boundary (dynarmic
+  `HaltExecution`, `kGdbHalt` = UserDefined4) and the thread parks in `gdb_park` until resumed. A thread that is
+  inside a host function (an HLE import, a native, a blocking wait) counts as stopped and parks when it returns
+  to guest code; its registers are those at the call. `vCont` actions per thread (`s:tid` with or without a
+  default `c`), `c`, `s`, `^C`.
+- **Breakpoints:** `Z0` / `Z1` write `BRK #0x7d0` over the instruction and invalidate the word in every JIT;
+  memory reads show the original instruction. A hit stops the world with `T05 ... swbreak`; gdb steps over it
+  as usual (remove, step the thread, re-insert). A native replacement's entry (its `SVC` hook) can't take one
+  (`E01`). Watchpoints are not supported.
+- **Stepping:** `Step()` of the thread's own JIT, one instruction (a step into an `SVC` runs the whole host
+  function).
+- **Faults:** a host signal in guest context, an unimplemented instruction or a guest exception is reported to an
+  attached debugger first (`T0b` for SIGSEGV), and the thread waits until gdb continues or detaches; then the
+  client crashes as before. Registers at a fault are the last synchronised ones (the JIT keeps some in host
+  registers within a block).
+- **Symbols:** the stub lists the loaded images (`qXfer:libraries:read`, `osabi none`), and
+  `control/gdbinit-soa` has gdb read them right after `target remote`; `monitor base` prints each image's load
+  address and the `add-symbol-file work/libSOA-3.7.0.so -o BASE` line for a library file gdb can't open.
+  `monitor threads` lists the threads and their state.
+- **Cost:** none when off: the JIT's run loop handles `kGdbHalt` only when `Run()` returns, plus one
+  predictable branch per guest_call entry and per host-function call (`core/zz-bench-transitions`: 22-25 ns
+  per nested guest call with and without `--gdb`). With `--gdb` and no debugger attached, the same.
+  Profiling (`SOA_PROFILE`) and `--gdb` together lose the profiler's host-function attribution.
+- **Tests:** `soaruntime_tests` drives the stub end to end over a socket against a guest loop
+  (`tests/gdbstub_test.cpp`: stop, registers, memory, breakpoint, step, write, detach) and the protocol's
+  encodings (`gdb/protocol-*`); `soaruntime_tests --gdb-demo HOST:PORT [--fault]` runs that loop for a
+  debugger, which `control/tests/test_gdbclient.py` attaches `control/gdbclient.py` and gdb-multiarch to (T0's
+  `pytest-control`).
+
 ## Graphics: the guest's EGL over SDL's GL contexts
 
 The window, its surface and every GL context belong to the host: `app/sdl_gl.cpp` creates them with SDL2 (`SDL_WINDOW_OPENGL`, `SDL_GL_CreateContext`, `SDL_GL_MakeCurrent`, `SDL_GL_SwapWindow`) on whatever video driver SDL picks. The runtime never opens an EGL display or surface itself: `hle/egl.cpp` emulates the guest's 17 EGL imports over `GfxHooks`, and `hle/gles.cpp` passes its GL calls to the host's GLES. There is no X11 code left in the build; the window system is SDL's business.

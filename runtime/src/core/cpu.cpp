@@ -19,6 +19,7 @@
 #include <set>
 #include <unordered_map>
 
+#include "core/gdbstub.h"
 #include "core/host_mem.h"
 #include "core/log.h"
 #include "dynarmic/interface/A64/a64.h"
@@ -174,6 +175,7 @@ struct CpuCallbacks final : Dynarmic::A64::UserCallbacks {
     void InterpreterFallback(u64 pc, size_t n) override {
         LOGE("cpu", "unimplemented instruction %08x at %s", fetch<u32>(pc), describe_guest_addr(pc).c_str());
         dump_guest_state(*cpu);
+        if (g_gdb_enabled) gdb_fault(cpu, SIGILL);
         fatal("interpreter fallback");
     }
 
@@ -190,6 +192,12 @@ struct CpuCallbacks final : Dynarmic::A64::UserCallbacks {
             cpu->set_pc(pc + 4);
             return;
         case E::Breakpoint:
+            // A breakpoint the GDB stub inserted (--gdb): back to the BRK (the IR advanced the PC
+            // past it), and the stub has halted this JIT, so it parks at the end of this block.
+            if (g_gdb_enabled && gdb_breakpoint_hit(*cpu, pc)) {
+                cpu->set_pc(pc);
+                return;
+            }
             LOGE("cpu", "guest BRK at %s", describe_guest_addr(pc).c_str());
             break;
         default:
@@ -197,6 +205,7 @@ struct CpuCallbacks final : Dynarmic::A64::UserCallbacks {
             break;
         }
         dump_guest_state(*cpu);
+        if (g_gdb_enabled) gdb_fault(cpu, e == E::Breakpoint ? SIGTRAP : SIGILL);
         fatal("guest exception");
     }
 
@@ -231,6 +240,7 @@ public:
     std::vector<u64> tls_block;
     ProfThread prof;
     bool prof_registered = false;
+    std::atomic<bool> in_jit{false};  // the innermost level is running JIT code (maintained only with g_gdb_enabled)
 
     ~ThreadState() { release(); }
 
@@ -457,6 +467,16 @@ void CpuCallbacks::CallSVC(u32 swi) {
     const ThunkEntry& t = g_thunks[swi];
     if (!t.fn) fatal("SVC #%u with no handler", swi);
     if (__builtin_expect(t_hook_filter != nullptr, 0) && t.hook && t_hook_filter(*cpu, t.hook)) return;
+    if (__builtin_expect(g_gdb_enabled, 0)) {
+        // For the GDB stub: this level is in host code (stopped from gdb's point of view) until the
+        // handler returns to the JIT.
+        bool was = t_state.in_jit.exchange(false, std::memory_order_acq_rel);
+        if (g_prof_enabled) g_thunk_calls[swi].fetch_add(1, std::memory_order_relaxed);
+        t.fn(*cpu);
+        t_state.in_jit.store(was, std::memory_order_release);
+        if (t_state.info.exiting) cpu->halt();
+        return;
+    }
     if (g_prof_enabled) {
         // Count the call and publish "this thread is in host code" for the sampler.
         g_thunk_calls[swi].fetch_add(1, std::memory_order_relaxed);
@@ -511,6 +531,26 @@ inline u32 direct_thunk(u64 fn) {
     return idx;
 }
 
+// run_jit with the GDB stub on (--gdb; core/gdbstub.h): parks this thread while the debugger has
+// the guest stopped (at entry, or when the JIT returns with kGdbHalt) and keeps ts.in_jit current.
+void run_jit_debug(Cpu& c, ThreadState& ts) {
+    using HR = Dynarmic::HaltReason;
+    const bool was = ts.in_jit.load(std::memory_order_relaxed);
+    if (gdb_stopped()) gdb_park(c);
+    for (;;) {
+        ts.in_jit.store(true, std::memory_order_release);
+        HR hr = c.jit()->Run();
+        ts.in_jit.store(false, std::memory_order_release);
+        if (ts.info.exiting || Has(hr, HR::UserDefined1)) break;
+        if (Has(hr, (HR)kGdbHalt)) {
+            gdb_park(c);
+            continue;
+        }
+        if (!Has(hr, HR::CacheInvalidation)) break;
+    }
+    ts.in_jit.store(was, std::memory_order_release);
+}
+
 // Runs the JIT at level d (1-based) until the guest function returns to host_return_addr.
 void run_jit(Cpu& c, u64 fn, ThreadState& ts, int d) {
     // The JIT clears every halt reason when it returns, so these are normally no-ops; skip the
@@ -518,6 +558,7 @@ void run_jit(Cpu& c, u64 fn, ThreadState& ts, int d) {
     // called handler, is still pending.)
     if (c.halt_reason() & (u32)Dynarmic::HaltReason::UserDefined1) c.jit()->ClearHalt();
     if (!g_prof_enabled) {
+        if (__builtin_expect(g_gdb_enabled, 0)) return run_jit_debug(c, ts);
         // A cache invalidation requested while this level runs (e.g. a test stubbing a guest
         // function from inside a hook) halts the JIT too: resume, like the profiling loop below.
         using HR = Dynarmic::HaltReason;
@@ -539,9 +580,16 @@ void run_jit(Cpu& c, u64 fn, ThreadState& ts, int d) {
     pt.depth.store(d, std::memory_order_release);
     if (c.halt_reason() & (u32)kSampleHalt) c.jit()->ClearHalt(kSampleHalt);
     using HR = Dynarmic::HaltReason;
+    if (g_gdb_enabled && gdb_stopped()) gdb_park(c);
     for (;;) {
+        if (g_gdb_enabled) ts.in_jit.store(true, std::memory_order_release);
         HR hr = c.jit()->Run();
+        if (g_gdb_enabled) ts.in_jit.store(false, std::memory_order_release);
         if (ts.info.exiting || Has(hr, HR::UserDefined1)) break;
+        if (Has(hr, (HR)kGdbHalt)) {
+            gdb_park(c);
+            continue;
+        }
         if (!Has(hr, kSampleHalt) && !Has(hr, HR::CacheInvalidation)) break;
         if (Has(hr, kSampleHalt) && g_prof_sample) g_prof_sample(c, pt);
     }
@@ -743,6 +791,24 @@ void invalidate_guest_code_this_thread(u64 addr, u64 size) {
 
 size_t guest_depth_this_thread() { return t_state.depth; }
 
+std::vector<GuestThreadView> guest_threads() {
+    std::vector<GuestThreadView> out;
+    std::lock_guard lk(g_proc_mutex);
+    for (ThreadState* t : g_thread_states) {
+        if (t->pool.empty()) continue;
+        size_t d = t->depth;
+        Cpu* c = t->pool[d > 0 && d <= t->pool.size() ? d - 1 : 0].get();
+        out.push_back({(int)t->tid, c, t->in_jit.load(std::memory_order_acquire), t->entry});
+    }
+    std::sort(out.begin(), out.end(), [](const GuestThreadView& a, const GuestThreadView& b) { return a.tid < b.tid; });
+    return out;
+}
+
+void halt_all_guest_cpus(u32 reason) {
+    std::lock_guard lk(g_proc_mutex);
+    for (Cpu* c : g_cpus) c->jit()->HaltExecution((Dynarmic::HaltReason)reason);
+}
+
 CpuMemStats cpu_memstats() {
     CpuMemStats st;
     std::lock_guard lk(g_proc_mutex);
@@ -854,6 +920,7 @@ static void segv_handler(int sig, siginfo_t* si, void*) {
     if (c) {
         fprintf(stderr, "guest pc (last sync) = %s\n", describe_guest_addr(c->pc()).c_str());
         dump_guest_state(*c);
+        if (g_gdb_enabled) gdb_fault(c, sig);  // an attached debugger sees the fault first
     }
     signal(sig, SIG_DFL);
     raise(sig);

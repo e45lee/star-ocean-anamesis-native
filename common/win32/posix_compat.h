@@ -25,6 +25,9 @@
 #ifndef SIGPIPE
 #define SIGPIPE 13  // never raised on Windows; signal(SIGPIPE, ...) just fails
 #endif
+#ifndef SIGTRAP
+#define SIGTRAP 5  // Linux's number (the GDB stub reports signals by it)
+#endif
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
 #endif

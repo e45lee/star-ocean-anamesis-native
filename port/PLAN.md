@@ -79,9 +79,10 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 
 ### 5. Rebuild tooling, with the control-script consolidation
 - **The consolidation (the user, 2026-10-03: approved, done together with this task):** `control/PLAN-consolidate.md`'s steps: the shared driver library `control/soadrive/` (seeded by `tests/diff/diffdrive/` and the faster-tests work: slot pool, shards, `tools/tests_for.py`, `tools/gate.sh` tiers), the named flows for both targets (port and emulator), the session scripts as thin wrappers, and step 7, **a GDB remote stub for the guest in the runtime** (`--gdb HOST:PORT`, attachable from soadrive to read guest state at a milestone — what the native rebuild uses to compare natives with the guest). It starts after the faster-tests branch merges (they touch the same scripts).
-- **`tools/decomp.sh` / `decomp_at.sh --into <subsystem>[/<topic>]`** write stamped decompiles to `port/decomp/<subsystem>/<topic>.c`. Without it they write scratch output to `work/decomp/`.
-- **Per-subsystem scaffolding:** `port/src/native/<subsystem>/README.md` + `<subsystem>_layout.h`, and `port/decomp/<subsystem>/symbols.tsv`.
-- **A fresh profile of the 3.7.0 port (in-process server)** (`SOA_PROFILE` / `SOA_COVERAGE`, `port/scripts/profile_report.py`, `remaining.py`) to rank subsystems by guest time. The output is the rebuild queue.
+- **`tools/decomp.sh` / `decomp_at.sh --into <subsystem>[/<topic>]`** write stamped decompiles to `port/decomp/<subsystem>/<topic>.c`. Without it they write scratch output to `work/decomp/`. ✅ (2026-10-03; `tools/decomp_stamp.py`)
+- **The GDB stub** (`control/PLAN-consolidate.md` step 7) ✅ (2026-10-03): `--gdb HOST:PORT` on soa / soa-emu / soa-viewer, `control/gdbclient.py` for tests, `control/gdbinit-soa`; runtime/README.md "Debugging the guest with gdb". Attaching it from `soadrive` is part of the consolidation.
+- **Per-subsystem scaffolding:** `port/src/native/<subsystem>/README.md` + `<subsystem>_layout.h`, and `port/decomp/<subsystem>/symbols.tsv`. ✅ (2026-10-03) `tools/subsystem.py new|list|check|skeleton|export-types` (`skeleton`: the class declarations from `symbols.tsv`, methods attached, virtuals in vtable order; members bound with `NATIVE_METHOD`, `native/common/native_method.h`), a `subsystem.cmake` per subsystem, `scope.txt`, `types.json` for Ghidra (`tools/ghidra_apply_types.sh`, the integrator, serially); no shared file per subsystem (`control/tests/test_subsystem.py`); the workflow: `port/src/native/README.md` "Per-subsystem workflow".
+- **A fresh profile of the 3.7.0 port (in-process server)** (`SOA_PROFILE` / `SOA_COVERAGE`, `port/scripts/profile_report.py`, `remaining.py`) to rank subsystems by guest time. The output is the rebuild queue. ✅ (2026-10-03) [`REBUILD-QUEUE.md`](REBUILD-QUEUE.md): login, battle, gacha and a story flow; per subsystem its guest time, level and measured dependencies, the waves (`port/scripts/rebuild_queue.py`).
 
 ### 5b. W: native Windows runner (before N)
 - **Scope (the user, 2026-10-02): all three programs run natively on Windows: the port (`soa.exe`), the 3.7.0 emulator (`soa-emu.exe`) and the 3.8.0 viewer (`soa-viewer.exe`),** plus `soa-server.exe`, since the emulator needs it. They share `runtime/` and `platform370/`, so most of the work is common; each program's own code (the port's natives and in-process server, the emulator's networking to `soa-server`, the viewer's offline XAPK path) gets its Windows check too.
@@ -118,8 +119,9 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
   - recover each class or struct as a C++ struct with `static_assert`ed offsets before porting the code that uses it;
   - order leaves first: values, then containers, then objects, then managers and phases;
   - unknown bytes become named padding, never offset arithmetic;
+  - **classes with their methods attached, not structs + free functions** (the user, 2026-10-03): the guest's `Class::Method` becomes a member of the recovered class (constructors, virtuals in vtable order, statics as static members); when porting makes it possible, existing struct + free-function natives are rewritten that way;
   - mirror the structs as data types in the committed Ghidra project.
-- **Among subsystems whose types are ready, hottest first** (the profile from 5).
+- **Among subsystems whose types are ready, hottest first** (the profile from 5: [`REBUILD-QUEUE.md`](REBUILD-QUEUE.md), the ranking and the dependency waves).
 - **Every native gets** differential tests against the 3.7.0 guest and a live check at 0 mismatches. The `tests/diff/` flows stay green.
 
 **Code organization:**
@@ -138,6 +140,11 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 - **Boundaries where data is opaque or plain** (SQLite handles; `Aska::JpegUtil`, not `jpeg_*`).
 - **Bridge what crosses:** structs, callbacks, paths, allocators.
 - **Version-match where bytes matter.**
+- **Per library (agreed with the user, 2026-10-03; shares from `port/REBUILD-QUEUE.md`):**
+  - **Host library at the boundary, wave 0, one agent each:** SQLite 3.13.0 (5.1%; vcpkg's newer SQLite, compared with the guest because a newer planner can order rows differently without `ORDER BY`; pin 3.13.0 via `FetchContent` if it does), libVorbis + ogg (1.3%; callbacks through `guest_call`), zstd (0.3%), zlib 1.2.5 (0.1%; decompression identical, compression bytes may differ: matters only where the game stores or compares them; on Windows `z_stream`'s `uLong` fields are 32-bit, so a layout shim), IJG libjpeg 9b (`FetchContent`, bit-exact; boundary `Aska::JpegUtil`), the OpenSSL pieces (0.6%, 4 functions). About 7.4% of guest time without decompiling.
+  - **libc++ is not hostable:** guest code inlines its templates and embeds `std::string` and containers using the NDK's layout, so the hot out-of-line helpers become small natives against that layout.
+  - **Bullet:** the version-pin task below decides.
+  - **Hashes** (`hash`, 3.0%): SpookyHash / CRC rewritten from their reference implementations, checked bit-exact against the guest; CHash32 from the decompile.
 
 **Exceptions:**
 - **`Framework::Cocos` is tri-Ace's own cocos2d-x-like UI**, not cocos2d-x: no `cocos2d::` symbols, objects used at fixed offsets, converted `.csf` layouts, drawn through Aska. It's rewritten from Ghidra, with cocos2d-x / Cocos Studio sources as a reference only.

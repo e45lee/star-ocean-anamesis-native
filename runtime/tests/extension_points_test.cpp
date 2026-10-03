@@ -17,6 +17,7 @@
 #include "core/log.h"
 #include "core/selftest.h"
 #include "core/vfs.h"
+#include "gdbstub_test.h"
 #include "jni/jni_names.h"
 #include "jni/jvm.h"
 
@@ -85,7 +86,11 @@ u64 env_fn(jni::Vm& vm, const char* name) {
 
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
+    if (argc >= 3 && !strcmp(argv[1], "--gdb-demo")) {  // gdbstub_test.cpp: the guest loop for a debugger
+        cpu_global_init();
+        return run_gdb_demo(argv[2], argc >= 4 && !strcmp(argv[3], "--fault"));
+    }
     // A scratch data dir: jni/references-low-byte writes (and deletes) a SharedPreferences file.
     char dir[] = "/tmp/soaruntime_tests.XXXXXX";
     if (!mkdtemp(dir)) fatal("mkdtemp failed");
@@ -135,6 +140,8 @@ int main() {
     run_runtime_tests("cpu/");
     run_runtime_tests("jni/");
     run_runtime_tests("frontend/text-");  // the text-entry editor (frontend/text_entry_tests.cpp)
+    run_runtime_tests("gdb/");             // the GDB protocol's encodings (core/gdb_protocol_tests.cpp)
+    run_gdbstub_tests(check);              // the GDB stub end to end (gdbstub_test.cpp; last: it turns the debugger hooks on)
     std::error_code ec;
     std::filesystem::remove_all(dir, ec);
     if (ec) fprintf(stderr, "couldn't remove %s\n", dir);

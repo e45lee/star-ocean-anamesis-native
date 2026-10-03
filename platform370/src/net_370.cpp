@@ -20,11 +20,16 @@
 //     agree). They are translated to glibc's for the call and back to Bionic's in the results;
 //   - the EAI_* return codes: Bionic's are positive (netdb.h: EAI_NONAME 8, EAI_AGAIN 2 ...),
 //     glibc's negative; they are translated to Bionic's.
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <string.h>
 #include <sys/socket.h>
+#endif
+#include <string.h>
 
 #include <mutex>
 #include <set>
@@ -36,6 +41,9 @@
 #include "platform370/platform370.h"
 
 namespace soa::platform370 {
+
+// The guest's (Linux / bionic) AF_INET6; Winsock's is 23. Guest sockaddrs carry the guest's.
+constexpr int kGuestAfInet6 = 10;
 
 std::string mapped_address(const std::string& name) {
     auto& cfg = net_config();
@@ -97,8 +105,12 @@ int eai_to_bionic(int r) {
     case EAI_SOCKTYPE: return 10;
     case EAI_SERVICE: return 9;
     case EAI_MEMORY: return 6;
+#ifdef EAI_SYSTEM
     case EAI_SYSTEM: return 11;
+#endif
+#ifdef EAI_OVERFLOW
     case EAI_OVERFLOW: return 14;
+#endif
 #ifdef EAI_NODATA
     case EAI_NODATA: return 7;
 #endif
@@ -118,7 +130,7 @@ std::set<std::string> g_mapped_addrs;
 
 std::string addr_key(const sockaddr* sa) {
     if (sa->sa_family == AF_INET) return std::string((const char*)&((const sockaddr_in*)sa)->sin_addr, 4);
-    if (sa->sa_family == AF_INET6) {
+    if (sa->sa_family == kGuestAfInet6) {
         auto* a6 = &((const sockaddr_in6*)sa)->sin6_addr;
         if (IN6_IS_ADDR_V4MAPPED(a6)) return std::string((const char*)a6 + 12, 4);
         return std::string((const char*)a6, 16);
@@ -207,7 +219,7 @@ void th_connect(Cpu& c) {
     u32 len = (u32)c.x(2);
     auto& cfg = net_config();
     thread_local sockaddr_storage t_ss;
-    if (sa && len <= sizeof(t_ss) && (sa->sa_family == AF_INET || sa->sa_family == AF_INET6) && is_mapped(sa)) {
+    if (sa && len <= sizeof(t_ss) && (sa->sa_family == AF_INET || sa->sa_family == kGuestAfInet6) && is_mapped(sa)) {
         u16* port = sa->sa_family == AF_INET ? &((sockaddr_in*)&t_ss)->sin_port : &((sockaddr_in6*)&t_ss)->sin6_port;
         memcpy(&t_ss, sa, len);
         int from = ntohs(*port);
@@ -223,7 +235,7 @@ void th_connect(Cpu& c) {
             }
             *port = htons((u16)to);
             char buf[INET6_ADDRSTRLEN] = "";
-            inet_ntop(sa->sa_family, sa->sa_family == AF_INET ? (const void*)&((sockaddr_in*)&t_ss)->sin_addr : (const void*)&((sockaddr_in6*)&t_ss)->sin6_addr, buf, sizeof buf);
+            inet_ntop(sa->sa_family == AF_INET ? AF_INET : AF_INET6, sa->sa_family == AF_INET ? (const void*)&((sockaddr_in*)&t_ss)->sin_addr : (const void*)&((sockaddr_in6*)&t_ss)->sin6_addr, buf, sizeof buf);
             LOGI("net", "connect(fd %d): port %d -> %s:%d (redirected)", (int)c.x(0), from, buf, to);
             c.set_x(1, (u64)&t_ss);
         }

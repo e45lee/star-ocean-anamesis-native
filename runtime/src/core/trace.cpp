@@ -4,6 +4,7 @@
 //   SOA_TRACE="_ZN21CHomeModelViewManager12SetCameraPosEPNS_13HomeCharacterEb:0x3270=f,0x3274=f"
 //   A symbol can also be "0x<ELF vaddr>" (functions without a symbol, e.g. lambdas).
 #include <soa/env.h>
+#include <cinttypes>
 #include <cstdlib>
 #include <cstring>
 #include <mutex>
@@ -33,13 +34,13 @@ std::unordered_map<u64, Traced> g_traced;  // hooked address -> info
 
 void trace_thunk(Cpu& c) {
     auto it = g_traced.find(c.pc() - 4);
-    if (it == g_traced.end()) fatal("trace: unknown hook at %#lx", c.pc() - 4);
+    if (it == g_traced.end()) fatal("trace: unknown hook at %#" PRIx64, c.pc() - 4);
     const Traced& t = it->second;
     GuestArgs a;
     for (int i = 0; i < 8; i++) a.i(c.x(i));
     for (int i = 0; i < 8; i++) a.vecs.push_back(c.v(i));
     char buf[512];
-    snprintf(buf, sizeof buf, "x0=%#lx x1=%#lx x2=%#lx x3=%#lx s0=%g s1=%g s2=%g", c.x(0), c.x(1), c.x(2), c.x(3), c.s(0), c.s(1), c.s(2));
+    snprintf(buf, sizeof buf, "x0=%#" PRIx64 " x1=%#" PRIx64 " x2=%#" PRIx64 " x3=%#" PRIx64 " s0=%g s1=%g s2=%g", c.x(0), c.x(1), c.x(2), c.x(3), c.s(0), c.s(1), c.s(2));
     u64 self = c.x(0), lr = c.x(30);
     GuestResult r = guest_call(t.original, a);
     float rf;
@@ -49,12 +50,12 @@ void trace_thunk(Cpu& c) {
     for (auto& d : t.dumps) {
         char b[64];
         u64 p = self + d.off;
-        if (d.kind == 'f') snprintf(b, sizeof b, " [+%#lx]=%g", d.off, *(float*)p);
-        else if (d.kind == 'i') snprintf(b, sizeof b, " [+%#lx]=%d", d.off, *(s32*)p);
-        else snprintf(b, sizeof b, " [+%#lx]=%#lx", d.off, *(u64*)p);
+        if (d.kind == 'f') snprintf(b, sizeof b, " [+%#" PRIx64 "]=%g", d.off, *(float*)p);
+        else if (d.kind == 'i') snprintf(b, sizeof b, " [+%#" PRIx64 "]=%d", d.off, *(s32*)p);
+        else snprintf(b, sizeof b, " [+%#" PRIx64 "]=%#" PRIx64, d.off, *(u64*)p);
         dumps += b;
     }
-    LOGI("trace", "%s(%s) from %s -> x0=%#lx s0=%g%s", t.name.c_str(), buf, describe_guest_addr(lr).c_str(), r.x0, rf, dumps.c_str());
+    LOGI("trace", "%s(%s) from %s -> x0=%#" PRIx64 " s0=%g%s", t.name.c_str(), buf, describe_guest_addr(lr).c_str(), r.x0, rf, dumps.c_str());
     c.set_x(0, r.x0);
     c.set_v(0, r.v0);
     if (t.has_ret_override) {

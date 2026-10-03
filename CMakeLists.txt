@@ -56,6 +56,7 @@ option(SOA_BUILD_EMULATOR "build emulator/ (soa-emu); needs platform370" ON)
 option(SOA_BUILD_PLATFORM370 "build platform370/ (libsoaplatform370, the 3.7.0 platform layer)" ON)
 option(SOA_BUILD_VIEWER "build emulator-viewer/ (soa-viewer)" ON)
 option(SOA_BUILD_TOOLS "build the host tools (tools/aif2png)" ON)
+option(SOA_BUILD_RUNTIME "build runtime/ even when nothing above needs it (the runtime tests alone: the Windows bring-up, port/PLAN.md 5b)" OFF)
 option(SOA_BUILD_WEBVIEW "build webview/ (libsoawebview, soa-webview-render: the HTML page renderer, docs/webview.md)" ON)
 if(SOA_BUILD_PORT AND NOT SOA_BUILD_SERVER)
   message(FATAL_ERROR "SOA_BUILD_PORT needs SOA_BUILD_SERVER: soa links libsoaserver")
@@ -81,17 +82,17 @@ set(SOA_REPO_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ---- the dependencies (vcpkg, the system, FetchContent; SDL2, EGL/GLES and dynarmic only when
 # the runtime is built)
-if(SOA_BUILD_PORT OR SOA_BUILD_EMULATOR OR SOA_BUILD_VIEWER OR SOA_BUILD_PLATFORM370)
+if(SOA_BUILD_PORT OR SOA_BUILD_EMULATOR OR SOA_BUILD_VIEWER OR SOA_BUILD_PLATFORM370 OR SOA_BUILD_RUNTIME)
   set(SOA_NEED_RUNTIME ON)
 else()
   set(SOA_NEED_RUNTIME OFF)
 endif()
 include(cmake/deps.cmake)
 
-add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests
+add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests, soa_compat (sockets; the Windows shims)
 
 # ---- the parts, in dependency order
-if(SOA_BUILD_PORT OR SOA_BUILD_EMULATOR OR SOA_BUILD_VIEWER OR SOA_BUILD_PLATFORM370)
+if(SOA_NEED_RUNTIME)
   add_subdirectory(runtime)   # libsoaruntime, soaruntime_app, soaruntime_tests
 endif()
 if(SOA_BUILD_PLATFORM370)

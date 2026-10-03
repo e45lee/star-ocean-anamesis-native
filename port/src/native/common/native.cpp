@@ -1,6 +1,7 @@
 #include "native/common/native.h"
 
 #include <algorithm>
+#include <cinttypes>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -85,11 +86,11 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route) {
                 to_replaced = targets.count(addr + off) != 0;
             }
             if (is_ret || to_replaced) {
-                LOGI("native", "%s is a %lu-byte %s; left as guest code", f.symbol, size, is_ret ? "RET" : "branch to a replaced function");
+                LOGI("native", "%s is a %" PRIu64 "-byte %s; left as guest code", f.symbol, size, is_ret ? "RET" : "branch to a replaced function");
                 continue;
             }
             // Anything else would overwrite the next function's entry: leave it to the guest.
-            LOGW("native", "%s is only %lu bytes; replacement not installed", f.symbol, size);
+            LOGW("native", "%s is only %" PRIu64 " bytes; replacement not installed", f.symbol, size);
             continue;
         }
         if (f.original) {

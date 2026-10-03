@@ -1,5 +1,7 @@
 #include "native/common/guest_std.h"
 
+#include <cinttypes>
+
 #include "core/loader.h"
 #include "core/log.h"
 
@@ -46,7 +48,7 @@ void String::init(std::string_view s) {
     // libc++: allocation = round_up(n + 1, 16); stored capacity word = allocation | 1.
     u64 alloc = (n + 16) & ~15ull;
     char* p = (char*)stl_alloc(alloc);
-    if (!p) fatal("guest string allocation of %lu bytes failed", alloc);
+    if (!p) fatal("guest string allocation of %" PRIu64 " bytes failed", alloc);
     std::memcpy(p, s.data(), n);
     p[n] = 0;
     u64 cap = alloc | 1, size = n, ptr = (u64)p;

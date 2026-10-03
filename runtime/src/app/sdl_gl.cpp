@@ -3,6 +3,9 @@
 
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include <atomic>
 #include <mutex>
@@ -95,6 +98,18 @@ void set_attributes() {
     // the same Mesa EGL contexts the runtime's GL entry points (libEGL, hle/gles.cpp) dispatch to,
     // as before SDL owned them. Wayland always uses EGL.
     SDL_SetHint(SDL_HINT_VIDEO_X11_FORCE_EGL, "1");
+#ifdef _WIN32
+    // Windows: OpenGL ES through EGL (not WGL), from the ANGLE linked into this program. SDL loads
+    // its EGL and GLES libraries by path: the program itself, which exports ANGLE's EGL entry
+    // points (app/egl_exports_win32.def); GL functions come from its eglGetProcAddress. So SDL's
+    // contexts are the contexts of the ANGLE the runtime's GL entry points dispatch to.
+    SDL_SetHint(SDL_HINT_OPENGL_ES_DRIVER, "1");
+    char exe[MAX_PATH];
+    if (GetModuleFileNameA(nullptr, exe, sizeof exe)) {
+        SDL_setenv("SDL_VIDEO_EGL_DRIVER", exe, 1);
+        SDL_setenv("SDL_VIDEO_GL_DRIVER", exe, 1);
+    }
+#endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);

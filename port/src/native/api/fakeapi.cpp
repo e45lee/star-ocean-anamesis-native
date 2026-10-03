@@ -21,6 +21,7 @@
 // The lambdas' std::function objects keep their guest vtables, so the guest's copies and
 // destructors of them still work; this file replaces the vtable's operator() entries.
 #include <array>
+#include <cinttypes>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -503,16 +504,16 @@ void dump_schema_info(FILE* f, const std::map<u32, std::string>& dict, u64 info,
     if (depth > 6 || !valid_map(info + 0x08) || !valid_map(info + 0x20)) return;
     for (u64 n = at<u64>(info, 0x08); n && n != info + 0x10; n = tree_next(n)) {
         u64 prop = at<u64>(n, 0x28);
-        fprintf(f, "%s  .%s : %s  @+%#lx #%08x\n", pad.c_str(), key_name(at<u32>(n, 0x20)).c_str(),
-                prop ? describe_guest_addr(at<u64>(prop, 0)).c_str() : "null", (unsigned long)(prop - info),
+        fprintf(f, "%s  .%s : %s  @+%#" PRIx64 " #%08x\n", pad.c_str(), key_name(at<u32>(n, 0x20)).c_str(),
+                prop ? describe_guest_addr(at<u64>(prop, 0)).c_str() : "null", (u64)(prop - info),
                 at<u32>(n, 0x20));
     }
     for (u64 n = at<u64>(info, 0x20); n && n != info + 0x28; n = tree_next(n)) {
         u64 child = at<u64>(n, 0x28);
         u64 pm = at<u64>(g("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE"), 0);
         if (child > pm && child < pm + 0x10000)
-            fprintf(f, "%s  child %s (CParameterManager+%#lx):\n", pad.c_str(), key_name(at<u32>(n, 0x20)).c_str(),
-                    (unsigned long)(child - pm));
+            fprintf(f, "%s  child %s (CParameterManager+%#" PRIx64 "):\n", pad.c_str(), key_name(at<u32>(n, 0x20)).c_str(),
+                    (u64)(child - pm));
         else
             fprintf(f, "%s  child %s:\n", pad.c_str(), key_name(at<u32>(n, 0x20)).c_str());
         if (child) dump_schema_info(f, dict, child, depth + 2);
@@ -536,7 +537,7 @@ void dump_schema(const char* path) {
     fprintf(f, "# FakeApiCaller response schema (port dump; key names by CHash32 of .rodata strings)\n");
     for (u64 n = at<u64>(pm, 0x70); n != pm + 0x68; n = at<u64>(n, 8)) {
         u64 info = at<u64>(n, 0x10);
-        if (info > pm && info < pm + 0x10000) fprintf(f, "# at CParameterManager+%#lx:\n", (unsigned long)(info - pm));
+        if (info > pm && info < pm + 0x10000) fprintf(f, "# at CParameterManager+%#" PRIx64 ":\n", (u64)(info - pm));
         dump_schema_info(f, dict, info, 0);
     }
     fprintf(f, "# CParameterManager+0x600 (map or array under its own key)\n");
@@ -587,8 +588,8 @@ void h_game_init(Cpu& c) {
     at<u64>(slot, 0) = self;
     g_fake_caller = self;
     if (!options().client.fake_server_schema.empty()) dump_schema(options().client.fake_server_schema.c_str());
-    LOGI("fakeapi", "fake server %s: FakeApiCaller at %#lx replaces the API caller %#lx", g_serve_dir.c_str(),
-         (unsigned long)self, (unsigned long)old);
+    LOGI("fakeapi", "fake server %s: FakeApiCaller at %#" PRIx64 " replaces the API caller %#" PRIx64, g_serve_dir.c_str(),
+         (u64)self, (u64)old);
 }
 // Port code for the restore run's local server: queues the request of the FakeApiCaller method
 // `method` (e.g. "GetPlayMission") as if the game had called it, so the server can deliver data
@@ -648,7 +649,7 @@ void h_lambda(Cpu& c) {
         c.set_x(0, x0);
         return;
     }
-    fatal("FakeApiCaller lambda with unknown vtable 0x%lx", (unsigned long)vt);
+    fatal("FakeApiCaller lambda with unknown vtable 0x%" PRIx64, (u64)vt);
 }
 
 template <u64 V>
@@ -1003,7 +1004,7 @@ bool register_all() {
         reg({kRequests[i].sym, kRequestHooks[i], "FakeApiCaller request"});
         // (Login and SimpleLogin share a lambda body shape but not the address.)
         char* at_sym = (char*)malloc(24);
-        snprintf(at_sym, 24, "@0x%lx", (unsigned long)kRequests[i].lambda_op);
+        snprintf(at_sym, 24, "@0x%" PRIx64, (u64)kRequests[i].lambda_op);
         reg({at_sym, h_lambda, "FakeApiCaller lambda"});
     }
 #define FAKEAPI_ST(sym, v) \
@@ -1084,14 +1085,14 @@ struct Obj {
 std::string dump(u64 self) {
     std::string s;
     char b[256];
-    snprintf(b, sizeof b, "size=%lu begin=%s;", (unsigned long)at<u64>(self, kMapSize),
+    snprintf(b, sizeof b, "size=%" PRIu64 " begin=%s;", (u64)at<u64>(self, kMapSize),
              at<u64>(self, kMap) == self + kMapEnd ? "end" : "node");
     s += b;
     for (u64 n = at<u64>(self, kMap); n != self + kMapEnd; n = tree_next(n)) {
         u64 f = at<u64>(n, kFnF);
-        snprintf(b, sizeof b, " [%08x %08x st%u %s vt=%lx own=%ld inl=%d]", at<u32>(n, kKey), at<u32>(n, kInfo),
+        snprintf(b, sizeof b, " [%08x %08x st%u %s vt=%" PRIx64 " own=%" PRId64 " inl=%d]", at<u32>(n, kKey), at<u32>(n, kInfo),
                  at<u32>(n, kState), ((guest::String*)(n + kName))->str().c_str(),
-                 f ? (unsigned long)(at<u64>(f, 0) - lib_base()) : 0ul, f ? (long)(at<u64>(f, 8) - self) : 0l,
+                 f ? (u64)(at<u64>(f, 0) - lib_base()) : (u64)0, f ? (s64)(at<u64>(f, 8) - self) : (s64)0,
                  f == n + kFn);
         s += b;
     }
@@ -1120,7 +1121,7 @@ NATIVE_TEST("fakeapi/requests") {
             const Request& r = kRequests[t.rand_int(0, kNumRequests - 1)];
             u64 sg = guest_request(t, A.p(), r), sn = 0xdead;
             Request_((u64)&sn, B.p(), r);
-            if (sg != sn) { t.fail("%s status %lu vs %lu", r.sym, sg, sn); bad++; }
+            if (sg != sn) { t.fail("%s status %" PRIu64 " vs %" PRIu64, r.sym, sg, sn); bad++; }
         } else if (kind < 8) {
             // Move a request along (what Progress would do).
             u32 fid = fids[t.rand_int(0, (int)fids.size() - 1)];
@@ -1161,12 +1162,12 @@ NATIVE_TEST("fakeapi/trivial") {
         GuestArgs a;
         a.p((void*)A.p()).i(1).i(2).i(3).sret(&v);
         guest_call(t.sym(sym), a);
-        if (v != want) t.fail("%s: guest status %lu, native %lu", sym, v, want);
+        if (v != want) t.fail("%s: guest status %" PRIu64 ", native %" PRIu64, sym, v, want);
     };
-    auto cst = [&](const char* sym, long want) {
+    auto cst = [&](const char* sym, s64 want) {
         if (want < 0) return;  // lone RET, left as guest code
         u64 v = guest_call(t.sym(sym), {A.p(), 0x1234});
-        if (v != (u64)want) t.fail("%s: guest %lu, native %ld", sym, v, want);
+        if (v != (u64)want) t.fail("%s: guest %" PRIu64 ", native %" PRId64, sym, v, want);
     };
 #define FAKEAPI_T_ST(sym, v) st(sym, v);
     FAKEAPI_STATUS_ONLY(FAKEAPI_T_ST)
@@ -1185,7 +1186,7 @@ std::string ason_text(u64 v, int depth = 0) {
     u32 type = at<u32>(v, 0);
     char b[64];
     switch (type) {
-        case 2: case 3: snprintf(b, sizeof b, "%lu", (unsigned long)at<u64>(v, 8)); return b;
+        case 2: case 3: snprintf(b, sizeof b, "%" PRIu64, (u64)at<u64>(v, 8)); return b;
         case 5: return "\"" + std::string((const char*)at<u64>(v, 8), at<u32>(v, 0x18)) + "\"";
         case 7: {
             std::string s = "{";
@@ -1260,7 +1261,7 @@ NATIVE_TEST("fakeapi/lambdas") {
             std::string a, b;
             for (auto& l : logs[0]) a += "\n    " + l;
             for (auto& l : logs[1]) b += "\n    " + l;
-            t.fail("%s lambda: status %lx/%lx x0 %lx/%lx\n  guest:%s\n  native:%s", r.sym, status[0], status[1], x0[0], x0[1],
+            t.fail("%s lambda: status %" PRIx64 "/%" PRIx64 " x0 %" PRIx64 "/%" PRIx64 "\n  guest:%s\n  native:%s", r.sym, status[0], status[1], x0[0], x0[1],
                    a.c_str(), b.c_str());
         }
         if (logs[1].empty()) t.fail("%s lambda: no handler call recorded", r.sym);
@@ -1426,9 +1427,9 @@ NATIVE_TEST("fakeapi/lifetime") {
             if (side == 0) guest_call(t.sym("_ZN13FakeApiCallerC2Ev"), {self});
             else Construct(self);
             char b[160];
-            snprintf(b, sizeof b, "ctor: vt=%lx fiber_vt=%lx begin=%ld root=%lx size=%lx", (unsigned long)(at<u64>(self, 0) - lib_base()),
-                     (unsigned long)(at<u64>(self, 8) - lib_base()), (long)(at<u64>(self, kMap) - self),
-                     (unsigned long)at<u64>(self, kMapEnd), (unsigned long)at<u64>(self, kMapSize));
+            snprintf(b, sizeof b, "ctor: vt=%" PRIx64 " fiber_vt=%" PRIx64 " begin=%" PRId64 " root=%" PRIx64 " size=%" PRIx64, (u64)(at<u64>(self, 0) - lib_base()),
+                     (u64)(at<u64>(self, 8) - lib_base()), (s64)(at<u64>(self, kMap) - self),
+                     (u64)at<u64>(self, kMapEnd), (u64)at<u64>(self, kMapSize));
             s.log.push_back(b);
             for (int i : reqs) {
                 u64 st;
@@ -1439,9 +1440,9 @@ NATIVE_TEST("fakeapi/lifetime") {
             u64 arg = cs.thunk ? self + 8 : self;
             if (side == 0) guest_call(t.sym(cs.dtor), {arg});
             else Destruct(self, cs.deleting);
-            snprintf(b, sizeof b, "dtor: vt=%lx fiber_vt=%lx begin=%ld root=%lx size=%lx", (unsigned long)(at<u64>(self, 0) - lib_base()),
-                     (unsigned long)(at<u64>(self, 8) - lib_base()), (long)(at<u64>(self, kMap) - self),
-                     (unsigned long)at<u64>(self, kMapEnd), (unsigned long)at<u64>(self, kMapSize));
+            snprintf(b, sizeof b, "dtor: vt=%" PRIx64 " fiber_vt=%" PRIx64 " begin=%" PRId64 " root=%" PRIx64 " size=%" PRIx64, (u64)(at<u64>(self, 0) - lib_base()),
+                     (u64)(at<u64>(self, 8) - lib_base()), (s64)(at<u64>(self, kMap) - self),
+                     (u64)at<u64>(self, kMapEnd), (u64)at<u64>(self, kMapSize));
             s.log.push_back(b);
             logs[side] = s.log;
         }

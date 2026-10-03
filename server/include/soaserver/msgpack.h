@@ -24,11 +24,13 @@ struct Value {
     Value() = default;
     Value(bool v) : type(Bool), b(v) {}
     Value(int v) : type(v < 0 ? Int : UInt), i(v), u(v < 0 ? 0 : (uint64_t)v) {}
-    Value(int64_t v) : type(v < 0 ? Int : UInt), i(v), u(v < 0 ? 0 : (uint64_t)v) {}
+    // One constructor per integer type, not per <cstdint> alias: int64_t is long on Linux but
+    // long long on Windows (LLP64), so an int64_t overload would duplicate one of these there.
+    Value(long long v) : type(v < 0 ? Int : UInt), i(v), u(v < 0 ? 0 : (uint64_t)v) {}
+    Value(long v) : Value((long long)v) {}
     Value(unsigned v) : type(UInt), u(v) {}
     Value(unsigned long v) : type(UInt), u(v) {}
     Value(unsigned long long v) : type(UInt), u(v) {}
-    Value(long long v) : Value((int64_t)v) {}
     Value(double v) : type(Float), f(v) {}
     Value(const char* v) : type(Str), s(v) {}
     Value(std::string v) : type(Str), s(std::move(v)) {}

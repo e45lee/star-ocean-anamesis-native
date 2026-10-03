@@ -15,7 +15,7 @@ file(GLOB SOA_WEBVIEW_SOURCES CONFIGURE_DEPENDS ${SOA_WEBVIEW_DIR}/src/*.cpp)
 list(SORT SOA_WEBVIEW_SOURCES)
 add_library(soawebview STATIC ${SOA_WEBVIEW_SOURCES})
 target_include_directories(soawebview PUBLIC ${SOA_WEBVIEW_DIR}/include PRIVATE ${SOA_WEBVIEW_DIR}/src)
-target_link_libraries(soawebview PUBLIC soa_env litehtml PRIVATE soa::stb)
+target_link_libraries(soawebview PUBLIC soa_env soa_compat litehtml PRIVATE soa::stb)
 target_compile_options(soawebview PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function)
 
 add_executable(soa-webview-render ${SOA_WEBVIEW_DIR}/tools/render.cpp)

@@ -8,8 +8,9 @@
 /.venv
 __pycache__/
 .pytest_cache/
-# The build (cmake -S . -B build) and its log
+# The build (cmake -S . -B build), the Windows cross build (scripts/build.sh --windows) and the log
 /build/
+/build-win/
 /build.log
 # vcpkg (scripts/vcpkg-bootstrap.sh) and a stray `vcpkg install`'s output
 /.vcpkg

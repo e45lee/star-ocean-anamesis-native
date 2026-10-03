@@ -21,6 +21,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <cinttypes>
 #include <cstring>
 #include <mutex>
 #include <set>
@@ -163,7 +164,7 @@ bool config_matches(EGLint attr, EGLint want) {
 // ---- thunks
 
 void th_eglGetDisplay(Cpu& c) {
-    LOGI("egl", "eglGetDisplay(%#lx) = %p", (unsigned long)c.x(0), (void*)&g_display);
+    LOGI("egl", "eglGetDisplay(%#" PRIx64 ") = %p", c.x(0), (void*)&g_display);
     ret_ptr(c, &g_display);
 }
 
@@ -456,7 +457,7 @@ void th_eglGetError(Cpu& c) {
 void th_eglGetProcAddress(Cpu& c) {
     const char* n = arg_str(c, 0);
     u64 a = Hle::get().lookup(n);
-    LOGD("egl", "eglGetProcAddress(%s) = %#lx", n, a);
+    LOGD("egl", "eglGetProcAddress(%s) = %#" PRIx64, n, a);
     ret(c, a);
 }
 

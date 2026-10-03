@@ -2,10 +2,13 @@
 #include <soa/env.h>
 #include "native/common/guest_stub.h"
 
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 
 #include <algorithm>
 #include <array>
+#include <cinttypes>
 #include <cstring>
 #include <utility>
 #include <mutex>
@@ -32,7 +35,7 @@ thread_local StubSession* t_session = nullptr;
 Stub lookup(u64 addr) {
     std::lock_guard lk(g_mutex);
     auto it = g_stubs.find(addr);
-    if (it == g_stubs.end()) fatal("guest_stub: unknown stub at %#lx", addr);
+    if (it == g_stubs.end()) fatal("guest_stub: unknown stub at %#" PRIx64, addr);
     return it->second;
 }
 
@@ -218,7 +221,7 @@ bool stub_at(u64 addr, const char* name, int n_int, int n_float) {
         u64 size = 0;
         for (; it != lib.sorted_syms.end() && it->addr == addr; ++it) size = std::max(size, it->size);
         if (size && size < 8) {
-            LOGI("stub", "%s is only %lu bytes; not stubbed", name, size);
+            LOGI("stub", "%s is only %" PRIu64 " bytes; not stubbed", name, size);
             return false;
         }
     }

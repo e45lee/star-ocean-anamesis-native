@@ -231,6 +231,7 @@ used). The programs' own lists: `port/README.md` "Environment" (soa), `emulator/
 | `SOA_GL_MAP_INVALIDATE=0` | don't add `GL_MAP_INVALIDATE_RANGE_BIT` to the engine's overwrite maps (default on) |
 | `SOA_GL_RELEASE_SHADER_COMPILER=1` | pass `glReleaseShaderCompiler` to the driver (default dropped) |
 | `SOA_DIRECT_CALLS=0` | send host-thunk calls through the JIT (default on: called directly; `core/cpu.cpp`) |
+| `SOA_FAULT_LOG=1` | Windows: log every first-chance fault (module offsets of the host stack, the guest pc; `core/cpu.cpp`): a crash inside a system DLL can end the process without the crash report |
 
 Host variables: `HOME` (the programs' default data dirs); `TZ`, `HOME` and `TMPDIR` are the only
 host variables the guest's `getenv` sees (`hle/libc.cpp`); child processes (`ffmpeg` for movies,

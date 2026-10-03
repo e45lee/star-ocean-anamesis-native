@@ -110,6 +110,60 @@ time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWE
 `SOA_BUILD_SERVER=OFF` needs `SOA_BUILD_PORT=OFF` too; the emulator needs platform370, so
 `SOA_BUILD_PLATFORM370=OFF` needs `SOA_BUILD_EMULATOR=OFF`).
 
+### Windows
+
+A cross build from Linux (or WSL) with **llvm-mingw** (clang, libc++, the UCRT) into `build-win/`
+(`port/PLAN.md` 5b, "W"): every part, as `.exe` files (`soa.exe`, `soa-server.exe`, `soa-emu.exe`,
+`soa-viewer.exe`, the tests and tools). Checked on Windows so far: `soa-server.exe --selftest`,
+`soaruntime_tests.exe`, `soa.exe --selftest` and `soa-emu.exe` up to the login against
+`soa-server.exe`; the sessions and the viewer are next (`port/PLAN.md` 5b, "As built").
+
+```sh
+# once: llvm-mingw (any recent ucrt ubuntu-x86_64 release of github.com/mstorsjo/llvm-mingw)
+curl -LO https://github.com/mstorsjo/llvm-mingw/releases/download/20260922/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
+tar -C ~/tools -xf llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
+ln -sfn ~/tools/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64 ~/tools/llvm-mingw   # or set SOA_LLVM_MINGW
+scripts/build.sh --windows                              # build-win/: everything
+scripts/build.sh --windows --target soa-server          # one part
+```
+
+- `--windows` configures `build-win/` with vcpkg's toolchain chainloading
+  `cmake/toolchains/llvm-mingw-x64.cmake`, the triplet `x64-mingw-static`
+  (`cmake/vcpkg-triplets/x64-mingw-static.cmake`: static, release only, the same sqlite3 options as
+  Linux so the served master and the CDN ids don't depend on the platform) and the vcpkg feature
+  `angle` (ANGLE: EGL / GLES on Windows). The first configure builds every port for MinGW (about an
+  hour, then cached; a change to the triplet file rebuilds them all). The `.exe` files are static:
+  only Windows' own DLLs.
+- In a git worktree set `VCPKG_ROOT` to the main checkout's `.vcpkg` (as for `build/`), or
+  `scripts/vcpkg-bootstrap.sh` clones another vcpkg.
+- What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
+  `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
+  POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,
+  ...), `soa/sock.h` the host sockets. The runtime's guest-facing differences (bionic is LP64 with
+  a 32-bit `wchar_t`, Linux constants and struct layouts) are in `runtime/src/hle/libc_win32.cpp`
+  and `net_win32.cpp`.
+
+From WSL the `.exe` files run directly (interop), but not in place: SQLite can't lock files on
+`\\wsl.localhost\...` ("database is locked"), a worktree's `work/` link isn't followed there, and
+the tests' `/tmp` is `\tmp` on the current drive. `scripts/windows-stage.sh` copies the tracked
+files, the `work/` data the programs read and the `.exe` files to `C:\soa-win` (incremental; the
+first copy of the 3.7.0 download takes about 10 minutes):
+
+```sh
+scripts/windows-stage.sh                                # -> /mnt/c/soa-win (C:\soa-win)
+cd /mnt/c/soa-win && ./build-win/server/soa-server.exe --selftest
+cd /mnt/c/soa-win && ./build-win/runtime/soaruntime_tests.exe
+cd /mnt/c/soa-win && ./build-win/port/soa.exe --data run/soa-data --selftest
+# the emulator against the server (pick free ports; a window opens unless --headless)
+cd /mnt/c/soa-win && ./build-win/server/soa-server.exe --listen 127.0.0.1:39300 --http 127.0.0.1:39380 \
+    --data run/server --download-dir work/download-3.7.0 &
+cd /mnt/c/soa-win && ./build-win/emulator/soa-emu.exe --data run/phone --server 127.0.0.1:39300 --http 127.0.0.1:39380
+```
+
+`--control NAME` is a named pipe there (`\\.\pipe\NAME`): `cmd.exe /c "echo tap:405:1000> \\.\pipe\NAME"`.
+
+On a Windows machine, clone the repository and run the same `.exe` files from there.
+
 ## Running
 
 `scripts/build.sh` sets up vcpkg (first time only) and builds everything. Then:

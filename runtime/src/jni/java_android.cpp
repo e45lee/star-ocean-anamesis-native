@@ -1,7 +1,11 @@
 // Java-side classes the game calls through JNI: jb.Aska.AskaActivity, SOAActivity, and the
 // bits of the Android framework / Play Core they touch.
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <sys/statvfs.h>
+#endif
 #include <unistd.h>
 
 #include <cstring>
@@ -167,9 +171,15 @@ void install_android_classes(Vm& vm) {
                           "GetNativeHeapSize"})
         vm.def(SOA, n, "()J", mem);
     auto free_space = [](Object*, const Args&) -> u64 {
+#ifdef _WIN32
+        ULARGE_INTEGER avail;
+        if (!GetDiskFreeSpaceExA(vfs_config().root.c_str(), &avail, nullptr, nullptr)) return (u64)8 << 30;
+        return (u64)avail.QuadPart;
+#else
         struct statvfs s;
         if (statvfs(vfs_config().root.c_str(), &s) != 0) return (u64)8 << 30;
         return (u64)s.f_bavail * s.f_frsize;
+#endif
     };
     vm.def(SOA, "GetDeviceFreeSize", "()J", free_space);
     vm.def(SOA, "GetSDCardFreeSize", "()J", free_space);

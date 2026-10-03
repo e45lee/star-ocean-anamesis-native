@@ -29,13 +29,14 @@
 // across nested guest_call levels (host code calling back into the guest).
 #include "core/profile.h"
 
-#include <dlfcn.h>
-#include <elf.h>
+#include "core/elf64.h"
 #include <pthread.h>
+#ifndef _WIN32
+#include <dlfcn.h>
 #include <ucontext.h>
+#endif
 #include <fcntl.h>
 #include <signal.h>
-#include <sys/mman.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
@@ -43,6 +44,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cinttypes>
 #include <condition_variable>
 #include <cstdio>
 #include <cstdlib>
@@ -55,6 +57,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "core/host_mem.h"
 #include "core/log.h"
 #include "dynarmic/interface/A64/a64.h"
 
@@ -125,20 +128,16 @@ std::string func_name(size_t i) {
     const Func& f = g_funcs[i];
     if (f.name) return f.name;
     char b[32];
-    snprintf(b, sizeof b, "FUN_%08lx", f.addr - g_lib->base + 0x100000);
+    snprintf(b, sizeof b, "FUN_%08" PRIx64, f.addr - g_lib->base + 0x100000);
     return b;
 }
 
 s64 sext(u64 v, int bits) { return (s64)(v << (64 - bits)) >> (64 - bits); }
 
 bool build_function_table(LoadedLib& lib) {
-    int fd = open(lib.path.c_str(), O_RDONLY);
-    if (fd < 0) return false;
-    struct stat st;
-    fstat(fd, &st);
-    auto* file = (const u8*)mmap(nullptr, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    close(fd);
-    if (file == MAP_FAILED) return false;
+    hostmem::MappedFile mf;
+    if (!hostmem::map_file(lib.path, &mf)) return false;
+    const u8* file = mf.data;
     auto* eh = (const Elf64_Ehdr*)file;
     auto* sh = (const Elf64_Shdr*)(file + eh->e_shoff);
     const char* shstr = (const char*)file + sh[eh->e_shstrndx].sh_offset;
@@ -589,6 +588,13 @@ constexpr size_t kHostPcs = 1 << 23;
 u64* g_host_pcs = nullptr;
 std::atomic<size_t> g_host_npcs{0};
 u64 g_exe_base = 0;
+#ifdef _WIN32
+// Not on Windows yet (port/PLAN.md 5b): SOA_PROFILE_HOST samples host PCs with SIGPROF.
+void host_sample(ProfThread&, int) {}
+void init_host_sampling() {
+    if (const char* e = getenv("SOA_PROFILE_HOST"); e && *e && strcmp(e, "0")) LOGW("profile", "SOA_PROFILE_HOST: not available on Windows");
+}
+#else
 void on_sigprof(int, siginfo_t*, void* uc) {
     size_t i = g_host_npcs.fetch_add(1, std::memory_order_relaxed);
     if (i < kHostPcs) g_host_pcs[i] = (u64)((ucontext_t*)uc)->uc_mcontext.gregs[REG_RIP];
@@ -613,6 +619,7 @@ void init_host_sampling() {
     sigaction(SIGPROF, &sa, nullptr);
     g_host_sampling = true;
 }
+#endif
 void write_host_samples(FILE* f) {
     size_t n = std::min(g_host_npcs.load(std::memory_order_relaxed), kHostPcs);
     std::unordered_map<u64, u64> hist;
@@ -620,7 +627,7 @@ void write_host_samples(FILE* f) {
     std::vector<std::pair<u64, u64>> v(hist.begin(), hist.end());
     std::sort(v.begin(), v.end());
     fprintf(f, "# offset\tsamples   (host PCs in native replacements, relative to the soa executable; %zu samples)\n", n);
-    for (auto& [pc, c] : v) fprintf(f, "%lx\t%lu\n", pc, c);
+    for (auto& [pc, c] : v) fprintf(f, "%" PRIx64 "\t%" PRIu64 "\n", pc, c);
 }
 
 void sample_thread(ProfThread& t, void*) {
@@ -741,7 +748,7 @@ void profile_dump() {
                 if (fn.sources & kSrcEh) *p++ = 'H';
                 if (fn.sources & kSrcAdrp) *p++ = 'A';
                 *p = 0;
-                fprintf(f, "%lx\t%lu\t%s\t%s\n", fn.addr - g_lib->base, fn.size, src, func_name(i).c_str());
+                fprintf(f, "%" PRIx64 "\t%" PRIu64 "\t%s\t%s\n", fn.addr - g_lib->base, fn.size, src, func_name(i).c_str());
             }
             commit(f, tmp, "functions.tsv");
             g_funcs_written = true;
@@ -751,7 +758,7 @@ void profile_dump() {
         if (FILE* f = open_tmp("coverage.tsv", tmp)) {
             fprintf(f, "# offset\tfirst_hit_s\tname   (%d of %d armed entries executed, %.1f s)\n", g_cov_hits.load(), g_cov_patched, secs);
             for (size_t i = 0; i < g_funcs.size(); i++)
-                if (g_state[i].load(std::memory_order_relaxed) == 2) fprintf(f, "%lx\t%.2f\t%s\n", g_funcs[i].addr - g_lib->base, g_first_hit[i], func_name(i).c_str());
+                if (g_state[i].load(std::memory_order_relaxed) == 2) fprintf(f, "%" PRIx64 "\t%.2f\t%s\n", g_funcs[i].addr - g_lib->base, g_first_hit[i], func_name(i).c_str());
             commit(f, tmp, "coverage.tsv");
         }
     }
@@ -767,7 +774,7 @@ void profile_dump() {
             if (!n) continue;
             u64 a = thunk_hook_addr(i);
             bool native = a >= g_text_lo && a < g_text_hi;
-            fprintf(f, "%s\t%lu\t%lx\t%s\n", native ? "native" : "hle", n, native ? a - g_lib->base : 0, thunk_name(i) ? thunk_name(i) : "?");
+            fprintf(f, "%s\t%" PRIu64 "\t%" PRIx64 "\t%s\n", native ? "native" : "hle", n, native ? a - g_lib->base : 0, thunk_name(i) ? thunk_name(i) : "?");
         }
         commit(f, tmp, "calls.tsv");
     }
@@ -787,13 +794,13 @@ void profile_dump() {
                     if (!line.empty()) line += ';';
                     line += nit->second;
                 }
-                fprintf(f, "%s %lu\n", line.c_str(), n);
+                fprintf(f, "%s %" PRIu64 "\n", line.c_str(), n);
             }
             commit(f, tmp, "stacks.folded");
         }
     }
     if (FILE* f = open_tmp("meta.txt", tmp)) {
-        fprintf(f, "seconds %.1f\ncoverage %d\nsampling %d\nhz %d\nfunctions %zu\narmed %d\nexecuted %d\nsamples %lu\nsamples_guest %lu\nsamples_host %lu\nsampler_cpu_s %.2f\n",
+        fprintf(f, "seconds %.1f\ncoverage %d\nsampling %d\nhz %d\nfunctions %zu\narmed %d\nexecuted %d\nsamples %" PRIu64 "\nsamples_guest %" PRIu64 "\nsamples_host %" PRIu64 "\nsampler_cpu_s %.2f\n",
                 secs, g_coverage, g_sampling, g_hz, g_funcs.size(), g_cov_patched, g_cov_hits.load(), g_samples.load(), g_samples_guest.load(),
                 g_samples_host.load(), g_sampler_cpu_ns.load() / 1e9);
         commit(f, tmp, "meta.txt");
@@ -827,7 +834,9 @@ void profile_init(LoadedLib& lib) {
     g_sampling = prof && *prof;
     if (g_coverage) install_coverage();
     if (g_sampling) init_host_sampling();
-    signal(SIGUSR1, on_sigusr1);
+#ifndef _WIN32
+    signal(SIGUSR1, on_sigusr1);  // (no SIGUSR1 on Windows: the dump on exit only)
+#endif
     std::thread(sampler_main).detach();
     LOGI("profile", "writing to %s (coverage %s, sampling %s at %d Hz)", g_dir.c_str(), g_coverage ? "on" : "off", g_sampling ? "on" : "off", g_hz);
 }

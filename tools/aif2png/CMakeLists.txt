@@ -3,4 +3,4 @@
 # and zlib from vcpkg.
 add_executable(aif2png aif2png.cpp)
 target_compile_options(aif2png PRIVATE -Wall)
-target_link_libraries(aif2png PRIVATE soa::jpeg9 zstd::libzstd ZLIB::ZLIB)
+target_link_libraries(aif2png PRIVATE soa::jpeg9 zstd::libzstd ZLIB::ZLIB soa_compat)

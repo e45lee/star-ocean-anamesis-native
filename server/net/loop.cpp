@@ -1,19 +1,11 @@
 // soa-server's poll() loop (loop.h). Our code.
 #include "loop.h"
 
-#include <arpa/inet.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <poll.h>
 #include <strings.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
 #include <cstring>
 
+#include "soa/sock.h"
 #include "soaserver/log.h"
 
 namespace soa::server::net {
@@ -37,10 +29,10 @@ bool parse_host_port(const std::string& s, std::string* host, uint16_t* port) {
 Loop::~Loop() {
     for (auto& [fd, c] : conns_) {
         if (!c.http) game_.close(c.game_id);
-        ::close(fd);
+        sock::close(fd);
     }
-    if (game_fd_ >= 0) ::close(game_fd_);
-    if (http_fd_ >= 0) ::close(http_fd_);
+    if (game_fd_ >= 0) sock::close(game_fd_);
+    if (http_fd_ >= 0) sock::close(http_fd_);
 }
 
 bool Loop::listen_on(const std::string& host, uint16_t port, int* fd, uint16_t* bound, std::string* err) {
@@ -48,6 +40,7 @@ bool Loop::listen_on(const std::string& host, uint16_t port, int* fd, uint16_t* 
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
+    sock::startup();  // (Winsock, before the name lookup)
     if (int r = getaddrinfo(host.c_str(), nullptr, &hints, &res); r != 0 || !res) {
         *err = host + ": " + gai_strerror(r);
         return false;
@@ -55,12 +48,11 @@ bool Loop::listen_on(const std::string& host, uint16_t port, int* fd, uint16_t* 
     sockaddr_in a = *(sockaddr_in*)res->ai_addr;
     freeaddrinfo(res);
     a.sin_port = htons(port);
-    int s = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
-    int one = 1;
-    setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &one, sizeof one);
+    int s = sock::tcp_socket(true);
+    if (s >= 0) sock::set_reuse_addr(s);
     if (s < 0 || bind(s, (sockaddr*)&a, sizeof a) != 0 || listen(s, 16) != 0) {
-        *err = host + ":" + std::to_string(port) + ": " + strerror(errno);
-        if (s >= 0) ::close(s);
+        *err = host + ":" + std::to_string(port) + ": " + sock::last_error();
+        if (s >= 0) sock::close(s);
         return false;
     }
     socklen_t len = sizeof a;
@@ -75,10 +67,8 @@ bool Loop::listen_http(const std::string& host, uint16_t port, std::string* err)
 
 void Loop::accept_on(int lfd, bool http) {
     for (;;) {
-        int fd = accept4(lfd, nullptr, nullptr, SOCK_NONBLOCK | SOCK_CLOEXEC);
+        int fd = sock::accept_nonblocking(lfd);
         if (fd < 0) return;
-        int one = 1;
-        setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof one);
         Conn& c = conns_[fd];
         c = Conn();
         c.http = http;
@@ -90,22 +80,22 @@ void Loop::drop(int fd) {
     auto it = conns_.find(fd);
     if (it == conns_.end()) return;
     if (!it->second.http) game_.close(it->second.game_id);
-    ::close(fd);
+    sock::close(fd);
     conns_.erase(it);
 }
 
 void Loop::on_readable(int fd, Conn& c) {
     uint8_t buf[65536];
     for (;;) {
-        ssize_t n = recv(fd, buf, sizeof buf, 0);
+        ssize_t n = sock::recv(fd, buf, sizeof buf);
         if (n == 0) {
             c.close_after = true;
             if (c.out.empty()) return drop(fd);
             return;
         }
         if (n < 0) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) return;
-            if (errno == EINTR) continue;
+            if (sock::would_block()) return;
+            if (sock::interrupted()) continue;
             return drop(fd);
         }
         if (!c.http) {
@@ -146,13 +136,13 @@ void Loop::on_readable(int fd, Conn& c) {
 }
 
 void Loop::run_once(int timeout_ms) {
-    std::vector<pollfd> fds;
+    std::vector<sock::PollFd> fds;
     if (game_fd_ >= 0) fds.push_back({game_fd_, POLLIN, 0});
     if (http_fd_ >= 0) fds.push_back({http_fd_, POLLIN, 0});
     for (auto& [fd, c] : conns_) fds.push_back({fd, (short)(POLLIN | (c.out.empty() ? 0 : POLLOUT)), 0});
-    int r = poll(fds.data(), fds.size(), timeout_ms);
+    int r = sock::poll(fds.data(), fds.size(), timeout_ms);
     if (r <= 0) return;
-    for (const pollfd& p : fds) {
+    for (const sock::PollFd& p : fds) {
         if (!p.revents) continue;
         if (p.fd == game_fd_ || p.fd == http_fd_) {
             accept_on(p.fd, p.fd == http_fd_);
@@ -169,9 +159,9 @@ void Loop::run_once(int timeout_ms) {
             continue;
         }
         while (!c.out.empty()) {
-            ssize_t n = send(p.fd, c.out.data(), c.out.size(), MSG_NOSIGNAL);
+            ssize_t n = sock::send(p.fd, c.out.data(), c.out.size());
             if (n <= 0) {
-                if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) break;
+                if (n < 0 && (sock::would_block() || sock::interrupted())) break;
                 c.out.clear();
                 c.close_after = true;
                 break;

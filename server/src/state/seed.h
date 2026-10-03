@@ -14,7 +14,7 @@ constexpr const char* kLocalPlayerId = "LOCAL00001";
 // The runtime seed save: data/saves/seed/Game.xml in the checkout, "" when it's missing.
 std::string real_seed_save();
 
-// Seeds the player, roster, party 1 and planets from the first save that exists of
+// Seeds the player, roster, party 1 and meta keys from the first save that exists of
 // `explicit_seed`, --seed, real_seed_save() and --game-xml.
 void seed(ext::Ctx& ctx, const std::string& explicit_seed = "");
 

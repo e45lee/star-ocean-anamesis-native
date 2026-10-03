@@ -36,7 +36,6 @@ const std::vector<MasterRef>& master_refs() {
         {"favor", "same_role_id", "master_role", "same_role_id", false},
         {"favor_drop_play", "same_role_id", "master_role", "same_role_id", false},
         {"shop_counts", "id", "master_item_shop", "id", false},
-        {"exchange_counts", "shop_id", "master_exchange_shop", "id", false},
         {"ds_area", "area_id", "master_deep_space_area", "id", false},
         {"ds_offer", "mission_id", "master_deep_space_mission", "id", false},
         {"sphere_cell", "asset_id", "master_sphere211_floor_asset", "id", false},

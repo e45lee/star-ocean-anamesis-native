@@ -257,6 +257,10 @@ def parse_creates(text):
     return out
 
 
+# The migration steps' drops (applied to the parsed creates; PLAN-schema 4.3 S2).
+SCHEMA_STEPS = "server/src/state/schema.cpp"
+DROP_TABLE_RE = re.compile(r"^drop table (?:if exists )?(\w+)$", re.I)
+DROP_COLUMN_RE = re.compile(r"^alter table (\w+) drop column (\w+)$", re.I)
 WRITE_RE = re.compile(r"\b(insert(?:\s+or\s+\w+)?\s+into|replace\s+into|update|delete\s+from)\s+(\w+)", re.I)
 READ_RE = re.compile(r"\b(from|join)\s+(\w+)", re.I)
 IDENT_RE = re.compile(r"[A-Za-z_]\w*")
@@ -378,7 +382,6 @@ RELS = [
     ("favor_drop_play", "same_role_id", "m:master_role", "same_role_id", None, "-", ""),
     ("favor_bonus_state", "lot_uid", "roster", "uid", 0, "SET NULL", "the favor bonus character"),
     ("shop_counts", "id", "m:master_item_shop", "id", None, "-", ""),
-    ("exchange_counts", "shop_id", "m:master_exchange_shop", "id", None, "-", ""),
     ("ds_area", "area_id", "m:master_deep_space_area", "id", None, "-", ""),
     ("ds_offer", "mission_id", "m:master_deep_space_mission", "id", None, "-", ""),
     ("ds_offer", "area_id", "ds_area", "area_id", None, "CASCADE", ""),
@@ -454,7 +457,7 @@ LINT_UPSERT_ONLY = ("player", "roster", "items", "titles", "party_set", "mission
                     "wboss", "party", "party_member", "favor", "stock", "subscription", "present_texts")
 # Consumers whose SQL runs on another DB: the pools DB's builder (its own meta table).
 LINT_OTHER_DB = ("tools/build_gacha_pools.py",)
-POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(\w+)\s+values\b", re.I)
+POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(?:temp\.)?(\w+)\s+values\b", re.I)
 REPLACE_RE = re.compile(r"\b(?:insert\s+or\s+replace|replace)\s+into\s+(\w+)\b", re.I)
 
 
@@ -520,6 +523,18 @@ def main():
                     tgt[name]["also"].append("%s:%d" % (rel(path), ln))
                     continue
                 tgt[name] = {"cols": cols, "cons": cons, "where": "%s:%d" % (rel(path), ln), "also": []}
+    # The schema's later steps (state/schema.cpp, in step order) drop tables and columns: the
+    # inventory is the schema at this build's version.
+    schema_src = os.path.join(ROOT, SCHEMA_STEPS)
+    for line, text, dyn in literal_groups(open(schema_src, encoding="utf-8").read()):
+        for st in [" ".join(x.split()) for x in text.split(";")]:
+            m_ = DROP_TABLE_RE.match(st)
+            if m_ and m_.group(1) in tables:
+                del tables[m_.group(1)]
+                continue
+            m_ = DROP_COLUMN_RE.match(st)
+            if m_ and m_.group(1) in tables:
+                tables[m_.group(1)]["cols"] = [c for c in tables[m_.group(1)]["cols"] if c[0] != m_.group(2)]
     for path, src in src_cache.items():
         if rel(path) in OTHER_DB:
             continue

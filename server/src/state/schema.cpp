@@ -9,6 +9,7 @@
 // never changed an existing table, so a state from before a column was added would miss it.
 #include "state/schema.h"
 
+#include <iterator>
 #include <set>
 #include <string>
 #include <vector>
@@ -260,6 +261,23 @@ bool repair_columns(sqlite3* db) {
     return ok;
 }
 
+// ---- step 2: drop the dead (PLAN-schema S2, finding F1) ---------------------------------------
+// What nothing reads: roster.favor (favor lives per same role in `favor`), mission.best_rank (no
+// per-mission rank: docs/server-rules.md "Missions"), exchange_counts.shop_id (the contents row
+// names its shop in the master), and the tables nothing uses: view_flags (UpdateView keeps the
+// words in meta view_status / view_status2), gear (gear_items), box_gacha (box_state /
+// box_slots) and planets (written by the seed, never read: the open planets are the campaign's
+// ActiveMissionList). `drop column` (SQLite 3.35+) since no key, index or reference names them.
+const char* const kDropDead[] = {
+    "alter table roster drop column favor",
+    "alter table mission drop column best_rank",
+    "alter table exchange_counts drop column shop_id",
+    "drop table view_flags",
+    "drop table gear",
+    "drop table box_gacha",
+    "drop table planets",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -272,6 +290,7 @@ const std::vector<const char*>& baseline_sql() {
 const std::vector<Step>& steps() {
     static const std::vector<Step> s = {
         {1, "the baseline (the 58 tables as before PLAN-schema S1), plus missing columns", baseline_sql(), repair_columns},
+        {2, "drop the dead tables and columns (PLAN-schema S2)", {std::begin(kDropDead), std::end(kDropDead)}, nullptr},
     };
     return s;
 }

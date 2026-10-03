@@ -61,3 +61,13 @@ target_link_libraries(soa PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>")
 target_link_libraries(soa PRIVATE soanet)
 # The web view's page renderer (../webview: litehtml; on by default, docs/webview.md).
 target_link_libraries(soa PRIVATE soawebview)
+
+# Per-subsystem build settings of the native rebuild (port/src/native/<s>/subsystem.cmake, made by
+# tools/subsystem.py new): a subsystem's own libraries / definitions live in its folder, so parallel
+# branches adding subsystems never edit this file. Its sources come from the glob above (basename
+# order, D8). Included sorted, after the target exists.
+file(GLOB _soa_subsystem_cmake CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/native/*/subsystem.cmake)
+list(SORT _soa_subsystem_cmake)
+foreach(_f ${_soa_subsystem_cmake})
+  include(${_f})
+endforeach()

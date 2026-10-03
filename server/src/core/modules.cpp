@@ -55,8 +55,6 @@ const Module kModules[] = {
     {"title", register_title},
     {"tower", tower::register_tower},
     {"worldboss", register_worldboss},
-    {"counters", ext::register_counters},
-    {"present_texts", ext::register_present_texts},
 };
 
 }  // namespace

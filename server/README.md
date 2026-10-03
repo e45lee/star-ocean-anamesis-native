@@ -81,7 +81,7 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
 | `hooks.h` | What the server asks its host: `AssetIndex` (below) |
 | `battle_log.h` | `BattleLog` (the ASON battle log MissionEnd & co. carry: `ason()`, `prop_u32`, `evaluation`), `parse_battle_log`, `carries_battle_log` |
 | `log.h` | `set_log_sink(write, enabled)`: where the server's log lines go (default stderr, `I/server: ...`) |
-| `ext.h` | Extension modules: the registration functions (`add_api`, `add_player_load`, `add_schema`, `add_response_hook`, `add_grant`, `add_item_extra`, `add_mission_start_extra`, `add_mission_result_extra`, `add_client_master`), `hook_order`; `Ctx`; shared state helpers |
+| `ext.h` | Extension modules: the registration functions (`add_api`, `add_player_load`, `add_response_hook`, `add_grant`, `add_item_extra`, `add_mission_start_extra`, `add_mission_result_extra`, `add_client_master`), `hook_order`; `Ctx`; shared state helpers |
 | `events.h`, `api_campaign.h` | The event and campaign modules' entry points the port calls (`events::end_mission_talk`, `campaign::on_request` / `on_response` / `end_mission_talk`) |
 | `msgpack.h` | `Value`, `mp_encode` / `mp_decode` (the response bodies) |
 | `chash32.h` | `chash32`: the game's `Framework::CHash32` (the port's CHash32 natives use it too) |
@@ -131,6 +131,14 @@ Sphere211MissionFailed). soa builds it from the guest registers of the FakeApiCa
 the client's own serializer) and calls `submit()`; the wire decoder (`net/wire.cpp`) builds the same
 struct (port test `wire/inproc-parity` compares the two). `handle(fid, ...)` then answers the pending request of that
 fid in one transaction (refusals roll back and set `error_code(fid)`).
+
+### The state DB and its upgrades
+
+The player state is one SQLite file (`--db`, soa-server's `--data DIR/server.sqlite3`, soa's
+`SOA_SERVER_DB`), its schema versioned by `pragma user_version` (`src/state/README.md`). Opening an
+older file upgrades it in place, step by step, after copying it to `<file>.bak-v<old version>`; a
+file newer than the build is refused and left untouched. **There is no down-migration**: to go back
+to an older build, restore the `.bak-v<N>` copy that build wrote.
 
 ### The client's master copy
 

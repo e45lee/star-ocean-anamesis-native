@@ -1,11 +1,34 @@
 # server/src/state: the player state
 
-The state DB (`server.sqlite3`) and what fills it. Today it holds the Game.xml codec and seeding (moved out of `../core/server.cpp` by step R8 of `../../PLAN-readability.md`). `../../PLAN-schema.md` S1 makes this the state module: the schema (today `Server::schema()` in `../core/server.cpp` and the modules' `ext::add_schema` calls), the `meta` helpers (`meta` / `set_meta` / `next_uid`, declared in `../core/server.h`) and the one SQL wrapper move here then.
+The state DB (`server.sqlite3`): its schema and how a file is brought to it, what fills a new one, the checks on it, and the one SQLite wrapper every handler uses. This is the state module of `../../PLAN-schema.md` (3.1; step S1 made it). Every table of the state is created here when the DB opens: no module creates its own, none is made lazily, and no handler asks whether a table exists.
 
 | File | What |
 |---|---|
+| `schema.{h,cpp}` | the schema as ordered migration steps (`kSchemaVersion`, `steps()`): step N takes a file from version N-1 to N. Step 1 is the baseline, the 58 tables as the server created them before S1, verbatim (`baseline_sql()`), plus the column repair (a baseline column a legacy table lacks is added with its default) |
+| `state.{h,cpp}` | `open_and_migrate` (below), `user_version`, `report_master_refs` (the master-reference check at open), and the `meta` table's helpers `meta` / `set_meta` / `next_uid` / `has_player` (core/server.h includes this header) |
+| `check.{h,cpp}` | the master-reference check (`state::check`, PLAN-schema S0): every state column that holds master ids (`master_refs()`, PLAN-schema 1.6's `m:` rows) resolved against the master; report-only (a dangling id is returned and logged, nothing is fixed) |
+| `sql.cpp` | the one SQLite wrapper, `sql::Row` / `Arg` / `Sql` and `one_null_as_zero` (declared in the public `../../include/soaserver/sql.h`; the handlers see them as `ext::Row` / `Arg` / `Sql`) |
 | `kvs.{h,cpp}` | the Game.xml codec: the game's Aska::LocalKVS SharedPreferences files (`read_kvs`, `read_kvs_ordered`, `write_kvs`, `kv_u32`, `kv_str`; the layout is the client's, `soa_save/kvs.py` documents it) |
-| `check.{h,cpp}` | the master-reference check (`state::check`, PLAN-schema S0): every state column that holds master ids (`master_refs()`, PLAN-schema 1.6's `m:` rows) resolved against the master; report-only (a dangling id is returned, nothing is fixed). Only its test calls it until S1 runs it at open |
 | `seed.{h,cpp}` | seeding a new state from a save: the player, roster, party 1, planets and meta keys (`seed`, `real_seed_save`, `kLocalPlayerId`; docs/server-rules.md "Seed") |
 
-The uid scheme of owned objects (`kRosterUid0`, `kNewCharUid0`, `kItemUid0`) is `../core/ids.h`. Tests: `kvs_tests.cpp` (`server/kvs-roundtrip`), `seed_tests.cpp` (`server/seed-from-380-save`), `check_tests.cpp` (`server/schema-integrity`); `../core/server_tests.cpp` seeds a whole session.
+## Opening a state DB
+
+`Server::open_state` (`../core/server.cpp`) is the one read-write open of the state, for both hosts (soa in-process, soa-server) and the tests' scratch servers:
+
+1. `state::open_and_migrate(db, path)`:
+   - the file's version is `pragma user_version` (0 for a file from before S1, or a new one);
+   - **a version newer than this build's is refused**: the server doesn't open it and the file isn't touched (LOGE). There is no down-migration; going back to an older build means restoring a `.bak` copy;
+   - an older file that has a player is first copied to `<path>.bak-v<version>` (`sqlite3_backup`; LOGI `state DB …: schema version N -> M`);
+   - with `foreign_keys` off, each missing step runs in its own `begin immediate` transaction: its SQL, its C++ (data mapping, repairs), `pragma foreign_key_check` (any row: rollback, LOGE, not opened), `pragma user_version = N`, commit. A failure leaves the file at the last good version;
+   - then `pragma foreign_keys = on`.
+2. `journal_mode = wal`.
+3. A state without a player is seeded (`seed`, in one `begin immediate … commit`), unless the new-player mode wants none.
+4. `state::report_master_refs`: `state::check` against the master, one LOGW per dangling reference (report-only: a master can change under a saved state).
+
+A new file runs every step from version 0, so a new state and an upgraded one are the same (the test `server/schema-fresh-equals-migrated`). A module that needs a new table or column adds a step to `schema.cpp` (a table rebuild follows PLAN-schema 4.1's procedure).
+
+The session scripts that write a state directly (Python `sqlite3`) also switch `foreign_keys` on; the tools open it read-only.
+
+## Tests
+
+`schema_tests.cpp`: `server/schema-fresh-equals-migrated`, `server/schema-migrate-v1` (on the committed v0 fixture `../../tests/fixtures/state-v0.sql`, written by `tools/make_state_fixture.py`: every table has rows, plus the dirt the later steps clean), `server/schema-newer-refused`; `check_tests.cpp` (`server/schema-integrity`: a scratch server's state is at this version with every table and foreign keys on, and its master references resolve after representative calls); `kvs_tests.cpp` (`server/kvs-roundtrip`), `seed_tests.cpp` (`server/seed-from-380-save`); `../core/server_tests.cpp` seeds a whole session. The uid scheme of owned objects (`kRosterUid0`, `kNewCharUid0`, `kItemUid0`) is `../core/ids.h`.

@@ -20,8 +20,6 @@ namespace soa::server::event_extras {
 using namespace ext;
 
 namespace {
-// (d) the characters whose bonus the current play uses (same_role_id, bonus lots)
-const char* const kSchemaPlay = "create table if not exists favor_drop_play (same_role_id integer primary key, lots integer);";
 // (b) Common::MissionDropType 4: a favor event drop (the result screen's heart badge).
 constexpr u32 kDropTypeFavorEvent = 4;
 
@@ -114,7 +112,6 @@ void favor_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
 // "The module registry and its order").
 void register_favor_drop() {
     using namespace ext;
-    add_schema(kSchemaPlay);
     add_mission_start_extra([](Ctx& ctx, const MissionInfo& mission, Value& param, Value& data) { favor_start(ctx, mission, param, data); });
 }
 

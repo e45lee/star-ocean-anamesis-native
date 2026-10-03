@@ -125,11 +125,9 @@ std::string json_string_field(const std::string& json, const std::string& key) {
 // re-bound it through SQEX BRIDGE's data transfer [unknown how]. Ours has one player per state DB
 // (the seeded LOCAL00001, or the one CreatePlayer made), so every device gets that player; with no
 // player yet (soa-server --new-player on a fresh state) the device has none and its Login is
-// refused with 19001, which starts the client's new-player flow. The table records who connected.
+// refused with 19001, which starts the client's new-player flow. The table (state/schema.cpp,
+// on both routes since PLAN-schema S1; only this one writes it) records who connected.
 uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, int64_t now) {
-    st.exec(
-        "create table if not exists wire_device (uuid text primary key, player_id integer, device_type integer, "
-        "first_seen integer, last_seen integer)");
     uint32_t pid = (uint32_t)st.one("select id from player limit 1", {}, 0);
     if (st.one("select count(*) from wire_device where uuid = ?", {uuid}) == 0)
         st.q("insert into wire_device (uuid, player_id, device_type, first_seen, last_seen) values (?, ?, ?, ?, ?)",

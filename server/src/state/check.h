@@ -2,9 +2,9 @@
 // The state's references into the master DB, checked (server/PLAN-schema.md S0; port code, not
 // guest behaviour). SQLite can't enforce them: the master is another file, read-only, replaced per
 // version. So the check is report-only: a dangling id is reported, never fixed or refused (a
-// master can change under a saved state). S1 runs it when the state is opened (LOGW per dangling
-// reference); S11 exports it (soa-server --check-state). Today only the test
-// server/schema-integrity (check_tests.cpp) calls it.
+// master can change under a saved state). The server runs it when the state is opened
+// (state::report_master_refs: LOGW per dangling reference, PLAN-schema S1); S11 exports it
+// (soa-server --check-state). The test server/schema-integrity (check_tests.cpp) checks it.
 #include <sqlite3.h>
 
 #include <cstdint>
@@ -31,8 +31,7 @@ struct Dangling {
     std::vector<int64_t> ids;
 };
 
-// Every master_refs() row whose state table exists (the modules create theirs lazily until S1),
-// checked against `master`; NULL is never an id. Returns the references with dangling ids (empty:
+// Every master_refs() row (the state is migrated: every table exists), checked against `master`; NULL is never an id. Returns the references with dangling ids (empty:
 // all resolve). A master table missing from `master` makes its references dangling.
 std::vector<Dangling> check(sqlite3* st, sqlite3* master);
 

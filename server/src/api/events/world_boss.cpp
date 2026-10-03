@@ -52,16 +52,6 @@ constexpr int64_t kEventTypeWorldBoss = 1;
 // to the first (hotspring: wave 1 3,100,000 -> 1,500, wave 2 5,780,000 -> 2,797).
 constexpr u64 kFirstWave = 1500;
 
-// (d) our layout: one row per world boss the player met.
-const char* const kSchemaBoss = R"(
-create table if not exists wboss (boss_id integer primary key, area_id integer, wave integer default 1, n1 integer default 0,
-  n2 integer default 0, n3 integer default 0, a1 integer default 0, a2 integer default 0, a3 integer default 0,
-  required integer default 0, wave_started_at integer, last_clear_secs integer default 0, hunt_until integer default 0,
-  hunt_new integer default 0);
-create table if not exists wboss_clear (boss_id integer, wave integer, cleared_at integer, notified integer default 0,
-  primary key (boss_id, wave));
-)";
-
 struct Boss {
     u32 id = 0, items[3] = {0, 0, 0};
     u32 bonus_rate = 0, bighunt_minutes = 0;
@@ -406,7 +396,6 @@ void world_boss_mission_result(Ctx& ctx, const MissionInfo& mission, Value& data
 // "The module registry and its order").
 void register_worldboss() {
     using namespace ext;
-    add_schema(kSchemaBoss);
     add_api({"GetWorldBossInfo"}, get_world_boss_info);
     events::add_area_extra(big_hunt_area_extra);
     add_player_load(load_world_boss);

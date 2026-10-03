@@ -4,7 +4,7 @@ The extra dungeon of 3.7.0 ("スフィア211", `CPhase_Mission` with mission typ
 
 | File | What |
 |---|---|
-| `sphere211.cpp` | the 13 handlers, each with its doc block (signature, fid, rules with their labels, refusal codes, answer), the player-load hook (`load_sphere211`), the tables (`kSchemaSphere`, `kSchemaSphereExtra`), `register_sphere211()` |
+| `sphere211.cpp` | the 13 handlers, each with its doc block (signature, fid, rules with their labels, refusal codes, answer), the player-load hook (`load_sphere211`), `register_sphere211()` (the module's tables are `../../state/schema.cpp`'s, PLAN-schema S1) |
 | `sphere211.h` | what other modules and the tests reach: `pick_season`, the asset override (`set_asset_check`, `mission_playable`), the achievements of types 61 / 62 (`api/presents/achievements.cpp` asks) |
 | `dive.h` | what the module's files share (namespace `sphere211`, internal) |
 | `sphere211_args.h` | the request arguments by name (`args::Sphere211MissionStartArgs`, ...) |

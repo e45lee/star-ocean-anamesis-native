@@ -33,11 +33,6 @@ using ext::Row;
 
 namespace {
 
-// (d) our state: one row per plan the player has (its window and last grant).
-const char* const kSchema =
-    "create table if not exists subscription (plan_id integer primary key, opened_at integer, closed_at integer, "
-    "updated_at integer)";
-
 // (d) the days of a pass whose master row has no count: the Galaxy Pass's 30.
 constexpr u32 kDefaultPassDays = 30;
 
@@ -163,7 +158,6 @@ Value ext::subscription_state(Ctx& ctx) { return subscription::subscription_info
 // "The module registry and its order").
 void register_subscription() {
     using namespace ext;
-    add_schema(subscription::kSchema);
     add_grant(subscription::kContentTypePass, subscription::grant_subscription_plan);
     add_player_load(subscription::load_subscriptions);
 }

@@ -12,9 +12,10 @@
 namespace soa::server {
 namespace {
 
-// Per kind: the registering modules in run order, with the detail (Grant: content type; Schema: the
-// first table) where there is one. Today's order is the one the file names gave before step R4 of
-// server/PLAN-readability.md (static initializers in link order).
+// Per kind: the registering modules in run order, with the detail (Grant: content type) where
+// there is one. Today's order is the one the file names gave before step R4 of
+// server/PLAN-readability.md (static initializers in link order). (The Schema kind went with
+// PLAN-schema S1: every table is state/schema.cpp's.)
 const char* const kExpected[] = {
     "OnPlayerLoad: login_bonus, achievements, daily, event, follow, gear, home, notice, shop, sphere211, subscription, title, tower, worldboss",
     "OnResponse: event, title",
@@ -24,9 +25,6 @@ const char* const kExpected[] = {
     "ItemExtra: gear",
     "ClientMaster: event, shop, sphere211, sphere211, tower",
     "AreaExtra: worldboss",
-    "Schema: daily (premium_pass), deepspace (ds_area), event (event_last), event_ranking (event_rank_score), favor_drop (favor_drop_play), "
-    "follow (follow_rental), gear (gear_items), growth (roster_ext), shop (shop_counts), sphere211 (sphere), sphere211 (sphere_meta), "
-    "subscription (subscription), title (titles), worldboss (wboss), counters (counters), present_texts (present_texts)",
 };
 
 NATIVE_TEST("server/module-order") {

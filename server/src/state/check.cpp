@@ -67,7 +67,6 @@ std::vector<Dangling> check(sqlite3* st_handle, sqlite3* master_handle) {
     Sql st{st_handle}, m{master_handle};
     std::vector<Dangling> out;
     for (const MasterRef& ref : master_refs()) {
-        if (!has_table(st, ref.table)) continue;  // a module table not created yet
         std::vector<std::string> parents;
         for (const std::string& t : split_tables(ref.master_tables))
             if (has_table(m, t)) parents.push_back(t);

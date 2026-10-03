@@ -45,11 +45,10 @@ Value person_info(ext::Ctx& ctx, const Row& roster_row, u32 owner_player_id) {
     });
     // (b) CPersonInfo add_hp .. add_ap: the seeds the client's status computation adds
     // (AddStatusCharacter; the table is api/growth/growth.cpp's)
-    if (ctx.st.one("select count(*) from sqlite_master where name = 'roster_ext'", {}))
-        ctx.st.q("select * from roster_ext where uid = ?", {roster_row.i("uid")}, [&](const Row& ext_row) {
-            for (const char* k : {"add_hp", "add_attack", "add_intelligence", "add_defence", "add_hit", "add_guard", "add_ap"})
-                info[k] = (u32)ext_row.i(k);
-        });
+    ctx.st.q("select * from roster_ext where uid = ?", {roster_row.i("uid")}, [&](const Row& ext_row) {
+        for (const char* k : {"add_hp", "add_attack", "add_intelligence", "add_defence", "add_hit", "add_guard", "add_ap"})
+            info[k] = (u32)ext_row.i(k);
+    });
     return info;
 }
 

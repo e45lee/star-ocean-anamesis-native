@@ -58,14 +58,6 @@ constexpr u32 kOnlyRank = 1;
 // (b) EventRankingInfo's party slots party_*1..4.
 constexpr int kPartySlots = 4;
 
-// (d) our layout: the best score per ranking, the party that made it, and the groups whose result
-// was received; `fresh` = updated since the ranking screen last cleared it (UpdatedEventRankingIdList).
-const char* const kSchemaRank = R"(
-create table if not exists event_rank_score (ranking_id integer primary key, group_id integer, score integer, roles text,
-  created_at integer, fresh integer default 1);
-create table if not exists event_rank_received (group_id integer primary key, received_at integer);
-)";
-
 struct Group {
     u32 id = 0;
     int64_t opened = 0, closed = 0, ranking_closed = 0, result_closed = 0;
@@ -337,7 +329,6 @@ std::vector<u8> get_player_detail_info(Ctx& ctx, const Request& req) {
 // "The module registry and its order").
 void register_event_ranking() {
     using namespace ext;
-    add_schema(kSchemaRank);
     add_mission_result_extra(ranking_mission_result);
     add_api({"GetEventRankingInfo"}, get_event_ranking_info);
     add_api({"ClearNewEventRanking"}, clear_new_event_ranking);

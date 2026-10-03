@@ -101,7 +101,6 @@ void record_rental(Ctx& ctx, const Season& season, u32 lender, int64_t t) {
 }
 
 void rental_bonus(Ctx& ctx, Value& data) {
-    if (!ctx.st.one("select count(*) from sqlite_master where name = 'sphere_rental_day'", {})) return;
     int64_t today = rental_day(ctx, ctx.now());
     std::vector<std::tuple<int64_t, u32, u32>> due;  // day, season, count
     ctx.st.q("select day, season_id, count from sphere_rental_day where paid = 0 and day < ? order by day", {today},

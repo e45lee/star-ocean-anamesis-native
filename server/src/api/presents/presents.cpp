@@ -19,11 +19,9 @@ using ext::Row;
 namespace {
 
 // The line the box shows for a present: (b) the box shows free_text_message_id verbatim
-// (present_texts.cpp). The present_texts table is a module's: a core handler gets no
-// ext::ensure_schema before it runs, so it is made sure of here.
+// (present_texts.cpp).
 std::string present_line(ext::Ctx& ctx, const Row& present_row) {
     ext::Sql state{ctx.st.h}, master{ctx.m.h};
-    ext::ensure_schema(state);
     return ext::present_text(state, master, present_row.i("id"), (u32)present_row.i("reason_type"), (u32)present_row.i("reason_param"));
 }
 

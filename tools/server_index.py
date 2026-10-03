@@ -24,7 +24,7 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(REPO, "server/src")
 HOOK_KINDS = ["OnPlayerLoad", "OnResponse", "MissionStartExtra", "MissionResultExtra", "Grant", "ItemExtra", "ClientMaster",
-              "AreaExtra", "Schema"]
+              "AreaExtra"]
 API_RE = re.compile(r"\badd_(?:core_)?api\(\{([^}]*)\},\s*(\[|[\w:]+)")
 
 

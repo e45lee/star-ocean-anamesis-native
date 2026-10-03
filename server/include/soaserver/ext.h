@@ -9,8 +9,8 @@
 //    dispatcher asks `ext::find(method)` for methods it doesn't answer itself;
 //  - `ext::add_player_load(fn)` adds keys to the full-state player response (Login,
 //    NoLoginStart, GetPlayer ...), e.g. the day's login bonus;
-//  - `ext::add_schema("create table if not exists ...")` adds the module's own state tables
-//    (created in the state DB before any module handler runs).
+// A module's state tables are not its own registration: every table is created when the state
+// DB opens (src/state/schema.cpp, PLAN-schema S1); a module that needs a new one adds a step there.
 // The add_* functions are called only from a register_<module>() (their `file` / `line` record
 // the caller, for soa-server --list-apis / --list-hooks).
 // Every game rule a module applies carries its source label in a comment, as in server.cpp:
@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "soaserver/server.h"
+#include "soaserver/sql.h"
 
 namespace soa::server {
 struct RequestContext;  // src/core/request_context.h
@@ -35,36 +36,12 @@ class Pools;  // src/master/gacha_pools.h
 
 namespace soa::server::ext {
 
-// ---- SQLite on a borrowed handle (the state or master DB server.cpp opened) --------------
-struct Row {
-    std::map<std::string, sqlite3_value*> v;  // valid only during the callback
-    int64_t i(const char* k) const;
-    double f(const char* k) const;
-    std::string s(const char* k) const;
-    bool null(const char* k) const;
-};
-struct Arg {
-    enum { I, S, N, F } t;
-    int64_t i = 0;
-    double d = 0;
-    std::string s;
-    Arg(int v) : t(I), i(v) {}
-    Arg(unsigned v) : t(I), i(v) {}
-    Arg(long v) : t(I), i(v) {}
-    Arg(unsigned long v) : t(I), i((int64_t)v) {}
-    Arg(long long v) : t(I), i(v) {}
-    Arg(unsigned long long v) : t(I), i((int64_t)v) {}
-    Arg(double v) : t(F), d(v) {}
-    Arg(const char* v) : t(S), s(v) {}
-    Arg(std::string v) : t(S), s(std::move(v)) {}
-    Arg(std::nullptr_t) : t(N) {}
-};
-struct Sql {
-    sqlite3* h = nullptr;
-    void exec(const std::string& sql);
-    int q(const std::string& sql, std::initializer_list<Arg> args, const std::function<void(const Row&)>& fn = {});
-    int64_t one(const std::string& sql, std::initializer_list<Arg> args, int64_t dflt = 0);
-};
+// ---- SQLite on a borrowed handle (the state or master DB the server opened) ----------------
+// The one wrapper, soaserver/sql.h; its names here are the ones every handler uses.
+using Row = sql::Row;
+using Arg = sql::Arg;
+using Sql = sql::Sql;
+using sql::one_null_as_zero;
 
 // A module's changes to the core mission flow (api/sphere211/sphere211.cpp: Sphere 211 battles are event
 // missions played through the core MissionStart / MissionEnd). Port code; the rules are the
@@ -129,17 +106,13 @@ using Handler = std::function<std::vector<u8>(Ctx&, const Request&)>;
 // registration error (registration_errors; the first registration stays).
 // `file` is the registering source file (soa-server --list-apis); the caller's by default.
 void add_api(std::initializer_list<const char*> methods, Handler h, const char* file = __builtin_FILE(), int line = __builtin_LINE());
-// The core's APIs (src/api/entry, api/player, ...; registered before the modules): as add_api,
-// but the modules' tables (add_schema) aren't created before them. They never were: the core's
-// handlers create them lazily where they read a module's table, and some answers depend on
-// whether a table exists yet (PLAN-schema S1 creates every table when the state opens).
+// The core's APIs (src/api/entry, api/player, ...; registered before the modules): add_api under
+// the name the API index (tools/server_index.py) marks as the core's. (Before PLAN-schema S1 the
+// modules' tables weren't created before a core API; every table now exists once the state is
+// open.)
 void add_core_api(std::initializer_list<const char*> methods, Handler h, const char* file = __builtin_FILE(), int line = __builtin_LINE());
-// A method registered with add_core_api.
-bool is_core_api(const std::string& method);
 using PlayerLoadFn = std::function<void(Ctx&, const Request&, Value& data)>;
 void add_player_load(PlayerLoadFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
-// `sql` must outlive the server (a string literal).
-void add_schema(const char* sql, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 // `ext::add_response_hook(fn)`: sees (and may add keys to) the data of every response the server
 // answers through its dispatcher (core and module APIs alike; not refused ones), inside the
 // request's transaction, after the handler ran. `r.method` names the API. E.g. the event module
@@ -199,8 +172,8 @@ void add_client_master(ClientMasterFn fn, const char* file = __builtin_FILE(), i
 
 // The registrations in their order (soa-server --list-hooks, the test server/module-order): every
 // hook (`kind` OnPlayerLoad, OnResponse, MissionStartExtra, MissionResultExtra, Grant, ItemExtra,
-// ClientMaster, AreaExtra, Schema; not Api) with the module that registered it, the registering
-// file and line, and a detail (Grant: the content type; Schema: the first table it creates).
+// ClientMaster, AreaExtra; not Api) with the module that registered it, the registering file and
+// line, and a detail (Grant: the content type).
 struct HookInfo {
     std::string kind, module, file, detail;
     int line = 0;
@@ -218,7 +191,6 @@ std::map<std::string, std::string> api_sources();
 void player_load(Ctx& c, const Request& r, Value& data);
 bool has_response_hooks();
 bool on_response(Ctx& c, const Request& r, Value& data);  // true: data changed
-void ensure_schema(Sql& st);
 const GrantFn* find_grant(u32 content_type);
 void item_extra(Sql& st, Sql& m, u64 uid, Value& item);
 void client_master(sqlite3* db, int64_t now, int64_t event_now);

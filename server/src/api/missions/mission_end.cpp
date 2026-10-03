@@ -267,10 +267,8 @@ Value mission_end_data(ext::Ctx& ctx, MissionEnd& end) {
     end.mission_time = ctx.live() ? battle_log_u32(ctx, "mission_time", 0) : 0;
     end_result["mission_time"] = end.mission_time;
     data["MissionEndResult"] = end_result;
-    {  // (b) the favor achievements follow the battle favor (ext::achievement_state)
-        ext::ensure_schema(ctx.st);
-        data["Achievement"] = ext::achievement_state(ctx);
-    }
+    // (b) the favor achievements follow the battle favor (ext::achievement_state)
+    data["Achievement"] = ext::achievement_state(ctx);
     data["DropList"] = drop_list_info(end);
     if (end.first_clear) data["ClearPresentList"] = clear_present_list_info(end);
     if (!end.added_items.arr.empty()) data["AddItem"] = end.added_items;

@@ -39,10 +39,6 @@ namespace soa::server::events {
 namespace {
 using namespace ext;
 
-// (d) our state: the last event mission started (is_last_play). Clears are the core's `mission`
-// table (MissionEnd / MissionTalk / end_mission_talk).
-const char* const kSchema = "create table if not exists event_last (id integer primary key check (id = 1), mission_id integer, area_id integer)";
-
 // ---- assets ------------------------------------------------------------------------------
 // The one asset gate (core/assets.h): the tests' override, else everything when there is no asset
 // source at all (outside the game: nothing is gated rather than everything), else the index.
@@ -532,7 +528,6 @@ bool end_mission_talk(u32 mission) {
 // "The module registry and its order").
 void register_event() {
     using namespace ext;
-    add_schema(kSchema);
     add_player_load(load_events);
     add_response_hook(event_response_keys);
     add_client_master(client_master_events);

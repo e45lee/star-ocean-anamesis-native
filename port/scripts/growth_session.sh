@@ -31,6 +31,7 @@ phone370_client_save "$TMP/data/data/shared_prefs"
 import sqlite3, sys
 m = sqlite3.connect("work/../data/basmaster-3.7.0.sqlite3")
 st = sqlite3.connect(sys.argv[1])
+st.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
 st.execute("create table stock (master_item_id integer primary key, item_type integer, count integer)")
 st.execute("create table items (uid integer primary key, master_item_id integer, item_type integer, level integer default 1, "
            "exp integer default 0, limit_break integer default 0, locked integer default 0, created_at integer)")

@@ -59,6 +59,7 @@ c quit; wait $pid || true
 .venv/bin/python - "$TMP/data/server.sqlite3" work/../data/basmaster-3.7.0.sqlite3 <<'PY'
 import sqlite3, sys
 s, m = sqlite3.connect(sys.argv[1]), sqlite3.connect(sys.argv[2])
+s.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
 home = s.execute("select r.role_id from player p join roster r on r.uid = p.home_uid").fetchone()[0]
 home_same = m.execute("select same_role_id from master_role where id = ?", (home,)).fetchone()[0]
 sames = sorted({m.execute("select same_role_id from master_role where id = ?", (r,)).fetchone()[0]

@@ -42,6 +42,7 @@ tapw() { python3 $FLOW tap-until "$TMP/fifo" "$L" "$@"; }
 sql() { .venv/bin/python - "$TMP/data/server.sqlite3" "$@" <<'PY'
 import sqlite3, sys
 c = sqlite3.connect(sys.argv[1], timeout=60)
+c.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
 for q in sys.argv[2:]: c.execute(q)
 c.commit()
 PY
@@ -91,6 +92,7 @@ master=$(grep -o '(master [^)]*basmaster-3.7.0.sqlite3' "$L" | head -1 | cut -c9
 .venv/bin/python - "$TMP/data/server.sqlite3" "$season" "$master" <<'PY'
 import sqlite3, sys, time
 c = sqlite3.connect(sys.argv[1], timeout=60)
+c.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
 m = sqlite3.connect("file:%s?mode=ro" % sys.argv[3], uri=True)
 for i, t in m.execute("select id, type from master_item where id_label like 'item_sphere_stamina_%' or id_label like 'item_sphere_re_%'"):
     c.execute("insert into stock (master_item_id, item_type, count) values (?, ?, 2) on conflict(master_item_id) do update set count = 2", (i, t))

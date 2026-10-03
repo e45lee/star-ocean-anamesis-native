@@ -15,7 +15,6 @@
 #include "core/request_args.h"
 #include "core/response.h"
 #include "core/time.h"  // day_start
-#include "core/server.h"  // one_null_as_zero
 #include "rules/mission_rules.h"
 #include "soaserver/chash32.h"
 #include "soaserver/config.h"
@@ -322,7 +321,6 @@ bool rental_helper(ext::Ctx& ctx, MissionStart& start) {
     start.helper_uid = rental_id;
     start.helper_kind = HelperKind::kRental;
     // (d) counted per rental day for the rental bonus (api/social/rental.cpp)
-    ext::ensure_schema(ctx.st);
     ctx.st.q("insert into follow_rental (day, count) values (?, 1) on conflict(day) do update set count = count + 1",
              {day_start(clock_now(), (int)ctx.global_u32("login_bonus_reset_hour", 4))});
     LOGI("server", "MissionStart: rental helper %llu (a clone of roster uid %llu) as member 4",

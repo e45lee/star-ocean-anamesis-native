@@ -117,14 +117,14 @@ Written 2026-10-03 by agent `multiplayer-study`, branch `port/multiplayer-study`
 
 Follow `server/PLAN-readability.md`'s target layout and `server/PLAN-schema.md` for state.
 
-1. **Wire** (`server/net/multiplay/` or `server/net/` files `multiplay_wire.{h,cpp}`):
+1. **Wire** (new files in `server/net/`: a `multiplay/` folder, or `multiplay_wire.{h,cpp}`):
    - header reuse without SHA-1;
    - ChaCha20 (test it against RFC 7539 §2.4.2, as the prototype did);
    - struct codecs for PlayerInfo, PlayerDetailInfo, RoomCondition, RoomInfo and Message lists, with `static_assert` sizes (0x70, 0x480, 0x1e8, 0x450);
    - the FID table from `wire/multiplay_wire.inc`. Better: regenerate it in `tools/` next to `api_wire.py` and put the output in `server/net/gen/`.
    - **Tests:** a differential codec selftest against the client's own `Set*`/`Get*` (as `port/src/native/api/wire_test.cpp` does for GameRPC), plus round-trips of the captured bytes in `captures/`.
-2. **Lobby listener** (`server/net/lobby.{h,cpp}`, an option like `--lobby-listen`): the room table (in memory; rooms don't need persistence), CreateRoom, GetRoomList (filter by condition, room-id string, page), Automatch, CloseRoom (multiplayer.md §3.1).
-3. **Relay listener** (`server/net/relay.{h,cpp}`, `--relay-listen`, `--relay-host`):
+2. **Lobby listener** (a new `lobby.{h,cpp}` in `server/net/`, an option like `--lobby-listen`): the room table (in memory; rooms don't need persistence), CreateRoom, GetRoomList (filter by condition, room-id string, page), Automatch, CloseRoom (multiplayer.md §3.1).
+3. **Relay listener** (a new `relay.{h,cpp}` in `server/net/`, `--relay-listen`, `--relay-host`):
    - slots (creator = 0);
    - the room phase;
    - barriers;

@@ -26,7 +26,7 @@ ext::Sql* test_master();
 struct ScratchServer {
     struct Options {
         bool pools = true;  // open the reconstructed gacha pools (else draws go by rarity)
-        // Its own run options: the run's server test hooks (SOA_SERVER_FAIL / _SURPRISE) don't apply.
+        // Its own run options: the run's server test hooks (--fail / --surprise) don't apply.
         bool own_test_options = false;
     };
     Server sv;

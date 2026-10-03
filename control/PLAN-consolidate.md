@@ -4,7 +4,7 @@ Status: **plan only** (agent `summer-demo`, 2026-10-01). Nothing below is done y
 being edited by another agent (p5a-test-baseline), so the migration starts after that lands.
 
 **Scope (the user, 2026-10-01).** This covers only what the port (`soa`, 3.7.0 client, in-process
-server: the default, no `--restore` / `SOA_RESTORE`) and the emulator (`soa-emu` + `soa-server`) can
+server: the default, no `--restore`) and the emulator (`soa-emu` + `soa-server`) can
 share: the driver library, the start / stop / screenshot / wait / milestone helpers, the flows both
 programs run (title and login, the download, popups, missions and battles, stories, events, gacha,
 the new player and tutorial), and the session scripts that could run against either program. Scripts

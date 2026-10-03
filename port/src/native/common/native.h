@@ -31,7 +31,7 @@ struct NativeFunction {
 
 constexpr const char* kGroupRoute = "route";
 
-// Which registered natives install_native_functions installs (soa --natives / SOA_NATIVES):
+// Which registered natives install_native_functions installs (soa --natives):
 //   Route: every registered native: the in-process route's hooks plus the port's own (the
 //          CPhase::Progress wrapper of the control commands, the tower, the local web pages).
 //          Since the rebase's revision 2 (docs/history/PLAN-rebase-370.md) there are no other natives;

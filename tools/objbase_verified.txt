@@ -1,6 +1,6 @@
-# Transcribed functions (objbase_a2c.cpp) verified by the live check (SOA_OBJBASE_CHECK=1): >0 checks, 0 mismatches,
+# Transcribed functions (objbase_a2c.cpp) verified by the live check (then an environment switch; now soa --live-check objbase): >0 checks, 0 mismatches,
 # over restore_session.sh and the other sessions listed in port/src/native/README.md. Columns: symbol, ok checks.
-# The block after "B2" was checked on the port/b2-objbase harness with SOA_OBJBASE_ALL=1 and SOA_OBJBASE_CHECK_ONLY=<the
+# The block after "B2" was checked on the port/b2-objbase harness with every function installed and the check limited (--live-check objbase:only=<the
 # unverified set>, repeated on the functions a pass left unchecked (nested in a checked caller), over restore, events and
 # home (+ deepspace for OrAllFlag), then confirmed by one pass with every function checked at every 2nd call. Not reached in those sessions (left out):
 # CBehaviorObject::DeleteBehaviorQueue / DeletesSimilarityQueue / IsAlreadyResistBehaviorQueue, CMovableObject::PreProgress /
@@ -90,7 +90,7 @@ _ZN9Framework15CAnimationModel13UpdatePostureERKNS_7CMatrixE 5457
 _ZNK9Framework15CAnimationModel12cpObjectRootEv 2598
 _ZN9Framework15CAnimationModel11pObjectRootEv 1928
 _ZN9Framework15CAnimationModel11rObjectRootEv 63
-# B2 (2026-09-30); ok = the final pass: SOA_OBJBASE_ALL=1 SOA_OBJBASE_CHECK_EVERY=2 (every function, so nested callees too),
+# B2 (2026-09-30); ok = the final pass: every function installed, checked every 2nd call (every function, so nested callees too),
 # restore + events + home + deepspace, 571,000 checks, 0 mismatches
 _ZN14CMovableObject24Callback_EndPostProgressEv 16198
 _ZN21CAnimationModelObjectC2Ev 11

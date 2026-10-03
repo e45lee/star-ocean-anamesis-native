@@ -19,14 +19,14 @@
 #                   data/saves/client/Game.xml (default; an offline-build-era KVS, which 3.7.0 reads), the seed
 #                   data/saves/seed/Game.xml, or the phone's own (SOA_PHONE only). The local KVS
 #                   (Aska.xml: version, crc, device UUID) is always deleted: the client makes a new one.
-#   SOA_SERVER_SEED_RNG (default 1)
+#   SEED_RNG (soa --seed-rng; default 1); WATCH=1 shows the window
 # Screenshots go to OUT/shots, the log to OUT/log.txt, the server state (tools/server_state.py) to
 # OUT/state-home.txt. Kills only the soa it started.
 set -eu
 SOA=$1; OUT=$2; TMP=$3
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos" "${OUT:?}"/state-*.txt
 mkdir -p "$TMP" "$OUT/shots"
@@ -40,7 +40,7 @@ case ${CLIENT_SAVE:-client} in
            [ -f "$TMP/data/data/shared_prefs/Game.xml" ] || { echo "FAIL: CLIENT_SAVE=phone: $SOA_PHONE has no save (the shared phone never does)"; exit 1; } ;;
     *) echo "FAIL: CLIENT_SAVE=${CLIENT_SAVE}"; exit 1 ;;
 esac
-SOA_SERVER_SEED_RNG=${SOA_SERVER_SEED_RNG:-1} timeout -k 10 1500 "$SOA" --data "$TMP/data" --size 729x1296 \
+timeout -k 10 1500 "$SOA" $HEADLESS --seed-rng "${SEED_RNG:-1}" --data "$TMP/data" --size 729x1296 \
   --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 step=boot

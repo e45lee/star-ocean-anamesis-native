@@ -1,5 +1,5 @@
 #pragma once
-// Memory diagnostics (SOA_MEMSTATS / control "memstats"); see memstats.cpp.
+// Memory diagnostics (--memstats / control "memstats"); see memstats.cpp.
 #include "core/cpu.h"
 
 namespace soa::native::memstats {

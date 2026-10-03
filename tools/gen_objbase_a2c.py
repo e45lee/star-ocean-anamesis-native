@@ -8,7 +8,7 @@ home / gacha scene objects), instruction by instruction. The functions listed
 
 Every outgoing call goes through ob_gcall() / ob_icall() (objbase.h): calls to other transcribed
 functions of this table run their bodies directly, other calls go to the guest (or the host
-function of another native), and the live check (SOA_OBJBASE_CHECK=1) records and replays them
+function of another native), and the live check (soa --live-check objbase) records and replays them
 (objbase_rt.cpp).
 
 Each body starts with a dispatch to its readable version (objbase_rd.cpp, g_ob_rd) when there is

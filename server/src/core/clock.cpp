@@ -17,7 +17,7 @@
 namespace soa::server {
 
 // ---- the server clock (server.h clock_now) ----------------------------------------------------
-// SOA_CLOCK="YYYY-MM-DD HH:MM:SS" (port option): the server's clock starts at that time and
+// --clock "YYYY-MM-DD HH:MM:SS": the server's clock starts at that time and
 // runs on from there, so past banners and events can be replayed.
 namespace {
 int64_t g_clock_offset = 0;

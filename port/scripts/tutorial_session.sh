@@ -1,7 +1,7 @@
 #!/bin/sh
 # The tutorial battle from a FRESH state (soa --server inproc, the 3.7.0 client): a data dir with
 # no save (no shared_prefs/Game.xml) and no local-server state (no server.sqlite3), new-player mode
-# (SOA_RESTORE_NEW_PLAYER=1: the server starts without a player). SOA_PHONE=DIR starts from a copy
+# (--new-player: the server starts without a player). SOA_PHONE=DIR starts from a copy
 # of a pre-downloaded phone (its saves removed); without it the client downloads its data after
 # CreatePlayer's Login (port/scripts/phone370.sh). Flow:
 #   title -> Login (error 19001) -> terms -> name entry -> CreatePlayer -> Login -> data check ->
@@ -23,7 +23,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py
 rm -rf "${TMP:?}/fresh" "${OUT:?}/fresh" "${OUT:?}/fresh.log.pos"
 mkdir -p "$OUT/fresh"
@@ -50,9 +50,9 @@ waitlog() {  # waitlog <pattern> [timeout s]
 [ ! -e "$D/server.sqlite3" ] || fail "the data dir $D has a server state"
 # SOA_TRACE on CCharacterObject::OnDamage: every hit's damage (its s0), as the emulator's
 # --new-player session traces it (tools/compare_tutorial.py)
-SDL_AUDIODRIVER=${SDL_AUDIODRIVER:-dummy} SOA_RESTORE_NEW_PLAYER=1 SOA_SERVER_SEED_RNG=1 \
+SDL_AUDIODRIVER=${SDL_AUDIODRIVER:-dummy} \
     SOA_TRACE=_ZN16CCharacterObject8OnDamageERKN24IAttackCollisionCallback23CallbackArgument_DamageEfb \
-    timeout -k 10 3600 "$SOA" --data "$D" --size 729x1296 --control "$FIFO" > "$L" 2>&1 &
+    timeout -k 10 3600 "$SOA" $HEADLESS --new-player --seed-rng 1 --data "$D" --size 729x1296 --control "$FIFO" > "$L" 2>&1 &
 pid=$!
 while [ ! -p "$FIFO" ]; do sleep 1; done
 waitlog 'port_debug: phase 1 ' || fail "the title never came up"

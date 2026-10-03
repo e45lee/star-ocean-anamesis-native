@@ -23,7 +23,7 @@ using MissionsBy = std::map<u32, std::vector<const Mission*>>;
 // core/time.h's open_at with its own semantics (a string compare), kept apart on purpose.
 bool in_window(const std::string& opened, const std::string& closed) {
     char now[32];
-    time_t t = (time_t)clock_now();  // the server clock (--clock / SOA_CLOCK)
+    time_t t = (time_t)clock_now();  // the server clock (--clock)
     strftime(now, sizeof now, "%Y-%m-%d %H:%M:%S", localtime(&t));
     if (!opened.empty() && opened > now) return false;
     if (!closed.empty() && closed < now) return false;
@@ -171,7 +171,7 @@ Value build_player(const State& s, bool views) {
     player["world_map_progress"] = (u64)episode_progress(m, s, episode2);
     player["world_map_progress_ep3"] = (u64)episode_progress(m, s, episode3);
     if (views) {
-        // (d) A returning player (SOA_CAMPAIGN_SEED) has seen the menus' one-time tutorials:
+        // (d) A returning player (--campaign-seed) has seen the menus' one-time tutorials:
         // CPlayerInfo view_status / view_status2 (u64 bit sets read by
         // CParameterUtility::IsTutorialViewStatus, (b)) all set. A new player keeps them clear.
         player["view_status"] = ~0ull;

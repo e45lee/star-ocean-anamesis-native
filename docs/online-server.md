@@ -503,11 +503,11 @@ There are two ways to run our server (`server/`, rules in [server-rules.md](serv
 |---|---|---|
 | `NetworkApiCaller` + GameRPC + TCP 443 + Ninja cipher | Not used. The port constructs `FakeApiCaller` instead and hooks its methods natively; `server_port::capture`, port/src/native/api/server_adapters.cpp reads each method's arguments from the registers (by mangled signature) | `port/src/native/api/fakeapi.cpp`, notes "Offline server (FakeApiCaller)" |
 | Bridge handshake, `sharedSecurityKey`, `UpdateSession` | None. `FakeApiCaller::BeginBridge` / `EndBridge` return success, and `LoggedIn` reports the local server's own session flag (set after a Login) | `fakeapi.cpp` (`kLoggedIn`) |
-| Device UUID / `Player.Id` | One local player in `DATA/server.sqlite3`, seeded from `work/Game-3.7.0.xml`, or none with `SOA_RESTORE_NEW_PLAYER=1` | `server/src/state/seed.cpp` |
+| Device UUID / `Player.Id` | One local player in `DATA/server.sqlite3`, seeded from `work/Game-3.7.0.xml`, or none with `--new-player` | `server/src/state/seed.cpp` |
 | Login / 19001 / CreatePlayer / terms | Same codes and order: no player → 19001 → the restored 3.7.0 `CPhase_Login` runs terms, name entry and `CreatePlayer` | `server/src/api/entry/entry.cpp` `login`; docs/client-changes.md |
 | Response bodies (ASON `{data, status}`) | Same format, encoded by `server/include/soaserver/msgpack.h` and fed to the same `CApiNotify::On<Api>Res` handlers | `server.cpp`, `ext.h` |
 | ProtocolError → `ErrorCode(fid)` → dialog | `server::error_code(fid)` is reported through the port's `FakeApiCaller::IsSuccess` / `IsFailure` / `ErrorCode` hooks; the same `error_message_text_<code>` dialogs appear | docs/client-changes.md "error codes"; server-rules "Refusals and error codes" |
-| Server clock / `data.Time` | Every response carries `data.Time` from the server clock (`--clock` / `SOA_CLOCK`, event calendar replay) | server-rules "Conventions" |
+| Server clock / `data.Time` | Every response carries `data.Time` from the server clock (`--clock`, event calendar replay) | server-rules "Conventions" |
 | Server-side rules (drops, gacha, growth, EXP…) | Re-implemented from master data and client evidence, each labelled (a)–(d) | server-rules.md |
 | CDN / downloader | soa: no download; `--download-dir work/download-3.7.0` serves the 3.7.0 files through the asset lookup, and the offline master DB gets the client-master overrides in memory with the in-process server. soa-server: an HTTP CDN of rebuilt bundles, manifests, `version.bin` and the re-packed 3.7.0 master with the same overrides (section 6) | port/README.md; server/README.md "CDN" |
 | Maintenance / version checks | Not emulated: no maintenance keys; the asset revision in the header doesn't exist on this route | — |

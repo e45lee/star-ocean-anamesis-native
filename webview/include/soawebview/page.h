@@ -29,6 +29,11 @@ struct FetchResult {
 };
 using Fetch = std::function<FetchResult(const std::string& url)>;
 
+// A font file tried first for the regular (Japanese) face: soa's and soa-webview-render's --font
+// (one flag for the web view and the keyboard's text box: both want a Japanese font). Set it
+// before the first page is laid out (fonts load once); "" or "none" = the search only.
+void set_font(const std::string& path);
+
 // Log lines (level: 0 debug, 1 info, 2 warning, 3 error). Default: warnings and errors to stderr.
 void set_log(std::function<void(int level, const std::string& msg)> log);
 

@@ -1,4 +1,4 @@
-"""Generate FakeApiCaller responses (for the port option SOA_FAKE_SERVER=DIR) from master data.
+"""Generate FakeApiCaller responses (for the port option --fake-server DIR) from master data.
 
     tools/fakeapi_responses.py DIR [--mission LABEL] [--gacha LABEL] [--draws N] [--seed S]
                                [--db data/basmaster-3.7.0.sqlite3]

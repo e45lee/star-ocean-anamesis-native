@@ -10,7 +10,7 @@ transcriptions stay as test references.
 
 Every outgoing call goes through arena_gcall() / arena_icall() (arena.h): calls to other
 transcribed functions of this table run their bodies directly, other calls go to the guest (or
-the host function of another native), and the live check (SOA_ARENA_CHECK=1) records and replays
+the host function of another native), and the live check (soa --live-check arena) records and replays
 them (arena_rt.cpp).
 
 Usage: .venv/bin/python tools/gen_arena_a2c.py port/src/native/arena/gen/arena_a2c.cpp

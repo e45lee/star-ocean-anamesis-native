@@ -9,6 +9,7 @@
 // makes SDL's X11 backend use EGL rather than GLX, and its Wayland backend only has EGL), so the
 // stubs reach the same Mesa driver SDL's context runs on. app/host.cpp checks this once at start-up
 // (SDL_GL_GetProcAddress vs these pointers).
+#include <soa/env.h>
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -102,8 +103,7 @@ void th_glGetString(Cpu& c) {
 // game doesn't use, and querying the texture's internal format back, which it doesn't do.)
 bool host_srgb_etc2() {
     static const bool on = [] {
-        const char* e = getenv("SOA_GL_HOST_SRGB_ETC2");
-        return e && *e && *e != '0';
+        return env::env_on("SOA_GL_HOST_SRGB_ETC2");
     }();
     return on;
 }
@@ -171,8 +171,7 @@ void host_glCompressedTexSubImage2D(GLenum target, GLint level, GLint x, GLint y
 // Port enhancement, default on; SOA_GL_MAP_INVALIDATE=0 maps with the caller's flags only.
 bool map_invalidate_on() {
     static const bool on = [] {
-        const char* e = getenv("SOA_GL_MAP_INVALIDATE");
-        return !(e && *e == '0');
+        return env::env_bool("SOA_GL_MAP_INVALIDATE", true);
     }();
     return on;
 }
@@ -265,7 +264,7 @@ GLuint default_fbo() {
 }
 // Debug (SOA_TRACE_RT=1): log distinct render-target allocations and viewports.
 bool trace_rt() {
-    static bool on = getenv("SOA_TRACE_RT") != nullptr;
+    static bool on = env::env_on("SOA_TRACE_RT");
     return on;
 }
 void host_glRenderbufferStorage(GLenum target, GLenum fmt, GLsizei w, GLsizei h) {
@@ -357,8 +356,7 @@ void gl_thunk(Cpu& c) {
 // passes it through to the host like the guest does.
 bool release_shader_compiler_passthrough() {
     static const bool on = [] {
-        const char* e = getenv("SOA_GL_RELEASE_SHADER_COMPILER");
-        return e && *e && *e != '0';
+        return env::env_on("SOA_GL_RELEASE_SHADER_COMPILER");
     }();
     return on;
 }

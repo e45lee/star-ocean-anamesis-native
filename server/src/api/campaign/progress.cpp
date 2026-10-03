@@ -19,7 +19,7 @@ State g_state;
 
 std::string state_path() { return config().data_root + "/server_campaign.txt"; }
 
-// SOA_CAMPAIGN_SEED=<mission label>: every mission on the unlock chain leading to it counts as
+// --campaign-seed <mission label>: every mission on the unlock chain leading to it counts as
 // cleared, so play starts at that mission (port option for testing and demos).
 void seed_progress(State& s) {
     const std::string& seed = config().campaign_seed;

@@ -17,7 +17,7 @@ namespace soa::server {
 
 // The runtime seed save (soa's and soa-server's default): the committed, sanitized 3.7.0
 // save data/saves/seed/Game.xml (a real end-of-service player, BAS:PlayerID = LOCAL00001;
-// data/saves/README.md); --seed / SOA_SERVER_SEED override it. "" when it's missing.
+// data/saves/README.md); --seed overrides it. "" when it's missing.
 std::string real_seed_save() { return find_repo_file("data/saves/seed/Game.xml"); }
 
 // (d) seed defaults, labelled in docs/server-rules.md "Seed".

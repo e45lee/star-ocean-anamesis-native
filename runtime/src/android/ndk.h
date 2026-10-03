@@ -25,17 +25,17 @@ public:
     std::vector<std::string> list_files(const std::string& dir) const;
     size_t file_count() const { return index_.size(); }
 
-    // Port option (--download-dir / SOA_DOWNLOAD_DIR, off by default): a directory holding the
+    // Port option (--download-dir, off by default): a directory holding the
     // online game's downloadable asset tree (Sound/, Parameter/, Motion/, ..., sqlite/). A
     // "builtin_data/<rel>" asset missing from the APKs is served from <dir>/<rel>, as if the
-    // game's downloader had fetched it. With `prefer` (SOA_DOWNLOAD_PREFER=1) the directory wins
+    // game's downloader had fetched it. With `prefer` (--download-prefer) the directory wins
     // over the APKs (e.g. to use the 3.7.0 master DB). Looked up on every open, so files that
     // appear while the game runs are found.
     void set_download_dir(const std::string& dir, bool prefer) {
         download_dir_ = dir;
         download_prefer_ = prefer;
     }
-    // Port option (--standin-assets / SOA_STANDIN_ASSETS; on by default with --server inproc): an
+    // Port option (--standin-assets; on by default with --server inproc): an
     // overlay of made-up stand-in files (standin-assets/<rel>, e.g. lost gacha banners) for
     // "builtin_data/<rel>" assets that neither the APKs nor the download dir have. Real assets
     // always win: the overlay is searched last.

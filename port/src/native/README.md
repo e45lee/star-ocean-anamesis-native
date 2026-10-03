@@ -61,17 +61,23 @@ thunks and native code alike, as text instead of executing it; recorded calls re
 ### Live checks: native vs guest in a normal run (`live_check.h`)
 
 Families check their natives against the guest originals during a real session (e.g.
-`SOA_<FAMILY>_CHECK=1 port/scripts/restore_session.sh ...`) with the shared harness in
-`live_check.{h,cpp}`; the register file it records calls on is `a2c_regs.h`. No family uses it at
-the moment (they were deleted); a rebuilt family should. A record / replay family (hand-written
-code whose outgoing calls go through `Family::gcall` / `gcall_n` / `gcall_sret` / `memop` /
-`live::ACall`) is a
-`live::Family("tag", "SOA_TAG", every, sret_marked)` plus `Family::add(sym, host_fn | body,
-obj_bytes, ret, enabled, label)` per function; override `add_regions()` to snapshot more than the
-object at x0 and `unreplayable()` for functions whose replay can't work. Every family gets
-`<ENV>_CHECK`, `_CHECK_EVERY=n`, `_CHECK_OUT=file` (per-function counts), `_CHECK_ONLY=a,b,..` (only
-the functions whose symbols contain one of these: the others run unchecked, so the chosen ones are
-checked also as nested callees of other natives) and `_CHECK_TRACE` / `_DUMP`. The replay rules
+`port/scripts/restore_session.sh ... --live-check FAMILY`, i.e. soa's `--live-check`) with the
+shared harness in `live_check.{h,cpp}`; the register file it records calls on is `a2c_regs.h`.
+**No family is registered at the moment** (they were deleted with the offline build's natives), so
+`--live-check` names none and refuses any name ("registered: none"); a rebuilt family should use it.
+A record / replay family (hand-written code whose outgoing calls go through `Family::gcall` /
+`gcall_n` / `gcall_sret` / `memop` / `live::ACall`) is a static `live::Family("tag", every,
+sret_marked)` plus `Family::add(sym, host_fn | body, obj_bytes, ret, enabled, label)` per function;
+override `add_regions()` to snapshot more than the object at x0 and `unreplayable()` for functions
+whose replay can't work. Every family is switched on and tuned from the command line by its tag:
+
+    --live-check FAMILY[,FAMILY..][:KEY[=VALUE]..]     (repeatable)
+
+with the keys `every=N` (every n-th call per function; default the family's), `budget=N` (checks
+per function at most), `out=FILE` (per-function counts), `only=SUB[|SUB..]` (only the functions
+whose symbols contain one of these: the others run unchecked, so the chosen ones are checked also
+as nested callees of other natives), `trace` and `dump`; e.g. `--live-check arena:every=4:only=Alloc|Free`.
+(These were the `SOA_<FAMILY>_CHECK*` variables; soa warns when one is still set.) The replay rules
 (stubs shared by every family and dropped from each JIT level once, lone-B / PLT callees followed,
 sret pattern fill, the replay at the native run's SP with its stack leftovers, the undo log of the
 body's stores, freed-block snapshots incl. deleting destructors, stack-vector elements, never-empty stub sessions, runaway stop, 64 MB cap, race
@@ -90,7 +96,7 @@ families.
 | `restore/restore_tower.cpp` | Port, `--restore-tower` only: `CParameterUtility::IsOpenTowerMission` = 1, stand-in `play_plate/0..3` nodes for `CTowerMissionMenu::Setup` (wrappers of the guest `CCocosNode::SearchByName` / `SearchByTreeName`), the common-resource scene for `CTowerMissionMenu::Initialize` (`docs/client-changes.md` "Tower"). |
 | `ui/webview_local.cpp` | Port, `--server inproc`: `CWebView::OpenView` + `SOAActivity.ShowWebView`: pages the local server hosts (the notice board) shown as text in the popup (`docs/client-changes.md` "Notice board page"). |
 
-The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/arm_float.h`, `common/memstats.*` (`SOA_MEMSTATS`), `common/core_bench_test.cpp` (guest-call costs).
+The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/arm_float.h`, `common/memstats.*` (`--memstats`), `common/core_bench_test.cpp` (guest-call costs).
 
 ## Porting guidelines
 

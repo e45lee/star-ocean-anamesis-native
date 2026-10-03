@@ -2,7 +2,7 @@
 # Scripted session of the restored entry flow (the in-process local server; docs/client-changes.md
 # "Entry flow", docs/server-rules.md "Entry flow"), in two parts:
 #   1. seeded player (the 3.7.0 save): title -> Login -> data check -> notice popup -> home;
-#   2. new player (SOA_RESTORE_NEW_PLAYER=1, empty save): title -> Login (error 19001) -> terms
+#   2. new player (--new-player, empty save): title -> Login (error 19001) -> terms
 #      -> name entry -> CreatePlayer -> Login -> data check -> tutorial (the opening scene
 #      mc00_010 in auto mode with its choices, mc00_015, the battle tutorial ms00_001, mc00_025,
 #      the mission-menu step: 1-01's story, the companions, home) until home, or
@@ -20,7 +20,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py
 rm -rf "${TMP:?}/seeded" "${TMP:?}/newplayer" "${OUT:?}/seeded" "${OUT:?}/newplayer" "${OUT:?}/seeded.log.pos" "${OUT:?}/newplayer.log.pos"
 mkdir -p "$OUT/seeded" "$OUT/newplayer"
@@ -34,9 +34,9 @@ pid=
 trap '[ -n "$pid" ] && kill $pid 2>/dev/null || true' EXIT
 fail() { echo "FAIL: $*"; exit 1; }
 
-start() {  # start <name> [env...]: soa (the in-process server) with a control FIFO
+start() {  # start <name> [soa flags...]: soa (the in-process server) with a control FIFO
     name=$1; shift
-    SDL_AUDIODRIVER=${SDL_AUDIODRIVER:-dummy} env "$@" SOA_SERVER_SEED_RNG=1 timeout -k 10 3600 "$SOA" --data "$TMP/$name/data" \
+    SDL_AUDIODRIVER=${SDL_AUDIODRIVER:-dummy} timeout -k 10 3600 "$SOA" $HEADLESS --seed-rng 1 "$@" --data "$TMP/$name/data" \
         --size 729x1296 --control "$TMP/$name/fifo" > "$OUT/$name.log" 2>&1 &
     pid=$!
     while [ ! -p "$TMP/$name/fifo" ]; do sleep 1; done
@@ -76,7 +76,7 @@ c quit || true
 wait $pid || true; pid=
 
 # ---- 2. new player --------------------------------------------------------------------------
-start newplayer SOA_RESTORE_NEW_PLAYER=1
+start newplayer --new-player
 FIFO=$TMP/newplayer/fifo; L=$OUT/newplayer.log; S=$OUT/newplayer
 waitlog "$L" 'port_debug: phase 1 '
 c wait:8000 shot:$S/01-title.png

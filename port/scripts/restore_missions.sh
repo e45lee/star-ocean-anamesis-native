@@ -1,10 +1,10 @@
 #!/bin/sh
 # The mission side of the local server (the in-process local server), end to end:
-#  1. a battle of mf01_003, whose surprise enemy appears (SOA_SERVER_SURPRISE=1, a port test
+#  1. a battle of mf01_003, whose surprise enemy appears (--surprise, a port test
 #     option; the server otherwise rolls master_mission.surprise_rate 10.25 %): the result shows
 #     the surprise drops, the first clear unlocks mf01_004 (log + state dump);
 #  2. a step-up gacha advancing a step: gacha_pickup_role_1011 (step 1 of 10, open at
-#     SOA_CLOCK 2021-05-25, the first banner of the gacha screen's おすすめガチャ) drawn through the
+#     --clock 2021-05-25, the first banner of the gacha screen's おすすめガチャ) drawn through the
 #     gacha screen (10連ガチャ -> 決定), then step 2 on the same banner; the server logs each step;
 #  3. the error dialog: the player's stamina is set to 0 in the server's state, and the start of
 #     mf01_001 is refused with 10004; the client's own error handling shows
@@ -21,7 +21,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos" "${OUT:?}"/state-*.txt
 mkdir -p "$OUT/shots"
@@ -30,7 +30,7 @@ mkdir -p "$OUT/shots"
 . port/scripts/phone370.sh
 phone370_prepare "$TMP/data"
 phone370_client_save "$TMP/data/data/shared_prefs"
-SOA_SERVER_SEED_RNG=${SOA_SERVER_SEED_RNG:-1} SOA_SERVER_SURPRISE=1 SOA_CLOCK="2021-05-25 12:00:00" timeout -k 10 2400 "$SOA" --data "$TMP/data" \
+timeout -k 10 2400 "$SOA" $HEADLESS --seed-rng "${SEED_RNG:-1}" --surprise --clock "2021-05-25 12:00:00" --data "$TMP/data" \
   --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null || true' EXIT

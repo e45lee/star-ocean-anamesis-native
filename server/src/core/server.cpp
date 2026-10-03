@@ -44,10 +44,10 @@ using ext::body;  // core/response.cpp
 
 // ---- the server (core/server.h) -------------------------------------------------------------
 bool Server::init() {
-    if (config().has_clock) set_clock_offset(config().clock_offset);  // --clock / SOA_CLOCK
+    if (config().has_clock) set_clock_offset(config().clock_offset);  // --clock
     std::string master = first_existing({config().master, find_repo_file("data/basmaster-3.7.0.sqlite3")});
     if (master.empty() || !m.open(master, true)) {
-        LOGE("server", "the 3.7.0 master DB (data/basmaster-3.7.0.sqlite3, or SOA_SERVER_MASTER) wasn't found");
+        LOGE("server", "the 3.7.0 master DB (data/basmaster-3.7.0.sqlite3, or --master) wasn't found");
         return false;
     }
     std::string path = !config().db.empty() ? config().db : "server.sqlite3";
@@ -70,7 +70,7 @@ bool Server::open_state(const std::string& path, u64 seed_rng, const std::string
     }
     st.exec("pragma journal_mode = wal; pragma synchronous = normal;");
     rng.seed(seed_rng);
-    // SOA_RESTORE_NEW_PLAYER=1 (entry flow, agent restore-title): start without a player, so
+    // --new-player (entry flow, agent restore-title): start without a player, so
     // the client's Login gets "no account" and it runs the new-player flow (CreatePlayer).
     if (st.one("select count(*) from player", {}) == 0 && !new_player_mode()) {
         RequestContext rc = new_request();

@@ -18,7 +18,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos"
 mkdir -p "$OUT/shots"
@@ -63,7 +63,7 @@ for k, (g,) in enumerate(m.execute("select i.id from master_item i join master_g
     st.execute("insert into gear_items (uid, type, master_item_id, created_at) values (?,0,?,0)", (0x7c0f0000 + k, g))
 st.commit()
 PY
-SOA_SERVER_SEED_RNG=${SOA_SERVER_SEED_RNG:-1} timeout -k 10 2400 "$SOA" --data "$TMP/data" \
+timeout -k 10 2400 "$SOA" $HEADLESS --seed-rng "${SEED_RNG:-1}" --data "$TMP/data" \
   --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 [ "${GROWTH_KEEP:-0}" = 1 ] || trap 'kill $pid 2>/dev/null || true' EXIT

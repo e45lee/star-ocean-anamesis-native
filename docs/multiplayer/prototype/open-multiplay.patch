@@ -1,13 +1,12 @@
-diff --git a/server/src/api_home.cpp b/server/src/api_home.cpp
-index 0790aaf..ea1373b 100644
---- a/server/src/api_home.cpp
-+++ b/server/src/api_home.cpp
-@@ -41,7 +41,7 @@ Value footer_mission_info(Ctx& c) {
-     // from launch); the growth module answers EvolutionCharacter (api_growth.cpp).
-     f["is_open_evolution"] = true;
+diff --git a/server/src/api/player/home_footer.cpp b/server/src/api/player/home_footer.cpp
+--- a/server/src/api/player/home_footer.cpp
++++ b/server/src/api/player/home_footer.cpp
+@@ -43,7 +43,7 @@
+     // from launch); the growth module answers EvolutionCharacter (api/growth/growth.cpp).
+     footer["is_open_evolution"] = true;
      // (d) Multiplayer closed: there is no other player to match with.
--    f["is_open_multiplay"] = false;
-+    f["is_open_multiplay"] = getenv("MP_STUDY_OPEN") != nullptr;
-     (void)c;
-     return f;
+-    footer["is_open_multiplay"] = false;
++    footer["is_open_multiplay"] = getenv("MP_STUDY_OPEN") != nullptr;
+     return footer;
  }
+ 

@@ -32,7 +32,9 @@ def options(ap):
 def ds_state(s, tag):
     c = sqlite3.connect(s.state_db)
     out = ["area %s %s" % r for r in c.execute("select area_id, exp from ds_area order by area_id")]
-    out += ["ship %s %s %s %s" % r for r in c.execute("select ship_id, mission_id, closed_at - started_at, uids from ds_ship order by ship_id")]
+    # the crew as "uid,uid" (ds_ship_member by slot, PLAN-schema S7; the text ds_ship.uids was)
+    crew = "(select group_concat(uid, ',') from (select uid from ds_ship_member m where m.ship_id = s.ship_id order by slot))"
+    out += ["ship %s %s %s %s" % r for r in c.execute("select ship_id, mission_id, closed_at - started_at, %s from ds_ship s order by ship_id" % crew)]
     out.append("offers %s" % c.execute("select count(*) from ds_offer").fetchone()[0])
     out.append("free_coin %s" % c.execute("select free_coin from player").fetchone()[0])
     out.append("presents %s" % c.execute("select count(*) from presents").fetchone()[0])

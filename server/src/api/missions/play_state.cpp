@@ -34,25 +34,58 @@ std::vector<u8> play_mission_answer(ext::Ctx& ctx, const Request& req) {
 
 }  // namespace
 
+std::vector<PlayMember> play_members(ext::Ctx& ctx) {
+    std::vector<PlayMember> members;
+    ctx.st.q("select uid, npc_uid from play_member where play_id = 1 order by slot", {},
+             [&](const Row& member_row) { members.push_back({member_row.opt<CharacterUid>("uid"), member_row.opt<NpcPartyUid>("npc_uid")}); });
+    return members;
+}
+
+std::vector<u64> battle_uids(const std::vector<PlayMember>& members) {
+    std::vector<u64> uids;
+    for (const PlayMember& member : members) {
+        if (member.uid) uids.push_back(member.uid->v);
+        else if (member.npc_uid) uids.push_back(member.npc_uid->v);
+    }
+    return uids;
+}
+
 // MissionRestart() / MultiMissionRestart() -> MissionRestartRes (as MissionStartRes)     fid 1f96f310
 // API: docs/api.md#missionrestart   Rules: docs/server-rules.md "2.6 Failure, continue, restart", "Server missions"
 //
 // Resumes the mission in progress after an interruption (CStageManager::Progress, after
 // GetPlayMission.is_play).
-//   (d) the play record's mission and party start again (start_mission with `restarting`): no
-//       stamina, ticket or play count is taken again, and the stored surprise roll is replayed;
-//   (d) the helper isn't restored: the restart sends the play's party as the third argument (the
-//       helper index + 1) and no helper ids, and type 0 (find_mission tries the other tables);
+//   (b) the request has no arguments, and the client builds the resumed battle's four slots from
+//       the answer's BattleParameter.PlayerCharacter as for a MissionStart (CStageManager::Progress,
+//       Ghidra 0x13c7820, sends 0x1f96f310 / 0x8c788f39 instead of MissionStart when
+//       CParameterUI::GetMissionRestart; CPartyManager::InitializePlayer(ulong*, bool*, int),
+//       0x13a1f6c, CreateCharacterInfoByAPI(0..3)): what the restart fights with is the server's;
+//   (d) the play record's mission, type, party set and helper start again (start_mission with
+//       `restarting`): the recorded helper as MissionStart's arguments (helper index 1; an own
+//       character's uid, a rental id or the NPC helper argument by play.helper_kind); no stamina,
+//       ticket, play count or rental-day count is taken again, and the stored surprise roll is
+//       replayed. (Until 2026-10-03 the restart sent the play's party id as the helper index and no
+//       helper ids, so a restarted battle lost its helper: R15's finding.) What the online server
+//       did isn't known;
 //   nothing in progress: not handled.
 // Answers: as MissionStart.
 std::vector<u8> mission_restart(ext::Ctx& ctx, const Request&) {
-    u32 mission = 0, party = 1;
-    ctx.st.q("select mission_id, party_id from play where id = 1", {}, [&](const Row& play_row) {
+    u32 mission = 0, type = 0, npc_id = 0;
+    HelperKind kind = HelperKind::kNone;
+    u64 helper_uid = 0;
+    ctx.st.q("select mission_id, mission_type, helper_kind, helper_uid, npc_id from play where id = 1", {}, [&](const Row& play_row) {
         mission = (u32)play_row.i("mission_id");
-        party = (u32)play_row.i("party_id");
+        type = (u32)play_row.i("mission_type");
+        kind = HelperKind((u32)play_row.i("helper_kind"));
+        helper_uid = (u64)play_row.i("helper_uid");  // NULL: none (0)
+        npc_id = (u32)play_row.i("npc_id");
     });
     if (!mission) return {};
-    Request again{"MissionStart", 0xb7c62bc2, {0, mission, party, 0, 0, 0, 0}, {}, {}};
+    // MissionStart(type, mission, helper index + 1, own helper uid, NPC helper id, rental id, u32)
+    const u64 helper_index_plus_1 = kind == HelperKind::kNone ? 0 : 1;
+    const u64 own_helper_uid = kind == HelperKind::kOwn ? helper_uid : 0;
+    const u64 rental_uid = kind == HelperKind::kRental ? helper_uid : 0;
+    Request again{"MissionStart", 0xb7c62bc2, {type, mission, helper_index_plus_1, own_helper_uid, npc_id, rental_uid, 0}, {}, {}};
     return start_mission(ctx, again, nullptr, true);
 }
 
@@ -68,11 +101,12 @@ std::vector<u8> get_play_mission(ext::Ctx& ctx, const Request& req) { return pla
 // API: docs/api.md#missionfailed   Rules: docs/server-rules.md "2.6 Failure, continue, restart", "Play state"
 //
 // A lost or retired battle, or an interrupted one given up.
-//   (c) no rewards, and the stamina stays spent (docs/api.md); the play record ends (play_ext
-//       stays until the next start).
+//   (c) no rewards, and the stamina stays spent (docs/api.md); the play record ends, all of it
+//       (its members, type, surprise roll and helper: one row since PLAN-schema S7, so a later
+//       MissionEnd without a play reads none of them, d).
 // Answers: the player state with PlayMission (nothing in progress).
 std::vector<u8> mission_failed(ext::Ctx& ctx, const Request& req) {
-    ctx.st.q("delete from play", {});
+    ctx.st.q("delete from play", {});  // and its members (ON DELETE CASCADE)
     return play_mission_answer(ctx, req);
 }
 

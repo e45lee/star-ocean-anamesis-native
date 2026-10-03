@@ -7,10 +7,13 @@
 // "None": since PLAN-schema S4 the state's reference columns hold NULL for "none" (roster.weapon_uid
 // / accessory_uid / assist_uid, player.home_uid / support_uid / title_id, roster.equip_skill1..3;
 // since S5 gear_items.item_uid, NULL = in the gear box; since S6 party_member.uid, NULL = an empty
-// slot, and its weapon_uid / accessory_uid / skill_id1..3 / assist_uid), and they read as
-// std::optional<…> (sql::Row::opt). The wire still says "none" with 0 (or_zero). Columns not yet
-// converted keep their 0 sentinel and read as a plain id with value 0 (sql::Row::id): the play /
-// ds_ship uid lists (text, until S7), favor_bonus_state.lot_uid and gacha_history.uid (until S10).
+// slot, and its weapon_uid / accessory_uid / skill_id1..3 / assist_uid; since S7 play_member.uid,
+// NULL = an NPC or a character gone, and play.party_id), and they read as std::optional<…>
+// (sql::Row::opt). The wire still says "none" with 0 (or_zero). Columns not yet converted keep
+// their 0 sentinel and read as a plain id with value 0 (sql::Row::id): favor_bonus_state.lot_uid
+// and gacha_history.uid (until S10). Plain values on purpose: play.helper_uid (its kind is
+// play.helper_kind: an owned character, a rental id of api/social/rental.h, or a client's id only
+// recorded) and play.npc_id (a master_npc or master_mission_npc id, whichever the client sent).
 //
 // Kept public (beside sql.h) so the module API (soaserver/ext.h) and the SQL wrapper can use them;
 // the uid scheme's constants are src/core/ids.h.
@@ -55,6 +58,10 @@ using TitleId = Id<struct TitleIdTag, uint32_t>;
 using AreaId = Id<struct AreaIdTag, uint32_t>;
 // A master skill id (roster.equip_skill1..3), u32.
 using SkillId = Id<struct SkillIdTag, uint32_t>;
+// A mission NPC fighting in the battle party (the tutorial's NPC party: play_member.npc_uid), u64:
+// the uid the server gives it in BattleParameter.PlayerCharacter, 0x7f000000 + 1 + its order (d:
+// the server's own numbering; api/missions/mission_start.cpp kNpcPartyUid0). Not a roster row.
+using NpcPartyUid = Id<struct NpcPartyUidTag, uint64_t>;
 
 // The wire's form of an optional reference: the id, or 0 for none (the client's "none").
 template <class Tag, class Rep>

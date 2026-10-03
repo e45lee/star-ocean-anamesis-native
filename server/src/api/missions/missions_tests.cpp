@@ -9,7 +9,9 @@
 #include <vector>
 
 #include "api/missions/missions.h"
+#include "api/social/rental.h"
 #include "soaserver/config.h"
+#include "soaserver/msgpack.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
 
@@ -42,7 +44,7 @@ NATIVE_TEST("missions/surprise-campaign-evaluation") {
     for (int k = 0; k < 400; k++) {
         sv.st.q("update player set stamina = 200", {});
         if (S.call(ms) != 0) return t.fail("MissionStart refused");
-        surprises += (int)sv.st.one("select surprise from play_ext where id = 1", {});
+        surprises += (int)sv.st.one("select surprise from play where id = 1", {});
     }
     if (surprises < 18 || surprises > 70) t.fail("surprise rate: %d / 400", surprises);
     // (a) Campaign_evo_blue_prism (2017-05-30 .. 2017-08-30, area event_evo_blue): +1 lot and one
@@ -134,6 +136,110 @@ NATIVE_TEST("missions/end-unknown-mission") {
     t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m1, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
     t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {}, {}, {}}), 0u, "no argument: the play's mission");
     t.expect_eq((u32)sv.st.one("select clear_count from mission where mission_id = ?", {m1}), 2u, "the play's mission cleared");
+}
+
+// The play record (PLAN-schema S7): MissionStart writes one `play` row and the party as
+// `play_member` rows in battle order (owned characters, or the tutorial's mission NPCs as
+// npc_uid); MissionFailed ends all of it, so a MissionEnd with no play in progress reads no mission
+// type, surprise roll or party (before S7, MissionFailed left play_ext's type and surprise behind).
+NATIVE_TEST("missions/play-record") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    u32 m3 = S.id("master_mission", "mf01_003");
+    sv.st.q("update player set stamina = 200", {});
+    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m3, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
+    t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 1u, "one play");
+    t.expect_eq((u32)sv.st.one("select mission_id from play", {}), m3, "its mission");
+    const u32 members = (u32)sv.st.one("select count(*) from play_member", {});
+    t.expect_eq(members > 0, true, "the party recorded");
+    t.expect_eq((u32)sv.st.one("select count(*) from play_member m join roster r on r.uid = m.uid where m.npc_uid is null", {}), members,
+                "owned characters");
+    t.expect_eq(
+        (u32)sv.st.one("select count(*) from play_member where slot != (select count(*) from play_member p where p.slot < play_member.slot)", {}), 0u,
+        "slots 0..n-1");
+    // a surprise roll, then the battle is lost
+    sv.st.q("update play set surprise = 1", {});
+    t.expect_eq(S.call({"MissionFailed", 0x479604f6, {0, m3}, {}, {}}), 0u, "MissionFailed");
+    t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 0u, "the play ended");
+    t.expect_eq((u32)sv.st.one("select count(*) from play_member", {}), 0u, "its members with it");
+    // a MissionEnd naming the mission, with no play: no party gets EXP, nothing stale is read
+    std::vector<u8> out;
+    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {m3, 0}, {}, {}}, &out), 0u, "MissionEnd without a play");
+    Value d = out.empty() ? Value() : mp_decode(out);
+    const Value* data = d.find("data");
+    const Value* result = data ? data->find("MissionResultCharacter") : nullptr;
+    t.expect_eq(result && result->type == Value::Map ? result->map.size() : (size_t)99, (size_t)0, "no party: no character EXP");
+    // the tutorial battle's NPC party: npc_uid, no roster reference
+    u32 tutorial = S.id("master_mission", "ms00_001");
+    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, tutorial, 0, 0, 0, 0, 0}, {}, {}}), 0u, "the tutorial battle");
+    const u32 npcs = (u32)sv.m.one("select count(*) from master_mission_npc where master_mission_id = ?", {tutorial});
+    t.expect_eq((u32)sv.st.one("select count(*) from play_member where uid is null and npc_uid between 2130706433 and 2130706687", {}), npcs,
+                "the mission NPCs as npc_uid");
+    t.expect_eq((u32)sv.st.one("select min(npc_uid) from play_member", {}), 0x7f000001u, "kNpcPartyUid0 + 1 first");
+}
+
+// MissionRestart replays the recorded helper (PLAN-schema S7; before, it sent the play's party id
+// as the helper index and no helper ids, so the restarted battle lost its helper): an own
+// character stays rental_sub_character_id and a member; a rental clone stays member 4 and its
+// rental day isn't counted again; the play's party set fights again.
+NATIVE_TEST("missions/restart-helper") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    u32 m1 = S.id("master_mission", "mf01_001");
+    sv.st.q("update player set stamina = 200", {});
+    auto battle = [&](const std::vector<u8>& out) {
+        Value d = out.empty() ? Value() : mp_decode(out);
+        const Value* data = d.find("data");
+        const Value* bp = data ? data->find("BattleParameter") : nullptr;
+        return bp ? *bp : Value();
+    };
+    auto members = [&](const Value& bp) {
+        std::vector<u64> ids;
+        if (const Value* pc = bp.find("PlayerCharacter"); pc && pc->type == Value::Arr)
+            for (const Value& member : pc->arr) ids.push_back(member.get_u("id"));
+        return ids;
+    };
+    const Request restart{"MissionRestart", 0x1f96f310, {}, {}, {}};
+    // an own character outside the party as the helper
+    const u64 own = (u64)sv.st.one(
+        "select uid from roster where uid not in (select uid from party_member where uid is not null and party_id = (select party_id from player)) "
+        "order by uid limit 1",
+        {});
+    std::vector<u8> out;
+    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m1, 1, own, 0, 0, 0}, {}, {}}, &out), 0u, "start with an own helper");
+    Value started = battle(out);
+    t.expect_eq(started.get_u("rental_sub_character_id"), own, "the own helper");
+    t.expect_eq((u32)sv.st.one("select helper_kind from play", {}), (u32)HelperKind::kOwn, "recorded: kind own");
+    out.clear();
+    t.expect_eq(S.call(restart, &out), 0u, "MissionRestart");
+    Value restarted = battle(out);
+    t.expect_eq(restarted.get_u("rental_sub_character_id"), own, "the restart keeps the own helper");
+    t.expect_eq(members(restarted), members(started), "the same members");
+    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {m1, 0}, {}, {}}), 0u, "MissionEnd");
+    // a rental clone as member 4
+    const u64 rental = rental::id_of(CharacterUid(own));
+    const int64_t rentals = sv.st.one("select ifnull(sum(count), 0) from follow_rental", {});
+    out.clear();
+    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m1, 1, 0, 0, rental, 0}, {}, {}}, &out), 0u, "start with a rental clone");
+    started = battle(out);
+    t.expect_eq(members(started).size(), (size_t)4, "four members");
+    t.expect_eq(members(started).back(), rental, "the clone is member 4");
+    t.expect_eq(sv.st.one("select ifnull(sum(count), 0) from follow_rental", {}), rentals + 1, "a rental counted");
+    out.clear();
+    t.expect_eq(S.call(restart, &out), 0u, "MissionRestart");
+    restarted = battle(out);
+    t.expect_eq(members(restarted), members(started), "the restart keeps the clone as member 4");
+    t.expect_eq(sv.st.one("select ifnull(sum(count), 0) from follow_rental", {}), rentals + 1, "the restart isn't another rental");
+    t.expect_eq((u32)sv.st.one("select helper_kind from play", {}), (u32)HelperKind::kRental, "still kind rental");
+    // the play's party set fights again, also when the current set changed since
+    const u32 set = (u32)sv.st.one("select party_id from play", {});
+    sv.st.q("update player set party_id = ?", {set == 1 ? 2u : 1u});
+    t.expect_eq(S.call(restart), 0u, "MissionRestart after the current set changed");
+    t.expect_eq((u32)sv.st.one("select party_id from play", {}), set, "the play's set");
+    t.expect_eq(S.call({"MissionFailed", 0x479604f6, {}, {}, {}}), 0u, "MissionFailed");
+    t.expect_eq(S.call(restart), 0xffffffffu, "nothing in progress: not handled");
 }
 
 }  // namespace

@@ -20,7 +20,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py; REF=work/port-test/smoke-base
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos"
 mkdir -p "$OUT/shots"
@@ -29,7 +29,7 @@ mkdir -p "$OUT/shots"
 . port/scripts/phone370.sh
 phone370_prepare "$TMP/data"
 phone370_client_save "$TMP/data/data/shared_prefs"
-SOA_SERVER_SEED_RNG=${SOA_SERVER_SEED_RNG:-1} timeout -k 10 2100 "$SOA" --data "$TMP/data" \
+timeout -k 10 2100 "$SOA" $HEADLESS --seed-rng "${SEED_RNG:-1}" --data "$TMP/data" \
   --size 729x1296 --restore-tower --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null || true' EXIT

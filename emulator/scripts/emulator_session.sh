@@ -146,7 +146,7 @@ trap cleanup EXIT
 # The game server. Its default bridge and CDN URLs are on the client's own host name, without a
 # port (the client's URI parser can't resolve "host:port"; emulator/README.md "Networking");
 # soa-emu maps that name to --server / --http. --seed-rng 1 as restore_session.sh's
-# SOA_SERVER_SEED_RNG=1 (the parity run, emulator/README.md "Parity").
+# --seed-rng 1 (the parity run, emulator/README.md "Parity").
 srv_args=(--seed-rng 1)
 if [ $mode = newplayer ]; then srv_args+=(--new-player); else srv_args+=(--campaign-seed mf01_001); fi
 # shellcheck disable=SC2206

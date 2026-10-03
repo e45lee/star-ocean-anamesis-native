@@ -68,7 +68,7 @@ struct Master {
     std::map<u32, u32> group_progress;  // master_world_map_group_mission.progress (story groups)
     std::vector<ProgressRow> progress;
 };
-// The master data, loaded on first use from the server's master DB (open_master: SOA_MASTER_DB,
+// The master data, loaded on first use from the server's master DB (open_master: --campaign-master-db,
 // else the 3.7.0 DB, else the offline build's).
 const Master& master();
 
@@ -78,7 +78,7 @@ struct State {
     std::set<u32> cleared;
     u32 last_play = 0;
     u32 playing = 0;     // the mission of the last MissionStart
-    bool seeded = false;      // SOA_CAMPAIGN_SEED: a returning player
+    bool seeded = false;      // --campaign-seed: a returning player
     u32 wm_episode = 0;  // the episode of the last GetWorldMapInfoList (0: all)
 };
 // The progress, loaded from <data>/server_campaign.txt on first use (and seeded); callers hold

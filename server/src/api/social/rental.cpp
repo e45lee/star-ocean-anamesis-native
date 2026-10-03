@@ -9,7 +9,7 @@
 //     master data alone: nothing to serve;
 //   - otherwise CParameterUtility::CreateRentalList walks the `BattleRental` info
 //     (CBattleRentalInfoList at CParameterManager+0x62c8, its map at +0x6300; the live schema
-//     dump, SOA_FAKE_SERVER_SCHEMA) and makes one tCharaData::InitializeRental(player, pc) per
+//     dump, --fake-server-schema) and makes one tCharaData::InitializeRental(player, pc) per
 //     entry, skipping players in BlacklistID (+0x6638) and flagging those in FollowID (+0x6350).
 //     The entries are CFollowInfo = {order, player: CFollowPlayerInfo, pc: CFollowPersonInfo} (the
 //     child names are the classes' pParseName; b), keyed by id as a string like the other ...Map

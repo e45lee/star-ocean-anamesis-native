@@ -67,7 +67,7 @@ struct Ctx {
     // A live server (soa or soa-server): the client's data (the request's battle log, the asset
     // index) is there; false in the unit tests' scratch servers.
     bool live() const;
-    int64_t now();                                  // the server clock (--clock / SOA_CLOCK aware)
+    int64_t now();                                  // the server clock (--clock aware)
     // The event calendar (server.h event_now): dated content (event terms, deep-space missions,
     // Sphere 211 seasons) uses it; wallet, stamina and other real-time rules use now().
     int64_t event_now();

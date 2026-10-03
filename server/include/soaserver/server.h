@@ -52,7 +52,7 @@ bool web_page(const std::string& url, std::string* text);
 bool web_document(const std::string& url, std::string* content_type, std::string* body);
 
 // ---- clocks ------------------------------------------------------------------------------
-// clock_now(): the server clock: the real time, or --clock "YYYY-MM-DD HH:MM:SS" / SOA_CLOCK and
+// clock_now(): the server clock: the real time, or --clock "YYYY-MM-DD HH:MM:SS" and
 // running on from there. Wallet, stamina, login and other real-time rules use it.
 int64_t clock_now();
 // A time as the server sends it: local "YYYY-MM-DD HH:MM:SS" (src/core/time.h has the parsers and
@@ -83,7 +83,7 @@ int event_year(sqlite3* master, int m, int d);
 // Logs it. Nothing when the server is off.
 void submit(const Request& r);
 
-// Entry flow (agent restore-title). SOA_RESTORE_NEW_PLAYER=1: the server starts without a
+// Entry flow (agent restore-title). --new-player: the server starts without a
 // player (the client runs the 3.7.0 new-player flow; its Login is refused with 19001, see
 // error_code). logged_in(): FakeApiCaller::LoggedIn (false until a Login was answered).
 bool new_player_mode();

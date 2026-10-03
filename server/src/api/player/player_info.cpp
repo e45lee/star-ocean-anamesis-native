@@ -12,7 +12,7 @@
 #include "api/player/party_set.h"  // party_set_info
 #include "api/player/roster.h"  // roster_info
 #include "core/log.h"
-#include "core/server.h"  // meta, has_player
+#include "core/server.h"  // has_player
 #include "soaserver/config.h"
 
 namespace soa::server {
@@ -36,11 +36,11 @@ namespace {
 
 // Player.support_pc_id: the character the player lends (レンタル), as a uid.
 //   (b) CRentalBonus::Setup builds its card with tCharaData::Initialize(CParameterManager+0xba8 =
-//       Player.support_pc_id): UpdateSupport's owned character (meta support_uid, api/social/rental.cpp).
+//       Player.support_pc_id): UpdateSupport's owned character (player.support_uid, api/social/rental.cpp).
 //   (d) Unset or no longer owned: the highest-level character (ties by uid), the first of the
 //       rental list's lenders (api/social/rental.cpp).
-u64 support_uid(ext::Ctx& ctx) {
-    u64 uid = (u64)std::stoull(meta(ctx, "support_uid", "0"));
+u64 support_uid(ext::Ctx& ctx, const Row& player_row) {
+    u64 uid = (u64)player_row.i("support_uid");  // NULL: unset (0)
     if (!uid || !ctx.st.one("select count(*) from roster where uid = ?", {uid}))
         uid = (u64)ctx.st.one("select uid from roster order by level desc, uid limit 1", {}, 0);
     return uid;
@@ -59,20 +59,21 @@ void add_stock_caps(ext::Ctx& ctx, Value& player) {
     player["follow_max"] = ctx.global_u32("follow_default", 30);  // (a) master_global follow_default
 }
 
-// The state other domains keep for Player, in meta (player_info, step 4).
-void add_meta_state(ext::Ctx& ctx, Value& player) {
+// The state other domains keep for Player, in the player row (player_info, step 4; in meta until
+// PLAN-schema S3).
+void add_domain_state(const Row& player_row, Value& player) {
     // Entry flow: tutorial progress, UI tutorials seen, accepted terms version (b: the client reads
     // them back; docs/server-rules.md "Entry flow").
-    player["tutorial_status"] = (u32)std::stoul(meta(ctx, "tutorial_status", "0"));
-    player["view_status"] = (u64)std::stoull(meta(ctx, "view_status", "0"));
-    player["view_status2"] = (u64)std::stoull(meta(ctx, "view_status2", "0"));
-    player["kiyaku_version"] = meta(ctx, "kiyaku_version", "");
+    player["tutorial_status"] = (u32)player_row.i("tutorial_status");
+    player["view_status"] = (u64)player_row.i("view_status");  // the u64 word's int64 bits (all ones: -1)
+    player["view_status2"] = (u64)player_row.i("view_status2");
+    player["kiyaku_version"] = player_row.s("kiyaku_version");
     // Deep space (api/deepspace/deepspace.cpp): quick returns used today, which the client's
     // quick-return dialog prices the next one by (CDeepSpaceQuickReturnDialog::Open).
-    player["time_saving_use_count"] = (u32)std::stoul(meta(ctx, "ds_time_saving_count", "0"));
+    player["time_saving_use_count"] = (u32)player_row.i("time_saving_count");
     // Titles (api/player/titles.cpp): the selected master_title id, which the status bar's plate
     // shows (b: CCommon::UpdateMyStatus -> CParameterUtility::SetPlayerTitle, +0xed8).
-    player["title"] = (u32)std::stoul(meta(ctx, "title", "0"));
+    player["title"] = (u32)player_row.i("title_id");  // NULL: none (0)
 }
 
 }  // namespace
@@ -100,7 +101,7 @@ Value player_info(ext::Ctx& ctx) {
         // id here; docs/server-rules.md "Home character".)
         player["home_pc_id"] = (u64)player_row.i("home_uid");
         player["party_id"] = (u32)player_row.i("party_id");
-        player["support_pc_id"] = support_uid(ctx);
+        player["support_pc_id"] = support_uid(ctx, player_row);
         // 2. the stock caps
         add_stock_caps(ctx, player);
         // 3. the times; (d) updated_at is the answer's time
@@ -110,8 +111,8 @@ Value player_info(ext::Ctx& ctx) {
         // (d) the 3D home: Home3DAnd2DSwitching (3.7.0's CHome::Progress) has no handler, so the
         // flag never changes
         player["is_3d_home"] = true;
-        // 4. the state other domains keep in meta
-        add_meta_state(ctx, player);
+        // 4. the state other domains keep in the player row
+        add_domain_state(player_row, player);
     });
     return player;
 }

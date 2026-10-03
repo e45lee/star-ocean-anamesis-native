@@ -140,7 +140,6 @@ std::string meta(ext::Ctx& ctx, const char* key, const char* dflt) {
     return v;
 }
 
-void set_meta(ext::Ctx& ctx, const char* key, const std::string& v) { ctx.st.q("insert or replace into meta (key, value) values (?, ?)", {key, v}); }
 bool has_player(ext::Ctx& ctx) { return ctx.st.one("select count(*) from player", {}) > 0; }
 
 }  // namespace soa::server

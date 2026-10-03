@@ -48,5 +48,35 @@ NATIVE_TEST("player/home-pc-id") {
     t.expect_eq(loaded(), other, "refused: unchanged");
 }
 
+// view_status / view_status2 are u64 bit sets (CPlayerInfo) the state keeps as their int64 bits
+// (player columns since PLAN-schema S3; section 5's risk: a signed read would send -1). All ones in,
+// all ones out: the seeded state's (every UI tutorial seen), and UpdateView's word with the top
+// bit set, in its reply (the msgpack uint 64) and in the next player load.
+NATIVE_TEST("player/view-status-bits") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext request = sv.new_request();
+    ext::Ctx ctx = sv.make_ctx(request);
+    auto word = [](const Value& player, const char* key) {
+        const Value* v = player.find(key);
+        return v && v->type == Value::UInt ? v->u : 0;
+    };
+    t.expect_eq(sv.st.one("select view_status from player", {}), (int64_t)-1, "seeded: stored as the int64 bits");
+    t.expect_eq(word(player_info(ctx), "view_status"), ~0ull, "seeded: view_status all ones");
+    t.expect_eq(word(player_info(ctx), "view_status2"), ~0ull, "seeded: view_status2 all ones");
+    const ext::Handler* update_view = ext::find("UpdateView");
+    if (!update_view) return t.fail("no UpdateView handler");
+    const u64 top_bit = 0x8000000000000005ull;
+    Value reply = mp_decode((*update_view)(ctx, Request{"UpdateView", 0, {0, top_bit}, {}, {}}));
+    const Value* data = reply.find("data");
+    const Value* player = data ? data->find("Player") : nullptr;
+    t.expect_eq(player ? word(*player, "view_status") : 0, top_bit, "UpdateView(0): the reply's word, unsigned");
+    t.expect_eq(word(player_info(ctx), "view_status"), top_bit, "the next load");
+    (*update_view)(ctx, Request{"UpdateView", 0, {1, 0}, {}, {}});
+    t.expect_eq(word(player_info(ctx), "view_status2"), 0ull, "UpdateView(1): view_status2");
+    t.expect_eq(word(player_info(ctx), "view_status"), top_bit, "view_status unchanged");
+}
+
 }  // namespace
 }  // namespace soa::server

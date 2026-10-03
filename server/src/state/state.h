@@ -35,9 +35,8 @@ size_t report_master_refs(sqlite3* st, sqlite3* master);
 
 namespace soa::server {
 
-// ---- the meta table (key -> text) ----------------------------------------------------------
+// ---- the meta table (key -> text: next_char_uid, next_item_uid, seed; PLAN-schema S3) ------
 std::string meta(ext::Ctx& ctx, const char* key, const char* dflt);
-void set_meta(ext::Ctx& ctx, const char* key, const std::string& v);
 // The meta counter `key`'s value, counted up (uids of new characters and items).
 u64 next_uid(ext::Ctx& ctx, const char* key);
 bool has_player(ext::Ctx& ctx);

@@ -366,6 +366,17 @@
    ],
    "source": "observed (requests.txt)"
   },
+  "replay:hammers": {
+   "apis": [
+    "ExItemShop",
+    "GachaTicket",
+    "GetPlayer",
+    "ItemCompose",
+    "ItemComposeArray",
+    "Login"
+   ],
+   "source": "observed (requests.txt)"
+  },
   "replay:items-party": {
    "apis": [
     "AttachGear",

@@ -48,13 +48,13 @@ Answered by the library: 106. Covered: 92. Only refused or not handled: 12. Only
 - `DeepSpaceMissionStart` (server/src/api/deepspace/deepspace.cpp): deepspace
 - `EquipSkill` (server/src/api/growth/growth.cpp): growth
 - `EquipWeapon` (server/src/api/growth/growth.cpp): growth
-- `ExItemShop` (server/src/api/shop/shop.cpp): economy, growth
+- `ExItemShop` (server/src/api/shop/shop.cpp): economy, growth, hammers
 - `ExshopExchange` (server/src/api/shop/shop.cpp): economy
 - `ExshopExchangeList` (server/src/api/shop/shop.cpp): economy
 - `FollowList` (server/src/api/social/rental.cpp): missions
 - `Gacha` (server/src/api/gacha/gacha.cpp): economy, items-party
 - `GachaOnce` (server/src/api/gacha/gacha.cpp): economy
-- `GachaTicket` (server/src/api/gacha/gacha.cpp): economy
+- `GachaTicket` (server/src/api/gacha/gacha.cpp): economy, hammers
 - `GenerateGear` (server/src/api/items/gear.cpp): items-party
 - `GetBoxGacha` (server/src/api/gacha/box.cpp): economy
 - `GetEventRankingInfo` (server/src/api/events/ranking.cpp): event-extras
@@ -63,7 +63,7 @@ Answered by the library: 106. Covered: 92. Only refused or not handled: 12. Only
 - `GetGearInfo` (server/src/api/items/gear.cpp): items-party
 - `GetMissionList` (server/src/api/missions/play_state.cpp): missions, seeded, tutorial
 - `GetPlayMission` (server/src/api/missions/play_state.cpp): missions, tower
-- `GetPlayer` (server/src/api/player/player_info.cpp): deepspace, economy, event-extras, growth, items-party, missions, profile, sphere211, tower
+- `GetPlayer` (server/src/api/player/player_info.cpp): deepspace, economy, event-extras, growth, hammers, items-party, missions, profile, sphere211, tower
 - `GetPlayerDetailInfo` (server/src/api/events/ranking.cpp): event-extras
 - `GetPresent` (server/src/api/presents/presents.cpp): profile
 - `GetPresentArray` (server/src/api/presents/presents.cpp): profile
@@ -72,15 +72,15 @@ Answered by the library: 106. Covered: 92. Only refused or not handled: 12. Only
 - `GetSphere211Info` (server/src/api/sphere211/sphere211.cpp): sphere211
 - `GetSphere211RankingInfo` (server/src/api/sphere211/sphere211.cpp): sphere211
 - `GetWorldBossInfo` (server/src/api/events/world_boss.cpp): event-extras
-- `ItemCompose` (server/src/api/items/items.cpp): items-party
-- `ItemComposeArray` (server/src/api/items/items.cpp): items-party
+- `ItemCompose` (server/src/api/items/items.cpp): hammers, items-party
+- `ItemComposeArray` (server/src/api/items/items.cpp): hammers, items-party
 - `ItemGradeUp` (server/src/api/items/items.cpp): items-party
 - `ItemShopList` (server/src/api/shop/shop.cpp): economy
 - `LimitBreakCharacter` (server/src/api/growth/growth.cpp): growth
 - `LimitBreakCharacter_Legacy` (server/src/api/growth/growth.cpp): growth
 - `LockItem` (server/src/api/items/items.cpp): items-party
 - `LockItemArray` (server/src/api/items/items.cpp): profile
-- `Login` (server/src/api/entry/entry.cpp): deepspace, economy, event, event-extras, growth, items-party, missions, profile, seeded, sphere211, tower, tutorial
+- `Login` (server/src/api/entry/entry.cpp): deepspace, economy, event, event-extras, growth, hammers, items-party, missions, profile, seeded, sphere211, tower, tutorial
 - `MissionEnd` (server/src/api/missions/mission_end.cpp): event, event-extras, missions, seeded, tower, tutorial
 - `MissionFailed` (server/src/api/missions/play_state.cpp): missions, tower
 - `MissionRestart` (server/src/api/missions/play_state.cpp): missions

@@ -3,7 +3,8 @@
 # From vcpkg (vcpkg.json, manifest mode: configured through the vcpkg toolchain, which the root
 # CMakeLists.txt picks up from $VCPKG_ROOT or .vcpkg/): imported targets
 #   ZLIB::ZLIB  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
-#   OpenSSL::Crypto  soa::SDL2  Boost::boost (dynarmic)  and the EGL/GLES/KHR headers.
+#   OpenSSL::Crypto  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
+#   runtime/src/app/text_overlay.cpp)  and the EGL/GLES/KHR headers.
 # From the system (README.md, "Setup": what vcpkg can't replace on Linux), only when the runtime is
 # built (SOA_NEED_RUNTIME, like soa::SDL2 and dynarmic):
 #   soa::EGL, soa::GLESv2  Mesa's libEGL / libGLESv2 (the libraries only; headers from vcpkg)
@@ -21,6 +22,7 @@ find_package(Vorbis CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 if(SOA_NEED_RUNTIME)  # the JIT host runtime and what links it (not for a server-only build)
   find_package(SDL2 CONFIG REQUIRED)
+  find_package(Freetype REQUIRED)  # vcpkg's freetype (zlib only): soaruntime_app's text box
   add_library(soa::SDL2 INTERFACE IMPORTED)
   target_link_libraries(soa::SDL2 INTERFACE $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
   # egl-registry / opengl-registry: headers only (EGL/, KHR/, GLES2/, GLES3/).

@@ -4,7 +4,7 @@
 
 | Tool | What |
 |---|---|
-| `soactl.py FIFO CMD...` | Sends commands to a running instance: `tap:X:Y`, `drag:X1:Y1:X2:Y2`, `wheel:X:Y:DY`, `back`, `text:STRING`, `shot:PATH`, `wait:MS`, `quit`. The port also has native debug commands (`phase:`, `call:`, `uiset:`, `debugwin:`) that the emulators lack. |
+| `soactl.py FIFO CMD...` | Sends commands to a running instance: `tap:X:Y`, `drag:X1:Y1:X2:Y2`, `wheel:X:Y:DY`, `back`, `text:STRING`, `shot:PATH`, `wait:MS`, `quit`; while the game's keyboard is open, test-only `type:TEXT`, `compose:TEXT` and `key:enter|escape|backspace|delete|left|right|home|end` drive the text box's editor (`runtime/README.md`, "Text entry"). The port also has native debug commands (`phase:`, `call:`, `uiset:`, `debugwin:`) that the emulators lack. |
 | `flowctl.py` | Higher-level flows built on `soactl.py`: `wait-log`, `tap-until` (tap until a log line appears), `login-popups` (closes the notice board and the LOGIN BONUS popup), `name-entry`. |
 
 **Used by:**

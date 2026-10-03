@@ -115,7 +115,7 @@ std::string html_escape(const std::string& s) {
 
 // (d) The HTML form of the page: the same lines, marked up by their leading mark ("【...】" the
 // title, "■" a section heading, "・" a list item, the rest paragraphs), in the look of the game's
-// own local pages (the 3.8.0 APK's assets/*.html: a 640-px viewport, white text on dark grey, a
+// own local pages (the 3.8.0 APK's assets/*.html: a 640-px viewport, white text on dark grey, a (380-ok)
 // dark heading bar), with inline CSS only (no resources to fetch).
 std::string Page::html() const {
     std::string h =

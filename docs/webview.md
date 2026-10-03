@@ -69,7 +69,7 @@ Sources: call sites found by `tools/callers.py`; the type is the `w1`/`w0` const
 | 0xe | `bridge_backup` | the title's data transfer | **editable** | like 4 |
 | 0xf, 0x14 | (the passed URL) | banners (`CBannerBehavior::GetBannerLink` → `CDialogManager::OpenWebView`: `master_banner.url`), gacha rates (`CGachaBoxDetail`, `CGacha::CallRateWebView`), achievements | popup, useBrowser (0xf); a banner is editable when its form flag is set (`cset eq`) | |
 | 0x10 | `twitter` | その他: **browser** | | |
-| 0x11 | `opening` | その他 → オープニングムービー? (the 3.8.0 APK has `movie_index.html`) | popup, useBrowser | `?md5` |
+| 0x11 | `opening` | その他 → オープニングムービー? (the 3.8.0 APK has `movie_index.html`) | popup, useBrowser | `?md5` | <!-- 380-ok: the 3.8.0 XAPK as a content source -->
 | 0x12 | `comic` | その他 → 公式漫画 | popup, useBrowser | `?md5` |
 | 0x15 | a crypted parameter (CParameterManager+0xa908) | `CRefundDialog` | popup | |
 | 0x16 | `pay_back_site` (`master_global`) | `CRefundDialog` (refund form) | **editable** | POST `tagname=…&k=…` |
@@ -89,15 +89,15 @@ Sources: call sites found by `tools/callers.py`; the type is the `w1`/`w0` const
 |---|---|---|---|
 | Notice board (お知らせ, type 1/0x13) | `production-cache.webview.so-ana.com/information/…` (c) | Nothing. **Wayback has no snapshot** of any JP `information/` page; `/information/detail/<id>.html` returns no capture at all. Only two NA-host pages are archived (`production-cache.webview.na.so-ana.com/information/list.html`, `…/detail/56002.html`). | **The local server's page** (server-first, (d)): built from its state (open events, login bonus, present box). It already exists as text and now also as HTML (`server::web_document`, below). |
 | Banner details (0xf: 1,715 `master_banner.url` → `information/detail/<id>.html`, 53 `form*.square-enix.com`) | same host (a) | Nothing archived | A server page per banner, generated from `master_banner` (name, period, image under `B/` in the download), or one "this notice is no longer available" page (d) |
-| Terms (利用規約, 0) | server-supplied `kiyaku` URL (b) | The **3.8.0 XAPK's `assets/kiyaku.html`**: the offline edition's terms, `ユーザー規約（… オフライン版）`. Not in the 3.7.0 APK, which has no HTML assets. | 3.8.0's `kiyaku.html` + `css/common.css` + `images/`, served by the server under the 3.7.0 key, with a departure note: these are the offline edition's terms (d) |
-| Copyright (6), credit (9), comic (0x12), opening (0x11) | server-supplied URLs | 3.8.0 XAPK: `copyright_android.html`, `credit.html`, `comic_index.html` (its banners link to the official site), `movie_index.html` | Those files, served the same way |
-| 特定商取引法 / 資金決済法 (2, 3) | server-supplied | 3.8.0 XAPK `tokutei.html`, `shikin.html` | Those files |
-| Inquiry, age (no 3.7.0 type) | | 3.8.0 `inquiry.html` ("仮設置": a placeholder), `nenrei.html` | Not needed |
+| Terms (利用規約, 0) | server-supplied `kiyaku` URL (b) | The **3.8.0 XAPK's `assets/kiyaku.html`**: the offline edition's terms, `ユーザー規約（… オフライン版）`. Not in the 3.7.0 APK, which has no HTML assets. | 3.8.0's `kiyaku.html` + `css/common.css` + `images/`, served by the server under the 3.7.0 key, with a departure note: these are the offline edition's terms (d) | <!-- 380-ok: the 3.8.0 XAPK as a content source -->
+| Copyright (6), credit (9), comic (0x12), opening (0x11) | server-supplied URLs | 3.8.0 XAPK: `copyright_android.html`, `credit.html`, `comic_index.html` (its banners link to the official site), `movie_index.html` | Those files, served the same way | <!-- 380-ok: the 3.8.0 XAPK as a content source -->
+| 特定商取引法 / 資金決済法 (2, 3) | server-supplied | 3.8.0 XAPK `tokutei.html`, `shikin.html` | Those files | <!-- 380-ok: the 3.8.0 XAPK as a content source -->
+| Inquiry, age (no 3.7.0 type) | | 3.8.0 `inquiry.html` ("仮設置": a placeholder), `nenrei.html` | Not needed | <!-- 380-ok: the 3.8.0 XAPK as a content source -->
 | Help (ヘルプ, 10) | `production-cache.webview.so-ana.com/help/…` (c) | **Wayback has the help site**: `help/index.html` and 17 topic pages (about, battle, character, deepspace, favor, follow, gacha, home, item, mission, sevens_star, stamina, stone, title, tower, twineclipse, worldboss), `css/common.css` and about 33 images, captured 2016–2020 (the latest on 2020-02-10). `about.html` was fetched once to check (200, Japanese, `width=device-width`; the topics are CSS `:checked` toggles, no JavaScript). Nothing was downloaded in bulk. | Optional: the user fetches the archived set once into a local directory (not committed), and the server serves it from there. Otherwise a small server help page. |
 | Data transfer, refund (4, 7, 0xe, 0x16) | `sqex-bridge.jp`, `support.jp.square-enix.com` forms | Dead services (c) | A server page saying the service has ended (d). The forms can't work. |
 | Browser links (0xc, 0xd, 0x10, the comic banners) | external sites | | Log them, as today. Optionally print the URL on the page or in a host notification; never open a browser silently. |
 
-The 3.8.0 pages are Square Enix files and stay out of git. The server reads them where they already are: the viewer's XAPK extraction, or `--apk-dir`.
+The 3.8.0 pages are Square Enix files and stay out of git. The server reads them where they already are: the viewer's XAPK extraction, or `--apk-dir`. <!-- 380-ok: the 3.8.0 XAPK as a content source -->
 
 ## 3. Design
 
@@ -170,7 +170,7 @@ Dragalia's `webview_page.cpp` is reused nearly verbatim: litehtml's container dr
 
 The pages are the server's: the client asks for a URL and the server answers it. Today `server::web_page(url)` returns plain text for `http://soa-local.invalid/notice`, and `server::web_document(url)` (new) returns that page as HTML (`text/html; charset=utf-8`). The plan:
 
-1. **Serve over HTTP on the CDN router.** Mount a `/webview/` route on `server/net`'s `HttpRouter`, next to `mount_cdn`: `/webview/information` (the notice), `/webview/banner/<id>`, `/webview/apk/<file>` (the 3.8.0 pages and their `css/` and `images/`), `/webview/help/…` (an optional local Wayback copy). The router is the one soa-server serves on `--http` and the one the in-process server installs as platform370's HTTP backend.
+1. **Serve over HTTP on the CDN router.** Mount a `/webview/` route on `server/net`'s `HttpRouter`, next to `mount_cdn`: `/webview/information` (the notice), `/webview/banner/<id>`, `/webview/apk/<file>` (the 3.8.0 pages and their `css/` and `images/`), `/webview/help/…` (an optional local Wayback copy). The router is the one soa-server serves on `--http` and the one the in-process server installs as platform370's HTTP backend. <!-- 380-ok: the 3.8.0 XAPK as a content source -->
 2. **Hand out URLs on that host.** The `WebView` list (state key `WebView`, (b)) sends every key the client looks up (`information`, `kiyaku`, `help`, `copyright`, `credit`, `comic`, `opening`, `tokutei`, `shikin`, and `bridge_user` / `bridge_backup` / pay-back pages saying "ended"). The values are `http://production-game.so-ana.com/webview/<key>`: the client's own CDN host, which platform370 already maps (`NetConfig::hosts`). soa-emu over soa-server then gets the pages from soa-server, and soa in-process gets them from the same router. `soa-local.invalid` goes, and soa-emu's notice board stops being empty.
 3. **Fetch through the same path.** The web view's `Fetch` goes through platform370's HTTP client (`http_370.cpp`, the backend or the socket to `--http`), so the page, its CSS and its images are all server answers. soa-viewer (3.8.0, no server) fetches `file:///android_asset/…` from its APK.
 4. **The label stand-in can go** once the web view is the default. It is a client change (`webview_local.cpp`), and its `docs/client-changes.md` entry goes with it.
@@ -205,7 +205,7 @@ Screenshots are in `/home/fish/.claude/jobs/ac4802d9/tmp/webview/`:
 - `run2/shots/02a-notice-webview.png`: **in game**. After login the notice board shows the server's HTML page, laid out over the popup's page area (0, 85, 810×1092 on the 810×1440 game screen) with the game's 閉じる and 今日は表示しない around it. 閉じる closes it (`ShowWebView()` → `webview: closed`).
 - `run1/shots/02-notice.png`: the same popup with today's label stand-in, for comparison.
 - `notice-render.png`: the same HTML rendered offline (`soa-webview-render`). The HTML came from `SOA_NOTICE_HTML_DUMP=… soa-server --selftest player/notice`.
-- `apk-kiyaku-screen.png`, `apk-kiyaku.png`, `apk-comic_index-top.png`, `apk-credit.png`, `apk-copyright_android.png`, `apk-tokutei.png`: the 3.8.0 APK's pages (Japanese terms wrapped with kinsoku, the comic banner images, the CSS header bar).
+- `apk-kiyaku-screen.png`, `apk-kiyaku.png`, `apk-comic_index-top.png`, `apk-credit.png`, `apk-copyright_android.png`, `apk-tokutei.png`: the 3.8.0 APK's pages (Japanese terms wrapped with kinsoku, the comic banner images, the CSS header bar). <!-- 380-ok: the 3.8.0 XAPK as a content source -->
 
 Not tried in game:
 
@@ -237,7 +237,7 @@ Estimates are for one agent and include gates and docs.
 | Stage | Work | Estimate |
 |---|---|---|
 | W0 (done) | This investigation; litehtml through vcpkg; the renderer ported with Japanese breaking and wide viewport; offline tool and tests; the notice board as HTML in game behind `SOA_WEBVIEW` | — |
-| W1 | **Server pages over HTTP:** the `/webview/` route on the CDN router; the `WebView` list with every key; the notice and an "ended" page; the 3.8.0 APK pages from `--apk-dir` / the viewer's XAPK; banner pages from `master_banner`. Tests per route; `docs/server-rules.md` labels | 0.5–1 day |
+| W1 | **Server pages over HTTP:** the `/webview/` route on the CDN router; the `WebView` list with every key; the notice and an "ended" page; the 3.8.0 APK pages from `--apk-dir` / the viewer's XAPK; banner pages from `master_banner`. Tests per route; `docs/server-rules.md` labels | 0.5–1 day | <!-- 380-ok: the 3.8.0 XAPK as a content source -->
 | W2 | **The Java side in the runtime** (`frontend/webview.cpp`) for every host: `ShowWebView` both modes, `IsShowingWebView` (the editable mode's close: an Android-style close button drawn under the page, Back closes it), `SetRootURI` / `OpenBrowser` link policy, `postData` logged. Fetch through platform370's HTTP client (soa, soa-emu) or the APK (soa-viewer, `file:///android_asset`). Render on a worker thread, as Dragalia does, not on the logic thread. Turn it on by default; retire the label stand-in. Gates: smoke, viewer and emulator boots, the session scripts that close the notice board (`flowctl.py login-popups` waits for `ShowWebView(http`) | 1–1.5 days |
 | W3 | **Fonts shared with the text box** (one search, FreeType or stb), README setup | 0.5 day |
 | W4 | **Help:** an optional local copy of the Wayback help site (a fetch script the user runs once; nothing committed); the `:checked` toggles (simplifier rewrite + label taps) | 0.5 day |

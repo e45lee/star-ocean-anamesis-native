@@ -3,6 +3,7 @@
 //   dump = <offset>=<f|i|x>, read from the *first argument* (this) after the call, e.g.
 //   SOA_TRACE="_ZN21CHomeModelViewManager12SetCameraPosEPNS_13HomeCharacterEb:0x3270=f,0x3274=f"
 //   A symbol can also be "0x<ELF vaddr>" (functions without a symbol, e.g. lambdas).
+#include <soa/env.h>
 #include <cstdlib>
 #include <cstring>
 #include <mutex>
@@ -65,7 +66,7 @@ void trace_thunk(Cpu& c) {
 }  // namespace
 
 void install_traces(LoadedLib& lib) {
-    const char* spec = getenv("SOA_TRACE");
+    const char* spec = env::env_str("SOA_TRACE");
     if (!spec) return;
     std::stringstream ss(spec);
     std::string item;

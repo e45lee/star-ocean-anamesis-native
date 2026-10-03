@@ -4,6 +4,7 @@
 //
 // Coordinates: litehtml lays the page out in CSS pixels, `width / zoom` wide; the canvas is in
 // device pixels, so every draw call scales by zoom. Fonts are made at their device size.
+#include <soa/env.h>
 #include <litehtml.h>
 
 #include <algorithm>
@@ -470,7 +471,7 @@ struct WebPage::Impl : lh::document_container {
         }
         text = simplify_css(r.body);
         baseurl = u;
-        if (const char* dump = getenv("SOA_WEBVIEW_DUMP_CSS")) {  // debugging: the stylesheet as litehtml gets it
+        if (const char* dump = env::env_str("SOA_WEBVIEW_DUMP_CSS")) {  // debugging: the stylesheet as litehtml gets it
             if (FILE* f = fopen(dump, "ab")) {
                 fprintf(f, "/* %s */\n%s\n", u.c_str(), text.c_str());
                 fclose(f);

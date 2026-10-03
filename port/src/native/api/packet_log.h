@@ -1,6 +1,6 @@
 #pragma once
 // The in-process route's packet log (port code, not guest behaviour): soa --log-packets DIR /
-// SOA_LOG_PACKETS writes DIR/packets.log in the form soa-server --log-packets writes it
+// --log-packets DIR writes DIR/packets.log in the form soa-server --log-packets writes it
 // (server/net/game.cpp), so that tools/compare_packets.py compares a run of the in-process port
 // with a run against soa-server (tests/diff/). Off unless the option is given.
 //

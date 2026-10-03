@@ -53,6 +53,7 @@ add_library(soaruntime_iface INTERFACE)
 target_include_directories(soaruntime_iface INTERFACE ${SOA_RUNTIME_DIR}/src)
 target_compile_definitions(soaruntime_iface INTERFACE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)
 target_link_libraries(soaruntime_iface INTERFACE
+  soa_env
   dynarmic
   soa::EGL
   soa::GLESv2

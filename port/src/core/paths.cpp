@@ -45,12 +45,12 @@ struct Roots {
     std::string root;
     std::vector<std::string> all;
     Roots() {
-        const std::string& o = options().repo_dir;  // --repo / SOA_REPO
+        const std::string& o = options().repo_dir;  // --repo
         if (!o.empty()) {
             root = real(o);
-            if (root.empty()) LOGW("paths", "--repo / SOA_REPO: %s not found", o.c_str());
+            if (root.empty()) LOGW("paths", "--repo: %s not found", o.c_str());
         }
-        const char* how = "--repo / SOA_REPO";
+        const char* how = "--repo";
         if (root.empty()) {
             how = "the executable";
             std::string exe = real("/proc/self/exe");
@@ -61,7 +61,7 @@ struct Roots {
             root = upwards(real("."));
         }
         if (root.empty()) {
-            LOGW("paths", "the repository wasn't found (use --repo DIR / SOA_REPO); repo files are looked up in the working directory");
+            LOGW("paths", "the repository wasn't found (use --repo DIR); repo files are looked up in the working directory");
             return;
         }
         all.push_back(root);

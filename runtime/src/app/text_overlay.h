@@ -13,7 +13,7 @@
 // (hle/gfx.h) for the box to update as you type.
 //
 // Text is rendered with FreeType from a system font with Japanese glyphs, found at the first draw:
-// HostConfig::font / SOA_FONT (a path; "none" turns the box off), else the known paths of IPAex
+// HostConfig::font (--font: a path; "none" turns the box off), else the known paths of IPAex
 // Gothic, Noto Sans CJK and Droid Sans Fallback, else `fc-match :lang=ja` (plus a fallback face from
 // fc-match for the code points it lacks: Droid Sans Fallback has no Latin). Without one the box is
 // not drawn and the window title alone shows the text (one log line says so).
@@ -41,7 +41,7 @@ struct Layout {
 // it for SDL_SetTextInputRect, the render thread to draw.
 Layout layout(int vx, int vy, int vw, int vh, int dh);
 
-// The font: a path, "none" (no box), or "" (SOA_FONT, then the search above). Set before the
+// The font: a path, "none" (no box), or "" (the search above). Set before the
 // first draw (app::run, from HostConfig::font).
 void set_font_request(const std::string& path);
 

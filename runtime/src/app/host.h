@@ -36,7 +36,7 @@ struct HostConfig {
     std::vector<std::string> actions;               // "S:COMMAND": a control command S seconds after start
     std::string control_path;                       // read control commands from this FIFO
     std::string font;                               // the text box's font (app/text_overlay.h): a path,
-                                                    // "none", or "" (SOA_FONT, then a system CJK font)
+                                                    // "none", or "" (a system CJK font)
 
     // Hooks (optional):
     // a control command the host loop doesn't know; return true when handled

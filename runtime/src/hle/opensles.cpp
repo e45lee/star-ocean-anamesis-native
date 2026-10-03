@@ -1,5 +1,6 @@
 // OpenSL ES (Android flavour): engine, output mix, PCM buffer-queue audio players.
 // Mixed on a host thread and fed to the frontend's audio device.
+#include <soa/env.h>
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -90,7 +91,7 @@ SlObject* owner(Cpu& c) { return ((Itf*)c.x(0))->owner; }
 // SOA_AUDIO_DUMP=<dir>: writes the PCM each player enqueues to <dir>/player<N>.wav (N in
 // creation order), before mixing and resampling, so decoded audio can be compared exactly.
 void dump_open(SlObject* o) {
-    static const char* dir = getenv("SOA_AUDIO_DUMP");
+    static const char* dir = env::env_str("SOA_AUDIO_DUMP");
     static std::atomic<int> next{0};
     if (!dir) return;
     char path[512];

@@ -33,6 +33,7 @@
 //                         ASON (DeserializeBinary, Serialize) comes back byte-identical.
 //   wire/examples         worked examples for docs/api.md.
 // SOA_WIRE_DUMP=FILE appends the measured layouts (docs/api-wire.txt) and the examples to FILE.
+#include <soa/env.h>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -71,7 +72,7 @@ constexpr size_t kCap = 0x10000;
 
 FILE* dump_file() {
     static FILE* f = [] {
-        const char* p = getenv("SOA_WIRE_DUMP");
+        const char* p = env::env_str("SOA_WIRE_DUMP");
         return p ? fopen(p, "a") : nullptr;
     }();
     return f;

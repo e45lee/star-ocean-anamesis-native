@@ -77,26 +77,86 @@ using native::stub_at;
 
 // ---- switches ----
 
-bool env_on(const char* name) {
-    const char* e = getenv(name);
-    return e && *e && *e != '0';
+namespace {
+std::mutex g_check_m;
+std::map<std::string, CheckOptions>& check_table() {  // --live-check, by family tag
+    static std::map<std::string, CheckOptions> t;
+    return t;
 }
-bool env_listed(const char* env, const char* s, bool all_word) {
-    const char* e = getenv(env);
-    if (!e || !s) return false;
-    std::string list = std::string(",") + e + ",";
-    return list.find(std::string(",") + s + ",") != std::string::npos || (all_word && list.find(",all,") != std::string::npos);
+std::vector<Family*>& families() {  // every constructed family
+    static std::vector<Family*> v;
+    return v;
 }
-Only::Only(const char* env_var) {
-    const char* e = getenv(env_var);
-    if (!e) return;
-    std::string s = e;
+std::vector<std::string> split(const std::string& s, char sep) {
+    std::vector<std::string> out;
     for (size_t p = 0; p <= s.size();) {
-        size_t q = s.find(',', p);
+        size_t q = s.find(sep, p);
         if (q == std::string::npos) q = s.size();
-        if (q > p) subs.push_back(s.substr(p, q - p));
+        if (q > p) out.push_back(s.substr(p, q - p));
         p = q + 1;
     }
+    return out;
+}
+bool whole(const std::string& v, int lo, int* out) {
+    char* end = nullptr;
+    long n = strtol(v.c_str(), &end, 10);
+    if (v.empty() || *end || n < lo || n > 1000000000) return false;
+    *out = (int)n;
+    return true;
+}
+}  // namespace
+
+bool parse_live_check(const std::string& spec, std::string* err) {
+    auto parts = split(spec, ':');
+    if (spec.empty() || spec[0] == ':' || parts.empty()) return *err = "expected FAMILY[,FAMILY..][:KEY[=VALUE]..]", false;
+    CheckOptions o;
+    for (size_t k = 1; k < parts.size(); k++) {
+        const std::string& kv = parts[k];
+        size_t eq = kv.find('=');
+        std::string key = kv.substr(0, eq), val = eq == std::string::npos ? "" : kv.substr(eq + 1);
+        bool has = eq != std::string::npos;
+        if (key == "every" && has && whole(val, 1, &o.every)) continue;
+        if (key == "budget" && has && whole(val, 1, &o.budget)) continue;
+        if (key == "out" && has && !val.empty()) {
+            o.out = val;
+            continue;
+        }
+        if (key == "only" && has && !(o.only = split(val, '|')).empty()) continue;
+        if (key == "trace" && !has) {
+            o.trace = true;
+            continue;
+        }
+        if (key == "dump" && !has) {
+            o.dump = true;
+            continue;
+        }
+        return *err = "\"" + kv + "\": expected every=N, budget=N, out=FILE, only=SUB[|SUB..], trace or dump", false;
+    }
+    std::lock_guard lk(g_check_m);
+    for (auto& fam : split(parts[0], ',')) check_table()[fam] = o;
+    return true;
+}
+
+bool apply_live_check(std::string* err) {
+    std::lock_guard lk(g_check_m);
+    for (auto& [name, o] : check_table()) {
+        Family* f = nullptr;
+        for (Family* g : families())
+            if (name == g->tag) f = g;
+        if (!f) {
+            std::string have;
+            for (Family* g : families()) have += (have.empty() ? "" : ", ") + std::string(g->tag);
+            *err = "no family \"" + name + "\" (registered: " + (have.empty() ? "none" : have) + ")";
+            return false;
+        }
+        if (o.every) f->every = o.every;
+        f->budget = o.budget;
+        f->out_path = o.out;
+        f->only.subs = o.only;
+        f->trace = o.trace, f->dump = o.dump;
+        f->on = true;
+    }
+    return true;
 }
 bool Only::match(const char* sym) const {
     if (subs.empty()) return true;
@@ -671,15 +731,10 @@ void undo_note(u64 a, u32 n) {
     }
 }
 
-Family::Family(const char* tag_, const char* env_, int every_, bool sret_marked_)
-    : tag(tag_), log_tag(std::string(tag_) + "_check"), env(env_), sret_marked(sret_marked_), only((std::string(env_) + "_CHECK_ONLY").c_str()) {
-    std::string e = env_;
-    on = env_on((e + "_CHECK").c_str());
-    const char* ev = getenv((e + "_CHECK_EVERY").c_str());
-    every = ev ? std::max(1, atoi(ev)) : every_;
-    if (const char* o = getenv((e + "_CHECK_OUT").c_str())) out_path = o;
-    trace = getenv((e + "_CHECK_TRACE").c_str()) != nullptr;
-    dump = getenv((e + "_CHECK_DUMP").c_str()) != nullptr;
+Family::Family(const char* tag_, int every_, bool sret_marked_)
+    : tag(tag_), log_tag(std::string(tag_) + "_check"), every(every_), sret_marked(sret_marked_) {
+    std::lock_guard lk(g_check_m);
+    families().push_back(this);  // (static families: --live-check switches them on, apply_live_check)
 }
 
 int Family::add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label) {

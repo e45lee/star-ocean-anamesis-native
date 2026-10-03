@@ -1,5 +1,5 @@
 """The tutorial shards: the `tutorial` flow in stages, each from the server state the full flow has
-at the stage's start (diffdrive/prepared.py: the `tutorial` replay corpus cut after its
+at the stage's start (soadrive/prepared.py: the `tutorial` replay corpus cut after its
 UpdateTutorial(N), replayed by soa-server). The 3.7.0 client resumes the tutorial from the
 server's Player.tutorial_status at Login (seen on every target, 2026-10-03): status 1 -> the second
 scene (MissionTalk mc00_015), 2 -> the battle tutorial (MissionStart ms00_001), 3 -> the third

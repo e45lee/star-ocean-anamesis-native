@@ -81,23 +81,33 @@ def auto_mode(s):
     s.ctl("tap:612:1240", "wait:1000", "tap:115:45", "wait:1000")
 
 
-def rounds(s, k, limit=150):
+def rounds(s, k, limit=150, shot_fmt=None, on_round=None, stop=None):
     """Rounds of taps (one every ~9 s, paced by a screenshot) through the scenes and the battle
-    until UpdateTutorial(k)."""
+    until UpdateTutorial(k). shot_fmt (e.g. "tutorial-%03d"): every round's screenshot kept under
+    that name (tools/compare_tutorial.py aligns them); on_round(i, path) after each shot. Returns
+    the number of rounds. stop: another predicate that ends the rounds (e.g. home reached)."""
     i = 0
-    while i < limit and not tut(s, k)():
+    while i < limit and not tut(s, k)() and not (stop and stop()):
         if not s.alive():
             s.miss("tutorial (the client exited)")
             raise Abort("tutorial")
         # (the shot paces the rounds: send() returns once it is written, after the wait)
-        s.send(["wait:6000", "shot:" + s.scratch("round.png")] + TUTORIAL_TAPS)
+        path = s.layout.shot_path(shot_fmt % i) if shot_fmt else s.scratch("round.png")
+        if on_round:
+            s.send(["wait:6000", "shot:" + path])
+            on_round(i, path)
+            s.send(TUTORIAL_TAPS)
+        else:
+            s.send(["wait:6000", "shot:" + path] + TUTORIAL_TAPS)
         i += 1
+    return i
 
 
-def home_part(s):
+def home_part(s, popups=True, home_wait=3000):
     """From the mission-menu step (UpdateTutorial 4): planet Mere's map, 1-01 (ここをタップ) ->
     ストーリー開始 -> the story, skipped -> UpdateTutorial(6) -> "summoned companions" 次へ -> ホーム
-    -> the home tutorial -> UpdateTutorial(9) -> the notice board and the LOGIN BONUS -> home."""
+    -> the home tutorial -> UpdateTutorial(9) -> the notice board and the LOGIN BONUS (popups=False:
+    left open, as the sessions' home shot always showed the board) -> home."""
     s.ctl("wait:10000")
     s.shot("05-tutorial-map")
     s.ctl("tap:360:640", "wait:3000", "tap:515:714")
@@ -123,8 +133,9 @@ def home_part(s):
     s.wait_for("UpdateTutorial(9) (the tutorial cleared)", 90, tut(s, 9))
     # The notice board (its page text only in-process: the port's web-view stand-in,
     # docs/client-changes.md, hence "info") and the LOGIN BONUS, then home.
-    launch.popups(s, "08c-notice", "08d-login-bonus")
-    s.ctl("wait:3000")
+    if popups:
+        launch.popups(s, "08c-notice", "08d-login-bonus")
+    s.ctl("wait:%d" % home_wait)
     s.shot("09-home")
 
 

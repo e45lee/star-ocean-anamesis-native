@@ -2,6 +2,10 @@
 emulator/scripts/emulator_session.sh, summer_demo.sh and the port's session scripts, which use the
 same points on both programs."""
 TITLE = "364:713"            # TAP TO START (anywhere on the title), also a communication dialog's リトライ
+TITLE_PORT = "364:1000"       # TAP TO START as the port's sessions tap it (phone370.sh; lower on the same title)
+NOTICE_CLOSE = "364:1133"     # the notice board's 閉じる
+LOGIN_BONUS_CLOSE = "364:1063"  # the LOGIN BONUS popup's 閉じる (on home: the gap between ミッション and スフィア211)
+FAVOR_BONUS_CLOSE = "364:928"   # the favor login bonus popup's 閉じる (on home: the home character)
 DATA_DECIDE = "364:1043"     # Episodeデータ管理 -> 決定 (the data check's first dialog)
 DATA_DOWNLOAD = "515:800"    # the download dialog's ダウンロード
 DATA_DONE = "364:790"        # the download's 完了

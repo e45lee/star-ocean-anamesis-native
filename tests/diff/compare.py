@@ -8,8 +8,8 @@ Writes the report and returns PASS/FAIL."""
 import os
 import subprocess
 
-from . import screens, state
-from .proc import REPO
+from soadrive import screens, state
+from soadrive.proc import REPO
 
 
 def packets(ref, run):

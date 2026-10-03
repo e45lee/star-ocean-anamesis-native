@@ -755,7 +755,7 @@ def main():
     for t in list(tables) + ["(tools/server_state.py)"]:
         if consumers.get(t):
             w("| `%s` | %s |" % (t, ", ".join(sorted(consumers[t]))))
-    w("\n`tests/diff/diffdrive/state.py` reads **every** table generically (`select *`, masked by column-name patterns; skips `meta`, `wire_device`).\n")
+    w("\n`control/soadrive/state.py` reads **every** table generically (`select *`, masked by column-name patterns; skips `meta`, `wire_device`).\n")
 
     w("### 1.6 Relationships and today's violations\n")
     w("Every reference between tables (`m:` = the read-only master DB, not enforceable by SQLite). Per state: "

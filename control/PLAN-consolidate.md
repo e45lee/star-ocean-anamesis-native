@@ -1,7 +1,12 @@
 # Plan: one driver layer for the port and the emulator
 
-Status: **plan only** (agent `summer-demo`, 2026-10-01). Nothing below is done yet. `port/scripts/*` is
-being edited by another agent (p5a-test-baseline), so the migration starts after that lands.
+Status: **done but the emulator's phase trace** (agent `consolidate`; step 7 by agent `rebuild-tooling`, 2026-10-03; written by agent
+`summer-demo`, 2026-10-01, approved by the user 2026-10-03 as part of port/PLAN.md task 5). What was built
+is in control/README.md "soadrive"; "As built" at the end says, step by step, what changed from this plan.
+Two merges before it did parts of it: the faster-tests work (the slot pool `control/soaslot.py`,
+tests/diff's parallel flows and shards from prepared states in `tests/diff/diffdrive` + `flows/`,
+`tools/tests_for.py`, the `tools/gate.sh` tiers) and the env->flags cleanup (settings are command-line
+flags; docs/environment.md).
 
 **Scope (the user, 2026-10-01).** This covers only what the port (`soa`, 3.7.0 client, in-process
 server: the default, no `--restore`) and the emulator (`soa-emu` + `soa-server`) can
@@ -196,3 +201,34 @@ Each step is one or a few commits, keeps every old entry point working, and is g
 | `emulator-viewer/scripts/*` | the 3.8.0 viewer: a different UI and its own references; may import `soadrive.proc` / `screens` later |
 | `scripts/build.sh`, `fetch-deps.sh`, `run-port.sh`, `run-emulator-370.sh`, `run-viewer-380.sh` | end-user launchers, not test drivers |
 | `tests/test_kvs.py`, `test_saves.py`, `test_script.py` | `soa_save` unit tests (no game); `tests/tutorial_milestones.txt` stays as the shared data file the newplayer flow reads |
+
+## As built (agent `consolidate`, 2026-10-03)
+
+- **Steps 1-2 (the core, the names):** `tests/diff/diffdrive` (faster-tests: proc, fifo, screens, state, ui370,
+  targets, prepared, flows) moved to `control/soadrive/` unchanged in layout; added `milestones.py` (the one wait
+  implementation: flowctl's `LOG.pos` cursor and its tap-until rule moved there, whole-file predicates, `poll`) and
+  `popups.py` (login popups, name entry). `soactl.py` and `flowctl.py` are thin CLIs over it (same arguments, output,
+  exit codes); tests/diff keeps only `compare.py` and `difftest.py`. D1-D3, D7 (named in `ui370.py`), D10, D11
+  were done by diffdrive already. Not done: `state.py` as the parser of `tools/server_state.py`'s text (the sessions
+  still regex the dump: D9 is shared per session, not in one reader).
+- **Steps 3, 5, 6 (sessions):** `targets.Run` got layouts (tests/diff's run dir; the port sessions' `OUT/log.txt`,
+  `OUT/shots`, `TMP/data`; the emulator session's `OUT/emu.log`, flat `OUT/NAME.png`), the sessions' options (the
+  server's own seed and no clock, the episode-flag client save, extra client flags, env, a held slot, later boots on
+  the same phone) and cursor waits. `control/run.py SESSION` runs `control/soadrive/sessions/<name>.py`; every
+  script in step 6's list plus battle/gacha/rebase-inproc/tutorial/newplayer and the emulator's
+  `emulator_session.sh` (seeded, `--new-player`) and `summer_demo.sh` is a wrapper now (names, arguments,
+  environment knobs, output files, verdict lines and exit codes kept; the `restore_*` sessions are named
+  `battle-gacha`, `missions`, `favor`, their scripts keep their names). The login of every session is the shared
+  `flows/launch.py` (packet-log milestones: the port sessions run with `--log-packets OUT/packets`), D5/D6 in one place.
+  Sessions keep their port-only shortcuts (`mission:`/`phase:`/`clock:`, phase lines) and say so (`TARGETS_WHY`);
+  `gacha`, `seeded`, `newplayer`, `summer-demo` run against all three targets. `growth_drive.sh` no longer existed
+  (P5a removed it).
+- **Step 4:** the packet log for the in-process server existed already (`soa --log-packets`, faster-tests); the
+  emulator's phase trace was not added (sessions that need phase lines stay port-only).
+- **Step 7:** built by agent `rebuild-tooling` (the runtime's stub, `control/gdbclient.py`); `soadrive/gdb.py`
+  wires it: `Config(gdb=True)` starts the client with `--gdb 127.0.0.1:PORT`, `Run.gdb()` attaches at a milestone.
+- **Step 8:** control/README.md, port/README.md updated; `port/scripts/phone370.sh` stays for the scripts not converted
+  (debug sessions, `profile_extra.sh`, `smoke_vs_emu.sh`, `scripts/make-phone-370.sh`'s docs); the forwarding stubs
+  `port/scripts/soactl.py` / `flowctl.py` stay until no branch uses them.
+- **tools/tests_for.py:** a session module (`control/soadrive/sessions/X.py`, its `WRAPPER`) selects its script's tests;
+  `declared` APIs follow a wrapper into its session; a driver change also runs `session:rebase-inproc` and `emu:seeded`.

@@ -49,7 +49,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T0 | `server-format` | 6 s | - | server/ C++ formatted (clang-format 18) | `tools/format_server.sh --check` |
 | T0 | `schema-inventory` | 1 s | - | the state schema inventory parses (server/PLAN-schema.md) | `python3 tools/schema_inventory.py` |
 | T0 | `no-380` | 1 s | - | no reference to the offline build outside the allowed places (tools/check_no_380.sh) | `tools/check_no_380.sh` |
-| T0 | `pytest-control` | 10 s | - | the slot pool and tools/tests_for.py's path rules (no game) | `.venv/bin/python -m pytest -q control/tests` |
+| T0 | `pytest-control` | 50 s | - | the slot pool, the driver library control/soadrive (log cursor, FIFO, resend rules) and tools/tests_for.py's path rules (no game) | `.venv/bin/python -m pytest -q control/tests` |
 | T0 | `pytest-soa-save` | 5 s | - | soa_save's unit tests (no game) **Known failure:** tests/test_kvs.py::test_unlock_all_keeps_existing needs the offline game's package in apk/, which a worktree lacks (untracked); passes in the main checkout | `.venv/bin/python -m pytest -q tests` |
 | T0 | `soa-selftest` | 70 s | 1 | every port selftest (natives off; every registered test, one boot; carried past a crashing test) | `port/scripts/selftest_resilient.sh {out}` |
 | T0 | `impact-map` | 3 s | - | tests/impact.json knows every API soa-server answers and every test of tests/tiers.json | `python3 tools/tests_for.py --check` |
@@ -90,6 +90,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T3 | `session:sphere211-continue` | 7.0 min | 1 | a lost Sphere 211 battle continued and retired, the stamina healed, the achievements | `port/scripts/sphere211_continue_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:episode-movie` | 8.0 min | 1 | an episode pack downloaded, the opening movie | `port/scripts/episode_movie_session.sh build/port/soa {out} {tmp} 2` |
 | T3 | `session:newplayer-download` | 15.0 min | 1 | the full 3 GB download from the in-process CDN, then the new player | `SOA_PHONE=none port/scripts/newplayer_session.sh build/port/soa {out} {tmp}` |
+| T3 | `session:gdb-probe` | 2.2 min | 1 | the guest debugger at a milestone (soadrive/gdb.py over the runtime's --gdb stub): attach at home, a breakpoint hit, x0 and memory read, a step, detach, the client runs on | `control/run.py gdb-probe build/port/soa {out} {tmp}` |
 | T3 | `session:debug` | 2.0 min | 1 | the framework's debug windows | `port/scripts/debug_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:debug-input` | 2.0 min | 1 | the debug windows' input | `port/scripts/debug_input_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:profile-extra` | 5.0 min | 1 | the profiling flow over the screens the others don't visit | `port/scripts/profile_extra.sh build/port/soa {out} {tmp}` |

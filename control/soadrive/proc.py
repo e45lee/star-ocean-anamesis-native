@@ -6,7 +6,8 @@ import socket
 import subprocess
 import time
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+# control/soadrive/proc.py -> the repository root
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MAX_RSS_KB = 6 * 1024 * 1024
 
 

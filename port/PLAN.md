@@ -26,7 +26,6 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 | **4b** | **Server code: readability, then the database schema** (`server/PLAN-readability.md` R0-R20, then `server/PLAN-schema.md` S0-S12; R12/R17 after S4/S9) | the two plans | 🔄 resumed 2026-10-03: readability phase 1 done (R0-R11, R13-R16, R18; 67db9de); next on resume: one full tests/diff over the phase, then schema S0-S12, then R12, R17, R19 |
 | **5** | **Rebuild tooling, together with the control-script consolidation** (`control/PLAN-consolidate.md`, incl. the runtime's GDB stub) | below | 🔄 2026-10-03: decomp --into, scaffolding, the GDB stub (`--gdb`) and the fresh profile running (agent rebuild-tooling); the consolidation (soadrive, flows, thin wrappers) after the env→flags cleanup lands |
 | **5b** | **W: native Windows runner** (the user, 2026-10-02: before N) | below | 🔄 phase 1 started early (2026-10-03, to speed things up; the user): the MinGW cross build, soa-server.exe and the runtime tests on the host via WSL interop, the `long` audit (agent win-runner) |
-| **4c** | **Multiplayer state: the schema for several players** (`server/PLAN-multiplayer-schema.md`, steps M1…) | that plan | ⏳ plan being written (agent mp-schema); runs **strictly after 4b's S0–S12** (the user, 2026-10-03) |
 | **6** | **N: rebuild the natives** | below | ⏳ ongoing after 5b |
 | **7** | **H: trim the server hooks** | below | ✅ done with P3 (25fd054) |
 
@@ -161,6 +160,9 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 - **`apply_client_master`'s `sqlite3_exec` hook:** already gone with the dump (`libs/lib_sqlite.cpp`). The in-process CDN serves the edited master.
 
 **Proof:** a per-API check that the override's `Request` equals what `soa-server` decodes from the 3.7.0 client's packet.
+
+## Future work (not queued; needs the user's review)
+- **Multiplayer state: the schema for several players** ([`server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md), steps M1…): a plan only, written for review (agent mp-schema, 2026-10-03). Not a task until the user has reviewed it and queued it; if queued, it starts only after 4b's S0–S12 have landed.
 
 ## Working rules
 - **Branches:** commits go on `main` (since 2026-10-03; until then on `linux-port`, which was squash-merged into main as one commit on 2026-10-03); each agent gets a worktree on `port/<name>` off main, merged back into main.

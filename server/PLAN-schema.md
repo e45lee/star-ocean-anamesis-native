@@ -1,6 +1,6 @@
 # Plan: rationalize the local server's state schema
 
-**Multiplayer comes after this plan (the user, 2026-10-03):** the schema changes multiplayer needs are planned separately in [`PLAN-multiplayer-schema.md`](PLAN-multiplayer-schema.md) (steps M1…) and run **strictly after S12** (and R12, R17, S11+R19) have landed, starting from this plan's final schema. Nothing here is changed for them: S3–S12 proceed as written; where one makes an M step costlier, the M step says so.
+**Multiplayer is future work, outside this plan (the user, 2026-10-03):** the schema changes multiplayer would need are sketched in [`PLAN-multiplayer-schema.md`](PLAN-multiplayer-schema.md) (steps M1…), a plan for review only, not queued. If it is queued, it starts only after S12 (and R12, R17, S11+R19) have landed, from this plan's final schema. Nothing here changes for it: S3–S12 proceed as written; where one makes an M step costlier, the M step says so.
 
 Status: plan only (2026-10-02, agent `schema-plan`, branch `port/schema-plan` off `linux-port` ec4354c). No server code is changed by this plan; the first commit that implements it is step S1 below.
 

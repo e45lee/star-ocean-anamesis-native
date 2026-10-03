@@ -15,8 +15,6 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
   - the out-of-process packets equal `soa-emu`'s;
   - the emulator and viewer boots.
 
-**⏸ The plan is paused (the user, 2026-10-03).** Nothing runs until it's resumed. On resume: `tests/diff/run.sh` over readability phase 1, then `server/PLAN-schema.md` S0-S12, then R12/R17/R19; the control-script consolidation still waits for the user's review of `control/PLAN-consolidate.md`.
-
 ## Tasks, in order
 | # | Task | Scope | Status |
 |---|---|---|---|
@@ -25,7 +23,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 | **2b** | **Faster test setup: a shared, linked pre-downloaded 3.7.0 phone** | below | ✅ done (45b5403) |
 | **3** | **P5b: `tests/diff/`, port-vs-emulator differential flows** | below | ✅ done (32ff1d9; `tests/diff/README.md`) |
 | **4** | **P3 + P4: offline-build cleanup and references** | below | ✅ done (25fd054, 7940bac; `tools/check_no_380.sh` strict since e229364) |
-| **4b** | **Server code: readability, then the database schema** (`server/PLAN-readability.md` R0-R20, then `server/PLAN-schema.md` S0-S12; R12/R17 after S4/S9) | the two plans | ⏸ paused (2026-10-03): readability phase 1 done (R0-R11, R13-R16, R18; 67db9de); next on resume: one full tests/diff over the phase, then schema S0-S12, then R12, R17, R19 |
+| **4b** | **Server code: readability, then the database schema** (`server/PLAN-readability.md` R0-R20, then `server/PLAN-schema.md` S0-S12; R12/R17 after S4/S9) | the two plans | 🔄 resumed 2026-10-03: readability phase 1 done (R0-R11, R13-R16, R18; 67db9de); next on resume: one full tests/diff over the phase, then schema S0-S12, then R12, R17, R19 |
 | **5** | **Rebuild tooling** | below | ⏳ |
 | **5b** | **W: native Windows runner** (the user, 2026-10-02: before N) | below | ⏳ after 5 |
 | **6** | **N: rebuild the natives** | below | ⏳ ongoing after 5b |

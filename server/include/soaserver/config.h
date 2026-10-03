@@ -22,8 +22,8 @@ struct ServerConfig {
     std::string db;                // the state DB (SOA_SERVER_DB; "" = server.sqlite3 in the working directory)
     std::string seed;              // the save a new state is seeded from (SOA_SERVER_SEED)
     std::string game_xml;          // the client's Game.xml, the last seed fallback (SOA_SERVER_GAME_XML)
-    std::string gacha_pools;       // --gacha-pools: the reconstructed gacha pools ("" = SOA_GACHA_POOLS, else data/gacha_pools.sqlite3 in the repo)
-    bool has_seed_rng = false;     // a fixed RNG seed (SOA_SERVER_SEED_RNG), else the time
+    std::string gacha_pools;  // --gacha-pools: the reconstructed gacha pools ("" = SOA_GACHA_POOLS, else data/gacha_pools.sqlite3 in the repo)
+    bool has_seed_rng = false;  // a fixed RNG seed (SOA_SERVER_SEED_RNG), else the time
     uint64_t seed_rng = 0;
     // Free coins a new local player starts with (--start-coins; docs/server-rules.md "Seed").
     uint32_t start_coins = 300000;
@@ -35,16 +35,16 @@ struct ServerConfig {
     int64_t clock_offset = 0;
 
     // ---- modules --------------------------------------------------------------------------------
-    bool galaxy_pass = false;      // --galaxy-pass (api/shop/subscription.cpp)
-    bool enable_events = false;    // --enable-events (enable_events.h)
-    std::string event_keywords;    // --event-keywords; "" = kDefaultEventKeywords
-    bool restore_tower = false;    // --restore-tower (api/tower/tower.cpp)
+    bool galaxy_pass = false;  // --galaxy-pass (api/shop/subscription.cpp)
+    bool enable_events = false;  // --enable-events (enable_events.h)
+    std::string event_keywords;  // --event-keywords; "" = kDefaultEventKeywords
+    bool restore_tower = false;  // --restore-tower (api/tower/tower.cpp)
     std::string campaign_master_db;  // SOA_MASTER_DB: the campaign module's master DB
-    std::string campaign_seed;       // SOA_CAMPAIGN_SEED=<mission label>
+    std::string campaign_seed;  // SOA_CAMPAIGN_SEED=<mission label>
 
     // ---- test hooks -----------------------------------------------------------------------------
-    std::string fail;              // SOA_SERVER_FAIL="Method:code[,Method:code]"
-    bool surprise = false;         // SOA_SERVER_SURPRISE=1: force surprise missions
+    std::string fail;  // SOA_SERVER_FAIL="Method:code[,Method:code]"
+    bool surprise = false;  // SOA_SERVER_SURPRISE=1: force surprise missions
 
     // ---- files ----------------------------------------------------------------------------------
     // The source checkouts repo files (master DBs, seed saves, port/server-data) are looked up in,
@@ -59,11 +59,11 @@ struct ServerConfig {
     // Login / SimpleLogin answer AssetPath = cdn_url + "/download", MasterPath = cdn_url + "/master"
     // and r_ver = cdn_revision (docs/online-server.md section 6); empty (soa) = not sent.
     std::string cdn_url;
-    std::string cdn_revision;      // the served version.bin's revision (cdn::Tree::build sets it)
-    std::string download_dir;      // the 3.7.0 download tree served (--download-dir)
-    bool cdn_standins = true;      // serve the stand-in assets too (--standin-assets DIR|off)
-    std::string standin_dir;       // "" = the repo's standin-assets
-    std::string cdn_scratch;       // where the served master and the bundle-hash cache go ("" = data_root, else /tmp)
+    std::string cdn_revision;  // the served version.bin's revision (cdn::Tree::build sets it)
+    std::string download_dir;  // the 3.7.0 download tree served (--download-dir)
+    bool cdn_standins = true;  // serve the stand-in assets too (--standin-assets DIR|off)
+    std::string standin_dir;  // "" = the repo's standin-assets
+    std::string cdn_scratch;  // where the served master and the bundle-hash cache go ("" = data_root, else /tmp)
 };
 
 // The configuration in force (mutable: the embedder fills it, tests change it).

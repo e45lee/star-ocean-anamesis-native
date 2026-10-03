@@ -132,6 +132,11 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 - **Boundaries where data is opaque or plain** (SQLite handles; `Aska::JpegUtil`, not `jpeg_*`).
 - **Bridge what crosses:** structs, callbacks, paths, allocators.
 - **Version-match where bytes matter.**
+- **Per library (agreed with the user, 2026-10-03; shares from `port/REBUILD-QUEUE.md`):**
+  - **Host library at the boundary, wave 0, one agent each:** SQLite 3.13.0 (5.1%; vcpkg's newer SQLite, compared with the guest because a newer planner can order rows differently without `ORDER BY`; pin 3.13.0 via `FetchContent` if it does), libVorbis + ogg (1.3%; callbacks through `guest_call`), zstd (0.3%), zlib 1.2.5 (0.1%; decompression identical, compression bytes may differ: matters only where the game stores or compares them; on Windows `z_stream`'s `uLong` fields are 32-bit, so a layout shim), IJG libjpeg 9b (`FetchContent`, bit-exact; boundary `Aska::JpegUtil`), the OpenSSL pieces (0.6%, 4 functions). About 7.4% of guest time without decompiling.
+  - **libc++ is not hostable:** guest code inlines its templates and embeds `std::string` and containers using the NDK's layout, so the hot out-of-line helpers become small natives against that layout.
+  - **Bullet:** the version-pin task below decides.
+  - **Hashes** (`hash`, 3.0%): SpookyHash / CRC rewritten from their reference implementations, checked bit-exact against the guest; CHash32 from the decompile.
 
 **Exceptions:**
 - **`Framework::Cocos` is tri-Ace's own cocos2d-x-like UI**, not cocos2d-x: no `cocos2d::` symbols, objects used at fixed offsets, converted `.csf` layouts, drawn through Aska. It's rewritten from Ghidra, with cocos2d-x / Cocos Studio sources as a reference only.

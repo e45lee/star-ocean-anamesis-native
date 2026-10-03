@@ -18,16 +18,23 @@ import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from diffdrive import compare, targets  # noqa: E402
-from diffdrive.flows import event, seeded, tutorial  # noqa: E402
+from diffdrive.targets import soaslot  # noqa: E402
+from diffdrive.flows import event, seeded, shard_battle, shard_gacha, shard_login, shard_tutorial, tutorial  # noqa: E402
 
-FLOWS = {f.NAME: f for f in (seeded, tutorial, event)}
+# The full flows (the end-of-batch gate: `run.sh` with no flow names) and the shards (short flows
+# for per-change gating: tools/tests_for.py picks them; tests/diff/README.md "Shards").
+FULL = (seeded, tutorial, event)
+SHARDS = (shard_login, shard_battle, shard_gacha) + shard_tutorial.STAGES
+FLOWS = {f.NAME: f for f in FULL + SHARDS}
 REF = "emu"
 
 
-def run_target(flow, target, rdir, opts, inject, out):
+def run_target(flow, target, rdir, opts, inject, out, prepared=None):
     cfg = flow.config(targets.Config)
     if inject:
         cfg.server_args += inject
+    if prepared:
+        cfg.prepared = prepared
     r = targets.Run(target, rdir, cfg, keep=opts.keep)
     out[target] = r
     t0 = time.monotonic()
@@ -47,21 +54,60 @@ def run_target(flow, target, rdir, opts, inject, out):
             r.stop()
         except Exception:
             traceback.print_exc()
-        r.elapsed_total = int(time.monotonic() - t0)
+        r.elapsed_total = int(time.monotonic() - t0) - getattr(r, "queued", 0)
+
+
+def run_flow(name, tgts, o, inject, out, results, start_gate):
+    """One flow: its targets in parallel (each queued for a game slot, control/soaslot.py), then
+    the comparison. results[name] = (ok, summary line, report text)."""
+    flow = FLOWS[name]
+    fdir = os.path.join(out, name)
+    os.makedirs(fdir, exist_ok=True)
+    t0 = time.monotonic()
+    prepared = None
+    if hasattr(flow, "prepare"):
+        try:
+            prepared = flow.prepare(os.path.join(fdir, "prepared"), targets.binaries()["server"])
+        except Exception as e:
+            text = "# tests/diff flow %s\n\nFAIL: preparing the server state: %s\n" % (name, e)
+            open(os.path.join(fdir, "report.txt"), "w").write(text)
+            results[name] = (False, "FAIL %-14s %4ds  (no prepared state)" % (name, 0), text)
+            return
+    runs, threads = {}, []
+    for t in tgts:
+        with start_gate:  # staggered starts: boots don't all compete for the CPU in the same second
+            th = threading.Thread(target=run_target, args=(flow, t, os.path.join(fdir, t), o, inject.get(t), runs, prepared))
+            th.start()
+            time.sleep(0 if o.sequential else 2)
+        if o.sequential:
+            th.join()
+        threads.append(th)
+    for th in threads:
+        th.join()
+    runs = {t: runs[t] for t in tgts if t in runs}
+    ok = compare.report(flow, runs, REF, os.path.join(fdir, "report.txt"))
+    line = "%s %-14s %4ds  %s" % ("PASS" if ok else "FAIL", name, int(time.monotonic() - t0),
+                                  "  ".join("%s %ds" % (t, r.elapsed_total) for t, r in runs.items()))
+    results[name] = (ok, line, open(os.path.join(fdir, "report.txt")).read())
+    print(results[name][2] + "\n" + line, flush=True)
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("flows", nargs="*", help="flows (default all: %s)" % " ".join(FLOWS))
+    ap.add_argument("flows", nargs="*", help="flows and shards (default the full flows: %s; `shards`: every shard; all: %s)"
+                    % (" ".join(f.NAME for f in FULL), " ".join(FLOWS)))
     ap.add_argument("--target", default=",".join(targets.TARGETS), help="comma list (default all; emu is the reference)")
     ap.add_argument("--out", default=None, help="the out dir (default a fresh /tmp/tests-diff.XXXX)")
     ap.add_argument("--keep", action="store_true", help="keep the run phones")
-    ap.add_argument("--sequential", action="store_true", help="one target at a time")
+    ap.add_argument("--sequential", action="store_true", help="one run at a time (default: every flow and target at once, "
+                    "bounded by the game slot pool, control/soaslot.py)")
     ap.add_argument("--inject", action="append", default=[], metavar="TARGET:ARGS",
                     help="extra server arguments for one target only, e.g. 'port-inproc:--start-coins 1000' "
                          "(the deliberate-difference check: the run must FAIL)")
     o = ap.parse_args()
-    flows = o.flows or list(FLOWS)
+    flows = o.flows or [f.NAME for f in FULL]
+    if flows == ["shards"]:
+        flows = [f.NAME for f in SHARDS]
     for f in flows:
         if f not in FLOWS:
             ap.error("unknown flow %s (%s)" % (f, " ".join(FLOWS)))
@@ -80,30 +126,24 @@ def main():
     os.makedirs(out, exist_ok=True)
     print("tests/diff: flows %s, targets %s, out %s" % (" ".join(flows), " ".join(tgts), out), flush=True)
 
-    summary, all_ok = [], True
-    for name in flows:
-        flow = FLOWS[name]
-        fdir = os.path.join(out, name)
-        os.makedirs(fdir, exist_ok=True)
-        t0 = time.monotonic()
-        runs = {}
-        threads = []
-        for t in tgts:
-            th = threading.Thread(target=run_target, args=(flow, t, os.path.join(fdir, t), o, inject.get(t), runs))
-            th.start()
-            if o.sequential:
-                th.join()
-            threads.append(th)
-            time.sleep(3)  # staggered starts: the boots don't all compete for the CPU at once
-        for th in threads:
+    # Every flow at once (the slot pool bounds how many clients run); the longest first, so the
+    # wall time is the longest flow's when there are enough slots. --sequential: one run at a time.
+    t0 = time.monotonic()
+    results, gate, threads = {}, threading.Lock(), []
+    order = sorted(flows, key=lambda f: -getattr(FLOWS[f], "EST", 300))
+    for name in order:
+        th = threading.Thread(target=run_flow, args=(name, tgts, o, inject, out, results, gate))
+        th.start()
+        if o.sequential:
             th.join()
-        runs = {t: runs[t] for t in tgts if t in runs}
-        ok = compare.report(flow, runs, REF, os.path.join(fdir, "report.txt"))
-        all_ok &= ok
-        line = "%s %-9s %4ds  %s" % ("PASS" if ok else "FAIL", name, int(time.monotonic() - t0),
-                                    "  ".join("%s %ds" % (t, r.elapsed_total) for t, r in runs.items()))
-        summary.append(line)
-        print(open(os.path.join(fdir, "report.txt")).read(), flush=True)
+        threads.append(th)
+    for th in threads:
+        th.join()
+    wall = int(time.monotonic() - t0)
+    summary = [results[f][1] for f in flows if f in results]
+    all_ok = all(results[f][0] for f in flows if f in results) and all(f in results for f in flows)
+    summary.append("wall time %ds (%d flows x %d targets, %s)" % (wall, len(flows), len(tgts),
+                                                                 "sequential" if o.sequential else "parallel, %d game slots" % soaslot.n_slots()))
     with open(os.path.join(out, "summary.txt"), "w") as f:
         f.write("\n".join(summary) + "\n")
     print("---")

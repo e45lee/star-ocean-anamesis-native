@@ -119,7 +119,7 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 | The story campaign's progress | `<data_root>/server_campaign.txt` (a text file: cleared missions, the last one) | `src/api/campaign/progress.cpp` only; outside the state DB (PLAN-readability section 6) |
 | The master data | `data/basmaster-3.7.0.sqlite3` (read-only; `--master`) | nobody: the server reads it |
 | The client's master copy | the CDN's `basmaster-served.sqlite3` (`<scratch>`), the 3.7.0 master with `apply_client_master` | `cdn::Tree::build` (`src/cdn/tree.cpp`), `make_served_master` (`src/cdn/served_master.cpp`) |
-| Gacha pools | `port/server-data/gacha_pools.sqlite3` (reconstructed; read-only) | `tools/build_gacha_pools.py` |
+| Gacha pools | `data/gacha_pools.sqlite3` (reconstructed; read-only) | `tools/build_gacha_pools.py` |
 | The seed | `data/saves/seed/Game.xml` (sanitized, `LOCAL00001`; `--seed`) | read once when the state DB is new |
 
 ## What each host owns

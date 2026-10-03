@@ -70,6 +70,54 @@ u32 item_level_of(Ctx& ctx, const Item& item) {
     return growth_rules::item_level(item.points, next, item_cap(ctx, item));
 }
 
+// What a material is to a compose's limit break, beyond a copy of the base: a limit-break item
+// ("hammer", …ハンマー：上限解放素材 / マジカルスレッド) that fits the base, one that doesn't, or
+// neither (an ordinary material).
+enum class LimitBreakItem { kNone, kFits, kOtherBase };
+// (b) the client's rule:
+//   A limit-break item is a strengthening material (CParameterUtility::IsStrengMaterialWithMaster
+//   @0180a2d0: the item's master_weapon kind, CMasterCache::IsStrengMaterial @01692f9c: the kind
+//   label contains "W99St") listed by item_id in master_weapon_limit_break (weapons:
+//   CItemStrengtheningPotal::IsLimitBrealItem @01b8975c) or master_accessory_limit_break
+//   (accessories: IsAccessoryLimitBrealItem @01b897bc); (a) all 185 rows are W99St items.
+//   It fits a weapon (CItemStrengtheningList::IsAvailableLimitBreak @01b746fc) when its row has a
+//   weapon_type_id and that is the base's master_weapon_kind_id or the row's weapon_type_id_label
+//   is "ALL" (the generic hammers: by kind, whatever the base's family), or, without a
+//   weapon_type_id, when the row's limitbreak_type_id is the base's master_item.limitbreak_type_id
+//   (the family hammers). It fits an accessory (IsAvailableAccessoryLimitBreak @01b75a4c) when
+//   its row's limitbreak_type_id is set and accessory_type_id_label is "ALL" or that type is the
+//   base's (a: the one row, マジカルスレッド, is ALL).
+LimitBreakItem limit_break_item(Ctx& ctx, const Item& base, const Item& material) {
+    bool strengthening_material = ctx.m.one(
+                                      "select count(*) from master_item i join master_weapon w on w.id = i.master_weapon_id "
+                                      "join master_weapon_kind k on k.id = w.master_weapon_kind_id where i.id = ? and instr(k.id_label, 'W99St') > 0",
+                                      {material.id}) > 0;
+    if (!strengthening_material) return LimitBreakItem::kNone;
+    int64_t base_family = ctx.m.one("select ifnull(limitbreak_type_id, 0) from master_item where id = ?", {base.id});
+    bool listed = false, fits = false;
+    if (base.type == item_type::kAccessory) {
+        ctx.m.q(
+            "select ifnull(limitbreak_type_id, 0) as family, ifnull(accessory_type_id_label, '') as label from master_accessory_limit_break "
+            "where item_id = ? order by id limit 1",
+            {material.id}, [&](const Row& row) {
+                listed = true;
+                fits = row.i("family") != 0 && (row.s("label") == "ALL" || row.i("family") == base_family);
+            });
+    } else {
+        int64_t base_kind = ctx.m.one(
+            "select w.master_weapon_kind_id from master_item i join master_weapon w on w.id = i.master_weapon_id where i.id = ?", {base.id});
+        ctx.m.q(
+            "select ifnull(weapon_type_id, 0) as kind, ifnull(weapon_type_id_label, '') as label, ifnull(limitbreak_type_id, 0) as family "
+            "from master_weapon_limit_break where item_id = ? order by id limit 1",
+            {material.id}, [&](const Row& row) {
+                listed = true;
+                fits = row.i("kind") ? (row.i("kind") == base_kind || row.s("label") == "ALL") : row.i("family") == base_family;
+            });
+    }
+    if (!listed) return LimitBreakItem::kNone;
+    return fits ? LimitBreakItem::kFits : LimitBreakItem::kOtherBase;
+}
+
 // The arguments of ItemCompose(Array) and ItemGradeUp(Array): (u64 base uid, vector<u64> materials).
 struct BaseAndMaterialsArgs {
     u64 base_uid = 0;
@@ -112,11 +160,16 @@ std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
 // Feeds weapons / accessories to a base item: boosted points, levels and limit breaks.
 //   (b) each material adds growth_rules::compose_points (CItemStrengtheningPotal::GetAddBoostedPoint).
 //   (a) a copy of the base's own item raises its limit break (master_item_limit_break_level_max);
+//   (b) so does a limit-break item that fits the base (limit_break_item: master_weapon_limit_break /
+//   master_accessory_limit_break); one raise per copy or item, up to the cap, counted as
+//   `weapon_limit_break` / `accessory_limit_break` (achievement type 6); every compose counts
+//   `weapon_boost` / `accessory_boost` (types 5 / 38).
 //   use_fol_one per material; weapon_compose_up_rate / weapon_compose_bonus_rate.
 //   (d) locked or equipped materials and the base itself can't be fed; FOL at the base's rarity;
 //   points stop at the cap level's threshold.
-//   (d) Refusals: kItemUnusable (10208) without a base weapon / accessory or materials,
-//   kLockedItem (10204) for a material, kFolShortGrowth (11001) for the FOL.
+//   (d) Refusals: kItemUnusable (10208) without a base weapon / accessory or materials, or for a
+//   limit-break item that doesn't fit the base (b: the client never offers one), kLockedItem
+//   (10204) for a material, kFolShortGrowth (11001) for the FOL.
 // Answers: the player state, ComposeResult and Item.
 std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     const auto args = BaseAndMaterialsArgs::from(req);
@@ -138,8 +191,20 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
         // (d) locked or equipped items and the base itself can't be fed
         if (!material.ok || material.locked || material.equipped || material_uid == base_uid)
             return refuse(ctx, "ItemCompose", "a material is locked, equipped or missing", ErrorCode::kLockedItem);
-        // (a) a copy of the same item raises the limit break (master_item_limit_break_level_max)
-        if (material.id == base.id && lb < lb_max) lb++;
+        // (a) a copy of the same item raises the limit break (master_item_limit_break_level_max);
+        // (b) so does a limit-break item that fits the base, one raise each
+        // (CItemStrengtheningPotal::GetAddLimitReleaseWeaponNum @01b899d8 /
+        // GetAddLimitReleaseAccessoryNum @01b89b70: a copy first, else a limit-break item)
+        bool raises = material.id == base.id;
+        if (!raises) {
+            LimitBreakItem hammer = limit_break_item(ctx, base, material);
+            // (b) the material list never offers one that doesn't fit (CItemStrengtheningList::
+            // CreateWeaponList / CreateAccessoryList skip it); (d) refused, with kItemUnusable
+            if (hammer == LimitBreakItem::kOtherBase)
+                return refuse(ctx, "ItemCompose", "a limit-break item that doesn't fit the base", ErrorCode::kItemUnusable);
+            raises = hammer == LimitBreakItem::kFits;
+        }
+        if (raises && lb < lb_max) lb++;
         u32 boosted_point = (u32)ctx.m.one(std::string("select boosted_point from ") + table + " where rarity = ?", {material.rarity});
         gain += growth_rules::compose_points(material.points, boosted_point);
     }
@@ -164,6 +229,14 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     }
     add_fol(ctx, -(int64_t)composed.cost);
     count(ctx, base.type == item_type::kAccessory ? "accessory_boost" : "weapon_boost");
+    // The limit-break raises of this compose, one per raise (achievement type 6, 武器を N回上限解放する:
+    // api/presents/achievements.cpp). (b) A compose raises the limit break once per qualifying
+    // material: CItemStrengtheningPotal::GetAddLimitReleaseWeaponNum (@01b899d8) adds 1 for each
+    // material of the base's item id or a limit-break item, and WarningLimitbreak (@01b8a810)
+    // warns when the current limit break plus that sum reaches 6; (a) the cap is
+    // master_item_limit_break_level_max's highest limit_break (5). The raises counted are the ones
+    // applied above (lb - base.lb), so nothing is counted past the cap.
+    if (lb > base.lb) count(ctx, base.type == item_type::kAccessory ? "accessory_limit_break" : "weapon_limit_break", (int64_t)(lb - base.lb));
     std::vector<u8> response = compose_response(ctx, composed);
     LOGI("server", "ItemCompose %llx: +%llu points%s, level %u -> %u, limit break %u -> %u, FOL -%llu", (unsigned long long)base_uid,
          (unsigned long long)gain, composed.big ? " (big success)" : "", composed.level_before, composed.level_after, base.lb, lb,

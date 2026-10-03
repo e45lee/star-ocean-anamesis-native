@@ -175,7 +175,9 @@ def login_popups(fifo, log, notice_shot, bonus_shot, home_shot):
     if opened is None:
         print("note: no notice board opened", file=sys.stderr)
     else:
-        closed = re.compile(r"ShowWebView\(\) not supported")
+        # closed: the runtime's "ShowWebView() not supported" (the text-label fallback, soa-emu) or the
+        # port's web view ("webview: closed")
+        closed = re.compile(r"ShowWebView\(\) not supported|I/webview: closed")
         cmds = ["wait:8000", "shot:" + keep(notice_shot), "tap:364:1133"]
         for n in range(10):
             send(fifo, *cmds, timeout=400)

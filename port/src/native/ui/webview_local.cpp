@@ -113,13 +113,12 @@ bool open_local(const std::string& url) {
 static bool g_show_webview_override = jni::add_class_installer([](jni::Vm& vm) {
     vm.override_method("com/square_enix/android_googleplay/StarOceanj/SOAActivity", "ShowWebView", "(Ljava/lang/String;IIIIZLjava/lang/String;ZIII)V",
                        [](jni::Object* self, const jni::Args& a, const jni::Impl& original) -> u64 {
-                           // the web view prototype (SOA_WEBVIEW=1): the page as HTML over the game
-                           if (page_view_enabled()) {
-                               LOGI("java", "ShowWebView(%s, %d, %d, %d, %d, useBrowser %d, post %zu bytes, editable %d, close %dx%d, %d)",
-                                    jni::jstr(a[0]).c_str(), (int)(s32)a[1], (int)(s32)a[2], (int)(s32)a[3], (int)(s32)a[4], (int)(a[5] & 1),
-                                    jni::jstr(a[6]).size(), (int)(a[7] & 1), (int)(s32)a[8], (int)(s32)a[9], (int)(s32)a[10]);
-                               if (page_view_show(jni::jstr(a[0]), (s32)a[1], (s32)a[2], (s32)a[3], (s32)a[4])) return 0;
-                           }
+                           // the web view: a page the local server hosts, as HTML over the game
+                           LOGI("java", "ShowWebView(%s, %d, %d, %d, %d, useBrowser %d, post %zu bytes, editable %d, close %dx%d, %d)",
+                                jni::jstr(a[0]).c_str(), (int)(s32)a[1], (int)(s32)a[2], (int)(s32)a[3], (int)(s32)a[4], (int)(a[5] & 1),
+                                jni::jstr(a[6]).size(), (int)(a[7] & 1), (int)(s32)a[8], (int)(s32)a[9], (int)(s32)a[10]);
+                           if (page_view_show(jni::jstr(a[0]), (s32)a[1], (s32)a[2], (s32)a[3], (s32)a[4])) return 0;
+
                            // in-process: a page the local server hosts is shown as text in the popup
                            if (open_local(jni::jstr(a[0]))) {
                                LOGI("java", "ShowWebView(%s): local page", jni::jstr(a[0]).c_str());

@@ -77,5 +77,130 @@ NATIVE_TEST("items/apis") {
     if (!ran) return;  // no 3.7.0 master or save
 }
 
+// Achievement type 6 (武器を N回上限解放する) counts limit-break raises, one per copy fed
+// (CItemStrengtheningPotal::GetAddLimitReleaseWeaponNum), not composes; type 5 counts composes.
+NATIVE_TEST("items/limit-break-achievement") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        add_fol(c, 10000000);
+        u32 weapon = (u32)c.m.one("select id from master_item where type = 1 and rarity = 3 order by id limit 1", {});
+        u32 other = (u32)c.m.one("select id from master_item where type = 1 and rarity = 3 and id <> ? order by id limit 1", {weapon});
+        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+        c.grant(1, weapon, 6, items, stocks, chars);
+        c.grant(1, other, 1, items, stocks, chars);
+        std::vector<u64> w, o;
+        for (auto& e : items.arr) (e.get_u("master_item_id") == weapon ? w : o).push_back(e.get_u("id"));
+        if (w.size() != 6 || o.size() != 1) return t.fail("granted %zu + %zu weapons", w.size(), o.size());
+        // the type 6 row with the smallest goal that the active list holds (the achievement state)
+        int64_t row = 0, goal = 0;
+        Value state = achievement_state(c);
+        c.m.q("select id, goal_count from master_achievement where type = 6 order by goal_count, id", {}, [&](const Row& r) {
+            if (row || !state.find(std::to_string(r.i("id")))) return;
+            row = r.i("id");
+            goal = r.i("goal_count");
+        });
+        auto progress = [&]() -> int64_t {
+            Value now = achievement_state(c);
+            const Value* info = now.find(std::to_string(row));
+            return info ? (int64_t)info->get_u("count") : -1;
+        };
+        // two copies at once: two raises, one compose
+        call(c, "ItemComposeArray", {w[0]}, {{w[1], w[2]}});
+        t.expect_eq((u32)c.st.one("select limit_break from items where uid = ?", {w[0]}), 2u, "two copies: limit break 2");
+        t.expect_eq(counter(c, "weapon_limit_break"), (int64_t)2, "two raises counted");
+        t.expect_eq(counter(c, "weapon_boost"), (int64_t)1, "one compose counted");
+        if (row) t.expect_eq(progress(), std::min<int64_t>(2, goal), "type 6 progress = the raises");
+        // another weapon fed: a boost, no raise
+        call(c, "ItemComposeArray", {w[0]}, {{o[0]}});
+        t.expect_eq(counter(c, "weapon_limit_break"), (int64_t)2, "no raise without a copy");
+        t.expect_eq(counter(c, "weapon_boost"), (int64_t)2, "the compose counted");
+        if (row) t.expect_eq(progress(), std::min<int64_t>(2, goal), "type 6 unchanged by a plain compose");
+        // at the cap: only the raises applied count
+        u32 lb_max = (u32)c.m.one("select max(limit_break) from master_item_limit_break_level_max where type = 1", {});
+        c.st.q("update items set limit_break = ? where uid = ?", {lb_max - 1, w[0]});
+        call(c, "ItemComposeArray", {w[0]}, {{w[3], w[4]}});
+        t.expect_eq((u32)c.st.one("select limit_break from items where uid = ?", {w[0]}), lb_max, "capped");
+        t.expect_eq(counter(c, "weapon_limit_break"), (int64_t)3, "one raise up to the cap");
+        if (!row) t.fail("no active type 6 achievement to check");
+        c.st.exec("rollback");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
+}
+
+// Limit-break items ("hammers", master_weapon_limit_break / master_accessory_limit_break) fed to
+// ItemCompose (CItemStrengtheningList::IsAvailableLimitBreak, GetAddLimitReleaseWeaponNum): a
+// generic hammer on its weapon kind (also a family weapon of that kind), ALL on any weapon, a
+// family hammer on its family, the thread on an accessory; one that doesn't fit is refused and
+// nothing changes; raises stop at the cap but the hammer is still consumed.
+NATIVE_TEST("items/limit-break-items") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        add_fol(c, 100000000);
+        auto weapon_of_kind = [&](const char* kind) {
+            return (u32)c.m.one(
+                "select i.id from master_item i join master_weapon w on w.id = i.master_weapon_id join master_weapon_kind k on "
+                "k.id = w.master_weapon_kind_id where i.type = 1 and i.rarity = 3 and k.id_label = ? and i.limitbreak_type_id is null "
+                "order by i.id limit 1",
+                {std::string(kind)});
+        };
+        u32 sword = weapon_of_kind("W01Sw"), bow = weapon_of_kind("W07Bw");
+        u32 nier_sword = master_id(c, "item_W01Sw_48");
+        u32 sword_hammer = master_id(c, "item_weapon_limit_break_04"), all_hammer = master_id(c, "item_weapon_limit_break_35");
+        u32 nier_hammer = master_id(c, "item_weapon_limit_break_34"), thread = master_id(c, "item_acce_limit_break_01");
+        u32 accessory = (u32)c.m.one("select id from master_item where type = 3 and rarity = 3 order by id limit 1", {});
+        if (!sword || !bow || !nier_sword || !sword_hammer || !all_hammer || !nier_hammer || !thread || !accessory)
+            return t.fail("master rows missing");
+        auto grant = [&](u32 item, u32 n) {
+            Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+            c.grant(1, item, n, items, stocks, chars);
+            std::vector<u64> uids;
+            for (auto& e : items.arr) uids.push_back(e.get_u("id"));
+            if (uids.size() != n) t.fail("granted %zu of item %u", uids.size(), item);
+            return uids;
+        };
+        auto lb = [&](u64 uid) { return (u32)c.st.one("select limit_break from items where uid = ?", {uid}); };
+        auto owned = [&](u64 uid) { return c.st.one("select count(*) from items where uid = ?", {uid}) != 0; };
+        u64 s = grant(sword, 1)[0], b = grant(bow, 1)[0], n = grant(nier_sword, 1)[0], a = grant(accessory, 1)[0];
+        auto sh = grant(sword_hammer, 3), ah = grant(all_hammer, 2), nh = grant(nier_hammer, 2), th = grant(thread, 1);
+        if (t.failures()) return;
+        // generic hammer on a weapon of its kind: one raise, consumed, counted
+        int64_t raises = counter(c, "weapon_limit_break");
+        call(c, "ItemComposeArray", {s}, {{sh[0]}});
+        t.expect_eq(lb(s), 1u, "片手剣ハンマー on a sword");
+        t.expect_eq(!owned(sh[0]), true, "the hammer is consumed");
+        t.expect_eq(counter(c, "weapon_limit_break"), raises + 1, "the raise counted (type 6)");
+        // the same generic hammer on a family weapon of that kind (W01Sw, type_nier)
+        call(c, "ItemComposeArray", {n}, {{sh[1]}});
+        t.expect_eq(lb(n), 1u, "片手剣ハンマー on a NieR sword");
+        // a family hammer on its family; ALL on a bow
+        call(c, "ItemComposeArray", {n}, {{nh[0]}});
+        t.expect_eq(lb(n), 2u, "NieR hammer on a NieR sword");
+        call(c, "ItemComposeArray", {b}, {{ah[0]}});
+        t.expect_eq(lb(b), 1u, "マジカルハンマー (ALL) on a bow");
+        // the thread on an accessory
+        call(c, "ItemComposeArray", {a}, {{th[0]}});
+        t.expect_eq(lb(a), 1u, "マジカルスレッド on an accessory");
+        t.expect_eq(counter(c, "accessory_limit_break"), (int64_t)1, "the accessory raise counted");
+        // hammers that don't fit: refused, nothing consumed or charged
+        u32 f = fol(c);
+        call(c, "ItemComposeArray", {b}, {{sh[2]}});
+        call(c, "ItemComposeArray", {s}, {{nh[1]}});
+        t.expect_eq(lb(b), 1u, "片手剣ハンマー on a bow: no raise");
+        t.expect_eq(lb(s), 1u, "NieR hammer on a plain sword: no raise");
+        t.expect_eq(owned(sh[2]) && owned(nh[1]), true, "refused hammers kept");
+        t.expect_eq(fol(c), f, "refused composes cost nothing");
+        // at the cap: the hammer is consumed, no raise counted
+        u32 lb_max = (u32)c.m.one("select max(limit_break) from master_item_limit_break_level_max where type = 1", {});
+        c.st.q("update items set limit_break = ? where uid = ?", {lb_max, b});
+        raises = counter(c, "weapon_limit_break");
+        call(c, "ItemComposeArray", {b}, {{ah[1]}});
+        t.expect_eq(lb(b), lb_max, "capped");
+        t.expect_eq(!owned(ah[1]), true, "consumed at the cap");
+        t.expect_eq(counter(c, "weapon_limit_break"), raises, "no raise past the cap");
+        c.st.exec("rollback");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
+}
+
 }  // namespace
 }  // namespace soa::server

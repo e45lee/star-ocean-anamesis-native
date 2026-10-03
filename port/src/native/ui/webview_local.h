@@ -11,10 +11,9 @@ namespace soa::webview {
 // CWebView::OpenView hook).
 bool open_local(const std::string& url);
 
-// The web view prototype (webview_page_view.cpp; docs/webview.md): SOA_WEBVIEW=1.
-bool page_view_enabled();
-// ShowWebView's URL ("" = the close) and rectangle (game-screen pixels): true when the prototype
-// handled it (a page the local server hosts as HTML, shown over the game; or the close of one).
+// The web view (webview_page_view.cpp; docs/webview.md), on by default: ShowWebView's URL
+// ("" = the close) and rectangle (game-screen pixels): true when it handled it (a page the local
+// server hosts, drawn as HTML over the game; or the close of one). false = the text-label fallback.
 bool page_view_show(const std::string& url, int x, int y, int w, int h);
 
 }  // namespace soa::webview

@@ -14,7 +14,7 @@ from .proc import REPO
 
 def packets(ref, run):
     cmd = ["python3", os.path.join(REPO, "tools/compare_packets.py"), "--labels", ref.target, run.target, "--mask-battle-log",
-           "--collapse-title-repeat", ref.packets, run.packets]
+           "--collapse-title-repeat", "--float-time-sync", ref.packets, run.packets]
     if "port-inproc" in (ref.target, run.target):
         cmd.insert(2, "--transport-neutral")
     r = subprocess.run(cmd, capture_output=True, text=True)

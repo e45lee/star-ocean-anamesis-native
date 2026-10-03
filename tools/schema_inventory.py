@@ -48,7 +48,7 @@ TEST_DIRS = ["server/tests"]
 CONSUMER_DIRS = ["tools", "tests", "port/scripts", "emulator/scripts", "control", "scripts"]
 KV_TABLES = ("meta", "sphere_meta", "counters")
 # Files whose SQL runs on another DB (not the state): their statements are not state uses.
-OTHER_DB = {"server/src/master/gacha_pools.cpp": "port/server-data/gacha_pools.sqlite3 (its own meta table)"}
+OTHER_DB = {"server/src/master/gacha_pools.cpp": "data/gacha_pools.sqlite3 (its own meta table)"}
 
 
 def rel(p):

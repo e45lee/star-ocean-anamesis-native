@@ -7,7 +7,7 @@ This file covers the in-game web pages of STAR OCEAN: anamnesis 3.7.0: the notic
 - the design of a real web view for the port, the emulator and the viewer, reusing the renderer from the Dragalia Lost project;
 - a staged plan.
 
-A working prototype is on branch `port/webview`, off by default (`SOA_WEBVIEW=1`; "The prototype" below).
+The web view is in the port and **on by default** (since 2026-10-03; "The prototype" below): a page the local server hosts is drawn as HTML over the game, else the text-label fallback.
 
 Source labels follow `docs/server-rules.md`: (a) master data, (b) client-side evidence (decompile, jadx, logs), (c) outside knowledge, (d) assumption or our choice.
 
@@ -189,7 +189,7 @@ These are platform behaviour, not game code, so most belong in the runtime's REA
 
 ## 4. The prototype (branch `port/webview`)
 
-Off by default. `SOA_WEBVIEW=1` turns it on in soa with the in-process server.
+On by default in soa with the in-process server (the `SOA_WEBVIEW` switch is gone). When the renderer can't show a page (no URL the local server hosts, or no font), the older text-label path shows the page's text in the popup.
 
 ### What it does
 

@@ -59,5 +59,5 @@ target_link_libraries(soa PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>")
 # soa-server's HTTP router and poll loop (../server/net): --server inproc serves the library's CDN
 # in-process (src/native/api/server_cdn.cpp).
 target_link_libraries(soa PRIVATE soanet)
-# The web view prototype's page renderer (../webview: litehtml; SOA_WEBVIEW=1, docs/webview.md).
+# The web view's page renderer (../webview: litehtml; on by default, docs/webview.md).
 target_link_libraries(soa PRIVATE soawebview)

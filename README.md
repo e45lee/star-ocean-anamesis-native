@@ -9,6 +9,7 @@ Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_google
   - how IDs are derived (`CHash32`)
 - `docs/online-server.md`: how the online game server (shut down in 2021) worked, reconstructed from the client: hosts, the TCP RPC protocol and its encryption, the SQEX BRIDGE session handshake, asset delivery, multiplayer and payments.
 - `docs/history/`: finished plans and comparisons, e.g. [`docs/history/libsoa-3.7.0-vs-3.8.0.md`](docs/history/libsoa-3.7.0-vs-3.8.0.md), what the offline build changed against 3.7.0.
+- `docs/environment.md`: every environment variable `soa`, `soa-server`, `soa-emu` and `soa-viewer` read, their command-line equivalents, and an audit of the gaps.
 - `docs/api.md`: every API the client calls, with the wire format of each request and reply. `docs/ason.md`: ASON, the engine's MessagePack (reply bodies, request payloads). `docs/server-rules.md`: the game rules the port's local server applies.
 - `soa_save/`: Python library and CLI for reading, editing and writing saves, and for decoding the event scripts ([`soa_save/README.md`](soa_save/README.md)).
 - `tools/`: helpers used for the reverse engineering: Ghidra headless scripts, ELF/PLT resolver, xref/caller scanners, unicorn emulator harness.
@@ -128,7 +129,7 @@ Each script has `--help` and works from any directory.
 - **Use a fresh data folder** (`--data`, `--home`): an existing server state keeps its player.
 
 ### Game files
-The scripts check for these and say which is missing. **In git** (plain git, no LFS; each under GitHub's 100 MB limit): the 3.7.0 APK, the three master DBs in `data/` and `port/server-data/gacha_pools.sqlite3`. **Local only** (too big for GitHub, or derived): the 3.8.0 XAPK, the Ghidra quick projects, and everything under `work/`. A checksummed copy of all of them is in `work/backup-lfs/`. <!-- 380-ok: names the viewer's XAPK -->
+The scripts check for these and say which is missing. **In git** (plain git, no LFS; each under GitHub's 100 MB limit): the 3.7.0 APK, the three master DBs in `data/` and `data/gacha_pools.sqlite3`. **Local only** (too big for GitHub, or derived): the 3.8.0 XAPK, the Ghidra quick projects, and everything under `work/`. A checksummed copy of all of them is in `work/backup-lfs/`. <!-- 380-ok: names the viewer's XAPK -->
 
 | File | Used by |
 |---|---|
@@ -138,7 +139,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 | `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (through `work/extracted/xapk/`), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
 | `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`) | <!-- 380-ok: the viewer's game file -->
 | `data/version-3.7.0.bin` (in git; a copy of `work/download-3.7.0/version.bin`: the original CDN's index of the 3.7.0 download, revision 1471, 26,268 assets, MessagePack; the server's CDN serves a rebuilt revision 1472) | the reference for checking a download (`tools/check_download.py`) and for the CDN's rebuild |
-| `port/server-data/gacha_pools.sqlite3` (the reconstructed gacha pools, made by `tools/build_gacha_pools.py`) | the local server's gacha draws (`docs/server-rules.md` 4.3) |
+| `data/gacha_pools.sqlite3` (the reconstructed gacha pools, made by `tools/build_gacha_pools.py`) | the local server's gacha draws (`docs/server-rules.md` 4.3) |
 | `ghidra/quick-v370/`, `ghidra/quick/` (Ghidra quick projects; imported by `tools/common.sh` when missing) | `tools/decomp.sh`, `scripts/ghidra-mcp.sh` |
 
 **Verifying the download.** `.venv/bin/python tools/check_download.py work/download-3.7.0` checks the folder against its own manifests and `version.bin`: every listed member present, its size and SHA-1 (of the ADLD-decrypted plaintext, as the manifests record it), the ADLD header against `e`, `parentHash`, the `.version` ids and totalSizes, duplicates and unlisted extra files, and `version.bin` against the canonical `data/version-3.7.0.bin`. It prints a summary per manifest and PASS / FAIL (exit 0 / 1); `--quick` checks existence, sizes and headers only, `--manifest ep1` one manifest, `--json OUT` every finding. The same layout is a client's storage, so it also checks a phone's `data/files/download` (e.g. `work/phone-3.7.0/data/files/download`, whose `version.bin` is the client's own revision-1472 record: reported as a note). On the 3.7.0 download: PASS with one warning, `Sound/TS_C121_Common_SE.spk`, which `version.bin` lists and no manifest does; about 5 s with the files in the page cache (`--quick` 2 s).

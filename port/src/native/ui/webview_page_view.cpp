@@ -1,4 +1,4 @@
-// The web view prototype (docs/webview.md; SOA_WEBVIEW=1, off by default): SOAActivity.ShowWebView
+// The web view (docs/webview.md; on by default): SOAActivity.ShowWebView
 // shows a page the local server hosts as HTML, laid out and drawn by libsoawebview (litehtml, the
 // Dragalia Lost project's renderer) and put over the game by the host (app/page_overlay.h) at the
 // rectangle the game asks for, as Android's WebView in a PopupWindow. Port code, platform side (the
@@ -109,16 +109,7 @@ void on_input(int kind, float x, float y, float dy) {
 
 }  // namespace
 
-bool page_view_enabled() {
-    static const bool on = [] {
-        const char* e = getenv("SOA_WEBVIEW");
-        return e && *e && *e != '0';
-    }();
-    return on;
-}
-
 bool page_view_show(const std::string& url, int x, int y, int w, int h) {
-    if (!page_view_enabled()) return false;
     std::lock_guard lk(g_m);
     if (url.empty()) {
         if (!g_page) return false;  // not ours: the guest path (logged as before)

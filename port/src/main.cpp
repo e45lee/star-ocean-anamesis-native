@@ -134,6 +134,7 @@ void usage() {
             "                  HOST (platform370's network glue)\n"
             "  --db FILE       the state DB (default DATA/server.sqlite3; env SOA_SERVER_DB)\n"
             "  --master FILE   the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3; env SOA_SERVER_MASTER)\n"
+            "  --gacha-pools FILE  the reconstructed gacha pools (default data/gacha_pools.sqlite3; env SOA_GACHA_POOLS)\n"
             "  --seed FILE     the save a new state is seeded from, e.g. a 3.7.0 or offline Game.xml; an existing\n"
             "                  state DB keeps its player (env SOA_SERVER_SEED)\n"
             "  --game-xml FILE the last seed fallback (default DATA/data/shared_prefs/Game.xml; env SOA_SERVER_GAME_XML)\n"
@@ -285,6 +286,7 @@ int main(int argc, char** argv) {
         else if (a == "--surprise") srv.surprise = true, server_flags.push_back(a);
         else if (a == "--db") srv.db = next(), server_flags.push_back(a);
         else if (a == "--master") srv.master = next(), server_flags.push_back(a);
+        else if (a == "--gacha-pools") srv.gacha_pools = next(), server_flags.push_back(a);
         else if (a == "--seed") srv.seed = next(), server_flags.push_back(a);
         else if (a == "--game-xml") srv.game_xml = next(), server_flags.push_back(a);
         else if (a == "--campaign-master-db") srv.campaign_master_db = next(), server_flags.push_back(a);

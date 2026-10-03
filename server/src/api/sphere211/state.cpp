@@ -152,8 +152,8 @@ void put_state(Ctx& ctx, const Season& season, Value& data) {
     // with an EX character (role rank 5, CParameterUtility::IsRoleDeity) since the last 帰還;
     // CSphereMissionDetail::NextPhase shows master_global max_revive_count (3, a) minus
     // it as uimsg_sphere211_mission_start_with_deity "使用可能回数 残り %d 回" ("※使用可能回数は帰還
-    // することで回復します"). Not counted yet (a rules gap found in R18, PLAN-schema F1): the column
-    // is never written, so the dialog always says 3 left.
+    // することで回復します"). Counted by Sphere211MissionStart, reset by ReturnSphere211 and a
+    // season change (sphere211.cpp, season.cpp).
     if (Value* player = data.find("Player") ? &data["Player"] : nullptr) (*player)["sphere211_revive_count"] = dive.revive_count;
     put_rental(ctx, dive.floor, data);
     // (b) the board's 勲章 button shows CParameterUtility::NumGetAchievement(), a count over the

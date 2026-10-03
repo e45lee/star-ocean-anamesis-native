@@ -339,7 +339,7 @@ bool rental_helper(ext::Ctx& ctx, MissionStart& start) {
     // (d) counted per rental day for the rental bonus (api/social/rental.cpp); a restart (the same
     // rental again, MissionRestart) isn't counted again
     if (!start.restarting)
-        ctx.st.q("insert into follow_rental (day, count) values (?, 1) on conflict(day) do update set count = count + 1",
+        ctx.st.q("insert into follow_rental (rental_day, count) values (?, 1) on conflict(rental_day) do update set count = count + 1",
                  {day_start(clock_now(), (int)ctx.global_u32("login_bonus_reset_hour", 4))});
     LOGI("server", "MissionStart: rental helper %llu (a clone of roster uid %llu) as member 4",
          (unsigned long long)rental_id,  // read by rental_session.sh

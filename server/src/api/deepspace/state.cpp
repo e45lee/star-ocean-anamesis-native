@@ -263,7 +263,7 @@ Value area_info(Ctx& ctx, const Area& area, int64_t t) {
     // (d) ships of the area still out / back and waiting to be collected
     info["ship_in_progress_num"] = (u32)ctx.st.one("select count(*) from ds_ship where area_id = ? and closed_at > ?", {area.id, t});
     info["ship_complete_num"] = (u32)ctx.st.one("select count(*) from ds_ship where area_id = ? and closed_at <= ?", {area.id, t});
-    info["is_last_play"] = ctx.st.one("select last_play from ds_area where area_id = ?", {area.id}) != 0;
+    info["is_last_play"] = ctx.st.one("select is_last_play from ds_area where area_id = ?", {area.id}) != 0;
     info["is_rare_mission"] = ctx.st.one("select count(*) from ds_offer where area_id = ? and closed_at > 0 and ship_id = 0", {area.id}) != 0;
     info["is_new"] = ctx.st.one("select is_new from ds_area where area_id = ?", {area.id}) != 0;
     Value missions = Value::object();

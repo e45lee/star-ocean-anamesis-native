@@ -124,7 +124,7 @@ NATIVE_TEST("daily/login-bonus") {
         Value d = Value::object();
         player_load(c, lr, d);
         u32 lb = master_id(c, "login_bonus", "master_login_bonus");
-        t.expect_eq((u32)c.st.one("select day from login_bonus where id = ?", {lb}), 1u, "day 1");
+        t.expect_eq((u32)c.st.one("select day_index from login_bonus where id = ?", {lb}), 1u, "day 1");
         const Value* list = d.find("LoginBonus");
         bool received = false;
         if (list)
@@ -144,7 +144,7 @@ NATIVE_TEST("daily/login-bonus") {
         c.st.q("update login_bonus set last_at = last_at - 86400", {});
         d = Value::object();
         player_load(c, lr, d);
-        t.expect_eq((u32)c.st.one("select day from login_bonus where id = ?", {lb}), 2u, "day 2 the next day");
+        t.expect_eq((u32)c.st.one("select day_index from login_bonus where id = ?", {lb}), 2u, "day 2 the next day");
         c.st.exec("commit");
     });
 }

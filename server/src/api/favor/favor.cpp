@@ -11,6 +11,7 @@
 #include <ctime>
 #include <functional>
 #include <map>
+#include <optional>
 #include <set>
 
 #include "core/log.h"
@@ -24,6 +25,7 @@ namespace {
 
 // The handles favor.h's callers pass, through the one SQL wrapper (soaserver/sql.h). A NULL
 // value reads as 0 / "" (Row), and a lookup by key reads its one row.
+using sql::Arg;
 using sql::Row;
 using sql::Sql;
 
@@ -58,19 +60,27 @@ u32 max_level(sqlite3* m, int64_t now, SameRoleId same_role_id) {
     return max;
 }
 
-// One character's row of the `favor` table.
+// One character's row of the `favor` table. The times are seconds on the server clock, NULL
+// (nullopt) for never (PLAN-schema 3.1, S9); the responses format them at the boundary
+// (format_time_or_empty: "" for never, as the client's empty time).
 struct State {
     u32 point = 0, taps = 0;  // favor points; taps on tapped_at's favor day
-    int64_t tapped_at = 0;
-    std::string event_drop_at;  // added_event_drop_at, as sent
+    std::optional<int64_t> tapped_at;  // the last tap that counted
+    std::optional<int64_t> event_drop_at;  // added_event_drop_at: the event drop bonus last spent
 };
+std::optional<int64_t> time_or_never(const Row& row, const char* column) {
+    if (row.null(column)) return std::nullopt;
+    return row.i(column);
+}
+Arg time_arg(const std::optional<int64_t>& t) { return t ? Arg(*t) : Arg(nullptr); }
+std::string format_time_or_never(const std::optional<int64_t>& t) { return format_time_or_empty(t.value_or(0)); }
 State load(sqlite3* st, SameRoleId same_role_id) {
     State state;
     Sql{st}.q("select point, tap_count, tapped_at, event_drop_at from favor where same_role_id = ?", {same_role_id}, [&](const Row& favor_row) {
         state.point = (u32)favor_row.i("point");
         state.taps = (u32)favor_row.i("tap_count");
-        state.tapped_at = favor_row.i("tapped_at");
-        state.event_drop_at = favor_row.s("event_drop_at");
+        state.tapped_at = time_or_never(favor_row, "tapped_at");
+        state.event_drop_at = time_or_never(favor_row, "event_drop_at");
     });
     return state;
 }
@@ -79,13 +89,13 @@ void save(sqlite3* st, SameRoleId same_role_id, const State& state) {
         "insert into favor (same_role_id, point, tap_count, tapped_at, event_drop_at) values (?,?,?,?,?)"
         " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
         "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at",
-        {same_role_id, state.point, state.taps, state.tapped_at, state.event_drop_at});
+        {same_role_id, state.point, state.taps, time_arg(state.tapped_at), time_arg(state.event_drop_at)});
 }
 
-// Today's taps of a character: the count resets at the favor day boundary.
+// Today's taps of a character: the count resets at the favor day boundary (never tapped: none).
 u32 taps_today(sqlite3* m, const State& state, int64_t now) {
     int reset_hour = (int)global_u32(m, "login_bonus_reset_hour", 4);
-    return rules::favor_day(state.tapped_at, reset_hour) == rules::favor_day(now, reset_hour) ? state.taps : 0;
+    return rules::favor_day(state.tapped_at.value_or(0), reset_hour) == rules::favor_day(now, reset_hour) ? state.taps : 0;
 }
 
 // The CPlayerCharacterFavorInfoElement of one character (property names from its Initialize (b)).
@@ -94,9 +104,9 @@ Value element(sqlite3* m, int64_t now, SameRoleId same_role_id, const State& sta
     e["master_role_same_role_id"] = same_role_id.v;
     e["favor_point"] = state.point;
     e["favor_level"] = level;
-    e["added_event_drop_at"] = state.event_drop_at;
+    e["added_event_drop_at"] = format_time_or_never(state.event_drop_at);
     e["favor_up_count_by_tap"] = taps_today(m, state, now);
-    e["updated_by_tap_at"] = format_time_or_empty(state.tapped_at);
+    e["updated_by_tap_at"] = format_time_or_never(state.tapped_at);
     return e;
 }
 
@@ -161,15 +171,15 @@ u32 level_of(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id) {
 // login_bonus_reset_hour); (a) master_global favor_event_drop_bonus_limit uses a day, (d) counted
 // in characters.
 bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id) {
-    std::string at = load(st, same_role_id).event_drop_at;
-    if (at.empty()) return false;
+    std::optional<int64_t> at = load(st, same_role_id).event_drop_at;
+    if (!at) return false;
     int reset_hour = (int)global_u32(m, "login_bonus_reset_hour", 4);
-    return rules::favor_day(parse_time_strict(at), reset_hour) == rules::favor_day(now, reset_hour);
+    return rules::favor_day(*at, reset_hour) == rules::favor_day(now, reset_hour);
 }
 u32 event_drop_remaining(sqlite3* st, sqlite3* m, int64_t now) {
     u32 limit = global_u32(m, "favor_event_drop_bonus_limit", 3), used = 0;
     std::vector<SameRoleId> same_role_ids;
-    Sql{st}.q("select same_role_id from favor where event_drop_at != ''", {},
+    Sql{st}.q("select same_role_id from favor where event_drop_at is not null", {},
               [&](const Row& favor_row) { same_role_ids.push_back(favor_row.id<SameRoleId>("same_role_id")); });
     for (SameRoleId same_role_id : same_role_ids)
         if (event_drop_used_today(st, m, now, same_role_id)) used++;
@@ -177,9 +187,9 @@ u32 event_drop_remaining(sqlite3* st, sqlite3* m, int64_t now) {
 }
 std::string mark_event_drop(sqlite3* st, SameRoleId same_role_id, int64_t now) {
     State state = load(st, same_role_id);
-    state.event_drop_at = format_time_or_empty(now);
+    state.event_drop_at = now;
     save(st, same_role_id, state);
-    return state.event_drop_at;
+    return format_time_or_never(state.event_drop_at);
 }
 
 void add_player_state(sqlite3* st, sqlite3* m, int64_t now, SameRoleId home_same_role_id, Value& data) {
@@ -233,7 +243,7 @@ Value mission_gain(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id
     result["before_favor_point"] = gain.before.point;
     result["after_favor_level"] = gain.level_after;
     result["after_favor_point"] = gain.after.point;
-    result["added_event_drop_at"] = gain.after.event_drop_at;
+    result["added_event_drop_at"] = format_time_or_never(gain.after.event_drop_at);
     // read by port/scripts/restore_favor_session.sh ("favor: mission (stamina N) same_role")
     LOGI("server", "favor: mission (stamina %u) same_role %u +%u: %u -> %u (level %u -> %u)", stamina, same_role_id.v, points, gain.before.point,
          gain.after.point, gain.level_before, gain.level_after);

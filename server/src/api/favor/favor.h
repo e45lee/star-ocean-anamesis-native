@@ -47,7 +47,7 @@ void use_item(sqlite3* st, sqlite3* m, int64_t now, u32 master_item_id, u32 coun
 
 // The favor event drop bonus (docs/server-rules.md "Event extras"): whether a character's bonus is
 // spent for the favor day, today's remaining uses (RemainingEventDropBonusCountByFavor), and
-// spending one (returns the added_event_drop_at text stored).
+// spending one (stores now as event_drop_at; returns it formatted as added_event_drop_at).
 bool event_drop_used_today(sqlite3* st, sqlite3* m, int64_t now, SameRoleId same_role_id);
 u32 event_drop_remaining(sqlite3* st, sqlite3* m, int64_t now);
 std::string mark_event_drop(sqlite3* st, SameRoleId same_role_id, int64_t now);

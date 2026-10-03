@@ -118,12 +118,12 @@ NATIVE_TEST("deepspace/expedition") {
         c.st.q(
             "insert into ds_area (area_id, exp) values (?, ?)"
             " on conflict(area_id) do update set exp = excluded.exp, is_new = excluded.is_new, "
-            "last_play = excluded.last_play",
+            "is_last_play = excluded.is_last_play",
             {r1, (u32)std::ceil(max1 * p1 / 100)});
         c.st.q(
             "insert into ds_area (area_id, exp) values (?, ?)"
             " on conflict(area_id) do update set exp = excluded.exp, is_new = excluded.is_new, "
-            "last_play = excluded.last_play",
+            "is_last_play = excluded.is_last_play",
             {r2, (u32)std::ceil(max2 * p2 / 100) - 1});
         call(c, "DeepSpaceActiveList", {});
         t.expect_eq((u32)c.st.one("select count(*) from ds_area where area_id = ?", {locked}), 0u, "one condition short");
@@ -200,7 +200,7 @@ NATIVE_TEST("deepspace/extras") {
         c.st.q(
             "insert into ds_area (area_id, exp) values (?, ?)"
             " on conflict(area_id) do update set exp = excluded.exp, is_new = excluded.is_new, "
-            "last_play = excluded.last_play",
+            "is_last_play = excluded.is_last_play",
             {area44, max / 2});
         t.expect_eq(count_of(ac44), (int64_t)(max / 2 * 100 / max), "type 44: the exploration rate");
         c.st.q("update ds_area set exp = ? where area_id = ?", {max, area44});

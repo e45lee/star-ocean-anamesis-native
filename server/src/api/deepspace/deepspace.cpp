@@ -237,7 +237,7 @@ std::vector<u8> deep_space_mission_start(Ctx& ctx, const Request& req) {
         "play_count_weekly = play_count_weekly + 1 where mission_id = ?",
         {ship_id, t, args.mission_id});
     ctx.st.q("insert into ds_log (mission_id, started_at) values (?, ?)", {args.mission_id, t});
-    ctx.st.q("update ds_area set last_play = (area_id = ?)", {area_id});
+    ctx.st.q("update ds_area set is_last_play = (area_id = ?)", {area_id});
     set_ship_bonuses(ctx, ship_id, offer.bonus_set_id, args.item_id, args.uids);
     // 3. the answer
     Value data = ctx.base_data();

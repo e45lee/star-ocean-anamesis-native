@@ -31,3 +31,9 @@ req 26 1790841610 PresentList fa782a45 - - - -
 req 27 1790841615 AchievementReceive 47e9dee6 2282065 - - -
 req 28 1790841620 UseFavorItem 88af959e 555097489,1,0 - - -
 req 29 1790841625 GetPlayer 9a056905 - - - -
+# (PLAN-schema S9) taps on a character with favor (same role 1717018109): favor.tapped_at stored as
+# seconds, sent as updated_by_tap_at by the next full load; the next day's load resets the count
+req 30 1790841630 UpdateFavorByTap e06ec7b3 1717018109 - - -
+req 31 1790841635 UpdateFavorByTap e06ec7b3 1717018109 - - -
+req 32 1790841640 GetPlayer 9a056905 - - - -
+req 33 1790928040 GetPlayer 9a056905 - - - -

@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "core/log.h"
+#include "core/time.h"      // parse_time_strict (S9: favor.event_drop_at)
 #include "master/master.h"  // global_u32 (party_set_max)
 
 namespace soa::server::state {
@@ -1033,6 +1034,210 @@ from presents p left join present_texts t on t.id = p.id order by p.id)");
     return ok;
 }
 
+// ---- step 9: times and booleans (PLAN-schema S9, finding F5) -----------------------------------
+// The conventions of 3.1 on the tables that still broke them: a time is an INTEGER of unix seconds
+// on the server clock and NULL is "never" (favor.event_drop_at was a formatted local-time text, ''
+// for never; favor.tapped_at, titles.got_at and premium_pass.last_at used 0); a counter is
+// `day_index` and a reset day's start `*_day` (login_bonus.day / premium_pass.day were counters,
+// follow_rental.day / sphere_rental_day.day day starts); a boolean keeps its name, `is_*` where it
+// had none (ds_area.last_play -> is_last_play), and is `integer not null default 0 check (x in
+// (0, 1))`. A CHECK needs a rebuild, so each table below is rebuilt into its 3.2 form (STRICT), less
+// what S10 adds: the tables S10 rebuilds for their foreign keys get their boolean CHECKs there
+// (ds_offer.is_new, gacha_history.duplicate, wboss_clear.notified), and the 0 sentinels S10 maps
+// stay (wboss.hunt_until, ds_offer.closed_at; favor_bonus_state.healed_at with its lot_uid FK).
+// `titles` is a parent (player.title_id): new_titles is renamed to titles after the old one is
+// dropped (4.1), so the reference resolves to the new table. No new foreign key.
+const char* const kTimesBooleans[] = {
+    // CPlayerCharacterFavorInfoElement (b): favor_point, favor_up_count_by_tap on the favor day of
+    // updated_by_tap_at, added_event_drop_at; the times NULL: never
+    R"(create table new_favor (
+  same_role_id integer primary key,
+  point integer not null default 0,
+  tap_count integer not null default 0,
+  tapped_at integer,
+  event_drop_at integer
+) strict)",
+    // the owned titles (TitleList (b)); got_at NULL: a default title, owned from the start
+    R"(create table new_titles (
+  id integer primary key,
+  got_at integer
+) strict)",
+    // CLoginBonusInfo.current_idx (b): the last page granted, and when
+    R"(create table new_login_bonus (
+  id integer primary key,
+  day_index integer not null,
+  last_at integer
+) strict)",
+    // CPremiumLoginBonusInfo.current_idx (b) of a pass the player holds; last_at NULL: no page yet
+    R"(create table new_premium_pass (
+  id integer primary key,
+  granted_at integer not null,
+  day_index integer not null default 0,
+  last_at integer
+) strict)",
+    // the rentals taken per rental day (its start), and whether that day's bonus was paid
+    R"(create table new_follow_rental (
+  rental_day integer primary key,
+  count integer not null default 0,
+  paid integer not null default 0 check (paid in (0, 1))
+) strict)",
+    // Sphere 211's rentals per rental day (its start), and whether that day's bonus was paid
+    R"(create table new_sphere_rental_day (
+  rental_day integer primary key,
+  season_id integer,
+  count integer not null default 0,
+  paid integer not null default 0 check (paid in (0, 1))
+) strict)",
+    // CDeepSpaceAreaInfo (b): exp, is_new, is_last_play
+    R"(create table new_ds_area (
+  area_id integer primary key,
+  exp integer not null default 0,
+  is_new integer not null default 0 check (is_new in (0, 1)),
+  is_last_play integer not null default 0 check (is_last_play in (0, 1))
+) strict)",
+    // the missions played: cleared (is_clear (b)), the counts, the first clear
+    R"(create table new_mission (
+  mission_id integer primary key,
+  cleared integer not null default 0 check (cleared in (0, 1)),
+  play_count integer not null default 0,
+  clear_count integer not null default 0,
+  first_clear_at integer
+) strict)",
+    // an event ranking's best score and its party; fresh: updated since the screen last cleared it
+    R"(create table new_event_rank_score (
+  ranking_id integer primary key,
+  group_id integer not null,
+  score integer not null,
+  roles text,
+  created_at integer,
+  fresh integer not null default 1 check (fresh in (0, 1))
+) strict)",
+    // a world boss the player met (columns as before; hunt_until 0 = no big hunt until S10)
+    R"(create table new_wboss (
+  boss_id integer primary key,
+  area_id integer,
+  wave integer default 1,
+  n1 integer default 0, n2 integer default 0, n3 integer default 0,
+  a1 integer default 0, a2 integer default 0, a3 integer default 0,
+  required integer default 0,
+  wave_started_at integer,
+  last_clear_secs integer default 0,
+  hunt_until integer default 0,
+  hunt_new integer not null default 0 check (hunt_new in (0, 1))
+) strict)",
+    // a cell of the current Sphere 211 floor
+    R"(create table new_sphere_cell (
+  asset_id integer primary key,
+  floor_level integer not null,
+  mission_box_id integer,
+  mission_id integer,
+  overwrite_enemy_level integer not null default 0,
+  cleared integer not null default 0 check (cleared in (0, 1)),
+  playing integer not null default 0 check (playing in (0, 1)),
+  created_at integer,
+  updated_at integer
+) strict)",
+    // a lender of the current floor's rental slot, and whether it was rented
+    R"(create table new_sphere_rental (
+  follow_player_id integer primary key,
+  used integer not null default 0 check (used in (0, 1)),
+  updated_at integer
+) strict)",
+};
+
+// The tables step 9 rebuilds, in kTimesBooleans' order.
+const char* const kTimesBooleansTables[] = {"favor",   "titles",  "login_bonus",      "premium_pass", "follow_rental", "sphere_rental_day",
+                                            "ds_area", "mission", "event_rank_score", "wboss",        "sphere_cell",   "sphere_rental"};
+
+// Step 9's data mapping (PLAN-schema S9), with the conventions of 4.1 (each case logged with its
+// count): a boolean not 0 / 1 -> 1, NULL -> 0 (the readers test `!= 0`); a NULL in a not-null
+// column -> 0 (what the readers read);
+//   favor: event_drop_at '' (or NULL) -> NULL, a time string -> its seconds (parse_time_strict, the
+//     reader's parse: local time), one that doesn't parse -> NULL (the reader read it as never: no
+//     favor day); tapped_at 0 -> NULL;
+//   titles.got_at 0 -> NULL (the default titles);
+//   login_bonus.day / premium_pass.day -> day_index; premium_pass.last_at 0 -> NULL (no page yet);
+//   follow_rental.day / sphere_rental_day.day -> rental_day;
+//   ds_area.last_play -> is_last_play.
+// Every other column is copied as it is.
+bool rebuild_times_and_booleans(sqlite3* db, sqlite3*) {
+    // the counts, for the log (before anything changes)
+    struct Bool {
+        const char *table, *column;
+    };
+    for (const Bool& b : {Bool{"follow_rental", "paid"}, Bool{"sphere_rental_day", "paid"}, Bool{"ds_area", "is_new"}, Bool{"ds_area", "last_play"},
+                          Bool{"mission", "cleared"}, Bool{"event_rank_score", "fresh"}, Bool{"wboss", "hunt_new"}, Bool{"sphere_cell", "cleared"},
+                          Bool{"sphere_cell", "playing"}, Bool{"sphere_rental", "used"}}) {
+        const std::string what = std::string(b.table) + "." + b.column;
+        log_count(db, ("select count(*) from " + std::string(b.table) + " where " + b.column + " is null or " + b.column + " not in (0, 1)").c_str(),
+                  what.c_str(), "NULL -> 0, not 0 / 1 -> 1", 9);
+    }
+    log_count(db, "select count(*) from favor where tapped_at = 0", "favor.tapped_at", "0 -> NULL (never)", 9);
+    log_count(db, "select count(*) from titles where got_at = 0", "titles.got_at", "0 -> NULL", 9);
+    log_count(db, "select count(*) from premium_pass where last_at = 0", "premium_pass.last_at", "0 -> NULL (no page yet)", 9);
+
+    // favor.event_drop_at: text -> seconds, in C++ (the server's own parse of what it formatted)
+    int64_t times = 0;
+    std::vector<std::pair<int64_t, int64_t>> drop_at;  // same_role_id -> seconds
+    for (auto& [same_role_id, text] : keyed_texts(db, "select same_role_id, event_drop_at from favor where ifnull(event_drop_at, '') != ''")) {
+        if (int64_t t = parse_time_strict(text); t > 0) {
+            drop_at.emplace_back(same_role_id, t);
+            times++;
+        } else {
+            LOGW("server", "migrate v9: favor.event_drop_at = '%s' (same_role_id %lld) isn't a time: -> NULL", text.c_str(), (long long)same_role_id);
+        }
+    }
+    if (times) LOGI("server", "migrate v9: favor.event_drop_at: %lld times -> seconds", (long long)times);
+
+    bool ok = run(db, R"(
+insert into new_favor (same_role_id, point, tap_count, tapped_at, event_drop_at)
+select same_role_id, ifnull(point, 0), ifnull(tap_count, 0), nullif(tapped_at, 0), null from favor)");
+    for (size_t k = 0; ok && k < drop_at.size(); k++)
+        ok = run(db, "update new_favor set event_drop_at = ? where same_role_id = ?",
+                 {Bound::integer(drop_at[k].second), Bound::integer(drop_at[k].first)});
+    ok = ok && run(db, "insert into new_titles (id, got_at) select id, nullif(got_at, 0) from titles");
+    ok = ok && run(db, "insert into new_login_bonus (id, day_index, last_at) select id, ifnull(day, 0), last_at from login_bonus");
+    ok = ok && run(db, R"(
+insert into new_premium_pass (id, granted_at, day_index, last_at)
+select id, ifnull(granted_at, 0), ifnull(day, 0), nullif(last_at, 0) from premium_pass)");
+    ok = ok && run(db, R"(
+insert into new_follow_rental (rental_day, count, paid)
+select day, ifnull(count, 0), case when ifnull(paid, 0) != 0 then 1 else 0 end from follow_rental)");
+    ok = ok && run(db, R"(
+insert into new_sphere_rental_day (rental_day, season_id, count, paid)
+select day, season_id, ifnull(count, 0), case when ifnull(paid, 0) != 0 then 1 else 0 end from sphere_rental_day)");
+    ok = ok && run(db, R"(
+insert into new_ds_area (area_id, exp, is_new, is_last_play)
+select area_id, ifnull(exp, 0), case when ifnull(is_new, 0) != 0 then 1 else 0 end, case when ifnull(last_play, 0) != 0 then 1 else 0 end
+from ds_area)");
+    ok = ok && run(db, R"(
+insert into new_mission (mission_id, cleared, play_count, clear_count, first_clear_at)
+select mission_id, case when ifnull(cleared, 0) != 0 then 1 else 0 end, ifnull(play_count, 0), ifnull(clear_count, 0), first_clear_at
+from mission)");
+    ok = ok && run(db, R"(
+insert into new_event_rank_score (ranking_id, group_id, score, roles, created_at, fresh)
+select ranking_id, ifnull(group_id, 0), ifnull(score, 0), roles, created_at, case when ifnull(fresh, 0) != 0 then 1 else 0 end
+from event_rank_score)");
+    ok = ok && run(db, R"(
+insert into new_wboss (boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until, hunt_new)
+select boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until,
+  case when ifnull(hunt_new, 0) != 0 then 1 else 0 end
+from wboss)");
+    ok = ok && run(db, R"(
+insert into new_sphere_cell (asset_id, floor_level, mission_box_id, mission_id, overwrite_enemy_level, cleared, playing, created_at, updated_at)
+select asset_id, ifnull(floor_level, 0), mission_box_id, mission_id, ifnull(overwrite_enemy_level, 0),
+  case when ifnull(cleared, 0) != 0 then 1 else 0 end, case when ifnull(playing, 0) != 0 then 1 else 0 end, created_at, updated_at
+from sphere_cell)");
+    ok = ok && run(db, R"(
+insert into new_sphere_rental (follow_player_id, used, updated_at)
+select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updated_at from sphere_rental)");
+    for (const char* table : kTimesBooleansTables) {
+        ok = ok && run(db, ("drop table " + std::string(table)).c_str());
+        ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
+    }
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1068,6 +1273,11 @@ const std::vector<Step>& steps() {
          "presents: present_texts merged into presents (text), presents rebuilt STRICT, a wallet present's content_id NULL (PLAN-schema S8)",
          {std::begin(kPresents), std::end(kPresents)},
          rebuild_presents},
+        {9,
+         "times and booleans: favor's times as seconds (NULL: never), day counters day_index, rental days rental_day, "
+         "ds_area.is_last_play, the boolean checks; twelve tables rebuilt STRICT (PLAN-schema S9)",
+         {std::begin(kTimesBooleans), std::end(kTimesBooleans)},
+         rebuild_times_and_booleans},
     };
     return s;
 }

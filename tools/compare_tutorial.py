@@ -226,7 +226,7 @@ def tiny_rmse(a, b):
 
 
 # ---- server state -------------------------------------------------------------------------------
-TIME_COL = re.compile(r"(_at$|^at$|^time$|_time$|^day|_day$|^date|stamina_at)")
+TIME_COL = re.compile(r"(_at$|^at$|^time$|_time$|_day$|^date|stamina_at|_secs$)")  # as control/soadrive/state.py (PLAN-schema S9)
 ID_COLS = {("player", "id"), ("player", "search_id")}
 
 

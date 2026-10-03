@@ -166,7 +166,6 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | `--shot S:PATH`, `--do S:CMD`, `--control FIFO` | Scripted screenshots and input (see `soa --help`). Drive a `--control` instance with `control/soactl.py FIFO tap:X:Y wait:MS wheel:X:Y:DY shot:PATH ...`; the port's own commands are in "Control commands". |
 | `--selftest [F]`, `--smoke`, `--list-native` | The self-tests (tests matching F), a quick library check, the native list |
 | `SOA_AUDIO_DUMP=DIR` (env) | Write the PCM each OpenSL ES player enqueues to `DIR/playerN.wav`, before mixing and resampling. With `SDL_AUDIODRIVER=disk` audio runs in real time without a sound device. |
-| `SOA_WEBVIEW=1` (env) | Experimental, off by default: the web view prototype. A page the local server hosts (today the notice board) is shown as HTML, rendered by libsoawebview (litehtml) over the game's popup, instead of the text label. Drag or wheel scrolls it, a tap follows a link. `docs/webview.md`. |
 
 **Server options** (the same flags as `soa-server`; only with `--server inproc`)
 
@@ -316,6 +315,6 @@ Saves are Android SharedPreferences files in the same format as on the phone: `<
 ## Known limitations
 
 - **Sound** that the APK lacks (most BGM, the talk-scene sounds) is in the 3.7.0 download, which the client fetches from the local server's CDN like any game data.
-- Web views (news, terms text) and external links aren't shown; they're only logged. The notice board is the exception: the local server's page is shown as text, or as HTML with the experimental `SOA_WEBVIEW=1` (`docs/webview.md`, which has the plan for the rest).
+- Web views (news, terms text) and external links aren't shown; they're only logged. The notice board is the exception: the local server's page is drawn as HTML over the game by the web view (libsoawebview, litehtml; drag or wheel scrolls, a tap follows a link), or as text in the popup when no font is found (`docs/webview.md`, which has the plan for the rest).
 - The game lays out its UI and allocates its render targets once, at startup (phones never resize). A window resized to a different aspect ratio is letterboxed; restart to render at a new aspect ratio.
 - Linux desktops only: X11 or Wayland, through SDL2. SDL2 prefers X11 when both are there (XWayland); `SDL_VIDEODRIVER=wayland` runs natively on Wayland. Headless runs under Wayland present offscreen (`runtime/README.md`, "Graphics").

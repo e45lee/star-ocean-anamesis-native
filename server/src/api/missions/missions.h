@@ -4,6 +4,7 @@
 // the master_campaign rows (campaigns.cpp) and the play state (play_state.cpp: GetPlayMission,
 // MissionFailed, MissionTalk, MissionRestart, GetMissionList). docs/server-rules.md "Server
 // missions", "2. Missions".
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -21,14 +22,29 @@ using MissionRef = master::MissionRef;
 // master_mission_model_type uses the same numbers).
 enum class MissionType : u32 { kStory = 0, kEvent = 1, kTower = 2, kWorldMap = 3 };
 
-// The battle's helper as MissionStart records it (play_ext.helper_kind; d: the server's own
-// numbering, nothing on the wire).
+// The battle's helper as MissionStart records it (play.helper_kind; d: the server's own
+// numbering, nothing on the wire). play.helper_uid is the helper's id of that kind (kOwn: an owned
+// CharacterUid; kRental: the rental id, a clone's (api/social/rental.h) or a client's id only
+// recorded; kNpc: none, play.npc_id holds the NPC helper argument).
 enum class HelperKind : u32 {
     kNone = 0,
     kOwn = 1,     // one of the player's characters, outside the party
     kRental = 2,  // a rental character (a clone of the roster: api/social/rental.h)
     kNpc = 3,     // an NPC: the event mission's NPC helper, or an NPC id only recorded
 };
+
+// One member of the battle in progress (a play_member row, in the order of
+// BattleParameter.PlayerCharacter): an owned character, or a mission NPC (the tutorial's NPC
+// party); neither: a character gone since the start (ON DELETE SET NULL).
+struct PlayMember {
+    std::optional<CharacterUid> uid;
+    std::optional<NpcPartyUid> npc_uid;
+};
+// The battle in progress's party (play_member, by slot); empty when nothing is in progress.
+std::vector<PlayMember> play_members(ext::Ctx& ctx);
+// The party as MissionStart sent it (the members' battle uids, by slot; a member gone is left out):
+// what ext::MissionInfo::uids carries.
+std::vector<u64> battle_uids(const std::vector<PlayMember>& members);
 
 // The master_campaign.type_id values the missions apply (a: the rows; b: what the client queries
 // them for, docs/server-rules.md "Type-8 campaigns").

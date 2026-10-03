@@ -132,9 +132,7 @@ Offer find_offer(Ctx& ctx, u32 mission_id, int64_t t) {
 // counter), none out on a ship, none twice.
 const char* party_refusal(Ctx& ctx, const std::vector<u64>& uids) {
     std::set<u64> busy, seen;
-    ctx.st.q("select uids from ds_ship", {}, [&](const Row& ship_row) {
-        for (u64 uid : parse_uids(ship_row.s("uids"))) busy.insert(uid);
-    });
+    ctx.st.q("select uid from ds_ship_member", {}, [&](const Row& member_row) { busy.insert((u64)member_row.i("uid")); });
     if (uids.empty() || uids.size() > kMaxMembers) return "party size";
     for (u64 uid : uids)
         if (!seen.insert(uid).second || busy.count(uid) || !ctx.st.one("select count(*) from roster where uid = ?", {uid}))
@@ -229,10 +227,11 @@ std::vector<u8> deep_space_mission_start(Ctx& ctx, const Request& req) {
     }
     // 2. the ship departs
     int64_t minutes = ctx.m.one("select time from master_deep_space_mission where id = ?", {args.mission_id});
-    std::string uid_list;
-    for (u64 uid : args.uids) uid_list += (uid_list.empty() ? "" : ",") + std::to_string(uid);
-    ctx.st.q("insert into ds_ship (ship_id, area_id, mission_id, bonus_set_id, item_id, uids, started_at, closed_at) values (?,?,?,?,?,?,?,?)",
-             {ship_id, area_id, args.mission_id, offer.bonus_set_id, args.item_id, uid_list, t, t + minutes * 60});
+    ctx.st.q("insert into ds_ship (ship_id, area_id, mission_id, bonus_set_id, item_id, started_at, closed_at) values (?,?,?,?,?,?,?)",
+             {ship_id, area_id, args.mission_id, offer.bonus_set_id, args.item_id, t, t + minutes * 60});
+    // the crew, slot 1..8 in the order sent (b: the ship_slot the client looks up; owned, checked above)
+    for (size_t k = 0; k < args.uids.size(); k++)
+        ctx.st.q("insert into ds_ship_member (ship_id, slot, uid) values (?,?,?)", {ship_id, (u32)k + 1, CharacterUid(args.uids[k])});
     ctx.st.q(
         "update ds_offer set ship_id = ?, updated_at = ?, play_count_daily = play_count_daily + 1, "
         "play_count_weekly = play_count_weekly + 1 where mission_id = ?",
@@ -261,8 +260,8 @@ struct Ship {
     bool found = false;
     u32 ship_id = 0, area_id = 0, mission_id = 0;
     int64_t closed_at = 0;
-    std::string uids;
-    Value info;  // CDeepSpaceShipInfo as it was found
+    std::vector<CharacterUid> members;  // the crew (ds_ship_member), by slot
+    Value info;                         // CDeepSpaceShipInfo as it was found
 };
 Ship load_ship(Ctx& ctx, u32 ship_id) {
     Ship ship;
@@ -272,7 +271,7 @@ Ship load_ship(Ctx& ctx, u32 ship_id) {
         ship.area_id = (u32)ship_row.i("area_id");
         ship.mission_id = (u32)ship_row.i("mission_id");
         ship.closed_at = ship_row.i("closed_at");
-        ship.uids = ship_row.s("uids");
+        ship.members = ship_members(ctx, ship_id);
         ship.info = ship_info(ctx, ship_row);
     });
     return ship;
@@ -383,7 +382,7 @@ void grant_player(Ctx& ctx, const Ship& ship, Expedition& done) {
 // animates before_level / before_exp + add_exp; the handler stores after_level / after_exp.
 void grant_character_exp(Ctx& ctx, const Ship& ship, Expedition& done) {
     u32 order = 0;
-    for (u64 uid : parse_uids(ship.uids))
+    for (const CharacterUid uid : ship.members)
         ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
             const RoleId role_id = roster_row.id<RoleId>("role_id");
             u32 level_before = (u32)roster_row.i("level"), exp_before = (u32)roster_row.i("exp");
@@ -391,14 +390,14 @@ void grant_character_exp(Ctx& ctx, const Ship& ship, Expedition& done) {
                 rules::add_exp(level_before, exp_before, done.character_exp, ctx.role_next(role_id), ctx.role_level_cap(role_id));
             ctx.st.q("update roster set level = ?, exp = ? where uid = ?", {level_after, exp_after, uid});
             Value info = Value::object();
-            info["character_id"] = uid;
+            info["character_id"] = uid.v;
             info["add_exp"] = done.character_exp;
             info["order_id"] = order++;
             info["before_level"] = level_before;
             info["before_exp"] = exp_before;
             info["after_level"] = level_after;
             info["after_exp"] = exp_after;
-            done.characters_exp[std::to_string(uid)] = info;
+            done.characters_exp[std::to_string(uid.v)] = info;
         });
 }
 
@@ -498,7 +497,7 @@ std::vector<u8> deep_space_mission_end(Ctx& ctx, const Request& req) {
     // 2. the offers and the ship
     renew_offer(ctx, ship, t);
     roll_rare_offer(ctx, ship, t, rare_mission_mul, done);
-    ctx.st.q("delete from ds_ship where ship_id = ?", {ship.ship_id});
+    ctx.st.q("delete from ds_ship where ship_id = ?", {ship.ship_id});  // and its crew (ON DELETE CASCADE)
     ctx.st.q("delete from ds_bonus where ship_id = ?", {ship.ship_id});
     refresh_offers(ctx, t);  // areas the new exploration rate opens
     // 3. the answer

@@ -34,6 +34,22 @@ std::vector<u8> play_mission_answer(ext::Ctx& ctx, const Request& req) {
 
 }  // namespace
 
+std::vector<PlayMember> play_members(ext::Ctx& ctx) {
+    std::vector<PlayMember> members;
+    ctx.st.q("select uid, npc_uid from play_member where play_id = 1 order by slot", {},
+             [&](const Row& member_row) { members.push_back({member_row.opt<CharacterUid>("uid"), member_row.opt<NpcPartyUid>("npc_uid")}); });
+    return members;
+}
+
+std::vector<u64> battle_uids(const std::vector<PlayMember>& members) {
+    std::vector<u64> uids;
+    for (const PlayMember& member : members) {
+        if (member.uid) uids.push_back(member.uid->v);
+        else if (member.npc_uid) uids.push_back(member.npc_uid->v);
+    }
+    return uids;
+}
+
 // MissionRestart() / MultiMissionRestart() -> MissionRestartRes (as MissionStartRes)     fid 1f96f310
 // API: docs/api.md#missionrestart   Rules: docs/server-rules.md "2.6 Failure, continue, restart", "Server missions"
 //
@@ -68,11 +84,12 @@ std::vector<u8> get_play_mission(ext::Ctx& ctx, const Request& req) { return pla
 // API: docs/api.md#missionfailed   Rules: docs/server-rules.md "2.6 Failure, continue, restart", "Play state"
 //
 // A lost or retired battle, or an interrupted one given up.
-//   (c) no rewards, and the stamina stays spent (docs/api.md); the play record ends (play_ext
-//       stays until the next start).
+//   (c) no rewards, and the stamina stays spent (docs/api.md); the play record ends, all of it
+//       (its members, type, surprise roll and helper: one row since PLAN-schema S7, so a later
+//       MissionEnd without a play reads none of them, d).
 // Answers: the player state with PlayMission (nothing in progress).
 std::vector<u8> mission_failed(ext::Ctx& ctx, const Request& req) {
-    ctx.st.q("delete from play", {});
+    ctx.st.q("delete from play", {});  // and its members (ON DELETE CASCADE)
     return play_mission_answer(ctx, req);
 }
 

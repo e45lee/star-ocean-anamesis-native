@@ -373,8 +373,9 @@ RELS = [
     ("unlocks", "by_mission", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", 0, "-", ""),
     ("unlocks", "by_mission", "mission", "mission_id", 0, "NO ACTION, deferred", "the mission whose clear opened it"),
     ("play", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission|master_deep_space_mission", "id", 0, "-", ""),
-    ("play_ext", "id", "play", "id", None, "merged (S7)", "1:1 extension"),
-    ("play", "list:uids", "roster", "uid", 0, "SET NULL (play_member.uid, S7)", "party of the battle (0x7f0000xx: NPCs)"),
+    ("play", "party_id", "party_set", "party_id", None, "SET NULL (S7)", "the battle's party set (play_ext merged in, S7)"),
+    ("play_member", "play_id", "play", "id", None, "CASCADE (S7)", "the play's members (play.uids text before S7)"),
+    ("play_member", "uid", "roster", "uid", None, "SET NULL (S7)", "an owned member (NULL: a mission NPC, npc_uid 0x7f0000xx, or gone)"),
     ("gacha_history", "gacha_id", "m:master_gacha", "id", None, "-", ""),
     ("gacha_history", "role_id", "m:master_role", "id", 0, "-", ""),
     ("gacha_history", "uid", "roster|items", "uid", 0, "SET NULL (split: character_uid / item_uid, S10)", "a character uid, or an item uid for a weapon draw (role_id 0)"),
@@ -396,7 +397,8 @@ RELS = [
     ("ds_offer", "area_id", "ds_area", "area_id", None, "CASCADE", ""),
     ("ds_offer", "ship_id", "ds_ship", "ship_id", 0, "SET NULL", ""),
     ("ds_ship", "area_id", "ds_area", "area_id", None, "CASCADE", ""),
-    ("ds_ship", "list:uids", "roster", "uid", 0, "NO ACTION (ds_ship_member.uid, S7)", "the ship's crew"),
+    ("ds_ship_member", "ship_id", "ds_ship", "ship_id", None, "CASCADE (S7)", "a ship's crew (ds_ship.uids text before S7)"),
+    ("ds_ship_member", "uid", "roster", "uid", None, "NO ACTION (S7)", "the ship's crew: a character out on a ship"),
     ("ds_bonus", "ship_id", "ds_ship", "ship_id", None, "CASCADE", ""),
     ("sphere_departed", "uid", "roster", "uid", None, "CASCADE", ""),
     ("sphere_cell", "asset_id", "m:master_sphere211_floor_asset", "id", None, "-", ""),
@@ -473,11 +475,11 @@ def fk_report(st_path, master_path):
 
 
 # Tables written only by upsert (S0): the parents of the target schema's foreign keys (section 3.2:
-# player, roster, items, titles, party_set, mission, box_state, presents, ds_area, ds_ship, wboss)
-# and the other tables of F9's REPLACE list (party_member (party merged in, S6), favor, stock,
-# subscription, present_texts).
+# player, roster, items, titles, party_set, mission, box_state, presents, ds_area, ds_ship, wboss;
+# play since S7: play_member's parent) and the other tables of F9's REPLACE list (party_member
+# (party merged in, S6), favor, stock, subscription, present_texts).
 LINT_UPSERT_ONLY = ("player", "roster", "items", "titles", "party_set", "mission", "box_state", "presents", "ds_area", "ds_ship",
-                    "wboss", "party_member", "favor", "stock", "subscription", "present_texts")
+                    "wboss", "play", "party_member", "favor", "stock", "subscription", "present_texts")
 # Consumers whose SQL runs on another DB: the pools DB's builder (its own meta table).
 LINT_OTHER_DB = ("tools/build_gacha_pools.py",)
 POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(?:temp\.)?(\w+)\s+values\b", re.I)

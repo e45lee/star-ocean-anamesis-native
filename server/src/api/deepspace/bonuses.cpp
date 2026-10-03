@@ -94,9 +94,7 @@ std::vector<std::pair<u32, float>> party_bonuses(Ctx& ctx, u32 set_id, const std
 
 std::vector<u64> free_characters(Ctx& ctx) {
     std::set<u64> busy;
-    ctx.st.q("select uids from ds_ship", {}, [&](const Row& ship_row) {
-        for (u64 uid : parse_uids(ship_row.s("uids"))) busy.insert(uid);
-    });
+    ctx.st.q("select uid from ds_ship_member", {}, [&](const Row& member_row) { busy.insert((u64)member_row.i("uid")); });
     std::vector<u64> free;
     ctx.st.q("select uid from roster order by uid", {}, [&](const Row& roster_row) {
         if (!busy.count((u64)roster_row.i("uid"))) free.push_back((u64)roster_row.i("uid"));

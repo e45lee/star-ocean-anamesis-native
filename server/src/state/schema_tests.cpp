@@ -30,8 +30,9 @@ struct TempDb {
     explicit TempDb(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
     ~TempDb() { remove_all(); }
     void remove_all() {
-        for (const char* suffix : {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal", ".bak-v1", ".bak-v1-journal", ".bak-v2",
-                                   ".bak-v2-journal", ".bak-v3", ".bak-v3-journal", ".bak-v4", ".bak-v4-journal", ".bak-v5", ".bak-v5-journal"})
+        for (const char* suffix :
+             {"", "-wal", "-shm", "-journal", ".bak-v0", ".bak-v0-journal", ".bak-v1", ".bak-v1-journal", ".bak-v2", ".bak-v2-journal", ".bak-v3",
+              ".bak-v3-journal", ".bak-v4", ".bak-v4-journal", ".bak-v5", ".bak-v5-journal", ".bak-v6", ".bak-v6-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -128,14 +129,15 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51,
-                "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6)");
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)52,
+                "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
+                "less play_ext, plus play_member and ds_ship_member (S7)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
                 "gear_items' slot index (S5)");
     t.expect_eq(a.one("select count(*) from party_set", {}), (int64_t)0, "no player: no party set rows (the seed / CreatePlayer add them)");
-    for (const char* gone : {"view_flags", "gear", "box_gacha", "planets", "sphere_meta", "roster_ext", "assist", "party"})
+    for (const char* gone : {"view_flags", "gear", "box_gacha", "planets", "sphere_meta", "roster_ext", "assist", "party", "play_ext"})
         t.expect_eq(a.one("select count(*) from sqlite_master where name = ?", {gone}), (int64_t)0, (std::string(gone) + " not there").c_str());
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'ds_state'", {}), (int64_t)1, "ds_state there");
     t.expect_eq(a.one("select count(*) from sqlite_master where name = 'wire_device'", {}), (int64_t)1, "wire_device on every route");
@@ -750,7 +752,7 @@ NATIVE_TEST("server/schema-migrate-v6") {
     t.expect_eq(f.exec("pragma foreign_keys = off; insert into party_set (party_id) values (0);"
                        "insert into party (party_id, slot, uid) values (0, 0, 2113929216); update player set party_id = 0"),
                 true, "UpdateParty(0) planted");
-    t.expect_eq(state::open_and_migrate(f.h, v5.path), true, "v5 -> v6");
+    t.expect_eq(state::open_and_migrate(f.h, v5.path, 6), true, "v5 -> v6");
     t.expect_eq(state::user_version(f.h), 6, "user_version 6");
     t.expect_eq(f.one("select party_id from player", {}, -1), (int64_t)1, "party_id 0 -> 1");
     t.expect_eq(f.one("select count(*) from party_set where party_id = 0", {}), (int64_t)0, "set 0 dropped");
@@ -783,6 +785,111 @@ NATIVE_TEST("server/schema-migrate-v6") {
 // Plus the unique indexes (one character per item, one assisted character per assist, one gear per
 // weapon slot), STRICT and the checks (items.locked, gear_items.is_new, party_set.is_lock 0 / 1;
 // party_set.party_id >= 1; party_member.slot 0..3).
+// Version 7 (PLAN-schema S7: the battle in progress). (1) v0 -> v7 at once, against the same file
+// migrated to 6, with planted cases: play ⟕ play_ext merged (surprise 5 -> 1, helper_kind 7 -> 0,
+// a dangling party_id -> NULL, helper_uid / npc_id 0 -> NULL, campaign_lots gone); play.uids ->
+// play_member (an owned uid, a mission NPC's 0x7f000001, a gone uid -> both NULL, a non-number
+// skipped); ds_ship.uids -> ds_ship_member (a gone uid dropped, an empty item skipped; slot 1..);
+// ds_log's rows keep their order as ids (NULL -> 0); every other table's rows equal. (2) v6 -> v7
+// without the master (.bak-v6): MissionFailed's leftover (a play_ext without a play) is dropped.
+NATIVE_TEST("server/schema-migrate-v7") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v7 -------------------------------------------------------------------------------
+    TempDb ref_file("v7-ref"), old("v7");
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    const int64_t a = db.one("select min(uid) from roster", {});
+    const int64_t b = db.one("select min(uid) from roster where uid > ?", {a});
+    const int64_t c = db.one("select min(uid) from roster where uid > ?", {b});
+    const int64_t mission = db.one("select mission_id from play", {}), started = db.one("select started_at from play", {});
+    t.expect_eq(rows_over(db, "play", "uids"), (std::vector<std::string>{"3:" + std::to_string(a) + "," + std::to_string(b) + ",|"}),
+                "the fixture's play: a and b");
+    t.expect_eq(rows_over(db, "ds_ship", "ship_id, uids"), (std::vector<std::string>{"1:1|3:" + std::to_string(a) + "," + std::to_string(b) + ",|"}),
+                "the fixture's ship 1: a and b");
+    // the S7 dirt, in both files
+    for (Sql* d : {&ref, &db})
+        d->exec("update play set party_id = 15, uids = '" + std::to_string(a) + ",2130706433,9999,x," + std::to_string(b) +
+                "';"
+                "update play_ext set surprise = 5, helper_kind = 7, helper_uid = 0, npc_id = 0, campaign_lots = 3;"
+                "insert into ds_ship (ship_id, area_id, mission_id, bonus_set_id, item_id, uids, started_at, closed_at) "
+                "select 2, area_id, mission_id, 0, 0, '9999," +
+                std::to_string(c) +
+                ",,', started_at, closed_at from ds_ship where ship_id = 1;"
+                "insert into ds_log (mission_id, started_at) values (null, null)");
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 6, m), true, "the reference: migrated to 6");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 7, m), true, "migrated to 7");
+    t.expect_eq(state::user_version(db.h), 7, "user_version 7");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
+    // every other table: its rows as they were at version 6
+    std::vector<std::string> tables;
+    ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+          [&](const Row& r) { tables.push_back(r.s("name")); });
+    auto ref_rows = rows_of(ref), db_rows = rows_of(db);
+    for (const std::string& table : tables) {
+        if (table == "play" || table == "play_ext" || table == "ds_ship" || table == "ds_log") continue;
+        if (ref_rows[table] != db_rows[table]) t.fail("%s: rows changed", table.c_str());
+    }
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)52, "52 tables");
+    t.expect_eq(db.one("select count(*) from sqlite_master where name in ('play_ext') or name like 'new_%'", {}), (int64_t)0,
+                "play_ext gone, no new_X");
+    // play: (id, mission_id, mission_type, party_id, started_at, stamina_cost, surprise, helper_kind, helper_uid, npc_id)
+    t.expect_eq(rows_over(db, "play", "*"),
+                (std::vector<std::string>{"1:1|1:" + std::to_string(mission) + "|1:0|5:|1:" + std::to_string(started) + "|1:5|1:1|1:0|5:|5:|"}),
+                "play ⟕ play_ext merged");
+    t.expect_eq(columns_of(db, "play").count("campaign_lots") + columns_of(db, "play").count("uids"), (size_t)0, "campaign_lots and uids gone");
+    // play_member: (play_id, slot, uid, npc_uid)
+    t.expect_eq(rows_over(db, "play_member", "*"),
+                (std::vector<std::string>{"1:1|1:0|1:" + std::to_string(a) + "|5:|", "1:1|1:1|5:|1:2130706433|", "1:1|1:2|5:|5:|",
+                                          "1:1|1:3|1:" + std::to_string(b) + "|5:|"}),
+                "play.uids -> play_member (a, an NPC, a gone uid, b; 'x' skipped)");
+    // ds_ship_member: (ship_id, slot, uid)
+    t.expect_eq(rows_over(db, "ds_ship_member", "*"),
+                (std::vector<std::string>{"1:1|1:1|1:" + std::to_string(a) + "|", "1:1|1:2|1:" + std::to_string(b) + "|",
+                                          "1:2|1:2|1:" + std::to_string(c) + "|"}),
+                "ds_ship.uids -> ds_ship_member (9999 dropped, the empty item skipped)");
+    const std::string ship_cols = "ship_id, area_id, mission_id, bonus_set_id, item_id, started_at, closed_at";
+    t.expect_eq(rows_over(db, "ds_ship", ship_cols), rows_over(ref, "ds_ship", ship_cols), "ds_ship's other columns kept");
+    t.expect_eq(columns_of(db, "ds_ship").count("uids"), (size_t)0, "ds_ship.uids gone");
+    // ds_log: the rows in order as ids, NULL -> 0
+    std::vector<std::string> logs = rows_over(ref, "ds_log", "rowid, ifnull(mission_id, 0), ifnull(started_at, 0)");
+    t.expect_eq(rows_over(db, "ds_log", "*"), logs, "ds_log: rowid -> id, NULL -> 0");
+    t.expect_eq(logs.size(), (size_t)2, "(two departures)");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    if (m)
+        for (const auto& d : state::check(db.h, m)) t.fail("%s", state::describe(d).c_str());
+    ref.close();
+    db.close();
+
+    // ---- (2) v6 -> v7, without the master: MissionFailed's leftover ---------------------------------
+    TempDb v6("v7-from-v6");
+    if (!write_fixture(t, v6.path)) return;
+    Sql f;
+    if (!f.open(v6.path, false)) return t.fail("open v6");
+    t.expect_eq(state::open_and_migrate(f.h, v6.path, 6, m), true, "migrated to 6");
+    f.close();
+    unlink((v6.path + ".bak-v0").c_str());
+    if (!f.open(v6.path, false)) return t.fail("reopen v6");
+    t.expect_eq(state::user_version(f.h), 6, "a version 6 file");
+    // MissionStart (a surprise roll) then MissionFailed at version 6: play deleted, play_ext left
+    t.expect_eq(f.exec("update play_ext set surprise = 1, mission_type = 1; delete from play"), true, "MissionFailed planted");
+    t.expect_eq(state::open_and_migrate(f.h, v6.path, 7), true, "v6 -> v7");
+    t.expect_eq(state::user_version(f.h), 7, "user_version 7");
+    t.expect_eq(f.one("select count(*) from play", {}), (int64_t)0, "nothing in progress");
+    t.expect_eq(f.one("select count(*) from play_member", {}), (int64_t)0, "no members");
+    t.expect_eq(f.one("select count(*) from sqlite_master where name = 'play_ext'", {}), (int64_t)0, "the leftover is gone");
+    t.expect_eq(f.one("select count(*) from ds_ship_member", {}), (int64_t)2, "ship 1's crew");
+    t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+    f.close();
+    Sql bak;
+    if (!bak.open(v6.path + ".bak-v6", true)) return t.fail("no %s.bak-v6", v6.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 6, "the backup is version 6");
+    t.expect_eq(bak.one("select count(*) from play_ext", {}), (int64_t)1, "the backup keeps play_ext");
+    bak.close();
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;
@@ -845,6 +952,29 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(rc("update party_set set is_lock = 2 where party_id = 3"), SQLITE_CONSTRAINT_CHECK, "party_set.is_lock 0 / 1");
     t.expect_eq(rc("update party_member set skill_id1 = 'x' where party_id = 3"), SQLITE_CONSTRAINT_DATATYPE, "STRICT party_member");
     t.expect_eq(rc("update party_set set icon_id = 'x' where party_id = 3"), SQLITE_CONSTRAINT_DATATYPE, "STRICT party_set");
+    // S7: the play and its members, a ship's crew, the departures
+    t.expect_eq(db.one("select count(*) from play_member where play_id = 1", {}), (int64_t)2, "the fixture's play: a and b");
+    t.expect_eq(db.one("select count(*) from ds_ship_member where ship_id = 1", {}), (int64_t)2, "the fixture's ship 1: a and b");
+    for (const std::string& sql :
+         {std::string("update play_member set uid = 9999 where slot = 0"),
+          std::string("insert into play_member (play_id, slot, uid) values (2, 0, null)"), std::string("update play set party_id = 99"),
+          std::string("insert into ds_ship_member (ship_id, slot, uid) values (1, 3, 9999)"),
+          "insert into ds_ship_member (ship_id, slot, uid) values (99, 1, " + c + ")"})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once").c_str());
+    t.expect_eq(rc("update play_member set npc_uid = 2130706433 where slot = 0"), SQLITE_CONSTRAINT_CHECK, "a member is a character or an NPC");
+    t.expect_eq(rc("insert into play_member (slot, uid, npc_uid) values (5, null, 2130706433)"), SQLITE_OK, "an NPC member");
+    t.expect_eq(rc("update play set surprise = 2"), SQLITE_CONSTRAINT_CHECK, "play.surprise 0 / 1");
+    t.expect_eq(rc("update play set helper_kind = 4"), SQLITE_CONSTRAINT_CHECK, "play.helper_kind 0..3");
+    t.expect_eq(rc("insert into ds_ship_member (ship_id, slot, uid) values (1, 9, " + c + ")"), SQLITE_CONSTRAINT_CHECK, "ship slot 9");
+    t.expect_eq(rc("insert into ds_ship_member (ship_id, slot, uid) values (1, 3, null)"), SQLITE_CONSTRAINT_NOTNULL,
+                "a crew slot names a character");
+    t.expect_eq(rc("update play set mission_id = 'x'"), SQLITE_CONSTRAINT_DATATYPE, "STRICT play");
+    t.expect_eq(rc("update play_member set slot = 'x' where slot = 5"), SQLITE_CONSTRAINT_DATATYPE, "STRICT play_member");
+    t.expect_eq(rc("update ds_ship_member set slot = 'x' where slot = 1"), SQLITE_CONSTRAINT_DATATYPE, "STRICT ds_ship_member");
+    t.expect_eq(rc("insert into ds_log (mission_id, started_at) values ('x', 0)"), SQLITE_CONSTRAINT_DATATYPE, "STRICT ds_log");
+    t.expect_eq(rc("insert into ds_log (mission_id, started_at) values (1, 0)"), SQLITE_OK, "a departure");
+    t.expect_eq(db.one("select id from ds_log where mission_id = 1 and started_at = 0", {}), db.one("select max(id) from ds_log", {}),
+                "ds_log: its id, the last");
     t.expect_eq(rc("delete from party_set where party_id = 4"), SQLITE_OK, "set 4 deleted");
     t.expect_eq(db.one("select count(*) from party_member where party_id = 4", {}), (int64_t)0, "ON DELETE CASCADE: its members are gone");
     for (const std::string& sql : {std::string("update player set home_uid = 9999"), std::string("update player set party_id = 99"),
@@ -888,7 +1018,11 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and accessory_uid is null", {}), (int64_t)1,
                 "the set's accessory_uid -> NULL");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and accessory_uid is null", {std::stoll(a)}), (int64_t)1, "accessory_uid -> NULL");
+    t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_CONSTRAINT_FOREIGNKEY, "a character out on a ship: refused (NO ACTION)");
+    t.expect_eq(rc("delete from ds_ship where ship_id = 1"), SQLITE_OK, "ship 1 deleted");
+    t.expect_eq(db.one("select count(*) from ds_ship_member", {}), (int64_t)0, "ON DELETE CASCADE: its crew is gone");
     t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_OK, "the assist and support character deleted");
+    t.expect_eq(db.one("select count(*) from play_member where slot = 1 and uid is null", {}), (int64_t)1, "play_member.uid -> NULL (b)");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and assist_uid is null", {std::stoll(a)}), (int64_t)1, "assist_uid -> NULL");
     t.expect_eq(db.one("select count(*) from player where support_uid is null", {}), (int64_t)1, "support_uid -> NULL");
     t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and assist_uid is null", {}), (int64_t)1,
@@ -899,6 +1033,12 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(txn("delete from roster where uid = " + c), SQLITE_OK, "the home character deleted");
     t.expect_eq(db.one("select count(*) from player where home_uid is null", {}), (int64_t)1,
                 "home_uid -> NULL (the deferred FK's action is at once)");
+    t.expect_eq(db.one("select count(*) from play_member where slot = 0 and uid is null", {}), (int64_t)1, "play_member.uid -> NULL (a)");
+    t.expect_eq(rc("insert into party_set (party_id) values (20); update play set party_id = 20; delete from party_set where party_id = 20"),
+                SQLITE_OK, "the play's set deleted");
+    t.expect_eq(db.one("select count(*) from play where party_id is null", {}), (int64_t)1, "play.party_id -> NULL");
+    t.expect_eq(rc("delete from play"), SQLITE_OK, "the play ended");
+    t.expect_eq(db.one("select count(*) from play_member", {}), (int64_t)0, "ON DELETE CASCADE: its members are gone");
     t.expect_eq(rc("delete from titles where id = " + title), SQLITE_OK, "the worn title deleted");
     t.expect_eq(db.one("select count(*) from player where title_id is null", {}), (int64_t)1, "title_id -> NULL");
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");

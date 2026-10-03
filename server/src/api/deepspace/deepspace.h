@@ -53,8 +53,8 @@ bool at_limit(Ctx& ctx, const Row& offer_row);
 // ---- ships (state.cpp) -----------------------------------------------------------------------
 u32 subscription_ships(Ctx& ctx, int64_t t);
 u32 max_ships(Ctx& ctx, int64_t t);
-// The uids of a ds_ship row's `uids` text ("uid,uid,...").
-std::vector<u64> parse_uids(const std::string& uids);
+// A ship's crew (ds_ship_member), by slot (1..8).
+std::vector<CharacterUid> ship_members(Ctx& ctx, u32 ship_id);
 // The quick returns used today (resets the count on a new day).
 u32 time_saving_count(Ctx& ctx, int64_t t);
 

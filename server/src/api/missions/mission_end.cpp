@@ -27,7 +27,7 @@ constexpr u32 kContentItem = 1, kContentCharacter = 2, kContentFol = 3, kContent
 // run (mission_end below).
 struct MissionEnd {
     u32 mission = 0;
-    std::string play_uids;  // the party, as the play record keeps it ("uid,uid,")
+    std::vector<PlayMember> party;  // the play's party (play_member)
     u32 play_stamina_cost = 0;
     bool surprise = false;
     MissionRef mission_ref;
@@ -44,33 +44,24 @@ struct MissionEnd {
     u32 mission_time = 0;  // the battle log's mission_time
 };
 
-// The party uids of a play record ("uid,uid,"), in order.
-std::vector<u64> split_play_uids(const std::string& play_uids) {
-    std::vector<u64> uids;
-    for (size_t begin = 0; begin < play_uids.size();) {
-        size_t end = play_uids.find(',', begin);
-        if (end == std::string::npos) end = play_uids.size();
-        if (end > begin) uids.push_back(std::stoull(play_uids.substr(begin, end - begin)));
-        begin = end + 1;
-    }
-    return uids;
-}
-
 // 1. The play this ends: the mission, its party, its stamina and surprise roll. False when the
 // request names no mission the master knows (below): MissionEnd isn't answered.
 bool read_play(ext::Ctx& ctx, const Request& req, MissionEnd& end) {
     // MissionEnd(u32 mission (+0x54), u32 (+0x5c)); the party and mission come from the
     // MissionStart this ends.
     end.mission = args::MissionEndArgs::from(req).mission;
-    u32 played = 0;
-    ctx.st.q("select * from play where id = 1", {}, [&](const Row& play_row) {
+    // (d) without a play in progress (none started, or MissionFailed ended it) the mission type is
+    // 0 (find_mission tries every table), no surprise enemy, no party: until PLAN-schema S7 the
+    // last start's type and surprise roll were read (MissionFailed left them behind).
+    u32 played = 0, played_type = 0;
+    ctx.st.q("select mission_id, mission_type, stamina_cost, surprise from play where id = 1", {}, [&](const Row& play_row) {
         played = (u32)play_row.i("mission_id");
-        end.play_uids = play_row.s("uids");
+        played_type = (u32)play_row.i("mission_type");
         end.play_stamina_cost = (u32)play_row.i("stamina_cost");
+        end.surprise = play_row.i("surprise") != 0;
     });
+    end.party = play_members(ctx);
     if (!end.mission) end.mission = played;
-    u32 played_type = (u32)ctx.st.one("select mission_type from play_ext where id = 1", {}, 0);
-    end.surprise = ctx.st.one("select surprise from play_ext where id = 1", {}, 0) != 0;
     end.mission_ref = find_mission(ctx, played_type, end.mission);
     // An id that is 0 (no argument and no play) or in none of the mission tables isn't a mission
     // to end: (d) not answered, nothing granted or recorded, as MissionStart doesn't answer an
@@ -127,7 +118,9 @@ void player_exp(ext::Ctx& ctx, MissionEnd& end) {
 void characters_exp_and_favor(ext::Ctx& ctx, MissionEnd& end) {
     end.result_characters = Value::object();
     end.result_favor = Value::object();
-    for (u64 uid : split_play_uids(end.play_uids)) {
+    for (const PlayMember& member : end.party) {
+        if (!member.uid) continue;  // a mission NPC (or a character gone): no EXP, no favor
+        const CharacterUid uid = *member.uid;
         ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
             const RoleId role = roster_row.id<RoleId>("role_id");
             u32 level_before = (u32)roster_row.i("level"), exp_before = (u32)roster_row.i("exp");
@@ -135,12 +128,12 @@ void characters_exp_and_favor(ext::Ctx& ctx, MissionEnd& end) {
             auto [level_after, exp_after] = rules::add_exp(level_before, exp_before, end.character_exp, next_exp, ctx.role_level_cap(role));
             ctx.st.q("update roster set level = ?, exp = ? where uid = ?", {level_after, exp_after, uid});
             Value result = Value::object();
-            result["id"] = uid;
+            result["id"] = uid.v;
             result["before_level"] = level_before;
             result["before_exp"] = exp_before;
             result["after_level"] = level_after;
             result["after_exp"] = exp_after;
-            end.result_characters[std::to_string(uid)] = result;
+            end.result_characters[std::to_string(uid.v)] = result;
             // Favor per same_role_id: server/src/api/favor/favor.cpp (master_favor_battle_effect).
             const SameRoleId same_role_id = ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role});
             if (!end.result_favor.find(std::to_string(same_role_id.v))) {
@@ -158,7 +151,7 @@ void roll_and_grant_drops(ext::Ctx& ctx, MissionEnd& end) {
     end.added_characters = Value::array();
     // the party's roles, in roster order (the character bonus counts them, not their order)
     std::vector<u32> roles;
-    ctx.st.q("select r.role_id from roster r where ',' || ? like '%,' || r.uid || ',%'", {"," + end.play_uids},
+    ctx.st.q("select r.role_id from roster r where r.uid in (select uid from play_member) order by r.uid", {},
              [&](const Row& roster_row) { roles.push_back((u32)roster_row.i("role_id")); });
     const MissionRef& ref = end.mission_ref;
     end.rolled = roll_drops(ctx, end.mission, ref.table, ref.type, ref.area, end.surprise, roles);
@@ -216,8 +209,7 @@ void record_clear(ext::Ctx& ctx, MissionEnd& end) {
     ctx.st.q("insert into mission (mission_id) values (?) on conflict(mission_id) do nothing", {end.mission});
     ctx.st.q("update mission set cleared = 1, clear_count = clear_count + 1, first_clear_at = ifnull(first_clear_at, ?) where mission_id = ?",
              {clock_now(), end.mission});
-    ctx.st.q("delete from play", {});
-    ctx.st.q("delete from play_ext", {});
+    ctx.st.q("delete from play", {});  // and its members (ON DELETE CASCADE)
 }
 
 // (b) BattleEvaluationResultInfoList: one CBattleEvaluationResultInfo {master_battle_evaluation_id}
@@ -333,7 +325,7 @@ void log_mission_end(ext::Ctx& ctx, const MissionEnd& end) {
 
 // 11. The modules' additions (ext::MissionResultExtra).
 void mission_result_extras(ext::Ctx& ctx, const MissionEnd& end, Value& data) {
-    ext::MissionInfo info = mission_info(ctx, end.mission_ref, end.mission, split_play_uids(end.play_uids));
+    ext::MissionInfo info = mission_info(ctx, end.mission_ref, end.mission, battle_uids(end.party));
     info.mission_time = end.mission_time;
     info.log_u32 = [&ctx](const char* name) { return ctx.live() ? battle_log_u32(ctx, name, 0) : (u32)ctx.request->test_log_value; };
     info.evaluation = [&ctx](int type) -> int64_t { return ctx.live() ? battle_evaluation_value(ctx, type) : (int64_t)ctx.request->test_log_value; };

@@ -60,7 +60,7 @@ struct MissionStart {
     u32 party_id = 0;
     std::vector<u64> party_uids;
     Value player_characters;          // BattleParameter.PlayerCharacter
-    std::string play_uids;            // the party as the play record keeps it ("uid,uid,")
+    std::vector<PlayMember> play_members;  // the party as the play record keeps it (play_member)
     std::vector<MissionNpc> npcs;     // the mission's NPCs that fight (the tutorial's NPC party)
     std::vector<MissionNpc> all_npcs;  // every master_mission_npc row of the mission, in order
     u32 event_npc = 0;                // the picked NPC helper: its index + 1 in all_npcs (0: none)
@@ -148,7 +148,7 @@ std::vector<u8> check_cost(ext::Ctx& ctx, const Request& req, MissionStart& star
 // 4. The surprise enemy roll.
 void roll_surprise(ext::Ctx& ctx, MissionStart& start) {
     // (d) a restart (MissionRestart) replays the stored surprise roll
-    if (start.restarting) start.surprise = ctx.st.one("select surprise from play_ext where id = 1", {}) != 0;
+    if (start.restarting) start.surprise = ctx.st.one("select surprise from play where id = 1", {}) != 0;
     else if (start.surprise_possible) start.surprise = mission_rules::roll_percent(start.surprise_rate, (*ctx.rng)());
     // --surprise (a test option): a mission with a surprise enemy always meets it
     if (!start.restarting && start.surprise_possible && config().surprise) start.surprise = true;
@@ -308,7 +308,9 @@ void party_members(ext::Ctx& ctx, MissionStart& start) {
                  start.all_npcs[k].mission_npc_id, applied ? "applied" : "declined", npc_stat("attack"), npc_stat("hp"), npc_stat("attack"),
                  npc_stat("intelligence"), npc_stat("defence"), npc_stat("hit"), npc_stat("guard"));
         }
-        start.play_uids += std::to_string(uid) + ",";
+        // (the tutorial's NPC party: mission NPCs; else the player's or a module's characters)
+        if (start.npcs.empty()) start.play_members.push_back({CharacterUid(uid), std::nullopt});
+        else start.play_members.push_back({std::nullopt, NpcPartyUid(uid)});
     }
 }
 
@@ -385,16 +387,27 @@ void drop_npc_party(ext::Ctx& ctx, MissionStart& start) {
     LOGI("server", "MissionStart: %zu mission NPCs as the party (master_mission_npc)", start.npcs.size());
 }
 
-// 11. The play record and the mission's play count.
+// 11. The play record (play and its play_member rows) and the mission's play count.
 void record_play(ext::Ctx& ctx, MissionStart& start) {
     const u32 mission = start.args.mission;
-    ctx.st.q("insert or replace into play (id, mission_id, party_id, started_at, stamina_cost, uids) values (1,?,?,?,?,?)",
-             {mission, start.party_id, clock_now(), start.stamina_cost, start.play_uids});
-    if (!start.restarting)
+    if (start.restarting) {
+        // (d) a restart keeps the record's mission type, surprise roll and helper; the members are
+        // the restart's
+        ctx.st.q("update play set mission_id = ?, party_id = ?, started_at = ?, stamina_cost = ? where id = 1",
+                 {mission, start.party_id, clock_now(), start.stamina_cost});
+        ctx.st.q("delete from play_member", {});
+    } else {
+        ctx.st.q("delete from play", {});  // the last play's members go with it (ON DELETE CASCADE)
         ctx.st.q(
-            "insert or replace into play_ext (id, mission_type, surprise, helper_uid, helper_kind, npc_id, campaign_lots) values (1,?,?,?,?,?,?)",
-            {start.mission_ref.type, start.surprise ? 1 : 0, start.helper_uid, (u32)start.helper_kind, start.args.npc_helper_id,
-             start.campaign_lots});
+            "insert into play (id, mission_id, mission_type, party_id, started_at, stamina_cost, surprise, helper_kind, helper_uid, npc_id) "
+            "values (1,?,?,?,?,?,?,?,?,?)",
+            {mission, start.mission_ref.type, start.party_id, clock_now(), start.stamina_cost, start.surprise ? 1 : 0, (u32)start.helper_kind,
+             start.helper_uid ? ext::Arg(start.helper_uid) : ext::Arg(nullptr),
+             start.args.npc_helper_id ? ext::Arg(start.args.npc_helper_id) : ext::Arg(nullptr)});
+    }
+    for (size_t slot = 0; slot < start.play_members.size(); slot++)
+        ctx.st.q("insert into play_member (play_id, slot, uid, npc_uid) values (1,?,?,?)",
+                 {(u32)slot, start.play_members[slot].uid, start.play_members[slot].npc_uid});
     ctx.st.q("insert into mission (mission_id) values (?) on conflict(mission_id) do nothing", {mission});
     if (!start.restarting) ctx.st.q("update mission set play_count = play_count + 1 where mission_id = ?", {mission});
 }

@@ -217,16 +217,11 @@ u32 subscription_ships(Ctx& ctx, int64_t t) {
 }
 u32 max_ships(Ctx& ctx, int64_t t) { return limit_break_ships(ctx, t) + subscription_ships(ctx, t); }
 
-std::vector<u64> parse_uids(const std::string& uids) {
-    std::vector<u64> list;
-    size_t start = 0;
-    while (start < uids.size()) {
-        size_t comma = uids.find(',', start);
-        if (comma == std::string::npos) comma = uids.size();
-        if (comma > start) list.push_back(std::stoull(uids.substr(start, comma - start)));
-        start = comma + 1;
-    }
-    return list;
+std::vector<CharacterUid> ship_members(Ctx& ctx, u32 ship_id) {
+    std::vector<CharacterUid> members;
+    ctx.st.q("select uid from ds_ship_member where ship_id = ? order by slot", {ship_id},
+             [&](const Row& member_row) { members.push_back(member_row.id<CharacterUid>("uid")); });
+    return members;
 }
 
 // Quick returns used today: (d) a day from master_global login_bonus_reset_hour (4:00), like the
@@ -321,15 +316,13 @@ Value ship_info_of(Ctx& ctx, u32 ship_id) {
 
 Value character_map(Ctx& ctx) {
     Value map = Value::object();
-    ctx.st.q("select ship_id, uids from ds_ship order by ship_id", {}, [&](const Row& ship_row) {
-        auto uids = parse_uids(ship_row.s("uids"));
-        for (size_t k = 0; k < uids.size(); k++) {
-            Value info = Value::object();
-            info["character_id"] = uids[k];
-            info["ship_id"] = (u32)ship_row.i("ship_id");
-            info["ship_slot"] = (u32)k + 1;  // (b) 1..8 (CDeepSpaceProgressDialog::Open looks up slots 1..8)
-            map[std::to_string(uids[k])] = info;
-        }
+    ctx.st.q("select ship_id, slot, uid from ds_ship_member order by ship_id, slot", {}, [&](const Row& member_row) {
+        const CharacterUid uid = member_row.id<CharacterUid>("uid");
+        Value info = Value::object();
+        info["character_id"] = uid.v;
+        info["ship_id"] = (u32)member_row.i("ship_id");
+        info["ship_slot"] = (u32)member_row.i("slot");  // (b) 1..8 (CDeepSpaceProgressDialog::Open looks up slots 1..8)
+        map[std::to_string(uid.v)] = info;
     });
     return map;
 }

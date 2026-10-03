@@ -804,6 +804,182 @@ where p.party_id >= 1 and p.slot between 0 and 3)");
     return ok;
 }
 
+// ---- step 7: the battle in progress (PLAN-schema S7, findings F2, F3) --------------------------
+// The play record was two singletons written together (`play`: the mission, party, start and the
+// party's uids as a "uid,uid," text; `play_ext`: the mission type, the surprise roll and the
+// helper) but not always deleted together (MissionFailed deleted `play` only, so a MissionEnd
+// without a play read the last start's type and surprise roll). They are one row now, `play`, and
+// the party is `play_member` rows: an owned character's uid (checkable: a roster reference), or a
+// mission NPC's battle uid (0x7f000000 + 1 + its order, the tutorial's NPC party). Deleting the
+// play deletes its members. play_ext.campaign_lots was written and never read (MissionEnd reads the
+// campaigns again): dropped. helper_uid / helper_kind / npc_id are kept: MissionRestart replays the
+// helper from them. Deep space's ships keep their crew the same way (`ds_ship.uids` text ->
+// `ds_ship_member` rows, slot 1..8 as the client's ship_slot), and `ds_log` gets its id (3.2).
+//
+// The foreign keys and their actions (PLAN-schema 3.1):
+//   play.party_id            -> party_set.party_id  ON DELETE SET NULL (MissionRestart: the
+//                                                   player's current party then)
+//   play_member.play_id      -> play.id             ON DELETE CASCADE (the play's members)
+//   play_member.uid          -> roster.uid          ON DELETE SET NULL (a member gone)
+//   ds_ship_member.ship_id   -> ds_ship.ship_id     ON DELETE CASCADE (the ship's crew)
+//   ds_ship_member.uid       -> roster.uid          NO ACTION (a character out on a ship can't go)
+// All immediate (every writer writes the parent first). No ON UPDATE action.
+const char* const kPlay[] = {
+    // CPlayMissionInfo (b) and what MissionStart decided (d): the mission in progress
+    R"(create table new_play (
+  id integer primary key check (id = 1),
+  mission_id integer not null,
+  mission_type integer not null default 0,
+  party_id integer references party_set(party_id) on delete set null,
+  started_at integer not null,
+  stamina_cost integer not null default 0,
+  surprise integer not null default 0 check (surprise in (0, 1)),
+  helper_kind integer not null default 0 check (helper_kind between 0 and 3),
+  helper_uid integer,
+  npc_id integer
+) strict)",
+    // BattleParameter.PlayerCharacter (b), in order (slot 0..): an owned character or a mission
+    // NPC, never both; both NULL: a character gone since (SET NULL)
+    R"(create table play_member (
+  play_id integer not null default 1 references play(id) on delete cascade,
+  slot integer not null check (slot >= 0),
+  uid integer references roster(uid) on delete set null,
+  npc_uid integer check (npc_uid is null or uid is null),
+  primary key (play_id, slot)
+) strict)",
+    // CDeepSpaceCharacterInfo (b): a ship's crew, ship_slot 1..8 (CDeepSpaceProgressDialog::Open)
+    R"(create table ds_ship_member (
+  ship_id integer not null references ds_ship(ship_id) on delete cascade,
+  slot integer not null check (slot between 1 and 8),
+  uid integer not null references roster(uid),
+  primary key (ship_id, slot)
+) strict)",
+    // every departure (api/presents/achievements.cpp counts them)
+    R"(create table new_ds_log (
+  id integer primary key autoincrement,
+  mission_id integer not null,
+  started_at integer not null
+) strict)",
+};
+
+// The numbers of a "uid,uid," list in order (empty items skipped); `bad` counts the items that
+// aren't numbers (skipped too: the readers' std::stoull threw on them).
+std::vector<int64_t> uid_list(const std::string& text, int64_t& bad) {
+    std::vector<int64_t> out;
+    for (size_t begin = 0; begin < text.size();) {
+        size_t end = text.find(',', begin);
+        if (end == std::string::npos) end = text.size();
+        if (end > begin) {
+            std::string item = text.substr(begin, end - begin);
+            char* stop = nullptr;
+            errno = 0;
+            unsigned long long v = std::strtoull(item.c_str(), &stop, 10);
+            if (errno || *stop || item[0] == '-') bad++;
+            else out.push_back((int64_t)v);
+        }
+        begin = end + 1;
+    }
+    return out;
+}
+
+// Rows of `sql` as (int64 key, text) pairs.
+std::vector<std::pair<int64_t, std::string>> keyed_texts(sqlite3* db, const char* sql) {
+    std::vector<std::pair<int64_t, std::string>> out;
+    sqlite3_stmt* s = nullptr;
+    if (sqlite3_prepare_v2(db, sql, -1, &s, nullptr) == SQLITE_OK)
+        while (sqlite3_step(s) == SQLITE_ROW) {
+            const unsigned char* v = sqlite3_column_text(s, 1);
+            out.push_back({sqlite3_column_int64(s, 0), v ? (const char*)v : ""});
+        }
+    sqlite3_finalize(s);
+    return out;
+}
+
+// The battle uids the server gives mission NPCs (api/missions/mission_start.cpp kNpcPartyUid0 + 1
+// + their order; master_mission_npc has a few rows per mission).
+constexpr int64_t kNpcPartyUidFirst = 0x7f000001, kNpcPartyUidLast = 0x7f0000ff;
+
+// Step 7's data mapping (PLAN-schema S7), with the conventions of 4.1 (each case logged with its
+// count):
+//   play ⟕ play_ext -> new_play (the one row, id 1): a play without a mission (mission_id NULL or
+//     0: nothing in progress, GetPlayMission's reading) -> dropped, and so is a play_ext without a
+//     play (MissionFailed's leftover: nothing reads it now); mission_type / surprise /
+//     helper_kind from play_ext (none: 0, what the readers read); surprise not 0 -> 1;
+//     helper_kind outside 0..3 -> 0; party_id not a party set -> NULL; started_at / stamina_cost
+//     NULL -> 0; helper_uid / npc_id 0 -> NULL; campaign_lots dropped (never read).
+//   play.uids -> play_member, the k-th item at slot k: a roster uid -> uid; else 0x7f000001 ..
+//     0x7f0000ff -> npc_uid (a mission NPC); else (a character gone) a row with both NULL, as
+//     ON DELETE SET NULL leaves it; an item that isn't a number -> skipped.
+//   ds_ship.uids -> ds_ship_member, the k-th item at slot k + 1: a roster uid -> a row; else (gone,
+//     or past slot 8) -> dropped (uid is NOT NULL); not a number -> skipped. Then the column goes.
+//   ds_log -> new_ds_log: id = the row's rowid (the departures' order), mission_id / started_at
+//     NULL -> 0.
+bool rebuild_play(sqlite3* db, sqlite3*) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from play where ifnull(mission_id, 0) = 0", "play.mission_id", "none -> dropped (nothing in progress)", 7);
+    log_count(db, "select count(*) from play_ext where id not in (select id from play where ifnull(mission_id, 0) != 0)", "play_ext",
+              "no play -> dropped", 7);
+    log_count(db, "select count(*) from play where party_id is not null and party_id not in (select party_id from party_set)", "play.party_id",
+              "dangling -> NULL", 7);
+    log_count(db, "select count(*) from play_ext where helper_kind is not null and helper_kind not between 0 and 3", "play.helper_kind",
+              "outside 0..3 -> 0", 7);
+    log_count(db, "select count(*) from ds_log where mission_id is null or started_at is null", "ds_log", "NULL -> 0", 7);
+
+    bool ok = run(db, R"(
+insert into new_play (id, mission_id, mission_type, party_id, started_at, stamina_cost, surprise, helper_kind, helper_uid, npc_id)
+select 1, p.mission_id, ifnull(e.mission_type, 0),
+  case when p.party_id in (select party_id from party_set) then p.party_id end,
+  ifnull(p.started_at, 0), ifnull(p.stamina_cost, 0),
+  case when ifnull(e.surprise, 0) != 0 then 1 else 0 end,
+  case when e.helper_kind between 0 and 3 then e.helper_kind else 0 end,
+  nullif(e.helper_uid, 0), nullif(e.npc_id, 0)
+from play p left join play_ext e on e.id = p.id
+where p.id = 1 and ifnull(p.mission_id, 0) != 0)");
+
+    // the play's party
+    int64_t bad = 0, gone = 0, npcs = 0;
+    for (auto& [id, text] : keyed_texts(db, "select id, uids from play where id = 1 and ifnull(mission_id, 0) != 0")) {
+        std::vector<int64_t> uids = uid_list(text, bad);
+        for (size_t k = 0; ok && k < uids.size(); k++) {
+            const int64_t uid = uids[k];
+            const bool owned = count_of(db, "select count(*) from roster where uid = ?", uid) != 0;
+            const bool npc = !owned && uid >= kNpcPartyUidFirst && uid <= kNpcPartyUidLast;
+            if (!owned && !npc) gone++;
+            if (npc) npcs++;
+            ok = run(db, "insert into play_member (play_id, slot, uid, npc_uid) values (1, ?, ?, ?)",
+                     {Bound::integer((int64_t)k), owned ? Bound::integer(uid) : Bound::null(), npc ? Bound::integer(uid) : Bound::null()});
+        }
+    }
+    if (npcs) LOGI("server", "migrate v7: play_member.npc_uid: %lld mission NPCs", (long long)npcs);
+    if (gone) LOGW("server", "migrate v7: play_member.uid: %lld dangling -> NULL", (long long)gone);
+    if (bad) LOGW("server", "migrate v7: play.uids: %lld items not a number -> skipped", (long long)bad);
+
+    // the ships' crews
+    bad = gone = 0;
+    for (auto& [ship_id, text] : keyed_texts(db, "select ship_id, uids from ds_ship order by ship_id")) {
+        std::vector<int64_t> uids = uid_list(text, bad);
+        for (size_t k = 0; ok && k < uids.size(); k++) {
+            if (k >= 8 || !count_of(db, "select count(*) from roster where uid = ?", uids[k])) {
+                gone++;
+                continue;
+            }
+            ok = run(db, "insert into ds_ship_member (ship_id, slot, uid) values (?, ?, ?)",
+                     {Bound::integer(ship_id), Bound::integer((int64_t)k + 1), Bound::integer(uids[k])});
+        }
+    }
+    if (gone) LOGW("server", "migrate v7: ds_ship_member.uid: %lld dangling or past slot 8 -> dropped", (long long)gone);
+    if (bad) LOGW("server", "migrate v7: ds_ship.uids: %lld items not a number -> skipped", (long long)bad);
+
+    ok =
+        ok &&
+        run(db,
+            "insert into new_ds_log (id, mission_id, started_at) select rowid, ifnull(mission_id, 0), ifnull(started_at, 0) from ds_log order by rowid");
+    for (const char* sql : {"drop table play_ext", "drop table play", "drop table ds_log", "alter table new_play rename to play",
+                            "alter table new_ds_log rename to ds_log", "alter table ds_ship drop column uids"})
+        ok = ok && run(db, sql);
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -830,6 +1006,11 @@ const std::vector<Step>& steps() {
          "parties: party merged into party_member, party_set and party_member rebuilt with their foreign keys (PLAN-schema S6)",
          {std::begin(kParty), std::end(kParty)},
          rebuild_parties},
+        {7,
+         "the battle in progress: play_ext merged into play, the party as play_member rows, a ship's crew as ds_ship_member rows, "
+         "ds_log with its id (PLAN-schema S7)",
+         {std::begin(kPlay), std::end(kPlay)},
+         rebuild_play},
     };
     return s;
 }

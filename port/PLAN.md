@@ -98,6 +98,13 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 - **Why before N:** natives written after W are tested on both platforms from the start, and W's `long` audit and libc-layer port touch code N would otherwise grow on top of.
 
 ### 6. N: rebuild the natives
+**Parallelism (the user, 2026-10-03: "parallelize as much as reasonably possible"; N still starts after all of W):**
+- **Many agents at once, one per subsystem** (worktree off `main`, its own `port/src/native/<subsystem>/` and `port/decomp/<subsystem>/`), as many as the machine carries: the slot pool's 12 clients and the memory gate bound the test runs, not the agent count.
+- **Pipelined by stage:** type-recovery agents (structs + `static_assert`s + Ghidra types) run a wave ahead of the code agents for the same subsystem, so a subsystem's code starts as soon as its leaf types land; leaf subsystems (values, containers) and independent ones run side by side.
+- **Independent tracks from day one:** the library boundaries (zlib, IJG libjpeg, SQLite, libVorbis/ogg, zstd, libc++: host libraries via vcpkg / `FetchContent`), the Bullet version pin, and `Framework::Cocos`, each its own agent.
+- **No shared hot files:** each subsystem registers its natives and sources through its own CMake fragment / registration file (task 5's scaffolding makes these per subsystem), so parallel branches don't conflict on one list; `native/common/` changes go through small separate commits merged first.
+- **Ghidra:** agents don't write the committed Ghidra project concurrently; each exports its types/names as a per-subsystem script or archive under `port/decomp/<subsystem>/`, and the integrator applies them to the project serially.
+- **Gates:** `tools/gate.sh T0` per commit; per subsystem its differential tests, the live check at 0 mismatches (`--live-check`), and `T1 --git-diff main`; T2 once per wave of merges. The integrator merges continuously (T0 on the merged `main`, then pushes).
 **How:**
 - **Readable C++ from the Ghidra decompile; no new a2c translations.** Regenerating the existing a2c files as a reference or fallback is still allowed.
 - **Types first:**

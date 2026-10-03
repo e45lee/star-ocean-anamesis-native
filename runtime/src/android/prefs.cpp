@@ -61,7 +61,7 @@ std::string xml_escape(const std::string& s) {
 std::string java_base64(const std::vector<unsigned char>& d) {
     std::string raw;
     for (size_t i = 0; i < d.size(); i += 3) {
-        u_int32_t v = d[i] << 16;
+        uint32_t v = d[i] << 16;
         if (i + 1 < d.size()) v |= d[i + 1] << 8;
         if (i + 2 < d.size()) v |= d[i + 2];
         raw.push_back(kB64[(v >> 18) & 63]);
@@ -76,12 +76,12 @@ std::string java_base64(const std::vector<unsigned char>& d) {
 
 std::vector<unsigned char> base64_decode(const std::string& s) {
     std::vector<unsigned char> out;
-    u_int32_t acc = 0;
+    uint32_t acc = 0;
     int bits = 0;
     for (char c : s) {
         const char* p = c ? strchr(kB64, c) : nullptr;
         if (!p) continue;
-        acc = (acc << 6) | (u_int32_t)(p - kB64);
+        acc = (acc << 6) | (uint32_t)(p - kB64);
         bits += 6;
         if (bits >= 8) {
             bits -= 8;

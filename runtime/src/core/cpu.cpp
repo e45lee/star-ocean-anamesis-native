@@ -1,9 +1,13 @@
 #include "core/cpu.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <execinfo.h>
-#include <malloc.h>
 #include <signal.h>
-#include <sys/mman.h>
+#endif
+#include <malloc.h>
+#include <pthread.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -14,6 +18,7 @@
 #include <set>
 #include <unordered_map>
 
+#include "core/host_mem.h"
 #include "core/log.h"
 #include "dynarmic/interface/A64/a64.h"
 #include "dynarmic/interface/A64/config.h"
@@ -246,7 +251,7 @@ public:
         }
         pool.clear();
         if (info.stack_lo) {
-            munmap((void*)(info.stack_lo - 0x1000), info.stack_hi - info.stack_lo + 0x1000);
+            hostmem::unmap((void*)(info.stack_lo - 0x1000), info.stack_hi - info.stack_lo + 0x1000);
             info.stack_lo = info.stack_hi = 0;
         }
     }
@@ -277,9 +282,9 @@ void guest_thread_init(size_t stack_size) {
     if (ts.info.stack_lo) return;
     stack_size = (stack_size + 0xfff) & ~0xfffull;
     if (stack_size < 0x40000) stack_size = 0x40000;
-    void* p = mmap(nullptr, stack_size + 0x1000, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
-    if (p == MAP_FAILED) fatal("guest stack mmap failed");
-    mprotect(p, 0x1000, PROT_NONE);  // guard page
+    void* p = hostmem::map_rw(stack_size + 0x1000, true);
+    if (!p) fatal("guest stack mapping failed");
+    hostmem::protect_none(p, 0x1000);  // guard page
     ts.info.stack_lo = (u64)p + 0x1000;
     ts.info.stack_hi = ts.info.stack_lo + stack_size;
     // Bionic-style TLS: slot 5 (tp+0x28) is the stack guard. Keep some slots below tp too.
@@ -365,7 +370,7 @@ static void release_fast_dispatch_table(Dynarmic::A64::Jit& j) {
     }
     const u64 lo = ((u64)(impl + run_at) + 0xfff) & ~0xfffull;
     const u64 hi = ((u64)(impl + run_at) + kEntries * 16) & ~0xfffull;
-    if (hi > lo) madvise((void*)lo, hi - lo, MADV_DONTNEED);
+    if (hi > lo) hostmem::discard((void*)lo, hi - lo);
 }
 
 // Finds dynarmic's A64JitState inside the Jit's private Impl so the register accessors can be
@@ -750,15 +755,15 @@ void invalidate_guest_code(u64 addr, u64 size) {
 }
 
 void* map_guest_code(size_t bytes) {
-    void* p = mmap(nullptr, bytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (p == MAP_FAILED) fatal("map_guest_code: mmap of %zu bytes failed", bytes);
+    void* p = hostmem::map_rw(bytes);
+    if (!p) fatal("map_guest_code: mapping %zu bytes failed", bytes);
     invalidate_guest_code((u64)p, bytes);
     return p;
 }
 
 void unmap_guest_code(void* p, size_t bytes) {
     invalidate_guest_code((u64)p, bytes);
-    munmap(p, bytes);
+    hostmem::unmap(p, bytes);
 }
 
 thread_local bool (*t_hook_filter)(Cpu& c, u64 hook_addr) = nullptr;
@@ -786,6 +791,21 @@ void hook_guest_function(u64 addr, const char* name, HostFn fn) {
 
 // ---------------------------------------------------------------------------
 
+#ifdef _WIN32
+// The last chance for an exception nothing handled (dynarmic's fastmem faults are handled before
+// this, by its own handler): the guest state, then the default (the process ends).
+static LONG WINAPI unhandled_exception(EXCEPTION_POINTERS* ep) {
+    Cpu* c = t_current;
+    const EXCEPTION_RECORD* r = ep->ExceptionRecord;
+    fprintf(stderr, "\n*** host exception %#lx at %p (fault addr %#llx, thread %d) ***\n", (unsigned long)r->ExceptionCode, r->ExceptionAddress,
+            r->NumberParameters >= 2 ? (unsigned long long)r->ExceptionInformation[1] : 0ull, (int)gettid());
+    if (c) {
+        fprintf(stderr, "guest pc (last sync) = %s\n", describe_guest_addr(c->pc()).c_str());
+        dump_guest_state(*c);
+    }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+#else
 static void segv_handler(int sig, siginfo_t* si, void*) {
     Cpu* c = t_current;
     fprintf(stderr, "\n*** host signal %d (fault addr %p, thread %ld) ***\n", sig, si->si_addr, (long)gettid());
@@ -803,11 +823,12 @@ static void segv_handler(int sig, siginfo_t* si, void*) {
     signal(sig, SIG_DFL);
     raise(sig);
 }
+#endif
 
 void cpu_global_init() {
     g_thunks = new ThunkEntry[kMaxThunks];
-    void* p = mmap(nullptr, kMaxThunks * 8, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (p == MAP_FAILED) fatal("thunk mmap failed");
+    void* p = hostmem::map_rw(kMaxThunks * 8);
+    if (!p) fatal("thunk mapping failed");
     g_thunk_code = (u32*)p;
     g_thunk_code[0] = enc_svc(0);
     g_thunk_code[1] = 0xd61f0200;  // BR X16: guest_call's entry (see guest_call_raw)
@@ -815,6 +836,9 @@ void cpu_global_init() {
     g_proc_used.assign(kMaxProcessors, false);
     g_monitor = new Dynarmic::ExclusiveMonitor(kMaxProcessors);
 
+#ifdef _WIN32
+    SetUnhandledExceptionFilter(unhandled_exception);
+#else
     struct sigaction sa {};
     sa.sa_sigaction = segv_handler;
     sa.sa_flags = SA_SIGINFO;
@@ -822,6 +846,7 @@ void cpu_global_init() {
     sigaction(SIGBUS, &sa, nullptr);
     sigaction(SIGILL, &sa, nullptr);
     sigaction(SIGFPE, &sa, nullptr);
+#endif
 }
 
 void dump_guest_state(Cpu& c) {

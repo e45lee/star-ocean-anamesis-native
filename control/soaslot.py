@@ -33,7 +33,8 @@ Env:
                        a dozen clients booting at once saturate the cores
     SOA_SLOT_SOFTWARE_GL=1  (opt-in, harness only; default off: the host GPU) the clients render
                        on Mesa's llvmpipe instead of the host GPU: acquire(), `run` and
-                       soaslot_take export SOFTWARE_GL_ENV for the clients they start
+                       soaslot_take export SOFTWARE_GL_ENV (+ SOFTWARE_GL_DEFAULTS unless set)
+                       for the clients they start
                        (docs/testing-software-gl.md; `tools/gate.sh --software-gl` sets it)
     SOA_SLOT_HELD=1    set by `run` for the command it starts: a nested `run` (a script that
                        starts another script) doesn't take a second slot (no hold-and-wait)
@@ -292,11 +293,12 @@ def main(argv):
         return 0
     if cmd == "run":
         args, name = argv[1:], None
-        if args[:1] == ["--name"]:
-            name, args = args[1], args[2:]
-        if args[:1] == ["--software-gl"]:
-            os.environ["SOA_SLOT_SOFTWARE_GL"] = "1"
-            args = args[1:]
+        while args[:1] in (["--name"], ["--software-gl"]):  # either order
+            if args[0] == "--name":
+                name, args = args[1], args[2:]
+            else:
+                os.environ["SOA_SLOT_SOFTWARE_GL"] = "1"
+                args = args[1:]
         if args[:1] == ["--"]:
             args = args[1:]
         if not args:

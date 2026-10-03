@@ -40,7 +40,7 @@ The whole contract is three Java methods and one static flag. Compared with Drag
 - **`CWebView::Progress`** (every frame, while the dialog is open):
   - **Editable mode:** when `IsShowingWebView()` turns false (the Android close button), it runs the close functor and calls `BAS::WebView(nullptr, …)`.
   - **Both modes:** the game's own close (`ForceClose`, or its 閉じる → `ToRelease`) calls `BAS::WebView(nullptr, …)`. In the logs that is `ShowWebView()` with an empty URL.
-  - **Game loop:** the game keeps running and presenting frames while a web view is open.
+  - **Game loop:** the game keeps running and presenting frames while a web view is open (observed: the port logs `perf: 59.6 fps` throughout the open notice board).
 - **`WebViewUtility::GetWebInfo(ViewType, string url)`** turns a type into a URL.
   - **Lookup:** the key is looked up in the server's `WebView` list (`CWebViewInfo`, CParameterManager+0x6120: `[{key, value}]`), then `CommonWebView` (+0x6b90), then `CommonWebSite` (+0x6be0). Some types use `master_global` instead (`CParameterUtility::FindGlobalStringWithKey`), and some use the URL the caller passes.
   - **Cache buster:** most types get `"?" + CTimeUtility::NowDate2MD5()` appended. That is the `?<40 hex>` seen in the logs.

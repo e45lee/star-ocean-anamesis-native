@@ -24,8 +24,8 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 | **3** | **P5b: `tests/diff/`, port-vs-emulator differential flows** | below | ✅ done (32ff1d9; `tests/diff/README.md`) |
 | **4** | **P3 + P4: offline-build cleanup and references** | below | ✅ done (25fd054, 7940bac; `tools/check_no_380.sh` strict since e229364) |
 | **4b** | **Server code: readability, then the database schema** (`server/PLAN-readability.md` R0-R20, then `server/PLAN-schema.md` S0-S12; R12/R17 after S4/S9) | the two plans | 🔄 resumed 2026-10-03: readability phase 1 done (R0-R11, R13-R16, R18; 67db9de); next on resume: one full tests/diff over the phase, then schema S0-S12, then R12, R17, R19 |
-| **5** | **Rebuild tooling, together with the control-script consolidation** (`control/PLAN-consolidate.md`, incl. the runtime's GDB stub) | below | ⏳ (the user, 2026-10-03: consolidation done with 5; starts after the faster-tests work merges) |
-| **5b** | **W: native Windows runner** (the user, 2026-10-02: before N) | below | ⏳ after 5 |
+| **5** | **Rebuild tooling, together with the control-script consolidation** (`control/PLAN-consolidate.md`, incl. the runtime's GDB stub) | below | 🔄 2026-10-03: decomp --into, scaffolding, the GDB stub (`--gdb`) and the fresh profile running (agent rebuild-tooling); the consolidation (soadrive, flows, thin wrappers) after the env→flags cleanup lands |
+| **5b** | **W: native Windows runner** (the user, 2026-10-02: before N) | below | 🔄 phase 1 started early (2026-10-03, to speed things up; the user): the MinGW cross build, soa-server.exe and the runtime tests on the host via WSL interop, the `long` audit (agent win-runner) |
 | **6** | **N: rebuild the natives** | below | ⏳ ongoing after 5b |
 | **7** | **H: trim the server hooks** | below | ✅ done with P3 (25fd054) |
 
@@ -98,6 +98,13 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 - **Why before N:** natives written after W are tested on both platforms from the start, and W's `long` audit and libc-layer port touch code N would otherwise grow on top of.
 
 ### 6. N: rebuild the natives
+**Parallelism (the user, 2026-10-03: "parallelize as much as reasonably possible"; N still starts after all of W):**
+- **Many agents at once, one per subsystem** (worktree off `main`, its own `port/src/native/<subsystem>/` and `port/decomp/<subsystem>/`), as many as the machine carries: the slot pool's 12 clients and the memory gate bound the test runs, not the agent count.
+- **Pipelined by stage:** type-recovery agents (structs + `static_assert`s + Ghidra types) run a wave ahead of the code agents for the same subsystem, so a subsystem's code starts as soon as its leaf types land; leaf subsystems (values, containers) and independent ones run side by side.
+- **Independent tracks from day one:** the library boundaries (zlib, IJG libjpeg, SQLite, libVorbis/ogg, zstd, libc++: host libraries via vcpkg / `FetchContent`), the Bullet version pin, and `Framework::Cocos`, each its own agent.
+- **No shared hot files:** each subsystem registers its natives and sources through its own CMake fragment / registration file (task 5's scaffolding makes these per subsystem), so parallel branches don't conflict on one list; `native/common/` changes go through small separate commits merged first.
+- **Ghidra:** agents don't write the committed Ghidra project concurrently; each exports its types/names as a per-subsystem script or archive under `port/decomp/<subsystem>/`, and the integrator applies them to the project serially.
+- **Gates:** `tools/gate.sh T0` per commit; per subsystem its differential tests, the live check at 0 mismatches (`--live-check`), and `T1 --git-diff main`; T2 once per wave of merges. The integrator merges continuously (T0 on the merged `main`, then pushes).
 **How:**
 - **Readable C++ from the Ghidra decompile; no new a2c translations.** Regenerating the existing a2c files as a reference or fallback is still allowed.
 - **Types first:**

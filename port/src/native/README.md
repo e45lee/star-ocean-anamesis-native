@@ -119,7 +119,7 @@ The steps:
    scratch output to `work/decomp/`.
 3. **Types first:** recover the structs into `<s>_layout.h` (fields at guest offsets, unknown bytes as named
    padding, a `static_assert` per offset and size), then `tools/subsystem.py export-types <s>` (clang's
-   record layouts -> `types.json`). Set the functions' status to `typed`.
+   record layouts -> `types.json`). Set the functions' status to `typed`. Run `export-types` before committing a changed layout header: T0's `pytest-control` (`control/tests/test_subsystem.py`) runs `tools/subsystem.py check`, which compiles every layout header alone with clang++ and fails on a stale `types.json` (so keep the headers to standard C++ that both clang and GCC accept).
 4. **Natives + tests** in `<s>_*.cpp` (NATIVE_FUNCTION, NATIVE_TEST: register themselves), using the typed
    fields; list them in the subsystem README; status `native`, then `tested` once the live check is at 0.
 5. **Check:** `tools/subsystem.py check` (files present, `symbols.tsv` well-formed, the layout header compiles on

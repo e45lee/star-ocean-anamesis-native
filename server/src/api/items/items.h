@@ -20,7 +20,7 @@ constexpr u32 kHealItem = 10;   // a stamina heal item (heal_type / heal_point)
 // GenerateGear's materials: the request's first vector, empty when none was sent.
 inline std::vector<u64> uid_list(const Request& req) { return req.vecs.empty() ? std::vector<u64>{} : req.vecs[0]; }
 // uid_list as item uids (SellItem(Array), LockItem(Array), UnlockItem(Array), ItemCompose /
-// ItemGradeUp's materials); the gear lists stay plain (gear_items: PLAN-schema S5).
+// ItemGradeUp's materials); gear.cpp has its gear uid list (ClearNewGear, SellGear).
 inline std::vector<ItemUid> item_uid_list(const Request& req) {
     std::vector<ItemUid> uids;
     for (u64 uid : uid_list(req)) uids.push_back(ItemUid(uid));
@@ -28,7 +28,8 @@ inline std::vector<ItemUid> item_uid_list(const Request& req) {
 }
 
 // Whether a character wears the item (roster.weapon_uid / accessory_uid). A party set's own
-// equipment (party_member) isn't looked at: PLAN-schema S5/S6.
+// equipment (party_member) isn't looked at until PLAN-schema S6 (its plain 0-sentinel columns);
+// the roster's references are kept consistent by their ON DELETE SET NULL (S4).
 bool item_equipped(ext::Ctx& ctx, ItemUid item_uid);
 
 }  // namespace soa::server

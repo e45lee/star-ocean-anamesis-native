@@ -32,7 +32,8 @@ constexpr int kRecipeIngredients = 5;
 struct Item {
     bool ok = false;
     ItemUid uid;
-    u32 id = 0, type = 0, points = 0, lb = 0, rarity = 0, sale_fol = 0;  // points: boosted points (`exp`); lb: limit break
+    MasterItemId id;
+    u32 type = 0, points = 0, lb = 0, rarity = 0, sale_fol = 0;  // points: boosted points (`exp`); lb: limit break
     bool locked = false, equipped = false;
 };
 Item find_item(Ctx& ctx, ItemUid uid) {
@@ -40,7 +41,7 @@ Item find_item(Ctx& ctx, ItemUid uid) {
     ctx.st.q("select * from items where uid = ?", {uid}, [&](const Row& item_row) {
         item.ok = true;
         item.uid = uid;
-        item.id = (u32)item_row.i("master_item_id");
+        item.id = item_row.id<MasterItemId>("master_item_id");
         item.type = (u32)item_row.i("item_type");
         item.points = (u32)item_row.i("exp");
         item.lb = (u32)item_row.i("limit_break");
@@ -224,7 +225,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     composed.level_before = item_level_of(ctx, base), composed.level_after = item_level_of(ctx, after);
     ctx.st.q("update items set exp = ?, limit_break = ?, level = ? where uid = ?", {after.points, lb, composed.level_after, base_uid});
     for (ItemUid material_uid : materials) {
-        ctx.st.q("delete from items where uid = ?", {material_uid});
+        ctx.st.q("delete from items where uid = ?", {material_uid});  // its gear goes with it (ON DELETE CASCADE)
         composed.lost.push(material_uid.v);
     }
     add_fol(ctx, -(int64_t)composed.cost);
@@ -296,7 +297,7 @@ std::vector<u8> item_grade_up(Ctx& ctx, const Request& req) {
     ctx.st.q("update items set master_item_id = ?, item_type = (select 1), exp = 0, limit_break = 0, level = 1 where uid = ?", {got, base_uid});
     Value lost = Value::array();
     for (ItemUid material_uid : materials) {
-        ctx.st.q("delete from items where uid = ?", {material_uid});
+        ctx.st.q("delete from items where uid = ?", {material_uid});  // its gear goes with it (ON DELETE CASCADE)
         lost.push(material_uid.v);
     }
     add_fol(ctx, -(int64_t)cost);
@@ -310,7 +311,7 @@ std::vector<u8> item_grade_up(Ctx& ctx, const Request& req) {
     result["UpdateGearList"] = Value::array();
     data["GradeUpResult"] = result;
     data["Item"] = ctx.items();
-    LOGI("server", "ItemGradeUp %llx: item %u -> %u, FOL -%u", (unsigned long long)base_uid.v, base.id, got, cost);
+    LOGI("server", "ItemGradeUp %llx: item %u -> %u, FOL -%u", (unsigned long long)base_uid.v, base.id.v, got, cost);
     return body(data);
 }
 
@@ -417,7 +418,7 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
                         [&](const Row& rate_row) { rate = rate_row.f("sale_rate"); });
             }
             total += growth_rules::sell_price(item.sale_fol, rate);
-            ctx.st.q("delete from items where uid = ?", {uid});
+            ctx.st.q("delete from items where uid = ?", {uid});  // its gear goes with it (ON DELETE CASCADE)
             ids.push(uid.v);
         }
     }

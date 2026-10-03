@@ -5,11 +5,12 @@
 // only way between a kind and its number is explicit (`CharacterUid(n)`, `.v`).
 //
 // "None": since PLAN-schema S4 the state's reference columns hold NULL for "none" (roster.weapon_uid
-// / accessory_uid / assist_uid, player.home_uid / support_uid / title_id, roster.equip_skill1..3), and
-// they read as std::optional<…> (sql::Row::opt). The wire still says "none" with 0 (or_zero). Columns
-// not yet converted keep their 0 sentinel and read as a plain id with value 0 (sql::Row::id): party /
-// party_member (until S6), gear_items.item_uid (0 = the gear box, until S5), the play / ds_ship uid
-// lists (text, until S7), favor_bonus_state.lot_uid and gacha_history.uid (until S10).
+// / accessory_uid / assist_uid, player.home_uid / support_uid / title_id, roster.equip_skill1..3;
+// since S5 gear_items.item_uid, NULL = in the gear box), and they read as std::optional<…>
+// (sql::Row::opt). The wire still says "none" with 0 (or_zero). Columns not yet converted keep
+// their 0 sentinel and read as a plain id with value 0 (sql::Row::id): party / party_member (until
+// S6), the play / ds_ship uid lists (text, until S7), favor_bonus_state.lot_uid and gacha_history.uid
+// (until S10).
 //
 // Kept public (beside sql.h) so the module API (soaserver/ext.h) and the SQL wrapper can use them;
 // the uid scheme's constants are src/core/ids.h.
@@ -34,6 +35,8 @@ struct Id {
 using CharacterUid = Id<struct CharacterUidTag, uint64_t>;
 // An owned unique item: a weapon or an accessory (items.uid), u64.
 using ItemUid = Id<struct ItemUidTag, uint64_t>;
+// An owned gear (gear_items.uid), u64.
+using GearUid = Id<struct GearUidTag, uint64_t>;
 // The player (CHash32 of the search id), u32.
 using PlayerId = Id<struct PlayerIdTag, uint32_t>;
 // master_role.id (a character's role), u32.

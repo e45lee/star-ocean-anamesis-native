@@ -107,7 +107,8 @@ NATIVE_TEST("items/gear-apis") {
         code = 0;
         call(c, "RemoveGear", {wuid});  // (b) the screen sends the weapon
         t.expect_eq(code, 0u, "remove accepted");
-        t.expect_eq((u64)c.st.one("select item_uid from gear_items where uid = ?", {g2}), (u64)0, "detached");
+        t.expect_eq(c.st.one("select count(*) from gear_items where uid = ? and item_uid is null and slot = 0", {g2}), (int64_t)1,
+                    "detached: in the gear box (item_uid NULL)");
         t.expect_eq(stock_count(c, master_id(c, "item_grease")), 0u, "grease used");
         // ---- SellGear: sale_fol
         u32 f1 = fol(c);
@@ -135,6 +136,17 @@ NATIVE_TEST("items/gear-apis") {
         code = 0;
         call(c, "GenerateGear", {0, 0}, {{}});
         t.expect_eq(code, 10208u, "nothing to purify");
+        // a weapon sold with a gear set in it: the gear goes with it (PLAN-schema S5: the state's
+        // ON DELETE CASCADE, the rule gear_info_list applied by hand before)
+        u64 sold = add_weapon(c, witem);
+        Value a2, b2, c2;
+        c.grant(15, gitem, 1, a2, b2, c2);
+        u64 gs = (u64)c.st.one("select max(uid) from gear_items", {});
+        c.st.q("update gear_items set item_uid = ?, slot = 0 where uid = ?", {sold, gs});
+        code = 0;
+        call(c, "SellItem", {}, {{sold}});
+        t.expect_eq(code, 0u, "the weapon sold");
+        t.expect_eq(c.st.one("select count(*) from gear_items where uid = ?", {gs}), (int64_t)0, "its gear gone with it");
         c.st.exec("rollback");
     });
     if (!ran) return;  // no 3.7.0 master or save

@@ -38,7 +38,7 @@ namespace {
 using namespace ext;
 
 // (d) gear uids: their own range, like the core's item uids (0x7d000000..)
-constexpr u64 kGearUid0 = 0x7c000000;
+constexpr GearUid kGearUid0{0x7c000000};
 
 // CGearInfo.type (b: the client structures above): 0 a gear item, != 0 a gear made from a
 // weapon's factor; the server makes type 1 (d).
@@ -58,22 +58,31 @@ constexpr u32 kMaxGearBonuses = 3;
 constexpr size_t kMaxGenerateMaterials = 5;
 constexpr int kMaxGearRarity = 5;
 
+// uid_list as gear uids (ClearNewGear, SellGear).
+std::vector<GearUid> gear_uid_list(const Request& req) {
+    std::vector<GearUid> uids;
+    for (u64 uid : uid_list(req)) uids.push_back(GearUid(uid));
+    return uids;
+}
+
 // One owned gear (a gear_items row).
 struct Gear {
     bool ok = false;
-    u64 uid = 0, item_uid = 0;  // item_uid: the weapon it is attached to, 0 when free
-    u32 type = 0, id = 0, param2 = 0, slot = 0;  // id: param1 (the gear item, or the factor's weapon)
+    GearUid uid;
+    std::optional<ItemUid> item_uid;  // the weapon it is set in; none: in the gear box (free)
+    MasterItemId id;                  // param1: the gear item, or the factor's weapon
+    u32 type = 0, param2 = 0, slot = 0;
     bool is_new = false;
 };
-Gear find_gear(Sql& state, u64 uid) {
+Gear find_gear(Sql& state, GearUid uid) {
     Gear gear;
     state.q("select * from gear_items where uid = ?", {uid}, [&](const Row& gear_row) {
         gear.ok = true;
         gear.uid = uid;
         gear.type = (u32)gear_row.i("type");
-        gear.id = (u32)gear_row.i("master_item_id");
+        gear.id = gear_row.id<MasterItemId>("master_item_id");
         gear.param2 = (u32)gear_row.i("param2");
-        gear.item_uid = (u64)gear_row.i("item_uid");
+        gear.item_uid = gear_row.opt<ItemUid>("item_uid");
         gear.slot = (u32)gear_row.i("slot");
         gear.is_new = gear_row.i("is_new") != 0;
     });
@@ -84,21 +93,20 @@ Gear find_gear(Sql& state, u64 uid) {
 Value gear_info(const Gear& gear) {  // (b) CGearInfo's fields
     Value info = Value::object();
     info["type"] = gear.type;
-    info["param1"] = gear.id;
+    info["param1"] = gear.id.v;
     info["param2"] = gear.param2;
-    info["player_item_id"] = gear.item_uid;
+    info["player_item_id"] = or_zero(gear.item_uid);  // (b) 0: in the gear box
     info["slot_index"] = gear.slot;
     info["is_new"] = gear.is_new;
     return info;
 }
-// GearInfoList: every owned gear by uid.
+// GearInfoList: every owned gear by uid. (d) Gear set in a weapon that is gone (sold, used as a
+// material) went with it: the state's ON DELETE CASCADE (PLAN-schema S5; state/schema.cpp step 5).
 Value gear_info_list(Sql& state) {
-    // (d) gear attached to a weapon that is gone (sold, used as material) goes with it
-    state.exec("delete from gear_items where item_uid != 0 and item_uid not in (select uid from items)");
     Value list = Value::object();
     state.q("select uid from gear_items order by uid", {}, [&](const Row& gear_row) {
-        u64 uid = (u64)gear_row.i("uid");
-        list[std::to_string(uid)] = gear_info(find_gear(state, uid));
+        GearUid uid = gear_row.id<GearUid>("uid");
+        list[std::to_string(uid.v)] = gear_info(find_gear(state, uid));
     });
     return list;
 }
@@ -109,9 +117,9 @@ Value gear_info_list(Sql& state) {
 Value attached_gear_info(Sql& master, const Gear& gear) {
     Value info = Value::object();
     info["type"] = gear.type;
-    info["param1"] = gear.id;
+    info["param1"] = gear.id.v;
     info["param2"] = gear.param2;
-    info["gear_id"] = gear.uid;
+    info["gear_id"] = gear.uid.v;
     for (u32 k = 1; k <= kMaxGearBonuses; k++) {
         info["add_param_type" + std::to_string(k)] = 0u;
         info["value" + std::to_string(k)] = 0u;
@@ -135,10 +143,10 @@ Value attached_gear_info(Sql& master, const Gear& gear) {
     return info;
 }
 // A weapon's AttachedGearInfoList, by slot.
-Value attached_gear_info_list(Sql& state, Sql& master, u64 item_uid) {
+Value attached_gear_info_list(Sql& state, Sql& master, ItemUid item_uid) {
     Value list = Value::array();
     state.q("select uid from gear_items where item_uid = ? order by slot", {item_uid},
-            [&](const Row& gear_row) { list.push(attached_gear_info(master, find_gear(state, (u64)gear_row.i("uid")))); });
+            [&](const Row& gear_row) { list.push(attached_gear_info(master, find_gear(state, gear_row.id<GearUid>("uid")))); });
     return list;
 }
 
@@ -146,11 +154,11 @@ Value attached_gear_info_list(Sql& state, Sql& master, u64 item_uid) {
 //   (b) CItemInfo's child AttachedGearInfoList (+0x2e0); sent only when the weapon has gear.
 void attached_gear_extra(Sql& state, Sql& master, ItemUid uid, Value& item) {
     if (state.one("select count(*) from gear_items where item_uid = ?", {uid}) == 0) return;
-    item["AttachedGearInfoList"] = attached_gear_info_list(state, master, uid.v);  // (gear_items stays plain: S5)
+    item["AttachedGearInfoList"] = attached_gear_info_list(state, master, uid);
 }
 
-u64 new_gear(Ctx& ctx, u32 type, u32 master_item, u32 param2) {
-    u64 uid = (u64)ctx.st.one("select ifnull(max(uid), ?) + 1 from gear_items", {kGearUid0});
+GearUid new_gear(Ctx& ctx, u32 type, MasterItemId master_item, u32 param2) {
+    GearUid uid = ctx.st.one_id<GearUid>("select ifnull(max(uid), ?) + 1 from gear_items", {kGearUid0});
     ctx.st.q("insert into gear_items (uid, type, master_item_id, param2, created_at) values (?,?,?,?,?)",
              {uid, type, master_item, param2, ctx.now()});
     return uid;
@@ -180,15 +188,15 @@ u32 lottery(Ctx& ctx, const std::string& category, u32 kind) {
     return rows.back().first;
 }
 
-void add_to(Value& list, u64 uid, const Gear& gear) { list[std::to_string(uid)] = gear_info(gear); }
+void add_to(Value& list, GearUid uid, const Gear& gear) { list[std::to_string(uid.v)] = gear_info(gear); }
 
 // ---- content grants: 15 gear item, 98 gear lottery ----------------------------------------
 // (a) content type 15 = a master_item of type 15 with its master_gear row; 98 = a lottery of
 // master_gear_lottery by category_id (gear_drop_1..5), docs/api.md "Content types". (d) the gear
 // stock cap isn't checked for grants.
-void grant_gear(Ctx& ctx, u32 item, u32 num, Value& added) {
+void grant_gear(Ctx& ctx, MasterItemId item, u32 num, Value& added) {
     for (u32 k = 0; k < std::max(1u, num); k++) {
-        u64 uid = new_gear(ctx, kGearItem, item, 0);
+        GearUid uid = new_gear(ctx, kGearItem, item, 0);
         add_to(added, uid, find_gear(ctx.st, uid));
     }
 }
@@ -197,7 +205,7 @@ void grant_gear(Ctx& ctx, u32 item, u32 num, Value& added) {
 //   Setup, CItemPossessionList::Setup), so a grant only changes the state.
 void grant_gear_content(Ctx& ctx, u32 id, u32 num, Value&, Value&, Value&) {
     Value unused = Value::object();
-    grant_gear(ctx, id, num, unused);
+    grant_gear(ctx, MasterItemId(id), num, unused);
 }
 // Hook (ext::add_grant 98): `num` draws (at least one) of the gear lottery category `id`
 //   (a: master_gear_lottery.category_id); a category with nothing open logs and grants nothing.
@@ -207,7 +215,7 @@ void grant_gear_lottery(Ctx& ctx, u32 id, u32 num, Value&, Value&, Value&) {
             [&](const Row& lottery_row) { category = lottery_row.s("category_id_label"); });
     Value unused = Value::object();
     for (u32 k = 0; k < std::max(1u, num); k++)
-        if (u32 item = lottery(ctx, category, 0)) grant_gear(ctx, item, 1, unused);
+        if (u32 item = lottery(ctx, category, 0)) grant_gear(ctx, MasterItemId(item), 1, unused);
         else LOGW("server", "gear lottery %u (%s): nothing open", id, category.c_str());
 }
 
@@ -320,9 +328,9 @@ std::vector<u8> get_gear_info(Ctx& ctx, const Request&) {
 // Answers: the player state and UpdateGearList (the uids sent).
 std::vector<u8> clear_new_gear(Ctx& ctx, const Request& req) {
     Value data = ctx.base_data(), ids = Value::array();
-    for (u64 uid : uid_list(req)) {
+    for (GearUid uid : gear_uid_list(req)) {
         ctx.st.q("update gear_items set is_new = 0 where uid = ?", {uid});
-        ids.push(uid);
+        ids.push(uid.v);
     }
     data["UpdateGearList"] = ids;
     return body(data);
@@ -331,14 +339,15 @@ std::vector<u8> clear_new_gear(Ctx& ctx, const Request& req) {
 // An owned weapon (an `items` row) and its master_item / master_weapon fields.
 struct Weapon {
     bool ok = false;
-    u32 id = 0, level = 1, lb = 0, rarity = 0, slots = 0, kind = 0, type = 0;  // lb: limit break; slots: max_gear_slot_num
+    MasterItemId id;
+    u32 level = 1, lb = 0, rarity = 0, slots = 0, kind = 0, type = 0;  // lb: limit break; slots: max_gear_slot_num
     bool locked = false, equipped = false;
 };
-Weapon find_weapon(Ctx& ctx, u64 uid) {
+Weapon find_weapon(Ctx& ctx, ItemUid uid) {
     Weapon weapon;
     ctx.st.q("select * from items where uid = ?", {uid}, [&](const Row& item_row) {
         weapon.ok = true;
-        weapon.id = (u32)item_row.i("master_item_id");
+        weapon.id = item_row.id<MasterItemId>("master_item_id");
         weapon.level = (u32)std::max<int64_t>(1, item_row.i("level"));
         weapon.lb = (u32)item_row.i("limit_break");
         weapon.locked = item_row.i("locked") != 0;
@@ -353,7 +362,7 @@ Weapon find_weapon(Ctx& ctx, u64 uid) {
             weapon.slots = (u32)item_row.i("max_gear_slot_num");
             weapon.kind = (u32)item_row.i("master_weapon_kind_id");
         });
-    weapon.equipped = item_equipped(ctx, ItemUid(uid));
+    weapon.equipped = item_equipped(ctx, uid);
     return weapon;
 }
 // The weapon kind a gear fits: a gear item's master_gear kind (a), a factor gear's weapon's (d).
@@ -368,14 +377,15 @@ u32 gear_kind(Ctx& ctx, const Gear& gear) {
 // AttachGear's arguments: (u64 weapon uid, u64 gear uid, u32 slot); all three or none.
 struct AttachGearArgs {
     bool complete = false;
-    u64 weapon_uid = 0, gear_uid = 0;
+    ItemUid weapon_uid;
+    GearUid gear_uid;
     u32 slot = 0;
     static AttachGearArgs from(const Request& req) {
         AttachGearArgs args;
         args.complete = req.ints.size() >= 3;
         if (!args.complete) return args;
-        args.weapon_uid = req.ints[0];
-        args.gear_uid = req.ints[1];
+        args.weapon_uid = ItemUid(req.ints[0]);
+        args.gear_uid = GearUid(req.ints[1]);
         args.slot = (u32)req.ints[2];
         return args;
     }
@@ -399,7 +409,8 @@ struct AttachGearArgs {
 std::vector<u8> attach_gear(Ctx& ctx, const Request& req) {
     const auto args = AttachGearArgs::from(req);
     if (!args.complete) return refuse(ctx, "AttachGear", "arguments", ErrorCode::kItemUnusable);
-    u64 weapon_uid = args.weapon_uid, gear_uid = args.gear_uid;
+    const ItemUid weapon_uid = args.weapon_uid;
+    const GearUid gear_uid = args.gear_uid;
     u32 slot = args.slot;
     Weapon weapon = find_weapon(ctx, weapon_uid);
     Gear gear = find_gear(ctx.st, gear_uid);
@@ -428,18 +439,19 @@ std::vector<u8> attach_gear(Ctx& ctx, const Request& req) {
     add_fol(ctx, -(int64_t)cost);
     Value destroyed = Value::array(), added = Value::object(), attached = Value::object();
     ctx.st.q("select uid from gear_items where item_uid = ? and slot = ?", {weapon_uid, slot},
-             [&](const Row& gear_row) { destroyed.push((u64)gear_row.i("uid")); });
-    for (auto& old : destroyed.arr) ctx.st.q("delete from gear_items where uid = ?", {old.u});
+             [&](const Row& gear_row) { destroyed.push(gear_row.id<GearUid>("uid").v); });
+    for (auto& old : destroyed.arr) ctx.st.q("delete from gear_items where uid = ?", {GearUid(old.u)});
     ctx.st.q("update gear_items set item_uid = ?, slot = ?, is_new = 0 where uid = ?", {weapon_uid, slot, gear_uid});
     add_to(added, gear_uid, find_gear(ctx.st, gear_uid));
-    attached[std::to_string(weapon_uid)] = attached_gear_info_list(ctx.st, ctx.m, weapon_uid);
+    attached[std::to_string(weapon_uid.v)] = attached_gear_info_list(ctx.st, ctx.m, weapon_uid);
     count(ctx, "gear_attach");
     Value data = ctx.base_data();
     data["AddGearInfoList"] = added;
     data["UpdateGearList"] = destroyed;  // (b) erased from GearInfoList: the destroyed gear
     data["UpdateAttachedGearInfoList"] = attached;
     data["Item"] = ctx.items();
-    LOGI("server", "AttachGear: gear %llu -> weapon %llu slot %u (%zu replaced)", (unsigned long long)gear_uid, (unsigned long long)weapon_uid, slot,
+    LOGI("server", "AttachGear: gear %llu -> weapon %llu slot %u (%zu replaced)", (unsigned long long)gear_uid.v, (unsigned long long)weapon_uid.v,
+         slot,
          destroyed.arr.size());  // read by growth_session.sh
     return body(data);
 }
@@ -472,12 +484,12 @@ struct RemoveGearArgs {
 std::vector<u8> remove_gear(Ctx& ctx, const Request& req) {
     const auto args = RemoveGearArgs::from(req);
     if (!args.sent) return refuse(ctx, "RemoveGear", "arguments", ErrorCode::kItemUnusable);
-    u64 weapon_uid = args.uid;
-    Gear gear = find_gear(ctx.st, weapon_uid);
-    if (gear.ok) weapon_uid = gear.item_uid;
-    std::vector<u64> gears;
-    ctx.st.q("select uid from gear_items where item_uid = ? and item_uid != 0 order by slot", {weapon_uid},
-             [&](const Row& gear_row) { gears.push_back((u64)gear_row.i("uid")); });
+    // the argument names a gear (its weapon, if it is set in one) or a weapon; 0 names neither
+    Gear gear = find_gear(ctx.st, GearUid(args.uid));
+    std::optional<ItemUid> weapon_uid = gear.ok ? gear.item_uid : nonzero<ItemUid>(args.uid);
+    std::vector<GearUid> gears;
+    ctx.st.q("select uid from gear_items where item_uid = ? order by slot", {weapon_uid},
+             [&](const Row& gear_row) { gears.push_back(gear_row.id<GearUid>("uid")); });
     if (gear.ok) gears = {gear.uid};
     if (gears.empty() || !weapon_uid) return refuse(ctx, "RemoveGear", "no gear attached", ErrorCode::kItemUnusable);
     std::string label = master::global_str(ctx.m.h, "gear_remove_gear_item");
@@ -487,11 +499,11 @@ std::vector<u8> remove_gear(Ctx& ctx, const Request& req) {
     // (the player state is built again below, after the changes; this first build ticks the
     // stamina before them, as it always did)
     Value data = ctx.base_data(), ids = Value::array(), attached = Value::object(), stock_update = Value::array();
-    for (u64 uid : gears) {
-        ctx.st.q("update gear_items set item_uid = 0, slot = 0 where uid = ?", {uid});
-        ids.push(uid);
+    for (GearUid uid : gears) {
+        ctx.st.q("update gear_items set item_uid = null, slot = 0 where uid = ?", {uid});  // back in the gear box
+        ids.push(uid.v);
     }
-    attached[std::to_string(weapon_uid)] = attached_gear_info_list(ctx.st, ctx.m, weapon_uid);
+    attached[std::to_string(weapon_uid->v)] = attached_gear_info_list(ctx.st, ctx.m, *weapon_uid);
     Value grease_left = Value::object();
     grease_left["id"] = grease;
     grease_left["master_item_id"] = grease;
@@ -503,7 +515,7 @@ std::vector<u8> remove_gear(Ctx& ctx, const Request& req) {
     data["UpdateStockItem"] = stock_update;
     data["StockItem"] = ctx.stock();
     data["Item"] = ctx.items();
-    LOGI("server", "RemoveGear: %zu gear(s) off weapon %llu", gears.size(), (unsigned long long)weapon_uid);  // read by growth_session.sh
+    LOGI("server", "RemoveGear: %zu gear(s) off weapon %llu", gears.size(), (unsigned long long)weapon_uid->v);  // read by growth_session.sh
     return body(data);
 }
 
@@ -518,21 +530,21 @@ std::vector<u8> remove_gear(Ctx& ctx, const Request& req) {
 // Answers: the player state, SellResult {total_fol, item_ids (empty), UpdateGearList} and
 // UpdateGearList.
 std::vector<u8> sell_gear(Ctx& ctx, const Request& req) {
-    std::vector<u64> uids = uid_list(req);
+    std::vector<GearUid> uids = gear_uid_list(req);
     if (uids.empty()) return refuse(ctx, "SellGear", "nothing", ErrorCode::kItemUnusable);
     u32 total = 0;
     Value ids = Value::array();
-    for (u64 uid : uids) {
+    for (GearUid uid : uids) {
         Gear gear = find_gear(ctx.st, uid);
         if (!gear.ok || gear.item_uid) return refuse(ctx, "SellGear", "gear not owned or attached", ErrorCode::kLockedItem);
-        u32 item = gear.id;
+        MasterItemId item = gear.id;
         if (gear.type != kGearItem) {
             std::string label = master::global_str(ctx.m.h, "weapon_gear_item");
-            item = (u32)ctx.m.one("select id from master_item where id_label = ?", {label});
+            item = ctx.m.one_id<MasterItemId>("select id from master_item where id_label = ?", {label});
         }
         total += (u32)ctx.m.one("select ifnull(sale_fol, 0) from master_item where id = ?", {item});
         ctx.st.q("delete from gear_items where uid = ?", {uid});
-        ids.push(uid);
+        ids.push(uid.v);
     }
     add_fol(ctx, total);
     Value data = ctx.base_data(), result = Value::object();
@@ -579,14 +591,14 @@ u32 weapon_attack_int(Ctx& ctx, const Weapon& weapon) {
 // the first two or none.
 struct GenerateGearArgs {
     bool complete = false;
-    u64 base_uid = 0;
+    std::optional<ItemUid> base_uid;  // none: 0, no base
     u32 carrot_item = 0;
-    std::vector<u64> material_uids;
+    std::vector<u64> material_uids;  // each a gear or a weapon uid
     static GenerateGearArgs from(const Request& req) {
         GenerateGearArgs args;
         args.complete = req.ints.size() >= 2;
         if (!args.complete) return args;
-        args.base_uid = req.ints[0];
+        args.base_uid = nonzero<ItemUid>(req.ints[0]);
         args.carrot_item = (u32)req.ints[1];
         args.material_uids = uid_list(req);
         return args;
@@ -598,7 +610,8 @@ struct Generation {
     GenerateGearArgs args;
     Weapon base;                        // the base weapon (ok = false without one)
     u32 rarity_sum = 0, first_kind = 0;  // the materials' rarities; the first material's weapon kind
-    std::vector<u64> used_items, used_gears;  // the materials, by table
+    std::vector<ItemUid> used_items;     // the materials, by table
+    std::vector<GearUid> used_gears;
     u32 carrot_slot = 0;                // the factor slot the carrot picks (1..3), 0 without one
     u32 rank_value = 0, rarity = 1;     // the rank value and the drawn rarity
     u32 item = 0;                       // the purified gear's master item (0: nothing open)
@@ -618,7 +631,7 @@ bool check_base_and_materials(Ctx& ctx, Generation& gen, std::vector<u8>& refusa
         return false;
     }
     if (args.base_uid) {
-        gen.base = find_weapon(ctx, args.base_uid);
+        gen.base = find_weapon(ctx, *args.base_uid);
         if (!gen.base.ok || gen.base.type != item_type::kWeapon) {
             refusal = refuse(ctx, "GenerateGear", "base is not an owned weapon", ErrorCode::kItemUnusable);
             return false;
@@ -629,11 +642,11 @@ bool check_base_and_materials(Ctx& ctx, Generation& gen, std::vector<u8>& refusa
         }
     }
     for (u64 uid : args.material_uids) {
-        if (uid == args.base_uid) {
+        if (uid == or_zero(args.base_uid)) {
             refusal = refuse(ctx, "GenerateGear", "base used as material", ErrorCode::kItemUnusable);
             return false;
         }
-        Gear gear = find_gear(ctx.st, uid);
+        Gear gear = find_gear(ctx.st, GearUid(uid));
         if (gear.ok) {
             if (gear.item_uid) {
                 refusal = refuse(ctx, "GenerateGear", "attached gear", ErrorCode::kLockedItem);
@@ -641,10 +654,10 @@ bool check_base_and_materials(Ctx& ctx, Generation& gen, std::vector<u8>& refusa
             }
             gen.rarity_sum += (u32)ctx.m.one("select rarity from master_item where id = ?", {gear.id});
             if (!gen.first_kind) gen.first_kind = gear_kind(ctx, gear);
-            gen.used_gears.push_back(uid);
+            gen.used_gears.push_back(gear.uid);
             continue;
         }
-        Weapon weapon = find_weapon(ctx, uid);
+        Weapon weapon = find_weapon(ctx, ItemUid(uid));
         if (!weapon.ok || weapon.type != item_type::kWeapon) {
             refusal = refuse(ctx, "GenerateGear", "material not owned", ErrorCode::kItemUnusable);
             return false;
@@ -655,7 +668,7 @@ bool check_base_and_materials(Ctx& ctx, Generation& gen, std::vector<u8>& refusa
         }
         gen.rarity_sum += weapon.rarity;  // (b) tItemData+0x1e8 = the master item's rarity
         if (!gen.first_kind) gen.first_kind = weapon.kind;
-        gen.used_items.push_back(uid);
+        gen.used_items.push_back(ItemUid(uid));
     }
     return true;
 }
@@ -744,7 +757,7 @@ void draw_gear(Ctx& ctx, Generation& gen) {
     }
     gen.next = barney_current(ctx, true);
     if (gen.item) {
-        u64 uid = new_gear(ctx, kGearItem, gen.item, 0);
+        GearUid uid = new_gear(ctx, kGearItem, MasterItemId(gen.item), 0);
         add_to(gen.added, uid, find_gear(ctx.st, uid));
     }
 }
@@ -772,23 +785,24 @@ void extract_factor(Ctx& ctx, Generation& gen) {
         u32 p = ctx.global_u32(("extraction_facter_" + std::to_string(std::min<u32>(base.lb, 2) + 1)).c_str(), 0);
         float chance = gear_rules::extract_chance(p, gen.rarity_sum);
         if ((float)((*ctx.rng)() % 10000) < chance * 100.0f) {
-            u64 uid = new_gear(ctx, kFactorGear, base.id, slot);
+            GearUid uid = new_gear(ctx, kFactorGear, base.id, slot);
             add_to(gen.added, uid, find_gear(ctx.st, uid));
         }
     }
-    ctx.st.q("delete from items where uid = ?", {gen.args.base_uid});  // (d) the base weapon is used up too
-    gen.deleted.push(gen.args.base_uid);
+    // (d) the base weapon is used up too (the gear set in it goes with it: the state's ON DELETE CASCADE)
+    ctx.st.q("delete from items where uid = ?", {gen.args.base_uid});
+    gen.deleted.push(or_zero(gen.args.base_uid));
 }
 
 // 7. The materials are used up (b: uimsg_gear_create_warning 素材にした武器やギアは失われます).
 void use_materials(Ctx& ctx, Generation& gen) {
-    for (u64 uid : gen.used_items) {
+    for (ItemUid uid : gen.used_items) {
         ctx.st.q("delete from items where uid = ?", {uid});
-        gen.deleted.push(uid);
+        gen.deleted.push(uid.v);
     }
-    for (u64 uid : gen.used_gears) {
+    for (GearUid uid : gen.used_gears) {
         ctx.st.q("delete from gear_items where uid = ?", {uid});
-        gen.gone.push(uid);
+        gen.gone.push(uid.v);
     }
 }
 

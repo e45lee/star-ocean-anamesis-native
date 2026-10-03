@@ -724,7 +724,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `1f96f310`, encrypted: RequestHeader(16) = 16 bytes; reply `MissionRestartRes` fid `42ff2e75`
 - **Request**: none
 - **Response** (`data.*`): as MissionStart
-- **Handler / effect**: `OnMissionStart` + acknowledge. Resume an interrupted mission (after `GetPlayMission.is_play`).
+- **Handler / effect**: `OnMissionStart` + acknowledge. Resume an interrupted mission (after `GetPlayMission.is_play`). The client builds the resumed battle's party from the reply's `BattleParameter.PlayerCharacter` as for MissionStart (`CStageManager::Progress` → `CPartyManager::InitializePlayer(ulong*, bool*, int)`), so the server sends the play's party and helper again (docs/server-rules.md 2.6).
 - **Callers** (fid constant scan): `CStageManager::Progress`
 - **Status**: **online**
 - **FakeApiCaller**: `FakeApi/mission_start.msgp`

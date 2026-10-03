@@ -55,20 +55,37 @@ std::vector<u64> battle_uids(const std::vector<PlayMember>& members) {
 //
 // Resumes the mission in progress after an interruption (CStageManager::Progress, after
 // GetPlayMission.is_play).
-//   (d) the play record's mission and party start again (start_mission with `restarting`): no
-//       stamina, ticket or play count is taken again, and the stored surprise roll is replayed;
-//   (d) the helper isn't restored: the restart sends the play's party as the third argument (the
-//       helper index + 1) and no helper ids, and type 0 (find_mission tries the other tables);
+//   (b) the request has no arguments, and the client builds the resumed battle's four slots from
+//       the answer's BattleParameter.PlayerCharacter as for a MissionStart (CStageManager::Progress,
+//       Ghidra 0x13c7820, sends 0x1f96f310 / 0x8c788f39 instead of MissionStart when
+//       CParameterUI::GetMissionRestart; CPartyManager::InitializePlayer(ulong*, bool*, int),
+//       0x13a1f6c, CreateCharacterInfoByAPI(0..3)): what the restart fights with is the server's;
+//   (d) the play record's mission, type, party set and helper start again (start_mission with
+//       `restarting`): the recorded helper as MissionStart's arguments (helper index 1; an own
+//       character's uid, a rental id or the NPC helper argument by play.helper_kind); no stamina,
+//       ticket, play count or rental-day count is taken again, and the stored surprise roll is
+//       replayed. (Until 2026-10-03 the restart sent the play's party id as the helper index and no
+//       helper ids, so a restarted battle lost its helper: R15's finding.) What the online server
+//       did isn't known;
 //   nothing in progress: not handled.
 // Answers: as MissionStart.
 std::vector<u8> mission_restart(ext::Ctx& ctx, const Request&) {
-    u32 mission = 0, party = 1;
-    ctx.st.q("select mission_id, party_id from play where id = 1", {}, [&](const Row& play_row) {
+    u32 mission = 0, type = 0, npc_id = 0;
+    HelperKind kind = HelperKind::kNone;
+    u64 helper_uid = 0;
+    ctx.st.q("select mission_id, mission_type, helper_kind, helper_uid, npc_id from play where id = 1", {}, [&](const Row& play_row) {
         mission = (u32)play_row.i("mission_id");
-        party = (u32)play_row.i("party_id");
+        type = (u32)play_row.i("mission_type");
+        kind = HelperKind((u32)play_row.i("helper_kind"));
+        helper_uid = (u64)play_row.i("helper_uid");  // NULL: none (0)
+        npc_id = (u32)play_row.i("npc_id");
     });
     if (!mission) return {};
-    Request again{"MissionStart", 0xb7c62bc2, {0, mission, party, 0, 0, 0, 0}, {}, {}};
+    // MissionStart(type, mission, helper index + 1, own helper uid, NPC helper id, rental id, u32)
+    const u64 helper_index_plus_1 = kind == HelperKind::kNone ? 0 : 1;
+    const u64 own_helper_uid = kind == HelperKind::kOwn ? helper_uid : 0;
+    const u64 rental_uid = kind == HelperKind::kRental ? helper_uid : 0;
+    Request again{"MissionStart", 0xb7c62bc2, {type, mission, helper_index_plus_1, own_helper_uid, npc_id, rental_uid, 0}, {}, {}};
     return start_mission(ctx, again, nullptr, true);
 }
 

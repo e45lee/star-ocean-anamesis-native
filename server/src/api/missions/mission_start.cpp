@@ -197,6 +197,9 @@ void own_party(ext::Ctx& ctx, MissionStart& start) {
     // else party 1 (d). (A NULL party_id reads as 0 here, which has no members, so party 1: the
     // same party a NULL-as-default read would give.)
     start.party_id = (u32)one_null_as_zero(ctx.st, "select party_id from player", {}, 1);
+    // (d) a restart (MissionRestart) fights with the play's party set again (NULL: its set is gone,
+    // the current one)
+    if (start.restarting) start.party_id = (u32)ctx.st.one("select party_id from play where id = 1", {}, start.party_id);
     // (the battle's list is plain numbers: NPC and rental members join it as sentinels)
     auto own_uids = [&](u32 party_id) {
         std::vector<u64> uids;
@@ -333,9 +336,11 @@ bool rental_helper(ext::Ctx& ctx, MissionStart& start) {
     else members.push(helper_status);
     start.helper_uid = rental_id;
     start.helper_kind = HelperKind::kRental;
-    // (d) counted per rental day for the rental bonus (api/social/rental.cpp)
-    ctx.st.q("insert into follow_rental (day, count) values (?, 1) on conflict(day) do update set count = count + 1",
-             {day_start(clock_now(), (int)ctx.global_u32("login_bonus_reset_hour", 4))});
+    // (d) counted per rental day for the rental bonus (api/social/rental.cpp); a restart (the same
+    // rental again, MissionRestart) isn't counted again
+    if (!start.restarting)
+        ctx.st.q("insert into follow_rental (day, count) values (?, 1) on conflict(day) do update set count = count + 1",
+                 {day_start(clock_now(), (int)ctx.global_u32("login_bonus_reset_hour", 4))});
     LOGI("server", "MissionStart: rental helper %llu (a clone of roster uid %llu) as member 4",
          (unsigned long long)rental_id,  // read by rental_session.sh
          (unsigned long long)rental_source->v);
@@ -499,8 +504,8 @@ ext::MissionInfo mission_info(ext::Ctx& ctx, const MissionRef& ref, u32 mission,
 //       vanish_item_id x vanish_num, taken at the start (d); stamina short -> 10004, items short
 //       -> 10206 (d: the code); a locked mission isn't refused (d);
 //   (a) the surprise roll at surprise_rate (d: master_global surprise_rate when the row has none);
-//   (d) the party is the player's current party (Player.party_id), else party 1; (b) the third
-//       argument is the helper index + 1, not a party;
+//   (d) the party is the player's current party (Player.party_id), else party 1 (a MissionRestart:
+//       the play's set); (b) the third argument is the helper index + 1, not a party;
 //   the tutorial's master_mission_npc rows fight as the party; an event mission's are helper
 //       candidates (b); a rental clone, an own character or the picked NPC joins as member 4 (d).
 // Answers: the player state with MissionParameter, PlayMission, BattleParameter, StockItem when

@@ -118,3 +118,11 @@ req 81 1620921650 MissionFailed 479604f6 - - - -
 req 82 1620921655 MissionStart b7c62bc2 0,1069935642,1,0,0,0,2693101203 - - -
 req 83 1620921660 MissionFailed 479604f6 - - - -
 req 84 1620921665 MissionEnd 8312a64c 1069935642,0 - - -
+# MissionRestart replays the recorded helper (PLAN-schema S7; it used to lose it): an own character, then
+# a rental clone as member 4 (its rental day not counted again)
+req 85 1620921670 MissionStart b7c62bc2 0,3519778102,1,2113929238,0,0,2693101203 - - -
+req 86 1620921675 MissionRestart 1f96f310 - - - -
+req 87 1620921680 MissionEnd 8312a64c 3519778102,0 - - -
+req 88 1620921685 MissionStart b7c62bc2 0,3519778102,1,1101625557014,0,0,2693101203 - - -
+req 89 1620921690 MissionRestart 1f96f310 - - - -
+req 90 1620921695 MissionEnd 8312a64c 3519778102,0 - - -

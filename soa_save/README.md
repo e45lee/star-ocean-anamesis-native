@@ -1,6 +1,6 @@
 # soa_save: save editor and event-script decoder
 
-Python library and CLI for the saves of *STAR OCEAN: anamnesis* and for its event scripts. It works on the **offline game** (3.8.0), the build still installed on phones since the service ended: its saves, the master DB in its XAPK (`apk/`, local, not in git) and the scripts in its install-time asset pack. The desktop port (`port/`) runs the 3.7.0 client and doesn't need any of it. Setup: `README.md` "Setup".
+Python library and CLI for the saves of *STAR OCEAN: anamnesis* and for its event scripts. It works on the **offline game** (3.8.0), the build still installed on phones since the service ended: its saves, the master DB in its XAPK (`apk/`, local only: over GitHub's 100 MB limit) and the scripts in its install-time asset pack. The desktop port (`port/`) runs the 3.7.0 client and doesn't need any of it. Setup: `README.md` "Setup".
 
 ## Editing a save
 
@@ -15,7 +15,7 @@ Saves live on the device at `/data/data/com.square_enix.android_googleplay.StarO
 
 `saves/Game_all_characters.xml` is a ready-made example: 276 characters (every playable variant whose model ships offline, at top rarity) with the generic player ID `AAAAAAAAAA`.
 
-`roster` and `unlock-all` read the decrypted master database at `data/basmaster-3.8.0.sqlite3` (local, not in git; named for the game version it came from). If it is missing, they decrypt it again from the XAPK.
+`roster` and `unlock-all` read the decrypted master database at `data/basmaster-3.8.0.sqlite3` (in git; named for the game version it came from). If it is missing, they decrypt it again from the XAPK.
 
 ### Waydroid
 

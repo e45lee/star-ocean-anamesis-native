@@ -309,7 +309,7 @@ Pools* test_pools() {
 
 NATIVE_TEST("server/gacha-pools") {
     Pools* p = test_pools();
-    if (!p) return;  // the file isn't there (a fresh clone: it is not in git; tools/build_gacha_pools.py makes it): nothing to check
+    if (!p) return;  // the file isn't there (a checkout without it; tools/build_gacha_pools.py makes it): nothing to check
     const std::string now = "2021-06-10 15:00:00";
     // gacha_role_0001 (the standard character gacha, open 2016..2030): S 2.2 A 3.8 B 26.1 C 67.9
     Gacha g;

@@ -12,7 +12,7 @@ Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_google
 - `docs/api.md`: every API the client calls, with the wire format of each request and reply. `docs/ason.md`: ASON, the engine's MessagePack (reply bodies, request payloads). `docs/server-rules.md`: the game rules the port's local server applies.
 - `soa_save/`: Python library and CLI for reading, editing and writing saves, and for decoding the event scripts ([`soa_save/README.md`](soa_save/README.md)).
 - `tools/`: helpers used for the reverse engineering: Ghidra headless scripts, ELF/PLT resolver, xref/caller scanners, unicorn emulator harness.
-- `apk/`: the 3.7.0 APK, and the offline build's XAPK for the viewer (`emulator-viewer/`) and the save editor (local only, not in git: README "Game files").
+- `apk/`: the 3.7.0 APK, and the offline build's XAPK for the viewer (`emulator-viewer/`) and the save editor (the 3.7.0 APK is in git; the XAPK, over GitHub's 100 MB limit, is local only: "Game files").
 - `standin-assets/`: made-up **stand-in** images (marked "STAND-IN") for assets the online server had deleted, e.g. lost gacha banners; `tools/make_standin_banners.py` makes them, and the CDN of `soa-server` and of the port's in-process server serves them (`--standin-assets DIR|off`).
 
 ## Setup
@@ -124,7 +124,7 @@ Each script has `--help` and works from any directory.
 - **Use a fresh data folder** (`--data`, `--home`): an existing server state keeps its player.
 
 ### Game files
-The scripts check for these and say which is missing. None of them are in git (until 2026-10-03 the APKs, the master DBs, `port/server-data/gacha_pools.sqlite3` and the two Ghidra quick projects were in Git LFS; they're now local, ignored files, with a checksummed copy in `work/backup-lfs/`).
+The scripts check for these and say which is missing. **In git** (plain git, no LFS; each under GitHub's 100 MB limit): the 3.7.0 APK, the three master DBs in `data/` and `port/server-data/gacha_pools.sqlite3`. **Local only** (too big for GitHub, or derived): the 3.8.0 XAPK, the Ghidra quick projects, and everything under `work/`. A checksummed copy of all of them is in `work/backup-lfs/`.
 
 | File | Used by |
 |---|---|

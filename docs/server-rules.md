@@ -178,7 +178,7 @@ The generator in `tools/fakeapi_responses.py` uses an invented formula; replace 
   - progress per player: `BoxGachaList` {total_count, reset_count, next_master_gacha_id} and `BoxGacha` (remaining slots) (a: schema).
 
 ### 4.5 Gacha pools (reconstructed)
-The live server drew from its `master_gacha_item_*` tables, which neither master DB has (4.3). `tools/build_gacha_pools.py` rebuilds a pool for each of the 2,281 gachas from the 3.7.0 master data and writes **`port/server-data/gacha_pools.sqlite3`** (local, not in git, like `data/*.sqlite3`; deterministic for a given master, so the tool regenerates it). Rebuild with `tools/build_gacha_pools.py [--master data/basmaster-3.7.0.sqlite3] [--report FILE]`; it prints the sanity checks below. The local server reads it through **`server/src/master/gacha_pools.{h,cpp}`**. Every rule carries a code (R-…), stored with its label in the file's `rule` table and in comments of the script.
+The live server drew from its `master_gacha_item_*` tables, which neither master DB has (4.3). `tools/build_gacha_pools.py` rebuilds a pool for each of the 2,281 gachas from the 3.7.0 master data and writes **`port/server-data/gacha_pools.sqlite3`** (in git, like `data/*.sqlite3`; deterministic for a given master, so the tool can regenerate it). Rebuild with `tools/build_gacha_pools.py [--master data/basmaster-3.7.0.sqlite3] [--report FILE]`; it prints the sanity checks below. The local server reads it through **`server/src/master/gacha_pools.{h,cpp}`**. Every rule carries a code (R-…), stored with its label in the file's `rule` table and in comments of the script.
 
 **What is drawn (ranks).**
 

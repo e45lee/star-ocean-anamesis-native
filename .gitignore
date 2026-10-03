@@ -16,10 +16,8 @@ __pycache__/
 /vcpkg_installed/
 # Agent worktrees (git worktree add .claude/worktrees/<name>)
 /.claude/worktrees/
-# Game files and generated databases, kept locally (not in git; they were in Git LFS until
-# 2026-10-03; a verified copy is in work/backup-lfs/). README.md "Game files" says where each comes from.
-/apk/*apk
-/data/*.sqlite3
-/port/server-data/*.sqlite3
+# Game files too big for GitHub (a file over 100 MB), kept locally; README.md "Game files" says where
+# each comes from. The 3.7.0 APK, the master DBs and gacha_pools.sqlite3 are in git (no LFS).
+/apk/*.xapk
 /ghidra/quick/
 /ghidra/quick-v370/

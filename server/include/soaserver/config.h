@@ -22,6 +22,7 @@ struct ServerConfig {
     std::string db;                // the state DB (SOA_SERVER_DB; "" = server.sqlite3 in the working directory)
     std::string seed;              // the save a new state is seeded from (SOA_SERVER_SEED)
     std::string game_xml;          // the client's Game.xml, the last seed fallback (SOA_SERVER_GAME_XML)
+    std::string gacha_pools;       // --gacha-pools: the reconstructed gacha pools ("" = SOA_GACHA_POOLS, else data/gacha_pools.sqlite3 in the repo)
     bool has_seed_rng = false;     // a fixed RNG seed (SOA_SERVER_SEED_RNG), else the time
     uint64_t seed_rng = 0;
     // Free coins a new local player starts with (--start-coins; docs/server-rules.md "Seed").

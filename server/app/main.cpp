@@ -53,6 +53,7 @@ void usage() {
             "  --data DIR           the server's data dir (state DB default DIR/server.sqlite3, side files)\n"
             "  --db FILE            the state DB (soa: SOA_SERVER_DB)\n"
             "  --master FILE        the 3.7.0 master DB (SOA_SERVER_MASTER; default data/basmaster-3.7.0.sqlite3)\n"
+            "  --gacha-pools FILE   the reconstructed gacha pools (SOA_GACHA_POOLS; default data/gacha_pools.sqlite3)\n"
             "  --seed FILE          the save a new state is seeded from (SOA_SERVER_SEED)\n"
             "  --game-xml FILE      the last seed fallback (SOA_SERVER_GAME_XML)\n"
             "  --seed-rng N         fixed RNG seed (SOA_SERVER_SEED_RNG)\n"
@@ -167,6 +168,7 @@ int main(int argc, char** argv) {
         else if (a == "--data") data = next();
         else if (a == "--db") c.db = next();
         else if (a == "--master") c.master = next();
+        else if (a == "--gacha-pools") c.gacha_pools = next();
         else if (a == "--seed") c.seed = next();
         else if (a == "--game-xml") c.game_xml = next();
         else if (a == "--seed-rng") c.has_seed_rng = true, c.seed_rng = strtoull(next().c_str(), nullptr, 0);

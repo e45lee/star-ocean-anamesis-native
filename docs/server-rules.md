@@ -224,7 +224,7 @@ A pick-up released after its banner opened (but before it closed) is drawn from 
 - Box gachas (`gacha_type` 2) have `gacha` rows only: their contents are `master_box_gacha` (4.4).
 
 **Server side** (`soa::server::gacha_pools::Pools`, for the draws (`gacha`) and `GetGachaRate` (`get_gacha_rate`) in `server/src/api/gacha/`):
-- `open()` finds the file (`$SOA_GACHA_POOLS`, then `data/gacha_pools.sqlite3` in the checkout), rejecting a file that isn't a pool file (e.g. an old git-lfs pointer).
+- `open()` finds the file (`--gacha-pools FILE` on soa / soa-server, else `$SOA_GACHA_POOLS`, else `data/gacha_pools.sqlite3` in the checkout), rejecting a file that isn't a pool file (e.g. an old git-lfs pointer).
 - `draw(gacha_id, bonus, now, r1, r2, rank, unit)`: rank by the master rates (the bonus rates for the bonus draw of a bulk draw), skipping ranks with nothing released at `now` (d), then a unit by weight among those released at `now`. `now` is the server clock as "YYYY-MM-DD HH:MM:SS" (the clock that `GetGachaInData` uses).
 - `units()`, `all_units()`, `rank_weights()`, `gacha()`, `id_of()` for anything else.
 - `rate_info(gacha_id, now)` → the `GachaRateInfoList` entries (one per step of a step-up, following `next_stepup_gacha_id`; the last step loops back to step 1 in 167 of 168 chains (a)), each with `rate_lines()`.

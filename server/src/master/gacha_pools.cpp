@@ -88,7 +88,8 @@ bool Pools::open(const std::string& path) {
         LOGI("gacha", "reconstructed gacha pools: %s (format %s)", c.c_str(), chk.col_s(0).c_str());
         return true;
     }
-    LOGW("gacha", "no reconstructed gacha pools (data/gacha_pools.sqlite3; tools/build_gacha_pools.py)");
+    if (!path.empty()) LOGW("gacha", "no reconstructed gacha pools at %s (--gacha-pools)", path.c_str());
+    else LOGW("gacha", "no reconstructed gacha pools (data/gacha_pools.sqlite3; tools/build_gacha_pools.py)");
     return false;
 }
 

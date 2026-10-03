@@ -60,6 +60,7 @@ void config_from_options(const std::string& data_dir) {
     c.enabled = o.enabled;
     c.new_player = o.new_player;
     c.master = o.master;
+    c.gacha_pools = o.gacha_pools;
     c.db = o.db;
     c.seed = o.seed;
     c.game_xml = o.game_xml;

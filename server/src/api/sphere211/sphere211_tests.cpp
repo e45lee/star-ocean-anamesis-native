@@ -738,4 +738,74 @@ NATIVE_TEST("sphere211/items") {
     if (!ran) t.fail("needs the 3.7.0 master and a seed save");
 }
 
+// EX characters (master_role.rank 5): a sortie with one uses one of max_revive_count (3) uses
+// (Player.sphere211_revive_count); only the EX character departs; with no uses left the start
+// is refused (10208); 帰還 gives the uses back.
+NATIVE_TEST("sphere211/ex-sorties") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        std::mt19937_64 rng(t.rand_u64());
+        c.rng = &rng;
+        int64_t clock = c.parse_time("2020-07-01 12:00:00");
+        c.test.now = [&] { return clock; };
+        c.test.event_now = [&] { return clock; };
+        u32 code = 0;
+        c.test.on_refuse = [&](u32 e) { code = e; };
+        sphere211::set_asset_check([](const std::string&) { return true; });
+        Value d = call(c, "GetSphere211Info", {});
+        u32 start = 0;
+        for (auto& [a, x] : cells(d))
+            if (x.can_play) start = a;
+        if (!start) return t.fail("no playable cell");
+        std::vector<u32> ex_roles;
+        c.m.q("select id from master_role where rank = 5 order by id", {}, [&](const Row& r) { ex_roles.push_back((u32)r.i("id")); });
+        std::vector<u64> uids;
+        c.st.q("select uid from roster order by uid limit 9", {}, [&](const Row& r) { uids.push_back((u64)r.i("uid")); });
+        if (ex_roles.size() < 4 || uids.size() < 9) return t.fail("%zu EX roles, %zu characters", ex_roles.size(), uids.size());
+        // four EX characters (uids 0..3, retagged); the others plain
+        for (size_t k = 0; k < 4; k++) c.st.q("update roster set role_id = ? where uid = ?", {ex_roles[k], uids[k]});
+        u32 max = c.global_u32("max_revive_count", 3);
+        t.expect_eq(max, 3u, "(a) max_revive_count");
+        auto revive = [](const Value& v) {
+            const Value* p = v.find("Player");
+            return p ? (u32)num(p->find("sphere211_revive_count")) : 999u;
+        };
+        auto departed = [&](u64 uid) { return c.st.one("select count(*) from sphere_departed where uid = ?", {uid}) != 0; };
+        // EX sorties 1..3: one use each; only the EX character departs
+        for (u32 k = 0; k < max; k++) {
+            c.st.q("update sphere set stamina = 9", {});
+            code = 0;
+            d = call(c, "Sphere211MissionStart", {start, 0, uids[k], uids[4 + (k % 2)], uids[6], 0, 0});
+            t.expect_eq(code, 0u, "EX sortie accepted");
+            t.expect_eq(revive(d), k + 1, "Player.sphere211_revive_count counts the EX sortie");
+            t.expect_eq(departed(uids[k]), true, "the EX character departs");
+            t.expect_eq(departed(uids[4]) || departed(uids[5]) || departed(uids[6]), false, "its companions don't");
+            call(c, "Sphere211MissionFailed", {start, 0});
+        }
+        // no uses left: refused, nothing spent or departed
+        c.st.q("update sphere set stamina = 9", {});
+        code = 0;
+        call(c, "Sphere211MissionStart", {start, 0, uids[4], uids[3], uids[5], 0, 0});
+        t.expect_eq(code, 10208u, "(d) EX sorties used up: 10208");
+        t.expect_eq(departed(uids[3]), false, "refused: nobody departs");
+        t.expect_eq(c.st.one("select stamina from sphere", {}), (int64_t)9, "refused: no stamina spent");
+        // a plain sortie: everyone departs, no use counted
+        code = 0;
+        d = call(c, "Sphere211MissionStart", {start, 0, uids[4], uids[5], uids[6], 0, 0});
+        t.expect_eq(code, 0u, "plain sortie accepted");
+        t.expect_eq(revive(d), max, "a plain sortie isn't counted");
+        t.expect_eq(departed(uids[4]) && departed(uids[5]) && departed(uids[6]), true, "a plain party departs");
+        d = call(c, "Sphere211MissionEnd", {start, 0});
+        t.expect_eq(revive(d), max, "the count stays until 帰還");
+        // 帰還: the uses come back
+        d = call(c, "ReturnSphere211", {});
+        t.expect_eq(revive(d), 0u, "帰還 resets the count");
+        t.expect_eq(c.st.one("select revive_count from sphere", {}), (int64_t)0, "revive_count 0");
+        sphere211::set_asset_check({});
+        c.st.exec("rollback");
+    });
+    sphere211::set_asset_check({});
+    if (!ran) t.fail("needs the 3.7.0 master and a seed save");
+}
+
 }  // namespace soa::server

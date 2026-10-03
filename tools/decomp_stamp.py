@@ -225,6 +225,15 @@ def main():
         for va in sorted(blocks):
             f.write("\n" + "\n".join(blocks[va]) + "\n")
     write_symbols(os.path.join(store, "symbols.tsv"), rows)
+    # types.json lists each class's methods from symbols.tsv: keep it current (tools/subsystem.py check).
+    try:
+        import json
+        import subsystem
+        doc = subsystem.export_structs(a.root, sub)
+        with open(os.path.join(store, "types.json"), "w") as f:
+            f.write(json.dumps(doc, indent=1) + "\n")
+    except Exception as e:  # noqa: BLE001 (clang missing, a header that doesn't compile: check reports it)
+        print(f"decomp_stamp: types.json not regenerated ({e}); run tools/subsystem.py export-types {sub}", file=sys.stderr)
     print(f"{rel}: {len(funcs)} function(s) ({len(blocks)} in the file); "
           f"{os.path.relpath(os.path.join(store, 'symbols.tsv'), a.root)}: {len(rows)} row(s)")
 

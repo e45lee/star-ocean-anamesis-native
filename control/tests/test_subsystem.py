@@ -31,9 +31,10 @@ def fill(root, name):
     run(root, sys.executable, TOOL, "--root", root, "new", name, "--title", f"dummy {name}", "--scope", f"^C{name.title()}::")
     with open(os.path.join(root, f"port/src/native/{name}/{name}_layout.h")) as f:
         text = f.read()
+    cls = f"C{name.title()}"
     text = text.replace(f"}}  // namespace soa::native::{name}",
-                        f"struct C{name.title()} {{\n    const void* vtable;\n    u32 m_id;\n    u8 unk_0c[4];\n}};\n"
-                        f"static_assert(sizeof(C{name.title()}) == 0x10);\n\n}}  // namespace soa::native::{name}")
+                        f"class {cls} {{\npublic:\n    u32 Get() const;\n\n    const void* vtable;\n    u32 m_id;\n    u8 unk_0c[4];\n}};\n"
+                        f"static_assert(sizeof({cls}) == 0x10);\n\n}}  // namespace soa::native::{name}")
     with open(os.path.join(root, f"port/src/native/{name}/{name}_layout.h"), "w") as f:
         f.write(text)
     with open(os.path.join(root, f"port/src/native/{name}/{name}_natives.cpp"), "w") as f:
@@ -41,7 +42,7 @@ def fill(root, name):
     with open(os.path.join(root, f"port/decomp/{name}/{name}.c"), "w") as f:
         f.write(f"// ==== C{name.title()}::Get()\n// vaddr 0x1000 | ghidra 0x101000 | size 8 | symbol x | lib l | d\n")
     with open(os.path.join(root, f"port/decomp/{name}/symbols.tsv"), "a") as f:
-        f.write(f"0x1000\t0x101000\t8\t_ZN{name}\tC{name.title()}::Get()\t{name}\tnative\t\n")
+        f.write(f"0x1000\t0x101000\t8\t_ZNK{len(cls)}{cls}3GetEv\t{cls}::Get() const\t{name}\tnative\t\n")
     if shutil.which("clang++"):
         run(root, sys.executable, TOOL, "--root", root, "export-types", name)
 
@@ -100,3 +101,27 @@ def test_repo_subsystems_check():
     args = [sys.executable, TOOL, "check"] + ([] if shutil.which("clang++") else ["--no-compile"])
     r = subprocess.run(args, capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_skeleton_classes_with_methods(scratch):
+    """skeleton --append declares the guest's Class::Method as members; export-types carries them for Ghidra."""
+    run(scratch, sys.executable, TOOL, "--root", scratch, "new", "dummye")
+    with open(os.path.join(scratch, "port/decomp/dummye/symbols.tsv"), "a") as f:
+        for va, sym, dem in [(0x1000, "_ZN7CWidgetC2Ev", "CWidget::CWidget()"),
+                             (0x1010, "_ZNK7CWidget5GetIdEv", "CWidget::GetId() const"),
+                             (0x1020, "_ZN7CWidget6SetPosEffPKc", "CWidget::SetPos(float, float, char const*)"),
+                             (0x1030, "_ZN7CWidget4LinkEPS_", "CWidget::Link(CWidget*)")]:
+            f.write(f"{va:#x}\t{va + 0x100000:#x}\t8\t{sym}\t{dem}\tw\tdecompiled\t\n")
+    out = run(scratch, sys.executable, TOOL, "--root", scratch, "skeleton", "dummye")
+    assert "class CWidget {" in out and "void CtorBase();" in out and "void GetId() const;" in out
+    assert "void SetPos(float, float, const char*);" in out and "void Link(CWidget*);" in out
+    run(scratch, sys.executable, TOOL, "--root", scratch, "skeleton", "dummye", "--append")
+    out = run(scratch, sys.executable, TOOL, "--root", scratch, "skeleton", "dummye", "--append")
+    assert "0 class skeleton(s) added" in out  # never twice
+    if shutil.which("clang++"):
+        run(scratch, sys.executable, TOOL, "--root", scratch, "export-types", "dummye")
+        import json
+        with open(os.path.join(scratch, "port/decomp/dummye/types.json")) as f:
+            st = {s["name"]: s for s in json.load(f)["structs"]}
+        assert [m["name"] for m in st["CWidget"]["methods"]] == ["CWidget", "GetId", "SetPos", "Link"]
+        assert "ok   dummye" in run(scratch, sys.executable, TOOL, "--root", scratch, "check")

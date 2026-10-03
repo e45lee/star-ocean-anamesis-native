@@ -3,7 +3,8 @@
 # Applies port/decomp/<subsystem>/types.json (the structs of <subsystem>_layout.h, from
 # tools/subsystem.py export-types) and symbols.tsv to the Ghidra project the decompile tools use
 # (tools/common.sh: work/ghidra-quick-v370, kept in ghidra/quick-v370), so later decompiles show
-# the recovered types (data types /soa/<subsystem>/...; bookmarks "soa/<subsystem>").
+# the recovered types (data types /soa/<subsystem>/...; each class's methods get `this` typed as a
+# pointer to it; bookmarks "soa/<subsystem>").
 # The integrator runs it, serially, after merging subsystem branches: agents never write the project
 # (port/PLAN.md task 6, "Parallelism"). It takes every slot lock of the project pool, applies the
 # types to the base project, saves a copy to ghidra/, and drops the pool's other copies (the next

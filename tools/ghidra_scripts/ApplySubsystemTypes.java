@@ -2,6 +2,8 @@
 // Args: <types.json> [<symbols.tsv>]
 //   types.json (tools/subsystem.py export-types): structs -> data types in /soa/<subsystem>, replacing
 //     an earlier version of the same name; pointers to structs of the same file are typed.
+//   a struct's "methods" (the class's member functions from symbols.tsv): the function's first
+//     parameter becomes `this`, a pointer to the class's structure (classes with their methods attached).
 //   symbols.tsv: a function still named FUN_... gets the row's symbol; every row gets a bookmark
 //     "soa/<subsystem>" with its status and topic.
 import ghidra.app.script.GhidraScript;
@@ -9,6 +11,7 @@ import ghidra.program.model.data.*;
 import ghidra.program.model.symbol.*;
 import ghidra.program.model.listing.*;
 import ghidra.program.model.address.*;
+import ghidra.program.model.listing.Function.FunctionUpdateType;
 import com.google.gson.*;
 import java.nio.file.*;
 import java.util.*;
@@ -92,6 +95,34 @@ public class ApplySubsystemTypes extends GhidraScript {
             made.put(name, dtm.addDataType(c, DataTypeConflictHandler.REPLACE_HANDLER));
         }
         println("soa/" + sub + ": " + structs.size() + " struct(s), " + nfields + " field(s)");
+
+        // Methods: `this` typed as a pointer to the class.
+        int typed = 0;
+        for (JsonElement e : structs) {
+            JsonObject s = e.getAsJsonObject();
+            if (!s.has("methods")) continue;
+            DataType cls = made.get(s.get("name").getAsString());
+            DataType ptr = new PointerDataType(cls, 8, dtm);
+            for (JsonElement me : s.getAsJsonArray("methods")) {
+                Address a = toAddr(Long.parseLong(me.getAsJsonObject().get("ghidra").getAsString().replaceFirst("^0x", ""), 16));
+                Function fn = getFunctionAt(a);
+                if (fn == null) {
+                    disassemble(a);
+                    fn = createFunction(a, null);
+                }
+                if (fn == null) continue;
+                Parameter[] ps = fn.getParameters();
+                if (ps.length > 0) {
+                    ps[0].setName("this", SourceType.USER_DEFINED);
+                    ps[0].setDataType(ptr, SourceType.USER_DEFINED);
+                } else {
+                    fn.replaceParameters(FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS, true, SourceType.USER_DEFINED,
+                                         new ParameterImpl("this", ptr, currentProgram));
+                }
+                typed++;
+            }
+        }
+        println("soa/" + sub + ": " + typed + " method(s) with a typed this");
 
         if (args.length < 2 || !Files.exists(Path.of(args[1]))) return;
         int renamed = 0, marked = 0;

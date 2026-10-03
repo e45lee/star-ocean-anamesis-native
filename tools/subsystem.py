@@ -12,15 +12,23 @@ shared file:
   port/decomp/<s>/types.json             <s>_layout.h's structs for Ghidra (export-types)
   port/decomp/<s>/<topic>.c              stamped decompiles (tools/decomp.sh --into <s>/<topic>)
 Sources need no registration: port/CMakeLists.txt globs src/**/*.cpp in basename order (D8), and
-natives register themselves (NATIVE_FUNCTION). Name the files <s>_*.cpp.
+natives register themselves (NATIVE_METHOD for a class's member, NATIVE_FUNCTION otherwise). Name the
+files <s>_*.cpp. Recovered types are classes with their methods attached (port/PLAN.md task 6): the
+guest's Class::Method is a member function of the recovered class, bound with NATIVE_METHOD
+(native/common/native_method.h).
 
 Usage:
   tools/subsystem.py new NAME [--title TEXT] [--scope REGEX]...   scaffold (never overwrites)
   tools/subsystem.py list                                         the index: symbols by status, structs, natives
   tools/subsystem.py check [NAME...]                              the files are there and well-formed; the
                                                                   layout header compiles alone; types.json current
+  tools/subsystem.py skeleton NAME [--class C]... [--append]      class skeletons from symbols.tsv: the guest's
+                                                                  Class::Method as members (ctors, virtuals in
+                                                                  vtable order, the rest), to paste into
+                                                                  <s>_layout.h (--append adds the missing ones)
   tools/subsystem.py export-types NAME...                         <s>_layout.h -> port/decomp/<s>/types.json
-                                                                  (clang -fdump-record-layouts)
+                                                                  (clang -fdump-record-layouts; each class's
+                                                                  methods from symbols.tsv, for Ghidra's `this`)
 Ghidra: tools/ghidra_apply_types.sh [NAME...] applies types.json + symbols.tsv to the Ghidra project
 (the integrator, serially; agents never write the project).
 Options: --root DIR (the repository; default this checkout).
@@ -33,6 +41,9 @@ import shutil
 import subprocess
 import sys
 import tempfile
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "port", "scripts"))
+from profile_report import qualified_name, split_qualified  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
@@ -75,14 +86,14 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 - Types: [`{s}_layout.h`]({s}_layout.h); for Ghidra, `tools/subsystem.py export-types {s}` -> `port/decomp/{s}/types.json`.
 - Build settings of its own (a host library, a definition): [`subsystem.cmake`](subsystem.cmake).
 
-## Types
+## Types (classes with their methods attached)
 
-| Struct | Guest size | Found from (ctor, decompile) | Status |
+| Class | Guest size | Found from (ctor, decompile) | Status |
 |---|---|---|---|
 
 ## Natives
 
-| Guest symbol | File | Differential tests | Live check |
+| Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
 
 ## Dependencies
@@ -99,12 +110,14 @@ def layout_text(s, title):
     return f"""// {s}_layout.h: the guest data layouts of the `{s}` subsystem ({title}).
 //
 // Types first (port/PLAN.md task 6): every guest class or struct this subsystem's natives touch is
-// recovered here before the code that uses it, as a C++ struct with the guest's layout byte for byte:
+// recovered here before the code that uses it, as a C++ class with the guest's layout byte for byte
+// and the guest's methods attached as members (not a struct + free functions):
 //   - fields at the guest's offsets, named after their use (m_hp); unknown bytes as named padding
 //     (u8 unk_0c[4]), never offset arithmetic in the natives;
 //   - a static_assert per known field offset and one for sizeof, so a wrong guess fails the build;
 //   - a comment naming where the layout was read (constructor, decompile in port/decomp/{s}/).
-// Natives use these typed fields (obj->m_hp), never *(T*)(p + off). The guest is AArch64 LP64; the
+// Natives are these members (this->m_hp), never *(T*)(p + off). Keep the classes standard-layout (no
+// C++ virtual, no non-static members of reference type), so offsetof works. The guest is AArch64 LP64; the
 // host (x86-64 / AArch64) has the same sizes and alignments for these plain types.
 // `tools/subsystem.py export-types {s}` turns the structs into port/decomp/{s}/types.json for Ghidra.
 #ifndef {guard}
@@ -124,11 +137,22 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-// The form (replace with the first recovered struct):
+// The form (replace with the first recovered class; `tools/subsystem.py skeleton {s}` writes the
+// member declarations from port/decomp/{s}/symbols.tsv):
 //
 // // CExample: guest size 0x18; layout from CExample::CExample (port/decomp/{s}/example.c).
-// struct CExample {{
-//     const void* vtable;  // 0x00
+// class CExample {{
+// public:
+//     // Guest methods as members (bound with NATIVE_METHOD, native/common/native_method.h):
+//     void Ctor();                    // CExample::CExample()  _ZN8CExampleC2Ev (a C++ constructor can't be bound)
+//     void Dtor();                    // CExample::~CExample() _ZN8CExampleD2Ev
+//     u32 GetId() const;              // CExample::GetId() const
+//     static CExample* Instance();    // a static member: bound with NATIVE_FUNCTION(sym, wrap<&CExample::Instance>(), ...)
+//     // Virtuals in vtable order, as plain members: the object lives in guest memory with the guest's
+//     // vtable, so no C++ `virtual` (a host vptr would change the layout); vtable is a field.
+//     void Update(float dt);          // vtable slot 2  CExample::Update(float)
+//
+//     const void* vtable;  // 0x00: _ZTV8CExample + 0x10
 //     u32 m_id;            // 0x08
 //     u8 unk_0c[4];        // 0x0c: written by CExample::Reset, meaning unknown
 //     u64 m_value;         // 0x10
@@ -255,7 +279,7 @@ def parse_layouts(text, ns):
         m = FIELD_RE.match(line)
         if m and cur is None:
             decl = m.group(5)
-            mm = re.match(r"(?:struct|class|union) (\S+)$", decl)
+            mm = re.match(r"(?:struct|class|union) (\S+)(?: \(empty\))?$", decl)
             if mm and m.group(1) == "0" and mm.group(1).startswith(ns + "::") and "::" not in mm.group(1)[len(ns) + 2:]:
                 cur = {"name": mm.group(1)[len(ns) + 2:], "union": decl.startswith("union"), "fields": []}
                 depth1 = len(m.group(4)) + 2
@@ -350,6 +374,17 @@ def export_structs(root, s):
                 if f["type"]["kind"] == "bytes":
                     f["type"]["size"] = sz
             f["size"] = sz
+    # Each class's methods (symbols.tsv, grouped by the demangled class name): Ghidra types their `this`.
+    if os.path.exists(p["symbols"]):
+        rows, _ = read_symbols(p["symbols"])
+        by_short = {}
+        for cls, ms in class_methods(rows).items():
+            by_short.setdefault(cls.rsplit("::", 1)[-1], []).extend(ms)
+        for st in structs:
+            ms = [m for m in by_short.get(st["name"], []) if "thunk to " not in m[0]["demangled"]]  # thunks' this is adjusted
+            if ms:
+                st["methods"] = [{"ghidra": m[0]["ghidra"], "symbol": m[0]["symbol"], "name": m[1]}
+                                 for m in sorted(ms, key=lambda m: int(m[0]["vaddr"], 16))]
     return types_doc(s, structs)
 
 
@@ -360,6 +395,241 @@ def cmd_export_types(a):
         with open(out, "w") as f:
             f.write(json.dumps(doc, indent=1) + "\n")
         print(f"{os.path.relpath(out, a.root)}: {len(doc['structs'])} struct(s)")
+
+
+# ---- classes from symbols.tsv ---------------------------------------------------------------------
+
+def split_params(sig):
+    """'Foo::Bar(int, std::x<a, b>*) const' -> (['int', 'std::x<a, b>*'], const)."""
+    i = sig.find("(")
+    if i < 0:
+        return [], False
+    depth, cur, out, j = 0, "", [], i + 1
+    while j < len(sig):
+        ch = sig[j]
+        if ch in "<(":
+            depth += 1
+        elif ch in ">)":
+            if depth == 0 and ch == ")":
+                break
+            depth -= 1
+        if ch == "," and depth == 0:
+            out.append(cur.strip())
+            cur = ""
+        else:
+            cur += ch
+        j += 1
+    if cur.strip() and cur.strip() != "void":
+        out.append(cur.strip())
+    return out, sig[j + 1:].strip().startswith("const")
+
+
+def class_methods(rows):
+    """{class (qualified): [(row, method name, params, const)]} from symbols.tsv rows."""
+    out = {}
+    for r in rows:
+        dem = r["demangled"]
+        for pre in ("non-virtual thunk to ", "virtual thunk to "):
+            if dem.startswith(pre):
+                dem = dem[len(pre):]
+        parts = split_qualified(qualified_name(dem))
+        if len(parts) < 2:
+            continue
+        params, const = split_params(dem)
+        out.setdefault("::".join(parts[:-1]), []).append((r, parts[-1], params, const))
+    return out
+
+
+PARAM_TYPES = {
+    "int": "s32", "unsigned int": "u32", "bool": "bool", "float": "float", "double": "double", "long": "s64",
+    "unsigned long": "u64", "long long": "s64", "unsigned long long": "u64", "short": "s16", "unsigned short": "u16",
+    "char": "char", "signed char": "s8", "unsigned char": "u8", "char const*": "const char*", "char*": "char*",
+    "void*": "void*", "void const*": "const void*",
+}
+
+
+def param_decl(t, short_names):
+    """A guest parameter type as a host declaration type (guest classes by pointer -> void* unless declared here)."""
+    t = t.strip()
+    if t in PARAM_TYPES:
+        return PARAM_TYPES[t]
+    base = t.rstrip("*& ").replace(" const", "").strip()
+    ind = t[len(t.rstrip("*&")):] if t.endswith(("*", "&")) else ""
+    short = base.rsplit("::", 1)[-1]
+    if ind and short in short_names and "<" not in base:
+        return ("const " if " const" in t else "") + short + "*" * max(1, ind.count("*") + ind.count("&"))
+    if ind:
+        return "void*"
+    return "u64"  # a by-value guest type: fix by hand
+
+
+def mangled_class(sym):
+    """'_ZN5CHome11GetAdjutantE...' -> '5CHome' (the nested name minus its last component), or None."""
+    if not sym.startswith("_ZN"):
+        return None
+    i = 3
+    while i < len(sym) and sym[i] in "KVr":
+        i += 1
+    comps = []
+    while i < len(sym) and sym[i].isdigit():
+        j = i
+        while sym[j].isdigit():
+            j += 1
+        n = int(sym[i:j])
+        comps.append(sym[i:j + n])
+        i = j + n
+    if i < len(sym) and sym[i] in "CD" and len(sym) > i + 1 and sym[i + 1].isdigit():  # ctor / dtor
+        comps.append("ctor")
+    if len(comps) < 2:
+        return None
+    cls = comps[:-1]
+    return cls[0] if len(cls) == 1 else "N" + "".join(cls) + "E"
+
+
+def vtable_slots(lib_path, mangled_cls):
+    """[(slot, vaddr of the target)] of the class's vtable (_ZTV<class>), after offset-to-top and typeinfo."""
+    try:
+        from elftools.elf.elffile import ELFFile
+        from elftools.elf.relocation import RelocationSection
+    except ImportError:  # run it with .venv/bin/python for the vtables
+        return []
+    with open(lib_path, "rb") as f:
+        elf = ELFFile(f)
+        ds = elf.get_section_by_name(".dynsym")
+        vt = ds.get_symbol_by_name("_ZTV" + mangled_cls)
+        if not vt:
+            return []
+        a, size = vt[0]["st_value"], vt[0]["st_size"]
+        rel = {}
+        for sec in elf.iter_sections():
+            if isinstance(sec, RelocationSection) and sec.name == ".rela.dyn":
+                for r in sec.iter_relocations():
+                    if a <= r["r_offset"] < a + size:
+                        tgt = r["r_addend"]
+                        if r["r_info_sym"]:
+                            tgt = ds.get_symbol(r["r_info_sym"])["st_value"] + r["r_addend"]
+                        rel[r["r_offset"]] = tgt
+        return [((off - a) // 8 - 2, rel.get(off, 0)) for off in range(a + 16, a + size, 8)]
+
+
+_ELF_NAMES = {}
+
+
+def elf_name(lib_path, addr):
+    """The demangled ELF symbol at addr (cxa_pure_virtual etc.), or the address."""
+    if lib_path not in _ELF_NAMES:
+        names = {}
+        try:
+            from elftools.elf.elffile import ELFFile
+            with open(lib_path, "rb") as f:
+                for sym in ELFFile(f).get_section_by_name(".dynsym").iter_symbols():
+                    if sym.name and sym["st_value"]:
+                        names.setdefault(sym["st_value"], sym.name)
+        except (ImportError, OSError):
+            pass
+        _ELF_NAMES[lib_path] = names
+    n = _ELF_NAMES[lib_path].get(addr)
+    if not n:
+        return f"{addr:#x}"
+    r = subprocess.run(["c++filt", n], capture_output=True, text=True)
+    return f"{r.stdout.strip() or n} ({addr:#x})"
+
+
+def skeleton_blocks(rows, classes=None, lib_path=None):
+    """[(class short name or None, text)]."""
+    by_class = class_methods(rows)
+    short_names = {c.rsplit("::", 1)[-1] for c in by_class}
+    lib_path = lib_path or os.path.join(REPO, "work", "libSOA-3.7.0.so")
+    out = []
+    for cls in sorted(by_class):
+        short = cls.rsplit("::", 1)[-1]
+        if classes and short not in classes and cls not in classes:
+            continue
+        if "<" in cls:
+            out.append((None, f"// {cls}: a template instantiation: recover its layout by hand ({len(by_class[cls])} method(s) in symbols.tsv)"))
+            continue
+        methods = by_class[cls]
+        by_addr = {int(m[0]["vaddr"], 16): m for m in methods}
+        mcls = next((mangled_class(m[0]["symbol"]) for m in methods if mangled_class(m[0]["symbol"])), None)
+        slots = vtable_slots(lib_path, mcls) if mcls and os.path.exists(lib_path) else []
+        lines = [f"// {cls}: guest methods from port/decomp/<s>/symbols.tsv; size and fields: fill in from the decompile.",
+                 f"class {short} {{", "public:"]
+        done = set()
+        thunk_addrs = {int(m[0]["vaddr"], 16): m[0]["demangled"] for m in methods
+                       if m[0]["demangled"].startswith(("non-virtual thunk", "virtual thunk"))}
+
+        def decl(m, comment_extra=""):
+            r, name, params, const = m
+            ps = ", ".join(param_decl(t, short_names) for t in params)
+            if name in (short, "~" + short):  # Itanium variants: C1 complete, C2 base, D0 deleting, D1 complete, D2 base
+                v = re.search(r"([CD][012])E", r["symbol"])
+                kind = v.group(1) if v else ("C1" if name == short else "D1")
+                name_d = {"C1": "Ctor", "C2": "CtorBase", "C3": "Ctor", "D0": "DtorDelete", "D1": "Dtor", "D2": "DtorBase"}[kind]
+                ret = "void"
+            else:
+                name_d, ret = name, "void"
+            if not name_d.isidentifier() or name_d.startswith("operator"):
+                return f"    // {r['demangled']}  {r['symbol']}: an operator: name it by hand"
+            return (f"    {ret} {name_d}({ps}){' const' if const else ''};  // {comment_extra}{r['demangled']}  "
+                    f"{r['symbol']}  (return type: from the decompile)")
+
+        thunks = [m for m in methods if m[0]["demangled"].startswith(("non-virtual thunk", "virtual thunk"))]
+        methods = [m for m in methods if m not in thunks]
+        by_addr = {int(m[0]["vaddr"], 16): m for m in methods}
+        for m in thunks:
+            done.add(int(m[0]["vaddr"], 16))
+        ctors = [m for m in methods if m[1] in (short, "~" + short)]
+        if ctors:
+            lines.append("    // Constructors / destructors (bound as Ctor / Dtor: a C++ constructor can't be bound)")
+            for m in ctors:
+                lines.append(decl(m))
+                done.add(int(m[0]["vaddr"], 16))
+        if slots:
+            lines.append(f"    // Virtuals in vtable order (_ZTV{mcls}), as plain members: no C++ `virtual` (the guest's vtable is the field)")
+            for slot, tgt in slots:
+                if tgt in by_addr and tgt not in done:
+                    lines.append(decl(by_addr[tgt], f"vtable slot {slot}: "))
+                    done.add(tgt)
+                elif tgt in by_addr:
+                    lines.append(f"    // vtable slot {slot}: {by_addr[tgt][0]['demangled']} (declared above)")
+                elif tgt in thunk_addrs:
+                    lines.append(f"    // vtable slot {slot}: {thunk_addrs[tgt]} (a this-adjusting thunk of a member above)")
+                elif tgt:
+                    lines.append(f"    // vtable slot {slot}: {elf_name(lib_path, tgt)} (not in symbols.tsv: inherited, or not decompiled yet)")
+        for m in thunks:
+            lines.append(f"    // {m[0]['demangled']}  {m[0]['symbol']}: a this-adjusting thunk (bind it to the same member)")
+        rest = [m for m in methods if int(m[0]["vaddr"], 16) not in done]
+        if rest:
+            lines.append("    // Methods (a static one: declare it static and bind it with NATIVE_FUNCTION(sym, wrap<&C::F>(), ...))")
+            for m in rest:
+                lines.append(decl(m))
+        lines += ["", "    const void* vtable;  // 0x00 (if the class has one)" if slots else "    // fields at the guest's offsets",
+                  "    // ... fields, unknown bytes as u8 unk_XX[n] ...", "};",
+                  f"// static_assert(offsetof({short}, ...) == 0x..);", f"// static_assert(sizeof({short}) == 0x..);"]
+        out.append((short, "\n".join(lines)))
+    return out
+
+
+def cmd_skeleton(a):
+    p = paths(a.root, a.name)
+    rows, probs = read_symbols(p["symbols"])
+    if probs:
+        sys.exit("symbols.tsv: " + "; ".join(probs))
+    blocks = skeleton_blocks(rows, set(a.cls) if a.cls else None, a.lib)
+    if not a.append:
+        print("\n\n".join(t for _, t in blocks))
+        return
+    with open(p["layout"]) as f:
+        hdr = f.read()
+    keep = [t for short, t in blocks
+            if short and not re.search(rf"^\s*(class|struct) {short}\b", hdr, re.M)]  # declared already: never overwritten
+    close = f"}}  // namespace soa::native::{a.name}"
+    if close not in hdr:
+        sys.exit(f"{p['layout']}: no '{close}' line to insert before")
+    hdr = hdr.replace(close, "\n\n".join(keep) + "\n\n" + close if keep else close)
+    with open(p["layout"], "w") as f:
+        f.write(hdr)
+    print(f"{os.path.relpath(p['layout'], a.root)}: {len(keep)} class skeleton(s) added")
 
 
 # ---- list / check -------------------------------------------------------------------------------
@@ -495,10 +765,15 @@ def main():
     c = sp.add_parser("check")
     c.add_argument("names", nargs="*")
     c.add_argument("--no-compile", action="store_true", help="skip the layout header compile and types.json check")
+    k = sp.add_parser("skeleton")
+    k.add_argument("name")
+    k.add_argument("--class", dest="cls", action="append", default=[], help="only this class (repeatable)")
+    k.add_argument("--append", action="store_true", help="add the classes not declared yet to <s>_layout.h")
+    k.add_argument("--lib", help="the ELF for the vtables (default work/libSOA-3.7.0.so)")
     e = sp.add_parser("export-types")
     e.add_argument("names", nargs="+")
     a = ap.parse_args()
-    {"new": cmd_new, "list": cmd_list, "check": cmd_check, "export-types": cmd_export_types}[a.cmd](a)
+    {"new": cmd_new, "list": cmd_list, "check": cmd_check, "export-types": cmd_export_types, "skeleton": cmd_skeleton}[a.cmd](a)
 
 
 if __name__ == "__main__":

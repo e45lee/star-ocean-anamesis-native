@@ -11,7 +11,12 @@
 // (EAI_NONAME) without a DNS query, so the client never reaches whoever holds the domain later,
 // and never a local soa-server (whose answer mixes a 3.7.0 server player into the offline save:
 // README "Network"). Every other lookup goes to the runtime's thunks unchanged.
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <netdb.h>
+#endif
 #include <strings.h>
 
 #include <cstring>

@@ -38,6 +38,11 @@ constexpr u32 kMaxThunks = 0x10000;
 // (the monitor's per-processor state is a few bytes).
 constexpr size_t kMaxProcessors = 1024;
 constexpr u64 kCntFreq = 19200000;  // typical Android CNTFRQ
+// Mapped memory above the guest stack's top: a read of the caller's frame at a top-level sp (a
+// host function looking at "stack arguments" that weren't passed, core_bench_test's h_record)
+// stays in the mapping. Linux's mmap usually had a neighbour there; Windows' 64 KiB-aligned
+// VirtualAlloc regions don't.
+constexpr size_t kStackHeadroom = 0x1000;
 
 struct ThunkEntry {
     HostFn fn = nullptr;
@@ -252,7 +257,7 @@ public:
         }
         pool.clear();
         if (info.stack_lo) {
-            hostmem::unmap((void*)(info.stack_lo - 0x1000), info.stack_hi - info.stack_lo + 0x1000);
+            hostmem::unmap((void*)(info.stack_lo - 0x1000), info.stack_hi - info.stack_lo + 0x1000 + kStackHeadroom);
             info.stack_lo = info.stack_hi = 0;
         }
     }
@@ -283,7 +288,7 @@ void guest_thread_init(size_t stack_size) {
     if (ts.info.stack_lo) return;
     stack_size = (stack_size + 0xfff) & ~0xfffull;
     if (stack_size < 0x40000) stack_size = 0x40000;
-    void* p = hostmem::map_rw(stack_size + 0x1000, true);
+    void* p = hostmem::map_rw(stack_size + 0x1000 + kStackHeadroom, true);
     if (!p) fatal("guest stack mapping failed");
     hostmem::protect_none(p, 0x1000);  // guard page
     ts.info.stack_lo = (u64)p + 0x1000;

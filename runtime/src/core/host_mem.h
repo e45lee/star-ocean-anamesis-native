@@ -18,6 +18,9 @@ bool protect_none(void* p, size_t bytes);
 // Gives the pages back to the OS; they read as zero afterwards.
 void discard(void* p, size_t bytes);
 
+// Whether every page of [p, p + bytes) is mapped (mincore; VirtualQuery: committed).
+bool mapped(const void* p, size_t bytes);
+
 // A read-only mapping of a whole file.
 struct MappedFile {
     const unsigned char* data = nullptr;

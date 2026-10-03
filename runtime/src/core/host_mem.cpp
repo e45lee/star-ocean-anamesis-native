@@ -1,6 +1,8 @@
 // host_mem.h: mmap on Linux, VirtualAlloc and file mappings on Windows.
 #include "core/host_mem.h"
 
+#include <cstdint>
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -25,6 +27,17 @@ bool protect_none(void* p, size_t bytes) {
 void discard(void* p, size_t bytes) {
     // decommit + recommit: the pages come back zeroed, like MADV_DONTNEED on anonymous memory
     if (VirtualFree(p, bytes, MEM_DECOMMIT)) VirtualAlloc(p, bytes, MEM_COMMIT, PAGE_READWRITE);
+}
+
+bool mapped(const void* p, size_t bytes) {
+    const char* a = (const char*)p;
+    const char* end = a + bytes;
+    while (a < end) {
+        MEMORY_BASIC_INFORMATION mi;
+        if (!VirtualQuery(a, &mi, sizeof mi) || mi.State != MEM_COMMIT) return false;
+        a = (const char*)mi.BaseAddress + mi.RegionSize;
+    }
+    return true;
 }
 
 bool map_file(const std::string& path, MappedFile* out) {
@@ -65,6 +78,13 @@ void unmap(void* p, size_t bytes) {
 }
 bool protect_none(void* p, size_t bytes) { return mprotect(p, bytes, PROT_NONE) == 0; }
 void discard(void* p, size_t bytes) { madvise(p, bytes, MADV_DONTNEED); }
+bool mapped(const void* p, size_t bytes) {
+    static const uintptr_t pg = (uintptr_t)sysconf(_SC_PAGESIZE);
+    unsigned char v;
+    for (uintptr_t a = (uintptr_t)p & ~(pg - 1); a < (uintptr_t)p + bytes; a += pg)
+        if (mincore((void*)a, pg, &v) != 0) return false;
+    return true;
+}
 
 bool map_file(const std::string& path, MappedFile* out) {
     int fd = open(path.c_str(), O_RDONLY | O_CLOEXEC);

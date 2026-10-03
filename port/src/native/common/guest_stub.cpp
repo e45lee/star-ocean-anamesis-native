@@ -2,7 +2,9 @@
 #include <soa/env.h>
 #include "native/common/guest_stub.h"
 
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 
 #include <algorithm>
 #include <array>

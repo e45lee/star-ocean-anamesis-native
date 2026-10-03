@@ -12,8 +12,8 @@
 #
 # --windows (first argument): the Windows cross build instead, into build-win/ (port/PLAN.md 5b;
 # README.md, "Windows"): llvm-mingw's clang ($SOA_LLVM_MINGW, else ~/tools/llvm-mingw), vcpkg's
-# x64-mingw-static triplet (cmake/vcpkg-triplets/), cmake/toolchains/llvm-mingw-x64.cmake. Only the
-# parts that build for Windows so far are on (SOA_BUILD_* below).
+# x64-mingw-static triplet (cmake/vcpkg-triplets/), cmake/toolchains/llvm-mingw-x64.cmake, the
+# vcpkg feature "angle" (EGL / GLES).
 #
 # Usage: scripts/build.sh [--windows] [cmake --build options...]   e.g. scripts/build.sh --target soa
 set -eu
@@ -31,9 +31,7 @@ if [ "${1:-}" = "--windows" ]; then
   export PATH="$llvm_mingw/bin:$PATH" SOA_LLVM_MINGW="$llvm_mingw"
   cfg_extra="-DVCPKG_TARGET_TRIPLET=x64-mingw-static -DVCPKG_HOST_TRIPLET=x64-linux
     -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$repo/cmake/toolchains/llvm-mingw-x64.cmake
-    -DVCPKG_MANIFEST_FEATURES=angle -DSOA_BUILD_RUNTIME=ON
-    -DSOA_BUILD_PORT=OFF -DSOA_BUILD_VIEWER=OFF
-    -DSOA_BUILD_TOOLS=OFF -DSOA_BUILD_WEBVIEW=OFF"
+    -DVCPKG_MANIFEST_FEATURES=angle"
 fi
 
 vcpkg_root=$(scripts/vcpkg-bootstrap.sh)
@@ -57,5 +55,6 @@ cmake --build "$bdir" -j"$jobs" "$@"
 if [ "$bdir" = build ]; then
   echo "== done: build/port/soa, build/server/soa-server, build/emulator/soa-emu, build/emulator-viewer/soa-viewer"
 else
-  echo "== done: $bdir/server/soa-server.exe, $bdir/emulator/soa-emu.exe, $bdir/runtime/soaruntime_tests.exe"
+  echo "== done: $bdir/port/soa.exe, $bdir/server/soa-server.exe, $bdir/emulator/soa-emu.exe, $bdir/emulator-viewer/soa-viewer.exe"
+  echo "   (from WSL: scripts/windows-stage.sh, then run them in /mnt/c/soa-win; README.md \"Windows\")"
 fi

@@ -51,7 +51,7 @@ target_link_libraries(soa PRIVATE
   Ogg::ogg
   soa::jpeg9
   zstd::libzstd
-  pthread dl)
+  pthread $<$<NOT:$<PLATFORM_ID:Windows>>:dl>)
 # The server library, whole (its tests register from static initializers; its modules register in
 # server/src/core/modules.cpp's order), after the port's own objects: the same test order as when it was
 # port/src/server.

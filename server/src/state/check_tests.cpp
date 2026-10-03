@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "state/check.h"
+#include "state/state.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
 
@@ -12,7 +13,8 @@ namespace {
 
 using ext::Row;
 
-// server/PLAN-schema.md 4.2 / S0: after a scratch server's representative calls, no foreign key is
+// server/PLAN-schema.md 4.2 / S0 / S1: the server's state is at this build's schema version with
+// every table and foreign keys on; after a scratch server's representative calls, no foreign key is
 // violated (none is declared before S4: trivially empty until then) and every reference into the
 // master resolves; a planted dangling id is reported, a 0 "none" sentinel isn't.
 NATIVE_TEST("server/schema-integrity") {
@@ -20,6 +22,10 @@ NATIVE_TEST("server/schema-integrity") {
     if (!S.ok) return;  // needs the 3.7.0 master and the test seed (the test failed)
     Server& sv = S.sv;
     S.set_clock("2021-05-25 12:00:00");
+    t.expect_eq(state::user_version(sv.st.h), state::kSchemaVersion, "the state is at this build's version");
+    t.expect_eq(sv.st.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(sv.st.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)58,
+                "every table exists before the first request");
     sv.st.q("update player set free_coin = 100000", {});
     u32 mission = S.id("master_mission", "mf01_001");
     u32 gacha = S.id("master_gacha", "gacha_pickup_role_1011");

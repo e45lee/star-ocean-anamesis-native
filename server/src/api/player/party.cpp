@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <iterator>
 
+#include "api/items/items.h"          // owns_item
 #include "api/player/party_set.h"    // party_set_info, ensure_party_set
 #include "api/player/player_info.h"  // base_data
 #include "api/player/roster.h"       // owns_character
@@ -24,25 +25,43 @@ namespace {}  // namespace
 //
 // Stores a party's three members in slots 0..2. No 3.7.0 caller is known (the party screen saves
 // with UpdatePartySet); the request shape is the method's signature (b).
-//   (d) A uid that isn't an owned character is stored as an empty slot (0).
+//   (a) party ids 1..master_global.party_set_max; (d) others are not answered (no body: the
+//   host's fallback, no error code), with a warning, as UpdatePartySet (PLAN-schema S6: before,
+//   any id was stored, 0 included).
+//   (d) A uid that isn't an owned character is stored as an empty slot (NULL, sent as 0).
+//   (d) A slot whose character changes loses the set's equipment, skills and assist for it (they
+//   were the previous character's; the slot then has none, sent as 0, until UpdatePartySet saves
+//   it); a slot keeping its character keeps them (PLAN-schema S6: before, they stayed in either
+//   case).
 //   (d) The party last edited becomes the current one (Player.party_id, which MissionStart uses).
 //   The party id defaults to 1 when missing (args::UpdatePartyArgs).
 // Answers: the player state, PartyUpdate {party_id, player_character_id1..3} and PartySet.
 std::vector<u8> update_party(ext::Ctx& ctx, const Request& req) {
     const auto args = args::UpdatePartyArgs::from(req);
     u32 party_id = args.party_id;
+    u32 max = ctx.global_u32("party_set_max", 10);
+    if (party_id < 1 || party_id > max) {
+        LOGW("server", "UpdateParty: party id %u outside 1..%u", party_id, max);
+        return {};
+    }
+    ensure_party_set(ctx, party_id);  // the members' parent (party_member.party_id -> party_set)
     Value party_update = Value::object();
     party_update["party_id"] = party_id;
     for (int slot = 0; slot < (int)std::size(args.member_uid); slot++) {
-        CharacterUid uid = args.member_uid[slot];
-        if (!owns_character(ctx, uid)) uid = CharacterUid(0);  // (d) only owned characters (party's 0: empty, until S6)
+        std::optional<CharacterUid> uid = args.member_uid[slot];
+        if (!owns_character(ctx, *uid)) uid.reset();  // (d) only owned characters: else an empty slot
         ctx.st.q(
-            "insert into party (party_id, slot, uid) values (?,?,?)"
-            " on conflict(party_id, slot) do update set uid = excluded.uid",
+            "insert into party_member (party_id, slot, uid) values (?,?,?)"
+            " on conflict(party_id, slot) do update set uid = excluded.uid,"
+            " weapon_uid = case when party_member.uid is excluded.uid then party_member.weapon_uid end,"
+            " accessory_uid = case when party_member.uid is excluded.uid then party_member.accessory_uid end,"
+            " skill_id1 = case when party_member.uid is excluded.uid then party_member.skill_id1 end,"
+            " skill_id2 = case when party_member.uid is excluded.uid then party_member.skill_id2 end,"
+            " skill_id3 = case when party_member.uid is excluded.uid then party_member.skill_id3 end,"
+            " assist_uid = case when party_member.uid is excluded.uid then party_member.assist_uid end",
             {party_id, slot, uid});
-        party_update["player_character_id" + std::to_string(slot + 1)] = uid.v;
+        party_update["player_character_id" + std::to_string(slot + 1)] = or_zero(uid);
     }
-    ensure_party_set(ctx, party_id);  // (d) any id: its party_set row (player.party_id's parent, PLAN-schema S4)
     ctx.st.q("update player set party_id = ?", {party_id});  // (d) the party last edited is the current one
     Value data = base_data(ctx);
     data["PartyUpdate"] = party_update;
@@ -86,8 +105,14 @@ bool parse_party_set_text(const std::string& text, PartySetText& out) {
     for (size_t k = 1; k < records.size(); k++) {
         const auto& fields = records[k];
         if (fields.size() < 9) continue;  // (d) a short member record is skipped
-        out.members.push_back(
-            {num(fields, 1), num(fields, 2), num(fields, 3), num(fields, 4), {num(fields, 5), num(fields, 6), num(fields, 7)}, num(fields, 8)});
+        PartySetMember member;
+        member.slot = num(fields, 1);
+        member.character_uid = nonzero<CharacterUid>(num(fields, 2));
+        member.weapon_uid = nonzero<ItemUid>(num(fields, 3));
+        member.accessory_uid = nonzero<ItemUid>(num(fields, 4));
+        for (int k = 0; k < 3; k++) member.skill_id[k] = nonzero<SkillId>((u32)num(fields, 5 + k));
+        member.assist_uid = nonzero<CharacterUid>(num(fields, 8));
+        out.members.push_back(member);
     }
     return true;
 }
@@ -101,8 +126,10 @@ bool parse_party_set_text(const std::string& text, PartySetText& out) {
 //   PartySetResult as the party set with that id).
 //   (a) party ids 1..master_global.party_set_max; (d) others, and text that doesn't parse, are
 //   not answered (no body: the host's fallback, no error code), with a warning.
-//   (d) a member must be an owned character, else the slot is stored empty; the weapon,
-//   accessory, skills and assist are stored as sent (not checked against the roster).
+//   (d) a member must be an owned character, else the slot is stored empty; the weapon and
+//   accessory must be owned items and the assist an owned character, else they are stored as
+//   none (PLAN-schema S6: they were stored as sent; the skills still are); a record whose
+//   party_index is outside 0..3 (the screen's four slots, b) is skipped, as a short one.
 //   (b) the set replaces the stored one (the handler replaces the map entry).
 //   (d) the saved set becomes the player's current party.
 // Answers: the player state, PartySetResult (the saved set) and PartySet (every set).
@@ -123,23 +150,21 @@ std::vector<u8> update_party_set(ext::Ctx& ctx, const Request& req) {
         "insert into party_set (party_id, icon_id, is_lock) values (?,?,?)"
         " on conflict(party_id) do update set icon_id = excluded.icon_id, is_lock = excluded.is_lock",
         {party_id, set.icon_id, set.is_lock ? 1 : 0});
-    ctx.st.q("delete from party where party_id = ?", {party_id});
     ctx.st.q("delete from party_member where party_id = ?", {party_id});
-    for (const auto& member : set.members) {
-        u64 uid = member.character_uid;  // (party / party_member stay plain, 0 = empty: PLAN-schema S6)
-        if (uid && !owns_character(ctx, CharacterUid(uid))) uid = 0;  // only owned characters (d)
+    for (auto member : set.members) {
+        if (member.slot > 3) continue;  // (d) not one of the four slots
+        if (member.character_uid && !owns_character(ctx, *member.character_uid)) member.character_uid.reset();  // (d) only owned
+        if (member.weapon_uid && !owns_item(ctx, *member.weapon_uid)) member.weapon_uid.reset();                // (d) characters
+        if (member.accessory_uid && !owns_item(ctx, *member.accessory_uid)) member.accessory_uid.reset();       // and items
+        if (member.assist_uid && !owns_character(ctx, *member.assist_uid)) member.assist_uid.reset();
         ctx.st.q(
-            "insert into party (party_id, slot, uid) values (?,?,?)"
-            " on conflict(party_id, slot) do update set uid = excluded.uid",
-            {party_id, member.slot, uid});
-        ctx.st.q(
-            "insert into party_member (party_id, slot, weapon_uid, accessory_uid, skill1, skill2, skill3, assist_uid) "
-            "values (?,?,?,?,?,?,?,?)"
-            " on conflict(party_id, slot) do update set weapon_uid = excluded.weapon_uid, "
-            "accessory_uid = excluded.accessory_uid, skill1 = excluded.skill1, skill2 = excluded.skill2, "
-            "skill3 = excluded.skill3, assist_uid = excluded.assist_uid",
-            {party_id, member.slot, member.weapon_uid, member.accessory_uid, member.skill_id[0], member.skill_id[1], member.skill_id[2],
-             member.assist_uid});
+            "insert into party_member (party_id, slot, uid, weapon_uid, accessory_uid, skill_id1, skill_id2, skill_id3, assist_uid) "
+            "values (?,?,?,?,?,?,?,?,?)"
+            " on conflict(party_id, slot) do update set uid = excluded.uid, weapon_uid = excluded.weapon_uid, "
+            "accessory_uid = excluded.accessory_uid, skill_id1 = excluded.skill_id1, skill_id2 = excluded.skill_id2, "
+            "skill_id3 = excluded.skill_id3, assist_uid = excluded.assist_uid",
+            {party_id, member.slot, member.character_uid, member.weapon_uid, member.accessory_uid, member.skill_id[0], member.skill_id[1],
+             member.skill_id[2], member.assist_uid});
     }
     // (d) the saved set becomes the player's current party (Player.party_id, which the party
     // screen opens on (CParameterUtility::GetPatyIndex) and MissionStart uses).

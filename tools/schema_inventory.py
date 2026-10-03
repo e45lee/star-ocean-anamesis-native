@@ -362,11 +362,11 @@ RELS = [
     ("stock", "master_item_id", "m:master_item", "id", None, "-", ""),
     ("gear_items", "item_uid", "items", "uid", None, "CASCADE (S5)", "the weapon the gear is set in (NULL: in the gear box; 0 before S5)"),
     ("gear_items", "master_item_id", "m:master_item", "id", None, "-", "gear kind (api/items/gear.cpp reads master_item for it)"),
-    ("party", "uid", "roster", "uid", 0, "SET NULL (as party_member.uid, S6)", "member"),
-    ("party_member", "party_id", "party_set", "party_id", None, "CASCADE", "slot details of a set"),
-    ("party_member", "weapon_uid", "items", "uid", 0, "SET NULL", ""),
-    ("party_member", "accessory_uid", "items", "uid", 0, "SET NULL", ""),
-    ("party_member", "assist_uid", "roster", "uid", 0, "SET NULL", ""),
+    ("party_member", "uid", "roster", "uid", None, "SET NULL (S6)", "member (party.uid before S6; NULL: an empty slot, 0 before)"),
+    ("party_member", "party_id", "party_set", "party_id", None, "CASCADE (S6)", "a set's members (party merged in, S6)"),
+    ("party_member", "weapon_uid", "items", "uid", None, "SET NULL (S6)", "the member's weapon in the set (0 before S6)"),
+    ("party_member", "accessory_uid", "items", "uid", None, "SET NULL (S6)", "the member's accessory in the set (0 before S6)"),
+    ("party_member", "assist_uid", "roster", "uid", None, "SET NULL (S6)", "the member's assist in the set (0 before S6)"),
     ("mission", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-",
      "four disjoint id spaces (the tower's floors too: S0 found them in the tower replay)"),
     ("unlocks", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-", ""),
@@ -474,10 +474,10 @@ def fk_report(st_path, master_path):
 
 # Tables written only by upsert (S0): the parents of the target schema's foreign keys (section 3.2:
 # player, roster, items, titles, party_set, mission, box_state, presents, ds_area, ds_ship, wboss)
-# and the other tables of F9's REPLACE list (party, party_member, favor, stock, subscription,
-# present_texts).
+# and the other tables of F9's REPLACE list (party_member (party merged in, S6), favor, stock,
+# subscription, present_texts).
 LINT_UPSERT_ONLY = ("player", "roster", "items", "titles", "party_set", "mission", "box_state", "presents", "ds_area", "ds_ship",
-                    "wboss", "party", "party_member", "favor", "stock", "subscription", "present_texts")
+                    "wboss", "party_member", "favor", "stock", "subscription", "present_texts")
 # Consumers whose SQL runs on another DB: the pools DB's builder (its own meta table).
 LINT_OTHER_DB = ("tools/build_gacha_pools.py",)
 POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(?:temp\.)?(\w+)\s+values\b", re.I)

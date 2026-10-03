@@ -708,6 +708,102 @@ from gear_items g where ifnull(g.item_uid, 0) = 0 or g.item_uid in (select uid f
     return ok;
 }
 
+// ---- step 6: parties (PLAN-schema S6, findings F2, F3) -----------------------------------------
+// A party set's members were two tables with one key: `party` (party_id, slot, uid: written by the
+// seed, CreatePlayer, UpdateParty and UpdatePartySet) and `party_member` (the slot's equipment,
+// skills and assist: written by UpdatePartySet only). They are one table now, `party_member`, with
+// the member's uid; `party` is gone. `party_set` (the set's icon and lock) is rebuilt STRICT with
+// its checks (3.2): a set id is >= 1, a slot is 0..3 (the client's four).
+//
+// The foreign keys and their actions (PLAN-schema 3.1):
+//   party_member.party_id      -> party_set.party_id  ON DELETE CASCADE (the set's members)
+//   party_member.uid           -> roster.uid          ON DELETE SET NULL (an empty slot)
+//   party_member.weapon_uid    -> items.uid           ON DELETE SET NULL (the member's equipment in
+//   party_member.accessory_uid -> items.uid           ON DELETE SET NULL  the set: none)
+//   party_member.assist_uid    -> roster.uid          ON DELETE SET NULL
+// All immediate (every writer writes the set before its members). No ON UPDATE action: a parent key
+// never changes. player.party_id keeps naming `party_set` (step 4's deferred NO ACTION), which is
+// the new table after the rename.
+const char* const kParty[] = {
+    // PartySetInfo (b): a party set's own fields
+    R"(create table new_party_set (
+  party_id integer primary key check (party_id >= 1),
+  icon_id integer not null default 0,
+  is_lock integer not null default 0 check (is_lock in (0, 1))
+) strict)",
+    // PartySetCharacterInfo (b): one slot of a set: its character, and the character's equipment,
+    // skills (master skill ids) and assist in this set; NULL: none (the equipment: the
+    // character's own, party_set.cpp)
+    R"(create table new_party_member (
+  party_id integer not null references party_set(party_id) on delete cascade,
+  slot integer not null check (slot between 0 and 3),
+  uid integer references roster(uid) on delete set null,
+  weapon_uid integer references items(uid) on delete set null,
+  accessory_uid integer references items(uid) on delete set null,
+  skill_id1 integer, skill_id2 integer, skill_id3 integer,
+  assist_uid integer references roster(uid) on delete set null,
+  primary key (party_id, slot)
+) strict)",
+};
+
+// Step 6's data mapping (PLAN-schema S6), with the conventions of 4.1 (each case logged with its
+// count):
+//   party_set -> new_party_set: a set id < 1 (UpdateParty took any id) -> dropped, with its members;
+//     icon_id NULL -> 0, is_lock not 0 -> 1 (read as `!= 0`); a set that has `party` rows but no
+//     party_set row (UpdateParty's sets before step 4 gave the current one a row) -> a row (icon 0,
+//     unlocked: what PartySet sent for it).
+//   player.party_id < 1 -> 1 (UpdateParty(0) made set 0 current; set 1 exists for every player).
+//   party ⟕ party_member -> new_party_member, one row per `party` row (a party_member row without
+//     one -> dropped: nothing read it): uid 0 or not an owned character -> NULL (an empty slot);
+//     weapon_uid / accessory_uid 0 or not an owned item (sold, composed) -> NULL; skill1..3 ->
+//     skill_id1..3, 0 -> NULL; assist_uid 0 or not an owned character -> NULL; a slot outside 0..3
+//     (UpdatePartySet stored any party_index) or a set id < 1 -> dropped. A slot without a
+//     party_member row (the seed's, CreatePlayer's, UpdateParty's) has NULL equipment, skills and
+//     assist.
+bool rebuild_parties(sqlite3* db, sqlite3*) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from party_set where party_id is null or party_id < 1", "party_set.party_id", "< 1 -> dropped", 6);
+    log_count(db, "select count(*) from party_set where is_lock is not null and is_lock not in (0, 1)", "party_set.is_lock", "not 0 / 1 -> 1", 6);
+    log_count(db, "select count(distinct party_id) from party where party_id >= 1 and party_id not in (select party_id from party_set)",
+              "party.party_id", "a set without a party_set row -> its row", 6);
+    log_count(db, "select count(*) from player where party_id < 1", "player.party_id", "< 1 -> 1", 6);
+    log_count(db, "select count(*) from party where party_id is null or party_id < 1 or slot is null or slot not between 0 and 3", "party.slot",
+              "a set id < 1 or a slot outside 0..3 -> dropped", 6);
+    log_count(db, "select count(*) from party_member m where not exists (select 1 from party p where p.party_id = m.party_id and p.slot = m.slot)",
+              "party_member", "no party row -> dropped", 6);
+    log_count(db, "select count(*) from party where uid != 0 and uid not in (select uid from roster)", "party_member.uid", "dangling -> NULL", 6);
+    log_count(db, "select count(*) from party_member where weapon_uid != 0 and weapon_uid not in (select uid from items)", "party_member.weapon_uid",
+              "dangling -> NULL", 6);
+    log_count(db, "select count(*) from party_member where accessory_uid != 0 and accessory_uid not in (select uid from items)",
+              "party_member.accessory_uid", "dangling -> NULL", 6);
+    log_count(db, "select count(*) from party_member where assist_uid != 0 and assist_uid not in (select uid from roster)", "party_member.assist_uid",
+              "dangling -> NULL", 6);
+
+    bool ok = run(db, R"(
+insert into new_party_set (party_id, icon_id, is_lock)
+select party_id, ifnull(icon_id, 0), case when ifnull(is_lock, 0) != 0 then 1 else 0 end
+from party_set where party_id >= 1)");
+    ok = ok && run(db, R"(
+insert into new_party_set (party_id)
+select distinct party_id from party where party_id >= 1 and party_id not in (select party_id from party_set))");
+    ok = ok && run(db, "update player set party_id = 1 where party_id < 1");
+    ok = ok && run(db, "insert into new_party_set (party_id) select party_id from player where true on conflict(party_id) do nothing");
+    ok = ok && run(db, R"(
+insert into new_party_member (party_id, slot, uid, weapon_uid, accessory_uid, skill_id1, skill_id2, skill_id3, assist_uid)
+select p.party_id, p.slot,
+  case when p.uid in (select uid from roster) then p.uid end,
+  case when m.weapon_uid in (select uid from items) then m.weapon_uid end,
+  case when m.accessory_uid in (select uid from items) then m.accessory_uid end,
+  nullif(m.skill1, 0), nullif(m.skill2, 0), nullif(m.skill3, 0),
+  case when m.assist_uid in (select uid from roster) then m.assist_uid end
+from party p left join party_member m on m.party_id = p.party_id and m.slot = p.slot
+where p.party_id >= 1 and p.slot between 0 and 3)");
+    for (const char* sql : {"drop table party_member", "drop table party", "drop table party_set", "alter table new_party_set rename to party_set",
+                            "alter table new_party_member rename to party_member"})
+        ok = ok && run(db, sql);
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -730,6 +826,10 @@ const std::vector<Step>& steps() {
          "items and gear: items and gear_items rebuilt STRICT, gear set in a weapon references it (PLAN-schema S5)",
          {std::begin(kItemsGear), std::end(kItemsGear)},
          rebuild_items_and_gear},
+        {6,
+         "parties: party merged into party_member, party_set and party_member rebuilt with their foreign keys (PLAN-schema S6)",
+         {std::begin(kParty), std::end(kParty)},
+         rebuild_parties},
     };
     return s;
 }

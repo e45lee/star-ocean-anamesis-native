@@ -38,9 +38,11 @@ NATIVE_TEST("player/home-pc-id") {
     auto loaded = [&] { return (u64)player_info(ctx).get_u("home_pc_id"); };
     u64 home = (u64)sv.st.one("select home_uid from player", {});
     t.expect_eq(loaded(), home, "seeded: the home character's uid");
-    t.expect_eq((u64)sv.st.one("select uid from party where party_id = 1 and slot = 0", {}), home, "seeded: party 1's first member");
+    t.expect_eq((u64)sv.st.one("select uid from party_member where party_id = 1 and slot = 0", {}), home, "seeded: party 1's first member");
     t.expect_eq(sv.st.one("select count(*) from roster where uid = ?", {loaded()}), (int64_t)1, "an owned uid, not a role id");
-    u64 other = (u64)sv.st.one("select uid from roster where uid not in (select uid from party where party_id = 1) order by uid desc limit 1", {});
+    u64 other = (u64)sv.st.one(
+        "select uid from roster where uid not in (select uid from party_member where party_id = 1 and uid is not null) order by uid desc limit 1",
+        {});
     if (!other) return t.fail("no character outside party 1");
     t.expect_eq(sent(update_home(ctx, Request{"UpdateHome", 0, {other}, {}, {}})), other, "UpdateHome answers the new uid");
     t.expect_eq(loaded(), other, "the next player load sends it");

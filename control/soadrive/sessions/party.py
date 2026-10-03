@@ -30,7 +30,9 @@ def party(s, tag):
     """OUT/state-TAG.txt: the player's current party and every set's members (printed too)."""
     c = sqlite3.connect(s.state_db)
     lines = ["player.party_id %s" % c.execute("select party_id from player").fetchone()[0]]
-    for r in c.execute("select p.party_id, p.slot, p.uid, r.role_id from party p left join roster r on r.uid = p.uid order by 1, 2"):
+    # (party_member since PLAN-schema S6; an empty slot's NULL uid prints 0, as the party table's 0 did)
+    for r in c.execute("select p.party_id, p.slot, ifnull(p.uid, 0), r.role_id from party_member p left join roster r on r.uid = p.uid "
+                       "order by 1, 2"):
         lines.append("party " + " ".join(str(x) for x in r))
     c.close()
     text = "\n".join(lines) + "\n"

@@ -6,11 +6,11 @@
 //
 // "None": since PLAN-schema S4 the state's reference columns hold NULL for "none" (roster.weapon_uid
 // / accessory_uid / assist_uid, player.home_uid / support_uid / title_id, roster.equip_skill1..3;
-// since S5 gear_items.item_uid, NULL = in the gear box), and they read as std::optional<…>
-// (sql::Row::opt). The wire still says "none" with 0 (or_zero). Columns not yet converted keep
-// their 0 sentinel and read as a plain id with value 0 (sql::Row::id): party / party_member (until
-// S6), the play / ds_ship uid lists (text, until S7), favor_bonus_state.lot_uid and gacha_history.uid
-// (until S10).
+// since S5 gear_items.item_uid, NULL = in the gear box; since S6 party_member.uid, NULL = an empty
+// slot, and its weapon_uid / accessory_uid / skill_id1..3 / assist_uid), and they read as
+// std::optional<…> (sql::Row::opt). The wire still says "none" with 0 (or_zero). Columns not yet
+// converted keep their 0 sentinel and read as a plain id with value 0 (sql::Row::id): the play /
+// ds_ship uid lists (text, until S7), favor_bonus_state.lot_uid and gacha_history.uid (until S10).
 //
 // Kept public (beside sql.h) so the module API (soaserver/ext.h) and the SQL wrapper can use them;
 // the uid scheme's constants are src/core/ids.h.

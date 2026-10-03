@@ -27,9 +27,11 @@ inline std::vector<ItemUid> item_uid_list(const Request& req) {
     return uids;
 }
 
-// Whether a character wears the item (roster.weapon_uid / accessory_uid). A party set's own
-// equipment (party_member) isn't looked at until PLAN-schema S6 (its plain 0-sentinel columns);
-// the roster's references are kept consistent by their ON DELETE SET NULL (S4).
+// Whether a character wears the item: its own equipment (roster.weapon_uid / accessory_uid) or a
+// party set's for a member (party_member.weapon_uid / accessory_uid; PLAN-schema S6, d: the set's
+// equipment is the member's, so the item is in use). Both references are ON DELETE SET NULL.
 bool item_equipped(ext::Ctx& ctx, ItemUid item_uid);
+// Whether the player owns the weapon or accessory (an `items` row).
+bool owns_item(ext::Ctx& ctx, ItemUid item_uid);
 
 }  // namespace soa::server

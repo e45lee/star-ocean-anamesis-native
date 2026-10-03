@@ -197,10 +197,16 @@ void own_party(ext::Ctx& ctx, MissionStart& start) {
     // else party 1 (d). (A NULL party_id reads as 0 here, which has no members, so party 1: the
     // same party a NULL-as-default read would give.)
     start.party_id = (u32)one_null_as_zero(ctx.st, "select party_id from player", {}, 1);
-    start.party_uids = party_member_uids(ctx, start.party_id);
+    // (the battle's list is plain numbers: NPC and rental members join it as sentinels)
+    auto own_uids = [&](u32 party_id) {
+        std::vector<u64> uids;
+        for (CharacterUid uid : party_member_uids(ctx, party_id)) uids.push_back(uid.v);
+        return uids;
+    };
+    start.party_uids = own_uids(start.party_id);
     if (start.party_uids.empty()) {
         start.party_id = 1;
-        start.party_uids = party_member_uids(ctx, 1);
+        start.party_uids = own_uids(1);
     }
     if (start.module_override && !start.module_override->party.empty()) start.party_uids = start.module_override->party;  // the module's party
 }

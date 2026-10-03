@@ -3,8 +3,8 @@
 // cache) per host thread, the JIT code-cache mappings' RSS, host malloc (mallinfo2), the guest
 // engine heap (Aska default MemoryManager) and the largest mappings from /proc/self/smaps.
 //
-//   SOA_MEMSTATS=1    a snapshot at every CPhase change (battle start/end, home, ...)
-//   SOA_MEMSTATS=S    (S > 1) also every S seconds
+//   --memstats        a snapshot at every CPhase change (battle start/end, home, ...)
+//   --memstats S      (S > 1) also every S seconds
 //   control "memstats[:TAG]"  one snapshot now (e.g. from a session script)
 //
 // Written for PLAN-next D7 (per-battle growth); see port/README.md "Memory diagnostics".

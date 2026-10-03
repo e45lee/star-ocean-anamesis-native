@@ -29,6 +29,7 @@ control/soactl.py /tmp/emu.fifo tap:364:713 wait:3000 shot:/tmp/emu.png
 | `--apk FILE` | The APK whose assets the client reads. Default: `<repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk`. It isn't extracted: the runtime's asset manager indexes any zip. Repeatable; a later APK wins. |
 | `--data DIR` | The emulated phone's storage: saves, SharedPreferences, downloads. Default: `~/.local/share/soa-emulator-370/phone`, beside the port's `~/.local/share/soa-linux-370` (`scripts/run-emulator-370.sh` keeps the server beside it in `server/`). Never point it at a port data dir: it holds that port's cached `libSOA.so` and save. |
 | `--download-dir DIR` | A temporary stand-in for the CDN: assets missing from the APK are served from DIR (e.g. `work/download-3.7.0`). Off by default. The boot to the network path doesn't need it. |
+| `--download-prefer` | With `--download-dir`: DIR wins over the APK (as `soa` and `soa-viewer`). |
 | `--server HOST[:PORT]` | The game server, soa-server's `--listen`. Default `127.0.0.1:44300`. The client's `production-game.so-ana.com` resolves to HOST, and its port 443 becomes PORT. See "Networking". |
 | `--http HOST:PORT` | soa-server's `--http`. Default `<server host>:44380`. `http://` and `https://` URLs to a mapped host are fetched there, as plain HTTP. |
 | `--lobby HOST:PORT` | Where the client's lobby connections (port 4001) go. Default: not redirected. |
@@ -38,12 +39,13 @@ control/soactl.py /tmp/emu.fifo tap:364:713 wait:3000 shot:/tmp/emu.png
 | (window title) | `[EMULATED] STAR OCEAN -anamnesis- 3.7.0 online client (soa-emu)`, so it can't be mistaken for the port's `soa` window. |
 | `--repo DIR` | The source checkout, for the defaults. Default: found upwards from the executable. In a git worktree, files the worktree lacks (the APK) are also looked up in the main checkout that `work/` links to. |
 | `--guest-cpus N` / `host` | CPUs the game sees. Default 8. |
-| `--headless` | Don't show the window. It still renders: screenshots and the control FIFO work. |
+| `--headless` / `--windowed` | Don't show the window. It still renders: screenshots and the control FIFO work. `--windowed` (the default) undoes an earlier `--headless`, as in `soa`. |
+| `--font PATH` | The keyboard text box's font (`none`: no box), as in `soa`. |
 | `--size WxH`, `--landscape`, `--render-size S`, `--fullscreen` | Window and game-screen size, as in `soa`. |
 | `--shot S:PATH`, `--do S:ACTION`, `--control FIFO` | Scripted input and screenshots, as in `soa`. The commands are `tap`, `drag`, `wheel`, `back`, `text`, `shot`, `resize`, `fullscreen`, `quit`; `control/soactl.py` drives the FIFO. `soa`'s `phase:` / `call:` / `uiset:` debug commands need natives and don't exist here. |
 | `-v` / `-vv` | Verbose / trace logging. |
 
-The runtime's environment switches work too: `SOA_TRACE`, `SOA_PROFILE` / `SOA_COVERAGE`, `SOA_WATCHDOG`.
+Settings are flags only (a `SOA_*` variable that was a setting prints one warning naming its flag; `docs/environment.md`). The runtime's diagnostic switches work too (`SOA_TRACE`, `SOA_PROFILE` / `SOA_COVERAGE`, `SOA_WATCHDOG`, ...): [`runtime/README.md`](../runtime/README.md) "Environment".
 
 ## What is emulator-specific
 Only `emulator/src/main.cpp`. The platform layer it runs the client on moved to `platform370/` (2026-10-01, P0 of `docs/history/PLAN-rebase-370.md`; `git log --follow` keeps the `*_370.cpp` files' history), so the port can share it. `platform370::install` registers its pieces through the runtime's extension points. `docs/client-changes.md` "Emulator mode" lists the same answers for the change log.
@@ -244,7 +246,7 @@ The title runs at 60 fps.
 
 ## Parity with the in-process server (step 6)
 The same seeded flow both ways, then the two server databases compared (agent `e6-end2end`, 2026-10-01):
-- **Port:** `SOA_CAMPAIGN_SEED=mf01_001 port/scripts/restore_session.sh build/port/soa OUT TMP` (login, popups, mf01_001 through the `mission:` / `phase:` route, the results, the 10-draw of the first recommended banner, home; `SOA_SERVER_SEED_RNG=1`).
+- **Port:** `port/scripts/restore_session.sh build/port/soa OUT TMP --campaign-seed mf01_001` (login, popups, mf01_001 through the `mission:` / `phase:` route, the results, the 10-draw of the first recommended banner, home; `--seed-rng 1`).
 - **Emulator:** `emulator/scripts/emulator_session.sh` (the same steps through the real UI: ミッション → planet Mere → 1-05, the same banner; `--seed-rng 1 --campaign-seed mf01_001`).
 - **Compared:** `tools/server_state.py` of both (`state-3-after-gacha.txt`), and every table of both `server.sqlite3` row by row with the time columns masked, plus `server_campaign.txt`.
 
@@ -262,7 +264,7 @@ Gaps found on the way (all fixed in soa-server; "After home" above): `LoggedIn` 
 
 ## Tutorial parity (agent `t1-tutorial-parity`, 2026-10-01)
 The new-player flow from a fresh start, both ways, compared step by step:
-- **Port:** `port/scripts/tutorial_session.sh build/port/soa OUT TMP`: `soa`, an empty data dir, `SOA_RESTORE_NEW_PLAYER=1`.
+- **Port:** `port/scripts/tutorial_session.sh build/port/soa OUT TMP`: `soa`, an empty data dir, `--new-player`.
 - **Emulator:** `emulator/scripts/emulator_session.sh --new-player`: the unmodified 3.7.0 client against `soa-server --new-player`, a new phone (the 3.1 GB download included).
 - **The same milestones:** both scripts end with `tools/compare_tutorial.py check {port|emu} OUT`, which reads **`tests/tutorial_milestones.txt`**: the 22 game requests both must send in order (normalized: the arguments both transports carry), and the three party members' stats in the battle tutorial. Both print `PASS  tutorial milestones`.
 - **The report:** `tools/compare_tutorial.py compare PORT_OUT EMU_OUT --montage DIR` compares two runs: the request sequences (every one-sided request classified), the battle (party, enemies, mission time, every hit's damage: both runs trace `CCharacterObject::OnDamage` with `SOA_TRACE`), the screenshots (an RMSE per milestone pair and a montage, the per-round tutorial frames aligned) and both `server.sqlite3` (every table, row by row, times masked). It ends with `PASS parity` when no difference is left unexplained.

@@ -23,8 +23,9 @@ int user_version(sqlite3* db);
 //   - the backup or a step fails (the file stays at the last good version).
 // An older file that has a player is first copied to `<path>.bak-v<version>` (sqlite3_backup).
 // Each step runs in its own `begin immediate` transaction and commits only when `pragma
-// foreign_key_check` is empty. Must be called outside any transaction.
-bool open_and_migrate(sqlite3* db, const std::string& path);
+// foreign_key_check` is empty. Must be called outside any transaction. `target` stops at an older
+// version (the tests' per-step migrations, schema-migrate-vN); the server always takes this build's.
+bool open_and_migrate(sqlite3* db, const std::string& path, int target = kSchemaVersion);
 
 // Runs state::check (the master references; check.h) and logs each dangling reference (LOGW).
 // Report-only: a master can change under a saved state. The number of dangling references.
@@ -34,9 +35,8 @@ size_t report_master_refs(sqlite3* st, sqlite3* master);
 
 namespace soa::server {
 
-// ---- the meta table (key -> text) ----------------------------------------------------------
+// ---- the meta table (key -> text: next_char_uid, next_item_uid, seed; PLAN-schema S3) ------
 std::string meta(ext::Ctx& ctx, const char* key, const char* dflt);
-void set_meta(ext::Ctx& ctx, const char* key, const std::string& v);
 // The meta counter `key`'s value, counted up (uids of new characters and items).
 u64 next_uid(ext::Ctx& ctx, const char* key);
 bool has_player(ext::Ctx& ctx);

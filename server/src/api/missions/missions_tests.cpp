@@ -108,7 +108,7 @@ NATIVE_TEST("missions/unlock-refusal") {
     t.expect_eq(S.call(me), 0u, "second clear");
     t.expect_eq((u32)sv.st.one("select count(*) from unlocks", {}),
                 (u32)sv.m.one("select count(*) from master_mission where unlock_mission_id = ?", {m1}), "unlocks recorded once");
-    // SOA_SERVER_FAIL isn't set in the tests: the forced-error option is off
+    // --fail isn't given in the tests: the forced-error option is off
     t.expect_eq(sv.forced_error("MissionStart"), 0u, "no forced error");
 }
 

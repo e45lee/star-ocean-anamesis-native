@@ -3,7 +3,7 @@
 # the in-process local server; server module server/src/api/sphere211/sphere211.cpp). Boot -> title (test setup in the
 # state DB, as sphere211_session.sh: the season's heal / reroll tickets, 5 Sphere 211 rentals two
 # days ago) -> notice board -> LOGIN BONUS -> the Sphere 211 rental bonus popup -> home -> スフィア211
-# -> the start cell with enemy level 250 (the server's test hook: sphere_meta test_enemy_level, set
+# -> the start cell with enemy level 250 (the server's test hook: sphere.debug_enemy_level, set
 # in the state DB for this battle only) and a rental in the 4th slot -> the party falls -> the
 # defeat dialog's はい (Sphere211MissionContinue, 100 coins) -> the pause menu's ミッションリタイア ->
 # はい (Sphere211MissionFailed) -> the board -> the stamina the battle took healed with a ticket
@@ -18,7 +18,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos" "${OUT:?}"/state-*.txt
 mkdir -p "$OUT/shots"
@@ -27,7 +27,7 @@ mkdir -p "$OUT/shots"
 . port/scripts/phone370.sh
 phone370_prepare "$TMP/data"
 phone370_client_save "$TMP/data/data/shared_prefs"
-SOA_SERVER_SEED_RNG=${SOA_SERVER_SEED_RNG:-605} timeout -k 10 2400 "$SOA" --data "$TMP/data" \
+timeout -k 10 2400 "$SOA" $HEADLESS --seed-rng "${SEED_RNG:-605}" --data "$TMP/data" \
   --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null || true' EXIT
@@ -114,20 +114,20 @@ c wait:3000 shot:$S/04b-rental-bonus.png tap:364:800 wait:3000 shot:$S/04c-home.
 tapw 'GetSphere211Info: season' 60 20 3 -- tap:455:1085 || fail "the home button didn't open Sphere 211"
 c wait:6000 shot:$S/05-board.png
 grep -q 'Sphere211: floor 1 (floor row [0-9]*), map 2554458071 ' "$L" \
-  || fail "floor 1 isn't the map this script's taps are for (SOA_SERVER_SEED_RNG=1 lots map 2554458071): $(grep 'Sphere211: floor 1' "$L")"
+  || fail "floor 1 isn't the map this script's taps are for (--seed-rng 1 lots map 2554458071): $(grep 'Sphere211: floor 1' "$L")"
 state > "$OUT/state-1-floor1.txt"; cat "$OUT/state-1-floor1.txt"
 
 # A lost battle on the start cell (enemy level 250 through the test hook), with a rental in the 4th
 # slot: the defeat dialog's はい (continue, 100 coins; tapped until the server logs it: the dialog
 # comes when the party falls), then the pause menu's ミッションリタイア -> はい (retire), back on the
 # board. The stamina it took (9 -> 8) is healed with a ticket (+ -> the ticket -> 決定 -> 閉じる).
-sql "insert or replace into sphere_meta (key, value) values ('test_enemy_level', 250)"
+sql "update sphere set debug_enemy_level = 250 where id = 1"
 c tap:364:670; c wait:4000 shot:$S/06-lose-detail.png tap:364:905 wait:5000 shot:$S/06-rental-list.png tap:364:383 wait:4000 shot:$S/06-rental-party.png
 c tap:364:898; logw 'Sphere211AutoMemberSelect: 4 members proposed' 30 || fail "lost battle: no auto member select"
 c wait:4000 shot:$S/06-party.png tap:140:898 wait:3000 tap:515:713
 logw 'Sphere211MissionStart: floor .* enemy level 250' 60 || fail "lost battle: no Sphere211MissionStart"
 grep -q 'MissionStart: rental helper .* as member 4' "$L" || fail "the rental didn't join as member 4"
-sql "delete from sphere_meta where key = 'test_enemy_level'"
+sql "update sphere set debug_enemy_level = null where id = 1"
 tapw 'Sphere211MissionContinue: ' 400 10 40 -- tap:489:786 || { c shot:$S/07-stuck.png; fail "no continue after the defeat"; }
 c shot:$S/07-continued.png
 tapw 'Sphere211MissionFailed: ' 90 15 5 -- tap:80:50 wait:2500 tap:364:607 wait:2500 tap:525:790 || { c shot:$S/08-stuck.png; fail "no retire"; }

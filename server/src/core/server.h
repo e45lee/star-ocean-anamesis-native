@@ -15,7 +15,7 @@
 #include "core/request_context.h"
 #include "master/gacha_pools.h"
 #include "soaserver/ext.h"
-#include "state/state.h"  // meta, set_meta, next_uid, has_player (the state module)
+#include "state/state.h"  // meta, next_uid, has_player (the state module)
 
 namespace soa::server {
 
@@ -61,7 +61,7 @@ struct Server {
     RequestContext new_request() const;
     ext::Ctx make_ctx(RequestContext& rc);
 
-    // SOA_SERVER_FAIL="Method:code[,Method:code]" (port test option): refuse those requests.
+    // --fail "Method:code[,Method:code]" (a test option): refuse those requests.
     u32 forced_error(const std::string& method);
 
     // One transaction per request: a response and the state it reports are written together.

@@ -1,6 +1,7 @@
 // The desktop host loop (app/host.h): SDL2 window/input/audio around the runtime, the
 // ANativeActivity bring-up and the main loop. Moved from port/src/main.cpp unchanged; the port's
 // own pieces (its debug commands, --selftest) plug in through HostConfig's hooks.
+#include <soa/env.h>
 #include <GLES3/gl3.h>
 #include <SDL.h>
 #include <zlib.h>
@@ -111,8 +112,7 @@ Gfx g_gfx;
 // SOA_WATCHDOG=SECONDS: once frames have started, if none is presented for that long, log it and
 // print every guest thread's stack (full stacks need SOA_PROFILE too). For catching deadlocks.
 void app::start_watchdog() {
-    const char* e = getenv("SOA_WATCHDOG");
-    int secs = e ? atoi(e) : 0;
+    int secs = (int)env::env_int("SOA_WATCHDOG", 0, 86400, 0);
     if (secs <= 0) return;
     std::thread([secs] {
         u64 last = 0;
@@ -780,8 +780,8 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
     SDL_StopTextInput();
     app::text_overlay::set_font_request(cfg.font);
     if (cfg.hidden) {
-        const char* e = getenv("SOA_OFFSCREEN_PRESENT");
-        g_gfx.offscreen = e && *e ? *e != '0' : strcmp(SDL_GetCurrentVideoDriver(), "x11") != 0;
+        // SOA_OFFSCREEN_PRESENT (env_tristate): unset = offscreen unless the video driver is x11.
+        g_gfx.offscreen = env::env_tristate("SOA_OFFSCREEN_PRESENT").value_or(strcmp(SDL_GetCurrentVideoDriver(), "x11") != 0);
     }
 
     // The game's screen size. It lays out its UI and allocates its render targets for this once, at

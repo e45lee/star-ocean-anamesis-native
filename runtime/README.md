@@ -148,10 +148,44 @@ The game asks for text (the new player's name: `CUIUtility::StringInput` → `BA
 - **The editor** (`frontend/text_entry.h`, tests `frontend/text-*`, also in `soaruntime_tests`): UTF-8 with a byte cursor on code point boundaries. Everything that adds text goes through `insert`, which drops control characters, keeps only ASCII digits in a numeric field (type 1) and keeps the code points that fit the maximum (Android's `LengthFilter` does the same; before, a typed chunk that didn't fit was dropped whole and a paste ignored both rules). Keys: Backspace, Delete, Left, Right, Home, End, Ctrl+V, Enter (`GetEditText` returns the text), Esc (an empty string).
 - **IME:** SDL text input is on only while the keyboard is open (SDL starts it on; the host stops it at start-up so an IME never takes the game's keys), with `SDL_SetTextInputRect` on the box's field (window points; also after a resize). `SDL_HINT_IME_SUPPORT_EXTENDED_TEXT` makes a composition arrive whole (`SDL_TEXTEDITING_EXT`). The composition is shown underlined at the cursor and isn't part of the text until the IME commits it (`SDL_TEXTINPUT`); while there is one the editing keys are the IME's.
 - **The box** (`app/text_overlay.h`): a semi-transparent panel across the bottom of the letterboxed game image: a hint row ("Enter: OK   Esc: Cancel", "Numbers only" for a numeric field, and the `n/max` counter, orange at the maximum), and the field (text, composition, a caret blinking at 530 ms and solid after each edit, scrolled to keep the caret visible). Sizes follow the game image's height (font `vh/30`), so it scales with the window, HiDPI and fullscreen. It is composed on the CPU into one premultiplied RGBA image (redrawn only when what it shows changes), uploaded to one texture and drawn as one blended quad (a `#version 300 es` program, positions from `gl_VertexID`) from `GfxHooks::draw_overlay`, in window space after the letterboxed blit and before a screenshot is read. It runs on the game's own context, so it saves and restores everything it changes (program, VAO (one per context), texture unit 0's binding and sampler, the active unit, blend state, depth / stencil / cull / coverage / scissor enables, viewport, draw framebuffer, the unpack buffer and alignment / row length / skips). While the keyboard is closed it returns before any GL call.
-- **The font** (FreeType from vcpkg, zlib only; render thread only): `HostConfig::font` (`--font`), else `SOA_FONT`, else IPAex Gothic, Noto Sans CJK, Droid Sans Fallback at their Debian/Ubuntu (and Arch/Fedora Noto) paths, else `fc-match :lang=ja`. A face without Latin (Droid Sans Fallback) or Japanese gets a fallback face from `fc-match`. One log line names it (`text box font: ...`). With no font, or `none`, one log line says the keyboard shows in the title bar only, and nothing is drawn. The window title always shows the text too.
+- **The font** (FreeType from vcpkg, zlib only; render thread only): `HostConfig::font` (`--font`), else IPAex Gothic, Noto Sans CJK, Droid Sans Fallback at their Debian/Ubuntu (and Arch/Fedora Noto) paths, else `fc-match :lang=ja`. A face without Latin (Droid Sans Fallback) or Japanese gets a fallback face from `fc-match`. One log line names it (`text box font: ...`). With no font, or `none`, one log line says the keyboard shows in the title bar only, and nothing is drawn. The window title always shows the text too.
 - **Repainting while the game is stopped (idle presenting, `hle/gfx.h`).** While the keyboard is open the game presents no frames: the logic thread sleeps in `GetKeyboardEditText_Android` and the RenderThread (`Aska::RenderThread::Handler`, the thread whose context is on the window) waits for work in `pthread_cond_wait` (`Aska::Event::Wait`); `SOA_WATCHDOG=5` used to fire 5 s after the keyboard opened. Only the window's thread can present (an EGL surface is current on one thread; the JNI calls come on the logic thread, and the host's main thread has no context on the window). So `th_cond_wait` (`hle/libc_thread.cpp`) on the window's thread waits in slices, 100 ms normally (the RenderThread is already waiting when the keyboard opens) and 33 ms while idle presenting is on, and after a slice in which nothing was presented, presents the last frame again (`present_again`: the stand-in blit + `draw_overlay` + swap). A slice's timeout is never returned to the guest, and the guest's mutex stays held during the repaint, so no signal is lost. The host turns it on while text entry is active. With the keyboard closed the slices cost a timed wait instead of a plain one (the RenderThread is woken every frame long before 100 ms). A `shot:` taken while the keyboard is open now shows the dialog and the box.
 - **Test commands** (control FIFO / `--do`; they go through the same SDL event path): `type:TEXT` (one `SDL_TEXTINPUT` per code point), `compose:TEXT` (a composition with its caret at the end; empty clears it), `key:enter|escape|backspace|delete|left|right|home|end`. `text:STRING` is unchanged: it finishes the entry with STRING at once, bypassing the editor. A `shot:` is served at the next present, so put a `wait:` between a `shot:` and the next edit.
 - **A game quirk:** the name dialog says 12 characters (「12文字まで入力できます」) but opens the keyboard with max 14; 決定 with 13 or 14 characters shows the game's own error (「文字が入力されていないか、文字数上限を超えている…」), and CreatePlayer is not sent. The box's counter shows the keyboard's maximum, 14, as Android's would.
+
+## Environment: the runtime's diagnostics
+
+The runtime reads no setting from the environment: the programs take flags (`--font`, `--headless`,
+...). These diagnostic switches are the same in soa, soa-emu and soa-viewer, read through
+`common/include/soa/env.h`'s rule: a switch is off when unset, empty, `0`, `false`, `no` or `off`
+(any case) and on otherwise; numbers are range-checked (a bad value is warned about and the default
+used). The programs' own lists: `port/README.md` "Environment" (soa), `emulator/README.md`,
+`emulator-viewer/README.md`; the removed settings: `docs/environment.md`.
+
+| Variable | Effect (source) |
+|---|---|
+| `SOA_TRACE="sym[=float][:off[,off..]];..."` | log calls, arguments and results of guest functions (mangled names or `0x<ELF vaddr>`), optionally overriding a float result (`core/trace.cpp`); not installed under soa `--selftest` |
+| `SOA_COVERAGE=DIR` | every guest function executed, `DIR/coverage.tsv` (`core/profile.cpp`; port/README.md "Profiling") |
+| `SOA_PROFILE=DIR` | sampled guest stacks, `DIR/stacks.folded`; wins over `SOA_COVERAGE`'s dir when both are set and differ |
+| `SOA_PROFILE_HZ=N` | the sample rate, 10..10000 (default 1000) |
+| `SOA_PROFILE_HOST=1` | with `SOA_PROFILE`: host PCs inside natives, `DIR/host.tsv` |
+| `SOA_WATCHDOG=S` | 1..86400 seconds without a presented frame: log every guest stack (`app/host.cpp`; default off) |
+| `SOA_AUDIO_DUMP=DIR` | each OpenSL ES player's PCM as `DIR/playerN.wav`, before mixing (`hle/opensles.cpp`) |
+| `SOA_TRACE_RT=1` | log render-target allocations and viewports (`hle/gles.cpp`) |
+| `SOA_OFFSCREEN_PRESENT=1\|0` | headless only: present offscreen (on) or into the hidden window (off); unset = offscreen unless the video driver is x11 (see "Graphics") |
+| `SOA_GL_HOST_SRGB_ETC2=1` | pass sRGB ETC2 textures to the driver instead of decoding them (default off) |
+| `SOA_GL_MAP_INVALIDATE=0` | don't add `GL_MAP_INVALIDATE_RANGE_BIT` to the engine's overwrite maps (default on) |
+| `SOA_GL_RELEASE_SHADER_COMPILER=1` | pass `glReleaseShaderCompiler` to the driver (default dropped) |
+| `SOA_DIRECT_CALLS=0` | send host-thunk calls through the JIT (default on: called directly; `core/cpu.cpp`) |
+
+Host variables: `HOME` (the programs' default data dirs); `TZ`, `HOME` and `TMPDIR` are the only
+host variables the guest's `getenv` sees (`hle/libc.cpp`); child processes (`ffmpeg` for movies,
+`fc-match` for the font) inherit the environment. SDL reads its own (`SDL_VIDEODRIVER`,
+`SDL_AUDIODRIVER`, any `SDL_*` hint). The runtime sets `SDL_HINT_VIDEO_X11_FORCE_EGL` (`app/sdl_gl.cpp`)
+and `SDL_HINT_IME_SUPPORT_EXTENDED_TEXT` (`app/host.cpp`) at normal priority, so the environment's
+`SDL_VIDEO_X11_FORCE_EGL` / `SDL_IME_SUPPORT_EXTENDED_TEXT` override them: left so on purpose (SDL's
+documented behaviour), but `SDL_VIDEO_X11_FORCE_EGL=0` would give X11 GLX contexts, which the EGL
+emulation doesn't expect.
 
 ## Platform fidelity: what the guest may rely on
 

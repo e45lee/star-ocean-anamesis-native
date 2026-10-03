@@ -1,3 +1,4 @@
+#include <soa/env.h>
 #include <cxxabi.h>
 // Guest profiler: function table, one-shot coverage traps and a stack-sampling profiler.
 //
@@ -606,8 +607,7 @@ void host_sample(ProfThread& t, int d) {
     pthread_kill((pthread_t)t.host_thread, SIGPROF);
 }
 void init_host_sampling() {
-    const char* e = getenv("SOA_PROFILE_HOST");
-    if (!e || !*e || !strcmp(e, "0")) return;
+    if (!env::env_on("SOA_PROFILE_HOST")) return;
     Dl_info di;
     if (!dladdr((void*)&profile_init, &di)) return;
     g_exe_base = (u64)di.dli_fbase;
@@ -808,15 +808,15 @@ void profile_dump() {
 }
 
 void profile_init(LoadedLib& lib) {
-    const char* cov = getenv("SOA_COVERAGE");
-    const char* prof = getenv("SOA_PROFILE");
-    if ((!cov || !*cov) && (!prof || !*prof)) return;
-    if (cov && *cov && prof && *prof && strcmp(cov, prof) != 0) LOGW("profile", "SOA_COVERAGE and SOA_PROFILE differ; writing everything to %s", prof);
-    g_dir = prof && *prof ? prof : cov;
+    const char* cov = env::env_str("SOA_COVERAGE");
+    const char* prof = env::env_str("SOA_PROFILE");
+    if (!cov && !prof) return;
+    if (cov && prof && strcmp(cov, prof) != 0) LOGW("profile", "SOA_COVERAGE and SOA_PROFILE differ; writing everything to %s", prof);
+    g_dir = prof ? prof : cov;
     mkdir(g_dir.c_str(), 0755);
     g_lib = &lib;
     g_t0 = Clock::now();
-    if (const char* hz = getenv("SOA_PROFILE_HZ")) g_hz = std::clamp(atoi(hz), 10, 10000);
+    g_hz = (int)env::env_int("SOA_PROFILE_HZ", 10, 10000, g_hz);
     if (!build_function_table(lib)) {
         LOGE("profile", "couldn't read %s; profiling disabled", lib.path.c_str());
         return;

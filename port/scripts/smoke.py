@@ -22,10 +22,10 @@ OUT_DIR/NN-name.png, with a side-by-side strip in OUT_DIR/strip.png.
 The phone: the shared pre-downloaded 3.7.0 phone, linked (port/scripts/phone370.sh; SOA_PHONE=DIR
 another, SOA_PHONE=none an empty one: the client downloads its 3 GB first). The client save is
 data/saves/client/Game.xml; the local server seeds itself from data/saves/seed/Game.xml with
-SOA_SERVER_SEED_RNG=1 and its clock fixed at SMOKE_CLOCK (default 2026-09-30 12:00:00), so the
+--seed-rng 1 (SEED_RNG) and its clock fixed at SMOKE_CLOCK (default 2026-09-30 12:00:00), so the
 home (stamina, the login bonus day, the open events) is the same on every run. OUT_DIR/data (the
 run's phone) is deleted after a PASS unless SMOKE_KEEP_DATA=1. Exit status 0 = pass.
-soa runs headless (SOA_HEADLESS=1: no window, same rendering); SOA_HEADLESS=0 shows the window.
+soa runs headless (--headless: no window, same rendering); WATCH=1 shows the window (--windowed).
 The offline port's baselines (its title -> character list flow) are in work/port-test/smoke-base-380 (380-ok).
 """
 import os
@@ -64,7 +64,6 @@ def rmse(a, b):
 
 
 def main():
-    os.environ.setdefault("SOA_HEADLESS", "1")  # soa --headless (no window); SOA_HEADLESS=0 to watch
     if len(sys.argv) < 3:
         sys.exit(__doc__)
     soa = os.path.abspath(sys.argv[1])
@@ -95,9 +94,11 @@ def main():
         os.remove(fifo)  # soa creates it
 
     log = open(logpath, "w")
-    env = dict(os.environ, SOA_SERVER_SEED_RNG=os.environ.get("SOA_SERVER_SEED_RNG", "1"))
-    proc = subprocess.Popen([soa, "--data", data, "--size", "729x1296", "--clock", CLOCK, "--control", fifo] + extra,
-                            cwd=REPO, stdout=log, stderr=subprocess.STDOUT, env=env, pass_fds=(slot,) if slot >= 0 else ())
+    # --headless unless WATCH=1 (no window, same rendering); the server's RNG fixed (SEED_RNG, default 1)
+    headless = "--windowed" if os.environ.get("WATCH") == "1" else "--headless"
+    proc = subprocess.Popen([soa, headless, "--seed-rng", os.environ.get("SEED_RNG", "1"), "--data", data, "--size", "729x1296",
+                             "--clock", CLOCK, "--control", fifo] + extra,
+                            cwd=REPO, stdout=log, stderr=subprocess.STDOUT, pass_fds=(slot,) if slot >= 0 else ())
 
     for _ in range(1200):
         if os.path.exists(fifo) or proc.poll() is not None:

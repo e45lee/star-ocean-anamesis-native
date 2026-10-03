@@ -17,7 +17,7 @@
 // (content_type 13); the 30 others are the 26 `is_default` titles (title_other_0001..0026) and
 // four event titles (title_bring_0010/0014/0015, title_battle_0025) no master row awards.
 //
-// State: the table `titles` (the owned ids) and the meta key `title` (the selected id).
+// State: the table `titles` (the owned ids) and player.title_id (the selected id; NULL: none).
 #include <algorithm>
 #include <cstdio>
 #include <string>
@@ -29,6 +29,7 @@
 #include "core/errors.h"
 #include "core/modules.h"
 #include "core/request_context.h"
+#include "api/player/titles.h"
 
 namespace soa::server {
 
@@ -67,20 +68,15 @@ Value title_list(ext::Ctx& ctx) {
     return list;
 }
 
-// The selected title (meta "title"). (d) A player who never chose one wears the first default
-// title (lowest order_id, title_other_0001): 3.7.0's choice for a new player isn't known, and
-// with 0 the status bar's plate stays hidden. That default is stored on the first read.
-u32 selected_title(ext::Ctx& ctx) {
-    int64_t stored = -1;
-    ctx.st.q("select value from meta where key = 'title'", {}, [&](const Row& meta_row) { stored = std::stoll(meta_row.s("value")); });
-    if (stored >= 0) return (u32)stored;
-    u32 first_default = (u32)ctx.m.one("select id from master_title where is_default = 1 order by order_id, id limit 1", {});
-    ctx.st.q("insert or replace into meta (key, value) values ('title', ?)", {std::to_string(first_default)});
-    return first_default;
-}
+// The selected title (player.title_id; NULL: none, Player.title 0). (d) A new player wears the
+// first default title (lowest order_id, title_other_0001; new_player_titles, at creation):
+// 3.7.0's choice for a new player isn't known, and with 0 the status bar's plate stays hidden.
+u32 selected_title(ext::Ctx& ctx) { return (u32)ctx.st.one("select title_id from player", {}); }
 
+// SetTitle's choice; 0 (taken off) is stored as NULL.
 void select_title(ext::Ctx& ctx, u32 title_id) {
-    ctx.st.q("insert or replace into meta (key, value) values ('title', ?)", {std::to_string(title_id)});
+    if (title_id) ctx.st.q("update player set title_id = ?", {title_id});
+    else ctx.st.q("update player set title_id = null", {});
 }
 
 void set_player_title(Value& data, u32 title_id) {
@@ -207,7 +203,7 @@ NATIVE_TEST("player/titles") {
         set_req.method = "SetTitle";
         set_req.ints = {ach_title};
         (*handler)(ctx, set_req);
-        t.expect_eq((u32)ctx.st.one("select value from meta where key = 'title'", {}), first, "unowned title refused");
+        t.expect_eq((u32)ctx.st.one("select title_id from player", {}), first, "unowned title refused");
         const ext::GrantFn* grant = ext::find_grant(kContentTypeTitle);
         if (!grant) {
             t.fail("content type 13 has no grant");
@@ -233,20 +229,33 @@ NATIVE_TEST("player/titles") {
         t.expect_eq(present_data.find("AddTitleList") != nullptr, false, "no AddTitleList without a grant");
 
         (*handler)(ctx, set_req);
-        t.expect_eq((u32)ctx.st.one("select value from meta where key = 'title'", {}), ach_title, "owned title set");
+        t.expect_eq((u32)ctx.st.one("select title_id from player", {}), ach_title, "owned title set");
         data = Value::object();
         data["Player"] = Value::object();
         ext::player_load(ctx, login_req, data);
         t.expect_eq(player_title(data), ach_title, "the load reports the set title");
         set_req.ints = {0};
         (*handler)(ctx, set_req);
-        t.expect_eq((u32)ctx.st.one("select value from meta where key = 'title'", {}), 0u, "SetTitle(0) takes it off");
+        t.expect_eq(ctx.st.one("select count(*) from player where title_id is null", {}), (int64_t)1, "SetTitle(0) takes it off (NULL)");
+        data = Value::object();
+        data["Player"] = Value::object();
+        ext::player_load(ctx, login_req, data);
+        t.expect_eq(player_title(data), 0u, "and it stays off (no default again)");
         ctx.st.exec("rollback");
     });
     if (!ran) t.fail("needs the 3.7.0 master (data/basmaster-3.7.0.sqlite3) and the seed save (data/saves/seed/Game.xml)");
 }
 
 }  // namespace
+
+// A new player's titles (seed, CreatePlayer; api/player/titles.h): (a)+(d) the default titles
+// owned (ensure_default_titles), and (d) the first default one worn (selected_title's rule).
+// Before PLAN-schema S3 both happened at the player's first load; the first answer is the same.
+void new_player_titles(ext::Ctx& ctx) {
+    ensure_default_titles(ctx);
+    u32 first_default = (u32)ctx.m.one("select id from master_title where is_default = 1 order by order_id, id limit 1", {});
+    select_title(ctx, first_default);
+}
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").

@@ -17,7 +17,7 @@
 # retire are in sphere211_continue_session.sh (one more battle here would take the game past its
 # memory budget: each battle added about 0.7 GB before PLAN-next D7; now about 70 MB, the run peaks near 2.3 GB). The heal and reroll tickets of every season are put into the player's
 # stock at the title screen (the account has none; the game sold them in event shops).
-# The cell taps are screen positions of the map the server lots with SOA_SERVER_SEED_RNG=605
+# The cell taps are screen positions of the map the server lots with --seed-rng 605
 # (Asset_easy_normal_0003: start -> 2 -> 3 -> 6 -> boss 7 -> goal; since the favor login bonus lots
 # at the login (a4-helpers), seed 1 lots another map); the script checks the map id in the log and
 # stops if another map came up. Before each tap the board is re-entered from home,
@@ -33,7 +33,7 @@ SOA=$1; OUT=$2; TMP=$3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
-export SOA_HEADLESS="${SOA_HEADLESS:-1}"  # soa --headless (no window); SOA_HEADLESS=0 to watch
+HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
 CTL=control/soactl.py; FLOW=control/flowctl.py
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos" "${OUT:?}"/state-*.txt
 mkdir -p "$OUT/shots"
@@ -42,7 +42,7 @@ mkdir -p "$OUT/shots"
 . port/scripts/phone370.sh
 phone370_prepare "$TMP/data"
 phone370_client_save "$TMP/data/data/shared_prefs"
-SOA_SERVER_SEED_RNG=${SOA_SERVER_SEED_RNG:-605} timeout -k 10 2400 "$SOA" --data "$TMP/data" \
+timeout -k 10 2400 "$SOA" $HEADLESS --seed-rng "${SEED_RNG:-605}" --data "$TMP/data" \
   --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null || true' EXIT
@@ -130,7 +130,7 @@ c wait:3000 shot:$S/04b-rental-bonus.png tap:364:800 wait:3000 shot:$S/04c-home.
 tapw 'GetSphere211Info: season' 60 20 3 -- tap:455:1085 || fail "the home button didn't open Sphere 211"
 c wait:6000 shot:$S/05-board.png
 grep -q 'Sphere211: floor 1 (floor row [0-9]*), map 2554458071 ' "$L" \
-  || fail "floor 1 isn't the map this script's taps are for (SOA_SERVER_SEED_RNG=1 lots map 2554458071): $(grep 'Sphere211: floor 1' "$L")"
+  || fail "floor 1 isn't the map this script's taps are for (--seed-rng 1 lots map 2554458071): $(grep 'Sphere211: floor 1' "$L")"
 state > "$OUT/state-1-floor1.txt"; cat "$OUT/state-1-floor1.txt"
 
 # The board's camera moves after a battle (it follows the cleared cell), so before each tap the
@@ -158,8 +158,9 @@ return_dive() {
 # The battles are won or lost by the client's own (unseeded) battle: with seed 605 the level-65
 # cell 6 and the level-90 boss were lost in some runs (the defeat dialog times out: "制限時間に
 # 達しました"). The session checks the flow, not the balance, so the enemies are set to level 30
-# with the server's test hook (sphere_meta test_enemy_level) for the whole dive.
-sql "insert or replace into sphere_meta (key, value) values ('test_enemy_level', 30)"
+# with the server's test hook (sphere.debug_enemy_level; the dive's row exists since the board
+# opened) for the whole dive.
+sql "update sphere set debug_enemy_level = 30 where id = 1"
 # The path: the start cell, 2, 3 (on the start view), then 6 (scrolled). The auto party takes the
 # strongest characters first, so by the boss only level-50 ones are left, which lose to its
 # level 90: 帰還 first (the characters come back, the boxes so far are analysed, the dive stays
@@ -195,7 +196,7 @@ state > "$OUT/state-4-floor2.txt"; cat "$OUT/state-4-floor2.txt"
 
 # 帰還 on floor 2: the floor-1 boss and floor-clear boxes analysed, everyone back.
 return_dive 70
-sql "delete from sphere_meta where key = 'test_enemy_level'"
+sql "update sphere set debug_enemy_level = null where id = 1"
 state > "$OUT/state-5-returned.txt"; cat "$OUT/state-5-returned.txt"
 c quit
 wait $pid || true

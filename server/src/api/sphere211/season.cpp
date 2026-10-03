@@ -123,31 +123,28 @@ Season load_dive(Ctx& ctx) {
     Season season = current_season(ctx);
     int64_t t = ctx.now();
     if (!ctx.st.one("select count(*) from sphere", {})) {
-        ctx.st.q("insert into sphere (id, season_id, floor_level, stamina, stamina_at, entered_at) values (1, ?, 0, ?, ?, ?)",
-                 {season.id, stamina_max(ctx), t, t});  // (d) the gauge starts full
-        set_sphere_meta(ctx, "cycle", season.cycle);
+        ctx.st.q("insert into sphere (id, season_id, floor_level, stamina, stamina_at, entered_at, cycle) values (1, ?, 0, ?, ?, ?, ?)",
+                 {season.id, stamina_max(ctx), t, t, season.cycle});  // (d) the gauge starts full
     }
     u32 dive_season = (u32)ctx.st.one("select season_id from sphere where id = 1", {});
-    u32 dive_cycle = (u32)sphere_meta(ctx, "cycle");
+    u32 dive_cycle = (u32)ctx.st.one("select cycle from sphere where id = 1", {});
     if (dive_season != season.id || dive_cycle != season.cycle) {
         Season old = season_by_id(ctx, dive_season);
         if (old.id) open_boxes(ctx, old, nullptr, nullptr, nullptr, nullptr);
         u32 best = (u32)ctx.st.one("select ifnull(max(floor_level), 0) from sphere_rank where season_id = ?", {dive_season});
         u32 boxes = (u32)ctx.st.one("select treasure_total from sphere where id = 1", {});
-        u32 wins = (u32)sphere_meta(ctx, "season_wins");
+        u32 wins = (u32)ctx.st.one("select season_wins from sphere where id = 1", {});
         u32 rank = old.id && wins ? 1u : 0u;
         if (rank) ranking_reward(ctx, old.id, rank);
         ctx.st.q(
             "update sphere set season_id = ?, floor_level = 0, asset_group = 0, streak = 0, treasure_total = 0, clear_asset = 0, "
-            "lot_floor_num = 0, revive_count = 0, prev_season = ?, prev_floor = ?, prev_treasure = ?, prev_rank = ?",
-            {season.id, dive_season, best, boxes, rank});
+            "lot_floor_num = 0, revive_count = 0, prev_season = ?, prev_floor = ?, prev_treasure = ?, prev_rank = ?, cycle = ?, "
+            "season_wins = 0, end_pending = ?",
+            {season.id, dive_season, best, boxes, rank, season.cycle, old.id ? 1 : 0});
         ctx.st.exec("delete from sphere_cell");
         ctx.st.exec("delete from sphere_departed");
         ctx.st.exec("delete from sphere_rental");
         ctx.st.q("delete from sphere_rank where season_id = ?", {season.id});  // a repeated season ranks anew
-        set_sphere_meta(ctx, "cycle", season.cycle);
-        set_sphere_meta(ctx, "season_wins", 0);
-        set_sphere_meta(ctx, "end_pending", old.id ? 1 : 0);
         LOGI("server", "Sphere211: season %u (cycle %u) -> %u (cycle %u); best floor %u, %u battles won, rank %u", dive_season, dive_cycle, season.id,
              season.cycle, best, wins, rank);
     }

@@ -5,6 +5,7 @@
 // (platform370/), plus its one native patch that hides master_global.service_stop_day so the
 // client runs on the real date. This file maps the command line onto platform370::Config and
 // brings the runtime up. emulator/README.md, platform370/README.md.
+#include <soa/env.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -90,6 +91,7 @@ void usage() {
             "                  never the port's: its cached libSOA.so and save don't belong here)\n"
             "  --download-dir DIR  temporary stand-in for the CDN: serve assets missing from the APK from DIR\n"
             "                  (e.g. work/download-3.7.0); off by default\n"
+            "  --download-prefer  with --download-dir: DIR wins over the APK (as soa / soa-viewer)\n"
             "  --repo DIR      the source checkout (default: found from the executable)\n"
             "  --device-clock \"YYYY-MM-DD HH:MM:SS\"|host  the phone's clock (local time) at start; it runs on from\n"
             "                  there (default %s: the host's real time; the client's service-end check is\n"
@@ -107,22 +109,27 @@ void usage() {
             "  --landscape     default to a 16:9 landscape window\n"
             "  --render-size S the game's screen size: 'desktop' (default), 'window' or WxH\n"
             "  --fullscreen    start in (desktop) fullscreen\n"
-            "  --font PATH     the on-screen text box's font (env SOA_FONT; default: a system Japanese font; 'none': off)\n"
+            "  --font PATH     the on-screen text box's font (default: a system Japanese font; 'none': off)\n"
             "  --headless      don't show the window (it still renders; screenshots and the control FIFO work)\n"
+            "  --windowed      show the window (the default; undoes an earlier --headless)\n"
             "  --shot S:PATH   save a screenshot S seconds after start (repeatable; F12 any time)\n"
             "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
             "                  wheel:X:Y:DY, back, text:STRING, shot:PATH, quit\n"
             "  --control FIFO  read the same commands, one per line, from a named pipe (control/soactl.py)\n"
-            "  -v / -vv        verbose / trace logging\n",
+            "  -v / -vv        verbose / trace logging\n"
+            "Diagnostic switches are environment variables (SOA_TRACE, SOA_PROFILE, SOA_WATCHDOG, ...:\n"
+            "runtime/README.md \"Environment\"); settings are flags only.\n",
             kDefaultDeviceClock);
 }
 
 }  // namespace
 
 int main(int argc, char** argv) {
+    env::warn_removed_env("soa-emu", env::kEmu);  // SOA_* settings that are flags now
     signal(SIGPIPE, SIG_IGN);
     app::install_host_hooks();
     std::string lib_path, data_dir, download_dir, repo_arg;
+    bool download_prefer = false;
     std::vector<std::string> apks;
     int guest_cpus = 8;
     // The 3.7.0 platform layer: everything on (soa-emu is the 3.7.0 phone, network included).
@@ -144,6 +151,7 @@ int main(int argc, char** argv) {
         else if (a == "--apk") apks.push_back(next());
         else if (a == "--data") data_dir = next();
         else if (a == "--download-dir") download_dir = next();
+        else if (a == "--download-prefer") download_prefer = true;
         else if (a == "--repo") repo_arg = next();
         else if (a == "--device-clock") p370.device_clock = next();
         else if (a == "--no-patch") p370.patch = false;
@@ -185,6 +193,7 @@ int main(int argc, char** argv) {
         else if (a == "--font") host.font = next();
         else if (a == "--fullscreen") host.fullscreen = true;
         else if (a == "--headless") host.hidden = true;
+        else if (a == "--windowed") host.hidden = false;
         else if (a == "--shot") host.shots.push_back(next());
         else if (a == "--do") host.actions.push_back(next());
         else if (a == "--control") host.control_path = next();
@@ -244,8 +253,8 @@ int main(int argc, char** argv) {
 
     auto& am = asset_manager();
     if (!download_dir.empty()) {
-        am.set_download_dir(download_dir, false);
-        LOGI("emu", "download dir %s: a temporary stand-in for the CDN (fallback for the APK)", download_dir.c_str());
+        am.set_download_dir(download_dir, download_prefer);
+        LOGI("emu", "download dir %s: a temporary stand-in for the CDN (%s the APK)", download_dir.c_str(), download_prefer ? "preferred over" : "fallback for");
     }
     // The 3.7.0 APK is a single APK (no splits, no asset packs); the asset manager indexes the zip.
     for (auto& f : apks)

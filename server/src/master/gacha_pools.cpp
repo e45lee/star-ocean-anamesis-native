@@ -64,10 +64,7 @@ Pools::~Pools() {
 bool Pools::open(const std::string& path) {
     std::vector<std::string> cands;
     if (!path.empty()) cands.push_back(path);
-    else {
-        if (const char* e = getenv("SOA_GACHA_POOLS")) cands.push_back(e);
-        if (std::string p = find_repo_file("data/gacha_pools.sqlite3"); !p.empty()) cands.push_back(p);
-    }
+    else if (std::string p = find_repo_file("data/gacha_pools.sqlite3"); !p.empty()) cands.push_back(p);
     for (auto& c : cands) {
         if (!exists(c)) continue;
         sqlite3* db = nullptr;

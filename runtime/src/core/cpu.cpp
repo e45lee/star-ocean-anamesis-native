@@ -1,3 +1,4 @@
+#include <soa/env.h>
 #include "core/cpu.h"
 
 #ifdef _WIN32
@@ -72,7 +73,7 @@ size_t alloc_processor_id() {
     // exits. Running out means a thread nests without bound (e.g. a hook or stub that calls
     // guest code which calls the hook again) or thousands of live guest threads.
     fatal("out of guest CPU contexts (%zu in use, kMaxProcessors = %zu in core/cpu.cpp): each host thread holds one per "
-          "guest_call nesting level it reached; run with SOA_MEMSTATS=1 to see which threads hold them (log "
+          "guest_call nesting level it reached; run soa with --memstats to see which threads hold them (log "
           "I/memstats), and look for unbounded guest<->host recursion before raising the limit",
           g_cpus.size(), kMaxProcessors);
 }
@@ -488,8 +489,7 @@ void prof_native_wait(bool waiting) {
 namespace {
 
 bool g_direct_calls = [] {
-    const char* e = getenv("SOA_DIRECT_CALLS");
-    return !(e && e[0] == '0');
+    return env::env_bool("SOA_DIRECT_CALLS", true);
 }();
 
 // Thunk index when `fn` is the entry of a host function that can be called without the JIT: a

@@ -9,6 +9,11 @@
 // never changed an existing table, so a state from before a column was added would miss it.
 #include "state/schema.h"
 
+#include <cerrno>
+#include <cstdlib>
+#include <iterator>
+#include <map>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
@@ -260,6 +265,193 @@ bool repair_columns(sqlite3* db) {
     return ok;
 }
 
+// ---- step 2: drop the dead (PLAN-schema S2, finding F1) ---------------------------------------
+// What nothing reads: roster.favor (favor lives per same role in `favor`), mission.best_rank (no
+// per-mission rank: docs/server-rules.md "Missions"), exchange_counts.shop_id (the contents row
+// names its shop in the master), and the tables nothing uses: view_flags (UpdateView keeps the
+// words in meta view_status / view_status2), gear (gear_items), box_gacha (box_state /
+// box_slots) and planets (written by the seed, never read: the open planets are the campaign's
+// ActiveMissionList). `drop column` (SQLite 3.35+) since no key, index or reference names them.
+const char* const kDropDead[] = {
+    "alter table roster drop column favor",
+    "alter table mission drop column best_rank",
+    "alter table exchange_counts drop column shop_id",
+    "drop table view_flags",
+    "drop table gear",
+    "drop table box_gacha",
+    "drop table planets",
+};
+
+// ---- step 3: keys out of meta, sphere_meta and counters (PLAN-schema S3, finding F4) -----------
+// The player's fields that lived as meta keys become player columns (the table is rebuilt STRICT,
+// with its foreign keys, in S4); deep space's two period starts get their singleton table; the
+// dive's keyed values (sphere_meta) become columns of the one `sphere` row; the login bonus's
+// popup flag leaves counters. kKeysOut is the DDL; move_keys (below) maps the values and then
+// deletes the keys and drops sphere_meta.
+const char* const kKeysOut[] = {
+    // Player.tutorial_status, view_status / view_status2 (u64 bit sets stored as their int64
+    // bits), kiyaku_version, title (the selected master_title id; NULL: none), support_pc_id (an
+    // owned uid; NULL: unset), time_saving_use_count and its day, the login bonus's popup flag
+    "alter table player add column tutorial_status integer not null default 0",
+    "alter table player add column view_status integer not null default 0",
+    "alter table player add column view_status2 integer not null default 0",
+    "alter table player add column kiyaku_version text not null default ''",
+    "alter table player add column title_id integer",
+    "alter table player add column support_uid integer",
+    "alter table player add column time_saving_count integer not null default 0",
+    "alter table player add column time_saving_day integer",
+    "alter table player add column login_bonus_popup_pending integer not null default 0 check (login_bonus_popup_pending in (0, 1))",
+    // api/deepspace/: the start of the daily and the weekly play-limit period the offers' counts are of
+    "create table ds_state (id integer primary key check (id = 1), limit_day integer, limit_week integer) strict",
+    // api/sphere211/: the season's cycle the dive is of, its battles won, whether the season-end
+    // result is still to be sent, and the port's test hook (session scripts only: the enemy
+    // level of every start; NULL: off)
+    "alter table sphere add column cycle integer not null default 0",
+    "alter table sphere add column season_wins integer not null default 0",
+    "alter table sphere add column end_pending integer not null default 0 check (end_pending in (0, 1))",
+    "alter table sphere add column debug_enemy_level integer",
+};
+
+// One statement with its arguments (an int64, a text or NULL); false (logged) when it fails.
+struct Bound {
+    enum { I, S, N } t = N;
+    int64_t i = 0;
+    std::string s;
+    static Bound integer(int64_t v) { return {I, v, {}}; }
+    static Bound text(std::string v) { return {S, 0, std::move(v)}; }
+    static Bound null() { return {}; }
+};
+bool run(sqlite3* db, const char* sql, const std::vector<Bound>& args = {}) {
+    sqlite3_stmt* s = nullptr;
+    if (sqlite3_prepare_v2(db, sql, -1, &s, nullptr) != SQLITE_OK) {
+        LOGE("server", "state schema: version 3: %s: %s", sql, sqlite3_errmsg(db));
+        sqlite3_finalize(s);
+        return false;
+    }
+    for (size_t k = 0; k < args.size(); k++) {
+        int n = (int)k + 1;
+        if (args[k].t == Bound::I) sqlite3_bind_int64(s, n, args[k].i);
+        else if (args[k].t == Bound::S) sqlite3_bind_text(s, n, args[k].s.c_str(), -1, SQLITE_TRANSIENT);
+        else sqlite3_bind_null(s, n);
+    }
+    int rc;
+    while ((rc = sqlite3_step(s)) == SQLITE_ROW) {}
+    sqlite3_finalize(s);
+    if (rc != SQLITE_DONE) LOGE("server", "state schema: version 3: %s: %s", sql, sqlite3_errmsg(db));
+    return rc == SQLITE_DONE;
+}
+
+// A key-value table's rows (key -> its value as text).
+std::map<std::string, std::string> key_values(sqlite3* db, const char* sql) {
+    std::map<std::string, std::string> out;
+    sqlite3_stmt* s = nullptr;
+    if (sqlite3_prepare_v2(db, sql, -1, &s, nullptr) == SQLITE_OK)
+        while (sqlite3_step(s) == SQLITE_ROW) {
+            const unsigned char* v = sqlite3_column_text(s, 1);
+            out[(const char*)sqlite3_column_text(s, 0)] = v ? (const char*)v : "";
+        }
+    sqlite3_finalize(s);
+    return out;
+}
+
+// The first column of the first row of `sql` (bound to `arg` when given); 0 without a row.
+int64_t count_of(sqlite3* db, const char* sql, std::optional<int64_t> arg = std::nullopt) {
+    sqlite3_stmt* s = nullptr;
+    int64_t n = 0;
+    if (sqlite3_prepare_v2(db, sql, -1, &s, nullptr) == SQLITE_OK) {
+        if (arg) sqlite3_bind_int64(s, 1, *arg);
+        if (sqlite3_step(s) == SQLITE_ROW) n = sqlite3_column_int64(s, 0);
+    }
+    sqlite3_finalize(s);
+    return n;
+}
+
+// A key's value as a number: the u64 the readers parsed it as (std::stoull), stored as its int64
+// bits (PLAN-schema 4.1: `cast(value as integer)` saturates at 2^63, so view_status's all-ones
+// word is converted here). Absent or not a number: nullopt.
+std::optional<int64_t> number(const std::map<std::string, std::string>& kv, const char* key) {
+    auto it = kv.find(key);
+    if (it == kv.end() || it->second.empty()) return std::nullopt;
+    const char* p = it->second.c_str();
+    char* end = nullptr;
+    errno = 0;
+    unsigned long long v = *p == '-' ? (unsigned long long)std::strtoll(p, &end, 10) : std::strtoull(p, &end, 10);
+    if (errno || *end) {
+        LOGW("server", "migrate v3: %s = '%s' isn't a number: dropped", key, p);
+        return std::nullopt;
+    }
+    return (int64_t)v;
+}
+
+Bound value_or(const std::optional<int64_t>& v, int64_t dflt) { return Bound::integer(v ? *v : dflt); }
+Bound value_or_null(const std::optional<int64_t>& v) { return v ? Bound::integer(*v) : Bound::null(); }
+
+// Step 3's data mapping (PLAN-schema S3): the keys' values into the new columns, then the keys go.
+//   meta tutorial_status, view_status, view_status2, kiyaku_version, ds_time_saving_count ->
+//     player's columns (absent: the column's default, which is what the readers read for an
+//     absent key: 0 / "");
+//   meta title -> player.title_id: '0' (taken off) -> NULL, as is absent (never chosen; only a
+//     player never loaded has no key: the first load stored the default);
+//   meta support_uid -> player.support_uid: 0 or not an owned uid -> NULL (both read as "unset");
+//   meta ds_time_saving_day -> player.time_saving_day (absent -> NULL, read as 0 as before);
+//   meta ds_limit_day / ds_limit_week -> ds_state (a row only when either key exists);
+//   counters login_bonus_popup_pending -> player.login_bonus_popup_pending (value > 0, the
+//     reader's test -> 1);
+//   sphere_meta cycle, season_wins, end_pending (!= 0 -> 1), test_enemy_level (0: off -> NULL)
+//     -> the sphere row's columns. Without a sphere row there is no dive for them to belong to
+//     (load_dive creates the row with the season's cycle): dropped, logged.
+bool move_keys(sqlite3* db) {
+    auto meta = key_values(db, "select key, value from meta");
+    auto sphere_meta = key_values(db, "select key, value from sphere_meta");
+    auto counters = key_values(db, "select key, value from counters where key = 'login_bonus_popup_pending'");
+    bool has_player = count_of(db, "select count(*) from player") > 0;
+
+    std::optional<int64_t> title = number(meta, "title");
+    if (title && *title == 0) title.reset();
+    std::optional<int64_t> support = number(meta, "support_uid");
+    if (support && (*support == 0 || !count_of(db, "select count(*) from roster where uid = ?", *support))) {
+        if (*support) LOGW("server", "migrate v3: player.support_uid: 1 dangling -> NULL");
+        support.reset();
+    }
+    std::optional<int64_t> popup = number(counters, "login_bonus_popup_pending");
+    auto kiyaku = meta.find("kiyaku_version");
+    bool ok = run(db,
+                  "update player set tutorial_status = ?, view_status = ?, view_status2 = ?, kiyaku_version = ?, title_id = ?, "
+                  "support_uid = ?, time_saving_count = ?, time_saving_day = ?, login_bonus_popup_pending = ?",
+                  {value_or(number(meta, "tutorial_status"), 0), value_or(number(meta, "view_status"), 0), value_or(number(meta, "view_status2"), 0),
+                   Bound::text(kiyaku == meta.end() ? "" : kiyaku->second), value_or_null(title), value_or_null(support),
+                   value_or(number(meta, "ds_time_saving_count"), 0), value_or_null(number(meta, "ds_time_saving_day")),
+                   Bound::integer(popup && *popup > 0 ? 1 : 0)});
+    static const char* const kPlayerKeys[] = {"tutorial_status", "view_status", "view_status2",         "kiyaku_version",
+                                              "title",           "support_uid", "ds_time_saving_count", "ds_time_saving_day"};
+    if (!has_player) {
+        size_t n = 0;
+        for (const char* k : kPlayerKeys) n += meta.count(k);
+        n += counters.size();
+        if (n) LOGW("server", "migrate v3: %zu player keys without a player row: dropped", n);
+    }
+    std::optional<int64_t> limit_day = number(meta, "ds_limit_day"), limit_week = number(meta, "ds_limit_week");
+    if (ok && (limit_day || limit_week))
+        ok = run(db, "insert into ds_state (id, limit_day, limit_week) values (1, ?, ?)", {value_or_null(limit_day), value_or_null(limit_week)});
+    if (ok && !sphere_meta.empty()) {
+        if (count_of(db, "select count(*) from sphere where id = 1")) {
+            std::optional<int64_t> end_pending = number(sphere_meta, "end_pending"), enemy_level = number(sphere_meta, "test_enemy_level");
+            if (enemy_level && *enemy_level == 0) enemy_level.reset();
+            ok = run(db, "update sphere set cycle = ?, season_wins = ?, end_pending = ?, debug_enemy_level = ? where id = 1",
+                     {value_or(number(sphere_meta, "cycle"), 0), value_or(number(sphere_meta, "season_wins"), 0),
+                      Bound::integer(end_pending && *end_pending ? 1 : 0), value_or_null(enemy_level)});
+        } else {
+            LOGW("server", "migrate v3: %zu sphere_meta keys without a sphere row (no dive): dropped", sphere_meta.size());
+        }
+    }
+    ok = ok && run(db,
+                   "delete from meta where key in ('tutorial_status', 'view_status', 'view_status2', 'kiyaku_version', 'title', 'support_uid', "
+                   "'ds_time_saving_count', 'ds_time_saving_day', 'ds_limit_day', 'ds_limit_week')");
+    ok = ok && run(db, "drop table sphere_meta");
+    ok = ok && run(db, "delete from counters where key = 'login_bonus_popup_pending'");
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -272,6 +464,8 @@ const std::vector<const char*>& baseline_sql() {
 const std::vector<Step>& steps() {
     static const std::vector<Step> s = {
         {1, "the baseline (the 58 tables as before PLAN-schema S1), plus missing columns", baseline_sql(), repair_columns},
+        {2, "drop the dead tables and columns (PLAN-schema S2)", {std::begin(kDropDead), std::end(kDropDead)}, nullptr},
+        {3, "keys out of meta, sphere_meta and counters (PLAN-schema S3)", {std::begin(kKeysOut), std::end(kKeysOut)}, move_keys},
     };
     return s;
 }

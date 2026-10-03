@@ -14,6 +14,7 @@
 // (native/ui/webview_local.cpp, a client change). The page is built from the server
 // state when it is opened: the event areas open now (events::open_areas, the same list the
 // event menu shows), the login bonus's day and the present box.
+#include <soa/env.h>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -290,7 +291,7 @@ NATIVE_TEST("player/notice") {
         t.expect_eq(h.find("<h1>お知らせ</h1>") != std::string::npos, true, "html title");
         t.expect_eq(h.find("<h2>開催中のイベント (" + std::to_string(n) + ")</h2>") != std::string::npos, true, "html events heading");
         t.expect_eq(h.find("<h2>プレゼントBOX: ") != std::string::npos, true, "html present box heading");
-        if (const char* dump = getenv("SOA_NOTICE_HTML_DUMP")) {  // docs/webview.md: the page for soa-webview-render
+        if (const char* dump = env::env_str("SOA_NOTICE_HTML_DUMP")) {  // docs/webview.md: the page for soa-webview-render
             if (FILE* f = fopen(dump, "wb")) {
                 fwrite(h.data(), 1, h.size(), f);
                 fclose(f);

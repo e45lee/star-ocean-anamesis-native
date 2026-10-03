@@ -201,7 +201,7 @@ void AddLocalFile(u64 self, u32 fid, const char* name, u64 fn) {
 }
 
 // FakeApiCaller::Progress(): queue each new request's file, and hand each loaded one to its lambda.
-// Port option SOA_FAKE_SERVER=DIR (not guest behaviour): see ServeProgress below.
+// Port option --fake-server DIR (not guest behaviour): see ServeProgress below.
 std::string g_serve_dir;
 void ServeProgress(u64 self);
 // Port option (serve mode only): requests the guest fake never queues but the port serves
@@ -263,7 +263,7 @@ void Request_(u64 status, u64 self, const Request& r) {
     at<u64>(status, 0) = 1;
 }
 
-// Port test hook (api_notify_live.cpp, SOA_FAKE_SERVER_DRIVE): queues the request of the
+// Port helper (queue_request; once the api_notify_live.cpp test hook, removed): queues the request of the
 // FakeApiCaller method `method` (e.g. "Gacha") as if the game had called it; the native request
 // methods ignore their arguments. False if there is no such method.
 // The FakeApiCaller request table entry of a method name (for the drive hook's arguments).
@@ -388,9 +388,9 @@ void Destruct(u64 self, bool deleting) {
     if (deleting) guest_call(g("_ZdlPv"), {self});
 }
 
-// ---- port option: the fake server, live (SOA_FAKE_SERVER=DIR) ---------------------------
+// ---- port option: the fake server, live (--fake-server DIR) ---------------------------
 // Our invention, not guest behaviour. The shipped game never constructs FakeApiCaller and
-// never shipped its FakeApi/*.msgp files. With SOA_FAKE_SERVER=DIR:
+// never shipped its FakeApi/*.msgp files. With --fake-server DIR:
 //  - after CGame::OnInitialize, a FakeApiCaller is constructed (its own constructor: fiber,
 //    CApiNotify, CErrorHandlerWrap::SetFakeAppCaller) and put in TSingleton<CApiCaller> in
 //    place of the NetworkApiCaller, which stays alive but unused;
@@ -478,7 +478,7 @@ void ServeProgress(u64 self) {
     }
 }
 
-// SOA_FAKE_SERVER_SCHEMA=FILE (with SOA_FAKE_SERVER): writes the response schema the handlers
+// --fake-server-schema FILE (with the route): writes the response schema the handlers
 // accept, i.e. what CParameterManager::Deserialize walks: each registered InfoBase (the list at
 // CParameterManager+0x68, plus the one at +0x600) with its top-level key (pParseName), its
 // properties (map<u32 CHash32(key), IParameterProperty*> at +0x08: key name recovered by
@@ -569,7 +569,7 @@ u64 g_fake_caller = 0;
 u64 g_orig_game_init = 0;
 
 bool serve_enabled() {
-    const std::string& d = options().client.fake_server_dir;  // SOA_FAKE_SERVER (--server inproc defaults it)
+    const std::string& d = options().client.fake_server_dir;  // --fake-server (--server inproc defaults it)
     if (d.empty()) return false;
     g_serve_dir = d;
     return true;
@@ -588,7 +588,7 @@ void h_game_init(Cpu& c) {
     at<u64>(slot, 0) = self;
     g_fake_caller = self;
     if (!options().client.fake_server_schema.empty()) dump_schema(options().client.fake_server_schema.c_str());
-    LOGI("fakeapi", "SOA_FAKE_SERVER=%s: FakeApiCaller at %#" PRIx64 " replaces the API caller %#" PRIx64, g_serve_dir.c_str(),
+    LOGI("fakeapi", "fake server %s: FakeApiCaller at %#" PRIx64 " replaces the API caller %#" PRIx64, g_serve_dir.c_str(),
          (u64)self, (u64)old);
 }
 // Port code for the restore run's local server: queues the request of the FakeApiCaller method
@@ -609,7 +609,7 @@ bool queue_request(const char* method) {
     return false;
 }
 
-NATIVE_ROUTE_FUNCTION_ORIG_IF("_ZN5CGame12OnInitializeEv", h_game_init, "port option SOA_FAKE_SERVER: FakeApiCaller as the API caller",
+NATIVE_ROUTE_FUNCTION_ORIG_IF("_ZN5CGame12OnInitializeEv", h_game_init, "port option --fake-server: FakeApiCaller as the API caller",
                               serve_enabled, &g_orig_game_init);
 
 namespace {
@@ -656,7 +656,7 @@ template <u64 V>
 void h_status(Cpu& c) { at<u64>(c.x(8), 0) = V; }
 
 // FakeApiCaller::GetGachaInData(): the guest only returns Status 0 (nothing queued, so the gacha
-// screen gets no GachaHashMap and lists no gachas). Port option SOA_FAKE_SERVER (not guest
+// screen gets no GachaHashMap and lists no gachas). Port option --fake-server (not guest
 // behaviour): queue it like the other requests, from DIR/gacha_in_data.msgp, answered by
 // CApiNotify::OnGetGachaInDataRes (the handler NetworkApiCaller's response goes to).
 constexpr char kGetGachaInData[] = "_ZN13FakeApiCaller14GetGachaInDataEv";
@@ -1013,7 +1013,7 @@ bool register_all() {
         reg({sym, &h_status<v>, "FakeApiCaller status"});
     FAKEAPI_STATUS_ONLY(FAKEAPI_ST)
 #undef FAKEAPI_ST
-    reg({kGetGachaInData, h_get_gacha_in_data, "FakeApiCaller status (served with SOA_FAKE_SERVER)"});
+    reg({kGetGachaInData, h_get_gacha_in_data, "FakeApiCaller status (served with --fake-server)"});
     for (size_t i = 0; i < kServedHooks.size(); i++)
         reg({kServedStatusOnly[i].sym, kServedHooks[i], "FakeApiCaller status (served by the local server in-process)"});
     reg({kUpdatePartySet, h_update_party_set, "IApiCaller::UpdatePartySet (served by the local server in-process)"});
@@ -1047,7 +1047,7 @@ NATIVE_ROUTE_FUNCTION("_ZN13FakeApiCaller8ProgressEv", [](Cpu& c) { Progress(c.x
 NATIVE_ROUTE_FUNCTION("_ZThn8_N13FakeApiCaller8ProgressEv", [](Cpu& c) { Progress(c.x(0) - 8); }, "FakeApiCaller");
 NATIVE_ROUTE_FUNCTION("_ZNK13FakeApiCaller12IsRequestingEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDE",
                 [](Cpu& c) {
-                    // Port option SOA_FAKE_SERVER (not guest behaviour): a request the fake never
+                    // Port option --fake-server (not guest behaviour): a request the fake never
                     // queues (the status-only methods, e.g. GetGachaInData) is finished rather
                     // than in flight forever, so the screens waiting on it move on.
                     if (!g_serve_dir.empty() && !find(c.x(0), (u32)c.x(1))) return c.set_x(0, 0);

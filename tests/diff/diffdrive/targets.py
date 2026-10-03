@@ -19,7 +19,7 @@ import subprocess
 import sys
 import time
 
-from . import fifo, proc, screens
+from . import fifo, prepared, proc, screens
 from .proc import REPO
 
 sys.path.insert(0, os.path.join(REPO, "control"))
@@ -109,7 +109,13 @@ class Run:
         self.note("phone: " + make_phone(self.phone))
         if self.cfg.prepared:
             shutil.copyfile(self.cfg.prepared, self.state_db)
-            self.note("server state: a copy of %s" % self.cfg.prepared)
+            # the side files go to the server's data dir: soa-server's --data, soa's --data (the phone)
+            side_dir = self.phone if self.target == "port-inproc" else os.path.dirname(self.state_db)
+            for f in prepared.side_files(self.cfg.prepared):
+                shutil.copyfile(f, os.path.join(side_dir, os.path.basename(f)))
+            self.note("server state: a copy of %s%s" % (self.cfg.prepared,
+                      " (and %s)" % ", ".join(os.path.basename(f) for f in prepared.side_files(self.cfg.prepared))
+                      if prepared.side_files(self.cfg.prepared) else ""))
         if self.cfg.client_save:
             shutil.copyfile(os.path.join(REPO, "data/saves/client/Game.xml"), os.path.join(self.phone, "data/shared_prefs/Game.xml"))
         srv = ["--master", master, "--seed-rng", "1", "--clock", self.cfg.clock] + self.cfg.server_args

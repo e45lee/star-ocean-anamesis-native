@@ -4,7 +4,7 @@
 // found from the executable's location, so soa runs from any working directory.
 //
 // The repo root is found once:
-//   1. --repo DIR / SOA_REPO (RunOptions::repo_dir), when set;
+//   1. --repo DIR (RunOptions::repo_dir), when set;
 //   2. else upwards from the executable (/proc/self/exe: build/port/soa -> ../..), the first
 //      directory holding port/CMakeLists.txt;
 //   3. else upwards from the working directory, the same way.

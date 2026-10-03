@@ -139,17 +139,17 @@ Dragalia's `webview_page.cpp` is reused nearly verbatim: litehtml's container dr
 - **Japanese line breaking.** litehtml 0.10 breaks only at white space and around U+4E00–9FCC ideographs, so a kana or katakana run was one unbreakable word that overflowed its box. `split_text_ja` (a `split_text` override) breaks between any two characters when one is CJK (kana, ideographs, CJK punctuation, full-width forms, Hangul), with the basic kinsoku rules: no break before closing punctuation, small kana or ー, and none after opening brackets.
 - **The wide-viewport mode.** `SOAActivity` sets `useWideViewPort` + `loadWithOverviewMode`. A page whose viewport meta names a width (the APK's pages: `width=640`) is laid out that many CSS pixels wide and scaled to the view. Other pages use the phone's density: (d) 2.625, i.e. 420 dpi on a 1080-wide phone, scaled to the game screen.
 - **Fonts, Japanese first.** The regular face is a host Japanese font:
-  - `SOA_WEBVIEW_FONT`;
+  - `--font PATH` (soa's, also the text box's; soa-webview-render takes it too);
   - IPAex Gothic, Noto Sans CJK, `fonts-japanese-gothic`, IPA Gothic, Droid Sans Fallback;
   - DejaVu / Liberation as the Latin fallback.
   - Bold is Noto CJK Bold if installed, else synthetic. Without a font, pages draw no text, with a warning. The README setup should list `fonts-ipaexfont` or `fonts-noto-cjk`, as the keyboard text box does.
 - **Language** ja-JP. **WebP is left out.**
 
-**Fonts, later:** the keyboard's text box (`runtime/src/app/text_overlay.cpp`, branch `port/text-overlay2`) uses FreeType and its own search for the same fonts (`SOA_FONT`, IPAex, Noto CJK, Droid, `fc-match :lang=ja`). Two stacks for one job is one too many. Plan:
+**Fonts, later:** the keyboard's text box (`runtime/src/app/text_overlay.cpp`, branch `port/text-overlay2`) uses FreeType and its own search for the same fonts (`--font`, IPAex, Noto CJK, Droid, `fc-match :lang=ja`). Two stacks for one job is one too many. Plan:
 
 1. Move the search into a shared `runtime/src/app/fonts.{h,cpp}` (or a tiny library both link) that returns paths.
 2. Then either keep stb_truetype for pages (simple, no hinting) or switch `fonts.cpp` to FreeType once it is in `vcpkg.json` (better small-size quality, `.ttc` faces by index).
-3. One environment variable, `SOA_FONT`, for both.
+3. One setting for both: done (2026-10-03) as the flag `--font` (the two environment variables are gone, docs/environment.md).
 
 ### Drawing over the game, shared with the text box
 

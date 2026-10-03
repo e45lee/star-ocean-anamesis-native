@@ -238,9 +238,9 @@ def split_top(s):
     return parts
 
 
-def parse_creates(text):
+def parse_creates(text, create_re=CREATE_RE):
     out = []
-    for m in CREATE_RE.finditer(text):
+    for m in create_re.finditer(text):
         depth, j = 1, m.end()
         while j < len(text) and depth:
             depth += {"(": 1, ")": -1}.get(text[j], 0)
@@ -257,6 +257,13 @@ def parse_creates(text):
     return out
 
 
+# The migration steps' drops, added columns and new tables (applied to the parsed creates;
+# PLAN-schema 4.3 S2, S3).
+SCHEMA_STEPS = "server/src/state/schema.cpp"
+DROP_TABLE_RE = re.compile(r"^drop table (?:if exists )?(\w+)$", re.I)
+DROP_COLUMN_RE = re.compile(r"^alter table (\w+) drop column (\w+)$", re.I)
+ADD_COLUMN_RE = re.compile(r"^alter table (\w+) add column (\w+) (.*)$", re.I)
+STEP_CREATE_RE = re.compile(r"create\s+table\s+(?!if\s)(\w+)\s*\(", re.I)
 WRITE_RE = re.compile(r"\b(insert(?:\s+or\s+\w+)?\s+into|replace\s+into|update|delete\s+from)\s+(\w+)", re.I)
 READ_RE = re.compile(r"\b(from|join)\s+(\w+)", re.I)
 IDENT_RE = re.compile(r"[A-Za-z_]\w*")
@@ -378,7 +385,6 @@ RELS = [
     ("favor_drop_play", "same_role_id", "m:master_role", "same_role_id", None, "-", ""),
     ("favor_bonus_state", "lot_uid", "roster", "uid", 0, "SET NULL", "the favor bonus character"),
     ("shop_counts", "id", "m:master_item_shop", "id", None, "-", ""),
-    ("exchange_counts", "shop_id", "m:master_exchange_shop", "id", None, "-", ""),
     ("ds_area", "area_id", "m:master_deep_space_area", "id", None, "-", ""),
     ("ds_offer", "mission_id", "m:master_deep_space_mission", "id", None, "-", ""),
     ("ds_offer", "area_id", "ds_area", "area_id", None, "CASCADE", ""),
@@ -394,8 +400,8 @@ RELS = [
     ("event_rank_score", "ranking_id", "m:master_event_ranking", "id", None, "-", ""),
     ("event_rank_received", "group_id", "m:master_event_ranking_group", "id", None, "-", ""),
     ("wire_device", "player_id", "player", "id", 0, "SET NULL", ""),
-    ("meta", "kv:support_uid", "roster", "uid", 0, "SET NULL (player.support_uid, S3)", "Player.support_pc_id"),
-    ("meta", "kv:title", "titles", "id", 0, "SET NULL (player.title_id, S3)", "Player.title"),
+    ("player", "support_uid", "roster", "uid", None, "SET NULL (S4)", "Player.support_pc_id (meta support_uid before S3)"),
+    ("player", "title_id", "titles", "id", None, "SET NULL (S4)", "Player.title (meta title before S3)"),
 ]
 
 
@@ -454,7 +460,7 @@ LINT_UPSERT_ONLY = ("player", "roster", "items", "titles", "party_set", "mission
                     "wboss", "party", "party_member", "favor", "stock", "subscription", "present_texts")
 # Consumers whose SQL runs on another DB: the pools DB's builder (its own meta table).
 LINT_OTHER_DB = ("tools/build_gacha_pools.py",)
-POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(\w+)\s+values\b", re.I)
+POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(?:temp\.)?(\w+)\s+values\b", re.I)
 REPLACE_RE = re.compile(r"\b(?:insert\s+or\s+replace|replace)\s+into\s+(\w+)\b", re.I)
 
 
@@ -520,6 +526,25 @@ def main():
                     tgt[name]["also"].append("%s:%d" % (rel(path), ln))
                     continue
                 tgt[name] = {"cols": cols, "cons": cons, "where": "%s:%d" % (rel(path), ln), "also": []}
+    # The schema's later steps (state/schema.cpp, in step order) drop tables and columns, add
+    # columns and create tables (a step's plain `create table`): the inventory is the schema at
+    # this build's version.
+    schema_src = os.path.join(ROOT, SCHEMA_STEPS)
+    for line, text, dyn in literal_groups(open(schema_src, encoding="utf-8").read()):
+        for name, cols, cons, off in parse_creates(text, STEP_CREATE_RE):
+            tables[name] = {"cols": cols, "cons": cons, "where": "%s:%d" % (SCHEMA_STEPS, line + text.count("\n", 0, off)), "also": []}
+        for st in [" ".join(x.split()) for x in text.split(";")]:
+            m_ = ADD_COLUMN_RE.match(st)
+            if m_ and m_.group(1) in tables:
+                tables[m_.group(1)]["cols"].append((m_.group(2), m_.group(3)))
+                continue
+            m_ = DROP_TABLE_RE.match(st)
+            if m_ and m_.group(1) in tables:
+                del tables[m_.group(1)]
+                continue
+            m_ = DROP_COLUMN_RE.match(st)
+            if m_ and m_.group(1) in tables:
+                tables[m_.group(1)]["cols"] = [c for c in tables[m_.group(1)]["cols"] if c[0] != m_.group(2)]
     for path, src in src_cache.items():
         if rel(path) in OTHER_DB:
             continue

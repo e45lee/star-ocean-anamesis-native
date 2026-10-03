@@ -90,6 +90,8 @@ endif()
 include(cmake/deps.cmake)
 include(cmake/compat.cmake)  # soa_compat: the Windows build's POSIX shims (empty on Linux)
 
+add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests
+
 # ---- the parts, in dependency order
 if(SOA_NEED_RUNTIME)
   add_subdirectory(runtime)   # libsoaruntime, soaruntime_app, soaruntime_tests

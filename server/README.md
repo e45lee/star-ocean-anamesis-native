@@ -100,14 +100,17 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
 - **soa** fills it from its run options (`soa::options()`, `port/README.md` "Run options") in
   `server_port::config_from_options` (`port/src/native/api/server_adapters.cpp`), called by `main` once
   the options are final.
-- **soa-server** fills it from its command line, with soa's option names where soa has one
-  (`--clock`, `--start-coins`, `--galaxy-pass`, `--enable-events`, `--event-keywords`,
-  `--restore-tower`, `--download-dir`, `--repo`) and `--db`, `--master`, `--seed`, `--game-xml`,
-  `--seed-rng`, `--new-player`, `--fail`, `--surprise`, `--campaign-master-db`, `--campaign-seed`,
-  `--data` for soa's `SOA_SERVER_*` variables. `soa-server --help` lists them.
-  The events defaults are soa's too: `--event-keywords` defaults to the summer events
-  (`kDefaultEventKeywords`, "水着,夏,サマー,!福袋"), and `SOA_ENABLE_EVENTS` / `SOA_EVENT_KEYWORDS` apply
-  when the flag isn't given.
+- **soa-server** fills it from its command line, with the same flags as soa's server options
+  (`--db`, `--master`, `--gacha-pools`, `--seed`, `--game-xml`, `--seed-rng`, `--new-player`,
+  `--clock`, `--start-coins`, `--galaxy-pass`, `--enable-events`, `--event-keywords`,
+  `--restore-tower`, `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise`,
+  `--download-dir`, `--standin-assets`, `--repo`) plus its own `--data` (the state DB's directory).
+  `soa-server --help` lists them. The events defaults are soa's too: `--event-keywords` defaults to
+  the summer events (`kDefaultEventKeywords`, "水着,夏,サマー,!福袋").
+- **Neither reads a setting from the environment.** A `SOA_*` variable that was one prints one line naming
+  its flag and is ignored
+  (`common/include/soa/env.h`, `docs/environment.md`). The library's only environment variable is
+  a self-test dump, `SOA_NOTICE_HTML_DUMP=FILE` (`player/notice` writes the notice page's HTML there).
 
 ### The host interface (`hooks.h`)
 
@@ -134,8 +137,8 @@ fid in one transaction (refusals roll back and set `error_code(fid)`).
 
 ### The state DB and its upgrades
 
-The player state is one SQLite file (`--db`, soa-server's `--data DIR/server.sqlite3`, soa's
-`SOA_SERVER_DB`), its schema versioned by `pragma user_version` (`src/state/README.md`). Opening an
+The player state is one SQLite file (`--db`; soa-server's default `--data DIR/server.sqlite3`, soa's
+`DATA/server.sqlite3`), its schema versioned by `pragma user_version` (`src/state/README.md`). Opening an
 older file upgrades it in place, step by step, after copying it to `<file>.bak-v<old version>`; a
 file newer than the build is refused and left untouched. **There is no down-migration**: to go back
 to an older build, restore the `.bak-v<N>` copy that build wrote.

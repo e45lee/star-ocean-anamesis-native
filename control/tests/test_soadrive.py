@@ -108,6 +108,52 @@ def test_fifo_delivers_and_waits_for_shots(tmp_path):
     assert fifo.deliver(path, ["tap:1:2"], timeout=0.5) == (False, [])
 
 
+def test_tcp_channel_delivers_with_client_paths(tmp_path):
+    """--control tcp:HOST:PORT (a Windows client from WSL): one connection per batch; a shot is sent
+    in the client's spelling (fifo.CLIENT_PATH) and waited for at the local path."""
+    import socket
+    from soadrive import winhost
+    ls = socket.socket()
+    ls.bind(("127.0.0.1", 0))
+    ls.listen(4)
+    addr = "tcp:127.0.0.1:%d" % ls.getsockname()[1]
+    shot = str(tmp_path / "s.png")
+    got = []
+
+    def server():
+        while True:
+            c, _ = ls.accept()
+            data = b""
+            while True:
+                b = c.recv(1024)
+                if not b:
+                    break
+                data += b
+            c.close()
+            lines = [x for x in data.decode().split("\n") if x]
+            got.extend(lines)
+            if any(x.startswith("shot:") for x in lines):
+                open(shot, "wb").write(b"png")
+                return
+
+    t = threading.Thread(target=server)
+    t.start()
+    fifo.CLIENT_PATH[addr] = lambda p: "WIN:" + p
+    try:
+        assert fifo.listening(addr)
+        sent, pending = fifo.deliver(addr, ["tap:1:2", "shot:" + shot], timeout=10)
+    finally:
+        del fifo.CLIENT_PATH[addr]
+    t.join()
+    ls.close()
+    assert sent and pending == [] and got == ["tap:1:2", "shot:WIN:" + shot]
+    # nobody listens: not sent
+    assert not fifo.listening(addr)
+    assert fifo.deliver(addr, ["tap:1:2"], timeout=0.5) == (False, [])
+    assert winhost.winpath("/mnt/c/soa-win/run/x") == "C:\\soa-win\\run\\x"
+    assert winhost.is_windows("build-win/port/soa.exe") and not winhost.is_windows("build/port/soa")
+
+
 def test_ui370_points_are_window_coordinates():
     pts = {k: v for k, v in vars(ui370).items() if k.isupper() and isinstance(v, str)}
     assert len(pts) > 20

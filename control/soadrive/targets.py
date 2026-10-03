@@ -33,7 +33,7 @@ import subprocess
 import sys
 import time
 
-from . import fifo, gdb, milestones, prepared, proc, screens
+from . import fifo, gdb, milestones, prepared, proc, screens, winhost
 from .proc import REPO
 
 sys.path.insert(0, os.path.join(REPO, "control"))
@@ -92,16 +92,20 @@ def binaries():
     }
 
 
-def make_phone(dst, fresh_kvs=True):
+def make_phone(dst, fresh_kvs=True, win=False):
     """The run's phone: the shared pre-downloaded phone linked (SOA_PHONE as the session scripts
     take it: unset = the shared phone, none = empty, DIR = that phone). Returns (a note, whether the
-    data is on it)."""
+    data is on it). win: a Windows client's (the stage's shared phone, work/phone-3.7.0 there,
+    unless SOA_SHARED_PHONE says otherwise: hard links within the Windows drive)."""
     if os.path.isdir(dst):
         shutil.rmtree(dst)
+    env = dict(os.environ)
+    if win and "SOA_SHARED_PHONE" not in env:
+        env["SOA_SHARED_PHONE"] = os.path.join(winhost.STAGE, "work", "phone-3.7.0")
     r = subprocess.run(["bash", "-c", '. scripts/shared-phone.sh; shared_phone_resolve "$1"; '
                         'if [ -n "$SOA_PHONE" ]; then shared_phone_link "$SOA_PHONE" "$2" && echo "linked from $SOA_PHONE"; '
                         'else mkdir -p "$2"; echo "empty (the client downloads)"; fi', "-", REPO, dst],
-                       cwd=REPO, capture_output=True, text=True)
+                       cwd=REPO, capture_output=True, text=True, env=env)
     if r.returncode != 0:
         raise Abort("preparing the phone: " + (r.stdout + r.stderr).strip()[-300:])
     os.makedirs(os.path.join(dst, "data", "shared_prefs"), exist_ok=True)
@@ -235,6 +239,7 @@ class Run:
         self.results, self.failed, self.t0 = [], False, time.monotonic()
         self.shot_names = []
         self.predownloaded = False
+        self.win = False  # a Windows client (start(): soadrive/winhost.py)
         self.ctl_timeout = 120 if lay.kind == "diff" else 400
         self._cursor = None
         # called after the phone and the client save are in place, before anything starts (a
@@ -262,9 +267,34 @@ class Run:
         if self.queued:
             self.note("waited %ds for a game slot (control/soaslot.py)" % self.queued)
         b = binaries()
-        master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
-        download = proc.repo_file("work/download-3.7.0")
         server_side = self.target != "port-inproc"
+        binary = cfg.binary or (b["soa"] if self.target != "emu" else b["emu"])
+        # A Windows client (build-win/*.exe; soadrive/winhost.py): the staged programs and data, Windows
+        # paths, the TCP control channel, the phone and the server's state on the Windows drive.
+        self.win = winhost.is_windows(binary)
+        if self.win:
+            binary = winhost.staged_binary(binary)
+            server_binary = winhost.staged_binary(cfg.server_binary or os.path.join(os.path.dirname(os.path.dirname(binary)),
+                                                                                    "server", "soa-server.exe"))
+            master, download = winhost.stage_file("data/basmaster-3.7.0.sqlite3"), winhost.stage_file("work/download-3.7.0")
+            if not master or not download:
+                raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not staged in %s (scripts/windows-stage.sh)"
+                            % winhost.STAGE)
+            wp, cwd = winhost.winpath, winhost.STAGE
+            if not cfg.phone:
+                inside = os.path.dirname(self.state_db) == self.phone or self.state_db.startswith(self.phone + os.sep)
+                self.phone = winhost.local_dir(self.phone)
+                if inside:
+                    self.state_db = os.path.join(self.phone, os.path.relpath(self.layout.state_db, self.layout.phone))
+            if not winhost.on_drive(os.path.dirname(self.state_db)):
+                self.state_db = os.path.join(winhost.local_dir(os.path.dirname(self.state_db)), os.path.basename(self.state_db))
+            self.fifo = "tcp:127.0.0.1:%d" % proc.free_ports(1)[0]
+            fifo.CLIENT_PATH[self.fifo] = wp
+        else:
+            master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
+            download = proc.repo_file("work/download-3.7.0")
+            server_binary = cfg.server_binary or b["server"]
+            wp, cwd = (lambda p: p), REPO
         if (cfg.explicit_data or server_side) and (not master or not download):
             raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not found")
         if cfg.phone:
@@ -275,7 +305,7 @@ class Run:
             self.note("phone: %s (as it is)" % self.phone)
         else:
             t = time.monotonic()
-            note, self.predownloaded = make_phone(self.phone, cfg.fresh_kvs)
+            note, self.predownloaded = make_phone(self.phone, cfg.fresh_kvs, self.win)
             self.note("phone: %s (%d ms)" % (note, int((time.monotonic() - t) * 1000)))
         if cfg.prepared:
             shutil.copyfile(cfg.prepared, self.state_db)
@@ -294,17 +324,17 @@ class Run:
             self.before_client()
         srv = []
         if cfg.explicit_data or server_side:
-            srv += ["--master", master]
+            srv += ["--master", wp(master)]
         if cfg.seed_rng is not None:
             srv += ["--seed-rng", str(cfg.seed_rng)]
         if cfg.clock:
             srv += ["--clock", cfg.clock]
         srv += cfg.server_args
         if cfg.seed is None and not cfg.new_player:
-            srv += ["--seed", os.path.join(REPO, "data/saves/seed/Game.xml")]
+            srv += ["--seed", wp(os.path.join(winhost.STAGE if self.win else REPO, "data/saves/seed/Game.xml"))]
         elif cfg.seed:
-            srv += ["--seed", cfg.seed]
-        client = ["--data", self.phone, "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H),
+            srv += ["--seed", wp(cfg.seed)]
+        client = ["--data", wp(self.phone), "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H),
                   "--control", self.fifo]
         if cfg.gdb:
             if not gdb.available():
@@ -315,35 +345,38 @@ class Run:
             client += ["--device-clock", cfg.clock]
         env = {"SDL_AUDIODRIVER": os.environ.get("SDL_AUDIODRIVER", "dummy")}
         env.update(cfg.env)
-        pkt = ["--log-packets", os.path.dirname(self.packets)] if cfg.log_packets else []
+        if self.win:
+            # the client's environment reaches a Windows program only through WSLENV
+            names = [k for k in env if k not in os.environ.get("WSLENV", "").split(":")]
+            env["WSLENV"] = ":".join([x for x in os.environ.get("WSLENV", "").split(":") if x] + names)
+        pkt = ["--log-packets", wp(os.path.dirname(self.packets))] if cfg.log_packets else []
         if self.target == "port-inproc":
             extra = []
             if cfg.explicit_data or not self.layout.inproc_db_default:
-                extra += ["--db", self.state_db]
+                extra += ["--db", wp(self.state_db)]
             if cfg.explicit_data:
-                extra += ["--download-dir", download]
-            binary = cfg.binary or b["soa"]
+                extra += ["--download-dir", wp(download)]
             self.client = proc.Proc("soa", [binary] + client + cfg.client_args + srv + extra + pkt, self.client_log,
-                                    limit=cfg.limit, env=env, slot_fd=self.slot)
+                                    limit=cfg.limit, env=env, slot_fd=self.slot, cwd=cwd)
         else:
             gp, hp = proc.free_ports(2)
-            self.server = proc.Proc("soa-server", [cfg.server_binary or b["server"], "--listen", "127.0.0.1:%d" % gp,
-                                                   "--http", "127.0.0.1:%d" % hp, "--data", os.path.dirname(self.state_db),
-                                                   "--download-dir", download] + pkt + srv, self.server_log, limit=cfg.limit)
+            self.server = proc.Proc("soa-server", [server_binary, "--listen", "127.0.0.1:%d" % gp,
+                                                   "--http", "127.0.0.1:%d" % hp, "--data", wp(os.path.dirname(self.state_db)),
+                                                   "--download-dir", wp(download)] + pkt + srv, self.server_log, limit=cfg.limit,
+                                    cwd=cwd)
             end = time.monotonic() + 120
             while not self.grep(self.server_log, r"^soa-server: game"):
                 if not self.server.running() or time.monotonic() > end:
                     raise Abort("soa-server didn't start (see %s)" % self.server_log)
                 time.sleep(0.5)
-            binary = cfg.binary or (b["emu"] if self.target == "emu" else b["soa"])
             self.client = proc.Proc(os.path.basename(binary), [binary] + client + cfg.client_args +
                                     ["--server", "127.0.0.1:%d" % gp, "--http", "127.0.0.1:%d" % hp], self.client_log, env=env,
-                                    limit=cfg.limit, slot_fd=self.slot)
+                                    limit=cfg.limit, slot_fd=self.slot, cwd=cwd)
         emu_link = os.path.join(self.dir, "emu.log")
         if self.layout.kind == "diff" and not os.path.lexists(emu_link):
             os.symlink("client.log", emu_link)
         end = time.monotonic() + 120
-        while not os.path.exists(self.fifo):
+        while not fifo.listening(self.fifo):
             if not self.alive() or time.monotonic() > end:
                 raise Abort("the client didn't open its control FIFO (%s; see %s)" % (
                     self.gone() if not self.alive() else "not within 120s", self.client_log))

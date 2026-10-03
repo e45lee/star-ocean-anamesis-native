@@ -92,9 +92,10 @@ std::vector<u64> scanf_args(const char* fmt, VaSource& va);
 // (`win`: force the translation, for the tests on Linux).
 std::string host_scanf_format(const char* fmt, bool win = WIN_HOST);
 // The guest's rand(): bionic's RAND_MAX is 0x7fffffff. Linux: the host's (glibc: the same
-// TYPE_3 additive generator, seed 1). Windows, whose rand() is 15-bit: that generator here, so
-// both platforms give the guest the same sequence (glibc_random: the generator itself; reset:
-// back to seed 1, returning 0).
+// TYPE_3 additive generator, seed 1). Windows, whose rand() is 15-bit: that generator here (the
+// same sequence as Linux's while no host code there calls rand() in between: on Linux the guest
+// shares glibc's state with the host). glibc_random: the generator itself; reset: back to seed 1,
+// returning 0.
 s32 guest_rand();
 s32 glibc_random(bool reset = false);
 

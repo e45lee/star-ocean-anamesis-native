@@ -6,7 +6,7 @@ Every gate test is listed once, in [`tiers.json`](tiers.json) (the single source
 |---|---|---|---|
 | **T0** | every commit | the incremental build, then the fast deterministic checks in parallel: the server and runtime unit tests, every port selftest (one boot), every replay corpus, the docs / format / evidence / no-380 / schema checks, pytest, the coverage and impact maps current | about 1.5 minutes (the port selftest's boot is the long pole: 92 s; without it 43 s) |
 | **T1** | per change | T0, then what `tools/tests_for.py` selects for the changed paths: the replay against the parent build, the tests/diff shards and port sessions that exercise the touched APIs (the cheapest set covering them), smoke for client changes, the emulator / viewer gates when their scope is touched | 2-6 minutes for one area (the shards run in parallel) |
-| **T2** | per batch, before merging to main | T0, the full tests/diff (all flows, all targets, parallel), the broad port session set, the emulator and viewer sessions, the CDN check | about 25 minutes (the full tests/diff and the sessions share the 12 slots) |
+| **T2** | per batch, before merging to main | T0, the full tests/diff (all flows, all targets, parallel), the broad port session set, the emulator and viewer sessions, the CDN check; with a `build-win/`, the Windows tests `win:*` (else SKIP) | about 25 minutes (the full tests/diff and the sessions share the 12 slots; the `win:*` tests add about 7) |
 | **T3** | occasional (nightly, before a release) | the slow or rarely affected: Sphere 211's long runs, the episode download, the full new-player download, the demos, smoke vs the emulator, the stand-in fetch, the debug-window sessions | |
 
 ```sh
@@ -29,6 +29,7 @@ tools/tests_for.py --git-diff main    # what T1 would pick, and why
 - `server/src/rules/<x>_rules*`: the API folder of that name; the rest of `server/` and `tools/server_*`: every corpus and every shard;
 - `runtime/`, `platform370/`, `port/src/`, `emulator/src/`, the build: the broad set (every shard, smoke, the gate-scope sessions);
 - `tests/diff/`, `control/`, `phone370.sh`: every shard; a test script itself: that test.
+- never the Windows tests (`win:*`, kind `platform`, no impact entry): T2 runs them when `build-win/` exists (their `requires`; else SKIP), or by name (`tools/gate.sh win:seeded`).
 
 Regenerate the map after adding a test or a corpus: `tools/gate.sh T2 --out /tmp/g && tools/tests_for.py --regen --observed /tmp/g` (T0's `impact-map` check fails when an API or a test is missing from it).
 

@@ -203,6 +203,10 @@ control/run.py seeded build-win/emulator/soa-emu.exe build-win/server/soa-server
 emulator-viewer/scripts/viewer_boot.sh build-win/emulator-viewer/soa-viewer.exe OUT
 ```
 
+The stage is one per machine: two checkouts running Windows tests at once would test each other's
+files and `.exe` files; give each its own: `scripts/windows-stage.sh --phone --viewer
+/mnt/c/soa-win-NAME` once, then `SOA_WIN_STAGE=/mnt/c/soa-win-NAME` for its tests.
+
 Windows ports: in mirrored networking a port WSL has bound (even briefly, to test it) stays refused
 to Windows for a while, and WSL's ephemeral range is reserved for WSL; the drivers give Windows
 programs port 0 (the control channel) or untested ports below that range (`soa-server.exe`, retried

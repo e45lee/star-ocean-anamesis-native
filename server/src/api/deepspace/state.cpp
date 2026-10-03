@@ -77,16 +77,16 @@ bool area_unlocked(Ctx& ctx, const Area& area, const std::vector<Area>& all) {
 
 // The play-limit periods: (d) the offers' play_count_daily restart at the daily reset (04:00),
 // play_count_weekly at the week's start (rules::deepspace::week_start). The period starts are kept
-// in meta (ds_limit_day, ds_limit_week).
+// in ds_state (limit_day, limit_week; NULL or no row: none yet, read as 0).
 void restart_limit_periods(Ctx& ctx, int64_t t) {
     int64_t day = limit_day(ctx, t), week = dr::week_start(day);
-    if (ctx.st.one("select cast(value as integer) from meta where key = 'ds_limit_day'", {}) != day) {
+    if (ctx.st.one("select limit_day from ds_state where id = 1", {}) != day) {
         ctx.st.q("update ds_offer set play_count_daily = 0", {});
-        ctx.st.q("insert or replace into meta (key, value) values ('ds_limit_day', ?)", {std::to_string(day)});
+        ctx.st.q("insert into ds_state (id, limit_day) values (1, ?) on conflict(id) do update set limit_day = excluded.limit_day", {day});
     }
-    if (ctx.st.one("select cast(value as integer) from meta where key = 'ds_limit_week'", {}) != week) {
+    if (ctx.st.one("select limit_week from ds_state where id = 1", {}) != week) {
         ctx.st.q("update ds_offer set play_count_weekly = 0", {});
-        ctx.st.q("insert or replace into meta (key, value) values ('ds_limit_week', ?)", {std::to_string(week)});
+        ctx.st.q("insert into ds_state (id, limit_week) values (1, ?) on conflict(id) do update set limit_week = excluded.limit_week", {week});
     }
 }
 
@@ -230,15 +230,12 @@ std::vector<u64> parse_uids(const std::string& uids) {
 }
 
 // Quick returns used today: (d) a day from master_global login_bonus_reset_hour (4:00), like the
-// other daily counters. Kept in the core's meta table (Player.time_saving_use_count reads it).
+// other daily counters. Kept in the player row (time_saving_count, time_saving_day; Player.time_saving_use_count reads it).
 u32 time_saving_count(Ctx& ctx, int64_t t) {
     int64_t day = day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4));
-    int64_t counted_day = ctx.st.one("select cast(value as integer) from meta where key = 'ds_time_saving_day'", {});
-    if (counted_day != day) {
-        ctx.st.q("insert or replace into meta (key, value) values ('ds_time_saving_day', ?)", {std::to_string(day)});
-        ctx.st.q("insert or replace into meta (key, value) values ('ds_time_saving_count', '0')", {});
-    }
-    return (u32)ctx.st.one("select cast(value as integer) from meta where key = 'ds_time_saving_count'", {});
+    int64_t counted_day = ctx.st.one("select time_saving_day from player", {});  // NULL: never counted (0)
+    if (counted_day != day) ctx.st.q("update player set time_saving_day = ?, time_saving_count = 0", {day});
+    return (u32)ctx.st.one("select time_saving_count from player", {});
 }
 
 // ---- the answers' values -----------------------------------------------------------------------

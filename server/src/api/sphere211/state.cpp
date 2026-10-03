@@ -10,13 +10,7 @@
 
 namespace soa::server::sphere211 {
 
-// ---- small keyed values, the log, the RNG ------------------------------------------------------
-int64_t sphere_meta(Ctx& ctx, const char* key, int64_t dflt) {
-    return ctx.st.one("select ifnull((select value from sphere_meta where key = ?), ?)", {key, dflt});
-}
-void set_sphere_meta(Ctx& ctx, const char* key, int64_t value) {
-    ctx.st.q("insert or replace into sphere_meta (key, value) values (?, ?)", {key, value});
-}
+// ---- the log, the RNG ------------------------------------------------------------------------------
 void log_event(Ctx& ctx, LogKind kind, u32 value) {
     ctx.st.q("insert into sphere_log (kind, value, at) values (?, ?, ?)", {(int)kind, value, ctx.now()});
 }
@@ -99,7 +93,7 @@ Value floor_cells(Ctx& ctx, u32 player_id) {
 // until a GetSphere211Info has carried it (end_pending), zeros afterwards, so the dialog opens
 // once per season end.
 void put_end_result(Ctx& ctx, const DiveRow& dive, Value& data) {
-    bool pending = sphere_meta(ctx, "end_pending") != 0;
+    bool pending = ctx.st.one("select end_pending from sphere where id = 1", {}) != 0;
     Value result = Value::object();
     result["previous_season_id"] = pending ? dive.prev_season : 0u;
     result["rank"] = pending ? dive.prev_rank : 0u;

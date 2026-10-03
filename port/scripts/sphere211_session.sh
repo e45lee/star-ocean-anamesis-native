@@ -158,8 +158,9 @@ return_dive() {
 # The battles are won or lost by the client's own (unseeded) battle: with seed 605 the level-65
 # cell 6 and the level-90 boss were lost in some runs (the defeat dialog times out: "制限時間に
 # 達しました"). The session checks the flow, not the balance, so the enemies are set to level 30
-# with the server's test hook (sphere_meta test_enemy_level) for the whole dive.
-sql "insert or replace into sphere_meta (key, value) values ('test_enemy_level', 30)"
+# with the server's test hook (sphere.debug_enemy_level; the dive's row exists since the board
+# opened) for the whole dive.
+sql "update sphere set debug_enemy_level = 30 where id = 1"
 # The path: the start cell, 2, 3 (on the start view), then 6 (scrolled). The auto party takes the
 # strongest characters first, so by the boss only level-50 ones are left, which lose to its
 # level 90: 帰還 first (the characters come back, the boxes so far are analysed, the dive stays
@@ -195,7 +196,7 @@ state > "$OUT/state-4-floor2.txt"; cat "$OUT/state-4-floor2.txt"
 
 # 帰還 on floor 2: the floor-1 boss and floor-clear boxes analysed, everyone back.
 return_dive 70
-sql "delete from sphere_meta where key = 'test_enemy_level'"
+sql "update sphere set debug_enemy_level = null where id = 1"
 state > "$OUT/state-5-returned.txt"; cat "$OUT/state-5-returned.txt"
 c quit
 wait $pid || true

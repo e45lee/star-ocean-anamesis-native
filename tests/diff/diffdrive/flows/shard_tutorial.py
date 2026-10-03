@@ -154,9 +154,9 @@ def home(s):
 def tutorial_status(s):
     try:
         c = sqlite3.connect("file:%s?mode=ro" % s.state_db, uri=True)
-        r = c.execute("select value from meta where key = 'tutorial_status'").fetchone()
+        r = c.execute("select tutorial_status from player").fetchone()  # PLAN-schema S3 (meta before)
         c.close()
-        return r[0] if r else None
+        return str(r[0]) if r else None
     except sqlite3.Error:
         return None
 

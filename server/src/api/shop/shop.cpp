@@ -138,7 +138,8 @@ Refusal buy_item_shop_row(Ctx& ctx, const Row& shop_row, int64_t t) {
     u32 price = (u32)shop_row.i("price");
     if (!wallet::spend_coins(ctx.st.h, price)) return {"not enough coins", ErrorCode::kCoinsShort};
     ctx.st.q(
-        "insert into shop_counts values (?, ?, ?, 1) on conflict(id) do update set num = excluded.num, period = excluded.period, "
+        "insert into shop_counts (id, num, period, total) values (?, ?, ?, 1) "
+        "on conflict(id) do update set num = excluded.num, period = excluded.period, "
         "total = total + 1",
         {id, bought + 1, shop_period(shop_row, t)});
     return {};
@@ -288,7 +289,7 @@ std::vector<u8> exshop_exchange(Ctx& ctx, const Request& req) {
             u32 ex_item = (u32)contents_row.i("ex_item_id");
             u64 pay = (u64)contents_row.i("ex_num") * count;
             add_stock(ctx, ex_item, -(int64_t)pay);
-            ctx.st.q("insert into exchange_counts values (?, ?, ?) on conflict(id) do update set num = num + excluded.num",
+            ctx.st.q("insert into exchange_counts (id, shop_id, num) values (?, ?, ?) on conflict(id) do update set num = num + excluded.num",
                      {id, (u32)contents_row.i("master_exchange_shop_id"), count});
             Value items = Value::array(), stocks = Value::array(), characters = Value::array();
             u32 free_coins = 0;

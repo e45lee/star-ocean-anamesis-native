@@ -96,7 +96,7 @@ void login_bonus(Ctx& ctx, const Request& req, Value& data) {
                 received_now = true;
                 granted++;
             }
-            ctx.st.q("insert or replace into login_bonus values (?, ?, ?)", {id, day, t});
+            ctx.st.q("insert or replace into login_bonus (id, day, last_at) values (?, ?, ?)", {id, day, t});
         }
         if (!day) return;
         Value info = Value::object();

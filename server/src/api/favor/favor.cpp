@@ -109,7 +109,10 @@ State load(sqlite3* st, u32 same_role_id) {
     return state;
 }
 void save(sqlite3* st, u32 same_role_id, const State& state) {
-    Q q(st, "insert or replace into favor (same_role_id, point, tap_count, tapped_at, event_drop_at) values (?,?,?,?,?)");
+    Q q(st,
+        "insert into favor (same_role_id, point, tap_count, tapped_at, event_drop_at) values (?,?,?,?,?)"
+        " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
+        "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at");
     q.bind(1, (int64_t)same_role_id).bind(2, (int64_t)state.point).bind(3, (int64_t)state.taps).bind(4, state.tapped_at).bind(5, state.event_drop_at);
     q.run();
 }

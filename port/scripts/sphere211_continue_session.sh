@@ -93,9 +93,9 @@ import sqlite3, sys, time
 c = sqlite3.connect(sys.argv[1], timeout=60)
 m = sqlite3.connect("file:%s?mode=ro" % sys.argv[3], uri=True)
 for i, t in m.execute("select id, type from master_item where id_label like 'item_sphere_stamina_%' or id_label like 'item_sphere_re_%'"):
-    c.execute("insert into stock values (?, ?, 2) on conflict(master_item_id) do update set count = 2", (i, t))
+    c.execute("insert into stock (master_item_id, item_type, count) values (?, ?, 2) on conflict(master_item_id) do update set count = 2", (i, t))
 c.execute("create table if not exists sphere_rental_day (day integer primary key, season_id integer, count integer default 0, paid integer default 0)")
-c.execute("insert or replace into sphere_rental_day values (?, ?, 5, 0)", (int(time.time()) - 2 * 86400, int(sys.argv[2])))
+c.execute("insert or replace into sphere_rental_day (day, season_id, count, paid) values (?, ?, 5, 0)", (int(time.time()) - 2 * 86400, int(sys.argv[2])))
 c.commit()
 PY
 # TAP TO START -> Login -> the data check (or the download) -> home (phase 4).
@@ -119,7 +119,7 @@ state > "$OUT/state-1-floor1.txt"; cat "$OUT/state-1-floor1.txt"
 # slot: the defeat dialog's はい (continue, 100 coins; tapped until the server logs it: the dialog
 # comes when the party falls), then the pause menu's ミッションリタイア -> はい (retire), back on the
 # board. The stamina it took (9 -> 8) is healed with a ticket (+ -> the ticket -> 決定 -> 閉じる).
-sql "insert or replace into sphere_meta values ('test_enemy_level', 250)"
+sql "insert or replace into sphere_meta (key, value) values ('test_enemy_level', 250)"
 c tap:364:670; c wait:4000 shot:$S/06-lose-detail.png tap:364:905 wait:5000 shot:$S/06-rental-list.png tap:364:383 wait:4000 shot:$S/06-rental-party.png
 c tap:364:898; logw 'Sphere211AutoMemberSelect: 4 members proposed' 30 || fail "lost battle: no auto member select"
 c wait:4000 shot:$S/06-party.png tap:140:898 wait:3000 tap:515:713

@@ -66,7 +66,12 @@ NATIVE_TEST("daily/premium-favor-bonus") {
             c.st.exec("rollback");
             return;
         }
-        for (u32 s : sames) c.st.q("insert or replace into favor (same_role_id, point) values (?, 60000)", {s});
+        for (u32 s : sames)
+            c.st.q(
+                "insert into favor (same_role_id, point) values (?, 60000)"
+                " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
+                "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at",
+                {s});
         c.st.q("delete from favor_bonus_state", {});
         int64_t n1 = c.st.one("select count(*) from presents", {});
         d = player_load_data(c);

@@ -82,11 +82,11 @@ void restart_limit_periods(Ctx& ctx, int64_t t) {
     int64_t day = limit_day(ctx, t), week = dr::week_start(day);
     if (ctx.st.one("select cast(value as integer) from meta where key = 'ds_limit_day'", {}) != day) {
         ctx.st.q("update ds_offer set play_count_daily = 0", {});
-        ctx.st.q("insert or replace into meta values ('ds_limit_day', ?)", {std::to_string(day)});
+        ctx.st.q("insert or replace into meta (key, value) values ('ds_limit_day', ?)", {std::to_string(day)});
     }
     if (ctx.st.one("select cast(value as integer) from meta where key = 'ds_limit_week'", {}) != week) {
         ctx.st.q("update ds_offer set play_count_weekly = 0", {});
-        ctx.st.q("insert or replace into meta values ('ds_limit_week', ?)", {std::to_string(week)});
+        ctx.st.q("insert or replace into meta (key, value) values ('ds_limit_week', ?)", {std::to_string(week)});
     }
 }
 
@@ -235,8 +235,8 @@ u32 time_saving_count(Ctx& ctx, int64_t t) {
     int64_t day = day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4));
     int64_t counted_day = ctx.st.one("select cast(value as integer) from meta where key = 'ds_time_saving_day'", {});
     if (counted_day != day) {
-        ctx.st.q("insert or replace into meta values ('ds_time_saving_day', ?)", {std::to_string(day)});
-        ctx.st.q("insert or replace into meta values ('ds_time_saving_count', '0')", {});
+        ctx.st.q("insert or replace into meta (key, value) values ('ds_time_saving_day', ?)", {std::to_string(day)});
+        ctx.st.q("insert or replace into meta (key, value) values ('ds_time_saving_count', '0')", {});
     }
     return (u32)ctx.st.one("select cast(value as integer) from meta where key = 'ds_time_saving_count'", {});
 }

@@ -358,7 +358,8 @@ void advance_stepup(ext::Ctx& ctx, const Request& req, GachaDraw& draw, Value& d
     u32 limit = (u32)std::max<int64_t>(1, ctx.m.one("select ifnull(stepup_limit_count, 1) from master_gacha where id = ?", {draw.id}));
     auto [next, restarted] = tries >= limit ? mission_rules::stepup_advance(draw.chain, draw.step) : std::pair<int, u32>{draw.step, 0};
     ctx.st.q(
-        "insert into stepup values (?, ?, ?, ?) on conflict(head) do update set try_count = excluded.try_count, "
+        "insert into stepup (head, try_count, restart_count, next_id) values (?, ?, ?, ?) "
+        "on conflict(head) do update set try_count = excluded.try_count, "
         "restart_count = restart_count + excluded.restart_count, next_id = excluded.next_id",
         {draw.chain[0], tries >= limit ? 0u : tries, restarted, draw.chain[next]});
     data["UpdateStepUpGacha"] = stepup_gacha_info(ctx, draw.chain[0]);  // (b) merged by key: this chain's steps

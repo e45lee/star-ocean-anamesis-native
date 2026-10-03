@@ -66,7 +66,10 @@ sames = sorted({m.execute("select same_role_id from master_role where id = ?", (
 sames = [x for x in sames if m.execute("select 1 from master_favor_schedule where id = ?", (x,)).fetchone()]
 pts = [0, 5000, 10000, 20000, 30000, 45000, 60000, 80000]
 for i, x in enumerate(sames):
-    s.execute("insert or replace into favor values (?, ?, 0, 0, '')", (x, 9900 if x == home_same else pts[i % len(pts)]))
+    s.execute("insert into favor (same_role_id, point, tap_count, tapped_at, event_drop_at) values (?, ?, 0, 0, '') "
+              "on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
+              "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at",
+              (x, 9900 if x == home_same else pts[i % len(pts)]))
 s.commit()
 PY
 favor 0-setup

@@ -65,7 +65,7 @@ using ext::body;  // core/response.cpp
 
 u64 next_uid(ext::Ctx& ctx, const char* key) {
     u64 v = (u64)std::stoull(meta(ctx, key, "0"));
-    ctx.st.q("insert or replace into meta values (?, ?)", {key, std::to_string(v + 1)});
+    ctx.st.q("insert or replace into meta (key, value) values (?, ?)", {key, std::to_string(v + 1)});
     return v;
 }
 std::string meta(ext::Ctx& ctx, const char* key, const char* dflt) {
@@ -74,7 +74,7 @@ std::string meta(ext::Ctx& ctx, const char* key, const char* dflt) {
     return v;
 }
 
-void set_meta(ext::Ctx& ctx, const char* key, const std::string& v) { ctx.st.q("insert or replace into meta values (?, ?)", {key, v}); }
+void set_meta(ext::Ctx& ctx, const char* key, const std::string& v) { ctx.st.q("insert or replace into meta (key, value) values (?, ?)", {key, v}); }
 bool has_player(ext::Ctx& ctx) { return ctx.st.one("select count(*) from player", {}) > 0; }
 
 // ---- the server (core/server.h) -------------------------------------------------------------

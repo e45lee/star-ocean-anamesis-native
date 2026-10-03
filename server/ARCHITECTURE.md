@@ -135,3 +135,4 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 - `tools/server_replay_diff.sh PARENT CHILD`: replays the corpora of `server/tests/replay/` with two builds and compares replies, error codes, end state and the log (RG4).
 - `tools/server_evidence.py --against REV`: no rule label, client address, symbol, offset, master table or log-line pattern lost (RG10's evidence check).
 - `tests/diff/run.sh`: the port against the emulator, three flows.
+- `tools/schema_inventory.py --lint`: every INSERT names its columns and no future FK parent is written with INSERT OR REPLACE (PLAN-schema S0); `server/schema-integrity` checks the state's references into the master (`state::check`, `src/state/check.h`).

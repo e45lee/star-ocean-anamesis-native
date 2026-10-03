@@ -178,8 +178,8 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
     if (stamina >= stamina_max(ctx)) ctx.st.q("update sphere set stamina_at = ?", {t});  // (d) regen starts when leaving full
     ctx.st.q("update sphere set stamina = stamina - ?", {floor.use_stamina});
     ctx.st.q("update sphere_cell set playing = case when asset_id = ? then 1 else 0 end, updated_at = ?", {asset_id, t});
-    for (u64 uid : override_.party) ctx.st.q("insert or ignore into sphere_departed values (?)", {uid});
-    if (override_.helper && !lender) ctx.st.q("insert or ignore into sphere_departed values (?)", {override_.helper});
+    for (u64 uid : override_.party) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {uid});
+    if (override_.helper && !lender) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {override_.helper});
     if (lender) record_rental(ctx, season, lender, t);
     put_state(ctx, season, data);
     LOGI("server", "Sphere211MissionStart: floor %u cell %u mission %u, %zu members, enemy level %u, sphere stamina %u -> %u", level, asset_id,

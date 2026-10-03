@@ -155,7 +155,8 @@ void enter_floor(Ctx& ctx, const Season& season, u32 level) {
     });
     ctx.st.q("update sphere set floor_level = ?, asset_group = ?, clear_asset = 0, lot_floor_num = 0, entered_at = ?", {level, group, t});
     ctx.st.q(
-        "insert into sphere_rank values (?, ?, ?) on conflict(season_id) do update set floor_level = max(floor_level, excluded.floor_level), "
+        "insert into sphere_rank (season_id, floor_level, entered_at) values (?, ?, ?) "
+        "on conflict(season_id) do update set floor_level = max(floor_level, excluded.floor_level), "
         "entered_at = case when excluded.floor_level > floor_level then excluded.entered_at else entered_at end",
         {season.id, level, t});
     log_event(ctx, LogKind::kFloor, level);

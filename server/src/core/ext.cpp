@@ -332,13 +332,17 @@ void add_stock(Ctx& c, u32 item, int64_t delta) { wallet::add_stock(c.st.h, c.m.
 u32 fol(Ctx& c) { return wallet::fol(c.st.h); }
 void add_fol(Ctx& c, int64_t delta) { wallet::add_fol(c.st.h, c.m.h, delta); }
 void count(Ctx& c, const std::string& key, int64_t n) {
-    c.st.q("insert into counters values (?, ?) on conflict(key) do update set value = value + excluded.value", {key, n});
+    c.st.q("insert into counters (key, value) values (?, ?) on conflict(key) do update set value = value + excluded.value", {key, n});
 }
 int64_t counter(Ctx& c, const std::string& key) { return c.st.one("select value from counters where key = ?", {key}); }
 void add_present(Ctx& c, u32 type, u32 id, u32 num, u32 reason_type, u32 reason_param, const std::string& text) {
     c.st.q("insert into presents (content_type, content_id, num, reason_type, reason_param, created_at) values (?,?,?,?,?,?)",
            {type, id, num, reason_type, reason_param, c.now()});
-    if (!text.empty()) c.st.q("insert or replace into present_texts values (last_insert_rowid(), ?)", {text});
+    if (!text.empty())
+        c.st.q(
+            "insert into present_texts (id, text) values (last_insert_rowid(), ?)"
+            " on conflict(id) do update set text = excluded.text",
+            {text});
 }
 const char* const kSchemaCounters = "create table if not exists counters (key text primary key, value integer)";
 

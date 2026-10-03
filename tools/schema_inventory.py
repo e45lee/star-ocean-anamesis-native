@@ -26,6 +26,14 @@ What it does (server/PLAN-schema.md, section 1, is its output):
 
 Output: markdown on stdout, or with --update FILE the text between the markers
 `<!-- inventory:begin -->` and `<!-- inventory:end -->` in FILE is replaced.
+
+    tools/schema_inventory.py --lint
+
+The SQL hygiene gate of server/PLAN-schema.md S0 (F9): every INSERT into a state table names its
+columns, and no future FK parent (LINT_UPSERT_ONLY) is written with INSERT OR REPLACE (a delete
+plus an insert: with foreign keys on, it would run the children's ON DELETE actions); use
+`insert ... on conflict(pk) do update set` instead. Checks server/ (the joined literals) and the
+consumers' SQL (port/scripts, emulator/scripts, tools, tests: line by line). Exit 1 on a finding.
 """
 import argparse
 import collections
@@ -346,9 +354,10 @@ RELS = [
     ("party_member", "assist_uid", "roster", "uid", 0, "SET NULL", ""),
     ("assist", "uid", "roster", "uid", None, "merged (S4): roster.assist_uid", ""),
     ("assist", "assist_uid", "roster", "uid", None, "SET NULL (roster.assist_uid)", ""),
-    ("mission", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission", "id", None, "-", "three disjoint id spaces"),
-    ("unlocks", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission", "id", None, "-", ""),
-    ("unlocks", "by_mission", "m:master_mission|master_event_mission|master_world_map_mission", "id", 0, "-", ""),
+    ("mission", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-",
+     "four disjoint id spaces (the tower's floors too: S0 found them in the tower replay)"),
+    ("unlocks", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-", ""),
+    ("unlocks", "by_mission", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", 0, "-", ""),
     ("unlocks", "by_mission", "mission", "mission_id", 0, "NO ACTION, deferred", "the mission whose clear opened it"),
     ("play", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission|master_deep_space_mission", "id", 0, "-", ""),
     ("play_ext", "id", "play", "id", None, "merged (S7)", "1:1 extension"),
@@ -437,7 +446,57 @@ def fk_report(st_path, master_path):
     return out
 
 
+# Tables written only by upsert (S0): the parents of the target schema's foreign keys (section 3.2:
+# player, roster, items, titles, party_set, mission, box_state, presents, ds_area, ds_ship, wboss)
+# and the other tables of F9's REPLACE list (party, party_member, favor, stock, subscription,
+# present_texts).
+LINT_UPSERT_ONLY = ("player", "roster", "items", "titles", "party_set", "mission", "box_state", "presents", "ds_area", "ds_ship",
+                    "wboss", "party", "party_member", "favor", "stock", "subscription", "present_texts")
+# Consumers whose SQL runs on another DB: the pools DB's builder (its own meta table).
+LINT_OTHER_DB = ("tools/build_gacha_pools.py",)
+POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(\w+)\s+values\b", re.I)
+REPLACE_RE = re.compile(r"\b(?:insert\s+or\s+replace|replace)\s+into\s+(\w+)\b", re.I)
+
+
+def lint():
+    """The S0 gate (module docstring): a list of "file:line: finding" strings."""
+    state = set()
+    for path in list(files(SERVER_DIRS, (".cpp", ".h"))) + list(files(TEST_DIRS, (".cpp", ".h"))):
+        if rel(path) in OTHER_DB:
+            continue
+        for line, text, dyn in literal_groups(open(path, encoding="utf-8", errors="replace").read()):
+            state |= {name for name, _, _, _ in parse_creates(text)}
+    found = []
+
+    def check(where, stmt):
+        for m in POSITIONAL_RE.finditer(stmt):
+            if m.group(1) in state:
+                found.append("%s: insert into %s without a column list" % (where, m.group(1)))
+        for m in REPLACE_RE.finditer(stmt):
+            if m.group(1) in LINT_UPSERT_ONLY:
+                found.append("%s: insert or replace into %s (a future FK parent: upsert)" % (where, m.group(1)))
+
+    for path in list(files(SERVER_DIRS, (".cpp", ".h"))) + list(files(TEST_DIRS, (".cpp", ".h"))):
+        if rel(path) in OTHER_DB:
+            continue
+        for line, text, dyn in literal_groups(open(path, encoding="utf-8", errors="replace").read()):
+            for st in statements(text):
+                check("%s:%d" % (rel(path), line), st)
+    for path in files(CONSUMER_DIRS, (".sh", ".py")):
+        if rel(path) in LINT_OTHER_DB or rel(path) == "tools/schema_inventory.py":
+            continue
+        for k, l in enumerate(open(path, encoding="utf-8", errors="replace"), 1):
+            check("%s:%d" % (rel(path), k), l)
+    return found
+
+
 def main():
+    if sys.argv[1:] == ["--lint"]:
+        found = lint()
+        for f in found:
+            print(f)
+        print("schema_inventory --lint: %s" % ("%d finding(s)" % len(found) if found else "clean"))
+        sys.exit(1 if found else 0)
     ap = argparse.ArgumentParser()
     ap.add_argument("--state", action="append", default=[], help="LABEL=PATH of a state DB for row counts")
     ap.add_argument("--master", default=os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3"))
@@ -499,7 +558,7 @@ def main():
             code = l.split("//")[0]
             name, is_test = ctx[k]
             where = "%s:%d %s%s" % (r, k, name, " (test)" if is_test or is_test_file else "")
-            for m in re.finditer(r"into (meta|sphere_meta|counters) values \('(\w+)'", code):
+            for m in re.finditer(r"into (meta|sphere_meta|counters) (?:\(key, value\) )?values \('(\w+)'", code):
                 kv[m.group(1)][m.group(2)]["w"].add(where)
             for m in re.finditer(r"from (meta|sphere_meta|counters) where key = '(\w+)'", code):
                 kv[m.group(1)][m.group(2)]["r"].add(where)

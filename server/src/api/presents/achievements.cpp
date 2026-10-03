@@ -27,7 +27,7 @@ enum class AchievementType : int {
     kEvolutions = 3,              // evolutions, to rarity target_id
     kCharacterLimitBreaks = 4,    // character limit breaks
     kWeaponBoosts = 5,            // 武器を N回強化する
-    kWeaponLimitBreaks = 6,       // 武器を N回上限解放する (counted as weapon boosts, see progress)
+    kWeaponLimitBreaks = 6,       // 武器を N回上限解放する: weapon limit-break raises
     kWeaponGradeUps = 7,          // 武器を N回錬成する
     kMissionClears = 8,           // clears of mission target_id
     kOwnCharacter = 11,           // own character target_id
@@ -92,10 +92,14 @@ int64_t progress(Ctx& ctx, const Row& achievement_row) {
         case AchievementType::kCharacterLimitBreaks:
             return counter(ctx, "limit_break");
         case AchievementType::kWeaponBoosts:
-        case AchievementType::kWeaponLimitBreaks:
-            // (d) type 6 counted as weapon boosts (every ItemCompose of a weapon counts), although
-            // its texts (a) say limit breaks (武器を N回上限解放する)
             return counter(ctx, "weapon_boost");
+        case AchievementType::kWeaponLimitBreaks:
+            // (a) the rows' texts: 武器を N回上限解放する (goal_count 1 .. 1000), and the hint
+            // "同じ武器を強化合成すると、上限解放します"; (b) a compose raises the limit break once per
+            // copy (CItemStrengtheningPotal::GetAddLimitReleaseWeaponNum), so each raise counts: the
+            // `weapon_limit_break` counter of ItemCompose (api/items/items.cpp). Until 2026-10-03
+            // this read `weapon_boost`, which every weapon compose counts.
+            return counter(ctx, "weapon_limit_break");
         case AchievementType::kWeaponGradeUps:
             return counter(ctx, "weapon_grade_up");
         case AchievementType::kMissionClears:
@@ -215,7 +219,12 @@ void load_achievements(Ctx& ctx, const Request&, Value& data) { data["Achievemen
 //
 // The active achievements with their progress (CAchievementMenu::Initialize, the 実績 screen,
 // sends category 1; CHonorMenu::ProgressList, the 称号 screen, 3).
-//   (d) the category isn't read: every active achievement is answered.
+//   (b)+(d) the category isn't read: every active achievement is answered. (b) The client merges
+//   the answer into its one active list (CApiNotify::OnAchievementActiveListRes @014df128 adds
+//   each entry to CParameterManager+0x67c8) and each screen picks its rows itself, by the master
+//   row's own category (tAchievement::InitializeCategory -> tAchievement::GetCategory @0181ce10:
+//   the row's `category` string, normal / daily / weekly, and EVENT); so the whole list shows the
+//   same screens. (d) What the online server left out per category can't be seen.
 // Answers: the player state with Achievement (achievement_map).
 std::vector<u8> achievement_active_list(Ctx& ctx, const Request&) {
     Value data = ctx.base_data();

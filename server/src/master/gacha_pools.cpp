@@ -1,4 +1,4 @@
-// Reconstructed gacha pools: the read-only accessor of port/server-data/gacha_pools.sqlite3.
+// Reconstructed gacha pools: the read-only accessor of data/gacha_pools.sqlite3.
 // See gacha_pools.h and docs/server-rules.md "Gacha pools (reconstructed)". Source labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include "master/gacha_pools.h"
@@ -66,7 +66,7 @@ bool Pools::open(const std::string& path) {
     if (!path.empty()) cands.push_back(path);
     else {
         if (const char* e = getenv("SOA_GACHA_POOLS")) cands.push_back(e);
-        if (std::string p = find_repo_file("port/server-data/gacha_pools.sqlite3"); !p.empty()) cands.push_back(p);
+        if (std::string p = find_repo_file("data/gacha_pools.sqlite3"); !p.empty()) cands.push_back(p);
     }
     for (auto& c : cands) {
         if (!exists(c)) continue;
@@ -88,7 +88,8 @@ bool Pools::open(const std::string& path) {
         LOGI("gacha", "reconstructed gacha pools: %s (format %s)", c.c_str(), chk.col_s(0).c_str());
         return true;
     }
-    LOGW("gacha", "no reconstructed gacha pools (port/server-data/gacha_pools.sqlite3; tools/build_gacha_pools.py)");
+    if (!path.empty()) LOGW("gacha", "no reconstructed gacha pools at %s (--gacha-pools)", path.c_str());
+    else LOGW("gacha", "no reconstructed gacha pools (data/gacha_pools.sqlite3; tools/build_gacha_pools.py)");
     return false;
 }
 

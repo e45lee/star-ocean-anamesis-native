@@ -57,6 +57,7 @@ struct ServerOptions {
     bool enabled = false;
     bool new_player = false;          // --new-player / SOA_RESTORE_NEW_PLAYER=1: start without a player
     std::string master;               // --master / SOA_SERVER_MASTER: the 3.7.0 master DB
+    std::string gacha_pools;          // --gacha-pools / SOA_GACHA_POOLS: the reconstructed gacha pools
     std::string db;                   // --db / SOA_SERVER_DB (inproc default <data>/server.sqlite3)
     std::string seed;                 // --seed / SOA_SERVER_SEED: the save a new state is seeded from
     std::string game_xml;             // --game-xml / SOA_SERVER_GAME_XML (inproc default <data>/.../Game.xml)

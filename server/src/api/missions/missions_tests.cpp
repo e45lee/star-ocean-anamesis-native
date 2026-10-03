@@ -112,5 +112,29 @@ NATIVE_TEST("missions/unlock-refusal") {
     t.expect_eq(sv.forced_error("MissionStart"), 0u, "no forced error");
 }
 
+// MissionEnd of no mission (no argument and no play, or an id in no mission table) isn't answered
+// and records nothing (it used to record mission 0 as cleared); a known mission still ends.
+NATIVE_TEST("missions/end-unknown-mission") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    const u32 kNotHandled = 0xffffffffu;
+    auto recorded = [&] { return (u32)sv.st.one("select count(*) from mission", {}); };
+    u32 before = recorded();
+    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {}, {}, {}}), kNotHandled, "no argument, no play: not answered");
+    t.expect_eq((u32)sv.st.one("select count(*) from mission where mission_id = 0", {}), 0u, "mission 0 not recorded");
+    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {12345, 0}, {}, {}}), kNotHandled, "an unknown id: not answered");
+    t.expect_eq(recorded(), before, "nothing recorded");
+    // a known mission ends as before, also when its start was refused (no play: the request's id)
+    u32 m1 = S.id("master_mission", "mf01_001");
+    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {m1, 0}, {}, {}}), 0u, "a known mission without a play: answered");
+    t.expect_eq((u32)sv.st.one("select clear_count from mission where mission_id = ?", {m1}), 1u, "cleared");
+    // with a play, no argument ends the play's mission
+    sv.st.q("update player set stamina = 100", {});
+    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m1, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
+    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {}, {}, {}}), 0u, "no argument: the play's mission");
+    t.expect_eq((u32)sv.st.one("select clear_count from mission where mission_id = ?", {m1}), 2u, "the play's mission cleared");
+}
+
 }  // namespace
 }  // namespace soa::server

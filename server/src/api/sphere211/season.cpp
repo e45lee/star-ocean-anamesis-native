@@ -114,7 +114,7 @@ void client_seasons(ext::Sql& db, int64_t clock, int64_t ev) {
 }
 
 // Loads (and on a new season resets) the dive. (d) A season change (another season, or another
-// cycle of the repeated last one) ends the dive: its boxes are opened into the player's items; its
+// cycle of the repeated last one) ends the dive (everyone back, the EX sorties' uses too): its boxes are opened into the player's items; its
 // result becomes Sphere211EndResult (sent once, see put_state): the best floor, the boxes gathered,
 // and rank 1 of the local ranking when a battle was won in it (b: master_text
 // uimsg_sphere211_ranking_empty2 "ミッションを1つもクリアしていない場合は、ランキング未参加"; rank 0 =
@@ -139,7 +139,7 @@ Season load_dive(Ctx& ctx) {
         if (rank) ranking_reward(ctx, old.id, rank);
         ctx.st.q(
             "update sphere set season_id = ?, floor_level = 0, asset_group = 0, streak = 0, treasure_total = 0, clear_asset = 0, "
-            "lot_floor_num = 0, prev_season = ?, prev_floor = ?, prev_treasure = ?, prev_rank = ?",
+            "lot_floor_num = 0, revive_count = 0, prev_season = ?, prev_floor = ?, prev_treasure = ?, prev_rank = ?",
             {season.id, dive_season, best, boxes, rank});
         ctx.st.exec("delete from sphere_cell");
         ctx.st.exec("delete from sphere_departed");

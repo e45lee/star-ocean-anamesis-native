@@ -38,7 +38,7 @@ int64_t event_clock_of(sqlite3* m);
 struct Server {
     std::mutex mu;
     ext::Sql st, m;  // state, master (Sql::open; ScratchServer closes its own)
-    gacha_pools::Pools pools;  // reconstructed gacha pools (port/server-data/gacha_pools.sqlite3)
+    gacha_pools::Pools pools;  // reconstructed gacha pools (data/gacha_pools.sqlite3)
     bool ok = false;
     std::mt19937_64 rng;
     std::map<u32, Request> pending;  // fid -> the last captured request

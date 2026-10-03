@@ -93,3 +93,13 @@ def test_software_gl(tmp_path):
         assert r.stdout.strip() == "[llvmpipe][1]", (held, r.stdout, r.stderr)
     r = subprocess.run(["sh", "-c", script], env=e, cwd=os.path.dirname(CONTROL), capture_output=True, text=True, timeout=20)
     assert r.stdout.strip() == "[][]"
+
+
+def test_software_gl_threads(tmp_path):
+    """llvmpipe's LP_NUM_THREADS: 4 by default under the switch, a caller's value wins."""
+    e = env(tmp_path, 1)
+    for k in ("GALLIUM_DRIVER", "LIBGL_ALWAYS_SOFTWARE", "LP_NUM_THREADS", "SOA_SLOT_HELD"):
+        e.pop(k, None)
+    py = [sys.executable, os.path.join(CONTROL, "soaslot.py"), "run", "--software-gl", "--", "sh", "-c", 'echo "[$LP_NUM_THREADS]"']
+    assert subprocess.run(py, env=e, capture_output=True, text=True).stdout.strip() == "[4]"
+    assert subprocess.run(py, env=dict(e, LP_NUM_THREADS="8"), capture_output=True, text=True).stdout.strip() == "[8]"

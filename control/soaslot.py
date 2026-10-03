@@ -61,9 +61,11 @@ DEFAULT_SLOTS = 12
 # clients' SDL creates its GL ES contexts through X11 EGL (runtime app/sdl_gl.cpp). On WSL the host
 # GPU is Mesa's d3d12 gallium driver, which runs under the same "software" (drisw) loader as
 # llvmpipe and is chosen by GALLIUM_DRIVER=d3d12 (this machine's ~/.profile exports it), so
-# LIBGL_ALWAYS_SOFTWARE=1 alone keeps the GPU: GALLIUM_DRIVER is overridden. Other variables a
-# caller sets pass through (e.g. LP_NUM_THREADS, llvmpipe's rasterizer threads per context).
+# LIBGL_ALWAYS_SOFTWARE=1 alone keeps the GPU: GALLIUM_DRIVER is overridden. LP_NUM_THREADS (llvmpipe's
+# rasterizer threads per screen; default one per core, 32 here, ~160 threads per client) is only a
+# default a caller's value overrides: 4 drew the home screen as fast as 32 at two thirds of the CPU.
 SOFTWARE_GL_ENV = {"GALLIUM_DRIVER": "llvmpipe", "LIBGL_ALWAYS_SOFTWARE": "1"}
+SOFTWARE_GL_DEFAULTS = {"LP_NUM_THREADS": "4"}
 
 
 def software_gl():
@@ -76,7 +78,9 @@ def apply_software_gl():
     if not software_gl():
         return {}
     os.environ.update(SOFTWARE_GL_ENV)
-    return dict(SOFTWARE_GL_ENV)
+    for k, v in SOFTWARE_GL_DEFAULTS.items():
+        os.environ.setdefault(k, v)
+    return {k: os.environ[k] for k in list(SOFTWARE_GL_ENV) + list(SOFTWARE_GL_DEFAULTS)}
 
 
 def slot_dir():

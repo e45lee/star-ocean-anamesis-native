@@ -240,6 +240,8 @@ class Run:
         # called after the phone and the client save are in place, before anything starts (a
         # session's own files on the phone)
         self.before_client = None
+        # why the client is gone (None while it runs): _scan / alive
+        self.death, self._scan_pos, self._perf_at = None, 0, None
         if prefix is None:
             prefix = "[%s %s] " % (os.path.basename(os.path.dirname(lay.out)), target) if lay.kind == "diff" else ""
         self.prefix = prefix
@@ -342,8 +344,9 @@ class Run:
             os.symlink("client.log", emu_link)
         end = time.monotonic() + 120
         while not os.path.exists(self.fifo):
-            if not self.client.running() or time.monotonic() > end:
-                raise Abort("the client didn't open its control FIFO (see %s)" % self.client_log)
+            if not self.alive() or time.monotonic() > end:
+                raise Abort("the client didn't open its control FIFO (%s; see %s)" % (
+                    self.gone() if not self.alive() else "not within 120s", self.client_log))
             time.sleep(0.5)
 
     def stop(self):
@@ -356,11 +359,14 @@ class Run:
         if self.own_slot:
             soaslot.release(self.slot)
             self.slot = -1
+        self._scan()
         if self.grep(self.client_log, r"Unhandled SIG|\*\*\* host signal"):
             # a crash whose backtrace is in the host's GPU driver (WSL's NVIDIA GL, seen once with
             # many clients at once) is the host's, not the game's: labelled so
             host = self.grep(self.client_log, r"^/usr/lib/wsl/drivers/|libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri")
             self.miss("the client crashed%s (see %s)" % (" in the host GPU driver" if host else "", self.client_log))
+        elif self.death and self.death.startswith("host GPU") and not self.failed:
+            self.miss("the client lost the host GPU: %s (see %s)" % (self.death, self.client_log))
         if self.grep(self.client_log, r"glx: failed to create|X Error of failed request"):
             self.note("the host's GL/GLX failed for this client (see %s): a host problem, not the game's" % self.client_log)
         if self.layout.state_end and os.path.exists(self.state_db):
@@ -371,26 +377,67 @@ class Run:
         with open(self.layout.steps, "w") as f:
             f.write("\n".join(self.results) + "\n" + ("FAIL" if self.failed else "PASS") + "\n")
 
+    # Why a client is gone though its process may still be there (it can hang after these lines: a
+    # wedged GL driver): a crash (its signal handler's lines), or the host's GPU dropping out
+    # (WSL: "D3D12: Removing Device.", a GLX context that can't be made, a backtrace in the NVIDIA
+    # driver) -- the host's problem, not the game's: labelled "host GPU" so a gate can say so.
     CRASH = re.compile(rb"Unhandled SIG|\*\*\* host signal")
+    HOST_GPU = re.compile(rb"D3D12: Removing Device|glx: failed to create|X Error of failed request|^/usr/lib/wsl/drivers/|"
+                          rb"libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri", re.M)
+    # no frame-rate line (the host loop logs "I/perf: N fps" every 10 s) for this long, after one was
+    # seen: the client's main loop is stuck
+    STALL_SECS = 120
 
-    def crashed(self):
-        """The client logged a crash (its signal handler's lines): it may hang on after them
-        (a wedged GL driver), so it counts as gone. Reads only what the log gained since the last call."""
-        if getattr(self, "_crashed", False):
-            return True
+    def _scan(self):
+        """Reads what the client log gained since the last call; sets self.death (None while fine)."""
+        if getattr(self, "death", None):
+            return
         try:
             with open(self.client_log, "rb") as f:
-                f.seek(max(0, getattr(self, "_crash_pos", 0) - 64))
+                f.seek(max(0, getattr(self, "_scan_pos", 0) - 64))
                 data = f.read()
-                self._crash_pos = f.tell()
+                self._scan_pos = f.tell()
         except FileNotFoundError:
-            return False
-        self._crashed = self.CRASH.search(data) is not None
-        return self._crashed
+            return
+        now = time.monotonic()
+        if b"I/perf: " in data:
+            self._perf_at = now
+        host, crash = self.HOST_GPU.search(data), self.CRASH.search(data)
+        if host:
+            self.death = "host GPU (%s)" % host.group(0).decode(errors="replace").strip()
+        elif crash:
+            self.death = "crashed (%s)" % crash.group(0).decode(errors="replace")
+        elif getattr(self, "_perf_at", None) and now - self._perf_at > self.STALL_SECS:
+            self.death = "stuck (no frame-rate line for %ds)" % self.STALL_SECS
+        if self.death:
+            print("%s%s: %s (see %s)" % (self.prefix, "HOST-GPU-FAILURE" if self.death.startswith("host GPU") else "CLIENT-DIED",
+                                         self.death, self.client_log), flush=True)
+
+    def crashed(self):
+        """The client logged a crash or a host GPU failure, or stopped drawing (self.death says
+        which): it counts as gone even while its process lingers."""
+        self._scan()
+        return bool(getattr(self, "death", None))
 
     def alive(self):
-        return (self.client is not None and self.client.alive() and (self.server is None or self.server.running())
-                and not self.crashed())
+        """The client (and its soa-server) still running and not dead by its log. Every wait checks it,
+        so a dead client fails the step at once instead of at its time limit."""
+        if self.client is None:
+            return False
+        if not self.client.alive():
+            if not getattr(self, "death", None):
+                self._scan()
+                self.death = getattr(self, "death", None) or "exited (status %s)" % self.client.p.poll()
+            return False
+        if self.server is not None and not self.server.running():
+            self.death = getattr(self, "death", None) or "its soa-server exited (status %s)" % self.server.p.poll()
+            return False
+        return not self.crashed()
+
+    def gone(self):
+        """Why the client is gone, for a step's FAIL line."""
+        d = getattr(self, "death", None) or "exited"
+        return "the client is gone: " + d + ("; a host problem, not the game's: rerun" if d.startswith("host GPU") else "")
 
     # ---- recording ----------------------------------------------------------------------------
     def elapsed(self):
@@ -490,7 +537,7 @@ class Run:
             self.ok(name)
             return True
         if not self.alive():
-            self.miss(name + " (the client exited)")
+            self.miss("%s (%s)" % (name, self.gone()))
             raise Abort(name)
         self.miss("%s (not within %ds)" % (name, secs))
         if fatal:
@@ -530,7 +577,7 @@ class Run:
         if line is not None:
             self.ok(name or line)
             return line
-        why = "the client exited" if not self.alive() else "not within %ds" % secs
+        why = self.gone() if not self.alive() else "not within %ds" % secs
         self._missed(name or "no log line matching %r" % rx, why, fatal)
         if fatal:
             raise Abort(name or rx)
@@ -545,7 +592,7 @@ class Run:
         if line is not None:
             self.ok(name or line)
             return line
-        why = "the client exited" if not self.alive() else "not within %ds, %d x %s" % (secs, sent, " ".join(cmds))
+        why = self.gone() if not self.alive() else "not within %ds, %d x %s" % (secs, sent, " ".join(cmds))
         self._missed(name or "no log line matching %r" % rx, why, fatal)
         if fatal:
             raise Abort(name or rx)

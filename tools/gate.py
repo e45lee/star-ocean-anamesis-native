@@ -202,7 +202,8 @@ def main():
             rs = f.result()
             for r in (rs if isinstance(rs, list) else [rs]):
                 results.append(r)
-                print("%s %-28s %4ds" % ("PASS" if r["ok"] else "FAIL", r["name"], r["secs"]), flush=True)
+                print("%s %-28s %4ds%s" % ("PASS" if r["ok"] else "FAIL", r["name"], r["secs"],
+                                           "  (host GPU failure)" if not r["ok"] and host_gpu(r) else ""), flush=True)
     return finish(results, outdir, t0)
 
 
@@ -227,6 +228,18 @@ def markdown():
     return 0
 
 
+HOST_GPU = re.compile(r"HOST-GPU-FAILURE|in the host GPU driver|lost the host GPU|the client is gone: host GPU")
+
+
+def host_gpu(r):
+    """A failed test whose client lost the host's GPU (control/soadrive/targets.py labels it): the
+    machine's problem, not the change's; rerun it once the host recovers."""
+    try:
+        return HOST_GPU.search(open(r["log"], errors="replace").read()) is not None
+    except OSError:
+        return False
+
+
 def finish(results, outdir, t0):
     wall = int(time.monotonic() - t0)
     order = {t["name"]: i for i, t in enumerate(tests_for.load_tiers())}
@@ -235,11 +248,17 @@ def finish(results, outdir, t0):
     lines = ["%-5s %-4s %-28s %6s %8s  %s" % ("", "tier", "test", "time", "measured", "log")]
     for r in results:
         st = "PASS" if r["ok"] else "KNOWN" if r["name"] in known else "FAIL"
-        lines.append("%-5s %-4s %-28s %5ds %7ds  %s" % (st, r["tier"], r["name"], r["secs"], r["est"], r["log"]))
+        gpu = st == "FAIL" and host_gpu(r)
+        lines.append("%-5s %-4s %-28s %5ds %7ds  %s%s" % (st, r["tier"], r["name"], r["secs"], r["est"], r["log"],
+                                                        "  [host GPU failure: rerun]" if gpu else ""))
     for r in results:
         if not r["ok"] and r["name"] in known:
             lines.append("KNOWN %s: %s" % (r["name"], known[r["name"]]))
     bad = [r for r in results if not r["ok"] and r["name"] not in known]
+    gpu = [r["name"] for r in bad if host_gpu(r)]
+    if gpu:
+        lines.append("HOST GPU: %s failed because a client lost the host's GPU (D3D12 device removed, GLX, the NVIDIA "
+                     "driver): not the change's fault; rerun them once the host recovers" % " ".join(gpu))
     ok = not bad
     lines.append("%s: %d tests, %d failed%s, wall time %ds (out %s)" % (
         "PASS" if ok else "FAIL", len(results), len(bad),

@@ -55,7 +55,7 @@ def is_favor_bonus(shot):
     return _signature_match(shot, "300x80+215+890", "12x4", FAVOR_BONUS_CLOSE)
 
 
-def login_popups(fifo_path, log, notice_shot, bonus_shot, home_shot, notice_wait=None, bonus_wait=None):
+def login_popups(fifo_path, log, notice_shot, bonus_shot, home_shot, notice_wait=None, bonus_wait=None, alive=None):
     """After the 3.7.0 login reaches home: close the notice board (閉じる at 364:1133, retried until
     the client logs its web view closing), then the LOGIN BONUS popup (閉じる at 364:1063, tapped
     while a screenshot shows the popup's title: it can have a second page, and it can appear late),
@@ -63,7 +63,12 @@ def login_popups(fifo_path, log, notice_shot, bonus_shot, home_shot, notice_wait
     waited for when the log has the in-process server's "favor login bonus" line), with a
     screenshot of each and of the home after them. A shot path of '-' isn't kept. Returns the
     summary line ('ok popups closed (...)'); raises Failed when a popup doesn't close."""
-    send = lambda *cmds: fifo.send(fifo_path, list(cmds), timeout=400)
+    def send(*cmds):
+        # a client that died (alive(): its process, its log) ends the popups at once
+        if alive is not None and not alive():
+            raise Failed("the client is gone")
+        return fifo.send(fifo_path, list(cmds), timeout=400, alive=alive)
+
     lg = LogCursor(log)
     scratch = os.path.join(os.path.dirname(os.path.abspath(log)), ".flowctl-popup.png")
     keep = lambda p: p if p != "-" else scratch
@@ -73,7 +78,7 @@ def login_popups(fifo_path, log, notice_shot, bonus_shot, home_shot, notice_wait
         bonus_wait = float(os.environ.get("FLOW_BONUS_WAIT", "40"))
     # 1. the notice board: the client opens its web view (ShowWebView(http...)), 閉じる closes it
     # (SetRootURI("") + ShowWebView()).
-    opened = lg.wait(re.compile(r"ShowWebView\(http"), notice_wait)
+    opened = lg.wait(re.compile(r"ShowWebView\(http"), notice_wait, alive=alive)
     if opened is None:
         _note("note: no notice board opened")
     else:
@@ -83,7 +88,7 @@ def login_popups(fifo_path, log, notice_shot, bonus_shot, home_shot, notice_wait
         cmds = ["wait:8000", "shot:" + keep(notice_shot), "tap:" + ui370.NOTICE_CLOSE]
         for n in range(10):
             send(*cmds)
-            if lg.wait(closed, 8) is not None:
+            if lg.wait(closed, 8, alive=alive) is not None:
                 break
             _note("retry %d: the notice board is still open" % (n + 2))
             cmds = ["tap:" + ui370.NOTICE_CLOSE]
@@ -132,18 +137,23 @@ def login_popups(fifo_path, log, notice_shot, bonus_shot, home_shot, notice_wait
             ("yes" if opened else "no", "x%d" % taps if seen else "no", ", favor bonus x%d" % favor if favor else ""))
 
 
-def name_entry(fifo_path, log, name, typed_shot):
+def name_entry(fifo_path, log, name, typed_shot, alive=None):
     """The new-player name dialog (after the terms' 同意する): tap the name field until the client
     opens its keyboard (StartKeyboardActivity; a tap during the dialog's fade-in is dropped), only
     then type NAME (text:, which a keyboard opened later would clear), screenshot, then 決定 until
     the client sends CreatePlayer (the in-process server's 'request CreatePlayer' line). Returns
     'ok CreatePlayer "NAME"'; raises Failed unless CreatePlayer carries NAME."""
-    send = lambda *cmds: fifo.send(fifo_path, list(cmds), timeout=400)
+    def send(*cmds):
+        # a client that died (alive(): its process, its log) ends the popups at once
+        if alive is not None and not alive():
+            raise Failed("the client is gone")
+        return fifo.send(fifo_path, list(cmds), timeout=400, alive=alive)
+
     lg = LogCursor(log)
     kb = re.compile(r"StartKeyboardActivity\(")
     for n in range(12):
         send("wait:1500", "tap:" + ui370.NAME_FIELD)
-        if lg.wait(kb, 4) is not None:
+        if lg.wait(kb, 4, alive=alive) is not None:
             break
         _note("retry %d: no keyboard yet" % (n + 2))
         if n % 3 == 2:  # the terms' 同意する may have been dropped: tap it again
@@ -157,7 +167,7 @@ def name_entry(fifo_path, log, name, typed_shot):
     line = None
     for n in range(5):
         send("tap:" + ui370.NAME_DECIDE)
-        line = lg.wait(cp, 10)
+        line = lg.wait(cp, 10, alive=alive)
         if line is not None:
             break
         _note("retry %d: no CreatePlayer yet" % (n + 2))

@@ -111,7 +111,8 @@ def popups(s, notice, bonus, home="-", bonus_wait=None):
     summary line ('ok popups closed (notice yes, login bonus x1)')."""
     sh = lambda n: s.layout.shot_path(n) if n and n != "-" else "-"
     try:
-        line = _popups.login_popups(s.fifo, s.client_log, sh(notice), sh(bonus), sh(home), bonus_wait=bonus_wait)
+        line = _popups.login_popups(s.fifo, s.client_log, sh(notice), sh(bonus), sh(home), bonus_wait=bonus_wait,
+                                    alive=s.alive)
     except Failed as e:
         s.miss("login popups (FAIL: %s)" % e)
         raise Abort("login popups")

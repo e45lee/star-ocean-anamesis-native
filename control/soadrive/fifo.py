@@ -20,7 +20,7 @@ def deliver(fifo, cmds, timeout=120, on_shot=None, alive=None):
         try:
             fd = os.open(fifo, os.O_WRONLY | os.O_NONBLOCK)
         except OSError:
-            if time.monotonic() > deadline:
+            if time.monotonic() > deadline or (alive is not None and not alive()):
                 return False, list(shots)
             time.sleep(0.2)
             continue

@@ -137,3 +137,48 @@ def test_every_session_module_declares_its_interface():
         assert m.TARGETS and set(m.TARGETS) <= set(targets.TARGETS), n
         assert callable(m.options) and callable(m.main), n
         assert os.path.exists(os.path.join(proc.REPO, m.WRAPPER.split()[0])), n
+
+
+def _fake_run(tmp_path, script):
+    """A Run whose client is a shell script standing in for the game (no FIFO reader)."""
+    from soadrive import targets
+    r = targets.Run("port-inproc", targets.Layout.port_session(str(tmp_path / "out"), str(tmp_path / "tmp")), targets.Config())
+    r.layout.prepare()
+    r.client = proc.Proc("fake-client", ["sh", "-c", script], r.client_log, limit=120)
+    return r
+
+
+def test_a_wait_fails_fast_when_the_client_exits(tmp_path):
+    import pytest
+    from soadrive import targets
+    r = _fake_run(tmp_path, "echo booting; sleep 2; exit 3")
+    t0 = time.monotonic()
+    with pytest.raises(targets.Abort):
+        r.wait_for("a milestone that never comes", 300, lambda: False)
+    assert time.monotonic() - t0 < 10
+    assert "exited (status" in r.results[-1] and r.failed
+    r.stop()
+
+
+def test_a_host_gpu_failure_is_named_and_ends_the_wait(tmp_path):
+    import pytest
+    from soadrive import targets
+    # the process lingers after the driver dropped out (as a wedged client does)
+    r = _fake_run(tmp_path, "echo 'D3D12: Removing Device.'; sleep 100")
+    t0 = time.monotonic()
+    with pytest.raises(targets.Abort):
+        r.tap_log(r"never", 300, 20, 5, "tap:1:1", name="a tap that is never answered")
+    assert time.monotonic() - t0 < 10
+    assert "host GPU" in r.results[-1] and "rerun" in r.results[-1]
+    r.stop()
+    assert not r.client.running()
+
+
+def test_the_gate_labels_host_gpu_failures(tmp_path):
+    sys.path.insert(0, os.path.join(proc.REPO, "tools"))
+    import gate
+    log = tmp_path / "t.log"
+    log.write_text("FAIL: a step (the client is gone: host GPU (D3D12: Removing Device); a host problem, not the game's: rerun)\n")
+    assert gate.host_gpu({"log": str(log)})
+    log.write_text("FAIL: a step (not within 60s)\n")
+    assert not gate.host_gpu({"log": str(log)})

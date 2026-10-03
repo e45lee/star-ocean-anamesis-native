@@ -156,7 +156,7 @@ def body(s, sh, scratch):
     names = [sh.name(x) for x in ("notice-board", "login-bonus", "home")]
     paths = [s.layout.shot_path(x) for x in names]
     try:
-        line = _popups.login_popups(s.fifo, s.client_log, *paths)
+        line = _popups.login_popups(s.fifo, s.client_log, *paths, alive=s.alive)
     except Failed as e:
         s.fail("login popups (FAIL: %s)" % e)
     s.ok("login " + line[3:])

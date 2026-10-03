@@ -139,7 +139,7 @@ def body(s):
         return
     try:
         line = _popups.login_popups(s.fifo, s.client_log, s.layout.shot_path("notice"), s.layout.shot_path("login-bonus"),
-                                    s.layout.shot_path("home"))
+                                    s.layout.shot_path("home"), alive=s.alive)
         with open(os.path.join(s.dir, "popups.txt"), "w") as f:
             f.write(line + "\n")
         s.ok("login " + line[3:])

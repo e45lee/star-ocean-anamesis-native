@@ -59,7 +59,7 @@ def new_player(s, player, steps, on_round=None, stop_home=True):
     s.ctl("wait:3000", s.shot_cmd("02-terms"), "tap:" + ui370.TERMS_AGREE, "wait:3000", s.shot_cmd("03-name"))
     # The name: tap the field until the keyboard opens, type, 決定; checks CreatePlayer's name.
     try:
-        s.ok(popups.name_entry(s.fifo, s.client_log, player, s.layout.shot_path("04-name-typed"))[3:])
+        s.ok(popups.name_entry(s.fifo, s.client_log, player, s.layout.shot_path("04-name-typed"), alive=s.alive)[3:])
     except Failed as e:
         s.fail("the name entry failed (%s)" % e)
     s.wait_for('the server created the player "%s"' % player, 30,

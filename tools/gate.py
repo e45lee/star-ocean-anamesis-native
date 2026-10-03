@@ -20,7 +20,8 @@ and a time limit of 3x its measured time (at least 10 minutes), counted from whe
 game test takes its slot here first (passed down, so its script doesn't queue again). Prints a table (PASS / FAIL, the
 time against the measured one) and OUT/summary.txt; exit 1 when anything FAILs. A test with a
 `known` failure in tests/tiers.json (one that fails without the change) is reported KNOWN, with
-the reason, and doesn't fail the gate.
+the reason, and doesn't fail the gate. A test whose `requires` paths are missing (e.g. build-win/
+for the Windows tests) is reported SKIP and not run.
 """
 import argparse
 import concurrent.futures
@@ -70,6 +71,14 @@ def run_cmd(cmd, out, tmp, limit, log, slot=-1):
 
 def run_test(t, outdir, keep):
     name = slug(t["name"])
+    missing = [r for r in t.get("requires", []) if not os.path.exists(os.path.join(REPO, r))]
+    if missing:
+        # a test of a part this checkout hasn't built (the Windows build: tests/tiers.json `requires`)
+        log = os.path.join(outdir, name + ".log")
+        with open(log, "w") as f:
+            f.write("SKIP: %s not here\n" % " ".join(missing))
+        return {"name": t["name"], "tier": t["tier"], "ok": True, "skip": "no " + " ".join(missing), "rc": 0, "secs": 0,
+                "est": t["secs"], "log": log}
     out, tmp = os.path.join(outdir, name), os.path.join(outdir, ".tmp", name)
     # A game test (one client at a time) queues for its slot here, before its clock starts.
     slot = soaslot.acquire("gate " + t["name"], quiet=True) if t.get("game", 0) else -1
@@ -202,7 +211,7 @@ def main():
             rs = f.result()
             for r in (rs if isinstance(rs, list) else [rs]):
                 results.append(r)
-                print("%s %-28s %4ds%s" % ("PASS" if r["ok"] else "FAIL", r["name"], r["secs"],
+                print("%s %-28s %4ds%s" % (("SKIP" if r.get("skip") else "PASS") if r["ok"] else "FAIL", r["name"], r["secs"],
                                            "  (host GPU failure)" if not r["ok"] and host_gpu(r) else ""), flush=True)
     return finish(results, outdir, t0)
 
@@ -247,7 +256,7 @@ def finish(results, outdir, t0):
     known = {t["name"]: t["known"] for t in tests_for.load_tiers() if t.get("known")}
     lines = ["%-5s %-4s %-28s %6s %8s  %s" % ("", "tier", "test", "time", "measured", "log")]
     for r in results:
-        st = "PASS" if r["ok"] else "KNOWN" if r["name"] in known else "FAIL"
+        st = ("SKIP" if r.get("skip") else "PASS") if r["ok"] else "KNOWN" if r["name"] in known else "FAIL"
         gpu = st == "FAIL" and host_gpu(r)
         lines.append("%-5s %-4s %-28s %5ds %7ds  %s%s" % (st, r["tier"], r["name"], r["secs"], r["est"], r["log"],
                                                         "  [host GPU failure: rerun]" if gpu else ""))
@@ -259,6 +268,9 @@ def finish(results, outdir, t0):
     if gpu:
         lines.append("HOST GPU: %s failed because a client lost the host's GPU (D3D12 device removed, GLX, the NVIDIA "
                      "driver): not the change's fault; rerun them once the host recovers" % " ".join(gpu))
+    for r in results:
+        if r.get("skip"):
+            lines.append("SKIP %s: %s" % (r["name"], r["skip"]))
     ok = not bad
     lines.append("%s: %d tests, %d failed%s, wall time %ds (out %s)" % (
         "PASS" if ok else "FAIL", len(results), len(bad),

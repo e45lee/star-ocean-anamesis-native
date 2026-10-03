@@ -1,5 +1,5 @@
 {
-  "about": "Every gate test, its tier, its measured wall time on the development machine (32 cores, 45 GB; seconds, with the other agents' load of the day), what it covers and its command. The single source of truth for tools/gate.sh and tools/tests_for.py; tests/TIERS.md explains the tiers. Commands run from the repository root; {out} is the test's own out dir and {tmp} its scratch dir (tools/gate.sh makes both). `game` is the number of game clients it runs at once (they queue on the slot pool, control/soaslot.py). `area` is what a change must touch for tools/tests_for.py to pick it (T1); `apis` come from tests/impact.json; `apis: false` marks a test that talks to no server. `known` is a failure that exists without the change being gated (the reason): tools/gate.sh reports it as KNOWN and doesn't fail on it.",
+  "about": "Every gate test, its tier, its measured wall time on the development machine (32 cores, 45 GB; seconds, with the other agents' load of the day), what it covers and its command. The single source of truth for tools/gate.sh and tools/tests_for.py; tests/TIERS.md explains the tiers. Commands run from the repository root; {out} is the test's own out dir and {tmp} its scratch dir (tools/gate.sh makes both). `game` is the number of game clients it runs at once (they queue on the slot pool, control/soaslot.py). `area` is what a change must touch for tools/tests_for.py to pick it (T1); `apis` come from tests/impact.json; `apis: false` marks a test that talks to no server. `known` is a failure that exists without the change being gated (the reason): tools/gate.sh reports it as KNOWN and doesn't fail on it. `requires` lists paths the test needs (missing: tools/gate.sh reports it SKIP and doesn't run it). Kind `platform`: a test of another platform's build (the Windows `win:*` tests, scripts/windows-test.sh): run by its tier, never picked by tools/tests_for.py (no impact entry).",
   "tiers": {
     "T0": "every commit: the build, the fast deterministic checks (about a minute)",
     "T1": "per change: T0, then what tools/tests_for.py selects for the changed paths (minutes)",
@@ -132,6 +132,15 @@
     {"name": "viewer:session", "tier": "T2", "secs": 275, "apis": false, "kind": "session", "game": 1, "area": ["emulator-viewer/", "runtime/", "CMakeLists.txt"],
      "cmd": "emulator-viewer/scripts/viewer_session.sh build/emulator-viewer/soa-viewer {out}",
      "covers": "soa-viewer's session (viewer gate scope)"},
+    {"name": "win:battle-gacha", "tier": "T2", "secs": 310, "kind": "platform", "game": 1, "requires": ["build-win/CMakeCache.txt"],
+     "cmd": "scripts/windows-test.sh battle-gacha {out} {tmp}",
+     "covers": "Windows (soa.exe from WSL through interop, staged in C:\\soa-win): the restore session: home, a battle, a 10-draw, the server state after each"},
+    {"name": "win:seeded", "tier": "T2", "secs": 350, "kind": "platform", "game": 1, "requires": ["build-win/CMakeCache.txt"],
+     "cmd": "scripts/windows-test.sh seeded {out} {tmp}",
+     "covers": "Windows: soa-emu.exe against soa-server.exe: login, battle, gacha (the emulator's seeded session)"},
+    {"name": "win:viewer-boot", "tier": "T2", "secs": 45, "kind": "platform", "game": 1, "requires": ["build-win/CMakeCache.txt"],
+     "cmd": "scripts/windows-test.sh viewer-boot {out} {tmp}",
+     "covers": "Windows: soa-viewer.exe boots to the title and the terms prompt (the viewer's boot)"},
     {"name": "server-cdn", "tier": "T2", "secs": 240, "kind": "check", "game": 0, "area": ["server/src/cdn/", "server/net/"],
      "known": "the two builds' logs list the same CDN lines in a different order, so it reports DIFFERENT even for identical server sources (2026-10-03: HEAD~1 and HEAD with no server change)",
      "cmd": "tools/server_build_at.sh {base} {tmp}/parent && tools/server_cdn_check.sh {tmp}/parent/soa-server build/server/soa-server {out}",

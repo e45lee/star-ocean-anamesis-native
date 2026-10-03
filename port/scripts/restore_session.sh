@@ -10,12 +10,13 @@
 #
 # The phone: the shared pre-downloaded one, linked (port/scripts/phone370.sh); SOA_PHONE=DIR another,
 # SOA_PHONE=none an empty one (the client then downloads its 3 GB from the in-process CDN after Login).
-# Usage: port/scripts/restore_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
+# Usage: port/scripts/restore_session.sh <soa> <out-dir> <scratch-dir> [soa flags...]   (from any directory)
+# The extra flags go to soa, e.g. --campaign-seed mf01_001 (emulator/README.md "Parity") or --live-check FAMILY.
 # The client save is the all-characters test save; the server seeds itself from
 # data/saves/seed/Game.xml into a fresh <scratch-dir>/data/server.sqlite3 and writes its player
 # summary into the client save before boot. --seed-rng (SEED_RNG, default 1) fixes the server's RNG.
 set -eu
-SOA=$1; OUT=$2; TMP=$3
+SOA=$1; OUT=$2; TMP=$3; shift 3
 # Paths relative to the caller's directory stay valid; the rest of the script runs from the repo root.
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
@@ -29,7 +30,7 @@ mkdir -p "$OUT/shots"
 phone370_prepare "$TMP/data"
 phone370_client_save "$TMP/data/data/shared_prefs"
 timeout -k 10 1800 "$SOA" $HEADLESS --seed-rng "${SEED_RNG:-1}" --data "$TMP/data" \
-  --size 729x1296 --control "$TMP/fifo" > "$OUT/log.txt" 2>&1 &
+  --size 729x1296 --control "$TMP/fifo" "$@" > "$OUT/log.txt" 2>&1 &
 pid=$!
 step=boot
 trap 'rc=$?; kill $pid 2>/dev/null || true; [ $step = done ] || { echo "FAIL: stopped at step $step"; exit 1; }; exit $rc' EXIT

@@ -350,6 +350,23 @@ const char* thunk_name(u32 idx);
 // Guest address a thunk index is hooked at (0 for plain HLE thunks).
 u64 thunk_hook_addr(u32 idx);
 
+// ---- Debugger support (core/gdbstub.cpp; inert unless g_gdb_enabled) ----
+
+// A host thread that holds guest CPU contexts, as the GDB stub sees it: its kernel tid, the CPU of
+// its innermost guest_call level in use (the one whose registers gdb shows; level 0's when the
+// thread is in no guest_call), whether that level is running JIT code right now (false: parked,
+// in a host function, or outside guest code), and its last outermost guest function.
+struct GuestThreadView {
+    int tid;
+    Cpu* cpu;
+    bool in_jit;
+    u64 entry;
+};
+std::vector<GuestThreadView> guest_threads();
+// HaltExecution(reason) on every live guest CPU (running ones stop at their next block boundary,
+// idle ones as soon as they run).
+void halt_all_guest_cpus(u32 reason);
+
 // Symbolization for diagnostics.
 std::string describe_guest_addr(u64 addr);
 void dump_guest_state(Cpu& c);

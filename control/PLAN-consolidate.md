@@ -134,7 +134,9 @@ Each step is one or a few commits, keeps every old entry point working, and is g
    shortcuts in favour of taps where both programs must run it, run against both targets once.
    Rename the `restore_*` sessions (the switch is gone); keep the old file names as wrappers until no
    caller uses them.
-7. **A GDB remote stub in the runtime** (the user, 2026-10-02; done alongside these control changes): `runtime/` serves
+7. **A GDB remote stub in the runtime** ✅ (2026-10-03, task 5: `runtime/src/core/gdbstub.*`, `--gdb` on soa / soa-emu /
+   soa-viewer, `control/gdbclient.py`, `control/gdbinit-soa`; runtime/README.md "Debugging the guest with gdb"; the
+   soadrive integration comes with the consolidation) (the user, 2026-10-02; done alongside these control changes): `runtime/` serves
    the GDB remote serial protocol for the **guest** (AArch64) on `--gdb HOST:PORT` (soa, soa-emu, soa-viewer;
    off by default), so `gdb-multiarch` (installed) can attach to the running client.
    - **Target description:** aarch64 core registers (x0-x30, sp, pc, cpsr) and the FP/SIMD registers (v0-v31, fpsr,

@@ -39,6 +39,7 @@
 namespace soa {
 
 void to_bionic_stat(const struct stat& s, u64 dst);  // libc_stdio.cpp
+void register_net_win32(Hle& h);                     // net_win32.cpp
 
 int guest_errno(int host) {
     switch (host) {
@@ -566,8 +567,9 @@ int oflags_to_host(int f) {
 void th_open(Cpu& c) {
     std::string hp = host_path(arg_str(c, 0));
     int mode = (int)c.x(2);
-    int fd = _open(hp.c_str(), oflags_to_host((int)c.x(1)), (mode & 0200 ? _S_IWRITE : 0) | _S_IREAD);
-    if (fd < 0) set_errno_guest();
+    int crt = _open(hp.c_str(), oflags_to_host((int)c.x(1)), (mode & 0200 ? _S_IWRITE : 0) | _S_IREAD);
+    if (crt < 0) set_errno_guest();
+    int fd = hostfd::adopt_file(crt);
     LOGD("io", "open(%s -> %s, %#x) = %d", arg_str(c, 0), hp.c_str(), (int)c.x(1), fd);
     ret(c, (u64)(s64)fd);
 }
@@ -581,9 +583,10 @@ void th_write(Cpu& c) {
     }
     ret(c, (u64)(s64)hostfd::write(fd, (const void*)c.x(1), c.x(2)));
 }
-void th_lseek64(Cpu& c) { ret(c, (u64)(s64)_lseeki64((int)c.x(0), (s64)c.x(1), (int)c.x(2))); }
-void th_fsync(Cpu& c) { ret(c, (u64)(s64)_commit((int)c.x(0))); }
-void th_ftruncate(Cpu& c) { ret(c, (u64)(s64)(_chsize_s((int)c.x(0), (s64)c.x(1)) == 0 ? 0 : -1)); }
+// (a guest descriptor that isn't a file: the CRT calls fail with EBADF on -1)
+void th_lseek64(Cpu& c) { ret(c, (u64)(s64)_lseeki64(hostfd::crt_of((int)c.x(0)), (s64)c.x(1), (int)c.x(2))); }
+void th_fsync(Cpu& c) { ret(c, (u64)(s64)_commit(hostfd::crt_of((int)c.x(0)))); }
+void th_ftruncate(Cpu& c) { ret(c, (u64)(s64)(_chsize_s(hostfd::crt_of((int)c.x(0)), (s64)c.x(1)) == 0 ? 0 : -1)); }
 void th_pipe(Cpu& c) {
     int fds[2];
     int r = hostfd::make_pipe(fds);
@@ -593,9 +596,9 @@ void th_pipe(Cpu& c) {
 void th_fstat(Cpu& c) {
     int fd = (int)c.x(0);
     struct stat s{};
-    if (hostfd::emulated(fd)) {
-        s.st_mode = _S_IFIFO | 0600;
-    } else if (fstat(fd, &s) != 0) {
+    if (hostfd::emulated(fd) || hostfd::socket_of(fd) != ~(uintptr_t)0) {
+        s.st_mode = hostfd::emulated(fd) ? _S_IFIFO | 0600 : 0140600;  // a pipe / a socket (S_IFSOCK)
+    } else if (fstat(hostfd::crt_of(fd), &s) != 0) {
         set_errno_guest();
         return ret(c, (u64)-1);
     }
@@ -708,6 +711,8 @@ void register_libc_win32(Hle& h) {
     h.fn("fstat", th_fstat);
     h.fn("utimes", [](Cpu& c) { ret(c, 0); });
     h.fn("readlink", th_readlink);
+
+    register_net_win32(h);  // after fcntl: it wraps it for sockets
 }
 
 }  // namespace soa

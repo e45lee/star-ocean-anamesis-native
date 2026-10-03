@@ -167,7 +167,17 @@ void th_getaddrinfo(Cpu& c) {
         hints.ai_family = ghints->ai_family;
         hints.ai_socktype = ghints->ai_socktype;
         hints.ai_protocol = ghints->ai_protocol;
+#ifdef _WIN32  // AF_INET6 is 10 in the guest, 23 in Winsock (and Winsock needs starting)
+        if (hints.ai_family == 10) hints.ai_family = AF_INET6;
+#endif
     }
+#ifdef _WIN32
+    static const bool wsa = [] {
+        WSADATA d;
+        return WSAStartup(MAKEWORD(2, 2), &d) == 0;
+    }();
+    (void)wsa;
+#endif
     LOGI("net", "getaddrinfo(%s, %s)", node ? node : "", serv ? serv : "");
     int r = getaddrinfo(node, serv, ghints ? &hints : nullptr, &res);
     BionicAddrinfo* head = nullptr;
@@ -180,6 +190,9 @@ void th_getaddrinfo(Cpu& c) {
         b->ai_protocol = a->ai_protocol;
         b->ai_addrlen = a->ai_addrlen;
         memcpy(b + 1, a->ai_addr, a->ai_addrlen);
+#ifdef _WIN32
+        if (a->ai_family == AF_INET6) b->ai_family = 10, ((sockaddr*)(b + 1))->sa_family = 10;
+#endif
         b->ai_addr = (u64)(b + 1);
         b->ai_canonname = a->ai_canonname ? (u64)strdup(a->ai_canonname) : 0;
         *tail = b;

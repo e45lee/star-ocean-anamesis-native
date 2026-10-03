@@ -39,7 +39,7 @@ S=$OUT/shots; L=$OUT/log.txt; DB=$TMP/data/server.sqlite3
 c() { python3 $CTL --timeout 400 "$TMP/fifo" "$@"; }
 logw() { python3 $FLOW wait-log "$L" "$1" "${2:-120}"; }
 state() { .venv/bin/python tools/server_state.py "$DB" > "$OUT/state-$1.txt"; cat "$OUT/state-$1.txt"; }
-sql() { .venv/bin/python -c "import sqlite3,sys; c=sqlite3.connect(sys.argv[1]); c.execute(sys.argv[2]); c.commit()" "$DB" "$1"; }
+sql() { .venv/bin/python -c "import sqlite3,sys; c=sqlite3.connect(sys.argv[1]); c.execute('pragma foreign_keys = on'); c.execute(sys.argv[2]); c.commit()" "$DB" "$1"; }
 
 fail() { echo "FAIL: $*"; c quit || true; exit 1; }
 # The title (phase 1), TAP TO START -> Login -> the data check (or the download) -> home (phase 4),

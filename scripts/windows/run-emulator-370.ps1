@@ -4,7 +4,8 @@
 #
 # Usage: scripts\windows\run-emulator-370.cmd [options] [soa-emu options...]
 #   -Home DIR / --home DIR   data: DIR\phone (the client), DIR\server (the server's state),
-#                            DIR\server.log + server.log.err (default %LOCALAPPDATA%\soa-370\emulator)
+#                            DIR\server.log + server.log.err (default %LOCALAPPDATA%\soa\emulator-370:
+#                            DIR\phone is soa-emu.exe's own default)
 #   --port N                 the game port (default 44300; HTTP: N + 80)
 #   --new-player, --enable-events, --event-keywords W, --seed FILE   soa-server's options
 #   the others go to soa-emu.exe (e.g. --fullscreen, --headless)
@@ -15,7 +16,7 @@ $ErrorActionPreference = "Stop"
 $repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 $emu = Join-Path $repo "build-win\emulator\soa-emu.exe"
 $srv = Join-Path $repo "build-win\server\soa-server.exe"
-$home_dir = Join-Path $env:LOCALAPPDATA "soa-370\emulator"
+$home_dir = Join-Path $env:LOCALAPPDATA "soa\emulator-370"
 $port = 44300
 $srvArgs = @(); $emuArgs = @()
 for ($i = 0; $i -lt $args.Count; $i++) {

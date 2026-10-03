@@ -5,6 +5,7 @@
 // (incl. Play Asset Delivery: jni/java_playcore.cpp), so the viewer adds only one platform
 // answer: the dead service's host names don't resolve (net_offline.cpp). emulator-viewer/README.md.
 #include <soa/env.h>
+#include <soa/paths.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -138,8 +139,8 @@ void usage() {
             "  --download-prefer  with --download-dir: DIR wins over the APKs (as soa / soa-emu)\n"
             "  --lib PATH      the client library (default: extracted from DIR/config.arm64_v8a.apk into the data dir)\n"
             "  --data DIR      the emulated device's data (saves, prefs, asset packs; default\n"
-            "                  ~/.local/share/soa-viewer-380, like the port's ~/.local/share/soa-linux;\n"
-            "                  never the port's)\n"
+            "                  ~/.local/share/soa-viewer-380, like the port's ~/.local/share/soa-linux-370;\n"
+            "                  Windows %%LOCALAPPDATA%%\\soa\\viewer-380; never the port's)\n"
             "  --repo DIR      the source checkout (default: found from the executable)\n"
             "  --guest-cpus N|host  CPUs the game sees (default 8)\n"
             "  --size WxH      window size (default: portrait 9:16 at 90%% of the desktop height)\n"
@@ -232,11 +233,8 @@ int main(int argc, char** argv) {
     }
     for (const char* f : {kBaseApk, "assetinstalltime.apk"})
         if (!exists(apk_dir + "/" + f)) fatal("--apk-dir %s: %s is missing", apk_dir.c_str(), f);
-    if (data_dir.empty()) {
-        // Beside the port's ~/.local/share/soa-linux (port/src/main.cpp).
-        const char* h = getenv("HOME");
-        data_dir = std::string(h ? h : ".") + "/.local/share/soa-viewer-380";
-    }
+    // Beside the port's (soa/paths.h): ~/.local/share/soa-viewer-380, on Windows %LOCALAPPDATA%\soa\viewer-380.
+    if (data_dir.empty()) data_dir = soa::default_data_dir("soa-viewer-380", "viewer-380");
     make_dirs(data_dir);
     if (lib_path.empty()) lib_path = extract_lib(apk_dir + "/config.arm64_v8a.apk", data_dir + "/libSOA.so");
     LOGI("viewer", "3.8.0 client %s, XAPK %s, data %s: pure JIT, unmodified", lib_path.c_str(), apk_dir.c_str(), data_dir.c_str());

@@ -30,7 +30,7 @@ control/soactl.py /tmp/viewer.fifo tap:364:1000 wait:3000 shot:/tmp/viewer.png
 | `--download-dir DIR` | Serve `builtin_data/` assets missing from the APKs from DIR, an online asset tree such as `work/download-3.7.0`: the same option as `soa` and `soa-emu`. Off by default. It doesn't fill in the missing Play Asset Delivery packs (`assetfastfollow` / `assetondemand1`), which aren't `builtin_data/`. |
 | `--download-prefer` | With `--download-dir`: DIR wins over the APKs (as `soa` and `soa-emu`). |
 | `--lib PATH` | The client library. Default: `lib/arm64-v8a/libSOA.so` from `DIR/config.arm64_v8a.apk`, extracted into the data dir (again when its size differs), as the package manager installs it. |
-| `--data DIR` | The emulated phone's storage: the save (`data/shared_prefs/`), the extracted library, asset packs. Default `~/.local/share/soa-viewer-380`, beside the port's `~/.local/share/soa-linux`. Never the port's data dir: the port's save and cached library are its own. |
+| `--data DIR` | The emulated phone's storage: the save (`data/shared_prefs/`), the extracted library, asset packs. Default `~/.local/share/soa-viewer-380` (Windows: `%LOCALAPPDATA%\soa\viewer-380`; `common/include/soa/paths.h`), beside the port's `~/.local/share/soa-linux-370`. Never the port's data dir: the port's save and cached library are its own. |
 | (window title) | `[EMULATED] STAR OCEAN -anamnesis- 3.8.0 offline client (soa-viewer)`. |
 | (app version) | `3.8.0`, the XAPK's versionName (what the client sends in NoLoginStart). |
 | `--repo DIR` | The source checkout, for the defaults. Default: found upwards from the executable; in a git worktree, files it lacks are looked up in the main checkout `work/` links to. |

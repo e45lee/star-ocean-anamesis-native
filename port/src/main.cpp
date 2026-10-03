@@ -25,6 +25,7 @@
 #include <thread>
 
 #include <soa/env.h>
+#include <soa/paths.h>
 
 #include "android/ndk.h"
 #include "app/host.h"
@@ -88,7 +89,7 @@ void usage() {
             "  --lib PATH      the libSOA.so (default: lib/arm64-v8a/libSOA.so of the APK, extracted once into\n"
             "                  DATA/libSOA-3.7.0.so; else <repo>/work/libSOA-3.7.0.so)\n"
             "  --data DIR      the phone's data dir: game data, saves, and in-process the server's state\n"
-            "                  (default ~/.local/share/soa-linux-370)\n"
+            "                  (default ~/.local/share/soa-linux-370; Windows %%LOCALAPPDATA%%\\soa\\port-370)\n"
             "  --download-dir DIR  the client's asset fallback for builtin_data/ files the APK lacks (the online\n"
             "                  game's downloaded tree). Required with --server inproc, whose CDN serves it too\n"
             "                  (default <repo>/work/download-3.7.0); off by default with --server HOST, whose\n"
@@ -187,10 +188,10 @@ bool start_inproc_cdn(std::string* err);                // native/api/server_cdn
 int main(int argc, char** argv) {
     env::warn_removed_env("soa", env::kSoa);  // SOA_* settings that are flags now: one line each
     signal(SIGPIPE, SIG_IGN);
-    const char* home = getenv("HOME");
-    // A data dir of its own: the old offline-build port's ~/.local/share/soa-linux holds a cached
-    // libSOA.so of that build and its save.
-    std::string data_dir = std::string(home ? home : ".") + "/.local/share/soa-linux-370";
+    // A data dir of its own (soa/paths.h): ~/.local/share/soa-linux-370 (the old offline-build port's
+    // ~/.local/share/soa-linux holds a cached libSOA.so of that build and its save), on Windows
+    // %LOCALAPPDATA%\soa\port-370.
+    std::string data_dir = soa::default_data_dir("soa-linux-370", "port-370");
     std::string apk_path, lib_path;
     bool smoke = false, selftest = false;
     // --natives: route (every registered native) or none.
@@ -425,7 +426,7 @@ int main(int argc, char** argv) {
         }
     }
     if (!file_exists(apk_path)) fatal("--apk: %s not found", apk_path.c_str());
-    mkdir(data_dir.c_str(), 0755);
+    soa::make_dir_tree(data_dir);
     if (lib_path.empty()) {
         lib_path = data_dir + "/libSOA-3.7.0.so";
         if (!file_exists(lib_path)) {

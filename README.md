@@ -167,9 +167,16 @@ the checkout (or the stage `C:\soa-win`) in `cmd.exe` or PowerShell, saves under
 
 | Launcher | Runs |
 |---|---|
-| `scripts\windows\run-port.cmd [soa options]` | the port: the 3.7.0 client with its in-process server (`%LOCALAPPDATA%\soa-370\port` unless `--data`) |
-| `scripts\windows\run-emulator-370.cmd [options]` | the 3.7.0 client in the emulator against `soa-server.exe`, which it starts and stops (`run-emulator-370.ps1`; `%LOCALAPPDATA%\soa-370\emulator`; `--new-player`, `--enable-events`, `--port`, `--home`) |
-| `scripts\windows\run-viewer-380.cmd [soa-viewer options]` | the offline 3.8.0 client in the viewer (`%LOCALAPPDATA%\soa-380\viewer`; needs `work\extracted\xapk`) |
+| `scripts\windows\run-port.cmd [soa options]` | the port: the 3.7.0 client with its in-process server (saves: `%LOCALAPPDATA%\soa\port-370` unless `--data`) |
+| `scripts\windows\run-emulator-370.cmd [options]` | the 3.7.0 client in the emulator against `soa-server.exe`, which it starts and stops (`run-emulator-370.ps1`; `%LOCALAPPDATA%\soa\emulator-370`: `phone\`, `server\`, `server.log`; `--new-player`, `--enable-events`, `--port`, `--home`) |
+| `scripts\windows\run-viewer-380.cmd [soa-viewer options]` | the offline 3.8.0 client in the viewer (saves: `%LOCALAPPDATA%\soa\viewer-380`; needs `work\extracted\xapk`) |
+
+The programs' own default data dirs on Windows are these (`common/include/soa/paths.h`; on Linux
+`~/.local/share/...`, as below); `--data DIR` overrides them. Builds before 2026-10-03 put them under
+`<the launch directory>\.local\share\` (`soa-linux-370`, `soa-emulator-370\phone`, `soa-viewer-380`):
+they aren't moved automatically; to keep such a save, move the directory while the program isn't
+running, e.g. `move .local\share\soa-linux-370 "%LOCALAPPDATA%\soa\port-370"` (create
+`%LOCALAPPDATA%\soa` first), or keep using it with `--data`.
 
 **The control channel:** `--control NAME` is a named pipe on Windows (`\\.\pipe\NAME`:
 `cmd.exe /c "echo tap:405:1000> \\.\pipe\NAME"`); `--control tcp:127.0.0.1:PORT` (both platforms; PORT 0:

@@ -1,5 +1,5 @@
 // soa_env_tests: the environment rule of common/include/soa/env.h (the on/off words, the number
-// check, the removed variables' warnings per program). Run: build/soa_env_tests (exit 1 on a
+// check, the removed variables' warnings per program) and the default data dirs (soa/paths.h). Run: build/soa_env_tests (exit 1 on a
 // failure). The binaries' own warnings are checked by tests/env_removed.sh.
 #include <cstdio>
 #include <cstdlib>
@@ -9,6 +9,8 @@
 #include <soa/env.h>
 
 using namespace soa::env;
+
+int paths_tests();
 
 namespace {
 int g_failures = 0;
@@ -59,6 +61,7 @@ int main() {
         check(r.programs != 0 && r.use[0] == '-', std::string(r.name) + ": a flag in some program");
         check(!is_live_check_var(r.name), std::string(r.name) + ": not a live-check name");
     }
+    g_failures += paths_tests();  // the default data dirs (soa/paths.h; paths_tests.cpp)
     fprintf(stderr, "%s\n", g_failures ? "FAILED" : "all passed");
     return g_failures ? 1 : 0;
 }

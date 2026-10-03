@@ -24,7 +24,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 | **3** | **P5b: `tests/diff/`, port-vs-emulator differential flows** | below | ✅ done (32ff1d9; `tests/diff/README.md`) |
 | **4** | **P3 + P4: offline-build cleanup and references** | below | ✅ done (25fd054, 7940bac; `tools/check_no_380.sh` strict since e229364) |
 | **4b** | **Server code: readability, then the database schema** (`server/PLAN-readability.md` R0-R20, then `server/PLAN-schema.md` S0-S12; R12/R17 after S4/S9) | the two plans | 🔄 resumed 2026-10-03: readability phase 1 done (R0-R11, R13-R16, R18; 67db9de); next on resume: one full tests/diff over the phase, then schema S0-S12, then R12, R17, R19 |
-| **5** | **Rebuild tooling** | below | ⏳ |
+| **5** | **Rebuild tooling, together with the control-script consolidation** (`control/PLAN-consolidate.md`, incl. the runtime's GDB stub) | below | ⏳ (the user, 2026-10-03: consolidation done with 5; starts after the faster-tests work merges) |
 | **5b** | **W: native Windows runner** (the user, 2026-10-02: before N) | below | ⏳ after 5 |
 | **6** | **N: rebuild the natives** | below | ⏳ ongoing after 5b |
 | **7** | **H: trim the server hooks** | below | ✅ done with P3 (25fd054) |
@@ -77,7 +77,8 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
   - `data/basmaster-3.8.0.sqlite3` and the offline build's Ghidra project stay, for the viewer (`emulator-viewer/`) and history.
 - **Gate:** a grep check that no 3.8.0 reference remains outside `emulator-viewer/` and `docs/history/`.
 
-### 5. Rebuild tooling
+### 5. Rebuild tooling, with the control-script consolidation
+- **The consolidation (the user, 2026-10-03: approved, done together with this task):** `control/PLAN-consolidate.md`'s steps: the shared driver library `control/soadrive/` (seeded by `tests/diff/diffdrive/` and the faster-tests work: slot pool, shards, `tools/tests_for.py`, `tools/gate.sh` tiers), the named flows for both targets (port and emulator), the session scripts as thin wrappers, and step 7, **a GDB remote stub for the guest in the runtime** (`--gdb HOST:PORT`, attachable from soadrive to read guest state at a milestone — what the native rebuild uses to compare natives with the guest). It starts after the faster-tests branch merges (they touch the same scripts).
 - **`tools/decomp.sh` / `decomp_at.sh --into <subsystem>[/<topic>]`** write stamped decompiles to `port/decomp/<subsystem>/<topic>.c`. Without it they write scratch output to `work/decomp/`.
 - **Per-subsystem scaffolding:** `port/src/native/<subsystem>/README.md` + `<subsystem>_layout.h`, and `port/decomp/<subsystem>/symbols.tsv`.
 - **A fresh profile of the 3.7.0 port (in-process server)** (`SOA_PROFILE` / `SOA_COVERAGE`, `port/scripts/profile_report.py`, `remaining.py`) to rank subsystems by guest time. The output is the rebuild queue.

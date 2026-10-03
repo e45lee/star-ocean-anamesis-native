@@ -13,7 +13,7 @@ P3 + H (battle log from the client's own serializer, `InGameHooks` dropped), P4 
 | **P5b: `tests/diff/`** | port-vs-emulator flows compared by packets, server state and screenshots | task 3 |
 
 ## Next
-1. **Control-script consolidation:** review `control/PLAN-consolidate.md`, then carry it out (the plan includes the runtime's GDB stub, step 7).
+1. **Control-script consolidation, with the rebuild tooling (task 5; approved 2026-10-03):** carry out `control/PLAN-consolidate.md` (the plan includes the runtime's GDB stub, step 7).
 2. **Rebuild tooling:** `decomp.sh --into <subsystem>` writing to `port/decomp/<subsystem>/`; per-subsystem scaffolding; a fresh profile ranking subsystems by guest time. (task 5)
 3. **W: a native Windows runner** (before N, the user 2026-10-02) **for the port, the emulator and the viewer** (and `soa-server`), each passing its checks on Windows. MinGW-w64 clang, vcpkg, ANGLE; port the HLE libc layer and guest memory/fault handling; audit `long`; runtime tests under Wine.
 4. **N: rebuild the natives.** Readable C++ from the Ghidra decompile, types first, hottest subsystems first, each with differential tests and live checks at 0 mismatches; well-known libraries called from the host via vcpkg. (task 6)

@@ -797,8 +797,16 @@ void hook_guest_function(u64 addr, const char* name, HostFn fn) {
 static LONG WINAPI unhandled_exception(EXCEPTION_POINTERS* ep) {
     Cpu* c = t_current;
     const EXCEPTION_RECORD* r = ep->ExceptionRecord;
-    fprintf(stderr, "\n*** host exception %#lx at %p (fault addr %#llx, thread %d) ***\n", (unsigned long)r->ExceptionCode, r->ExceptionAddress,
+    const u64 exe = (u64)GetModuleHandleA(nullptr);
+    fprintf(stderr, "\n*** host exception %#lx at %p = exe+%#llx (fault addr %#llx, thread %d) ***\n", (unsigned long)r->ExceptionCode,
+            r->ExceptionAddress, (unsigned long long)((u64)r->ExceptionAddress - exe),
             r->NumberParameters >= 2 ? (unsigned long long)r->ExceptionInformation[1] : 0ull, (int)gettid());
+    // host backtrace as exe offsets (llvm-symbolizer --obj=<the .exe> --adjust-vma=0x140000000 <offset>)
+    void* bt[48];
+    USHORT n = CaptureStackBackTrace(0, 48, bt, nullptr);
+    fprintf(stderr, "host backtrace (exe offsets):");
+    for (USHORT i = 0; i < n; i++) fprintf(stderr, " %#llx", (unsigned long long)((u64)bt[i] - exe));
+    fprintf(stderr, "\n");
     if (c) {
         fprintf(stderr, "guest pc (last sync) = %s\n", describe_guest_addr(c->pc()).c_str());
         dump_guest_state(*c);

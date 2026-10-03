@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <string>
 
 #include "core/cpu.h"
@@ -134,8 +135,9 @@ int main() {
     run_runtime_tests("cpu/");
     run_runtime_tests("jni/");
     run_runtime_tests("frontend/text-");  // the text-entry editor (frontend/text_entry_tests.cpp)
-    std::string rm = std::string("rm -rf '") + dir + "'";
-    if (system(rm.c_str()) != 0) fprintf(stderr, "couldn't remove %s\n", dir);
+    std::error_code ec;
+    std::filesystem::remove_all(dir, ec);
+    if (ec) fprintf(stderr, "couldn't remove %s\n", dir);
 
     fprintf(stderr, "%s: %d failure(s)\n", g_failures ? "FAIL" : "PASS", g_failures);
     return g_failures ? 1 : 0;

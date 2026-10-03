@@ -131,7 +131,7 @@ RUNTIME_TEST("jni/references-low-byte") {
     if (have_activity && set_mid) unlink((host_shared_prefs_dir() + "/" + kPrefs + ".xml").c_str());
     if (zero) t.fail("%d of %d handles had a zero low byte (first: %s)", zero, total, first_zero.c_str());
     // Every one ends in 8 (mod 16): TaggedAlloc's offset.
-    if (((u64)vm.boolean(false) & 15) != TaggedAlloc::kTag) t.fail("a Boolean isn't at 8 (mod 16)");
+    if ((u64)vm.boolean(false) % TaggedAlloc::kAlign != TaggedAlloc::kTag) t.fail("a Boolean isn't at kTag (mod kAlign)");
     // The activity (activity->clazz) and the classes made at init are tagged too.
     if (have_activity && !((u64)vm.activity & 0xff)) t.fail("the activity object has a zero low byte");
     if (!((u64)vm.find_class("java/lang/String") & 0xff)) t.fail("java/lang/String has a zero low byte");

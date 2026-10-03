@@ -66,6 +66,17 @@ if(SOA_NEED_RUNTIME)  # the JIT host runtime and what links it (not for a server
   set(DYNARMIC_TESTS OFF CACHE BOOL "" FORCE)
   set(DYNARMIC_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(dynarmic)
+  if(WIN32 AND TARGET fmt)
+    # dynarmic's bundled fmt 10.1 and llvm-mingw's clang (23): its compile-time format-string
+    # checks are rejected ("call to consteval function ... is not a constant expression"); run
+    # them at run time instead.
+    target_compile_definitions(fmt PUBLIC FMT_CONSTEVAL=)
+    # its <fmt/ostream.h> wants libc++'s internal <__std_stream> on Windows: cmake/dynarmic-win
+    target_include_directories(fmt BEFORE PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/dynarmic-win>)
+    # dynarmic's ir_emitter.h uses std::vector without <vector> (libstdc++ includes it on the way);
+    # mcl's lift_sequence for this clang (cmake/dynarmic-win/mcl_lift_sequence.h)
+    target_compile_options(dynarmic PRIVATE -include vector "SHELL:-include ${CMAKE_CURRENT_LIST_DIR}/dynarmic-win/mcl_lift_sequence.h")
+  endif()
 endif()
 
 # ---- IJG libjpeg 9e (the game bundles 9b; 9e is what Ubuntu's libjpeg9 package, used before, ships)

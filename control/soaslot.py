@@ -26,6 +26,8 @@ Env:
     SOA_SLOT_DIR=DIR   where the slot files are (default /tmp/soa-slots)
     SOA_SLOT_MIN_FREE_GB=G  also wait while MemAvailable is below G GB (default 8: the agents'
                        brief), which covers game processes that don't go through the pool
+    SOA_SLOT_STAGGER=S at least S seconds (default 4) between two clients' starts machine-wide:
+                       a dozen clients booting at once saturate the cores
     SOA_SLOT_HELD=1    set by `run` for the command it starts: a nested `run` (a script that
                        starts another script) doesn't take a second slot (no hold-and-wait)
 
@@ -110,6 +112,26 @@ def try_acquire(name):
     return None
 
 
+def stagger():
+    """Spaces the clients' starts machine-wide: at least SOA_SLOT_STAGGER s (default 4) after the
+    last slot taken. A booting client is the heaviest (the JIT translates the game's startup), and
+    a dozen booting at once saturated the 32 cores (load 32) where the same clients started a few
+    seconds apart did not."""
+    gap = float(os.environ.get("SOA_SLOT_STAGGER", "4"))
+    if gap <= 0:
+        return
+    path = os.path.join(slot_dir(), "last-start")
+    fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o666)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)  # one starter at a time
+        wait = os.path.getmtime(path) + gap - time.time()
+        if 0 < wait <= gap:
+            time.sleep(wait)
+        os.utime(path, None)
+    finally:
+        os.close(fd)
+
+
 def acquire(name="game", quiet=False, timeout=None):
     """Takes a slot, waiting as long as it takes (or `timeout` s: then None). Returns the slot's
     file descriptor (keep it open while the client runs; close it to free the slot), or -1 when the
@@ -122,6 +144,7 @@ def acquire(name="game", quiet=False, timeout=None):
             got = try_acquire(name)
             if got:
                 fd, i = got
+                stagger()
                 waited = time.monotonic() - t0
                 if said and not quiet:
                     print("soaslot: %s: slot %d after %.0f s" % (name, i, waited), file=sys.stderr, flush=True)

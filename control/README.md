@@ -30,6 +30,7 @@ Only clients take slots, never `soa-server` (a server waits for its client; serv
 
 - `control/soaslot.py status`: who holds which slot, for how long. `control/soaslot.py slots`: N.
 - `SOA_SLOTS=N` overrides the pool's size (`0`: no pool). The default is the measured `DEFAULT_SLOTS` (12, below), capped by nproc/2 and MemTotal/3 GB on a smaller machine.
+- `SOA_SLOT_STAGGER` (default 4 s): a client starts at least that long after the previous one, machine-wide. Booting is a client's heaviest part (the JIT translates the game's startup): twelve session scripts that took their slots in the same second pushed the load to 32 on the 32 cores and two of them timed out; spaced 4 s apart they don't.
 - `SOA_SLOT_MIN_FREE_GB` (default 8, the agents' rule): a run also waits while MemAvailable is below it, which covers game processes that don't go through the pool (an older branch's scripts, a hand-started `soa`).
 - Tests: `control/tests/test_soaslot.py` (pytest, no game).
 

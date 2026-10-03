@@ -13,6 +13,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <sys/prctl.h>
+#include <sys/resource.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -202,6 +204,12 @@ int run_gdb_demo(const char* addr, bool fault) {
     if (!gdb_listen(addr, &err)) {
         fprintf(stderr, "%s\n", err.c_str());
         return 2;
+    }
+    if (fault) {  // the crash is the point: no core dump (a piped core_pattern, e.g. WSL's crash capture,
+                  // ignores RLIMIT_CORE 0, and dumping the JIT's mappings took 20 s under load)
+        rlimit rl{0, 0};
+        setrlimit(RLIMIT_CORE, &rl);
+        prctl(PR_SET_DUMPABLE, 0);
     }
     Guest g;
     g.start(fault);

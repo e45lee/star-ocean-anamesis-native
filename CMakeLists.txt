@@ -88,6 +88,11 @@ else()
 endif()
 include(cmake/deps.cmake)
 
+# soa_env: header-only, the programs' environment rule and the removed variables' table
+# (common/include/soa/env.h; docs/environment.md). Every library links it.
+add_library(soa_env INTERFACE)
+target_include_directories(soa_env INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/common/include)
+
 # ---- the parts, in dependency order
 if(SOA_BUILD_PORT OR SOA_BUILD_EMULATOR OR SOA_BUILD_VIEWER OR SOA_BUILD_PLATFORM370)
   add_subdirectory(runtime)   # libsoaruntime, soaruntime_app, soaruntime_tests

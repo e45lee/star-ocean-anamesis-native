@@ -1,8 +1,10 @@
 #pragma once
-// The local server's configuration (library code). The server reads nothing else: the port (soa)
-// fills it from its run options (soa::options(), port/src/native/api/server_adapters.cpp) before
-// the game starts, soa-server from its own command line (server/app/main.cpp, the same option
-// names). Tests change fields of config() directly and restore them.
+// The local server's configuration (library code): every setting the server has. The port (soa)
+// fills it from its command line (soa::options(), port/src/native/api/server_adapters.cpp) before
+// the game starts, soa-server from its own (server/app/main.cpp, the same flags). The library reads
+// no setting from the environment; its one environment variable is a self-test dump
+// (SOA_NOTICE_HTML_DUMP, docs/environment.md). Tests change fields of config() directly and
+// restore them.
 #include <cstdint>
 #include <initializer_list>
 #include <string>
@@ -17,13 +19,13 @@ extern const char* const kDefaultEventKeywords;
 struct ServerConfig {
     // ---- the server -----------------------------------------------------------------------------
     bool enabled = false;          // the server answers (soa: --server inproc, the default)
-    bool new_player = false;       // start without a player (SOA_RESTORE_NEW_PLAYER=1)
-    std::string master;            // the 3.7.0 master DB (SOA_SERVER_MASTER; "" = data/basmaster-3.7.0.sqlite3 in the repo)
-    std::string db;                // the state DB (SOA_SERVER_DB; "" = server.sqlite3 in the working directory)
-    std::string seed;              // the save a new state is seeded from (SOA_SERVER_SEED)
-    std::string game_xml;          // the client's Game.xml, the last seed fallback (SOA_SERVER_GAME_XML)
-    std::string gacha_pools;       // --gacha-pools: the reconstructed gacha pools ("" = SOA_GACHA_POOLS, else data/gacha_pools.sqlite3 in the repo)
-    bool has_seed_rng = false;     // a fixed RNG seed (SOA_SERVER_SEED_RNG), else the time
+    bool new_player = false;       // --new-player: start without a player
+    std::string master;            // --master: the 3.7.0 master DB ("" = data/basmaster-3.7.0.sqlite3 in the repo)
+    std::string db;                // --db: the state DB ("" = server.sqlite3 in the working directory)
+    std::string seed;              // --seed: the save a new state is seeded from
+    std::string game_xml;          // --game-xml: the client's Game.xml, the last seed fallback
+    std::string gacha_pools;       // --gacha-pools: the reconstructed gacha pools ("" = data/gacha_pools.sqlite3 in the repo)
+    bool has_seed_rng = false;     // --seed-rng: a fixed RNG seed, else the time
     uint64_t seed_rng = 0;
     // Free coins a new local player starts with (--start-coins; docs/server-rules.md "Seed").
     uint32_t start_coins = 300000;
@@ -39,12 +41,12 @@ struct ServerConfig {
     bool enable_events = false;    // --enable-events (enable_events.h)
     std::string event_keywords;    // --event-keywords; "" = kDefaultEventKeywords
     bool restore_tower = false;    // --restore-tower (api/tower/tower.cpp)
-    std::string campaign_master_db;  // SOA_MASTER_DB: the campaign module's master DB
-    std::string campaign_seed;       // SOA_CAMPAIGN_SEED=<mission label>
+    std::string campaign_master_db;  // --campaign-master-db: the campaign module's master DB
+    std::string campaign_seed;       // --campaign-seed <mission label>
 
     // ---- test hooks -----------------------------------------------------------------------------
-    std::string fail;              // SOA_SERVER_FAIL="Method:code[,Method:code]"
-    bool surprise = false;         // SOA_SERVER_SURPRISE=1: force surprise missions
+    std::string fail;              // --fail "Method:code[,Method:code]"
+    bool surprise = false;         // --surprise: force surprise missions
 
     // ---- files ----------------------------------------------------------------------------------
     // The source checkouts repo files (master DBs, seed saves, port/server-data) are looked up in,

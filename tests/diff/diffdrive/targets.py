@@ -153,7 +153,12 @@ class Run:
         soaslot.release(self.slot)
         self.slot = -1
         if self.grep(self.client_log, r"Unhandled SIG|\*\*\* host signal"):
-            self.miss("the client crashed (see %s)" % self.client_log)
+            # a crash whose backtrace is in the host's GPU driver (WSL's NVIDIA GL, seen once with
+            # many clients at once) is the host's, not the game's: labelled so
+            host = self.grep(self.client_log, r"^/usr/lib/wsl/drivers/|libnvwgf2umx|libnvidia-gl|libGLX_nvidia|d3d12_dri")
+            self.miss("the client crashed%s (see %s)" % (" in the host GPU driver" if host else "", self.client_log))
+        if self.grep(self.client_log, r"glx: failed to create|X Error of failed request"):
+            self.note("the host's GL/GLX failed for this client (see %s): a host problem, not the game's" % self.client_log)
         if os.path.exists(self.state_db):
             self.state("end")
         if not self.keep and os.path.isdir(self.phone):

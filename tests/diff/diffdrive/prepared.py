@@ -2,7 +2,9 @@
 playing up to it. The state is made by the server itself (soa-server --replay of a recorded corpus
 of server/tests/replay/, cut after one of its requests), so it is exactly what the server's own
 rules produce for those requests; every target then starts from a copy of it (soa-server --data,
-or soa --db for the in-process route). No client state is prepared: the phone is the shared one, as
+or soa --db for the in-process route; only server.sqlite3: a corpus whose options keep side
+files, e.g. --campaign-seed's server_campaign.txt in the data dir, would need those copied too).
+No client state is prepared: the phone is the shared one, as
 in every flow, and the client learns where it is from the server (Login / GetPlayer).
 """
 import os

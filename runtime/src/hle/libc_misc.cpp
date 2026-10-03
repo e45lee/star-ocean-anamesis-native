@@ -1,18 +1,24 @@
 // Bionic libc: time, sysconf/syscall, dynamic linker, sockets.
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h>
-#include <errno.h>
 #include <linux/futex.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <sys/syscall.h>
+#endif
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 
+#include <cinttypes>
 #include <string>
 
 #include "core/device.h"
@@ -23,6 +29,7 @@
 namespace soa {
 namespace {
 
+#ifndef _WIN32  // Windows: libc_win32.cpp (time structs, sysconf, syscall)
 // ---- time ----
 locale_t fixloc(u64 l) {
     static locale_t c = newlocale(LC_ALL_MASK, "C", (locale_t)0);
@@ -78,6 +85,7 @@ void th_syscall(Cpu& c) {
     }
     ret(c, (u64)r);
 }
+#endif
 
 // ---- dynamic linker ----
 constexpr u64 kHandleSelf = 0x1000, kHandleSystem = 0x2000;
@@ -107,7 +115,7 @@ void th_dlsym(Cpu& c) {
     if (h == kHandleSelf && main_lib()) a = main_lib()->sym(name);
     if (!a) a = Hle::get().lookup(name);
     if (!a && main_lib() && h != kHandleSystem) a = main_lib()->sym(name);
-    LOGD("dl", "dlsym(%#lx, %s) = %#lx", h, name, a);
+    LOGD("dl", "dlsym(%#" PRIx64 ", %s) = %#" PRIx64, h, name, a);
     if (!a) t_dlerror = "symbol not found";
     ret(c, a);
 }
@@ -159,7 +167,17 @@ void th_getaddrinfo(Cpu& c) {
         hints.ai_family = ghints->ai_family;
         hints.ai_socktype = ghints->ai_socktype;
         hints.ai_protocol = ghints->ai_protocol;
+#ifdef _WIN32  // AF_INET6 is 10 in the guest, 23 in Winsock (and Winsock needs starting)
+        if (hints.ai_family == 10) hints.ai_family = AF_INET6;
+#endif
     }
+#ifdef _WIN32
+    static const bool wsa = [] {
+        WSADATA d;
+        return WSAStartup(MAKEWORD(2, 2), &d) == 0;
+    }();
+    (void)wsa;
+#endif
     LOGI("net", "getaddrinfo(%s, %s)", node ? node : "", serv ? serv : "");
     int r = getaddrinfo(node, serv, ghints ? &hints : nullptr, &res);
     BionicAddrinfo* head = nullptr;
@@ -172,6 +190,9 @@ void th_getaddrinfo(Cpu& c) {
         b->ai_protocol = a->ai_protocol;
         b->ai_addrlen = a->ai_addrlen;
         memcpy(b + 1, a->ai_addr, a->ai_addrlen);
+#ifdef _WIN32
+        if (a->ai_family == AF_INET6) b->ai_family = 10, ((sockaddr*)(b + 1))->sa_family = 10;
+#endif
         b->ai_addr = (u64)(b + 1);
         b->ai_canonname = a->ai_canonname ? (u64)strdup(a->ai_canonname) : 0;
         *tail = b;
@@ -194,6 +215,7 @@ void th_freeaddrinfo(Cpu& c) {
 }  // namespace
 
 void register_libc_misc(Hle& h) {
+#ifndef _WIN32
     HLE_WRAP(h, clock_gettime);
     HLE_WRAP(h, gettimeofday);
     HLE_WRAP(h, time);
@@ -207,6 +229,7 @@ void register_libc_misc(Hle& h) {
     h.fn("sysconf", th_sysconf);
     h.fn("syscall", th_syscall);
     h.fn("getrlimit", [](Cpu& c) { ret(c, (u64)(s64)getrlimit((__rlimit_resource_t)c.x(0), (rlimit*)c.x(1))); });
+#endif
 
     h.fn("dlopen", th_dlopen);
     h.fn("dlsym", th_dlsym);
@@ -214,6 +237,7 @@ void register_libc_misc(Hle& h) {
     h.fn("dlerror", th_dlerror);
     h.fn("dl_iterate_phdr", th_dl_iterate_phdr);
 
+#ifndef _WIN32  // Windows: guest fds are a table there (libc_win32.cpp)
     HLE_WRAP(h, socket);
     HLE_WRAP(h, bind);
     HLE_WRAP(h, connect);
@@ -233,6 +257,7 @@ void register_libc_misc(Hle& h) {
     HLE_WRAP(h, gethostbyaddr);
     HLE_WRAP(h, getnameinfo);
     HLE_WRAP(h, inet_addr);
+#endif
     h.fn("getaddrinfo", th_getaddrinfo);
     h.fn("freeaddrinfo", th_freeaddrinfo);
 }

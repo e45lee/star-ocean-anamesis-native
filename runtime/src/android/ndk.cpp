@@ -1,17 +1,17 @@
 // NDK: ALooper, AInputQueue/AInputEvent, AAssetManager, AConfiguration, ANativeWindow, liblog.
 #include "android/ndk.h"
 
-#include <poll.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include <sys/eventfd.h>
 #include <unistd.h>
 
 #include <algorithm>
+#include <cinttypes>
 #include <cstring>
 #include <set>
 
 #include "core/hle.h"
+#include "core/host_fd.h"
 #include "core/log.h"
 #include "hle/format.h"
 
@@ -101,8 +101,14 @@ std::vector<std::string> AssetManager::list_files(const std::string& dir) const 
         if (!root->empty() && prefix.compare(0, sizeof(kBuiltinData) - 1, kBuiltinData) == 0) {
             std::string host = *root + "/" + prefix.substr(sizeof(kBuiltinData) - 1);
             if (DIR* dh = opendir(host.c_str())) {
-                while (dirent* e = readdir(dh))
+                while (dirent* e = readdir(dh)) {
+#ifdef _WIN32  // (MinGW's dirent has no d_type)
+                    struct stat st;
+                    if (stat((host + "/" + e->d_name).c_str(), &st) == 0 && S_ISREG(st.st_mode)) out.insert(e->d_name);
+#else
                     if (e->d_type == DT_REG) out.insert(e->d_name);
+#endif
+                }
                 closedir(dh);
             }
         }
@@ -138,7 +144,7 @@ bool open_download(Cpu& c, const char* name, const std::string& host) {
     }
     a->size = a->owned.size();
     a->data = a->owned.data();
-    LOGD("assets", "open(%s) = %lu bytes from %s", name, a->size, host.c_str());
+    LOGD("assets", "open(%s) = %" PRIu64 " bytes from %s", name, a->size, host.c_str());
     ret_ptr(c, a);
     return true;
 }
@@ -167,7 +173,7 @@ void th_AAssetManager_open(Cpu& c) {
         }
         a->data = a->owned.data();
     }
-    LOGT("assets", "open(%s) = %lu bytes", name, a->size);
+    LOGT("assets", "open(%s) = %" PRIu64 " bytes", name, a->size);
     ret_ptr(c, a);
 }
 void th_AAsset_close(Cpu& c) { delete (Asset*)c.x(0); }
@@ -281,9 +287,9 @@ void th_ALooper_pollAll(Cpu& c) {
         std::lock_guard lk(l->m);
         fds = l->fds;
     }
-    std::vector<pollfd> pfd;
-    for (auto& f : fds) pfd.push_back({f.fd, (short)((f.events & 1) ? POLLIN : 0), 0});
-    int r = poll(pfd.data(), pfd.size(), timeout);
+    std::vector<hostfd::PollFd> pfd;
+    for (auto& f : fds) pfd.push_back({f.fd, (short)((f.events & 1) ? hostfd::kIn : 0), 0});
+    int r = hostfd::poll(pfd.data(), pfd.size(), timeout);
     if (r <= 0) {
         ret(c, (u64)(r == 0 ? -3 : -4));  // ALOOPER_POLL_TIMEOUT / ERROR
         return;
@@ -291,7 +297,7 @@ void th_ALooper_pollAll(Cpu& c) {
     for (size_t i = 0; i < pfd.size(); i++) {
         if (!pfd[i].revents) continue;
         const auto& f = fds[i];
-        int ev = ((pfd[i].revents & POLLIN) ? 1 : 0) | ((pfd[i].revents & POLLERR) ? 4 : 0) | ((pfd[i].revents & POLLHUP) ? 8 : 0);
+        int ev = ((pfd[i].revents & hostfd::kIn) ? 1 : 0) | ((pfd[i].revents & hostfd::kErr) ? 4 : 0) | ((pfd[i].revents & hostfd::kHup) ? 8 : 0);
         if (f.callback) {
             if (!guest_call(f.callback, {(u64)f.fd, (u64)ev, f.data})) looper_remove_fd(l, f.fd);
             ret(c, (u64)-2);  // ALOOPER_POLL_CALLBACK
@@ -364,28 +370,23 @@ void th_android_log_print(Cpu& c) {
 
 // ===========================================================================
 
-InputQueue::InputQueue() { efd_ = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC); }
+InputQueue::InputQueue() { efd_ = hostfd::make_event(); }
 
 void InputQueue::push(const InputEvent& e) {
     std::lock_guard lk(m_);
     q_.push_back(new InputEvent(e));
-    u64 one = 1;
-    (void)!write(efd_, &one, 8);
+    hostfd::event_signal(efd_);
 }
 
 bool InputQueue::pop(InputEvent*& out) {
     std::lock_guard lk(m_);
     if (q_.empty()) {
-        u64 v;
-        (void)!read(efd_, &v, 8);
+        hostfd::event_drain(efd_);
         return false;
     }
     out = q_.front();
     q_.pop_front();
-    if (q_.empty()) {
-        u64 v;
-        (void)!read(efd_, &v, 8);
-    }
+    if (q_.empty()) hostfd::event_drain(efd_);
     return true;
 }
 

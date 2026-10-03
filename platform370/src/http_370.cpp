@@ -36,15 +36,9 @@
 // HTTP, also for https:// (soa-server has no TLS). https:// to the server's own address is
 // plain HTTP too. Other http:// URLs are fetched as they are; other https:// URLs fail (no TLS
 // here; the original services are gone).
-#include <arpa/inet.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <poll.h>
 #include <string.h>
 #include <strings.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
 #include <atomic>
 #include <chrono>
@@ -55,6 +49,7 @@
 #include "internal.h"
 #include "jni/jvm.h"
 #include "platform370/platform370.h"
+#include "soa/sock.h"
 
 namespace soa::platform370::detail {
 namespace {
@@ -83,7 +78,7 @@ struct Exchange {
 thread_local Exchange t_x;
 // Ends the calling thread's exchange (closes a streaming connection).
 void reset_exchange() {
-    if (t_x.fd >= 0) close(t_x.fd);
+    if (t_x.fd >= 0) sock::close(t_x.fd);
     t_x = Exchange{};
 }
 std::string g_user_agent = "Dalvik/2.1.0 (Linux; U; Android 9)";  // until SetHttpUserAgent; assumption (d)
@@ -118,6 +113,7 @@ bool parse_url(const std::string& u, Url& out) {
 int connect_to(const std::string& host, int port, std::string& err) {
     addrinfo hints{}, *res = nullptr;
     hints.ai_socktype = SOCK_STREAM;
+    sock::startup();
     int r = getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res);
     if (r) {
         err = std::string("resolve: ") + gai_strerror(r);
@@ -125,27 +121,25 @@ int connect_to(const std::string& host, int port, std::string& err) {
     }
     int fd = -1;
     for (addrinfo* a = res; a; a = a->ai_next) {
-        fd = socket(a->ai_family, a->ai_socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, a->ai_protocol);
+        fd = sock::tcp_socket(true, a->ai_family);
         if (fd < 0) continue;
-        if (connect(fd, a->ai_addr, a->ai_addrlen) == 0) break;
-        if (errno == EINPROGRESS) {
-            pollfd p{fd, POLLOUT, 0};
+        if (connect(fd, a->ai_addr, (int)a->ai_addrlen) == 0) break;
+        if (sock::connect_in_progress()) {
+            sock::PollFd p{fd, POLLOUT, 0};
             int e = 0;
             socklen_t el = sizeof e;
-            if (poll(&p, 1, kConnectTimeoutMs) == 1 && getsockopt(fd, SOL_SOCKET, SO_ERROR, &e, &el) == 0 && e == 0) break;
-            err = e ? strerror(e) : "connect timeout";
+            if (sock::poll(&p, 1, kConnectTimeoutMs) == 1 && getsockopt(fd, SOL_SOCKET, SO_ERROR, (char*)&e, &el) == 0 && e == 0) break;
+            err = e ? "connect: error " + std::to_string(e) : "connect timeout";
         } else {
-            err = strerror(errno);
+            err = sock::last_error();
         }
-        close(fd);
+        sock::close(fd);
         fd = -1;
     }
     freeaddrinfo(res);
-    if (fd >= 0) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
     if (fd >= 0) {
-        timeval tv{kReadTimeoutMs / 1000, 0};
-        setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
-        setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
+        sock::set_nonblocking(fd, false);
+        sock::set_timeouts(fd, kReadTimeoutMs / 1000);
     }
     return fd;
 }
@@ -153,7 +147,7 @@ int connect_to(const std::string& host, int port, std::string& err) {
 bool send_all(int fd, const std::string& s) {
     size_t off = 0;
     while (off < s.size()) {
-        ssize_t n = send(fd, s.data() + off, s.size() - off, MSG_NOSIGNAL);
+        ssize_t n = sock::send(fd, s.data() + off, s.size() - off);
         if (n <= 0) return false;
         off += (size_t)n;
     }
@@ -300,19 +294,19 @@ bool exchange(const std::string& url, int port_arg, const std::string& body, boo
         // The head first.
         char buf[65536];
         while ((he = resp.find("\r\n\r\n")) == std::string::npos) {
-            ssize_t n = recv(fd, buf, sizeof buf, 0);
-            if (n < 0 && errno == EINTR) continue;
+            ssize_t n = sock::recv(fd, buf, sizeof buf);
+            if (n < 0 && sock::interrupted()) continue;
             if (n <= 0) {
-                err = n < 0 ? strerror(errno) : "connection closed";
+                err = n < 0 ? sock::last_error() : "connection closed";
                 break;
             }
             resp.append(buf, (size_t)n);
         }
     } else {
-        err = strerror(errno);
+        err = sock::last_error();
     }
     if (!ok || he == std::string::npos || resp.compare(0, 5, "HTTP/") != 0) {
-        close(fd);
+        sock::close(fd);
         LOGW("http", "%s %s (%s:%d): no response (%s)", post ? "POST" : "GET", url.c_str(), host.c_str(), port, err.empty() ? "malformed" : err.c_str());
         return false;
     }
@@ -329,17 +323,17 @@ bool exchange(const std::string& url, int port_arg, const std::string& body, boo
         if (rbody.size() > length) rbody.resize(length);
         t_x.remaining = length - rbody.size();
         if (t_x.remaining) t_x.fd = fd;
-        else close(fd);
+        else sock::close(fd);
     } else {
         // Chunked, or delimited by the end of the connection: read it whole.
         char buf[65536];
         for (;;) {
-            ssize_t n = recv(fd, buf, sizeof buf, 0);
-            if (n < 0 && errno == EINTR) continue;
+            ssize_t n = sock::recv(fd, buf, sizeof buf);
+            if (n < 0 && sock::interrupted()) continue;
             if (n <= 0) break;
             rbody.append(buf, (size_t)n);
         }
-        close(fd);
+        sock::close(fd);
         if (chunked) {
             std::string dec;
             if (!dechunk(rbody, dec)) {
@@ -420,19 +414,19 @@ void install_http(Vm& vm) {
         }
         if (t_x.fd < 0 || !t_x.remaining) return (u64)(s64)-1;
         for (;;) {
-            ssize_t n = recv(t_x.fd, arr->data.data(), (size_t)std::min<u64>(arr->length, t_x.remaining), 0);
-            if (n < 0 && errno == EINTR) continue;
+            ssize_t n = sock::recv(t_x.fd, arr->data.data(), (size_t)std::min<u64>(arr->length, t_x.remaining));
+            if (n < 0 && sock::interrupted()) continue;
             if (n <= 0) {
                 // A short body: the client's size / SHA-1 checks catch it.
                 LOGW("http", "%s: the body ended %llu bytes early (%s)", t_x.url.c_str(), (unsigned long long)t_x.remaining,
-                     n < 0 ? strerror(errno) : "connection closed");
-                close(t_x.fd);
+                     n < 0 ? sock::last_error().c_str() : "connection closed");
+                sock::close(t_x.fd);
                 t_x.fd = -1;
                 return (u64)(s64)-1;
             }
             t_x.remaining -= (u64)n;
             if (!t_x.remaining) {
-                close(t_x.fd);
+                sock::close(t_x.fd);
                 t_x.fd = -1;
             }
             return (u64)n;

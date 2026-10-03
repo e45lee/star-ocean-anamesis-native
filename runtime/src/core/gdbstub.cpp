@@ -9,6 +9,26 @@
 // reply, not a crash).
 #include "core/gdbstub.h"
 
+#ifdef _WIN32
+// Not on Windows yet (port/PLAN.md 5b): --gdb says so; the hooks stay off (g_gdb_enabled false).
+#include <signal.h>
+
+#include "core/log.h"
+
+namespace soa {
+bool g_gdb_enabled = false;
+bool gdb_listen(const std::string&, std::string* err) {
+    if (err) *err = "the GDB stub isn't available on Windows yet";
+    return false;
+}
+int gdb_port() { return -1; }
+void gdb_shutdown() {}
+bool gdb_stopped() { return false; }
+void gdb_park(Cpu&) {}
+bool gdb_breakpoint_hit(Cpu&, u64) { return false; }
+void gdb_fault(Cpu*, int) {}
+}  // namespace soa
+#else
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -727,3 +747,4 @@ void gdb_shutdown() {
 }
 
 }  // namespace soa
+#endif

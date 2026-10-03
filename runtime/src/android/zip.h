@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "core/host_mem.h"
+
 namespace soa {
 
 class ZipArchive {
@@ -31,6 +33,7 @@ public:
 private:
     uint64_t data_offset(const Entry& e) const;
     std::string path_;
+    hostmem::MappedFile file_;
     const uint8_t* map_ = nullptr;
     size_t size_ = 0;
     std::unordered_map<std::string, Entry> entries_;

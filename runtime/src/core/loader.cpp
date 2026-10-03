@@ -1,18 +1,19 @@
 #include "core/loader.h"
 
 #include <cxxabi.h>
-#include <elf.h>
+#include "core/elf64.h"
 #include <fcntl.h>
-#include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include <algorithm>
+#include <cinttypes>
 #include <cstring>
 #include <functional>
 #include <unordered_map>
 
 #include "core/hle.h"
+#include "core/host_mem.h"
 #include "core/log.h"
 
 namespace soa {
@@ -70,18 +71,18 @@ u64 translate_symbol_addr(const LoadedLib& from, const LoadedLib& to, u64 addr) 
 
 std::string describe_guest_addr(u64 addr) {
     char buf[64];
-    snprintf(buf, sizeof buf, "0x%lx", addr);
+    snprintf(buf, sizeof buf, "0x%" PRIx64, addr);
     std::string out = buf;
     if (const char* t = thunk_name_at(addr)) return out + " <thunk:" + t + ">";
     for (LoadedLib* l : g_libs) {
         if (addr < l->base || addr >= l->base + l->size) continue;
         std::string n;
         u64 off;
-        snprintf(buf, sizeof buf, " [lib+0x%lx]", addr - l->base);
+        snprintf(buf, sizeof buf, " [lib+0x%" PRIx64 "]", addr - l->base);
         out += buf;
         if (l->symbolize(addr, n, off)) {
             if (n.size() > 160) n = n.substr(0, 160) + "...";
-            snprintf(buf, sizeof buf, "+0x%lx", off);
+            snprintf(buf, sizeof buf, "+0x%" PRIx64, off);
             out += " " + n + buf;
         }
     }
@@ -89,13 +90,10 @@ std::string describe_guest_addr(u64 addr) {
 }
 
 static LoadedLib* load_image(const std::string& path) {
-    int fd = open(path.c_str(), O_RDONLY);
-    if (fd < 0) fatal("cannot open %s", path.c_str());
-    struct stat st;
-    fstat(fd, &st);
-    auto* file = (const u8*)mmap(nullptr, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    close(fd);
-    if (file == MAP_FAILED) fatal("mmap %s failed", path.c_str());
+    hostmem::MappedFile mf;
+    if (!hostmem::map_file(path, &mf)) fatal("cannot map %s", path.c_str());
+    const u8* file = mf.data;
+    const u64 file_size = mf.size;
 
     auto* eh = (const Elf64_Ehdr*)file;
     if (memcmp(eh->e_ident, ELFMAG, SELFMAG) != 0 || eh->e_machine != EM_AARCH64) fatal("%s: not an AArch64 ELF", path.c_str());
@@ -106,8 +104,8 @@ static LoadedLib* load_image(const std::string& path) {
         if (ph[i].p_type == PT_LOAD) max_va = std::max<u64>(max_va, ph[i].p_vaddr + ph[i].p_memsz);
     max_va = (max_va + 0xffff) & ~0xffffull;
 
-    void* mem = mmap(nullptr, max_va, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (mem == MAP_FAILED) fatal("mmap for image failed");
+    void* mem = hostmem::map_rw(max_va);
+    if (!mem) fatal("mapping %" PRIu64 " bytes for the image failed", max_va);
     u64 base = (u64)mem;
 
     auto* lib = new LoadedLib();
@@ -124,11 +122,11 @@ static LoadedLib* load_image(const std::string& path) {
     lib->phnum = eh->e_phnum;
     // Allocated sections (name, address, size) from the section headers, when present.
     if (eh->e_shoff && eh->e_shentsize == sizeof(Elf64_Shdr) && eh->e_shstrndx < eh->e_shnum &&
-        eh->e_shoff + (u64)eh->e_shnum * sizeof(Elf64_Shdr) <= (u64)st.st_size) {
+        eh->e_shoff + (u64)eh->e_shnum * sizeof(Elf64_Shdr) <= file_size) {
         auto* sh = (const Elf64_Shdr*)(file + eh->e_shoff);
         const Elf64_Shdr& strs = sh[eh->e_shstrndx];
         for (int i = 0; i < eh->e_shnum; i++)
-            if ((sh[i].sh_flags & SHF_ALLOC) && sh[i].sh_name < strs.sh_size && strs.sh_offset + strs.sh_size <= (u64)st.st_size)
+            if ((sh[i].sh_flags & SHF_ALLOC) && sh[i].sh_name < strs.sh_size && strs.sh_offset + strs.sh_size <= file_size)
                 lib->sections.push_back({std::string((const char*)file + strs.sh_offset + sh[i].sh_name,
                                                      strnlen((const char*)file + strs.sh_offset + sh[i].sh_name, strs.sh_size - sh[i].sh_name)),
                                          base + sh[i].sh_addr, sh[i].sh_size});
@@ -217,8 +215,8 @@ static LoadedLib* load_image(const std::string& path) {
         u64 f = ((u64*)init_array)[i];
         if (f && f != ~0ull) lib->init_array.push_back(f);
     }
-    munmap((void*)file, st.st_size);
-    LOGI("loader", "loaded %s at 0x%lx (%lu KiB, %lu init functions)", path.c_str(), base, max_va / 1024, lib->init_array.size());
+    hostmem::unmap_file(mf);
+    LOGI("loader", "loaded %s at 0x%" PRIx64 " (%" PRIu64 " KiB, %zu init functions)", path.c_str(), base, max_va / 1024, lib->init_array.size());
     g_libs.push_back(lib);
     return lib;
 }

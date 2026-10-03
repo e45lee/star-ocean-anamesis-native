@@ -1,6 +1,7 @@
 // JNIEnv / JavaVM function tables backed by the fake VM in jvm.h.
 #include "jni/jvm.h"
 
+#include <cinttypes>
 #include <cstring>
 #include <mutex>
 #include <set>
@@ -391,7 +392,7 @@ void call_thunk(Cpu& c) {
             static std::mutex mu;
             std::lock_guard lk(mu);
             if (warned.insert(m).second)
-                LOGW("jni", "%s.%s%s returned a reference with a zero low byte (%#lx): not a Vm object?", m->cls ? m->cls->name.c_str() : "?",
+                LOGW("jni", "%s.%s%s returned a reference with a zero low byte (%#" PRIx64 "): not a Vm object?", m->cls ? m->cls->name.c_str() : "?",
                      m->name.c_str(), m->sig.c_str(), r);
         }
     }

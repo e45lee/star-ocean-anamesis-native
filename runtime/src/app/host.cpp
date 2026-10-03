@@ -6,11 +6,15 @@
 #include <SDL.h>
 #include <zlib.h>
 #include <signal.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include <algorithm>
+#include <cinttypes>
 #include <cmath>
 #include <chrono>
 #include <functional>
@@ -643,6 +647,43 @@ void run_command(const std::string& cmd) {
     }
 }
 
+void control_push(std::string l) {
+    while (!l.empty() && (l.back() == '\n' || l.back() == '\r')) l.pop_back();
+    if (l.empty()) return;
+    std::lock_guard lk(g_control_mutex);
+    g_control_cmds.push_back(l);
+}
+
+#ifdef _WIN32
+// Windows: a named pipe instead of the FIFO, \\.\pipe\<the path's file name> (or the path itself
+// when it is already \\.\pipe\...); each writer connects, writes lines and disconnects.
+void control_thread(std::string path) {
+    std::string name = path;
+    if (name.rfind("\\\\.\\pipe\\", 0) != 0) {
+        size_t s = name.find_last_of("/\\");
+        name = "\\\\.\\pipe\\" + (s == std::string::npos ? name : name.substr(s + 1));
+    }
+    LOGI("control", "listening on %s", name.c_str());
+    for (;;) {
+        HANDLE h = CreateNamedPipeA(name.c_str(), PIPE_ACCESS_INBOUND, PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, 1, 4096, 4096, 0, nullptr);
+        if (h == INVALID_HANDLE_VALUE) {
+            LOGE("control", "CreateNamedPipe %s failed (%lu)", name.c_str(), (unsigned long)GetLastError());
+            return;
+        }
+        if (ConnectNamedPipe(h, nullptr) || GetLastError() == ERROR_PIPE_CONNECTED) {
+            std::string pending;
+            char buf[1024];
+            DWORD n;
+            while (ReadFile(h, buf, sizeof buf, &n, nullptr) && n) {
+                pending.append(buf, n);
+                for (size_t e; (e = pending.find('\n')) != std::string::npos; pending.erase(0, e + 1)) control_push(pending.substr(0, e));
+            }
+            control_push(pending);
+        }
+        CloseHandle(h);
+    }
+}
+#else
 // Reads commands (one per line) from a FIFO so a running instance can be driven externally.
 void control_thread(std::string path) {
     unlink(path.c_str());
@@ -655,16 +696,11 @@ void control_thread(std::string path) {
         FILE* f = fopen(path.c_str(), "r");
         if (!f) return;
         char line[1024];
-        while (fgets(line, sizeof line, f)) {
-            std::string l = line;
-            while (!l.empty() && (l.back() == '\n' || l.back() == '\r')) l.pop_back();
-            if (l.empty()) continue;
-            std::lock_guard lk(g_control_mutex);
-            g_control_cmds.push_back(l);
-        }
+        while (fgets(line, sizeof line, f)) control_push(line);
         fclose(f);
     }
 }
+#endif
 
 // ---------------------------------------------------------------------------
 // ANativeActivity
@@ -785,7 +821,7 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
     g_activity.obbPath = (u64)strdup(obb.c_str());
 
     u64 onload = lib.sym("JNI_OnLoad");
-    if (onload) LOGI("main", "JNI_OnLoad = %#lx", guest_call(onload, {vm.vm_ptr(), 0}));
+    if (onload) LOGI("main", "JNI_OnLoad = %#" PRIx64, guest_call(onload, {vm.vm_ptr(), 0}));
     u64 oncreate = lib.sym("ANativeActivity_onCreate");
     if (!oncreate) fatal("ANativeActivity_onCreate not found");
     guest_call(oncreate, {(u64)&g_activity, 0, 0});

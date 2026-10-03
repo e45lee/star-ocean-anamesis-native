@@ -156,10 +156,12 @@ void log(const char* why) {
         LOGI("memstats", "  map %lx-%lx %s %lu MB, rss %ld MB %s", big[i]->lo, big[i]->hi, big[i]->perms.c_str(), (big[i]->hi - big[i]->lo) >> 20,
              big[i]->rss_kb / 1024, big[i]->name.c_str());
 
-    // Host malloc.
+    // Host malloc (glibc's; the /proc parts above find nothing on Windows).
+#ifndef _WIN32
     struct mallinfo2 mi = mallinfo2();
     LOGI("memstats", "host malloc: in use %zu MB (arena %zu MB, mmapped %zu MB in %zu), free in arenas %zu MB, top pad %zu MB",
          (mi.uordblks + mi.hblkhd) >> 20, mi.arena >> 20, mi.hblkhd >> 20, mi.hblks, mi.fordblks >> 20, mi.keepcost >> 20);
+#endif
 
     // Guest engine heap (docs/notes.md "Engine heap"): the available manager, +0x28 heap size.
     static const u64 get_mm = guest::sym("_ZN4Aska6Global25GetAvailableMemoryManagerEv");

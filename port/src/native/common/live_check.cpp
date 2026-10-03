@@ -53,8 +53,9 @@
 //     wrote its inputs in between and it counts as a race.
 #include "native/common/live_check.h"
 
+#ifndef _WIN32
 #include <sys/mman.h>
-#include <sys/syscall.h>
+#endif
 #include <unistd.h>
 
 #include <algorithm>
@@ -65,6 +66,7 @@
 #include <set>
 #include <thread>
 
+#include "core/host_mem.h"
 #include "core/loader.h"
 #include "core/log.h"
 #include "native/common/guest_std.h"
@@ -542,13 +544,7 @@ void play_call(A64& r, u64 target, int memop) {
 
 // [a, a + n) is mapped memory (the stack-vector guess below also matches buffers of floats: e.g. a
 // CVector (0.707, 0) reads as the "pointer" 0x3f34fe8a).
-bool mapped(u64 a, u64 n) {
-    static const u64 pg = (u64)sysconf(_SC_PAGESIZE);
-    unsigned char v;
-    for (u64 p = a & ~(pg - 1); p < a + n; p += pg)
-        if (mincore((void*)p, pg, &v) != 0) return false;
-    return true;
-}
+bool mapped(u64 a, u64 n) { return hostmem::mapped((const void*)a, n); }
 
 // Where a call through a PLT entry that has been stubbed itself (check(): the callee couldn't be)
 // lands: callee() no longer recognises the patched entry.
@@ -666,7 +662,7 @@ std::mutex g_pin_m;
 std::condition_variable g_pin_cv;
 thread_local int t_pin_depth = 0;
 int my_tid() {
-    static thread_local const int tid = (int)syscall(SYS_gettid);
+    static thread_local const int tid = (int)gettid();
     return tid;
 }
 }  // namespace
@@ -936,7 +932,7 @@ void check(Cpu& c, int i) {
     Family& fam = *e.fam;
     if (t_busy || !e.orig || !fam.only.match(e.sym) || (fam.budget && e.checks >= (u64)fam.budget) || e.calls++ % fam.every) return e.run_unchecked(c);
     t_busy = true;
-    if (fam.trace) LOGI(fam.log_tag.c_str(), "check %s x0=%llx (thread %ld)", e.sym, (unsigned long long)c.x(0), (long)syscall(SYS_gettid));
+    if (fam.trace) LOGI(fam.log_tag.c_str(), "check %s x0=%llx (thread %ld)", e.sym, (unsigned long long)c.x(0), (long)gettid());
     u64 x[9];
     V128 v[8];
     for (int k = 0; k < 9; k++) x[k] = c.x(k);
@@ -1275,12 +1271,12 @@ void check(Cpu& c, int i) {
         if (race) {
             u64 n = ++fam.stats.races;
             e.races++;
-            if (n <= 60) LOGI(fam.log_tag.c_str(), "race %s (thread %ld): %s; %s", e.sym, (long)syscall(SYS_gettid), s.c_str(), race);
+            if (n <= 60) LOGI(fam.log_tag.c_str(), "race %s (thread %ld): %s; %s", e.sym, (long)gettid(), s.c_str(), race);
         } else {
             e.bad++;
             fam.on_mismatch(e, s);
             u64 n = ++fam.stats.bad;
-            if (n <= 60) LOGI(fam.log_tag.c_str(), "MISMATCH %s (thread %ld): %s", e.sym, (long)syscall(SYS_gettid), s.c_str());
+            if (n <= 60) LOGI(fam.log_tag.c_str(), "MISMATCH %s (thread %ld): %s", e.sym, (long)gettid(), s.c_str());
         }
     }
     t_busy = false;

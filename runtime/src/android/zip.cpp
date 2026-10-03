@@ -1,7 +1,6 @@
 #include "android/zip.h"
 
 #include <fcntl.h>
-#include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <zlib.h>
@@ -23,15 +22,9 @@ T rd(const uint8_t* p) {
 
 bool ZipArchive::open(const std::string& path) {
     path_ = path;
-    int fd = ::open(path.c_str(), O_RDONLY);
-    if (fd < 0) return false;
-    struct stat st;
-    fstat(fd, &st);
-    size_ = st.st_size;
-    void* m = mmap(nullptr, size_, PROT_READ, MAP_SHARED, fd, 0);
-    ::close(fd);
-    if (m == MAP_FAILED) return false;
-    map_ = (const uint8_t*)m;
+    if (!hostmem::map_file(path, &file_)) return false;
+    map_ = file_.data;
+    size_ = file_.size;
 
     // End of central directory (with possible comment), and ZIP64 locator.
     if (size_ < 22) return false;
@@ -82,7 +75,7 @@ bool ZipArchive::open(const std::string& path) {
 }
 
 ZipArchive::~ZipArchive() {
-    if (map_) munmap((void*)map_, size_);
+    hostmem::unmap_file(file_);
 }
 
 const ZipArchive::Entry* ZipArchive::find(const std::string& name) const {

@@ -1,0 +1,1577 @@
+# Local server: game rules
+
+The rules the local server (`server/`, in-process in `soa` or standalone as `soa-server`) applies when it answers the game's API requests. For the requests and response shapes themselves see `docs/api.md`; for the plan see `docs/history/PLAN-restore-original.md`.
+
+Written 2026-09-29 by agent `apicat` as the skeleton for `server-core` and the Wave B/C server agents. Master data is the 3.7.0 DB (`data/basmaster-3.7.0.sqlite3`); the queries were run against it.
+
+## Source labels
+Every rule carries one label. Put the same label in a comment next to the code that applies it.
+- **(a) master data**: the table and columns decide it. The right answer.
+- **(b) client-side evidence**: client code shows, previews or pre-computes the value; the function is named. Also right, as long as the server matches it.
+- **(c) outside knowledge**: how the live game behaved, from memory of the game or community sources. Needs checking.
+- **(d) assumption**: a reasonable, playable default where no evidence exists, with the reasoning. Listed again in "Register of (c) and (d) rules" at the end, because every (c)/(d) value the player can see should be revisited.
+
+## Conventions
+- **The client's clock and how the server sets it** (b: `CTimeUtility::NowTime`, `CServerTime::UpdateServerTimeOffset`, `CTimeUtility::str2time_t`):
+  - 3.7.0's `NowTime()` is `CServerTime::FixTime(BAS::LocalTime())`: the device clock corrected by the server-time offset (decompile @01ec5bdc). It doesn't read `master_global.service_stop_day` (2021/06/24 14:30:00 in the 3.7.0 DB); that row's only readers are the service-end check (`CTitle::Setup`, `CPhase_Server::CPhase_Server`: `docs/client-changes.md` "Emulator mode"). The client before the rebase froze its clock at that row: `docs/history/server-rules-3.8.0.md`.
+  - **Server-side, no client change:** the master the server's CDN serves has no `service_stop_day` row (`apply_client_master`, both server modes), as in service; platform370's native patch takes the check out on the APK's built-in master.
+  - **The offset** comes from `data.Time`: every response's `DeserializeToInfo` calls `UpdateServerTimeOffset`, which parses `data.Time` and, when it differs from the local clock by 60 s or more, stores the difference as the offset. So the server can put its own clock (host time or `SOA_CLOCK`) into the client by sending `data.Time` in its responses.
+  - Time strings are `YYYY-MM-DD HH:MM:SS` or `YYYY/MM/DD HH:MM:SS` (both separators parse).
+  - The server must use the **same** "now" as the client, or what it grants and what the client shows drift apart.
+- **Time.** The server clock (`now()` in server.cpp, `server::clock_now()`, `ext::Ctx::now`) is the host clock, or `--clock "YYYY-MM-DD HH:MM:SS"` / `SOA_CLOCK` when set, running on from there (the plan's clock override for replaying past events; `core/options.h`). All master `opened_at` / `closed_at` strings are JST (`YYYY-MM-DD HH:MM:SS`); the client compares them with its own server-time offset (`CServerTime`, `CTimeUtility::str2time_t`). (a)
+- **Clock: the event calendar** (`server::event_now()`, `ext::Ctx::event_now`; `server/src/core/clock.cpp`). Dated content (event terms, deep-space missions, the Sphere 211 season) uses it; the wallet, stamina, login and daily counters keep the real `now()`. **(d)** With `--clock` it is the clock. Without, the service's calendar replays year after year: today's month, day and time of day are mapped onto the most recent year in which some `master_event_term` covers that month-day (`opened_day <= Y-MM-DD <= closed_day`, day-level so the year holds for the whole day). The candidate years are the years the table's terms open in (2016-2021 in the 3.7.0 DB), newest first; open-ended terms (closing after the newest of those years, e.g. the 2030-12-31 rows) don't count; Feb 29 only matches leap years. If no year qualifies, the real time. In the 3.7.0 DB every day of the year maps into 2019-2021 (e.g. Jan 3 -> 2021, Jun 25 -> 2020, Oct 1 -> 2019); unit test `server/event-now`. Why: the user chose "replay the calendar" so seasonal events come back on their dates without a `--clock`; nothing about which events exist is hard-coded.
+- **The daily reset is 04:00 JST**: `master_global.login_bonus_reset_hour` = 4, read by `CParameterUtility::LoginBonusResetHour`. Use it for every "per day" counter (login bonus, day-limited gacha, daily achievements, favor tap limits). (a)+(b) for the login bonus; (d) for the other daily counters.
+- **Content grants.** A reward is `(content_type, content_id, num)`; the types are in `docs/api.md` "Content types". The server applies each grant to its state and reports it in the response infos the screen reads (`AddItem`, `AddCharacter`, `UpdateStockItem`, `Wallet`, `Player.fol`). Type 99 (item set) expands to its `master_item_set` rows (a).
+- **Caps.** FOL is capped at `master_global.item_fol_max_num` = 4,200,000,000 (a); stack items at `item_stock_max_num` = 100,000,000 per item (a); weapons / accessories at `Player.item_stock` slots (see "Stocks and wallet"). When a cap would be exceeded the live game sent the overflow to the present box (c); the local server does the same.
+- **Randomness.** Use one seeded PRNG per player state, so a session can be replayed (d). Weighted lots ("by `rate_weigh`") pick one row with probability `rate_weigh / sum(rate_weigh)` over the candidate rows (a: the column's name and the per-mission sums, e.g. `mf01_001` weights sum to about 10,000).
+
+## 1. Player, stamina and player rank
+
+### Player rank (調査ランク) and its EXP
+- **Level curve:** `master_player_level` (257 rows for levels 1..999): `next_exp` is the EXP needed from this level to the next (level 1: 60, 2: 111, 100: 5,133, 255: 13,038) (a). The player's `exp` is kept **within the current level**: the header shows `next_exp(level) - Player.exp` (b: `CCommon::UpdateMyStatus` → `CUIUtility::GetNextLevelExp(level)`).
+- **Levels missing from the table are interpolated** (b: `MasterPlayerLevelModel::GetByCalculatedLevel`): with the nearest rows below (`low`) and above (`high`), `value = low.value + round_half_away((high.value - low.value) / (high.level - low.level) × (level - low.level))`, for both `next_exp` and `stamina`. The server must use the same interpolation.
+- **Maximum rank:** `master_global.Player_Rank_max` = 900 (a), read by `CUIUtility::GetMaxLevel()`, which clamps to 999 and defaults to 255 when the key is missing (b). EXP beyond the maximum is dropped (d).
+- **EXP sources:** missions (`exp` column of the mission tables), deep-space `player_exp`, Sphere211 `base_exp` × `exp_rate`. (a)
+- **Rank up** (`HostPlayer.is_level_up`, `Player.is_level_up`): the result screen says 調査ランクがアップしました / スタミナ上限がアップします / スタミナが加算されます (`uimsg_result_rankup0..2`), so a rank-up raises `stamina_max` to the new level's `master_player_level.stamina` and **adds** stamina. (b: messages). How much is added: the new `stamina_max`, on top of the current stamina (overflow allowed) (c: the live game refilled stamina on rank-up; "加算" = added, not "set").
+
+### Stamina
+- **Maximum:** `master_player_level.stamina` of the player's level (level 1: 10, 50: 120, 100: 140, 255: 200, 999: 300). Sent as `Player.stamina_max`. (a)
+- **Regeneration is computed by the client** from `Player.stamina`, `Player.stamina_max` and `Player.stamina_update`, so the server must use the same formula (b: `StaminaUtility::NowStamina` → `CTimeUtility::NowAp(stamina, max, heal_time, str2time_t(stamina_update))`):
+  ```
+  now_stamina = stamina                                   if stamina > max (overflow is kept, no regen)
+              = min(max, stamina + floor((now - stamina_update) / heal_time))   otherwise
+  ```
+  `heal_time` = `master_global.stamina_heal_time` = 180 s (default 180 when missing, b: `StaminaUtility::StaminaHealTime`).
+- **Spending** (MissionStart): compute `now_stamina`, subtract the cost, store the result as `stamina`, and set `stamina_update` = `now - ((now - stamina_update) mod heal_time)` so the partial minute toward the next point is kept (d: matches the client's `OneApRemainSec`; the live server's exact bookkeeping is unknown). When `now_stamina >= max` before spending, set `stamina_update = now` (d).
+- **Other stamina types** (b: same functions): type 2 = Sphere211 stamina (maximum `master_global.sphere_stamina_max` = 9, sent as `Sphere211StaminaInfo.stamina_max`, which the client reads at `CParameterManager+0x9c50`; one point per `sphere_stamina_recovery_time` = 17,280 s, client default 14,400); type 1 = tower tries (max 3 = `Tower_Challenge_Count`, no regeneration).
+- **Refill with coins** (`StaminaHeal`): costs `master_global.stamina_use_coin` = 100 coins (default 100; b: `StaminaUtility::StaminaUseCoin`) and heals `stamina_max` points (b: `StaminaUtility::StaminaHealPoint(type, nullptr)` = the max, at least 1), added to the current stamina (d: added rather than set, like the items below).
+- **Heal items** (`UseHealItem`): `master_item` type 10 (a). Points healed (b: `StaminaUtility::StaminaHealPoint(type, item)`): `heal_type` 1 → `heal_point × stamina_max / 100` (`item_heal_100` = a full refill); `heal_type` 2 or 3 → `heal_point` flat (`item_heal_50/200/300`); anything else 0. Added to the current stamina, overflow allowed (d: the client lets you heal above max; `IsStaminaMaxOver` exists).
+- **Owned heal items** listed by the client are stack items of type 10 with `heal_type` 1 or 2 (b: `StaminaUtility::GetHealItems`).
+- **Stamina campaigns:** `master_campaign.type_id` 1 (labels `*_sutamina*`, `magnification` 0.5) halve the stamina cost of missions of the campaign's `master_mission_model_type` (0 EP1, 1 event, 3 EP2/EP3, 99 other, -2 all) while it runs (a: labels and values; b: `CUIUtility::IsDecConsumeStamina(missionType)` = `IsCampaignOnMission(1, type)`). Rounding: round up, minimum 1 (d).
+
+### Stocks and wallet
+- Item / gear / follow capacity: start values and expansion (`master_global`: `item_stock_max` 500, `item_stock_up_num` 5, `item_stock_use_coin` 100; `gear_stock_max` 500, `gear_stock_up_num` 5, `gear_stock_use_coin` 100; `follow_default` 30, `follow_max` 300, `follow_up_num` 5, `follow_use_coin` 100). (a) The starting item stock is not in master data: start at `item_stock_max` = 500 (d).
+- **Coins (紋章石):** `Wallet` {free_coin, pay_coin, total_coin}. Spend free coins first, then paid (a: master_text `uimsg_buy_history_explan`, the coin purchase history's note "紋章石を使用する際は無償入手分から先に消費されます", coins are spent from the free ones first; `server/src/core/wallet.h`). Every coin payment follows it: the shops, StaminaHeal, the gacha, Sphere 211's continue, deep space's quick return. There is no purchase route in the port (the coin shop closed: `master_global.pay_back_stop` 2022-03-15); coins come from login bonuses, presents, achievements, clear presents and missions (a: those tables grant content type 4). A new player, seeded or created, starts with 300,000 free coins (`--start-coins N`; (d), the user's request).
+
+## 2. Missions
+
+The mission tables share one shape: `master_mission` (story, 613), `master_event_mission` (1,803), `master_tower_mission` (450), `master_training_mission` (1), `master_world_map_mission` (1,376). MissionStart's first argument (`Common::MissionType`) selects the table (b: `CStageManager::CallMissionStart`, `CParameterUtility::FindMissionWithId(id, type)`).
+
+### 2.1 Opening missions
+- A mission is visible when `visible_mission_id` is cleared (or null), and playable when `unlock_mission_id` is cleared (or null), inside `opened_at`..`closed_at` (a). E.g. `mf01_002` unlocks after `mc01_035`.
+- Areas and planets: `master_area.master_planet_id`, `opened_at`/`closed_at`; event areas are gated by `master_event_term` (day ranges with times) and `master_event_weekly` (`week_id`) (a).
+- World map (EP story, 3.x): `master_world_map_progress` rows give, per `episode_type_id` and `progress`, the `unlock_condition_mission_id` and the `unlock_mission_group_id` that opens next (a). The seed save's `world_map_progress` and last cell come from `work/Game-3.7.0.xml` (plan).
+- The response is `GetMissionList` → `ActiveMissionList` / `ActiveEventMissionList` (docs/api.md). Per mission the server sends `{id, is_new, is_clear, is_last_play}`, per area `{mission_ct, is_new, is_last_play, is_start_bighunt}`, per planet `{area_ct, is_new, is_last_play}` (b: `CMissionElementInfo` / `CAreaInfo` / `CPlanetInfo::Initialize`); the rest of what the mission select shows (names, stamina, recommended level, drops) comes from master data (b: `CParameterUtility::tMissionData` reads the master row). `is_new` = visible and never played (d).
+
+### 2.2 MissionStart
+0. **Arguments** (b: `CStageManager::CallMissionStart`; `CPhase_Battle::Progress` → `CStageManager::Initialize(mission, u32, u64, u32, u64, type, u32)`, 3.7.0 decompile `work/decomp/campaign-370-c.resolved.c`; the `CParameterUI` fields 3.7.0's `CMissionMenu::NextPhase` fills, as `verdiff` reads it):
+   1. mission type (`CParameterUI+0x140`), 2. master mission id (`+0x1a0`),
+   3. u32 `CParameterUI+0x1b0` (the helper index + 1),
+   4. u64 `+0x1b8` when the helper kind (`+0x1c0`) is 0 (one of the player's own characters? d),
+   5. u32 `+0x1b8` when the kind is neither 0 nor 2 (an NPC helper id, d),
+   6. u64 `+0x1b8` when the kind is 2 (a rental character),
+   7. u32 from `+0x14c` of the mission-kind object for mission kinds 0 and 3, else 0.
+   The party itself is not an argument: 3.7.0's menu stores the chosen party indices at `CParameterUI+0x150` / `+0x154` and the party sets are server state, so the server uses the player's current party (`Player.party_id`, set by the party screen through `UpdatePartySet` / `UpdateParty`) (d).
+1. **Checks:** the mission is open (2.1); stamina `>=` cost, or the ticket item (`ticket_item_id` × `ticket_num`) is owned when the mission uses a ticket (a); the party is valid. On failure answer with the matching error code (a: `master_text` `error_message_text_<code>`, catalogued in docs/api.md "Appendix: server error codes": e.g. 10004 スタミナが不足しています, 10706 FOLが不足しています, 10404 対象ガチャは期限切れです, 10202 装備アイテム所持枠が不足しています, 10305 プレゼントは期限切れです). Both hosts report the code: soa's FakeApiCaller hooks answer the client's `IsSuccess` / `ErrorCode` with it, soa-server sends a ProtocolError (server/ARCHITECTURE.md "Transactions, refusals and errors"). As built, a locked mission isn't refused (d: "Server missions" below).
+2. **Cost:** stamina `use_stamina` (after campaigns, 1), or the ticket; `vanish_item_id` × `vanish_num` is also consumed when set (a: columns; d: when exactly it's consumed — at start).
+3. **Surprise enemy:** when `is_surprise_enemy` = 1, roll `surprise_rate` percent (e.g. 10.25) (a); `master_global.surprise_rate` = 10 is the default when the row's rate is null (d). Send `MissionParameter.is_surprise`; the stages with `is_surprise_enemy_stage` are then played, and the surprise drop set applies.
+4. **Stages:** every `master_mission_stage` row of the mission, in `order_id`, sent as `MissionParameter.mission_stage` (a; docs/notes.md shows the exact element fields the client needs: `id`, `id_label`, `order_id`, `is_boss`, `stage_bgm` as CHash32, ...).
+5. **Drops:** the online server may have rolled them here and sent them in `MissionParameter` (`mission_drop`, `mission_drop_rare`, `common_drop`, `battle_evaluation_drop`: a, the lists are in the MissionStart response schema), but no reader was found: the result screen reads MissionEnd's lists (2.3), and the mission detail's possible-drop list comes from master data (`CParameterUtility::tMissionDropItem::CollectMissionDrop`). **As built** the four lists are empty and MissionEnd rolls and grants the drops (d; `api/missions/drops.cpp`). See 2.4.
+6. **Party status:** `BattleParameter.PlayerCharacter` = one `CPersonStatusInfo` per party slot, computed as in section 3.
+7. **Enemy levels:** `add_enemy_level` / `overwrite_enemy_level` are 0 for normal missions (d); Sphere211 uses `master_sphere211_overwrite_enemy_level` (a).
+8. **State:** remember the in-flight mission (for `GetPlayMission.is_play` and restart), the rolled drops and the stamina spent.
+
+### 2.3 MissionEnd (win)
+Input: mission id, a u32 flag, and the serialized battle log (`CBattleLogInfo`: `battle_result`, `mission_time`, `damage_total`, `hit_max`, kills, `rush_cooperate`, ...; docs/api.md).
+- **The battle log comes with the request** (`Request::battle_log`, `soaserver/battle_log.h`): the `NetworkApiCaller::MissionEnd` request lambda (3.7.0 @015d68bc) serializes `CParameterManager+0x52d8` (`CBattleLogInfo`) as ASON and sends the bytes (b); soa-server takes them from the wire, and in-process the FakeApiCaller route runs the same client serializer (`docs/client-changes.md` "The battle log on the FakeApiCaller route"). Use its `mission_time` for `MissionEndResult.mission_time` and for evaluation (2.5) instead of a constant.
+- **Player EXP:** the mission's `exp` (a). Level-ups as in 1.
+- **FOL:** the mission's `fol` (a), times FOL campaigns if any apply to missions (d: no mission-FOL campaign type was identified; types 2/4/5 are compose / boost / evolution FOL discounts).
+- **Character EXP:** every party member gets the mission's `pc_exp` (a), levelled with the character curve (5.1). Sent as `MissionResultCharacter` (map uid → before/after level/exp) and `add_characters_exp` (a: schema). Rental / support members get nothing (d).
+- **Drops:** grant the rolled drops (2.4).
+- **What the result screen lists** (b: `ResultUtility::GetRewardItemList`, reading `CParameterManager+0x600` = the `data` infos):
+  - reward type 2, "first clear": `ClearPresentList.free_coin` (as content type 4) and its `item` / `character` / `stock_item` entries, each shown only when it matches a `master_mission_clear_present` row of the mission (so send exactly those rows, and only on the first clear);
+  - reward type 0, drops: `DropList`, `CommonDropList`, `RareDropList` (`CMissionResultDropInfo`: `fol`, `free_coin`, `up_fol_rate`, `item[]`, `character[]`, `stock_item[]`, `AddStampList`);
+  - reward type 4: the world-boss time-bonus list; the evaluation bonuses come from `BattleEvaluationResultInfoList` (b: `ResultUtility::GetEvaluationBonusList`);
+  - items whose id is in the "new" id list are marked NEW.
+  So the MissionStart drop lists (`MissionParameter.mission_drop` ...) are not what the result shows: MissionEnd must send the drops in `DropList` & co. (see 2.2 item 5).
+- **First-clear presents:** on the **first** clear only, every `master_mission_clear_present` row of the mission (content, num) (a: rows; d: "first clear only" — the table has no repeat flag and the client names it clear present, `CParameterUtility::tMissionDropItem::CollectClearRresent`; `first_Present_View` flags missions that show it before the first clear). Sent in `ClearPresentList`.
+- **Clear state:** mark cleared (unlocks follow from 2.1) and send the updated `ActiveMissionList`.
+- **Favor:** each party member gains `master_favor_battle_effect.favor_up_point` for the row with `use_stamina` = the mission's stamina cost and `play_type` 0 (single play; 1 host, 2 guest) (a: e.g. 2 stamina → 12 points, 10 → 60, 20 → 119). See 8.
+- **Mission character bonus:** `master_mission_character_bonus` (area or mission, `master_role_category_id`, `bonus_count`, `extra_bonus_*`) adds `bonus_count` extra lots and `extra_bonus_num` of `extra_bonus_content_id` per party member of that role category, capped by `master_global.max_character_bonus` = 2 and `max_character_extra_bonus` = 2 (a: columns and caps; d: that the cap is per party).
+- **Battle evaluation** (event missions with an `evaluation_group_id`): see 2.5.
+
+### 2.4 Drops
+- **Lots:**
+  - `lot_drop_count` lots from the mission's `master_mission_drop` rows with `is_fix_drop` = 0 / null and `is_surprise_enemy` = 0 / null, weighted by `rate_weigh` (a).
+  - When the surprise enemy appeared: `lot_surprise_drop_count` lots from the rows with `is_surprise_enemy` = 1 (a).
+  - `lot_common_drop_count` lots from `master_common_drop` rows of the mission's `common_drop_id` (a). E.g. `mf01_003`: 3 surprise lots, 3 common lots from `common_drop_01`.
+  - Every row with `is_fix_drop` = 1 always drops (a: the column name; d: exact semantics).
+  - Each lot grants the row's `content_type` / `content_id` / `num` (a).
+- **`host_bonus`** rows only drop for the multiplayer host (a: column; irrelevant in single player; d: skip them).
+- **Content type 98** (`gear_drop_1..4`) is a gear lottery: pick from `master_gear_lottery` rows of that category (by `rate_weigh`, filtered by weapon kind and rarity) (a: labels match `master_gear_lottery.category_id`; d: the filter).
+- **Campaign drops:** while a `master_campaign` of type 0 (labels `Campaign_evo_*_prism`) runs, add `lot_drop_count_add` lots (a); `master_campaign_drop` rows of an active campaign drop by `rate_weigh` too (a: table; d: how many lots — one).
+- **Rare drops** (`mission_drop_rare`, `RareDropList`): no column marks rarity; treat the lowest-weight row that dropped as the "rare" one only for display (d).
+- **Favor event-drop bonus:** `master_favor_level.event_drop_bonus` (0,0,0,1,2 by favor level) extra event-drop lots in event missions for high-favor party members, limited to `favor_event_drop_bonus_limit` = 3 per day (a: columns; d: exact application).
+
+### 2.5 Battle evaluation (戦闘成績ボーナス)
+- `master_battle_evaluation` (17 rows): per `evaluation_group_id` (the event mission's column) up to three evaluations, each with an `evaluation_type` and up to five `(rank_N_condition, rank_N_drop_count)` pairs, and a `master_mission_drop_id` naming the drop set (the `master_mission_drop` rows whose `master_mission_id` is that label, e.g. `me99_1113_evalution`) (a).
+- **Types** (b: `CParameterUtility::tMissionData::GetEvaluationNumberString`, messages `uimsg_evaluation_condition1..6`): 1 total damage (`damage_total`), 2 enemies defeated, 3 rush-combo total damage (`rush_cooperate`), 4 highest hit count (`hit_max`), 5 highest single damage, 6 clear time (`mission_time`; lower is better, conditions such as 90000 / 120000 / 180000 are in ms = 1:30.00 / 2:00.00 / 3:00.00, shown as `%d:%02d.%02d`).
+- **Rule:** for each evaluation, find the best rank whose condition the battle log meets (`>=`, or `<=` for type 6); draw `rank_N_drop_count` lots from its drop set by `rate_weigh`; send `BattleEvaluationResultInfoList` and the drops (a: data; d: that ranks are checked best-first and only the best one pays).
+- The battle log values come from the MissionEnd request, so the server trusts the client (d).
+
+### 2.6 Failure, continue, restart
+- **MissionFailed / retire:** no rewards, stamina stays spent, the in-flight mission is cleared (c).
+- **MissionContinue:** costs `master_global.continue_use_coin` = 100 coins (a), halved by a type-9 campaign (labels `*_Continue_*`, magnification 0.5) (a). Only when `is_continue` = 1 on the mission (a: column; d: meaning).
+- **MissionRestart** / `MultiMissionRestart` (resume after a crash): the play record's mission and party start again with nothing paid (no stamina, ticket or play count) and the stored surprise roll (d). The helper isn't restored: the restart sends the play's party id as the third argument (the helper index + 1) and no helper ids (d, as built: `api/missions/play_state.cpp`). Nothing in progress: not handled.
+
+## 3. Battle party status (`CPersonStatusInfo`)
+The server builds each party member's battle status, and the client uses it as is (docs/notes.md "Playing a battle and a gacha through"). **The client has the same computation for its status screens: `PersonModel::CalculateParameter(CPersonInfo const&, ...)` → `CParameterUtility::tCharaData::CalcStatus(CPersonStatusInfo*, bool)`.** The in-process server should call that guest function (or its native port) to fill `CPersonStatusInfo`, so the battle uses exactly the stats the status screen shows. (b)
+What it does, as far as read (b: `work/decomp/apicat-status.resolved.c`):
+- base stat = round_half_away(`master_role.<stat>` × `master_character_common_parameter[level].<stat>` / 100), for hp, attack, intelligence, defence, hit, guard;
+- × the `master_rank` row of (role `rank`, `limit_break_count`) / 100 (e.g. `party_03` = 123 → +23%);
+- + the character's `add_*` (seed items) and the equipped weapon / accessory stats (`master_item` attack..guard with their compose level), gear, factor and talent effects (`MasterFactorModel::GetParameter`), awakening (`master_awaken`), favor AP bonus (`GetFavorApBonus`); stats below 1 are clamped to 1.
+- Skills: `master_role.master_skill1..5_id` opened at `master_skill*_open_level`, the equipped three from `EquipSkill` (a).
+- Rush skill, gauge: `master_role.rush_skill1_id`, `rush_gauge_max`, `rush_gauge_use`, or the `master_awaken` row's (a).
+- `weapon_id` = the equipped item's `master_weapon_id` (a).
+The generator in `tools/fakeapi_responses.py` uses an invented formula; replace it with the above.
+
+## 4. Gacha
+
+### 4.1 What's open
+- A banner is listed when `GetGachaInData.GachaHashMap` has an entry for it whose window contains now, and the master row's own `opened_at`/`closed_at` does too (b: `CGacha::IsEnableHash`). The server sends an entry for every `master_gacha` row open at the (possibly overridden) clock (a).
+- In real time (2026) only 29 rows are open (their `closed_at` is far in the future: permanent banners). The last live banners closed on 2021-06-24 (`service_stop_day`), so the full 3.7.0 line-up needs `SOA_CLOCK` in May/June 2021 (a).
+- `--enable-events` adds the gachas whose names match a keyword list (default: the summer banners) all year; see "Enabling events by keyword" under "Events".
+- `limit_count` (total draws), `day_limit_count` (per day), `stepup_limit_count`, `sale_once_limit_count` / `sale_bulk_limit_count` with `sale_*_interval_day` limit the draws; the counts go in `GachaCount`, `GachaDayLimitCountInfo`, `SaleGachaCount` (a: columns and schema).
+
+### 4.2 Cost
+- **Single draw:** `coin` coins; `is_pay_coin` = 1 means paid coins only (a).
+- **Bulk (10) draw:** `bulk_count` draws for `bulk_coin` coins (e.g. 10 for 2,500 or 5,000) (a).
+- **Sale:** `is_sale` with `sale_once_coin` / `sale_bulk_coin` in `sale_opened_at`..`sale_closed_at` (`SaleGachaOnce` / `SaleGacha`) (a).
+- **Ticket:** `ticket_item_id` × `ticket_num` per draw (`GachaTicket`) (a).
+- Debit the wallet and send `Wallet` (the fake server doesn't, notes).
+
+### 4.3 Rates and pool
+- **Rank rates:** `s_rank_rate`, `a_rank_rate`, `b_rank_rate`, `c_rank_rate`, `d_rank_rate` in percent (e.g. 4 / 2 / 26.1 / 67.9 / 0) (a).
+- **Bulk bonus:** when `is_bulk_bonus` = 1, one draw of each bulk draw uses `bonus_s..c_rank_rate` (e.g. 12 / 4 / 84 / 0: a guaranteed B or better) (a: columns; c: the live game's "10th draw guaranteed ★4 or higher").
+- **Gacha types** (a: `gacha_type` vs the other columns): 0 character gacha (1,389 rows, 985 of them step-up), 1 weapon gacha (458), 2 box gacha (434, all `is_box` = 1).
+- **Ranks → rarity:**
+  - character gachas: S and A are ★5 (S the pick-up characters of the banner, A the rest; without pick-ups S the aces, A the other ★5s), B ★4, C ★3 (a+text: the common row is 4 / 2 / 26.1 / 67.9 and banners split the 6 % as 3/3, 4.5/1.5, 5.5/2.5 while B and C stay; titles such as ★5以上1体確定キャラガチャ ("one ★5 or higher guaranteed") have `bonus_s_rank_rate` 100; the rate dialog prints `★5:%.5f%%` per rarity, `gacha_tilte_message_0002`) (c: the live game's ★5 6 %). **Rarity-6 roles are not drawn:** they are evolutions of the rarity-5 role of the same `role_category_id` (`master_role_evolution`), and a banner image shows the rarity-6 form of its rarity-5 pick-up (a; 4.5, R-BASE).
+  - weapon gachas: A ★5 (8–8.5 %), B ★4, C ★3, S = the banner's pick-up weapons (a: rates; text: ticket names ★3/★4/★5武器ガチャチケット and the ★4～5 fill tickets' A 29.44 / B 70.56) (d: S).
+- **The pool is not in the database.** `master_gacha.table_name` names a server table (`master_gacha_item_old`, `_role`, `_weapon`, `_20210610_valentine2021`, ...) that the client never had: the DB has no `master_gacha_item*` table (a). **It is reconstructed** in `port/server-data/gacha_pools.sqlite3`; 4.5 gives the rules, the format, and the server and client sides.
+  - The rate dialog (`GetGachaRate` → `GachaRateInfoList`) must show the pools and per-unit rates the server really uses; 4.5 builds both from the same file (b: schema).
+  - The pool reconstruction is in the UI-visible register: it is the largest (d) in the gacha.
+- **Result:** each draw → `GachaItems` entry {master_role_id / master_item_id, player_character_id / player_item_id, duplication, is_mutation}; new characters → `AddCharacter` (a map keyed by uid string), new items → `AddItem` (a: schema, notes).
+- **Duplicates** (b: `CLimitOverCharacter::CountLimiBreak`, `SetupLimitBreakItem`, `CountCharaChip`, which build the "limit over" result screen from the response):
+  - a drawn character counts as a duplicate when the player owns a role of the same `role_category_id` (the same character at any rarity) (b: the screen matches by `CUIUtility::GetCharaCategoryId_FromCharaRoleId`);
+  - each duplicate raises the owned character's limit break by one, up to its maximum (5.2). The response sends `LimitBreakCharacter` (map uid → CLimitBreakInfo {master_role_id, before/after_master_role_id, before/after_limit_break_count}); the screen assigns the steps before+1 .. after to the duplicates in draw order (b); the handler syncs the count onto the owned character (notes, `AddLimitBreak`);
+  - a duplicate beyond the maximum becomes an item: `LimitBreakItem` (CLimitBreakItemInfo {master_role_id, master_item_id}) (b: shown for duplicates without a limit-break step); which item: `master_role_duplication_item` by the role's rank (rank 1 → `item_limitbreak_01`, 2 → `_02`, 3 → `_03`, 4 → `_03` ×2, 5 → `_06`; the `limitbreak_id` rows for the special roles) (a: table; c: duplicates became limit-break material);
+  - character chips: `CharacterChipInfoList` entries (role, chip item, count), the count split evenly over the duplicates of that character (b: `CountCharaChip` divides by the number of duplicates). Chip item = `master_role.universe_chip_item_id` (593 of 737 roles) (a); amount: `master_universe_chip_gacha_exchange` by role rank (`chip` 100, `chip_rate` 5 / 25 / 50 / 50 for ranks 2–5) — read as `chip × chip_rate / 100` per duplicate (d);
+  - `duplication` = 1 in the draw's `GachaItems` entry; the duplicate is not added to the roster (a: no second uid is needed; d).
+- **`is_mutation`** ("mutation", `master_global.gacha_mutation` = 2): a draw upgraded to a higher-rarity variant. Leave 0 (d).
+- **Gift gacha:** `master_gift_gacha` rows of the banner (is_bulk 0/1) are granted with each single / bulk draw (a: columns; d: always granted) → `GiftGachaItems`.
+
+### 4.4 Step-up and box gacha
+- **Step-up:** `is_stepup` rows chain through `next_stepup_gacha_id`; `stepup_number` / `stepup_max` give the position; `loop_count` / `reset_type` restart the chain (a). Each draw advances the player's `StepUpGacha` {try_count, restart_count, next_master_gacha_id} (a: schema).
+- **Box gacha** (event boxes paid with event coins, e.g. `ticket_item_id` `item_coin_213` × 5 per draw) (a):
+  - each `master_gacha` row with `is_box` = 1 is one box; its contents are the `master_box_gacha` rows of that `master_gacha_id`: one row per slot, `box_count` copies of the slot (1 in the data), each granting `content` × `num` (a). `rate_weigh` is 1 everywhere and `is_reset` 0 everywhere (a), so a draw takes a uniformly random remaining slot (c: box gacha = drawing without replacement).
+  - boxes chain with `box_gacha_index` 1, 2, 3 and `next_box_gacha_id`; `rest_box_gacha_num` counts the boxes after this one; the last box points to itself and has `is_manual_reset` = 1 (a). So: an empty box moves on to `next_box_gacha_id`; the last box can be reset (`ResetBoxGacha`) at any time, refilling it and counting `reset_count` (c: the live event boxes were resettable from the last box on; d: "any time" rather than "when empty").
+  - progress per player: `BoxGachaList` {total_count, reset_count, next_master_gacha_id} and `BoxGacha` (remaining slots) (a: schema).
+
+### 4.5 Gacha pools (reconstructed)
+The live server drew from its `master_gacha_item_*` tables, which neither master DB has (4.3). `tools/build_gacha_pools.py` rebuilds a pool for each of the 2,281 gachas from the 3.7.0 master data and writes **`port/server-data/gacha_pools.sqlite3`** (local, not in git, like `data/*.sqlite3`; deterministic for a given master, so the tool regenerates it). Rebuild with `tools/build_gacha_pools.py [--master data/basmaster-3.7.0.sqlite3] [--report FILE]`; it prints the sanity checks below. The local server reads it through **`server/src/master/gacha_pools.{h,cpp}`**. Every rule carries a code (R-…), stored with its label in the file's `rule` table and in comments of the script.
+
+**What is drawn (ranks).**
+
+| rank | character gacha (`gacha_type` 0) | weapon gacha (`gacha_type` 1) |
+|---|---|---|
+| S | the banner's pick-ups; without pick-ups the general aces (★5, rank 4) | the banner's pick-up weapons (46 gachas use S) |
+| A | every other general ★5 (on the 10-step PU step-ups: every other general ace); without pick-ups the general ★5 non-aces (rank 3, `common_party`) | the general ★5 weapons, pick-ups included |
+| B | ★4 (rarity 4, rank 2, `common_guest`) | ★4 weapons |
+| C | ★3 (rarity 3, rank 1, `common_people`) | ★3 weapons |
+| D | never (rate 0 in every row) | never |
+
+- A drawn character is the **base role** of its `role_category_id` (its lowest rarity): rarity 6, and rarity 4/5 of ranks 1–2, are evolutions (`master_role_evolution`, rarity n → n+1). The real 3.7.0 save owns only rarity 3/rank 1, 4/2, 5/3, 5/4 and 4 rarity-6 roles (a), and every banner image says "進化や覚醒などを含む、強化が行われる前の状態で出現いたします" (units come before any evolution or awakening) (b).
+- The S/A reading comes from the ticket gachas (a): ★4キャラ ticket B 100; ★4～5 S 2.2 / A 3.8 / B 94; ★5キャラ S 2.2 / A 97.8; **★5エースキャラ S 100**, whose text says an ace (エース) is a high-ability character; and the step-up steps titled "PU1体確定" (one pick-up guaranteed) have `bonus_s_rank_rate` 100. The 10-step PU step-ups' images say "★5はエースだけ!" (★5s are aces only) (b), so their A holds no party roles. That A is "the rest" on the other pick-up banners, and the party/ace split on the standard banner, are (d).
+- **The general ★5 pool is the permanent line-up** (R-GENERAL): the ★5s offered by the exchange shops that list it (福袋 / GW / 700万DL / 覚醒 / マーレゼリア coin shops, 50+ roles each) or by a ピックアップキャラコイン shop: 70 aces and 15 party / special roles (a). **Every other ★5 is limited** (期間限定) and appears only as a pick-up of a banner that features it: all seasonal costumes (花嫁, 渚, 歌星, 聖夜 …), the 神 series, SRF, event units, collaboration roles (`role_cc*`: Tales of, Persona, NieR, Sakura Wars, Guilty Gear, FFBE, Attack on Titan, Valkyrie Profile, Radiata) and exceed roles (rank 5, picked up by the paid universe-pass banners `gacha_paid_role_*`). The shop split coincides with the costume names (a), and the SO2メモリアル banner image says "ピックアップは期間限定キャラのみ" (pick-ups are limited characters only) over five seasonal SO2 units (b). Units handed out by missions are limited too (d).
+- **Weapons:** ★3/★4 = every `master_item` type 1 of that rarity; ★5 = the 229 weapons ever featured by a weapon-gacha image (released at the first featuring gacha) plus a 190-weapon launch set (W01–W17 families, `serial_number` <= 392, no 未定 / コインウェポン) (a+d). The other ~470 rarity-5 weapons (event rewards, `item_weapon_*`) are never drawn (d). A weapon kind released later (whip 2020-06-25, launcher 2019-02-14, scythe 2018-11-15: `master_weapon_kind.opened_at`) joins then (a). Kind-restricted banners draw only their kinds, read from 【…】 or after ":" in the title ('定常武器ガチャ【近接】【ナックル/双剣/剣&鞘/鎌】', '補填武器チケット：杖'); 【遠距離】 alone = range type 2 without 杖/オーブ/本, 紋章武器 = 杖/オーブ/本 (a: titles; d: the two group readings).
+- **Release and window** (R-RELEASE-ROLE, R-WINDOW): a pool holds every unit released by the end of the gacha's window (`closed_at`, cut at the service end 2021-06-24 14:30), each row with its `released_at`; **the server draws only units with `released_at` <= its clock**, so a unit released mid-window joins on its release day and a permanent banner (2016 → 2030) grows over the years. The 222 roles dated 2017-05-20 04:00 (the earliest value: older history is collapsed into it) count as released at launch (d).
+- **Weights:** equal within a rank (d). The live per-unit rates were shown in the rate dialog, but no copy survives.
+
+**Pick-ups** (the S pool), first match wins; counts are gachas (type 0 / type 1):
+
+| code | source | evidence | gachas |
+|---|---|---|---|
+| R-PU-PERMANENT | (a)+(d) | table `master_gacha_item_jousetu` (常設, permanent: standard banner, tickets, 定常武器), `_sphere211`, `_galaxy` → no pick-ups; their images are showcases | 7 / 12 |
+| R-PU-GROUP | (a) | `master_gacha_pickup` of `gacha_pickup_group_id` | 9 / – |
+| R-PU-IMAGE | (a) | `master_gacha_image` content rows (role → base role; weapon items) | 528 / 267 |
+| R-PU-NAME | (a)+(d) | names in the title's brackets matched to `master_person` / `master_item` names: 'ピックアップキャラガチャ(花嫁レナ/花嫁イヴリーシュ)', 'ラスウェル確定ガチャ', '(ラティクスorミリー確定)', '(花嫁/水着/ハロウィンのみ)' | 77 / – |
+| R-PU-SIBLING | (a)+(d) | the pick-ups of the gachas sharing its `banner_id` (steps of a step-up, single / 10-draw variants) | 221 / – |
+| R-PU-BANNERART | (b) | read off the banner images where the master data names nobody: 衣装コンテスト2018 = ヒーローベルダ / ナースフィオーレ, 2019 = 花魁ミュリア / ハンターセリーヌ, 復刻神級1 = 神翼のマリア / 賢神のマスティマ, 2 = 神龍のアシュトン / 神星のレナ / 神翼のフェイト, 3 = 神弓のレイミ / 神導のソフィア | 70 / – |
+| R-PU-THEME | (c)+(d), checked (b) | seasonal reruns: '復刻花嫁2020' → the 花嫁/花婿 aces released in 2020; 水着 = 渚/真夏/常夏, アイドル = 歌星, メイド = メイド/執事; 正月 01-01..01-07, xmas/クリスマス 12-01..12-24, ハロウィン 10-20..10-31 (ハロウィンN = 2016+N), バレンタイン 01-25..02-14, costumes only. The banner images of 復刻正月2021, 復刻ハロウィン2020, 復刻クリスマス2020 and 復刻バレンタイン2021 name exactly these units | 280 / – |
+| R-PU-RERUN | (d) | other reruns ('復刻SRF'): the pick-ups of earlier banners whose title holds the rerun's key | 20 / – |
+| R-PU-SERIES | (a)+(b)+(c) | 'SO4キャラピックアップガチャ', 'スターオーシャン5発売日記念…' ('スターオーシャン発売日' = SO1): that game's cast among the general ★5s, party included (b: the SO5 image, "スターオーシャン5★5キャラが10連で1体確定", shows nine base characters, which is what this gives); 'SO3メモリアル…': the cast's limited aces (b: the SO2メモリアル image). Cast by `master_person` label cp01..cp05 = SO1..SO5 (c; cp00 are anamnesis originals) | 32 / – |
+| R-PU-NEW | (d) | a pick-up banner (not a rerun) still without evidence: the ★5s released on its opening day | 17 / 6 |
+| none | | standard-like banners (DL / CM / anniversary / weekend-free / "★5以上確定" / step-ups without names), weapon banners without images | 135 / 185 |
+
+A pick-up released after its banner opened (but before it closed) is drawn from its release on (R-PU-RELEASE, 6 cases). If a rank with a rate had no pool, S and A would fall back to each other (R-EMPTY); it never triggers.
+
+**The file** (`meta.format` = 1):
+- `gacha(gacha_id, id_label, name, gacha_type, kind, opened_at, closed_at, banner_id, pickup_source, kind_filter, is_bulk_bonus, bulk_count, is_stepup, stepup_number, next_stepup_gacha_id)`: one row per `master_gacha` row; `kind` role / weapon / box; the last five are copies of `master_gacha`.
+- `gacha_rank(gacha_id, rank, rate, bonus_rate, set_id, rule)`: rank S..D, the master rates (percent; `bonus_rate` 0 unless `is_bulk_bonus`), the pool, and the rule codes that built it. `set_id` is null when both rates are 0.
+- `pool_set(set_id, content_type, content_id, weight, released_at)`: the units (content type 2 role, 1 item, as in the master tables); pools are shared between gachas (508 sets, 27,213 rows).
+- `pool_set_info(set_id, size, description)`, `gacha_pickup(gacha_id, content_type, content_id, source)`, `rule(code, source, text)`, `meta(key, value)`.
+- Box gachas (`gacha_type` 2) have `gacha` rows only: their contents are `master_box_gacha` (4.4).
+
+**Server side** (`soa::server::gacha_pools::Pools`, for the draws (`gacha`) and `GetGachaRate` (`get_gacha_rate`) in `server/src/api/gacha/`):
+- `open()` finds the file (`$SOA_GACHA_POOLS`, `server-data/`, `port/server-data/`, `../port/server-data/`), rejecting an un-fetched git-lfs pointer.
+- `draw(gacha_id, bonus, now, r1, r2, rank, unit)`: rank by the master rates (the bonus rates for the bonus draw of a bulk draw), skipping ranks with nothing released at `now` (d), then a unit by weight among those released at `now`. `now` is the server clock as "YYYY-MM-DD HH:MM:SS" (the clock that `GetGachaInData` uses).
+- `units()`, `all_units()`, `rank_weights()`, `gacha()`, `id_of()` for anything else.
+- `rate_info(gacha_id, now)` → the `GachaRateInfoList` entries (one per step of a step-up, following `next_stepup_gacha_id`; the last step loops back to step 1 in 167 of 168 chains (a)), each with `rate_lines()`.
+- Test `server/gacha-pools` (in `--selftest`): the standard banner's rank frequencies over 20,000 draws, its ace pool growing between 2018 and 2021, the rate rows adding up to 100 % (and again in the bonus slot), and that every non-box gacha draws and has rate rows at the end of its window.
+
+**Client side: the rate dialog can show exactly these pools** (b, from `CGachaRatio::CreateRatioList` / `ListItemUpdate` and the `CGachaRateInfo` / `CGachaRateContentInfo` `Initialize` key tables):
+- `GetGachaRate` (fid `d6bcb49d`) answers `data.GachaRateInfoList`: an array of `CGachaRateInfo` (0x1a8 bytes) {`id` (+0x60), `title` (+0x90), `introduction_msg`, `bonus_msg`, `stepup_number` (+0x150), `GachaRateContentInfoList` (vector at +0x190)}, stored at `CParameterManager+0x5058`. `CGachaRatio::SearchRatioInfo(step)` takes the first entry for a normal gacha and the entry whose **`stepup_number`** equals the current step for a step-up (docs/notes.md calls +0x150 "the gacha id"; the key table says `stepup_number`).
+- Each content row (`CGachaRateContentInfo`, 0x188 bytes) is {`type` (+0x60), `message_id` (+0x90), `content_id` (+0xd0), `percentage` (+0x100, a string), `direct_message` (+0x140), `order_id`}. `type`: 1 separator line; 2 text line; 3 section title (text = `direct_message`, else `message_id`); 4 character (`content_id` = role: the client looks up the person's name, the role's rarity icon, class icon and weapon icon itself); 5 item with rarity icon (weapons); 8 item without it; 6 / 7 open and close a block of rows that the client sorts before listing. Unit rows show `percentage` verbatim.
+- `rate_lines()` emits: 3 "レアリティー別提供割合" (`gacha_tilte_message_0001`), 2 "★5:x%" / "★4:x%" / "★3:x%" (0002–0004), 1, 3 "一般提供割合" (0010), then per rarity 3 "★5提供割合 x%" (0005–0007), 6, one 4/5 row per unit with `"%.5f%%"` (0009's format), 7; and for `is_bulk_bonus` gachas the same under 3 "10連ガチャ特典枠" (0008) with the bonus rates. All numbers are computed from the same `rank_weights()` / `units()` as `draw()`, so **what the player sees is what is drawn**, including the clock filter. The row layout is (d): only the message texts survive, not a live response.
+- `GetGachaRate` answers `rate_info()`'s pages when the pools file is there (`server/src/api/gacha/rates.cpp`), and the player state only without it (d). Replayed by the `economy` corpus; the dialog itself not checked in a live run.
+
+**Sanity checks** (the script's report, 3.7.0 master):
+- every pick-up unit is in its gacha's pool: 0 missing;
+- ranks with a rate > 0 and an empty pool: 0 (R-EMPTY fallback used: 0);
+- pool units released after their gacha closed: 0; units released after their gacha opened: 1,731 in 241 gachas (they join on their release day, R-WINDOW); pick-ups among them: 6 (R-PU-RELEASE);
+- pool sizes (units at the end of the window):
+
+| gacha type | gachas | S | A | B | C |
+|---|---|---|---|---|---|
+| 0 character | 1,389 | 1–70 (mean 6) | 14–85 (mean 61) | 18 | 18–34 |
+| 1 weapon | 458 | 2–5 (46 gachas) | 22–419 (mean 233) | 5–51 | 4–50 |
+| 2 box | 434 | `master_box_gacha` (11,826 slots) | | | |
+
+- At the June 2021 clock (2021-06-10 15:00) 219 character, 16 weapon and 34 box gachas are open; all character banners but the standard, ticket, sphere211, galaxy and お詫び ones have pick-ups.
+
+**Open questions** (all (d) above; better evidence would replace them): the per-unit weights; the party/ace split of the standard banner; which rarity-5 weapons beyond the featured and launch sets were drawable (no exchange shop lists a weapon line-up); release dates before May 2017. The 556 extracted banner images (`work/gacha-banners/`) name the pick-ups of most banners: reading more of them (as done for R-PU-BANNERART and to check R-PU-THEME) is the cheapest way to firm up the rest.
+
+**Rules** (the script's `RULES`, also in the file's `rule` table):
+
+| code | source | rule |
+|---|---|---|
+| R-TYPE | (a) | gacha_type 0 draws characters (roles), 1 weapons (master_item type 1), 2 is a box gacha whose contents are master_box_gacha (not rebuilt here; the server uses master_box_gacha directly). |
+| R-BASE | (a+b) | A drawn character is the base role of its role_category_id: the lowest-rarity member. Rarity 6 (and 4/5 of rank 1-2) roles are evolutions (master_role_evolution: rarity n -> n+1 for FOL and items), never drawn. The real 3.7.0 save owns rarity 3/rank 1, 4/2, 5/3 and 5/4 roles plus 4 rarity-6 roles (a); the banner images say '進化や覚醒などを含む、強化が行われる前の状態で出現いたします' (units come before any evolution or awakening) (b). |
+| R-RANK-ROLE | (a) | Character ranks: C = rarity 3 (rank 1, limitbreak common_people), B = rarity 4 (rank 2, common_guest), S and A = rarity 5. Evidence: the ticket gachas' rates and names - ★4キャラ (B 100), ★4～5キャラ (S 2.2 / A 3.8 / B 94), ★5キャラ (S 2.2 / A 97.8), ★5エースキャラ (S 100); rate headings gacha_tilte_message_0002..0004 are ★5/★4/★3. |
+| R-SA-PICKUP | (a+d) | On a banner with featured (pick-up) characters, S = the pick-up characters and A = every other ★5 in the general pool. Evidence: step-up steps named 'PU1体確定' (one pick-up guaranteed) have bonus_s_rank_rate 100 (a); that A is 'the rest' is (d). |
+| R-SA-ACEONLY | (b) | On the '10連10ステップ目PU1体確定' step-ups A holds the general aces only (no party roles): their banner images say '★5はエースだけ!' (e.g. 20200917_chara_PU_001, 20210610_chara_PU_003). |
+| R-SA-NOPICKUP | (a+d) | On a banner without pick-ups, S = the ace ★5s (rank 4, limitbreak common_ace) and A = the other ★5s (rank 3, common_party). Evidence: the ★5エース ticket is S 100 %, its text says an ace is a high-ability character, and the plain ★5 ticket is S 2.2 / A 97.8 (a); the split for the standard banner (S 2.2 / A 3.8) is (d). |
+| R-GENERAL | (a+b) | The general ★5 pool is the permanent line-up: the ★5 roles offered by the exchange shops that list it (福袋 / GW / 700万DL / 覚醒 / マーレゼリア coin shops, >= 50 roles each) or by a ピックアップキャラコイン shop (a new unit's coin): 70 aces and 15 party roles in their base forms (a). Every other ★5 - all seasonal costumes (花嫁, 渚, 歌星, 聖夜 ...), the 神 series, SRF, event units - is limited (期間限定): pick-up only. The split coincides with the costume names (a), and the SO2メモリアル banner image says 'ピックアップは期間限定キャラのみ' over five seasonal SO2 units (b). |
+| R-LIMITED | (c+d) | Limited characters are never in a general pool, only as pick-ups of a banner that features them: the not-general ★5s (R-GENERAL), collaboration roles (id_label role_cc*: Tales of, Persona, NieR, Sakura Wars, Guilty Gear, FFBE, Attack on Titan, Valkyrie Profile, Radiata...) (c: collab units were limited to collab banners), exceed roles (rank 5, sold through the paid 'universe pass' banners gacha_paid_role_*) (a: those banners pick them up) and the units handed out by missions (master_mission_clear_present, master_mission_drop) (d). |
+| R-RELEASE-ROLE | (a+d) | A role is released at master_role.opened_at and withdrawn at closed_at (a). The 222 roles dated 2017-05-20 04:00 (the earliest value; the older history is collapsed into it) count as released at launch (d). Rows with id_label not starting role_c (check_*, cp*) and roles withdrawn at 2017-05-20 05:00, an hour after that epoch ('※ダミーホームテスト狼アンリ', 'ティニーク(狼版)', 'アイドル子ティカ'), are test rows and excluded (a). |
+| R-WINDOW | (a+d) | A gacha's pool holds every unit released by the end of its window (closed_at, cut at the service end 2021-06-24 14:30), each with its release time (pool_set.released_at); the server draws only units with released_at <= its clock, so a unit released mid-window joins the pool on its release day and a permanent banner grows over the years (a: dates; d: live pools grew the same way). |
+| R-PU-PERMANENT | (a+d) | Gachas drawing from the permanent tables (table_name master_gacha_item_jousetu = 常設 'permanent': the standard キャラガチャ, the ★3..★5 / ★5エース tickets, the 定常武器 gachas; _sphere211; _galaxy) have no pick-ups: their master_gacha_image rows are showcases (a: table names, the tickets' fixed rates; d: showcase reading). |
+| R-PU-GROUP | (a) | Pick-ups from master_gacha_pickup via master_gacha.gacha_pickup_group_id. |
+| R-PU-IMAGE | (a) | Pick-ups from master_gacha_image rows of the gacha: content_type 2 = role (shown in its rarity-6 form; mapped to the base role, R-BASE), 1 = weapon item, 0 = role or item by id. |
+| R-PU-NAME | (a+d) | Pick-ups from the banner title (master_text of name_message_id): names in brackets (e.g. 'ピックアップキャラガチャ(花嫁レナ/花嫁イヴリーシュ)') matched to master_person names (roles) or master_item names (weapons); a character name matches that person's ★5 base roles released by the close of the banner (d: the matching). |
+| R-PU-SERIES | (a+b+c) | A banner named after a game ('SO4キャラピックアップガチャ', 'スターオーシャン5発売日記念...', 'SO3メモリアル...'; 'スターオーシャン発売日' = SO1) without named characters picks up that game's cast: its general ★5s (aces and party), or for a メモリアル banner its limited (seasonal) aces (b: the SO5 banner image 'スターオーシャン5★5キャラが10連で1体確定' shows the base cast, the SO2メモリアル image says 'ピックアップは期間限定キャラのみ'). The cast is master_person id_label cp01xx..cp05xx = SO1..SO5 (a: labels; c: the casts, e.g. cp05 = Fidel, Miki of SO5, cp04 = Edge, Reimi of SO4; cp00 are anamnesis originals). |
+| R-PU-SIBLING | (a+d) | A gacha without own evidence takes the pick-ups of the gachas sharing its banner_id (the steps of a step-up and the single/10-draw variants of one banner) (a: shared banner; d: same pick-ups). |
+| R-PU-RERUN | (d) | A rerun (復刻) banner without own evidence takes the pick-ups of the earlier banners whose title contains its event key (e.g. 復刻花嫁2020 -> banners titled with 花嫁2020). |
+| R-PU-ROLEPICK | (a+d) | 'ロールピックアップ' banners naming a class (アタッカー, ディフェンダー, シューター, キャスター, ヒーラー) pick up every general-pool ace of that master_role.category_type. |
+| R-PU-THEME | (c+d) | A seasonal rerun without other evidence ('復刻花嫁2020', '復刻正月2021', '復刻ハロウィン1', '復刻神級(2)') picks up the aces of that event: units whose names carry the costume word (花嫁/花婿, 渚/真夏/常夏, 歌星 for アイドル, メイド/執事) released in that year, or units released in the event's window (正月 01-01..01-07, xmas/クリスマス 12-01..12-24, ハロウィン 10-20..10-31, バレンタイン 01-25..02-14, costumes only: not a plain *_b01a character; ハロウィンN = the N-th Halloween, 2016+N) (c: the seasonal events and their costume names; d: the windows). Checked against the banner images of 復刻正月2021, 復刻ハロウィン2020, 復刻クリスマス2020 and 復刻バレンタイン2021: all four match (b). |
+| R-PU-BANNERART | (b) | Pick-ups read off the banner images where the master data names none: the 衣装コンテスト 2018 step-ups show ★5ヒーローベルダ / ★5ナースフィオーレ (20200917_chara_PU_001), the 2019 ones ★5花魁ミュリア / ★5ハンターセリーヌ (20200903_chara_002); 復刻神級1 神翼のマリア / 賢神のマスティマ, 2 神龍のアシュトン / 神星のレナ / 神翼のフェイト, 3 神弓のレイミ / 神導のソフィア (20210603_chara_PU_006, _007, 20210610_chara_PU_005). |
+| R-PU-NEW | (d) | A pick-up banner (not a rerun) still without evidence picks up the ★5 roles (weapons) released on its opening day (master_role.opened_at's date = the gacha's). |
+| R-PU-RELEASE | (d) | A pick-up unit released after the banner opened but before it closed counts as released by the banner (it is added to the S pool, never to the general pools). |
+| R-RANK-WEAPON | (a) | Weapon ranks: A = rarity 5, B = rarity 4, C = rarity 3. Evidence: ★3/★4/★5武器 tickets are C/B/A 100 %; the ★4～5 fill tickets are A 29.44 / B 70.56. |
+| R-S-WEAPON | (a+d) | Weapon S (used by a few step-ups with bonus_s_rank_rate 100) = the banner's pick-up weapons; A = the general ★5 pool including those pick-ups (d: uniform within A). |
+| R-W5-POOL | (a+d) | The general ★5 weapon pool: the weapons ever featured by a weapon gacha image (master_gacha_image content_type 1; released = the first featuring gacha's opened_at) (a), plus the launch set: rarity-5 weapons of the W01..W17 families with serial_number <= 392, excluding placeholders (未定) and coin-shop weapons (コインウェポン) (d: the launch set). Other rarity-5 weapons (event rewards, item_weapon_*) are not drawn (d). |
+| R-W34-POOL | (a+d) | ★3 and ★4 weapon pools: every master_item type 1 of that rarity (51 and 52 rows) (a), released at their weapon kind's opened_at (master_weapon_kind.opened_at, e.g. whip 2020-06-25) (a) or at launch (d). |
+| R-KIND | (a+d) | Weapon banners restricted by kind in their title ('定常武器ガチャ【近接】【ナックル/双剣/剣&鞘/鎌】', '補填武器チケット：杖', 'gacha_pickup_weapon_sword_*') draw only those kinds; 【遠距離】 alone = range-type 2 without the magic kinds; 紋章武器 = 杖/オーブ/本 (a: titles; d: the two group readings). |
+| R-WEIGHT | (d) | Within a rank, every unit has the same weight (the live per-unit rates are unknown; the rate dialog showed them, but no copy survives). |
+| R-EMPTY | (d) | A rank with rate > 0 whose pool would be empty falls back: S -> the A pool, A -> the S pool (recorded in gacha_rank.rule). |
+
+## 5. Growth
+
+### 5.1 Character EXP and level
+- **Curve:** EXP to the next level = `int(master_character_common_parameter[level].next_exp × master_role_boosted(rank, rarity).exp_rate + 0.5)` (b: `PersonModel::GetNextLevelExp(level, rank, rarity)`). `exp` is kept within the level (b: the strengthen screen shows `next - exp`).
+- **Level cap:** the character's own cap from the server (`CPersonInfo` +0x1690, the limit-break result's level cap) or else `master_role_level_max` by rarity (3: 40, 4: 50, 5: 60, 6: 70) (b: `tCharaData::LevelMax`, `CMasterCache::tLevelMaxCache::Get`). Rarity 7 = rarity 6's cap plus the levels opened on the universe board (`master_universe_board`) (b, partly read). EXP at the cap is discarded (d).
+- **Boost with EXP items** (`BoostCharacter(uid, item, count)`), as the client previews it (b: `CPartyStrengthening::GetStrengtheningItemReflection`):
+  - EXP gained = `floor(count × item.base_boosted_point × (1.5 if item.role_category_type == the character's category else 1.0))` (`item_exp_*`: 1,000..16,000 per item; `item_exp_all_*` have no category);
+  - FOL = `count × master_role_boosted(rank, rarity).use_fol_one` (b: `MasterRoleUseFolOne`), times a type-4 campaign's `magnification` (0.5) (a: campaign labels `*_kyara_FOL*`; b: `CharacterUtility::ConsidereCampaignFol`).
+  - **Big success:** `master_global.pc_boosted_up_rate` = 11.5 (% chance) and `pc_boosted_bonus_rate` = 1.5 (EXP multiplier), `pc_boosted_role_category_bonus_rate` = 1.5 (the category bonus above) (a: keys; d: that up_rate is the percent chance). Type-7 campaigns (`*_kyouka`, 1.48–3.0) multiply the chance (a: labels; d: what they multiply). Result: `BoostedCharacterResult.is_big_success`.
+- **Seeds** (`AddStatusCharacter(uid, item, count)`): each `item_seed_*` adds its own stat column of `master_item` (attack / intelligence / defence / hit / guard / ap 1, hp 5) to the character's `add_<stat>`, capped at `master_role.<stat>_add_max` (a: the seed rows; b: `CPartyStrengthening::GetParameterAddItemReflection` previews `current + value × count`, capped at the role's maximum). FOL: `master_global.add_status_fol_<stat>` per use (hp 1,500, attack..guard 7,500, ap 500,000) (a: keys; d: per seed used rather than per point). Result: `CharacterAddStatusResult` (before/after add_*, use_fol, new_fol).
+
+### 5.2 Limit break
+- **Maximum** by role rank = number of `master_rank` rows of that rank minus one (people 3, guest 5, party / ace / exceed 10) (b: `CParameterUtility::CalcMasterRole2LimitBreakMax`; matches `master_character_limit_break.target_limitbreak_max`).
+- **FOL** for the next step = `master_rank(rank, limit_break = current + 1).use_fol` (b: `tCharaData::LimitBreakNeedFol`).
+- **Items:** the item passed with the request, `master_item_limit_break.<people|guest|party|ace>` copies of it by role rank 1–4 (e.g. `item_limitbreak_01`: 1 / 5 / 25 / 50) (b: `tCharaData::LimitBreakNeedItemNum`), or `master_character_limit_break` rows of the role's `limitbreak_id` for the special ones (`child_tika`, `bow_crawd`, `common_exceed`) (a).
+- **Effect:** `limit_break_count` + 1 → stats from `master_rank` (section 3) (b). The level cap doesn't change (d: the client reads the cap from the rarity unless the server overrides it).
+
+### 5.3 Evolution
+- `master_role_evolution` by (role `rank`, `rarity`, `category_type`): `use_fol` and up to four (item, num) pairs (a). The evolved role is the role with the same `role_category_id` and the next higher rarity (b: `CUIUtility::MaxEvolution(role)` looks for a `master_role` row with the same `role_category_id_label` and a higher `rarity`; the evolution cost is `CParameterUtility::FindRoleEvolution(rank, rarity, category_type)`). The response carries `EvolutionResult.UpdatePlayerCharacter` {before/after master_role_id, level} (a: schema); **requires the character at its level cap** and enough items and FOL (b: `CPartyCompositionEvolution` enables the button only when every item count, the FOL and `level >= tCharaData::LevelMax()` are met); the evolved character starts again at level 1, EXP 0, under the next rarity's cap `LevelMax(rarity + 1)` (b: the evolution screen previews the evolved form at "LV 1/<new cap>", and after the result the client says `uimsg_next_strongth` 進化したため、レベルが1になりました; "Fixes found on the growth screens"). FOL campaigns of type 5 halve the cost (a).
+- ★7 evolution (`IsRare7_Evolution`) uses the `Ac_*_6-7` rows (a).
+
+### 5.4 Awakening, skills, mastery, universe
+- **Awakening:** `master_item_awaken` (awaken_id, awaken_level → items, `use_fol`) and `master_awaken` (per `role_category_id` and level: rush skill, talents, skills) (a).
+- **Mastery:** `master_mastery_step` (type, step → required item, count, FOL) (a).
+- **Universe board:** `master_universe_board` (cells: open level, status bonus, talent, `chip_num`), `master_universe_talent`; reset costs `reset_universe_board_item` × 1 (a).
+
+### 5.5 Weapons and accessories
+- **Compose** (`ItemCompose(base, materials)`): each material adds boosted points; the client previews the gain per material as `(material.boosted_point + 100) × master_item_compose[material rarity].boosted_point / 100`, summed (b: `CItemStrengtheningPotal::GetAddBoostedPoint`, as far as read: the `+0x120` field of the material's `CItemInfo` is `boosted_point` by the property order `id, player_id, master_item_id, item_type, boosted_point, limit_break_count`, and the rarity match selects the `master_item_compose` / `_accessory_compose` row). The base item's level follows from its total boosted points against `next_level_boosted_point` (a; d: cumulative per level). Levels from `master_item_compose` (weapons) / `master_item_accessory_compose` (accessories): per rarity `level_max` 10, `next_level_boosted_point` per level, `use_fol_one` per material (a). Big success: `weapon_compose_up_rate` 11.5 %, `weapon_compose_bonus_rate` 1.5 (a; d: meaning as for characters); a type-6 campaign (`*_gousei`, 3.0) multiplies it (a). Type-2 campaigns halve the FOL (a).
+- **Limit break** of a weapon by feeding the same weapon: raises `limit_break_count` and the level cap per `master_item_limit_break_level_max` (limit break 1..5 → cap 12..20) (a).
+- **Grade up** (`ItemGradeUp`): `master_item_grade_up` by rarity: `grade_up_num` = 5 materials and `use_fol`; the new item is drawn from `master_item_grade_up_list` (same rarity and weapon kind) by `rate_weigh` (a).
+- **Sell:** price = `round(master_item.sale_fol × master_item_sale_rate[level].sale_rate)` for weapons (item kind 1; `sale_rate` 1.0 at level 1, +0.1 per level), else `sale_fol` (b: `CParameterUtility::tItemData::SellingPrice`). Stack items: `sale_fol` × count (a).
+- **Material compose:** `master_material_compose`: up to five (item, num) → `result_item_id` × `result_item_num`, `use_fol` (a).
+- **Gear:** `master_gear*`, `master_global.coin_for_generate_gears` 10,000, `attach_gear_coin` 10,000, `extraction_facter_1..3` (a). Implemented by agent server-rules: see "Server rules added by agent `server-rules`" at the end.
+
+## 6. Presents
+- The present box holds `CPresentBoxInfo` {content, num, reason_type, reason_param, message, deadline_at}. Deadline = received + `present_deadline_day` = 30 days (a: key; d: expired presents are dropped). At most `present_list_limit` = 100 listed and `present_receive_limit` = 10 received per request (a).
+- Receiving applies the grant (1: content grants) and returns the **whole remaining box** in `PresentGetResult.add` (b: `ApplyGetPresent` replaces the box with it; notes).
+- Rewards that go to the box: login bonuses, achievements, rank rewards, overflow from caps (c).
+
+## 7. Login bonus
+- **Daily trigger:** the first request after the 04:00 JST reset (1: conventions) counts a login day (b: `LoginBonusResetHour`).
+- **How the client shows it** (b: `CPopupManager::CheckStart`, `LoginBonusModel::GetList(true)`): on entering home, the popups are checked in order — notice board (once a day, local KVS), premium login bonus (`PremiumLoginBonus` entries with the received flag), the premium pass ending, **login bonus**, two favor popups, guide information, ... The login-bonus popup opens when `data.LoginBonus` (CLoginBonusInfo {`master_login_bonus_id`, `current_idx`, `is_received_now`}) has an entry with `is_received_now` set whose master row is open (`LoginBonusModel::EnableParameter`); the page shown is `current_idx` (b: `CLoginBonusOperater::GetCurrentIndex`). `LoginBonus` is not reset between responses (api.md "Player state"), so send `is_received_now` = true only in the response that grants the day's bonus, and false afterwards (d). Send it in the first home response of the day: on 3.7.0 the title's NoLoginStart grants the day and the Login right after it reports it again (`api/daily/login_bonus.cpp`) (d). The Other menu reopens the popup (`COtherMenu::RequestLoginBonus`) (b).
+- **Which bonuses:** every `master_login_bonus` row open now (a). The permanent one is `login_bonus` (`is_loop` = 1, 28 days: coins 500/250, heal items, FOL 50,000, gacha tickets, `item_limitbreak_03`, ...) (a). Event bonuses (`is_loop` = 0) stop after their last `order_idx` (a).
+- **Day index:** `current_idx` advances by one per login day, wrapping to 1 after the last `order_idx` when `is_loop` (a: columns; c: SOA's login bonuses counted login days, not calendar days).
+- **Reward:** the `master_login_bonus_contents` row with `order_idx` = the day, sent to the present box (c).
+- **Premium login bonus** (`master_premium_login_bonus*`): tied to a purchased pass (content type 11); off unless the player owns the pass (d). Implemented in `api/daily/premium_and_favor_bonus.cpp` (see "Premium and favor login bonuses" at the end).
+- **Favor login bonus:** `master_favor_bonus` / `_contents`, limited by `favor_login_bonus_limit` = 5 (a); see 8. Implemented in `api/daily/premium_and_favor_bonus.cpp` (see "Premium and favor login bonuses" at the end).
+- **Implemented** by agent server-growth's `server/src/api/daily/login_bonus.cpp` (agent restore-home's parallel `home.cpp` was dropped at the merge; its description below matches the rules both used). `PresentBoxCount` is sent on every player load (`server/src/api/player/player_info.cpp`):
+  - Every `master_login_bonus` row open at the server's clock (a). On the first player load of a login day (the day starts at `master_global.login_bonus_reset_hour` = 4, local time: (a) + (b) `CParameterUtility::LoginBonusResetHour`), its next page is granted: page = last granted + 1, wrapping to 1 after the last `order_idx` when `is_loop`, none after the last page otherwise (a)+(c). State: table `login_bonus` (id, day = last page granted, last_at).
+  - The page's `master_login_bonus_contents` rows go to the present box with `reason_type` 1 and the line "<name> N日目" (`Present_box_1`; see "Present box lines" at the end).
+  - `LoginBonus` lists every open bonus that has granted a page: `{master_login_bonus_id, current_idx = the page, is_received_now}`; `is_received_now` is true only in the granting response (d). `current_idx` as the 1-based `order_idx` is (d). `IsLoginBonus` = a page was granted in this response (d).
+  - `PresentBoxCount` = the unreceived presents (b: the present badge, `CParameterUtility::GetPresentCount`).
+  - **The popup checks are the client's.** `CPopupManager::CheckStart` only checks the popup kinds whose bit is set in its flags (+0x3c); 3.7.0's `CPhase_Login::Progress` sets them (`CPopupManager::AddPopup()`, bits 0x7b) after the login when the tutorial is cleared. The server only sends the data. (b)
+
+## 8. Favor (affinity, 好感度)
+Implemented in `server/src/api/favor/favor.{h,cpp}` (agent `restore-favor`), called from `server.cpp` at the player load, the battle status, MissionEnd and the favor APIs. The 3.7.0 client's own favor getters show the levels the server sends (the client before the rebase didn't: `docs/history/server-rules-3.8.0.md`).
+
+### State
+- One row per **same_role_id** in the server table `favor` (`same_role_id`, `point`, `tap_count`, `tapped_at`, `event_drop_at`). The client keys its favor map by same_role_id: `CParameterManager`+0x8410, `map<u64, CPlayerCharacterFavorInfoElement>`, and the favor results of MissionEnd / UpdateFavorByTap / UseFavorItem are written into it by that id. **(b)** So every version of a character (all roles with the same `master_role.same_role_id`) shares one favor. **(b)**
+- Seed: no favor, 0 points for everyone. **(d)** The 3.7.0 save has no favor data.
+- Only characters with a `master_favor_schedule` row (id = same_role_id; 96 rows, 95 same roles in `master_role`) have favor. **(a)** The client's `CParameterUtility::GetEnableFavorability` makes the same test. **(b)**
+
+### Levels
+- **Thresholds:** `master_favor_level.next_favor_point` of level L is the **cumulative** point total needed for level L+1: 10,000 / 30,000 / 60,000 / 90,000 / 99,999,999. **(a)** for the values. **(b)** for reading them as cumulative: `CHome::GetFavorabilityPointPersent` draws the home gauge as `points / next[1]` at level 1 and `(points - next[L-1]) / (next[L] - next[L-1])` above.
+- **Level** = 1 + the number of thresholds reached, capped at the character's maximum. **(a)+(b)**
+- **Maximum:** `master_favor_schedule.favor_max_level` (4 for every row), or `next_favor_max_level` (5) from `next_opened_at` on (always empty in 3.7.0). **(a)** Same rule as `GetEnableFavorability`. **(b)**
+- **Points stop** at the threshold of the maximum level (60,000 while the maximum is 4). **(d)** Nothing shows points past the maximum: the home gauge is empty at the maximum level. **(b)**
+
+### Gains
+- **Battle** (MissionEnd): every party member with favor gains `master_favor_battle_effect.favor_up_point` of the row with `play_type` 0 (single play; 1 = multiplay host, 2 = guest) and `use_stamina` = the stamina the MissionStart took (2 → 12, 10 → 60, 20 → 119). **(a)** A stamina with no row uses the largest `use_stamina` below it. **(d)** (every value 0..300 in use has a row.) A same role present twice in the party gains once. **(d)**
+- **Home tap** (`UpdateFavorByTap(u32 same_role_id)`, sent by `CHome::UpdateFavorPointByTap` when the home character is tapped): `master_global.favor_tap_bonus_point` = 50 points. **(a)** At most `favor_tap_bonus_limit` = 5 taps per character per day. **(a)** for the numbers; **(b)** for "per character": the favor element has its own `favor_up_count_by_tap` and `updated_by_tap_at`.
+  - The day starts at `master_global.login_bonus_reset_hour` (04:00) in the server's local time, like the other daily counters (see Conventions). **(d)** for applying it to taps.
+  - A tap past the limit, or on a character without favor, changes nothing and answers the current level and points. **(d)**
+- **Favor items** (`UseFavorItem(u32 master_item_id, u32 count, u32 same_role_id)`): `master_favor_item_effect.favor_up_point` per item. **(a)** `target_type` 0 works on any character; otherwise only on the row's `master_role_same_role_id`. **(d)** for that reading of `target_type`. The count is capped by the stack held; the stack is debited. **(d)**
+- The favor login bonus (`master_favor_bonus`, `StaminaHealByFavor`) is in `api/daily/premium_and_favor_bonus.cpp` ("Premium and favor login bonuses") and the favor event drops (`added_event_drop_at`, `RemainingEventDropBonusCountByFavor` consumed) in `api/events/favor_drop.cpp` / `favor.cpp` ("Event extras"); tests `daily/premium-favor-bonus`, `events/favor-drop`.
+
+### Responses
+- **Player load** (`NoLoginStart`, `Login`, `GetPlayer`, ...):
+  - `PlayerCharacterFavorMap`: a map keyed by same_role_id (as a string) of `CPlayerCharacterFavorInfoElement` {`master_role_same_role_id`, `favor_point`, `favor_level`, `added_event_drop_at`, `favor_up_count_by_tap` (today's), `updated_by_tap_at`}, one per owned character with favor (37 for the 3.7.0 seed). **(b)** for the shape: property names from the class's `Initialize`, map shape as the other `...Map` infos.
+  - `RemainingUpdateFavorCountByTap`: the taps left today for the **home** character. **(d)** The client keeps one number (`CParameterManager`+0xb660) and needs it non-zero to send a tap (`CHome::IsAddFavorPointByTap`). **(b)**
+  - `RemainingEventDropBonusCountByFavor` = `master_global.favor_event_drop_bonus_limit` (3). **(a)** for the value, less today's favor event drops ("Event extras"; agent events-extras). The client needs it non-zero to show the party screens' favor drop icon (`GetFavorDropIconImageName`). **(b)**
+- **MissionEnd:** `MissionResultCharacterFavor`, keyed by same_role_id: {`id`, `master_role_same_role_id`, `before_favor_level`, `before_favor_point`, `after_favor_level`, `after_favor_point`, `added_event_drop_at`}. `CApiNotify::OnMissionEnd` copies the after values into the favor map. **(b)**
+- **UpdateFavorByTap:** `UpdateFavorByTapResultInfo` {`same_role_id`, `favor_level`, `favor_point`, `RemainingUpdateFavorCountByTap`}; the handler writes them into the favor map and +0xb660. **(b)**
+- **UseFavorItem:** `UseFavorResultInfo` {`same_role_id`, `favor_level`, `favor_point`} and `StockItem` (the whole stack list). **(b)** for the result keys; **(d)** for sending the whole list.
+- **Battle status** (`BattleParameter.PlayerCharacter[].favor_level`): the member's favor level. **(b)** for the key.
+
+### Effects (client-side, from the master data)
+`master_favor_level.assist_cut_in_rate`, `ap_bonus` (read by `GetFavorApBonus`, levels 4 and 5) and `event_drop_bonus` **(a)**; the client applies them from the favor level it reads. The favor AP bonus isn't added to the server's battle status yet.
+
+## 9. Shops
+- **Item shop** (`ExItemShop`, `master_item_shop`, 293 rows): `price` in coins for `content` × `num` (almost all item sets, type 99) (a: columns; b: in 紋章石, the screen's 必要紋章石, "Shops" below). `limit_count` per period; the client shows `limit_count - num_total` as the remaining count and disables the row at 0 (b: `ItemShopUtility::ItemSetInfo::GetRemain` / `IsEnable`), and hides it outside `opened_at`..`closed_at` (b: `IsWithinDayEnableEmpty`). `reset_type` 2 (10 rows, all `reset_param` 1, `reset_time` 00:00:00) = a **monthly** reset on day `reset_param` at `reset_time`, `loop_count` being the number of months until `closed_at` (a, inferred: rows opened 2019-08-01 / 2020-03-01 / 2020-09-01 have `loop_count` 136 / 129 / 124, i.e. months to December 2030). `interval_day`, when set, = a reset every N days (a: column; d: meaning). Counters go in `ItemShopInfo` {limit_count, num_total, loop_count}.
+- **Exchange shops** (`ExshopExchange`, `master_exchange_shop` 1,001 / `_contents` 11,547): pay `ex_num` of `ex_item_id` (event coins, medals) per `num` × content; `ex_limit` caps the total per row (0 = unlimited) (a). `exchange_item_max` = 50 per request (a). Counts in `ExchangeShopExCount`.
+- **Direct item shop / coin list / deposits:** real-money products; not offered (d: no payment in the port).
+
+## 10. Achievements (勲章 / 実績)
+- `master_achievement` (5,628) and `master_achievement_secret` (174): `type` (the event counted: e.g. 8 clear mission `target_id`, 11 own character, 16 ..., 24/25 event items, 52 favor level ...), `target_id`, `goal_count`, `is_count_reset`, `default_release` (active from the start), `next_achievement_id` (chain), `open_mission_id`, `daily_pattern_id` / `weekly_pattern_id` (daily / weekly ones reset), reward (`content_type`, `content_id`, `num`), `opened_at` / `closed_at` (a).
+- **Types**, pinned from each type's name texts (`name_message_id` → `master_text`) and `target_id` (a+text; the counted quantity is `goal_count`):
+
+| type | rows | counts | target_id |
+|---|---|---|---|
+| 1 | 15 | character gacha draws | gacha label |
+| 2 | 13 | character boosts (強化) | – |
+| 3 | 13 | evolutions (to rarity target) | rarity |
+| 4 | 7 | character limit breaks | – |
+| 5 | 35 | weapon boosts | – |
+| 6 / 7 | 37 / 17 | weapon limit breaks (武器を N回上限解放する) / alchemy (grade-up, 錬成) | – |
+| 8 | 1,785 | clears of mission `target_id` | mission label |
+| 9 | 12 | all missions of an area cleared (踏破) | area label |
+| 11 | 232 | own / obtain character chips | chip or role label |
+| 12 / 13 | 43 / 42 | hits in one battle / total hits | – |
+| 14 | 34 | rush-combo chain length | – |
+| 16 | 94 | multiplayer wins | `all` or mission |
+| 17 | 69 | FOL obtained | – |
+| 18 | 5 | players followed | – |
+| 19 | 25 | daily achievements completed | pattern |
+| 24 | 183 | clears of an event mission group | event label |
+| 25 | 1,484 | event items collected (daily challenges) | item label |
+| 26 | 5 | box gacha draws | box gacha label |
+| 29 / 30 / 31 / 32 | 5 / 1 / 2 / 3 | a character at level N / rarity N / limit break N; a weapon at level N | – |
+| 34 | 45 | exchange-shop trades | – |
+| 35 | 3 | weapon gacha draws | – |
+| 36 | 85 | player rank reached (調査ランク) | – |
+| 37 | 235 | clears (event title series) | mission label |
+| 38 / 39 | 21 / 6 | accessory boosts / crafts | – |
+| 40 | 8 | seed (status) boosts of stat `target_id` | stat index |
+| 44 / 45 | 13 / 17 | deep-space exploration rate / expeditions | area label |
+| 46 | 34 | story chapter cleared | mission label |
+| 48 | 2 | rush assists | – |
+| 49 | 2 | role changes | person label |
+| 51 | 13 | gears owned | – |
+| 52 | 368 | favor points with a character | role label |
+| 53 | 12 | characters at favor level `target_id` | favor level |
+| 55 | 17 | orders activated (stamp) | order type |
+| 58 | 3 | accessory inheritances | – |
+| 59 | 45 | damage in an evaluated battle | evaluation label |
+| 61 / 62 | 151 / 337 | Sphere211 floor reached / weekly challenge | – |
+| 69 | 1 | ★7 evolution | rarity |
+| others | ≤ 7 each | anniversary quiz events (4周年記念トレジャーハント) | – |
+- Progress is counted by the server as events happen (mission clear, level up, gacha, ...) and sent in `Achievement` / `UpdatedAchievement`; receiving (`AchievementReceive`) grants the reward to the present box and activates `next_achievement_id` (a: columns and schema; c: rewards went to the present box).
+
+## 11. Other modes (outline)
+- **Deep space:** implemented, see "Deep space" at the end.
+- **Sphere 211:** implemented, see "Sphere 211" at the end.
+- **Tower:** `master_tower_area` / `_mission`, 3 tries a day (`Tower_Challenge_Count`) (a; d: daily).
+- **World boss:** `master_world_boss`, `_wave`, `master_time_bonus` (a).
+- **Event ranking:** `master_event_ranking*`; single player → the player is rank 1 (d).
+- **Event missions:** implemented, see "Events" at the end.
+- **Multiplayer, follows, neighbours:** empty lists; rental characters from `master_rental_bonus` / NPCs (d).
+
+## 12. Home (agent home370, `server/src/api/player/home_footer.cpp`)
+The 3.7.0 home reads these.
+- **`FooterMissionInfo`** on every full-state player response (Login, NoLoginStart, GetPlayer) (d: which responses the 3.7.0 server sent it on isn't known). The client keeps it in CParameterManager (b): `is_open_extra_dungeon` → +0x1a38 (`IsOpenExtraDungeon`), `is_open_event_mission` → +0x1a68 (`IsOpenEventMission`), `is_open_evolution` → +0x1a98 (`IsOpenEvolution`), `is_open_multiplay` → +0x1ac8 (`IsOpenMulti`); `ep1_new_area_count` is the fifth field.
+  - `is_open_extra_dungeon` = 1 (d): no master row says when Sphere 211 opened (the lock text only says "clear missions"); the seeded account (rank 87, every planet open) had it. Whether the button then leads in is the client's `MissionUtility::GetExtraDungeonList` (a part in its period), i.e. the sphere211 module's seasons.
+  - `is_open_event_mission` = 1 (d): the event list is served (see "Events" at the end).
+  - `is_open_evolution` = 1 (d, c: evolution existed from launch).
+  - `is_open_multiplay` = 0 (d): no other players.
+  - `ep1_new_area_count` = 0 (d): the campaign's "New" marks are in `ActiveMissionList`.
+- **Deep space** is not a footer flag: `IsOpenDeepSpace` is true unless the feature-status map (CParameterManager+0x74a8, `PartialMaintenance`) lists `deep_space` as closed (b). The server sends none.
+- **Follow menu** (the home's side menu → フォロー; `server/src/api/social/social.cpp`): `Blacklist` and `GetRecentlyPlayedList` answer the player state only, i.e. empty lists (d: no other players); `SearchPlayer` is refused with error 10002, the game's "プレイヤーデータが見つかりません" (b: master_text `error_message_text_10002`; d: that nobody is found). `FollowList` (also the mission helper list) belongs to the rental / NPC-helper rules.
+- **Login-bonus popup after the login** (`api/daily/login_bonus.cpp`): a day granted by the title's `NoLoginStart` is reported with `is_received_now` once more on the following `Login` / `SimpleLogin` (d), so the popup the 3.7.0 login arms finds it (the popup condition is (b): `CPopupManager::CheckStart` → `LoginBonusModel::GetList(true)`).
+
+### Titles (称号; agent a3-home, `server/src/api/player/titles.cpp`)
+What the client reads (b): `TitleList` is a plain array of master_title ids (`CTitleList` = `InfoBaseValueArray<u32>`, kept at CParameterManager+0x71d8); `CHonorMenu::SetupTitleData` lists exactly those ids (`SELECT * FROM master_title WHERE id IN (...)`, split into the バトル / シナリオ / 育成 / その他 tabs by `category`), and adds no default titles itself. `Player.title` (+0xed8) is the selected title; the status bar's plate (`CCommon::UpdateMyStatus` → `CParameterUtility::SetPlayerTitle`) shows its `tips_resource` plate and name, and hides the plate for 0. `SetTitle(u32)` (`CHonorMenu::CallApiSetTitle`) expects `Player.title` back; the menu's 外す sends 0.
+- **Owned titles:** the `is_default` titles (26 rows, title_other_0001..0026) are every player's **(a)**; the server lists them in `TitleList` **(d)** (without them a new player's list is empty). The others are earned **(a)**: 355 of the 385 rows are `master_achievement` rewards (`content_type` 13); an achievement's reward goes to the present box (section 10), and receiving it grants the title. Four titles no master row awards (title_bring_0010/0014/0015, title_battle_0025) are never granted **(d)**.
+- **Grant** (content type 13, `ext::Grant`): the title joins the owned list; one owned already changes nothing **(d)**. The response then carries the whole `TitleList`, `AddTitleList` (the new ids) and, for a present receive, `PresentGetResult.result.Title` [{`master_title_id`}] **(b)**: the keys (docs/api.md, `CPresentBoxReceiveTitleInfo`).
+- **Selected title:** kept in the state's meta `title`; every `Player` carries it (`server/src/api/player/player_info.cpp` `player_info`). A player who never chose one wears the first default title by `order_id` (title_other_0001, アナムネシスデビュー) **(d)**: 3.7.0's choice for a new player isn't known, and with 0 the plate stays hidden.
+- **`SetTitle(id)`:** an owned id is stored and answered with `Player.title` and `TitleList`; 0 takes the title off **(b)** (the 外す button, the client's "称号を外しました" dialog); an id not owned is refused with error 10208 **(d)**.
+- Checked on screen by `port/scripts/home_session.sh` (the その他 tab, a SetTitle, 外す) and by `player/titles`.
+
+### Notice board page (お知らせ; agent a3-home, `server/src/api/player/notice.cpp`)
+(b) The notice board (`CNoticeBoard`, the first popup 3.7.0's login arms, and the side menu's お知らせ) opens `CWebView::OpenView(1)`, whose URL is `WebViewUtility::GetWebInfo(1)`: the value of key `information` in the server's `WebView` list (`CWebViewInfo`: [{`key`, `value`}], CParameterManager+0x6120; the client appends `?<hash>`). The URL goes to `BAS::WebView` → `SOAActivity.ShowWebView`. 3.7.0's server sent its online notice pages' URL (c); they are gone.
+- **`WebView`** = [{`information`: `http://soa-local.invalid/notice`}] on every full-state player response **(d)**: the URL of a page the local server hosts itself; `WebView` is a state key.
+- **The page** (`server::web_page`, built when the popup opens): the server clock (and the event calendar when it differs), the event areas open now (`events::open_areas`, the list the event menu shows; names from `master_event_area.name_message_id` **(a)**; at most 12 listed), the running login bonuses with the day reached **(a)**, and the number of presents waiting. Plain text, rows wrapped at 48 columns **(d)**; what it lists is the server's choice **(d)**.
+- The desktop has no web view: the port shows the page's text in the popup's page area (client change, `docs/client-changes.md` "Notice board page"). Other web pages (help, terms, gacha rates, ...) aren't hosted and stay blank.
+
+## Register of (c) and (d) rules the player can see
+| Area | Rule | Label | Why it's needed / how to check |
+|---|---|---|---|
+| Player | rank-up adds the new stamina max to the current stamina | (c) | messages say "added"; amount unknown |
+| Stamina | partial regen progress kept on spend | (d) | server bookkeeping unknown |
+| Clock | without `--clock`, dated content uses today's month-day in the newest service year with an event term that day (`event_now`) | (d) | the user's choice (replay the calendar); `--clock` overrides |
+| Stamina | coin refill / heal items add to the current stamina (overflow allowed) | (d) | amounts are (b) |
+| Stamina | halved costs round up, minimum 1 | (d) | no evidence |
+| Wallet | free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (c) | (a) | |
+| Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
+| Missions | drops rolled at MissionStart and repeated at MissionEnd | (d) | the start response carries drop lists; no reader found |
+| Missions | first-clear presents only on the first clear | (d) | table has no repeat flag |
+| Missions | `is_fix_drop` rows always drop; `host_bonus` rows skipped | (d) | |
+| Missions | rare-drop marking for display | (d) | |
+| Missions | character bonus cap per party | (d) | |
+| Missions | vanish item consumed at start | (d) | |
+| All | refusing a request without an error code on the FakeApiCaller route | (d) | the codes are (a); the route can't report them yet |
+| Evaluation | best rank only, checked best-first | (d) | |
+| Gacha | rank S/A = ★5 (S pick-up, else ace), B ★4, C ★3; weapons A ★5, S pick-up | (a)+(d) | ticket rates and titles fit; the S/A split without pick-ups is inferred (4.5) |
+| Gacha | the pools (server tables `master_gacha_item_*` are missing): reconstructed per gacha | (a)–(d) per rule | 4.5: pick-ups from images / titles / themes, general pools by release date, equal weights within a rank (d) |
+| Gacha | duplicate over the max → `master_role_duplication_item`; chip amount | (c)/(d) | the matching and limit-break steps are (b) |
+| Gacha | box draw without replacement; last box resettable any time | (c)/(d) | |
+| Gacha | gift gacha always granted; `is_mutation` 0 | (d) | |
+| Growth | big-success chance 11.5 %, ×1.5 | (d) | key names only |
+| Growth | seed FOL per seed used | (d) | amounts are (a)/(b) |
+| Growth | limit break leaves the level cap | (d) | |
+| Shops | item shop `reset_type` 2 = monthly, `interval_day` = every N days | (a) inferred / (d) | |
+| Login | `LoginBonus` sent in the first home response of the day, `is_received_now` only then | (d) | the popup condition is (b) |
+| Login | rewards go to the present box; day index counts login days | (c) | |
+| Presents | expired presents dropped after 30 days | (d) | |
+| Modes | event ranking: player is rank 1 | (d) | |
+| Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
+| Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
+| Player | `is_3d_home` always true; `storage_stock` 500; `updated_at` the answer's time; Wallet `total_coin` = free + paid, `android_coin` = paid | (d) | "Player load" |
+| Entry | `NoLoginStart` / `GetPlayer` without a player answer `data.Time` only; `UpdateView` stores any kind but 0 as `view_status2` | (d) | "Entry flow", "UI tutorial flags" |
+| Login | a bonus day granted by `NoLoginStart` is received-now again on the next `Login` | (d) | 12; lets the 3.7.0 login's popup show it |
+| Achievements | a state seeded from a save has the starter missions (help_addr rows) done; they aren't listed | (d) | section 10; else the "Next Mission" popup covers home |
+| Home | the default titles are owned; a player who never chose wears title_other_0001; SetTitle of an unowned id is refused (10208) | (d) | 12 "Titles"; the lists and keys are (b) |
+| Home | the notice board shows a local page: clock, open events, login bonus, present count | (d) | 12 "Notice board page"; the `WebView` key is (b) |
+| Sphere 211 | past the last season (13, closed 2021-06-24) the last season repeats, its dates moved by whole season lengths (also in the client's master) | (d) | "Sphere 211"; without it the mode is "outside the season" for good |
+| Sphere 211 | a missing battle map skips the mission (cell battles are lotted among playable missions only; nothing playable: the unfiltered lot) | (d) | "Sphere 211"; decided from the files at run time |
+| Sphere 211 | a dive starts on floor 1; 帰還 keeps the floor; a new season starts a new dive | (d) | "Sphere 211" |
+| Sphere 211 | the start cell and the uncleared neighbours of cleared cells are playable (`can_play`) | (c)+(d) | "Sphere 211" |
+| Sphere 211 | treasure: the battle's boxes + boss extra (lottery type 2) + rare extra (4 / 6) + streak bonus; ranks lotted at 帰還 with the current floor's weights | (a)+(d) | "Sphere 211"; the counts are (a), which cells count as boss / rare is (d) |
+| Sphere 211 | continue after a defeat costs 100 coins (continue_use_coin); retire resets the streak, the stamina stays spent | (a)+(d) | "Sphere 211" |
+| Sphere 211 | the rental slot lends clones of the player's own characters (once per lender, 3 per floor); their rentals count for the Sphere 211 rental bonus | (d) | "Sphere 211" |
+| Sphere 211 | season end: rank 1 of a one-player ranking when a battle was won, with that rank's reward; the end result shown once | (d) | "Sphere 211" |
+| Sphere 211 | auto party: the 4 strongest characters that haven't sortied (level, rarity, limit break) | (d) | "Sphere 211" |
+| Sphere 211 | local ranking: the player is rank 1; season end result rank 1 | (d) | "Sphere 211" |
+
+## Notes for the server-core implementation (as of its commit 9792e87)
+Where the evidence above pins down something the first implementation assumed. Each item names the section.
+- **Battle status** (3): the client's formula rounds half away from zero (not floor) and multiplies by the `master_rank` row of (rank, limit break); AP, element defences, equipment, factors and favor AP also come from it. Calling the guest `PersonModel::CalculateParameter` / `tCharaData::CalcStatus` gives the exact values.
+- **Mission time and battle log** (2.3): the request carries the serialized `CBattleLogInfo` (`CParameterManager+0x52d8`); no need for a constant.
+- **MissionStart's third argument** (2.2): the helper (support) index + 1 (b), not a party; the party comes from the player's state.
+- **The client clock** (conventions): 3.7.0's `NowTime` follows the `data.Time` every response carries; nothing else is needed (the frozen clock of the client before the rebase: `docs/history/server-rules-3.8.0.md`).
+- **Favor per battle** (2.3, 8): `master_favor_battle_effect` by stamina cost (a) rather than a flat +100.
+- **Stamina** (1): partial regeneration progress, the refill / item amounts (b), the halving campaigns (a).
+- **Player level table** (1): levels missing from `master_player_level` are interpolated (b); a plain row lookup breaks above level 255.
+- **Gacha** (4.3, 4.5): draw from `port/server-data/gacha_pools.sqlite3` through `server/gacha_pools.h` (S/A by pick-up, rarity 6 never drawn, weapon banners draw weapons, units only from their release time), and answer `GetGachaRate` from the same file; box gacha rules (4.4).
+- **Surprise enemies and drops** (2.2, 2.3, 2.4): `surprise_rate` per mission (a); the result screen lists `DropList` / `CommonDropList` / `RareDropList` / `ClearPresentList`, and shows a first-clear item only when it matches a `master_mission_clear_present` row (b).
+- **Stocks** (1): the master data gives 500 for item / gear stock (`item_stock_max`, `gear_stock_max`).
+
+**Status in server-core (2026-09-29, 02:00).** Done:
+- battle status (rounding, `master_rank`);
+- mission time from the battle log;
+- MissionStart's party from `Player.party_id`;
+- the clock (`service_stop_day` dropped + `data.Time`);
+- favor from `master_favor_battle_effect`;
+- the player level interpolation;
+- stocks (500);
+- gacha from the reconstructed pools, with duplicates via `role_category_id` + `LimitBreakCharacter` / `LimitBreakItem`;
+- the result screen's drop list.
+
+Not yet:
+- surprise enemies and surprise / campaign / character-bonus drops;
+- mission unlocks (`ActiveMissionList`);
+- equipment and factors in the battle status;
+- chips for duplicates;
+- step-up / box gacha;
+- error codes on the FakeApiCaller route.
+
+## Server core: what `server/` implements (agent `server-core`)
+The implementation's own rules, as the code applies them, with labels. Where they differ from the sections above, the sections above are the evidence; the "Notes for the server-core implementation" list says which have been brought in line.
+
+#### Architecture
+- **Route.** With the in-process server, the port brings up `FakeApiCaller` as the API caller (the `SOA_FAKE_SERVER` route; the directory defaults to `port/fakeapi/responses`), and `--download-dir` defaults to `work/download-3.7.0`.
+  - The FakeApiCaller request hooks pass each method's arguments to `server_port::capture`, port/src/native/api/server_adapters.cpp, which keeps the request until it is answered. Arguments are read from x1..x7 by the mangled signature: integers, `s8 const*` strings, `CSTLVector<u64/u32>` references.
+  - `ServeProgress` answers each request through `server::answer` (the library's one request lifecycle, as soa-server's wire uses it). APIs the server doesn't implement still come from the static files.
+  - With `--server HOST`, none of this runs: the client's own NetworkApiCaller talks to soa-server.
+- **State.** A SQLite file, `DATA/server.sqlite3` (`SOA_SERVER_DB`). Tables:
+  - `player`: id, search id, name, level, exp, fol, stamina and its timestamp, free and paid coins, home character, party;
+  - `roster`: uid, role, level, exp, limit break, awakening, skill levels, equipped weapon and accessory, favor points (unused: favor lives in `favor`, section 8);
+  - `favor`: per same_role_id favor points and today's taps (section 8);
+  - `items` (unique items: weapons, accessories), `stock` (stack items), `gear`;
+  - `party` (party set, slot, uid);
+  - `mission` (cleared, best rank, play and clear counts, first clear), `play` (the mission in progress);
+  - `gacha_history`, `box_gacha`;
+  - `presents`, `login_bonus`, `achievements`, `planets`, `meta`.
+
+  `tools/server_state.py DATA/server.sqlite3` prints it.
+- **Clock.** `SOA_CLOCK="YYYY-MM-DD HH:MM:SS"` starts the server's clock at that time, so past banners can be replayed. Times are local time strings.
+  - Every response carries `data.Time`, the server's clock. **(b)** `CServerTime::UpdateServerTimeOffset` parses it after each response and keeps its difference from the device clock, so the client's `CTimeUtility::NowTime` follows the server.
+  - The client computes the stamina it shows from that clock: `StaminaUtility::NowStamina` = `stamina` + (NowTime − `stamina_update`) / heal time, up to the maximum.
+- **`service_stop_day`.** The master the server's CDN serves has no `master_global.service_stop_day` row (`apply_client_master`, applied by `server/src/cdn/served_master.cpp`; both server modes), as in service. 3.7.0 reads the row only for its service-end check (Conventions above; the APK's built-in master is handled by platform370's patch, `docs/client-changes.md` "Emulator mode"). The handling before the rebase (the frozen clock, the `lib_sqlite` hook): `docs/history/server-rules-3.8.0.md`.
+- **Master DB.** `SOA_SERVER_MASTER`, else `data/basmaster-3.7.0.sqlite3` next to the repository (found through the `work` link from a worktree).
+
+#### Seed (first run)
+The seed is `SOA_SERVER_SEED`, else the real 3.7.0 save in the repo (`work/Game-3.7.0.xml`, else `samples/Game.xml`; both gitignored, found from the executable's location, `port/src/core/paths.h`), else the game's own `DATA/data/shared_prefs/Game.xml`.
+
+**Test seed.** The scratch-server selftests (`--selftest "server/"`) seed from the committed synthetic `port/server-data/test-seed.xml` instead, so they run in a fresh checkout with no real save. It holds no real account data: `BAS:PlayerID` `LOCAL00001`, the made-up name "Tessa", level 60, FOL 250,000, all 10 planets open, and 38 roles picked mechanically from the 3.7.0 master (the lowest ids per rarity: 12 ★3, 10 ★4, 12 ★5, 4 ★6; home = the first ★5). `tools/make_test_seed.py` regenerates it. Tests read their expectations from the seed file, not from constants.
+
+| Value | Rule | Source |
+|---|---|---|
+| player search id, name, level, EXP, FOL | `BAS:PlayerID`, `player_name`, `player_level`, `player_exp`, `player_fol` from the save (name, level, EXP and FOL, e.g. Fayt, 87, 1048, 1,675,605). The search id is **not** copied: the save's `BAS:PlayerID` is a real account's id, so the local player always gets the sanitized `LOCAL00001` (d) | seed save |
+| numeric player id | CHash32 of the search id | (d) |
+| stamina | full: `master_player_level.stamina` of the level (134 at 87; levels without a row interpolated, see Stamina) | (a)+(b) max; (d) full |
+| free coins | 300,000 (`--start-coins N` / `SOA_START_COINS`) | (d): the user's request (was 10,000); the save has no wallet. Only a new state gets it: an existing `DATA/server.sqlite3` keeps its balance; delete that file (the whole local server state) to reseed |
+| paid coins | 0 | (d) |
+| roster | `person_master_role_id_N` (master_role ids), duplicates dropped, only ids in `master_role` (74 from the 3.7.0 save); uid `0x7e000000+N` | seed save; uid scheme (d) |
+| character level | the rarity's cap (`master_role_level_max`) minus 10 (rarity 6: 60), EXP 0 | cap (a); level (d): not in the save, chosen so progression shows |
+| skills, limit break, awakening, favor, equipment | skill level 1, limit break 0, awakening 0, favor 0, nothing equipped | (d) |
+| items, stack items, gear | none | (d) |
+| home character | `player_home_pc_roleid` | seed save |
+| party 1 | the home character, then the three highest-rarity other characters (roster order among equals); parties 2..10 empty | (d) |
+| planets | `BAS:PlanetOpen_*` flags | seed save |
+
+#### The game's save is not synced (removed 2026-10-01)
+The game's save keeps a summary of the player (`player_name`, `player_level`, `player_exp`, `player_fol`, `player_stamina_max`, `player_home_pc_roleid`, `person_size`, `person_master_role_id_N`; `CUserDataUtility::Save_PlayerInfo` / `Save_PartyInfo`). The client before the rebase read it back at boot and showed it over the boot response, so the server used to write its own state into it before every boot (`sync_save`). **3.7.0 never reads it back (b):** the only functions that read those keys from the local KVS are `CUserDataUtility::Load_PlayerInfo` and `Load_PartyInfo` (string xrefs in `libSOA-3.7.0.so`), both called only from `CUserDataUtility::LoadFromLocalKVS` (@01f5a788), which has no caller: no BL/B, no address taken (ADRP/ADD), no pointer in any table or relocation. The 3.7.0 client takes the summary from `Login`'s `data.Player` and the roster from the responses only, so the sync was dead and is gone (agent open-issues). The server still *reads* the client's `Game.xml` as the last seed fallback ("Seed").
+
+#### Stamina
+- **Maximum:** `master_player_level.stamina` for the player's level. **(a)** The table has 257 rows for levels 1..999; the levels without a row are interpolated linearly between the nearest rows, rounded half away from zero. **(b)** `MasterPlayerLevelModel::GetByCalculatedLevel`. `next_exp` is interpolated the same way. The maximum rank is `master_global.Player_Rank_max` (900). **(a)** `CUIUtility::GetMaxLevel` clamps it to 999 and uses 255 without the key. **(b)**
+- **Regeneration:** one point per `master_global.stamina_heal_time` seconds (180). A stamina above the maximum (after a level-up) doesn't regenerate, but isn't cut either. **(a)** for the period; **(c)** for the rule shape.
+- **Mission cost:** `master_mission.use_stamina`, taken at `MissionStart`. **(a)** A start with too little stamina still goes ahead, and stamina stops at 0: never negative. **(d)** The client checks stamina before it asks.
+- **Level-up:** the new maximum is **added** to the current stamina; overflow is kept. **(c)** The client's rank-up dialog says スタミナが加算されます ("stamina is added"); see 1 above.
+
+#### Player load (`NoLoginStart`, `Login`, `SimpleLogin`, `GetPlayer`, `CreatePlayer`)
+- The whole state goes in one response:
+  - `data.Player` (CPlayerInfo fields: id, name, search_id, level, exp, fol, stamina, stamina_max, stamina_update, home_pc_id, party_id, stocks, follow_max, times, is_3d_home);
+  - `data.Wallet`;
+  - `data.Character` (the roster: CPersonInfo with id, level, exp, limit break, awakening, skills and their levels, rush skill, gauge);
+  - `data.PartySet` (map keyed by party id as a string; `PartySetCharacter` entries);
+  - `data.StockItem`, `data.Item`.
+- 3.7.0's title sends `NoLoginStart` and then `Login`, which loads the player again; both carry the whole state.
+- `item_stock` and `gear_stock` are `master_global.item_stock_max` / `gear_stock_max` (500). **(a)** `storage_stock` is 500. **(d)**
+- `follow_max` is `master_global.follow_default`. **(a)**
+- `support_pc_id` is the character the player lends (UpdateSupport's, "Rental helpers"); unset or no longer owned, the highest-level character. **(b)** for the key; **(d)** for the fallback.
+- `is_3d_home` is always true: the 3D home. **(d)** `Home3DAnd2DSwitching` has no handler. `updated_at` is the answer's time. **(d)**
+- `Wallet`: `total_coin` = free + paid, `android_coin` = the paid coins. **(d)** The local server has no other store.
+- Code: `server/src/api/player/player_info.cpp` (`player_info`, `wallet_info`, `full_player_state`).
+
+#### Party (`UpdateParty(u32 party, u64 uid1, u64 uid2, u64 uid3)`)
+- Stores the three members in slots 0..2. A uid that isn't owned is stored as empty (only owned characters). **(d)** A missing party id is 1.
+- The party edited becomes the player's current `party_id`, which `MissionStart` uses. **(d)**
+- Answers `PartyUpdate` and `PartySet`.
+- The request shape comes from the method's signature. No caller was found in 3.7.0 (`docs/api.md` "UpdateParty": the party screen saves with `UpdatePartySet`), so it's untested on screen.
+
+#### Party sets (`UpdatePartySet(PartySetInfo const&)`, agent `restore-party`)
+The 3.7.0 party screen saves a party set with `UpdatePartySet` when the player leaves the member select. On the FakeApiCaller route the request arrives as `PartySetInfo::Serialize()` text, the same string `NetworkApiCaller` sent: `party_id,icon_id,is_lock/` and one `id,party_index,character_id,weapon_item_id,accessory_item_id,skill_id1,skill_id2,skill_id3,assist_character_id/` per member (usually four, `party_index` 0..3). **(b)**
+- **Party ids** 1..`master_global.party_set_max` (10). **(a)** A request outside that range, or text without a `party_id,icon_id,is_lock` record, changes nothing and returns no body: the host answers with its fallback, without an error code. **(d)**
+- **Members:** each record replaces the set's slot `party_index`; a record without all nine fields is skipped. A `character_id` that isn't owned is stored as empty. **(d)** The member's weapon, accessory, three skills and assist are stored with the set (table `party_member`), and `icon_id` / `is_lock` with the set (table `party_set`). **(b)** from the serializer; the server doesn't check the equipment or skills against the roster yet. **(d)**
+- **Current party:** the saved set becomes `Player.party_id`, which the party screen opens on (`CParameterUtility::GetPatyIndex`, CParameterManager+0x768) and `MissionStart` takes its members from. **(d)**
+- **Response:** `PartySetResult` (the saved set) and `PartySet` (all sets), plus `Player` and `Wallet`. `CApiNotify::OnUpdatePartySetRes` stores `PartySetResult` into the client's party-set map under its id. **(b)**
+- **All sets exist:** `PartySet` always carries sets 1..`party_set_max`. A set the player never saved is sent with set 1's members. **(d)** Evidence for why it can't be empty: the client's list code (identical in 3.7.0 and the pre-rebase client, per `verdiff`; the crashes were seen before the rebase) crashes on a set without members (`CUISort::CreateCharaParameterCommon`) or with `character_id` 0 slots (`CPartyMemberSelect`), and the screen pages through the sets it received ("1/10"), so the online server must have sent every set filled. **(b)** What the online server put in a new account's sets 2..10 is unknown.
+- **Joinable characters** are the client's rule, not the server's: `tCharaData::IsPartyJoinable` refuses a role whose person is in `master_guest_character` with `unlock_progress` above the player's story progress (CParameterManager+0xca8). With the seed save that's the `tika_release_00` Tika role. **(b)** The server doesn't send story progress yet, so that role stays unselectable.
+- Tests: `port/scripts/party_session.sh` (edit set 1 on screen, save, battle; checks the MissionStart members); `player/party-set-text` (the text's parser, `server/src/api/player/party_tests.cpp`); the `items-party` replay corpus.
+
+#### Assist (`SetAssist(u64 character, u64 assist character)`, agent `restore-party`)
+- The equipment screen (装備・技・アシスト変更 → the assist icon) sends it. An assist of 0 removes the character's assist.
+- `CApiNotify::OnSetAssistRes` applies `SetAssistResult {character_id, assist_id, old_assist_id}` to the client's characters. A character has one assist, and an assist character assists only one character: it's taken off whoever had it. The server keeps the same pairs (table `assist`). **(b)**
+- Both characters must be owned and differ, else nothing changes and the request isn't handled (no body: the host's fallback answer, no error code). **(d)** The level-70 requirement is the client's (the assist list refuses lower levels, and says so). **(b)**
+- `Character` entries carry `assist_character_id` and `assisting_character_id` from those pairs, so they survive a restart and reach `MissionStart`'s party status. **(b)** for the keys (`CPersonInfo`).
+- Tested on screen with the seed's ★6 characters raised to level 70 in the server DB: Maria ← Karin, shown as ASSIST.
+
+#### UI tutorial flags (`UpdateView(ViewFlagType kind, u64 flags)`, agent `restore-party`)
+- The screens' UI tutorials (the equipment screen's, for example) end with `CTutorialManager::ST_Net_Tutoflag`, which sends the word that `CParameterUtility::AddTutorialViewStatus` returns (the old word with the tutorial's bit set), with kind = bit index >> 6. **(b)**
+- The server stores the word per kind (`meta` keys `view_status` / `view_status2`; the `view_flags` table is created but unused) and sends it as `Player.view_status` (kind 0) / `view_status2` (kind 1). The client reads them at CParameterManager+0xe08 / +0xe38 (`GetTutorialViewStatus`, `IsTutorialViewStatus`). **(b)** Any other kind is stored as `view_status2`. **(d)**
+- A new account has seen no UI tutorial. **(d)** The seed save doesn't record them, although the seeded veteran player would have seen them all.
+- The main tutorial's `UpdateTutorial` is the entry flow's ("Tutorial progress").
+
+#### Home character (`UpdateHome(u64 character)`, agent `restore-party`)
+- The 3.7.0 お気に入り変更 screen (`CAdjutantSelect`) sends the chosen owned character's id. The server stores it as the player's home character if it's owned; otherwise nothing changes and the request isn't answered (an empty body: the host's fallback, not an error code). **(b)** for the request, **(d)** for the check. Code: `server/src/api/player/home.cpp`.
+- **`Player.home_pc_id` is the home character's uid (b)**, in every player response (`Login`, `GetPlayer`, `UpdateHome`'s answer and the rest that carry `data.Player`). 3.7.0's `CHome::GetAdjutant` (@01aebe38) takes CParameterManager+0x8698 when it's set, else +0xd08 (`Player.home_pc_id`), and looks the value up among the owned characters (+0x1178, stride 0xb88) by `CPersonInfo` uid (+0x60; `docs/notes.md` "AddCharacter"). With no match it falls back to party set 1's first member (the PartySet map at +0x1878: the entry whose `party_id` is 1, member 0's `character_id`), so the role id the server sent before (a rule made for the client before the rebase, whose home read a role id; `docs/history/server-rules-3.8.0.md`) always showed the party leader: right after UpdateHome and after a restart. The seed makes the home character party 1's first member, which hid it. Fixed 2026-10-01. Test `player/home-pc-id`.
+- **+0x8698** is the favor login bonus's character, i.e. `FavorBonusContetsResultInfo.lot_character_id` **(b)**, by these readings: `CFavorCharacterLoginBonus::Setup` builds its card from it (`tCharaData::Initialize(+0x8698)`); `CPopupManager::CheckStart` case 6 (the favor login bonus popup) opens when it is non-zero and the contents list at +0x8658 is non-empty; `CFavorBonusContetsResultInfo::Initialize` registers its `lot_character_id` property with the value at info+0xb0, which puts the info at +0x85e8 (an inference: the deserializer writes it through that property, so no store names the offset; a scan for direct stores found only the clearers `CHome::Release` / `Progress` / `ResetFavorabilityLoginBonusInfo`). `CHome::IsVisibleReturnCharaButton` shows the "back to the home character" button while it is set and differs from +0xd08. The server sends `lot_character_id` as a uid ("Premium and favor login bonuses"), so with `home_pc_id` a uid too the two compare as the client expects; with the role id the button would have shown even for the home character itself.
+- 3.7.0 doesn't read the save's `player_home_pc_roleid` (only the client before the rebase did; "The game's save is not synced"), so on 3.7.0 the home after a restart depends on `Login`'s `home_pc_id` alone. The seed save's `player_home_pc_roleid` still picks the seeded home character (by role; "Seed").
+- Seen in soa-emu against soa-server (2026-10-01): お気に入り変更 → a character in party 1's second slot → UpdateHome → quit → boot. With the role id the home kept showing party 1's leader, in the session and after the restart; with the uid it shows the chosen character in both.
+
+#### MissionStart
+- **Arguments:** `(u32 mission type, u32 master mission id, u32, u64, u32, u64, u32)`, from `CStageManager::CallMissionStart`. With the port's `mission:` route the type was 0 or 0xffffffff and the other arguments 0.
+- **Mission:** `MissionParameter` from `master_mission`, with `mission_stage` from `master_mission_stage` ordered by `order_id`. `stage_bgm` is sent as the CHash32 of the name. **(a)**; **(b)** for the hash (the client's `CMissionStageInfo` holds a uint).
+- **Party:** the player's current party set (`Player.party_id`), else party 1. **(d)**
+  - The third argument is the helper index + 1 (`CParameterUI+0x1b0`), not a party. **(b)** (2.2 above)
+  - Helpers (support / rental characters) weren't added to the battle at first; now an own character, a rental clone or an event mission's NPC joins as member 4 ("Server missions", "Rental helpers").
+- **Battle status** of each member (`BattleParameter.PlayerCharacter`, CPersonStatusInfo):
+  - HP, attack, intelligence, defence, hit and guard, as the client's status screen computes them. **(b)** `PersonModel::CalculateParameter` → `tCharaData::CalcStatus` (section 3).
+    - base = round_half_away(`master_role.<stat>` × `master_character_common_parameter[level].<stat>` / 100);
+    - then × the `master_rank` row of (role rank, limit break) / 100, rounded half away again **(d: the second rounding)**;
+    - at least 1.
+  - The rush skill level is that `master_rank` row's `rush_level`. **(a)**
+  - Not added yet: equipment, seeds, factors, talents, awakening and the favor AP bonus.
+  - AP is 100. **(d)** There's no master column for it.
+  - Element defences are 0. **(d)**
+  - The weapon is the first `master_weapon` of the role's weapon kind. **(d)** Nothing is equipped yet.
+  - Skills 1..3 are open when `master_skillN_open_level` ≤ level. **(a)** Skill level 1. **(d)**
+  - The rush skill and gauge come from `master_role`. **(a)**
+  - `next_exp`: see the character EXP curve below.
+  - `favor_level`: see Favor below.
+- **Drops:** no pre-rolled drop lists yet (`mission_drop` etc. are empty); the drops are rolled at `MissionEnd`. **(d)** The online server pre-rolled them (docs/api.md).
+- Surprise enemies: rolled since "Server missions" (`MissionParameter.is_surprise`); at first `is_surprise` was always false.
+- **Bookkeeping:** records the play (mission, party, members, time) and counts it in `mission.play_count`.
+
+#### MissionEnd (`MissionEnd(u32 master mission id, u32)`)
+- **Player EXP:** `master_mission.exp`. The level goes up through `master_player_level.next_exp`; EXP left over carries into the next level. **(a)** for the amounts; **(c)** for the carry-over.
+- **Character EXP:** `master_mission.pc_exp` to every member of the play's party. **(a)**
+  - The level cap is `master_role_level_max` for the role's rarity. **(a)** At the cap EXP stays 0. **(d)**
+  - **Character EXP curve:** `next_exp(level)` = `(int)(master_role_boosted.exp_rate(rank, rarity) × master_character_common_parameter.next_exp(level) + 0.5)`. **(a)** for the tables; **(b)** for the formula: `PersonModel::GetNextLevelExp(float, rank, rarity)` computes exactly this.
+- **FOL:** `master_mission.fol`, capped at `master_global.item_fol_max_num`. **(a)**
+- **Drops:**
+  - `lot_drop_count` lots from `master_mission_drop` (not the surprise-enemy rows), each picking one row by `rate_weigh`; rows with `is_fix_drop` always drop. **(a)** for the tables; **(d)** for how lots work.
+  - Plus `lot_common_drop_count` lots from `master_common_drop` of the mission's `common_drop_id`. **(a)** / **(d)** as above.
+  - Picks are with replacement: the same row can drop twice. **(d)**
+- **Granting a content** (drops, presents): by `content_type`.
+  - 1: a unique item with a fresh uid (`0x7d000000+`).
+  - 2: a character; a duplicate raises limit break (see Gacha).
+  - 3: FOL.
+  - 4: free coins.
+  - 5..10 and 16: stack items.
+
+  **(a)** by example (docs/api.md "Content types"). Gear (15), gear lotteries (98), item sets (99), stamps, titles and deco aren't granted yet; they're logged. **(d)** (Since then gear and gear lotteries are granted by `api/items/gear.cpp`, titles (13) by `api/player/titles.cpp`.)
+- **Response:** `DropList.item` / `.stock_item` / `.character` and `.fol`, `AddItem` for new unique items, `StockItem` (the whole stack list) when stack items changed, `MissionResultCharacter` (uid → before/after level and EXP), `MissionResultCharacterFavor`, `Player`, `Wallet`, `PresentBoxCount`.
+- **Mission time** in `MissionEndResult` is the battle log's `mission_time` (ms). **(b)** `NetworkApiCaller::MissionEnd`'s request lambda serializes `CBattleLogInfo` (`CParameterManager+0x52d8`) at request time and sends it with the request (in-process the route runs the same serializer; 2.3).
+- **First clear:** the `master_mission_clear_present` rows go to the present box, with reason 2. **(a)** for the rows; **(d)** for the reason code.
+  - They're also listed in `ClearPresentList`: `free_coin`, and `item` / `character` / `stock_item` entries whose `id` is the content id. The result screen marks them 初回クリア. **(b)** `ResultUtility::GetRewardItemList`.
+- **Favor:** per same_role_id, see 8 (`server/src/api/favor/favor.cpp`): `master_favor_battle_effect` by the play's stamina, levels from the cumulative `master_favor_level` thresholds capped by `master_favor_schedule`. The roster's `favor` column is no longer used.
+- **Mission progress:** `cleared`, `clear_count` and `first_clear_at` are updated. Unlocks are recorded on the first clear ("Server missions", "MissionEnd drops"); the story campaign sends the updated `ActiveMissionList` (`api/campaign/`).
+- **Level-up stamina:** see Stamina.
+
+#### Gacha
+- **`GetGachaInData`:** `GachaHashMap` lists every `master_gacha` row whose `opened_at` ≤ now ≤ `closed_at` (29 rows at the real 2026 date; more with `SOA_CLOCK`). **(a)** Each has one `GachaHashList` entry: hash = the gacha id in hex. **(d)** The client only echoes it back with the draw. Plus `Wallet` and `Player`.
+- **Price and count:**
+  - `GachaOnce` is 1 draw for `coin`;
+  - `Gacha` is `bulk_count` draws for `bulk_coin`;
+  - `SaleGachaOnce` / `SaleGacha` use `sale_once_coin` / `sale_bulk_coin` when set;
+  - `GachaTicket` takes `ticket_num` × draws of the `ticket_item_id` stack item.
+
+  **(a)** The draw count for `GachaTicket` is its second argument. **(d)**
+- **Currency:** free coins are spent first, then paid. **(a)** (master_text `uimsg_buy_history_explan`, "Stocks and wallet"). Rows with `is_pay_coin` take only paid coins. **(a)** Without enough currency the draw returns no items and debits nothing. **(d)**
+- **Rank per draw:** by `s/a/b/c/d_rank_rate`. The last draw of a bulk draw uses the `bonus_*_rank_rate` columns when `is_bulk_bonus` is set. **(a)** for the rates; **(d)** for which draw gets the bonus.
+- **Pool:** the reconstructed pools of 4.5 (`port/server-data/gacha_pools.sqlite3`, `gacha_pools::Pools::draw` at the server clock) decide the rank and the unit. Weapons become unique items (`AddItem`, `GachaItems.player_item_id`).
+  - `GetGachaRate` answers `GachaRateInfoList` from `Pools::rate_info`, so the rate dialog shows what is drawn.
+  - Without the pools file, the fallback is the server's own rarity pools (`draw_role`). Their method is **(d)**, following 4.3 above:
+  - S and A: ★5 and up = rarity 5 and 6, role ranks 3..5. S draws from the banner's `master_gacha_pickup` group when it has one. **(a)+(c)**
+  - B: rarity 4. C and D: rarity 3. **(b)+(a)** `gacha_role_0001`'s 10-draw bonus rates are C 0 / B 84, and its banner says 10連で★4以上のキャラが1体確定!.
+  - Only roles already released (`opened_at` ≤ the server's clock); the whole rarity when none fits. **(d)** The banners' own `opened_at` is too early for the permanent ones: `gacha_role_0001` opened 2016-01-01.
+  - Only characters, no weapons, even for weapon banners. **(d)**
+- **Duplicates:**
+  - A drawn role is a duplicate when the player owns a role of the same `role_category_id`. **(b)** `CLimitOverCharacter`.
+  - The owned character's limit break goes up by one, up to its maximum: the number of `master_rank` rows of its rank minus one (3 / 5 / 10 / 10 / 10). **(b)** `CalcMasterRole2LimitBreakMax`
+  - Response: `LimitBreakCharacter`, a map uid → {id, master_role_id, before/after_master_role_id, before/after_limit_break_count}. **(b)**
+  - Beyond the maximum, the `master_role_duplication_item` material (by `limitbreak_id`, else by rank) is added to the stack items and listed in `LimitBreakItem`. **(a)+(c)**
+  - The result says `duplication` 1. **(c)** for duplicates becoming limit breaks; **(a)** for the cap.
+- **New characters:** level 1, uid `0x7e100000+`, in `AddCharacter` (map keyed by uid as a string).
+- **History:** every draw goes into `gacha_history` (gacha, role, uid, rank, duplicate, the coins spent).
+
+#### Play state (`GetPlayMission`, `MissionFailed`, `MissionTalk`)
+- `GetPlayMission`: `PlayMission.is_play` is 1 while a `MissionStart` hasn't been ended.
+- `MissionFailed` (retire or lose): no rewards, and the stamina stays spent. **(c)** (docs/api.md)
+- `MissionTalk` (a story-only mission): counts as cleared. **(d)**
+- All three answer with `Player`, `Wallet` and `PlayMission` (`api/missions/play_state.cpp`; both hosts answer them through the server).
+
+#### Presents (`PresentList`)
+- `PresentBox` lists the unreceived presents: id, content type and id, num, reason, and an empty deadline.
+- **Receiving** (`GetPresent(u64 id, ...)` / `GetPresentArray(vector<u64>)`): each unreceived present's content is granted as a drop is, and marked received.
+  - Answers `PresentGetResult`: `get` = the ids received; `add` = the whole box left, since `CApiNotify::ApplyGetPresent` refills the box from it; `result.fol` / `free_coin` = what was gained.
+  - Also `AddItem`, `StockItem` and `AddCharacter` when they changed.
+  - For `GetPresent` only the first id is read (its varargs aren't captured). **(d)**
+
+#### Player-visible (c) and (d) rules
+These come from the server core. Revisit them when evidence turns up.
+
+| Rule | Label |
+|---|---|
+| Seed: 300,000 free coins (`--start-coins`, the user's request), character levels (cap − 10), skill level 1, nothing equipped, no items | (d) |
+| Party 1 = home character + three highest-rarity characters; MissionStart uses the current party | (d) |
+| Party sets never saved carry set 1's members; the last saved set becomes the current party | (d) |
+| Battle stats: common curve × role % / 100, AP 100, no element defences, default weapon | (d) |
+| Drop lots: `lot_drop_count` weighted picks with replacement, fixed drops always | (d) |
+| Second rounding of the rank multiplier in battle stats | (d) |
+| Gacha pools: 4.5's reconstruction; the fallback without the pools file is by rarity (S/A ★5+, B ★4, C ★3), characters only | (d) |
+| Duplicate → +1 limit break | (c) |
+| Free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (d) | (a) |
+| No surprise enemies | (d) |
+
+## Entry flow: login, new player, tutorial (agent `restore-title`)
+The APIs the 3.7.0 login and tutorial code issues; the client runs that code unchanged. Code: `server/src/api/entry/entry.cpp`.
+
+### Session and login
+- **`LoggedIn`** is false until a `Login` / `SimpleLogin` succeeds. **(b)**
+  - The 3.7.0 `CPhase_Login` sends `Login` only when `IApiCaller::LoggedIn()` is false (vtable +0x6a0).
+  - It's reported through `FakeApiCaller::LoggedIn` with the in-process server.
+- **`Login` / `SimpleLogin` with a player:** the whole player state, as `NoLoginStart`. **(b)** The 3.7.0 result lambda moves on to the terms-version check on success.
+- **`Login` without a player:** error **19001**, and nothing is applied. **(b)** The result lambda (`CPhase_Login::Progress` lambda #1, 3.7.0 `0x17bff9c`) treats exactly 19001 as "no account" and starts the new-player flow. Any other error returns to the title.
+  - The error goes through `FakeApiCaller::IsSuccess` / `IsFailure` / `ErrorCode`, and the answer isn't applied, as `NetworkApiCaller` does with a failed request.
+- **`NoLoginStart` / `GetPlayer` without a player:** `data.Time` only. **(d)**
+- **`GetMissionList`:** `data.Time`, plus the campaign's `ActiveMissionList` and the events' `ActiveEventMissionList` / `CampaignInfo` (sections "Campaign progression", "Events"). **(d)** (the keys: **(b)** docs/api.md).
+- **`GetServerTime`:** `data.Time`. **(b)** (`time_only`, the answer GetMissionList and a playerless `NoLoginStart` / `GetPlayer` share.) `CPhase_SyncServerTime` sends it when `CPhase::CheckSynkServerTime` asks for a resync: on login, and when the 10-minute bucket changes between phase switches.
+- **`SOA_RESTORE_NEW_PLAYER=1`** (port option): the server starts without a player, so the client runs the new-player flow. Without it, the server seeds the 3.7.0 save's player (see "Seed").
+
+### New player (`CreatePlayer(name, uuid)`)
+| Value | Rule | Source |
+|---|---|---|
+| level, EXP, FOL | 1, 0, 0 | (d): the start of the rank table |
+| stamina | full: `master_player_level.stamina` of level 1 | (a) max; (d) full |
+| coins | 300,000 free (`--start-coins N`, the user's request; was 0), 0 paid | (d) |
+| starter characters | `master_global` `Default_Character_1..3` of the 3.7.0 DB (`role_cn0014_b01a_3011`, `role_cn0012_b01a_3073`, `role_cn0017_b01a_3025`), level 1; party 1 = these three; home character = the first | (a) the keys; (c) that the server used them (apicat, docs/api.md "CreatePlayer") |
+| search id | `LOCAL` + 5 digits of CHash32(uuid + name); numeric id = CHash32(search id) | (d) |
+| name | as sent | (d): the online server's name checks (client errors 10501..10503: the `CreatePlayer` result lambda shows a dialog for them) aren't known |
+| tutorial | `tutorial_status` 0, `view_status` / `view_status2` 0 | (b): 0 = no tutorial step done |
+
+After `CreatePlayer`, the client calls `CUIUtility::SettingForNewPlayer` and sends `Login` again (state 7). The second `Login` succeeds and sets `LoggedIn`.
+
+### Tutorial progress
+- **`Player.tutorial_status`** is the last tutorial step reached. **(b)**
+  - `CParameterUtility::GetTutorialStatus` reads it at `CParameterManager+0xdd8`.
+  - `IsTutorialClear` is `status >= CPhase_TutorialNext::LastMemId()`, which is 9.
+- **Seeded (3.7.0) player:** `tutorial_status` = 9, the tutorial finished. **(b)** For the value; the 3.7.0 player had finished it.
+- **Seeded player's `view_status` / `view_status2`:** all ones, so every UI tutorial counts as seen. **(d)** The save doesn't record them; a player at rank 87 has seen them all.
+- **`UpdateTutorial(u64 status)`:** stores `tutorial_status`, and answers `Player`. **(b)** `CTutorialManager::ST_Net_Tutoflag` sends the step and `SetTutorialStatus`es it.
+- **`UpdateView(kind, flags)`:** stores `view_status` (kind 0) or `view_status2`, and answers `Player`. **(b)** For the two sets: `CParameterUtility::AddTutorialViewStatus` picks the second set for ids with bits 0x3fc0. **(d)** That the flags replace the stored set.
+  - `UpdateView` reaches the server through the FakeApiCaller route (`port/src/native/api/fakeapi.cpp`, `docs/client-changes.md` "`IApiCaller::UpdatePartySet`, `SetAssist` and `UpdateView`").
+
+### Tutorial battle (`MissionStart` of `ms00_001`)
+- A mission with `master_mission_npc` rows is fought by those NPCs instead of the player's party. The tutorial battle `ms00_001` has `tutorial_npc_role0001..3`: roles `role_cp0501_b01a_6011`, `role_cp0303_b01a_6033` and `role_cp0408_b01a_6024` through `master_npc_base_parameter`, at level 60.
+  - **(a)** the rows.
+  - **(c)** the tutorial battle was played with preset characters.
+  - **(d)** that they're sent as `BattleParameter.PlayerCharacter`, with uids `0x7f000000` + order, the stats rules of a roster character (section 3) and no limit break.
+  - **(b)** in the game (agent tutorial-dmg, 2026-09-29), each NPC's stats and weapon are then replaced by the client's own NPC status, `MasterMissionNpcModel::CalculateParameter(master_mission_npc id)` (`client_npc_status`, `port/src/native/api/server_client_status.cpp`). That is the function `tCharaData::CalcStatus` runs for an NPC `tCharaData` (`tCharaData::InitializeNPC`, used by the NPC helper list), i.e. `MasterNpcBaseParameterModel::GetCharacterParameter`: round(`master_role` stat × `master_character_common_parameter`[level] / 100) × the role's `master_rank` row, plus **the NPC's weapon `master_npc_base_parameter.master_item_id`** (`MasterItemModel`) with its factors, and the role's talents. `weapon_master_item_id` / `weapon_id` become that weapon (so the NPCs also hold their own weapon models). Before, the weapon was missing: e.g. Fidel's attack was 1,152 instead of 1,281 (see docs/notes.md "Tutorial battle damage").
+  - **(b)** the NPCs' skills come from the same model (agent cleanups, 2026-09-30): `GetCharacterParameter` runs `MasterRoleModel::AddSkillInfo(role, level)`, which sets `skill1..3` = `master_role.master_skillN_id` when `master_skillN_open_level` ≤ the NPC's level (else 0) and `skill1..3_level` = 1 always. The server copies `skill1..3` / `skill1..3_level` from the result, and clears `skillN_label` for a closed skill. For `ms00_001` (level 60, every skill opens at 1) that is all three skills at level 1, the same values the roster rule gave. The result has to be read at the members' offsets: `CalculateParameter` returns it through `CPersonStatusInfo(CPersonStatusInfo&&)`, whose property map still points into the moved-from object in the function's (destroyed) stack frame, where the skills already read 0.
+  - **(b) soa-server, and soa before the client's model is asked** (agent t1-tutorial-parity, 2026-10-01): the server computes the same NPC model from the master data, `rules::npc_status` (`server/src/master/npc_status.cpp`, `soaserver/npc_status.h`), following the 3.7.0 decompiles of `MasterNpcBaseParameterModel::GetCharacterParameter` / `GetParameter` and `MasterFactorModel::GetParameter` / `CheckFactorSeed` / `GetParam` (`work/decomp/tutorial-dmg-e.resolved.c`, `server-rules-factor.resolved.c`), in the client's single-precision steps:
+    - base = rnd(`master_character_common_parameter`[level].stat × (u32 `master_role`.stat / 100)), then rnd(base × `master_rank`[role rank, limit break 0].stat / 100); rnd = ±0.5, truncated;
+    - plus the NPC's weapon at level 1, limit break 0: attack / intelligence + `master_item_compose`[rarity].`status_up` × 1 (when non-zero), defence, hit, guard; no HP;
+    - the factors: the role's talents 1-6 (`master_talent.master_factor_id`), its hidden factors 1-4, the weapon's factor1 (`factor1_limit_break` = 0) and factor2 / factor3 (limit break ≤ 0); of these the passive ones (`timing` 0) contribute their seeds 1-4 by `elment_type`: 16 (`ChangeParameter`, stat `param1` += `param2` %), 53 (`ExchangeParameter`, the largest `param3` per (from, to); the source stat loses it), 70 (`ChangeParameterFix`, flat), 77 (AP);
+    - stat = rnd(stat × (100 + %) / 100) + flat, at least 1; skills as `AddSkillInfo` (open at the level, level 1); AP 100 and the elemental resistances 0 (`CPersonStatusInfo::Initialize`'s; the model leaves them, for every row). Before, soa-server's NPCs kept the roster rule's AP (100 + the favor AP bonus of the NPC's same role), which differed for players with favor and for event NPC helpers.
+    - e.g. Fidel 1,152 + 110 (`item_W01Sw_21`) + 19 (rarity-5 `status_up`) = 1,281; the rod NPC's intelligence (1,434 + 120 + 19) × 1.30 (talent `factor0103`: seed 16077, intelligence +30 %) = 2,045.
+    - Verified equal to the client's model (stats, AP, resistances, weapon, skills) for **every** `master_mission_npc` row (822, port test `server/npc-status-master`) and against the three tutorial NPCs' values (`server/npc-status-tutorial`, library). In soa the client's model then overwrites it with the same numbers (its log line says `unchanged`).
+    - **(b) the 3.7.0 client battles with these values as sent** (agent f2-tutorial-stats, 2026-10-01): in `emulator_session.sh --new-player` the MissionEnd battle log's `PlayerCharacter` stats equal `MissionStartRes`'s `BattleParameter.PlayerCharacter` exactly, with the old roster numbers (a stale soa-server without this rule) and with the model's; the client doesn't recompute the NPCs. soa-server logs `MissionStart NPC <id>: master-data model applied|declined (attack N)` per NPC; test `server/npc-status-tutorial-missionstart` checks the MissionStart response.
+    - Before this, soa-server (no client to ask) sent the roster rule: the 3.7.0 emulator's tutorial battle was fought with attack 1,152 / 1,069 and intelligence 762 / 1,434 (its MissionEnd battle log), damage 20-45 % lower than the port's, the battle about 30 % longer (emulator/README.md "Tutorial parity").
+  - Without the row (or its role), the roster rule with the first weapon of the role's kind stays. **(d)**
+- They're not added to the roster.
+
+### Status of the new-player flow (2026-09-29)
+Verified on screen (`port/scripts/newplayer_session.sh`):
+- title;
+- `Login` → 19001;
+- terms and name entry;
+- `CreatePlayer`, then `Login`;
+- the opening scene `mc00_010`, with its choices;
+- `UpdateTutorial(1)`, then `mc00_015`;
+- `UpdateTutorial(2)`, then the battle tutorial `ms00_001`. That's two stages with the three NPCs, the 3.7.0 tutorial dialogs (move, attack, skills, RUSH combo), and `MissionEnd`;
+- `UpdateTutorial(3)`, then `mc00_025`;
+- `UpdateTutorial(4)`: the mission-menu step (re-verified 2026-09-29, agent gaps-core). Planet Mere's map shows 1-01 惑星メーア with ここをタップ, then ストーリー開始 and the story. `UpdateTutorial(6)` follows, then "I summoned companions" 次へ, then ホーム. **Home is reached** with `UpdateTutorial(7)`.
+
+**The old crash is gone.** At `UpdateTutorial(4)` the game used to crash in `CMissionMenu::SetLastPlayPlanetNow` (fault at 0x40). In tutorial mode, 3.7.0's `CreatePlanetList` keeps only the tutorial planet and the first planet (`tMissionData::GetTutorialPlanetId` / `GetFirstPlanetId`) out of `CParameterUtility::CollectEffectivePlanet()`, then selects index 1. `SetLastPlayPlanetNow` reads element 1 of that list, and with an empty list (no `ActiveMissionList.Planet` from the server) it read address 0x40. The campaign server now sends `ActiveMissionList` with every response, and by this step the tutorial's story clears (`MissionTalk` / `MissionEnd` of mc00_010 … mc00_025) have opened planet Mere's first mission. So both planets are listed, and no server change was needed. `port/scripts/newplayer_session.sh` now plays this step through to home.
+- **After home (re-checked 2026-09-30, agent a3-home): the 3.7.0 home tutorial runs**, with no further change. 3.7.0's `CHome::Initialize` sees tutorial memId 8 (`CPhase_TutorialNext`'s table: 7 → phase 5, 8 → home, 9 = `LastMemId`) and starts two UI steps: the プレゼント button highlighted with cp0002_tutorial_010 (次へ), then the footer ガチャ with cp0002_tutorial_011 (閉じる). When the set ends, the `CTutorialManager::StateInit` state-6 lambda sends **`UpdateTutorial(9)`**; no `UpdateTutorial(8)` is ever sent (8 is only the in-memory home step). `IsTutorialClear` is then true, and the popups the login armed open (the notice board). **(b)** There is no tutorial gacha (no API, master row or global key): the text only points at the normal gacha button. The server needs nothing new: `UpdateTutorial` stores any value, and the one-time UI tutorials that follow reach it as `UpdateView` (the FakeApiCaller route, `docs/client-changes.md`). `newplayer_session.sh` and `tutorial_session.sh` play it to `UpdateTutorial(9)`.
+  - Off this path, 3.7.0's episode select (`CMissionSelectPart`, phase 8: the mission map's Ep選択) has its own one-time hints: `Initialize` calls `CTutorialManager::CheckViewStart(8, …)`, whose lambda starts UI tutorials 22 (0x16), 58 (0x3a) and, while EP3 is open (`IsOpenEP3`), 59 (0x3b) (`GetViewTutorial`: those ids at view 8, unless `IsTutorialViewStatus` has them). **Verified on screen (agent open-issues, 2026-10-02):** the tutorial's new player booted again (with the home's own hints marked seen in `view_status`) → ミッション → Ep選択: ここはエピソード選択メニューね… (22), then the episode-download hint (58); 閉じる sends `UpdateView(0, flags | 1<<22)` and the server stores it. Before the rebase `CMissionSelectPart` wasn't restored, so these hints never showed. Nothing for the server to do.
+
+### Terms and name
+- **`UpdateKiyakuVersion(version)`:** stores `Player.kiyaku_version`, and answers `MasterKiyakuVersion` {`kiyaku_version` = `master_global.kiyaku_version` (20200319), `update_kiyaku_string` = ""}. **(a)** For the version; **(b)** for the shape (docs/api.md).
+- **`UpdatePlayerName(name)`:** stores the name as sent. **(d)**
+
+#### Player-visible (c) and (d) rules (entry flow)
+| Rule | Label |
+|---|---|
+| New player: 300,000 free coins (`--start-coins`), level-1 starters, the name unchecked | (d) |
+| Seeded player: every UI tutorial seen | (d) |
+
+| Favor: seed 0 points; points stop at the max level's threshold; the tap day starts at 04:00 local; the load's tap count is the home character's; favor item `target_type` reading | (d) (agent restore-favor, section 8) |
+
+### soa-server: the wire layer (agent `s2-wire`; `server/net/`)
+How `soa-server` behaves on the wire where the client doesn't say what the real server did. The
+format itself is the client's (docs/online-server.md §3-4, all confirmed); these are the server's
+choices. Code: `server/net/game.cpp`, `wire.cpp`.
+
+| Rule | Source |
+|---|---|
+| **Device → player.** Every device UUID the bridge sees gets the state DB's one player (the seeded `LOCAL00001`, or the one `CreatePlayer` made); the `wire_device` table records uuid, player, device type, first and last seen. With no player yet (`soa-server --new-player` on a fresh state) a device has none: its Login is refused with 19001 and the client runs the new-player flow; `CreatePlayer` then binds it. How the real server bound UUIDs (and re-bound them through SQEX BRIDGE's data transfer) is unknown | (d) |
+| **Session values.** nativeToken: 48 hex characters; nativeSessionId: 32 hex characters (UpdateSession sends it in a `char[32]`); sharedSecurityKey: 64 hex characters, so it is printable, longer than the 32 bytes the client's KeyStore takes, and never starts with a NUL; ResultStart's third value: empty (the client copies it into 8 bytes and never reads it) | (b) the field sizes and the key rules; (d) the values |
+| **Bridge reply.** The body is the gzip stream of the JSON, without a `Content-Encoding` header (BridgeNotify::OnReceive gunzips the body itself; an HTTP layer honouring the header would hand it plain JSON) | (b) the gunzip; (d) the header |
+| **Reply cipher.** Every encrypted reply uses AES-128 with random r2 and salt (the client decrypts any of the ten algorithms the envelope names) | (b) |
+| **Reply counter.** The request's header counter is echoed in its reply | (d): who sets the counter and whether the client checks it is [unknown] |
+| **Refusals.** A request the server refuses (`error_code` != 0) is answered with a ProtocolError (status = the error code, the request's FunctionID), which the client shows as `error_message_text_<code>`. Wire-level failures (SHA-1 mismatch, unknown FunctionID, an envelope that doesn't decrypt, an encrypted request before UpdateSession, a body that doesn't decode, an unknown session id) are ProtocolErrors with status 1002, the client's generic communication error | (b) the ProtocolError path; (d) 1002 |
+| **Unimplemented APIs.** A request the server has no handler for is answered `{"data": {"Time"}, "status": 0}` (logged), so the screen continues; soa falls back to FakeApiCaller's static files instead | (d) |
+| **LoginResult's FunctionID word** is the request's (Login `a01c67ef`, SimpleLogin `447fafb8`): `CApiNotify::OnLoginResult` only uses it to map a deserialize failure to an error code | (b) the use; (d) the value |
+| **Login ends with a GetPlayerRes.** A LoginResult / SimpleLoginResult is followed, on the same connection and with the same counter, by a GetPlayerRes carrying the same body. `CApiNotify::OnLoginResult` (3.7.0 @014be668) applies the body but never ends the request (no EndRequest, no `ErrorHandler::Success`, no API-watchdog stop; `CApiNotify::ResetErrorCode` has no caller), while every `On<Api>Res` ends whichever request is in flight; with a LoginResult alone the 3.7.0 client (soa-emu) waited until the 60 s watchdog failed the login with 1002. The developers' `FakeApiCaller::Login` answers Login through `OnGetPlayerRes` with `FakeApi/player_get.msgp`. What the real server sent after its LoginResult is unknown (agent `e1-emu-net`; `server/net/game.cpp`) | (b) the handlers and the fake; (d) the follow-up message and its body |
+| **a_ver.** soa-server's Login carries `a_ver` = `master_global.a_ver_android` (3.7.0), with the CDN keys (only when a CDN is configured, so soa's in-process responses are unchanged). After a successful reply (all but a few session fids) `CErrorHandlerWrap::CallBackCore` (3.7.0 @01586b20) looks for `BAS::GetApplicationVersion()` in the client's `a_ver` property and otherwise opens the "update the app" dialog (`OpenDialogAppVer`), which soa-emu showed right after the login. The property keeps the value for the later replies (agent `e1-emu-net`; `server/src/api/entry/entry.cpp` `add_cdn_paths`) | (a) the value; (b) the check |
+| **Wire-only arguments.** Login's device UUID, push token and advertising id, and the DeviceType of NoLoginStart / CreatePlayer / MissionContinue, aren't passed to the server's handlers (the IApiCaller methods don't take them); they are in the packet log | (b) |
+| **Default URLs on the client's host name** (agent `e6-end2end`). ResultStart's bridge URL defaults to `https://production-game.so-ana.com/bridge` and Login's CDN base to `http://production-game.so-ana.com` (`--bridge-url` / `--cdn-url` override them). The 3.7.0 URI parser (`Aska::Yayoi::URI::Deserialize`) keeps a URL's `:port` in the host name it resolves, so a URL with a port can't work on the client; the client must map that name to `--http` (soa-emu does) | (b) the parser; (d) the default |
+| **LoginResult's root `Player`** (agent `e6-end2end`; `server/net/game.cpp` `login_result_body`). The LoginResult / SimpleLoginResult body is the library's Login answer plus a top-level `"Player": {"Id", "Level", "Name"}`. `CApiNotify::OnLoginResult` (3.7.0 @014be668) hands the body's root map to `CParameterManager::Deserialize`; its legacy `CParameterPlayer` (pParseName "Player" @017f84d4) reads `root["Player"]` into `{Id u32, Token u32, Level u32, Role s32, PersonID u32, Weapon u32, Name}` (`CParameterPlayerElement::Initialize` @017f81b8) and only then sets its deserialized byte (+0x178). `CApiNotify::LoggedIn` (@014bb174) is that byte and `Id != 0`, and every API after the login checks `LoggedIn` first (`NetworkApiCaller::GetMissionList` @015b9c90 and the rest; vtable +0x6a0). Without it soa-emu failed them locally with 1002 (`DisconnectDialog(-0x3b3)`), never sending them. The `data` map is never read by `OnLoginResult`: the GetPlayerRes that follows applies it. `Id` is also the RequestHeader's `+0` and `Token` its `+4` | (b) the reader, the check; (d) Id = the player's numeric id, Level / Name the player's, Token / Role / PersonID / Weapon not sent (defaults -1, 0, 0, 0) |
+| **Reconnects continue the session** (agent `e6-end2end`; `handle_packet`). The client opens a connection per request and closes it after the reply; while logged in, its next request reconnects and is sent encrypted with the session key, with no StartBridge or UpdateSession (`CApiNotify::OnDisconnect` / `OnError`, @014bb314 / @014bb1fc, keep the bridged flag +0x4d0 while `LoggedIn`). An encrypted request on a connection without a session is decrypted with each session's key, newest first; the envelope's keyed trailer rejects every other key (`ninja` `kErrMac`), and the connection is bound to the session that decrypts it (logged "rebound to session"). Without a match it is the ProtocolError 1002 as before | (b) the reconnect (soa-emu's packet logs: GetServerTime, GetMissionList ... each on a new connection); (d) how the real server found the session (the RequestHeader that names the player is inside the ciphertext) |
+| **A ProtocolError ends the connection** (agent `e6-end2end`; `on_data`). After sending a ProtocolError soa-server closes the connection. The client handles the error on its main thread and closes the socket there (`Socket::Close`: `close(fd)`, then `fd = -1`), while its network thread is in `Socket::Poll` (3.7.0 @0220dd98), which re-reads the fd after `select` returns and indexes the fd_set with it; with the connection left open the two raced, `fd = -1` made the index a top-byte-tagged address (`x21 + 0x1ffffffffffffff8`), and soa-emu crashed (2 of 3 runs, and 2 of 2 before; 0 of 3 with the close). An ARM64 phone ignores the top byte (Top Byte Ignore) and reads a stack word instead, so the race was harmless there (emulator/README.md "Error replies and the tagged-address crash"). Since agent `r2-runtime-fixes` the runtime emulates TBI and soa-emu survives the race without the close too; the close stays the default, and the hidden `--keep-open-after-error` turns it off (a test switch) | (b) the client's handling and the race; (d) that the real server closed after a ProtocolError |
+| **CreatePlayer carries `a_ver`** (`server/src/api/entry/entry.cpp` `create_player`). `CreatePlayerRes` is a successful reply that `CErrorHandlerWrap::CallBackCore` checks `a_ver` on, and a new player's client has had no Login reply yet: without it soa-emu showed the "update the app" dialog right after CreatePlayer. Only `a_ver` (when a CDN is configured, as for Login): the CDN keys come with the Login the client sends next, which then starts the game data download as on a seeded login (the S3 open question: nothing else is needed after CreatePlayer) | (a) the value; (b) the check |
+| **The story campaign on the wire** (agent `e6-end2end`; `LiveBackend`). soa-server calls the campaign module as soa's FakeApiCaller route does (`port/src/native/api/fakeapi.cpp`): `campaign::on_request` after every `submit`, and `campaign::on_response` on every delivered body, including the `{data: {Time}}` stand-in of an API without a handler (soa adds it to the canned file it falls back to). So `GetMissionList` gets the campaign's `ActiveMissionList`, as with the in-process server; before, soa-server's mission select listed no missions. `--campaign-seed` works as `SOA_CAMPAIGN_SEED` | the campaign's own rules (section "Campaign progression", `server/src/api/campaign/campaign.cpp`) |
+| **EndMissionTalk** (agent `e6-end2end`). 3.7.0's `EventScenario::CEventScenario::Exit` sends `EndMissionTalk(type, mission, flag, u32)` when a story mission's scene ends, and `CApiNotify::OnEndMissionTalkRes` applies the answer. The library has no EndMissionTalk API: soa delivers the request's effect itself (`port/src/native/restore/restore_campaign.cpp`: `events::end_mission_talk`, else `campaign::end_mission_talk`, then the GetPlayMission answer with the campaign's data), and soa-server does the same for the wire request, answering with that GetPlayMission body | (b) the request and its handler; the clears: the campaign's / events' rules |
+
+### soa-server: the CDN (agent `s3-cdn`; `server/src/cdn/`, `soaserver/cdn.h`)
+What `soa-server` serves the 3.7.0 downloader (`CGameResourceDownloader`; the protocol is in docs/online-server.md §6). Built once at startup from `--download-dir` (work/download-3.7.0) and the 3.7.0 master.
+
+| Rule | Source |
+|---|---|
+| **The served master is the client master edits.** `sqlite/basmaster.sqlite3` is `data/basmaster-3.7.0.sqlite3` with exactly the overrides soa applies to the client's in-memory master with the in-process server (`apply_client_master`: `service_stop_day` dropped, the dated event tables moved by the event calendar's whole years, the 3.7.0 texts, tower stand-in banners with `--restore-tower`, exchange-shop windows, the Sphere 211 season dates and ranking groups), applied once with the clock of the server's start (the server clock; the event calendar replayed on this master, or the clock itself under `--clock`). Each override keeps the label of its own rule (sections above). A server running across the day the calendar's year mapping changes keeps the start's shift until restarted | the overrides: their own labels; applying them at startup: (d) |
+| **Packing.** The master is VACUUMed and ADLD-packed as encType 2: AES-128-CBC with the key of CHash32("sqlite/basmaster.sqlite3") and the DCNE v1 header; `encrypt(decrypt(x))` gives the 3.7.0 file byte for byte (test `cdn/adld-reencrypt-3.7.0`) | (b) |
+| **version.bin.** The 3.7.0 file with `revision` + 1 (1471 → 1472), a new `version` id, the master's entry (`md5` = SHA-1 of the plaintext, `size` = the ADLD file's size, `time` = the start time), the 234 bundle entries' `md5` (= their Individual bundle's), and the stand-ins' entries (`parentHash` = CHash32 of the member's Individual bundle name, which is what the 3.7.0 entries hold) | (b) the fields' meanings (checked on the 3.7.0 data); (d) the time and the id |
+| **Login.** `AssetPath` = `<cdn_url>/download`, `r_ver` = the served revision, `MasterPath` = `<cdn_url>/master`; `cdn_url` = `--cdn-url`, default `http://production-game.so-ana.com` (the client's host name, mapped to `--http` by the client; "Default URLs on the client's host name" above). Only soa-server sends them (soa's in-process responses are unchanged) | (b) AssetPath and r_ver (`CInfoManager::GetDownloadURL` = "%s/%s/" of the two, `GetResourceVersion` = r_ver, `SetServerAssetRevision`); (d) MasterPath (no 3.7.0 reader found) |
+| **Episode data: `LatestEpisodeVersion`** (agent `episode-data`, 2026-10-02; `server/src/api/entry/entry.cpp` `add_episode_version`). Login carries `LatestEpisodeVersion` = `master_global.latest_episode_version` (3), with the CDN keys. It is the number of episode packs (`version_latest_ep1..3`, `download/EP1..3`) the client knows of: `CInfoManager::Initialize` (3.7.0 @015135b4) registers the top-level property at CInfoManager+0xb0f0, i.e. CParameterManager+0xb6f0 (the CInfoManager is CParameterManager+0x600), and that u32 is the episode count every episode-data reader uses: `CParameterUI::tEpisodeData::Initialize` / `GetEpisodeMax` (Episodeデータ管理's rows, `CDownloadEpisodeSelectDialog::Initialize`), `CParameterUtility::IsEpisodeDataStatusDownload` / `Delete`, and `CGameResourceDownloader::UpdateEpisodeDataMaxSize` (downloader+0x278, set by `CPhase_DataDownload::Initialize`), which `Progress_Setup` loops over for `version_latest_ep%d.version` / `.bin` and `LoadLocalKVSEpisodeUpdateFlag` for the packs to keep. Without it (before 2026-10-02) the count was 0: Episodeデータ管理 listed nothing and the data phase never fetched an episode pack, so Episodes 2 and 3 couldn't be played. Which packs the client then downloads is its own local KVS: `BAS:DownloadEpisodeFlag` (bit n-1 = Episode n downloaded or chosen; a fresh KVS has 0; the committed client save `data/saves/client/Game.xml` has 7, Episodes 1-3, which on a phone without the packs fetches all three, ~705 MB, at the first data phase and makes ミッション open Episode 2's map, so the port's sessions install it with 0 through `phone370_client_save` unless `SOA_EPISODE_PACKS=1`) and `BAS:DownloadEpisodeChangeStatusFlag` (the episode list's はい / Episodeデータ管理's choices, downloaded after the next TAP TO START). Sent only with the CDN keys: without a CDN there is no pack to fetch. Test `cdn/login-paths`; sessions `port/scripts/episode_movie_session.sh 2` / `3` | (a) the value; (b) the key, its readers and what 0 does; (d) sending it only with the CDN keys, and on Login only (whether the real server sent it on other replies is unknown) |
+| **Bundles.** Every bundle of the manifests is rebuilt from the download's unpacked members: `\0ISF` image, header {magic, 0x20130304, count, 0}, entries {name offset, payload offset, payload length, 0}, names packed, payloads 32-aligned, the whole padded to 32. A member's payload is its stored file minus the 16-byte ADLD header when its `e` is set (the client writes `ADLD`, `e`, 8 zeros, then the payload). The manifests' bundle `md5` / `size` are those of our bundles, since the 3.7.0 bundles aren't in the download and two of their header words are unknown (the sizes of ours match theirs up to the final padding, test `cdn/bundle-layout`) | (b) the format the client reads, the SHA-1 check (`CDownloadStream::Close` → `CryptBufferSHA1`, compared in `CDownloadNode::Handler`), the member write (`UnpackNotify::Handler`); (d) the zero words and paddings |
+| **Version ids.** Bulk, Individual, version.bin and `version.version` share one new id; ep1-3 get their own new ids; `.version` = `version:<id>\r\ntotalSize:<sum of the members' sizes>\r\n`, as in 3.7.0 | (b) the format; (d) the ids (any value different from 3.7.0's) |
+| **Stand-ins.** `standin-assets/<rel>` files the download lacks are served as new members: one Individual bundle each (`I/5374616e/<CHash32 hex>.bin`) and one Bulk bundle (`B/5374616e/standins.bin`); a real asset of the same name wins. On by default (`--standin-assets off` drops them); they are made-up art (docs/client-changes.md, port/README.md "Stand-in assets") | (d) |
+| **Paths.** `…/Android/<name>` with any prefix (the client's is `/download/<r_ver>/`), and `/master/<rev>/<name>` (the client's "download/" → "master/" swap of master nodes: its flag is never set in 3.7.0) answer the same tree; `<name>` is version.bin, `manifest/etc2/hi/…` (the only format the download has), a bundle, or a file of the download (the client never asks for single files; served for tools) | (b) the URL; (d) the rest |
+
+## Growth and economy: what the extension modules implement (agent `server-growth`)
+The growth, item, shop and daily-system APIs, as the local server applies them. Code: `server/src/api/growth/growth.cpp`, `api/items/items.cpp`, `api/shop/shop.cpp`, `api/daily/login_bonus.cpp`; the pure rules are in `server/src/rules/growth_rules.{h,cpp}`. Each rule carries its label in a code comment too. Sections 1, 5, 7, 9 and 10 above are the evidence; this is what the code does with it.
+
+#### Architecture
+- **Extension registry** (`server/{include/soaserver/ext.h,src/core/ext.cpp}`). server.cpp's dispatcher asks `ext::find(method)` for methods it doesn't answer itself; a module registers handlers with `ext::add_api({"Method", ...}, fn)` from its `register_<module>()` function (`server/src/core/modules.cpp` calls those in one fixed order). `ext::add_player_load` (OnPlayerLoad) adds keys to the full-state player responses (`NoLoginStart`, `Login`, `GetPlayer` ...). `ext::add_schema` adds the modules' tables. A handler gets an `ext::Ctx`: the state and master DBs (inside the request's transaction), the server clock, and the core's own `base_data`, `grant`, roster / stock / item lists, EXP curves and caps.
+- **Module tables** (in `DATA/server.sqlite3`): `roster_ext` (seed-raised stats `add_*`, equipped skills), `shop_counts` (item-shop purchases per row: this period, the period start, all time), `exchange_counts` (exchanges per contents row), `counters` (event counts for achievements: boosts, limit breaks, evolutions, weapon / accessory boosts, grade-ups, exchanges, seeds). The core's `login_bonus` and `achievements` tables hold the login days and received achievements.
+- **Refusals.** A request the rules refuse (not enough materials, FOL or coins, locked or equipped items, sold out, over a limit) changes nothing; it goes through the core's error path with a client error code (see Verification below for the codes) and the client shows its own error dialog.
+- **Response shapes.** The owned lists that changed are sent whole (`StockItem`, `Item`), as the core does. The per-API result infos carry the field names of their `Initialize` (b); `tools/fakeapi_fields.py` finds most, and the short ones the compiler builds inline (`id`, `num`, `count`, `status` ...) were read from the decompiled `Initialize` bodies.
+
+#### Character growth
+- **BoostCharacter(uid, item, count)**: EXP = floor(count × `master_item.base_boosted_point` × 1.5 when the item's `role_category_type` is the role's `category_type`) (b: `CPartyStrengthening::GetStrengtheningItemReflection`; a: `pc_boosted_role_category_bonus_rate`). The role's EXP curve (`next_exp` × `master_role_boosted.exp_rate`) and level cap (b); EXP at the cap dropped (d). FOL = count × `master_role_boosted(rank, rarity).use_fol_one` (b). Big success: a `pc_boosted_up_rate` % chance (a: key; d: its meaning) multiplies the EXP by `pc_boosted_bonus_rate`, truncated (d). FOL campaigns (type 4) aren't applied (d). Answers `BoostedCharacterResult` {uid: {id, before/after level and exp, is_big_success}}, `StockItem`, `Player`.
+- **LimitBreakCharacter(uid, item)** and `_Legacy`: the maximum is the `master_rank` rows of the role's rank − 1 (b). Items: the `master_character_limit_break` row of the role's `limitbreak_id` for that item and the current limit break (`target_limitbreak_min` ≤ lb < `target_limitbreak_max`) gives `item_num` (a); without one, `master_item_limit_break`'s column for the rank (b: `tCharaData::LimitBreakNeedItemNum`). FOL = `master_rank(rank, lb + 1).use_fol` (b). The level cap stays the rarity's (d). Answers `LimitBreakCharacter` {uid: CLimitBreakInfo}, `StockItem`.
+- **EvolutionCharacter(uid)**: the character must be at its level cap (b). The new role: same `role_category_id_label`, the next higher rarity (b: `CUIUtility::MaxEvolution`). Cost: `master_role_evolution(rank, rarity, category_type)`: `use_fol` and up to four items (a+b). The level goes back to 1 (b; agent server-rules, see "Fixes found on the growth screens"; server-growth kept it). Answers `EvolutionResult` {use_fol, UseStockItem, UpdatePlayerCharacter {id, before/after master_role_id, level, is_rarity_7}}.
+- **UpdateAwakenLevel(uid, level)**: one step at a time (d); cost `master_item_awaken(role's awaken_id, level)`: up to three items and `use_fol` (a). Answers `AwakenResult` with `UpdateCharacter`.
+- **AddStatusCharacter(uid, seed, count)**: the seed's own stat column of `master_item` (a) × count, capped at `master_role.<stat>_add_max` (a+b: `GetParameterAddItemReflection`). FOL `add_status_fol_<stat>` per seed (a: key; d: per seed). Answers `CharacterAddStatusResult` (CPersonAddStatusResultInfo's fields) plus use_fol / new_fol (d: names). The raised stats are in `Character` (`add_*`) and added to the battle status (`person_status_info`, `server/src/api/player/person_status.cpp`) as the client's status computation adds them (b: `PersonModel::CalculateParameter`).
+- **EquipWeapon / EquipAccessory(uid, item uid)**: only owned items of the kind (`master_item.type` 1 / 3) (a); an item moves from its previous owner (d). Answers `EquipWeaponResult` / `EquipAccessoryResult` {Character: {uid: {id, weapon_item_id / accessory_item_id}}, Item: {uid: {id}}}. **EquipSkill(uid, s1, s2, s3)** stores the slots and answers `UpdateCharacter`.
+
+#### Items and stamina
+- **ItemCompose(Array)(base, materials)**: each material adds (its boosted points + 100) × `master_item_compose` (weapons) / `_accessory_compose` (accessories) `.boosted_point` of the material's rarity / 100 (b: `CItemStrengtheningPotal::GetAddBoostedPoint`, as far as read). A copy of the base's own item raises its limit break, up to the last `master_item_limit_break_level_max` row (a). Level = 1 + points / `next_level_boosted_point`, capped at `level_max` or the limit break's `level_max` (a; d: the same amount per level); points stop at the cap level (d). FOL = `use_fol_one` of the base's rarity per material (a; d: which rarity). Big success `weapon_compose_up_rate` % → × `weapon_compose_bonus_rate` (a: keys; d: meaning). Locked or equipped materials refuse the request (d). Answers `ComposeResult` and `Item`.
+- **ItemGradeUp(Array)(base, materials)**: `master_item_grade_up[base rarity]`: exactly `grade_up_num` materials and `use_fol` (a). The new weapon is drawn from `master_item_grade_up_list` rows of the base's rarity and weapon kind, open by the clock, by `rate_weigh` (a). The base becomes the new weapon at level 1 without limit break (d). Answers `GradeUpResult` and `Item`.
+- **MaterialCompose(id, times)**: `master_material_compose`: up to five (item, num) and `use_fol` → `result_item_id` × `result_item_num`, per time (a).
+- **SellItem(Array)(uids)**: weapons `round(sale_fol × master_item_sale_rate[level].sale_rate)`, others `sale_fol` (b: `tItemData::SellingPrice`); locked or equipped items refuse (d). **SellStackItem(item, n)**: `sale_fol` × n (a). **SellGear** is the gear module's (`api/items/gear.cpp`, "Gear" below). Answers `SellResult` {total_fol, master_item_id, num, item_ids, StockItem}.
+- **LockItem / UnlockItem(Array)(uids)**: the lock flag, sent as `Item.is_lock`.
+- **UseHealItem(item, n)**: `master_item` type 10 (a); points `StaminaHealPoint`: heal_type 1 → heal_point % of the maximum, 2 / 3 → heal_point (b), × n.
+- **StaminaHeal()**: `stamina_use_coin` = 100 coins (a+b), free coins first (a: "Stocks and wallet"); heals the maximum (b).
+- Healed stamina is added to the current stamina, overflow allowed; the regeneration clock restarts when it reaches the maximum (d).
+
+#### Shops
+- **The item shop list** (b: `CItemShop::CreateItemSetList`): the shop shows the master rows whose ids are in the owned `ItemShopInfoList`; a row missing from it counts as sold out. So the server sends every `master_item_shop` row open at its clock (a: `opened_at` / `closed_at`), in every full-state response and after each purchase. With the host clock (2026) those are the ten monthly `reset_type` 2 rows (until 2030); `SOA_CLOCK` in the service years shows the event rows.
+- **CItemShopInfo** (b, same function; `GetRemain` / `IsEnable`): `limit_count` is the count **still available** this period (the client shows master `limit_count` − it as bought); `reset_at` (parsed with `str2time_t`) is shown as the deadline (交換可能期限): the next reset (d for the value). `num_total`: purchases ever (d). The price is in 紋章石 (b: the screen's 紋章石と様々なアイテムを交換します and 必要紋章石).
+- **ExItemShop(id)**: open and not sold out (b); `price` coins (a), free first (a: "Stocks and wallet"); `limit_count` 0 = unlimited (d). `reset_type` 2 = monthly on day `reset_param` at `reset_time` (a, inferred, section 9); other rows never reset (d). The content (item sets, type 99, expanded through `master_item_set`) goes straight into the inventory (d). Answers `ItemShopInfo`, `ItemShopInfoList`, `AddItem`, `StockItem`.
+- **The exchange shop list** (b: `CShop::Progress` after `CUIUtility::CollectMasterItemExchangeShop`): only the master exchange shops open by the clock whose id is a key of `ExchangeShopExCount` (`CExchangeShopExCountInfoCategoryMap`, `CParameterManager+0x60d0`) are listed. So the server sends every open shop, each with its contents: shop id → contents id → {`ex_count`} (b: the shop keys and `ex_count`, the element's one field; d: the contents-id keys). With the host clock: the permanent weapon-coin shops, the chip shop and the treasured-weapon shop.
+- **ExshopExchange(contents id, n)**: the shop and row open (a); n ≤ `exchange_item_max` (a); `ex_limit` caps the total, 0 = unlimited (a); pays `ex_num` × n of `ex_item_id` and grants the content × n (a). Answers `ExchangeResult` {master_exchange_shop_id, ex_item_id, num, AddFreeCoin}, `ExchangeShopExCount`, `AddItem` / `AddCharacter`, `StockItem`.
+
+#### Login bonus
+- On a full-state player response, each `master_login_bonus` open at the server clock (a) advances one day the first time after the daily reset at `login_bonus_reset_hour` = 04:00, local time (a+b; d: local time, as the core's clock). The day's `master_login_bonus_contents` row (`order_idx` = the day) goes to the present box with `reason_type` 1, `reason_param` = the bonus id (c: the box; d: the reason values, after master_text `Present_box_1` = "%s %d日目"; the box still shows the line `free_text_message_id` for it, so the text lookup isn't understood yet). Looping bonuses restart at day 1 after the last `order_idx`; others stop (a+c).
+- `LoginBonus` lists the open bonuses with a day: {`master_login_bonus_id`, `current_idx`, `is_received_now`}; `is_received_now` only in the response that granted the day (b: the popup condition; d: only then).
+- **The popup.** 3.7.0's login arms the popup checks itself (`CPopupManager::AddPopup()`); the server only sends `LoginBonus`. The popup shows the day's reward; receiving it in the present box credits it (verified: 紋章石 10,000 → 10,500 on day 1).
+- **Player.tutorial_status = 9** when no other module set it: (b) `CParameterUtility::IsTutorialClear` = `tutorial_status` ≥ `CPhase_TutorialNext::LastMemId()` = 9, and the popups only open past the tutorial; (d) the seeded rank-87 account has finished it.
+- The premium login bonus needs a purchased pass: not granted (d). The favor login bonus: "Premium and favor login bonuses" below.
+
+#### Achievements
+- **Active list** (`AchievementActiveList(category)`; (d) the category isn't read, every active achievement is answered): `master_achievement` rows with `default_release` open at the clock, plus the `next_achievement_id` of received ones; received rows leave the list (a; d: leaving). Each as CAchievementInfo {id, player_id, master_achievement_id, limit_at = closed_at, status (d: 0 in progress, 1 achieved), count (capped at goal_count), is_goal} (b: field names).
+- **Progress** is computed from the server state (a: `type`, `target_id`, `goal_count`): 1 gacha draws (of the gacha, or all), 2 boosts, 3 evolutions to the rarity, 4 limit breaks, 5/6 weapon boosts (d: 6, weapon limit breaks by its texts, counted as boosts), 7 grade-ups, 8 and 37 clears of the mission, 11 owns the role, 29 highest character level, 31 highest limit break, 34 exchanges, 36 player rank, 38 accessory boosts, 44 / 45 deep space exploration rate / expeditions (see "Deep space"), 52 favor points of the role's same_role_id. Other types report 0 (d).
+- **`Achievement` is a map keyed by the id** (b): the client's `CAchievementActiveInfoList` is an `InfoBaseNumberMap<CAchievementInfo>` whose `DeserializeArray` returns 0 without reading, so the array the server sent until agent a6-deepspace left the client's list (CParameterManager+0x67c8) empty: the 実績 screen (`CAchievementMenu`, `tAchievement::InitializeList`, reached from the deep space screen's 実績 button) said every category was achieved, and the favor-achievement popups had nothing to read. The screen lists the rows whose `master_achievement_id` the map holds and that the master query `platform IS NULL AND help_addr IS NULL AND content_type IS NOT 13` keeps (title rewards are the 称号 menu's), split into イベント / 日替わり / 週替わり / その他 by `tAchievement::GetCategory`. Checked on screen by `deepspace_session.sh` (the expedition achievements achieved, 一括達成 → `AchievementListReceive` → the present box).
+- **Starter missions** (スターターミッション: the 39 rows with `help_addr`, which `tAchievement::InitializeStarterList` takes from the `Achievement` map for the home's "Next Mission" popup (b)): a state seeded from a save (meta `seed`: the restored rank-87 account, every planet open) had finished them, so they are left out of the list and their rewards aren't granted again (d). A player the server created (new-player mode) gets them. Without this, the working map made the popup open over home at every return.
+- **Receiving** (`AchievementReceive(id)`, `AchievementListReceive(ids)`, `AchievementReceiveList()` = all achieved (d)): only achieved, unreceived rows; the reward (`content_type`, `content_id`, `num`) goes to the present box with `reason_type` 3 (c; d: the reason). Answers `Achievement`, `AddPresent`, `ReceiveAchievementId`, `IsUpdateAchievement`, `PresentBoxCount`. Checked by the unit tests and on screen: the home side menu's 実績 (`port/scripts/home_session.sh`, `26-achievements`; it sends `AchievementActiveList(1)`, the 称号 screen `AchievementActiveList(3)`) and the deep space screen's 実績 (`deepspace_session.sh`, 一括達成).
+
+#### Fixes to the core's responses (server.cpp)
+- **Presents' `deadline_at`** = created + `present_deadline_day` (30) days (a). (b) `CPresentbox::CreateAllPresentList` lists only presents whose deadline isn't past, and an empty string parses as 0, so the core's presents were hidden.
+- **`StockItem.num`** = the count held. (b) CStackItemInfo's fields are master_item_id, **num**, item_type, sort_name_idx, is_new, use_count, player_id; the shops and exchanges show `num` as 所持数. `use_count` is still sent as before.
+- **`Item`** also carries `level`, `is_lock`, `is_equip` and `num` = 1 (b: CItemInfo's fields).
+
+#### Verification
+- Refusals use the core's error path (agent server-missions): the handler sets a client error code, the request is rolled back and the client shows `error_message_text_<code>`: 10206 items short, 10204 locked / equipped items, 10710 FOL short (growth) / 11001 (items) (d: which FOL code), 20000 coins short, 11006 limit reached / sold out, 11002 not at the level cap, 17001 exchange closed, 10208 otherwise (b: the texts; d: the choice).
+- Unit tests: `rules/growth` (every pure rule, hand values), `growth/apis` (Boost, LimitBreak, Evolution, AddStatus on a scratch server seeded from the 3.7.0 save, with refusals), `items/apis` (Compose, Lock, Sell, SellStackItem, UseHealItem, StaminaHeal, the same way), `shop/item-shop-and-exchange` (item-shop purchase, sold out, new period; exchange), `daily/login-bonus` (login bonus day 1, no second grant, day 2), `presents/achievement-chain` (achievement chain receive).
+- In the client (`--server inproc`, screenshots): the LOGIN BONUS popup at home on day 1, the present received (紋章石 +500); the item shop (`phase:0xa` → アイテムショップ) buys a monthly set for 5,000 紋章石 and shows the row sold out; the exchange (アイテム交換所 → 武器) lists the permanent coin shops with the coins held and exchanges a weapon.
+- The growth screens (CPartyComposition's strengthening, limit break, evolution, weapon custom) are the 3.7.0 client's own (footer キャラクター, アイテム); `port/scripts/growth_session.sh` plays them on screen and checks the server's log for each request and its effect (verified on 3.7.0 in P5a, 2026-10-01). `growth_drive.sh`, which issued the requests through the `SOA_FAKE_SERVER_DRIVE` hook while the offline UI lacked the screens, was removed with the hook.
+
+#### Player-visible (c) and (d) rules (agent server-growth)
+| Rule | Label |
+|---|---|
+| Big success: `*_up_rate` is a percent chance, × `*_bonus_rate` | (d) |
+| FOL campaigns (types 2, 4, 5) and big-success campaigns (6, 7) not applied | (d) |
+| Seed FOL per seed | (d) |
+| Limit break keeps the level cap | (d) |
+| Awakening one level at a time | (d) |
+| Compose: the same boosted points per level; FOL at the base's rarity; locked / equipped materials refused | (d) |
+| Grade-up: the base becomes the new weapon at level 1 | (d) |
+| An equipped item moves from its previous owner | (d) |
+| Heals add to the current stamina (overflow kept) | (d) |
+| Shop / exchange / login / achievement grants: shop and exchange straight to the inventory; login bonus and achievements to the present box | (c)/(d) |
+| Item-shop `limit_count` 0 = unlimited; non-monthly rows never reset; `reset_at` = the next reset; `num_total` = all-time purchases | (d) |
+| Exchange count keys: contents id | (d) |
+| Login-bonus day at 04:00 local time; `is_received_now` only in the granting response; present `reason_type` 1 / achievement 3 | (d) |
+| `Player.tutorial_status` 9 for the seeded account | (d) |
+| Achievement status values; untracked types report 0; received rows leave the list | (d) |
+## Server missions: what agent `server-missions` added
+Code: `server/src/api/missions/` (the handlers) and `server/src/rules/mission_rules.{h,cpp}` (the pure rules, unit-tested). Tests: `rules/missions`, `missions/surprise-campaign-evaluation`, `missions/unlock-refusal`, `gacha/stepup-box`. Live: `port/scripts/restore_missions.sh`. This supersedes the "Not yet" list above for these items and the server-core rows "No surprise enemies", "refusing a request without an error code".
+
+#### Refusals and error codes
+- A handler refuses a request by setting an error code. `server::handle` then rolls the request's state changes back and records the code for the fid; `server::error_code(fid)` reports it until that fid's next answer.
+- The codes are `master_text` `error_message_text_<code>` (a):
+  - 10004 スタミナが不足しています: MissionStart with stamina < cost;
+  - 10206 アイテムの所持数エラー: MissionStart without the ticket / vanish items, BoxGacha without its event coins, GachaTicket without tickets (d: which code);
+  - 20000 紋章石が不足しています: a draw without enough coins (d: 20000 rather than 20003);
+  - 10403 不正なデータ処理です: a step-up step drawn out of order, an empty box, resetting a box that isn't resettable (d).
+- **How the client shows it** (b: `work/decomp/server-missions-err-*.resolved.c`):
+  - The network path hands the code to `ErrorHandler::Handle(fid, Status = code)` (`CApiNotify::OnProtocolError`).
+  - `CErrorHandlerWrap`'s callback (`CallBackCore` → `ErrKind`) picks the kind: codes ≥ 10000 without a table row are kind 2. Kind 2 is `OpenDialogCatch`: a one-button dialog with `ErrMessage(code)` = `error_message_text_<code>`.
+  - The OK button follows `HndlType(fid)`. `MissionStart` goes back to the title (the guest's own table at ELF 0x271d000). A gacha screen registered through `CErrorHandlerWrap::Auto` gets type 1 (give up), so the dialog just closes.
+  - The port does the same on the FakeApiCaller route; see `docs/client-changes.md`.
+  - 10404 and 10202 are kind 1 on the gacha fids (a throw callback, no dialog), so the server doesn't use them for draws.
+- **Verified in game** (`port/scripts/restore_missions.sh`): the dialog reads スタミナが不足しています。エラー:10004 with a 閉じる button, which returns to the title. The same run shows `mf01_003`'s surprise drops on the result screen (no badges; the 初回クリア rewards badged), the unlock of `mf01_004` and a step-up chain advancing from step 1 to 3.
+- **Before any client check:** whether 3.7.0's mission menu checked stamina itself before calling MissionStart isn't known. The port's `mission:` route doesn't, so the server's refusal is what the player sees (d).
+- `SOA_SERVER_FAIL=Method:code[,...]` (port test option) refuses those requests with the given code.
+
+#### MissionStart
+- **Mission table by type:** 0 `master_mission`, 1 `master_event_mission`, 3 `master_world_map_mission` (b: `FindMissionWithId(id, type)`; a: `master_campaign.master_mission_model_type` uses the same numbers). When the id isn't in that table, the other tables are tried (d: the port's `mission:` route sends type 0 for every mission).
+- **Stamina campaigns:** a running `master_campaign` of type 1 (magnification 0.5) whose `master_mission_model_type` is the mission's type (or -2, every type), for the mission's area (or area 0, every area), multiplies the cost: rounded up, at least 1 (a: columns; b: `IsDecConsumeStamina`; d: the rounding).
+  - **Campaign windows:** `opened_day opened_time` .. `closed_day closed_time` at the server's clock (a). `week_id` 7 means every day; it is the only value in the data (a). 0..6 is read as a weekday, Sunday 0, as `master_event_weekly` numbers them (d).
+- **Checks:**
+  - stamina ≥ cost, else refused with 10004 (a: the code);
+  - `ticket_item_id` × `ticket_num` and `vanish_item_id` × `vanish_num` owned, else refused with 10206 (a: columns; d: the code). Both are consumed at the start (d), and the response carries `StockItem`.
+  - A restart (`MissionRestart`) checks and pays nothing (d, as before).
+  - A locked mission (its `unlock_mission_id` not cleared) is **not** refused (d): the server's clear record starts empty for a player seeded from the 3.7.0 save, which has no per-mission progress.
+- **Surprise enemy:** when the row's `is_surprise_enemy` is 1, roll `surprise_rate` percent (e.g. `mf01_003` 10.25) (a), or `master_global.surprise_rate` = 10 when the row has none (d). The result goes in `MissionParameter.is_surprise` and is kept for MissionEnd. A restart replays it (d).
+  - `SOA_SERVER_SURPRISE=1` (port test option) makes every surprise-capable mission meet it.
+  - All `master_mission_stage` rows are sent, with their `is_surprise_enemy_stage` flags, as before (d: the client picks the stages).
+- **Helpers:** the third argument is the helper index + 1 (b); 0 is no helper. What the other arguments mean is inferred from 3.7.0's `CMissionMenu::NextPhase` (d; docs/api.md).
+  - An own character (the u64 fourth argument), owned and not in the party, is appended to `BattleParameter.PlayerCharacter` with its status and named in `rental_sub_character_id` (d).
+  - A rental character (the u64 sixth argument) and an NPC helper (the u32 fifth, a `master_npc` id) are recorded (`play_ext.helper_kind` 2 / 3). (Later: rental clones and event-mission NPC helpers join the battle; see "Rental helpers" and "NPC helpers (`master_mission_npc`)".)
+  - `master_rental_bonus` (10 rows of `item_coin_37`, 300..750) is paid by the rental helpers' rule (d: the row whose id is the day's rental count; "Rental helpers").
+- **State:** `play_ext` keeps the mission type, the surprise roll, the helper and the campaign lots until MissionEnd, MissionFailed or the next start.
+
+#### MissionEnd drops
+All lots pick one row by `rate_weigh`, with replacement (d, as before).
+- **Normal:** `lot_drop_count` lots from the mission's `master_mission_drop` rows without `is_surprise_enemy` (a). Rows with `is_fix_drop` always drop (a: column; d: meaning).
+- **`host_bonus` rows are skipped** (a: column; d: they're for the multiplayer host). server-core drew them.
+- **Surprise enemy:** when it appeared, `lot_surprise_drop_count` lots from the rows with `is_surprise_enemy` = 1 (a). `mf01_003`: 3 lots.
+- **Campaign drops:** for each running type-0 campaign (`Campaign_evo_*_prism`, 2017) that applies to the mission (model -2, its area):
+  - `lot_drop_count_add` more normal lots (a);
+  - one lot from its `master_campaign_drop` rows (a: rows; d: one lot).
+  - The type-8 campaigns (`*_yuukou_*`, magnification 1.5 for event areas) multiply the battle favor, not the drops (d: see "Type-8 campaigns").
+- **Character bonus:** each party member whose role category has a `master_mission_character_bonus` row for the mission, or for its area when the row names no mission, inside the row's `opened_at`..`closed_at`, adds (a):
+  - `bonus_count` more normal lots;
+  - `extra_bonus_num` of the extra content.
+
+  The totals are capped by `master_global.max_character_bonus` = 2 and `max_character_extra_bonus` = 2 (a), per party (d).
+- **Battle evaluation:** for event missions with an `evaluation_group_id`, each `master_battle_evaluation` row of the group is checked:
+  - the battle log value for its type (b: `CBattleLogInfo` names): 1 `damage_total`, 3 `rush_cooperate`, 4 `hit_max`, 6 `mission_time` (met when ≤, and only when not 0);
+  - types 2 (enemies defeated) and 5 (highest single damage) have no log field: every type's value comes first from the battle's evaluation array (`BattleEvaluationInfo` in the battle log, b; "Battle evaluation values"), the log field only when the array has none;
+  - the best rank met pays `rank_N_drop_count` lots from the drop set, the `master_mission_drop` rows whose `master_mission_id_label` is the row's `master_mission_drop_id_label` (a; d: best rank first, only that one);
+  - reached evaluations are listed in `BattleEvaluationResultInfoList` {`master_battle_evaluation_id`} (b: the info class).
+- All drops are listed in `DropList` (d: no rare/surprise split for display).
+- **`drop_type`** is `Common::MissionDropType`. The result screen turns it into a badge (b: `ResultUtility::GetRewardType` → `GetRewardBadgeIcon`, `work/decomp/server-missions-{rewardtype,badge}.resolved.c`):
+
+  | drop_type | Badge |
+  |---|---|
+  | 0 | none |
+  | 1 | host bonus (`hostb_badge`) |
+  | 2 | beginner (`icon_wakaba`, 初心者) |
+  | 3 | `kakin_badge` |
+  | 4 | favor (`heartb_badge`) |
+  | 5 | character bonus (`chara_badge`) |
+  | 7 | `ds_plus_badge` |
+  | 10 | defeat |
+  | 11 | `god_badge` |
+
+  - server-core sent common drops as 2, which showed them as 初心者. They are now 0 (d: the common set has no badge of its own).
+  - Character-bonus drops are 5 (b).
+  - Normal, surprise, campaign and evaluation drops are 0 (d). The surprise badge (reward type 5) has no `MissionDropType` that maps to it.
+- The log line `MissionEnd mission N drops: surprise …, campaign …, character bonus …, evaluation …` shows each source.
+- **Unlocks:** on the first clear, the missions of the same table whose `unlock_mission_id` is this mission are recorded in the state's `unlocks` table and logged (a). Example: `mf01_001` → `mc01_030`, `mf01_003` → `mf01_004`.
+  - The menus learn about them through `ActiveMissionList`. Agent `campaign`'s server (`server/src/api/campaign/campaign.cpp`, branch `port/campaign`) builds that list from the same rule, adds it to every response and keeps its own clear record. When both are merged, the campaign code should read the server's `mission` / `unlocks` tables, so there's one clear record (d: integration left to the merge).
+  - Mission ranks: the only per-mission rank data are the evaluation ranks above; `mission.best_rank` stays 0 (d).
+
+#### Battle status additions (`CPersonStatusInfo`)
+- **Equipment:** an equipped weapon or accessory (`roster.weapon_uid` / `accessory_uid` → `items`) adds its `master_item` hp, attack, intelligence, defence, hit, guard and ap (a: columns; b: `CalcStatus` adds equipment).
+  - The values are the base ones; growth toward `*_max` with the compose level isn't applied (d).
+  - The weapon's `master_weapon_id` becomes `weapon_id` (a), and `*_master_item_id`, `*_limit_break_count` and `*_level` are filled.
+- **Favor AP:** `master_favor_level.ap_bonus` of the character's favor level is added to the AP (a: column; b: `GetFavorApBonus`; d: on top of the base 100). The favor level is `favor::level_of` for the role's same_role_id (agent restore-favor).
+- **Awakening:** with `awaken` > 0, the `master_awaken` row of the role's category at that level replaces the rush skill, its level, factor and gauge (a). Its talents (factors) aren't added (d).
+- **Not yet:** factors and talents (`MasterFactorModel::GetParameter`), seeds (`add_*`), element defences. The seeded roster has nothing equipped, so the battle stats of a fresh player are unchanged.
+
+#### Gacha: step-up and box
+- **Step-up** (a: `is_stepup`, `stepup_number`, `next_stepup_gacha_id`; the last step points back to step 1):
+  - A chain is the gacha ids linked by `next_stepup_gacha_id`, ordered by `stepup_number`, keyed by its step 1 (d).
+  - Only the chain's current step can be drawn; another step is refused with 10403 (d).
+  - Each draw advances the chain: the state's `stepup` table {try_count, restart_count, next_id}. Drawing the last step goes back to step 1 and counts a restart (a: the loop link; d: the count).
+  - The draw's response carries `UpdateStepUpGacha` and `StepUpGacha`, and `GetGachaInData` carries `StepUpGacha`: {`player_id`, `master_gacha_id`, `try_count`, `is_close`, `restart_count`, `next_master_gacha_id`} (a: the schema), **a map keyed by step id**, one entry per step of every chain open at the clock (see "Step-up and box gacha lists" below; the earlier array was ignored by the client).
+  - `GachaHashMap` still lists every open step (d). `stepup_limit_count`, `loop_count` and `reset_type`: see "Step-up gacha state" (agent server-rules) at the end.
+- **Box gacha** (4.4):
+  - `BoxGacha(gacha, count)`: `count` draws, capped by the slots left, each costing `ticket_item_id` × `ticket_num` (a). Each draw takes a uniformly random remaining copy (c: without replacement; a: `rate_weigh` is 1 everywhere) and grants its `content_type` / `content_id` × `num` as a drop is granted.
+  - The response carries:
+    - `BoxGachaItems` {`master_box_gacha_id`, `content_id`, `content_type`, `duplication` 0};
+    - `UpdateBoxGacha`, the box's slots, a map keyed by `master_box_gacha_id` {`player_id`, `master_gacha_id`, `master_box_gacha_id`, `max_box_count`, `box_num` = copies left (b), `order_id`, `content_id`, `content_type`, `num`, `is_maintenance`} (b: `CBoxGachaInfo::Initialize`);
+    - `UpdateBoxGachaList` {`total_count`, `reset_count`, `next_master_gacha_id`: the box itself, or `next_box_gacha_id` once it's empty (a)};
+    - `StockItem` and `AddItem` / `AddCharacter`.
+  - `ResetBoxGacha(gacha)`: only a box with `is_manual_reset` (a); at any time (d); it refills the slots and counts `reset_count`. Other boxes are refused with 10403 (d).
+  - `GetBoxGacha`: `BoxGachaList` for every box series open at the server clock, and `BoxGacha` with the current boxes' slots. `GetGachaInData` carries `BoxGachaList` too (the イベントガチャ tab). Shapes: "Step-up and box gacha lists" below.
+  - The series' last box ("∞", `next_box_gacha_id` = itself or none) refills by itself once emptied, counted as a reset: the box banners say "∞ボックスは繰り返し召喚できます" (b), and an emptied box (`box_num` 0) drops out of the client's list, so it couldn't be reset any more (b: `CGacha::RemoveInactiveBox`; d: the refill).
+- **Character chips for duplicates** (4.3). On a gacha with `universe_chip_flg` = 1 (a: 956 rows), each duplicate adds chips of the role's `universe_chip_item_id` to the stack items (a).
+  - The amount is `chip × chip_rate / 100` of the `master_universe_chip_gacha_exchange` row for the role's rank: 5 / 25 / 50 / 50 for ranks 2–5 (d: the reading of the columns).
+  - The draw's response carries `CharacterChipInfoList`, a map uid → {`id`, `master_role_id`, `master_item_id`, `num` = the chips for that character in this draw}, and `StockItem`.
+  - (b) `CharacterChipInfo` derives from `CLimitBreakItemInfo`, whose `Initialize` (@0x150364c) registers `id`, `master_role_id`, `master_item_id` and `num`. `CLimitOverCharacter::CountCharaChip` reads the map at `CParameterManager+0x6210` and splits `num` evenly over that character's duplicates.
+
+#### Player-visible (c) and (d) rules added here
+| Rule | Label |
+|---|---|
+| Refusal codes 10206 (items short), 20000 (coins short), 10403 (step order, empty box) | (d) (the texts are (a)) |
+| A locked mission isn't refused | (d) |
+| Surprise rate falls back to `master_global.surprise_rate` | (d) |
+| Stamina campaign rounding up, minimum 1 | (d) |
+| One campaign-drop lot per type-0 campaign; type-8 campaigns: see "Type-8 campaigns" (agent server-rules) | (d) |
+| Character bonus capped per party | (d) |
+| Evaluation by the battle's evaluation array, else the log field (types 2 and 5 have none); best rank only | (d) |
+| Equipment at base stats; favor AP on top of 100 | (d) |
+| Step-up: other steps refused; box: resettable any time | (d) |
+| Chips per duplicate = chip × chip_rate / 100 | (d) |
+| Common drops without a badge (server-core sent the beginner badge) | (d) |
+| An own-character helper joins the battle list; an event mission's picked NPC joins as member 4, other NPC ids are only recorded; a rental helper replaces member 4 (see "Rental helpers" below); a restart doesn't restore the helper | (d) |
+
+## Campaign progression (agent `campaign`; `server/src/api/campaign/campaign.cpp`)
+
+| Rule | Source | Notes |
+|---|---|---|
+| A mission is listed when its `master_mission.unlock_mission_id` is cleared (or it has none) and its `visible_mission_id` (if any) is cleared. | (a) | The whole Episode 1 chain is in the data. |
+| Missions, areas and planets are listed only inside their `opened_at` / `closed_at` windows. | (a) | Compared with the server clock (`--clock` / `SOA_CLOCK`) as text (`server/src/api/campaign/lists.cpp` `in_window`). The client compares them with its own clock, which follows the server's `data.Time` (Conventions); the Episode 1 windows contain it. |
+| Only the story areas `planet00_area01` … `planet10_area01` take part; `Sample_*`, `planet98`, `planet99` are left out. | (d) | They look like debug and training content. |
+| `ActiveMissionList` shapes: `Planet` by planet id, `Area` by planet id then area id, `Mission` by area id (arrays). | (b) | From the info classes (`InfoBaseNumberMap` / `InfoBaseArray` templates and each `Initialize`). The key of `Mission` isn't read by `GetMissionInfoWithIdW` (it searches every list); the area id is the natural key. |
+| `is_clear` = cleared; `is_new` = listed and not cleared; `area_ct` / `mission_ct` = the number of listed areas / missions; `is_last_play` = the planet / area / mission of the last clear; `is_start_bighunt` = false. | (d) | The client shows "New" and "CLEAR" and the clear rate from these. |
+| A `MissionEnd` clears the mission it names (among its first two arguments), else the one started. | (b) | `MissionEnd(mission id, select part id)` as `CStageManager` sends it; it is only sent for a won mission (a loss sends `MissionFailed` / `MissionLose`). |
+| An `EndMissionTalk` (the end of a story scene; 3.7.0's `CEventScenario::Exit`) clears the story mission it names; `MissionTalk` likewise. | (b) | Story missions are `master_mission` / `master_world_map_mission` rows with a `talk_event_id`; other missions are ignored. |
+| **World map (Episodes 2 and 3).** A group of `master_world_map_mission` rows opens when a `master_world_map_progress` row for it has `progress` ≤ the episode's progress and its `unlock_condition_mission_id` (if any) is cleared. | (a) | |
+| The episode's progress is the highest `master_world_map_group_mission.progress` among story groups with a cleared mission (0 at the start); it is sent as `Player.world_map_progress` (Episode 2) / `world_map_progress_ep3`. | (d) | The story groups' progress values chain the progress rows in the data, so this reproduces the order; exactly when the 3.7.0 server advanced it (first mission of the group or all of them) isn't known. |
+| World map missions also need their own `unlock_mission_id` / `visible_mission_id` cleared and their map, cell and date windows open. | (a) | |
+| `ActiveWorldMapMissionList`: `WorldMap` {map id: area_ct = listed cells, is_new, is_last_play, opened_at, closed_at}, `WorldMapCellList` {map id: {cell id: {}}}, `WorldMapMission` {cell id: [id, is_new, is_clear, is_last_play, mission_group_id, difficulty, mission_type, scenario_library_id]}, for the episode `GetWorldMapInfoList` asked for. | (b) + (d) | Shapes from the info classes and `CWorldMapMenu::CollectMaster*FromInfo`; the counts and flags as for Episode 1. |
+| `MissionStart`'s `MissionParameter`, rewards, stamina and play state come from the server core (above); the campaign adds only its progress keys to the responses. `Player` keys the campaign adds (`world_map_progress*`, `view_status*`) are merged into the server core's `Player`. | — | |
+| A new player starts with nothing cleared. `SOA_CAMPAIGN_SEED=<mission label>` marks every mission on the unlock chain before it as cleared (a returning player). | (d) | The 3.7.0 save (`work/Game-3.7.0.xml`) doesn't record per-mission progress, only `BAS:PlanetOpen_*`, `BAS:LastPlayPlanet`, the last world map / cell and episode. |
+| A returning player (seeded) has seen the menus' one-time tutorials: `Player.view_status` / `view_status2` all ones. | (d) | A new player keeps them clear, so the 3.7.0 tutorials show. |
+| Progress persists in `<data>/server_campaign.txt` (`clear <mission id>`, `last <mission id>`). | — | Plain text, separate from the server core's `mission` table (which also records clears): folding it into the state DB is PLAN-schema's S12 (`server/PLAN-readability.md` section 6). |
+| Every response carries the current `ActiveMissionList`; the login data is delivered as a `GetPlayer` answer after the save's roster loads (the server core answers `GetPlayer` with the whole player). | (d) | Which 3.7.0 responses carried it isn't known; the client accepts it in any response. |
+
+**Visible (c)/(d) rules:** the "New" marks and clear rates (is_new / counts) and the absence of tutorials for a seeded player.
+
+## Rental helpers (agent `gaps-core`; `server/src/api/social/rental.cpp`)
+
+How the 3.7.0 client builds the helper list (**b**, from `CMissionMenu::CreateRentalCharactorList` → `CParameterUtility::CreateRentalListAuto` / `CreateRentalList`):
+- A mission with `master_mission_npc` rows (the tutorial `ms00_001` and 358 event missions) lists those NPCs. That list comes from master data alone; the server serves nothing for it.
+- Every other mission lists the entries of **`BattleRental`** (`CBattleRentalInfoList`, `CParameterManager+0x62c8`, its map at `+0x6300`). Entries whose player is in `BlacklistID` (`+0x6638`) are skipped, and those in `FollowID` (`+0x6350`) are flagged as followed. The offsets come from the live schema dump (`SOA_FAKE_SERVER_SCHEMA`).
+- An entry is a `CFollowInfo` {`order`, `player`: `CFollowPlayerInfo`, `pc`: `CFollowPersonInfo`}. The child names are the classes' `pParseName`. The map is keyed by the id as a string, like the other `...Map` infos.
+- No request is sent when the list opens. The client shows whatever `BattleRental` it last received.
+
+| Rule | Source | Notes |
+|---|---|---|
+| `BattleRental` goes out with every full-state player response (`Login`, `GetPlayMission` …). | (d) | Which 3.7.0 response carried it isn't known. The client accepts it in any response. |
+| The rental list is a set of **clones of the player's own roster**: the 10 highest-level characters, one per role, ties broken by uid. | (d) | A local server has no other players. The count of 10 is an assumption. |
+| Each clone is lent by a synthetic player with id `0x7d000000 + order`. The player carries the player's own name and level, `last_login_at` = now, `follow_status` 0, and is neither blocked, a rookie nor a subscriber. | (d) | |
+| `pc` = the roster character as the server core reports it (`Character` fields), plus `player_id` and the equipment's `weapon_/accessory_master_item_id`, `_level` and `_limit_break_count`. `id` = the roster uid with bit 40 set (`rental.h`). | (b) + (d) | The field names come from `CFollowPersonInfo::Initialize` and `fields.txt`, and `InitializeRental` reads the master item ids. The id encoding is ours. |
+| **`MissionStart` with a rental.** The client sends the chosen rental's id as the 4th argument (the u64 MissionStartArgs calls `own_helper_uid`, seen live). The server accepts it in either u64 argument. The clone's battle status (`person_status_info` of the source uid, `id` = the rental id) **replaces party member 4**, or is appended when the party has fewer than four members. | (b) + (d) | (b): the party screen shows the helper in slot 4 (`tPartyData` +0x8798 = 8 + 3 × 0x2d30), and `CPartyManager::InitializePlayer` builds exactly four slots. Verified on screen: the 4th card in the party select, the battle and the result EXP page. |
+| Missions with `master_mission_npc` rows keep the core's rule (the NPCs are the party), so no rental is used there. | — | See "Tutorial battle". In event missions those rows are the helper list instead: see "NPC helpers (`master_mission_npc`)". |
+| **`FollowList`** answers `Follow` (the same entries), and empty `FollowPlayerList`, `FollowID` and `MutualFollowID`. | (b) keys (docs/api.md) + (d) empty | Nobody is followed on a local server. |
+| **Rental bonus.** `master_rental_bonus` rows {id 1..10, `rental_bonus_1`, `item_coin_37` サポートメダル, 300..750} pay the medals "you get when a character you set for rental is rented". Per `uimsg_sphere211_getting_rental_bonus`, it pays daily by the number of rentals the day before. | (a) | The texts are from `master_text`. |
+| The row whose **id = that day's rental count** pays, capped at the last row. | (d) + (b) | (b): `CUIUtility::GetMasterRentalBonus(id)` looks rows up by id. |
+| The rentals counted are **the player's own rentals of the clones**, counted per rental day by `MissionStart` in the server table `follow_rental`, where the day starts at `login_bonus_reset_hour`. Each earlier day still unpaid pays once, into the present box (reason type 3), on the next full-state player response. `RentalCount` / `RentalBonus` carry the last paid day's count and row id. | (d) | Nobody else rents the player's characters. |
+| **The `CRentalBonus` popup** (レンタルボーナス獲得！) opens on the home after the login-bonus popup when `RentalBonus` (CParameterManager+0xb4a0) and `RentalCount` (+0xb4d0) are both non-zero. Its bit (4) is armed by 3.7.0's login (`CPopupManager::AddPopup()`, mask 0x7b), so no server call is needed; the server only sends the two values on the day's first player response. The popup shows `uimsg_rentalbonus_num` "%u人" + "からレンタルされました。", the paying row's content (`CUIUtility::GetMasterRentalBonus(RentalBonus)`: サポートメダル×300 for row 1), `uimsg_rentalbonus_explan` (the present box), and the card of `Player.support_pc_id`. Seen in game (agent a4-helpers, 2026-09-30): a rental on 2026-09-30, then a boot with `--clock "2026-10-01 12:00:00"`: notice board → LOGIN BONUS → the rental-bonus popup. | (b) | `CPopupManager::CheckStart` case 4 / `Create(4)` / `CRentalBonus::Setup`, decompiled from 3.7.0 (`work/decomp/a4-helpers-popup.resolved.c`); the offsets match the schema's key order (`RentalBonus` #560, `RentalCount` #561, 0x30 apart). |
+| **`Player.support_pc_id`** = the character the player lends (a uid: `CRentalBonus::Setup` builds its card with `tCharaData::Initialize(CParameterManager+0xba8)`). **`UpdateSupport(u64 character)`** (the character dialog's レンタル button, `uimsg_ch_dialog_rental`) sets it and answers `Player`; the character must be owned, else refused (no body). Unset, or no longer owned: the highest-level character (ties by uid), the first of the rental list's lenders. Stored as `meta.support_uid`. | request and key (b: docs/api.md, `OnUpdateSupportRes`); uid (b); owned check, default (d) | `api/social/rental.cpp`, `server/src/api/player/player_info.cpp` `player_info`. Test `social/follow-support`. |
+
+## Server rules added by agent `server-rules` (2026-09-29)
+Code: `server/src/api/items/gear.cpp` (gear) and the modules named below; tests `server/src/rules/rules_tests.cpp` (...), and for the gear `server/src/api/items/gear_tests.cpp` (`items/gear-apis`, `items/gear-barney-chance`) and `server/src/rules/gear_rules_tests.cpp` (`items/gear-rules`). The scratch-server tests seed from the committed synthetic `port/server-data/test-seed.xml` (see "Seed") and need the 3.7.0 master DB; without either the test fails with a message naming the missing file. Decompiles: `work/decomp/server-rules-*.resolved.c`.
+
+### Gear (ギア, 武器カスタム; `api/items/gear.cpp`)
+**Client structures** (b: the decompiled `Initialize` bodies and `CApiNotify` handlers):
+- `GearInfoList` (CParameterManager+0x8c98) = map<gear uid, CGearInfo {`type`, `param1`, `param2`, `player_item_id`, `slot_index`, `is_new`}>. It holds every owned gear, attached or not; the gear lists show the ones with `player_item_id` 0 (`tItemData::CreateGearList`).
+  - `type` 0 = a gear item: `param1` = its `master_item` id (type 15, with `master_gear_id`).
+  - `type` ≠ 0 = a gear made from a weapon's factor: `param1` = the weapon's item, `param2` = the factor slot 1..3 (`tItemData::SetGearItem(u32, u32)`, which shows it as `master_global.weapon_gear_item`). The server uses `type` 1 (d).
+- `AddGearInfoList` (+0x8ce8, same shape) is merged into `GearInfoList`; `UpdateGearList` (+0x8d38, gear uids) names gear taken out of it (DeleteGear / SellGear; ClearNewGear clears `is_new`; RemoveGear detaches); `UpdateAttachedGearInfoList` (+0x8d88) = map<weapon uid, [CAttachedGearInfo]>.
+- A weapon's gears are the child `AttachedGearInfoList` of its `CItemInfo` (+0x2e0): CAttachedGearInfo {`type`, `param1`, `param2`, `gear_id`, `add_param_type1..3`, `value1..3`}. The weapon's stats add `value_k` to stat `add_param_type_k`: 1 attack, 2 intelligence, 3 defence, 4 hit, 5 guard; 6 = a factor, which takes two slots (`tItemData::SetGearList`, `SetGearItem`). The server sends it on every weapon with gear in `Item` (an `ext::ItemExtra` hook).
+
+**Rules:**
+| Rule | Label |
+|---|---|
+| Content type 15 grants one gear of that `master_item` per unit; type 98 draws from the `master_gear_lottery` category (`gear_drop_1..5`) open at the clock, by `rate_weigh`. The gear stock cap isn't checked for grants. | (a); cap (d) |
+| An attached gear's bonuses are its `master_gear.add_param_type1..3` / `add_param1..3`; a weapon-factor gear carries the weapon's `factor<slot>_id` as bonus type 6. | (a); factor gear (d) |
+| `GetGearInfo`, and every full-state player response, send the whole `GearInfoList`. The client refetches it when it opens the gear screens (`CCustomGear::Setup`, `CItemPossessionList::Setup`), so grants elsewhere only change the state. | (b) |
+| **AttachGear(weapon, gear, slot):** a free gear, a weapon with `master_item.max_gear_slot_num` > slot (0-based), and the same weapon kind (tutorial `cp0003_tutorial_180` 同じ武器種のギア). A gear already in the slot is destroyed (`uimsg_gear_set_dialog2`, `cp0003_tutorial_181`). Cost `attach_gear_coin` = 10,000 **FOL**. Answers `AddGearInfoList` (the gear, now attached), `UpdateGearList` (the destroyed one), `UpdateAttachedGearInfoList`, `Item`. | slot/kind/destroy (a)+(b); FOL (d: the key says coin, but the only gear shortage text is `uimsg_gear_fol_shortage`); slot base (d) |
+| **RemoveGear(weapon):** one `gear_remove_gear_item` (`item_grease`, ウェルチ特製グリス) per request (the dialog's 必要数 1), the gears go back to the free list (`OnRemoveGearRes` zeroes `player_item_id` / `slot_index`; `uimsg_gear_slot_remove_success` ギアを入手しました). The screen sends the **weapon's** uid; all its gears come off. A gear's uid is accepted too: that gear comes off. Re-verified in game by `growth_session.sh` (agent a4-helpers, 2026-09-30: "RemoveGear: 1 gear(s) off weapon", the grease used, the gear back in the list). | (a)+(b); a gear's uid (d) |
+| **SellGear(uids):** free gears only, `master_item.sale_fol` each (the `weapon_gear_item`'s for factor gears). Answers `SellResult` and `UpdateGearList`. | (a); attached refused (d) |
+| **UpdateGearStock:** `gear_stock_max` is the **maximum** (b: `CParameterUtility::MaxGearFrame`, default 300), +`gear_stock_up_num` for `gear_stock_use_coin` 紋章石 (b: `uimsg_gear_extension_confimation`). The core already sends `Player.gear_stock` = the maximum, so the request is refused (11006). | (a)+(b); start capacity (d) |
+| **GenerateGear(base weapon, carrot, materials) (ギア精製):** up to five materials (gears or weapons, `item_image1..5`), at least one item selected (`cp0003_tutorial_186`); locked / equipped weapons refused (`uimsg_gear_weapon_lock`); the carrot is optional (`uimsg_gear_create_item`) and must be a `gear_extract_factor1..3_item`. Cost `coin_for_generate_gears` 10,000 FOL (b: `UpdatePurificationMenu` compares the FOL with the cost; d: flat). | (a)+(b) |
+| Rank value = `(int)((Σ material rarity × 0.01 + 1.0) × (base attack + base intelligence)) + rare_factor_for_normal_gear (30) × Σ material rarity`; the `master_gear_probability` row with the largest `rank_threshold` below it gives the rarity rates `rank1..5_rate` (percent) (b: `CCustomGear::UpdatePurificationPlate` builds exactly this query and shows these rates as the 完成ギア期待値). Below every threshold: the lowest row. | (b); fallback (d) |
+| The base weapon's attack / intelligence at its level: `master_item.attack`..`attack_max` linearly over levels 1..`level_max` of its rarity. | (d) (the client's `ItemModel::GetDetail` wasn't read) |
+| The gear: `master_gear_lottery` `gear_purification_<rarity>` of the base weapon's kind (without a base: the first material's kind), open at the clock, by `rate_weigh`. | (a); no-base kind (d) |
+| Factor extraction from the base weapon: chance `min(p × Σ rarity × 0.01 + p, 100)` % (b: same function). `p` = `extraction_facter_<n>` for n = min(limit break, 2) + 1 (d: the client indexes a rate list by the base's limit break; that the list is these keys in order is assumed). Extractable slots: `factorN_id` set, `factorN_limit_break` ≤ the limit break, `factorN_lock` = 0 (a; b: `uimsg_gear_create_item_warning`). The carrot N picks slot N (a+b: `cp0003_tutorial_188`), else a uniform slot (d). The factor gear comes **in addition** to the gear (d). | (b)/(a)/(d) |
+| The base weapon and all materials are used up (b: `uimsg_gear_create_warning` 素材にした武器やギアは失われます; d: the base too). Gear attached to a weapon that is gone goes with it. | (b); base, orphan gear (d) |
+| **Barney chance** (バーニィチャンス, agent a4-helpers; `api/items/gear.cpp` "barney chance"): `master_gear_barney_chance` holds groups of three rows, one per `barney_chance_type` 1..3 (normal / good / excellent), each with a `mood_rate` and a `mutation_rate`. In every group the three `mood_rate`s sum to 100 (the undated `default` group 70/25/5; event groups e.g. 0/0/100) and the `mutation_rate`s rise with the type (10/30/60; `gear_20201126` 100). | (a) |
+| What the client shows (3.7.0): the purification menu's icon `Image_chance1` = `icon_chance1..3.png` from CParameterManager+0x91c0 = **`GearBarneyChanceInfo.barney_chance_type`** (one step higher when a selected material has the flag at tItemData+0x22d) (`CCustomGear::UpdatePurificationMenu`); after `GenerateGear`, when **`GearGenerationInfoResult.is_barney_chance`** (+0x8ef0) is set, the gear cut-in (`CCustomGearCutIn`) starts at the first new gear's rarity − 1 and plays its rank-up. So `is_barney_chance` means "this gear was raised a rarity". Neither rate is read by the client. | (b) (`work/decomp/a4-helpers-gearui`, `-cutincaller`, `-cutin`) |
+| The open group: the dated group whose `opened_at`..`closed_at` holds the event clock, else the undated `default` group. The **mood** (the chance type) is drawn from it by `mood_rate`, kept (table `gear_barney`) until the next `GenerateGear` or until another group opens, and sent as `GearBarneyChanceInfo` {`barney_chance_group_id`, `barney_chance_type`} with every full-state response, `GetGearInfo` and `GenerateGear`. | dates (a); mood as a weighted draw, when it's redrawn, where it's sent (d) |
+| A generation raises the drawn gear a rarity (a new draw from `gear_purification_<rarity + 1>`, when there is one, below rarity 5) with the current mood's `mutation_rate` percent; the result's `is_barney_chance` says whether it did, `barney_chance_type` is the mood used; then the next mood is drawn. Test `items/gear-barney-chance`. Seen in game (agent a4-helpers, `growth_session.sh`): with the default group the purification menu shows the plain Barney (type 1, "…"); with `SOA_CLOCK="2020-12-01 12:00:00"` (`gear_20201126`) it shows the sparkling バーニィチャンス! icon (type 3), and the purification's cut-in plays the raise (rarity 1 → ★2). | (d) for the reading of `mutation_rate`; the display (b) |
+| Answer: `GearGenerationInfoResult` {`is_barney_chance`, `use_master_item_id` = the carrot, `barney_chance_type`, `AddGearInfoList`, `CDeleteItemList` (the weapon uids), `UpdateGearList` (the material gears)}, plus top-level `AddGearInfoList`, `UpdateGearList`, `Item`, `StockItem`. | fields (b); `CDeleteItemList` shape (d) |
+| Refusal codes: 10208 bad arguments / slot / kind, 10204 locked or equipped, 10206 no grease / carrot, 10710 FOL short, 11006 stock at maximum. | (d) (the texts are (a)) |
+
+### Present box lines (`present_texts.cpp`)
+| Rule | Label |
+|---|---|
+| The box shows each present's `free_text_message_id` **string** verbatim as its line: `CPresentbox::CreateAllPresentList` copies it (CPresentBoxInfo +0x1f0) into PresentParameter+0x68 and the list cell sets it as the label text. `reason_type` / `reason_param` are never read, and the client has no `Present_box*` key. So the server sends the finished line (it used to send 0, an empty line). | (b) |
+| The lines use the master_text templates: login bonus `Present_box_1` "%s %d日目" (bonus name, day; stored when granted), mission first clear `Present_box_2` "%sより" (mission name), achievement `Present_box_3` "%s" (achievement name), premium login bonus `Present_box_6` "%s %d日目", favor bonus `Present_favor_1` "%sのフレンドリープレゼント" (the character's `master_person` name), anything else `Present_box_99` 運営からのプレゼント. | templates (a); which template per reason (d) |
+| `reason_type` numbers are the server's own: 1 login bonus, 2 mission clear, 3 achievement, 6 premium login bonus, 7 favor bonus (`ext.h` `PresentReason`). A stored line (table `present_texts`) wins over the one built from the reason. | (d) |
+
+### Premium and favor login bonuses (`api/daily/premium_and_favor_bonus.cpp`)
+| Rule | Label |
+|---|---|
+| **Premium login bonus pass:** content type 11, `content_id` = the `master_premium_login_bonus` row. It was sold in `master_direct_item_shop` (`pshop_ploginbonus_001`), which the port can't sell, so the bonus is **off unless the state holds a pass**: a type-11 grant (e.g. a present) records one (table `premium_pass`). | (a); off by default (d) |
+| With a pass whose master row is open at the clock, each login day (after the 04:00 reset, as the login bonus) grants the next page of `master_premium_login_bonus_contents` (`order_idx`, 14 pages) to the present box, line `Present_box_6` "プレミアムログインボーナス N日目". It doesn't loop (the table has no `is_loop`). | (a); no loop (d) |
+| `PremiumLoginBonus` lists the passes with a page: CPremiumLoginBonusInfo {`player_id`, `master_premium_login_bonus_id`, `current_idx`, `created_at`, `updated_at`, `is_updated`, `is_next`}. The home popup (`CPopupManager::CheckStart` case 1) shows the entries with `is_updated` (`PremiumLoginBonusModel::GetList`), so `is_updated` is true only in the granting response. `is_next` = false. | fields and popup (b); `is_next` (d) |
+| **Favor login bonus** (フレンドリープレゼント): `master_favor_bonus` tiers need `required_count` characters (by `same_role_id`) at favor level ≥ `required_min_master_favor_level` (4); the open tier with the largest `required_count` the player meets applies (from 2019-03-29 on: 1..30 and 100 characters → 1..3 presents, 10..100 stamina). | columns (a); largest tier (d) |
+| Once per login day it draws `present_count` lots from the open `master_favor_bonus_contents` by `rate_weigh` into the present box, line `Present_favor_1` "<name>のフレンドリープレゼント", naming a random qualifying character, sent as `FavorBonusContetsResultInfo` {`lot_character_id` = its uid, `FavorBonusContetsInfoList` [the drawn `master_favor_bonus_contents` ids]}. **The list is u32 ids (b):** `CFavorBonusContetsInfoList` is an `InfoBaseValueArray<u32>` (its vtable's `DeserializeArray` / `Initialize`), `CFavorCharacterLoginBonus::Setup` looks the ids up with `CMasterParameterFavorBonusContents::ParameterByIDList`, and `CPopupManager::CheckStart` case 6 opens the popup only when the list (CParameterManager+0x8658) is non-empty. Until 2026-10-02 the server sent {content_type, content_id, num} objects, which left it empty: the lot character visited the home but the popup never opened. Seen on screen since (agent open-issues): "アンヌのフレンドリープレゼント! GRDシード ×3" after the notice board; `control/flowctl.py login-popups` closes it. | lot fields (b: schema, list type); once a day, the named character (d) |
+| **StaminaHealByFavor():** once per day, the tier's `stamina_recovery_value` is added to the stamina (overflow kept, the regeneration clock restarts at the maximum as for the other heals); `IsHealedByFavor` says whether it did. `Player.favor_bonus_received_at` / `stamina_update_by_favor` report the last bonus / heal. | value (a); once a day, the Player times (d) |
+| `master_global.favor_login_bonus_limit` (5) is a **server-side key**: the client never reads it (its string is in neither the 3.7.0 nor the 3.8.0 library <!-- 380-ok: evidence from both libraries -->; nor are `favor_tap_bonus_limit` / `favor_event_drop_bonus_limit`), and `CFavorCharacterLoginBonus::Setup` lists one character's lots however many there are. Read like its siblings (5 taps a day, 3 event-drop bonuses a day) as a per-day cap: at most that many favor-login-bonus lots a day (`min(present_count, limit)`). With the 3.7.0 tiers (`present_count` 0..3, once a day) it never binds. With the seed save nobody has favor yet, so the favor bonus starts once characters reach level 4. | key and value (a); not client-read (b); the reading (d) |
+| The home popups of `CPopupManager::CheckStart` cases 4 and 5 (CParameterManager+0xb4a0/+0xb4d0, +0xb500/+0xb530) are the **rental bonus** (`RentalBonus` / `RentalCount`) and the **Sphere 211 rental bonus** (`Sphere211RentalBonus` / `Sphere211RentalCount`), not favor popups; the favor login bonus popup is case 6 (`CFavorCharacterLoginBonus`, the list at +0x8658). See "Rental helpers". | (b) |
+
+### Battle evaluation values (types 2 and 5; `server.cpp` `battle_evaluation_value`)
+| Rule | Label |
+|---|---|
+| `CBattleLogInfo` has no field for evaluation types 2 (enemies defeated) or 5 (highest single damage). The values of all six types are in the battle's evaluation array: `CBattleLogModel::EndMission` appends one `CBattleEvaluationInfo` {type, value} per type to the TArray at CParameterManager+0x5988 (data +0x5990, count +0x59a0, stride 0x70; type u32 at +0x38, value u64 at +0x68), from the log model's counters (1 `AddDamageTotal` sum, 2 `EndBattle` defeated count, 3 rush-combo total, 4 hit max, 5 the largest single `AddDamageTotal`, 6 clear time in ms), and the MissionEnd request sends it as `BattleEvaluationInfo`. The server reads the last entry of each type; without one it falls back to the `CBattleLogInfo` property (types 1, 3, 4, 6). | (b) |
+| So evaluation groups with type 2 (e.g. `me99_983`, 50 defeated) and type 5 (`me99_MemLast_07`, 50,000,000 damage) now pay their drops. The server trusts the client's values. | (a) conditions; trust (d) |
+
+### Step-up gacha state (`server.cpp` `stepup_value`, the draw)
+| Rule | Label |
+|---|---|
+| CStepUpGachaInfo is {`player_id`, `master_gacha_id`, `try_count`, `is_close`, `restart_count`, `next_master_gacha_id`}. `CGacha::FirstCreateNormalAndStepup` lists, for every entry without `is_close`, the master row whose id is its `master_gacha_id`, and `CGacha::CheckSeriesData` lets it be drawn while `try_count` < that row's `stepup_limit_count`. So `master_gacha_id` is the chain's **current step** and `try_count` the draws made on it. (The earlier server sent step 1 and the chain's total draws: the client would have shown step 1 and closed it after one draw.) | (b) |
+| A step is drawn `stepup_limit_count` times (1 in every 3.7.0 step-up row) before the chain moves to `next_stepup_gacha_id`; after the last step the chain returns to step 1 and counts a restart (`restart_count`). `next_master_gacha_id` = the current step's `next_stepup_gacha_id`. | (a)+(b) |
+| `is_close` when the current row has a `loop_count` and that many restarts are done; a closed chain is refused (10403). No 3.7.0 step-up row sets `loop_count` or `reset_type`, so chains loop without end and never reset. The only rows with `reset_type` (5) are the pass gachas (`gacha_galaxy_role`, the universe-pass ones), which need a subscription the port can't sell. | column meaning (d); data (a) |
+
+### Single and bulk draws of `Gacha` (agent `stepup-list`)
+| Rule | Label |
+|---|---|
+| `Gacha(id, hash, n)`: n = 1 is the single draw (`coin`, 1 unit), n = 0 the bulk draw (`bulk_coin`, `bulk_count` units). `CGacha::RequestGacha` passes 1 when the selected button (`CGacha+0x2d4`) is the single one, where the sale variant is `SaleGachaOnce`, and 0 otherwise (`SaleGacha`). The server used to draw every `Gacha` as the bulk one, so 1回ガチャ cost and drew a 10-draw. Test `gacha/stepup-box`. | (b) |
+
+### Step-up and box gacha lists (agent `stepup-list`; `server.cpp` `stepup_value`, `box_list_value`, `box_value`)
+No step-up and no box gacha was ever listed on the gacha screen, at any clock and with or without `--enable-events`: the server sent `StepUpGacha`, `BoxGachaList` and `BoxGacha` as **arrays**, and these are `IInfoBaseMap<u64, …>` infos, whose `DeserializeArray` does nothing (docs/ason.md). `CGacha::FirstCreateNormalAndStepup` lists a step-up row only through the `StepUpGacha` map (CParameterManager+0x7408) and `CGacha::AddListBoxSeries` (the イベントガチャ tab) a box only through the `BoxGachaList` map (+0x7278), so both stayed empty.
+
+| Rule | Label |
+|---|---|
+| `StepUpGacha` / `UpdateStepUpGacha` / `BoxGachaList` / `UpdateBoxGachaList` / `BoxGacha` / `UpdateBoxGacha` are maps keyed by id (the id as a string). | (b) `IInfoBaseMap::DeserializeArray` is empty; `InfoBaseNumberMap<…>::ConvertParserValueToKey` |
+| **One entry per step** (key = `master_gacha_id` = the step's gacha id): `CApiNotify::UpdateStepUpGacha` merges by key and copies `try_count`, `is_close`, `restart_count`, `next_master_gacha_id` but never `master_gacha_id`, so a key can't move from step to step. The current step is open, the chain's other steps `is_close` = true (`FirstCreateNormalAndStepup` skips `is_close` == 1), so each chain shows its current step ("ステップ n/10"). | (b); the closed siblings (d) |
+| Every chain whose current step is open at the clock is sent, an untouched one at step 1 with `try_count` 0; the draw's `UpdateStepUpGacha` carries that chain's steps. | (b) nothing lists a chain without an entry; defaults (d) |
+| **One entry per box** (key = `master_gacha_id` = the box): `CApiNotify::UpdateBoxGacha` merges `UpdateBoxGachaList` by key without copying `master_gacha_id`. A series (the `default_release` = 1 box, then `next_box_gacha_id`) lists its boxes up to the current one (the first with copies left, or the last); the emptied ones `is_close` = true, so the list moves on to ボックス 2 after BOX COMPLETE. | (a) the chain; (b) the merge and `AddListBoxSeries` (`is_close` == 0 and `box_num` != 0) |
+| `CBoxGachaListInfo.box_num` = the copies left in the box: `CGacha::CreateBoxData` keeps it for the box screen, which shows it as ボックス残数 and offers 10連ガチャ only with 10 or more left; `RemoveInactiveBox` drops a box with `box_num` 0. `is_reset` = `is_manual_reset`. | (b) (seen on screen: box_num 1 showed ボックス残数 1 and no 10-draw) ; `is_reset` (d) |
+| `CBoxGachaInfo.box_num` = a slot's copies left (the only field `UpdateBoxGacha` merges); `order_id` and `num` from `master_box_gacha`. `BoxGachaItems` entries {`id` = the draw's index (d), `master_box_gacha_id`, `content_id`, `content_type`, `num`, `duplication`}: the result list shows "×num" (it showed ×0 without it). | (b) the Initialize functions; (a) the columns |
+| A box series whose banner image isn't present isn't listed (`enable_events::gacha_shown`). | (b)+(d), as the enabled gachas |
+
+Tests: `gacha/stepup-box` (map shape, one open step per chain, an untouched chain at step 1, box series listing and the move to box 2, the ∞ box refill). Seen on screen with `--enable-events` (step-ups on the おすすめ / キャラ tabs, a 10-draw moving 復刻水着2020① from ステップ 1/10 to 2/10, the 星の海と夢の渚 box drawn to BOX COMPLETE and listed as ボックス 2) and with `--clock "2020-08-10 12:00:00"` alone (水着2020① / 復刻兎耳 / 復刻水着2019 step-ups and the 星の海と夢の渚 box with their real end dates).
+
+### Type-8 campaigns (友好, `*_yuukou_*`, ×1.5; `server.cpp` MissionEnd, `favor.cpp`)
+| Rule | Label |
+|---|---|
+| The client queries campaign type 8 only in `MissionUtility::UpdateEventAreaListCampaign`, and only while `CParameterUtility::IsOpenFavorabilityBattle()`: `GetCampaignSituationOnMission(8, …)` / `GetCampaignEvetMissionAreaList(8, …)` put the campaign badge and its value on the matching event area. It multiplies nothing itself. All 97 type-8 rows name an event area and model type 1. | (b), (a) |
+| So a running type-8 campaign for the mission's area multiplies the **battle favor** MissionEnd grants (`master_favor_battle_effect.favor_up_point` × `magnification`, truncated). | favor as the target (d, from the favor-battle gate and the name 友好); truncation (d) |
+| Other campaign types the client queries: 1 event-area stamina; 2, 3, 6 the item menu (weapon FOL, compose); 4, 7 `CPartyComposition::UpdateCampaign` (character FOL, strengthening); 5 awakening / evolution FOL (`ConsidereCampaignFol(…, 5, …)`). No client query of 0 or 9 was found. | (b) |
+
+### Battle status (party members' stats)
+| Rule | Label |
+|---|---|
+| Each party member's `CPersonStatusInfo` stats come from the server's own formula in both server modes (in-process, `soa-server`, and so `soa-emu`): base × rank plus the seeds (`add_*`, also reported in the `Character` list); the `tests/diff/` flows compare the modes. Mission NPCs come from `rules::npc_status` (master data, "Tutorial battle"). Its last check against the 3.7.0 client model (selftest `server/npc-status-master`, since removed) differed in one row, `master_mission_npc` 409829631 HP 5158 (server) vs 4728 (client): a data difference, not a formula one (agent open-issues, 2026-10-01). That selftest's client read the 3.7.0 APK's built-in master, where the NPC's role (`role_cp0306_b04a_5131`) has the talents `factor_oni_101/103/105/107` (passive `factor_oni_107`: HP and attack +10 %); the downloaded 3.7.0 master, which the server uses and its CDN serves to the client, has `factor_wadoramu10_501`, `oni_103`, `wadoramu10_505/503` (passive `wadoramu10_505`: HP +20 %, attack +15 %). Base HP rnd(3256 × 1.32) = 4298: × 1.2 = 5158, × 1.1 = 4728. The server's formula gives 4728 on the APK master's talents too; test `server/npc-status-409829631`. Until the rebase's revision 2 (2026-10-01) the in-game path asked the client's own computation (`StatusProvider`): `docs/history/server-rules-3.8.0.md`. | (d) |
+
+### Favor achievements (`api/presents/achievements.cpp`, `api/favor/favor_api.cpp`)
+| Rule | Label |
+|---|---|
+| `GetNotReceiveGoaledFavorabilityAchievement` isn't an API: it is the client helper `CParameterUtility::GetNotReceiveGoaledFavorabilityAchievement`. It walks the `Achievement` state (CParameterManager+0x67c8) for entries with `is_goal`, `status` not 2 / 3 and a `limit_at` not past, keeps the type-52 ones (`GetParameterListFromAchievementIDAndType(52)`) and builds the reward popups. `CAdjutantSelect::Progress` (the adjutant select) then sends `AchievementListReceive` with their ids; `CHome::UpdateBadge` counts them for the home badge. Neither sends `AchievementActiveList`. | (b) |
+| So the server sends the `Achievement` state with every full-state player response and with the responses that change favor (MissionEnd, UpdateFavorByTap, UseFavorItem). | (b); which responses (d) |
+| Type 52 (`Favor_role_<person>_NN`, 368 rows): `target_id` is a **same_role_id** (`target_id_label` = `master_role.same_role_id_label`); progress = the favor points of that same_role_id, goal 10,000 / 30,000 / 60,000. The earlier code looked it up as a role id and never matched. `limit_at` = `closed_at` (2030-12-13). | (a) |
+
+### Fixes found on the growth screens (`port/scripts/growth_session.sh`)
+| Rule | Label |
+|---|---|
+| **Evolution resets the level to 1** (exp 0): the evolution screen previews the evolved form at "LV 1/70", and after the result the client says `uimsg_next_strongth` 進化したため、レベルが1になりました. The server kept the level (its result screen then showed 60/70). | (b) |
+| **LimitBreakCharacter's second argument is the `master_character_limit_break` row id** the screen offers (e.g. `type_party_l`), not the item id; the row gives the item and its count. The server refused every limit break from the screen with 10208. An item id is still accepted. | (b) (the request seen in game) |
+| **AttachGear** needs the weapon's limit break ≥ the gear's `master_gear.limit_break_conditions` (the list shows it as セット条件; the screen refuses with 武器の上限解放が必要です) and at least as many weapon slots as the gear has bonuses (`tItemData::GearSlotCount`: a gear's non-zero `add_param_type` count, a weapon's `max_gear_slot_num` capped at 3). | (a)+(b) |
+| `Player.gear_num` (CPlayerInfo +0x978, `NowGearItemCount`, the ギア所持 count) = the free gears. | (b); attached not counted (d) |
+
+## Deep space (agent `deepspace`; `server/src/api/deepspace/deepspace.cpp`)
+The expedition mode ("ディープスペース探査", `CPhase_DeepSpace` = phase 6). The client code is unchanged from 3.7.0; the module answers its five APIs. Unit tests `rules/deepspace` (`server/src/rules/deepspace_rules_tests.cpp`), `deepspace/expedition`, `deepspace/extras` (pass ships, play limits, achievements; `server/src/api/deepspace/deepspace_tests.cpp`), `shop/subscription`; replay corpus `server/tests/replay/deepspace`; session `port/scripts/deepspace_session.sh` (runs with `--galaxy-pass`: two expeditions out at once, the second on a pass ship; the 実績 screen and 一括達成).
+
+#### Requests as the client sends them (b: the captured requests)
+- `DeepSpaceActiveList()` (queued on the FakeApiCaller route with the in-process server, see `docs/client-changes.md`).
+- `DeepSpaceAutoMemberSelect(u32 bonus_set_id, u32 bonus_id)`: the offer's bonus set and the bonus the player tapped on the party screen. (The API table's "area, mission" reading was wrong.)
+- `DeepSpaceMissionStart(u32 mission_id, u32 item, vector<u64> uids)`: `item` is the master item id of the bonus item chosen in `CDeepSpaceItemSelectDialog` (0 = none). The area is the mission's.
+- `DeepSpaceMissionEnd(u32 ship_id)`, `DeepSpaceMissionEndNow(u32 ship_id)`.
+
+#### Response shapes (b)
+From the info classes' `Initialize` and the handlers. A number map replaces the client's whole map (`IInfoBaseMap::DeserializeChild` clears it first), so every response sends full lists.
+- `DeepSpaceAreaList` {area id: `CDeepSpaceAreaInfo`} = master_area_id, current_exp, max_exp, ship_in_progress_num, ship_complete_num, is_last_play, is_rare_mission, is_new, `DeepSpaceMissionList` {mission id: `CDeepSpaceMissionInfo` = master_mission_id, bonus_set_id, ship_id, closed_at, count_weekly_at, updated_at, is_new, play_count_daily, play_count_weekly, play_count}. An area missing from the list shows as "？？？？？" (`CDeepSpace::GetDeepSpaceAreaList`); a mission missing from its area's list isn't shown (`GetDeepSpaceMissionList`).
+- `DeepSpaceActiveShipInfoList` / `DeepSpaceEndShipInfoList` {ship id: `CDeepSpaceShipInfo` = ship_id, master_area_id, master_mission_id, bonus_set_id, item_id, started_at, closed_at}. A mission whose offer's ship_id is in the Active map shows 進行中 with its remaining time and 今すぐ帰還; in the End map, 帰還済, and tapping it sends `DeepSpaceMissionEnd` (`CDeepSpace::SetupPartySelect`).
+- `characters` {uid: character_id, ship_id, ship_slot}: the characters out on ships; ship_slot is the party position 1..8 (`CDeepSpaceProgressDialog::Open` looks up slots 1..8).
+- `DeepSpaceBonusAllApplyInfoList` / `UpdateDeepSpaceBonusAllApplyInfoList` {ship id: {bonus id: {bonus: float}}}: a dispatched ship's bonus values, which the client shows instead of its own estimate (`UpdateDeepSpaceMissionBonusList`).
+- `AutoSelectedResult`: an array of uids (`InfoBaseValueArray<u64>`).
+- MissionStart also sends `DeepSpaceShip` (the handler inserts it into the Active map) and `DeepSpaceArea` (merged into the list).
+- MissionEnd: `DeepSpaceShip` (the handler erases it from both ship maps), `DeepMissionPlayer` (level, exp, stamina, stamina_max, fol, is_level_up, tower_try_count, time_saving_use_count, stamina_update; copied into the player), `add_characters_exp` {uid: character_id, add_exp, before_level, before_exp, after_level, after_exp, order_id} (`CDeepSpaceResult::Setup` shows the members by order_id 0..7; the handler stores after_level / after_exp), `CContentInfoMap` {n: `CDropContentInfo` = content_id, content_type, num, is_new, master_item_id, bonus_category, is_rare_bonus, is_add_bonus, is_hit_bonus, is_rare_hit_bonus} (the result's reward items, `CDeepSpaceResult::GetRewardItemList`), `AddItem`, `StockItem`.
+- MissionEndNow: `DeepSpaceShip` (the handler moves it into the End map), `DeepMissionPlayer`, the ship lists, `StockItem`.
+
+#### Clocks
+- **Expedition timers** (a ship's started_at / closed_at, a rare offer's limit, the quick-return price and its daily count) use the server clock `now()` (`clock_now`), so `--clock` and the control command `clock:+SECONDS` fast-forward them.
+- **Dated master rows only the server reads** (bonus sets, drop items, bonus items) use the event calendar `event_now()`.
+- **Dated rows the client also filters by its own clock** (data.Time = the server clock): areas and missions must be open by **both** clocks, or the server would offer what the client hides (b: `GetDeepSpaceAreaList`, `GetDeepSpaceMissionList`). The ship count uses the server clock only (b: `CUIUtility::GetMaxShipCount`). The date checks sit in `calendar()` / `open_by_both_clocks()` (`server/src/api/deepspace/state.cpp`).
+
+#### Rules
+| Rule | Label | Notes |
+|---|---|---|
+| An area opens when its `opened_at` / `closed_at` window holds; one with `is_required` also needs every `required_areaN_id`'s exploration rate (current_exp / max_exp, in %) to reach `required_exp_rateN`. | (a) + (d) | (d): all listed conditions are needed. |
+| An area is offered only when its image `Image/etc2/<resource>.aif` is found through the port's asset lookup (APKs, then `--download-dir`), checked at runtime. | (d) | No list of areas in the code; more downloaded assets open more areas. Outside the game (unit tests) every area counts as present. |
+| A newly opened area that needed other areas is `is_new` once (the next `DeepSpaceActiveList`). | (d) | |
+| Every normal mission (`rare_type_id` empty) of an opened area inside its window is always on offer. | (a) + (d) | |
+| Each offer has one bonus set, picked by `rate_weigh` among the `master_deep_space_bonus_set` rows of the mission's `bonus_set_type_id` open by the calendar; rolled when the mission is offered and again after each expedition. | (a) + (d) | |
+| Ships: the number of `master_deep_space_ship` rows with `use_type` 1 open by the clock whose `required_num` the player's total limit-break count reaches (the client's "艦数" and "NEXT pt"). Ships are numbered 1..N. | (b) `CUIUtility::GetMaxShipCount` + (d) numbering | When the count grows, the client itself opens `CDeepSpaceShipIncrementDialog` ("累計 N pt達成により同時に探査できる艦数が増えました", compared with its local KVS `BAS:DeepSpaceShipCount`); the dialog calls no API. |
+| **Subscription ships:** while the player's pass gives `master_subscription` type 3 (the Galaxy Pass, `subscmsg_gpass_deepspace_title` "ディープスペース探査艦＋２隻"), `master_global.subscription_deepspace_ship` (2) more ships, numbered after the limit-break ones. | (a) + (b) + (d) numbering | (b): `CDeepSpace::Setup` reads the key, `SetupAfterConnection` adds it to the 艦数 shown (in the pass colour) and `GetUnusedShipCount` to the ships that may depart, both only when `EnableSubscriptionType(3)` (the `Subscription` state, see "Passes" below). The `use_type` 3 rows (ship_charging_01/02) are read by no client code. |
+| The pass runs out while a pass ship is out: the ship still comes back and is collected, but no ship departs beyond the remaining count. | (a) the pass text `subscmsg_gpass_deepspace_manual` "探査に出発中に有効期限が切れた場合、帰還は可能で再出発ができません" | MissionEnd doesn't look at the count. |
+| **Coin ships** (`use_type` 2: ship_coin_01..03, `required_num` 500 / 1000 / 1500) aren't counted or sold. | (b) | No client code reads them (the only query of `master_deep_space_ship` is `GetMaxShipCount`'s `WHERE use_type=?` with 1, in 3.7.0) and no client API buys a ship, so a server-side coin ship would be one the client never lets depart (`GetUnusedShipCount`). |
+| A ship is busy from MissionStart until MissionEnd collects it (Active while out, End once back). | (b) `CUIUtility::GetUnusedShipCount` | |
+| MissionStart: 1..8 owned characters, none out on a ship, none twice; the mission on offer and not on a ship; a free ship. Otherwise refused with 10208 (a bonus item not owned: 10206). | (b) "%d / ８" + (d) codes | |
+| Expedition time = `master_deep_space_mission.time` minutes. | (a) + (b) | The confirmation shows 探査時間:30分 for time 30. |
+| Bonus values: condition1 1 = the role (`master_role.category_type`) equals param1, 2 = the weapon kind (`master_weapon_kind_id_label`) equals param1, 3 = anyone; condition2 1 = level ≥ param2, 3 = limit break ≥ param2, 4 = awaken level ≥ param2, 5 = sum of battle power, others = anyone. Below `bonus_condition_param_min` the value is `bonus_effect_param_min`; from it, linear to `bonus_effect_param_max` at `_max` in steps of one member (battle power: (max − min) / 19), rounded down to 0.1. | (b) `CDeepSpace::tBonusInfo::IsApplyCharacter`, `UpdateDeepSpaceMissionBonusList` | condition2 2 ("all parameters at maximum") is taken as level ≥ param2 (d). category_type as the role is (d) (the areas' labels At/De/Sh/Ca/He fit 1..5). |
+| Battle power per character ≈ 3.86 × level × (1 + 0.03 × limit break). | (d) | The client's CalcBP needs the full status; fitted to the client's own sum on screen for the seed save (8 characters of levels 50..60: 1701). |
+| A bonus item: `master_deep_space_bonus_item` of that master item, open by the calendar; one is used per expedition; type 2 multiplies every bonus by `value`, type 1 adds the bonus `param1_id` at `value`. | (a) + (d) | The multiplier is the client's (b); the use-up and type-1 value are (d). |
+| AutoMemberSelect: the free characters meeting the tapped bonus's conditions first (by battle power for a battle-power bonus, else by level), then the others by level; up to 8. | (d) | The screen's hint says it prefers the characters that strengthen that bonus. |
+| MissionEnd refused (10208) before the ship is back. | (d) | |
+| Rewards: `player_exp` to the player rank (a level-up adds the new stamina maximum, as MissionEnd), `fol`, `character_exp` to each member, `exp` to the area's exploration up to `max_exp`. | (a) | |
+| Drops: `drop_count` lots from `drop_type_id` (`master_deep_space_drop_item` open by the calendar, by `rate_weigh`); each lot comes from `rare_drop_type_id` instead with `rare_drop_rate` % (× the rare-drop bonuses). | (a) + (d) | Lot semantics (d). |
+| Bonus effects: 1 "レア探査ポイント発見率アップ" multiplies the rare-mission rate by the value; 2 "レアアイテム発見率アップ" the rare-drop rate; 3 "＋N追加アイテム発見率" adds `bonus_effect_param1` lots with `bonus_effect_param2` % × value; 4 "X発見率アップ" draws one lot from the drop table named `bonus_effect_param1` (`drop_type_id_label`) with `bonus_effect_param3` % × value. | (c) + (d) | From the effect names in master_text `name_ds_bonus_*`; `bonus_effect_param4..6` unused. |
+| Result marks: bonus_category 1 for an effect-4 lot, 2 for an effect-3 lot, 3 for a rare-table lot. | (d) | |
+| Rare missions: after an expedition, with `rare_mission_rate` % (× the rare-point bonuses), one mission whose `rare_type_id` is the finished mission's `rare_mission_type_id`, in the same area, open by both clocks and not already offered, is offered by `rate_weigh` for `rare_limit_time` minutes. A rare offer is used up by its expedition. | (a) + (d) | |
+| Quick return (今すぐ帰還): hours left (rounded up) × `master_deep_space_time_saving.rate` of today's use number + 1 (capped at the last row) = quick-return items (`master_global.deep_space_quick_return_item`) needed; the items the player lacks cost 10 coins each (free coins first). It only brings the ship home (End); MissionEnd gives the rewards. | (b) `CDeepSpaceQuickReturnDialog::Update`, `OnDeepSpaceMissionEndNowRes` + (a) free coins first ("Stocks and wallet") | |
+| Quick returns per day count from `login_bonus_reset_hour` (04:00); sent as `Player.time_saving_use_count` and `DeepMissionPlayer.time_saving_use_count`. | (d) | |
+| **Play limits:** `master_deep_space_mission.limit_type` 1 = per day, 2 = per week, with `limit_count` departures in that period; empty / 0 / other types = none. A departure (MissionStart) counts in the offer's `play_count_daily` / `play_count_weekly`, which restart at 04:00 (`login_bonus_reset_hour`) and on Monday 04:00. | (a) columns + (d) the meanings, the period starts, counting departures | Every 3.7.0 row leaves both columns empty, so nothing is limited with today's data; the rule applies to data that has them. The client shows no limit (b: no limit text among its deep space strings). Test `deepspace/extras` (a temp copy of the table with limits). |
+| A mission at its limit is left out of its area's `DeepSpaceMissionList` until the period restarts (unless it is on a ship), and MissionStart refuses it (10208). `count_weekly_at` = the week's start for a weekly-limited mission, else "". | (b) a mission missing from the list isn't shown + (d) | |
+| **Achievements** (`api/presents/achievements.cpp` progress): type 44 = the exploration rate of the area `target_id` (`master_deep_space_area` id; `exp` × 100 / `max_exp`, rounded down; goal 100 "探査率１００％"); type 45 = expeditions ("ディープスペース探査を N回行う"). | (a) texts and columns + (d) rounding | |
+| A departure counts as an expedition, at its time (state table `ds_log`). Type-45 rows with `is_unlimited` (the ac_ind / title rows) count every expedition; the campaign rows (no `is_unlimited`) only those inside their `opened_at` .. `closed_at`. | (d) | The campaign rows are only active in their windows anyway (by the server clock). |
+
+#### State (`server.sqlite3`)
+`ds_area` (exploration exp, is_new, last play), `ds_offer` (the areas' mission lists, with the play counts), `ds_ship` (ships out or back, with their members), `ds_bonus` (a ship's bonus values), `ds_log` (every departure: mission, time; for the achievements); the day's quick-return count in `meta` (`ds_time_saving_count`, `ds_time_saving_day`), the play-limit periods (`ds_limit_day`, `ds_limit_week`). The passes are in `subscription` (`api/shop/subscription.cpp`).
+
+#### Passes (subscriptions; `server/src/api/shop/subscription.cpp`)
+| Rule | Label |
+|---|---|
+| Content type 20 is a pass: `content_id` = a `master_subscription_plan`, `num` = the days it runs (30 for the Galaxy Pass `pshop_galaxypass_001`, 14 for the character passes; `master_direct_item_shop`, `master_item_set`). A grant while the plan still runs extends it by `num` days, else it runs from now. The port sells no pass (the direct item shop was real money), so passes come only from such a grant, or from `--galaxy-pass`. | (a) the rows + (d) `num` as days, extending |
+| `--galaxy-pass` / `SOA_GALAXY_PASS=1` (port option, the user's choice; off by default): the Galaxy Pass (the `master_direct_item_shop` type-20 product whose plan has `is_galaxypass`) is granted whenever a full player load finds it not running, as an auto-renewed pass would be. | (d); (b) the feature name `auto_renewable_subscriptions` |
+| `Subscription` {type: {master_subscription_type_id, opened_at, closed_at}}, one entry per `master_subscription` type of the recorded plans (the later `closed_at` when two plans give a type), and `SubscriptionPlan` {plan id: {master_subscription_plan_id, updated_at, opened_at, closed_at}}, on every full-state player response and (`Subscription`) on `DeepSpaceActiveList`. A type is on while `closed_at` is after the clock. | keys and fields (b) (`EnableSubscriptionType` reads the map at CParameterManager+0x9600 and compares the entry's `closed_at`, SubscriptionInfo +0xd0, with `NowTime`); which responses (d) |
+| Of the Galaxy Pass's types (1 event-drop slot, 2 storage +`subscription_storage_stock`, 3 deep space ships, 5 character gacha), only type 3 has server rules; the client shows the others' effects (e.g. the storage size) without server-side counterparts. `GetSubscriptionHistory` (the パス購入履歴 dialog) isn't answered. | (d) not done |
+
+#### Not done
+- Coin-bought ships: no client route (see the rule above).
+- `LimitBreakCharacter` in MissionEnd: no deep-space drop grants a character in the 3.7.0 data.
+- The Galaxy Pass's other types (drop slot, storage, gacha) and `GetSubscriptionHistory`.
+
+#### Player-visible (c) and (d) rules
+| Rule | Label |
+|---|---|
+| Area image present on disk | (d) |
+| All normal missions always offered; bonus set re-rolled after each expedition | (d) |
+| Ship numbering (pass ships after the limit-break ones); no coin ships (b) | (d) |
+| Pass `num` read as days; `--galaxy-pass` renews the Galaxy Pass | (d) |
+| Play limits: type 1 day / 2 week, departures counted, periods from 04:00 / Monday 04:00, a mission at its limit hidden (no 3.7.0 row has limits) | (d) |
+| Achievements: a departure is an expedition; campaign rows count only their window; exploration rate rounded down | (d) |
+| Auto member select order | (d) |
+| Battle power approximation | (d) |
+| Bonus effects 1–4 (rates, extra lots) | (c)/(d) |
+| Rare-table and rare-mission lot semantics; result marks | (d) |
+| Quick returns counted per day from 04:00 | (d) |
+| Quick returns: free coins first (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (d) | (a) |
+| Refusal codes 10208 / 10206 | (d) |
+
+## Sphere 211 (agents `sphere211`, `sphere211b`; `server/src/api/sphere211/sphere211.cpp`)
+The extra dungeon ("スフィア211", `CPhase_Mission` with mission type 5, the `CSphere*` screens). The client code is unchanged from 3.7.0; the module answers its 13 APIs, which reach the local server through the FakeApiCaller routing in `docs/client-changes.md` ("The Sphere 211 requests on the FakeApiCaller route"). Its battles are `master_event_mission` rows played through the core `MissionStart` / `MissionEnd` (`ext::Ctx::core_mission` with an `ext::MissionOverride`). Entry: the restored 3.7.0 home's スフィア211 button (or the control command `uiset:0x140:5 phase:5`). Unit tests `sphere211/season`, `/lottery`, `/stamina`, `/dive`, `/rental`, `/achievements`, `/items` (`server/src/api/sphere211/sphere211_tests.cpp`); replay corpus `server/tests/replay/sphere211`; the code by topic in `server/src/api/sphere211/README.md`; sessions `port/scripts/sphere211_session.sh` (the dive; with the rental bonus popup, a rental, the heal ticket and the reroll; seed 605 since the favor login bonus draws at the login) and `port/scripts/sphere211_continue_session.sh` (a lost battle continued and retired).
+
+#### Requests as the client sends them (b: the captured requests, `sphere211_session.sh`)
+- `GetSphere211Info()`: when the board opens (phase 5).
+- `Sphere211AutoMemberSelect(1, cell asset id, 0)`: 自動編成 on the party screen.
+- `Sphere211MissionStart(1, cell asset id, uid, uid, uid, uid4, owner player id)`: three party members, the 4th (rental) slot's character and its owner (the player's own id when the slot holds an own character; a rented character's rental id and its lender's player id, seen in game: `... 1101625557006 2097152001`). The first argument was 1 on floor 1 (CStageManager+0x68; its meaning is not known, (d) ignored).
+- `Sphere211MissionEnd(1, cell asset id)`, `Sphere211MissionFailed(u32, u32)`, `Sphere211MissionContinue(u32, u32, bool)`: CStageManager+0x68 / +0x6c as MissionStart's first two.
+- `Sphere211FloorClear(goal asset id)`: the goal (目標地点) → 次のフロアへ → 決定.
+- `Sphere211SelectedFloor(n)`: the floor chosen in the floor select, as the offset from the current floor (1 = the next floor) (b: 1 when 2F was chosen from 1F).
+- `ReturnSphere211()`: 帰還 → 帰還.
+- `Sphere211StaminaHeal()`: the S stamina ＋ → the season's ticket → 決定 (the dialog shows 8 / 9 → 9 / 9 for a 1-point ticket).
+- `Sphere211MissionContinue(1, cell asset id, 1)`: the defeat dialog's はい ("紋章石100個を使用することで全員が復活できます"). `Sphere211MissionFailed(1, cell asset id)`: also the pause menu's ミッションリタイア → はい.
+- `Sphere211UseRerollItem()`: the floor select's 再設定 → 決定.
+- Not seen in the session (signatures from `docs/api.md`): `GetSphere211RankingInfo(bool)`, `Sphere211EquipAuto(u32, u32, vector<u64>)`.
+
+#### Response keys (b: the info classes' `Initialize`, `port/fakeapi/fields.txt`)
+Every response carries the whole dive state (the maps replace the client's): `Sphere211CurrentId`, `Sphere211NeedsReset` 0, `Sphere211FloorInfo` {floor_level, mission_clear_streak}, `Sphere211FloorAssetInfoMap` {asset id: player_id, floor_level, master_sphere211_asset_id, master_sphere211_mission_box_id, overwrite_enemy_level, is_cleared, is_playing, can_play, is_new, created_at, updated_at} (`can_play` is the property whose CHash32 is 0x5730cc2a; the board offers a battle only then), `Sphere211StaminaInfo` {stamina, stamina_max, stamina_update}, `Sphere211TreasureInfo` {num, total_num}, `Sphere211CharacterInfoMap` {uid: player_character_id} (the characters that have sortied), `Sphere211FloorClearInfo` {floor_level, master_sphere211_asset_id, lot_floor_num}, `Sphere211EndResult` {previous_season_id, rank, floor_num, treasure_num}, `Player.sphere211_revive_count`. Per request:
+- AutoMemberSelect: `Sphere211AutoMemberSelectResultInfo`, an array of uids (b: its typeinfo sits with `InfoBaseValueArray<u64>`'s, like deep space's `AutoSelectedResult`; the party screen fills its four slots from it, seen on screen).
+- MissionStart: the core MissionStart's `MissionParameter` (with the enemy level), `PlayMission`, `BattleParameter`.
+- MissionEnd: the core MissionEnd's result keys plus `Sphere211TreasureDropInfoList` [{type, num}] (b: `ResultUtility::GetRewardType(Common::Sphere211DropType)` badges type 1 `badge_clear.png` (連続クリア), 2 `badge_boss.png` (ボス撃破), 3 `badge_rareenemy.png`; other types no badge; `CSphereFloorClear` reads type 4 as the floor-clear boxes).
+- FloorClear: `Sphere211FloorClearResultInfo` {clear_present_id, clear_present_content_type, clear_present_num}, `Sphere211TreasureDropInfoList` [{type 4, num}], `StockItem`.
+- ReturnSphere211: `Sphere211TreasureResultLotInfoMap` {0..4: {lot_num}} and `Sphere211TreasureResultInfoMap` {0..4: [{content_id, content_type, num}]}, keyed 0 = D .. 4 = S (b: `CSphereBoxResult` shows key 4 as S and 3 as A), `StockItem`, `Item` / `Character` when granted.
+- RankingInfo: `Sphere211RankingInfoMap` / `Sphere211RankingTopInfoMap` {player id: {player_id, floor_level, entered_at, rank}}.
+- Every Sphere 211 answer also carries the rental slot (agent a5-sphere): `Sphere211RentalCharacterInfoMap` {lender id: {player_id, follow_player_id, is_used, updated_at}}, `Sphere211RentalCharacterDetailInfoMap` {lender id: CFollowInfo {order, player, pc}}, `FollowID` [lender ids], `Sphere211FollowFloorInfoList` [{player_id, floor_level, follow_status}]; and the `Achievement` state. (b) field names: the info classes' `Initialize` (`tools/info_fields_emu.py`); the map offsets (CParameterManager+0xa008 / +0xa058) from the live schema dump.
+- The full player load also carries `Sphere211RentalBonus` / `Sphere211RentalCount` on the day a Sphere 211 rental bonus is paid.
+
+#### Rules
+| Rule | Label | Notes |
+|---|---|---|
+| **Season:** the `master_sphere211` row whose `opened_at` .. `closed_at` covers the event calendar (`event_now()`: `--clock`, or today's date replayed onto the service years). | (a) | The client checks the same dates against its own clock (data.Time = the server clock), so the served season's dates are moved by (clock − calendar) in the client's master copy (`ext::ClientMaster`, docs/client-changes.md). |
+| **Past the last season** (the service ended with season 13, 2021-06-10 .. 06-24): the last season runs on, its window moved forward by the fewest whole season lengths that bring it over the calendar; the same shift goes into the client's master. Each further season length is a new **cycle**, a new season for the dive and the ranking. In the one-hour gaps between seasons (13:59:59 .. 15:00), and in the day between the last season's end and the first one's date a year later, the previous season is moved on the same way (no new cycle). | (d) | Without it the mode is "現在、開催期間外です" for good. Test `sphere211/season`. |
+| **Before the first season** (the replayed calendar maps Oct 1 - 2 and Oct 7 to 2019, before the first season of 2020-06-25): the season of the same date and time a year later (the 13 seasons span one year), moved by the same shift. | (d) | Before (agent a5-sphere) those days served season 1 moved into the future: "outside the season" and a spurious season change 4 → 1 → 4. Test `sphere211/season`. |
+| `Sphere211CurrentId` is also sent with every full player load (Login, NoLoginStart, ...), and `FooterMissionInfo.is_open_extra_dungeon` = 1. | (b) + (d) | (b): the extra-dungeon menu (`MissionUtility` part info of type 5) shows the season as out of its period until `Sphere211CurrentId` (CParameterManager+0xaff0) names it; the footer flag sets CParameterManager+0x1a38 (`IsOpenExtraDungeon`). (d): open for this account (see 12). |
+| **A season change ends the dive:** its unopened boxes are opened into the player's items, its best floor and boxes become `Sphere211EndResult`, and a new dive starts. The rank is 1 (the local ranking has one player) when a battle was won in that season, else 0 (not ranked). | (d) + (b) | The client's end-of-season dialog (uimsg_sphere211_return_dialog2) says the previous season's data is analysed; uimsg_sphere211_ranking_empty2: "ミッションを1つもクリアしていない場合は、ランキング未参加". |
+| **`Sphere211EndResult` is sent once** (until a `GetSphere211Info` carried it), zeros afterwards. | (b) + (d) | (b) `CSphereMissionMenu::Progress` state 4, whenever the board opens: rank ≠ 0 opens the ranking-result dialog (`CDialogManager::OpenSphere211RankingResult`), else previous_season_id ≠ 0 shows uimsg_sphere211_season_has_finished3 "前回のランキングは終了しました。新しいシーズンが始まりました。"; (d) once, so it isn't shown at every visit. |
+| **Season ranking reward:** at the season change, for rank ≥ 1, the season's `master_sphere211_ranking_reward` row with the smallest `required_ranking` ≥ the rank (rank 1: the `_1` row, an item set, content type 99, expanded through `master_item_set`), granted straight into the items; `StockItem` / `Item` go with the end result. The last season has no group (`master_sphere211_ranking_reward_id` empty): the group of the latest season before it (also written into the client's master copy). | (a) + (b) + (d) | (a) the rows and sets; (b) `CSphereRankingResult::Initialize` shows the tier whose range holds the rank (from `previous_season_id`'s row), and uimsg_sphere211_ranking_result "ランキング報酬が所持アイテムに追加されました" (no present box); (d) the fallback group. Test `sphere211/season`. |
+| **Dive:** the first `GetSphere211Info` of a dive enters floor 1. 帰還 keeps the dive on its floor; only a season change starts over. | (d) | (b): with no cells the menu says the season has finished (`MissionUtility::GetEventMissionList` type 5). |
+| **Floor row:** the season's `master_sphere211_floor` row of that level; above the table's last level, the last row. | (a) + (b) | (b): `MissionUtility::Sphere211FloorData` extends the list with the highest level. |
+| **Floor map:** one `master_sphere211_floor_asset` template lotted from the floor's `asset_box_group_id` by `weight`; every row of the template is a cell. | (a) | Test `sphere211/lottery` (same seed, same floors). |
+| **Cell battle:** a `master_sphere211_mission_box` row of the cell's `mission_box_group_id` whose `type` is the cell's `lottery_type`, lotted by `rate`. | (a) | The column pairs 1/2/4/6 match. |
+| **Missing maps:** a mission is lotted only when every stage's battle map (`BG/<master_map_id_label>.asf/.aaf/.acf`, with the texture subdirectories) is found through the port's asset lookup (APKs, `--download-dir`), decided at run time. When none of the box group's rows is playable: a playable row of the same type from any box; when nothing is playable: the unfiltered lot (logged). | (d) | More downloaded assets make more missions playable; no list of names in the code. Outside the game (no asset source) every mission counts as playable. Test `sphere211/lottery` (an injected asset predicate). |
+| **Enemy level:** the cell's `overwrite_enemy_level_group_id` lotted by `rate` (`master_sphere211_overwrite_enemy_level`), else the floor's `base_enemy_level` + the cell's `add_enemy_level`, sent as `MissionParameter.overwrite_enemy_level`. | (a) + (d) | (d): their sum. |
+| **Playable cells (`can_play`):** the start cell (no `parent_cell_N_id`) and every uncleared cell with a cleared neighbour (`parent_cell_1..4_id`, which list both directions). `is_new`: playable and not cleared. | (c) + (d) | The goal cell has no battle; it becomes playable the same way and leads to FloorClear. Test `sphere211/dive`. |
+| **Sphere stamina:** its own gauge, maximum `master_global.sphere_stamina_max` (9), one point per `sphere_stamina_recovery_time` (17,280 s) on the server clock, regenerating like AP; a new dive starts full. | (a) + (d) | (d): starts full, the partial period is kept. Test `sphere211/stamina` (`set_server_clock`). |
+| **MissionStart:** costs the floor's `use_stamina` from the sphere gauge (not AP; error 10004 when short); the three party members and the 4th slot (an own character, played as the core's own helper, or a rented character, below) fight; the cell is marked playing and the party as departed. | (a) + (b) + (d) | (b): the 4th slot is the rental slot, filled from own characters too; (d): the refusal code. |
+| **The rental slot:** the lenders are the synthetic rental players of `api/social/rental.cpp` (clones of the player's own characters, `rental::follow_map`), all followed (`FollowID`) and on the player's floor (`Sphere211FollowFloorInfoList`). Each lends once per floor (`is_used`); after 3 rentals on a floor every lender is used; a new floor lends again. A rental in `Sphere211MissionStart` (a rental id whose roster character exists, lent by a listed, unused lender, rentals left) plays as the core's rental helper (the clone of that character); it doesn't depart. Otherwise refused (10208). | (a) + (b) + (d) | (b) `CParameterUtility::CreateSphere211RentalList`: the entries of `Sphere211RentalCharacterInfoMap` without `is_used`, whose `follow_player_id` is in `FollowID` and not in `BlacklistID`, built from the `Sphere211RentalCharacterDetailInfoMap` entry whose `pc.player_id` matches (`tCharaData::InitializeRental`), sorted by `updated_at`; the board shows them as the followee icons (`UpdateBadgeAndFollowee`). (a) master_text cp0003_tutorial_sphere211_007: followed players on the same floor lend "１フロアにつき合計３回まで". (d) no other players, so the clones; once per lender; the refusal code. Seen in game: the rental list after シングルプレイ開始, the lender in slot 4 kept by 自動編成. Test `sphere211/rental`. |
+| **Sphere 211 rental bonus:** the Sphere 211 rentals are counted per rental day (from `login_bonus_reset_hour`, with the season). On the next full player load after that day, the season's `master_sphere211_rental_bonus` row with the highest `rental_count` at or below the day's count (5 → the season's reroll ticket × 1) goes to the present box (line: its `present_message_id` text "スフィア211レンタルボーナス"), and `Sphere211RentalBonus` = the row id, `Sphere211RentalCount` = the count are sent. Paid once per day; a day below every row's count pays nothing. | (a) + (b) + (d) | (a) the rows; (b) `CPopupManager::CheckStart` case 5 opens `CSphereRentalBonus` when both are non-zero (armed by 3.7.0's login, `AddPopup()` mask 0x7b); `CSphereRentalBonus::Setup` looks the row up by id and formats uimsg_sphere211_getting_rental_bonus "前日、%u人のユーザーがあなたをレンタルしました ... あなたのフォロワーから%sが%u個届いています"; `MissionUtility::Sphere211RentalBonusItem(count)` picks the row by `rental_count` ≤ count; (d) the player's own rentals are what is counted (nobody else rents), and the present box ("届いています"). Seen in game. Test `sphere211/rental`. |
+| **Departed characters** can't sortie again until 帰還. | (b) | uimsg_sphere211_return_dialog "帰還をすることで全てのキャラが再度出撃できるようになり"; the menu counts them (出撃数). |
+| **AutoMemberSelect:** the 4 strongest characters that haven't sortied: by level, then rarity (`master_role.rarity`), then limit break. | (d) | |
+| **MissionEnd:** the core MissionEnd of the event mission (EXP, FOL, drops, first-clear presents, (a)); the cell is cleared; the clear streak grows. | (a) + (b) | |
+| **Treasure boxes of a battle:** the floor's `treasure_num`, + `boss_add_treasure_num` on a boss cell (`lottery_type` 2), + `rare_add_treasure_num` on a rare cell (`lottery_type` 4 or 6), + the streak bonus (`master_sphere211_treasure_streak_bonus`: the highest row whose id (streak) is reached). Sent as drop types 0 (the battle's own, no badge), 1 (streak), 2 (boss), 3 (rare). | (a) + (b) + (d) | (a): counts; (b): the badges, the board's "10連でドロップ数+1" hint matches the row id 10; (d): which lottery types are boss / rare, and type 0. |
+| **Lost or retired battle** (`Sphere211MissionFailed`): the cell stays uncleared and playable, the stamina stays spent, the clear streak resets; the core MissionFailed ends the play record. | (c) + (d) | |
+| **Continue** (`Sphere211MissionContinue`): `master_global.continue_use_coin` (100) coins, free coins first; error 20000 when short; the battle goes on. | (a) + (b) + (d) | (b) the defeat dialog "紋章石100個を使用することで全員が復活できます" with 300000 → 299900 (seen in game); (a) free coins first ("Stocks and wallet"); (d) the code. Until agent a5-sphere it was free. Test `sphere211/dive`. |
+| **FloorClear:** the floor's clear present (`master_sphere211_floor_clear_present` of the season's group, the highest `level` at or below the floor), `floor_clear_treasure_num` more boxes, and the next-floor count `lot_floor_num`. | (a) + (d) | (d): the highest level row at or below. |
+| **Next-floor count (warp access):** the highest `master_sphere211_floor_transfer_level` open now whose `required_treasure` the dive's gathered boxes reach; its rate group's `floor_num` lotted by `weight`; at least 1. | (a) + (b) + (d) | (b): `MissionUtility::Sphere211WarpAccessLevelAndExp`, `GetSphere211TransferRateId`; (d): at least 1. |
+| **SelectedFloor(n):** the floor n above the current one (the n-th entry of the offered list), clamped to 1 .. `lot_floor_num`; a new floor is lotted. | (b) + (d) | (b): the request's value was 1 when 2F was chosen on 1F; (d): the clamp. |
+| **Reroll** (`Sphere211UseRerollItem`): the season's `reroll_item_id` × `reroll_item_num` re-lots `lot_floor_num`; error 10206 when short. | (a) + (d) | |
+| **Stamina heal** (`Sphere211StaminaHeal`): one of the season's `heal_item_id` adds its `master_item.heal_point` (1), capped at the maximum; error 10206 when short. | (a) + (b) + (d) | (a) heal_point 1, the item text "スフィア・スタミナを1回復できるチケット"; (b) the dialog: 現在のスタミナ 8 / 9 → 回復後 9 / 9 (seen in game; until agent a5-sphere the server refilled to the maximum); (d) the cap and the code. Test `sphere211/items`. |
+| **Achievements (types 61 / 62):** type 61 "スフィア211の N F以上に到達する" (per season) and type 62 "スフィア211のミッションを N回クリアする" (スフィア週間チャレンジ, the weekly challenge: 7-day windows from Thursday 14:30; and campaign rows) are active while their window, moved by the current season's shift, covers the server clock; `limit_at` = the moved `closed_at`. Progress: the highest floor entered (61) / the Sphere 211 battles won (62) while the moved window ran, from the dive's log. The Sphere 211 answers carry the `Achievement` state. | (a) + (b) + (d) | (a) the rows, texts, windows; (b) the board's 実績 button shows `CParameterUtility::NumGetAchievement()` over the `Achievement` state; (d) the windows move with the season, "won" = a `Sphere211MissionEnd`. The other types keep the real clock (`api/daily/login_bonus.cpp`). Seen in game (after agent a6-deepspace made `Achievement` an id-keyed map): the board's 実績 → イベント lists スフィア週間チャレンジ 5 / 10 / 15 / 20 回 with 残り時間 あと1日 (the replayed week ends Thursday 13:59), 週替わり lists 週替：スフィア211を15回クリア (`sphere211_continue_session.sh`). Test `sphere211/achievements`. |
+| **Test hook (port, not a game rule):** `sphere_meta` key `test_enemy_level`, when a script writes it into the state DB, overrides the enemy level of the next starts (`sphere211_continue_session.sh` loses a battle with 250; `sphere211_session.sh` sets every enemy to 30, since the client's unseeded battles sometimes lost the level-65 cell or the level-90 boss; both delete it afterwards). The server never sets it. | — | |
+| **帰還 (ReturnSphere211):** the gathered boxes are analysed: each box's rank lotted with the current floor's `master_sphere211_treasure` s..d weights, then opened: one row of that rank's `master_sphere211_treasure_contents` common drop (`master_common_drop`, by `rate_weigh`), granted to the player. Every departed character comes back; the clear streak resets; the dive stays on its floor; nothing is charged. | (a) + (b) + (d) | (b): the return dialog shows the current floor's rates and says the streak bonus resets, and "出撃したキャラクターが帰還しました"; (d): ranks lotted at 帰還 rather than when found, granted directly. |
+| **Ranking** (`GetSphere211RankingInfo`): a local ranking of one player, the season's best floor, rank 1. | (d) | |
+| **EquipAuto:** answered with the state; the client keeps its own equipment. | (d) | |
+
+#### State (`server.sqlite3`)
+`sphere` (one row: season, floor, map template, streak, gathered-box total, sphere stamina, the floor-clear info, the previous season's result), `sphere_cell` (the current floor's cells: box, mission, enemy level, cleared, playing), `sphere_departed` (uids out until 帰還), `sphere_box` (unopened boxes, their rank once lotted), `sphere_rank` (best floor per season; a new cycle starts it over). Added by agent a5-sphere: `sphere_meta` (the season's cycle, its battles won, whether the end result is still to be shown, the test hook), `sphere_rental` (the floor's lenders that lent), `sphere_rental_day` (Sphere 211 rentals per rental day, season, paid), `sphere_log` (battles won and floors entered, server clock, for the achievements).
+
+#### Not done
+- `GetSphere211RankingInfo`'s `Sphere211RankingDetailInfoMap` and the ranking screens (not driven by the session).
+- The rental bonus counts only the player's own rentals; `Sphere211FollowFloorInfoList` puts every lender on the player's floor.
+- **EX characters** (found in R18; a rules gap, not changed): `Player.sphere211_revive_count` is never counted (`sphere.revive_count` stays 0). (b) It is the sorties with an EX character (`master_role.rank` 5, `CParameterUtility::IsRoleDeity`) since the last 帰還: `CSphereMissionDetail::NextPhase` opens `OpenSphere211SallyDialogWithDeity` with `master_global.max_revive_count` (3, (a)) minus CParameterManager+0xf48 (`CPlayerInfo`+0x910, the field `CPlayerInfo::Initialize` registers as `sphere211_revive_count`), whose text (a) uimsg_sphere211_mission_start_with_deity says: the characters sortieing with an EX character don't become 出撃済み on a clear, the EX character does; "使用可能回数 残り %d 回"; "※使用可能回数は帰還することで回復します". The server marks every member departed at MissionStart and never counts the uses, so the dialog always says 3 left. A fix would count an EX sortie, reset the count on 帰還, and depart only the EX character on a won battle with one (`UpdateMissionStartPlayerInfo` carries the field too).
+
+#### Player-visible (c) and (d) rules
+| Rule | Label |
+|---|---|
+| The last season repeats after the service's end (dates moved) | (d) |
+| Missions with missing maps are never lotted | (d) |
+| The dive starts on floor 1; 帰還 keeps the floor | (d) |
+| Start cell and neighbours of cleared cells are playable | (c)/(d) |
+| Which cells count as boss / rare for the extra boxes; the battle's own boxes carry no badge | (d) |
+| Ranks lotted at 帰還; boxes granted directly | (d) |
+| Continue costs 100 coins; retire keeps the stamina spent | (a)/(d) |
+| The rental slot lends clones of the player's own characters, once per lender and 3 per floor | (d) |
+| The Sphere 211 rental bonus counts the player's own rentals | (d) |
+| A season's ranking rank is 1 when a battle was won in it; the repeated last season pays season 12's rewards | (d) |
+| Days before the first season play the season of the same date a year later | (d) |
+| Sphere 211 achievements run on the season's moved dates | (d) |
+| Auto party order | (d) |
+| Local ranking rank 1 | (d) |
+| Refusal codes 10004 / 10206 / 10208 / 20000 | (d) |
+
+## Tower (試練の遺跡; opt-in `--restore-tower`, agent `a11-tower`; `server/src/api/tower/tower.cpp`)
+The tower was closed in 3.7.0 (`CParameterUtility::IsOpenTowerMission` returned 0). The opt-in opens it on the client (docs/client-changes.md "The tower (試練の遺跡) opened", "Tower banner rows added to the client's master copy"; docs/notes.md "Tower layout") and this module serves its data. Entry: home → スフィア211 → 試練の遺跡. Its battles are `master_tower_mission` rows played through the core `MissionStart` / `MissionEnd` (Common::MissionType 2). Unit tests `tower/banner`, `tower/client-master`, `tower/lists` (`server/src/api/tower/tower_tests.cpp`); session `port/scripts/tower_session.sh`.
+
+- **Lists** (with every full player load, and again in a tower battle's `MissionEnd`): `ActiveTowerMissionList` {`TowerArea`: {area id: {mission_ct, is_new, is_last_play}}, `TowerMission`: {area id: [{id, is_new, is_clear, is_last_play}]}}, `TowerSchedule` [{opened_at, closed_at}], `Player.tower_try_count`.
+  - (b) the shape: the event lists' (`ActiveEventMissionList`); `MissionUtility::GetEventAreaList` type 2 walks the `TowerArea` map (CParameterManager+0x1c68) by area id and reads each area from `master_tower_area`; seen working in game.
+  - (a) an area is listed while its `opened_at`..`closed_at` covers the event calendar (`server::event_now`; `--clock` aware). In the 3.7.0 master only `tower_01`..`05` (呪い, 封印, マヒ, 凍結, 毒) run past 2021 (until 2030).
+  - (b)+(d) only areas the client will show: `tAreaInfo`'s constructor drops an area whose `master_banner_id` has no `master_banner` row, so an area is listed only when its banner row exists or a stand-in row can be made (below).
+  - (a) a floor (mission) is listed when it has no `unlock_mission_id` or that mission is cleared; (d) a floor whose battle maps or enemy models are missing is left out (`events::mission_playable`, decided from the files at run time).
+  - (d) `is_new` until cleared; an area's `is_new` when any listed floor is; `is_last_play` of a floor = the mission of the last `MissionStart`; the area's `is_last_play` false.
+  - (d) the lists are refreshed in the `MissionEnd` of a tower battle, so the floor a clear unlocks is listed at once (when the online server refreshed them isn't known).
+  - (a) `Player.tower_try_count` = `master_global` `Tower_Challenge_Count` (3). (d) not counted down: every floor can be played any number of times. The client's tries (`StaminaUtility::NowStamina(1)`, CParameterManager+0xc48) show 3/3 on the extra-dungeon banner.
+- **Stand-in banners** (client master copy, `tower::client_banners`): (a) `master_tower_area` names `banner801`..`banner805` for `tower_01`..`05`, which the 3.7.0 `master_banner` lacks; (a) the 16 surviving tower banner rows show `banner_TrialSpace_<the area's tower number, 3 digits>` (with `_002` for some); (d) a missing row is made with the first of `banner_TrialSpace_NNN`, `_NNN_002`, `_NNN_001` whose image the port can load (the 3.7.0 download has `banner_TrialSpace_001`..`005`), the area's dates and no URL. No loadable image, no row, and the area isn't listed.
+- **Rewards:** the core `MissionEnd` (master drops: the first-clear coin reward, the tower coins); (d) nothing tower-specific (no ranking, no coin exchange; the ランキング / イベントメニュー buttons are the event menu's, not served).
+
+## Events (agent `events-core`; `server/src/api/events/event_missions.cpp`, `events.h`)
+Event missions (`master_event_area` / `_mission`, 168 areas, 1,803 missions) with the in-process server: the home's イベント button → `CPhase_Mission` with mission type 1 → `CEventMissionMenu` (the イベント / 素材 tabs, the area banners, the mission boards and lists) → the mission detail → the helper list → the party → the core `MissionStart` / `MissionEnd`, or a story scene (`CPhase_Event`) whose end clears the mission. The client code is unchanged; everything below is server data. Nothing about which events exist is written anywhere: the lists are computed from the master data, the player's state, the two clocks and the asset files present when the list is built.
+
+#### Two clocks
+- **The client's clock** is `data.Time` (the server clock `now()`: the real time, or `--clock`). The client filters the event areas by it: (b) `MissionUtility::GetEventAreaList(now, 1, ...)` keeps a listed area only while a `master_event_term` row (opened_day opened_time .. closed_day closed_time) or a `master_event_weekly` row (week_id = the weekday, opened_time .. closed_time) covers `now`; `GetEventMissionList` and `CTimeUtility::IsEnableTime` do the same for a mission's `opened_at` / `closed_at`. The campaign badges compare `CampaignInfo.opened_at` / `closed_at` with it (b: `CUIUtility::GetCampaignSituation*`).
+- **The event calendar** is `event_now()` (server.h; with `--clock` it is the clock, otherwise today mapped onto the latest service year with an event term that day, (d)).
+- **The year shift** (d): `years = year(now) − year(event_now)` (6 on 2026-09-29 without `--clock`, 0 with it). The dated event tables of the client's master copy move by that many years (month, day and time stay; `ext::ClientMaster`, see `docs/client-changes.md`), and every window the server checks is moved the same way and compared with `now`, so both sides agree to the second. Tables moved: `master_event_term` (opened_day, closed_day), `master_event_area`, `master_event_mission`, `master_banner`, `master_banner_replace`, `master_world_boss`, `master_replace_resource` (opened_at, closed_at), `master_campaign` (opened_day, closed_day), `master_event_ranking_group` (opened_at, closed_at, ranking_closed_at, result_closed_at). Other modules with dated event content use `events::client_years()` / `shift_years()` / `window_open()` (events.h) and must not move these tables again.
+- **Weekly slots keep the real weekday** (d): `master_event_weekly` has no dates, only `week_id` (0 = Sunday, as its labels say: `sunday_allday_01` …), so the daily material missions follow the weekday of the client's date, not the weekday the replayed day had in the service year.
+- Feb 29 of a moved year that isn't a leap year normalises to Mar 1 on both sides (the client's `str2time_t` and the server's `mktime`).
+
+#### What is listed (`ActiveEventMissionList`)
+| Rule | Label | Evidence / note |
+|---|---|---|
+| **Shape:** `ActiveEventMissionList` {`EventArea`: {area id: `CAreaInfo` {`mission_ct`, `is_new`, `is_last_play`, `is_start_bighunt`}}, `EventMission`: {area id: [`CMissionElementInfo` {`id`, `is_new`, `is_clear`, `is_last_play`}]}}, keyed by the id as a string. | (b) | `CActiveEventMissionListInfo` (children `EventArea` = `InfoBaseNumberMap<CAreaInfo>` at CParameterManager+0x1d40, `EventMission` = `InfoBaseNumberMap<CMissionInfoList>` at +0x1d90); the classes' `Initialize` keys (`tools/info_fields_emu.py`). |
+| **Delivery:** on every full-state player load (`Login`, `NoLoginStart`, `GetPlayer`) and on the answers of `MissionStart`, `MissionEnd`, `MissionFailed`, `MissionTalk`, `MissionRestart`, `GetPlayMission` (the story end), `UpdateHome`, `GetMissionList`. | (b) + (d) | (b): the event menu sends no request (`CPhase_Mission` asks `GetMissionList` only for the story campaign); (d): which responses the 3.7.0 server carried it on. |
+| **An area is listed** when its own `opened_at` .. `closed_at` allows, a term or weekly slot covers the client's time **or starts within the next 24 hours**, and at least one of its missions is listed. | (a) + (b) + (d) | (d): the day ahead, so an area that opens later today (e.g. the 19:00 FOL mission) appears without a new request; the client hides it until its time. |
+| **A mission is listed** when its window allows, its `unlock_mission_id` and `visible_mission_id` (if any) are cleared, and it is playable (below). | (a) | the same chain rule as the story campaign. |
+| **Assets:** a battle mission is playable when every stage's map (`BG/<map>.asf/.aaf/.acf`, after the area's `master_replace_resource` res_type 4 replacement) and every enemy model (`Character/<master_person.asf>.asf` of the stage's `master_enemy_party` members) is present in the APKs, the install-time asset pack or `--download-dir`; a story mission when its script (`Script/<talk_event_id label>.msgp`) and talk file (`Scenario/<talk_message_file>.msgp`) are. Otherwise it isn't offered. | (b) + (d) | (b), seen on screen: a story whose script is missing leaves `CPhase_Event` black for good (event_ill_47 on 2020-09-29); the battle's map and model loads open the files directly and a missing one crashes (the direct-file loads, `docs/notes.md`). Checked through the port's asset lookup at run time and cached per mission; more downloaded files make more missions playable. |
+| **A mission that isn't playable doesn't block** what it unlocks (its `unlock_mission_id` / `visible_mission_id` counts as met), so the rest of an event stays reachable. | (d) | |
+| `is_clear`: the core's `mission` table (`MissionEnd`, `MissionTalk`, the story end). `is_new`: not cleared. Area `is_new`: an uncleared mission is listed. `mission_ct`: the number listed. `is_last_play`: the event mission (and its area) started or played last. | (d) | |
+| `is_start_bighunt` = false unless a module sets it (`events::AreaExtra`, e.g. the world boss module). | (d) | |
+| A ticket mission (`ticket_item_id`) is listed like any other; the detail shows the tickets held and `MissionStart` refuses with 10206 when short (the core's rule). | (a) + (b) | |
+| **Missing banners and backgrounds:** left as they are. Seen on screen: an area whose `master_banner` image is missing shows an empty banner slot (still tappable, with its time bar); nothing crashes. | (b) | no stand-in images are substituted. |
+
+#### Other data
+- **`CampaignInfo`** on the player loads (and `GetMissionList`): the `master_campaign` rows whose window (opened_day opened_time .. closed_day closed_time, moved by the year shift) covers the client's time and whose `week_id` is 7 or the client's weekday, as `CCampaignInfo` {`id`, `type_id`, `week_id`, `opened_at`, `closed_at` (client time), `magnification`, `lot_drop_count_add`, `master_area_id`(`_label`), `master_mission_model_type`} (a + b: the class's keys; the badges on the home's イベント button and the event banners, e.g. 友好度上昇率UP, come from it).
+- **The core's campaigns** (stamina halving, extra lots, favor) use the event calendar instead of the clock (d), so they match what `CampaignInfo` shows.
+- **`EventMaintenanceInfoMap`** = {} on the player loads (d): no event is under maintenance.
+- **`FooterMissionInfo.is_open_event_mission`** = 1 (d, `api/player/home_footer.cpp`).
+
+#### Story missions (`talk_event_id`, no stages)
+- The detail has 閉じる / ストーリー開始; the scene plays in `CPhase_Event`; at its end the client's `EndMissionTalk` (3.7.0's `CEventScenario::Exit`; in-process through the FakeApiCaller route, `docs/client-changes.md` "`IApiCaller::EndMissionTalk`") reaches `events::end_mission_talk`: the mission is recorded as cleared (play and clear counts), becomes the last played, and on the first clear its `master_mission_clear_present` rows (none in the 3.7.0 data for event stories) go to the present box (a + d). The answer (`GetPlayMission`) carries the new list, so the board shows CLEAR and the next node New.
+- 3.7.0 also sends `MissionTalk` at the start of a story (`CMissionMenu::Setup` lambda #34; seen in the 3.7.0 session logs). The event clear is recorded at the scene's end (`EndMissionTalk`), which is enough for the chain (d).
+
+#### NPC helpers (`master_mission_npc`)
+- (b) `CParameterUtility::CreateRentalListAuto(type, mission)`: when a mission has `master_mission_npc` rows, the helper list (レンタルキャラクター) shows exactly those NPCs instead of the rental list (seen on screen: 斬鬼のネル / 鬼炎のアルベル for me99_1027). So they are **helper candidates**, not the party: the player's party fights, and the NPC the player picks (`MissionStart`'s NPC argument, the `master_npc_base_parameter` id; the `master_mission_npc` id is accepted too) joins as the 4th member, with the stats rules of a roster character of the row's role and level (d, as the tutorial's NPCs). No pick (選択しない): no NPC.
+- (b) In the game (agent a4-helpers), the picked NPC's stats, weapon and skills are then replaced by the client's own NPC status, as for the tutorial's NPCs (see "Tutorial battle"): `MasterMissionNpcModel::CalculateParameter(master_mission_npc id)` (`client_npc_status`, `port/src/native/api/server_client_status.cpp`), the function `tCharaData::CalcStatus` runs for the helper list's NPC `tCharaData` (`tCharaData::InitializeNPC`). So the helper fights with its weapon `master_npc_base_parameter.master_item_id` (`weapon_master_item_id` / `weapon_id`), its factors and talents, exactly as the helper list shows it. Before, the weapon was missing (e.g. master_mission_npc 1255989 at level 22: attack 478 without, 982 with the weapon). Test `server/event-npc-helper-status`.
+- The tutorial battle (`ms00_001`, the only non-event mission with NPC rows) keeps its preset NPC party (`CPhase_TutorialNext` builds it from the same rows).
+
+#### Tests and session
+- Unit tests `events/shift`, `-lists`, `-weekly`, `-asset-gating`, `-clear-chain`, `-campaign-info`, `-npc-helper` (`server/src/api/events/event_missions_tests.cpp`): everything derived from the master data at run time; assets through an injected predicate.
+- `port/scripts/events_session.sh <soa> <out> <scratch> [clock]`: home → イベント → 素材 → a daily mission → battle → result → CLEAR; with a clock, also a story event (story → CLEAR → the unlocked battle with an NPC helper → result).
+
+#### Player-visible (c) and (d) rules
+| Rule | Label |
+|---|---|
+| Past events replay on the service calendar, moved into today's year | (d) |
+| Daily material missions follow today's real weekday | (d) |
+| Missions without their files are not offered; they don't block what they unlock | (d) |
+| The event list is sent a day ahead | (d) |
+| New = not cleared | (d) |
+| Event stories clear at the end of the scene | (d) |
+| Event NPCs are 4th-member helpers | (b) + (d) |
+| No event maintenance, no big hunt by default | (d) |
+
+### Enabling events by keyword (`--enable-events`; `server/src/api/events/enable_events.{h,cpp}`)
+A port option, off by default (the user's request: "enable the summer events/banners, if/when possible"). With `--enable-events` (`SOA_ENABLE_EVENTS=1`), today's replayed calendar stays as it is and **in addition** every event area and every gacha whose name matches a keyword list is open all year, as far as its assets allow. `--event-keywords "a,b,!c"` (`SOA_EVENT_KEYWORDS`) replaces the list; the default is the summer events. Summer is only the default example: any list works (e.g. `--event-keywords "花嫁"` for the wedding events).
+
+| Rule | Label |
+|---|---|
+| What matches: an area (`master_event_area`) or gacha (`master_gacha`) whose name, `master_text.text_value` of its `name_message_id`, contains at least one plain keyword and none of the `!`-prefixed ones. Nothing about which events exist is written in the code | (a) the names; (d) the method |
+| The default list `水着,夏,サマー,!福袋` (swimsuit, summer, "summer"; not the New Year lucky-bag ticket gacha "2018年福袋限定チケットガチャ(花嫁/水着/ハロウィンのみ)", which only names 水着 among its line-up). In the 3.7.0 master it matches **7 event areas**: `event_sum_22` 水着イベント前半, `event_sum_23` 水着イベント後半, `event_sum_49` 【180726】水着前半イベント, `event_sum_50` 【180809】水着後半イベント, `event_sww2019_75` / `_76` 水着イベント2019前半 / 後半, `event_sww2020_93` 水着イベント2020 (夏 and サマー match no area name), and **185 gachas**: the 水着 / 復刻水着2017–2020 step-ups and pick-ups, 水着1–3ピックアップ武器ガチャ, 常夏 / 真夏 character pick-ups, サマーステップアップキャラガチャ, and 30 event box gachas (2020 水着イベント；星の海と夢の渚, サマー・リゾート・スクランブル SIDE:A/B, 常夏イベント) | (a) the names; (d) the choice of keywords |
+| A gacha sharing its `banner_id` with a matching gacha counts too (the steps of a step-up and the single / 10-draw variants of one banner share it); the exclusions still apply | (a) the shared banner; (d) |
+| An enabled area is listed whatever its `master_event_term` / `master_event_weekly` rows and its own dated window say, and its missions whatever their `opened_at` / `closed_at` say; everything else of "Events" applies unchanged (unlock chains, clears, New, last play) | (d) the user's request |
+| **Assets permitting:** a mission is still offered only when `events::mission_playable` (its maps, enemy models, story files present); an area with no playable mission isn't listed. With `--download-dir work/download-3.7.0` all 7 default areas are playable; without the download none is | (d), as "Events" |
+| **Gachas:** an enabled gacha is in `GetGachaInData` whatever its `opened_at` / `closed_at`, with the hash window `2016-01-01 00:00:00`..`2037-12-31 23:59:59` (the window its master row gets in the client's copy) | (b) `CGacha::IsEnableHash` needs both windows; (d) |
+| **Banner images:** an enabled gacha whose list banner (`master_banner.image` of its `banner_id`, `Image/<image>.aif`) isn't present is **not** opened: the client does cope with a missing banner (no crash), but the list row is an empty frame with only the date, which nobody can pick sensibly (seen on screen). Box gachas too since they are listed (agent stepup-list: the イベントガチャ tab showed empty "ボックス 1" frames); the same check keeps box series without a banner image out of `BoxGachaList` with or without the option. The stand-in overlay (the in-process server's `standin-assets`, port/README.md "Stand-in assets") adds made-up banners for `gacha_pickup_role_0054` / `_0056` (Summer '17) and `gacha_pickup_role_0283` (the NieR:Automata rerun; `--event-keywords NieR` opens exactly that gacha, `emulator/scripts/nier_demo.sh`); soa sees them through its AssetManager (`--standin-assets`), soa-server through its asset index, which holds the download dir and the stand-ins the CDN serves (`cdn::asset_index_from_config`; `--standin-assets off` leaves them out, and those gachas stay shut; test `events/enable-standin-banners`). The check is the same file lookup; nothing names those gachas | (b) on screen; (d) the choice |
+| The open window: `2016-01-01`..`2037-12-31 23:59:59` (the client prints "2037/12/31(木)23:59まで"). It ends before 2038 so no 32-bit time or remaining-seconds value overflows | (d) |
+| Draws, rates, pools, step-ups and prices are the gacha's own (4.x); the pools' release dates are all before the 2026 clock | (a)+(d) as 4.x |
+| **Exchange shops** (アイテム交換所, `master_exchange_shop`): a shop belongs to the enabled events through its currency: the `ex_item_id` of its contents is a coin that the enabled areas' missions drop or give on clear (`master_mission_drop` / `master_mission_clear_present` of their `master_event_mission` rows) and that nothing else gives (no other event area's missions, no story / tower / world-map / training mission, no `master_common_drop` / `master_campaign_drop` row; drop rows of test missions that exist in no mission table are ignored). A shared currency such as the revival coins (復刻コイン, 復刻コイン【滅】: ~90 areas each) links nothing. Nothing names a shop or an event in the code | (a) the drop tables and the shops' currencies; (d) "only these events give it" as the link |
+| A coin's shop was re-issued with each rerun under a new id (e.g. コーダル【朱】: `exchange_coral_coin_shop` 2018, `_200722_shop` 2020, `exchange_first_coral_coin_shop` 2021); only the one with the latest `opened_at` (the last run's line-up) is opened, so the list doesn't show the same shop three times | (a) the windows; (d) the choice |
+| With the default keywords: **9 shops** (コーダル【朱】 / 【蒼】, マーレゼリアコイン【青】, 海神の真珠, 竜人コイン, ドリンクコースター, 切り分けたスイカ, 人魚バーニィシール, 真夏の朱花 exchanges). An enabled shop is in `ExchangeShopExCount` and `ExshopExchange` accepts its rows whatever its window and the rows' `opened_at` say; prices, limits and contents are the shop's own ("Growth and economy") | (a) + (d) |
+| The client's master copy: see `docs/client-changes.md` "Enabled events opened in the client's master copy" | |
+
+The step-ups and the イベントガチャ tab (box gachas) are listed since agent stepup-list ("Step-up and box gacha lists" below: `StepUpGacha` / `BoxGachaList` must be maps, not arrays); the exchange shops since agent a2-shops (on screen, `--enable-events --download-dir work/download-3.7.0`: ショップ → アイテム交換所 → イベント lists the summer coin shops (新真夏の朱花 / 新人魚バーニィシール / 新切り分けたスイカ / 新ドリンクコースター / 新海神の真珠 …, "あと99日") next to the calendar's own; 新真夏の朱花交換所 lists its line-up, and one ゴールドハンマー for 300 真夏の朱花 exchanged: 1000 → 700 held, 在庫 10 → 9). Unit tests: `events/enable-keywords`, `events/enable-areas`, `events/enable-exchange-shops` (`server/src/api/events/enable_events_tests.cpp`).
+
+## Event extras (agent `events-extras`; `server/src/api/events/ranking.cpp`, `api/events/world_boss.cpp`, `api/events/favor_drop.cpp`, `api/shop/shop.cpp`)
+Event rankings, world bosses and big hunts, time bonuses, the favor event drop bonus and the exchange shops on the event calendar. The entry into event areas (`ActiveEventMissionList`, the events button, the event tables' date shift in the client's master) is agent `events-core`'s (`api/events/event_missions.cpp`); these modules move the event tables' dates by the same whole years (`events::client_years` / `window_open`) and compare them with the clock, so they agree with the client's copy that module moves. The six requests reach the server through the FakeApiCaller routing in `docs/client-changes.md` ("Event ranking and world-boss requests on the FakeApiCaller route"). MissionStart / MissionEnd additions go through two hooks in `ext.h`: `ext::MissionStartExtra` and `ext::MissionResultExtra` (with `ext::MissionInfo`: the mission, its table / type / area, the party, the battle's `mission_time` and evaluation values; `ext::add_drop` adds a granted drop to `DropList` / `AddItem` / `StockItem`). Unit tests: `events/exchange-shop-calendar`, `events/ranking`, `events/worldboss-waves`, `events/worldboss-time-bonus`, `events/favor-drop` (`server/src/api/events/event_extras_tests.cpp`; events and missions picked from the master by their columns).
+
+### Event rankings (イベントランキング)
+Client flow (b): the event menu (`CEventMissionMenu::Initialize`) sends `CheckEventRankingResult`; when its `CheckEventRankingResultInfo.master_event_ranking_group_id` is non-zero, `Progress` sends `ReceiveEventRankingResult` and opens the result dialog (`CEventRankingResult`). The ranking screen (`CEventRanking`) sends `GetEventRankingInfo(group id)` for the group running by its clock (and the previous one from the 報酬 tab) and `ClearNewEventRanking(ranking ids)` on close; `GetPlayerDetailInfo(player id)` only from another entrant's row.
+
+Response keys (b: the classes' `Initialize`): `GetEventRankingResultInfo` {`EventRankingInfoListMap` / `EventRankingTopInfoListMap`: {ranking id: [EventRankingInfo {player_id, rank, rank_ui, score (u64), party_player_id1..4, party_player_id1..4_valid, party_role_id1..4, battle_id, created_at}]}, `EventRankingPlayerInfoMap` {player id: {name}}}; `CheckEventRankingResultInfo` {master_event_ranking_group_id, RankingResultInfoList [{master_event_ranking_id, score, rank}]}; `UpdatedEventRankingIdList` [ranking id] (non-empty lights the ranking badge, `MissionUtility::IsUpdateEventRanking`).
+
+| Rule | Label | Notes |
+|---|---|---|
+| A ranking (`master_event_ranking`) ranks the wins of its `master_event_mission_id` while its group (`master_event_ranking_group`) runs, `opened_at` ≤ clock ≤ `closed_at` (the dates moved by the calendar's whole years, as in the client's copy). | (a) | Test `events/ranking`. |
+| The score is the battle's evaluation value of the ranking's `ranking_type`: 1 total damage, 2 enemies defeated, 3 rush-combo damage, 4 highest hit count, 5 highest single damage, 6 clear time (ms). Higher is better, except type 6: lower, and 0 (not won) is no score. | (b) | `uimsg_evaluation_condition<n>` / `CParameterUtility::tMissionData::GetEvaluationNumberString`; the values are the `CBattleEvaluationInfo` the battle log records (types 1..6, the same numbering). |
+| **The player is the only entrant**: rank 1 in every ranking played; the best score is kept with the party of that win (its roles; every slot the player's own, `_valid` set). No play, no row. | (d) | The service's other players are gone. `EventRankingTopInfoListMap` repeats the same row. |
+| A win that improves a score sends `UpdatedEventRankingIdList` [ranking id]; `ClearNewEventRanking` answers it empty. | (b) + (d) | (b) the badge; (d) when to light it. |
+| The result is due from `ranking_closed_at` to `result_closed_at` (moved dates, clock), once, for the latest group with a score not yet received; otherwise `CheckEventRankingResultInfo` names group 0 (always sent: the client keeps the last one). | (a) + (d) | (a) the dates; (d) once, only when played. |
+| The reward of a ranking: the `master_event_ranking_reward` row of `ranking_reward_group_id` = the ranking's id with the smallest `required_ranking` ≥ the rank (rank 1: the top tier), granted by `ReceiveEventRankingResult` (item sets, content type 99, expanded through `master_item_set`), `AddItem` / `StockItem`. | (a) + (b) | (b) `CEventRankingResult::Initialize` shows tier i for ranks (required_{i-1}, required_i]. Some legacy reward rows (e.g. `EvRank02_01b`) name no ranking and are never paid. |
+| `GetPlayerDetailInfo(player id)` answers `SearchResult` {player id: CFollowInfo {order 1, player: CFollowPlayerInfo (id, name, level of the player), pc: CFollowPersonInfo (the home character, else the highest-level one, as the rental entries build it)}} for any id: the player is the only entrant. | (b) the dialog reads the first `SearchResult` entry (`CEventRanking::OpenDetailDialog` → `CParameterUtility::CreateSearchFriendData` → `tCharaData::InitializeFollow`, CParameterManager+0x6490); (d) the character shown | (b) The rows' touch handlers skip the player's own row and own party slots (they compare the entry's player id with `PlayerInfo()+0x60`), so the client doesn't send it with one entrant; the answer is there for any other caller. Test `events/player-detail`. |
+
+All ranking groups in the 3.7.0 data belong to `event_god_86`, whose assets are incomplete in the download; the rankings are therefore tested through unit tests only.
+
+### World bosses and big hunts (ワールドボス / 大討伐)
+Client flow (b): an event area with `event_type` 1 names a world boss (`event_id` → `master_world_boss`). While the boss's window is open by the client clock, a fresh board open (`CEventMissionBoard::Progress`) sends `GetWorldBossInfo(event area id)` and shows the boss plate (`SetupWorldBossPlate`): the wave (`CWorldBossInfo.wave`, its `master_world_boss_wave` reward), three gauges `num1..3` of the target items (`master_item_id1..3`) against `CT_WorldBossInfo.next_required_num`, and "+N" boxes `add_item1..3_num`. Each entry of `CWorldBossPlayerInfoList` opens a wave-clear dialog (no request, no grant). `start_bigHunt_area_id` (any response) marks the area of a running big hunt: its `is_bighunt` missions are listed (`MissionUtility::GetEventMissionList`, no time check) and the board counts down to `CT_WorldBossInfo.bighunt_closed_at`; the cut-in plays when `CWorldBossPlayerInfo.is_new_open` is set. The client reads nothing of `fast/base/slow_required_num`, `estimated_clear_time`, `wave_calc_length`, `bighunt_time`, `bonus_rate`, `bonus_add_slot_max`: those are server rules.
+
+| Rule | Label | Notes |
+|---|---|---|
+| A boss is served while its `master_world_boss` window, moved by the calendar's whole years, covers the clock; otherwise `GetWorldBossInfo` answers `world_boss_id` 0 (a plain event board). | (a) + (d) | Test `events/worldboss-waves`. |
+| **Single player:** the community totals are the player's own. A wave needs, of each of the three target items, the master's requirement scaled so the boss's first wave needs 1,500 (`kFirstWave`); later waves keep the master's proportion to the first. | (d) | The master's numbers were sized for the whole player base (hotspring wave 1: 3,100,000). The event missions drop 150..650 target coins per lot, so a wave takes a handful of wins per item. |
+| The requirement of the next wave: `fast_required_num` when the previous wave cleared within `fast_rate` % of its `estimated_clear_time` (minutes), `slow_required_num` beyond `slow_rate` %, else `base_required_num`. | (a) + (d) | (d) that reading of the columns, on the player's own clear times. |
+| The target items a win brings (its `DropList` stack items and time bonuses) fill the gauges; during a big hunt they count `bonus_rate` % more. `add_item1..3_num` is the last win's share. | (a) + (d) | |
+| A wave whose three gauges are full clears: its `master_world_boss_wave` content goes to the present box (text `present_message_id`), the clear is listed once in the next `GetWorldBossInfo`'s `CWorldBossPlayerInfoList` (always sent: the client keeps the map), the next wave starts from empty gauges (no carry-over); past the last row the last wave stays full. | (a) + (d) | (b) the dialog grants nothing, so a present. |
+| **Big hunt:** a wave clear starts one for `bighunt_time` minutes in the boss's area (`start_bigHunt_area_id`, sent with every player load, MissionStart, MissionEnd and `GetWorldBossInfo`; 0 when none); the cut-in flag `is_new_open` is sent once; MissionStart sends it false (back on the board the client reuses its cached data). | (a) + (d) | (a) the duration; (d) what starts it. |
+| `CAreaInfo.is_start_bighunt` of the big hunt's area is set (`events::AreaExtra`). | (d) | The client reads `start_bigHunt_area_id`; kept consistent. |
+| `is_received` false, `is_notified` true in `CWorldBossPlayerInfo`. | (d) | (b) the detail dialog adds `is_received` to the wave for the rows it lists. |
+
+### Time bonus (タイムボーナス)
+| Rule | Label | Notes |
+|---|---|---|
+| An event mission with `time_bonus_type_id` pays, on a win, every `master_time_bonus` row of that type whose `time` (seconds) the battle's `mission_time` (ms) is within; granted and listed in `WorldBossMissionTimeBonusDropItemInfoList` [{id, content_type, num}]. | (a) + (b) + (d) | (b) the result screen shows that list as reward type 4 (`ds_time_badge`), the client computes nothing; `CWorldBossConditionDialog` prints `time` as %u:%02u. (d) cumulative rows (every row met, not only the best). Test `events/worldboss-time-bonus`. |
+
+### Favor event drop bonus (好感度イベントドロップ)
+(b) The client never computes it: the party screens show a per-character drop icon (3.7.0 `CParameterUtility::GetFavorDropIconImageName`: favor level ≥ 4, `added_event_drop_at` before the day's reset at `login_bonus_reset_hour`, `RemainingEventDropBonusCountByFavor` non-zero), the result screen badges `drop_type` 4 drops with a heart, and `MissionEnd`'s `MissionResultCharacterFavor[same_role_id].added_event_drop_at` is copied into the favor map. `MissionParameter.is_event_drop_by_favor` is read by nothing.
+
+| Rule | Label | Notes |
+|---|---|---|
+| At MissionStart of a `master_event_mission`, the party's own characters (slot order) whose favor level has an `event_drop_bonus` (`master_favor_level`: 1 at level 4, 2 at level 5) and whose bonus isn't spent today take part, up to the day's remaining uses; `is_event_drop_by_favor` says whether any does. A restart keeps the set. | (a) + (d) | (d) event missions only (like the Galaxy Pass's extra event slot, `subscmsg_gpass_drop_manual`); the limit counts characters. Test `events/favor-drop`. |
+| On the win, each of them adds `event_drop_bonus` lots from the mission's own drop rows (non-fixed, non-surprise, no host bonus; by `rate_weigh`) as `drop_type` 4, and its bonus is spent: `added_event_drop_at` = now (sent in its `MissionResultCharacterFavor` entry). | (d) | |
+| `RemainingEventDropBonusCountByFavor` = `master_global.favor_event_drop_bonus_limit` (3) less the characters spent since the day's reset (`login_bonus_reset_hour`), on every player load and after a bonus win. | (a) + (d) | Replaces the constant 3 of agent restore-favor. |
+
+### Exchange shops on the event calendar
+| Rule | Label | Notes |
+|---|---|---|
+| An exchange shop (`master_exchange_shop`) is listed (`ExchangeShopExCount`) and exchanges when the clock is inside its window **or** its window moved by the calendar's whole years (`events::client_years`); a contents row's `opened_at` likewise. | (a) + (d) | The event coin shops (e.g. an event's `*_coin_shop`) open with their event. Test `events/exchange-shop-calendar`. |
+| The client's master copy moves only the rows that move opens (their contents' `opened_at` too); open-ended rows stay (moved forward they would open late). Agent events-core moves every row of the event tables. | (d) | `docs/client-changes.md` "Event exchange shops moved in the client's master copy". With `--clock` the calendar is the clock and nothing moves. |
+
+### Heat-up (ヒートアップ)
+Client-only (b): the heat-up tactics order (`COrderGaugeManager::FinishHeatUp` / `FixHeatUpBonus`, `CRushComboManager::GetHeatUpBonus`) reads `master_heat_up_bonus` from the client's master; the server only receives `order_count_heat_up` in the battle log and applies no rule.
+
+## Seeding from a save (3.7.0 or 3.8.0) <!-- 380-ok: a 3.8.0 save is a supported seed -->
+- **(b)** A new state is seeded from a local-KVS `Game.xml`: `soa --seed` / `SOA_SERVER_SEED`, `soa-server --seed`, default `data/saves/seed/Game.xml`. The summary keys are the same in the 3.7.0 online save and the 3.8.0 offline save (which adds `BAS:StandAlone*` keys): `player_level`, `player_fol`, `player_name`, `person_master_role_id_N`. The test is `server/seed-from-380-save`. <!-- 380-ok: a 3.8.0 save is a supported seed -->
+- **(d)** What a save doesn't hold (per-character EXP, favor, limit breaks, items) starts at the server's defaults.
+- **(d)** The save's `BAS:PlayerID` is never copied: the local player is `LOCAL00001`.
+- **(d)** Only a fresh state is seeded; an existing `server.sqlite3` keeps its player.

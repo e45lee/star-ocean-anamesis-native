@@ -1,0 +1,160 @@
+# Star Ocean: Anamnesis reverse engineering and save editor
+
+Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_googleplay.StarOceanj`), whose Japanese service closed in June 2021: a desktop port of the last online client (3.7.0) with a local game server, the same client unmodified in an emulator, a viewer for the offline build (`emulator-viewer/`), and a save editor.
+
+- `docs/notes.md`: the reverse-engineered formats:
+  - the save files (`Aska.xml`, `Game.xml`: ChaCha20-encrypted SharedPreferences)
+  - the `ADLD` asset container
+  - the AES-encrypted master database
+  - how IDs are derived (`CHash32`)
+- `docs/online-server.md`: how the online game server (shut down in 2021) worked, reconstructed from the client: hosts, the TCP RPC protocol and its encryption, the SQEX BRIDGE session handshake, asset delivery, multiplayer and payments.
+- `docs/history/`: finished plans and comparisons, e.g. [`docs/history/libsoa-3.7.0-vs-3.8.0.md`](docs/history/libsoa-3.7.0-vs-3.8.0.md), what the offline build changed against 3.7.0.
+- `docs/api.md`: every API the client calls, with the wire format of each request and reply. `docs/ason.md`: ASON, the engine's MessagePack (reply bodies, request payloads). `docs/server-rules.md`: the game rules the port's local server applies.
+- `soa_save/`: Python library and CLI for reading, editing and writing saves, and for decoding the event scripts ([`soa_save/README.md`](soa_save/README.md)).
+- `tools/`: helpers used for the reverse engineering: Ghidra headless scripts, ELF/PLT resolver, xref/caller scanners, unicorn emulator harness.
+- `apk/`: the 3.7.0 APK, and the offline build's XAPK for the viewer (`emulator-viewer/`) and the save editor (local only, not in git: README "Game files").
+- `standin-assets/`: made-up **stand-in** images (marked "STAND-IN") for assets the online server had deleted, e.g. lost gacha banners; `tools/make_standin_banners.py` makes them, and the CDN of `soa-server` and of the port's in-process server serves them (`--standin-assets DIR|off`).
+
+## Setup
+
+```sh
+# the game files aren't in git: put them in place first ("Game files" below)
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+tools/extract.sh          # unpack the XAPK into work/extracted: only for the viewer (emulator-viewer/), decomp.sh --v380 and Waydroid
+```
+
+### Build dependencies
+
+The C++ dependencies come from **vcpkg** in manifest mode (`vcpkg.json`, pinned by its
+`builtin-baseline`): Boost (headers, for dynarmic), zlib, SQLite, zstd, libogg, libvorbis, SDL2 (X11 and
+Wayland video), OpenSSL, and the Khronos EGL/GLES headers. All are built from source by vcpkg, as static
+libraries (`cmake/vcpkg-triplets/x64-linux.cmake`: release only), on the first configure, into
+`build/vcpkg_installed/`; vcpkg's binary cache (`~/.cache/vcpkg/archives`) makes later configures,
+other build dirs and worktrees fast. Two libraries vcpkg doesn't have come from CMake
+`FetchContent`, pinned by URL and SHA-256, into `build/_deps/` (`cmake/deps.cmake`):
+- **dynarmic** (the ARM64 JIT) at `lioncash/dynarmic` commit `a41c380`;
+- **IJG libjpeg 9e**, built static by `cmake/libjpeg9/` (target `soa::jpeg9`). The game bundles 9b
+  and vcpkg has only libjpeg-turbo, which isn't bit-exact with IJG's; 9e is what Ubuntu's
+  `libjpeg9` ships, which the port used before. Used by `tools/aif2png`, and kept for the
+  host-library natives (`port/PLAN.md`, N).
+
+**SQLite is pinned to 3.45.1** (`overrides` in `vcpkg.json`) and built with the compile options of
+Ubuntu 24.04's `libsqlite3` (the triplet file), the library the server linked before vcpkg. The
+server's served master is a `VACUUM`ed copy whose bytes depend on both (the version number in the
+header; `SQLITE_SECURE_DELETE` zeroes freed space), its SHA-1 feeds the CDN's version ids, and a
+pre-downloaded phone (`SOA_PHONE`) skips the data check only while those ids match. Changing the
+SQLite version or options therefore makes every saved phone download the data again.
+
+**vcpkg itself:** `$VCPKG_ROOT` if set, else `.vcpkg/` in the repository (untracked):
+`scripts/vcpkg-bootstrap.sh` clones `github.com/microsoft/vcpkg` there at the `builtin-baseline`
+commit and runs its bootstrap (`scripts/build.sh` does this). The root `CMakeLists.txt` finds the
+toolchain file from the same places, so a plain `cmake -S . -B build` works once vcpkg is there.
+Worktrees made by `port/scripts/agent-worktree.sh` share the main checkout's `.vcpkg` by symlink.
+
+**Linux prerequisites** vcpkg can't replace (Ubuntu 24.04 names; CMake 3.28 or newer, which 24.04 ships):
+
+```sh
+# build tools (vcpkg needs curl, zip, unzip, tar, git and pkg-config (pkgconf on 24.04); it downloads its own ninja and CMake if needed)
+sudo apt install build-essential cmake git curl zip unzip tar pkg-config perl python3 autoconf automake libtool
+# optional, faster builds: scripts/build.sh configures with Ninja and compiles through ccache when they are installed
+sudo apt install ninja-build ccache
+# SDL2's X11 and Wayland video and PulseAudio audio (vcpkg builds SDL2 against the system's headers; it loads the
+# X11, Wayland and PulseAudio libraries at run time, so either window system works; libdecor-0-dev is optional:
+# window decorations under Wayland compositors that want client-side ones)
+sudo apt install libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev libxss-dev libxfixes-dev libpulse-dev
+sudo apt install libwayland-dev libxkbcommon-dev libegl-dev libdecor-0-dev
+# EGL / GLES 2 at run time (Mesa): SDL creates the GLES contexts through EGL, on X11 or Wayland
+sudo apt install libegl1 libgles2 libegl-mesa0 libgl1-mesa-dri
+```
+
+**Sound:** vcpkg's SDL2 here has the PulseAudio backend (plus sndio/OSS), not ALSA or PipeWire
+(the system SDL2 had both). PipeWire desktops serve it through `pipewire-pulse`; a machine with
+neither runs silently (the port's null sink). Adding sdl2's `alsa` feature to `vcpkg.json` builds
+vcpkg's alsa-lib, which also needs `autoconf-archive` from apt.
+
+## Building
+
+The C++ parts share one CMake build, rooted at `CMakeLists.txt`:
+
+| Part | What | Output |
+|---|---|---|
+| `runtime/` | the JIT host runtime: ELF loader, dynarmic CPU, Android HLE, JVM, host loop (`runtime/README.md`) | `build/runtime/soaruntime_tests` |
+| `server/` | the local game server library and its standalone binary (`server/README.md`) | `build/server/soa-server` |
+| `port/` | the desktop port of the 3.7.0 client (`port/README.md`) | `build/port/soa` |
+| `platform370/` | the 3.7.0 platform layer: Java answers, `fmod`, device clock, the `service_stop_day` patch, network glue (`platform370/README.md`); used by `soa-emu` | `build/platform370/libsoaplatform370.a` |
+| `emulator/` | the unmodified 3.7.0 online client (`emulator/README.md`) | `build/emulator/soa-emu` |
+| `emulator-viewer/` | the unmodified offline 3.8.0 client (`emulator-viewer/README.md`) | `build/emulator-viewer/soa-viewer` |
+
+```sh
+scripts/build.sh                    # vcpkg (bootstrapped into .vcpkg/ if missing), configure, build everything
+# or by hand, once vcpkg is there (scripts/vcpkg-bootstrap.sh, or $VCPKG_ROOT):
+cmake -S . -B build                 # RelWithDebInfo unless -DCMAKE_BUILD_TYPE=...; the first one builds the vcpkg ports
+cmake --build build -j8             # everything
+cmake --build build -j8 --target soa        # one part: soa, soa-server, soa-emu, soa-viewer, soaruntime_tests or aif2png
+```
+
+The root `CMakeLists.txt` picks vcpkg's toolchain file (`$VCPKG_ROOT`, else `.vcpkg/`; an explicit
+`-DCMAKE_TOOLCHAIN_FILE` wins), holds the shared settings (C++20, the build type), includes
+`cmake/deps.cmake` (the dependencies' imported targets; "Build dependencies" above), then adds
+`runtime/`, `platform370/`, `server/`, `port/`, `emulator/`, `emulator-viewer/` and `tools/aif2png`.
+A build dir configured before vcpkg (with `deps/` and `third_party/`, now retired) can't switch
+toolchains: delete it and configure again. vcpkg builds its ports with `VCPKG_MAX_CONCURRENCY` jobs
+(8 unless set). Parts can be left out at configure
+time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWER=OFF`,
+`-DSOA_BUILD_SERVER=OFF` or `-DSOA_BUILD_PLATFORM370=OFF` (the port needs the server library, so
+`SOA_BUILD_SERVER=OFF` needs `SOA_BUILD_PORT=OFF` too; the emulator needs platform370, so
+`SOA_BUILD_PLATFORM370=OFF` needs `SOA_BUILD_EMULATOR=OFF`).
+
+## Running
+
+`scripts/build.sh` sets up vcpkg (first time only) and builds everything. Then:
+
+| Script | Runs |
+|---|---|
+| `scripts/run-port.sh` | the desktop port: the 3.7.0 client against the local server built into it (`--server inproc`), or `--server HOST[:PORT]` against a running soa-server. Other options go to `soa`, in two groups (`build/port/soa --help`): client options (`--fullscreen`, `--data DIR`, ...) and server options, soa-server's own flags (`--enable-events`, `--new-player`, `--seed FILE`, ...). Saves: `~/.local/share/soa-linux-370` unless `--data`. |
+| `scripts/run-emulator-370.sh` | the original 3.7.0 online client, unmodified, in the emulator, against `soa-server` over TCP, which the script starts and stops. Data: `~/.local/share/soa-emulator-370/` (`phone/`, `server/`, `server.log`). Options: `--new-player`, `--enable-events`, `--event-keywords`, `--port`, `--home DIR`; others go to `soa-emu`. The first start downloads about 3 GB of game data from the local server. |
+| `scripts/run-viewer-380.sh` | the offline 3.8.0 client, unmodified, in the viewer (`emulator-viewer/`, `soa-viewer`): the game as shipped after the service ended. No server: its one request goes unanswered, as on a phone today. Data: `~/.local/share/soa-viewer-380` (like the port's `~/.local/share/soa-linux`). Options: `--data DIR`; others go to `soa-viewer`, e.g. `--fullscreen`. |
+
+Each script has `--help` and works from any directory.
+
+**Bringing your own save over:**
+- `--seed FILE` (port and `run-emulator-370.sh`) seeds a **new** local server state from a game save: a 3.7.0 or an offline-game `Game.xml`, e.g. the offline game's `shared_prefs/Game.xml` copied from your phone.
+- **What carries over:** the player's level, FOL and name, and the characters you own.
+- **What doesn't:** per-character EXP, favor and limit breaks aren't in a save, so they start at the defaults. The save's player id isn't used either; the local player is always `LOCAL00001`.
+- **Use a fresh data folder** (`--data`, `--home`): an existing server state keeps its player.
+
+### Game files
+The scripts check for these and say which is missing. None of them are in git (until 2026-10-03 the APKs, the master DBs, `port/server-data/gacha_pools.sqlite3` and the two Ghidra quick projects were in Git LFS; they're now local, ignored files, with a checksummed copy in `work/backup-lfs/`).
+
+| File | Used by |
+|---|---|
+| `apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk` (the APKPure download) and `work/libSOA-3.7.0.so` (its `lib/arm64-v8a/libSOA.so`; the port also extracts it into its data dir) | the port; the 3.7.0 emulator |
+| `work/download-3.7.0/` (the full 3.7.0 download) and `data/basmaster-3.7.0.sqlite3` (its master DB, decrypted) | the port's in-process server (its CDN and master data); the 3.7.0 emulator's server and CDN |
+| `work/extracted/xapk/` (the offline XAPK, unpacked by `tools/extract.sh`) | only the viewer (`emulator-viewer/`, `soa-viewer`) |
+| `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (through `work/extracted/xapk/`), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
+| `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`) | <!-- 380-ok: the viewer's game file -->
+| `port/server-data/gacha_pools.sqlite3` (the reconstructed gacha pools, made by `tools/build_gacha_pools.py`) | the local server's gacha draws (`docs/server-rules.md` 4.3) |
+| `ghidra/quick-v370/`, `ghidra/quick/` (Ghidra quick projects; imported by `tools/common.sh` when missing) | `tools/decomp.sh`, `scripts/ghidra-mcp.sh` |
+
+## Reverse-engineering tools
+
+- **Ghidra** (12.1.2, snap at `/snap/ghidra/current/ghidra`): `tools/decomp.sh` / `tools/decomp_at.sh` decompile from the quick projects (`ghidra/quick-v370`, local, not in git; re-imported by `tools/common.sh` when missing) through a pool of working copies in `work/ghidra-quick-v370*`. Ghidra refuses project paths with a component starting with `.`.
+- **PyGhidra**, in `.venv`, from Ghidra's own wheels (`requirements.txt` says how): `pyghidra.start()` with `GHIDRA_INSTALL_DIR` set.
+- **Ghidra over MCP for Claude Code**: `scripts/ghidra-mcp.sh` serves the 3.7.0 project with [pyghidra-mcp](https://github.com/clearbluejar/pyghidra-mcp) (through `uvx`), headless, on its own working copy `work/ghidra-mcp-v370` (so its analysis, renames and types never touch the committed project). `.mcp.json` registers it as the project's `ghidra-v370` server; Claude Code asks once to approve it. Before first use run `scripts/ghidra-mcp.sh --analyze` once (Ghidra's full auto-analysis plus pyghidra-mcp's indexes; the tools refuse until it's done). One server at a time can have the copy open.
+- **jadx** (the APK's Java), **lief**, **keystone**, **capstone**, **unicorn**, and the system tools in "Setup" (gdb-multiarch, clang tools, strace, …).
+
+## Save editor and event scripts
+
+`soa_save/` edits the offline game's saves (`dump`, `set`, `roster`, `unlock-all`), pushes them to a phone or Waydroid, and decodes the event scripts: [`soa_save/README.md`](soa_save/README.md).
+
+## Tests
+
+`tools/check_no_380.sh` checks that no reference to the offline build is left outside the viewer and `docs/history/` (it lists what may keep one).
+
+`.venv/bin/python -m pytest tests`. They use the sanitized saves committed in `data/saves/` (`data/saves/README.md`); your own saves stay in the ignored `samples/`.
+
+The port's tests (`build/port/soa --selftest`, `port/scripts/smoke.sh`, the `port/scripts/*_session.sh` sessions; `port/README.md`) and the emulator's (`emulator/scripts/`) run headless: the game renders into a hidden window, so no window opens, but they still need an X display. `SOA_HEADLESS=0` shows the port's window while a script runs; `soa --headless` / `--windowed` choose by hand. The session scripts of both start from the shared pre-downloaded 3.7.0 phone `work/phone-3.7.0` (build it once with `scripts/make-phone-370.sh`, verify it with `scripts/check-phone-370.sh`; `SOA_PHONE=none` runs the full download instead; `port/README.md` "The shared pre-downloaded phone").
+
+## Credits
+
+English character names come from the [Star Ocean Wiki](https://starocean.fandom.com/wiki/Star_Ocean:_Anamnesis_playable_characters) (CC BY-SA). A copy is in `docs/wiki/`.

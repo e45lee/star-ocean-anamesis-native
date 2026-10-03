@@ -1,0 +1,37 @@
+generator	output	lib	rc	seconds	diff_lines_vs_committed	stderr_tail
+gen_apinotify_a2c.py	port/src/native/api/gen/api_notify_a2c.cpp	370	0	7	4040	1 bodies, 70 call targets, 0 unsupported
+gen_apinotify_a2c.py	port/src/native/api/gen/api_notify_a2c.cpp	380	0	7	0	1 bodies, 70 call targets, 0 unsupported
+gen_arena_a2c.py	port/src/native/arena/gen/arena_a2c.cpp	380	0	7	14	167 bodies, 284 call targets, 0 unsupported
+gen_arena_a2c.py	port/src/native/arena/gen/arena_a2c.cpp	370	0	7	25466	167 bodies, 284 call targets, 0 unsupported
+gen_aska_math_a2c.py	port/src/native/engine/math/gen/aska_math_a2c.cpp	380	0	9	388	NOTE: _ZN9Framework10CCollision11IsIntersectERKNS_8CSegmentEfS3_RA2_NS_7CVectorERi not transcribable (unsupported instruction or call); left to the JIT
+gen_aska_math_a2c.py	port/src/native/engine/math/gen/aska_math_a2c.cpp	370	0	9	52192	NOTE: _ZN9Framework10CCollision11IsIntersectERKNS_8CSegmentEfS3_RA2_NS_7CVectorERi not transcribable (unsupported instruction or call); left to the JIT
+gen_cocos_a2c.py	port/src/native/ui/cocos/gen/cocos_a2c.cpp	380	0	6	734	
+gen_cocos_a2c.py	port/src/native/ui/cocos/gen/cocos_a2c.cpp	370	0	7	36839	
+gen_containers_a2c.py	port/src/native/containers/gen/containers_a2c.cpp	380	0	8	26566	203 transcribed, 0 skipped
+gen_containers_a2c.py	port/src/native/containers/gen/containers_a2c.cpp	370	0	8	61704	203 transcribed, 0 skipped
+gen_containers_tables.py	port/src/native/containers/gen/containers_tables.inc	380	0	10	0	
+gen_containers_tables.py	port/src/native/containers/gen/containers_tables.inc	370	0	10	4	
+gen_dynamics_a2c.py	port/src/native/dynamics/gen/dynamics_a2c.cpp	370	0	7	15323	6 bodies, 17 guest call targets, 0 unsupported
+gen_dynamics_a2c.py	port/src/native/dynamics/gen/dynamics_a2c.cpp	380	0	7	0	96 bodies, 39 guest call targets, 0 unsupported
+gen_guireader_a2c.py	port/src/native/ui/cocos/gen/cocos_guireader_a2c.cpp	380	0	7	2	
+gen_guireader_a2c.py	port/src/native/ui/cocos/gen/cocos_guireader_a2c.cpp	370	0	7	13952	
+gen_infobase_a2c.py	port/src/native/params/gen/infobase_a2c.cpp	380	0	8	0	385 bodies ({'map_child': 88, 'map_array': 88, 'array': 59, 'value_array': 62, 'key_number': 87, 'key_hash': 1}), 455 guest call targets, 0 unsupported
+gen_infobase_a2c.py	port/src/native/params/gen/infobase_a2c.cpp	370	0	8	122344	385 bodies ({'map_child': 88, 'map_array': 88, 'array': 59, 'value_array': 62, 'key_number': 87, 'key_hash': 1}), 455 guest call targets, 0 unsupported
+gen_loader_tables.py	port/src/native/params/gen/parameter_elements.inc	380	0	7	0	// _ZN22CSimpleSqliteConnectorIN8MasterDB9CWorldMapEN4Aska5Yayoi13TEntity_SlaveINS3_12SQLiteDriverES1_NS3_7NoCacheEEEE: connector not recognised
+gen_loader_tables.py	port/src/native/params/gen/parameter_elements.inc	370	0	7	438	// _ZN22CSimpleSqliteConnectorIN8MasterDB9CWorldMapEN4Aska5Yayoi13TEntity_SlaveINS3_12SQLiteDriverES1_NS3_7NoCacheEEEE: connector not recognised
+gen_models_a2c.py	port/src/native/models/gen/models_a2c.cpp	380	0	15	0	672 bodies, 4728 aliases, 366 guest call targets, 0 unsupported
+gen_models_a2c.py	port/src/native/models/gen/models_a2c.cpp	370	0	15	213974	672 bodies, 4728 aliases, 366 guest call targets, 0 unsupported
+gen_objbase_a2c.py	port/src/native/objbase/gen/objbase_a2c.cpp	380	0	7	0	163 bodies, 191 call targets, 0 unsupported
+gen_objbase_a2c.py	port/src/native/objbase/gen/objbase_a2c.cpp	370	0	7	25264	163 bodies, 190 call targets, 0 unsupported
+gen_objmgr_a2c.py	port/src/native/engine/gen/objmgr_a2c.cpp	370	0	7	21838	
+gen_objmgr_a2c.py	port/src/native/engine/gen/objmgr_a2c.cpp	380	0	7	4	
+gen_parameter_tables.py	port/src/native/params/gen/parameter_tables.inc	370	0	7	0	
+gen_parameter_tables.py	port/src/native/params/gen/parameter_tables.inc	380	0	7	0	
+gen_particles_a2c.py	port/src/native/particles/gen/particles_a2c.cpp	380	0	7	0	219 bodies, 154 guest call targets, 0 unsupported
+gen_particles_a2c.py	port/src/native/particles/gen/particles_a2c.cpp	370	0	7	106174	219 bodies, 155 guest call targets, 0 unsupported
+gen_render_a2c.py	port/src/native/render/gen/render_a2c.cpp	380	0	7	0	71 bodies, 157 guest call targets, 0 unsupported
+gen_render_a2c.py	port/src/native/render/gen/render_a2c.cpp	370	0	7	45004	71 bodies, 157 guest call targets, 0 unsupported
+gen_screens_a2c.py	port/src/native/ui/screen/gen/screen_a2c.cpp	370	0	7	50687	32 bodies, 474 call targets, 0 unsupported
+gen_screens_a2c.py	port/src/native/ui/screen/gen/screen_a2c.cpp	380	0	7	4	32 bodies, 467 call targets, 0 unsupported
+api_wire.py	port/src/native/api/gen/wire_table.inc	380	0	7	0	
+api_wire.py	port/src/native/api/gen/wire_table.inc	370	0	7	0	

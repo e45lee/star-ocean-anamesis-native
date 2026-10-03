@@ -1,0 +1,51 @@
+# soa-server replay corpus (server/tests/replay/README.md): economy, hand-written (PLAN-readability R18):
+# the item shop (2016 sample rows for event coins, box tickets and gacha tickets; limits, refusals), the gacha
+# (GachaTicket, a step-up chain in order and out of order, single / bulk / sale draws, weapons, the rate dialog),
+# a box series drawn to its last box (refill, reset), the exchange shop (limits and refusals), the Galaxy Pass.
+# tz: America/Toronto
+req 1 1464796800 Login a01c67ef - - - -
+req 2 1464796805 ItemShopList b04c111c - - - -
+req 3 1464796810 ExItemShop 33d09fb7 91416608 - - -
+req 4 1464796811 ExItemShop 33d09fb7 91416608 - - -
+req 5 1464796812 ExItemShop 33d09fb7 91416608 - - -
+req 6 1464796813 ExItemShop 33d09fb7 91416608 - - -
+req 7 1464796814 ExItemShop 33d09fb7 91416608 - - -
+req 8 1464796820 ExItemShop 33d09fb7 91416608 - - -
+req 9 1464796825 ExItemShop 33d09fb7 3804939559 - - -
+req 10 1464796830 ExItemShop 33d09fb7 1 - - -
+req 11 1464796835 GachaTicket ee11c3d3 880474854,1 78 - -
+req 12 1464796840 GachaTicket ee11c3d3 880474854,5 78 - -
+req 13 1464796845 GetGachaInData 8e4a88d7 - - - -
+req 14 1603641600 GetPlayer 9a056905 - - - -
+req 15 1603641605 GetGachaInData 8e4a88d7 - - - -
+req 16 1603641610 Gacha a0a1940b 3589601563,0 78 - -
+req 17 1603641615 Gacha a0a1940b 1006278711,0 78 - -
+req 18 1603641620 Gacha a0a1940b 2733885837,0 78 - -
+req 19 1603641625 GachaOnce 992ccbe5 4218244542 78 - -
+req 20 1603641630 Gacha a0a1940b 4218244542,1 78 - -
+req 21 1603641635 SaleGacha b164b4c5 2201696395 78 - -
+req 22 1603641640 SaleGachaOnce 2d230806 2201696395 78 - -
+req 23 1603641645 GetGachaRate d6bcb49d 3589601563 78 - -
+req 24 1603641650 Gacha a0a1940b 1 78 - -
+req 25 1603641660 GetBoxGacha af250236 - - - -
+req 26 1603641665 BoxGacha 5be25d4b 2694801837,3 - - -
+req 27 1603641670 BoxGacha 5be25d4b 2694801837,1000 - - -
+req 28 1603641675 ResetBoxGacha c292cf48 2694801837 - - -
+req 29 1603641680 BoxGacha 5be25d4b 1243198671,1000 - - -
+req 30 1603641685 BoxGacha 5be25d4b 2773156398,1000 - - -
+req 31 1603641690 GetBoxGacha af250236 - - - -
+req 32 1603641695 BoxGacha 5be25d4b 1147471946,1000 - - -
+req 33 1603641700 BoxGacha 5be25d4b 1147471946,2 - - -
+req 34 1603641705 ResetBoxGacha c292cf48 1147471946 - - -
+req 35 1603641710 BoxGacha 5be25d4b 1 - - -
+req 36 1603641720 ExshopExchangeList 7329eff2 - - - -
+req 37 1603641725 ExshopExchange 70d0f3ce 823480280,1 - - -
+req 38 1603641730 ExshopExchange 70d0f3ce 1372767805,3 - - -
+req 39 1603641735 ExshopExchange 70d0f3ce 1372767805,1 - - -
+req 40 1603641740 ExshopExchange 70d0f3ce 823480280,51 - - -
+req 41 1603641745 ExshopExchange 70d0f3ce 672038553,3 - - -
+req 42 1603641750 ExshopExchange 70d0f3ce 4229533541,1 - - -
+req 43 1603641755 ExshopExchange 70d0f3ce 1 - - -
+req 44 1603641760 ExItemShop 33d09fb7 91416608 - - -
+req 45 1603641765 ExItemShop 33d09fb7 166782100 - - -
+req 46 1603641770 GetPlayer 9a056905 - - - -

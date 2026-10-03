@@ -1,0 +1,620 @@
+test	result	first message (selftest of the 3.7.0 guest, natives off; P1 2026-10-01)
+a2c/call-stack-args	ok	
+acsv/captured	ok	
+acsv/debug	ok	
+acsv/fields	ok	
+acsv/tables	ok	
+aff/utilities	ok	
+apinotify/add-character	ok	
+apinotify/add-item	ok	
+apinotify/apply-get-present	ok	
+apinotify/auto-equip	ok	
+apinotify/deserialize-to-info	CRASH	
+apinotify/gacha-progress	ok	
+apinotify/gear-uuid	ok	
+apinotify/handlers	ok	
+apinotify/inline	ok	
+apinotify/limit-break-sync	ok	
+apinotify/login	ok	
+apinotify/mission-chain	ok	
+apinotify/mission-end	ok	
+apinotify/pm-deserialize	FAIL	PM::Deserialize body0 infos=0: bytes differ at pm+46888
+apinotify/session	ok	
+apinotify/sphere211-mission-end	ok	
+apinotify/storage	ok	
+apinotify/update-stack-item	ok	
+arena/carena-hand	FAIL	_ZN6CArena14rBattleManagerEv calls mismatch
+arena/effect-hand	FAIL	_ZN9Framework14CEffectManager6CPiece11pReadyModelEv calls mismatch
+arena/effect-remove-release	CRASH	
+arena/progress-main	FAIL	Progress_Main calls mismatch
+arena/readable-field	CRASH	
+arena/readable-hit	CRASH	
+arena/readable-math	CRASH	
+aska-math/MT	FAIL	MT index 0: results differ
+aska-math/Matrix::Create(Quaternion)	ok	
+aska-math/Quaternion-Matrix::CalcEuler	ok	
+aska-math/Quaternion::Create	ok	
+aska-math/Quaternion::CreateFromEuler	ok	
+aska-math/Quaternion::Mul-Ln-Exp-IsRotation	ok	
+aska-math/Quaternion::Slerp-Squad	ok	
+aska-math/Random	FAIL	random op 0 seed 6843a40d: InitRandom state differ
+aska-math/Vector::ApplyMatrix	ok	
+aska-math/Vector::ApplyQuaternion	ok	
+aska-math/estimate-and-minmax-instructions	ok	
+aska-math/hand-written-hooks	ok	
+aska-math/readable	FAIL	_ZN4Aska6Vector17IsInsideWithAngleEPKS0_f: case 1: mismatch at float -1 (guest 00000000 native 00000000) ret 1/0
+aska-math/transcribed	TIMEOUT	
+aska-math/zz-bench-trap	ok	
+aska_memory/carve-boundaries	ok	
+aska_memory/concurrent	ok	
+aska_memory/fixed-container	ok	
+aska_memory/fixed-pools	ok	
+aska_memory/header-helpers	ok	
+aska_memory/heap-ops-odd	ok	
+aska_memory/heap-ops-small	ok	
+aska_memory/notify	ok	
+ason/deserialize-assets	FAIL	only 2 .msgp files found
+ason/deserialize-synthetic	ok	
+ason/memory	FAIL	only 2 .msgp files found
+ason/pack	ok	
+ason/serialize-lookup	FAIL	only 2 .msgp files found
+audio/askaogg-corrupt	ok	
+audio/askaogg-pcm-host	ok	
+audio/askaogg-stream	ok	
+audio/csoundmanager-frame	ok	
+audio/opensl-queue-drains	ok	
+audio/sequencer-notes	ok	
+audio/signal-lists	ok	
+audio/signal-notify	ok	
+audio/slvoice-controls	ok	
+audio/slvoice-submit-ogg	ok	
+audio/soundmanager-bookkeeping	ok	
+audio/soundmanager-lists	ok	
+audio/soundobject	ok	
+battle-factor/check-priority	ok	
+battle-factor/check-target-type	ok	
+battle-factor/checkseed	FAIL	AddDamageUp trial 38: call logs differ (2 vs 2 calls)
+battle-factor/destructors	ok	
+battle-factor/factory-all-seeds	ok	
+battle-factor/manager-lists	ok	
+battle-factor/model-getparam	ok	
+battle-factor/onprogress	ok	
+battle-factor/setparam	ok	
+battle-factor/type-ids	ok	
+battle-glue/party-characters	FAIL	_ZN13CPartyManager18OnReleaseCollisionEjN9Parameter9eAttackIDEi case 0: call 0: guest gDoAssert(713c5f94ae91,
+battle-glue/party-check-alive	FAIL	_ZNK13CPartyManager10CheckAliveERiS0_ case 0: call 0: guest gDoAssert(713c5f94ae91,23,713c5f94af21) / native
+battle-glue/party-choice-target	CRASH	
+battle-glue/party-events	CRASH	
+battle-glue/party-progress	CRASH	
+battle-glue/party-progress-params	ok	
+battle-glue/party-queries	FAIL	_ZNK13CPartyManager12GetCharacterEi case 2: call 0: guest gDoAssert(713c5f94ae91,23,713c5f94af21) / native gDoAs
+battle-glue/stage-progress	CRASH	
+battle-glue/stage-small	FAIL	_ZNK13CStageManager21GetAIAppointMovePointEj case 0 (state 3046131852): call 0: guest gDoAssert(755a3f96d610,507,7
+battle-ui/arena-camera	ok	
+battle-ui/nowloading	ok	
+battle-ui/ui-manager	ok	
+battle/actor-behavior-queue-resist	ok	
+battle/actor-character	FAIL	CeilingHeight case 0: call logs differ (4 vs 4 calls)
+battle/actor-initialized	FAIL	IsInitialized case 0: call logs differ (5 vs 5 calls)
+battle/actor-offset-color	FAIL	CalcCharacterOffsetColor case 0: call logs differ (3 vs 3 calls)
+battle/actor-sphere-list	FAIL	IsSceneObjectSphereList case 1: call logs differ (9 vs 9 calls)
+battle/actors	FAIL	_ZN19ICalculateParameter6DamageERK16CCharacterObjectRKN24IAttackCollisionCallback23CallbackArgument_DamageE case 0: random s
+battle/ai-target	FAIL	_ZN16CAITargetManager13OnStartBattleEv: call 0: guest gDoAssert(70387b94ae91,23,70387b94af21) / native gDoAssert(70387b95
+battle/attack-data-id	ok	
+battle/attack-dispatch	FAIL	CreateBullet case 0: calls differ at #4
+battle/bullet-args	FAIL	CreateBulletArgs case 16: calls differ
+battle/calc-bp	CRASH	
+battle/calc-damage	FAIL	_ZN19ICalculateParameter10CalcDamageEjfffffbf type 0 ign 0 (5.1, 108, -1, 1436, 3.6, 0.6): guest 44c80f66 (1600.48) nat
+battle/chardata	FAIL	_ZN14CCharacterData14ResetStunCountEb: calls differ
+battle/charobj-attack	FAIL	_ZN16CCharacterObject5UseAPEfb case 19: call logs differ (12 vs 12 calls)
+battle/charobj-checksignal	FAIL	_ZN16CCharacterObject11CheckSignalEPKcN9Parameter9eAttackIDEjfP14CSignalCheckerjj case 0: call logs differ (50 
+battle/charobj-misc	CRASH	
+battle/charobj-postprogress	FAIL	_ZN16CCharacterObject12PostProgressEv case 1: call logs differ (15 vs 15 calls)
+battle/charobj-preprogress	FAIL	_ZN16CCharacterObject11PreProgressEv case 1: call logs differ (19 vs 19 calls)
+battle/charobj-progress	FAIL	_ZN16CCharacterObject8ProgressEv case 3: call logs differ (4 vs 4 calls)
+battle/charobj-seed	FAIL	_ZN16CCharacterObject19UpdateSeedConditionEv case 0: call logs differ (91 vs 91 calls)
+battle/charobj-signal	CRASH	
+battle/charobj-small	FAIL	_ZNK16CCharacterObject18IsControlCharacterEv case 0: call logs differ (2 vs 2 calls)
+battle/charobj-small2	FAIL	_ZN16CCharacterObject11StartAttackEN9Parameter9eAttackIDEj case 2: call logs differ (3 vs 3 calls)
+battle/charobj-timers	FAIL	_ZN16CCharacterObject8UpdateAPEf case 27: call logs differ (5 vs 5 calls)
+battle/charobj-visibility	FAIL	_ZN16CCharacterObject19SignalEffectVisibleEb case 0: call logs differ (9 vs 9 calls)
+battle/check-se-que	FAIL	CheckSeQue(79999): guest 7685fcd56d43/10100000003e7 native 7685fcd5fb13/10100000003e7
+battle/damage-object	FAIL	_ZN17CBaseDamageObjectD2Ev case 1: calls differ
+battle/damage-object-attack-signal	FAIL	StartAttackSignal case 0: calls differ at #0 of 2/2
+battle/damage-object-progress	FAIL	Progress case 1: calls differ at #1 of 32/32
+battle/damage-object-shapes	FAIL	_ZN17CBaseDamageObject24SetCommonAttackCollisionERK35AttackCollisionElement_BaseArgumentRKN9Framework7CMatrixE
+battle/damage-object-start	FAIL	Start case 0: calls differ at #1 of 18/18
+battle/delete-attack-object	FAIL	DeleteAttackObject case 0: calls differ (28 / 28)
+battle/direct-damage	FAIL	DirectDamage case 1: calls differ at #0 of 10/10
+battle/file-names	ok	
+battle/fix-weapon-scale	ok	
+battle/hud	FAIL	_ZNK7CBattle19IsEnableOrderButtonEv: call 0: guest gDoAssert(713c5f94ae91,23,713c5f94af21) / native gDoAssert(713c5f953c55,23,7
+battle/load-wrappers	ok	
+battle/log-model	ok	
+battle/manager-accessors	FAIL	_ZN14CBattleManager12AddKillCountEi: call 1: guest gDoAssert(780b18d4ae91,23,780b18d4af21) / native gDoAssert(780
+battle/manager-counters	FAIL	_ZN14CBattleManager13SetHitCounterEifb: call 1: guest gDoAssert(780b18d4ae91,23,780b18d4af21) / native gDoAssert(7
+battle/manager-progress	CRASH	
+battle/manager-results	FAIL	_ZN14CBattleManager17CheckBattleResultEv: call 0: guest gDoAssert(713c5f94ae91,23,713c5f94af21) / native gDoAssert(
+battle/manager-start	CRASH	
+battle/order-gauge	FAIL	_ZNK18COrderGaugeManager8GetPointEv: call 0: guest gDoAssert(70387b94ae91,23,70387b94af21) / native gDoAssert(70387b953
+battle/person-resource-names	ok	
+battle/person-status-info	ok	
+battle/random	FAIL	_ZN6detail10InitRandomEj init: random state differs
+battle/role-to-assist	ok	
+battle/rush-combo-manager	FAIL	_ZNK17CRushComboManager19GetControlCharacterEv: call 0: guest gDoAssert(70387b94ae91,23,70387b94af21) / native g
+battle/split-node-name	ok	
+battle/utility-pure	ok	
+battle/voice	FAIL	_ZN14CBattleUtility17GetVoiceParameterEj(2218271, switch 456218060): guest [0/22/voice_cp0102_3] native [0/22/voice_cm115L]
+camera-filter/base	ok	
+camera-filter/monotone-matrix	FAIL	MonotoneFilter::MakeMatrix differs (case 0)
+cdn/adld-reencrypt-3.7.0	ok	
+cdn/adld-roundtrip	ok	
+cdn/bundle-layout	ok	
+cdn/login-paths	ok	
+cdn/served-master	ok	
+cdn/tree	ok	
+cdn/version-bin-roundtrip	ok	
+cocos/actions	ok	
+cocos/anim-in-frame	FAIL	ApplyNormal iter 0: node 60 (CCocosImage 'square_enix') byte +0xbc: 00 vs 87
+cocos/atlas-helpers-in-frame	ok	
+cocos/dictionary-helper	CRASH	
+cocos/drawself-in-frame	CRASH	
+cocos/easing	FAIL	float type -3 dur 0x1.c4p+6 el 0x1.de0904p+6 a -0x1.9edb6ep+5 b 0x1.34924ap+4: 0x1.348e0cp+4 (419a4706) vs inf (7f800000)
+cocos/edits	ok	
+cocos/event-ui-in-frame	ok	
+cocos/flags-live	ok	
+cocos/flags-synthetic	ok	
+cocos/gui-reader-in-frame	FAIL	no layout was loaded
+cocos/keyframes-in-frame	FAIL	int key frame: node 64 (CCocosImage 'logo_tri') byte +0xbc: 00 vs 87
+cocos/keyframes2-in-frame	ok	
+cocos/layout-in-frame	ok	
+cocos/matrix-in-frame	FAIL	GetLocalMatrix(false) iter 2: node 5 (CCocosLabel 'Text_1') byte +0x130: d1 vs 00
+cocos/node-touch-in-frame	FAIL	no node touch listeners
+cocos/particles-in-frame	CRASH	
+cocos/predraw-in-frame	ok	
+cocos/priority-in-frame	FAIL	CalcCocosDrawPriority 'UI/dialog1.csf' iter 0: node 1 (CCocosPanel 'pop1') byte +0xc8: d9 vs 72
+cocos/renderstate-in-frame	ok	
+cocos/scene-in-frame	ok	
+cocos/search-live	ok	
+cocos/search-renderer-in-frame	CRASH	
+cocos/search-synthetic	ok	
+cocos/setters-in-frame	ok	
+cocos/touch-dispatch-in-frame	ok	
+cocos/views-in-frame	ok	
+cocos/zz-bench-nested-guest-call	ok	
+cocos/zz-bench-scene-progress	ok	
+containers/a2c-array-fill	CRASH	
+containers/a2c-camera	CRASH	
+containers/a2c-csv	CRASH	
+containers/a2c-poolfast	CRASH	
+containers/a2c-time-element	ok	
+containers/app-proxy	ok	
+containers/global	FAIL	_ZN4Aska6Global15MakeStoragePathEPcjPKc mismatch
+containers/node-keys	ok	
+containers/object-container	ok	
+containers/playcore	CRASH	
+containers/pool	ok	
+containers/readable-array	CRASH	
+containers/readable-hashmap	CRASH	
+containers/readable-pool	CRASH	
+containers/readable-run-low	CRASH	
+containers/tree	ok	
+core/guest-call-direct	ok	
+core/guest-call-threads	ok	
+core/zz-bench-transitions	ok	
+cpu/tbi-tagged-data-addresses	ok	
+cryption/chacha20	ok	
+crypto/ADLD-decrypt-real-assets	FAIL	asset builtin_data/Parameter/Home3D/home3d_cc0001_b01a.msgp missing
+crypto/CEncryptAES128	ok	
+debugwin/create-window	FAIL	round 0 create 0 (tab): object +0x30 differs
+debugwin/log-console	ok	
+debugwin/log-window	ok	
+debugwin/manager	FAIL	round 10 op 20: calls
+debugwin/message-queue	ok	
+debugwin/primitives	FAIL	case 1 (grid): call 3
+debugwin/script-basics	ok	
+debugwin/tab-window	FAIL	step 3 op 3: calls
+debugwin/window-base	FAIL	constructed objects differ
+debugwin/window-frame	ok	
+dynamics/handler-adm-run	CRASH	
+dynamics/handler-command-notify	ok	
+dynamics/handler-dpg-run	ok	
+dynamics/handler-flush-notify	CRASH	
+dynamics/handler-manager-run	CRASH	
+dynamics/handler-wait	CRASH	
+dynamics/ik-set-max-joint	CRASH	
+dynamics/leaf-24226dc	ok	
+dynamics/live	ok	
+dynamics/readable-collision-and-constraint	CRASH	
+dynamics/readable-collision-response	ok	
+dynamics/readable-ik-bend	CRASH	
+dynamics/readable-ik-bend-rotation	ok	
+dynamics/readable-ik-joint-velocity	ok	
+dynamics/readable-joint-prepare-calc	CRASH	
+dynamics/readable-preprocess	CRASH	
+dynamics/readable-simulate-main	CRASH	
+dynamics/readable-solve-link	ok	
+dynamics/readable-standard-ik	CRASH	
+event/GetString	FAIL	GetString(2.14329e+09): 0x7b47b0f42011 vs 0x7b47b0f44091
+event/handlers-fuzz	FAIL	handler 66 #12: call logs differ at #3: guest 'Allocate(24,135547839674228,32)' vs native 'Allocate(24,135547839710532
+event/ifjump	ok	
+event/interpreter-fuzz	FAIL	11CalcCommandEv #8: call logs differ at #9: guest 'Allocate(24,135547839674228,32)' vs native 'Allocate(24,13554783
+event/objects	ok	
+event/scripts-lockstep	ok	
+event/sepalate-data	ok	
+event/text-and-backlog	FAIL	text #4 Run: call logs differ at #1: guest 'Base::StopSE(135526617200736,3;500/43f9ffff)' vs native 'Base::StopSE(1
+fakeapi/lambdas	ok	
+fakeapi/lifetime	ok	
+fakeapi/progress	ok	
+fakeapi/requests	ok	
+fakeapi/trivial	ok	
+frontend/movie-ends-without-audio-device	ok	
+gacha/dialogs	CRASH	
+gacha/is-enable-hash	FAIL	IsEnableHash v0: bytes differ at hashbuf+0
+gacha/manager	FAIL	_ZN13CGachaManager11StartEffectEjb v0: calls
+gacha/manager-init	ok	
+gacha/screen	FAIL	_ZN6CGacha16ChangeRequestTabEN20GachaStaticParameter7TabTypeE v0: calls
+hash/CHash32	ok	
+hle/etc2-vs-host	ok	
+hle/map-overwrite	ok	
+home/camera	ok	
+home/state-setters	ok	
+infobase/containers	CRASH	
+infobase/gen-table	ok	
+infobase/keys	CRASH	
+infobase/map-array	CRASH	
+infobase/real-bodies	FAIL	no container reached
+input/cpad-frame	ok	
+input/ctouchpanel-progress	CRASH	
+input/pad-status	ok	
+input/touch-device	ok	
+input/touch-gestures	ok	
+input/touch-random	ok	
+jni/references-low-byte	ok	
+jpeg/corrupt	ok	
+jpeg/progressive	ok	
+jpeg/real-assets	FAIL	no JPEG assets found
+jpeg/synthetic	ok	
+libcxx/cityhash	ok	
+libcxx/cxa_guard	ok	
+libcxx/dynamic_cast	ok	
+libcxx/function-swap	ok	
+libcxx/locale	ok	
+libcxx/map-assign-multi	ok	
+libcxx/map-emplace-chash32	ok	
+libcxx/map-emplace-destroy	ok	
+libcxx/map-home3d-emplace	ok	
+libcxx/map-string-destroy	ok	
+libcxx/next_prime	ok	
+libcxx/shared_count	ok	
+libcxx/sort-u32	ok	
+libcxx/string-cstl	ok	
+libcxx/string-cstl-operator+	ok	
+libcxx/string-std	ok	
+libcxx/string-std-operator+	ok	
+libcxx/tree	ok	
+libcxx/unordered-map-rehash	ok	
+libcxx/unordered-map-string-find	ok	
+libcxx/vector-slow-path	ok	
+libcxx/vector-string-cstl	ok	
+libcxx/vector-u32-assign	ok	
+libcxx/wstring	ok	
+mainloop/copy-texture-idle	ok	
+mainloop/fiber-kernel	ok	
+mainloop/main-task-run-frame	ok	
+mainloop/notifier	ok	
+mainloop/scene-container	CRASH	
+models/a2c-instructions	ok	
+models/a2c-memory-instructions	ok	
+models/bench-gcall	ok	
+models/constructors	CRASH	
+models/controllers-live	ok	
+models/controllers-synthetic	CRASH	
+models/hier-walk-live	ok	
+models/hierarchy-live	FAIL	_ZN4Aska18HierarchicalObject10MakeMatrixEv: no symbol / body
+models/readable-aof	ok	
+models/readable-aof-prepare	CRASH	
+models/readable-aof-render	CRASH	
+models/readable-blend	ok	
+models/readable-controllers	CRASH	
+models/readable-functor	CRASH	
+models/readable-hier-walk	ok	
+models/readable-hierarchy	ok	
+models/readable-iterator	CRASH	
+models/readable-light-context	CRASH	
+models/readable-render-context	CRASH	
+models/readable-skin	CRASH	
+models/skin-live	ok	
+models/skin-simple-live	ok	
+objbase/readable-blend	ok	
+objbase/readable-blend-small	ok	
+objbase/readable-model	ok	
+objbase/readable-model-object	CRASH	
+objbase/readable-model-small	ok	
+objbase/readable-movable	CRASH	
+objbase/readable-thing-behavior	ok	
+objbase/simple	ok	
+objmgr/add-painting-list-candidates	ok	
+objmgr/dispatch	ok	
+objmgr/live-culling	CRASH	
+objmgr/live-painting-list	ok	
+objmgr/make-painting-list	ok	
+objmgr/make-painting-list-post	ok	
+objmgr/occlusion-culling	CRASH	
+objmgr/on-paint	CRASH	
+objmgr/pipeline	ok	
+objmgr/prerender-versatile	ok	
+objmgr/render-info-conditions	ok	
+objmgr/tom-quicksort	ok	
+offline/assetpack-download	CRASH	
+offline/payment-progress	ok	
+oracle/differs-GetFavorabilityLevel	ok	
+oracle/differs-favor-bonus-param	ok	
+oracle/identical-CParameterUtility	ok	
+oracle/identical-CUIUtility	ok	
+oracle/image	ok	
+param/elements/layout	ok	
+param/elements/lifecycle	ok	
+param/loader/category-miss	ok	
+param/loader/connector	ok	
+param/loader/count-keys	ok	
+param/loader/deserialize	ok	
+param/loader/deserialize-parameter	ok	
+param/loader/from-hash-miss	ok	
+param/loader/from-id-list	ok	
+param/loader/insert-cache	ok	
+param/loader/master-cache	ok	
+param/loader/message	ok	
+param/loader/query-map	ok	
+param/loader/query-miss	ok	
+param/loader/release-thunk	ok	
+param/loader/serialize-edge	ok	
+param/loader/serialize-tables	ok	
+param/loader/store-all-cache-size	ok	
+params/CInteroperateParameter-lookups	ok	
+params/CMasterCache	ok	
+params/CParameterElementBase-AddProperty	ok	
+params/CParameterElementBase-Deserialize	ok	
+params/CParameterElementBase-Deserialize-real-rows	ok	
+params/CParameterParser-GetParserValue	ok	
+params/CParameterProperty-Deserialize	ok	
+params/CParameterUI-accessors	FAIL	_ZNK12CParameterUI10pParseNameEv(d56ac02b7a9d1955, 10e): guest 7aeeeb9cee38 native 7aeeeb9d7b38
+params/CParameterUtility-awaken-achievements	ok	
+params/CParameterUtility-feature-flags	ok	
+params/CParameterUtility-finders	ok	
+params/CParameterUtility-globals	FAIL	FindGlobalStringWithKey(service_stop_day): '0/0/0:' vs '0/0/19:2021/06/24 14:30:00'
+params/CParameterUtility-persons-tutorial-misc	ok	
+params/CParameterUtility-player-state	ok	
+params/Category-pParameterFromHash-by-name	ok	
+params/MakeCacheKey	ok	
+params/ParameterByQuery-global	ok	
+params/PropertyBase-CryptString	ok	
+params/PropertyBase-NameHash-CompareName	ok	
+params/Simple-ClearCache-ReleaseParameter-Initialize	ok	
+params/Simple-Deserialize	ok	
+params/manager-accessors	ok	
+params/pParameterFromHash-all-records	ok	
+params/tCharaData-getters	FAIL	role _ZNK17CParameterUtility10tCharaData17AccSilhouetteFileEv(0): guest 7aeeeb9cfb54 native 7aeeeb9d8854
+params/tItemData-tSkillData-getters	ok	
+params/tMessage-GetMessage-GetSystemMessage	ok	
+particles/live	ok	
+particles/readable-emit	CRASH	
+particles/readable-gather	ok	
+particles/readable-life	CRASH	
+particles/readable-procedure	ok	
+particles/readable-simulate	FAIL	MCL rep 3: emitter +0x288 transcription 0a readable 4c
+particles/readable-table	ok	
+particles/readable-texture	ok	
+particles/readable-traverse	ok	
+particles/render-small	CRASH	
+particles/setup-units	CRASH	
+perf-counter/timing	CRASH	
+render-a2c/bloom-blend-rates	FAIL	#3: +0x40: guest c5 native eb
+render-a2c/buffer-handlers	CRASH	
+render-a2c/live	CRASH	
+render-a2c/readable-bloom	CRASH	
+render-a2c/readable-shadow	ok	
+render-a2c/thread-producers	ok	
+render-context/live	ok	
+render-context/synthetic	FAIL	SetShaderConstant_Pixel: call 10 differs: guest PSConst(44, 5d4ae4fa1cd0, 5) #5829a2dde46818a9 / native PSConst(4
+render-manager/delete-lists	ok	
+render-manager/mark-for-delete	ok	
+render-manager/performance-counter	ok	
+render-meshgen/synthetic	ok	
+render-pass/live	ok	
+render-pass/synthetic-batch-server	ok	
+render-pass/synthetic-manager	ok	
+render-pass/synthetic-shader-state	ok	
+render-pass/synthetic-update-texture	ok	
+render-swap/begin-render	CRASH	
+render-swap/swap-buffers	ok	
+render-target/live	FAIL	RenderTargetManagerGL::ChangeTarget        300 live calls compared, 150 mismatches
+render-target/synthetic	FAIL	SetScreenShaderConst: region 0 differs at +0x68: guest 00 native 72
+render-thread/synthetic	ok	
+render/batch-constants	ok	
+render/context-paint	FAIL	0:OnPaint: state differs (region 10 +0x64: guest 00 native 56)
+render/draw	FAIL	0:DrawIndexedPrimitive: GL call 15 differs: guest glTexParameteri(0x806f, 0x2803, 33071) / native glTexParameteri(0x806f, 0x28
+render/framebuffers	FAIL	7:SetClearRenderTargetData: GL call 0 differs: guest glClearColor(0.501961f/3f008081, 0.501961f/3f008081, 0.501961f/3f
+render/program-lookup	ok	
+render/render-state	FAIL	6:Apply: state differs (region 0 +0x300: guest 05 native 04)
+render/shaders	ok	
+render/spooky-hash	ok	
+render/state-setters	FAIL	5:SetAlphaBlendFunction: state differs (region 0 +0x344: guest 02 native 06)
+render/textures	ok	
+render/uniforms	ok	
+render/update-render-state	FAIL	1:LastMinute_Textures: GL call 2 differs: guest glTexParameteri(0xde1, 0x2803, 33648) / native glTexParameteri(
+restore/character-sort	ok	
+restore/favor-achievement-level	ok	
+restore/favor-chara	ok	
+restore/favor-sort-filter	ok	
+restore/favor-utility	ok	
+restore/home-picturebook-time	ok	
+restore/image	ok	
+restore/link	ok	
+restore/login-constructor	ok	
+restore/mission-menu-next-phase-handover	ok	
+restore/sort-condition	ok	
+restore/tutorial-queries	ok	
+screen/a2c-live	ok	
+screen/chara-list	CRASH	
+screen/common	CRASH	
+screen/home-helpers	FAIL	_ZN5CHome19UpdateSphereStaminaEv round 0: calls
+screen/home-voice-helpers	FAIL	_ZN21CHomeModelViewManager9StopVoiceEv round 2
+screen/is-play-animation	ok	
+screen/other-menu-progress	FAIL	state 0 variant 0: calls
+screen/phase-manager	FAIL	_ZN6CPhase6SwitchEj v 0: region 0 differs
+screen/phase-menus	ok	
+screen/settings-progress	ok	
+screen/settings-sliders	FAIL	_ZN18CSystemSettingMenu20SetProgressBGMSliderEiPN9Framework5Cocos11CCocosSceneE(-3) shape 0: kvs 4/1 vs 4/0
+screen/stamina-queries	CRASH	
+screen/stamina-ui	FAIL	UpdateStamina v 0: NowStamina(0); GetAtlasLabel(root+0,129925440523179); OneStaminaRemainSec(0); GetSystemMessage(self+1
+screen/title-helpers	FAIL	_ZN6CTitle14PlayTapToStartEv round 0
+screen/title-progress	ok	
+screen/ui-scene-helpers	FAIL	PlayStarBackGroundAnimation(5ce4e000, 0.000000)
+screen/ui-sound-settings	FAIL	_ZN10CUIUtility12PlaySystemSeEib(1) v0: kvs 0/0 vs 0/0, statics -1,-1,0 vs -1,-1,0
+screen/uiutil-footer-badge	ok	
+screen/uiutil-play-bgm	ok	
+screen/uiutil-scene-title	ok	
+script/AddString-and-paths	ok	
+script/InitializeCommandList-all-scripts	FAIL	only 0 script files tested
+script/InitializeCommandList-synthetic	ok	
+server/add-exp	ok	
+server/campaign-splice	ok	
+server/campaign-unlock-chain	ok	
+server/client-status	ok	
+server/deepspace-expedition	ok	
+server/deepspace-extras	ok	
+server/deepspace-rules	ok	
+server/economy-apis	ok	
+server/enable-events-areas	ok	
+server/enable-events-exchange-shops	ok	
+server/enable-events-gachas	ok	
+server/enable-events-keywords	ok	
+server/enable-events-start-coins	ok	
+server/event-asset-gating	ok	
+server/event-asset-lookup	ok	
+server/event-campaign-info	ok	
+server/event-clear-chain	ok	
+server/event-exchange-shop	ok	
+server/event-favor-drop	ok	
+server/event-lists	ok	
+server/event-now	ok	
+server/event-npc-helper	ok	
+server/event-npc-helper-status	ok	
+server/event-player-detail	ok	
+server/event-ranking	ok	
+server/event-shift	ok	
+server/event-weekly	ok	
+server/favor-achievements	ok	
+server/favor-rules	ok	
+server/follow-rental	ok	
+server/follow-support	ok	
+server/friendship-campaign	ok	
+server/gacha-pools	ok	
+server/gacha-stepup-box	ok	
+server/gear-apis	ok	
+server/gear-barney-chance	ok	
+server/gear-rules	ok	
+server/growth-apis	ok	
+server/growth-rules	ok	
+server/home-footer	ok	
+server/kvs-roundtrip	ok	
+server/level-interpolation	ok	
+server/mission-rules	ok	
+server/mission-surprise-campaign-evaluation	ok	
+server/mission-unlock-refusal	ok	
+server/msgpack	ok	
+server/no-setenv-state	ok	
+server/notice	ok	
+server/npc-status-master	FAIL	master_mission_npc 409829631 hp: server 5158, client 4728
+server/npc-status-tutorial	ok	
+server/options	ok	
+server/premium-favor-bonus	ok	
+server/present-texts	ok	
+server/session-invariants	ok	
+server/sphere211-achievements	ok	
+server/sphere211-dive	ok	
+server/sphere211-items	ok	
+server/sphere211-lottery	ok	
+server/sphere211-rental	ok	
+server/sphere211-season	ok	
+server/sphere211-stamina	ok	
+server/stamina	ok	
+server/standin-assets	ok	
+server/subscription	ok	
+server/titles	ok	
+server/tower-banner	ok	
+server/tower-client-master	ok	
+server/tower-lists	ok	
+server/tutorial-npc-status	ok	
+server/weighted-pick	ok	
+server/worldboss-time-bonus	ok	
+server/worldboss-waves	ok	
+shader-compression/lzword-dic	ok	
+shader-compression/tree	ok	
+slz/assets-v5	FAIL	only 3 SLZ v5 files
+slz/assets-v7	FAIL	only 4 SLZ v7 files
+slz/chunks	FAIL	only 1 SLZ v5 files
+slz/containers	CRASH	
+slz/sle	FAIL	only 1 SLZ v5 files
+smd/multi	FAIL	state differs after PostSyncMessages(Argument) (step 1)
+smd/send-stress	ok	
+smd/variants	ok	
+sqlite/query-results-identical	ok	
+sync/bench-event	ok	
+sync/cmutex	ok	
+sync/cmutex-stress	ok	
+sync/dispatcher	ok	
+sync/dispatcher-resume	ok	
+sync/dispatcher-stress	ok	
+sync/event	ok	
+sync/event-stress	ok	
+sync/event-timed-wait	ok	
+sync/om-job-dispatcher	ok	
+sync/om-worker-change-mode	ok	
+sync/semaphore	ok	
+taskmgr/kick	CRASH	
+taskmgr/make-task-list	ok	
+taskmgr/ops	CRASH	
+taskmgr/prealloc	CRASH	
+text/StringDB-Get	ok	
+time/AToF	ok	
+time/CompTime-Ap	FAIL	_ZN12CTimeUtility14MaxApRemainSecEiiill(24,212,591,1790785394,0): 20413 vs 0
+time/IsEnableTime	ok	
+time/NowTime-NowDate	FAIL	NowTime mismatch
+time/str2time_t	ok	
+ui/badge-button	ok	
+ui/campaigns	FAIL	IsCampaignAny
+ui/chara-frame-params	FAIL	_ZN10CUIUtility20SetCharacterOneParamEPN9Framework5Cocos10CCocosNodeEPKcjjjjj: node 8 byte +276: 20 vs c8
+ui/chara-list-small	ok	
+ui/file-names	FAIL	_ZN10CUIUtility20GetSkillIconFileNameERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CST
+ui/knob-sizes	ok	
+ui/levels	ok	
+ui/master	ok	
+ui/nodes	ok	
+ui/settings-getters	CRASH	
+ui/settings-migration	FAIL	_ZN10CUIUtility21IsMenuVoiceCoroEnableEv a-1 b-1 o-1: 1/-932 vs 1/1
+ui/settings-misc	ok	
+ui/settings-setters	FAIL	_ZN10CUIUtility12SetFrameRateENS_13FrameRateTypeEb(0, 0) pre -1: len 4/4 value 0/0 vsync 1e/30305f73
+ui/strings	FAIL	_ZN10CUIUtility25GetSkillRangeIconFileNameEj(-3): 'S cap=0 len=0:' vs 'L cap=41 len=61:4Aska18TPoolAtomicDynamicINS_5Yayoi12Net
+ui/system-message	ok	
+ui/text	FAIL	_ZN10CUIUtility21SetFamiliarFrameImageEPN9Framework5Cocos10CCocosNodeEjb op 13: calls
+ui/value-types	FAIL	GetScenePriority(-3)
+ui/within-day	FAIL	IsWithinDayEnableEmpty('2020-10-15 15:00:00', '2022-03-24 13:59:59')
+vorbis/corrupt-and-chunked	ok	
+vorbis/decode-real-bgm	ok	
+vorbis/loop-seek	ok	
+vorbis/oggpack-and-pages	ok	
+wire/ason-roundtrip	ok	
+wire/battle-log	ok	
+wire/deco-payload	ok	
+wire/examples	ok	
+wire/reply-roundtrip	ok	
+wire/request-layouts	ok	
+zlib/checksums	ok	
+zlib/deflate-output-identical	ok	
+zlib/guest-deflate-host-inflate	ok	
+zlib/host-deflate-guest-inflate	ok	
+zstd/SLZ7-assets	FAIL	only 0 SLZ v7 samples found
+zstd/damaged	CRASH	
+zstd/version	ok	

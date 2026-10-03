@@ -1,0 +1,18 @@
+# The server's log lines that scripts read (server/PLAN-readability.md 1.12): a refactor keeps them
+# byte-identical. One per line: <fragment of the LOG* format string in server/>  TAB  <regex on a log line>.
+# tools/server_evidence.py checks every fragment is still in the source; tools/server_replay_diff.py
+# compares the matching log lines of two builds exactly (tier 1), the other lines as declared differences.
+request %s (fid %08x):%s	^I/server: request \S+ \(fid
+fid %08x (%s): refused with error %u	refused with error
+MissionEnd mission %u: unlocked %s	MissionEnd mission \d+: unlocked
+MissionEnd mission %u: player exp	MissionEnd mission \d+: player exp
+MissionEnd mission %u drops: surprise %s	MissionEnd mission \d+ drops: surprise
+MissionStart: rental helper %llu (a clone of roster uid %llu) as member 4	MissionStart: rental helper .* as member 4
+MissionStart party member %zu: uid %llu	MissionStart party member \d+: uid
+MissionStart NPC %u: master-data model %s (attack %g) [hp %g atk %g int %g def %g hit %g grd %g]	MissionStart NPC
+%s %u (%s): %u draws for %u free + %u paid coins, %u tickets	^I/server: \S*Gacha\S* \d+ \(.*draws for
+GetGachaInData: %d gachas open at %s	GetGachaInData: .* gachas open
+Sphere211MissionEnd: floor %u cell %u mission %u cleared, streak %u, %u boxes	Sphere211MissionEnd: .*streak
+tower: %d areas, %d missions listed	server: tower: \d+ areas
+seeding from %s (%zu keys)	seeding from
+DeepSpaceActiveList: %zu areas, %zu ships out, %zu back, %u ships (%u by the pass)	^I/server: Deep

@@ -1,0 +1,197 @@
+# Request layouts measured by the `wire/request-layouts` selftest (port/src/native/api/wire_test.cpp)
+# on the client's GameProtocoledData::Set<Name> serializers. Regenerate: SOA_WIRE_DUMP=FILE soa --selftest wire/request-layouts
+# name fid plaintext-bytes tokens (hdr = RequestHeader 16 bytes; str[N] = fixed N-byte field;
+#   blob = u32 len + bytes; vec64/vec32 = u32 n + n elements; dev = u32 DeviceType)
+BoxGacha 5be25d4b 24 hdr u32 u32
+CoinList d859bb89 16 hdr
+LockItem 88f29383 44 hdr vec64
+SellGear 1700186d 44 hdr vec64
+SellItem 00ee45f7 44 hdr vec64
+SetDeity 1d6647c0 56 hdr u64 u64 u64 u64 u64
+SetTitle 4332363c 20 hdr u32
+Blacklist 36ed89b2 16 hdr
+DebugGear 45ebe6cf 64 hdr u64 u32 vec64 u32 u32
+EquipAuto 7827ff6a 24 hdr u64
+FollowAdd 2559b5a1 20 hdr u32
+GachaOnce 992ccbe5 53 hdr u32 str[33]
+GetConfig 8fcedcac 16 hdr
+GetPlayer 9a056905 16 hdr
+SaleGacha b164b4c5 53 hdr u32 str[33]
+SetAssist 741e0072 32 hdr u64 u64
+AttachGear bce2e7f2 36 hdr u64 u64 u32
+ChangeRole 720e2bac 28 hdr u64 u32
+DebugGacha e774b925 25 hdr u32 u32 u8
+EquipSkill 4656d729 36 hdr u64 u32 u32 u32
+ExItemShop 33d09fb7 20 hdr u32
+FollowList 9bddc9d7 16 hdr
+GetPresent 4072d7e1 44 hdr vec64
+MissionEnd 8312a64c 33 hdr u32 blob u32
+RemoveGear 33da88ce 24 hdr u64
+UnlockItem 2f9569e5 44 hdr vec64
+UpdateHome 46e0807c 24 hdr u64
+UpdateName e8e5c4da 207 hdr str[191]
+UpdateView a2eb69ba 25 hdr u8 u64
+DebugGetFol d236524d 20 hdr u32
+DepositItem c4cd3b1a 44 hdr vec64
+EquipWeapon 1f3c9eca 32 hdr u64 u64
+GachaTicket ee11c3d3 57 hdr u32 u32 str[33]
+GetBoxGacha af250236 16 hdr
+GetDecoInfo 33015ed5 16 hdr
+GetGearInfo 388092cc 16 hdr
+ItemCompose 02a5cd1d 52 hdr u64 vec64
+ItemGradeUp 8952aa02 52 hdr u64 vec64
+MissionLose 863bb1ec 16 hdr
+MissionTalk 816dc8b4 29 hdr s32 u32 u32 u8 range-checked
+PresentList fa782a45 16 hdr
+ResetConfig 685d66f3 16 hdr
+SimpleLogin 447fafb8 71 hdr str[36] blob blob u8
+StaminaHeal 737fac92 16 hdr
+StartBridge d4053e85 16 hdr
+UpdateParty ef02dd83 44 hdr u32 u64 u64 u64 range-checked
+UseHealItem baeea1ba 24 hdr u32 u32 range-checked
+BlacklistAdd 3ba507e7 20 hdr u32
+ChangeMascot d1bcebee 20 hdr u32
+ClearNewGear b0092669 44 hdr vec64
+ClearNewItem 22b15407 44 hdr vec64
+CreatePlayer e3e463ad 279 hdr str[36] str[191] dev str[32]
+DebugGetCoin a6730b41 20 hdr u32
+DebugGetItem a74f38cf 16 hdr
+FollowRemove 408f02f6 20 hdr u32
+GenerateGear af1c5d33 56 hdr u64 u32 vec64
+GetGachaRate d6bcb49d 53 hdr u32 str[33]
+ItemShopList b04c111c 16 hdr
+MissionStart b7c62bc2 52 hdr s32 u32 u32 u64 u32 u64 u32 range-checked
+NeighborList 451d30bf 24 hdr f32 f32
+NoLoginStart 95804837 36 hdr str[16] dev
+ResetMastery 614fa7ea 32 hdr u64 u64
+SearchPlayer 5e598152 207 hdr str[191]
+SendErrorLog 0465aa57 144 hdr str[128]
+SetStampSlot 58123949 32 hdr vec32
+TrainMastery bb0e7ef9 39 hdr u64 u64 u8 u32 u8 u8
+UpdateConfig f82ca7ca 215 hdr u32 str[191] u32
+UseFavorItem 88af959e 28 hdr u32 u32 u32 range-checked
+DebugGearDrop ecf973a6 24 hdr u32 u32
+DebugLotDeity cfcf2ca6 49 hdr u32 u8 u32 u64 u64 u64
+DebugTowerMax 22e8e9d7 16 hdr
+GetServerTime 98b03930 16 hdr
+MissionFailed 479604f6 33 hdr s32 u32 blob range-checked
+ResetBoxGacha c292cf48 20 hdr u32
+SaleGachaOnce 2d230806 53 hdr u32 str[33]
+SellStackItem 445ab956 24 hdr u32 u32 range-checked
+UniverseReset 21e2c5f5 24 hdr u64
+UpdateSession ea04f3fd 48 hdr str[32]
+UpdateSupport 3e77af96 24 hdr u64
+BoostCharacter e5a04db6 32 hdr u64 u32 u32 range-checked
+DebugDeepBonus 0a9bbfc6 24 hdr u32 u32
+DebugItemBoost 14e81e78 20 hdr u32
+EndMissionTalk 1d00a78c 29 hdr s32 u32 u8 u32 range-checked
+EquipAccessory 99750e8d 32 hdr u64 u64
+EquipAutoParty 263ff8f5 20 hdr u32
+ExshopExchange 70d0f3ce 24 hdr u32 u32
+GetGachaInData 8e4a88d7 16 hdr
+GetMasteryInfo 45bea005 16 hdr
+GetMissionList 57308f4d 20 hdr s32 range-checked
+GetPlayMission 7c1b7a1b 16 hdr
+GetStorageInfo 06669069 16 hdr
+LocationRegist 49898ba4 24 hdr f32 f32
+MissionRestart 1f96f310 16 hdr
+NeighborRegist 9a57cfc9 24 hdr f32 f32
+UpdatePartySet c119d0d8 25 hdr blob
+UpdateTutorial 1cf2b3d7 24 hdr u64
+AcquireUniverse de9b7104 40 hdr u64 vec32
+BlacklistRemove cde8ce84 20 hdr u32
+LockStorageItem b398671e 44 hdr vec64
+MaterialCompose f9a4ba8c 24 hdr u32 u32
+MissionContinue 755cba3d 57 hdr str[36] dev u8
+ReturnSphere211 83390f3f 16 hdr
+UpdateFollowMax 7c2b82bf 16 hdr
+UpdateGearStock d10e6806 16 hdr
+UpdateItemStock cf39cc5c 16 hdr
+CbtCertification 5f583f50 207 hdr str[191]
+DebugMissionDrop f26ec3f0 24 hdr u32 u32
+DebugOpenMission 717cc46f 16 hdr
+GetSphere211Info 1e03058b 16 hdr
+GetWorldBossInfo 86d6a220 20 hdr u32
+InheritAccessory d9feb3e8 32 hdr u64 u64
+SetCharacterDeco 0747f39c 25 hdr blob
+UpdateFavorByTap e06ec7b3 20 hdr u32
+ClearNewCharacter 36ce009c 44 hdr vec64
+ClearNewStackItem aabac605 32 hdr vec32
+CoinDepositCreate 3850fb96 30 hdr s8 s32 blob
+DebugBarneyChance bd4c143a 20 hdr u32
+DebugCreatePlayer 1145eeb1 20 hdr u32
+DebugDeletePlayer f3274abd 16 hdr
+DebugGetCharacter c49021d4 16 hdr
+GetBirthYearMonth 59a48d41 16 hdr
+UnlockStorageItem b28403c2 44 hdr vec64
+UpdateAwakenLevel 2d714808 28 hdr u64 u32
+AchievementReceive 47e9dee6 24 hdr u64
+AddStatusCharacter 74e09417 32 hdr u64 u32 u32 range-checked
+DebugGachaMutation b5d548e1 25 hdr u32 u32 u8
+DirectItemShopList c367268b 16 hdr
+EvolutionCharacter 990921b6 24 hdr u64
+ExshopExchangeList 7329eff2 16 hdr
+FavoriteDecoObject 2b486f97 32 hdr vec32
+ReadExpirationInfo dc269365 32 hdr vec32
+Sphere211EquipAuto 9ce7e42e 52 hdr u32 u32 vec64
+StaminaHealByFavor 960546a3 16 hdr
+UpdateRelationship b0ee01e8 80 hdr vec32 vec32 vec32 vec32
+DebugCharacterBoost 9e6b12d6 20 hdr u32
+DeepSpaceActiveList a7a82ef5 16 hdr
+DeepSpaceMissionEnd 140e365b 20 hdr u32
+GetEventRankingInfo 94456167 20 hdr u32
+GetPlayerDetailInfo 626e1e5f 20 hdr u32
+GetWorldMapInfoList 15a9bdbd 20 hdr u32
+LimitBreakCharacter 78972d03 28 hdr u64 u32
+MultiMissionRestart 8c788f39 16 hdr
+Sphere211FloorClear 5187adb1 20 hdr u32
+Sphere211MissionEnd 03f169b2 33 hdr u32 u32 blob
+UpdateKiyakuVersion e5af488c 207 hdr str[191]
+ClearNewEventRanking cb1a5781 32 hdr vec32
+CoinDepositIOSUpdate c5193b15 38 hdr u32 blob blob
+DebugDeepMissionDrop 82c3b9e0 56 hdr u32 u32 u32 vec64
+DebugFavorLoginBonus 4ff23fbb 20 hdr u32
+Home3DAnd2DSwitching a092292c 17 hdr u8
+SellItemsFromStorage 81416fa8 44 hdr vec64
+SendGuideInformation 5cf6a3e9 20 hdr u32
+Sphere211StaminaHeal 3a3ab3ed 16 hdr
+TrainingMissionStart 0a16fd90 32 hdr u32 u32 u64
+UnFavoriteDecoObject 6c67993d 32 hdr vec32
+UpdateBirthYearMonth 0088b260 24 hdr str[8]
+AchievementActiveList d0b25cb6 20 hdr u32
+DebugGradeUpCharacter 6da21fe9 16 hdr
+DeepSpaceMissionStart 63c9927a 52 hdr u32 u32 vec64
+GetOneTimeStorageInfo 074df139 16 hdr
+GetRecentlyPlayedList c5316c8e 16 hdr
+Sphere211MissionStart 04ec9513 60 hdr u32 u32 u64 u64 u64 u64 u32
+AchievementListReceive bbc99ccf 44 hdr vec64
+AchievementReceiveList f43a965d 16 hdr
+DebugSphere211LotAsset c924a6f2 24 hdr u32 u32
+DeepSpaceMissionEndNow 2df0328c 20 hdr u32
+GetSubscriptionHistory e6863aa3 24 hdr u32 u32
+GetUniverseBoardIdList 77c6528c 24 hdr u64
+Sphere211MissionFailed 172f3b5f 33 hdr u32 u32 blob
+Sphere211SelectedFloor f8371209 20 hdr u32
+Sphere211UseRerollItem 19e61236 16 hdr
+CheckEventRankingResult 83809bfb 16 hdr
+CoinDepositAmazonUpdate 0bc7f736 38 hdr u32 blob blob
+GetSphere211RankingInfo 5943ae5c 17 hdr u8
+WithdrawItemFromStorage de86bab0 44 hdr vec64
+CoinDepositAndroidUpdate 089ac659 38 hdr u32 blob blob
+DebugSphere211LotMission 4af4eaf3 28 hdr u32 u32 u32
+Sphere211MissionContinue 5ac657b3 25 hdr u32 u32 u8
+DebugDeepBonusRareMission a523e5c7 56 hdr u32 u32 u32 vec64
+DebugSphere211LotFloorNum 20059792 24 hdr u32 u32
+DebugSphere211TreasureBox dacb9b66 28 hdr u32 u32 u32
+DeepSpaceAutoMemberSelect ed9aae28 24 hdr u32 u32
+ReceiveEventRankingResult 4700c6f7 16 hdr
+Sphere211AutoMemberSelect 2d0a3ab3 28 hdr u32 u32 u32
+ClearNewOneTimeStorageItem d4f178a3 32 hdr vec32
+ExchangingUniverseCurrency 1680b258 24 hdr u32 u32
+GetScenarioLibraryInfoList e08c972e 20 hdr u32
+LimitBreakCharacter_Legacy 1d7cbc6a 28 hdr u64 u32
+DebugSphere211LotEnemyLevel be9c22dc 24 hdr u32 u32
+WithdrawItemFromOneTimeStorage aa6a1d11 24 hdr u32 u32
+BulkWithdrawItemFromOneTimeStorage 59f02ddd 48 hdr vec32 vec32
+Gacha a0a1940b 57 hdr u32 str[33] u32
+Login a01c67ef 71 hdr str[36] blob blob u8

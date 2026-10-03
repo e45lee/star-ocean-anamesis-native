@@ -1,0 +1,103 @@
+# Native replacements
+
+Code in this directory replaces functions of `libSOA.so` with C++. It's how the port moves from ARM64 code running under the JIT to native code, one verified piece at a time.
+
+**State (the rebase's revision 2, 2026-10-01; `docs/history/PLAN-rebase-370.md`):** the natives written for the offline build (about 18,000: models, containers, battle, render, particles, dynamics, arena, objbase, engine and math, params, UI / screens / cocos, event, gacha, audio, input, the bundled-library replacements, restore370) were deleted on `port/rebase-370` and are being rebuilt for the 3.7.0 client, as readable C++ from the Ghidra decompile (`tools/decomp.sh`), hottest families first, each with differential selftests and a live check against the 3.7.0 guest. No new a2c transcriptions. git history (`linux-port` before the merge) keeps the old families for reference. What remains is listed in "What's native now" below; `soa --list-native` prints it (301 rows).
+
+## How a replacement works
+
+```cpp
+// void CUIUtility::IsResolutionLegacy()
+void IsResolutionLegacy(Cpu& c) { c.set_x(0, 0); }
+NATIVE_FUNCTION("_ZN10CUIUtility18IsResolutionLegacyEv", IsResolutionLegacy, "note");
+```
+
+At startup, `install_native_functions()` looks up each registered mangled symbol and patches the guest function's first instructions to `SVC #n; RET`. Every call to it then lands in the host function, whether it's a direct call, through the PLT, or through a vtable.
+
+The host function receives the guest CPU state:
+
+- **Arguments**: follow AAPCS64. Integer and pointer arguments are in `c.x(0..7)`, floats and doubles in `c.s(i)`/`c.d(i)`, and anything further is on the stack.
+- **Results**: go in `c.set_x(0, …)` or `c.set_s(0, …)`/`c.set_d(0, …)`.
+- **Signature adapter**: `wrap<&fn>()` builds the `HostFn` automatically when the C signature means the same thing on both sides (e.g. a whole C library swapped for the host's).
+- **Memory**: guest memory is identity-mapped, so pointers can be dereferenced directly.
+- **Calling guest code**: `guest_call(addr, {args…})` calls back into guest functions that haven't been ported yet. A nested JIT instance runs them on the caller's stack. For float arguments or results use `guest_invoke<R>(addr, args…)` (integers/pointers go to x registers, `float`/`double` to v registers; `R` comes from x0 or v0) or `GuestArgs`. None of these allocate. A call costs about 20-25 ns; when `addr` is itself a native replacement (or an HLE thunk), `guest_call` calls the host function directly (about 10 ns) without entering the JIT (`SOA_DIRECT_CALLS=0` disables that). `core/zz-bench-transitions` in `--selftest` measures these costs.
+
+- **Short functions**: the patch is 8 bytes, so a 4-byte function (a lone `RET` or a tail `B`) would also overwrite the next function's first instruction. The installer leaves such a function as guest code when it's a `RET` or a branch to another replaced function, and warns otherwise.
+- **Deferring to the original**: `NATIVE_FUNCTION_ORIG(sym, fn, note, &orig)` stores a trampoline to the original code in `orig`. A replacement can then handle the common case natively and pass the rest (e.g. a cache miss that runs a loader) to the guest. `orig` stays 0 when the replacement isn't installed, as in `--selftest`.
+
+Use `NATIVE_FUNCTION_IF(sym, fn, note, predicate)` for replacements that change behaviour on purpose, such as the tower opt-in, so they're only installed when enabled. `NATIVE_ROUTE_FUNCTION` marks the in-process route's own hooks (`kGroupRoute`), which `--server HOST` leaves out. `soa --natives none` (`--no-native`) installs nothing.
+
+## Verifying replacements
+
+Each replacement should come with a differential test in the same file:
+
+```cpp
+NATIVE_TEST("hash/chash32") {
+    alignas(16) u8 obj[32] = {};
+    t.call("_ZN9Framework7CHash32C1EPKc", {(u64)obj, (u64)"role_cp0303_b04a_6131"});  // original ARM64 code
+    u32 guest = (u32)t.call("_ZNK9Framework7CHash323GetEv", {(u64)obj});
+    t.expect_eq(guest, server::chash32("role_cp0303_b04a_6131"), "CHash32");
+}
+```
+
+Run the tests with:
+
+```sh
+build/port/soa --selftest [name-filter]
+```
+
+In self-test mode the library is loaded without any replacements installed. `t.call()` therefore always reaches the original ARM64 code, and the test compares its results with the native implementation on the same inputs.
+
+### Code that calls GL
+
+Native code calls GL through `GLH(glName, args...)` (`hle/gl_host.h`), never the host library
+directly, so it gets the same translations the guest's HLE thunks apply. For tests, a
+`glh::Recorder` installed on the thread (`glh::t_rec`) records every GL call made on it, by guest
+thunks and native code alike, as text instead of executing it; recorded calls return
+`Recorder::result`. Comparing the two recordings is the differential test for GL-issuing code
+(the deleted render family's `render_device.cpp` did; see git history).
+**Testing code that works on live game state.** The game keeps running on its own threads during `--selftest`, so tests must not touch objects the game is using. For code over live objects (the UI tree, for example), `NATIVE_TEST_HOOK(symbol, fn, &original)` installs a hook before the game starts, so the test body can run on the game's thread at a known point (e.g. between two frames in `CCocosDirector::SceneProgress`): snapshot the objects involved, run the guest function, capture the result, restore the snapshot, run the native function, compare. Callees whose effects a snapshot can't undo can be stubbed by recording hooks (`guest_stub.h`; a stub used in a frame job must be installed from inside it: `stub()` only invalidates the calling thread's idle JIT code), so the two runs are also compared by their call logs. `SOA_SELFTEST_DELAY=S` plus `--do` taps lets the tests run on a busier screen than the title; `SOA_SELFTEST_START_FILE=F` waits until F exists.
+
+### Live checks: native vs guest in a normal run (`live_check.h`)
+
+Families check their natives against the guest originals during a real session (e.g.
+`SOA_<FAMILY>_CHECK=1 port/scripts/restore_session.sh ...`) with the shared harness in
+`live_check.{h,cpp}`; the register file it records calls on is `a2c_regs.h`. No family uses it at
+the moment (they were deleted); a rebuilt family should. A record / replay family (hand-written
+code whose outgoing calls go through `Family::gcall` / `gcall_n` / `gcall_sret` / `memop` /
+`live::ACall`) is a
+`live::Family("tag", "SOA_TAG", every, sret_marked)` plus `Family::add(sym, host_fn | body,
+obj_bytes, ret, enabled, label)` per function; override `add_regions()` to snapshot more than the
+object at x0 and `unreplayable()` for functions whose replay can't work. Every family gets
+`<ENV>_CHECK`, `_CHECK_EVERY=n`, `_CHECK_OUT=file` (per-function counts), `_CHECK_ONLY=a,b,..` (only
+the functions whose symbols contain one of these: the others run unchecked, so the chosen ones are
+checked also as nested callees of other natives) and `_CHECK_TRACE` / `_DUMP`. The replay rules
+(stubs shared by every family and dropped from each JIT level once, lone-B / PLT callees followed,
+sret pattern fill, the replay at the native run's SP with its stack leftovers, the undo log of the
+body's stores, freed-block snapshots incl. deleting destructors, stack-vector elements, never-empty stub sessions, runaway stop, 64 MB cap, race
+rerun) are listed at the top of `live_check.cpp`. Families with their own recorders and run-both
+checks (the old battle, particles and dynamics families did) use its stubs, `ReplaySession`,
+`Only`, `Budget` and `StoreLog`. `live::t_busy`: only one check at a time per thread, across
+families.
+
+## What's native now
+
+| File | What |
+|---|---|
+| `api/fakeapi.cpp` (+ `gen/fakeapi_tables.inc`, generated by `tools/gen_fakeapi_tables.py` from the 3.7.0 lib) | **The in-process route** (`--server inproc`; group `kGroupRoute`, 294 hooks): `FakeApiCaller`, the built-in offline server the shipped game never constructs (`docs/notes.md` "Offline server (FakeApiCaller)"), put in `TSingleton<CApiCaller>` by the `CGame::OnInitialize` hook; its 95 request methods hand each request to the local server library (`api/server_adapters.cpp` `capture`), the status-only / constant methods, the base-class requests the route serves (`UpdatePartySet`, `SetAssist`, `UpdateView`, `EndMissionTalk`, Sphere 211, event rankings), `AddLocalFile`, `Progress`, `IsRequesting`, `Release`, construction and destruction, and the 95 lambda `operator()`s (forwards to `CApiNotify::On*Res`; the login ones build the fake-login ASON). Tests `fakeapi/*` (requests with map dumps, every lambda, `Progress`, lifetime) against the 3.7.0 guest. |
+| `api/server_adapters.*`, `api/server_cdn.cpp` | Not natives: the server library's hooks into the port (log sink, the asset index), the route's requests as the wire carries them (`inproc_request`; MissionEnd & co. with the battle log the client's own serializer makes, `client_battle_log.*`), `config_from_options` (core/options.h `ServerOptions` -> `server::ServerConfig`), and the in-process CDN (soa-server's HTTP router as platform370's HTTP backend). Tests `server/*` (`zz_server_guest_test.cpp`, `server_cdn_test.cpp`), `wire/*` (`wire_test.cpp`, the request serializers' layouts, `wire/inproc-parity` the route's requests vs soa-server's decode of the client's packets; table `gen/wire_table.inc` by `tools/api_wire.py --gen-inc`). |
+| `common/port_debug.cpp` | Port: a `CPhase::Progress` wrapper that runs the `--control` commands `phase:` / `call:` / `mission:` / `uiset:` / `clock:` / `debugwin:` / `memstats` on the game thread and logs `port_debug: phase N` (what the session scripts wait on). |
+| `restore/restore_tower.cpp` | Port, `--restore-tower` only: `CParameterUtility::IsOpenTowerMission` = 1, stand-in `play_plate/0..3` nodes for `CTowerMissionMenu::Setup` (wrappers of the guest `CCocosNode::SearchByName` / `SearchByTreeName`), the common-resource scene for `CTowerMissionMenu::Initialize` (`docs/client-changes.md` "Tower"). |
+| `ui/webview_local.cpp` | Port, `--server inproc`: `CWebView::OpenView` + `SOAActivity.ShowWebView`: pages the local server hosts (the notice board) shown as text in the popup (`docs/client-changes.md` "Notice board page"). |
+
+The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/arm_float.h`, `common/memstats.*` (`SOA_MEMSTATS`), `common/core_bench_test.cpp` (guest-call costs).
+
+## Porting guidelines
+
+- **Decompile first**: the client is 3.7.0, so `tools/decomp.sh <name> '<regex>'` (and `decomp_at.sh`) decompiles every function matching a demangled-name regex from the 3.7.0 lib, the default, into `work/decomp/<name>.resolved.c` (its Ghidra project pool, `work/ghidra-quick-v370*`; `--v370` is accepted, `--v380` selects the viewer's offline lib). Write readable C++ from it; no new a2c transcriptions (the user, 2026-10-01). `tools/verdiff_decomp.sh` / `verdiff.py` (3.7.0 vs the offline build) are history tools.
+- **Keep guest layouts**: data structures shared with guest code must keep the guest's in-memory layout. That includes libc++ (`std::__ndk1`) containers and the `Framework::CSTLAllocator` allocators, until every function touching them is native.
+- **Port whole families**: port every entry point of a library or class that owns internal state at once. Mixing guest and host implementations over the same state doesn't work; for example, all of zlib moved together.
+- **Transcribing**: `tools/a2c.py` and the `tools/gen_*_a2c.py` generators (goto-structured C++ over a register file, instruction by instruction) are kept as tools only; nothing in the tree uses their output now, and new natives are readable code. Floating point: match the guest's fused multiply-adds (`std::fma`) where it fuses, plain mul + add where it doesn't (`arm_float.h` has the ARM NaN rules).
+- **Hook size**: the patch is 8 bytes (`SVC; RET`); `install_native_functions` skips functions smaller than that (4-byte tail-call trampolines) instead of clobbering the next function.
+- **Host-built guest code** (trampolines, test snippets, fake code pages): allocate it with `map_guest_code()` and free it with `unmap_guest_code()` (`core/cpu.h`), never plain `mmap` / `munmap`. The JIT caches translations by address only, so a page that is unmapped and mapped again keeps running the old code in every JIT that ran it. That was once an intermittent full-`--selftest` SIGSEGV (a page-aligned guest `pc`, `lr = <return-to-host>`): tests unmapped their snippet pages, and a later test's trampoline landed on the same address and ran a stale snippet.
+- **Good targets**: leaf functions, pure functions, and whole template families. The `Aska::TAaf*` animation controllers, for instance, are ~15k instantiations of a few templates.

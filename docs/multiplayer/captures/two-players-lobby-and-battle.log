@@ -1,0 +1,50 @@
+00:29:51 listening lobby_client 127.0.0.1 46543
+00:29:51 listening relay_client 127.0.0.1 45661
+00:33:10 lobby_client connect ('127.0.0.1', 48592)
+00:33:27 lobby48592 < CreateRoom ctr=0 flags=0x0 len=600 0e00007e00000000000000000100000086d0793001000000cd345314c00500000000000000000000000000003c000000
+00:33:27   lobby48592 > CreateRoomResult len=1104 flags=0x0
+00:33:27 lobby48592 closed
+00:33:27 relay_client connect ('127.0.0.1', 46882)
+00:33:28 relay46882 < EnterRoom ctr=0 flags=0x0 len=1156 0e00007e00000000000000000100000086d0793001000000cd345314c00500000000000000000000000000003c000000
+00:33:28   room 1001: EnterRoom -> slot=0 player_id=<P1-id> leader_uid=2113929230 name='Fayt' (slot 0 = host)
+00:33:28   relay46882 > EnterRoomResult len=4624 flags=0x0
+00:33:53 lobby_client connect ('127.0.0.1', 45242)
+00:33:54 lobby45242 < GetRoomList ctr=0 flags=0x0 len=608 3000007e00000000000000000100000088ad429d01000000cd345314c005000000000000000000000000000032000000
+00:33:54   lobby45242 > GetRoomListResult len=1116 flags=0x0
+00:33:54 lobby45242 closed
+00:34:00 relay_client connect ('127.0.0.1', 45458)
+00:34:00 relay45458 < EnterRoom ctr=0 flags=0x0 len=1156 3000007e00000000000000000100000088ad429d01000000cd345314c005000000000000000000000000000032000000
+00:34:00   room 1001: EnterRoom -> slot=1 player_id=1000000002 leader_uid=2113929264 name='Player2' (guest)
+00:34:00   relay45458 > EnterRoomResult len=4624 flags=0x0
+00:34:21 relay46882 < StartMultiplay ctr=0 flags=0x0 len=0 
+00:34:21   relay46882 > StartMultiplayRes len=4610 flags=0x0
+00:34:21   relay45458 > StartMultiplayRes len=4610 flags=0x0
+00:34:22   MissionStart for slot 0: party [(2113929230, <P1-id>), (2113929264, 1000000002), (2113929253, <P1-id>), (2113929270, <P1-id>)]
+00:34:22   relay46882 > MissionStartPush len=10574 flags=0x80
+00:34:22   MissionStart for slot 1: party [(2113929230, <P1-id>), (2113929264, 1000000002), (2113929253, <P1-id>), (2113929270, <P1-id>)]
+00:34:22   relay45458 > MissionStartPush len=8191 flags=0x80
+00:34:28 relay46882 < StartBattleStage ctr=0 flags=0x0 len=0 
+00:34:28 relay45458 < StartBattleStage ctr=0 flags=0x0 len=0 
+00:34:28   relay46882 > StartBattleStageRes len=4 flags=0x0
+00:34:28   relay45458 > StartBattleStageRes len=4 flags=0x0
+00:34:34 relay46882 < FinishBattleStage ctr=0 flags=0x0 len=0 
+00:34:34 relay45458 < FinishBattleStage ctr=0 flags=0x0 len=0 
+00:34:34   relay46882 > FinishBattleStageRes len=0 flags=0x0
+00:34:34   relay45458 > FinishBattleStageRes len=0 flags=0x0
+00:34:41 relay46882 < StartBattleStage ctr=0 flags=0x0 len=0 
+00:34:41 relay45458 < StartBattleStage ctr=0 flags=0x0 len=0 
+00:34:41   relay46882 > StartBattleStageRes len=4 flags=0x0
+00:34:41   relay45458 > StartBattleStageRes len=4 flags=0x0
+00:34:45 relay46882 < FinishBattleStage ctr=0 flags=0x0 len=0 
+00:34:45 relay46882 < MissionEnd ctr=0 flags=0x80 len=3741 <decrypted: uuid[36] (redacted), DeviceType, len, battle log>
+00:34:45   MissionEnd from slot 0: uuid fedc…..., battle log 3697 bytes
+00:34:45   relay46882 > MissionEndPush len=108433 flags=0x80
+00:34:45 relay45458 < FinishBattleStage ctr=0 flags=0x0 len=0 
+00:34:45   relay46882 > FinishBattleStageRes len=0 flags=0x0
+00:34:45   relay45458 > FinishBattleStageRes len=0 flags=0x0
+00:34:45 relay45458 < MissionEnd ctr=0 flags=0x80 len=3739 <decrypted: uuid[36] (redacted), DeviceType, len, battle log>
+00:34:45   MissionEnd from slot 1: uuid fedc…..., battle log 3695 bytes
+00:34:45   relay45458 > MissionEndPush len=106049 flags=0x80
+00:34:59 relay45458 closed
+00:34:59   relay46882 > DisconnectNodePush len=8 flags=0x0
+00:35:03 relay46882 closed

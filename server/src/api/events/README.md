@@ -1,0 +1,23 @@
+# api/events: event missions and their extras
+
+Public header: `soaserver/events.h` (the clocks' year shift, the asset gate, the lists, `end_mission_talk`; the port's test and other modules use it). Internal: `enable_events.h`, `event_extras.h`.
+
+| File | Module | What |
+|---|---|---|
+| `event_missions.cpp` | `event` | the open event areas: `open_areas` (`event_progress`, `list_area_missions`), `area_scheduled` (`term_covers`, `weekly_covers`), `mission_playable` (`battle_files`, `story_playable`: the asset gate), `active_event_mission_list` (`area_info`: CAreaInfo, `mission_list`), `campaign_info` (CCampaignInfo); event story clears (`clear_story`, `events::end_mission_talk`); the hooks `load_events` (`OnPlayerLoad`: ActiveEventMissionList, CampaignInfo, EventMaintenanceInfoMap), `event_response_keys` (`OnResponse`: the list on the mission flow's answers), `client_master_events` (`ClientMaster`: the year shift, `shift_client_master`, and `--enable-events`) |
+| `ranking.cpp` | `event_ranking` | **GetEventRankingInfo**, **ClearNewEventRanking**, **CheckEventRankingResult**, **ReceiveEventRankingResult**, **GetPlayerDetailInfo** (handlers named after them, their args structs beside the module); scores from MissionEnd (`ranking_mission_result`: `MissionResultExtra`); `event_ranking_info` (EventRankingInfo), `due_group`, `result_info`, `reward_for`; rewards through `core/rewards.h` `grant_with_item_sets` |
+| `world_boss.cpp` | `worldboss` | **GetWorldBossInfo**; the big hunt on the area list (`big_hunt_area_extra`: `AreaExtra`) and on every player load (`load_world_boss`: `OnPlayerLoad`) and MissionStart (`world_boss_mission_start`: `MissionStartExtra`); time bonuses and world-boss contributions on a won MissionEnd (`world_boss_mission_result`: `MissionResultExtra`, which runs the favor drop's result first) |
+| `favor_drop.cpp` | `favor_drop` | the favor event drop bonus (`favor_start`: `MissionStartExtra`; its result half `favor_result` runs from world_boss.cpp) |
+| `enable_events.{h,cpp}` | (called by event_missions, the gacha, the shop) | `--enable-events`: areas, gachas and exchange shops matching a keyword list opened; the client's master copy (`client_master`: `open_areas`, `open_gachas`, `open_banners`, `open_exchange_shops`) |
+| `event_extras.h` | | the favor drop's two halves, run in one fixed order by world_boss.cpp's `MissionResultExtra` (favor drops, time bonuses, world boss); `kMissionTypeEvent` |
+| `*_tests.cpp` | | `event_missions_tests.cpp` (`events/shift`, `events/lists`, `events/weekly`, `events/asset-gating`, `events/clear-chain`, `events/campaign-info`, `events/npc-helper`), `event_extras_tests.cpp` (`events/exchange-shop-calendar`, `events/ranking`, `events/worldboss-waves`, `events/worldboss-time-bonus`, `events/favor-drop`, `events/player-detail`), `enable_events_tests.cpp` (`events/enable-keywords`, `events/enable-areas`, `events/enable-exchange-shops`, `events/enable-standin-banners`) |
+
+Every handler and hook carries the 2.5 doc block. The event calendar vs the client clock: `soaserver/events.h`'s header comment and docs/server-rules.md "Two clocks".
+
+**Hooks and their order** (`../../core/modules.cpp`; `soa-server --list-hooks`): `event` (`OnPlayerLoad`, `OnResponse`, `ClientMaster`), `event_ranking` (`MissionResultExtra`, its APIs), `favor_drop` (`MissionStartExtra`), `worldboss` (its API, `AreaExtra`, `OnPlayerLoad`, `MissionStartExtra`, `MissionResultExtra`), in that module order: the favor drop's start runs before the world boss's, its result inside the world boss's (`event_extras.h`).
+
+**State** (`server.sqlite3`; `../../../PLAN-schema.md` section 1): `event_last` (the event mission and area played last), `event_rank_score` (best score per ranking, its party, `fresh`), `event_rank_received` (the groups whose result was paid), `wboss` (per boss: wave, gauges, last share, requirement, timings, big hunt), `wboss_clear` (per boss and wave: cleared, notified), `favor_drop_play` (the characters of the current play's favor bonus); the core's `mission` (clears), `presents`, `stock`.
+
+**Rules**: docs/server-rules.md "Events" ("Two clocks", "What is listed", "Other data", "Story missions", "NPC helpers"), "Enabling events by keyword", "Event extras" ("Event rankings", "World bosses and big hunts", "Time bonus", "Favor event drop bonus", "Exchange shops on the event calendar").
+
+**Proof and sessions**: the replay corpora `event` (the summer board with `--enable-events`, a story, a battle) and `event-extras` (a world boss area with time bonuses, an event ranking scored, due and paid); `port/scripts/events_session.sh` (reads "events: N event areas open"), `emulator/scripts/summer_demo.sh` (reads "enable-events").

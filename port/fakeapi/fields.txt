@@ -1,0 +1,160 @@
+# Response fields per info class (static: tools/fakeapi_fields.py; literals each <Class>::Initialize hashes).
+# Heuristic: fields registered by a base class's Initialize (e.g. an id) appear under that base class.
+AssistDetailInfo: assist_role_id, assist_limit_break_count, assist_favor
+CAchievementInfo: player_id, master_achievement_id
+CAddCharacterExpInfo: character_id, before_level, before_exp, after_level, after_exp
+CAreaInfo: mission_ct, is_last_play, is_start_bighunt
+CAttachedGearInfo: add_param_type1, add_param_type2, add_param_type3
+CAwakenResultInfo: awaken_level, update_child_id, update_child_mastery_talent_id
+CBattleEvaluationResultInfo: master_battle_evaluation_id
+CBattleLogInfo: is_defeat, damage_total, damage_total_party, hit_total, rush_cooperate, rush_count, battle_result, continue_count, mission_type, abnormal_count_stun, abnormal_count_freeze, abnormal_count_poison, abnormal_count_paralysis, abnormal_count_seal, abnormal_count_curse, abnormal_count_fog, abnormal_count_burn, abnormal_count_debuff, mission_time, mission_total_time, assist_cutin_count, order_count_all, order_count_invincible, order_count_bunker, order_count_heat_up
+CBattleParameterInfo: rental_sub_character_id
+CBoostCharacterResultInfo: before_level, before_exp, after_level, after_exp, is_big_success
+CBoxGachaInfo: player_id, master_gacha_id, master_box_gacha_id, max_box_count, content_id, content_type, is_maintenance
+CBoxGachaListInfo: player_id, master_gacha_id, total_count, reset_count, next_master_gacha_id, is_maintenance
+CBoxGachaResultInfo: master_box_gacha_id, content_id, content_type, duplication
+CCampaignInfo: opened_at, closed_at, magnification, lot_drop_count_add, master_area_id, master_area_id_label, master_mission_model_type
+CCharacterDecoObjectInfo: player_character_id, master_deco_object_id, attach_bone, attach_type, slider_pos_x, slider_pos_y, slider_pos_z, slider_rotate_x, slider_rotate_y, slider_rotate_z
+CCharacterDecoSendInfo: character_id
+CCheckInInfo: player_id, limit_num, present_message_id, content_id, content_id_label, content_type, place_message_id, place_message_id_label, longitude, distance_limit, limit_count, interval_day, opened_at, closed_at
+CCoinDepositInfo: deposit_trans_id
+CCoinInfo: free_coin, product_id, name_label, title_label, description_label, opened_at, closed_at, limit_count, interval_day, bonus_type, bonus_id_label, starter_limit_day, sale_type, is_view_closed_at, bought_at, limit_num
+CComposeResultInfo: before_level, before_boosted_point, before_limit_break_count, after_level, after_boosted_point, after_limit_break_count, is_big_success
+CConfigInfo: master_config_id
+CDebugBonusInfo: bonus_set_id, bonus_set_id_label
+CDebugGearGenerationInfo: weapon_kind_id, normal_gear_id, facter_index, is_barney_chance, is_facter
+CDebugGearGenerationInfoResult: rank_calculation, factor_extraction
+CDecoObjectInfo: player_id, master_deco_id, is_favorite
+CDeepSpaceAreaInfo: master_area_id, current_exp, ship_in_progress_num, ship_complete_num, is_last_play, is_rare_mission
+CDeepSpaceCharacterInfo: character_id, ship_slot
+CDeepSpaceDebugCharacterInfo: master_role_id_label, limit_limitbreak, is_max_seed, awaken_level
+CDeepSpaceDebugRareMissionInfo: rare_mission_id_label
+CDeepSpaceMissionInfo: master_mission_id, bonus_set_id, closed_at, count_weekly_at, updated_at, play_count_daily, play_count_weekly, play_count
+CDeepSpaceShipInfo: master_area_id, master_mission_id, bonus_set_id, started_at, closed_at
+CDirectItemShopInfo: name_label, title_label, description_label, opened_at, closed_at, limit_count, interval_day, starter_limit_day, sale_type, is_view_closed_at, thumbnail_id, content_id, content_id_label, content_type, new_opened_at, new_closed_at, master_banner_id, num_total, bought_at
+CDropContentInfo: content_id, content_type, master_item_id, bonus_category, is_rare_bonus, is_add_bonus, is_hit_bonus, is_rare_hit_bonus
+CEquipAccessoryResultPersonInfo: accessory_item_id
+CEquipWeaponResultPersonInfo: weapon_item_id
+CEventMaintenanceInfo: master_event_area_id
+CExchangeMaintenanceInfo: master_exchange_shop_id
+CExchangeResultInfo: master_exchange_shop_id, ex_item_id, AddFreeCoin
+CExpirationInfo: limit_day, limit_time, is_finished, subscription_campaign_count
+CFactorInfo: factor_id
+CFavorBonusContetsResultInfo: lot_character_id
+CFollowPersonInfo: player_id, master_role_id, weapon_item_id, accessory_item_id, limit_break_count, weapon_master_item_id, weapon_level, weapon_limit_break_count, accessory_master_item_id, accessory_level, accessory_limit_break_count, add_attack, add_intelligence, add_defence, add_guard, awaken_level, rush_skill1_id, rush_skill1_level, rush_skill1_factor_id, rush_gauge_max, rush_gauge_use, favor_level, parent_master_role_id, mastery_talent_id, is_rarity_7
+CFollowPlayerInfo: last_login_at, played_with_at, follow_status, is_rookie, is_subscription, sphere211_floor_level, sphere211_previous_floor_level
+CFollowPlayerListElementInfo: player_id, last_login_at, master_role_id, is_follower
+CFooterBadgeInfo: badge_type, badge_category_type, update_type
+CFriendGaugeInfo: player_id, target_player_id, master_id, reward_index, created_at, updated_at
+CFriendGaugeUpdateInfo: player_id, target_player_id, master_id, reward_index, gauge_before, created_at, updated_at
+CGachaCountInfo: master_gacha_id, try_count, loop_count
+CGachaDayLimitCountInfo: master_gacha_id, day_count, total_count
+CGachaHashInfo: master_gacha_id, opened_at, closed_at
+CGachaMaintenanceInfo: master_gacha_id
+CGachaMutationTestResultInfo: content_id, content_id_label, content_type, is_mutation
+CGachaRateContentInfo: message_id, content_id, percentage, direct_message
+CGachaRateInfo: introduction_msg, bonus_msg, stepup_number
+CGachaResultInfo: master_item_id, player_item_id, master_role_id, player_character_id, duplication, is_mutation
+CGachaTestResultInfo: content_type, content_id, content_id_label, real_rate, master_item_gacha_id_label
+CGearBarneyChanceInfo: barney_chance_group_id, barney_chance_type
+CGearGenerationInfoResult: is_barney_chance, use_master_item_id, barney_chance_type
+CGearInfo: player_item_id, slot_index
+CGiftGachaResultInfo: master_gacha_id, content_id, content_type, duplication, limitBreakItemID, limitBreakCount
+CGradeUpResultInfo: grade_up_m_item_id, base_item_id
+CGuideInformation: GuideInformationDialog, navi_kakin
+CItemBoostTestResultInfo: big_success_count, success_count
+CItemDetailInfo: player_id, master_item_id, item_type, boosted_point, limit_break_count, level_max, limit_level, master_weapon_id, intelligence, master_weapon_kind_id, serial_number
+CItemInfo: player_id, master_item_id, item_type, boosted_point, limit_break_count
+CItemShopInfo: limit_count, num_total, loop_count
+CLimitBreakInfo: master_role_id, before_master_role_id, after_master_role_id, before_limit_break_count, after_limit_break_count
+CLimitBreakItemInfo: master_role_id, master_item_id
+CLoginBonusInfo: master_login_bonus_id, current_idx, is_received_now
+CMascontInfo: master_person_id
+CMasterExpirationInformationElement: title_image, description_image, description_message_id, one_message_id, target_content_type, target_content_type_detail, target_content_id, target_content_id_label, opened_at, closed_at
+CMasterKiyakuVersionInfo: kiyaku_version, update_kiyaku_string
+CMasterMissionEnemyInfoElement: master_mission_id, master_mission_id_label, enemy_id_label, bossinfo_notes1_message_id, bossinfo_notes2_message_id
+CMasterParameterGuideInformationElement: view_character_node_name, talk_message_id, master_menu_common_voice_id, master_menu_common_voice_id_label, title_message_id, description_image, description_message_id, one_message_id, target_content_type, target_content_id, target_content_id_label, layout_type, user_type, opened_at, closed_at
+CMasteryRewardInfo: master_item_id
+CMissionDropCharacterInfo: drop_type
+CMissionDropItemInfo: drop_type, debug_name, content_type
+CMissionDropStackItemInfo: drop_type, debug_name
+CMissionElementInfo: is_last_play
+CMissionParameterInfo: master_mission_id, master_mission_id_label, is_surprise, multi_player_count, stamina_cost, is_event_drop_by_favor, overwrite_enemy_level, add_enemy_level
+CMissionResultCharacterFavorInfo: master_role_same_role_id, before_favor_level, before_favor_point, after_favor_level, after_favor_point, added_event_drop_at
+CMissionResultCharacterInfo: before_level, before_exp, after_level, after_exp
+CMissionResultDropInfo: free_coin, up_fol_rate
+CMissionStageInfo: serial_number, master_mission_id, master_mission_id_label, master_stage_layout_id, master_stage_layout_id_label, master_enemy_party_id, master_map_id, master_map_id_label, stage_bgm, is_surprise_enemy_stage
+COptionInfo: player_id, frame_rate, resolution, camera_range, camera_effect, bgm_volume, se_volume, voice_volume, is_notification
+CPartyInfo: player_character_id1, player_character_id2, player_character_id3
+CPersonAddStatusResultInfo: player_character_id, player_id, before_add_hp, before_add_attack, before_add_intelligence, before_add_defence, before_add_hit, before_add_guard, before_add_ap, after_add_hp, after_add_attack, after_add_intelligence, after_add_defence, after_add_hit, after_add_guard, after_add_ap
+CPersonInfo: player_id, player_name, master_role_id, weapon_item_id, accessory_item_id, limit_break_count, skill1_label, skill1_level, skill2_label, skill2_level, skill3_label, skill3_level, add_attack, add_intelligence, add_defence, add_guard, awaken_level, rush1_label, rush1_level, rush_skill1_factor_id, rush_gauge_max, rush_gauge_use, assist_character_id, assisting_character_id, parent_master_role_id, mastery_talent_id, is_rarity_7
+CPersonStatusInfo: player_id, player_level, player_name, master_role_id, weapon_item_id, accessory_item_id, limit_break_count, skill1_label, skill1_level, skill2_label, skill2_level, skill3_label, skill3_level, intelligence, def_water, def_earth, def_thunder, def_light, rush1_label, rush_skill1_factor_id, rush1_level, weapon_id, master_weapon_kind_id, weapon_kind_id_label, weapon_master_item_id, weapon_limit_break_count, weapon_level, accessory_master_item_id, accessory_limit_break_count, accessory_level, up_exp_rate, up_fol_rate, add_drop_num, add_character_bonus, add_event_drop_num, is_rookie, is_subscription, add_attack, add_intelligence, add_defence, add_guard, add_ap_by_favor, awaken_level, rush_gauge_max, rush_gauge_use, is_multi_main_character, favor_level, parent_master_role_id, mastery_talent_id, is_rarity_7
+CPlanetInfo: is_last_play
+CPlayMissionInfo: mission_id, is_expired, is_maintenance, episode_type_id, master_sphere211_floor_asset_id, sphere211_floor_level
+CPlayerCharacterFavorInfoElement: master_role_same_role_id, favor_point, favor_level, added_event_drop_at, favor_up_count_by_tap, updated_by_tap_at
+CPlayerCharacterMasteryInfo: character_id, player_id, parent_character_id, master_mastery_step_type_id, master_mastery_step_1_option_no, master_mastery_step_2_option_no, master_mastery_step_3_option_no, master_mastery_step_4_option_no, master_mastery_step_5_option_no, created_at, updated_at
+CPlayerInfo: native_user_id, stamina_max, inquiry_rank, inquiry_point, vip_point, item_stock, storage_stock, gear_stock, stamina_update, last_login_at, favor_bonus_received_at, device_type, created_at, updated_at, stamina_max_time, is_level_up, support_pc_id, follow_max, stamina_update_by_favor, tower_try_count, time_saving_use_count, world_map_progress, world_map_progress_ep3, home_pc_id, is_3d_home, mascot_id, search_id, tutorial_status, view_status, view_status2, is_rookie, kiyaku_version, sphere211_revive_count
+CPremiumLoginBonusInfo: player_id, master_premium_login_bonus_id, current_idx, created_at, updated_at, is_updated
+CPresentBoxInfo: player_id, content_id, reason_type, content_type, is_receive, reason_param, free_text_message_id, deadline_at
+CPresentBoxReceiveCharacterInfo: master_role_id, duplication
+CPresentBoxReceiveDecoInfo: master_deco_id
+CPresentBoxReceiveInfo: free_coin
+CPresentBoxReceiveItemInfo: master_item_id
+CPresentBoxReceiveStampInfo: master_stamp_id
+CPresentBoxReceiveTitleInfo: master_title_id
+CPurchasedItemInfo: bonus_type, name_label, title_label
+CSaleGachaCountInfo: master_gacha_id, once_limit_num, bulk_limit_num
+CSellResultInfo: total_fol, master_item_id
+CServerBuildInfo: BuildNumber, BuildScmRevision, BuildScmURL
+CSkillInfo: skill_level, master_skill_id
+CStackItemInfo: master_item_id, item_type, sort_name_idx, use_count, player_id
+CStepUpGachaInfo: player_id, master_gacha_id, try_count, restart_count, next_master_gacha_id
+CStorageItemInfo: update_at_time
+CT_WorldBossInfo: world_boss_id, wave_started_at, wave_clear_time, bighunt_started_at, bighunt_closed_at, next_required_num, add_item1_num, add_item2_num, add_item3_num
+CTermInfoUI: TermInfo, presentbox
+CUpdateCharacterInfo: player_id, master_role_id, weapon_item_id, skill1_level, skill2_level, skill3_level, rush_skill, rush_skill_level, rush_skill_factor_id, rush_gauge_max, rush_gauge_use, weapon_kind
+CUpdateCharacterMasteryInfo: mastery_talent_id, parent_master_role_id
+CUpdateFavorByTapResultInfo: same_role_id, favor_level, favor_point, RemainingUpdateFavorCountByTap
+CUseResultInfo: master_item_id
+CUseStackItemInfo: master_item_id, use_count
+CUserFavorResultInfo: same_role_id, favor_level, favor_point
+CWalletInfo: android_coin, free_coin, total_coin
+CWorldBossInfo: world_boss_id, master_item_id1, master_item_id2, master_item_id3
+CWorldBossItemInfo: content_type
+CWorldBossPlayerInfo: world_boss_id, master_item_id1, master_item_id2, master_item_id3, is_received, is_notified, is_new_open
+CWorldMapInfo: opened_at, closed_at
+CWorldMapMaintenanceInfo: master_select_part_id
+CWorldMapMissionElementInfo: mission_group_id, difficulty, scenario_library_id, mission_type
+CheckEventRankingResultInfo: master_event_ranking_group_id
+DeepMissionEndResultPlayerInfo: stamina_max, is_level_up, tower_try_count, time_saving_use_count, stamina_update
+DeityInfo: deity_role_category_id, familiar_count, set_index
+EventRankingInfo: player_id, party_player_id1, party_player_id2, party_player_id3, party_player_id4, party_player_id1_valid, party_player_id2_valid, party_player_id3_valid, party_player_id4_valid, party_role_id1, party_role_id2, party_role_id3, party_role_id4, battle_id, created_at
+FooterMissionInfo: ep1_new_area_count, is_open_extra_dungeon, is_open_event_mission, is_open_evolution, is_open_multiplay
+InheritItemInfo: inherited_master_item_id, inherited_master_item_limit_break_count
+InheritResultInfo: base_player_item_id, lost_master_item_id, lost_player_item_id, lost_item_limit_break_count
+MissionEndResultInfo: mission_time
+PartySetCharacterInfo: party_index, character_id, weapon_item_id, accessory_item_id, skill_id1, skill_id2, skill_id3, assist_character_id
+RankingResultInfo: master_event_ranking_id
+SetAssistResultInfo: character_id, assist_id, old_assist_id
+Sphere211CharacterInfo: player_character_id
+Sphere211EndResult: floor_num, treasure_num, previous_season_id
+Sphere211FloorAssetInfo: player_id, floor_level, master_sphere211_asset_id, master_sphere211_mission_box_id, overwrite_enemy_level, is_cleared, is_playing, updated_at, created_at
+Sphere211FloorClearInfo: floor_level, master_sphere211_asset_id, lot_floor_num
+Sphere211FloorClearResultInfo: clear_present_id, clear_present_content_type, clear_present_num
+Sphere211FloorInfo: floor_level, mission_clear_streak
+Sphere211FollowFloorInfo: player_id, floor_level, follow_status
+Sphere211RankingInfo: player_id, floor_level, entered_at
+Sphere211RentalCharacterInfo: player_id, follow_player_id, updated_at
+Sphere211StaminaInfo: stamina_update, stamina_max
+Sphere211TreasureInfo: total_num
+Sphere211TreasureResultInfo: content_id
+SubscriptionCampaignResult: master_subscription_campaign_id, closed_at
+SubscriptionGachaCountInfo: master_subscription_type_id, gacha_count, created_at, opened_at, closed_at
+SubscriptionHistoryInfo: master_subscription_plan_id, name_label, opened_at, closed_at
+SubscriptionInfo: master_subscription_type_id, opened_at, closed_at
+SubscriptionPlanInfo: master_subscription_plan_id, updated_at, opened_at, closed_at
+TowerScheduleInfo_S2C: opened_at, closed_at
+UniverseAddStatusInfo: player_id, player_character_id, add_attack, add_intelligence, add_defence, add_guard
+UniverseDeityBoostInfo: player_id, player_character_id, add_attack, add_intelligence, add_defence, add_guard
+UpdateMissionStartPlayerInfo: stamina_update, stamina_max_time, is_rookie, sphere211_revive_count
+UpdateUniverseLevelInfo: player_id, player_character_id, update_level

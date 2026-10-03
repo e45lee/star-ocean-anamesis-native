@@ -1,0 +1,1241 @@
+# FakeApiCaller response schema (port dump; key names by CHash32 of .rodata strings)
+Sound  [CParameterSound]
+Player  [CParameterPlayer]
+master_text  [StringDB]
+ParameterUI  [CParameterUI]
+CocosCommonResource  [CParameterCocosCommonResource]
+master_win_camera  [CMasterParameterWinCamera]
+master_ai  [CMasterParameterAI]
+master_area  [CMasterParameterArea]
+master_attack_action  [CMasterParameterAttackAction]
+master_skill  [CMasterParameterSkill]
+master_skill_parameter  [CMasterParameterSkillParameter]
+master_banner  [CMasterParameterBanner]
+master_campaign  [CMasterParameterCampaign]
+master_battle_global  [CMasterParameterBattleGlobal]
+master_character_common_parameter  [CMasterParameterCharacterCommon]
+master_effect  [CMasterParameterEffect]
+master_enemy_base_parameter  [CMasterParameterEnemyBase]
+master_enemy_common_parameter  [CMasterParameterEnemyCommon]
+master_enemy_party  [CMasterParameterEnemyParty]
+master_enemy_trans  [CMasterParameterEnemyTrans]
+master_gacha  [CMasterParameterGacha]
+master_gacha_item  [CMasterParameterGachaItem]
+master_item  [CMasterParameterItem]
+master_language  [CMasterParameterLanguage]
+master_loading_message  [CMasterParameterLoadingMessage]
+master_login_bonus  [CMasterParameterLoginBonus]
+master_login_bonus_contents  [CMasterParameterLoginBonusContents]
+master_premium_login_bonus  [CMasterParameterPremiumLoginBonus]
+master_premium_login_bonus_contents  [CMasterParameterPremiumLoginBonusContents]
+master_map  [CMasterParameterMap]
+master_home3d_map  [CMasterParameterHome3DMap]
+master_mission  [CMasterParameterMission]
+master_mission_clear_present  [CMasterParameterMissionClearPresent]
+master_mission_drop  [CMasterParameterMissionDrop]
+master_mission_stage  [CMasterParameterMissionStage]
+master_world_boss  [CMasterWorldBoss]
+master_world_boss_wave  [CMasterWorldBossWave]
+master_deep_space_area  [CMasterDeepSpaceArea]
+master_deep_space_mission  [CMasterDeepSpaceMission]
+master_deep_space_bonus_item  [CMasterDeepSpaceBonusItem]
+master_deep_space_bonus_set  [CMasterDeepSpaceBonusSet]
+master_deep_space_bonus  [CMasterDeepSpaceBonus]
+master_deep_space_ship  [CMasterDeepSpaceShip]
+master_deep_space_time_saving  [CMasterDeepSpaceTimeSaving]
+master_person  [CMasterParameterPerson]
+master_planet  [CMasterParameterPlanet]
+master_signal  [CMasterParameterSignal]
+master_sound  [CMasterParameterSound]
+master_stage_layout  [CMasterParameterStageLayout]
+master_voice  [CMasterParameterVoice]
+master_weapon  [CMasterParameterWeapon]
+master_weapon_kind  [CMasterParameterWeaponKind]
+master_weapon_limit_break  [CMasterParameterWeaponLimitBreak]
+master_accessory_limit_break  [CMasterParameterAccessoryLimitBreak]
+master_role  [CMasterParameterRole]
+master_npc_base_parameter  [CMasterParameterNpcBase]
+master_player_level  [CMasterParameterPlayerLevel]
+master_mission_npc  [CMasterParameterMissionNpc]
+master_talent  [CMasterParameterTalent]
+master_factor  [CMasterParameterFactor]
+master_factor_lock  [CMasterParameterFactorLock]
+master_factor_seed  [CMasterParameterFactorSeed]
+master_mission_board  [CMasterParameterMissionBoard]
+master_common_drop  [CMasterParameterCommonDrop]
+master_rank  [CMasterParameterRank]
+master_role_level_max  [CMasterParameterRoleLevelMax]
+master_role_evolution  [CMasterParameterRoleEvolution]
+master_exchange_shop  [CMasterParameterItemExchangeShop]
+master_exchange_shop_contents  [CMasterParameterItemExchangeShopContents]
+master_item_grade_up  [CMasterParameterItemGradeUp]
+master_item_grade_up_list  [CMasterParameterItemGradeUpList]
+master_item_sale_rate  [CMasterParameterItemSaleRate]
+master_item_limit_break  [CMasterParameterItemLimitBreak]
+master_character_limit_break  [CMasterParameterCharacterLimitBreak]
+master_achievement  [CMasterParameterAchievement]
+master_event_area  [CMasterParameterEventArea]
+master_event_mission  [CMasterParameterEventMission]
+master_event_term  [CMasterParameterEventTerm]
+master_event_weekly  [CMasterParameterEventWeekly]
+master_global  [CMasterParameterGlobal]
+master_home_message  [CMasterParameterHomeMessage]
+master_item_compose  [CMasterParameterItemCompose]
+master_item_accessory_compose  [CMasterParameterItemAccessoryCompose]
+master_role_boosted  [CMasterParameterRoleBoosted]
+master_role_duplication_item  [CMasterParameterRoleDuplicationItem]
+master_tower_area  [CMasterParameterTowerArea]
+master_tower_mission  [CMasterParameterTowerMission]
+master_item_limit_break_level_max  [CMasterParameterItemLimitBreakLevelMax]
+master_stamp  [CMasterParameterStamp]
+master_replace_resource  [CMasterParameterReplaceResource]
+master_friend_gauge  [CMasterParameterFriendGauge]
+master_friend_gauge_contents  [CMasterParameterFriendGaugeContents]
+master_title  [CMasterParameterTitle]
+master_rental_bonus  [CMasterRentalBonus]
+master_gift_gacha  [CMasterParameterGiftGacha]
+master_awaken  [CMasterParameterAwaken]
+master_item_awaken  [CMasterParameterItemAwaken]
+master_item_shop  [CMasterParameterItemShop]
+master_barrier  [CMasterParameterBarrier]
+master_material_compose  [CMasterParameterMaterialCompose]
+master_item_set  [CMasterItemSet]
+master_factor_condition  [CMasterParameterFactorCondition]
+master_gacha_image  [CMasterParameterGachaImage]
+master_home3d  [CMasterHome3D]
+master_time_bonus  [CMasterTimeBonus]
+master_home3d_motion_setting  [CMasterHome3DMotionSetting]
+master_assist_skill_parameter  [CMasterParameterAssistSkill]
+master_selectpart  [CMasterParameterSelectPart]
+master_scenario_library  [CMasterParameterScenarioLibrary]
+master_world_map  [CMasterParameterWorldMap]
+master_world_map_base  [CMasterParameterWorldMapBase]
+master_world_map_cell  [CMasterParameterWorldMapCell]
+master_world_map_mission  [CMasterParameterWorldMapMission]
+master_world_map_group_mission  [CMasterParameterWorldMapGroupMission]
+master_world_map_progress  [CMasterParameterWorldMapProgress]
+master_menu_voice  [CMasterParameterMenuVoice]
+master_assist_voice_margin  [CMasterParameterAssistVoiceMargin]
+master_party_symbol  [CMasterPartySymbol]
+master_role_change  [CMasterParameterRoleChange]
+master_guest_character  [CMasterParameterGuestCharacter]
+master_training_area  [CMasterParameterTrainingArea]
+master_training_mission  [CMasterParameterTrainingMission]
+master_assist_cutin_offset  [CMasterParameterAssistCutinOffset]
+master_voice_switch  [CMasterParameterVoiceSwitch]
+master_menu_bgm  [CMasterParameterMenuBGM]
+master_mission_enemy_info  [CMasterMissionEnemyInfo]
+master_menu_common_voice  [CMasterParameterMenuCommonVoice]
+master_mission_character_bonus  [CMasterParameterMissionCharacterBonus]
+master_gear  [CMasterParameterGear]
+master_gear_probability  [CMasterGearProbability]
+master_gear_lottery  [CMasterGearLottery]
+master_favor_level  [CMasterParameterFavorLevel]
+master_favor_schedule  [CMasterParameterFavorSchedule]
+master_favor_item_effect  [CMasterParameterFavorItemEffect]
+master_studio_bg  [CMasterParameterStudioBg]
+master_banner_replace  [CMasterParameterBannerReplace]
+master_chant_effect_type  [CMasterParameterChantEffectType]
+master_gear_barney_chance  [CMasterGearBarneyChance]
+master_favor_bonus_contents  [CMasterParameterFavorBonusContents]
+master_favor_bonus  [CMasterParameterFavorBonus]
+master_heat_up_bonus  [CMasterParameterHeatUpBonus]
+master_bunker_setup  [CMasterParameterBunkerSetup]
+master_deco_offset_type  [CMasterParameterDecoOffsetType]
+master_deco_attach_enable  [CMasterParameterDecoAttachEnable]
+master_deco_object  [CMasterParameterDecoObject]
+master_deco_hair  [CMasterParameterDecoHair]
+master_mastery_step  [CMasterParameterMasteryStep]
+master_ai_appoint_move  [CMasterParameterAIAppointMove]
+master_guide_information  [CMasterParameterGuideInformation]
+master_expiration_information  [CMasterExpirationInformation]
+master_battle_evaluation  [CMasterParameterBattleEvaluation]
+master_subscription  [CMasterSubscription]
+master_subscription_plan  [CMasterSubscriptionPlan]
+master_direct_item_shop  [CMasterParameterDirectItemShop]
+master_sphere211  [CMasterSphere211]
+master_sphere211_floor  [CMasterSphere211Floor]
+master_sphere211_floor_asset  [CMasterSphere211FloorAsset]
+master_sphere211_floor_asset_box  [CMasterSphere211FloorAssetBox]
+master_sphere211_floor_clear_present  [CMasterSphere211FloorClearPresent]
+master_sphere211_floor_transfer_level  [CMasterSphere211FloorTransferLevel]
+master_sphere211_floor_transfer_rate  [CMasterSphere211FloorTransferRate]
+master_sphere211_mission_box  [CMasterSphere211MissionBox]
+master_sphere211_overwrite_enemy_level  [CMasterSphere211OverwriteEnemyLevel]
+master_sphere211_ranking_reward  [CMasterSphere211RankingReward]
+master_sphere211_rental_bonus  [CMasterSphere211RentalBonus]
+master_sphere211_treasure  [CMasterSphere211Treasure]
+master_sphere211_treasure_contents  [CMasterSphere211TreasureContents]
+master_sphere211_treasure_streak_bonus  [CMasterSphere211TreasureStreakBonus]
+master_universe_board  [CMasterUniverseBoard]
+master_universe_talent  [CMasterUniverseTalent]
+master_universe_chip_gacha_exchange  [CMasterUniverseChipGachaExchange]
+master_factor_boost  [CMasterFactorBoost]
+master_event_ranking  [CMasterEventRanking]
+master_event_ranking_group  [CMasterEventRankingGroup]
+master_event_ranking_reward  [CMasterEventRankingReward]
+master_role_deity_buff  [CMasterParameterRoleDeityBuffer]
+master_subscription_campaign  [CMasterParameterSubscriptionCampaign]
+# CParameterManager+0x600 (map or array under its own key)
+data  [CInfoManager]
+  .Sphere211CurrentId : 0x29ecaa8 unsigned int #536
+  .a_ver : 0x29ebd00 string
+  .IsUpdateAchievement : 0x29ec7d8 unsigned int #526
+  .RemoveBlacklist : 0x29ec8c8 unsigned int #529
+  .subscription_hitory_total_count : 0x29ed138 unsigned int #579
+  .BattleProxyPort : 0x29ecc38 unsigned int #549
+  .IsJudgment : 0x29eceb8 bool #565
+  .r_ver : 0x29ebdb0 string
+  .LatestEpisodeVersion : 0x29ed0e8 unsigned int #577
+  .DebugTime : 0x29ebc50 string
+  .LobbyProxyPath : 0x29ebfb8 string
+  .RentalBonus : 0x29ecd78 unsigned int #560
+  .AssetPath : 0x29ec1c0 string
+  .RentalCount : 0x29ecdc8 unsigned int #561
+  .MasterPath : 0x29ec110 string
+  .is_mission_continue : 0x29ed098 bool #575
+  .Sphere211NeedsReset : 0x29ecaf8 unsigned int #537
+  .Time : 0x29ebba0 string
+  .ClearPlanetId : 0x29ecb98 unsigned int #541
+  .BattleProxyPath : 0x29ebeb8 string
+  .master_event_mission_id : 0x29eca08 unsigned int #534
+  .LobbyProxyPort : 0x29ecbe8 unsigned int #547
+  .RemainingUpdateFavorCountByTap : 0x29ecff8 unsigned int #572
+  .master_tower_mission_id : 0x29eca58 unsigned int #535
+  .Sphere211RentalBonus : 0x29ece18 unsigned int #562
+  .AddFollow : 0x29ec828 unsigned int #527
+  .IsHealedByFavor : 0x29ed048 bool #573
+  .Sphere211RentalCount : 0x29ece68 unsigned int #563
+  .NumDecoObject : 0x29ec968 unsigned int #531
+  .JudgmentUrl : 0x29eb718 string
+  .PresentBoxCount : 0x29ec918 unsigned int #530
+  .IsLoginBonus : 0x29eccd8 bool #558
+  .GameID : 0x29ecd28 unsigned int #559
+  .LobbyPath : 0x29ec060 string
+  .MaintenanceMessage : 0x29ebaf0 string
+  .AddBlacklist : 0x29ec878 unsigned int #528
+  .MainteAnnounce : 0x29ec318 string
+  .master_mission_id : 0x29ec9b8 unsigned int #533
+  .MainteMode : 0x29ecb48 unsigned int #540
+  .RemainingEventDropBonusCountByFavor : 0x29ecfa8 unsigned int #571
+  .#f79a2d96 : 0x29ecf08 bool #567
+  .start_bigHunt_area_id : 0x29ecf58 unsigned int #569
+  .ReceiveAchievementId : 0x29ec788 unsigned int #525
+  child #00000000:
+    ?  [CWorldBossItemInfo]
+      .num : 0x29bc2c0 unsigned int #18
+      .content_type : 0x29c48e8 unsigned int #17
+      .id : 0x29bc168 unsigned int #16
+  child GachaRateInfoList:
+    GachaRateInfoList  [CGachaRateInfoList]
+  child FollowID:
+    FollowID  [CFollowIDInfo]
+  child SetAssistResult:
+    SetAssistResult  [SetAssistResultInfo]
+      .character_id : 0x29c4f08 unsigned long #13
+      .old_assist_id : 0x29c5008 unsigned long #15
+      .assist_id : 0x29c4fb0 unsigned long #14
+  child MasterKiyakuVersion:
+    MasterKiyakuVersion  [CMasterKiyakuVersionInfo]
+      .update_kiyaku_string : 0x29e5030 string
+      .kiyaku_version : 0x29e4f88 string
+  child Follow:
+    Follow  [CFollowInfoList]
+  child DeepSpaceBonusAllApplyInfoList:
+    DeepSpaceBonusAllApplyInfoList  [CDeepSpaceBonusAllApplyInfoList]
+  child Sphere211RankingDetailInfoMap:
+    Sphere211RankingDetailInfoMap  [Sphere211RankingDetailInfoMap]
+  child WorldMapMaintenanceInfoMap:
+    WorldMapMaintenanceInfoMap  [CWorldMapMaintenanceInfoMap]
+  child HostPlayer:
+    HostPlayer  [CHostPlayerInfo]
+      child UpdateMissionStartPlayerInfo:
+        UpdateMissionStartPlayerInfo  [UpdateMissionStartPlayerInfo]
+          .stamina_update : 0x29c4768 string
+          .is_rookie : 0x29b7458 bool #156
+          .stamina : 0x29ba8b8 unsigned int #153
+          .sphere211_revive_count : 0x29a0730 unsigned int #157
+          .stamina_max_time : 0x29a05d0 unsigned int #155
+          .id : 0x29a03c0 unsigned int #152
+      child UpdateStockItem:
+        UpdateStockItem  [CUpdateStackItemInfoList]
+  child Sphere211EndResult:
+    Sphere211EndResult  [Sphere211EndResult]
+      .previous_season_id : 0x29c4c80 unsigned int #370
+      .rank : 0x29c4b20 unsigned int #368
+      .floor_num : 0x29c4a78 unsigned int #367
+      .treasure_num : 0x29c4bd0 unsigned int #369
+  child GachaDayLimitCountInfo:
+    GachaDayLimitCountInfo  [CGachaDayLimitCountInfoArray]
+  child PremiumLoginBonus:
+    PremiumLoginBonus  [CPremiumLoginBonusInfoList]
+  child PickupCharaterChipResultInfoMap:
+    PickupCharaterChipResultInfoMap  [PickupCharaterChipResultInfoMap]
+  child BoostedCharacterResult:
+    BoostedCharacterResult  [CBoostCharacterResultInfoMap]
+  child UseStockItem:
+    UseStockItem  [CUseStackItemInfo]
+      .use_count : 0x299c7f8 unsigned int #77
+      .master_item_id : 0x29a5788 unsigned int #76
+  child Item:
+    Item  [CItemInfoList]
+  child CheckInInfoList:
+    CheckInInfoList  [CCheckInInfoList]
+  child AddGearInfoList:
+    AddGearInfoList  [CAddGearInfoList]
+  child CharacterDeco:
+    CharacterDeco  [CCharacterDecoSendInfo]
+      .character_id : 0x29e5768 unsigned long #162
+      .hair_id : 0x29dcd78 unsigned int #163
+      .pose_id : 0x29a0c00 unsigned int #164
+  child DebugGearGenerationInfoResult:
+    DebugGearGenerationInfoResult  [CDebugGearGenerationInfoResult]
+      .rank_calculation : 0x29e68c8 unsigned int #397
+      .factor_extraction : 0x29e6970 float #398
+      child GearProbabilityInfoList:
+        GearProbabilityInfoList  [CGearProbabilityInfoList]
+      child DebugGearGenerationInfoList:
+        DebugGearGenerationInfoList  [CDebugGearGenerationInfoList]
+  child GiftGachaItems:
+    GiftGachaItems  [CGiftGachaResultInfoArray]
+  child RecentlyPlayedDetail:
+    RecentlyPlayedDetail  [RecentlyPlayedDetailInfoMap]
+  child OneTimeStorageItemClearNewList:
+    OneTimeStorageItemClearNewList  [COneTimeStorageItemClearNewList]
+  child Wallet:
+    Wallet  [CWalletInfo]
+      .#2267f31d : 0x29dbec8 unsigned int #12
+      .free_coin : 0x29c1338 unsigned int #14
+      .pay_coin : 0x29bc168 unsigned int #16
+      .total_coin : 0x29c1388 unsigned int #15
+      .android_coin : 0x29c57a8 unsigned int #13
+  child UpdateUniverseEffectualTalentInfoList:
+    UpdateUniverseEffectualTalentInfoList  [UpdateUniverseEffectualTalentInfoList]
+  child DeepSpaceArea:
+    DeepSpaceArea  [CDeepSpaceAreaInfo]
+      .is_new : 0x29a5350 bool #68
+      .current_exp : 0x29a5108 unsigned int #62
+      .max_exp : 0x29a5158 unsigned int #63
+      .ship_complete_num : 0x29b1308 unsigned int #65
+      .master_area_id : 0x29a50b8 unsigned int #61
+      .is_last_play : 0x29a51f8 bool #66
+      .ship_in_progress_num : 0x29a51a8 unsigned int #64
+      .is_rare_mission : 0x29a52a0 bool #67
+      child DeepSpaceMissionList:
+        DeepSpaceMissionList  [CDeepSpaceMissionInfoMap]
+  child ActiveEventMissionList:
+    ActiveEventMissionList  [CActiveEventMissionListInfo]
+      child EventArea:
+        EventArea  [CEventAreaInfoCategoryList]
+      child EventMission:
+        EventMission  [CEventMissionInfoCategoryList]
+  child InheritResultInfo:
+    InheritResultInfo  [InheritResultInfo]
+      .lost_item_limit_break_count : 0x29a50b8 unsigned int #61
+      .lost_player_item_id : 0x29c56b8 unsigned long #60
+      .base_player_item_id : 0x29c5668 unsigned long #58
+      .lost_master_item_id : 0x29b12b8 unsigned int #59
+  child GachaTestResult:
+    GachaTestResult  [CGachaTestResultInfoList]
+  child CExpirationPurchaseCampaignInfoList:
+    CExpirationPurchaseCampaignInfoList  [CExpirationPurchaseCampaignInfoList]
+  child CUpdateDeityInfoList:
+    CUpdateDeityInfoList  [CUpdateDeityInfoList]
+  child Sphere211TreasureDropInfoList:
+    Sphere211TreasureDropInfoList  [Sphere211TreasureDropInfoList]
+  child TowerSchedule:
+    TowerSchedule  [TowerScheduleInfoArray_S2C]
+  child WorldBossMissionTimeBonusDropItemInfoList:
+    WorldBossMissionTimeBonusDropItemInfoList  [CWorldBossMissionTimeBonusDropItemInfoList]
+  child PlayerCharacterMasteryInfoMap:
+    PlayerCharacterMasteryInfoMap  [CPlayerCharacterMasteryInfoMap]
+  child Sphere211StaminaInfo:
+    Sphere211StaminaInfo  [Sphere211StaminaInfo]
+      .stamina_update : 0x29e8ad8 string
+      .stamina : 0x29a3a78 unsigned int #125
+      .stamina_max : 0x299f2f8 unsigned int #127
+  child AddFriendGauge:
+    AddFriendGauge  [CAddFriendGaugeInfoMap]
+  child DeepSpaceShip:
+    DeepSpaceShip  [CDeepSpaceShipInfo]
+      .closed_at : 0x29c5148 string
+      .bonus_set_id : 0x29bc2c0 unsigned int #18
+      .item_id : 0x29ba428 unsigned int #19
+      .master_area_id : 0x29bc168 unsigned int #16
+      .ship_id : 0x29c1388 unsigned int #15
+      .master_mission_id : 0x29c48e8 unsigned int #17
+      .started_at : 0x29bc370 string
+  child FooterBadgeInfoMap:
+    FooterBadgeInfoMap  [CFooterBadgeInfoMap]
+  child EquipWeaponResult:
+    EquipWeaponResult  [CEquipWeaponResultInfo]
+      child Item:
+        Item  [CEquipWeaponResultItemInfoCategory]
+      child Character:
+        Character  [CEquipWeaponResultPersonInfoCategory]
+  child Option:
+    Option  [COptionInfo]
+      .voice_volume : 0x29b64d8 unsigned int #38
+      .resolution : 0x29af758 unsigned int #32
+      .is_notification : 0x29b67d8 unsigned int #39
+      .se_volume : 0x29a69b8 unsigned int #37
+      .#45dc0a39 : 0x29b14b0 unsigned int #33
+      .bgm_volume : 0x29af958 unsigned int #36
+      .camera_range : 0x29af858 unsigned int #34
+      .player_id : 0x29c6ba8 unsigned int #30
+      .camera_effect : 0x29af900 unsigned int #35
+      .frame_rate : 0x29b6438 unsigned int #31
+  child ItemGetList:
+    ItemGetList  [CItemReceiveList]
+  child SellResult:
+    SellResult  [CSellResultInfo]
+      .num : 0x29b6438 unsigned int #31
+      .master_item_id : 0x29c6ba8 unsigned int #30
+      .total_fol : 0x29adc98 unsigned int #29
+      child item_ids:
+        item_ids  [CSellResultItemList]
+      child StockItem:
+        StockItem  [CSellResultStackItemMap]
+      child UpdateGearList:
+        UpdateGearList  [CUpdateGearList]
+  child UseFavorResultInfo:
+    UseFavorResultInfo  [CUserFavorResultInfo]
+      .same_role_id : 0x29a7848 unsigned int #66
+      .favor_point : 0x29a46a8 unsigned int #68
+      .favor_level : 0x29b1358 unsigned int #67
+  child RemoveFollow:
+    RemoveFollow  [CRemoveFollowInfo]
+      .id : 0x29e2318 unsigned int #317
+  child LimitBreakItem:
+    LimitBreakItem  [CLimitBreakItemInfoList]
+  child BlacklistPlayerList:
+    BlacklistPlayerList  [CBlacklistPlayerListInfo]
+  child ActiveWorldMapMissionList:
+    ActiveWorldMapMissionList  [CActiveWorldMapMissionListInfo]
+      child WorldMap:
+        WorldMap  [CWorldMapInfoCategoryList]
+      child WorldMapCellList:
+        WorldMapCellList  [CWorldMapCellInfoCategoryList]
+      child WorldMapMission:
+        WorldMapMission  [CWorldMapMissionInfoCategoryList]
+  child ItemShopInfoList:
+    ItemShopInfoList  [CItemShopInfoList]
+  child GradeUpResult:
+    GradeUpResult  [CGradeUpResultInfo]
+      .grade_up_m_item_id : 0x29af858 unsigned int #34
+      .base_item_id : 0x29af900 unsigned int #35
+      .use_fol : 0x29af958 unsigned int #36
+      child lost_item_ids:
+        lost_item_ids  [CLostItemIDsList]
+      child UpdateGearList:
+        UpdateGearList  [CUpdateGearList]
+  child AddItem:
+    AddItem  [CAddItemList]
+  child NeighborList:
+    NeighborList  [CNeighborInfoList]
+  child UpdateCharacterMasteryInfoArray:
+    UpdateCharacterMasteryInfoArray  [CUpdateCharacterMasteryInfoArray]
+  child StepUpGacha:
+    StepUpGacha  [CStepUpGachaInfoList]
+  child GetAchievementApiInfoList:
+    GetAchievementApiInfoList  [CAchievementKindInfoList]
+  child FollowPlayerList:
+    FollowPlayerList  [CFollowPlayerListInfo]
+  child UpdateOneTimeStorageItem:
+    UpdateOneTimeStorageItem  [CUpdateOneTimeStorageItemInfoList]
+  child CUniverseBoardList:
+    CUniverseBoardList  [CUniverseBoardList]
+  child WorldMapScenarioLibraryInfoList:
+    WorldMapScenarioLibraryInfoList  [CWorldMapScenarioLibraryInfoList]
+  child StockItem:
+    StockItem  [CStackItemInfoList]
+  child EvolutionResult:
+    EvolutionResult  [CEvolutionResultInfo]
+      .use_fol : 0x29aa660 unsigned int #55
+      child UseStockItem:
+        UseStockItem  [CUseEvolutionResult_StackItemInfoList]
+      child UpdatePlayerCharacter:
+        UpdatePlayerCharacter  [CUpdatePlayerCharacter]
+          .after_master_role_id : 0x29af958 unsigned int #36
+          .before_master_role_id : 0x29af900 unsigned int #35
+          .is_rarity_7 : 0x29b64d8 unsigned int #38
+          .level : 0x29a69b8 unsigned int #37
+          .id : 0x29af858 unsigned int #34
+  child SetAssistResultList:
+    SetAssistResultList  [SetAssistResultList]
+  child OneTimeStorageItem:
+    OneTimeStorageItem  [COneTimeStorageItemInfoList]
+  child AddDecoObject:
+    AddDecoObject  [CAddDecoObjectInfoList]
+  child AddStampList:
+    AddStampList  [CAddStampList]
+  child CommonWebSite:
+    CommonWebSite  [CCommonWebSiteInfo]
+  child ServerBuildInfo:
+    ServerBuildInfo  [CServerBuildInfo]
+      .BuildScmRevision : 0x29b4ab8 string
+      .BuildId : 0x29e30d8 string
+      .BuildNumber : 0x29db828 string
+      .BuildScmURL : 0x29b6788 string
+  child BattleEvaluationResultInfoList:
+    BattleEvaluationResultInfoList  [CBattleEvaluationResultInfoList]
+  child PickupCharaterChipResultInfoList:
+    PickupCharaterChipResultInfoList  [PickupCharaterChipResultInfoList]
+  child UpdateCharacterList:
+    UpdateCharacterList  [CUpdateCharacterInfoList]
+  child FavorBonusContetsResultInfo:
+    FavorBonusContetsResultInfo  [CFavorBonusContetsResultInfo]
+      .lot_character_id : 0x29e53c8 unsigned long #92
+      child FavorBonusContetsInfoList:
+        FavorBonusContetsInfoList  [CFavorBonusContetsInfoList]
+  child ItemShopInfo:
+    ItemShopInfo  [CItemShopInfo]
+      .loop_count : 0x29b6578 unsigned int #41
+      .is_new : 0x29c69a8 bool #38
+      .#9049d8cd : 0x29a6b10 string
+      .limit_count : 0x29a69b8 unsigned int #37
+      .id : 0x29af958 unsigned int #36
+      .num_total : 0x29b6528 unsigned int #40
+  child CommonDropList:
+    CommonDropList  [CMissionResultCommonDropInfo]
+      .free_coin : 0x29a34d8 unsigned int #102
+      .up_fol_rate : 0x29a3528 unsigned int #103
+      .fol : 0x299d8b0 unsigned int #101
+      child AddStampList:
+        AddStampList  [CAddStampList]
+      child item:
+        item  [CMissionDropItemInfoList]
+      child character:
+        character  [CMissionDropCharacterInfoList]
+      child stock_item:
+        stock_item  [CMissionDropStackItemInfoList]
+  child MissionEndResult:
+    MissionEndResult  [MissionEndResultInfo]
+      .mission_time : 0x29c6ba8 unsigned int #30
+  child ExchangeResult:
+    ExchangeResult  [CExchangeResultInfo]
+      .num : 0x29aa5b8 unsigned int #52
+      .ex_item_id : 0x29aa560 unsigned int #51
+      .master_exchange_shop_id : 0x29a3d10 unsigned int #50
+      .AddFreeCoin : 0x29a3e70 unsigned int #53
+  child Achievement:
+    Achievement  [CAchievementActiveInfoList]
+  child BattleParameter:
+    BattleParameter  [CBattleParameterInfo]
+      .rental_sub_character_id : 0x29b6d28 unsigned int #43
+      child BattleResultInheritUiList:
+        BattleResultInheritUiList  [CBattleResultInheritUiList]
+      child PlayerCharacter:
+        PlayerCharacter  [CPlayerCharacterInfoList]
+      child BattleResultGearUiList:
+        BattleResultGearUiList  [CBattleResultGearUiList]
+      child AttackActionList:
+        AttackActionList  [CAttackActionListInfoList]
+  child DebugFavorBonusContetsResultInfoList:
+    DebugFavorBonusContetsResultInfoList  [CDebugFavorBonusContetsResultInfoList]
+  child Character:
+    Character  [CPersonInfoList]
+  child CContentInfoMap:
+    CContentInfoMap  [CContentInfoMap]
+  child PresentGetResult:
+    PresentGetResult  [CPresentGetResultInfo]
+      child add:
+        add  [CPresentBoxAddInfoList]
+      child get:
+        get  [CPresentBoxGetList]
+      child result:
+        result  [CPresentBoxReceiveInfo]
+          .free_coin : 0x29df018 unsigned int #223
+          .fol : 0x29b9878 unsigned int #222
+          child StockItem:
+            StockItem  [CPresentBoxReceiveStackItemInfoList]
+          child Character:
+            Character  [CPresentBoxReceiveCharacterInfoList]
+          child Stamp:
+            Stamp  [CPresentBoxReceiveStampInfoList]
+          child item:
+            item  [CPresentBoxReceiveItemInfoList]
+          child PresentBoxReceiveGearInfoList:
+            PresentBoxReceiveGearInfoList  [CPresentBoxReceiveGearInfoList]
+          child Title:
+            Title  [CPresentBoxReceiveTitleInfoList]
+          child AddOneTimeStorageInfo:
+            AddOneTimeStorageInfo  [CAddOneTimeStorageInfo]
+  child ConfigInfoList:
+    ConfigInfoList  [CConfigInfoList]
+  child DeepMissionPlayer:
+    DeepMissionPlayer  [DeepMissionEndResultPlayerInfo]
+      .tower_try_count : 0x29bd1c8 unsigned int #151
+      .stamina_update : 0x29a0470 string
+      .time_saving_use_count : 0x29a03c0 unsigned int #152
+      .stamina : 0x29bd128 unsigned int #146
+      .is_level_up : 0x29dd3b8 bool #150
+      .level : 0x299fef0 unsigned int #145
+      .stamina_max : 0x29a0050 unsigned int #147
+      .fol : 0x29bd178 unsigned int #149
+      .exp : 0x29bba88 unsigned int #148
+  child PresentBox:
+    PresentBox  [CPresentBoxInfoList]
+  child AddCharacter:
+    AddCharacter  [CAddCharacterList]
+  child AutoSelectedResult:
+    AutoSelectedResult  [CAutoSelectedCharacterIDInfo]
+  child Sphere211RankingInfoMap:
+    Sphere211RankingInfoMap  [Sphere211RankingInfoMap]
+  child MutualFollowID:
+    MutualFollowID  [CMutualFollowIDInfo]
+  child BoxGachaList:
+    BoxGachaList  [CBoxGachaListInfoList]
+  child UpdateStorageItem:
+    UpdateStorageItem  [CUpdateStorageItemInfoList]
+  child MascontInfoList:
+    MascontInfoList  [CMascontInfoList]
+  child Sphere211AutoMemberSelectResultInfo:
+    Sphere211AutoMemberSelectResultInfo  [Sphere211AutoMemberSelectResultInfo]
+  child ClearPresentList:
+    ClearPresentList  [CMissionResultPresentInfo]
+      .free_coin : 0x29a34d8 unsigned int #102
+      .up_fol_rate : 0x29a3528 unsigned int #103
+      .fol : 0x299d8b0 unsigned int #101
+      child AddStampList:
+        AddStampList  [CAddStampList]
+      child item:
+        item  [CMissionDropItemInfoList]
+      child character:
+        character  [CMissionDropCharacterInfoList]
+      child stock_item:
+        stock_item  [CMissionDropStackItemInfoList]
+  child StampList:
+    StampList  [CStampList]
+  child BlacklistID:
+    BlacklistID  [CBlacklistIDInfo]
+  child GearInfoList:
+    GearInfoList  [CGearInfoList]
+  child BoxGachaItems:
+    BoxGachaItems  [CBoxGachaResultInfoList]
+  child CDebugDeepCharacterList:
+    CDebugDeepCharacterList  [CDeepSpaceDebugCharacterInfoMap]
+  child Sphere211RentalCharacterInfoMap:
+    Sphere211RentalCharacterInfoMap  [Sphere211RentalCharacterInfoMap]
+  child ExchangeShopExCount:
+    ExchangeShopExCount  [CExchangeShopExCountInfoCategoryMap]
+  child UpdateStorageLockList:
+    UpdateStorageLockList  [CUpdateStorageLockList]
+  child DirectItemShopInfo:
+    DirectItemShopInfo  [CDirectItemShopInfo]
+      .icon_id : 0x29af758 unsigned int #32
+      .master_banner_id : 0x29aa560 unsigned int #51
+      .closed_at : 0x29e30d8 string
+      .num : 0x29aa468 unsigned int #48
+      .new_closed_at : 0x29bc028 string
+      .interval_day : 0x29a69b8 unsigned int #37
+      .name_label : 0x29a6398 string
+      .order_id : 0x29bc5b8 unsigned int #28
+      .content_type : 0x29a3bb8 unsigned int #47
+      .starter_limit_day : 0x29b67d8 unsigned int #39
+      .description_label : 0x29e4d38 string
+      .content_id : 0x29aa3c8 unsigned int #45
+      .sale_type : 0x29b6528 unsigned int #40
+      .bought_at : 0x29a58c8 string
+      .thumbnail_id : 0x29b6d78 string
+      .title_label : 0x29e4ce8 string
+      .limit_count : 0x29af958 unsigned int #36
+      .is_view_closed_at : 0x29b6578 unsigned int #41
+      .content_id_label : 0x29b6dc8 string
+      .is_once : 0x29e4d88 bool #33
+      .opened_at : 0x29db828 string
+      .id : 0x29bc510 unsigned int #26
+      .num_total : 0x29a5878 unsigned int #54
+      .bonus_id : 0x29b64d8 unsigned int #38
+      .yen : 0x29c51e8 unsigned int #27
+      .new_opened_at : 0x29bc7c8 string
+  child DirectItemShopInfoList:
+    DirectItemShopInfoList  [CDirectItemShopInfoList]
+  child UpdateDeepSpaceBonusAllApplyInfoList:
+    UpdateDeepSpaceBonusAllApplyInfoList  [CUpdateDeepSpaceBonusAllApplyInfoList]
+  child CampaignInfo:
+    CampaignInfo  [CCampaignInfoList]
+  child LoginBonus:
+    LoginBonus  [CLoginBonusInfoList]
+  child AwakenResult:
+    AwakenResult  [CAwakenResultInfo]
+      .update_child_mastery_talent_id : 0x29ae058 unsigned int #20
+      .awaken_level : 0x29bc168 unsigned int #16
+      .update_child_id : 0x29ba428 unsigned int #19
+      .use_fol : 0x29c1388 unsigned int #15
+      child UseStockItem:
+        UseStockItem  [CUseEvolutionResult_StackItemInfoList]
+      child UpdateCharacter:
+        UpdateCharacter  [CUpdateCharacterInfo]
+          .skill3_level : 0x29c6ba8 unsigned int #30
+          .master_role_id : 0x29ba1f8 unsigned int #21
+          .rush_skill_factor_id : 0x29af900 unsigned int #35
+          .skill1 : 0x29bc468 unsigned int #25
+          .is_new : 0x29b6438 unsigned int #31
+          .level : 0x29c4938 unsigned int #23
+          .skill1_level : 0x29bc510 unsigned int #26
+          .rush_skill : 0x29b14b0 unsigned int #33
+          .skill2_level : 0x29bc5b8 unsigned int #28
+          .weapon_item_id : 0x29c5a78 unsigned long #22
+          .rush_gauge_use : 0x29a69b8 unsigned int #37
+          .skill2 : 0x29c51e8 unsigned int #27
+          .rush_gauge_max : 0x29af958 unsigned int #36
+          .skill3 : 0x29adc98 unsigned int #29
+          .weapon_kind : 0x29b67d8 unsigned int #39
+          .id : 0x29ae158 unsigned long #19
+          .player_id : 0x29ae058 unsigned int #20
+          .rush_skill_level : 0x29af858 unsigned int #34
+          .exp : 0x29c6ec8 unsigned int #24
+  child ActiveMissionList:
+    ActiveMissionList  [CActiveMissionListInfo]
+      child Mission:
+        Mission  [CMissionInfoCategoryList]
+      child Planet:
+        Planet  [CPlanetInfoCategoryList]
+      child Area:
+        Area  [CAreaInfoCategoryListList]
+  child PartialMaintenance:
+    PartialMaintenance  [CPartialMaintenanceInfoMap]
+  child ConfigInfo:
+    ConfigInfo  [CConfigInfo]
+      .value : 0x29bccc8 string
+      .type : 0x29b6d28 unsigned int #43
+      .master_config_id : 0x29b6578 unsigned int #41
+  child StampSlot:
+    StampSlot  [CStampSlotInfo]
+  child DebugGearDropInfoList:
+    DebugGearDropInfoList  [CDebugGearDropInfoList]
+  child AddTitleList:
+    AddTitleList  [CAddTitleList]
+  child FriendGaugeUpdate:
+    FriendGaugeUpdate  [CFriendGaugeUpdateInfoMap]
+  child StackItemClearNewList:
+    StackItemClearNewList  [CStackItemClearNewList]
+  child GachaCount:
+    GachaCount  [CGachaCountInfoList]
+  child PlayerCharacterFavorMap:
+    PlayerCharacterFavorMap  [CPlayerCharacterFavorInfoMap]
+  child Sphere211FloorClearResultInfo:
+    Sphere211FloorClearResultInfo  [Sphere211FloorClearResultInfo]
+      .clear_present_id : 0x29b9af8 unsigned int #234
+      .clear_present_num : 0x29b9b48 unsigned int #236
+      .clear_present_content_type : 0x29e8fd8 unsigned int #235
+  child UpdateStepUpGacha:
+    UpdateStepUpGacha  [CUpdateStepUpGachaInfoList]
+  child Sphere211FloorAssetInfoMap:
+    Sphere211FloorAssetInfoMap  [Sphere211FloorAssetInfoMap]
+  child CInformationSiteInfo:
+    CInformationSiteInfo  [CInformationSiteInfo]
+      .#b62cb052 : 0x29eb048 string
+  child LimitBreakCharacter:
+    LimitBreakCharacter  [CLimitBreakInfoList]
+  child EventMaintenanceInfoMap:
+    EventMaintenanceInfoMap  [CEventMaintenanceInfoMap]
+  child AddFollow:
+    AddFollow  [CAddFollowInfoList]
+  child ExpirationInfoList:
+    ExpirationInfoList  [CExpirationInfoList]
+  child DeepSpaceDebugRareMissionInfoList:
+    DeepSpaceDebugRareMissionInfoList  [CDeepSpaceDebugRareMissionInfoList]
+  child Sphere211FloorClearInfo:
+    Sphere211FloorClearInfo  [Sphere211FloorClearInfo]
+      .floor_level : 0x29a2a40 unsigned int #208
+      .lot_floor_num : 0x29b9648 unsigned int #210
+      .master_sphere211_asset_id : 0x29a2af0 unsigned int #209
+  child SkillList:
+    SkillList  [CSkillInfoMap]
+  child MissionParameter:
+    MissionParameter  [CMissionParameterInfo]
+      .is_surprise : 0x29dc808 bool #19
+      .is_event_drop_by_favor : 0x29da518 bool #22
+      .master_mission_id_label : 0x29c6908 string
+      .add_enemy_level : 0x29c6ec8 unsigned int #24
+      .overwrite_enemy_level : 0x29c4938 unsigned int #23
+      .stamina_cost : 0x29ba1f8 unsigned int #21
+      .master_mission_id : 0x29c48e8 unsigned int #17
+      .multi_player_count : 0x29ae058 unsigned int #20
+      child mission_stage:
+        mission_stage  [CMissionStageInfoList]
+      child mission_drop:
+        mission_drop  [CMissionDropInfoList]
+      child mission_drop_rare:
+        mission_drop_rare  [CMissionRareDropInfoList]
+      child common_drop:
+        common_drop  [CMissionCommonDropInfoList]
+      child battle_evaluation_drop:
+        battle_evaluation_drop  [CBattleEvaluationDropInfoList]
+  child SubscriptionHistory:
+    SubscriptionHistory  [SubscriptionHistoryInfoList]
+  child ItemClearNewList:
+    ItemClearNewList  [CItemClearNewList]
+  child BoxGacha:
+    BoxGacha  [CBoxGachaInfoList]
+  child UpdatedAchievement:
+    UpdatedAchievement  [CUpdatedAchievementList]
+  child AddPresent:
+    AddPresent  [CAddPresentBoxInfoList]
+  child CWorldBossPlayerInfo:
+    CWorldBossPlayerInfo  [CWorldBossPlayerInfo]
+      .is_notified : 0x29deb28 bool #98
+      .is_received : 0x29dead8 bool #97
+      .num2 : 0x29dea38 unsigned long #93
+      .master_item_id3 : 0x29a3348 unsigned int #94
+      .master_item_id2 : 0x29a32f8 unsigned int #92
+      .#6922c920 : 0x29dea88 unsigned long #95
+      .wave : 0x299d540 unsigned int #96
+      .world_boss_id : 0x29a3208 unsigned int #88
+      .#872ca80c : 0x29de9e8 unsigned long #91
+      .is_new_open : 0x29b6be8 bool #100
+      .master_item_id1 : 0x29a3258 unsigned int #90
+  child add_characters_exp:
+    add_characters_exp  [CAddCharacterExpInfoList]
+  child Sphere211FollowFloorInfoList:
+    Sphere211FollowFloorInfoList  [Sphere211FollowFloorInfoList]
+  child GuideInformationInfoList:
+    GuideInformationInfoList  [CGuideInformationInfoList]
+  child StorageItem:
+    StorageItem  [CStorageItemInfoList]
+  child UpdateAttachedGearInfoList:
+    UpdateAttachedGearInfoList  [CUpdateAttachedGearInfoList]
+  child UpdateBoxGachaList:
+    UpdateBoxGachaList  [CUpdateBoxGachaListInfoList]
+  child PlayMission:
+    PlayMission  [CPlayMissionInfo]
+      .type : 0x29e2dc8 unsigned int #201
+      .sphere211_floor_level : 0x29a2990 unsigned int #207
+      .#3faa64a9 : 0x29a2620 unsigned int #202
+      .mission_id : 0x29b95a8 unsigned int #200
+      .is_play : 0x29a2410 unsigned int #199
+      .master_sphere211_floor_asset_id : 0x29a28e0 unsigned int #206
+      .episode_type_id : 0x29a2830 unsigned int #205
+      .is_maintenance : 0x29e2e68 bool #204
+      .is_expired : 0x29e2e18 bool #203
+  child DecoObject:
+    DecoObject  [CDecoObjectInfoList]
+  child UpdatedEventRankingIdList:
+    UpdatedEventRankingIdList  [UpdatedEventRankingIdList]
+  child CharacterChipInfoList:
+    CharacterChipInfoList  [CharacterChipInfoList]
+  child ComposeResult:
+    ComposeResult  [CComposeResultInfo]
+      .before_level : 0x29a6e80 unsigned int #44
+      .before_boosted_point : 0x29aa3c8 unsigned int #45
+      .after_boosted_point : 0x29aa468 unsigned int #48
+      .before_limit_break_count : 0x29aa418 unsigned int #46
+      .after_level : 0x29a3bb8 unsigned int #47
+      .is_big_success : 0x29e12b8 bool #51
+      .id : 0x29e1268 unsigned long #43
+      .use_fol : 0x29a3d10 unsigned int #50
+      .after_limit_break_count : 0x29aa4b8 unsigned int #49
+      child lost_item_ids:
+        lost_item_ids  [CLostItemIDsList]
+      child UpdateGearList:
+        UpdateGearList  [CUpdateGearList]
+  child GetEventRankingResultInfo:
+    GetEventRankingResultInfo  [GetEventRankingResultInfo]
+      child EventRankingTopInfoListMap:
+        EventRankingTopInfoListMap  [EventRankingTopInfoListMap]
+      child EventRankingPlayerInfoMap:
+        EventRankingPlayerInfoMap  [EventRankingPlayerInfoMap]
+      child EventRankingInfoListMap:
+        EventRankingInfoListMap  [EventRankingInfoListMap]
+  child ReceiveAchievement:
+    ReceiveAchievement  [CAchievementReceiveInfoList]
+  child MissionResultCharacterFavor:
+    MissionResultCharacterFavor  [CMissionResultCharacterFavorInfoMap]
+  child GachaHashMap:
+    GachaHashMap  [CGachaHashInfoMap]
+  child MasteryRewardInfo:
+    MasteryRewardInfo  [CMasteryRewardInfo]
+      .num : 0x29a56e8 unsigned int #74
+      .master_item_id : 0x29a5fd8 unsigned int #73
+  child FooterMissionInfo:
+    FooterMissionInfo  [FooterMissionInfo]
+      .is_open_multiplay : 0x29dadb8 bool #192
+      .is_open_extra_dungeon : 0x29dacc8 bool #189
+      .is_open_evolution : 0x29dad68 bool #191
+      .is_open_event_mission : 0x29dad18 bool #190
+      .ep1_new_area_count : 0x29a1c80 unsigned int #188
+  child RareDropList:
+    RareDropList  [CMissionResultRareDropInfo]
+      .free_coin : 0x29a34d8 unsigned int #102
+      .up_fol_rate : 0x29a3528 unsigned int #103
+      .fol : 0x299d8b0 unsigned int #101
+      child AddStampList:
+        AddStampList  [CAddStampList]
+      child item:
+        item  [CMissionDropItemInfoList]
+      child character:
+        character  [CMissionDropCharacterInfoList]
+      child stock_item:
+        stock_item  [CMissionDropStackItemInfoList]
+  child EquipAccessoryResult:
+    EquipAccessoryResult  [CEquipAccessoryResultInfo]
+      child Item:
+        Item  [CEquipAccessoryResultItemInfoCategory]
+      child Character:
+        Character  [CEquipAccessoryResultPersonInfoCategory]
+  child SubscriptionCampaignResultList:
+    SubscriptionCampaignResultList  [SubscriptionCampaignResultList]
+  child CheckEventRankingResultInfo:
+    CheckEventRankingResultInfo  [CheckEventRankingResultInfo]
+      .master_event_ranking_group_id : 0x29aa660 unsigned int #55
+      child RankingResultInfoList:
+        RankingResultInfoList  [RankingResultInfoList]
+  child CT_WorldBossInfo:
+    CT_WorldBossInfo  [CT_WorldBossInfo]
+      .wave_clear_time : 0x29de818 unsigned int #168
+      .bighunt_started_at : 0x29bd3a8 string
+      .bighunt_closed_at : 0x29a1020 string
+      .wave : 0x29a0d60 unsigned int #166
+      .wave_started_at : 0x29bbd58 string
+      .world_boss_id : 0x29dcdc8 unsigned int #165
+      .add_item1_num : 0x29b92d8 unsigned int #172
+      .next_required_num : 0x29de868 unsigned long #175
+      .add_item2_num : 0x29a1230 unsigned int #173
+      .add_item3_num : 0x29b9328 unsigned int #174
+  child LockItemResult:
+    LockItemResult  [CLockItemResult]
+  child CoinDeposit:
+    CoinDeposit  [CCoinDepositInfo]
+      .deposit_trans_id : 0x29bc168 unsigned int #16
+  child TitleList:
+    TitleList  [CTitleList]
+  child DropList:
+    DropList  [CMissionResultDropInfo]
+      .free_coin : 0x29a34d8 unsigned int #102
+      .up_fol_rate : 0x29a3528 unsigned int #103
+      .fol : 0x299d8b0 unsigned int #101
+      child AddStampList:
+        AddStampList  [CAddStampList]
+      child item:
+        item  [CMissionDropItemInfoList]
+      child character:
+        character  [CMissionDropCharacterInfoList]
+      child stock_item:
+        stock_item  [CMissionDropStackItemInfoList]
+  child UpdateUniverseLevelInfo:
+    UpdateUniverseLevelInfo  [UpdateUniverseLevelInfo]
+      .update_level : 0x29c4e68 int #219
+      .player_id : 0x29c4dc8 unsigned int #217
+      .player_character_id : 0x29c4e18 unsigned long #218
+  child AddMutualFollowID:
+    AddMutualFollowID  [CAddMutualFollowIDInfo]
+  child PartyUpdate:
+    PartyUpdate  [CPartyUpdateInfo]
+      .player_character_id3 : 0x29ded78 unsigned long #34
+      .player_character_id2 : 0x29ded28 unsigned long #33
+      .party_id : 0x29b6438 unsigned int #31
+      .player_character_id1 : 0x29c6c48 unsigned long #32
+  child UpdateBoxGacha:
+    UpdateBoxGacha  [CUpdateBoxGachaInfoList]
+  child Subscription:
+    Subscription  [SubscriptionInfoMap]
+  child CoinList:
+    CoinList  [CCoinInfoList]
+  child CommonWebView:
+    CommonWebView  [CCommonWebViewInfo]
+  child SubscriptionPlan:
+    SubscriptionPlan  [SubscriptionPlanInfoMap]
+  child MissionDropTestResultInfo:
+    MissionDropTestResultInfo  [CMissionDropTestResultInfo]
+      child MissionParameter:
+        MissionParameter  [CMissionParameterInfo]
+          .is_surprise : 0x29dc808 bool #19
+          .is_event_drop_by_favor : 0x29da518 bool #22
+          .master_mission_id_label : 0x29c6908 string
+          .add_enemy_level : 0x29c6ec8 unsigned int #24
+          .overwrite_enemy_level : 0x29c4938 unsigned int #23
+          .stamina_cost : 0x29ba1f8 unsigned int #21
+          .master_mission_id : 0x29c48e8 unsigned int #17
+          .multi_player_count : 0x29ae058 unsigned int #20
+          child mission_stage:
+            mission_stage  [CMissionStageInfoList]
+          child mission_drop:
+            mission_drop  [CMissionDropInfoList]
+          child mission_drop_rare:
+            mission_drop_rare  [CMissionRareDropInfoList]
+          child common_drop:
+            common_drop  [CMissionCommonDropInfoList]
+          child battle_evaluation_drop:
+            battle_evaluation_drop  [CBattleEvaluationDropInfoList]
+  child UseResult:
+    UseResult  [CUseResultInfo]
+      .num : 0x29ba1f8 unsigned int #21
+      .master_item_id : 0x29ae058 unsigned int #20
+      child StockItem:
+        StockItem  [CUseResultStackItemMap]
+  child PurchasedItemInfo:
+    PurchasedItemInfo  [CPurchasedItemInfo]
+      .name_label : 0x29bd088 string
+      .title_label : 0x29a7cf8 string
+      .bonus_type : 0x29a3528 unsigned int #103
+  child SearchResult:
+    SearchResult  [CSearchResultInfo]
+  child DebugGearBarneyChanceInfoList:
+    DebugGearBarneyChanceInfoList  [CDebugGearBarneyChanceInfoList]
+  child characters:
+    characters  [CDeepSpaceCharacterInfoList]
+  child DebugBonusInfoList:
+    DebugBonusInfoList  [CDebugBonusInfoMap]
+  child FavoriteDecoObjectResult:
+    FavoriteDecoObjectResult  [CFavoriteDecoObjectResult]
+  child GearBarneyChanceInfo:
+    GearBarneyChanceInfo  [CGearBarneyChanceInfo]
+      .barney_chance_type : 0x29e7240 unsigned int #351
+      .barney_chance_group_id : 0x29e7198 unsigned int #350
+  child BattleLog:
+    BattleLog  [CBattleLogInfo]
+      .abnormal_count_curse : 0x29a0520 unsigned int #154
+      .is_defeat : 0x29e0b38 bool #139
+      .mission_total_time : 0x29a0890 unsigned int #159
+      .rush_cooperate : 0x29bb998 unsigned int #144
+      .damage_total : 0x29bb948 unsigned int #140
+      .abnormal_count_burn : 0x29a0680 unsigned int #156
+      .mission_time : 0x29a07e0 unsigned int #158
+      .abnormal_count_seal : 0x29ba8b8 unsigned int #153
+      .order_count_all : 0x29bbc68 unsigned int #161
+      .hit_total : 0x299fd90 unsigned int #143
+      .abnormal_count_fog : 0x29a05d0 unsigned int #155
+      .damage_total_party : 0x299fc30 unsigned int #141
+      .abnormal_count_poison : 0x29bd1c8 unsigned int #151
+      .order_count_invincible : 0x29dcd28 unsigned int #162
+      .rush_count : 0x299fef0 unsigned int #145
+      .battle_result : 0x29bd128 unsigned int #146
+      .order_count_heat_up : 0x29a0c00 unsigned int #164
+      .autoplay : 0x29a0d60 unsigned int #166
+      .abnormal_count_paralysis : 0x29a03c0 unsigned int #152
+      .abnormal_count_stun : 0x29bd178 unsigned int #149
+      .order_count_bunker : 0x29dcd78 unsigned int #163
+      .continue_count : 0x29a0050 unsigned int #147
+      .assist_cutin_count : 0x29bbc18 unsigned int #160
+      .hit_max : 0x29bd0d8 unsigned int #142
+      .abnormal_count_debuff : 0x29a0730 unsigned int #157
+      .abnormal_count_freeze : 0x29bbb28 unsigned int #150
+      .mission_type : 0x29bba88 unsigned int #148
+  child CGachaMutationTestResult:
+    CGachaMutationTestResult  [CGachaMutationTestResultInfoList]
+  child UpdateUniverseAddStatusInfo:
+    UpdateUniverseAddStatusInfo  [UpdateUniverseAddStatusInfo]
+  child ExchangeMaintenanceInfoMap:
+    ExchangeMaintenanceInfoMap  [CExchangeMaintenanceInfoMap]
+  child PartySet:
+    PartySet  [PartySetInfoMap]
+  child DeepSpaceEndShipInfoList:
+    DeepSpaceEndShipInfoList  [CDeepSpaceEndShipInfoList]
+  child DebugSphere211FloorNumList:
+    DebugSphere211FloorNumList  [CDebugSphere211FloorNumList]
+  child Sphere211TreasureResultLotInfoMap:
+    Sphere211TreasureResultLotInfoMap  [Sphere211TreasureResultLotInfoMap]
+  child CWorldBossInfo:
+    CWorldBossInfo  [CWorldBossInfo]
+      .num2 : 0x29c0c28 unsigned long #51
+      .master_item_id3 : 0x29aa5b8 unsigned int #52
+      .master_item_id2 : 0x29a3d10 unsigned int #50
+      .#6922c920 : 0x29de778 unsigned long #53
+      .wave : 0x29a5878 unsigned int #54
+      .world_boss_id : 0x29a3bb8 unsigned int #47
+      .#872ca80c : 0x29de728 unsigned long #49
+      .master_item_id1 : 0x29aa468 unsigned int #48
+  child Sphere211ReviveResultInfoList:
+    Sphere211ReviveResultInfoList  [Sphere211ReviveResultInfoList]
+  child BannerURLInfoList:
+    BannerURLInfoList  [CBannerURLInfoList]
+  child PartySetResult:
+    PartySetResult  [PartySetInfo]
+      .icon_id : 0x29b1308 unsigned int #65
+      .is_lock : 0x29a51f8 bool #66
+      .party_id : 0x29a51a8 unsigned int #64
+      child PartySetCharacter:
+        PartySetCharacter  [PartySetCharacterInfoList]
+  child Sphere211RankingTopInfoMap:
+    Sphere211RankingTopInfoMap  [Sphere211RankingTopInfoMap]
+  child SaleGachaCount:
+    SaleGachaCount  [CSaleGachaCountInfoList]
+  child CRemoveFamiliarCharacterList:
+    CRemoveFamiliarCharacterList  [CRemoveFamiliarCharacterList]
+  child GachaItems:
+    GachaItems  [CGachaResultInfoArray]
+  child FriendGauge:
+    FriendGauge  [CFriendGaugeInfoMap]
+  child ItemBoostTestResult:
+    ItemBoostTestResult  [CItemBoostTestResultInfo]
+      .success_count : 0x29c57a8 unsigned int #13
+      .big_success_count : 0x29dbec8 unsigned int #12
+  child Sphere211FloorInfo:
+    Sphere211FloorInfo  [Sphere211FloorInfo]
+      .floor_level : 0x29aa4b8 unsigned int #49
+      .mission_clear_streak : 0x29a3d10 unsigned int #50
+  child BattleRental:
+    BattleRental  [CBattleRentalInfoList]
+  child Sphere211TreasureResultInfoMap:
+    Sphere211TreasureResultInfoMap  [Sphere211TreasureResultInfoMap]
+  child UpdateFavorByTapResultInfo:
+    UpdateFavorByTapResultInfo  [CUpdateFavorByTapResultInfo]
+      .same_role_id : 0x29aec58 unsigned int #114
+      .RemainingUpdateFavorCountByTap : 0x29a3898 unsigned int #117
+      .favor_point : 0x29a3848 unsigned int #116
+      .favor_level : 0x29a37f8 unsigned int #115
+  child WebView:
+    WebView  [CWebViewInfo]
+  child UpdateStockItem:
+    UpdateStockItem  [CUpdateStackItemInfoList]
+  child CWorldBossPlayerInfoList:
+    CWorldBossPlayerInfoList  [CWorldBossPlayerInfoList]
+  child Sphere211RentalCharacterDetailInfoMap:
+    Sphere211RentalCharacterDetailInfoMap  [Sphere211RentalCharacterDetailInfoMap]
+  child ActiveTowerMissionList:
+    ActiveTowerMissionList  [CActiveTowerMissionListInfo]
+      child TowerArea:
+        TowerArea  [CTowerAreaInfoCategoryList]
+      child TowerMission:
+        TowerMission  [CTowerMissionInfoCategoryList]
+  child DeepSpaceAreaList:
+    DeepSpaceAreaList  [CDeepSpaceAreaInfoMap]
+  child AddItemGetList:
+    AddItemGetList  [CAddedItemReceiveList]
+  child CharacterAddStatusResult:
+    CharacterAddStatusResult  [CPersonAddStatusResultInfo]
+      .before_add_attack : 0x29aa5b8 unsigned int #52
+      .after_add_guard : 0x29a51a8 unsigned int #64
+      .before_add_hp : 0x29aa560 unsigned int #51
+      .before_add_guard : 0x29a7758 unsigned int #56
+      .before_add_hit : 0x29aa660 unsigned int #55
+      .after_add_hp : 0x29b12b8 unsigned int #59
+      .new_fol : 0x29a46a8 unsigned int #68
+      .after_add_ap : 0x29b1308 unsigned int #65
+      .before_add_intelligence : 0x29a3e70 unsigned int #53
+      .after_add_attack : 0x29a5068 unsigned int #60
+      .after_add_hit : 0x29a5158 unsigned int #63
+      .before_add_defence : 0x29a5878 unsigned int #54
+      .before_add_ap : 0x29aa6b8 unsigned int #57
+      .after_add_intelligence : 0x29a50b8 unsigned int #61
+      .player_id : 0x29aa4b8 unsigned int #49
+      .after_add_defence : 0x29a5108 unsigned int #62
+      .use_fol : 0x29b1358 unsigned int #67
+      .player_character_id : 0x29dab48 unsigned long #48
+  child UpdateCharacter:
+    UpdateCharacter  [CUpdateCharacterInfo]
+      .skill3_level : 0x29c6ba8 unsigned int #30
+      .master_role_id : 0x29ba1f8 unsigned int #21
+      .rush_skill_factor_id : 0x29af900 unsigned int #35
+      .skill1 : 0x29bc468 unsigned int #25
+      .is_new : 0x29b6438 unsigned int #31
+      .level : 0x29c4938 unsigned int #23
+      .skill1_level : 0x29bc510 unsigned int #26
+      .rush_skill : 0x29b14b0 unsigned int #33
+      .skill2_level : 0x29bc5b8 unsigned int #28
+      .weapon_item_id : 0x29c5a78 unsigned long #22
+      .rush_gauge_use : 0x29a69b8 unsigned int #37
+      .skill2 : 0x29c51e8 unsigned int #27
+      .rush_gauge_max : 0x29af958 unsigned int #36
+      .skill3 : 0x29adc98 unsigned int #29
+      .weapon_kind : 0x29b67d8 unsigned int #39
+      .id : 0x29ae158 unsigned long #19
+      .player_id : 0x29ae058 unsigned int #20
+      .rush_skill_level : 0x29af858 unsigned int #34
+      .exp : 0x29c6ec8 unsigned int #24
+  child GachaMaintenanceInfoMap:
+    GachaMaintenanceInfoMap  [CGachaMaintenanceInfoMap]
+  child DeepSpaceActiveShipInfoList:
+    DeepSpaceActiveShipInfoList  [CDeepSpaceActiveShipInfoList]
+  child Sphere211TreasureInfo:
+    Sphere211TreasureInfo  [Sphere211TreasureInfo]
+      .num : 0x29de818 unsigned int #168
+      .total_num : 0x29a0f70 unsigned int #169
+  child Blacklist:
+    Blacklist  [CBlacklistInfoList]
+  child Birth:
+    Birth  [CBirthInfo]
+      .year : 0x29bc168 unsigned int #16
+      .month : 0x29c48e8 unsigned int #17
+  child MissionResultCharacter:
+    MissionResultCharacter  [CMissionResultCharacterCategoryInfo]
+  child ReceiveAchievementList:
+    ReceiveAchievementList  [CReceiveAchievementList]
+  child SubscriptionGachaCount:
+    SubscriptionGachaCount  [SubscriptionGachaCountInfoList]
+  child Player:
+    Player  [CPlayerInfo]
+      .native_user_id : 0x29aa5b8 unsigned int #52
+      .tower_try_count : 0x29a4b68 unsigned int #79
+      .#2093d78d : 0x29a7848 unsigned int #66
+      .gear_stock : 0x29b1358 unsigned int #67
+      .title : 0x29a32f8 unsigned int #92
+      .mascot_id : 0x299cdb0 unsigned int #85
+      .search_id : 0x299ce60 string
+      .support_pc_id : 0x299ed48 unsigned long #76
+      .world_map_progress_ep3 : 0x29a3118 unsigned int #82
+      .device_type : 0x29a4800 unsigned int #71
+      .stamina_update : 0x29d9e08 string
+      .is_rookie : 0x29d9f98 bool #91
+      .view_status2 : 0x29d9f48 unsigned long #89
+      .time_saving_use_count : 0x299ee48 unsigned int #80
+      .stamina : 0x29aa6b8 unsigned int #57
+      .world_map_progress : 0x29a4bb8 unsigned int #81
+      .storage_stock : 0x29b1308 unsigned int #65
+      .home_pc_id : 0x29c1588 unsigned long #83
+      .sphere211_revive_count : 0x29a3348 unsigned int #94
+      .is_level_up : 0x29d9e58 bool #75
+      .created_at : 0x29a54a0 string
+      .vip_point : 0x29a5108 unsigned int #62
+      .level : 0x29a5878 unsigned int #54
+      .kiyaku_version : 0x29a4c08 string
+      .item_stock : 0x29a51a8 unsigned int #64
+      .stamina_max_time : 0x29a56e8 unsigned int #74
+      .party_id : 0x29aa660 unsigned int #55
+      .inquiry_rank : 0x29b12b8 unsigned int #59
+      .is_3d_home : 0x29a7ac8 bool #84
+      .favor_bonus_received_at : 0x29b6968 string
+      .view_status : 0x29d9ef8 unsigned long #88
+      .updated_at : 0x29a48b0 string
+      .last_login_at : 0x29a4750 string
+      .#bfa8e8b6 : 0x29a50b8 unsigned int #61
+      .follow_max : 0x299c7f8 unsigned int #77
+      .stamina_max : 0x29a7758 unsigned int #56
+      .inquiry_point : 0x29a5068 unsigned int #60
+      .id : 0x29aa560 unsigned int #51
+      .tutorial_status : 0x29d9ea8 unsigned long #87
+      .stamina_update_by_favor : 0x299c8e8 string
+      .fol : 0x29a5158 unsigned int #63
+      .tagName : 0x299d120 string
+      .name : 0x29aa7f8 string
+      .exp : 0x29a77a8 unsigned int #58
+  child DebugSphere211CommonDropIdList:
+    DebugSphere211CommonDropIdList  [CDebugSphere211CommonDropInfoList]
+  child ExpirationInfo:
+    ExpirationInfo  [CExpirationInfo]
+      .status : 0x29af900 unsigned int #35
+      .limit_time : 0x29b6788 string
+      .is_read : 0x29c49d8 bool #34
+      .is_finished : 0x29c0de8 bool #39
+      .limit_day : 0x29af958 unsigned int #36
+      .subscription_campaign_count : 0x29a6d20 unsigned int #42
+  child Sphere211CharacterInfoMap:
+    Sphere211CharacterInfoMap  [Sphere211CharacterInfoMap]
+  child AddOneTimeStorageInfo:
+    AddOneTimeStorageInfo  [CAddOneTimeStorageInfo]
+  child UpdateGearList:
+    UpdateGearList  [CUpdateGearList]
+  child GearGenerationInfoResult:
+    GearGenerationInfoResult  [CGearGenerationInfoResult]
+      .is_barney_chance : 0x29e6678 bool #301
+      .use_master_item_id : 0x29e6720 unsigned int #302
+      .barney_chance_type : 0x29e67d0 unsigned int #305
+      child AddGearInfoList:
+        AddGearInfoList  [CAddGearInfoList]
+      child CDeleteItemList:
+        CDeleteItemList  [CDeleteItemList]
+      child UpdateGearList:
+        UpdateGearList  [CUpdateGearList]
+  child CDebugDropContentInfoMap:
+    CDebugDropContentInfoMap  [CDebugDropContentInfoMap]
+# CParameterManager+0xf70: child infos by name hash
+UpdateMissionStartPlayerInfo  [UpdateMissionStartPlayerInfo]
+  .stamina_update : 0x29c4768 string
+  .is_rookie : 0x29b7458 bool #156
+  .stamina : 0x29ba8b8 unsigned int #153
+  .sphere211_revive_count : 0x29a0730 unsigned int #157
+  .stamina_max_time : 0x29a05d0 unsigned int #155
+  .id : 0x29a03c0 unsigned int #152
+UpdateStockItem  [CUpdateStackItemInfoList]

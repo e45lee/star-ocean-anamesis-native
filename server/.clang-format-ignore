@@ -1,0 +1,3 @@
+# Not formatted (tools/format_server.sh skips them too): the Ninja cipher tables and the generated decoder table.
+net/ninja/*
+net/gen/*

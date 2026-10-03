@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "ghidra-v370": {
+      "type": "stdio",
+      "command": "scripts/ghidra-mcp.sh",
+      "args": [],
+      "env": {}
+    }
+  }
+}

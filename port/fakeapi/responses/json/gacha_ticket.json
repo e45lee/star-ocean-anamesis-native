@@ -1,0 +1,149 @@
+{
+ "data": {
+  "GachaItems": [
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 1998707542,
+    "player_character_id": 2130706688,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 2062789360,
+    "player_character_id": 2130706689,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 3012405916,
+    "player_character_id": 2130706690,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 1620236376,
+    "player_character_id": 2130706691,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 3561986000,
+    "player_character_id": 2130706692,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 884034973,
+    "player_character_id": 2130706693,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 493782837,
+    "player_character_id": 2130706694,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 2147710486,
+    "player_character_id": 2130706695,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 119710988,
+    "player_character_id": 2130706696,
+    "duplication": 0,
+    "is_mutation": false
+   },
+   {
+    "master_item_id": 0,
+    "player_item_id": 0,
+    "master_role_id": 4022722464,
+    "player_character_id": 2130706697,
+    "duplication": 0,
+    "is_mutation": false
+   }
+  ],
+  "AddCharacter": {
+   "2130706688": {
+    "id": 2130706688,
+    "master_role_id": 1998707542,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706689": {
+    "id": 2130706689,
+    "master_role_id": 2062789360,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706690": {
+    "id": 2130706690,
+    "master_role_id": 3012405916,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706691": {
+    "id": 2130706691,
+    "master_role_id": 1620236376,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706692": {
+    "id": 2130706692,
+    "master_role_id": 3561986000,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706693": {
+    "id": 2130706693,
+    "master_role_id": 884034973,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706694": {
+    "id": 2130706694,
+    "master_role_id": 493782837,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706695": {
+    "id": 2130706695,
+    "master_role_id": 2147710486,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706696": {
+    "id": 2130706696,
+    "master_role_id": 119710988,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   "2130706697": {
+    "id": 2130706697,
+    "master_role_id": 4022722464,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   }
+  }
+ },
+ "status": 0
+}

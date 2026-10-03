@@ -1,0 +1,70 @@
+# Replay corpora: the proof that a server refactor changes nothing
+
+Each folder here is a recorded (or generated) request sequence. `tools/server_replay_diff.sh` replays every one with two `soa-server` builds (a parent and a child commit) and compares what they emit. This is gate **RG4** of `server/PLAN-readability.md` (section 4.1): every step of that plan must pass it byte-identical.
+
+```sh
+tools/server_build_at.sh HEAD~1 build/rg4-parent           # the parent's soa-server (server-only build, ~45 s)
+scripts/build.sh --target soa-server                        # the child: this checkout
+tools/server_replay_diff.sh build/rg4-parent/soa-server build/server/soa-server
+tools/server_replay_diff.sh build/server/soa-server build/server/soa-server   # stability: one binary twice
+```
+
+## What is compared
+
+`soa-server <options> --replay DIR --out OUT` starts a fresh state from the corpus's server options and sends each request through the same path as soa-server's game connection: `submit`, the story campaign's `on_request`, `handle`, `error_code` and the campaign's `on_response`, plus soa-server's own `EndMissionTalk` (`net::live_backend()`, server/net/game.cpp). The server clock reads each request's recorded time, through the clock-source seam (`set_clock_source`, soaserver/server.h). Its output:
+
+| File | What | Compared |
+|---|---|---|
+| `<n>-<Method>.msgp` | each reply body as the library answered it | byte-identical |
+| `errors.txt` | `<n> <Method> <code>` (0 accepted, `not-handled`: no handler) | identical |
+| `state.sql` | every table's schema and rows (sorted), then the data dir's side files (`server_campaign.txt`) | identical |
+| `server.log` | the server's log, paths masked | tier 1: the lines of `tools/server_log_patterns.txt` (those scripts read) identical; tier 2: any other difference is printed and must be declared in the commit message |
+| `replies.txt` | the bodies as text | not compared; shown for a body that differs |
+
+Exit status: 0 identical, 2 only tier-2 log lines differ, 1 anything else.
+
+What it does not cover: the wire layer's own work (the bridge, the Ninja cipher, packet framing, the LoginResult's extra `Player` map and the GetPlayerRes after it, the `wire_device` table) and the CDN (`r_ver` is empty in a replay). `server/tests/net` tests those.
+
+## The corpora
+
+| Corpus | Source | Requests |
+|---|---|---|
+| `seeded` | tests/diff's `seeded` flow, `emu` target (soa-emu + soa-server `--log-packets`), on 2eaaaf6: title, Login, the mission 1-05 (mf01_001) battle, a 10-draw | 10 |
+| `tutorial` | tests/diff's `tutorial` flow, `emu` target: a new player, the refused Login (19001), CreatePlayer, the tutorial's scenes (MissionTalk / EndMissionTalk), the battle tutorial ms00_001, UpdateTutorial 1-9 | 27 |
+| `event` | tests/diff's `event` flow, `emu` target, `--enable-events`: the summer event board (CheckEventRankingResult), story mc99_565 (EndMissionTalk), battle me99_1054 | 11 |
+| `growth` | hand-written for R11 (`req` lines, on 487e3f6), the `seeded` options: Login; four item-shop sets for the materials (EXP items, `item_limitbreak_03`, seeds, awakening and evolution items); every growth API (BoostCharacter, LimitBreakCharacter(_Legacy), EvolutionCharacter, UpdateAwakenLevel, AddStatusCharacter, EquipWeapon / EquipAccessory, EquipSkill) and SetAssist, accepted and refused; UpdateParty, GetPlayer (the `Character` and `PartySet` builders with seeds, awakening and assists) and MissionStart (`CPersonStatusInfo` of the grown party) | 32 |
+| `economy` | hand-written for R18 (`req` lines), the `seeded` options without the campaign seed, plus `--galaxy-pass` (the pass kept on every player load): at 2016-06-01 the item shop's sample rows (event coins, box tickets, gacha tickets: ItemShopList, ExItemShop to its limit, refusals), GachaTicket; at 2020-10-25 GetGachaInData, a step-up chain (in order, out of order), single / bulk / sale draws (weapons from the pools), GetGachaRate, a box series drawn to its last box (it refills; ResetBoxGacha refused and accepted), GetBoxGacha, the exchange shop (ExshopExchangeList, ExshopExchange accepted and refused by limit, `exchange_item_max`, items short, closed, unknown), a 2020 item-shop row with a reset period, GetPlayer | 46 |
+| `event-extras` | hand-written for R18, the `seeded` options without the campaign seed: a world boss (GetWorldBossInfo, a won mission of its area with time bonuses and the gauges, a non-boss area) and an event ranking (a scored win, GetEventRankingInfo, ClearNewEventRanking, CheckEventRankingResult before and when due, ReceiveEventRankingResult, GetPlayerDetailInfo). The battles are the `event` corpus's me99_1054 MissionStart / MissionEnd bodies with the mission id replaced (the ranking mission's start is refused for its ticket item; its end still scores) | 17 |
+| `deepspace` | hand-written for R18 (`req` lines, on 4e52a11), the `seeded` options: Login; DeepSpaceActiveList; DeepSpaceAutoMemberSelect (a weapon-kind and a role bonus); DeepSpaceMissionStart accepted and refused (party size, not on offer, a member twice / unknown / busy, no free ship: the seed has one limit-break ship; a bonus item not owned (10206) and one out of its window); MissionEnd early (refused) and of an unknown ship; quick returns paid in coins (MissionEndNow), also after the 04:00 reset of their daily count; MissionEnd's rewards (player, character and area EXP, FOL, drops), a rare offer it rolls, played and used up; GetPlayer | 41 |
+| `sphere211` | hand-written for R18 (`req` lines, on 4e52a11), the `seeded` options: a dive on floor 1 of the season the clock replays: GetSphere211Info, Sphere211AutoMemberSelect / EquipAuto, Sphere211MissionStart (no such cell refused; an own helper; the rental slot, a lender refused once used), MissionContinue, MissionFailed, MissionEnd (the core MissionStart / MissionEnd underneath; a rare and two boss cells), StaminaHeal and UseRerollItem refused (no items), FloorClear, GetSphere211RankingInfo, SelectedFloor, ReturnSphere211 (the boxes opened), the next day's GetPlayer, and 40 days later a season change (the end result once, the ranking reward). Which missions are playable depends on the maps in `--download-dir` (the replay is deterministic on one download tree) | 32 |
+| `missions` | hand-written for R15 (`req` lines, on 13b2367; one `wire` MissionEnd: the `event` flow's battle log with the mission id replaced), the `seeded` options, at 2017 and 2021 times: MissionStart / MissionEnd with no helper, an own helper (and one already in the party), a rental clone in the 4th and the 6th argument, a foreign rental id, a story NPC id, the event NPC helper (by `master_npc` and `master_mission_npc` id, and a wrong one); MissionRestart / MultiMissionRestart (and with nothing in progress), MissionFailed, GetPlayMission, MissionTalk, GetMissionList; refusals 10004 (stamina) and 10206 (ticket, vanish item), an unknown mission; the surprise roll, campaigns (2017 prism lots and drops; 2021 story stamina, 友好 favor ×1.5), the character bonus, battle evaluation (me99_MemLast_07); FollowList, UpdateSupport (accepted, refused); the rental bonus over three rental days (03:59 still the day before) | 73 |
+| `tower` | hand-written for R15, the `seeded` options plus `--restore-tower`: Login (the tower lists), two floors of `tower_01` cleared in turn (each MissionEnd lists again, the next floor unlocked), a MissionFailed, a story battle (its MissionEnd lists nothing), GetPlayer | 12 |
+| `api-sweep` | generated (`tools/server_replay_record.py --sweep`): every method `soa-server --list-apis` says the library answers, once, without arguments, at 5 s steps from 03:58:00 (across the 04:00 reset) | 106 |
+| `items-party` | hand-written (`req` lines; PLAN-readability R13/R14), the sweep's options: on the seeded state, three 10-draws of the weapon gacha `gacha_weapon_0009`, then the item, gear and party APIs with real arguments (compose with a copy, lock / sell, grade up, purification with and without a base, attach, the refusals, UpdateParty, UpdatePartySet: a set, an id out of range, unparsable text) and GetPlayer | 40 |
+
+The sweep is the coverage floor: with no arguments, some handlers decline (`not-handled`: 14 of 106 today) or refuse; the flows exercise the real arguments.
+
+**Fidelity.** Replayed on the build they were recorded with, the flows' replies equal the recorded ones byte for byte, except Login's `r_ver` (the CDN's revision: no CDN is built in a replay, so it is empty).
+
+## Files
+
+- `requests.txt`: a header (`# tz: ZONE`, the zone the recording ran in; the replay runs in it), then one request per line:
+  - `wire <n> <t> <Api> <hex>`: the request's plaintext body as the client sent it (`<n>-<Api>.bin` of the packet log), decoded again by `net::decode_request` at replay (battle log included). `<t>` is the server clock of the request in Unix seconds: the recorded reply's `data.Time`, or for a reply without one (a refusal) the log stamp plus the clock offset of the nearest reply. A `#` line before it repeats the packet log's method and arguments.
+  - `req <n> <t> <Method> <fid> <ints> <strs> <vecs> <battle log>`: a request given by its arguments (the generated corpora). `-` is an empty list; ints comma-separated; strings hex, comma-separated (`_` an empty string); vectors `|`-separated groups of comma-separated ints (`_` an empty vector); the battle log hex (ASON).
+- `options`: the recording's server options, one argument per line, paths relative to the repository root.
+
+## Recording a corpus
+
+```sh
+tests/diff/run.sh seeded --target emu --keep --out /tmp/d      # or any soa-server --log-packets DIR
+tools/server_replay_record.py /tmp/d/seeded/emu/packets server/tests/replay/seeded \
+    --options '--master data/basmaster-3.7.0.sqlite3 --seed data/saves/seed/Game.xml --seed-rng 1 --clock "2026-10-01 12:00:05" --campaign-seed mf01_001 --download-dir work/download-3.7.0 --cdn-url http://production-game.so-ana.com' \
+    --note "where it came from"
+tools/server_replay_record.py --sweep server/tests/replay/api-sweep --options '...'
+```
+
+The options are the recording's (tests/diff gives every run `--master`, `--seed-rng 1`, `--clock "2026-10-01 12:00:05"`, the seed save unless a new player, `--download-dir`, and the flow's own: tests/diff/README.md). `--cdn-url` makes Login answer `AssetPath` / `MasterPath` as soa-server does.
+
+The recorder refuses a packet log holding a player id other than the sanitized `LOCAL00001` (data/saves/README.md): a 10-character upper-case id anywhere in the requests, or the `BAS:PlayerID` of an untracked personal save on the machine. In-process logs (`soa --log-packets`) have no request bodies and aren't supported yet; the domain sessions' corpora of the plan (4.1) wait for that.
+
+A corpus is re-recorded only when the client's requests change (a new flow, a changed flow); a server change never needs a new recording, since the comparison is between two builds on the same requests.

@@ -1,0 +1,38 @@
+# soa-server replay corpus (server/tests/replay/README.md): sphere211, hand-written (PLAN-readability R18):
+# a Sphere 211 dive on the seeded state: the board, auto select, battles through the core MissionStart /
+# MissionEnd (won, lost, continued, refused), the rental slot, the boss and rare cells' boxes, the floor
+# clear and the next-floor select, items refused, the ranking, the return (boxes opened), a season change
+# (the end result and the ranking reward) and the next day's rental bonus on GetPlayer.
+# tz: America/Toronto
+req 1 1790856005 Login a01c67ef - - - -
+req 2 1790856010 GetSphere211Info 1e03058b - - - -
+req 3 1790856015 Sphere211AutoMemberSelect 2d0a3ab3 1,4140489172,0 - - -
+req 4 1790856020 Sphere211EquipAuto 9ce7e42e - - - -
+req 5 1790856025 Sphere211MissionStart 04ec9513 1,99999 - - -
+req 6 1790856030 Sphere211MissionStart 04ec9513 1,4140489172,2113929216,2113929217,2113929218,2113929219,0 - - -
+req 7 1790856035 Sphere211MissionContinue 5ac657b3 1,4140489172,1 - - -
+req 8 1790856040 Sphere211MissionEnd 03f169b2 1,4140489172 - - -
+req 9 1790856045 Sphere211MissionStart 04ec9513 1,1875085422,2113929220,2113929221,2113929222,1101625557006,2097152001 - - -
+req 10 1790856050 Sphere211MissionFailed 172f3b5f 1,1875085422 - - -
+req 11 1790856055 Sphere211MissionStart 04ec9513 1,1875085422,2113929223,2113929224,2113929225,1101625557006,2097152001 - - -
+req 12 1790856060 Sphere211MissionStart 04ec9513 1,1875085422,2113929223,2113929224,2113929225,1101625557007,2097152002 - - -
+req 13 1790856065 Sphere211MissionEnd 03f169b2 1,1875085422 - - -
+req 14 1790856070 Sphere211MissionStart 04ec9513 1,415545592,2113929226,2113929227,2113929228,0,0 - - -
+req 15 1790856075 Sphere211MissionEnd 03f169b2 1,415545592 - - -
+req 16 1790856080 Sphere211MissionStart 04ec9513 1,2258644315,2113929229,2113929230,2113929231,0,0 - - -
+req 17 1790856085 Sphere211MissionEnd 03f169b2 1,2258644315 - - -
+req 18 1790856090 Sphere211MissionStart 04ec9513 1,4054261197,2113929232,2113929233,2113929234,0,0 - - -
+req 19 1790856095 Sphere211MissionEnd 03f169b2 1,4054261197 - - -
+req 20 1790856100 Sphere211StaminaHeal 3a3ab3ed - - - -
+req 21 1790856105 Sphere211FloorClear 5187adb1 3005173274 - - -
+req 22 1790856110 Sphere211UseRerollItem 19e61236 - - - -
+req 23 1790856115 GetSphere211RankingInfo 5943ae5c 1 - - -
+req 24 1790856120 Sphere211SelectedFloor f8371209 1 - - -
+req 25 1790856125 Sphere211AutoMemberSelect 2d0a3ab3 1,0,0 - - -
+req 26 1790856130 ReturnSphere211 83390f3f - - - -
+req 27 1790856135 GetSphere211Info 1e03058b - - - -
+req 28 1790942405 GetPlayer 9a056905 - - - -
+req 29 1790942410 GetSphere211Info 1e03058b - - - -
+req 30 1794312005 GetSphere211Info 1e03058b - - - -
+req 31 1794312010 GetSphere211Info 1e03058b - - - -
+req 32 1794312015 GetSphere211RankingInfo 5943ae5c 1 - - -

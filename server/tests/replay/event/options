@@ -1,0 +1,13 @@
+--master
+data/basmaster-3.7.0.sqlite3
+--seed
+data/saves/seed/Game.xml
+--seed-rng
+1
+--clock
+2026-10-01 12:00:05
+--enable-events
+--download-dir
+work/download-3.7.0
+--cdn-url
+http://production-game.so-ana.com

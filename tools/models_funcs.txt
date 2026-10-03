@@ -1,0 +1,326 @@
+# group<TAB>mangled symbol: functions transcribed by gen_models_a2c.py in addition to its patterns
+# (generated from the executed-function coverage in work/profile; demangled name in the comment column)
+aof	_ZN4Aska9AofObjectC2Ev	# Aska::AofObject::AofObject()
+aof	_ZN9Framework27CDirectAofPrimitiveRendererC2Ev	# Framework::CDirectAofPrimitiveRenderer::CDirectAofPrimitiveRenderer()
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer10InitializeENS0_5iTypeEjb	# Framework::CDirectAofPrimitiveRenderer::Initialize(Framework::CDirectAofPrimitiveRenderer::iType, unsigned int, bool)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer7ReserveEj	# Framework::CDirectAofPrimitiveRenderer::Reserve(unsigned int)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer7TextureEPN4Aska7TextureE	# Framework::CDirectAofPrimitiveRenderer::Texture(Aska::Texture*)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer14DirectMaterialERN4Aska14DirectMaterialE	# Framework::CDirectAofPrimitiveRenderer::DirectMaterial(Aska::DirectMaterial&)
+aof	_ZN9Framework20DirectAofPrimitiveEx8AddDummyENS_27CDirectAofPrimitiveRenderer5iTypeEj	# Framework::DirectAofPrimitiveEx::AddDummy(Framework::CDirectAofPrimitiveRenderer::iType, unsigned int)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer20PreliminarilyPrepareEPN4Aska12LightManagerE	# Framework::CDirectAofPrimitiveRenderer::PreliminarilyPrepare(Aska::LightManager*)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer19PrepareForRenderingEPKN4Aska10RENDERINFOE	# Framework::CDirectAofPrimitiveRenderer::PrepareForRendering(Aska::RENDERINFO const*)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer6RenderEPN4Aska13RenderContextEi	# Framework::CDirectAofPrimitiveRenderer::Render(Aska::RenderContext*, int)
+aof	_ZNK9Framework27CDirectAofPrimitiveRenderer13NumPrimitivesEv	# Framework::CDirectAofPrimitiveRenderer::NumPrimitives() const
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer5ResetEv	# Framework::CDirectAofPrimitiveRenderer::Reset()
+aof	_ZNK9Framework27CDirectAofPrimitiveRenderer9cpTextureEv	# Framework::CDirectAofPrimitiveRenderer::cpTexture() const
+aof	_ZNK9Framework27CDirectAofPrimitiveRenderer16crDirectMaterialEv	# Framework::CDirectAofPrimitiveRenderer::crDirectMaterial() const
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer3PutERKNS_21tSpriteParameter_RectE	# Framework::CDirectAofPrimitiveRenderer::Put(Framework::tSpriteParameter_Rect const&)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer3PutERKNS_21tSpriteParameter_QuadE	# Framework::CDirectAofPrimitiveRenderer::Put(Framework::tSpriteParameter_Quad const&)
+aof	_ZN9Framework27CDirectAofPrimitiveRenderer8PriorityEf	# Framework::CDirectAofPrimitiveRenderer::Priority(float)
+aof	_ZN9Framework27CDirectAofPrimitiveRendererD0Ev	# Framework::CDirectAofPrimitiveRenderer::~CDirectAofPrimitiveRenderer()
+aof	_ZN4Aska9AofObject22CheckSleepAvailabilityEv	# Aska::AofObject::CheckSleepAvailability()
+aof	_ZN4Aska9AofObject14GetBoundingBoxEb	# Aska::AofObject::GetBoundingBox(bool)
+aof	_ZN4Aska9AofObject16EnableCastShadowEb	# Aska::AofObject::EnableCastShadow(bool)
+aof	_ZN4Aska9AofObject18SetSystemColorRateEPKNS_6VectorE	# Aska::AofObject::SetSystemColorRate(Aska::Vector const*)
+aof	_ZNK4Aska9AofObject15SystemColorRateEv	# Aska::AofObject::SystemColorRate() const
+aof	_ZN4Aska9AofObject12SetColorRateEPKNS_6VectorE	# Aska::AofObject::SetColorRate(Aska::Vector const*)
+aof	_ZN4Aska9AofObject20SetSystemColorOffsetEPKNS_6VectorE	# Aska::AofObject::SetSystemColorOffset(Aska::Vector const*)
+aof	_ZN4Aska9AofObject14SetColorOffsetEPKNS_6VectorE	# Aska::AofObject::SetColorOffset(Aska::Vector const*)
+aof	_ZN4Aska9AofObject22SetIBLAcceptanceNumberEj	# Aska::AofObject::SetIBLAcceptanceNumber(unsigned int)
+aof	_ZN4Aska9AofObject21ComputeBoundingSphereEb	# Aska::AofObject::ComputeBoundingSphere(bool)
+aof	_ZN9Framework20DirectAofPrimitiveExD0Ev	# Framework::DirectAofPrimitiveEx::~DirectAofPrimitiveEx()
+aof	_ZNK4Aska16DirectAofHandler11IsDirectAofEv	# Aska::DirectAofHandler::IsDirectAof() const
+load	_ZN4Aska15AafBlendManagerD0Ev	# Aska::AafBlendManager::~AafBlendManager()
+load	_ZN4Aska15AafBlendManager6CreateEi	# Aska::AafBlendManager::Create(int)
+load	_ZN4Aska15AafBlendManager4OpenEi	# Aska::AafBlendManager::Open(int)
+load	_ZN4Aska15AafBlendManager5CloseEh	# Aska::AafBlendManager::Close(unsigned char)
+load	_ZN4Aska15AafBlendManager6AddAafEPNS_10AafHandlerE	# Aska::AafBlendManager::AddAaf(Aska::AafHandler*)
+load	_ZN4Aska15AafBlendManager12SetPlayFrameEif	# Aska::AafBlendManager::SetPlayFrame(int, float)
+load	_ZNK4Aska15AafBlendManager9GetWeightEi	# Aska::AafBlendManager::GetWeight(int) const
+load	_ZN4Aska15AafBlendManager9SetWeightEif	# Aska::AafBlendManager::SetWeight(int, float)
+load	_ZN4Aska15AafBlendManager16NormalizeWeightsEv	# Aska::AafBlendManager::NormalizeWeights()
+load	_ZN4Aska15AafBlendManager10CalcValuesEv	# Aska::AafBlendManager::CalcValues()
+load	_ZN4Aska15AafBlendManager9SetValuesEv	# Aska::AafBlendManager::SetValues()
+load	_ZN4Aska15AafBlendManager10InitializeEv	# Aska::AafBlendManager::Initialize()
+load	_ZN4Aska15AafBlendManager11_CalcNotify7HandlerEm	# Aska::AafBlendManager::_CalcNotify::Handler(unsigned long)
+load	_ZN4Aska25AafGetControllerSizeLocalILb0EEEiPKNS_19AafControllerHeaderEPKNS_17AafKeyframeHeaderEPjS7_	# int Aska::AafGetControllerSizeLocal<false>(Aska::AafControllerHeader const*, Aska::AafKeyframeHeader const*, unsigned int*, unsigned int*)
+load	_ZN4Aska10AafHandler11InstantiateEv	# Aska::AafHandler::Instantiate()
+load	_ZN4Aska10AafHandler17DeleteControllersEv	# Aska::AafHandler::DeleteControllers()
+load	_ZN4Aska10AafHandler17CreateControllersEPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListEb	# Aska::AafHandler::CreateControllers(Aska::AsfHandler*, Aska::CollisionHandler*, Aska::AsfTargetNameList*, bool)
+load	_ZN4Aska10AafHandler9AttachAafEPKvPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListE	# Aska::AafHandler::AttachAaf(void const*, Aska::AsfHandler*, Aska::CollisionHandler*, Aska::AsfTargetNameList*)
+load	_ZN4Aska10AafHandler12DetachObjectEv	# Aska::AafHandler::DetachObject()
+load	_ZN4Aska10AafHandler22CalcRuntimeMemorySize1EPKNS_3AFF8AskaFileEPKNS_9AafHeaderE	# Aska::AafHandler::CalcRuntimeMemorySize1(Aska::AFF::AskaFile const*, Aska::AafHeader const*)
+load	_ZN4Aska10AafHandler9SetValuesEf	# Aska::AafHandler::SetValues(float)
+load	_ZN4Aska10AafHandler11BlendValuesEff	# Aska::AafHandler::BlendValues(float, float)
+load	_ZNK4Aska10AafHandler13GetFigureRateEhh	# Aska::AafHandler::GetFigureRate(unsigned char, unsigned char) const
+load	_ZN4Aska10AafHandlerD2Ev	# Aska::AafHandler::~AafHandler()
+load	_ZN4Aska10AafHandlerD0Ev	# Aska::AafHandler::~AafHandler()
+load	_ZN4Aska10AafHandler13SetControllerEPNS_17AafControllerInfoEPPhS4_	# Aska::AafHandler::SetController(Aska::AafControllerInfo*, unsigned char**, unsigned char**)
+load	_Z18LocalSetControllerILb0EEbPN4Aska10AafHandlerEPNS0_17AafControllerInfoEPPhS6_	# bool LocalSetController<false>(Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**, unsigned char**)
+load	_ZN4Aska13AafController14CallDestructorEv	# Aska::AafController::CallDestructor()
+load	_ZN4Aska13AafController16SetControlBufferEPPhi	# Aska::AafController::SetControlBuffer(unsigned char**, int)
+load	_Z21LocalSetControllerF32RmRPvbPN4Aska10AafHandlerEPNS2_17AafControllerInfoEPPh	# LocalSetControllerF32(unsigned long&, void*&, bool, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_Z21LocalSetControllerF32ILb0EEbRmRPvPN4Aska10AafHandlerEPNS3_17AafControllerInfoEPPh	# bool LocalSetControllerF32<false>(unsigned long&, void*&, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_ZN4Aska13AafController12AttachObjectEPNS_10AsfHandlerEPNS_14AafSetValueArgEPKNS_19AafControllerHeaderE	# Aska::AafController::AttachObject(Aska::AsfHandler*, Aska::AafSetValueArg*, Aska::AafControllerHeader const*)
+load	_ZN4Aska13AafController23IsIndependentControllerEv	# Aska::AafController::IsIndependentController()
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEE9CalcValueEPvf	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> >::CalcValue(void*, float)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEE6AttachEPv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> >::Attach(void*)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEE12CalcValueSubEPvfb	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> >::CalcValueSub(void*, float, bool)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEED2Ev	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> >::~TAafNormalController()
+load	_Z29LocalSetControllerF32_DefaultRmRPvbPN4Aska10AafHandlerEPNS2_17AafControllerInfoEPPh	# LocalSetControllerF32_Default(unsigned long&, void*&, bool, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_Z29LocalSetControllerF32_DefaultILb0EEbRmRPvPN4Aska10AafHandlerEPNS3_17AafControllerInfoEPPh	# bool LocalSetControllerF32_Default<false>(unsigned long&, void*&, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEED2Ev	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> >::~TAafNormalController()
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEE6AttachEPv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> >::Attach(void*)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEE9CalcValueEPvf	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> >::CalcValue(void*, float)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEE12CalcValueSubEPvfb	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> >::CalcValueSub(void*, float, bool)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEED2Ev	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> >::~TAafNormalController()
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEE6AttachEPv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> >::Attach(void*)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEE17CalcValueConstantEPvi	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> >::CalcValueConstant(void*, int)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEED2Ev	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> >::~TAafNormalController()
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEE6AttachEPv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> >::Attach(void*)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEE9CalcValueEPvf	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> >::CalcValue(void*, float)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEE12CalcValueSubEPvfb	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> >::CalcValueSub(void*, float, bool)
+load	_Z36LocalSetControllerF32_Default_TrRtScRmRPvbPN4Aska10AafHandlerEPNS2_17AafControllerInfoEPPh	# LocalSetControllerF32_Default_TrRtSc(unsigned long&, void*&, bool, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_Z36LocalSetControllerF32_Default_TrRtScILb0EEbRmRPvPN4Aska10AafHandlerEPNS3_17AafControllerInfoEPPh	# bool LocalSetControllerF32_Default_TrRtSc<false>(unsigned long&, void*&, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_ZN4Aska24TAafTranslateXControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE20SetValueOfDirectAddrEPvS7_	# Aska::TAafTranslateXController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::SetValueOfDirectAddr(void
+load	_ZN4Aska24TAafTranslateXControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafTranslateXController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::SetValueToTarget(void*, A
+load	_ZN4Aska24TAafTranslateXControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE22BlendValueOfDirectAddrEPvS7_f	# Aska::TAafTranslateXController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::BlendValueOfDirectAddr(vo
+load	_ZN4Aska24TAafTranslateXControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE18BlendValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafTranslateXController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::BlendValueToTarget(void*,
+load	_ZN4Aska24TAafTranslateYControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE20SetValueOfDirectAddrEPvS7_	# Aska::TAafTranslateYController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::SetValueOfDirectAddr(void
+load	_ZN4Aska24TAafTranslateYControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafTranslateYController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::SetValueToTarget(void*, A
+load	_ZN4Aska24TAafTranslateYControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE22BlendValueOfDirectAddrEPvS7_f	# Aska::TAafTranslateYController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::BlendValueOfDirectAddr(vo
+load	_ZN4Aska24TAafTranslateYControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEEEE18BlendValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafTranslateYController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> > >::BlendValueToTarget(void*,
+load	_ZN4Aska26TAafTranslateXYZControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEEEE20SetValueOfDirectAddrEPvS7_	# Aska::TAafTranslateXYZController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> > >::SetValueOfDirectAddr(vo
+load	_ZN4Aska26TAafTranslateXYZControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafTranslateXYZController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> > >::SetValueToTarget(void*,
+load	_ZN4Aska26TAafTranslateXYZControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEEEE22BlendValueOfDirectAddrEPvS7_f	# Aska::TAafTranslateXYZController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> > >::BlendValueOfDirectAddr(
+load	_ZN4Aska26TAafTranslateXYZControllerINS_20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEEEE18BlendValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafTranslateXYZController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> > >::BlendValueToTarget(void
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEEEE20SetValueOfDirectAddrEPvS7_	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> > >::SetValueOf
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> > >::SetValueTo
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEEEE22BlendValueOfDirectAddrEPvS7_f	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> > >::BlendValue
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEEEE18BlendValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> > >::BlendValue
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEEEE20SetValueOfDirectAddrEPvS7_	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> > >::SetValue
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> > >::SetValue
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEEEE22BlendValueOfDirectAddrEPvS7_f	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> > >::BlendVal
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEEEE18BlendValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> > >::BlendVal
+load	_Z33LocalSetControllerQuaternionU32EXRmRPvbPN4Aska10AafHandlerEPNS2_17AafControllerInfoEPPh	# LocalSetControllerQuaternionU32EX(unsigned long&, void*&, bool, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEEED2Ev	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u> >::~TAafNormalController()
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEEE6AttachEPv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u> >::Attach(void*)
+load	_ZN4Aska30TAafControllerCompressionLayerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEELb1ELb0EE16SetControlBufferEPPhi	# Aska::TAafControllerCompressionLayer<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u>, true, false>::SetControlBuffer(un
+load	_ZN4Aska30TAafControllerCompressionLayerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEELb1ELb0EE13SetFigureRateEf	# Aska::TAafControllerCompressionLayer<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u>, true, false>::SetFigureRate(float
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEEE17CalcValueConstantEPvi	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u> >::CalcValueConstant(void*, int)
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEEEEE20SetValueOfDirectAddrEPvS7_	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u> > >::Se
+load	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u> > >::Se
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_39AafControlPoint_Quaternion_Linear_U32EXELb0ELb0ELj0EEEE6CreateEv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear_U32EX, false, false, 0u> >::Create()
+load	_Z21LocalSetControllerU16RmRPvbPN4Aska10AafHandlerEPNS2_17AafControllerInfoEPPh	# LocalSetControllerU16(unsigned long&, void*&, bool, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_Z21LocalSetControllerU16ILb0EEbRmRPvPN4Aska10AafHandlerEPNS3_17AafControllerInfoEPPh	# bool LocalSetControllerU16<false>(unsigned long&, void*&, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_Z29LocalSetControllerU16_DefaultRmRPvbPN4Aska10AafHandlerEPNS2_17AafControllerInfoEPPh	# LocalSetControllerU16_Default(unsigned long&, void*&, bool, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_Z29LocalSetControllerU16_DefaultILb0EEbRmRPvPN4Aska10AafHandlerEPNS3_17AafControllerInfoEPPh	# bool LocalSetControllerU16_Default<false>(unsigned long&, void*&, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEEED2Ev	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u> >::~TAafNormalController()
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEEE6AttachEPv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u> >::Attach(void*)
+load	_ZN4Aska30TAafControllerCompressionLayerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEELb1ELb0EE16SetControlBufferEPPhi	# Aska::TAafControllerCompressionLayer<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u>, true, false>::SetControlBuffer(unsigned c
+load	_ZN4Aska30TAafControllerCompressionLayerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEELb1ELb0EE13SetFigureRateEf	# Aska::TAafControllerCompressionLayer<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u>, true, false>::SetFigureRate(float)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEEE17CalcValueConstantEPvi	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u> >::CalcValueConstant(void*, int)
+load	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEEE6CreateEv	# Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u> >::Create()
+load	_Z36LocalSetControllerU16_Default_TrRtScRmRPvbPN4Aska10AafHandlerEPNS2_17AafControllerInfoEPPh	# LocalSetControllerU16_Default_TrRtSc(unsigned long&, void*&, bool, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_Z36LocalSetControllerU16_Default_TrRtScILb0EEbRmRPvPN4Aska10AafHandlerEPNS3_17AafControllerInfoEPPh	# bool LocalSetControllerU16_Default_TrRtSc<false>(unsigned long&, void*&, Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**)
+load	_ZN4Aska26TAafTranslateXYZControllerINS_20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEEEEE20SetValueOfDirectAddrEPvS7_	# Aska::TAafTranslateXYZController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u> > >::SetValueOfDire
+load	_ZN4Aska26TAafTranslateXYZControllerINS_20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Vector_Step_U16ELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	# Aska::TAafTranslateXYZController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector_Step_U16, false, false, 0u> > >::SetValueToTarg
+load	_ZNK4Aska10AsfHandler37QuickSearchByNameFromExternalLinkListEPKc	# Aska::AsfHandler::QuickSearchByNameFromExternalLinkList(char const*) const
+aof	_ZN4Aska10AofHandler6AttachEPKvbii	# Aska::AofHandler::Attach(void const*, bool, int, int)
+aof	_ZN4Aska10AofHandler16Attach_IndexListEPNS_11AofhMeshsetEPKNS_3AFF8MeshbodyEj	# Aska::AofHandler::Attach_IndexList(Aska::AofhMeshset*, Aska::AFF::Meshbody const*, unsigned int)
+aof	_ZN4Aska10AofHandler17Attach_VertexListEPNS_11AofhMeshsetEPKNS_3AFF8MeshbodyEjb	# Aska::AofHandler::Attach_VertexList(Aska::AofhMeshset*, Aska::AFF::Meshbody const*, unsigned int, bool)
+aof	_ZN4Aska10AofHandler16InitializeShaderEPNS_10RenderPassEibb	# Aska::AofHandler::InitializeShader(Aska::RenderPass*, int, bool, bool)
+aof	_ZN4Aska10AofHandler17MakeRenderContextEPNS_13RenderContextEPNS_9AofObjectEPKNS_10RENDERINFOEPNS_10RenderPassEPNS_20CommandBufferManagerE	# Aska::AofHandler::MakeRenderContext(Aska::RenderContext*, Aska::AofObject*, Aska::RENDERINFO const*, Aska::RenderPass*, Aska::CommandBufferManager*)
+aof	_ZN4Aska10AofHandler6DetachEv	# Aska::AofHandler::Detach()
+aof	_ZN4Aska10AofHandlerC2Ev	# Aska::AofHandler::AofHandler()
+aof	_ZN4Aska10AofHandlerD1Ev	# Aska::AofHandler::~AofHandler()
+aof	_ZN4Aska10AofHandlerD0Ev	# Aska::AofHandler::~AofHandler()
+aof	_ZN4Aska10AofHandler13NotifyTextureEv	# Aska::AofHandler::NotifyTexture()
+aof	_ZNK4Aska10AofHandler28UsesTexturePaletteBySkinningEv	# Aska::AofHandler::UsesTexturePaletteBySkinning() const
+aof	_ZNK4Aska10AofHandler20GetShaderContextFlagEv	# Aska::AofHandler::GetShaderContextFlag() const
+aof	_ZN4Aska10AofHandler20SetShaderContextFlagEv	# Aska::AofHandler::SetShaderContextFlag()
+aof	_ZN4Aska10AofHandler14DeleteCallbackEiPv	# Aska::AofHandler::DeleteCallback(int, void*)
+aof	_ZNK4Aska10AofHandler18CreateSkinMatricesEv	# Aska::AofHandler::CreateSkinMatrices() const
+aof	_ZNK4Aska10AofHandler11IsDirectAofEv	# Aska::AofHandler::IsDirectAof() const
+aof	_ZN4Aska10AofHandler21OnSkinMatricesCreatedERNS_9AofObjectE	# Aska::AofHandler::OnSkinMatricesCreated(Aska::AofObject&)
+aof	_ZN4Aska9AofObjectD1Ev	# Aska::AofObject::~AofObject()
+aof	_ZN4Aska9AofObjectD0Ev	# Aska::AofObject::~AofObject()
+aof	_ZN4Aska9AofObject10DeleteThisEPNS_13DeleteManagerE	# Aska::AofObject::DeleteThis(Aska::DeleteManager*)
+aof	_ZN4Aska9AofObject3RunEi	# Aska::AofObject::Run(int)
+aof	_ZN4Aska9AofObject20InitializeConditionsEv	# Aska::AofObject::InitializeConditions()
+aof	_ZN4Aska9AofObject27SetProgrammableTransparencyENS_16RenderableObject9ProgTransE	# Aska::AofObject::SetProgrammableTransparency(Aska::RenderableObject::ProgTrans)
+aof	_ZN4Aska9AofObject16SetRenderLayerIDEh	# Aska::AofObject::SetRenderLayerID(unsigned char)
+aof	_ZN4Aska9AofObject13SetAofHandlerEPNS_10AofHandlerEb	# Aska::AofObject::SetAofHandler(Aska::AofHandler*, bool)
+aof	_ZN4Aska9AofObject21UpdateBoundingVolumesEPNS_10AofHandlerE	# Aska::AofObject::UpdateBoundingVolumes(Aska::AofHandler*)
+aof	_ZN4Aska9AofObject19CheckRenderContextsEv	# Aska::AofObject::CheckRenderContexts()
+aof	_ZN4Aska9AofObject21MakeObjectRenderStateILj1010EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	# bool Aska::AofObject::MakeObjectRenderState<1010u>(Aska::AofObjectRenderState*, Aska::RenderPass*)
+aof	_ZN4Aska9AofObject21MakeObjectRenderStateILj496EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	# bool Aska::AofObject::MakeObjectRenderState<496u>(Aska::AofObjectRenderState*, Aska::RenderPass*)
+aof	_ZN4Aska9AofObject21MakeObjectRenderStateILj3055EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	# bool Aska::AofObject::MakeObjectRenderState<3055u>(Aska::AofObjectRenderState*, Aska::RenderPass*)
+aof	_ZN4Aska9AofObject18CalcBoundingExtentEb	# Aska::AofObject::CalcBoundingExtent(bool)
+aof	_ZN4Aska9AofObject16RenderingDecidedEv	# Aska::AofObject::RenderingDecided()
+aof	_ZN4Aska9AofObject26ResetDynamicShaderModifierEv	# Aska::AofObject::ResetDynamicShaderModifier()
+aof	_ZN4Aska9AofObject21SetShadowManagerIndexEim	# Aska::AofObject::SetShadowManagerIndex(int, unsigned long)
+aof	_ZN4Aska9AofObject21GetShadowManagerIndexEi	# Aska::AofObject::GetShadowManagerIndex(int)
+aof	_ZN4Aska9AofObject16IsAffectingLightEPNS_5LightE	# Aska::AofObject::IsAffectingLight(Aska::Light*)
+aof	_ZN4Aska9AofObject19PrepareLightContextEPNS_12LightManagerE	# Aska::AofObject::PrepareLightContext(Aska::LightManager*)
+aof	_ZN4Aska9AofObject20PreliminarilyPrepareEPNS_12LightManagerE	# Aska::AofObject::PreliminarilyPrepare(Aska::LightManager*)
+aof	_ZN4Aska9AofObject12GetColorPassEPKNS_10RENDERINFOE	# Aska::AofObject::GetColorPass(Aska::RENDERINFO const*)
+aof	_ZN4Aska9AofObject31PrepareForRendering_PreliminaryEv	# Aska::AofObject::PrepareForRendering_Preliminary()
+aof	_ZN4Aska9AofObject19PrepareForRenderingEPKNS_10RENDERINFOE	# Aska::AofObject::PrepareForRendering(Aska::RENDERINFO const*)
+aof	_ZN4Aska9AofObject20GetObjectRenderStateEj	# Aska::AofObject::GetObjectRenderState(unsigned int)
+aof	_ZN4Aska9AofObject18PrepareColorShaderEPNS_10RenderPassEPKNS_10RENDERINFOE	# Aska::AofObject::PrepareColorShader(Aska::RenderPass*, Aska::RENDERINFO const*)
+aof	_ZNK4Aska9AofObject27GetActualLightConfigurationEv	# Aska::AofObject::GetActualLightConfiguration() const
+aof	_ZN4Aska9AofObject6RenderEPNS_13RenderContextEi	# Aska::AofObject::Render(Aska::RenderContext*, int)
+aof	_ZN22AofObjectDeleteHandlerIN4Aska16RenderStateArrayEE14DeleteCallbackEiPv	# AofObjectDeleteHandler<Aska::RenderStateArray>::DeleteCallback(int, void*)
+aof	_ZN23AofObjectReleaseHandlerIN4Aska11RenderStateEE14DeleteCallbackEiPv	# AofObjectReleaseHandler<Aska::RenderState>::DeleteCallback(int, void*)
+aof	_ZN23AofObjectReleaseHandlerIN4Aska10AofHandlerEE14DeleteCallbackEiPv	# AofObjectReleaseHandler<Aska::AofHandler>::DeleteCallback(int, void*)
+aof	_ZN22AofObjectDeleteHandlerIN4Aska16SkinMatricesBaseEE14DeleteCallbackEiPv	# AofObjectDeleteHandler<Aska::SkinMatricesBase>::DeleteCallback(int, void*)
+load	_ZN4Aska10AsfHandlerC2Ev	# Aska::AsfHandler::AsfHandler()
+load	_ZN4Aska10AsfHandlerD1Ev	# Aska::AsfHandler::~AsfHandler()
+load	_ZN4Aska10AsfHandlerD0Ev	# Aska::AsfHandler::~AsfHandler()
+load	_ZN4Aska10AsfHandler10CreateTreeEPNS_11TaskManagerEPNS_13ObjectManagerEPNS_12LightManagerEPNS_13CameraManagerEPNS_15OccluderManagerEPNS_16ProjectorManagerEPNS_15ModifierManagerEPNS_20MeshGeneratorManagerENS0_6StatusE	# Aska::AsfHandler::CreateTree(Aska::TaskManager*, Aska::ObjectManager*, Aska::LightManager*, Aska::CameraManager*, Aska::OccluderManager*, Aska::Projec
+load	_ZN4Aska10AsfHandler27ClearRigidBodyPrimitiveListEv	# Aska::AsfHandler::ClearRigidBodyPrimitiveList()
+load	_ZN4Aska10AsfHandler23SetupRigidBodyPrimitiveEv	# Aska::AsfHandler::SetupRigidBodyPrimitive()
+load	_ZN4Aska10AsfHandler24SetupRigidBodyConstraintEv	# Aska::AsfHandler::SetupRigidBodyConstraint()
+load	_ZN4Aska10AsfHandler12DeleteTreeExEv	# Aska::AsfHandler::DeleteTreeEx()
+load	_ZN4Aska10AsfHandler10RemoveTreeEv	# Aska::AsfHandler::RemoveTree()
+load	_ZN4Aska10AsfHandler24RemoveRigidBodyPrimitiveEv	# Aska::AsfHandler::RemoveRigidBodyPrimitive()
+load	_ZN4Aska10AsfHandler19UpdateExternalLinkREv	# Aska::AsfHandler::UpdateExternalLinkR()
+load	_ZN4Aska10AsfHandler19AdjustPretendParentEPKNS_7AsfNodeE	# Aska::AsfHandler::AdjustPretendParent(Aska::AsfNode const*)
+load	_ZN4Aska10AsfHandler21ClearExternalLinkListEb	# Aska::AsfHandler::ClearExternalLinkList(bool)
+load	_ZN4Aska10AsfHandler21MergeDynamicsHandlersEv	# Aska::AsfHandler::MergeDynamicsHandlers()
+load	_ZNK4Aska10AsfHandler6SearchEPKc	# Aska::AsfHandler::Search(char const*) const
+load	_ZN4Aska10AsfHandler20CalcExternalLinkListEv	# Aska::AsfHandler::CalcExternalLinkList()
+load	_ZNK4Aska10AsfHandler19QuickSearchByNameExEPKc	# Aska::AsfHandler::QuickSearchByNameEx(char const*) const
+load	_ZNK4Aska10AsfHandler11QuickSearchEPKc	# Aska::AsfHandler::QuickSearch(char const*) const
+load	_ZNK4Aska10AsfHandler17SearchFirstByKindEh	# Aska::AsfHandler::SearchFirstByKind(unsigned char) const
+load	_ZNK4Aska10AsfHandler16SearchNextByKindEhPKNS_11IAnimatableE	# Aska::AsfHandler::SearchNextByKind(unsigned char, Aska::IAnimatable const*) const
+load	_ZN4Aska10AsfHandler15SetExternalLinkEPS0_	# Aska::AsfHandler::SetExternalLink(Aska::AsfHandler*)
+load	_ZN4Aska10AsfHandler19DetachExternalLinkREv	# Aska::AsfHandler::DetachExternalLinkR()
+load	_ZN4Aska10AsfHandler19AttachExternalLinkREv	# Aska::AsfHandler::AttachExternalLinkR()
+load	_ZNK4Aska10AsfHandler18GetInverseBindPoseEiPPNS_11IAnimatableE	# Aska::AsfHandler::GetInverseBindPose(int, Aska::IAnimatable**) const
+load	_ZN4Aska10AsfHandler24AllocateExtraChunkBufferEv	# Aska::AsfHandler::AllocateExtraChunkBuffer()
+load	_ZN4Aska10AsfHandler16SetupExtraChunksEv	# Aska::AsfHandler::SetupExtraChunks()
+load	_ZN4Aska10AsfHandler17DeleteExtraChunksEv	# Aska::AsfHandler::DeleteExtraChunks()
+load	_ZNK4Aska10AsfHandler13CreateHandlerEPKNS_3AFF12AsfAttributeEPPv	# Aska::AsfHandler::CreateHandler(Aska::AFF::AsfAttribute const*, void**) const
+load	_ZNK4Aska10AsfHandler13DeleteHandlerEhPv	# Aska::AsfHandler::DeleteHandler(unsigned char, void*) const
+load	_ZNK4Aska10AsfHandler22CreateInstanceOfObjectEPKNS_3AFF12AsfAttributeE	# Aska::AsfHandler::CreateInstanceOfObject(Aska::AFF::AsfAttribute const*) const
+load	_ZNK4Aska10AsfHandler12CreateObjectEPKNS_3AFF12AsfAttributeEj	# Aska::AsfHandler::CreateObject(Aska::AFF::AsfAttribute const*, unsigned int) const
+load	_ZNK4Aska10AsfHandler14CreateParticleEPKNS_3AFF18AsfParticleEmitterE	# Aska::AsfHandler::CreateParticle(Aska::AFF::AsfParticleEmitter const*) const
+load	_ZNK4Aska10AsfHandler12DeleteObjectEhPv	# Aska::AsfHandler::DeleteObject(unsigned char, void*) const
+load	_ZN4Aska10AsfHandler22PrepareForCreatingTreeEPNS_13CameraManagerE	# Aska::AsfHandler::PrepareForCreatingTree(Aska::CameraManager*)
+load	_ZN4Aska10AsfHandler23UnmergeDynamicsHandlersEv	# Aska::AsfHandler::UnmergeDynamicsHandlers()
+load	_ZNK4Aska10AsfHandler22GetModifierAnimationIdEPKcPPNS_11IAnimatableEPi	# Aska::AsfHandler::GetModifierAnimationId(char const*, Aska::IAnimatable**, int*) const
+load	_ZN4Aska10AsfHandler15IAnimatableListD0Ev	# Aska::AsfHandler::IAnimatableList::~IAnimatableList()
+aof	_ZN4Aska6detail23AnimationGroupContainerC2Ev	# Aska::detail::AnimationGroupContainer::AnimationGroupContainer()
+aof	_ZN4Aska6detail23AnimationGroupContainerD2Ev	# Aska::detail::AnimationGroupContainer::~AnimationGroupContainer()
+aof	_ZN4Aska6detail23AnimationGroupContainer9AddGroup_Esi	# Aska::detail::AnimationGroupContainer::AddGroup_(short, int)
+aof	_ZN4Aska6detail23AnimationGroupContainer12AddPrimitiveEPNS_11AofhMeshsetEtjj	# Aska::detail::AnimationGroupContainer::AddPrimitive(Aska::AofhMeshset*, unsigned short, unsigned int, unsigned int)
+aof	_ZN4Aska6detail23AnimationGroupContainer17CreateBonePaletteEv	# Aska::detail::AnimationGroupContainer::CreateBonePalette()
+aof	_ZNK4Aska6detail23AnimationGroupContainer13GetBoneMatrixEi	# Aska::detail::AnimationGroupContainer::GetBoneMatrix(int) const
+aof	_ZN4Aska6detail23AnimationGroupContainer15RefreshPriorityEPNS_16DirectAofHandlerE	# Aska::detail::AnimationGroupContainer::RefreshPriority(Aska::DirectAofHandler*)
+aof	_ZN4Aska6detail22DirectAofPrimitiveImplC1EPNS_18DirectAofPrimitiveE	# Aska::detail::DirectAofPrimitiveImpl::DirectAofPrimitiveImpl(Aska::DirectAofPrimitive*)
+aof	_ZN4Aska6detail22DirectAofPrimitiveImplD2Ev	# Aska::detail::DirectAofPrimitiveImpl::~DirectAofPrimitiveImpl()
+aof	_ZNK4Aska6detail22DirectAofPrimitiveImpl13BeginRectMeshEPNS_14DirectMaterialEm	# Aska::detail::DirectAofPrimitiveImpl::BeginRectMesh(Aska::DirectMaterial*, unsigned long) const
+aof	_ZNK4Aska6detail22DirectAofPrimitiveImpl13BeginQuadMeshEPNS_14DirectMaterialEm	# Aska::detail::DirectAofPrimitiveImpl::BeginQuadMesh(Aska::DirectMaterial*, unsigned long) const
+aof	_ZN4Aska6detail22DirectAofPrimitiveImpl7AddRectEPKNS_6VectorES4_PKj	# Aska::detail::DirectAofPrimitiveImpl::AddRect(Aska::Vector const*, Aska::Vector const*, unsigned int const*)
+aof	_ZN4Aska6detail22DirectAofPrimitiveImpl7AddRectEPKNS_6VectorES4_S4_	# Aska::detail::DirectAofPrimitiveImpl::AddRect(Aska::Vector const*, Aska::Vector const*, Aska::Vector const*)
+aof	_ZN4Aska6detail22DirectAofPrimitiveImpl7AddQuadEPKNS_6VectorES4_PKj	# Aska::detail::DirectAofPrimitiveImpl::AddQuad(Aska::Vector const*, Aska::Vector const*, unsigned int const*)
+aof	_ZN4Aska6detail22DirectAofPrimitiveImpl7AddQuadEPKNS_6VectorES4_S4_	# Aska::detail::DirectAofPrimitiveImpl::AddQuad(Aska::Vector const*, Aska::Vector const*, Aska::Vector const*)
+aof	_ZN4Aska16DirectAofHandler6CreateEibPKc	# Aska::DirectAofHandler::Create(int, bool, char const*)
+aof	_ZN4Aska16DirectAofHandler4OpenEv	# Aska::DirectAofHandler::Open()
+aof	_ZN4Aska16DirectAofHandlerC1Ev	# Aska::DirectAofHandler::DirectAofHandler()
+aof	_ZN4Aska16DirectAofHandlerD2Ev	# Aska::DirectAofHandler::~DirectAofHandler()
+aof	_ZN4Aska16DirectAofHandler5CloseEPKNS_6VectorEb	# Aska::DirectAofHandler::Close(Aska::Vector const*, bool)
+aof	_ZN4Aska16DirectAofHandler9BeginMeshEPNS_14DirectMaterialEii	# Aska::DirectAofHandler::BeginMesh(Aska::DirectMaterial*, int, int)
+aof	_ZN4Aska16DirectAofHandler10AddMeshsetEiRKNS_14DirectMaterialEii	# Aska::DirectAofHandler::AddMeshset(int, Aska::DirectMaterial const&, int, int)
+aof	_ZN4Aska16DirectAofHandler9BeginMeshEPNS_14DirectMaterialE	# Aska::DirectAofHandler::BeginMesh(Aska::DirectMaterial*)
+aof	_ZN4Aska16DirectAofHandler7EndMeshEv	# Aska::DirectAofHandler::EndMesh()
+aof	_ZN4Aska16DirectAofHandler10FlipBufferEi	# Aska::DirectAofHandler::FlipBuffer(int)
+aof	_ZN4Aska16DirectAofHandler17MakeRenderContextEPNS_13RenderContextEPNS_9AofObjectEPKNS_10RENDERINFOEPNS_10RenderPassEPNS_20CommandBufferManagerE	# Aska::DirectAofHandler::MakeRenderContext(Aska::RenderContext*, Aska::AofObject*, Aska::RENDERINFO const*, Aska::RenderPass*, Aska::CommandBufferManag
+aof	_ZN4Aska16DirectAofHandler17SetDirectMaterialEiPNS_14DirectMaterialE	# Aska::DirectAofHandler::SetDirectMaterial(int, Aska::DirectMaterial*)
+aof	_ZN4Aska16DirectAofHandler18SetDefaultMaterialEPNS_14DirectMaterialE	# Aska::DirectAofHandler::SetDefaultMaterial(Aska::DirectMaterial*)
+aof	_ZN4Aska18DirectAofPrimitiveC2Ev	# Aska::DirectAofPrimitive::DirectAofPrimitive()
+aof	_ZN4Aska18DirectAofPrimitiveD1Ev	# Aska::DirectAofPrimitive::~DirectAofPrimitive()
+aof	_ZNK4Aska18DirectAofPrimitive16GetVertexAsmbit_Ev	# Aska::DirectAofPrimitive::GetVertexAsmbit_() const
+aof	_ZNK4Aska18DirectAofPrimitive16GetVertexStride_Ev	# Aska::DirectAofPrimitive::GetVertexStride_() const
+aof	_ZN4Aska18DirectAofPrimitive12AddVerticesTEiPKNS_6VectorERS2_S3_PKj	# Aska::DirectAofPrimitive::AddVerticesT(int, Aska::Vector const*, Aska::Vector const&, Aska::Vector const*, unsigned int const*)
+aof	_ZN4Aska22DirectAofPrimitiveBaseC2Ev	# Aska::DirectAofPrimitiveBase::DirectAofPrimitiveBase()
+aof	_ZN4Aska22DirectAofPrimitiveBaseD1Ev	# Aska::DirectAofPrimitiveBase::~DirectAofPrimitiveBase()
+aof	_ZNK4Aska22DirectAofPrimitiveBase18CreateSkinMatricesEv	# Aska::DirectAofPrimitiveBase::CreateSkinMatrices() const
+aof	_ZN4Aska22DirectAofPrimitiveBase6OnOpenEv	# Aska::DirectAofPrimitiveBase::OnOpen()
+aof	_ZN4Aska22DirectAofPrimitiveBase7OnCloseEPKNS_6VectorEb	# Aska::DirectAofPrimitiveBase::OnClose(Aska::Vector const*, bool)
+aof	_ZN4Aska22DirectAofPrimitiveBase12OnAddMeshsetEi	# Aska::DirectAofPrimitiveBase::OnAddMeshset(int)
+aof	_ZN4Aska22DirectAofPrimitiveBase21OnSkinMatricesCreatedERNS_9AofObjectE	# Aska::DirectAofPrimitiveBase::OnSkinMatricesCreated(Aska::AofObject&)
+aof	_ZNK4Aska22DirectAofPrimitiveBase20GetShaderContextFlagEv	# Aska::DirectAofPrimitiveBase::GetShaderContextFlag() const
+aof	_ZN4Aska13DirectAofText18SetDefaultMaterialEPNS_14DirectMaterialE	# Aska::DirectAofText::SetDefaultMaterial(Aska::DirectMaterial*)
+aof	_ZN4Aska13DirectAofTextC2Ev	# Aska::DirectAofText::DirectAofText()
+aof	_ZN4Aska13DirectAofTextD1Ev	# Aska::DirectAofText::~DirectAofText()
+aof	_ZN4Aska13DirectAofText15BeginStringMeshEPNS_14DirectMaterialEm	# Aska::DirectAofText::BeginStringMesh(Aska::DirectMaterial*, unsigned long)
+aof	_ZN4Aska13DirectAofText8AddGlyphEjfffffjh	# Aska::DirectAofText::AddGlyph(unsigned int, float, float, float, float, float, unsigned int, unsigned char)
+aof	_ZN4Aska13DirectAofText7OnCloseEPKNS_6VectorEb	# Aska::DirectAofText::OnClose(Aska::Vector const*, bool)
+aof	_ZNK4Aska13DirectAofText16GetVertexAsmbit_Ev	# Aska::DirectAofText::GetVertexAsmbit_() const
+aof	_ZNK4Aska13DirectAofText16GetVertexStride_Ev	# Aska::DirectAofText::GetVertexStride_() const
+aof	_ZN4Aska12SkinMatricesC1Ev	# Aska::SkinMatrices::SkinMatrices()
+aof	_ZN4Aska12SkinMatricesD0Ev	# Aska::SkinMatrices::~SkinMatrices()
+aof	_ZNK4Aska12SkinMatrices12GetAllocSizeEmmm	# Aska::SkinMatrices::GetAllocSize(unsigned long, unsigned long, unsigned long) const
+aof	_ZN4Aska12SkinMatrices6AssignEmmm	# Aska::SkinMatrices::Assign(unsigned long, unsigned long, unsigned long)
+aof	_ZN4Aska12SkinMatrices12InitPalette_EPNS_9AofObjectEPNS_10AsfHandlerE	# Aska::SkinMatrices::InitPalette_(Aska::AofObject*, Aska::AsfHandler*)
+aof	_ZN4Aska12SkinMatrices14InitPaletteEx_EPNS_9AofObjectEPNS_10AsfHandlerE	# Aska::SkinMatrices::InitPaletteEx_(Aska::AofObject*, Aska::AsfHandler*)
+aof	_ZN4Aska12SkinMatrices16MakeSkinMatricesEv	# Aska::SkinMatrices::MakeSkinMatrices()
+aof	_ZN4Aska16SkinMatricesBaseC2Ev	# Aska::SkinMatricesBase::SkinMatricesBase()
+aof	_ZN4Aska16SkinMatricesBaseD2Ev	# Aska::SkinMatricesBase::~SkinMatricesBase()
+aof	_ZN4Aska16SkinMatricesBase11InitPaletteEPNS_9AofObjectEPNS_10AsfHandlerE	# Aska::SkinMatricesBase::InitPalette(Aska::AofObject*, Aska::AsfHandler*)
+aof	_ZN4Aska16SkinMatricesBase11InitPaletteEPNS_9AofObjectEPNS_22DirectAofPrimitiveBaseE	# Aska::SkinMatricesBase::InitPalette(Aska::AofObject*, Aska::DirectAofPrimitiveBase*)
+aof	_ZN4Aska16SkinMatricesBase13InitPaletteExEPNS_9AofObjectEPNS_10AsfHandlerE	# Aska::SkinMatricesBase::InitPaletteEx(Aska::AofObject*, Aska::AsfHandler*)
+aof	_ZNK4Aska16SkinMatricesBase12GetAllocSizeEmmm	# Aska::SkinMatricesBase::GetAllocSize(unsigned long, unsigned long, unsigned long) const
+aof	_ZN4Aska16SkinMatricesBase6AssignEmmm	# Aska::SkinMatricesBase::Assign(unsigned long, unsigned long, unsigned long)
+aof	_ZN4Aska16SkinMatricesBase4InitEPNS_9AofObjectE	# Aska::SkinMatricesBase::Init(Aska::AofObject*)
+aof	_ZNK4Aska16SkinMatricesBase18GetSkinMatrixCountEi	# Aska::SkinMatricesBase::GetSkinMatrixCount(int) const
+aof	_ZN4Aska16SkinMatricesBase11KickPaletteEPNS_8Matrix34E	# Aska::SkinMatricesBase::KickPalette(Aska::Matrix34*)
+aof	_ZN4Aska18SkinMatricesSimpleC1Ev	# Aska::SkinMatricesSimple::SkinMatricesSimple()
+aof	_ZN4Aska18SkinMatricesSimpleD0Ev	# Aska::SkinMatricesSimple::~SkinMatricesSimple()
+aof	_ZNK4Aska18SkinMatricesSimple12GetAllocSizeEmmm	# Aska::SkinMatricesSimple::GetAllocSize(unsigned long, unsigned long, unsigned long) const
+aof	_ZN4Aska18SkinMatricesSimple6AssignEmmm	# Aska::SkinMatricesSimple::Assign(unsigned long, unsigned long, unsigned long)
+aof	_ZN4Aska18SkinMatricesSimple12InitPalette_EPNS_9AofObjectEPNS_22DirectAofPrimitiveBaseE	# Aska::SkinMatricesSimple::InitPalette_(Aska::AofObject*, Aska::DirectAofPrimitiveBase*)
+aof	_ZN4Aska18SkinMatricesSimple16MakeSkinMatricesEv	# Aska::SkinMatricesSimple::MakeSkinMatrices()
+aof	_ZN4Aska6detail14AnimationGroupC1Ei	# Aska::detail::AnimationGroup::AnimationGroup(int)
+aof	_ZN4Aska6detail14AnimationGroupD1Ev	# Aska::detail::AnimationGroup::~AnimationGroup()
+aof	_ZN4Aska6detail14AnimationGroup12AddPrimitiveEPNS_11AofhMeshsetEttjj	# Aska::detail::AnimationGroup::AddPrimitive(Aska::AofhMeshset*, unsigned short, unsigned short, unsigned int, unsigned int)
+aof	_ZN4Aska6detail14AnimationGroup19SetBonePaletteIndexEt	# Aska::detail::AnimationGroup::SetBonePaletteIndex(unsigned short)
+aof	_ZN4Aska6detail11MeshsetInfoC2EPNS_11AofhMeshsetE	# Aska::detail::MeshsetInfo::MeshsetInfo(Aska::AofhMeshset*)
+aof	_ZN4Aska6detail11MeshsetInfoD2Ev	# Aska::detail::MeshsetInfo::~MeshsetInfo()
+hier	_ZNK4Aska18HierarchicalObject15GetDefaultLevelEv	# Aska::HierarchicalObject::GetDefaultLevel() const
+hier	_ZN4Aska18HierarchicalObject8OnActiveEb	# Aska::HierarchicalObject::OnActive(bool)
+hier	_ZN4Aska18HierarchicalObject10MakeMatrixEv	# Aska::HierarchicalObject::MakeMatrix()
+aof	_ZN9Framework22CDirectAofTextRendererC2Ev	# Framework::CDirectAofTextRenderer::CDirectAofTextRenderer()
+aof	_ZN9Framework22CDirectAofTextRendererD2Ev	# Framework::CDirectAofTextRenderer::~CDirectAofTextRenderer()
+aof	_ZN9Framework22CDirectAofTextRendererD0Ev	# Framework::CDirectAofTextRenderer::~CDirectAofTextRenderer()
+aof	_ZN9Framework22CDirectAofTextRenderer10InitializeEiN4Aska10FontHandleERKNS_10CSTLVectorImEEjb	# Framework::CDirectAofTextRenderer::Initialize(int, Aska::FontHandle, Framework::CSTLVector<unsigned long> const&, unsigned int, bool)
+aof	_ZN9Framework22CDirectAofTextRenderer7ReserveEj	# Framework::CDirectAofTextRenderer::Reserve(unsigned int)
+aof	_ZN9Framework22CDirectAofTextRenderer8PriorityEf	# Framework::CDirectAofTextRenderer::Priority(float)
+aof	_ZN9Framework22CDirectAofTextRenderer20PreliminarilyPrepareEPN4Aska12LightManagerE	# Framework::CDirectAofTextRenderer::PreliminarilyPrepare(Aska::LightManager*)
+aof	_ZN9Framework22CDirectAofTextRenderer5ResetEv	# Framework::CDirectAofTextRenderer::Reset()
+aof	_ZN9Framework22CDirectAofTextRenderer8tPutPool12PushBackPoolERKNS0_7tStringE	# Framework::CDirectAofTextRenderer::tPutPool::PushBackPool(Framework::CDirectAofTextRenderer::tString const&)
+aof	_ZN9Framework22CDirectAofTextRenderer3PutERKNS0_7tStringEj	# Framework::CDirectAofTextRenderer::Put(Framework::CDirectAofTextRenderer::tString const&, unsigned int)
+aof	_ZN9Framework22CDirectAofTextRenderer13AddPutCounterEmRNS0_10tSizeCacheE	# Framework::CDirectAofTextRenderer::AddPutCounter(unsigned long, Framework::CDirectAofTextRenderer::tSizeCache&)
+aof	_ZNK9Framework22CDirectAofTextRenderer14CalcStringRectEPKcff	# Framework::CDirectAofTextRenderer::CalcStringRect(char const*, float, float) const
+aof	_ZNK9Framework22CDirectAofTextRenderer9CharCountEv	# Framework::CDirectAofTextRenderer::CharCount() const
+aof	_ZNK9Framework22CDirectAofTextRenderer10PutCounterEv	# Framework::CDirectAofTextRenderer::PutCounter() const
+aof	_ZN9Framework22CDirectAofTextRenderer8tPutPool11_ExpandCoreEj	# Framework::CDirectAofTextRenderer::tPutPool::_ExpandCore(unsigned int)
+aof	_ZNK4Aska15TTextCompositorINS_4Utf8EE14ComposeString_INS_13DirectAofText11CharPrinterEEEvPfS6_PNS_6VectorEmPKcT_	# void Aska::TTextCompositor<Aska::Utf8>::ComposeString_<Aska::DirectAofText::CharPrinter>(float*, float*, Aska::Vector*, unsigned long, char const*, As
+hier	_ZN4Aska18HierarchicalObjectD2Ev	# Aska::HierarchicalObject::~HierarchicalObject()
+aof	_ZThn160_N4Aska10AofHandler14DeleteCallbackEiPv	# non-virtual thunk to Aska::AofHandler::DeleteCallback(int, void*)
+hier	_ZN4Aska18HierarchicalObject20InitializeConditionsEv	# Aska::HierarchicalObject::InitializeConditions()
+hier	_ZN4Aska18HierarchicalObject22CheckSleepAvailabilityEv	# Aska::HierarchicalObject::CheckSleepAvailability()
+hier	_ZN4Aska18HierarchicalObject23SetAppropriateTaskLevelEv	# Aska::HierarchicalObject::SetAppropriateTaskLevel()
+hier	_ZN4Aska18HierarchicalObject14SwapChangelingEPS0_	# Aska::HierarchicalObject::SwapChangeling(Aska::HierarchicalObject*)
+hier	_ZNK4Aska18HierarchicalObject10GetClassIDEi	# Aska::HierarchicalObject::GetClassID(int) const
+hier	_ZN4Aska27HierarchicalObjectContainer16DetachFromParentEv	# Aska::HierarchicalObjectContainer::DetachFromParent()
+hier	_ZN4Aska27HierarchicalObjectContainer11AttachChildEPS0_	# Aska::HierarchicalObjectContainer::AttachChild(Aska::HierarchicalObjectContainer*)
+hier	_ZN4Aska27HierarchicalObjectContainer20UpdateHierarchicallyEv	# Aska::HierarchicalObjectContainer::UpdateHierarchically()
+hier	_ZN4Aska27HierarchicalObjectContainer10SwapParentEPS0_	# Aska::HierarchicalObjectContainer::SwapParent(Aska::HierarchicalObjectContainer*)
+aof	_ZN4Aska12LightManager16MakeLightContextEPNS_9AofObjectEPNS0_12LightContextEPh	# Aska::LightManager::MakeLightContext(Aska::AofObject*, Aska::LightManager::LightContext*, unsigned char*)
+aof	_ZN4Aska12LightManager20MakeLightContextPostEPNS_9AofObjectEPNS0_12LightContextEPh	# Aska::LightManager::MakeLightContextPost(Aska::AofObject*, Aska::LightManager::LightContext*, unsigned char*)
+hier	_ZN4Aska18HierarchicalObject14GetBoundingBoxEb	# Aska::HierarchicalObject::GetBoundingBox(bool)
+hier	_ZN4Aska11JointObjectD0Ev	# Aska::JointObject::~JointObject()

@@ -1,0 +1,25 @@
+{
+ "data": {
+  "Character": [
+   {
+    "id": 2113929216,
+    "master_role_id": 3846564450,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   {
+    "id": 2113929217,
+    "master_role_id": 3047483019,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   },
+   {
+    "id": 2113929218,
+    "master_role_id": 1357323193,
+    "limit_break_count": 0,
+    "awaken_level": 0
+   }
+  ]
+ },
+ "status": 0
+}

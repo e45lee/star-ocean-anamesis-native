@@ -1,0 +1,23 @@
+# The local server's C++ style (server/PLAN-readability.md section 5): today's style, measured.
+# Apply with tools/format_server.sh (clang-format 18, the version it was measured with).
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 150
+AccessModifierOffset: -4
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLoopsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortBlocksOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: All
+DerivePointerAlignment: false
+PointerAlignment: Left
+SortIncludes: Never
+IncludeBlocks: Preserve
+ReflowComments: false
+BreakStringLiterals: false
+AlignTrailingComments:
+  Kind: Leave
+SpacesBeforeTrailingComments: 2
+FixNamespaceComments: true
+NamespaceIndentation: None
+KeepEmptyLinesAtTheStartOfBlocks: false

@@ -1,0 +1,47 @@
+# soa-server replay corpus (server/tests/replay/README.md): deepspace, hand-written (PLAN-readability R18):
+# the five deep space APIs on the seeded state (one limit-break ship): offers, auto select, departures
+# (accepted and refused: not on offer, party size, busy member, no free ship, bonus items), an early
+# MissionEnd, quick returns paid in coins (across the 04:00 reset of their daily count), MissionEnd's
+# rewards (player / character / area EXP, drops, rare offers) and the lists after each.
+# tz: America/Toronto
+req 1 1790856005 Login a01c67ef - - - -
+req 2 1790856010 DeepSpaceActiveList a7a82ef5 - - - -
+req 3 1790856015 DeepSpaceAutoMemberSelect ed9aae28 1284099191,3835296747 - - -
+req 4 1790856020 DeepSpaceAutoMemberSelect ed9aae28 1882972179,51492191 - - -
+req 5 1790856025 DeepSpaceMissionStart 63c9927a 2327558468,0 - 2113929216,2113929217,2113929218,2113929219,2113929220,2113929221,2113929222,2113929223,2113929224 -
+req 6 1790856030 DeepSpaceMissionStart 63c9927a 12345,0 - 2113929216,2113929217,2113929218,2113929219,2113929220,2113929221,2113929222,2113929223 -
+req 7 1790856035 DeepSpaceMissionStart 63c9927a 2327558468,0 - _ -
+req 8 1790856040 DeepSpaceMissionStart 63c9927a 2327558468,0 - 2113929216,2113929216 -
+req 9 1790856045 DeepSpaceMissionStart 63c9927a 2327558468,0 - 2113929216,99 -
+req 10 1790856050 DeepSpaceMissionStart 63c9927a 2327558468,0 - 2113929216,2113929217,2113929218,2113929219,2113929220,2113929221,2113929222,2113929223 -
+req 11 1790856055 DeepSpaceMissionStart 63c9927a 330492158,0 - 2113929224,2113929225,2113929226,2113929227 -
+req 12 1790856060 DeepSpaceMissionStart 63c9927a 330492158,0 - 2113929216 -
+req 13 1790856065 DeepSpaceAutoMemberSelect ed9aae28 1284099191,3835296747 - - -
+req 14 1790856070 DeepSpaceActiveList a7a82ef5 - - - -
+req 15 1790856605 DeepSpaceMissionEnd 140e365b 1 - - -
+req 16 1790856610 DeepSpaceMissionEnd 140e365b 2 - - -
+req 17 1790856615 DeepSpaceMissionEndNow 2df0328c 2 - - -
+req 18 1790856620 DeepSpaceMissionEndNow 2df0328c 1 - - -
+req 19 1790856625 DeepSpaceActiveList a7a82ef5 - - - -
+req 20 1790856630 DeepSpaceMissionEnd 140e365b 1 - - -
+req 21 1790856635 DeepSpaceActiveList a7a82ef5 - - - -
+req 22 1790856640 DeepSpaceMissionStart 63c9927a 350170343,2631171033 - 2113929224,2113929225,2113929226,2113929227 -
+req 23 1790856645 DeepSpaceMissionStart 63c9927a 350170343,3388304262 - 2113929224,2113929225,2113929226,2113929227 -
+req 24 1790856650 DeepSpaceMissionStart 63c9927a 350170343,0 - 2113929224,2113929225,2113929226,2113929227 -
+req 25 1790859605 DeepSpaceMissionEndNow 2df0328c 1 - - -
+req 26 1790859610 DeepSpaceMissionEnd 140e365b 1 - - -
+req 27 1790859615 DeepSpaceActiveList a7a82ef5 - - - -
+req 28 1790859620 DeepSpaceMissionStart 63c9927a 2642086932,0 - 2113929216,2113929217,2113929218,2113929219,2113929220,2113929221,2113929222,2113929223 -
+req 29 1790863221 DeepSpaceMissionEnd 140e365b 1 - - -
+req 30 1790863226 DeepSpaceActiveList a7a82ef5 - - - -
+req 31 1790859615 DeepSpaceMissionStart 63c9927a 2379644253,0 - 2113929216,2113929217,2113929218,2113929219,2113929220,2113929221,2113929222,2113929223 -
+req 32 1790881216 DeepSpaceActiveList a7a82ef5 - - - -
+req 33 1790881220 DeepSpaceMissionEnd 140e365b 1 - - -
+req 34 1790881225 DeepSpaceMissionStart 63c9927a 4208020939,0 - 2113929216,2113929217,2113929218,2113929219,2113929220,2113929221,2113929222,2113929223 -
+req 35 1790881230 DeepSpaceMissionEndNow 2df0328c 1 - - -
+req 36 1790881235 DeepSpaceMissionEnd 140e365b 1 - - -
+req 37 1790913605 DeepSpaceMissionStart 63c9927a 350170343,0 - 2113929216,2113929217,2113929218,2113929219,2113929220,2113929221,2113929222,2113929223 -
+req 38 1790913610 DeepSpaceMissionEndNow 2df0328c 1 - - -
+req 39 1790913615 DeepSpaceMissionEnd 140e365b 1 - - -
+req 40 1790913620 DeepSpaceActiveList a7a82ef5 - - - -
+req 41 1790913625 GetPlayer 9a056905 - - - -

@@ -1,0 +1,25 @@
+# Personal saves (real device UUID / player ID): never committed. The tests use the sanitized
+# copies in data/saves/.
+/samples/
+# Local working data: game files (APK extracts, the 3.7.0 download), Ghidra projects, decompiles,
+# test outputs, toolchains (see README.md "Game files")
+/work
+# The Python environment and caches
+/.venv
+__pycache__/
+.pytest_cache/
+# The build (cmake -S . -B build) and its log
+/build/
+/build.log
+# vcpkg (scripts/vcpkg-bootstrap.sh) and a stray `vcpkg install`'s output
+/.vcpkg
+/vcpkg_installed/
+# Agent worktrees (git worktree add .claude/worktrees/<name>)
+/.claude/worktrees/
+# Game files and generated databases, kept locally (not in git; they were in Git LFS until
+# 2026-10-03; a verified copy is in work/backup-lfs/). README.md "Game files" says where each comes from.
+/apk/*apk
+/data/*.sqlite3
+/port/server-data/*.sqlite3
+/ghidra/quick/
+/ghidra/quick-v370/

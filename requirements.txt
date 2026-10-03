@@ -1,0 +1,16 @@
+pycryptodome
+msgpack
+pytest
+# reverse-engineering tools (tools/*.py)
+pyelftools
+capstone
+unicorn
+# screenshot contact sheets (tools/contact_sheet.py)
+pillow
+# stand-in gacha images (tools/make_standin_banners.py)
+numpy
+zstandard
+lief
+keystone-engine
+# PyGhidra ships with Ghidra (12.1.2 snap); install it from there:
+#   pip install --no-index --find-links /snap/ghidra/current/ghidra/Ghidra/Features/PyGhidra/pypkg/dist pyghidra

@@ -1,0 +1,61 @@
+# The new-player tutorial flow from a fresh start: the milestones both runs must reach, in order.
+# Read by tools/compare_tutorial.py, which port/scripts/tutorial_session.sh (soa, a
+# fresh data dir) and emulator/scripts/emulator_session.sh --new-player (the unmodified 3.7.0
+# client against soa-server) call at their end (--check), and for the parity report of two runs
+# (compare). emulator/README.md "Tutorial parity".
+#
+#   req <method> [args]  a game request, normalized (tools/compare_tutorial.py "normalize"):
+#                        the arguments both clients send the same way; $NAME is the player name
+#   party <hp> <attack> <intelligence> <defence> <hit> <guard>
+#                        a member of the tutorial battle's party fought with these stats (port:
+#                        the SOA_BATTLE_DAMAGE_LOG attackers of the old battle natives, else the
+#                        MissionEnd battle log's PlayerCharacter as the in-process server logs it,
+#                        else the stats it sent in MissionStart (its NPC log line); emulator: the
+#                        MissionEnd battle log's PlayerCharacter, i.e. the stats the client battled
+#                        with)
+#   shot <name> <port png> <emulator png> <max RMSE> [why a larger difference is expected]
+#                        a screenshot pair taken at the same milestone (compare only)
+
+# title -> Login (no player: 19001) -> terms -> name entry
+req NoLoginStart
+req Login
+req CreatePlayer "$NAME"
+req Login
+# the opening scene mc00_010 (its choices), then mc00_015
+req MissionTalk 0 3499068150 0 0
+req EndMissionTalk 3499068150
+req UpdateTutorial 1
+req MissionTalk 0 2699394681 0 0
+req EndMissionTalk 2699394681
+req UpdateTutorial 2
+# the battle tutorial ms00_001 (the three NPCs of master_mission_npc), then mc00_025
+req MissionStart 0 3645708271 1 0 0 0 0
+req MissionEnd 3645708271 0
+req UpdateTutorial 3
+req MissionTalk 0 2345151930 0 0
+req EndMissionTalk 2345151930
+# the mission-menu step: planet Mere, 1-01 (mc01_010, the story of world-map mission 2693101203)
+req UpdateTutorial 4
+req UpdateTutorial 5
+req MissionTalk 0 3991905094 2693101203 0
+req EndMissionTalk 3991905094
+req UpdateTutorial 6
+# home, then the home tutorial (present box, gacha): tutorial cleared
+req UpdateTutorial 7
+req UpdateTutorial 9
+
+# The battle tutorial's party: the client's NPC model (MasterMissionNpcModel::CalculateParameter;
+# docs/server-rules.md "Tutorial battle"): sword, gun, rod
+party 7781 1281 755 960 551 397
+party 6859 1208 898 832 616 451
+party 5989 749 2045 653 516 407
+
+shot title 01-title.png title.png 0.10 the threshold dates from when the port showed the offline build's title (its APK's art, no 3.7.0 buttons)
+shot terms 02-terms.png terms.png 0.05
+shot name 04-name-typed.png name-typed.png 0.05
+shot opening 05-opening.png opening.png 0.15
+shot mission-map 90-mission-map.png tutorial-map.png 0.05
+shot companions 93-companions.png tutorial-companions.png 0.05
+shot home-tutorial 95-home-tutorial.png home-tutorial.png 0.05
+shot home-tutorial-gacha 96-home-tutorial-gacha.png home-tutorial-gacha.png 0.05
+shot home 99-home.png home.png 0.10 the notice board: soa shows the local server's page (native/ui/webview_local.cpp), soa-emu has no web view (an empty board)

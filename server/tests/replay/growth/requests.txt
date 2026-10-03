@@ -1,0 +1,36 @@
+# soa-server replay corpus (server/tests/replay/README.md): growth, hand-written (PLAN-readability R11):
+# the item shop's sets for materials, then every growth API, SetAssist and the party / player
+# state (Character, PartySet, MissionStart's CPersonStatusInfo) on the seeded roster, refusals included.
+# tz: America/Toronto
+req 1 1790856005 Login a01c67ef - - - -
+req 2 1790856010 ExItemShop 33d09fb7 1875469583 - - -
+req 3 1790856015 ExItemShop 33d09fb7 1220949191 - - -
+req 4 1790856020 ExItemShop 33d09fb7 2051182432 - - -
+req 5 1790856025 ExItemShop 33d09fb7 2935424380 - - -
+req 6 1790856030 BoostCharacter e5a04db6 2113929216,3633820516,3 - - -
+req 7 1790856035 BoostCharacter e5a04db6 2113929216,3633820516,20 - - -
+req 8 1790856040 BoostCharacter e5a04db6 2113929219,1650401513,10 - - -
+req 9 1790856045 BoostCharacter e5a04db6 2113929216,1271216557,1 - - -
+req 10 1790856050 BoostCharacter e5a04db6 2113929216,3633820516,200 - - -
+req 11 1790856055 LimitBreakCharacter 78972d03 2113929216,1811459413 - - -
+req 12 1790856060 LimitBreakCharacter_Legacy 1d7cbc6a 2113929216,1811459413 - - -
+req 13 1790856065 LimitBreakCharacter 78972d03 9,1811459413 - - -
+req 14 1790856070 EvolutionCharacter 990921b6 2113929230 - - -
+req 15 1790856075 EvolutionCharacter 990921b6 2113929216 - - -
+req 16 1790856080 UpdateAwakenLevel 2d714808 2113929238,1 - - -
+req 17 1790856085 UpdateAwakenLevel 2d714808 2113929238,3 - - -
+req 18 1790856090 AddStatusCharacter 74e09417 2113929230,1639571894,3 - - -
+req 19 1790856095 AddStatusCharacter 74e09417 2113929230,4292703253,40 - - -
+req 20 1790856100 AddStatusCharacter 74e09417 2113929230,3633820516,1 - - -
+req 21 1790856105 EquipWeapon 1f3c9eca 2113929230,0 - - -
+req 22 1790856110 EquipAccessory 99750e8d 2113929230,12345 - - -
+req 23 1790856115 EquipSkill 4656d729 2113929230,11,22,33 - - -
+req 24 1790856120 EquipSkill 4656d729 2113929238,5 - - -
+req 25 1790856125 SetAssist 741e0072 2113929230,2113929238 - - -
+req 26 1790856130 SetAssist 741e0072 2113929253,2113929238 - - -
+req 27 1790856135 SetAssist 741e0072 2113929270,2113929270 - - -
+req 28 1790856140 SetAssist 741e0072 2113929253,0 - - -
+req 29 1790856145 SetAssist 741e0072 2113929230,2113929216 - - -
+req 30 1790856150 UpdateParty ef02dd83 1,2113929238,2113929230,2113929216 - - -
+req 31 1790856155 GetPlayer 9a056905 - - - -
+req 32 1790856160 MissionStart b7c62bc2 0,3519778102,1,0,0,0,2693101203 - - -

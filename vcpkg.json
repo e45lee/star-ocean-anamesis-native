@@ -1,0 +1,40 @@
+{
+  "$comment": "Build dependencies (vcpkg manifest mode). README.md, Setup. sdl2: X11 and Wayland video (SDL picks; runtime/src/app/sdl_gl.cpp creates the GLES contexts through EGL on either). Both backends load their system libraries at run time; building the wayland feature needs libwayland-dev (wayland-scanner from libwayland-bin), libxkbcommon-dev and libegl-dev, and uses libdecor-0-dev when present (SDL bundles the protocol XML: no wayland-protocols package). boost-icl + boost-variant: the Boost headers dynarmic includes (boost-headers is only the umbrella CMake package). egl-registry / opengl-registry: headers only; libEGL / libGLESv2 come from the system (Mesa). dynarmic and IJG libjpeg 9 are not in vcpkg: CMake FetchContent (cmake/deps.cmake). Later, for the Windows runner: angle (platform windows). sqlite3 is pinned to 3.45.1 (overrides), the version of Ubuntu 24.04's libsqlite3 the server used before vcpkg: the served master (server/src/cdn/served_master.cpp make_served_master: a VACUUMed copy) is byte-for-byte that SQLite's output, its SHA-1 feeds the CDN's version ids, and a pre-downloaded phone (SOA_PHONE) only skips the data check while those ids match. Its compile options are Ubuntu's too (cmake/vcpkg-triplets/x64-linux.cmake: SQLITE_SECURE_DELETE zeroes freed space in the VACUUMed file).",
+  "name": "soa",
+  "version-string": "0",
+  "builtin-baseline": "fdd4e6059c803f56bb5df86e285bf374d9d44407",
+  "dependencies": [
+    "boost-headers",
+    "boost-icl",
+    "boost-variant",
+    "zlib",
+    "sqlite3",
+    "zstd",
+    "libogg",
+    "libvorbis",
+    {
+      "name": "sdl2",
+      "default-features": false,
+      "features": [
+        {
+          "name": "x11",
+          "platform": "linux"
+        },
+        {
+          "name": "wayland",
+          "platform": "linux"
+        }
+      ]
+    },
+    "openssl",
+    "egl-registry",
+    "opengl-registry"
+  ],
+  "overrides": [
+    {
+      "name": "sqlite3",
+      "version": "3.45.1",
+      "port-version": 1
+    }
+  ]
+}

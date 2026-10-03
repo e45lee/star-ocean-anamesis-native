@@ -1,0 +1,6 @@
+# Commits that only reformat code: git blame skips them with
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# (GitHub reads this file by itself.)
+
+# R3 of server/PLAN-readability.md: server/ formatted with server/.clang-format
+d56509d21dbf775daabaacf6b4ecf5b87fe32514

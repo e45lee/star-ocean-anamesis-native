@@ -1,0 +1,170 @@
+# label	English description (hand-written interpretation of the master data; "likely" = inferred, not confirmed)
+# Read by tools/event_coverage.py --notes. Keyed by master_event_area.id_label; describes content, not asset presence.
+event_kororin2018	"Koro-lympics" (コロリンピック): a tournament-style battle event (qualifier → quarter-final → semi-final → final stages) hosted by the mascot Koro; final boss Jie Revorse.
+event_evo_green	Daily evolution-material missions, Healer (green) role; beginner/intermediate/advanced.
+event_evo_purple	Daily evolution-material missions, Caster (purple) role; beginner/intermediate/advanced.
+event_evo_blue	Daily evolution-material missions, Shooter (blue) role; beginner/intermediate/advanced.
+event_evo_yellow	Daily evolution-material missions, Defender (yellow) role; beginner/intermediate/advanced.
+event_evo_red	Daily evolution-material missions, Attacker (red) role; beginner/intermediate/advanced.
+event_money	Daily "ingot" missions that drop sell-for-Fol materials.
+event_Sphere211_01	Hegemon-rank (覇級) boss rush tied to Sphere 211: very hard re-fights of story bosses (Adhesion Alma, Administered Gear, Armaros Depth, …).
+event_ticket	Ticket missions (2016–17): ticket-entry versions of the ingot and EXP-material dailies.
+event_so1_01	STAR OCEAN 1 crossover event: a Gerel (slime) outbreak; two story chapters plus Gerel-swarm hunts; Gerel legacy coins. Rerun later.
+event_wel_04_01	"Operation Christmas Present" part 1 (Dec 2016) — container with no missions of its own.
+event_wel_04_02	"Operation Christmas Present" part 2 — container with no missions of its own.
+event_wel_04_03	"Operation Christmas Present" (1)–(3): short Christmas 2016 story event.
+event_so1_02	STAR OCEAN 1 crossover: the tyrant Jie Revorse appears; escape from another dimension; Jie Revorse boss and coins.
+event_new_01	Year-end "big cleaning" one-mission story event (Dec 2016).
+event_new_02	"Happy New Year" 2017 one-mission story event.
+event_wep_exp	Daily "hammer" missions: weapon-EXP material (Hammer Golem).
+event_mem_01	Memorial service (慰霊祭) part 1 (Jan 2017) — container with no missions.
+event_mem_02	Memorial service part 2 — container with no missions.
+event_fro_04	Frost Tree raid: high-difficulty (滅/獄) boss hunt dropping Frost coins.
+event_mem_03	Memorial service (3): "The vow in the lantern" (1)–(3), short story event.
+event_ren_03	Valkyrie Profile crossover: Blood Valkyrie (dark Lenneth) descends; two story chapters and a boss up to Annihilation rank.
+event_ren_03_02	Valkyrie Profile Blood Valkyrie — extra container with no missions.
+event_val_01	"Chocolate Panic" part 1 (Valentine 2017) — container with no missions.
+event_val_02	"Chocolate Panic" part 2 — container with no missions.
+event_cry_07	Crystal Guardian raid: high-difficulty boss hunt dropping Crystal coins.
+event_val_03	"Chocolate Panic" (1)–(3): Valentine 2017 story event.
+event_bat_05	STAR OCEAN 2 Arena event: a VR arena in the pleasure city (Fun City); simulator battles and simulator coins.
+event_mic_06	STAR OCEAN 2 Michael (Ten Wise Men) descends: Fun City in flames; Michael boss and coins.
+event_mic_06_02	SO2 Michael Annihilation-rank add-on — container with no missions.
+event_spo_08	STAR OCEAN 3 Executioner invasion: defence operation against the Executioners/Proxies; coins.
+event_exp_all	Daily EXP-material missions for all roles (rainbow).
+event_mik_10	Hinamatsuri (Girls' Day) 2017 short story event, (1)–(3).
+event_exp_purple	Daily EXP-material missions, Caster role.
+event_exp_red	Daily EXP-material missions, Attacker role.
+event_luc_13	STAR OCEAN 3 Lucifer descends: the creator runs amok; Lucifer boss and coins.
+event_luc_13_02	SO3 Lucifer Annihilation-rank add-on — container with no missions.
+event_apr_12	April Fools 2017: one-mission "fabricated reality" gag event.
+event_apr_12_02	April Fools sequel (2017): "the strongest enemy?!" Koro Revorse parody boss; banana coins.
+event_exp_green	Daily EXP-material missions, Healer role.
+event_apr_12_03_01	"One day at school" series (Apr 2017, 2 days each): the student-council room — school-parody story + battle.
+event_rim_11	"The Federation Academy freshman" (Rimle): story event with Rimle's challenges.
+event_apr_12_03_02	"One day at school": the classroom ("Anamne Angels").
+event_apr_12_03_03	"One day at school": the auditorium.
+event_apr_12_03_04	"One day at school": the infirmary.
+event_apr_12_03_05	"One day at school": the gym.
+event_apr_12_03_06	"One day at school": the club room.
+event_apr_12_03_07	"One day at school": the sports ground ("road to Koshien").
+event_exp_blue	Daily EXP-material missions, Shooter role.
+event_eoe_14_02	Add-on container (May 2017) with no missions; label suggests it belongs to the "eoe" crossover.
+event_axb_15	STAR OCEAN 4 "small fry" event: hunting the legendary giant bird (Colossal Beak) and its egg; egg coins.
+event_axb_15_02	SO4 small-fry Annihilation-rank add-on — container with no missions.
+event_exp_yellow	Daily EXP-material missions, Defender role.
+event_alm_16	STAR OCEAN 4 boss event: guided by an oracle, "Doraneko" detour, Armaros Depth descends; coins.
+event_evo_all	Daily evolution-material missions for all roles (rainbow).
+event_wed_20	"Wedding delusion scenario" (Jun 2017) — container with no missions.
+event_arm_21	STAR OCEAN 5 Adhesion Alma battle plus epilogue; several ship's-log (航海日誌) side stories.
+event_sum_22	Swimsuit event, first half (2017): ocean planet resort; rescue "Onigumo"; resort dates with Miki / Muria.
+event_acc_exp	Daily "thread" missions: accessory-EXP material.
+event_sum_23	Swimsuit event, second half (2017): resort dates with Sophia / Reimi; the broken sea king.
+event_mir_24	Adjutant (副官) event: searching for Anne; Facula Dragon attack; ship's-log stories.
+event_cra_25	"Bow Claude" event: Claude with a bow; family stories (son / mother / father); Claude coins.
+event_asm_26	"Twin dragons" exorcism event: Salva mine monsters and a dungeon battle; ship's-log stories (Ashton).
+event_prb_28	Precis & Welda event: an invention grand prix; Lucifer (Ten Wise Men) descends.
+event_sed_exp	Daily "seed" missions: awakening seed material.
+event_ffbe_27	FINAL FANTASY BRAVE EXVIUS collaboration (achievements are titled "FFBE collab"): two worlds overlap through dimensional rifts; long mission ladder up to 絶 rank.
+event_aca_28	Academy-days event: training programme, "who protects Earth", unknown enemy.
+event_ticket_02	Ticket missions (2017–19): ticket-entry ingot / thread / hammer missions.
+event_hall_29	Halloween 2017: glowing eyes on the bridge, ghost-costume operation, pumpkin monsters.
+event_ud1_30	"UD" crossover, likely INFINITE UNDISCOVERY (tri-Ace): beast-tamer Venbatt, prison escape; ship's-log stories.
+event_leon_32	Leon event: stranded, an interview-reporting story; Mine cave; crest-creature stampede.
+event_ren_33	Valkyrie Profile crossover, part A: Chapter 1 — Freya's prophecy, Lezard's hideout, Midgard.
+event_ren_33_02	Valkyrie Profile crossover, part B: Chapter 2 — a new god, rebellion, Villnore castle.
+event_ren_33_03	Valkyrie Profile crossover, part C: Chapter 3 — the reincarnation curse, two sorcerers; Lezard Valeth boss.
+event_valentine_34	Valentine 2018: "gifts filled with feelings" — failed/penitent Valentines; gathering chocolate ingredients.
+event_sius_35	Cyuss event: a warrior's continent (Astral), knight's trial.
+event_mar_37	Maria & Dias event: a hunting party that learns to cooperate; giant-bird / insect / beast hunts; cherry-blossom coins.
+event_maid_39	Maid Nel & Clair event: missing footsteps, a war cameraman (Chisato), the governor's pet dragon.
+event_afl_40	April Fools 2018: a doujin-sale parody (red book / green book), Koro Revorse.
+event_ope_41	Opera & Albel event: Albel vs Ashton, the three-eyed beauty, ruin exploration.
+event_eoe_14	"eoe" crossover (partner not identified from master data): "star and gear meet"; Champ Peter boss; Energy Hexa drops.
+event_mel_43	Mirakle & Lucifer event: an eternal prison, time-warping beasts.
+event_rad_44	Giant mud-snail (ジャンボタニシ) gag event; high ranks only; "rad" label, likely a radio-show tie-in.
+event_wed_17	Wedding event, first half (2018): "who is your bride?" — life with Nel / Maria / Koro.
+event_wed_19	Wedding event, second half (2018): new life with Reesh / Rena; beast monarch.
+event_ill_47	Illustration-contest event: winning fan illustrations as stories (Brunelli clinic, "beast kid" captain).
+event_asp_48	"Blazing Ashton" event: trouble at the mountain top (Metox), protect the girl.
+event_maid_51	Maid Sophia / butler Leon event: a cat gathering, a dream-forest, a memory mansion.
+event_yuin_52	Euin (Blue Sphere-style) opera event: sudden time-warp, self-producing, a missing friend.
+event_casino_53	Casino event with a world boss and big-hunt: emergency landing, casino troublemakers, colosseum beast; single-only dice mission.
+event_wel_54	"BAS Welch" event: the genius-girl war, 99-round Welch challenge.
+event_eoe_42	"eoe" crossover part 2 (partner not identified): a closed graveyard, two letters, a dam, Basel back-alleys; Cannon Daddy boss; Energy Hexa drops.
+event_hal_55	Halloween 2018: a festival haunted by a giant spirit.
+event_max_38	Hegemon-rank (覇級) challenge: Michael of the Ten Wise Men.
+event_aru_56	Eilmat & Carlin event: guiding light, a reaper and a witch, usurper from the heavens.
+event_Xmas_57	Christmas 2018: the planet of the deadly winter, a ritual to protect.
+event_BossRush_33	"Counterattack of the three giants": year-end 2018 boss rush (Evil Eye, Aqua Regia, Amber Princess).
+event_nier_36	Large crossover (73 missions, Dec 2018): "stone tablets of remembrance" with Emerson / Phase / Fayt / Marvel chapters; concurrent box gacha "追臆の眠る墓標" — likely the NieR:Automata collaboration.
+event_xmas_31	Christmas event (rerun): a worried Santa, recover the first star.
+event_sak_60	Crossover (Jan 2019), likely SAKURA WARS: a secret demon-exorcism squad, 降魔 (demons).
+event_valentine_61	Valentine 2019: maidens on alert, cooking simulator, lake guardian.
+event_valcahenri_62	Valka & Henri event: led by a stone of the abyss, invaders, loneliness.
+event_shingeki_63	ATTACK ON TITAN collaboration: expedition outside the walls, city defence, the rampaging (Eren) Titan; Survey Corps insignia.
+event_afl2019_65	April Fools 2019: "SHIMA OCEAN – FAKE JAGA" parody, "well-done" difficulty, fake Sahariel.
+event_tic_67	Adult Tika & Ricardo event: experiment's price, brother and sister, a crest of destruction.
+event_Guilty_70	GUILTY GEAR collaboration part 1: star-eating stone, the Cube's castle, "GIVE AND TAKE".
+event_OverRoad	"The overlord's challenge" (覇王の挑戦): boss rush (Lucifer, Facula Dragon, Administered Gear).
+event_Souffle_68	Souffle & Noel event: land defiled by demon stones, invaders from space.
+event_radio2_69	Mud-snail event 2: metal snail (Tanishi) hunting; likely the radio-show tie-in again.
+event_TOP_1_71	TALES OF PHANTASIA collaboration part 1: return to Toltus (Cless / Mint); gels (グミ) as drops.
+event_TOP_2_72	TALES OF PHANTASIA collaboration part 2: temple, Dhaos's castle, the mad demon king (Shadow Dhaos).
+event_sum_49	Swimsuit event 2018 first half (rerun 2019): the sea is calling, a dragon-man in a sea cave.
+event_sww2019_75	Swimsuit event 2019 first half: vacation, beach house, chasing the attacker.
+event_sum_50	Swimsuit event 2018 second half (rerun): the sea-god calamity.
+event_sww2019_76	Swimsuit event 2019 second half: undersea temple, the flame that shakes the sea.
+event_iracon_78	2019 illustration-contest event: Japanese-style treasure hunt, oiran procession.
+event_bstr_79	Blue Sphere Chisato & Leon event: flower-field bird, farewell to a comrade.
+event_ticket_03	Ticket missions (2019–): ingot / gear / thread missions with 5× drop and rare-spawn boosts.
+event_maid_80	2019 maid event part 3: novice maid's first job, the thirsting water spirit.
+event_PSNC1_81	Crossover part 1 (Oct 2019, code PSNC; partner not identified from master data): exchange students, a lament over the demon sea.
+event_PSNC2_82	Crossover part 2 (code PSNC): an incoming call, "senpai", heartscape; Antenora core boss; blank-card drops.
+event_3year_85	3rd-anniversary event: party goods sale, visits to Tika / Welda / Reesh.
+event_god_86	God-rank (神級) ranking event: an EV-hall dungeon descending floor by floor; Crocell's counterattack; scored ranking (EvRank groups).
+event_Xmas3_84	Christmas 2019: becoming Santa (Perisie's training), a rampaging robot.
+event_Bow_74	Permanent Bowman event: a pharmacist's healing power, blue crystal.
+event_erisu_77	Eris & Joshua event: a girl trapped in an ice world, ruins-guardian machines; investigation-point bonus missions.
+event_BossRush_2019	Year-end 2019 boss rush "return of the champions" (Michael, Lucifer).
+event_newyear_59	New Year & SRF event (2020): New Year greetings, mochi-pounding battles, rampaging mascot.
+event_Guilty_88	GUILTY GEAR collaboration part 2: meeting a knight, the colosseum, phantom Sol.
+event_Valentine_2020	"Chocolate in the hell" Valentine 2020 battle event; single-only "obligation chocolate hell".
+event_spring_89	Hot-spring event with a world boss and big-hunt: a snow-country boy, a mischievous monster, the fungus king Yukitake.
+event_sak_90	SHIN SAKURA WARS collaboration: the Imperial Combat Revue (帝国華撃団), Hatsuho and Anastasia; demon dragon.
+event_April2020	April Fools 2020: a scary doll, secret job, Gerel apparition.
+event_idol_58	Idol event: a mega idol appears, first live, "beyond the top".
+event_idol2_64	Idol event part 2: vanished stars, audition preparation.
+event_EP3CP1	Episode 3 chapter-campaign missions 1: Phantomized Synard hunt with investigation-point bonus missions.
+event_Memory_01	"Wadorum, the Sanctuary of Oblivion" part 1: memory replays of Ratix / Edge.
+event_radiata_66	RADIATA STORIES collaboration: the green forest capital, the knight's name; Count Allocen.
+event_kimono_91	Kimono & oni event: the doomed planet Ogas, the two-faced demon god.
+event_Bride2019_73	Bride 2019 event: trouble from the island, the bond beyond the bridge; temple bird.
+event_wed_45	Bride event first half (42 missions): zombie outbreak waves.
+event_Memory_02	Wadorum part 2: memory replays of Raffine / Bowman / Eris.
+event_EP3CP2	Episode 3 chapter-campaign missions 2: Multiple Gear hunt.
+event_VP2_92	Alicia & Rufus (Valkyrie Profile: Lenneth / Covenant) event: the guard sword, the volcano cave lord.
+event_sww2020_93	Swimsuit event 2020: a phantom beach, beach sports, "dream Rena".
+event_EP3CP3	Episode 3 chapter-campaign missions 3: Phantom Commander hunt.
+event_Memory_03	Wadorum part 3: memory replays of Farleen / Crowe / Dias.
+event_Memory_04	Wadorum part 4: memory replays of Anne / Ronyx / Precis.
+event_EP3CP4	Episode 3 chapter-campaign missions 4: the Phantoms' counterattack (Phantomized Armaros / Lucifer).
+event_FT2019_83	Halloween 2019 (fairy-tale event): guided into a storybook world — sweets witch, exorcist.
+event_Memory_05	Wadorum part 5: memory replays of Lilia / Bacchus / Ernest.
+event_4year_95	4th-anniversary event: "Starverse" idol auditions, dance lessons, song-star simulator.
+event_Memory_06	Wadorum part 6: memory replays of Ted / Millie / Rimle.
+event_2020_max_01	Hegemon-rank festival day 1: Beast Kid captain; Hegemon coins.
+event_2020_max_02	Hegemon-rank festival day 2: Akemashite-O (New Year mecha); Hegemon coins.
+event_newyear_87	New Year 2020 event: a year-long duel, the seer, a shrine; Daruma-izer boss.
+event_newyear_88	New Year 2021 event: first dreams, endless calligraphy, kite racing.
+event_2020_max_03	Hegemon-rank festival day 3: Facula Dragon; Hegemon coins.
+event_2020_max_04	Hegemon-rank festival day 4: Wrathful Adray; Hegemon coins.
+event_Memory_07	Wadorum part 7: memory replays of Mirakle / Pavine / Mirage.
+event_EP3CP5	Episode 3 chapter-campaign missions 5: Asmodeus descends.
+event_Memory_08	Wadorum part 8: memory replays of Sarah / Marvel / Celine.
+event_VP_94	Valkyrie Profile Valkyrie & Lezard event: death and reincarnation, "that girl Alicia"; phantom Valkyrie.
+event_EP3CP6	Episode 3 chapter-campaign missions 6: Imitate Satanail descends.
+event_Memory_09	Wadorum part 9: memory replays of Irene / Perisie / "???".
+event_idol4_89	Idol event part 4: debut, festival showdown.
+event_Memory_10	Wadorum part 10: memory replays of Roger / Tinek / Chisato.
+event_Memory_Last	Wadorum final chapter: footsteps, Welch's mystery, "pure-white bond"; Asmodeus.

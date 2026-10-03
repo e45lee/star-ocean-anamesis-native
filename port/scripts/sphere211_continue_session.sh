@@ -3,7 +3,7 @@
 # the in-process local server; server module server/src/api/sphere211/sphere211.cpp). Boot -> title (test setup in the
 # state DB, as sphere211_session.sh: the season's heal / reroll tickets, 5 Sphere 211 rentals two
 # days ago) -> notice board -> LOGIN BONUS -> the Sphere 211 rental bonus popup -> home -> スフィア211
-# -> the start cell with enemy level 250 (the server's test hook: sphere_meta test_enemy_level, set
+# -> the start cell with enemy level 250 (the server's test hook: sphere.debug_enemy_level, set
 # in the state DB for this battle only) and a rental in the 4th slot -> the party falls -> the
 # defeat dialog's はい (Sphere211MissionContinue, 100 coins) -> the pause menu's ミッションリタイア ->
 # はい (Sphere211MissionFailed) -> the board -> the stamina the battle took healed with a ticket
@@ -121,13 +121,13 @@ state > "$OUT/state-1-floor1.txt"; cat "$OUT/state-1-floor1.txt"
 # slot: the defeat dialog's はい (continue, 100 coins; tapped until the server logs it: the dialog
 # comes when the party falls), then the pause menu's ミッションリタイア -> はい (retire), back on the
 # board. The stamina it took (9 -> 8) is healed with a ticket (+ -> the ticket -> 決定 -> 閉じる).
-sql "insert or replace into sphere_meta (key, value) values ('test_enemy_level', 250)"
+sql "update sphere set debug_enemy_level = 250 where id = 1"
 c tap:364:670; c wait:4000 shot:$S/06-lose-detail.png tap:364:905 wait:5000 shot:$S/06-rental-list.png tap:364:383 wait:4000 shot:$S/06-rental-party.png
 c tap:364:898; logw 'Sphere211AutoMemberSelect: 4 members proposed' 30 || fail "lost battle: no auto member select"
 c wait:4000 shot:$S/06-party.png tap:140:898 wait:3000 tap:515:713
 logw 'Sphere211MissionStart: floor .* enemy level 250' 60 || fail "lost battle: no Sphere211MissionStart"
 grep -q 'MissionStart: rental helper .* as member 4' "$L" || fail "the rental didn't join as member 4"
-sql "delete from sphere_meta where key = 'test_enemy_level'"
+sql "update sphere set debug_enemy_level = null where id = 1"
 tapw 'Sphere211MissionContinue: ' 400 10 40 -- tap:489:786 || { c shot:$S/07-stuck.png; fail "no continue after the defeat"; }
 c shot:$S/07-continued.png
 tapw 'Sphere211MissionFailed: ' 90 15 5 -- tap:80:50 wait:2500 tap:364:607 wait:2500 tap:525:790 || { c shot:$S/08-stuck.png; fail "no retire"; }

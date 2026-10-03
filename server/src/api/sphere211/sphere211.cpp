@@ -68,7 +68,7 @@ std::vector<u8> get_sphere211_info(Ctx& ctx, const Request&) {
     Season season = load_dive(ctx);
     start_dive_if_idle(ctx, season);
     Value data = dive_state(ctx, season);
-    set_sphere_meta(ctx, "end_pending", 0);
+    ctx.st.q("update sphere set end_pending = 0 where id = 1", {});
     LOGI("server", "GetSphere211Info: season %u (index %u), floor %u", season.id, season.index,
          (u32)ctx.st.one("select floor_level from sphere where id = 1", {}));
     return ext::body(data);
@@ -132,7 +132,7 @@ std::vector<u64> ex_members(Ctx& ctx, const ext::MissionOverride& override_, boo
 
 // The cell's enemy level: (a) overwrite_enemy_level of the cell, else base_enemy_level + the cell's
 // add_enemy_level (d: their sum).
-// Port test hook (not a game rule): sphere_meta 'test_enemy_level', when a session script sets
+// Port test hook (not a game rule): sphere.debug_enemy_level, when a session script sets
 // it in the state DB, overrides the enemy level, so port/scripts/sphere211_session.sh can lose
 // a battle on purpose (continue / retire). Never set by the server itself.
 u32 enemy_level(Ctx& ctx, const Floor& floor, u32 asset_id) {
@@ -141,7 +141,7 @@ u32 enemy_level(Ctx& ctx, const Floor& floor, u32 asset_id) {
             [&](const Row& asset_row) { add = (u32)asset_row.i("add_enemy_level"); });
     u32 overwrite = (u32)ctx.st.one("select overwrite_enemy_level from sphere_cell where asset_id = ?", {asset_id});
     u32 level = overwrite ? overwrite : floor.base_enemy_level + add;
-    if (int64_t test_level = sphere_meta(ctx, "test_enemy_level")) level = (u32)test_level;
+    if (int64_t test_level = ctx.st.one("select debug_enemy_level from sphere where id = 1", {})) level = (u32)test_level;
     return level;
 }
 
@@ -271,7 +271,7 @@ std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
     bool boss = type == (u32)LotteryType::kBoss, rare = type == (u32)LotteryType::kRare || type == (u32)LotteryType::kRareAlt;
     ctx.st.q("update sphere set streak = streak + 1", {});
     log_event(ctx, LogKind::kWin, 1);  // the achievements (type 62) and the season's ranking entry
-    set_sphere_meta(ctx, "season_wins", sphere_meta(ctx, "season_wins") + 1);
+    ctx.st.q("update sphere set season_wins = season_wins + 1 where id = 1", {});
     u32 streak = (u32)ctx.st.one("select streak from sphere where id = 1", {});
     u32 streak_bonus = (u32)ctx.m.one(
         "select ifnull((select add_treasure from master_sphere211_treasure_streak_bonus where id <= ? order by id desc limit 1), 0)", {streak});

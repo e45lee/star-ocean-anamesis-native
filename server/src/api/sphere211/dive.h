@@ -16,11 +16,10 @@ namespace soa::server::sphere211 {
 using ext::Ctx;
 using ext::Row;
 
-// ---- small keyed values, the log, the RNG (state.cpp) -----------------------------------------
-// sphere_meta (d): the season's cycle, its battles won, whether the season-end result is still to
-// be shown, the port's test hook.
-int64_t sphere_meta(Ctx& ctx, const char* key, int64_t dflt = 0);
-void set_sphere_meta(Ctx& ctx, const char* key, int64_t value);
+// ---- the log, the RNG (state.cpp) ----------------------------------------------------------------
+// (The dive's season cycle, its battles won, whether the season-end result is still to be shown
+// and the port's test hook are columns of the `sphere` row: cycle, season_wins, end_pending,
+// debug_enemy_level; the key-value table sphere_meta until PLAN-schema S3.)
 // sphere_log kinds: a battle won (value 1) and a floor entered (value = the floor), on the server
 // clock, for the achievements (types 62 / 61) and the season's ranking entry.
 enum class LogKind : int { kWin = 1, kFloor = 2 };

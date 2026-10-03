@@ -15,7 +15,7 @@
 #include "core/request_context.h"
 #include "master/gacha_pools.h"
 #include "soaserver/ext.h"
-#include "state/state.h"  // meta, set_meta, next_uid, has_player (the state module)
+#include "state/state.h"  // meta, next_uid, has_player (the state module)
 
 namespace soa::server {
 

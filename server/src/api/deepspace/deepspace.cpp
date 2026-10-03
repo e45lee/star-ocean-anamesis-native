@@ -299,7 +299,7 @@ bool pay_quick_return(Ctx& ctx, const Ship& ship, int64_t t, QuickReturnPaid& pa
     if (!wallet::covers(have, cost.coins)) return false;
     if (cost.items) ext::add_stock(ctx, item_id, -(int64_t)cost.items);
     wallet::take(ctx.st.h, wallet::split(have, cost.coins));  // (a) free coins first (core/wallet.h)
-    ctx.st.q("insert or replace into meta (key, value) values ('ds_time_saving_count', ?)", {std::to_string(used_today + 1)});
+    ctx.st.q("update player set time_saving_count = ?", {used_today + 1});
     paid.items = cost.items;
     paid.coins = cost.coins;
     return true;

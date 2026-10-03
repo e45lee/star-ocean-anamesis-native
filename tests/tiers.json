@@ -8,7 +8,7 @@
   },
   "tests": [
     {"name": "build", "tier": "T0", "secs": 1, "kind": "build", "game": 0,
-     "cmd": "scripts/build.sh --target soa soa-server soa-emu soa-viewer soaruntime_tests",
+     "cmd": "scripts/build.sh --target soa soa-server soa-emu soa-viewer soa-webview-render soaruntime_tests soa_env_tests",
      "covers": "the incremental build (0.1 s with nothing to do; a header change rebuilds minutes)"},
     {"name": "server-selftest", "tier": "T0", "secs": 45, "kind": "check", "game": 0,
      "cmd": "build/server/soa-server --selftest",
@@ -16,6 +16,9 @@
     {"name": "runtime-tests", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "build/runtime/soaruntime_tests",
      "covers": "the runtime's unit tests (jvm, cpu, jni)"},
+    {"name": "env-rule", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
+     "cmd": "build/common/soa_env_tests && tests/env_removed.sh",
+     "covers": "the environment rule (soa/env.h: the on/off words, numbers checked) and every removed SOA_* setting's one warning line naming its flag, in each program (docs/environment.md)"},
     {"name": "replay", "tier": "T0", "secs": 15, "kind": "replay", "game": 0,
      "cmd": "tools/server_replay_diff.sh build/server/soa-server build/server/soa-server",
      "covers": "every replay corpus twice with this build (determinism, no crash); T1 compares with the parent build instead (replay-parent)"},

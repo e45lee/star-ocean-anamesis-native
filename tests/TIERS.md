@@ -39,9 +39,10 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 <!-- tiers-table: tools/gate.py --markdown -->
 | Tier | Test | Time | Clients | What | Command |
 |---|---|---|---|---|---|
-| T0 | `build` | 1 s | - | the incremental build (0.1 s with nothing to do; a header change rebuilds minutes) | `scripts/build.sh --target soa soa-server soa-emu soa-viewer soaruntime_tests` |
+| T0 | `build` | 1 s | - | the incremental build (0.1 s with nothing to do; a header change rebuilds minutes) | `scripts/build.sh --target soa soa-server soa-emu soa-viewer soa-webview-render soaruntime_tests soa_env_tests` |
 | T0 | `server-selftest` | 45 s | - | the server library's and the wire layer's unit tests | `build/server/soa-server --selftest` |
 | T0 | `runtime-tests` | 1 s | - | the runtime's unit tests (jvm, cpu, jni) | `build/runtime/soaruntime_tests` |
+| T0 | `env-rule` | 1 s | - | the environment rule (soa/env.h: the on/off words, numbers checked) and every removed SOA_* setting's one warning line naming its flag, in each program (docs/environment.md) | `build/common/soa_env_tests && tests/env_removed.sh` |
 | T0 | `replay` | 15 s | - | every replay corpus twice with this build (determinism, no crash); T1 compares with the parent build instead (replay-parent) | `tools/server_replay_diff.sh build/server/soa-server build/server/soa-server` |
 | T0 | `replay-coverage` | 4 s | - | server/tests/replay/COVERAGE.md is current (the APIs without a corpus) | `python3 tools/replay_coverage.py --check` |
 | T0 | `server-docs` | 1 s | - | the server's doc blocks, docs links, API-INDEX.md fresh, the evidence labels | `tools/check_server_docs.sh` |

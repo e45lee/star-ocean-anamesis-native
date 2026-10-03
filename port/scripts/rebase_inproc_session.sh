@@ -61,8 +61,9 @@ step=login; tapw 'request Login ' 90 10 6 -- tap:364:1000
 # (version_latest_*). On an empty phone it first says the episode data is missing (決定 364:1043),
 # then reads the manifests and asks to download (ダウンロード 515:800): the bundles, then 完了 (364:790).
 if [ -n "${SOA_PHONE:-}" ]; then
-    step=datacheck; logw 'version_latest_Bulk' 120
-    step=home; logw 'port_debug: phase 4 ' 240
+    # the data check, and the download dialog of what the phone lacks (the master the server edits
+    # for the run's clock: every run since the master edits), as every session (phone370_data)
+    step=home; phone370_data "$TMP/fifo" "$L" "$S"
 else
     step=download
     # Phase 19: CPhase_DataDownload (a tap before it lands on the login and isn't resent).

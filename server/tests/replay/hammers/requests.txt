@@ -1,0 +1,20 @@
+# soa-server replay corpus (server/tests/replay/README.md): hammers, hand-written (agent srv-hammers):
+# limit-break items fed to ItemCompose. At 2019-05-03 (inside shop_item_set_00050 / 00051's
+# windows): the item shop's sets 00050 x2 and 00051 x3 (eight マジカルハンマー, ALL weapons, and two
+# マジカルスレッド), two weapons from ticketgacha_weapon_0003 (a wand and a sword), then composes:
+# one hammer, three, two at the cap (one raise wasted), two hammers and a thread (the thread is an
+# ordinary material on a weapon), and GetPlayer.
+# tz: America/Toronto
+req 1 1556899200 Login a01c67ef - - - -
+req 2 1556899205 ExItemShop 33d09fb7 1430077420 - - -
+req 3 1556899210 ExItemShop 33d09fb7 1430077420 - - -
+req 4 1556899215 ExItemShop 33d09fb7 574230394 - - -
+req 5 1556899220 ExItemShop 33d09fb7 574230394 - - -
+req 6 1556899225 ExItemShop 33d09fb7 574230394 - - -
+req 7 1556899230 GachaTicket ee11c3d3 4243491229,1 78 - -
+req 8 1556899235 GachaTicket ee11c3d3 4243491229,1 78 - -
+req 9 1556899240 ItemCompose 02a5cd1d 2097152010 - 2097152001 -
+req 10 1556899245 ItemComposeArray f0000030 2097152010 - 2097152003,2097152004,2097152005 -
+req 11 1556899250 ItemComposeArray f0000030 2097152010 - 2097152006,2097152007 -
+req 12 1556899255 ItemCompose 02a5cd1d 2097152011 - 2097152008,2097152009,2097152000 -
+req 13 1556899260 GetPlayer 9a056905 - - - -

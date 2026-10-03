@@ -32,7 +32,9 @@ list(SORT SOA_RUNTIME_SOURCES)
 
 # The runtime must not depend on its users: every quoted #include in runtime/ must name a file in
 # runtime/src (or next to the including file), or dynarmic. Nothing from port/, server/ or
-# emulator/. (Also enforced by the include path, which is runtime/src only, and by
+# emulator/. The one other include is the header-only soa_env (`#include <soa/env.h>`,
+# common/include: the environment rule every program shares), a dependency like dynarmic, not a
+# user of the runtime. (Also enforced by the include path, which is runtime/src only, and by
 # soaruntime_tests, which links the whole archive without any port code.)
 file(GLOB_RECURSE _rt_check CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/* ${SOA_RUNTIME_DIR}/tests/*)
 foreach(_f ${_rt_check})

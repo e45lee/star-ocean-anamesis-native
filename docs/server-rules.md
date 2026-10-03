@@ -559,15 +559,15 @@ The implementation's own rules, as the code applies them, with labels. Where the
   - With `--server HOST`, none of this runs: the client's own NetworkApiCaller talks to soa-server.
 - **State.** A SQLite file, `DATA/server.sqlite3` (`--db`). Tables:
   - `player`: id, search id, name, level, exp, fol, stamina and its timestamp, free and paid coins, home character, party;
-  - `roster`: uid, role, level, exp, limit break, awakening, skill levels, equipped weapon and accessory (favor isn't a roster column: it lives in `favor`, section 8);
+  - `roster`: uid, role, level, exp, limit break, awakening, skill levels, the equipped skills, the seeds' `add_*`, equipped weapon and accessory, the assist (favor isn't a roster column: it lives in `favor`, section 8);
   - `favor`: per same_role_id favor points and today's taps (section 8);
   - `items` (unique items: weapons, accessories), `stock` (stack items);
-  - `party` (party set, slot, uid);
+  - `party` (party set, slot, uid), `party_set` (a row per set 1..`party_set_max`: icon, lock), `party_member` (a saved set's equipment, skills, assist);
   - `mission` (cleared, play and clear counts, first clear), `play` (the mission in progress);
   - `gacha_history`;
   - `presents`, `login_bonus`, `achievements`, `meta` (the uid counters and the seed path only, since schema version 3).
 
-  The modules' tables (favor, gear, growth, shops, Sphere 211, deep space, events, …) and the schema's versions are `server/src/state/` (`schema.cpp`; `server/PLAN-schema.md`). Schema version 2 (PLAN-schema S2) dropped what nothing read: `roster.favor`, `mission.best_rank`, `exchange_counts.shop_id` and the tables `view_flags`, `gear`, `box_gacha` and `planets`. Schema version 3 (S3) moved the keys of `meta`, `sphere_meta` and `counters` that were structured state into columns: `player.tutorial_status`, `view_status`, `view_status2` (the u64 words as their int64 bits), `kiyaku_version`, `title_id`, `support_uid`, `time_saving_count`, `time_saving_day`, `login_bonus_popup_pending`; the table `ds_state` (deep space's play-limit periods); `sphere.cycle`, `season_wins`, `end_pending`, `debug_enemy_level` (`sphere_meta` dropped).
+  The modules' tables (favor, gear, growth, shops, Sphere 211, deep space, events, …) and the schema's versions are `server/src/state/` (`schema.cpp`; `server/PLAN-schema.md`). Schema version 2 (PLAN-schema S2) dropped what nothing read: `roster.favor`, `mission.best_rank`, `exchange_counts.shop_id` and the tables `view_flags`, `gear`, `box_gacha` and `planets`. Schema version 3 (S3) moved the keys of `meta`, `sphere_meta` and `counters` that were structured state into columns: `player.tutorial_status`, `view_status`, `view_status2` (the u64 words as their int64 bits), `kiyaku_version`, `title_id`, `support_uid`, `time_saving_count`, `time_saving_day`, `login_bonus_popup_pending`; the table `ds_state` (deep space's play-limit periods); `sphere.cycle`, `season_wins`, `end_pending`, `debug_enemy_level` (`sphere_meta` dropped). Schema version 4 (S4) merged `roster_ext` (the seeds' `add_*`, the equipped skills) and `assist` into `roster` (`skill1..3` became `skill1..3_level`), rebuilt `roster` and `player` as STRICT tables with the state's first foreign keys (`roster.weapon_uid` / `accessory_uid` → `items`, `roster.assist_uid` → `roster`, `player.home_uid` / `support_uid` → `roster`, `player.title_id` → `titles`, `player.party_id` → `party_set`), and gave every player the `party_set` rows 1..`party_set_max`. "None" is NULL in those columns (it was 0); the replies still send 0.
 
   `tools/server_state.py DATA/server.sqlite3` prints it.
 - **Clock.** `--clock "YYYY-MM-DD HH:MM:SS"` starts the server's clock at that time, so past banners can be replayed. Times are local time strings.
@@ -594,6 +594,7 @@ The seed is `--seed`, else the real 3.7.0 save in the repo (`work/Game-3.7.0.xml
 | items, stack items, gear | none | (d) |
 | home character | `player_home_pc_roleid` | seed save |
 | party 1 | the home character, then the three highest-rarity other characters (roster order among equals); parties 2..10 empty | (d) |
+| party sets | a `party_set` row per set 1..`master_global.party_set_max` (10): icon 0, unlocked (what `PartySet` sends for a set without one); the current party is set 1 | (a) the count; (d) the defaults |
 | planets | not stored (the seed wrote the save's `BAS:PlanetOpen_*` flags into a `planets` table nothing read, dropped in schema version 2): the open planets are the campaign's `ActiveMissionList` | (d) |
 
 #### The game's save is not synced (removed 2026-10-01)
@@ -622,7 +623,7 @@ The game's save keeps a summary of the player (`player_name`, `player_level`, `p
 
 #### Party (`UpdateParty(u32 party, u64 uid1, u64 uid2, u64 uid3)`)
 - Stores the three members in slots 0..2. A uid that isn't owned is stored as empty (only owned characters). **(d)** A missing party id is 1.
-- The party edited becomes the player's current `party_id`, which `MissionStart` uses. **(d)**
+- The party edited becomes the player's current `party_id`, which `MissionStart` uses. **(d)** Any party id is taken (unlike `UpdatePartySet`): one outside 1..`party_set_max` gets its `party_set` row (icon 0, unlocked), since `player.party_id` must name a set (schema version 4). **(d)**
 - Answers `PartyUpdate` and `PartySet`.
 - The request shape comes from the method's signature. No caller was found in 3.7.0 (`docs/api.md` "UpdateParty": the party screen saves with `UpdatePartySet`), so it's untested on screen.
 
@@ -638,7 +639,7 @@ The 3.7.0 party screen saves a party set with `UpdatePartySet` when the player l
 
 #### Assist (`SetAssist(u64 character, u64 assist character)`, agent `restore-party`)
 - The equipment screen (装備・技・アシスト変更 → the assist icon) sends it. An assist of 0 removes the character's assist.
-- `CApiNotify::OnSetAssistRes` applies `SetAssistResult {character_id, assist_id, old_assist_id}` to the client's characters. A character has one assist, and an assist character assists only one character: it's taken off whoever had it. The server keeps the same pairs (table `assist`). **(b)**
+- `CApiNotify::OnSetAssistRes` applies `SetAssistResult {character_id, assist_id, old_assist_id}` to the client's characters. A character has one assist, and an assist character assists only one character: it's taken off whoever had it. The server keeps the same pairs (`roster.assist_uid`, unique: the table `assist` before schema version 4). **(b)**
 - Both characters must be owned and differ, else nothing changes and the request isn't handled (no body: the host's fallback answer, no error code). **(d)** The level-70 requirement is the client's (the assist list refuses lower levels, and says so). **(b)**
 - `Character` entries carry `assist_character_id` and `assisting_character_id` from those pairs, so they survive a restart and reach `MissionStart`'s party status. **(b)** for the keys (`CPersonInfo`).
 - Tested on screen with the seed's ★6 characters raised to level 70 in the server DB: Maria ← Karin, shown as ASSIST.
@@ -787,6 +788,7 @@ The APIs the 3.7.0 login and tutorial code issues; the client runs that code unc
 | search id | `LOCAL` + 5 digits of CHash32(uuid + name); numeric id = CHash32(search id) | (d) |
 | name | as sent | (d): the online server's name checks (client errors 10501..10503: the `CreatePlayer` result lambda shows a dialog for them) aren't known |
 | tutorial | `tutorial_status` 0, `view_status` / `view_status2` 0 | (b): 0 = no tutorial step done |
+| party sets | a `party_set` row per set 1..`party_set_max`, as the seed; the current party is set 1 | (a) the count; (d) |
 
 After `CreatePlayer`, the client calls `CUIUtility::SettingForNewPlayer` and sends `Login` again (state 7). The second `Login` succeeds and sets `LoggedIn`.
 
@@ -893,7 +895,7 @@ The growth, item, shop and daily-system APIs, as the local server applies them. 
 
 #### Architecture
 - **Extension registry** (`server/{include/soaserver/ext.h,src/core/ext.cpp}`). server.cpp's dispatcher asks `ext::find(method)` for methods it doesn't answer itself; a module registers handlers with `ext::add_api({"Method", ...}, fn)` from its `register_<module>()` function (`server/src/core/modules.cpp` calls those in one fixed order). `ext::add_player_load` (OnPlayerLoad) adds keys to the full-state player responses (`NoLoginStart`, `Login`, `GetPlayer` ...). The modules' tables are the state module's (`server/src/state/schema.cpp`, created when the state DB opens). A handler gets an `ext::Ctx`: the state and master DBs (inside the request's transaction), the server clock, and the core's own `base_data`, `grant`, roster / stock / item lists, EXP curves and caps.
-- **Module tables** (in `DATA/server.sqlite3`): `roster_ext` (seed-raised stats `add_*`, equipped skills), `shop_counts` (item-shop purchases per row: this period, the period start, all time), `exchange_counts` (exchanges per contents row), `counters` (event counts for achievements: boosts, limit breaks, evolutions, weapon / accessory boosts, grade-ups, exchanges, seeds). The core's `login_bonus` and `achievements` tables hold the login days and received achievements.
+- **Module tables** (in `DATA/server.sqlite3`): the seed-raised stats `add_*` and the equipped skills are `roster` columns (the growth module's `roster_ext` table until schema version 4), `shop_counts` (item-shop purchases per row: this period, the period start, all time), `exchange_counts` (exchanges per contents row), `counters` (event counts for achievements: boosts, limit breaks, evolutions, weapon / accessory boosts, grade-ups, exchanges, seeds). The core's `login_bonus` and `achievements` tables hold the login days and received achievements.
 - **Refusals.** A request the rules refuse (not enough materials, FOL or coins, locked or equipped items, sold out, over a limit) changes nothing; it goes through the core's error path with a client error code (see Verification below for the codes) and the client shows its own error dialog.
 - **Response shapes.** The owned lists that changed are sent whole (`StockItem`, `Item`), as the core does. The per-API result infos carry the field names of their `Initialize` (b); `tools/fakeapi_fields.py` finds most, and the short ones the compiler builds inline (`id`, `num`, `count`, `status` ...) were read from the decompiled `Initialize` bodies.
 

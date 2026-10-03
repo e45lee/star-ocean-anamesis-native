@@ -100,6 +100,17 @@ Value party_set_info(ext::Ctx& ctx) {
     return party_set;
 }
 
+// (a) the sets 1..master_global.party_set_max (the party screen pages through them); (d) a row
+// with icon 0, unlocked: what PartySet sends for a set without one (saved_party_sets), so the
+// rows change no reply.
+void add_party_sets(ext::Ctx& ctx) {
+    for (u32 party_id = 1, max = ctx.global_u32("party_set_max", 10); party_id <= max; party_id++) ensure_party_set(ctx, party_id);
+}
+
+void ensure_party_set(ext::Ctx& ctx, u32 party_id) {
+    ctx.st.q("insert into party_set (party_id) values (?) on conflict(party_id) do nothing", {party_id});
+}
+
 // The owned uids of party `party_id`, in slot order (its empty slots left out).
 std::vector<u64> party_member_uids(ext::Ctx& ctx, u32 party_id) {
     std::vector<u64> uids;

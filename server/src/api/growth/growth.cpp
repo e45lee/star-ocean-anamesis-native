@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "api/growth/growth_args.h"
+#include "api/player/roster.h"  // has_growth
 #include "core/errors.h"
 #include "core/log.h"
 #include "core/modules.h"
@@ -103,8 +104,10 @@ Value take_cost_items(Ctx& ctx, const ItemCost& cost) {
     return use;
 }
 
-// The character's fields as UpdateCharacter (CUpdateCharacterInfo) carries them.
-Value update_character_info(Ctx& ctx, u64 uid) {
+// The character's fields as UpdateCharacter (CUpdateCharacterInfo) carries them. The equipped
+// skills (skill1..3) are sent after EquipSkill (`equipped_skills`), else for a character with
+// growth (has_growth: as when they lived in roster_ext, which EquipSkill always wrote).
+Value update_character_info(Ctx& ctx, u64 uid, bool equipped_skills) {
     Value info = Value::object();
     ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
         u32 role = (u32)roster_row.i("role_id");
@@ -114,11 +117,11 @@ Value update_character_info(Ctx& ctx, u64 uid) {
         info["level"] = (u32)roster_row.i("level");
         info["exp"] = (u32)roster_row.i("exp");
         info["weapon_item_id"] = (u64)roster_row.i("weapon_uid");
-        for (int k = 1; k <= 3; k++) info["skill" + std::to_string(k) + "_level"] = (u32)roster_row.i(("skill" + std::to_string(k)).c_str());
-        // the equipped skills (EquipSkill), when the character has a roster_ext row
-        ctx.st.q("select * from roster_ext where uid = ?", {uid}, [&](const Row& ext_row) {
-            for (int k = 1; k <= 3; k++) info["skill" + std::to_string(k)] = (u32)ext_row.i(("equip_skill" + std::to_string(k)).c_str());
-        });
+        for (int k = 1; k <= 3; k++)
+            info["skill" + std::to_string(k) + "_level"] = (u32)roster_row.i(("skill" + std::to_string(k) + "_level").c_str());
+        // the equipped skills (EquipSkill; NULL: none, 0)
+        if (equipped_skills || has_growth(roster_row))
+            for (int k = 1; k <= 3; k++) info["skill" + std::to_string(k)] = (u32)roster_row.i(("equip_skill" + std::to_string(k)).c_str());
         // (a) the role's rush skill, gauge and weapon kind (master_role)
         ctx.m.q("select * from master_role where id = ?", {role}, [&](const Row& role_row) {
             info["rush_skill"] = (u32)role_row.i("rush_skill1_id");
@@ -378,7 +381,7 @@ std::vector<u8> update_awaken_level(Ctx& ctx, const Request& req) {
     result["awaken_level"] = level;
     result["use_fol"] = cost.fol;
     result["UseStockItem"] = use;
-    result["UpdateCharacter"] = update_character_info(ctx, uid);
+    result["UpdateCharacter"] = update_character_info(ctx, uid, false);
     result["update_child_id"] = 0u;                  // (d) no child role
     result["update_child_mastery_talent_id"] = 0u;  // (d) no mastery talent
     data["AwakenResult"] = result;
@@ -422,15 +425,14 @@ std::vector<u8> add_status_character(Ctx& ctx, const Request& req) {
     u64 cost = (u64)ctx.global_u32(("add_status_fol_" + std::string(kSeedStats[stat])).c_str(), 0) * n;
     if (fol(ctx) < cost) return refuse(ctx, "AddStatusCharacter", "not enough FOL", ErrorCode::kFolShort);
     u32 before[7] = {0};
-    ctx.st.q("insert into roster_ext (uid) values (?) on conflict(uid) do nothing", {uid});
-    ctx.st.q("select * from roster_ext where uid = ?", {uid}, [&](const Row& ext_row) {
-        for (int k = 0; k < 7; k++) before[k] = (u32)ext_row.i(("add_" + std::string(kSeedStats[k])).c_str());
+    ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
+        for (int k = 0; k < 7; k++) before[k] = (u32)roster_row.i(("add_" + std::string(kSeedStats[k])).c_str());
     });
     u32 add_max = (u32)ctx.m.one(std::string("select ") + kSeedStats[stat] + "_add_max from master_role where id = ?", {chara.role_id});  // (a)
     u32 after[7];
     std::copy(before, before + 7, after);
     after[stat] = growth_rules::stat_seed_gain(before[stat], per_seed, n, add_max);
-    ctx.st.q(std::string("update roster_ext set add_") + kSeedStats[stat] + " = ? where uid = ?", {after[stat], uid});
+    ctx.st.q(std::string("update roster set add_") + kSeedStats[stat] + " = ? where uid = ?", {after[stat], uid});
     add_stock(ctx, item, -(int64_t)n);
     add_fol(ctx, -(int64_t)cost);
     count(ctx, "add_status_" + std::to_string(stat));
@@ -477,8 +479,10 @@ std::vector<u8> equip_item(Ctx& ctx, const Request& req) {
     if (item)
         ctx.st.q(std::string("select uid from roster where ") + column + " = ? and uid != ?", {item, uid},
                  [&](const Row& roster_row) { previous_owner = (u64)roster_row.i("uid"); });
-    if (previous_owner) ctx.st.q(std::string("update roster set ") + column + " = 0 where uid = ?", {previous_owner});
-    ctx.st.q(std::string("update roster set ") + column + " = ? where uid = ?", {item, uid});
+    // (first: roster_weapon / roster_accessory, one character per item; NULL: none)
+    if (previous_owner) ctx.st.q(std::string("update roster set ") + column + " = null where uid = ?", {previous_owner});
+    if (item) ctx.st.q(std::string("update roster set ") + column + " = ? where uid = ?", {item, uid});
+    else ctx.st.q(std::string("update roster set ") + column + " = null where uid = ?", {uid});
     Value data = ctx.base_data();
     Value result = Value::object(), characters = Value::object(), items = Value::object();
     const char* key = weapon ? "weapon_item_id" : "accessory_item_id";
@@ -515,11 +519,11 @@ std::vector<u8> equip_skill(Ctx& ctx, const Request& req) {
     const u64 uid = args.character_uid;
     if (!ctx.st.one("select count(*) from roster where uid = ?", {uid}))
         return refuse(ctx, "EquipSkill", "unknown character", ErrorCode::kItemUnusable);
-    ctx.st.q("insert into roster_ext (uid) values (?) on conflict(uid) do nothing", {uid});
-    ctx.st.q("update roster_ext set equip_skill1 = ?, equip_skill2 = ?, equip_skill3 = ? where uid = ?",
+    // (0: an empty slot, NULL)
+    ctx.st.q("update roster set equip_skill1 = nullif(?, 0), equip_skill2 = nullif(?, 0), equip_skill3 = nullif(?, 0) where uid = ?",
              {args.skill[0], args.skill[1], args.skill[2], uid});
     Value data = ctx.base_data();
-    data["UpdateCharacter"] = update_character_info(ctx, uid);
+    data["UpdateCharacter"] = update_character_info(ctx, uid, true);
     return body(data);
 }
 

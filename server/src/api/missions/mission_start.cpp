@@ -252,8 +252,8 @@ void event_npc_status(ext::Ctx& ctx, MissionStart& start) {
     // (d) as the tutorial's NPCs: the stats rules of a roster character, no limit break
     ctx.st.exec("create temp table roster as select * from main.roster where 0");
     ctx.st.q(
-        "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1, skill2, skill3, weapon_uid, accessory_uid, "
-        "created_at) values (?,?,?,0,0,0,1,1,1,0,0,?)",
+        "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level, add_hp, "
+        "add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap, created_at) values (?,?,?,0,0,0,1,1,1,0,0,0,0,0,0,0,?)",
         {kNpcPartyUid0 + 1, start.npcs[0].role_id, start.npcs[0].level, clock_now()});
     start.event_npc_status = person_status_info(ctx, kNpcPartyUid0 + 1);
     ctx.st.exec("drop table temp.roster");
@@ -274,8 +274,8 @@ void npc_party(ext::Ctx& ctx, MissionStart& start) {
     ctx.st.exec("create temp table roster as select * from main.roster where 0");
     for (size_t k = 0; k < start.npcs.size(); k++)
         ctx.st.q(
-            "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1, skill2, skill3, weapon_uid, accessory_uid, "
-            "created_at) values (?,?,?,0,0,0,1,1,1,0,0,?)",
+            "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level, add_hp, "
+            "add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap, created_at) values (?,?,?,0,0,0,1,1,1,0,0,0,0,0,0,0,?)",
             {kNpcPartyUid0 + k + 1, start.npcs[k].role_id, start.npcs[k].level, clock_now()});
     start.party_uids.clear();
     for (size_t k = 0; k < start.npcs.size(); k++) start.party_uids.push_back(kNpcPartyUid0 + k + 1);

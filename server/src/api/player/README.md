@@ -9,7 +9,7 @@ What the client keeps about the player (CPlayerInfo, CWalletInfo, the roster, th
 | `party_set.{h,cpp}` | - | the party sets: `party_set_info` (PartySetInfo, PartySet: every set 1..`party_set_max`, the unsaved ones filled from set 1) and `party_member_uids` (a party's members, for MissionStart) |
 | `person_status.{h,cpp}` | - | `person_status_info` (CPersonStatusInfo: a battle member's status, in four steps: base stats, equipment, favor and awakening, seeds) |
 | `party.{h,cpp}` | `party` (core) | UpdateParty, UpdatePartySet (PartySetInfo as its serialized text: `parse_party_set_text` → `PartySetText`; test `party_tests.cpp`, `player/party-set-text`) |
-| `assist.cpp` | `assist` (core) | SetAssist (the `assist` pairs that `person_info` reports) |
+| `assist.cpp` | `roster.assist_uid` (core) | SetAssist (the pairs that `person_info` reports) |
 | `home.{h,cpp}` | `home_character` (core) | UpdateHome (`update_home`: the home character, `Player.home_pc_id`) |
 | `home_footer.cpp` | `home` | `FooterMissionInfo` (`OnPlayerLoad`: the home footer's feature flags); the follow menu's lists are `../social/social.cpp`'s |
 | `titles.cpp`, `titles.h` | `title` | SetTitle (`set_title`, its args struct `args::SetTitleArgs` beside it); a new player's titles (`new_player_titles`: the seed, CreatePlayer); title grants (`Grant` 13), `TitleList` + `Player.title` (`OnPlayerLoad`), the titles a request added (`OnResponse`) |

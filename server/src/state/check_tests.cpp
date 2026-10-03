@@ -14,9 +14,10 @@ namespace {
 using ext::Row;
 
 // server/PLAN-schema.md 4.2 / S0 / S1: the server's state is at this build's schema version with
-// every table and foreign keys on; after a scratch server's representative calls, no foreign key is
-// violated (none is declared before S4: trivially empty until then) and every reference into the
-// master resolves; a planted dangling id is reported, a 0 "none" sentinel isn't.
+// every table and foreign keys on; the seeded state violates no foreign key (S4: the party sets
+// 1..party_set_max, the home character); after a scratch server's representative calls, no foreign
+// key is violated and every reference into the master resolves; a planted dangling id is reported,
+// a 0 "none" sentinel isn't.
 NATIVE_TEST("server/schema-integrity") {
     ScratchServer S(t.rand_u64());
     if (!S.ok) return;  // needs the 3.7.0 master and the test seed (the test failed)
@@ -24,8 +25,15 @@ NATIVE_TEST("server/schema-integrity") {
     S.set_clock("2021-05-25 12:00:00");
     t.expect_eq(state::user_version(sv.st.h), state::kSchemaVersion, "the state is at this build's version");
     t.expect_eq(sv.st.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
-    t.expect_eq(sv.st.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54,
+    t.expect_eq(sv.st.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)52,
                 "every table exists before the first request");
+    int seeded_fk_rows = 0;
+    sv.st.q("pragma foreign_key_check", {}, [&](const Row&) { seeded_fk_rows++; });
+    t.expect_eq(seeded_fk_rows, 0, "the seeded state: foreign_key_check");
+    t.expect_eq(sv.st.one("select count(*) from party_set", {}), sv.st.one("select count(*) from party_set where party_id between 1 and 10", {}),
+                "the seeded party sets are 1..party_set_max");
+    t.expect_eq(sv.st.one("select count(*) from party_set", {}), (int64_t)10, "party_set_max (10) sets seeded");
+    t.expect_eq(sv.st.one("select count(*) from player p join roster r on r.uid = p.home_uid", {}), (int64_t)1, "the home character");
     sv.st.q("update player set free_coin = 100000", {});
     u32 mission = S.id("master_mission", "mf01_001");
     u32 gacha = S.id("master_gacha", "gacha_pickup_role_1011");

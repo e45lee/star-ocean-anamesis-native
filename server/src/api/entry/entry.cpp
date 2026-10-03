@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "api/player/party_set.h"    // add_party_sets
 #include "api/player/player_info.h"  // full_player_state, base_data: the player state answers
 #include "api/player/titles.h"       // new_player_titles
 #include "core/errors.h"
@@ -71,7 +72,7 @@ std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args,
         "support_uid = excluded.support_uid, time_saving_count = excluded.time_saving_count, "
         "time_saving_day = excluded.time_saving_day, login_bonus_popup_pending = excluded.login_bonus_popup_pending",
         {player_id, std::string(search_id), args.name, 1u, 0u, 0u, ctx.stamina_max(1), now, config().start_coins /* (d) free coin, --start-coins */,
-         0u, 0u, 1u, now, now});
+         0u, nullptr /* home_uid: add_starters */, kStarterPartyId, now, now});
     return search_id;
 }
 
@@ -89,13 +90,17 @@ std::vector<u64> add_starters(ext::Ctx& ctx, int64_t now) {
             "insert into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)"
             " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
             "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
-            "skill1 = excluded.skill1, skill2 = excluded.skill2, skill3 = excluded.skill3, "
-            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, "
+            "skill1_level = excluded.skill1_level, skill2_level = excluded.skill2_level, skill3_level = excluded.skill3_level, "
+            "equip_skill1 = excluded.equip_skill1, equip_skill2 = excluded.equip_skill2, equip_skill3 = excluded.equip_skill3, "
+            "add_hp = excluded.add_hp, add_attack = excluded.add_attack, add_intelligence = excluded.add_intelligence, "
+            "add_defence = excluded.add_defence, add_hit = excluded.add_hit, add_guard = excluded.add_guard, add_ap = excluded.add_ap, "
+            "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, assist_uid = excluded.assist_uid, "
             "created_at = excluded.created_at",
             {uid, role_id, 1u, 0u, now});
         party.push_back(uid);
     }
     if (!party.empty()) ctx.st.q("update player set home_uid = ?", {party[0]});
+    add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents (PLAN-schema S4)
     for (size_t slot = 0; slot < party.size(); slot++)
         ctx.st.q(
             "insert into party (party_id, slot, uid) values (?,?,?)"

@@ -813,6 +813,28 @@ static LONG WINAPI unhandled_exception(EXCEPTION_POINTERS* ep) {
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }
+static LONG WINAPI log_fault(EXCEPTION_POINTERS* ep) {
+    static std::atomic<int> n{0};
+    const EXCEPTION_RECORD* r = ep->ExceptionRecord;
+    if (r->ExceptionCode < 0xc0000000u || n++ >= 20) return EXCEPTION_CONTINUE_SEARCH;
+    fprintf(stderr, "fault: %#lx at %p, address %#llx, thread %d; host stack:", (unsigned long)r->ExceptionCode, r->ExceptionAddress,
+            r->NumberParameters >= 2 ? (unsigned long long)r->ExceptionInformation[1] : 0ull, (int)gettid());
+    void* bt[32];
+    USHORT k = CaptureStackBackTrace(0, 32, bt, nullptr);
+    for (USHORT i = 0; i < k; i++) {  // module+offset (llvm-symbolizer --obj=MODULE 0x140000000+offset for the .exe)
+        HMODULE m = nullptr;
+        char name[MAX_PATH] = "?";
+        if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)bt[i], &m))
+            GetModuleFileNameA(m, name, sizeof name);
+        const char* base = strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name;
+        fprintf(stderr, " %s+%#llx", base, (unsigned long long)((u64)bt[i] - (u64)m));
+    }
+    fprintf(stderr, "\n");
+    if (Cpu* c = t_current)
+        fprintf(stderr, "fault: guest pc %s, x0=%#llx x1=%#llx x2=%#llx, lr %s\n", describe_guest_addr(c->pc()).c_str(), (unsigned long long)c->x(0),
+                (unsigned long long)c->x(1), (unsigned long long)c->x(2), describe_guest_addr(c->x(30)).c_str());
+    return EXCEPTION_CONTINUE_SEARCH;
+}
 #else
 static void segv_handler(int sig, siginfo_t* si, void*) {
     Cpu* c = t_current;
@@ -846,6 +868,10 @@ void cpu_global_init() {
 
 #ifdef _WIN32
     SetUnhandledExceptionFilter(unhandled_exception);
+    // SOA_FAULT_LOG (Windows): every first-chance fault, with module offsets and the guest's pc. A
+    // crash in a system DLL called from a thunk (e.g. strstr(NULL) in ucrtbase) ended the process
+    // without reaching the filter above.
+    if (env::env_bool("SOA_FAULT_LOG", false)) AddVectoredExceptionHandler(1, log_fault);
 #else
     struct sigaction sa {};
     sa.sa_sigaction = segv_handler;

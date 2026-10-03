@@ -32,7 +32,7 @@ if [ "${1:-}" = "--windows" ]; then
   cfg_extra="-DVCPKG_TARGET_TRIPLET=x64-mingw-static -DVCPKG_HOST_TRIPLET=x64-linux
     -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$repo/cmake/toolchains/llvm-mingw-x64.cmake
     -DVCPKG_MANIFEST_FEATURES=angle -DSOA_BUILD_RUNTIME=ON
-    -DSOA_BUILD_PORT=OFF -DSOA_BUILD_EMULATOR=OFF -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_PLATFORM370=OFF
+    -DSOA_BUILD_PORT=OFF -DSOA_BUILD_VIEWER=OFF
     -DSOA_BUILD_TOOLS=OFF -DSOA_BUILD_WEBVIEW=OFF"
 fi
 
@@ -57,5 +57,5 @@ cmake --build "$bdir" -j"$jobs" "$@"
 if [ "$bdir" = build ]; then
   echo "== done: build/port/soa, build/server/soa-server, build/emulator/soa-emu, build/emulator-viewer/soa-viewer"
 else
-  echo "== done: $bdir/server/soa-server.exe, $bdir/runtime/soaruntime_tests.exe"
+  echo "== done: $bdir/server/soa-server.exe, $bdir/emulator/soa-emu.exe, $bdir/runtime/soaruntime_tests.exe"
 fi

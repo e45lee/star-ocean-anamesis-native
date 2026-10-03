@@ -9,7 +9,7 @@ add_library(soa_env INTERFACE)
 target_include_directories(soa_env INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_executable(soa_env_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/env_tests.cpp)
-target_link_libraries(soa_env_tests PRIVATE soa_env)
+target_link_libraries(soa_env_tests PRIVATE soa_env soa_compat)  # (soa_compat: setenv on Windows)
 
 # soa_compat: what more than one part needs to build for both Linux and Windows (port/PLAN.md 5b,
 # W); linked by the server's and the runtime's targets.

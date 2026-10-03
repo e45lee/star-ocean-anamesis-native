@@ -21,7 +21,7 @@ Everything runs from a clean checkout. Paths are repo-relative, outputs go to di
 ```sh
 # 1. a soa-server that opens multiplayer (scratch: revert afterwards)
 git apply docs/multiplayer/prototype/open-multiplay.patch && scripts/build.sh --target soa-server
-cp build/server/soa-server /tmp/soa-server-mp && git checkout server/src/api_home.cpp && scripts/build.sh --target soa-server
+cp build/server/soa-server /tmp/soa-server-mp && git checkout server/src/api/player/home_footer.cpp && scripts/build.sh --target soa-server
 export SOA_SERVER=/tmp/soa-server-mp
 
 # 2. the MissionStartRes / MissionEndRes bodies the relay serves (it fakes the API side, see below):

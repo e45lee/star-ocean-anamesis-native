@@ -32,6 +32,7 @@ struct Step {
     int keycode = 0;     // key: AKEYCODE_*
     int min_ms = 0;      // at least this long after the previous step was sent
     int min_frames = 0;  // and this many frames presented after the guest read the previous step
+    bool after_read = true;  // false: min_ms only (a fast drag's up follows its last move at once)
 };
 
 // The touch hold: a tap's up waits for kTapFrames frames after the guest read the down, and at
@@ -58,8 +59,11 @@ using Send = std::function<uint64_t(const Step&)>;
 // tap:X:Y: down, then up after kTapFrames / kTapMs.
 std::vector<Step> tap(float x, float y);
 // drag:X1:Y1:X2:Y2:MS: down; moves every 30 ms (at least 10, MS in all), the first one frame after
-// the down was read; the up kTapFrames frames after the last move was read (and 200 ms after it
-// for a drag slower than 300 ms, as before), so the game sees the last position before the end.
+// the down was read, so the touch begins in a frame of its own. A drag of up to 300 ms is a swipe:
+// its up follows the last move at once, as before (a finger held still for frames before the up
+// loses the swipe's speed: a party page swipe didn't turn the page when the up waited 3 frames). A
+// slower drag (a scroll) holds still 200 ms, as before, and kTapFrames frames after the last move
+// was read.
 std::vector<Step> drag(float x1, float y1, float x2, float y2, float ms);
 // back: the Back key down, then up like a tap's.
 std::vector<Step> key(int keycode);

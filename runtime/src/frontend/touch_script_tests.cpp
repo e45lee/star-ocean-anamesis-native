@@ -156,7 +156,14 @@ RUNTIME_TEST("frontend/touch-gives-up-without-frames") {
 
 RUNTIME_TEST("frontend/touch-drag-and-back") {
     for (int fm : {16, 100, 250}) {
-        Game g = play(drag(100, 0, 300, 0, 300), fm);
+        for (float ms : {300.f, 800.f}) {
+            Game g = play(drag(100, 0, 300, 0, ms), fm);
+            if (g.taps != 1 || g.lost != 0) t.fail("%g ms drag at %d ms frames: began/ended %d, lost %d", ms, fm, g.taps, g.lost);
+            if (g.end_x != 300) t.fail("%g ms drag at %d ms frames ended at x %g", ms, fm, g.end_x);
+        }
+        auto swipe = drag(100, 0, 300, 0, 300);
+        t.expect_eq(swipe.back().after_read || swipe.back().min_ms, false, "a swipe's up follows its last move at once");
+        Game g = play(swipe, fm);
         if (g.taps != 1 || g.lost != 0) t.fail("drag at %d ms frames: began/ended %d, lost %d", fm, g.taps, g.lost);
         if (g.end_x != 300) t.fail("drag at %d ms frames ended at x %g", fm, g.end_x);
         if (fm <= 100 && g.moves < 1) t.fail("drag at %d ms frames: no move frame", fm);

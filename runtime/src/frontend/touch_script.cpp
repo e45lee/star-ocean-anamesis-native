@@ -31,8 +31,8 @@ std::vector<Step> drag(float x1, float y1, float x2, float y2, float ms) {
     }
     Step up;
     up.action = 1, up.x = x2, up.y = y2;
-    up.min_ms = ms > 300 ? 200 : 0;
-    up.min_frames = kTapFrames;
+    if (ms > 300) up.min_ms = 200, up.min_frames = kTapFrames;
+    else up.after_read = false;
     s.push_back(up);
     return s;
 }
@@ -67,7 +67,7 @@ void Player::poll(const Clock& c, const Send& send) {
         if (!read_ && c.consumed >= seq_) read_ = true, read_frames_ = c.frames;
         int64_t waited = c.now_ms - sent_ms_;
         uint64_t frames = read_ ? c.frames - read_frames_ : 0;
-        bool due = waited >= s.min_ms && (!paced_ || (read_ && frames >= (uint64_t)s.min_frames));
+        bool due = waited >= s.min_ms && (!paced_ || !s.after_read || (read_ && frames >= (uint64_t)s.min_frames));
         if (!due) {
             if (waited < s.min_ms + kMaxWaitMs) return;
             timeouts_++;

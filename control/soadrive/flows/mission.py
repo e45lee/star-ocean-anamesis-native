@@ -53,3 +53,40 @@ def campaign_105(s):
     s.ctl("tap:" + ui370.FOOTER_HOME, "wait:8000")
     s.shot("11-home-after-battle")
     return st
+
+
+# ---- the port's shortcut into a battle (soa only: the `mission:` / `phase:` control commands and
+# the port_debug phase lines; port/scripts' battle, restore, party, favor, missions sessions) -------
+def phase(n):
+    return r"port_debug: phase %d " % n
+
+
+def port_start(s, mission):
+    """`mission:M phase:0xf`: CPhase_Battle with mission M (the switch a mission's start button
+    makes) -> MissionStart to the in-process server."""
+    s.ctl("mission:" + mission, "phase:0xf")
+    s.wait_log(phase(15), 120, name="CPhase_Battle (mission:%s phase:0xf)" % mission)
+
+
+def battle_shots(s, first, last, every_ms, fmt="%d-battle", ended=r"mission_end\.msgp"):
+    """A screenshot every every_ms while the party fights on its own, until the client log shows the
+    battle's end (MissionEnd's body) or `last` shots were taken. Returns the next index."""
+    i = first
+    while not s.in_client(ended) and i < last and s.alive():
+        s.ctl("wait:%d" % every_ms, s.shot_cmd(fmt % i))
+        i += 1
+    return i
+
+
+def results_until(s, done_rx, first, last, wait_ms, fmt="%d-result", name="the result pages -> back"):
+    """The Mission Result pages, each closed with OK (ui370.RESULT_OK: the spot all of them cover)
+    and screenshotted, until the client logs done_rx (the cursor: after the battle's end). FAIL
+    after `last`."""
+    i = first
+    while s.cursor.wait(done_rx, 4, alive=s.alive) is None:
+        if i >= last or not s.alive():
+            s.fail(name)
+        s.ctl("tap:" + ui370.RESULT_OK, "wait:%d" % wait_ms, s.shot_cmd(fmt % i))
+        i += 1
+    s.ok(name)
+    return i

@@ -422,7 +422,7 @@ The S steps proceed as written (the user). This table lists, per S step, what it
 ### M7: tools, fixtures, scripts
 
 - `tools/server_state.py --player ID` (default: the first player).
-- `tests/diff/diffdrive/state.py` compares per player.
+- `control/soadrive/state.py` compares per player.
 - The session scripts' SQL is scoped by `player_id` (PLAN-schema 1.5's consumer list).
 - `tools/make_state_fixture.py --players N`. The replay gains a two-player corpus once docs/multiplayer.md's M1 session exists (`emulator/scripts/multiplay_session.sh`).
 - `tools/schema_inventory.py` shows the per-player / shared classification in the inventory.

@@ -17,12 +17,18 @@ SCREENS = {
 }
 
 
-def ten_draw(s, st_before):
-    """A 10-draw of the first recommended banner; checks the coins debited (against st_before, the
-    state text before) and the ten draws recorded."""
+def open_gacha(s, shot="12-gacha"):
+    """The footer's ガチャ -> GetGachaInData -> the gacha screen."""
     s.tap_until("ガチャ -> GetGachaInData", 60, ui370.FOOTER_GACHA, lambda: s.in_packets(r"< GetGachaInDataRes"))
     s.ctl("wait:10000")
-    s.shot("12-gacha")
+    s.shot(shot)
+
+
+def ten_draw(s, st_before, opened=False):
+    """A 10-draw of the first recommended banner; checks the coins debited (against st_before, the
+    state text before) and the ten draws recorded. opened: the gacha screen is open already."""
+    if not opened:
+        open_gacha(s)
     s.ctl("tap:" + ui370.GACHA_TAB_RECOMMENDED, "wait:3000", "tap:" + ui370.GACHA_FIRST_BANNER, "wait:4000")
     s.shot("13-gacha-detail")
     s.ctl("tap:" + ui370.GACHA_10, "wait:2500")

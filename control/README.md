@@ -20,7 +20,7 @@ Every game client a test starts (`soa`, `soa-emu`, `soa-viewer`) first takes one
 
 | Who | How |
 |---|---|
-| `tests/diff` (`diffdrive/targets.py`) | each target's run takes a slot before it starts anything (`soaslot.acquire`), passes it to the client, frees it at the end; the time a run queued is noted and not counted in its time |
+| `tests/diff` and `control/run.py` (`control/soadrive/targets.py`) | each target's run takes a slot before it starts anything (`soaslot.acquire`), passes it to the client, frees it at the end; the time a run queued is noted and not counted in its time |
 | `port/scripts/*_session.sh` | `phone370_prepare` (every session calls it) takes one slot for the script's lifetime (`soaslot_take`, fd 9); the sessions run one client at a time |
 | `port/scripts/smoke.py`, `selftest_resilient.sh` | one slot for the run |
 | `emulator/scripts/emulator_session.sh`, `summer_demo.sh`, `nier_demo.sh`, `emulator_boot.sh`, `standin_fetch_test.sh`, `emulator-viewer/scripts/viewer_lib.sh` | one slot, taken before the server starts |

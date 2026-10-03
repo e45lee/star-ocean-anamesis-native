@@ -79,7 +79,7 @@
      "cmd": "tests/diff/run.sh event --out {out}",
      "covers": "the summer event (--enable-events): the board, story mc99_565, battle me99_1054, drops (a full flow, shard-sized)"},
     {"name": "smoke", "tier": "T1", "secs": 240, "kind": "session", "game": 1, "area": ["port/", "runtime/", "platform370/", "control/", "CMakeLists.txt", "cmake/"],
-     "cmd": "port/scripts/smoke.sh build/port/soa {out} work/port-test/smoke-base",
+     "cmd": "port/scripts/smoke.sh build/port/soa {out} tests/smoke-base",
      "covers": "the port's screens against the baselines (title, home, character list, detail, other)"},
 
     {"name": "diff-full", "tier": "T2", "secs": 1050, "kind": "flow", "game": 9,
@@ -152,7 +152,7 @@
     {"name": "session:profile-extra", "tier": "T3", "secs": 300, "kind": "session", "game": 1,
      "cmd": "port/scripts/profile_extra.sh build/port/soa {out} {tmp}", "covers": "the profiling flow over the screens the others don't visit"},
     {"name": "smoke-vs-emu", "tier": "T3", "secs": 300, "kind": "session", "game": 1,
-     "cmd": "port/scripts/smoke_vs_emu.sh {out} work/port-test/smoke-base",
+     "cmd": "port/scripts/smoke_vs_emu.sh {out} tests/smoke-base",
      "covers": "the smoke baselines against soa-emu"},
     {"name": "emu:boot", "tier": "T3", "secs": 120, "apis": false, "kind": "session", "game": 1,
      "cmd": "emulator/scripts/emulator_boot.sh build/emulator/soa-emu {out}", "covers": "the emulator's no-server boot"},

@@ -185,7 +185,7 @@ Each step is one or a few commits, keeps every old entry point working, and is g
 
 | Script | Why it stays |
 |---|---|
-| `port/scripts/smoke.sh`, `smoke.py` | the port's screenshot regression (P5a: new 3.7.0 baselines in `work/port-test/smoke-base`, matched against soa-emu by `smoke_vs_emu.sh`); may later import `soadrive.screens` for RMSE |
+| `port/scripts/smoke.sh`, `smoke.py` | the port's screenshot regression (P5a: new 3.7.0 baselines in `tests/smoke-base/` (committed), matched against soa-emu by `smoke_vs_emu.sh`); may later import `soadrive.screens` for RMSE |
 | `port/scripts/selftest_battle.sh`, `selftest_resilient.sh`, `selftest_home.py`, `selftest_screens.py` | drive `soa --selftest` (guest calls, natives off): no emulator equivalent |
 | `port/scripts/debug_session.sh`, `debug_input_session.sh` | the port's debug windows through `call:` / `uiset:` natives |
 | `port/scripts/battle_session.sh`, `gacha_session.sh` | rewritten by P5a for the in-process server after this plan was written: re-check whether they can move to shared flows (step 6) |

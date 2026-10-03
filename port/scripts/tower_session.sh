@@ -21,7 +21,7 @@ SOA=$1; OUT=$2; TMP=$3
 abs() { case $1 in /*) echo "$1" ;; *) echo "$PWD/$1" ;; esac; }
 SOA=$(abs "$SOA"); OUT=$(abs "$OUT"); TMP=$(abs "$TMP"); cd "$(dirname "$0")/../.."
 HEADLESS=--headless; [ "${WATCH:-0}" != 1 ] || HEADLESS=--windowed  # soa --headless (no window); WATCH=1 to watch
-CTL=control/soactl.py; FLOW=control/flowctl.py; REF=work/port-test/smoke-base
+CTL=control/soactl.py; FLOW=control/flowctl.py; REF=tests/smoke-base
 rm -rf "${TMP:?}/data" "${TMP:?}/fifo" "${OUT:?}/shots" "${OUT:?}/log.txt" "${OUT:?}/log.txt.pos"
 mkdir -p "$OUT/shots"
 # The phone: the shared pre-downloaded one linked, SOA_PHONE's, or empty (port/scripts/phone370.sh);

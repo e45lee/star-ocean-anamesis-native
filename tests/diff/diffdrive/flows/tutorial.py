@@ -100,8 +100,15 @@ def home_part(s):
     s.ctl("wait:10000")
     s.shot("05-tutorial-map")
     s.ctl("tap:360:640", "wait:3000", "tap:515:714")
-    s.ctl("wait:20000", "tap:" + ui370.STORY_SKIP, "wait:2000", "tap:" + ui370.STORY_SKIP_YES)
-    s.wait_for("UpdateTutorial(6) (the story of 1-01)", 180, tut(s, 6))
+    s.wait_for("1-01's story starts (MissionTalk mc01_010)", 90, lambda: s.in_packets(r"> MissionTalk .* 3991905094 "))
+    # スキップ, then はい, until the story ends: either tap is lost while its dialog fades in (seen
+    # under load: the skip dialog open, はい never tapped), so the pair is repeated.
+    s.ctl("wait:12000")
+    end = time.monotonic() + 120
+    while not s.in_packets(r"> EndMissionTalk .* 3991905094 ") and s.alive() and time.monotonic() < end:
+        s.ctl("tap:" + ui370.STORY_SKIP, "wait:2500", "tap:" + ui370.STORY_SKIP_YES)
+        s.poll(8, lambda: s.in_packets(r"> EndMissionTalk .* 3991905094 "))
+    s.wait_for("UpdateTutorial(6) (the story of 1-01)", 120, tut(s, 6))
     s.ctl("wait:8000")
     s.shot("06-companions")
     s.ctl("tap:527:1090", "wait:3000", "tap:60:1240")

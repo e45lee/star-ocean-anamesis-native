@@ -21,6 +21,7 @@
 #include <thread>
 
 #include "app/host.h"
+#include "app/page_overlay.h"
 #include "app/sdl_gl.h"
 #include "app/text_overlay.h"
 #include "android/ndk.h"
@@ -78,6 +79,8 @@ struct Gfx final : GfxHooks {
     }
     void draw_overlay(int ww, int wh, unsigned target_fbo) override {
         if (movie_active()) movie_draw(ww, wh, target_fbo);
+        // a host-drawn page (app/page_overlay.h; no GL call unless one is shown)
+        if (app::page_overlay::visible()) app::page_overlay::draw(target_fbo, vx, vy, vw, vh, platform().width, platform().height);
         app::text_overlay::draw(ww, wh, target_fbo, vx, vy, vw, vh);  // no-op unless the keyboard is open
         if (shot_requested.exchange(false)) write_screenshot(ww, wh, target_fbo);
     }
@@ -286,6 +289,7 @@ namespace {
 s64 now_ns() { return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(); }
 
 void push_touch(int action, float x, float y) {
+    if (app::page_overlay::touch(action, x, y)) return;  // a touch on a host-drawn page (app/page_overlay.h)
     InputEvent e;
     e.type = 2;          // AINPUT_EVENT_TYPE_MOTION
     e.source = 0x1002;   // AINPUT_SOURCE_TOUCHSCREEN
@@ -596,7 +600,7 @@ void run_command(const std::string& cmd) {
         push_touch(1, tx2, ty2);
     } else if (sscanf(cmd.c_str(), "wheel:%f:%f:%f", &tx, &ty, &tx2) == 3) {  // wheel:X:Y:DY
         map_mouse((int)tx, (int)ty, tx, ty);
-        g_pinch.wheel(tx, ty, tx2);
+        if (!app::page_overlay::wheel(tx, ty, tx2)) g_pinch.wheel(tx, ty, tx2);
     } else if (cmd == "back") {
         push_key(0, 4);
         push_key(1, 4);
@@ -830,6 +834,7 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
                 map_mouse(mx, my, x, y);
                 float dy = ev.wheel.preciseY != 0 ? ev.wheel.preciseY : (float)ev.wheel.y;
                 if (ev.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) dy = -dy;
+                if (app::page_overlay::wheel(x, y, dy)) break;  // scrolls a host-drawn page
                 g_pinch.wheel(x, y, dy);
                 break;
             }

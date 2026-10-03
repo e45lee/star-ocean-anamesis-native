@@ -228,6 +228,10 @@ void install_android_classes(Vm& vm) {
             p.text_max_len = (s32)a[2];
             p.text_editing = jstr(a[3]);
             p.text_value.clear();
+            p.text_cursor = p.text_editing.size();
+            p.text_composition.clear();
+            p.text_comp_cursor = 0;
+            p.text_serial++;
         }
         LOGI("java", "StartKeyboardActivity(type=%d, lines=%d, max=%d, \"%s\")", (int)(s32)a[0], (int)(s32)a[1], (int)(s32)a[2], jstr(a[3]).c_str());
         p.text_active = true;

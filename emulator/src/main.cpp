@@ -107,6 +107,7 @@ void usage() {
             "  --landscape     default to a 16:9 landscape window\n"
             "  --render-size S the game's screen size: 'desktop' (default), 'window' or WxH\n"
             "  --fullscreen    start in (desktop) fullscreen\n"
+            "  --font PATH     the on-screen text box's font (env SOA_FONT; default: a system Japanese font; 'none': off)\n"
             "  --headless      don't show the window (it still renders; screenshots and the control FIFO work)\n"
             "  --shot S:PATH   save a screenshot S seconds after start (repeatable; F12 any time)\n"
             "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
@@ -181,6 +182,7 @@ int main(int argc, char** argv) {
         else if (a == "--size") sscanf(next().c_str(), "%dx%d", &host.width, &host.height);
         else if (a == "--landscape") host.landscape = true;
         else if (a == "--render-size") host.render_size = next();
+        else if (a == "--font") host.font = next();
         else if (a == "--fullscreen") host.fullscreen = true;
         else if (a == "--headless") host.hidden = true;
         else if (a == "--shot") host.shots.push_back(next());

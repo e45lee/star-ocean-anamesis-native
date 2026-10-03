@@ -22,6 +22,7 @@
 
 #include "app/host.h"
 #include "app/sdl_gl.h"
+#include "app/text_overlay.h"
 #include "android/ndk.h"
 #include "android/platform.h"
 #include "core/cpu.h"
@@ -31,6 +32,7 @@
 #include "core/profile.h"
 #include "core/vfs.h"
 #include "frontend/movie.h"
+#include "frontend/text_entry.h"
 #include "hle/audio.h"
 #include "hle/gfx.h"
 #include "jni/jvm.h"
@@ -76,6 +78,7 @@ struct Gfx final : GfxHooks {
     }
     void draw_overlay(int ww, int wh, unsigned target_fbo) override {
         if (movie_active()) movie_draw(ww, wh, target_fbo);
+        app::text_overlay::draw(ww, wh, target_fbo, vx, vy, vw, vh);  // no-op unless the keyboard is open
         if (shot_requested.exchange(false)) write_screenshot(ww, wh, target_fbo);
     }
     void write_screenshot(int w, int h, unsigned fbo);
@@ -405,57 +408,166 @@ void update_title() {
     SDL_SetWindowTitle(g_window, t.c_str());
 }
 
-void utf8_pop_back(std::string& s) {
-    while (!s.empty()) {
-        unsigned char c = s.back();
-        s.pop_back();
-        if ((c & 0xc0) != 0x80) break;
-    }
+// ---------------------------------------------------------------------------
+// Text entry (the emulated KeyboardActivity: platform().text_*). Keys, committed text (typing, an
+// IME, a paste) and the IME's composition go through the editor (frontend/text_entry.h), which
+// keeps the field's max length and numeric filter; app/text_overlay.h draws the box.
+
+// Ends text entry: Enter (`ok`) hands the text to the game (GetEditText), Esc an empty string.
+void finish_text(Platform& p, bool ok) {
+    p.text_value = ok ? p.text_editing : std::string();
+    p.text_composition.clear();
+    p.text_serial++;
+    p.text_active = false;
 }
-size_t utf8_len(const std::string& s) {
-    size_t n = 0;
-    for (unsigned char c : s)
-        if ((c & 0xc0) != 0x80) n++;
-    return n;
+
+void insert_text(Platform& p, std::string_view add) {
+    text_entry::insert(p.text_editing, p.text_cursor, add, {p.text_max_len, p.text_numeric});
+    p.text_serial++;
 }
 
 bool handle_text_event(const SDL_Event& ev) {
     auto& p = platform();
-    if (!p.text_active) return false;
-    if (!SDL_IsTextInputActive()) SDL_StartTextInput();
-    if (ev.type == SDL_TEXTINPUT) {
+    if (!p.text_active) {
+        if (ev.type == SDL_TEXTEDITING_EXT) SDL_free(ev.editExt.text);
+        return false;
+    }
+    switch (ev.type) {
+    case SDL_TEXTINPUT: {  // committed text: typed, or the IME's result
         std::lock_guard lk(p.text_mutex);
-        std::string add = ev.text.text;
-        if (p.text_numeric) std::erase_if(add, [](char ch) { return ch < '0' || ch > '9'; });
-        if (p.text_max_len <= 0 || utf8_len(p.text_editing + add) <= (size_t)p.text_max_len) p.text_editing += add;
+        p.text_composition.clear();
+        insert_text(p, ev.text.text);
         return true;
     }
-    if (ev.type == SDL_KEYDOWN) {
+    case SDL_TEXTEDITING:      // the IME's composition (start: its caret, in code points)
+    case SDL_TEXTEDITING_EXT: {  // the same, unlimited length (SDL_HINT_IME_SUPPORT_EXTENDED_TEXT)
+        bool ext = ev.type == SDL_TEXTEDITING_EXT;
+        const char* text = ext ? ev.editExt.text : ev.edit.text;
+        int start = ext ? ev.editExt.start : ev.edit.start;
+        {
+            std::lock_guard lk(p.text_mutex);
+            p.text_composition = text ? text : "";
+            p.text_comp_cursor = text_entry::byte_offset(p.text_composition, (size_t)std::max(0, start));
+            p.text_serial++;
+        }
+        if (ext) SDL_free(ev.editExt.text);
+        return true;
+    }
+    case SDL_KEYDOWN: {
         auto k = ev.key.keysym.sym;
+        if (k == SDLK_F11 || k == SDLK_F12) return false;  // fullscreen, screenshot
         std::lock_guard lk(p.text_mutex);
-        if (k == SDLK_BACKSPACE) utf8_pop_back(p.text_editing);
-        else if (k == SDLK_RETURN || k == SDLK_KP_ENTER) {
-            p.text_value = p.text_editing;
-            p.text_active = false;
-            SDL_StopTextInput();
-        } else if (k == SDLK_ESCAPE) {
-            p.text_value.clear();
-            p.text_active = false;
-            SDL_StopTextInput();
-        } else if (k == SDLK_v && (ev.key.keysym.mod & KMOD_CTRL)) {
-            if (char* clip = SDL_GetClipboardText()) {
-                p.text_editing += clip;
+        if (!p.text_composition.empty()) return true;  // the IME owns the keys while it composes
+        auto& t = p.text_editing;
+        auto& c = p.text_cursor;
+        bool changed = false;
+        if (k == SDLK_BACKSPACE) changed = text_entry::backspace(t, c);
+        else if (k == SDLK_DELETE) changed = text_entry::del(t, c);
+        else if (k == SDLK_LEFT) changed = text_entry::left(t, c);
+        else if (k == SDLK_RIGHT) changed = text_entry::right(t, c);
+        else if (k == SDLK_HOME) changed = text_entry::home(c);
+        else if (k == SDLK_END) changed = text_entry::end(t, c);
+        else if (k == SDLK_RETURN || k == SDLK_KP_ENTER) finish_text(p, true);
+        else if (k == SDLK_ESCAPE) finish_text(p, false);
+        else if (k == SDLK_v && (ev.key.keysym.mod & KMOD_CTRL)) {
+            if (char* clip = SDL_GetClipboardText()) {  // a paste obeys the field like typing does
+                insert_text(p, clip);
                 SDL_free(clip);
             }
         }
+        if (changed) p.text_serial++;
         return true;
     }
-    return ev.type == SDL_KEYUP || ev.type == SDL_TEXTEDITING;
+    case SDL_KEYUP:
+        return ev.key.keysym.sym != SDLK_F11 && ev.key.keysym.sym != SDLK_F12;
+    default:
+        return false;
+    }
+}
+
+// The box's text field in window coordinates (points), for the IME's candidate window.
+SDL_Rect text_input_rect() {
+    int ww, wh, pw, ph;
+    SDL_GetWindowSize(g_window, &ww, &wh);
+    SDL_GL_GetDrawableSize(g_window, &pw, &ph);
+    if (pw <= 0 || ph <= 0) pw = ww, ph = wh;
+    int vw = g_gfx.vw, vh = g_gfx.vh, vx = g_gfx.vx, vy = g_gfx.vy;
+    if (vw <= 0 || vh <= 0) vx = 0, vy = 0, vw = pw, vh = ph;
+    auto f = app::text_overlay::layout(vx, vy, vw, vh, ph).field;
+    return {f.x * ww / pw, f.y * wh / ph, f.w * ww / pw, f.h * wh / ph};
+}
+
+// Each main-loop iteration: SDL text input on while the game's keyboard is open (and off otherwise,
+// so an IME doesn't take the game's keys), the IME rect kept on the box, idle presenting on so the
+// box repaints while the game shows no frames.
+void update_text_input() {
+    static bool was = false;
+    static SDL_Rect last{};
+    bool on = platform().text_active;
+    if (on != was) {
+        was = on;
+        if (on) {
+            SDL_StartTextInput();
+            last = {};
+        } else {
+            SDL_StopTextInput();
+            std::lock_guard lk(platform().text_mutex);
+            platform().text_composition.clear();
+        }
+    }
+    if (on) {
+        SDL_Rect r = text_input_rect();
+        if (r.x != last.x || r.y != last.y || r.w != last.w || r.h != last.h) {  // also after a resize
+            SDL_SetTextInputRect(&r);
+            last = r;
+        }
+    }
+    set_idle_present(on);
+}
+
+// The test commands type:, compose: and key: (run_command) go through handle_text_event like
+// SDL's events.
+void command_type(const std::string& s) {
+    for (size_t i = 0; i < s.size();) {
+        size_t j = text_entry::next_boundary(s, i);
+        SDL_Event ev{};
+        ev.type = SDL_TEXTINPUT;
+        memcpy(ev.text.text, s.data() + i, std::min(j - i, sizeof ev.text.text - 1));
+        i = j;
+        handle_text_event(ev);
+    }
+}
+void command_compose(const std::string& s) {
+    SDL_Event ev{};
+    ev.type = SDL_TEXTEDITING_EXT;
+    ev.editExt.text = SDL_strdup(s.c_str());
+    ev.editExt.start = (Sint32)text_entry::utf8_len(s);  // the caret at the end
+    if (!handle_text_event(ev)) LOGW("control", "compose: the keyboard isn't open");
+}
+void command_key(const std::string& name) {
+    static const std::pair<const char*, SDL_Keycode> kKeys[] = {
+        {"enter", SDLK_RETURN}, {"escape", SDLK_ESCAPE}, {"backspace", SDLK_BACKSPACE}, {"delete", SDLK_DELETE},
+        {"left", SDLK_LEFT}, {"right", SDLK_RIGHT}, {"home", SDLK_HOME}, {"end", SDLK_END},
+    };
+    for (auto& [n, k] : kKeys)
+        if (name == n) {
+            SDL_Event ev{};
+            ev.type = SDL_KEYDOWN;
+            ev.key.state = SDL_PRESSED;
+            ev.key.keysym.sym = k;
+            if (!handle_text_event(ev)) LOGW("control", "key: the keyboard isn't open");
+            return;
+        }
+    LOGW("control", "key: unknown key '%s'", name.c_str());
 }
 
 // ---------------------------------------------------------------------------
 // Scripted/remote control: "tap:X:Y", "drag:X1:Y1:X2:Y2[:MS]", "wheel:X:Y:DY", "back", "text:STRING",
 // "shot:PATH", "resize:W:H", "fullscreen", "quit"; the control FIFO also accepts "wait:MS".
+// Text entry while the game's keyboard is open: "text:STRING" finishes it with STRING at once (no
+// editor, no box); for testing the editor and the box (they go through the SDL event path):
+// "type:TEXT" (typed, one SDL_TEXTINPUT per code point), "compose:TEXT" (an IME composition with its
+// caret at the end; empty clears it), "key:enter|escape|backspace|delete|left|right|home|end".
 
 std::mutex g_control_mutex;
 std::vector<std::string> g_control_cmds;
@@ -493,6 +605,13 @@ void run_command(const std::string& cmd) {
         std::lock_guard lk(p.text_mutex);
         p.text_value = cmd.substr(5);
         p.text_active = false;
+    } else if (cmd.rfind("type:", 0) == 0) {
+        if (!platform().text_active) LOGW("control", "type: the keyboard isn't open");
+        command_type(cmd.substr(5));
+    } else if (cmd.rfind("compose:", 0) == 0) {
+        command_compose(cmd.substr(8));
+    } else if (cmd.rfind("key:", 0) == 0) {
+        command_key(cmd.substr(4));
     } else if (cmd.rfind("shot:", 0) == 0) {
         g_gfx.shot_path = cmd.substr(5);
         g_gfx.shot_requested = true;
@@ -594,6 +713,8 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
     // SDL picks the video driver (X11 or Wayland; SDL_VIDEODRIVER chooses). The window is an
     // OpenGL ES window: SDL owns its surface and the GL contexts, the runtime emulates the guest's
     // EGL over them (hle/egl.cpp, app/sdl_gl.h).
+    // An IME's composition arrives whole (SDL_TEXTEDITING_EXT), not in 32-byte pieces.
+    SDL_SetHint(SDL_HINT_IME_SUPPORT_EXTENDED_TEXT, "1");
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS) != 0) fatal("SDL_Init: %s", SDL_GetError());
     sdlgl::set_attributes();
     SDL_DisplayMode desktop{};
@@ -614,6 +735,10 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
     g_window = SDL_CreateWindow(g_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, wflags);
     if (!g_window) fatal("SDL_CreateWindow: %s", SDL_GetError());
     sdlgl::init(g_window);
+    // SDL starts with text input on; it is on only while the game's keyboard is open
+    // (update_text_input), so an IME never takes the game's keys.
+    SDL_StopTextInput();
+    app::text_overlay::set_font_request(cfg.font);
     if (cfg.hidden) {
         const char* e = getenv("SOA_OFFSCREEN_PRESENT");
         g_gfx.offscreen = e && *e ? *e != '0' : strcmp(SDL_GetCurrentVideoDriver(), "x11") != 0;
@@ -746,7 +871,7 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
                 break;
             }
         }
-        set_idle_present(platform().text_active);
+        update_text_input();
         platform_run_ui_tasks();
         g_pinch.update();
         if (cfg.tick) cfg.tick();  // HostConfig::tick (the port: --selftest)

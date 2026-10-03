@@ -16,10 +16,14 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import time
 
 from . import fifo, proc, screens
 from .proc import REPO
+
+sys.path.insert(0, os.path.join(REPO, "control"))
+import soaslot  # noqa: E402  (control/soaslot.py: the machine-wide game-process slot pool)
 
 TARGETS = ("emu", "port-server", "port-inproc")
 W, H = 729, 1296
@@ -33,8 +37,11 @@ class Config:
     """What a flow asks of its targets: the server's options (the same for every target), whether
     the client save goes on the phone, and the clock both sides start at."""
 
-    def __init__(self, server_args, clock, client_save=False, new_player=False):
+    def __init__(self, server_args, clock, client_save=False, new_player=False, prepared=None):
         self.server_args, self.clock, self.client_save, self.new_player = list(server_args), clock, client_save, new_player
+        # a prepared server state (diffdrive/prepared.py: a state DB every target starts from a
+        # copy of), or None: a fresh state
+        self.prepared = prepared
 
 
 def binaries():
@@ -76,6 +83,7 @@ class Run:
         self.shots = os.path.join(rdir, "shots")
         self.phone = os.path.join(rdir, "phone")
         self.server = self.client = None
+        self.slot = -1
         self.results, self.failed, self.t0 = [], False, time.monotonic()
         self.shot_names = []
 
@@ -85,12 +93,23 @@ class Run:
             shutil.rmtree(self.dir)
         for d in ("packets", "server", "shots"):
             os.makedirs(os.path.join(self.dir, d))
+        # The client's slot (control/soaslot.py): queued here, before anything starts; the run's
+        # clock starts once it has one.
+        t = time.monotonic()
+        self.slot = soaslot.acquire("tests/diff %s %s" % (os.path.basename(os.path.dirname(self.dir)), self.target), quiet=True)
+        self.queued = int(time.monotonic() - t)
+        self.t0 = time.monotonic()
+        if self.queued:
+            self.note("waited %ds for a game slot (control/soaslot.py)" % self.queued)
         b = binaries()
         master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
         download = proc.repo_file("work/download-3.7.0")
         if not master or not download:
             raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not found")
         self.note("phone: " + make_phone(self.phone))
+        if self.cfg.prepared:
+            shutil.copyfile(self.cfg.prepared, self.state_db)
+            self.note("server state: a copy of %s" % self.cfg.prepared)
         if self.cfg.client_save:
             shutil.copyfile(os.path.join(REPO, "data/saves/client/Game.xml"), os.path.join(self.phone, "data/shared_prefs/Game.xml"))
         srv = ["--master", master, "--seed-rng", "1", "--clock", self.cfg.clock] + self.cfg.server_args
@@ -102,7 +121,7 @@ class Run:
         if self.target == "port-inproc":
             self.client = proc.Proc("soa", [b["soa"]] + client + srv + ["--db", self.state_db, "--download-dir", download,
                                                                       "--log-packets", os.path.dirname(self.packets)],
-                                    self.client_log, env=env)
+                                    self.client_log, env=env, slot_fd=self.slot)
         else:
             gp, hp = proc.free_ports(2)
             self.server = proc.Proc("soa-server", [b["server"], "--listen", "127.0.0.1:%d" % gp, "--http", "127.0.0.1:%d" % hp,
@@ -115,7 +134,8 @@ class Run:
                 time.sleep(0.5)
             binary = b["emu"] if self.target == "emu" else b["soa"]
             self.client = proc.Proc(os.path.basename(binary), [binary] + client +
-                                    ["--server", "127.0.0.1:%d" % gp, "--http", "127.0.0.1:%d" % hp], self.client_log, env=env)
+                                    ["--server", "127.0.0.1:%d" % gp, "--http", "127.0.0.1:%d" % hp], self.client_log, env=env,
+                                    slot_fd=self.slot)
         os.symlink("client.log", os.path.join(self.dir, "emu.log"))
         end = time.monotonic() + 120
         while not os.path.exists(self.fifo):
@@ -130,6 +150,8 @@ class Run:
         for p in (self.client, self.server):
             if p:
                 p.stop()
+        soaslot.release(self.slot)
+        self.slot = -1
         if self.grep(self.client_log, r"Unhandled SIG|\*\*\* host signal"):
             self.miss("the client crashed (see %s)" % self.client_log)
         if os.path.exists(self.state_db):
@@ -148,7 +170,7 @@ class Run:
 
     def _rec(self, s):
         self.results.append(s)
-        print("[%s] %s" % (self.target, s), flush=True)
+        print("[%s %s] %s" % (os.path.basename(os.path.dirname(self.dir)), self.target, s), flush=True)
 
     def ok(self, name):
         self._rec("PASS  %s (%ds)" % (name, self.elapsed()))

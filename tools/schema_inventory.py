@@ -17,7 +17,7 @@ What it does (server/PLAN-schema.md, section 1, is its output):
   3. Attributes each statement to its enclosing function (the nearest preceding definition line,
      or the NATIVE_TEST it sits in: those count as tests, not as readers / writers).
   4. Lists the key-value keys (meta, sphere_meta, counters) with their writers and readers, from
-     the SQL literals and the helper calls (core/server.h meta / set_meta / next_uid, api/sphere211/
+     the SQL literals and the helper calls (state/state.h meta / set_meta / next_uid, api/sphere211/
      sphere_meta(ctx, ..) / set_sphere_meta(ctx, ..), ext count / counter).
   5. Greps the consumers outside the server (tools/, tests/, port/scripts, emulator/scripts,
      control/, scripts/) for the tables they name.
@@ -566,8 +566,9 @@ def main():
                 for m in re.finditer(r"\b(set_sphere_meta|sphere_meta)\((?:c|ctx), \"(\w+)\"", code):
                     kv["sphere_meta"][m.group(2)]["w" if m.group(1) == "set_sphere_meta" else "r"].add(where)
                 continue
-            # the core's meta helpers (core/server.h): server.cpp and the files that include it
-            if r.endswith("core/server.cpp") or '#include "core/server.h"' in src:
+            # the state module's meta helpers (state/state.h): the files that include it, directly or
+            # through core/server.h
+            if r.endswith("state/state.cpp") or '#include "state/state.h"' in src or '#include "core/server.h"' in src:
                 for m in re.finditer(r"\b(set_meta|meta|next_uid)\(([^;]*)", code):
                     first = m.group(2).split(",")[0] if m.group(1) != "set_meta" else m.group(2).rsplit(",", 1)[0]
                     for key in re.findall(r'"(\w+)"', first):

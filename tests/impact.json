@@ -727,7 +727,13 @@
     "Login",
     "NoLoginStart"
    ],
-   "source": "declared"
+   "source": "observed",
+   "observed": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ]
   },
   "diff-full": {
    "apis": [
@@ -1283,12 +1289,29 @@
     "Sphere211StaminaHeal",
     "Sphere211UseRerollItem"
    ],
-   "source": "declared"
+   "source": "observed+declared",
+   "observed": [
+    "GetPlayer",
+    "GetServerTime",
+    "GetSphere211Info",
+    "Login",
+    "NoLoginStart",
+    "ReturnSphere211",
+    "Sphere211AutoMemberSelect",
+    "Sphere211FloorClear",
+    "Sphere211MissionEnd",
+    "Sphere211MissionStart",
+    "Sphere211SelectedFloor",
+    "Sphere211StaminaHeal",
+    "Sphere211UseRerollItem"
+   ]
   },
   "session:sphere211-continue": {
    "apis": [
+    "AchievementActiveList",
     "GetPlayer",
     "GetServerTime",
+    "GetSphere211Info",
     "Login",
     "MissionStart",
     "NoLoginStart",
@@ -1298,18 +1321,43 @@
     "Sphere211MissionStart",
     "Sphere211StaminaHeal"
    ],
-   "source": "declared"
+   "source": "observed+declared",
+   "observed": [
+    "AchievementActiveList",
+    "GetPlayer",
+    "GetServerTime",
+    "GetSphere211Info",
+    "Login",
+    "NoLoginStart",
+    "Sphere211AutoMemberSelect",
+    "Sphere211MissionContinue",
+    "Sphere211MissionFailed",
+    "Sphere211MissionStart",
+    "Sphere211StaminaHeal"
+   ]
   },
   "session:episode-movie": {
    "apis": [
     "EndMissionTalk",
+    "GetPlayMission",
     "GetPlayer",
     "GetServerTime",
     "GetWorldMapInfoList",
     "Login",
+    "MissionTalk",
     "NoLoginStart"
    ],
-   "source": "declared"
+   "source": "observed",
+   "observed": [
+    "EndMissionTalk",
+    "GetPlayMission",
+    "GetPlayer",
+    "GetServerTime",
+    "GetWorldMapInfoList",
+    "Login",
+    "MissionTalk",
+    "NoLoginStart"
+   ]
   },
   "session:newplayer-download": {
    "apis": [
@@ -1333,7 +1381,14 @@
     "Login",
     "NoLoginStart"
    ],
-   "source": "declared"
+   "source": "observed",
+   "observed": [
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ]
   },
   "session:debug": {
    "apis": [

@@ -314,6 +314,12 @@ class Run:
         if cfg.clock:
             client += ["--device-clock", cfg.clock]
         env = {"SDL_AUDIODRIVER": os.environ.get("SDL_AUDIODRIVER", "dummy")}
+        # SOA_SLOT_SOFTWARE_GL (control/soaslot.py; docs/testing-software-gl.md): the client on Mesa's
+        # llvmpipe, also when the caller holds the slot (acquire() not called here)
+        gl = soaslot.apply_software_gl()
+        if gl:
+            self.note("software GL: " + " ".join("%s=%s" % kv for kv in sorted(gl.items())))
+        env.update(gl)
         env.update(cfg.env)
         pkt = ["--log-packets", os.path.dirname(self.packets)] if cfg.log_packets else []
         if self.target == "port-inproc":

@@ -42,4 +42,24 @@ struct GfxHooks {
 
 void set_gfx_hooks(GfxHooks* h);
 
+// Presents the last frame again (the window stand-in, letterboxed, plus GfxHooks::draw_overlay), when
+// the calling thread's context is on the window surface; false (nothing done) otherwise.
+bool present_again();
+
+// Idle presenting: repaints while the game shows no new frames. A frontend overlay that changes over
+// the game's last frame turns it on (the text-entry box: while the game waits for the keyboard its
+// logic thread blocks, and its render thread waits for work). The thread whose context is on the
+// window waits in pthread_cond_wait (hle/libc_thread.cpp) in slices of kIdleCheckMs (it may have
+// started waiting before idle presenting was turned on), and while idle presenting is on, of
+// kIdlePresentMs, presenting the last frame again (present_again) after a slice in which no frame
+// was presented.
+constexpr int kIdlePresentMs = 33;
+constexpr int kIdleCheckMs = 100;
+void set_idle_present(bool on);
+bool idle_present_on();
+// For the HLE's blocking waits: this thread's context is on the window surface.
+bool window_thread();
+// Presents the last frame again when none was presented for kIdlePresentMs (on the window thread).
+void idle_present();
+
 }  // namespace soa

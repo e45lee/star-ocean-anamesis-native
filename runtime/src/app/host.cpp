@@ -746,6 +746,7 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
                 break;
             }
         }
+        set_idle_present(platform().text_active);
         platform_run_ui_tasks();
         g_pinch.update();
         if (cfg.tick) cfg.tick();  // HostConfig::tick (the port: --selftest)

@@ -18,6 +18,7 @@
 
 #include "core/hle.h"
 #include "core/log.h"
+#include "hle/gfx.h"
 #include "hle/thread.h"
 
 namespace soa {
@@ -242,7 +243,23 @@ void th_cond_init(Cpu& c) { ret(c, (u64)pthread_cond_init((pthread_cond_t*)c.x(0
 void th_cond_destroy(Cpu& c) { ret(c, (u64)pthread_cond_destroy((pthread_cond_t*)c.x(0))); }
 void th_cond_signal(Cpu& c) { ret(c, (u64)pthread_cond_signal((pthread_cond_t*)c.x(0))); }
 void th_cond_broadcast(Cpu& c) { ret(c, (u64)pthread_cond_broadcast((pthread_cond_t*)c.x(0))); }
-void th_cond_wait(Cpu& c) { ret(c, (u64)pthread_cond_wait((pthread_cond_t*)c.x(0), fix_mutex(c.x(1)))); }
+void th_cond_wait(Cpu& c) {
+    auto* cv = (pthread_cond_t*)c.x(0);
+    pthread_mutex_t* m = fix_mutex(c.x(1));
+    if (!window_thread()) return ret(c, (u64)pthread_cond_wait(cv, m));
+    // Idle presenting (hle/gfx.h): the window's thread (the game's RenderThread, waiting for its next
+    // frame's work) waits in slices, so that it notices idle presenting turned on while it already
+    // waits, and then repaints the last frame between slices. A slice's timeout is not a wakeup.
+    for (;;) {
+        timespec t;
+        clock_gettime(CLOCK_REALTIME, &t);
+        t.tv_nsec += (idle_present_on() ? kIdlePresentMs : kIdleCheckMs) * 1000000L;
+        if (t.tv_nsec >= 1000000000L) t.tv_sec++, t.tv_nsec -= 1000000000L;
+        int r = pthread_cond_timedwait(cv, m, &t);
+        if (r != ETIMEDOUT) return ret(c, (u64)r);
+        if (idle_present_on()) idle_present();
+    }
+}
 void th_cond_timedwait(Cpu& c) {
     ret(c, (u64)pthread_cond_timedwait((pthread_cond_t*)c.x(0), fix_mutex(c.x(1)), (const timespec*)c.x(2)));
 }

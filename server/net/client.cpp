@@ -7,11 +7,9 @@
 #include "game.h"
 #include "http.h"
 #include "ninja/ninja_ref.h"
-#include "soa_compat/sock.h"
+#include "soa/sock.h"
 
 namespace soa::server::net {
-
-namespace sock = soa::compat::sock;
 
 namespace {
 
@@ -19,6 +17,7 @@ int connect_to(const std::string& host, uint16_t port, std::string* err) {
     addrinfo hints = {}, *res = nullptr;
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
+    sock::startup();  // (Winsock, before the name lookup)
     if (int r = getaddrinfo(host.c_str(), nullptr, &hints, &res); r != 0 || !res) {
         *err = host + ": " + gai_strerror(r);
         return -1;

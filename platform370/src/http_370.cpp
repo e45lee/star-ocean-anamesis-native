@@ -49,12 +49,10 @@
 #include "internal.h"
 #include "jni/jvm.h"
 #include "platform370/platform370.h"
-#include "soa_compat/sock.h"
+#include "soa/sock.h"
 
 namespace soa::platform370::detail {
 namespace {
-
-namespace sock = soa::compat::sock;  // host sockets: BSD on Linux, Winsock on Windows
 
 using jni::Args;
 using jni::Impl;

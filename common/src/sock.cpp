@@ -1,5 +1,5 @@
-// soa_compat/sock.h: BSD sockets on Linux, Winsock on Windows.
-#include "soa_compat/sock.h"
+// soa/sock.h: BSD sockets on Linux, Winsock on Windows.
+#include "soa/sock.h"
 
 #include <cerrno>
 #include <cstring>
@@ -10,7 +10,7 @@
 #include <unistd.h>
 #endif
 
-namespace soa::compat::sock {
+namespace soa::sock {
 
 #ifdef _WIN32
 
@@ -141,4 +141,4 @@ int poll(PollFd* fds, size_t n, int timeout_ms) {
 
 #endif
 
-}  // namespace soa::compat::sock
+}  // namespace soa::sock

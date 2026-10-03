@@ -5,12 +5,10 @@
 
 #include <cstring>
 
-#include "soa_compat/sock.h"
+#include "soa/sock.h"
 #include "soaserver/log.h"
 
 namespace soa::server::net {
-
-namespace sock = soa::compat::sock;
 
 #define NLOG(level, ...)                                                                  \
     do {                                                                                  \
@@ -42,6 +40,7 @@ bool Loop::listen_on(const std::string& host, uint16_t port, int* fd, uint16_t* 
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
+    sock::startup();  // (Winsock, before the name lookup)
     if (int r = getaddrinfo(host.c_str(), nullptr, &hints, &res); r != 0 || !res) {
         *err = host + ": " + gai_strerror(r);
         return false;

@@ -1,4 +1,4 @@
-// compat/win32/posix_compat.h's functions (Windows only).
+// common/win32/posix_compat.h's functions (Windows only).
 #ifdef _WIN32
 #include "../win32/posix_compat.h"
 

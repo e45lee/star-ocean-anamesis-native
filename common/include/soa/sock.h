@@ -21,7 +21,7 @@
 #include <string>
 #include <sys/types.h>
 
-namespace soa::compat::sock {
+namespace soa::sock {
 
 // Starts Winsock (once; nothing on Linux): before getaddrinfo and the like. tcp_socket does it too.
 bool startup();
@@ -55,4 +55,4 @@ struct PollFd {
 // poll(): POLLIN / POLLOUT / POLLERR / POLLHUP / POLLNVAL as <poll.h> (WSAPoll on Windows).
 int poll(PollFd* fds, size_t n, int timeout_ms);
 
-}  // namespace soa::compat::sock
+}  // namespace soa::sock

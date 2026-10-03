@@ -88,9 +88,8 @@ else()
   set(SOA_NEED_RUNTIME OFF)
 endif()
 include(cmake/deps.cmake)
-include(cmake/compat.cmake)  # soa_compat: the Windows build's POSIX shims (empty on Linux)
 
-add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests
+add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests, soa_compat (sockets; the Windows shims)
 
 # ---- the parts, in dependency order
 if(SOA_NEED_RUNTIME)

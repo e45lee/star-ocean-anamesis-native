@@ -7,6 +7,7 @@
 // callbacks). 3.7.0 Aska::Yayoi::Socket::Poll reads `[fdset + 0x1ffffffffffffff8]` when the main
 // thread closed the socket (fd = -1) meanwhile: on a phone that reads fdset - 8; before this the
 // JIT crashed there (emulator/README.md "Error replies and the tagged-address crash").
+#include <cinttypes>
 #include <cstring>
 
 #include "core/cpu.h"
@@ -74,11 +75,11 @@ RUNTIME_TEST("cpu/tbi-tagged-data-addresses") {
         u64 r = guest_call((u64)code, {addr, v});
         expect_counter++;
         expect_byte++;
-        if (r != block[0]) t.fail("tag %#lx: load read %#lx, memory has %#lx", tag, r, block[0]);
-        if (block[1] != v) t.fail("tag %#lx: store wrote %#lx, expected %#lx", tag, block[1], v);
-        if (block[2] != expect_counter) t.fail("tag %#lx: exclusive increment: %lu, expected %lu", tag, block[2], expect_counter);
-        if ((u8)block[3] != expect_byte) t.fail("tag %#lx: byte increment: %#x, expected %#x", tag, (u8)block[3], expect_byte);
-        if (block[6] != block[4] || block[7] != block[5]) t.fail("tag %#lx: 128-bit copy differs", tag);
+        if (r != block[0]) t.fail("tag %#" PRIx64 ": load read %#" PRIx64 ", memory has %#" PRIx64, tag, r, block[0]);
+        if (block[1] != v) t.fail("tag %#" PRIx64 ": store wrote %#" PRIx64 ", expected %#" PRIx64, tag, block[1], v);
+        if (block[2] != expect_counter) t.fail("tag %#" PRIx64 ": exclusive increment: %" PRIu64 ", expected %" PRIu64, tag, block[2], expect_counter);
+        if ((u8)block[3] != expect_byte) t.fail("tag %#" PRIx64 ": byte increment: %#x, expected %#x", tag, (u8)block[3], expect_byte);
+        if (block[6] != block[4] || block[7] != block[5]) t.fail("tag %#" PRIx64 ": 128-bit copy differs", tag);
     }
     unmap_guest_code(code, 4096);
 }

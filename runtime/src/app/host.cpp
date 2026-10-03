@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cinttypes>
 #include <cmath>
 #include <chrono>
 #include <functional>
@@ -785,7 +786,7 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
     g_activity.obbPath = (u64)strdup(obb.c_str());
 
     u64 onload = lib.sym("JNI_OnLoad");
-    if (onload) LOGI("main", "JNI_OnLoad = %#lx", guest_call(onload, {vm.vm_ptr(), 0}));
+    if (onload) LOGI("main", "JNI_OnLoad = %#" PRIx64, guest_call(onload, {vm.vm_ptr(), 0}));
     u64 oncreate = lib.sym("ANativeActivity_onCreate");
     if (!oncreate) fatal("ANativeActivity_onCreate not found");
     guest_call(oncreate, {(u64)&g_activity, 0, 0});

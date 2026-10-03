@@ -13,6 +13,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <cinttypes>
 #include <string>
 
 #include "core/device.h"
@@ -107,7 +108,7 @@ void th_dlsym(Cpu& c) {
     if (h == kHandleSelf && main_lib()) a = main_lib()->sym(name);
     if (!a) a = Hle::get().lookup(name);
     if (!a && main_lib() && h != kHandleSystem) a = main_lib()->sym(name);
-    LOGD("dl", "dlsym(%#lx, %s) = %#lx", h, name, a);
+    LOGD("dl", "dlsym(%#" PRIx64 ", %s) = %#" PRIx64, h, name, a);
     if (!a) t_dlerror = "symbol not found";
     ret(c, a);
 }

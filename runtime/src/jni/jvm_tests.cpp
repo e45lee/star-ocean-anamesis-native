@@ -9,6 +9,7 @@
 // 16-aligned allocator would give a zero low byte with probability 1 - (15/16)^256 > 0.99999.
 #include <unistd.h>
 
+#include <cinttypes>
 #include <cstring>
 #include <string>
 
@@ -124,7 +125,7 @@ RUNTIME_TEST("jni/references-low-byte") {
             u64 r = call("CallObjectMethodA", {env, (u64)vm.activity, set_mid, (u64)a3});
             check("SetSharedPreferences (Boolean)", r);
             // The guest's test (ELF 0x1f28474): the low byte of the reference is the result.
-            if (!(u8)r) t.fail("SetSharedPreferences: the guest's low-byte test reads the save as failed (%#lx)", r);
+            if (!(u8)r) t.fail("SetSharedPreferences: the guest's low-byte test reads the save as failed (%#" PRIx64 ")", r);
         }
     }
     if (have_activity && set_mid) unlink((host_shared_prefs_dir() + "/" + kPrefs + ".xml").c_str());

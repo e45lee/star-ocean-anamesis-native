@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cinttypes>
 #include <mutex>
 #include <set>
 #include <unordered_map>
@@ -824,10 +825,10 @@ void cpu_global_init() {
 }
 
 void dump_guest_state(Cpu& c) {
-    fprintf(stderr, "  pc=%s  sp=%016lx  lr=%s\n", describe_guest_addr(c.pc()).c_str(), c.sp(), describe_guest_addr(c.x(30)).c_str());
+    fprintf(stderr, "  pc=%s  sp=%016" PRIx64 "  lr=%s\n", describe_guest_addr(c.pc()).c_str(), c.sp(), describe_guest_addr(c.x(30)).c_str());
     for (int i = 0; i < 31; i += 4) {
         fprintf(stderr, " ");
-        for (int j = i; j < i + 4 && j < 31; j++) fprintf(stderr, " x%-2d=%016lx", j, c.x(j));
+        for (int j = i; j < i + 4 && j < 31; j++) fprintf(stderr, " x%-2d=%016" PRIx64, j, c.x(j));
         fprintf(stderr, "\n");
     }
     // Frame-pointer walk

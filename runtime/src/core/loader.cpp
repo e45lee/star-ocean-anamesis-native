@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cinttypes>
 #include <cstring>
 #include <functional>
 #include <unordered_map>
@@ -70,18 +71,18 @@ u64 translate_symbol_addr(const LoadedLib& from, const LoadedLib& to, u64 addr) 
 
 std::string describe_guest_addr(u64 addr) {
     char buf[64];
-    snprintf(buf, sizeof buf, "0x%lx", addr);
+    snprintf(buf, sizeof buf, "0x%" PRIx64, addr);
     std::string out = buf;
     if (const char* t = thunk_name_at(addr)) return out + " <thunk:" + t + ">";
     for (LoadedLib* l : g_libs) {
         if (addr < l->base || addr >= l->base + l->size) continue;
         std::string n;
         u64 off;
-        snprintf(buf, sizeof buf, " [lib+0x%lx]", addr - l->base);
+        snprintf(buf, sizeof buf, " [lib+0x%" PRIx64 "]", addr - l->base);
         out += buf;
         if (l->symbolize(addr, n, off)) {
             if (n.size() > 160) n = n.substr(0, 160) + "...";
-            snprintf(buf, sizeof buf, "+0x%lx", off);
+            snprintf(buf, sizeof buf, "+0x%" PRIx64, off);
             out += " " + n + buf;
         }
     }
@@ -218,7 +219,7 @@ static LoadedLib* load_image(const std::string& path) {
         if (f && f != ~0ull) lib->init_array.push_back(f);
     }
     munmap((void*)file, st.st_size);
-    LOGI("loader", "loaded %s at 0x%lx (%lu KiB, %lu init functions)", path.c_str(), base, max_va / 1024, lib->init_array.size());
+    LOGI("loader", "loaded %s at 0x%" PRIx64 " (%" PRIu64 " KiB, %zu init functions)", path.c_str(), base, max_va / 1024, lib->init_array.size());
     g_libs.push_back(lib);
     return lib;
 }

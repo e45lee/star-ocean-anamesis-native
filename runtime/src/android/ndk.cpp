@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cinttypes>
 #include <cstring>
 #include <set>
 
@@ -138,7 +139,7 @@ bool open_download(Cpu& c, const char* name, const std::string& host) {
     }
     a->size = a->owned.size();
     a->data = a->owned.data();
-    LOGD("assets", "open(%s) = %lu bytes from %s", name, a->size, host.c_str());
+    LOGD("assets", "open(%s) = %" PRIu64 " bytes from %s", name, a->size, host.c_str());
     ret_ptr(c, a);
     return true;
 }
@@ -167,7 +168,7 @@ void th_AAssetManager_open(Cpu& c) {
         }
         a->data = a->owned.data();
     }
-    LOGT("assets", "open(%s) = %lu bytes", name, a->size);
+    LOGT("assets", "open(%s) = %" PRIu64 " bytes", name, a->size);
     ret_ptr(c, a);
 }
 void th_AAsset_close(Cpu& c) { delete (Asset*)c.x(0); }

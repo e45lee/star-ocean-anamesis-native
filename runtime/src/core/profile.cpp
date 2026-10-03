@@ -42,6 +42,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cinttypes>
 #include <condition_variable>
 #include <cstdio>
 #include <cstdlib>
@@ -124,7 +125,7 @@ std::string func_name(size_t i) {
     const Func& f = g_funcs[i];
     if (f.name) return f.name;
     char b[32];
-    snprintf(b, sizeof b, "FUN_%08lx", f.addr - g_lib->base + 0x100000);
+    snprintf(b, sizeof b, "FUN_%08" PRIx64, f.addr - g_lib->base + 0x100000);
     return b;
 }
 
@@ -620,7 +621,7 @@ void write_host_samples(FILE* f) {
     std::vector<std::pair<u64, u64>> v(hist.begin(), hist.end());
     std::sort(v.begin(), v.end());
     fprintf(f, "# offset\tsamples   (host PCs in native replacements, relative to the soa executable; %zu samples)\n", n);
-    for (auto& [pc, c] : v) fprintf(f, "%lx\t%lu\n", pc, c);
+    for (auto& [pc, c] : v) fprintf(f, "%" PRIx64 "\t%" PRIu64 "\n", pc, c);
 }
 
 void sample_thread(ProfThread& t, void*) {
@@ -741,7 +742,7 @@ void profile_dump() {
                 if (fn.sources & kSrcEh) *p++ = 'H';
                 if (fn.sources & kSrcAdrp) *p++ = 'A';
                 *p = 0;
-                fprintf(f, "%lx\t%lu\t%s\t%s\n", fn.addr - g_lib->base, fn.size, src, func_name(i).c_str());
+                fprintf(f, "%" PRIx64 "\t%" PRIu64 "\t%s\t%s\n", fn.addr - g_lib->base, fn.size, src, func_name(i).c_str());
             }
             commit(f, tmp, "functions.tsv");
             g_funcs_written = true;
@@ -751,7 +752,7 @@ void profile_dump() {
         if (FILE* f = open_tmp("coverage.tsv", tmp)) {
             fprintf(f, "# offset\tfirst_hit_s\tname   (%d of %d armed entries executed, %.1f s)\n", g_cov_hits.load(), g_cov_patched, secs);
             for (size_t i = 0; i < g_funcs.size(); i++)
-                if (g_state[i].load(std::memory_order_relaxed) == 2) fprintf(f, "%lx\t%.2f\t%s\n", g_funcs[i].addr - g_lib->base, g_first_hit[i], func_name(i).c_str());
+                if (g_state[i].load(std::memory_order_relaxed) == 2) fprintf(f, "%" PRIx64 "\t%.2f\t%s\n", g_funcs[i].addr - g_lib->base, g_first_hit[i], func_name(i).c_str());
             commit(f, tmp, "coverage.tsv");
         }
     }
@@ -767,7 +768,7 @@ void profile_dump() {
             if (!n) continue;
             u64 a = thunk_hook_addr(i);
             bool native = a >= g_text_lo && a < g_text_hi;
-            fprintf(f, "%s\t%lu\t%lx\t%s\n", native ? "native" : "hle", n, native ? a - g_lib->base : 0, thunk_name(i) ? thunk_name(i) : "?");
+            fprintf(f, "%s\t%" PRIu64 "\t%" PRIx64 "\t%s\n", native ? "native" : "hle", n, native ? a - g_lib->base : 0, thunk_name(i) ? thunk_name(i) : "?");
         }
         commit(f, tmp, "calls.tsv");
     }
@@ -787,13 +788,13 @@ void profile_dump() {
                     if (!line.empty()) line += ';';
                     line += nit->second;
                 }
-                fprintf(f, "%s %lu\n", line.c_str(), n);
+                fprintf(f, "%s %" PRIu64 "\n", line.c_str(), n);
             }
             commit(f, tmp, "stacks.folded");
         }
     }
     if (FILE* f = open_tmp("meta.txt", tmp)) {
-        fprintf(f, "seconds %.1f\ncoverage %d\nsampling %d\nhz %d\nfunctions %zu\narmed %d\nexecuted %d\nsamples %lu\nsamples_guest %lu\nsamples_host %lu\nsampler_cpu_s %.2f\n",
+        fprintf(f, "seconds %.1f\ncoverage %d\nsampling %d\nhz %d\nfunctions %zu\narmed %d\nexecuted %d\nsamples %" PRIu64 "\nsamples_guest %" PRIu64 "\nsamples_host %" PRIu64 "\nsampler_cpu_s %.2f\n",
                 secs, g_coverage, g_sampling, g_hz, g_funcs.size(), g_cov_patched, g_cov_hits.load(), g_samples.load(), g_samples_guest.load(),
                 g_samples_host.load(), g_sampler_cpu_ns.load() / 1e9);
         commit(f, tmp, "meta.txt");

@@ -54,8 +54,9 @@ void th_fgets(Cpu& c) { ret_ptr(c, fgets((char*)c.x(0), (int)c.x(1), gfile(c.x(2
 void th_fputc(Cpu& c) { ret(c, (u64)(s64)fputc((int)c.x(0), gfile(c.x(1)))); }
 void th_fread(Cpu& c) { ret(c, fread((void*)c.x(0), c.x(1), c.x(2), gfile(c.x(3)))); }
 void th_fwrite(Cpu& c) { ret(c, fwrite((const void*)c.x(0), c.x(1), c.x(2), gfile(c.x(3)))); }
-void th_fseek(Cpu& c) { ret(c, (u64)(s64)fseek(gfile(c.x(0)), (long)c.x(1), (int)c.x(2))); }
-void th_ftell(Cpu& c) { ret(c, (u64)ftell(gfile(c.x(0)))); }
+// The guest's long is 64-bit (LP64); fseeko/ftello keep the offset 64-bit on an LLP64 host too.
+void th_fseek(Cpu& c) { ret(c, (u64)(s64)fseeko(gfile(c.x(0)), (off_t)(s64)c.x(1), (int)c.x(2))); }
+void th_ftell(Cpu& c) { ret(c, (u64)(s64)ftello(gfile(c.x(0)))); }
 void th_puts(Cpu& c) { ret(c, (u64)(s64)puts(arg_str(c, 0))); }
 void th_putchar(Cpu& c) { ret(c, (u64)(s64)putchar((int)c.x(0))); }
 

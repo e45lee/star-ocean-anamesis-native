@@ -21,6 +21,7 @@
 #include "app/host.h"
 #include "core/cpu.h"
 #include "core/device.h"
+#include "core/gdbstub.h"
 #include "core/hle.h"
 #include "core/loader.h"
 #include "core/log.h"
@@ -116,6 +117,8 @@ void usage() {
             "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
             "                  wheel:X:Y:DY, back, text:STRING, shot:PATH, quit\n"
             "  --control FIFO  read the same commands, one per line, from a named pipe (control/soactl.py)\n"
+            "  --gdb HOST:PORT serve the GDB remote protocol for the guest (gdb-multiarch -x control/gdbinit-soa,\n"
+            "                  control/gdbclient.py; runtime/README.md \"Debugging the guest with gdb\")\n"
             "  -v / -vv        verbose / trace logging\n"
             "Diagnostic switches are environment variables (SOA_TRACE, SOA_PROFILE, SOA_WATCHDOG, ...:\n"
             "runtime/README.md \"Environment\"); settings are flags only.\n",
@@ -125,6 +128,7 @@ void usage() {
 }  // namespace
 
 int main(int argc, char** argv) {
+    std::string gdb_addr;  // --gdb HOST:PORT (core/gdbstub.h)
     env::warn_removed_env("soa-emu", env::kEmu);  // SOA_* settings that are flags now
     signal(SIGPIPE, SIG_IGN);
     app::install_host_hooks();
@@ -197,6 +201,7 @@ int main(int argc, char** argv) {
         else if (a == "--shot") host.shots.push_back(next());
         else if (a == "--do") host.actions.push_back(next());
         else if (a == "--control") host.control_path = next();
+        else if (a == "--gdb") gdb_addr = next();
         else if (a == "-v") g_log_level = LogLevel::Debug;
         else if (a == "-vv") g_log_level = LogLevel::Trace;
         else {
@@ -241,6 +246,13 @@ int main(int argc, char** argv) {
 
     auto t0 = std::chrono::steady_clock::now();
     cpu_global_init();
+    if (!gdb_addr.empty()) {  // --gdb: the debugger hooks go on before any guest code runs
+        std::string err;
+        if (!gdb_listen(gdb_addr, &err)) {
+            fprintf(stderr, "%s\n", err.c_str());
+            return 2;
+        }
+    }
     hle_init();             // + platform370: fmod, the clock, the network redirect
     jni::Vm::get().init();  // + platform370: the 3.7.0 Java answers, the HTTP client
     LoadedLib* lib = load_library(lib_path);

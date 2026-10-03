@@ -1,6 +1,6 @@
 # Plan: one driver layer for the port and the emulator
 
-Status: **done but step 7 and the emulator's phase trace** (agent `consolidate`, 2026-10-03; written by agent
+Status: **done but the emulator's phase trace** (agent `consolidate`; step 7 by agent `rebuild-tooling`, 2026-10-03; written by agent
 `summer-demo`, 2026-10-01, approved by the user 2026-10-03 as part of port/PLAN.md task 5). What was built
 is in control/README.md "soadrive"; "As built" at the end says, step by step, what changed from this plan.
 Two merges before it did parts of it: the faster-tests work (the slot pool `control/soaslot.py`,
@@ -139,7 +139,9 @@ Each step is one or a few commits, keeps every old entry point working, and is g
    shortcuts in favour of taps where both programs must run it, run against both targets once.
    Rename the `restore_*` sessions (the switch is gone); keep the old file names as wrappers until no
    caller uses them.
-7. **A GDB remote stub in the runtime** (the user, 2026-10-02; done alongside these control changes): `runtime/` serves
+7. **A GDB remote stub in the runtime** ✅ (2026-10-03, task 5: `runtime/src/core/gdbstub.*`, `--gdb` on soa / soa-emu /
+   soa-viewer, `control/gdbclient.py`, `control/gdbinit-soa`; runtime/README.md "Debugging the guest with gdb"; the
+   soadrive integration comes with the consolidation) (the user, 2026-10-02; done alongside these control changes): `runtime/` serves
    the GDB remote serial protocol for the **guest** (AArch64) on `--gdb HOST:PORT` (soa, soa-emu, soa-viewer;
    off by default), so `gdb-multiarch` (installed) can attach to the running client.
    - **Target description:** aarch64 core registers (x0-x30, sp, pc, cpsr) and the FP/SIMD registers (v0-v31, fpsr,
@@ -223,7 +225,7 @@ Each step is one or a few commits, keeps every old entry point working, and is g
   (P5a removed it).
 - **Step 4:** the packet log for the in-process server existed already (`soa --log-packets`, faster-tests); the
   emulator's phase trace was not added (sessions that need phase lines stay port-only).
-- **Step 7:** being built by agent `rebuild-tooling` (the runtime's stub, `control/gdbclient.py`); `soadrive/gdb.py`
+- **Step 7:** built by agent `rebuild-tooling` (the runtime's stub, `control/gdbclient.py`); `soadrive/gdb.py`
   wires it: `Config(gdb=True)` starts the client with `--gdb 127.0.0.1:PORT`, `Run.gdb()` attaches at a milestone.
 - **Step 8:** control/README.md, port/README.md updated; `port/scripts/phone370.sh` stays for the scripts not converted
   (debug sessions, `profile_extra.sh`, `smoke_vs_emu.sh`, `scripts/make-phone-370.sh`'s docs); the forwarding stubs

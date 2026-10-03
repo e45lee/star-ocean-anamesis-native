@@ -970,6 +970,7 @@
    "apis": [
     "AchievementActiveList",
     "AchievementListReceive",
+    "AchievementReceive",
     "DeepSpaceActiveList",
     "DeepSpaceAutoMemberSelect",
     "DeepSpaceMissionEnd",
@@ -1164,7 +1165,6 @@
   "emu:seeded": {
    "apis": [
     "CreatePlayer",
-    "EndMissionTalk",
     "GetGachaInData",
     "GetMissionList",
     "GetPlayer",
@@ -1198,7 +1198,6 @@
    "apis": [
     "CreatePlayer",
     "EndMissionTalk",
-    "GetGachaInData",
     "GetMissionList",
     "GetPlayMission",
     "GetPlayer",
@@ -1272,13 +1271,13 @@
     "GetServerTime",
     "GetSphere211Info",
     "Login",
+    "MissionEnd",
     "MissionStart",
     "NoLoginStart",
     "ReturnSphere211",
     "Sphere211AutoMemberSelect",
     "Sphere211FloorClear",
     "Sphere211MissionEnd",
-    "Sphere211MissionFailed",
     "Sphere211MissionStart",
     "Sphere211SelectedFloor",
     "Sphere211StaminaHeal",
@@ -1290,13 +1289,11 @@
    "apis": [
     "GetPlayer",
     "GetServerTime",
-    "GetSphere211Info",
     "Login",
     "MissionStart",
     "NoLoginStart",
     "Sphere211AutoMemberSelect",
     "Sphere211MissionContinue",
-    "Sphere211MissionEnd",
     "Sphere211MissionFailed",
     "Sphere211MissionStart",
     "Sphere211StaminaHeal"
@@ -1325,6 +1322,16 @@
     "MissionTalk",
     "NoLoginStart",
     "UpdateTutorial"
+   ],
+   "source": "declared"
+  },
+  "session:gdb-probe": {
+   "apis": [
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
    ],
    "source": "declared"
   },

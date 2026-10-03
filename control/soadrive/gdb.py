@@ -5,17 +5,20 @@ guest: soa, soa-emu, soa-viewer), and Run.gdb() connects control/gdbclient.py's 
     s = Run(target, layout, Config(..., gdb=True))
     ... s.wait_for("home", ...)                      # a milestone
     with s.gdb() as g:                               # stops every guest thread
-        g.break_symbol("_ZN5CHome11GetAdjutantEv")
+        gdb.break_symbol(g, "_ZN4Aska14RenderDeviceGL31SwapBuffers_RenderThreadContextEv")
         g.cont(timeout=60)
         this = g.reg("x0"); raw = g.read(this, 0x40)
     # leaving the block detaches: breakpoints removed, the client runs on
 
 The stub and the client are agent rebuild-tooling's (runtime/src/core/gdbstub.cpp,
-control/gdbclient.py); until they are in this checkout, available() is False and Run.gdb() raises
-GdbUnavailable naming what is missing, and a run asked for gdb fails at start with the same reason."""
+control/gdbclient.py); without control/gdbclient.py available() is False, Run.gdb() raises
+GdbUnavailable and a run asked for gdb fails at start with the reason. The session `gdb-probe`
+(control/run.py gdb-probe) is the end-to-end check: attach at home, a breakpoint hit, registers and
+memory read, a step, detach, the client runs on."""
 import contextlib
 import importlib
 import os
+import subprocess
 import sys
 
 from .proc import REPO
@@ -57,3 +60,28 @@ def attach(port, timeout=30.0):
             g.detach()
         except Exception:
             pass
+
+
+def symbol_vaddr(symbol, lib=None):
+    """The ELF vaddr of a game-library symbol (mangled): gdbclient's (pyelftools), else `nm -D`
+    (the system python the wrappers run may lack pyelftools)."""
+    mod = _client_module()
+    try:
+        return mod.symbol_vaddr(symbol, lib)
+    except ImportError:
+        pass
+    path = lib or os.path.join(REPO, "work", "libSOA-3.7.0.so")
+    for args in (["nm", "-D", path], ["nm", path]):
+        out = subprocess.run(args, capture_output=True, text=True).stdout
+        for ln in out.splitlines():
+            f = ln.split()
+            if len(f) == 3 and f[2] == symbol and int(f[0], 16):
+                return int(f[0], 16)
+    raise KeyError("%s not in %s" % (symbol, path))
+
+
+def break_symbol(g, symbol, lib=None):
+    """A breakpoint on a game-library function; returns its address."""
+    addr = g.lib_base() + symbol_vaddr(symbol, lib)
+    g.set_break(addr)
+    return addr

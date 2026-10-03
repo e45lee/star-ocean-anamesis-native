@@ -90,6 +90,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T3 | `session:sphere211-continue` | 7.0 min | 1 | a lost Sphere 211 battle continued and retired, the stamina healed, the achievements | `port/scripts/sphere211_continue_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:episode-movie` | 8.0 min | 1 | an episode pack downloaded, the opening movie | `port/scripts/episode_movie_session.sh build/port/soa {out} {tmp} 2` |
 | T3 | `session:newplayer-download` | 15.0 min | 1 | the full 3 GB download from the in-process CDN, then the new player | `SOA_PHONE=none port/scripts/newplayer_session.sh build/port/soa {out} {tmp}` |
+| T3 | `session:gdb-probe` | 2.2 min | 1 | the guest debugger at a milestone (soadrive/gdb.py over the runtime's --gdb stub): attach at home, a breakpoint hit, x0 and memory read, a step, detach, the client runs on | `control/run.py gdb-probe build/port/soa {out} {tmp}` |
 | T3 | `session:debug` | 2.0 min | 1 | the framework's debug windows | `port/scripts/debug_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:debug-input` | 2.0 min | 1 | the debug windows' input | `port/scripts/debug_input_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:profile-extra` | 5.0 min | 1 | the profiling flow over the screens the others don't visit | `port/scripts/profile_extra.sh build/port/soa {out} {tmp}` |

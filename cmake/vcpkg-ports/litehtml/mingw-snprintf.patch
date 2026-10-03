@@ -1,0 +1,25 @@
+--- a/include/litehtml/os_types.h	2026-10-03 08:40:34.699926210 -0400
++++ b/include/litehtml/os_types.h	2026-10-03 08:40:41.447273831 -0400
+@@ -1,16 +1,11 @@
+ #ifndef LH_OS_TYPES_H
+ #define LH_OS_TYPES_H
+ 
+-#if defined( WIN32 ) || defined( _WIN32 ) || defined( WINCE )
+-
+-	#define t_itoa(value, buffer, size, radix)	_itoa_s(value, buffer, size, radix)
+-	#define t_snprintf(s, n, format, ...) _snprintf_s(s, _TRUNCATE, n, format, __VA_ARGS__)
+-
+-#else
+-
+-	#define t_itoa(value, buffer, size, radix)	snprintf(buffer, size, "%d", value)
+-	#define t_snprintf(s, n, format, ...) snprintf(s, n, format, __VA_ARGS__)
+-
+-#endif
++// dl-emu: the C99 functions everywhere. The Windows branch called _snprintf_s(s, _TRUNCATE, n, ...)
++// (_TRUNCATE as the buffer size) and _itoa_s; built by MinGW-w64 at -O3, the first document
++// litehtml parsed threw std::bad_alloc. tests/snprintf_s_args.c shows that call writes a NUL one
++// byte past the buffer on every call (msvcrt, MinGW-w64), at -O0 and -O3 alike.
++#define t_itoa(value, buffer, size, radix)	snprintf(buffer, size, "%d", value)
++#define t_snprintf(s, n, format, ...) snprintf(s, n, format, __VA_ARGS__)
+ 
+ #endif  // LH_OS_TYPES_H

@@ -19,6 +19,7 @@
 #   build/runtime/soaruntime_tests  the runtime's extension-point tests (runtime/README.md)
 #   build/platform370/libsoaplatform370.a  the 3.7.0 platform layer soa-emu and soa link (platform370/README.md)
 #   build/tools/aif2png/aif2png     the AIF -> PNG converter (tools/aif2png)
+#   build/webview/soa-webview-render  renders an HTML page to a PNG with the web view's renderer (docs/webview.md)
 #
 # One part: `cmake --build build --target soa` (or soa-server, soa-emu, soa-viewer,
 # soaruntime_tests, aif2png), or turn parts off at configure time with the options below.
@@ -44,6 +45,8 @@ if(NOT DEFINED ENV{VCPKG_MAX_CONCURRENCY})
   set(ENV{VCPKG_MAX_CONCURRENCY} 8)
 endif()
 set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_CURRENT_SOURCE_DIR}/cmake/vcpkg-triplets" CACHE STRING "")
+# Our overlay ports (cmake/vcpkg-ports/): litehtml, patched (the web view, webview/).
+list(APPEND VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_SOURCE_DIR}/cmake/vcpkg-ports")
 
 project(soa CXX C)
 
@@ -53,11 +56,15 @@ option(SOA_BUILD_EMULATOR "build emulator/ (soa-emu); needs platform370" ON)
 option(SOA_BUILD_PLATFORM370 "build platform370/ (libsoaplatform370, the 3.7.0 platform layer)" ON)
 option(SOA_BUILD_VIEWER "build emulator-viewer/ (soa-viewer)" ON)
 option(SOA_BUILD_TOOLS "build the host tools (tools/aif2png)" ON)
+option(SOA_BUILD_WEBVIEW "build webview/ (libsoawebview, soa-webview-render: the HTML page renderer, docs/webview.md)" ON)
 if(SOA_BUILD_PORT AND NOT SOA_BUILD_SERVER)
   message(FATAL_ERROR "SOA_BUILD_PORT needs SOA_BUILD_SERVER: soa links libsoaserver")
 endif()
 if(SOA_BUILD_PORT AND NOT SOA_BUILD_PLATFORM370)
   message(FATAL_ERROR "SOA_BUILD_PORT needs SOA_BUILD_PLATFORM370: soa links libsoaplatform370")
+endif()
+if(SOA_BUILD_PORT AND NOT SOA_BUILD_WEBVIEW)
+  message(FATAL_ERROR "SOA_BUILD_PORT needs SOA_BUILD_WEBVIEW: soa links libsoawebview (the web view prototype)")
 endif()
 if(SOA_BUILD_EMULATOR AND NOT SOA_BUILD_PLATFORM370)
   message(FATAL_ERROR "SOA_BUILD_EMULATOR needs SOA_BUILD_PLATFORM370: soa-emu links libsoaplatform370")
@@ -90,6 +97,9 @@ if(SOA_BUILD_PLATFORM370)
 endif()
 if(SOA_BUILD_SERVER)
   add_subdirectory(server)    # libsoaserver, soanet, soa-server
+endif()
+if(SOA_BUILD_WEBVIEW)
+  add_subdirectory(webview)   # libsoawebview + soa-webview-render (litehtml; no runtime dependency)
 endif()
 if(SOA_BUILD_PORT)
   add_subdirectory(port)      # soa: runtime objects + port/src + libsoaserver

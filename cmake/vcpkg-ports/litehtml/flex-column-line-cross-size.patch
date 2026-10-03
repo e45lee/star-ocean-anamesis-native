@@ -1,0 +1,16 @@
+--- a/src/flex_line.cpp	2026-10-03 08:21:56.656047452 -0400
++++ b/src/flex_line.cpp	2026-10-03 08:21:56.668233652 -0400
+@@ -438,6 +438,13 @@
+ 		{
+ 			cross_size = max_cross_size;
+ 		}
++		// The container's inner width is definite (a block's): an item wider than it overflows,
++		// it doesn't widen the line, so stretched items stay inside the container (CSS Flexbox 9.4
++		// step 8, single-line). Without this one wide item made every stretched sibling wider.
++		if(max_cross_size.is_default() && self_size.render_width > 0 && cross_size > self_size.render_width)
++		{
++			cross_size = self_size.render_width;
++		}
+ 	}
+ }
+ 

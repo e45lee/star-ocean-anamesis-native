@@ -1,0 +1,20 @@
+{
+  "$comment": "Copied whole from the Dragalia Lost project's overlay port (cmake/vcpkg-ports/litehtml at 049be74); keep it in sync. The one difference: mingw-snprintf.patch's hunk header reads @@ -1,16 +1,11 @@ (Dragalia's a4c1697 added a comment line to the hunk without updating its count, +1,10, so git apply rejects that file as corrupt). docs/webview.md, 'The vcpkg port'.",
+  "name": "litehtml",
+  "version": "0.10",
+  "port-version": 2,
+  "description": "litehtml is the lightweight HTML rendering engine with CSS2/CSS3 support.",
+  "homepage": "https://github.com/litehtml/litehtml",
+  "license": "BSD-3-Clause",
+  "dependencies": [
+    "gumbo",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

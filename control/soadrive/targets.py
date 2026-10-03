@@ -431,7 +431,11 @@ class Run:
         if self.layout.state_end and os.path.exists(self.state_db):
             self.state("end")
         cleanup = self.layout.phone_cleanup
-        if cleanup and not self.keep and os.path.isdir(cleanup):
+        if cleanup and not self.keep and os.path.islink(cleanup):
+            # a Windows run's phone: on the Windows drive (winhost.local_dir), linked here
+            shutil.rmtree(os.path.realpath(cleanup), ignore_errors=True)
+            os.remove(cleanup)
+        elif cleanup and not self.keep and os.path.isdir(cleanup):
             shutil.rmtree(cleanup, ignore_errors=True)
         with open(self.layout.steps, "w") as f:
             f.write("\n".join(self.results) + "\n" + ("FAIL" if self.failed else "PASS") + "\n")

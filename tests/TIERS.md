@@ -16,6 +16,7 @@ tools/gate.sh T2 --out /tmp/gate-t2   # before reporting a batch
 tools/gate.sh shard:battle session:gacha   # named tests
 tools/gate.sh T1 --git-diff main --list    # the plan only
 tools/tests_for.py --git-diff main    # what T1 would pick, and why
+tools/gate.sh T1 --git-diff main --software-gl   # the clients on llvmpipe, not the host GPU (docs/testing-software-gl.md)
 ```
 
 `tools/gate.sh` runs the build first and alone, then everything else at once: the checks on 4 workers, the game tests in parallel (each queues for a game slot: control/README.md "The slot pool"), and the selected tests/diff shards and flows in one tests/diff run. Each test writes `OUT/<test>/` and `OUT/<test>.log`; the summary table (PASS / FAIL, the time against the measured one) goes to the terminal and `OUT/summary.txt`; exit 1 when anything fails.

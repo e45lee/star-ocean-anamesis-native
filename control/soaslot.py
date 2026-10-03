@@ -10,7 +10,8 @@ it (the PID stays the same, so `$!` is the game's `timeout`), the client inherit
 frees itself when the client exits or is killed; no stale locks, no cleanup. flock(1) and Python's
 fcntl.flock take the same locks.
 
-    control/soaslot.py run [--name NAME] -- CMD ARGS...   take a slot (waiting for one), exec CMD
+    control/soaslot.py run [--name NAME] [--software-gl] -- CMD ARGS...
+                                                          take a slot (waiting for one), exec CMD
     control/soaslot.py status                             the slots: free, or who holds them
     control/soaslot.py slots                              N (what `run` uses)
     control/soaslot.py fps DIR...                         the frame rates of the client logs under DIR
@@ -18,6 +19,8 @@ fcntl.flock take the same locks.
                                                           lifetime, on fd 9 (its children inherit it)
     control/soaslot.py pick NAME                          (soaslot.sh's helper) waits until a slot is
                                                           free and prints its file
+    control/soaslot.py gl-env                             (soaslot.sh's helper) `export` lines for
+                                                          SOA_SLOT_SOFTWARE_GL (nothing when it's off)
 
 Env:
     SOA_SLOTS=N        the pool's size (0: no pool, never wait). Default: DEFAULT_SLOTS (measured on
@@ -28,6 +31,11 @@ Env:
                        brief), which covers game processes that don't go through the pool
     SOA_SLOT_STAGGER=S at least S seconds (default 4) between two clients' starts machine-wide:
                        a dozen clients booting at once saturate the cores
+    SOA_SLOT_SOFTWARE_GL=1  (opt-in, harness only; default off: the host GPU) the clients render
+                       on Mesa's llvmpipe instead of the host GPU: acquire(), `run` and
+                       soaslot_take export SOFTWARE_GL_ENV (+ SOFTWARE_GL_DEFAULTS unless set)
+                       for the clients they start
+                       (docs/testing-software-gl.md; `tools/gate.sh --software-gl` sets it)
     SOA_SLOT_HELD=1    set by `run` for the command it starts: a nested `run` (a script that
                        starts another script) doesn't take a second slot (no hold-and-wait)
 
@@ -48,6 +56,34 @@ import time
 # to 10 GB, booting clients dropped to 20-28 fps and a run timed out. 12 leaves room for the
 # clients and builds outside the pool.
 DEFAULT_SLOTS = 12
+
+
+# What SOA_SLOT_SOFTWARE_GL=1 puts in the clients' environment (docs/testing-software-gl.md). The
+# clients' SDL creates its GL ES contexts through X11 EGL (runtime app/sdl_gl.cpp). On WSL the host
+# GPU is Mesa's d3d12 gallium driver, which runs under the same "software" (drisw) loader as
+# llvmpipe and is chosen by GALLIUM_DRIVER=d3d12 (this machine's ~/.profile exports it), so
+# LIBGL_ALWAYS_SOFTWARE=1 alone keeps the GPU: GALLIUM_DRIVER is overridden. LP_NUM_THREADS (llvmpipe's
+# rasterizer threads per screen; default one per core, 32 here, ~160 threads per client) is only a
+# default a caller's value overrides: 4 drew the home screen as fast as 32 at two thirds of the CPU.
+SOFTWARE_GL_ENV = {"GALLIUM_DRIVER": "llvmpipe", "LIBGL_ALWAYS_SOFTWARE": "1"}
+SOFTWARE_GL_DEFAULTS = {"LP_NUM_THREADS": "4"}
+
+
+def software_gl():
+    """docs/environment.md's on/off rule: unset or empty = off (the default), 0/false/no/off = off."""
+    v = os.environ.get("SOA_SLOT_SOFTWARE_GL", "").strip().lower()
+    return v not in ("", "0", "false", "no", "off")
+
+
+def apply_software_gl():
+    """With SOA_SLOT_SOFTWARE_GL on: SOFTWARE_GL_ENV into this process's environment, which every
+    client it then starts inherits. Returns the variables set ({} when off)."""
+    if not software_gl():
+        return {}
+    os.environ.update(SOFTWARE_GL_ENV)
+    for k, v in SOFTWARE_GL_DEFAULTS.items():
+        os.environ.setdefault(k, v)
+    return {k: os.environ[k] for k in list(SOFTWARE_GL_ENV) + list(SOFTWARE_GL_DEFAULTS)}
 
 
 def slot_dir():
@@ -135,7 +171,9 @@ def stagger():
 def acquire(name="game", quiet=False, timeout=None):
     """Takes a slot, waiting as long as it takes (or `timeout` s: then None). Returns the slot's
     file descriptor (keep it open while the client runs; close it to free the slot), or -1 when the
-    pool is off (SOA_SLOTS=0) or this process already runs under a slot (SOA_SLOT_HELD)."""
+    pool is off (SOA_SLOTS=0) or this process already runs under a slot (SOA_SLOT_HELD).
+    With SOA_SLOT_SOFTWARE_GL on, the clients started after it render on llvmpipe."""
+    apply_software_gl()
     if n_slots() == 0 or os.environ.get("SOA_SLOT_HELD"):
         return -1
     t0, said, end = time.monotonic(), False, (time.monotonic() + timeout) if timeout else None
@@ -239,6 +277,10 @@ def main(argv):
     if cmd == "fps":
         fps(argv[1:])
         return 0
+    if cmd == "gl-env":
+        for k, v in apply_software_gl().items():
+            print("%s=%s; export %s" % (k, v, k))
+        return 0
     if cmd == "pick":
         # soaslot.sh: wait until a slot is free and print its path; the shell then takes it with
         # flock -n on its own descriptor (and asks again if another process was quicker).
@@ -251,8 +293,12 @@ def main(argv):
         return 0
     if cmd == "run":
         args, name = argv[1:], None
-        if args[:1] == ["--name"]:
-            name, args = args[1], args[2:]
+        while args[:1] in (["--name"], ["--software-gl"]):  # either order
+            if args[0] == "--name":
+                name, args = args[1], args[2:]
+            else:
+                os.environ["SOA_SLOT_SOFTWARE_GL"] = "1"
+                args = args[1:]
         if args[:1] == ["--"]:
             args = args[1:]
         if not args:
@@ -266,7 +312,7 @@ def main(argv):
             os.set_inheritable(fd, True)
             os.environ["SOA_SLOT_HELD"] = "1"
         os.execvp(args[0], args)
-    print("soaslot: unknown command %s (run, status, slots)" % cmd, file=sys.stderr)
+    print("soaslot: unknown command %s (run, status, slots, fps, gl-env)" % cmd, file=sys.stderr)
     return 2
 
 

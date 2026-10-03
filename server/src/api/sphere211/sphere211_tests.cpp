@@ -740,7 +740,7 @@ NATIVE_TEST("sphere211/items") {
 
 // EX characters (master_role.rank 5): a sortie with one uses one of max_revive_count (3) uses
 // (Player.sphere211_revive_count); only the EX character departs; with no uses left the start
-// is refused (10208); 帰還 gives the uses back.
+// is a plain sortie (d); 帰還 gives the uses back.
 NATIVE_TEST("sphere211/ex-sorties") {
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
         c.st.exec("begin");
@@ -782,13 +782,15 @@ NATIVE_TEST("sphere211/ex-sorties") {
             t.expect_eq(departed(uids[4]) || departed(uids[5]) || departed(uids[6]), false, "its companions don't");
             call(c, "Sphere211MissionFailed", {start, 0});
         }
-        // no uses left: refused, nothing spent or departed
+        // no uses left: (d) accepted as a plain sortie (everyone departs, no use counted)
         c.st.q("update sphere set stamina = 9", {});
         code = 0;
-        call(c, "Sphere211MissionStart", {start, 0, uids[4], uids[3], uids[5], 0, 0});
-        t.expect_eq(code, 10208u, "(d) EX sorties used up: 10208");
-        t.expect_eq(departed(uids[3]), false, "refused: nobody departs");
-        t.expect_eq(c.st.one("select stamina from sphere", {}), (int64_t)9, "refused: no stamina spent");
+        d = call(c, "Sphere211MissionStart", {start, 0, uids[4], uids[3], uids[5], 0, 0});
+        t.expect_eq(code, 0u, "(d) EX sorties used up: accepted as a plain sortie");
+        t.expect_eq(revive(d), max, "(d) used up: no use counted");
+        t.expect_eq(departed(uids[3]) && departed(uids[4]) && departed(uids[5]), true, "(d) used up: everyone departs");
+        call(c, "Sphere211MissionFailed", {start, 0});
+        c.st.q("update sphere set stamina = 9", {});
         // a plain sortie: everyone departs, no use counted
         code = 0;
         d = call(c, "Sphere211MissionStart", {start, 0, uids[4], uids[5], uids[6], 0, 0});

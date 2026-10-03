@@ -167,8 +167,11 @@ u32 enemy_level(Ctx& ctx, const Floor& floor, u32 asset_id) {
 //       here); (a) uimsg_sphere211_mission_start_with_deity: the characters sortieing with an EX
 //       character don't become 出撃済み, the EX character does. (d) Departing happens at the start,
 //       as for every sortie (the text says "on a clear"), and one use per sortie however many EX
-//       characters it has; with no uses left the start is refused with 10208 (kItemUnusable) (d:
-//       the code; the client's dialog then says 残り 0 回 and doesn't stop the start itself).
+//       characters it has. With no uses left the sortie is accepted as a plain one (everyone
+//       departs, no use counted): (d) a rule we couldn't reverse engineer (the client's dialog says
+//       残り 0 回 and doesn't stop the start itself; what the online server did is unknown; a
+//       refusal would send the player back to the title, Sphere211MissionStart's error handling
+//       type 2), the user's choice 2026-10-03.
 //   (d) the gauge's regeneration starts when it leaves full.
 // Answers: the core MissionStart's keys (MissionParameter with the enemy level, PlayMission,
 // BattleParameter) and the dive state.
@@ -198,8 +201,10 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
     const std::vector<u64> ex = ex_members(ctx, override_, lender != 0);
     u32 revive_count = (u32)ctx.st.one("select revive_count from sphere where id = 1", {});
     u32 revive_max = ctx.global_u32("max_revive_count", 3);
-    if (!ex.empty() && revive_count >= revive_max)
-        return ext::refusef(ctx, method, ErrorCode::kItemUnusable, "EX sorties used up (%u of %u)", revive_count, revive_max);
+    // (d) no uses left: a plain sortie (see above)
+    const bool ex_sortie = !ex.empty() && revive_count < revive_max;
+    if (!ex.empty() && !ex_sortie)
+        LOGI("server", "Sphere211MissionStart: EX sorties used up (%u of %u): a plain sortie, everyone departs", revive_count, revive_max);
     // 3. the core battle
     Request core{"MissionStart", kFidMissionStart, {kMissionTypeEvent, mission_id, 0, 0, 0, 0, 0}, {}, {}};
     Value data = ctx.core_mission(core, &override_);
@@ -209,7 +214,7 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
     if (stamina >= stamina_max(ctx)) ctx.st.q("update sphere set stamina_at = ?", {t});  // (d) regen starts when leaving full
     ctx.st.q("update sphere set stamina = stamina - ?", {floor.use_stamina});
     ctx.st.q("update sphere_cell set playing = case when asset_id = ? then 1 else 0 end, updated_at = ?", {asset_id, t});
-    if (ex.empty()) {
+    if (!ex_sortie) {
         for (u64 uid : override_.party) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {uid});
         if (override_.helper && !lender) ctx.st.q("insert or ignore into sphere_departed (uid) values (?)", {override_.helper});
     } else {  // an EX sortie: only the EX characters depart; one use

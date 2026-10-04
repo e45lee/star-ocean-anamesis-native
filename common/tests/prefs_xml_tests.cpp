@@ -53,9 +53,10 @@ void prefs_xml_tests() {
     for (const char* rel : {"port/server-data/test-seed.xml", "data/saves/seed/Game.xml", "data/saves/client/Game.xml", "data/saves/client/Aska.xml"}) {
         bool ok = false;
         std::string in = file_bytes(std::string(SOA_REPO_DIR) + "/" + rel, ok);
+        if (!ok) in = file_bytes(rel, ok);  // a staged copy (Windows): run from its root
         if (!ok) {
 #ifdef _WIN32
-            fprintf(stderr, "skip  %s: not staged\n", rel);
+            fprintf(stderr, "skip  %s: not staged (run from the repository root)\n", rel);
 #else
             codec_check(false, std::string(rel) + " is missing");
 #endif

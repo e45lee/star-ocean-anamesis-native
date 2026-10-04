@@ -3,5 +3,5 @@
 # tools/subsystem.py check warns about a function claimed by two subsystems.
 ^(\S+ )?Aska::(ASON|ACSV|MsgPack\w*|Json\w*)::
 ^(\S+ )?Framework::(CACSV|CCSV)::
-^(\S+ )?(_AsonSerializer|SerializerImpl::_Serializer_Impl<.*>)::
+^(\S+ )?(_AsonSerializer|AsonSerializer_Prepare|AsonSerializer|SerializerImpl::_Serializer_Impl<.*>)::
 ^(\S+ )?(msgpack|picojson)::

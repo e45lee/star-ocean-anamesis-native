@@ -2113,7 +2113,7 @@
      "name": "m_value",
      "type": {
       "kind": "bytes",
-      "ctype": "ACSV_AValue::(unnamed at /home/fish/star-ocean/star-ocean-anamesis-reverse/.claude/worktrees/n-types-core-dataf/port/src/native/data_formats/data_formats_layout.h:474:5)",
+      "ctype": "ACSV_AValue::(anonymous)",
       "size": 8
      },
      "size": 8
@@ -2821,7 +2821,7 @@
      "name": "m_data",
      "type": {
       "kind": "bytes",
-      "ctype": "tElement::(unnamed at /home/fish/star-ocean/star-ocean-anamesis-reverse/.claude/worktrees/n-types-core-dataf/port/src/native/data_formats/data_formats_layout.h:651:5)",
+      "ctype": "tElement::(anonymous)",
       "size": 8
      },
      "size": 8

@@ -327,6 +327,7 @@ def parse_layouts(text, ns):
 
 def short_type(name, ns):
     """A record name without this subsystem's namespace, also inside template arguments."""
+    name = re.sub(r"\((?:unnamed|anonymous) (?:struct|union|class|enum)? ?at [^)]*\)", "(anonymous)", name)  # no checkout path
     return re.sub(r"\b(?:struct|class|union|enum) ", "", name.replace(ns + "::", ""))
 
 

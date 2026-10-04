@@ -46,6 +46,8 @@ What it does not cover: the wire layer's own work (the bridge, the Ninja cipher,
 
 | `profile` | hand-written (`req` lines; agent fast-tests, 2026-10-03, from `tools/replay_coverage.py`'s gaps), the `items-party` options: the entry and player APIs with real arguments (SimpleLogin, UpdateView, UpdateKiyakuVersion, UpdatePlayerName, UpdateHome accepted and an unknown character, SetTitle: a default title, an achievement title not owned, 0), the presents (PresentList, GetPresent, GetPresentArray), AchievementActiveList / AchievementReceive, the favor APIs (UpdateFavorByTap, StaminaHealByFavor, UseFavorItem), LockItemArray / UnlockItem, the social lists (Blacklist, GetRecentlyPlayedList, SearchPlayer: refused, no other player), GetPlayer (PLAN-schema S9) two taps on a character with favor and the full loads that send them, the same day and the next | 33 |
 
+| `stubs` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 8), the `profile` options: Login, every stub once (the social calls with arguments: a player id, a location as f32 bits; the 27 `Debug*` without), GetPlayer: each answers `{Time}`, logs `stub: ...`, and the state is unchanged | 37 |
+
 The sweep is the coverage floor: with no arguments, some handlers decline (`not-handled`: 14 of 106 today) or refuse; the flows exercise the real arguments.
 
 **Fidelity.** Replayed on the build they were recorded with, the flows' replies equal the recorded ones byte for byte, except Login's `r_ver` (the CDN's revision: no CDN is built in a replay, so it is empty).

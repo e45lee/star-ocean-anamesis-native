@@ -652,8 +652,43 @@ void h_lambda(Cpu& c) {
     fatal("FakeApiCaller lambda with unknown vtable 0x%" PRIx64, (u64)vt);
 }
 
-template <u64 V>
-void h_status(Cpu& c) { at<u64>(c.x(8), 0) = V; }
+// The status-only FakeApiCaller methods (FAKEAPI_STATUS_ONLY) the port doesn't serve: the guest's
+// Status, nothing queued, so nothing reaches the local server. On the in-process route (port code,
+// not guest behaviour) each call is logged, `no handler: <Method>`, as the library logs a request
+// it has no handler for (docs/unimplemented-apis.md "Stub logging"); the client carries on without
+// an answer (CErrorHandlerWrap::Auto sees the fid not requesting and reports success).
+#define FAKEAPI_ST_ENTRY(sym, v) {sym, (u64)(v)},
+struct StatusOnly {
+    const char* sym;
+    u64 status;
+};
+constexpr StatusOnly kStatusOnly[] = {FAKEAPI_STATUS_ONLY(FAKEAPI_ST_ENTRY)};
+#undef FAKEAPI_ST_ENTRY
+bool on_fake_caller(u64 self);
+// "_ZN13FakeApiCaller9GetConfigEv" -> "GetConfig"
+std::string status_method(const char* sym) {
+    const char* p = sym + strlen("_ZN13FakeApiCaller");
+    size_t n = 0;
+    while (*p >= '0' && *p <= '9') n = n * 10 + (size_t)(*p++ - '0');
+    return std::string(p, n);
+}
+// Initialize, BeginBridge and EndBridge are the caller's plumbing, not requests: not logged.
+bool is_plumbing(const std::string& m) { return m == "Initialize" || m == "BeginBridge" || m == "EndBridge"; }
+template <int I>
+void h_status(Cpu& c) {
+    if (on_fake_caller(c.x(0))) {
+        static const std::string m = status_method(kStatusOnly[I].sym);
+        if (!is_plumbing(m))
+            LOGW("fakeapi", "no handler: %s (status only, not served in-process: nothing sent, nothing stored; "
+                 "docs/unimplemented-apis.md)", m.c_str());
+    }
+    at<u64>(c.x(8), 0) = kStatusOnly[I].status;
+}
+template <int... I>
+constexpr std::array<HostFn, sizeof...(I)> status_hooks(std::integer_sequence<int, I...>) {
+    return {&h_status<I>...};
+}
+constexpr auto kStatusHooks = status_hooks(std::make_integer_sequence<int, (int)(sizeof(kStatusOnly) / sizeof(kStatusOnly[0]))>{});
 
 // FakeApiCaller::GetGachaInData(): the guest only returns Status 0 (nothing queued, so the gacha
 // screen gets no GachaHashMap and lists no gachas). Port option --fake-server (not guest
@@ -1025,13 +1060,13 @@ bool register_all() {
         snprintf(at_sym, 24, "@0x%" PRIx64, (u64)kRequests[i].lambda_op);
         reg({at_sym, h_lambda, "FakeApiCaller lambda"});
     }
-#define FAKEAPI_ST(sym, v) \
-    if (strcmp(sym, kGetGachaInData) != 0 && strcmp(sym, kGetWorldMapInfoList) != 0 && !is_served_status_only(sym) && \
-        strcmp(sym, kDeepSpaceActiveList) != 0 && strcmp(sym, kHome3DAnd2DSwitching) != 0 && !is_sphere_method(sym) && \
-        !is_event_api(sym)) \
-        reg({sym, &h_status<v>, "FakeApiCaller status"});
-    FAKEAPI_STATUS_ONLY(FAKEAPI_ST)
-#undef FAKEAPI_ST
+    for (size_t i = 0; i < kStatusHooks.size(); i++) {
+        const char* sym = kStatusOnly[i].sym;
+        if (strcmp(sym, kGetGachaInData) != 0 && strcmp(sym, kGetWorldMapInfoList) != 0 && !is_served_status_only(sym) &&
+            strcmp(sym, kDeepSpaceActiveList) != 0 && strcmp(sym, kHome3DAnd2DSwitching) != 0 && !is_sphere_method(sym) &&
+            !is_event_api(sym))
+            reg({sym, kStatusHooks[i], "FakeApiCaller status"});
+    }
     reg({kGetGachaInData, h_get_gacha_in_data, "FakeApiCaller status (served with --fake-server)"});
     for (size_t i = 0; i < kServedHooks.size(); i++)
         reg({kServedStatusOnly[i].sym, kServedHooks[i], "FakeApiCaller status (served by the local server in-process)"});

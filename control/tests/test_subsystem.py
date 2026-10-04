@@ -125,3 +125,25 @@ def test_skeleton_classes_with_methods(scratch):
             st = {s["name"]: s for s in json.load(f)["structs"]}
         assert [m["name"] for m in st["CWidget"]["methods"]] == ["CWidget", "GetId", "SetPos", "Link"]
         assert "ok   dummye" in run(scratch, sys.executable, TOOL, "--root", scratch, "check")
+
+
+@pytest.mark.skipif(not shutil.which("clang++"), reason="export-types reads clang's record layouts")
+def test_export_template_instantiations(scratch):
+    """A class template has no layout of its own; `using X = T<...>;` aliases export its instantiations."""
+    run(scratch, sys.executable, TOOL, "--root", scratch, "new", "dummyt")
+    p = os.path.join(scratch, "port/src/native/dummyt/dummyt_layout.h")
+    with open(p) as f:
+        text = f.read()
+    text = text.replace("}  // namespace soa::native::dummyt",
+                        "template <typename T>\nclass TVec {\npublic:\n    T* m_data;\n    u32 m_size;\n};\n"
+                        "template <typename T>\nusing TAlias = TVec<T>;\nstruct Elem { u32 a; };\nusing TVecElem = TVec<Elem>;\nusing TVecU32 = TVec<u32>;\n"
+                        "struct Holder { TVec<Elem> v; };\n\n}  // namespace soa::native::dummyt")
+    with open(p, "w") as f:
+        f.write(text)
+    run(scratch, sys.executable, TOOL, "--root", scratch, "export-types", "dummyt")
+    import json
+    with open(os.path.join(scratch, "port/decomp/dummyt/types.json")) as f:
+        st = {s["name"]: s for s in json.load(f)["structs"]}
+    assert set(st) == {"Elem", "TVec<Elem>", "TVec<unsigned int>", "Holder"}
+    assert st["TVec<Elem>"]["fields"][0]["type"] == {"kind": "ptr", "to": "Elem"}
+    assert st["Holder"]["fields"][0]["type"] == {"kind": "struct", "name": "TVec<Elem>"}

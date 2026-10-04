@@ -330,6 +330,8 @@ def stage_package(plat, kind, version, work, dbg_dir):
         src = os.path.join(ROOT, P["build"], sub, exe)
         if not os.path.isfile(src):
             raise SystemExit(f"package: {src} isn't built (run without --no-build)")
+        if os.path.getmtime(src) < int(git("log", "-1", "--format=%ct")):
+            log(f"WARNING: {src} is older than the last commit (BUILD-INFO.txt names HEAD): rebuild, or run without --no-build")
         strip_into(plat, src, os.path.join(root, exe), os.path.join(dbg_dir, exe + ".debug"))
     launchers = {"port": ["run-port"], "emulator": ["run-emulator"], "viewer": ["run-viewer"]}[kind]
     for base in launchers:

@@ -11,9 +11,11 @@
 #ifndef SOA_NATIVE_RENDER_TEST_UTIL_H
 #define SOA_NATIVE_RENDER_TEST_UTIL_H
 
+#include <condition_variable>
 #include <cstdint>
 #include <functional>
 #include <initializer_list>
+#include <mutex>
 
 #include "core/cpu.h"
 #include "core/loader.h"
@@ -48,6 +50,29 @@ inline bool has_vtable(TestContext& t, const void* obj, const char* ztv) {
 // `timeout_ms`). Returns false (and fails the test) when no frame came: the game isn't painting.
 bool on_frame(TestContext& t, const std::function<void()>& body, int timeout_ms = 20000);
 
+// A probe on a guest function, for objects no global reaches (a model's animation handler, a draw's
+// material): TEST_PROBE(name, "mangled symbol") registers a NATIVE_TEST_HOOK (--selftest only) that
+// forwards every call to the original (x0..x8 and v0..v7 as they came: no stack arguments, so only
+// for functions with at most 8 integer and 8 FP arguments) and, while a test has it armed, first runs
+// the test's body on the calling thread with the call's registers (this = cpu.x(0)). The body returns
+// true when it took the call (else the probe stays armed for the next one).
+struct Probe {
+    u64 orig = 0;
+    std::mutex mu;
+    std::condition_variable cv;
+    const std::function<bool(Cpu&)>* body = nullptr;
+    bool done = false;
+};
+void probe_hook(Probe& p, Cpu& c);
+// Arms `p` and waits (at most timeout_ms) until a call was taken. False (and a failed test) on timeout.
+bool probe_call(TestContext& t, Probe& p, const std::function<bool(Cpu&)>& body, int timeout_ms = 20000,
+                const char* what = "the probed function");
+
 }  // namespace soa::native::render::testutil
+
+#define TEST_PROBE(name, sym)                                                                   \
+    static ::soa::native::render::testutil::Probe name;                                         \
+    static void NATIVE_CONCAT(name, _hook)(::soa::Cpu & c) { ::soa::native::render::testutil::probe_hook(name, c); } \
+    NATIVE_TEST_HOOK(sym, NATIVE_CONCAT(name, _hook), &name.orig)
 
 #endif  // SOA_NATIVE_RENDER_TEST_UTIL_H

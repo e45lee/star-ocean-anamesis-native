@@ -4,7 +4,7 @@ on the running game's objects (port/src/native/render/render_test_util.h, on_fra
 has no 3D models. The client is soa on the wire (--server: with --selftest no natives are installed,
 so the in-process route isn't there either) against a fresh soa-server, the seeded player (LOCAL00001;
 --campaign-seed mf01_001): the title, TAP TO START, Login, the data check (the shared pre-downloaded
-phone, linked), home (the notice board closed); with --at battle also the login popups, ミッション ->
+phone, linked), home, the login popups closed; with --at battle also ミッション ->
 Mere -> 1-05 -> MissionStart, 15 s into the battle. Then OUT/start-tests is created
 (SOA_SELFTEST_START_FILE), the tests run on the game's threads and soa exits with their result.
 
@@ -54,15 +54,15 @@ def main(o):
         s.ctl("wait:8000")
         launch.data_check(s, lambda: s.in_client(r"ShowWebView\(http"), "home (notice board)", "00-download-dialog",
                           "00-download-done")
+        try:  # the notice board and the LOGIN BONUS closed: home's character model in view
+            _popups.login_popups(s.fifo, s.client_log, s.layout.shot_path("02-notice"), s.layout.shot_path("02-login-bonus"),
+                                 s.layout.shot_path("02-home"), alive=s.alive)
+            s.ok("login popups")
+        except Failed as e:
+            s.fail("login popups (FAIL: %s)" % e)
         if o.at == "home":
-            s.ctl("wait:5000", "tap:364:1133", "wait:10000", s.shot_cmd("02-home"))
+            s.ctl("wait:5000", s.shot_cmd("03-home"))
         else:
-            try:
-                _popups.login_popups(s.fifo, s.client_log, s.layout.shot_path("02-notice"), s.layout.shot_path("02-login-bonus"),
-                                     s.layout.shot_path("02-home"), alive=s.alive)
-                s.ok("login popups")
-            except Failed as e:
-                s.fail("login popups (FAIL: %s)" % e)
             n = s.n_packets(r"< GetMissionListRes")
             s.tap_until("ミッション -> GetMissionList", 60, ui370.HOME_MISSION, s.more_than(r"< GetMissionListRes", n))
             s.ctl("wait:6000")

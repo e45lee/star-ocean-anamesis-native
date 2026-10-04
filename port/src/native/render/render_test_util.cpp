@@ -60,4 +60,49 @@ bool on_frame(TestContext& t, const std::function<void()>& body, int timeout_ms)
     return true;
 }
 
+void probe_hook(Probe& p, Cpu& c) {
+    {
+        std::unique_lock<std::mutex> lk(p.mu);
+        if (p.body) {
+            const std::function<bool(Cpu&)>* body = p.body;
+            p.body = nullptr;  // taken: other threads' calls pass while it runs
+            lk.unlock();
+            bool took = (*body)(c);
+            lk.lock();
+            if (took) {
+                p.done = true;
+                p.cv.notify_all();
+            } else {
+                p.body = body;  // not this one: stay armed
+            }
+        }
+    }
+    GuestArgs ga;
+    for (int i = 0; i < 8; i++) ga.i(c.x(i));
+    for (int i = 0; i < 8; i++) ga.vecs.push_back(c.v(i));
+    ga.x8 = c.x(8);
+    GuestResult r = guest_call(p.orig, ga);
+    c.set_x(0, r.x0);
+    c.set_x(1, r.x1);
+    c.set_v(0, r.v0);
+    c.set_v(1, r.v1);
+    c.set_v(2, r.v2);
+    c.set_v(3, r.v3);
+}
+
+bool probe_call(TestContext& t, Probe& p, const std::function<bool(Cpu&)>& body, int timeout_ms, const char* what) {
+    std::unique_lock<std::mutex> lk(p.mu);
+    p.done = false;
+    p.body = &body;
+    if (p.cv.wait_for(lk, std::chrono::milliseconds(timeout_ms), [&] { return p.done; })) return true;
+    if (p.body == &body) {  // armed, not running: withdraw it
+        p.body = nullptr;
+        t.fail("no call of %s within %d ms", what, timeout_ms);
+        return false;
+    }
+    p.cv.wait(lk, [&] { return p.done || p.body == &body; });  // running now: `body` must outlive it
+    if (p.body == &body) p.body = nullptr;
+    return p.done;
+}
+
 }  // namespace soa::native::render::testutil

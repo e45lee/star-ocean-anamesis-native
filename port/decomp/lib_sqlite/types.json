@@ -1,0 +1,6 @@
+{
+ "subsystem": "lib_sqlite",
+ "generated_by": "tools/subsystem.py export-types lib_sqlite",
+ "header": "port/src/native/lib_sqlite/lib_sqlite_layout.h",
+ "structs": []
+}

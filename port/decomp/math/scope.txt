@@ -1,0 +1,6 @@
+# port/decomp/math/scope.txt: the guest functions the `math` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Aska::(Vector|Matrix|Matrix34|Quaternion|Segment|Line|Ray|Box|Sphere|Plane|AABB|AABB_MinMax)::
+^Framework::(CVector|CMatrix|CQuaternion)::
+^Collision::Math::

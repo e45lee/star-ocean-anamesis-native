@@ -1,4 +1,5 @@
 #include "native/common/native.h"
+#include "native/common/trampoline.h"
 
 #include <algorithm>
 #include <cinttypes>
@@ -94,7 +95,7 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route) {
             continue;
         }
         if (f.original) {
-            *f.original = trampolines[addr] = make_original_trampoline(addr);
+            *f.original = trampolines[addr] = make_relocated_trampoline(addr);  // (PC-relative prologues relocated: trampoline.h)
             if (!*f.original) {
                 LOGW("native", "%s: prologue can't be relocated; replacement not installed", f.symbol);
                 continue;

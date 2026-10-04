@@ -1,1 +1,370 @@
 vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x1e5b09c	0x1f5b09c	92	_ZN9Framework24CAnimationBlendContainerC2Ev	Framework::CAnimationBlendContainer::CAnimationBlendContainer()	animation_model	typed	
+0x1e5b0f8	0x1f5b0f8	88	_ZN9Framework24CAnimationBlendContainerD2Ev	Framework::CAnimationBlendContainer::~CAnimationBlendContainer()	animation_model	typed	
+0x1e5b150	0x1f5b150	176	_ZN9Framework24CAnimationBlendContainer7ReleaseEv	Framework::CAnimationBlendContainer::Release()	animation_model	typed	
+0x1e5b200	0x1f5b200	68	_ZN4Aska6TArrayIN9Framework24CAnimationBlendContainer17_tBlendMotionDataELb0EED2Ev	Aska::TArray<Framework::CAnimationBlendContainer::_tBlendMotionData, false>::~TArray()	animation_model	decompiled	
+0x1e5b244	0x1f5b244	80	_ZN9Framework24CAnimationBlendContainerD0Ev	Framework::CAnimationBlendContainer::~CAnimationBlendContainer()	animation_model	typed	
+0x1e5b294	0x1f5b294	284	_ZN9Framework24CAnimationBlendContainer10InitializeEjj	Framework::CAnimationBlendContainer::Initialize(unsigned int, unsigned int)	animation_model	typed	
+0x1e5b3b0	0x1f5b3b0	4	_ZN9Framework24CAnimationBlendContainer4OpenEv	Framework::CAnimationBlendContainer::Open()	animation_model	typed	
+0x1e5b3b4	0x1f5b3b4	172	_ZN9Framework24CAnimationBlendContainer9AttachAafERN4Aska10AsfHandlerEjPKvib	Framework::CAnimationBlendContainer::AttachAaf(Aska::AsfHandler&, unsigned int, void const*, int, bool)	animation_model	typed	
+0x1e5b460	0x1f5b460	36	_ZN9Framework24CAnimationBlendContainer16DetachAafByIndexEj	Framework::CAnimationBlendContainer::DetachAafByIndex(unsigned int)	animation_model	typed	
+0x1e5b484	0x1f5b484	76	_ZN9Framework24CAnimationBlendContainer17DetachAafByAnimIDEj	Framework::CAnimationBlendContainer::DetachAafByAnimID(unsigned int)	animation_model	typed	
+0x1e5b4d0	0x1f5b4d0	88	_ZN9Framework24CAnimationBlendContainer7pSearchEi	Framework::CAnimationBlendContainer::pSearch(int)	animation_model	typed	
+0x1e5b528	0x1f5b528	100	_ZN9Framework24CAnimationBlendContainer9AttachAetEjPKv	Framework::CAnimationBlendContainer::AttachAet(unsigned int, void const*)	animation_model	typed	
+0x1e5b58c	0x1f5b58c	136	_ZN9Framework24CAnimationBlendContainer16ReplaceAafAndAetEjPKvS2_	Framework::CAnimationBlendContainer::ReplaceAafAndAet(unsigned int, void const*, void const*)	animation_model	typed	
+0x1e5b614	0x1f5b614	20	_ZN9Framework24CAnimationBlendContainer5CloseEv	Framework::CAnimationBlendContainer::Close()	animation_model	typed	
+0x1e5b628	0x1f5b628	72	_ZNK9Framework24CAnimationBlendContainer15pSearchForIndexEi	Framework::CAnimationBlendContainer::pSearchForIndex(int) const	animation_model	typed	
+0x1e5b670	0x1f5b670	60	_ZNK9Framework24CAnimationBlendContainer12pSearchEmptyEv	Framework::CAnimationBlendContainer::pSearchEmpty() const	animation_model	typed	
+0x1e5b6ac	0x1f5b6ac	740	_ZN9Framework24CAnimationBlendContainer13ProgressBlendEf	Framework::CAnimationBlendContainer::ProgressBlend(float)	animation_model	typed	
+0x1e5b990	0x1f5b990	344	_ZN9Framework24CAnimationBlendContainer13ProgressFrameEfPKNS0_24tProgressFrame_ArgumentsE	Framework::CAnimationBlendContainer::ProgressFrame(float, Framework::CAnimationBlendContainer::tProgressFrame_Arguments const*)	animation_model	typed	
+0x1e5bae8	0x1f5bae8	764	_ZN9Framework24CAnimationBlendContainer20ProgressFrame_DirectEf	Framework::CAnimationBlendContainer::ProgressFrame_Direct(float)	animation_model	typed	
+0x1e5bde4	0x1f5bde4	852	_ZN9Framework24CAnimationBlendContainer13PlayAnimationEPN4Aska9FiberTaskE	Framework::CAnimationBlendContainer::PlayAnimation(Aska::FiberTask*)	animation_model	typed	
+0x1e5c160	0x1f5c160	188	_ZNK9Framework24CAnimationBlendContainer9OrAllFlagEv	Framework::CAnimationBlendContainer::OrAllFlag() const	animation_model	typed	
+0x1e5c21c	0x1f5c21c	8	_ZNK9Framework24CAnimationBlendContainer11NumElementsEv	Framework::CAnimationBlendContainer::NumElements() const	animation_model	typed	
+0x1e5c224	0x1f5c224	172	_ZN9Framework24CAnimationBlendContainer8rElementEi	Framework::CAnimationBlendContainer::rElement(int)	animation_model	typed	
+0x1e5c2d0	0x1f5c2d0	172	_ZNK9Framework24CAnimationBlendContainer9crElementEi	Framework::CAnimationBlendContainer::crElement(int) const	animation_model	typed	
+0x1e5c37c	0x1f5c37c	76	_ZNK9Framework24CAnimationBlendContainer7IsExistEi	Framework::CAnimationBlendContainer::IsExist(int) const	animation_model	typed	
+0x1e5c3c8	0x1f5c3c8	204	_ZNK9Framework24CAnimationBlendContainer31BlendRateAtLastRequestedElementEv	Framework::CAnimationBlendContainer::BlendRateAtLastRequestedElement() const	animation_model	typed	
+0x1e5c494	0x1f5c494	200	_ZN9Framework24CAnimationBlendContainer50SetBlendRateElapsedTimeLimitToLastRequestedElementEf	Framework::CAnimationBlendContainer::SetBlendRateElapsedTimeLimitToLastRequestedElement(float)	animation_model	typed	
+0x1e5c55c	0x1f5c55c	120	_ZN9Framework24CAnimationBlendContainer9MakeBlankEf	Framework::CAnimationBlendContainer::MakeBlank(float)	animation_model	typed	
+0x1e5c5d4	0x1f5c5d4	404	_ZN9Framework24CAnimationBlendContainer14StartAnimationEifb	Framework::CAnimationBlendContainer::StartAnimation(int, float, bool)	animation_model	typed	
+0x1e5c768	0x1f5c768	316	_ZN9Framework24CAnimationBlendContainer28StartDirectionBlendAnimationEPKNS0_25tDirectionBlend_ArgumentsEif	Framework::CAnimationBlendContainer::StartDirectionBlendAnimation(Framework::CAnimationBlendContainer::tDirectionBlend_Arguments const*, int, float)	animation_model	typed	
+0x1e5c8a4	0x1f5c8a4	124	_ZN9Framework24CAnimationBlendContainer20DirectionBlendRadianEjf	Framework::CAnimationBlendContainer::DirectionBlendRadian(unsigned int, float)	animation_model	typed	
+0x1e5c920	0x1f5c920	344	_ZN9Framework24CAnimationBlendContainer17StartAddAnimationEjfb	Framework::CAnimationBlendContainer::StartAddAnimation(unsigned int, float, bool)	animation_model	typed	
+0x1e5ca78	0x1f5ca78	344	_ZN9Framework24CAnimationBlendContainer23StartOverwriteAnimationEjfb	Framework::CAnimationBlendContainer::StartOverwriteAnimation(unsigned int, float, bool)	animation_model	typed	
+0x1e5cbd0	0x1f5cbd0	144	_ZN9Framework24CAnimationBlendContainer25ResetAnimationControllersEPN4Aska10AsfHandlerEPNS1_16CollisionHandlerE	Framework::CAnimationBlendContainer::ResetAnimationControllers(Aska::AsfHandler*, Aska::CollisionHandler*)	animation_model	typed	
+0x1e5cc60	0x1f5cc60	208	_ZN9Framework24CAnimationBlendContainer10StartFrameEf	Framework::CAnimationBlendContainer::StartFrame(float)	animation_model	typed	
+0x1e5cd30	0x1f5cd30	208	_ZN9Framework24CAnimationBlendContainer8EndFrameEf	Framework::CAnimationBlendContainer::EndFrame(float)	animation_model	typed	
+0x1e5ce00	0x1f5ce00	112	_ZN9Framework24CAnimationBlendContainer18GetAnimationLengthEj	Framework::CAnimationBlendContainer::GetAnimationLength(unsigned int)	animation_model	typed	
+0x1e5ce70	0x1f5ce70	200	_ZN9Framework24CAnimationBlendContainer12PresentFrameEf	Framework::CAnimationBlendContainer::PresentFrame(float)	animation_model	typed	
+0x1e5cf38	0x1f5cf38	200	_ZN9Framework24CAnimationBlendContainer16TerminateProcessEj	Framework::CAnimationBlendContainer::TerminateProcess(unsigned int)	animation_model	typed	
+0x1e5d000	0x1f5d000	184	_ZNK9Framework24CAnimationBlendContainer12IsEnableLoopEv	Framework::CAnimationBlendContainer::IsEnableLoop() const	animation_model	typed	
+0x1e5d0b8	0x1f5d0b8	184	_ZNK9Framework24CAnimationBlendContainer22IsEnableFrameStopAtEndEv	Framework::CAnimationBlendContainer::IsEnableFrameStopAtEnd() const	animation_model	typed	
+0x1e5d170	0x1f5d170	184	_ZNK9Framework24CAnimationBlendContainer16IsEnableFreeTermEv	Framework::CAnimationBlendContainer::IsEnableFreeTerm() const	animation_model	typed	
+0x1e5d228	0x1f5d228	184	_ZNK9Framework24CAnimationBlendContainer8IsLoopedEv	Framework::CAnimationBlendContainer::IsLooped() const	animation_model	typed	
+0x1e5d2e0	0x1f5d2e0	184	_ZNK9Framework24CAnimationBlendContainer14IsLoopedAtOnceEv	Framework::CAnimationBlendContainer::IsLoopedAtOnce() const	animation_model	typed	
+0x1e5d398	0x1f5d398	180	_ZNK9Framework24CAnimationBlendContainer7NumLoopEv	Framework::CAnimationBlendContainer::NumLoop() const	animation_model	typed	
+0x1e5d44c	0x1f5d44c	180	_ZN9Framework24CAnimationBlendContainer15ClearLoopedFlagEv	Framework::CAnimationBlendContainer::ClearLoopedFlag()	animation_model	typed	
+0x1e5d500	0x1f5d500	108	_ZN9Framework24CAnimationBlendContainer14AnimationSpeedEf	Framework::CAnimationBlendContainer::AnimationSpeed(float)	animation_model	typed	
+0x1e5d56c	0x1f5d56c	284	_ZN9Framework24CAnimationBlendContainer31AnimationSpeedByTransitionValueEjff	Framework::CAnimationBlendContainer::AnimationSpeedByTransitionValue(unsigned int, float, float)	animation_model	typed	
+0x1e5d688	0x1f5d688	116	_ZNK9Framework24CAnimationBlendContainer14AnimationSpeedEv	Framework::CAnimationBlendContainer::AnimationSpeed() const	animation_model	typed	
+0x1e5d6fc	0x1f5d6fc	180	_ZNK9Framework24CAnimationBlendContainer10StartFrameEv	Framework::CAnimationBlendContainer::StartFrame() const	animation_model	typed	
+0x1e5d7b0	0x1f5d7b0	180	_ZNK9Framework24CAnimationBlendContainer12PresentFrameEv	Framework::CAnimationBlendContainer::PresentFrame() const	animation_model	typed	
+0x1e5d864	0x1f5d864	180	_ZNK9Framework24CAnimationBlendContainer8EndFrameEv	Framework::CAnimationBlendContainer::EndFrame() const	animation_model	typed	
+0x1e5d918	0x1f5d918	200	_ZNK9Framework24CAnimationBlendContainer16PresentBlendRateEv	Framework::CAnimationBlendContainer::PresentBlendRate() const	animation_model	typed	
+0x1e5d9e0	0x1f5d9e0	180	_ZNK9Framework24CAnimationBlendContainer4FlagEv	Framework::CAnimationBlendContainer::Flag() const	animation_model	typed	
+0x1e5da94	0x1f5da94	180	_ZN9Framework24CAnimationBlendContainer12ClearAllFlagEv	Framework::CAnimationBlendContainer::ClearAllFlag()	animation_model	typed	
+0x1e5db48	0x1f5db48	200	_ZN9Framework24CAnimationBlendContainer6OrFlagEj	Framework::CAnimationBlendContainer::OrFlag(unsigned int)	animation_model	typed	
+0x1e5dc10	0x1f5dc10	200	_ZN9Framework24CAnimationBlendContainer7AndFlagEj	Framework::CAnimationBlendContainer::AndFlag(unsigned int)	animation_model	typed	
+0x1e5dcd8	0x1f5dcd8	204	_ZN9Framework24CAnimationBlendContainer9DetachApkEPKv	Framework::CAnimationBlendContainer::DetachApk(void const*)	animation_model	typed	
+0x1e5dda4	0x1f5dda4	176	_ZN9Framework24CAnimationBlendContainer26InitializeKeepHipsPositionEPN4Aska18HierarchicalObjectE	Framework::CAnimationBlendContainer::InitializeKeepHipsPosition(Aska::HierarchicalObject*)	animation_model	typed	
+0x1e5de54	0x1f5de54	140	_ZN9Framework24CAnimationBlendContainer29InitializeKeepPosRootPositionEPN4Aska18HierarchicalObjectE	Framework::CAnimationBlendContainer::InitializeKeepPosRootPosition(Aska::HierarchicalObject*)	animation_model	typed	
+0x1e5dee0	0x1f5dee0	40	_ZN9Framework24CAnimationBlendContainer18DeleteBlendManagerEv	Framework::CAnimationBlendContainer::DeleteBlendManager()	animation_model	typed	
+0x1e5e1e4	0x1f5e1e4	60	_ZN4Aska6TArrayIN9Framework24CAnimationBlendContainer17_tBlendMotionDataELb0EED0Ev	Aska::TArray<Framework::CAnimationBlendContainer::_tBlendMotionData, false>::~TArray()	animation_model	decompiled	
+0x1e5e220	0x1f5e220	312	_ZN4Aska6TArrayIN9Framework24CAnimationBlendContainer17_tBlendMotionDataELb0EE6ResizeElb	Aska::TArray<Framework::CAnimationBlendContainer::_tBlendMotionData, false>::Resize(long, bool)	animation_model	decompiled	
+0x1e5e358	0x1f5e358	56	_ZN9Framework17CAnimationElementC2Ev	Framework::CAnimationElement::CAnimationElement()	animation_model	typed	
+0x1e5e390	0x1f5e390	100	_ZN9Framework17CAnimationElementD1Ev	Framework::CAnimationElement::~CAnimationElement()	animation_model	typed	
+0x1e5e3f4	0x1f5e3f4	84	_ZN9Framework17CAnimationElement7ReleaseEv	Framework::CAnimationElement::Release()	animation_model	typed	
+0x1e5e448	0x1f5e448	100	_ZN9Framework17CAnimationElementD0Ev	Framework::CAnimationElement::~CAnimationElement()	animation_model	typed	
+0x1e5e4ac	0x1f5e4ac	176	_ZN9Framework17CAnimationElement10InitializeERN4Aska10AsfHandlerEPKvib	Framework::CAnimationElement::Initialize(Aska::AsfHandler&, void const*, int, bool)	animation_model	typed	
+0x1e5e55c	0x1f5e55c	24	_ZN9Framework17CAnimationElement15AfterInitializeEv	Framework::CAnimationElement::AfterInitialize()	animation_model	typed	
+0x1e5e574	0x1f5e574	352	_ZN9Framework17CAnimationElement16CreateAafHandlerEv	Framework::CAnimationElement::CreateAafHandler()	animation_model	typed	
+0x1e5e6d4	0x1f5e6d4	160	_ZN9Framework17CAnimationElement16ReplaceAafAndAetEPKvS2_	Framework::CAnimationElement::ReplaceAafAndAet(void const*, void const*)	animation_model	typed	
+0x1e5e774	0x1f5e774	56	_ZN9Framework17CAnimationElement16DeleteAafHandlerEv	Framework::CAnimationElement::DeleteAafHandler()	animation_model	typed	
+0x1e5e7ac	0x1f5e7ac	108	_ZN9Framework17CAnimationElement9AttachAetEPKv	Framework::CAnimationElement::AttachAet(void const*)	animation_model	typed	
+0x1e5e818	0x1f5e818	36	_ZN9Framework17CAnimationElement5ResetEv	Framework::CAnimationElement::Reset()	animation_model	typed	
+0x1e5e83c	0x1f5e83c	8	_ZN9Framework17CAnimationElement16PresentBlendRateEf	Framework::CAnimationElement::PresentBlendRate(float)	animation_model	typed	
+0x1e5e844	0x1f5e844	16	_ZN9Framework17CAnimationElement20DirectionBlendRadianEf	Framework::CAnimationElement::DirectionBlendRadian(float)	animation_model	typed	
+0x1e5e854	0x1f5e854	44	_ZN9Framework17CAnimationElement5StartEj	Framework::CAnimationElement::Start(unsigned int)	animation_model	typed	
+0x1e5e880	0x1f5e880	28	_ZNK9Framework17CAnimationElement18GetAnimationLengthEv	Framework::CAnimationElement::GetAnimationLength() const	animation_model	typed	
+0x1e5e89c	0x1f5e89c	68	_ZN9Framework17CAnimationElement8ProgressEf	Framework::CAnimationElement::Progress(float)	animation_model	typed	
+0x1e5e8e0	0x1f5e8e0	24	_ZN9Framework17CAnimationElement15DirectSetValuesEPN4Aska9FiberTaskE	Framework::CAnimationElement::DirectSetValues(Aska::FiberTask*)	animation_model	typed	
+0x1e5e8f8	0x1f5e8f8	16	_ZN9Framework17CAnimationElement13SetStartFrameEf	Framework::CAnimationElement::SetStartFrame(float)	animation_model	typed	
+0x1e5e908	0x1f5e908	28	_ZN9Framework17CAnimationElement11SetEndFrameEf	Framework::CAnimationElement::SetEndFrame(float)	animation_model	typed	
+0x1e5e924	0x1f5e924	104	_ZN9Framework17CAnimationElement18OverwriteAetValueXEjf	Framework::CAnimationElement::OverwriteAetValueX(unsigned int, float)	animation_model	typed	
+0x1e5ebf8	0x1f5ebf8	104	_ZN9Framework17CAnimationElement18OverwriteAetValueYEjf	Framework::CAnimationElement::OverwriteAetValueY(unsigned int, float)	animation_model	typed	
+0x1e5ef94	0x1f5ef94	104	_ZN9Framework17CAnimationElement18OverwriteAetValueZEjf	Framework::CAnimationElement::OverwriteAetValueZ(unsigned int, float)	animation_model	typed	
+0x1e5f280	0x1f5f280	144	_ZN9Framework17CAnimationElement17SetDirectionBlendEiff	Framework::CAnimationElement::SetDirectionBlend(int, float, float)	animation_model	typed	
+0x1e5f310	0x1f5f310	24	_ZNK9Framework17CAnimationElement29DirectionBlendParentElementIdEv	Framework::CAnimationElement::DirectionBlendParentElementId() const	animation_model	typed	
+0x1e5f328	0x1f5f328	24	_ZNK9Framework17CAnimationElement27DirectionBlend_RadianCenterEv	Framework::CAnimationElement::DirectionBlend_RadianCenter() const	animation_model	typed	
+0x1e5f340	0x1f5f340	24	_ZNK9Framework17CAnimationElement26DirectionBlend_RadianRangeEv	Framework::CAnimationElement::DirectionBlend_RadianRange() const	animation_model	typed	
+0x1e5f358	0x1f5f358	24	_ZNK9Framework17CAnimationElement20DirectionBlendRadianEv	Framework::CAnimationElement::DirectionBlendRadian() const	animation_model	typed	
+0x1e5f370	0x1f5f370	16	_ZN9Framework17CAnimationElement18DirectionBlendRateEf	Framework::CAnimationElement::DirectionBlendRate(float)	animation_model	typed	
+0x1e5f380	0x1f5f380	24	_ZNK9Framework17CAnimationElement18DirectionBlendRateEv	Framework::CAnimationElement::DirectionBlendRate() const	animation_model	typed	
+0x1e5f398	0x1f5f398	64	_ZN9Framework15CAnimationModelC2Ev	Framework::CAnimationModel::CAnimationModel()	animation_model	typed	
+0x1e5f3d8	0x1f5f3d8	24	_ZN9Framework15CAnimationModelD1Ev	Framework::CAnimationModel::~CAnimationModel()	animation_model	typed	
+0x1e5f3f0	0x1f5f3f0	4	_ZN9Framework15CAnimationModelD0Ev	Framework::CAnimationModel::~CAnimationModel()	animation_model	typed	
+0x1e5f3f4	0x1f5f3f4	92	_ZN9Framework15CAnimationModel10InitializeEv	Framework::CAnimationModel::Initialize()	animation_model	typed	
+0x1e5f450	0x1f5f450	16	_ZN9Framework15CAnimationModel12ResetPostureEv	Framework::CAnimationModel::ResetPosture()	animation_model	typed	
+0x1e5f460	0x1f5f460	8	_ZN9Framework15CAnimationModel7ReleaseEv	Framework::CAnimationModel::Release()	animation_model	typed	
+0x1e5f468	0x1f5f468	324	_ZN9Framework15CAnimationModel14AssignResourceERN4Aska10AsfHandlerERNS_24CAnimationBlendContainerE	Framework::CAnimationModel::AssignResource(Aska::AsfHandler&, Framework::CAnimationBlendContainer&)	animation_model	typed	
+0x1e5f5ac	0x1f5f5ac	60	_ZN9Framework15CAnimationModel19rAssignedAsfHandlerEv	Framework::CAnimationModel::rAssignedAsfHandler()	animation_model	typed	
+0x1e5f5e8	0x1f5f5e8	60	_ZNK9Framework15CAnimationModel20crAssignedAsfHandlerEv	Framework::CAnimationModel::crAssignedAsfHandler() const	animation_model	typed	
+0x1e5f624	0x1f5f624	60	_ZN9Framework15CAnimationModel11rObjectRootEv	Framework::CAnimationModel::rObjectRoot()	animation_model	typed	
+0x1e5f660	0x1f5f660	60	_ZN9Framework15CAnimationModel11pObjectRootEv	Framework::CAnimationModel::pObjectRoot()	animation_model	typed	
+0x1e5f69c	0x1f5f69c	60	_ZNK9Framework15CAnimationModel12cpObjectRootEv	Framework::CAnimationModel::cpObjectRoot() const	animation_model	typed	
+0x1e5f6d8	0x1f5f6d8	60	_ZN9Framework15CAnimationModel13SetObjectRootEPN4Aska18HierarchicalObjectE	Framework::CAnimationModel::SetObjectRoot(Aska::HierarchicalObject*)	animation_model	typed	
+0x1e5f714	0x1f5f714	60	_ZN9Framework15CAnimationModel24rAnimationBlendContainerEv	Framework::CAnimationModel::rAnimationBlendContainer()	animation_model	typed	
+0x1e5f750	0x1f5f750	16	_ZNK9Framework15CAnimationModel16HasTranslateRootEv	Framework::CAnimationModel::HasTranslateRoot() const	animation_model	typed	
+0x1e5f760	0x1f5f760	72	_ZNK9Framework15CAnimationModel21OffsetAtTranslateRootEv	Framework::CAnimationModel::OffsetAtTranslateRoot() const	animation_model	typed	
+0x1e5f7a8	0x1f5f7a8	76	_ZN9Framework15CAnimationModel21OffsetAtTranslateRootERKNS_7CVectorE	Framework::CAnimationModel::OffsetAtTranslateRoot(Framework::CVector const&)	animation_model	typed	
+0x1e5f7f4	0x1f5f7f4	132	_ZN9Framework15CAnimationModel14StartAnimationEifb	Framework::CAnimationModel::StartAnimation(int, float, bool)	animation_model	typed	
+0x1e5f878	0x1f5f878	56	_ZNK9Framework15CAnimationModel16PresentAnimationEv	Framework::CAnimationModel::PresentAnimation() const	animation_model	typed	
+0x1e5f8b0	0x1f5f8b0	56	_ZNK9Framework15CAnimationModel26PresentAnimationChangeTimeEv	Framework::CAnimationModel::PresentAnimationChangeTime() const	animation_model	typed	
+0x1e5f8e8	0x1f5f8e8	76	_ZN9Framework15CAnimationModel10StartFrameEf	Framework::CAnimationModel::StartFrame(float)	animation_model	typed	
+0x1e5f934	0x1f5f934	76	_ZN9Framework15CAnimationModel8EndFrameEf	Framework::CAnimationModel::EndFrame(float)	animation_model	typed	
+0x1e5f980	0x1f5f980	76	_ZN9Framework15CAnimationModel12PresentFrameEf	Framework::CAnimationModel::PresentFrame(float)	animation_model	typed	
+0x1e5f9cc	0x1f5f9cc	76	_ZN9Framework15CAnimationModel16TerminateProcessEj	Framework::CAnimationModel::TerminateProcess(unsigned int)	animation_model	typed	
+0x1e5fa18	0x1f5fa18	60	_ZNK9Framework15CAnimationModel12IsEnableLoopEv	Framework::CAnimationModel::IsEnableLoop() const	animation_model	typed	
+0x1e5fa54	0x1f5fa54	60	_ZNK9Framework15CAnimationModel22IsEnableFrameStopAtEndEv	Framework::CAnimationModel::IsEnableFrameStopAtEnd() const	animation_model	typed	
+0x1e5fa90	0x1f5fa90	60	_ZNK9Framework15CAnimationModel16IsEnableFreeTermEv	Framework::CAnimationModel::IsEnableFreeTerm() const	animation_model	typed	
+0x1e5facc	0x1f5facc	60	_ZNK9Framework15CAnimationModel8IsLoopedEv	Framework::CAnimationModel::IsLooped() const	animation_model	typed	
+0x1e5fb08	0x1f5fb08	60	_ZNK9Framework15CAnimationModel14IsLoopedAtOnceEv	Framework::CAnimationModel::IsLoopedAtOnce() const	animation_model	typed	
+0x1e5fb44	0x1f5fb44	60	_ZNK9Framework15CAnimationModel7NumLoopEv	Framework::CAnimationModel::NumLoop() const	animation_model	typed	
+0x1e5fb80	0x1f5fb80	60	_ZN9Framework15CAnimationModel15ClearLoopedFlagEv	Framework::CAnimationModel::ClearLoopedFlag()	animation_model	typed	
+0x1e5fbbc	0x1f5fbbc	76	_ZN9Framework15CAnimationModel14AnimationSpeedEf	Framework::CAnimationModel::AnimationSpeed(float)	animation_model	typed	
+0x1e5fc08	0x1f5fc08	100	_ZN9Framework15CAnimationModel31AnimationSpeedByTransitionValueEjff	Framework::CAnimationModel::AnimationSpeedByTransitionValue(unsigned int, float, float)	animation_model	typed	
+0x1e5fc6c	0x1f5fc6c	60	_ZNK9Framework15CAnimationModel14AnimationSpeedEv	Framework::CAnimationModel::AnimationSpeed() const	animation_model	typed	
+0x1e5fca8	0x1f5fca8	60	_ZNK9Framework15CAnimationModel10StartFrameEv	Framework::CAnimationModel::StartFrame() const	animation_model	typed	
+0x1e5fce4	0x1f5fce4	60	_ZNK9Framework15CAnimationModel12PresentFrameEv	Framework::CAnimationModel::PresentFrame() const	animation_model	typed	
+0x1e5fd20	0x1f5fd20	60	_ZNK9Framework15CAnimationModel8EndFrameEv	Framework::CAnimationModel::EndFrame() const	animation_model	typed	
+0x1e5fd5c	0x1f5fd5c	60	_ZNK9Framework15CAnimationModel16PresentBlendRateEv	Framework::CAnimationModel::PresentBlendRate() const	animation_model	typed	
+0x1e5fd98	0x1f5fd98	60	_ZNK9Framework15CAnimationModel4FlagEv	Framework::CAnimationModel::Flag() const	animation_model	typed	
+0x1e5fdd4	0x1f5fdd4	60	_ZN9Framework15CAnimationModel12ClearAllFlagEv	Framework::CAnimationModel::ClearAllFlag()	animation_model	typed	
+0x1e5fe10	0x1f5fe10	76	_ZN9Framework15CAnimationModel6OrFlagEj	Framework::CAnimationModel::OrFlag(unsigned int)	animation_model	typed	
+0x1e5fe5c	0x1f5fe5c	76	_ZN9Framework15CAnimationModel7AndFlagEj	Framework::CAnimationModel::AndFlag(unsigned int)	animation_model	typed	
+0x1e5fea8	0x1f5fea8	364	_ZN9Framework15CAnimationModel8ProgressEf	Framework::CAnimationModel::Progress(float)	animation_model	typed	
+0x1e60014	0x1f60014	464	_ZN9Framework15CAnimationModel22GetVelocityByAnimationEf	Framework::CAnimationModel::GetVelocityByAnimation(float)	animation_model	typed	
+0x1e601e4	0x1f601e4	1588	_ZN9Framework15CAnimationModel16GetVelocityByAetEf	Framework::CAnimationModel::GetVelocityByAet(float)	animation_model	typed	
+0x1e60818	0x1f60818	1780	_ZN9Framework15CAnimationModel14GetRotateByAetEf	Framework::CAnimationModel::GetRotateByAet(float)	animation_model	typed	
+0x1e60f0c	0x1f60f0c	112	_ZN9Framework15CAnimationModel13UpdatePostureERKNS_7CMatrixE	Framework::CAnimationModel::UpdatePosture(Framework::CMatrix const&)	animation_model	typed	
+0x1e60f7c	0x1f60f7c	144	_ZN9Framework15CAnimationModel16InvalidateMatrixEPN4Aska18HierarchicalObjectE	Framework::CAnimationModel::InvalidateMatrix(Aska::HierarchicalObject*)	animation_model	typed	
+0x1e6100c	0x1f6100c	16	_ZN9Framework15CAnimationModel11UpdateScaleERKNS_7CVectorE	Framework::CAnimationModel::UpdateScale(Framework::CVector const&)	animation_model	typed	
+0x1e6101c	0x1f6101c	72	_ZN9Framework15CAnimationModel15EnableFrameOnlyEb	Framework::CAnimationModel::EnableFrameOnly(bool)	animation_model	typed	
+0x1e6207c	0x1f6207c	92	_ZN9Framework21CAnimationTimeElement10InitializeEv	Framework::CAnimationTimeElement::Initialize()	animation_model	typed	
+0x1e620d8	0x1f620d8	8	_ZN9Framework21CAnimationTimeElement15SetMaxLoopCountEj	Framework::CAnimationTimeElement::SetMaxLoopCount(unsigned int)	animation_model	typed	
+0x1e620e0	0x1f620e0	20	_ZN9Framework21CAnimationTimeElement5ResetEv	Framework::CAnimationTimeElement::Reset()	animation_model	typed	
+0x1e620f4	0x1f620f4	8	_ZN9Framework21CAnimationTimeElement15SetPresentFrameEf	Framework::CAnimationTimeElement::SetPresentFrame(float)	animation_model	typed	
+0x1e620fc	0x1f620fc	12	_ZN9Framework21CAnimationTimeElement5StartEv	Framework::CAnimationTimeElement::Start()	animation_model	typed	
+0x1e62108	0x1f62108	216	_ZN9Framework21CAnimationTimeElement8ProgressEf	Framework::CAnimationTimeElement::Progress(float)	animation_model	typed	
+0x1e621e0	0x1f621e0	16	_ZN9Framework21CAnimationTimeElement6OrFlagEj	Framework::CAnimationTimeElement::OrFlag(unsigned int)	animation_model	typed	
+0x1e621f0	0x1f621f0	68	_ZNK9Framework21CAnimationTimeElement14CheckLoopFrameEfRfS1_	Framework::CAnimationTimeElement::CheckLoopFrame(float, float&, float&) const	animation_model	typed	
+0x1e62234	0x1f62234	120	_ZN9Framework21CAnimationTimeElement16TerminateProcessEj	Framework::CAnimationTimeElement::TerminateProcess(unsigned int)	animation_model	typed	
+0x1e622ac	0x1f622ac	16	_ZN9Framework21CAnimationTimeElement7AndFlagEj	Framework::CAnimationTimeElement::AndFlag(unsigned int)	animation_model	typed	
+0x1e622bc	0x1f622bc	16	_ZN9Framework21CAnimationTimeElement15ClearLoopedFlagEv	Framework::CAnimationTimeElement::ClearLoopedFlag()	animation_model	typed	
+0x1e622cc	0x1f622cc	8	_ZN9Framework21CAnimationTimeElement12ClearAllFlagEv	Framework::CAnimationTimeElement::ClearAllFlag()	animation_model	typed	
+0x1e622d4	0x1f622d4	8	_ZN9Framework21CAnimationTimeElement13SetStartFrameEf	Framework::CAnimationTimeElement::SetStartFrame(float)	animation_model	typed	
+0x1e622dc	0x1f622dc	8	_ZN9Framework21CAnimationTimeElement11SetEndFrameEf	Framework::CAnimationTimeElement::SetEndFrame(float)	animation_model	typed	
+0x1e65800	0x1f65800	16	_ZN9Framework16CBlendRatePlayer6CPiece5ResetEv	Framework::CBlendRatePlayer::CPiece::Reset()	animation_model	typed	
+0x1e65810	0x1f65810	100	_ZN9Framework16CBlendRatePlayer6CPiece5StartEf	Framework::CBlendRatePlayer::CPiece::Start(float)	animation_model	typed	
+0x1e65874	0x1f65874	24	_ZNK9Framework16CBlendRatePlayer6CPiece6HandleEv	Framework::CBlendRatePlayer::CPiece::Handle() const	animation_model	typed	
+0x1e6588c	0x1f6588c	76	_ZN9Framework16CBlendRatePlayer6CPiece12AddBlendRateEf	Framework::CBlendRatePlayer::CPiece::AddBlendRate(float)	animation_model	typed	
+0x1e658d8	0x1f658d8	68	_ZN9Framework16CBlendRatePlayer6CPiece28SetBlendRateElapsedTimeLimitEf	Framework::CBlendRatePlayer::CPiece::SetBlendRateElapsedTimeLimit(float)	animation_model	typed	
+0x1e6591c	0x1f6591c	68	_ZN9Framework16CBlendRatePlayer6CPiece23SetBlendRateElapsedTimeEf	Framework::CBlendRatePlayer::CPiece::SetBlendRateElapsedTime(float)	animation_model	typed	
+0x1e65960	0x1f65960	16	_ZN9Framework16CBlendRatePlayer6CPiece22SetBlendRateChangeTimeEf	Framework::CBlendRatePlayer::CPiece::SetBlendRateChangeTime(float)	animation_model	typed	
+0x1e65970	0x1f65970	24	_ZNK9Framework16CBlendRatePlayer6CPiece4RateEv	Framework::CBlendRatePlayer::CPiece::Rate() const	animation_model	typed	
+0x1e65988	0x1f65988	464	_ZN9Framework16CBlendRatePlayer6CPiece8ProgressEfRf	Framework::CBlendRatePlayer::CPiece::Progress(float, float&)	animation_model	typed	
+0x1e65b58	0x1f65b58	24	_ZN9Framework16CBlendRatePlayerC1Ev	Framework::CBlendRatePlayer::CBlendRatePlayer()	animation_model	typed	
+0x1e65b70	0x1f65b70	48	_ZN9Framework16CBlendRatePlayerD1Ev	Framework::CBlendRatePlayer::~CBlendRatePlayer()	animation_model	typed	
+0x1e65ba0	0x1f65ba0	32	_ZN9Framework16CBlendRatePlayer7ReleaseEv	Framework::CBlendRatePlayer::Release()	animation_model	typed	
+0x1e65bc0	0x1f65bc0	48	_ZN9Framework16CBlendRatePlayerD0Ev	Framework::CBlendRatePlayer::~CBlendRatePlayer()	animation_model	typed	
+0x1e65bf0	0x1f65bf0	164	_ZN9Framework16CBlendRatePlayer10InitializeEj	Framework::CBlendRatePlayer::Initialize(unsigned int)	animation_model	typed	
+0x1e65c94	0x1f65c94	140	_ZN9Framework16CBlendRatePlayer8ProgressEf	Framework::CBlendRatePlayer::Progress(float)	animation_model	typed	
+0x1e65d20	0x1f65d20	328	_ZN9Framework16CBlendRatePlayer3AddEf	Framework::CBlendRatePlayer::Add(float)	animation_model	typed	
+0x1e65e68	0x1f65e68	192	_ZN9Framework16CBlendRatePlayer9MakeBlankEv	Framework::CBlendRatePlayer::MakeBlank()	animation_model	typed	
+0x1e65f28	0x1f65f28	304	_ZN9Framework16CBlendRatePlayer6RemoveEj	Framework::CBlendRatePlayer::Remove(unsigned int)	animation_model	typed	
+0x1e66058	0x1f66058	172	_ZN9Framework16CBlendRatePlayer6DefragEv	Framework::CBlendRatePlayer::Defrag()	animation_model	typed	
+0x1e66104	0x1f66104	156	_ZNK9Framework16CBlendRatePlayer7crPieceEj	Framework::CBlendRatePlayer::crPiece(unsigned int) const	animation_model	typed	
+0x1e661a0	0x1f661a0	156	_ZNK9Framework16CBlendRatePlayer6rPieceEj	Framework::CBlendRatePlayer::rPiece(unsigned int) const	animation_model	typed	
+0x1e6623c	0x1f6623c	76	_ZNK9Framework16CBlendRatePlayer13NumPlayHandleEv	Framework::CBlendRatePlayer::NumPlayHandle() const	animation_model	typed	
+0x1e66288	0x1f66288	76	_ZN9Framework16CBlendRatePlayer40SetTerminatedForIndependentCalcBlendRateEv	Framework::CBlendRatePlayer::SetTerminatedForIndependentCalcBlendRate()	animation_model	typed	
+0x1f8db44	0x208db44	36	_ZN4Aska15AafBlendManagerD2Ev	Aska::AafBlendManager::~AafBlendManager()	aaf_handler	typed	
+0x1f8db68	0x208db68	48	_ZN4Aska15AafBlendManagerD0Ev	Aska::AafBlendManager::~AafBlendManager()	aaf_handler	typed	
+0x1f8db98	0x208db98	124	_ZN4Aska15AafBlendManager6CreateEi	Aska::AafBlendManager::Create(int)	aaf_handler	typed	
+0x1f8dc14	0x208dc14	100	_ZN4Aska15AafBlendManager4OpenEi	Aska::AafBlendManager::Open(int)	aaf_handler	typed	
+0x1f8dc78	0x208dc78	112	_ZN4Aska15AafBlendManager5CloseEh	Aska::AafBlendManager::Close(unsigned char)	aaf_handler	typed	
+0x1f8dce8	0x208dce8	76	_ZN4Aska15AafBlendManager24AllocateControllerBufferEv	Aska::AafBlendManager::AllocateControllerBuffer()	aaf_handler	typed	
+0x1f8dd34	0x208dd34	8	_ZN4Aska15AafBlendManager20FreeControllerBufferEv	Aska::AafBlendManager::FreeControllerBuffer()	aaf_handler	typed	
+0x1f8dd3c	0x208dd3c	68	_ZN4Aska15AafBlendManager6AddAafEPNS_10AafHandlerE	Aska::AafBlendManager::AddAaf(Aska::AafHandler*)	aaf_handler	typed	
+0x1f8dd80	0x208dd80	52	_ZNK4Aska15AafBlendManager12GetPlayFrameEi	Aska::AafBlendManager::GetPlayFrame(int) const	aaf_handler	typed	
+0x1f8ddb4	0x208ddb4	104	_ZNK4Aska15AafBlendManager12GetPlayFrameEPKNS_10AafHandlerE	Aska::AafBlendManager::GetPlayFrame(Aska::AafHandler const*) const	aaf_handler	typed	
+0x1f8de1c	0x208de1c	76	_ZN4Aska15AafBlendManager12SetPlayFrameEif	Aska::AafBlendManager::SetPlayFrame(int, float)	aaf_handler	typed	
+0x1f8de68	0x208de68	124	_ZN4Aska15AafBlendManager12SetPlayFrameEPKNS_10AafHandlerEf	Aska::AafBlendManager::SetPlayFrame(Aska::AafHandler const*, float)	aaf_handler	typed	
+0x1f8dee4	0x208dee4	52	_ZNK4Aska15AafBlendManager9GetWeightEi	Aska::AafBlendManager::GetWeight(int) const	aaf_handler	typed	
+0x1f8df18	0x208df18	104	_ZNK4Aska15AafBlendManager9GetWeightEPKNS_10AafHandlerE	Aska::AafBlendManager::GetWeight(Aska::AafHandler const*) const	aaf_handler	typed	
+0x1f8df80	0x208df80	76	_ZN4Aska15AafBlendManager9SetWeightEif	Aska::AafBlendManager::SetWeight(int, float)	aaf_handler	typed	
+0x1f8dfcc	0x208dfcc	124	_ZN4Aska15AafBlendManager9SetWeightEPKNS_10AafHandlerEf	Aska::AafBlendManager::SetWeight(Aska::AafHandler const*, float)	aaf_handler	typed	
+0x1f8e048	0x208e048	72	_ZN4Aska15AafBlendManager9GetNotifyEi	Aska::AafBlendManager::GetNotify(int)	aaf_handler	typed	
+0x1f8e090	0x208e090	120	_ZN4Aska15AafBlendManager9GetNotifyEPKNS_10AafHandlerE	Aska::AafBlendManager::GetNotify(Aska::AafHandler const*)	aaf_handler	typed	
+0x1f8e108	0x208e108	76	_ZN4Aska15AafBlendManager9SetNotifyEiPNS_7INotifyE	Aska::AafBlendManager::SetNotify(int, Aska::INotify*)	aaf_handler	typed	
+0x1f8e154	0x208e154	124	_ZN4Aska15AafBlendManager9SetNotifyEPKNS_10AafHandlerEPNS_7INotifyE	Aska::AafBlendManager::SetNotify(Aska::AafHandler const*, Aska::INotify*)	aaf_handler	typed	
+0x1f8e1d0	0x208e1d0	156	_ZN4Aska15AafBlendManager16NormalizeWeightsEv	Aska::AafBlendManager::NormalizeWeights()	aaf_handler	typed	
+0x1f8e26c	0x208e26c	184	_ZN4Aska15AafBlendManager24StaticCalcValues_NoFiberEPS0_i	Aska::AafBlendManager::StaticCalcValues_NoFiber(Aska::AafBlendManager*, int)	aaf_handler	typed	
+0x1f8e324	0x208e324	288	_ZN4Aska15AafBlendManager10CalcValuesEv	Aska::AafBlendManager::CalcValues()	aaf_handler	typed	
+0x1f8e444	0x208e444	80	_ZN4Aska15AafBlendManager12CopyMatricesEi	Aska::AafBlendManager::CopyMatrices(int)	aaf_handler	typed	
+0x1f8e494	0x208e494	32	_ZN4Aska15AafBlendManager9SetValuesEv	Aska::AafBlendManager::SetValues()	aaf_handler	typed	
+0x1f8e4b4	0x208e4b4	192	_ZN4Aska15AafBlendManager15RestoreSnapShotEPNS_13SceneSnapShotERNS_16IAafBlendManager8_AafInfoE	Aska::AafBlendManager::RestoreSnapShot(Aska::SceneSnapShot*, Aska::IAafBlendManager::_AafInfo&)	aaf_handler	typed	
+0x1f8e574	0x208e574	436	_ZN4Aska15AafBlendManager9SetValuesEPPNS_13SceneSnapShotE	Aska::AafBlendManager::SetValues(Aska::SceneSnapShot**)	aaf_handler	typed	
+0x1f8e728	0x208e728	36	_ZN4Aska15AafBlendManager10InitializeEv	Aska::AafBlendManager::Initialize()	aaf_handler	typed	
+0x1f8e74c	0x208e74c	184	_ZN4Aska15AafBlendManager11_CalcNotify7HandlerEm	Aska::AafBlendManager::_CalcNotify::Handler(unsigned long)	aaf_handler	typed	
+0x1f8e804	0x208e804	4	_ZN4Aska15AafBlendManager11_CalcNotifyD0Ev	Aska::AafBlendManager::_CalcNotify::~_CalcNotify()	aaf_handler	typed	
+0x1f8e808	0x208e808	132	_ZN4Aska10AafHandler27Function_SearchKeyFrameDataERPvRPNS_25FrameSortDataForSearchOldERijS4_tiib	Aska::AafHandler::Function_SearchKeyFrameData(void*&, Aska::FrameSortDataForSearchOld*&, int&, unsigned int, Aska::FrameSortDataForSearchOld*, unsigned short, int, int, bool)	aaf_handler	typed	
+0x1f8e88c	0x208e88c	1120	_ZN4Aska10AafHandler34Function_RenewalAllControllerCacheEfPjS1_jPNS_17AafControllerInfoEjPNS_25FrameSortDataForSearchOldEjb	Aska::AafHandler::Function_RenewalAllControllerCache(float, unsigned int*, unsigned int*, unsigned int, Aska::AafControllerInfo*, unsigned int, Aska::FrameSortDataForSearchOld*, unsigned int, bool)	aaf_handler	typed	
+0x1f8ecec	0x208ecec	476	_ZN4Aska10AafHandler31Function_UpdateKeyFrameData_AllILj0EEEbPjRjS2_S3_PNS_17AafControllerInfoEjjPNS_25FrameSortDataForSearchOldEjiib	bool Aska::AafHandler::Function_UpdateKeyFrameData_All<0u>(unsigned int*, unsigned int&, unsigned int*, unsigned int&, Aska::AafControllerInfo*, unsigned int, unsigned int, Aska::FrameSortDataForSearchOld*, unsigned int, int, int, bool)	aaf_handler	decompiled	
+0x1f8eec8	0x208eec8	476	_ZN4Aska10AafHandler31Function_UpdateKeyFrameData_AllILj1EEEbPjRjS2_S3_PNS_17AafControllerInfoEjjPNS_25FrameSortDataForSearchOldEjiib	bool Aska::AafHandler::Function_UpdateKeyFrameData_All<1u>(unsigned int*, unsigned int&, unsigned int*, unsigned int&, Aska::AafControllerInfo*, unsigned int, unsigned int, Aska::FrameSortDataForSearchOld*, unsigned int, int, int, bool)	aaf_handler	decompiled	
+0x1f8f0a4	0x208f0a4	464	_ZN4Aska10AafHandler31Function_UpdateKeyFrameData_AllILj2EEEbPjRjS2_S3_PNS_17AafControllerInfoEjjPNS_25FrameSortDataForSearchOldEjiib	bool Aska::AafHandler::Function_UpdateKeyFrameData_All<2u>(unsigned int*, unsigned int&, unsigned int*, unsigned int&, Aska::AafControllerInfo*, unsigned int, unsigned int, Aska::FrameSortDataForSearchOld*, unsigned int, int, int, bool)	aaf_handler	decompiled	
+0x1f8f274	0x208f274	152	_ZN4Aska10AafHandler21Function_GetChunkInfoEPKS0_PKNS_9AafHeaderERfRjRmRPNS_21AafFrameSortChunkInfoE	Aska::AafHandler::Function_GetChunkInfo(Aska::AafHandler const*, Aska::AafHeader const*, float&, unsigned int&, unsigned long&, Aska::AafFrameSortChunkInfo*&)	aaf_handler	typed	
+0x1f95324	0x2095324	140	_ZN4Aska10AafHandler11InstantiateEv	Aska::AafHandler::Instantiate()	aaf_handler	typed	
+0x1f953b0	0x20953b0	40	_ZN4Aska10AafHandlernwEmRKSt9nothrow_t	Aska::AafHandler::operator new(unsigned long, std::nothrow_t const&)	aaf_handler	typed	
+0x1f953d8	0x20953d8	20	_ZN4Aska10AafHandler10DeleteThisEv	Aska::AafHandler::DeleteThis()	aaf_handler	typed	
+0x1f953ec	0x20953ec	368	_ZN4Aska10AafHandler10DecodeDataEPv	Aska::AafHandler::DecodeData(void*)	aaf_handler	typed	
+0x1f9555c	0x209555c	120	_ZN4Aska10AafHandler17DeleteControllersEv	Aska::AafHandler::DeleteControllers()	aaf_handler	typed	
+0x1f955d4	0x20955d4	184	_ZN4Aska10AafHandler14AttachResourceEPNS_15ResourceManagerE	Aska::AafHandler::AttachResource(Aska::ResourceManager*)	aaf_handler	typed	
+0x1f9568c	0x209568c	64	_ZNK4Aska10AafHandler13GetTargetNameEPKNS_19AafTargetHeaderBaseE	Aska::AafHandler::GetTargetName(Aska::AafTargetHeaderBase const*) const	aaf_handler	typed	
+0x1f956cc	0x20956cc	220	_ZN4Aska10AafHandler18ResolveConstraintsEf	Aska::AafHandler::ResolveConstraints(float)	aaf_handler	typed	
+0x1f957a8	0x20957a8	156	_ZN4Aska10AafHandler21AddAutoControllerTaskEPNS_11TaskManagerEPf	Aska::AafHandler::AddAutoControllerTask(Aska::TaskManager*, float*)	aaf_handler	typed	
+0x1f95844	0x2095844	48	_ZN4Aska10AafHandler24RemoveAutoControllerTaskEv	Aska::AafHandler::RemoveAutoControllerTask()	aaf_handler	typed	
+0x1f95874	0x2095874	268	_ZN4Aska10AafHandler5CloneEPNS_10AsfHandlerEPS0_PNS_16CollisionHandlerEPNS_17AsfTargetNameListEb	Aska::AafHandler::Clone(Aska::AsfHandler*, Aska::AafHandler*, Aska::CollisionHandler*, Aska::AsfTargetNameList*, bool)	aaf_handler	typed	
+0x1f95980	0x2095980	1236	_ZN4Aska10AafHandler17CreateControllersEPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListEb	Aska::AafHandler::CreateControllers(Aska::AsfHandler*, Aska::CollisionHandler*, Aska::AsfTargetNameList*, bool)	aaf_handler	typed	
+0x1f95e54	0x2095e54	548	_ZN4Aska10AafHandler4CopyEPNS_10AsfHandlerEPS0_PNS_16CollisionHandlerEPNS_17AsfTargetNameListEb	Aska::AafHandler::Copy(Aska::AsfHandler*, Aska::AafHandler*, Aska::CollisionHandler*, Aska::AsfTargetNameList*, bool)	aaf_handler	typed	
+0x1f96078	0x2096078	168	_ZN4Aska10AafHandler23AttachConstantChunkDataEPh	Aska::AafHandler::AttachConstantChunkData(unsigned char*)	aaf_handler	typed	
+0x1f96120	0x2096120	80	_ZN4Aska10AafHandler15AttachChunkDataEiPh	Aska::AafHandler::AttachChunkData(int, unsigned char*)	aaf_handler	typed	
+0x1f96170	0x2096170	164	_ZN4Aska10AafHandler20PrecreateControllersEPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListE	Aska::AafHandler::PrecreateControllers(Aska::AsfHandler*, Aska::CollisionHandler*, Aska::AsfTargetNameList*)	aaf_handler	typed	
+0x1f96214	0x2096214	2256	_ZN4Aska10AafHandler9AttachAafEPKvPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListE	Aska::AafHandler::AttachAaf(void const*, Aska::AsfHandler*, Aska::CollisionHandler*, Aska::AsfTargetNameList*)	aaf_handler	typed	
+0x1f96ae4	0x2096ae4	236	_ZN4Aska10AafHandler12DetachObjectEv	Aska::AafHandler::DetachObject()	aaf_handler	typed	
+0x1f96bd0	0x2096bd0	424	_ZN4Aska10AafHandler22CalcRuntimeMemorySize1EPKNS_3AFF8AskaFileEPKNS_9AafHeaderE	Aska::AafHandler::CalcRuntimeMemorySize1(Aska::AFF::AskaFile const*, Aska::AafHeader const*)	aaf_handler	typed	
+0x1f96d78	0x2096d78	96	_ZN4Aska10AafHandler25GetTargetControllerObjectEiii	Aska::AafHandler::GetTargetControllerObject(int, int, int)	aaf_handler	typed	
+0x1f96dd8	0x2096dd8	44	_ZN4Aska10AafHandler15CheckPlatformIDEPKNS_19AafControllerHeaderE	Aska::AafHandler::CheckPlatformID(Aska::AafControllerHeader const*)	aaf_handler	typed	
+0x1f96e04	0x2096e04	156	_ZN4Aska10AafHandler26InitializeAllConstantCacheEPt	Aska::AafHandler::InitializeAllConstantCache(unsigned short*)	aaf_handler	typed	
+0x1f96ea0	0x2096ea0	60	_ZNK4Aska10AafHandler23GetComplementBufferSizeEv	Aska::AafHandler::GetComplementBufferSize() const	aaf_handler	typed	
+0x1f96edc	0x2096edc	84	_ZN4Aska10AafHandler22AttachComplementBufferEPvj	Aska::AafHandler::AttachComplementBuffer(void*, unsigned int)	aaf_handler	typed	
+0x1f96f30	0x2096f30	44	_ZN4Aska10AafHandler22DetachComplementBufferEv	Aska::AafHandler::DetachComplementBuffer()	aaf_handler	typed	
+0x1f96f5c	0x2096f5c	48	_ZNK4Aska10AafHandler26IsAttachedComplementBufferEv	Aska::AafHandler::IsAttachedComplementBuffer() const	aaf_handler	typed	
+0x1f96f8c	0x2096f8c	316	_ZN4Aska10AafHandler13HaltAnimationEPNS_11IAnimatableEb	Aska::AafHandler::HaltAnimation(Aska::IAnimatable*, bool)	aaf_handler	typed	
+0x1f970c8	0x20970c8	368	_ZN4Aska10AafHandler13HaltAnimationEPKcb	Aska::AafHandler::HaltAnimation(char const*, bool)	aaf_handler	typed	
+0x1f97238	0x2097238	396	_ZN4Aska10AafHandler13HaltAnimationEPNS_11IAnimatableEbNS_21EnumAafControllerTypeE	Aska::AafHandler::HaltAnimation(Aska::IAnimatable*, bool, Aska::EnumAafControllerType)	aaf_handler	typed	
+0x1f973c4	0x20973c4	232	_ZN4Aska10AafHandler22GetControllerInterfaceEPNS_11IAnimatableENS_22EnumAafDetailAttributeE	Aska::AafHandler::GetControllerInterface(Aska::IAnimatable*, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f974ac	0x20974ac	216	_ZN4Aska10AafHandler27LocalGetControllerInterfaceEPNS_11IAnimatableENS_22EnumAafDetailAttributeE	Aska::AafHandler::LocalGetControllerInterface(Aska::IAnimatable*, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f97584	0x2097584	236	_ZN4Aska10AafHandler22GetControllerInterfaceEPKcNS_22EnumAafDetailAttributeE	Aska::AafHandler::GetControllerInterface(char const*, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f97670	0x2097670	464	_ZN4Aska10AafHandler25GetAllControllerInterfaceEPPNS_11IControllerEiPNS_11IAnimatableENS_21EnumAafControllerTypeEPi	Aska::AafHandler::GetAllControllerInterface(Aska::IController**, int, Aska::IAnimatable*, Aska::EnumAafControllerType, int*)	aaf_handler	typed	
+0x1f97840	0x2097840	220	_ZN4Aska10AafHandler22GetControllerInterfaceEPNS_11IAnimatableENS_21EnumAafControllerTypeEi	Aska::AafHandler::GetControllerInterface(Aska::IAnimatable*, Aska::EnumAafControllerType, int)	aaf_handler	typed	
+0x1f9791c	0x209791c	260	_ZN4Aska10AafHandler22GetControllerInterfaceEPKcNS_21EnumAafControllerTypeEi	Aska::AafHandler::GetControllerInterface(char const*, Aska::EnumAafControllerType, int)	aaf_handler	typed	
+0x1f97a20	0x2097a20	72	_ZN4Aska10AafHandler18DisableControllersENS_21EnumAafControllerTypeE	Aska::AafHandler::DisableControllers(Aska::EnumAafControllerType)	aaf_handler	typed	
+0x1f97a68	0x2097a68	128	_ZN4Aska10AafHandler16DetachControllerEPNS_11IAnimatableE	Aska::AafHandler::DetachController(Aska::IAnimatable*)	aaf_handler	typed	
+0x1f97ae8	0x2097ae8	88	_ZN4Aska10AafHandler17DetachControllersENS_21EnumAafControllerTypeE	Aska::AafHandler::DetachControllers(Aska::EnumAafControllerType)	aaf_handler	typed	
+0x1f97b40	0x2097b40	212	_ZN4Aska10AafHandler20DetachAllControllersEv	Aska::AafHandler::DetachAllControllers()	aaf_handler	typed	
+0x1f97c14	0x2097c14	252	_ZN4Aska10AafHandler16AttachControllerEPNS_11IAnimatableEPKc	Aska::AafHandler::AttachController(Aska::IAnimatable*, char const*)	aaf_handler	typed	
+0x1f97d10	0x2097d10	272	_ZN4Aska10AafHandler16AttachControllerEPKc	Aska::AafHandler::AttachController(char const*)	aaf_handler	typed	
+0x1f97e20	0x2097e20	272	_ZN4Aska10AafHandler11MakeBiArrayEf	Aska::AafHandler::MakeBiArray(float)	aaf_handler	typed	
+0x1f97f30	0x2097f30	212	_ZN4Aska10AafHandler25RenewalAllControllerCacheEf	Aska::AafHandler::RenewalAllControllerCache(float)	aaf_handler	typed	
+0x1f98014	0x2098014	300	_ZN4Aska10AafHandler22CalcRuntimeMemorySize0ERjS1_S1_PKvRPNS_9AafHeaderE	Aska::AafHandler::CalcRuntimeMemorySize0(unsigned int&, unsigned int&, unsigned int&, void const*, Aska::AafHeader*&)	aaf_handler	typed	
+0x1f98140	0x2098140	72	_ZN4Aska10AafHandler20SearchModifierTargetEPKcPiPNS_10AsfHandlerE	Aska::AafHandler::SearchModifierTarget(char const*, int*, Aska::AsfHandler*)	aaf_handler	typed	
+0x1f98188	0x2098188	136	_ZN4Aska10AafHandler20PrepareForComplementEv	Aska::AafHandler::PrepareForComplement()	aaf_handler	typed	
+0x1f98210	0x2098210	248	_ZN4Aska10AafHandler21CalcDifferenceOfValueEPvmff	Aska::AafHandler::CalcDifferenceOfValue(void*, unsigned long, float, float)	aaf_handler	typed	
+0x1f98308	0x2098308	492	_ZN4Aska10AafHandler21CalcDifferenceOfValueEPfPNS_17AafControllerInfoEff	Aska::AafHandler::CalcDifferenceOfValue(float*, Aska::AafControllerInfo*, float, float)	aaf_handler	typed	
+0x1f984f4	0x20984f4	604	_ZN4Aska10AafHandler21CalcDifferenceOfValueEPNS_6VectorEPNS_17AafControllerInfoEff	Aska::AafHandler::CalcDifferenceOfValue(Aska::Vector*, Aska::AafControllerInfo*, float, float)	aaf_handler	typed	
+0x1f98750	0x2098750	492	_ZN4Aska10AafHandler21CalcDifferenceOfValueEPiPNS_17AafControllerInfoEff	Aska::AafHandler::CalcDifferenceOfValue(int*, Aska::AafControllerInfo*, float, float)	aaf_handler	typed	
+0x1f9893c	0x209893c	584	_ZN4Aska10AafHandler21CalcDifferenceOfValueEPNS_10QuaternionEPNS_17AafControllerInfoEff	Aska::AafHandler::CalcDifferenceOfValue(Aska::Quaternion*, Aska::AafControllerInfo*, float, float)	aaf_handler	typed	
+0x1f98b84	0x2098b84	92	_ZN4Aska10AafHandler12GetAafHeaderEPNS_3AFF8AskaFileE	Aska::AafHandler::GetAafHeader(Aska::AFF::AskaFile*)	aaf_handler	typed	
+0x1f98be0	0x2098be0	52	_ZN4Aska10AafHandler9SetValuesEf	Aska::AafHandler::SetValues(float)	aaf_handler	typed	
+0x1f98c14	0x2098c14	100	_ZN4Aska10AafHandler9SetValuesEfi	Aska::AafHandler::SetValues(float, int)	aaf_handler	typed	
+0x1f98c78	0x2098c78	52	_ZN4Aska10AafHandler9AddValuesEf	Aska::AafHandler::AddValues(float)	aaf_handler	typed	
+0x1f98cac	0x2098cac	48	_ZN4Aska10AafHandler11BlendValuesEff	Aska::AafHandler::BlendValues(float, float)	aaf_handler	typed	
+0x1f98cdc	0x2098cdc	52	_ZN4Aska10AafHandler18SetValuesHighSpeedEf	Aska::AafHandler::SetValuesHighSpeed(float)	aaf_handler	typed	
+0x1f98d10	0x2098d10	104	_ZN4Aska10AafHandler18SetValuesHighSpeedEfi	Aska::AafHandler::SetValuesHighSpeed(float, int)	aaf_handler	typed	
+0x1f98d78	0x2098d78	56	_ZN4Aska10AafHandler11SetOneValueEPNS_11IAnimatableEf	Aska::AafHandler::SetOneValue(Aska::IAnimatable*, float)	aaf_handler	typed	
+0x1f98db0	0x2098db0	108	_ZN4Aska10AafHandler11SetOneValueEPNS_11IAnimatableEfi	Aska::AafHandler::SetOneValue(Aska::IAnimatable*, float, int)	aaf_handler	typed	
+0x1f98e1c	0x2098e1c	56	_ZN4Aska10AafHandler11SetOneValueEPNS_11IControllerEf	Aska::AafHandler::SetOneValue(Aska::IController*, float)	aaf_handler	typed	
+0x1f98e54	0x2098e54	108	_ZN4Aska10AafHandler11SetOneValueEPNS_11IControllerEfi	Aska::AafHandler::SetOneValue(Aska::IController*, float, int)	aaf_handler	typed	
+0x1f98ec0	0x2098ec0	9140	_ZN4Aska10AafHandler17SetAutoComplementEffPS0_fPNS_10AsfHandlerE	Aska::AafHandler::SetAutoComplement(float, float, Aska::AafHandler*, float, Aska::AsfHandler*)	aaf_handler	typed	
+0x1f9b274	0x209b274	152	_ZNK4Aska10AafHandler12IsChunkReadyEf	Aska::AafHandler::IsChunkReady(float) const	aaf_handler	typed	
+0x1f9b30c	0x209b30c	80	_ZN4Aska10AafHandler12SearchTargetEPKcPNS_10AsfHandlerE	Aska::AafHandler::SearchTarget(char const*, Aska::AsfHandler*)	aaf_handler	typed	
+0x1f9b35c	0x209b35c	212	_ZN4Aska10AafHandler30LocalGetControllerInfoByDetailEPNS_11IAnimatableENS_22EnumAafDetailAttributeE	Aska::AafHandler::LocalGetControllerInfoByDetail(Aska::IAnimatable*, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f9b430	0x209b430	236	_ZN4Aska10AafHandler38LocalGetControllerInfoByIndexAndDetailEPNS_11IAnimatableEmNS_22EnumAafDetailAttributeE	Aska::AafHandler::LocalGetControllerInfoByIndexAndDetail(Aska::IAnimatable*, unsigned long, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f9b51c	0x209b51c	184	_ZN4Aska10AafHandler29LocalGetControllerInfoByIndexEPNS_11IAnimatableEm	Aska::AafHandler::LocalGetControllerInfoByIndex(Aska::IAnimatable*, unsigned long)	aaf_handler	typed	
+0x1f9b5d4	0x209b5d4	24	_ZNK4Aska10AafHandler6LengthEv	Aska::AafHandler::Length() const	aaf_handler	typed	
+0x1f9b5ec	0x209b5ec	296	_ZN4Aska10AafHandler16DisappearHandlerEb	Aska::AafHandler::DisappearHandler(bool)	aaf_handler	typed	
+0x1f9b714	0x209b714	268	_ZN4Aska10AafHandler31CalcAndSetDifferenceOfValueMainEPNS_17AafControllerInfoE	Aska::AafHandler::CalcAndSetDifferenceOfValueMain(Aska::AafControllerInfo*)	aaf_handler	typed	
+0x1f9b820	0x209b820	252	_ZN4Aska10AafHandler21CalcRuntimeMemorySizeEPKv	Aska::AafHandler::CalcRuntimeMemorySize(void const*)	aaf_handler	typed	
+0x1f9b91c	0x209b91c	48	_ZN4Aska10AafHandlernwEmmb	Aska::AafHandler::operator new(unsigned long, unsigned long, bool)	aaf_handler	typed	
+0x1f9b94c	0x209b94c	48	_ZN4Aska10AafHandlernaEmmb	Aska::AafHandler::operator new[](unsigned long, unsigned long, bool)	aaf_handler	typed	
+0x1f9b97c	0x209b97c	40	_ZN4Aska10AafHandlernaEmRKSt9nothrow_t	Aska::AafHandler::operator new[](unsigned long, std::nothrow_t const&)	aaf_handler	typed	
+0x1f9b9a4	0x209b9a4	96	_ZNK4Aska10AafHandler13GetFigureRateEhh	Aska::AafHandler::GetFigureRate(unsigned char, unsigned char) const	aaf_handler	typed	
+0x1f9ba04	0x209ba04	240	_ZN4Aska10AafHandler30LocalGetControllerInfoAndIndexEPiPNS_11IAnimatableENS_22EnumAafDetailAttributeE	Aska::AafHandler::LocalGetControllerInfoAndIndex(int*, Aska::IAnimatable*, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f9baf4	0x209baf4	212	_ZN4Aska10AafHandler28LocalGetControllerInfoByTypeEPNS_11IAnimatableENS_21EnumAafControllerTypeEi	Aska::AafHandler::LocalGetControllerInfoByType(Aska::IAnimatable*, Aska::EnumAafControllerType, int)	aaf_handler	typed	
+0x1f9bbc8	0x209bbc8	464	_ZN4Aska10AafHandler31LocalGetAllControllerInfoByTypeEPPNS_17AafControllerInfoEiPNS_11IAnimatableENS_21EnumAafControllerTypeEPi	Aska::AafHandler::LocalGetAllControllerInfoByType(Aska::AafControllerInfo**, int, Aska::IAnimatable*, Aska::EnumAafControllerType, int*)	aaf_handler	typed	
+0x1f9bd98	0x209bd98	220	_ZN4Aska10AafHandler25GetControllerInfoByDetailEPNS_11IAnimatableENS_22EnumAafDetailAttributeE	Aska::AafHandler::GetControllerInfoByDetail(Aska::IAnimatable*, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f9be74	0x209be74	188	_ZN4Aska10AafHandler24GetControllerInfoByIndexEPNS_11IAnimatableEm	Aska::AafHandler::GetControllerInfoByIndex(Aska::IAnimatable*, unsigned long)	aaf_handler	typed	
+0x1f9bf30	0x209bf30	4	_ZN4Aska10AafHandler33GetControllerInfoByIndexAndDetailEPNS_11IAnimatableEmNS_22EnumAafDetailAttributeE	Aska::AafHandler::GetControllerInfoByIndexAndDetail(Aska::IAnimatable*, unsigned long, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f9bf34	0x209bf34	248	_ZN4Aska10AafHandler25GetControllerInfoAndIndexEPiPNS_11IAnimatableENS_22EnumAafDetailAttributeE	Aska::AafHandler::GetControllerInfoAndIndex(int*, Aska::IAnimatable*, Aska::EnumAafDetailAttribute)	aaf_handler	typed	
+0x1f9c02c	0x209c02c	220	_ZN4Aska10AafHandler23GetControllerInfoByTypeEPNS_11IAnimatableENS_21EnumAafControllerTypeEi	Aska::AafHandler::GetControllerInfoByType(Aska::IAnimatable*, Aska::EnumAafControllerType, int)	aaf_handler	typed	
+0x1f9c108	0x209c108	4	_ZN4Aska10AafHandler26GetAllControllerInfoByTypeEPPNS_17AafControllerInfoEiPNS_11IAnimatableENS_21EnumAafControllerTypeEPi	Aska::AafHandler::GetAllControllerInfoByType(Aska::AafControllerInfo**, int, Aska::IAnimatable*, Aska::EnumAafControllerType, int*)	aaf_handler	typed	
+0x1f9c1d4	0x209c1d4	140	_ZN4Aska10AafHandler12GetChunkSizeEiPmS1_S1_S1_	Aska::AafHandler::GetChunkSize(int, unsigned long*, unsigned long*, unsigned long*, unsigned long*)	aaf_handler	typed	
+0x1f9c260	0x209c260	132	_ZN4Aska10AafHandler12GetChunkSizeEPKNS_3AFF8AskaFileEPKNS_9AafHeaderEiPmS8_S8_S8_	Aska::AafHandler::GetChunkSize(Aska::AFF::AskaFile const*, Aska::AafHeader const*, int, unsigned long*, unsigned long*, unsigned long*, unsigned long*)	aaf_handler	typed	
+0x1f9c2e4	0x209c2e4	76	_ZN4Aska10AafHandler20GetConstantChunkSizeEPmS1_S1_S1_	Aska::AafHandler::GetConstantChunkSize(unsigned long*, unsigned long*, unsigned long*, unsigned long*)	aaf_handler	typed	
+0x1f9c330	0x209c330	72	_ZN4Aska10AafHandler20GetConstantChunkSizeEPKNS_3AFF8AskaFileEPKNS_9AafHeaderEPmS8_S8_S8_	Aska::AafHandler::GetConstantChunkSize(Aska::AFF::AskaFile const*, Aska::AafHeader const*, unsigned long*, unsigned long*, unsigned long*, unsigned long*)	aaf_handler	typed	
+0x1f9c378	0x209c378	8	_ZN4Aska10AafHandler23DetachConstantChunkDataEv	Aska::AafHandler::DetachConstantChunkData()	aaf_handler	typed	
+0x1f9c380	0x209c380	40	_ZN4Aska10AafHandler15DetachChunkDataEi	Aska::AafHandler::DetachChunkData(int)	aaf_handler	typed	
+0x1f9c3a8	0x209c3a8	72	_ZNK4Aska10AafHandler19IsChunkReadyByIndexEi	Aska::AafHandler::IsChunkReadyByIndex(int) const	aaf_handler	typed	
+0x1f9c410	0x209c410	212	_ZN4Aska10AafHandlerD2Ev	Aska::AafHandler::~AafHandler()	aaf_handler	typed	
+0x1f9c4e4	0x209c4e4	24	_ZN4Aska10AafHandlerD0Ev	Aska::AafHandler::~AafHandler()	aaf_handler	typed	
+0x1f9c508	0x209c508	1200	_ZN4Aska20AafCalcCommonFunctor20CalcAndSetSubFunctorINS_11AafCalcTypeILNS_17kTYPE_AAFCALCCNTRE0ELNS_19kTYPE_AAFCALCANDSETE0ELNS_18kTYPE_AAFCALCSPEEDE0ELNS_13kTYPE_AAFCALCE0ELNS_22kTYPE_AAFLOOPCONDITIONE0EEELb0ELb0ELS3_0EEclEPNS_10AafHandlerEPNS_11IAnimatableEPNS_11IControllerEffj	Aska::AafCalcCommonFunctor::CalcAndSetSubFunctor<Aska::AafCalcType<(Aska::kTYPE_AAFCALCCNTR)0, (Aska::kTYPE_AAFCALCANDSET)0, (Aska::kTYPE_AAFCALCSPEED)0, (Aska::kTYPE_AAFCALC)0, (Aska::kTYPE_AAFLOOPCONDITION)0>, false, false, (Aska::kTYPE_AAFCALCCNTR)0>::operator()(Aska::AafHandler*, Aska::IAnimatable*, Aska::IController*, float, float, unsigned int)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1f9c9b8	0x209c9b8	512	_ZN4Aska20AafCalcCommonFunctor10CheckCacheINS_11AafCalcTypeILNS_17kTYPE_AAFCALCCNTRE0ELNS_19kTYPE_AAFCALCANDSETE0ELNS_18kTYPE_AAFCALCSPEEDE0ELNS_13kTYPE_AAFCALCE0ELNS_22kTYPE_AAFLOOPCONDITIONE0EEEEEvPNS_10AafHandlerEPjSB_PPNS_17AafControllerInfoERiSF_PtSG_SF_jPNS_11IAnimatableEfPNS_25FrameSortDataForSearchOldEj	void Aska::AafCalcCommonFunctor::CheckCache<Aska::AafCalcType<(Aska::kTYPE_AAFCALCCNTR)0, (Aska::kTYPE_AAFCALCANDSET)0, (Aska::kTYPE_AAFCALCSPEED)0, (Aska::kTYPE_AAFCALC)0, (Aska::kTYPE_AAFLOOPCONDITION)0> >(Aska::AafHandler*, unsigned int*, unsigned int*, Aska::AafControllerInfo**, int&, int&, unsigned short*, unsigned short*, int&, unsigned int, Aska::IAnimatable*, float, Aska::FrameSortDataForSearchOld*, unsigned int)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1f9d198	0x209d198	220	_ZN4Aska10AafHandler25RenewalOneControllerCacheILi1EEEvfi	void Aska::AafHandler::RenewalOneControllerCache<1>(float, int)	aaf_handler	decompiled	
+0x1f9d274	0x209d274	1520	_ZN4Aska10AafHandler34Function_RenewalOneControllerCacheEftiPNS_17AafControllerInfoEPNS_18AAF_RENEWAL_ONE_CPEPNS_17AafKeyframeHeaderEPNS_25FrameSortDataForSearchOldEjb	Aska::AafHandler::Function_RenewalOneControllerCache(float, unsigned short, int, Aska::AafControllerInfo*, Aska::AAF_RENEWAL_ONE_CP*, Aska::AafKeyframeHeader*, Aska::FrameSortDataForSearchOld*, unsigned int, bool)	aaf_handler	typed	
+0x1f9f6f0	0x209f6f0	1028	_ZN4Aska20AafCalcCommonFunctor20CalcAndSetSubFunctorINS_11AafCalcTypeILNS_17kTYPE_AAFCALCCNTRE0ELNS_19kTYPE_AAFCALCANDSETE0ELNS_18kTYPE_AAFCALCSPEEDE0ELNS_13kTYPE_AAFCALCE0ELNS_22kTYPE_AAFLOOPCONDITIONE0EEELb1ELb0ELS3_0EEclEPNS_10AafHandlerEPNS_11IAnimatableEPNS_11IControllerEffj	Aska::AafCalcCommonFunctor::CalcAndSetSubFunctor<Aska::AafCalcType<(Aska::kTYPE_AAFCALCCNTR)0, (Aska::kTYPE_AAFCALCANDSET)0, (Aska::kTYPE_AAFCALCSPEED)0, (Aska::kTYPE_AAFCALC)0, (Aska::kTYPE_AAFLOOPCONDITION)0>, true, false, (Aska::kTYPE_AAFCALCCNTR)0>::operator()(Aska::AafHandler*, Aska::IAnimatable*, Aska::IController*, float, float, unsigned int)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fa05c8	0x20a05c8	1204	_ZN4Aska20AafCalcCommonFunctor20CalcAndSetSubFunctorINS_11AafCalcTypeILNS_17kTYPE_AAFCALCCNTRE0ELNS_19kTYPE_AAFCALCANDSETE0ELNS_18kTYPE_AAFCALCSPEEDE0ELNS_13kTYPE_AAFCALCE0ELNS_22kTYPE_AAFLOOPCONDITIONE0EEELb0ELb1ELS3_0EEclEPNS_10AafHandlerEPNS_11IAnimatableEPNS_11IControllerEffj	Aska::AafCalcCommonFunctor::CalcAndSetSubFunctor<Aska::AafCalcType<(Aska::kTYPE_AAFCALCCNTR)0, (Aska::kTYPE_AAFCALCANDSET)0, (Aska::kTYPE_AAFCALCSPEED)0, (Aska::kTYPE_AAFCALC)0, (Aska::kTYPE_AAFLOOPCONDITION)0>, false, true, (Aska::kTYPE_AAFCALCCNTR)0>::operator()(Aska::AafHandler*, Aska::IAnimatable*, Aska::IController*, float, float, unsigned int)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fa7290	0x20a7290	1376	_ZN4Aska10AafHandler13SetControllerEPNS_17AafControllerInfoEPPhS4_	Aska::AafHandler::SetController(Aska::AafControllerInfo*, unsigned char**, unsigned char**)	aaf_handler	typed	
+0x1fa798c	0x20a798c	404	_Z18LocalSetControllerILb0EEbPN4Aska10AafHandlerEPNS0_17AafControllerInfoEPPhS6_	bool LocalSetController<false>(Aska::AafHandler*, Aska::AafControllerInfo*, unsigned char**, unsigned char**)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fa7b3c	0x20a7b3c	8	_ZN4Aska13AafController5CloneEPNS_11IControllerEb	Aska::AafController::Clone(Aska::IController*, bool)	aaf_handler	typed	
+0x1fa7b44	0x20a7b44	8	_ZN4Aska13AafController4CopyEPNS_11IControllerEb	Aska::AafController::Copy(Aska::IController*, bool)	aaf_handler	typed	
+0x1fa7b64	0x20a7b64	4	_ZN4Aska13AafController9CalcValueEPvf	Aska::AafController::CalcValue(void*, float)	aaf_handler	typed	
+0x1fa7b7c	0x20a7b7c	8	_ZNK4Aska13AafController20GetAafKeyframeHeaderEv	Aska::AafController::GetAafKeyframeHeader() const	aaf_handler	typed	
+0x1fa7b84	0x20a7b84	8	_ZNK4Aska13AafController11GetKeyframeEPfi	Aska::AafController::GetKeyframe(float*, int) const	aaf_handler	typed	
+0x1fa7b8c	0x20a7b8c	8	_ZNK4Aska13AafController15GetControlPointEPvi	Aska::AafController::GetControlPoint(void*, int) const	aaf_handler	typed	
+0x1fa7b94	0x20a7b94	8	_ZN4Aska13AafController14GetIAnimatableEv	Aska::AafController::GetIAnimatable()	aaf_handler	typed	
+0x1fa7b9c	0x20a7b9c	12	_ZN4Aska13AafController14CallDestructorEv	Aska::AafController::CallDestructor()	aaf_handler	typed	
+0x1fa7ba8	0x20a7ba8	4	_ZN4Aska13AafController12DetachObjectEv	Aska::AafController::DetachObject()	aaf_handler	typed	
+0x1fa7bac	0x20a7bac	4	_ZN4Aska13AafController16SetControlBufferEPPhi	Aska::AafController::SetControlBuffer(unsigned char**, int)	aaf_handler	typed	
+0x1fa7bb0	0x20a7bb0	4	_ZN4Aska13AafController19SetComplementBufferEPPh	Aska::AafController::SetComplementBuffer(unsigned char**)	aaf_handler	typed	
+0x1fa7bb4	0x20a7bb4	4	_ZN4Aska13AafController15SetControlPointEifPv	Aska::AafController::SetControlPoint(int, float, void*)	aaf_handler	typed	
+0x1fa7bb8	0x20a7bb8	12	_ZN4Aska13AafController20ForceSetControlPointEifPv	Aska::AafController::ForceSetControlPoint(int, float, void*)	aaf_handler	typed	
+0x1fa7bc4	0x20a7bc4	4	_ZN4Aska13AafController16SwapControlPointEv	Aska::AafController::SwapControlPoint()	aaf_handler	typed	
+0x1fa7bc8	0x20a7bc8	4	_ZN4Aska13AafController12SetLoopCountEi	Aska::AafController::SetLoopCount(int)	aaf_handler	typed	
+0x1fa7bcc	0x20a7bcc	4	_ZN4Aska13AafController12SetLoopCountEf	Aska::AafController::SetLoopCount(float)	aaf_handler	typed	
+0x1fa7bd0	0x20a7bd0	4	_ZN4Aska13AafController13SetFigureRateEf	Aska::AafController::SetFigureRate(float)	aaf_handler	typed	
+0x1fa7bd4	0x20a7bd4	8	_ZN4Aska13AafController25IsNecessaryToRenewalCacheEfff	Aska::AafController::IsNecessaryToRenewalCache(float, float, float)	aaf_handler	typed	
+0x1fa7bdc	0x20a7bdc	4	_ZN4Aska13AafController20GetDifferenceOfValueEPv	Aska::AafController::GetDifferenceOfValue(void*)	aaf_handler	typed	
+0x1fa7be0	0x20a7be0	4	_ZN4Aska13AafController20SetDifferenceOfValueEPv	Aska::AafController::SetDifferenceOfValue(void*)	aaf_handler	typed	
+0x1fa7be4	0x20a7be4	4	_ZN4Aska13AafController20AddDifferenceOfValueEPvf	Aska::AafController::AddDifferenceOfValue(void*, float)	aaf_handler	typed	
+0x1fa7be8	0x20a7be8	4	_ZN4Aska13AafController8GetValueEPvS1_	Aska::AafController::GetValue(void*, void*)	aaf_handler	typed	
+0x1fa7bec	0x20a7bec	4	_ZN4Aska13AafController18GetComplementValueEiPv	Aska::AafController::GetComplementValue(int, void*)	aaf_handler	typed	
+0x1fa7bf0	0x20a7bf0	4	_ZN4Aska13AafController20GetComplementTangentEiPvS1_	Aska::AafController::GetComplementTangent(int, void*, void*)	aaf_handler	typed	
+0x1fa7bf4	0x20a7bf4	4	_ZN4Aska13AafController19CalcValueComplementEPvfff	Aska::AafController::CalcValueComplement(void*, float, float, float)	aaf_handler	typed	
+0x1fa7bf8	0x20a7bf8	4	_ZN4Aska13AafController17CalcValueConstantEPvi	Aska::AafController::CalcValueConstant(void*, int)	aaf_handler	typed	
+0x1fa7bfc	0x20a7bfc	4	_ZN4Aska13AafController32CalcValueByLinearAtPreOutOfRangeEPvf	Aska::AafController::CalcValueByLinearAtPreOutOfRange(void*, float)	aaf_handler	typed	
+0x1fa7c00	0x20a7c00	4	_ZN4Aska13AafController33CalcValueByLinearAtPostOutOfRangeEPvf	Aska::AafController::CalcValueByLinearAtPostOutOfRange(void*, float)	aaf_handler	typed	
+0x1fa7c04	0x20a7c04	4	_ZN4Aska13AafController20SetValueOfDirectAddrEPvS1_	Aska::AafController::SetValueOfDirectAddr(void*, void*)	aaf_handler	typed	
+0x1fa7c08	0x20a7c08	4	_ZN4Aska13AafController20AddValueOfDirectAddrEPvS1_	Aska::AafController::AddValueOfDirectAddr(void*, void*)	aaf_handler	typed	
+0x1fa7c0c	0x20a7c0c	4	_ZN4Aska13AafController16AddValueToTargetEPvPNS_14AafSetValueArgE	Aska::AafController::AddValueToTarget(void*, Aska::AafSetValueArg*)	aaf_handler	typed	
+0x1fa7c10	0x20a7c10	4	_ZN4Aska13AafController22BlendValueOfDirectAddrEPvS1_f	Aska::AafController::BlendValueOfDirectAddr(void*, void*, float)	aaf_handler	typed	
+0x1fa7c14	0x20a7c14	4	_ZN4Aska13AafController18BlendValueToTargetEPvPNS_14AafSetValueArgE	Aska::AafController::BlendValueToTarget(void*, Aska::AafSetValueArg*)	aaf_handler	typed	
+0x1fa7c18	0x20a7c18	8	_ZN4Aska13AafController20GetInputAddrForValueEPNS_14AafSetValueArgE	Aska::AafController::GetInputAddrForValue(Aska::AafSetValueArg*)	aaf_handler	typed	
+0x1fa7c20	0x20a7c20	8	_ZN4Aska13AafController21GetOutputAddrForValueEPNS_14AafSetValueArgE	Aska::AafController::GetOutputAddrForValue(Aska::AafSetValueArg*)	aaf_handler	typed	
+0x1fa7c28	0x20a7c28	8	_ZN4Aska13AafController20GetInputAddrForValueEPNS_11IAnimatableE	Aska::AafController::GetInputAddrForValue(Aska::IAnimatable*)	aaf_handler	typed	
+0x1fa7c30	0x20a7c30	8	_ZN4Aska13AafController21GetOutputAddrForValueEPNS_11IAnimatableE	Aska::AafController::GetOutputAddrForValue(Aska::IAnimatable*)	aaf_handler	typed	
+0x1fa7c38	0x20a7c38	4	_ZN4Aska13AafController20UpdateTargetForValueEPNS_14AafSetValueArgE	Aska::AafController::UpdateTargetForValue(Aska::AafSetValueArg*)	aaf_handler	typed	
+0x1fa7c3c	0x20a7c3c	8	_ZN4Aska13AafController17GetControllerSizeEv	Aska::AafController::GetControllerSize()	aaf_handler	typed	
+0x1fa7c44	0x20a7c44	4	_ZN4Aska13AafController26SetConstantComplementPointEv	Aska::AafController::SetConstantComplementPoint()	aaf_handler	typed	
+0x1fa7c48	0x20a7c48	4	_ZN4Aska13AafController18UpdateCurrentRangeEv	Aska::AafController::UpdateCurrentRange()	aaf_handler	typed	
+0x1fa7c4c	0x20a7c4c	8	_ZN4Aska13AafController15GetCurrentRangeEv	Aska::AafController::GetCurrentRange()	aaf_handler	typed	
+0x1fa7c54	0x20a7c54	8	_ZNK4Aska13AafController11GetKeyframeEi	Aska::AafController::GetKeyframe(int) const	aaf_handler	typed	
+0x1fa8c18	0x20a8c18	8	_ZN4Aska13AafController12AttachObjectEPNS_10AsfHandlerEPNS_14AafSetValueArgEPKNS_19AafControllerHeaderE	Aska::AafController::AttachObject(Aska::AsfHandler*, Aska::AafSetValueArg*, Aska::AafControllerHeader const*)	aaf_handler	typed	
+0x1fa8e84	0x20a8e84	8	_ZN4Aska13AafController23IsIndependentControllerEv	Aska::AafController::IsIndependentController()	aaf_handler	typed	
+0x1fab770	0x20ab770	1720	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_NormalELb0ELb0ELj0EEEE12CalcValueSubEPvfb	Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Normal, false, false, 0u> >::CalcValueSub(void*, float, bool)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fc4d90	0x20c4d90	1888	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_22AafControlPoint_VectorELb0ELb0ELj0EEEE12CalcValueSubEPvfb	Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector, false, false, 0u> >::CalcValueSub(void*, float, bool)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fcf4ac	0x20cf4ac	1660	_ZN4Aska20TAafNormalControllerINS_7AafTypeINS_33AafControlPoint_Quaternion_LinearELb0ELb0ELj0EEEE12CalcValueSubEPvfb	Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Linear, false, false, 0u> >::CalcValueSub(void*, float, bool)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fd97a8	0x20d97a8	76	_ZN4Aska26TAafTranslateXYZControllerINS_20TAafNormalControllerINS_7AafTypeINS_27AafControlPoint_Vector_StepELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	Aska::TAafTranslateXYZController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Vector_Step, false, false, 0u> > >::SetValueToTarget(void*, Aska::AafSetValueArg*)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fdee48	0x20dee48	76	_ZN4Aska30TAafRotateQuaternionControllerINS_20TAafNormalControllerINS_7AafTypeINS_31AafControlPoint_Quaternion_StepELb0ELb0ELj0EEEEEE16SetValueToTargetEPvPNS_14AafSetValueArgE	Aska::TAafRotateQuaternionController<Aska::TAafNormalController<Aska::AafType<Aska::AafControlPoint_Quaternion_Step, false, false, 0u> > >::SetValueToTarget(void*, Aska::AafSetValueArg*)	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x1fe9ebc	0x20e9ebc	368	_ZNK4Aska39AafKeyframeData_Quaternion_Linear_U48EX8GetValueEPf	Aska::AafKeyframeData_Quaternion_Linear_U48EX::GetValue(float*) const	controllers	typed	typed through AafHandler / AafControllerInfo / AafController (the functor's and the controllers' data)
+0x2072c88	0x2172c88	4	_ZN4Aska13AafController16SetValueToTargetEPvPNS_14AafSetValueArgE	Aska::AafController::SetValueToTarget(void*, Aska::AafSetValueArg*)	aaf_handler	typed	

@@ -3,7 +3,7 @@
 
   .venv/bin/python tools/missing_assets.py [--db data/basmaster-3.7.0.sqlite3]
         [--download work/download-3.7.0] [--apk apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk]
-        [--standins standin-assets] [--xapk work/extracted/xapk/assetinstalltime.apk]
+        [--standins standin-assets]
         [--gl data/basmaster-gl.sqlite3] [--names docs/missing-assets-names.tsv]
         [--md docs/missing-assets-3.7.0.md] [--json OUT] [--residue OUT]
 
@@ -28,8 +28,7 @@ are printed in the document's "Path rules" section):
             BG/<x>.asf/.aaf/.acf
 A file is present when a source holds it (logical names: everything up to builtin_data/ or
 assetpack/ dropped, the etc2/ and etc2/hi/ quality folders folded away; zero-size files don't
-count). Sources in priority order: the 3.7.0 download, the 3.7.0 APK, the 3.8.0 offline XAPK's
-install-time pack (local only; optional), the repo's stand-ins.
+count). Sources in priority order: the 3.7.0 download, the 3.7.0 APK, the repo's stand-ins.
 
 "What it probably is" comes from the referencing column and row, the subject (gacha title,
 pick-up role / weapon, mission, person) and the size / format of existing files of the same name
@@ -314,8 +313,6 @@ class Build:
         self.c.row_factory = sqlite3.Row
         self.names = Names(self.c, a.gl, a.names)
         self.sources = [Source("download", a.download), Source("APK 3.7.0", a.apk)]
-        if a.xapk:
-            self.sources.append(Source("XAPK 3.8.0", a.xapk))
         self.sources.append(Source("stand-in", a.standins))
         self.dims_cache = {}
         q = self.q
@@ -1088,8 +1085,7 @@ def write(b, events, gachas, dangling, a, part2=()):
       f"Sources, in lookup order: {src_lines}. A file found in a source counts as present; a file found only "
       "in `standin-assets/` is listed as **stand-in** (made-up art, port/README.md \"Stand-in assets\"). The online "
       "CDN dropped old event and gacha art before the last download, so most of what is missing is art and "
-      "story data of events and banners that had already closed. The 3.8.0 offline XAPK's install-time asset pack "
-      "(2,433 images, 458 scripts; `--xapk`) fills none of these gaps (checked 2026-10-04).\n")
+      "story data of events and banners that had already closed.\n")
     w("Names: the heading gives the Japanese name from `master_text`, then an English name. English comes from "
       "the Global master (`data/basmaster-gl.sqlite3`, official text, marked *GL*) where it has one, else from "
       "the hand-written table `docs/missing-assets-names.tsv` (established series / anamnesis names where known; "
@@ -1132,7 +1128,7 @@ def write(b, events, gachas, dangling, a, part2=()):
       "`Character/<asf>.asf`, `Character/<acf>.acf`, `Motion/<apk>.apk`, `Character/<unique_apk>.apk` | (a) the "
       "join; (b) the four person resource fields (docs/notes.md \"Characters\") |")
     w("| `stage_bgm`, `voice_menu_pack_name` | `Sound/<x>.aac`, `Sound/<x>.spk` | (b) only partly: libSOA 3.7.0 has "
-      "`Sound/`, `.aac` and `.spk`, and the 3.8.0 asset pack lists BGM as `Sound/<name>.aac`; (d) the "
+      "`Sound/`, `.aac` and `.spk`; (d) the "
       "concatenation, backed by the presence counts below |")
     w("| `master_gacha.resource_replace_group_id` | `BG/<replace_res>.*` | (a) `master_replace_resource`; (b) "
       "`CResourceReplaceManager::GetResourceName(id, 4)` replaces the gacha map `bg99_01` |")
@@ -1281,9 +1277,6 @@ def main():
     ap.add_argument("--db", default=rel("data", "basmaster-3.7.0.sqlite3"))
     ap.add_argument("--download", default=rel("work", "download-3.7.0"))
     ap.add_argument("--apk", default=rel("apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"))
-    ap.add_argument("--xapk", default="",
-                    help="also search the 3.8.0 offline install-time asset pack (local only), e.g. "
-                         "work/extracted/xapk/assetinstalltime.apk; it fills none of the gaps (checked 2026-10-04)")
     ap.add_argument("--standins", default=rel("standin-assets"))
     ap.add_argument("--gl", default=rel("data", "basmaster-gl.sqlite3"))
     ap.add_argument("--names", default=rel("docs", "missing-assets-names.tsv"))

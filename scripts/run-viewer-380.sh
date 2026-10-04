@@ -19,7 +19,7 @@ data=${HOME:-.}/.local/share/soa-viewer-380
 viewer_args=()
 while [ $# -gt 0 ]; do
   case "$1" in
-    -h|--help) sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'; exit 0;;
+    -h|--help) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 0;;
     --data|--home) data=$2; shift 2;;
     *) viewer_args+=("$1"); shift;;
   esac

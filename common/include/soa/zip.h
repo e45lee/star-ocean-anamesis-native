@@ -75,7 +75,7 @@ private:
     void close();
 
     std::string path_;
-    std::shared_ptr<Mapping> map_file_;  // shared with the archives opened from it (open_member)
+    std::shared_ptr<Mapping> map_file_;  // this archive's mapping (a nested archive maps the file again; the page cache is shared)
     const uint8_t* map_ = nullptr;       // the archive's first byte
     uint64_t base_ = 0, size_ = 0;
     void* stream_ = nullptr;  // minizip-ng: the stream over [map_, map_ + size_) and the zip handle

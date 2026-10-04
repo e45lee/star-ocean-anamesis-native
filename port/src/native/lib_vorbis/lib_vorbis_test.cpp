@@ -191,7 +191,9 @@ Trace decode(I& api, const std::vector<u8>& d, int max_pages, int loop_at) {
     }
     if (headers < 3) return tr;
     int ch = x.vi->channels;
-    tr.r(ch), tr.r((s32)x.vi->rate), tr.r(x.vi->version), tr.r(x.vi->bitrate_nominal);
+    // (the fields the game reads, which keep their offsets on every host: on Windows the host's
+    // vorbis_info, in place, has its 32-bit longs elsewhere; the live check compares them all)
+    tr.r(ch), tr.r((s32)x.vi->rate), tr.r(x.vi->version);
     tr.r(api.synthesis_init(x));
     tr.r(api.block_init(x));
     tr.r(api.info_blocksize(x, 0)), tr.r(api.info_blocksize(x, 1));

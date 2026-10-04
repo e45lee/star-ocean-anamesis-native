@@ -80,6 +80,22 @@ it), `_WorkerThread::Handler` (the worker's main loop: its exit is `Thread::Exit
 which halts the guest CPU at its JIT level; it never touches the lock), `TaskManager::OwnersKickTask`
 and the rest of TaskManager / CFiberKernel / NotifierThread.
 
+## Measurements
+
+The login and battle flows (`SOA_PROFILE` at 1000 Hz), the binary before these natives (main at a1d2854)
+and after (this branch before the merge of main) run side by side, 2026-10-04 (`port/scripts/rebuild_queue.py`):
+
+| | kernel guest self (login / battle) | rank | battle fps (`I/perf`, steady) |
+|---|---|---|---|
+| before | 17,175 (12.7%: 11.1% / 13.4%) | 3 | ~56-59 |
+| after | 3,700 (3.1%: 2.8% / 3.3%) | 6 | ~56-60 (the cap) |
+
+The win is moving the dispatcher's and the task manager's critical sections off the JIT (the guest
+spun on the FastCriticalSection's word through the JIT's exclusive monitor while the holder ran its
+critical section as JIT code); the lock design is unchanged (the guest's word, sync's Enter / Leave).
+What is left of kernel's guest self: OwnersKickTask, CFiberKernel::Progress, CMainTask::Run,
+VSync::UpdateVSyncEvents, the unbound dispatcher forms.
+
 ## Dependencies
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):

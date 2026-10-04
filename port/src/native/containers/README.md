@@ -48,6 +48,16 @@ to `types.json`.
 | `Aska::StringUtility::Utf8ToMultiByte` | `containers_string_utility.cpp` | `containers/utf8-to-multibyte` (random strings, every argument combination) | `containers`: 0 mismatches |
 | `Framework::TObjectContainer<T>::NumElements` / `rElement` / `crElement` for T = `CSound::CElement`, `Collision::CollisionShapeGroup`, `IFixedLengthAllocator*`, `BehaviorQueue*` (12) | `containers_object_container.cpp` (+ `.h`: the instantiations) | `containers/object-container` (the guest's vtables, random counts / indices) | `containers`: 0 mismatches |
 
+| `Aska::THashMap<std::string, CAssetInfo, Hasher_CSTLString>::Find_` (x8 iterator) | `containers_hash_map.cpp` | `containers/hash-map-find-asset` (hand-built tables: used / deleted / empty buckets, short and long keys, collisions, absent keys) | `containers` |
+| `TOMQuickSort<Aska::RenderableObject, float, 64, 10>::Descend` / `Ascend` | `containers_quick_sort.cpp` | `containers/tom-quick-sort` (random keys with many ties, random ranges: the exact order) | `containers` |
+| `Framework::CSTLStringUtility_Base<std::string>::ReplaceSelf` / `Replace` (x8) | `containers_stl_string_utility.cpp` | `containers/stl-string-replace` (guest-built strings, 0..n matches, growing / shrinking, null flag) | `containers` |
+
+`TDynamicArray<T>::InsertFill` (`containers_dynamic_array.h`: `Insert_<TUninitializedFillN<T>>`) is a
+template for other subsystems' natives (data_formats' ASON::Malloc); not bound on its own.
+The CHash32 Find_ uses is a local copy of the hash subsystem's CRC (switch to `hash::CHash32::Of` once
+that subsystem is on main). Left guest (see the queue below): `TPoolFast<u8[90], true>::Scoop` / `Sink`
+(their thread-safe form inlines sync's FastCriticalSection enter / leave: after sync's natives merge).
+
 `TObjectContainer` is memory's class (`memory_layout.h`, memory's `scope.txt`); its accessors are bound
 here because the containers code task took them (the hottest of the container code). Their
 `symbols.tsv` rows: `port/decomp/containers/object_container.c` (the client's instantiations) and

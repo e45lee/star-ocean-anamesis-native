@@ -172,6 +172,15 @@ struct THashMapBucketArray {
     u64 m_count;    // +0x08: number of buckets
 };
 
+// Aska::THashMapIterator<THashMapBucketArray<...>>: {bucket, buckets begin, buckets end} (Find_'s x8
+// result; the end iterator has m_bucket == m_end).
+template <typename B>
+struct THashMapIterator {
+    B* m_bucket;  // 0x00
+    B* m_begin;   // 0x08
+    B* m_end;     // 0x10
+};
+
 // The common shape of THashMap and THashSet (V = the bucket's value type: TPair<K, V> or K).
 template <typename V>
 class THashTable {
@@ -195,6 +204,8 @@ public:
     void Dtor();                    // ~THashMap() D2: frees the buckets (AlignedFree), size = 0
     void DtorDelete();              // ~THashMap() D0
     V* OpIndex(const K* key);       // operator[](K const&): inserts a default V when missing
+    // Find_(K const&) const: the key's bucket, or the end iterator (an x8 result)
+    THashMapIterator<THashMapBucket<TPair<K, V>>> Find_(const K& key) const;
     void Rehash_(u64 count);        // Rehash_(unsigned long)
     // template Insert<THashMapIterator<...>>(first, last): range insert (Rehash_ uses it)
 
@@ -521,7 +532,9 @@ template <typename T>
 class TDynamicArray {
 public:
     void Reserve(u64 n);   // Reserve(unsigned long)
-    // TArrayIterator<...> Insert_<Memory::TUninitializedFillN<T>>(TArrayIterator<...>, unsigned long, ...)
+    // TArrayIterator<...> Insert_<Memory::TUninitializedFillN<T>>(TArrayIterator<...>, unsigned long, ...):
+    // n slots at pos, the first `copies` copies of *value (containers_dynamic_array.h)
+    T* InsertFill(T* pos, u64 n, u64 copies, const T* value);
     void Dtor();           // ~TDynamicArray() D2
     void DtorDelete();     // ~TDynamicArray() D0
 

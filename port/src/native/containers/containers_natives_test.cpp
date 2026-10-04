@@ -1,6 +1,7 @@
 // Differential tests of the `containers` natives against the 3.7.0 guest (--selftest containers/):
 // the guest functions run as ARM64 code (natives aren't installed in --selftest), the natives on the
 // same inputs (random, plus the shapes the game uses).
+#include <algorithm>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -8,6 +9,7 @@
 #include "native/common/test.h"
 #include "native/containers/containers_layout.h"
 #include "native/containers/containers_object_container.h"
+#include "native/libcxx/libcxx_layout.h"
 
 namespace soa::native::containers {
 namespace {
@@ -67,6 +69,147 @@ NATIVE_TEST("containers/object-container") {
     objc_case<memory::CollisionShapeGroup>(t, "IN9Collision19CollisionShapeGroupEE");
     objc_case<memory::IFixedLengthAllocatorRef*>(t, "IPNS_21IFixedLengthAllocatorEE");
     objc_case<memory::BehaviorQueueRef*>(t, "IP13BehaviorQueueE");
+}
+
+}  // namespace
+
+void tom_quick_sort(bool descend, void** a, s32 lo, s32 hi, const void* ctx);
+libcxx::basic_string<char>* stl_replace_self(libcxx::basic_string<char>* s, const libcxx::basic_string<char>& from, const libcxx::basic_string<char>& to,
+                                             bool* replaced);
+void stl_replace(libcxx::basic_string<char>* out, const libcxx::basic_string<char>& src, const libcxx::basic_string<char>& from,
+                 const libcxx::basic_string<char>& to, bool* replaced);
+
+namespace {
+
+// TOMQuickSort<RenderableObject>: random keys (many equal, some NaN-free ties), random ranges; the
+// resulting order must be the guest's exactly (equal keys included).
+// THashMap<std::string, CAssetInfo>::Find_ on tables built by hand (the guest's bucket layout: state,
+// key string short or long, the 0xa0-byte value), probing with present, absent and colliding keys.
+NATIVE_TEST("containers/hash-map-find-asset") {
+    using String = libcxx::String;
+    using Map = THashMap<String, Opaque<0xa0>>;
+    using Bucket = THashMapBucket<TPair<String, Opaque<0xa0>>>;
+    using It = THashMapIterator<Bucket>;
+    constexpr const char* kSym =
+        "_ZNK4Aska8THashMapINSt6__ndk112basic_stringIcNS1_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS5_22CSTLStringAllocatorInfEEEEE10CAssetInfo17Hasher_"
+        "CSTLStringNS_8TEqualToIS9_EENS_10TAllocatorINS_5TPairIKS9_SA_EEEEE5Find_ERSG_";
+    auto make = [](String& g, const std::string& v) {
+        std::memset(&g, 0, sizeof g);
+        if (v.size() < 23) {
+            g.r.s.head.size = (u8)(v.size() << 1);
+            std::memcpy((char*)&g + 1, v.data(), v.size());
+        } else {
+            g.r.l.cap = (v.size() + 16) | 1;
+            g.r.l.size = v.size();
+            g.r.l.data = const_cast<char*>(v.data());
+        }
+    };
+    for (int k = 0; k < 60; k++) {
+        u64 count = (u64)t.rand_int(0, 40);
+        std::vector<Bucket> buckets(count);
+        std::vector<std::string> names;
+        for (int i = 0; i < 30; i++) names.push_back(std::string(k % 2 ? "Character/cp" : "c") + std::to_string(t.rand_int(0, 50)) + (i % 3 ? std::string(30, 'x') : ""));
+        names.push_back("");
+        std::memset(buckets.data(), 0, count * sizeof(Bucket));
+        for (u64 i = 0; i < count; i++) {
+            buckets[i].m_state = (u8)t.rand_int(0, 2);
+            make(buckets[i].m_value.first, names[(size_t)t.rand_int(0, (int)names.size() - 1)]);
+        }
+        alignas(8) Map m{};
+        m.table.m_buckets.m_data = buckets.data();
+        m.table.m_buckets.m_count = count;
+        for (int q = 0; q < 40; q++) {
+            String key;
+            std::string probe = q % 7 == 0 ? "absent" + std::to_string(q) : names[(size_t)t.rand_int(0, (int)names.size() - 1)];
+            make(key, probe);
+            It g{};
+            t.call(kSym, GuestArgs().sret(&g).p(&m).p(&key));
+            It n = m.Find_(key);
+            if (g.m_bucket != n.m_bucket || g.m_begin != n.m_begin || g.m_end != n.m_end) {
+                t.fail("Find_ case %d probe \"%s\" (%llu buckets): guest bucket %td, native %td", k, probe.c_str(), (unsigned long long)count,
+                       g.m_bucket - buckets.data(), n.m_bucket - buckets.data());
+                return;
+            }
+        }
+    }
+}
+
+// CSTLStringUtility_Base<std::string>::ReplaceSelf / Replace on strings the guest built (its insert),
+// patterns that occur 0..n times, overlap, grow or shrink the string, short and long forms.
+NATIVE_TEST("containers/stl-string-replace") {
+    using Str = libcxx::basic_string<char>;
+    constexpr const char* kInsert = "_ZNSt6__ndk112basic_stringIcNS_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS3_22CSTLStringAllocatorInfEEEE6insertEmPKc";
+    constexpr const char* kDtor = "_ZNSt6__ndk112basic_stringIcNS_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS3_22CSTLStringAllocatorInfEEEED2Ev";
+#define UTIL_SYM(m) \
+    "_ZN9Framework22CSTLStringUtility_BaseINSt6__ndk112basic_stringIcNS1_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEEE" m
+    auto make = [&](Str& s, const std::string& v) {
+        std::memset(&s, 0, sizeof s);
+        if (!v.empty()) t.call(kInsert, {(u64)&s, 0, (u64)v.c_str()});
+    };
+    auto text = [&](int maxlen, const char* alphabet) {
+        std::string v((size_t)t.rand_int(0, maxlen), ' ');
+        for (auto& c : v) c = alphabet[t.rand_int(0, (int)std::strlen(alphabet) - 1)];
+        return v;
+    };
+    for (int k = 0; k < 400; k++) {
+        std::string base = text(k % 3 ? 30 : 120, "abc/._");
+        std::string from = text(3, "abc/");
+        if (from.empty()) from = "a";
+        std::string to = text(k % 4 ? 4 : 40, "xyz/");
+        if (to.find(from) != std::string::npos && to.size() >= from.size()) to = "Z";  // (keeps the guest's loop finite)
+        Str g, n, f, tt, go, no;
+        make(g, base), make(n, base), make(f, from), make(tt, to);
+        bool gr = true, nr = true;
+        bool* gp = k % 5 ? &gr : nullptr;
+        bool* np = gp ? &nr : nullptr;
+        if (k % 2) {
+            u64 r = t.call(UTIL_SYM("11ReplaceSelfERS8_RKS8_SC_Pb"), {(u64)&g, (u64)&f, (u64)&tt, (u64)gp});
+            Str* rn = stl_replace_self(&n, f, tt, np);
+            if (r != (u64)&g || rn != &n) t.fail("ReplaceSelf's result");
+        } else {
+            make(go, ""), make(no, "");
+            t.call(UTIL_SYM("7ReplaceERKS8_SB_SB_Pb"), GuestArgs().sret(&go).p(&g).p(&f).p(&tt).p(gp));
+            stl_replace(&no, n, f, tt, np);
+        }
+        const Str& a = k % 2 ? g : go;
+        const Str& b = k % 2 ? n : no;
+        bool same = std::string(a.data(), a.size()) == std::string(b.data(), b.size()) && a.is_long() == b.is_long() && a.capacity() == b.capacity() &&
+                    gr == nr && std::string(g.data(), g.size()) == std::string(n.data(), n.size());
+        for (Str* s : {&g, &n, &f, &tt}) t.call(kDtor, {(u64)s});
+        if (!(k % 2)) t.call(kDtor, {(u64)&go}), t.call(kDtor, {(u64)&no});
+        if (!same) {
+            t.fail("case %d: \"%s\" / \"%s\" -> \"%s\": results differ", k, base.c_str(), from.c_str(), to.c_str());
+            return;
+        }
+    }
+#undef UTIL_SYM
+}
+
+NATIVE_TEST("containers/tom-quick-sort") {
+    constexpr int kObjs = 400;
+    std::vector<u8> objs(kObjs * 0x1c0);
+    std::vector<float> ctx(2 * kObjs);
+    for (int k = 0; k < 300; k++) {
+        int distinct = t.rand_int(1, k % 3 == 0 ? 4 : 1000);
+        for (int i = 0; i < kObjs; i++) {
+            *(u16*)&objs[i * 0x1c0 + 0x1b8] = (u16)t.rand_int(0, kObjs - 1);
+            ctx[2 * i + 1] = (float)t.rand_int(0, distinct) * 0.5f - 3.0f;
+        }
+        int n = t.rand_int(0, k % 5 == 0 ? 20 : 350);
+        int lo = t.rand_int(0, std::min(n, 5)), hi = t.rand_int(lo, n);
+        std::vector<void*> g(n), v;
+        for (auto& p : g) p = &objs[(size_t)t.rand_int(0, kObjs - 1) * 0x1c0];
+        v = g;
+        bool desc = k & 1;
+        t.call(desc ? "_ZN12TOMQuickSortIN4Aska16RenderableObjectEfLi64ELi10EE7DescendEPPS1_iiPNS0_13ObjectManager23RenderableObjectContextE"
+                    : "_ZN12TOMQuickSortIN4Aska16RenderableObjectEfLi64ELi10EE6AscendEPPS1_iiPNS0_13ObjectManager23RenderableObjectContextE",
+               {(u64)g.data(), (u64)lo, (u64)hi, (u64)ctx.data()});
+        tom_quick_sort(desc, v.data(), lo, hi, ctx.data());
+        if (g != v) {
+            t.fail("case %d (%s, n %d, [%d, %d), %d keys): orders differ", k, desc ? "Descend" : "Ascend", n, lo, hi, distinct);
+            return;
+        }
+    }
 }
 
 }  // namespace

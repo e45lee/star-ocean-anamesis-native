@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "soaserver/msgpack.h"
+#include "soaserver/times.h"
 
 struct sqlite3;
 
@@ -58,6 +59,9 @@ int64_t clock_now();
 // A time as the server sends it: local "YYYY-MM-DD HH:MM:SS" (src/core/time.h has the parsers and
 // the other variants).
 std::string format_time(int64_t t);
+// The same for either clock's time (soaserver/times.h): the wire's text, formatted at the boundary.
+inline std::string format_time(ServerTime t) { return format_time(t.v); }
+inline std::string format_time(EventTime t) { return format_time(t.v); }
 // Tests: sets the clock to `t` (running on from there), as --clock does; 0 = the real time.
 void set_server_clock(int64_t t);
 // Test seam (soa-server --replay): the wall clock the server clock runs on, `time(nullptr)` by

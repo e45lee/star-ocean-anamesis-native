@@ -73,6 +73,8 @@ struct Ctx {
     // Sphere 211 seasons) uses it; wallet, stamina and other real-time rules use now().
     int64_t event_now();
     std::string fmt_time(int64_t t);               // "YYYY-MM-DD HH:MM:SS", local time
+    std::string fmt_time(ServerTime t) { return fmt_time(t.v); }
+    std::string fmt_time(EventTime t) { return fmt_time(t.v); }
     int64_t parse_time(const std::string& s);
     Value base_data();                             // {Time, Player, Wallet}
     Value roster();                                // Character (CPersonInfo list)

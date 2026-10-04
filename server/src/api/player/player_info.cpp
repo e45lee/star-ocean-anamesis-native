@@ -25,7 +25,7 @@ using ext::Row;
 void tick_stamina(ext::Ctx& ctx) {
     ctx.st.q("select level, stamina, stamina_at from player", {}, [&](const Row& player_row) {
         u32 max = ctx.stamina_max((u32)player_row.i("level"));
-        int64_t now = clock_now(), at = player_row.i("stamina_at");
+        ServerTime now = clock_now(), at = player_row.time("stamina_at");
         auto [stamina, carry] =
             rules::regen_stamina((u32)player_row.i("stamina"), max, (u64)std::max<int64_t>(0, now - at), ctx.global_u32("stamina_heal_time", 180));
         ctx.st.q("update player set stamina = ?, stamina_at = ?", {stamina, stamina >= max ? now : now - (int64_t)carry});

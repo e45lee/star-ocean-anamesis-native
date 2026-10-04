@@ -51,7 +51,7 @@ NATIVE_TEST("social/follow-rental") {
         }
         // Rental bonus: 3 rentals yesterday -> row 3 (a: 400 support medals), once.
         int64_t p0 = c.st.one("select count(*) from presents", {});
-        int64_t yday = c.now() - 86400 - 3600;
+        ServerTime yday = c.now() - 86400 - 3600;
         c.st.q("insert into follow_rental (rental_day, count) values (?, 3)", {yday});
         d = Value::object();
         player_load(c, lr, d);

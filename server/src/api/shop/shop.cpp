@@ -46,11 +46,11 @@ using namespace ext;
 // below), so the client's own filter (b: CShop::Progress lists the master shops open by the client
 // clock) agrees. Unlike the event tables, only the rows the move opens are moved (an open-ended row
 // moved forward would open late).
-bool opened_by_year_shift(const std::string& opened_at, const std::string& closed_at, int years, int64_t now) {
+bool opened_by_year_shift(const std::string& opened_at, const std::string& closed_at, int years, ServerTime now) {
     return years > 0 && events::window_open(opened_at, closed_at, years, now) && !events::window_open(opened_at, closed_at, 0, now);
 }
 bool exchange_window_open(Ctx& ctx, const std::string& opened_at, const std::string& closed_at) {
-    int64_t now = ctx.now();
+    ServerTime now = ctx.now();
     return events::window_open(opened_at, closed_at, 0, now) || events::window_open(opened_at, closed_at, events::client_years(ctx), now);
 }
 // "hh:mm:ss" -> seconds since midnight (master_item_shop.reset_time).
@@ -62,17 +62,17 @@ int seconds_of_day(const std::string& hms) {
 
 // The start of an item-shop row's current period (growth_rules::shop_period_start: (a) reset_type 2
 // monthly on day reset_param at reset_time; 0 = the row never resets).
-int64_t shop_period(const Row& shop_row, int64_t t) {
-    return growth_rules::shop_period_start(t, (int)shop_row.i("reset_type"), (int)shop_row.i("reset_param"),
-                                           seconds_of_day(shop_row.s("reset_time")));
+ServerTime shop_period(const Row& shop_row, ServerTime t) {
+    return ServerTime(growth_rules::shop_period_start(t.v, (int)shop_row.i("reset_type"), (int)shop_row.i("reset_param"),
+                                                      seconds_of_day(shop_row.s("reset_time"))));
 }
 
 // The player's count for one item-shop row in the current period.
-u32 shop_bought(Ctx& ctx, const Row& shop_row, int64_t t) {
-    int64_t period = shop_period(shop_row, t);
+u32 shop_bought(Ctx& ctx, const Row& shop_row, ServerTime t) {
+    ServerTime period = shop_period(shop_row, t);
     u32 bought = 0;
     ctx.st.q("select num, period from shop_counts where id = ?", {shop_row.i("id")}, [&](const Row& count_row) {
-        if (count_row.i("period") == period) bought = (u32)count_row.i("num");  // (a) a new period starts from 0
+        if (count_row.time("period") == period) bought = (u32)count_row.i("num");  // (a) a new period starts from 0
     });
     return bought;
 }
@@ -82,7 +82,7 @@ u32 shop_bought(Ctx& ctx, const Row& shop_row, int64_t t) {
 // limit_count - it; ItemShopUtility::ItemSetInfo::GetRemain / IsEnable), and reset_at, parsed
 // with str2time_t, is the time shown as 交換可能期限 (the next reset). num_total: (d) the number
 // bought ever.
-Value item_shop_info(Ctx& ctx, const Row& shop_row, int64_t t) {
+Value item_shop_info(Ctx& ctx, const Row& shop_row, ServerTime t) {
     Value info = Value::object();
     int reset_type = (int)shop_row.i("reset_type"), reset_param = (int)shop_row.i("reset_param");
     int reset_seconds = seconds_of_day(shop_row.s("reset_time"));
@@ -92,7 +92,7 @@ Value item_shop_info(Ctx& ctx, const Row& shop_row, int64_t t) {
     info["num_total"] = (u32)ctx.st.one("select total from shop_counts where id = ?", {shop_row.i("id")});
     info["loop_count"] = (u32)shop_row.i("loop_count");
     info["is_new"] = false;
-    int64_t period = growth_rules::shop_period_start(t, reset_type, reset_param, reset_seconds);
+    int64_t period = growth_rules::shop_period_start(t.v, reset_type, reset_param, reset_seconds);  // 0: never resets
     // (d) the next reset: the period start a month (32 days) on, normalised to its day
     info["reset_at"] =
         period ? ctx.fmt_time(growth_rules::shop_period_start(period + 32 * 86400, reset_type, reset_param, reset_seconds)) : std::string("");
@@ -101,7 +101,7 @@ Value item_shop_info(Ctx& ctx, const Row& shop_row, int64_t t) {
 // ItemShopInfoList: every master_item_shop row open at the clock, in order_id order.
 Value item_shop_list(Ctx& ctx) {
     Value list = Value::array();
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     ctx.m.q("select * from master_item_shop order by order_id", {}, [&](const Row& shop_row) {
         if (open_at(shop_row.s("opened_at"), shop_row.s("closed_at"), t)) list.push(item_shop_info(ctx, shop_row, t));  // (a)+(b) the open window
     });
@@ -128,7 +128,7 @@ struct Refusal {
 };
 
 // Pays for one item-shop row and counts it, unless refused.
-Refusal buy_item_shop_row(Ctx& ctx, const Row& shop_row, int64_t t) {
+Refusal buy_item_shop_row(Ctx& ctx, const Row& shop_row, ServerTime t) {
     u32 id = (u32)shop_row.i("id");
     if (!open_at(shop_row.s("opened_at"), shop_row.s("closed_at"), t)) return {"closed", ErrorCode::kExchangeExpired};
     u32 limit = (u32)shop_row.i("limit_count"), bought = shop_bought(ctx, shop_row, t);
@@ -157,7 +157,7 @@ Refusal buy_item_shop_row(Ctx& ctx, const Row& shop_row, int64_t t) {
 // AddItem when items were granted.
 std::vector<u8> ex_item_shop(Ctx& ctx, const Request& req) {
     const auto args = args::ExItemShopArgs::from(req);
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     std::vector<u8> out;
     bool found = false;
     ctx.m.q("select * from master_item_shop where id = ?", {args.shop_row_id}, [&](const Row& shop_row) {
@@ -307,7 +307,7 @@ std::vector<u8> exshop_exchange(Ctx& ctx, const Request& req) {
 // ClientMaster hook (the served master's override). The client's master copy: the exchange shops
 // the event calendar has open but the clock hasn't move by the calendar's whole years
 // (events::year_shift), with their contents' opened_at (d).
-void client_master_shops(Sql& db, int64_t now, int64_t ev) {
+void client_master_shops(Sql& db, ServerTime now, EventTime ev) {
     int years = events::year_shift(now, ev);
     if (years <= 0) return;
     std::vector<std::tuple<int64_t, std::string, std::string>> shops;

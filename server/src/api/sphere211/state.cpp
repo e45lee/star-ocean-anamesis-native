@@ -23,7 +23,7 @@ namespace {
 struct DiveRow {
     u32 floor = 0, streak = 0, treasure_total = 0, stamina = 0, revive_count = 0, clear_asset = 0, lot_floor_num = 0;
     u32 prev_season = 0, prev_floor = 0, prev_treasure = 0, prev_rank = 0;
-    int64_t stamina_at = 0;
+    ServerTime stamina_at;
 };
 DiveRow read_dive(Ctx& ctx) {
     DiveRow dive;
@@ -32,7 +32,7 @@ DiveRow read_dive(Ctx& ctx) {
         dive.streak = (u32)sphere_row.i("streak");
         dive.treasure_total = (u32)sphere_row.i("treasure_total");
         dive.stamina = (u32)sphere_row.i("stamina");
-        dive.stamina_at = sphere_row.i("stamina_at");
+        dive.stamina_at = sphere_row.time("stamina_at");
         dive.revive_count = (u32)sphere_row.i("revive_count");
         dive.clear_asset = (u32)sphere_row.i("clear_asset");
         dive.lot_floor_num = (u32)sphere_row.i("lot_floor_num");

@@ -125,7 +125,9 @@ u64 requirement(const Wave& info, const Wave& prev, int64_t last_clear_secs, u64
 struct State {
     u32 area = 0, wave = 1;
     u64 n[3] = {0, 0, 0}, a[3] = {0, 0, 0}, required = 0;
-    int64_t started = 0, last_clear = 0, hunt_until = 0;
+    ServerTime started;      // the wave's start
+    int64_t last_clear = 0;  // the last wave's duration (seconds)
+    ServerTime hunt_until;   // the big hunt's end; 0 = none (a sentinel PLAN-schema S10 maps to NULL)
     bool hunt_new = false;
 };
 State load(Ctx& ctx, const Boss& boss, u32 area) {
@@ -138,9 +140,9 @@ State load(Ctx& ctx, const Boss& boss, u32 area) {
         state.n[0] = (u64)row.i("n1"), state.n[1] = (u64)row.i("n2"), state.n[2] = (u64)row.i("n3");
         state.a[0] = (u64)row.i("a1"), state.a[1] = (u64)row.i("a2"), state.a[2] = (u64)row.i("a3");
         state.required = (u64)row.i("required");
-        state.started = row.i("wave_started_at");
+        state.started = row.time("wave_started_at");
         state.last_clear = row.i("last_clear_secs");
-        state.hunt_until = row.i("hunt_until");
+        state.hunt_until = row.time("hunt_until");
         state.hunt_new = row.i("hunt_new") != 0;
     });
     if (!have) {  // (d) the first meeting starts wave 1
@@ -164,7 +166,7 @@ void save(Ctx& ctx, const Boss& boss, const State& state) {
         {boss.id, state.area, state.wave, state.n[0], state.n[1], state.n[2], state.a[0], state.a[1], state.a[2], state.required, state.started,
          state.last_clear, state.hunt_until, state.hunt_new ? 1 : 0});
 }
-bool hunting(Ctx& ctx, const State& state) { return state.hunt_until && ctx.now() <= state.hunt_until; }
+bool hunting(Ctx& ctx, const State& state) { return state.hunt_until.v && ctx.now() <= state.hunt_until; }
 
 // Adds the player's target items to the gauges; a wave whose three gauges are full clears: (d) its
 // reward goes to the present box (master_world_boss_wave content, present_message_id's text), a big

@@ -28,8 +28,8 @@ std::vector<uint8_t> make_served_master(const std::string& master, const std::st
         // (d) the overrides the in-process client master gets (apply_client_master), with the
         // clock of the server's start: the server clock, and the event calendar replayed on this
         // master (event_now: the clock itself under --clock).
-        int64_t t = now ? now : files::server_time();
-        int64_t ev = config().has_clock ? t : event_time(db, t);
+        ServerTime t(now ? now : files::server_time());
+        EventTime ev = config().has_clock ? clock_as_calendar(t) : event_time(db, t);
         apply_client_master(db, t, ev, master);
     }
     char* err = nullptr;

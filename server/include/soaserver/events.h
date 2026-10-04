@@ -21,7 +21,7 @@ namespace soa::server::events {
 // ---- clocks ------------------------------------------------------------------------------
 // Whole years from the event calendar to the client clock: year(now) - year(ev) (0 with --clock,
 // where both are the clock). (d)
-int year_shift(int64_t now, int64_t ev);
+int year_shift(ServerTime now, EventTime ev);
 // "YYYY-..." (a date or date-time string of the master data) with the year moved by `years`;
 // other strings (empty, "HH:MM:SS") unchanged.
 std::string shift_years(const std::string& s, int years);
@@ -35,7 +35,7 @@ int64_t shift_time(int64_t t, int years);
 int client_years(ext::Ctx& ctx);
 // A master window opened..closed (date-time strings, empty = open-ended) moved by `years`,
 // compared with the local time `t`.
-bool window_open(const std::string& opened, const std::string& closed, int years, int64_t t);
+bool window_open(const std::string& opened, const std::string& closed, int years, ServerTime t);
 
 // ---- assets (decided at run time, never from a list) --------------------------------------
 // Whether the game can load "<dir>/<file>" (e.g. "BG/bm0012_b01a.aaf"): the port's asset lookup
@@ -70,17 +70,17 @@ struct AreaState {
 };
 // The event areas the client will show at `now` (the client clock) with the event calendar `ev`,
 // and their missions, from the player's state (ctx.st) and the master data (ctx.m).
-std::vector<AreaState> open_areas(ext::Ctx& ctx, int64_t now, int64_t ev);
+std::vector<AreaState> open_areas(ext::Ctx& ctx, ServerTime now, EventTime ev);
 // Whether an area's term (master_event_term) or weekly slot (master_event_weekly) covers the
 // client time `now` (shifted by `years`), or will start within `ahead` seconds (d: the list is
 // sent ahead so an area that opens later today appears without a new request; the client hides
 // it until then).
-bool area_scheduled(ext::Sql& master, u32 area, int years, int64_t now, int64_t ahead = 0);
+bool area_scheduled(ext::Sql& master, u32 area, int years, ServerTime now, int64_t ahead = 0);
 // ActiveEventMissionList {EventArea: {area id: CAreaInfo}, EventMission: {area id: [CMissionElementInfo]}}.
-Value active_event_mission_list(ext::Ctx& ctx, int64_t now, int64_t ev);
+Value active_event_mission_list(ext::Ctx& ctx, ServerTime now, EventTime ev);
 // CampaignInfo: the master_campaign rows running at the event calendar, with their windows in the
 // client's time (the client compares them with its clock, (b) CUIUtility::GetCampaignSituation*).
-Value campaign_info(ext::Ctx& ctx, int64_t now, int64_t ev);
+Value campaign_info(ext::Ctx& ctx, ServerTime now, EventTime ev);
 
 // ---- hooks for other modules (e.g. the ranking / world boss module) ------------------------
 // `events::add_area_extra(fn)` (AreaExtra, from a module's register function): adds or changes

@@ -55,7 +55,7 @@ bool web_document(const std::string& url, std::string* content_type, std::string
 // ---- clocks ------------------------------------------------------------------------------
 // clock_now(): the server clock: the real time, or --clock "YYYY-MM-DD HH:MM:SS" and
 // running on from there. Wallet, stamina, login and other real-time rules use it.
-int64_t clock_now();
+ServerTime clock_now();
 // A time as the server sends it: local "YYYY-MM-DD HH:MM:SS" (src/core/time.h has the parsers and
 // the other variants).
 std::string format_time(int64_t t);
@@ -76,10 +76,13 @@ void set_clock_source(ClockSource source);
 // years the table's terms open in, 2016-2021 in the 3.7.0 DB; open-ended terms that close after
 // the last of those years don't count), so the service's calendar replays year after year.
 // docs/server-rules.md "Clock".
-int64_t event_now();
+EventTime event_now();
 // The mapping itself for the real time `t` over the master DB `master` (core/clock.cpp; t
 // itself when no year qualifies or the table is missing). Cached per local day.
-int64_t event_time(sqlite3* master, int64_t t);
+EventTime event_time(sqlite3* master, ServerTime t);
+// The event calendar when it is the server clock itself (--clock; no master to replay): the one
+// place a ServerTime becomes an EventTime unmapped (soaserver/times.h).
+inline EventTime clock_as_calendar(ServerTime t) { return EventTime(t.v); }
 // The year event_time picks for the month-day m-d (0: none), uncached (tests).
 int event_year(sqlite3* master, int m, int d);
 
@@ -98,7 +101,7 @@ bool logged_in();
 // ext::ClientMaster hooks (date shifts, texts, tower banners, shop, Sphere 211). Both server modes'
 // CDNs prepare the master they serve with it (no live server needed). Nothing when `db` has no
 // master_global table. `server_master` stands in for the live server's master file wherever a module reads it.
-void apply_client_master(sqlite3* db, int64_t now, int64_t event_now, const std::string& server_master);
+void apply_client_master(sqlite3* db, ServerTime now, EventTime event_now, const std::string& server_master);
 
 // Builds the response body for the pending request of FunctionID `fid` (submit), in one
 // transaction. False if no handler answers it. Both hosts reach it through answer().

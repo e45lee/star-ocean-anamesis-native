@@ -42,14 +42,14 @@ constexpr u32 kDefaultPassDays = 30;
 // master_item_set rows of type 20 name a master_subscription_plan (content_id) with num 30 for the
 // Galaxy Pass (pshop_galaxypass_001) and 14 for the character passes; (d) num is the days the pass
 // runs. (d) A grant while the plan still runs extends it by num days; otherwise it runs from now.
-void grant_plan(Ctx& ctx, u32 plan, u32 days, int64_t t) {
+void grant_plan(Ctx& ctx, u32 plan, u32 days, ServerTime t) {
     if (!ctx.m.one("select count(*) from master_subscription_plan where id = ?", {plan})) {
         LOGW("server", "pass %u: no master_subscription_plan row, not granted", plan);
         return;
     }
-    int64_t closed = ctx.st.one("select ifnull(max(closed_at), 0) from subscription where plan_id = ?", {plan});
-    int64_t from = closed > t ? closed : t;
-    int64_t opened = closed > t ? ctx.st.one("select opened_at from subscription where plan_id = ?", {plan}) : t;
+    ServerTime closed = ctx.st.one_time("select ifnull(max(closed_at), 0) from subscription where plan_id = ?", {plan});
+    ServerTime from = closed > t ? closed : t;
+    ServerTime opened = closed > t ? ctx.st.one_time("select opened_at from subscription where plan_id = ?", {plan}) : t;
     ctx.st.q(
         "insert into subscription (plan_id, opened_at, closed_at, updated_at) values (?, ?, ?, ?)"
         " on conflict(plan_id) do update set opened_at = excluded.opened_at, closed_at = excluded.closed_at, "
@@ -73,7 +73,7 @@ void grant_subscription_plan(Ctx& ctx, u32 id, u32 num, Value&, Value&, Value&) 
 // IsOpenSubscriptions). The pass is the master_direct_item_shop product of type 20 whose plan
 // has is_galaxypass (a: pshop_galaxypass_001, 30 days); it is granted again whenever a full player
 // load finds it expired (d).
-void keep_galaxy_pass(Ctx& ctx, int64_t t) {
+void keep_galaxy_pass(Ctx& ctx, ServerTime t) {
     u32 plan = 0, days = 0;
     ctx.m.q(
         "select s.content_id, s.num from master_direct_item_shop s join master_subscription_plan p on p.id = s.content_id "
@@ -91,15 +91,15 @@ Value subscription_info(Ctx& ctx) {
     // (a) master_subscription: the types (type_id) a plan (plan_id) gives. (d) when two plans give
     // one type, the later closed_at is sent.
     struct Window {
-        int64_t opened = 0, closed = 0;
+        ServerTime opened, closed;
     };
     std::vector<std::pair<u32, Window>> types;
     ctx.st.q("select * from subscription order by plan_id", {}, [&](const Row& plan_row) {
         ctx.m.q("select type_id from master_subscription where plan_id = ? order by order_id, id", {plan_row.i("plan_id")}, [&](const Row& type_row) {
             u32 type = (u32)type_row.i("type_id");
             auto it = std::find_if(types.begin(), types.end(), [&](auto& known) { return known.first == type; });
-            if (it == types.end()) types.push_back({type, {plan_row.i("opened_at"), plan_row.i("closed_at")}});
-            else if (plan_row.i("closed_at") > it->second.closed) it->second = {plan_row.i("opened_at"), plan_row.i("closed_at")};
+            if (it == types.end()) types.push_back({type, {plan_row.time("opened_at"), plan_row.time("closed_at")}});
+            else if (plan_row.time("closed_at") > it->second.closed) it->second = {plan_row.time("opened_at"), plan_row.time("closed_at")};
         });
     });
     Value info = Value::object();
@@ -145,7 +145,7 @@ void load_subscriptions(Ctx& ctx, const Request&, Value& data) {
 namespace soa::server {
 
 // (b) EnableSubscriptionType: a type is on while its closed_at is after the clock.
-bool ext::subscription_active(Ctx& ctx, u32 type, int64_t t) {
+bool ext::subscription_active(Ctx& ctx, u32 type, ServerTime t) {
     bool on = false;
     ctx.st.q("select plan_id, closed_at from subscription where closed_at > ?", {t}, [&](const Row& plan_row) {
         if (ctx.m.one("select count(*) from master_subscription where plan_id = ? and type_id = ?", {plan_row.i("plan_id"), type})) on = true;

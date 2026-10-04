@@ -140,7 +140,7 @@ bool received(Ctx& ctx, int64_t id) { return ctx.st.one("select count(*) from ac
 // next_achievement_id of received ones; (d) received rows leave the list.
 std::vector<int64_t> active_achievement_ids(Ctx& ctx) {
     std::vector<int64_t> ids;
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     std::string now = ctx.fmt_time(t);
     ctx.m.q(
         "select id, opened_at, closed_at from master_achievement where default_release = 1 and type not in (61, 62) and "

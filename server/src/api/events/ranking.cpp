@@ -60,17 +60,18 @@ constexpr int kPartySlots = 4;
 
 struct Group {
     u32 id = 0;
-    int64_t opened = 0, closed = 0, ranking_closed = 0, result_closed = 0;
+    ServerTime opened, closed, ranking_closed, result_closed;
 };
-// A group's dates as the client sees them (moved by the calendar's whole years).
+// A group's dates as the client sees them (moved by the calendar's whole years: on the client's
+// clock, the server clock).
 Group group_dates(Ctx& ctx, const Row& group_row) {
     Group group;
     int years = events::client_years(ctx);
     group.id = (u32)group_row.i("id");
-    group.opened = ctx.parse_time(events::shift_years(group_row.s("opened_at"), years));
-    group.closed = ctx.parse_time(events::shift_years(group_row.s("closed_at"), years));
-    group.ranking_closed = ctx.parse_time(events::shift_years(group_row.s("ranking_closed_at"), years));
-    group.result_closed = ctx.parse_time(events::shift_years(group_row.s("result_closed_at"), years));
+    group.opened = ServerTime(ctx.parse_time(events::shift_years(group_row.s("opened_at"), years)));
+    group.closed = ServerTime(ctx.parse_time(events::shift_years(group_row.s("closed_at"), years)));
+    group.ranking_closed = ServerTime(ctx.parse_time(events::shift_years(group_row.s("ranking_closed_at"), years)));
+    group.result_closed = ServerTime(ctx.parse_time(events::shift_years(group_row.s("result_closed_at"), years)));
     return group;
 }
 
@@ -98,7 +99,7 @@ std::string party_roles(const MissionInfo& mission) {
 // Adds: UpdatedEventRankingIdList (the rankings improved), when any.
 void ranking_mission_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
     if (mission.type != event_extras::kMissionTypeEvent || !mission.evaluation) return;
-    int64_t now = ctx.now();  // the clock, against the moved dates
+    ServerTime now = ctx.now();  // the clock, against the moved dates
     std::vector<u32> updated;
     ctx.m.q(
         "select r.id as rid, r.ranking_type, g.* from master_event_ranking r join master_event_ranking_group g on g.id = r.ranking_group_id "
@@ -204,9 +205,9 @@ std::vector<u8> clear_new_event_ranking(Ctx& ctx, const Request& req) {
 // The group whose result is due: (a) ranking_closed_at <= calendar <= result_closed_at, not received
 // yet, with a score in one of its rankings (d: no play, no result); the latest such group.
 u32 due_group(Ctx& ctx) {
-    int64_t now = ctx.now();  // the clock, against the moved dates
+    ServerTime now = ctx.now();  // the clock, against the moved dates
     u32 due = 0;
-    int64_t due_ranking_closed = 0;
+    ServerTime due_ranking_closed;
     ctx.m.q("select * from master_event_ranking_group", {}, [&](const Row& group_row) {
         Group group = group_dates(ctx, group_row);
         if (!(group.ranking_closed <= now && now <= group.result_closed)) return;

@@ -68,9 +68,9 @@ u32 grant_next_page(Ctx& ctx, const Row& bonus_row, u32 day) {
 // PresentBoxCount when a day is granted or reported, and the default Player.tutorial_status.
 void login_bonus(Ctx& ctx, const Request& req, Value& data) {
     default_tutorial_status(data);
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     // (a)+(b) the login day starts at master_global login_bonus_reset_hour (CParameterUtility::LoginBonusResetHour)
-    int64_t today = day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4));
+    ServerTime today = day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4));
     Value list = Value::array();
     int granted = 0;
     // (b)+(d) The popup reads is_received_now from the last LoginBonus the client got. With the
@@ -83,10 +83,10 @@ void login_bonus(Ctx& ctx, const Request& req, Value& data) {
         if (!open_at(bonus_row.s("opened_at"), bonus_row.s("closed_at"), t)) return;
         u32 id = (u32)bonus_row.i("id");
         u32 day = 0;
-        int64_t last_at = 0;
+        ServerTime last_at;  // no row: 0, before every day
         ctx.st.q("select day_index, last_at from login_bonus where id = ?", {id}, [&](const Row& state_row) {
             day = (u32)state_row.i("day_index");
-            last_at = state_row.i("last_at");
+            last_at = state_row.time("last_at");
         });
         bool received_now = pending && last_at >= today;
         if (received_now) granted++;

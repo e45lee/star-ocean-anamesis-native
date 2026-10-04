@@ -19,11 +19,11 @@ std::vector<Campaign> campaigns_for(ext::Ctx& ctx, const MissionRef& ref) {
     // (d) campaigns are dated event content: the event calendar (server.h event_now), as the
     // client sees them (api/events/event_missions.cpp moves master_campaign by the same whole
     // years and sends CampaignInfo).
-    int64_t now = event_clock_of(ctx.m.h);
+    EventTime now = event_clock_of(ctx.m.h);
     ctx.m.q("select * from master_campaign order by id", {}, [&](const Row& campaign_row) {
         // (a) the window: opened_day opened_time .. closed_day closed_time, week_id
         if (!mission_rules::campaign_active(campaign_row.s("opened_day"), campaign_row.s("opened_time"), campaign_row.s("closed_day"),
-                                            campaign_row.s("closed_time"), (int)campaign_row.i("week_id"), now))
+                                            campaign_row.s("closed_time"), (int)campaign_row.i("week_id"), now.v))
             return;
         // (a) master_mission_model_type (the mission type, -2 every type) and master_area_id (0 every area)
         if (!mission_rules::campaign_applies((int)campaign_row.i("master_mission_model_type"), (u32)campaign_row.i("master_area_id"), ref.type,

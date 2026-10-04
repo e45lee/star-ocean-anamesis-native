@@ -24,7 +24,7 @@ using ext::Row;
 // GetDeepSpaceAreaList / GetDeepSpaceMissionList drop those outside opened_at..closed_at) must be
 // open by both, or the server would offer what the client hides: open_by_both_clocks(). The ship
 // count reads the server clock only (b: CUIUtility::GetMaxShipCount).
-int64_t calendar(Ctx& ctx);
+EventTime calendar(Ctx& ctx);
 bool open_by_both_clocks(Ctx& ctx, const std::string& opened_at, const std::string& closed_at);
 
 // ---- areas and offers (state.cpp) ------------------------------------------------------------
@@ -41,33 +41,33 @@ std::vector<Area> areas(Ctx& ctx);
 u32 area_exp(Ctx& ctx, u32 area_id);
 // Opens the areas the clock and the exploration rates allow, offers their normal missions and
 // drops the offers that ran out (rules in state.cpp).
-void refresh_offers(Ctx& ctx, int64_t t);
+void refresh_offers(Ctx& ctx, ServerTime t);
 // (a) a master_deep_space_bonus_set row of `set_type` open by the calendar, picked by rate_weigh;
 // 0 when none.
 u32 roll_bonus_set(Ctx& ctx, u32 set_type);
 // The start of t's play-limit day (the daily reset).
-int64_t limit_day(Ctx& ctx, int64_t t);
+ServerTime limit_day(Ctx& ctx, ServerTime t);
 // Whether an offer (a ds_offer row) has used up its plays for the period.
 bool at_limit(Ctx& ctx, const Row& offer_row);
 
 // ---- ships (state.cpp) -----------------------------------------------------------------------
-u32 subscription_ships(Ctx& ctx, int64_t t);
-u32 max_ships(Ctx& ctx, int64_t t);
+u32 subscription_ships(Ctx& ctx, ServerTime t);
+u32 max_ships(Ctx& ctx, ServerTime t);
 // A ship's crew (ds_ship_member), by slot (1..8).
 std::vector<CharacterUid> ship_members(Ctx& ctx, u32 ship_id);
 // The quick returns used today (resets the count on a new day).
-u32 time_saving_count(Ctx& ctx, int64_t t);
+u32 time_saving_count(Ctx& ctx, ServerTime t);
 
 // ---- the answers' values (state.cpp; the client's info classes, b) ---------------------------
-Value area_info(Ctx& ctx, const Area& area, int64_t t);  // CDeepSpaceAreaInfo
-void put_area_info(Ctx& ctx, Value& data, u32 area_id, int64_t t);  // data.DeepSpaceArea: the area's, when it exists
-Value area_list(Ctx& ctx, int64_t t);                    // DeepSpaceAreaList
+Value area_info(Ctx& ctx, const Area& area, ServerTime t);  // CDeepSpaceAreaInfo
+void put_area_info(Ctx& ctx, Value& data, u32 area_id, ServerTime t);  // data.DeepSpaceArea: the area's, when it exists
+Value area_list(Ctx& ctx, ServerTime t);                    // DeepSpaceAreaList
 Value ship_info(Ctx& ctx, const Row& ship_row);          // CDeepSpaceShipInfo
-Value ship_list(Ctx& ctx, int64_t t, bool ended);        // DeepSpaceActiveShipInfoList / DeepSpaceEndShipInfoList
+Value ship_list(Ctx& ctx, ServerTime t, bool ended);        // DeepSpaceActiveShipInfoList / DeepSpaceEndShipInfoList
 Value ship_info_of(Ctx& ctx, u32 ship_id);               // DeepSpaceShip
 Value character_map(Ctx& ctx);                           // characters {uid: CDeepSpaceCharacterInfo}
 Value bonus_apply_list(Ctx& ctx, int64_t only_ship = -1);  // DeepSpaceBonusAllApplyInfoList
-Value deep_mission_player(Ctx& ctx, int64_t t, bool level_up);  // DeepMissionPlayer
+Value deep_mission_player(Ctx& ctx, ServerTime t, bool level_up);  // DeepMissionPlayer
 
 // ---- the party and its bonuses (bonuses.cpp) ---------------------------------------------------
 constexpr size_t kMaxMembers = 8;  // (b) uimsg_deep_space_select_num "%d / ８"

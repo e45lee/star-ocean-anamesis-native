@@ -116,7 +116,8 @@ NATIVE_TEST("events/enable-areas") {
     ServerConfig& opt = config();
     opt.event_keywords.clear();
     // 2026-01-15 on the client's clock, the calendar in 2021-01: no summer term runs
-    int64_t now = T("2026-01-15 12:00:00"), ev = T("2021-01-15 12:00:00");
+    ServerTime now(T("2026-01-15 12:00:00"));
+    EventTime ev(T("2021-01-15 12:00:00"));
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
         std::set<u32> want = enable_events::area_ids(c.m, kDefaultEventKeywords);
         auto listed = [&]() {
@@ -195,11 +196,12 @@ NATIVE_TEST("events/enable-exchange-shops") {
     KeepOptions keep;
     ServerConfig& opt = config();
     opt.event_keywords.clear();
-    int64_t now = T("2026-01-15 12:00:00"), ev = T("2021-01-15 12:00:00");
+    ServerTime now(T("2026-01-15 12:00:00"));
+    EventTime ev(T("2021-01-15 12:00:00"));
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
         c.st.exec("begin");
-        c.test.now = [&] { return now; };
-        c.test.event_now = [&] { return ev; };
+        c.test.now = [&] { return now.v; };
+        c.test.event_now = [&] { return ev.v; };
         std::set<u32> shops = enable_events::exchange_shop_ids(c.m, kDefaultEventKeywords);
         std::set<std::string> sl = labels(c.m, "master_exchange_shop", shops);
         std::string all;

@@ -140,10 +140,10 @@ Value follow_player_info(Ctx& ctx, u32 player_id) {
 constexpr u32 kReasonRentalBonus = 3;  // (d) the present reason type (a plain "%s" line), as achievements
 
 void rental_bonus(Ctx& ctx, Value& data) {
-    int64_t today = day_start(ctx.now(), (int)ctx.global_u32("login_bonus_reset_hour", 4));  // (a)
-    std::vector<std::pair<int64_t, u32>> due;  // day, rentals
+    ServerTime today = day_start(ctx.now(), (int)ctx.global_u32("login_bonus_reset_hour", 4));  // (a)
+    std::vector<std::pair<ServerTime, u32>> due;  // day, rentals
     ctx.st.q("select rental_day, count from follow_rental where paid = 0 and count > 0 and rental_day < ? order by rental_day", {today},
-             [&](const Row& rental_row) { due.emplace_back(rental_row.i("rental_day"), (u32)rental_row.i("count")); });
+             [&](const Row& rental_row) { due.emplace_back(rental_row.time("rental_day"), (u32)rental_row.i("count")); });
     if (due.empty()) return;
     u32 last_row_id = (u32)ctx.m.one("select max(id) from master_rental_bonus", {}, 0);
     u32 paid_count = 0, paid_row_id = 0;
@@ -151,7 +151,7 @@ void rental_bonus(Ctx& ctx, Value& data) {
         u32 row_id = std::min(count, last_row_id);
         ctx.m.q("select * from master_rental_bonus where id = ?", {row_id}, [&](const Row& bonus_row) {
             add_present(ctx, (u32)bonus_row.i("content_type"), (u32)bonus_row.i("content_id"), (u32)bonus_row.i("num"), kReasonRentalBonus, row_id);
-            LOGI("server", "rental bonus: %u rentals on day %lld -> row %u: %u x %s", count, (long long)day, row_id,  // read by rental_session.sh
+            LOGI("server", "rental bonus: %u rentals on day %lld -> row %u: %u x %s", count, (long long)day.v, row_id,  // read by rental_session.sh
                  (u32)bonus_row.i("num"), bonus_row.s("content_id_label").c_str());
         });
         ctx.st.q("update follow_rental set paid = 1 where rental_day = ?", {day});

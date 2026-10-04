@@ -89,7 +89,9 @@ u64 env_fn(jni::Vm& vm, const char* name) {
 int main(int argc, char** argv) {
     if (argc >= 3 && !strcmp(argv[1], "--gdb-demo")) {  // gdbstub_test.cpp: the guest loop for a debugger
         cpu_global_init();
-        return run_gdb_demo(argv[2], argc >= 4 && !strcmp(argv[3], "--fault"));
+        bool fault = false, native = false;
+        for (int i = 3; i < argc; i++) fault |= !strcmp(argv[i], "--fault"), native |= !strcmp(argv[i], "--native");
+        return run_gdb_demo(argv[2], fault, native);
     }
     // A scratch data dir: jni/references-low-byte writes (and deletes) a SharedPreferences file.
     char dir[] = "/tmp/soaruntime_tests.XXXXXX";

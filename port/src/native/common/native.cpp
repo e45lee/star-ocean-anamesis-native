@@ -28,6 +28,15 @@ void list_native_functions(FILE* out) {
     for (auto& f : registry()) fprintf(out, "%s\t%s%s\n", f.symbol, f.note ? f.note : "", f.enabled ? " [conditional]" : "");
 }
 
+// The C++ a registration names, as `monitor natives` shows it: "&C::M" / "::soa::f" -> "C::M" / "soa::f"
+// (kept for the run: the hook keeps the pointer).
+static const char* host_name(const char* written) {
+    std::string s = written;
+    while (!s.empty() && (s[0] == '&' || s[0] == ' ')) s.erase(0, 1);
+    if (s.rfind("::", 0) == 0) s.erase(0, 2);
+    return s == written ? written : strdup(s.c_str());
+}
+
 // Size of the function at addr from the symbol table (the largest symbol there), or 0.
 static u64 function_size(const LoadedLib& lib, u64 addr) {
     auto it = std::lower_bound(lib.sorted_syms.begin(), lib.sorted_syms.end(), addr, [](const LoadedLib::Sym& s, u64 a) { return s.addr < a; });
@@ -101,7 +110,7 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route) {
                 continue;
             }
         }
-        hook_guest_function(addr, f.symbol, f.fn);
+        hook_guest_function(addr, f.symbol, f.fn, f.host ? host_name(f.host) : f.note);
         n++;
     }
     LOGI("native", "%d guest functions replaced by native code (--natives %s%s)", n, native_set_name(set),

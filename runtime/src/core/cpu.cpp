@@ -26,6 +26,13 @@
 #include "dynarmic/interface/A64/config.h"
 #include "dynarmic/interface/exclusive_monitor.h"
 
+// For a host gdb attached to the process (control/gdbinit-soa: soa-native-break): the thunk table,
+// kMaxThunks entries of {HostFn fn; const char* name; u64 hook; const char* host_name} (32 bytes),
+// filled in order (an entry with fn 0 ends it). Set by cpu_global_init.
+extern "C" {
+void* soa_gdb_thunks = nullptr;
+}
+
 namespace soa {
 
 namespace {
@@ -48,8 +55,12 @@ constexpr size_t kStackHeadroom = 0x1000;
 struct ThunkEntry {
     HostFn fn = nullptr;
     const char* name = nullptr;
-    u64 hook = 0;  // guest function entry patched to trap here (hook_guest_function), or 0
+    u64 hook = 0;                    // guest function entry patched to trap here (hook_guest_function), or 0
+    const char* host_name = nullptr;  // hook_guest_function's host_name
 };
+// control/gdbinit-soa's soa-native-break reads this table from a host gdb (no debug info needed).
+static_assert(sizeof(ThunkEntry) == 32 && offsetof(ThunkEntry, name) == 8 && offsetof(ThunkEntry, hook) == 16 &&
+              offsetof(ThunkEntry, host_name) == 24);
 
 ThunkEntry* g_thunks = nullptr;
 u32* g_thunk_code = nullptr;  // 2 instructions per thunk
@@ -175,7 +186,7 @@ struct CpuCallbacks final : Dynarmic::A64::UserCallbacks {
     void InterpreterFallback(u64 pc, size_t n) override {
         LOGE("cpu", "unimplemented instruction %08x at %s", fetch<u32>(pc), describe_guest_addr(pc).c_str());
         dump_guest_state(*cpu);
-        if (g_gdb_enabled) gdb_fault(cpu, SIGILL);
+        if (g_gdb_enabled) gdb_fault(cpu, kGdbSigIll);
         fatal("interpreter fallback");
     }
 
@@ -205,7 +216,7 @@ struct CpuCallbacks final : Dynarmic::A64::UserCallbacks {
             break;
         }
         dump_guest_state(*cpu);
-        if (g_gdb_enabled) gdb_fault(cpu, e == E::Breakpoint ? SIGTRAP : SIGILL);
+        if (g_gdb_enabled) gdb_fault(cpu, e == E::Breakpoint ? kGdbSigTrap : kGdbSigIll);
         fatal("guest exception");
     }
 
@@ -472,7 +483,8 @@ void CpuCallbacks::CallSVC(u32 swi) {
         // handler returns to the JIT.
         bool was = t_state.in_jit.exchange(false, std::memory_order_acq_rel);
         if (g_prof_enabled) g_thunk_calls[swi].fetch_add(1, std::memory_order_relaxed);
-        t.fn(*cpu);
+        if (t.hook && gdb_native_breakpoints()) gdb_call_native(*cpu, t.hook, t.fn, true);  // (a breakpoint on a native)
+        else t.fn(*cpu);
         t_state.in_jit.store(was, std::memory_order_release);
         if (t_state.info.exiting) cpu->halt();
         return;
@@ -600,6 +612,10 @@ void run_jit(Cpu& c, u64 fn, ThreadState& ts, int d) {
 // Calls thunk `idx` directly on level d's CPU, as the SVC at `fn` would (PC = fn + 4).
 void run_direct(Cpu& c, u32 idx, u64 fn, ThreadState& ts, int d) {
     HostFn f = g_thunks[idx].fn;
+    if (__builtin_expect(g_gdb_enabled, 0) && g_thunks[idx].hook && gdb_native_breakpoints()) {
+        gdb_call_native(c, fn, f, false);  // (a breakpoint on a native: core/gdbstub.h)
+        return;
+    }
     if (!g_prof_enabled) {
         f(c);
         return;
@@ -859,9 +875,10 @@ HostFn hooked_host_fn(u64 addr) {
     return t.hook == addr ? t.fn : nullptr;
 }
 
-void hook_guest_function(u64 addr, const char* name, HostFn fn) {
+void hook_guest_function(u64 addr, const char* name, HostFn fn, const char* host_name) {
     u64 stub = make_thunk(name, fn);
     u32 idx = (u32)((stub - (u64)g_thunk_code) / 8);
+    g_thunks[idx].host_name = host_name;
     g_thunks[idx].hook = addr;
     std::atomic_thread_fence(std::memory_order_release);
     u32* p = (u32*)addr;
@@ -871,9 +888,42 @@ void hook_guest_function(u64 addr, const char* name, HostFn fn) {
     g_hooked[addr] = idx;
 }
 
+std::vector<HookedFunction> hooked_functions() {
+    std::vector<HookedFunction> out;
+    {
+        std::lock_guard lk(g_thunk_mutex);
+        for (auto& [addr, idx] : g_hooked) {
+            const ThunkEntry& t = g_thunks[idx];
+            if (hooked_host_fn(addr) == t.fn) out.push_back({addr, t.name, t.host_name, t.fn});
+        }
+    }
+    std::sort(out.begin(), out.end(), [](const HookedFunction& a, const HookedFunction& b) { return a.guest_addr < b.guest_addr; });
+    return out;
+}
+
 // ---------------------------------------------------------------------------
 
 #ifdef _WIN32
+// The GDB protocol's signal for a Windows exception code.
+static int gdb_signal_of(DWORD code) {
+    switch (code) {
+    case EXCEPTION_ILLEGAL_INSTRUCTION:
+    case EXCEPTION_PRIV_INSTRUCTION: return kGdbSigIll;
+    case EXCEPTION_BREAKPOINT:
+    case EXCEPTION_SINGLE_STEP: return kGdbSigTrap;
+    case EXCEPTION_INT_DIVIDE_BY_ZERO:
+    case EXCEPTION_INT_OVERFLOW:
+    case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+    case EXCEPTION_FLT_INVALID_OPERATION:
+    case EXCEPTION_FLT_OVERFLOW:
+    case EXCEPTION_FLT_UNDERFLOW:
+    case EXCEPTION_FLT_INEXACT_RESULT:
+    case EXCEPTION_FLT_DENORMAL_OPERAND:
+    case EXCEPTION_FLT_STACK_CHECK: return kGdbSigFpe;
+    case EXCEPTION_DATATYPE_MISALIGNMENT: return kGdbSigBus;
+    default: return kGdbSigSegv;  // access violation, stack overflow, in-page error, ...
+    }
+}
 // The last chance for an exception nothing handled (dynarmic's fastmem faults are handled before
 // this, by its own handler): the guest state, then the default (the process ends).
 static LONG WINAPI unhandled_exception(EXCEPTION_POINTERS* ep) {
@@ -893,6 +943,32 @@ static LONG WINAPI unhandled_exception(EXCEPTION_POINTERS* ep) {
         fprintf(stderr, "guest pc (last sync) = %s\n", describe_guest_addr(c->pc()).c_str());
         dump_guest_state(*c);
     }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+// --gdb (core/gdbstub.h): an attached debugger sees a fatal fault in guest context first. A vectored
+// handler, called last among them: the filter above isn't reached when the unwinder can't get
+// through the JIT's frames (the process just ends). Vectored handlers run before dynarmic's own
+// (SEH on its code, RtlAddFunctionTable), which takes the fastmem faults that are normal (tagged
+// addresses, retried through the memory callbacks): those happen in JIT code, outside every
+// module, and are left alone; a fault in the .exe or a DLL is reported.
+static LONG WINAPI gdb_fault_handler(EXCEPTION_POINTERS* ep) {
+    const EXCEPTION_RECORD* r = ep->ExceptionRecord;
+    Cpu* c = t_current;
+    if (!g_gdb_enabled || !c) return EXCEPTION_CONTINUE_SEARCH;
+    switch (r->ExceptionCode) {
+    case EXCEPTION_ACCESS_VIOLATION:
+    case EXCEPTION_ILLEGAL_INSTRUCTION:
+    case EXCEPTION_PRIV_INSTRUCTION:
+    case EXCEPTION_INT_DIVIDE_BY_ZERO:
+    case EXCEPTION_STACK_OVERFLOW:
+    case EXCEPTION_IN_PAGE_ERROR:
+    case EXCEPTION_DATATYPE_MISALIGNMENT: break;
+    default: return EXCEPTION_CONTINUE_SEARCH;
+    }
+    HMODULE m = nullptr;
+    if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)r->ExceptionAddress, &m))
+        return EXCEPTION_CONTINUE_SEARCH;  // JIT code: dynarmic's
+    gdb_fault(c, gdb_signal_of(r->ExceptionCode));
     return EXCEPTION_CONTINUE_SEARCH;
 }
 static LONG WINAPI log_fault(EXCEPTION_POINTERS* ep) {
@@ -931,7 +1007,8 @@ static void segv_handler(int sig, siginfo_t* si, void*) {
     if (c) {
         fprintf(stderr, "guest pc (last sync) = %s\n", describe_guest_addr(c->pc()).c_str());
         dump_guest_state(*c);
-        if (g_gdb_enabled) gdb_fault(c, sig);  // an attached debugger sees the fault first
+        if (g_gdb_enabled)  // an attached debugger sees the fault first
+            gdb_fault(c, sig == SIGILL ? kGdbSigIll : sig == SIGFPE ? kGdbSigFpe : sig == SIGBUS ? kGdbSigBus : kGdbSigSegv);
     }
     signal(sig, SIG_DFL);
     raise(sig);
@@ -940,6 +1017,7 @@ static void segv_handler(int sig, siginfo_t* si, void*) {
 
 void cpu_global_init() {
     g_thunks = new ThunkEntry[kMaxThunks];
+    soa_gdb_thunks = g_thunks;
     void* p = hostmem::map_rw(kMaxThunks * 8);
     if (!p) fatal("thunk mapping failed");
     g_thunk_code = (u32*)p;
@@ -955,6 +1033,7 @@ void cpu_global_init() {
     // crash in a system DLL called from a thunk (e.g. strstr(NULL) in ucrtbase) ended the process
     // without reaching the filter above.
     if (env::env_bool("SOA_FAULT_LOG", false)) AddVectoredExceptionHandler(1, log_fault);
+    AddVectoredExceptionHandler(0, gdb_fault_handler);  // (nothing unless --gdb)
 #else
     struct sigaction sa {};
     sa.sa_sigaction = segv_handler;

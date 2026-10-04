@@ -30,6 +30,8 @@ bool startup();
 int tcp_socket(bool nonblocking, int family = AF_INET);
 // accept() on a listening socket; the new socket non-blocking, close-on-exec, TCP_NODELAY. -1: none.
 int accept_nonblocking(int listen_fd);
+// accept() on a listening socket; the new socket blocking, close-on-exec, TCP_NODELAY. -1: failed.
+int accept(int listen_fd);
 int close(int fd);
 // SO_RCVTIMEO and SO_SNDTIMEO.
 void set_timeouts(int fd, int seconds);
@@ -52,6 +54,14 @@ struct PollFd {
     int fd;
     short events, revents;
 };
+// Splits "HOST:PORT", "[IPV6]:PORT", ":PORT", "HOST", "[IPV6]" or a bare IPv6 address ("::1": more
+// than one colon, no brackets) into the host (brackets removed; "" for ":PORT") and the port's text
+// ("" when there is none). False for a "[" without its "]" or anything but ":PORT" after the "]".
+// Callers check the port (digits, range) themselves.
+bool split_host_port(const std::string& s, std::string* host, std::string* port);
+// "HOST:PORT", or "[HOST]:PORT" when HOST is an IPv6 address (has a colon).
+std::string join_host_port(const std::string& host, int port);
+
 // poll(): POLLIN / POLLOUT / POLLERR / POLLHUP / POLLNVAL as <poll.h> (WSAPoll on Windows).
 int poll(PollFd* fds, size_t n, int timeout_ms);
 

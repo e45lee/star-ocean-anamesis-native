@@ -96,7 +96,17 @@ u64 make_thunk(const char* name, HostFn fn);
 // Name of the thunk at a guest address, or nullptr.
 const char* thunk_name_at(u64 addr);
 // Overwrites a guest function's entry with an SVC stub so calls go to `fn` instead.
-void hook_guest_function(u64 guest_addr, const char* name, HostFn fn);
+// `host_name` (optional): what replaces it on the host side, e.g. the C++ member of a native
+// (monitor natives in the GDB stub; control/gdbinit-soa's soa-native-break).
+void hook_guest_function(u64 guest_addr, const char* name, HostFn fn, const char* host_name = nullptr);
+// The hooked guest functions whose entries still trap to their hooks, by guest address.
+struct HookedFunction {
+    u64 guest_addr;
+    const char* name;       // as given to hook_guest_function (a native's: its mangled guest symbol)
+    const char* host_name;  // or nullptr
+    HostFn fn;
+};
+std::vector<HookedFunction> hooked_functions();
 // Drops this host thread's JIT translations of a guest code range (after patching it at run time).
 void invalidate_guest_code_this_thread(u64 addr, u64 size);
 // This host thread's guest_call nesting depth (the first level invalidate_guest_code_this_thread

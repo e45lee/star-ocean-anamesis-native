@@ -382,7 +382,6 @@ RELS = [
     ("stepup", "head", "m:master_gacha", "id", None, "-", ""),
     ("box_state", "gacha_id", "m:master_gacha", "id", None, "-", ""),
     ("box_slots", "gacha_id", "box_state", "gacha_id", None, "CASCADE", ""),
-    ("present_texts", "id", "presents", "id", None, "merged (S8)", ""),
     ("login_bonus", "id", "m:master_login_bonus", "id", None, "-", ""),
     ("achievements", "id", "m:master_achievement", "id", None, "-", ""),
     ("titles", "id", "m:master_title", "id", None, "-", ""),
@@ -477,9 +476,9 @@ def fk_report(st_path, master_path):
 # Tables written only by upsert (S0): the parents of the target schema's foreign keys (section 3.2:
 # player, roster, items, titles, party_set, mission, box_state, presents, ds_area, ds_ship, wboss;
 # play since S7: play_member's parent) and the other tables of F9's REPLACE list (party_member
-# (party merged in, S6), favor, stock, subscription, present_texts).
+# (party merged in, S6), favor, stock, subscription; present_texts until S8 merged it into presents).
 LINT_UPSERT_ONLY = ("player", "roster", "items", "titles", "party_set", "mission", "box_state", "presents", "ds_area", "ds_ship",
-                    "wboss", "play", "party_member", "favor", "stock", "subscription", "present_texts")
+                    "wboss", "play", "party_member", "favor", "stock", "subscription")
 # Consumers whose SQL runs on another DB: the pools DB's builder (its own meta table).
 LINT_OTHER_DB = ("tools/build_gacha_pools.py",)
 POSITIONAL_RE = re.compile(r"\b(?:insert(?:\s+or\s+\w+)?|replace)\s+into\s+(?:temp\.)?(\w+)\s+values\b", re.I)

@@ -142,8 +142,8 @@ constexpr u32 kReasonRentalBonus = 3;  // (d) the present reason type (a plain "
 void rental_bonus(Ctx& ctx, Value& data) {
     int64_t today = day_start(ctx.now(), (int)ctx.global_u32("login_bonus_reset_hour", 4));  // (a)
     std::vector<std::pair<int64_t, u32>> due;  // day, rentals
-    ctx.st.q("select day, count from follow_rental where paid = 0 and count > 0 and day < ? order by day", {today},
-             [&](const Row& rental_row) { due.emplace_back(rental_row.i("day"), (u32)rental_row.i("count")); });
+    ctx.st.q("select rental_day, count from follow_rental where paid = 0 and count > 0 and rental_day < ? order by rental_day", {today},
+             [&](const Row& rental_row) { due.emplace_back(rental_row.i("rental_day"), (u32)rental_row.i("count")); });
     if (due.empty()) return;
     u32 last_row_id = (u32)ctx.m.one("select max(id) from master_rental_bonus", {}, 0);
     u32 paid_count = 0, paid_row_id = 0;
@@ -154,7 +154,7 @@ void rental_bonus(Ctx& ctx, Value& data) {
             LOGI("server", "rental bonus: %u rentals on day %lld -> row %u: %u x %s", count, (long long)day, row_id,  // read by rental_session.sh
                  (u32)bonus_row.i("num"), bonus_row.s("content_id_label").c_str());
         });
-        ctx.st.q("update follow_rental set paid = 1 where day = ?", {day});
+        ctx.st.q("update follow_rental set paid = 1 where rental_day = ?", {day});
         paid_count = count;
         paid_row_id = row_id;
     }

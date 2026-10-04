@@ -52,7 +52,7 @@ NATIVE_TEST("social/follow-rental") {
         // Rental bonus: 3 rentals yesterday -> row 3 (a: 400 support medals), once.
         int64_t p0 = c.st.one("select count(*) from presents", {});
         int64_t yday = c.now() - 86400 - 3600;
-        c.st.q("insert into follow_rental (day, count) values (?, 3)", {yday});
+        c.st.q("insert into follow_rental (rental_day, count) values (?, 3)", {yday});
         d = Value::object();
         player_load(c, lr, d);
         t.expect_eq(c.st.one("select count(*) from presents", {}), p0 + 1, "one rental bonus present");
@@ -64,13 +64,13 @@ NATIVE_TEST("social/follow-rental") {
         player_load(c, lr, d);
         t.expect_eq(c.st.one("select count(*) from presents", {}), p0 + 1, "paid once");
         // 25 rentals: capped at the last row
-        c.st.q("insert into follow_rental (day, count) values (?, 25)", {yday - 86400});
+        c.st.q("insert into follow_rental (rental_day, count) values (?, 25)", {yday - 86400});
         d = Value::object();
         player_load(c, lr, d);
         u32 last = (u32)c.m.one("select max(id) from master_rental_bonus", {});
         t.expect_eq(d.find("RentalBonus") ? (u32)d.get_u("RentalBonus") : 0u, last, "capped row");
         // today's rentals wait for tomorrow
-        c.st.q("insert into follow_rental (day, count) values (?, 2)", {c.now()});
+        c.st.q("insert into follow_rental (rental_day, count) values (?, 2)", {c.now()});
         d = Value::object();
         player_load(c, lr, d);
         if (d.find("RentalBonus")) t.fail("today's rentals paid early");

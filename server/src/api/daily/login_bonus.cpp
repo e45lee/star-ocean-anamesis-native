@@ -4,7 +4,7 @@
 // every rule carries its source label: (a) master data, (b) client-side evidence, (c) outside
 // knowledge, (d) assumption.
 //
-// State: table `login_bonus` (id = master_login_bonus id, day = the last page granted, last_at),
+// State: table `login_bonus` (id = master_login_bonus id, day_index = the last page granted, last_at),
 // and player.login_bonus_popup_pending (a day NoLoginStart granted, to report again).
 #include <ctime>
 
@@ -84,8 +84,8 @@ void login_bonus(Ctx& ctx, const Request& req, Value& data) {
         u32 id = (u32)bonus_row.i("id");
         u32 day = 0;
         int64_t last_at = 0;
-        ctx.st.q("select day, last_at from login_bonus where id = ?", {id}, [&](const Row& state_row) {
-            day = (u32)state_row.i("day");
+        ctx.st.q("select day_index, last_at from login_bonus where id = ?", {id}, [&](const Row& state_row) {
+            day = (u32)state_row.i("day_index");
             last_at = state_row.i("last_at");
         });
         bool received_now = pending && last_at >= today;
@@ -96,7 +96,7 @@ void login_bonus(Ctx& ctx, const Request& req, Value& data) {
                 received_now = true;
                 granted++;
             }
-            ctx.st.q("insert or replace into login_bonus (id, day, last_at) values (?, ?, ?)", {id, day, t});
+            ctx.st.q("insert or replace into login_bonus (id, day_index, last_at) values (?, ?, ?)", {id, day, t});
         }
         if (!day) return;
         Value info = Value::object();

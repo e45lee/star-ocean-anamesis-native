@@ -40,8 +40,7 @@ NATIVE_TEST("daily/premium-favor-bonus") {
             c.m.one("select count(*) from master_premium_login_bonus_contents where master_premium_login_bonus_id = ? and order_idx = 1", {pass});
         t.expect_eq(c.st.one("select count(*) from presents", {}) - n0, day1, "day-1 presents");
         std::string line;
-        c.st.q("select t.text from present_texts t join presents p on p.id = t.id where p.reason_type = 6", {},
-               [&](const Row& r) { line = r.s("text"); });
+        c.st.q("select text from presents where reason_type = 6", {}, [&](const Row& r) { line = r.s("text"); });
         t.expect_eq(line, std::string("プレミアムログインボーナス 1日目"), "premium present line");
         // same day: no second page
         d = player_load_data(c);
@@ -125,7 +124,7 @@ NATIVE_TEST("daily/login-bonus") {
         Value d = Value::object();
         player_load(c, lr, d);
         u32 lb = master_id(c, "login_bonus", "master_login_bonus");
-        t.expect_eq((u32)c.st.one("select day from login_bonus where id = ?", {lb}), 1u, "day 1");
+        t.expect_eq((u32)c.st.one("select day_index from login_bonus where id = ?", {lb}), 1u, "day 1");
         const Value* list = d.find("LoginBonus");
         bool received = false;
         if (list)
@@ -145,7 +144,7 @@ NATIVE_TEST("daily/login-bonus") {
         c.st.q("update login_bonus set last_at = last_at - 86400", {});
         d = Value::object();
         player_load(c, lr, d);
-        t.expect_eq((u32)c.st.one("select day from login_bonus where id = ?", {lb}), 2u, "day 2 the next day");
+        t.expect_eq((u32)c.st.one("select day_index from login_bonus where id = ?", {lb}), 2u, "day 2 the next day");
         c.st.exec("commit");
     });
 }

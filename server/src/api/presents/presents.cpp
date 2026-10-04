@@ -19,10 +19,10 @@ using ext::Row;
 namespace {
 
 // The line the box shows for a present: (b) the box shows free_text_message_id verbatim
-// (present_texts.cpp).
+// (present_texts.cpp); the row's stored `text`, else built from its reason.
 std::string present_line(ext::Ctx& ctx, const Row& present_row) {
-    ext::Sql state{ctx.st.h}, master{ctx.m.h};
-    return ext::present_text(state, master, present_row.i("id"), (u32)present_row.i("reason_type"), (u32)present_row.i("reason_param"));
+    ext::Sql master{ctx.m.h};
+    return ext::present_text(master, present_row.s("text"), (u32)present_row.i("reason_type"), (u32)present_row.i("reason_param"));
 }
 
 // (b) CPresentbox::CreateAllPresentList lists only presents whose deadline_at isn't past

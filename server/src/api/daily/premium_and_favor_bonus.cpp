@@ -44,7 +44,7 @@ Value* player_map(Value& data) {
 //       types"). There is no purchase route in the port, so the bonus is off unless the state
 //       holds a pass (d): a type-11 grant records one, from page 0.
 void grant_premium_pass(Ctx& ctx, u32 pass_id, u32, Value&, Value&, Value&) {
-    ctx.st.q("insert into premium_pass (id, granted_at) values (?, ?) on conflict(id) do update set granted_at = excluded.granted_at, day = 0",
+    ctx.st.q("insert into premium_pass (id, granted_at) values (?, ?) on conflict(id) do update set granted_at = excluded.granted_at, day_index = 0",
              {pass_id, ctx.now()});
     LOGI("server", "premium login bonus pass %u granted", pass_id);
 }
@@ -63,7 +63,7 @@ u32 grant_premium_page(Ctx& ctx, u32 pass_id, u32 day, const std::string& name_m
                 add_present(ctx, (u32)content.i("content_type"), (u32)content.i("content_id"), (u32)content.i("num"), kPresentPremiumLogin, pass_id,
                             format_present(text(ctx.m, "Present_box_6"), text(ctx.m, name_message_id), next));
             });
-    ctx.st.q("update premium_pass set day = ?, last_at = ? where id = ?", {next, now, pass_id});
+    ctx.st.q("update premium_pass set day_index = ?, last_at = ? where id = ?", {next, now, pass_id});
     LOGI("server", "premium login bonus %u: day %u", pass_id, next);
     return next;
 }
@@ -75,7 +75,7 @@ void premium_login_bonus(Ctx& ctx, Value& data, int& granted) {
     Value list = Value::array();
     ctx.st.q("select * from premium_pass order by id", {}, [&](const Row& pass_row) {
         u32 pass_id = (u32)pass_row.i("id");
-        u32 day = (u32)pass_row.i("day");
+        u32 day = (u32)pass_row.i("day_index");
         int64_t last_at = pass_row.i("last_at");
         std::string name_message_id, opened_at, closed_at;
         bool known = false;

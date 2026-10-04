@@ -57,7 +57,7 @@ bool owns_title(ext::Ctx& ctx, TitleId title) { return ctx.st.one("select count(
 // lists only TitleList ids, so without them a new player's list would be empty).
 void ensure_default_titles(ext::Ctx& ctx) {
     ctx.m.q("select id from master_title where is_default = 1", {},
-            [&](const Row& title_row) { ctx.st.q("insert or ignore into titles (id, got_at) values (?, 0)", {title_row.i("id")}); });
+            [&](const Row& title_row) { ctx.st.q("insert or ignore into titles (id, got_at) values (?, null)", {title_row.i("id")}); });
 }
 
 // TitleList: the owned master_title ids, the default ones included.

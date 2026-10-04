@@ -189,7 +189,7 @@ void add_login_bonuses(ext::Ctx& ctx, int64_t now, Page& page) {
     int bonuses = 0;
     ctx.m.q("select id, name_message_id, opened_at, closed_at from master_login_bonus order by order_id", {}, [&](const Row& bonus_row) {
         if (!open_at(bonus_row.s("opened_at"), bonus_row.s("closed_at"), now)) return;
-        int64_t day = ctx.st.one("select ifnull(max(day), 0) from login_bonus where id = ?", {bonus_row.i("id")});
+        int64_t day = ctx.st.one("select ifnull(max(day_index), 0) from login_bonus where id = ?", {bonus_row.i("id")});
         page.line("・" + ext::text(ctx.m, bonus_row.s("name_message_id")) + (day ? " " + std::to_string(day) + "日目" : ""));
         bonuses++;
     });

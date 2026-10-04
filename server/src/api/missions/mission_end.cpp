@@ -186,8 +186,8 @@ void clear_presents(ext::Ctx& ctx, MissionEnd& end) {
     if (!end.first_clear) return;
     ctx.m.q("select * from master_mission_clear_present where master_mission_id = ? order by order_id", {end.mission}, [&](const Row& present_row) {
         ctx.st.q("insert into presents (content_type, content_id, num, reason_type, reason_param, created_at) values (?,?,?,?,?,?)",
-                 {present_row.i("content_type"), present_row.i("content_id"), present_row.i("num"),
-                  (int)ext::kPresentMissionClear /* (d) the reason */, end.mission, clock_now()});
+                 {present_row.i("content_type"), ext::present_content_id((u32)present_row.i("content_type"), (u32)present_row.i("content_id")),
+                  present_row.i("num"), (int)ext::kPresentMissionClear /* (d) the reason */, end.mission, clock_now()});
         u32 content_type = (u32)present_row.i("content_type"), content_id = (u32)present_row.i("content_id"), num = (u32)present_row.i("num");
         Value entry = Value::object();
         entry["id"] = content_id;

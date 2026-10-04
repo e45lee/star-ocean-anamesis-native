@@ -239,14 +239,15 @@ void count(Ctx& c, const std::string& key, int64_t n) {
     c.st.q("insert into counters (key, value) values (?, ?) on conflict(key) do update set value = value + excluded.value", {key, n});
 }
 int64_t counter(Ctx& c, const std::string& key) { return c.st.one("select value from counters where key = ?", {key}); }
+Arg present_content_id(u32 type, u32 id) {
+    // (a) the wallet types, 3 FOL and 4 free coins (docs/api.md "Content types"), name no content:
+    // their master rows' content_id is 0, stored as NULL ("none", PLAN-schema 3.1, S8)
+    if ((type == 3 || type == 4) && id == 0) return nullptr;
+    return id;
+}
 void add_present(Ctx& c, u32 type, u32 id, u32 num, u32 reason_type, u32 reason_param, const std::string& text) {
-    c.st.q("insert into presents (content_type, content_id, num, reason_type, reason_param, created_at) values (?,?,?,?,?,?)",
-           {type, id, num, reason_type, reason_param, c.now()});
-    if (!text.empty())
-        c.st.q(
-            "insert into present_texts (id, text) values (last_insert_rowid(), ?)"
-            " on conflict(id) do update set text = excluded.text",
-            {text});
+    c.st.q("insert into presents (content_type, content_id, num, reason_type, reason_param, text, created_at) values (?,?,?,?,?,?,?)",
+           {type, present_content_id(type, id), num, reason_type, reason_param, text.empty() ? Arg(nullptr) : Arg(text), c.now()});
 }
 
 }  // namespace soa::server::ext

@@ -56,9 +56,7 @@ std::string mission_name(Sql& master_db, u32 mission_id) {
 }
 }  // namespace
 
-std::string present_text(Sql& state, Sql& master_db, int64_t id, u32 reason_type, u32 reason_param) {
-    std::string stored;
-    state.q("select text from present_texts where id = ?", {id}, [&](const Row& row) { stored = row.s("text"); });
+std::string present_text(Sql& master_db, const std::string& stored, u32 reason_type, u32 reason_param) {
     if (!stored.empty()) return stored;
     switch (reason_type) {
         case kPresentLoginBonus:  // (d) without the stored day: the bonus name alone

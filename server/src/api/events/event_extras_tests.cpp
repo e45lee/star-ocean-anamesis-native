@@ -388,11 +388,13 @@ NATIVE_TEST("events/favor-drop") {
         if (!hearts) t.fail("no favor (drop_type 4) drops");
         u32 limit = c.global_u32("favor_event_drop_bonus_limit", 3);
         t.expect_eq(num(d.find("RemainingEventDropBonusCountByFavor")), (u64)(limit - used), "remaining count");
-        t.expect_eq(c.st.one("select count(*) from favor where event_drop_at != ''", {}), used, "bonus spent");
+        t.expect_eq(c.st.one("select count(*) from favor where event_drop_at is not null", {}), used, "bonus spent");
         // again the same day: the spent characters give no bonus
         d = c.core_mission(rs, nullptr);
         t.expect_eq(
-            c.st.one("select count(*) from favor_drop_play f where f.same_role_id in (select same_role_id from favor where event_drop_at != '')", {}),
+            c.st.one(
+                "select count(*) from favor_drop_play f where f.same_role_id in (select same_role_id from favor where event_drop_at is not null)",
+                {}),
             (int64_t)0, "spent characters skipped");
         c.core_mission(re, nullptr);
         c.st.exec("rollback");

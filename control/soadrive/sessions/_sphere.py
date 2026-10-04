@@ -50,8 +50,8 @@ def setup(s):
     master = sqlite3.connect("file:%s?mode=ro" % repo_file("data/basmaster-3.7.0.sqlite3"), uri=True)
     for i, t in master.execute("select id, type from master_item where id_label like 'item_sphere_stamina_%' or id_label like 'item_sphere_re_%'"):
         c.execute("insert into stock (master_item_id, item_type, count) values (?, ?, 2) on conflict(master_item_id) do update set count = 2", (i, t))
-    c.execute("create table if not exists sphere_rental_day (day integer primary key, season_id integer, count integer default 0, paid integer default 0)")
-    c.execute("insert or replace into sphere_rental_day (day, season_id, count, paid) values (?, ?, 5, 0)",
+    # the server made the table (schema version 9: rental_day, the day's start)
+    c.execute("insert or replace into sphere_rental_day (rental_day, season_id, count, paid) values (?, ?, 5, 0)",
               (int(time.time()) - 2 * 86400, int(m.group(1))))
     c.commit()
     c.close()

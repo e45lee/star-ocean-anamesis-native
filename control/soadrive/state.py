@@ -5,7 +5,11 @@ import sqlite3
 
 # Columns that hold a time (the server clock runs on in real time from --clock, so two runs differ
 # by seconds): masked.
-TIME_COL = re.compile(r"(_at$|^at$|^time$|_time$|^day|_day$|^date|stamina_at|^last_|_until$|^expire)")
+# PLAN-schema S9: a day start is `*_day` and a counter `day_index` (compared: login_bonus.day_index,
+# premium_pass.day_index; they were `day`, masked by `^day`), a boolean `is_*` (ds_area.is_last_play,
+# was last_play, masked by `^last_`); `_secs$` keeps wboss.last_clear_secs (a battle's duration in
+# real seconds) masked, which `^last_` covered.
+TIME_COL = re.compile(r"(_at$|^at$|^time$|_time$|_day$|^date|stamina_at|_secs$|_until$|^expire)")
 # Columns that hold a run's identity: masked.
 ID_COLS = {
     # a new player's id and search id: CHash32 of the device UUID + name, and a fresh KVS makes a

@@ -197,6 +197,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc; co
 
 ## Future work (not queued; needs the user's review)
 - **Multiplayer state: the schema for several players** ([`server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md), steps M1…): a plan only, written for review (agent mp-schema, 2026-10-03). Not a task until the user has reviewed it and queued it; if queued, it starts only after 4b's S0–S12 have landed.
+- **Multi-user server: the code** ([`server/PLAN-multiplayer-code.md`](../server/PLAN-multiplayer-code.md), steps MC1…): accounts and identity per device, the request lifecycle per player (client sessions, the caller's player, scoping checks), concurrency, shared state, social features (task U's stubs made real), co-op through the lobby and relay, admin and operations, tests across players; built on the schema plan's M steps. A plan only, written for review (agent mp-code, 2026-10-04); not a task until the user has reviewed it and queued it.
 
 ## Working rules
 - **Branches:** commits go on `main` (since 2026-10-03; until then on `linux-port`, which was squash-merged into main as one commit on 2026-10-03). That squash made main a new root commit: the hashes this plan names from before it (e5cdcbc, 19a08b5, ...) and the tag `pre-rebase-370` are not in this repository; the old history is in the earlier repository, star-ocean-anamesis-reverse. Each agent gets a worktree on `port/<name>` off main, merged back into main.

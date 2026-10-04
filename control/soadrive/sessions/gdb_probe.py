@@ -103,6 +103,6 @@ def main(o):
         fails += common.checks((got.get("native"), "no native breakpoint was hit"))
     native = "; a native (%s, %s) stopped at its entry and stepped whole" % (got.get("native_cpp"), got.get("native")) if got.get("native") else ""
     return common.verdict(s, fails, "attached at home%s: a breakpoint on %s hit, x0 %#x and 64 bytes at it read, a step%s; "
-                          "detached, the client ran on (GetGachaInData)" % (" over ::1" if o.ipv6 else "", SYMBOL, got.get("x0") or 0, native))
+                          "detached, the client ran on (GetGachaInData)" % (" with --ipv6 (the stub on %s)" % s.gdb_host if o.ipv6 else "", SYMBOL, got.get("x0") or 0, native))
 
 

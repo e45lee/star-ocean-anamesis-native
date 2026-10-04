@@ -32,3 +32,11 @@ if(WIN32)
   find_file(SOA_MINGW_BINMODE binmode.o PATHS ${SOA_MINGW_SYSROOT}/lib REQUIRED NO_DEFAULT_PATH)
   target_link_libraries(soa_compat PUBLIC ${SOA_MINGW_BINMODE} ws2_32)
 endif()
+
+# soa_codec: file formats more than one part reads or writes, on well-known libraries (vcpkg):
+#   include/soa/png.h  PNG files (stb_image_write, zlib's deflate): the runtime's screenshots
+#                      (runtime/src/app/host.cpp), tools/aif2png
+add_library(soa_codec STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/png.cpp)
+target_include_directories(soa_codec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_options(soa_codec PRIVATE -Wall)
+target_link_libraries(soa_codec PRIVATE soa::stb ZLIB::ZLIB soa_compat)

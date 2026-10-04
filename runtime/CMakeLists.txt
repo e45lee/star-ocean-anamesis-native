@@ -19,7 +19,7 @@
 #                     which also proves the runtime links without any port code.
 #   soaruntime_app    STATIC: the desktop host loop (src/app/: SDL2 window and GL contexts, input,
 #                     audio device, control FIFO, activity bring-up, main loop, the text-entry
-#                     box: FreeType, privately). Kept out of
+#                     box: FreeType, privately; screenshots: soa_codec's PNG writer). Kept out of
 #                     soaruntime because it links SDL2; a host program that uses it links it as a
 #                     plain library.
 
@@ -79,7 +79,7 @@ target_compile_options(soaruntime_tests PRIVATE -Wall -Wno-unused-parameter -fno
 # The desktop host loop (src/app/host.h), on SDL2 (X11 or Wayland: SDL picks).
 file(GLOB SOA_RUNTIME_APP_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/app/*.cpp)
 add_library(soaruntime_app STATIC ${SOA_RUNTIME_APP_SOURCES})
-target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2 PRIVATE Freetype::Freetype)
+target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2 PRIVATE Freetype::Freetype soa_codec)
 # Windows: the program exports ANGLE's EGL entry points, so SDL loads EGL from it (src/app/sdl_gl.cpp)
 target_link_options(soaruntime_app INTERFACE $<$<PLATFORM_ID:Windows>:${SOA_RUNTIME_DIR}/src/app/egl_exports_win32.def>)
 target_compile_options(soaruntime_app PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing -mcx16)

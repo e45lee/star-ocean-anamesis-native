@@ -207,7 +207,7 @@ std::string server_master_path();
 // Runs fn on the live server (under its lock, in one transaction). False without a server.
 bool with_live_server(const std::function<void(Ctx&)>& fn);
 
-// Tests: runs fn on a scratch server seeded from port/server-data/test-seed.xml (synthetic) with the 3.7.0 master
+// Tests: runs fn on a scratch server seeded from server/tests/fixtures/test-seed.xml (synthetic) with the 3.7.0 master
 // (implemented in server.cpp). False when either file is missing; the running test then fails
 // with a message naming the missing file.
 bool with_scratch_server(u64 seed, const std::function<void(Ctx&)>& fn);

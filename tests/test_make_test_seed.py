@@ -26,7 +26,7 @@ def roster(k):
 def test_default_is_the_committed_seed(tmp_path):
     out = tmp_path / "seed.xml"
     mts.main(["--master", str(MASTER), "--out", str(out)])
-    assert out.read_bytes() == (ROOT / "port/server-data/test-seed.xml").read_bytes()
+    assert out.read_bytes() == (ROOT / "server/tests/fixtures/test-seed.xml").read_bytes()
 
 
 def test_extra_roles_and_home(tmp_path):

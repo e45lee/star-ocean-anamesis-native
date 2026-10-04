@@ -9,7 +9,7 @@ fixture was made from the `items-party` corpus replayed by 30db20b's soa-server:
 
     tools/server_build_at.sh 30db20b /tmp/v0                    # soa-server at the last v0 commit
     mkdir /tmp/fx && cp server/tests/replay/items-party/requests.txt /tmp/fx/
-    sed 's#data/saves/seed/Game.xml#port/server-data/test-seed.xml#' server/tests/replay/items-party/options > /tmp/fx/options
+    sed 's#data/saves/seed/Game.xml#server/tests/fixtures/test-seed.xml#' server/tests/replay/items-party/options > /tmp/fx/options
     TZ=America/Toronto /tmp/v0/soa-server $(cat /tmp/fx/options) --replay /tmp/fx --out /tmp/fx/out   # one option per line
     tools/make_state_fixture.py /tmp/fx/out/data/server.sqlite3
 

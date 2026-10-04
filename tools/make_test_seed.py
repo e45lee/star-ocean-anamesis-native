@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes port/server-data/test-seed.xml: a synthetic seed save for the local server's tests.
+"""Writes server/tests/fixtures/test-seed.xml: a synthetic seed save for the local server's tests.
 
 The runtime seed (soa's and soa-server's default) is the committed, sanitized real 3.7.0 save data/saves/seed/Game.xml,
 which is gitignored because it holds a real account (player id, device id, name). The server's
@@ -82,7 +82,7 @@ def main(argv=None):
     root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
     ap = argparse.ArgumentParser()
     ap.add_argument("--master", default=os.path.join(root, "data/basmaster-3.7.0.sqlite3"))
-    ap.add_argument("--out", default=os.path.join(root, "port/server-data/test-seed.xml"))
+    ap.add_argument("--out", default=os.path.join(root, "server/tests/fixtures/test-seed.xml"))
     ap.add_argument("--extra-roles", default="", help="comma-separated master_role ids or id_labels to add to the roster")
     ap.add_argument("--home", help="the home character's master_role id or id_label")
     a = ap.parse_args(argv)

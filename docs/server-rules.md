@@ -1727,7 +1727,7 @@ What no single domain owns: the in-process route and the state, the extension re
 ### Seed (first run)
 The seed is `--seed`, else the real 3.7.0 save in the repo (`work/Game-3.7.0.xml`, else `samples/Game.xml`; both gitignored, found from the executable's location, `port/src/core/paths.h`), else the game's own `DATA/data/shared_prefs/Game.xml`.
 
-**Test seed.** The scratch-server selftests (`--selftest "server/"`) seed from the committed synthetic `port/server-data/test-seed.xml` instead, so they run in a fresh checkout with no real save. It holds no real account data: `BAS:PlayerID` `LOCAL00001`, the made-up name "Tessa", level 60, FOL 250,000, all 10 planets open, and 38 roles picked mechanically from the 3.7.0 master (the lowest ids per rarity: 12 ★3, 10 ★4, 12 ★5, 4 ★6; home = the first ★5). `tools/make_test_seed.py` regenerates it. Tests read their expectations from the seed file, not from constants.
+**Test seed.** The scratch-server selftests (`--selftest "server/"`) seed from the committed synthetic `server/tests/fixtures/test-seed.xml` instead, so they run in a fresh checkout with no real save. It holds no real account data: `BAS:PlayerID` `LOCAL00001`, the made-up name "Tessa", level 60, FOL 250,000, all 10 planets open, and 38 roles picked mechanically from the 3.7.0 master (the lowest ids per rarity: 12 ★3, 10 ★4, 12 ★5, 4 ★6; home = the first ★5). `tools/make_test_seed.py` regenerates it. Tests read their expectations from the seed file, not from constants.
 
 | Value | Rule | Source |
 |---|---|---|

@@ -1,6 +1,6 @@
 #pragma once
 // Repository resources (port code): the files soa reads from the source checkout (the master DBs
-// under data/, the seed saves, port/server-data, port/fakeapi, standin-assets, work/...),
+// under data/, the seed saves, server/tests/fixtures, port/fakeapi, standin-assets, work/...),
 // found from the executable's location, so soa runs from any working directory.
 //
 // The repo root is found once:

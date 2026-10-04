@@ -1332,7 +1332,7 @@ state::check(db, master) -> master references (LOGW per dangling id; not fatal: 
 
 ### 4.2 The fixture
 
-There's no committed state DB today (tests seed fresh from `port/server-data/test-seed.xml`). S1 adds `tools/make_state_fixture.py`, which writes `server/tests/fixtures/state-v0.sql`, a text dump (diffable, no binary), at today's schema (user_version 0). It holds:
+There's no committed state DB today (tests seed fresh from `server/tests/fixtures/test-seed.xml`). S1 adds `tools/make_state_fixture.py`, which writes `server/tests/fixtures/state-v0.sql`, a text dump (diffable, no binary), at today's schema (user_version 0). It holds:
 
 - the seeded test player (LOCAL00001, "Tessa"), with rows in **every** table, including the module ones;
 - the dirt the migrations must clean:

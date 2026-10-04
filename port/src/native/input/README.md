@@ -41,7 +41,8 @@ thread calls every frame and CPad::Merge. Their critical section is sync's
 same locks (the PeripheralManager thread's `GetStatus` / `GetDeviceData` / `UpdateKeyStatus`, `Release`)
 and these natives exclude each other. Live check: `soa --live-check input[:every=N][:out=FILE]` (default
 every=16; `input_check.h`: the guest original on a shadow of the object as the native saw it under the
-lock).
+lock). Result (2026-10-04, every=4, the login and battle flows): 29,000 checks, 0 mismatches, 0 races; the
+scripted taps' pacing unchanged (login 9 / battle 14 taps released after a median 4 frames, 81 ms; no late steps, as on main).
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|

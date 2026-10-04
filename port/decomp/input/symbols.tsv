@@ -26,7 +26,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e8c984	0x1f8c984	12	_ZN9Framework4CPad5CUnit9UnlockAllEv	Framework::CPad::CUnit::UnlockAll()	framework	typed	
 0x1e8c990	0x1f8c990	188	_ZN9Framework4CPad5CUnit8ProgressEf	Framework::CPad::CUnit::Progress(float)	framework	typed	
 0x1e8ca4c	0x1f8ca4c	192	_ZN9Framework4CPad5CUnit4CopyEv	Framework::CPad::CUnit::Copy()	framework	typed	
-0x1e8cb0c	0x1f8cb0c	1388	_ZN9Framework4CPad5MergeEv	Framework::CPad::Merge()	framework	typed	
+0x1e8cb0c	0x1f8cb0c	1388	_ZN9Framework4CPad5MergeEv	Framework::CPad::Merge()	framework	tested	
 0x1e8d078	0x1f8d078	4	_ZN9Framework4CPad6PrintSEi	Framework::CPad::PrintS(int)	framework	typed	
 0x1e8d07c	0x1f8d07c	8	_ZNK9Framework4CPad4ModeEv	Framework::CPad::Mode() const	framework	typed	
 0x1e8d084	0x1f8d084	76	_ZNK9Framework4CPad16NowWithEveryModeEv	Framework::CPad::NowWithEveryMode() const	framework	typed	
@@ -39,9 +39,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e8d3a4	0x1f8d3a4	28	_ZN9Framework4CPad5CUnitC2Ev	Framework::CPad::CUnit::CUnit()	framework	typed	
 0x1e8d3c0	0x1f8d3c0	80	_ZN9Framework4CPad5CUnitD2Ev	Framework::CPad::CUnit::~CUnit()	framework	typed	
 0x1e8d410	0x1f8d410	64	_ZN9Framework4CPad5CUnit7ReleaseEv	Framework::CPad::CUnit::Release()	framework	typed	
-0x1e8d450	0x1f8d450	344	_ZN4Aska3Pad18SetAnalogAsDigitalEb	Aska::Pad::SetAnalogAsDigital(bool)	aska	typed	
-0x1e8d5a8	0x1f8d5a8	344	_ZN4Aska3Pad18SetRepeatThresholdEh	Aska::Pad::SetRepeatThreshold(unsigned char)	aska	typed	
-0x1e8d700	0x1f8d700	344	_ZN4Aska3Pad17SetRepeatIntervalEh	Aska::Pad::SetRepeatInterval(unsigned char)	aska	typed	
+0x1e8d450	0x1f8d450	344	_ZN4Aska3Pad18SetAnalogAsDigitalEb	Aska::Pad::SetAnalogAsDigital(bool)	aska	tested	
+0x1e8d5a8	0x1f8d5a8	344	_ZN4Aska3Pad18SetRepeatThresholdEh	Aska::Pad::SetRepeatThreshold(unsigned char)	aska	tested	
+0x1e8d700	0x1f8d700	344	_ZN4Aska3Pad17SetRepeatIntervalEh	Aska::Pad::SetRepeatInterval(unsigned char)	aska	tested	
 0x1e8d858	0x1f8d858	8	_ZN9Framework4CPad5CUnit5rKeysEv	Framework::CPad::CUnit::rKeys()	framework	typed	
 0x1e8d860	0x1f8d860	8	_ZNK9Framework4CPad5CUnit4KeysEv	Framework::CPad::CUnit::Keys() const	framework	typed	
 0x1e8d868	0x1f8d868	20	_ZN9Framework4CPad5CUnit7LockAllEv	Framework::CPad::CUnit::LockAll()	framework	typed	
@@ -102,7 +102,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e9f3e8	0x1f9f3e8	24	_ZN9Framework11CTouchPanel5ResetEv	Framework::CTouchPanel::Reset()	framework	typed	
 0x1e9f400	0x1f9f400	1320	_ZN9Framework11CTouchPanel8ProgressEf	Framework::CTouchPanel::Progress(float)	framework	typed	
 0x1e9f928	0x1f9f928	4	_ZN9Framework11CTouchPanel14InputFromMouseEv	Framework::CTouchPanel::InputFromMouse()	framework	typed	
-0x1e9f92c	0x1f9f92c	672	_ZN4Aska10TouchPanel12CopyMessagesEPNS_9TouchDataE	Aska::TouchPanel::CopyMessages(Aska::TouchData*)	aska	typed	
+0x1e9f92c	0x1f9f92c	672	_ZN4Aska10TouchPanel12CopyMessagesEPNS_9TouchDataE	Aska::TouchPanel::CopyMessages(Aska::TouchData*)	aska	tested	
 0x1e9fbcc	0x1f9fbcc	52	_ZNK9Framework11CTouchPanel11IsConnectedEv	Framework::CTouchPanel::IsConnected() const	framework	typed	
 0x1e9fc00	0x1f9fc00	8	_ZNK9Framework11CTouchPanel14rAnalogVirtualEv	Framework::CTouchPanel::rAnalogVirtual() const	framework	typed	
 0x1e9fc08	0x1f9fc08	8	_ZNK9Framework11CTouchPanel16rTouchDataBufferEv	Framework::CTouchPanel::rTouchDataBuffer() const	framework	typed	
@@ -174,7 +174,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f0881c	0x200881c	64	_ZN4Aska10TouchPanel13GetPinchOutInEPNS0_15PinchOutInParamE	Aska::TouchPanel::GetPinchOutIn(Aska::TouchPanel::PinchOutInParam*)	aska	typed	
 0x1f08860	0x2008860	20	_ZN4Aska10TouchPanel9GetStatusEv	Aska::TouchPanel::GetStatus()	aska	typed	
 0x1f08874	0x2008874	1208	_ZN4Aska10TouchPanel13GetDeviceDataEv	Aska::TouchPanel::GetDeviceData()	aska	typed	
-0x1f08d2c	0x2008d2c	340	_ZN4Aska10TouchPanel11ResetStatusEv	Aska::TouchPanel::ResetStatus()	aska	typed	
+0x1f08d2c	0x2008d2c	340	_ZN4Aska10TouchPanel11ResetStatusEv	Aska::TouchPanel::ResetStatus()	aska	tested	
 0x1f08e80	0x2008e80	8	_ZN4Aska10TouchPanel17InitializeGestureEv	Aska::TouchPanel::InitializeGesture()	aska	typed	
 0x1f08e88	0x2008e88	4	_ZN4Aska10TouchPanel15FinalizeGestureEv	Aska::TouchPanel::FinalizeGesture()	aska	typed	
 0x1f0a0b8	0x200a0b8	48	_ZN4Aska10TouchPanelD0Ev	Aska::TouchPanel::~TouchPanel()	aska	typed	
@@ -232,7 +232,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f53b4c	0x2053b4c	408	_ZN4Aska3Pad18CalcAnalogPositionEPsS1_S1_S1_	Aska::Pad::CalcAnalogPosition(short*, short*, short*, short*)	aska	typed	
 0x1f53ce4	0x2053ce4	20	_ZN4Aska3Pad17CalcAnalogTriggerEPhS1_	Aska::Pad::CalcAnalogTrigger(unsigned char*, unsigned char*)	aska	typed	
 0x1f53cf8	0x2053cf8	36	_ZN4Aska3Pad11ResetStatusEv	Aska::Pad::ResetStatus()	aska	typed	
-0x1f53d1c	0x2053d1c	384	_ZN4Aska3Pad4FlipEv	Aska::Pad::Flip()	aska	typed	
+0x1f53d1c	0x2053d1c	384	_ZN4Aska3Pad4FlipEv	Aska::Pad::Flip()	aska	tested	
 0x1f53e9c	0x2053e9c	28	_ZN4Aska3Pad12EnableRumbleEb	Aska::Pad::EnableRumble(bool)	aska	typed	
 0x1f53eb8	0x2053eb8	28	_ZN4Aska3Pad9SetRumbleEtt	Aska::Pad::SetRumble(unsigned short, unsigned short)	aska	typed	
 0x1f53ed4	0x2053ed4	96	_ZN4Aska3Pad12SetAnalogMaxEssss	Aska::Pad::SetAnalogMax(short, short, short, short)	aska	typed	

@@ -52,7 +52,9 @@ TStaticString, TArray, TPoolLegacy, TSharedPointer, String, list, vector, ASON).
 ## Natives
 
 13 bound (`soa --list-native | grep resource:`). Live check: `soa --live-check resource[:every=N][:out=FILE]`
-(default every=16; `resource_check.h`).
+(default every=16; `resource_check.h`). Result (2026-10-04, every=4, login and battle): 9,000 checks, 0 mismatches,
+0 races (Run 3,140, IsReadyDirectFile 3,322, the two GetData 1,895, IsLoading 628, NumLoading 15). IsReady,
+Num, NumByUniqueBitFlag and the four searches weren't called in these flows (differential tests only: status `native`).
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|

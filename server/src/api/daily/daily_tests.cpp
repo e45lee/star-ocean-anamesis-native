@@ -71,9 +71,26 @@ NATIVE_TEST("daily/premium-favor-bonus") {
                 " on conflict(same_role_id) do update set point = excluded.point, tap_count = excluded.tap_count, "
                 "tapped_at = excluded.tapped_at, event_drop_at = excluded.event_drop_at",
                 {s});
+        // the Player keys of the favor bonus: "" while never (PLAN-schema S10: NULL, 0 before), the
+        // time once done
+        auto player_key = [&](const Value& data, const char* key) {
+            const Value* player = data.find("Player");
+            const Value* v = player ? player->find(key) : nullptr;
+            return v ? v->s : std::string("<none>");
+        };
+        // a heal before any favor bonus (the heal makes the row; the bonus's day stays never)
         c.st.q("delete from favor_bonus_state", {});
+        c.st.q("update player set stamina_at = ?", {t0});
+        call(c, "StaminaHealByFavor", {});
+        t.expect_eq(c.st.one("select count(*) from favor_bonus_state where day_at is null and healed_at is not null", {}), (int64_t)1,
+                    "the heal's row: the bonus day NULL (never)");
+        c.st.q("delete from favor_bonus_state where day_at is null", {});
         int64_t n1 = c.st.one("select count(*) from presents", {});
         d = player_load_data(c);
+        t.expect_eq(player_key(d, "favor_bonus_received_at"), c.fmt_time(c.now()), "favor_bonus_received_at: the bonus's time");
+        t.expect_eq(player_key(d, "stamina_update_by_favor"), std::string(""), "stamina_update_by_favor: never");
+        t.expect_eq(c.st.one("select count(*) from favor_bonus_state where healed_at is null and lot_uid in (select uid from roster)", {}),
+                    (int64_t)1, "the bonus's row: an owned lot character, never healed");
         const Value* fb = d.find("FavorBonusContetsResultInfo");
         if (!fb) {
             t.fail("favor bonus with two level-4 characters");

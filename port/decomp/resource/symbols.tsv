@@ -1,0 +1,883 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x136c278	0x146c278	212	_ZN13CGameLocalKVSC2Ev	CGameLocalKVS::CGameLocalKVS()	local_kvs	typed	
+0x136c34c	0x146c34c	40	_ZN13CGameLocalKVS12VersionCheckEv	CGameLocalKVS::VersionCheck()	local_kvs	typed	
+0x136c374	0x146c374	92	_ZN13CGameLocalKVSD1Ev	CGameLocalKVS::~CGameLocalKVS()	local_kvs	typed	
+0x136c3d0	0x146c3d0	104	_ZN13CGameLocalKVSD0Ev	CGameLocalKVS::~CGameLocalKVS()	local_kvs	typed	
+0x136c438	0x146c438	8	_ZNK13CGameLocalKVS6ResultEv	CGameLocalKVS::Result() const	local_kvs	typed	
+0x136c440	0x146c440	8	_ZNK13CGameLocalKVS10pSubstanceEv	CGameLocalKVS::pSubstance() const	local_kvs	typed	
+0x136c448	0x146c448	1112	_ZN13CGameLocalKVS13_VersionCheckEPN4Aska8LocalKVSE	CGameLocalKVS::_VersionCheck(Aska::LocalKVS*)	local_kvs	typed	
+0x136c8a0	0x146c8a0	4	_ZN13CGameLocalKVS13VersionUpdateEv	CGameLocalKVS::VersionUpdate()	local_kvs	typed	
+0x136c8a4	0x146c8a4	180	_ZN13CGameLocalKVS13_SetCipherKeyEPKcPN4Aska8LocalKVSE	CGameLocalKVS::_SetCipherKey(char const*, Aska::LocalKVS*)	local_kvs	typed	
+0x136c958	0x146c958	148	_ZN13CGameLocalKVS11_SetVersionEPKcPN4Aska8LocalKVSE	CGameLocalKVS::_SetVersion(char const*, Aska::LocalKVS*)	local_kvs	typed	
+0x136c9ec	0x146c9ec	112	_ZN13CGameLocalKVS3SetINSt6__ndk112basic_stringIcNS1_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS5_22CSTLStringAllocatorInfEEEEEEEvPKcRKT_	void CGameLocalKVS::Set<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >(char const*, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	local_kvs	typed	
+0x136cb08	0x146cb08	588	_ZN13CGameLocalKVS3GetINSt6__ndk112basic_stringIcNS1_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS5_22CSTLStringAllocatorInfEEEEEEET_PKcRKSA_	std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > CGameLocalKVS::Get<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >(char const*, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	local_kvs	decompiled	
+0x14f6600	0x15f6600	52	_ZN4Aska4FileD0Ev	Aska::File::~File()	streams	typed	
+0x14f6634	0x15f6634	32	_ZN4Aska4FileD2Ev	Aska::File::~File()	streams	typed	
+0x17cff3c	0x18cff3c	248	_ZN4Aska7IStream9ReadAsyncEPvlmmPNS_7INotifyEPVl	Aska::IStream::ReadAsync(void*, long, unsigned long, unsigned long, Aska::INotify*, long volatile*)	streams	typed	
+0x17d0034	0x18d0034	420	_ZN23CGameResourceDownloaderC1Ev	CGameResourceDownloader::CGameResourceDownloader()	downloader	typed	
+0x17d01d8	0x18d01d8	912	_ZN23CGameResourceDownloaderD2Ev	CGameResourceDownloader::~CGameResourceDownloader()	downloader	decompiled	
+0x17d0568	0x18d0568	32	_ZN4Aska6TArrayIN23CGameResourceDownloader24tDownloadNodeInitializerELb0EED2Ev	Aska::TArray<CGameResourceDownloader::tDownloadNodeInitializer, false>::~TArray()	downloader	decompiled	
+0x17d0588	0x18d0588	68	_ZN4Aska6TArrayIPN23CGameResourceDownloader13CDownloadNodeELb0EED2Ev	Aska::TArray<CGameResourceDownloader::CDownloadNode*, false>::~TArray()	downloader	decompiled	
+0x17d05cc	0x18d05cc	24	_ZN23CGameResourceDownloaderD0Ev	CGameResourceDownloader::~CGameResourceDownloader()	downloader	decompiled	
+0x17d05e4	0x18d05e4	304	_ZN23CGameResourceDownloader10InitializeEv	CGameResourceDownloader::Initialize()	downloader	decompiled	
+0x17d0714	0x18d0714	264	_ZN23CGameResourceDownloader7ReleaseEv	CGameResourceDownloader::Release()	downloader	decompiled	
+0x17d081c	0x18d081c	196	_ZN23CGameResourceDownloader5ResetEb	CGameResourceDownloader::Reset(bool)	downloader	decompiled	
+0x17d08e0	0x18d08e0	408	_ZN23CGameResourceDownloader29LoadLocalKVSEpisodeUpdateFlagEb	CGameResourceDownloader::LoadLocalKVSEpisodeUpdateFlag(bool)	downloader	decompiled	
+0x17d0a78	0x18d0a78	164	_ZN23CGameResourceDownloader16SetErrorCallbackENSt6__ndk18functionIFvjN4Aska6StatusEEEE	CGameResourceDownloader::SetErrorCallback(std::__ndk1::function<void (unsigned int, Aska::Status)>)	downloader	decompiled	
+0x17d0b1c	0x18d0b1c	1920	_ZN23CGameResourceDownloader15RequestDownloadEPKcNSt6__ndk18functionIFvS1_NS_10iErrorCodeEEEE	CGameResourceDownloader::RequestDownload(char const*, std::__ndk1::function<void (char const*, CGameResourceDownloader::iErrorCode)>)	downloader	decompiled	
+0x17d129c	0x18d129c	32	_ZNK23CGameResourceDownloader15IsReadyDownloadEv	CGameResourceDownloader::IsReadyDownload() const	downloader	typed	
+0x17d12bc	0x18d12bc	16	_ZNK23CGameResourceDownloader7IsIdeleEv	CGameResourceDownloader::IsIdele() const	downloader	typed	
+0x17d12cc	0x18d12cc	88	_ZNK23CGameResourceDownloader14IsNeedDownloadEPKc	CGameResourceDownloader::IsNeedDownload(char const*) const	downloader	typed	
+0x17d1324	0x18d1324	32	_ZN23CGameResourceDownloader15RestartDownloadEv	CGameResourceDownloader::RestartDownload()	downloader	decompiled	
+0x17d1344	0x18d1344	116	_ZN23CGameResourceDownloader18CJournalFileWriter4OpenEPKcb	CGameResourceDownloader::CJournalFileWriter::Open(char const*, bool)	downloader	decompiled	
+0x17d13b8	0x18d13b8	468	_ZNK23CGameResourceDownloader18SearchDownloadNodeEPKc	CGameResourceDownloader::SearchDownloadNode(char const*) const	downloader	decompiled	
+0x17d158c	0x18d158c	16	_ZNK23CGameResourceDownloader13CDownloadNode12IsDownloadedEv	CGameResourceDownloader::CDownloadNode::IsDownloaded() const	downloader	decompiled	
+0x17d159c	0x18d159c	192	_ZN23CGameResourceDownloader13CDownloadNode8DownloadEPKcNSt6__ndk18functionIFvS2_NS_10iErrorCodeEEEEb	CGameResourceDownloader::CDownloadNode::Download(char const*, std::__ndk1::function<void (char const*, CGameResourceDownloader::iErrorCode)>, bool)	downloader	decompiled	
+0x17d165c	0x18d165c	748	_ZN23CGameResourceDownloader13CDownloadNode16RegistryCallbackEPKcNSt6__ndk18functionIFvS2_NS_10iErrorCodeEEEE	CGameResourceDownloader::CDownloadNode::RegistryCallback(char const*, std::__ndk1::function<void (char const*, CGameResourceDownloader::iErrorCode)>)	downloader	decompiled	
+0x17d1948	0x18d1948	416	_ZN23CGameResourceDownloader18RequestDownloadAllENSt6__ndk18functionIFvPKcNS_10iErrorCodeEEEE	CGameResourceDownloader::RequestDownloadAll(std::__ndk1::function<void (char const*, CGameResourceDownloader::iErrorCode)>)	downloader	decompiled	
+0x17d1ae8	0x18d1ae8	8	_ZNK23CGameResourceDownloader13CDownloadNode9pFileNameEv	CGameResourceDownloader::CDownloadNode::pFileName() const	downloader	decompiled	
+0x17d1af0	0x18d1af0	188	_ZN23CGameResourceDownloader25RequestRemoveDownloadDataENSt6__ndk18functionIFvN4Aska6StatusEEEE	CGameResourceDownloader::RequestRemoveDownloadData(std::__ndk1::function<void (Aska::Status)>)	downloader	decompiled	
+0x17d1bac	0x18d1bac	20	_ZNK23CGameResourceDownloader26IsFinishRemoveDownloadDataEv	CGameResourceDownloader::IsFinishRemoveDownloadData() const	downloader	typed	
+0x17d1bc0	0x18d1bc0	8	_ZNK23CGameResourceDownloader21NumRemoveDownloadDataEv	CGameResourceDownloader::NumRemoveDownloadData() const	downloader	typed	
+0x17d1bc8	0x18d1bc8	8	_ZNK23CGameResourceDownloader24NumMaxRemoveDownloadDataEv	CGameResourceDownloader::NumMaxRemoveDownloadData() const	downloader	typed	
+0x17d1bd0	0x18d1bd0	852	_ZN23CGameResourceDownloader36CheckLocalResourceFileToolVersionOldEv	CGameResourceDownloader::CheckLocalResourceFileToolVersionOld()	downloader	decompiled	
+0x17d2000	0x18d2000	784	_ZN23CGameResourceDownloader21LoadVersionFileToAsonERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEESA_	CGameResourceDownloader::LoadVersionFileToAson(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	downloader	decompiled	
+0x17d2310	0x18d2310	332	_ZN23CGameResourceDownloader24RequestDeleteEpisodeDataENSt6__ndk18functionIFvN4Aska6StatusEEEE	CGameResourceDownloader::RequestDeleteEpisodeData(std::__ndk1::function<void (Aska::Status)>)	downloader	decompiled	
+0x17d245c	0x18d245c	2076	_ZN23CGameResourceDownloader14ScriptDownloadEv	CGameResourceDownloader::ScriptDownload()	downloader	decompiled	
+0x17d2c78	0x18d2c78	272	_ZN23CGameResourceDownloader19InitAllDownloadListEv	CGameResourceDownloader::InitAllDownloadList()	downloader	decompiled	
+0x17d2d88	0x18d2d88	236	_ZNK23CGameResourceDownloader15NeedNumDownloadEv	CGameResourceDownloader::NeedNumDownload() const	downloader	decompiled	
+0x17d2e74	0x18d2e74	204	_ZNK23CGameResourceDownloader22GetRequireDownloadSizeEv	CGameResourceDownloader::GetRequireDownloadSize() const	downloader	decompiled	
+0x17d2f40	0x18d2f40	8	_ZNK23CGameResourceDownloader13CDownloadNode15GetContentsSizeEv	CGameResourceDownloader::CDownloadNode::GetContentsSize() const	downloader	decompiled	
+0x17d2f48	0x18d2f48	180	_ZN23CGameResourceDownloader36GetRequireDownloadSize_withWorkSpaceEv	CGameResourceDownloader::GetRequireDownloadSize_withWorkSpace()	downloader	decompiled	
+0x17d2ffc	0x18d2ffc	8	_ZNK23CGameResourceDownloader24GetRequireHiDownloadSizeEv	CGameResourceDownloader::GetRequireHiDownloadSize() const	downloader	decompiled	
+0x17d3004	0x18d3004	204	_ZNK23CGameResourceDownloader15CalcNumDownloadERjS0_	CGameResourceDownloader::CalcNumDownload(unsigned int&, unsigned int&) const	downloader	decompiled	
+0x17d30d0	0x18d30d0	8	_ZNK23CGameResourceDownloader20GetSetupProgressRateEv	CGameResourceDownloader::GetSetupProgressRate() const	downloader	decompiled	
+0x17d30d8	0x18d30d8	16	_ZN23CGameResourceDownloader21RequestDownloadCancelEv	CGameResourceDownloader::RequestDownloadCancel()	downloader	decompiled	
+0x17d30e8	0x18d30e8	48	_ZNK23CGameResourceDownloader19IsExistDownloadListEPKc	CGameResourceDownloader::IsExistDownloadList(char const*) const	downloader	typed	
+0x17d3118	0x18d3118	32	_ZNK23CGameResourceDownloader17IsExistDownloadDBEPKc	CGameResourceDownloader::IsExistDownloadDB(char const*) const	downloader	typed	
+0x17d3138	0x18d3138	20	_ZNK23CGameResourceDownloader13CDownloadNode13IsDownloadingEv	CGameResourceDownloader::CDownloadNode::IsDownloading() const	downloader	decompiled	
+0x17d314c	0x18d314c	16	_ZNK23CGameResourceDownloader13CDownloadNode17IsWaitingDownloadEv	CGameResourceDownloader::CDownloadNode::IsWaitingDownload() const	downloader	decompiled	
+0x17d315c	0x18d315c	1072	_ZNK23CGameResourceDownloader13IsBuildInDataEPKc	CGameResourceDownloader::IsBuildInData(char const*) const	downloader	typed	
+0x17d358c	0x18d358c	32	_ZNK23CGameResourceDownloader13IsDownloadingEv	CGameResourceDownloader::IsDownloading() const	downloader	typed	
+0x17d35ac	0x18d35ac	24	_ZNK23CGameResourceDownloader14NumDownloadingEv	CGameResourceDownloader::NumDownloading() const	downloader	typed	
+0x17d35c4	0x18d35c4	212	_ZNK23CGameResourceDownloader18EndNodeDownloadingEv	CGameResourceDownloader::EndNodeDownloading() const	downloader	decompiled	
+0x17d3698	0x18d3698	8	_ZNK23CGameResourceDownloader13CDownloadNode13GetUnpackSizeEv	CGameResourceDownloader::CDownloadNode::GetUnpackSize() const	downloader	decompiled	
+0x17d36a0	0x18d36a0	160	_ZNK23CGameResourceDownloader13CDownloadNode12GetUnpackNumEv	CGameResourceDownloader::CDownloadNode::GetUnpackNum() const	downloader	decompiled	
+0x17d3740	0x18d3740	72	_ZNK23CGameResourceDownloader18NumNodeDownloadingEv	CGameResourceDownloader::NumNodeDownloading() const	downloader	typed	
+0x17d3788	0x18d3788	344	_ZNK23CGameResourceDownloader26NumDownloadingExactWaitingEi	CGameResourceDownloader::NumDownloadingExactWaiting(int) const	downloader	typed	
+0x17d38e0	0x18d38e0	16	_ZNK23CGameResourceDownloader13CDownloadNode11IsUnpackingEv	CGameResourceDownloader::CDownloadNode::IsUnpacking() const	downloader	decompiled	
+0x17d38f0	0x18d38f0	264	_ZNK23CGameResourceDownloader23NumUnpakingExactWaitingEi	CGameResourceDownloader::NumUnpakingExactWaiting(int) const	downloader	typed	
+0x17d39f8	0x18d39f8	8	_ZNK23CGameResourceDownloader19IsReadyDownloadFlagEv	CGameResourceDownloader::IsReadyDownloadFlag() const	downloader	typed	
+0x17d3a00	0x18d3a00	760	_ZN23CGameResourceDownloader17IsExistOldVersionEv	CGameResourceDownloader::IsExistOldVersion()	downloader	typed	
+0x17d3cf8	0x18d3cf8	760	_ZN23CGameResourceDownloader19IsExistLocalVersionEv	CGameResourceDownloader::IsExistLocalVersion()	downloader	typed	
+0x17d3ff0	0x18d3ff0	12	_ZN23CGameResourceDownloader24SetOldVersionFileCheckedEv	CGameResourceDownloader::SetOldVersionFileChecked()	downloader	decompiled	
+0x17d3ffc	0x18d3ffc	8	_ZN23CGameResourceDownloader23IsCheckedOldVersionFileEv	CGameResourceDownloader::IsCheckedOldVersionFile()	downloader	typed	
+0x17d4004	0x18d4004	16	_ZNK23CGameResourceDownloader14IsModeDownloadEv	CGameResourceDownloader::IsModeDownload() const	downloader	typed	
+0x17d4014	0x18d4014	104	_ZNK23CGameResourceDownloader12IsExistCacheEv	CGameResourceDownloader::IsExistCache() const	downloader	typed	
+0x17d407c	0x18d407c	644	_ZN23CGameResourceDownloader7ForEachEPKcRKNSt6__ndk18functionIFbS1_EEE	CGameResourceDownloader::ForEach(char const*, std::__ndk1::function<bool (char const*)> const&)	downloader	decompiled	
+0x17d4300	0x18d4300	1112	_ZN23CGameResourceDownloader21NotifyRequireDownLoadEPKN4Aska4ASON6AValueEPKcS6_j9CMetaList	CGameResourceDownloader::NotifyRequireDownLoad(Aska::ASON::AValue const*, char const*, char const*, unsigned int, CMetaList)	downloader	decompiled	
+0x17d4758	0x18d4758	60	_ZN23CGameResourceDownloader20RegisterDownloadNodeEPNS_13CDownloadNodeE	CGameResourceDownloader::RegisterDownloadNode(CGameResourceDownloader::CDownloadNode*)	downloader	decompiled	
+0x17d4794	0x18d4794	416	_ZN23CGameResourceDownloader13CDownloadNode11SetJsonDataEP10CAssetInfojPKc9CMetaList	CGameResourceDownloader::CDownloadNode::SetJsonData(CAssetInfo*, unsigned int, char const*, CMetaList)	downloader	decompiled	
+0x17d4bc0	0x18d4bc0	332	_ZN23CGameResourceDownloader8ProgressEv	CGameResourceDownloader::Progress()	downloader	typed	
+0x17d4d0c	0x18d4d0c	100	_ZN23CGameResourceDownloader9PostErrorEiN4Aska6StatusE	CGameResourceDownloader::PostError(int, Aska::Status)	downloader	decompiled	
+0x17d4d70	0x18d4d70	240	_ZN23CGameResourceDownloader21Progress_StopDownloadEi	CGameResourceDownloader::Progress_StopDownload(int)	downloader	typed	
+0x17d4e60	0x18d4e60	5108	_ZN23CGameResourceDownloader26Progress_DeleteEpisodeDataEv	CGameResourceDownloader::Progress_DeleteEpisodeData()	downloader	typed	
+0x17d6254	0x18d6254	21872	_ZN23CGameResourceDownloader14Progress_SetupEv	CGameResourceDownloader::Progress_Setup()	downloader	typed	
+0x17db7c4	0x18db7c4	1492	_ZN23CGameResourceDownloader17Progress_DownloadEv	CGameResourceDownloader::Progress_Download()	downloader	typed	
+0x17dbd98	0x18dbd98	528	_ZN23CGameResourceDownloader27Progress_RemoveDownloadDataEv	CGameResourceDownloader::Progress_RemoveDownloadData()	downloader	typed	
+0x17dbfa8	0x18dbfa8	132	_ZN23CGameResourceDownloader11CVerifyTask10InitializeEiPS_P12CVersionInfoS3_PKN4Aska4ASON6AValue4AMapES9_	CGameResourceDownloader::CVerifyTask::Initialize(int, CGameResourceDownloader*, CVersionInfo*, CVersionInfo*, Aska::ASON::AValue::AMap const*, Aska::ASON::AValue::AMap const*)	downloader	decompiled	
+0x17dc02c	0x18dc02c	56	_ZN23CGameResourceDownloader11CVerifyTask8ProgressEv	CGameResourceDownloader::CVerifyTask::Progress()	downloader	decompiled	
+0x17dc064	0x18dc064	128	_ZNK23CGameResourceDownloader11CVerifyTask12GetCheckRateEv	CGameResourceDownloader::CVerifyTask::GetCheckRate() const	downloader	decompiled	
+0x17dc0e4	0x18dc0e4	8	_ZNK23CGameResourceDownloader11CVerifyTask5IsEndEv	CGameResourceDownloader::CVerifyTask::IsEnd() const	downloader	decompiled	
+0x17dc0ec	0x18dc0ec	612	_ZN23CGameResourceDownloader32LoadVersionFileToAsonEpisodeDataERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE	CGameResourceDownloader::LoadVersionFileToAsonEpisodeData(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	downloader	decompiled	
+0x17dc350	0x18dc350	128	_ZN23CGameResourceDownloader11CVerifyTask18AddManifestMapDataEPKN4Aska4ASON6AValue4AMapE	CGameResourceDownloader::CVerifyTask::AddManifestMapData(Aska::ASON::AValue::AMap const*)	downloader	decompiled	
+0x17dc3d0	0x18dc3d0	836	_ZN23CGameResourceDownloader25SerializeLocalVersionJsonEb	CGameResourceDownloader::SerializeLocalVersionJson(bool)	downloader	decompiled	
+0x17dc714	0x18dc714	16	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotify18ResetDispatchCountEv	CGameResourceDownloader::CDownloadNode::UnpackNotify::ResetDispatchCount()	downloader	decompiled	
+0x17dc808	0x18dc808	1312	_ZN23CGameResourceDownloader34episodeResourceFileListUpdateCheckERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEESA_	CGameResourceDownloader::episodeResourceFileListUpdateCheck(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	downloader	decompiled	
+0x17dd02c	0x18dd02c	212	_ZNK23CGameResourceDownloader11CVerifyTask13IsLatestAssetEPKc	CGameResourceDownloader::CVerifyTask::IsLatestAsset(char const*) const	downloader	decompiled	
+0x17dd284	0x18dd284	188	_ZN4Aska6TArrayIN23CGameResourceDownloader24tDownloadNodeInitializerELb0EE5ClearEv	Aska::TArray<CGameResourceDownloader::tDownloadNodeInitializer, false>::Clear()	downloader	decompiled	
+0x17dd340	0x18dd340	236	_ZN23CGameResourceDownloader13CDownloadNode3RunEv	CGameResourceDownloader::CDownloadNode::Run()	downloader	decompiled	
+0x17dd42c	0x18dd42c	16	_ZNK23CGameResourceDownloader13CDownloadNode7IsErrorEv	CGameResourceDownloader::CDownloadNode::IsError() const	downloader	decompiled	
+0x17dd43c	0x18dd43c	84	_ZN23CGameResourceDownloader18CJournalFileWriter5CloseEv	CGameResourceDownloader::CJournalFileWriter::Close()	downloader	decompiled	
+0x17dd490	0x18dd490	132	_ZN23CGameResourceDownloader18CJournalFileWriter5StartEv	CGameResourceDownloader::CJournalFileWriter::Start()	downloader	decompiled	
+0x17dd514	0x18dd514	28	_ZN23CGameResourceDownloader13CDownloadNode7CalncelEv	CGameResourceDownloader::CDownloadNode::Calncel()	downloader	decompiled	
+0x17dd530	0x18dd530	32	_ZN23CGameResourceDownloader11CDeleteTask5StartEv	CGameResourceDownloader::CDeleteTask::Start()	downloader	decompiled	
+0x17dd550	0x18dd550	396	_ZN23CGameResourceDownloader11CDeleteTask8ProgressEv	CGameResourceDownloader::CDeleteTask::Progress()	downloader	decompiled	
+0x17dd6dc	0x18dd6dc	20	_ZNK23CGameResourceDownloader11CDeleteTask13ProgressFilesEv	CGameResourceDownloader::CDeleteTask::ProgressFiles() const	downloader	decompiled	
+0x17dd6f0	0x18dd6f0	16	_ZNK23CGameResourceDownloader11CDeleteTask8NumFilesEv	CGameResourceDownloader::CDeleteTask::NumFiles() const	downloader	decompiled	
+0x17dd700	0x18dd700	16	_ZNK23CGameResourceDownloader11CDeleteTask8IsFinishEv	CGameResourceDownloader::CDeleteTask::IsFinish() const	downloader	decompiled	
+0x17dd710	0x18dd710	12	_ZNK23CGameResourceDownloader11CDeleteTask13GetLastResultEv	CGameResourceDownloader::CDeleteTask::GetLastResult() const	downloader	decompiled	
+0x17ddc9c	0x18ddc9c	16	_ZNK23CGameResourceDownloader13IsErrorStatusEv	CGameResourceDownloader::IsErrorStatus() const	downloader	typed	
+0x17ddcac	0x18ddcac	404	_ZN23CGameResourceDownloader13IsVersionFileEPKc	CGameResourceDownloader::IsVersionFile(char const*)	downloader	typed	
+0x17dde40	0x18dde40	420	_ZN23CGameResourceDownloader21SetDownloadDataServerEPKc	CGameResourceDownloader::SetDownloadDataServer(char const*)	downloader	decompiled	
+0x17ddfe4	0x18ddfe4	324	_ZN23CGameResourceDownloader22SetServerAssetRevisionEPKc	CGameResourceDownloader::SetServerAssetRevision(char const*)	downloader	decompiled	
+0x17de128	0x18de128	332	_ZNK23CGameResourceDownloader20GetLocalAssetevisionEv	CGameResourceDownloader::GetLocalAssetevision() const	downloader	decompiled	
+0x17de274	0x18de274	28	_ZN23CGameResourceDownloader24UpdateEpisodeDataMaxSizeEv	CGameResourceDownloader::UpdateEpisodeDataMaxSize()	downloader	decompiled	
+0x17de290	0x18de290	260	_ZN23CGameResourceDownloader18PermissionDownloadEv	CGameResourceDownloader::PermissionDownload()	downloader	decompiled	
+0x17de394	0x18de394	8	_ZN23CGameResourceDownloader8GetMutexEv	CGameResourceDownloader::GetMutex()	downloader	decompiled	
+0x17de39c	0x18de39c	24	_ZN23CGameResourceDownloader23WriteToTempDownloadListEPKcS1_jjjjjP9CMetaListS1_	CGameResourceDownloader::WriteToTempDownloadList(char const*, char const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, CMetaList*, char const*)	downloader	decompiled	
+0x17de3b4	0x18de3b4	428	_ZN23CGameResourceDownloader18CJournalFileWriter12AddWriteInfoEPKcS2_jjjjjP9CMetaListS2_	CGameResourceDownloader::CJournalFileWriter::AddWriteInfo(char const*, char const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, CMetaList*, char const*)	downloader	decompiled	
+0x17de560	0x18de560	12	_ZN23CGameResourceDownloader24EnableDefaultErrorHandleEb	CGameResourceDownloader::EnableDefaultErrorHandle(bool)	downloader	decompiled	
+0x17de920	0x18de920	760	_ZN23CGameResourceDownloader32checkLocalEpisodeFilelistVersionERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE	CGameResourceDownloader::checkLocalEpisodeFilelistVersion(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	downloader	decompiled	
+0x17dec18	0x18dec18	72	_ZN23CGameResourceDownloader23ClearLocalAssetRevisionEv	CGameResourceDownloader::ClearLocalAssetRevision()	downloader	decompiled	
+0x17dec60	0x18dec60	440	_ZN23CGameResourceDownloader13CDownloadNodeC2EPKcNSt6__ndk18functionIFvS2_NS_10iErrorCodeEEEE	CGameResourceDownloader::CDownloadNode::CDownloadNode(char const*, std::__ndk1::function<void (char const*, CGameResourceDownloader::iErrorCode)>)	downloader	decompiled	
+0x17dee18	0x18dee18	516	_ZN23CGameResourceDownloader13CDownloadNodeD1Ev	CGameResourceDownloader::CDownloadNode::~CDownloadNode()	downloader	decompiled	
+0x17df01c	0x18df01c	128	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStreamD2Ev	CGameResourceDownloader::CDownloadNode::CDownloadStream::~CDownloadStream()	downloader	decompiled	
+0x17df09c	0x18df09c	24	_ZN23CGameResourceDownloader13CDownloadNodeD0Ev	CGameResourceDownloader::CDownloadNode::~CDownloadNode()	downloader	decompiled	
+0x17df0b4	0x18df0b4	2404	_ZN23CGameResourceDownloader13CDownloadNode13StartDownloadEv	CGameResourceDownloader::CDownloadNode::StartDownload()	downloader	decompiled	
+0x17dfa18	0x18dfa18	932	_ZN23CGameResourceDownloader13CDownloadNode20DownloadCompleteCalcEv	CGameResourceDownloader::CDownloadNode::DownloadCompleteCalc()	downloader	decompiled	
+0x17dfdbc	0x18dfdbc	4436	_ZN23CGameResourceDownloader13CDownloadNode15UnpackChildDataEv	CGameResourceDownloader::CDownloadNode::UnpackChildData()	downloader	decompiled	
+0x17e0f10	0x18e0f10	632	_ZN23CGameResourceDownloader13CDownloadNode8CallbackEPKcNS_10iErrorCodeE	CGameResourceDownloader::CDownloadNode::Callback(char const*, CGameResourceDownloader::iErrorCode)	downloader	decompiled	
+0x17e1188	0x18e1188	8	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream9GetBufferEv	CGameResourceDownloader::CDownloadNode::CDownloadStream::GetBuffer() const	downloader	decompiled	
+0x17e1190	0x18e1190	32	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream12DeleteBufferEv	CGameResourceDownloader::CDownloadNode::CDownloadStream::DeleteBuffer()	downloader	decompiled	
+0x17e11b0	0x18e11b0	468	_ZN23CGameResourceDownloader13CDownloadNode11AllCallbackEv	CGameResourceDownloader::CDownloadNode::AllCallback()	downloader	decompiled	
+0x17e1384	0x18e1384	144	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotify9SetBinaryEPKcPKvjP10CAssetInfo	CGameResourceDownloader::CDownloadNode::UnpackNotify::SetBinary(char const*, void const*, unsigned int, CAssetInfo*)	downloader	decompiled	
+0x17e1414	0x18e1414	20	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotify16GetDispatchCountEv	CGameResourceDownloader::CDownloadNode::UnpackNotify::GetDispatchCount()	downloader	decompiled	
+0x17e1428	0x18e1428	8	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotify19GetMaxDispatchCountEv	CGameResourceDownloader::CDownloadNode::UnpackNotify::GetMaxDispatchCount()	downloader	decompiled	
+0x17e1430	0x18e1430	64	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotify16IncDispatchCountEv	CGameResourceDownloader::CDownloadNode::UnpackNotify::IncDispatchCount()	downloader	decompiled	
+0x17e1470	0x18e1470	60	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotify16SubDispatchCountEv	CGameResourceDownloader::CDownloadNode::UnpackNotify::SubDispatchCount()	downloader	decompiled	
+0x17e14ac	0x18e14ac	504	_ZNSt6__ndk113unordered_mapIjN23CGameResourceDownloader13CDownloadNode13tCallbackInfoENS_4hashIjEENS_8equal_toIjEEN9Framework13CSTLAllocatorINS_4pairIKjS3_EENS8_28CSTLUnorderedMapAllocatorInfEEEEixEOj	std::__ndk1::unordered_map<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo, std::__ndk1::hash<unsigned int>, std::__ndk1::equal_to<unsigned int>, Framework::CSTLAllocator<std::__ndk1::pair<unsigned int const, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, Framework::CSTLUnorderedMapAllocatorInf> >::operator[](unsigned int&&)	downloader	decompiled	
+0x17e16a4	0x18e16a4	8	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream15SetContentsSizeEm	CGameResourceDownloader::CDownloadNode::CDownloadStream::SetContentsSize(unsigned long)	downloader	decompiled	
+0x17e16ac	0x18e16ac	436	_ZNK23CGameResourceDownloader13CDownloadNode10IsMetaInfoEPKc	CGameResourceDownloader::CDownloadNode::IsMetaInfo(char const*) const	downloader	decompiled	
+0x17e1860	0x18e1860	308	_ZN23CGameResourceDownloader13CDownloadNode7HandlerEm	CGameResourceDownloader::CDownloadNode::Handler(unsigned long)	downloader	decompiled	
+0x17e1994	0x18e1994	28	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream8CheckMD5EPKc	CGameResourceDownloader::CDownloadNode::CDownloadStream::CheckMD5(char const*) const	downloader	decompiled	
+0x17e19b0	0x18e19b0	196	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream5CloseEb	CGameResourceDownloader::CDownloadNode::CDownloadStream::Close(bool)	downloader	decompiled	
+0x17e1a74	0x18e1a74	52	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotifyC1Ev	CGameResourceDownloader::CDownloadNode::UnpackNotify::UnpackNotify()	downloader	decompiled	
+0x17e1aa8	0x18e1aa8	116	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotifyD1Ev	CGameResourceDownloader::CDownloadNode::UnpackNotify::~UnpackNotify()	downloader	decompiled	
+0x17e1b1c	0x18e1b1c	96	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotifyD0Ev	CGameResourceDownloader::CDownloadNode::UnpackNotify::~UnpackNotify()	downloader	decompiled	
+0x17e1b7c	0x18e1b7c	548	_ZN23CGameResourceDownloader13CDownloadNode12UnpackNotify7HandlerEm	CGameResourceDownloader::CDownloadNode::UnpackNotify::Handler(unsigned long)	downloader	decompiled	
+0x17e1da0	0x18e1da0	84	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream4OpenEPKc	CGameResourceDownloader::CDownloadNode::CDownloadStream::Open(char const*)	downloader	decompiled	
+0x17e1df4	0x18e1df4	32	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream7IsReadyEv	CGameResourceDownloader::CDownloadNode::CDownloadStream::IsReady() const	downloader	decompiled	
+0x17e1e14	0x18e1e14	24	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream4TellEv	CGameResourceDownloader::CDownloadNode::CDownloadStream::Tell() const	downloader	decompiled	
+0x17e1e2c	0x18e1e2c	24	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream4SeekEli	CGameResourceDownloader::CDownloadNode::CDownloadStream::Seek(long, int)	downloader	decompiled	
+0x17e1e44	0x18e1e44	24	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream4ReadEPvmm	CGameResourceDownloader::CDownloadNode::CDownloadStream::Read(void*, unsigned long, unsigned long)	downloader	decompiled	
+0x17e1e5c	0x18e1e5c	116	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream5WriteEPKvmm	CGameResourceDownloader::CDownloadNode::CDownloadStream::Write(void const*, unsigned long, unsigned long)	downloader	decompiled	
+0x17e1ed0	0x18e1ed0	24	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStream5FlushEv	CGameResourceDownloader::CDownloadNode::CDownloadStream::Flush()	downloader	decompiled	
+0x17e1ee8	0x18e1ee8	32	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream5IsEndEPl	CGameResourceDownloader::CDownloadNode::CDownloadStream::IsEnd(long*) const	downloader	decompiled	
+0x17e1f08	0x18e1f08	32	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream12SetLastErrorEl	CGameResourceDownloader::CDownloadNode::CDownloadStream::SetLastError(long) const	downloader	decompiled	
+0x17e1f28	0x18e1f28	24	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream12GetLastErrorEv	CGameResourceDownloader::CDownloadNode::CDownloadStream::GetLastError() const	downloader	decompiled	
+0x17e1f40	0x18e1f40	8	_ZNK23CGameResourceDownloader13CDownloadNode15CDownloadStream6GetMD5Ev	CGameResourceDownloader::CDownloadNode::CDownloadStream::GetMD5() const	downloader	decompiled	
+0x17e1f48	0x18e1f48	84	_ZN23CGameResourceDownloader11CVerifyTaskC1Ev	CGameResourceDownloader::CVerifyTask::CVerifyTask()	downloader	decompiled	
+0x17e1f9c	0x18e1f9c	3020	_ZN23CGameResourceDownloader11CVerifyTask22ProgressLocalFileCheckEv	CGameResourceDownloader::CVerifyTask::ProgressLocalFileCheck()	downloader	decompiled	
+0x17e2b68	0x18e2b68	1136	_ZN23CGameResourceDownloader11CVerifyTask27ProgressServerManifestCheckEv	CGameResourceDownloader::CVerifyTask::ProgressServerManifestCheck()	downloader	decompiled	
+0x17e2fd8	0x18e2fd8	1960	_ZN23CGameResourceDownloader11CVerifyTask18ProgressEraseCheckEv	CGameResourceDownloader::CVerifyTask::ProgressEraseCheck()	downloader	decompiled	
+0x17e3780	0x18e3780	404	_ZN23CGameResourceDownloader11CVerifyTask29ProgressEraseEpisodeDataCheckEv	CGameResourceDownloader::CVerifyTask::ProgressEraseEpisodeDataCheck()	downloader	decompiled	
+0x17e3914	0x18e3914	2324	_ZN23CGameResourceDownloader11CVerifyTask21ProgressSetupManifestEv	CGameResourceDownloader::CVerifyTask::ProgressSetupManifest()	downloader	decompiled	
+0x17e4228	0x18e4228	8	_ZNK23CGameResourceDownloader11CVerifyTask12IsNeedUpdateEv	CGameResourceDownloader::CVerifyTask::IsNeedUpdate() const	downloader	decompiled	
+0x17e4230	0x18e4230	28	_ZN23CGameResourceDownloader11CVerifyTask6GetMapEv	CGameResourceDownloader::CVerifyTask::GetMap()	downloader	decompiled	
+0x17e432c	0x18e432c	8	_ZN23CGameResourceDownloader11CVerifyTask23InitializeManifestCheckEv	CGameResourceDownloader::CVerifyTask::InitializeManifestCheck()	downloader	decompiled	
+0x17e4334	0x18e4334	228	_ZN23CGameResourceDownloader11CVerifyTask30InitializeEpisodeManifestCheckEv	CGameResourceDownloader::CVerifyTask::InitializeEpisodeManifestCheck()	downloader	decompiled	
+0x17e4418	0x18e4418	5516	_ZN23CGameResourceDownloader11CVerifyTask21ProgressManifestCheckEbPKN4Aska4ASON6AValue4AMapEPj	CGameResourceDownloader::CVerifyTask::ProgressManifestCheck(bool, Aska::ASON::AValue::AMap const*, unsigned int*)	downloader	decompiled	
+0x17e5d34	0x18e5d34	888	_ZN23CGameResourceDownloader11CVerifyTask24ProgressEraseEpisodeDataEPKN4Aska4ASON6AValue4AMapE	CGameResourceDownloader::CVerifyTask::ProgressEraseEpisodeData(Aska::ASON::AValue::AMap const*)	downloader	decompiled	
+0x17e60ac	0x18e60ac	8	_ZNK23CGameResourceDownloader11CVerifyTask13GetCheckCountEv	CGameResourceDownloader::CVerifyTask::GetCheckCount() const	downloader	decompiled	
+0x17e60b4	0x18e60b4	112	_ZNK23CGameResourceDownloader11CVerifyTask12GetCheckSizeEv	CGameResourceDownloader::CVerifyTask::GetCheckSize() const	downloader	decompiled	
+0x17e6124	0x18e6124	4	_ZN23CGameResourceDownloader11CVerifyTask7HandlerEm	CGameResourceDownloader::CVerifyTask::Handler(unsigned long)	downloader	decompiled	
+0x17e6128	0x18e6128	904	_ZN23CGameResourceDownloader18CJournalFileWriter7HandlerEm	CGameResourceDownloader::CJournalFileWriter::Handler(unsigned long)	downloader	decompiled	
+0x17e64b0	0x18e64b0	28	_ZN23CGameResourceDownloader11CDeleteTaskC1Ev	CGameResourceDownloader::CDeleteTask::CDeleteTask()	downloader	decompiled	
+0x17e64cc	0x18e64cc	624	_ZN23CGameResourceDownloader11CDeleteTask9FindFilesEPKcRN9Framework8CSTLListINSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS3_13CSTLAllocatorIcNS3_22CSTLStringAllocatorInfEEEEEEE	CGameResourceDownloader::CDeleteTask::FindFiles(char const*, Framework::CSTLList<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >&)	downloader	decompiled	
+0x17e68a4	0x18e68a4	12	_ZN23CGameResourceDownloader11CDeleteTask6FinishEv	CGameResourceDownloader::CDeleteTask::Finish()	downloader	decompiled	
+0x17e68b0	0x18e68b0	32	_ZNK23CGameResourceDownloader11CDeleteTask12ProgressRateEv	CGameResourceDownloader::CDeleteTask::ProgressRate() const	downloader	decompiled	
+0x17e68d0	0x18e68d0	400	_ZN23CGameResourceDownloader16CEraseCheckFiber8ProgressEv	CGameResourceDownloader::CEraseCheckFiber::Progress()	downloader	decompiled	
+0x17e6a60	0x18e6a60	64	_ZNK4Aska7IStream13PeekLastErrorEv	Aska::IStream::PeekLastError() const	streams	typed	
+0x17e6aa0	0x18e6aa0	288	_ZNK4Aska7IStream12GetTotalSizeEv	Aska::IStream::GetTotalSize() const	streams	typed	
+0x17e6bc0	0x18e6bc0	8	_ZNK4Aska7IStream7IsAsyncEv	Aska::IStream::IsAsync() const	streams	typed	
+0x17e6bc8	0x18e6bc8	8	_ZNK4Aska7IStream6IsBusyEv	Aska::IStream::IsBusy() const	streams	typed	
+0x17e6bd0	0x18e6bd0	8	_ZNK4Aska7IStream4WaitEi	Aska::IStream::Wait(int) const	streams	typed	
+0x17e6bd8	0x18e6bd8	8	_ZN4Aska7IStream6CancelEm	Aska::IStream::Cancel(unsigned long)	streams	typed	
+0x17e6be0	0x18e6be0	224	_ZN4Aska7IStream10WriteAsyncEPKvlmmPNS_7INotifyEPVl	Aska::IStream::WriteAsync(void const*, long, unsigned long, unsigned long, Aska::INotify*, long volatile*)	streams	typed	
+0x17e6cc0	0x18e6cc0	128	_ZN23CGameResourceDownloader13CDownloadNode15CDownloadStreamD0Ev	CGameResourceDownloader::CDownloadNode::CDownloadStream::~CDownloadStream()	downloader	decompiled	
+0x17e6d40	0x18e6d40	200	_ZN23CGameResourceDownloader18CJournalFileWriterD2Ev	CGameResourceDownloader::CJournalFileWriter::~CJournalFileWriter()	downloader	decompiled	
+0x17e6e08	0x18e6e08	24	_ZN23CGameResourceDownloader18CJournalFileWriterD0Ev	CGameResourceDownloader::CJournalFileWriter::~CJournalFileWriter()	downloader	decompiled	
+0x17e6e20	0x18e6e20	60	_ZN23CGameResourceDownloader16CEraseCheckFiberD2Ev	CGameResourceDownloader::CEraseCheckFiber::~CEraseCheckFiber()	downloader	decompiled	
+0x17e6e5c	0x18e6e5c	68	_ZN23CGameResourceDownloader16CEraseCheckFiberD0Ev	CGameResourceDownloader::CEraseCheckFiber::~CEraseCheckFiber()	downloader	decompiled	
+0x17e6ea0	0x18e6ea0	232	_ZN23CGameResourceDownloader11CVerifyTaskD2Ev	CGameResourceDownloader::CVerifyTask::~CVerifyTask()	downloader	decompiled	
+0x17e6f88	0x18e6f88	24	_ZN23CGameResourceDownloader11CVerifyTaskD0Ev	CGameResourceDownloader::CVerifyTask::~CVerifyTask()	downloader	decompiled	
+0x17e6fa0	0x18e6fa0	68	_ZN4Aska6TArrayIN23CGameResourceDownloader18CJournalFileWriter10tWriteInfoELb0EED2Ev	Aska::TArray<CGameResourceDownloader::CJournalFileWriter::tWriteInfo, false>::~TArray()	downloader	decompiled	
+0x17e6fe4	0x18e6fe4	60	_ZN4Aska6TArrayIN23CGameResourceDownloader18CJournalFileWriter10tWriteInfoELb0EED0Ev	Aska::TArray<CGameResourceDownloader::CJournalFileWriter::tWriteInfo, false>::~TArray()	downloader	decompiled	
+0x17e93dc	0x18e93dc	60	_ZN4Aska6TArrayIPN23CGameResourceDownloader13CDownloadNodeELb0EED0Ev	Aska::TArray<CGameResourceDownloader::CDownloadNode*, false>::~TArray()	downloader	decompiled	
+0x17e9418	0x18e9418	52	_ZN4Aska6TArrayIN23CGameResourceDownloader24tDownloadNodeInitializerELb0EED0Ev	Aska::TArray<CGameResourceDownloader::tDownloadNodeInitializer, false>::~TArray()	downloader	decompiled	
+0x17e944c	0x18e944c	252	_ZN4Aska6TArrayIPN23CGameResourceDownloader13CDownloadNodeELb0EE6ResizeElb	Aska::TArray<CGameResourceDownloader::CDownloadNode*, false>::Resize(long, bool)	downloader	decompiled	
+0x17e967c	0x18e967c	308	_ZNSt6__ndk18functionIFvPKcN23CGameResourceDownloader10iErrorCodeEEE4swapERS6_	std::__ndk1::function<void (char const*, CGameResourceDownloader::iErrorCode)>::swap(std::__ndk1::function<void (char const*, CGameResourceDownloader::iErrorCode)>&)	downloader	decompiled	
+0x17e97b0	0x18e97b0	464	_ZN4Aska6TArrayIN23CGameResourceDownloader24tDownloadNodeInitializerELb0EE5SetAtElRKS2_	Aska::TArray<CGameResourceDownloader::tDownloadNodeInitializer, false>::SetAt(long, CGameResourceDownloader::tDownloadNodeInitializer const&)	downloader	decompiled	
+0x17e9980	0x18e9980	516	_ZN4Aska6TArrayIN23CGameResourceDownloader24tDownloadNodeInitializerELb0EE6ResizeElb	Aska::TArray<CGameResourceDownloader::tDownloadNodeInitializer, false>::Resize(long, bool)	downloader	decompiled	
+0x17e9b84	0x18e9b84	384	_ZN4Aska6TArrayIN23CGameResourceDownloader24tDownloadNodeInitializerELb0EE12ForceReallocEllPKS2_9StBooleanILb0EE	Aska::TArray<CGameResourceDownloader::tDownloadNodeInitializer, false>::ForceRealloc(long, long, CGameResourceDownloader::tDownloadNodeInitializer const*, StBoolean<false>)	downloader	decompiled	
+0x17e9d04	0x18e9d04	320	_ZN4Aska6TArrayIN23CGameResourceDownloader24tDownloadNodeInitializerELb0EE19CallCopyConstructorEPS2_RKS2_9StBooleanILb0EE	Aska::TArray<CGameResourceDownloader::tDownloadNodeInitializer, false>::CallCopyConstructor(CGameResourceDownloader::tDownloadNodeInitializer*, CGameResourceDownloader::tDownloadNodeInitializer const&, StBoolean<false>)	downloader	decompiled	
+0x17e9e44	0x18e9e44	364	_ZN23CGameResourceDownloader24tDownloadNodeInitializeraSERKS0_	CGameResourceDownloader::tDownloadNodeInitializer::operator=(CGameResourceDownloader::tDownloadNodeInitializer const&)	downloader	decompiled	
+0x17f4fec	0x18f4fec	208	_ZNSt6__ndk112__hash_tableINS_17__hash_value_typeIjPN23CGameResourceDownloader13CDownloadNodeEEENS_22__unordered_map_hasherIjS5_NS_4hashIjEELb1EEENS_21__unordered_map_equalIjS5_NS_8equal_toIjEELb1EEEN9Framework13CSTLAllocatorIS5_NSE_28CSTLUnorderedMapAllocatorInfEEEE6rehashEm	std::__ndk1::__hash_table<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, std::__ndk1::__unordered_map_hasher<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, std::__ndk1::hash<unsigned int>, true>, std::__ndk1::__unordered_map_equal<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, std::__ndk1::equal_to<unsigned int>, true>, Framework::CSTLAllocator<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, Framework::CSTLUnorderedMapAllocatorInf> >::rehash(unsigned long)	downloader	decompiled	
+0x17f50bc	0x18f50bc	524	_ZNSt6__ndk112__hash_tableINS_17__hash_value_typeIjPN23CGameResourceDownloader13CDownloadNodeEEENS_22__unordered_map_hasherIjS5_NS_4hashIjEELb1EEENS_21__unordered_map_equalIjS5_NS_8equal_toIjEELb1EEEN9Framework13CSTLAllocatorIS5_NSE_28CSTLUnorderedMapAllocatorInfEEEE8__rehashEm	std::__ndk1::__hash_table<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, std::__ndk1::__unordered_map_hasher<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, std::__ndk1::hash<unsigned int>, true>, std::__ndk1::__unordered_map_equal<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, std::__ndk1::equal_to<unsigned int>, true>, Framework::CSTLAllocator<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode*>, Framework::CSTLUnorderedMapAllocatorInf> >::__rehash(unsigned long)	downloader	decompiled	
+0x17f646c	0x18f646c	208	_ZNSt6__ndk112__hash_tableINS_17__hash_value_typeIjN23CGameResourceDownloader13CDownloadNode13tCallbackInfoEEENS_22__unordered_map_hasherIjS5_NS_4hashIjEELb1EEENS_21__unordered_map_equalIjS5_NS_8equal_toIjEELb1EEEN9Framework13CSTLAllocatorIS5_NSE_28CSTLUnorderedMapAllocatorInfEEEE6rehashEm	std::__ndk1::__hash_table<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, std::__ndk1::__unordered_map_hasher<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, std::__ndk1::hash<unsigned int>, true>, std::__ndk1::__unordered_map_equal<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, std::__ndk1::equal_to<unsigned int>, true>, Framework::CSTLAllocator<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, Framework::CSTLUnorderedMapAllocatorInf> >::rehash(unsigned long)	downloader	decompiled	
+0x17f653c	0x18f653c	524	_ZNSt6__ndk112__hash_tableINS_17__hash_value_typeIjN23CGameResourceDownloader13CDownloadNode13tCallbackInfoEEENS_22__unordered_map_hasherIjS5_NS_4hashIjEELb1EEENS_21__unordered_map_equalIjS5_NS_8equal_toIjEELb1EEEN9Framework13CSTLAllocatorIS5_NSE_28CSTLUnorderedMapAllocatorInfEEEE8__rehashEm	std::__ndk1::__hash_table<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, std::__ndk1::__unordered_map_hasher<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, std::__ndk1::hash<unsigned int>, true>, std::__ndk1::__unordered_map_equal<unsigned int, std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, std::__ndk1::equal_to<unsigned int>, true>, Framework::CSTLAllocator<std::__ndk1::__hash_value_type<unsigned int, CGameResourceDownloader::CDownloadNode::tCallbackInfo>, Framework::CSTLUnorderedMapAllocatorInf> >::__rehash(unsigned long)	downloader	decompiled	
+0x17f6b44	0x18f6b44	324	_ZNSt6__ndk16vectorIN23CGameResourceDownloader11CVerifyTask11tFolderInfoEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE21__push_back_slow_pathIRKS3_EEvOT_	void std::__ndk1::vector<CGameResourceDownloader::CVerifyTask::tFolderInfo, Framework::CSTLAllocator<CGameResourceDownloader::CVerifyTask::tFolderInfo, Framework::CSTLVectorAllocatorInf> >::__push_back_slow_path<CGameResourceDownloader::CVerifyTask::tFolderInfo const&>(CGameResourceDownloader::CVerifyTask::tFolderInfo const&)	downloader	decompiled	
+0x17f6c88	0x18f6c88	348	_ZN4Aska6TArrayIN23CGameResourceDownloader18CJournalFileWriter10tWriteInfoELb0EE6ResizeElb	Aska::TArray<CGameResourceDownloader::CJournalFileWriter::tWriteInfo, false>::Resize(long, bool)	downloader	decompiled	
+0x17f6de4	0x18f6de4	356	_ZN20CGameResourceManagerC2EPKc	CGameResourceManager::CGameResourceManager(char const*)	game_resource_manager	typed	
+0x17f6f48	0x18f6f48	60	_ZN20CGameResourceManager9SubstanceEPN9Framework16CResourceManagerE	CGameResourceManager::Substance(Framework::CResourceManager*)	game_resource_manager	typed	
+0x17f6f84	0x18f6f84	144	_ZN20CGameResourceManagerD2Ev	CGameResourceManager::~CGameResourceManager()	game_resource_manager	typed	
+0x17f7014	0x18f7014	188	_ZN20CGameResourceManager7ReleaseEv	CGameResourceManager::Release()	game_resource_manager	typed	
+0x17f7110	0x18f7110	148	_ZN20CGameResourceManagerD0Ev	CGameResourceManager::~CGameResourceManager()	game_resource_manager	typed	
+0x17f71a4	0x18f71a4	3256	_ZN20CGameResourceManager10InitializeEv	CGameResourceManager::Initialize()	game_resource_manager	typed	
+0x17f7e5c	0x18f7e5c	60	_ZN20CGameResourceManager10pSubstanceEv	CGameResourceManager::pSubstance()	game_resource_manager	typed	
+0x17f7e98	0x18f7e98	56	_ZNK20CGameResourceManager12IsInitializeEv	CGameResourceManager::IsInitialize() const	game_resource_manager	typed	
+0x17f7ed0	0x18f7ed0	60	_ZNK20CGameResourceManager11cpSubstanceEv	CGameResourceManager::cpSubstance() const	game_resource_manager	typed	
+0x17f7f0c	0x18f7f0c	504	_ZN20CGameResourceManager13AddDirectFileEjPKcjbNS_13iPriorityModeE	CGameResourceManager::AddDirectFile(unsigned int, char const*, unsigned int, bool, CGameResourceManager::iPriorityMode)	game_resource_manager	typed	
+0x17f8104	0x18f8104	1328	_ZNK20CGameResourceManager15ReplaceFileNameEPKc	CGameResourceManager::ReplaceFileName(char const*) const	game_resource_manager	typed	
+0x17f8634	0x18f8634	808	_ZNK20CGameResourceManager17FileExistLanguageEPKcNS_13iPriorityModeEPN9Framework13TStaticStringILm256EEE	CGameResourceManager::FileExistLanguage(char const*, CGameResourceManager::iPriorityMode, Framework::TStaticString<256ul>*) const	game_resource_manager	typed	
+0x17f895c	0x18f895c	208	_ZN20CGameResourceManager18DownloadDirectFileEPKc	CGameResourceManager::DownloadDirectFile(char const*)	game_resource_manager	typed	
+0x17f8a2c	0x18f8a2c	336	_ZN20CGameResourceManager16RemoveDirectFileEPKc	CGameResourceManager::RemoveDirectFile(char const*)	game_resource_manager	typed	
+0x17f8b7c	0x18f8b7c	224	_ZNK20CGameResourceManager13SearchFileMapEPKc	CGameResourceManager::SearchFileMap(char const*) const	game_resource_manager	typed	
+0x17f8c5c	0x18f8c5c	660	_ZNK20CGameResourceManager22RegisteredFileLanguageEPKcRN9Framework13TStaticStringILm256EEE	CGameResourceManager::RegisteredFileLanguage(char const*, Framework::TStaticString<256ul>&) const	game_resource_manager	typed	
+0x17f8ef0	0x18f8ef0	336	_ZN20CGameResourceManager21RemoveForceDirectFileEPKc	CGameResourceManager::RemoveForceDirectFile(char const*)	game_resource_manager	typed	
+0x17f9040	0x18f9040	68	_ZN20CGameResourceManager21RemoveByUniqueBitFlagEj	CGameResourceManager::RemoveByUniqueBitFlag(unsigned int)	game_resource_manager	typed	
+0x17f9084	0x18f9084	144	_ZNK20CGameResourceManager17IsReadyDirectFileEPKc	CGameResourceManager::IsReadyDirectFile(char const*) const	game_resource_manager	typed	
+0x17f9114	0x18f9114	60	_ZN20CGameResourceManager4LockEv	CGameResourceManager::Lock()	game_resource_manager	typed	
+0x17f9150	0x18f9150	60	_ZN20CGameResourceManager6UnlockEv	CGameResourceManager::Unlock()	game_resource_manager	typed	
+0x17f918c	0x18f918c	60	_ZNK20CGameResourceManager8IsLockedEv	CGameResourceManager::IsLocked() const	game_resource_manager	typed	
+0x17f91c8	0x18f91c8	60	_ZNK20CGameResourceManager11LockCounterEv	CGameResourceManager::LockCounter() const	game_resource_manager	typed	
+0x17f9204	0x18f9204	124	_ZN20CGameResourceManager26rResourceElementDirectFileEPKc	CGameResourceManager::rResourceElementDirectFile(char const*)	game_resource_manager	typed	
+0x17f9280	0x18f9280	124	_ZNK20CGameResourceManager27crResourceElementDirectFileEPKc	CGameResourceManager::crResourceElementDirectFile(char const*) const	game_resource_manager	typed	
+0x17f92fc	0x18f92fc	72	_ZNK20CGameResourceManager24crResourceElementByIndexEj	CGameResourceManager::crResourceElementByIndex(unsigned int) const	game_resource_manager	typed	
+0x17f9344	0x18f9344	120	_ZNK20CGameResourceManager10NumLoadingEv	CGameResourceManager::NumLoading() const	game_resource_manager	typed	
+0x17f93bc	0x18f93bc	192	_ZNK20CGameResourceManager9IsLoadingEv	CGameResourceManager::IsLoading() const	game_resource_manager	typed	
+0x17f947c	0x18f947c	60	_ZNK20CGameResourceManager3NumEv	CGameResourceManager::Num() const	game_resource_manager	typed	
+0x17f94b8	0x18f94b8	68	_ZNK20CGameResourceManager18NumByUniqueBitFlagEj	CGameResourceManager::NumByUniqueBitFlag(unsigned int) const	game_resource_manager	typed	
+0x17f94fc	0x18f94fc	68	_ZN20CGameResourceManager6PrintSEPKc	CGameResourceManager::PrintS(char const*)	game_resource_manager	typed	
+0x17f9540	0x18f9540	80	_ZNK20CGameResourceManager11IsFileExistEPKcb	CGameResourceManager::IsFileExist(char const*, bool) const	game_resource_manager	typed	
+0x17f9590	0x18f9590	864	_ZNK20CGameResourceManager25IsFileExistDownloadFolderEPKc	CGameResourceManager::IsFileExistDownloadFolder(char const*) const	game_resource_manager	typed	
+0x17f98f0	0x18f98f0	116	_ZNK20CGameResourceManager11IsVoiceFileEPKc	CGameResourceManager::IsVoiceFile(char const*) const	game_resource_manager	typed	
+0x17f9aa8	0x18f9aa8	48	_ZNK20CGameResourceManager19CheckResourceStatusEjNS_13iPriorityModeE	CGameResourceManager::CheckResourceStatus(unsigned int, CGameResourceManager::iPriorityMode) const	game_resource_manager	typed	
+0x17f9ad8	0x18f9ad8	460	_ZNK20CGameResourceManager29CheckResourceStatusByFileNameEPKcNS_13iPriorityModeE	CGameResourceManager::CheckResourceStatusByFileName(char const*, CGameResourceManager::iPriorityMode) const	game_resource_manager	typed	
+0x17f9ca4	0x18f9ca4	736	_ZN20CGameResourceManager18MakeResolutionPathEPKc	CGameResourceManager::MakeResolutionPath(char const*)	game_resource_manager	typed	
+0x17f9f84	0x18f9f84	48	_ZN20CGameResourceManager25MakeCurrentResolutionPathEv	CGameResourceManager::MakeCurrentResolutionPath()	game_resource_manager	typed	
+0x18efa40	0x19efa40	212	_ZN13CGameLocalKVS3GetIjEET_PKcRKS1_	unsigned int CGameLocalKVS::Get<unsigned int>(char const*, unsigned int const&)	local_kvs	decompiled	
+0x1de85f4	0x1ee85f4	212	_ZN13CGameLocalKVS3GetIiEET_PKcRKS1_	int CGameLocalKVS::Get<int>(char const*, int const&)	local_kvs	typed	
+0x1dea294	0x1eea294	228	_ZN13CGameLocalKVS3GetIbEET_PKcRKS1_	bool CGameLocalKVS::Get<bool>(char const*, bool const&)	local_kvs	typed	
+0x1df04f0	0x1ef04f0	212	_ZN13CGameLocalKVS3GetImEET_PKcRKS1_	unsigned long CGameLocalKVS::Get<unsigned long>(char const*, unsigned long const&)	local_kvs	decompiled	
+0x1e828f4	0x1f828f4	144	_ZN9Framework11CFileLoaderC2Ev	Framework::CFileLoader::CFileLoader()	file_loader	typed	
+0x1e82984	0x1f82984	68	_ZN9Framework11CFileLoader9DummySizeEm	Framework::CFileLoader::DummySize(unsigned long)	file_loader	typed	
+0x1e829c8	0x1f829c8	552	_ZN9Framework11CFileLoader10InitializeEjmb	Framework::CFileLoader::Initialize(unsigned int, unsigned long, bool)	file_loader	typed	
+0x1e82bf0	0x1f82bf0	68	_ZN9Framework11CFileLoader12BufferOffsetEm	Framework::CFileLoader::BufferOffset(unsigned long)	file_loader	typed	
+0x1e82c34	0x1f82c34	8	_ZN9Framework11CFileLoader27QueryToExternalProcessCacheEPKc	Framework::CFileLoader::QueryToExternalProcessCache(char const*)	file_loader	typed	
+0x1e82c3c	0x1f82c3c	84	_ZN9Framework11CFileLoader33InitializeDefaultDirectLoadFolderEv	Framework::CFileLoader::InitializeDefaultDirectLoadFolder()	file_loader	typed	
+0x1e82c90	0x1f82c90	64	_ZN9Framework11CFileLoader30ReleaseDefaultDirectLoadFolderEv	Framework::CFileLoader::ReleaseDefaultDirectLoadFolder()	file_loader	typed	
+0x1e82cd0	0x1f82cd0	252	_ZN9Framework11CFileLoader26SetDefaultDirectLoadFolderEPKc	Framework::CFileLoader::SetDefaultDirectLoadFolder(char const*)	file_loader	typed	
+0x1e82dcc	0x1f82dcc	96	_ZN9Framework11CFileLoader28ResetDefaultDirectLoadFolderEv	Framework::CFileLoader::ResetDefaultDirectLoadFolder()	file_loader	typed	
+0x1e82e2c	0x1f82e2c	88	_ZN9Framework11CFileLoader24pDefaultDirectLoadFolderEv	Framework::CFileLoader::pDefaultDirectLoadFolder()	file_loader	typed	
+0x1e82e84	0x1f82e84	1452	_ZN9Framework11CFileLoader22InitializeByDirectFileEPKcmb	Framework::CFileLoader::InitializeByDirectFile(char const*, unsigned long, bool)	file_loader	typed	
+0x1e83430	0x1f83430	68	_ZN9Framework11CFileLoader18IsAssetManagerPathEPKc	Framework::CFileLoader::IsAssetManagerPath(char const*)	file_loader	typed	
+0x1e83474	0x1f83474	216	_ZN9Framework11CFileLoader16EnableDirectLoadEPKc	Framework::CFileLoader::EnableDirectLoad(char const*)	file_loader	typed	
+0x1e8354c	0x1f8354c	136	_ZNK9Framework11CFileLoader29pDirectOpenedFileRelativeNameEv	Framework::CFileLoader::pDirectOpenedFileRelativeName() const	file_loader	typed	
+0x1e835d4	0x1f835d4	428	_ZN9Framework11CFileLoader25InitializeByImmediateLoadEPKcmb	Framework::CFileLoader::InitializeByImmediateLoad(char const*, unsigned long, bool)	file_loader	typed	
+0x1e83780	0x1f83780	196	_ZN9Framework11CFileLoader21gIsImmediateFileExistEPKc	Framework::CFileLoader::gIsImmediateFileExist(char const*)	file_loader	typed	
+0x1e83844	0x1f83844	656	_ZN9Framework11CFileLoader12gIsFileExistEPKcS2_	Framework::CFileLoader::gIsFileExist(char const*, char const*)	file_loader	typed	
+0x1e83ad4	0x1f83ad4	68	_ZN9Framework11CFileLoader42SetFileNumberToInitializeByImmediateLoadedEj	Framework::CFileLoader::SetFileNumberToInitializeByImmediateLoaded(unsigned int)	file_loader	typed	
+0x1e83b48	0x1f83b48	152	_ZN9Framework11CFileLoader33SetAssetManagerEvaluationFunctionERKNSt6__ndk18functionIFbPKcEEE	Framework::CFileLoader::SetAssetManagerEvaluationFunction(std::__ndk1::function<bool (char const*)> const&)	file_loader	typed	
+0x1e83c10	0x1f83c10	152	_ZN9Framework11CFileLoader18SetDecryptFunctionERKNSt6__ndk18functionIFvPS0_PKcS5_PPhRmEEE	Framework::CFileLoader::SetDecryptFunction(std::__ndk1::function<void (Framework::CFileLoader*, char const*, char const*, unsigned char**, unsigned long&)> const&)	file_loader	typed	
+0x1e83ca8	0x1f83ca8	220	_ZN9Framework11CFileLoader7ReleaseEv	Framework::CFileLoader::Release()	file_loader	typed	
+0x1e83d84	0x1f83d84	76	_ZN9Framework11CFileLoader19DirectReleaseBufferEb	Framework::CFileLoader::DirectReleaseBuffer(bool)	file_loader	typed	
+0x1e83dd0	0x1f83dd0	8	_ZNK9Framework11CFileLoader10FileNumberEv	Framework::CFileLoader::FileNumber() const	file_loader	typed	
+0x1e83dd8	0x1f83dd8	108	_ZNK9Framework11CFileLoader9pFileNameEv	Framework::CFileLoader::pFileName() const	file_loader	typed	
+0x1e83e44	0x1f83e44	120	_ZNK9Framework11CFileLoader12FileNameHashEv	Framework::CFileLoader::FileNameHash() const	file_loader	typed	
+0x1e83ebc	0x1f83ebc	152	_ZNK9Framework11CFileLoader7pBufferEv	Framework::CFileLoader::pBuffer() const	file_loader	typed	
+0x1e83f54	0x1f83f54	8	_ZNK9Framework11CFileLoader12BufferOffsetEv	Framework::CFileLoader::BufferOffset() const	file_loader	typed	
+0x1e83f5c	0x1f83f5c	108	_ZNK9Framework11CFileLoader4SizeEv	Framework::CFileLoader::Size() const	file_loader	typed	
+0x1e83fc8	0x1f83fc8	220	_ZN9Framework11CFileLoader7HandlerEm	Framework::CFileLoader::Handler(unsigned long)	file_loader	typed	
+0x1e840a4	0x1f840a4	8	_ZNK9Framework11CFileLoader10pBufferTopEv	Framework::CFileLoader::pBufferTop() const	file_loader	typed	
+0x1e840ac	0x1f840ac	8	_ZNK9Framework11CFileLoader9IsLoadingEv	Framework::CFileLoader::IsLoading() const	file_loader	typed	
+0x1e840b4	0x1f840b4	136	_ZN9Framework11CFileLoader17SwapBufferPointerEPvm	Framework::CFileLoader::SwapBufferPointer(void*, unsigned long)	file_loader	typed	
+0x1e8413c	0x1f8413c	148	_ZN9Framework11CFileLoaderD2Ev	Framework::CFileLoader::~CFileLoader()	file_loader	typed	
+0x1e841d0	0x1f841d0	24	_ZN9Framework11CFileLoaderD0Ev	Framework::CFileLoader::~CFileLoader()	file_loader	typed	
+0x1e904c0	0x1f904c0	2696	_ZN9Framework16CResourceElement13gpInstantiateEj	Framework::CResourceElement::gpInstantiate(unsigned int)	resource_manager	typed	
+0x1e90f48	0x1f90f48	20	_ZN9Framework16CResourceElement13tMappingImageC2Ev	Framework::CResourceElement::tMappingImage::tMappingImage()	resource_manager	typed	
+0x1e90f5c	0x1f90f5c	20	_ZN9Framework16CResourceElement13tMappingImageD2Ev	Framework::CResourceElement::tMappingImage::~tMappingImage()	resource_manager	typed	
+0x1e90f70	0x1f90f70	12	_ZN9Framework16CResourceElement18tMemoryDescriptionC2Ev	Framework::CResourceElement::tMemoryDescription::tMemoryDescription()	resource_manager	typed	
+0x1e90f7c	0x1f90f7c	48	_ZNK9Framework16CResourceElement18tMemoryDescription6IsHighEv	Framework::CResourceElement::tMemoryDescription::IsHigh() const	resource_manager	typed	
+0x1e90fac	0x1f90fac	100	_ZN9Framework16CResourceElement18tMemoryDescription6CreateEbbb	Framework::CResourceElement::tMemoryDescription::Create(bool, bool, bool)	resource_manager	typed	
+0x1e91010	0x1f91010	160	_ZN9Framework16CResourceElementC1Ej	Framework::CResourceElement::CResourceElement(unsigned int)	resource_manager	typed	
+0x1e910b0	0x1f910b0	136	_ZN9Framework16CResourceElement11_InitializeEjmRKNS0_18tMemoryDescriptionE	Framework::CResourceElement::_Initialize(unsigned int, unsigned long, Framework::CResourceElement::tMemoryDescription const&)	resource_manager	typed	
+0x1e91138	0x1f91138	168	_ZN9Framework16CResourceElement19_InitializeByMemoryEPvRKNS0_18tMemoryDescriptionE	Framework::CResourceElement::_InitializeByMemory(void*, Framework::CResourceElement::tMemoryDescription const&)	resource_manager	typed	
+0x1e911e0	0x1f911e0	156	_ZN9Framework16CResourceElement23_InitializeByDirectFileEPKcmRKNS0_18tMemoryDescriptionES2_	Framework::CResourceElement::_InitializeByDirectFile(char const*, unsigned long, Framework::CResourceElement::tMemoryDescription const&, char const*)	resource_manager	typed	
+0x1e9127c	0x1f9127c	240	_ZN9Framework16CResourceElement7ReleaseEv	Framework::CResourceElement::Release()	resource_manager	typed	
+0x1e9136c	0x1f9136c	4248	_ZN9Framework16CResourceElement3RunEi	Framework::CResourceElement::Run(int)	resource_manager	typed	
+0x1e92404	0x1f92404	380	_ZN9Framework16CResourceElement18PhaseLoadingFinishEv	Framework::CResourceElement::PhaseLoadingFinish()	resource_manager	typed	
+0x1e92580	0x1f92580	8	_ZNK9Framework16CResourceElement4TypeEv	Framework::CResourceElement::Type() const	resource_manager	typed	
+0x1e92588	0x1f92588	20	_ZN9Framework16CResourceElement4DoneEv	Framework::CResourceElement::Done()	resource_manager	typed	
+0x1e9259c	0x1f9259c	256	_ZNSt6__ndk16vectorIN9Framework16CResourceElement13tMappingImageENS1_13CSTLAllocatorIS3_NS1_22CSTLVectorAllocatorInfEEEE7reserveEm	std::__ndk1::vector<Framework::CResourceElement::tMappingImage, Framework::CSTLAllocator<Framework::CResourceElement::tMappingImage, Framework::CSTLVectorAllocatorInf> >::reserve(unsigned long)	resource_manager	decompiled	
+0x1e9269c	0x1f9269c	8	_ZThn192_N9Framework16CResourceElement3RunEi	non-virtual thunk to Framework::CResourceElement::Run(int)	resource_manager	decompiled	
+0x1e926a4	0x1f926a4	40	_ZN9Framework16CResourceElement25IsRquestMappingMemoryTypeEj	Framework::CResourceElement::IsRquestMappingMemoryType(unsigned int)	resource_manager	typed	
+0x1e926cc	0x1f926cc	132	_ZN9Framework16CResourceElement20SwapDecompressBufferEv	Framework::CResourceElement::SwapDecompressBuffer()	resource_manager	typed	
+0x1e92750	0x1f92750	8	_ZNK9Framework16CResourceElement5PhaseEv	Framework::CResourceElement::Phase() const	resource_manager	typed	
+0x1e92758	0x1f92758	16	_ZNK9Framework16CResourceElement13IsInitializedEv	Framework::CResourceElement::IsInitialized() const	resource_manager	typed	
+0x1e92768	0x1f92768	16	_ZNK9Framework16CResourceElement6IsDoneEv	Framework::CResourceElement::IsDone() const	resource_manager	typed	
+0x1e92778	0x1f92778	80	_ZNK9Framework16CResourceElement6pImageEv	Framework::CResourceElement::pImage() const	resource_manager	typed	
+0x1e927c8	0x1f927c8	236	_ZNK9Framework16CResourceElement17pFindMappingImageEPKc	Framework::CResourceElement::pFindMappingImage(char const*) const	resource_manager	typed	
+0x1e928b4	0x1f928b4	68	_ZN9Framework16CResourceElement13IsArchiveTypeEj	Framework::CResourceElement::IsArchiveType(unsigned int)	resource_manager	typed	
+0x1e928f8	0x1f928f8	80	_ZN9Framework16CResourceElement13IsArchiveTypeEjb	Framework::CResourceElement::IsArchiveType(unsigned int, bool)	resource_manager	typed	
+0x1e92948	0x1f92948	48	_ZN9Framework16CResourceElement7HandlerEm	Framework::CResourceElement::Handler(unsigned long)	resource_manager	typed	
+0x1e92978	0x1f92978	8	_ZNK9Framework16CResourceElement19IsExpansionFinishedEv	Framework::CResourceElement::IsExpansionFinished() const	resource_manager	typed	
+0x1e92980	0x1f92980	236	_ZN9Framework16CResourceElement13CFinishNotify7HandlerEm	Framework::CResourceElement::CFinishNotify::Handler(unsigned long)	resource_manager	typed	
+0x1e936a4	0x1f936a4	148	_ZN9Framework16CResourceElementD0Ev	Framework::CResourceElement::~CResourceElement()	resource_manager	typed	
+0x1e93738	0x1f93738	40	_ZNK9Framework16CResourceElement7pBufferEv	Framework::CResourceElement::pBuffer() const	resource_manager	typed	
+0x1e93760	0x1f93760	8	_ZNK9Framework16CResourceElement5AlignEv	Framework::CResourceElement::Align() const	resource_manager	typed	
+0x1e93768	0x1f93768	84	_ZN9Framework16CResourceElement10InitializeEjRKNS0_18tMemoryDescriptionE	Framework::CResourceElement::Initialize(unsigned int, Framework::CResourceElement::tMemoryDescription const&)	resource_manager	typed	
+0x1e937bc	0x1f937bc	92	_ZN9Framework16CResourceElement22InitializeByDirectFileEPKcRKNS0_18tMemoryDescriptionES2_	Framework::CResourceElement::InitializeByDirectFile(char const*, Framework::CResourceElement::tMemoryDescription const&, char const*)	resource_manager	typed	
+0x1e93818	0x1f93818	8	_ZN9Framework16CResourceElement20pResourceElement_BsbEv	Framework::CResourceElement::pResourceElement_Bsb()	resource_manager	typed	
+0x1e93820	0x1f93820	4	_ZNK9Framework16CResourceElement13pBufferDirectEv	Framework::CResourceElement::pBufferDirect() const	resource_manager	typed	
+0x1e93824	0x1f93824	4	_ZN9Framework16CResourceElement14StartExpansionEv	Framework::CResourceElement::StartExpansion()	resource_manager	typed	
+0x1e93828	0x1f93828	144	_ZThn192_N9Framework16CResourceElementD1Ev	non-virtual thunk to Framework::CResourceElement::~CResourceElement()	resource_manager	decompiled	
+0x1e938b8	0x1f938b8	8	_ZThn192_N9Framework16CResourceElementD0Ev	non-virtual thunk to Framework::CResourceElement::~CResourceElement()	resource_manager	decompiled	
+0x1e938c0	0x1f938c0	4	_ZN9Framework16CResourceElement13CFinishNotifyD0Ev	Framework::CResourceElement::CFinishNotify::~CFinishNotify()	resource_manager	typed	
+0x1e945c0	0x1f945c0	140	_ZN9Framework16CResourceElementD2Ev	Framework::CResourceElement::~CResourceElement()	resource_manager	typed	
+0x1e94afc	0x1f94afc	384	_ZNSt6__ndk16vectorIN9Framework16CResourceElement13tMappingImageENS1_13CSTLAllocatorIS3_NS1_22CSTLVectorAllocatorInfEEEE26__swap_out_circular_bufferERNS_14__split_bufferIS3_RS6_EE	std::__ndk1::vector<Framework::CResourceElement::tMappingImage, Framework::CSTLAllocator<Framework::CResourceElement::tMappingImage, Framework::CSTLVectorAllocatorInf> >::__swap_out_circular_buffer(std::__ndk1::__split_buffer<Framework::CResourceElement::tMappingImage, Framework::CSTLAllocator<Framework::CResourceElement::tMappingImage, Framework::CSTLVectorAllocatorInf>&>&)	resource_manager	decompiled	
+0x1e94c7c	0x1f94c7c	592	_ZNSt6__ndk16vectorIN9Framework16CResourceElement13tMappingImageENS1_13CSTLAllocatorIS3_NS1_22CSTLVectorAllocatorInfEEEE21__push_back_slow_pathIS3_EEvOT_	void std::__ndk1::vector<Framework::CResourceElement::tMappingImage, Framework::CSTLAllocator<Framework::CResourceElement::tMappingImage, Framework::CSTLVectorAllocatorInf> >::__push_back_slow_path<Framework::CResourceElement::tMappingImage>(Framework::CResourceElement::tMappingImage&&)	resource_manager	decompiled	
+0x1e94ecc	0x1f94ecc	8	_ZN9Framework16CResourceManager8tElementC2Ev	Framework::CResourceManager::tElement::tElement()	resource_manager	typed	
+0x1e94ed4	0x1f94ed4	4	_ZN9Framework16CResourceManager8tElementD2Ev	Framework::CResourceManager::tElement::~tElement()	resource_manager	typed	
+0x1e94ed8	0x1f94ed8	232	_ZN9Framework16CResourceManager8tElement10InitializeEjjjb	Framework::CResourceManager::tElement::Initialize(unsigned int, unsigned int, unsigned int, bool)	resource_manager	typed	
+0x1e94fc0	0x1f94fc0	16	_ZN9Framework16CResourceManager8tElement25IncrementReferenceCounterEv	Framework::CResourceManager::tElement::IncrementReferenceCounter()	resource_manager	typed	
+0x1e94fd0	0x1f94fd0	236	_ZN9Framework16CResourceManager8tElement22InitializeByDirectFileEjPKcjb	Framework::CResourceManager::tElement::InitializeByDirectFile(unsigned int, char const*, unsigned int, bool)	resource_manager	typed	
+0x1e950bc	0x1f950bc	248	_ZN9Framework16CResourceManager8tElement32InitializeByDirectFileWithFolderEjPKcS3_jb	Framework::CResourceManager::tElement::InitializeByDirectFileWithFolder(unsigned int, char const*, char const*, unsigned int, bool)	resource_manager	typed	
+0x1e951b4	0x1f951b4	36	_ZN9Framework16CResourceManager8tElement7ReleaseEv	Framework::CResourceManager::tElement::Release()	resource_manager	typed	
+0x1e951d8	0x1f951d8	64	_ZN9Framework16CResourceManager8tElement25DecrementReferenceCounterEv	Framework::CResourceManager::tElement::DecrementReferenceCounter()	resource_manager	typed	
+0x1e95218	0x1f95218	8	_ZNK9Framework16CResourceManager8tElement16ReferenceCounterEv	Framework::CResourceManager::tElement::ReferenceCounter() const	resource_manager	typed	
+0x1e95220	0x1f95220	36	_ZN9Framework16CResourceManager8tElement12ForceReleaseEv	Framework::CResourceManager::tElement::ForceRelease()	resource_manager	typed	
+0x1e95244	0x1f95244	60	_ZN9Framework16CResourceManager8tElement16rResourceElementEv	Framework::CResourceManager::tElement::rResourceElement()	resource_manager	typed	
+0x1e95280	0x1f95280	60	_ZNK9Framework16CResourceManager8tElement17crResourceElementEv	Framework::CResourceManager::tElement::crResourceElement() const	resource_manager	typed	
+0x1e952bc	0x1f952bc	8	_ZNK9Framework16CResourceManager8tElement13UniqueBitFlagEv	Framework::CResourceManager::tElement::UniqueBitFlag() const	resource_manager	typed	
+0x1e952c4	0x1f952c4	16	_ZN9Framework16CResourceManager8tElement15OrUniqueBitFlagEj	Framework::CResourceManager::tElement::OrUniqueBitFlag(unsigned int)	resource_manager	typed	
+0x1e952d4	0x1f952d4	16	_ZN9Framework16CResourceManager8tElement16AndUniqueBitFlagEj	Framework::CResourceManager::tElement::AndUniqueBitFlag(unsigned int)	resource_manager	typed	
+0x1e952e4	0x1f952e4	92	_ZN9Framework16CResourceManagerC1EPKc	Framework::CResourceManager::CResourceManager(char const*)	resource_manager	typed	
+0x1e95340	0x1f95340	124	_ZN9Framework16CResourceManagerD1Ev	Framework::CResourceManager::~CResourceManager()	resource_manager	typed	
+0x1e953bc	0x1f953bc	4	_ZN9Framework16CResourceManager7ReleaseEv	Framework::CResourceManager::Release()	resource_manager	typed	
+0x1e953c0	0x1f953c0	132	_ZN9Framework16CResourceManagerD0Ev	Framework::CResourceManager::~CResourceManager()	resource_manager	typed	
+0x1e95444	0x1f95444	164	_ZN9Framework16CResourceManager10InitializeEv	Framework::CResourceManager::Initialize()	resource_manager	typed	
+0x1e954e8	0x1f954e8	276	_ZN9Framework16CResourceManager3RunEi	Framework::CResourceManager::Run(int)	resource_manager	typed	
+0x1e955fc	0x1f955fc	164	_ZNK9Framework16CResourceManager7pSearchEj	Framework::CResourceManager::pSearch(unsigned int) const	resource_manager	typed	
+0x1e956a0	0x1f956a0	164	_ZN9Framework16CResourceManager7pSearchEj	Framework::CResourceManager::pSearch(unsigned int)	resource_manager	typed	
+0x1e95744	0x1f95744	168	_ZNK9Framework16CResourceManager19pSearchByDirectPathEPKc	Framework::CResourceManager::pSearchByDirectPath(char const*) const	resource_manager	typed	
+0x1e957ec	0x1f957ec	168	_ZN9Framework16CResourceManager19pSearchByDirectPathEPKc	Framework::CResourceManager::pSearchByDirectPath(char const*)	resource_manager	typed	
+0x1e95894	0x1f95894	404	_ZN9Framework16CResourceManager3AddEjjjb	Framework::CResourceManager::Add(unsigned int, unsigned int, unsigned int, bool)	resource_manager	typed	
+0x1e95a28	0x1f95a28	100	_ZN9Framework16CResourceManager9AddByNameEjPKcjb	Framework::CResourceManager::AddByName(unsigned int, char const*, unsigned int, bool)	resource_manager	typed	
+0x1e95a8c	0x1f95a8c	4	_ZN9Framework16CResourceManager16AddImmediateFileEjjPKcjb	Framework::CResourceManager::AddImmediateFile(unsigned int, unsigned int, char const*, unsigned int, bool)	resource_manager	typed	
+0x1e95a90	0x1f95a90	408	_ZN9Framework16CResourceManager13AddDirectFileEjPKcjb	Framework::CResourceManager::AddDirectFile(unsigned int, char const*, unsigned int, bool)	resource_manager	typed	
+0x1e95c28	0x1f95c28	416	_ZN9Framework16CResourceManager23AddDirectFileWithFolderEjPKcS2_jb	Framework::CResourceManager::AddDirectFileWithFolder(unsigned int, char const*, char const*, unsigned int, bool)	resource_manager	typed	
+0x1e95dc8	0x1f95dc8	268	_ZN9Framework16CResourceManager6RemoveEj	Framework::CResourceManager::Remove(unsigned int)	resource_manager	typed	
+0x1e95ed4	0x1f95ed4	56	_ZN9Framework16CResourceManager12RemoveByNameEPKc	Framework::CResourceManager::RemoveByName(char const*)	resource_manager	typed	
+0x1e95f0c	0x1f95f0c	280	_ZN9Framework16CResourceManager16RemoveDirectFileEPKc	Framework::CResourceManager::RemoveDirectFile(char const*)	resource_manager	typed	
+0x1e96024	0x1f96024	228	_ZN9Framework16CResourceManager11RemoveForceEj	Framework::CResourceManager::RemoveForce(unsigned int)	resource_manager	typed	
+0x1e96108	0x1f96108	64	_ZN9Framework16CResourceManager17RemoveForceByNameEPKc	Framework::CResourceManager::RemoveForceByName(char const*)	resource_manager	typed	
+0x1e96148	0x1f96148	284	_ZN9Framework16CResourceManager21RemoveForceDirectFileEPKc	Framework::CResourceManager::RemoveForceDirectFile(char const*)	resource_manager	typed	
+0x1e96264	0x1f96264	224	_ZN9Framework16CResourceManager21RemoveByUniqueBitFlagEj	Framework::CResourceManager::RemoveByUniqueBitFlag(unsigned int)	resource_manager	typed	
+0x1e96344	0x1f96344	328	_ZNK9Framework16CResourceManager7IsReadyEjPb	Framework::CResourceManager::IsReady(unsigned int, bool*) const	resource_manager	typed	
+0x1e9648c	0x1f9648c	48	_ZNK9Framework16CResourceManager13IsReadyByNameEPKcPb	Framework::CResourceManager::IsReadyByName(char const*, bool*) const	resource_manager	typed	
+0x1e964bc	0x1f964bc	332	_ZNK9Framework16CResourceManager17IsReadyDirectFileEPKcPb	Framework::CResourceManager::IsReadyDirectFile(char const*, bool*) const	resource_manager	typed	
+0x1e96608	0x1f96608	52	_ZN9Framework16CResourceManager4LockEv	Framework::CResourceManager::Lock()	resource_manager	typed	
+0x1e9663c	0x1f9663c	52	_ZN9Framework16CResourceManager6UnlockEv	Framework::CResourceManager::Unlock()	resource_manager	typed	
+0x1e96670	0x1f96670	52	_ZNK9Framework16CResourceManager8IsLockedEv	Framework::CResourceManager::IsLocked() const	resource_manager	typed	
+0x1e966a4	0x1f966a4	52	_ZNK9Framework16CResourceManager11LockCounterEv	Framework::CResourceManager::LockCounter() const	resource_manager	typed	
+0x1e966d8	0x1f966d8	312	_ZN9Framework16CResourceManager16rResourceElementEj	Framework::CResourceManager::rResourceElement(unsigned int)	resource_manager	typed	
+0x1e96810	0x1f96810	312	_ZNK9Framework16CResourceManager17crResourceElementEj	Framework::CResourceManager::crResourceElement(unsigned int) const	resource_manager	typed	
+0x1e96948	0x1f96948	36	_ZN9Framework16CResourceManager22rResourceElementByNameEPKc	Framework::CResourceManager::rResourceElementByName(char const*)	resource_manager	typed	
+0x1e9696c	0x1f9696c	36	_ZNK9Framework16CResourceManager23crResourceElementByNameEPKc	Framework::CResourceManager::crResourceElementByName(char const*) const	resource_manager	typed	
+0x1e96990	0x1f96990	308	_ZN9Framework16CResourceManager26rResourceElementDirectFileEPKc	Framework::CResourceManager::rResourceElementDirectFile(char const*)	resource_manager	typed	
+0x1e96ac4	0x1f96ac4	308	_ZNK9Framework16CResourceManager27crResourceElementDirectFileEPKc	Framework::CResourceManager::crResourceElementDirectFile(char const*) const	resource_manager	typed	
+0x1e96bf8	0x1f96bf8	164	_ZNK9Framework16CResourceManager24crResourceElementByIndexEj	Framework::CResourceManager::crResourceElementByIndex(unsigned int) const	resource_manager	typed	
+0x1e96c9c	0x1f96c9c	220	_ZNK9Framework16CResourceManager10NumLoadingEv	Framework::CResourceManager::NumLoading() const	resource_manager	typed	
+0x1e96d78	0x1f96d78	284	_ZNK9Framework16CResourceManager9IsLoadingEv	Framework::CResourceManager::IsLoading() const	resource_manager	typed	
+0x1e96e94	0x1f96e94	104	_ZNK9Framework16CResourceManager3NumEv	Framework::CResourceManager::Num() const	resource_manager	typed	
+0x1e96efc	0x1f96efc	156	_ZNK9Framework16CResourceManager18NumByUniqueBitFlagEj	Framework::CResourceManager::NumByUniqueBitFlag(unsigned int) const	resource_manager	typed	
+0x1e96f98	0x1f96f98	4	_ZNK9Framework16CResourceManager8tElement6PrintSEj	Framework::CResourceManager::tElement::PrintS(unsigned int) const	resource_manager	typed	
+0x1e96f9c	0x1f96f9c	116	_ZN9Framework16CResourceManager6PrintSEPKc	Framework::CResourceManager::PrintS(char const*)	resource_manager	typed	
+0x1e97010	0x1f97010	64	_ZNK9Framework16CResourceManager10GetClassIDEi	Framework::CResourceManager::GetClassID(int) const	resource_manager	typed	
+0x1e97050	0x1f97050	8	_ZNK9Framework16CResourceManager15GetDefaultLevelEv	Framework::CResourceManager::GetDefaultLevel() const	resource_manager	typed	
+0x1f0231c	0x200231c	1536	_ZN4Aska7IStream15ByteSwapInWriteEPS0_PKvmm	Aska::IStream::ByteSwapInWrite(Aska::IStream*, void const*, unsigned long, unsigned long)	streams	typed	
+0x1f1cc58	0x201cc58	172	_ZN4Aska15DecompressQueueC1Ei	Aska::DecompressQueue::DecompressQueue(int)	queues	typed	
+0x1f1cd04	0x201cd04	8	_ZN4Aska15DecompressQueue5ClearEv	Aska::DecompressQueue::Clear()	queues	typed	
+0x1f1cd0c	0x201cd0c	44	_ZN4Aska15DecompressQueueD1Ev	Aska::DecompressQueue::~DecompressQueue()	queues	typed	
+0x1f1cd38	0x201cd38	652	_ZN4Aska15DecompressQueue3AddEPKvPNS_14DecompressInfoEiPNS_7INotifyEPNS_14IMemoryManagerES8_S8_S8_	Aska::DecompressQueue::Add(void const*, Aska::DecompressInfo*, int, Aska::INotify*, Aska::IMemoryManager*, Aska::IMemoryManager*, Aska::IMemoryManager*, Aska::IMemoryManager*)	queues	typed	
+0x1f1cfc4	0x201cfc4	584	_ZN4Aska15DecompressQueue3AddEPKvPhiPNS_7INotifyE	Aska::DecompressQueue::Add(void const*, unsigned char*, int, Aska::INotify*)	queues	typed	
+0x1f1d20c	0x201d20c	412	_ZN4Aska15DecompressQueue10GetElementEj	Aska::DecompressQueue::GetElement(unsigned int)	queues	typed	
+0x1f1d3a8	0x201d3a8	412	_ZN4Aska15DecompressQueue10GetElementEPv	Aska::DecompressQueue::GetElement(void*)	queues	typed	
+0x1f1d544	0x201d544	92	_ZNK4Aska15DecompressQueue6IsFullEPv	Aska::DecompressQueue::IsFull(void*) const	queues	typed	
+0x1f1d5a0	0x201d5a0	40	_ZNK4Aska15DecompressQueue7IsEmptyEv	Aska::DecompressQueue::IsEmpty() const	queues	typed	
+0x1f1d5c8	0x201d5c8	36	_ZNK4Aska15DecompressQueue7GetSizeEv	Aska::DecompressQueue::GetSize() const	queues	typed	
+0x1f1d5ec	0x201d5ec	356	_ZN4Aska15DecompressQueue4StopEj	Aska::DecompressQueue::Stop(unsigned int)	queues	typed	
+0x1f1d750	0x201d750	52	_ZN4Aska15DecompressQueue6IsSafeEj	Aska::DecompressQueue::IsSafe(unsigned int)	queues	typed	
+0x1f1d784	0x201d784	52	_ZN4Aska15DecompressQueue6IsSafeEPv	Aska::DecompressQueue::IsSafe(void*)	queues	typed	
+0x1f1d7b8	0x201d7b8	272	_ZN4Aska16DecompressThreadC2EPNS_15DecompressQueueE	Aska::DecompressThread::DecompressThread(Aska::DecompressQueue*)	queues	decompiled	
+0x1f1d8c8	0x201d8c8	160	_ZN4Aska16DecompressThreadD1Ev	Aska::DecompressThread::~DecompressThread()	queues	decompiled	
+0x1f1d968	0x201d968	80	_ZN4Aska16DecompressThread13TElementQueueINS_15DecompressQueue7ElementELb1EED2Ev	Aska::DecompressThread::TElementQueue<Aska::DecompressQueue::Element, true>::~TElementQueue()	queues	decompiled	
+0x1f1d9b8	0x201d9b8	24	_ZN4Aska16DecompressThreadD0Ev	Aska::DecompressThread::~DecompressThread()	queues	decompiled	
+0x1f1d9d0	0x201d9d0	984	_ZN4Aska16DecompressThread7HandlerEv	Aska::DecompressThread::Handler()	queues	decompiled	
+0x1f1dda8	0x201dda8	572	_ZN4Aska16DecompressThread3AddEPNS_15DecompressQueue14_DecompressArgE	Aska::DecompressThread::Add(Aska::DecompressQueue::_DecompressArg*)	queues	decompiled	
+0x1f1dfe4	0x201dfe4	424	_ZN4Aska16DecompressThread10CleanQueueEv	Aska::DecompressThread::CleanQueue()	queues	decompiled	
+0x1f1e18c	0x201e18c	80	_ZN4Aska16DecompressThread13TElementQueueINS_15DecompressQueue7ElementELb1EED0Ev	Aska::DecompressThread::TElementQueue<Aska::DecompressQueue::Element, true>::~TElementQueue()	queues	decompiled	
+0x1f1e1dc	0x201e1dc	56	_ZN4Aska13TDynamicQueueINS_15DecompressQueue7ElementELb1EED2Ev	Aska::TDynamicQueue<Aska::DecompressQueue::Element, true>::~TDynamicQueue()	queues	decompiled	
+0x1f1e214	0x201e214	56	_ZN4Aska13TDynamicQueueINS_15DecompressQueue7ElementELb1EED0Ev	Aska::TDynamicQueue<Aska::DecompressQueue::Element, true>::~TDynamicQueue()	queues	decompiled	
+0x1f1f510	0x201f510	72	_ZN4Aska4File5CloseEv	Aska::File::Close()	streams	typed	
+0x1f1f570	0x201f570	172	_ZN4Aska4File4OpenEPKcbbb	Aska::File::Open(char const*, bool, bool, bool)	streams	typed	
+0x1f1f61c	0x201f61c	596	_ZN4Aska4File38DistanceToLineBreakOrEndOrNonPrintableEv	Aska::File::DistanceToLineBreakOrEndOrNonPrintable()	streams	typed	
+0x1f1f870	0x201f870	128	_ZNK4Aska4File12GetFileSizeLEv	Aska::File::GetFileSizeL() const	streams	typed	
+0x1f1f8f0	0x201f8f0	144	_ZN4Aska4File4ReadEPvmPj	Aska::File::Read(void*, unsigned long, unsigned int*)	streams	typed	
+0x1f1f980	0x201f980	80	_ZN4Aska4File5SeekLElNS0_6OriginE	Aska::File::SeekL(long, Aska::File::Origin)	streams	typed	
+0x1f1f9d0	0x201f9d0	8	_ZN4Aska4File11SetFileSizeEm	Aska::File::SetFileSize(unsigned long)	streams	typed	
+0x1f1f9d8	0x201f9d8	28	_ZN4Aska4File5FlushEv	Aska::File::Flush()	streams	typed	
+0x1f1f9f4	0x201f9f4	288	_ZN4Aska4File14ReadWithOffsetEPvmmPj	Aska::File::ReadWithOffset(void*, unsigned long, unsigned long, unsigned int*)	streams	typed	
+0x1f1fb14	0x201fb14	80	_ZN4Aska4File5WriteEPKvm	Aska::File::Write(void const*, unsigned long)	streams	typed	
+0x1f1fb64	0x201fb64	80	_ZN4Aska4File4SeekElNS0_6OriginE	Aska::File::Seek(long, Aska::File::Origin)	streams	typed	
+0x1f1fbb4	0x201fbb4	128	_ZNK4Aska4File11GetFileSizeEv	Aska::File::GetFileSize() const	streams	typed	
+0x1f1fc68	0x201fc68	228	_ZN4Aska4File15CreateDirectoryEPKc	Aska::File::CreateDirectory(char const*)	streams	typed	
+0x1f1fd4c	0x201fd4c	104	_ZN4Aska4File9DoesExistEPKcb	Aska::File::DoesExist(char const*, bool)	streams	typed	
+0x1f1fdb4	0x201fdb4	612	_ZN4Aska4File11TraverseDirEPKcPNS0_8FINDDATAEij	Aska::File::TraverseDir(char const*, Aska::File::FINDDATA*, int, unsigned int)	streams	typed	
+0x1f20018	0x2020018	304	_ZN4Aska4File9PutStringEPKcSt9__va_list	Aska::File::PutString(char const*, std::__va_list)	streams	typed	
+0x1f20148	0x2020148	20	_ZN4Aska4File21GetNumberOfFoundFilesEPKcj	Aska::File::GetNumberOfFoundFiles(char const*, unsigned int)	streams	typed	
+0x1f2015c	0x202015c	4	_ZN4Aska4File9FindFilesEPKcPNS0_8FINDDATAEij	Aska::File::FindFiles(char const*, Aska::File::FINDDATA*, int, unsigned int)	streams	typed	
+0x1f20160	0x2020160	8	_ZN4Aska4File10IsReadOnlyEPKc	Aska::File::IsReadOnly(char const*)	streams	typed	
+0x1f20168	0x2020168	208	_ZN4Aska4File12GetFileSizeLEPKcb	Aska::File::GetFileSizeL(char const*, bool)	streams	typed	
+0x1f20238	0x2020238	8	_ZN4Aska4File11GetFileSizeEPKcb	Aska::File::GetFileSize(char const*, bool)	streams	typed	
+0x1f20240	0x2020240	24	_ZN4Aska4File10DeleteFileEPKc	Aska::File::DeleteFile(char const*)	streams	typed	
+0x1f20258	0x2020258	8	_ZN4Aska4File8CopyFileEPKcS2_b	Aska::File::CopyFile(char const*, char const*, bool)	streams	typed	
+0x1f20260	0x2020260	24	_ZN4Aska4File8MoveFileEPKcS2_	Aska::File::MoveFile(char const*, char const*)	streams	typed	
+0x1f20278	0x2020278	436	_ZN4Aska4File19OpenAndDumpToBufferEPKcbPcPmb	Aska::File::OpenAndDumpToBuffer(char const*, bool, char*, unsigned long*, bool)	streams	typed	
+0x1f20818	0x2020818	148	_ZN4Aska15FileReadManager9AddDeviceEPNS_14BaseReadDeviceE	Aska::FileReadManager::AddDevice(Aska::BaseReadDevice*)	read_device	typed	
+0x1f208ac	0x20208ac	68	_ZN4Aska15FileReadManager22EnableDirectReadDeviceEv	Aska::FileReadManager::EnableDirectReadDevice()	read_device	typed	
+0x1f20938	0x2020938	72	_ZN4Aska15FileReadManager8FinalizeEv	Aska::FileReadManager::Finalize()	read_device	typed	
+0x1f20980	0x2020980	84	_ZN4Aska15FileReadManager10SortDeviceEv	Aska::FileReadManager::SortDevice()	read_device	typed	
+0x1f209d4	0x20209d4	416	_ZN4Aska15FileReadManager12RemoveDeviceEPNS_14BaseReadDeviceE	Aska::FileReadManager::RemoveDevice(Aska::BaseReadDevice*)	read_device	typed	
+0x1f20b74	0x2020b74	184	_ZN4Aska15FileReadManager12RemoveDeviceEi	Aska::FileReadManager::RemoveDevice(int)	read_device	typed	
+0x1f20c2c	0x2020c2c	72	_ZN4Aska15FileReadManager9GetDeviceEi	Aska::FileReadManager::GetDevice(int)	read_device	typed	
+0x1f20c74	0x2020c74	36	_ZN4Aska15FileReadManager16GetDeviceByIndexEi	Aska::FileReadManager::GetDeviceByIndex(int)	read_device	typed	
+0x1f20c98	0x2020c98	112	_ZN4Aska15FileReadManager17GetReadableDeviceEi	Aska::FileReadManager::GetReadableDevice(int)	read_device	typed	
+0x1f20d08	0x2020d08	224	_ZN4Aska15FileReadManager4ReadEiPhPNS_7INotifyEmmiib	Aska::FileReadManager::Read(int, unsigned char*, Aska::INotify*, unsigned long, unsigned long, int, int, bool)	read_device	typed	
+0x1f20de8	0x2020de8	48	_ZN4Aska15FileReadManager4ReadEPKcPhPNS_7INotifyEmmiibb	Aska::FileReadManager::Read(char const*, unsigned char*, Aska::INotify*, unsigned long, unsigned long, int, int, bool, bool)	read_device	typed	
+0x1f20e18	0x2020e18	420	_ZN4Aska15FileReadManager9ReadGroupEiiPhPNS_7INotifyEmii	Aska::FileReadManager::ReadGroup(int, int, unsigned char*, Aska::INotify*, unsigned long, int, int)	read_device	typed	
+0x1f20fbc	0x2020fbc	88	_ZNK4Aska15FileReadManager10FileExistsEPNS_14BaseReadDeviceEii	Aska::FileReadManager::FileExists(Aska::BaseReadDevice*, int, int) const	read_device	typed	
+0x1f21014	0x2021014	60	_ZN4Aska15FileReadManager9CancelAllEv	Aska::FileReadManager::CancelAll()	read_device	typed	
+0x1f21050	0x2021050	68	_ZN4Aska15FileReadManager6CancelEi	Aska::FileReadManager::Cancel(int)	read_device	typed	
+0x1f21094	0x2021094	116	_ZN4Aska15FileReadManager13CancelByParamEiPhmmi	Aska::FileReadManager::CancelByParam(int, unsigned char*, unsigned long, unsigned long, int)	read_device	typed	
+0x1f21108	0x2021108	68	_ZNK4Aska15FileReadManager7IsEmptyEv	Aska::FileReadManager::IsEmpty() const	read_device	typed	
+0x1f2114c	0x202114c	92	_ZNK4Aska15FileReadManager10FileExistsEi	Aska::FileReadManager::FileExists(int) const	read_device	typed	
+0x1f211a8	0x20211a8	128	_ZNK4Aska15FileReadManager14CalcFileLengthEi	Aska::FileReadManager::CalcFileLength(int) const	read_device	typed	
+0x1f21228	0x2021228	128	_ZNK4Aska15FileReadManager24CalcCompressedFileLengthEi	Aska::FileReadManager::CalcCompressedFileLength(int) const	read_device	typed	
+0x1f212a8	0x20212a8	184	_ZNK4Aska15FileReadManager15CalcGroupLengthEii	Aska::FileReadManager::CalcGroupLength(int, int) const	read_device	typed	
+0x1f21360	0x2021360	8	_ZN4Aska15FileReadManager10FileExistsEPKcb	Aska::FileReadManager::FileExists(char const*, bool)	read_device	typed	
+0x1f21368	0x2021368	8	_ZN4Aska15FileReadManager14CalcFileLengthEPKcb	Aska::FileReadManager::CalcFileLength(char const*, bool)	read_device	typed	
+0x1f21370	0x2021370	8	_ZNK4Aska15FileReadManager18GetDirectReadAlignEv	Aska::FileReadManager::GetDirectReadAlign() const	read_device	typed	
+0x1f2138c	0x202138c	4	_ZN4Aska14BaseReadDevice15ReadRequestListD0Ev	Aska::BaseReadDevice::ReadRequestList::~ReadRequestList()	read_device	typed	
+0x1f21390	0x2021390	84	_ZN4Aska14BaseReadDevice15ReadRequestList3AddEPNS_11ReadRequestE	Aska::BaseReadDevice::ReadRequestList::Add(Aska::ReadRequest*)	read_device	typed	
+0x1f214b4	0x20214b4	92	_ZN4Aska15FileReadManagerD2Ev	Aska::FileReadManager::~FileReadManager()	read_device	typed	
+0x1f21510	0x2021510	196	_ZN4Aska15FileReadManagerD0Ev	Aska::FileReadManager::~FileReadManager()	read_device	typed	
+0x1f215d4	0x20215d4	108	_ZN4Aska14BaseReadDeviceD2Ev	Aska::BaseReadDevice::~BaseReadDevice()	read_device	typed	
+0x1f21644	0x2021644	148	_ZN4Aska10FileStream4OpenEPKcbbNS_7Machine6EndianE	Aska::FileStream::Open(char const*, bool, bool, Aska::Machine::Endian)	streams	typed	
+0x1f216d8	0x20216d8	20	_ZN4Aska10FileStream5CloseEv	Aska::FileStream::Close()	streams	typed	
+0x1f216ec	0x20216ec	156	_ZN4Aska10FileStream4SeekEli	Aska::FileStream::Seek(long, int)	streams	typed	
+0x1f21788	0x2021788	68	_ZNK4Aska10FileStream4TellEv	Aska::FileStream::Tell() const	streams	typed	
+0x1f217cc	0x20217cc	980	_ZN4Aska10FileStream4ReadEPvmm	Aska::FileStream::Read(void*, unsigned long, unsigned long)	streams	typed	
+0x1f21ba0	0x2021ba0	1684	_ZN4Aska10FileStream5WriteEPKvmm	Aska::FileStream::Write(void const*, unsigned long, unsigned long)	streams	typed	
+0x1f22234	0x2022234	68	_ZN4Aska10FileStream5FlushEv	Aska::FileStream::Flush()	streams	typed	
+0x1f22278	0x2022278	128	_ZNK4Aska10FileStream5IsEndEPl	Aska::FileStream::IsEnd(long*) const	streams	typed	
+0x1f222f8	0x20222f8	100	_ZNK4Aska10FileStream12GetTotalSizeEv	Aska::FileStream::GetTotalSize() const	streams	typed	
+0x1f2235c	0x202235c	116	_ZN4Aska10FileStreamD2Ev	Aska::FileStream::~FileStream()	streams	typed	
+0x1f223d0	0x20223d0	96	_ZN4Aska10FileStreamD0Ev	Aska::FileStream::~FileStream()	streams	typed	
+0x1f22430	0x2022430	16	_ZNK4Aska10FileStream7IsReadyEv	Aska::FileStream::IsReady() const	streams	typed	
+0x1f22440	0x2022440	12	_ZNK4Aska10FileStream12SetLastErrorEl	Aska::FileStream::SetLastError(long) const	streams	typed	
+0x1f2244c	0x202244c	8	_ZNK4Aska10FileStream12GetLastErrorEv	Aska::FileStream::GetLastError() const	streams	typed	
+0x1f229f8	0x20229f8	184	_ZN4Aska7IStream6PrintVEPS0_PKcSt9__va_list	Aska::IStream::PrintV(Aska::IStream*, char const*, std::__va_list)	streams	typed	
+0x1f22ab0	0x2022ab0	388	_ZN4Aska7IStream5AlignEPS0_iml	Aska::IStream::Align(Aska::IStream*, int, unsigned long, long)	streams	typed	
+0x1f22c34	0x2022c34	192	_ZN4Aska7IStream4FillEPS0_imPl	Aska::IStream::Fill(Aska::IStream*, int, unsigned long, long*)	streams	typed	
+0x1f22cf4	0x2022cf4	96	_ZN4Aska7IStream9SeekAlignEPS0_ml	Aska::IStream::SeekAlign(Aska::IStream*, unsigned long, long)	streams	typed	
+0x1f22d54	0x2022d54	52	_ZN4Aska7IStream8TransferEPS0_S1_mPl	Aska::IStream::Transfer(Aska::IStream*, Aska::IStream*, unsigned long, long*)	streams	typed	
+0x1f22d88	0x2022d88	40	_ZN4Aska7IStream8TransferEPS0_S1_mPvmPl	Aska::IStream::Transfer(Aska::IStream*, Aska::IStream*, unsigned long, void*, unsigned long, long*)	streams	typed	
+0x1f22db0	0x2022db0	640	_ZN4Aska7IStream8TransferEPS0_S1_mmPvmPl	Aska::IStream::Transfer(Aska::IStream*, Aska::IStream*, unsigned long, unsigned long, void*, unsigned long, long*)	streams	typed	
+0x1f23030	0x2023030	40	_ZN4Aska7IStream8TransferEPS0_S1_mmPl	Aska::IStream::Transfer(Aska::IStream*, Aska::IStream*, unsigned long, unsigned long, long*)	streams	typed	
+0x1f23058	0x2023058	40	_ZN4Aska7IStream7CompareEPS0_S1_mPl	Aska::IStream::Compare(Aska::IStream*, Aska::IStream*, unsigned long, long*)	streams	typed	
+0x1f23080	0x2023080	400	_ZN4Aska7IStream7CompareEPS0_S1_mPvmPl	Aska::IStream::Compare(Aska::IStream*, Aska::IStream*, unsigned long, void*, unsigned long, long*)	streams	typed	
+0x1f23210	0x2023210	148	_ZN4Aska7IStream10CalcSeekPtElllliPl	Aska::IStream::CalcSeekPt(long, long, long, long, int, long*)	streams	typed	
+0x1f279e0	0x20279e0	148	_ZN4Aska8LocalKVS4InitEPKcbPcS3_	Aska::LocalKVS::Init(char const*, bool, char*, char*)	local_kvs	typed	
+0x1f27a98	0x2027a98	88	_ZN4Aska8LocalKVS10SetKVSNameEPKc	Aska::LocalKVS::SetKVSName(char const*)	local_kvs	typed	
+0x1f27af0	0x2027af0	424	_ZN4Aska8LocalKVS9SetCipherEbPcS1_	Aska::LocalKVS::SetCipher(bool, char*, char*)	local_kvs	typed	
+0x1f27c98	0x2027c98	336	_ZN4Aska8LocalKVS9SetBinaryEPKcPKal	Aska::LocalKVS::SetBinary(char const*, signed char const*, long)	local_kvs	typed	
+0x1f27de8	0x2027de8	704	_ZNK4Aska8LocalKVS16CipherEncryptKeyEPKcPPcS2_m	Aska::LocalKVS::CipherEncryptKey(char const*, char**, char const*, unsigned long) const	local_kvs	typed	
+0x1f280a8	0x20280a8	640	_ZNK4Aska8LocalKVS16CipherEncryptValEPKalPPaS2_m	Aska::LocalKVS::CipherEncryptVal(signed char const*, long, signed char**, signed char const*, unsigned long) const	local_kvs	typed	
+0x1f28328	0x2028328	564	_ZN4Aska8LocalKVS16SetBinaryAndroidEPKcPKal	Aska::LocalKVS::SetBinaryAndroid(char const*, signed char const*, long)	local_kvs	typed	
+0x1f2855c	0x202855c	756	_ZNK4Aska8LocalKVS9GetBinaryEPKcPl	Aska::LocalKVS::GetBinary(char const*, long*) const	local_kvs	typed	
+0x1f28850	0x2028850	764	_ZNK4Aska8LocalKVS16GetBinaryAndroidEPKcPl	Aska::LocalKVS::GetBinaryAndroid(char const*, long*) const	local_kvs	typed	
+0x1f28b4c	0x2028b4c	832	_ZNK4Aska8LocalKVS16CipherDecryptValEPKalRNS_12TSharedArrayIaEE	Aska::LocalKVS::CipherDecryptVal(signed char const*, long, Aska::TSharedArray<signed char>&) const	local_kvs	typed	
+0x1f28e8c	0x2028e8c	208	_ZN4Aska8LocalKVS5ClearEPKc	Aska::LocalKVS::Clear(char const*)	local_kvs	typed	
+0x1f28f5c	0x2028f5c	456	_ZN4Aska8LocalKVS12ClearAndroidEPKc	Aska::LocalKVS::ClearAndroid(char const*)	local_kvs	typed	
+0x1f29124	0x2029124	24	_ZN4Aska8LocalKVS8ClearAllEv	Aska::LocalKVS::ClearAll()	local_kvs	typed	
+0x1f2913c	0x202913c	400	_ZN4Aska8LocalKVS15ClearAllAndroidEv	Aska::LocalKVS::ClearAllAndroid()	local_kvs	typed	
+0x1f74dc4	0x2074dc4	16	_ZNK4Aska16MultiMediaStream7IsReadyEv	Aska::MultiMediaStream::IsReady() const	streams	typed	
+0x1f74dd4	0x2074dd4	28	_ZNK4Aska16MultiMediaStream16IsBufferingReadyEv	Aska::MultiMediaStream::IsBufferingReady() const	streams	typed	
+0x1f74df8	0x2074df8	200	_ZN4Aska18TPoolAtomicDynamicINS_14DiscReadStream15ReadAsyncNotifyEED2Ev	Aska::TPoolAtomicDynamic<Aska::DiscReadStream::ReadAsyncNotify>::~TPoolAtomicDynamic()	streams	decompiled	
+0x1f74ec0	0x2074ec0	24	_ZN4Aska18TPoolAtomicDynamicINS_14DiscReadStream15ReadAsyncNotifyEED0Ev	Aska::TPoolAtomicDynamic<Aska::DiscReadStream::ReadAsyncNotify>::~TPoolAtomicDynamic()	streams	decompiled	
+0x1f74ed8	0x2074ed8	28	_ZN4Aska11TPoolAtomicINS_15StreamingStream15BufferingNotifyELi9EED2Ev	Aska::TPoolAtomic<Aska::StreamingStream::BufferingNotify, 9>::~TPoolAtomic()	streams	decompiled	
+0x1f74ef4	0x2074ef4	28	_ZN4Aska11TPoolAtomicINS_15StreamingStream15BufferingNotifyELi9EED0Ev	Aska::TPoolAtomic<Aska::StreamingStream::BufferingNotify, 9>::~TPoolAtomic()	streams	decompiled	
+0x1f74f10	0x2074f10	104	_ZN4Aska15StreamingStream12WorkerThreadD2Ev	Aska::StreamingStream::WorkerThread::~WorkerThread()	streams	decompiled	
+0x1f74f78	0x2074f78	112	_ZN4Aska15StreamingStream12WorkerThreadD0Ev	Aska::StreamingStream::WorkerThread::~WorkerThread()	streams	decompiled	
+0x1f74fe8	0x2074fe8	64	_ZN4Aska17TWorkerThreadBaseINS_15StreamingStream12WorkerThreadEE7HandlerEv	Aska::TWorkerThreadBase<Aska::StreamingStream::WorkerThread>::Handler()	streams	decompiled	
+0x1f75028	0x2075028	40	_ZN4Aska17TWorkerThreadBaseINS_15StreamingStream12WorkerThreadEED2Ev	Aska::TWorkerThreadBase<Aska::StreamingStream::WorkerThread>::~TWorkerThreadBase()	streams	decompiled	
+0x1f75050	0x2075050	48	_ZN4Aska17TWorkerThreadBaseINS_15StreamingStream12WorkerThreadEED0Ev	Aska::TWorkerThreadBase<Aska::StreamingStream::WorkerThread>::~TWorkerThreadBase()	streams	decompiled	
+0x1f75080	0x2075080	4	_ZN4Aska6TQueueINS_15StreamingStream12WorkerThread7RequestELi9EED2Ev	Aska::TQueue<Aska::StreamingStream::WorkerThread::Request, 9>::~TQueue()	streams	decompiled	
+0x1f75084	0x2075084	4	_ZN4Aska6TQueueINS_15StreamingStream12WorkerThread7RequestELi9EED0Ev	Aska::TQueue<Aska::StreamingStream::WorkerThread::Request, 9>::~TQueue()	streams	decompiled	
+0x1f750cc	0x20750cc	232	_ZN4Aska15StreamingStreamD2Ev	Aska::StreamingStream::~StreamingStream()	streams	decompiled	
+0x1f7b4ec	0x207b4ec	40	_ZN4Aska12StaticStream4OpenEPKam	Aska::StaticStream::Open(signed char const*, unsigned long)	streams	typed	
+0x1f7b514	0x207b514	156	_ZN4Aska12StaticStream4SeekEli	Aska::StaticStream::Seek(long, int)	streams	typed	
+0x1f7b5b0	0x207b5b0	80	_ZNK4Aska12StaticStream4TellEv	Aska::StaticStream::Tell() const	streams	typed	
+0x1f7b600	0x207b600	204	_ZN4Aska12StaticStream4ReadEPvmm	Aska::StaticStream::Read(void*, unsigned long, unsigned long)	streams	typed	
+0x1f7b6cc	0x207b6cc	204	_ZN4Aska12StaticStream5WriteEPKvmm	Aska::StaticStream::Write(void const*, unsigned long, unsigned long)	streams	typed	
+0x1f7b798	0x207b798	60	_ZN4Aska12StaticStream5FlushEv	Aska::StaticStream::Flush()	streams	typed	
+0x1f7b7d4	0x207b7d4	104	_ZNK4Aska12StaticStream5IsEndEPl	Aska::StaticStream::IsEnd(long*) const	streams	typed	
+0x1f7b83c	0x207b83c	204	_ZN4Aska12StaticStream4LockEPPvm	Aska::StaticStream::Lock(void**, unsigned long)	streams	typed	
+0x1f7b908	0x207b908	168	_ZN4Aska12StaticStream6UnlockEm	Aska::StaticStream::Unlock(unsigned long)	streams	typed	
+0x1f7b9b0	0x207b9b0	176	_ZNK4Aska12StaticStream12IsBufferableEimPl	Aska::StaticStream::IsBufferable(int, unsigned long, long*) const	streams	typed	
+0x1f7ba60	0x207ba60	144	_ZNK4Aska12StaticStream14IsBufferingEndEiPl	Aska::StaticStream::IsBufferingEnd(int, long*) const	streams	typed	
+0x1f7baf0	0x207baf0	144	_ZN4Aska12StaticStreamD2Ev	Aska::StaticStream::~StaticStream()	streams	typed	
+0x1f7bb80	0x207bb80	148	_ZN4Aska12StaticStreamD0Ev	Aska::StaticStream::~StaticStream()	streams	typed	
+0x1f7bc14	0x207bc14	16	_ZNK4Aska12StaticStream7IsReadyEv	Aska::StaticStream::IsReady() const	streams	typed	
+0x1f7bc24	0x207bc24	12	_ZNK4Aska12StaticStream12SetLastErrorEl	Aska::StaticStream::SetLastError(long) const	streams	typed	
+0x1f7bc30	0x207bc30	16	_ZNK4Aska12StaticStream12GetLastErrorEv	Aska::StaticStream::GetLastError() const	streams	typed	
+0x1f7bc40	0x207bc40	8	_ZNK4Aska12StaticStream13PeekLastErrorEv	Aska::StaticStream::PeekLastError() const	streams	typed	
+0x1f7bc48	0x207bc48	32	_ZNK4Aska12StaticStream12GetTotalSizeEv	Aska::StaticStream::GetTotalSize() const	streams	typed	
+0x1f7bc68	0x207bc68	12	_ZNK4Aska12StaticStream16IsBufferingReadyEv	Aska::StaticStream::IsBufferingReady() const	streams	typed	
+0x1f7bc74	0x207bc74	172	_ZN4Aska15StreamingStream4OpenEPNS_7IStreamEmmmm	Aska::StreamingStream::Open(Aska::IStream*, unsigned long, unsigned long, unsigned long, unsigned long)	streams	decompiled	
+0x1f7bd20	0x207bd20	52	_ZN4Aska15StreamingStream5CloseEv	Aska::StreamingStream::Close()	streams	decompiled	
+0x1f7bd54	0x207bd54	428	_ZN4Aska15StreamingStream5Open_EPNS_7IStreamEmmm	Aska::StreamingStream::Open_(Aska::IStream*, unsigned long, unsigned long, unsigned long)	streams	decompiled	
+0x1f7bf00	0x207bf00	168	_ZN4Aska15StreamingStream4OpenEPNS_7IStreamEPKvmmmm	Aska::StreamingStream::Open(Aska::IStream*, void const*, unsigned long, unsigned long, unsigned long, unsigned long)	streams	decompiled	
+0x1f7bfa8	0x207bfa8	252	_ZN4Aska15StreamingStream6Close_Ev	Aska::StreamingStream::Close_()	streams	decompiled	
+0x1f7c0a4	0x207c0a4	304	_ZN4Aska15StreamingStream4SeekEli	Aska::StreamingStream::Seek(long, int)	streams	decompiled	
+0x1f7c1d4	0x207c1d4	296	_ZN4Aska15StreamingStream13SeekBufferingElib	Aska::StreamingStream::SeekBuffering(long, int, bool)	streams	decompiled	
+0x1f7c2fc	0x207c2fc	60	_ZNK4Aska15StreamingStream4TellEv	Aska::StreamingStream::Tell() const	streams	decompiled	
+0x1f7c338	0x207c338	60	_ZNK4Aska15StreamingStream12GetTotalSizeEv	Aska::StreamingStream::GetTotalSize() const	streams	decompiled	
+0x1f7c374	0x207c374	364	_ZN4Aska15StreamingStream4ReadEPvmm	Aska::StreamingStream::Read(void*, unsigned long, unsigned long)	streams	decompiled	
+0x1f7c4e0	0x207c4e0	140	_ZNK4Aska15StreamingStream16WaitForBufferingEm	Aska::StreamingStream::WaitForBuffering(unsigned long) const	streams	decompiled	
+0x1f7c56c	0x207c56c	32	_ZN4Aska15StreamingStream5WriteEPKvmm	Aska::StreamingStream::Write(void const*, unsigned long, unsigned long)	streams	decompiled	
+0x1f7c58c	0x207c58c	16	_ZN4Aska15StreamingStream5FlushEv	Aska::StreamingStream::Flush()	streams	decompiled	
+0x1f7c59c	0x207c59c	24	_ZNK4Aska15StreamingStream5IsEndEPl	Aska::StreamingStream::IsEnd(long*) const	streams	decompiled	
+0x1f7c5b4	0x207c5b4	12	_ZNK4Aska15StreamingStream12SetLastErrorEl	Aska::StreamingStream::SetLastError(long) const	streams	decompiled	
+0x1f7c5c0	0x207c5c0	48	_ZNK4Aska15StreamingStream12GetLastErrorEv	Aska::StreamingStream::GetLastError() const	streams	decompiled	
+0x1f7c5f0	0x207c5f0	40	_ZNK4Aska15StreamingStream13PeekLastErrorEv	Aska::StreamingStream::PeekLastError() const	streams	decompiled	
+0x1f7c618	0x207c618	144	_ZN4Aska15StreamingStream4LockEPPvm	Aska::StreamingStream::Lock(void**, unsigned long)	streams	decompiled	
+0x1f7c6a8	0x207c6a8	96	_ZN4Aska15StreamingStream5Lock_EiPPvm	Aska::StreamingStream::Lock_(int, void**, unsigned long)	streams	decompiled	
+0x1f7c708	0x207c708	244	_ZN4Aska15StreamingStream6UnlockEm	Aska::StreamingStream::Unlock(unsigned long)	streams	decompiled	
+0x1f7c7fc	0x207c7fc	248	_ZN4Aska15StreamingStream7Unlock_Eim	Aska::StreamingStream::Unlock_(int, unsigned long)	streams	decompiled	
+0x1f7c8f4	0x207c8f4	156	_ZNK4Aska15StreamingStream12IsBufferableEimPl	Aska::StreamingStream::IsBufferable(int, unsigned long, long*) const	streams	decompiled	
+0x1f7c990	0x207c990	92	_ZNK4Aska15StreamingStream13IsBufferable_EiimPl	Aska::StreamingStream::IsBufferable_(int, int, unsigned long, long*) const	streams	decompiled	
+0x1f7c9ec	0x207c9ec	112	_ZNK4Aska15StreamingStream14IsBufferingEndEiPl	Aska::StreamingStream::IsBufferingEnd(int, long*) const	streams	decompiled	
+0x1f7ca5c	0x207ca5c	280	_ZN4Aska15StreamingStream14SetFrontSeekPtEmm	Aska::StreamingStream::SetFrontSeekPt(unsigned long, unsigned long)	streams	decompiled	
+0x1f7cb74	0x207cb74	16	_ZN4Aska15StreamingStream13SetBackSeekPtEmm	Aska::StreamingStream::SetBackSeekPt(unsigned long, unsigned long)	streams	decompiled	
+0x1f7cb84	0x207cb84	32	_ZN4Aska15StreamingStream15ResetRingBufferEv	Aska::StreamingStream::ResetRingBuffer()	streams	decompiled	
+0x1f7cba4	0x207cba4	148	_ZN4Aska15StreamingStream12WorkerThread4InitEPNS_7IStreamE	Aska::StreamingStream::WorkerThread::Init(Aska::IStream*)	streams	decompiled	
+0x1f7cc38	0x207cc38	144	_ZN4Aska15StreamingStream14StartBufferingEv	Aska::StreamingStream::StartBuffering()	streams	decompiled	
+0x1f7ccc8	0x207ccc8	120	_ZN4Aska15StreamingStream21WaitForPauseBufferingEv	Aska::StreamingStream::WaitForPauseBuffering()	streams	decompiled	
+0x1f7cd40	0x207cd40	100	_ZN4Aska15StreamingStream12WorkerThread4TermEv	Aska::StreamingStream::WorkerThread::Term()	streams	decompiled	
+0x1f7cda4	0x207cda4	348	_ZN4Aska15StreamingStream14LockRingBufferEiPPvm	Aska::StreamingStream::LockRingBuffer(int, void**, unsigned long)	streams	decompiled	
+0x1f7cf00	0x207cf00	128	_ZN4Aska15StreamingStream16UnlockRingBufferEim	Aska::StreamingStream::UnlockRingBuffer(int, unsigned long)	streams	decompiled	
+0x1f7cf80	0x207cf80	1060	_ZN4Aska15StreamingStream19Streaming_LockFrontEm	Aska::StreamingStream::Streaming_LockFront(unsigned long)	streams	decompiled	
+0x1f7d3a4	0x207d3a4	92	_ZNK4Aska15StreamingStream22IsBufferableRingBufferEiimPl	Aska::StreamingStream::IsBufferableRingBuffer(int, int, unsigned long, long*) const	streams	decompiled	
+0x1f7d400	0x207d400	60	_ZNK4Aska15StreamingStream18CalcBufferableSizeEii	Aska::StreamingStream::CalcBufferableSize(int, int) const	streams	decompiled	
+0x1f7d43c	0x207d43c	260	_ZN4Aska15StreamingStream14ClearBufferingEb	Aska::StreamingStream::ClearBuffering(bool)	streams	decompiled	
+0x1f7d540	0x207d540	304	_ZN4Aska15StreamingStream22AcquireBufferingNotifyEm	Aska::StreamingStream::AcquireBufferingNotify(unsigned long)	streams	decompiled	
+0x1f7d670	0x207d670	108	_ZN4Aska15StreamingStream22ReleaseBufferingNotifyEPNS0_15BufferingNotifyE	Aska::StreamingStream::ReleaseBufferingNotify(Aska::StreamingStream::BufferingNotify*)	streams	decompiled	
+0x1f7d6dc	0x207d6dc	208	_ZN4Aska15StreamingStream21Streaming_UnlockFrontEPNS0_15BufferingNotifyE	Aska::StreamingStream::Streaming_UnlockFront(Aska::StreamingStream::BufferingNotify*)	streams	decompiled	
+0x1f7d7ac	0x207d7ac	340	_ZN4Aska15StreamingStream15BufferingNotify7HandlerEm	Aska::StreamingStream::BufferingNotify::Handler(unsigned long)	streams	decompiled	
+0x1f7d900	0x207d900	312	_ZN4Aska15StreamingStream12WorkerThread9SequencerEv	Aska::StreamingStream::WorkerThread::Sequencer()	streams	decompiled	
+0x1f7da38	0x207da38	24	_ZN4Aska15StreamingStreamD0Ev	Aska::StreamingStream::~StreamingStream()	streams	decompiled	
+0x1f7da50	0x207da50	32	_ZNK4Aska15StreamingStream7IsReadyEv	Aska::StreamingStream::IsReady() const	streams	decompiled	
+0x1f7da70	0x207da70	8	_ZNK4Aska15StreamingStream7IsAsyncEv	Aska::StreamingStream::IsAsync() const	streams	decompiled	
+0x1f7da78	0x207da78	8	_ZNK4Aska15StreamingStream6IsBusyEv	Aska::StreamingStream::IsBusy() const	streams	decompiled	
+0x1f7da80	0x207da80	8	_ZNK4Aska15StreamingStream4WaitEi	Aska::StreamingStream::Wait(int) const	streams	decompiled	
+0x1f7da88	0x207da88	8	_ZN4Aska15StreamingStream6CancelEm	Aska::StreamingStream::Cancel(unsigned long)	streams	decompiled	
+0x1f7da90	0x207da90	248	_ZN4Aska15StreamingStream9ReadAsyncEPvlmmPNS_7INotifyEPVl	Aska::StreamingStream::ReadAsync(void*, long, unsigned long, unsigned long, Aska::INotify*, long volatile*)	streams	decompiled	
+0x1f7db88	0x207db88	224	_ZN4Aska15StreamingStream10WriteAsyncEPKvlmmPNS_7INotifyEPVl	Aska::StreamingStream::WriteAsync(void const*, long, unsigned long, unsigned long, Aska::INotify*, long volatile*)	streams	decompiled	
+0x1f7dc68	0x207dc68	12	_ZNK4Aska15StreamingStream16IsBufferingReadyEv	Aska::StreamingStream::IsBufferingReady() const	streams	decompiled	
+0x1f7dc74	0x207dc74	4	_ZN4Aska15StreamingStream15BufferingNotifyD0Ev	Aska::StreamingStream::BufferingNotify::~BufferingNotify()	streams	decompiled	
+0x20ab260	0x21ab260	920	_ZN4Aska18AHSLCacheManagerV2C2Ev	Aska::AHSLCacheManagerV2::AHSLCacheManagerV2()	ahsl	typed	
+0x20ab5f8	0x21ab5f8	100	_ZN4Aska18AHSLCacheManagerV215UpdateTimestampEv	Aska::AHSLCacheManagerV2::UpdateTimestamp()	ahsl	typed	
+0x20ab65c	0x21ab65c	892	_ZN4Aska18AHSLCacheManagerV2D2Ev	Aska::AHSLCacheManagerV2::~AHSLCacheManagerV2()	ahsl	typed	
+0x20ab9d8	0x21ab9d8	376	_ZN4Aska18AHSLCacheManagerV216CleanCacheSlotL3EPNS0_9CacheSlotE	Aska::AHSLCacheManagerV2::CleanCacheSlotL3(Aska::AHSLCacheManagerV2::CacheSlot*)	ahsl	typed	
+0x20abb50	0x21abb50	4	_ZN4Aska18AHSLCacheManagerV225CleanAllLinkedDiskCacheL2Ev	Aska::AHSLCacheManagerV2::CleanAllLinkedDiskCacheL2()	ahsl	typed	
+0x20abb54	0x21abb54	24	_ZN4Aska18AHSLCacheManagerV2D0Ev	Aska::AHSLCacheManagerV2::~AHSLCacheManagerV2()	ahsl	typed	
+0x20abb6c	0x21abb6c	152	_ZN4Aska18AHSLCacheManagerV22L114ReleaseShadersEv	Aska::AHSLCacheManagerV2::L1::ReleaseShaders()	ahsl	typed	
+0x20abc04	0x21abc04	408	_ZN4Aska18AHSLCacheManagerV24InitEv	Aska::AHSLCacheManagerV2::Init()	ahsl	typed	
+0x20abd9c	0x21abd9c	168	_ZN4Aska18AHSLCacheManagerV223InitFileCacheHeaderWorkEv	Aska::AHSLCacheManagerV2::InitFileCacheHeaderWork()	ahsl	typed	
+0x20abe44	0x21abe44	4	_ZN4Aska18AHSLCacheManagerV220SetShaderCacheInfoNoEi	Aska::AHSLCacheManagerV2::SetShaderCacheInfoNo(int)	ahsl	typed	
+0x20abe48	0x21abe48	164	_ZN4Aska18AHSLCacheManagerV217LoadBootDiskCacheEv	Aska::AHSLCacheManagerV2::LoadBootDiskCache()	ahsl	typed	
+0x20abeec	0x21abeec	8	_ZN4Aska18AHSLCacheManagerV230GetShaderCacheMajorShadersTextEPcPiS2_	Aska::AHSLCacheManagerV2::GetShaderCacheMajorShadersText(char*, int*, int*)	ahsl	typed	
+0x20abef4	0x21abef4	4	_ZN4Aska18AHSLCacheManagerV219InformationDispMainEi	Aska::AHSLCacheManagerV2::InformationDispMain(int)	ahsl	typed	
+0x20abef8	0x21abef8	72	_ZN4Aska18AHSLCacheManagerV22L18MallocExEm	Aska::AHSLCacheManagerV2::L1::MallocEx(unsigned long)	ahsl	typed	
+0x20abf40	0x21abf40	444	_ZN4Aska18AHSLCacheManagerV22L115DeleteColdCacheEv	Aska::AHSLCacheManagerV2::L1::DeleteColdCache()	ahsl	typed	
+0x20ac0fc	0x21ac0fc	88	_ZN4Aska18AHSLCacheManagerV22L115AlignedMallocExEmi	Aska::AHSLCacheManagerV2::L1::AlignedMallocEx(unsigned long, int)	ahsl	typed	
+0x20ac154	0x21ac154	1108	_ZN4Aska18AHSLCacheManagerV214SearchBindedVSEPNS_11ShaderCacheEmi	Aska::AHSLCacheManagerV2::SearchBindedVS(Aska::ShaderCache*, unsigned long, int)	ahsl	typed	
+0x20ac5a8	0x21ac5a8	4	_ZN4Aska18AHSLCacheManagerV218UpdateLastCreationEPNS_11ShaderCacheE	Aska::AHSLCacheManagerV2::UpdateLastCreation(Aska::ShaderCache*)	ahsl	typed	
+0x20ac5ac	0x21ac5ac	652	_ZN4Aska18AHSLCacheManagerV215SearchOrCompileEPKhPi	Aska::AHSLCacheManagerV2::SearchOrCompile(unsigned char const*, int*)	ahsl	typed	
+0x20ac838	0x21ac838	656	_ZN4Aska12AHSLDatabaseINS_11ShaderCacheELh9EE7GetDataEPKh	Aska::AHSLDatabase<Aska::ShaderCache, (unsigned char)9>::GetData(unsigned char const*)	ahsl	typed	
+0x20acac8	0x21acac8	656	_ZN4Aska12AHSLDatabaseINS_15ShaderDiskCacheELh9EE7GetDataEPKh	Aska::AHSLDatabase<Aska::ShaderDiskCache, (unsigned char)9>::GetData(unsigned char const*)	ahsl	typed	
+0x20acd58	0x21acd58	852	_ZN4Aska18AHSLCacheManagerV212AddToL1CacheEPKNS_15ShaderDiskCacheES3_	Aska::AHSLCacheManagerV2::AddToL1Cache(Aska::ShaderDiskCache const*, Aska::ShaderDiskCache const*)	ahsl	typed	
+0x20ad0ac	0x21ad0ac	104	_ZN4Aska18AHSLCacheManagerV24TickEv	Aska::AHSLCacheManagerV2::Tick()	ahsl	typed	
+0x20ad114	0x21ad114	4	_ZN4Aska18AHSLCacheManagerV217Tick_RebuildCacheEv	Aska::AHSLCacheManagerV2::Tick_RebuildCache()	ahsl	typed	
+0x20ad118	0x21ad118	4	_ZN4Aska18AHSLCacheManagerV216ResetErrorShaderEv	Aska::AHSLCacheManagerV2::ResetErrorShader()	ahsl	typed	
+0x20ad11c	0x21ad11c	124	_ZN4Aska18AHSLCacheManagerV22L127ReleaseAndDeleteShaderCacheEPNS_11ShaderCacheE	Aska::AHSLCacheManagerV2::L1::ReleaseAndDeleteShaderCache(Aska::ShaderCache*)	ahsl	typed	
+0x20ad198	0x21ad198	100	_ZN4Aska18AHSLCacheManagerV22L117DeleteFromL1CacheEPNS_11ShaderCacheE	Aska::AHSLCacheManagerV2::L1::DeleteFromL1Cache(Aska::ShaderCache*)	ahsl	typed	
+0x20ad1fc	0x21ad1fc	16	_ZNK4Aska18AHSLCacheManagerV231GetBackendCompilingShaderCachesEv	Aska::AHSLCacheManagerV2::GetBackendCompilingShaderCaches() const	ahsl	typed	
+0x20ad20c	0x21ad20c	20	_ZN4Aska18AHSLCacheManagerV234EnableBackendCompilingShaderCachesEb	Aska::AHSLCacheManagerV2::EnableBackendCompilingShaderCaches(bool)	ahsl	typed	
+0x20ad220	0x21ad220	16	_ZNK4Aska18AHSLCacheManagerV237IsBackendCompilingShaderCachesEnabledEv	Aska::AHSLCacheManagerV2::IsBackendCompilingShaderCachesEnabled() const	ahsl	typed	
+0x20ad230	0x21ad230	16	_ZN4Aska18AHSLCacheManagerV239SetBackendCompilingShaderCachesPerFrameEj	Aska::AHSLCacheManagerV2::SetBackendCompilingShaderCachesPerFrame(unsigned int)	ahsl	typed	
+0x20ad240	0x21ad240	16	_ZNK4Aska18AHSLCacheManagerV239GetBackendCompilingShaderCachesPerFrameEv	Aska::AHSLCacheManagerV2::GetBackendCompilingShaderCachesPerFrame() const	ahsl	typed	
+0x20ad250	0x21ad250	20	_ZN4Aska18AHSLCacheManagerV224EnableDeleteShaderCachesEb	Aska::AHSLCacheManagerV2::EnableDeleteShaderCaches(bool)	ahsl	typed	
+0x20ad264	0x21ad264	68	_ZN4Aska18AHSLCacheManagerV212AddToL2CacheEPKNS_15ShaderDiskCacheE	Aska::AHSLCacheManagerV2::AddToL2Cache(Aska::ShaderDiskCache const*)	ahsl	typed	
+0x20ad2a8	0x21ad2a8	616	_ZN4Aska18AHSLCacheManagerV222BuildLinkedDiskCacheL2EPKNS_15ShaderDiskCacheE	Aska::AHSLCacheManagerV2::BuildLinkedDiskCacheL2(Aska::ShaderDiskCache const*)	ahsl	typed	
+0x20ad510	0x21ad510	996	_ZN4Aska12AHSLDatabaseINS_15ShaderDiskCacheELh9EE7SetDataEPhPS1_	Aska::AHSLDatabase<Aska::ShaderDiskCache, (unsigned char)9>::SetData(unsigned char*, Aska::ShaderDiskCache*)	ahsl	typed	
+0x20ad8f4	0x21ad8f4	172	_ZN4Aska18AHSLCacheManagerV222CleanLinkedDiskCacheL2EPKNS_15ShaderDiskCacheE	Aska::AHSLCacheManagerV2::CleanLinkedDiskCacheL2(Aska::ShaderDiskCache const*)	ahsl	typed	
+0x20ad9ac	0x21ad9ac	88	_ZN4Aska18AHSLCacheManagerV222IsValidFileCacheHeaderEPKNS_19AHSLFileCacheHeaderEb	Aska::AHSLCacheManagerV2::IsValidFileCacheHeader(Aska::AHSLFileCacheHeader const*, bool)	ahsl	typed	
+0x20ada04	0x21ada04	852	_ZN4Aska18AHSLCacheManagerV22L119PurgeNonDrewL1CacheEi	Aska::AHSLCacheManagerV2::L1::PurgeNonDrewL1Cache(int)	ahsl	typed	
+0x20add58	0x21add58	348	_ZNK4Aska12AHSLDatabaseINS_11ShaderCacheELh9EE12GetNodeCountEi	Aska::AHSLDatabase<Aska::ShaderCache, (unsigned char)9>::GetNodeCount(int) const	ahsl	typed	
+0x20adeb4	0x21adeb4	392	_ZN4Aska12AHSLDatabaseINS_11ShaderCacheELh9EE13GetNodeDirectEii	Aska::AHSLDatabase<Aska::ShaderCache, (unsigned char)9>::GetNodeDirect(int, int)	ahsl	typed	
+0x20ae03c	0x21ae03c	280	_ZN4Aska18AHSLCacheManagerV22L115SearchColdCacheEv	Aska::AHSLCacheManagerV2::L1::SearchColdCache()	ahsl	typed	
+0x20ae154	0x21ae154	68	_ZN4Aska18AHSLCacheManagerV22L19FreeCacheEPNS_11ShaderCacheE	Aska::AHSLCacheManagerV2::L1::FreeCache(Aska::ShaderCache*)	ahsl	typed	
+0x20ae198	0x21ae198	1212	_ZN4Aska12AHSLDatabaseINS_11ShaderCacheELh9EE10DeleteDataEPhPS1_	Aska::AHSLDatabase<Aska::ShaderCache, (unsigned char)9>::DeleteData(unsigned char*, Aska::ShaderCache*)	ahsl	typed	
+0x20ae654	0x21ae654	996	_ZN4Aska12AHSLDatabaseINS_11ShaderCacheELh9EE7SetDataEPhPS1_	Aska::AHSLDatabase<Aska::ShaderCache, (unsigned char)9>::SetData(unsigned char*, Aska::ShaderCache*)	ahsl	typed	
+0x20aea38	0x21aea38	432	_ZN4Aska18AHSLCacheManagerV222Logging_WriteShaderKeyERNS_4FileEPhb	Aska::AHSLCacheManagerV2::Logging_WriteShaderKey(Aska::File&, unsigned char*, bool)	ahsl	typed	
+0x20aebe8	0x21aebe8	8	_ZNK4Aska18AHSLCacheManagerV220DoesPrebuiltFinishedEv	Aska::AHSLCacheManagerV2::DoesPrebuiltFinished() const	ahsl	typed	
+0x20aebf0	0x21aebf0	8	_ZN4Aska18AHSLCacheManagerV217SetPrebuiltBinaryEPKvm	Aska::AHSLCacheManagerV2::SetPrebuiltBinary(void const*, unsigned long)	ahsl	typed	
+0x20aebf8	0x21aebf8	144	_ZN4Aska18AHSLCacheManagerV215AttachDiskCacheEiPv	Aska::AHSLCacheManagerV2::AttachDiskCache(int, void*)	ahsl	typed	
+0x20aec88	0x21aec88	460	_ZN4Aska18AHSLCacheManagerV215AttachDiskCacheEii	Aska::AHSLCacheManagerV2::AttachDiskCache(int, int)	ahsl	typed	
+0x20aee54	0x21aee54	24	_ZN4Aska18AHSLCacheManagerV221IsAttachmentCompletedEv	Aska::AHSLCacheManagerV2::IsAttachmentCompleted()	ahsl	typed	
+0x20aee6c	0x21aee6c	88	_ZN4Aska18AHSLCacheManagerV215RemoveDiskCacheEi	Aska::AHSLCacheManagerV2::RemoveDiskCache(int)	ahsl	typed	
+0x20aeec4	0x21aeec4	8	_ZN4Aska18AHSLCacheManagerV217WriteHDDDiskCacheEiPh	Aska::AHSLCacheManagerV2::WriteHDDDiskCache(int, unsigned char*)	ahsl	typed	
+0x20aeecc	0x21aeecc	192	_ZN4Aska18AHSLCacheManagerV221Compile_CreateLogNameEPcj	Aska::AHSLCacheManagerV2::Compile_CreateLogName(char*, unsigned int)	ahsl	typed	
+0x20aef8c	0x21aef8c	232	_ZN4Aska18AHSLCacheManagerV213MakeCachePathEPci	Aska::AHSLCacheManagerV2::MakeCachePath(char*, int)	ahsl	typed	
+0x20af074	0x21af074	220	_ZN4Aska18AHSLCacheManagerV220MakeCachePathPrivateEPciPKc	Aska::AHSLCacheManagerV2::MakeCachePathPrivate(char*, int, char const*)	ahsl	typed	
+0x20af150	0x21af150	132	_ZN4Aska18AHSLCacheManagerV27HandlerEv	Aska::AHSLCacheManagerV2::Handler()	ahsl	typed	
+0x20af1d4	0x21af1d4	48	_ZN4Aska18AHSLCacheManagerV220Tick_BG_AHSL_CompileEv	Aska::AHSLCacheManagerV2::Tick_BG_AHSL_Compile()	ahsl	typed	
+0x20af204	0x21af204	4	_ZN4Aska18AHSLCacheManagerV212FlushProfileEv	Aska::AHSLCacheManagerV2::FlushProfile()	ahsl	typed	
+0x20af208	0x21af208	244	_ZN4Aska18AHSLCacheManagerV218ProcDiskCacheEntryEv	Aska::AHSLCacheManagerV2::ProcDiskCacheEntry()	ahsl	typed	
+0x20af2fc	0x21af2fc	488	_ZN4Aska18AHSLCacheManagerV225ProcDiskCacheEntry_HelperERbS1_	Aska::AHSLCacheManagerV2::ProcDiskCacheEntry_Helper(bool&, bool&)	ahsl	typed	
+0x20af4e4	0x21af4e4	380	_ZN4Aska12AHSLDatabaseINS_15ShaderDiskCacheELh9EE9DeleteAllEv	Aska::AHSLDatabase<Aska::ShaderDiskCache, (unsigned char)9>::DeleteAll()	ahsl	typed	
+0x20af660	0x21af660	748	_ZN4Aska18AHSLCacheManagerV217RebuildL2DatabaseEv	Aska::AHSLCacheManagerV2::RebuildL2Database()	ahsl	typed	
+0x20af94c	0x21af94c	4	_ZN4Aska18AHSLCacheManagerV218RecompileDiskCacheEv	Aska::AHSLCacheManagerV2::RecompileDiskCache()	ahsl	typed	
+0x20af950	0x21af950	4	_ZN4Aska18AHSLCacheManagerV223DynamicDiskCacheReplaceEv	Aska::AHSLCacheManagerV2::DynamicDiskCacheReplace()	ahsl	typed	
+0x20af954	0x21af954	424	_ZN4Aska18AHSLCacheManagerV227InvalidateObjectShaderCacheEv	Aska::AHSLCacheManagerV2::InvalidateObjectShaderCache()	ahsl	typed	
+0x20afafc	0x21afafc	4	_ZN4Aska18AHSLCacheManagerV233ExportBackendCompilationDiskCacheEv	Aska::AHSLCacheManagerV2::ExportBackendCompilationDiskCache()	ahsl	typed	
+0x20afb00	0x21afb00	180	_ZN4Aska18AHSLCacheManagerV217CreateEmptyShaderEPKhPhb	Aska::AHSLCacheManagerV2::CreateEmptyShader(unsigned char const*, unsigned char*, bool)	ahsl	typed	
+0x20afbb4	0x21afbb4	8	_ZN4Aska18AHSLCacheManagerV219Handler_ProcBGQueueEb	Aska::AHSLCacheManagerV2::Handler_ProcBGQueue(bool)	ahsl	typed	
+0x20afbbc	0x21afbbc	76	_ZN4Aska18AHSLCacheManagerV214CheckOnHandlerEPh	Aska::AHSLCacheManagerV2::CheckOnHandler(unsigned char*)	ahsl	typed	
+0x20afce4	0x21afce4	236	_ZN4Aska8AHSLBase8LoadFileEPvPKcPj	Aska::AHSLBase::LoadFile(void*, char const*, unsigned int*)	ahsl	decompiled	
+0x20afdd0	0x21afdd0	44	_ZN4Aska8AHSLBase10CopyStringEPcPKci	Aska::AHSLBase::CopyString(char*, char const*, int)	ahsl	decompiled	
+0x20afdfc	0x21afdfc	100	_ZN4Aska8AHSLBase13CopyIntStringEPcii	Aska::AHSLBase::CopyIntString(char*, int, int)	ahsl	decompiled	
+0x20afe60	0x21afe60	100	_ZN4Aska8AHSLBase14ChopTailNumberEPcPKc	Aska::AHSLBase::ChopTailNumber(char*, char const*)	ahsl	decompiled	
+0x20afec4	0x21afec4	12	_ZN4Aska8AHSLBase6Static20IsValidTargetConsoleENS0_13TargetConsoleE	Aska::AHSLBase::Static::IsValidTargetConsole(Aska::AHSLBase::TargetConsole)	ahsl	decompiled	
+0x20b184c	0x21b184c	2648	_ZN4Aska12AHSLCompiler16GeneratePipeCodeEPPcNS_8TLongIntImLi1EEENS_8AHSLBase13TargetConsoleE	Aska::AHSLCompiler::GeneratePipeCode(char**, Aska::TLongInt<unsigned long, 1>, Aska::AHSLBase::TargetConsole)	ahsl	decompiled	
+0x20b2eec	0x21b2eec	148	_ZN4Aska8AHSLBase27CreateCompressedShaderCacheEPNS_15ShaderDiskCacheEPvPh	Aska::AHSLBase::CreateCompressedShaderCache(Aska::ShaderDiskCache*, void*, unsigned char*)	ahsl	decompiled	
+0x20b2f80	0x21b2f80	40	_ZNK4Aska8AHSLBase38GetSizeOfShaderCacheBodyForCompressionEv	Aska::AHSLBase::GetSizeOfShaderCacheBodyForCompression() const	ahsl	decompiled	
+0x20b2fa8	0x21b2fa8	196	_ZN4Aska8AHSLBase21UncompressShaderCacheEPNS_15ShaderDiskCacheEPKS1_Ph	Aska::AHSLBase::UncompressShaderCache(Aska::ShaderDiskCache*, Aska::ShaderDiskCache const*, unsigned char*)	ahsl	decompiled	
+0x2136840	0x2236840	20	_ZN4Aska11LIBLManager10InitializeEi	Aska::LIBLManager::Initialize(int)	libl	typed	
+0x2136880	0x2236880	328	_ZN4Aska11TPoolLegacyINS_11LIBLManager14_AarLoaderElemELb0EE10SecurePoolEjbPKvPKj	Aska::TPoolLegacy<Aska::LIBLManager::_AarLoaderElem, false>::SecurePool(unsigned int, bool, void const*, unsigned int const*)	libl	decompiled	
+0x21369c8	0x22369c8	492	_ZN4Aska11LIBLManager6DeleteEv	Aska::LIBLManager::Delete()	libl	typed	
+0x2136bb4	0x2236bb4	64	_ZN4Aska5TListINS_11LIBLManager14_AarLoaderElemEE6DeleteEPS2_	Aska::TList<Aska::LIBLManager::_AarLoaderElem>::Delete(Aska::LIBLManager::_AarLoaderElem*)	libl	decompiled	
+0x2136bf4	0x2236bf4	540	_ZN4Aska11LIBLManager14_AarLoaderElem6DetachEv	Aska::LIBLManager::_AarLoaderElem::Detach()	libl	typed	
+0x2136e10	0x2236e10	300	_ZN4Aska11LIBLManager12CreateNotifyEi	Aska::LIBLManager::CreateNotify(int)	libl	typed	
+0x2136f3c	0x2236f3c	856	_ZN4Aska11LIBLManager6UpdateEv	Aska::LIBLManager::Update()	libl	typed	
+0x2137294	0x2237294	976	_ZN4Aska11LIBLManager9IntersectEPPNS_16RenderableObjectEii	Aska::LIBLManager::Intersect(Aska::RenderableObject**, int, int)	libl	typed	
+0x2137664	0x2237664	168	_ZN4Aska11LIBLManager11_LIBLNotify5ResetEPNS_16RenderableObjectEPNS_19OrientedBoundingBoxE	Aska::LIBLManager::_LIBLNotify::Reset(Aska::RenderableObject*, Aska::OrientedBoundingBox*)	libl	typed	
+0x213770c	0x223770c	136	_ZN4Aska11LIBLManager9SetResultEPPNS_16RenderableObjectEi	Aska::LIBLManager::SetResult(Aska::RenderableObject**, int)	libl	typed	
+0x2137794	0x2237794	116	_ZN4Aska11LIBLManager21MakeEffectiveLIBLListEv	Aska::LIBLManager::MakeEffectiveLIBLList()	libl	typed	
+0x2137808	0x2237808	100	_ZN4Aska11LIBLManager3AddEPNS_29IntegratedDynamicsEnvironmentEPKNS_10AsfHandlerE	Aska::LIBLManager::Add(Aska::IntegratedDynamicsEnvironment*, Aska::AsfHandler const*)	libl	typed	
+0x213786c	0x223786c	92	_ZN4Aska11LIBLManager3AddEPNS_29IntegratedDynamicsEnvironmentE	Aska::LIBLManager::Add(Aska::IntegratedDynamicsEnvironment*)	libl	typed	
+0x21378c8	0x22378c8	468	_ZN4Aska11LIBLManager11_LIBLNotify12GetMarginOBBEPNS_3BoxEPKNS_5LightE	Aska::LIBLManager::_LIBLNotify::GetMarginOBB(Aska::Box*, Aska::Light const*)	libl	typed	
+0x2137a9c	0x2237a9c	520	_ZN4Aska11LIBLManager11_LIBLNotify7HandlerEm	Aska::LIBLManager::_LIBLNotify::Handler(unsigned long)	libl	typed	
+0x2137ca4	0x2237ca4	136	_ZN4Aska11LIBLManager11_LIBLNotify3SetEPNS_16RenderableObjectEff	Aska::LIBLManager::_LIBLNotify::Set(Aska::RenderableObject*, float, float)	libl	typed	
+0x2137d2c	0x2237d2c	8	_ZNK4Aska11LIBLManager3GetEmPv	Aska::LIBLManager::Get(unsigned long, void*) const	libl	typed	
+0x2137d34	0x2237d34	8	_ZN4Aska11LIBLManager3SetEmPKv	Aska::LIBLManager::Set(unsigned long, void const*)	libl	typed	
+0x2137d3c	0x2237d3c	780	_ZN4Aska11LIBLManager6AddAarEPNS_10AarHandlerEim	Aska::LIBLManager::AddAar(Aska::AarHandler*, int, unsigned long)	libl	typed	
+0x2138048	0x2238048	64	_ZNK4Aska11LIBLManager11ExistsLocalEPKNS_10AarHandlerE	Aska::LIBLManager::ExistsLocal(Aska::AarHandler const*) const	libl	typed	
+0x2138088	0x2238088	280	_ZN4Aska11TPoolLegacyINS_11LIBLManager14_AarLoaderElemELb0EE5ScoopEv	Aska::TPoolLegacy<Aska::LIBLManager::_AarLoaderElem, false>::Scoop()	libl	decompiled	
+0x21381a0	0x22381a0	208	_ZN4Aska11LIBLManager14_AarLoaderElem6AttachEPNS_10AarHandlerEim	Aska::LIBLManager::_AarLoaderElem::Attach(Aska::AarHandler*, int, unsigned long)	libl	typed	
+0x2138270	0x2238270	36	_ZN4Aska5TListINS_11LIBLManager14_AarLoaderElemEE3AddEPS2_	Aska::TList<Aska::LIBLManager::_AarLoaderElem>::Add(Aska::LIBLManager::_AarLoaderElem*)	libl	decompiled	
+0x2138294	0x2238294	772	_ZN4Aska11LIBLManager6AddAarEPNS_10AarHandlerEPNS_7IStreamE	Aska::LIBLManager::AddAar(Aska::AarHandler*, Aska::IStream*)	libl	typed	
+0x2138598	0x2238598	192	_ZN4Aska11LIBLManager14_AarLoaderElem6AttachEPNS_10AarHandlerEPNS_7IStreamE	Aska::LIBLManager::_AarLoaderElem::Attach(Aska::AarHandler*, Aska::IStream*)	libl	typed	
+0x2138658	0x2238658	560	_ZN4Aska11LIBLManager9RemoveAarEPNS_10AarHandlerE	Aska::LIBLManager::RemoveAar(Aska::AarHandler*)	libl	typed	
+0x2138888	0x2238888	184	_ZN4Aska11LIBLManager13UpdateTextureEPKNS_3BoxEf	Aska::LIBLManager::UpdateTexture(Aska::Box const*, float)	libl	typed	
+0x2138940	0x2238940	304	_ZN4Aska11LIBLManager16_StreamingNotify7HandlerEm	Aska::LIBLManager::_StreamingNotify::Handler(unsigned long)	libl	typed	
+0x2138a70	0x2238a70	48	_ZN4Aska11LIBLManager9ExistsIDEEPKNS_29IntegratedDynamicsEnvironmentE	Aska::LIBLManager::ExistsIDE(Aska::IntegratedDynamicsEnvironment const*)	libl	typed	
+0x2138aa0	0x2238aa0	448	_ZN4Aska11LIBLManager14_AarLoaderList4FindEmPPNS0_14_AarLoaderElemE	Aska::LIBLManager::_AarLoaderList::Find(unsigned long, Aska::LIBLManager::_AarLoaderElem**)	libl	typed	
+0x2138c60	0x2238c60	124	_ZN4Aska11LIBLManager14_AarLoaderElem4ReadEfRNS_10AarHandler8IteratorEPKvPNS_29IntegratedDynamicsEnvironmentE	Aska::LIBLManager::_AarLoaderElem::Read(float, Aska::AarHandler::Iterator&, void const*, Aska::IntegratedDynamicsEnvironment*)	libl	typed	
+0x2138cdc	0x2238cdc	140	_ZN4Aska11LIBLManager14_AarLoaderElem10AttachMainEPNS_10AarHandlerE	Aska::LIBLManager::_AarLoaderElem::AttachMain(Aska::AarHandler*)	libl	typed	
+0x2138d68	0x2238d68	92	_ZN4Aska11LIBLManager13DetachTextureEPv	Aska::LIBLManager::DetachTexture(void*)	libl	typed	
+0x2138eec	0x2238eec	56	_ZN4Aska11LIBLManager14_AarLoaderElem6ExistsEm	Aska::LIBLManager::_AarLoaderElem::Exists(unsigned long)	libl	typed	
+0x2138f24	0x2238f24	16	_ZN4Aska11LIBLManager20_AarLoaderUpdateTask3RunEi	Aska::LIBLManager::_AarLoaderUpdateTask::Run(int)	libl	typed	
+0x2138f34	0x2238f34	3244	_ZN4Aska11LIBLManager11CopyTextureEv	Aska::LIBLManager::CopyTexture()	libl	typed	
+0x2139db4	0x2239db4	348	_ZN4Aska11LIBLManagerD2Ev	Aska::LIBLManager::~LIBLManager()	libl	typed	
+0x2139f10	0x2239f10	24	_ZN4Aska11LIBLManagerD0Ev	Aska::LIBLManager::~LIBLManager()	libl	typed	
+0x2139f28	0x2239f28	36	_ZNK4Aska11LIBLManager10GetClassIDEi	Aska::LIBLManager::GetClassID(int) const	libl	typed	
+0x2139f4c	0x2239f4c	4	_ZN4Aska11LIBLManager11_LIBLNotifyD0Ev	Aska::LIBLManager::_LIBLNotify::~_LIBLNotify()	libl	typed	
+0x2139f50	0x2239f50	4	_ZN4Aska11LIBLManager16_StreamingNotifyD0Ev	Aska::LIBLManager::_StreamingNotify::~_StreamingNotify()	libl	typed	
+0x2139f54	0x2239f54	24	_ZN4Aska11LIBLManager20_AarLoaderUpdateTaskD0Ev	Aska::LIBLManager::_AarLoaderUpdateTask::~_AarLoaderUpdateTask()	libl	typed	
+0x2139f6c	0x2239f6c	8	_ZNK4Aska11LIBLManager20_AarLoaderUpdateTask15GetDefaultLevelEv	Aska::LIBLManager::_AarLoaderUpdateTask::GetDefaultLevel() const	libl	typed	
+0x2139f74	0x2239f74	220	_ZN4Aska11TPoolLegacyINS_11LIBLManager14_AarLoaderElemELb0EED2Ev	Aska::TPoolLegacy<Aska::LIBLManager::_AarLoaderElem, false>::~TPoolLegacy()	libl	decompiled	
+0x213a050	0x223a050	220	_ZN4Aska11TPoolLegacyINS_11LIBLManager14_AarLoaderElemELb0EED0Ev	Aska::TPoolLegacy<Aska::LIBLManager::_AarLoaderElem, false>::~TPoolLegacy()	libl	decompiled	
+0x213a12c	0x223a12c	40	_ZN4Aska5TListINS_11LIBLManager14_AarLoaderElemEED2Ev	Aska::TList<Aska::LIBLManager::_AarLoaderElem>::~TList()	libl	decompiled	
+0x213a154	0x223a154	60	_ZN4Aska11LIBLManager14_AarLoaderListD0Ev	Aska::LIBLManager::_AarLoaderList::~_AarLoaderList()	libl	typed	
+0x213a190	0x223a190	36	_ZN4Aska5TListINS_11LIBLManager14_AarLoaderElemEE6AddTopEPS2_	Aska::TList<Aska::LIBLManager::_AarLoaderElem>::AddTop(Aska::LIBLManager::_AarLoaderElem*)	libl	decompiled	
+0x213a1b4	0x223a1b4	32	_ZN4Aska5TListINS_11LIBLManager14_AarLoaderElemEE6InsertEPS2_S4_	Aska::TList<Aska::LIBLManager::_AarLoaderElem>::Insert(Aska::LIBLManager::_AarLoaderElem*, Aska::LIBLManager::_AarLoaderElem*)	libl	decompiled	
+0x213a1d4	0x223a1d4	60	_ZN4Aska5TListINS_11LIBLManager14_AarLoaderElemEED0Ev	Aska::TList<Aska::LIBLManager::_AarLoaderElem>::~TList()	libl	decompiled	
+0x213a210	0x223a210	20	_ZN4Aska11LIBLManager14_AarLoaderElemD2Ev	Aska::LIBLManager::_AarLoaderElem::~_AarLoaderElem()	libl	typed	
+0x213a224	0x223a224	40	_ZN4Aska11LIBLManager14_AarLoaderElemD0Ev	Aska::LIBLManager::_AarLoaderElem::~_AarLoaderElem()	libl	typed	
+0x2221a0c	0x2321a0c	824	_ZN4Aska14BaseReadDevice13InitializeSubEiii	Aska::BaseReadDevice::InitializeSub(int, int, int)	read_device	typed	
+0x2221d44	0x2321d44	84	_ZN4Aska14BaseReadDevice8FinalizeEv	Aska::BaseReadDevice::Finalize()	read_device	typed	
+0x2221d98	0x2321d98	376	_ZN4Aska14BaseReadDevice9CancelAllEv	Aska::BaseReadDevice::CancelAll()	read_device	typed	
+0x2221f10	0x2321f10	1048	_ZN4Aska14BaseReadDevice4ReadEPNS_11ReadRequestE	Aska::BaseReadDevice::Read(Aska::ReadRequest*)	read_device	typed	
+0x2222328	0x2322328	92	_ZNK4Aska14BaseReadDevice19LocalGetGroupLengthEii	Aska::BaseReadDevice::LocalGetGroupLength(int, int) const	read_device	typed	
+0x2222384	0x2322384	392	_ZN4Aska14BaseReadDevice6CancelEi	Aska::BaseReadDevice::Cancel(int)	read_device	typed	
+0x222250c	0x232250c	696	_ZN4Aska14BaseReadDevice13CancelByParamEiPhmmi	Aska::BaseReadDevice::CancelByParam(int, unsigned char*, unsigned long, unsigned long, int)	read_device	typed	
+0x22227c4	0x23227c4	348	_ZN4Aska14BaseReadDevice10GetRequestEv	Aska::BaseReadDevice::GetRequest()	read_device	typed	
+0x2222920	0x2322920	788	_ZN4Aska14BaseReadDevice7HandlerEv	Aska::BaseReadDevice::Handler()	read_device	typed	
+0x2222c34	0x2322c34	192	_ZN4Aska14BaseReadDevice10DecompressEPhS1_PNS_7INotifyEmib	Aska::BaseReadDevice::Decompress(unsigned char*, unsigned char*, Aska::INotify*, unsigned long, int, bool)	read_device	typed	
+0x2222cf4	0x2322cf4	24	_ZN4Aska14BaseReadDeviceD0Ev	Aska::BaseReadDevice::~BaseReadDevice()	read_device	typed	
+0x2222d0c	0x2322d0c	112	_ZN4Aska14BaseReadDevice10InitializeEiii	Aska::BaseReadDevice::Initialize(int, int, int)	read_device	typed	
+0x2222d7c	0x2322d7c	8	_ZNK4Aska14BaseReadDevice10FileExistsEi	Aska::BaseReadDevice::FileExists(int) const	read_device	typed	
+0x2222d84	0x2322d84	8	_ZNK4Aska14BaseReadDevice10FileExistsEii	Aska::BaseReadDevice::FileExists(int, int) const	read_device	typed	
+0x2222d8c	0x2322d8c	12	_ZNK4Aska14BaseReadDevice14CalcFileLengthEi	Aska::BaseReadDevice::CalcFileLength(int) const	read_device	typed	
+0x2222d98	0x2322d98	12	_ZNK4Aska14BaseReadDevice23GetCompressedFileLengthEi	Aska::BaseReadDevice::GetCompressedFileLength(int) const	read_device	typed	
+0x2222da4	0x2322da4	8	_ZNK4Aska14BaseReadDevice25GetDecompressedFileLengthEi	Aska::BaseReadDevice::GetDecompressedFileLength(int) const	read_device	typed	
+0x2222dac	0x2322dac	8	_ZNK4Aska14BaseReadDevice12GetReadAlignEv	Aska::BaseReadDevice::GetReadAlign() const	read_device	typed	
+0x2222db4	0x2322db4	8	_ZNK4Aska14BaseReadDevice7GetTypeEv	Aska::BaseReadDevice::GetType() const	read_device	typed	
+0x2222dbc	0x2322dbc	4	_ZN4Aska14BaseReadDevice21InitProgressParameterEiPv	Aska::BaseReadDevice::InitProgressParameter(int, void*)	read_device	typed	
+0x2222dc0	0x2322dc0	4	_ZN4Aska14BaseReadDevice15SetReadProgressEm	Aska::BaseReadDevice::SetReadProgress(unsigned long)	read_device	typed	
+0x2222dc4	0x2322dc4	8	_ZN4Aska14BaseReadDevice11CalcReadPosEimm	Aska::BaseReadDevice::CalcReadPos(int, unsigned long, unsigned long)	read_device	typed	
+0x2222dcc	0x2322dcc	8	_ZNK4Aska14BaseReadDevice18LocalGetFileLengthEi	Aska::BaseReadDevice::LocalGetFileLength(int) const	read_device	typed	
+0x2222dd4	0x2322dd4	8	_ZNK4Aska14BaseReadDevice30LocalGetDecompressedFileLengthEi	Aska::BaseReadDevice::LocalGetDecompressedFileLength(int) const	read_device	typed	
+0x2222ddc	0x2322ddc	16	_ZNK4Aska14BaseReadDevice27LocalCalcExistingFileLengthEPNS_11ReadRequestE	Aska::BaseReadDevice::LocalCalcExistingFileLength(Aska::ReadRequest*) const	read_device	typed	
+0x2222dec	0x2322dec	8	_ZN4Aska14BaseReadDevice15LocalInitializeEv	Aska::BaseReadDevice::LocalInitialize()	read_device	typed	
+0x2222df4	0x2322df4	4	_ZN4Aska14BaseReadDevice8ReadMainEPNS_11ReadRequestE	Aska::BaseReadDevice::ReadMain(Aska::ReadRequest*)	read_device	typed	
+0x2222df8	0x2322df8	108	_ZN4Aska14BaseReadDevice16DecompressNotify7HandlerEm	Aska::BaseReadDevice::DecompressNotify::Handler(unsigned long)	read_device	typed	
+0x2222e64	0x2322e64	4	_ZN4Aska14BaseReadDevice16DecompressNotifyD0Ev	Aska::BaseReadDevice::DecompressNotify::~DecompressNotify()	read_device	typed	
+0x2224e6c	0x2324e6c	188	_ZN4Aska16DirectReadDevice4ReadEPKcPhPNS_7INotifyEmmiibb	Aska::DirectReadDevice::Read(char const*, unsigned char*, Aska::INotify*, unsigned long, unsigned long, int, int, bool, bool)	read_device	decompiled	
+0x2224f28	0x2324f28	152	_ZN4Aska16DirectReadDevice8ReadMainEPNS_11ReadRequestE	Aska::DirectReadDevice::ReadMain(Aska::ReadRequest*)	read_device	decompiled	
+0x22252a8	0x23252a8	116	_ZN4Aska16DirectReadDeviceD0Ev	Aska::DirectReadDevice::~DirectReadDevice()	read_device	decompiled	
+0x222531c	0x232531c	16	_ZNK4Aska16DirectReadDevice27LocalCalcExistingFileLengthEPNS_11ReadRequestE	Aska::DirectReadDevice::LocalCalcExistingFileLength(Aska::ReadRequest*) const	read_device	decompiled	
+0x222532c	0x232532c	128	_ZN4Aska14DiscReadDevice17MakeLayerFileNameEPci	Aska::DiscReadDevice::MakeLayerFileName(char*, int)	read_device	decompiled	
+0x22253ac	0x23253ac	704	_ZN4Aska14DiscReadDevice14MakeFileSystemEv	Aska::DiscReadDevice::MakeFileSystem()	read_device	decompiled	
+0x222566c	0x232566c	152	_ZN4Aska14DiscReadDevice7SetPathEPKc	Aska::DiscReadDevice::SetPath(char const*)	read_device	decompiled	
+0x2225704	0x2325704	44	_ZNK4Aska14DiscReadDevice18LocalGetFileLengthEi	Aska::DiscReadDevice::LocalGetFileLength(int) const	read_device	decompiled	
+0x2225730	0x2325730	16	_ZNK4Aska14DiscReadDevice30LocalGetDecompressedFileLengthEi	Aska::DiscReadDevice::LocalGetDecompressedFileLength(int) const	read_device	decompiled	
+0x2225740	0x2325740	128	_ZN4Aska14DiscReadDevice15LocalInitializeEv	Aska::DiscReadDevice::LocalInitialize()	read_device	decompiled	
+0x22257c0	0x23257c0	92	_ZN4Aska14DiscReadDevice13LocalFinalizeEv	Aska::DiscReadDevice::LocalFinalize()	read_device	decompiled	
+0x222581c	0x232581c	132	_ZN4Aska14DiscReadDevice8ReadMainEPNS_11ReadRequestE	Aska::DiscReadDevice::ReadMain(Aska::ReadRequest*)	read_device	decompiled	
+0x2225c7c	0x2325c7c	416	_ZN4Aska14DiscReadDevice11GetProgressEiPv	Aska::DiscReadDevice::GetProgress(int, void*)	read_device	decompiled	
+0x2225e1c	0x2325e1c	400	_ZN4Aska14DiscReadDevice21InitProgressParameterEiPv	Aska::DiscReadDevice::InitProgressParameter(int, void*)	read_device	decompiled	
+0x2225fac	0x2325fac	12	_ZN4Aska14DiscReadDevice15SetReadProgressEm	Aska::DiscReadDevice::SetReadProgress(unsigned long)	read_device	decompiled	
+0x2225fb8	0x2325fb8	24	_ZN4Aska14DiscReadDevice11CalcReadPosEimm	Aska::DiscReadDevice::CalcReadPos(int, unsigned long, unsigned long)	read_device	decompiled	
+0x2225fd0	0x2325fd0	8	_ZN4Aska14DiscReadDevice8SwapDiscEiPNS_5EventEPNS_7INotifyE	Aska::DiscReadDevice::SwapDisc(int, Aska::Event*, Aska::INotify*)	read_device	decompiled	
+0x2225fd8	0x2325fd8	72	_ZN4Aska14DiscReadDevice12SwapDiscMainEiPNS_5EventEPNS_7INotifyE	Aska::DiscReadDevice::SwapDiscMain(int, Aska::Event*, Aska::INotify*)	read_device	decompiled	
+0x2226020	0x2326020	8	_ZN4Aska14DiscReadDevice10SwapCancelEv	Aska::DiscReadDevice::SwapCancel()	read_device	decompiled	
+0x2226028	0x2326028	8	_ZN4Aska14DiscReadDevice14GetPlayGoChunkEi	Aska::DiscReadDevice::GetPlayGoChunk(int)	read_device	decompiled	
+0x2226030	0x2326030	4	_ZN4Aska14DiscReadDevice19PrefetchPlayGoChunkEi	Aska::DiscReadDevice::PrefetchPlayGoChunk(int)	read_device	decompiled	
+0x2226034	0x2326034	4	_ZN4Aska14DiscReadDevice27PrefetchPlayGoChunkByFileIDEi	Aska::DiscReadDevice::PrefetchPlayGoChunkByFileID(int)	read_device	decompiled	
+0x2226038	0x2326038	464	_ZN4Aska14DiscReadDeviceD2Ev	Aska::DiscReadDevice::~DiscReadDevice()	read_device	decompiled	
+0x2226208	0x2326208	24	_ZN4Aska14DiscReadDeviceD0Ev	Aska::DiscReadDevice::~DiscReadDevice()	read_device	decompiled	
+0x2226220	0x2326220	48	_ZNK4Aska14DiscReadDevice10FileExistsEi	Aska::DiscReadDevice::FileExists(int) const	read_device	decompiled	
+0x2226250	0x2326250	12	_ZNK4Aska14DiscReadDevice14CalcFileLengthEi	Aska::DiscReadDevice::CalcFileLength(int) const	read_device	decompiled	
+0x222625c	0x232625c	12	_ZNK4Aska14DiscReadDevice25GetDecompressedFileLengthEi	Aska::DiscReadDevice::GetDecompressedFileLength(int) const	read_device	decompiled	
+0x2226268	0x2326268	8	_ZNK4Aska14DiscReadDevice7GetTypeEv	Aska::DiscReadDevice::GetType() const	read_device	decompiled	
+0x2226270	0x2326270	12	_ZNK4Aska14DiscReadDevice13GetFileLengthEi	Aska::DiscReadDevice::GetFileLength(int) const	read_device	decompiled	
+0x222627c	0x232627c	120	_ZN4Aska14DiscReadStream4OpenEijm	Aska::DiscReadStream::Open(int, unsigned int, unsigned long)	streams	decompiled	
+0x22262f4	0x23262f4	48	_ZN4Aska14DiscReadStream10OpenCommonEjm	Aska::DiscReadStream::OpenCommon(unsigned int, unsigned long)	streams	decompiled	
+0x2226324	0x2326324	208	_ZN4Aska14DiscReadStream4OpenEPKcjmb	Aska::DiscReadStream::Open(char const*, unsigned int, unsigned long, bool)	streams	decompiled	
+0x22263f4	0x23263f4	256	_ZN4Aska14DiscReadStream5CloseEv	Aska::DiscReadStream::Close()	streams	decompiled	
+0x22264f4	0x23264f4	476	_ZN4Aska14DiscReadStream9ReadAsyncEPvlmmPNS_7INotifyEPVl	Aska::DiscReadStream::ReadAsync(void*, long, unsigned long, unsigned long, Aska::INotify*, long volatile*)	streams	decompiled	
+0x22266d0	0x23266d0	356	_ZN4Aska14DiscReadStream22AcquireReadAsyncNotifyEPNS_7INotifyE	Aska::DiscReadStream::AcquireReadAsyncNotify(Aska::INotify*)	streams	decompiled	
+0x2226834	0x2326834	20	_ZN4Aska14DiscReadStream15ReadAsyncNotify12SetStreamingEPhmS2_mmm	Aska::DiscReadStream::ReadAsyncNotify::SetStreaming(unsigned char*, unsigned long, unsigned char*, unsigned long, unsigned long, unsigned long)	streams	decompiled	
+0x2226848	0x2326848	152	_ZN4Aska14DiscReadStream5Read_EPhPNS_7INotifyEmm	Aska::DiscReadStream::Read_(unsigned char*, Aska::INotify*, unsigned long, unsigned long)	streams	decompiled	
+0x22268e0	0x23268e0	192	_ZNK4Aska14DiscReadStream4WaitEi	Aska::DiscReadStream::Wait(int) const	streams	decompiled	
+0x22269a0	0x23269a0	152	_ZN4Aska14DiscReadStream6CancelEm	Aska::DiscReadStream::Cancel(unsigned long)	streams	decompiled	
+0x2226a38	0x2326a38	128	_ZNK4Aska14DiscReadStream5IsEndEPl	Aska::DiscReadStream::IsEnd(long*) const	streams	decompiled	
+0x2226ab8	0x2326ab8	48	_ZN4Aska14DiscReadStream15CalcFileLength_Ev	Aska::DiscReadStream::CalcFileLength_()	streams	decompiled	
+0x2226ae8	0x2326ae8	300	_ZN4Aska14DiscReadStream4SeekEli	Aska::DiscReadStream::Seek(long, int)	streams	decompiled	
+0x2226c14	0x2326c14	316	_ZN4Aska14DiscReadStream4ReadEPvmm	Aska::DiscReadStream::Read(void*, unsigned long, unsigned long)	streams	decompiled	
+0x2226d50	0x2326d50	32	_ZN4Aska14DiscReadStream5WriteEPKvmm	Aska::DiscReadStream::Write(void const*, unsigned long, unsigned long)	streams	decompiled	
+0x2226d70	0x2326d70	16	_ZN4Aska14DiscReadStream5FlushEv	Aska::DiscReadStream::Flush()	streams	decompiled	
+0x2226d80	0x2326d80	568	_ZN4Aska18TPoolAtomicDynamicINS_14DiscReadStream15ReadAsyncNotifyEE10SecurePoolEi	Aska::TPoolAtomicDynamic<Aska::DiscReadStream::ReadAsyncNotify>::SecurePool(int)	streams	decompiled	
+0x2226fb8	0x2326fb8	28	_ZN4Aska14DiscReadStream15ReadAsyncNotify4InitEPS0_PNS_7INotifyE	Aska::DiscReadStream::ReadAsyncNotify::Init(Aska::DiscReadStream*, Aska::INotify*)	streams	decompiled	
+0x2226fd4	0x2326fd4	108	_ZN4Aska14DiscReadStream22ReleaseReadAsyncNotifyEPNS0_15ReadAsyncNotifyE	Aska::DiscReadStream::ReleaseReadAsyncNotify(Aska::DiscReadStream::ReadAsyncNotify*)	streams	decompiled	
+0x2227040	0x2327040	232	_ZN4Aska14DiscReadStream15FinishReadAsyncEPNS0_15ReadAsyncNotifyEm	Aska::DiscReadStream::FinishReadAsync(Aska::DiscReadStream::ReadAsyncNotify*, unsigned long)	streams	decompiled	
+0x2227128	0x2327128	780	_ZN4Aska14DiscReadStream15ReadAsyncNotify7HandlerEm	Aska::DiscReadStream::ReadAsyncNotify::Handler(unsigned long)	streams	decompiled	
+0x2227434	0x2327434	36	_ZN4Aska14DiscReadStream10ReadNotify7HandlerEm	Aska::DiscReadStream::ReadNotify::Handler(unsigned long)	streams	decompiled	
+0x2227458	0x2327458	40	_ZN4Aska14DiscReadStreamD2Ev	Aska::DiscReadStream::~DiscReadStream()	streams	decompiled	
+0x2227480	0x2327480	60	_ZN4Aska14DiscReadStreamD0Ev	Aska::DiscReadStream::~DiscReadStream()	streams	decompiled	
+0x22274bc	0x23274bc	16	_ZNK4Aska14DiscReadStream7IsReadyEv	Aska::DiscReadStream::IsReady() const	streams	decompiled	
+0x22274cc	0x23274cc	8	_ZNK4Aska14DiscReadStream4TellEv	Aska::DiscReadStream::Tell() const	streams	decompiled	
+0x22274d4	0x23274d4	12	_ZNK4Aska14DiscReadStream12SetLastErrorEl	Aska::DiscReadStream::SetLastError(long) const	streams	decompiled	
+0x22274e0	0x23274e0	24	_ZNK4Aska14DiscReadStream12GetLastErrorEv	Aska::DiscReadStream::GetLastError() const	streams	decompiled	
+0x22274f8	0x23274f8	8	_ZNK4Aska14DiscReadStream13PeekLastErrorEv	Aska::DiscReadStream::PeekLastError() const	streams	decompiled	
+0x2227500	0x2327500	48	_ZNK4Aska14DiscReadStream12GetTotalSizeEv	Aska::DiscReadStream::GetTotalSize() const	streams	decompiled	
+0x2227530	0x2327530	8	_ZNK4Aska14DiscReadStream7IsAsyncEv	Aska::DiscReadStream::IsAsync() const	streams	decompiled	
+0x2227538	0x2327538	16	_ZNK4Aska14DiscReadStream6IsBusyEv	Aska::DiscReadStream::IsBusy() const	streams	decompiled	
+0x2227548	0x2327548	4	_ZN4Aska14DiscReadStream10ReadNotifyD0Ev	Aska::DiscReadStream::ReadNotify::~ReadNotify()	streams	decompiled	
+0x222754c	0x232754c	4	_ZN4Aska14DiscReadStream15ReadAsyncNotifyD0Ev	Aska::DiscReadStream::ReadAsyncNotify::~ReadAsyncNotify()	streams	decompiled	
+0x2229aa4	0x2329aa4	104	_ZN4Aska7IStream5PrintEPS0_PKcz	Aska::IStream::Print(Aska::IStream*, char const*, ...)	streams	typed	
+0x2234f48	0x2334f48	184	_ZN4Aska16MultiMediaStream4OpenEPNS_7IStreamEmmPNS0_9LoopParamE	Aska::MultiMediaStream::Open(Aska::IStream*, unsigned long, unsigned long, Aska::MultiMediaStream::LoopParam*)	streams	typed	
+0x2235000	0x2335000	208	_ZN4Aska16MultiMediaStream5Open_EPNS_7IStreamEbmmPNS0_9LoopParamE	Aska::MultiMediaStream::Open_(Aska::IStream*, bool, unsigned long, unsigned long, Aska::MultiMediaStream::LoopParam*)	streams	typed	
+0x22350d0	0x23350d0	212	_ZN4Aska16MultiMediaStream4OpenEPNS_16IBufferingStreamEmmPNS0_9LoopParamE	Aska::MultiMediaStream::Open(Aska::IBufferingStream*, unsigned long, unsigned long, Aska::MultiMediaStream::LoopParam*)	streams	typed	
+0x22351a4	0x23351a4	20	_ZN4Aska16MultiMediaStream5CloseEv	Aska::MultiMediaStream::Close()	streams	typed	
+0x22351b8	0x23351b8	292	_ZN4Aska16MultiMediaStream4SeekEli	Aska::MultiMediaStream::Seek(long, int)	streams	typed	
+0x22352dc	0x23352dc	92	_ZNK4Aska16MultiMediaStream14CalcStartEndPtEiPmS1_	Aska::MultiMediaStream::CalcStartEndPt(int, unsigned long*, unsigned long*) const	streams	typed	
+0x2235338	0x2335338	616	_ZN4Aska16MultiMediaStream4ReadEPvmm	Aska::MultiMediaStream::Read(void*, unsigned long, unsigned long)	streams	typed	
+0x22355a0	0x23355a0	72	_ZN4Aska16MultiMediaStream12LoopDelegateEmm	Aska::MultiMediaStream::LoopDelegate(unsigned long, unsigned long)	streams	typed	
+0x22355e8	0x23355e8	192	_ZNK4Aska16MultiMediaStream5IsEndEPl	Aska::MultiMediaStream::IsEnd(long*) const	streams	typed	
+0x22356a8	0x23356a8	64	_ZNK4Aska16MultiMediaStream12GetTotalSizeEv	Aska::MultiMediaStream::GetTotalSize() const	streams	typed	
+0x22356e8	0x23356e8	32	_ZN4Aska16MultiMediaStream5WriteEPKvmm	Aska::MultiMediaStream::Write(void const*, unsigned long, unsigned long)	streams	typed	
+0x2235708	0x2335708	16	_ZN4Aska16MultiMediaStream5FlushEv	Aska::MultiMediaStream::Flush()	streams	typed	
+0x2235718	0x2335718	40	_ZNK4Aska16MultiMediaStream4TellEv	Aska::MultiMediaStream::Tell() const	streams	typed	
+0x2235740	0x2335740	28	_ZNK4Aska16MultiMediaStream12SetLastErrorEl	Aska::MultiMediaStream::SetLastError(long) const	streams	typed	
+0x223575c	0x233575c	28	_ZNK4Aska16MultiMediaStream12GetLastErrorEv	Aska::MultiMediaStream::GetLastError() const	streams	typed	
+0x2235778	0x2335778	28	_ZNK4Aska16MultiMediaStream13PeekLastErrorEv	Aska::MultiMediaStream::PeekLastError() const	streams	typed	
+0x2235794	0x2335794	484	_ZN4Aska16MultiMediaStream4LockEPPvm	Aska::MultiMediaStream::Lock(void**, unsigned long)	streams	typed	
+0x2235978	0x2335978	420	_ZN4Aska16MultiMediaStream6UnlockEm	Aska::MultiMediaStream::Unlock(unsigned long)	streams	typed	
+0x2235b1c	0x2335b1c	312	_ZNK4Aska16MultiMediaStream12IsBufferableEimPl	Aska::MultiMediaStream::IsBufferable(int, unsigned long, long*) const	streams	typed	
+0x2235c54	0x2335c54	224	_ZNK4Aska16MultiMediaStream14IsBufferingEndEiPl	Aska::MultiMediaStream::IsBufferingEnd(int, long*) const	streams	typed	
+0x2235d34	0x2335d34	36	_ZN4Aska16MultiMediaStreamD2Ev	Aska::MultiMediaStream::~MultiMediaStream()	streams	typed	
+0x2235d58	0x2335d58	20	_ZN4Aska16MultiMediaStreamD0Ev	Aska::MultiMediaStream::~MultiMediaStream()	streams	typed	
+0x2238384	0x2338384	456	_ZN4Aska18ResourceReadyQueueC2Ej	Aska::ResourceReadyQueue::ResourceReadyQueue(unsigned int)	queues	typed	
+0x223854c	0x233854c	460	_ZN4Aska18ResourceReadyQueueC2Ejj	Aska::ResourceReadyQueue::ResourceReadyQueue(unsigned int, unsigned int)	queues	typed	
+0x2238718	0x2338718	392	_ZN4Aska18ResourceReadyQueueD2Ev	Aska::ResourceReadyQueue::~ResourceReadyQueue()	queues	typed	
+0x22389c8	0x23389c8	196	_ZN4Aska10TEventPortINS_18ResourceReadyQueue6EvItemEED2Ev	Aska::TEventPort<Aska::ResourceReadyQueue::EvItem>::~TEventPort()	queues	decompiled	
+0x2238a8c	0x2338a8c	24	_ZN4Aska18ResourceReadyQueueD0Ev	Aska::ResourceReadyQueue::~ResourceReadyQueue()	queues	typed	
+0x2238aa4	0x2338aa4	564	_ZN4Aska18ResourceReadyQueue4InitEjj	Aska::ResourceReadyQueue::Init(unsigned int, unsigned int)	queues	typed	
+0x2238cd8	0x2338cd8	420	_ZN4Aska11TEventQueueINS_18ResourceReadyQueue6EvItemEE6CreateEjbb	Aska::TEventQueue<Aska::ResourceReadyQueue::EvItem>::Create(unsigned int, bool, bool)	queues	decompiled	
+0x2238e7c	0x2338e7c	284	_ZN4Aska10TEventPortINS_18ResourceReadyQueue6EvItemEE6CreateERNS_14TSharedPointerINS_11TEventQueueIS2_EEEE	Aska::TEventPort<Aska::ResourceReadyQueue::EvItem>::Create(Aska::TSharedPointer<Aska::TEventQueue<Aska::ResourceReadyQueue::EvItem> >&)	queues	decompiled	
+0x2238f98	0x2338f98	284	_ZN4Aska18ResourceReadyQueue4TermEv	Aska::ResourceReadyQueue::Term()	queues	typed	
+0x22390b4	0x23390b4	56	_ZNK4Aska18ResourceReadyQueue6IsBusyEv	Aska::ResourceReadyQueue::IsBusy() const	queues	typed	
+0x22390ec	0x23390ec	112	_ZNK4Aska18ResourceReadyQueue4WaitEv	Aska::ResourceReadyQueue::Wait() const	queues	typed	
+0x223915c	0x233915c	204	_ZN4Aska18ResourceReadyQueue14CalcTargetSizeEPNS_7IStreamEPjm	Aska::ResourceReadyQueue::CalcTargetSize(Aska::IStream*, unsigned int*, unsigned long)	queues	typed	
+0x2239228	0x2339228	256	_ZN4Aska18ResourceReadyQueue6InvokeEPNS_7IStreamEPPvPlPNS_7INotifyEPNS_14IMemoryManagerENS0_14AllocationTypeEb	Aska::ResourceReadyQueue::Invoke(Aska::IStream*, void**, long*, Aska::INotify*, Aska::IMemoryManager*, Aska::ResourceReadyQueue::AllocationType, bool)	queues	typed	
+0x2239328	0x2339328	624	_ZN4Aska18ResourceReadyQueue16PrepareForEvItemERNS0_6EvItemEPNS_14IMemoryManagerENS0_14AllocationTypeE	Aska::ResourceReadyQueue::PrepareForEvItem(Aska::ResourceReadyQueue::EvItem&, Aska::IMemoryManager*, Aska::ResourceReadyQueue::AllocationType)	queues	typed	
+0x2239598	0x2339598	1740	_ZN4Aska18ResourceReadyQueue9SequencerEPNS0_6EvItemE	Aska::ResourceReadyQueue::Sequencer(Aska::ResourceReadyQueue::EvItem*)	queues	typed	
+0x2239c64	0x2339c64	224	_ZN4Aska18ResourceReadyQueue6EvItemD2Ev	Aska::ResourceReadyQueue::EvItem::~EvItem()	queues	typed	
+0x2239d44	0x2339d44	428	_ZN4Aska18ResourceReadyQueue3AddEPNS_7IStreamEPPvPlPNS_7INotifyEiPNS_14IMemoryManagerENS0_14AllocationTypeEb	Aska::ResourceReadyQueue::Add(Aska::IStream*, void**, long*, Aska::INotify*, int, Aska::IMemoryManager*, Aska::ResourceReadyQueue::AllocationType, bool)	queues	typed	
+0x2239ef0	0x2339ef0	456	_ZN4Aska18ResourceReadyQueue3AddERNS_14TSharedPointerINS_7IStreamEEEPPvPlPNS_7INotifyEiPNS_14IMemoryManagerENS0_14AllocationTypeEb	Aska::ResourceReadyQueue::Add(Aska::TSharedPointer<Aska::IStream>&, void**, long*, Aska::INotify*, int, Aska::IMemoryManager*, Aska::ResourceReadyQueue::AllocationType, bool)	queues	typed	
+0x223a0b8	0x233a0b8	236	_ZN4Aska18ResourceReadyQueue6CancelEm	Aska::ResourceReadyQueue::Cancel(unsigned long)	queues	typed	
+0x223a1a4	0x233a1a4	112	_ZN4Aska18ResourceReadyQueue5FlushEv	Aska::ResourceReadyQueue::Flush()	queues	typed	
+0x223a214	0x233a214	248	_ZN4Aska18ResourceReadyQueue7HandlerEv	Aska::ResourceReadyQueue::Handler()	queues	typed	
+0x223a30c	0x233a30c	32	_ZNK4Aska18ResourceReadyQueue7IsReadyEv	Aska::ResourceReadyQueue::IsReady() const	queues	typed	
+0x223a32c	0x233a32c	196	_ZN4Aska10TEventPortINS_18ResourceReadyQueue6EvItemEED0Ev	Aska::TEventPort<Aska::ResourceReadyQueue::EvItem>::~TEventPort()	queues	decompiled	
+0x223a3f0	0x233a3f0	80	_ZN4Aska11TEventQueueINS_18ResourceReadyQueue6EvItemEED2Ev	Aska::TEventQueue<Aska::ResourceReadyQueue::EvItem>::~TEventQueue()	queues	decompiled	
+0x223a440	0x233a440	88	_ZN4Aska11TEventQueueINS_18ResourceReadyQueue6EvItemEED0Ev	Aska::TEventQueue<Aska::ResourceReadyQueue::EvItem>::~TEventQueue()	queues	decompiled	
+0x223a498	0x233a498	328	_ZN4Aska11TPoolLegacyINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEELb0EE10SecurePoolEjbPKvPKj	Aska::TPoolLegacy<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>, false>::SecurePool(unsigned int, bool, void const*, unsigned int const*)	queues	decompiled	
+0x223a5e0	0x233a5e0	292	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EED2Ev	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::~TPriorityQueue()	queues	decompiled	
+0x223a704	0x233a704	24	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EED0Ev	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::~TPriorityQueue()	queues	decompiled	
+0x223a71c	0x233a71c	52	_ZN4Aska5TListINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEEED2Ev	Aska::TList<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem> >::~TList()	queues	decompiled	
+0x223a750	0x233a750	68	_ZN4Aska5TListINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEEED0Ev	Aska::TList<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem> >::~TList()	queues	decompiled	
+0x223a794	0x233a794	36	_ZN4Aska5TListINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEEE3AddEPS4_	Aska::TList<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem> >::Add(Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>*)	queues	decompiled	
+0x223a7b8	0x233a7b8	36	_ZN4Aska5TListINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEEE6AddTopEPS4_	Aska::TList<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem> >::AddTop(Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>*)	queues	decompiled	
+0x223a7dc	0x233a7dc	32	_ZN4Aska5TListINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEEE6InsertEPS4_S6_	Aska::TList<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem> >::Insert(Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>*, Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>*)	queues	decompiled	
+0x223a7fc	0x233a7fc	64	_ZN4Aska5TListINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEEE6DeleteEPS4_	Aska::TList<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem> >::Delete(Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>*)	queues	decompiled	
+0x223a83c	0x233a83c	32	_ZN4Aska13TEventElementINS_18ResourceReadyQueue6EvItemEED2Ev	Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>::~TEventElement()	queues	decompiled	
+0x223a85c	0x233a85c	48	_ZN4Aska13TEventElementINS_18ResourceReadyQueue6EvItemEED0Ev	Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>::~TEventElement()	queues	decompiled	
+0x223a88c	0x233a88c	220	_ZN4Aska11TPoolLegacyINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEELb0EED2Ev	Aska::TPoolLegacy<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>, false>::~TPoolLegacy()	queues	decompiled	
+0x223a968	0x233a968	220	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EE6MyPoolD0Ev	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::MyPool::~MyPool()	queues	decompiled	
+0x223aa44	0x233aa44	48	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EE6MyPool12DirtyElementEPNS_13TEventElementIS2_EE	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::MyPool::DirtyElement(Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>*)	queues	decompiled	
+0x223aa74	0x233aa74	220	_ZN4Aska11TPoolLegacyINS_13TEventElementINS_18ResourceReadyQueue6EvItemEEELb0EED0Ev	Aska::TPoolLegacy<Aska::TEventElement<Aska::ResourceReadyQueue::EvItem>, false>::~TPoolLegacy()	queues	decompiled	
+0x223ab50	0x233ab50	304	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EE10ClearQueueEv	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::ClearQueue()	queues	decompiled	
+0x223ac80	0x233ac80	424	_ZN4Aska11TEventQueueINS_18ResourceReadyQueue6EvItemEE3SetEPKS2_mPmi	Aska::TEventQueue<Aska::ResourceReadyQueue::EvItem>::Set(Aska::ResourceReadyQueue::EvItem const*, unsigned long, unsigned long*, int)	queues	decompiled	
+0x223ae28	0x233ae28	388	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EE13CreateElementEv	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::CreateElement()	queues	decompiled	
+0x223afac	0x233afac	476	_ZN4Aska18ResourceReadyQueue6EvItem4CopyEPKS1_	Aska::ResourceReadyQueue::EvItem::Copy(Aska::ResourceReadyQueue::EvItem const*)	queues	typed	
+0x223b188	0x233b188	448	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EE6RemoveEmPS2_	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::Remove(unsigned long, Aska::ResourceReadyQueue::EvItem*)	queues	decompiled	
+0x223b348	0x233b348	460	_ZN4Aska14TPriorityQueueINS_18ResourceReadyQueue6EvItemELb1EE7AcquireEPS2_mPm	Aska::TPriorityQueue<Aska::ResourceReadyQueue::EvItem, true>::Acquire(Aska::ResourceReadyQueue::EvItem*, unsigned long, unsigned long*)	queues	decompiled	

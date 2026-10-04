@@ -90,7 +90,7 @@ int event_year(sqlite3* master, int m, int d);
 // Logs it. Nothing when the server is off.
 void submit(const Request& r);
 
-// Entry flow (agent restore-title). --new-player: the server starts without a
+// Entry flow. --new-player: the server starts without a
 // player (the client runs the 3.7.0 new-player flow; its Login is refused with 19001, see
 // error_code). logged_in(): FakeApiCaller::LoggedIn (false until a Login was answered).
 bool new_player_mode();

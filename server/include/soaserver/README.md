@@ -20,4 +20,4 @@ What the port (`port/src/native/api/*`, `common/test.cpp`, `ui/webview_local.cpp
 | `npc_status.h` | mission NPC status from the master data |
 | `testing.h`, `native_test.h`, `scratch.h` | the test registry and runner, the `NATIVE_TEST` spelling, a scratch server for tests outside the library |
 
-Every function here gets a doc comment (section 2.6 of the plan); the check is report-only until R19 (`tools/check_server_docs.sh`).
+Every function here has a doc comment (the comment above it or above its group of declarations; constructors, destructors and operators are covered by their class's): enforced since R19 (`tools/check_server_docs.sh`, `tools/server_doc_coverage.py`).

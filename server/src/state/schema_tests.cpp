@@ -41,7 +41,8 @@ struct TempDb {
                                    ".bak-v5", ".bak-v5-journal",
                                    ".bak-v6", ".bak-v6-journal",
                                    ".bak-v7", ".bak-v7-journal",
-                                   ".bak-v8", ".bak-v8-journal"})
+                                   ".bak-v8", ".bak-v8-journal",
+                                   ".bak-v9", ".bak-v9-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -1098,6 +1099,205 @@ NATIVE_TEST("server/schema-migrate-v9") {
     bak.close();
 }
 
+// Version 10 (PLAN-schema S10: the module tables). (1) v0 -> v10 at once, against the same file
+// migrated to 9, with the fixture's S10 dirt and planted cases per module group; the rebuilt
+// tables row by row, every other table's rows equal (but the CASCADE children the mapping drops
+// with their parent: listed). (2) v9 -> v10 without the master (.bak-v9).
+NATIVE_TEST("server/schema-migrate-v10") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v10 ------------------------------------------------------------------------------
+    TempDb ref_file("v10-ref"), old("v10");
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    const std::string area = "3129394740", crew_uid = "2113929216";  // the fixture's explored area, ship 1's first member
+    // the S10 dirt, in both files
+    for (Sql* d : {&ref, &db})
+        t.expect_eq(
+            d->exec(
+                // deep space: an offer on a ship that doesn't exist (is_new 3, a NULL count, updated_at 0), one of no explored
+                // area, one on a ship of no explored area; that ship (with a crew member) and one with NULLs; bonus values of
+                // the dropped ship, without a bonus id, without a value
+                "insert into ds_offer (mission_id, area_id, bonus_set_id, closed_at, ship_id, is_new, play_count, play_count_daily, "
+                "play_count_weekly, updated_at) values (11, " +
+                area + ", 5, 1790900000, 77, 3, null, 2, 0, 0), (12, 999, 5, 0, 0, 0, 0, 0, 0, 1), (13, " + area +
+                ", 5, 0, 2, 0, 0, 0, 0, 1);"
+                "insert into ds_ship (ship_id, area_id, mission_id, bonus_set_id, item_id, uids, started_at, closed_at) values (2, 999, 13, 0, 0, '" +
+                crew_uid + ",', 1, 2), (3, " + area +
+                ", null, null, 0, '', null, 5);"
+                "insert into ds_bonus (ship_id, bonus_id, value) values (2, 1, 2.0), (1, null, 1.0), (3, 4, null);"
+                // gacha: a character draw (duplicate 2, NULL rank and costs) and one of a character not owned; the counter
+                // above the ids; a step-up row with NULL counts; drawn slots of a box without its box_state row, a slot
+                // without a slot id
+                "insert into gacha_history (id, gacha_id, at, role_id, uid, rank, duplicate, cost_free, cost_pay) values "
+                "(900, 1, 5, 77, " +
+                crew_uid +
+                ", null, 2, null, null), (901, 1, 5, 77, 12345, 'S', 0, 1, 2);"
+                "update sqlite_sequence set seq = 950 where name = 'gacha_history';"
+                "insert into stepup (head, try_count, restart_count, next_id) values (66, null, null, null);"
+                "insert into box_slots (gacha_id, slot_id, drawn) values (77, 1, 2), (77, 2, null), (78, null, 1);"
+                // events: a boss in a big hunt, clears of a boss never met (and without a wave), notified 5, NULL lots
+                "insert into wboss (boss_id, area_id, wave, wave_started_at, hunt_until, hunt_new) values (55, 1, 2, 1790841600, 1790900000, 1);"
+                "insert into wboss_clear (boss_id, wave, cleared_at, notified) values (55, 1, 1790841700, 5), (4242, 1, 1, 0), (55, null, 1, 0);"
+                "insert into favor_drop_play (same_role_id, lots) values (66, null);"
+                // shop: NULL counts
+                "insert into shop_counts (id, num, period, total) values (67, null, 5, null);"
+                "insert into exchange_counts (id, num) values (68, null);"
+                // Sphere 211: a NULL count in the dive, a departed character not owned, a box with NULLs and the counter
+                // above it, the log emptied with its counter kept, a ranking without a floor
+                "update sphere set streak = null;"
+                "insert into sphere_departed (uid) values (12345);"
+                "insert into sphere_box (id, floor_level, rank) values (5, null, null);"
+                "update sqlite_sequence set seq = 99 where name = 'sphere_box';"
+                "delete from sphere_log;"
+                "update sqlite_sequence set seq = 42 where name = 'sphere_log';"
+                "insert into sphere_rank (season_id, floor_level, entered_at) values (69, null, null);"
+                // daily: the fixture's favor bonus row has healed_at 0; its lot character not owned
+                "update favor_bonus_state set lot_uid = 12345;"
+                // the rest: a meta key without a value, NULL counts, an unlock by a mission never played (the fixture's
+                // wire_device has player_id 0)
+                "insert into meta (key, value) values ('x_key', null);"
+                "insert into stock (master_item_id, item_type, count) values (70, null, null);"
+                "insert into counters (key, value) values ('x_count', null);"
+                "insert into unlocks (mission_id, mission_type, by_mission, at) values (71, null, 4242, null), (72, 1, 0, 5);"),
+            true, "the S10 cases planted");
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 9, m), true, "the reference: migrated to 9");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 10, m), true, "migrated to 10");
+    t.expect_eq(state::user_version(db.h), 10, "user_version 10");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
+    // clang-format off
+    const std::set<std::string> rebuilt = {
+        "ds_ship", "ds_offer", "ds_bonus",
+        "gacha_history", "stepup", "box_state", "box_slots",
+        "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
+        "shop_counts", "exchange_counts", "subscription",
+        "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
+        "favor_bonus_state",
+        "meta", "stock", "counters", "achievements", "gear_barney", "unlocks", "wire_device",
+    };
+    // clang-format on
+    std::vector<std::string> tables;
+    ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+          [&](const Row& r) { tables.push_back(r.s("name")); });
+    auto ref_rows = rows_of(ref), db_rows = rows_of(db);
+    for (const std::string& table : tables) {
+        if (rebuilt.count(table) || table == "ds_ship_member") continue;
+        if (ref_rows[table] != db_rows[table]) t.fail("%s: rows changed", table.c_str());
+    }
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51, "51 tables");
+    t.expect_eq(db.one("select count(*) from sqlite_master where name like 'new_%'", {}), (int64_t)0, "no new_X");
+    for (const std::string& table : rebuilt)
+        t.expect_eq(db.one("select count(*) from sqlite_master where name = ? and sql like '%) strict'", {table}), (int64_t)1,
+                    (table + " is STRICT").c_str());
+    // deep space
+    t.expect_eq(
+        rows_over(db, "ds_ship", "*"),
+        (std::vector<std::string>{"1:1|1:" + area + "|1:2081363|1:0|1:0|1:1790841600|1:1790845200|", "1:3|1:" + area + "|1:0|5:|1:0|1:0|1:5|"}),
+        "ds_ship: a ship of no area dropped, NULLs -> 0, item_id 0 kept");
+    t.expect_eq(rows_over(db, "ds_ship_member", "ship_id, slot, uid"), rows_over(ref, "ds_ship_member", "ship_id, slot, uid", "ship_id != 2"),
+                "ds_ship_member: the dropped ship's crew gone with it");
+    t.expect_eq(ref.one("select count(*) from ds_ship_member where ship_id = 2", {}), (int64_t)1, "(the reference has it)");
+    t.expect_eq(
+        rows_over(db, "ds_offer", "*"),
+        (std::vector<std::string>{"1:11|1:" + area + "|1:5|1:1790900000|5:|1:1|1:0|1:2|1:0|5:|", "1:13|1:" + area + "|1:5|5:|5:|1:0|1:0|1:0|1:0|1:1|",
+                                  "1:2081363|1:" + area + "|1:0|5:|1:1|1:0|1:1|1:1|1:1|1:1790841600|"}),
+        "ds_offer: closed_at / updated_at 0 -> NULL, ship_id dangling -> NULL, is_new 3 -> 1, no area -> dropped");
+    t.expect_eq(rows_over(db, "ds_bonus", "*"), (std::vector<std::string>{"1:1|1:1|2:1.5|", "1:3|1:4|2:0.0|"}),
+                "ds_bonus: no ship or no bonus id -> dropped, NULL value -> 0");
+    // gacha: (id, gacha_id, at, role_id, character_uid, item_uid, rank, duplicate, cost_free, cost_pay)
+    t.expect_eq(rows_over(db, "gacha_history", "*", "id >= 900"),
+                (std::vector<std::string>{"1:900|1:1|1:5|1:77|1:" + crew_uid + "|5:|3:|1:1|1:0|1:0|", "1:901|1:1|1:5|1:77|5:|5:|3:S|1:0|1:1|1:2|"}),
+                "gacha_history: a character draw's uid -> character_uid (not owned: NULL), duplicate 2 -> 1, NULL rank / costs");
+    const int64_t weapon_draws = ref.one("select count(*) from gacha_history where role_id = 0", {});
+    t.expect_eq(weapon_draws > 0, true, "(the fixture's draws are weapons)");
+    t.expect_eq(db.one("select count(*) from gacha_history where role_id is null and character_uid is null", {}), weapon_draws,
+                "a weapon draw: role_id 0 -> NULL, no character");
+    t.expect_eq(rows_over(db, "gacha_history", "id, item_uid", "id < 900"),
+                rows_over(ref, "gacha_history", "id, case when uid in (select uid from items) then uid end", "id < 900"),
+                "its uid -> item_uid, NULL for the sold weapon");
+    t.expect_eq(db.one("select count(*) from gacha_history where id < 900 and item_uid is null", {}), (int64_t)14,
+                "(14 of the fixture's 30 drawn weapons are gone: sold or used up)");
+    t.expect_eq(db.one("select seq from sqlite_sequence where name = 'gacha_history'", {}), (int64_t)950, "the AUTOINCREMENT counter kept");
+    t.expect_eq(rows_over(db, "stepup", "*", "head = 66"), (std::vector<std::string>{"1:66|1:0|1:0|5:|"}), "stepup: NULL counts -> 0");
+    t.expect_eq(rows_over(db, "box_state", "*", "gacha_id = 77"), (std::vector<std::string>{"1:77|1:0|1:0|"}),
+                "box_state: a row for the box its slots name");
+    t.expect_eq(rows_over(db, "box_slots", "*", "gacha_id in (77, 78)"), (std::vector<std::string>{"1:77|1:1|1:2|", "1:77|1:2|1:0|"}),
+                "box_slots: kept (NULL drawn -> 0), no slot id -> dropped");
+    t.expect_eq(rows_over(db, "box_slots", "*", "gacha_id < 77"), rows_over(ref, "box_slots", "*", "gacha_id < 77"), "the fixture's slots kept");
+    // events
+    t.expect_eq(rows_over(db, "wboss", "boss_id, hunt_until"), (std::vector<std::string>{"1:55|1:1790900000|", "1:959907062|5:|"}),
+                "wboss.hunt_until 0 -> NULL (no big hunt), a hunt's end kept");
+    const std::string wboss_cols = "boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_new";
+    t.expect_eq(rows_over(db, "wboss", wboss_cols), rows_over(ref, "wboss", wboss_cols), "wboss's other columns kept");
+    t.expect_eq(rows_over(db, "wboss_clear", "*"), (std::vector<std::string>{"1:55|1:1|1:1790841700|1:1|", "1:959907062|1:1|1:1790841600|1:0|"}),
+                "wboss_clear: a boss never met or no wave -> dropped, notified 5 -> 1");
+    t.expect_eq(rows_over(db, "favor_drop_play", "*", "same_role_id = 66"), (std::vector<std::string>{"1:66|1:0|"}),
+                "favor_drop_play: NULL lots -> 0");
+    // shop
+    t.expect_eq(rows_over(db, "shop_counts", "*", "id = 67"), (std::vector<std::string>{"1:67|1:0|1:5|1:0|"}), "shop_counts: NULL counts -> 0");
+    t.expect_eq(rows_over(db, "exchange_counts", "*", "id = 68"), (std::vector<std::string>{"1:68|1:0|"}), "exchange_counts: NULL num -> 0");
+    // Sphere 211
+    t.expect_eq(db.one("select streak from sphere where id = 1", {}) == 0 && !db.one("select streak is null from sphere", {}), true,
+                "sphere: NULL streak -> 0");
+    const std::string sphere_cols =
+        "id, season_id, floor_level, asset_group, treasure_total, stamina, stamina_at, revive_count, best_floor, entered_at, clear_asset, "
+        "lot_floor_num, reroll_count, prev_season, prev_floor, prev_treasure, prev_rank, cycle, season_wins, end_pending, debug_enemy_level";
+    t.expect_eq(rows_over(db, "sphere", sphere_cols), rows_over(ref, "sphere", sphere_cols), "sphere's other columns kept");
+    t.expect_eq(rows_over(db, "sphere_departed", "*"), (std::vector<std::string>{"1:2113929217|"}), "sphere_departed: not owned -> dropped");
+    t.expect_eq(rows_over(db, "sphere_box", "*"), (std::vector<std::string>{"1:1|1:1|1:1|", "1:5|1:0|1:0|"}), "sphere_box: NULLs -> 0");
+    t.expect_eq(db.one("select seq from sqlite_sequence where name = 'sphere_box'", {}), (int64_t)99, "sphere_box's counter kept");
+    t.expect_eq(db.one("select count(*) from sphere_log", {}), (int64_t)0, "(the log empty)");
+    t.expect_eq(db.one("select seq from sqlite_sequence where name = 'sphere_log'", {}), (int64_t)42, "sphere_log's counter kept without rows");
+    t.expect_eq(rows_over(db, "sphere_rank", "*", "season_id = 69"), (std::vector<std::string>{"1:69|1:0|5:|"}), "sphere_rank: NULL floor -> 0");
+    // daily: (id, day_at, bonus_id, lot_uid, healed_at)
+    t.expect_eq(rows_over(db, "favor_bonus_state", "*"), (std::vector<std::string>{"1:1|1:1790755200|1:0|5:|5:|"}),
+                "favor_bonus_state: healed_at 0 -> NULL (never), lot_uid not owned -> NULL, day_at kept");
+    // the rest
+    t.expect_eq(rows_over(db, "meta", "*", "key = 'x_key'"), (std::vector<std::string>{"3:x_key|3:|"}), "meta: NULL value -> ''");
+    t.expect_eq(rows_over(db, "stock", "*", "master_item_id = 70"), (std::vector<std::string>{"1:70|1:0|1:0|"}), "stock: NULLs -> 0");
+    t.expect_eq(rows_over(db, "counters", "*", "key = 'x_count'"), (std::vector<std::string>{"3:x_count|1:0|"}), "counters: NULL -> 0");
+    t.expect_eq(rows_over(db, "unlocks", "*", "mission_id in (71, 72)"), (std::vector<std::string>{"1:71|1:0|5:|1:0|", "1:72|1:1|5:|1:5|"}),
+                "unlocks: by_mission never played or 0 -> NULL, NULLs -> 0");
+    t.expect_eq(rows_over(db, "unlocks", "*", "mission_id < 71"), rows_over(ref, "unlocks", "*", "mission_id < 71"), "the fixture's unlock kept");
+    t.expect_eq(rows_over(db, "wire_device", "uuid, player_id"), (std::vector<std::string>{"3:00000000-0000-4000-8000-000000000001|5:|"}),
+                "wire_device.player_id 0 -> NULL (a device seen before the player)");
+    for (const char* table : {"meta", "stock", "counters"}) {
+        const std::string other = std::string(table) == "stock" ? "master_item_id != 70" : "key not like 'x_%'";
+        t.expect_eq(rows_over(db, table, "*", other), rows_over(ref, table, "*", other), (std::string(table) + "'s rows kept").c_str());
+    }
+    for (const char* table : {"event_last", "event_rank_received", "subscription", "achievements", "gear_barney"})
+        t.expect_eq(rows_over(db, table, "*"), rows_over(ref, table, "*"), (std::string(table) + " copied").c_str());
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    ref.close();
+    db.close();
+
+    // ---- (2) v9 -> v10, without the master -------------------------------------------------------------
+    TempDb v9("v10-from-v9");
+    if (!write_fixture(t, v9.path)) return;
+    Sql f;
+    if (!f.open(v9.path, false)) return t.fail("open v9");
+    t.expect_eq(state::open_and_migrate(f.h, v9.path, 9, m), true, "migrated to 9");
+    f.close();
+    unlink((v9.path + ".bak-v0").c_str());
+    if (!f.open(v9.path, false)) return t.fail("reopen v9");
+    t.expect_eq(state::user_version(f.h), 9, "a version 9 file");
+    t.expect_eq(state::open_and_migrate(f.h, v9.path, 10), true, "v9 -> v10");
+    t.expect_eq(state::user_version(f.h), 10, "user_version 10");
+    t.expect_eq(f.one("select count(*) from ds_offer where closed_at is null and ship_id = 1", {}), (int64_t)1, "the offer: no limit, on ship 1");
+    t.expect_eq(f.one("select count(*) from favor_bonus_state where healed_at is null and lot_uid is not null", {}), (int64_t)1,
+                "the favor bonus: never healed, its character kept");
+    t.expect_eq(f.one("select count(*) from wire_device where player_id is null", {}), (int64_t)1, "the device: no player");
+    t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+    f.close();
+    Sql bak;
+    if (!bak.open(v9.path + ".bak-v9", true)) return t.fail("no %s.bak-v9", v9.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 9, "the backup is version 9");
+    t.expect_eq(bak.one("select count(*) from ds_offer where closed_at = 0", {}), (int64_t)1, "the backup keeps the 0");
+    bak.close();
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;
@@ -1227,11 +1427,86 @@ NATIVE_TEST("server/schema-fk-actions") {
           std::string("update wboss set wave = 'x'"), std::string("update sphere_cell set floor_level = 'x'")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S9)").c_str());
     t.expect_eq(rc("insert into login_bonus (id, last_at) values (1, 0)"), SQLITE_CONSTRAINT_NOTNULL, "login_bonus.day_index not null (S9)");
+    // S10: the module tables' references refused when dangling, their checks and STRICT
+    for (const std::string& sql : {std::string("update ds_offer set ship_id = 99"), std::string("update ds_offer set area_id = 99"),
+                                   std::string("insert into ds_ship (ship_id, area_id, mission_id, started_at) values (9, 99, 1, 0)"),
+                                   std::string("insert into ds_bonus (ship_id, bonus_id, value) values (99, 1, 1.0)")})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once (S10)").c_str());
+    t.expect_eq(rc("insert into sphere_departed (uid) values (9999)"), SQLITE_CONSTRAINT_FOREIGNKEY, "sphere_departed: refused at once (S10)");
+    t.expect_eq(rc("update favor_bonus_state set lot_uid = 9999"), SQLITE_CONSTRAINT_FOREIGNKEY, "favor_bonus_state.lot_uid: refused at once (S10)");
+    t.expect_eq(rc("update wire_device set player_id = 9999"), SQLITE_CONSTRAINT_FOREIGNKEY, "wire_device.player_id: refused at once (S10)");
+    t.expect_eq(rc("update wire_device set player_id = (select id from player)"), SQLITE_OK, "the device: the player's");
+    t.expect_eq(txn("insert into unlocks (mission_id, mission_type, by_mission, at) values (73, 1, 4243, 0)"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "an unlock by a mission never played: refused at commit (S10)");
+    t.expect_eq(txn("insert into unlocks (mission_id, mission_type, by_mission, at) values (73, 1, 4243, 0);"
+                    "insert into mission (mission_id) values (4243)"),
+                SQLITE_OK, "deferred: the mission's row before commit (MissionEnd's order, S10)");
+    t.expect_eq(rc("delete from mission where mission_id = 4243"), SQLITE_CONSTRAINT_FOREIGNKEY, "a mission that unlocked one: NO ACTION");
+    t.expect_eq(rc("insert into meta (key) values ('y')"), SQLITE_CONSTRAINT_NOTNULL, "meta.value not null (S10)");
+    t.expect_eq(rc("update gear_barney set id = 2"), SQLITE_CONSTRAINT_CHECK, "gear_barney: one row");
+    t.expect_eq(rc("update favor_bonus_state set id = 2"), SQLITE_CONSTRAINT_CHECK, "favor_bonus_state: one row");
+    t.expect_eq(rc("insert into gacha_history (gacha_id, at, character_uid, rank) values (1, 0, 9999, 'S')"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "gacha_history.character_uid: refused at once (S10)");
+    t.expect_eq(rc("insert into gacha_history (gacha_id, at, item_uid, rank) values (1, 0, 9999, 'S')"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "gacha_history.item_uid: refused at once (S10)");
+    t.expect_eq(rc("insert into box_slots (gacha_id, slot_id, drawn) values (9999, 1, 1)"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "box_slots without its box: refused at once (S10)");
+    // a boss's clear: deferred, so a first meeting's clear can come before the boss's row (MissionEnd)
+    t.expect_eq(txn("insert into wboss_clear (boss_id, wave) values (4242, 1)"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "a clear of a boss never met: refused at commit (S10)");
+    t.expect_eq(txn("insert into wboss_clear (boss_id, wave) values (4242, 1); insert into wboss (boss_id, area_id) values (4242, 1)"), SQLITE_OK,
+                "deferred: the boss's row before commit (S10)");
+    for (const std::string& sql : {std::string("update ds_offer set is_new = 2"), std::string("update gacha_history set duplicate = 2"),
+                                   std::string("update wboss_clear set notified = 2")})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_CHECK, (sql + ": refused (S10)").c_str());
+    for (const std::string& sql : {std::string("update ds_offer set closed_at = 'x'"),
+                                   std::string("update ds_ship set started_at = 'x'"),
+                                   std::string("update ds_bonus set value = 'x'"),
+                                   std::string("update gacha_history set at = 'x'"),
+                                   std::string("update stepup set try_count = 'x'"),
+                                   std::string("update box_slots set drawn = 'x'"),
+                                   std::string("update wboss set hunt_until = 'x'"),
+                                   std::string("update wboss_clear set cleared_at = 'x'"),
+                                   std::string("update event_last set mission_id = 'x'"),
+                                   std::string("update event_rank_received set received_at = 'x'"),
+                                   std::string("update favor_drop_play set lots = 'x'"),
+                                   std::string("update shop_counts set total = 'x'"),
+                                   std::string("update exchange_counts set num = 'x'"),
+                                   std::string("update subscription set closed_at = 'x'"),
+                                   std::string("update sphere set streak = 'x'"),
+                                   std::string("update sphere_box set rank = 'x'"),
+                                   std::string("update sphere_rank set floor_level = 'x'"),
+                                   std::string("update sphere_log set at = 'x'"),
+                                   std::string("update favor_bonus_state set healed_at = 'x'"),
+                                   std::string("update stock set count = 'x'"),
+                                   std::string("update counters set value = 'x'"),
+                                   std::string("update achievements set progress = 'x'"),
+                                   std::string("update gear_barney set type = 'x'"),
+                                   std::string("update unlocks set at = 'x'"),
+                                   std::string("update wire_device set last_seen = 'x'")})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S10)").c_str());
     t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
                 "a present has its created_at (S8)");
 
+    // S10, gacha: a box's slots go with it; a drawn character or weapon gone leaves its draw
+    t.expect_eq(rc("insert into gacha_history (gacha_id, at, role_id, character_uid, rank) values (1, 0, 1, " + a +
+                   ", 'S');"
+                   "insert into gacha_history (gacha_id, at, item_uid, rank) values (1, 0, " +
+                   item1 + ", 'S')"),
+                SQLITE_OK, "a's draw and item1's");
+    const int64_t box = db.one("select min(gacha_id) from box_slots", {});
+    t.expect_eq(box != 0, true, "the fixture's box has drawn slots");
+    t.expect_eq(rc("delete from box_state where gacha_id = " + std::to_string(box)), SQLITE_OK, "the box deleted");
+    t.expect_eq(db.one("select count(*) from box_slots where gacha_id = ?", {box}), (int64_t)0, "ON DELETE CASCADE: its slots are gone");
+    // S10, events: a boss's clears go with it
+    t.expect_eq(db.one("select count(*) from wboss_clear where boss_id = 4242", {}), (int64_t)1, "boss 4242's clear");
+    t.expect_eq(rc("delete from wboss where boss_id = 4242"), SQLITE_OK, "boss 4242 deleted");
+    t.expect_eq(db.one("select count(*) from wboss_clear where boss_id = 4242", {}), (int64_t)0, "ON DELETE CASCADE: its clears are gone");
+
     // ON DELETE SET NULL
     t.expect_eq(rc("delete from items where uid = " + item1), SQLITE_OK, "an item deleted");
+    t.expect_eq(db.one("select count(*) from gacha_history where item_uid is null and at = 0 and role_id is null", {}), (int64_t)1,
+                "gacha_history.item_uid -> NULL (S10)");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and weapon_uid is null and accessory_uid = ?", {std::stoll(a), std::stoll(item2)}),
                 (int64_t)1, "its wearer's weapon_uid -> NULL");
     t.expect_eq(db.one("select count(*) from gear_items where uid in (" + gear_set + ", " + gear_free + ")", {}), (int64_t)0,
@@ -1244,15 +1519,36 @@ NATIVE_TEST("server/schema-fk-actions") {
                 "the set's accessory_uid -> NULL");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and accessory_uid is null", {std::stoll(a)}), (int64_t)1, "accessory_uid -> NULL");
     t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_CONSTRAINT_FOREIGNKEY, "a character out on a ship: refused (NO ACTION)");
+    t.expect_eq(db.one("select count(*) from ds_offer where ship_id = 1", {}), (int64_t)1, "the fixture's offer: on ship 1");
+    t.expect_eq(db.one("select count(*) from ds_bonus where ship_id = 1", {}), (int64_t)1, "the fixture's ship 1: a bonus value");
     t.expect_eq(rc("delete from ds_ship where ship_id = 1"), SQLITE_OK, "ship 1 deleted");
     t.expect_eq(db.one("select count(*) from ds_ship_member", {}), (int64_t)0, "ON DELETE CASCADE: its crew is gone");
+    t.expect_eq(db.one("select count(*) from ds_bonus", {}), (int64_t)0, "ON DELETE CASCADE: its bonus values are gone (S10)");
+    t.expect_eq(db.one("select count(*) from ds_offer where ship_id is null", {}), db.one("select count(*) from ds_offer", {}),
+                "ON DELETE SET NULL: its offer is on no ship (S10)");
+    // S10, deep space: an area's offers and ships go with it
+    t.expect_eq(rc("insert into ds_ship (ship_id, area_id, mission_id, started_at) values (5, (select min(area_id) from ds_area), 1, 0);"
+                   "insert into ds_bonus (ship_id, bonus_id, value) values (5, 1, 1.0);"
+                   "update ds_offer set ship_id = 5"),
+                SQLITE_OK, "ship 5 out, the offer on it");
+    t.expect_eq(rc("delete from ds_area"), SQLITE_OK, "the area deleted");
+    t.expect_eq(
+        db.one("select count(*) from ds_offer", {}) + db.one("select count(*) from ds_ship", {}) + db.one("select count(*) from ds_bonus", {}),
+        (int64_t)0, "ON DELETE CASCADE: its offers, its ship and the ship's bonus values are gone");
+    t.expect_eq(db.one("select count(*) from sphere_departed where uid = ?", {std::stoll(b)}), (int64_t)1, "b departed (the fixture's)");
     t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_OK, "the assist and support character deleted");
+    t.expect_eq(db.one("select count(*) from sphere_departed where uid = ?", {std::stoll(b)}), (int64_t)0,
+                "ON DELETE CASCADE: b's sortie is gone (S10)");
     t.expect_eq(db.one("select count(*) from play_member where slot = 1 and uid is null", {}), (int64_t)1, "play_member.uid -> NULL (b)");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and assist_uid is null", {std::stoll(a)}), (int64_t)1, "assist_uid -> NULL");
     t.expect_eq(db.one("select count(*) from player where support_uid is null", {}), (int64_t)1, "support_uid -> NULL");
     t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and assist_uid is null", {}), (int64_t)1,
                 "the set's assist_uid -> NULL");
+    t.expect_eq(rc("update favor_bonus_state set lot_uid = " + a), SQLITE_OK, "a is the favor bonus's character");
     t.expect_eq(rc("delete from roster where uid = " + a), SQLITE_OK, "set 3's member deleted");
+    t.expect_eq(db.one("select count(*) from favor_bonus_state where lot_uid is null", {}), (int64_t)1, "favor_bonus_state.lot_uid -> NULL (S10)");
+    t.expect_eq(db.one("select count(*) from gacha_history where character_uid is null and at = 0 and role_id = 1", {}), (int64_t)1,
+                "gacha_history.character_uid -> NULL (S10)");
     t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and uid is null", {}), (int64_t)1,
                 "party_member.uid -> NULL (an empty slot)");
     t.expect_eq(txn("delete from roster where uid = " + c), SQLITE_OK, "the home character deleted");
@@ -1266,6 +1562,8 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(db.one("select count(*) from play_member", {}), (int64_t)0, "ON DELETE CASCADE: its members are gone");
     t.expect_eq(rc("delete from titles where id = " + title), SQLITE_OK, "the worn title deleted");
     t.expect_eq(db.one("select count(*) from player where title_id is null", {}), (int64_t)1, "title_id -> NULL");
+    t.expect_eq(txn("delete from player"), SQLITE_OK, "the player deleted");
+    t.expect_eq(db.one("select count(*) from wire_device where player_id is null", {}), (int64_t)1, "wire_device.player_id -> NULL (S10)");
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");
     db.close();
 }

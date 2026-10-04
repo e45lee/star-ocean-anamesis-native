@@ -52,6 +52,20 @@ struct Side {
         t.call("_ZN4Aska5EventC1Ev", {(u64)&d->m_freeBlockEvent});
         t.call("_ZN4Aska23SimpleMessageDispatcher10InitializeEv", {(u64)d});
         t.call("_ZN4Aska23SimpleMessageDispatcher5SetupEii", {(u64)d, (u64)kBlocks, 0x55});
+        // (Setup leaves the blocks' links and contents as the heap had them: zeroed on both sides)
+        for (s32 k = 0; k < kBlocks; k++) {
+            MessageDispatcherBlockForList& b = d->m_blocks[k];
+            b.link.m_prev = b.link.m_next = nullptr;
+            std::memset(&b.m_block, 0, sizeof b.m_block);
+            b.m_priority = 0;
+        }
+        // (the free queue's unused slot is uninitialized heap memory: zeroed so the two sides compare)
+        for (u32 i = 0; i < d->m_freeBlocks.m_capacity; i++)
+            if (i == d->m_freeBlocks.m_write || i == d->m_freeBlocks.m_read) {
+                bool used = false;
+                for (s32 k = 0; k < kBlocks; k++) used |= d->m_freeBlocks.m_items[i] == &d->m_blocks[k];
+                if (!used) d->m_freeBlocks.m_items[i] = nullptr;
+            }
         std::memset(workers, 0, sizeof workers);
         *reinterpret_cast<u64*>(workers) = kWorkers;
         auto* w = reinterpret_cast<WorkerThread*>(workers + 8);

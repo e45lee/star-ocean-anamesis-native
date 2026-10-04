@@ -1,0 +1,295 @@
+STAR OCEAN: anamnesis on the desktop: {{IF port}}the desktop port of 3.7.0{{END}}{{IF emulator}}the 3.7.0 emulator and its local server{{END}}{{IF viewer}}the offline client in soa-viewer{{END}}
+Version {{VERSION}} ({{PLATFORM}}), built from commit {{COMMIT}}
+==========================================================================
+{{IF viewer}}
+soa-viewer{{EXE}} runs the offline build of STAR OCEAN: anamnesis (JP), the version released after{{# 380-ok}}
+the online service ended, unmodified, in an emulator: the game as a phone shows it today (no
+server). Your progress stays on this computer.
+
+This package holds no game files. You supply your own copy of the game (below); soa-viewer reads
+it where it is and never changes it.
+
+
+1. Game files
+-------------
+
+soa-viewer needs one file: the offline game's XAPK as downloaded from APKPure,{{# 380-ok}}
+  STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk{{# 380-ok: soa-viewer's game file}}
+Any file name ending in .xapk works when it holds the game (soa-viewer reads it in place, without{{# 380-ok}}
+unpacking it). Put it in the folder "game" beside soa-viewer{{EXE}} (it is already there, empty):
+
+  {{TOP}}/
+    soa-viewer{{EXE}}
+{{IF windows}}
+    run-viewer.cmd
+{{ELSE}}
+    run-viewer.sh
+{{END}}
+    README.txt  (this file)
+    game/
+      STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk{{# 380-ok: soa-viewer's game file}}
+
+It may also sit directly beside soa-viewer{{EXE}} instead of in game/.
+
+Where soa-viewer looks, first match wins:
+  1. the command-line flags (below);
+  2. a source checkout of the project, when it runs from one (developers);
+  3. the folder soa-viewer{{EXE}} is stored in (not the current directory);
+  4. its game/ subfolder.
+In 3. and 4. only the top level is searched: the first *.xapk there that holds the game.{{# 380-ok}}
+
+
+2. Running
+----------
+
+{{IF windows}}
+  Double-click run-viewer.cmd, or in a terminal:  soa-viewer.exe [options]
+{{ELSE}}
+  ./soa-viewer [options]        (or ./run-viewer.sh [options])
+{{END}}
+
+soa-viewer{{EXE}}
+  needs:      the offline game's XAPK (1.){{# 380-ok}}
+  flags:      --xapk FILE          the XAPK{{# 380-ok}}
+              --apk-dir DIR        the XAPK unpacked instead (its APKs in DIR){{# 380-ok}}
+              --data DIR           where the game's data and save go (default below)
+              --fullscreen, --size WxH, --landscape, ...  soa-viewer{{EXE}} --help lists them all.
+  writes to:  {{IF windows}}%LOCALAPPDATA%\soa\viewer-380\{{ELSE}}~/.local/share/soa-viewer-380/{{END}}  (unless --data DIR): the phone's data and
+              save, libSOA.so (taken from the XAPK on the first run), the asset pack's files{{# 380-ok}}
+
+
+3. The first run
+----------------
+
+soa-viewer takes the client library (libSOA.so) out of the XAPK into its data dir, once (a{{# 380-ok}}
+second; again only when the XAPK's library changes), and installs the asset pack's files there.{{# 380-ok}}
+
+
+4. When something is missing
+----------------------------
+
+soa-viewer stops with a message naming the file and where it looked:
+
+  fatal: the 3.8.0 XAPK wasn't found: give --xapk FILE (or put the *.xapk in <here>/game, beside{{# 380-ok: soa-viewer's message}}
+         soa-viewer, or in the repository's apk/: see README.txt), or --apk-dir DIR
+
+Put the file as in 1. and start again.
+
+
+5. What is in this package
+--------------------------
+
+  soa-viewer{{EXE}}           the program (optimized build, debug info stripped: a separate
+                              debug-symbols zip of the same version has it)
+  LICENSE.txt                 this software's license (GNU GPL v3)
+  THIRD-PARTY-NOTICES.txt     the licenses of the libraries it links
+  BUILD-INFO.txt              the version, commit and build settings
+
+{{IF linux}}
+Linux needs: glibc 2.39 or newer (Ubuntu 24.04, Debian 13, Fedora 40 or later), libEGL and
+libGLESv2 (Mesa: libegl1, libgles2, libegl-mesa0, libgl1-mesa-dri), X11 or Wayland, PulseAudio
+or PipeWire (pipewire-pulse) for sound, ffmpeg for the story movies, and a Japanese font for
+the name-entry box (e.g. fonts-ipaexfont-gothic or fonts-noto-cjk).
+{{ELSE}}
+Windows needs: Windows 10 or 11 (x64). Everything else is built in, except ffmpeg for the story
+movies: put ffmpeg.exe beside the program or on PATH (without it the movies do not play).
+{{END}}
+{{ELSE}}
+{{IF port}}
+soa{{EXE}} is the desktop port of the last online client of STAR OCEAN: anamnesis (3.7.0, JP),
+with a local game server built in: no network and no account needed. Your progress stays on
+this computer.
+{{ELSE}}
+soa-emu{{EXE}} runs the original 3.7.0 client of STAR OCEAN: anamnesis (JP), unmodified, in an
+emulator; soa-server{{EXE}} is the local game server it talks to (it can also run on its own, for
+any client that connects to it). run-emulator{{IF windows}}.cmd{{ELSE}}.sh{{END}} starts the server, then the client, and stops
+the server when you close the client.
+{{END}}
+
+This package holds no game files. You supply your own copy of the game (below); the programs read
+it where it is and never change it.
+
+
+1. Game files
+-------------
+
+You need two files:
+
+  STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk
+      the 3.7.0 app (APK). Any file name ending in .apk works: the programs recognise the
+      3.7.0 APK by its contents (lib/arm64-v8a/libSOA.so of 3.7.0); other versions are skipped
+      with a note in the log.
+
+  SOA-3.7.0-canonical-data.zip
+      the full 3.7.0 download (the data the online game downloaded: version.bin, manifest/,
+      sqlite/, Sound/, Character/, ...). Leave it zipped, or extract it into a folder (any name);
+      a folder counts when it holds version.bin, manifest/ and sqlite/basmaster.sqlite3.
+
+Put them in the folder "game" beside the program{{IF windows}}s{{END}} (it is already there, empty), like this:
+
+  {{TOP}}/
+{{IF port}}
+    soa{{EXE}}
+{{IF windows}}
+    run-port.cmd
+{{ELSE}}
+    run-port.sh
+{{END}}
+{{ELSE}}
+    soa-emu{{EXE}}
+    soa-server{{EXE}}
+{{IF windows}}
+    run-emulator.cmd, run-emulator.ps1
+{{ELSE}}
+    run-emulator.sh
+{{END}}
+{{END}}
+    README.txt  (this file)
+    data/  standin-assets/  (ours: see 5.)
+    game/
+      STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk
+      SOA-3.7.0-canonical-data.zip          <- or the extracted folder, e.g. game/download-3.7.0/
+
+They may also sit directly beside the program instead of in game/.
+
+Where the programs look, first match wins:
+  1. the command-line flags (below);
+  2. a source checkout of the project, when the program runs from one (developers);
+  3. the folder the program is stored in (not the current directory);
+  4. its game/ subfolder.
+In 3. and 4. only the top level is searched: the APK is any *.apk there, the data is
+SOA-3.7.0-canonical-data.zip there, or a folder there (or the folder itself) holding the download.
+
+
+2. Running
+----------
+
+{{IF port}}
+{{IF windows}}
+  Double-click run-port.cmd, or in a terminal:  soa.exe [options]
+{{ELSE}}
+  ./soa [options]        (or ./run-port.sh [options])
+{{END}}
+
+soa{{EXE}}
+  needs:      the 3.7.0 APK and the 3.7.0 download (1.)
+  flags:      --apk FILE           the APK
+              --download PATH      the download: SOA-3.7.0-canonical-data.zip or a folder
+                                   (--download-dir DIR is the same)
+              --master FILE        an already decrypted 3.7.0 master DB (normally not needed: 3.)
+              --data DIR           where your save and the server's state go (default below)
+              --fullscreen, --size WxH, --new-player, --seed FILE, --enable-events, ...
+              soa{{EXE}} --help lists them all.
+  first run:  a new account: the game's own tutorial and starter characters. To continue from
+              your own 3.7.0 save instead, give it once on the first run: --seed Game.xml (the
+              phone's shared_prefs/Game.xml).
+  writes to:  {{IF windows}}%LOCALAPPDATA%\soa\port-370\{{ELSE}}~/.local/share/soa-linux-370/{{END}}  (unless --data DIR):
+              the phone's data and save, server.sqlite3 (your player), libSOA-3.7.0.so (taken from
+              the APK on the first run), master/ (the master DB, 3.), cdn/ (the local CDN's cache)
+{{ELSE}}
+{{IF windows}}
+  Double-click run-emulator.cmd, or in a terminal:  run-emulator.cmd [options]
+{{ELSE}}
+  ./run-emulator.sh [options]
+{{END}}
+  First run: a new account (the game's tutorial and starter characters), unless --seed FILE
+  (your own 3.7.0 or offline Game.xml) is given on the first run.
+  Options: --new-player (start a fresh account), --seed FILE (start from a 3.7.0 or offline
+  Game.xml), --enable-events, --port N, --home DIR; others go to soa-emu (e.g. --fullscreen).
+  run-emulator{{IF windows}}.cmd{{ELSE}}.sh{{END}} --help lists them.
+  Data: {{IF windows}}%LOCALAPPDATA%\soa\emulator-370\{{ELSE}}~/.local/share/soa-emulator-370/{{END}}  (unless --home DIR): phone{{IF windows}}\{{ELSE}}/{{END}} (the
+  client's data and save), server{{IF windows}}\{{ELSE}}/{{END}} (the server's state, master{{IF windows}}\{{ELSE}}/{{END}}, cdn{{IF windows}}\{{ELSE}}/{{END}}), server.log.
+
+soa-server{{EXE}}
+  needs:      the 3.7.0 download (1.): it serves it to the client (the local CDN) and decrypts
+              the game's master DB from it (3.). The APK is not needed.
+  flags:      --download PATH      the download: SOA-3.7.0-canonical-data.zip or a folder
+                                   (--download-dir DIR is the same)
+              --master FILE        an already decrypted 3.7.0 master DB
+              --data DIR           its state (server.sqlite3), master/, cdn/ (run-emulator passes
+                                   HOME{{IF windows}}\{{ELSE}}/{{END}}server; without --data: ./server.sqlite3, and the master under
+                                   {{IF windows}}%LOCALAPPDATA%\soa\server-370\master{{ELSE}}~/.local/share/soa-server-370/master{{END}})
+              --listen HOST:PORT   the game port (default 127.0.0.1:44300); --http HOST:PORT the
+                                   CDN (default 127.0.0.1:44380); soa-server{{EXE}} --help lists all
+  Without a download it still answers the game, but has no CDN: the client can't get its data.
+
+soa-emu{{EXE}}
+  needs:      the 3.7.0 APK (1.). It gets the rest of the data from soa-server, like the real
+              game did (the first start downloads about 3 GB from it into the phone's data).
+  flags:      --apk FILE           the APK
+              --data DIR           the phone's data (default {{IF windows}}%LOCALAPPDATA%\soa\emulator-370\phone{{ELSE}}~/.local/share/soa-emulator-370/phone{{END}})
+              --server HOST:PORT, --http HOST:PORT   where soa-server listens
+              soa-emu{{EXE}} --help lists them all.
+  writes to:  the phone's data dir: the client's files and save, libSOA-3.7.0.so (taken from the
+              APK on the first run)
+{{END}}
+
+
+3. The first run
+----------------
+
+The programs prepare what they need from your game files, once:
+  - the client library libSOA.so is taken out of the APK into the data dir (a second);
+  - the game's master database is decrypted from the download's sqlite/basmaster.sqlite3 into
+    the data dir's master/ folder (a few seconds). Its file name holds a hash of the source, so a
+    different download is decrypted again; nothing else changes the cached copy. Without a
+    download, the APK's built-in master is used as a last resort (it is older: some content is
+    missing; a warning says so), but the local CDN still needs the download;
+  - the local CDN indexes the download (cdn/; seconds from a fast disk, up to a minute from a
+    slow one; zipped or extracted makes no difference).
+{{IF emulator}}
+  - soa-emu's client then downloads its data from soa-server (about 3 GB, a few minutes), as the
+    real game did on a phone.
+{{END}}
+
+
+4. When something is missing
+----------------------------
+
+The program stops with a message naming the file, and where it looked, for example:
+
+{{IF port}}
+  fatal: the 3.7.0 APK wasn't found (--apk FILE, ...); put the game files in <here>/game
+         (the 3.7.0 APK, and the 3.7.0 download: SOA-3.7.0-canonical-data.zip, zipped or extracted): see README.txt
+  fatal: --server inproc needs the 3.7.0 download: give --download PATH (a folder or
+         SOA-3.7.0-canonical-data.zip; ...); put the game files in ...
+{{ELSE}}
+  soa-emu:    fatal: the 3.7.0 APK wasn't found (give --apk); put the game files in <here>/game ...
+  soa-server: E/server: no 3.7.0 master DB: give --master FILE, or --download PATH (the 3.7.0
+              download, a folder or SOA-3.7.0-canonical-data.zip, ...), or put the game files in ...
+  run-emulator: soa-server found no 3.7.0 download (see README.txt); log: .../server.log
+{{END}}
+
+An APK of another version is skipped with "another version of the game (its libSOA.so isn't
+3.7.0's)" in the log. Put the files as in 1. and start again.
+
+
+5. What is in this package
+--------------------------
+
+{{IF port}}
+  soa{{EXE}}                  the program (optimized build, debug info stripped: a separate
+                              debug-symbols zip of the same version has it)
+{{ELSE}}
+  soa-emu{{EXE}}, soa-server{{EXE}}   the programs (optimized builds, debug info stripped: a separate
+                              debug-symbols zip of the same version has it)
+{{END}}
+  data/gacha_pools.sqlite3    our reconstruction of the gacha draw pools (ids and rates; the gacha
+                              titles come from your master at run time)
+  standin-assets/             made-up stand-in images (marked "STAND-IN") for banners the online
+                              server had already deleted
+  LICENSE.txt                 this software's license (GNU GPL v3)
+  THIRD-PARTY-NOTICES.txt     the licenses of the libraries it links
+  BUILD-INFO.txt              the version, commit and build settings
+
+{{IF linux}}
+Linux needs: glibc 2.39 or newer (Ubuntu 24.04, Debian 13, Fedora 40 or later), libEGL and
+libGLESv2 (Mesa: libegl1, libgles2, libegl-mesa0, libgl1-mesa-dri), X11 or Wayland, PulseAudio
+or PipeWire (pipewire-pulse) for sound, ffmpeg for the story movies, and a Japanese font for
+the name-entry box (e.g. fonts-ipaexfont-gothic or fonts-noto-cjk).
+{{ELSE}}
+Windows needs: Windows 10 or 11 (x64). Everything else is built in, except ffmpeg for the story
+movies: put ffmpeg.exe beside the program or on PATH (without it the movies do not play).
+{{END}}
+{{END}}
+STAR OCEAN: anamnesis is (C) SQUARE ENIX. This project is not affiliated with Square Enix.

@@ -18,6 +18,7 @@
 #include "core/request_context.h"
 #include "core/response.h"  // ext::body
 #include "soaserver/config.h"
+#include "soaserver/master_source.h"
 #include "soaserver/server.h"
 #include "state/seed.h"  // seeding a new state
 
@@ -45,9 +46,10 @@ using ext::body;  // core/response.cpp
 // ---- the server (core/server.h) -------------------------------------------------------------
 bool Server::init() {
     if (config().has_clock) set_clock_offset(config().clock_offset);  // --clock
-    std::string master = first_existing({config().master, find_repo_file("data/basmaster-3.7.0.sqlite3")});
+    // --master, the repo's data/basmaster-3.7.0.sqlite3, else derived from the game files (soaserver/master_source.h)
+    std::string master = first_existing({master_source::resolve()});
     if (master.empty() || !m.open(master, true)) {
-        LOGE("server", "the 3.7.0 master DB (data/basmaster-3.7.0.sqlite3, or --master) wasn't found");
+        LOGE("server", "the 3.7.0 master DB (--master, data/basmaster-3.7.0.sqlite3, or one derived from the 3.7.0 download) wasn't found");
         return false;
     }
     std::string path = !config().db.empty() ? config().db : "server.sqlite3";
@@ -56,7 +58,9 @@ bool Server::init() {
     if (!open_state(path, seed_rng, "", config().data_root)) return false;
     if (pools.open(config().gacha_pools)) LOGI("server", "gacha pools %s", pools.path().c_str());
     else LOGW("server", "gacha pools (data/gacha_pools.sqlite3) not found; drawing by rarity");
-    LOGI("server", "local server state %s (master %s)%s", path.c_str(), master.c_str(), fresh ? ", seeded" : "");
+    // a new state: seeded, or no player (--new-player, or no seed save: docs/server-rules.md#seed)
+    const char* fresh_note = !fresh ? "" : st.one("select count(*) from player", {}) ? ", seeded" : ", new (no player: the new-player flow)";
+    LOGI("server", "local server state %s (master %s)%s", path.c_str(), master.c_str(), fresh_note);
     return true;
 }
 
@@ -72,7 +76,14 @@ bool Server::open_state(const std::string& path, u64 seed_rng, const std::string
     rng.seed(seed_rng);
     // --new-player (the entry flow): start without a player, so
     // the client's Login gets "no account" and it runs the new-player flow (CreatePlayer).
-    if (st.one("select count(*) from player", {}) == 0 && !new_player_mode()) {
+    // (d) With no save to seed from (a packaged build ships none: docs/server-rules.md#seed), a new
+    // state starts the same way: a fresh account through the client's own new-player flow, rather
+    // than a finished-tutorial player with no characters.
+    const bool no_seed = seed_source(seed_save).empty();
+    if (no_seed && st.one("select count(*) from player", {}) == 0 && !new_player_mode())
+        LOGI("server",
+             "no seed save (--seed, data/saves/seed/Game.xml, or a --game-xml holding a player): starting a fresh account (the new-player flow)");
+    if (st.one("select count(*) from player", {}) == 0 && !new_player_mode() && !no_seed) {
         RequestContext rc = new_request();
         ext::Ctx ctx = make_ctx(rc);
         // one transaction: a seed is all there or not at all (PLAN-schema S1)

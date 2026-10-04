@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <atomic>
 #include <cstdio>
 #include <cstring>
@@ -15,6 +16,7 @@
 #include <vector>
 
 #include <soa/env.h>
+#include <soa/game_files.h>
 
 #include "net/cdn_http.h"
 #include "net/game.h"
@@ -24,6 +26,7 @@
 #include "replay.h"
 #include "soaserver/cdn.h"
 #include "soaserver/config.h"
+#include "soaserver/master_source.h"
 #include "soaserver/ext.h"
 #include "soaserver/hooks.h"
 #include "soaserver/log.h"
@@ -54,7 +57,11 @@ void usage() {
             "                       upwards from the executable, then the working directory\n"
             "  --data DIR           the server's data dir (state DB default DIR/server.sqlite3, side files)\n"
             "  --db FILE            the state DB (default DATA/server.sqlite3, without --data ./server.sqlite3)\n"
-            "  --master FILE        the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3)\n"
+            "  --master FILE        the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3 in the checkout, else\n"
+            "                       decrypted once from the download's sqlite/basmaster.sqlite3 into DATA/master/;\n"
+            "                       server/README.md \"The master DB\")\n"
+            "  --apk FILE           the 3.7.0 APK: its built-in (older) master is the last resort without a download\n"
+            "                       (default: apk/ in the checkout, else beside the program)\n"
             "  --gacha-pools FILE   the reconstructed gacha pools (default data/gacha_pools.sqlite3)\n"
             "  --seed FILE          the save a new state is seeded from\n"
             "  --game-xml FILE      the last seed fallback\n"
@@ -68,8 +75,11 @@ void usage() {
             "                       events \"水着,夏,サマー,!福袋\"\n"
             "  --restore-tower      serve the tower (as soa --restore-tower)\n"
             "  --home3d-all         debug: the 3D home for every character (as soa --home3d-all)\n"
-            "  --download-dir DIR   the 3.7.0 download (work/download-3.7.0): content is gated on it (as soa\n"
-            "                       --download-dir) and the CDN serves it (server/README.md \"CDN\")\n"
+            "  --download PATH      the 3.7.0 download: a folder (work/download-3.7.0) or SOA-3.7.0-canonical-data.zip,\n"
+            "                       read in place; content is gated on it (as soa --download) and the CDN serves it\n"
+            "                       (server/README.md \"CDN\"); default: none, except a packaged soa-server's: a\n"
+            "                       download folder or zip beside the program or in its game/ folder (README.txt).\n"
+            "                       --download-dir PATH is the same\n"
             "  --cdn-url URL        the CDN base Login sends (AssetPath = URL/download, MasterPath, r_ver); default\n"
             "                       http://production-game.so-ana.com\n"
             "  The default URLs name the client's own host, without a port: the 3.7.0 client's URI parser can't\n"
@@ -111,20 +121,27 @@ std::string upwards(std::string d) {
 }
 // The repo roots, as soa finds them (port core/paths.h): --repo, else upwards from the
 // executable, else from the working directory; plus the main checkout of a git worktree whose
-// work/ links into it.
+// work/ links into it; then the install dirs.
 std::vector<std::string> repo_roots(const std::string& given) {
     std::string root = given.empty() ? "" : real(given);
     if (root.empty()) root = upwards(parent(real("/proc/self/exe")));
     if (root.empty()) root = upwards(real("."));
     std::vector<std::string> all;
-    if (root.empty()) return all;
-    all.push_back(root);
-    struct stat st;
-    if (lstat((root + "/work").c_str(), &st) == 0 && S_ISLNK(st.st_mode)) {
-        std::string w = real(root + "/work");
-        std::string main = w.empty() ? "" : parent(w);
-        if (!main.empty() && main != root && is_repo(main)) all.push_back(main);
+    if (!root.empty()) {
+        all.push_back(root);
+        struct stat st;
+        if (lstat((root + "/work").c_str(), &st) == 0 && S_ISLNK(st.st_mode)) {
+            std::string w = real(root + "/work");
+            std::string main = w.empty() ? "" : parent(w);
+            if (!main.empty() && main != root && is_repo(main)) all.push_back(main);
+        }
     }
+    // then the install dirs (soa/install.h): a packaged soa-server's data files (data/gacha_pools.sqlite3,
+    // data/saves/seed/Game.xml, standin-assets/) sit at their repo paths beside it; without a
+    // checkout, the working directory last (as before, when no root meant "relative to it")
+    for (auto& d : soa::install::install_dirs())
+        if (std::find(all.begin(), all.end(), d) == all.end()) all.push_back(d);
+    if (root.empty() && !all.empty()) all.push_back(".");
     return all;
 }
 
@@ -174,6 +191,7 @@ int main(int argc, char** argv) {
         else if (a == "--data") data = next();
         else if (a == "--db") c.db = next();
         else if (a == "--master") c.master = next();
+        else if (a == "--apk") c.apk = next();
         else if (a == "--gacha-pools") c.gacha_pools = next();
         else if (a == "--seed") c.seed = next();
         else if (a == "--game-xml") c.game_xml = next();
@@ -191,7 +209,7 @@ int main(int argc, char** argv) {
         else if (a == "--event-keywords") c.event_keywords = next();
         else if (a == "--restore-tower") c.restore_tower = true;
         else if (a == "--home3d-all") c.home3d_all = true;
-        else if (a == "--download-dir") download_dir = c.download_dir = next();
+        else if (a == "--download-dir" || a == "--download") download_dir = c.download_dir = next();
         else if (a == "--cdn-url") c.cdn_url = next();
         else if (a == "--standin-assets") {
             std::string v = next();
@@ -217,6 +235,23 @@ int main(int argc, char** argv) {
     if (!data.empty()) {
         c.data_root = data;
         if (c.db.empty()) c.db = data + "/server.sqlite3";
+    }
+    const bool serving = !selftest && !list_apis && !list_hooks && replay_dir.empty();
+    if (serving && download_dir.empty()) {
+        // A packaged soa-server (README.md "Packaging"): the download beside the program or in its
+        // game/ folder (soa/install.h). A checkout's build dir has none, so there nothing changes.
+        std::vector<std::string> notes;
+        std::string d = soa::install::find_download(soa::install::install_dirs(), &notes);
+        for (auto& n : notes) fprintf(stderr, "soa-server: %s\n", n.c_str());
+        if (!d.empty()) {
+            download_dir = c.download_dir = d;
+            fprintf(stderr, "soa-server: the 3.7.0 download %s (found beside the program)\n", d.c_str());
+        }
+    }
+    // The master: --master, the checkout's, else derived from the game files (soaserver/master_source.h).
+    if (serving && soa::server::master_source::resolve().empty()) {
+        fprintf(stderr, "soa-server: no 3.7.0 master DB (see above)\n");
+        return 1;
     }
     // The asset index the content gates use: what the CDN serves, the download dir and the
     // stand-ins unless --standin-assets off (as soa's AssetManager with --standin-assets).

@@ -5,6 +5,7 @@
 // (incl. Play Asset Delivery: jni/java_playcore.cpp), so the viewer adds only one platform
 // answer: the dead service's host names don't resolve (net_offline.cpp). emulator-viewer/README.md.
 #include <soa/env.h>
+#include <soa/install.h>
 #include <soa/paths.h>
 #include <limits.h>
 #include <signal.h>
@@ -186,32 +187,19 @@ bool is_game_xapk(const std::string& path) {
 }
 
 // The XAPK when no --xapk / --apk-dir names the game: the first *.xapk holding the app in the
-// executable's folder, its game/ subfolder, then the repository's apk/ (in a git worktree also the
-// main checkout's, which holds the untracked XAPK). TODO(port/dist): switch the first two to the
-// shared install-dir lookup (common/include/soa/install.h install_dirs()) once it is on main.
+// install dirs (the executable's folder and its game/ subfolder: common/include/soa/install.h, the
+// lookup all four programs share), then the repository's apk/ (in a git worktree also the main
+// checkout's, which holds the untracked XAPK).
 std::string find_xapk(const std::string& repo) {
-    std::vector<std::string> dirs;
-    std::string exe_dir = parent(real("/proc/self/exe"));
-    if (!exe_dir.empty()) dirs = {exe_dir, exe_dir + "/game"};
+    std::vector<std::string> dirs = soa::install::install_dirs();
     if (!repo.empty()) {
         dirs.push_back(repo + "/apk");
         std::string w = real(repo + "/work");
         std::string main = w.empty() ? "" : parent(w);
         if (!main.empty() && main != repo) dirs.push_back(main + "/apk");
     }
-    for (auto& d : dirs) {
-        std::vector<std::string> names;
-        if (DIR* dh = opendir(d.c_str())) {
-            while (dirent* de = readdir(dh)) {
-                std::string n = de->d_name;
-                if (n.size() > 5 && strcasecmp(n.c_str() + n.size() - 5, ".xapk") == 0) names.push_back(n);
-            }
-            closedir(dh);
-        }
-        std::sort(names.begin(), names.end());
-        for (auto& n : names)
-            if (is_game_xapk(d + "/" + n)) return d + "/" + n;
-    }
+    for (auto& f : soa::install::files_with_ext(dirs, ".xapk"))
+        if (is_game_xapk(f)) return f;
     return "";
 }
 
@@ -319,7 +307,7 @@ int main(int argc, char** argv) {
     }
 
     std::string repo = find_repo(repo_arg);
-    if (repo.empty()) LOGW("viewer", "the repository wasn't found (give --repo DIR); defaults need it");
+    if (repo.empty()) LOGI("viewer", "no source checkout: the XAPK is looked up beside the program (README.txt)");
     if (!apk_dir.empty() && !xapk_path.empty()) {
         fprintf(stderr, "soa-viewer: give --xapk FILE or --apk-dir DIR, not both\n");
         return 2;
@@ -333,8 +321,9 @@ int main(int argc, char** argv) {
         if (xapk_path.empty()) {
             std::string base = repo_file(repo, std::string("work/extracted/xapk/") + kBaseApk);
             if (base.empty())
-                fatal("the 3.8.0 XAPK wasn't found: give --xapk FILE (or put the *.xapk beside soa-viewer or in the "
-                      "repository's apk/), or --apk-dir DIR (tools/extract.sh)");
+                fatal("the 3.8.0 XAPK wasn't found: give --xapk FILE (or put the *.xapk in %s/%s, beside soa-viewer, or in the "
+                      "repository's apk/: see README.txt), or --apk-dir DIR (tools/extract.sh)",
+                      soa::install::exe_dir().c_str(), soa::install::kGameSubdir);
             apk_dir = parent(base);
         }
     }

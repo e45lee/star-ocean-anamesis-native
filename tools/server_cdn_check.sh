@@ -1,6 +1,7 @@
 #!/bin/bash
 # The CDN's byte-identical proof (server/PLAN-readability.md R18; the replay of RG4 builds no CDN):
-# runs `soa-server --cdn-check` with two builds over every path the CDN serves and compares what
+# runs `soa-server --cdn-check` with two builds over every path the CDN serves (2,000 paths per run,
+# so the runs split the same way whatever the arguments) and compares what
 # they answer (status, size, SHA-1, content type per path) and their logs (times and the scratch
 # dir masked), with the stand-ins on and off, each from an empty scratch dir and again with the
 # bundle-hash cache it wrote (the cache's reuse path). The process's time() is frozen (an
@@ -11,6 +12,9 @@
 # served master (both URL forms), every bundle the download's manifests name, the stand-in bundles
 # and files, and one missing name. Needs work/download-3.7.0 and data/basmaster-3.7.0.sqlite3.
 # Exit 0 identical, 1 different (the differences are printed).
+# DOWNLOAD_A / DOWNLOAD_B (default work/download-3.7.0): the download each side serves, a folder or
+# the zip (SOA-3.7.0-canonical-data.zip, read in place): BIN_A = BIN_B with DOWNLOAD_B=the zip proves
+# the CDN serves the same bytes from either (README.md "Packaging"); the paths are masked in the output.
 set -uo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
@@ -50,20 +54,21 @@ printf '#include <time.h>\ntime_t time(time_t* t) { if (t) *t = 1790856005; retu
 cc -shared -fPIC -o "$shim" "$out/frozen_time.c" || { echo "cannot build the time shim"; exit 2; }
 # run BIN TAG EXTRA...: two passes on one fresh scratch dir (cold, then the hash cache)
 run() {
-  local bin=$1 tag=$2; shift 2
+  local bin=$1 tag=$2 dl=$3; shift 3
   local s; s=$(mktemp -d /tmp/server-cdn-check-scratch.XXXXXX)
   for pass in cold warm; do
-    LD_PRELOAD="$shim" xargs -a "$paths" -d '\n' "$bin" --master data/basmaster-3.7.0.sqlite3 --download-dir work/download-3.7.0 \
-      --clock "2026-10-01 12:00:05" --cdn-scratch "$s" "$@" --cdn-check > "$out/$tag.$pass.txt" 2> "$out/$tag.$pass.raw.log"
-    sed -E "s#$s#SCRATCH#g; s/[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?//g" "$out/$tag.$pass.raw.log" > "$out/$tag.$pass.log"
+    LD_PRELOAD="$shim" xargs -n 2000 -a "$paths" -d '\n' "$bin" --master data/basmaster-3.7.0.sqlite3 --download-dir "$dl" \
+      --clock "2026-10-01 12:00:05" --cdn-scratch "$s" "$@" --cdn-check > "$out/$tag.$pass.raw.txt" 2> "$out/$tag.$pass.raw.log"
+    sed -E "s#$s#SCRATCH#g; s#$dl#DOWNLOAD#g; s/[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?//g" "$out/$tag.$pass.raw.log" > "$out/$tag.$pass.log"
+    sed -E "s#$dl#DOWNLOAD#g" "$out/$tag.$pass.raw.txt" > "$out/$tag.$pass.txt"
   done
   rm -rf "${s:?}"
 }
 fail=0
 for mode in on off; do
   extra=(); [ "$mode" = off ] && extra=(--standin-assets off)
-  run "$a" "a-$mode" "${extra[@]}"
-  run "$b" "b-$mode" "${extra[@]}"
+  run "$a" "a-$mode" "${DOWNLOAD_A:-work/download-3.7.0}" "${extra[@]}"
+  run "$b" "b-$mode" "${DOWNLOAD_B:-work/download-3.7.0}" "${extra[@]}"
   for pass in cold warm; do
     for kind in txt log; do
       if ! diff -q "$out/a-$mode.$pass.$kind" "$out/b-$mode.$pass.$kind" > /dev/null; then

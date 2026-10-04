@@ -37,8 +37,8 @@ static_assert((int)server::LogLevel::Trace == (int)LogLevel::Trace && (int)serve
 struct AssetManagerIndex : server::AssetIndex {
     bool exists(const std::string& name) const override {
         AssetManager::Found f;
-        std::string host;
-        return asset_manager().find(name, f) || asset_manager().find_download(name, host);
+        AssetManager::Download dl;
+        return asset_manager().find(name, f) || asset_manager().find_download(name, dl);
     }
     bool empty() const override { return asset_manager().file_count() == 0; }
 };

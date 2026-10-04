@@ -11,6 +11,9 @@ ProtocolError 19001 (no player); terms (同意する) -> the name (the keyboard)
 (UpdateTutorial 1-3, MissionStart / MissionEnd), the mission-menu step (UpdateTutorial 4-6), home
 (7) and the home tutorial (9); the new player in the server's state; the milestones of
 tests/tutorial_milestones.txt (tools/compare_tutorial.py check emu OUT -> OUT/milestones.txt).
+On a release package (SOA_PACKAGE_DIR, README.md "Packaging") the server gets no --new-player: a
+package ships no seed save, so it must start the fresh account by itself (docs/server-rules.md#seed;
+checked: its "no seed save" line).
 Every hit's damage is traced (SOA_TRACE on CCharacterObject::OnDamage) and a screenshot is kept per
 round (OUT/tutorial-NNN.png) for tools/compare_tutorial.py compare.
 Targets: emu (default), port-server, port-inproc."""
@@ -23,7 +26,7 @@ import time
 from .. import ui370
 from ..flows import launch, tutorial
 from ..proc import REPO
-from ..targets import Abort
+from ..targets import PACKAGE_DIR, Abort
 from . import common, seeded
 
 TARGETS = ("emu", "port-server", "port-inproc")
@@ -71,6 +74,9 @@ def body(s, name):
     s.check("battle tutorial: MissionEnd (battle log) -> MissionEndRes", s.in_packets(r"< MissionEndRes"))
     s.wait_for("UpdateTutorial(4) (the mission menu)", 30, tutorial.tut(s, 4))
     tutorial.home_part(s, popups=False, home_wait=8000)
+    if PACKAGE_DIR:
+        s.check("the server: no seed save, a fresh account (no --new-player)",
+                s.in_server(r"no seed save .*starting a fresh account") and not s.in_server(r"seeding from"))
     st = s.state("newplayer")
     s.check('server state: the new player "%s"' % name, re.search(r"^player LOCAL[0-9]* \(%s," % re.escape(name), st, re.M))
     if s.in_packets(r"< ProtocolError .*status=1[0-9][0-9][0-9] "):
@@ -91,7 +97,8 @@ def body(s, name):
 def main(o):
     name = os.environ.get("NEWPLAYER_NAME") or "Claire"
     try:
-        s = seeded.emu_run(o, ["--new-player"], env={"SOA_TRACE": ONDAMAGE}, shots=SHOTS)
+        # a package: no flag, its server has no seed save (docs/server-rules.md#seed)
+        s = seeded.emu_run(o, [] if PACKAGE_DIR else ["--new-player"], env={"SOA_TRACE": ONDAMAGE}, shots=SHOTS)
     except Abort:
         return 1
     common.drive(s, lambda s: body(s, name))

@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <soa/file_tree.h>
+
 #include "android/zip.h"
 #include "core/cpu.h"
 
@@ -29,29 +31,33 @@ public:
     std::vector<std::string> list_files(const std::string& dir) const;
     size_t file_count() const { return index_.size(); }
 
-    // Port option (--download-dir, off by default): a directory holding the
-    // online game's downloadable asset tree (Sound/, Parameter/, Motion/, ..., sqlite/). A
-    // "builtin_data/<rel>" asset missing from the APKs is served from <dir>/<rel>, as if the
-    // game's downloader had fetched it. With `prefer` (--download-prefer) the directory wins
-    // over the APKs (e.g. to use the 3.7.0 master DB). Looked up on every open, so files that
-    // appear while the game runs are found.
-    void set_download_dir(const std::string& dir, bool prefer) {
-        download_dir_ = dir;
-        download_prefer_ = prefer;
-    }
+    // Port option (--download / --download-dir, off by default): the online game's downloadable
+    // asset tree (Sound/, Parameter/, Motion/, ..., sqlite/), a folder or its zip read in place
+    // (SOA-3.7.0-canonical-data.zip; soa/file_tree.h). A "builtin_data/<rel>" asset missing from
+    // the APKs is served from <tree>/<rel>, as if the game's downloader had fetched it. With
+    // `prefer` (--download-prefer) the tree wins over the APKs (e.g. to use the 3.7.0 master DB).
+    // A folder is looked up on every open, so files that appear while the game runs are found.
+    // False when `path` is neither a folder nor a zip.
+    bool set_download_dir(const std::string& path, bool prefer);
     // Port option (--standin-assets; on by default with --server inproc): an
     // overlay of made-up stand-in files (standin-assets/<rel>, e.g. lost gacha banners) for
     // "builtin_data/<rel>" assets that neither the APKs nor the download dir have. Real assets
     // always win: the overlay is searched last.
     void set_standin_dir(const std::string& dir) { standin_dir_ = dir; }
     const std::string& standin_dir() const { return standin_dir_; }
-    // Host path of <download dir>/<rel> for a "builtin_data/<rel>" asset name, if that file exists;
-    // else of <stand-in dir>/<rel> when the APKs don't have the asset either.
-    bool find_download(const std::string& name, std::string& host) const;
+    // <download>/<rel> for a "builtin_data/<rel>" asset name, if that file exists; else
+    // <stand-in dir>/<rel> when the APKs don't have the asset either.
+    struct Download {
+        std::shared_ptr<const FileTree> tree;
+        std::string rel;
+        FileTree::Loc loc;  // where its bytes are (a host file's range; or not in place: tree->read)
+    };
+    bool find_download(const std::string& name, Download& out) const;
     bool download_prefer() const { return download_prefer_; }
 
 private:
-    std::string download_dir_, standin_dir_;
+    std::shared_ptr<const FileTree> download_;
+    std::string standin_dir_;
     bool download_prefer_ = false;
 
     std::vector<std::unique_ptr<ZipArchive>> zips_;

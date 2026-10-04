@@ -1,7 +1,7 @@
 #!/bin/sh
 # Stages a Windows-side copy of the repository for the Windows build's programs (port/PLAN.md 5b,
 # W; README.md "Windows"): the tracked files (git ls-files), what they read from work/
-# (download-3.7.0, libSOA-3.7.0.so) and build-win/'s .exe files, into DEST (default /mnt/c/soa-win,
+# (download-3.7.0, libSOA-3.7.0.so, SOA-3.7.0-canonical-data.zip) and build-win/'s .exe files, into DEST (default /mnt/c/soa-win,
 # i.e. C:\soa-win). Incremental (rsync). The programs find the repository upwards from the .exe,
 # as on Linux.
 #
@@ -41,7 +41,8 @@ cd "$repo"
 # the tracked files (not the work/ link itself), then the work/ data the programs read
 git ls-files -z | grep -zv '^work$' | rsync -a --from0 --files-from=- ./ "$dest/"
 mkdir -p "$dest/work"
-[ "$quick" = 1 ] || for w in download-3.7.0 libSOA-3.7.0.so; do
+# (SOA-3.7.0-canonical-data.zip: the download zipped, 4 GB; the test cdn/download-zip reads it beside the folder)
+[ "$quick" = 1 ] || for w in download-3.7.0 libSOA-3.7.0.so SOA-3.7.0-canonical-data.zip; do
   [ -e "work/$w" ] && rsync -aL --delete "work/$w" "$dest/work/"
 done
 if [ "$phone" = 1 ]; then

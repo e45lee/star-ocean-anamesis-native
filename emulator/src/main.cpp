@@ -6,6 +6,7 @@
 // client runs on the real date. This file maps the command line onto platform370::Config and
 // brings the runtime up. emulator/README.md, platform370/README.md.
 #include <soa/env.h>
+#include <soa/game_files.h>
 #include <soa/paths.h>
 #include <limits.h>
 #include <signal.h>
@@ -19,6 +20,7 @@
 #include <vector>
 
 #include "android/ndk.h"
+#include "android/zip.h"
 #include "app/host.h"
 #include "core/cpu.h"
 #include "core/device.h"
@@ -85,15 +87,18 @@ void usage() {
     fprintf(stderr,
             "usage: soa-emu [options]\n"
             "Runs the 3.7.0 online client unmodified (pure JIT, no natives). emulator/README.md.\n"
-            "  --lib PATH      the client library (default <repo>/work/libSOA-3.7.0.so)\n"
+            "  --lib PATH      the client library (default <repo>/work/libSOA-3.7.0.so, else the APK's\n"
+            "                  lib/arm64-v8a/libSOA.so, extracted once into DATA/libSOA-3.7.0.so)\n"
             "  --apk FILE      the APK whose assets the client reads (default\n"
-            "                  <repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk; repeatable, later wins)\n"
+            "                  <repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk, else a 3.7.0 APK beside the\n"
+            "                  program or in its game/ folder: a release package, README.txt; repeatable, later wins)\n"
             "  --data DIR      the emulated device's data (saves, prefs, downloads; default\n"
             "                  ~/.local/share/soa-emulator-370/phone, beside the port's ~/.local/share/soa-linux-370;\n"
             "                  Windows %%LOCALAPPDATA%%\\soa\\emulator-370\\phone; never the port's: its cached\n"
             "                  libSOA.so and save don't belong here)\n"
-            "  --download-dir DIR  temporary stand-in for the CDN: serve assets missing from the APK from DIR\n"
-            "                  (e.g. work/download-3.7.0); off by default\n"
+            "  --download PATH temporary stand-in for the CDN: serve assets missing from the APK from the\n"
+            "                  3.7.0 download (a folder, e.g. work/download-3.7.0, or SOA-3.7.0-canonical-data.zip);\n"
+            "                  off by default (soa-server's CDN serves them). --download-dir PATH is the same\n"
             "  --download-prefer  with --download-dir: DIR wins over the APK (as soa / soa-viewer)\n"
             "  --repo DIR      the source checkout (default: found from the executable)\n"
             "  --device-clock \"YYYY-MM-DD HH:MM:SS\"|host  the phone's clock (local time) at start; it runs on from\n"
@@ -157,7 +162,7 @@ int main(int argc, char** argv) {
         if (a == "--lib") lib_path = next();
         else if (a == "--apk") apks.push_back(next());
         else if (a == "--data") data_dir = next();
-        else if (a == "--download-dir") download_dir = next();
+        else if (a == "--download-dir" || a == "--download") download_dir = next();
         else if (a == "--download-prefer") download_prefer = true;
         else if (a == "--repo") repo_arg = next();
         else if (a == "--device-clock") p370.device_clock = next();
@@ -214,14 +219,17 @@ int main(int argc, char** argv) {
     }
 
     std::string repo = find_repo(repo_arg);
-    if (repo.empty()) LOGW("emu", "the repository wasn't found (give --repo DIR); defaults need it");
-    if (lib_path.empty()) {
-        lib_path = repo_file(repo, "work/libSOA-3.7.0.so");
-        if (lib_path.empty()) fatal("work/libSOA-3.7.0.so not found (give --lib)");
-    }
+    if (repo.empty()) LOGI("emu", "no source checkout: the game files are looked up beside the program (README.txt)");
     if (apks.empty()) {
         std::string apk = repo_file(repo, "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk");
-        if (apk.empty()) fatal("apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk not found (give --apk)");
+        if (apk.empty()) {
+            // a release package (README.md "Packaging"): a 3.7.0 APK beside the program or in game/
+            std::vector<std::string> notes;
+            apk = soa::install::find_apk(soa::install::install_dirs(), &notes);
+            for (auto& n : notes) LOGW("emu", "%s", n.c_str());
+            if (apk.empty()) fatal("the 3.7.0 APK wasn't found (give --apk); %s", soa::install::missing_hint().c_str());
+            LOGI("emu", "the 3.7.0 APK %s (found beside the program)", apk.c_str());
+        }
         apks.push_back(apk);
     }
     // Beside the port's (soa/paths.h): ~/.local/share/soa-emulator-370/phone, on Windows
@@ -229,6 +237,18 @@ int main(int argc, char** argv) {
     // launcher) use the same phone/.
     if (data_dir.empty()) data_dir = soa::default_data_dir("soa-emulator-370/phone", "emulator-370\\phone");
     soa::make_dir_tree(data_dir);
+    if (lib_path.empty()) {
+        lib_path = repo_file(repo, "work/libSOA-3.7.0.so");
+        if (lib_path.empty()) {
+            // the APK's own lib/arm64-v8a/libSOA.so, extracted once into the data dir (as soa does)
+            lib_path = data_dir + "/libSOA-3.7.0.so";
+            if (!exists(lib_path)) {
+                LOGI("emu", "extracting %s from %s", soa::install::kLibEntry, apks[0].c_str());
+                if (!soa::install::extract_entry(apks[0], soa::install::kLibEntry, lib_path))
+                    fatal("couldn't extract %s from %s (give --lib)", soa::install::kLibEntry, apks[0].c_str());
+            }
+        }
+    }
     LOGI("emu", "3.7.0 client %s, data %s, pure JIT + one native patch (platform370)", lib_path.c_str(), data_dir.c_str());
 
     // The emulated device: a phone with the 3.7.0 app installed (app_version "3.7.0", the APK's
@@ -267,7 +287,7 @@ int main(int argc, char** argv) {
 
     auto& am = asset_manager();
     if (!download_dir.empty()) {
-        am.set_download_dir(download_dir, download_prefer);
+        if (!am.set_download_dir(download_dir, download_prefer)) fatal("--download %s: neither a folder nor a zip", download_dir.c_str());
         LOGI("emu", "download dir %s: a temporary stand-in for the CDN (%s the APK)", download_dir.c_str(), download_prefer ? "preferred over" : "fallback for");
     }
     // The 3.7.0 APK is a single APK (no splits, no asset packs); the asset manager indexes the zip.

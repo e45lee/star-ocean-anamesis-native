@@ -9,6 +9,8 @@
 #include <ctime>
 #include <mutex>
 
+#include <soa/file_tree.h>
+
 #include "soaserver/chash32.h"
 #include "soaserver/config.h"
 #include "soaserver/hooks.h"
@@ -108,7 +110,7 @@ struct NoAssets : AssetIndex {
 };
 
 struct DirAssets : AssetIndex {
-    std::vector<std::string> dirs;
+    std::vector<std::shared_ptr<const FileTree>> dirs;  // folders or zips (the download: soa/file_tree.h)
     bool exists(const std::string& name) const override {
         // "builtin_data/<rel>" -> <dir>/<rel> (a regular file), as the port's --download-dir
         static const char kBuiltin[] = "builtin_data/";
@@ -117,10 +119,8 @@ struct DirAssets : AssetIndex {
         if (n.compare(0, sizeof(kBuiltin) - 1, kBuiltin) != 0) return false;
         std::string rel = n.substr(sizeof(kBuiltin) - 1);
         if (rel.empty() || rel.find("..") != std::string::npos) return false;
-        for (auto& d : dirs) {
-            struct stat st;
-            if (stat((d + "/" + rel).c_str(), &st) == 0 && S_ISREG(st.st_mode)) return true;
-        }
+        for (auto& d : dirs)
+            if (d->exists(rel)) return true;
         return false;
     }
     bool empty() const override { return dirs.empty(); }
@@ -139,7 +139,8 @@ const AssetIndex& asset_index() {
 std::shared_ptr<const AssetIndex> dir_asset_index(std::vector<std::string> dirs) {
     auto d = std::make_shared<DirAssets>();
     for (auto& x : dirs)
-        if (!x.empty()) d->dirs.push_back(x);
+        if (!x.empty())
+            if (auto t = FileTree::open(x)) d->dirs.push_back(std::move(t));
     return d;
 }
 

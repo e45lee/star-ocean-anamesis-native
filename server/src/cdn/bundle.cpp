@@ -96,6 +96,7 @@ bool bundle_stream(const std::vector<Member>& members, Sink&& sink) {
 uint64_t Response::size() const {
     if (bundle) return bundle_size(*bundle);
     if (file.empty()) return body.size();
+    if (file_range) return file_len;
     uint64_t n = 0;
     stat_file(file, &n);
     return n;
@@ -105,6 +106,19 @@ bool Response::read(std::vector<uint8_t>& out) const {
     if (file.empty()) {
         out = body;
         return true;
+    }
+    if (file_range) {
+        int fd = ::open(file.c_str(), O_RDONLY);
+        if (fd < 0) return false;
+        out.resize(file_len);
+        uint64_t at = 0;
+        while (at < file_len) {
+            ssize_t n = pread(fd, out.data() + at, (size_t)std::min<uint64_t>(file_len - at, 1u << 30), (off_t)(file_offset + at));
+            if (n <= 0) break;
+            at += (uint64_t)n;
+        }
+        ::close(fd);
+        return at == file_len;
     }
     return read_file(file, out);
 }
@@ -192,8 +206,10 @@ std::unique_ptr<Reader> Response::open() const {
         uint64_t n = 0;
         if (!stat_file(file, &n)) return nullptr;
         reader->file_name = file;
-        reader->pieces.push_back({nullptr, &reader->file_name, 0, n});
-        reader->total = n;
+        uint64_t off = file_range ? file_offset : 0, len = file_range ? file_len : n;
+        if (off + len > n) return nullptr;
+        reader->pieces.push_back({nullptr, &reader->file_name, off, len});
+        reader->total = len;
         return reader;
     }
     reader->owned = body;

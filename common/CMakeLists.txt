@@ -2,14 +2,16 @@
 #
 # soa_env: header-only (include/soa/env.h), the programs' environment rule and the table of the
 # SOA_* variables that are flags now (docs/environment.md); include/soa/paths.h, the programs'
-# default data dirs (Linux ~/.local/share/..., Windows %LOCALAPPDATA%\soa\...). Every library links it: the runtime,
+# default data dirs (Linux ~/.local/share/..., Windows %LOCALAPPDATA%\soa\...); include/soa/install.h,
+# the install-dir lookup (a release package's game files beside the program). Every library links it: the runtime,
 # the server, the web view (none depends on another for it).
 #   soa_env_tests  its unit tests (build/common/soa_env_tests); tests/env_removed.sh checks the
 #                  programs' warnings.
 add_library(soa_env INTERFACE)
 target_include_directories(soa_env INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(soa_env_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/env_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/paths_tests.cpp)
+add_executable(soa_env_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/env_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/paths_tests.cpp
+               ${CMAKE_CURRENT_SOURCE_DIR}/tests/install_tests.cpp)
 target_link_libraries(soa_env_tests PRIVATE soa_env soa_compat)  # (soa_compat: setenv on Windows)
 
 # soa_compat: what more than one part needs to build for both Linux and Windows (port/PLAN.md 5b,
@@ -45,9 +47,21 @@ target_include_directories(soa_zip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(soa_zip PRIVATE MINIZIP::minizip-ng PUBLIC ZLIB::ZLIB)
 target_compile_options(soa_zip PRIVATE -Wall -Wno-unused-parameter)
 
+# soa_gamefiles: the game files where a program finds them (README.md "Packaging"): include/soa/file_tree.h
+# (the 3.7.0 download, a folder or the user's zip read in place), include/soa/game_files.h (the
+# zip-aware half of the install-dir lookup of soa/install.h). The server and the runtime link it.
+#   soa_gamefiles_tests  its unit tests (build/common/soa_gamefiles_tests)
+add_library(soa_gamefiles STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/file_tree.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/game_files.cpp)
+target_link_libraries(soa_gamefiles PUBLIC soa_zip soa_env)
+target_link_libraries(soa_gamefiles PRIVATE soa_compat)  # (64-bit stat on Windows)
+target_compile_options(soa_gamefiles PRIVATE -Wall -Wno-unused-parameter)
+
 find_package(Threads REQUIRED)
 add_executable(soa_zip_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/zip_tests.cpp)
 target_link_libraries(soa_zip_tests PRIVATE soa_zip soa_compat ZLIB::ZLIB Threads::Threads)  # (soa_compat: mkdir on Windows)
+
+add_executable(soa_gamefiles_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/gamefiles_tests.cpp)
+target_link_libraries(soa_gamefiles_tests PRIVATE soa_gamefiles soa_compat ZLIB::ZLIB)
 
 # soa_codec: file formats more than one part reads or writes, on well-known libraries (vcpkg):
 #   include/soa/png.h     PNG files (stb_image_write, zlib's deflate): the runtime's screenshots

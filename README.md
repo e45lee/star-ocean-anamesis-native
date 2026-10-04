@@ -88,6 +88,8 @@ The C++ parts share one CMake build, rooted at `CMakeLists.txt`:
 
 | Part | What | Output |
 |---|---|---|
+| `common/` | small libraries every program shares: `soa_env` (`soa/env.h`, the environment rule; `soa/paths.h`, the default data dirs; `soa/install.h`, the install-dir lookup), `soa_compat` (sockets, the Windows POSIX shims in `common/win32/`), `soa_zip` (ZIP on minizip-ng), `soa_gamefiles` (`file_tree.h`, `game_files.h`: the game files, a download folder or zip), `soa_codec` (Base64, the SharedPreferences XML, PNG) | `build/common/libsoa_*.a`, the tests `build/common/soa_{env,zip,gamefiles,codec}_tests` |
+| `webview/` | the web view's HTML renderer on litehtml (the notice board; `docs/webview.md`) | `build/webview/libsoawebview.a`, `build/webview/soa-webview-render`, `build/webview/soawebview_tests` |
 | `runtime/` | the JIT host runtime: ELF loader, dynarmic CPU, Android HLE, JVM, host loop (`runtime/README.md`) | `build/runtime/soaruntime_tests` |
 | `server/` | the local game server library and its standalone binary (`server/README.md`) | `build/server/soa-server` |
 | `port/` | the desktop port of the 3.7.0 client (`port/README.md`) | `build/port/soa` |
@@ -244,7 +246,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 | File | Used by |
 |---|---|
 | `apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk` (the APKPure download) and `work/libSOA-3.7.0.so` (its `lib/arm64-v8a/libSOA.so`; the port also extracts it into its data dir) | the port; the 3.7.0 emulator |
-| `work/download-3.7.0/` (the full 3.7.0 download) and `data/basmaster-3.7.0.sqlite3` (its master DB, decrypted) | the port's in-process server (its CDN and master data); the 3.7.0 emulator's server and CDN |
+| `work/download-3.7.0/` (the full 3.7.0 download; or `work/SOA-3.7.0-canonical-data.zip`, the same tree zipped, read in place with `--download`) and `data/basmaster-3.7.0.sqlite3` (its master DB, decrypted; without it the programs decrypt the download's into their data dir at startup: `docs/server-rules.md#master-source`) | the port's in-process server (its CDN and master data); the 3.7.0 emulator's server and CDN |
 | `work/extracted/xapk/` (the offline XAPK, unpacked by `tools/extract.sh`) | optional for the viewer (`emulator-viewer/`, `soa-viewer --apk-dir`; it reads the XAPK in place when it finds one); `decomp.sh --v380` |
 | `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (`soa-viewer` reads it in place: `--xapk FILE`, or found in `apk/` or beside the executable), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
 | `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`) | <!-- 380-ok: the viewer's game file -->
@@ -256,12 +258,73 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 
 **Unpacking a download archive.** `.venv/bin/python tools/unpack_download.py ARCHIVE.zip DEST [--sha256 ARCHIVE.zip.sha256]` extracts a zip of the download tree into DEST (the tree at the zip's top level, as in `SOA-3.7.0-canonical-data.zip`, or inside one top folder, which is stripped; Windows `:Zone.Identifier` files are skipped), checks the archive against its `.sha256` first if given, then runs the same check as `check_download.py` on DEST. Exit 0 = complete.
 
+## Packaging
+
+`scripts/package.sh` (`tools/package.py`) builds the release ZIPs, for Linux and Windows (both unless
+`--linux` / `--windows`; into `dist/` unless `--out DIR`; `--no-build` packages the existing builds):
+
+| ZIP | Holds |
+|---|---|
+| `soa-port-<V>-<platform>.zip` | `soa` (the port, its server in-process), `run-port.sh` / `run-port.cmd` |
+| `soa-emulator-<V>-<platform>.zip` | `soa-emu` (the unmodified 3.7.0 client), `soa-server` (its server; runs alone too), `run-emulator.sh` / `run-emulator.cmd` + `.ps1` (start the server, then the client) |
+| `soa-<V>-<platform>-debug-symbols.zip` | the programs' debug info (line tables), stripped from the binaries |
+
+`<V>` is the commit date and hash; `<platform>` `linux-x64` or `windows-x64`.
+
+- **Optimized:** `scripts/build.sh [--windows] --release` builds `build-release/` (`build-win-release/`):
+  `CMAKE_BUILD_TYPE=Release` (`-O3`, `NDEBUG`) plus `-g1`, soa / soa-server / soa-emu only; no
+  `-march` and no `-ffast-math` (the natives are bit-exact only with x86-64's default code). No LTO.
+  On Linux libstdc++ and libgcc are linked statically: the binaries need glibc 2.39 (the build
+  host's, Ubuntu 24.04), `libEGL.so.1` and `libGLESv2.so.2`; SDL loads X11 / Wayland / PulseAudio
+  at run time; ffmpeg runs the movies. The Windows `.exe` files are static (Windows' DLLs only;
+  `ffmpeg.exe` beside them or on PATH for the movies).
+- **What goes in** (an allow-list in `tools/package.py`): the binaries, the launchers, `README.txt`
+  (from `scripts/package/README.txt.in`, one template for the four packages: per program, which game
+  files it needs, where to put them, the lookup order, the flags, the data dirs, the first run, the
+  messages when something is missing), `LICENSE.txt`, `THIRD-PARTY-NOTICES.txt` (the copyright files
+  of the vcpkg ports linked, dynarmic and its x86-64 externals, IJG libjpeg 9, zstd 1.3.4),
+  `BUILD-INFO.txt`, and only data we made: `data/gacha_pools.sqlite3` **with the game's text
+  removed** (`gacha.name`, `rule.text`; the server takes the titles from the master,
+  `docs/server-rules.md#gacha-pools`) and `standin-assets/` (our images). **No seed save** (the
+  user, 2026-10-04: `data/saves/seed/Game.xml` is a real player's): a package's first run starts a
+  new account through the game's own tutorial, unless `--seed FILE` names a save
+  (`docs/server-rules.md#seed`).
+- **What never goes in:** any game file: the APKs, the download, the master DBs
+  (`data/basmaster-*.sqlite3` are decryptions of the game's own), `version.bin`, `libSOA.so`,
+  `port/fakeapi/responses`, decompiles. Before a zip is written every file must be on the allow-list
+  and pass a game-file scan (the ADLD magic, the game's asset extensions, an ARM64 ELF, a zip, a
+  SQLite file with `master_*` tables or gacha titles, the names `basmaster` / `version*.bin` /
+  `libSOA`); the stand-ins pass only as files tracked in git under `standin-assets/` that the download
+  doesn't have. A violation fails the run and writes no zip (`tests/test_package.py` checks the check).
+- **The game files at run time:** the programs look for them where they are stored
+  (`common/include/soa/install.h`, `game_files.h`): flags first (`--apk`, `--download` (=
+  `--download-dir`), `--master`), then the source checkout (developers), then **the program's own
+  folder and its `game/` subfolder**: the 3.7.0 APK is any top-level `*.apk` whose libSOA.so is
+  3.7.0's; the download is a folder holding `version.bin`, `manifest/` and `sqlite/basmaster.sqlite3`
+  (any name), or `SOA-3.7.0-canonical-data.zip` (or another zip holding that tree) **read in place
+  without extracting it** (`common/include/soa/file_tree.h`: stored entries served as ranges of the
+  zip, by the CDN, the asset fallback and the movie player). The master DB is decrypted from the
+  download on the first run into the data dir (`docs/server-rules.md#master-source`); libSOA.so is
+  taken from the APK. A missing file stops the program with a message naming it and pointing to
+  `README.txt`.
+- **Checking a package:** unzip it outside the checkout, put the game files as its README.txt says,
+  and run a session on it: `SOA_PACKAGE_DIR=<the unpacked folder>` makes `control/run.py` run the
+  package's programs from their folder, with no `--master` / `--download-dir` / `--seed` (e.g.
+  `SOA_PACKAGE_DIR=$P port/scripts/tutorial_session.sh $P/soa OUT TMP`: the first run, a new
+  account (no `--new-player`: the package has no seed save) through the tutorial to home; for the
+  emulator `SOA_PACKAGE_DIR=$P emulator/scripts/emulator_session.sh --new-player $P/soa-emu
+  $P/soa-server OUT`, which then passes the server no `--new-player` either. A session that needs the
+  seeded player (e.g. `gacha`) gets a player only from a save: the port's client save
+  (`--game-xml`, holding a player) or `--seed`; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your
+  stage). `DOWNLOAD_B=work/SOA-3.7.0-canonical-data.zip tools/server_cdn_check.sh BIN BIN` proves the
+  CDN serves the same bytes from the zip as from the folder.
+
 ## Reverse-engineering tools
 
 - **Ghidra** (12.1.2, snap at `/snap/ghidra/current/ghidra`): `tools/decomp.sh` / `tools/decomp_at.sh` decompile from the quick projects (`ghidra/quick-v370`, local, not in git; re-imported by `tools/common.sh` when missing) through a pool of working copies in `work/ghidra-quick-v370*`. Ghidra refuses project paths with a component starting with `.`.
 - **PyGhidra**, in `.venv`, from Ghidra's own wheels (`requirements.txt` says how): `pyghidra.start()` with `GHIDRA_INSTALL_DIR` set.
 - **Ghidra over MCP for Claude Code**: `scripts/ghidra-mcp.sh` serves the 3.7.0 project with [pyghidra-mcp](https://github.com/clearbluejar/pyghidra-mcp) (through `uvx`), headless, on its own working copy `work/ghidra-mcp-v370` (so its analysis, renames and types never touch the committed project). `.mcp.json` registers it as the project's `ghidra-v370` server; Claude Code asks once to approve it. Before first use run `scripts/ghidra-mcp.sh --analyze` once (Ghidra's full auto-analysis plus pyghidra-mcp's indexes; the tools refuse until it's done). One server at a time can have the copy open.
-- **jadx** (the APK's Java), **lief**, **keystone**, **capstone**, **unicorn**, and the system tools in "Setup" (gdb-multiarch, clang tools, strace, …).
+- **jadx** (the APK's Java), **lief**, **keystone**, **capstone**, **unicorn**, and system tools from apt: gdb-multiarch (the guest's GDB stub: `runtime/README.md` "Debugging the guest with gdb"), clang-format 18 (`tools/format_server.sh`), clang++ (`tools/subsystem.py check` compiles the layout headers with it), strace, ltrace, valgrind, apktool (`sudo apt install gdb-multiarch clang-format-18 clang strace ltrace valgrind apktool`).
 
 ## Save editor and event scripts
 

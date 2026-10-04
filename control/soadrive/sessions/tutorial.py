@@ -9,6 +9,9 @@ with CCharacterObject::OnDamage traced (SOA_TRACE), then checks:
   - every hit's damage is finite and positive; the battle ended (MissionEnd) and home was reached;
   - the milestones of tests/tutorial_milestones.txt (tools/compare_tutorial.py check port), the same
     list emulator/scripts/emulator_session.sh --new-player checks against the 3.7.0 client.
+On a release package (SOA_PACKAGE_DIR, README.md "Packaging") the run gets no --new-player: a
+package ships no seed save, so the server must start the fresh account by itself
+(docs/server-rules.md#seed; checked: its "no seed save" line, and never "seeding from").
 OUT keeps the log (fresh.log), one screenshot per round (fresh/lNNN.png), the packets
 (packets-fresh/) and the server's state (server.sqlite3) for the parity report:
 tools/compare_tutorial.py compare OUT EMU_OUT. (The `entry` session runs a seeded player first and
@@ -29,6 +32,7 @@ from .. import popups, ui370
 from ..flows import launch, mission, tutorial
 from ..milestones import Failed
 from ..proc import REPO
+from ..targets import PACKAGE_DIR
 from . import common
 
 TARGETS = ("port-inproc",)
@@ -46,7 +50,8 @@ def options(ap):
 
 def new_player_run(o, name="fresh", trace=True):
     env = {"SOA_TRACE": ONDAMAGE} if trace else {}
-    cfg = common.port_config(o, ["--new-player"], limit=3600, client_save=False, env=env)
+    # a package: no flag, its server has no seed save (docs/server-rules.md#seed)
+    cfg = common.port_config(o, [] if PACKAGE_DIR else ["--new-player"], limit=3600, client_save=False, env=env)
     return common.port_run(o, cfg, SHOTS, name=name)
 
 
@@ -95,6 +100,12 @@ def main(o):
         if s.in_client(r"seeding from"):
             s.fail("the server seeded a player from a save (not a fresh state)")
         new_player(s, player, steps, on_round)
+        # the server opens its state at the first request: these lines come with Login
+        if s.in_client(r"seeding from"):
+            s.fail("the server seeded a player from a save (not a fresh state)")
+        if PACKAGE_DIR:
+            s.check("the server: no seed save, a fresh account (no --new-player)",
+                    s.in_client(r"no seed save .*starting a fresh account"))
 
     ran = common.drive(s, body)
     s.state("fresh")

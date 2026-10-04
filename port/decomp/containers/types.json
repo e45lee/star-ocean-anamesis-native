@@ -1450,6 +1450,95 @@
    "align": 8
   },
   {
+   "name": "TPoolFastLocked<Opaque<90> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_used",
+     "type": {
+      "kind": "struct",
+      "name": "TBitArray<unsigned long>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 48,
+     "name": "m_pool",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_cursor",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_lock",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 208,
+     "name": "m_ownsPool",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 209,
+     "name": "unk_d1",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 216,
+   "align": 8
+  },
+  {
    "name": "TArray<unsigned int, false>",
    "union": false,
    "fields": [

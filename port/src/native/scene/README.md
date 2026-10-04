@@ -44,8 +44,43 @@ CreateTree is a load path), `Aska::DPGHandler`, `Aska::HeightObject*`, `Framewor
 
 ## Natives
 
+16 bound (`soa --list-native | grep scene:`). Live check: `soa --live-check scene[:every=N][:out=FILE]`
+(default every=16; [`scene_check.h`](scene_check.h)).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `ObjectManagerJobDispatcher::Dispatch_MakePaintingList` / `_PreliminarilyPrepare` / `_PrepareForRendering` / `_ViewFrustumCulling` / `_DetectLIBL` / `_ResetSystemFlags` (the job inline: `ObjectManagerWorkerThread::Run*`) | [`scene_dispatch.cpp`](scene_dispatch.cpp) | `scene/dispatch-make-painting-list`, `-preliminarily-prepare`, `-prepare-for-rendering`, `-view-frustum-culling`, `-detect-libl`, `-reset-system-flags` | shadow replay: the guest's Dispatch_X + the worker's Handler_X on a shadow worker, the job's callees replayed from the native's record |
+| `ObjectManagerJobDispatcher::ChangeMode` / `RetryChangeMode` / `RetryChangeModeExceptRenderThread` / `WaitIdle` / `WaitAllIssued` / `Sleep` | `scene_dispatch.cpp` | `scene/dispatch-modes-and-parameters` | shadow replay (the dispatcher's bytes) |
+| `ObjectManagerJobDispatcher::Set{PreliminarilyPrepare,PrepareForRendering,ViewFrustumCulling,DetectLIBL}BasicParameter` | `scene_dispatch.cpp` | `scene/dispatch-modes-and-parameters` | shadow replay (the workers' parameters) |
+
+Not bound: `Dispatch_RenderingDecided` (no caller in 3.7.0), the worker's `Handler` / `Handler_*` / `ChangeMode`
+(no longer reached: the worker stays parked, below), the constructors and destructors (once per process).
+
+### The job dispatcher (scene_dispatch.cpp)
+
+The guest's dispatcher hands each job to its single worker thread and the caller polls (RE notes,
+"Busy-waits"). The natives keep the guest's job structures — the dispatcher's Set*BasicParameter and
+Dispatch_X store every parameter in the worker as the guest does, and the job's body reads them from
+there (`ObjectManagerWorkerThread::Run*`, one iteration of the worker's Handler_X loop: the same
+RENDERINFO copy at the worker's +0x170 passed to PrepareForRendering, the same atomic ORs into the result
+words) — but run the body at once on the posting thread and return true. That is one of the guest's
+own schedules (a worker that finishes before the poster looks again):
+- the callers scan the result words in index order (TraversePaintingList's AddRenderQueue /
+  AddTemporaryResolve, OnPrePaint's context hand-out, the culling's output list), so what they produce
+  doesn't depend on when the worker finished;
+- jobs 4 to 6 (culling, LIBL detection, the system-flag reset) are already run on the posting thread by
+  the guest itself whenever its worker is busy (MultithreadViewFrustumCulling, Prerender's
+  LIBLManager::Intersect, PrepareMatrices' inline reset);
+- the work OnPrePaint does after posting the last MakePaintingList (ResetServer, GetRenderContext for
+  the context objects, the multi-draw counters) doesn't meet the job: MakePaintingList's only shared
+  writes are atomic increments of the objects' m_contextDivisor, which commute with OnPrePaint's;
+- no job takes a lock its poster holds and none reads thread-local state (pthread_getspecific is the
+  render device's, on the render thread).
+ChangeMode / Sleep / WaitIdle keep only the dispatcher's bookkeeping (m_workerCountSeen, m_exceptMode),
+so the worker thread, created in mode 7, stays in its Event wait for the life of the process (the
+guest destructor still stops it). Per-frame draw lists traced at the title (SOA_TRACE on OnPostPaint /
+AddRenderQueue / AddTemporaryResolve, objects and contexts renamed by first appearance): the 13
+distinct draw lists of ~3,800 frames are the same with and without the natives.
 
 ## Dependencies
 

@@ -68,20 +68,14 @@ constexpr u32 kCopyStride = 0x250;   // one object copy (kObjSnap bytes, 16-alig
 constexpr size_t kParamsFrom = offsetof(W, m_lightManager);
 constexpr size_t kStateFrom = offsetof(W, m_mode), kStateTo = offsetof(W, unk_120);
 
-void* zalloc(size_t n) {
-    void* p = std::aligned_alloc(16, (n + 15) & ~size_t(15));
-    std::memset(p, 0, n);
-    return p;
-}
-
 // This thread's shadow: a dispatcher with one worker built by the guest's constructor (its Event created,
 // never started), reused by every check on the thread.
 struct Shadow {
     D* d = nullptr;
     W* w = nullptr;
     Shadow() {
-        d = (D*)zalloc(sizeof(D));
-        u8* block = (u8*)zalloc(16 + sizeof(W));
+        d = (D*)zalloc16(sizeof(D));
+        u8* block = (u8*)zalloc16(16 + sizeof(W));
         *(u64*)(block + 8) = 1;  // (operator new[]'s count)
         w = (W*)(block + 16);
         guest_call(guest::sym("_ZN4Aska25ObjectManagerWorkerThreadC1Ev"), {(u64)w});
@@ -207,7 +201,7 @@ void check_job(Cpu& c, JobFn& f, HostFn native) {
     // The shadow, as the native found things.
     Shadow& sh = shadow();
     sh.set(realD, fieldsPre.data(), f.job);
-    u8* copies = (u8*)zalloc(n * kCopyStride + 16);
+    u8* copies = (u8*)zalloc16(n * kCopyStride + 16);
     std::vector<u64> shadowArray(n);
     for (size_t i = 0; i < n; i++) {
         std::memcpy(copies + i * kCopyStride, &objsPre[i * kObjSnap], kObjSnap);
@@ -237,7 +231,7 @@ void check_job(Cpu& c, JobFn& f, HostFn native) {
     for (const JobCall& k : rec.calls) {
         const char* name = live::ensure_stub(k.target);
         if (!name) {
-            std::free(copies);
+            zfree16(copies);
             return check_result(f, Outcome::Skipped, "a callee can't be stubbed");
         }
         live::drop_stale_code(k.target);
@@ -304,7 +298,7 @@ void check_job(Cpu& c, JobFn& f, HostFn native) {
         std::string d = hexdiff((const u8*)rec.objs[i] + from, (const u8*)copy_of(i) + from, kObjSnap - from, from);
         if (!d.empty()) err = "object " + std::to_string(i) + " " + d;
     }
-    std::free(copies);
+    zfree16(copies);
     check_result(f, err.empty() ? Outcome::Ok : Outcome::Mismatch, err);
 }
 

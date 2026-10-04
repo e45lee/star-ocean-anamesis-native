@@ -27,12 +27,6 @@ namespace {
 constexpr u32 kObjBytes = 0x310;  // a RenderableObject
 constexpr int kObjects = 40;
 
-void* zalloc(size_t n) {
-    void* p = std::aligned_alloc(16, (n + 15) & ~size_t(15));
-    std::memset(p, 0, n);
-    return p;
-}
-
 std::string hex(const void* p, size_t n) {
     std::string s;
     char b[4];
@@ -64,8 +58,8 @@ struct Rig {
     u8 fakeOm[0x20];
 
     Rig(TestContext& tc, int workers) : t(tc), n(workers) {
-        d = (ObjectManagerJobDispatcher*)zalloc(sizeof(ObjectManagerJobDispatcher));
-        block = (u8*)zalloc(16 + n * sizeof(ObjectManagerWorkerThread));
+        d = (ObjectManagerJobDispatcher*)zalloc16(sizeof(ObjectManagerJobDispatcher));
+        block = (u8*)zalloc16(16 + n * sizeof(ObjectManagerWorkerThread));
         *(u64*)(block + 8) = (u64)n;
         d->m_workers = (ObjectManagerWorkerThread*)(block + 16);
         d->m_workerCount = n;
@@ -81,15 +75,15 @@ struct Rig {
         static const u64 fPrelim = fake_function("scene.t.prelim", 2), fPrepare = fake_function("scene.t.prepare", 2),
                          fReset = fake_function("scene.t.rdsm", 1), fCheck = fake_function("scene.t.crc", 1),
                          fRoutine = fake_function("scene.t.routine", 1);
-        vtable = (u64*)zalloc(8 * 96);
+        vtable = (u64*)zalloc16(8 * 96);
         vtable[kSlotPreliminarilyPrepare] = fPrelim;
         vtable[kSlotPrepareForRendering] = fPrepare;
         vtable[kSlotResetDynamicShaderModifier] = fReset;
         vtable[kSlotCheckRenderContexts] = fCheck;
         vtable[kSlotRoutineProcedure] = fRoutine;
-        objs = (u8*)zalloc(kObjBytes * kObjects);
-        objsInit = (u8*)zalloc(kObjBytes * kObjects);
-        static RenderContext* ctxBase = (RenderContext*)zalloc(0x230 * 4);
+        objs = (u8*)zalloc16(kObjBytes * kObjects);
+        objsInit = (u8*)zalloc16(kObjBytes * kObjects);
+        static RenderContext* ctxBase = (RenderContext*)zalloc16(0x230 * 4);
         for (int i = 0; i < kObjects; i++) {
             RenderableObject* o = obj[i] = (RenderableObject*)(objs + i * kObjBytes);
             u8 raw[kObjBytes];
@@ -103,7 +97,7 @@ struct Rig {
             o->m_contextsWanted = t.rand_int(0, 9) == 0 ? (s32)0x80000000 : t.rand_int(-100000, 100000);
             o->m_contextsUsed = t.rand_int(-3, 70000);
             o->m_contexts = ctxBase + t.rand_int(0, 3);
-            o->m_camera = t.rand_int(0, 1) ? nullptr : (render::Camera*)(0x1000 + 16 * i);
+            o->m_camera = t.rand_int(0, 1) ? nullptr : (render::Camera*)(uintptr_t)(0x1000 + 16 * i);
             o->m_renderFlags = (u32)t.rand_u64();
             o->base.base.link.m_next = (containers::LinkElement*)(i + 1 < kObjects ? objs + (i + 1) * kObjBytes : nullptr);
         }
@@ -115,11 +109,11 @@ struct Rig {
             t.call("_ZN4Aska5Event4ExitEv", {(u64)&w->m_event});
             t.call("_ZN4Aska19FastCriticalSectionD1Ev", {(u64)&w->m_lock});
         }
-        std::free(d);
-        std::free(block);
-        std::free(objs);
-        std::free(objsInit);
-        std::free(vtable);
+        zfree16(d);
+        zfree16(block);
+        zfree16(objs);
+        zfree16(objsInit);
+        zfree16(vtable);
     }
     ObjectManagerWorkerThread& w(int i = 0) { return d->m_workers[i]; }
     int index_of(u64 p) const {

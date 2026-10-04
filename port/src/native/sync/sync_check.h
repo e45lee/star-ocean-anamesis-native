@@ -21,18 +21,22 @@
 #include <string>
 
 #include "core/cpu.h"
+#include "native/common/shadow_check.h"
 #include "native/sync/sync_layout.h"
 
 namespace soa::native::sync {
 
-// One checked guest function: its symbol, the trampoline to the original (set when installed) and
-// its counters.
-struct CheckedFn {
-    const char* sym;
-    u64 orig = 0;
-    std::atomic<u64> calls{0}, checks{0}, ok{0}, bad{0}, skipped{0}, races{0};
-    explicit CheckedFn(const char* s);
+// The family (--live-check sync) and the shared shadow-check helpers (common/shadow_check.h).
+live::ShadowFamily& family();
+using live::CheckScope;
+using live::check_result;
+using live::diff_bytes;
+using live::Outcome;
+struct CheckedFn : live::CheckedFn {
+    explicit CheckedFn(const char* s) : live::CheckedFn(::soa::native::sync::family(), s) {}
 };
+inline bool check_due(CheckedFn& f) { return live::check_due(f); }
+inline void check_getter(Cpu& c, CheckedFn& f, HostFn native, u64 mask) { live::check_getter(c, f, native, mask); }
 
 // What a mutator saw at its linearization point (filled by the native when t_obs is set).
 struct Observation {
@@ -56,26 +60,12 @@ struct Observation {
 // Set by a check around its native run; the natives note their observations here.
 extern thread_local Observation* t_obs;
 
-// True when this call is to be checked: the family is on (--live-check sync), the function is in
-// only=, its budget isn't spent, it's the every-th call, and no check runs on this thread already.
-bool check_due(CheckedFn& f);
-// Inside a check on this thread (also live::t_busy, so other families leave the callees alone).
-struct CheckScope {
-    CheckScope();
-    ~CheckScope();
-};
-enum class Outcome { Ok, Mismatch, Skipped, Race };
-// Counts one check's outcome; a mismatch (and the first few skips) is logged with `why`.
-void check_result(CheckedFn& f, Outcome o, const std::string& why = {});
+// Set by another family's shadow check around a guest replay of a blocking caller (kernel's
+// SendMessage: it waits on an event only a worker would set): Event::Wait on this thread then
+// returns at once, as if the event were signaled.
+extern thread_local bool t_replay_no_wait;
 
 // A zeroed, 16-aligned, per-thread scratch buffer for shadows (guest-visible host memory: guest
 // memory is identity-mapped). `slot` keeps two shadows apart.
 u8* shadow_buffer(int slot);
-// "+0xNN: native XX guest YY" for the first differing byte of [from, to) outside `skip` ranges.
-std::string diff_bytes(const u8* native, const u8* guest, size_t from, size_t to, std::initializer_list<std::pair<size_t, size_t>> skip = {});
-
-// A read-only method: runs the native, then the guest original on the same object, and compares
-// x0 (masked to the result's width); a difference that a rerun of both doesn't reproduce is a race.
-void check_getter(Cpu& c, CheckedFn& f, HostFn native, u64 mask);
-
 }  // namespace soa::native::sync

@@ -1,0 +1,901 @@
+{
+ "subsystem": "sync",
+ "generated_by": "tools/subsystem.py export-types sync",
+ "header": "port/src/native/sync/sync_layout.h",
+ "structs": [
+  {
+   "name": "Semaphore",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_pSem",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sem",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 24,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x205cbf0",
+     "symbol": "_ZN4Aska9SemaphoreC2Ev",
+     "name": "Semaphore"
+    },
+    {
+     "ghidra": "0x205cbf8",
+     "symbol": "_ZN4Aska9SemaphoreD1Ev",
+     "name": "~Semaphore"
+    },
+    {
+     "ghidra": "0x205cc18",
+     "symbol": "_ZN4Aska9Semaphore4ExitEv",
+     "name": "Exit"
+    },
+    {
+     "ghidra": "0x205cc38",
+     "symbol": "_ZN4Aska9Semaphore6CreateEii",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x205cc7c",
+     "symbol": "_ZNK4Aska9Semaphore4WaitEv",
+     "name": "Wait"
+    },
+    {
+     "ghidra": "0x205cc8c",
+     "symbol": "_ZNK4Aska9Semaphore15WaitNonBlockingEv",
+     "name": "WaitNonBlocking"
+    },
+    {
+     "ghidra": "0x205ccac",
+     "symbol": "_ZNK4Aska9Semaphore7IsReadyEv",
+     "name": "IsReady"
+    },
+    {
+     "ghidra": "0x205ccbc",
+     "symbol": "_ZNK4Aska9Semaphore7PollingEv",
+     "name": "Polling"
+    },
+    {
+     "ghidra": "0x205ccf0",
+     "symbol": "_ZNK4Aska9Semaphore6SignalEv",
+     "name": "Signal"
+    },
+    {
+     "ghidra": "0x205cd00",
+     "symbol": "_ZNK4Aska9Semaphore13Signal_LegacyEv",
+     "name": "Signal_Legacy"
+    }
+   ]
+  },
+  {
+   "name": "Event",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_pMutex",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_mutex",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 48,
+     "name": "m_cond",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 96,
+     "name": "m_signaled",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 97,
+     "name": "m_manualReset",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 98,
+     "name": "unk_62",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 104,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x201f2ec",
+     "symbol": "_ZN4Aska5EventC1Ev",
+     "name": "Event"
+    },
+    {
+     "ghidra": "0x201f2f4",
+     "symbol": "_ZN4Aska5Event6CreateEbb",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x201f350",
+     "symbol": "_ZNK4Aska5Event4WaitEj",
+     "name": "Wait"
+    },
+    {
+     "ghidra": "0x201f418",
+     "symbol": "_ZNK4Aska5Event3SetEv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x201f468",
+     "symbol": "_ZNK4Aska5Event5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x201f4a8",
+     "symbol": "_ZNK4Aska5Event8IsSignalEv",
+     "name": "IsSignal"
+    },
+    {
+     "ghidra": "0x201f4c8",
+     "symbol": "_ZN4Aska5Event4ExitEv",
+     "name": "Exit"
+    },
+    {
+     "ghidra": "0x208d218",
+     "symbol": "_ZN4Aska5EventD2Ev",
+     "name": "~Event"
+    }
+   ]
+  },
+  {
+   "name": "CriticalSection",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_mutex",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    }
+   ],
+   "size": 40,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x2017f14",
+     "symbol": "_ZN4Aska15CriticalSectionC2Ev",
+     "name": "CriticalSection"
+    },
+    {
+     "ghidra": "0x2017f54",
+     "symbol": "_ZN4Aska15CriticalSectionD1Ev",
+     "name": "~CriticalSection"
+    },
+    {
+     "ghidra": "0x2017f58",
+     "symbol": "_ZN4Aska15CriticalSection6DeleteEv",
+     "name": "Delete"
+    },
+    {
+     "ghidra": "0x2017f5c",
+     "symbol": "_ZNK4Aska15CriticalSection5EnterEv",
+     "name": "Enter"
+    },
+    {
+     "ghidra": "0x2017f60",
+     "symbol": "_ZNK4Aska15CriticalSection8TryEnterEv",
+     "name": "TryEnter"
+    },
+    {
+     "ghidra": "0x2017f78",
+     "symbol": "_ZNK4Aska15CriticalSection5LeaveEv",
+     "name": "Leave"
+    }
+   ]
+  },
+  {
+   "name": "Mutex",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sem",
+     "type": {
+      "kind": "struct",
+      "name": "Semaphore"
+     },
+     "size": 24
+    }
+   ],
+   "size": 32,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2050274",
+     "symbol": "_ZN4Aska5MutexC2Ev",
+     "name": "Mutex"
+    },
+    {
+     "ghidra": "0x2050298",
+     "symbol": "_ZN4Aska5MutexD2Ev",
+     "name": "~Mutex"
+    },
+    {
+     "ghidra": "0x20502b4",
+     "symbol": "_ZN4Aska5Mutex4LockEv",
+     "name": "Lock"
+    },
+    {
+     "ghidra": "0x20502bc",
+     "symbol": "_ZN4Aska5Mutex7TryLockEv",
+     "name": "TryLock"
+    },
+    {
+     "ghidra": "0x20502c4",
+     "symbol": "_ZN4Aska5Mutex6UnlockEv",
+     "name": "Unlock"
+    }
+   ]
+  },
+  {
+   "name": "FastCriticalSection",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 56,
+     "name": "m_lock",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_waiters",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "unk_40",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 120,
+     "name": "m_sem",
+     "type": {
+      "kind": "struct",
+      "name": "Semaphore"
+     },
+     "size": 24
+    }
+   ],
+   "size": 144,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2085580",
+     "symbol": "_ZN4Aska19FastCriticalSectionC2Ev",
+     "name": "FastCriticalSection"
+    },
+    {
+     "ghidra": "0x20855b4",
+     "symbol": "_ZN4Aska19FastCriticalSectionD1Ev",
+     "name": "~FastCriticalSection"
+    }
+   ]
+  },
+  {
+   "name": "Thread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2083f04",
+     "symbol": "_ZN4Aska6ThreadC1Ev",
+     "name": "Thread"
+    },
+    {
+     "ghidra": "0x2083f18",
+     "symbol": "_ZN4Aska6ThreadD2Ev",
+     "name": "~Thread"
+    },
+    {
+     "ghidra": "0x2083f4c",
+     "symbol": "_ZN4Aska6Thread7WaitEndEv",
+     "name": "WaitEnd"
+    },
+    {
+     "ghidra": "0x2083f60",
+     "symbol": "_ZN4Aska6Thread6DeleteEv",
+     "name": "Delete"
+    },
+    {
+     "ghidra": "0x2083f68",
+     "symbol": "_ZN4Aska6ThreadD0Ev",
+     "name": "~Thread"
+    },
+    {
+     "ghidra": "0x2083f9c",
+     "symbol": "_ZN4Aska6Thread6CreateEbiib",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x20850e4",
+     "symbol": "_ZN4Aska6Thread26ConvertToDependentPriorityEj",
+     "name": "ConvertToDependentPriority"
+    },
+    {
+     "ghidra": "0x2085198",
+     "symbol": "_ZN4Aska6Thread4MainEPv",
+     "name": "Main"
+    },
+    {
+     "ghidra": "0x20851b4",
+     "symbol": "_ZNK4Aska6Thread11GetPriorityEv",
+     "name": "GetPriority"
+    },
+    {
+     "ghidra": "0x208528c",
+     "symbol": "_ZN4Aska6Thread28ConvertToIndependentPriorityEi",
+     "name": "ConvertToIndependentPriority"
+    },
+    {
+     "ghidra": "0x2085344",
+     "symbol": "_ZN4Aska6Thread21PosixPriorityToStringEi",
+     "name": "PosixPriorityToString"
+    },
+    {
+     "ghidra": "0x208534c",
+     "symbol": "_ZN4Aska6Thread23PosixInitThreadPriorityEv",
+     "name": "PosixInitThreadPriority"
+    },
+    {
+     "ghidra": "0x20853cc",
+     "symbol": "_ZN4Aska6Thread11SetPriorityEi",
+     "name": "SetPriority"
+    },
+    {
+     "ghidra": "0x20854ac",
+     "symbol": "_ZN4Aska6Thread19DeleteSignalHandlerEv",
+     "name": "DeleteSignalHandler"
+    },
+    {
+     "ghidra": "0x20854b0",
+     "symbol": "_ZN4Aska6Thread4ExitEv",
+     "name": "Exit"
+    },
+    {
+     "ghidra": "0x20854bc",
+     "symbol": "_ZN4Aska6Thread12GetCurrentIDEv",
+     "name": "GetCurrentID"
+    },
+    {
+     "ghidra": "0x20854c0",
+     "symbol": "_ZN4Aska6Thread6SwitchEv",
+     "name": "Switch"
+    },
+    {
+     "ghidra": "0x20854c4",
+     "symbol": "_ZN4Aska6Thread5SleepEj",
+     "name": "Sleep"
+    },
+    {
+     "ghidra": "0x2085510",
+     "symbol": "_ZN4Aska6Thread6SleepUEj",
+     "name": "SleepU"
+    },
+    {
+     "ghidra": "0x208555c",
+     "symbol": "_ZN4Aska6Thread15CreateThreadKeyEv",
+     "name": "CreateThreadKey"
+    },
+    {
+     "ghidra": "0x2085560",
+     "symbol": "_ZN4Aska6Thread22InitializeThreadSystemEv",
+     "name": "InitializeThreadSystem"
+    },
+    {
+     "ghidra": "0x208557c",
+     "symbol": "_ZN4Aska6Thread7HandlerEv",
+     "name": "Handler"
+    }
+   ]
+  },
+  {
+   "name": "CMutex",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_substance",
+     "type": {
+      "kind": "struct",
+      "name": "FastCriticalSection"
+     },
+     "size": 144
+    },
+    {
+     "offset": 160,
+     "name": "m_initialized",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 161,
+     "name": "m_locked",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 162,
+     "name": "unk_a2",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 164,
+     "name": "m_lockCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 168,
+     "name": "m_owner",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 176,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f8bab4",
+     "symbol": "_ZN9Framework6CMutexC1Ev",
+     "name": "CMutex"
+    },
+    {
+     "ghidra": "0x1f8bacc",
+     "symbol": "_ZN9Framework6CMutexD2Ev",
+     "name": "~CMutex"
+    },
+    {
+     "ghidra": "0x1f8bb64",
+     "symbol": "_ZN9Framework6CMutex7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f8bbec",
+     "symbol": "_ZN9Framework6CMutexD0Ev",
+     "name": "~CMutex"
+    },
+    {
+     "ghidra": "0x1f8bc84",
+     "symbol": "_ZN9Framework6CMutex10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f8bccc",
+     "symbol": "_ZNK9Framework6CMutex13IsInitializedEv",
+     "name": "IsInitialized"
+    },
+    {
+     "ghidra": "0x1f8bcd4",
+     "symbol": "_ZNK9Framework6CMutex11LockCounterEv",
+     "name": "LockCounter"
+    },
+    {
+     "ghidra": "0x1f8bd0c",
+     "symbol": "_ZN9Framework6CMutex10rSubstanceEv",
+     "name": "rSubstance"
+    },
+    {
+     "ghidra": "0x1f8bd40",
+     "symbol": "_ZNK9Framework6CMutex11crSubstanceEv",
+     "name": "crSubstance"
+    },
+    {
+     "ghidra": "0x1f8bd74",
+     "symbol": "_ZN9Framework6CMutex4LockEv",
+     "name": "Lock"
+    },
+    {
+     "ghidra": "0x1f8bedc",
+     "symbol": "_ZN9Framework6CMutex6UnlockEv",
+     "name": "Unlock"
+    },
+    {
+     "ghidra": "0x1f8bfb0",
+     "symbol": "_ZNK9Framework6CMutex8IsLockedEv",
+     "name": "IsLocked"
+    }
+   ]
+  },
+  {
+   "name": "CSubstance",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "Thread"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_pInstance",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f9e468",
+     "symbol": "_ZN9Framework7CThread10CSubstanceC2Ev",
+     "name": "CSubstance"
+    },
+    {
+     "ghidra": "0x1f9e490",
+     "symbol": "_ZN9Framework7CThread10CSubstanceD2Ev",
+     "name": "~CSubstance"
+    },
+    {
+     "ghidra": "0x1f9e4c8",
+     "symbol": "_ZN9Framework7CThread10CSubstanceD0Ev",
+     "name": "~CSubstance"
+    },
+    {
+     "ghidra": "0x1f9e508",
+     "symbol": "_ZN9Framework7CThread10CSubstance16CreateAskaThreadERS0_PKcijm",
+     "name": "CreateAskaThread"
+    },
+    {
+     "ghidra": "0x1f9e578",
+     "symbol": "_ZNK9Framework7CThread10CSubstance9IsCreatedEv",
+     "name": "IsCreated"
+    },
+    {
+     "ghidra": "0x1f9e588",
+     "symbol": "_ZN9Framework7CThread10CSubstance7HandlerEv",
+     "name": "Handler"
+    }
+   ]
+  },
+  {
+   "name": "CThread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_substance",
+     "type": {
+      "kind": "struct",
+      "name": "CSubstance"
+     },
+     "size": 32
+    },
+    {
+     "offset": 40,
+     "name": "m_isExecuting",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 41,
+     "name": "unk_29",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 48,
+     "name": "m_pTerminateCallback",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_terminateArg",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 64,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f9e61c",
+     "symbol": "_ZN9Framework7CThread11ToTerminateEv",
+     "name": "ToTerminate"
+    },
+    {
+     "ghidra": "0x1f9e670",
+     "symbol": "_ZN9Framework7CThreadC2Ev",
+     "name": "CThread"
+    },
+    {
+     "ghidra": "0x1f9e6b0",
+     "symbol": "_ZN9Framework7CThreadD1Ev",
+     "name": "~CThread"
+    },
+    {
+     "ghidra": "0x1f9e6fc",
+     "symbol": "_ZN9Framework7CThreadD0Ev",
+     "name": "~CThread"
+    },
+    {
+     "ghidra": "0x1f9e700",
+     "symbol": "_ZN9Framework7CThread6CreateEPKcijm",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x1f9e7b4",
+     "symbol": "_ZN9Framework7CThread6ResumeEv",
+     "name": "Resume"
+    },
+    {
+     "ghidra": "0x1f9e80c",
+     "symbol": "_ZNK9Framework7CThread12IsTerminatedEv",
+     "name": "IsTerminated"
+    },
+    {
+     "ghidra": "0x1f9e81c",
+     "symbol": "_ZN9Framework7CThread17TerminateCallbackERNS_9ICallbackEj",
+     "name": "TerminateCallback"
+    },
+    {
+     "ghidra": "0x1f9e828",
+     "symbol": "_ZN9Framework7CThread11rAskaThreadEv",
+     "name": "rAskaThread"
+    }
+   ]
+  }
+ ]
+}

@@ -531,7 +531,8 @@ NATIVE_TEST("render/layout-camera") {
         get(0x12, &f); t.expect_eq(f, cam->m_e00, "Get(0x12) = 0xe00");
         get(0x16, &f); t.expect_eq(f, (float)cam->m_zRange1, "Get(0x16) = (float)m_zRange1");
         get(0x17, &f); t.expect_eq(f, (float)cam->m_zRange0, "Get(0x17) = (float)m_zRange0");
-        get(0x1c, &f); t.expect_eq(f, (float)cam->m_fogMode, "Get(0x1c) = m_fogMode");
+        u32 mode = 0xdead;
+        get(0x1c, &mode); t.expect_eq(mode, (u32)cam->m_fogMode, "Get(0x1c) = m_fogMode (an integer)");
         alignas(16) float col[4] = {};
         get(0x1b, col); t.expect_eq(std::memcmp(col, &cam->m_fogColor, 16), 0, "Get(0x1b) = m_fogColor");
         t.expect_eq(cam->m_zRange0F == (float)cam->m_zRange0 && cam->m_zRange1F == (float)cam->m_zRange1, true, "the float copies of the z range");

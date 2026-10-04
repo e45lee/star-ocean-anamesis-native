@@ -19,7 +19,10 @@ def make_stage(tmp_path):
     """A stage like stage_package's, without the binaries' build (placeholder x86-64 ELF)."""
     root = tmp_path / "stage" / TOP
     (root / "data").mkdir(parents=True)
-    (root / "soa").write_bytes(b"\x7fELF\x02\x01\x01" + b"\0" * 11 + b"\x3e\x00" + b"\0" * 44)
+    for prog in ("soa", "soa-server"):
+        (root / prog).write_bytes(b"\x7fELF\x02\x01\x01" + b"\0" * 11 + b"\x3e\x00" + b"\0" * 44)
+    for f in package.launcher_files("port", False):
+        shutil.copyfile(ROOT / "scripts/package" / f, root / f)
     package.clean_pools(ROOT / "data/gacha_pools.sqlite3", root / "data/gacha_pools.sqlite3")
     for rel in package.git("ls-files", "standin-assets").splitlines():
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
@@ -82,8 +85,13 @@ def test_readme_renders(kind, windows):
         assert ".xapk" in text and "3.7.0_APKPure.apk" not in text  # 380-ok: soa-viewer's game file
     else:
         assert "SOA-3.7.0-canonical-data.zip" in text and "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" in text
-    for prog in {"port": ["soa"], "emulator": ["soa-emu", "soa-server"], "viewer": ["soa-viewer"]}[kind]:
+    for prog in {"port": ["soa", "soa-server"], "emulator": ["soa-emu", "soa-server"], "viewer": ["soa-viewer"]}[kind]:
         assert f"\n{prog}{v['EXE']}\n" in text  # a section per program
+    if kind == "port":
+        # both ways of running the port, and the separate server's launcher with its options
+        launcher = "run-port-server" + (".cmd" if windows else ".sh")
+        assert ("run-port.cmd" if windows else "run-port.sh") in text and f"\n{launcher}\n" in text
+        assert "--port N" in text and "server.log" in text and "soa --server" in text
 
 
 def test_seed_save_is_not_packaged(tmp_path):
@@ -92,3 +100,17 @@ def test_seed_save_is_not_packaged(tmp_path):
     (root / "data/saves/seed").mkdir(parents=True)
     shutil.copyfile(ROOT / "data/saves/seed/Game.xml", root / "data/saves/seed/Game.xml")
     assert package.check(str(stage), "port", None) != []
+
+
+def test_port_package_ships_the_server_and_its_launcher():
+    """The port package: soa-server and the run-port-server launcher (the user, 2026-10-04), beside
+    soa and run-port; on Windows the .cmd with the .ps1 it runs."""
+    assert ("server", "soa-server") in package.PROGRAMS["port"]
+    for f in ["soa-server", "soa-server.exe"] + package.launcher_files("port", False) + package.launcher_files("port", True):
+        assert f in package.ALLOW["port"], f
+    assert package.launcher_files("port", False) == ["run-port.sh", "run-port-server.sh"]
+    assert package.launcher_files("port", True) == ["run-port.cmd", "run-port-server.cmd", "run-port-server.ps1"]
+    assert package.launcher_files("emulator", True) == ["run-emulator.cmd", "run-emulator.ps1"]
+    assert package.launcher_files("viewer", True) == ["run-viewer.cmd"]
+    for f in package.launcher_files("port", False) + package.launcher_files("port", True):
+        assert (ROOT / "scripts/package" / f).is_file(), f

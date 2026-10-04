@@ -7,9 +7,11 @@ It reads the 3.7.0 master (``data/basmaster-3.7.0.sqlite3``), turns what each co
 references into asset paths (the path rules), looks each path up in the asset sources (the 3.7.0
 download, the 3.7.0 APK, the repo's stand-ins) and writes:
 
-- ``docs/missing-assets-3.7.0.md``: part 1, every event and gacha banner with missing files, with
-  Japanese and English names and a best guess per file; part 2, the other content (missions,
-  Sphere 211, characters, items, ...) and which rows missing files block;
+- ``docs/missing-assets-3.7.0.md``: a linked table of contents; part 1, every event and gacha
+  banner with missing files (each event followed by its banners, then the banners without an
+  event), with Japanese and English names and a best guess per file; part 2, the other content
+  (missions, Sphere 211, characters, items, ...), which rows missing files block, and the
+  unreleased / test rows counted apart;
 - ``docs/missing-assets-3.7.0.txt``: the distinct missing paths of both parts, one per line;
 - optionally a JSON dump (``--json``) and the untranslated name residue (``--residue``).
 
@@ -36,9 +38,11 @@ Layout (one responsibility per module)
 ``references`` the shared reference collectors: banners and missions.
 ``events``     part 1: events (``master_event_area``).
 ``gachas``     part 1: gacha banners (``master_gacha`` grouped by ``banner_id``).
-``beyond``     part 2: missions, Sphere 211, characters, items and the small kinds.
+``associate``  part 1: which event a gacha banner belongs to (bonus characters, released together).
+``beyond``     part 2: missions, Sphere 211, characters, items and the small kinds; the
+               unreleased / test row rule.
 ``guess``      "what it probably is": the description, confidence and evidence per missing file.
-``render``     the markdown and text writers.
+``render``     the markdown and text writers (contents, explicit ``<a id>`` anchors from master labels).
 ``cli``        the command line.
 
 How to add a path rule
@@ -50,7 +54,8 @@ Add a ``PathRule`` to ``rules.py`` with its template, label and reason, and buil
 How to add a kind of content
 ----------------------------
 Part 1 (owners with sections): write a collector like ``events.collect_events`` returning
-``ContentItem`` objects and render them with ``render.write_item_section``.
+``ContentItem`` objects and render them with ``render.write_item_section`` (give each section an
+anchor from its master label via ``render.Anchors``).
 Part 2 (rows that missing files block): add a function to ``beyond.py`` that turns one master row
 into a ``ContentItem`` (``item.add(...)`` for every referenced file; ``item.gate`` for the files
 its use needs) and register it in ``beyond.ROW_KINDS`` (one row = one item) or, for grouped kinds,

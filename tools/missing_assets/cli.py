@@ -7,6 +7,7 @@ import json
 import os
 
 from . import ROOT
+from .associate import associate
 from .beyond import collect_beyond
 from .events import collect_events
 from .gachas import collect_gachas
@@ -81,7 +82,7 @@ def main(argv=None) -> None:
     events = collect_events(master)
     gachas, dangling = collect_gachas(master)
     beyond = collect_beyond(master)
-    doc = render_document(presence, guesser, events, gachas, dangling, beyond)
+    doc = render_document(presence, guesser, events, gachas, dangling, beyond, associate(master, gachas))
     write_file(args.md, doc.text())
     if args.txt:
         write_file(args.txt, missing_paths_text(doc.status))

@@ -55,6 +55,7 @@ class ContentItem:
     gachas: list[GachaRow] = field(default_factory=list)        # gacha banners
     picks: list[str] = field(default_factory=list)              # gacha pick-up names
     gate: set[str] = field(default_factory=set)  # part 2: the files the item's use needs
+    unreleased: str = ""  # part 2: why the row is an unreleased / test row ("" = real content)
 
     def add(self, path: str, kind: str, col: str, row: str, subject: str = "", order: int = 0) -> None:
         """Record a reference; a path already referenced gains the column / row (first kind wins)."""

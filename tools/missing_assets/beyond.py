@@ -9,6 +9,7 @@ deco, stamps, exchange shops, skills, studio backgrounds).
 from __future__ import annotations
 
 import collections
+import datetime as dt
 import re
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -27,6 +28,27 @@ WORLD_MAP_EPISODES = {"02": 2, "06": 3}
 WEAPON_KIND_NOT_A_MODEL = "W99St"
 #: master_exchange_shop_contents.content_type values that are master_item ids (a).
 SHOP_ITEM_CONTENT_TYPES = (1, 8, 9)
+
+# Unreleased / test rows (d, from the master's dates and names): counted apart from real content.
+#: A row open for at most this long was never really available (e.g. the roles of 2017-05-20
+#: 04:00-05:00: Idol Tika, wolf T'nique, Seaside Shimada).
+UNRELEASED_MAX_WINDOW = dt.timedelta(hours=1)
+#: Dummy / test names (ダミー, テスト but not コンテスト "contest").
+TEST_NAME_RE = re.compile(r"ダミー|(?<!コン)テスト")
+REASON_SHORT_WINDOW = "open for at most an hour"
+REASON_TEST_NAME = "dummy / test name"
+REASON_NO_AREA = "area has no master_area row"
+
+
+def unreleased_reason(item: ContentItem) -> str:
+    """Why a part-2 row is unreleased / test content, or "" for real content."""
+    if TEST_NAME_RE.search(item.ja or ""):
+        return REASON_TEST_NAME
+    try:
+        start, end = dt.datetime.fromisoformat(item.start), dt.datetime.fromisoformat(item.end)
+    except ValueError:
+        return ""
+    return REASON_SHORT_WINDOW if end - start <= UNRELEASED_MAX_WINDOW else ""
 
 
 def new_item(master: MasterIndex, typ: str, key, label: str, mid: Optional[str], ja: Optional[str] = None,
@@ -53,6 +75,9 @@ def collect_beyond(master: MasterIndex) -> list[ContentKind]:
     """Every part-2 kind, in document order."""
     kinds = [missions_kind(master), sphere211_kind(master), characters_kind(master), items_kind(master)]
     kinds += [row_kind(master, k) for k in ROW_KINDS]
+    for kind in kinds:
+        for item in kind.items():
+            item.unreleased = item.unreleased or unreleased_reason(item)
     return kinds
 
 
@@ -89,9 +114,12 @@ def area_mission_groups(master: MasterIndex) -> list[ContentGroup]:
             en, how = names.english(ar["name_message_id"])
         else:
             ja, en, how = f"master_area_id {aid}", "no master_area row (test missions, by their names)", "tsv"
+        items = mission_items(master, rows, "master_mission")
+        if not ar:
+            for item in items:
+                item.unreleased = REASON_NO_AREA
         groups.append(ContentGroup(ja or f"area {aid}", en, how,
-                                   f"master_mission, area `{ar['id_label'] if ar else aid}`",
-                                   mission_items(master, rows, "master_mission")))
+                                   f"master_mission, area `{ar['id_label'] if ar else aid}`", items))
     return groups
 
 
@@ -197,7 +225,7 @@ def character_item(master: MasterIndex, role) -> ContentItem:
     """A playable role: model files and portraits gate it; voices, chip and home model don't."""
     person = master.person[role["master_person_id"]]
     item = new_item(master, "character", role["id"], role["id_label"], person["name_message_id"],
-                    start=role["opened_at"] or "")
+                    start=role["opened_at"] or "", end=role["closed_at"] or "")
     ja, en = master.names.person(person["name_message_id"])
     item.ja, item.en, item.how = ja, en or item.en, "names" if en else item.how
     item.ja = f"★{role['rarity']} {item.ja}"

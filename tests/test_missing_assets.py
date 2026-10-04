@@ -14,11 +14,13 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT))
 from missing_assets import rules  # noqa: E402
+from missing_assets.associate import RULE_AMBIGUOUS, RULE_BONUS, RULE_RELEASE, Association, associate  # noqa: E402
+from missing_assets.beyond import REASON_SHORT_WINDOW, REASON_TEST_NAME, unreleased_reason  # noqa: E402
 from missing_assets.guess import Guesser, name_pattern  # noqa: E402
-from missing_assets.model import ContentGroup, ContentItem, ContentKind  # noqa: E402
+from missing_assets.model import ContentGroup, ContentItem, ContentKind, GachaRow  # noqa: E402
 from missing_assets.names import Names  # noqa: E402
 from missing_assets.presence import Presence, Source, image_info, logical_name  # noqa: E402
-from missing_assets.render import merge_bg, missing_paths_text, render_document  # noqa: E402
+from missing_assets.render import Anchors, merge_bg, missing_paths_text, render_document  # noqa: E402
 from soa_save.adld import chash32  # noqa: E402
 
 
@@ -232,19 +234,108 @@ def test_render_tiny_model(tree):
     row.add("Character/cx.asf", "character model", "master_person.asf", "cp_x", "", 1)
     row.gate.add("Character/cx.asf")
     kinds = [ContentKind("Characters", "Roles.", [ContentGroup("キャラ", "Characters", "tsv", "master_role", [row])])]
-    doc = render_document(tree, Guesser(tree), [ev], [ga], [], kinds)
+    doc = render_document(tree, Guesser(tree), [ev], [ga], [], kinds, Association({ga.key: ev.label}))
     md = doc.text()
-    assert "### イベント — The Event *GL*" in md
+    assert '### <a id="ev-event_x"></a>イベント — The Event *GL*' in md
+    assert '#### <a id="g-bn_g"></a>ガチャ — Some Gacha *GL*' in md  # nested under its event
+    assert "  - [イベント — The Event](#ev-event_x) · 2017-05-01 · 2 missing" in md  # contents
+    assert "    - [ガチャ — Some Gacha](#g-bn_g) · 2018-01-01 · 1 missing" in md
     assert "`event_x` (id 7) · 2017-05-01 12:00 → 2017-05-10 · 1 term(s) · 2 missing of 5 files" in md
     assert "| `Image/etc2/ev_banner.aif` | event banner | `master_banner.image`: `bn_ev` |" in md
-    events_part = md.split("## Events")[1].split("## Gacha")[0]
+    events_part = md.split('## <a id="events"></a>')[1].split('## <a id="unassociated-banners"></a>')[0]
     assert "| `BG/bc01_01.acf` | battle map (.acf) |" in events_part  # .asf (download) and .aaf (APK) present
     assert "bc01_01.asf" not in events_part
-    assert "| Characters | 1 | 0 | 1 | Character 1 |" in md
+    assert "| Characters | 1 | 0 | 1 | 0 | Character 1 (1) |" in md
     assert "Stand-ins (made-up, `standin-assets/`): `Image/etc2/bn_0002.aif` (gacha list banner)" in md
     assert "1 missing of 2 files, 1 stand-in" in md
     assert doc.events_missing == [ev] and doc.gachas_missing == [ga]
     assert missing_paths_text(doc.status) == "BG/bc01_01.acf\nCharacter/cx.asf\nImage/ev_banner.aif\nImage/panel.aif\n"
+
+
+def test_anchors_unique():
+    anchors = Anchors()
+    assert Anchors.make("g-", "(none:gacha_1)") == "g--none-gacha_1-"
+    assert anchors.tag("ev-a") == '<a id="ev-a"></a>'
+    with pytest.raises(ValueError):
+        anchors.tag("ev-a")
+
+
+def test_unreleased_rows(tree):
+    def row(label, ja, start="", end="", missing=True):
+        o = ContentItem("character", label, label, ja, "", "none", start, end, "")
+        path = f"Image/{label}.aif" if missing else "Image/bn_0001.aif"
+        o.add(path, "icon", "c", label)
+        o.gate.add(path)
+        return o
+    short = row("r_short", "★5 X", "2017-05-20 04:00:00", "2017-05-20 05:00:00")
+    dummy = row("r_dummy", "★5 ※ダミーX")
+    contest = row("r_contest", "イラストコンテスト", "2017-05-20 04:00:00", "2017-06-20 05:00:00")
+    ok = row("r_ok", "★5 Y", missing=False)
+    assert unreleased_reason(short) == REASON_SHORT_WINDOW and unreleased_reason(dummy) == REASON_TEST_NAME
+    assert unreleased_reason(contest) == unreleased_reason(ok) == ""
+    for o in (short, dummy, contest, ok):
+        o.unreleased = unreleased_reason(o)
+    kinds = [ContentKind("Characters", "Roles.", [ContentGroup("キャラ", "Characters", "tsv", "master_role",
+                                                               [short, dummy, contest, ok])])]
+    md = render_document(tree, Guesser(tree), [], [], [], kinds, Association()).text()
+    assert "| Characters | 4 | 1 | 1 | 2 | Image 1 (1) |" in md
+    assert "#### Characters: unreleased / test rows" in md
+    assert "`r_short` ★5 X — open for at most an hour; `r_dummy` ★5 ※ダミーX — dummy / test name" in md
+
+
+class FakeMaster:
+    """Just `query` over an in-memory master with the tables the associator reads."""
+
+    def __init__(self, script):
+        self.conn = sqlite3.connect(":memory:")
+        self.conn.row_factory = sqlite3.Row
+        self.conn.executescript(script)
+
+    def query(self, sql, *params):
+        return list(self.conn.execute(sql, params))
+
+
+ASSOC_MASTER = """
+create table master_event_area (id, id_label, opened_at, closed_at);
+create table master_event_term (id, master_event_area_id_label, opened_day, opened_time, closed_day, closed_time);
+create table master_event_mission (master_event_area_id_label, talk_event_id_label);
+create table master_mission_character_bonus (master_area_id, master_role_category_id);
+create table master_role (id, role_category_id);
+create table master_gacha_image (master_gacha_id, content_id, content_type);
+create table master_gacha_pickup (pickup_group_id, master_role_id);
+create table master_gacha (id, id_label, opened_at, gacha_pickup_group_id);
+insert into master_event_area values (1, 'ev_bonus', null, null), (2, 'ev_story', null, null),
+  (3, 'ev_twin_a', null, null), (4, 'ev_twin_b', null, null), (5, 'ev_nostory', null, null);
+insert into master_event_term values
+  (1, 'ev_bonus', '2019-01-10', '14:30:00', '2019-01-24', '13:59:59'),
+  (2, 'ev_story', '2019-02-07', '14:30:00', '2019-02-21', '13:59:59'),
+  (3, 'ev_twin_a', '2019-03-07', '14:30:00', '2019-03-21', '13:59:59'),
+  (4, 'ev_twin_b', '2019-03-07', '15:00:00', '2019-03-21', '13:59:59'),
+  (5, 'ev_nostory', '2019-04-04', '14:30:00', '2019-04-18', '13:59:59');
+insert into master_event_mission values ('ev_story', 'talk1'), ('ev_twin_a', 'talk2'), ('ev_twin_b', 'talk3'),
+  ('ev_nostory', null);
+insert into master_mission_character_bonus values (1, 77);
+insert into master_role values (500, 77), (501, 78);
+insert into master_gacha_image values (10, 500, 2);
+insert into master_gacha_pickup values (9, 500);
+insert into master_gacha values (10, 'g_bonus', '2019-01-17 14:30:00', null),
+  (11, 'g_pickup_group', '2019-01-12 00:00:00', 9), (12, 'g_late', '2019-06-01 14:30:00', 9),
+  (13, 'g_story', '2019-02-07 15:00:00', null), (14, 'g_twin', '2019-03-07 14:30:00', null),
+  (15, 'g_nostory', '2019-04-04 14:30:00', null);
+"""
+
+
+def test_association_rules():
+    def banner(label):
+        o = ContentItem("gacha", label, label, "", "", "none", "", "", "")
+        o.gachas = [GachaRow(label, "", None, None)]
+        return o
+    labels = ["g_bonus", "g_pickup_group", "g_late", "g_story", "g_twin", "g_nostory"]
+    result = associate(FakeMaster(ASSOC_MASTER), [banner(x) for x in labels])
+    assert result.event_of == {"g_bonus": "ev_bonus", "g_pickup_group": "ev_bonus", "g_story": "ev_story"}
+    # g_late: bonus character but outside the event's window; g_twin: two story events start then;
+    # g_nostory: the only event starting then has no talk script
+    assert result.by_rule == {RULE_BONUS: 2, RULE_RELEASE: 1, RULE_AMBIGUOUS: 1, "none": 2}
 
 
 # ---------------------------------------------------------------- the real documents

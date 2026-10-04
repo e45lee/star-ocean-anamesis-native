@@ -1,0 +1,4 @@
+# port/decomp/lib_zstd/scope.txt: the guest functions the `lib_zstd` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(ZSTD|ZSTDv\d+|HUF|FSE|ZDICT|POOL|XXH\w*|ZBUFF|COVER|ERR)_\w*$

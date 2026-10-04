@@ -1,0 +1,107 @@
+{
+ "subsystem": "lib_crypto",
+ "generated_by": "tools/subsystem.py export-types lib_crypto",
+ "header": "port/src/native/lib_crypto/lib_crypto_layout.h",
+ "structs": [
+  {
+   "name": "AesKey",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "rd_key",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 60
+     },
+     "size": 240
+    },
+    {
+     "offset": 240,
+     "name": "rounds",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 244,
+   "align": 4
+  },
+  {
+   "name": "CEncryptAES128",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "key",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "iv",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 32,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x26a5c58",
+     "symbol": "_ZN7Encrypt14CEncryptAES128C1Ev",
+     "name": "CEncryptAES128"
+    },
+    {
+     "ghidra": "0x26a5c5c",
+     "symbol": "_ZN7Encrypt14CEncryptAES128C1EPKhS2_",
+     "name": "CEncryptAES128"
+    },
+    {
+     "ghidra": "0x26a5c60",
+     "symbol": "_ZN7Encrypt14CEncryptAES12810InitializeEPKhS2_",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x26a5d40",
+     "symbol": "_ZN7Encrypt14CEncryptAES1287EncryptEPKvjPvj",
+     "name": "Encrypt"
+    },
+    {
+     "ghidra": "0x26a5e14",
+     "symbol": "_ZN7Encrypt14CEncryptAES1287DecryptEPKvjPvj",
+     "name": "Decrypt"
+    },
+    {
+     "ghidra": "0x26a5e88",
+     "symbol": "_ZN7Encrypt14CEncryptAES12821CalcEncryptBufferSizeEj",
+     "name": "CalcEncryptBufferSize"
+    }
+   ]
+  }
+ ]
+}

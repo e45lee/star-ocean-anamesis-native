@@ -188,8 +188,9 @@ From the task-5 profile (login + battle + gacha + story, 293,654 busy samples;
 | SkinMatrices::MakeSkinMatrices | (SkinMatrices 326) | | |
 
 (This table is the task-5 profile, before the dispatcher's natives; ObjectManager's residue after them,
-side by side over the four flows: ViewFrustumCulling ~1,800, Prerender ~890, MultithreadOcclusionCulling
-~790, MakePaintingList ~770, OnPrePaint ~750, AddPaintingListCandidates ~700, OnPostPaint ~630.)
+side by side over the four flows: ViewFrustumCulling 1,710, MultithreadOcclusionCulling 809,
+MakePaintingList 741, OnPrePaint 727, Prerender 726, AddPaintingListCandidates 636, OnPostPaint 594,
+PrepareMatrices 309, TraversePaintingList 224.)
 
 Recommended order: (1, done: "The job dispatcher") the dispatch / polling layer as one family (OnPrePaint's and
 TraversePaintingList's batch loops, the Dispatch_* and both ChangeModes, the worker's Handler: they share

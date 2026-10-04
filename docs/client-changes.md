@@ -137,6 +137,13 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
 - **Switch:** the in-process server (`--server inproc`, the default).
 
+### The settings and account requests on the FakeApiCaller route (agent `server-u-settings`)
+- **Symbols:** `FakeApiCaller::GetConfig()`, `UpdateConfig(u32, s8 const*, u32)`, `ResetConfig()`, `GetBirthYearMonth()`, `UpdateBirthYearMonth(u16, u8)`, `ReadExpirationInfo(CSTLVector<u32> const&)`, `SendGuideInformation(u32)`, `GetScenarioLibraryInfoList(u32)` (status-only methods of the fake caller: Status 0, the birth pair 1; nothing queued).
+- **Guest behaviour:** the screens send them through `CErrorHandlerWrap::Auto` and carry on with no reply: その他設定 / バトル設定 showed no stored options and a change was lost at once (一時保管庫設定 off again when reopened), 初期設定に戻す changed nothing, シナリオライブラリ listed no chapters. `NetworkApiCaller` sends the requests.
+- **Change (port-specific, `port/src/native/api/fakeapi.cpp` `kServedStatusOnly`):** with the in-process server, on the FakeApiCaller, each request is queued with NetworkApiCaller's FunctionID and answered by its `CApiNotify::On<Method>Res` with the local server's body (`server/src/api/settings/`). `UpdateBirthYearMonth`'s arguments are sent in the wire's shape, the string NetworkApiCaller makes ("%u-%02u", `server_adapters.cpp` `to_wire_shape`; `wire/inproc-parity`). Otherwise the guest's Status. `UpdateSession` stays the guest's (its only caller, `BridgeNotify::OnReceive`, needs the bridge the FakeApiCaller never opens).
+- **Why not server-side:** this *is* the route to the server; the fake caller never implemented the requests.
+- **Switch:** the in-process server (`--server inproc`, the default).
+
 ### The Sphere 211 requests on the FakeApiCaller route (agent `sphere211`)
 - **Symbols:** the base-class stubs `IApiCaller::GetSphere211Info()`, `GetSphere211RankingInfo(bool)`, `Sphere211AutoMemberSelect(u32, u32, u32)`, `Sphere211EquipAuto(u32, u32, vector<u64>)`, `Sphere211MissionContinue(u32, u32, bool)`, `Sphere211MissionEnd(u32, u32)`, `Sphere211MissionFailed(u32, u32)`, `Sphere211MissionStart(u32, u32, u64, u64, u64, u64, u32)`, which `FakeApiCaller` inherits, and `FakeApiCaller`'s own status-only overrides `ReturnSphere211()`, `Sphere211StaminaHeal()`, `Sphere211UseRerollItem()`, `Sphere211FloorClear(u32)`, `Sphere211SelectedFloor(u32)`: the 13 Sphere211 APIs.
 - **Guest behaviour:** each returns a Status and sends nothing, so the Sphere 211 board (`CPhase_Mission` with mission type 5, `CSphere*`) never gets its floor, cells, stamina or results. `NetworkApiCaller` sends them.

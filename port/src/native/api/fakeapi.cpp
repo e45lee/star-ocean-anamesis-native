@@ -837,7 +837,8 @@ void h_get_mission_list(Cpu& c) {
 // arguments go to server_port::capture and the request is queued with NetworkApiCaller's FunctionID,
 // answered by the CApiNotify handler NetworkApiCaller's response goes to. On another caller
 // the guest's Status. The gear screens (CCustomGear) and the favor-achievement
-// receive (CAdjutantSelect -> AchievementListReceive) use them.
+// receive (CAdjutantSelect -> AchievementListReceive) and the settings and account screens
+// (docs/client-changes.md) use them.
 struct ServedStatusOnly {
     const char* sym;
     u64 status;  // the guest's Status
@@ -857,6 +858,21 @@ const ServedStatusOnly kServedStatusOnly[] = {
     {"_ZN13FakeApiCaller15UpdateGearStockEv", 0, 0xd10e6806, "_ZN10CApiNotify20OnUpdateGearStockResEPaRj", "FakeApi/update_gear_stock.msgp"},
     {"_ZN13FakeApiCaller22AchievementListReceiveERKN9Framework10CSTLVectorImEE", 1, 0xbbc99ccf,
      "_ZN10CApiNotify27OnAchievementListReceiveResEPaRj", "FakeApi/achievement_list_receive.msgp"},
+    // settings and account (server/src/api/settings/): the options (その他設定 / バトル設定, 初期設定に戻す),
+    // the birth month (BirthDialogUtility::RequestGetAge, CBirthDialog), 期限情報's read marks
+    // (CTermInfoUI), the guide popup's link (CGuideInformation), シナリオライブラリ (CScenarioLibrary)
+    {"_ZN13FakeApiCaller9GetConfigEv", 0, 0x8fcedcac, "_ZN10CApiNotify14OnGetConfigResEPaRj", "FakeApi/get_config.msgp"},
+    {"_ZN13FakeApiCaller12UpdateConfigEjPKaj", 0, 0xf82ca7ca, "_ZN10CApiNotify17OnUpdateConfigResEPaRj", "FakeApi/update_config.msgp"},
+    {"_ZN13FakeApiCaller11ResetConfigEv", 0, 0x685d66f3, "_ZN10CApiNotify16OnResetConfigResEPaRj", "FakeApi/reset_config.msgp"},
+    {"_ZN13FakeApiCaller17GetBirthYearMonthEv", 1, 0x59a48d41, "_ZN10CApiNotify22OnGetBirthYearMonthResEPaRj", "FakeApi/get_birth_year_month.msgp"},
+    {"_ZN13FakeApiCaller20UpdateBirthYearMonthEth", 1, 0x0088b260, "_ZN10CApiNotify25OnUpdateBirthYearMonthResEPaRj",
+     "FakeApi/update_birth_year_month.msgp"},
+    {"_ZN13FakeApiCaller18ReadExpirationInfoERKN9Framework10CSTLVectorIjEE", 0, 0xdc269365, "_ZN10CApiNotify23OnReadExpirationInfoResEPaRj",
+     "FakeApi/read_expiration_info.msgp"},
+    {"_ZN13FakeApiCaller20SendGuideInformationEj", 0, 0x5cf6a3e9, "_ZN10CApiNotify25OnSendGuideInformationResEPaRj",
+     "FakeApi/send_guide_information.msgp"},
+    {"_ZN13FakeApiCaller26GetScenarioLibraryInfoListEj", 0, 0xe08c972e, "_ZN10CApiNotify31OnGetScenarioLibraryInfoListResEPaRj",
+     "FakeApi/get_scenario_library_info_list.msgp"},
 };
 bool is_served_status_only(const char* sym) {
     for (const auto& s : kServedStatusOnly)

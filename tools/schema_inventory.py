@@ -421,6 +421,7 @@ RELS = [
      "a cleared story mission (server_campaign.txt's clear lines before S12)"),
     ("campaign_last", "mission_id", "campaign_clear", "mission_id", None, "CASCADE (S12)",
      "the last story mission played (server_campaign.txt's last line before S12; no row: none)"),
+    ("config", "master_config_id", "m:master_config", "id", None, "-", "an option the player changed (UpdateConfig; v13)"),
 ]
 
 

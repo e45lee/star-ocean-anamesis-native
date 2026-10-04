@@ -31,7 +31,9 @@
   "GachaOnce": "server/src/api/gacha/gacha.cpp",
   "GachaTicket": "server/src/api/gacha/gacha.cpp",
   "GenerateGear": "server/src/api/items/gear.cpp",
+  "GetBirthYearMonth": "server/src/api/settings/account.cpp",
   "GetBoxGacha": "server/src/api/gacha/box.cpp",
+  "GetConfig": "server/src/api/settings/config.cpp",
   "GetEventRankingInfo": "server/src/api/events/ranking.cpp",
   "GetGachaInData": "server/src/api/gacha/gacha.cpp",
   "GetGachaRate": "server/src/api/gacha/rates.cpp",
@@ -43,6 +45,7 @@
   "GetPresent": "server/src/api/presents/presents.cpp",
   "GetPresentArray": "server/src/api/presents/presents.cpp",
   "GetRecentlyPlayedList": "server/src/api/social/social.cpp",
+  "GetScenarioLibraryInfoList": "server/src/api/settings/scenario_library.cpp",
   "GetServerTime": "server/src/api/entry/entry.cpp",
   "GetSphere211Info": "server/src/api/sphere211/sphere211.cpp",
   "GetSphere211RankingInfo": "server/src/api/sphere211/sphere211.cpp",
@@ -67,9 +70,11 @@
   "MultiMissionRestart": "server/src/api/missions/play_state.cpp",
   "NoLoginStart": "server/src/api/player/player_info.cpp",
   "PresentList": "server/src/api/presents/presents.cpp",
+  "ReadExpirationInfo": "server/src/api/settings/account.cpp",
   "ReceiveEventRankingResult": "server/src/api/events/ranking.cpp",
   "RemoveGear": "server/src/api/items/gear.cpp",
   "ResetBoxGacha": "server/src/api/gacha/box.cpp",
+  "ResetConfig": "server/src/api/settings/config.cpp",
   "ReturnSphere211": "server/src/api/sphere211/sphere211.cpp",
   "SaleGacha": "server/src/api/gacha/gacha.cpp",
   "SaleGachaOnce": "server/src/api/gacha/gacha.cpp",
@@ -78,6 +83,7 @@
   "SellItem": "server/src/api/items/items.cpp",
   "SellItemArray": "server/src/api/items/items.cpp",
   "SellStackItem": "server/src/api/items/items.cpp",
+  "SendGuideInformation": "server/src/api/settings/account.cpp",
   "SetAssist": "server/src/api/player/assist.cpp",
   "SetTitle": "server/src/api/player/titles.cpp",
   "SimpleLogin": "server/src/api/entry/entry.cpp",
@@ -96,6 +102,8 @@
   "UnlockItem": "server/src/api/items/items.cpp",
   "UnlockItemArray": "server/src/api/items/items.cpp",
   "UpdateAwakenLevel": "server/src/api/growth/growth.cpp",
+  "UpdateBirthYearMonth": "server/src/api/settings/account.cpp",
+  "UpdateConfig": "server/src/api/settings/config.cpp",
   "UpdateFavorByTap": "server/src/api/favor/favor_api.cpp",
   "UpdateGearStock": "server/src/api/items/gear.cpp",
   "UpdateHome": "server/src/api/player/home.cpp",
@@ -172,6 +180,9 @@
    "AreaExtra",
    "MissionResultExtra",
    "MissionStartExtra",
+   "OnPlayerLoad"
+  ],
+  "server/src/api/settings/config.cpp": [
    "OnPlayerLoad"
   ]
  },
@@ -287,6 +298,21 @@
    ],
    "source": "observed (requests.txt)"
   },
+  "replay:campaign": {
+   "apis": [
+    "EndMissionTalk",
+    "GetMissionList",
+    "GetPlayer",
+    "GetScenarioLibraryInfoList",
+    "GetWorldMapInfoList",
+    "Login",
+    "MissionEnd",
+    "MissionFailed",
+    "MissionStart",
+    "MissionTalk"
+   ],
+   "source": "observed (requests.txt)"
+  },
   "replay:deepspace": {
    "apis": [
     "DeepSpaceActiveList",
@@ -383,6 +409,8 @@
    "apis": [
     "AttachGear",
     "ClearNewGear",
+    "EquipAccessory",
+    "EquipWeapon",
     "Gacha",
     "GenerateGear",
     "GetGearInfo",
@@ -430,6 +458,8 @@
     "AchievementActiveList",
     "AchievementReceive",
     "Blacklist",
+    "GetBirthYearMonth",
+    "GetConfig",
     "GetPlayer",
     "GetPresent",
     "GetPresentArray",
@@ -438,11 +468,16 @@
     "LockItemArray",
     "Login",
     "PresentList",
+    "ReadExpirationInfo",
+    "ResetConfig",
     "SearchPlayer",
+    "SendGuideInformation",
     "SetTitle",
     "SimpleLogin",
     "StaminaHealByFavor",
     "UnlockItem",
+    "UpdateBirthYearMonth",
+    "UpdateConfig",
     "UpdateFavorByTap",
     "UpdateHome",
     "UpdateKiyakuVersion",
@@ -1381,10 +1416,11 @@
     "GetGachaInData",
     "GetPlayer",
     "GetServerTime",
+    "Home3DAnd2DSwitching",
     "Login",
     "NoLoginStart"
    ],
-   "source": "observed",
+   "source": "observed+declared",
    "observed": [
     "GetGachaInData",
     "GetPlayer",

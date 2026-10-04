@@ -16,6 +16,7 @@ One folder per API group of `docs/api.md`, so the catalogue, the code and the ru
 | `missions/` | MissionStart, MissionEnd, the drop roll, master_campaign, the play state (core) |
 | `player/` | the player state and its load (core), parties, assist and home character (core), home footer, titles, the notice page |
 | `presents/` | PresentList, GetPresent(Array) (core), present texts |
+| `settings/` | the options (GetConfig, UpdateConfig, ResetConfig; ConfigInfoList on the player load), the birth month, the read marks, the scenario library |
 | `shop/` | item shop, exchange, subscriptions (passes) |
 | `social/` | follow lists and rental helpers; the follow menu's lists (Blacklist, GetRecentlyPlayedList, SearchPlayer) |
 | `sphere211/` | Sphere 211 |

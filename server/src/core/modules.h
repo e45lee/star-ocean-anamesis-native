@@ -40,6 +40,7 @@ void register_sphere211();     // api/sphere211/sphere211.cpp
 void register_subscription();  // api/shop/subscription.cpp
 void register_title();         // api/player/titles.cpp
 void register_worldboss();     // api/events/world_boss.cpp
+void register_settings();      // api/settings/account.cpp: the options (config.cpp), the birth month, the read marks, the scenario library
 }  // namespace soa::server
 namespace soa::server::events {
 void register_event();  // api/events/event_missions.cpp: event missions, campaigns (master_campaign)

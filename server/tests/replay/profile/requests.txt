@@ -43,3 +43,19 @@ req 34 1790928045 Home3DAnd2DSwitching a092292c 0 - - -
 req 35 1790928050 GetPlayer 9a056905 - - - -
 req 36 1790928055 Home3DAnd2DSwitching a092292c 1 - - -
 req 37 1790928060 GetPlayer 9a056905 - - - -
+# (settings and account, schema v13) the options: GetConfig (the master's defaults), UpdateConfig
+# 一時保管庫設定 "true", GetConfig and the player load carry it, an unknown id refused (10403), ResetConfig;
+# the birth month: refused 10009 until entered, "1899-01" refused, "1990-05" stored and answered;
+# ReadExpirationInfo and SendGuideInformation (nothing stored)
+req 38 1790928065 GetConfig 8fcedcac - - - -
+req 39 1790928070 UpdateConfig f82ca7ca 4025152546,4 74727565 - -
+req 40 1790928075 GetConfig 8fcedcac - - - -
+req 41 1790928080 GetPlayer 9a056905 - - - -
+req 42 1790928085 UpdateConfig f82ca7ca 12345,4 74727565 - -
+req 43 1790928090 ResetConfig 685d66f3 - - - -
+req 44 1790928095 GetBirthYearMonth 59a48d41 - - - -
+req 45 1790928100 UpdateBirthYearMonth 0088b260 - 313839392d3031 - -
+req 46 1790928105 UpdateBirthYearMonth 0088b260 - 313939302d3035 - -
+req 47 1790928110 GetBirthYearMonth 59a48d41 - - - -
+req 48 1790928115 ReadExpirationInfo dc269365 - - 475676447,1801260937 -
+req 49 1790928120 SendGuideInformation 5cf6a3e9 732197292 - - -

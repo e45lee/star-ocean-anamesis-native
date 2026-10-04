@@ -1845,6 +1845,20 @@ const char* const kHome3D[] = {
     "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
 };
 
+// ---- step 13: the player's options and birth month (settings and account) -----------------------
+//
+// config: the options the player changed (UpdateConfig; api/settings/config.cpp), one row per
+//   master_config id (a master reference, state::check's): the value string as sent and its type.
+//   No row: the master's default (master_config.value); ResetConfig deletes them all.
+// player.birth_year / birth_month: the birth month the player entered (UpdateBirthYearMonth;
+//   api/settings/account.cpp); NULL: never entered. The ranges are the client's own
+//   (CNetworkUtility::BirthYearMonthString2Number @015f7cc0: 1900..2100, 1..12).
+const char* const kSettings[] = {
+    "create table config (master_config_id integer primary key, value text not null, type integer not null) strict",
+    "alter table player add column birth_year integer check (birth_year between 1900 and 2100)",
+    "alter table player add column birth_month integer check (birth_month between 1 and 12)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1896,6 +1910,10 @@ const std::vector<Step>& steps() {
          import_campaign,
          retire_campaign_file},
         {12, "the player's 2D / 3D home: player.is_3d_home (Home3DAnd2DSwitching)", {std::begin(kHome3D), std::end(kHome3D)}, nullptr},
+        {13,
+         "the player's options and birth month: config, player.birth_year / birth_month (UpdateConfig, UpdateBirthYearMonth)",
+         {std::begin(kSettings), std::end(kSettings)},
+         nullptr},
     };
     return s;
 }

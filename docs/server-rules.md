@@ -1066,7 +1066,7 @@ Code: `server/src/api/growth/` (BoostCharacter … EquipSkill) and `server/src/r
 <a id="awakening"></a>
 #### 5.4 Awakening, skills, mastery, universe
 - **Awakening:** `master_item_awaken` (awaken_id, awaken_level → items, `use_fol`) and `master_awaken` (per `role_category_id` and level: rush skill, talents, skills) (a).
-- **Mastery:** `master_mastery_step` (type, step → required item, count, FOL) (a).
+- **Mastery:** `master_mastery_step` (type, step → required item, count, FOL) (a). What the server does with it: [Mastery](#mastery).
 - **Universe board:** `master_universe_board` (cells: open level, status bonus, talent, `chip_num`), `master_universe_talent`; reset costs `reset_universe_board_item` × 1 (a).
 
 <a id="growth-and-economy"></a>
@@ -1098,6 +1098,20 @@ The growth, item, shop and daily-system APIs, as the local server applies them. 
 | **AttachGear** needs the weapon's limit break ≥ the gear's `master_gear.limit_break_conditions` (the list shows it as セット条件; the screen refuses with 武器の上限解放が必要です) and at least as many weapon slots as the gear has bonuses (`tItemData::GearSlotCount`: a gear's non-zero `add_param_type` count, a weapon's `max_gear_slot_num` capped at 3). | (a)+(b) |
 | `Player.gear_num` (CPlayerInfo +0x978, `NowGearItemCount`, the ギア所持 count) = the free gears. | (b); attached not counted (d) |
 
+<a id="mastery"></a>
+### Mastery (マスタリー, 師弟; `server/src/api/growth/mastery.cpp`)
+キャラクター > マスタリー: three 道場, each training one 師匠 / 弟子 pair through five trainings (each a choice of three cards); after the fifth (皆伝) the 弟子 inherits a talent of its 師匠 and the pair moves to the 皆伝 list. Decompiles: `work/decomp/server-u-mastery-*.resolved.c` (3.7.0).
+- **What the client keeps (b):** `CPlayerCharacterMasteryInfo` (`Initialize` @014f772c): `character_id` (the 弟子, the map's key), `player_id`, `parent_character_id` (the 師匠), `dojo_no` (an inline name `port/fakeapi/fields.txt` misses), `master_mastery_step_type_id`, `master_mastery_step_1..5_option_no`, `created_at`, `updated_at`. `CMasteryTop::UpdateList` (@01b95450) shows the rows of the player's `player_id`: fewer than five cleared trainings in 道場 `dojo_no` (1-3), the others in the 皆伝 list with their `updated_at`. `CUpdateCharacterMasteryInfo` adds `mastery_talent_id` and `parent_master_role_id`; `OnTrainMasteryRes` (@014e8ba0) merges each element of `UpdateCharacterMasteryInfoArray` into the map and copies those two into the 弟子's `CPersonInfo`; `OnResetMasteryRes` (@014e9958) erases each element's `character_id` and zeroes them.
+- **Who (b):** `tCharaData::InitializeMastery` (@01822340): a role with a mastery type is a 師匠 (trainer), the others can be 弟子; a 弟子 counts its cleared trainings (non-zero option_no), and a non-zero parent role in its `CPersonInfo` counts as all five, so the two `CPersonInfo` keys are 0 until 皆伝. `uimsg_mastery_Warning_01`: both at **LV70** and the **same ロール** (`master_role.category_type` 1-5, which the five mastery types match one to one (a)). The pair's type is the 師匠 role's `master_mastery_step_type_id` (a).
+- **The requests (b):** `TrainMastery(弟子, 師匠, u8, u32 type, u8 step, u8 option)`: the selection screen's lambda (@01ba2880) pairs with step 0, option 0 and the dojo index + 1; the training dialog's (`StartTraining`, @01b939e8) sends the 弟子's cleared trainings + 1 and (`マスタリーパスメダルを使う` ? 4 : 1) + the card's index. `ResetMastery(u64, u64)` comes 師匠 first from the selection screen (@01ba4910) and in the 皆伝 dialog's order (@01b94244); the server finds the pair either way.
+- **Pairing:** both owned and distinct, the 師匠's role has the request's type and the 弟子's none, the same category, both LV70 (11002 otherwise), dojo 1-3 (10208 otherwise). **(b)** A character already in a pair (either side, training or 皆伝) leaves it first (`uimsg_mastary_dialog4` "現在の師弟関係を解消して、新たな師弟関係を結びますか"). **(b)** Another pair still training in that dojo refuses (10208). **(d)** (the screen pairs only in an empty dojo)
+- **A training:** only the pair's next one (10208). Cards 1-3 cost `master_mastery_step` (type, step, option_no) `required_master_item_id` × `required_num` and `required_fol` **(a)**; the pass medal (option 4-6) costs `master_global.mastery_training_pass_item_id` × `mastery_training_pass_required_num` and no FOL **(a)+(b)** (`CMasteryTrainingConfirmationDialog::Setup` enables that button on the medal count alone), and stores the chosen card **(d)**. Items short 10206, FOL short 10710.
+- **皆伝 (the fifth):** `master_global.mastery_reward_master_item_id` × `mastery_reward_num` to the stock (`MasteryRewardInfo` {master_item_id, num}) **(a)+(b)** (`CMasteryTrainingAllClearDialog`'s gift line, `uimsg_mastary_dialog11`). The 弟子 inherits `parent_master_role_id` = the 師匠's current role and `mastery_talent_id` = the talent in the 師匠 role's `master_role.mastery_talent_slot` **(a)**; when the 師匠's awakening row (`master_awaken` of its category at its awaken level, the row `tTalentDataSet::Create` gets) sets that slot, its talent replaces the role's **(a)+(d)** (e.g. role_cp0022_b01a_6191's slot 5 changes at awakening 5). Both are computed from the stored pair, so they follow the 師匠's later growth **(d)**; `CPersonInfo` sends them for a graduated 弟子 only, `CPersonStatusInfo` always (0 otherwise).
+- **Awakening a 師匠:** `UpdateAwakenLevel`'s `AwakenResult.update_child_id` / `update_child_mastery_talent_id` are the graduated 弟子 and its talent now (b: `OnUpdateAwakenLevelRes` @014e2d90 sets that character's `CPersonInfo` `mastery_talent_id`); 0 / 0 without one **(d)** (sent whenever there is one).
+- **Parting (`ResetMastery`):** the pair's row goes, with the trainings and the inherited talent **(b)** (`uimsg_mastary_dialog2`); nothing paid comes back **(d)**. Answers the parted pair (its `character_id` is what the client erases). No such pair: 10208.
+- **State:** table `mastery` (schema version 13): the 弟子 `uid` (key), `master_uid` (unique: one pair each), `dojo_no` 1-3, `type_id` (a `master_mastery_step.type_id`), `step1..5` (the card cleared, 0 not yet), the times; both characters cascade.
+- Code: `server/src/api/growth/mastery.cpp`. Tests: `growth/mastery-pairing`, `growth/mastery-training`, `growth/mastery-awakening`, `server/schema-migrate-v13`; the `mastery` replay corpus; the session `mastery` (`port/scripts/mastery_session.sh`).
+
 <a id="growth-register"></a>
 ### Player-visible (c) and (d) rules (growth and economy)
 
@@ -1120,6 +1134,10 @@ From the growth and economy modules (items, shops, login bonus and achievements 
 | Login-bonus day at 04:00 local time; `is_received_now` only in the granting response; present `reason_type` 1 / achievement 3 | (d) |
 | `Player.tutorial_status` 9 for the seeded account | (d) |
 | Achievement status values; untracked types report 0; received rows leave the list | (d) |
+| Mastery: a dojo with a pair still training refuses another pair | (d) |
+| Mastery: the pass medal stores the card it was used on | (d) |
+| Mastery: an awakening's talent in the mastery slot replaces the role's; the inheritance follows the master's later growth | (d) |
+| Mastery: parting returns nothing paid | (d) |
 
 From the register before R20 (with the area and how to check):
 
@@ -1890,6 +1908,10 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [growth](#growth-register) |  | Login-bonus day at 04:00 local time; `is_received_now` only in the granting response; present `reason_type` 1 / achievement 3 | (d) |  |
 | [growth](#growth-register) |  | `Player.tutorial_status` 9 for the seeded account | (d) |  |
 | [growth](#growth-register) |  | Achievement status values; untracked types report 0; received rows leave the list | (d) |  |
+| [growth](#growth-register) |  | Mastery: a dojo with a pair still training refuses another pair | (d) |  |
+| [growth](#growth-register) |  | Mastery: the pass medal stores the card it was used on | (d) |  |
+| [growth](#growth-register) |  | Mastery: an awakening's talent in the mastery slot replaces the role's; the inheritance follows the master's later growth | (d) |  |
+| [growth](#growth-register) |  | Mastery: parting returns nothing paid | (d) |  |
 | [growth](#growth-register) | Growth | big-success chance 11.5 %, ×1.5 | (d) | key names only |
 | [growth](#growth-register) | Growth | seed FOL per seed used | (d) | amounts are (a)/(b) |
 | [growth](#growth-register) | Growth | limit break leaves the level cap | (d) |  |

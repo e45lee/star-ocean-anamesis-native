@@ -36,6 +36,7 @@
   "GetGachaInData": "server/src/api/gacha/gacha.cpp",
   "GetGachaRate": "server/src/api/gacha/rates.cpp",
   "GetGearInfo": "server/src/api/items/gear.cpp",
+  "GetMasteryInfo": "server/src/api/growth/mastery.cpp",
   "GetMissionList": "server/src/api/missions/play_state.cpp",
   "GetPlayMission": "server/src/api/missions/play_state.cpp",
   "GetPlayer": "server/src/api/player/player_info.cpp",
@@ -70,6 +71,7 @@
   "ReceiveEventRankingResult": "server/src/api/events/ranking.cpp",
   "RemoveGear": "server/src/api/items/gear.cpp",
   "ResetBoxGacha": "server/src/api/gacha/box.cpp",
+  "ResetMastery": "server/src/api/growth/mastery.cpp",
   "ReturnSphere211": "server/src/api/sphere211/sphere211.cpp",
   "SaleGacha": "server/src/api/gacha/gacha.cpp",
   "SaleGachaOnce": "server/src/api/gacha/gacha.cpp",
@@ -93,6 +95,7 @@
   "Sphere211UseRerollItem": "server/src/api/sphere211/sphere211.cpp",
   "StaminaHeal": "server/src/api/items/items.cpp",
   "StaminaHealByFavor": "server/src/api/daily/premium_and_favor_bonus.cpp",
+  "TrainMastery": "server/src/api/growth/mastery.cpp",
   "UnlockItem": "server/src/api/items/items.cpp",
   "UnlockItemArray": "server/src/api/items/items.cpp",
   "UpdateAwakenLevel": "server/src/api/growth/growth.cpp",
@@ -287,6 +290,20 @@
    ],
    "source": "observed (requests.txt)"
   },
+  "replay:campaign": {
+   "apis": [
+    "EndMissionTalk",
+    "GetMissionList",
+    "GetPlayer",
+    "GetWorldMapInfoList",
+    "Login",
+    "MissionEnd",
+    "MissionFailed",
+    "MissionStart",
+    "MissionTalk"
+   ],
+   "source": "observed (requests.txt)"
+  },
   "replay:deepspace": {
    "apis": [
     "DeepSpaceActiveList",
@@ -383,6 +400,8 @@
    "apis": [
     "AttachGear",
     "ClearNewGear",
+    "EquipAccessory",
+    "EquipWeapon",
     "Gacha",
     "GenerateGear",
     "GetGearInfo",
@@ -405,6 +424,18 @@
     "UpdateParty",
     "UpdatePartySet",
     "UseHealItem"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:mastery": {
+   "apis": [
+    "BoostCharacter",
+    "ExItemShop",
+    "GetMasteryInfo",
+    "GetPlayer",
+    "Login",
+    "ResetMastery",
+    "TrainMastery"
    ],
    "source": "observed (requests.txt)"
   },
@@ -975,6 +1006,30 @@
     "RemoveGear"
    ]
   },
+  "session:mastery": {
+   "apis": [
+    "GetMasteryInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "ResetMastery",
+    "TrainMastery"
+   ],
+   "source": "declared"
+  },
+  "session:mastery-server": {
+   "apis": [
+    "GetMasteryInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "ResetMastery",
+    "TrainMastery"
+   ],
+   "source": "declared"
+  },
   "session:deepspace": {
    "apis": [
     "AchievementActiveList",
@@ -1381,10 +1436,11 @@
     "GetGachaInData",
     "GetPlayer",
     "GetServerTime",
+    "Home3DAnd2DSwitching",
     "Login",
     "NoLoginStart"
    ],
-   "source": "observed",
+   "source": "observed+declared",
    "observed": [
     "GetGachaInData",
     "GetPlayer",

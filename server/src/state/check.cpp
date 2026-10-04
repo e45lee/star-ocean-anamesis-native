@@ -46,6 +46,8 @@ const std::vector<MasterRef>& master_refs() {
         {"event_rank_received", "group_id", "master_event_ranking_group", "id", false},
         // the story campaign's clears (PLAN-schema S12): Episode 1's missions and the world map's
         {"campaign_clear", "mission_id", "master_mission|master_world_map_mission", "id", false},
+        // the 師弟 pairs' mastery type (schema version 13)
+        {"mastery", "type_id", "master_mastery_step", "type_id", false},
     };
     return refs;
 }

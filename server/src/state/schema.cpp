@@ -1845,6 +1845,29 @@ const char* const kHome3D[] = {
     "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
 };
 
+// ---- step 13: mastery (師弟: GetMasteryInfo, TrainMastery, ResetMastery) ----------------------
+//
+// mastery: one 師弟 pair per disciple (CPlayerCharacterMasteryInfo; api/growth/mastery.cpp):
+// uid the 弟子 (character_id), master_uid the 師匠 (parent_character_id; one pair each), the
+// 道場 1-3, the pair's master_mastery_step type, the option (1-3) cleared at each of the five
+// trainings (0: not yet), the times. A character that goes takes its pair with it (cascade).
+const char* const kMastery[] = {
+    R"(create table mastery (
+  uid integer primary key references roster(uid) on delete cascade,
+  master_uid integer not null unique references roster(uid) on delete cascade,
+  dojo_no integer not null check (dojo_no between 1 and 3),
+  type_id integer not null,
+  step1 integer not null default 0 check (step1 between 0 and 3),
+  step2 integer not null default 0 check (step2 between 0 and 3),
+  step3 integer not null default 0 check (step3 between 0 and 3),
+  step4 integer not null default 0 check (step4 between 0 and 3),
+  step5 integer not null default 0 check (step5 between 0 and 3),
+  created_at integer not null,
+  updated_at integer not null,
+  check (master_uid <> uid)
+) strict)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1896,6 +1919,7 @@ const std::vector<Step>& steps() {
          import_campaign,
          retire_campaign_file},
         {12, "the player's 2D / 3D home: player.is_3d_home (Home3DAnd2DSwitching)", {std::begin(kHome3D), std::end(kHome3D)}, nullptr},
+        {13, "mastery: the 師弟 pairs (GetMasteryInfo, TrainMastery, ResetMastery)", {std::begin(kMastery), std::end(kMastery)}, nullptr},
     };
     return s;
 }

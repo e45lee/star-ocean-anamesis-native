@@ -3,6 +3,8 @@
 // (c) outside knowledge, (d) assumption (docs/server-rules.md#player-load).
 #include "api/player/roster.h"
 
+#include "api/growth/mastery.h"
+
 #include "api/player/player_info.h"  // player_id
 
 namespace soa::server {
@@ -50,6 +52,14 @@ Value person_info(ext::Ctx& ctx, const Row& roster_row, PlayerId owner_player_id
     if (has_growth(roster_row))
         for (const char* k : {"add_hp", "add_attack", "add_intelligence", "add_defence", "add_hit", "add_guard", "add_ap"})
             info[k] = (u32)roster_row.i(k);
+    // (b) CPersonInfo parent_master_role_id / mastery_talent_id: what a 弟子 inherited once its
+    // five mastery trainings are cleared (api/growth/mastery.cpp; tCharaData::InitializeMastery
+    // reads them), sent for a graduated disciple only
+    MasteryInheritance inh = mastery_inheritance(ctx, uid);
+    if (inh.graduated) {
+        info["parent_master_role_id"] = inh.parent_master_role_id;
+        info["mastery_talent_id"] = inh.mastery_talent_id;
+    }
     return info;
 }
 

@@ -46,7 +46,7 @@ player, screens opened by hand through `--control`.
 | `DepositItem`, `WithdrawItemFromStorage`, `SellItemsFromStorage`, `Lock`/`UnlockStorageItem` | decompile | the screen takes the call as done; nothing moves on the server, so the item is back after a reload (the seeded player has no loose weapons to move; the storage session plants some) |
 | 設定 > その他設定 / バトル設定 (`GetConfig`, `UpdateConfig`) | I, S | opens with the master defaults; a toggled option (一時保管庫設定) is **lost at once**: reopened, it is off again (S: `UpdateConfig(4025152546, "true", 4)` answered with `Time` only) |
 | 初期設定に戻す (`ResetConfig`) | decompile | same pattern |
-| キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters |
+| キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters. **Done (step 3.4):** the pairs, trainings, 皆伝 and parting are the server's (`server/src/api/growth/mastery.cpp`, below) |
 | 惑星選択 > シナリオライブラリ (`GetScenarioLibraryInfoList`) | S | opens; メインストーリー / サブストーリー with no chapters |
 | キャラクター > バトルシミュレーター (`TrainingMissionStart`, canned `mission_start.msgp`) | I | **wrong data**: the battle starts with the canned reply's party and stages (other characters, STAGE 1/2), not the chosen party; シミュレーター終了 returns to the character menu (no `MissionLose`) |
 | 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player) |
@@ -93,8 +93,6 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | **Missions** | [MissionContinue](api.md#missioncontinue) | ★ | continuing a lost battle |
 | | [MissionLose](api.md#missionlose) | ★ | |
 | | [TrainingMissionStart](api.md#trainingmissionstart) | canned `mission_start.msgp` | |
-| **Mastery** | [GetMasteryInfo](api.md#getmasteryinfo) | {} | |
-| | [TrainMastery](api.md#trainmastery) / [ResetMastery](api.md#resetmastery) | {} | |
 | **Equipment** | [EquipAuto](api.md#equipauto) | {} | auto-equip |
 | | [InheritAccessory](api.md#inheritaccessory) | ★ | |
 | | [UpdateItemStock](api.md#updateitemstock) | {} | |
@@ -268,6 +266,23 @@ evidence against one replaces it and records why.
 - All 27 `Debug*` methods answer success with an empty reply and change nothing — even the ones
   whose names promise items or currency (`DebugGetCoin`, `DebugGetItem`). The 3.7.0 client can't
   send them; only tests or a modified client could.
+
+**Mastery (step 3.4, done: `server/src/api/growth/mastery.cpp`, docs/server-rules.md#mastery).** No
+port change: the three are "empty" methods, answered in-process by the registered handlers. Read
+from the client: the request shapes (pairing is `TrainMastery` with step 0), the reply keys
+(`dojo_no` is missing from `port/fakeapi/fields.txt`), LV70 and the same role, the pass medal's
+cost, the 皆伝 gift, the inheritance in `CPersonInfo` and `UpdateAwakenLevel`'s child update. The
+assumptions, each (d) in the code and in server-rules.md:
+- A dojo with a pair still training refuses another pair (the selection screen pairs only in an
+  empty dojo, so the client never asks).
+- A training done with the pass medal stores the card it was used on (the client shows only the
+  count of cleared trainings).
+- The talent a 弟子 inherits is the 師匠's in its role's `mastery_talent_slot`, from its awakening's
+  `master_awaken` row when that row sets the slot (the master data changes it at awakening 5 for
+  some roles; the client's own fallback reads the 師匠's talent list the same way); it and the
+  parent role follow the 師匠's later growth (computed from the stored pair, not snapshotted), and
+  `UpdateAwakenLevel` reports the 弟子's talent whenever the awakened character has one.
+- Parting returns nothing paid (the dialog offers nothing back).
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

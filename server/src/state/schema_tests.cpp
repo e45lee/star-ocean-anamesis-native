@@ -45,7 +45,8 @@ struct TempDb {
                                    ".bak-v8",  ".bak-v8-journal",
                                    ".bak-v9",  ".bak-v9-journal",
                                    ".bak-v10", ".bak-v10-journal",
-                                   ".bak-v11", ".bak-v11-journal"})
+                                   ".bak-v11", ".bak-v11-journal",
+                                   ".bak-v12", ".bak-v12-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -163,9 +164,10 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)53,
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54,
                 "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
-                "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12)");
+                "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12), "
+                "plus mastery (v13)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
@@ -1476,6 +1478,73 @@ NATIVE_TEST("server/schema-migrate-v12") {
         t.expect_eq(state::user_version(bak.h), 11, "the backup is version 11");
         t.expect_eq(bak.one("select count(*) from pragma_table_info('player') where name = 'is_3d_home'", {}), (int64_t)0,
                     "the backup has no is_3d_home");
+        bak.close();
+    }
+}
+
+// Version 13: the mastery table (GetMasteryInfo / TrainMastery / ResetMastery). The version is
+// written once here (kV) so a renumbering at merge changes one line. (1) v0 -> v13: every table's
+// rows as the same file at version 12, an empty mastery table; .bak-v0. (2) a planted v12 file ->
+// 13 without the master: the table, its checks and cascades, .bak-v12 without it.
+NATIVE_TEST("server/schema-migrate-v13") {
+    constexpr int kV = 13;
+    const std::string bak_prev = ".bak-v" + std::to_string(kV - 1);
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v13 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file("v13-ref"), old("v13");
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kV - 1, m), true, "the reference: migrated to the version before");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "v0 -> v13");
+        t.expect_eq(state::user_version(db.h), kV, "user_version");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        t.expect_eq(rb.count("mastery") == 1 && rb["mastery"].empty(), true, "an empty mastery table");
+        rb.erase("mastery");
+        t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v12 -> v13, without the master ------------------------------------------------------------
+    {
+        TempDb prev("v13-from-v12");
+        if (!write_fixture(t, prev.path)) return;
+        Sql f;
+        if (!f.open(prev.path, false)) return t.fail("open v12");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV - 1, m), true, "migrated to the version before");
+        f.close();
+        unlink((prev.path + ".bak-v0").c_str());
+        if (!f.open(prev.path, false)) return t.fail("reopen v12");
+        t.expect_eq(state::user_version(f.h), kV - 1, "a file at the version before");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV), true, "v12 -> v13");
+        t.expect_eq(state::user_version(f.h), kV, "user_version");
+        int64_t a = f.one("select min(uid) from roster", {}), b = f.one("select max(uid) from roster", {});
+        if (a == b) return t.fail("the fixture needs two characters");
+        auto ok = [&](const std::string& sql) { return sqlite3_exec(f.h, sql.c_str(), nullptr, nullptr, nullptr) == SQLITE_OK; };
+        const std::string A = std::to_string(a), B = std::to_string(b);
+        t.expect_eq(ok("insert into mastery (uid, master_uid, dojo_no, type_id, created_at, updated_at) values (" + A + ", " + A + ", 1, 7, 0, 0)"),
+                    false, "a character isn't its own master");
+        t.expect_eq(ok("insert into mastery (uid, master_uid, dojo_no, type_id, created_at, updated_at) values (" + A + ", " + B + ", 4, 7, 0, 0)"),
+                    false, "dojo 1-3");
+        t.expect_eq(
+            ok("insert into mastery (uid, master_uid, dojo_no, type_id, step1, created_at, updated_at) values (" + A + ", " + B + ", 1, 7, 4, 0, 0)"),
+            false, "an option 0-3");
+        t.expect_eq(ok("insert into mastery (uid, master_uid, dojo_no, type_id, created_at, updated_at) values (" + A + ", 1, 1, 7, 0, 0)"), false,
+                    "the master is an owned character");
+        t.expect_eq(ok("insert into mastery (uid, master_uid, dojo_no, type_id, created_at, updated_at) values (" + A + ", " + B + ", 1, 7, 0, 0)"),
+                    true, "a pair");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        t.expect_eq(ok("delete from roster where uid = " + B), true, "the master goes");
+        t.expect_eq(f.one("select count(*) from mastery", {}), (int64_t)0, "its pair with it (cascade)");
+        f.close();
+        Sql bak;
+        if (!bak.open(prev.path + bak_prev, true)) return t.fail("no %s%s", prev.path.c_str(), bak_prev.c_str());
+        t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is at the version before");
+        t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'mastery'", {}), (int64_t)0, "the backup has no mastery table");
         bak.close();
     }
 }

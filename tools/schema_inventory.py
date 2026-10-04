@@ -421,6 +421,9 @@ RELS = [
      "a cleared story mission (server_campaign.txt's clear lines before S12)"),
     ("campaign_last", "mission_id", "campaign_clear", "mission_id", None, "CASCADE (S12)",
      "the last story mission played (server_campaign.txt's last line before S12; no row: none)"),
+    ("mastery", "uid", "roster", "uid", None, "CASCADE (v13)", "a 師弟 pair's disciple (CPlayerCharacterMasteryInfo.character_id)"),
+    ("mastery", "master_uid", "roster", "uid", None, "CASCADE (v13)", "a 師弟 pair's master (parent_character_id; one pair each)"),
+    ("mastery", "type_id", "m:master_mastery_step", "type_id", None, "-", "the pair's mastery type"),
 ]
 
 

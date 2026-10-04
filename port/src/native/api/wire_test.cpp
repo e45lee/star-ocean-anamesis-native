@@ -822,6 +822,16 @@ NATIVE_TEST("wire/inproc-parity") {
             compare(t, "SaleGacha", server_port::inproc_request("_ZN13FakeApiCaller9SaleGachaEjPKa", 0xb164b4c5, x), d);
         }
     }
+    {
+        // TrainMastery(u64 disciple, u64 master, u8 dojo, u32 type, u8 step, u8 option): u8s
+        // between wider arguments, their registers' upper bits undefined (AAPCS64)
+        server::net::Decoded d;
+        if (wire_decode(t, "TrainMastery", {u('Q', 0x7e000005ull), u('Q', 0x7e000009ull), u('B', 2), u('I', 4177083684u), u('B', 3), u('B', 5)},
+                        &d)) {
+            u64 x[8] = {0x5150, 0x7e000005ull, 0x7e000009ull, 0xdead0002ull, 4177083684u, 0xbeef0003ull, 0x1234505ull};
+            compare(t, "TrainMastery", server_port::inproc_request("_ZN13FakeApiCaller12TrainMasteryEmmhjhh", 0xbb0e7ef9, x), d);
+        }
+    }
 }
 
 }  // namespace

@@ -87,6 +87,8 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `session:party` | 4.4 min | 1 | party sets 1 and 2 edited (UpdatePartySet), the home character (UpdateHome), a battle with set 2 | `port/scripts/party_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:rental` | 5.4 min | 1 | a rental helper fought as member 4; a second boot a day later: the rental bonus | `port/scripts/rental_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:growth` | 5.7 min | 1 | strengthening, evolution, limit break, weapon custom (gear set, removed, purified) | `port/scripts/growth_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:mastery` | 6.0 min | 1 | マスタリー in-process: a 師弟 pair formed, five trainings (the fifth with the pass medal) to 皆伝, kept after a re-login, parted | `port/scripts/mastery_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:mastery-server` | 6.0 min | 1 | the mastery session against soa-server (the wire route of GetMasteryInfo / TrainMastery / ResetMastery) | `port/scripts/mastery_session.sh --target port-server build/port/soa {out} {tmp}` |
 | T2 | `session:deepspace` | 5.4 min | 1 | deep-space expeditions: started, returned, collected, a quick return, two ships, achievements | `port/scripts/deepspace_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:tower` | 4.3 min | 1 | the tower's floor list, a floor's battle, the next floor unlocked (--restore-tower) | `port/scripts/tower_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:restore` | 4.8 min | 1 | home, a battle, a 10-draw, the server state after each | `port/scripts/restore_session.sh build/port/soa {out} {tmp}` |

@@ -1223,10 +1223,10 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Method** `GetMasteryInfo(void)`
 - **Wire**: request fid `45bea005`, encrypted: RequestHeader(16) = 16 bytes; reply `GetMasteryInfoRes` fid `7475e348`
 - **Request**: none
-- **Response** (`data.*`): `PlayerCharacterMasteryInfoMap`
+- **Response** (`data.*`): `PlayerCharacterMasteryInfoMap` {disciple uid: CPlayerCharacterMasteryInfo {character_id, player_id, parent_character_id, dojo_no, master_mastery_step_type_id, master_mastery_step_1..5_option_no, created_at, updated_at}}
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CMasteryTop::Initialize`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/mastery.cpp`; docs/server-rules.md#mastery)
 - **Master tables**: `master_mastery_step`
 - **FakeApiCaller**: `FakeApi/get_mastery_info.msgp`
 
@@ -1269,11 +1269,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `614fa7ea`
 - **Method** `ResetMastery(unsigned long,unsigned long)`; wire `SendResetMastery(RequestHeader, unsigned long, unsigned long)`
 - **Wire**: request fid `614fa7ea`, encrypted: RequestHeader(16) · u64 · u64 = 32 bytes; reply `ResetMasteryRes` fid `4b76b6d7`
-- **Request**: `u64`, `u64`
+- **Request**: `u64`, `u64`: the pair's two characters, master first from the selection screen, in the 皆伝 dialog's DojoInfo order from CMasteryTrainingAllClearDialog
 - **Response** (`data.*`): `UpdateCharacterMasteryInfoArray`
 - **Handler / effect**: Inline (guest).
 - **Callers** (fid constant scan): unnamed code near `CMasteryTrainingAllClearDialog`, unnamed code near `CMasteryTrainingSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/mastery.cpp`; docs/server-rules.md#mastery)
 - **FakeApiCaller**: `FakeApi/reset_mastery.msgp`
 
 ### SetAssist
@@ -1302,11 +1302,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `bb0e7ef9`
 - **Method** `TrainMastery(unsigned long,unsigned long,unsigned char,unsigned int,unsigned char,unsigned char)`; wire `SendTrainMastery(RequestHeader, unsigned long, unsigned long, unsigned char, unsigned int, unsigned char, unsigned char)`
 - **Wire**: request fid `bb0e7ef9`, encrypted: RequestHeader(16) · u64 · u64 · u8 · u32 · u8 · u8 = 39 bytes; reply `TrainMasteryRes` fid `61d246ee`
-- **Request**: `u64`, `u64`, `u8`, `u32`, `u8`, `u8`
+- **Request**: `u64 disciple uid`, `u64 master uid`, `u8 dojo_no` (1-3), `u32 master_mastery_step type_id`, `u8 step` (0: form the pair; 1-5: the training), `u8 option` (1-3 the card; 4-6 the card with the pass medal)
 - **Response** (`data.*`): `UpdateCharacterMasteryInfoArray`, `MasteryRewardInfo`, `UpdateStockItem`
 - **Handler / effect**: Inline (guest).
 - **Callers** (fid constant scan): `CMasteryTrainingConfirmationDialog::StartTraining`, unnamed code near `CMasteryTrainingSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/mastery.cpp`; docs/server-rules.md#mastery)
 - **Master tables**: `master_mastery_step`, `master_global.mastery_*`
 - **FakeApiCaller**: `FakeApi/train_mastery.msgp`
 

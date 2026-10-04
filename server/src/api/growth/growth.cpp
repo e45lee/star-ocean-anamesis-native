@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "api/growth/growth_args.h"
+#include "api/growth/mastery.h"
 #include "api/player/roster.h"  // has_growth
 #include "core/errors.h"
 #include "core/log.h"
@@ -359,7 +360,8 @@ std::vector<u8> evolution_character(Ctx& ctx, const Request& req) {
 //   Refused: unknown character, not the next level, no cost row (10208), items short (10206), FOL
 //   short (10710).
 // Answers: the player state, AwakenResult {awaken_level, use_fol, UseStockItem, UpdateCharacter,
-// update_child_id, update_child_mastery_talent_id}, StockItem.
+// update_child_id, update_child_mastery_talent_id (a graduated 弟子's new inherited talent:
+// docs/server-rules.md#mastery)}, StockItem.
 std::vector<u8> update_awaken_level(Ctx& ctx, const Request& req) {
     const auto args = args::UpdateAwakenLevelArgs::from(req);
     const CharacterUid uid = args.character_uid;
@@ -385,8 +387,15 @@ std::vector<u8> update_awaken_level(Ctx& ctx, const Request& req) {
     result["use_fol"] = cost.fol;
     result["UseStockItem"] = use;
     result["UpdateCharacter"] = update_character_info(ctx, uid, false);
-    result["update_child_id"] = 0u;                  // (d) no child role
-    result["update_child_mastery_talent_id"] = 0u;  // (d) no mastery talent
+    // (b) CAwakenResultInfo update_child_id / update_child_mastery_talent_id: the client sets
+    // the CPersonInfo mastery_talent_id (+0x7a0) of the character update_child_id to the latter
+    // (CApiNotify::OnUpdateAwakenLevelRes @014e2d90): a master's awakening can change the talent its
+    // graduated 弟子 inherited (api/growth/mastery.cpp mastery_talent_of: the awakening's talent
+    // in the master role's mastery_talent_slot); (d) reported whenever the awakened character
+    // has a graduated disciple, else 0 / 0
+    std::optional<CharacterUid> child = graduated_disciple_of(ctx, uid);
+    result["update_child_id"] = child ? child->v : 0u;
+    result["update_child_mastery_talent_id"] = child ? mastery_inheritance(ctx, *child).mastery_talent_id : 0u;
     data["AwakenResult"] = result;
     data["StockItem"] = ctx.stock();
     LOGI("server", "UpdateAwakenLevel %llx: awakening %u -> %u, FOL -%u", (unsigned long long)uid.v, chara.awaken_level, level, cost.fol);

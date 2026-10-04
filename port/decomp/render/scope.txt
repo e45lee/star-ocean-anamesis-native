@@ -1,0 +1,9 @@
+# port/decomp/render/scope.txt: the guest functions the `render` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Aska::(Render\w*|_RenderDevice\w*|Shader\w*|DirectShader\w*|Texture\w*|ITextureHandler|VertexBuffer|IndexBuffer|PrimitiveBuffer|PostProcess\w*|Light\w*|Shadow\w*|Camera\w*|Lens|BackBufferSync|ResolveTarget\w*|MSAA\w*|FrameTexture\w*|Filter\w*|DepthTexture\w*|DiffuseCubeMap|ToneMapTable|Projector\w*|Occluder\w*|Material\w*|UniformValueBuffer\d*|IPixelFormat\w*|SimplePrimRenderer|RenderablePrimitive|OpticalPhenomenon|MeshGenerator\w*|GraphicsDevice\w*|GL\w*|ScissorObject|AhslConst)::
+^Framework::CCamera::
+^(CNormalCamera|CRenderLayer\w*|CShadowController)::
+# The object hierarchy's bases (every scene object derives from them; scene and anim use them):
+^Aska::(IAnimatable|AnimatableLinkElement|HierarchicalObject|HierarchicalObjectContainer|AimingObject)::
+^(\S+ )?Function_UpdateHierarchicallyByUsingStack<

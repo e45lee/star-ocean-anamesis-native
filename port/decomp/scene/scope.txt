@@ -1,0 +1,7 @@
+# port/decomp/scene/scope.txt: the guest functions the `scene` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Aska::(ObjectManager\w*|JointObject|Aof\w*|DirectAof\w*|Asf\w*|DPGHandler|SkinMatrices\w*|TextureNode|ModifierManager|HeightObject\w*)::
+^Framework::(C\w*Model|CEffectManager|CDirectAof\w*)::
+^(CArenaEffectModel|CHomeModelViewManager|CAnimationModelObject)::
+^(\S+ )?Aska::AofObject::

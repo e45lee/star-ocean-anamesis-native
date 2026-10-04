@@ -64,9 +64,13 @@ struct Probe {
     bool done = false;
 };
 void probe_hook(Probe& p, Cpu& c);
-// Arms `p` and waits (at most timeout_ms) until a call was taken. False (and a failed test) on timeout.
+// Arms `p` and waits (at most timeout_ms) until a call was taken. False on timeout: a failed test when
+// `required`, else a note on stderr (an object the current screen doesn't have).
 bool probe_call(TestContext& t, Probe& p, const std::function<bool(Cpu&)>& body, int timeout_ms = 20000,
-                const char* what = "the probed function");
+                const char* what = "the probed function", bool required = true);
+// True in a selftest-live run (port/scripts/selftest_live.sh: SOA_SELFTEST_START_FILE set): the tests run
+// on a live screen (home, a battle), where the models' objects must exist; false at the title.
+bool live_screen();
 
 }  // namespace soa::native::render::testutil
 

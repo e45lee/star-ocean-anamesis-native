@@ -37,8 +37,10 @@ def main(o):
     os.makedirs(o.out, exist_ok=True)
     if os.path.exists(start):
         os.remove(start)
+    # client_save False: the phone's own client save, as the seeded session runs (the port sessions'
+    # save, with no episode pack on its books, opens the episode list instead of Mere's planet select)
     cfg = common.port_config(o, server_args=["--campaign-seed", "mf01_001"], limit=2400,
-                             env={"SOA_SELFTEST_START_FILE": start})
+                             env={"SOA_SELFTEST_START_FILE": start}, client_save=False)
     cfg.client_args = ["--selftest", o.filter]  # soa-server: SOA_SERVER (default build/server/soa-server)
     try:
         s = common.port_run(o, cfg)

@@ -568,7 +568,8 @@ public:
     s32 ReferenceCounter() const;
     void Release();
     void ForceRelease();
-    CResourceElement* rResourceElement();
+    CResourceElement* rResourceElement();                       // (asserts ResourceManager.cpp:0x7e when null)
+    const CResourceElement* crResourceElement() const;          // (asserts ResourceManager.cpp:0x84 when null)
     u32 UniqueBitFlag() const;
     void OrUniqueBitFlag(u32 f);
     void AndUniqueBitFlag(u32 f);
@@ -597,8 +598,10 @@ public:
     void Run(s32 level);                                        // slot 13: done elements with no reference -> CDelayDelete
     void Initialize();                                          // TaskManager::Add, m_isInitialized = 1
     void Release();
-    tElement* pSearch(u32 fileNumber);                          // by CFileLoader::FileNumber
+    tElement* pSearch(u32 fileNumber);                          // by CFileLoader::FileNumber (the caller holds m_mutex)
+    const tElement* pSearch(u32 fileNumber) const;              // (the same; its asserts' lines differ)
     tElement* pSearchByDirectPath(const char* path);            // by pFileName (strcmp)
+    const tElement* pSearchByDirectPath(const char* path) const;
     void Add(u32 type, u32 fileNumber, u32 flag, bool high);    // a found element: m_referenceCounter++, flag |= ...
     void AddByName(u32 type, const char* name, u32 flag, bool high);
     void AddDirectFile(u32 type, const char* path, u32 flag, bool high);
@@ -608,8 +611,8 @@ public:
     void RemoveDirectFile(const char* path);
     void RemoveForce(u32 fileNumber);
     void RemoveByUniqueBitFlag(u32 flag);
-    bool IsReady(u32 fileNumber, bool* error) const;
-    bool IsReadyDirectFile(const char* path, bool* error) const;
+    bool IsReady(u32 fileNumber, bool* found) const;            // under m_mutex: *found = in the list; true when done
+    bool IsReadyDirectFile(const char* path, bool* found) const;
     void Lock();
     void Unlock();
     bool IsLocked() const;

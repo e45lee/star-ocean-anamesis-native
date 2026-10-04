@@ -51,8 +51,28 @@ TStaticString, TArray, TPoolLegacy, TSharedPointer, String, list, vector, ASON).
 
 ## Natives
 
+13 bound (`soa --list-native | grep resource:`). Live check: `soa --live-check resource[:every=N][:out=FILE]`
+(default every=16; `resource_check.h`).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `Framework::CResourceManager::Run` (done, unreferenced elements to `CDelayDelete::AddTask`, nodes freed) | `resource_manager.cpp` | `resource/manager-run` (twin private managers over fake elements, AddTask stubbed) | under the manager's own lock: the guest on a shadow manager over a copy of the list, AddTask / the STL Free answered by stubs on this thread; calls, frees and the list left compared |
+| `CResourceManager::IsReady` / `IsReadyDirectFile` | `resource_manager.cpp` | `resource/manager-searches` | getter (+ the `found` out-parameter) |
+| `CResourceManager::Num` / `NumByUniqueBitFlag` / `NumLoading` / `IsLoading` | `resource_manager.cpp` | `resource/manager-searches` (also with the mutex locked: NumLoading / IsLoading then don't lock) | getter |
+| `CResourceManager::pSearch` / `pSearchByDirectPath` (both const and not) | `resource_manager.cpp` | `resource/manager-searches` (hits, misses) | getter |
+| `Aska::AHSLDatabase<ShaderCache, 9>::GetData`, `<ShaderDiskCache, 9>::GetData` | `resource_ahsl.cpp` | `resource/ahsl-get-data` (a private database: inline / external arrays, shared tags, hits, misses) | getter |
+
+Inlined leaves written as members, not bound (a host trap costs more than the few JIT'd instructions):
+`tElement::rResourceElement` / `crResourceElement`, `CResourceElement::IsDone`, `CFileLoader::FileNumber` /
+`pFileName` (which calls the guest's `FileID::gpFileName` for numbered files), `ShaderKeyUtil::GetShaderKeySize`.
+
+Not done (the next wave): `LIBLManager::CopyTexture` (154 self samples in login + battle; 3.2 KB over the Aar
+texture loaders, `TextureManager`, `ResourceReadyQueue::Invoke`, StaticStream: render's types, untyped here),
+`AHSLCacheManagerV2::SearchBindedVS` / `SearchOrCompile` / `Init` (render-side shader cache logic),
+`CGameResourceDownloader::Progress*` / `CVerifyTask::*` (mostly waiting; large), `LocalKVS::GetBinary`
+(x8 result + JNI), `BaseReadDevice::Read` / `Handler` (ReadRequest / ReadRequestList not typed), the stream
+leaves (`MultiMediaStream::IsBufferingReady` / `IsBufferingEnd` / `Lock`, `StaticStream::Tell`,
+`StreamingStream::IsReady`: vtable leaves of the sound path, 15-43 samples each).
 
 ## Dependencies
 

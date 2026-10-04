@@ -2,5 +2,1689 @@
  "subsystem": "libcxx",
  "generated_by": "tools/subsystem.py export-types libcxx",
  "header": "port/src/native/libcxx/libcxx_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "string_long_rep<char>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "cap",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "string_short_head<char>",
+   "union": true,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 0,
+     "name": "lx",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": true
+     },
+     "size": 1
+    }
+   ],
+   "size": 1,
+   "align": 1
+  },
+  {
+   "name": "string_short_rep<char>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "head",
+     "type": {
+      "kind": "struct",
+      "name": "string_short_head<char>"
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "data",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 23
+     },
+     "size": 23
+    }
+   ],
+   "size": 24,
+   "align": 1
+  },
+  {
+   "name": "string_rep<char>",
+   "union": true,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "l",
+     "type": {
+      "kind": "struct",
+      "name": "string_long_rep<char>"
+     },
+     "size": 24
+    },
+    {
+     "offset": 0,
+     "name": "s",
+     "type": {
+      "kind": "struct",
+      "name": "string_short_rep<char>"
+     },
+     "size": 24
+    },
+    {
+     "offset": 0,
+     "name": "words",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 24
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "basic_string<char>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "r",
+     "type": {
+      "kind": "struct",
+      "name": "string_rep<char>"
+     },
+     "size": 24
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "string_short_head<wchar_t>",
+   "union": true,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 0,
+     "name": "lx",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 4,
+   "align": 4
+  },
+  {
+   "name": "string_short_rep<wchar_t>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "head",
+     "type": {
+      "kind": "struct",
+      "name": "string_short_head<wchar_t>"
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "data",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 5
+     },
+     "size": 20
+    }
+   ],
+   "size": 24,
+   "align": 4
+  },
+  {
+   "name": "vector<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "begin_",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "end_",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "end_cap_",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "list<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "prev",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "list_node<unsigned long>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "prev",
+     "type": {
+      "kind": "ptr",
+      "to": "list_node<unsigned long>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "list_node<unsigned long>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "value",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "tree_node_base",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "left",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node_base"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "right",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node_base"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "parent",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node_base"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "is_black",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "pad_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "pair<unsigned int, unsigned long>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "first",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "second",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "tree_node<pair<unsigned int, unsigned long> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "left",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<unsigned int, unsigned long> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "right",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<unsigned int, unsigned long> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "parent",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node_base"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "is_black",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "pad_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 32,
+     "name": "value",
+     "type": {
+      "kind": "struct",
+      "name": "pair<unsigned int, unsigned long>"
+     },
+     "size": 16
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "tree<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "begin_node",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "root",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "pair<unsigned int, _Bool>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "first",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "second",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 8,
+   "align": 4
+  },
+  {
+   "name": "hash_node<pair<unsigned int, _Bool> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "hash_node<pair<unsigned int, _Bool> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "hash",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "value",
+     "type": {
+      "kind": "struct",
+      "name": "pair<unsigned int, _Bool>"
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "hash_table<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "buckets",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "bucket_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "first",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "max_load_factor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "pad_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "shared_count",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "shared_owners",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "shared_weak_count",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "shared_owners",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "shared_weak_owners",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "shared_ptr_emplace<unsigned long>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "shared_owners",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "shared_weak_owners",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "value",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "shared_ptr_pointer<void *>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "shared_owners",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "shared_weak_owners",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "ptr",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "shared_ptr<void>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "ptr",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "cntrl",
+     "type": {
+      "kind": "ptr",
+      "to": "shared_weak_count"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "function",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "buf",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "f",
+     "type": {
+      "kind": "ptr",
+      "to": "function_base"
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 16
+  },
+  {
+   "name": "func<function>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "f",
+     "type": {
+      "kind": "struct",
+      "name": "function"
+     },
+     "size": 48
+    }
+   ],
+   "size": 64,
+   "align": 16
+  },
+  {
+   "name": "deque<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "map_first",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "map_begin",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "map_end",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "map_end_cap",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "start",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "deque<void *>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "map_first",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "map_begin",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "map_end",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "map_end_cap",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "start",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "list<basic_string<char> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "prev",
+     "type": {
+      "kind": "ptr",
+      "to": "list_node<basic_string<char> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "list_node<basic_string<char> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "list_node<basic_string<char> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "prev",
+     "type": {
+      "kind": "ptr",
+      "to": "list_node<basic_string<char> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "list_node<basic_string<char> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "value",
+     "type": {
+      "kind": "struct",
+      "name": "basic_string<char>"
+     },
+     "size": 24
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "tree<pair<basic_string<char>, basic_string<char> > >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "begin_node",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<basic_string<char>, basic_string<char> > >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "root",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<basic_string<char>, basic_string<char> > >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "pair<basic_string<char>, basic_string<char> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "first",
+     "type": {
+      "kind": "struct",
+      "name": "basic_string<char>"
+     },
+     "size": 24
+    },
+    {
+     "offset": 24,
+     "name": "second",
+     "type": {
+      "kind": "struct",
+      "name": "basic_string<char>"
+     },
+     "size": 24
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "tree_node<pair<basic_string<char>, basic_string<char> > >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "left",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<basic_string<char>, basic_string<char> > >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "right",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<basic_string<char>, basic_string<char> > >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "parent",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node_base"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "is_black",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "pad_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 32,
+     "name": "value",
+     "type": {
+      "kind": "struct",
+      "name": "pair<basic_string<char>, basic_string<char> >"
+     },
+     "size": 48
+    }
+   ],
+   "size": 80,
+   "align": 8
+  },
+  {
+   "name": "tree<pair<unsigned int, unsigned long> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "begin_node",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<unsigned int, unsigned long> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "root",
+     "type": {
+      "kind": "ptr",
+      "to": "tree_node<pair<unsigned int, unsigned long> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "hash_table<pair<basic_string<char>, void *> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "buckets",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "bucket_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "first",
+     "type": {
+      "kind": "ptr",
+      "to": "hash_node<pair<basic_string<char>, void *> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "max_load_factor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "pad_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "pair<basic_string<char>, void *>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "first",
+     "type": {
+      "kind": "struct",
+      "name": "basic_string<char>"
+     },
+     "size": 24
+    },
+    {
+     "offset": 24,
+     "name": "second",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "hash_node<pair<basic_string<char>, void *> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "hash_node<pair<basic_string<char>, void *> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "hash",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "value",
+     "type": {
+      "kind": "struct",
+      "name": "pair<basic_string<char>, void *>"
+     },
+     "size": 32
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "hash_table<pair<unsigned int, _Bool> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "buckets",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "bucket_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "first",
+     "type": {
+      "kind": "ptr",
+      "to": "hash_node<pair<unsigned int, _Bool> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "max_load_factor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "pad_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "hash_table<pair<unsigned int, unsigned long> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "buckets",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "bucket_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "first",
+     "type": {
+      "kind": "ptr",
+      "to": "hash_node<pair<unsigned int, unsigned long> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "max_load_factor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "pad_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "hash_node<pair<unsigned int, unsigned long> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "hash_node<pair<unsigned int, unsigned long> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "hash",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "value",
+     "type": {
+      "kind": "struct",
+      "name": "pair<unsigned int, unsigned long>"
+     },
+     "size": 16
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "unique_ptr<void>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "ptr",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8
+  },
+  {
+   "name": "vector<void *>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "begin_",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "end_",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "end_cap_",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "vector<basic_string<char> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "begin_",
+     "type": {
+      "kind": "ptr",
+      "to": "basic_string<char>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "end_",
+     "type": {
+      "kind": "ptr",
+      "to": "basic_string<char>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "end_cap_",
+     "type": {
+      "kind": "ptr",
+      "to": "basic_string<char>"
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "weak_ptr<void>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "ptr",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "cntrl",
+     "type": {
+      "kind": "ptr",
+      "to": "shared_weak_count"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "function_base",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8
+  }
+ ]
 }

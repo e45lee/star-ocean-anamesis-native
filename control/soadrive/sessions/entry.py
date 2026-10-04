@@ -1,5 +1,5 @@
 """Session `entry`: the restored entry flow (the in-process local server; docs/client-changes.md
-"Entry flow", docs/server-rules.md "Entry flow"), in two boots:
+"Entry flow", docs/server-rules.md#entry), in two boots:
   1. the seeded player (the committed client save): title -> Login -> data check -> the notice
      board and the LOGIN BONUS -> home;
   2. a new player (--new-player, no save): title -> Login (error 19001) -> terms -> name entry ->

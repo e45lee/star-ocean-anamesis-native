@@ -1,7 +1,7 @@
 // Enabling events by keyword (--enable-events; see enable_events.h). Port option: the
 // user asked for the summer events and banners all year ("if/when possible"); the keyword list
 // makes it any events. Labels: (a) master data, (b) client-side evidence, (c) outside knowledge,
-// (d) assumption; docs/server-rules.md "Enabling events by keyword".
+// (d) assumption; docs/server-rules.md#enabling-events.
 #include "api/events/enable_events.h"
 
 #include <map>

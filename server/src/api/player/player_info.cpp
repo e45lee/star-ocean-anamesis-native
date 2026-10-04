@@ -1,6 +1,6 @@
 // The player state the client receives (api/player/player_info.h). Port code, not guest
 // behaviour; every rule carries its source label, (a) master data, (b) client-side evidence,
-// (c) outside knowledge, (d) assumption (docs/server-rules.md "Player load").
+// (c) outside knowledge, (d) assumption (docs/server-rules.md#player-load).
 #include "api/player/player_info.h"
 
 #include <algorithm>
@@ -62,7 +62,7 @@ void add_stock_caps(ext::Ctx& ctx, Value& player) {
 // PLAN-schema S3).
 void add_domain_state(const Row& player_row, Value& player) {
     // Entry flow: tutorial progress, UI tutorials seen, accepted terms version (b: the client reads
-    // them back; docs/server-rules.md "Entry flow").
+    // them back; docs/server-rules.md#entry).
     player["tutorial_status"] = (u32)player_row.i("tutorial_status");
     player["view_status"] = (u64)player_row.i("view_status");  // the u64 word's int64 bits (all ones: -1)
     player["view_status2"] = (u64)player_row.i("view_status2");
@@ -97,7 +97,7 @@ Value player_info(ext::Ctx& ctx) {
         // CFavorCharacterLoginBonus::Setup builds its card from it) when set, else +0xd08
         // (Player.home_pc_id), and finds it among the owned characters by CPersonInfo uid; with
         // no match it shows party 1's first member. (The client before the rebase read a role
-        // id here; docs/server-rules.md "Home character".)
+        // id here; docs/server-rules.md#home-character.)
         player["home_pc_id"] = or_zero(player_row.opt<CharacterUid>("home_uid"));  // NULL: none (0)
         player["party_id"] = (u32)player_row.i("party_id");
         player["support_pc_id"] = support_uid(ctx, player_row).v;
@@ -216,7 +216,7 @@ namespace {
 
 // GetPlayer() / NoLoginStart(search id) -> GetPlayerRes / NoLoginStartRes  fid 9a056905 / 95804837
 // API: docs/api.md#getplayer, docs/api.md#nologinstart
-// Rules: docs/server-rules.md "Player load", "Session and login"
+// Rules: docs/server-rules.md#player-load, docs/server-rules.md#session-and-login
 //
 // The whole player state: 3.7.0's title sends NoLoginStart and then Login; GetPlayer refreshes it
 // (e.g. CPresentbox::Progress after receiving presents).

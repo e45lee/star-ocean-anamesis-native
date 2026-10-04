@@ -12,4 +12,4 @@ Public header `soaserver/api_campaign.h` (`campaign::enabled`, `on_request`, `on
 
 **Not a module:** no `register_*`, no `Api`; the campaign is called around each request, and its keys come after every hook's. **State:** the state DB's `campaign_clear` / `campaign_last` (`server/src/state/README.md`, step 11), read once and written per clear in the live server's own transaction; the campaign's lock is taken before the server's (it runs around a request, never inside a handler).
 
-**Rules**: docs/server-rules.md "Campaign progression". **Proof and sessions**: every replay corpus (the campaign runs on every request; `campaign`: clears, story scenes, the world map; `seeded` with `--campaign-seed mf01_001`, the `tutorial`'s scenes); `port/scripts/campaign_session.sh`, `restore_missions.sh`.
+**Rules**: docs/server-rules.md#campaign. **Proof and sessions**: every replay corpus (the campaign runs on every request; `campaign`: clears, story scenes, the world map; `seeded` with `--campaign-seed mf01_001`, the `tutorial`'s scenes); `port/scripts/campaign_session.sh`, `restore_missions.sh`.

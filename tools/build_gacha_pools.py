@@ -9,7 +9,7 @@ does contain, and writes it for the local server (`--server inproc`, server/).
 Every rule is labelled with its source, as in docs/server-rules.md:
   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 The rules are listed in RULES below, stored in the output's `rule` table and documented in
-docs/server-rules.md, "Gacha pools (reconstructed)".
+docs/server-rules.md#gacha-pools.
 
 Usage:
   tools/build_gacha_pools.py [--master data/basmaster-3.7.0.sqlite3]
@@ -659,7 +659,7 @@ def write(out, res, master_path):
 
 
 def report(m, b, res, out_db):
-    """Sanity checks and statistics (docs/server-rules.md "Gacha pools (reconstructed)")."""
+    """Sanity checks and statistics (docs/server-rules.md#gacha-pools)."""
     db = sqlite3.connect(out_db)
     q = lambda s, a=(): db.execute(s, a).fetchall()
     lines = []

@@ -3,7 +3,7 @@
 // CPlayerInfo (Player), CWalletInfo (Wallet), CPersonInfo (Character), PartySetInfo (PartySet),
 // CStackItemInfo (StockItem), CItemInfo (Item) and CPersonStatusInfo (a battle member), and the
 // whole player state of Login / GetPlayer (api/player/player_info.cpp). Every value carries its
-// source label there; docs/server-rules.md "Player load".
+// source label there; docs/server-rules.md#player-load.
 #include <string>
 #include <vector>
 
@@ -34,7 +34,7 @@ enum class CdnKeys {
 };
 // The whole player state of Login / SimpleLogin / CreatePlayer / GetPlayer / NoLoginStart: Player,
 // Wallet, the roster, the party sets, the stocks and items, the favor state and the modules'
-// OnPlayerLoad keys (docs/server-rules.md "Player load"). Stamps last_login_at.
+// OnPlayerLoad keys (docs/server-rules.md#player-load). Stamps last_login_at.
 std::vector<u8> full_player_state(ext::Ctx& ctx, const Request& req, CdnKeys cdn = CdnKeys::kNone);
 // The home character's master_role.same_role_id (id 0 when none: the favor module's "none").
 SameRoleId home_same_role(ext::Ctx& ctx);

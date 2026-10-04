@@ -1,7 +1,7 @@
 // Local server: items and stamina. ItemCompose(Array), ItemGradeUp(Array),
 // MaterialCompose, SellItem(Array) / SellStackItem, LockItem(Array) / UnlockItem(Array),
-// UseHealItem, StaminaHeal (SellGear: gear.cpp). Rules in docs/server-rules.md sections 1 and 5.5
-// and "Growth and economy", "Items and stamina"; labels:
+// UseHealItem, StaminaHeal (SellGear: gear.cpp). Rules in docs/server-rules.md#player-rank-stamina,
+// docs/server-rules.md#weapons-and-accessories, docs/server-rules.md#growth-and-economy, docs/server-rules.md#items-and-stamina; labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include <cmath>
 
@@ -161,7 +161,7 @@ std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
 
 // ItemCompose(u64 base uid, vector<u64> material uids) -> ItemComposeRes   fid 02a5cd1d
 //   (also ItemComposeArray, the same request)
-// API: docs/api.md#itemcomposearray   Rules: docs/server-rules.md "Items and stamina", "5.5 Weapons and accessories"
+// API: docs/api.md#itemcomposearray   Rules: docs/server-rules.md#items-and-stamina, docs/server-rules.md#weapons-and-accessories
 //
 // Feeds weapons / accessories to a base item: boosted points, levels and limit breaks.
 //   (b) each material adds growth_rules::compose_points (CItemStrengtheningPotal::GetAddBoostedPoint).
@@ -252,7 +252,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
 
 // ItemGradeUp(u64 base uid, vector<u64> material uids) -> ItemGradeUpRes   fid 8952aa02
 //   (also ItemGradeUpArray, the same request)
-// API: docs/api.md#itemgradeuparray   Rules: docs/server-rules.md "Items and stamina", "5.5 Weapons and accessories"
+// API: docs/api.md#itemgradeuparray   Rules: docs/server-rules.md#items-and-stamina, docs/server-rules.md#weapons-and-accessories
 //
 // Turns a weapon and its materials into a weapon of the next grade.
 //   (a) master_item_grade_up by rarity: grade_up_num materials, use_fol; the new weapon from
@@ -329,7 +329,7 @@ struct MaterialComposeArgs {
 };
 
 // MaterialCompose(u32 recipe id, u32 times) -> MaterialComposeRes          fid f9a4ba8c
-// API: docs/api.md#materialcompose   Rules: docs/server-rules.md "Items and stamina"
+// API: docs/api.md#materialcompose   Rules: docs/server-rules.md#items-and-stamina
 //
 // Makes stack items from stack items.
 //   (a) master_material_compose: up to five (item, num), use_fol -> result item x num, per time;
@@ -381,7 +381,7 @@ struct SellStackItemArgs {
 
 // SellItem(vector<u64> item uids) -> SellItemRes                           fid 00ee45f7
 //   (also SellItemArray, the same request; SellStackItem(u32 item, u32 count), fid 445ab956)
-// API: docs/api.md#sellitemarray, docs/api.md#sellstackitem   Rules: docs/server-rules.md "Items and stamina", "5.5 Weapons and accessories"
+// API: docs/api.md#sellitemarray, docs/api.md#sellstackitem   Rules: docs/server-rules.md#items-and-stamina, docs/server-rules.md#weapons-and-accessories
 //
 // Sells weapons / accessories, or a count of one stack item, for FOL.
 //   (b) weapons: round(sale_fol x master_item_sale_rate[level].sale_rate); others sale_fol
@@ -445,7 +445,7 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
 
 // LockItem(vector<u64> item uids) -> LockItemRes                           fid 88f29383
 //   (also LockItemArray; UnlockItem(Array), fid 2f9569e5: the same with the lock off)
-// API: docs/api.md#lockitemarray, docs/api.md#unlockitemarray   Rules: docs/server-rules.md "Items and stamina"
+// API: docs/api.md#lockitemarray, docs/api.md#unlockitemarray   Rules: docs/server-rules.md#items-and-stamina
 //
 // Sets or clears the items' lock flag (sent as Item.is_lock, b: CItemInfo's fields).
 //   (d) Uids that aren't owned items change nothing; no refusal.
@@ -476,7 +476,7 @@ struct UseHealItemArgs {
 };
 
 // UseHealItem(u32 master item id, u32 count) -> UseHealItemRes             fid baeea1ba
-// API: docs/api.md#usehealitem   Rules: docs/server-rules.md "Items and stamina", "Stamina"
+// API: docs/api.md#usehealitem   Rules: docs/server-rules.md#items-and-stamina, docs/server-rules.md#stamina
 //
 // Uses stamina heal items.
 //   (a) master_item type 10, heal_type / heal_point; (b) the points are
@@ -511,7 +511,7 @@ std::vector<u8> use_heal_item(Ctx& ctx, const Request& req) {
 }
 
 // StaminaHeal() -> StaminaHealRes                                          fid 737fac92
-// API: docs/api.md#staminaheal   Rules: docs/server-rules.md "Items and stamina", "Stamina"
+// API: docs/api.md#staminaheal   Rules: docs/server-rules.md#items-and-stamina, docs/server-rules.md#stamina
 //
 // Refills the stamina for coins.
 //   (a)+(b) master_global stamina_use_coin (StaminaUtility::StaminaUseCoin); heals the maximum

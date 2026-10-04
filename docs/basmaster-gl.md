@@ -325,7 +325,7 @@ Suggested approach: look up the name in the GL DB by `name_message_id`, using `e
 
 **So an English mode means rewriting the `ja` rows' `text_value`**, keeping their ids, in the master the client is served. The hook already exists:
 
-- soa-server builds the served master in `make_served_master()` (server/src/cdn/served_master.cpp) by applying `apply_client_master()` overrides to a copy of `data/basmaster-3.7.0.sqlite3`. That code already applies "the 3.7.0 texts" (docs/server-rules.md, "The served master is the client master edits").
+- soa-server builds the served master in `make_served_master()` (server/src/cdn/served_master.cpp) by applying `apply_client_master()` overrides to a copy of `data/basmaster-3.7.0.sqlite3`. That code already applies "the 3.7.0 texts" (docs/server-rules.md#cdn).
 - The port's in-process server applies the same overrides to the client's in-memory master.
 - An opt-in `--english` (with a `SOA_ENGLISH` variable) could add one more override from `data/basmaster-gl.sqlite3`. It would be off by default and documented in server-rules.md with source label (a).
 

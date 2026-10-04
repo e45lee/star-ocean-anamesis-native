@@ -2,7 +2,7 @@
 // (ActiveMissionList) and of the world map (ActiveWorldMapMissionList, Episodes 2 and 3), and the
 // campaign's Player keys. Port code, not guest behaviour. Every rule is labelled with its source
 // (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption, here and in
-// docs/server-rules.md "Campaign progression".
+// docs/server-rules.md#campaign.
 #include <algorithm>
 #include <ctime>
 #include <map>

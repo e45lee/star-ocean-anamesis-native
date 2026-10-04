@@ -12,6 +12,6 @@ Every handler and hook carries the 2.5 doc block. Item sets (content type 99) ar
 
 **State** (`server.sqlite3`; the tables are `../../state/schema.cpp`'s, STRICT since PLAN-schema S10; `../../../PLAN-schema.md` section 1): `shop_counts` (per item-shop row: this period's count, the period, the count ever), `exchange_counts` (per contents row: the count exchanged; its shop is the master's, the `shop_id` column went in S2), `subscription` (per plan: opened_at, closed_at, updated_at); the wallet (`player.free_coin` / `pay_coin`), `stock` (event coins, the exchanged items), `counters` (`exchange`, for the achievements).
 
-**Rules**: docs/server-rules.md "9. Shops", "Shops" (under "Growth and economy"), "Exchange shops on the event calendar", "Passes (subscriptions)", "Enabling events by keyword" (the enabled events' shops).
+**Rules**: docs/server-rules.md#shops, docs/server-rules.md#shops-modules (under "Growth and economy"), "Exchange shops on the event calendar", "Passes (subscriptions)", "Enabling events by keyword" (the enabled events' shops).
 
 **Proof and sessions**: the replay corpora `economy` (item-shop rows to their limit and refused, the exchange shop accepted and refused, `--galaxy-pass`) and `growth` (four item-shop sets); `port/scripts/deepspace_session.sh` (runs with `--galaxy-pass`: the pass ships).

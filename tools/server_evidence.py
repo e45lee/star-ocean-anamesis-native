@@ -123,7 +123,7 @@ def headings(root, doc):
     hs = set()
     if not os.path.exists(p):
         return hs, set()
-    anchors = set()
+    anchors, explicit = set(), set()
     in_code = False
     for ln in open(p, encoding="utf-8"):
         if ln.startswith("```"):
@@ -135,8 +135,9 @@ def headings(root, doc):
             hs.add(m.group(1).strip())
             anchors.add(slug(m.group(1)))
         for a in re.findall(r'<a (?:id|name)="([^"]+)"', ln):
-            anchors.add(a)
-    return hs, anchors
+            explicit.add(a)
+    # a doc with explicit anchors (docs/server-rules.md since R20) is linked by those only
+    return hs, explicit or anchors
 
 
 def link_ok(kind, target, heads):

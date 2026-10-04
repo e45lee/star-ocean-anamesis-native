@@ -1,5 +1,5 @@
 // The present box lines (free_text_message_id). Port code, not guest behaviour. Rules:
-// docs/server-rules.md "Present box lines"; labels: (a) master data, (b) client-side evidence,
+// docs/server-rules.md#present-box-lines; labels: (a) master data, (b) client-side evidence,
 // (c) outside knowledge, (d) assumption.
 // (b) CPresentbox::CreateAllPresentList (and the list cell's lambda) shows a present's
 // free_text_message_id (CPresentBoxInfo +0x1f0, a string property) verbatim; it never reads

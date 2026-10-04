@@ -45,7 +45,7 @@ req UpdateTutorial 7
 req UpdateTutorial 9
 
 # The battle tutorial's party: the client's NPC model (MasterMissionNpcModel::CalculateParameter;
-# docs/server-rules.md "Tutorial battle"): sword, gun, rod
+# docs/server-rules.md#tutorial-battle): sword, gun, rod
 party 7781 1281 755 960 551 397
 party 6859 1208 898 832 616 451
 party 5989 749 2045 653 516 407

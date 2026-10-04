@@ -36,7 +36,7 @@ So yes: the blocked rows above would run with their files back. Blocked by 2D im
 
 | Reference | File | Label and evidence |
 |---|---|---|
-| image columns (`bg_resource`, `master_banner.image`, `image1..4`, `image_resource`, `boss_icon`, `enemy_icon`) | `Image/etc2/<name>.aif` | (b): libSOA 3.7.0 has the format `Image/%s.aif`; docs/notes.md "Image assets": the game loads `"Image/" + name + ".aif"`, the `etc2/` folder is the texture-format directory of the asset manager; the ADLD key is CHash32 of `Image/etc2/<name>.aif` (verified here: the size reader decrypts existing files with exactly that key). The join `master_gacha.banner_id` = `master_banner.id_label` is (a) and the list-banner use is (b) (docs/server-rules.md "Banner images") |
+| image columns (`bg_resource`, `master_banner.image`, `image1..4`, `image_resource`, `boss_icon`, `enemy_icon`) | `Image/etc2/<name>.aif` | (b): libSOA 3.7.0 has the format `Image/%s.aif`; docs/notes.md "Image assets": the game loads `"Image/" + name + ".aif"`, the `etc2/` folder is the texture-format directory of the asset manager; the ADLD key is CHash32 of `Image/etc2/<name>.aif` (verified here: the size reader decrypts existing files with exactly that key). The join `master_gacha.banner_id` = `master_banner.id_label` is (a) and the list-banner use is (b) (docs/server-rules.md#enabling-events) |
 | `talk_event_id_label`, `talk_message_file` | `Script/<x>.msgp`, `Scenario/<x>.msgp` | (b): `EventScenario::CEventScenario::SetEventId` formats `Script/%s.msgp` and `Scenario/%s.msgp` (docs/notes.md; both strings are in libSOA 3.7.0) |
 | `master_mission_stage.master_map_id` | `BG/<map>.asf` / `.aaf` / `.acf` | (b): `battle_files` loads the three, the map first mapped through `master_replace_resource` res_type 4 (docs/notes.md "Resource names") |
 | enemy persons (`master_enemy_party` → `master_enemy_base_parameter` → `master_person`) | `Character/<asf>.asf`, `Character/<acf>.acf`, `Motion/<apk>.apk`, `Character/<unique_apk>.apk` | (a) the join; (b) the four person resource fields (docs/notes.md "Characters") |
@@ -11489,7 +11489,7 @@ master_world_map_mission `m06_06_*` (EP from the label: m02 = EP2, m06 = EP3, (d
 
 ### Sphere 211
 
-Floors need their battle map; a cell battle is lotted from the floor's mission box, and the server lots only playable missions (docs/server-rules.md "Sphere 211", "Missing maps"; the same check as above). Floor backgrounds and BGM are listed but don't block.
+Floors need their battle map; a cell battle is lotted from the floor's mission box, and the server lots only playable missions (docs/server-rules.md#sphere211, docs/server-rules.md#sphere211-rules; the same check as above). Floor backgrounds and BGM are listed but don't block.
 
 1483 rows: **1378 usable** (every gating file present), **105 blocked by missing files**; 0 of the usable ones miss only non-blocking files.
 

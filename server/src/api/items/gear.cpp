@@ -1,7 +1,7 @@
 // Local server: gear (ギア) and weapon customisation (武器カスタム). GetGearInfo,
 // ClearNewGear, AttachGear, RemoveGear, GenerateGear (ギア精製), SellGear, UpdateGearStock, the
 // gear content grants (content type 15 gear item, 98 gear lottery) and the `GearInfoList` /
-// per-weapon `AttachedGearInfoList` state. Rules in docs/server-rules.md "Gear";
+// per-weapon `AttachedGearInfoList` state. Rules in docs/server-rules.md#gear;
 // labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
@@ -307,7 +307,7 @@ void load_gear_state(Ctx& ctx, const Request&, Value& data) {
 }
 
 // GetGearInfo() -> GetGearInfoRes                                         fid 388092cc
-// API: docs/api.md#getgearinfo   Rules: docs/server-rules.md "Gear"
+// API: docs/api.md#getgearinfo   Rules: docs/server-rules.md#gear
 //
 // The gear screens' refetch of the whole gear state.
 //   (b) CCustomGear::Setup and CItemPossessionList::Setup send it when they open.
@@ -320,7 +320,7 @@ std::vector<u8> get_gear_info(Ctx& ctx, const Request&) {
 }
 
 // ClearNewGear(vector<u64> gear uids) -> ClearNewGearRes                  fid b0092669
-// API: docs/api.md#clearnewgear   Rules: docs/server-rules.md "Gear"
+// API: docs/api.md#clearnewgear   Rules: docs/server-rules.md#gear
 //
 // Clears the "new" mark of the gears.
 //   (b) OnClearNewGearRes clears is_new of the gears UpdateGearList names.
@@ -392,7 +392,7 @@ struct AttachGearArgs {
 };
 
 // AttachGear(u64 weapon uid, u64 gear uid, u32 slot) -> AttachGearRes      fid bce2e7f2
-// API: docs/api.md#attachgear   Rules: docs/server-rules.md "Gear", "Fixes found on the growth screens"
+// API: docs/api.md#attachgear   Rules: docs/server-rules.md#gear, docs/server-rules.md#growth-screen-fixes
 //
 // Sets a free gear into a weapon's slot (the weapon custom screen, CCustomGear).
 //   (b) uimsg_gear_set_*: only a weapon with slots (master_item.max_gear_slot_num, a) and a gear
@@ -469,7 +469,7 @@ struct RemoveGearArgs {
 };
 
 // RemoveGear(u64 weapon uid) -> RemoveGearRes                              fid 33da88ce
-// API: docs/api.md#removegear   Rules: docs/server-rules.md "Gear"
+// API: docs/api.md#removegear   Rules: docs/server-rules.md#gear
 //
 // Takes the gear off a weapon (CCustomGear's ギア解除).
 //   (b) the argument is the weapon's uid (the request seen in game from CCustomGear's ギア解除, which
@@ -520,7 +520,7 @@ std::vector<u8> remove_gear(Ctx& ctx, const Request& req) {
 }
 
 // SellGear(vector<u64> gear uids) -> SellGearRes                           fid 1700186d
-// API: docs/api.md#sellgear   Rules: docs/server-rules.md "Gear"
+// API: docs/api.md#sellgear   Rules: docs/server-rules.md#gear
 //
 // Sells free gears for FOL.
 //   (a) master_item.sale_fol of the gear item (type 15; the weapon_gear_item's for weapon-factor
@@ -557,7 +557,7 @@ std::vector<u8> sell_gear(Ctx& ctx, const Request& req) {
 }
 
 // UpdateGearStock() -> UpdateGearStockRes                                  fid d10e6806
-// API: docs/api.md#updategearstock   Rules: docs/server-rules.md "Gear"
+// API: docs/api.md#updategearstock   Rules: docs/server-rules.md#gear
 //
 // Buys more gear slots; always refused.
 //   (a) gear_stock_up_num 5 more slots for gear_stock_use_coin 100 coins (b: uimsg_gear_extension_
@@ -829,7 +829,7 @@ std::vector<u8> generate_gear_response(Ctx& ctx, Generation& gen) {
 
 // GenerateGear(u64 base weapon uid, u32 carrot item, vector<u64> materials) -> GenerateGearRes
 //                                                                          fid af1c5d33
-// API: docs/api.md#generategear   Rules: docs/server-rules.md "Gear"
+// API: docs/api.md#generategear   Rules: docs/server-rules.md#gear
 //
 // The gear purification (ギア精製): materials (gears or weapons) and an optional base weapon
 // become a new gear of a drawn rarity, plus maybe a factor gear of the base.

@@ -1,6 +1,6 @@
 // Rewards: granting a content and adding a character (core/rewards.h). Port code, not guest
 // behaviour; every rule carries its source label, (a) master data, (b) client-side evidence,
-// (c) outside knowledge, (d) assumption (docs/api.md "Content types"; docs/server-rules.md "4. Gacha").
+// (c) outside knowledge, (d) assumption (docs/api.md "Content types"; docs/server-rules.md#gacha-rules).
 #include "core/rewards.h"
 
 #include <algorithm>

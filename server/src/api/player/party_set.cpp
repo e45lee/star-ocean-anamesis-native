@@ -1,6 +1,6 @@
 // The party sets as the client receives them: PartySetInfo (api/player/party_set.h). Port code,
 // not guest behaviour; every rule carries its source label, (a) master data, (b) client-side
-// evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md "Party sets").
+// evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md#party-sets).
 #include "api/player/party_set.h"
 
 #include <map>

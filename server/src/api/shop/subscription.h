@@ -1,7 +1,7 @@
 #pragma once
 // Passes (subscriptions) as player state: the module's functions its tests and the shop's README
 // name (api/shop/subscription.cpp). The other domains use ext::subscription_active /
-// ext::subscription_state (soaserver/ext.h). docs/server-rules.md "Passes".
+// ext::subscription_state (soaserver/ext.h). docs/server-rules.md#passes.
 #include "soaserver/ext.h"
 
 namespace soa::server::subscription {

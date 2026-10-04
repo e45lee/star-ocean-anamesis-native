@@ -9,7 +9,7 @@ The state DB (`server.sqlite3`): its schema and how a file is brought to it, wha
 | `check.{h,cpp}` | the master-reference check (`state::check`, PLAN-schema S0): every state column that holds master ids (`master_refs()`, PLAN-schema 1.6's `m:` rows) resolved against the master; report-only (a dangling id is returned and logged, nothing is fixed). `master_refs()` is the one list: `tools/schema_inventory.py`'s RELS `m:` rows must equal it (T0's `schema-inventory` fails otherwise) |
 | `sql.cpp` | the one SQLite wrapper, `sql::Row` / `Arg` / `Sql` and `one_null_as_zero` (declared in the public `../../include/soaserver/sql.h`; the handlers see them as `ext::Row` / `Arg` / `Sql`) |
 | `kvs.{h,cpp}` | the Game.xml codec: the game's Aska::LocalKVS SharedPreferences files (`read_kvs`, `read_kvs_ordered`, `write_kvs`, `kv_u32`, `kv_str`; the layout is the client's, `soa_save/kvs.py` documents it) |
-| `seed.{h,cpp}` | seeding a new state from a save: the player (with the tutorial and view words), roster, party 1, the party sets 1..`party_set_max`, the default titles and meta keys (`seed`, `real_seed_save`, `kLocalPlayerId`; docs/server-rules.md "Seed") |
+| `seed.{h,cpp}` | seeding a new state from a save: the player (with the tutorial and view words), roster, party 1, the party sets 1..`party_set_max`, the default titles and meta keys (`seed`, `real_seed_save`, `kLocalPlayerId`; docs/server-rules.md#seed) |
 
 ## Opening a state DB
 

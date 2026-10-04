@@ -1,8 +1,8 @@
 #pragma once
 // The Sphere 211 APIs' request arguments by name (port code, not guest behaviour), as
 // core/request_args.h does for the core's: each struct reads one method's positional arguments
-// (docs/api.md's **Method** / **Request** lines; docs/server-rules.md "Sphere 211", "Requests as the
-// client sends them"), with the defaults the handlers used when one is missing (0 / none; none of
+// (docs/api.md's **Method** / **Request** lines; docs/server-rules.md#sphere211-requests),
+// with the defaults the handlers used when one is missing (0 / none; none of
 // them logs). MissionStart / End / Failed / Continue also name their cell by their first two
 // integers (CStageManager+0x68 / +0x6c), which find_cell (floors.cpp) reads.
 #include <vector>

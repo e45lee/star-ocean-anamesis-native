@@ -5,8 +5,8 @@
 // kDefaultEventKeywords is the summer events and banners) is open all year: the server lists it
 // (events::open_areas, GetGachaInData) and the client's master copy gets an open window for it
 // (client_master below), so the client's own clock filters let it through. Missions are still
-// gated on their assets (events::mission_playable). Rules and labels in docs/server-rules.md
-// "Enabling events by keyword":
+// gated on their assets (events::mission_playable). Rules and labels in
+// docs/server-rules.md#enabling-events:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include <set>
 #include <string>

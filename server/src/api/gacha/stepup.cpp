@@ -1,7 +1,7 @@
 // Step-up gacha chains (api/gacha/gacha.h). Port code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "4. Gacha", "Step-up gacha state",
-// "Step-up and box gacha lists").
+// knowledge, (d) assumption (docs/server-rules.md#gacha-rules, docs/server-rules.md#step-up-state,
+// docs/server-rules.md#gacha-lists).
 #include "api/gacha/gacha.h"
 
 #include <algorithm>

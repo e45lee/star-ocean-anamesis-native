@@ -1,6 +1,6 @@
 // The entry flow: login, new player, tutorial, terms, name (api/entry/entry.h, api/entry/README.md).
 // Port code, not guest behaviour; every rule carries its source label, (a) master data, (b)
-// client-side evidence, (c) outside knowledge, (d) assumption. docs/server-rules.md "Entry flow"
+// client-side evidence, (c) outside knowledge, (d) assumption. docs/server-rules.md#entry
 // lists every rule with its source.
 #include "api/entry/entry.h"
 
@@ -38,7 +38,7 @@ constexpr u32 kSearchIdModulo = 100000;
 
 // Login() / SimpleLogin() -> LoginRes / SimpleLoginRes              fid a01c67ef / 447fafb8
 // API: docs/api.md#login, docs/api.md#simplelogin
-// Rules: docs/server-rules.md "Entry flow" (Session and login), "Player load"
+// Rules: docs/server-rules.md#entry (Session and login), "Player load"
 //
 // The 3.7.0 CPhase_Login's login (states 0 and 7).
 //   (b) With no account the server answers error 19001 (kNoPlayer): the 3.7.0 client's Login
@@ -116,7 +116,7 @@ std::vector<CharacterUid> add_starters(ext::Ctx& ctx, ServerTime now) {
 
 // CreatePlayer(name, uuid) -> CreatePlayerRes                                  fid e3e463ad
 // API: docs/api.md#createplayer
-// Rules: docs/server-rules.md "New player", "Player load"
+// Rules: docs/server-rules.md#new-player, docs/server-rules.md#player-load
 //
 // The new-player flow's account, after the terms and the name entry.
 //   (d) level 1, EXP 0, FOL 0: the start of the rank table.
@@ -158,7 +158,7 @@ namespace {
 
 // UpdateTutorial(u64 tutorial_status) -> UpdateTutorialRes                     fid 1cf2b3d7
 // API: docs/api.md#updatetutorial
-// Rules: docs/server-rules.md "Tutorial progress"
+// Rules: docs/server-rules.md#tutorial-progress
 //
 // The main tutorial's progress.
 //   (b) The client sends the tutorial step it reached (CTutorialManager::ST_Net_Tutoflag) and
@@ -173,7 +173,7 @@ std::vector<u8> update_tutorial(ext::Ctx& ctx, const Request& req) {
 
 // UpdateView(ViewFlagType kind, u64 flags) -> UpdateViewRes                    fid a2eb69ba
 // API: docs/api.md#updateview
-// Rules: docs/server-rules.md "Tutorial progress", "UI tutorial flags"
+// Rules: docs/server-rules.md#tutorial-progress, docs/server-rules.md#ui-tutorial-flags
 //
 // The "seen" bit sets of the UI tutorials.
 //   (b) CParameterUtility::AddTutorialViewStatus: kind 0 -> view_status, else view_status2 (the
@@ -189,7 +189,7 @@ std::vector<u8> update_view(ext::Ctx& ctx, const Request& req) {
 
 // UpdateKiyakuVersion(version) -> UpdateKiyakuVersionRes                       fid e5af488c
 // API: docs/api.md#updatekiyakuversion
-// Rules: docs/server-rules.md "Terms and name"
+// Rules: docs/server-rules.md#terms-and-name
 //
 // The terms (規約) the player accepted.
 //   (b) Stores the version in Player.kiyaku_version.
@@ -208,7 +208,7 @@ std::vector<u8> update_kiyaku_version(ext::Ctx& ctx, const Request& req) {
 
 // UpdatePlayerName(name) -> UpdatePlayerNameRes                                fid e8e5c4da
 // API: docs/api.md#updateplayername
-// Rules: docs/server-rules.md "Terms and name"
+// Rules: docs/server-rules.md#terms-and-name
 //
 // The player's name.
 //   (d) Accepted as sent; an empty name changes nothing.
@@ -221,7 +221,7 @@ std::vector<u8> update_player_name(ext::Ctx& ctx, const Request& req) {
 
 // GetServerTime() -> GetServerTimeRes                                          fid 98b03930
 // API: docs/api.md#getservertime
-// Rules: docs/server-rules.md "Session and login"
+// Rules: docs/server-rules.md#session-and-login
 //
 // The server clock.
 //   (b) CPhase_SyncServerTime sends it when CPhase::CheckSynkServerTime asks for a resync (on
@@ -277,7 +277,7 @@ void add_aver(ext::Ctx& ctx, Value& data) {
 }
 
 // (b) GetServerTime: data.Time only; (d) NoLoginStart / GetPlayer without a player and
-// GetMissionList answer the same (docs/server-rules.md "Session and login").
+// GetMissionList answer the same (docs/server-rules.md#session-and-login).
 std::vector<u8> time_only(ext::Ctx& ctx) {
     Value data = Value::object();
     data["Time"] = format_time(clock_now());

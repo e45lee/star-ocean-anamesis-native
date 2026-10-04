@@ -27,7 +27,7 @@
      "covers": "server/tests/replay/COVERAGE.md is current (the APIs without a corpus)"},
     {"name": "server-docs", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "tools/check_server_docs.sh --evidence {base}",
-     "covers": "enforcing (R19): every handler's 2.5 block with a label, every hook's and include/soaserver function's doc comment, docs links, API-INDEX.md fresh, no agent mentions in server/ code, the evidence manifest not shrunk against {base} (HEAD~1, or the --git-diff rev)"},
+     "covers": "enforcing (R19): every handler's 2.5 block with a label, every hook's and include/soaserver function's doc comment, docs links (docs/server-rules.md links are #anchors and resolve, R20), docs/server-rules.md's anchors and its generated register fresh (tools/server_rules_doc.py --check), API-INDEX.md fresh, no agent mentions in server/ code, the evidence manifest (with the rules doc and its history) not shrunk against {base} (HEAD~1, or the --git-diff rev)"},
     {"name": "server-format", "tier": "T0", "secs": 6, "kind": "check", "game": 0,
      "cmd": "tools/format_server.sh --check",
      "covers": "server/ C++ formatted (clang-format 18; enforced: any unformatted file fails)"},

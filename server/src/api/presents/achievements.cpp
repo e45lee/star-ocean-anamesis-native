@@ -1,7 +1,7 @@
 // The achievements (勲章 / 実績): AchievementActiveList, AchievementReceive,
 // AchievementListReceive, AchievementReceiveList, and the `Achievement` key of the full-state
-// player responses. Port code, not guest behaviour. Rules: docs/server-rules.md "10. Achievements",
-// "Achievements" (under "Growth and economy") and "Favor achievements"; every rule carries its
+// player responses. Port code, not guest behaviour. Rules: docs/server-rules.md#achievements,
+// docs/server-rules.md#achievements-modules, docs/server-rules.md#favor-achievements; every rule carries its
 // source label: (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
 // Progress isn't stored: it is computed from the server state each time (the counters table,
@@ -20,7 +20,7 @@ using namespace ext;
 
 // master_achievement.type, the event a row counts: the types the server tracks. (a) the type of
 // each row; what it counts is (a)+text, from the rows' name and description texts
-// (docs/server-rules.md "10. Achievements" lists every type).
+// (docs/server-rules.md#achievements lists every type).
 enum class AchievementType : int {
     kCharacterGachaDraws = 1,     // character gacha draws, of gacha target_id or any
     kCharacterBoosts = 2,         // character boosts (強化)
@@ -77,7 +77,7 @@ int64_t favor_points(Ctx& ctx, int64_t same_role_id) {
 }
 
 // Progress of one master_achievement row, from the server state (a: the row's type and
-// target_id; the meaning of each type is (a)+text, docs/server-rules.md section 10). Types the
+// target_id; the meaning of each type is (a)+text, docs/server-rules.md#achievements). Types the
 // server doesn't track report 0 (d).
 int64_t progress(Ctx& ctx, const Row& achievement_row) {
     int type = (int)achievement_row.i("type");
@@ -206,7 +206,7 @@ Value achievement_map(Ctx& ctx) {
 
 // OnPlayerLoad hook (runs right after the login bonus's: core/modules.cpp): adds `Achievement`
 // to every full-state player response (Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart).
-// Rules: docs/server-rules.md "Favor achievements"
+// Rules: docs/server-rules.md#favor-achievements
 //   (b) the client reads the `Achievement` state (CParameterManager+0x67c8) for its
 //       favor-achievement popup (CAdjutantSelect -> GetNotReceiveGoaledFavorabilityAchievement ->
 //       AchievementListReceive) and the home badge before any screen asks: 3.7.0 sends
@@ -216,7 +216,7 @@ Value achievement_map(Ctx& ctx) {
 void load_achievements(Ctx& ctx, const Request&, Value& data) { data["Achievement"] = achievement_map(ctx); }
 
 // AchievementActiveList(u32 category) -> AchievementActiveListRes          fid d0b25cb6
-// API: docs/api.md#achievementactivelist   Rules: docs/server-rules.md "10. Achievements", docs/server-rules.md#achievements
+// API: docs/api.md#achievementactivelist   Rules: docs/server-rules.md#achievements, docs/server-rules.md#achievements-modules
 //
 // The active achievements with their progress (CAchievementMenu::Initialize, the 実績 screen,
 // sends category 1; CHonorMenu::ProgressList, the 称号 screen, 3).
@@ -272,7 +272,7 @@ struct AchievementReceiveArgs {
 // AchievementListReceive(vector<u64> ids) -> AchievementListReceiveRes    fid bbc99ccf
 // AchievementReceiveList() -> AchievementReceiveListRes                   fid f43a965d
 // API: docs/api.md#achievementreceive, docs/api.md#achievementlistreceive, docs/api.md#achievementreceivelist
-// Rules: docs/server-rules.md "10. Achievements", docs/server-rules.md#achievements, docs/server-rules.md "Favor achievements"
+// Rules: docs/server-rules.md#achievements, docs/server-rules.md#achievements-modules, docs/server-rules.md#favor-achievements
 //
 // Receives achievements: each achieved, unreceived one puts its reward in the present box and
 // leaves the active list (its next_achievement_id joins it). AchievementListReceive is the

@@ -50,10 +50,10 @@ CryptString XORs with N & 0xff, a string Deserialize calls its N's CryptString).
 | `CParameterElementBase::Deserialize` | `params_element.cpp` | `params/element-deserialize` (random elements / maps), `params/corpus` (the flows' recorded inputs) | 503K checks, 0 mismatches |
 | `CParameterElementBase::AddProperty` (the self-link quirk kept) | `params_element.cpp` | `params/element-addproperty` | 10.8M, 0 |
 | `CParameterBase::pGetRoot`, `Find` | `params_element.cpp` | `params/base-getroot` | `pGetRoot` 46K, 0 (`Find` not called) |
-| `CParameterParser::GetParserValue`, `GetValue(AValue const*)` | `params_parser.cpp` | `params/parser-by-hash` (also through the key-hash cache), `params/parser-double-and-string` | see below |
-| the 8 typed getters by hash (`GetValueString`, `Float`, `Int`, `UInt`, `Long`, `ULong`, `Bool`, `UTiny`) and the 8 `GetValue<T>(map, unsigned)` (T = float, int, unsigned, long, unsigned long, bool, unsigned char, char*) | `params_parser.cpp` | `params/parser-by-hash` (every kind, the conversions' edges) | see below |
+| `CParameterParser::GetParserValue`, `GetValue(AValue const*)` | `params_parser.cpp` | `params/parser-by-hash` (also through the key-hash cache), `params/parser-double-and-string` | `only=CParameterParser` below |
+| the 8 typed getters by hash (`GetValueString`, `Float`, `Int`, `UInt`, `Long`, `ULong`, `Bool`, `UTiny`) and the 8 `GetValue<T>(map, unsigned)` (T = float, int, unsigned, long, unsigned long, bool, unsigned char, char*) | `params_parser.cpp` | `params/parser-by-hash` (every kind, the conversions' edges) | `only=CParameterParser` below |
 | the 8 typed getters by key, `GetValue<bool>` / `GetValue<unsigned char>(map, char const*)` | `params_parser.cpp` | `params/parser-by-key` (also the dropped messages' allocations) | `GetValueUInt` 321K, `GetValueString` 181K, 0 |
-| `GetValue<std::string>` by hash and by key (x8) | `params_parser.cpp` | `params/parser-double-and-string` | see below |
+| `GetValue<std::string>` by hash and by key (x8) | `params_parser.cpp` | `params/parser-double-and-string` | `only=CParameterParser` below |
 | `CParameterPropertyValue<T, N, Conv>::Deserialize` (786: T = unsigned 290, float 204 + radian 23, bool 127, unsigned long 63, int 54, unsigned char 25) | `params_property.cpp` | `params/property-values` (every instantiation x every edge value) | 6.8M, 0 |
 | `CParameterPropertyString<std::string, N>::Deserialize` (194) | `params_property.cpp` | `params/property-strings` (every instantiation) | 1.9M, 0 |
 | `CParameterPropertyBase<N>::CryptString<std::string>` (194) | `params_property.cpp` | `params/property-cryptstring` (every instantiation; growth, aliasing) | 439K, 0 |
@@ -84,7 +84,7 @@ original runs with the property natives recording instead of deserializing); `Ad
 copy of the chain. Nested natives run unchecked inside a check, so each layer is checked with `only=`.
 Results (2026-10-04, the four flows of port/REBUILD-QUEUE.md, `every=1`, each PASS, 0 mismatches, 0 races,
 0 skipped): the whole family (only the outermost natives checked): 12.4M checks; `only=` the properties,
-CryptString, AddProperty and CParameterBase: 20.5M; `only=CParameterParser`: PARSER_RESULTS.
+CryptString, AddProperty and CParameterBase: 20.5M; `only=CParameterParser`: 11.1M (`GetValue<unsigned>` 4.9M, `GetParserValue` and `GetValue<std::string>` 1.9M each (inside the elements' Deserialize: through the key-hash cache), `GetValue<float>` 773K, `<int>` 552K, `<bool>` 482K, `GetValueUInt(key)` 319K, `GetValueString(key)` 181K, `<unsigned char>` 22K, `<unsigned long>` 14K). Not called in the flows: the other by-key getters, `GetValue(AValue const*)`, `Find`, the by-hash typed wrappers (the tests cover them).
 
 ## Tests
 

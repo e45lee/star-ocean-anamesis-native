@@ -22,8 +22,24 @@ namespace soa::server {
 std::string real_seed_save() { return find_repo_file("data/saves/seed/Game.xml"); }
 
 // (d) seed defaults, labelled in docs/server-rules.md#seed.
+bool save_holds_player(const std::string& path) {
+    auto kv = read_kvs(path);
+    return !kv_str(kv, "player_name").empty() || kv_u32(kv, "person_size", 0) > 0;
+}
+
+std::string seed_source(const std::string& explicit_seed) {
+    if (std::string p = first_existing({explicit_seed, config().seed, real_seed_save()}); !p.empty()) return p;
+    // (b)+(d) The client's own Game.xml (--game-xml; soa's default <data>/data/shared_prefs/Game.xml)
+    // counts only when it holds a player: on a fresh data dir the client writes it at its first
+    // start (its settings: BAS:EffectAlpha, BAS:VoiceLanguage, BAS:PlayerName 0, ...: 9 keys)
+    // before its first request opens the server's state, and seeding from that gave a nameless
+    // player with no characters (docs/server-rules.md#seed).
+    std::string g = first_existing({config().game_xml});
+    return !g.empty() && save_holds_player(g) ? g : "";
+}
+
 void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
-    std::string seedp = first_existing({explicit_seed, config().seed, real_seed_save(), config().game_xml});
+    std::string seedp = seed_source(explicit_seed);
     auto kv = read_kvs(seedp);
     LOGI("server", "seeding from %s (%zu keys)", seedp.empty() ? "(nothing)" : seedp.c_str(), kv.size());
     // (d) The local player's search id is always the sanitized kLocalPlayerId, never the save's

@@ -28,7 +28,8 @@ tools/extract.sh          # unpack the XAPK into work/extracted: only for the vi
 
 The C++ dependencies come from **vcpkg** in manifest mode (`vcpkg.json`, pinned by its
 `builtin-baseline`): Boost (headers, for dynarmic), zlib, SQLite, zstd, libogg, libvorbis, SDL2 (X11 and
-Wayland video), OpenSSL, and the Khronos EGL/GLES headers. All are built from source by vcpkg, as static
+Wayland video), OpenSSL, FreeType, litehtml, stb (PNG writing, the web view), pugixml (SharedPreferences
+XML: `common/`'s `soa_codec`) and the Khronos EGL/GLES headers. All are built from source by vcpkg, as static
 libraries (`cmake/vcpkg-triplets/x64-linux.cmake`: release only), on the first configure, into
 `build/vcpkg_installed/`; vcpkg's binary cache (`~/.cache/vcpkg/archives`) makes later configures,
 other build dirs and worktrees fast. Three libraries come from CMake

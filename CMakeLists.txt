@@ -89,7 +89,7 @@ else()
 endif()
 include(cmake/deps.cmake)
 
-add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests, soa_compat (sockets; the Windows shims), soa_codec (PNG)
+add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests, soa_compat (sockets; the Windows shims), soa_codec (PNG, Base64, SharedPreferences XML)
 
 # ---- the parts, in dependency order
 if(SOA_NEED_RUNTIME)

@@ -38,12 +38,18 @@ endif()
 #                         (runtime/src/app/host.cpp), tools/aif2png
 #   include/soa/base64.h  Base64 (OpenSSL's EVP_EncodeBlock / EVP_DecodeBlock) with Android's and
 #                         Aska's spellings: the runtime's SharedPreferences, the server's Game.xml
-#   soa_codec_tests  its unit tests (build/common/soa_codec_tests; T0 `codec`)
-add_library(soa_codec STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/png.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/base64.cpp)
+#   include/soa/prefs_xml.h  Android SharedPreferences XML, the string entries (pugixml reads; the
+#                         writer is Android's bytes by hand): the runtime's prefs, the server's Game.xml
+#   soa_codec_tests  its unit tests (build/common/soa_codec_tests; T0 `codec`); the committed saves
+#                    are read from this checkout (SOA_REPO_DIR)
+add_library(soa_codec STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/png.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/base64.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/prefs_xml.cpp)
 target_include_directories(soa_codec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(soa_codec PRIVATE -Wall)
-target_link_libraries(soa_codec PRIVATE soa::stb ZLIB::ZLIB OpenSSL::Crypto soa_compat)
+target_link_libraries(soa_codec PRIVATE soa::stb ZLIB::ZLIB OpenSSL::Crypto pugixml::pugixml soa_compat)
 
-add_executable(soa_codec_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/codec_main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/base64_tests.cpp)
+add_executable(soa_codec_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/codec_main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/base64_tests.cpp
+               ${CMAKE_CURRENT_SOURCE_DIR}/tests/prefs_xml_tests.cpp)
 target_compile_options(soa_codec_tests PRIVATE -Wall)
+target_compile_definitions(soa_codec_tests PRIVATE SOA_REPO_DIR="${CMAKE_SOURCE_DIR}")
 target_link_libraries(soa_codec_tests PRIVATE soa_codec soa_compat)

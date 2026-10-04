@@ -12,9 +12,11 @@ void codec_check(bool ok, const std::string& what) {
 }
 
 void base64_tests();
+void prefs_xml_tests();
 
 int main() {
     base64_tests();
+    prefs_xml_tests();
     fprintf(stderr, "%s (%d failures)\n", g_codec_failures ? "FAIL" : "all passed", g_codec_failures);
     return g_codec_failures;
 }

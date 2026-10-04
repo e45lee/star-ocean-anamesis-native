@@ -1,8 +1,8 @@
 #include "android/prefs.h"
 
 #include <soa/base64.h>
+#include <soa/prefs_xml.h>
 
-#include <cstring>
 #include <fstream>
 #include <sstream>
 
@@ -10,53 +10,6 @@
 #include "core/vfs.h"
 
 namespace soa {
-
-namespace {
-std::string xml_unescape(const std::string& s) {
-    std::string out;
-    for (size_t i = 0; i < s.size(); i++) {
-        if (s[i] != '&') {
-            out.push_back(s[i]);
-            continue;
-        }
-        size_t e = s.find(';', i);
-        if (e == std::string::npos) {
-            out.push_back(s[i]);
-            continue;
-        }
-        std::string ent = s.substr(i + 1, e - i - 1);
-        if (ent == "amp") out.push_back('&');
-        else if (ent == "lt") out.push_back('<');
-        else if (ent == "gt") out.push_back('>');
-        else if (ent == "quot") out.push_back('"');
-        else if (ent == "apos") out.push_back('\'');
-        else if (!ent.empty() && ent[0] == '#') {
-            long cp = ent.size() > 1 && (ent[1] == 'x' || ent[1] == 'X') ? strtol(ent.c_str() + 2, nullptr, 16) : strtol(ent.c_str() + 1, nullptr, 10);
-            if (cp < 0x80) out.push_back((char)cp);
-            else out += "?";
-        } else {
-            out += "&" + ent + ";";
-        }
-        i = e;
-    }
-    return out;
-}
-
-std::string xml_escape(const std::string& s) {
-    std::string out;
-    for (char c : s) {
-        switch (c) {
-        case '&': out += "&amp;"; break;
-        case '<': out += "&lt;"; break;
-        case '>': out += "&gt;"; break;
-        case '"': out += "&quot;"; break;
-        case '\n': out += "&#10;"; break;
-        default: out.push_back(c);
-        }
-    }
-    return out;
-}
-}  // namespace
 
 SharedPrefs& SharedPrefs::get() {
     static SharedPrefs p;
@@ -71,30 +24,13 @@ SharedPrefs::File& SharedPrefs::load(const std::string& name) {
     if (!in) return f;
     std::stringstream ss;
     ss << in.rdbuf();
-    std::string xml = ss.str();
-    size_t pos = 0;
-    while ((pos = xml.find("<string name=\"", pos)) != std::string::npos) {
-        pos += 14;
-        size_t q = xml.find('"', pos);
-        std::string key = xml_unescape(xml.substr(pos, q - pos));
-        size_t gt = xml.find('>', q);
-        if (xml[gt - 1] == '/') {  // <string name="x" />
-            f.entries.emplace_back(key, "");
-            pos = gt;
-            continue;
-        }
-        size_t end = xml.find("</string>", gt);
-        f.entries.emplace_back(key, xml_unescape(xml.substr(gt + 1, end - gt - 1)));
-        pos = end;
-    }
+    f.entries = prefs_xml::parse(ss.str());
     LOGI("prefs", "loaded %s.xml (%zu entries)", name.c_str(), f.entries.size());
     return f;
 }
 
 void SharedPrefs::save(const std::string& name, const File& f) {
-    std::string out = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n";
-    for (auto& [k, v] : f.entries) out += "    <string name=\"" + xml_escape(k) + "\">" + xml_escape(v) + "</string>\n";
-    out += "</map>\n";
+    std::string out = prefs_xml::serialize(f.entries);
     std::string path = host_shared_prefs_dir() + "/" + name + ".xml";
     std::string tmp = path + ".tmp";
     {

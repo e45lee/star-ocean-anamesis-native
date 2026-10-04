@@ -3,7 +3,7 @@
 # From vcpkg (vcpkg.json, manifest mode: configured through the vcpkg toolchain, which the root
 # CMakeLists.txt picks up from $VCPKG_ROOT or .vcpkg/): imported targets
 #   ZLIB::ZLIB  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
-#   OpenSSL::Crypto  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
+#   OpenSSL::Crypto  pugixml::pugixml  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
 #   runtime/src/app/text_overlay.cpp)  litehtml  soa::stb (headers; soa_codec's PNG writer, the web view)  and the
 #   EGL/GLES/KHR headers.
 # From the system (README.md, "Setup": what vcpkg can't replace on Linux), only when the runtime is
@@ -22,6 +22,7 @@ find_package(zstd CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED)
 find_package(Vorbis CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(pugixml CONFIG REQUIRED)  # pugixml::pugixml: SharedPreferences XML (soa_codec, common/src/prefs_xml.cpp)
 # stb (headers): stb_image_write writes every PNG (soa_codec, common/src/png.cpp: screenshots,
 # tools/aif2png; the web view's render tool), stb_truetype / stb_image the web view's text and images.
 find_path(SOA_STB_INCLUDE_DIR stb_image_write.h REQUIRED)

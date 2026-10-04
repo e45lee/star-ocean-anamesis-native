@@ -4,6 +4,7 @@
 
 #include <openssl/evp.h>
 #include <soa/base64.h>
+#include <soa/prefs_xml.h>
 
 #include <cstdio>
 #include <cstring>
@@ -36,20 +37,7 @@ std::vector<std::pair<std::string, std::string>> read_kvs_ordered(const std::str
     size_t k;
     while ((k = fread(buf, 1, sizeof buf, f)) > 0) s.append(buf, k);
     fclose(f);
-    size_t p = 0;
-    const std::string open = "<string name=\"";
-    while ((p = s.find(open, p)) != std::string::npos) {
-        p += open.size();
-        size_t q = s.find("\">", p);
-        size_t e = s.find("</string>", q);
-        if (q == std::string::npos || e == std::string::npos) break;
-        std::string name = chacha(base64::decode(s.substr(p, q - p)));
-        std::string text = s.substr(q + 2, e - q - 2);
-        size_t amp;
-        while ((amp = text.find("&#10;")) != std::string::npos) text.replace(amp, 5, "\n");
-        kv.emplace_back(name, chacha(base64::decode(text)));
-        p = e;
-    }
+    for (auto& [name, text] : prefs_xml::parse(s)) kv.emplace_back(chacha(base64::decode(name)), chacha(base64::decode(text)));
     return kv;
 }
 std::map<std::string, std::string> read_kvs(const std::string& path) {
@@ -62,14 +50,9 @@ std::map<std::string, std::string> read_kvs(const std::string& path) {
 // name is Aska's Base64 of ChaCha20(key) ("====" appended when no padding is needed), the value
 // Android's Base64.DEFAULT (76-column lines) of ChaCha20(value) plus four spaces.
 bool write_kvs(const std::string& path, const std::vector<std::pair<std::string, std::string>>& kv) {
-    std::string out = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n";
-    for (auto& [k, v] : kv) {
-        std::string n = base64::aska_name(chacha(k)), t;
-        for (char c : base64::android_default(chacha(v))) c == '\n' ? t += "&#10;" : t += c;
-        t += "    ";
-        out += "    <string name=\"" + n + "\">" + t + "</string>\n";
-    }
-    out += "</map>\n";
+    prefs_xml::Entries e;
+    for (auto& [k, v] : kv) e.emplace_back(base64::aska_name(chacha(k)), base64::android_default(chacha(v)) + "    ");
+    std::string out = prefs_xml::serialize(e);
     std::string tmp = path + ".tmp";
     FILE* f = fopen(tmp.c_str(), "wb");
     if (!f) return false;

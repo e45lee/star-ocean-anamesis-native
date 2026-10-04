@@ -53,18 +53,18 @@ bool Server::init() {
     std::string path = !config().db.empty() ? config().db : "server.sqlite3";
     u64 seed_rng = config().has_seed_rng ? config().seed_rng : (u64)time(nullptr);
     bool fresh = !file_exists(path);
-    if (!open_state(path, seed_rng, "")) return false;
+    if (!open_state(path, seed_rng, "", config().data_root)) return false;
     if (pools.open(config().gacha_pools)) LOGI("server", "gacha pools %s", pools.path().c_str());
     else LOGW("server", "gacha pools (data/gacha_pools.sqlite3) not found; drawing by rarity");
     LOGI("server", "local server state %s (master %s)%s", path.c_str(), master.c_str(), fresh ? ", seeded" : "");
     return true;
 }
 
-bool Server::open_state(const std::string& path, u64 seed_rng, const std::string& seed_save) {
+bool Server::open_state(const std::string& path, u64 seed_rng, const std::string& seed_save, const std::string& data_dir) {
     if (!st.open(path, false)) return false;
     // The schema (state/schema.cpp): every table, at this build's version; a newer file isn't
     // opened (and isn't touched: the journal mode below writes the file).
-    if (!state::open_and_migrate(st.h, path, state::kSchemaVersion, m.h)) {
+    if (!state::open_and_migrate(st.h, path, state::kSchemaVersion, m.h, data_dir)) {
         st.close();
         return false;
     }

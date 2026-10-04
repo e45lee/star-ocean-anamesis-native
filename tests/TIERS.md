@@ -94,6 +94,8 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `emu:seeded` | 4.7 min | 1 | the 3.7.0 emulator against soa-server: login, battle, gacha (emulator gate scope) | `emulator/scripts/emulator_session.sh build/emulator/soa-emu build/server/soa-server {out}` |
 | T2 | `emu:newplayer` | 11.3 min | 1 | the emulator's new player and tutorial (emulator gate scope) | `emulator/scripts/emulator_session.sh --new-player build/emulator/soa-emu build/server/soa-server {out}` |
 | T2 | `emu:summer` | 6.1 min | 1 | the summer event demo on the emulator (emulator gate scope) | `emulator/scripts/summer_demo.sh {out}` |
+| T2 | `selftest-live:home` | 4.0 min | 1 | the layout selftests of render / scene / anim on home's live objects (soa --selftest on the wire, started at home: the character model, its animation) | `port/scripts/selftest_live.sh build/port/soa {out} {tmp} layout- --at home` |
+| T3 | `selftest-live:battle` | 5.0 min | 1 | the same layout selftests 15 s into mf01_001's battle | `port/scripts/selftest_live.sh build/port/soa {out} {tmp} layout- --at battle` |
 | T2 | `viewer:boot` | 40 s | 1 | soa-viewer boots (viewer gate scope) | `emulator-viewer/scripts/viewer_boot.sh build/emulator-viewer/soa-viewer {out}` |
 | T2 | `viewer:session` | 4.6 min | 1 | soa-viewer's session (viewer gate scope) | `emulator-viewer/scripts/viewer_session.sh build/emulator-viewer/soa-viewer {out}` |
 | T2 | `win:battle-gacha` | 5.2 min | 1 | Windows (soa.exe from WSL through interop, staged in C:\soa-win): the restore session: home, a battle, a 10-draw, the server state after each | `scripts/windows-test.sh battle-gacha {out} {tmp}` |

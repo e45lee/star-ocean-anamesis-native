@@ -30,8 +30,10 @@ Labels: **(a)** data or strings in the game files, **(b)** decompiled code, **(d
 
 ## 1. Where the shaders live: the AHSL disk cache
 
-**No GLSL source ships with the game, and no shader is generated at runtime.** Every material shader is a
-precompiled GLSL ES 3.00 string in `Shader/AHSLDiskCacheAdd`.
+**No GLSL source ships with the game, and no GLSL is generated at runtime.** Every material shader is a
+precompiled GLSL ES 3.00 string in `Shader/AHSLDiskCacheAdd`. (The cache is still real CPU work at boot: the
+shader-cache thread decompresses and recompresses every entry through `ShaderComprssionTree::InsertNode`, about
+1.1% of busy time; port/src/native/render/README.md.)
 
 - The file ships in two copies with identical contents. (a)
   - The APK's `assets/builtin_data/Shader/` copy is stored plain.

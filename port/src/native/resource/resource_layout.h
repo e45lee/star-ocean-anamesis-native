@@ -29,6 +29,7 @@
 #include "../kernel/kernel_layout.h"
 #include "../libcxx/libcxx_layout.h"
 #include "../memory/memory_layout.h"
+#include "../sync/sync_layout.h"
 
 namespace soa::native::resource {
 
@@ -46,11 +47,11 @@ using String = libcxx::String;  // std::__ndk1::basic_string<char, ..., Framewor
 
 // ---- Other subsystems' classes held as sized bytes (their headers are not merged yet) ----------------
 //
-// sync (n-sync's sync_layout.h): swap these for its classes once merged.
-inline constexpr u64 kFastCriticalSectionSize = 0x90;  // Aska::FastCriticalSection (lock word at +0x38, waiters +0x3c, Semaphore +0x78)
-inline constexpr u64 kCMutexSize = 0xb0;               // Framework::CMutex (a FastCriticalSection at +0x10)
-inline constexpr u64 kEventSize = 0x68;                // Aska::Event
-inline constexpr u64 kCriticalSectionSize = 0x28;      // Aska::CriticalSection (a recursive pthread mutex)
+// sync (sync_layout.h): its classes are embedded where the guest embeds them.
+using sync::CMutex;
+using sync::CriticalSection;
+using sync::Event;
+using sync::FastCriticalSection;
 // kernel (the sibling type agent recovers it): Aska::Task, guest size 0x28, data size 0x27 (a derived
 // class's first byte goes at +0x27: Framework::CResourceManager::m_isInitialized). Its constructor
 // (inlined in CResourceManager's / CResourceElement's): vtable, +0x08 / +0x10 / +0x18 = 0, +0x20 u32 =
@@ -299,8 +300,8 @@ public:
     const void* vtable;                     // 0x00: (Aska::Thread base) the device's vtable
     u64 m_thread;                           // 0x08: (Aska::Thread base) the guest pthread_t
     u8 unk_10[8];                           // 0x10
-    u8 m_queueCs[kFastCriticalSectionSize]; // 0x18: Aska::FastCriticalSection (sync): the request queue's lock (lock word 0x50)
-    u8 m_poolCs[kFastCriticalSectionSize];  // 0xa8: Aska::FastCriticalSection (sync): the request pool's lock (lock word 0xe0)
+    FastCriticalSection m_queueCs;          // 0x18: Aska::FastCriticalSection (sync): the request queue's lock (lock word 0x50)
+    FastCriticalSection m_poolCs;           // 0xa8: Aska::FastCriticalSection (sync): the request pool's lock (lock word 0xe0)
     u8 unk_138[8];                          // 0x138
     u8 m_queue[0x68];                       // 0x140: the queued requests (ReadRequestList: empty when +0x10 == this + 0x140)
     u32 m_freeHead;                         // 0x1a8: free-request ring: next slot to fill
@@ -312,7 +313,7 @@ public:
     void* m_requestPool;                    // 0x1c8: new[](count * 0x80): ReadRequest[count] (0x58 each), the ring, the notifies
     u32 unk_1d0;                            // 0x1d0
     s32 m_requestCount;                     // 0x1d4
-    u8 m_wakeEvent[kEventSize];             // 0x1d8: Aska::Event (sync): wakes the thread
+    Event m_wakeEvent;                      // 0x1d8: Aska::Event (sync): wakes the thread
     s32 m_priority;                         // 0x240: FileReadManager keeps devices sorted by it (descending)
     s32 m_deviceId;                         // 0x244: FileReadManager::GetDevice(id); < 0 not addable
     u8 unk_248;                             // 0x248
@@ -376,7 +377,7 @@ public:
     void Clear();
 
     void* m_thread;                          // 0x00: Aska::DecompressThread* (0x140; ring head +0x98, tail +0x9c, capacity +0xa0)
-    u8 m_cs[kFastCriticalSectionSize];       // 0x08: Aska::FastCriticalSection (sync)
+    FastCriticalSection m_cs;                // 0x08: Aska::FastCriticalSection (sync)
     u32 unk_98;                              // 0x98: the constructor clears it
     u8 m_running;                            // 0x9c: the thread started
     u8 unk_9d[3];                            // 0x9d
@@ -567,7 +568,8 @@ public:
     s32 ReferenceCounter() const;
     void Release();
     void ForceRelease();
-    CResourceElement* rResourceElement();
+    CResourceElement* rResourceElement();                       // (asserts ResourceManager.cpp:0x7e when null)
+    const CResourceElement* crResourceElement() const;          // (asserts ResourceManager.cpp:0x84 when null)
     u32 UniqueBitFlag() const;
     void OrUniqueBitFlag(u32 f);
     void AndUniqueBitFlag(u32 f);
@@ -596,8 +598,10 @@ public:
     void Run(s32 level);                                        // slot 13: done elements with no reference -> CDelayDelete
     void Initialize();                                          // TaskManager::Add, m_isInitialized = 1
     void Release();
-    tElement* pSearch(u32 fileNumber);                          // by CFileLoader::FileNumber
+    tElement* pSearch(u32 fileNumber);                          // by CFileLoader::FileNumber (the caller holds m_mutex)
+    const tElement* pSearch(u32 fileNumber) const;              // (the same; its asserts' lines differ)
     tElement* pSearchByDirectPath(const char* path);            // by pFileName (strcmp)
+    const tElement* pSearchByDirectPath(const char* path) const;
     void Add(u32 type, u32 fileNumber, u32 flag, bool high);    // a found element: m_referenceCounter++, flag |= ...
     void AddByName(u32 type, const char* name, u32 flag, bool high);
     void AddDirectFile(u32 type, const char* path, u32 flag, bool high);
@@ -607,8 +611,8 @@ public:
     void RemoveDirectFile(const char* path);
     void RemoveForce(u32 fileNumber);
     void RemoveByUniqueBitFlag(u32 flag);
-    bool IsReady(u32 fileNumber, bool* error) const;
-    bool IsReadyDirectFile(const char* path, bool* error) const;
+    bool IsReady(u32 fileNumber, bool* found) const;            // under m_mutex: *found = in the list; true when done
+    bool IsReadyDirectFile(const char* path, bool* found) const;
     void Lock();
     void Unlock();
     bool IsLocked() const;
@@ -625,7 +629,7 @@ public:
     u8 task_08[0x1f];                  // 0x08: Aska::Task's fields (kernel; its data ends at 0x27)
     u8 m_isInitialized;                // 0x27: in Aska::Task's tail padding
     libcxx::list<tElement> m_elements; // 0x28: std::__ndk1::list (CSTLAllocator; node 0x20: prev, next, tElement)
-    u8 m_mutex[kCMutexSize];           // 0x40: Framework::CMutex (sync)
+    CMutex m_mutex;                    // 0x40: Framework::CMutex (sync)
 };
 static_assert(offsetof(CResourceManager, m_isInitialized) == 0x27);
 static_assert(offsetof(CResourceManager, m_elements) == 0x28);
@@ -705,7 +709,7 @@ public:
     u8 unk_157[9];                                              // 0x157: 1, 1, 0, 0, 1, ... (the constructor)
     s64 m_errorStatus;                                          // 0x160: Aska::Status; != 0 an error
     u8 unk_168[8];                                              // 0x168
-    u8 m_mutex[kCMutexSize];                                    // 0x170: Framework::CMutex (sync)
+    CMutex m_mutex;                                             // 0x170: Framework::CMutex (sync)
     u8 unk_220[0x60];                                           // 0x220: +0x221 a flag, 0x238.. zeroed (0x44 bytes)
     data_formats::ASON m_ason[3];                               // 0x280: Aska::ASON x3 (the manifests / version JSON)
     u8 unk_430[0x18];                                           // 0x430: zeroed by the constructor
@@ -834,7 +838,7 @@ public:
     T* GetNodeDirect(s32 bucket, s32 i);              // the i-th entry's data
     void DeleteAll();
 
-    u8 m_cs[kFastCriticalSectionSize];  // 0x00000: Aska::FastCriticalSection (sync; lock word at +0x38)
+    FastCriticalSection m_cs;           // 0x00000: Aska::FastCriticalSection (sync; lock word at +0x38)
     AHSLTagBucket m_tags[512];          // 0x00090
     AHSLNode<T> m_nodes[512];           // 0x04090
     u32 m_count;                        // 0x17090
@@ -879,18 +883,18 @@ public:
     memory::MemoryManager m_l1Heap;               // 0x170c8: Aska::MemoryManager over a 0x300000-byte block (+0x17268)
     u8 unk_171b8[0x0c];                           // 0x171b8
     s32 m_frame;                                  // 0x171c4: Tick's counter (2 at construction)
-    u8 m_l1Cs[kFastCriticalSectionSize];          // 0x171c8: Aska::FastCriticalSection (sync)
+    FastCriticalSection m_l1Cs;                   // 0x171c8: Aska::FastCriticalSection (sync)
     u8 unk_17258[0x2660];                         // 0x17258: the file-cache header (0x17490..), the key work area (0x174b0, 0x2000 bytes), ...
     AHSLDatabaseShaderDiskCache m_l2;             // 0x198b8: the disk cache's entries
     u8 unk_30950[0x20];                           // 0x30950
-    u8 m_l2Cs[kFastCriticalSectionSize];          // 0x30970: Aska::FastCriticalSection (sync)
+    FastCriticalSection m_l2Cs;                   // 0x30970: Aska::FastCriticalSection (sync)
     u8 unk_30a00[0x18];                           // 0x30a00
     u8 m_requestPending;                          // 0x30a18: Tick: set -> signal m_requestEvent, wait m_doneEvent, clear
     u8 unk_30a19[7];                              // 0x30a19
-    u8 m_requestEvent[kEventSize];                // 0x30a20: Aska::Event (sync)
-    u8 m_doneEvent[kEventSize];                   // 0x30a88: Aska::Event (sync)
+    Event m_requestEvent;                         // 0x30a20: Aska::Event (sync)
+    Event m_doneEvent;                            // 0x30a88: Aska::Event (sync)
     u8 unk_30af0[8];                              // 0x30af0
-    u8 m_threadEvent[kEventSize];                 // 0x30af8: Aska::Event (sync; Init creates it)
+    Event m_threadEvent;                          // 0x30af8: Aska::Event (sync; Init creates it)
 };
 static_assert(offsetof(AHSLCacheManagerV2, m_targetConsole) == 0x20);
 static_assert(offsetof(AHSLCacheManagerV2, m_l1) == 0x30);
@@ -940,7 +944,7 @@ public:
 
     const void* vtable;                                       // 0x000: _ZTVN4Aska11LIBLManagerE + 0x10
     u8 unk_008[0x588];                                        // 0x008
-    u8 m_cs[kFastCriticalSectionSize];                        // 0x590: Aska::FastCriticalSection (sync; lock word 0x5c8 in CopyTexture)
+    FastCriticalSection m_cs;                                 // 0x590: Aska::FastCriticalSection (sync; lock word 0x5c8 in CopyTexture)
     containers::TPoolLegacy<u8> m_loaderPool;                 // 0x620: TPoolLegacy<_AarLoaderElem, false>
     u8 m_loaderList[0x20];                                    // 0x670: LIBLManager::_AarLoaderList (a TList<_AarLoaderElem>; its sentinel is an _AarLoaderElem: vtable at 0x678)
     u8 m_blendTextureLoader[0x258];                           // 0x690: Aska::AarLoaderForBlendTexture
@@ -976,8 +980,8 @@ public:
     u8 m_initialized;                             // 0x011: Init returns at once when set
     u8 unk_12;                                    // 0x012
     u8 unk_13[5];                                 // 0x013
-    u8 m_event[kEventSize];                       // 0x018: Aska::Event (sync; Create(true, true))
-    u8 m_cs[kCriticalSectionSize];                // 0x080: Aska::CriticalSection (sync)
+    Event m_event;                                // 0x018: Aska::Event (sync; Create(true, true))
+    CriticalSection m_cs;                         // 0x080: Aska::CriticalSection (sync)
     u32 unk_a8;                                   // 0x0a8
     u8 unk_ac[4];                                 // 0x0ac
     const void* m_portVtable;                     // 0x0b0: Aska::TEventPort<EvItem>
@@ -993,7 +997,7 @@ public:
     u32 m_workSize;                               // 0x198: 0x1000
     u8 unk_19c[0x80];                             // 0x19c
     u32 unk_21c;                                  // 0x21c: 0x10
-    u8 m_cs2[kCriticalSectionSize];               // 0x220: Aska::CriticalSection (sync)
+    CriticalSection m_cs2;                        // 0x220: Aska::CriticalSection (sync)
 };
 static_assert(offsetof(ResourceReadyQueue, m_initialized) == 0x11);
 static_assert(offsetof(ResourceReadyQueue, m_event) == 0x18);

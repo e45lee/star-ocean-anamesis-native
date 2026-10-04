@@ -1,0 +1,9 @@
+# port/decomp/anim/scope.txt: the guest functions the `anim` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Aska::(Aaf\w*|Aai\w*|FastIk\w*|ILandscapeConstraint|GuideEffector)::
+^(\S+ )?Aska::(TAaf\w*|Aaf\w*)<
+^Framework::(CAnimation\w*|CBlendRatePlayer|Aai\w*)::
+^LocalSetController\w*
+# Not anim's: Aska::Sequencer2 is the sound sequencer (Aska::SoundObject::AudioRun calls it): audio's,
+# though port/scripts/rebuild_queue.py's table matches it to anim.

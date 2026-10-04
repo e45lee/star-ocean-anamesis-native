@@ -3,6 +3,7 @@
 // committed v0 fixture server/tests/fixtures/state-v0.sql (tools/make_state_fixture.py). Test names
 // are their seeds (testing.h).
 #include <sqlite3.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -31,19 +32,41 @@ struct TempDb {
     explicit TempDb(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
     ~TempDb() { remove_all(); }
     void remove_all() {
-        for (const char* suffix : {"",        "-wal",
-                                   "-shm",    "-journal",
-                                   ".bak-v0", ".bak-v0-journal",
-                                   ".bak-v1", ".bak-v1-journal",
-                                   ".bak-v2", ".bak-v2-journal",
-                                   ".bak-v3", ".bak-v3-journal",
-                                   ".bak-v4", ".bak-v4-journal",
-                                   ".bak-v5", ".bak-v5-journal",
-                                   ".bak-v6", ".bak-v6-journal",
-                                   ".bak-v7", ".bak-v7-journal",
-                                   ".bak-v8", ".bak-v8-journal",
-                                   ".bak-v9", ".bak-v9-journal"})
+        for (const char* suffix : {"",         "-wal",
+                                   "-shm",     "-journal",
+                                   ".bak-v0",  ".bak-v0-journal",
+                                   ".bak-v1",  ".bak-v1-journal",
+                                   ".bak-v2",  ".bak-v2-journal",
+                                   ".bak-v3",  ".bak-v3-journal",
+                                   ".bak-v4",  ".bak-v4-journal",
+                                   ".bak-v5",  ".bak-v5-journal",
+                                   ".bak-v6",  ".bak-v6-journal",
+                                   ".bak-v7",  ".bak-v7-journal",
+                                   ".bak-v8",  ".bak-v8-journal",
+                                   ".bak-v9",  ".bak-v9-journal",
+                                   ".bak-v10", ".bak-v10-journal"})
             unlink((path + suffix).c_str());
+    }
+};
+
+// A scratch data dir under /tmp for a step's side files (S12: the campaign's server_campaign.txt
+// and its .migrated), removed again.
+struct TempDir {
+    std::string path;
+    explicit TempDir(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".d") {
+        remove_all();
+        mkdir(path.c_str(), 0755);
+    }
+    ~TempDir() { remove_all(); }
+    void remove_all() {
+        for (const char* f : {state::kCampaignFile, state::kCampaignFileMigrated}) unlink((path + "/" + f).c_str());
+        rmdir(path.c_str());
+    }
+    void write(const char* name, const std::string& text) const { std::ofstream(path + "/" + name, std::ios::binary) << text; }
+    bool has(const char* name) const { return access((path + "/" + name).c_str(), F_OK) == 0; }
+    std::string read(const char* name) const {
+        std::ifstream f(path + "/" + name, std::ios::binary);
+        return std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
     }
 };
 
@@ -139,9 +162,9 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51,
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)53,
                 "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
-                "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8)");
+                "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
@@ -1298,6 +1321,108 @@ NATIVE_TEST("server/schema-migrate-v10") {
     bak.close();
 }
 
+// Version 11 (PLAN-schema S12): the campaign's progress moves from the data dir's
+// server_campaign.txt into campaign_clear / campaign_last. (1) v0 -> v11 with a planted file: read
+// as the campaign read it (a repeated clear once, a number cut to 32 bits, a line of another word
+// skipped, the last "last" wins, stopped at the first line that isn't "<word> <number>"); the file
+// renamed .migrated, unchanged; every other table as the same file at version 10. Without a data
+// dir nothing is imported and a file there isn't touched. (2) v10 -> v11: a "last" that isn't a
+// clear is dropped; .bak-v10. (3) A step that fails leaves the file where it was. (4) A new state in
+// a data dir with a file imports it (a new state and an upgraded one are the same).
+NATIVE_TEST("server/schema-migrate-v11") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    const char* file = state::kCampaignFile;
+    const char* migrated = state::kCampaignFileMigrated;
+    // ---- (1) v0 -> v11 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file("v11-ref"), old("v11");
+        TempDir dir("v11"), other("v11-none");
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        const std::string text = "clear 101\nclear 102\nclear 101\nlast 5\nclear 4294967297\nlast 102\nbogus 7\nclear 103 junk\nclear 999\n";
+        dir.write(file, text);
+        other.write(file, "clear 1\n");
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 10, m, other.path), true, "the reference: migrated to 10");
+        t.expect_eq(other.has(file) && !other.has(migrated), true, "a step before 11 imports nothing");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, 11, m, dir.path), true, "v0 -> v11");
+        t.expect_eq(state::user_version(db.h), 11, "user_version 11");
+        t.expect_eq(rows_over(db, "campaign_clear", "*"), (std::vector<std::string>{"1:101|", "1:102|", "1:103|", "1:1|"}),
+                    "campaign_clear: 101 once, 4294967297 as 1, 103 before the line that stops the read, not 999");
+        t.expect_eq(rows_over(db, "campaign_last", "*"), (std::vector<std::string>{"1:1|1:102|"}), "campaign_last: the last 'last' line");
+        t.expect_eq(dir.has(file), false, "the file is gone");
+        t.expect_eq(dir.read(migrated), text, "kept as server_campaign.txt.migrated, unchanged");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        rb.erase("campaign_clear");
+        rb.erase("campaign_last");
+        t.expect_eq(ra == rb, true, "every other table's rows as at version 10");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        // no data dir: no import, the file there untouched
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 11, m), true, "the reference: 10 -> 11 without a data dir");
+        t.expect_eq(ref.one("select count(*) from campaign_clear", {}) + ref.one("select count(*) from campaign_last", {}), (int64_t)0,
+                    "nothing imported");
+        t.expect_eq(other.read(file), std::string("clear 1\n"), "the other dir's file untouched");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v10 -> v11, without the master: a last play that isn't a clear --------------------------------
+    {
+        TempDb v10("v11-from-v10");
+        TempDir dir("v11-from-v10");
+        if (!write_fixture(t, v10.path)) return;
+        Sql f;
+        if (!f.open(v10.path, false)) return t.fail("open v10");
+        t.expect_eq(state::open_and_migrate(f.h, v10.path, 10, m), true, "migrated to 10");
+        f.close();
+        unlink((v10.path + ".bak-v0").c_str());
+        dir.write(file, "clear 7\nlast 8\n");
+        if (!f.open(v10.path, false)) return t.fail("reopen v10");
+        t.expect_eq(state::user_version(f.h), 10, "a version 10 file");
+        t.expect_eq(state::open_and_migrate(f.h, v10.path, 11, nullptr, dir.path), true, "v10 -> v11");
+        t.expect_eq(state::user_version(f.h), 11, "user_version 11");
+        t.expect_eq(rows_over(f, "campaign_clear", "*"), (std::vector<std::string>{"1:7|"}), "the clear");
+        t.expect_eq(f.one("select count(*) from campaign_last", {}), (int64_t)0, "the last play 8 isn't a clear: dropped");
+        t.expect_eq(!dir.has(file) && dir.has(migrated), true, "renamed .migrated");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        f.close();
+        Sql bak;
+        if (!bak.open(v10.path + ".bak-v10", true)) return t.fail("no %s.bak-v10", v10.path.c_str());
+        t.expect_eq(state::user_version(bak.h), 10, "the backup is version 10");
+        t.expect_eq(bak.one("select count(*) from sqlite_master where name like 'campaign_%'", {}), (int64_t)0, "the backup has no campaign table");
+        bak.close();
+    }
+    // ---- (3) a failed step leaves the file -----------------------------------------------------------------
+    {
+        TempDb v10("v11-fails");
+        TempDir dir("v11-fails");
+        if (!write_fixture(t, v10.path)) return;
+        Sql f;
+        if (!f.open(v10.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(f.h, v10.path, 10, m), true, "migrated to 10");
+        f.exec("create table campaign_clear (x integer)");  // step 11's create table fails on it
+        dir.write(file, "clear 7\n");
+        t.expect_eq(state::open_and_migrate(f.h, v10.path, 11, m, dir.path), false, "step 11 fails");
+        t.expect_eq(state::user_version(f.h), 10, "still version 10");
+        t.expect_eq(dir.has(file) && !dir.has(migrated), true, "the file stays");
+        f.close();
+    }
+    // ---- (4) a new state in a data dir with a file ---------------------------------------------------------
+    {
+        TempDb fresh("v11-fresh");
+        TempDir dir("v11-fresh");
+        dir.write(file, "clear 9\nlast 9\n");
+        Sql f;
+        if (!f.open(fresh.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(f.h, fresh.path, state::kSchemaVersion, m, dir.path), true, "a new state");
+        t.expect_eq(rows_over(f, "campaign_last", "mission_id"), (std::vector<std::string>{"1:9|"}), "imported");
+        t.expect_eq(!dir.has(file) && dir.has(migrated), true, "renamed .migrated");
+        t.expect_eq(access((fresh.path + ".bak-v0").c_str(), F_OK) != 0, true, "no backup of a new file");
+        f.close();
+    }
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;
@@ -1562,6 +1687,15 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(db.one("select count(*) from play_member", {}), (int64_t)0, "ON DELETE CASCADE: its members are gone");
     t.expect_eq(rc("delete from titles where id = " + title), SQLITE_OK, "the worn title deleted");
     t.expect_eq(db.one("select count(*) from player where title_id is null", {}), (int64_t)1, "title_id -> NULL");
+    // the campaign (S12): the last play is a clear; it goes with it
+    t.expect_eq(rc("insert into campaign_last (id, mission_id) values (1, 555)"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "campaign_last refused without its clear");
+    t.expect_eq(rc("insert into campaign_clear (mission_id) values (555); insert into campaign_last (id, mission_id) values (1, 555)"), SQLITE_OK,
+                "a clear and the last play");
+    t.expect_eq(rc("insert into campaign_last (id, mission_id) values (2, 555)"), SQLITE_CONSTRAINT_CHECK, "one last play (id 1)");
+    t.expect_eq(rc("insert into campaign_clear (mission_id) values ('x')"), SQLITE_MISMATCH, "campaign_clear is STRICT (its key, the rowid)");
+    t.expect_eq(rc("delete from campaign_clear where mission_id = 555"), SQLITE_OK, "the clear deleted");
+    t.expect_eq(db.one("select count(*) from campaign_last", {}), (int64_t)0, "ON DELETE CASCADE: the last play is gone (S12)");
     t.expect_eq(txn("delete from player"), SQLITE_OK, "the player deleted");
     t.expect_eq(db.one("select count(*) from wire_device where player_id is null", {}), (int64_t)1, "wire_device.player_id -> NULL (S10)");
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");

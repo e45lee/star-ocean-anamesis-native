@@ -1,0 +1,7279 @@
+{
+ "subsystem": "render",
+ "generated_by": "tools/subsystem.py export-types render",
+ "header": "port/src/native/render/render_layout.h",
+ "structs": [
+  {
+   "name": "IAnimatable",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2022454",
+     "symbol": "_ZNK4Aska11IAnimatable8IsThisItEt",
+     "name": "IsThisIt"
+    },
+    {
+     "ghidra": "0x20224c8",
+     "symbol": "_ZN4Aska11IAnimatable5CloneEPKS0_",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x202251c",
+     "symbol": "_ZN4Aska11IAnimatable11CreateCloneEPKS0_",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x2022524",
+     "symbol": "_ZN4Aska11IAnimatableD1Ev",
+     "name": "~IAnimatable"
+    },
+    {
+     "ghidra": "0x2022528",
+     "symbol": "_ZN4Aska11IAnimatableD0Ev",
+     "name": "~IAnimatable"
+    },
+    {
+     "ghidra": "0x202252c",
+     "symbol": "_ZNK4Aska11IAnimatable10GetClassIDEi",
+     "name": "GetClassID"
+    }
+   ]
+  },
+  {
+   "name": "HierarchicalObjectContainer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_world",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 80,
+     "name": "m_position",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 96,
+     "name": "m_posture",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 112,
+     "name": "m_scale",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 128,
+     "name": "m_param9",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 144,
+     "name": "m_jointOrientation",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 160,
+     "name": "m_param10",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 176,
+     "name": "m_param11",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 192,
+     "name": "m_parent",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 200,
+     "name": "m_firstChild",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 208,
+     "name": "m_prevSibling",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 216,
+     "name": "m_nextSibling",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 224,
+     "name": "m_referrers",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 232,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 240,
+     "name": "m_pWorld",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 248,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 249,
+     "name": "m_flags2",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 250,
+     "name": "unk_fa",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 256,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2234490",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer13CopyParameterEPKNS_18HierarchicalObjectE",
+     "name": "CopyParameter"
+    },
+    {
+     "ghidra": "0x2234498",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer13CopyParameterEPKS0_",
+     "name": "CopyParameter"
+    },
+    {
+     "ghidra": "0x22345ec",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x2234800",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer16DetachFromParentEv",
+     "name": "DetachFromParent"
+    },
+    {
+     "ghidra": "0x2234918",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer11AttachChildEPS0_",
+     "name": "AttachChild"
+    },
+    {
+     "ghidra": "0x2234960",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x2234a2c",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer30InvalidateMatrixHierarchicallyEv",
+     "name": "InvalidateMatrixHierarchically"
+    },
+    {
+     "ghidra": "0x2234aa8",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer20UpdateHierarchicallyEv",
+     "name": "UpdateHierarchically"
+    },
+    {
+     "ghidra": "0x2234cf8",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer25ForceUpdateHierarchicallyEv",
+     "name": "ForceUpdateHierarchically"
+    },
+    {
+     "ghidra": "0x2234f5c",
+     "symbol": "_ZNK4Aska27HierarchicalObjectContainer19GetChildObjectCountEv",
+     "name": "GetChildObjectCount"
+    },
+    {
+     "ghidra": "0x2234f88",
+     "symbol": "_ZNK4Aska27HierarchicalObjectContainer11ChildObjectEi",
+     "name": "ChildObject"
+    },
+    {
+     "ghidra": "0x2234fb4",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer18MakeTransformParamEv",
+     "name": "MakeTransformParam"
+    },
+    {
+     "ghidra": "0x2235120",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer10MakeMatrixEv",
+     "name": "MakeMatrix"
+    },
+    {
+     "ghidra": "0x2235368",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer20MakeTransformParamExEv",
+     "name": "MakeTransformParamEx"
+    },
+    {
+     "ghidra": "0x22359c4",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer10SwapParentEPS0_",
+     "name": "SwapParent"
+    },
+    {
+     "ghidra": "0x2235a5c",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer16ReleaseHOCBufferEv",
+     "name": "ReleaseHOCBuffer"
+    },
+    {
+     "ghidra": "0x2235a80",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer12OpenIteratorEv",
+     "name": "OpenIterator"
+    },
+    {
+     "ghidra": "0x2235ad4",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer13AddToIteratorEv",
+     "name": "AddToIterator"
+    },
+    {
+     "ghidra": "0x2235c28",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer17IterateMakeMatrixEv",
+     "name": "IterateMakeMatrix"
+    },
+    {
+     "ghidra": "0x2235f98",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer23CallCalcTransformMatrixEPNS_18HierarchicalObjectE",
+     "name": "CallCalcTransformMatrix"
+    },
+    {
+     "ghidra": "0x22361a4",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainerD2Ev",
+     "name": "~HierarchicalObjectContainer"
+    },
+    {
+     "ghidra": "0x22361d0",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainerD0Ev",
+     "name": "~HierarchicalObjectContainer"
+    },
+    {
+     "ghidra": "0x2236214",
+     "symbol": "_ZNK4Aska27HierarchicalObjectContainer10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x223622c",
+     "symbol": "_ZNK4Aska27HierarchicalObjectContainer3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2236234",
+     "symbol": "_ZN4Aska27HierarchicalObjectContainer3SetEmPKv",
+     "name": "Set"
+    }
+   ]
+  },
+  {
+   "name": "HierarchicalObject",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::Task",
+      "size": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_onDestroy",
+     "type": {
+      "kind": "bytes",
+      "ctype": "void (*)(HierarchicalObject *)",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_hoc",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObjectContainer"
+     },
+     "size": 256
+    },
+    {
+     "offset": 304,
+     "name": "m_invWorld",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 368,
+     "name": "unk_170",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 384,
+     "name": "m_simpleDynamics",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 392,
+     "name": "unk_188",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 400,
+     "name": "unk_190",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 404,
+     "name": "m_active",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 405,
+     "name": "unk_195",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 406,
+     "name": "unk_196",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 407,
+     "name": "unk_197",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 408,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f68bc8",
+     "symbol": "_ZNK4Aska18HierarchicalObject15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    },
+    {
+     "ghidra": "0x1f68bd0",
+     "symbol": "_ZNK4Aska18HierarchicalObject11WorldMatrixEv",
+     "name": "WorldMatrix"
+    },
+    {
+     "ghidra": "0x1f68be0",
+     "symbol": "_ZN4Aska18HierarchicalObject11SetPositionEfff",
+     "name": "SetPosition"
+    },
+    {
+     "ghidra": "0x1f68c2c",
+     "symbol": "_ZN4Aska18HierarchicalObject11SetPositionEPKNS_6VectorE",
+     "name": "SetPosition"
+    },
+    {
+     "ghidra": "0x1f68c78",
+     "symbol": "_ZN4Aska18HierarchicalObject10SetPostureEfff",
+     "name": "SetPosture"
+    },
+    {
+     "ghidra": "0x1f68cc8",
+     "symbol": "_ZN4Aska18HierarchicalObject10SetPostureEPKNS_6VectorE",
+     "name": "SetPosture"
+    },
+    {
+     "ghidra": "0x1f68d04",
+     "symbol": "_ZN4Aska18HierarchicalObject10SetPostureEPKNS_10QuaternionE",
+     "name": "SetPosture"
+    },
+    {
+     "ghidra": "0x1f68d50",
+     "symbol": "_ZN4Aska18HierarchicalObject10SetPostureEffff",
+     "name": "SetPosture"
+    },
+    {
+     "ghidra": "0x1f68d98",
+     "symbol": "_ZN4Aska18HierarchicalObject8SetScaleEfff",
+     "name": "SetScale"
+    },
+    {
+     "ghidra": "0x1f68ddc",
+     "symbol": "_ZN4Aska18HierarchicalObject8SetScaleEPKNS_6VectorE",
+     "name": "SetScale"
+    },
+    {
+     "ghidra": "0x1f68e28",
+     "symbol": "_ZN4Aska18HierarchicalObject18SetPositionPassiveEfff",
+     "name": "SetPositionPassive"
+    },
+    {
+     "ghidra": "0x1f68e4c",
+     "symbol": "_ZN4Aska18HierarchicalObject18SetPositionPassiveEPKNS_6VectorE",
+     "name": "SetPositionPassive"
+    },
+    {
+     "ghidra": "0x1f68e80",
+     "symbol": "_ZN4Aska18HierarchicalObject17SetPosturePassiveEfff",
+     "name": "SetPosturePassive"
+    },
+    {
+     "ghidra": "0x1f68ea0",
+     "symbol": "_ZN4Aska18HierarchicalObject17SetPosturePassiveEPKNS_6VectorE",
+     "name": "SetPosturePassive"
+    },
+    {
+     "ghidra": "0x1f68ec4",
+     "symbol": "_ZN4Aska18HierarchicalObject17SetPosturePassiveEPKNS_10QuaternionE",
+     "name": "SetPosturePassive"
+    },
+    {
+     "ghidra": "0x1f68ef8",
+     "symbol": "_ZN4Aska18HierarchicalObject17SetPosturePassiveEffff",
+     "name": "SetPosturePassive"
+    },
+    {
+     "ghidra": "0x1f68f14",
+     "symbol": "_ZN4Aska18HierarchicalObject15SetScalePassiveEfff",
+     "name": "SetScalePassive"
+    },
+    {
+     "ghidra": "0x1f68f30",
+     "symbol": "_ZN4Aska18HierarchicalObject15SetScalePassiveEPKNS_6VectorE",
+     "name": "SetScalePassive"
+    },
+    {
+     "ghidra": "0x1f68f64",
+     "symbol": "_ZN4Aska18HierarchicalObject21VirtualBoundingSphereEv",
+     "name": "VirtualBoundingSphere"
+    },
+    {
+     "ghidra": "0x1f68f70",
+     "symbol": "_ZN4Aska18HierarchicalObject14GetBoundingBoxEb",
+     "name": "GetBoundingBox"
+    },
+    {
+     "ghidra": "0x1f68f78",
+     "symbol": "_ZN4Aska18HierarchicalObject8OnActiveEb",
+     "name": "OnActive"
+    },
+    {
+     "ghidra": "0x1f7666c",
+     "symbol": "_ZN4Aska18HierarchicalObject14SetWorldMatrixEPKNS_6MatrixE",
+     "name": "SetWorldMatrix"
+    },
+    {
+     "ghidra": "0x1f766b8",
+     "symbol": "_ZN4Aska18HierarchicalObject10MakeMatrixEv",
+     "name": "MakeMatrix"
+    },
+    {
+     "ghidra": "0x219f540",
+     "symbol": "_ZN4Aska18HierarchicalObjectD2Ev",
+     "name": "~HierarchicalObject"
+    },
+    {
+     "ghidra": "0x21d48d4",
+     "symbol": "_ZN4Aska18HierarchicalObject20EnableSimpleDynamicsEb",
+     "name": "EnableSimpleDynamics"
+    },
+    {
+     "ghidra": "0x22328fc",
+     "symbol": "_ZN4Aska18HierarchicalObject5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x2232988",
+     "symbol": "_ZN4Aska18HierarchicalObject11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x2232b20",
+     "symbol": "_ZN4Aska18HierarchicalObject20InitializeConditionsEv",
+     "name": "InitializeConditions"
+    },
+    {
+     "ghidra": "0x2232b64",
+     "symbol": "_ZN4Aska18HierarchicalObject22CheckSleepAvailabilityEv",
+     "name": "CheckSleepAvailability"
+    },
+    {
+     "ghidra": "0x2232b74",
+     "symbol": "_ZN4Aska18HierarchicalObject23SetAppropriateTaskLevelEv",
+     "name": "SetAppropriateTaskLevel"
+    },
+    {
+     "ghidra": "0x2232b8c",
+     "symbol": "_ZN4Aska18HierarchicalObject3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x2232c94",
+     "symbol": "_ZN4Aska18HierarchicalObject32MakeBillboardMatrixFromLocalAxisEPS0_PNS_6MatrixENS0_10TargetFaceE",
+     "name": "MakeBillboardMatrixFromLocalAxis"
+    },
+    {
+     "ghidra": "0x2232d2c",
+     "symbol": "_ZN4Aska18HierarchicalObject35MakeBillboardMatrixFromLocalAxisSubEPS0_RNS_6MatrixEbbNS0_10TargetFaceE",
+     "name": "MakeBillboardMatrixFromLocalAxisSub"
+    },
+    {
+     "ghidra": "0x2233410",
+     "symbol": "_ZN4Aska18HierarchicalObject17EstimateScaleStatEv",
+     "name": "EstimateScaleStat"
+    },
+    {
+     "ghidra": "0x2233564",
+     "symbol": "_ZN4Aska18HierarchicalObject20UpdateSimpleDynamicsEPKNS_3AFF24SimpleDynamicsParametersE",
+     "name": "UpdateSimpleDynamics"
+    },
+    {
+     "ghidra": "0x2233bd0",
+     "symbol": "_ZN4Aska18HierarchicalObject14SwapChangelingEPS0_",
+     "name": "SwapChangeling"
+    },
+    {
+     "ghidra": "0x2233c70",
+     "symbol": "_ZN4Aska18HierarchicalObject17InverseKinematicsEPKNS_6VectorEiiffb",
+     "name": "InverseKinematics"
+    },
+    {
+     "ghidra": "0x22341a8",
+     "symbol": "_ZNK4Aska18HierarchicalObject3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x223431c",
+     "symbol": "_ZN4Aska18HierarchicalObject3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x2234434",
+     "symbol": "_ZN4Aska18HierarchicalObjectD0Ev",
+     "name": "~HierarchicalObject"
+    },
+    {
+     "ghidra": "0x223444c",
+     "symbol": "_ZNK4Aska18HierarchicalObject10GetClassIDEi",
+     "name": "GetClassID"
+    }
+   ]
+  },
+  {
+   "name": "RenderableObject",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObject"
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "m_renderFlags",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 412,
+     "name": "unk_19c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 416,
+     "name": "m_camera",
+     "type": {
+      "kind": "ptr",
+      "to": "Camera"
+     },
+     "size": 8
+    },
+    {
+     "offset": 424,
+     "name": "m_renderQueued",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 428,
+     "name": "m_contextDivisor",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 432,
+     "name": "m_passMask",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 436,
+     "name": "m_progTrans",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 437,
+     "name": "m_shadowFlags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 439,
+     "name": "unk_1b7",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 440,
+     "name": "unk_1b8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 448,
+     "name": "m_contextsWanted",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 452,
+     "name": "unk_1c4",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 456,
+     "name": "unk_1c8",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 460,
+     "name": "m_contextsUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 464,
+     "name": "m_contexts",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderContext"
+     },
+     "size": 8
+    },
+    {
+     "offset": 472,
+     "name": "m_cloneSource",
+     "type": {
+      "kind": "ptr",
+      "to": "IAnimatable"
+     },
+     "size": 8
+    },
+    {
+     "offset": 480,
+     "name": "unk_1e0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 504,
+     "name": "unk_1f8",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 512,
+     "name": "unk_200",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 520,
+     "name": "m_multipassRenderingID",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 16
+    },
+    {
+     "offset": 536,
+     "name": "m_multipassRequestRenderingID",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 16
+    },
+    {
+     "offset": 552,
+     "name": "m_multiDraw",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 556,
+     "name": "m_multiDrawLimit",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 560,
+     "name": "unk_230",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 584,
+     "name": "m_iblAcceptance",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 585,
+     "name": "unk_249",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 23
+     },
+     "size": 23
+    },
+    {
+     "offset": 608,
+     "name": "unk_260",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 616,
+     "name": "unk_268",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 624,
+     "name": "m_colorRate",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 640,
+     "name": "m_colorOffset",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 656,
+     "name": "unk_290",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 720,
+     "name": "m_boundingSphere",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 736,
+     "name": "unk_2e0",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 752,
+     "name": "unk_2f0",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 753,
+     "name": "unk_2f1",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 756,
+     "name": "unk_2f4",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 760,
+     "name": "m_angle2f8",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 764,
+     "name": "m_angle2fc",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 768,
+     "name": "unk_300",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 776,
+     "name": "unk_308",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 784,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f766c0",
+     "symbol": "_ZN4Aska16RenderableObject21VirtualBoundingSphereEv",
+     "name": "VirtualBoundingSphere"
+    },
+    {
+     "ghidra": "0x1f766f0",
+     "symbol": "_ZN4Aska16RenderableObject8OnActiveEb",
+     "name": "OnActive"
+    },
+    {
+     "ghidra": "0x1f7670c",
+     "symbol": "_ZN4Aska16RenderableObject19UpdateMultiDrawVarsEv",
+     "name": "UpdateMultiDrawVars"
+    },
+    {
+     "ghidra": "0x1f76714",
+     "symbol": "_ZN4Aska16RenderableObject21SetShadowManagerIndexEim",
+     "name": "SetShadowManagerIndex"
+    },
+    {
+     "ghidra": "0x1f76718",
+     "symbol": "_ZN4Aska16RenderableObject21GetShadowManagerIndexEi",
+     "name": "GetShadowManagerIndex"
+    },
+    {
+     "ghidra": "0x1f76720",
+     "symbol": "_ZN4Aska16RenderableObject21GetShaderAdapterCacheEi",
+     "name": "GetShaderAdapterCache"
+    },
+    {
+     "ghidra": "0x1f76728",
+     "symbol": "_ZNK4Aska16RenderableObject25GetShaderAdapterCacheSizeEv",
+     "name": "GetShaderAdapterCacheSize"
+    },
+    {
+     "ghidra": "0x1f76730",
+     "symbol": "_ZN4Aska16RenderableObject26SetShaderAdapterCacheCountEii",
+     "name": "SetShaderAdapterCacheCount"
+    },
+    {
+     "ghidra": "0x1f76734",
+     "symbol": "_ZN4Aska16RenderableObject26ResetDynamicShaderModifierEv",
+     "name": "ResetDynamicShaderModifier"
+    },
+    {
+     "ghidra": "0x1f76738",
+     "symbol": "_ZN4Aska16RenderableObject16EnableCastShadowEb",
+     "name": "EnableCastShadow"
+    },
+    {
+     "ghidra": "0x1f76750",
+     "symbol": "_ZN4Aska16RenderableObject19EnableReceiveShadowEb",
+     "name": "EnableReceiveShadow"
+    },
+    {
+     "ghidra": "0x1f76768",
+     "symbol": "_ZN4Aska16RenderableObject22EnableReceiveProjectorEb",
+     "name": "EnableReceiveProjector"
+    },
+    {
+     "ghidra": "0x1f76780",
+     "symbol": "_ZN4Aska16RenderableObject19PrepareLightContextEPNS_12LightManagerE",
+     "name": "PrepareLightContext"
+    },
+    {
+     "ghidra": "0x1f76794",
+     "symbol": "_ZN4Aska16RenderableObject16IsAffectingLightEPNS_5LightE",
+     "name": "IsAffectingLight"
+    },
+    {
+     "ghidra": "0x1f7679c",
+     "symbol": "_ZNK4Aska16RenderableObject22QueryPrebuiltVariationEv",
+     "name": "QueryPrebuiltVariation"
+    },
+    {
+     "ghidra": "0x1f767a4",
+     "symbol": "_ZN4Aska16RenderableObject20SetPrebuiltVariationEi",
+     "name": "SetPrebuiltVariation"
+    },
+    {
+     "ghidra": "0x1f767a8",
+     "symbol": "_ZNK4Aska16RenderableObject27GetCurrentPrebuiltVariationEv",
+     "name": "GetCurrentPrebuiltVariation"
+    },
+    {
+     "ghidra": "0x1f767b0",
+     "symbol": "_ZN4Aska16RenderableObject19CheckRenderContextsEv",
+     "name": "CheckRenderContexts"
+    },
+    {
+     "ghidra": "0x1f767b4",
+     "symbol": "_ZN4Aska16RenderableObject24DoesInsertToPaintingListEPNS0_3IPLEiiPKi",
+     "name": "DoesInsertToPaintingList"
+    },
+    {
+     "ghidra": "0x1f767bc",
+     "symbol": "_ZN4Aska16RenderableObject18SetSystemColorRateEPKNS_6VectorE",
+     "name": "SetSystemColorRate"
+    },
+    {
+     "ghidra": "0x1f767e0",
+     "symbol": "_ZNK4Aska16RenderableObject15SystemColorRateEv",
+     "name": "SystemColorRate"
+    },
+    {
+     "ghidra": "0x1f767e8",
+     "symbol": "_ZN4Aska16RenderableObject12SetColorRateEPKNS_6VectorE",
+     "name": "SetColorRate"
+    },
+    {
+     "ghidra": "0x1f7680c",
+     "symbol": "_ZNK4Aska16RenderableObject9ColorRateEv",
+     "name": "ColorRate"
+    },
+    {
+     "ghidra": "0x1f76814",
+     "symbol": "_ZN4Aska16RenderableObject20SetSystemColorOffsetEPKNS_6VectorE",
+     "name": "SetSystemColorOffset"
+    },
+    {
+     "ghidra": "0x1f76838",
+     "symbol": "_ZNK4Aska16RenderableObject17SystemColorOffsetEv",
+     "name": "SystemColorOffset"
+    },
+    {
+     "ghidra": "0x1f76840",
+     "symbol": "_ZN4Aska16RenderableObject14SetColorOffsetEPKNS_6VectorE",
+     "name": "SetColorOffset"
+    },
+    {
+     "ghidra": "0x1f76864",
+     "symbol": "_ZNK4Aska16RenderableObject11ColorOffsetEv",
+     "name": "ColorOffset"
+    },
+    {
+     "ghidra": "0x1f7686c",
+     "symbol": "_ZN4Aska16RenderableObject27SetProgrammableTransparencyENS0_9ProgTransE",
+     "name": "SetProgrammableTransparency"
+    },
+    {
+     "ghidra": "0x1f76874",
+     "symbol": "_ZN4Aska16RenderableObject22SetIBLAcceptanceNumberEj",
+     "name": "SetIBLAcceptanceNumber"
+    },
+    {
+     "ghidra": "0x1f7687c",
+     "symbol": "_ZN4Aska16RenderableObject21ComputeBoundingSphereEb",
+     "name": "ComputeBoundingSphere"
+    },
+    {
+     "ghidra": "0x1f7689c",
+     "symbol": "_ZN4Aska16RenderableObject20GetBoundingBoxDirectEPNS_19OrientedBoundingBoxE",
+     "name": "GetBoundingBoxDirect"
+    },
+    {
+     "ghidra": "0x1f768a4",
+     "symbol": "_ZNK4Aska16RenderableObject14HasBoundingBoxEv",
+     "name": "HasBoundingBox"
+    },
+    {
+     "ghidra": "0x1f768ac",
+     "symbol": "_ZN4Aska16RenderableObject16RenderingDecidedEv",
+     "name": "RenderingDecided"
+    },
+    {
+     "ghidra": "0x1f768d8",
+     "symbol": "_ZN4Aska16RenderableObject15ResolveTargetGLEii",
+     "name": "ResolveTargetGL"
+    },
+    {
+     "ghidra": "0x1f768e0",
+     "symbol": "_ZN4Aska16RenderableObject16RoutineProcedureEv",
+     "name": "RoutineProcedure"
+    },
+    {
+     "ghidra": "0x1f768e4",
+     "symbol": "_ZN4Aska16RenderableObject15FinishRenderingEv",
+     "name": "FinishRendering"
+    },
+    {
+     "ghidra": "0x1f768e8",
+     "symbol": "_ZN4Aska16RenderableObject18ReleaseShaderCacheEv",
+     "name": "ReleaseShaderCache"
+    },
+    {
+     "ghidra": "0x1f768f0",
+     "symbol": "_ZN4Aska16RenderableObject22EnableObjectMotionBlurEb",
+     "name": "EnableObjectMotionBlur"
+    },
+    {
+     "ghidra": "0x1f7690c",
+     "symbol": "_ZN4Aska16RenderableObject21ProcessTextureDiscardEv",
+     "name": "ProcessTextureDiscard"
+    },
+    {
+     "ghidra": "0x1f76910",
+     "symbol": "_ZN4Aska16RenderableObject22ProcessTextureAllocateEv",
+     "name": "ProcessTextureAllocate"
+    },
+    {
+     "ghidra": "0x1f77bb8",
+     "symbol": "_ZNK4Aska16RenderableObject15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    },
+    {
+     "ghidra": "0x22696e4",
+     "symbol": "_ZNK4Aska16RenderableObject10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x22a996c",
+     "symbol": "_ZN4Aska16RenderableObject6RenderEPNS_13RenderContextEi",
+     "name": "Render"
+    },
+    {
+     "ghidra": "0x22b6a98",
+     "symbol": "_ZNK4Aska16RenderableObject11GetDeepestZEi",
+     "name": "GetDeepestZ"
+    },
+    {
+     "ghidra": "0x22b6abc",
+     "symbol": "_ZNK4Aska16RenderableObject14GetShallowestZEi",
+     "name": "GetShallowestZ"
+    },
+    {
+     "ghidra": "0x22b6ae0",
+     "symbol": "_ZN4Aska16RenderableObjectC2Ev",
+     "name": "RenderableObject"
+    },
+    {
+     "ghidra": "0x22b6cbc",
+     "symbol": "_ZN4Aska16RenderableObjectD1Ev",
+     "name": "~RenderableObject"
+    },
+    {
+     "ghidra": "0x22b6cc0",
+     "symbol": "_ZN4Aska16RenderableObjectD0Ev",
+     "name": "~RenderableObject"
+    },
+    {
+     "ghidra": "0x22b6cd8",
+     "symbol": "_ZN4Aska16RenderableObject5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x22b6e28",
+     "symbol": "_ZN4Aska16RenderableObject11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x22b6e90",
+     "symbol": "_ZN4Aska16RenderableObject23SetMultipassRenderingIDEPKmi",
+     "name": "SetMultipassRenderingID"
+    },
+    {
+     "ghidra": "0x22b6ec4",
+     "symbol": "_ZN4Aska16RenderableObject30SetMultipassRequestRenderingIDEPKmi",
+     "name": "SetMultipassRequestRenderingID"
+    },
+    {
+     "ghidra": "0x22b6ef8",
+     "symbol": "_ZN4Aska16RenderableObject20PreliminarilyPrepareEPNS_12LightManagerE",
+     "name": "PreliminarilyPrepare"
+    },
+    {
+     "ghidra": "0x22b6f00",
+     "symbol": "_ZN4Aska16RenderableObject19PrepareForRenderingEPKNS_10RENDERINFOE",
+     "name": "PrepareForRendering"
+    },
+    {
+     "ghidra": "0x22b6f08",
+     "symbol": "_ZN4Aska16RenderableObject22CheckSleepAvailabilityEv",
+     "name": "CheckSleepAvailability"
+    },
+    {
+     "ghidra": "0x22b6f1c",
+     "symbol": "_ZN4Aska16RenderableObject23SetAppropriateTaskLevelEv",
+     "name": "SetAppropriateTaskLevel"
+    },
+    {
+     "ghidra": "0x22b6f30",
+     "symbol": "_ZN4Aska16RenderableObject20InitializeConditionsEv",
+     "name": "InitializeConditions"
+    },
+    {
+     "ghidra": "0x22b6fd4",
+     "symbol": "_ZN4Aska16RenderableObject13ProcFarObjectEv",
+     "name": "ProcFarObject"
+    },
+    {
+     "ghidra": "0x22b7044",
+     "symbol": "_ZN4Aska16RenderableObject19MakeBillboardMatrixEPNS_6CameraE",
+     "name": "MakeBillboardMatrix"
+    },
+    {
+     "ghidra": "0x22b77cc",
+     "symbol": "_ZN4Aska16RenderableObject32MakeBillboardMatrixFromLocalAxisEPNS_6CameraE",
+     "name": "MakeBillboardMatrixFromLocalAxis"
+    },
+    {
+     "ghidra": "0x22b7824",
+     "symbol": "_ZN4Aska16RenderableObject3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x22b78a0",
+     "symbol": "_ZN4Aska16RenderableObject13SetVisibilityEf",
+     "name": "SetVisibility"
+    },
+    {
+     "ghidra": "0x22b79e8",
+     "symbol": "_ZN4Aska16RenderableObject16SetRenderLayerIDEh",
+     "name": "SetRenderLayerID"
+    },
+    {
+     "ghidra": "0x22b79f0",
+     "symbol": "_ZNK4Aska16RenderableObject19IsPostProcessObjectEv",
+     "name": "IsPostProcessObject"
+    },
+    {
+     "ghidra": "0x22b7a24",
+     "symbol": "_ZNK4Aska16RenderableObject3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x22b7c28",
+     "symbol": "_ZN4Aska16RenderableObject3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x22b7e28",
+     "symbol": "_ZN4Aska16RenderableObject10DeleteThisEPNS_13DeleteManagerE",
+     "name": "DeleteThis"
+    }
+   ]
+  },
+  {
+   "name": "AimingObject",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObject"
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "unk_198",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 416,
+     "name": "unk_1a0",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 420,
+     "name": "unk_1a4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 3
+     },
+     "size": 12
+    },
+    {
+     "offset": 432,
+     "name": "m_target",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 440,
+     "name": "m_upTarget",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 448,
+     "name": "m_aimNode",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 456,
+     "name": "unk_1c8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 472,
+     "name": "m_upNode",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 480,
+     "name": "unk_1e0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 496,
+     "name": "m_roll",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 500,
+     "name": "m_aimFlags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 501,
+     "name": "unk_1f5",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 11
+     },
+     "size": 11
+    }
+   ],
+   "size": 512,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f68f7c",
+     "symbol": "_ZNK4Aska12AimingObject12TargetObjectEv",
+     "name": "TargetObject"
+    },
+    {
+     "ghidra": "0x1f68f84",
+     "symbol": "_ZNK4Aska12AimingObject14UpTargetObjectEv",
+     "name": "UpTargetObject"
+    },
+    {
+     "ghidra": "0x21e56ac",
+     "symbol": "_ZN4Aska12AimingObject5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x21e57f8",
+     "symbol": "_ZN4Aska12AimingObject11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x21e5934",
+     "symbol": "_ZN4Aska12AimingObjectC2Ev",
+     "name": "AimingObject"
+    },
+    {
+     "ghidra": "0x24577c8",
+     "symbol": "_ZN4Aska12AimingObject14MakeMatrixMainEv",
+     "name": "MakeMatrixMain"
+    },
+    {
+     "ghidra": "0x2457988",
+     "symbol": "_ZN4Aska12AimingObject10MakeMatrixEv",
+     "name": "MakeMatrix"
+    },
+    {
+     "ghidra": "0x24579e4",
+     "symbol": "_ZNK4Aska12AimingObject3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2457a2c",
+     "symbol": "_ZN4Aska12AimingObject3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x2457a74",
+     "symbol": "_ZN4Aska12AimingObjectD2Ev",
+     "name": "~AimingObject"
+    },
+    {
+     "ghidra": "0x2457ad8",
+     "symbol": "_ZN4Aska12AimingObjectD0Ev",
+     "name": "~AimingObject"
+    },
+    {
+     "ghidra": "0x2457b54",
+     "symbol": "_ZNK4Aska12AimingObject10GetClassIDEi",
+     "name": "GetClassID"
+    }
+   ]
+  },
+  {
+   "name": "Camera",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObject"
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "m_aiming",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 93
+     },
+     "size": 93
+    },
+    {
+     "offset": 501,
+     "name": "unk_1f5",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 502,
+     "name": "unk_1f6",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1882
+     },
+     "size": 1882
+    },
+    {
+     "offset": 2384,
+     "name": "unk_950",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 2392,
+     "name": "unk_958",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1016
+     },
+     "size": 1016
+    },
+    {
+     "offset": 3408,
+     "name": "unk_d50",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3412,
+     "name": "unk_d54",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 3
+     },
+     "size": 12
+    },
+    {
+     "offset": 3424,
+     "name": "unk_d60",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 3488,
+     "name": "unk_da0",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 3552,
+     "name": "unk_de0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3556,
+     "name": "m_de4",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3560,
+     "name": "unk_de8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 3584,
+     "name": "m_e00",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3588,
+     "name": "m_e04",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3592,
+     "name": "unk_e08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 3600,
+     "name": "m_lens",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 3608,
+     "name": "unk_e18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 3632,
+     "name": "m_optical",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 3640,
+     "name": "unk_e38",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 118
+     },
+     "size": 118
+    },
+    {
+     "offset": 3758,
+     "name": "m_targetIndex",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3759,
+     "name": "unk_eaf",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 3762,
+     "name": "m_fogMode",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3763,
+     "name": "m_camFlags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 3765,
+     "name": "unk_eb5",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 3768,
+     "name": "m_zRange0",
+     "type": {
+      "kind": "float",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 3776,
+     "name": "m_zRange1",
+     "type": {
+      "kind": "float",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 3784,
+     "name": "m_zRange1F",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3788,
+     "name": "m_zRange0F",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3792,
+     "name": "unk_ed0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 3816,
+     "name": "m_fogFar",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3820,
+     "name": "m_fogNear",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3824,
+     "name": "m_fogDensity",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3828,
+     "name": "unk_ef4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 3840,
+     "name": "m_fogColor",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 3856,
+     "name": "unk_f10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 3872,
+     "name": "m_fogConst",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "bytes",
+       "ctype": "MathVector"
+      },
+      "count": 3
+     },
+     "size": 48
+    },
+    {
+     "offset": 3920,
+     "name": "unk_f50",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    }
+   ],
+   "size": 3984,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f68b84",
+     "symbol": "_ZNK4Aska6Camera10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x1f68bd8",
+     "symbol": "_ZN4Aska6Camera22CheckSleepAvailabilityEv",
+     "name": "CheckSleepAvailability"
+    },
+    {
+     "ghidra": "0x21e92bc",
+     "symbol": "_ZN4Aska6CameraC2Ev",
+     "name": "Camera"
+    },
+    {
+     "ghidra": "0x21e968c",
+     "symbol": "_ZN4Aska6Camera19SetNumberOfAFPointsEl",
+     "name": "SetNumberOfAFPoints"
+    },
+    {
+     "ghidra": "0x21e96e0",
+     "symbol": "_ZN4Aska6Camera10SetAFPointElff",
+     "name": "SetAFPoint"
+    },
+    {
+     "ghidra": "0x21e970c",
+     "symbol": "_ZN4Aska6Camera11GetFogConstEv",
+     "name": "GetFogConst"
+    },
+    {
+     "ghidra": "0x21e9890",
+     "symbol": "_ZN4Aska6Camera24SetRawScatteringFogConstEfffPNS_6VectorE",
+     "name": "SetRawScatteringFogConst"
+    },
+    {
+     "ghidra": "0x21e98fc",
+     "symbol": "_ZN4Aska6Camera14ConvertFromOLSEv",
+     "name": "ConvertFromOLS"
+    },
+    {
+     "ghidra": "0x21e9cac",
+     "symbol": "_ZN4Aska6Camera16MakeCameraMatrixEv",
+     "name": "MakeCameraMatrix"
+    },
+    {
+     "ghidra": "0x21ea6c0",
+     "symbol": "_ZN4Aska6Camera7DefaultEv",
+     "name": "Default"
+    },
+    {
+     "ghidra": "0x21ea978",
+     "symbol": "_ZN4Aska6Camera13DefaultCommonEv",
+     "name": "DefaultCommon"
+    },
+    {
+     "ghidra": "0x21eabc8",
+     "symbol": "_ZN4Aska6Camera15SetZBufferRangeEdd",
+     "name": "SetZBufferRange"
+    },
+    {
+     "ghidra": "0x21eb0f0",
+     "symbol": "_ZN4Aska6Camera14AdjustCameraEVEv",
+     "name": "AdjustCameraEV"
+    },
+    {
+     "ghidra": "0x21eb24c",
+     "symbol": "_ZN4Aska6Camera28DefaultForMultipassRenderingEjiiii",
+     "name": "DefaultForMultipassRendering"
+    },
+    {
+     "ghidra": "0x21eb3b4",
+     "symbol": "_ZNK4Aska6Camera22CalcReprojectionMatrixEfPNS_6MatrixE",
+     "name": "CalcReprojectionMatrix"
+    },
+    {
+     "ghidra": "0x21eb840",
+     "symbol": "_ZN4Aska6Camera10GetAFPointElPfS1_",
+     "name": "GetAFPoint"
+    },
+    {
+     "ghidra": "0x21eb884",
+     "symbol": "_ZNK4Aska6Camera21GetExposureMeterValueEv",
+     "name": "GetExposureMeterValue"
+    },
+    {
+     "ghidra": "0x21eb948",
+     "symbol": "_ZN4Aska6Camera15SetMeteringModeEi",
+     "name": "SetMeteringMode"
+    },
+    {
+     "ghidra": "0x21eb94c",
+     "symbol": "_ZNK4Aska6Camera15GetMeteringModeEPi",
+     "name": "GetMeteringMode"
+    },
+    {
+     "ghidra": "0x21eb95c",
+     "symbol": "_ZN4Aska6Camera26SetAutoExposureSensitivityEfff",
+     "name": "SetAutoExposureSensitivity"
+    },
+    {
+     "ghidra": "0x21eb96c",
+     "symbol": "_ZN4Aska6Camera33SetCenterweightedMetringGaussCoefEf",
+     "name": "SetCenterweightedMetringGaussCoef"
+    },
+    {
+     "ghidra": "0x21eb974",
+     "symbol": "_ZNK4Aska6Camera20CalcMotionBlurMatrixEfPNS_6MatrixEPKS1_",
+     "name": "CalcMotionBlurMatrix"
+    },
+    {
+     "ghidra": "0x21ebba0",
+     "symbol": "_ZN4Aska6Camera17CloneForMultipassEPKS0_",
+     "name": "CloneForMultipass"
+    },
+    {
+     "ghidra": "0x21ebdb0",
+     "symbol": "_ZN4Aska6Camera9CloneLensEv",
+     "name": "CloneLens"
+    },
+    {
+     "ghidra": "0x21ebe40",
+     "symbol": "_ZN4Aska6Camera22CloneOpticalPhenomenonEv",
+     "name": "CloneOpticalPhenomenon"
+    },
+    {
+     "ghidra": "0x21ebeb8",
+     "symbol": "_ZN4Aska6Camera11CloneCommonEPKS0_",
+     "name": "CloneCommon"
+    },
+    {
+     "ghidra": "0x21ebf54",
+     "symbol": "_ZN4Aska6Camera5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x21ec4bc",
+     "symbol": "_ZN4Aska6Camera11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x21ec524",
+     "symbol": "_ZN4Aska6Camera16ResetViewFrustumEv",
+     "name": "ResetViewFrustum"
+    },
+    {
+     "ghidra": "0x21ec530",
+     "symbol": "_ZN4Aska6Camera14SetWorldMatrixEPKNS_6MatrixE",
+     "name": "SetWorldMatrix"
+    },
+    {
+     "ghidra": "0x21ec58c",
+     "symbol": "_ZN4Aska6Camera10MakeMatrixEv",
+     "name": "MakeMatrix"
+    },
+    {
+     "ghidra": "0x21ec5b0",
+     "symbol": "_ZN4Aska6Camera23PrepareScreenProjectionEv",
+     "name": "PrepareScreenProjection"
+    },
+    {
+     "ghidra": "0x21ec6c4",
+     "symbol": "_ZN4Aska6Camera13ProjectScreenEPNS_6VectorE",
+     "name": "ProjectScreen"
+    },
+    {
+     "ghidra": "0x21ec6fc",
+     "symbol": "_ZN4Aska6Camera18ProjectFrontScreenEPNS_6VectorE",
+     "name": "ProjectFrontScreen"
+    },
+    {
+     "ghidra": "0x21ec734",
+     "symbol": "_ZN4Aska6Camera13SetViewMatrixEPKNS_6MatrixE",
+     "name": "SetViewMatrix"
+    },
+    {
+     "ghidra": "0x21ec870",
+     "symbol": "_ZN4Aska6Camera19SetViewObjectMatrixEPKNS_6MatrixE",
+     "name": "SetViewObjectMatrix"
+    },
+    {
+     "ghidra": "0x21ec8d0",
+     "symbol": "_ZN4Aska6Camera19GetFrameBufferDepthEff",
+     "name": "GetFrameBufferDepth"
+    },
+    {
+     "ghidra": "0x21eca88",
+     "symbol": "_ZNK4Aska6Camera15MeasureExposureEPf",
+     "name": "MeasureExposure"
+    },
+    {
+     "ghidra": "0x21ecb70",
+     "symbol": "_ZN4Aska6Camera3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x21ed198",
+     "symbol": "_ZNK4Aska6Camera3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x21ed888",
+     "symbol": "_ZN4Aska6Camera3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x21ee2f4",
+     "symbol": "_ZN4Aska6Camera28EnableViewFrustumObjectDebugEb",
+     "name": "EnableViewFrustumObjectDebug"
+    },
+    {
+     "ghidra": "0x21ee2f8",
+     "symbol": "_ZN4Aska6Camera9CrossFadeEv",
+     "name": "CrossFade"
+    },
+    {
+     "ghidra": "0x21ee3c4",
+     "symbol": "_ZN4Aska6CameraD1Ev",
+     "name": "~Camera"
+    },
+    {
+     "ghidra": "0x21ee514",
+     "symbol": "_ZN4Aska6CameraD0Ev",
+     "name": "~Camera"
+    },
+    {
+     "ghidra": "0x21ee52c",
+     "symbol": "_ZN4Aska6Camera20MakeViewFrustumPlaneEi",
+     "name": "MakeViewFrustumPlane"
+    },
+    {
+     "ghidra": "0x21eefdc",
+     "symbol": "_ZN4Aska6Camera28MakeLocalViewFrustumVerticesEPNS_6VectorEi",
+     "name": "MakeLocalViewFrustumVertices"
+    }
+   ]
+  },
+  {
+   "name": "Light",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObject"
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "m_aiming",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 93
+     },
+     "size": 93
+    },
+    {
+     "offset": 501,
+     "name": "unk_1f5",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 502,
+     "name": "unk_1f6",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 26
+     },
+     "size": 26
+    },
+    {
+     "offset": 528,
+     "name": "m_direction",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 544,
+     "name": "m_attenuation",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 4
+     },
+     "size": 16
+    },
+    {
+     "offset": 560,
+     "name": "m_color",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 576,
+     "name": "m_color2",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 592,
+     "name": "m_vec250",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 608,
+     "name": "m_vec260",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 624,
+     "name": "m_vec270",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 640,
+     "name": "m_groundColor",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 656,
+     "name": "unk_290",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 672,
+     "name": "m_2a0",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 673,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 674,
+     "name": "m_2a2",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 675,
+     "name": "unk_2a3",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 677,
+     "name": "m_lightFlags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 680,
+     "name": "m_2a8",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 688,
+     "name": "unk_2b0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 384
+     },
+     "size": 384
+    }
+   ],
+   "size": 1072,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x223a4ac",
+     "symbol": "_ZN4Aska5LightC2Ev",
+     "name": "Light"
+    },
+    {
+     "ghidra": "0x223a6d8",
+     "symbol": "_ZN4Aska5Light19CalcSpotCoefficientEv",
+     "name": "CalcSpotCoefficient"
+    },
+    {
+     "ghidra": "0x223a740",
+     "symbol": "_ZN4Aska5Light15CalcAttenuationEv",
+     "name": "CalcAttenuation"
+    },
+    {
+     "ghidra": "0x223a8d4",
+     "symbol": "_ZN4Aska5Light5CloneEPKS0_",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x223ac88",
+     "symbol": "_ZN4Aska5Light12SetLightTypeEi",
+     "name": "SetLightType"
+    },
+    {
+     "ghidra": "0x223ac98",
+     "symbol": "_ZN4Aska5Light15SetIBLTextureIDEmm",
+     "name": "SetIBLTextureID"
+    },
+    {
+     "ghidra": "0x223ad44",
+     "symbol": "_ZN4Aska5Light12InitNoiseBufEv",
+     "name": "InitNoiseBuf"
+    },
+    {
+     "ghidra": "0x223af64",
+     "symbol": "_ZN4Aska5Light8GetNoiseEf",
+     "name": "GetNoise"
+    },
+    {
+     "ghidra": "0x223afd0",
+     "symbol": "_ZN4Aska5Light18MakeNoiseIntensionEv",
+     "name": "MakeNoiseIntension"
+    },
+    {
+     "ghidra": "0x223b100",
+     "symbol": "_ZNK4Aska5Light16CalcIBLIntensityEv",
+     "name": "CalcIBLIntensity"
+    },
+    {
+     "ghidra": "0x223b140",
+     "symbol": "_ZNK4Aska5Light15CalcIntensityTSEPNS_16RenderableObjectEPNS0_17CalcIntensityWorkEbbPfS5_S5_",
+     "name": "CalcIntensityTS"
+    },
+    {
+     "ghidra": "0x223b49c",
+     "symbol": "_ZNK4Aska5Light19CalcBounceIntensityEPS0_PNS_6VectorE",
+     "name": "CalcBounceIntensity"
+    },
+    {
+     "ghidra": "0x223b818",
+     "symbol": "_ZNK4Aska5Light15GetIBLTextureIDEi",
+     "name": "GetIBLTextureID"
+    },
+    {
+     "ghidra": "0x223b9b4",
+     "symbol": "_ZN4Aska5Light13SetIBLProfileEj",
+     "name": "SetIBLProfile"
+    },
+    {
+     "ghidra": "0x223bc3c",
+     "symbol": "_ZN4Aska5Light13GetIBLTextureEv",
+     "name": "GetIBLTexture"
+    },
+    {
+     "ghidra": "0x223bcb4",
+     "symbol": "_ZN4Aska5Light21GetIBLTextureUniqueIDEv",
+     "name": "GetIBLTextureUniqueID"
+    },
+    {
+     "ghidra": "0x223bd30",
+     "symbol": "_ZNK4Aska5Light15GetIBLLodOffsetEv",
+     "name": "GetIBLLodOffset"
+    },
+    {
+     "ghidra": "0x223bd48",
+     "symbol": "_ZN4Aska5Light14DownconvertIBLEib",
+     "name": "DownconvertIBL"
+    },
+    {
+     "ghidra": "0x223c168",
+     "symbol": "_ZN4Aska5Light16EnableDebugGuideEb",
+     "name": "EnableDebugGuide"
+    },
+    {
+     "ghidra": "0x223c16c",
+     "symbol": "_ZN4Aska5Light15EnableTileDebugEb",
+     "name": "EnableTileDebug"
+    },
+    {
+     "ghidra": "0x223c170",
+     "symbol": "_ZN4Aska5LightD2Ev",
+     "name": "~Light"
+    },
+    {
+     "ghidra": "0x223c25c",
+     "symbol": "_ZN4Aska5Light24UnregisterDiffuseCubeMapEv",
+     "name": "UnregisterDiffuseCubeMap"
+    },
+    {
+     "ghidra": "0x223c2c4",
+     "symbol": "_ZN4Aska5LightD0Ev",
+     "name": "~Light"
+    },
+    {
+     "ghidra": "0x223c2dc",
+     "symbol": "_ZN4Aska5Light10DeleteThisEPNS_13DeleteManagerE",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x223c348",
+     "symbol": "_ZNK4Aska5Light3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x223c844",
+     "symbol": "_ZNK4Aska5Light14GetIlluminanceEv",
+     "name": "GetIlluminance"
+    },
+    {
+     "ghidra": "0x223caa0",
+     "symbol": "_ZNK4Aska5Light19GetColorTemperatureEv",
+     "name": "GetColorTemperature"
+    },
+    {
+     "ghidra": "0x223cd10",
+     "symbol": "_ZN4Aska5Light3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x223d758",
+     "symbol": "_ZN4Aska5Light14SetIlluminanceEf",
+     "name": "SetIlluminance"
+    },
+    {
+     "ghidra": "0x223d9c8",
+     "symbol": "_ZN4Aska5Light21SetColorByTemperatureEf",
+     "name": "SetColorByTemperature"
+    },
+    {
+     "ghidra": "0x223db0c",
+     "symbol": "_ZN4Aska5Light23CalcHemisphereIntensityEPNS_16RenderableObjectE",
+     "name": "CalcHemisphereIntensity"
+    },
+    {
+     "ghidra": "0x223dc10",
+     "symbol": "_ZN4Aska5Light22RegisterDiffuseCubeMapEv",
+     "name": "RegisterDiffuseCubeMap"
+    },
+    {
+     "ghidra": "0x223decc",
+     "symbol": "_ZN4Aska5Light18DoesAffectLightOFFEj",
+     "name": "DoesAffectLightOFF"
+    },
+    {
+     "ghidra": "0x223def8",
+     "symbol": "_ZN4Aska5Light24DoesAffectRangeReductionEj",
+     "name": "DoesAffectRangeReduction"
+    },
+    {
+     "ghidra": "0x223df24",
+     "symbol": "_ZNK4Aska5Light10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x223df68",
+     "symbol": "_ZNK4Aska5Light15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    },
+    {
+     "ghidra": "0x223df70",
+     "symbol": "_ZN4Aska5Light8OnActiveEb",
+     "name": "OnActive"
+    },
+    {
+     "ghidra": "0x223e668",
+     "symbol": "_ZN4Aska5Light18CalcIBLLocalMatrixEPNS_6MatrixE",
+     "name": "CalcIBLLocalMatrix"
+    }
+   ]
+  },
+  {
+   "name": "LightContext",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_bytes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1360
+     },
+     "size": 1360
+    }
+   ],
+   "size": 1360,
+   "align": 1
+  },
+  {
+   "name": "ShaderComprssionTree",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_matchPos",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_matchLen",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_parent",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 4097
+     },
+     "size": 16388
+    },
+    {
+     "offset": 16396,
+     "name": "m_left",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 4097
+     },
+     "size": 16388
+    },
+    {
+     "offset": 32784,
+     "name": "m_right",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 69633
+     },
+     "size": 278532
+    },
+    {
+     "offset": 311316,
+     "name": "m_text",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 4113
+     },
+     "size": 16452
+    }
+   ],
+   "size": 327768,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x22c626c",
+     "symbol": "_ZN4Aska20ShaderComprssionTreeC2Ev",
+     "name": "ShaderComprssionTree"
+    },
+    {
+     "ghidra": "0x22c62a8",
+     "symbol": "_ZN4Aska20ShaderComprssionTree10InsertNodeEii",
+     "name": "InsertNode"
+    },
+    {
+     "ghidra": "0x22c6434",
+     "symbol": "_ZN4Aska20ShaderComprssionTree10DeleteNodeEi",
+     "name": "DeleteNode"
+    }
+   ]
+  },
+  {
+   "name": "RenderContextServer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_contexts",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderContext"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_contextCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_contextUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_batches",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderContextBatch"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_batchCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_batchUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_batchLites",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_batchLiteCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "m_batchLiteUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_lightContexts",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": "LightContext"
+      },
+      "count": 2
+     },
+     "size": 16
+    },
+    {
+     "offset": 72,
+     "name": "m_lightContextUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 76,
+     "name": "m_lightContextCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 80,
+     "name": "m_bufferIndex",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 81,
+     "name": "unk_51",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 88,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22b9258",
+     "symbol": "_ZN4Aska19RenderContextServerC2Eiiii",
+     "name": "RenderContextServer"
+    },
+    {
+     "ghidra": "0x22b9390",
+     "symbol": "_ZN4Aska19RenderContextServer20ReallocRenderContextEi",
+     "name": "ReallocRenderContext"
+    },
+    {
+     "ghidra": "0x22b947c",
+     "symbol": "_ZN4Aska19RenderContextServer12ReallocBatchEi",
+     "name": "ReallocBatch"
+    },
+    {
+     "ghidra": "0x22b9570",
+     "symbol": "_ZN4Aska19RenderContextServer16ReallocBatchLiteEi",
+     "name": "ReallocBatchLite"
+    },
+    {
+     "ghidra": "0x22b95f0",
+     "symbol": "_ZN4Aska19RenderContextServer19ReallocLightContextEi",
+     "name": "ReallocLightContext"
+    },
+    {
+     "ghidra": "0x22b9678",
+     "symbol": "_ZN4Aska19RenderContextServerD1Ev",
+     "name": "~RenderContextServer"
+    },
+    {
+     "ghidra": "0x22b9734",
+     "symbol": "_ZN4Aska19RenderContextServerD0Ev",
+     "name": "~RenderContextServer"
+    },
+    {
+     "ghidra": "0x22b974c",
+     "symbol": "_ZN4Aska19RenderContextServer11ResetServerEv",
+     "name": "ResetServer"
+    },
+    {
+     "ghidra": "0x22b976c",
+     "symbol": "_ZN4Aska19RenderContextServer16GetRenderContextEi",
+     "name": "GetRenderContext"
+    },
+    {
+     "ghidra": "0x22b97a8",
+     "symbol": "_ZN4Aska19RenderContextServer14GetRenderBatchEi",
+     "name": "GetRenderBatch"
+    },
+    {
+     "ghidra": "0x22b97e0",
+     "symbol": "_ZN4Aska19RenderContextServer18GetRenderBatchLiteEi",
+     "name": "GetRenderBatchLite"
+    },
+    {
+     "ghidra": "0x22b9814",
+     "symbol": "_ZN4Aska19RenderContextServer15GetLightContextEi",
+     "name": "GetLightContext"
+    }
+   ]
+  },
+  {
+   "name": "RENDER_REQUEST",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "unk_01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 8,
+     "name": "m_arg",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 32
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "RenderRequestQueue",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_entries",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "RENDER_REQUEST"
+      },
+      "count": 8193
+     },
+     "size": 327720
+    }
+   ],
+   "size": 327736,
+   "align": 8
+  },
+  {
+   "name": "RenderThread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_wake",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 128,
+     "name": "m_event80",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 232,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 272,
+     "name": "m_event110",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 376,
+     "name": "unk_178",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 384,
+     "name": "unk_180",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 400,
+     "name": "unk_190",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 402,
+     "name": "m_status",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 403,
+     "name": "unk_193",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    },
+    {
+     "offset": 408,
+     "name": "m_queue",
+     "type": {
+      "kind": "struct",
+      "name": "RenderRequestQueue"
+     },
+     "size": 327736
+    },
+    {
+     "offset": 328144,
+     "name": "m_initialized",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328145,
+     "name": "unk_501d1",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328146,
+     "name": "unk_501d2",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328147,
+     "name": "m_needVSyncInit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328148,
+     "name": "unk_501d4",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328149,
+     "name": "unk_501d5",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328150,
+     "name": "unk_501d6",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 328152,
+     "name": "m_finishCallbackThread",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328160,
+     "name": "m_callbackThread",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328168,
+     "name": "m_blankTexture",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328176,
+     "name": "m_queueLock",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 328320,
+     "name": "unk_50280",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 328328,
+     "name": "unk_50288",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 328336,
+     "name": "unk_50290",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 328344,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22c1344",
+     "symbol": "_ZN4Aska12RenderThreadC2Ev",
+     "name": "RenderThread"
+    },
+    {
+     "ghidra": "0x22c1790",
+     "symbol": "_ZN4Aska12RenderThreadD1Ev",
+     "name": "~RenderThread"
+    },
+    {
+     "ghidra": "0x22c1888",
+     "symbol": "_ZN4Aska12RenderThreadD0Ev",
+     "name": "~RenderThread"
+    },
+    {
+     "ghidra": "0x22c18a0",
+     "symbol": "_ZNK4Aska12RenderThread9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x22c1a14",
+     "symbol": "_ZN4Aska12RenderThread11DeviceResetEv",
+     "name": "DeviceReset"
+    },
+    {
+     "ghidra": "0x22c1a8c",
+     "symbol": "_ZN4Aska12RenderThread11WaitForInitEv",
+     "name": "WaitForInit"
+    },
+    {
+     "ghidra": "0x22c1a90",
+     "symbol": "_ZN4Aska12RenderThread12Handler_InitEv",
+     "name": "Handler_Init"
+    },
+    {
+     "ghidra": "0x22c1aa4",
+     "symbol": "_ZN4Aska12RenderThread7HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x22c1da0",
+     "symbol": "_ZN4Aska12RenderThread13BlockCallFuncEv",
+     "name": "BlockCallFunc"
+    },
+    {
+     "ghidra": "0x22c1dd4",
+     "symbol": "_ZN4Aska12RenderThread6RenderERiRb",
+     "name": "Render"
+    },
+    {
+     "ghidra": "0x22c25a4",
+     "symbol": "_ZN4Aska12RenderThread14InsertCallBackENS0_11CALLBACK_IDEm",
+     "name": "InsertCallBack"
+    },
+    {
+     "ghidra": "0x22c262c",
+     "symbol": "_ZN4Aska12RenderThread16SetExposureScaleEff",
+     "name": "SetExposureScale"
+    },
+    {
+     "ghidra": "0x22c2670",
+     "symbol": "_ZN4Aska12RenderThread11EnableFastZEb",
+     "name": "EnableFastZ"
+    },
+    {
+     "ghidra": "0x22c2698",
+     "symbol": "_ZN4Aska12RenderThread20DirectInsertCallBackEPFvmmEmm",
+     "name": "DirectInsertCallBack"
+    },
+    {
+     "ghidra": "0x22c2734",
+     "symbol": "_ZN4Aska12RenderThread9CheckBootEv",
+     "name": "CheckBoot"
+    },
+    {
+     "ghidra": "0x22c2758",
+     "symbol": "_ZN4Aska12RenderThread21AddCreateRenderTargetEjPNS_21MULTIPASS_ENVIRONMENTE",
+     "name": "AddCreateRenderTarget"
+    },
+    {
+     "ghidra": "0x22c2760",
+     "symbol": "_ZN4Aska12RenderThread21AddChangeRenderTargetEjPNS_21MULTIPASS_ENVIRONMENTE",
+     "name": "AddChangeRenderTarget"
+    },
+    {
+     "ghidra": "0x22c2968",
+     "symbol": "_ZN4Aska12RenderThread14AddReloadZCullEv",
+     "name": "AddReloadZCull"
+    },
+    {
+     "ghidra": "0x22c2b54",
+     "symbol": "_ZN4Aska12RenderThread26AddEnableGnmOcclusionQueryEb",
+     "name": "AddEnableGnmOcclusionQuery"
+    },
+    {
+     "ghidra": "0x22c2d50",
+     "symbol": "_ZN4Aska12RenderThread16AddExposureScaleEff",
+     "name": "AddExposureScale"
+    },
+    {
+     "ghidra": "0x22c2f54",
+     "symbol": "_ZN4Aska12RenderThread14AddEnableFastZEb",
+     "name": "AddEnableFastZ"
+    },
+    {
+     "ghidra": "0x22c3150",
+     "symbol": "_ZN4Aska12RenderThread21AddFinishRenderTargetEjii",
+     "name": "AddFinishRenderTarget"
+    },
+    {
+     "ghidra": "0x22c3364",
+     "symbol": "_ZN4Aska12RenderThread19AddTemporaryResolveEPNS_16RenderableObjectEii",
+     "name": "AddTemporaryResolve"
+    },
+    {
+     "ghidra": "0x22c3574",
+     "symbol": "_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi",
+     "name": "AddRenderQueue"
+    },
+    {
+     "ghidra": "0x22c35f4",
+     "symbol": "_ZN4Aska12RenderThread14AddBeginRenderEv",
+     "name": "AddBeginRender"
+    },
+    {
+     "ghidra": "0x22c37e0",
+     "symbol": "_ZN4Aska12RenderThread12AddEndRenderEPNS_7INotifyE",
+     "name": "AddEndRender"
+    },
+    {
+     "ghidra": "0x22c39f4",
+     "symbol": "_ZN4Aska12RenderThread11AddCallBackEPFvmmEmm",
+     "name": "AddCallBack"
+    },
+    {
+     "ghidra": "0x22c3bfc",
+     "symbol": "_ZN4Aska12RenderThread21ReqCustomCommandBlockEPFvmmEmm",
+     "name": "ReqCustomCommandBlock"
+    },
+    {
+     "ghidra": "0x22c3c98",
+     "symbol": "_ZN4Aska12RenderThread24ReqDownloadResourceBlockEPNS_11GpuResourceE",
+     "name": "ReqDownloadResourceBlock"
+    },
+    {
+     "ghidra": "0x22c3d0c",
+     "symbol": "_ZN4Aska12RenderThread15AddDataTransferEPvS1_j",
+     "name": "AddDataTransfer"
+    },
+    {
+     "ghidra": "0x22c3f18",
+     "symbol": "_ZN4Aska12RenderThread42ExecutePendingTileRegionOperationByAddressEPv",
+     "name": "ExecutePendingTileRegionOperationByAddress"
+    },
+    {
+     "ghidra": "0x22c4120",
+     "symbol": "_ZN4Aska12RenderThread22AddOcclusionQueryBeginEPj",
+     "name": "AddOcclusionQueryBegin"
+    },
+    {
+     "ghidra": "0x22c4328",
+     "symbol": "_ZN4Aska12RenderThread20AddOcclusionQueryEndEv",
+     "name": "AddOcclusionQueryEnd"
+    },
+    {
+     "ghidra": "0x22c4514",
+     "symbol": "_ZN4Aska12RenderThread15WaitDeviceResetEv",
+     "name": "WaitDeviceReset"
+    },
+    {
+     "ghidra": "0x22c4534",
+     "symbol": "_ZN4Aska12RenderThread14ReqDeviceResetEv",
+     "name": "ReqDeviceReset"
+    },
+    {
+     "ghidra": "0x22c46cc",
+     "symbol": "_ZN4Aska12RenderThread7ReqExitEv",
+     "name": "ReqExit"
+    },
+    {
+     "ghidra": "0x22c485c",
+     "symbol": "_ZN4Aska12RenderThread7ReqSwapEv",
+     "name": "ReqSwap"
+    },
+    {
+     "ghidra": "0x22c4a48",
+     "symbol": "_ZN4Aska12RenderThread13ReqDeviceInitEv",
+     "name": "ReqDeviceInit"
+    },
+    {
+     "ghidra": "0x22c4c4c",
+     "symbol": "_ZN4Aska12RenderThread10ReqGpuWaitEv",
+     "name": "ReqGpuWait"
+    },
+    {
+     "ghidra": "0x22c4ddc",
+     "symbol": "_ZN4Aska12RenderThread15GPUIdleCallBackEm",
+     "name": "GPUIdleCallBack"
+    },
+    {
+     "ghidra": "0x22c4df0",
+     "symbol": "_ZN4Aska12RenderThread20FinishRenderCallBackEm",
+     "name": "FinishRenderCallBack"
+    },
+    {
+     "ghidra": "0x22c4e04",
+     "symbol": "_ZN4Aska12RenderThread20RenderThreadCallBackEm",
+     "name": "RenderThreadCallBack"
+    }
+   ]
+  },
+  {
+   "name": "RenderState",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_commands",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_cursor",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 24,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2289e9c",
+     "symbol": "_ZN4Aska11RenderStateC1Ev",
+     "name": "RenderState"
+    },
+    {
+     "ghidra": "0x2289ea8",
+     "symbol": "_ZN4Aska11RenderStateD2Ev",
+     "name": "~RenderState"
+    },
+    {
+     "ghidra": "0x2289ef0",
+     "symbol": "_ZN4Aska11RenderState5AllocEi",
+     "name": "Alloc"
+    },
+    {
+     "ghidra": "0x2289f34",
+     "symbol": "_ZN4Aska11RenderState5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x2289f44",
+     "symbol": "_ZN4Aska11RenderState7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x2289f88",
+     "symbol": "_ZN4Aska11RenderState11SetFillModeEi",
+     "name": "SetFillMode"
+    },
+    {
+     "ghidra": "0x2289f8c",
+     "symbol": "_ZN4Aska11RenderState11SetCullModeEi",
+     "name": "SetCullMode"
+    },
+    {
+     "ghidra": "0x2289fb4",
+     "symbol": "_ZN4Aska11RenderState11EnableZTestEb",
+     "name": "EnableZTest"
+    },
+    {
+     "ghidra": "0x2289fe0",
+     "symbol": "_ZN4Aska11RenderState12EnableZWriteEb",
+     "name": "EnableZWrite"
+    },
+    {
+     "ghidra": "0x228a00c",
+     "symbol": "_ZN4Aska11RenderState16SetZTestFunctionEi",
+     "name": "SetZTestFunction"
+    },
+    {
+     "ghidra": "0x228a034",
+     "symbol": "_ZN4Aska11RenderState12SetDepthBiasEff",
+     "name": "SetDepthBias"
+    },
+    {
+     "ghidra": "0x228a084",
+     "symbol": "_ZN4Aska11RenderState16EnableAlphaBlendEb",
+     "name": "EnableAlphaBlend"
+    },
+    {
+     "ghidra": "0x228a0b0",
+     "symbol": "_ZN4Aska11RenderState21SetAlphaBlendFunctionENS_10AlphaBlend9OperationENS_22SeparateAlphaBlendMode1EE",
+     "name": "SetAlphaBlendFunction"
+    },
+    {
+     "ghidra": "0x228a0fc",
+     "symbol": "_ZN4Aska11RenderState15EnableAlphaTestEb",
+     "name": "EnableAlphaTest"
+    },
+    {
+     "ghidra": "0x228a100",
+     "symbol": "_ZN4Aska11RenderState20SetAlphaTestFunctionEii",
+     "name": "SetAlphaTestFunction"
+    },
+    {
+     "ghidra": "0x228a104",
+     "symbol": "_ZN4Aska11RenderState18SetAlphaToCoverageEi",
+     "name": "SetAlphaToCoverage"
+    },
+    {
+     "ghidra": "0x228a12c",
+     "symbol": "_ZN4Aska11RenderState13EnableStencilENS_11StencilMode4ModeE",
+     "name": "EnableStencil"
+    },
+    {
+     "ghidra": "0x228a154",
+     "symbol": "_ZN4Aska11RenderState12SetStencilOpEiiiiis",
+     "name": "SetStencilOp"
+    },
+    {
+     "ghidra": "0x228a190",
+     "symbol": "_ZN4Aska11RenderState15SetStencilOpCCWEiiiiis",
+     "name": "SetStencilOpCCW"
+    },
+    {
+     "ghidra": "0x228a1cc",
+     "symbol": "_ZN4Aska11RenderState24SetTextureSamplingFilterEiNS_7TexSamp6FilterE",
+     "name": "SetTextureSamplingFilter"
+    },
+    {
+     "ghidra": "0x228a208",
+     "symbol": "_ZN4Aska11RenderState30SetTextureSamplingMipmapFilterEiNS_7TexSamp9MipFilterE",
+     "name": "SetTextureSamplingMipmapFilter"
+    },
+    {
+     "ghidra": "0x228a244",
+     "symbol": "_ZN4Aska11RenderState26SetTextureSamplingWrapModeEiNS_7TexWrap4ModeE",
+     "name": "SetTextureSamplingWrapMode"
+    },
+    {
+     "ghidra": "0x228a280",
+     "symbol": "_ZN4Aska11RenderState27SetTextureSamplingWrapModeUEiNS_7TexWrap4ModeE",
+     "name": "SetTextureSamplingWrapModeU"
+    },
+    {
+     "ghidra": "0x228a2bc",
+     "symbol": "_ZN4Aska11RenderState27SetTextureSamplingWrapModeVEiNS_7TexWrap4ModeE",
+     "name": "SetTextureSamplingWrapModeV"
+    },
+    {
+     "ghidra": "0x228a2f8",
+     "symbol": "_ZN4Aska11RenderState31SetTextureSamplingMipmapLODBiasEii",
+     "name": "SetTextureSamplingMipmapLODBias"
+    },
+    {
+     "ghidra": "0x228a2fc",
+     "symbol": "_ZN4Aska11RenderState32SetTextureSamplingTrilinearClampEij",
+     "name": "SetTextureSamplingTrilinearClamp"
+    },
+    {
+     "ghidra": "0x228a300",
+     "symbol": "_ZN4Aska11RenderState32SetTextureSamplingMaxAnisotropicEij",
+     "name": "SetTextureSamplingMaxAnisotropic"
+    },
+    {
+     "ghidra": "0x228a33c",
+     "symbol": "_ZN4Aska11RenderState33SetTextureSamplingAnisotropicBiasEii",
+     "name": "SetTextureSamplingAnisotropicBias"
+    },
+    {
+     "ghidra": "0x228a340",
+     "symbol": "_ZN4Aska11RenderState5ApplyEPNS_14RenderDeviceGLE",
+     "name": "Apply"
+    },
+    {
+     "ghidra": "0x228a600",
+     "symbol": "_ZN4Aska11RenderState23ReadyDefaultRenderStateEPNS_14RenderDeviceGLE",
+     "name": "ReadyDefaultRenderState"
+    },
+    {
+     "ghidra": "0x228a684",
+     "symbol": "_ZN4Aska11RenderState25RestoreDefaultRenderStateEPNS_14RenderDeviceGLE",
+     "name": "RestoreDefaultRenderState"
+    },
+    {
+     "ghidra": "0x228a688",
+     "symbol": "_ZN4Aska11RenderState23CheckDefaultRenderStateEPNS_14RenderDeviceGLEPKc",
+     "name": "CheckDefaultRenderState"
+    }
+   ]
+  },
+  {
+   "name": "RenderContextBatch",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_pixelConst",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "unk_010",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 32,
+     "name": "m_textures",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 16
+     },
+     "size": 128
+    },
+    {
+     "offset": 160,
+     "name": "m_extraTextures",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 3
+     },
+     "size": 24
+    },
+    {
+     "offset": 184,
+     "name": "m_draw",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 192,
+     "name": "m_state",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderState"
+     },
+     "size": 8
+    },
+    {
+     "offset": 200,
+     "name": "m_stateOverride",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderState"
+     },
+     "size": 8
+    },
+    {
+     "offset": 208,
+     "name": "unk_0d0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 224,
+     "name": "m_primArg0",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 232,
+     "name": "m_primArg1",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 240,
+     "name": "unk_0f0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 256,
+     "name": "unk_100",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 264,
+     "name": "m_constants",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 272,
+     "name": "unk_110",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 274,
+     "name": "unk_112",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 276,
+     "name": "m_shaderSlot",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 277,
+     "name": "unk_115",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 27
+     },
+     "size": 27
+    }
+   ],
+   "size": 304,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2273c58",
+     "symbol": "_ZN4Aska18RenderContextBatchC1Ev",
+     "name": "RenderContextBatch"
+    },
+    {
+     "ghidra": "0x2273c90",
+     "symbol": "_ZN4Aska18RenderContextBatchD2Ev",
+     "name": "~RenderContextBatch"
+    },
+    {
+     "ghidra": "0x2273c94",
+     "symbol": "_ZN4Aska18RenderContextBatch10ApplyStateEv",
+     "name": "ApplyState"
+    },
+    {
+     "ghidra": "0x2273cc8",
+     "symbol": "_ZN4Aska18RenderContextBatch13ApplyTexturesEv",
+     "name": "ApplyTextures"
+    },
+    {
+     "ghidra": "0x2273d98",
+     "symbol": "_ZN4Aska18RenderContextBatch23GetTexturesTextureStageEi",
+     "name": "GetTexturesTextureStage"
+    },
+    {
+     "ghidra": "0x2273dec",
+     "symbol": "_ZN4Aska18RenderContextBatch16PrepairMatriciesEv",
+     "name": "PrepairMatricies"
+    },
+    {
+     "ghidra": "0x2273df0",
+     "symbol": "_ZN4Aska18RenderContextBatch20ApplyShaderConstantsEmPNS_17ShaderNodeHandlerE",
+     "name": "ApplyShaderConstants"
+    }
+   ]
+  },
+  {
+   "name": "RenderContext",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_batches",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderContextBatch"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_batchCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "unk_00a",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 11,
+     "name": "unk_00b",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 13
+     },
+     "size": 13
+    },
+    {
+     "offset": 24,
+     "name": "unk_018",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_shaderTable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_instanceMatrices",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_instanceIndex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_instanceCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_instanceFlags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 61,
+     "name": "unk_03d",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 64,
+     "name": "m_instanceBuffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_target",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "unk_050",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "unk_058",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 92,
+     "name": "unk_05c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 96,
+     "name": "m_vc0",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 160,
+     "name": "m_vc10",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 224,
+     "name": "m_world",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 12
+     },
+     "size": 48
+    },
+    {
+     "offset": 272,
+     "name": "m_vc14",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 288,
+     "name": "m_pixelConst",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 304,
+     "name": "unk_130",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 320,
+     "name": "m_constFlags",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 328,
+     "name": "unk_148",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 336,
+     "name": "m_vc11",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 344,
+     "name": "unk_158",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 368,
+     "name": "m_vc9",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 432,
+     "name": "unk_1b0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 448,
+     "name": "m_vc15",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 512,
+     "name": "unk_200",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 528,
+     "name": "m_vc12",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "bytes",
+       "ctype": "MathVector"
+      },
+      "count": 2
+     },
+     "size": 32
+    }
+   ],
+   "size": 560,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2273e40",
+     "symbol": "_ZN4Aska13RenderContextC2Ev",
+     "name": "RenderContext"
+    },
+    {
+     "ghidra": "0x2273f08",
+     "symbol": "_ZN4Aska13RenderContextD1Ev",
+     "name": "~RenderContext"
+    },
+    {
+     "ghidra": "0x2273f14",
+     "symbol": "_ZN4Aska13RenderContext10AllocBatchEi",
+     "name": "AllocBatch"
+    },
+    {
+     "ghidra": "0x2273f18",
+     "symbol": "_ZN4Aska13RenderContext13GetBatchArrayEi",
+     "name": "GetBatchArray"
+    },
+    {
+     "ghidra": "0x2273f28",
+     "symbol": "_ZN4Aska13RenderContext7OnPaintEv",
+     "name": "OnPaint"
+    },
+    {
+     "ghidra": "0x2274398",
+     "symbol": "_ZN4Aska13RenderContext16PrepairMatriciesEv",
+     "name": "PrepairMatricies"
+    }
+   ]
+  },
+  {
+   "name": "TextureStateCache",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_state",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_valid",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 20,
+   "align": 4
+  },
+  {
+   "name": "OglStateSet0",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_texture2D",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 64
+    },
+    {
+     "offset": 72,
+     "name": "m_textureCube",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 64
+    },
+    {
+     "offset": 136,
+     "name": "m_texture3D",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 64
+    },
+    {
+     "offset": 200,
+     "name": "m_activeUnit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 204,
+   "align": 4
+  },
+  {
+   "name": "StateCacheThreadSafe",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_keySet0",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_keySet1",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_keySet0Created",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_keySet1Created",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 24,
+   "align": 4
+  },
+  {
+   "name": "DeviceTextureSlot",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_target",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 12,
+     "name": "m_glName",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 32,
+   "align": 4
+  },
+  {
+   "name": "RenderDeviceData",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_000",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "unk_028",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "unk_030",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 272
+     },
+     "size": 272
+    },
+    {
+     "offset": 320,
+     "name": "unk_140",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 32
+    },
+    {
+     "offset": 352,
+     "name": "unk_160",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 354,
+     "name": "unk_162",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 86
+     },
+     "size": 86
+    },
+    {
+     "offset": 440,
+     "name": "m_textureStatePool",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TPoolFast<TextureStateCache>",
+      "size": 72
+     },
+     "size": 72
+    },
+    {
+     "offset": 512,
+     "name": "m_textureStates",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THashMap<unsigned int, TextureStateCache *>",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 560,
+     "name": "unk_230",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 568,
+     "name": "unk_238",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 569,
+     "name": "unk_239",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 576,
+     "name": "m_event",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 680,
+     "name": "m_vertexAttribCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 684,
+     "name": "unk_2ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 688,
+     "name": "m_stateCache",
+     "type": {
+      "kind": "ptr",
+      "to": "StateCacheThreadSafe"
+     },
+     "size": 8
+    },
+    {
+     "offset": 696,
+     "name": "m_textureSlots",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "DeviceTextureSlot"
+      },
+      "count": 1024
+     },
+     "size": 32768
+    },
+    {
+     "offset": 33464,
+     "name": "m_resourceArray",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33504,
+     "name": "m_shaderKeys",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33544,
+     "name": "m_programs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33584,
+     "name": "m_shaderKeySet",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 33632,
+     "name": "unk_8360",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 33664,
+     "name": "m_bytes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33704,
+     "name": "m_programSet",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 33752,
+     "name": "unk_83d8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 33816,
+     "name": "m_vertexShader",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 33824,
+     "name": "unk_8420",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 33856,
+     "name": "m_program",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 33864,
+     "name": "unk_8448",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 17000
+     },
+     "size": 17000
+    }
+   ],
+   "size": 50864,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2276558",
+     "symbol": "_ZN4Aska16RenderDeviceDataC2Ev",
+     "name": "RenderDeviceData"
+    },
+    {
+     "ghidra": "0x227a4cc",
+     "symbol": "_ZN4Aska16RenderDeviceData15BindFrameBufferEPNS_11GpuResourceE",
+     "name": "BindFrameBuffer"
+    },
+    {
+     "ghidra": "0x227d0f8",
+     "symbol": "_ZN4Aska16RenderDeviceData20DrawIndexedPrimitiveEPNS_14RenderDeviceGLENS_8PrimType4TypeERNS_11IndexBufferEmi",
+     "name": "DrawIndexedPrimitive"
+    },
+    {
+     "ghidra": "0x2282ed8",
+     "symbol": "_ZN4Aska16RenderDeviceData17GetBoundTextureIDEj",
+     "name": "GetBoundTextureID"
+    },
+    {
+     "ghidra": "0x2283b98",
+     "symbol": "_ZN4Aska16RenderDeviceData21GetTextureStateCachesEj",
+     "name": "GetTextureStateCaches"
+    },
+    {
+     "ghidra": "0x2285de4",
+     "symbol": "_ZN4Aska16RenderDeviceData18GetThreadOglState1Ev",
+     "name": "GetThreadOglState1"
+    },
+    {
+     "ghidra": "0x22871a0",
+     "symbol": "_ZN4Aska16RenderDeviceData19UpdateShaderProgramEv",
+     "name": "UpdateShaderProgram"
+    },
+    {
+     "ghidra": "0x2287ee4",
+     "symbol": "_ZN4Aska16RenderDeviceData17UpdateRenderStateEPNS_14RenderDeviceGLE",
+     "name": "UpdateRenderState"
+    },
+    {
+     "ghidra": "0x2288158",
+     "symbol": "_ZN4Aska16RenderDeviceData21UpdateVertexAttributeEPNS_18ASKA_OGL_STATESET0E",
+     "name": "UpdateVertexAttribute"
+    },
+    {
+     "ghidra": "0x228887c",
+     "symbol": "_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_TexturesEPNS_18ASKA_OGL_STATESET0EPNS_14RenderDeviceGLE",
+     "name": "LastMinuteDrawCommands_Textures"
+    },
+    {
+     "ghidra": "0x228926c",
+     "symbol": "_ZN4Aska16RenderDeviceData20UpdateTextureFiltersEPNS_18ASKA_OGL_STATESET0Eij",
+     "name": "UpdateTextureFilters"
+    }
+   ]
+  },
+  {
+   "name": "VertexAttrGL",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_offset",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 2,
+     "name": "m_semantic",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3,
+     "name": "m_index",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 4,
+   "align": 1
+  },
+  {
+   "name": "VertexFormatGL",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_attrs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "VertexAttrGL"
+      },
+      "count": 10
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 41,
+     "name": "unk_29",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 44,
+   "align": 1
+  },
+  {
+   "name": "RenderDeviceGL",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_resourceUsed",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1008
+     },
+     "size": 1008
+    },
+    {
+     "offset": 1016,
+     "name": "m_resources",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "array",
+       "of": {
+        "kind": "int",
+        "size": 1,
+        "signed": false
+       },
+       "count": 8000
+      },
+      "count": 120
+     },
+     "size": 960000
+    },
+    {
+     "offset": 961016,
+     "name": "unk_ea9f8",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961020,
+     "name": "unk_ea9fc",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961024,
+     "name": "unk_eaa00",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 961025,
+     "name": "unk_eaa01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 961032,
+     "name": "m_tempSurfaces",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 72
+     },
+     "size": 72
+    },
+    {
+     "offset": 961104,
+     "name": "unk_eaa50",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 961152,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderDeviceData"
+     },
+     "size": 8
+    },
+    {
+     "offset": 961160,
+     "name": "m_textureStageCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961164,
+     "name": "m_extraTextureStageCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961168,
+     "name": "unk_eaa90",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 2
+     },
+     "size": 8
+    },
+    {
+     "offset": 961176,
+     "name": "unk_eaa98",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961180,
+     "name": "m_vertexFormats",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "VertexFormatGL"
+      },
+      "count": 128
+     },
+     "size": 5632
+    },
+    {
+     "offset": 966812,
+     "name": "unk_ec09c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 966816,
+     "name": "unk_ec0a0",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 966820,
+     "name": "unk_ec0a4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 966824,
+     "name": "unk_ec0a8",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 966828,
+     "name": "unk_ec0ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 28
+     },
+     "size": 28
+    }
+   ],
+   "size": 966856,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2274804",
+     "symbol": "_ZN4Aska14RenderDeviceGL11BindTextureEjj",
+     "name": "BindTexture"
+    },
+    {
+     "ghidra": "0x2275964",
+     "symbol": "_ZNK4Aska14RenderDeviceGL12GetGLVersionEv",
+     "name": "GetGLVersion"
+    },
+    {
+     "ghidra": "0x2276244",
+     "symbol": "_ZN4Aska14RenderDeviceGLC1Ev",
+     "name": "RenderDeviceGL"
+    },
+    {
+     "ghidra": "0x227a15c",
+     "symbol": "_ZN4Aska14RenderDeviceGL12EnableZWriteEb",
+     "name": "EnableZWrite"
+    },
+    {
+     "ghidra": "0x227ad24",
+     "symbol": "_ZN4Aska14RenderDeviceGL13ActiveTextureEj",
+     "name": "ActiveTexture"
+    },
+    {
+     "ghidra": "0x227b138",
+     "symbol": "_ZN4Aska14RenderDeviceGL16BindVertexFormatEPNS_12VertexBufferE",
+     "name": "BindVertexFormat"
+    },
+    {
+     "ghidra": "0x227b1b8",
+     "symbol": "_ZN4Aska14RenderDeviceGL16BindVertexFormatEiiPv",
+     "name": "BindVertexFormat"
+    },
+    {
+     "ghidra": "0x227b548",
+     "symbol": "_ZN4Aska14RenderDeviceGL10SetTextureEjPKPNS_11GpuResourceE",
+     "name": "SetTexture"
+    },
+    {
+     "ghidra": "0x227b798",
+     "symbol": "_ZN4Aska14RenderDeviceGL13RemoveTextureEj",
+     "name": "RemoveTexture"
+    },
+    {
+     "ghidra": "0x227cd0c",
+     "symbol": "_ZN4Aska14RenderDeviceGL14SetScissorRectEPK4RECTb",
+     "name": "SetScissorRect"
+    },
+    {
+     "ghidra": "0x227d3c0",
+     "symbol": "_ZN4Aska14RenderDeviceGL16BindVertexBufferEmPv",
+     "name": "BindVertexBuffer"
+    },
+    {
+     "ghidra": "0x227dcc0",
+     "symbol": "_ZN4Aska14RenderDeviceGL16EnableAlphaBlendEb",
+     "name": "EnableAlphaBlend"
+    },
+    {
+     "ghidra": "0x227dfc0",
+     "symbol": "_ZN4Aska14RenderDeviceGL24SetTextureSamplingFilterEjNS_7TexSamp6FilterE",
+     "name": "SetTextureSamplingFilter"
+    },
+    {
+     "ghidra": "0x227e060",
+     "symbol": "_ZN4Aska14RenderDeviceGL30SetTextureSamplingMipmapFilterEjNS_7TexSamp9MipFilterE",
+     "name": "SetTextureSamplingMipmapFilter"
+    },
+    {
+     "ghidra": "0x227e100",
+     "symbol": "_ZN4Aska14RenderDeviceGL26SetTextureSamplingWrapModeEjNS_7TexWrap4ModeES2_S2_",
+     "name": "SetTextureSamplingWrapMode"
+    },
+    {
+     "ghidra": "0x227e1c4",
+     "symbol": "_ZN4Aska14RenderDeviceGL32SetTextureSamplingMaxAnisotropicEjj",
+     "name": "SetTextureSamplingMaxAnisotropic"
+    },
+    {
+     "ghidra": "0x227e288",
+     "symbol": "_ZN4Aska14RenderDeviceGL11EnableZTestEb",
+     "name": "EnableZTest"
+    },
+    {
+     "ghidra": "0x227e3e4",
+     "symbol": "_ZN4Aska14RenderDeviceGL12SetDepthBiasEff",
+     "name": "SetDepthBias"
+    },
+    {
+     "ghidra": "0x227e494",
+     "symbol": "_ZN4Aska14RenderDeviceGL13EnableStencilENS_11StencilMode4ModeE",
+     "name": "EnableStencil"
+    },
+    {
+     "ghidra": "0x227e794",
+     "symbol": "_ZN4Aska14RenderDeviceGL11SetCullModeENS_4Cull4ModeE",
+     "name": "SetCullMode"
+    },
+    {
+     "ghidra": "0x227ea54",
+     "symbol": "_ZN4Aska14RenderDeviceGL15SetVertexShaderEPNS_12VertexShaderE",
+     "name": "SetVertexShader"
+    },
+    {
+     "ghidra": "0x227ea6c",
+     "symbol": "_ZN4Aska14RenderDeviceGL14SetPixelShaderEPNS_11PixelShaderE",
+     "name": "SetPixelShader"
+    },
+    {
+     "ghidra": "0x227ea84",
+     "symbol": "_ZN4Aska14RenderDeviceGL23SetVertexShaderConstantEiPKvi",
+     "name": "SetVertexShaderConstant"
+    },
+    {
+     "ghidra": "0x227eb20",
+     "symbol": "_ZN4Aska14RenderDeviceGL22SetPixelShaderConstantEiPKvi",
+     "name": "SetPixelShaderConstant"
+    },
+    {
+     "ghidra": "0x227ebbc",
+     "symbol": "_ZN4Aska14RenderDeviceGL23SetVertexShaderConstantEPNS_19UniformValueBuffer2E",
+     "name": "SetVertexShaderConstant"
+    },
+    {
+     "ghidra": "0x227ec74",
+     "symbol": "_ZN4Aska14RenderDeviceGL22SetPixelShaderConstantEPNS_19UniformValueBuffer2E",
+     "name": "SetPixelShaderConstant"
+    }
+   ]
+  },
+  {
+   "name": "MaterialContext",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_008",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "unk_010",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_018",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_textures",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 512
+     },
+     "size": 512
+    },
+    {
+     "offset": 544,
+     "name": "unk_220",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 552,
+     "name": "unk_228",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 560,
+     "name": "unk_230",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 561,
+     "name": "unk_231",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 564,
+     "name": "unk_234",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 568,
+     "name": "unk_238",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 570,
+     "name": "unk_23a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 578,
+     "name": "unk_242",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 579,
+     "name": "unk_243",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 580,
+     "name": "unk_244",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 581,
+     "name": "m_flags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 583,
+     "name": "unk_247",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 584,
+     "name": "unk_248",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 585,
+     "name": "unk_249",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 586,
+     "name": "unk_24a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 592,
+     "name": "unk_250",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 594,
+     "name": "unk_252",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 600,
+     "name": "unk_258",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 608,
+     "name": "unk_260",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 616,
+     "name": "unk_268",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 618,
+     "name": "unk_26a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 624,
+     "name": "unk_270",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 32
+    }
+   ],
+   "size": 656,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2243ef0",
+     "symbol": "_ZN4Aska15MaterialContextC1Ev",
+     "name": "MaterialContext"
+    },
+    {
+     "ghidra": "0x2243fa4",
+     "symbol": "_ZN4Aska15MaterialContext5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x2244048",
+     "symbol": "_ZN4Aska15MaterialContext10SetDefaultEPNS_18TextureSamplerModeE",
+     "name": "SetDefault"
+    },
+    {
+     "ghidra": "0x224406c",
+     "symbol": "_ZN4Aska15MaterialContext16AddShaderTextureENS_13ShaderContext13ShaderTexKindEPNS_11TEXTUREINFOEi",
+     "name": "AddShaderTexture"
+    },
+    {
+     "ghidra": "0x22441d8",
+     "symbol": "_ZN4Aska15MaterialContext19RemoveShaderTextureENS_13ShaderContext13ShaderTexKindEi",
+     "name": "RemoveShaderTexture"
+    },
+    {
+     "ghidra": "0x2244314",
+     "symbol": "_ZN4Aska15MaterialContext18MakeShaderConstantEPNS_21ShaderConstantManagerE",
+     "name": "MakeShaderConstant"
+    },
+    {
+     "ghidra": "0x22447c8",
+     "symbol": "_ZN4Aska15MaterialContext5ApplyEmPNS_14RenderDeviceGLEPNS_17ShaderNodeHandlerE",
+     "name": "Apply"
+    },
+    {
+     "ghidra": "0x224481c",
+     "symbol": "_ZN4Aska15MaterialContext20ApplyToCommandBufferEmPNS_8TLongIntImLi1EEEPNS_20CommandBufferManagerE",
+     "name": "ApplyToCommandBuffer"
+    },
+    {
+     "ghidra": "0x2244824",
+     "symbol": "_ZN4Aska15MaterialContextD0Ev",
+     "name": "~MaterialContext"
+    }
+   ]
+  },
+  {
+   "name": "MaterialEntry",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_008",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_context",
+     "type": {
+      "kind": "struct",
+      "name": "MaterialContext"
+     },
+     "size": 656
+    }
+   ],
+   "size": 672,
+   "align": 8
+  },
+  {
+   "name": "ShaderConstantManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_head",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_ready",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 26,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 28,
+     "name": "m_dirty",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 29,
+     "name": "m_one",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 30,
+     "name": "unk_1e",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    }
+   ],
+   "size": 32,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x21bce30",
+     "symbol": "_ZN4Aska21ShaderConstantManagerD1Ev",
+     "name": "~ShaderConstantManager"
+    },
+    {
+     "ghidra": "0x21bcf6c",
+     "symbol": "_ZNK4Aska21ShaderConstantManager9IsRGBZeroEii",
+     "name": "IsRGBZero"
+    },
+    {
+     "ghidra": "0x21bd038",
+     "symbol": "_ZNK4Aska21ShaderConstantManager21SearchShaderConstantFEiiPPNS_6VectorE",
+     "name": "SearchShaderConstantF"
+    },
+    {
+     "ghidra": "0x21bd0c8",
+     "symbol": "_ZNK4Aska21ShaderConstantManager16GetConstImmStateEii",
+     "name": "GetConstImmState"
+    },
+    {
+     "ghidra": "0x21bd258",
+     "symbol": "_ZN4Aska21ShaderConstantManager20SetShaderConstantFUCEiiPKNS_6VectorEi",
+     "name": "SetShaderConstantFUC"
+    },
+    {
+     "ghidra": "0x21bd4d0",
+     "symbol": "_ZN4Aska21ShaderConstantManager21SetShaderConstantRefFEiiPKNS_6VectorEi",
+     "name": "SetShaderConstantRefF"
+    },
+    {
+     "ghidra": "0x21bd5d4",
+     "symbol": "_ZNK4Aska21ShaderConstantManager18GetShaderConstantFEiiPPNS_6VectorE",
+     "name": "GetShaderConstantF"
+    },
+    {
+     "ghidra": "0x21bd624",
+     "symbol": "_ZNK4Aska21ShaderConstantManager15SearchConstInfoEii",
+     "name": "SearchConstInfo"
+    },
+    {
+     "ghidra": "0x21bd69c",
+     "symbol": "_ZN4Aska21ShaderConstantManager5CloneEPKS0_",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x21bd6e4",
+     "symbol": "_ZN4Aska21ShaderConstantManager12UpdatePacketEPNS_19UniformValueBuffer2EPNS_11ShaderCacheE",
+     "name": "UpdatePacket"
+    },
+    {
+     "ghidra": "0x21bd9f4",
+     "symbol": "_ZN4Aska21ShaderConstantManager27SetShaderConstantF_lockableILb1EEEbiiPKNS_6VectorEi",
+     "name": "SetShaderConstantF_lockable<true>"
+    },
+    {
+     "ghidra": "0x22452bc",
+     "symbol": "_ZN4Aska21ShaderConstantManager27SetShaderConstantF_lockableILb0EEEbiiPKNS_6VectorEi",
+     "name": "SetShaderConstantF_lockable<false>"
+    },
+    {
+     "ghidra": "0x22bc900",
+     "symbol": "_ZNK4Aska21ShaderConstantManager28IsShaderConstantManagerDirtyEv",
+     "name": "IsShaderConstantManagerDirty"
+    }
+   ]
+  },
+  {
+   "name": "RenderPassBatch",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_constants",
+     "type": {
+      "kind": "struct",
+      "name": "ShaderConstantManager"
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_shaderNode",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "unk_028",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 56,
+     "name": "m_shaderCache",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 2
+     },
+     "size": 16
+    },
+    {
+     "offset": 72,
+     "name": "m_renderState",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderState"
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "unk_050",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "unk_058",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 89,
+     "name": "unk_059",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 199
+     },
+     "size": 199
+    },
+    {
+     "offset": 288,
+     "name": "m_modifier",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 152
+     },
+     "size": 152
+    }
+   ],
+   "size": 440,
+   "align": 8
+  },
+  {
+   "name": "RenderPass",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_batches",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderPassBatch"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "unk_010",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 32,
+     "name": "unk_020",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 38,
+     "name": "m_batchCount",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 39,
+     "name": "unk_027",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 41,
+     "name": "unk_029",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 42,
+     "name": "unk_02a",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 44,
+     "name": "unk_02c",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 45,
+     "name": "unk_02d",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 46,
+     "name": "unk_02e",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 47,
+     "name": "m_bits2f",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 50,
+     "name": "unk_032",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 56,
+     "name": "m_parent",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderPass"
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_children",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderPass"
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_nextSibling",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderPass"
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "unk_050",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 304
+     },
+     "size": 304
+    },
+    {
+     "offset": 384,
+     "name": "unk_180",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 392,
+     "name": "unk_188",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 394,
+     "name": "unk_18a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 14
+     },
+     "size": 14
+    },
+    {
+     "offset": 408,
+     "name": "m_buffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 416,
+     "name": "unk_1a0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    }
+   ],
+   "size": 456,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22bb3ac",
+     "symbol": "_ZN4Aska10RenderPass6CreateEi",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x22bb5c4",
+     "symbol": "_ZN4Aska10RenderPass5CloneEPKS0_S2_b",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x22bb804",
+     "symbol": "_ZN4Aska10RenderPass4InitEiPv",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x22bb920",
+     "symbol": "_ZN4Aska10RenderPassC2Ev",
+     "name": "RenderPass"
+    },
+    {
+     "ghidra": "0x22bb9a4",
+     "symbol": "_ZN4Aska10RenderPassD1Ev",
+     "name": "~RenderPass"
+    },
+    {
+     "ghidra": "0x22bbbc4",
+     "symbol": "_ZN4Aska10RenderPassD0Ev",
+     "name": "~RenderPass"
+    },
+    {
+     "ghidra": "0x22bbbdc",
+     "symbol": "_ZN4Aska10RenderPass22SetNoneModifyingShaderEv",
+     "name": "SetNoneModifyingShader"
+    },
+    {
+     "ghidra": "0x22bbd08",
+     "symbol": "_ZN4Aska10RenderPass20BeginModifyingShaderEv",
+     "name": "BeginModifyingShader"
+    },
+    {
+     "ghidra": "0x22bbd28",
+     "symbol": "_ZN4Aska10RenderPass18EndModifyingShaderEPNS_12MaterialListE",
+     "name": "EndModifyingShader"
+    },
+    {
+     "ghidra": "0x22bbfac",
+     "symbol": "_ZN4Aska10RenderPass16AddShaderAdapterEPNS_17BaseShaderAdapterEi",
+     "name": "AddShaderAdapter"
+    },
+    {
+     "ghidra": "0x22bc268",
+     "symbol": "_ZN4Aska10RenderPass17InvalidateShadersEv",
+     "name": "InvalidateShaders"
+    },
+    {
+     "ghidra": "0x22bc2cc",
+     "symbol": "_ZN4Aska10RenderPass22InvalidateShaderCachesEv",
+     "name": "InvalidateShaderCaches"
+    },
+    {
+     "ghidra": "0x22bc398",
+     "symbol": "_ZN4Aska10RenderPass14ReadyShaderKeyEiiPNS_12MaterialListEb",
+     "name": "ReadyShaderKey"
+    },
+    {
+     "ghidra": "0x22bc588",
+     "symbol": "_ZN4Aska10RenderPass17GetShaderKeyFlagsEPKNS_15RenderPassBatchE",
+     "name": "GetShaderKeyFlags"
+    },
+    {
+     "ghidra": "0x22bc5a4",
+     "symbol": "_ZN4Aska10RenderPass11ReadyShaderEv",
+     "name": "ReadyShader"
+    },
+    {
+     "ghidra": "0x22bc7f4",
+     "symbol": "_ZN4Aska10RenderPass12UpdatePacketEv",
+     "name": "UpdatePacket"
+    },
+    {
+     "ghidra": "0x22bc954",
+     "symbol": "_ZN4Aska10RenderPass18PrepareRenderStateEPNS_12MaterialListEb",
+     "name": "PrepareRenderState"
+    },
+    {
+     "ghidra": "0x22bd004",
+     "symbol": "_ZN4Aska10RenderPass22PrepareShadowCastStateEPNS_10AofHandlerEh",
+     "name": "PrepareShadowCastState"
+    },
+    {
+     "ghidra": "0x22bd484",
+     "symbol": "_ZN4Aska10RenderPass21PrepareMultiDrawStateEPNS_10AofHandlerE",
+     "name": "PrepareMultiDrawState"
+    },
+    {
+     "ghidra": "0x22bd49c",
+     "symbol": "_ZN4Aska10RenderPass14SetObjectStateEPNS_20AofObjectRenderStateE",
+     "name": "SetObjectState"
+    },
+    {
+     "ghidra": "0x22bd534",
+     "symbol": "_ZN4Aska10RenderPass13UpdateTextureEPNS_12MaterialListEPNS_22TextureModifierManagerEPKNS_10RENDERINFOEib",
+     "name": "UpdateTexture"
+    },
+    {
+     "ghidra": "0x22bdac8",
+     "symbol": "_ZN4Aska10RenderPass14UpdateMaterialEPNS_12MaterialListE",
+     "name": "UpdateMaterial"
+    },
+    {
+     "ghidra": "0x22bdb64",
+     "symbol": "_ZN4Aska10RenderPass12ClearTextureEv",
+     "name": "ClearTexture"
+    },
+    {
+     "ghidra": "0x22bdbc0",
+     "symbol": "_ZN4Aska10RenderPass23UpdateTextureShadowPassEPNS_12MaterialListEPNS_22TextureModifierManagerEPKNS_10RENDERINFOEi",
+     "name": "UpdateTextureShadowPass"
+    },
+    {
+     "ghidra": "0x22bdfbc",
+     "symbol": "_ZN4Aska10RenderPass26UpdateFrameTexturePointersEPNS_12MaterialListEPKNS_10RENDERINFOEi",
+     "name": "UpdateFrameTexturePointers"
+    },
+    {
+     "ghidra": "0x22be180",
+     "symbol": "_ZN4Aska10RenderPass10TickShaderEv",
+     "name": "TickShader"
+    },
+    {
+     "ghidra": "0x22be184",
+     "symbol": "_ZNK4Aska10RenderPass16GetVertexPassNumEv",
+     "name": "GetVertexPassNum"
+    },
+    {
+     "ghidra": "0x22be258",
+     "symbol": "_ZN4Aska10RenderPass20RegisterFrameTextureEPNS_20FrameTextureEntitiesEPFPNS_7TextureEmjjjE",
+     "name": "RegisterFrameTexture"
+    }
+   ]
+  },
+  {
+   "name": "RenderPassManagerList",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_linkVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_last",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "MaterialList",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_ownedBuffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_materialData",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_extra",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_entries",
+     "type": {
+      "kind": "ptr",
+      "to": "MaterialEntry"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 34,
+     "name": "m_activeCount",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 35,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 36,
+     "name": "m_perPixelLights",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": true
+     },
+     "size": 1
+    },
+    {
+     "offset": 37,
+     "name": "unk_025",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 38,
+     "name": "unk_026",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 42,
+     "name": "unk_02a",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 43,
+     "name": "unk_02b",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 44,
+     "name": "m_shaderLod",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 45,
+     "name": "unk_02d",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 46,
+     "name": "unk_02e",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 47,
+     "name": "unk_02f",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 48,
+     "name": "m_activePass",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderPass"
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_managers",
+     "type": {
+      "kind": "struct",
+      "name": "RenderPassManagerList"
+     },
+     "size": 40
+    },
+    {
+     "offset": 96,
+     "name": "m_pass",
+     "type": {
+      "kind": "struct",
+      "name": "RenderPass"
+     },
+     "size": 456
+    }
+   ],
+   "size": 552,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x21c15ac",
+     "symbol": "_ZN4Aska12MaterialListC2Ev",
+     "name": "MaterialList"
+    },
+    {
+     "ghidra": "0x2244828",
+     "symbol": "_ZNK4Aska12MaterialList15GetAllocBufSizeEiPKNS_3AFF7MeshsetE",
+     "name": "GetAllocBufSize"
+    },
+    {
+     "ghidra": "0x2244878",
+     "symbol": "_ZN4Aska12MaterialList5AllocEiPv",
+     "name": "Alloc"
+    },
+    {
+     "ghidra": "0x2244990",
+     "symbol": "_ZN4Aska12MaterialList12DeleteBufferEv",
+     "name": "DeleteBuffer"
+    },
+    {
+     "ghidra": "0x22449dc",
+     "symbol": "_ZN4Aska12MaterialList7ConnectEiiPKNS_12MaterialDataE",
+     "name": "Connect"
+    },
+    {
+     "ghidra": "0x2244a00",
+     "symbol": "_ZN4Aska12MaterialList21SetPerPixelLightCountEi",
+     "name": "SetPerPixelLightCount"
+    },
+    {
+     "ghidra": "0x2244abc",
+     "symbol": "_ZN4Aska12MaterialList24EnablePerMatLightContextEb",
+     "name": "EnablePerMatLightContext"
+    },
+    {
+     "ghidra": "0x2244adc",
+     "symbol": "_ZN4Aska12MaterialList21SetPerMatLightContextEiiNS0_9LightFreqE",
+     "name": "SetPerMatLightContext"
+    },
+    {
+     "ghidra": "0x2244b14",
+     "symbol": "_ZN4Aska12MaterialList26UpdatePunchthroughZprepassEv",
+     "name": "UpdatePunchthroughZprepass"
+    },
+    {
+     "ghidra": "0x2244b7c",
+     "symbol": "_ZN4Aska12MaterialList24SetAmbientBRDFCapabilityEib",
+     "name": "SetAmbientBRDFCapability"
+    },
+    {
+     "ghidra": "0x2244bec",
+     "symbol": "_ZN4Aska12MaterialList28DisableAmbientBRDFCapabilityEv",
+     "name": "DisableAmbientBRDFCapability"
+    },
+    {
+     "ghidra": "0x2244c2c",
+     "symbol": "_ZN4Aska12MaterialList8ActivateEPKvPKNS_3AFF12MaterialInfoEiPPNS_11AofhMeshsetE",
+     "name": "Activate"
+    },
+    {
+     "ghidra": "0x22454e4",
+     "symbol": "_ZN4Aska12MaterialList6CreateEi",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x224578c",
+     "symbol": "_ZN4Aska12MaterialList5CloneEPKS0_b",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x2245790",
+     "symbol": "_ZN4Aska12MaterialList17SetDirectMaterialEiPNS_14DirectMaterialEPNS_19RenderablePrimitiveEm",
+     "name": "SetDirectMaterial"
+    },
+    {
+     "ghidra": "0x2245e6c",
+     "symbol": "_ZN4Aska12MaterialList15SetTexSelector_Eif",
+     "name": "SetTexSelector_"
+    },
+    {
+     "ghidra": "0x2245ea8",
+     "symbol": "_ZN4Aska12MaterialList19SetColorMultiplier_EiRKNS_6VectorES3_",
+     "name": "SetColorMultiplier_"
+    },
+    {
+     "ghidra": "0x2245f0c",
+     "symbol": "_ZN4Aska12MaterialList12SetUVMatrix_EiRKNS_6MatrixE",
+     "name": "SetUVMatrix_"
+    },
+    {
+     "ghidra": "0x2245f34",
+     "symbol": "_ZN4Aska12MaterialList16SetMaterialColorEiPNS_6VectorE",
+     "name": "SetMaterialColor"
+    },
+    {
+     "ghidra": "0x2245f4c",
+     "symbol": "_ZN4Aska12MaterialList18SetShaderConstantFEiiiPKNS_6VectorEi",
+     "name": "SetShaderConstantF"
+    },
+    {
+     "ghidra": "0x2246050",
+     "symbol": "_ZN4Aska12MaterialList14SetTexSelectorEif",
+     "name": "SetTexSelector"
+    },
+    {
+     "ghidra": "0x2246160",
+     "symbol": "_ZN4Aska12MaterialList18SetColorMultiplierEiRKNS_6VectorES3_",
+     "name": "SetColorMultiplier"
+    },
+    {
+     "ghidra": "0x2246298",
+     "symbol": "_ZN4Aska12MaterialList11SetUVMatrixEiRKNS_6MatrixE",
+     "name": "SetUVMatrix"
+    },
+    {
+     "ghidra": "0x22463a0",
+     "symbol": "_ZNK4Aska12MaterialList27GetActualPerPixelLightCountEv",
+     "name": "GetActualPerPixelLightCount"
+    },
+    {
+     "ghidra": "0x22463b4",
+     "symbol": "_ZN4Aska12MaterialList17EnableAmbientBRDFENS0_15AmbientBRDFTypeE",
+     "name": "EnableAmbientBRDF"
+    },
+    {
+     "ghidra": "0x224652c",
+     "symbol": "_ZN4Aska12MaterialList17EnableShadowNoiseEb",
+     "name": "EnableShadowNoise"
+    },
+    {
+     "ghidra": "0x2246680",
+     "symbol": "_ZN4Aska12MaterialList9EnableIBLEPNS_5LightEbNS0_13IBLOffsetTypeE",
+     "name": "EnableIBL"
+    },
+    {
+     "ghidra": "0x2246aa8",
+     "symbol": "_ZN4Aska12MaterialList18EnableSecondaryIBLEPNS_5LightE",
+     "name": "EnableSecondaryIBL"
+    },
+    {
+     "ghidra": "0x2246c1c",
+     "symbol": "_ZN4Aska12MaterialList12SetShaderLodEi",
+     "name": "SetShaderLod"
+    },
+    {
+     "ghidra": "0x2246c50",
+     "symbol": "_ZN4Aska12MaterialList23ServeShaderConstantBodyEv",
+     "name": "ServeShaderConstantBody"
+    },
+    {
+     "ghidra": "0x2246e34",
+     "symbol": "_ZN4Aska12MaterialList14IsPunchthroughEv",
+     "name": "IsPunchthrough"
+    },
+    {
+     "ghidra": "0x2246e7c",
+     "symbol": "_ZN4Aska12MaterialList13IsZprepassOFFEv",
+     "name": "IsZprepassOFF"
+    },
+    {
+     "ghidra": "0x2246ec0",
+     "symbol": "_ZN4Aska12MaterialList21UpdateMaterialContextEv",
+     "name": "UpdateMaterialContext"
+    },
+    {
+     "ghidra": "0x2246fc0",
+     "symbol": "_ZN4Aska12MaterialList22SetActiveMaterialCountEh",
+     "name": "SetActiveMaterialCount"
+    }
+   ]
+  },
+  {
+   "name": "ShaderCompression",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x22c654c",
+     "symbol": "_ZN4Aska17ShaderCompression12DecompressLZEPhS1_",
+     "name": "DecompressLZ"
+    },
+    {
+     "ghidra": "0x22c65d4",
+     "symbol": "_ZN4Aska17ShaderCompression10CompressLZEPviS1_",
+     "name": "CompressLZ"
+    },
+    {
+     "ghidra": "0x22c6df8",
+     "symbol": "_ZN4Aska17ShaderCompression16DecompressLZwordEPtS1_",
+     "name": "DecompressLZword"
+    },
+    {
+     "ghidra": "0x22c6eec",
+     "symbol": "_ZN4Aska17ShaderCompression14CompressLZwordEPviS1_",
+     "name": "CompressLZword"
+    },
+    {
+     "ghidra": "0x22c75fc",
+     "symbol": "_ZN4Aska17ShaderCompression19DecompressLZwordDicEPtS1_Ph",
+     "name": "DecompressLZwordDic"
+    },
+    {
+     "ghidra": "0x22c781c",
+     "symbol": "_ZN4Aska17ShaderCompression17CompressLZwordDicEPviS1_Ph",
+     "name": "CompressLZwordDic"
+    }
+   ]
+  }
+ ]
+}

@@ -26,17 +26,19 @@
 
 namespace soa::native::sync {
 
-// The family (--live-check sync) and the shared shadow-check helpers (common/shadow_check.h).
+// The family (--live-check sync; native/common/shadow_check.h has the switch, the counters, the
+// byte comparison and the getter check).
 live::ShadowFamily& family();
-using live::CheckScope;
+// One checked guest function of the family.
+struct CheckedFn : live::ShadowFn {
+    explicit CheckedFn(const char* s) : ShadowFn(family(), s) {}
+};
+using live::check_due;
+using live::check_getter;
 using live::check_result;
+using live::CheckScope;
 using live::diff_bytes;
 using live::Outcome;
-struct CheckedFn : live::CheckedFn {
-    explicit CheckedFn(const char* s) : live::CheckedFn(::soa::native::sync::family(), s) {}
-};
-inline bool check_due(CheckedFn& f) { return live::check_due(f); }
-inline void check_getter(Cpu& c, CheckedFn& f, HostFn native, u64 mask) { live::check_getter(c, f, native, mask); }
 
 // What a mutator saw at its linearization point (filled by the native when t_obs is set).
 struct Observation {
@@ -68,4 +70,11 @@ extern thread_local bool t_replay_no_wait;
 // A zeroed, 16-aligned, per-thread scratch buffer for shadows (guest-visible host memory: guest
 // memory is identity-mapped). `slot` keeps two shadows apart.
 u8* shadow_buffer(int slot);
+// A FastCriticalSection of a shadow object made ready for a guest original to run on it: `waiters`
+// waiters and the semaphore the shadow's own (a guest Signal / sem_destroy on it reaches nothing
+// real; the HLE's host semaphore for it is created here when the original had one); the lock word is
+// the caller's. release_shadow_lock destroys that host semaphore again.
+void make_shadow_lock(FastCriticalSection& cs, s32 waiters = FastCriticalSection::kWaiterBias);
+void release_shadow_lock(FastCriticalSection& cs);
+
 }  // namespace soa::native::sync

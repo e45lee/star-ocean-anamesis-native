@@ -8,7 +8,7 @@ that the replay is stable). The corpora default to every server/tests/replay/*/ 
 Each corpus is replayed (`soa-server <DIR/options> --replay DIR --out OUT`, in the corpus's time
 zone, from the repository root) by both, and compared:
   1. the error codes (errors.txt), every reply body (<n>-<Method>.msgp) and the end state
-     (state.sql: every table's rows, sorted, and the data dir's side files): byte-identical;
+     (state.sql: every table's rows, sorted; the campaign's progress too since PLAN-schema S12): byte-identical;
   2. the server log (paths masked): tier 1, the lines matching tools/server_log_patterns.txt (the
      lines scripts read), byte-identical; tier 2, any other difference is printed, and must be
      declared in the commit message (server/PLAN-readability.md 4.1).

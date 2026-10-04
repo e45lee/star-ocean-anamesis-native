@@ -1018,13 +1018,9 @@
      "offset": 24,
      "name": "m_queueCs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -1032,13 +1028,9 @@
      "offset": 168,
      "name": "m_poolCs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -1165,13 +1157,9 @@
      "offset": 472,
      "name": "m_wakeEvent",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -1607,13 +1595,9 @@
      "offset": 8,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -2756,13 +2740,9 @@
      "offset": 64,
      "name": "m_mutex",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 176
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CMutex",
+      "size": 176
      },
      "size": 176
     }
@@ -3464,13 +3444,9 @@
      "offset": 368,
      "name": "m_mutex",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 176
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CMutex",
+      "size": 176
      },
      "size": 176
     },
@@ -4465,13 +4441,9 @@
      "offset": 0,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -4637,13 +4609,9 @@
      "offset": 0,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -4829,13 +4797,9 @@
      "offset": 94664,
      "name": "m_l1Cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -4880,13 +4844,9 @@
      "offset": 199024,
      "name": "m_l2Cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -4932,13 +4892,9 @@
      "offset": 199200,
      "name": "m_requestEvent",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -4946,13 +4902,9 @@
      "offset": 199304,
      "name": "m_doneEvent",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -4974,13 +4926,9 @@
      "offset": 199416,
      "name": "m_threadEvent",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     }
@@ -5355,13 +5303,9 @@
      "offset": 1424,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -5646,13 +5590,9 @@
      "offset": 24,
      "name": "m_event",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -5660,13 +5600,9 @@
      "offset": 128,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 40
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CriticalSection",
+      "size": 40
      },
      "size": 40
     },
@@ -5844,13 +5780,9 @@
      "offset": 544,
      "name": "m_cs2",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 40
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CriticalSection",
+      "size": 40
      },
      "size": 40
     }

@@ -17,8 +17,8 @@ namespace soa::native::kernel {
 
 // The family (--live-check kernel).
 live::ShadowFamily& family();
-struct CheckedFn : live::CheckedFn {
-    explicit CheckedFn(const char* s) : live::CheckedFn(::soa::native::kernel::family(), s) {}
+struct CheckedFn : live::ShadowFn {
+    explicit CheckedFn(const char* s) : live::ShadowFn(::soa::native::kernel::family(), s) {}
 };
 
 constexpr int kMaxWorkers = 256;

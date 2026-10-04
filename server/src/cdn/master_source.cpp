@@ -132,8 +132,8 @@ const std::string& resolve() {
         LOGW("server", "the APK's master (%s): %s", apk.c_str(), err.c_str());
     }
     LOGE("server",
-         "no 3.7.0 master DB: give --master FILE, or --download-dir DIR (the 3.7.0 download, whose "
-         "sqlite/basmaster.sqlite3 is decrypted), or %s",
+         "no 3.7.0 master DB: give --master FILE, or --download PATH (the 3.7.0 download, a folder or "
+         "SOA-3.7.0-canonical-data.zip, whose sqlite/basmaster.sqlite3 is decrypted), or %s",
          install::missing_hint().c_str());
     return c.master;
 }

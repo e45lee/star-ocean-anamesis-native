@@ -44,8 +44,67 @@ CreateTree is a load path), `Aska::DPGHandler`, `Aska::HeightObject*`, `Framewor
 
 ## Natives
 
+16 bound (`soa --list-native | grep scene:`). Live check: `soa --live-check scene[:every=N][:out=FILE]`
+(default every=16; [`scene_check.h`](scene_check.h)).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `ObjectManagerJobDispatcher::Dispatch_MakePaintingList` / `_PreliminarilyPrepare` / `_PrepareForRendering` / `_ViewFrustumCulling` / `_DetectLIBL` / `_ResetSystemFlags` (the job inline: `ObjectManagerWorkerThread::Run*`) | [`scene_dispatch.cpp`](scene_dispatch.cpp) | `scene/dispatch-make-painting-list`, `-preliminarily-prepare`, `-prepare-for-rendering`, `-view-frustum-culling`, `-detect-libl`, `-reset-system-flags` | shadow replay: the guest's Dispatch_X + the worker's Handler_X on a shadow worker, the job's callees replayed from the native's record |
+| `ObjectManagerJobDispatcher::ChangeMode` / `RetryChangeMode` / `RetryChangeModeExceptRenderThread` / `WaitIdle` / `WaitAllIssued` / `Sleep` | `scene_dispatch.cpp` | `scene/dispatch-modes-and-parameters` | shadow replay (the dispatcher's bytes) |
+| `ObjectManagerJobDispatcher::Set{PreliminarilyPrepare,PrepareForRendering,ViewFrustumCulling,DetectLIBL}BasicParameter` | `scene_dispatch.cpp` | `scene/dispatch-modes-and-parameters` | shadow replay (the workers' parameters) |
+
+Not bound: `Dispatch_RenderingDecided` (no caller in 3.7.0), the worker's `Handler` / `Handler_*` / `ChangeMode`
+(no longer reached: the worker stays parked, below), the constructors and destructors (once per process).
+
+### The job dispatcher (scene_dispatch.cpp)
+
+The guest's dispatcher hands each job to its single worker thread and the caller polls (RE notes,
+"Busy-waits"). The natives keep the guest's job structures — the dispatcher's Set*BasicParameter and
+Dispatch_X store every parameter in the worker as the guest does, and the job's body reads them from
+there (`ObjectManagerWorkerThread::Run*`, one iteration of the worker's Handler_X loop: the same
+RENDERINFO copy at the worker's +0x170 passed to PrepareForRendering, the same atomic ORs into the result
+words) — but run the body at once on the posting thread and return true. That is one of the guest's
+own schedules (a worker that finishes before the poster looks again):
+- the callers scan the result words in index order (TraversePaintingList's AddRenderQueue /
+  AddTemporaryResolve, OnPrePaint's context hand-out, the culling's output list), so what they produce
+  doesn't depend on when the worker finished;
+- jobs 4 to 6 (culling, LIBL detection, the system-flag reset) are already run on the posting thread by
+  the guest itself whenever its worker is busy (MultithreadViewFrustumCulling, Prerender's
+  LIBLManager::Intersect, PrepareMatrices' inline reset);
+- the work OnPrePaint does after posting the last MakePaintingList (ResetServer, GetRenderContext for
+  the context objects, the multi-draw counters) doesn't meet the job: MakePaintingList's only shared
+  writes are atomic increments of the objects' m_contextDivisor, which commute with OnPrePaint's;
+- no job takes a lock its poster holds and none reads thread-local state (pthread_getspecific is the
+  render device's, on the render thread).
+ChangeMode / Sleep / WaitIdle keep only the dispatcher's bookkeeping (m_workerCountSeen, m_exceptMode),
+so the worker thread, created in mode 7, stays in its Event wait for the life of the process (the
+guest destructor still stops it). Per-frame draw lists traced at the title (SOA_TRACE on OnPostPaint /
+AddRenderQueue / AddTemporaryResolve, objects and contexts renamed by first appearance): the 13
+distinct draw lists of ~3,800 frames are the same with and without the natives; at home after login
+(rebase_inproc_session) the 56 distinct lists of ~5,980 frames are the same, every frame of either run
+covered by the other; in mf01_001's battle (time-dependent effects) the natives' run shares 125 lists
+covering 69% / 71% of the frames with the baseline, exactly what two baseline runs share (127, 69% / 72%).
+
+### Measurements
+
+The four flows (port/REBUILD-QUEUE.md's scripts, `SOA_PROFILE` at 1000 Hz), the baseline (main at
+c52def9) and this family's binary run side by side on the same machine load, 2026-10-04:
+
+| | baseline | natives |
+|---|---|---|
+| busy samples (login / battle / gacha / story) | 280,166 (40,358 / 79,836 / 60,277 / 99,695) | 229,412 (30,160 / 70,496 / 55,862 / 72,894): -18.1% |
+| scene guest self | 57,963 (20.7%) | 16,609 (7.2%) |
+| ObjectManagerJobDispatcher + ObjectManagerWorkerThread self | 25,480 | 5 |
+| ObjectManager self (TraversePaintingList*, OnPrePaint, MultithreadViewFrustumCulling, ...) | 22,252 | 7,236 |
+| game thread (AskaMainThread) busy, battle flow | 39,494 of 168,350 (23.5%) | 33,228 of 172,749 (19.2%) |
+
+Frame rate: both at the 60 fps cap in the battle's steady state (the 10-second `I/perf` samples), so
+the gain is headroom: the game thread's busy time per frame is down by about a sixth in battle and
+by a quarter at login / in the story flow. Live checks (every call, `--live-check scene:every=1`): login
+135,000, battle 235,000, gacha 258,000, story 351,000 checks, 0 mismatches; the same four flows on
+llvmpipe (`SOA_SLOT_SOFTWARE_GL=1`, a slower render thread: other timings) 728,000 checks, 0
+mismatches; Windows (soa.exe, the battle-gacha session) 220,000 checks, 0 mismatches. Again after merging
+main with render's natives (bbedbbb): the four flows 1,028,000 checks, Windows 217,000, 0 mismatches.
 
 ## Dependencies
 
@@ -73,7 +132,7 @@ bit 2) and m_hoc 0x90 a JointObject's joint orientation (property 15).
   then RenderThread::AddRenderQueue(object, object->contexts + used * 0x230, n) per prepared object).
   Each batch goes to the job dispatcher, which has ONE worker thread in 3.7.0
   (Global::InstantiateObjectManagerJobDispatcher passes 1).
-- **Busy-waits (where most of scene's self time goes).** The game thread never sleeps while a job is
+- **Busy-waits (where most of scene's self time went; native since n-scene: "The job dispatcher").** The game thread never sleeps while a job is
   out: `TraversePaintingList` (5497 self samples) and `OnPrePaint` (4073) loop on
   `Dispatch_PrepareForRendering` (6753) / `Dispatch_PreliminarilyPrepare` (1296) /
   `Dispatch_MakePaintingList` (2412): each call scans the worker for "idle in mode X" (5 flags behind
@@ -129,7 +188,12 @@ From the task-5 profile (login + battle + gacha + story, 293,654 busy samples;
 | CDirectAofTextRenderer::Reset | 333 | 333 | CCocosScene::Progress |
 | SkinMatrices::MakeSkinMatrices | (SkinMatrices 326) | | |
 
-Recommended order: (1) the dispatch / polling layer as one family (OnPrePaint's and
+(This table is the task-5 profile, before the dispatcher's natives; ObjectManager's residue after them,
+side by side over the four flows: ViewFrustumCulling 1,710, MultithreadOcclusionCulling 809,
+MakePaintingList 741, OnPrePaint 727, Prerender 726, AddPaintingListCandidates 636, OnPostPaint 594,
+PrepareMatrices 309, TraversePaintingList 224.)
+
+Recommended order: (1, done: "The job dispatcher") the dispatch / polling layer as one family (OnPrePaint's and
 TraversePaintingList's batch loops, the Dispatch_* and both ChangeModes, the worker's Handler: they share
 the worker's state, port them together; about 25k samples, pure control flow over the types here; the
 objects' virtuals stay guest calls); (2) the culling (ViewFrustumCulling + the Multithread* wrappers,

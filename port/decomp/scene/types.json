@@ -11,19 +11,15 @@
      "offset": 0,
      "name": "base_thread",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 24
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Thread",
+      "size": 16
      },
-     "size": 24
+     "size": 16
     },
     {
-     "offset": 24,
-     "name": "m_event",
+     "offset": 16,
+     "name": "unk_010",
      "type": {
       "kind": "array",
       "of": {
@@ -31,7 +27,17 @@
        "size": 1,
        "signed": false
       },
-      "count": 104
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_event",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -39,13 +45,9 @@
      "offset": 128,
      "name": "m_lock",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -240,19 +242,15 @@
      "offset": 368,
      "name": "m_renderInfo",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 32
+      "kind": "bytes",
+      "ctype": "soa::native::render::RENDERINFO",
+      "size": 32
      },
      "size": 32
     },
     {
      "offset": 400,
-     "name": "unk_190",
+     "name": "m_defaultCamera",
      "type": {
       "kind": "ptr",
       "to": null
@@ -506,13 +504,9 @@
      "offset": 8,
      "name": "m_lock",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },

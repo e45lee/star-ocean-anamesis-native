@@ -6,6 +6,7 @@
 #   dynarmic          the `dynarmic` target (FetchContent)
 #   soa::EGL, soa::GLESv2  Mesa's libEGL / libGLESv2 with the Khronos headers from vcpkg
 #   ZLIB::ZLIB, soa::SDL2, Freetype::Freetype (vcpkg)
+#   soa_codec         common/: Base64 (SharedPreferences values; OpenSSL), PNG (screenshots; stb)
 #
 # Targets:
 #   soaruntime_iface  INTERFACE: include dir (runtime/src, so `#include "core/cpu.h"`), definitions
@@ -56,6 +57,7 @@ target_include_directories(soaruntime_iface INTERFACE ${SOA_RUNTIME_DIR}/src)
 target_compile_definitions(soaruntime_iface INTERFACE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)
 target_link_libraries(soaruntime_iface INTERFACE
   soa_env
+  soa_codec
   dynarmic
   soa::EGL
   soa::GLESv2

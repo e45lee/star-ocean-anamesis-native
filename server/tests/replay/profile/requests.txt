@@ -37,3 +37,9 @@ req 30 1790841630 UpdateFavorByTap e06ec7b3 1717018109 - - -
 req 31 1790841635 UpdateFavorByTap e06ec7b3 1717018109 - - -
 req 32 1790841640 GetPlayer 9a056905 - - - -
 req 33 1790928040 GetPlayer 9a056905 - - - -
+# (agent nier-home, schema v12) the home's 2D / 3D mode: Home3DAnd2DSwitching 0 (2D), the next full
+# load answers is_3d_home false; then 1 (3D) and true again
+req 34 1790928045 Home3DAnd2DSwitching a092292c 0 - - -
+req 35 1790928050 GetPlayer 9a056905 - - - -
+req 36 1790928055 Home3DAnd2DSwitching a092292c 1 - - -
+req 37 1790928060 GetPlayer 9a056905 - - - -

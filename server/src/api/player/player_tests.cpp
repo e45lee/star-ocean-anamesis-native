@@ -107,4 +107,37 @@ NATIVE_TEST("player/home3d-all") {
     sqlite3_close(db);
 }
 
+// Home3DAnd2DSwitching (docs/server-rules.md#home-2d-3d): a new player's home is 3D; the
+// request stores the mode sent (0: 2D, any non-zero: 3D) and answers it as Player.is_3d_home, as
+// every later player load does.
+NATIVE_TEST("player/home3d-switching") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext request = sv.new_request();
+    ext::Ctx ctx = sv.make_ctx(request);
+    auto sent = [&](const std::vector<u8>& b) -> int {
+        if (b.empty()) return -1;
+        Value v = mp_decode(b);
+        const Value* d = v.find("data");
+        const Value* p = d ? d->find("Player") : nullptr;
+        const Value* h = p ? p->find("is_3d_home") : nullptr;
+        return h ? (h->type == Value::Bool ? (int)h->b : (int)h->u) : -1;
+    };
+    auto loaded = [&] {
+        const Value* h = player_info(ctx).find("is_3d_home");
+        return h ? (h->type == Value::Bool ? (int)h->b : (int)h->u) : -1;
+    };
+    t.expect_eq(loaded(), 1, "a new player: 3D");
+    Request r;
+    r.method = "Home3DAnd2DSwitching";
+    r.ints = {0};
+    t.expect_eq(sent(home3d_and_2d_switching(ctx, r)), 0, "switched to 2D: answered");
+    t.expect_eq(loaded(), 0, "2D on the next load");
+    t.expect_eq(sv.st.one("select is_3d_home from player", {}), (int64_t)0, "stored");
+    r.ints = {5};
+    t.expect_eq(sent(home3d_and_2d_switching(ctx, r)), 1, "any non-zero: 3D");
+    t.expect_eq(loaded(), 1, "3D on the next load");
+}
+
 }  // namespace soa::server

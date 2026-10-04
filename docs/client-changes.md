@@ -130,6 +130,13 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
 - **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
 
+### `FakeApiCaller::Home3DAnd2DSwitching` on the FakeApiCaller route (agent `nier-home`)
+- **Symbol:** `FakeApiCaller::Home3DAnd2DSwitching(unsigned char)` (a status-only method of the fake caller: Status 1, nothing queued).
+- **Guest behaviour:** `CHome::Progress` sends it for a home character the client shows in 2D only (`master_person.home3d_disable`: 2B, 9S, A2, ...) and continues only when it is answered, so the home stayed empty (no model, no illustration); the 会話モード 2D/3D変更 button sends it too and nothing changed. `NetworkApiCaller` sends the request.
+- **Change (port-specific, `port/src/native/api/fakeapi.cpp`):** with the in-process server, on the FakeApiCaller, the request is queued like `DeepSpaceActiveList` above and answered by `CApiNotify::OnHome3DAnd2DSwitchingRes` with the local server's body (`server/src/api/player/home.cpp`: the mode stored, `Player.is_3d_home`). Otherwise the guest's Status 1.
+- **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
+- **Switch:** the in-process server (`--server inproc`, the default).
+
 ### The Sphere 211 requests on the FakeApiCaller route (agent `sphere211`)
 - **Symbols:** the base-class stubs `IApiCaller::GetSphere211Info()`, `GetSphere211RankingInfo(bool)`, `Sphere211AutoMemberSelect(u32, u32, u32)`, `Sphere211EquipAuto(u32, u32, vector<u64>)`, `Sphere211MissionContinue(u32, u32, bool)`, `Sphere211MissionEnd(u32, u32)`, `Sphere211MissionFailed(u32, u32)`, `Sphere211MissionStart(u32, u32, u64, u64, u64, u64, u32)`, which `FakeApiCaller` inherits, and `FakeApiCaller`'s own status-only overrides `ReturnSphere211()`, `Sphere211StaminaHeal()`, `Sphere211UseRerollItem()`, `Sphere211FloorClear(u32)`, `Sphere211SelectedFloor(u32)`: the 13 Sphere211 APIs.
 - **Guest behaviour:** each returns a Status and sends nothing, so the Sphere 211 board (`CPhase_Mission` with mission type 5, `CSphere*`) never gets its floor, cells, stamina or results. `NetworkApiCaller` sends them.

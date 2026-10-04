@@ -52,7 +52,31 @@ void client_home3d_all(ext::Sql& client_master, ServerTime, EventTime) {
     LOGI("server", "--home3d-all: home3d_disable cleared for %d persons in the client's master", n);
 }
 
-// The home character's API (src/core/modules.cpp: the core's APIs first).
-void register_home_character() { ext::add_core_api({"UpdateHome"}, update_home); }
+// Home3DAnd2DSwitching(u8 is_3d) -> Home3DAnd2DSwitchingRes                       fid a092292c
+// API: docs/api.md#home3dand2dswitching
+// Rules: docs/server-rules.md#home-2d-3d, docs/home3d.md
+//
+// The home's 2D / 3D mode, the player's choice (b):
+//   - CHome::GetAdjutant (@01aebe38) reports whether the home character may be shown in 3D
+//     (!master_person.home3d_disable); CHome::Update then forces the 2D home for one that may
+//     not, and CHome::Progress sends Home3DAnd2DSwitching(0). Its answer's lambda continues the
+//     home (state 3) with the mode set from Player.is_3d_home (CParameterManager+0xd38); with no
+//     answer the home stays empty (no model, no illustration).
+//   - The 会話モード footer's 2D/3D変更 button sends the other mode the same way.
+//   (d) Stored as sent (any non-zero: 3D) in player.is_3d_home, the choice of the online game's
+//   setting; it holds for every home character, as the client's one flag does.
+// Answers: the player state (Player.is_3d_home).
+std::vector<u8> home3d_and_2d_switching(ext::Ctx& ctx, const Request& req) {
+    const bool is_3d = args::Home3DAnd2DSwitchingArgs::from(req).is_3d;
+    ctx.st.q("update player set is_3d_home = ?", {(int64_t)(is_3d ? 1 : 0)});
+    LOGI("server", "Home3DAnd2DSwitching: %s", is_3d ? "3D" : "2D");
+    return with_player_state(ctx);
+}
+
+// The home character's APIs (src/core/modules.cpp: the core's APIs first).
+void register_home_character() {
+    ext::add_core_api({"UpdateHome"}, update_home);
+    ext::add_core_api({"Home3DAnd2DSwitching"}, home3d_and_2d_switching);
+}
 
 }  // namespace soa::server

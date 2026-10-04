@@ -44,7 +44,8 @@ struct TempDb {
                                    ".bak-v7",  ".bak-v7-journal",
                                    ".bak-v8",  ".bak-v8-journal",
                                    ".bak-v9",  ".bak-v9-journal",
-                                   ".bak-v10", ".bak-v10-journal"})
+                                   ".bak-v10", ".bak-v10-journal",
+                                   ".bak-v11", ".bak-v11-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -1420,6 +1421,62 @@ NATIVE_TEST("server/schema-migrate-v11") {
         t.expect_eq(!dir.has(file) && dir.has(migrated), true, "renamed .migrated");
         t.expect_eq(access((fresh.path + ".bak-v0").c_str(), F_OK) != 0, true, "no backup of a new file");
         f.close();
+    }
+}
+
+// Version 12: player.is_3d_home (Home3DAnd2DSwitching). (1) v0 -> v12: every table's rows as the
+// same file at version 11, the player's plus is_3d_home = 1 (the 3D home the server always sent);
+// .bak-v0. (2) v11 -> v12 (a planted v11 file, without the master): the player 3D, .bak-v11 at 11
+// without the column; the column refuses anything but 0 / 1; a new player gets 1.
+NATIVE_TEST("server/schema-migrate-v12") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v12 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file("v12-ref"), old("v12");
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 11, m), true, "the reference: migrated to 11");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, 12, m), true, "v0 -> v12");
+        t.expect_eq(state::user_version(db.h), 12, "user_version 12");
+        t.expect_eq(db.one("select count(*) from player", {}) > 0, true, "the fixture has a player");
+        t.expect_eq(db.one("select count(*) from player where is_3d_home = 1", {}), db.one("select count(*) from player", {}), "every player 3D");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        ra.erase("player");
+        rb.erase("player");
+        t.expect_eq(ra == rb, true, "every other table's rows as at version 11");
+        t.expect_eq(rows_over(db, "player", "id, name, level, home_uid"), rows_over(ref, "player", "id, name, level, home_uid"),
+                    "the player's other columns kept");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v11 -> v12, without the master ------------------------------------------------------------
+    {
+        TempDb v11("v12-from-v11");
+        if (!write_fixture(t, v11.path)) return;
+        Sql f;
+        if (!f.open(v11.path, false)) return t.fail("open v11");
+        t.expect_eq(state::open_and_migrate(f.h, v11.path, 11, m), true, "migrated to 11");
+        f.close();
+        unlink((v11.path + ".bak-v0").c_str());
+        if (!f.open(v11.path, false)) return t.fail("reopen v11");
+        t.expect_eq(state::user_version(f.h), 11, "a version 11 file");
+        t.expect_eq(state::open_and_migrate(f.h, v11.path, 12), true, "v11 -> v12");
+        t.expect_eq(state::user_version(f.h), 12, "user_version 12");
+        t.expect_eq(f.one("select min(is_3d_home) from player", {}), (int64_t)1, "the existing player: 3D");
+        t.expect_eq(sqlite3_exec(f.h, "update player set is_3d_home = 2", nullptr, nullptr, nullptr) != SQLITE_OK, true, "is_3d_home is 0 or 1");
+        t.expect_eq(sqlite3_exec(f.h, "update player set is_3d_home = 0", nullptr, nullptr, nullptr), SQLITE_OK, "0: the 2D home");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        f.close();
+        Sql bak;
+        if (!bak.open(v11.path + ".bak-v11", true)) return t.fail("no %s.bak-v11", v11.path.c_str());
+        t.expect_eq(state::user_version(bak.h), 11, "the backup is version 11");
+        t.expect_eq(bak.one("select count(*) from pragma_table_info('player') where name = 'is_3d_home'", {}), (int64_t)0,
+                    "the backup has no is_3d_home");
+        bak.close();
     }
 }
 

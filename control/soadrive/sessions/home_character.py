@@ -10,12 +10,16 @@ in-process server, soa -v (the client's file opens in the log); then at home:
   OUT/<label>.mp4 with --movie SECS: the home recorded by repeated shots (--movie-fps, the character
                  tapped at --movie-taps seconds), half size, H.264; the frames in OUT/<label>-frames/
   20-interactive, 21-interactive-talk, 22-interactive-later   会話モード (interactive mode), a tap there
+  23-switched-2d, 24-switched-3d   (a character with a 3D home) its footer's 2D/3D変更 tapped twice:
+                 checked by the server's Home3DAnd2DSwitching lines; a 2D-only one (home3d_disable,
+                 without --home3d-all): checked that the client asked for the 2D home itself and
+                 loaded the illustration
 OUT/<label>/ holds each boot's shots, OUT/<label>.log its log; OUT/summary.txt per role its
 master_person.home3d_disable, the files the client opened for it (model, Motion/home_*, the Home3D
 parameters, the 2D illustration Image/<id>_fv..) and the requests sent. docs/home3d.md has the
 client's rules: a home3d_disable character (2B, 9S, A2, ...) gets the 2D home, which the port shows
 empty (Home3DAnd2DSwitching unanswered); --home3d-all (soa's debug option) clears the flag.
-Prints "PASS: ..." when every boot reached home and the shots were taken, else "FAIL: ..." (exit 1).
+Prints "PASS: ..." when every boot reached home and its checks passed, else "FAIL: ..." (exit 1).
 
 Usage: control/run.py home-character <soa> <out-dir> <scratch-dir> [--home ROLE]... [--extra-roles R,...]
          [--home3d-all] [--soa-arg FLAG]...
@@ -38,6 +42,7 @@ TARGETS_WHY = "a seed save through the in-process server's --seed"
 WRAPPER = "control/run.py home-character"
 DEFAULT_HOMES = ("role_cc0015_b01a_6551", "role_cc0016_b01a_6563", "role_cc0017_b01a_6572", "role_cp0002_b01a_6025")
 INTERACTIVE = "90:740"  # 会話モード (interactive mode), left of the mascot
+SWITCH_2D3D = "300:1225"  # 会話モード's footer: 2D/3D変更
 CHARACTER = "364:620"  # the character's body at 729x1296 (2D illustration or 3D model)
 
 
@@ -63,6 +68,12 @@ def seed_for(master, home, homes, extra, path):
     row = db.execute("select p.id_label, p.home3d_disable from master_role r join master_person p on p.id = r.master_person_id "
                      "where r.id = ?", (home_id,)).fetchone()
     return home_id, row[0], bool(row[1])
+
+
+def count(s, rx):
+    """The client log's lines matching rx (the whole file)."""
+    with open(s.client_log, errors="replace") as f:
+        return sum(1 for ln in f if re.search(rx, ln))
 
 
 def record_movie(s, o, out_mp4):
@@ -138,6 +149,22 @@ def main(o):
             c("tap:" + o.character, "wait:2000", s.shot_cmd("14-talk-2"), "wait:8000")
             c("tap:" + INTERACTIVE, "wait:4000", s.shot_cmd("20-interactive"), "tap:" + o.character, "wait:2000",
               s.shot_cmd("21-interactive-talk"), "wait:5000", s.shot_cmd("22-interactive-later"))
+            # The home's mode (docs/home3d.md): a 2D-only character (home3d_disable, without
+            # --home3d-all) makes the client send Home3DAnd2DSwitching(0) by itself and show the 2D
+            # illustration (Image/<id>_fv..); for the others the footer's 2D/3D変更 switches to 2D
+            # and back (the server's "Home3DAnd2DSwitching: 2D / 3D" lines).
+            short = person.split("_")[0]
+            if no3d and not o.home3d_all:
+                s.check("the client asked for the 2D home by itself (Home3DAnd2DSwitching 2D)", count(s, r"Home3DAnd2DSwitching: 2D") >= 1)
+                s.check("the 2D illustration loaded (Image/%s_fv*)" % short,
+                        count(s, r"fopen\(\S*/download/Image/(etc2/)?%s_fv\S* -> .*\) = 0x" % short) >= 1)
+            else:
+                for mode, name in (("2D", "23-switched-2d"), ("3D", "24-switched-3d")):
+                    before = count(s, r"Home3DAnd2DSwitching: " + mode)
+                    c("tap:" + SWITCH_2D3D)
+                    s.check("2D/3D変更 -> Home3DAnd2DSwitching %s" % mode,
+                            s.poll(20, lambda: count(s, r"Home3DAnd2DSwitching: " + mode) > before))
+                    c("wait:5000", s.shot_cmd(name))
 
         ok = common.drive(s, body)
         short = person.split("_")[0]  # cc0015: the illustrations and voices use the short id
@@ -153,6 +180,8 @@ def main(o):
         summary += lines[:200]
         if not ok:
             fails.append("%s: the boot didn't finish" % home)
+        elif any(r.startswith("FAIL") for r in s.results):
+            fails.append("%s: %d checks failed" % (home, sum(1 for r in s.results if r.startswith("FAIL"))))
     with open(os.path.join(o.out, "summary.txt"), "w") as f:
         f.write("\n".join(summary) + "\n")
     print("\n".join(ln for ln in summary if ln.startswith("==")))

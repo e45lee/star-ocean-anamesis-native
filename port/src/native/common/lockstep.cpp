@@ -15,7 +15,6 @@ u64 Lockstep::shadow(u64 key, size_t bytes) {
     if (it != shadows_.end()) return it->second.first;
     u64 b = (u64)(uintptr_t)calloc(1, bytes < 16 ? 16 : bytes);
     shadows_[key] = {b, bytes};
-    blocks_[b] = key;
     return b;
 }
 u64 Lockstep::find(u64 key) {
@@ -27,14 +26,21 @@ void Lockstep::drop(u64 key) {
     std::lock_guard lk(m_);
     auto it = shadows_.find(key);
     if (it == shadows_.end()) return;
-    blocks_.erase(it->second.first);
-    free((void*)(uintptr_t)it->second.first);
+    if (it->second.second) free((void*)(uintptr_t)it->second.first);
     shadows_.erase(it);
 }
-bool Lockstep::is_shadow(u64 p) {
-    if (!p) return false;
+void Lockstep::adopt(u64 key, u64 block) {
     std::lock_guard lk(m_);
-    return blocks_.count(p) != 0;
+    if (auto it = shadows_.find(key); it != shadows_.end() && it->second.second) free((void*)(uintptr_t)it->second.first);
+    shadows_[key] = {block, 0};
+}
+u64 Lockstep::release(u64 key) {
+    std::lock_guard lk(m_);
+    auto it = shadows_.find(key);
+    if (it == shadows_.end()) return 0;
+    u64 b = it->second.first;
+    shadows_.erase(it);
+    return b;
 }
 
 void Lockstep::count(const char* fn, bool good) {
@@ -52,7 +58,7 @@ void Lockstep::count(const char* fn, bool good) {
     if (n % 1000 == 0)
         LOGI(log_tag.c_str(), "%llu checks: %llu ok, %llu mismatches", (unsigned long long)n, (unsigned long long)stats.ok.load(),
              (unsigned long long)stats.bad.load());
-    if (timed || n % 1000 == 0) write_summary();
+    if (timed || n % 1000 == 0 || n < 200) write_summary();  // (the first ones each: rare functions end up in it)
 }
 void Lockstep::ok(const char* fn) { count(fn, true); }
 void Lockstep::bad(const char* fn, const char* fmt, ...) {
@@ -77,15 +83,15 @@ void Lockstep::write_summary() {
     }
 }
 
-void forward_to_original(Cpu& c, u64 orig) {
-    GuestArgs a;
-    for (int i = 0; i < 8; i++) a.i(c.x(i));
-    for (int i = 0; i < 8; i++) a.vecs.push_back(c.v(i));
-    a.x8 = c.x(8);
-    GuestResult r = guest_call(orig, a);
-    c.set_x(0, r.x0);
-    c.set_x(1, r.x1);
-    c.set_v(0, r.v0);
+namespace {
+thread_local int t_shadow = 0;  // > 0: this thread runs the guest library for a shadow
 }
+u64 shadow_call(u64 fn, std::initializer_list<u64> args) {
+    ++t_shadow;
+    u64 r = guest_call(fn, args);
+    --t_shadow;
+    return r;
+}
+bool in_shadow_run() { return t_shadow > 0; }
 
 }  // namespace soa::live

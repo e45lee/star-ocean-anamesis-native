@@ -28,7 +28,7 @@ other functions (the encoder, the internals) are unreachable once these are nati
 
 | Guest symbol | File | Differential tests | Live check |
 |---|---|---|---|
-| `ogg_sync_{init,clear,reset,buffer,wrote,pageout}`, `ogg_page_{eos,serialno}`, `ogg_stream_{init,clear,reset,pagein,packetout,packetpeek}` | `lib_vorbis_api.cpp` | `lib_vorbis/decode-bgm`, `lib_vorbis/decode-damaged`, `lib_vorbis/live-check` | 0 mismatches (battle 48,000+, story 80,000+ checks) |
+| `ogg_sync_{init,clear,reset,buffer,wrote,pageout}`, `ogg_page_{eos,serialno}`, `ogg_stream_{init,clear,reset,pagein,packetout,packetpeek}` | `lib_vorbis_api.cpp` | `lib_vorbis/decode-bgm`, `lib_vorbis/decode-damaged`, `lib_vorbis/live-check` | 0 mismatches (login 15,000+, battle 49,000+, gacha 45,000+, story 80,000+ checks) |
 | `vorbis_info_{init,clear,blocksize}`, `vorbis_comment_{init,clear}`, `vorbis_synthesis_{headerin,init,trackonly,blockin,pcmout,read,restart}`, `vorbis_synthesis`, `vorbis_dsp_clear`, `vorbis_block_{init,clear}`, `vorbis_packet_blocksize` | `lib_vorbis_api.cpp` | same | same |
 | `ogg_memory_hook` | `lib_vorbis_api.cpp` | - (a no-op: below) | - |
 
@@ -47,6 +47,10 @@ errors, flipped bytes behind valid CRCs, a cut stream); every result, packet and
 lockstep on shadow structs; results, pages, packets, stream parameters and every decoded sample compared.
 Measured over `battle_session.sh` (battle BGM, voices, SE) and `campaign_session.sh` (the story mission and
 scene mc01_030), both PASS.
+
+**Guest time:** 4,267 samples (1.5% of the four flows' guest time; login 1.0%, battle 1.3%, gacha 1.4%,
+story 1.8%) before, 0 after (no library function executes on the guest; port/REBUILD-QUEUE.md's flows,
+`port/scripts/rebuild_queue.py`).
 
 ## Dependencies
 
@@ -76,5 +80,6 @@ None (a leaf). The `audio` subsystem (`Aska::AskaOGG`, `Aska::SLVoice`) calls it
   `vorbis_synthesis_init` -> `vorbis_dsp_clear`, on errors): under the live check those calls carry the
   shadows, and the natives forward them to the originals.
 - **Trampolines:** 9 of the 32 start with a pc-relative instruction (`cbz x0` in `ogg_sync_init`, an
-  ADRP in `ogg_memory_hook`, ...); the runtime's original trampolines relocate those now (they used to
-  refuse, which left the function to the guest: guest and host library on one state).
+  ADRP in `ogg_memory_hook`, ...): they need the relocated trampolines (native/common/trampoline.h);
+  before those, such a native was left uninstalled, and guest and host library ran on one state (a crash
+  in the first live run).

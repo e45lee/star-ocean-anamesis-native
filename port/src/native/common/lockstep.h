@@ -12,9 +12,9 @@
 // run reaches the game: outputs go to scratch buffers.
 //
 // The guest library calls its own exported functions too (vorbis_synthesis_headerin -> vorbis_info_clear,
-// AES_set_decrypt_key -> AES_set_encrypt_key, ...), and those are natives now: a native given a
-// shadow object forwards the call to the guest original (forward_to_original), so the guest library
-// keeps running on its own state.
+// AES_set_decrypt_key -> AES_set_encrypt_key, ...), and those are natives now: while a thread runs the
+// guest library for a shadow (shadow_call), a native entered on it forwards to its guest original, so
+// the guest library keeps running on its own state (lib_sqlite's t_guest, shared by these families).
 //
 // Switches: --live-check <tag>[:out=FILE][:only=SUB|..] (live_check.h; every= and budget= don't apply:
 // a shadow must see every call to stay in step). only= limits the comparisons, not the shadow run.
@@ -41,7 +41,9 @@ public:
     u64 shadow(u64 key, size_t bytes);  // the key's shadow, made on first use
     u64 find(u64 key);                  // 0 if the key has none
     void drop(u64 key);                 // frees the key's shadow
-    bool is_shadow(u64 p);              // p is a shadow block (the guest library's own object)
+    // A shadow the guest library made itself (e.g. its ZSTD_createDStream's): registered, not owned.
+    void adopt(u64 key, u64 block);
+    u64 release(u64 key);  // unregisters the key's shadow (not freed); returns it (0: none)
 
     // Results of one comparison of `fn` (a check). bad() logs the first mismatches (E/<tag>_check).
     void ok(const char* fn);
@@ -58,15 +60,15 @@ private:
     };
     void count(const char* fn, bool good);
     std::mutex m_;
-    std::unordered_map<u64, std::pair<u64, size_t>> shadows_;  // key -> (block, bytes)
-    std::unordered_map<u64, u64> blocks_;                       // block -> key
+    std::unordered_map<u64, std::pair<u64, size_t>> shadows_;  // key -> (block, bytes; 0: adopted)
     std::map<std::string, Counts> per_fn_;
     std::atomic<s64> last_write_{0};
     std::atomic<int> logged_{0};
 };
 
-// Runs the hook's guest original with the native's own argument registers (x0-x7, v0-v7) and
-// returns its x0 / v0 to the caller: for calls the guest library makes on its shadow objects.
-void forward_to_original(Cpu& c, u64 orig);
+// A shadow run: the guest library's function `fn` (a hook's original) called for the check. While it
+// runs, in_shadow_run() is true on this thread, and the natives forward to their originals.
+u64 shadow_call(u64 fn, std::initializer_list<u64> args);
+bool in_shadow_run();
 
 }  // namespace soa::live

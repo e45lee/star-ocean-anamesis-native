@@ -76,8 +76,8 @@ void to_guest(const ogg_packet& h, OggPacket* g) {
 // ---- the lockstep check ----
 
 bool checking() { return g_check.active(); }
-// A call the guest library makes on one of its own (shadow) objects: run the original.
-bool is_shadow(const void* p) { return checking() && g_check.is_shadow(a(p)); }
+// A call the guest library makes on its own state during a shadow run: forwarded to the original.
+bool forwarding() { return live::in_shadow_run(); }
 u64 sh(const void* p, size_t n) { return g_check.shadow(a(p), n); }
 u64 fresh(const void* p, size_t n) {
     g_check.drop(a(p));
@@ -131,16 +131,16 @@ void ogg_memory_hook_(u64 malloc_fn, u64 calloc_fn, u64 realloc_fn, u64 free_fn)
 }
 
 s32 sync_init(OggSyncState* oy) {
-    if (is_shadow(oy)) return gi(guest_call(orig.sync_init, {a(oy)}));
+    if (forwarding()) return gi(guest_call(orig.sync_init, {a(oy)}));
     s32 r = ogg_sync_init(H(oy));
-    if (checking()) verdict_ret("ogg_sync_init", r, gi(guest_call(orig.sync_init, {fresh(oy, sizeof(OggSyncState))})));
+    if (checking()) verdict_ret("ogg_sync_init", r, gi(live::shadow_call(orig.sync_init, {fresh(oy, sizeof(OggSyncState))})));
     return r;
 }
 s32 sync_clear(OggSyncState* oy) {
-    if (is_shadow(oy)) return gi(guest_call(orig.sync_clear, {a(oy)}));
+    if (forwarding()) return gi(guest_call(orig.sync_clear, {a(oy)}));
     s32 r = ogg_sync_clear(H(oy));
     if (checking()) {
-        if (u64 s = g_check.find(a(oy))) verdict_ret("ogg_sync_clear", r, gi(guest_call(orig.sync_clear, {s})));
+        if (u64 s = g_check.find(a(oy))) verdict_ret("ogg_sync_clear", r, gi(live::shadow_call(orig.sync_clear, {s})));
         g_check.drop(a(oy));
         std::lock_guard lk(g_buf_m);
         g_bufs.erase(a(oy));
@@ -148,16 +148,16 @@ s32 sync_clear(OggSyncState* oy) {
     return r;
 }
 s32 sync_reset(OggSyncState* oy) {
-    if (is_shadow(oy)) return gi(guest_call(orig.sync_reset, {a(oy)}));
+    if (forwarding()) return gi(guest_call(orig.sync_reset, {a(oy)}));
     s32 r = ogg_sync_reset(H(oy));
-    if (checking()) verdict_ret("ogg_sync_reset", r, gi(guest_call(orig.sync_reset, {sh(oy, sizeof(OggSyncState))})));
+    if (checking()) verdict_ret("ogg_sync_reset", r, gi(live::shadow_call(orig.sync_reset, {sh(oy, sizeof(OggSyncState))})));
     return r;
 }
 char* sync_buffer(OggSyncState* oy, s64 size) {
-    if (is_shadow(oy)) return (char*)(uintptr_t)guest_call(orig.sync_buffer, {a(oy), (u64)size});
+    if (forwarding()) return (char*)(uintptr_t)guest_call(orig.sync_buffer, {a(oy), (u64)size});
     char* r = ogg_sync_buffer(H(oy), (long)size);
     if (checking()) {
-        u64 s = guest_call(orig.sync_buffer, {sh(oy, sizeof(OggSyncState)), (u64)size});
+        u64 s = live::shadow_call(orig.sync_buffer, {sh(oy, sizeof(OggSyncState)), (u64)size});
         verdict("ogg_sync_buffer", (r != nullptr) == (s != 0), "one buffer is null");
         std::lock_guard lk(g_buf_m);
         g_bufs[a(oy)] = {r, s};
@@ -165,7 +165,7 @@ char* sync_buffer(OggSyncState* oy, s64 size) {
     return r;
 }
 s32 sync_wrote(OggSyncState* oy, s64 bytes) {
-    if (is_shadow(oy)) return gi(guest_call(orig.sync_wrote, {a(oy), (u64)bytes}));
+    if (forwarding()) return gi(guest_call(orig.sync_wrote, {a(oy), (u64)bytes}));
     if (checking()) {
         // the bytes the game put in the host's buffer, into the shadow's (before the host's wrote)
         std::lock_guard lk(g_buf_m);
@@ -175,15 +175,15 @@ s32 sync_wrote(OggSyncState* oy, s64 bytes) {
         if (it != g_bufs.end()) g_bufs.erase(it);
     }
     s32 r = ogg_sync_wrote(H(oy), (long)bytes);
-    if (checking()) verdict_ret("ogg_sync_wrote", r, gi(guest_call(orig.sync_wrote, {sh(oy, sizeof(OggSyncState)), (u64)bytes})));
+    if (checking()) verdict_ret("ogg_sync_wrote", r, gi(live::shadow_call(orig.sync_wrote, {sh(oy, sizeof(OggSyncState)), (u64)bytes})));
     return r;
 }
 s32 sync_pageout(OggSyncState* oy, OggPage* og) {
-    if (is_shadow(oy)) return gi(guest_call(orig.sync_pageout, {a(oy), a(og)}));
+    if (forwarding()) return gi(guest_call(orig.sync_pageout, {a(oy), a(og)}));
     s32 r = ogg_sync_pageout(H(oy), H(og));
     if (checking()) {
         u64 sog = og ? sh(og, sizeof(OggPage)) : 0;
-        s32 g = gi(guest_call(orig.sync_pageout, {sh(oy, sizeof(OggSyncState)), sog}));
+        s32 g = gi(live::shadow_call(orig.sync_pageout, {sh(oy, sizeof(OggSyncState)), sog}));
         if (r != g || r != 1 || !og) verdict_ret("ogg_sync_pageout", r, g);
         else {
             ogg_page* hp = H(og);
@@ -196,57 +196,57 @@ s32 sync_pageout(OggSyncState* oy, OggPage* og) {
     return r;
 }
 s32 page_eos(const OggPage* og) {
-    if (is_shadow(og)) return gi(guest_call(orig.page_eos, {a(og)}));
+    if (forwarding()) return gi(guest_call(orig.page_eos, {a(og)}));
     s32 r = ogg_page_eos(H(const_cast<OggPage*>(og)));
     if (checking())
-        if (u64 s = g_check.find(a(og)); s && ((const OggPage*)(uintptr_t)s)->header) verdict_ret("ogg_page_eos", r, gi(guest_call(orig.page_eos, {s})));
+        if (u64 s = g_check.find(a(og)); s && ((const OggPage*)(uintptr_t)s)->header) verdict_ret("ogg_page_eos", r, gi(live::shadow_call(orig.page_eos, {s})));
     return r;
 }
 s32 page_serialno(const OggPage* og) {
-    if (is_shadow(og)) return gi(guest_call(orig.page_serialno, {a(og)}));
+    if (forwarding()) return gi(guest_call(orig.page_serialno, {a(og)}));
     s32 r = ogg_page_serialno(H(const_cast<OggPage*>(og)));
     if (checking())
         if (u64 s = g_check.find(a(og)); s && ((const OggPage*)(uintptr_t)s)->header)
-            verdict_ret("ogg_page_serialno", r, gi(guest_call(orig.page_serialno, {s})));
+            verdict_ret("ogg_page_serialno", r, gi(live::shadow_call(orig.page_serialno, {s})));
     return r;
 }
 s32 stream_init(OggStreamState* os, s32 serialno) {
-    if (is_shadow(os)) return gi(guest_call(orig.stream_init, {a(os), (u64)(u32)serialno}));
+    if (forwarding()) return gi(guest_call(orig.stream_init, {a(os), (u64)(u32)serialno}));
     s32 r = ogg_stream_init(H(os), serialno);
-    if (checking()) verdict_ret("ogg_stream_init", r, gi(guest_call(orig.stream_init, {fresh(os, sizeof(OggStreamState)), (u64)(u32)serialno})));
+    if (checking()) verdict_ret("ogg_stream_init", r, gi(live::shadow_call(orig.stream_init, {fresh(os, sizeof(OggStreamState)), (u64)(u32)serialno})));
     return r;
 }
 s32 stream_clear(OggStreamState* os) {
-    if (is_shadow(os)) return gi(guest_call(orig.stream_clear, {a(os)}));
+    if (forwarding()) return gi(guest_call(orig.stream_clear, {a(os)}));
     s32 r = ogg_stream_clear(H(os));
     if (checking()) {
-        if (u64 s = g_check.find(a(os))) verdict_ret("ogg_stream_clear", r, gi(guest_call(orig.stream_clear, {s})));
+        if (u64 s = g_check.find(a(os))) verdict_ret("ogg_stream_clear", r, gi(live::shadow_call(orig.stream_clear, {s})));
         g_check.drop(a(os));
     }
     return r;
 }
 s32 stream_reset(OggStreamState* os) {
-    if (is_shadow(os)) return gi(guest_call(orig.stream_reset, {a(os)}));
+    if (forwarding()) return gi(guest_call(orig.stream_reset, {a(os)}));
     s32 r = ogg_stream_reset(H(os));
-    if (checking()) verdict_ret("ogg_stream_reset", r, gi(guest_call(orig.stream_reset, {sh(os, sizeof(OggStreamState))})));
+    if (checking()) verdict_ret("ogg_stream_reset", r, gi(live::shadow_call(orig.stream_reset, {sh(os, sizeof(OggStreamState))})));
     return r;
 }
 s32 stream_pagein(OggStreamState* os, OggPage* og) {
-    if (is_shadow(os)) return gi(guest_call(orig.stream_pagein, {a(os), a(og)}));
+    if (forwarding()) return gi(guest_call(orig.stream_pagein, {a(os), a(og)}));
     s32 r = ogg_stream_pagein(H(os), H(og));
     if (checking())
         if (u64 s = g_check.find(a(og)); s && ((const OggPage*)(uintptr_t)s)->header)
-            verdict_ret("ogg_stream_pagein", r, gi(guest_call(orig.stream_pagein, {sh(os, sizeof(OggStreamState)), s})));
+            verdict_ret("ogg_stream_pagein", r, gi(live::shadow_call(orig.stream_pagein, {sh(os, sizeof(OggStreamState)), s})));
     return r;
 }
 static s32 packet_step(const char* fn, u64 o, int (*host)(ogg_stream_state*, ogg_packet*), OggStreamState* os, OggPacket* op) {
-    if (is_shadow(os)) return gi(guest_call(o, {a(os), a(op)}));
+    if (forwarding()) return gi(guest_call(o, {a(os), a(op)}));
     ogg_packet hp{};
     s32 r = host(H(os), op ? &hp : nullptr);
     if (op && r == 1) to_guest(hp, op);
     if (checking()) {
         u64 sop = op ? sh(op, sizeof(OggPacket)) : 0;
-        s32 g = gi(guest_call(o, {sh(os, sizeof(OggStreamState)), sop}));
+        s32 g = gi(live::shadow_call(o, {sh(os, sizeof(OggStreamState)), sop}));
         char why[256];
         if (r != g || r != 1 || !op) verdict_ret(fn, r, g);
         else verdict(fn, same_packet(*op, *(const OggPacket*)(uintptr_t)sop, why, sizeof why), why);
@@ -259,45 +259,45 @@ s32 stream_packetpeek(OggStreamState* os, OggPacket* op) { return packet_step("o
 // ---- libVorbis ----
 
 void info_init(VorbisInfo* vi) {
-    if (is_shadow(vi)) return (void)guest_call(orig.info_init, {a(vi)});
+    if (forwarding()) return (void)guest_call(orig.info_init, {a(vi)});
     vorbis_info_init(H(vi));
-    if (checking()) guest_call(orig.info_init, {fresh(vi, sizeof(VorbisInfo))});
+    if (checking()) live::shadow_call(orig.info_init, {fresh(vi, sizeof(VorbisInfo))});
 }
 void info_clear(VorbisInfo* vi) {
-    if (is_shadow(vi)) return (void)guest_call(orig.info_clear, {a(vi)});
+    if (forwarding()) return (void)guest_call(orig.info_clear, {a(vi)});
     vorbis_info_clear(H(vi));
     if (checking()) {
-        if (u64 s = g_check.find(a(vi))) guest_call(orig.info_clear, {s});
+        if (u64 s = g_check.find(a(vi))) live::shadow_call(orig.info_clear, {s});
         g_check.drop(a(vi));
     }
 }
 s32 info_blocksize(VorbisInfo* vi, s32 zo) {
-    if (is_shadow(vi)) return gi(guest_call(orig.info_blocksize, {a(vi), (u64)(u32)zo}));
+    if (forwarding()) return gi(guest_call(orig.info_blocksize, {a(vi), (u64)(u32)zo}));
     s32 r = vorbis_info_blocksize(H(vi), zo);
-    if (checking()) verdict_ret("vorbis_info_blocksize", r, gi(guest_call(orig.info_blocksize, {sh(vi, sizeof(VorbisInfo)), (u64)(u32)zo})));
+    if (checking()) verdict_ret("vorbis_info_blocksize", r, gi(live::shadow_call(orig.info_blocksize, {sh(vi, sizeof(VorbisInfo)), (u64)(u32)zo})));
     return r;
 }
 void comment_init(VorbisComment* vc) {
-    if (is_shadow(vc)) return (void)guest_call(orig.comment_init, {a(vc)});
+    if (forwarding()) return (void)guest_call(orig.comment_init, {a(vc)});
     vorbis_comment_init(H(vc));
-    if (checking()) guest_call(orig.comment_init, {fresh(vc, sizeof(VorbisComment))});
+    if (checking()) live::shadow_call(orig.comment_init, {fresh(vc, sizeof(VorbisComment))});
 }
 void comment_clear(VorbisComment* vc) {
-    if (is_shadow(vc)) return (void)guest_call(orig.comment_clear, {a(vc)});
+    if (forwarding()) return (void)guest_call(orig.comment_clear, {a(vc)});
     vorbis_comment_clear(H(vc));
     if (checking()) {
-        if (u64 s = g_check.find(a(vc))) guest_call(orig.comment_clear, {s});
+        if (u64 s = g_check.find(a(vc))) live::shadow_call(orig.comment_clear, {s});
         g_check.drop(a(vc));
     }
 }
 s32 synthesis_headerin(VorbisInfo* vi, VorbisComment* vc, OggPacket* op) {
-    if (is_shadow(vi)) return gi(guest_call(orig.headerin, {a(vi), a(vc), a(op)}));
+    if (forwarding()) return gi(guest_call(orig.headerin, {a(vi), a(vc), a(op)}));
     ogg_packet hp = to_host(*op);
     s32 r = vorbis_synthesis_headerin(H(vi), H(vc), &hp);
     if (checking())
         if (u64 sop = g_check.find(a(op))) {
             u64 svi = sh(vi, sizeof(VorbisInfo));
-            s32 g = gi(guest_call(orig.headerin, {svi, sh(vc, sizeof(VorbisComment)), sop}));
+            s32 g = gi(live::shadow_call(orig.headerin, {svi, sh(vc, sizeof(VorbisComment)), sop}));
             const vorbis_info* h = H(vi);
             const VorbisInfo* s = (const VorbisInfo*)(uintptr_t)svi;
             if (r != g) verdict_ret("vorbis_synthesis_headerin", r, g);
@@ -314,42 +314,42 @@ s32 synthesis_headerin(VorbisInfo* vi, VorbisComment* vc, OggPacket* op) {
     return r;
 }
 s32 synthesis_init(VorbisDspState* vd, VorbisInfo* vi) {
-    if (is_shadow(vd)) return gi(guest_call(orig.synthesis_init, {a(vd), a(vi)}));
+    if (forwarding()) return gi(guest_call(orig.synthesis_init, {a(vd), a(vi)}));
     s32 r = vorbis_synthesis_init(H(vd), H(vi));
     if (checking())
-        verdict_ret("vorbis_synthesis_init", r, gi(guest_call(orig.synthesis_init, {fresh(vd, sizeof(VorbisDspState)), sh(vi, sizeof(VorbisInfo))})));
+        verdict_ret("vorbis_synthesis_init", r, gi(live::shadow_call(orig.synthesis_init, {fresh(vd, sizeof(VorbisDspState)), sh(vi, sizeof(VorbisInfo))})));
     return r;
 }
 void dsp_clear(VorbisDspState* vd) {
-    if (is_shadow(vd)) return (void)guest_call(orig.dsp_clear, {a(vd)});
+    if (forwarding()) return (void)guest_call(orig.dsp_clear, {a(vd)});
     vorbis_dsp_clear(H(vd));
     if (checking()) {
-        if (u64 s = g_check.find(a(vd))) guest_call(orig.dsp_clear, {s});
+        if (u64 s = g_check.find(a(vd))) live::shadow_call(orig.dsp_clear, {s});
         g_check.drop(a(vd));
     }
 }
 s32 block_init(VorbisDspState* vd, VorbisBlock* vb) {
-    if (is_shadow(vd)) return gi(guest_call(orig.block_init, {a(vd), a(vb)}));
+    if (forwarding()) return gi(guest_call(orig.block_init, {a(vd), a(vb)}));
     s32 r = vorbis_block_init(H(vd), H(vb));
     if (checking())
-        verdict_ret("vorbis_block_init", r, gi(guest_call(orig.block_init, {sh(vd, sizeof(VorbisDspState)), fresh(vb, sizeof(VorbisBlock))})));
+        verdict_ret("vorbis_block_init", r, gi(live::shadow_call(orig.block_init, {sh(vd, sizeof(VorbisDspState)), fresh(vb, sizeof(VorbisBlock))})));
     return r;
 }
 s32 block_clear(VorbisBlock* vb) {
-    if (is_shadow(vb)) return gi(guest_call(orig.block_clear, {a(vb)}));
+    if (forwarding()) return gi(guest_call(orig.block_clear, {a(vb)}));
     s32 r = vorbis_block_clear(H(vb));
     if (checking()) {
-        if (u64 s = g_check.find(a(vb))) verdict_ret("vorbis_block_clear", r, gi(guest_call(orig.block_clear, {s})));
+        if (u64 s = g_check.find(a(vb))) verdict_ret("vorbis_block_clear", r, gi(live::shadow_call(orig.block_clear, {s})));
         g_check.drop(a(vb));
     }
     return r;
 }
 static s32 block_step(const char* fn, u64 o, int (*host)(vorbis_block*, ogg_packet*), VorbisBlock* vb, OggPacket* op) {
-    if (is_shadow(vb)) return gi(guest_call(o, {a(vb), a(op)}));
+    if (forwarding()) return gi(guest_call(o, {a(vb), a(op)}));
     ogg_packet hp = to_host(*op);
     s32 r = host(H(vb), &hp);
     if (checking())
-        if (u64 sop = g_check.find(a(op))) verdict_ret(fn, r, gi(guest_call(o, {sh(vb, sizeof(VorbisBlock)), sop})));
+        if (u64 sop = g_check.find(a(op))) verdict_ret(fn, r, gi(live::shadow_call(o, {sh(vb, sizeof(VorbisBlock)), sop})));
     return r;
 }
 s32 synthesis(VorbisBlock* vb, OggPacket* op) { return block_step("vorbis_synthesis", orig.synthesis, vorbis_synthesis, vb, op); }
@@ -357,19 +357,19 @@ s32 synthesis_trackonly(VorbisBlock* vb, OggPacket* op) {
     return block_step("vorbis_synthesis_trackonly", orig.trackonly, vorbis_synthesis_trackonly, vb, op);
 }
 s32 synthesis_blockin(VorbisDspState* vd, VorbisBlock* vb) {
-    if (is_shadow(vd)) return gi(guest_call(orig.blockin, {a(vd), a(vb)}));
+    if (forwarding()) return gi(guest_call(orig.blockin, {a(vd), a(vb)}));
     s32 r = vorbis_synthesis_blockin(H(vd), H(vb));
     if (checking())
-        verdict_ret("vorbis_synthesis_blockin", r, gi(guest_call(orig.blockin, {sh(vd, sizeof(VorbisDspState)), sh(vb, sizeof(VorbisBlock))})));
+        verdict_ret("vorbis_synthesis_blockin", r, gi(live::shadow_call(orig.blockin, {sh(vd, sizeof(VorbisDspState)), sh(vb, sizeof(VorbisBlock))})));
     return r;
 }
 s32 synthesis_pcmout(VorbisDspState* vd, float*** pcm) {
-    if (is_shadow(vd)) return gi(guest_call(orig.pcmout, {a(vd), a(pcm)}));
+    if (forwarding()) return gi(guest_call(orig.pcmout, {a(vd), a(pcm)}));
     s32 r = vorbis_synthesis_pcmout(H(vd), pcm);
     if (checking()) {
         if (!t_pcm_slot) t_pcm_slot = (u64*)calloc(1, 16);
         *t_pcm_slot = 0;
-        s32 g = gi(guest_call(orig.pcmout, {sh(vd, sizeof(VorbisDspState)), pcm ? a(t_pcm_slot) : 0}));
+        s32 g = gi(live::shadow_call(orig.pcmout, {sh(vd, sizeof(VorbisDspState)), pcm ? a(t_pcm_slot) : 0}));
         if (r != g || r <= 0 || !pcm) verdict_ret("vorbis_synthesis_pcmout", r, g);
         else {
             // the decoded samples, bit for bit
@@ -386,24 +386,24 @@ s32 synthesis_pcmout(VorbisDspState* vd, float*** pcm) {
     return r;
 }
 s32 synthesis_read(VorbisDspState* vd, s32 samples) {
-    if (is_shadow(vd)) return gi(guest_call(orig.read, {a(vd), (u64)(u32)samples}));
+    if (forwarding()) return gi(guest_call(orig.read, {a(vd), (u64)(u32)samples}));
     s32 r = vorbis_synthesis_read(H(vd), samples);
-    if (checking()) verdict_ret("vorbis_synthesis_read", r, gi(guest_call(orig.read, {sh(vd, sizeof(VorbisDspState)), (u64)(u32)samples})));
+    if (checking()) verdict_ret("vorbis_synthesis_read", r, gi(live::shadow_call(orig.read, {sh(vd, sizeof(VorbisDspState)), (u64)(u32)samples})));
     return r;
 }
 s32 synthesis_restart(VorbisDspState* vd) {
-    if (is_shadow(vd)) return gi(guest_call(orig.restart, {a(vd)}));
+    if (forwarding()) return gi(guest_call(orig.restart, {a(vd)}));
     s32 r = vorbis_synthesis_restart(H(vd));
-    if (checking()) verdict_ret("vorbis_synthesis_restart", r, gi(guest_call(orig.restart, {sh(vd, sizeof(VorbisDspState))})));
+    if (checking()) verdict_ret("vorbis_synthesis_restart", r, gi(live::shadow_call(orig.restart, {sh(vd, sizeof(VorbisDspState))})));
     return r;
 }
 s64 packet_blocksize(VorbisInfo* vi, OggPacket* op) {
-    if (is_shadow(vi)) return (s64)guest_call(orig.packet_blocksize, {a(vi), a(op)});
+    if (forwarding()) return (s64)guest_call(orig.packet_blocksize, {a(vi), a(op)});
     ogg_packet hp = to_host(*op);
     s64 r = vorbis_packet_blocksize(H(vi), &hp);
     if (checking())
         if (u64 sop = g_check.find(a(op)))
-            verdict_ret("vorbis_packet_blocksize", r, (s64)guest_call(orig.packet_blocksize, {sh(vi, sizeof(VorbisInfo)), sop}));
+            verdict_ret("vorbis_packet_blocksize", r, (s64)live::shadow_call(orig.packet_blocksize, {sh(vi, sizeof(VorbisInfo)), sop}));
     return r;
 }
 

@@ -181,7 +181,7 @@ NATIVE_TEST("resource/layout-file-loader") {
     t.call("_ZN9Framework16CResourceElementC1Ej", {(u64)e, 1});
     const u64 vt = vtable_of(t, "_ZTVN9Framework16CResourceElementE");
     t.expect_eq((u64)e->base.vtable, vt, "primary vtable");
-    t.expect_eq((u64)e->m_task.vtable, vt - 0x10 + 0xb0, "Aska::Task vtable at +0xc0 (_ZTV + 0xb0)");
+    t.expect_eq((u64)e->m_task.link.vtable, vt - 0x10 + 0xb0, "Aska::Task vtable at +0xc0 (_ZTV + 0xb0)");
     t.expect_eq((u64)e->m_finishNotify.vtable, vtable_of(t, "_ZTVN9Framework16CResourceElement13CFinishNotifyE"), "CFinishNotify vtable");
     t.expect_eq(e->m_finishNotify.m_owner, e, "CFinishNotify owner");
     t.expect_eq(e->m_finishNotify.m_done, (u8)0, "CFinishNotify done");
@@ -342,7 +342,7 @@ NATIVE_TEST("resource/layout-resource-manager") {
 
     auto* dl = reinterpret_cast<CGameResourceDownloader*>(grm->m_pDownLoader);
     if (!dl) return;
-    t.expect_eq((u64)*reinterpret_cast<const void* const*>(dl->fiberUnit), vtable_of(t, "_ZTV23CGameResourceDownloader"), "downloader vtable");
+    t.expect_eq((u64)dl->fiberUnit.vtable, vtable_of(t, "_ZTV23CGameResourceDownloader"), "downloader vtable");
     const u64 node_array_vt = vtable_of(t, "_ZTVN4Aska6TArrayIPN23CGameResourceDownloader13CDownloadNodeELb0EEE");
     t.expect_eq((u64)dl->m_nodes.vtable, node_array_vt, "m_nodes vtable");
     t.expect_eq((u64)dl->m_downloading.vtable, node_array_vt, "m_downloading vtable");
@@ -497,7 +497,7 @@ NATIVE_TEST("resource/layout-ahsl-libl") {
                 "m_loaderList: an _AarLoaderList (a TList<_AarLoaderElem>)");
     t.expect_eq(*reinterpret_cast<const u64*>(libl->m_loaderList + 8), vtable_of(t, "_ZTVN4Aska11LIBLManager14_AarLoaderElemE"),
                 "the list's sentinel element");
-    t.expect_eq((u64)libl->m_updateTask.vtable, vtable_of(t, "_ZTVN4Aska11LIBLManager20_AarLoaderUpdateTaskE"), "m_updateTask vtable");
+    t.expect_eq((u64)libl->m_updateTask.link.vtable, vtable_of(t, "_ZTVN4Aska11LIBLManager20_AarLoaderUpdateTaskE"), "m_updateTask vtable");
     t.expect_eq((u64)libl->m_detachHandlerVtable, vtable_of(t, "_ZTVN4Aska16AarTextureCommon20DetachTextureHandlerE"),
                 "the DetachTextureHandler");
 }

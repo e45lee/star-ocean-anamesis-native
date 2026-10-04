@@ -4,37 +4,6 @@
  "header": "port/src/native/resource/resource_layout.h",
  "structs": [
   {
-   "name": "TaskBytes",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "unk_08",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 32
-     },
-     "size": 32
-    }
-   ],
-   "size": 40,
-   "align": 8
-  },
-  {
    "name": "CHash32Bytes",
    "union": false,
    "fields": [
@@ -2376,8 +2345,9 @@
      "offset": 192,
      "name": "m_task",
      "type": {
-      "kind": "struct",
-      "name": "TaskBytes"
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::Task",
+      "size": 40
      },
      "size": 40
     },
@@ -3326,15 +3296,25 @@
      "offset": 0,
      "name": "fiberUnit",
      "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::CFiberUnit",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 56,
+     "name": "unk_038",
+     "type": {
       "kind": "array",
       "of": {
        "kind": "int",
        "size": 1,
        "signed": false
       },
-      "count": 64
+      "count": 8
      },
-     "size": 64
+     "size": 8
     },
     {
      "offset": 64,
@@ -5467,8 +5447,9 @@
      "offset": 2280,
      "name": "m_updateTask",
      "type": {
-      "kind": "struct",
-      "name": "TaskBytes"
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::Task",
+      "size": 40
      },
      "size": 40
     },

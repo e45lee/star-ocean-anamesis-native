@@ -25,6 +25,7 @@
 
 #include "../containers/containers_layout.h"
 #include "../data_formats/data_formats_layout.h"
+#include "../kernel/kernel_layout.h"
 #include "../libcxx/libcxx_layout.h"
 #include "../memory/memory_layout.h"
 
@@ -54,15 +55,13 @@ inline constexpr u64 kCriticalSectionSize = 0x28;      // Aska::CriticalSection 
 // (inlined in CResourceManager's / CResourceElement's): vtable, +0x08 / +0x10 / +0x18 = 0, +0x20 u32 =
 // GetDefaultLevel() (vtable slot 11), +0x24 u16 = 0, +0x26 u8 = 0.
 inline constexpr u64 kTaskDataSize = 0x27;
-// kernel: Framework::CFiberUnit, guest size 0x40 (CFiberUnit::CFiberUnit(unsigned) runs first in
-// CGameResourceDownloader's constructor; the downloader's own fields start at +0x40).
-inline constexpr u64 kFiberUnitSize = 0x40;
-
-// Aska::Task as a member (CResourceElement's second base at +0xc0): 0x28 bytes, opaque past its vtable.
-struct TaskBytes {
-    const void* vtable;  // 0x00: the derived class's secondary vtable (CResourceElement: _ZTV + 0xb0)
-    u8 unk_08[0x20];     // 0x08: kernel's Aska::Task fields
-};
+// kernel: Framework::CFiberUnit (kernel_layout.h, 0x38) is CGameResourceDownloader's base; the
+// downloader's first field the constructor writes is at +0x40, so +0x38..0x3f is either the derived
+// class's own (never written by its constructor) or alignment: unknown.
+// Aska::Task as a member (CResourceElement's second base at +0xc0, LIBLManager's update task):
+// kernel_layout.h's Task (0x28). CResourceManager keeps it as inline bytes (its own field sits in the
+// Task's tail padding at +0x27).
+using TaskBytes = kernel::Task;
 static_assert(sizeof(TaskBytes) == 0x28);
 
 // hash (n-hash-math): Framework::CHash32 {vtable, u32 hash}, 0x10 bytes.
@@ -692,7 +691,8 @@ public:
     void Progress_Setup();
     void Progress_Download();
 
-    u8 fiberUnit[kFiberUnitSize];                               // 0x000: Framework::CFiberUnit (kernel)
+    kernel::CFiberUnit fiberUnit;                               // 0x000: Framework::CFiberUnit (kernel)
+    u8 unk_038[8];                                              // 0x038: unknown (see kernel::CFiberUnit above)
     containers::TArray<void*, false> m_nodes;                   // 0x040: TArray<CDownloadNode*, false>
     containers::TArray<void*, false> m_downloading;             // 0x078: TArray<CDownloadNode*, false> (node +0x190: its state)
     containers::TArray<u8, false> m_nodeInitializers;           // 0x0b0: TArray<tDownloadNodeInitializer, false>

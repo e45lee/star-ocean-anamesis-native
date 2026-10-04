@@ -43,8 +43,9 @@ lock), its fields read through these classes and compared with the guest's acces
 
 Other subsystems' classes are held as sized bytes with the class named in the comment (the headers aren't
 merged yet): sync's FastCriticalSection (0x90), CMutex (0xb0), Event (0x68), CriticalSection (0x28); hash's
-CHash32 (`CHash32Bytes`, 0x10); kernel's Aska::Task (`TaskBytes` 0x28 / CResourceManager's inline bytes:
-data size 0x27, a derived class's first byte at +0x27) and Framework::CFiberUnit (0x40). The merged
+CHash32 (`CHash32Bytes`, 0x10). kernel's classes come from kernel_layout.h: Aska::Task (`TaskBytes` 0x28;
+CResourceManager keeps inline bytes: data size 0x27, a derived class's first byte at +0x27) and
+Framework::CFiberUnit (0x38). The merged
 memory / containers / libcxx / data_formats classes are embedded directly (MemoryManager, THashMap,
 TStaticString, TArray, TPoolLegacy, TSharedPointer, String, list, vector, ASON).
 
@@ -69,8 +70,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   and CResourceElement (at +0xc0), LIBLManager's update task (+0x8e8); Framework::CFiberUnit is the
   downloader's base; Framework::CApplication::CMainTask owns the CResourceManager (+0x60,
   CMainTask::rResourceManager). Aska::INotify: CFileLoader (slot 0 Handler) and CResourceElement::CFinishNotify
-  are notifies. Held opaque here: swap `TaskBytes` / `task_08` / `fiberUnit` for kernel_layout.h's classes
-  at the merge (CResourceManager::m_isInitialized lives in Task's tail padding at +0x27).
+  are notifies. Linked at the merge: `TaskBytes` is kernel_layout.h's `Task`, `fiberUnit` its `CFiberUnit` (0x38; the downloader's +0x38..0x3f unknown); `task_08` stays inline bytes
+  (CResourceManager::m_isInitialized lives in Task's tail padding at +0x27).
 - Upwards (callbacks, interfaces only): `render` (the shader cache's ShaderCache / ShaderDiskCache are opaque,
   LIBLManager's textures), `info`, `ui` (CDownloadingBar / CDownloadProgressBar: in scope, not typed).
 

@@ -26,7 +26,7 @@ constexpr u32 kContentPremiumPass = 11;
 
 // The start of the current login day: (a)+(b) master_global login_bonus_reset_hour, as the
 // login bonus.
-int64_t login_day_start(Ctx& ctx) { return day_start(ctx.now(), (int)ctx.global_u32("login_bonus_reset_hour", 4)); }
+ServerTime login_day_start(Ctx& ctx) { return day_start(ctx.now(), (int)ctx.global_u32("login_bonus_reset_hour", 4)); }
 
 // The response's Player map, nullptr when it has none.
 Value* player_map(Value& data) {
@@ -52,7 +52,7 @@ void grant_premium_pass(Ctx& ctx, u32 pass_id, u32, Value&, Value&, Value&) {
 // Grants the next page of premium pass `pass_id` (at page `day`, named `name_message_id`) to the
 // present box and records it. Returns the page granted, 0 for none.
 //   (d) one page per login day, not looping (the table has no is_loop; 14 pages each)
-u32 grant_premium_page(Ctx& ctx, u32 pass_id, u32 day, const std::string& name_message_id, int64_t now) {
+u32 grant_premium_page(Ctx& ctx, u32 pass_id, u32 day, const std::string& name_message_id, ServerTime now) {
     u32 last_idx =
         (u32)ctx.m.one("select max(order_idx) from master_premium_login_bonus_contents where master_premium_login_bonus_id = ?", {pass_id});
     u32 next = growth_rules::next_login_day(day, last_idx, false);
@@ -71,12 +71,12 @@ u32 grant_premium_page(Ctx& ctx, u32 pass_id, u32 day, const std::string& name_m
 // The premium login bonus of each pass the player holds: a new page each login day; adds
 // PremiumLoginBonus to `data` (`granted` counts the pages granted).
 void premium_login_bonus(Ctx& ctx, Value& data, int& granted) {
-    int64_t t = ctx.now(), today = login_day_start(ctx);
+    ServerTime t = ctx.now(), today = login_day_start(ctx);
     Value list = Value::array();
     ctx.st.q("select * from premium_pass order by id", {}, [&](const Row& pass_row) {
         u32 pass_id = (u32)pass_row.i("id");
         u32 day = (u32)pass_row.i("day_index");
-        int64_t last_at = pass_row.i("last_at");
+        ServerTime last_at = pass_row.time("last_at");
         std::string name_message_id, opened_at, closed_at;
         bool known = false;
         ctx.m.q("select * from master_premium_login_bonus where id = ?", {pass_id}, [&](const Row& bonus_row) {
@@ -104,7 +104,7 @@ void premium_login_bonus(Ctx& ctx, Value& data, int& granted) {
         info["player_id"] = ctx.player_id().v;
         info["master_premium_login_bonus_id"] = pass_id;
         info["current_idx"] = day;
-        info["created_at"] = ctx.fmt_time(pass_row.i("granted_at"));
+        info["created_at"] = ctx.fmt_time(pass_row.time("granted_at"));
         info["updated_at"] = ctx.fmt_time(received_now ? t : last_at);
         info["is_updated"] = received_now;
         info["is_next"] = false;
@@ -133,7 +133,7 @@ struct FavorTier {
 // The favor tier the player meets now (id 0: none); *lot_uids = one character uid per qualifying
 // same_role_id.
 FavorTier favor_tier(Ctx& ctx, std::vector<u64>* lot_uids = nullptr) {
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     std::map<SameRoleId, u64> uid_by_same_role;  // same_role_id -> a character (lot_uid: plain until S10)
     ctx.st.q("select uid, role_id from roster order by uid", {}, [&](const Row& roster_row) {
         const SameRoleId same_role_id = ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {roster_row.i("role_id")});
@@ -162,7 +162,7 @@ struct FavorLot {
 };
 
 // The open master_favor_bonus_contents rows with a weight (a: opened_at / closed_at, rate_weigh).
-std::vector<FavorLot> favor_lot_pool(Ctx& ctx, int64_t now) {
+std::vector<FavorLot> favor_lot_pool(Ctx& ctx, ServerTime now) {
     std::vector<FavorLot> pool;
     std::string now_text = ctx.fmt_time(now);
     ctx.m.q("select * from master_favor_bonus_contents where (opened_at is null or opened_at <= ?) and (closed_at is null or closed_at > ?)",
@@ -186,8 +186,8 @@ std::string favor_lot_line(Ctx& ctx, u32 role_id) {
 // The favor login bonus, once per login day: draws the tier's lots into the present box and adds
 // FavorBonusContetsResultInfo to `data` (`granted` counts it).
 void favor_login_bonus(Ctx& ctx, Value& data, int& granted) {
-    int64_t today = login_day_start(ctx), t = ctx.now();
-    int64_t done_at = ctx.st.one("select day_at from favor_bonus_state where id = 1", {}, 0);
+    ServerTime today = login_day_start(ctx), t = ctx.now();
+    ServerTime done_at = ctx.st.one_time("select day_at from favor_bonus_state where id = 1", {});
     if (done_at >= today) return;
     std::vector<u64> lot_uids;
     FavorTier tier = favor_tier(ctx, &lot_uids);
@@ -234,10 +234,12 @@ void favor_login_bonus(Ctx& ctx, Value& data, int& granted) {
 void favor_player_keys(Ctx& ctx, Value& data) {
     Value* player = player_map(data);
     if (!player) return;
-    int64_t bonus_at = ctx.st.one("select day_at from favor_bonus_state where id = 1", {}, 0);
-    int64_t healed_at = ctx.st.one("select healed_at from favor_bonus_state where id = 1", {}, 0);
-    (*player)["favor_bonus_received_at"] = bonus_at ? ctx.fmt_time(bonus_at) : std::string();
-    (*player)["stamina_update_by_favor"] = healed_at ? ctx.fmt_time(healed_at) : std::string();
+    // 0 = never in both (day_at: the heal's row starts it at 0; healed_at: one of the 0 sentinels
+    // PLAN-schema S10 maps to NULL), as no row.
+    ServerTime bonus_at = ctx.st.one_time("select day_at from favor_bonus_state where id = 1", {});
+    ServerTime healed_at = ctx.st.one_time("select healed_at from favor_bonus_state where id = 1", {});
+    (*player)["favor_bonus_received_at"] = bonus_at.v ? ctx.fmt_time(bonus_at) : std::string();
+    (*player)["stamina_update_by_favor"] = healed_at.v ? ctx.fmt_time(healed_at) : std::string();
 }
 
 // OnPlayerLoad hook (after the login bonus and the achievements: core/modules.cpp): the premium
@@ -264,8 +266,8 @@ void load_daily_bonuses(Ctx& ctx, const Request&, Value& data) {
 // Answers: the player state with IsHealedByFavor (a: schema) and the favor Player keys.
 std::vector<u8> stamina_heal_by_favor(Ctx& ctx, const Request&) {
     ctx.tick_stamina();
-    int64_t today = login_day_start(ctx), t = ctx.now();
-    int64_t healed_at = ctx.st.one("select healed_at from favor_bonus_state where id = 1", {}, 0);
+    ServerTime today = login_day_start(ctx), t = ctx.now();
+    ServerTime healed_at = ctx.st.one_time("select healed_at from favor_bonus_state where id = 1", {});  // 0 = never (S10's sentinel)
     FavorTier tier = favor_tier(ctx);
     bool healed = tier.id && tier.stamina && healed_at < today;
     if (healed) {

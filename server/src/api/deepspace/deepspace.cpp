@@ -59,7 +59,7 @@ enum class BonusItemType : int { kAddBonus = 1, kMultiplyAll = 2 };
 // Answers: the player state, DeepSpaceAreaList, DeepSpaceActiveShipInfoList,
 // DeepSpaceEndShipInfoList, DeepSpaceBonusAllApplyInfoList, characters, Subscription.
 std::vector<u8> deep_space_active_list(Ctx& ctx, const Request&) {
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     time_saving_count(ctx, t);
     refresh_offers(ctx, t);
     Value data = ctx.base_data();
@@ -119,10 +119,11 @@ struct Offer {
     bool open = false;
     u32 bonus_set_id = 0;
 };
-Offer find_offer(Ctx& ctx, u32 mission_id, int64_t t) {
+Offer find_offer(Ctx& ctx, u32 mission_id, ServerTime t) {
     Offer offer;
     ctx.st.q("select * from ds_offer where mission_id = ?", {mission_id}, [&](const Row& offer_row) {
-        offer.open = offer_row.i("ship_id") == 0 && !(offer_row.i("closed_at") && offer_row.i("closed_at") < t);
+        ServerTime closed = offer_row.time("closed_at");  // 0: no limit (a sentinel PLAN-schema S10 maps to NULL)
+        offer.open = offer_row.i("ship_id") == 0 && !(closed.v && closed < t);
         offer.bonus_set_id = (u32)offer_row.i("bonus_set_id");
     });
     return offer;
@@ -209,7 +210,7 @@ std::vector<u8> deep_space_mission_start(Ctx& ctx, const Request& req) {
     const auto args = args::DeepSpaceMissionStartArgs::from(req);
     const char* method = "DeepSpaceMissionStart";
     u32 area_id = (u32)ctx.m.one("select master_deep_area_id from master_deep_space_mission where id = ?", {args.mission_id});
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     refresh_offers(ctx, t);
     // 1. the offer, the party, the ship, the bonus item
     Offer offer = find_offer(ctx, args.mission_id, t);
@@ -259,7 +260,7 @@ std::vector<u8> deep_space_mission_start(Ctx& ctx, const Request& req) {
 struct Ship {
     bool found = false;
     u32 ship_id = 0, area_id = 0, mission_id = 0;
-    int64_t closed_at = 0;
+    ServerTime closed_at;
     std::vector<CharacterUid> members;  // the crew (ds_ship_member), by slot
     Value info;                         // CDeepSpaceShipInfo as it was found
 };
@@ -270,7 +271,7 @@ Ship load_ship(Ctx& ctx, u32 ship_id) {
         ship.found = true;
         ship.area_id = (u32)ship_row.i("area_id");
         ship.mission_id = (u32)ship_row.i("mission_id");
-        ship.closed_at = ship_row.i("closed_at");
+        ship.closed_at = ship_row.time("closed_at");
         ship.members = ship_members(ctx, ship_id);
         ship.info = ship_info(ctx, ship_row);
     });
@@ -285,7 +286,7 @@ struct QuickReturnPaid {
 // deep_space_quick_return_item and (a) master_deep_space_time_saving.rate of the day's use number
 // (+1, capped at the last row); paid with the items owned, the rest in coins, (a) free coins first
 // (core/wallet.h). False when the coins are short.
-bool pay_quick_return(Ctx& ctx, const Ship& ship, int64_t t, QuickReturnPaid& paid) {
+bool pay_quick_return(Ctx& ctx, const Ship& ship, ServerTime t, QuickReturnPaid& paid) {
     u32 used_today = time_saving_count(ctx, t);
     u32 last_row = (u32)ctx.m.one("select max(id) from master_deep_space_time_saving", {});
     double rate = 0;
@@ -320,7 +321,7 @@ bool pay_quick_return(Ctx& ctx, const Ship& ship, int64_t t, QuickReturnPaid& pa
 std::vector<u8> deep_space_mission_end_now(Ctx& ctx, const Request& req) {
     const auto args = args::DeepSpaceMissionEndArgs::from(req);
     const char* method = "DeepSpaceMissionEndNow";
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     Ship ship = load_ship(ctx, args.ship_id);
     if (!ship.found) return refuse(ctx, method, "no such ship", ErrorCode::kItemUnusable);
     QuickReturnPaid paid;
@@ -426,8 +427,9 @@ void grant_drops(Ctx& ctx, const Ship& ship, Expedition& done, double& rare_miss
 }
 
 // The offer: back on the list with a new bonus set (d); a rare offer is used up (d).
-void renew_offer(Ctx& ctx, const Ship& ship, int64_t t) {
-    bool rare_offer = ctx.st.one("select closed_at from ds_offer where mission_id = ?", {ship.mission_id}) != 0;
+void renew_offer(Ctx& ctx, const Ship& ship, ServerTime t) {
+    // a rare offer has a limit; 0 = none (a sentinel PLAN-schema S10 maps to NULL)
+    bool rare_offer = ctx.st.one_time("select closed_at from ds_offer where mission_id = ?", {ship.mission_id}).v != 0;
     if (rare_offer) {
         ctx.st.q("delete from ds_offer where mission_id = ?", {ship.mission_id});
     } else {
@@ -441,7 +443,7 @@ void renew_offer(Ctx& ctx, const Ship& ship, int64_t t) {
 // missions whose rare_type_id is this mission's rare_mission_type_id (open by the clock,
 // by rate_weigh) in the same area, (a) for rare_limit_time minutes. (d) one rare offer of a
 // mission at a time.
-void roll_rare_offer(Ctx& ctx, const Ship& ship, int64_t t, double rare_mission_mul, Expedition& done) {
+void roll_rare_offer(Ctx& ctx, const Ship& ship, ServerTime t, double rare_mission_mul, Expedition& done) {
     if (!done.rare_mission_type || !(uniform(ctx) * 100.0 < done.rare_mission_rate * rare_mission_mul)) return;
     std::vector<u32> ids, weights, limit_minutes, set_types;
     ctx.m.q("select * from master_deep_space_mission where rare_type_id = ? and master_deep_area_id = ?", {done.rare_mission_type, ship.area_id},
@@ -482,7 +484,7 @@ void roll_rare_offer(Ctx& ctx, const Ship& ship, int64_t t, double rare_mission_
 std::vector<u8> deep_space_mission_end(Ctx& ctx, const Request& req) {
     const auto args = args::DeepSpaceMissionEndArgs::from(req);
     const char* method = "DeepSpaceMissionEnd";
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     Ship ship = load_ship(ctx, args.ship_id);
     if (!ship.found) return refuse(ctx, method, "no such ship", ErrorCode::kItemUnusable);
     if (ship.closed_at > t) return refuse(ctx, method, "the ship isn't back yet", ErrorCode::kItemUnusable);

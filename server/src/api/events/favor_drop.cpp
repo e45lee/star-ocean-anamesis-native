@@ -41,7 +41,7 @@ void favor_start(Ctx& ctx, const MissionInfo& mission, Value& param, Value&) {
     }
     ctx.st.exec("delete from favor_drop_play");
     if (mission.type != kMissionTypeEvent || mission.table != "master_event_mission") return;
-    int64_t now = ctx.now();
+    ServerTime now = ctx.now();
     u32 left = favor::event_drop_remaining(ctx.st.h, ctx.m.h, now);
     std::set<SameRoleId> seen;
     for (u32 role : mission.roles) {
@@ -83,7 +83,7 @@ void favor_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
                                  (u32)drop_row.i("rate_weigh")});
             sum += (u32)drop_row.i("rate_weigh");
         });
-    int64_t now = ctx.now();
+    ServerTime now = ctx.now();
     u32 lots = 0;
     for (auto& [same_role, character_lots] : used) {
         for (u32 k = 0; k < character_lots && sum; k++) {

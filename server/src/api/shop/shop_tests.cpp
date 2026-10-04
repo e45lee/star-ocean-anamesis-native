@@ -17,7 +17,7 @@ NATIVE_TEST("shop/item-shop-and-exchange") {
     with_scratch_server(t.rand_u64(), [&](Ctx& ctx) {
         ctx.st.exec("begin");
         // ---- item shop: an open monthly row with limit_count 1; bought once per period
-        int64_t now = ctx.now();
+        ServerTime now = ctx.now();
         std::string now_text = ctx.fmt_time(now);
         u32 row = (u32)ctx.m.one(
             "select id from master_item_shop where reset_type = 2 and limit_count = 1 and opened_at <= ? and closed_at >= ? "
@@ -65,8 +65,8 @@ NATIVE_TEST("shop/item-shop-and-exchange") {
 NATIVE_TEST("shop/subscription") {
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& ctx) {
         ctx.st.exec("begin");
-        int64_t clock = ctx.parse_time("2020-06-01 12:00:00");
-        ctx.test.now = [&] { return clock; };
+        ServerTime clock(ctx.parse_time("2020-06-01 12:00:00"));
+        ctx.test.now = [&] { return clock.v; };
         u32 plan = (u32)ctx.m.one("select id from master_subscription_plan where id_label = 'pshop_galaxypass_001'", {});
         if (!plan) return t.fail("no pshop_galaxypass_001 plan");
         t.expect_eq(subscription_active(ctx, 3, clock), false, "no pass at first");

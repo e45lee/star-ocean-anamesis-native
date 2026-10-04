@@ -46,10 +46,12 @@ NATIVE_TEST("server/time-variants") {
     t.expect_eq(add_years(local(2020, 2, 29, 12, 0, 0), 1), local(2021, 3, 1, 12, 0, 0), "Feb 29 + 1 year");
     t.expect_eq(year_of(at), 2020, "year_of");
     // windows: inclusive ends, empty = open-ended
-    t.expect_eq(open_at("2020-06-01 12:34:56", "2020-06-01 12:34:56", at), true, "both ends inclusive");
-    t.expect_eq(!open_at("2020-06-01 12:34:57", "", at), true, "not yet open");
-    t.expect_eq(!open_at("", "2020-06-01 12:34:55", at), true, "closed");
-    t.expect_eq(open_at("", "", at), true, "open-ended");
+    t.expect_eq(open_at("2020-06-01 12:34:56", "2020-06-01 12:34:56", ServerTime(at)), true, "both ends inclusive");
+    t.expect_eq(!open_at("2020-06-01 12:34:57", "", ServerTime(at)), true, "not yet open");
+    t.expect_eq(!open_at("", "2020-06-01 12:34:55", EventTime(at)), true, "closed");
+    t.expect_eq(open_at("", "", EventTime(at)), true, "open-ended");
+    // the typed reset day (soaserver/times.h)
+    t.expect_eq(day_start(ServerTime(local(2020, 6, 1, 3, 59, 59)), 4).v, local(2020, 5, 31, 4, 0, 0), "a server-clock day start");
 }
 
 }  // namespace

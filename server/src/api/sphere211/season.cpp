@@ -51,26 +51,27 @@ Season season_by_id(Ctx& ctx, u32 season_id) {
 //  - (d) past that (the service ended with season 13 on 2021-06-24): the last season runs on in
 //    the same way, each further season length a new `cycle` (a new season for the dive and the
 //    ranking).
-SeasonPick pick_season(ext::Sql& master, int64_t clock, int64_t ev) {
+SeasonPick pick_season(ext::Sql& master, ServerTime clock, EventTime ev) {
     struct Window {
         u32 id;
-        int64_t opened, closed;
+        EventTime opened, closed;  // the master's dates: on the event calendar
     };
     std::vector<Window> seasons;
     master.q("select id, opened_at, closed_at from master_sphere211 order by opened_at", {}, [&](const Row& season_row) {
-        seasons.push_back({(u32)season_row.i("id"), parse_time(season_row.s("opened_at")), parse_time(season_row.s("closed_at"))});
+        seasons.push_back(
+            {(u32)season_row.i("id"), EventTime(parse_time(season_row.s("opened_at"))), EventTime(parse_time(season_row.s("closed_at")))});
     });
     SeasonPick pick;
     if (seasons.empty()) return pick;
     for (auto& season : seasons)
         if (season.opened <= ev && ev <= season.closed) {
             pick.id = season.id;
-            pick.shift = clock - ev;
+            pick.shift = clock.v - ev.v;  // where the two clocks meet: the calendar's date made current on the client's clock
             return pick;
         }
     if (ev < seasons.front().opened) {
-        int64_t next_year = ev;
-        for (int n = 0; n < 200 && next_year < seasons.front().opened; n++) next_year = add_years(next_year, 1);
+        EventTime next_year = ev;
+        for (int n = 0; n < 200 && next_year < seasons.front().opened; n++) next_year = EventTime(add_years(next_year.v, 1));
         if (next_year >= seasons.front().opened) return pick_season(master, clock, next_year);
     }
     const Window* latest = &seasons.front();
@@ -80,8 +81,8 @@ SeasonPick pick_season(ext::Sql& master, int64_t clock, int64_t ev) {
     int64_t period = std::max<int64_t>(1, latest->closed - latest->opened + 1);
     int64_t k = std::max<int64_t>(0, (ev - latest->closed + period - 1) / period);
     pick.id = latest->id;
-    pick.shift = clock - ev + k * period;
-    if (latest == &seasons.back() && ev >= add_years(seasons.front().opened, 1)) pick.cycle = (u32)k;
+    pick.shift = clock.v - ev.v + k * period;
+    if (latest == &seasons.back() && ev >= EventTime(add_years(seasons.front().opened.v, 1))) pick.cycle = (u32)k;
     return pick;
 }
 
@@ -99,7 +100,7 @@ Season current_season(Ctx& ctx) {
 }
 
 // ClientMaster: the client's master copy gets the same season dates (a data override, server side).
-void client_seasons(ext::Sql& db, int64_t clock, int64_t ev) {
+void client_seasons(ext::Sql& db, ServerTime clock, EventTime ev) {
     SeasonPick pick = pick_season(db, clock, ev);
     if (!pick.id || !pick.shift) return;
     for (const char* col : {"opened_at", "closed_at", "ranking_opened_at", "ranking_closed_at"}) {
@@ -121,7 +122,7 @@ void client_seasons(ext::Sql& db, int64_t clock, int64_t ev) {
 // not ranked, then the client only says the season has ended), with that rank's ranking reward.
 Season load_dive(Ctx& ctx) {
     Season season = current_season(ctx);
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     if (!ctx.st.one("select count(*) from sphere", {})) {
         ctx.st.q("insert into sphere (id, season_id, floor_level, stamina, stamina_at, entered_at, cycle) values (1, ?, 0, ?, ?, ?, ?)",
                  {season.id, stamina_max(ctx), t, t, season.cycle});  // (d) the gauge starts full
@@ -165,24 +166,24 @@ Season load_dive(Ctx& ctx) {
 namespace {
 enum class AchievementType : int { kFloorReached = 61, kBattlesWon = 62 };  // (a) master_achievement.type
 
-// The moved window [lo, hi] (INT64 bounds when open-ended).
-void moved_window(Ctx& ctx, const std::string& opened_at, const std::string& closed_at, int64_t& lo, int64_t& hi) {
+// The moved window [lo, hi] on the server clock (INT64 bounds when open-ended).
+void moved_window(Ctx& ctx, const std::string& opened_at, const std::string& closed_at, ServerTime& lo, ServerTime& hi) {
     int64_t shift = current_pick(ctx).shift;
-    lo = opened_at.empty() ? INT64_MIN : parse_time(opened_at) + shift;
-    hi = closed_at.empty() ? INT64_MAX : parse_time(closed_at) + shift;
+    lo = ServerTime(opened_at.empty() ? INT64_MIN : parse_time(opened_at) + shift);
+    hi = ServerTime(closed_at.empty() ? INT64_MAX : parse_time(closed_at) + shift);
 }
 }  // namespace
 
 bool is_achievement_type(int type) { return type == (int)AchievementType::kFloorReached || type == (int)AchievementType::kBattlesWon; }
 bool achievement_open(Ctx& ctx, const std::string& opened_at, const std::string& closed_at, std::string* limit_at) {
-    int64_t lo, hi;
+    ServerTime lo, hi;
     moved_window(ctx, opened_at, closed_at, lo, hi);
     if (limit_at) *limit_at = closed_at.empty() ? std::string() : format_time(hi);
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     return lo <= t && t <= hi;
 }
 int64_t achievement_progress(Ctx& ctx, int type, const std::string& opened_at, const std::string& closed_at) {
-    int64_t lo, hi;
+    ServerTime lo, hi;
     moved_window(ctx, opened_at, closed_at, lo, hi);
     if (type == (int)AchievementType::kBattlesWon)
         return ctx.st.one("select count(*) from sphere_log where kind = ? and at between ? and ?", {(int)LogKind::kWin, lo, hi});

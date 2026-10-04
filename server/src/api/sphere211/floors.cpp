@@ -136,7 +136,7 @@ void enter_floor(Ctx& ctx, const Season& season, u32 level) {
     int k = weighted_index(ctx, templates);
     u32 group = k < 0 ? 0 : templates[k].second;
     ctx.st.exec("delete from sphere_cell");
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     int cells = 0;
     ctx.m.q("select * from master_sphere211_floor_asset where floor_group_id = ?", {group}, [&](const Row& asset_row) {
         u32 asset_id = (u32)asset_row.i("id");
@@ -171,7 +171,7 @@ void enter_floor(Ctx& ctx, const Season& season, u32 level) {
 // (a) the highest master_sphere211_floor_transfer_level open now whose required_treasure the
 // season's gathered boxes reach, and its rate group's floor_num lotted by weight.
 u32 lot_floor_num(Ctx& ctx, u32 treasure_total) {
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     u32 group = 0, best = 0;
     ctx.m.q("select * from master_sphere211_floor_transfer_level order by transfer_level", {}, [&](const Row& level_row) {
         if (!open_at(level_row.s("opened_at"), level_row.s("closed_at"), t)) return;
@@ -228,12 +228,12 @@ u32 stamina_period(Ctx& ctx) { return std::max<u32>(1, ctx.global_u32("sphere_st
 }  // namespace
 void tick_stamina(Ctx& ctx) {
     u32 stamina = 0;
-    int64_t stamina_at = 0;
+    ServerTime stamina_at;
     ctx.st.q("select stamina, stamina_at from sphere where id = 1", {}, [&](const Row& sphere_row) {
         stamina = (u32)sphere_row.i("stamina");
-        stamina_at = sphere_row.i("stamina_at");
+        stamina_at = sphere_row.time("stamina_at");
     });
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     if (t <= stamina_at) return;
     auto [regenerated, carry] = rules::regen_stamina(stamina, stamina_max(ctx), (u64)(t - stamina_at), stamina_period(ctx));
     ctx.st.q("update sphere set stamina = ?, stamina_at = ?", {regenerated, t - (int64_t)carry});

@@ -1,0 +1,5 @@
+# port/decomp/libcxx/scope.txt: the guest functions the `libcxx` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?std::__ndk1::
+^(\S+ )?(__cxxabiv1|__gnu_cxx)::

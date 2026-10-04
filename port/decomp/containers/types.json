@@ -1,0 +1,2890 @@
+{
+ "subsystem": "containers",
+ "generated_by": "tools/subsystem.py export-types containers",
+ "header": "port/src/native/containers/containers_layout.h",
+ "structs": [
+  {
+   "name": "TStaticString<16>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_str",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 16,
+   "align": 1
+  },
+  {
+   "name": "TStaticString<32>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_str",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 32
+     },
+     "size": 32
+    }
+   ],
+   "size": 32,
+   "align": 1
+  },
+  {
+   "name": "TStaticString<256>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_str",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 256
+     },
+     "size": 256
+    }
+   ],
+   "size": 256,
+   "align": 1
+  },
+  {
+   "name": "TSharedPointer<unsigned char>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_ptr",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_counter",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "TDelegate<Opaque<8> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_object",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_fn",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_adj",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, unsigned long> > >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": "THashMapBucket<TPair<unsigned int, unsigned long> >"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "THashTable<TPair<unsigned int, unsigned long> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_hasher",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "m_equal",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 10,
+     "name": "unk_0a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_maxLoadFactor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_deleted",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_allocator",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 32,
+     "name": "m_buckets",
+     "type": {
+      "kind": "struct",
+      "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, unsigned long> > >"
+     },
+     "size": 16
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashMap<unsigned int, unsigned long>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "table",
+     "type": {
+      "kind": "struct",
+      "name": "THashTable<TPair<unsigned int, unsigned long> >"
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "TPair<unsigned int, unsigned long>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "first",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "second",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "THashMapBucket<TPair<unsigned int, unsigned long> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 8,
+     "name": "m_value",
+     "type": {
+      "kind": "struct",
+      "name": "TPair<unsigned int, unsigned long>"
+     },
+     "size": 16
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "THashMapBucketArray<THashMapBucket<unsigned int> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": "THashMapBucket<unsigned int>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "THashTable<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_hasher",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "m_equal",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 10,
+     "name": "unk_0a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_maxLoadFactor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_deleted",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_allocator",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 32,
+     "name": "m_buckets",
+     "type": {
+      "kind": "struct",
+      "name": "THashMapBucketArray<THashMapBucket<unsigned int> >"
+     },
+     "size": 16
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashSet<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "table",
+     "type": {
+      "kind": "struct",
+      "name": "THashTable<unsigned int>"
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashMapBucket<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 4,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 8,
+   "align": 4
+  },
+  {
+   "name": "TBitArray<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_bits",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_numWords",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "m_numBits",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_ownsBits",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 33,
+     "name": "unk_21",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "TBinaryNode<8>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<8>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<8>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_left",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<8>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_right",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<8>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_key",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "AddressNode",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "TBinaryNode<8>"
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2029ab0",
+     "symbol": "_ZN4Aska11AddressNode7CompareEPKv",
+     "name": "Compare"
+    },
+    {
+     "ghidra": "0x202df3c",
+     "symbol": "_ZN4Aska11AddressNodeD0Ev",
+     "name": "~AddressNode"
+    },
+    {
+     "ghidra": "0x202df40",
+     "symbol": "_ZN4Aska11AddressNode6SetKeyEPKv",
+     "name": "SetKey"
+    }
+   ]
+  },
+  {
+   "name": "TPoolLegacy<AddressNode>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_used",
+     "type": {
+      "kind": "struct",
+      "name": "TBitArray<unsigned int>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 56,
+     "name": "m_cursor",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_pool",
+     "type": {
+      "kind": "ptr",
+      "to": "AddressNode"
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_ownsPool",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 73,
+     "name": "unk_49",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 80,
+   "align": 8
+  },
+  {
+   "name": "TBinaryTree<AddressNode>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "TPoolLegacy<AddressNode>"
+     },
+     "size": 80
+    },
+    {
+     "offset": 80,
+     "name": "m_table",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_tableSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 92,
+     "name": "unk_5c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 96,
+     "name": "m_lastSlot",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 104,
+     "name": "m_inlineTable",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": "AddressNode"
+      },
+      "count": 1
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "m_head",
+     "type": {
+      "kind": "ptr",
+      "to": "AddressNode"
+     },
+     "size": 8
+    },
+    {
+     "offset": 120,
+     "name": "m_tail",
+     "type": {
+      "kind": "ptr",
+      "to": "AddressNode"
+     },
+     "size": 8
+    },
+    {
+     "offset": 128,
+     "name": "m_cursor",
+     "type": {
+      "kind": "ptr",
+      "to": "AddressNode"
+     },
+     "size": 8
+    },
+    {
+     "offset": 136,
+     "name": "m_iterationDone",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 137,
+     "name": "unk_89",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 140,
+     "name": "m_nodeCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 144,
+   "align": 8
+  },
+  {
+   "name": "THash<AddressNode>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "TBinaryTree<AddressNode>"
+     },
+     "size": 144
+    }
+   ],
+   "size": 144,
+   "align": 8
+  },
+  {
+   "name": "TAddressManager<AddressNode>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "THash<AddressNode>"
+     },
+     "size": 144
+    }
+   ],
+   "size": 144,
+   "align": 8
+  },
+  {
+   "name": "TPoolLegacy<Opaque<72> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_used",
+     "type": {
+      "kind": "struct",
+      "name": "TBitArray<unsigned int>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 56,
+     "name": "m_cursor",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_pool",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_ownsPool",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 73,
+     "name": "unk_49",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 80,
+   "align": 8
+  },
+  {
+   "name": "TBinaryTree<Opaque<72> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "TPoolLegacy<Opaque<72> >"
+     },
+     "size": 80
+    },
+    {
+     "offset": 80,
+     "name": "m_table",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_tableSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 92,
+     "name": "unk_5c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 96,
+     "name": "m_lastSlot",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 104,
+     "name": "m_inlineTable",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 1
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "m_head",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 120,
+     "name": "m_tail",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 128,
+     "name": "m_cursor",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 136,
+     "name": "m_iterationDone",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 137,
+     "name": "unk_89",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 140,
+     "name": "m_nodeCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 144,
+   "align": 8
+  },
+  {
+   "name": "THash<Opaque<72> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "TBinaryTree<Opaque<72> >"
+     },
+     "size": 144
+    }
+   ],
+   "size": 144,
+   "align": 8
+  },
+  {
+   "name": "TCategorizeHash<Opaque<72> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "THash<Opaque<72> >"
+     },
+     "size": 144
+    },
+    {
+     "offset": 144,
+     "name": "m_iterNode",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 152,
+     "name": "m_iterBucket",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 156,
+     "name": "unk_9c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 160,
+   "align": 8
+  },
+  {
+   "name": "TBitArray<unsigned long>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_bits",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_numWords",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "m_numBits",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_ownsBits",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 33,
+     "name": "unk_21",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "TPoolFast<Opaque<16> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_used",
+     "type": {
+      "kind": "struct",
+      "name": "TBitArray<unsigned long>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 48,
+     "name": "m_pool",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_cursor",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "unk_40",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 65,
+     "name": "m_ownsPool",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 66,
+     "name": "unk_42",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TArray<unsigned int, false>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "unk_20",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_minCapacity",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 50,
+     "name": "m_flags2",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 52,
+     "name": "unk_34",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x12a9e34",
+     "symbol": "_ZN4Aska6TArrayIjLb0EED2Ev",
+     "name": "~TArray"
+    },
+    {
+     "ghidra": "0x12ab488",
+     "symbol": "_ZN4Aska6TArrayIjLb0EED0Ev",
+     "name": "~TArray"
+    },
+    {
+     "ghidra": "0x12ab4c4",
+     "symbol": "_ZN4Aska6TArrayIjLb0EE6ResizeElb",
+     "name": "Resize"
+    }
+   ]
+  },
+  {
+   "name": "TDynamicArray<unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_begin",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_end",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_capEnd",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "TStack<unsigned int, 10>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_inline",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 10
+     },
+     "size": 40
+    },
+    {
+     "offset": 48,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_top",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 64,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x15a9ca0",
+     "symbol": "_ZN4Aska6TStackIjLi10EE11CopyElementEPKjPj",
+     "name": "CopyElement"
+    },
+    {
+     "ghidra": "0x15a9cb0",
+     "symbol": "_ZN4Aska6TStackIjLi10EED2Ev",
+     "name": "~TStack"
+    },
+    {
+     "ghidra": "0x15a9d00",
+     "symbol": "_ZN4Aska6TStackIjLi10EED0Ev",
+     "name": "~TStack"
+    }
+   ]
+  },
+  {
+   "name": "LinkElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "LinkElement"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "LinkElement"
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "TList<LinkElement>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sentinel",
+     "type": {
+      "kind": "struct",
+      "name": "LinkElement"
+     },
+     "size": 24
+    },
+    {
+     "offset": 32,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "RingBuffer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_owned",
+     "type": {
+      "kind": "struct",
+      "name": "TSharedPointer<unsigned char>"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_buffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_front",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_back",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_used",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "unk_34",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2322e68",
+     "symbol": "_ZN4Aska10RingBuffer4OpenEPKvm",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x2322eec",
+     "symbol": "_ZN4Aska10RingBuffer5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x2322ef8",
+     "symbol": "_ZN4Aska10RingBuffer4OpenEm",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x2322fc8",
+     "symbol": "_ZN4Aska10RingBuffer5CloseEv",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x2322fe4",
+     "symbol": "_ZN4Aska10RingBuffer9PushFrontEPKvm",
+     "name": "PushFront"
+    },
+    {
+     "ghidra": "0x23230b8",
+     "symbol": "_ZNK4Aska10RingBuffer20PrivatePeepPushFrontEPPvm",
+     "name": "PrivatePeepPushFront"
+    },
+    {
+     "ghidra": "0x2323148",
+     "symbol": "_ZN4Aska10RingBuffer8PopFrontEPvm",
+     "name": "PopFront"
+    },
+    {
+     "ghidra": "0x232321c",
+     "symbol": "_ZNK4Aska10RingBuffer19PrivatePeepPopFrontEPPvm",
+     "name": "PrivatePeepPopFront"
+    },
+    {
+     "ghidra": "0x2323290",
+     "symbol": "_ZN4Aska10RingBuffer8PushBackEPKvm",
+     "name": "PushBack"
+    },
+    {
+     "ghidra": "0x2323360",
+     "symbol": "_ZNK4Aska10RingBuffer19PrivatePeepPushBackEPPvm",
+     "name": "PrivatePeepPushBack"
+    },
+    {
+     "ghidra": "0x23233d8",
+     "symbol": "_ZN4Aska10RingBuffer7PopBackEPvm",
+     "name": "PopBack"
+    },
+    {
+     "ghidra": "0x23234b4",
+     "symbol": "_ZNK4Aska10RingBuffer18PrivatePeepPopBackEPPvm",
+     "name": "PrivatePeepPopBack"
+    },
+    {
+     "ghidra": "0x2323540",
+     "symbol": "_ZN4Aska10RingBuffer9PushFrontEPPvm",
+     "name": "PushFront"
+    },
+    {
+     "ghidra": "0x2323608",
+     "symbol": "_ZN4Aska10RingBuffer8PopFrontEPPvm",
+     "name": "PopFront"
+    },
+    {
+     "ghidra": "0x23236c8",
+     "symbol": "_ZN4Aska10RingBuffer8PushBackEPPvm",
+     "name": "PushBack"
+    },
+    {
+     "ghidra": "0x232378c",
+     "symbol": "_ZN4Aska10RingBuffer7PopBackEPPvm",
+     "name": "PopBack"
+    }
+   ]
+  },
+  {
+   "name": "CSTLMap<unsigned int, void *>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_beginNode",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_root",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "THierarchy<Opaque<8> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_parent",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_nextSibling",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_firstChild",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "unk_20",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "PathUtil",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x2055408",
+     "symbol": "_ZN4Aska8PathUtil11GetTailNameEPKcPm",
+     "name": "GetTailName"
+    },
+    {
+     "ghidra": "0x2055524",
+     "symbol": "_ZN4Aska8PathUtil16GetExtentionNameEPKcPm",
+     "name": "GetExtentionName"
+    },
+    {
+     "ghidra": "0x205563c",
+     "symbol": "_ZN4Aska8PathUtil16CatenatePathNameEPKcS2_Pcm",
+     "name": "CatenatePathName"
+    },
+    {
+     "ghidra": "0x2055788",
+     "symbol": "_ZN4Aska8PathUtil16CatenatePathNameEPKcS2_",
+     "name": "CatenatePathName"
+    }
+   ]
+  },
+  {
+   "name": "StringUtility",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x207de20",
+     "symbol": "_ZN4Aska13StringUtility19SeekStartOfNextLineEPc",
+     "name": "SeekStartOfNextLine"
+    },
+    {
+     "ghidra": "0x207de7c",
+     "symbol": "_ZN4Aska13StringUtility19SeekStartOfNextLineEPKc",
+     "name": "SeekStartOfNextLine"
+    },
+    {
+     "ghidra": "0x207ded8",
+     "symbol": "_ZN4Aska13StringUtility25CheckForSingleLineCommentEPKc",
+     "name": "CheckForSingleLineComment"
+    },
+    {
+     "ghidra": "0x207df04",
+     "symbol": "_ZN4Aska13StringUtility8CopyLineEPciPKc",
+     "name": "CopyLine"
+    },
+    {
+     "ghidra": "0x207e0c4",
+     "symbol": "_ZN4Aska13StringUtility26ConvertFullPathToDirectoryEPciPKc",
+     "name": "ConvertFullPathToDirectory"
+    },
+    {
+     "ghidra": "0x207eb9c",
+     "symbol": "_ZN4Aska13StringUtility27ConvertBinaryToHexBaseAsciiEPKamPcj",
+     "name": "ConvertBinaryToHexBaseAscii"
+    },
+    {
+     "ghidra": "0x207f290",
+     "symbol": "_ZN4Aska13StringUtility15Utf8ToMultiByteEPKcPcj",
+     "name": "Utf8ToMultiByte"
+    }
+   ]
+  },
+  {
+   "name": "TArray<unsigned int, true>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "unk_20",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_minCapacity",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 50,
+     "name": "m_flags2",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 52,
+     "name": "unk_34",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x26a1ed0",
+     "symbol": "_ZN4Aska6TArrayIjLb1EED2Ev",
+     "name": "~TArray"
+    },
+    {
+     "ghidra": "0x26a238c",
+     "symbol": "_ZN4Aska6TArrayIjLb1EE6ResizeElb",
+     "name": "Resize"
+    },
+    {
+     "ghidra": "0x26a2488",
+     "symbol": "_ZN4Aska6TArrayIjLb1EED0Ev",
+     "name": "~TArray"
+    }
+   ]
+  },
+  {
+   "name": "TBinaryNode<16>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<16>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<16>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_left",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<16>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_right",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<16>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_key",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 56,
+   "align": 8
+  },
+  {
+   "name": "TBinaryNode<24>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<24>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<24>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_left",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<24>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_right",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<24>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_key",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 64,
+   "align": 8
+  },
+  {
+   "name": "TBinaryNode<32>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<32>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<32>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_left",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<32>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_right",
+     "type": {
+      "kind": "ptr",
+      "to": "TBinaryNode<32>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_key",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, _Bool> > >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "THashTable<TPair<unsigned int, _Bool> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_hasher",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "m_equal",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 10,
+     "name": "unk_0a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_maxLoadFactor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_deleted",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_allocator",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 32,
+     "name": "m_buckets",
+     "type": {
+      "kind": "struct",
+      "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, _Bool> > >"
+     },
+     "size": 16
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashMap<unsigned int, _Bool>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "table",
+     "type": {
+      "kind": "struct",
+      "name": "THashTable<TPair<unsigned int, _Bool> >"
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, TStaticString<256> > > >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "THashTable<TPair<unsigned int, TStaticString<256> > >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_hasher",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "m_equal",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 10,
+     "name": "unk_0a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_maxLoadFactor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_deleted",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_allocator",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 32,
+     "name": "m_buckets",
+     "type": {
+      "kind": "struct",
+      "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, TStaticString<256> > > >"
+     },
+     "size": 16
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashMap<unsigned int, TStaticString<256> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "table",
+     "type": {
+      "kind": "struct",
+      "name": "THashTable<TPair<unsigned int, TStaticString<256> > >"
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, unsigned int> > >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "THashTable<TPair<unsigned int, unsigned int> >",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_hasher",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "m_equal",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 10,
+     "name": "unk_0a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_maxLoadFactor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_deleted",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_allocator",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 32,
+     "name": "m_buckets",
+     "type": {
+      "kind": "struct",
+      "name": "THashMapBucketArray<THashMapBucket<TPair<unsigned int, unsigned int> > >"
+     },
+     "size": 16
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "THashMap<unsigned int, unsigned int>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "table",
+     "type": {
+      "kind": "struct",
+      "name": "THashTable<TPair<unsigned int, unsigned int> >"
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 8
+  }
+ ]
+}

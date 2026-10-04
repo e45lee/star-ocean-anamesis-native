@@ -68,11 +68,16 @@ struct Ctx {
     // A live server (soa or soa-server): the client's data (the request's battle log, the asset
     // index) is there; false in the unit tests' scratch servers.
     bool live() const;
-    int64_t now();                                  // the server clock (--clock aware)
-    // The event calendar (server.h event_now): dated content (event terms, deep-space missions,
-    // Sphere 211 seasons) uses it; wallet, stamina and other real-time rules use now().
-    int64_t event_now();
-    std::string fmt_time(int64_t t);               // "YYYY-MM-DD HH:MM:SS", local time
+    // The two clocks, each its own type (soaserver/times.h): now() the server clock (--clock
+    // aware; wallet, stamina, every stored time, the wire's data.Time), event_now() the event
+    // calendar (server.h event_now: dated content only the server decides, e.g. event terms,
+    // deep space's bonus sets, Sphere 211's season).
+    ServerTime now();
+    EventTime event_now();
+    // "YYYY-MM-DD HH:MM:SS", local time: a time of either clock, or a master date's raw seconds.
+    std::string fmt_time(int64_t t);
+    std::string fmt_time(ServerTime t) { return fmt_time(t.v); }
+    std::string fmt_time(EventTime t) { return fmt_time(t.v); }
     int64_t parse_time(const std::string& s);
     Value base_data();                             // {Time, Player, Wallet}
     Value roster();                                // Character (CPersonInfo list)
@@ -97,7 +102,7 @@ struct Ctx {
     // Tests only (the scratch servers' callers): fixed clocks instead of the server's, and an
     // observer of refusals. Unset in a live server.
     struct TestHooks {
-        std::function<int64_t()> now, event_now;
+        std::function<int64_t()> now, event_now;  // seconds: now() / event_now() wrap them in their clock's type
         std::function<void(u32 code)> on_refuse;
     } test;
 };
@@ -168,7 +173,7 @@ void mission_result_extra(Ctx& c, const MissionInfo& mi, Value& data);
 // its in-memory DB at boot; the master both server modes' CDNs serve is prepared with these:
 // server.cpp apply_client_master). `now` is the server clock, `event_now` the event calendar (server.h). Data-level overrides only (docs/server-rules.md).
 // `ext::add_client_master(fn)` (ClientMaster).
-using ClientMasterFn = std::function<void(Sql& client_db, int64_t now, int64_t event_now)>;
+using ClientMasterFn = std::function<void(Sql& client_db, ServerTime now, EventTime event_now)>;
 void add_client_master(ClientMasterFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 
 // The registrations in their order (soa-server --list-hooks, the test server/module-order): every
@@ -194,7 +199,7 @@ bool has_response_hooks();
 bool on_response(Ctx& c, const Request& r, Value& data);  // true: data changed
 const GrantFn* find_grant(u32 content_type);
 void item_extra(Sql& st, Sql& m, ItemUid uid, Value& item);
-void client_master(sqlite3* db, int64_t now, int64_t event_now);
+void client_master(sqlite3* db, ServerTime now, EventTime event_now);
 
 // The file of the master DB the live server reads (the 3.7.0 master), "" without a server.
 std::string server_master_path();
@@ -228,7 +233,7 @@ Value achievement_state(Ctx& c);
 // Passes (api/shop/subscription.cpp): whether a master_subscription type (e.g. 3 = the deep space
 // ships) is on at t, and the `Subscription` state key {type: {master_subscription_type_id,
 // opened_at, closed_at}} the client reads (CParameterUtility::EnableSubscriptionType).
-bool subscription_active(Ctx& c, u32 type, int64_t t);
+bool subscription_active(Ctx& c, u32 type, ServerTime t);
 Value subscription_state(Ctx& c);
 // A present in the box (the core's presents table). `text` is the line the box shows for it
 // (sent as free_text_message_id; empty = built from the reason, see present_text), stored in the

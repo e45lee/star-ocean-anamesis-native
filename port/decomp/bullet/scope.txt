@@ -1,0 +1,12 @@
+# port/decomp/bullet/scope.txt: the guest functions the `bullet` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+# Bullet Physics (a modified 2.75, README.md): the classes, its template instantiations and free functions.
+^~?(bt[A-Z]\w*|gContact\w*|gjkepa2_impl::)
+^void btAlignedObjectArray<
+^(SegmentSqrDistance|dLineClosestApproach|dBoxBox2|cullPoints2|applyAnisotropicFriction|matrixToEulerXYZ)\(
+^(SphereTriangleDetector|CProfileManager|CProfileNode|CProfileIterator|BroadphaseRayTester|DebugDrawcallback|SupportVertexCallback)::
+# Aska's wrapper over it (the .asf rigid-body chunk 'DyPr').
+^Aska::RigidBody
+^Aska::Global::(Instantiate|Delete)RigidBodyManager\(
+^Aska::AsfHandler::(Create|Setup|Clear|Remove)RigidBody

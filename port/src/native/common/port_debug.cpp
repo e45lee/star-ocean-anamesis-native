@@ -144,7 +144,7 @@ void run(const std::string& cmd, u64 phase_mgr) {
 bool command(const std::string& cmd) {
     if (cmd.rfind("clock:+", 0) == 0) {
         int64_t n = strtoll(cmd.c_str() + 7, nullptr, 10);
-        int64_t t = server::clock_now() + n;
+        int64_t t = (server::clock_now() + n).v;
         server::set_server_clock(t);
         LOGI("port_debug", "clock +%lld s: the server clock is now %lld", (long long)n, (long long)t);
         return true;

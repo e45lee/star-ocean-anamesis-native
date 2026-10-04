@@ -422,6 +422,8 @@ RELS = [
     ("campaign_last", "mission_id", "campaign_clear", "mission_id", None, "CASCADE (S12)",
      "the last story mission played (server_campaign.txt's last line before S12; no row: none)"),
     ("config", "master_config_id", "m:master_config", "id", None, "-", "an option the player changed (UpdateConfig; v14)"),
+    ("one_time_storage", "master_item_id", "m:master_item", "id", None, "-",
+     "the overflow box (一時保管庫): one row per master item (schema version 15)"),
 ]
 
 

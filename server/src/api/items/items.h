@@ -31,7 +31,12 @@ inline std::vector<ItemUid> item_uid_list(const Request& req) {
 // party set's for a member (party_member.weapon_uid / accessory_uid; PLAN-schema S6, d: the set's
 // equipment is the member's, so the item is in use). Both references are ON DELETE SET NULL.
 bool item_equipped(ext::Ctx& ctx, ItemUid item_uid);
-// Whether the player owns the weapon or accessory (an `items` row).
+// Whether the player owns the weapon or accessory in the inventory (an `items` row not in the
+// equipment storage).
 bool owns_item(ext::Ctx& ctx, ItemUid item_uid);
+// What selling the item `item_uid` of the equipment storage pays: the inventory's sale rule
+// (SellItem: (b) round(sale_fol x master_item_sale_rate[level].sale_rate) for a weapon, sale_fol for
+// the rest); 0 when it isn't there.
+u32 stored_item_sale_fol(ext::Ctx& ctx, ItemUid item_uid);
 
 }  // namespace soa::server

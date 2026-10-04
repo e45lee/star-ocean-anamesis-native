@@ -2,6 +2,7 @@
 // Rewards (port code, not guest behaviour): granting a content (a drop, a present, a draw) and
 // adding a character (a duplicate raises the owned one's limit break); core/rewards.cpp. The
 // modules grant through ext::Ctx::grant, which is grant() with drop type 0.
+#include "api/storage/storage.h"  // EquipSource
 #include "soaserver/ext.h"
 
 namespace soa::server {
@@ -10,9 +11,11 @@ namespace soa::server {
 constexpr u32 kContentTypeFreeCoin = 4;
 constexpr u32 kContentTypeItemSet = 99;
 
-// One content to grant: content type, master id, count, Common::MissionDropType.
+// One content to grant: content type, master id, count, Common::MissionDropType, and for
+// equipment where it comes from (the overflow box's options: storage::to_one_time_storage).
 struct Drop {
     u32 type, id, num, drop_type;
+    storage::EquipSource source = storage::EquipSource::kOther;
 };
 
 // What adding a character did (a duplicate raises the owned one's limit break).
@@ -25,8 +28,12 @@ struct Added {
 };
 
 // Grants a content (drop, present, gacha) and lists what it added in `items` (AddItem),
-// `stocks` (StockItem) and `chars` (AddCharacter).
+// `stocks` (StockItem) and `chars` (AddCharacter). Equipment the inventory has no room for goes to
+// the overflow box instead (storage::to_one_time_storage; not in `items`).
 void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& chars);
+// A new owned weapon or accessory `id` in the inventory (an `items` row, whatever the inventory
+// holds) and its AddItem entry (CItemInfo, with the content and drop types).
+Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type);
 // Grants a content as ext::Ctx::grant does (drop type 0), expanding item sets (content type 99:
 // the master_item_set rows, recursively). `free_coins`, when given, adds up the free coins
 // (content type 4) granted, sets included.

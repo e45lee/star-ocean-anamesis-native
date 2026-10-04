@@ -12,12 +12,14 @@
   "BlacklistRemove": "server/src/api/social/social.cpp",
   "BoostCharacter": "server/src/api/growth/growth.cpp",
   "BoxGacha": "server/src/api/gacha/box.cpp",
+  "BulkWithdrawItemFromOneTimeStorage": "server/src/api/storage/one_time.cpp",
   "CbtCertification": "server/src/api/entry/entry.cpp",
   "CheckEventRankingResult": "server/src/api/events/ranking.cpp",
   "ClearNewCharacter": "server/src/api/items/new_flags.cpp",
   "ClearNewEventRanking": "server/src/api/events/ranking.cpp",
   "ClearNewGear": "server/src/api/items/gear.cpp",
   "ClearNewItem": "server/src/api/items/new_flags.cpp",
+  "ClearNewOneTimeStorageItem": "server/src/api/storage/one_time.cpp",
   "ClearNewStackItem": "server/src/api/items/new_flags.cpp",
   "CreatePlayer": "server/src/api/entry/entry.cpp",
   "DebugBarneyChance": "server/src/api/debug/debug_stubs.cpp",
@@ -52,6 +54,7 @@
   "DeepSpaceMissionEnd": "server/src/api/deepspace/deepspace.cpp",
   "DeepSpaceMissionEndNow": "server/src/api/deepspace/deepspace.cpp",
   "DeepSpaceMissionStart": "server/src/api/deepspace/deepspace.cpp",
+  "DepositItem": "server/src/api/storage/storage.cpp",
   "EquipAccessory": "server/src/api/growth/growth.cpp",
   "EquipSkill": "server/src/api/growth/growth.cpp",
   "EquipWeapon": "server/src/api/growth/growth.cpp",
@@ -74,6 +77,7 @@
   "GetGachaRate": "server/src/api/gacha/rates.cpp",
   "GetGearInfo": "server/src/api/items/gear.cpp",
   "GetMissionList": "server/src/api/missions/play_state.cpp",
+  "GetOneTimeStorageInfo": "server/src/api/storage/one_time.cpp",
   "GetPlayMission": "server/src/api/missions/play_state.cpp",
   "GetPlayer": "server/src/api/player/player_info.cpp",
   "GetPlayerDetailInfo": "server/src/api/events/ranking.cpp",
@@ -84,6 +88,7 @@
   "GetServerTime": "server/src/api/entry/entry.cpp",
   "GetSphere211Info": "server/src/api/sphere211/sphere211.cpp",
   "GetSphere211RankingInfo": "server/src/api/sphere211/sphere211.cpp",
+  "GetStorageInfo": "server/src/api/storage/storage.cpp",
   "GetWorldBossInfo": "server/src/api/events/world_boss.cpp",
   "Home3DAnd2DSwitching": "server/src/api/player/home.cpp",
   "ItemCompose": "server/src/api/items/items.cpp",
@@ -96,6 +101,7 @@
   "LocationRegist": "server/src/api/social/social.cpp",
   "LockItem": "server/src/api/items/items.cpp",
   "LockItemArray": "server/src/api/items/items.cpp",
+  "LockStorageItem": "server/src/api/storage/storage.cpp",
   "Login": "server/src/api/entry/entry.cpp",
   "MaterialCompose": "server/src/api/items/items.cpp",
   "MissionEnd": "server/src/api/missions/mission_end.cpp",
@@ -120,6 +126,7 @@
   "SellGear": "server/src/api/items/gear.cpp",
   "SellItem": "server/src/api/items/items.cpp",
   "SellItemArray": "server/src/api/items/items.cpp",
+  "SellItemsFromStorage": "server/src/api/storage/storage.cpp",
   "SellStackItem": "server/src/api/items/items.cpp",
   "SendErrorLog": "server/src/api/entry/entry.cpp",
   "SendGuideInformation": "server/src/api/settings/account.cpp",
@@ -140,6 +147,7 @@
   "StaminaHealByFavor": "server/src/api/daily/premium_and_favor_bonus.cpp",
   "UnlockItem": "server/src/api/items/items.cpp",
   "UnlockItemArray": "server/src/api/items/items.cpp",
+  "UnlockStorageItem": "server/src/api/storage/storage.cpp",
   "UpdateAwakenLevel": "server/src/api/growth/growth.cpp",
   "UpdateBirthYearMonth": "server/src/api/settings/account.cpp",
   "UpdateConfig": "server/src/api/settings/config.cpp",
@@ -155,7 +163,9 @@
   "UpdateTutorial": "server/src/api/entry/entry.cpp",
   "UpdateView": "server/src/api/entry/entry.cpp",
   "UseFavorItem": "server/src/api/favor/favor_api.cpp",
-  "UseHealItem": "server/src/api/items/items.cpp"
+  "UseHealItem": "server/src/api/items/items.cpp",
+  "WithdrawItemFromOneTimeStorage": "server/src/api/storage/one_time.cpp",
+  "WithdrawItemFromStorage": "server/src/api/storage/storage.cpp"
  },
  "hooks": {
   "server/src/api/daily/login_bonus.cpp": [
@@ -224,6 +234,9 @@
   ],
   "server/src/api/settings/config.cpp": [
    "OnPlayerLoad"
+  ],
+  "server/src/api/storage/one_time.cpp": [
+   "OnResponse"
   ]
  },
  "tests": {
@@ -570,6 +583,24 @@
     "Sphere211SelectedFloor",
     "Sphere211StaminaHeal",
     "Sphere211UseRerollItem"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:storage": {
+   "apis": [
+    "BulkWithdrawItemFromOneTimeStorage",
+    "ClearNewOneTimeStorageItem",
+    "DepositItem",
+    "Gacha",
+    "GetOneTimeStorageInfo",
+    "GetPlayer",
+    "GetStorageInfo",
+    "LockStorageItem",
+    "Login",
+    "SellItemsFromStorage",
+    "UnlockStorageItem",
+    "WithdrawItemFromOneTimeStorage",
+    "WithdrawItemFromStorage"
    ],
    "source": "observed (requests.txt)"
   },
@@ -1104,6 +1135,40 @@
     "NoLoginStart",
     "RemoveGear"
    ]
+  },
+  "session:storage": {
+   "apis": [
+    "BulkWithdrawItemFromOneTimeStorage",
+    "ClearNewOneTimeStorageItem",
+    "DepositItem",
+    "GetOneTimeStorageInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "GetStorageInfo",
+    "Login",
+    "NoLoginStart",
+    "SellItemsFromStorage",
+    "WithdrawItemFromOneTimeStorage",
+    "WithdrawItemFromStorage"
+   ],
+   "source": "declared"
+  },
+  "session:storage-server": {
+   "apis": [
+    "BulkWithdrawItemFromOneTimeStorage",
+    "ClearNewOneTimeStorageItem",
+    "DepositItem",
+    "GetOneTimeStorageInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "GetStorageInfo",
+    "Login",
+    "NoLoginStart",
+    "SellItemsFromStorage",
+    "WithdrawItemFromOneTimeStorage",
+    "WithdrawItemFromStorage"
+   ],
+   "source": "declared"
   },
   "session:deepspace": {
    "apis": [

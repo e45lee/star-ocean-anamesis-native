@@ -22,7 +22,12 @@ bool item_equipped(ext::Ctx& ctx, ItemUid item_uid) {
                {item_uid}) > 0;
 }
 
-bool owns_item(ext::Ctx& ctx, ItemUid item_uid) { return ctx.st.one("select count(*) from items where uid = ?", {item_uid}) > 0; }
+// (b) an item in the equipment storage isn't in the inventory: the client removes it from its item
+// list (CApiNotify::AddStorage @014d437c) and can't equip or strengthen it (a: master_text
+// cp0003_tutorial_151 "装備倉庫の中に入っている武器やアクセサリーの装備や強化はできない").
+bool owns_item(ext::Ctx& ctx, ItemUid item_uid) {
+    return ctx.st.one("select count(*) from items where uid = ? and stored_at is null", {item_uid}) > 0;
+}
 
 namespace {
 using namespace ext;
@@ -41,9 +46,11 @@ struct Item {
     u32 type = 0, points = 0, lb = 0, rarity = 0, sale_fol = 0;  // points: boosted points (`exp`); lb: limit break
     bool locked = false, equipped = false;
 };
-Item find_item(Ctx& ctx, ItemUid uid) {
+// The item `uid` of the inventory (not ok when it is in the equipment storage, owns_item), or with
+// `stored` one of the equipment storage.
+Item find_item(Ctx& ctx, ItemUid uid, bool stored = false) {
     Item item;
-    ctx.st.q("select * from items where uid = ?", {uid}, [&](const Row& item_row) {
+    ctx.st.q(std::string("select * from items where uid = ? and stored_at is ") + (stored ? "not null" : "null"), {uid}, [&](const Row& item_row) {
         item.ok = true;
         item.uid = uid;
         item.id = item_row.id<MasterItemId>("master_item_id");
@@ -74,6 +81,16 @@ u32 item_cap(Ctx& ctx, const Item& item) {
 u32 item_level_of(Ctx& ctx, const Item& item) {
     u32 next = (u32)ctx.m.one(std::string("select next_level_boosted_point from ") + compose_table(item.type) + " where rarity = ?", {item.rarity});
     return growth_rules::item_level(item.points, next, item_cap(ctx, item));
+}
+// What selling an item pays: (b) weapons round(sale_fol x master_item_sale_rate[level].sale_rate),
+// others sale_fol (CParameterUtility::tItemData::SellingPrice).
+u32 sale_fol(Ctx& ctx, const Item& item) {
+    double rate = 1.0;
+    if (item.type == item_type::kWeapon) {
+        u32 level = item_level_of(ctx, item);
+        ctx.m.q("select sale_rate from master_item_sale_rate where id = ?", {level}, [&](const Row& rate_row) { rate = rate_row.f("sale_rate"); });
+    }
+    return growth_rules::sell_price(item.sale_fol, rate);
 }
 
 // What a material is to a compose's limit break, beyond a copy of the base: a limit-break item
@@ -414,15 +431,7 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
                 return refuse(ctx, req.method.c_str(), "an item is locked, equipped or missing", ErrorCode::kLockedItem);
         }
         for (ItemUid uid : item_uid_list(req)) {
-            Item item = find_item(ctx, uid);
-            // (b) weapons: round(sale_fol x master_item_sale_rate[level].sale_rate); others sale_fol
-            double rate = 1.0;
-            if (item.type == item_type::kWeapon) {
-                u32 level = item_level_of(ctx, item);
-                ctx.m.q("select sale_rate from master_item_sale_rate where id = ?", {level},
-                        [&](const Row& rate_row) { rate = rate_row.f("sale_rate"); });
-            }
-            total += growth_rules::sell_price(item.sale_fol, rate);
+            total += sale_fol(ctx, find_item(ctx, uid));
             ctx.st.q("delete from items where uid = ?", {uid});  // its gear goes with it (ON DELETE CASCADE)
             ids.push(uid.v);
         }
@@ -534,6 +543,8 @@ std::vector<u8> stamina_heal(Ctx& ctx, const Request&) {
 }
 
 }  // namespace
+
+u32 stored_item_sale_fol(ext::Ctx& ctx, ItemUid item_uid) { return sale_fol(ctx, find_item(ctx, item_uid, true)); }
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").

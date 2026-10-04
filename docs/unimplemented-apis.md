@@ -16,13 +16,13 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **155** (35 of them stubs: section 2.5). Of the **44 without a handler**:
+The wire knows **199 methods**; the server has handlers for **165** (35 of them stubs: section 2.5). Of the **34 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
 | **Empty reply** | 10 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
 | **Canned reply** | 1 | The named file exists in `port/fakeapi/responses/`, but it is a fixed reply made for another method by `tools/fakeapi_responses.py`: `TrainingMissionStart` gets `mission_start.msgp` (a normal mission's start). Nothing is stored. (`CbtCertification`, which got `update_home.msgp`, is answered now: `server-rules.md#client-reports`.) |
-| **No reply** | 23 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
+| **No reply** | 13 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
 
 Over the network (`soa-server`, `soa-emu`, `soa --server HOST`), every unhandled method gets an
@@ -41,8 +41,8 @@ player, screens opened by hand through `--control`.
 
 | Screen (method) | Seen | What happens |
 |---|---|---|
-| アイテム > 装備倉庫にしまう / 取り出す / 売却 (`GetStorageInfo`) | I, S | opens; the storage is empty (倉庫装備所持 0/500) |
-| アイテム > 一時保管庫から取り出す (`GetOneTimeStorageInfo`) | I | opens; empty |
+| アイテム > 装備倉庫にしまう / 取り出す / 売却 (`GetStorageInfo`) | I, S | opens; the storage is empty (倉庫装備所持 0/500). **Done** (step 3.1, schema v15): see 3.1 below |
+| アイテム > 一時保管庫から取り出す (`GetOneTimeStorageInfo`) | I | opens; empty. **Done** (step 3.1) |
 | `DepositItem`, `WithdrawItemFromStorage`, `SellItemsFromStorage`, `Lock`/`UnlockStorageItem` | decompile | the screen takes the call as done; nothing moves on the server, so the item is back after a reload (the seeded player has no loose weapons to move; the storage session plants some) |
 | 設定 > その他設定 / バトル設定 (`GetConfig`, `UpdateConfig`) | I, S | opens with the master defaults; a toggled option (一時保管庫設定) is **lost at once**: reopened, it is off again (S: `UpdateConfig(4025152546, "true", 4)` answered with `Time` only). **Fixed (step 3.3):** kept, also over a restart; 初期設定に戻す resets |
 | 初期設定に戻す (`ResetConfig`) | decompile | same pattern |
@@ -82,14 +82,6 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 
 | Feature | Method | In-process | Notes |
 |---|---|---|---|
-| **Storage** (倉庫) | [GetStorageInfo](api.md#getstorageinfo) | ★ | the storage screen's contents |
-| | [DepositItem](api.md#deposititem) | ★ | |
-| | [WithdrawItemFromStorage](api.md#withdrawitemfromstorage) | ★ | |
-| | [SellItemsFromStorage](api.md#sellitemsfromstorage) | ★ | |
-| | [LockStorageItem](api.md#lockstorageitem) / [UnlockStorageItem](api.md#unlockstorageitem) | ★ | |
-| **One-time storage** (overflow box) | [GetOneTimeStorageInfo](api.md#getonetimestorageinfo) | ★ | where items go when the inventory is full |
-| | [WithdrawItemFromOneTimeStorage](api.md#withdrawitemfromonetimestorage) / [BulkWithdrawItemFromOneTimeStorage](api.md#bulkwithdrawitemfromonetimestorage) | ★ | |
-| | [ClearNewOneTimeStorageItem](api.md#clearnewonetimestorageitem) | ★ | the "new" badge |
 | **Missions** | [MissionContinue](api.md#missioncontinue) | ★ | continuing a lost battle |
 | | [MissionLose](api.md#missionlose) | ★ | |
 | | [TrainingMissionStart](api.md#trainingmissionstart) | canned `mission_start.msgp` | |
@@ -185,7 +177,7 @@ tables, rules section). New state goes through the state module's migrations
 (`user_version` +1 per group, the planted-old-version migration test, fresh == migrated,
 `tools/schema_inventory.py`). Suggested order, play impact first:
 
-1. **Storage and one-time storage** (10 methods): an `inventory_storage` table (items, stack counts,
+1. **Storage and one-time storage** (10 methods; **done**, schema version 15: `items.stored_at`, `one_time_storage`; `server/src/api/storage/`, [`server-rules.md#storage`](server-rules.md#storage); the assumptions below): an `inventory_storage` table (items, stack counts,
    locks, "new" flags); deposit/withdraw/sell/lock rules; the overflow box filled where the server
    already gives items (presents, drops, gacha) when the inventory is full — check how the client
    decides "full" and match it.
@@ -318,6 +310,32 @@ evidence against one replaces it and records why.
 - `UpdateSession`: no handler (2.3).
 - In-process, the eight methods are served through `kServedStatusOnly` (docs/client-changes.md);
   `UpdateBirthYearMonth`'s arguments are sent as NetworkApiCaller sends them ("YYYY-MM").
+
+**Storage and the overflow box (step 3.1, done).** The rules and their evidence are
+[`server-rules.md#storage`](server-rules.md#storage); what had to be assumed, and why:
+- A stored item stays an `items` row (`stored_at` set) instead of moving to a table of its own: its
+  gear, lock and the history's references stay intact, and every inventory API ignores it (the
+  client's equivalent: the item leaves the item list). Not observable by the player.
+- `update_at_time` is the deposit time / the box row's last change in seconds since the epoch (the
+  client reads a number and only sorts by it); the box's are kept unique per row because the box
+  screen tells its entries apart by it.
+- The box entry's `id` is its master item id (the client never reads it; it matches entries by
+  master id).
+- A locked stored item can't be sold (10204), as in the inventory.
+- Refusal codes chosen from the client's texts: 10203 (equipped), 10211 (storage full), 10202 (no
+  room in the inventory), 10206 (more than the box holds), 10403 (an item not where the request
+  says).
+- An overflowed gacha weapon's `GachaItems` entry has `player_item_id` 0 and its history row no
+  uid. The client's "sent to the box" messages (`uimsg_gacha_wapon_itemmax` ...) are chosen by code
+  not traced (the reader of `AddOneTimeStorageInfo` wasn't found), so they may not show; the item
+  is in the box either way.
+- Items taken out of the box are new level-1 items (the box keeps no item state), content type 1,
+  drop type 0.
+- `storage_stock` is no longer the assumed 500 but 100 + 400 with the Galaxy Pass (client and master
+  evidence); without `--galaxy-pass` a player now has 100 storage slots.
+- The その他設定 options that send equipment to the box always (is_one_time_storage,
+  is_one_time_storage_except_gacha) belong to the settings step: `storage::to_one_time_storage`
+  answers only the full case until they are stored.
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

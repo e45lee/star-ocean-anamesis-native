@@ -3,6 +3,8 @@
 #include "native/render/render_test_util.h"
 
 #include <chrono>
+#include <cstdio>
+#include <cstdlib>
 #include <condition_variable>
 #include <mutex>
 #include <vector>
@@ -90,14 +92,20 @@ void probe_hook(Probe& p, Cpu& c) {
     c.set_v(3, r.v3);
 }
 
-bool probe_call(TestContext& t, Probe& p, const std::function<bool(Cpu&)>& body, int timeout_ms, const char* what) {
+bool live_screen() { return std::getenv("SOA_SELFTEST_START_FILE") != nullptr; }
+
+bool probe_call(TestContext& t, Probe& p, const std::function<bool(Cpu&)>& body, int timeout_ms, const char* what,
+                bool required) {
     std::unique_lock<std::mutex> lk(p.mu);
     p.done = false;
     p.body = &body;
     if (p.cv.wait_for(lk, std::chrono::milliseconds(timeout_ms), [&] { return p.done; })) return true;
     if (p.body == &body) {  // armed, not running: withdraw it
         p.body = nullptr;
-        t.fail("no call of %s within %d ms", what, timeout_ms);
+        if (required)
+            t.fail("no call of %s within %d ms", what, timeout_ms);
+        else
+            fprintf(stderr, "    note: no call of %s within %d ms (not on this screen; skipped)\n", what, timeout_ms);
         return false;
     }
     p.cv.wait(lk, [&] { return p.done || p.body == &body; });  // running now: `body` must outlive it

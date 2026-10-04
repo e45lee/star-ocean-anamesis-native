@@ -2,5 +2,3720 @@
  "subsystem": "anim",
  "generated_by": "tools/subsystem.py export-types anim",
  "header": "port/src/native/anim/anim_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "AafHeader",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_version",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 4,
+     "name": "m_targetCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 6,
+     "name": "m_countC",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 8,
+     "name": "m_countA",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_countB",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_param0c",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 14,
+     "name": "m_chunkCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 16,
+     "name": "m_length",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_complementBufferSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_targetsOffset",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_chunkTableOffset",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_chunkLength",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 4
+  },
+  {
+   "name": "AafTarget",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_header",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_object",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "AafControllerInfo",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_setArg",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_controller",
+     "type": {
+      "kind": "ptr",
+      "to": "AafController"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_header",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_keyHeader",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_chunkData",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_chunkPos",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_targetIndex",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 46,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 47,
+     "name": "unk_2f",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "AafHandler",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_refCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_targetNames",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_file",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_header",
+     "type": {
+      "kind": "ptr",
+      "to": "AafHeader"
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "unk_030",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_controllerCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_countA",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_countB",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 68,
+     "name": "m_countC",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 72,
+     "name": "m_param48",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 76,
+     "name": "unk_04c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 80,
+     "name": "m_buffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "unk_058",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 104,
+     "name": "m_complementBuffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "m_complement",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 113,
+     "name": "m_complementShared",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 114,
+     "name": "m_complementDirty",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 115,
+     "name": "unk_073",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    },
+    {
+     "offset": 120,
+     "name": "m_targets",
+     "type": {
+      "kind": "ptr",
+      "to": "AafTarget"
+     },
+     "size": 8
+    },
+    {
+     "offset": 128,
+     "name": "m_infos",
+     "type": {
+      "kind": "ptr",
+      "to": "AafControllerInfo"
+     },
+     "size": 8
+    },
+    {
+     "offset": 136,
+     "name": "m_infosA",
+     "type": {
+      "kind": "ptr",
+      "to": "AafControllerInfo"
+     },
+     "size": 8
+    },
+    {
+     "offset": 144,
+     "name": "m_infosB",
+     "type": {
+      "kind": "ptr",
+      "to": "AafControllerInfo"
+     },
+     "size": 8
+    },
+    {
+     "offset": 152,
+     "name": "m_infosC",
+     "type": {
+      "kind": "ptr",
+      "to": "AafControllerInfo"
+     },
+     "size": 8
+    },
+    {
+     "offset": 160,
+     "name": "m_autoTask",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 168,
+     "name": "m_cacheWords",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 172,
+     "name": "unk_0ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 176,
+     "name": "m_cacheBits0",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 184,
+     "name": "m_cacheBits1",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 192,
+     "name": "m_activeInfos",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 200,
+     "name": "m_cacheIndex0",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 208,
+     "name": "m_cacheIndex1",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 216,
+     "name": "unk_0d8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 224,
+     "name": "m_currentChunk",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 232,
+     "name": "m_complementStart",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 236,
+     "name": "m_complementEnd",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 240,
+     "name": "m_complementLength",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 244,
+     "name": "m_targetCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 246,
+     "name": "unk_0f6",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 247,
+     "name": "m_complementActive",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 248,
+     "name": "m_complementOnce",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 249,
+     "name": "unk_0f9",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 250,
+     "name": "m_unk0fa",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 251,
+     "name": "unk_0fb",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 29
+     },
+     "size": 29
+    },
+    {
+     "offset": 280,
+     "name": "m_chunkTable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 288,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x208e808",
+     "symbol": "_ZN4Aska10AafHandler27Function_SearchKeyFrameDataERPvRPNS_25FrameSortDataForSearchOldERijS4_tiib",
+     "name": "Function_SearchKeyFrameData"
+    },
+    {
+     "ghidra": "0x208e88c",
+     "symbol": "_ZN4Aska10AafHandler34Function_RenewalAllControllerCacheEfPjS1_jPNS_17AafControllerInfoEjPNS_25FrameSortDataForSearchOldEjb",
+     "name": "Function_RenewalAllControllerCache"
+    },
+    {
+     "ghidra": "0x208ecec",
+     "symbol": "_ZN4Aska10AafHandler31Function_UpdateKeyFrameData_AllILj0EEEbPjRjS2_S3_PNS_17AafControllerInfoEjjPNS_25FrameSortDataForSearchOldEjiib",
+     "name": "Function_UpdateKeyFrameData_All<0u>"
+    },
+    {
+     "ghidra": "0x208eec8",
+     "symbol": "_ZN4Aska10AafHandler31Function_UpdateKeyFrameData_AllILj1EEEbPjRjS2_S3_PNS_17AafControllerInfoEjjPNS_25FrameSortDataForSearchOldEjiib",
+     "name": "Function_UpdateKeyFrameData_All<1u>"
+    },
+    {
+     "ghidra": "0x208f0a4",
+     "symbol": "_ZN4Aska10AafHandler31Function_UpdateKeyFrameData_AllILj2EEEbPjRjS2_S3_PNS_17AafControllerInfoEjjPNS_25FrameSortDataForSearchOldEjiib",
+     "name": "Function_UpdateKeyFrameData_All<2u>"
+    },
+    {
+     "ghidra": "0x208f274",
+     "symbol": "_ZN4Aska10AafHandler21Function_GetChunkInfoEPKS0_PKNS_9AafHeaderERfRjRmRPNS_21AafFrameSortChunkInfoE",
+     "name": "Function_GetChunkInfo"
+    },
+    {
+     "ghidra": "0x2095324",
+     "symbol": "_ZN4Aska10AafHandler11InstantiateEv",
+     "name": "Instantiate"
+    },
+    {
+     "ghidra": "0x20953b0",
+     "symbol": "_ZN4Aska10AafHandlernwEmRKSt9nothrow_t",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x20953d8",
+     "symbol": "_ZN4Aska10AafHandler10DeleteThisEv",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x20953ec",
+     "symbol": "_ZN4Aska10AafHandler10DecodeDataEPv",
+     "name": "DecodeData"
+    },
+    {
+     "ghidra": "0x209555c",
+     "symbol": "_ZN4Aska10AafHandler17DeleteControllersEv",
+     "name": "DeleteControllers"
+    },
+    {
+     "ghidra": "0x20955d4",
+     "symbol": "_ZN4Aska10AafHandler14AttachResourceEPNS_15ResourceManagerE",
+     "name": "AttachResource"
+    },
+    {
+     "ghidra": "0x209568c",
+     "symbol": "_ZNK4Aska10AafHandler13GetTargetNameEPKNS_19AafTargetHeaderBaseE",
+     "name": "GetTargetName"
+    },
+    {
+     "ghidra": "0x20956cc",
+     "symbol": "_ZN4Aska10AafHandler18ResolveConstraintsEf",
+     "name": "ResolveConstraints"
+    },
+    {
+     "ghidra": "0x20957a8",
+     "symbol": "_ZN4Aska10AafHandler21AddAutoControllerTaskEPNS_11TaskManagerEPf",
+     "name": "AddAutoControllerTask"
+    },
+    {
+     "ghidra": "0x2095844",
+     "symbol": "_ZN4Aska10AafHandler24RemoveAutoControllerTaskEv",
+     "name": "RemoveAutoControllerTask"
+    },
+    {
+     "ghidra": "0x2095874",
+     "symbol": "_ZN4Aska10AafHandler5CloneEPNS_10AsfHandlerEPS0_PNS_16CollisionHandlerEPNS_17AsfTargetNameListEb",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x2095980",
+     "symbol": "_ZN4Aska10AafHandler17CreateControllersEPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListEb",
+     "name": "CreateControllers"
+    },
+    {
+     "ghidra": "0x2095e54",
+     "symbol": "_ZN4Aska10AafHandler4CopyEPNS_10AsfHandlerEPS0_PNS_16CollisionHandlerEPNS_17AsfTargetNameListEb",
+     "name": "Copy"
+    },
+    {
+     "ghidra": "0x2096078",
+     "symbol": "_ZN4Aska10AafHandler23AttachConstantChunkDataEPh",
+     "name": "AttachConstantChunkData"
+    },
+    {
+     "ghidra": "0x2096120",
+     "symbol": "_ZN4Aska10AafHandler15AttachChunkDataEiPh",
+     "name": "AttachChunkData"
+    },
+    {
+     "ghidra": "0x2096170",
+     "symbol": "_ZN4Aska10AafHandler20PrecreateControllersEPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListE",
+     "name": "PrecreateControllers"
+    },
+    {
+     "ghidra": "0x2096214",
+     "symbol": "_ZN4Aska10AafHandler9AttachAafEPKvPNS_10AsfHandlerEPNS_16CollisionHandlerEPNS_17AsfTargetNameListE",
+     "name": "AttachAaf"
+    },
+    {
+     "ghidra": "0x2096ae4",
+     "symbol": "_ZN4Aska10AafHandler12DetachObjectEv",
+     "name": "DetachObject"
+    },
+    {
+     "ghidra": "0x2096bd0",
+     "symbol": "_ZN4Aska10AafHandler22CalcRuntimeMemorySize1EPKNS_3AFF8AskaFileEPKNS_9AafHeaderE",
+     "name": "CalcRuntimeMemorySize1"
+    },
+    {
+     "ghidra": "0x2096d78",
+     "symbol": "_ZN4Aska10AafHandler25GetTargetControllerObjectEiii",
+     "name": "GetTargetControllerObject"
+    },
+    {
+     "ghidra": "0x2096dd8",
+     "symbol": "_ZN4Aska10AafHandler15CheckPlatformIDEPKNS_19AafControllerHeaderE",
+     "name": "CheckPlatformID"
+    },
+    {
+     "ghidra": "0x2096e04",
+     "symbol": "_ZN4Aska10AafHandler26InitializeAllConstantCacheEPt",
+     "name": "InitializeAllConstantCache"
+    },
+    {
+     "ghidra": "0x2096ea0",
+     "symbol": "_ZNK4Aska10AafHandler23GetComplementBufferSizeEv",
+     "name": "GetComplementBufferSize"
+    },
+    {
+     "ghidra": "0x2096edc",
+     "symbol": "_ZN4Aska10AafHandler22AttachComplementBufferEPvj",
+     "name": "AttachComplementBuffer"
+    },
+    {
+     "ghidra": "0x2096f30",
+     "symbol": "_ZN4Aska10AafHandler22DetachComplementBufferEv",
+     "name": "DetachComplementBuffer"
+    },
+    {
+     "ghidra": "0x2096f5c",
+     "symbol": "_ZNK4Aska10AafHandler26IsAttachedComplementBufferEv",
+     "name": "IsAttachedComplementBuffer"
+    },
+    {
+     "ghidra": "0x2096f8c",
+     "symbol": "_ZN4Aska10AafHandler13HaltAnimationEPNS_11IAnimatableEb",
+     "name": "HaltAnimation"
+    },
+    {
+     "ghidra": "0x20970c8",
+     "symbol": "_ZN4Aska10AafHandler13HaltAnimationEPKcb",
+     "name": "HaltAnimation"
+    },
+    {
+     "ghidra": "0x2097238",
+     "symbol": "_ZN4Aska10AafHandler13HaltAnimationEPNS_11IAnimatableEbNS_21EnumAafControllerTypeE",
+     "name": "HaltAnimation"
+    },
+    {
+     "ghidra": "0x20973c4",
+     "symbol": "_ZN4Aska10AafHandler22GetControllerInterfaceEPNS_11IAnimatableENS_22EnumAafDetailAttributeE",
+     "name": "GetControllerInterface"
+    },
+    {
+     "ghidra": "0x20974ac",
+     "symbol": "_ZN4Aska10AafHandler27LocalGetControllerInterfaceEPNS_11IAnimatableENS_22EnumAafDetailAttributeE",
+     "name": "LocalGetControllerInterface"
+    },
+    {
+     "ghidra": "0x2097584",
+     "symbol": "_ZN4Aska10AafHandler22GetControllerInterfaceEPKcNS_22EnumAafDetailAttributeE",
+     "name": "GetControllerInterface"
+    },
+    {
+     "ghidra": "0x2097670",
+     "symbol": "_ZN4Aska10AafHandler25GetAllControllerInterfaceEPPNS_11IControllerEiPNS_11IAnimatableENS_21EnumAafControllerTypeEPi",
+     "name": "GetAllControllerInterface"
+    },
+    {
+     "ghidra": "0x2097840",
+     "symbol": "_ZN4Aska10AafHandler22GetControllerInterfaceEPNS_11IAnimatableENS_21EnumAafControllerTypeEi",
+     "name": "GetControllerInterface"
+    },
+    {
+     "ghidra": "0x209791c",
+     "symbol": "_ZN4Aska10AafHandler22GetControllerInterfaceEPKcNS_21EnumAafControllerTypeEi",
+     "name": "GetControllerInterface"
+    },
+    {
+     "ghidra": "0x2097a20",
+     "symbol": "_ZN4Aska10AafHandler18DisableControllersENS_21EnumAafControllerTypeE",
+     "name": "DisableControllers"
+    },
+    {
+     "ghidra": "0x2097a68",
+     "symbol": "_ZN4Aska10AafHandler16DetachControllerEPNS_11IAnimatableE",
+     "name": "DetachController"
+    },
+    {
+     "ghidra": "0x2097ae8",
+     "symbol": "_ZN4Aska10AafHandler17DetachControllersENS_21EnumAafControllerTypeE",
+     "name": "DetachControllers"
+    },
+    {
+     "ghidra": "0x2097b40",
+     "symbol": "_ZN4Aska10AafHandler20DetachAllControllersEv",
+     "name": "DetachAllControllers"
+    },
+    {
+     "ghidra": "0x2097c14",
+     "symbol": "_ZN4Aska10AafHandler16AttachControllerEPNS_11IAnimatableEPKc",
+     "name": "AttachController"
+    },
+    {
+     "ghidra": "0x2097d10",
+     "symbol": "_ZN4Aska10AafHandler16AttachControllerEPKc",
+     "name": "AttachController"
+    },
+    {
+     "ghidra": "0x2097e20",
+     "symbol": "_ZN4Aska10AafHandler11MakeBiArrayEf",
+     "name": "MakeBiArray"
+    },
+    {
+     "ghidra": "0x2097f30",
+     "symbol": "_ZN4Aska10AafHandler25RenewalAllControllerCacheEf",
+     "name": "RenewalAllControllerCache"
+    },
+    {
+     "ghidra": "0x2098014",
+     "symbol": "_ZN4Aska10AafHandler22CalcRuntimeMemorySize0ERjS1_S1_PKvRPNS_9AafHeaderE",
+     "name": "CalcRuntimeMemorySize0"
+    },
+    {
+     "ghidra": "0x2098140",
+     "symbol": "_ZN4Aska10AafHandler20SearchModifierTargetEPKcPiPNS_10AsfHandlerE",
+     "name": "SearchModifierTarget"
+    },
+    {
+     "ghidra": "0x2098188",
+     "symbol": "_ZN4Aska10AafHandler20PrepareForComplementEv",
+     "name": "PrepareForComplement"
+    },
+    {
+     "ghidra": "0x2098210",
+     "symbol": "_ZN4Aska10AafHandler21CalcDifferenceOfValueEPvmff",
+     "name": "CalcDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x2098308",
+     "symbol": "_ZN4Aska10AafHandler21CalcDifferenceOfValueEPfPNS_17AafControllerInfoEff",
+     "name": "CalcDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x20984f4",
+     "symbol": "_ZN4Aska10AafHandler21CalcDifferenceOfValueEPNS_6VectorEPNS_17AafControllerInfoEff",
+     "name": "CalcDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x2098750",
+     "symbol": "_ZN4Aska10AafHandler21CalcDifferenceOfValueEPiPNS_17AafControllerInfoEff",
+     "name": "CalcDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x209893c",
+     "symbol": "_ZN4Aska10AafHandler21CalcDifferenceOfValueEPNS_10QuaternionEPNS_17AafControllerInfoEff",
+     "name": "CalcDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x2098b84",
+     "symbol": "_ZN4Aska10AafHandler12GetAafHeaderEPNS_3AFF8AskaFileE",
+     "name": "GetAafHeader"
+    },
+    {
+     "ghidra": "0x2098be0",
+     "symbol": "_ZN4Aska10AafHandler9SetValuesEf",
+     "name": "SetValues"
+    },
+    {
+     "ghidra": "0x2098c14",
+     "symbol": "_ZN4Aska10AafHandler9SetValuesEfi",
+     "name": "SetValues"
+    },
+    {
+     "ghidra": "0x2098c78",
+     "symbol": "_ZN4Aska10AafHandler9AddValuesEf",
+     "name": "AddValues"
+    },
+    {
+     "ghidra": "0x2098cac",
+     "symbol": "_ZN4Aska10AafHandler11BlendValuesEff",
+     "name": "BlendValues"
+    },
+    {
+     "ghidra": "0x2098cdc",
+     "symbol": "_ZN4Aska10AafHandler18SetValuesHighSpeedEf",
+     "name": "SetValuesHighSpeed"
+    },
+    {
+     "ghidra": "0x2098d10",
+     "symbol": "_ZN4Aska10AafHandler18SetValuesHighSpeedEfi",
+     "name": "SetValuesHighSpeed"
+    },
+    {
+     "ghidra": "0x2098d78",
+     "symbol": "_ZN4Aska10AafHandler11SetOneValueEPNS_11IAnimatableEf",
+     "name": "SetOneValue"
+    },
+    {
+     "ghidra": "0x2098db0",
+     "symbol": "_ZN4Aska10AafHandler11SetOneValueEPNS_11IAnimatableEfi",
+     "name": "SetOneValue"
+    },
+    {
+     "ghidra": "0x2098e1c",
+     "symbol": "_ZN4Aska10AafHandler11SetOneValueEPNS_11IControllerEf",
+     "name": "SetOneValue"
+    },
+    {
+     "ghidra": "0x2098e54",
+     "symbol": "_ZN4Aska10AafHandler11SetOneValueEPNS_11IControllerEfi",
+     "name": "SetOneValue"
+    },
+    {
+     "ghidra": "0x2098ec0",
+     "symbol": "_ZN4Aska10AafHandler17SetAutoComplementEffPS0_fPNS_10AsfHandlerE",
+     "name": "SetAutoComplement"
+    },
+    {
+     "ghidra": "0x209b274",
+     "symbol": "_ZNK4Aska10AafHandler12IsChunkReadyEf",
+     "name": "IsChunkReady"
+    },
+    {
+     "ghidra": "0x209b30c",
+     "symbol": "_ZN4Aska10AafHandler12SearchTargetEPKcPNS_10AsfHandlerE",
+     "name": "SearchTarget"
+    },
+    {
+     "ghidra": "0x209b35c",
+     "symbol": "_ZN4Aska10AafHandler30LocalGetControllerInfoByDetailEPNS_11IAnimatableENS_22EnumAafDetailAttributeE",
+     "name": "LocalGetControllerInfoByDetail"
+    },
+    {
+     "ghidra": "0x209b430",
+     "symbol": "_ZN4Aska10AafHandler38LocalGetControllerInfoByIndexAndDetailEPNS_11IAnimatableEmNS_22EnumAafDetailAttributeE",
+     "name": "LocalGetControllerInfoByIndexAndDetail"
+    },
+    {
+     "ghidra": "0x209b51c",
+     "symbol": "_ZN4Aska10AafHandler29LocalGetControllerInfoByIndexEPNS_11IAnimatableEm",
+     "name": "LocalGetControllerInfoByIndex"
+    },
+    {
+     "ghidra": "0x209b5d4",
+     "symbol": "_ZNK4Aska10AafHandler6LengthEv",
+     "name": "Length"
+    },
+    {
+     "ghidra": "0x209b5ec",
+     "symbol": "_ZN4Aska10AafHandler16DisappearHandlerEb",
+     "name": "DisappearHandler"
+    },
+    {
+     "ghidra": "0x209b714",
+     "symbol": "_ZN4Aska10AafHandler31CalcAndSetDifferenceOfValueMainEPNS_17AafControllerInfoE",
+     "name": "CalcAndSetDifferenceOfValueMain"
+    },
+    {
+     "ghidra": "0x209b820",
+     "symbol": "_ZN4Aska10AafHandler21CalcRuntimeMemorySizeEPKv",
+     "name": "CalcRuntimeMemorySize"
+    },
+    {
+     "ghidra": "0x209b91c",
+     "symbol": "_ZN4Aska10AafHandlernwEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x209b94c",
+     "symbol": "_ZN4Aska10AafHandlernaEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x209b97c",
+     "symbol": "_ZN4Aska10AafHandlernaEmRKSt9nothrow_t",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x209b9a4",
+     "symbol": "_ZNK4Aska10AafHandler13GetFigureRateEhh",
+     "name": "GetFigureRate"
+    },
+    {
+     "ghidra": "0x209ba04",
+     "symbol": "_ZN4Aska10AafHandler30LocalGetControllerInfoAndIndexEPiPNS_11IAnimatableENS_22EnumAafDetailAttributeE",
+     "name": "LocalGetControllerInfoAndIndex"
+    },
+    {
+     "ghidra": "0x209baf4",
+     "symbol": "_ZN4Aska10AafHandler28LocalGetControllerInfoByTypeEPNS_11IAnimatableENS_21EnumAafControllerTypeEi",
+     "name": "LocalGetControllerInfoByType"
+    },
+    {
+     "ghidra": "0x209bbc8",
+     "symbol": "_ZN4Aska10AafHandler31LocalGetAllControllerInfoByTypeEPPNS_17AafControllerInfoEiPNS_11IAnimatableENS_21EnumAafControllerTypeEPi",
+     "name": "LocalGetAllControllerInfoByType"
+    },
+    {
+     "ghidra": "0x209bd98",
+     "symbol": "_ZN4Aska10AafHandler25GetControllerInfoByDetailEPNS_11IAnimatableENS_22EnumAafDetailAttributeE",
+     "name": "GetControllerInfoByDetail"
+    },
+    {
+     "ghidra": "0x209be74",
+     "symbol": "_ZN4Aska10AafHandler24GetControllerInfoByIndexEPNS_11IAnimatableEm",
+     "name": "GetControllerInfoByIndex"
+    },
+    {
+     "ghidra": "0x209bf30",
+     "symbol": "_ZN4Aska10AafHandler33GetControllerInfoByIndexAndDetailEPNS_11IAnimatableEmNS_22EnumAafDetailAttributeE",
+     "name": "GetControllerInfoByIndexAndDetail"
+    },
+    {
+     "ghidra": "0x209bf34",
+     "symbol": "_ZN4Aska10AafHandler25GetControllerInfoAndIndexEPiPNS_11IAnimatableENS_22EnumAafDetailAttributeE",
+     "name": "GetControllerInfoAndIndex"
+    },
+    {
+     "ghidra": "0x209c02c",
+     "symbol": "_ZN4Aska10AafHandler23GetControllerInfoByTypeEPNS_11IAnimatableENS_21EnumAafControllerTypeEi",
+     "name": "GetControllerInfoByType"
+    },
+    {
+     "ghidra": "0x209c108",
+     "symbol": "_ZN4Aska10AafHandler26GetAllControllerInfoByTypeEPPNS_17AafControllerInfoEiPNS_11IAnimatableENS_21EnumAafControllerTypeEPi",
+     "name": "GetAllControllerInfoByType"
+    },
+    {
+     "ghidra": "0x209c1d4",
+     "symbol": "_ZN4Aska10AafHandler12GetChunkSizeEiPmS1_S1_S1_",
+     "name": "GetChunkSize"
+    },
+    {
+     "ghidra": "0x209c260",
+     "symbol": "_ZN4Aska10AafHandler12GetChunkSizeEPKNS_3AFF8AskaFileEPKNS_9AafHeaderEiPmS8_S8_S8_",
+     "name": "GetChunkSize"
+    },
+    {
+     "ghidra": "0x209c2e4",
+     "symbol": "_ZN4Aska10AafHandler20GetConstantChunkSizeEPmS1_S1_S1_",
+     "name": "GetConstantChunkSize"
+    },
+    {
+     "ghidra": "0x209c330",
+     "symbol": "_ZN4Aska10AafHandler20GetConstantChunkSizeEPKNS_3AFF8AskaFileEPKNS_9AafHeaderEPmS8_S8_S8_",
+     "name": "GetConstantChunkSize"
+    },
+    {
+     "ghidra": "0x209c378",
+     "symbol": "_ZN4Aska10AafHandler23DetachConstantChunkDataEv",
+     "name": "DetachConstantChunkData"
+    },
+    {
+     "ghidra": "0x209c380",
+     "symbol": "_ZN4Aska10AafHandler15DetachChunkDataEi",
+     "name": "DetachChunkData"
+    },
+    {
+     "ghidra": "0x209c3a8",
+     "symbol": "_ZNK4Aska10AafHandler19IsChunkReadyByIndexEi",
+     "name": "IsChunkReadyByIndex"
+    },
+    {
+     "ghidra": "0x209c410",
+     "symbol": "_ZN4Aska10AafHandlerD2Ev",
+     "name": "~AafHandler"
+    },
+    {
+     "ghidra": "0x209c4e4",
+     "symbol": "_ZN4Aska10AafHandlerD0Ev",
+     "name": "~AafHandler"
+    },
+    {
+     "ghidra": "0x209d198",
+     "symbol": "_ZN4Aska10AafHandler25RenewalOneControllerCacheILi1EEEvfi",
+     "name": "RenewalOneControllerCache<1>"
+    },
+    {
+     "ghidra": "0x209d274",
+     "symbol": "_ZN4Aska10AafHandler34Function_RenewalOneControllerCacheEftiPNS_17AafControllerInfoEPNS_18AAF_RENEWAL_ONE_CPEPNS_17AafKeyframeHeaderEPNS_25FrameSortDataForSearchOldEjb",
+     "name": "Function_RenewalOneControllerCache"
+    },
+    {
+     "ghidra": "0x20a7290",
+     "symbol": "_ZN4Aska10AafHandler13SetControllerEPNS_17AafControllerInfoEPPhS4_",
+     "name": "SetController"
+    }
+   ]
+  },
+  {
+   "name": "AafController",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_loopState",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 13,
+     "name": "m_keySlot",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 14,
+     "name": "unk_0e",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 16,
+     "name": "m_keyTime",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 2
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_keyValue",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 2
+     },
+     "size": 16
+    },
+    {
+     "offset": 48,
+     "name": "unk_30",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_header",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_keyIndex",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 68,
+     "name": "unk_44",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 72,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x20a7b3c",
+     "symbol": "_ZN4Aska13AafController5CloneEPNS_11IControllerEb",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x20a7b44",
+     "symbol": "_ZN4Aska13AafController4CopyEPNS_11IControllerEb",
+     "name": "Copy"
+    },
+    {
+     "ghidra": "0x20a7b64",
+     "symbol": "_ZN4Aska13AafController9CalcValueEPvf",
+     "name": "CalcValue"
+    },
+    {
+     "ghidra": "0x20a7b7c",
+     "symbol": "_ZNK4Aska13AafController20GetAafKeyframeHeaderEv",
+     "name": "GetAafKeyframeHeader"
+    },
+    {
+     "ghidra": "0x20a7b84",
+     "symbol": "_ZNK4Aska13AafController11GetKeyframeEPfi",
+     "name": "GetKeyframe"
+    },
+    {
+     "ghidra": "0x20a7b8c",
+     "symbol": "_ZNK4Aska13AafController15GetControlPointEPvi",
+     "name": "GetControlPoint"
+    },
+    {
+     "ghidra": "0x20a7b94",
+     "symbol": "_ZN4Aska13AafController14GetIAnimatableEv",
+     "name": "GetIAnimatable"
+    },
+    {
+     "ghidra": "0x20a7b9c",
+     "symbol": "_ZN4Aska13AafController14CallDestructorEv",
+     "name": "CallDestructor"
+    },
+    {
+     "ghidra": "0x20a7ba8",
+     "symbol": "_ZN4Aska13AafController12DetachObjectEv",
+     "name": "DetachObject"
+    },
+    {
+     "ghidra": "0x20a7bac",
+     "symbol": "_ZN4Aska13AafController16SetControlBufferEPPhi",
+     "name": "SetControlBuffer"
+    },
+    {
+     "ghidra": "0x20a7bb0",
+     "symbol": "_ZN4Aska13AafController19SetComplementBufferEPPh",
+     "name": "SetComplementBuffer"
+    },
+    {
+     "ghidra": "0x20a7bb4",
+     "symbol": "_ZN4Aska13AafController15SetControlPointEifPv",
+     "name": "SetControlPoint"
+    },
+    {
+     "ghidra": "0x20a7bb8",
+     "symbol": "_ZN4Aska13AafController20ForceSetControlPointEifPv",
+     "name": "ForceSetControlPoint"
+    },
+    {
+     "ghidra": "0x20a7bc4",
+     "symbol": "_ZN4Aska13AafController16SwapControlPointEv",
+     "name": "SwapControlPoint"
+    },
+    {
+     "ghidra": "0x20a7bc8",
+     "symbol": "_ZN4Aska13AafController12SetLoopCountEi",
+     "name": "SetLoopCount"
+    },
+    {
+     "ghidra": "0x20a7bcc",
+     "symbol": "_ZN4Aska13AafController12SetLoopCountEf",
+     "name": "SetLoopCount"
+    },
+    {
+     "ghidra": "0x20a7bd0",
+     "symbol": "_ZN4Aska13AafController13SetFigureRateEf",
+     "name": "SetFigureRate"
+    },
+    {
+     "ghidra": "0x20a7bd4",
+     "symbol": "_ZN4Aska13AafController25IsNecessaryToRenewalCacheEfff",
+     "name": "IsNecessaryToRenewalCache"
+    },
+    {
+     "ghidra": "0x20a7bdc",
+     "symbol": "_ZN4Aska13AafController20GetDifferenceOfValueEPv",
+     "name": "GetDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x20a7be0",
+     "symbol": "_ZN4Aska13AafController20SetDifferenceOfValueEPv",
+     "name": "SetDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x20a7be4",
+     "symbol": "_ZN4Aska13AafController20AddDifferenceOfValueEPvf",
+     "name": "AddDifferenceOfValue"
+    },
+    {
+     "ghidra": "0x20a7be8",
+     "symbol": "_ZN4Aska13AafController8GetValueEPvS1_",
+     "name": "GetValue"
+    },
+    {
+     "ghidra": "0x20a7bec",
+     "symbol": "_ZN4Aska13AafController18GetComplementValueEiPv",
+     "name": "GetComplementValue"
+    },
+    {
+     "ghidra": "0x20a7bf0",
+     "symbol": "_ZN4Aska13AafController20GetComplementTangentEiPvS1_",
+     "name": "GetComplementTangent"
+    },
+    {
+     "ghidra": "0x20a7bf4",
+     "symbol": "_ZN4Aska13AafController19CalcValueComplementEPvfff",
+     "name": "CalcValueComplement"
+    },
+    {
+     "ghidra": "0x20a7bf8",
+     "symbol": "_ZN4Aska13AafController17CalcValueConstantEPvi",
+     "name": "CalcValueConstant"
+    },
+    {
+     "ghidra": "0x20a7bfc",
+     "symbol": "_ZN4Aska13AafController32CalcValueByLinearAtPreOutOfRangeEPvf",
+     "name": "CalcValueByLinearAtPreOutOfRange"
+    },
+    {
+     "ghidra": "0x20a7c00",
+     "symbol": "_ZN4Aska13AafController33CalcValueByLinearAtPostOutOfRangeEPvf",
+     "name": "CalcValueByLinearAtPostOutOfRange"
+    },
+    {
+     "ghidra": "0x20a7c04",
+     "symbol": "_ZN4Aska13AafController20SetValueOfDirectAddrEPvS1_",
+     "name": "SetValueOfDirectAddr"
+    },
+    {
+     "ghidra": "0x20a7c08",
+     "symbol": "_ZN4Aska13AafController20AddValueOfDirectAddrEPvS1_",
+     "name": "AddValueOfDirectAddr"
+    },
+    {
+     "ghidra": "0x20a7c0c",
+     "symbol": "_ZN4Aska13AafController16AddValueToTargetEPvPNS_14AafSetValueArgE",
+     "name": "AddValueToTarget"
+    },
+    {
+     "ghidra": "0x20a7c10",
+     "symbol": "_ZN4Aska13AafController22BlendValueOfDirectAddrEPvS1_f",
+     "name": "BlendValueOfDirectAddr"
+    },
+    {
+     "ghidra": "0x20a7c14",
+     "symbol": "_ZN4Aska13AafController18BlendValueToTargetEPvPNS_14AafSetValueArgE",
+     "name": "BlendValueToTarget"
+    },
+    {
+     "ghidra": "0x20a7c18",
+     "symbol": "_ZN4Aska13AafController20GetInputAddrForValueEPNS_14AafSetValueArgE",
+     "name": "GetInputAddrForValue"
+    },
+    {
+     "ghidra": "0x20a7c20",
+     "symbol": "_ZN4Aska13AafController21GetOutputAddrForValueEPNS_14AafSetValueArgE",
+     "name": "GetOutputAddrForValue"
+    },
+    {
+     "ghidra": "0x20a7c28",
+     "symbol": "_ZN4Aska13AafController20GetInputAddrForValueEPNS_11IAnimatableE",
+     "name": "GetInputAddrForValue"
+    },
+    {
+     "ghidra": "0x20a7c30",
+     "symbol": "_ZN4Aska13AafController21GetOutputAddrForValueEPNS_11IAnimatableE",
+     "name": "GetOutputAddrForValue"
+    },
+    {
+     "ghidra": "0x20a7c38",
+     "symbol": "_ZN4Aska13AafController20UpdateTargetForValueEPNS_14AafSetValueArgE",
+     "name": "UpdateTargetForValue"
+    },
+    {
+     "ghidra": "0x20a7c3c",
+     "symbol": "_ZN4Aska13AafController17GetControllerSizeEv",
+     "name": "GetControllerSize"
+    },
+    {
+     "ghidra": "0x20a7c44",
+     "symbol": "_ZN4Aska13AafController26SetConstantComplementPointEv",
+     "name": "SetConstantComplementPoint"
+    },
+    {
+     "ghidra": "0x20a7c48",
+     "symbol": "_ZN4Aska13AafController18UpdateCurrentRangeEv",
+     "name": "UpdateCurrentRange"
+    },
+    {
+     "ghidra": "0x20a7c4c",
+     "symbol": "_ZN4Aska13AafController15GetCurrentRangeEv",
+     "name": "GetCurrentRange"
+    },
+    {
+     "ghidra": "0x20a7c54",
+     "symbol": "_ZNK4Aska13AafController11GetKeyframeEi",
+     "name": "GetKeyframe"
+    },
+    {
+     "ghidra": "0x20a8c18",
+     "symbol": "_ZN4Aska13AafController12AttachObjectEPNS_10AsfHandlerEPNS_14AafSetValueArgEPKNS_19AafControllerHeaderE",
+     "name": "AttachObject"
+    },
+    {
+     "ghidra": "0x20a8e84",
+     "symbol": "_ZN4Aska13AafController23IsIndependentControllerEv",
+     "name": "IsIndependentController"
+    },
+    {
+     "ghidra": "0x2172c88",
+     "symbol": "_ZN4Aska13AafController16SetValueToTargetEPvPNS_14AafSetValueArgE",
+     "name": "SetValueToTarget"
+    }
+   ]
+  },
+  {
+   "name": "AafBlendInfo",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_playFrame",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_normalizedWeight",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_weight",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_handler",
+     "type": {
+      "kind": "ptr",
+      "to": "AafHandler"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_notify",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "unk_20",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "AafBlendCalcNotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": "AafBlendManager"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "AafBlendManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_created",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "m_closeMode",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 10,
+     "name": "unk_0a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_weightSum",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_calcNotify",
+     "type": {
+      "kind": "struct",
+      "name": "AafBlendCalcNotify"
+     },
+     "size": 16
+    },
+    {
+     "offset": 32,
+     "name": "m_firstUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_prevCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_added",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "unk_34",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_infos",
+     "type": {
+      "kind": "ptr",
+      "to": "AafBlendInfo"
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "unk_40",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 68,
+     "name": "unk_44",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 72,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x208db44",
+     "symbol": "_ZN4Aska15AafBlendManagerD2Ev",
+     "name": "~AafBlendManager"
+    },
+    {
+     "ghidra": "0x208db68",
+     "symbol": "_ZN4Aska15AafBlendManagerD0Ev",
+     "name": "~AafBlendManager"
+    },
+    {
+     "ghidra": "0x208db98",
+     "symbol": "_ZN4Aska15AafBlendManager6CreateEi",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x208dc14",
+     "symbol": "_ZN4Aska15AafBlendManager4OpenEi",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x208dc78",
+     "symbol": "_ZN4Aska15AafBlendManager5CloseEh",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x208dce8",
+     "symbol": "_ZN4Aska15AafBlendManager24AllocateControllerBufferEv",
+     "name": "AllocateControllerBuffer"
+    },
+    {
+     "ghidra": "0x208dd34",
+     "symbol": "_ZN4Aska15AafBlendManager20FreeControllerBufferEv",
+     "name": "FreeControllerBuffer"
+    },
+    {
+     "ghidra": "0x208dd3c",
+     "symbol": "_ZN4Aska15AafBlendManager6AddAafEPNS_10AafHandlerE",
+     "name": "AddAaf"
+    },
+    {
+     "ghidra": "0x208dd80",
+     "symbol": "_ZNK4Aska15AafBlendManager12GetPlayFrameEi",
+     "name": "GetPlayFrame"
+    },
+    {
+     "ghidra": "0x208ddb4",
+     "symbol": "_ZNK4Aska15AafBlendManager12GetPlayFrameEPKNS_10AafHandlerE",
+     "name": "GetPlayFrame"
+    },
+    {
+     "ghidra": "0x208de1c",
+     "symbol": "_ZN4Aska15AafBlendManager12SetPlayFrameEif",
+     "name": "SetPlayFrame"
+    },
+    {
+     "ghidra": "0x208de68",
+     "symbol": "_ZN4Aska15AafBlendManager12SetPlayFrameEPKNS_10AafHandlerEf",
+     "name": "SetPlayFrame"
+    },
+    {
+     "ghidra": "0x208dee4",
+     "symbol": "_ZNK4Aska15AafBlendManager9GetWeightEi",
+     "name": "GetWeight"
+    },
+    {
+     "ghidra": "0x208df18",
+     "symbol": "_ZNK4Aska15AafBlendManager9GetWeightEPKNS_10AafHandlerE",
+     "name": "GetWeight"
+    },
+    {
+     "ghidra": "0x208df80",
+     "symbol": "_ZN4Aska15AafBlendManager9SetWeightEif",
+     "name": "SetWeight"
+    },
+    {
+     "ghidra": "0x208dfcc",
+     "symbol": "_ZN4Aska15AafBlendManager9SetWeightEPKNS_10AafHandlerEf",
+     "name": "SetWeight"
+    },
+    {
+     "ghidra": "0x208e048",
+     "symbol": "_ZN4Aska15AafBlendManager9GetNotifyEi",
+     "name": "GetNotify"
+    },
+    {
+     "ghidra": "0x208e090",
+     "symbol": "_ZN4Aska15AafBlendManager9GetNotifyEPKNS_10AafHandlerE",
+     "name": "GetNotify"
+    },
+    {
+     "ghidra": "0x208e108",
+     "symbol": "_ZN4Aska15AafBlendManager9SetNotifyEiPNS_7INotifyE",
+     "name": "SetNotify"
+    },
+    {
+     "ghidra": "0x208e154",
+     "symbol": "_ZN4Aska15AafBlendManager9SetNotifyEPKNS_10AafHandlerEPNS_7INotifyE",
+     "name": "SetNotify"
+    },
+    {
+     "ghidra": "0x208e1d0",
+     "symbol": "_ZN4Aska15AafBlendManager16NormalizeWeightsEv",
+     "name": "NormalizeWeights"
+    },
+    {
+     "ghidra": "0x208e26c",
+     "symbol": "_ZN4Aska15AafBlendManager24StaticCalcValues_NoFiberEPS0_i",
+     "name": "StaticCalcValues_NoFiber"
+    },
+    {
+     "ghidra": "0x208e324",
+     "symbol": "_ZN4Aska15AafBlendManager10CalcValuesEv",
+     "name": "CalcValues"
+    },
+    {
+     "ghidra": "0x208e444",
+     "symbol": "_ZN4Aska15AafBlendManager12CopyMatricesEi",
+     "name": "CopyMatrices"
+    },
+    {
+     "ghidra": "0x208e494",
+     "symbol": "_ZN4Aska15AafBlendManager9SetValuesEv",
+     "name": "SetValues"
+    },
+    {
+     "ghidra": "0x208e4b4",
+     "symbol": "_ZN4Aska15AafBlendManager15RestoreSnapShotEPNS_13SceneSnapShotERNS_16IAafBlendManager8_AafInfoE",
+     "name": "RestoreSnapShot"
+    },
+    {
+     "ghidra": "0x208e574",
+     "symbol": "_ZN4Aska15AafBlendManager9SetValuesEPPNS_13SceneSnapShotE",
+     "name": "SetValues"
+    },
+    {
+     "ghidra": "0x208e728",
+     "symbol": "_ZN4Aska15AafBlendManager10InitializeEv",
+     "name": "Initialize"
+    }
+   ]
+  },
+  {
+   "name": "BlendRatePiece",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_used",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_handle",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 20
+     },
+     "size": 20
+    }
+   ],
+   "size": 28,
+   "align": 4
+  },
+  {
+   "name": "CBlendRatePlayer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_pieces",
+     "type": {
+      "kind": "ptr",
+      "to": "BlendRatePiece"
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f65b58",
+     "symbol": "_ZN9Framework16CBlendRatePlayerC1Ev",
+     "name": "CBlendRatePlayer"
+    },
+    {
+     "ghidra": "0x1f65b70",
+     "symbol": "_ZN9Framework16CBlendRatePlayerD1Ev",
+     "name": "~CBlendRatePlayer"
+    },
+    {
+     "ghidra": "0x1f65ba0",
+     "symbol": "_ZN9Framework16CBlendRatePlayer7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f65bc0",
+     "symbol": "_ZN9Framework16CBlendRatePlayerD0Ev",
+     "name": "~CBlendRatePlayer"
+    },
+    {
+     "ghidra": "0x1f65bf0",
+     "symbol": "_ZN9Framework16CBlendRatePlayer10InitializeEj",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f65c94",
+     "symbol": "_ZN9Framework16CBlendRatePlayer8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f65d20",
+     "symbol": "_ZN9Framework16CBlendRatePlayer3AddEf",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x1f65e68",
+     "symbol": "_ZN9Framework16CBlendRatePlayer9MakeBlankEv",
+     "name": "MakeBlank"
+    },
+    {
+     "ghidra": "0x1f65f28",
+     "symbol": "_ZN9Framework16CBlendRatePlayer6RemoveEj",
+     "name": "Remove"
+    },
+    {
+     "ghidra": "0x1f66058",
+     "symbol": "_ZN9Framework16CBlendRatePlayer6DefragEv",
+     "name": "Defrag"
+    },
+    {
+     "ghidra": "0x1f66104",
+     "symbol": "_ZNK9Framework16CBlendRatePlayer7crPieceEj",
+     "name": "crPiece"
+    },
+    {
+     "ghidra": "0x1f661a0",
+     "symbol": "_ZNK9Framework16CBlendRatePlayer6rPieceEj",
+     "name": "rPiece"
+    },
+    {
+     "ghidra": "0x1f6623c",
+     "symbol": "_ZNK9Framework16CBlendRatePlayer13NumPlayHandleEv",
+     "name": "NumPlayHandle"
+    },
+    {
+     "ghidra": "0x1f66288",
+     "symbol": "_ZN9Framework16CBlendRatePlayer40SetTerminatedForIndependentCalcBlendRateEv",
+     "name": "SetTerminatedForIndependentCalcBlendRate"
+    }
+   ]
+  },
+  {
+   "name": "CAnimationTimeElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_initialized",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "unk_09",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 12,
+     "name": "m_flag",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_presentFrame",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_startFrame",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_endFrame",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "m_loopCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxLoopCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_speed",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f6207c",
+     "symbol": "_ZN9Framework21CAnimationTimeElement10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f620d8",
+     "symbol": "_ZN9Framework21CAnimationTimeElement15SetMaxLoopCountEj",
+     "name": "SetMaxLoopCount"
+    },
+    {
+     "ghidra": "0x1f620e0",
+     "symbol": "_ZN9Framework21CAnimationTimeElement5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x1f620f4",
+     "symbol": "_ZN9Framework21CAnimationTimeElement15SetPresentFrameEf",
+     "name": "SetPresentFrame"
+    },
+    {
+     "ghidra": "0x1f620fc",
+     "symbol": "_ZN9Framework21CAnimationTimeElement5StartEv",
+     "name": "Start"
+    },
+    {
+     "ghidra": "0x1f62108",
+     "symbol": "_ZN9Framework21CAnimationTimeElement8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f621e0",
+     "symbol": "_ZN9Framework21CAnimationTimeElement6OrFlagEj",
+     "name": "OrFlag"
+    },
+    {
+     "ghidra": "0x1f621f0",
+     "symbol": "_ZNK9Framework21CAnimationTimeElement14CheckLoopFrameEfRfS1_",
+     "name": "CheckLoopFrame"
+    },
+    {
+     "ghidra": "0x1f62234",
+     "symbol": "_ZN9Framework21CAnimationTimeElement16TerminateProcessEj",
+     "name": "TerminateProcess"
+    },
+    {
+     "ghidra": "0x1f622ac",
+     "symbol": "_ZN9Framework21CAnimationTimeElement7AndFlagEj",
+     "name": "AndFlag"
+    },
+    {
+     "ghidra": "0x1f622bc",
+     "symbol": "_ZN9Framework21CAnimationTimeElement15ClearLoopedFlagEv",
+     "name": "ClearLoopedFlag"
+    },
+    {
+     "ghidra": "0x1f622cc",
+     "symbol": "_ZN9Framework21CAnimationTimeElement12ClearAllFlagEv",
+     "name": "ClearAllFlag"
+    },
+    {
+     "ghidra": "0x1f622d4",
+     "symbol": "_ZN9Framework21CAnimationTimeElement13SetStartFrameEf",
+     "name": "SetStartFrame"
+    },
+    {
+     "ghidra": "0x1f622dc",
+     "symbol": "_ZN9Framework21CAnimationTimeElement11SetEndFrameEf",
+     "name": "SetEndFrame"
+    }
+   ]
+  },
+  {
+   "name": "CAnimationElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CAnimationTimeElement"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_animId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "unk_2c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_aafData",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_aafHandler",
+     "type": {
+      "kind": "ptr",
+      "to": "AafHandler"
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_asfHandler",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "unk_48",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "m_blendPiece",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 84,
+     "name": "m_blendRate",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 88,
+     "name": "unk_58",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 92,
+     "name": "unk_5c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 96,
+     "name": "m_additive",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 97,
+     "name": "m_overwrite",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 98,
+     "name": "unk_62",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 100,
+     "name": "unk_64",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 101,
+     "name": "unk_65",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 104,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f5e358",
+     "symbol": "_ZN9Framework17CAnimationElementC2Ev",
+     "name": "CAnimationElement"
+    },
+    {
+     "ghidra": "0x1f5e390",
+     "symbol": "_ZN9Framework17CAnimationElementD1Ev",
+     "name": "~CAnimationElement"
+    },
+    {
+     "ghidra": "0x1f5e3f4",
+     "symbol": "_ZN9Framework17CAnimationElement7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f5e448",
+     "symbol": "_ZN9Framework17CAnimationElementD0Ev",
+     "name": "~CAnimationElement"
+    },
+    {
+     "ghidra": "0x1f5e4ac",
+     "symbol": "_ZN9Framework17CAnimationElement10InitializeERN4Aska10AsfHandlerEPKvib",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f5e55c",
+     "symbol": "_ZN9Framework17CAnimationElement15AfterInitializeEv",
+     "name": "AfterInitialize"
+    },
+    {
+     "ghidra": "0x1f5e574",
+     "symbol": "_ZN9Framework17CAnimationElement16CreateAafHandlerEv",
+     "name": "CreateAafHandler"
+    },
+    {
+     "ghidra": "0x1f5e6d4",
+     "symbol": "_ZN9Framework17CAnimationElement16ReplaceAafAndAetEPKvS2_",
+     "name": "ReplaceAafAndAet"
+    },
+    {
+     "ghidra": "0x1f5e774",
+     "symbol": "_ZN9Framework17CAnimationElement16DeleteAafHandlerEv",
+     "name": "DeleteAafHandler"
+    },
+    {
+     "ghidra": "0x1f5e7ac",
+     "symbol": "_ZN9Framework17CAnimationElement9AttachAetEPKv",
+     "name": "AttachAet"
+    },
+    {
+     "ghidra": "0x1f5e818",
+     "symbol": "_ZN9Framework17CAnimationElement5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x1f5e83c",
+     "symbol": "_ZN9Framework17CAnimationElement16PresentBlendRateEf",
+     "name": "PresentBlendRate"
+    },
+    {
+     "ghidra": "0x1f5e844",
+     "symbol": "_ZN9Framework17CAnimationElement20DirectionBlendRadianEf",
+     "name": "DirectionBlendRadian"
+    },
+    {
+     "ghidra": "0x1f5e854",
+     "symbol": "_ZN9Framework17CAnimationElement5StartEj",
+     "name": "Start"
+    },
+    {
+     "ghidra": "0x1f5e880",
+     "symbol": "_ZNK9Framework17CAnimationElement18GetAnimationLengthEv",
+     "name": "GetAnimationLength"
+    },
+    {
+     "ghidra": "0x1f5e89c",
+     "symbol": "_ZN9Framework17CAnimationElement8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f5e8e0",
+     "symbol": "_ZN9Framework17CAnimationElement15DirectSetValuesEPN4Aska9FiberTaskE",
+     "name": "DirectSetValues"
+    },
+    {
+     "ghidra": "0x1f5e8f8",
+     "symbol": "_ZN9Framework17CAnimationElement13SetStartFrameEf",
+     "name": "SetStartFrame"
+    },
+    {
+     "ghidra": "0x1f5e908",
+     "symbol": "_ZN9Framework17CAnimationElement11SetEndFrameEf",
+     "name": "SetEndFrame"
+    },
+    {
+     "ghidra": "0x1f5e924",
+     "symbol": "_ZN9Framework17CAnimationElement18OverwriteAetValueXEjf",
+     "name": "OverwriteAetValueX"
+    },
+    {
+     "ghidra": "0x1f5ebf8",
+     "symbol": "_ZN9Framework17CAnimationElement18OverwriteAetValueYEjf",
+     "name": "OverwriteAetValueY"
+    },
+    {
+     "ghidra": "0x1f5ef94",
+     "symbol": "_ZN9Framework17CAnimationElement18OverwriteAetValueZEjf",
+     "name": "OverwriteAetValueZ"
+    },
+    {
+     "ghidra": "0x1f5f280",
+     "symbol": "_ZN9Framework17CAnimationElement17SetDirectionBlendEiff",
+     "name": "SetDirectionBlend"
+    },
+    {
+     "ghidra": "0x1f5f310",
+     "symbol": "_ZNK9Framework17CAnimationElement29DirectionBlendParentElementIdEv",
+     "name": "DirectionBlendParentElementId"
+    },
+    {
+     "ghidra": "0x1f5f328",
+     "symbol": "_ZNK9Framework17CAnimationElement27DirectionBlend_RadianCenterEv",
+     "name": "DirectionBlend_RadianCenter"
+    },
+    {
+     "ghidra": "0x1f5f340",
+     "symbol": "_ZNK9Framework17CAnimationElement26DirectionBlend_RadianRangeEv",
+     "name": "DirectionBlend_RadianRange"
+    },
+    {
+     "ghidra": "0x1f5f358",
+     "symbol": "_ZNK9Framework17CAnimationElement20DirectionBlendRadianEv",
+     "name": "DirectionBlendRadian"
+    },
+    {
+     "ghidra": "0x1f5f370",
+     "symbol": "_ZN9Framework17CAnimationElement18DirectionBlendRateEf",
+     "name": "DirectionBlendRate"
+    },
+    {
+     "ghidra": "0x1f5f380",
+     "symbol": "_ZNK9Framework17CAnimationElement18DirectionBlendRateEv",
+     "name": "DirectionBlendRate"
+    }
+   ]
+  },
+  {
+   "name": "BlendMotionData",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_weight",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_frame",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_element",
+     "type": {
+      "kind": "ptr",
+      "to": "CAnimationElement"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "CAnimationBlendContainer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_motions",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<BlendMotionData, false>",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 64,
+     "name": "unk_40",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_blendManager",
+     "type": {
+      "kind": "ptr",
+      "to": "AafBlendManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "m_blendRatePlayer",
+     "type": {
+      "kind": "ptr",
+      "to": "CBlendRatePlayer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_numElements",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 92,
+     "name": "unk_5c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 96,
+     "name": "m_elements",
+     "type": {
+      "kind": "ptr",
+      "to": "CAnimationElement"
+     },
+     "size": 8
+    },
+    {
+     "offset": 104,
+     "name": "m_postNotify",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "m_speed",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 116,
+     "name": "unk_74",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 120,
+     "name": "unk_78",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 136,
+     "name": "unk_88",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 140,
+     "name": "unk_8c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 144,
+     "name": "m_currentAnimId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 148,
+     "name": "unk_94",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 152,
+     "name": "unk_98",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 154,
+     "name": "unk_9a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 160,
+     "name": "m_keepHipsPosition",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 168,
+     "name": "m_keepPosRootPosition",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 176,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f5b09c",
+     "symbol": "_ZN9Framework24CAnimationBlendContainerC2Ev",
+     "name": "CAnimationBlendContainer"
+    },
+    {
+     "ghidra": "0x1f5b0f8",
+     "symbol": "_ZN9Framework24CAnimationBlendContainerD2Ev",
+     "name": "~CAnimationBlendContainer"
+    },
+    {
+     "ghidra": "0x1f5b150",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f5b244",
+     "symbol": "_ZN9Framework24CAnimationBlendContainerD0Ev",
+     "name": "~CAnimationBlendContainer"
+    },
+    {
+     "ghidra": "0x1f5b294",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer10InitializeEjj",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f5b3b0",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer4OpenEv",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x1f5b3b4",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer9AttachAafERN4Aska10AsfHandlerEjPKvib",
+     "name": "AttachAaf"
+    },
+    {
+     "ghidra": "0x1f5b460",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer16DetachAafByIndexEj",
+     "name": "DetachAafByIndex"
+    },
+    {
+     "ghidra": "0x1f5b484",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer17DetachAafByAnimIDEj",
+     "name": "DetachAafByAnimID"
+    },
+    {
+     "ghidra": "0x1f5b4d0",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer7pSearchEi",
+     "name": "pSearch"
+    },
+    {
+     "ghidra": "0x1f5b528",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer9AttachAetEjPKv",
+     "name": "AttachAet"
+    },
+    {
+     "ghidra": "0x1f5b58c",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer16ReplaceAafAndAetEjPKvS2_",
+     "name": "ReplaceAafAndAet"
+    },
+    {
+     "ghidra": "0x1f5b614",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer5CloseEv",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x1f5b628",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer15pSearchForIndexEi",
+     "name": "pSearchForIndex"
+    },
+    {
+     "ghidra": "0x1f5b670",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer12pSearchEmptyEv",
+     "name": "pSearchEmpty"
+    },
+    {
+     "ghidra": "0x1f5b6ac",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer13ProgressBlendEf",
+     "name": "ProgressBlend"
+    },
+    {
+     "ghidra": "0x1f5b990",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer13ProgressFrameEfPKNS0_24tProgressFrame_ArgumentsE",
+     "name": "ProgressFrame"
+    },
+    {
+     "ghidra": "0x1f5bae8",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer20ProgressFrame_DirectEf",
+     "name": "ProgressFrame_Direct"
+    },
+    {
+     "ghidra": "0x1f5bde4",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer13PlayAnimationEPN4Aska9FiberTaskE",
+     "name": "PlayAnimation"
+    },
+    {
+     "ghidra": "0x1f5c160",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer9OrAllFlagEv",
+     "name": "OrAllFlag"
+    },
+    {
+     "ghidra": "0x1f5c21c",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer11NumElementsEv",
+     "name": "NumElements"
+    },
+    {
+     "ghidra": "0x1f5c224",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer8rElementEi",
+     "name": "rElement"
+    },
+    {
+     "ghidra": "0x1f5c2d0",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer9crElementEi",
+     "name": "crElement"
+    },
+    {
+     "ghidra": "0x1f5c37c",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer7IsExistEi",
+     "name": "IsExist"
+    },
+    {
+     "ghidra": "0x1f5c3c8",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer31BlendRateAtLastRequestedElementEv",
+     "name": "BlendRateAtLastRequestedElement"
+    },
+    {
+     "ghidra": "0x1f5c494",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer50SetBlendRateElapsedTimeLimitToLastRequestedElementEf",
+     "name": "SetBlendRateElapsedTimeLimitToLastRequestedElement"
+    },
+    {
+     "ghidra": "0x1f5c55c",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer9MakeBlankEf",
+     "name": "MakeBlank"
+    },
+    {
+     "ghidra": "0x1f5c5d4",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer14StartAnimationEifb",
+     "name": "StartAnimation"
+    },
+    {
+     "ghidra": "0x1f5c768",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer28StartDirectionBlendAnimationEPKNS0_25tDirectionBlend_ArgumentsEif",
+     "name": "StartDirectionBlendAnimation"
+    },
+    {
+     "ghidra": "0x1f5c8a4",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer20DirectionBlendRadianEjf",
+     "name": "DirectionBlendRadian"
+    },
+    {
+     "ghidra": "0x1f5c920",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer17StartAddAnimationEjfb",
+     "name": "StartAddAnimation"
+    },
+    {
+     "ghidra": "0x1f5ca78",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer23StartOverwriteAnimationEjfb",
+     "name": "StartOverwriteAnimation"
+    },
+    {
+     "ghidra": "0x1f5cbd0",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer25ResetAnimationControllersEPN4Aska10AsfHandlerEPNS1_16CollisionHandlerE",
+     "name": "ResetAnimationControllers"
+    },
+    {
+     "ghidra": "0x1f5cc60",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer10StartFrameEf",
+     "name": "StartFrame"
+    },
+    {
+     "ghidra": "0x1f5cd30",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer8EndFrameEf",
+     "name": "EndFrame"
+    },
+    {
+     "ghidra": "0x1f5ce00",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer18GetAnimationLengthEj",
+     "name": "GetAnimationLength"
+    },
+    {
+     "ghidra": "0x1f5ce70",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer12PresentFrameEf",
+     "name": "PresentFrame"
+    },
+    {
+     "ghidra": "0x1f5cf38",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer16TerminateProcessEj",
+     "name": "TerminateProcess"
+    },
+    {
+     "ghidra": "0x1f5d000",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer12IsEnableLoopEv",
+     "name": "IsEnableLoop"
+    },
+    {
+     "ghidra": "0x1f5d0b8",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer22IsEnableFrameStopAtEndEv",
+     "name": "IsEnableFrameStopAtEnd"
+    },
+    {
+     "ghidra": "0x1f5d170",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer16IsEnableFreeTermEv",
+     "name": "IsEnableFreeTerm"
+    },
+    {
+     "ghidra": "0x1f5d228",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer8IsLoopedEv",
+     "name": "IsLooped"
+    },
+    {
+     "ghidra": "0x1f5d2e0",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer14IsLoopedAtOnceEv",
+     "name": "IsLoopedAtOnce"
+    },
+    {
+     "ghidra": "0x1f5d398",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer7NumLoopEv",
+     "name": "NumLoop"
+    },
+    {
+     "ghidra": "0x1f5d44c",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer15ClearLoopedFlagEv",
+     "name": "ClearLoopedFlag"
+    },
+    {
+     "ghidra": "0x1f5d500",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer14AnimationSpeedEf",
+     "name": "AnimationSpeed"
+    },
+    {
+     "ghidra": "0x1f5d56c",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer31AnimationSpeedByTransitionValueEjff",
+     "name": "AnimationSpeedByTransitionValue"
+    },
+    {
+     "ghidra": "0x1f5d688",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer14AnimationSpeedEv",
+     "name": "AnimationSpeed"
+    },
+    {
+     "ghidra": "0x1f5d6fc",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer10StartFrameEv",
+     "name": "StartFrame"
+    },
+    {
+     "ghidra": "0x1f5d7b0",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer12PresentFrameEv",
+     "name": "PresentFrame"
+    },
+    {
+     "ghidra": "0x1f5d864",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer8EndFrameEv",
+     "name": "EndFrame"
+    },
+    {
+     "ghidra": "0x1f5d918",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer16PresentBlendRateEv",
+     "name": "PresentBlendRate"
+    },
+    {
+     "ghidra": "0x1f5d9e0",
+     "symbol": "_ZNK9Framework24CAnimationBlendContainer4FlagEv",
+     "name": "Flag"
+    },
+    {
+     "ghidra": "0x1f5da94",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer12ClearAllFlagEv",
+     "name": "ClearAllFlag"
+    },
+    {
+     "ghidra": "0x1f5db48",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer6OrFlagEj",
+     "name": "OrFlag"
+    },
+    {
+     "ghidra": "0x1f5dc10",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer7AndFlagEj",
+     "name": "AndFlag"
+    },
+    {
+     "ghidra": "0x1f5dcd8",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer9DetachApkEPKv",
+     "name": "DetachApk"
+    },
+    {
+     "ghidra": "0x1f5dda4",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer26InitializeKeepHipsPositionEPN4Aska18HierarchicalObjectE",
+     "name": "InitializeKeepHipsPosition"
+    },
+    {
+     "ghidra": "0x1f5de54",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer29InitializeKeepPosRootPositionEPN4Aska18HierarchicalObjectE",
+     "name": "InitializeKeepPosRootPosition"
+    },
+    {
+     "ghidra": "0x1f5dee0",
+     "symbol": "_ZN9Framework24CAnimationBlendContainer18DeleteBlendManagerEv",
+     "name": "DeleteBlendManager"
+    }
+   ]
+  },
+  {
+   "name": "CAnimationModel",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_asfHandler",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_pBlend",
+     "type": {
+      "kind": "ptr",
+      "to": "CAnimationBlendContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_objectRoot",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "unk_20",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "unk_28",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "unk_30",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "unk_34",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 60,
+     "name": "m_vec3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 4
+     },
+     "size": 16
+    },
+    {
+     "offset": 76,
+     "name": "m_vec4c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 4
+     },
+     "size": 16
+    },
+    {
+     "offset": 92,
+     "name": "m_scale5c",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 96,
+     "name": "unk_60",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 104,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f5f398",
+     "symbol": "_ZN9Framework15CAnimationModelC2Ev",
+     "name": "CAnimationModel"
+    },
+    {
+     "ghidra": "0x1f5f3d8",
+     "symbol": "_ZN9Framework15CAnimationModelD1Ev",
+     "name": "~CAnimationModel"
+    },
+    {
+     "ghidra": "0x1f5f3f0",
+     "symbol": "_ZN9Framework15CAnimationModelD0Ev",
+     "name": "~CAnimationModel"
+    },
+    {
+     "ghidra": "0x1f5f3f4",
+     "symbol": "_ZN9Framework15CAnimationModel10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f5f450",
+     "symbol": "_ZN9Framework15CAnimationModel12ResetPostureEv",
+     "name": "ResetPosture"
+    },
+    {
+     "ghidra": "0x1f5f460",
+     "symbol": "_ZN9Framework15CAnimationModel7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f5f468",
+     "symbol": "_ZN9Framework15CAnimationModel14AssignResourceERN4Aska10AsfHandlerERNS_24CAnimationBlendContainerE",
+     "name": "AssignResource"
+    },
+    {
+     "ghidra": "0x1f5f5ac",
+     "symbol": "_ZN9Framework15CAnimationModel19rAssignedAsfHandlerEv",
+     "name": "rAssignedAsfHandler"
+    },
+    {
+     "ghidra": "0x1f5f5e8",
+     "symbol": "_ZNK9Framework15CAnimationModel20crAssignedAsfHandlerEv",
+     "name": "crAssignedAsfHandler"
+    },
+    {
+     "ghidra": "0x1f5f624",
+     "symbol": "_ZN9Framework15CAnimationModel11rObjectRootEv",
+     "name": "rObjectRoot"
+    },
+    {
+     "ghidra": "0x1f5f660",
+     "symbol": "_ZN9Framework15CAnimationModel11pObjectRootEv",
+     "name": "pObjectRoot"
+    },
+    {
+     "ghidra": "0x1f5f69c",
+     "symbol": "_ZNK9Framework15CAnimationModel12cpObjectRootEv",
+     "name": "cpObjectRoot"
+    },
+    {
+     "ghidra": "0x1f5f6d8",
+     "symbol": "_ZN9Framework15CAnimationModel13SetObjectRootEPN4Aska18HierarchicalObjectE",
+     "name": "SetObjectRoot"
+    },
+    {
+     "ghidra": "0x1f5f714",
+     "symbol": "_ZN9Framework15CAnimationModel24rAnimationBlendContainerEv",
+     "name": "rAnimationBlendContainer"
+    },
+    {
+     "ghidra": "0x1f5f750",
+     "symbol": "_ZNK9Framework15CAnimationModel16HasTranslateRootEv",
+     "name": "HasTranslateRoot"
+    },
+    {
+     "ghidra": "0x1f5f760",
+     "symbol": "_ZNK9Framework15CAnimationModel21OffsetAtTranslateRootEv",
+     "name": "OffsetAtTranslateRoot"
+    },
+    {
+     "ghidra": "0x1f5f7a8",
+     "symbol": "_ZN9Framework15CAnimationModel21OffsetAtTranslateRootERKNS_7CVectorE",
+     "name": "OffsetAtTranslateRoot"
+    },
+    {
+     "ghidra": "0x1f5f7f4",
+     "symbol": "_ZN9Framework15CAnimationModel14StartAnimationEifb",
+     "name": "StartAnimation"
+    },
+    {
+     "ghidra": "0x1f5f878",
+     "symbol": "_ZNK9Framework15CAnimationModel16PresentAnimationEv",
+     "name": "PresentAnimation"
+    },
+    {
+     "ghidra": "0x1f5f8b0",
+     "symbol": "_ZNK9Framework15CAnimationModel26PresentAnimationChangeTimeEv",
+     "name": "PresentAnimationChangeTime"
+    },
+    {
+     "ghidra": "0x1f5f8e8",
+     "symbol": "_ZN9Framework15CAnimationModel10StartFrameEf",
+     "name": "StartFrame"
+    },
+    {
+     "ghidra": "0x1f5f934",
+     "symbol": "_ZN9Framework15CAnimationModel8EndFrameEf",
+     "name": "EndFrame"
+    },
+    {
+     "ghidra": "0x1f5f980",
+     "symbol": "_ZN9Framework15CAnimationModel12PresentFrameEf",
+     "name": "PresentFrame"
+    },
+    {
+     "ghidra": "0x1f5f9cc",
+     "symbol": "_ZN9Framework15CAnimationModel16TerminateProcessEj",
+     "name": "TerminateProcess"
+    },
+    {
+     "ghidra": "0x1f5fa18",
+     "symbol": "_ZNK9Framework15CAnimationModel12IsEnableLoopEv",
+     "name": "IsEnableLoop"
+    },
+    {
+     "ghidra": "0x1f5fa54",
+     "symbol": "_ZNK9Framework15CAnimationModel22IsEnableFrameStopAtEndEv",
+     "name": "IsEnableFrameStopAtEnd"
+    },
+    {
+     "ghidra": "0x1f5fa90",
+     "symbol": "_ZNK9Framework15CAnimationModel16IsEnableFreeTermEv",
+     "name": "IsEnableFreeTerm"
+    },
+    {
+     "ghidra": "0x1f5facc",
+     "symbol": "_ZNK9Framework15CAnimationModel8IsLoopedEv",
+     "name": "IsLooped"
+    },
+    {
+     "ghidra": "0x1f5fb08",
+     "symbol": "_ZNK9Framework15CAnimationModel14IsLoopedAtOnceEv",
+     "name": "IsLoopedAtOnce"
+    },
+    {
+     "ghidra": "0x1f5fb44",
+     "symbol": "_ZNK9Framework15CAnimationModel7NumLoopEv",
+     "name": "NumLoop"
+    },
+    {
+     "ghidra": "0x1f5fb80",
+     "symbol": "_ZN9Framework15CAnimationModel15ClearLoopedFlagEv",
+     "name": "ClearLoopedFlag"
+    },
+    {
+     "ghidra": "0x1f5fbbc",
+     "symbol": "_ZN9Framework15CAnimationModel14AnimationSpeedEf",
+     "name": "AnimationSpeed"
+    },
+    {
+     "ghidra": "0x1f5fc08",
+     "symbol": "_ZN9Framework15CAnimationModel31AnimationSpeedByTransitionValueEjff",
+     "name": "AnimationSpeedByTransitionValue"
+    },
+    {
+     "ghidra": "0x1f5fc6c",
+     "symbol": "_ZNK9Framework15CAnimationModel14AnimationSpeedEv",
+     "name": "AnimationSpeed"
+    },
+    {
+     "ghidra": "0x1f5fca8",
+     "symbol": "_ZNK9Framework15CAnimationModel10StartFrameEv",
+     "name": "StartFrame"
+    },
+    {
+     "ghidra": "0x1f5fce4",
+     "symbol": "_ZNK9Framework15CAnimationModel12PresentFrameEv",
+     "name": "PresentFrame"
+    },
+    {
+     "ghidra": "0x1f5fd20",
+     "symbol": "_ZNK9Framework15CAnimationModel8EndFrameEv",
+     "name": "EndFrame"
+    },
+    {
+     "ghidra": "0x1f5fd5c",
+     "symbol": "_ZNK9Framework15CAnimationModel16PresentBlendRateEv",
+     "name": "PresentBlendRate"
+    },
+    {
+     "ghidra": "0x1f5fd98",
+     "symbol": "_ZNK9Framework15CAnimationModel4FlagEv",
+     "name": "Flag"
+    },
+    {
+     "ghidra": "0x1f5fdd4",
+     "symbol": "_ZN9Framework15CAnimationModel12ClearAllFlagEv",
+     "name": "ClearAllFlag"
+    },
+    {
+     "ghidra": "0x1f5fe10",
+     "symbol": "_ZN9Framework15CAnimationModel6OrFlagEj",
+     "name": "OrFlag"
+    },
+    {
+     "ghidra": "0x1f5fe5c",
+     "symbol": "_ZN9Framework15CAnimationModel7AndFlagEj",
+     "name": "AndFlag"
+    },
+    {
+     "ghidra": "0x1f5fea8",
+     "symbol": "_ZN9Framework15CAnimationModel8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f60014",
+     "symbol": "_ZN9Framework15CAnimationModel22GetVelocityByAnimationEf",
+     "name": "GetVelocityByAnimation"
+    },
+    {
+     "ghidra": "0x1f601e4",
+     "symbol": "_ZN9Framework15CAnimationModel16GetVelocityByAetEf",
+     "name": "GetVelocityByAet"
+    },
+    {
+     "ghidra": "0x1f60818",
+     "symbol": "_ZN9Framework15CAnimationModel14GetRotateByAetEf",
+     "name": "GetRotateByAet"
+    },
+    {
+     "ghidra": "0x1f60f0c",
+     "symbol": "_ZN9Framework15CAnimationModel13UpdatePostureERKNS_7CMatrixE",
+     "name": "UpdatePosture"
+    },
+    {
+     "ghidra": "0x1f60f7c",
+     "symbol": "_ZN9Framework15CAnimationModel16InvalidateMatrixEPN4Aska18HierarchicalObjectE",
+     "name": "InvalidateMatrix"
+    },
+    {
+     "ghidra": "0x1f6100c",
+     "symbol": "_ZN9Framework15CAnimationModel11UpdateScaleERKNS_7CVectorE",
+     "name": "UpdateScale"
+    },
+    {
+     "ghidra": "0x1f6101c",
+     "symbol": "_ZN9Framework15CAnimationModel15EnableFrameOnlyEb",
+     "name": "EnableFrameOnly"
+    }
+   ]
+  }
+ ]
 }

@@ -1261,6 +1261,8 @@ select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updat
 //                                                sold or used up)
 //     box_slots.gacha_id          -> box_state.gacha_id  ON DELETE CASCADE (a box's drawn slots;
 //                                                BoxGacha writes the box_state row first)
+//   daily bonuses:
+//     favor_bonus_state.lot_uid -> roster.uid  ON DELETE SET NULL (the favor bonus's character)
 //   Sphere 211:
 //     sphere_departed.uid -> roster.uid  ON DELETE CASCADE (a character gone has no sortie)
 //   events:
@@ -1450,6 +1452,17 @@ const char* const kModules[] = {
   value integer,
   at integer not null
 ) strict)",
+    // ---- daily bonuses (api/daily/) ----
+    // the favor login bonus (one row): the day it was last drawn (day_at, NULL: never), its tier
+    // (master_favor_bonus) and lot character, the last favor stamina heal (healed_at, NULL: never);
+    // Player.favor_bonus_received_at / stamina_update_by_favor (b)
+    R"(create table new_favor_bonus_state (
+  id integer primary key check (id = 1),
+  day_at integer,
+  bonus_id integer,
+  lot_uid integer references roster(uid) on delete set null,
+  healed_at integer
+) strict)",
 };
 
 // The tables step 10 rebuilds (new_X -> X), in kModules' order.
@@ -1460,6 +1473,7 @@ const char* const kModuleTables[] = {
     "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
     "shop_counts", "exchange_counts", "subscription",
     "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
+    "favor_bonus_state",
 };
 // clang-format on
 
@@ -1651,13 +1665,26 @@ from sphere)");
     return ok;
 }
 
+// Daily bonuses (PLAN-schema S10): favor_bonus_state.day_at / healed_at 0 -> NULL (never: the
+// heal's row started day_at at 0, and healed_at defaulted to 0); lot_uid 0 or not owned -> NULL.
+bool rebuild_daily(sqlite3* db) {
+    log_count(db, "select count(*) from favor_bonus_state where day_at = 0", "favor_bonus_state.day_at", "0 -> NULL (never)", 10);
+    log_count(db, "select count(*) from favor_bonus_state where healed_at = 0", "favor_bonus_state.healed_at", "0 -> NULL (never)", 10);
+    log_count(db, "select count(*) from favor_bonus_state where lot_uid != 0 and lot_uid not in (select uid from roster)",
+              "favor_bonus_state.lot_uid", "dangling -> NULL", 10);
+    return run(db, R"(
+insert into new_favor_bonus_state (id, day_at, bonus_id, lot_uid, healed_at)
+select id, nullif(day_at, 0), bonus_id, case when lot_uid in (select uid from roster) then lot_uid end, nullif(healed_at, 0)
+from favor_bonus_state)");
+}
+
 // Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
 // above), then the old tables go and the new ones take their names; the AUTOINCREMENT counters
 // are kept.
 bool rebuild_modules(sqlite3* db, sqlite3*) {
     std::vector<std::pair<const char*, int64_t>> counters;
     for (const char* table : {"gacha_history", "sphere_box", "sphere_log"}) counters.emplace_back(table, sequence_of(db, table));
-    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db) && rebuild_sphere(db);
+    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db) && rebuild_sphere(db) && rebuild_daily(db);
     for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
     for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
     for (auto& [table, seq] : counters) ok = ok && keep_sequence(db, table, seq);

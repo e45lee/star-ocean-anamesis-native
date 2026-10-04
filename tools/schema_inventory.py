@@ -391,7 +391,7 @@ RELS = [
     ("subscription", "plan_id", "m:master_subscription_plan", "id", None, "-", ""),
     ("favor", "same_role_id", "m:master_role", "same_role_id", None, "-", "favor per same role"),
     ("favor_drop_play", "same_role_id", "m:master_role", "same_role_id", None, "-", ""),
-    ("favor_bonus_state", "lot_uid", "roster", "uid", 0, "SET NULL", "the favor bonus character"),
+    ("favor_bonus_state", "lot_uid", "roster", "uid", None, "SET NULL (S10)", "the favor bonus character (a plain uid before S10)"),
     ("shop_counts", "id", "m:master_item_shop", "id", None, "-", ""),
     ("ds_area", "area_id", "m:master_deep_space_area", "id", None, "-", ""),
     ("ds_offer", "mission_id", "m:master_deep_space_mission", "id", None, "-", ""),

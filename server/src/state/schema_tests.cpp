@@ -1152,7 +1152,9 @@ NATIVE_TEST("server/schema-migrate-v10") {
                 "update sqlite_sequence set seq = 99 where name = 'sphere_box';"
                 "delete from sphere_log;"
                 "update sqlite_sequence set seq = 42 where name = 'sphere_log';"
-                "insert into sphere_rank (season_id, floor_level, entered_at) values (69, null, null);"),
+                "insert into sphere_rank (season_id, floor_level, entered_at) values (69, null, null);"
+                // daily: the fixture's favor bonus row has healed_at 0; its lot character not owned
+                "update favor_bonus_state set lot_uid = 12345;"),
             true, "the S10 cases planted");
     t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 9, m), true, "the reference: migrated to 9");
     t.expect_eq(state::open_and_migrate(db.h, old.path, 10, m), true, "migrated to 10");
@@ -1166,6 +1168,7 @@ NATIVE_TEST("server/schema-migrate-v10") {
         "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
         "shop_counts", "exchange_counts", "subscription",
         "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
+        "favor_bonus_state",
     };
     // clang-format on
     std::vector<std::string> tables;
@@ -1241,6 +1244,9 @@ NATIVE_TEST("server/schema-migrate-v10") {
     t.expect_eq(db.one("select count(*) from sphere_log", {}), (int64_t)0, "(the log empty)");
     t.expect_eq(db.one("select seq from sqlite_sequence where name = 'sphere_log'", {}), (int64_t)42, "sphere_log's counter kept without rows");
     t.expect_eq(rows_over(db, "sphere_rank", "*", "season_id = 69"), (std::vector<std::string>{"1:69|1:0|5:|"}), "sphere_rank: NULL floor -> 0");
+    // daily: (id, day_at, bonus_id, lot_uid, healed_at)
+    t.expect_eq(rows_over(db, "favor_bonus_state", "*"), (std::vector<std::string>{"1:1|1:1790755200|1:0|5:|5:|"}),
+                "favor_bonus_state: healed_at 0 -> NULL (never), lot_uid not owned -> NULL, day_at kept");
     for (const char* table : {"event_last", "event_rank_received", "subscription"})
         t.expect_eq(rows_over(db, table, "*"), rows_over(ref, table, "*"), (std::string(table) + " copied").c_str());
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");
@@ -1260,6 +1266,8 @@ NATIVE_TEST("server/schema-migrate-v10") {
     t.expect_eq(state::open_and_migrate(f.h, v9.path, 10), true, "v9 -> v10");
     t.expect_eq(state::user_version(f.h), 10, "user_version 10");
     t.expect_eq(f.one("select count(*) from ds_offer where closed_at is null and ship_id = 1", {}), (int64_t)1, "the offer: no limit, on ship 1");
+    t.expect_eq(f.one("select count(*) from favor_bonus_state where healed_at is null and lot_uid is not null", {}), (int64_t)1,
+                "the favor bonus: never healed, its character kept");
     t.expect_eq(fk_violations(f), 0, "foreign_key_check");
     f.close();
     Sql bak;
@@ -1404,6 +1412,8 @@ NATIVE_TEST("server/schema-fk-actions") {
                                    std::string("insert into ds_bonus (ship_id, bonus_id, value) values (99, 1, 1.0)")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once (S10)").c_str());
     t.expect_eq(rc("insert into sphere_departed (uid) values (9999)"), SQLITE_CONSTRAINT_FOREIGNKEY, "sphere_departed: refused at once (S10)");
+    t.expect_eq(rc("update favor_bonus_state set lot_uid = 9999"), SQLITE_CONSTRAINT_FOREIGNKEY, "favor_bonus_state.lot_uid: refused at once (S10)");
+    t.expect_eq(rc("update favor_bonus_state set id = 2"), SQLITE_CONSTRAINT_CHECK, "favor_bonus_state: one row");
     t.expect_eq(rc("insert into gacha_history (gacha_id, at, character_uid, rank) values (1, 0, 9999, 'S')"), SQLITE_CONSTRAINT_FOREIGNKEY,
                 "gacha_history.character_uid: refused at once (S10)");
     t.expect_eq(rc("insert into gacha_history (gacha_id, at, item_uid, rank) values (1, 0, 9999, 'S')"), SQLITE_CONSTRAINT_FOREIGNKEY,
@@ -1427,7 +1437,8 @@ NATIVE_TEST("server/schema-fk-actions") {
           std::string("update favor_drop_play set lots = 'x'"), std::string("update shop_counts set total = 'x'"),
           std::string("update exchange_counts set num = 'x'"), std::string("update subscription set closed_at = 'x'"),
           std::string("update sphere set streak = 'x'"), std::string("update sphere_box set rank = 'x'"),
-          std::string("update sphere_rank set floor_level = 'x'"), std::string("update sphere_log set at = 'x'")})
+          std::string("update sphere_rank set floor_level = 'x'"), std::string("update sphere_log set at = 'x'"),
+          std::string("update favor_bonus_state set healed_at = 'x'")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S10)").c_str());
     t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
                 "a present has its created_at (S8)");
@@ -1488,7 +1499,9 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(db.one("select count(*) from player where support_uid is null", {}), (int64_t)1, "support_uid -> NULL");
     t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and assist_uid is null", {}), (int64_t)1,
                 "the set's assist_uid -> NULL");
+    t.expect_eq(rc("update favor_bonus_state set lot_uid = " + a), SQLITE_OK, "a is the favor bonus's character");
     t.expect_eq(rc("delete from roster where uid = " + a), SQLITE_OK, "set 3's member deleted");
+    t.expect_eq(db.one("select count(*) from favor_bonus_state where lot_uid is null", {}), (int64_t)1, "favor_bonus_state.lot_uid -> NULL (S10)");
     t.expect_eq(db.one("select count(*) from gacha_history where character_uid is null and at = 0 and role_id = 1", {}), (int64_t)1,
                 "gacha_history.character_uid -> NULL (S10)");
     t.expect_eq(db.one("select count(*) from party_member where party_id = 3 and slot = 0 and uid is null", {}), (int64_t)1,

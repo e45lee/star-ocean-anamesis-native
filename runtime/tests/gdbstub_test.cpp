@@ -15,7 +15,7 @@
 // With --native the leaf is a native (`monitor natives` lists it as gdb_demo_leaf).
 #include "gdbstub_test.h"
 
-#include "soa/sock.h"  // (Winsock first on Windows)
+#include <soa/sock.h>  // (Winsock first on Windows)
 
 #ifdef _WIN32
 #include <windows.h>

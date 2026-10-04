@@ -9,7 +9,7 @@
 // (Windows) on its own process: an unmapped address is an error reply, not a crash.
 #include "core/gdbstub.h"
 
-#include "soa/sock.h"  // (Winsock on Windows: first, before <windows.h>)
+#include <soa/sock.h>  // (Winsock on Windows: first, before <windows.h>)
 
 #ifdef _WIN32
 #include <windows.h>

@@ -1,15 +1,28 @@
+# Every third-party module a tracked *.py imports is listed here (tests/test_requirements.py checks).
+# soa_save (ADLD AES, the KVS ChaCha20), tools/check_download.py
 pycryptodome
+# soa_save/script.py, tools/fakeapi_msgp.py, tools/server_replay_record.py, tools/check_download.py,
+# tools/compare_tutorial.py, the tests
 msgpack
+# tests/, control/tests
 pytest
-# reverse-engineering tools (tools/*.py)
+# ELF reading: tools/elfinfo.py, verdiff.py, rebase_inventory.py, decomp_stamp.py, subsystem.py,
+# gen_containers_tables.py, restore370_audit.py, port/scripts/remaining.py, control/gdbclient.py,
+# server/tests/ninja/tools, port/decomp/bullet/pin
 pyelftools
+# AArch64 disassembly: tools/a2c.py, verdiff.py, elfinfo.py, rebase_inventory.py, api_wire.py,
+# gen_*_tables.py, fakeapi_fields.py, info_fields_emu.py, restore370_audit.py
 capstone
+# AArch64 emulation: tools/emu.py, tools/info_fields_emu.py, server/tests/ninja/tools/ninja_client.py
 unicorn
-# screenshot contact sheets (tools/contact_sheet.py)
+# images: tools/contact_sheet.py (screenshot contact sheets), tools/make_standin_banners.py
 pillow
-# stand-in gacha images (tools/make_standin_banners.py)
+# array XOR / pixels: tools/check_download.py, tools/make_standin_banners.py
 numpy
+# SLZ codec 7 (zstd): tools/missing_assets/presence.py, tools/make_standin_banners.py,
+# port/decomp/bullet/pin/scan_rb.py
 zstandard
+# interactive reverse engineering (README.md "Reverse-engineering tools"); no tracked script imports them
 lief
 keystone-engine
 # PyGhidra ships with Ghidra (12.1.2 snap); install it from there:

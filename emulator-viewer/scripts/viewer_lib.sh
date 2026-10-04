@@ -24,7 +24,7 @@ elapsed() { echo $(( $(date +%s) - t0 )); }
 
 # start_viewer BIN [extra soa-viewer args...]: headless, its own data dir, the control FIFO.
 # A Windows BIN (build-win/emulator-viewer/soa-viewer.exe; README.md "Windows") runs the staged copy
-# in $SOA_WIN_STAGE (default /mnt/c/soa-win: scripts/windows-stage.sh --viewer stages the XAPK) from
+# in $SOA_WIN_STAGE (default /mnt/c/soa-win: scripts/windows-stage.sh --viewer stages the XAPK in apk/) from
 # there, with its phone on the Windows drive and the TCP control channel (control/soadrive/winhost.py).
 win=0
 start_viewer() {
@@ -40,7 +40,7 @@ start_viewer() {
         win=1
         local py=(python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); from soadrive import winhost as w; print(eval(sys.argv[2]))' "$repo/control")
         bin=$("${py[@]}" "w.staged_binary('$bin')") || { echo "FAIL: $bin not staged"; exit 1; }
-        [ -d "${SOA_WIN_STAGE:-/mnt/c/soa-win}/work/extracted/xapk" ] ||
+        ls "${SOA_WIN_STAGE:-/mnt/c/soa-win}"/apk/*.xapk > /dev/null 2>&1 || [ -d "${SOA_WIN_STAGE:-/mnt/c/soa-win}/work/extracted/xapk" ] ||
             { echo "FAIL: the XAPK isn't staged (scripts/windows-stage.sh --viewer)"; exit 1; }
         [ -n "${VIEWER_DATA:-}" ] || phone=$("${py[@]}" "w.local_dir('$phone')")
         # port 0: the viewer picks one and logs it (in mirrored networking a port tried from WSL

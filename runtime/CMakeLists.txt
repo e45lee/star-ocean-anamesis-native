@@ -6,6 +6,7 @@
 #   dynarmic          the `dynarmic` target (FetchContent)
 #   soa::EGL, soa::GLESv2  Mesa's libEGL / libGLESv2 with the Khronos headers from vcpkg
 #   ZLIB::ZLIB, soa::SDL2, Freetype::Freetype (vcpkg); soa_zip (common/: the ZIP reader, on minizip-ng)
+#   soa_codec         common/: Base64 (SharedPreferences values; OpenSSL), PNG (screenshots; stb)
 #
 # Targets:
 #   soaruntime_iface  INTERFACE: include dir (runtime/src, so `#include "core/cpu.h"`), definitions
@@ -19,7 +20,7 @@
 #                     which also proves the runtime links without any port code.
 #   soaruntime_app    STATIC: the desktop host loop (src/app/: SDL2 window and GL contexts, input,
 #                     audio device, control FIFO, activity bring-up, main loop, the text-entry
-#                     box: FreeType, privately). Kept out of
+#                     box: FreeType, privately; screenshots: soa_codec's PNG writer). Kept out of
 #                     soaruntime because it links SDL2; a host program that uses it links it as a
 #                     plain library.
 
@@ -33,7 +34,8 @@ list(SORT SOA_RUNTIME_SOURCES)
 # The runtime must not depend on its users: every quoted #include in runtime/ must name a file in
 # runtime/src (or next to the including file), or dynarmic. Nothing from port/, server/ or
 # emulator/. The other includes are common/include's (`#include <soa/env.h>`, the environment rule
-# every program shares; `<soa/zip.h>`, the ZIP reader soa_zip), dependencies like dynarmic, not
+# every program shares; `<soa/zip.h>`, the ZIP reader soa_zip; `<soa/base64.h>`, `<soa/prefs_xml.h>`,
+# `<soa/png.h>`, the formats of soa_codec), dependencies like dynarmic, not
 # users of the runtime. (Also enforced by the include path, which is runtime/src only, and by
 # soaruntime_tests, which links the whole archive without any port code.)
 file(GLOB_RECURSE _rt_check CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/* ${SOA_RUNTIME_DIR}/tests/*)
@@ -58,6 +60,7 @@ target_link_libraries(soaruntime_iface INTERFACE
   soa_env
   soa_zip
   soa_gamefiles
+  soa_codec
   dynarmic
   soa::EGL
   soa::GLESv2
@@ -81,7 +84,7 @@ target_compile_options(soaruntime_tests PRIVATE -Wall -Wno-unused-parameter -fno
 # The desktop host loop (src/app/host.h), on SDL2 (X11 or Wayland: SDL picks).
 file(GLOB SOA_RUNTIME_APP_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/app/*.cpp)
 add_library(soaruntime_app STATIC ${SOA_RUNTIME_APP_SOURCES})
-target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2 PRIVATE Freetype::Freetype)
+target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2 PRIVATE Freetype::Freetype soa_codec)
 # Windows: the program exports ANGLE's EGL entry points, so SDL loads EGL from it (src/app/sdl_gl.cpp)
 target_link_options(soaruntime_app INTERFACE $<$<PLATFORM_ID:Windows>:${SOA_RUNTIME_DIR}/src/app/egl_exports_win32.def>)
 target_compile_options(soaruntime_app PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing -mcx16)

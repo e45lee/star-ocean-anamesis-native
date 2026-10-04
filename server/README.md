@@ -37,7 +37,8 @@ Build: part of the repository's build (`cmake -S . -B build && cmake --build bui
 (`cmake --build build --target soa-server` for the server alone; `-DSOA_BUILD_PORT=OFF
 -DSOA_BUILD_EMULATOR=OFF -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_PLATFORM370=OFF` configures only the server, without dynarmic, the runtime, SDL2 or EGL). It needs
 SQLite and OpenSSL's libcrypto (and zlib for `soa-server`), static from vcpkg
-(`unofficial::sqlite3::sqlite3`, `OpenSSL::Crypto`, `ZLIB::ZLIB`; `cmake/deps.cmake`). Link it whole (`$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>`):
+(`unofficial::sqlite3::sqlite3`, `OpenSSL::Crypto`, `ZLIB::ZLIB`; `cmake/deps.cmake`), and `soa_codec`
+(`common/`: Base64 and the Game.xml SharedPreferences XML, on OpenSSL and pugixml). Link it whole (`$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>`):
 the tests register from static initializers. The modules register from their `register_<module>()`
 functions, in the one order of `src/core/modules.cpp` (ARCHITECTURE.md "The module registry and its order").
 
@@ -83,6 +84,8 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
   file. `--report` prints the findings without failing (lost evidence and log lines still fail).
 
 ## API
+
+Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/unimplemented-apis.md) lists the 93 that don't, what the client gets for each today, and the plan (`tools/unhandled_apis.py` regenerates the list).
 
 | Header | What |
 |---|---|

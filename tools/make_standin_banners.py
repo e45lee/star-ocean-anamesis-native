@@ -52,6 +52,8 @@ except ImportError:  # only needed for zstd-compressed templates
     zstandard = None
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+from soa_save.adld import chash32 as _chash32  # noqa: E402
 AIF2PNG = os.path.join(ROOT, "tools", "aif2png", "aif2png")
 DEFAULT_GACHAS = ["gacha_pickup_role_0054", "gacha_pickup_role_0056", "gacha_pickup_role_0283"]
 FONTS = ["/usr/share/fonts/opentype/ipaexfont-gothic/ipaexg.ttf", "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf",
@@ -60,14 +62,8 @@ FONTS = ["/usr/share/fonts/opentype/ipaexfont-gothic/ipaexg.ttf", "/usr/share/fo
 
 # ---------------------------------------------------------------- ADLD / SLZ (as tools/aif2png)
 def chash32(s):
-    c = len(s.encode())
-    for b in s.encode():
-        c ^= b
-        x = c & 0xff
-        for _ in range(8):
-            x = (x >> 1) ^ 0xEDB88320 if x & 1 else x >> 1
-        c = x ^ (c >> 8)
-    return c
+    """Framework::CHash32 of a string (soa_save.adld.chash32)."""
+    return _chash32(s.encode())
 
 
 def adld_xor(body, name):

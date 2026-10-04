@@ -36,7 +36,9 @@ import sqlite3
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from fakeapi_msgp import build  # noqa: E402
+from soa_save.adld import chash32 as _chash32  # noqa: E402
 
 
 def rows(db, sql, *args):
@@ -50,14 +52,8 @@ def u(v):
 
 
 def chash32(text):
-    """Framework::CHash32: CRC-32 (reflected, poly 0xEDB88320) seeded with the length, no final XOR."""
-    b = text.encode()
-    c = len(b)
-    for x in b:
-        c ^= x
-        for _ in range(8):
-            c = (c >> 1) ^ (0xEDB88320 if c & 1 else 0)
-    return c
+    """Framework::CHash32 of a string (soa_save.adld.chash32)."""
+    return _chash32(text.encode())
 
 
 def person_status(db, uid, role_id, level):
@@ -243,7 +239,6 @@ def main():
     player = {"data": {}, "status": 0}
     roles = []
     if a.save:
-        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
         from soa_save.kvs import KVSFile
         from soa_save.roster import roster
         roles = roster(KVSFile.load(a.save))

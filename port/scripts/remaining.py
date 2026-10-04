@@ -77,26 +77,33 @@ def package_of(fam):
 
 
 def elf_reader(path):
-    """Returns read(vaddr, n) -> bytes over the sections of an ELF64 file (None if unreadable)."""
-    import struct
+    """Returns read(vaddr, n) -> bytes over the PROGBITS sections of an ELF file (None if unreadable)."""
+    from elftools.elf.elffile import ELFFile
     try:
-        data = open(path, "rb").read()
+        with open(path, "rb") as f:
+            secs = [(s["sh_addr"], s.data()) for s in ELFFile(f).iter_sections()
+                    if s["sh_type"] == "SHT_PROGBITS" and s["sh_addr"]]
     except OSError:
         return None
-    shoff, = struct.unpack_from("<Q", data, 0x28)
-    shentsize, shnum = struct.unpack_from("<HH", data, 0x3a)
-    secs = []
-    for k in range(shnum):
-        _, typ, _, addr, off, size = struct.unpack_from("<IIQQQQ", data, shoff + k * shentsize)
-        if typ == 1 and addr:  # PROGBITS
-            secs.append((addr, off, size))
 
     def read(va, n):
-        for addr, off, size in secs:
-            if addr <= va and va + n <= addr + size:
-                return data[off + va - addr:off + va - addr + n]
+        for addr, data in secs:
+            if addr <= va and va + n <= addr + len(data):
+                return data[va - addr:va - addr + n]
         return None
     return read
+
+
+def need_pyelftools():
+    """pyelftools reads the library: under a python without it, run again with the repo's .venv."""
+    try:
+        import elftools  # noqa: F401
+    except ImportError:
+        venv = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".venv")
+        py = os.path.join(venv, "bin", "python")
+        if not os.path.exists(py) or os.path.realpath(sys.prefix) == os.path.realpath(venv):
+            sys.exit("remaining.py needs pyelftools (pip install -r requirements.txt)")
+        os.execv(py, [py, os.path.abspath(__file__)] + sys.argv[1:])
 
 
 def short_kind(read, va, size):
@@ -131,6 +138,7 @@ def main():
                                                   "work/libSOA-3.7.0.so"),
                     help="libSOA.so, to classify functions under 8 bytes")
     a = ap.parse_args()
+    need_pyelftools()
 
     funcs = [(int(r[0], 16), int(r[1]), r[3]) for r in load_tsv(os.path.join(a.dirs[0], "functions.tsv"))]
     by_name = {n: i for i, (_, _, n) in enumerate(funcs)}

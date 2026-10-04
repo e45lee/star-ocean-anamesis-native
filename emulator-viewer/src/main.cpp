@@ -9,10 +9,16 @@
 #include <limits.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <dirent.h>
+#include <strings.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <chrono>
+#include <cstring>
+#include <iterator>
+#include <memory>
 #include <cstdio>
 #include <fstream>
 #include <string>
@@ -79,24 +85,74 @@ std::string repo_file(const std::string& repo, const std::string& rel) {
     return "";
 }
 
+// The game package: the 3.8.0 XAPK read in place (--xapk FILE, or one found: find_xapk), or the
+// XAPK unpacked into a directory (--apk-dir DIR, tools/extract.sh). Its APKs (the base APK, the
+// arm64 split, the asset packs) open as zip archives either way.
+struct GamePackage {
+    std::string xapk_path, dir;            // one of them
+    std::unique_ptr<ZipArchive> xapk;      // --xapk: the outer archive
+    std::string cache;                     // --xapk: <data>/xapk-cache, for a member stored deflated
+
+    std::string where() const { return xapk ? "XAPK " + xapk_path : "dir " + dir; }
+    bool has(const std::string& apk) const { return xapk ? xapk->find(apk) != nullptr : exists(dir + "/" + apk); }
+    std::string describe(const std::string& apk) const { return xapk ? xapk_path + ":" + apk : dir + "/" + apk; }
+    // The APK `apk`, nullptr when the package hasn't it. An XAPK's stored member is read in place
+    // (the APKPure XAPK stores every APK); a deflated one is extracted once into the cache (again
+    // when its CRC-32 or size changes).
+    std::unique_ptr<ZipArchive> open(const std::string& apk) const {
+        auto z = std::make_unique<ZipArchive>();
+        if (!xapk) return exists(dir + "/" + apk) && z->open(dir + "/" + apk) ? std::move(z) : nullptr;
+        const ZipArchive::Entry* e = xapk->find(apk);
+        if (!e) return nullptr;
+        if (z->open_member(*xapk, apk)) return z;
+        std::string out = cache + "/" + apk;
+        if (!fresh(out, *e)) {
+            LOGI("viewer", "extracting %s from the XAPK (stored deflated) into %s", apk.c_str(), cache.c_str());
+            if (!extract_to(*xapk, *e, out)) fatal("cannot extract %s from %s", apk.c_str(), xapk_path.c_str());
+        }
+        return z->open(out) ? std::move(z) : nullptr;
+    }
+
+    // A file extracted from an archive entry is current when its stamp (OUT.src: the entry's
+    // CRC-32 and size) matches and its size is right.
+    static std::string stamp_of(const ZipArchive::Entry& e) {
+        char b[64];
+        snprintf(b, sizeof b, "crc32 %08x size %llu\n", e.crc, (unsigned long long)e.size);
+        return b;
+    }
+    static bool fresh(const std::string& out, const ZipArchive::Entry& e) {
+        struct stat st;
+        if (stat(out.c_str(), &st) != 0 || (u64)st.st_size != e.size) return false;
+        std::ifstream f(out + ".src");
+        std::string have((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+        return have == stamp_of(e);
+    }
+    static bool extract_to(const ZipArchive& z, const ZipArchive::Entry& e, const std::string& out) {
+        std::vector<uint8_t> data;
+        if (!z.extract(e, data)) return false;
+        make_dirs(parent(out));
+        std::string tmp = out + ".tmp";
+        std::ofstream o(tmp, std::ios::binary);
+        o.write((const char*)data.data(), data.size());
+        o.close();
+        if (!o.good() || rename(tmp.c_str(), out.c_str()) != 0) return false;
+        std::ofstream(out + ".src") << stamp_of(e);
+        return true;
+    }
+};
+
 // The client library: lib/arm64-v8a/libSOA.so of config.arm64_v8a.apk, extracted into the
-// viewer's data dir (re-extracted when its size differs from the APK's entry), as the package
-// manager installs it. The port keeps its own copy in its own data dir; they are never shared.
-std::string extract_lib(const std::string& apk, const std::string& out) {
-    ZipArchive z;
-    if (!z.open(apk)) fatal("cannot open %s", apk.c_str());
-    auto* e = z.find("lib/arm64-v8a/libSOA.so");
-    if (!e) fatal("%s has no lib/arm64-v8a/libSOA.so", apk.c_str());
-    struct stat st;
-    if (stat(out.c_str(), &st) == 0 && (u64)st.st_size == e->size) return out;
-    LOGI("viewer", "extracting libSOA.so from %s", apk.c_str());
-    std::vector<uint8_t> data;
-    if (!z.extract(*e, data)) fatal("cannot extract libSOA.so from %s", apk.c_str());
-    std::string tmp = out + ".tmp";
-    std::ofstream o(tmp, std::ios::binary);
-    o.write((const char*)data.data(), data.size());
-    o.close();
-    if (!o.good() || rename(tmp.c_str(), out.c_str()) != 0) fatal("cannot write %s", out.c_str());
+// viewer's data dir (again when the entry's CRC-32 or size differs from the copy's stamp,
+// libSOA.so.src), as the package manager installs it. The port keeps its own copy in its own data
+// dir; they are never shared.
+std::string extract_lib(const GamePackage& pkg, const std::string& out) {
+    auto z = pkg.open("config.arm64_v8a.apk");
+    if (!z) fatal("%s is missing", pkg.describe("config.arm64_v8a.apk").c_str());
+    auto* e = z->find("lib/arm64-v8a/libSOA.so");
+    if (!e) fatal("%s has no lib/arm64-v8a/libSOA.so", pkg.describe("config.arm64_v8a.apk").c_str());
+    if (GamePackage::fresh(out, *e)) return out;
+    LOGI("viewer", "extracting libSOA.so from %s", pkg.describe("config.arm64_v8a.apk").c_str());
+    if (!GamePackage::extract_to(*z, *e, out)) fatal("cannot extract libSOA.so into %s", out.c_str());
     return out;
 }
 
@@ -104,9 +160,7 @@ std::string extract_lib(const std::string& apk, const std::string& out) {
 // XAPK has only the install-time one): its assets/ go to <files>/assetpacks/<name>/assets, the
 // STORAGE_FILES layout Play Core gives such packs (docs/notes.md "Asset packs"). Files already
 // there with the right size are kept.
-bool install_asset_pack(const std::string& apk, const std::string& name) {
-    ZipArchive z;
-    if (!z.open(apk)) return false;
+bool install_asset_pack(const ZipArchive& z, const std::string& from, const std::string& name) {
     std::string root = host_path((guest_internal_dir() + "/assetpacks/" + name).c_str());
     size_t n = 0, copied = 0;
     for (auto& [path, e] : z.entries()) {
@@ -121,23 +175,62 @@ bool install_asset_pack(const std::string& apk, const std::string& name) {
         std::ofstream(out, std::ios::binary).write((const char*)data.data(), data.size());
         copied++;
     }
-    LOGI("viewer", "asset pack %s: %zu files (%zu newly extracted) from %s", name.c_str(), n, copied, apk.c_str());
+    LOGI("viewer", "asset pack %s: %zu files (%zu newly extracted) from %s", name.c_str(), n, copied, from.c_str());
     return n > 0;
+}
+
+// An XAPK that holds the 3.8.0 app (its base APK and arm64 split).
+bool is_game_xapk(const std::string& path) {
+    ZipArchive z;
+    return z.open(path) && z.find(kBaseApk) && z.find("config.arm64_v8a.apk");
+}
+
+// The XAPK when no --xapk / --apk-dir names the game: the first *.xapk holding the app in the
+// executable's folder, its game/ subfolder, then the repository's apk/ (in a git worktree also the
+// main checkout's, which holds the untracked XAPK). TODO(port/dist): switch the first two to the
+// shared install-dir lookup (common/include/soa/install.h install_dirs()) once it is on main.
+std::string find_xapk(const std::string& repo) {
+    std::vector<std::string> dirs;
+    std::string exe_dir = parent(real("/proc/self/exe"));
+    if (!exe_dir.empty()) dirs = {exe_dir, exe_dir + "/game"};
+    if (!repo.empty()) {
+        dirs.push_back(repo + "/apk");
+        std::string w = real(repo + "/work");
+        std::string main = w.empty() ? "" : parent(w);
+        if (!main.empty() && main != repo) dirs.push_back(main + "/apk");
+    }
+    for (auto& d : dirs) {
+        std::vector<std::string> names;
+        if (DIR* dh = opendir(d.c_str())) {
+            while (dirent* de = readdir(dh)) {
+                std::string n = de->d_name;
+                if (n.size() > 5 && strcasecmp(n.c_str() + n.size() - 5, ".xapk") == 0) names.push_back(n);
+            }
+            closedir(dh);
+        }
+        std::sort(names.begin(), names.end());
+        for (auto& n : names)
+            if (is_game_xapk(d + "/" + n)) return d + "/" + n;
+    }
+    return "";
 }
 
 void usage() {
     fprintf(stderr,
             "usage: soa-viewer [options]\n"
             "Runs the offline 3.8.0 client unmodified (pure JIT, no natives, no server). emulator-viewer/README.md.\n"
-            "  --apk-dir DIR   the unpacked 3.8.0 XAPK: %s, assetinstalltime.apk,\n"
+            "  --xapk FILE     the 3.8.0 XAPK, read in place (its APKs aren't unpacked; libSOA.so is extracted\n"
+            "                  into the data dir). Default: a *.xapk beside the executable, in its game/ folder\n"
+            "                  or in <repo>/apk/, else --apk-dir's default\n"
+            "  --apk-dir DIR   the XAPK unpacked (tools/extract.sh): %s, assetinstalltime.apk,\n"
             "                  config.arm64_v8a.apk; optional assetfastfollow.apk / assetondemand1.apk\n"
-            "                  (default <repo>/work/extracted/xapk)\n"
+            "                  (default <repo>/work/extracted/xapk when no XAPK is found)\n"
             "  --apk FILE      read assets from FILE too (after the XAPK's; repeatable, later wins)\n"
             "  --download-dir DIR  serve builtin_data/ assets missing from the APKs from DIR, an online\n"
             "                  asset tree such as work/download-3.7.0 (as soa / soa-emu --download-dir); off by\n"
             "                  default\n"
             "  --download-prefer  with --download-dir: DIR wins over the APKs (as soa / soa-emu)\n"
-            "  --lib PATH      the client library (default: extracted from DIR/config.arm64_v8a.apk into the data dir)\n"
+            "  --lib PATH      the client library (default: extracted from config.arm64_v8a.apk into the data dir)\n"
             "  --data DIR      the emulated device's data (saves, prefs, asset packs; default\n"
             "                  ~/.local/share/soa-viewer-380, like the port's ~/.local/share/soa-linux-370;\n"
             "                  Windows %%LOCALAPPDATA%%\\soa\\viewer-380; never the port's)\n"
@@ -170,7 +263,7 @@ int main(int argc, char** argv) {
     env::warn_removed_env("soa-viewer", env::kViewer);  // SOA_* settings that are flags now
     signal(SIGPIPE, SIG_IGN);
     app::install_host_hooks();
-    std::string apk_dir, lib_path, data_dir, repo_arg;
+    std::string apk_dir, xapk_path, lib_path, data_dir, repo_arg;
     std::vector<std::string> extra_apks;
     std::string download_dir;
     bool download_prefer = false;
@@ -189,6 +282,7 @@ int main(int argc, char** argv) {
             return argv[++i];
         };
         if (a == "--apk-dir") apk_dir = next();
+        else if (a == "--xapk") xapk_path = next();
         else if (a == "--apk") extra_apks.push_back(next());
         else if (a == "--download-dir") download_dir = next();
         else if (a == "--download-prefer") download_prefer = true;
@@ -226,18 +320,37 @@ int main(int argc, char** argv) {
 
     std::string repo = find_repo(repo_arg);
     if (repo.empty()) LOGW("viewer", "the repository wasn't found (give --repo DIR); defaults need it");
-    if (apk_dir.empty()) {
-        std::string base = repo_file(repo, std::string("work/extracted/xapk/") + kBaseApk);
-        if (base.empty()) fatal("work/extracted/xapk/%s not found (give --apk-dir)", kBaseApk);
-        apk_dir = parent(base);
+    if (!apk_dir.empty() && !xapk_path.empty()) {
+        fprintf(stderr, "soa-viewer: give --xapk FILE or --apk-dir DIR, not both\n");
+        return 2;
     }
-    for (const char* f : {kBaseApk, "assetinstalltime.apk"})
-        if (!exists(apk_dir + "/" + f)) fatal("--apk-dir %s: %s is missing", apk_dir.c_str(), f);
     // Beside the port's (soa/paths.h): ~/.local/share/soa-viewer-380, on Windows %LOCALAPPDATA%\soa\viewer-380.
     if (data_dir.empty()) data_dir = soa::default_data_dir("soa-viewer-380", "viewer-380");
     make_dirs(data_dir);
-    if (lib_path.empty()) lib_path = extract_lib(apk_dir + "/config.arm64_v8a.apk", data_dir + "/libSOA.so");
-    LOGI("viewer", "3.8.0 client %s, XAPK %s, data %s: pure JIT, unmodified", lib_path.c_str(), apk_dir.c_str(), data_dir.c_str());
+    // The game: --xapk, --apk-dir, else an XAPK found (find_xapk), else the unpacked one in work/.
+    if (apk_dir.empty() && xapk_path.empty()) {
+        xapk_path = find_xapk(repo);
+        if (xapk_path.empty()) {
+            std::string base = repo_file(repo, std::string("work/extracted/xapk/") + kBaseApk);
+            if (base.empty())
+                fatal("the 3.8.0 XAPK wasn't found: give --xapk FILE (or put the *.xapk beside soa-viewer or in the "
+                      "repository's apk/), or --apk-dir DIR (tools/extract.sh)");
+            apk_dir = parent(base);
+        }
+    }
+    GamePackage pkg;
+    if (!xapk_path.empty()) {
+        pkg.xapk_path = xapk_path;
+        pkg.xapk = std::make_unique<ZipArchive>();
+        if (!pkg.xapk->open(xapk_path)) fatal("--xapk %s: not a zip archive", xapk_path.c_str());
+        pkg.cache = data_dir + "/xapk-cache";
+    } else {
+        pkg.dir = apk_dir;
+    }
+    for (const char* f : {kBaseApk, "assetinstalltime.apk", "config.arm64_v8a.apk"})
+        if (!pkg.has(f)) fatal("%s: %s is missing", pkg.where().c_str(), f);
+    if (lib_path.empty()) lib_path = extract_lib(pkg, data_dir + "/libSOA.so");
+    LOGI("viewer", "3.8.0 client %s, game from %s, data %s: pure JIT, unmodified", lib_path.c_str(), pkg.where().c_str(), data_dir.c_str());
 
     // The emulated device: a phone with the 3.8.0 app installed (the base APK, the arm64 split and
     // the install-time asset pack), its clock the host's: the client freezes its own game clock at
@@ -263,19 +376,25 @@ int main(int argc, char** argv) {
     app::start_watchdog();  // SOA_WATCHDOG
 
     auto& am = asset_manager();
-    if (!am.add_apk(apk_dir + "/" + kBaseApk)) fatal("cannot open %s/%s", apk_dir.c_str(), kBaseApk);
-    if (!am.add_apk(apk_dir + "/assetinstalltime.apk")) fatal("cannot open %s/assetinstalltime.apk", apk_dir.c_str());
+    auto t_pkg = std::chrono::steady_clock::now();
+    for (const char* f : {kBaseApk, "assetinstalltime.apk"}) {
+        auto z = pkg.open(f);
+        if (!z || !am.add_zip(std::move(z), pkg.describe(f))) fatal("cannot open %s", pkg.describe(f).c_str());
+    }
     // Fast-follow / on-demand packs aren't in the APKPure XAPK (their BGM and talk-scene sounds
     // are missing then, as on a phone that never fetched them), but can be supplied as split APKs.
     for (const char* pack : {"assetfastfollow", "assetondemand1"}) {
-        for (std::string f : {apk_dir + "/" + pack + ".apk", apk_dir + "/split_" + pack + ".apk"}) {
-            if (exists(f) && install_asset_pack(f, pack)) {
+        for (std::string f : {std::string(pack) + ".apk", std::string("split_") + pack + ".apk"}) {
+            auto z = pkg.has(f) ? pkg.open(f) : nullptr;
+            if (z && install_asset_pack(*z, pkg.describe(f), pack)) {
                 platform_add_asset_pack(pack);
                 break;
             }
         }
         if (!platform_has_asset_pack(pack)) LOGI("viewer", "asset pack %s not present (%s.apk); its sounds are missing", pack, pack);
     }
+    LOGI("viewer", "game assets indexed from %s in %.3f s", pkg.where().c_str(),
+         std::chrono::duration<double>(std::chrono::steady_clock::now() - t_pkg).count());
     for (auto& f : extra_apks)
         if (!am.add_apk(f)) fatal("--apk: cannot open %s", f.c_str());
     // The same option as soa / soa-emu (runtime AssetManager::set_download_dir).

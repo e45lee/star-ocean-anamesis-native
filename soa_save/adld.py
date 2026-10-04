@@ -11,30 +11,18 @@ Mirrors the decrypt callback registered in CGame::OnInitialize (vaddr 0x1149238)
 """
 import struct
 import sys
-
-from Crypto.Cipher import AES
-
-_T = []
-for _i in range(256):
-    _c = _i
-    for _ in range(8):
-        _c = (_c >> 1) ^ 0xEDB88320 if _c & 1 else _c >> 1
-    _T.append(_c)
+import zlib
 
 
 def chash32(s: bytes) -> int:
-    """Framework::CHash32(const char*): CRC-32 table, seeded with the length, no final xor."""
-    c = len(s)
-    for b in s:
-        c = _T[(c ^ b) & 0xFF] ^ (c >> 8)
-    return c & 0xFFFFFFFF
+    """Framework::CHash32(const char*): CRC-32 (zlib's polynomial) seeded with the length, no final
+    xor. zlib.crc32 inverts the value going in and coming out, so pre- and post-invert around it."""
+    return zlib.crc32(s, len(s) ^ 0xFFFFFFFF) ^ 0xFFFFFFFF
 
 
 def _digits16(s: str) -> bytes:
-    out = bytearray(16)
-    for i, ch in enumerate(s):
-        out[i // 2] |= int(ch) << 4 if i % 2 == 0 else int(ch)
-    return bytes(out)
+    """32 decimal digits packed one per nibble, high nibble first: the same bytes as reading them as hex."""
+    return bytes.fromhex(s)
 
 
 IV = _digits16("09375711857134629684891855841614")
@@ -50,6 +38,8 @@ def decode(data: bytes, name: str) -> bytes:
         k = b"%x" % h
         return bytes(b ^ k[i % len(k)] for i, b in enumerate(body))
     if flags & 2:
+        from Crypto.Cipher import AES  # pycryptodome; only this branch needs it
+
         body = AES.new(_digits16("%032u" % h), AES.MODE_CBC, IV).decrypt(body[: len(body) // 16 * 16])
         if body[:4] == b"DCNE" and struct.unpack_from("<I", body, 4)[0] == 1:
             body = body[16:struct.unpack_from("<I", body, 8)[0]]

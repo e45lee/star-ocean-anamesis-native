@@ -6,7 +6,7 @@ Use it as the starting point and executable spec for the real lobby and relay in
 
 | File | What |
 |---|---|
-| `mp_proto.py` | The lobby and relay: LobbyProtocol and BattleProtocol framing, fixed-key ChaCha20, rooms and slots, barriers, forwarding, composing MissionStart and MissionEnd. About 330 lines, Python 3 + `msgpack`. |
+| `mp_proto.py` | The lobby and relay: LobbyProtocol and BattleProtocol framing, fixed-key ChaCha20, rooms and slots, barriers, forwarding, composing MissionStart and MissionEnd. About 310 lines, Python 3 + `msgpack` + `pycryptodome` (the repo's `.venv`). |
 | `mp_client.sh` | One client: its own soa-server (with `open-multiplay.patch`) and a headless soa-emu with `--lobby` pointed at the prototype. It logs in, opens the 1-05 mission detail and holds. |
 | `make_player2.sh` | Builds player 2's soa-server state: numeric id 1000000002, `LOCAL00002`, name Player2, party leader Ashton. |
 | `mp_drive.sh` | The taps for host-room, guest-join and battle on two held clients, with screenshots of both at the same moments. |
@@ -34,7 +34,7 @@ B=/tmp/mp-bodies   # start-p1.msgp end-p1.msgp start-p2.msgp end-p2.msgp
 docs/multiplayer/prototype/make_player2.sh /tmp/mp/player2.sqlite3
 
 # 4. the lobby and relay, then two clients (each ~2-3 minutes to the mission detail)
-python3 -u docs/multiplayer/prototype/mp_proto.py --lobby-port 47001 --relay-port 47002 \
+.venv/bin/python -u docs/multiplayer/prototype/mp_proto.py --lobby-port 47001 --relay-port 47002 \
     --start-body 0=$B/start-p1.msgp --start-body 1=$B/start-p2.msgp \
     --end-body 0=$B/end-p1.msgp --end-body 1=$B/end-p2.msgp > /tmp/mp/proto.log &
 docs/multiplayer/prototype/mp_client.sh /tmp/mp/host 47001 &

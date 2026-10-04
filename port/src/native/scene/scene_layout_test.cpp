@@ -119,8 +119,7 @@ NATIVE_TEST("scene/layout-job-dispatcher") {
             // Between frames the dispatcher's Sleep left the worker idle (mode 7) with no job.
             t.expect_eq(w.m_job, 0, "worker m_job (idle between frames)");
             // The lock word of its FastCriticalSection: -1 when free (the sync layout: + 0x38).
-            s32 lockword;
-            std::memcpy(&lockword, w.m_lock + 0x38, 4);
+            s32 lockword = w.m_lock.m_lock;
             t.expect_eq(lockword == -1 || lockword == 0, true, "worker m_lock's word (-1 free / 0 held)");
             t.expect_eq(w.m_resultBits, object_manager()->m_resultBits, "worker m_resultBits = the object manager's");
             // Dispatch_RenderingDecided-free check of the job parameters set last frame: they point into

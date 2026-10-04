@@ -18,7 +18,7 @@ using module_test::player_load_data;
 NATIVE_TEST("daily/premium-favor-bonus") {
     bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
         c.st.exec("begin");
-        int64_t t0 = c.now();
+        int64_t t0 = c.now().v;
         // ---- premium: off without a pass
         Value d = player_load_data(c);
         const Value* pl = d.find("PremiumLoginBonus");

@@ -100,11 +100,12 @@ NATIVE_TEST("events/shift") {
     t.expect_eq(events::shift_years("14:30:00", 6), std::string("14:30:00"), "a time stays");
     t.expect_eq(events::shift_years("", 6), std::string(""), "empty stays");
     t.expect_eq(events::shift_years("2020-02-29", 0), std::string("2020-02-29"), "no shift");
-    t.expect_eq(events::year_shift(T("2026-09-29 21:00:00"), T("2020-09-29 21:00:00")), 6, "whole years");
-    t.expect_eq(events::year_shift(T("2019-05-01 10:00:00"), T("2019-05-01 10:00:00")), 0, "--clock: none");
-    t.expect_eq(events::window_open("2020-09-10 14:30:00", "2020-09-30 13:59:59", 6, T("2026-09-29 21:00:00")), true, "inside, shifted");
-    t.expect_eq(events::window_open("2020-09-10 14:30:00", "2020-09-30 13:59:59", 0, T("2026-09-29 21:00:00")), false, "outside, unshifted");
-    t.expect_eq(events::window_open("", "", 6, 0), true, "open-ended");
+    t.expect_eq(events::year_shift(ServerTime(T("2026-09-29 21:00:00")), EventTime(T("2020-09-29 21:00:00"))), 6, "whole years");
+    t.expect_eq(events::year_shift(ServerTime(T("2019-05-01 10:00:00")), EventTime(T("2019-05-01 10:00:00"))), 0, "--clock: none");
+    t.expect_eq(events::window_open("2020-09-10 14:30:00", "2020-09-30 13:59:59", 6, ServerTime(T("2026-09-29 21:00:00"))), true, "inside, shifted");
+    t.expect_eq(events::window_open("2020-09-10 14:30:00", "2020-09-30 13:59:59", 0, ServerTime(T("2026-09-29 21:00:00"))), false,
+                "outside, unshifted");
+    t.expect_eq(events::window_open("", "", 6, ServerTime(0)), true, "open-ended");
     t.expect_eq(events::shift_time(T("2020-09-29 21:00:00"), 6), T("2026-09-29 21:00:00"), "time");
 
     // The client's master copy (ext::ClientMaster): every dated event table moves by the years.
@@ -119,7 +120,8 @@ NATIVE_TEST("events/shift") {
         cm.exec("detach src");
         std::map<u32, std::string> before;
         cm.q("select id, opened_day from master_event_term", {}, [&](const Row& r) { before[(u32)r.i("id")] = r.s("opened_day"); });
-        int64_t now = T("2026-09-29 21:00:00"), ev = T("2020-09-29 21:00:00");
+        ServerTime now(T("2026-09-29 21:00:00"));
+        EventTime ev(T("2020-09-29 21:00:00"));
         client_master(db, now, ev);
         int bad = 0, n = 0;
         cm.q("select id, opened_day from master_event_term", {}, [&](const Row& r) {
@@ -150,7 +152,7 @@ NATIVE_TEST("events/lists") {
         if (!ch.area) return t.fail("no 2020 event with a two-mission unlock chain in the master");
         for (int years : {0, 6}) {
             int64_t ev = ch.at, now = events::shift_time(ch.at, years);
-            auto v = events::open_areas(c, now, ev);
+            auto v = events::open_areas(c, ServerTime(now), EventTime(ev));
             const events::AreaState* a = area_of(v, ch.area);
             if (!a) {
                 t.fail("area %u not open at %s (+%d years)", ch.area, F(ev).c_str(), years);
@@ -160,11 +162,11 @@ NATIVE_TEST("events/lists") {
             t.expect_eq(listed(a, ch.second), false, "the second not yet");
             // Before the service (no term of any year) the area isn't there.
             int64_t before = T("2015-06-01 12:00:00");
-            t.expect_eq(area_of(events::open_areas(c, events::shift_time(before, years), before), ch.area) == nullptr, true,
+            t.expect_eq(area_of(events::open_areas(c, ServerTime(events::shift_time(before, years)), EventTime(before)), ch.area) == nullptr, true,
                         "closed before any term");
         }
         // The list value: EventArea / EventMission keyed by the area id as a string.
-        Value l = events::active_event_mission_list(c, ch.at, ch.at);
+        Value l = events::active_event_mission_list(c, ServerTime(ch.at), EventTime(ch.at));
         const Value* ea = l.find("EventArea");
         const Value* em = l.find("EventMission");
         if (!ea || !em) return t.fail("no EventArea / EventMission");
@@ -197,15 +199,15 @@ NATIVE_TEST("events/weekly") {
         int64_t on = d + 86400 * week, off = 0;
         for (int k = 0; k < 7; k++)
             if (!days.count(k)) off = d + 86400 * k;
-        auto v = events::open_areas(c, on, events::shift_time(on, -6));
+        auto v = events::open_areas(c, ServerTime(on), EventTime(events::shift_time(on, -6)));
         t.expect_eq(area_of(v, area) != nullptr, true, "open on its weekday");
         if (off) {
             // (the list is sent a day ahead: the day before a slot the area is listed too)
             bool next_day_slot = days.count((int)(((off - d) / 86400 + 1) % 7)) != 0;
-            auto v2 = events::open_areas(c, off, events::shift_time(off, -6));
+            auto v2 = events::open_areas(c, ServerTime(off), EventTime(events::shift_time(off, -6)));
             t.expect_eq(area_of(v2, area) != nullptr, next_day_slot, "not open on another weekday");
         }
-        t.expect_eq(events::area_scheduled(c.m, area, 0, on), true, "scheduled");
+        t.expect_eq(events::area_scheduled(c.m, area, 0, ServerTime(on)), true, "scheduled");
     });
     if (!ran) fprintf(stderr, "    (no scratch server; skipped)\n");
 }
@@ -225,14 +227,14 @@ NATIVE_TEST("events/asset-gating") {
         bool shared = false;
         for (auto& m : first_maps) shared |= second_maps.count(m) != 0;
         events::set_asset_check([&](const std::string& rel) { return !first_maps.count(rel); });
-        auto v = events::open_areas(c, ch.at, ch.at);
+        auto v = events::open_areas(c, ServerTime(ch.at), EventTime(ch.at));
         const events::AreaState* a = area_of(v, ch.area);
         t.expect_eq(listed(a, ch.first), false, "a mission with a missing map is hidden");
         if (!shared) t.expect_eq(listed(a, ch.second), true, "what it unlocks is reachable");
         t.expect_eq(events::mission_playable(c.m, ch.first), false, "not playable");
         // Nothing present: the area disappears (its story missions aside).
         events::set_asset_check([](const std::string&) { return false; });
-        v = events::open_areas(c, ch.at, ch.at);
+        v = events::open_areas(c, ServerTime(ch.at), EventTime(ch.at));
         a = area_of(v, ch.area);
         bool only_story = true;
         if (a)
@@ -283,7 +285,7 @@ NATIVE_TEST("events/clear-chain") {
         e.method = "MissionEnd";
         e.ints = {ch.first, 0};
         c.core_mission(e, nullptr);
-        auto v = events::open_areas(c, ch.at, ch.at);
+        auto v = events::open_areas(c, ServerTime(ch.at), EventTime(ch.at));
         const events::AreaState* a = area_of(v, ch.area);
         const events::MissionState* m1 = mission_of(a, ch.first);
         t.expect_eq(m1 && m1->clear && !m1->is_new, true, "first mission CLEAR");
@@ -305,7 +307,7 @@ NATIVE_TEST("events/clear-chain") {
               [&](const Row& r) { day = r.s("opened_day"); });
         if (day.empty()) return;  // a weekly-only area
         int64_t at = T(day + " 12:00:00") + 86400;
-        auto sv = events::open_areas(c, at, at);
+        auto sv = events::open_areas(c, ServerTime(at), EventTime(at));
         a = area_of(sv, sarea);
         t.expect_eq(listed(a, st2), true, "the next story unlocked");
         t.expect_eq(mission_of(a, st1) && mission_of(a, st1)->clear, true, "story CLEAR");
@@ -324,7 +326,7 @@ NATIVE_TEST("events/campaign-info") {
             {}, [&](const Row& r) { id = (u32)r.i("id"), od = r.s("opened_day"), ot = r.s("opened_time"), cd = r.s("closed_day"); });
         if (!id) return;
         int64_t ev = T(od + " " + ot) + 3600, now = events::shift_time(ev, 6);
-        Value l = events::campaign_info(c, now, ev);
+        Value l = events::campaign_info(c, ServerTime(now), EventTime(ev));
         const Value* e = nullptr;
         for (auto& x : l.arr)
             if (x.find("id") && x.get_u("id") == id) e = &x;
@@ -332,7 +334,7 @@ NATIVE_TEST("events/campaign-info") {
         t.expect_eq(e->find("opened_at")->s, events::shift_years(od, 6) + " " + ot, "opened_at in the client's years");
         t.expect_eq(e->find("type_id") != nullptr && e->find("master_mission_model_type") != nullptr, true, "CCampaignInfo keys");
         // a year later nothing of it
-        Value l2 = events::campaign_info(c, now + 366 * 86400, ev + 366 * 86400);
+        Value l2 = events::campaign_info(c, ServerTime(now + 366 * 86400), EventTime(ev + 366 * 86400));
         bool still = false;
         for (auto& x : l2.arr) still |= x.get_u("id") == id;
         t.expect_eq(still, false, "over later");

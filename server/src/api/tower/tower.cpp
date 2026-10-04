@@ -117,7 +117,7 @@ Value area_floors(Ctx& ctx, u32 area_id, const std::set<u32>& cleared, u32 last_
 }  // namespace
 
 void lists(Ctx& ctx, Value& data) {
-    int64_t now = ctx.event_now();
+    EventTime now = ctx.event_now();  // dated content only the server decides: the event calendar
     std::set<u32> cleared;
     ctx.st.q("select mission_id from mission where cleared = 1", {},
              [&](const Row& mission_row) { cleared.insert((u32)mission_row.i("mission_id")); });
@@ -171,7 +171,7 @@ void tower_mission_result(Ctx& ctx, const MissionInfo& info, Value& data) {
 
 // ClientMaster (with --restore-tower): the client's master copy gets the stand-in banner rows (a
 // data override, server side; client_banners above).
-void client_tower_banners(Sql& client_master, int64_t, int64_t) {
+void client_tower_banners(Sql& client_master, ServerTime, EventTime) {
     if (config().restore_tower) client_banners(client_master);
 }
 

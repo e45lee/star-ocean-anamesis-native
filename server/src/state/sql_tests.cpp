@@ -1,11 +1,14 @@
-// Unit tests of the SQL wrapper's typed ids (soaserver/sql.h, soaserver/ids.h; PLAN-readability
-// R12). Run in --selftest; not differential (the server has no guest counterpart).
+// Unit tests of the SQL wrapper's typed ids and times (soaserver/sql.h, soaserver/ids.h,
+// soaserver/times.h; PLAN-readability R12, R17). Run in --selftest; not differential (the server
+// has no guest counterpart).
 #include <optional>
 #include <type_traits>
 
 #include "soaserver/ids.h"
 #include "soaserver/native_test.h"
+#include "soaserver/server.h"
 #include "soaserver/sql.h"
+#include "soaserver/times.h"
 
 namespace soa::server {
 namespace {
@@ -40,6 +43,42 @@ NATIVE_TEST("server/sql-typed-ids") {
     t.expect_eq((uint64_t)db.one_id<CharacterUid>("select a from t where k = 9", {}).v, (uint64_t)0, "one_id: no row");
     t.expect_eq(nonzero<CharacterUid>(0).has_value(), false, "nonzero(0)");
     t.expect_eq(CharacterUid(1) < CharacterUid(2), true, "ordered");
+    db.close();
+}
+
+// The two clocks (soaserver/times.h, R17): no mixing, no number in or out except explicitly, and
+// the event calendar is never bound to a statement.
+static_assert(!std::is_constructible_v<ServerTime, EventTime>);
+static_assert(!std::is_constructible_v<EventTime, ServerTime>);
+static_assert(!std::is_convertible_v<int64_t, ServerTime>);
+static_assert(!std::is_convertible_v<ServerTime, int64_t>);
+static_assert(std::is_constructible_v<ServerTime, int64_t>);  // explicitly
+static_assert(std::is_constructible_v<sql::Arg, ServerTime>);
+static_assert(!std::is_constructible_v<sql::Arg, EventTime>);
+template <class A, class B>
+concept Comparable = requires(A a, B b) { a < b; };
+template <class A, class B>
+concept Subtractable = requires(A a, B b) { a - b; };
+static_assert(Comparable<ServerTime, ServerTime> && !Comparable<ServerTime, EventTime> && !Comparable<ServerTime, int64_t>);
+static_assert(Subtractable<EventTime, EventTime> && !Subtractable<ServerTime, EventTime>);
+
+NATIVE_TEST("server/sql-time-types") {
+    sql::Sql db;
+    if (!db.open(":memory:", false)) return t.fail("open");
+    db.exec("create table t (k integer primary key, at integer)");
+    std::optional<ServerTime> never, some = ServerTime(1790755200);
+    db.q("insert into t (k, at) values (1, ?), (2, ?), (3, ?)", {never, some, ServerTime(1790755200) + 60});
+    t.expect_eq(db.one("select count(*) from t where at is null", {}), (int64_t)1, "never binds NULL");
+    t.expect_eq(db.one("select at from t where k = 3", {}), (int64_t)1790755260, "a time binds its seconds");
+    db.q("select at from t where k = 1", {}, [&](const sql::Row& row) {
+        t.expect_eq(row.opt<ServerTime>("at").has_value(), false, "NULL reads as never");
+        t.expect_eq(row.time("at").v, (int64_t)0, "NULL reads as 0 through time()");
+    });
+    db.q("select at from t where k = 3", {}, [&](const sql::Row& row) { t.expect_eq(row.time("at") - *some, (int64_t)60, "time(), a duration"); });
+    t.expect_eq(db.one_time("select at from t where k = 9", {}).v, (int64_t)0, "one_time: no row");
+    t.expect_eq(db.one_time("select at from t where k = 2", {}) == *some, true, "one_time");
+    t.expect_eq(db.one_opt<ServerTime>("select at from t where k = 1", {}).has_value(), false, "one_opt: NULL");
+    t.expect_eq(format_time(EventTime(some->v)), format_time(some->v), "formatted at the boundary alike");
     db.close();
 }
 

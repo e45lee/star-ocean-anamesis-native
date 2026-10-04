@@ -112,7 +112,7 @@ private:
 // The server's device table (d): every device UUID the bridge saw, with the player it gets.
 // soa-server's state DB, table wire_device. Returns the player id the device maps to (0: none yet,
 // the new-player flow).
-uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, int64_t now);
+uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, ServerTime now);
 
 // "key":"value" from a flat JSON object (the bridge request); "" when absent.
 std::string json_string_field(const std::string& json, const std::string& key);

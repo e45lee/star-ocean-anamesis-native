@@ -201,9 +201,9 @@ Server* server() {
 
 bool enabled() { return config().enabled; }  // soa: --server inproc, the default
 
-int64_t event_now() {
+EventTime event_now() {
     Server* s = g_server && g_server->ok ? g_server : nullptr;
-    return s ? event_clock_of(s->m.h) : clock_now();
+    return s ? event_clock_of(s->m.h) : clock_as_calendar(clock_now());
 }
 std::string ext::server_master_path() {
     if (g_master_override) return *g_master_override;
@@ -246,7 +246,7 @@ void submit(const Request& in) {
 // "Emulator mode"), so the master the server serves has no such row, as in service. (The client
 // before the rebase also froze its clock at the row: docs/history/notes-3.8.0.md "Clock frozen at
 // the end of service".) Both server modes serve apply_client_master's master from the CDN.
-void apply_client_master(sqlite3* db, int64_t t, int64_t ev, const std::string& server_master) {
+void apply_client_master(sqlite3* db, ServerTime t, EventTime ev, const std::string& server_master) {
     if (sqlite3_table_column_metadata(db, "main", "master_global", "key", nullptr, nullptr, nullptr, nullptr, nullptr) != SQLITE_OK) return;
     char* err = nullptr;
     int r = sqlite3_exec(db, "delete from main.master_global where key = 'service_stop_day'", nullptr, nullptr, &err);

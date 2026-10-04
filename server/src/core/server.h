@@ -29,7 +29,7 @@ void set_clock_offset(int64_t offset);
 // The replayed event calendar's reading of the master `m` (server.h event_now): the clock when one
 // is set (--clock, tests), else today mapped onto the latest service year with an event term that
 // day, (d).
-int64_t event_clock_of(sqlite3* m);
+EventTime event_clock_of(sqlite3* m);
 
 // ---- the server object --------------------------------------------------------------------
 // The long-lived server: the two DB handles, the gacha pools, the RNG, the requests waiting for

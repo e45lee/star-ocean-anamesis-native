@@ -31,19 +31,26 @@ int64_t parse_day_and_time(const std::string& day, const std::string& time);
 // (the daily counters, login bonus days, rental days; the hour is master_global
 // login_bonus_reset_hour, read by the caller).
 int64_t day_start(int64_t t, int reset_hour);
+// The same on the server clock (the stored `*_day` columns are such day starts).
+inline ServerTime day_start(ServerTime t, int reset_hour) { return ServerTime(day_start(t.v, reset_hour)); }
 // `t` moved by `years` calendar years (same month, day and time; Feb 29 normalises to Mar 1).
 int64_t add_years(int64_t t, int years);
 // The local calendar year of `t`.
 int year_of(int64_t t);
 
 // A master row's opened_at..closed_at window, both ends inclusive; an empty end is open-ended.
-// The ends are parsed with parse_time (so an unparsable one reads as 0).
+// The ends are parsed with parse_time (so an unparsable one reads as 0): the master's own dates,
+// raw seconds of no clock. A test names the clock it reads by its argument's type
+// (soaserver/times.h): the server clock (what the client sees, data.Time) or the event calendar.
 struct Window {
     int64_t opened = INT64_MIN, closed = INT64_MAX;
     static Window of(const std::string& opened_at, const std::string& closed_at);
-    bool contains(int64_t t) const { return opened <= t && t <= closed; }
+    bool contains(ServerTime t) const { return opened <= t.v && t.v <= closed; }
+    bool contains(EventTime t) const { return opened <= t.v && t.v <= closed; }
 };
-// Window::of(opened_at, closed_at).contains(t): whether a dated master row is open at t.
-inline bool open_at(const std::string& opened_at, const std::string& closed_at, int64_t t) { return Window::of(opened_at, closed_at).contains(t); }
+// Window::of(opened_at, closed_at).contains(t): whether a dated master row is open at t, on the
+// server clock or on the event calendar.
+inline bool open_at(const std::string& opened_at, const std::string& closed_at, ServerTime t) { return Window::of(opened_at, closed_at).contains(t); }
+inline bool open_at(const std::string& opened_at, const std::string& closed_at, EventTime t) { return Window::of(opened_at, closed_at).contains(t); }
 
 }  // namespace soa::server

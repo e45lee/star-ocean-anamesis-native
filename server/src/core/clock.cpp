@@ -24,11 +24,11 @@ int64_t g_clock_offset = 0;
 ClockSource g_clock_source = nullptr;  // set_clock_source (server.h): nullptr = time(nullptr)
 }  // namespace
 
-int64_t clock_now() { return (g_clock_source ? g_clock_source() : (int64_t)time(nullptr)) + g_clock_offset; }
+ServerTime clock_now() { return ServerTime((g_clock_source ? g_clock_source() : (int64_t)time(nullptr)) + g_clock_offset); }
 void set_server_clock(int64_t t) { g_clock_offset = t ? t - (int64_t)time(nullptr) : 0; }
 void set_clock_offset(int64_t offset) { g_clock_offset = offset; }
 void set_clock_source(ClockSource source) { g_clock_source = source; }
-int64_t event_clock_of(sqlite3* m) { return g_clock_offset ? clock_now() : event_time(m, clock_now()); }
+EventTime event_clock_of(sqlite3* m) { return g_clock_offset ? clock_as_calendar(clock_now()) : event_time(m, clock_now()); }
 
 namespace {
 
@@ -93,8 +93,8 @@ int event_year(sqlite3* master, int m, int d) {
     return found;
 }
 
-int64_t event_time(sqlite3* master, int64_t t) {
-    time_t tt = (time_t)t;
+EventTime event_time(sqlite3* master, ServerTime t) {
+    time_t tt = (time_t)t.v;
     struct tm tm;
     localtime_r(&tt, &tm);
     int y = tm.tm_year + 1900, m = tm.tm_mon + 1, d = tm.tm_mday;
@@ -112,11 +112,11 @@ int64_t event_time(sqlite3* master, int64_t t) {
         }
         year = c_year;
     }
-    if (!year) return t;  // (d) no term covers this month-day in any year: the real time
+    if (!year) return clock_as_calendar(t);  // (d) no term covers this month-day in any year: the real time
     struct tm e = tm;
     e.tm_year = year - 1900;
     e.tm_isdst = -1;
-    return (int64_t)mktime(&e);
+    return EventTime((int64_t)mktime(&e));
 }
 
 }  // namespace soa::server

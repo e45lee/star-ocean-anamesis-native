@@ -63,7 +63,7 @@ std::vector<std::function<void(Ctx&, u32, Value&)>>& area_extras() {
 }  // namespace
 
 // ---- clocks ------------------------------------------------------------------------------
-int year_shift(int64_t now, int64_t ev) { return year_of(now) - year_of(ev); }
+int year_shift(ServerTime now, EventTime ev) { return year_of(now.v) - year_of(ev.v); }
 
 std::string shift_years(const std::string& s, int years) {
     if (!years || s.size() < 5 || s[4] != '-') return s;
@@ -77,11 +77,11 @@ std::string shift_years(const std::string& s, int years) {
 int64_t shift_time(int64_t t, int years) { return years ? parse_time(shift_years(format_time(t), years)) : t; }
 int client_years(Ctx& ctx) { return year_shift(ctx.now(), ctx.event_now()); }
 
-bool window_open(const std::string& opened, const std::string& closed, int years, int64_t t) {
+bool window_open(const std::string& opened, const std::string& closed, int years, ServerTime t) {
     // (a) the master's local date-times; shifted as the client's copy is (the client parses them
     // with CTimeUtility::str2time_t, so Feb 29 of a common year normalises the same way).
-    if (!opened.empty() && parse_time(shift_years(opened, years)) > t) return false;
-    if (!closed.empty() && parse_time(shift_years(closed, years)) < t) return false;
+    if (!opened.empty() && ServerTime(parse_time(shift_years(opened, years))) > t) return false;
+    if (!closed.empty() && ServerTime(parse_time(shift_years(closed, years))) < t) return false;
     return true;
 }
 
@@ -177,17 +177,18 @@ namespace {
 
 // (a)+(b) master_event_term: opened_day opened_time .. closed_day closed_time (the client's
 // GetEventAreaList builds the same two date-times), moved by `years`.
-bool term_covers(Sql& master, u32 area, int years, int64_t now, int64_t ahead) {
+bool term_covers(Sql& master, u32 area, int years, ServerTime now, int64_t ahead) {
     bool open = false;
     master.q("select opened_day, closed_day, opened_time, closed_time from master_event_term where master_event_area_id = ?", {area},
              [&](const Row& term_row) {
                  if (open) return;
                  std::string opened_day = term_row.s("opened_day"), closed_day = term_row.s("closed_day");
                  if (opened_day.empty() || closed_day.empty()) return;
-                 int64_t opened =
-                     parse_time(shift_years(opened_day, years) + " " + (term_row.s("opened_time").empty() ? "00:00:00" : term_row.s("opened_time")));
-                 int64_t closed =
-                     parse_time(shift_years(closed_day, years) + " " + (term_row.s("closed_time").empty() ? "23:59:59" : term_row.s("closed_time")));
+                 // moved by the year shift: on the client's clock (the server clock)
+                 ServerTime opened(
+                     parse_time(shift_years(opened_day, years) + " " + (term_row.s("opened_time").empty() ? "00:00:00" : term_row.s("opened_time"))));
+                 ServerTime closed(
+                     parse_time(shift_years(closed_day, years) + " " + (term_row.s("closed_time").empty() ? "23:59:59" : term_row.s("closed_time"))));
                  if (opened <= now + ahead && now <= closed) open = true;
              });
     return open;
@@ -196,18 +197,18 @@ bool term_covers(Sql& master, u32 area, int years, int64_t now, int64_t ahead) {
 // (a)+(b) master_event_weekly: week_id = the weekday of the client's clock (0 Sunday, as the
 // labels sunday_* / monday_* say), opened_time..closed_time that day. The weekday is the real
 // one of the client's date, not the replayed year's (the client computes it; documented).
-bool weekly_covers(Sql& master, u32 area, int64_t now, int64_t ahead) {
+bool weekly_covers(Sql& master, u32 area, ServerTime now, int64_t ahead) {
     bool open = false;
-    for (int64_t t : {now, now + ahead}) {
-        time_t tt = (time_t)t;
+    for (ServerTime t : {now, now + ahead}) {
+        time_t tt = (time_t)t.v;
         struct tm tm;
         localtime_r(&tt, &tm);
         char day[16];
         strftime(day, sizeof day, "%Y-%m-%d", &tm);
         master.q("select opened_time, closed_time from master_event_weekly where master_event_area_id = ? and week_id = ?", {area, tm.tm_wday},
                  [&](const Row& weekly_row) {
-                     int64_t opened = parse_time(std::string(day) + " " + weekly_row.s("opened_time"));
-                     int64_t closed = parse_time(std::string(day) + " " + weekly_row.s("closed_time"));
+                     ServerTime opened(parse_time(std::string(day) + " " + weekly_row.s("opened_time")));
+                     ServerTime closed(parse_time(std::string(day) + " " + weekly_row.s("closed_time")));
                      if (t == now ? (opened <= now && now <= closed) : (now <= closed && opened <= now + ahead)) open = true;
                  });
         if (!ahead) break;
@@ -217,7 +218,7 @@ bool weekly_covers(Sql& master, u32 area, int64_t now, int64_t ahead) {
 
 }  // namespace
 
-bool area_scheduled(Sql& master, u32 area, int years, int64_t now, int64_t ahead) {
+bool area_scheduled(Sql& master, u32 area, int years, ServerTime now, int64_t ahead) {
     if (term_covers(master, area, years, now, ahead)) return true;
     return weekly_covers(master, area, now, ahead);
 }
@@ -246,7 +247,7 @@ EventProgress event_progress(Ctx& ctx) {
 }
 
 // The listed missions of one area, in order_id order (into area.missions).
-void list_area_missions(Ctx& ctx, const EventProgress& progress, bool enabled, int years, int64_t now, AreaState& area) {
+void list_area_missions(Ctx& ctx, const EventProgress& progress, bool enabled, int years, ServerTime now, AreaState& area) {
     ctx.m.q(
         "select id, unlock_mission_id, visible_mission_id, opened_at, closed_at from master_event_mission "
         "where master_event_area_id = ? order by order_id, id",
@@ -276,7 +277,7 @@ void list_area_missions(Ctx& ctx, const EventProgress& progress, bool enabled, i
 
 }  // namespace
 
-std::vector<AreaState> open_areas(Ctx& ctx, int64_t now, int64_t ev) {
+std::vector<AreaState> open_areas(Ctx& ctx, ServerTime now, EventTime ev) {
     int years = year_shift(now, ev);
     EventProgress progress = event_progress(ctx);
     std::vector<AreaState> out;
@@ -333,7 +334,7 @@ Value mission_list(const AreaState& area) {
 
 }  // namespace
 
-Value active_event_mission_list(Ctx& ctx, int64_t now, int64_t ev) {
+Value active_event_mission_list(Ctx& ctx, ServerTime now, EventTime ev) {
     Value areas = Value::object(), missions = Value::object();
     for (const AreaState& area : open_areas(ctx, now, ev)) {
         areas[std::to_string(area.id)] = area_info(ctx, area);
@@ -345,18 +346,19 @@ Value active_event_mission_list(Ctx& ctx, int64_t now, int64_t ev) {
     return list;
 }
 
-Value campaign_info(Ctx& ctx, int64_t now, int64_t ev) {
+Value campaign_info(Ctx& ctx, ServerTime now, EventTime ev) {
     int years = year_shift(now, ev);
     Value list = Value::array();
     ctx.m.q("select * from master_campaign order by id", {}, [&](const Row& campaign_row) {
         std::string opened_text = shift_years(campaign_row.s("opened_day"), years) + " " + campaign_row.s("opened_time");
         std::string closed_text = shift_years(campaign_row.s("closed_day"), years) + " " + campaign_row.s("closed_time");
-        int64_t opened = parse_time(opened_text), closed = parse_time(closed_text);
-        if (!opened || !closed || now < opened || now > closed) return;
+        // moved by the year shift: on the client's clock (the server clock); 0 = unparsable
+        ServerTime opened(parse_time(opened_text)), closed(parse_time(closed_text));
+        if (!opened.v || !closed.v || now < opened || now > closed) return;
         // (a) week_id 7 = every day (the only value in the data), 0..6 a weekday of the client clock
         int week = (int)campaign_row.i("week_id");
         if (week >= 0 && week <= 6) {
-            time_t tt = (time_t)now;
+            time_t tt = (time_t)now.v;
             struct tm tm;
             localtime_r(&tt, &tm);
             if (tm.tm_wday != week) return;
@@ -428,7 +430,8 @@ const std::set<std::string>& list_methods() {
 // Adds: ActiveEventMissionList (at the client clock and the event calendar), CampaignInfo,
 // EventMaintenanceInfoMap ({}).
 void load_events(Ctx& ctx, const Request&, Value& data) {
-    int64_t now = ctx.now(), event_now = ctx.event_now();
+    ServerTime now = ctx.now();
+    EventTime event_now = ctx.event_now();
     data["ActiveEventMissionList"] = active_event_mission_list(ctx, now, event_now);
     data["CampaignInfo"] = campaign_info(ctx, now, event_now);
     data["EventMaintenanceInfoMap"] = Value::object();
@@ -451,7 +454,8 @@ bool event_response_keys(Ctx& ctx, const Request& req, Value& data) {
         if (area) ctx.st.q("insert or replace into event_last (id, mission_id, area_id) values (1, ?, ?)", {mission, area});
     }
     if (!list_methods().count(req.method)) return false;
-    int64_t now = ctx.now(), event_now = ctx.event_now();
+    ServerTime now = ctx.now();
+    EventTime event_now = ctx.event_now();
     data["ActiveEventMissionList"] = active_event_mission_list(ctx, now, event_now);
     if (req.method == "GetMissionList") data["CampaignInfo"] = campaign_info(ctx, now, event_now);
     return true;
@@ -462,7 +466,7 @@ bool event_response_keys(Ctx& ctx, const Request& req, Value& data) {
 // clock, so the client's own filters (GetEventAreaList, IsEnableTime, the banners and campaign
 // windows) see the replayed calendar at its real date. Month, day and time stay; a weekly slot
 // keeps its weekday (master_event_weekly has no dates). With --clock the shift is 0.
-void shift_client_master(Sql& db, int64_t now, int64_t event_now) {
+void shift_client_master(Sql& db, ServerTime now, EventTime event_now) {
     int years = year_shift(now, event_now);
     if (!years) return;
     struct DatedTable {
@@ -511,7 +515,7 @@ void enable_client_master(Sql& db) {
 // Rules: docs/server-rules.md "Two clocks", "Enabling events by keyword"
 //   (d) the dated event tables moved by the year shift (shift_client_master), then (d) the
 //       --enable-events windows (enable_client_master); docs/client-changes.md lists both.
-void client_master_events(Sql& db, int64_t now, int64_t event_now) {
+void client_master_events(Sql& db, ServerTime now, EventTime event_now) {
     shift_client_master(db, now, event_now);
     enable_client_master(db);
 }

@@ -26,8 +26,8 @@ std::vector<std::function<bool(Ctx&, const Request&, Value&)>>& responses() {
     static std::vector<std::function<bool(Ctx&, const Request&, Value&)>> v;
     return v;
 }
-std::vector<std::function<void(Sql&, int64_t, int64_t)>>& client_masters() {
-    static std::vector<std::function<void(Sql&, int64_t, int64_t)>> v;
+std::vector<ClientMasterFn>& client_masters() {
+    static std::vector<ClientMasterFn> v;
     return v;
 }
 std::map<u32, GrantFn>& grants() {
@@ -211,7 +211,7 @@ void add_client_master(ClientMasterFn fn, const char* file, int line) {
     client_masters().push_back(std::move(fn));
     record_hook("ClientMaster", file, line);
 }
-void client_master(sqlite3* db, int64_t now, int64_t event_now) {
+void client_master(sqlite3* db, ServerTime now, EventTime event_now) {
     modules::register_all();
     Sql s;
     s.h = db;

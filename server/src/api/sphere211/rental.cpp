@@ -38,14 +38,14 @@ void put_rental(Ctx& ctx, u32 floor, Value& data) {
     u32 player_id = ctx.player_id().v;  // the wire's number
     bool full = floor_rentals_used_up(ctx);
     Value info_map = Value::object(), follow_ids = Value::array(), floors = Value::array();
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     for (auto& [key, entry] : lenders.map) {
         u32 lender = (u32)std::stoul(key);
         bool used = false;
-        int64_t updated_at = t;
+        ServerTime updated_at = t;
         ctx.st.q("select used, updated_at from sphere_rental where follow_player_id = ?", {lender}, [&](const Row& rental_row) {
             used = rental_row.i("used") != 0;
-            updated_at = rental_row.i("updated_at");
+            updated_at = rental_row.time("updated_at");
         });
         Value info = Value::object();
         info["player_id"] = player_id;
@@ -90,23 +90,23 @@ bool rental_available(Ctx& ctx, u32 lender, u64 rental_id) {
 // the season they were made in). Each earlier unpaid day pays once, on the next full player load,
 // into the present box ("届いています"), like the rental bonus of api/social/rental.cpp.
 namespace {
-int64_t rental_day(Ctx& ctx, int64_t t) {
+ServerTime rental_day(Ctx& ctx, ServerTime t) {
     return day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4));  // (a)
 }
 }  // namespace
 
 // (d) a rented character doesn't depart; its lender has lent on this floor; the day's rentals count.
-void record_rental(Ctx& ctx, const Season& season, u32 lender, int64_t t) {
+void record_rental(Ctx& ctx, const Season& season, u32 lender, ServerTime t) {
     ctx.st.q("insert or replace into sphere_rental (follow_player_id, used, updated_at) values (?, 1, ?)", {lender, t});
     ctx.st.q("insert into sphere_rental_day (rental_day, season_id, count) values (?, ?, 1) on conflict(rental_day) do update set count = count + 1",
              {rental_day(ctx, t), season.id});
 }
 
 void rental_bonus(Ctx& ctx, Value& data) {
-    int64_t today = rental_day(ctx, ctx.now());
-    std::vector<std::tuple<int64_t, u32, u32>> due;  // day, season, count
+    ServerTime today = rental_day(ctx, ctx.now());
+    std::vector<std::tuple<ServerTime, u32, u32>> due;  // day, season, count
     ctx.st.q("select rental_day, season_id, count from sphere_rental_day where paid = 0 and rental_day < ? order by rental_day", {today},
-             [&](const Row& day_row) { due.emplace_back(day_row.i("rental_day"), (u32)day_row.i("season_id"), (u32)day_row.i("count")); });
+             [&](const Row& day_row) { due.emplace_back(day_row.time("rental_day"), (u32)day_row.i("season_id"), (u32)day_row.i("count")); });
     u32 last_id = 0, last_count = 0;
     for (auto& [day, season_id, count] : due) {
         ctx.m.q("select * from master_sphere211_rental_bonus where master_sphere211_id = ? and rental_count <= ? order by rental_count desc limit 1",
@@ -117,7 +117,7 @@ void rental_bonus(Ctx& ctx, Value& data) {
                     last_id = (u32)bonus_row.i("id");
                     last_count = count;
                     // read by port/scripts/sphere211_session.sh, sphere211_continue_session.sh ("5 rentals")
-                    LOGI("server", "Sphere211 rental bonus: %u rentals on day %lld -> %s: %u x %s", count, (long long)day,
+                    LOGI("server", "Sphere211 rental bonus: %u rentals on day %lld -> %s: %u x %s", count, (long long)day.v,
                          bonus_row.s("id_label").c_str(), (u32)bonus_row.i("num"), bonus_row.s("content_id_label").c_str());
                 });
         ctx.st.q("update sphere_rental_day set paid = 1 where rental_day = ?", {day});

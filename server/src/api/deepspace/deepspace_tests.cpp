@@ -147,7 +147,7 @@ NATIVE_TEST("deepspace/extras") {
         call(c, "DeepSpaceActiveList", {});
         // ---- ships: limit breaks give one ship; the pass adds master_global subscription_deepspace_ship
         c.st.q("update roster set limit_break = 0", {});
-        t.expect_eq(max_ships(c, clock), 1u, "one ship without limit breaks (required_num 0)");
+        t.expect_eq(max_ships(c, ServerTime(clock)), 1u, "one ship without limit breaks (required_num 0)");
         u32 plan = (u32)c.m.one("select id from master_subscription_plan where id_label = 'pshop_galaxypass_001'", {});
         Value items = Value::array(), stocks = Value::array(), chars = Value::array();
         // (a) content type 20, 30 days, through the registered grant (api/shop/subscription.cpp) with
@@ -157,7 +157,7 @@ NATIVE_TEST("deepspace/extras") {
         (*g20)(c, plan, 30, items, stocks, chars);
         u32 extra = c.global_u32("subscription_deepspace_ship", 0);
         t.expect_eq(extra, 2u, "master_global subscription_deepspace_ship");
-        t.expect_eq(max_ships(c, clock), 1u + extra, "the pass adds its ships");
+        t.expect_eq(max_ships(c, ServerTime(clock)), 1u + extra, "the pass adds its ships");
         std::vector<u64> uids;
         c.st.q("select uid from roster order by uid limit 3", {}, [&](const Row& r) { uids.push_back((u64)r.i("uid")); });
         if (uids.size() < 3) return t.fail("seed roster too small");
@@ -173,7 +173,7 @@ NATIVE_TEST("deepspace/extras") {
         t.expect_eq((u32)c.st.one("select max(ship_id) from ds_ship", {}), 3u, "ships 1..3");
         // the pass runs out: the ships out still come back, none departs beyond the limit-break ship
         clock = base + 31 * 86400;
-        t.expect_eq(max_ships(c, clock), 1u, "the pass ran out");
+        t.expect_eq(max_ships(c, ServerTime(clock)), 1u, "the pass ran out");
         code = 0;
         call(c, "DeepSpaceMissionEnd", {3});
         t.expect_eq(code, 0u, "a pass ship still comes back");
@@ -216,7 +216,7 @@ NATIVE_TEST("deepspace/extras") {
             u32 area = (u32)c.st.one("select area_id from ds_offer where mission_id = ?", {mission});
             bool found = false;
             for (auto& a : areas(c))
-                if (a.id == area) found = area_info(c, a, clock)["DeepSpaceMissionList"].find(std::to_string(mission)) != nullptr;
+                if (a.id == area) found = area_info(c, a, ServerTime(clock))["DeepSpaceMissionList"].find(std::to_string(mission)) != nullptr;
             return found;
         };
         auto run = [&](u32 mission) {
@@ -234,12 +234,12 @@ NATIVE_TEST("deepspace/extras") {
         t.expect_eq(run(lm), 0u, "first play of the day");
         t.expect_eq(listed(lm), false, "hidden at its daily limit");
         t.expect_eq(run(lm), 10208u, "second play of the day refused");
-        clock = limit_day(c, clock) + 86400 + 60;  // the next day, after 04:00
+        clock = limit_day(c, ServerTime(clock)).v + 86400 + 60;  // the next day, after 04:00
         t.expect_eq(listed(lm), true, "listed again the next day");
         t.expect_eq(run(wm), 0u, "weekly 1");
         t.expect_eq(run(wm), 0u, "weekly 2");
         t.expect_eq(run(wm), 10208u, "weekly 3 refused");
-        clock = dr::week_start(limit_day(c, clock)) + 7 * 86400 + 60;
+        clock = dr::week_start(limit_day(c, ServerTime(clock)).v) + 7 * 86400 + 60;
         t.expect_eq(run(wm), 0u, "the next week");
         c.m.exec("drop table temp.master_deep_space_mission");
         // a campaign row (no is_unlimited) counts only the expeditions inside its window:

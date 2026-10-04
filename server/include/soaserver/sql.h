@@ -16,6 +16,7 @@
 #include <string>
 
 #include "soaserver/ids.h"
+#include "soaserver/times.h"
 
 namespace soa::server::sql {
 
@@ -39,6 +40,9 @@ struct Row {
         if (null(k)) return std::nullopt;
         return T((typename T::rep)i(k));
     }
+    // A time column (soaserver/times.h; server clock seconds, PLAN-schema S9): NULL or missing reads
+    // as ServerTime(0), as i() does. A column where NULL is "never" reads with opt<ServerTime>.
+    ServerTime time(const char* k) const { return ServerTime(i(k)); }
 };
 
 // A bound argument: an integer (unsigned 64-bit values keep their bits), a double, a text or NULL.
@@ -62,6 +66,10 @@ struct Arg {
     Arg(Id<Tag, Rep> id) : t(I), i((int64_t)id.v) {}
     template <class Tag, class Rep>
     Arg(const std::optional<Id<Tag, Rep>>& id) : t(id ? I : N), i(id ? (int64_t)id->v : 0) {}
+    // A server-clock time binds its seconds; an empty optional one (never) binds NULL. There is no
+    // EventTime overload: the event calendar is never stored (soaserver/times.h).
+    Arg(ServerTime at) : t(I), i(at.v) {}
+    Arg(const std::optional<ServerTime>& at) : t(at ? I : N), i(at ? at->v : 0) {}
 };
 
 // A handle (borrowed: copying it doesn't copy the connection; the server object closes it).
@@ -83,6 +91,8 @@ struct Sql {
     T one_id(const std::string& sql, std::initializer_list<Arg> args) {
         return T((typename T::rep)one(sql, args, 0));
     }
+    // one() as a time column: ServerTime(0) when there is no row or its value is NULL.
+    ServerTime one_time(const std::string& sql, std::initializer_list<Arg> args) { return ServerTime(one(sql, args, 0)); }
     // one() as a nullable reference: none when there is no row or its value is NULL.
     template <class T>
     std::optional<T> one_opt(const std::string& sql, std::initializer_list<Arg> args) {

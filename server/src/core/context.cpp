@@ -14,8 +14,8 @@
 namespace soa::server {
 
 bool ext::Ctx::live() const { return request->live; }
-int64_t ext::Ctx::now() { return test.now ? test.now() : clock_now(); }
-int64_t ext::Ctx::event_now() { return test.event_now ? test.event_now() : event_clock_of(m.h); }
+ServerTime ext::Ctx::now() { return test.now ? ServerTime(test.now()) : clock_now(); }
+EventTime ext::Ctx::event_now() { return test.event_now ? EventTime(test.event_now()) : event_clock_of(m.h); }
 std::string ext::Ctx::fmt_time(int64_t t) { return format_time(t); }
 int64_t ext::Ctx::parse_time(const std::string& s) { return server::parse_time(s); }
 Value ext::Ctx::base_data() { return server::base_data(*this); }

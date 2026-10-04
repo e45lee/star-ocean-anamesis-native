@@ -17,29 +17,33 @@ cmake --build build -j8 --target soa-viewer      # -> build/emulator-viewer/soa-
 
 ```sh
 scripts/run-viewer-380.sh                          # a window; data in ~/.local/share/soa-viewer-380
-build/emulator-viewer/soa-viewer --headless --control /tmp/viewer.fifo
+build/emulator-viewer/soa-viewer --headless --control /tmp/viewer.fifo     # finds apk/*.xapk
+build/emulator-viewer/soa-viewer --xapk apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk
 control/soactl.py /tmp/viewer.fifo tap:364:1000 wait:3000 shot:/tmp/viewer.png
 ```
 
-`scripts/run-viewer-380.sh` (README.md "Running") checks the game files, starts `soa-viewer` and stops it on exit or Ctrl-C; it starts no server, since the viewer needs none ("Network"). `--home DIR` moves the data; other options go to `soa-viewer`.
+`scripts/run-viewer-380.sh` (README.md "Running") checks the game files (the XAPK in `apk/`, read in place, else the unpacked `work/extracted/xapk`), starts `soa-viewer` and stops it on exit or Ctrl-C; it starts no server, since the viewer needs none ("Network"). `--home DIR` moves the data; other options go to `soa-viewer`.
 
 | Option | Meaning |
 |---|---|
-| `--apk-dir DIR` | The unpacked 3.8.0 XAPK. Default `<repo>/work/extracted/xapk` (`tools/extract.sh`). The viewer reads the base APK (`com.square_enix.android_googleplay.StarOceanj.apk`) and the install-time asset pack (`assetinstalltime.apk`), both indexed in place, and takes the library from `config.arm64_v8a.apk`. `assetfastfollow.apk` / `assetondemand1.apk` (or `split_*.apk`), when present, are installed as Play Asset Delivery packs (BGM and talk-scene sounds; the APKPure XAPK lacks them). |
+| `--xapk FILE` | The 3.8.0 XAPK as downloaded, read in place: the APKs inside it are zip archives stored uncompressed, so the base APK (`com.square_enix.android_googleplay.StarOceanj.apk`) and the install-time asset pack (`assetinstalltime.apk`) are indexed where they lie in the XAPK (`common/include/soa/zip.h` `open_member`), and `config.arm64_v8a.apk` gives the library. An APK the XAPK stores deflated would be extracted once into `DATA/xapk-cache/`. `assetfastfollow.apk` / `assetondemand1.apk` (or `split_*.apk`), when the XAPK has them, are installed as Play Asset Delivery packs (BGM and talk-scene sounds; the APKPure XAPK lacks them). Default: the first `*.xapk` holding the app beside the executable, in its `game/` folder, or in `<repo>/apk/` (a git worktree: also the main checkout's `apk/`). |
+| `--apk-dir DIR` | The XAPK unpacked (`tools/extract.sh`: `work/extracted/xapk`), the same files as separate APKs; the default when no XAPK is found. Not together with `--xapk`. |
 | `--apk FILE` | Also read assets from FILE, after the XAPK's. Repeatable; a later one wins. |
 | `--download-dir DIR` | Serve `builtin_data/` assets missing from the APKs from DIR, an online asset tree such as `work/download-3.7.0`: the same option as `soa` and `soa-emu`. Off by default. It doesn't fill in the missing Play Asset Delivery packs (`assetfastfollow` / `assetondemand1`), which aren't `builtin_data/`. |
 | `--download-prefer` | With `--download-dir`: DIR wins over the APKs (as `soa` and `soa-emu`). |
-| `--lib PATH` | The client library. Default: `lib/arm64-v8a/libSOA.so` from `DIR/config.arm64_v8a.apk`, extracted into the data dir (again when its size differs), as the package manager installs it. |
-| `--data DIR` | The emulated phone's storage: the save (`data/shared_prefs/`), the extracted library, asset packs. Default `~/.local/share/soa-viewer-380` (Windows: `%LOCALAPPDATA%\soa\viewer-380`; `common/include/soa/paths.h`), beside the port's `~/.local/share/soa-linux-370`. Never the port's data dir: the port's save and cached library are its own. |
+| `--lib PATH` | The client library. Default: `lib/arm64-v8a/libSOA.so` from `config.arm64_v8a.apk` (in the XAPK or DIR), extracted into the data dir as the package manager installs it, again when the entry's CRC-32 or size differs from the copy's stamp (`DATA/libSOA.so.src`). |
+| `--data DIR` | The emulated phone's storage: the save (`data/shared_prefs/`), the extracted library, asset packs, `xapk-cache/`. Default `~/.local/share/soa-viewer-380` (Windows: `%LOCALAPPDATA%\soa\viewer-380`; `common/include/soa/paths.h`), beside the port's `~/.local/share/soa-linux-370`. Never the port's data dir: the port's save and cached library are its own. |
 | (window title) | `[EMULATED] STAR OCEAN -anamnesis- 3.8.0 offline client (soa-viewer)`. |
 | (app version) | `3.8.0`, the XAPK's versionName (what the client sends in NoLoginStart). |
-| `--repo DIR` | The source checkout, for the defaults. Default: found upwards from the executable; in a git worktree, files it lacks are looked up in the main checkout `work/` links to. |
+| `--repo DIR` | The source checkout, for the defaults (`apk/`, `work/extracted/xapk`). Default: found upwards from the executable; in a git worktree, files it lacks are looked up in the main checkout `work/` links to. |
 | `--guest-cpus N` / `host` | CPUs the game sees. Default 8. |
 | `--headless` / `--windowed` | Don't show the window. It still renders: screenshots and the control FIFO work. `--windowed` (the default) undoes an earlier `--headless`, as in `soa`. |
 | `--font PATH` | The keyboard text box's font (`none`: no box), as in `soa`. |
 | `--size WxH`, `--landscape`, `--render-size S`, `--fullscreen` | Window and screen size, as in `soa`. The game picks its own back-buffer size (an 810x1440 screen gives `default framebuffer emulated at 720x1280` in the log), scaled to the window; the port's sharper rendering is a native option. |
 | `--shot S:PATH`, `--do S:ACTION`, `--control FIFO` | Scripted input and screenshots, as in `soa`: `tap`, `drag`, `wheel`, `back`, `text`, `shot`, `resize`, `fullscreen`, `quit` (`control/soactl.py`). `soa`'s `phase:` / `call:` debug commands need natives and don't exist here. |
 | `-v` / `-vv` | Verbose / trace logging. |
+
+Reading the XAPK costs nothing measurable over the unpacked tree (2026-10-04, page cache warm): its 23-entry directory plus the two APKs' directories are indexed in about 0.015 s either way (`game assets indexed from ... in` in the log), libSOA.so is extracted on the first run only, and a start-to-quit run takes 0.82-1.16 s for both, as before minizip-ng. Time to the title in `viewer_boot.sh`: 36 s from the XAPK, 32 s from the tree, run side by side under the same load; Windows 40 s from the XAPK.
 
 Settings are flags only (a `SOA_*` variable that was a setting prints one warning naming its flag; `docs/environment.md`). The runtime's diagnostic switches work too (`SOA_TRACE`, `SOA_PROFILE` / `SOA_COVERAGE`, `SOA_WATCHDOG`, ...): [`runtime/README.md`](../runtime/README.md) "Environment".
 
@@ -62,7 +66,7 @@ So the viewer runs **without a server**, as shipped, and soa-server has nothing 
 The terms (`利用規約`), copyright and credits pages are local HTML files in the base APK (`file:///android_asset/kiyaku.html`, `copyright_android.html`, ...; `master_global.local_html_*`). The runtime has no web view (`ShowWebView ... not supported` in the log), so the game shows its web-view frame with an empty page and a working 閉じる. The port shows these pages as text only with the in-process server (a game-code wrapper, which the viewer doesn't have).
 
 ### Asset packs
-The install-time pack (`assetinstalltime.apk`) is indexed like an APK. The game also asks Play Core for `assetfastfollow` (BGM) and `assetondemand1` (talk-scene sounds); without their APKs the runtime answers "no such pack" (`W/playcore: fetch(...)`), and those sounds are silent, as on a phone that never fetched them. Put `assetfastfollow.apk` / `assetondemand1.apk` next to the XAPK's APKs to install them.
+The install-time pack (`assetinstalltime.apk`) is indexed like an APK (in place inside the XAPK with `--xapk`). The game also asks Play Core for `assetfastfollow` (BGM) and `assetondemand1` (talk-scene sounds); without their APKs the runtime answers "no such pack" (`W/playcore: fetch(...)`), and those sounds are silent, as on a phone that never fetched them. Put `assetfastfollow.apk` / `assetondemand1.apk` next to the XAPK's APKs (`--apk-dir`), or into the XAPK, to install them.
 
 ## Status (2026-10-01)
 Everything the offline build offers works:

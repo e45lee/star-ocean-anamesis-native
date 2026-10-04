@@ -1,7 +1,8 @@
 #!/bin/sh
 # Unpack the XAPK from apk/ into work/extracted (split APKs, libSOA.so, base-APK master DB/params).
-# For the viewer (scripts/run-viewer-380.sh), tools/decomp.sh --v380 and the save editor's master DB
-# (soa_save); the port doesn't need it (it reads the 3.7.0 APK in place).
+# For tools/decomp.sh --v380 and the save editor's master DB (soa_save); optional for the viewer,
+# which reads the XAPK in place (soa-viewer --xapk; --apk-dir work/extracted/xapk still works). The
+# port doesn't need it (it reads the 3.7.0 APK in place).
 set -eu
 . "$(dirname "$0")/common.sh"
 XAPK=$(ls "$REPO"/apk/*.xapk | head -n1)

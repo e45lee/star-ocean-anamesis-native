@@ -21,14 +21,14 @@ Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_google
 ```sh
 # the game files aren't in git: put them in place first ("Game files" below)
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-tools/extract.sh          # unpack the XAPK into work/extracted: only for the viewer (emulator-viewer/), decomp.sh --v380 and Waydroid
+tools/extract.sh          # unpack the XAPK into work/extracted: decomp.sh --v380 and Waydroid; optional for the viewer (emulator-viewer/), which reads the XAPK in place
 ```
 
 ### Build dependencies
 
 The C++ dependencies come from **vcpkg** in manifest mode (`vcpkg.json`, pinned by its
 `builtin-baseline`): Boost (headers, for dynarmic), zlib, SQLite, zstd, libogg, libvorbis, SDL2 (X11 and
-Wayland video), OpenSSL, and the Khronos EGL/GLES headers. All are built from source by vcpkg, as static
+Wayland video), OpenSSL, minizip-ng (zlib only: the ZIP reader `soa_zip`, `common/include/soa/zip.h`), and the Khronos EGL/GLES headers. All are built from source by vcpkg, as static
 libraries (`cmake/vcpkg-triplets/x64-linux.cmake`: release only), on the first configure, into
 `build/vcpkg_installed/`; vcpkg's binary cache (`~/.cache/vcpkg/archives`) makes later configures,
 other build dirs and worktrees fast. Three libraries come from CMake
@@ -242,8 +242,8 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 |---|---|
 | `apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk` (the APKPure download) and `work/libSOA-3.7.0.so` (its `lib/arm64-v8a/libSOA.so`; the port also extracts it into its data dir) | the port; the 3.7.0 emulator |
 | `work/download-3.7.0/` (the full 3.7.0 download) and `data/basmaster-3.7.0.sqlite3` (its master DB, decrypted) | the port's in-process server (its CDN and master data); the 3.7.0 emulator's server and CDN |
-| `work/extracted/xapk/` (the offline XAPK, unpacked by `tools/extract.sh`) | only the viewer (`emulator-viewer/`, `soa-viewer`) |
-| `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (through `work/extracted/xapk/`), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
+| `work/extracted/xapk/` (the offline XAPK, unpacked by `tools/extract.sh`) | optional for the viewer (`emulator-viewer/`, `soa-viewer --apk-dir`; it reads the XAPK in place when it finds one); `decomp.sh --v380` |
+| `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (`soa-viewer` reads it in place: `--xapk FILE`, or found in `apk/` or beside the executable), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
 | `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`) | <!-- 380-ok: the viewer's game file -->
 | `data/version-3.7.0.bin` (in git; a copy of `work/download-3.7.0/version.bin`: the original CDN's index of the 3.7.0 download, revision 1471, 26,268 assets, MessagePack; the server's CDN serves a rebuilt revision 1472) | the reference for checking a download (`tools/check_download.py`) and for the CDN's rebuild |
 | `data/gacha_pools.sqlite3` (the reconstructed gacha pools, made by `tools/build_gacha_pools.py`) | the local server's gacha draws (`docs/server-rules.md` 4.3) |

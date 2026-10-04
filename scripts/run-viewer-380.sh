@@ -7,10 +7,10 @@
 #   --data DIR   where the emulated phone keeps its data (saves, settings, the extracted library;
 #                default ~/.local/share/soa-viewer-380, beside the port's ~/.local/share/soa-linux)
 #   any other options go to soa-viewer, e.g. --fullscreen, --size 729x1296, --download-dir DIR
-#   (serve assets missing from the APKs from DIR; soa-viewer --help)
+#   (serve assets missing from the APKs from DIR; soa-viewer --help), --xapk FILE / --apk-dir DIR
 #
-# Needs: scripts/build.sh and work/extracted/xapk/ (the 3.8.0 XAPK unpacked by tools/extract.sh;
-# README.md, "Game files").
+# Needs: scripts/build.sh and the 3.8.0 XAPK in apk/ (read in place: soa-viewer --xapk), else
+# work/extracted/xapk/ (the XAPK unpacked by tools/extract.sh; README.md, "Game files").
 set -euo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
 viewer=$repo/build/emulator-viewer/soa-viewer
@@ -26,10 +26,20 @@ while [ $# -gt 0 ]; do
 done
 
 [ -x "$viewer" ] || { echo "run-viewer-380: $viewer isn't built; run scripts/build.sh first" >&2; exit 1; }
-xapk=$repo/work/extracted/xapk
-for f in com.square_enix.android_googleplay.StarOceanj.apk assetinstalltime.apk config.arm64_v8a.apk; do
-  [ -s "$xapk/$f" ] || { echo "run-viewer-380: work/extracted/xapk/$f is missing; see README.md" >&2; exit 1; }
-done
+# the game: --xapk / --apk-dir as given, else the XAPK in apk/ (read in place), else the unpacked one
+game=()
+case " ${viewer_args[*]-} " in *" --xapk "*|*" --apk-dir "*) ;; *)
+  xapk=$(ls "$repo"/apk/*.xapk 2>/dev/null | head -n1 || true)
+  dir=$repo/work/extracted/xapk
+  if [ -n "$xapk" ]; then
+    game=(--xapk "$xapk")
+  else
+    for f in com.square_enix.android_googleplay.StarOceanj.apk assetinstalltime.apk config.arm64_v8a.apk; do
+      [ -s "$dir/$f" ] || { echo "run-viewer-380: no apk/*.xapk and work/extracted/xapk/$f is missing; see README.md" >&2; exit 1; }
+    done
+    game=(--apk-dir "$dir")
+  fi;;
+esac
 
 mkdir -p "$data"
 vpid=
@@ -42,6 +52,6 @@ trap 'exit 130' INT TERM
 
 echo "== starting soa-viewer (phone data $data; no server)"
 # In the background so Ctrl-C / a kill of this script reaches the trap, which stops it.
-"$viewer" --apk-dir "$xapk" --data "$data" "${viewer_args[@]}" &
+"$viewer" "${game[@]}" --data "$data" "${viewer_args[@]}" &
 vpid=$!
 wait "$vpid"

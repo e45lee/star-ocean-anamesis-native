@@ -103,7 +103,8 @@ the gain is headroom: the game thread's busy time per frame is down by about a s
 by a quarter at login / in the story flow. Live checks (every call, `--live-check scene:every=1`): login
 135,000, battle 235,000, gacha 258,000, story 351,000 checks, 0 mismatches; the same four flows on
 llvmpipe (`SOA_SLOT_SOFTWARE_GL=1`, a slower render thread: other timings) 728,000 checks, 0
-mismatches; Windows (soa.exe, the battle-gacha session) 220,000 checks, 0 mismatches.
+mismatches; Windows (soa.exe, the battle-gacha session) 220,000 checks, 0 mismatches. Again after merging
+main with render's natives (bbedbbb): the four flows 1,028,000 checks, Windows 217,000, 0 mismatches.
 
 ## Dependencies
 

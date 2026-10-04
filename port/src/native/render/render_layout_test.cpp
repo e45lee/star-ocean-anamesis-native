@@ -218,6 +218,7 @@ NATIVE_TEST("render/layout-shader-compression") {
 namespace {
 TEST_PROBE(g_probeAddRenderQueue, "_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi");
 TEST_PROBE(g_probeGetRenderBatch, "_ZN4Aska19RenderContextServer14GetRenderBatchEi");
+TEST_PROBE(g_probeTextureStateCaches, "_ZN4Aska16RenderDeviceData21GetTextureStateCachesEj");
 }  // namespace
 
 // RenderThread and its queue: two consecutive AddRenderQueue calls (on the painting thread); the entry
@@ -369,6 +370,50 @@ NATIVE_TEST("render/layout-render-context") {
         }
         return states > 0;
     }, 20000, "RenderThread::AddRenderQueue (a context with a render state)");
+}
+
+// RenderDeviceGL (g_pRenderDev) and its RenderDeviceData, read on the game thread: the base's pool vtable,
+// the device data's container members by their vtables (TPoolFast / TBitArray / THashMap of the texture
+// state caches), the hash map's buckets against GetTextureStateCaches (a hit doesn't modify the map),
+// GetGLVersion, the vertex formats' attribute counts.
+NATIVE_TEST("render/layout-render-device") {
+    on_frame(t, [&] {
+        auto* dev = global_ptr<RenderDeviceGL>(kVaddrRenderDev);
+        if (!t.expect_eq(dev != nullptr, true, "g_pRenderDev")) return;
+        t.expect_eq(dev->vtable, vtable_of(t, "_ZTVN4Aska11TPoolAtomicINS_11GpuResourceELi8000EEE"), "the base's vtable (TPoolAtomic<GpuResource, 8000>)");
+        RenderDeviceData* d = dev->m_data;
+        if (!t.expect_eq(d != nullptr, true, "m_data")) return;
+        t.expect_eq(dev->m_textureStageCount >= 1 && dev->m_textureStageCount <= 32, true, "m_textureStageCount");
+        t.expect_eq((u32)t.call("_ZNK4Aska14RenderDeviceGL12GetGLVersionEv", {(u64)dev}), *reinterpret_cast<u32*>(&d->unk_230), "GetGLVersion = m_data's 0x230");
+        t.expect_eq(d->m_textureStatePool.vtable, vtable_of(t, "_ZTVN4Aska9TPoolFastINS_15_RenderDeviceGL17TextureStateCacheELb0EEE"), "m_textureStatePool vtable");
+        t.expect_eq(d->m_textureStatePool.m_used.vtable, vtable_of(t, "_ZTVN4Aska9TBitArrayImLb0EEE"), "m_textureStatePool.m_used vtable");
+        t.expect_eq(d->m_textureStates.table.vtable, vtable_of(t, "_ZTVN4Aska8THashMapIjPNS_15_RenderDeviceGL17TextureStateCacheENS_7THasherIjEENS_8TEqualToIjEENS_10TAllocatorINS_5TPairIKjS3_EEEEEE"), "m_textures vtable");
+        t.expect_eq(d->m_textureStates.table.m_maxLoadFactor, 0.75f, "the map's max load factor");
+        t.expect_eq(d->m_stateCache != nullptr, true, "m_stateCache");
+        bool counts = true;
+        for (auto& vf : dev->m_vertexFormats) counts &= vf.m_count <= 10;
+        t.expect_eq(counts, true, "vertex formats: m_count <= 10");
+    });
+    // The map is the render thread's: read it there, on a GetTextureStateCaches call (before it runs).
+    probe_call(t, g_probeTextureStateCaches, [&](Cpu& c) {
+        auto* d = reinterpret_cast<RenderDeviceData*>(c.x(0));
+        t.expect_eq(d, global_ptr<RenderDeviceGL>(kVaddrRenderDev)->m_data, "this = g_pRenderDev->m_data");
+        auto& tb = d->m_textureStates.table;
+        int checked = 0;
+        for (u64 i = 0; i < tb.m_buckets.m_count && checked < 32; i++) {
+            auto& bk = tb.m_buckets.m_data[i];
+            if (bk.m_state != 1) continue;
+            checked++;
+            t.expect_eq(t.call("_ZN4Aska16RenderDeviceData21GetTextureStateCachesEj", {(u64)d, bk.m_value.first}), (u64)bk.m_value.second,
+                        "GetTextureStateCaches(name) = the bucket's cache");
+            u64 off = (u64)bk.m_value.second - (u64)d->m_textureStatePool.m_pool;
+            t.expect_eq(off % sizeof(TextureStateCache) == 0 && off / sizeof(TextureStateCache) < d->m_textureStatePool.m_used.m_numBits, true,
+                        "the cache is a pool slot (stride 0x14)");
+        }
+        t.expect_eq(checked > 0, true, "some texture state caches");
+        t.expect_eq((u32)checked <= tb.m_size, true, "used buckets <= m_size");
+        return true;
+    }, 20000, "RenderDeviceData::GetTextureStateCaches");
 }
 
 }  // namespace soa::native::render

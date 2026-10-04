@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../containers/containers_layout.h"
 #include "../memory/memory_layout.h"
 
 namespace soa::native::render {
@@ -866,6 +867,213 @@ static_assert(offsetof(RenderContext, m_vc9) == 0x170);
 static_assert(offsetof(RenderContext, m_vc15) == 0x1c0);
 static_assert(offsetof(RenderContext, m_vc12) == 0x210);
 static_assert(sizeof(RenderContext) == kRenderContextSize);
+
+// ---- The GL device: RenderDeviceGL (g_pRenderDev) and its RenderDeviceData -----------------------
+
+// Aska::_RenderDeviceGL::TextureStateCache: the sampler state last applied to one GL texture (0x14
+// bytes: TPoolFast<TextureStateCache> stride in RenderDeviceData::GetTextureStateCaches, which fills a
+// new one with a 16-byte default (vaddr 0x29cd0f0) and 1 at +0x10).
+struct TextureStateCache {
+    u32 m_state[4];     // 0x00: filter / mip filter / wrap state (the default at 0x29cd0f0)
+    u32 m_valid;        // 0x10: 1 when created
+};
+static_assert(sizeof(TextureStateCache) == 0x14);
+
+// Aska::ASKA_OGL_STATESET0: the GL state the calling thread last set (one per thread: a pthread key of
+// StateCacheThreadSafe), so the device skips redundant glBindTexture / glActiveTexture. Layout from
+// RenderDeviceGL::BindTexture and RenderDeviceData::GetBoundTextureID (port/decomp/render/
+// render_device.c); size not recovered (StateCacheThreadSafe::AllocateAndStoreStateSet0 allocates it).
+struct OglStateSet0 {
+    u8 unk_00[8];               // 0x00
+    u32 m_texture2D[16];        // 0x08: the texture bound to GL_TEXTURE_2D per unit
+    u32 m_textureCube[16];      // 0x48: GL_TEXTURE_CUBE_MAP (0x8513)
+    u32 m_texture3D[16];        // 0x88: GL_TEXTURE_3D (0x806f)
+    u8 m_activeUnit;            // 0xc8: glActiveTexture's unit
+};
+static_assert(offsetof(OglStateSet0, m_texture2D) == 0x08);
+static_assert(offsetof(OglStateSet0, m_textureCube) == 0x48);
+static_assert(offsetof(OglStateSet0, m_texture3D) == 0x88);
+static_assert(offsetof(OglStateSet0, m_activeUnit) == 0xc8);
+
+// Aska::StateCacheThreadSafe: the per-thread GL state caches (pthread keys created on first use, guarded
+// by an atomic flag each). Partial: from BindTexture / GetBoundTextureID / GetThreadOglState1.
+struct StateCacheThreadSafe {
+    u8 unk_00[8];               // 0x00
+    u32 m_keySet0;              // 0x08: pthread key of the thread's OglStateSet0
+    u32 m_keySet1;              // 0x0c: the second state set's (GetThreadOglState1), most likely
+    s32 m_keySet0Created;       // 0x10: 0 until the key is created (LDXR/STXR)
+    s32 m_keySet1Created;       // 0x14
+};
+static_assert(offsetof(StateCacheThreadSafe, m_keySet0) == 0x08);
+static_assert(offsetof(StateCacheThreadSafe, m_keySet0Created) == 0x10);
+static_assert(offsetof(StateCacheThreadSafe, m_keySet1Created) == 0x14);
+
+// One texture slot of the device (RenderDeviceData::m_textureSlots; 0x20 bytes; SetTexture: the slot of
+// a GpuResource handle, its GL target at +0x0 and name at +0xc).
+struct DeviceTextureSlot {
+    u32 m_target;               // 0x00: (SetTexture compares and binds through it)
+    u8 unk_04[8];               // 0x04
+    u32 m_glName;               // 0x0c: the GL texture name (BindTexture's argument)
+    u8 unk_10[8];               // 0x10
+    u8 m_flags;                 // 0x18: bit 0 copied to the per-unit state
+    u8 unk_19[7];               // 0x19
+};
+static_assert(offsetof(DeviceTextureSlot, m_glName) == 0x0c);
+static_assert(offsetof(DeviceTextureSlot, m_flags) == 0x18);
+static_assert(sizeof(DeviceTextureSlot) == 0x20);
+
+class VertexShader;
+class PixelShader;
+
+// Aska::RenderDeviceData: the GL device's data (RenderDeviceGL::m_data). Guest size 0xc6b0
+// (RenderDeviceGL::RenderDeviceGL: operator new(0xc6b0)); layout from RenderDeviceData() (its first
+// part), GetTextureStateCaches, GetBoundTextureID, BindTexture, SetTexture, SetVertexShader,
+// BindVertexFormat (port/decomp/render/render_device.c). Most of it is still padding.
+// GetTextureStateCaches (479 self samples) is an open-addressing THashMap lookup by GL texture name,
+// walked twice (count, then find), with a 64-bit division per probe; a miss takes a TPoolFast slot.
+class RenderDeviceData {
+public:
+    void Ctor();                                       // _ZN4Aska16RenderDeviceDataC2Ev
+    TextureStateCache* GetTextureStateCaches(u32 glName);
+    u32 GetBoundTextureID(u32 target);                 // from the thread's OglStateSet0 (else glGetIntegerv)
+    void* GetThreadOglState1();
+    void UpdateShaderProgram();                        // (587 self) links / picks the program, uploads constants
+    void UpdateRenderState(void* device);              // (280 self) before a draw: vertex attributes, textures, blending
+    void UpdateVertexAttribute(void* stateSet0);       // ASKA_OGL_STATESET0*
+    void LastMinuteDrawCommands_Textures(void* stateSet0, void* device);
+    void LastMinuteDrawCommands_Blending(void* stateSet0);
+    void UpdateTextureFilters(void* stateSet0, s32 unit, u32 glName);
+    void DrawIndexedPrimitive(void* device, s32 prim, void* indexBuffer, u64 start, s32 count);  // (788 self)
+    void BindFrameBuffer(GpuResource* target);
+    void SetShaderProgramUniform(void* program);       // ShaderProgramValue*
+
+    u8 unk_000[0x28];                                                  // 0x000
+    u64 unk_028;                                                       // 0x028: 0 at construction
+    u8 unk_030[0x110];                                                 // 0x030
+    u64 unk_140[4];                                                    // 0x140: 0 at construction
+    u16 unk_160;                                                       // 0x160: 0x101 at construction
+    u8 unk_162[0x56];                                                  // 0x162
+    containers::TPoolFast<TextureStateCache> m_textureStatePool;       // 0x1b8
+    containers::THashMap<u32, TextureStateCache*> m_textureStates;     // 0x200: GL name -> its cache (0x400 buckets at first)
+    u64 unk_230;                                                       // 0x230: 0 at construction (u32 at 0x230: the GL version, GetGLVersion)
+    u8 unk_238;                                                        // 0x238: 1 at construction
+    u8 unk_239[7];                                                     // 0x239
+    u8 m_event[0x68];                                                  // 0x240: Aska::Event (sync)
+    u32 m_vertexAttribCount;                                           // 0x2a8: BindVertexFormat disables attributes up to it
+    u8 unk_2ac[4];                                                     // 0x2ac
+    StateCacheThreadSafe* m_stateCache;                                // 0x2b0: the per-thread GL state
+    DeviceTextureSlot m_textureSlots[0x400];                           // 0x2b8: indexed by a GpuResource's slot (count (d): ends at 0x82b8)
+    u8 m_resourceArray[0x28];                                          // 0x82b8: Aska::TDynamicArray<TPair<GpuResource*, u32>> (vtable at 0x82b8)
+    u8 m_shaderKeys[0x28];                                             // 0x82e0: TDynamicArray<ShaderKeyValue*>
+    u8 m_programs[0x28];                                               // 0x8308: TDynamicArray<ShaderProgramValue*>
+    u8 m_shaderKeySet[0x30];                                           // 0x8330: THashSet<ShaderKeyValue*> (0x11 buckets at first)
+    u8 unk_8360[0x20];                                                 // 0x8360
+    u8 m_bytes[0x28];                                                  // 0x8380: TDynamicArray<u8>
+    u8 m_programSet[0x30];                                             // 0x83a8: THashSet<ShaderProgramValue*>
+    u8 unk_83d8[0x40];                                                 // 0x83d8
+    VertexShader* m_vertexShader;                                      // 0x8418: SetVertexShader
+    u8 unk_8420[0x20];                                                 // 0x8420
+    void* m_program;                                                   // 0x8440: the current program (SetVertexShaderConstant: +0x28 its uniform locations)
+    u8 unk_8448[0xc6b0 - 0x8448];                                      // 0x8448
+};
+static_assert(offsetof(RenderDeviceData, m_textureStatePool) == 0x1b8);
+static_assert(offsetof(RenderDeviceData, m_textureStatePool.m_used.m_bits) == 0x1d0);
+static_assert(offsetof(RenderDeviceData, m_textureStatePool.m_cursor) == 0x1f0);
+static_assert(offsetof(RenderDeviceData, m_textureStatePool.m_count) == 0x1f4);
+static_assert(offsetof(RenderDeviceData, m_textureStates) == 0x200);
+static_assert(offsetof(RenderDeviceData, m_textureStates.table.m_maxLoadFactor) == 0x20c);
+static_assert(offsetof(RenderDeviceData, m_textureStates.table.m_buckets.m_data) == 0x220);
+static_assert(offsetof(RenderDeviceData, unk_230) == 0x230);
+static_assert(offsetof(RenderDeviceData, m_event) == 0x240);
+static_assert(offsetof(RenderDeviceData, m_vertexAttribCount) == 0x2a8);
+static_assert(offsetof(RenderDeviceData, m_stateCache) == 0x2b0);
+static_assert(offsetof(RenderDeviceData, m_textureSlots) == 0x2b8);
+static_assert(offsetof(RenderDeviceData, m_resourceArray) == 0x82b8);
+static_assert(offsetof(RenderDeviceData, m_shaderKeySet) == 0x8330);
+static_assert(offsetof(RenderDeviceData, m_programSet) == 0x83a8);
+static_assert(offsetof(RenderDeviceData, m_vertexShader) == 0x8418);
+static_assert(offsetof(RenderDeviceData, m_program) == 0x8440);
+static_assert(sizeof(RenderDeviceData) == 0xc6b0);
+
+// One vertex format of the device (RenderDeviceGL::m_vertexFormats; 0x2c bytes, 0x80 of them):
+// BindVertexFormat(format, stream, base) walks m_count attributes {offset, type, semantic, index}.
+struct VertexFormatGL {
+    struct Attr { u8 m_offset, m_type, m_semantic, m_index; };   // 0x9c / 0x9d / 0x9e / 0x9f in BindVertexFormat
+    Attr m_attrs[10];       // 0x00
+    u8 m_count;             // 0x28: the attribute count
+    u8 unk_29[3];           // 0x29
+};
+static_assert(offsetof(VertexFormatGL, m_count) == 0x28);
+static_assert(sizeof(VertexFormatGL) == 0x2c);
+
+// Aska::RenderDeviceGL (: RenderManagerBase): the GL device, Aska::g_pRenderDev. Guest size 0xec0c8
+// (Global::InstantiateVideoManager / VideoManager::Init: operator new(0xec0c8)); layout from
+// RenderDeviceGL(), RenderManagerBase() (its start), BindTexture, SetTexture, BindVertexFormat,
+// GetGLVersion, RenderContextBatch::ApplyTextures (port/decomp/render/render_device.c). The base is
+// almost all of it: a TPoolAtomic<GpuResource, 8000> (0x78-byte resources) and a TPoolFast of temp
+// surfaces. Most setters (EnableZTest, SetCullMode, ...) go through the calling thread's
+// OglStateSet0 (m_data->m_stateCache) and call GL only on a change.
+class RenderDeviceGL {
+public:
+    void Ctor();                                           // _ZN4Aska14RenderDeviceGLC2Ev
+    void BindTexture(u32 target, u32 glName);              // skipped when the thread's state has it
+    void ActiveTexture(u32 unit);
+    s32 GetGLVersion() const;                              // m_data's 0x230
+    void BindVertexFormat(s32 format, s32 stream, void* base);   // (1371 self: the hottest device method)
+    void BindVertexFormat(void* vertexBuffer);
+    void SetTexture(u32 stage, GpuResource* const* res);
+    void RemoveTexture(u32 stage);
+    void SetScissorRect(const void* rect, bool on);
+    void BindVertexBuffer(u64 a, void* b);
+    void SetVertexShaderConstant(s32 reg, const void* data, s32 count);
+    void SetPixelShaderConstant(s32 reg, const void* data, s32 count);
+    void SetVertexShaderConstant(void* buffer);            // UniformValueBuffer2*
+    void SetPixelShaderConstant(void* buffer);
+    void SetVertexShader(VertexShader* vs);                // m_data->m_vertexShader
+    void SetPixelShader(PixelShader* ps);
+    void EnableZTest(bool on);
+    void EnableZWrite(bool on);
+    void SetCullMode(s32 mode);
+    void SetDepthBias(float a, float b);
+    void EnableStencil(s32 mode);
+    void EnableAlphaBlend(bool on);
+    void SetTextureSamplingFilter(u32 stage, s32 filter);
+    void SetTextureSamplingMipmapFilter(u32 stage, s32 filter);
+    void SetTextureSamplingWrapMode(u32 stage, s32 u, s32 v, s32 w);
+    void SetTextureSamplingMaxAnisotropic(u32 stage, u32 n);
+
+    const void* vtable;                     // 0x00000: RenderManagerBase's first base: TPoolAtomic<GpuResource, 8000>
+    u8 m_resourceUsed[0x3f0];               // 0x00008: the pool's used bits (zeroed by the constructor)
+    u8 m_resources[8000][0x78];             // 0x003f8: the GpuResource pool
+    u32 unk_ea9f8;                          // 0xea9f8
+    u32 unk_ea9fc;                          // 0xea9fc
+    u8 unk_eaa00;                           // 0xeaa00: 1 after the constructor
+    u8 unk_eaa01[7];                        // 0xeaa01
+    u8 m_tempSurfaces[0x48];                // 0xeaa08: TPoolFast<RenderManagerBase::TempSurface> (0x40 slots)
+    u8 unk_eaa50[0x30];                     // 0xeaa50
+    RenderDeviceData* m_data;               // 0xeaa80
+    u32 m_textureStageCount;                // 0xeaa88: RenderContextBatch::ApplyTextures' stage count
+    u32 m_extraTextureStageCount;           // 0xeaa8c: (up to 3 used)
+    float unk_eaa90[2];                     // 0xeaa90: (1, 1) at construction
+    u32 unk_eaa98;                          // 0xeaa98: 0x100 at construction
+    VertexFormatGL m_vertexFormats[0x80];   // 0xeaa9c
+    u8 unk_ec09c[4];                        // 0xec09c
+    u32 unk_ec0a0;                          // 0xec0a0: 0 at construction
+    u8 unk_ec0a4[4];                        // 0xec0a4
+    u32 unk_ec0a8;                          // 0xec0a8: 0 at construction
+    u8 unk_ec0ac[0x1c];                     // 0xec0ac
+};
+static_assert(offsetof(RenderDeviceGL, m_resources) == 0x3f8);
+static_assert(offsetof(RenderDeviceGL, unk_ea9f8) == 0xea9f8);
+static_assert(offsetof(RenderDeviceGL, m_tempSurfaces) == 0xeaa08);
+static_assert(offsetof(RenderDeviceGL, m_data) == 0xeaa80);
+static_assert(offsetof(RenderDeviceGL, m_textureStageCount) == 0xeaa88);
+static_assert(offsetof(RenderDeviceGL, m_extraTextureStageCount) == 0xeaa8c);
+static_assert(offsetof(RenderDeviceGL, unk_eaa98) == 0xeaa98);
+static_assert(offsetof(RenderDeviceGL, m_vertexFormats) == 0xeaa9c);
+static_assert(offsetof(RenderDeviceGL, unk_ec0a0) == 0xec0a0);
+static_assert(offsetof(RenderDeviceGL, unk_ec0a8) == 0xec0a8);
+static_assert(sizeof(RenderDeviceGL) == 0xec0c8);
 
 // ==== End of section: the device ====================================================================
 

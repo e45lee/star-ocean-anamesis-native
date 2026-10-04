@@ -2,5 +2,1837 @@
  "subsystem": "params",
  "generated_by": "tools/subsystem.py export-types params",
  "header": "port/src/native/params/params_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "CHash32Ref",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_hash",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "IParameterProperty",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "IParameterProperty"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x12575e0",
+     "symbol": "_ZN18IParameterProperty11DeserializeEPKN4Aska4ASON6AValue4AMapE",
+     "name": "Deserialize"
+    },
+    {
+     "ghidra": "0x12575e8",
+     "symbol": "_ZNK18IParameterProperty6PrintCEv",
+     "name": "PrintC"
+    }
+   ]
+  },
+  {
+   "name": "CParameterPropertyBase<36>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<unsigned int, 36>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<36>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<39>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<int, 39>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<39>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<96>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<float, 96>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<96>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<_Bool, 96>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<96>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<103>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<unsigned long, 103>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<103>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<186>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<unsigned char, 186>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<186>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<118>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<float, 118, CPropertyConverterRadian>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<118>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<42>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyString<42>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<42>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 64,
+   "align": 8
+  },
+  {
+   "name": "CParameterElementBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_first",
+     "type": {
+      "kind": "ptr",
+      "to": "IParameterProperty"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x17e8288",
+     "symbol": "_ZN21CParameterElementBaseC1Ev",
+     "name": "CParameterElementBase"
+    },
+    {
+     "ghidra": "0x17e829c",
+     "symbol": "_ZN21CParameterElementBase10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x17e82a0",
+     "symbol": "_ZN21CParameterElementBase11DeserializeEPKN4Aska4ASON6AValue4AMapE",
+     "name": "Deserialize"
+    },
+    {
+     "ghidra": "0x17e8394",
+     "symbol": "_ZNK21CParameterElementBase6PrintCEv",
+     "name": "PrintC"
+    },
+    {
+     "ghidra": "0x17e83c0",
+     "symbol": "_ZN21CParameterElementBase11AddPropertyEP18IParameterProperty",
+     "name": "AddProperty"
+    }
+   ]
+  },
+  {
+   "name": "CParameterBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x17e83ec",
+     "symbol": "_ZN14CParameterBaseC2Ev",
+     "name": "CParameterBase"
+    },
+    {
+     "ghidra": "0x17e8400",
+     "symbol": "_ZN14CParameterBase10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x17e8404",
+     "symbol": "_ZN14CParameterBase4FindEPKN4Aska4ASON6AValue4AMapE",
+     "name": "Find"
+    },
+    {
+     "ghidra": "0x17e8460",
+     "symbol": "_ZNK14CParameterBase8pGetRootEPKN4Aska4ASON6AValue4AMapE",
+     "name": "pGetRoot"
+    },
+    {
+     "ghidra": "0x17e84b0",
+     "symbol": "_ZN14CParameterBase11DeserializeEPKN4Aska4ASON6AValue4AMapE",
+     "name": "Deserialize"
+    },
+    {
+     "ghidra": "0x17e84b8",
+     "symbol": "_ZN14CParameterBaseD2Ev",
+     "name": "~CParameterBase"
+    },
+    {
+     "ghidra": "0x17e84bc",
+     "symbol": "_ZN14CParameterBaseD0Ev",
+     "name": "~CParameterBase"
+    },
+    {
+     "ghidra": "0x17e84c0",
+     "symbol": "_ZN14CParameterBase16ReleaseParameterEPKc",
+     "name": "ReleaseParameter"
+    }
+   ]
+  },
+  {
+   "name": "CParameterPropertyBase<37>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<unsigned int, 37>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<37>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<38>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<unsigned int, 38>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<38>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<40>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<unsigned int, 40>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<40>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<41>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyValue<unsigned int, 41>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<41>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "CParameterPlayerElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterElementBase"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_id",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyValue<unsigned int, 36>"
+     },
+     "size": 48
+    },
+    {
+     "offset": 64,
+     "name": "m_token",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyValue<unsigned int, 37>"
+     },
+     "size": 48
+    },
+    {
+     "offset": 112,
+     "name": "m_level",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyValue<unsigned int, 38>"
+     },
+     "size": 48
+    },
+    {
+     "offset": 160,
+     "name": "m_role",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyValue<int, 39>"
+     },
+     "size": 48
+    },
+    {
+     "offset": 208,
+     "name": "m_personId",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyValue<unsigned int, 40>"
+     },
+     "size": 48
+    },
+    {
+     "offset": 256,
+     "name": "m_weapon",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyValue<unsigned int, 41>"
+     },
+     "size": 48
+    },
+    {
+     "offset": 304,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyString<42>"
+     },
+     "size": 64
+    }
+   ],
+   "size": 368,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x17f7f5c",
+     "symbol": "_ZN23CParameterPlayerElementC2Ev",
+     "name": "CParameterPlayerElement"
+    },
+    {
+     "ghidra": "0x17f80bc",
+     "symbol": "_ZN23CParameterPlayerElementD1Ev",
+     "name": "~CParameterPlayerElement"
+    },
+    {
+     "ghidra": "0x17f81a0",
+     "symbol": "_ZN23CParameterPlayerElementD0Ev",
+     "name": "~CParameterPlayerElement"
+    },
+    {
+     "ghidra": "0x17f81b8",
+     "symbol": "_ZN23CParameterPlayerElement10InitializeEv",
+     "name": "Initialize"
+    }
+   ]
+  },
+  {
+   "name": "CParameterPlayer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterBase"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_element",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPlayerElement"
+     },
+     "size": 368
+    },
+    {
+     "offset": 376,
+     "name": "m_valid",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 377,
+     "name": "unk_179",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 384,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x17f8454",
+     "symbol": "_ZN16CParameterPlayerC1Ev",
+     "name": "CParameterPlayer"
+    },
+    {
+     "ghidra": "0x17f8484",
+     "symbol": "_ZN16CParameterPlayerD2Ev",
+     "name": "~CParameterPlayer"
+    },
+    {
+     "ghidra": "0x17f84a4",
+     "symbol": "_ZN16CParameterPlayerD0Ev",
+     "name": "~CParameterPlayer"
+    },
+    {
+     "ghidra": "0x17f84d4",
+     "symbol": "_ZNK16CParameterPlayer10pParseNameEv",
+     "name": "pParseName"
+    },
+    {
+     "ghidra": "0x17f84e0",
+     "symbol": "_ZN16CParameterPlayer11DeserializeEPKN4Aska4ASON6AValue4AMapE",
+     "name": "Deserialize"
+    },
+    {
+     "ghidra": "0x17f8558",
+     "symbol": "_ZNK16CParameterPlayer10pParameterEv",
+     "name": "pParameter"
+    },
+    {
+     "ghidra": "0x17f856c",
+     "symbol": "_ZN16CParameterPlayer16CopyForMultiplayEPN4Aska5Yayoi12MultiplayRPC16PlayerDetailInfoE",
+     "name": "CopyForMultiplay"
+    },
+    {
+     "ghidra": "0x17f861c",
+     "symbol": "_ZN16CParameterPlayer10InitializeEv",
+     "name": "Initialize"
+    }
+   ]
+  },
+  {
+   "name": "CParameterPropertyBase<30>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyString<30>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<30>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 64,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<31>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyString<31>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<31>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 64,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyBase<32>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "IParameterProperty"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_named",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 24,
+     "name": "m_name",
+     "type": {
+      "kind": "struct",
+      "name": "CHash32Ref"
+     },
+     "size": 16
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CParameterPropertyString<32>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyBase<32>"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_value",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 64,
+   "align": 8
+  },
+  {
+   "name": "CParameterCocosCommonResourceElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterElementBase"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_processingPriority",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyString<30>"
+     },
+     "size": 64
+    },
+    {
+     "offset": 80,
+     "name": "m_destinationName",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyString<31>"
+     },
+     "size": 64
+    },
+    {
+     "offset": 144,
+     "name": "m_sourceName",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterPropertyString<32>"
+     },
+     "size": 64
+    }
+   ],
+   "size": 208,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x17e84c8",
+     "symbol": "_ZN36CParameterCocosCommonResourceElementC2Ev",
+     "name": "CParameterCocosCommonResourceElement"
+    },
+    {
+     "ghidra": "0x17e8588",
+     "symbol": "_ZN36CParameterCocosCommonResourceElementD2Ev",
+     "name": "~CParameterCocosCommonResourceElement"
+    },
+    {
+     "ghidra": "0x17e864c",
+     "symbol": "_ZN36CParameterCocosCommonResourceElementD0Ev",
+     "name": "~CParameterCocosCommonResourceElement"
+    },
+    {
+     "ghidra": "0x17e8664",
+     "symbol": "_ZN36CParameterCocosCommonResourceElement10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x17e9338",
+     "symbol": "_ZN36CParameterCocosCommonResourceElementC2ERKS_",
+     "name": "CParameterCocosCommonResourceElement"
+    }
+   ]
+  },
+  {
+   "name": "CParameterCocosCommonResource",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CParameterBase"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_resources",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::hash_table<soa::native::libcxx::pair<soa::native::libcxx::basic_string<char>, CParameterCocosCommonResourceElement> >",
+      "size": 40
+     },
+     "size": 40
+    }
+   ],
+   "size": 48,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x17e87a0",
+     "symbol": "_ZN29CParameterCocosCommonResourceC2Ev",
+     "name": "CParameterCocosCommonResource"
+    },
+    {
+     "ghidra": "0x17e87d4",
+     "symbol": "_ZN29CParameterCocosCommonResourceD1Ev",
+     "name": "~CParameterCocosCommonResource"
+    },
+    {
+     "ghidra": "0x17e88ac",
+     "symbol": "_ZN29CParameterCocosCommonResource7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x17e8928",
+     "symbol": "_ZN29CParameterCocosCommonResourceD0Ev",
+     "name": "~CParameterCocosCommonResource"
+    },
+    {
+     "ghidra": "0x17e8940",
+     "symbol": "_ZNK29CParameterCocosCommonResource10pParseNameEv",
+     "name": "pParseName"
+    },
+    {
+     "ghidra": "0x17e894c",
+     "symbol": "_ZNK29CParameterCocosCommonResource10rParameterEv",
+     "name": "rParameter"
+    },
+    {
+     "ghidra": "0x17e8954",
+     "symbol": "_ZN29CParameterCocosCommonResource11DeserializeEPKN4Aska4ASON6AValue4AMapE",
+     "name": "Deserialize"
+    },
+    {
+     "ghidra": "0x17e89b4",
+     "symbol": "_ZN29CParameterCocosCommonResource20DeserializeParameterERN9Framework16CSTLUnorderedMapINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEE36CParameterCocosCommonResourceElementNS2_4hashIS9_EENS2_8equal_toIS9_EEEEPKN4Aska4ASON6AValue6AArrayE",
+     "name": "DeserializeParameter"
+    }
+   ]
+  },
+  {
+   "name": "CParameterParser",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x17f5bf0",
+     "symbol": "_ZN16CParameterParser14GetValueStringEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueString"
+    },
+    {
+     "ghidra": "0x17f5d08",
+     "symbol": "_ZN16CParameterParser14GetValueStringEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueString"
+    },
+    {
+     "ghidra": "0x17f5d74",
+     "symbol": "_ZN16CParameterParser14GetParserValueEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetParserValue"
+    },
+    {
+     "ghidra": "0x17f5e40",
+     "symbol": "_ZN16CParameterParser13GetValueFloatEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueFloat"
+    },
+    {
+     "ghidra": "0x17f5fb0",
+     "symbol": "_ZN16CParameterParser13GetValueFloatEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueFloat"
+    },
+    {
+     "ghidra": "0x17f605c",
+     "symbol": "_ZN16CParameterParser11GetValueIntEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueInt"
+    },
+    {
+     "ghidra": "0x17f6378",
+     "symbol": "_ZN16CParameterParser11GetValueIntEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueInt"
+    },
+    {
+     "ghidra": "0x17f6414",
+     "symbol": "_ZN16CParameterParser12GetValueUIntEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueUInt"
+    },
+    {
+     "ghidra": "0x17f6738",
+     "symbol": "_ZN16CParameterParser12GetValueUIntEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueUInt"
+    },
+    {
+     "ghidra": "0x17f67ec",
+     "symbol": "_ZN16CParameterParser12GetValueLongEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueLong"
+    },
+    {
+     "ghidra": "0x17f6b08",
+     "symbol": "_ZN16CParameterParser12GetValueLongEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueLong"
+    },
+    {
+     "ghidra": "0x17f6bac",
+     "symbol": "_ZN16CParameterParser13GetValueULongEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueULong"
+    },
+    {
+     "ghidra": "0x17f6ec8",
+     "symbol": "_ZN16CParameterParser13GetValueULongEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueULong"
+    },
+    {
+     "ghidra": "0x17f6f6c",
+     "symbol": "_ZN16CParameterParser12GetValueBoolEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueBool"
+    },
+    {
+     "ghidra": "0x17f705c",
+     "symbol": "_ZN16CParameterParser12GetValueBoolEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueBool"
+    },
+    {
+     "ghidra": "0x17f7110",
+     "symbol": "_ZN16CParameterParser13GetValueUTinyEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValueUTiny"
+    },
+    {
+     "ghidra": "0x17f74a0",
+     "symbol": "_ZN16CParameterParser13GetValueUTinyEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValueUTiny"
+    },
+    {
+     "ghidra": "0x17f7540",
+     "symbol": "_ZN16CParameterParser8GetValueEPKN4Aska4ASON6AValueE",
+     "name": "GetValue"
+    },
+    {
+     "ghidra": "0x17f75ac",
+     "symbol": "_ZN16CParameterParser8GetValueIfEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<float>"
+    },
+    {
+     "ghidra": "0x17f75b0",
+     "symbol": "_ZN16CParameterParser8GetValueIfEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<float>"
+    },
+    {
+     "ghidra": "0x17f765c",
+     "symbol": "_ZN16CParameterParser8GetValueIiEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<int>"
+    },
+    {
+     "ghidra": "0x17f7660",
+     "symbol": "_ZN16CParameterParser8GetValueIiEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<int>"
+    },
+    {
+     "ghidra": "0x17f76fc",
+     "symbol": "_ZN16CParameterParser8GetValueIjEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<unsigned int>"
+    },
+    {
+     "ghidra": "0x17f7700",
+     "symbol": "_ZN16CParameterParser8GetValueIjEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<unsigned int>"
+    },
+    {
+     "ghidra": "0x17f77b4",
+     "symbol": "_ZN16CParameterParser8GetValueIlEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<long>"
+    },
+    {
+     "ghidra": "0x17f77b8",
+     "symbol": "_ZN16CParameterParser8GetValueIlEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<long>"
+    },
+    {
+     "ghidra": "0x17f785c",
+     "symbol": "_ZN16CParameterParser8GetValueImEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<unsigned long>"
+    },
+    {
+     "ghidra": "0x17f7860",
+     "symbol": "_ZN16CParameterParser8GetValueImEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<unsigned long>"
+    },
+    {
+     "ghidra": "0x17f7904",
+     "symbol": "_ZN16CParameterParser8GetValueIbEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<bool>"
+    },
+    {
+     "ghidra": "0x17f7918",
+     "symbol": "_ZN16CParameterParser8GetValueIbEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<bool>"
+    },
+    {
+     "ghidra": "0x17f79cc",
+     "symbol": "_ZN16CParameterParser8GetValueIhEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<unsigned char>"
+    },
+    {
+     "ghidra": "0x17f79e0",
+     "symbol": "_ZN16CParameterParser8GetValueIhEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<unsigned char>"
+    },
+    {
+     "ghidra": "0x17f7a80",
+     "symbol": "_ZN16CParameterParser8GetValueIPcEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<char*>"
+    },
+    {
+     "ghidra": "0x17f7a84",
+     "symbol": "_ZN16CParameterParser8GetValueIPcEENSt6__ndk14pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<char*>"
+    },
+    {
+     "ghidra": "0x17f7af0",
+     "symbol": "_ZN16CParameterParser8GetValueINSt6__ndk112basic_stringIcNS1_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS5_22CSTLStringAllocatorInfEEEEEEENS1_4pairIT_bEEPKN4Aska4ASON6AValue4AMapEPKc",
+     "name": "GetValue<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >"
+    },
+    {
+     "ghidra": "0x17f7bcc",
+     "symbol": "_ZN16CParameterParser8GetValueINSt6__ndk112basic_stringIcNS1_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS5_22CSTLStringAllocatorInfEEEEEEENS1_4pairIT_bEEPKN4Aska4ASON6AValue4AMapEj",
+     "name": "GetValue<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >"
+    }
+   ]
+  },
+  {
+   "name": "CPropertyConverter",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1
+  },
+  {
+   "name": "CPropertyConverterRadian",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1
+  }
+ ]
 }

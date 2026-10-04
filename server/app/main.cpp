@@ -23,6 +23,7 @@
 #include "net/http.h"
 #include "net/loop.h"
 #include "net/tool.h"
+#include "cli.h"
 #include "replay.h"
 #include "soaserver/cdn.h"
 #include "soaserver/config.h"
@@ -35,67 +36,6 @@
 namespace {
 
 using soa::server::ServerConfig;
-
-void usage() {
-    fprintf(stderr,
-            "usage: soa-server [options]                serve the game (the 3.7.0 client's wire protocol)\n"
-            "       soa-server [options] --selftest [FILTER]\n"
-            "       soa-server --wire-tool CMD ...       wire-format helper (server/tests/ninja/tools; --wire-tool help)\n"
-            "  --listen HOST:PORT   the game server's TCP port (default 127.0.0.1:44300; the client's is 443)\n"
-            "  --http HOST:PORT     the HTTP server: /bridge and the CDN (default 127.0.0.1:44380)\n"
-            "  --bridge-url URL     the bridge URL sent in ResultStart (default https://production-game.so-ana.com/bridge)\n"
-            "  --log-packets DIR    log every request and reply (DIR/packets.log, plus each body as DIR/<n>-<name>.*)\n"
-            "  --selftest [FILTER]  run the server library's and the wire layer's unit tests (no game needed); FILTER\n"
-            "                       is a substring, \"a|b\" matches either; exit status 1 when one fails\n"
-            "  --shuffle N          with --selftest: run the tests in an order shuffled with seed N\n"
-            "  --replay DIR --out OUT  replay the recorded requests DIR/requests.txt with the server options given\n"
-            "                       (the corpus's DIR/options) into OUT: replies, error codes, end state, log\n"
-            "                       (server/tests/replay/README.md; tools/server_replay_diff.sh)\n"
-            "  --list-apis          every method and what answers it (core, a module file, - none)\n"
-            "  --list-hooks         every module hook in its run order (kind, module, file:line, detail)\n"
-            "  --repo DIR           the source checkout (master DBs, seed saves, server/tests/fixtures); default: found\n"
-            "                       upwards from the executable, then the working directory\n"
-            "  --data DIR           the server's data dir (state DB default DIR/server.sqlite3, side files)\n"
-            "  --db FILE            the state DB (default DATA/server.sqlite3, without --data ./server.sqlite3)\n"
-            "  --master FILE        the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3 in the checkout, else\n"
-            "                       decrypted once from the download's sqlite/basmaster.sqlite3 into DATA/master/;\n"
-            "                       server/README.md \"The master DB\")\n"
-            "  --apk FILE           the 3.7.0 APK: its built-in (older) master is the last resort without a download\n"
-            "                       (default: apk/ in the checkout, else beside the program)\n"
-            "  --gacha-pools FILE   the reconstructed gacha pools (default data/gacha_pools.sqlite3)\n"
-            "  --seed FILE          the save a new state is seeded from\n"
-            "  --game-xml FILE      the last seed fallback\n"
-            "  --seed-rng N         fixed RNG seed (default the time)\n"
-            "  --new-player         start without a player\n"
-            "  --clock \"YYYY-MM-DD HH:MM:SS\"  the server clock starts there (as soa --clock)\n"
-            "  --start-coins N      free coins of a new player (as soa --start-coins)\n"
-            "  --galaxy-pass        the Galaxy Pass as bought (as soa --galaxy-pass)\n"
-            "  --enable-events      open the events matching --event-keywords all year, as soa\n"
-            "  --event-keywords L   names to match, comma list (\"!\" excludes); default, as soa: the summer\n"
-            "                       events \"水着,夏,サマー,!福袋\"\n"
-            "  --restore-tower      serve the tower (as soa --restore-tower)\n"
-            "  --home3d-all         debug: the 3D home for every character (as soa --home3d-all)\n"
-            "  --download PATH      the 3.7.0 download: a folder (work/download-3.7.0) or SOA-3.7.0-canonical-data.zip,\n"
-            "                       read in place; content is gated on it (as soa --download) and the CDN serves it\n"
-            "                       (server/README.md \"CDN\"); default: none, except a packaged soa-server's: a\n"
-            "                       download folder or zip beside the program or in its game/ folder (README.txt).\n"
-            "                       --download-dir PATH is the same\n"
-            "  --cdn-url URL        the CDN base Login sends (AssetPath = URL/download, MasterPath, r_ver); default\n"
-            "                       http://production-game.so-ana.com\n"
-            "  The default URLs name the client's own host, without a port: the 3.7.0 client's URI parser can't\n"
-            "  resolve \"host:port\". The client must map production-game.so-ana.com to this machine and send\n"
-            "  those URLs to --http as plain HTTP (soa-emu does: --server / --http). A client that takes ported\n"
-            "  URLs can use --bridge-url http://<--http>/bridge --cdn-url http://<--http> instead.\n"
-            "  --standin-assets DIR|off  stand-in assets the CDN adds and content is gated on (default standin-assets)\n"
-            "  --cdn-scratch DIR    where the served master and the bundle-hash cache go (default DATA/cdn)\n"
-            "  --cdn-check [PATH..] build the CDN content, print it and the answers for PATHs (URL paths), exit\n"
-            "  --campaign-master-db FILE  the campaign module's master DB; --campaign-seed LABEL  seed the campaign\n"
-            "                       progress up to a mission; --fail M:CODE[,..]  force error replies; --surprise\n"
-            "                       force surprise missions (test hooks, as soa's)\n"
-            "  -v                   debug log\n"
-            "Settings are flags only; the environment variables that were settings print a warning\n"
-            "(docs/environment.md).\n");
-}
 
 bool exists(const std::string& p) {
     struct stat st;
@@ -159,77 +99,20 @@ bool log_enabled(soa::server::LogLevel l) { return l >= (g_verbose ? soa::server
 int main(int argc, char** argv) {
     soa::env::warn_removed_env("soa-server", soa::env::kServer);  // SOA_* settings that are flags now
     if (argc >= 2 && !strcmp(argv[1], "--wire-tool")) return soa::server::net::wire_tool(argc - 2, argv + 2);
+    // The command line (cli.cpp: soa-server's options around the server options it shares with soa,
+    // soaserver/cli.h).
     ServerConfig& c = soa::server::config();
-    std::string repo, data, download_dir, filter;
-    std::string listen = "127.0.0.1:44300", http = "127.0.0.1:44380", bridge_url, log_packets;
-    bool selftest = false, cdn_check = false, keep_open_after_error = false, list_apis = false, list_hooks = false;
-    std::string replay_dir, replay_out;
-    uint64_t shuffle = 0;
-    std::vector<std::string> cdn_paths;
-    for (int i = 1; i < argc; i++) {
-        std::string a = argv[i];
-        auto next = [&]() -> std::string {
-            if (i + 1 >= argc) {
-                fprintf(stderr, "soa-server: %s needs a value\n", a.c_str());
-                exit(2);
-            }
-            return argv[++i];
-        };
-        if (a == "--selftest") {
-            selftest = true;
-            if (i + 1 < argc && argv[i + 1][0] != '-') filter = argv[++i];
-        } else if (a == "--shuffle") shuffle = strtoull(next().c_str(), nullptr, 0);
-        else if (a == "--replay") replay_dir = next();
-        else if (a == "--out") replay_out = next();
-        else if (a == "--list-apis") list_apis = true;
-        else if (a == "--list-hooks") list_hooks = true;
-        else if (a == "--repo") repo = next();
-        else if (a == "--listen") listen = next();
-        else if (a == "--http") http = next();
-        else if (a == "--bridge-url") bridge_url = next();
-        else if (a == "--log-packets") log_packets = next();
-        else if (a == "--data") data = next();
-        else if (a == "--db") c.db = next();
-        else if (a == "--master") c.master = next();
-        else if (a == "--apk") c.apk = next();
-        else if (a == "--gacha-pools") c.gacha_pools = next();
-        else if (a == "--seed") c.seed = next();
-        else if (a == "--game-xml") c.game_xml = next();
-        else if (a == "--seed-rng") c.has_seed_rng = true, c.seed_rng = strtoull(next().c_str(), nullptr, 0);
-        else if (a == "--new-player") c.new_player = true;
-        else if (a == "--clock") {
-            std::string v = next();
-            if (!soa::server::set_clock(c, v)) {
-                fprintf(stderr, "soa-server: --clock %s: not \"YYYY-MM-DD HH:MM:SS\"\n", v.c_str());
-                return 2;
-            }
-        } else if (a == "--start-coins") c.start_coins = (uint32_t)strtoul(next().c_str(), nullptr, 10);
-        else if (a == "--galaxy-pass") c.galaxy_pass = true;
-        else if (a == "--enable-events") c.enable_events = true;
-        else if (a == "--event-keywords") c.event_keywords = next();
-        else if (a == "--restore-tower") c.restore_tower = true;
-        else if (a == "--home3d-all") c.home3d_all = true;
-        else if (a == "--download-dir" || a == "--download") download_dir = c.download_dir = next();
-        else if (a == "--cdn-url") c.cdn_url = next();
-        else if (a == "--standin-assets") {
-            std::string v = next();
-            if (v == "off" || v == "0") c.cdn_standins = false;
-            else c.standin_dir = v;
-        } else if (a == "--cdn-scratch") c.cdn_scratch = next();
-        else if (a == "--cdn-check") {
-            cdn_check = true;
-            while (i + 1 < argc && argv[i + 1][0] != '-') cdn_paths.push_back(argv[++i]);
-        } else if (a == "--campaign-master-db") c.campaign_master_db = next();
-        else if (a == "--campaign-seed") c.campaign_seed = next();
-        else if (a == "--fail") c.fail = next();
-        else if (a == "--surprise") c.surprise = true;
-        else if (a == "--keep-open-after-error") keep_open_after_error = true;  // hidden: a test switch (net/game.h)
-        else if (a == "-v") g_verbose = true;
-        else {
-            usage();
-            return a == "-h" || a == "--help" ? 0 : 2;
-        }
-    }
+    soa::server::app::ServerArgs args;
+    args.config = &c;
+    if (int rc = soa::server::app::parse_args(argc, argv, args); rc >= 0) return rc;
+    g_verbose = args.verbose > 0;
+    const std::string &repo = args.repo, &data = args.data, &filter = args.filter, &listen = args.listen, &http = args.http,
+                      &bridge_url = args.bridge_url, &log_packets = c.log_packets, &replay_dir = args.replay_dir, &replay_out = args.replay_out;
+    std::string download_dir = args.download_dir;
+    const bool selftest = args.selftest, cdn_check = args.cdn_check, keep_open_after_error = args.keep_open_after_error, list_apis = args.list_apis,
+               list_hooks = args.list_hooks;
+    const uint64_t shuffle = args.shuffle;
+    const std::vector<std::string>& cdn_paths = args.cdn_paths;
     soa::server::set_log_sink(nullptr, log_enabled);
     c.repo_roots = repo_roots(repo);
     if (!data.empty()) {

@@ -50,12 +50,13 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 <!-- tiers-table: tools/gate.py --markdown -->
 | Tier | Test | Time | Clients | What | Command |
 |---|---|---|---|---|---|
-| T0 | `build` | 1 s | - | the incremental build (0.1 s with nothing to do; a header change rebuilds minutes) | `scripts/build.sh --target soa soa-server soa-emu soa-viewer soa-webview-render soaruntime_tests soa_env_tests soa_zip_tests soa_codec_tests soa_gamefiles_tests` |
+| T0 | `build` | 1 s | - | the incremental build (0.1 s with nothing to do; a header change rebuilds minutes) | `scripts/build.sh --target soa soa-server soa-emu soa-viewer soa-webview-render soaruntime_tests soa_env_tests soa_zip_tests soa_codec_tests soa_gamefiles_tests soa_cli_tests` |
 | T0 | `server-selftest` | 45 s | - | the server library's and the wire layer's unit tests | `build/server/soa-server --selftest` |
 | T0 | `runtime-tests` | 1 s | - | the runtime's unit tests (jvm, cpu, jni) | `build/runtime/soaruntime_tests` |
 | T0 | `zip-tests` | 1 s | - | the ZIP reader (common/ soa_zip on minizip-ng): synthetic archives, an archive nested in another read in place, byte ranges, CRC checks, ZIP64 past 4 GiB (sparse file), concurrent readers | `build/common/soa_zip_tests` |
-| T0 | `gamefiles-tests` | 1 s | - | the game files where the programs find them (common/ soa_gamefiles): the download as a folder, a flat zip or a zip with a top folder (FileTree), the zip-aware install lookups | `build/common/soa_gamefiles_tests` |
+| T0 | `gamefiles-tests` | 1 s | - | the game files where the programs find them (common/ soa_gamefiles): the download as a folder, a flat zip or a zip with a top folder (FileTree: locate in place, read, list), the zip-aware install lookups (the APK by content, the download zip, extract_entry) | `build/common/soa_gamefiles_tests` |
 | T0 | `env-rule` | 1 s | - | the environment rule (soa/env.h: the on/off words, numbers checked) and every removed SOA_* setting's one warning line naming its flag, in each program (docs/environment.md) | `build/common/soa_env_tests && tests/env_removed.sh` |
+| T0 | `cli` | 1 s | - | the four programs' command lines on CLI11 (common/include/soa/cli.h and the shared option groups) against the hand-written parsers they replaced (tests/cli/legacy.cpp): every old option defined, every option in a table row, each row parsing to the same configuration and outcome (the deliberate differences listed) | `build/tests/cli/soa_cli_tests` |
 | T0 | `codec` | 1 s | - | soa_codec's unit tests (common/include/soa: Base64 with Android's and Aska's spellings, the SharedPreferences XML) | `build/common/soa_codec_tests` |
 | T0 | `replay` | 15 s | - | every replay corpus twice with this build (determinism, no crash); T1 compares with the parent build instead (replay-parent) | `tools/server_replay_diff.sh build/server/soa-server build/server/soa-server` |
 | T0 | `replay-coverage` | 4 s | - | server/tests/replay/COVERAGE.md is current (the APIs without a corpus) | `python3 tools/replay_coverage.py --check` |
@@ -111,6 +112,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T3 | `session:episode-movie` | 8.0 min | 1 | an episode pack downloaded, the opening movie | `port/scripts/episode_movie_session.sh build/port/soa {out} {tmp} 2` |
 | T3 | `session:newplayer-download` | 15.0 min | 1 | the full 3 GB download from the in-process CDN, then the new player | `SOA_PHONE=none port/scripts/newplayer_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:gdb-probe` | 2.2 min | 1 | the guest debugger at a milestone (soadrive/gdb.py over the runtime's --gdb stub): attach at home, a breakpoint hit, x0 and memory read, a step, detach, the client runs on | `control/run.py gdb-probe build/port/soa {out} {tmp}` |
+| T3 | `session:home-character` | 6.7 min | 1 | seed variants with a chosen home character (tools/make_test_seed.py --home): 2B (2D-only in 3.7.0, here with --home3d-all) and Evelysse (cp0002) in the 3D home: idle, long idle, talk lines, interactive mode (docs/home3d.md) | `control/run.py home-character build/port/soa {out} {tmp} --home role_cc0015_b01a_6551 --home role_cp0002_b01a_6025 --home3d-all` |
 | T3 | `session:debug` | 2.0 min | 1 | the framework's debug windows | `port/scripts/debug_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:debug-input` | 2.0 min | 1 | the debug windows' input | `port/scripts/debug_input_session.sh build/port/soa {out} {tmp}` |
 | T3 | `session:profile-extra` | 5.0 min | 1 | the profiling flow over the screens the others don't visit | `port/scripts/profile_extra.sh build/port/soa {out} {tmp}` |

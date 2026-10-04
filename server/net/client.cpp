@@ -1,4 +1,7 @@
-// The wire client (client.h). Our code.
+// The wire client (client.h). Our code; its HTTP requests are cpp-httplib's.
+// cpp-httplib first (net/use_httplib.h: winsock2.h before windows.h).
+#include "net/use_httplib.h"
+
 #include "client.h"
 
 #include <cerrno>
@@ -164,48 +167,32 @@ bool WireClient::call(const std::string& name, const std::vector<WireArg>& args,
     return true;
 }
 
-bool http_post(const std::string& url, const std::string& body, int* status, std::string* reply, std::string* err) {
+namespace {
+// One request on a new connection (Connection: close), as the client's HTTP stack makes them.
+bool http_request(const std::string& url, const std::string* post_body, int* status, std::string* reply, std::string* err) {
     std::string host, path;
     uint16_t port = 0;
     if (!split_url(url, &host, &port, &path)) return *err = "not an http:// URL: " + url, false;
-    int fd = connect_to(host, port, err);
-    if (fd < 0) return false;
-    std::string req = "POST " + path + " HTTP/1.1\r\nHost: " + host + ":" + std::to_string(port) +
-                      "\r\nContent-Type: application/json\r\nConnection: close\r\nContent-Length: " + std::to_string(body.size()) + "\r\n\r\n" + body;
-    std::string resp;
-    if (send_all(fd, req.data(), req.size())) {
-        char buf[16384];
-        ssize_t k;
-        while ((k = sock::recv(fd, buf, sizeof buf)) > 0) resp.append(buf, (size_t)k);
-    }
-    sock::close(fd);
-    size_t e = resp.find("\r\n\r\n");
-    if (resp.rfind("HTTP/1.", 0) != 0 || e == std::string::npos) return *err = "no HTTP response from " + url, false;
-    *status = atoi(resp.c_str() + 9);
-    *reply = resp.substr(e + 4);
+    sock::startup();  // (Winsock, before the name lookup)
+    httplib::Client cli(host, port);
+    cli.set_address_family(AF_INET);
+    cli.set_connection_timeout(10);
+    cli.set_read_timeout(10);
+    cli.set_write_timeout(10);
+    cli.set_tcp_nodelay(true);
+    httplib::Result res = post_body ? cli.Post(path, *post_body, "application/json") : cli.Get(path);
+    if (!res) return *err = "no HTTP response from " + url + " (" + httplib::to_string(res.error()) + ")", false;
+    *status = res->status;
+    *reply = std::move(res->body);
     return true;
+}
+}  // namespace
+
+bool http_post(const std::string& url, const std::string& body, int* status, std::string* reply, std::string* err) {
+    return http_request(url, &body, status, reply, err);
 }
 
-bool http_get(const std::string& url, int* status, std::string* reply, std::string* err) {
-    std::string host, path;
-    uint16_t port = 0;
-    if (!split_url(url, &host, &port, &path)) return *err = "not an http:// URL: " + url, false;
-    int fd = connect_to(host, port, err);
-    if (fd < 0) return false;
-    std::string req = "GET " + path + " HTTP/1.1\r\nHost: " + host + ":" + std::to_string(port) + "\r\nConnection: close\r\n\r\n";
-    std::string resp;
-    if (send_all(fd, req.data(), req.size())) {
-        char buf[65536];
-        ssize_t k;
-        while ((k = sock::recv(fd, buf, sizeof buf)) > 0) resp.append(buf, (size_t)k);
-    }
-    sock::close(fd);
-    size_t e = resp.find("\r\n\r\n");
-    if (resp.rfind("HTTP/1.", 0) != 0 || e == std::string::npos) return *err = "no HTTP response from " + url, false;
-    *status = atoi(resp.c_str() + 9);
-    *reply = resp.substr(e + 4);
-    return true;
-}
+bool http_get(const std::string& url, int* status, std::string* reply, std::string* err) { return http_request(url, nullptr, status, reply, err); }
 
 bool WireClient::bridge(const std::string& uuid, std::string* err) {
     WireReply r;

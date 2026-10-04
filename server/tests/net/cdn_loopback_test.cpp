@@ -2,6 +2,8 @@
 // Individual manifest, one asset) and a tiny master, the tree mounted on the router, fetched over
 // loopback the way the 3.7.0 client builds its URLs: <AssetPath>/<r_ver>/Android/<name>
 // (net/cdn-loopback), and in memory through HttpRouter::handle (net/cdn-in-memory).
+// cpp-httplib first (net/use_httplib.h: winsock2.h before windows.h): the Range request below is its client's.
+#include "net/use_httplib.h"
 #include <ftw.h>
 #include <sqlite3.h>
 #include <sys/stat.h>
@@ -148,6 +150,14 @@ NATIVE_TEST("net/cdn-loopback") {
     const Value* b2 = mv.find("assets") ? mv.find("assets")->find("I/2/2.bin") : nullptr;
     if (!http_get(base + "I/2/2.bin", &status, &body, &err) || status != 200) t.fail("GET bundle");
     if (!b2 || b2->find("md5")->s != cdn::sha1_hex((const uint8_t*)body.data(), body.size())) t.fail("bundle SHA-1 != manifest md5");
+    // a Range of the (streamed) bundle: 206 and the same bytes as the whole body's
+    if (body.size() > 20) {
+        httplib::Client cli("127.0.0.1", loop.http_port());
+        auto r = cli.Get("/download/42/Android/I/2/2.bin", httplib::Headers{{"Range", "bytes=10-19"}});
+        t.expect_eq(r && r->status == 206 && r->body == body.substr(10, 10), true, "bundle Range");
+    } else {
+        t.fail("bundle of %zu bytes", body.size());
+    }
     // the master/ spelling, and a 404
     if (!http_get("http://127.0.0.1:" + std::to_string(loop.http_port()) + "/master/42/version.bin", &status, &body, &err) || status != 200)
         t.fail("master/ path");
@@ -159,8 +169,8 @@ NATIVE_TEST("net/cdn-loopback") {
 
 // The same router called in memory (HttpRouter::handle on make_request, the port's in-process
 // server: port/src/native/api/server_cdn.cpp): files and bundles come back as a stream, read in
-// small pieces here, with the bytes Tree::lookup gives; the socket loop's materialize() gives the
-// same bytes.
+// small pieces here, with the bytes Tree::lookup gives (net/cdn-loopback reads the same streams
+// through the HTTP server).
 NATIVE_TEST("net/cdn-in-memory") {
     std::string root = "/tmp/soa-cdn-test-" + std::to_string(getpid()) + "-mem";
     std::shared_ptr<cdn::Tree> tree = make_tree(t, root);
@@ -199,9 +209,6 @@ NATIVE_TEST("net/cdn-in-memory") {
         t.expect_eq(streamed, std::string(name).find(".bin") == std::string::npos || std::string(name).rfind("I/", 0) == 0, name);
         std::string b = body_of(r, name);
         if (b != lookup(name)) t.fail("%s: the in-memory body != Tree::lookup's (%zu bytes)", name, b.size());
-        // the socket loop's path: materialize gives the same bytes
-        get(base + name, r);
-        if (!r.materialize() || r.stream || r.body != b) t.fail("%s: materialize", name);
     }
     // the bundle's SHA-1 is the manifest's md5
     get(base + "manifest/etc2/hi/version_latest_Individual.bin", r);

@@ -60,9 +60,9 @@ private:
     std::string key_, session_, url_, http_;
 };
 
-// One HTTP/1.1 POST (Connection: close); the status and the body.
+// One HTTP/1.1 POST of a JSON body (Connection: close; cpp-httplib); the status and the body.
 bool http_post(const std::string& url, const std::string& body, int* status, std::string* reply, std::string* err);
-// GET url (Connection: close): the status and the body (identity encoding).
+// GET url (Connection: close; cpp-httplib): the status and the body (as sent: no content decoding).
 bool http_get(const std::string& url, int* status, std::string* reply, std::string* err);
 
 // The scripted session of --wire-tool session: bridge, Login, GetPlayer, GetServerTime; the

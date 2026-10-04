@@ -1,8 +1,9 @@
 #pragma once
-// soa-server's HTTP side (our code): a minimal HTTP/1.1 server for the bridge (/bridge) and the
-// CDN (Android/<file>). GET / POST / HEAD with Content-Length bodies, keep-alive, no chunked
-// requests. Handlers are mounted by URL prefix (HttpRouter::route), so the CDN content
-// (server/src/cdn*, a separate step) can be mounted next to the bridge; the sockets are loop.h's.
+// soa-server's HTTP side (our code): the requests, responses and the router of the bridge
+// (/bridge) and the CDN (Android/<file>). Handlers are mounted by URL prefix (HttpRouter::route),
+// so the CDN content (server/src/cdn*) is mounted next to the bridge. The connections are
+// cpp-httplib's (http_server.h: keep-alive, HEAD, ranges); soa's in-process CDN calls the router
+// in memory (HttpRouter::handle).
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -20,7 +21,7 @@ struct HttpRequest {
     const std::string* header(const std::string& name) const;
 };
 
-// A request from its parts, as HttpParser makes it from the wire: `target` is split at '?' into
+// A request from its parts, as the HTTP server (http_server.cpp) makes it from the wire: `target` is split at '?' into
 // the URL-decoded `path` (an absolute-form target keeps only its path) and `query`. The router's
 // in-memory callers (the port's in-process server) build their requests with it.
 HttpRequest make_request(std::string method, std::string target, std::vector<std::pair<std::string, std::string>> headers = {}, std::string body = {},
@@ -40,14 +41,12 @@ struct HttpResponse {
     std::vector<std::pair<std::string, std::string>> headers;  // Content-Length is added
     std::string body;
     // When set, the body is this stream's bytes instead of `body` (a handler sets one or the other).
-    // An in-memory caller of HttpRouter::handle reads it as it goes; the socket loop reads it whole
-    // first (materialize), as it did with every body.
+    // An in-memory caller of HttpRouter::handle reads it as it goes; the HTTP server sends it as it
+    // reads it (a Range request skips forward to its offset).
     std::shared_ptr<HttpBodyStream> stream;
     void set_header(const std::string& name, const std::string& value);
     // The body's length (the stream's size when there is one).
     uint64_t content_length() const { return stream ? stream->size() : body.size(); }
-    // Reads the stream into `body` and drops it; false (body cleared) when it fails or comes up short.
-    bool materialize();
 };
 
 // A handler answers the request (true) or passes (false: the next route, then 404). `path` is
@@ -68,22 +67,6 @@ public:
 private:
     std::vector<std::pair<std::string, HttpHandler>> routes_;
 };
-
-// Parses requests from one connection's byte stream.
-class HttpParser {
-public:
-    enum Result { kNeedMore, kRequest, kBad };
-    void feed(const char* p, size_t n) { buf_.append(p, n); }
-    Result next(HttpRequest* out);
-
-private:
-    std::string buf_;
-};
-
-// The response bytes (status line, headers incl. Content-Length and Connection, body; a HEAD
-// response keeps the headers and drops the body). A stream is not read: materialize() first.
-std::string serialize_response(const HttpResponse& r, bool keep_alive, bool head = false);
-const char* status_text(int status);
 
 // Static files: GET <prefix><rel> -> <dir>/<rel> (no "..", no absolute paths). The placeholder
 // CDN: soa-server mounts it as /Android/ over --download-dir.

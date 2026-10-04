@@ -292,18 +292,18 @@ No sockets: soa-server mounts it with `net::mount_cdn`.
 ### The router in memory (`net/http.h`)
 
 `HttpRouter::handle(const HttpRequest&, HttpResponse&)` is the whole answer to one request, with no
-connection: soa-server's poll loop calls it per parsed request, and the port's in-process server
+connection: soa-server's HTTP server (`net/http_server.h`, cpp-httplib) calls it per request, and the port's in-process server
 (`soa --server inproc`, `port/src/native/api/server_cdn.cpp`) calls it directly, with the router
 `mount_cdn` set up (the same handlers), as platform370's HTTP backend: no socket, no port.
-- **`make_request(method, target, headers, body)`** builds the request as `HttpParser` does from the
-  wire (the parser uses it): the URL-decoded `path` and the `query` from `target`.
+- **`make_request(method, target, headers, body)`** builds the request as the HTTP server does from
+  the wire (it passes the raw target): the URL-decoded `path` and the `query` from `target`.
 - **`HttpResponse::stream`** (`HttpBodyStream`: `size()`, `read(buf, n)` > 0 / 0 at the end / < 0
   error): a body read in pieces instead of `body`. The CDN's handler streams files and bundles;
   `content_length()` is the body's length either way. An in-memory caller reads the stream as it
-  goes; the poll loop calls `materialize()` (the stream read into `body`; a failed read is a 500)
-  and sends what it sent before, byte for byte.
+  goes; the HTTP server sends it as it reads it (Content-Length from `size()`; a Range request,
+  answered 206, reads forward to its offset: a stream is sequential).
 - `net/cdn-in-memory` (with `net/cdn-loopback`'s synthetic tree) checks the in-memory answers,
-  streamed in small pieces, against `Tree::lookup` and the loop's materialized bodies.
+  streamed in small pieces, against `Tree::lookup`; `net/cdn-loopback` the same over the socket.
 
 ```sh
 build/server/soa-server --download-dir work/download-3.7.0 --cdn-check \
@@ -334,15 +334,16 @@ offsets, master tables and docs links in the comments (nothing may be lost).
 The wire layer's tests (`net/...`, only in soa-server): header scramble against docs/api.md's
 measured packet, packet round trips (a corrupted SHA-1 or body refused, a bad size), decoder round
 trips for all 193 layouts (encode -> decode -> compare, truncated / trailing bytes refused), the
-client's own request packets (`client-requests`), the battle log, reply bodies, HTTP parsing and
-routing, gzip and the bridge JSON, the 700 Ninja vectors (`net/ninja-vectors`), and `net/loopback`:
+client's own request packets (`client-requests`), the battle log, reply bodies, `make_request` and
+routing, the HTTP server (`net/http-server`: GET / HEAD / POST, 404, keep-alive, a streamed body
+whole and by Range), gzip and the bridge JSON, the 700 Ninja vectors (`net/ninja-vectors`), and `net/loopback`:
 the poll loop on a thread with a scratch server, a client doing StartBridge -> HTTP bridge ->
 UpdateSession -> Login (the root `Player.Id`) -> GetPlayer -> MissionStart -> MissionEnd (its battle
 log's `mission_time` comes back in `MissionEndResult`) -> a refused BoxGacha (ProtocolError 10206,
 then the connection closes) -> a reconnect that continues the session -> a corrupted packet -> an
 unimplemented API.
-`net/cdn-loopback` fetches version.bin, the served master, a manifest and a bundle from a mounted
-`cdn::Tree` over loopback.
+`net/cdn-loopback` fetches version.bin, the served master, a manifest and a bundle (also a Range of
+it) from a mounted `cdn::Tree` over loopback.
 
 The CDN's tests (`cdn/...`, library): ADLD round trips; byte-identical re-encryption of the 3.7.0
 master and an XOR asset; version.bin decode -> encode identity; the bundle layout against every

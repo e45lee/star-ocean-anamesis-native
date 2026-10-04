@@ -34,13 +34,17 @@ target_link_libraries(soaserver PUBLIC soa_env unofficial::sqlite3::sqlite3 Open
 target_link_libraries(soaserver PRIVATE msgpack-cxx)
 
 # soanet: soa-server's wire layer (net/: packets, the Ninja cipher, the request decoder, the game
-# session and bridge, the HTTP server, the poll loop). Not part of libsoaserver: soa never needs it.
+# session and bridge, the HTTP router; the HTTP server and client on cpp-httplib, the poll loop). Not part of libsoaserver: soa never needs it.
 file(GLOB_RECURSE _soanet_src CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp)
 add_library(soanet STATIC ${_soanet_src})
 # (soaserver's headers only: the executable links the library whole, after soanet)
 target_include_directories(soanet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_PROPERTY:soaserver,INTERFACE_INCLUDE_DIRECTORIES>)
 target_compile_options(soanet PRIVATE -Wall -Wno-unused-parameter -fno-strict-aliasing)
-target_link_libraries(soanet PUBLIC ZLIB::ZLIB OpenSSL::Crypto soa_compat)
+target_link_libraries(soanet PUBLIC ZLIB::ZLIB OpenSSL::Crypto soa_compat PRIVATE httplib::httplib)
+# cpp-httplib needs the Windows 10 API (CreateFile2, GetAddrInfoEx); llvm-mingw's default is older
+if(WIN32)
+  target_compile_definitions(soanet PRIVATE _WIN32_WINNT=0x0A00)
+endif()
 
 # soa-server: the standalone server. app/ is the command line; tests/net and tests/ninja are the
 # wire layer's selftests (tests/ninja/ninja_check.cpp is a separate command-line tool, not built here).
@@ -49,4 +53,7 @@ file(GLOB _soaserver_app CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/app/*.cpp
 add_executable(soa-server ${_soaserver_app})
 target_compile_options(soa-server PRIVATE -Wall -Wno-unused-parameter)
 # Every object of the library (the tests register from static initializers).
-target_link_libraries(soa-server PRIVATE soanet "$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>")
+target_link_libraries(soa-server PRIVATE soanet "$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>" httplib::httplib)  # (httplib: tests/net's client)
+if(WIN32)
+  target_compile_definitions(soa-server PRIVATE _WIN32_WINNT=0x0A00)  # (cpp-httplib, as soanet)
+endif()

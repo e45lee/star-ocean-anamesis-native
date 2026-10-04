@@ -1,5 +1,5 @@
 // soa/base64.h (part of soa_codec_tests): the vectors of RFC 4648, the Game.xml spellings (names and
-// values from port/server-data/test-seed.xml), the lenient decoder's skipping, and round trips.
+// values from server/tests/fixtures/test-seed.xml), the lenient decoder's skipping, and round trips.
 #include <string>
 
 #include <soa/base64.h>

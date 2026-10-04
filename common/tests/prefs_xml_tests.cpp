@@ -1,5 +1,5 @@
 // soa/prefs_xml.h (part of soa_codec_tests): escaping and entities, the element forms, and the
-// committed saves (data/saves, port/server-data/test-seed.xml) parsed and written back byte for byte.
+// committed saves (data/saves, server/tests/fixtures/test-seed.xml) parsed and written back byte for byte.
 #include <cstdio>
 #include <string>
 
@@ -50,7 +50,7 @@ void prefs_xml_tests() {
     codec_check(parse(serialize(odd)) == odd, "parse(serialize) round trip of escapable names and texts");
 
     // the committed saves: parse + serialize gives the file back
-    for (const char* rel : {"port/server-data/test-seed.xml", "data/saves/seed/Game.xml", "data/saves/client/Game.xml", "data/saves/client/Aska.xml"}) {
+    for (const char* rel : {"server/tests/fixtures/test-seed.xml", "data/saves/seed/Game.xml", "data/saves/client/Game.xml", "data/saves/client/Aska.xml"}) {
         bool ok = false;
         std::string in = file_bytes(std::string(SOA_REPO_DIR) + "/" + rel, ok);
         if (!ok) in = file_bytes(rel, ok);  // a staged copy (Windows): run from its root

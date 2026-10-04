@@ -107,7 +107,7 @@ Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/un
 `enabled`, `new_player`, `master`, `db`, `seed`, `game_xml`, `has_seed_rng` / `seed_rng`,
 `start_coins`, `has_clock` / `clock` / `clock_offset`, `galaxy_pass`, `enable_events`,
 `event_keywords`, `restore_tower`, `home3d_all`, `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
-`repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `port/server-data` are found),
+`repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `server/tests/fixtures` are found),
 `data_root` (the data dir: the CDN's scratch files; a `server_campaign.txt` there from before the state DB's version 11 is imported once, PLAN-schema S12).
 
 - **soa** fills it from its run options (`soa::options()`, `port/README.md` "Run options") in
@@ -316,7 +316,7 @@ build/server/soa-server --download-dir work/download-3.7.0 --cdn-check \
 ## Tests
 
 The library's unit tests (beside their code in `src/`) use scratch servers (a state DB under `/tmp` seeded from the committed
-synthetic `port/server-data/test-seed.xml`, with `data/basmaster-3.7.0.sqlite3`) and need no game:
+synthetic `server/tests/fixtures/test-seed.xml`, with `data/basmaster-3.7.0.sqlite3`) and need no game:
 
 ```sh
 build/server/soa-server --selftest            # all (91 today: 70 server/, 7 cdn/, 14 net/)

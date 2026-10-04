@@ -7,7 +7,7 @@
 # are extracted into OUTDIR/src and configured with the server only (SOA_BUILD_PORT/EMULATOR/
 # WEBVIEW/... OFF), reusing this checkout's vcpkg and build/vcpkg_installed (no dependency rebuild).
 # Incremental when OUTDIR is reused (the configure re-runs, cheaply, so a changed option applies).
-# The replay runs soa-server from this checkout's root, so it finds data/ and port/server-data there
+# The replay runs soa-server from this checkout's root, so it finds data/ and server/tests/fixtures there
 # (or upwards from OUTDIR when that is inside the checkout, e.g. build/rg4-parent).
 set -euo pipefail
 [ $# -eq 2 ] || { echo "usage: $0 REV OUTDIR" >&2; exit 2; }

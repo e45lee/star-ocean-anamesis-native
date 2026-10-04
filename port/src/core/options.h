@@ -102,7 +102,7 @@ struct ServerOptions {
 };
 
 struct RunOptions {
-    // The source checkout the repo files (master DBs, seed saves, port/server-data, ...) are read
+    // The source checkout the repo files (master DBs, seed saves, server/tests/fixtures, ...) are read
     // from (--repo DIR); empty = found from the executable (core/paths.h).
     std::string repo_dir;
     ClientOptions client;

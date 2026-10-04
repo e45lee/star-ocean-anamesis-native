@@ -1,6 +1,6 @@
 #pragma once
 // A scratch server for tests (library code): a fresh state DB under /tmp seeded from the committed
-// synthetic port/server-data/test-seed.xml, with the 3.7.0 master (data/basmaster-3.7.0.sqlite3),
+// synthetic server/tests/fixtures/test-seed.xml, with the 3.7.0 master (data/basmaster-3.7.0.sqlite3),
 // as the library's own unit tests use it. For tests outside the library that need the server's
 // request path, e.g. the port's tests that compare with the live client (set_live).
 #include <memory>

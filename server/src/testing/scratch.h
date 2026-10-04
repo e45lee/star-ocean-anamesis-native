@@ -1,6 +1,6 @@
 #pragma once
 // The library's scratch servers for tests (library code): a Server on a fresh state DB under /tmp,
-// seeded from the committed synthetic port/server-data/test-seed.xml, with the 3.7.0 master
+// seeded from the committed synthetic server/tests/fixtures/test-seed.xml, with the 3.7.0 master
 // (data/basmaster-3.7.0.sqlite3). One implementation behind the three ways tests get one:
 // ScratchServer (the library's own tests), ext::with_scratch_server (a module's tests, through
 // an ext::Ctx) and testing::Scratch (tests outside the library, soaserver/scratch.h).
@@ -12,7 +12,7 @@
 namespace soa::server {
 
 // The scratch-server tests' inputs: the 3.7.0 master DB and a seed save (the game's Game.xml,
-// Aska::LocalKVS). The seed is the committed synthetic port/server-data/test-seed.xml
+// Aska::LocalKVS). The seed is the committed synthetic server/tests/fixtures/test-seed.xml
 // (tools/make_test_seed.py: no real account data), so the tests don't depend on a local real
 // save; the master DB is local data (decrypted from the 3.7.0 download). When one is missing the
 // running test fails with a message saying what to put where (instead of skipping silently and

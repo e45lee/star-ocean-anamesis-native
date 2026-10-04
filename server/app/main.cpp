@@ -50,7 +50,7 @@ void usage() {
             "                       (server/tests/replay/README.md; tools/server_replay_diff.sh)\n"
             "  --list-apis          every method and what answers it (core, a module file, - none)\n"
             "  --list-hooks         every module hook in its run order (kind, module, file:line, detail)\n"
-            "  --repo DIR           the source checkout (master DBs, seed saves, port/server-data); default: found\n"
+            "  --repo DIR           the source checkout (master DBs, seed saves, server/tests/fixtures); default: found\n"
             "                       upwards from the executable, then the working directory\n"
             "  --data DIR           the server's data dir (state DB default DIR/server.sqlite3, side files)\n"
             "  --db FILE            the state DB (default DATA/server.sqlite3, without --data ./server.sqlite3)\n"

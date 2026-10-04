@@ -28,11 +28,11 @@ ext::Sql* test_master() {
 
 bool scratch_inputs(std::string& master, std::string& save) {
     master = find_repo_file("data/basmaster-3.7.0.sqlite3");
-    save = find_repo_file("port/server-data/test-seed.xml");
+    save = find_repo_file("server/tests/fixtures/test-seed.xml");
     if (!master.empty() && !save.empty()) return true;
     std::string why;
     if (master.empty()) why += "no 3.7.0 master DB (data/basmaster-3.7.0.sqlite3, decrypted from the 3.7.0 download)";
-    if (save.empty()) why += std::string(why.empty() ? "" : "; ") + "no test seed save (port/server-data/test-seed.xml; tools/make_test_seed.py)";
+    if (save.empty()) why += std::string(why.empty() ? "" : "; ") + "no test seed save (server/tests/fixtures/test-seed.xml; tools/make_test_seed.py)";
     LOGE("server", "scratch-server test data missing: %s", why.c_str());
     if (testing::Context* t = testing::current()) t->fail("scratch-server test data missing: %s", why.c_str());
     return false;

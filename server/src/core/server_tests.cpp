@@ -38,7 +38,7 @@ NATIVE_TEST("server/session-invariants") {
     sv.pools.open();  // the reconstructed pools when present (else the rarity fallback)
     RequestContext rc = sv.new_request();  // the handlers below are called directly, in one context
     ext::Ctx ctx = sv.make_ctx(rc);
-    // The seed's own values (port/server-data/test-seed.xml): its level and its distinct roles.
+    // The seed's own values (server/tests/fixtures/test-seed.xml): its level and its distinct roles.
     auto kv = read_kvs(save);
     std::set<u32> seed_roles;
     for (u32 i = 0, n = kv_u32(kv, "person_size", 0); i < n; i++)

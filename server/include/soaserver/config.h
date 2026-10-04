@@ -50,7 +50,7 @@ struct ServerConfig {
     bool surprise = false;         // --surprise: force surprise missions
 
     // ---- files ----------------------------------------------------------------------------------
-    // The source checkouts repo files (master DBs, seed saves, port/server-data) are looked up in,
+    // The source checkouts repo files (master DBs, seed saves, server/tests/fixtures) are looked up in,
     // in order (find_repo_file); empty = relative to the working directory.
     std::vector<std::string> repo_roots;
     // The server's data dir (the CDN's scratch files; a server_campaign.txt there from before the

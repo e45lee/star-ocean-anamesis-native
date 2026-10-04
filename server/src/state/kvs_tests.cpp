@@ -32,11 +32,11 @@ NATIVE_TEST("server/kvs-roundtrip") {
     t.expect_eq(kv_str(m, "player_name"), std::string("Fayt"), "str");
     unlink(p.c_str());
     // the committed synthetic test seed: the sanitized local id, never a real account's
-    if (std::string s = find_repo_file("port/server-data/test-seed.xml"); !s.empty()) {
+    if (std::string s = find_repo_file("server/tests/fixtures/test-seed.xml"); !s.empty()) {
         auto g = read_kvs(s);
         t.expect_eq(kv_str(g, "BAS:PlayerID"), std::string(kLocalPlayerId), "test seed player id");
         if (kv_u32(g, "player_level") < 1) t.fail("test seed: no player_level");
-    } else t.fail("port/server-data/test-seed.xml is missing");
+    } else t.fail("server/tests/fixtures/test-seed.xml is missing");
     // the real 3.7.0 save (the runtime seed), when present: readable
     if (std::string s = real_seed_save(); !s.empty()) {
         auto g = read_kvs(s);
@@ -61,7 +61,7 @@ NATIVE_TEST("server/kvs-rewrite-identical") {
     // (data/saves: the seed, the client's Game.xml and Aska.xml) and the synthetic test seed.
     std::string out = "/tmp/soa-server-kvs-rewrite-" + std::to_string(getpid()) + ".xml";
     for (const char* rel :
-         {"port/server-data/test-seed.xml", "data/saves/seed/Game.xml", "data/saves/client/Game.xml", "data/saves/client/Aska.xml"}) {
+         {"server/tests/fixtures/test-seed.xml", "data/saves/seed/Game.xml", "data/saves/client/Game.xml", "data/saves/client/Aska.xml"}) {
         std::string in = find_repo_file(rel);
         if (in.empty()) {
             t.fail("%s is missing", rel);

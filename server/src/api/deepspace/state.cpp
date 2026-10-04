@@ -99,7 +99,7 @@ void offer_normal_missions(Ctx& ctx, const Area& area, ServerTime t) {
         {area.id}, [&](const Row& mission_row) {
             if (!open_by_both_clocks(ctx, mission_row.s("opened_at"), mission_row.s("closed_at"))) return;
             if (ctx.st.one("select count(*) from ds_offer where mission_id = ?", {mission_row.i("id")})) return;
-            ctx.st.q("insert into ds_offer (mission_id, area_id, bonus_set_id, closed_at, updated_at) values (?,?,?,0,?)",
+            ctx.st.q("insert into ds_offer (mission_id, area_id, bonus_set_id, updated_at) values (?,?,?,?)",  // closed_at NULL: no limit
                      {mission_row.i("id"), area.id, roll_bonus_set(ctx, (u32)mission_row.i("bonus_set_type_id")), t});
         });
 }
@@ -108,9 +108,9 @@ void offer_normal_missions(Ctx& ctx, const Area& area, ServerTime t) {
 // whose closed_at passed.
 void drop_expired_offers(Ctx& ctx, ServerTime t) {
     std::vector<u32> gone;
-    ctx.st.q("select mission_id, closed_at from ds_offer where ship_id = 0", {}, [&](const Row& offer_row) {
-        ServerTime closed = offer_row.time("closed_at");  // 0: no limit (a sentinel PLAN-schema S10 maps to NULL)
-        bool open = !(closed.v && closed < t);
+    ctx.st.q("select mission_id, closed_at from ds_offer where ship_id is null", {}, [&](const Row& offer_row) {
+        const std::optional<ServerTime> closed = offer_row.opt<ServerTime>("closed_at");  // NULL: no limit
+        bool open = !(closed && *closed < t);
         ctx.m.q("select opened_at, closed_at from master_deep_space_mission where id = ?", {offer_row.i("mission_id")},
                 [&](const Row& mission_row) { open = open && open_by_both_clocks(ctx, mission_row.s("opened_at"), mission_row.s("closed_at")); });
         if (!open) gone.push_back((u32)offer_row.i("mission_id"));
@@ -241,14 +241,16 @@ Value mission_info(Ctx& ctx, const Row& offer_row) {
     Value info = Value::object();
     info["master_mission_id"] = (u32)offer_row.i("mission_id");
     info["bonus_set_id"] = (u32)offer_row.i("bonus_set_id");
-    info["ship_id"] = (u32)offer_row.i("ship_id");
-    ServerTime closed = offer_row.time("closed_at");  // 0: no limit (S10's sentinel)
-    info["closed_at"] = closed.v ? ctx.fmt_time(closed) : std::string("");  // (b) "" = no limit
+    info["ship_id"] = (u32)offer_row.i("ship_id");  // NULL (not on a ship): 0
+    const std::optional<ServerTime> closed = offer_row.opt<ServerTime>("closed_at");
+    info["closed_at"] = closed ? ctx.fmt_time(*closed) : std::string("");  // (b) "" = no limit
     // (d) the start of the week the weekly count runs in (rules::deepspace::week_start), for a
     // mission with a weekly limit; "" otherwise (all of the 3.7.0 data).
     int limit_type = (int)ctx.m.one("select ifnull(limit_type, 0) from master_deep_space_mission where id = ?", {offer_row.i("mission_id")});
     info["count_weekly_at"] = limit_type == (int)dr::LimitType::kWeekly ? ctx.fmt_time(dr::week_start(limit_day(ctx, ctx.now()).v)) : std::string("");
-    info["updated_at"] = ctx.fmt_time(offer_row.time("updated_at"));
+    // NULL (never: only a row from before PLAN-schema S10 can lack it) formats as the time 0, as
+    // its 0 did
+    info["updated_at"] = ctx.fmt_time(offer_row.opt<ServerTime>("updated_at").value_or(ServerTime(0)));
     info["is_new"] = offer_row.i("is_new") != 0;
     info["play_count_daily"] = (u32)offer_row.i("play_count_daily");
     info["play_count_weekly"] = (u32)offer_row.i("play_count_weekly");
@@ -266,13 +268,14 @@ Value area_info(Ctx& ctx, const Area& area, ServerTime t) {
     info["ship_in_progress_num"] = (u32)ctx.st.one("select count(*) from ds_ship where area_id = ? and closed_at > ?", {area.id, t});
     info["ship_complete_num"] = (u32)ctx.st.one("select count(*) from ds_ship where area_id = ? and closed_at <= ?", {area.id, t});
     info["is_last_play"] = ctx.st.one("select is_last_play from ds_area where area_id = ?", {area.id}) != 0;
-    info["is_rare_mission"] = ctx.st.one("select count(*) from ds_offer where area_id = ? and closed_at > 0 and ship_id = 0", {area.id}) != 0;
+    info["is_rare_mission"] =
+        ctx.st.one("select count(*) from ds_offer where area_id = ? and closed_at is not null and ship_id is null", {area.id}) != 0;
     info["is_new"] = ctx.st.one("select is_new from ds_area where area_id = ?", {area.id}) != 0;
     Value missions = Value::object();
     // (d) an offer at its play limit is left out until its period restarts (b: a mission missing
     // from the list isn't shown, GetDeepSpaceMissionList), unless it is on a ship.
     ctx.st.q("select * from ds_offer where area_id = ? order by mission_id", {area.id}, [&](const Row& offer_row) {
-        if (offer_row.i("ship_id") == 0 && at_limit(ctx, offer_row)) return;
+        if (offer_row.null("ship_id") && at_limit(ctx, offer_row)) return;
         missions[std::to_string(offer_row.i("mission_id"))] = mission_info(ctx, offer_row);
     });
     info["DeepSpaceMissionList"] = missions;

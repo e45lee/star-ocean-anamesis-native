@@ -39,9 +39,8 @@ and driven by its methods, or the running game's objects read at a frame boundar
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):
 - `memory`: `memory::DeleteManager` (Task::DeleteThis*).
-- `math` (n-hash-math; not on main yet): Aska::Vector / Quaternion / Matrix are opaque `MathVector` /
-  `MathQuaternion` / `MathMatrix` of the guest's sizes here; swap them for `math::Vector` etc. once
-  math_layout.h is merged (`using MathVector = math::Vector;`).
+- `math`: Aska::Vector / Quaternion / Matrix are math_layout.h's (`MathVector` / `MathQuaternion` /
+  `MathMatrix` are aliases of `math::Vector` etc.; render, scene and anim use the aliases).
 - `kernel`: **`Aska::Task` and `Aska::AnimatableLinkElement` are kernel's classes, parked here** as every
   scene object's base (Task's methods are in render's symbols.tsv with that note; render's scope.txt
   doesn't claim them). When kernel's layout header recovers them, it takes them over and

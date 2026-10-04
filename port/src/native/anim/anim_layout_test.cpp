@@ -16,7 +16,7 @@ namespace {
 
 using namespace render::testutil;
 
-int probe_timeout() { return live_screen() ? 30000 : 4000; }
+int probe_timeout() { return live_screen() ? 30000 : 1500; }
 
 // A guest float getter: this (+ an int) in, s0 out.
 float call_f(u64 fn, const void* self) { return guest_invoke<float>(fn, (u64)self); }
@@ -265,7 +265,7 @@ NATIVE_TEST("anim/layout-live-blend-manager") {
                 t.expect_eq(has_vtable(t, m->m_infos[i].m_handler, "_ZTVN4Aska10AafHandlerE"), true, "info's AafHandler");
         }
         return true;
-    }, live_screen() ? 15000 : 3000, "Aska::AafBlendManager::CalcValues (only while motions blend)", false);
+    }, live_screen() ? 15000 : 1500, "Aska::AafBlendManager::CalcValues (only while motions blend)", false);
 }
 
 }  // namespace soa::native::anim

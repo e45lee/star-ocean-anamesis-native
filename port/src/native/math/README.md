@@ -9,7 +9,8 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
   `CQuaternion` and `Collision::Math`. The queue's proposal also took `Aska::Collision` (the ACF mesh
   intersection templates), `Aska::_HO_*` (height objects), `Collision::CCollision*` (the battle's
   collision field), `NormalVisitor` and `Aska::AffUtil` (the AFF file format): they need scene /
-  dynamics / battle / data_formats types and are left to those subsystems.
+  dynamics / battle / data_formats types and are left to those subsystems (scope.txt doesn't claim them, and this branch takes them out
+  of the proposal's `math` line).
 - Decompiles and the function list: [`port/decomp/math/`](../../../decomp/math/) (`symbols.tsv`; `tools/decomp.sh --into math/<topic>`).
 - Types: [`math_layout.h`](math_layout.h); for Ghidra, `tools/subsystem.py export-types math` -> `port/decomp/math/types.json`.
 - Build settings: [`subsystem.cmake`](subsystem.cmake) compiles `math_*.cpp` with `-ffp-contract=off`.

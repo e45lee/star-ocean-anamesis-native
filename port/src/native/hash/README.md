@@ -8,7 +8,8 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
   (the containers subsystem left it to this one; decompiled, not ported yet). The queue's proposal
   (`port/scripts/rebuild_queue.py`) also took the whole `Aska::detail` family (DirectAofPrimitiveImpl,
   AnimationGroup, FontManager, SmallHeap: scene, text and memory code) and `Aska::Cryption` (ChaCha20,
-  RSA, BigNumber: crypto, 13 samples); scope.txt leaves both out.
+  RSA, BigNumber: crypto, 13 samples); neither scope.txt nor (since this branch) the proposal's `hash`
+  line claims them.
 - Decompiles and the function list: [`port/decomp/hash/`](../../../decomp/hash/) (`symbols.tsv`; `tools/decomp.sh --into hash/<topic>`).
 - Types: [`hash_layout.h`](hash_layout.h); for Ghidra, `tools/subsystem.py export-types hash` -> `port/decomp/hash/types.json`.
 - Build settings of its own: none ([`subsystem.cmake`](subsystem.cmake)).

@@ -15,7 +15,7 @@ P3 + H (battle log from the client's own serializer, `InGameHooks` dropped), P4 
 ## Next
 (Updated 2026-10-03; PLAN.md has the order.)
 1. ~~**4b, the server code**~~: done 2026-10-04 (`server/PLAN-readability.md` R0–R20, `server/PLAN-schema.md` S0–S12). The last step, R20, re-headed `docs/server-rules.md` by `api/<domain>` with stable anchors; the register of (c) and (d) rules is generated from the domains' tables (`tools/server_rules_doc.py`), and T0's `server-docs` keeps the links, anchors, register and evidence whole.
-2. **W phase 2 (5b):** a control channel on Windows (named pipe or TCP) so the sessions, tests/diff and smoke drive the .exe files; the full download and the viewer on Windows; the known gaps (port/PLAN.md 5b "As built").
+2. **W follow-ups (5b):** the GDB stub on Windows (queued, PLAN 5b "Next"); earlier: a control channel on Windows (named pipe or TCP) so the sessions, tests/diff and smoke drive the .exe files; the full download and the viewer on Windows; the known gaps (port/PLAN.md 5b "As built").
 3. **N: rebuild the natives** after all of W, in parallel waves from `port/REBUILD-QUEUE.md`; the tooling (decomp --into, tools/subsystem.py, NATIVE_METHOD, the GDB stub) is on main.
    - ~~**Bullet version pin**~~: done: a modified 2.75, unused by the 3.7.0 content; stays on the guest (`port/src/native/bullet/README.md`).
    - **`Framework::Cocos`** is tri-Ace's own UI framework: a Ghidra rewrite, with cocos2d-x only as a reference.

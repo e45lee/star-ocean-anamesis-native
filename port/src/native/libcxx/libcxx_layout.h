@@ -66,7 +66,7 @@ struct string_long_rep {
 template <typename C>
 union string_short_head {
     u8 size;  // size << 1 (low bit clear)
-    C lx;     // libc++'s __lx: gives the first character slot's size and alignment (wchar_t: 4 bytes)
+    C lx;     // libc++'s __lx: gives the first character slot's size and alignment (the guest wchar_t: 4 bytes; char32_t here, as the host wchar_t is 2 bytes on Windows)
 };
 
 template <typename C>
@@ -107,7 +107,7 @@ public:
 static_assert(sizeof(basic_string<char>) == 0x18);
 static_assert(offsetof(string_long_rep<char>, size) == 0x08 && offsetof(string_long_rep<char>, data) == 0x10);
 static_assert(offsetof(string_short_rep<char>, data) == 0x01 && sizeof(string_short_rep<char>) == 0x18);
-static_assert(offsetof(string_short_rep<wchar_t>, data) == 0x04 && sizeof(string_short_rep<wchar_t>) == 0x18);
+static_assert(offsetof(string_short_rep<char32_t>, data) == 0x04 && sizeof(string_short_rep<char32_t>) == 0x18);
 
 // ---- vector --------------------------------------------------------------------------------------------
 // std::__ndk1::vector<T, Alloc> (__vector_base: __begin_, __end_, __end_cap_ = __compressed_pair<T*, Alloc>).

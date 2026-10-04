@@ -157,7 +157,7 @@
    "align": 8
   },
   {
-   "name": "string_short_head<wchar_t>",
+   "name": "string_short_head<char32_t>",
    "union": true,
    "fields": [
     {
@@ -176,7 +176,7 @@
      "type": {
       "kind": "int",
       "size": 4,
-      "signed": true
+      "signed": false
      },
      "size": 4
     }
@@ -185,7 +185,7 @@
    "align": 4
   },
   {
-   "name": "string_short_rep<wchar_t>",
+   "name": "string_short_rep<char32_t>",
    "union": false,
    "fields": [
     {
@@ -193,7 +193,7 @@
      "name": "head",
      "type": {
       "kind": "struct",
-      "name": "string_short_head<wchar_t>"
+      "name": "string_short_head<char32_t>"
      },
      "size": 4
     },
@@ -205,7 +205,7 @@
       "of": {
        "kind": "int",
        "size": 4,
-       "signed": true
+       "signed": false
       },
       "count": 5
      },

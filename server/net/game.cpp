@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <optional>
 
 #include "ninja/ninja_ref.h"
 #include "soaserver/log.h"
@@ -124,15 +125,18 @@ std::string json_string_field(const std::string& json, const std::string& key) {
 // (d) The device table. The real server bound a device UUID to its player at CreatePlayer and
 // re-bound it through SQEX BRIDGE's data transfer [unknown how]. Ours has one player per state DB
 // (the seeded LOCAL00001, or the one CreatePlayer made), so every device gets that player; with no
-// player yet (soa-server --new-player on a fresh state) the device has none and its Login is
-// refused with 19001, which starts the client's new-player flow. The table (state/schema.cpp,
+// player yet (soa-server --new-player on a fresh state) the device has none (player_id NULL; 0
+// before PLAN-schema S10; the function returns 0) and its Login is refused with 19001, which
+// starts the client's new-player flow. The table (state/schema.cpp,
 // on both routes since PLAN-schema S1; only this one writes it) records who connected.
 uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, ServerTime now) {
     uint32_t pid = (uint32_t)st.one("select id from player limit 1", {}, 0);
+    // the table's player_id: NULL while there is no player (a reference to player.id, PLAN-schema S10)
+    const std::optional<PlayerId> player = pid ? std::optional<PlayerId>(PlayerId(pid)) : std::nullopt;
     if (st.one("select count(*) from wire_device where uuid = ?", {uuid}) == 0)
         st.q("insert into wire_device (uuid, player_id, device_type, first_seen, last_seen) values (?, ?, ?, ?, ?)",
-             {uuid, pid, device_type, now, now});
-    else st.q("update wire_device set player_id = ?, device_type = ?, last_seen = ? where uuid = ?", {pid, device_type, now, uuid});
+             {uuid, player, device_type, now, now});
+    else st.q("update wire_device set player_id = ?, device_type = ?, last_seen = ? where uuid = ?", {player, device_type, now, uuid});
     return pid;
 }
 

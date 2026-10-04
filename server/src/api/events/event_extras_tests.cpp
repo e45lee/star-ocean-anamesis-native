@@ -241,6 +241,8 @@ NATIVE_TEST("events/worldboss-waves") {
         u64 need = num(d, "CT_WorldBossInfo", "next_required_num");
         if (!need) t.fail("no requirement");
         t.expect_eq(num(d.find("start_bigHunt_area_id")), (u64)0, "no hunt yet");
+        t.expect_eq(c.st.one("select count(*) from wboss where boss_id = ? and hunt_until is null", {boss}), (int64_t)1,
+                    "no hunt: hunt_until NULL (PLAN-schema S10)");
         if (const Value* l = d.find("CWorldBossPlayerInfoList"); !l || !l->map.empty()) t.fail("empty clear list");
         // target items in a result's drops fill the gauges
         u32 items[3];

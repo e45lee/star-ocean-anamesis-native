@@ -53,7 +53,9 @@ def main():
     for mid, cl, pc, cc in st.execute("select mission_id, cleared, play_count, clear_count from mission"):
         print("  mission %s: cleared %d, played %d, cleared %d times" % (label("master_mission", mid), cl, pc, cc))
     for gid, role, uid, rank, dup, cf, cp in st.execute(
-            "select gacha_id, role_id, uid, rank, duplicate, cost_free, cost_pay from gacha_history order by id"):
+            # PLAN-schema S10: a weapon draw's role_id is NULL and its uid item_uid (NULL once the item is gone)
+            "select gacha_id, ifnull(role_id, 0), ifnull(character_uid, ifnull(item_uid, 0)), rank, duplicate, cost_free, cost_pay "
+            "from gacha_history order by id"):
         print("  gacha %s: %s %s uid %#x%s%s" % (label("master_gacha", gid), rank, label("master_role", role), uid,
                                                  " (duplicate)" if dup else "", " cost %d free + %d paid" % (cf, cp) if cf or cp else ""))
     n = st.execute("select count(*) from presents where received_at is null").fetchone()[0]

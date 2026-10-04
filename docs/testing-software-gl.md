@@ -140,16 +140,29 @@ finishes in the same time as one at 60, as long as the machine isn't saturated.
 - The guest sees the host's strings: `GL_RENDERER` "llvmpipe (LLVM 20.1.2, 256 bits)",
   `GL_VERSION` "OpenGL ES 3.2 Mesa ..." and GLSL ES 3.20 (hw: D3D12, ES 3.1, GLSL ES 3.10). Nothing
   in the game's output depended on it in these runs.
-- **Taps lost at low frame rates.** The failing sessions miss a step after a tap that didn't take:
-  e.g. the stamina dialog's 閉じる, tapped 3 s after the dialog was fully shown, left it open on sw
-  (old home script), and in T2 on 8 slots the growth session's tap on the first gear of the
-  武器カスタム list, 4 s after the list was shown, didn't select it (38 fps on average then). The
-  control layer's `tap:` is a touch down, 80 ms, touch up (runtime `app/host.cpp` `run_command`).
-  The likely mechanism (not verified): a frame or a hitch longer than 80 ms delivers both in one game
-  frame, which a button doesn't take as a press. The consolidated soadrive sessions
-  resend some taps until a log line shows; those that don't (and blind `wait:` steps) fail when the
-  client is slow. Holding a tap for two rendered frames instead of 80 ms would make every session
-  independent of the frame rate (a runtime change, not made here).
+- **Taps lost at low frame rates (fixed 2026-10-03).** The failing sessions missed a step after a
+  tap that didn't take: e.g. the stamina dialog's 閉じる, tapped 3 s after the dialog was fully
+  shown, left it open on sw (old home script), and in T2 on 8 slots the growth session's tap on the
+  first gear of the 武器カスタム list, 4 s after the list was shown, didn't select it (38 fps on
+  average then). The control layer's `tap:` was a touch down, 80 ms, touch up. The mechanism
+  (decompiled): `Framework::CTouchPanel::Progress` folds one logic frame's touch records into one
+  drag state (`Aska::TouchPanel::SetDragBegin` 0, `SetDragEnd` 2), and
+  `CCocosDirector::InputProgress` drops an "ended" with no touch begun, so a down and an up read
+  in the same frame (a frame or hitch longer than 80 ms) never press a button; the Back key
+  (`PadDroid::m_bBack`) is a level sampled per frame. Now `tap:`, `drag:` and `back` are paced
+  by the game's frames (runtime/README.md, "Scripted taps": the up 3 presented frames after the
+  guest read the down, at least 80 ms; the next command waits for the release).
+  - **Deterministic before/after** (`frame-delay:200`, 4.9 fps, via `--do` on smoke): the fixed
+    80 ms hold (`input-pacing:0`) FAILs smoke at the login (60 taps resent, the home never
+    reached); paced, smoke PASSes (each tap held ~500 ms, 3 frames).
+  - **Sessions on sw, `SOA_SLOTS=8`** (home, growth, party, rental, events, tower,
+    restore-missions; the parent build and this one at once, 14 sw clients queued on the 8 slots
+    shared with another agent's T2, load to 26, fps median 38-42, p10 17-21): the parent build
+    10 of 14 PASS over two rounds (FAIL: growth twice, EvolutionCharacter / LimitBreakCharacter
+    not within the time; home twice, 21 and 2 destinations missed); the paced build 13 of 14 and
+    then 9 of 9 (a third round, plus two extra party runs). Its one FAIL, party's swipe to set 2,
+    came from the first version holding a swipe still for 3 frames before the up (the page
+    didn't turn); a drag of up to 300 ms now releases right after its last move, as before.
 
 ## Recommendation
 
@@ -162,7 +175,8 @@ finishes in the same time as one at 60, as long as the machine isn't saturated.
 - Its cost is CPU: 3-4 cores per client (with `LP_NUM_THREADS=4`: ~2.8) against 0.7 on the GPU, so 12
   clients load the 32 cores to 45-56 and the frame rate falls to 10-25 fps. The tests that wait for
   log lines and resend taps (tests/diff, smoke, the soadrive sessions' tap-until steps) still pass;
-  sessions with a blind tap after a `wait:` lose taps at those rates and fail.
+  sessions with a blind tap after a `wait:` lost taps at those rates and failed until taps were
+  paced by frames (above).
 - **When to use it:** when the host GPU is failing (D3D12 device removed, GLX/drisw screens not
   created, crashes in `libnvwgf2umx.so`): `tools/gate.sh ... --software-gl` keeps T0/T1 and
   tests/diff runs going. It held for a T1-style run (8 sw clients, all PASS) and for 12 tests/diff
@@ -171,7 +185,6 @@ finishes in the same time as one at 60, as long as the machine isn't saturated.
   so 8 plus a build or the other agents' clients saturate the 32 cores; a sw client's frame rate
   follows the machine's load (T2 at 8 slots with ~6 other hw clients failed as at 12). Measured to
   pass: 8 sw clients of a T1-style run at load 27; 3 on a quiet machine. Not measured: T2 at 6.
-- **To make it a viable default** (if the GPU failures keep coming): make taps independent of the
-  frame rate (hold `tap:`'s touch for two rendered frames rather than 80 ms; runtime `app/host.cpp`),
-  convert the remaining blind taps in the sessions to tap-until steps, then re-measure T2 on sw with
-  `SOA_SLOTS=8`.
+- **To make it a viable default** (if the GPU failures keep coming): taps are now independent of
+  the frame rate (done, above); re-measure T2 on sw with `SOA_SLOTS=8`, and convert any blind tap
+  that still fails there to a tap-until step.

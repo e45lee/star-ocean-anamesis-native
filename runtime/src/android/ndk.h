@@ -1,5 +1,6 @@
 #pragma once
 // Host-side objects behind the NDK opaque types handed to the guest.
+#include <atomic>
 #include <deque>
 #include <memory>
 #include <mutex>
@@ -89,13 +90,19 @@ struct InputEvent {
 class InputQueue {
 public:
     InputQueue();
-    void push(const InputEvent& e);
+    // Returns the event's sequence number: the count of events pushed so far, this one included.
+    u64 push(const InputEvent& e);
     bool pop(InputEvent*& out);
     int fd() const { return efd_; }
+    // Events the guest has read (AInputQueue_getEvent) so far; event N has been read once this is
+    // >= N (frontend/touch_script.h paces scripted taps by it).
+    u64 consumed() const { return popped_.load(std::memory_order_acquire); }
 
 private:
     std::mutex m_;
     std::deque<InputEvent*> q_;
+    u64 pushed_ = 0;
+    std::atomic<u64> popped_{0};
     int efd_;
 };
 InputQueue& input_queue();

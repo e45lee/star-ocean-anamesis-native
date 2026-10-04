@@ -102,7 +102,7 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
 `start_coins`, `has_clock` / `clock` / `clock_offset`, `galaxy_pass`, `enable_events`,
 `event_keywords`, `restore_tower`, `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
 `repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `port/server-data` are found),
-`data_root` (the campaign's `server_campaign.txt`).
+`data_root` (the data dir: the CDN's scratch files; a `server_campaign.txt` there from before the state DB's version 11 is imported once, PLAN-schema S12).
 
 - **soa** fills it from its run options (`soa::options()`, `port/README.md` "Run options") in
   `server_port::config_from_options` (`port/src/native/api/server_adapters.cpp`), called by `main` once

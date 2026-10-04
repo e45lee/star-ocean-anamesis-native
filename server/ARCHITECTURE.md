@@ -115,8 +115,8 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 
 | Data | Where | Who writes it |
 |---|---|---|
-| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (52) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
-| The story campaign's progress | `<data_root>/server_campaign.txt` (a text file: cleared missions, the last one) | `src/api/campaign/progress.cpp` only; outside the state DB (PLAN-readability section 6) |
+| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (53) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
+| The story campaign's progress | the state DB's `campaign_clear` / `campaign_last` (since schema version 11, PLAN-schema S12; before, `<data_root>/server_campaign.txt`, which step 11 imports and renames `.migrated`) | `src/api/campaign/progress.cpp` only, through `ext::with_live_server` (around a request, not in a handler) |
 | The master data | `data/basmaster-3.7.0.sqlite3` (read-only; `--master`) | nobody: the server reads it |
 | The client's master copy | the CDN's `basmaster-served.sqlite3` (`<scratch>`), the 3.7.0 master with `apply_client_master` | `cdn::Tree::build` (`src/cdn/tree.cpp`), `make_served_master` (`src/cdn/served_master.cpp`) |
 | Gacha pools | `data/gacha_pools.sqlite3` (reconstructed; read-only) | `tools/build_gacha_pools.py` |

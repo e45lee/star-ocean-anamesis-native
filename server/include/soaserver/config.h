@@ -52,8 +52,9 @@ struct ServerConfig {
     // The source checkouts repo files (master DBs, seed saves, port/server-data) are looked up in,
     // in order (find_repo_file); empty = relative to the working directory.
     std::vector<std::string> repo_roots;
-    // The directory of the server's own side files (api/campaign/campaign.cpp: server_campaign.txt); the
-    // port passes its data dir (the client's --data).
+    // The server's data dir (the CDN's scratch files; a server_campaign.txt there from before the
+    // state DB's version 11 is imported by its step, PLAN-schema S12); the port passes its data dir
+    // (the client's --data).
     std::string data_root;
 
     // ---- CDN (soa-server only; soaserver/cdn.h) ----------------------------------------------

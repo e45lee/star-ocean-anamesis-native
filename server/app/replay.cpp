@@ -181,7 +181,7 @@ std::string sql_literal(sqlite3_stmt* s, int col) {
     }
 }
 
-bool dump_state(const std::string& db, const std::string& data_dir, const std::string& out) {
+bool dump_state(const std::string& db, const std::string& out) {
     sqlite3* h = nullptr;
     if (sqlite3_open_v2(db.c_str(), &h, SQLITE_OPEN_READONLY, nullptr) != SQLITE_OK) {
         sqlite3_close(h);
@@ -210,12 +210,6 @@ bool dump_state(const std::string& db, const std::string& data_dir, const std::s
         for (auto& r : rows) o += r + "\n";
     }
     sqlite3_close(h);
-    // The side files of the data dir (state outside the DB: the story campaign's progress).
-    for (const char* side : {"server_campaign.txt"}) {
-        std::ifstream f(data_dir + "/" + side, std::ios::binary);
-        o += std::string("-- file ") + side + (f ? ":\n" : ": (none)\n");
-        if (f) o += std::string(std::istreambuf_iterator<char>(f), {});
-    }
     return write_file(out, o.data(), o.size());
 }
 
@@ -240,6 +234,8 @@ int replay(const std::string& dir, const std::string& out, bool verbose) {
     }
     c.db = data + "/server.sqlite3";
     for (const char* suffix : {"", "-wal", "-shm"}) unlink((c.db + suffix).c_str());
+    // a campaign file of an older run in this dir would be imported by the new state's step 11
+    // (PLAN-schema S12)
     unlink((data + "/server_campaign.txt").c_str());
     if (!c.has_seed_rng) {
         fprintf(stderr, "soa-server --replay: needs --seed-rng (the corpus's options)\n");
@@ -303,7 +299,7 @@ int replay(const std::string& dir, const std::string& out, bool verbose) {
     fclose(g_log);
     g_log = nullptr;
     if (status) return status;
-    if (!dump_state(c.db, data, out + "/state.sql")) {
+    if (!dump_state(c.db, out + "/state.sql")) {
         fprintf(stderr, "soa-server --replay: can't read the state %s\n", c.db.c_str());
         return 1;
     }

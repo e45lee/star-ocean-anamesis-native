@@ -33,7 +33,7 @@ import subprocess
 import sys
 import time
 
-from . import fifo, gdb, milestones, prepared, proc, screens, winhost
+from . import fifo, gdb, milestones, proc, screens, winhost
 from .proc import REPO
 
 sys.path.insert(0, os.path.join(REPO, "control"))
@@ -316,14 +316,9 @@ class Run:
             note, self.predownloaded = make_phone(self.phone, cfg.fresh_kvs, self.win)
             self.note("phone: %s (%d ms)" % (note, int((time.monotonic() - t) * 1000)))
         if cfg.prepared:
+            # the whole server state (the campaign's progress too, PLAN-schema S12: no side file)
             shutil.copyfile(cfg.prepared, self.state_db)
-            # the side files go to the server's data dir: soa-server's --data, soa's --data (the phone)
-            side_dir = self.phone if self.target == "port-inproc" else os.path.dirname(self.state_db)
-            for f in prepared.side_files(cfg.prepared):
-                shutil.copyfile(f, os.path.join(side_dir, os.path.basename(f)))
-            self.note("server state: a copy of %s%s" % (cfg.prepared,
-                      " (and %s)" % ", ".join(os.path.basename(f) for f in prepared.side_files(cfg.prepared))
-                      if prepared.side_files(cfg.prepared) else ""))
+            self.note("server state: a copy of %s" % cfg.prepared)
         if cfg.client_save == "session":
             session_client_save(os.path.join(self.phone, "data/shared_prefs"))
         elif cfg.client_save:

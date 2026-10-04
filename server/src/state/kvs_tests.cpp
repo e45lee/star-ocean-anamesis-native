@@ -2,6 +2,8 @@
 // their seeds (testing.h): they keep the names they had in core/server.cpp.
 #include <unistd.h>
 
+#include <cstdio>
+
 #include <set>
 #include <string>
 #include <vector>
@@ -41,6 +43,35 @@ NATIVE_TEST("server/kvs-roundtrip") {
         if (kv_str(g, "BAS:PlayerID").size() != 10) t.fail("3.7.0 player id: not 10 characters");  // never copied: kLocalPlayerId
         if (kv_u32(g, "player_level") < 1) t.fail("3.7.0 save: no player_level");
     }
+}
+
+std::string file_bytes(const std::string& path) {
+    std::string s;
+    if (FILE* f = fopen(path.c_str(), "rb")) {
+        char buf[65536];
+        size_t k;
+        while ((k = fread(buf, 1, sizeof buf, f)) > 0) s.append(buf, k);
+        fclose(f);
+    }
+    return s;
+}
+
+NATIVE_TEST("server/kvs-rewrite-identical") {
+    // read_kvs_ordered then write_kvs gives back the game's own bytes: the committed saves
+    // (data/saves: the seed, the client's Game.xml and Aska.xml) and the synthetic test seed.
+    std::string out = "/tmp/soa-server-kvs-rewrite-" + std::to_string(getpid()) + ".xml";
+    for (const char* rel :
+         {"port/server-data/test-seed.xml", "data/saves/seed/Game.xml", "data/saves/client/Game.xml", "data/saves/client/Aska.xml"}) {
+        std::string in = find_repo_file(rel);
+        if (in.empty()) {
+            t.fail("%s is missing", rel);
+            continue;
+        }
+        auto kv = read_kvs_ordered(in);
+        if (kv.empty() || !write_kvs(out, kv)) t.fail("%s: not read or not written", rel);
+        t.expect_eq(file_bytes(out), file_bytes(in), (std::string(rel) + ": rewritten byte for byte").c_str());
+    }
+    unlink(out.c_str());
 }
 
 }  // namespace

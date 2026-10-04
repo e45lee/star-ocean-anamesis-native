@@ -21,6 +21,7 @@
 #include <iostream>
 #include <zlib.h>
 #include <zstd.h>
+#include <soa/png.h>
 extern "C" {
 #include <jpeglib.h>
 }
@@ -300,42 +301,12 @@ static bool decode_jpeg(const u8* p, size_t n, int& w, int& h, Bytes& rgba, std:
 }
 
 // ---------------------------------------------------------------- PNG writer
-static void be32(Bytes& o, u32 v) {
-    o.push_back(v >> 24); o.push_back(v >> 16); o.push_back(v >> 8); o.push_back(v);
-}
-static void chunk(Bytes& o, const char* type, const Bytes& data) {
-    be32(o, (u32)data.size());
-    size_t start = o.size();
-    o.insert(o.end(), type, type + 4);
-    o.insert(o.end(), data.begin(), data.end());
-    be32(o, (u32)crc32(0, &o[start], (uInt)(o.size() - start)));
-}
+// RGB (colour type 2) or RGBA (6) from the decoded RGBA pixels: soa/png.h (stb_image_write).
 static bool write_png(const std::string& path, int w, int h, const Bytes& rgba, bool alpha) {
-    int ch = alpha ? 4 : 3;
-    Bytes raw;
-    raw.reserve((size_t)(w * ch + 1) * h);
-    for (int y = 0; y < h; y++) {
-        raw.push_back(0);
-        for (int x = 0; x < w; x++) {
-            const u8* p = &rgba[((size_t)y * w + x) * 4];
-            raw.insert(raw.end(), p, p + ch);
-        }
-    }
-    uLongf zn = compressBound((uLong)raw.size());
-    Bytes z(zn);
-    compress2(z.data(), &zn, raw.data(), (uLong)raw.size(), 6);
-    z.resize(zn);
-    Bytes o = {0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'};
-    Bytes ihdr;
-    be32(ihdr, (u32)w); be32(ihdr, (u32)h);
-    ihdr.push_back(8); ihdr.push_back(alpha ? 6 : 2); ihdr.push_back(0); ihdr.push_back(0); ihdr.push_back(0);
-    chunk(o, "IHDR", ihdr);
-    chunk(o, "IDAT", z);
-    chunk(o, "IEND", {});
-    FILE* f = fopen(path.c_str(), "wb");
-    if (!f) return false;
-    bool ok = fwrite(o.data(), 1, o.size(), f) == o.size();
-    return fclose(f) == 0 && ok;
+    if (alpha) return soa::png_write(path, w, h, 4, rgba.data());
+    Bytes rgb((size_t)w * h * 3);
+    for (size_t i = 0; i < (size_t)w * h; i++) memcpy(&rgb[i * 3], &rgba[i * 4], 3);
+    return soa::png_write(path, w, h, 3, rgb.data());
 }
 
 // ---------------------------------------------------------------- AIF image chunk ('imgX')

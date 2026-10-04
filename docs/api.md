@@ -299,7 +299,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): status
 - **Handler / effect**: Plain apply; fid exempt from the error dialog. Dead since CBT ended (`master_global.cbt_end` 2016).
 - **Callers** (fid constant scan): `BridgeNotify::OnReceive`, `CClosedBetaDialog::ToRelease`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/entry/entry.cpp`: accepts any code (docs/server-rules.md#client-reports))
 - **FakeApiCaller**: `FakeApi/update_home.msgp`
 
 ### CreatePlayer
@@ -378,7 +378,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): status
 - **Handler / effect**: Plain apply. Payment error reports from the coin / direct shop. Local server: log and ignore.
 - **Callers** (fid constant scan): `CCoinShop::SendErrorLog`, `CDirectItemShop::SendErrorLog`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/entry/entry.cpp`: logs the report (docs/server-rules.md#client-reports))
 - **FakeApiCaller**: `FakeApi/send_error_log.msgp` (**fid `e5af488c` in FakeApiCaller**, not the network fid)
 
 ### SimpleLogin

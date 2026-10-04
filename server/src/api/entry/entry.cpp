@@ -284,6 +284,35 @@ std::vector<u8> time_only(ext::Ctx& ctx) {
     return body(data);
 }
 
+// SendErrorLog(s8 const* log) -> SendErrorLogRes                              fid 0465aa57
+// API: docs/api.md#senderrorlog
+// Rules: docs/server-rules.md#client-reports
+//
+// The client's error report: CCoinShop::SendErrorLog and CDirectItemShop::SendErrorLog send the
+// payment store's error text.
+//   (b) OnSendErrorLogRes (@014cd0e0) is a plain apply: it reads nothing back.
+//   (d) Nothing is stored; the report is logged as a warning (`SendErrorLog: <text>`), the only
+//       place a local server can show it.
+// Answers: data.Time only.
+std::vector<u8> send_error_log(ext::Ctx& ctx, const Request& req) {
+    LOGW("server", "SendErrorLog: %s", req.strs.empty() ? "" : req.strs[0].c_str());
+    return time_only(ctx);
+}
+
+// CbtCertification(s8 const* code) -> CbtCertificationRes                    fid 5f583f50
+// API: docs/api.md#cbtcertification
+// Rules: docs/server-rules.md#client-reports
+//
+// The closed beta's certification code (CClosedBetaDialog::ToRelease, BridgeNotify::OnReceive).
+//   (a) master_global.cbt_end: the closed beta ended in 2016; (b) OnCbtCertificationRes is a plain
+//       apply (docs/api.md).
+//   (d) Any code is accepted and nothing is stored: there is no closed beta to check against.
+// Answers: the player state {Time, Player, Wallet}.
+std::vector<u8> cbt_certification(ext::Ctx& ctx, const Request&) {
+    LOGI("server", "CbtCertification: accepted (the closed beta is over)");
+    return with_player_state(ctx);
+}
+
 // The entry flow's APIs (src/core/modules.cpp calls this first: the core's APIs register before
 // the modules').
 void register_entry() {
@@ -294,6 +323,8 @@ void register_entry() {
     ext::add_core_api({"UpdateKiyakuVersion"}, update_kiyaku_version);
     ext::add_core_api({"UpdatePlayerName"}, update_player_name);
     ext::add_core_api({"GetServerTime"}, get_server_time);
+    ext::add_core_api({"SendErrorLog"}, send_error_log);
+    ext::add_core_api({"CbtCertification"}, cbt_certification);
 }
 
 }  // namespace soa::server

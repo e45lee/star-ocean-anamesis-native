@@ -16,12 +16,12 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **145** (35 of them stubs: section 2.5). Of the **54 without a handler**:
+The wire knows **199 methods**; the server has handlers for **147** (35 of them stubs: section 2.5). Of the **52 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
-| **Empty reply** | 11 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
-| **Canned reply** | 2 | The named file exists in `port/fakeapi/responses/`, but it is a fixed reply made for another method by `tools/fakeapi_responses.py`: `TrainingMissionStart` gets `mission_start.msgp` (a normal mission's start), `CbtCertification` gets `update_home.msgp`. Nothing is stored. |
+| **Empty reply** | 10 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
+| **Canned reply** | 1 | The named file exists in `port/fakeapi/responses/`, but it is a fixed reply made for another method by `tools/fakeapi_responses.py`: `TrainingMissionStart` gets `mission_start.msgp` (a normal mission's start). Nothing is stored. (`CbtCertification`, which got `update_home.msgp`, is answered now: `server-rules.md#client-reports`.) |
 | **No reply** | 31 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
 
@@ -68,7 +68,7 @@ Not from the game. The 3.7.0 offline build's request lambdas each name a reply f
 local server has no handler**. That folder holds 10 replies generated early in the port by
 `tools/fakeapi_responses.py` (player_get, mission_start/end, present_get_all/item, update_home and four
 gacha ones, each with a readable `json/` copy). Every one of those methods has a real handler now,
-so the files are reached only by the two "canned" methods above. `port/fakeapi/fields.txt` and
+so the files are reached only by the "canned" method above. `port/fakeapi/fields.txt` and
 `schema.txt` are reverse-engineering references (the reply fields each client info class reads;
 the reply schema by CHash32 key) that server code cites as evidence; they are not served. Part 3
 replaces the fallback with explicit stubs, after which `responses/` can go.
@@ -109,8 +109,6 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | | [SetStampSlot](api.md#setstampslot) | {} | chat stamp slots |
 | | [UpdateSession](api.md#updatesession) | ★ | |
 | | [SendGuideInformation](api.md#sendguideinformation) | ★ | |
-| | [SendErrorLog](api.md#senderrorlog) | {} | the client's error reports; nothing to store |
-| | [CbtCertification](api.md#cbtcertification) | canned `update_home.msgp` | closed-beta check; probably never called |
 
 ### 2.2 Online-only features
 

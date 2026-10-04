@@ -23,7 +23,7 @@ AofObjects, 30 render states, 19 skinned AofObjects, 157 bones of which 93 Joint
 
 | Class (guest) | Guest size | Found from | Proven by (scene/layout-...) | Status |
 |---|---|---|---|---|
-| `TaskManagerBase` (Aska::TaskManager; kernel's) | 0xff0 data | TaskManager::TaskManager, Add | `-object-manager` (the Task base's vptr at 0x28) | parked here, opaque-ish (32 Events, CriticalSection, FastCriticalSection by extent) |
+| `TaskManagerBase` (= kernel::TaskManager, aliased) | 0xff0 data | TaskManager::TaskManager, Add | `-object-manager` (the Task base's vptr at 0x28) | parked here, opaque-ish (32 Events, CriticalSection, FastCriticalSection by extent) |
 | `ObjectManagerWorkerThread` (Aska) | 0x210 (the dispatcher's new[]) | ctor, Handler, Handler_*, ChangeMode, the dispatcher's Dispatch_* / Set*Parameter | `-job-dispatcher` (vtable, back pointers, mode / job / lock word, result bits, batch pointers into m_candidates) | typed; 0x120, 0x1d4..0x1ff (RenderingDecided's) partly |
 | `ObjectManagerJobDispatcher` (Aska) | 0xc8 (Global::Instantiate...: new(200)) | ctor, dtors, WaitIdle, ChangeMode, Dispatch_*, Sleep | `-job-dispatcher` (1 worker, new[] count, except index) | typed |
 | `ObjectManager` (Aska) | 0x10700 (Global::InstantiateObjectManager) | ctor, OnPrePaint, TraversePaintingList, MakePaintingList, GetSceneEV, GetNoTexture | `-object-manager` (11 owned objects by vtable, the system objects, GetSceneEV(0..) through the combiners, GetNoTexture through m_renderThread, every candidate IsThisIt RenderableObject) | typed where the hot paths read; large fixed arrays partly padding (0x10a0, 0x1e88..0x3ef0, 0x69f0..0xb418, 0xb428..0x104f0) |
@@ -53,7 +53,7 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
 - `render`: the bases (RenderableObject, HierarchicalObject(Container), Task) from render_layout.h; pointers
   to RenderContext (0x230 bytes each), RENDERINFO, RenderPass / RenderPassManager, RenderThread,
   RenderContextServer, RenderLayer, MaterialList (embedded in AofHandler at 0xe8, 0x230 bytes, opaque here).
-- `kernel`: `Aska::TaskManager` (ObjectManager's base) is parked here as `TaskManagerBase` until kernel types it.
+- `kernel`: `Aska::TaskManager` (ObjectManager's base) is kernel's (kernel_layout.h); `TaskManagerBase` aliases it.
 - `sync`: Thread / Event / FastCriticalSection are opaque byte arrays of their sizes (0x18 / 0x68 / 0x90).
 - `math`: render's MathVector / MathMatrix (aliases of math::Vector / Matrix since 19a4682).
 - `anim`: the models' animation (AafHandler, CAnimationBlendContainer, CAnimationModel) are anim_layout.h's.

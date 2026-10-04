@@ -24,8 +24,8 @@ and driven by its methods, or the running game's objects read at a frame boundar
 | Class (guest) | Guest size | Found from | Proven by (render/layout-...) | Status |
 |---|---|---|---|---|
 | `IAnimatable` (Aska) | 0x08 | IsThisIt, Clone, GetClassID | `-renderable-object` (vtable, IsThisIt) | typed |
-| `AnimatableLinkElement` (Aska) | 0x18 | the inlined constructors (links zeroed) | `-renderable-object` | typed; the links' users (TaskManager) not read |
-| `Task` (Aska; kernel's) | 0x28 (Task::CreateClone) | ~Task, Remove, ChangeLevel, Clone, ForceDelete | `-renderable-object` (m_manager, m_level = Task::GetDefaultLevel()) | typed; m_flags24 / m_flags26 unknown |
+| `AnimatableLinkElement` (Aska) | 0x18 | | | kernel's / containers' (`containers::LinkElement`: vtable, m_prev, m_next); aliased here |
+| `Task`, `TaskManager` (Aska) | 0x28, 0xff0 | | `-renderable-object` (the Task base: m_owner, m_level = Task::GetDefaultLevel()) | kernel's (kernel_layout.h); aliased here |
 | `HierarchicalObjectContainer` (Aska) | 0x100 (CreateClone) | CopyParameter, Clone, AttachChild, DetachFromParent, ChildObject | `-renderable-object` (owner, world pointer, the child ring through AttachChild / DetachFromParent / GetChildObjectCount / ChildObject, the setters) | typed; 0x08, 0x90 unknown |
 | `HierarchicalObject` (Aska) | 0x1a0 allocated, 0x198 data (CreateClone) | the inlined constructor, setters, Get / Set, ~HierarchicalObject, EnableSimpleDynamics | `-renderable-object` (WorldMatrix, SetPosition / SetPosture / SetScale, Get(5, 8, 13), Set(10, 11)) | typed; 0x170..0x17f, 0x188..0x190 partly |
 | `RenderableObject` (Aska) | 0x310 (CreateClone) | RenderableObject(), Clone, the accessors | `-renderable-object` (color rate / offset, shadow flag bits, OnActive, motion blur, transparency, IBL, multipass ids, multi-draw, bounding sphere) | typed; about half of 0x198..0x310 named |
@@ -57,10 +57,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
 - `memory`: `memory::DeleteManager` (Task::DeleteThis*).
 - `math`: Aska::Vector / Quaternion / Matrix are math_layout.h's (`MathVector` / `MathQuaternion` /
   `MathMatrix` are aliases of `math::Vector` etc.; render, scene and anim use the aliases).
-- `kernel`: **`Aska::Task` and `Aska::AnimatableLinkElement` are kernel's classes, parked here** as every
-  scene object's base (Task's methods are in render's symbols.tsv with that note; render's scope.txt
-  doesn't claim them). When kernel's layout header recovers them, it takes them over and
-  render_layout.h includes it. `TaskManager` is opaque here.
+- `kernel`: `Aska::Task`, `TaskManager` and AnimatableLinkElement (containers' LinkElement) are kernel's
+  (kernel_layout.h, containers_layout.h); render_layout.h includes them and aliases the names.
 - **Scope moves (re-ranks the queue):** the hierarchy's bases (`IAnimatable`, `AnimatableLinkElement`,
   `HierarchicalObject`, `HierarchicalObjectContainer`, `AimingObject`) are render's (scope.txt), not
   scene's / anim's as port/scripts/rebuild_queue.py's table proposed: RenderableObject and Camera

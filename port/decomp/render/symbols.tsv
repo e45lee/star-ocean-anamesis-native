@@ -1,12 +1,12 @@
 vaddr	ghidra	size	symbol	demangled	topic	status	note
-0x120232c	0x130232c	44	_ZNK4Aska4Task10GetClassIDEi	Aska::Task::GetClassID(int) const	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1202370	0x1302370	8	_ZN4Aska4Task14MessageHandlerEjiPvS1_	Aska::Task::MessageHandler(unsigned int, int, void*, void*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1202378	0x1302378	8	_ZNK4Aska4Task7IsMultiEv	Aska::Task::IsMulti() const	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1202380	0x1302380	4	_ZN4Aska4Task23OnDeleteFromTaskManagerEv	Aska::Task::OnDeleteFromTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1202384	0x1302384	4	_ZN4Aska4Task18OnAddToTaskManagerEv	Aska::Task::OnAddToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1202388	0x1302388	4	_ZN4Aska4Task21OnAddTopToTaskManagerEv	Aska::Task::OnAddTopToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x120238c	0x130238c	4	_ZN4Aska4Task21OnInsertToTaskManagerEv	Aska::Task::OnInsertToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x134e514	0x144e514	8	_ZNK4Aska4Task15GetDefaultLevelEv	Aska::Task::GetDefaultLevel() const	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x120232c	0x130232c	44	_ZNK4Aska4Task10GetClassIDEi	Aska::Task::GetClassID(int) const	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1202370	0x1302370	8	_ZN4Aska4Task14MessageHandlerEjiPvS1_	Aska::Task::MessageHandler(unsigned int, int, void*, void*)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1202378	0x1302378	8	_ZNK4Aska4Task7IsMultiEv	Aska::Task::IsMulti() const	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1202380	0x1302380	4	_ZN4Aska4Task23OnDeleteFromTaskManagerEv	Aska::Task::OnDeleteFromTaskManager()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1202384	0x1302384	4	_ZN4Aska4Task18OnAddToTaskManagerEv	Aska::Task::OnAddToTaskManager()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1202388	0x1302388	4	_ZN4Aska4Task21OnAddTopToTaskManagerEv	Aska::Task::OnAddTopToTaskManager()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x120238c	0x130238c	4	_ZN4Aska4Task21OnInsertToTaskManagerEv	Aska::Task::OnInsertToTaskManager()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x134e514	0x144e514	8	_ZNK4Aska4Task15GetDefaultLevelEv	Aska::Task::GetDefaultLevel() const	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
 0x1e68b84	0x1f68b84	68	_ZNK4Aska6Camera10GetClassIDEi	Aska::Camera::GetClassID(int) const	camera	typed	
 0x1e68bc8	0x1f68bc8	8	_ZNK4Aska18HierarchicalObject15GetDefaultLevelEv	Aska::HierarchicalObject::GetDefaultLevel() const	hierarchical_object	typed	
 0x1e68bd0	0x1f68bd0	8	_ZNK4Aska18HierarchicalObject11WorldMatrixEv	Aska::HierarchicalObject::WorldMatrix() const	hierarchical_object	typed	
@@ -81,18 +81,18 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f22524	0x2022524	4	_ZN4Aska11IAnimatableD1Ev	Aska::IAnimatable::~IAnimatable()	hierarchical_object	typed	
 0x1f22528	0x2022528	4	_ZN4Aska11IAnimatableD0Ev	Aska::IAnimatable::~IAnimatable()	hierarchical_object	typed	
 0x1f2252c	0x202252c	8	_ZNK4Aska11IAnimatable10GetClassIDEi	Aska::IAnimatable::GetClassID(int) const	hierarchical_object	typed	
-0x1f7f564	0x207f564	60	_ZN4Aska4TaskD2Ev	Aska::Task::~Task()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f5a0	0x207f5a0	68	_ZN4Aska4TaskD0Ev	Aska::Task::~Task()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f5e4	0x207f5e4	32	_ZN4Aska4Task6RemoveEv	Aska::Task::Remove()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f604	0x207f604	48	_ZN4Aska4Task10DeleteThisEPNS_13DeleteManagerE	Aska::Task::DeleteThis(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f634	0x207f634	52	_ZN4Aska4Task19DeleteThisNextFrameEPNS_13DeleteManagerE	Aska::Task::DeleteThisNextFrame(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f668	0x207f668	52	_ZN4Aska4Task24DeleteThisAfterTwoFramesEPNS_13DeleteManagerE	Aska::Task::DeleteThisAfterTwoFrames(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f69c	0x207f69c	20	_ZN4Aska4Task21DeleteThisImmediatelyEv	Aska::Task::DeleteThisImmediately()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f6b0	0x207f6b0	76	_ZN4Aska4Task5CloneEPKNS_11IAnimatableE	Aska::Task::Clone(Aska::IAnimatable const*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f6fc	0x207f6fc	156	_ZN4Aska4Task11CreateCloneEPKNS_11IAnimatableE	Aska::Task::CreateClone(Aska::IAnimatable const*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f798	0x207f798	56	_ZN4Aska4Task11ChangeLevelEj	Aska::Task::ChangeLevel(unsigned int)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f7d0	0x207f7d0	16	_ZN4Aska4Task11ForceDeleteEv	Aska::Task::ForceDelete()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
-0x1f7f7e0	0x207f7e0	4	_ZN4Aska4Task3RunEi	Aska::Task::Run(int)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f564	0x207f564	60	_ZN4Aska4TaskD2Ev	Aska::Task::~Task()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f5a0	0x207f5a0	68	_ZN4Aska4TaskD0Ev	Aska::Task::~Task()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f5e4	0x207f5e4	32	_ZN4Aska4Task6RemoveEv	Aska::Task::Remove()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f604	0x207f604	48	_ZN4Aska4Task10DeleteThisEPNS_13DeleteManagerE	Aska::Task::DeleteThis(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f634	0x207f634	52	_ZN4Aska4Task19DeleteThisNextFrameEPNS_13DeleteManagerE	Aska::Task::DeleteThisNextFrame(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f668	0x207f668	52	_ZN4Aska4Task24DeleteThisAfterTwoFramesEPNS_13DeleteManagerE	Aska::Task::DeleteThisAfterTwoFrames(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f69c	0x207f69c	20	_ZN4Aska4Task21DeleteThisImmediatelyEv	Aska::Task::DeleteThisImmediately()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f6b0	0x207f6b0	76	_ZN4Aska4Task5CloneEPKNS_11IAnimatableE	Aska::Task::Clone(Aska::IAnimatable const*)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f6fc	0x207f6fc	156	_ZN4Aska4Task11CreateCloneEPKNS_11IAnimatableE	Aska::Task::CreateClone(Aska::IAnimatable const*)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f798	0x207f798	56	_ZN4Aska4Task11ChangeLevelEj	Aska::Task::ChangeLevel(unsigned int)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f7d0	0x207f7d0	16	_ZN4Aska4Task11ForceDeleteEv	Aska::Task::ForceDelete()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
+0x1f7f7e0	0x207f7e0	4	_ZN4Aska4Task3RunEi	Aska::Task::Run(int)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
 0x209f540	0x219f540	152	_ZN4Aska18HierarchicalObjectD2Ev	Aska::HierarchicalObject::~HierarchicalObject()	hierarchical_object	typed	
 0x20bce30	0x21bce30	316	_ZN4Aska21ShaderConstantManagerD1Ev	Aska::ShaderConstantManager::~ShaderConstantManager()	material	typed	
 0x20bcf6c	0x21bcf6c	204	_ZNK4Aska21ShaderConstantManager9IsRGBZeroEii	Aska::ShaderConstantManager::IsRGBZero(int, int) const	material	typed	

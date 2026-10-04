@@ -58,32 +58,10 @@ class SkinMatricesBase;
 
 // ---- The kernel's classes the object manager is built from (opaque-ish; kernel types them) -------
 
-// Aska::TaskManager: the kernel's per-frame task list (ObjectManager and ShadowManagerRegistry derive
-// from it). Data size 0xff0; layout from TaskManager::TaskManager (work/decomp, kernel's) and
-// TaskManager::Add (its FastCriticalSection at 0xf60: the lock word at 0xf98). An AnimatableList (a vptr
-// and a sentinel AnimatableLinkElement), then a Task (the second base, its own vptr) at 0x28: that Task is
-// what the owner task manager runs (ObjectManager::OnPrePaint / OnPaint / OnPostPaint are reached through
-// it, TaskManager::OwnersKickTask). Kept here, in scene, until kernel's layout header has it.
-class TaskManagerBase {
-public:
-    const void* vtable;                    // 0x000: the AnimatableList / derived class's vtable
-    render::AnimatableLinkElement m_list;  // 0x008: the task list's sentinel (links = self when empty)
-    u32 m_count;                           // 0x020
-    u8 unk_024[4];                         // 0x024
-    render::Task m_task;                   // 0x028: the second base (vptr = the derived vtable + 0xa0 / 0xb0)
-    u8 unk_050[0x80];                      // 0x050: zeroed by the constructor
-    u8 unk_0d0[0x60];                      // 0x0d0
-    u8 unk_130[32][0x68];                  // 0x130: 32 Aska::Event (sync's, 0x68 each)
-    u8 unk_e30[0x108];                     // 0xe30: zeroed by the constructor
-    u8 m_criticalSection[0x28];            // 0xf38: Aska::CriticalSection (sync)
-    u8 m_fastCriticalSection[0x90];        // 0xf60: Aska::FastCriticalSection (sync; lock word at 0xf98)
-};
-static_assert(offsetof(TaskManagerBase, m_list) == 0x008);
-static_assert(offsetof(TaskManagerBase, m_count) == 0x020);
-static_assert(offsetof(TaskManagerBase, m_task) == 0x028);
-static_assert(offsetof(TaskManagerBase, m_criticalSection) == 0xf38);
-static_assert(offsetof(TaskManagerBase, m_fastCriticalSection) == 0xf60);
-static_assert(sizeof(TaskManagerBase) == 0xff0);
+// Aska::TaskManager (ObjectManager's and ShadowManagerRegistry's base) is the kernel subsystem's
+// (kernel_layout.h, 0xff0): the task list, the Task base at 0x28 (its vptr = the derived vtable + 0xa0 / 0xb0;
+// ObjectManager::OnPrePaint / OnPaint / OnPostPaint are reached through it), the level barriers, the locks.
+using TaskManagerBase = kernel::TaskManager;
 
 // ---- The object manager's job system ---------------------------------------------------------------
 

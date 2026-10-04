@@ -18,6 +18,8 @@
 #include <cstdint>
 
 #include "../containers/containers_layout.h"
+#include "../containers/containers_layout.h"
+#include "../kernel/kernel_layout.h"
 #include "../math/math_layout.h"
 #include "../memory/memory_layout.h"
 
@@ -83,66 +85,12 @@ public:
 };
 static_assert(sizeof(IAnimatable) == 0x08);
 
-// Aska::AnimatableLinkElement: IAnimatable + a two-way link (Task's first base: its Get / Set are vtable
-// slots 5 / 6 of Task; the links are zeroed by every constructor that inlines it).
-class AnimatableLinkElement {
-public:
-    bool Get(u64 id, void* out) const;                   // slot 5  _ZNK4Aska21AnimatableLinkElement3GetEmPv
-    bool Set(u64 id, const void* in);                    // slot 6
-
-    IAnimatable base;                // 0x00
-    AnimatableLinkElement* m_next;   // 0x08: the TaskManager's list (zeroed by the constructors)
-    AnimatableLinkElement* m_prev;   // 0x10
-};
-static_assert(offsetof(AnimatableLinkElement, m_next) == 0x08);
-static_assert(offsetof(AnimatableLinkElement, m_prev) == 0x10);
-static_assert(sizeof(AnimatableLinkElement) == 0x18);
-
-class TaskManager;  // Aska::TaskManager: the kernel subsystem's (opaque here)
-
-// Aska::Task: a unit of per-frame work owned by a TaskManager (kernel). Guest size 0x28 (Task::CreateClone:
-// operator new(0x28)); layout from the inlined constructor (RenderableObject::RenderableObject), ~Task,
-// Remove, ChangeLevel, Clone, ForceDelete (port/decomp/render/hierarchical_object.c). The kernel
-// subsystem owns Task (its TaskManager side); it is here because every renderable derives from it.
-// vtable (_ZTVN4Aska4TaskE): 0-6 as IAnimatable / AnimatableLinkElement, 7 DeleteThis(DeleteManager*),
-// 8 DeleteThisNextFrame, 9 DeleteThisAfterTwoFrames, 10 DeleteThisImmediately, 11 GetDefaultLevel() const
-// (0x40), 12 MessageHandler(unsigned, int, void*, void*), 13 Run(int), 14 IsMulti() const,
-// 15 OnDeleteFromTaskManager, 16 OnAddToTaskManager, 17 OnAddTopToTaskManager, 18 OnInsertToTaskManager.
-class Task {
-public:
-    void DtorBase();                                     // ~Task()  _ZN4Aska4TaskD2Ev (removes itself: m_manager slot 8)
-    void DtorDelete();                                   // ~Task()  _ZN4Aska4TaskD0Ev
-    u64 GetClassID(s32 depth) const;                     // slot 2: 0xf000f001f002 chain
-    bool Clone(const IAnimatable* src);                  // slot 3: copies m_level, m_flags24, m_flags26
-    Task* CreateClone(const IAnimatable* src);           // slot 4
-    void DeleteThis(memory::DeleteManager* dm);          // slot 7: dm (or Global::m_systemDeleteManager)->AddMain(this, 3, 0, 0)
-    void DeleteThisNextFrame(memory::DeleteManager* dm); // slot 8: AddMain(this, 3, 1, 0)
-    void DeleteThisAfterTwoFrames(memory::DeleteManager* dm);  // slot 9: AddMain(this, 3, 2, 0)
-    void DeleteThisImmediately();                        // slot 10: vtable slot 1 (D0)
-    u32 GetDefaultLevel() const;                         // slot 11
-    u64 MessageHandler(u32 msg, s32 a, void* p, void* q);  // slot 12
-    void Run(s32 frames);                                // slot 13
-    bool IsMulti() const;                                // slot 14
-    void OnDeleteFromTaskManager();                      // slot 15
-    void OnAddToTaskManager();                           // slot 16
-    void OnAddTopToTaskManager();                        // slot 17
-    void OnInsertToTaskManager();                        // slot 18
-    void Remove();                                       // m_manager's vtable slot 8 (remove this)
-    void ChangeLevel(u32 level);                         // TaskManager::ChangeLevel, then m_level
-    void ForceDelete();                                  // m_manager = null, then slot 10
-
-    AnimatableLinkElement base;  // 0x00
-    TaskManager* m_manager;      // 0x18: the owning TaskManager (null when not added)
-    u32 m_level;                 // 0x20: the task level (GetDefaultLevel() at construction)
-    u16 m_flags24;               // 0x24: copied by Clone; meaning unknown
-    u8 m_flags26;                // 0x26: copied by Clone; meaning unknown
-    u8 unk_27;                   // 0x27
-};
-static_assert(offsetof(Task, m_manager) == 0x18);
-static_assert(offsetof(Task, m_level) == 0x20);
-static_assert(offsetof(Task, m_flags24) == 0x24);
-static_assert(offsetof(Task, m_flags26) == 0x26);
-static_assert(sizeof(Task) == 0x28);
+// Aska::AnimatableLinkElement and Aska::Task (+ TaskManager) are the kernel subsystem's (kernel_layout.h:
+// Task = {containers::LinkElement link (vtable, m_prev, m_next), m_owner, m_level, m_flags}, 0x28 bytes);
+// every renderable derives from Task. The aliases keep render's / scene's / anim's names.
+using AnimatableLinkElement = containers::LinkElement;  // Aska::AnimatableLinkElement {vtable, m_prev, m_next}
+using Task = kernel::Task;                              // Aska::Task, 0x28
+using TaskManager = kernel::TaskManager;                // Aska::TaskManager, 0xff0
 
 class HierarchicalObject;
 

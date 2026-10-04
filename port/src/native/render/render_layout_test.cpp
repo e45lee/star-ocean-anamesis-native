@@ -45,10 +45,10 @@ NATIVE_TEST("render/layout-renderable-object") {
     HierarchicalObjectContainer& hoc = ho.m_hoc;
 
     // The bases, as the constructor leaves them.
-    t.expect_eq(ho.base.base.base.vtable, vtable_of(t, "_ZTVN4Aska16RenderableObjectE"), "vtable");
+    t.expect_eq(ho.base.link.vtable, vtable_of(t, "_ZTVN4Aska16RenderableObjectE"), "vtable");
     t.expect_eq(hoc.vtable, vtable_of(t, "_ZTVN4Aska27HierarchicalObjectContainerE"), "the HOC base's vtable at 0x30");
-    t.expect_eq(ho.base.m_manager, (TaskManager*)nullptr, "Task::m_manager");
-    t.expect_eq(ho.base.base.m_next, (AnimatableLinkElement*)nullptr, "link next");
+    t.expect_eq(ho.base.m_owner, (TaskManager*)nullptr, "Task::m_owner");
+    t.expect_eq(ho.base.link.m_next, (AnimatableLinkElement*)nullptr, "link next");
     // The constructor stores Task::GetDefaultLevel() (the Task part runs with Task's vtable), not the
     // derived class's slot 11.
     t.expect_eq((u64)ho.base.m_level, t.call("_ZNK4Aska4Task15GetDefaultLevelEv", {(u64)o}) & 0xffffffff, "m_level = Task::GetDefaultLevel()");
@@ -553,7 +553,7 @@ NATIVE_TEST("render/layout-light") {
     std::memset(buf, 0, sizeof buf);
     auto* l = reinterpret_cast<Light*>(buf);
     t.call("_ZN4Aska5LightC2Ev", {(u64)l});
-    t.expect_eq(l->base.base.base.base.vtable, vtable_of(t, "_ZTVN4Aska5LightE"), "vtable");
+    t.expect_eq(l->base.base.link.vtable, vtable_of(t, "_ZTVN4Aska5LightE"), "vtable");
     auto* ao = reinterpret_cast<AimingObject*>(l);
     t.expect_eq(ao->m_aimNode, &l->base.m_hoc, "AimingObject part: m_aimNode = &m_hoc");
     t.expect_eq(l->m_color.w, 100.0f, "intensity 100 at construction");

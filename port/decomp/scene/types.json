@@ -4,155 +4,6 @@
  "header": "port/src/native/scene/scene_layout.h",
  "structs": [
   {
-   "name": "TaskManagerBase",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_list",
-     "type": {
-      "kind": "bytes",
-      "ctype": "soa::native::render::AnimatableLinkElement",
-      "size": 24
-     },
-     "size": 24
-    },
-    {
-     "offset": 32,
-     "name": "m_count",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": false
-     },
-     "size": 4
-    },
-    {
-     "offset": 36,
-     "name": "unk_024",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 4
-     },
-     "size": 4
-    },
-    {
-     "offset": 40,
-     "name": "m_task",
-     "type": {
-      "kind": "bytes",
-      "ctype": "soa::native::render::Task",
-      "size": 40
-     },
-     "size": 40
-    },
-    {
-     "offset": 80,
-     "name": "unk_050",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 128
-     },
-     "size": 128
-    },
-    {
-     "offset": 208,
-     "name": "unk_0d0",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 96
-     },
-     "size": 96
-    },
-    {
-     "offset": 304,
-     "name": "unk_130",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "array",
-       "of": {
-        "kind": "int",
-        "size": 1,
-        "signed": false
-       },
-       "count": 32
-      },
-      "count": 104
-     },
-     "size": 3328
-    },
-    {
-     "offset": 3632,
-     "name": "unk_e30",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 264
-     },
-     "size": 264
-    },
-    {
-     "offset": 3896,
-     "name": "m_criticalSection",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 40
-     },
-     "size": 40
-    },
-    {
-     "offset": 3936,
-     "name": "m_fastCriticalSection",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
-     },
-     "size": 144
-    }
-   ],
-   "size": 4080,
-   "align": 8
-  },
-  {
    "name": "ObjectManagerWorkerThread",
    "union": false,
    "fields": [
@@ -965,8 +816,9 @@
      "offset": 0,
      "name": "base",
      "type": {
-      "kind": "struct",
-      "name": "TaskManagerBase"
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::TaskManager",
+      "size": 4080
      },
      "size": 4080
     },

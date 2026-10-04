@@ -53,209 +53,6 @@
    ]
   },
   {
-   "name": "AnimatableLinkElement",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "base",
-     "type": {
-      "kind": "struct",
-      "name": "IAnimatable"
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_next",
-     "type": {
-      "kind": "ptr",
-      "to": "AnimatableLinkElement"
-     },
-     "size": 8
-    },
-    {
-     "offset": 16,
-     "name": "m_prev",
-     "type": {
-      "kind": "ptr",
-      "to": "AnimatableLinkElement"
-     },
-     "size": 8
-    }
-   ],
-   "size": 24,
-   "align": 8
-  },
-  {
-   "name": "Task",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "base",
-     "type": {
-      "kind": "struct",
-      "name": "AnimatableLinkElement"
-     },
-     "size": 24
-    },
-    {
-     "offset": 24,
-     "name": "m_manager",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 32,
-     "name": "m_level",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": false
-     },
-     "size": 4
-    },
-    {
-     "offset": 36,
-     "name": "m_flags24",
-     "type": {
-      "kind": "int",
-      "size": 2,
-      "signed": false
-     },
-     "size": 2
-    },
-    {
-     "offset": 38,
-     "name": "m_flags26",
-     "type": {
-      "kind": "int",
-      "size": 1,
-      "signed": false
-     },
-     "size": 1
-    },
-    {
-     "offset": 39,
-     "name": "unk_27",
-     "type": {
-      "kind": "int",
-      "size": 1,
-      "signed": false
-     },
-     "size": 1
-    }
-   ],
-   "size": 40,
-   "align": 8,
-   "methods": [
-    {
-     "ghidra": "0x130232c",
-     "symbol": "_ZNK4Aska4Task10GetClassIDEi",
-     "name": "GetClassID"
-    },
-    {
-     "ghidra": "0x1302370",
-     "symbol": "_ZN4Aska4Task14MessageHandlerEjiPvS1_",
-     "name": "MessageHandler"
-    },
-    {
-     "ghidra": "0x1302378",
-     "symbol": "_ZNK4Aska4Task7IsMultiEv",
-     "name": "IsMulti"
-    },
-    {
-     "ghidra": "0x1302380",
-     "symbol": "_ZN4Aska4Task23OnDeleteFromTaskManagerEv",
-     "name": "OnDeleteFromTaskManager"
-    },
-    {
-     "ghidra": "0x1302384",
-     "symbol": "_ZN4Aska4Task18OnAddToTaskManagerEv",
-     "name": "OnAddToTaskManager"
-    },
-    {
-     "ghidra": "0x1302388",
-     "symbol": "_ZN4Aska4Task21OnAddTopToTaskManagerEv",
-     "name": "OnAddTopToTaskManager"
-    },
-    {
-     "ghidra": "0x130238c",
-     "symbol": "_ZN4Aska4Task21OnInsertToTaskManagerEv",
-     "name": "OnInsertToTaskManager"
-    },
-    {
-     "ghidra": "0x144e514",
-     "symbol": "_ZNK4Aska4Task15GetDefaultLevelEv",
-     "name": "GetDefaultLevel"
-    },
-    {
-     "ghidra": "0x207f564",
-     "symbol": "_ZN4Aska4TaskD2Ev",
-     "name": "~Task"
-    },
-    {
-     "ghidra": "0x207f5a0",
-     "symbol": "_ZN4Aska4TaskD0Ev",
-     "name": "~Task"
-    },
-    {
-     "ghidra": "0x207f5e4",
-     "symbol": "_ZN4Aska4Task6RemoveEv",
-     "name": "Remove"
-    },
-    {
-     "ghidra": "0x207f604",
-     "symbol": "_ZN4Aska4Task10DeleteThisEPNS_13DeleteManagerE",
-     "name": "DeleteThis"
-    },
-    {
-     "ghidra": "0x207f634",
-     "symbol": "_ZN4Aska4Task19DeleteThisNextFrameEPNS_13DeleteManagerE",
-     "name": "DeleteThisNextFrame"
-    },
-    {
-     "ghidra": "0x207f668",
-     "symbol": "_ZN4Aska4Task24DeleteThisAfterTwoFramesEPNS_13DeleteManagerE",
-     "name": "DeleteThisAfterTwoFrames"
-    },
-    {
-     "ghidra": "0x207f69c",
-     "symbol": "_ZN4Aska4Task21DeleteThisImmediatelyEv",
-     "name": "DeleteThisImmediately"
-    },
-    {
-     "ghidra": "0x207f6b0",
-     "symbol": "_ZN4Aska4Task5CloneEPKNS_11IAnimatableE",
-     "name": "Clone"
-    },
-    {
-     "ghidra": "0x207f6fc",
-     "symbol": "_ZN4Aska4Task11CreateCloneEPKNS_11IAnimatableE",
-     "name": "CreateClone"
-    },
-    {
-     "ghidra": "0x207f798",
-     "symbol": "_ZN4Aska4Task11ChangeLevelEj",
-     "name": "ChangeLevel"
-    },
-    {
-     "ghidra": "0x207f7d0",
-     "symbol": "_ZN4Aska4Task11ForceDeleteEv",
-     "name": "ForceDelete"
-    },
-    {
-     "ghidra": "0x207f7e0",
-     "symbol": "_ZN4Aska4Task3RunEi",
-     "name": "Run"
-    }
-   ]
-  },
-  {
    "name": "HierarchicalObjectContainer",
    "union": false,
    "fields": [
@@ -399,7 +196,7 @@
      "name": "m_referrers",
      "type": {
       "kind": "ptr",
-      "to": "AnimatableLinkElement"
+      "to": null
      },
      "size": 8
     },
@@ -594,8 +391,9 @@
      "offset": 0,
      "name": "base",
      "type": {
-      "kind": "struct",
-      "name": "Task"
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::Task",
+      "size": 40
      },
      "size": 40
     },

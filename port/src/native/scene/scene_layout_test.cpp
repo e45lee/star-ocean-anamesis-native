@@ -43,7 +43,7 @@ NATIVE_TEST("scene/layout-object-manager") {
     on_frame(t, [&] {
         ObjectManager* om = object_manager();
         if (!t.expect_eq(has_vtable(t, om, "_ZTVN4Aska13ObjectManagerE"), true, "ObjectManager vtable")) return;
-        t.expect_eq(om->base.m_task.base.base.vtable, (const void*)(t.sym("_ZTVN4Aska13ObjectManagerE") + 0xb0),
+        t.expect_eq(om->base.task.link.vtable, (const void*)(t.sym("_ZTVN4Aska13ObjectManagerE") + 0xb0),
                     "the Task base's vptr at 0x28 (vtable + 0xb0)");
         t.expect_eq(has_vtable(t, om->m_renderThread, "_ZTVN4Aska12RenderThreadE"), true, "m_renderThread");
         t.expect_eq(has_vtable(t, om->m_renderContextServer, "_ZTVN4Aska19RenderContextServerE"), true, "m_renderContextServer");

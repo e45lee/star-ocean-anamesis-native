@@ -2,5 +2,3638 @@
  "subsystem": "memory",
  "generated_by": "tools/subsystem.py export-types memory",
  "header": "port/src/native/memory/memory_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "MemoryBlock",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_physNext",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryBlock"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_physPrev",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryBlock"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_freeNext",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryBlock"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_freePrev",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryBlock"
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_flag30",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "m_used",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 50,
+     "name": "unk_32",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 56,
+     "name": "m_extra",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 64,
+   "align": 8
+  },
+  {
+   "name": "MemorySrbk",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_inUse",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "unk_01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 4,
+     "name": "m_next",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_allocated",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_free",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_largestFree",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "MemoryManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_allocHigh",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "unk_09",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 16,
+     "name": "m_srbks",
+     "type": {
+      "kind": "ptr",
+      "to": "MemorySrbk"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_srbkCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_heap",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_heapSize",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_badAllocNotify",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_ownsHeap",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 57,
+     "name": "unk_39",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 64,
+     "name": "m_ringHead",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_ringNext",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "m_ringPrev",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_parent",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 96,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    }
+   ],
+   "size": 240,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2049e3c",
+     "symbol": "_ZN4Aska13MemoryManager8InitHeapEPhm",
+     "name": "InitHeap"
+    },
+    {
+     "ghidra": "0x2049fd0",
+     "symbol": "_ZN4Aska13MemoryManager19GetAllocatedManagerEPKvPm",
+     "name": "GetAllocatedManager"
+    },
+    {
+     "ghidra": "0x2049fe4",
+     "symbol": "_ZN4Aska13MemoryManager19GetAllocatedManagerEPKv",
+     "name": "GetAllocatedManager"
+    },
+    {
+     "ghidra": "0x2049fec",
+     "symbol": "_ZN4Aska13MemoryManager19LocalRegisterNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "LocalRegisterNotify"
+    },
+    {
+     "ghidra": "0x204a010",
+     "symbol": "_ZN4Aska13MemoryManager17LocalRemoveNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "LocalRemoveNotify"
+    },
+    {
+     "ghidra": "0x204a034",
+     "symbol": "_ZN4Aska13MemoryManager23LocalIsRegisteredNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "LocalIsRegisteredNotify"
+    },
+    {
+     "ghidra": "0x204a060",
+     "symbol": "_ZN4Aska13MemoryManager24LocalGetRegisteredNotifyEPv",
+     "name": "LocalGetRegisteredNotify"
+    },
+    {
+     "ghidra": "0x204a068",
+     "symbol": "_ZN4Aska13MemoryManager14RegisterNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "RegisterNotify"
+    },
+    {
+     "ghidra": "0x204a1e4",
+     "symbol": "_ZN4Aska13MemoryManager12RemoveNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "RemoveNotify"
+    },
+    {
+     "ghidra": "0x204a360",
+     "symbol": "_ZN4Aska13MemoryManager18IsRegisteredNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "IsRegisteredNotify"
+    },
+    {
+     "ghidra": "0x204a4dc",
+     "symbol": "_ZN4Aska13MemoryManager19GetRegisteredNotifyEPv",
+     "name": "GetRegisteredNotify"
+    },
+    {
+     "ghidra": "0x204a638",
+     "symbol": "_ZN4Aska13MemoryManager12CalcSrbkSizeEm",
+     "name": "CalcSrbkSize"
+    },
+    {
+     "ghidra": "0x204a650",
+     "symbol": "_ZN4Aska13MemoryManager16CalcFullHeapSizeEm",
+     "name": "CalcFullHeapSize"
+    },
+    {
+     "ghidra": "0x204a670",
+     "symbol": "_ZN4Aska13MemoryManager27CalcFullHeapSizeForOneBlockEmlb",
+     "name": "CalcFullHeapSizeForOneBlock"
+    },
+    {
+     "ghidra": "0x204a6b4",
+     "symbol": "_ZN4Aska13MemoryManager9LocalFreeEPNS_12_MemoryBlockE",
+     "name": "LocalFree"
+    },
+    {
+     "ghidra": "0x204acb8",
+     "symbol": "_ZN4Aska13MemoryManagerC2Ev",
+     "name": "MemoryManager"
+    },
+    {
+     "ghidra": "0x204acf4",
+     "symbol": "_ZN4Aska13MemoryManager10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x204ad08",
+     "symbol": "_ZN4Aska13MemoryManagerC1Em",
+     "name": "MemoryManager"
+    },
+    {
+     "ghidra": "0x204ad58",
+     "symbol": "_ZN4Aska13MemoryManager8InitHeapEm",
+     "name": "InitHeap"
+    },
+    {
+     "ghidra": "0x204aeb4",
+     "symbol": "_ZN4Aska13MemoryManagerD2Ev",
+     "name": "~MemoryManager"
+    },
+    {
+     "ghidra": "0x204afbc",
+     "symbol": "_ZN4Aska13MemoryManager9ClearHeapEv",
+     "name": "ClearHeap"
+    },
+    {
+     "ghidra": "0x204afc0",
+     "symbol": "_ZN4Aska13MemoryManager6RemoveEPS0_",
+     "name": "Remove"
+    },
+    {
+     "ghidra": "0x204b054",
+     "symbol": "_ZN4Aska13MemoryManager10DeleteHeapEv",
+     "name": "DeleteHeap"
+    },
+    {
+     "ghidra": "0x204b08c",
+     "symbol": "_ZN4Aska13MemoryManagerD0Ev",
+     "name": "~MemoryManager"
+    },
+    {
+     "ghidra": "0x204b0b4",
+     "symbol": "_ZN4Aska13MemoryManager8InitSrbkEm",
+     "name": "InitSrbk"
+    },
+    {
+     "ghidra": "0x204b19c",
+     "symbol": "_ZN4Aska13MemoryManager8InitHeapEPhmS1_m",
+     "name": "InitHeap"
+    },
+    {
+     "ghidra": "0x204b2e8",
+     "symbol": "_ZN4Aska13MemoryManager8InitSrbkEmPh",
+     "name": "InitSrbk"
+    },
+    {
+     "ghidra": "0x204b3a0",
+     "symbol": "_ZN4Aska13MemoryManager6MallocEm",
+     "name": "Malloc"
+    },
+    {
+     "ghidra": "0x204b880",
+     "symbol": "_ZN4Aska13MemoryManager10MallocHighEm",
+     "name": "MallocHigh"
+    },
+    {
+     "ghidra": "0x204bd20",
+     "symbol": "_ZN4Aska13MemoryManager13AlignedMallocEml",
+     "name": "AlignedMalloc"
+    },
+    {
+     "ghidra": "0x204c2d4",
+     "symbol": "_ZN4Aska13MemoryManager17AlignedMallocHighEml",
+     "name": "AlignedMallocHigh"
+    },
+    {
+     "ghidra": "0x204c888",
+     "symbol": "_ZN4Aska13MemoryManager7ReallocEmPvl",
+     "name": "Realloc"
+    },
+    {
+     "ghidra": "0x204d0d4",
+     "symbol": "_ZN4Aska13MemoryManager5SplitEPvS1_",
+     "name": "Split"
+    },
+    {
+     "ghidra": "0x204d2ec",
+     "symbol": "_ZN4Aska13MemoryManager4MoveEPvlb",
+     "name": "Move"
+    },
+    {
+     "ghidra": "0x204d458",
+     "symbol": "_ZN4Aska13MemoryManager9LocalFreeEPv",
+     "name": "LocalFree"
+    },
+    {
+     "ghidra": "0x204d464",
+     "symbol": "_ZNK4Aska13MemoryManager9IsCreatedEv",
+     "name": "IsCreated"
+    },
+    {
+     "ghidra": "0x204d5c8",
+     "symbol": "_ZNK4Aska13MemoryManager10IsPhysicalEv",
+     "name": "IsPhysical"
+    },
+    {
+     "ghidra": "0x204d5d0",
+     "symbol": "_ZN4Aska13MemoryManager13GetMemorySizeEPKv",
+     "name": "GetMemorySize"
+    },
+    {
+     "ghidra": "0x204d5d8",
+     "symbol": "_ZNK4Aska13MemoryManager12CalcFreeSizeEPlS1_",
+     "name": "CalcFreeSize"
+    },
+    {
+     "ghidra": "0x204d7e4",
+     "symbol": "_ZN4Aska13MemoryManager15CountFreeBlocksEv",
+     "name": "CountFreeBlocks"
+    },
+    {
+     "ghidra": "0x204d98c",
+     "symbol": "_ZNK4Aska13MemoryManager7IsEmptyEb",
+     "name": "IsEmpty"
+    },
+    {
+     "ghidra": "0x204dcbc",
+     "symbol": "_ZN4Aska13MemoryManager12CalcFreeSizeEb",
+     "name": "CalcFreeSize"
+    },
+    {
+     "ghidra": "0x204dfb8",
+     "symbol": "_ZN4Aska13MemoryManager16PrintMemoryChainEv",
+     "name": "PrintMemoryChain"
+    },
+    {
+     "ghidra": "0x204dfbc",
+     "symbol": "_ZN4Aska13MemoryManager16PrintMemoryChainEPKc",
+     "name": "PrintMemoryChain"
+    },
+    {
+     "ghidra": "0x204dfc0",
+     "symbol": "_ZN4Aska13MemoryManager15SearchNextBlockEPPNS0_5_SrbkEPPNS_12_MemoryBlockEb",
+     "name": "SearchNextBlock"
+    },
+    {
+     "ghidra": "0x204e218",
+     "symbol": "_ZN4Aska13MemoryManager3AddEi",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x204e2c8",
+     "symbol": "_ZN4Aska13MemoryManager3AddEPvi",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x204e384",
+     "symbol": "_ZN4Aska13MemoryManager3AddEPS0_",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x204e3e0",
+     "symbol": "_ZN4Aska13MemoryManager20CreateDebugMemoryMapEiib",
+     "name": "CreateDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x204e3e4",
+     "symbol": "_ZN4Aska13MemoryManager20UpdateDebugMemoryMapEv",
+     "name": "UpdateDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x204e3e8",
+     "symbol": "_ZN4Aska13MemoryManager17GetDebugMemoryMapEPNS_4TextEffjff",
+     "name": "GetDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x204e3ec",
+     "symbol": "_ZN4Aska13MemoryManager21SetSwapDebugMemoryMapEb",
+     "name": "SetSwapDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x204e3f0",
+     "symbol": "_ZN4Aska13MemoryManager21VirtualRegisterNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "VirtualRegisterNotify"
+    },
+    {
+     "ghidra": "0x204e560",
+     "symbol": "_ZN4Aska13MemoryManager19VirtualRemoveNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "VirtualRemoveNotify"
+    },
+    {
+     "ghidra": "0x204e6d0",
+     "symbol": "_ZN4Aska13MemoryManager25VirtualIsRegisteredNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "VirtualIsRegisteredNotify"
+    },
+    {
+     "ghidra": "0x204e840",
+     "symbol": "_ZN4Aska13MemoryManager26VirtualGetRegisteredNotifyEPv",
+     "name": "VirtualGetRegisteredNotify"
+    },
+    {
+     "ghidra": "0x204e990",
+     "symbol": "_ZN4Aska13MemoryManager13VirtualMallocEm",
+     "name": "VirtualMalloc"
+    },
+    {
+     "ghidra": "0x204e994",
+     "symbol": "_ZN4Aska13MemoryManager17VirtualMallocHighEm",
+     "name": "VirtualMallocHigh"
+    },
+    {
+     "ghidra": "0x204e998",
+     "symbol": "_ZN4Aska13MemoryManager20VirtualAlignedMallocEml",
+     "name": "VirtualAlignedMalloc"
+    },
+    {
+     "ghidra": "0x204e99c",
+     "symbol": "_ZN4Aska13MemoryManager24VirtualAlignedMallocHighEml",
+     "name": "VirtualAlignedMallocHigh"
+    },
+    {
+     "ghidra": "0x204e9a0",
+     "symbol": "_ZN4Aska13MemoryManager14VirtualReallocEmPvl",
+     "name": "VirtualRealloc"
+    },
+    {
+     "ghidra": "0x204e9a4",
+     "symbol": "_ZN4Aska13MemoryManager12VirtualSplitEPvS1_",
+     "name": "VirtualSplit"
+    },
+    {
+     "ghidra": "0x204e9a8",
+     "symbol": "_ZN4Aska13MemoryManager11VirtualMoveEPvlb",
+     "name": "VirtualMove"
+    },
+    {
+     "ghidra": "0x204e9b0",
+     "symbol": "_ZN4Aska13MemoryManager15VirtualMoveHighEPvl",
+     "name": "VirtualMoveHigh"
+    },
+    {
+     "ghidra": "0x204e9b8",
+     "symbol": "_ZN4Aska13MemoryManager11VirtualFreeEPv",
+     "name": "VirtualFree"
+    },
+    {
+     "ghidra": "0x204e9cc",
+     "symbol": "_ZNK4Aska13MemoryManager21VirtualGetHeapAddressEv",
+     "name": "VirtualGetHeapAddress"
+    },
+    {
+     "ghidra": "0x204e9d4",
+     "symbol": "_ZNK4Aska13MemoryManager17VirtualIsPhysicalEv",
+     "name": "VirtualIsPhysical"
+    },
+    {
+     "ghidra": "0x204e9e4",
+     "symbol": "_ZNK4Aska13MemoryManager19VirtualCalcFreeSizeEPlS1_",
+     "name": "VirtualCalcFreeSize"
+    },
+    {
+     "ghidra": "0x204e9e8",
+     "symbol": "_ZNK4Aska13MemoryManager14VirtualIsEmptyEb",
+     "name": "VirtualIsEmpty"
+    },
+    {
+     "ghidra": "0x204e9f0",
+     "symbol": "_ZN4Aska13MemoryManager29VirtualGetFastCriticalSectionEv",
+     "name": "VirtualGetFastCriticalSection"
+    },
+    {
+     "ghidra": "0x204e9f8",
+     "symbol": "_ZNK4Aska13MemoryManager14VirtualGetSrbkEi",
+     "name": "VirtualGetSrbk"
+    },
+    {
+     "ghidra": "0x204ea08",
+     "symbol": "_ZNK4Aska13MemoryManager24VirtualGetTopSrbkAddressEv",
+     "name": "VirtualGetTopSrbkAddress"
+    },
+    {
+     "ghidra": "0x204ea10",
+     "symbol": "_ZN4Aska13MemoryManager23VirtualPrintMemoryChainEv",
+     "name": "VirtualPrintMemoryChain"
+    },
+    {
+     "ghidra": "0x204ea14",
+     "symbol": "_ZNK4Aska13MemoryManager18VirtualGetHeapSizeEv",
+     "name": "VirtualGetHeapSize"
+    },
+    {
+     "ghidra": "0x204ea1c",
+     "symbol": "_ZN4Aska13MemoryManager26VirtualGetAllocatedManagerEPKvPm",
+     "name": "VirtualGetAllocatedManager"
+    }
+   ]
+  },
+  {
+   "name": "MemoryManagerHelper",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_manager",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_savedGlobal",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_heap",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_srbks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x200aaac",
+     "symbol": "_ZN4Aska19MemoryManagerHelperC1Ev",
+     "name": "MemoryManagerHelper"
+    },
+    {
+     "ghidra": "0x200aacc",
+     "symbol": "_ZN4Aska19MemoryManagerHelperD2Ev",
+     "name": "~MemoryManagerHelper"
+    },
+    {
+     "ghidra": "0x200ab14",
+     "symbol": "_ZN4Aska19MemoryManagerHelper4InitEmj",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x200ab80",
+     "symbol": "_ZN4Aska19MemoryManagerHelper17InitMemoryManagerEm",
+     "name": "InitMemoryManager"
+    },
+    {
+     "ghidra": "0x200abcc",
+     "symbol": "_ZN4Aska19MemoryManagerHelper7CleanupEv",
+     "name": "Cleanup"
+    },
+    {
+     "ghidra": "0x200ac04",
+     "symbol": "_ZN4Aska19MemoryManagerHelper19CleanupMemoryManaerEv",
+     "name": "CleanupMemoryManaer"
+    },
+    {
+     "ghidra": "0x200ac2c",
+     "symbol": "_ZN4Aska19MemoryManagerHelper23InitMemoryHandleManagerEmj",
+     "name": "InitMemoryHandleManager"
+    },
+    {
+     "ghidra": "0x200acd8",
+     "symbol": "_ZN4Aska19MemoryManagerHelper26CleanupMemoryHandleManagerEv",
+     "name": "CleanupMemoryHandleManager"
+    }
+   ]
+  },
+  {
+   "name": "CApplicationMemory",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_primary",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_secondary",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_particle",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_sound",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_network",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f63c88",
+     "symbol": "_ZN9Framework18CApplicationMemoryC1Ev",
+     "name": "CApplicationMemory"
+    },
+    {
+     "ghidra": "0x1f63cd8",
+     "symbol": "_ZN9Framework18CApplicationMemory23SetPrimaryMemoryManagerEv",
+     "name": "SetPrimaryMemoryManager"
+    },
+    {
+     "ghidra": "0x1f63d3c",
+     "symbol": "_ZN9Framework18CApplicationMemory24SetParticleMemoryManagerEv",
+     "name": "SetParticleMemoryManager"
+    },
+    {
+     "ghidra": "0x1f63e18",
+     "symbol": "_ZN9Framework18CApplicationMemory30rDefaultBadAllocateNotifyRetryEv",
+     "name": "rDefaultBadAllocateNotifyRetry"
+    },
+    {
+     "ghidra": "0x1f63e58",
+     "symbol": "_ZN9Framework18CApplicationMemory21SetSoundMemoryManagerEv",
+     "name": "SetSoundMemoryManager"
+    },
+    {
+     "ghidra": "0x1f63f28",
+     "symbol": "_ZN9Framework18CApplicationMemory23SetNetworkMemoryManagerEv",
+     "name": "SetNetworkMemoryManager"
+    },
+    {
+     "ghidra": "0x1f63ffc",
+     "symbol": "_ZN9Framework18CApplicationMemory13gReportMemoryEv",
+     "name": "gReportMemory"
+    },
+    {
+     "ghidra": "0x1f64038",
+     "symbol": "_ZN9Framework18CApplicationMemory21rPrimaryMemoryManagerEv",
+     "name": "rPrimaryMemoryManager"
+    },
+    {
+     "ghidra": "0x1f64074",
+     "symbol": "_ZN9Framework18CApplicationMemory23rSecondaryMemoryManagerEv",
+     "name": "rSecondaryMemoryManager"
+    },
+    {
+     "ghidra": "0x1f640b0",
+     "symbol": "_ZN9Framework18CApplicationMemory25rDefaultBadAllocateNotifyEv",
+     "name": "rDefaultBadAllocateNotify"
+    },
+    {
+     "ghidra": "0x1f640f0",
+     "symbol": "_ZN9Framework18CApplicationMemory22rParticleMemoryManagerEv",
+     "name": "rParticleMemoryManager"
+    },
+    {
+     "ghidra": "0x1f6412c",
+     "symbol": "_ZN9Framework18CApplicationMemory19rSoundMemoryManagerEv",
+     "name": "rSoundMemoryManager"
+    },
+    {
+     "ghidra": "0x1f64168",
+     "symbol": "_ZN9Framework18CApplicationMemory21rNetworkMemoryManagerEv",
+     "name": "rNetworkMemoryManager"
+    }
+   ]
+  },
+  {
+   "name": "IFixedLengthAllocator",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8
+  },
+  {
+   "name": "FixedLengthBlockHeader",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 3,
+     "name": "m_free",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 4,
+     "name": "m_index",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_next",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 4
+  },
+  {
+   "name": "TFixedLengthBlock<32>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_header",
+     "type": {
+      "kind": "struct",
+      "name": "FixedLengthBlockHeader"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_data",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    }
+   ],
+   "size": 48,
+   "align": 4
+  },
+  {
+   "name": "TFixedLengthAllocator<32>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 27,
+     "name": "m_tagPad",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxBlock",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_ownsBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 52,
+     "name": "m_numAllocated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TFixedLengthAllocator<512>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 27,
+     "name": "m_tagPad",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxBlock",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_ownsBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 52,
+     "name": "m_numAllocated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TFixedLengthAllocator<256>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 27,
+     "name": "m_tagPad",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxBlock",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_ownsBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 52,
+     "name": "m_numAllocated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TFixedLengthAllocator<192>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 27,
+     "name": "m_tagPad",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxBlock",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_ownsBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 52,
+     "name": "m_numAllocated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TFixedLengthAllocator<128>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 27,
+     "name": "m_tagPad",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxBlock",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_ownsBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 52,
+     "name": "m_numAllocated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TFixedLengthAllocator<64>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 27,
+     "name": "m_tagPad",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxBlock",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_ownsBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 52,
+     "name": "m_numAllocated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TFixedLengthAllocator<16>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_tag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 27,
+     "name": "m_tagPad",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_maxBlock",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_ownsBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 52,
+     "name": "m_numAllocated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "TObjectContainer<IFixedLengthAllocator *>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_elements",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "CFixedLengthAllocatorContainer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_allocators",
+     "type": {
+      "kind": "struct",
+      "name": "TObjectContainer<IFixedLengthAllocator *>"
+     },
+     "size": 24
+    }
+   ],
+   "size": 24,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f9d6c0",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainerC2Ev",
+     "name": "CFixedLengthAllocatorContainer"
+    },
+    {
+     "ghidra": "0x1f9d6d8",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainerD2Ev",
+     "name": "~CFixedLengthAllocatorContainer"
+    },
+    {
+     "ghidra": "0x1f9d70c",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f9d83c",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer10InitializeEPPNS_21IFixedLengthAllocatorEj",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f9dab4",
+     "symbol": "_ZNK9Framework30CFixedLengthAllocatorContainer13IsInitializedEv",
+     "name": "IsInitialized"
+    },
+    {
+     "ghidra": "0x1f9dac4",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer9pAllocateEmPKcj",
+     "name": "pAllocate"
+    },
+    {
+     "ghidra": "0x1f9dc14",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer4FreeEPv",
+     "name": "Free"
+    },
+    {
+     "ghidra": "0x1f9dd48",
+     "symbol": "_ZNK9Framework30CFixedLengthAllocatorContainer6IsMineEPv",
+     "name": "IsMine"
+    },
+    {
+     "ghidra": "0x1f9def0",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer11EnableMutexEv",
+     "name": "EnableMutex"
+    },
+    {
+     "ghidra": "0x1f9dfec",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer12DisableMutexEv",
+     "name": "DisableMutex"
+    },
+    {
+     "ghidra": "0x1f9e0e8",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer7ReportSEv",
+     "name": "ReportS"
+    },
+    {
+     "ghidra": "0x1f9e1f8",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer7ReportCEv",
+     "name": "ReportC"
+    },
+    {
+     "ghidra": "0x1f9e308",
+     "symbol": "_ZN9Framework30CFixedLengthAllocatorContainer7ReportLEv",
+     "name": "ReportL"
+    }
+   ]
+  },
+  {
+   "name": "CHandleManager_Base",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_instanceId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_elements",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_mutex",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_nextSerial",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_reservedStart",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_reservedEnd",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "unk_34",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f845b4",
+     "symbol": "_ZN9Framework19CHandleManager_Base26MountAdditionalInformationEjj",
+     "name": "MountAdditionalInformation"
+    },
+    {
+     "ghidra": "0x1f845c0",
+     "symbol": "_ZN9Framework19CHandleManager_Base28UnmountAdditionalInformationEm",
+     "name": "UnmountAdditionalInformation"
+    },
+    {
+     "ghidra": "0x1f845c8",
+     "symbol": "_ZN9Framework19CHandleManager_Base18UnmountHandleValueEm",
+     "name": "UnmountHandleValue"
+    },
+    {
+     "ghidra": "0x1f845cc",
+     "symbol": "_ZNK9Framework19CHandleManager_Base32MountAdditionalInformationBySelfEj",
+     "name": "MountAdditionalInformationBySelf"
+    },
+    {
+     "ghidra": "0x1f84614",
+     "symbol": "_ZN9Framework19CHandleManager_BaseC1Ev",
+     "name": "CHandleManager_Base"
+    },
+    {
+     "ghidra": "0x1f8462c",
+     "symbol": "_ZN9Framework19CHandleManager_BaseD2Ev",
+     "name": "~CHandleManager_Base"
+    },
+    {
+     "ghidra": "0x1f846ac",
+     "symbol": "_ZN9Framework19CHandleManager_Base7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f8471c",
+     "symbol": "_ZN9Framework19CHandleManager_BaseD0Ev",
+     "name": "~CHandleManager_Base"
+    },
+    {
+     "ghidra": "0x1f8479c",
+     "symbol": "_ZN9Framework19CHandleManager_Base10InitializeEjjj",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f84968",
+     "symbol": "_ZNK9Framework19CHandleManager_Base13IsInitializedEv",
+     "name": "IsInitialized"
+    },
+    {
+     "ghidra": "0x1f84978",
+     "symbol": "_ZN9Framework19CHandleManager_Base11EnableMutexEv",
+     "name": "EnableMutex"
+    },
+    {
+     "ghidra": "0x1f849f4",
+     "symbol": "_ZN9Framework19CHandleManager_Base12DisableMutexEv",
+     "name": "DisableMutex"
+    },
+    {
+     "ghidra": "0x1f84a6c",
+     "symbol": "_ZN9Framework19CHandleManager_Base20DisableMutex_ExecuteEv",
+     "name": "DisableMutex_Execute"
+    },
+    {
+     "ghidra": "0x1f84ac4",
+     "symbol": "_ZN9Framework19CHandleManager_Base17rElementContainerEv",
+     "name": "rElementContainer"
+    },
+    {
+     "ghidra": "0x1f84b10",
+     "symbol": "_ZN9Framework19CHandleManager_Base8RegisterEm",
+     "name": "Register"
+    },
+    {
+     "ghidra": "0x1f84d48",
+     "symbol": "_ZN9Framework19CHandleManager_Base17RegisterToReserveEmj",
+     "name": "RegisterToReserve"
+    },
+    {
+     "ghidra": "0x1f84ea4",
+     "symbol": "_ZNK9Framework19CHandleManager_Base19IsRegisteredPointerEm",
+     "name": "IsRegisteredPointer"
+    },
+    {
+     "ghidra": "0x1f84fa4",
+     "symbol": "_ZNK9Framework19CHandleManager_Base25IsRegisteredReserveHandleEj",
+     "name": "IsRegisteredReserveHandle"
+    },
+    {
+     "ghidra": "0x1f85074",
+     "symbol": "_ZNK9Framework19CHandleManager_Base14IsIssuedHandleEm",
+     "name": "IsIssuedHandle"
+    },
+    {
+     "ghidra": "0x1f85088",
+     "symbol": "_ZN9Framework19CHandleManager_Base10UnregisterEm",
+     "name": "Unregister"
+    },
+    {
+     "ghidra": "0x1f85210",
+     "symbol": "_ZNK9Framework19CHandleManager_Base5ReferEm",
+     "name": "Refer"
+    },
+    {
+     "ghidra": "0x1f8533c",
+     "symbol": "_ZN9Framework19CHandleManager_Base7ReplaceEmm",
+     "name": "Replace"
+    },
+    {
+     "ghidra": "0x1f85470",
+     "symbol": "_ZNK9Framework19CHandleManager_Base21MakeHandleFromReserveEj",
+     "name": "MakeHandleFromReserve"
+    },
+    {
+     "ghidra": "0x1f85480",
+     "symbol": "_ZN9Framework19CHandleManager_Base14RegressionTestEv",
+     "name": "RegressionTest"
+    }
+   ]
+  },
+  {
+   "name": "TDynamicQueue<DeletePointerInfo *>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_items",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "DeletePointerInfo",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_pointer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_handler",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_deferred",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "m_kind",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 18,
+     "name": "unk_12",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "DeleteManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 152,
+     "name": "m_infoStorage",
+     "type": {
+      "kind": "ptr",
+      "to": "DeletePointerInfo"
+     },
+     "size": 8
+    },
+    {
+     "offset": 160,
+     "name": "m_infos",
+     "type": {
+      "kind": "ptr",
+      "to": "DeletePointerInfo"
+     },
+     "size": 8
+    },
+    {
+     "offset": 168,
+     "name": "m_free",
+     "type": {
+      "kind": "struct",
+      "name": "TDynamicQueue<DeletePointerInfo *>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 200,
+     "name": "m_queued",
+     "type": {
+      "kind": "struct",
+      "name": "TDynamicQueue<DeletePointerInfo *>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 232,
+     "name": "m_pendingQueue",
+     "type": {
+      "kind": "struct",
+      "name": "TDynamicQueue<DeletePointerInfo *>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 264,
+     "name": "m_flushing",
+     "type": {
+      "kind": "struct",
+      "name": "TDynamicQueue<DeletePointerInfo *>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 296,
+     "name": "m_pending",
+     "type": {
+      "kind": "ptr",
+      "to": "TDynamicQueue<DeletePointerInfo *>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 304,
+     "name": "m_queueSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 308,
+     "name": "unk_134",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 312,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x201e24c",
+     "symbol": "_ZN4Aska13DeleteManagerD2Ev",
+     "name": "~DeleteManager"
+    },
+    {
+     "ghidra": "0x201e2dc",
+     "symbol": "_ZN4Aska13DeleteManager10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x201e3e8",
+     "symbol": "_ZN4Aska13DeleteManager5ClearEv",
+     "name": "Clear"
+    },
+    {
+     "ghidra": "0x201e5b0",
+     "symbol": "_ZN4Aska13DeleteManager7IsEmptyEv",
+     "name": "IsEmpty"
+    },
+    {
+     "ghidra": "0x201e60c",
+     "symbol": "_ZN4Aska13DeleteManager7AddMainEPvhhPNS_14IDeleteHandlerE",
+     "name": "AddMain"
+    },
+    {
+     "ghidra": "0x201e918",
+     "symbol": "_ZN4Aska13DeleteManager6CancelEPv",
+     "name": "Cancel"
+    },
+    {
+     "ghidra": "0x201eb3c",
+     "symbol": "_ZN4Aska13DeleteManager12PreFlushMainEv",
+     "name": "PreFlushMain"
+    },
+    {
+     "ghidra": "0x201ed74",
+     "symbol": "_ZN4Aska13DeleteManager9FlushMainEv",
+     "name": "FlushMain"
+    },
+    {
+     "ghidra": "0x201f058",
+     "symbol": "_ZN4Aska13DeleteManager13PostFlushMainEv",
+     "name": "PostFlushMain"
+    },
+    {
+     "ghidra": "0x201f23c",
+     "symbol": "_ZN4Aska13DeleteManagerD0Ev",
+     "name": "~DeleteManager"
+    }
+   ]
+  },
+  {
+   "name": "TSharedPointerCodePool",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_lock",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_counters",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 256
+     },
+     "size": 1024
+    },
+    {
+     "offset": 1032,
+     "name": "m_used",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 32
+    },
+    {
+     "offset": 1064,
+     "name": "m_hint",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 1068,
+   "align": 4
+  },
+  {
+   "name": "MemoryHandleManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_allocHigh",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "unk_009",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 479
+     },
+     "size": 479
+    },
+    {
+     "offset": 488,
+     "name": "m_srbks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 496,
+     "name": "m_srbkCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 500,
+     "name": "unk_1f4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 504,
+     "name": "m_blockChunks",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 512,
+     "name": "unk_200",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 536,
+     "name": "m_heap",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 544,
+     "name": "m_heapSize",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 552,
+     "name": "unk_228",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 560,
+     "name": "m_growBlocks",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 561,
+     "name": "unk_231",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 568,
+     "name": "m_ringHead",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryHandleManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 576,
+     "name": "m_ringNext",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryHandleManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 584,
+     "name": "m_ringPrev",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryHandleManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 592,
+     "name": "m_parent",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryHandleManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 600,
+     "name": "unk_258",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 624,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 768,
+     "name": "m_blockCs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    }
+   ],
+   "size": 912,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2040608",
+     "symbol": "_ZNK4Aska19MemoryHandleManager8GetBlockEj",
+     "name": "GetBlock"
+    },
+    {
+     "ghidra": "0x2040780",
+     "symbol": "_ZN4Aska19MemoryHandleManager6FreeExEPv",
+     "name": "FreeEx"
+    },
+    {
+     "ghidra": "0x20409b4",
+     "symbol": "_ZN4Aska19MemoryHandleManager12CalcSrbkSizeEm",
+     "name": "CalcSrbkSize"
+    },
+    {
+     "ghidra": "0x20409cc",
+     "symbol": "_ZN4Aska19MemoryHandleManager14CalcBlocksSizeEi",
+     "name": "CalcBlocksSize"
+    },
+    {
+     "ghidra": "0x20409dc",
+     "symbol": "_ZN4Aska19MemoryHandleManager21CalcSrbkAndBlocksSizeEmi",
+     "name": "CalcSrbkAndBlocksSize"
+    },
+    {
+     "ghidra": "0x2040a00",
+     "symbol": "_ZN4Aska19MemoryHandleManager16CalcFullHeapSizeEm",
+     "name": "CalcFullHeapSize"
+    },
+    {
+     "ghidra": "0x2040a28",
+     "symbol": "_ZN4Aska19MemoryHandleManager27CalcFullHeapSizeForOneBlockEmlb",
+     "name": "CalcFullHeapSizeForOneBlock"
+    },
+    {
+     "ghidra": "0x2040a5c",
+     "symbol": "_ZN4Aska19MemoryHandleManagerC1Ev",
+     "name": "MemoryHandleManager"
+    },
+    {
+     "ghidra": "0x2040ad0",
+     "symbol": "_ZN4Aska19MemoryHandleManagerD2Ev",
+     "name": "~MemoryHandleManager"
+    },
+    {
+     "ghidra": "0x2040bb4",
+     "symbol": "_ZN4Aska19MemoryHandleManager6RemoveEPS0_",
+     "name": "Remove"
+    },
+    {
+     "ghidra": "0x2040c54",
+     "symbol": "_ZN4Aska19MemoryHandleManager10DeleteHeapEv",
+     "name": "DeleteHeap"
+    },
+    {
+     "ghidra": "0x2040e40",
+     "symbol": "_ZN4Aska19MemoryHandleManagerD0Ev",
+     "name": "~MemoryHandleManager"
+    },
+    {
+     "ghidra": "0x2040e58",
+     "symbol": "_ZN4Aska19MemoryHandleManager8InitHeapEPhlS1_l",
+     "name": "InitHeap"
+    },
+    {
+     "ghidra": "0x2040f14",
+     "symbol": "_ZN4Aska19MemoryHandleManager17CalcNumberOfSrbksEl",
+     "name": "CalcNumberOfSrbks"
+    },
+    {
+     "ghidra": "0x2040f34",
+     "symbol": "_ZN4Aska19MemoryHandleManager25AddUnusedMemoryBlockChunkEPNS0_23_UnusedMemoryBlockChunkEm",
+     "name": "AddUnusedMemoryBlockChunk"
+    },
+    {
+     "ghidra": "0x20411cc",
+     "symbol": "_ZN4Aska19MemoryHandleManager8InitSrbkEv",
+     "name": "InitSrbk"
+    },
+    {
+     "ghidra": "0x2041410",
+     "symbol": "_ZN4Aska19MemoryHandleManager12RegisterThisEv",
+     "name": "RegisterThis"
+    },
+    {
+     "ghidra": "0x20415e4",
+     "symbol": "_ZN4Aska19MemoryHandleManager8InitHeapEPhlS1_lS1_l",
+     "name": "InitHeap"
+    },
+    {
+     "ghidra": "0x20416b0",
+     "symbol": "_ZN4Aska19MemoryHandleManager8InitHeapEPhl",
+     "name": "InitHeap"
+    },
+    {
+     "ghidra": "0x204178c",
+     "symbol": "_ZN4Aska19MemoryHandleManager8InitHeapEl",
+     "name": "InitHeap"
+    },
+    {
+     "ghidra": "0x2041890",
+     "symbol": "_ZN4Aska19MemoryHandleManager14DeregisterThisEv",
+     "name": "DeregisterThis"
+    },
+    {
+     "ghidra": "0x2041af0",
+     "symbol": "_ZNK4Aska19MemoryHandleManager11IsAllocatedEjPm",
+     "name": "IsAllocated"
+    },
+    {
+     "ghidra": "0x2041c70",
+     "symbol": "_ZN4Aska19MemoryHandleManager11IsAllocatedEPKvPm",
+     "name": "IsAllocated"
+    },
+    {
+     "ghidra": "0x2041d28",
+     "symbol": "_ZN4Aska19MemoryHandleManager19GetAllocatedManagerEPKvPm",
+     "name": "GetAllocatedManager"
+    },
+    {
+     "ghidra": "0x2041fbc",
+     "symbol": "_ZN4Aska19MemoryHandleManager10StaticFreeEPKv",
+     "name": "StaticFree"
+    },
+    {
+     "ghidra": "0x2041fe4",
+     "symbol": "_ZN4Aska19MemoryHandleManager4FreeEPKv",
+     "name": "Free"
+    },
+    {
+     "ghidra": "0x20421d0",
+     "symbol": "_ZN4Aska19MemoryHandleManager6MallocEm",
+     "name": "Malloc"
+    },
+    {
+     "ghidra": "0x2042428",
+     "symbol": "_ZN4Aska19MemoryHandleManager10MallocHighEm",
+     "name": "MallocHigh"
+    },
+    {
+     "ghidra": "0x204310c",
+     "symbol": "_ZN4Aska19MemoryHandleManager13AlignedMallocEml",
+     "name": "AlignedMalloc"
+    },
+    {
+     "ghidra": "0x204336c",
+     "symbol": "_ZN4Aska19MemoryHandleManager17AlignedMallocHighEml",
+     "name": "AlignedMallocHigh"
+    },
+    {
+     "ghidra": "0x2044480",
+     "symbol": "_ZN4Aska19MemoryHandleManager7ReallocEmPvl",
+     "name": "Realloc"
+    },
+    {
+     "ghidra": "0x2045090",
+     "symbol": "_ZN4Aska19MemoryHandleManager14LocalFreeBlockEPNS_18_MemoryHandleBlockE",
+     "name": "LocalFreeBlock"
+    },
+    {
+     "ghidra": "0x2045094",
+     "symbol": "_ZNK4Aska19MemoryHandleManager9IsCreatedEv",
+     "name": "IsCreated"
+    },
+    {
+     "ghidra": "0x20451f8",
+     "symbol": "_ZNK4Aska19MemoryHandleManager12CalcFreeSizeEPlS1_",
+     "name": "CalcFreeSize"
+    },
+    {
+     "ghidra": "0x20453f4",
+     "symbol": "_ZN4Aska19MemoryHandleManager15CountFreeBlocksEv",
+     "name": "CountFreeBlocks"
+    },
+    {
+     "ghidra": "0x204559c",
+     "symbol": "_ZNK4Aska19MemoryHandleManager7IsEmptyEb",
+     "name": "IsEmpty"
+    },
+    {
+     "ghidra": "0x20458cc",
+     "symbol": "_ZN4Aska19MemoryHandleManager12CalcFreeSizeEb",
+     "name": "CalcFreeSize"
+    },
+    {
+     "ghidra": "0x2045bc0",
+     "symbol": "_ZN4Aska19MemoryHandleManager16PrintMemoryChainEv",
+     "name": "PrintMemoryChain"
+    },
+    {
+     "ghidra": "0x2045bc4",
+     "symbol": "_ZN4Aska19MemoryHandleManager16PrintMemoryChainEPKc",
+     "name": "PrintMemoryChain"
+    },
+    {
+     "ghidra": "0x2045bc8",
+     "symbol": "_ZN4Aska19MemoryHandleManager15SearchNextBlockEPPNS0_5_SrbkEPPNS_18_MemoryHandleBlockEb",
+     "name": "SearchNextBlock"
+    },
+    {
+     "ghidra": "0x2045e14",
+     "symbol": "_ZN4Aska19MemoryHandleManager3AddEPS0_",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x2045e70",
+     "symbol": "_ZN4Aska19MemoryHandleManager9LocalFreeEPNS_18_MemoryHandleBlockE",
+     "name": "LocalFree"
+    },
+    {
+     "ghidra": "0x20463a4",
+     "symbol": "_ZN4Aska19MemoryHandleManager4MoveEj",
+     "name": "Move"
+    },
+    {
+     "ghidra": "0x2046514",
+     "symbol": "_ZN4Aska19MemoryHandleManager9LocalMoveERNS_18_MemoryHandleBlockE",
+     "name": "LocalMove"
+    },
+    {
+     "ghidra": "0x2046870",
+     "symbol": "_ZN4Aska19MemoryHandleManager10MoveToHighEj",
+     "name": "MoveToHigh"
+    },
+    {
+     "ghidra": "0x20469e0",
+     "symbol": "_ZN4Aska19MemoryHandleManager15LocalMoveToHighERNS_18_MemoryHandleBlockE",
+     "name": "LocalMoveToHigh"
+    },
+    {
+     "ghidra": "0x2046d3c",
+     "symbol": "_ZN4Aska19MemoryHandleManager10CompactionEm",
+     "name": "Compaction"
+    },
+    {
+     "ghidra": "0x2046ff0",
+     "symbol": "_ZN4Aska19MemoryHandleManager10CompactionEv",
+     "name": "Compaction"
+    },
+    {
+     "ghidra": "0x20471d8",
+     "symbol": "_ZNK4Aska19MemoryHandleManager10IsPhysicalEv",
+     "name": "IsPhysical"
+    },
+    {
+     "ghidra": "0x20471e0",
+     "symbol": "_ZN4Aska19MemoryHandleManager13VirtualMallocEm",
+     "name": "VirtualMalloc"
+    },
+    {
+     "ghidra": "0x20471e4",
+     "symbol": "_ZN4Aska19MemoryHandleManager17VirtualMallocHighEm",
+     "name": "VirtualMallocHigh"
+    },
+    {
+     "ghidra": "0x20471e8",
+     "symbol": "_ZN4Aska19MemoryHandleManager20VirtualAlignedMallocEml",
+     "name": "VirtualAlignedMalloc"
+    },
+    {
+     "ghidra": "0x20471ec",
+     "symbol": "_ZN4Aska19MemoryHandleManager24VirtualAlignedMallocHighEml",
+     "name": "VirtualAlignedMallocHigh"
+    },
+    {
+     "ghidra": "0x20471f0",
+     "symbol": "_ZN4Aska19MemoryHandleManager14VirtualReallocEmPvl",
+     "name": "VirtualRealloc"
+    },
+    {
+     "ghidra": "0x20471f4",
+     "symbol": "_ZN4Aska19MemoryHandleManager12VirtualSplitEPvS1_",
+     "name": "VirtualSplit"
+    },
+    {
+     "ghidra": "0x204755c",
+     "symbol": "_ZN4Aska19MemoryHandleManager11VirtualMoveEPvlb",
+     "name": "VirtualMove"
+    },
+    {
+     "ghidra": "0x20476cc",
+     "symbol": "_ZN4Aska19MemoryHandleManager11VirtualFreeEPv",
+     "name": "VirtualFree"
+    },
+    {
+     "ghidra": "0x20478e4",
+     "symbol": "_ZN4Aska19MemoryHandleManager26VirtualGetAllocatedManagerEPKvPm",
+     "name": "VirtualGetAllocatedManager"
+    },
+    {
+     "ghidra": "0x20479b8",
+     "symbol": "_ZN4Aska19MemoryHandleManager21VirtualRegisterNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "VirtualRegisterNotify"
+    },
+    {
+     "ghidra": "0x2047bbc",
+     "symbol": "_ZN4Aska19MemoryHandleManager19VirtualRemoveNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "VirtualRemoveNotify"
+    },
+    {
+     "ghidra": "0x2047dc0",
+     "symbol": "_ZN4Aska19MemoryHandleManager25VirtualIsRegisteredNotifyEPvPNS_13IMemoryNotifyE",
+     "name": "VirtualIsRegisteredNotify"
+    },
+    {
+     "ghidra": "0x2047fc4",
+     "symbol": "_ZN4Aska19MemoryHandleManager26VirtualGetRegisteredNotifyEPv",
+     "name": "VirtualGetRegisteredNotify"
+    },
+    {
+     "ghidra": "0x20481a0",
+     "symbol": "_ZN4Aska19MemoryHandleManager20CreateDebugMemoryMapEiib",
+     "name": "CreateDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x20481a4",
+     "symbol": "_ZN4Aska19MemoryHandleManager20UpdateDebugMemoryMapEv",
+     "name": "UpdateDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x20481a8",
+     "symbol": "_ZN4Aska19MemoryHandleManager17GetDebugMemoryMapEPNS_4TextEffjff",
+     "name": "GetDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x20481ac",
+     "symbol": "_ZN4Aska19MemoryHandleManager21SetSwapDebugMemoryMapEb",
+     "name": "SetSwapDebugMemoryMap"
+    },
+    {
+     "ghidra": "0x20481b0",
+     "symbol": "_ZNK4Aska19MemoryHandleManager25GetUnusedMemoryBlockTotalEv",
+     "name": "GetUnusedMemoryBlockTotal"
+    },
+    {
+     "ghidra": "0x20481d8",
+     "symbol": "_ZN4Aska19MemoryHandleManager15VirtualMoveHighEPvl",
+     "name": "VirtualMoveHigh"
+    },
+    {
+     "ghidra": "0x20481e8",
+     "symbol": "_ZNK4Aska19MemoryHandleManager21VirtualGetHeapAddressEv",
+     "name": "VirtualGetHeapAddress"
+    },
+    {
+     "ghidra": "0x20481f0",
+     "symbol": "_ZNK4Aska19MemoryHandleManager17VirtualIsPhysicalEv",
+     "name": "VirtualIsPhysical"
+    },
+    {
+     "ghidra": "0x20481f8",
+     "symbol": "_ZN4Aska19MemoryHandleManager28VirtualIsMemoryHandleManagerEv",
+     "name": "VirtualIsMemoryHandleManager"
+    },
+    {
+     "ghidra": "0x2048200",
+     "symbol": "_ZNK4Aska19MemoryHandleManager19VirtualCalcFreeSizeEPlS1_",
+     "name": "VirtualCalcFreeSize"
+    },
+    {
+     "ghidra": "0x2048204",
+     "symbol": "_ZNK4Aska19MemoryHandleManager14VirtualIsEmptyEb",
+     "name": "VirtualIsEmpty"
+    },
+    {
+     "ghidra": "0x204820c",
+     "symbol": "_ZN4Aska19MemoryHandleManager29VirtualGetFastCriticalSectionEv",
+     "name": "VirtualGetFastCriticalSection"
+    },
+    {
+     "ghidra": "0x2048214",
+     "symbol": "_ZNK4Aska19MemoryHandleManager14VirtualGetSrbkEi",
+     "name": "VirtualGetSrbk"
+    },
+    {
+     "ghidra": "0x2048224",
+     "symbol": "_ZNK4Aska19MemoryHandleManager24VirtualGetTopSrbkAddressEv",
+     "name": "VirtualGetTopSrbkAddress"
+    },
+    {
+     "ghidra": "0x2048234",
+     "symbol": "_ZN4Aska19MemoryHandleManager23VirtualPrintMemoryChainEv",
+     "name": "VirtualPrintMemoryChain"
+    },
+    {
+     "ghidra": "0x2048238",
+     "symbol": "_ZNK4Aska19MemoryHandleManager18VirtualGetHeapSizeEv",
+     "name": "VirtualGetHeapSize"
+    }
+   ]
+  },
+  {
+   "name": "CAssignedMemoryManagerForSTLAllocator",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x1f9b39c",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator6AttachEPN4Aska13MemoryManagerE",
+     "name": "Attach"
+    },
+    {
+     "ghidra": "0x1f9b3e0",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator15CreateAndAttachEm",
+     "name": "CreateAndAttach"
+    },
+    {
+     "ghidra": "0x1f9b4b4",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator7ReportCEv",
+     "name": "ReportC"
+    },
+    {
+     "ghidra": "0x1f9b4d4",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator26AttachFixedLengthAllocatorEPNS_30CFixedLengthAllocatorContainerE",
+     "name": "AttachFixedLengthAllocator"
+    },
+    {
+     "ghidra": "0x1f9b518",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator27pAttachFixedLengthAllocatorEv",
+     "name": "pAttachFixedLengthAllocator"
+    },
+    {
+     "ghidra": "0x1f9b528",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj",
+     "name": "Allocate"
+    },
+    {
+     "ghidra": "0x1f9b598",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv",
+     "name": "Free"
+    },
+    {
+     "ghidra": "0x1f9b5f0",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator7ReportSEv",
+     "name": "ReportS"
+    },
+    {
+     "ghidra": "0x1f9b610",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator26IsEnableReportByEachAccessEb",
+     "name": "IsEnableReportByEachAccess"
+    },
+    {
+     "ghidra": "0x1f9b62c",
+     "symbol": "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator22pAttachedMemoryManagerEv",
+     "name": "pAttachedMemoryManager"
+    }
+   ]
+  },
+  {
+   "name": "MemoryManagerAdapter",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x204ea30",
+     "symbol": "_ZN4Aska20MemoryManagerAdapter6MallocEm",
+     "name": "Malloc"
+    },
+    {
+     "ghidra": "0x204ea48",
+     "symbol": "_ZN4Aska20MemoryManagerAdapter4FreeEPv",
+     "name": "Free"
+    },
+    {
+     "ghidra": "0x204ea6c",
+     "symbol": "_ZN4Aska20MemoryManagerAdapter13AlignedMallocEmm",
+     "name": "AlignedMalloc"
+    },
+    {
+     "ghidra": "0x204ea94",
+     "symbol": "_ZN4Aska20MemoryManagerAdapter11AlignedFreeEPv",
+     "name": "AlignedFree"
+    }
+   ]
+  },
+  {
+   "name": "TSharedPointerCode",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x2063054",
+     "symbol": "_ZN4Aska18TSharedPointerCode13CreateCounterEi",
+     "name": "CreateCounter"
+    },
+    {
+     "ghidra": "0x20631ac",
+     "symbol": "_ZN4Aska18TSharedPointerCode13DeleteCounterEPi",
+     "name": "DeleteCounter"
+    }
+   ]
+  }
+ ]
 }

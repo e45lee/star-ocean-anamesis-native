@@ -1,0 +1,355 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x1142bcc	0x1242bcc	268	_ZN9Framework21TFixedLengthAllocatorILm16EEC2Ecccm	Framework::TFixedLengthAllocator<16ul>::TFixedLengthAllocator(char, char, char, unsigned long)	stl_allocator	typed	
+0x1142cd8	0x1242cd8	284	_ZN9Framework21TFixedLengthAllocatorILm32EEC2Ecccm	Framework::TFixedLengthAllocator<32ul>::TFixedLengthAllocator(char, char, char, unsigned long)	stl_allocator	typed	
+0x1142df4	0x1242df4	284	_ZN9Framework21TFixedLengthAllocatorILm64EEC2Ecccm	Framework::TFixedLengthAllocator<64ul>::TFixedLengthAllocator(char, char, char, unsigned long)	stl_allocator	typed	
+0x1142f10	0x1242f10	284	_ZN9Framework21TFixedLengthAllocatorILm128EEC2Ecccm	Framework::TFixedLengthAllocator<128ul>::TFixedLengthAllocator(char, char, char, unsigned long)	stl_allocator	typed	
+0x114302c	0x124302c	284	_ZN9Framework21TFixedLengthAllocatorILm256EEC2Ecccm	Framework::TFixedLengthAllocator<256ul>::TFixedLengthAllocator(char, char, char, unsigned long)	stl_allocator	typed	
+0x1143148	0x1243148	284	_ZN9Framework21TFixedLengthAllocatorILm512EEC2Ecccm	Framework::TFixedLengthAllocator<512ul>::TFixedLengthAllocator(char, char, char, unsigned long)	stl_allocator	typed	
+0x11491a8	0x12491a8	64	_ZN9Framework21TFixedLengthAllocatorILm16EED2Ev	Framework::TFixedLengthAllocator<16ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x11491e8	0x12491e8	72	_ZN9Framework21TFixedLengthAllocatorILm16EED0Ev	Framework::TFixedLengthAllocator<16ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x1149230	0x1249230	8	_ZNK9Framework21TFixedLengthAllocatorILm16EE9BlockSizeEv	Framework::TFixedLengthAllocator<16ul>::BlockSize() const	stl_allocator	typed	
+0x1149238	0x1249238	8	_ZNK9Framework21TFixedLengthAllocatorILm16EE8MaxBlockEv	Framework::TFixedLengthAllocator<16ul>::MaxBlock() const	stl_allocator	typed	
+0x1149240	0x1249240	236	_ZN9Framework21TFixedLengthAllocatorILm16EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<16ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
+0x114932c	0x124932c	208	_ZN9Framework21TFixedLengthAllocatorILm16EE4FreeEPv	Framework::TFixedLengthAllocator<16ul>::Free(void*)	stl_allocator	typed	
+0x11493fc	0x12493fc	124	_ZNK9Framework21TFixedLengthAllocatorILm16EE6IsMineEPv	Framework::TFixedLengthAllocator<16ul>::IsMine(void*) const	stl_allocator	typed	
+0x1149478	0x1249478	84	_ZNK9Framework21TFixedLengthAllocatorILm16EE12NumAllocatedEv	Framework::TFixedLengthAllocator<16ul>::NumAllocated() const	stl_allocator	typed	
+0x11494cc	0x12494cc	92	_ZNK9Framework21TFixedLengthAllocatorILm16EE6IsFreeEv	Framework::TFixedLengthAllocator<16ul>::IsFree() const	stl_allocator	typed	
+0x1149528	0x1249528	104	_ZNK9Framework21TFixedLengthAllocatorILm16EE13ActivityRatioEv	Framework::TFixedLengthAllocator<16ul>::ActivityRatio() const	stl_allocator	typed	
+0x1149590	0x1249590	12	_ZNK9Framework21TFixedLengthAllocatorILm16EE17TotalMemoryAmountEv	Framework::TFixedLengthAllocator<16ul>::TotalMemoryAmount() const	stl_allocator	typed	
+0x114959c	0x124959c	88	_ZNK9Framework21TFixedLengthAllocatorILm16EE16UsedMemoryAmountEv	Framework::TFixedLengthAllocator<16ul>::UsedMemoryAmount() const	stl_allocator	typed	
+0x11495f4	0x12495f4	84	_ZN9Framework21TFixedLengthAllocatorILm16EE11EnableMutexEv	Framework::TFixedLengthAllocator<16ul>::EnableMutex()	stl_allocator	typed	
+0x1149648	0x1249648	40	_ZN9Framework21TFixedLengthAllocatorILm16EE12DisableMutexEv	Framework::TFixedLengthAllocator<16ul>::DisableMutex()	stl_allocator	typed	
+0x1149670	0x1249670	64	_ZN9Framework21TFixedLengthAllocatorILm32EED2Ev	Framework::TFixedLengthAllocator<32ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x11496b0	0x12496b0	72	_ZN9Framework21TFixedLengthAllocatorILm32EED0Ev	Framework::TFixedLengthAllocator<32ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x11496f8	0x12496f8	8	_ZNK9Framework21TFixedLengthAllocatorILm32EE9BlockSizeEv	Framework::TFixedLengthAllocator<32ul>::BlockSize() const	stl_allocator	typed	
+0x1149700	0x1249700	8	_ZNK9Framework21TFixedLengthAllocatorILm32EE8MaxBlockEv	Framework::TFixedLengthAllocator<32ul>::MaxBlock() const	stl_allocator	typed	
+0x1149708	0x1249708	244	_ZN9Framework21TFixedLengthAllocatorILm32EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<32ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
+0x11497fc	0x12497fc	208	_ZN9Framework21TFixedLengthAllocatorILm32EE4FreeEPv	Framework::TFixedLengthAllocator<32ul>::Free(void*)	stl_allocator	typed	
+0x11498cc	0x12498cc	128	_ZNK9Framework21TFixedLengthAllocatorILm32EE6IsMineEPv	Framework::TFixedLengthAllocator<32ul>::IsMine(void*) const	stl_allocator	typed	
+0x114994c	0x124994c	84	_ZNK9Framework21TFixedLengthAllocatorILm32EE12NumAllocatedEv	Framework::TFixedLengthAllocator<32ul>::NumAllocated() const	stl_allocator	typed	
+0x11499a0	0x12499a0	92	_ZNK9Framework21TFixedLengthAllocatorILm32EE6IsFreeEv	Framework::TFixedLengthAllocator<32ul>::IsFree() const	stl_allocator	typed	
+0x11499fc	0x12499fc	104	_ZNK9Framework21TFixedLengthAllocatorILm32EE13ActivityRatioEv	Framework::TFixedLengthAllocator<32ul>::ActivityRatio() const	stl_allocator	typed	
+0x1149a64	0x1249a64	16	_ZNK9Framework21TFixedLengthAllocatorILm32EE17TotalMemoryAmountEv	Framework::TFixedLengthAllocator<32ul>::TotalMemoryAmount() const	stl_allocator	typed	
+0x1149a74	0x1249a74	88	_ZNK9Framework21TFixedLengthAllocatorILm32EE16UsedMemoryAmountEv	Framework::TFixedLengthAllocator<32ul>::UsedMemoryAmount() const	stl_allocator	typed	
+0x1149acc	0x1249acc	84	_ZN9Framework21TFixedLengthAllocatorILm32EE11EnableMutexEv	Framework::TFixedLengthAllocator<32ul>::EnableMutex()	stl_allocator	typed	
+0x1149b20	0x1249b20	40	_ZN9Framework21TFixedLengthAllocatorILm32EE12DisableMutexEv	Framework::TFixedLengthAllocator<32ul>::DisableMutex()	stl_allocator	typed	
+0x1149b48	0x1249b48	64	_ZN9Framework21TFixedLengthAllocatorILm64EED2Ev	Framework::TFixedLengthAllocator<64ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x1149b88	0x1249b88	72	_ZN9Framework21TFixedLengthAllocatorILm64EED0Ev	Framework::TFixedLengthAllocator<64ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x1149bd0	0x1249bd0	8	_ZNK9Framework21TFixedLengthAllocatorILm64EE9BlockSizeEv	Framework::TFixedLengthAllocator<64ul>::BlockSize() const	stl_allocator	typed	
+0x1149bd8	0x1249bd8	8	_ZNK9Framework21TFixedLengthAllocatorILm64EE8MaxBlockEv	Framework::TFixedLengthAllocator<64ul>::MaxBlock() const	stl_allocator	typed	
+0x1149be0	0x1249be0	244	_ZN9Framework21TFixedLengthAllocatorILm64EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<64ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
+0x1149cd4	0x1249cd4	208	_ZN9Framework21TFixedLengthAllocatorILm64EE4FreeEPv	Framework::TFixedLengthAllocator<64ul>::Free(void*)	stl_allocator	typed	
+0x1149da4	0x1249da4	128	_ZNK9Framework21TFixedLengthAllocatorILm64EE6IsMineEPv	Framework::TFixedLengthAllocator<64ul>::IsMine(void*) const	stl_allocator	typed	
+0x1149e24	0x1249e24	84	_ZNK9Framework21TFixedLengthAllocatorILm64EE12NumAllocatedEv	Framework::TFixedLengthAllocator<64ul>::NumAllocated() const	stl_allocator	typed	
+0x1149e78	0x1249e78	92	_ZNK9Framework21TFixedLengthAllocatorILm64EE6IsFreeEv	Framework::TFixedLengthAllocator<64ul>::IsFree() const	stl_allocator	typed	
+0x1149ed4	0x1249ed4	104	_ZNK9Framework21TFixedLengthAllocatorILm64EE13ActivityRatioEv	Framework::TFixedLengthAllocator<64ul>::ActivityRatio() const	stl_allocator	typed	
+0x1149f3c	0x1249f3c	16	_ZNK9Framework21TFixedLengthAllocatorILm64EE17TotalMemoryAmountEv	Framework::TFixedLengthAllocator<64ul>::TotalMemoryAmount() const	stl_allocator	typed	
+0x1149f4c	0x1249f4c	88	_ZNK9Framework21TFixedLengthAllocatorILm64EE16UsedMemoryAmountEv	Framework::TFixedLengthAllocator<64ul>::UsedMemoryAmount() const	stl_allocator	typed	
+0x1149fa4	0x1249fa4	84	_ZN9Framework21TFixedLengthAllocatorILm64EE11EnableMutexEv	Framework::TFixedLengthAllocator<64ul>::EnableMutex()	stl_allocator	typed	
+0x1149ff8	0x1249ff8	40	_ZN9Framework21TFixedLengthAllocatorILm64EE12DisableMutexEv	Framework::TFixedLengthAllocator<64ul>::DisableMutex()	stl_allocator	typed	
+0x114a020	0x124a020	64	_ZN9Framework21TFixedLengthAllocatorILm128EED2Ev	Framework::TFixedLengthAllocator<128ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x114a060	0x124a060	72	_ZN9Framework21TFixedLengthAllocatorILm128EED0Ev	Framework::TFixedLengthAllocator<128ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x114a0a8	0x124a0a8	8	_ZNK9Framework21TFixedLengthAllocatorILm128EE9BlockSizeEv	Framework::TFixedLengthAllocator<128ul>::BlockSize() const	stl_allocator	typed	
+0x114a0b0	0x124a0b0	8	_ZNK9Framework21TFixedLengthAllocatorILm128EE8MaxBlockEv	Framework::TFixedLengthAllocator<128ul>::MaxBlock() const	stl_allocator	typed	
+0x114a0b8	0x124a0b8	244	_ZN9Framework21TFixedLengthAllocatorILm128EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<128ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
+0x114a1ac	0x124a1ac	208	_ZN9Framework21TFixedLengthAllocatorILm128EE4FreeEPv	Framework::TFixedLengthAllocator<128ul>::Free(void*)	stl_allocator	typed	
+0x114a27c	0x124a27c	128	_ZNK9Framework21TFixedLengthAllocatorILm128EE6IsMineEPv	Framework::TFixedLengthAllocator<128ul>::IsMine(void*) const	stl_allocator	typed	
+0x114a2fc	0x124a2fc	84	_ZNK9Framework21TFixedLengthAllocatorILm128EE12NumAllocatedEv	Framework::TFixedLengthAllocator<128ul>::NumAllocated() const	stl_allocator	typed	
+0x114a350	0x124a350	92	_ZNK9Framework21TFixedLengthAllocatorILm128EE6IsFreeEv	Framework::TFixedLengthAllocator<128ul>::IsFree() const	stl_allocator	typed	
+0x114a3ac	0x124a3ac	104	_ZNK9Framework21TFixedLengthAllocatorILm128EE13ActivityRatioEv	Framework::TFixedLengthAllocator<128ul>::ActivityRatio() const	stl_allocator	typed	
+0x114a414	0x124a414	16	_ZNK9Framework21TFixedLengthAllocatorILm128EE17TotalMemoryAmountEv	Framework::TFixedLengthAllocator<128ul>::TotalMemoryAmount() const	stl_allocator	typed	
+0x114a424	0x124a424	88	_ZNK9Framework21TFixedLengthAllocatorILm128EE16UsedMemoryAmountEv	Framework::TFixedLengthAllocator<128ul>::UsedMemoryAmount() const	stl_allocator	typed	
+0x114a47c	0x124a47c	84	_ZN9Framework21TFixedLengthAllocatorILm128EE11EnableMutexEv	Framework::TFixedLengthAllocator<128ul>::EnableMutex()	stl_allocator	typed	
+0x114a4d0	0x124a4d0	40	_ZN9Framework21TFixedLengthAllocatorILm128EE12DisableMutexEv	Framework::TFixedLengthAllocator<128ul>::DisableMutex()	stl_allocator	typed	
+0x114a4f8	0x124a4f8	64	_ZN9Framework21TFixedLengthAllocatorILm256EED2Ev	Framework::TFixedLengthAllocator<256ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x114a538	0x124a538	72	_ZN9Framework21TFixedLengthAllocatorILm256EED0Ev	Framework::TFixedLengthAllocator<256ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x114a580	0x124a580	8	_ZNK9Framework21TFixedLengthAllocatorILm256EE9BlockSizeEv	Framework::TFixedLengthAllocator<256ul>::BlockSize() const	stl_allocator	typed	
+0x114a588	0x124a588	8	_ZNK9Framework21TFixedLengthAllocatorILm256EE8MaxBlockEv	Framework::TFixedLengthAllocator<256ul>::MaxBlock() const	stl_allocator	typed	
+0x114a590	0x124a590	244	_ZN9Framework21TFixedLengthAllocatorILm256EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<256ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
+0x114a684	0x124a684	208	_ZN9Framework21TFixedLengthAllocatorILm256EE4FreeEPv	Framework::TFixedLengthAllocator<256ul>::Free(void*)	stl_allocator	typed	
+0x114a754	0x124a754	128	_ZNK9Framework21TFixedLengthAllocatorILm256EE6IsMineEPv	Framework::TFixedLengthAllocator<256ul>::IsMine(void*) const	stl_allocator	typed	
+0x114a7d4	0x124a7d4	84	_ZNK9Framework21TFixedLengthAllocatorILm256EE12NumAllocatedEv	Framework::TFixedLengthAllocator<256ul>::NumAllocated() const	stl_allocator	typed	
+0x114a828	0x124a828	92	_ZNK9Framework21TFixedLengthAllocatorILm256EE6IsFreeEv	Framework::TFixedLengthAllocator<256ul>::IsFree() const	stl_allocator	typed	
+0x114a884	0x124a884	104	_ZNK9Framework21TFixedLengthAllocatorILm256EE13ActivityRatioEv	Framework::TFixedLengthAllocator<256ul>::ActivityRatio() const	stl_allocator	typed	
+0x114a8ec	0x124a8ec	16	_ZNK9Framework21TFixedLengthAllocatorILm256EE17TotalMemoryAmountEv	Framework::TFixedLengthAllocator<256ul>::TotalMemoryAmount() const	stl_allocator	typed	
+0x114a8fc	0x124a8fc	88	_ZNK9Framework21TFixedLengthAllocatorILm256EE16UsedMemoryAmountEv	Framework::TFixedLengthAllocator<256ul>::UsedMemoryAmount() const	stl_allocator	typed	
+0x114a954	0x124a954	84	_ZN9Framework21TFixedLengthAllocatorILm256EE11EnableMutexEv	Framework::TFixedLengthAllocator<256ul>::EnableMutex()	stl_allocator	typed	
+0x114a9a8	0x124a9a8	40	_ZN9Framework21TFixedLengthAllocatorILm256EE12DisableMutexEv	Framework::TFixedLengthAllocator<256ul>::DisableMutex()	stl_allocator	typed	
+0x114a9d0	0x124a9d0	64	_ZN9Framework21TFixedLengthAllocatorILm512EED2Ev	Framework::TFixedLengthAllocator<512ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x114aa10	0x124aa10	72	_ZN9Framework21TFixedLengthAllocatorILm512EED0Ev	Framework::TFixedLengthAllocator<512ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x114aa58	0x124aa58	8	_ZNK9Framework21TFixedLengthAllocatorILm512EE9BlockSizeEv	Framework::TFixedLengthAllocator<512ul>::BlockSize() const	stl_allocator	typed	
+0x114aa60	0x124aa60	8	_ZNK9Framework21TFixedLengthAllocatorILm512EE8MaxBlockEv	Framework::TFixedLengthAllocator<512ul>::MaxBlock() const	stl_allocator	typed	
+0x114aa68	0x124aa68	244	_ZN9Framework21TFixedLengthAllocatorILm512EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<512ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
+0x114ab5c	0x124ab5c	208	_ZN9Framework21TFixedLengthAllocatorILm512EE4FreeEPv	Framework::TFixedLengthAllocator<512ul>::Free(void*)	stl_allocator	typed	
+0x114ac2c	0x124ac2c	128	_ZNK9Framework21TFixedLengthAllocatorILm512EE6IsMineEPv	Framework::TFixedLengthAllocator<512ul>::IsMine(void*) const	stl_allocator	typed	
+0x114acac	0x124acac	84	_ZNK9Framework21TFixedLengthAllocatorILm512EE12NumAllocatedEv	Framework::TFixedLengthAllocator<512ul>::NumAllocated() const	stl_allocator	typed	
+0x114ad00	0x124ad00	92	_ZNK9Framework21TFixedLengthAllocatorILm512EE6IsFreeEv	Framework::TFixedLengthAllocator<512ul>::IsFree() const	stl_allocator	typed	
+0x114ad5c	0x124ad5c	104	_ZNK9Framework21TFixedLengthAllocatorILm512EE13ActivityRatioEv	Framework::TFixedLengthAllocator<512ul>::ActivityRatio() const	stl_allocator	typed	
+0x114adc4	0x124adc4	16	_ZNK9Framework21TFixedLengthAllocatorILm512EE17TotalMemoryAmountEv	Framework::TFixedLengthAllocator<512ul>::TotalMemoryAmount() const	stl_allocator	typed	
+0x114add4	0x124add4	88	_ZNK9Framework21TFixedLengthAllocatorILm512EE16UsedMemoryAmountEv	Framework::TFixedLengthAllocator<512ul>::UsedMemoryAmount() const	stl_allocator	typed	
+0x114ae2c	0x124ae2c	84	_ZN9Framework21TFixedLengthAllocatorILm512EE11EnableMutexEv	Framework::TFixedLengthAllocator<512ul>::EnableMutex()	stl_allocator	typed	
+0x114ae80	0x124ae80	40	_ZN9Framework21TFixedLengthAllocatorILm512EE12DisableMutexEv	Framework::TFixedLengthAllocator<512ul>::DisableMutex()	stl_allocator	typed	
+0x13b5260	0x14b5260	280	_ZN9Framework21TFixedLengthAllocatorILm192EEC2Ecccm	Framework::TFixedLengthAllocator<192ul>::TFixedLengthAllocator(char, char, char, unsigned long)	stl_allocator	typed	
+0x13b65dc	0x14b65dc	64	_ZN9Framework21TFixedLengthAllocatorILm192EED2Ev	Framework::TFixedLengthAllocator<192ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x13b661c	0x14b661c	72	_ZN9Framework21TFixedLengthAllocatorILm192EED0Ev	Framework::TFixedLengthAllocator<192ul>::~TFixedLengthAllocator()	stl_allocator	typed	
+0x13b6664	0x14b6664	8	_ZNK9Framework21TFixedLengthAllocatorILm192EE9BlockSizeEv	Framework::TFixedLengthAllocator<192ul>::BlockSize() const	stl_allocator	typed	
+0x13b666c	0x14b666c	8	_ZNK9Framework21TFixedLengthAllocatorILm192EE8MaxBlockEv	Framework::TFixedLengthAllocator<192ul>::MaxBlock() const	stl_allocator	typed	
+0x13b6674	0x14b6674	244	_ZN9Framework21TFixedLengthAllocatorILm192EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<192ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
+0x13b6768	0x14b6768	208	_ZN9Framework21TFixedLengthAllocatorILm192EE4FreeEPv	Framework::TFixedLengthAllocator<192ul>::Free(void*)	stl_allocator	typed	
+0x13b6838	0x14b6838	128	_ZNK9Framework21TFixedLengthAllocatorILm192EE6IsMineEPv	Framework::TFixedLengthAllocator<192ul>::IsMine(void*) const	stl_allocator	typed	
+0x13b68b8	0x14b68b8	84	_ZNK9Framework21TFixedLengthAllocatorILm192EE12NumAllocatedEv	Framework::TFixedLengthAllocator<192ul>::NumAllocated() const	stl_allocator	typed	
+0x13b690c	0x14b690c	92	_ZNK9Framework21TFixedLengthAllocatorILm192EE6IsFreeEv	Framework::TFixedLengthAllocator<192ul>::IsFree() const	stl_allocator	typed	
+0x13b6968	0x14b6968	104	_ZNK9Framework21TFixedLengthAllocatorILm192EE13ActivityRatioEv	Framework::TFixedLengthAllocator<192ul>::ActivityRatio() const	stl_allocator	typed	
+0x13b69d0	0x14b69d0	16	_ZNK9Framework21TFixedLengthAllocatorILm192EE17TotalMemoryAmountEv	Framework::TFixedLengthAllocator<192ul>::TotalMemoryAmount() const	stl_allocator	typed	
+0x13b69e0	0x14b69e0	88	_ZNK9Framework21TFixedLengthAllocatorILm192EE16UsedMemoryAmountEv	Framework::TFixedLengthAllocator<192ul>::UsedMemoryAmount() const	stl_allocator	typed	
+0x13b6a38	0x14b6a38	84	_ZN9Framework21TFixedLengthAllocatorILm192EE11EnableMutexEv	Framework::TFixedLengthAllocator<192ul>::EnableMutex()	stl_allocator	typed	
+0x13b6a8c	0x14b6a8c	40	_ZN9Framework21TFixedLengthAllocatorILm192EE12DisableMutexEv	Framework::TFixedLengthAllocator<192ul>::DisableMutex()	stl_allocator	typed	
+0x1e63c88	0x1f63c88	80	_ZN9Framework18CApplicationMemoryC1Ev	Framework::CApplicationMemory::CApplicationMemory()	helpers	typed	
+0x1e63cd8	0x1f63cd8	100	_ZN9Framework18CApplicationMemory23SetPrimaryMemoryManagerEv	Framework::CApplicationMemory::SetPrimaryMemoryManager()	helpers	typed	
+0x1e63d3c	0x1f63d3c	220	_ZN9Framework18CApplicationMemory24SetParticleMemoryManagerEv	Framework::CApplicationMemory::SetParticleMemoryManager()	helpers	typed	
+0x1e63e18	0x1f63e18	64	_ZN9Framework18CApplicationMemory30rDefaultBadAllocateNotifyRetryEv	Framework::CApplicationMemory::rDefaultBadAllocateNotifyRetry()	helpers	typed	
+0x1e63e58	0x1f63e58	208	_ZN9Framework18CApplicationMemory21SetSoundMemoryManagerEv	Framework::CApplicationMemory::SetSoundMemoryManager()	helpers	typed	
+0x1e63f28	0x1f63f28	212	_ZN9Framework18CApplicationMemory23SetNetworkMemoryManagerEv	Framework::CApplicationMemory::SetNetworkMemoryManager()	helpers	typed	
+0x1e63ffc	0x1f63ffc	60	_ZN9Framework18CApplicationMemory13gReportMemoryEv	Framework::CApplicationMemory::gReportMemory()	helpers	typed	
+0x1e64038	0x1f64038	60	_ZN9Framework18CApplicationMemory21rPrimaryMemoryManagerEv	Framework::CApplicationMemory::rPrimaryMemoryManager()	helpers	typed	
+0x1e64074	0x1f64074	60	_ZN9Framework18CApplicationMemory23rSecondaryMemoryManagerEv	Framework::CApplicationMemory::rSecondaryMemoryManager()	helpers	typed	
+0x1e640b0	0x1f640b0	64	_ZN9Framework18CApplicationMemory25rDefaultBadAllocateNotifyEv	Framework::CApplicationMemory::rDefaultBadAllocateNotify()	helpers	typed	
+0x1e640f0	0x1f640f0	60	_ZN9Framework18CApplicationMemory22rParticleMemoryManagerEv	Framework::CApplicationMemory::rParticleMemoryManager()	helpers	typed	
+0x1e6412c	0x1f6412c	60	_ZN9Framework18CApplicationMemory19rSoundMemoryManagerEv	Framework::CApplicationMemory::rSoundMemoryManager()	helpers	typed	
+0x1e64168	0x1f64168	60	_ZN9Framework18CApplicationMemory21rNetworkMemoryManagerEv	Framework::CApplicationMemory::rNetworkMemoryManager()	helpers	typed	
+0x1e845b4	0x1f845b4	12	_ZN9Framework19CHandleManager_Base26MountAdditionalInformationEjj	Framework::CHandleManager_Base::MountAdditionalInformation(unsigned int, unsigned int)	handles	typed	
+0x1e845c0	0x1f845c0	8	_ZN9Framework19CHandleManager_Base28UnmountAdditionalInformationEm	Framework::CHandleManager_Base::UnmountAdditionalInformation(unsigned long)	handles	typed	
+0x1e845c8	0x1f845c8	4	_ZN9Framework19CHandleManager_Base18UnmountHandleValueEm	Framework::CHandleManager_Base::UnmountHandleValue(unsigned long)	handles	typed	
+0x1e845cc	0x1f845cc	72	_ZNK9Framework19CHandleManager_Base32MountAdditionalInformationBySelfEj	Framework::CHandleManager_Base::MountAdditionalInformationBySelf(unsigned int) const	handles	typed	
+0x1e84614	0x1f84614	24	_ZN9Framework19CHandleManager_BaseC1Ev	Framework::CHandleManager_Base::CHandleManager_Base()	handles	typed	
+0x1e8462c	0x1f8462c	128	_ZN9Framework19CHandleManager_BaseD2Ev	Framework::CHandleManager_Base::~CHandleManager_Base()	handles	typed	
+0x1e846ac	0x1f846ac	112	_ZN9Framework19CHandleManager_Base7ReleaseEv	Framework::CHandleManager_Base::Release()	handles	typed	
+0x1e8471c	0x1f8471c	128	_ZN9Framework19CHandleManager_BaseD0Ev	Framework::CHandleManager_Base::~CHandleManager_Base()	handles	typed	
+0x1e8479c	0x1f8479c	452	_ZN9Framework19CHandleManager_Base10InitializeEjjj	Framework::CHandleManager_Base::Initialize(unsigned int, unsigned int, unsigned int)	handles	typed	
+0x1e84960	0x1f84960	8	_ZN9Framework19CHandleManager_Base8tReserve5ResetEv	Framework::CHandleManager_Base::tReserve::Reset()	handles	decompiled	
+0x1e84968	0x1f84968	16	_ZNK9Framework19CHandleManager_Base13IsInitializedEv	Framework::CHandleManager_Base::IsInitialized() const	handles	typed	
+0x1e84978	0x1f84978	124	_ZN9Framework19CHandleManager_Base11EnableMutexEv	Framework::CHandleManager_Base::EnableMutex()	handles	typed	
+0x1e849f4	0x1f849f4	120	_ZN9Framework19CHandleManager_Base12DisableMutexEv	Framework::CHandleManager_Base::DisableMutex()	handles	typed	
+0x1e84a6c	0x1f84a6c	88	_ZN9Framework19CHandleManager_Base20DisableMutex_ExecuteEv	Framework::CHandleManager_Base::DisableMutex_Execute()	handles	typed	
+0x1e84ac4	0x1f84ac4	60	_ZN9Framework19CHandleManager_Base17rElementContainerEv	Framework::CHandleManager_Base::rElementContainer()	handles	typed	
+0x1e84b00	0x1f84b00	16	_ZNK9Framework19CHandleManager_Base8tReserve8IsEnableEv	Framework::CHandleManager_Base::tReserve::IsEnable() const	handles	decompiled	
+0x1e84b10	0x1f84b10	248	_ZN9Framework19CHandleManager_Base8RegisterEm	Framework::CHandleManager_Base::Register(unsigned long)	handles	typed	
+0x1e84d48	0x1f84d48	348	_ZN9Framework19CHandleManager_Base17RegisterToReserveEmj	Framework::CHandleManager_Base::RegisterToReserve(unsigned long, unsigned int)	handles	typed	
+0x1e84ea4	0x1f84ea4	256	_ZNK9Framework19CHandleManager_Base19IsRegisteredPointerEm	Framework::CHandleManager_Base::IsRegisteredPointer(unsigned long) const	handles	typed	
+0x1e84fa4	0x1f84fa4	208	_ZNK9Framework19CHandleManager_Base25IsRegisteredReserveHandleEj	Framework::CHandleManager_Base::IsRegisteredReserveHandle(unsigned int) const	handles	typed	
+0x1e85074	0x1f85074	20	_ZNK9Framework19CHandleManager_Base14IsIssuedHandleEm	Framework::CHandleManager_Base::IsIssuedHandle(unsigned long) const	handles	typed	
+0x1e85088	0x1f85088	392	_ZN9Framework19CHandleManager_Base10UnregisterEm	Framework::CHandleManager_Base::Unregister(unsigned long)	handles	typed	
+0x1e85210	0x1f85210	300	_ZNK9Framework19CHandleManager_Base5ReferEm	Framework::CHandleManager_Base::Refer(unsigned long) const	handles	typed	
+0x1e8533c	0x1f8533c	308	_ZN9Framework19CHandleManager_Base7ReplaceEmm	Framework::CHandleManager_Base::Replace(unsigned long, unsigned long)	handles	typed	
+0x1e85470	0x1f85470	16	_ZNK9Framework19CHandleManager_Base21MakeHandleFromReserveEj	Framework::CHandleManager_Base::MakeHandleFromReserve(unsigned int) const	handles	typed	
+0x1e85480	0x1f85480	4	_ZN9Framework19CHandleManager_Base14RegressionTestEv	Framework::CHandleManager_Base::RegressionTest()	handles	typed	
+0x1e9b39c	0x1f9b39c	68	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator6AttachEPN4Aska13MemoryManagerE	Framework::CAssignedMemoryManagerForSTLAllocator::Attach(Aska::MemoryManager*)	stl_allocator	typed	
+0x1e9b3e0	0x1f9b3e0	212	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator15CreateAndAttachEm	Framework::CAssignedMemoryManagerForSTLAllocator::CreateAndAttach(unsigned long)	stl_allocator	typed	
+0x1e9b4b4	0x1f9b4b4	32	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator7ReportCEv	Framework::CAssignedMemoryManagerForSTLAllocator::ReportC()	stl_allocator	typed	
+0x1e9b4d4	0x1f9b4d4	68	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator26AttachFixedLengthAllocatorEPNS_30CFixedLengthAllocatorContainerE	Framework::CAssignedMemoryManagerForSTLAllocator::AttachFixedLengthAllocator(Framework::CFixedLengthAllocatorContainer*)	stl_allocator	typed	
+0x1e9b518	0x1f9b518	16	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator27pAttachFixedLengthAllocatorEv	Framework::CAssignedMemoryManagerForSTLAllocator::pAttachFixedLengthAllocator()	stl_allocator	typed	
+0x1e9b528	0x1f9b528	112	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj	Framework::CAssignedMemoryManagerForSTLAllocator::Allocate(unsigned long, char const*, unsigned int)	stl_allocator	typed	
+0x1e9b598	0x1f9b598	88	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv	Framework::CAssignedMemoryManagerForSTLAllocator::Free(void*)	stl_allocator	typed	
+0x1e9b5f0	0x1f9b5f0	32	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator7ReportSEv	Framework::CAssignedMemoryManagerForSTLAllocator::ReportS()	stl_allocator	typed	
+0x1e9b610	0x1f9b610	28	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator26IsEnableReportByEachAccessEb	Framework::CAssignedMemoryManagerForSTLAllocator::IsEnableReportByEachAccess(bool)	stl_allocator	typed	
+0x1e9b62c	0x1f9b62c	16	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator22pAttachedMemoryManagerEv	Framework::CAssignedMemoryManagerForSTLAllocator::pAttachedMemoryManager()	stl_allocator	typed	
+0x1e9d6c0	0x1f9d6c0	24	_ZN9Framework30CFixedLengthAllocatorContainerC2Ev	Framework::CFixedLengthAllocatorContainer::CFixedLengthAllocatorContainer()	stl_allocator	typed	
+0x1e9d6d8	0x1f9d6d8	52	_ZN9Framework30CFixedLengthAllocatorContainerD2Ev	Framework::CFixedLengthAllocatorContainer::~CFixedLengthAllocatorContainer()	stl_allocator	typed	
+0x1e9d70c	0x1f9d70c	256	_ZN9Framework30CFixedLengthAllocatorContainer7ReleaseEv	Framework::CFixedLengthAllocatorContainer::Release()	stl_allocator	typed	
+0x1e9d80c	0x1f9d80c	48	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEED2Ev	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::~TObjectContainer()	stl_allocator	typed	
+0x1e9d83c	0x1f9d83c	340	_ZN9Framework30CFixedLengthAllocatorContainer10InitializeEPPNS_21IFixedLengthAllocatorEj	Framework::CFixedLengthAllocatorContainer::Initialize(Framework::IFixedLengthAllocator**, unsigned int)	stl_allocator	typed	
+0x1e9d990	0x1f9d990	100	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE10InitializeEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::Initialize(unsigned long)	stl_allocator	typed	
+0x1e9d9f4	0x1f9d9f4	52	_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE11NumElementsEv	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::NumElements() const	stl_allocator	typed	
+0x1e9da28	0x1f9da28	140	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE8rElementEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::rElement(unsigned long)	stl_allocator	typed	
+0x1e9dab4	0x1f9dab4	16	_ZNK9Framework30CFixedLengthAllocatorContainer13IsInitializedEv	Framework::CFixedLengthAllocatorContainer::IsInitialized() const	stl_allocator	typed	
+0x1e9dac4	0x1f9dac4	336	_ZN9Framework30CFixedLengthAllocatorContainer9pAllocateEmPKcj	Framework::CFixedLengthAllocatorContainer::pAllocate(unsigned long, char const*, unsigned int)	stl_allocator	typed	
+0x1e9dc14	0x1f9dc14	308	_ZN9Framework30CFixedLengthAllocatorContainer4FreeEPv	Framework::CFixedLengthAllocatorContainer::Free(void*)	stl_allocator	typed	
+0x1e9dd48	0x1f9dd48	284	_ZNK9Framework30CFixedLengthAllocatorContainer6IsMineEPv	Framework::CFixedLengthAllocatorContainer::IsMine(void*) const	stl_allocator	typed	
+0x1e9de64	0x1f9de64	140	_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE9crElementEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::crElement(unsigned long) const	stl_allocator	typed	
+0x1e9def0	0x1f9def0	252	_ZN9Framework30CFixedLengthAllocatorContainer11EnableMutexEv	Framework::CFixedLengthAllocatorContainer::EnableMutex()	stl_allocator	typed	
+0x1e9dfec	0x1f9dfec	252	_ZN9Framework30CFixedLengthAllocatorContainer12DisableMutexEv	Framework::CFixedLengthAllocatorContainer::DisableMutex()	stl_allocator	typed	
+0x1e9e0e8	0x1f9e0e8	272	_ZN9Framework30CFixedLengthAllocatorContainer7ReportSEv	Framework::CFixedLengthAllocatorContainer::ReportS()	stl_allocator	typed	
+0x1e9e1f8	0x1f9e1f8	272	_ZN9Framework30CFixedLengthAllocatorContainer7ReportCEv	Framework::CFixedLengthAllocatorContainer::ReportC()	stl_allocator	typed	
+0x1e9e308	0x1f9e308	272	_ZN9Framework30CFixedLengthAllocatorContainer7ReportLEv	Framework::CFixedLengthAllocatorContainer::ReportL()	stl_allocator	typed	
+0x1e9e418	0x1f9e418	48	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEED0Ev	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::~TObjectContainer()	stl_allocator	typed	
+0x1e9e448	0x1f9e448	4	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE5ResetEv	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::Reset()	stl_allocator	typed	
+0x1f0aaac	0x200aaac	32	_ZN4Aska19MemoryManagerHelperC1Ev	Aska::MemoryManagerHelper::MemoryManagerHelper()	helpers	typed	
+0x1f0aacc	0x200aacc	72	_ZN4Aska19MemoryManagerHelperD2Ev	Aska::MemoryManagerHelper::~MemoryManagerHelper()	helpers	typed	
+0x1f0ab14	0x200ab14	108	_ZN4Aska19MemoryManagerHelper4InitEmj	Aska::MemoryManagerHelper::Init(unsigned long, unsigned int)	helpers	typed	
+0x1f0ab80	0x200ab80	76	_ZN4Aska19MemoryManagerHelper17InitMemoryManagerEm	Aska::MemoryManagerHelper::InitMemoryManager(unsigned long)	helpers	typed	
+0x1f0abcc	0x200abcc	56	_ZN4Aska19MemoryManagerHelper7CleanupEv	Aska::MemoryManagerHelper::Cleanup()	helpers	typed	
+0x1f0ac04	0x200ac04	40	_ZN4Aska19MemoryManagerHelper19CleanupMemoryManaerEv	Aska::MemoryManagerHelper::CleanupMemoryManaer()	helpers	typed	
+0x1f0ac2c	0x200ac2c	172	_ZN4Aska19MemoryManagerHelper23InitMemoryHandleManagerEmj	Aska::MemoryManagerHelper::InitMemoryHandleManager(unsigned long, unsigned int)	helpers	typed	partial layout
+0x1f0acd8	0x200acd8	72	_ZN4Aska19MemoryManagerHelper26CleanupMemoryHandleManagerEv	Aska::MemoryManagerHelper::CleanupMemoryHandleManager()	helpers	typed	partial layout
+0x1f1e24c	0x201e24c	132	_ZN4Aska13DeleteManagerD2Ev	Aska::DeleteManager::~DeleteManager()	delete_manager	typed	
+0x1f1e2dc	0x201e2dc	216	_ZN4Aska13DeleteManager10InitializeEv	Aska::DeleteManager::Initialize()	delete_manager	typed	
+0x1f1e3e8	0x201e3e8	456	_ZN4Aska13DeleteManager5ClearEv	Aska::DeleteManager::Clear()	delete_manager	typed	
+0x1f1e5b0	0x201e5b0	92	_ZN4Aska13DeleteManager7IsEmptyEv	Aska::DeleteManager::IsEmpty()	delete_manager	typed	
+0x1f1e60c	0x201e60c	588	_ZN4Aska13DeleteManager7AddMainEPvhhPNS_14IDeleteHandlerE	Aska::DeleteManager::AddMain(void*, unsigned char, unsigned char, Aska::IDeleteHandler*)	delete_manager	typed	
+0x1f1e858	0x201e858	192	_ZN4Aska13DeleteManager18_DeletePointerInfo13DeletePointerEv	Aska::DeleteManager::_DeletePointerInfo::DeletePointer()	delete_manager	typed	
+0x1f1e918	0x201e918	548	_ZN4Aska13DeleteManager6CancelEPv	Aska::DeleteManager::Cancel(void*)	delete_manager	typed	
+0x1f1eb3c	0x201eb3c	568	_ZN4Aska13DeleteManager12PreFlushMainEv	Aska::DeleteManager::PreFlushMain()	delete_manager	typed	
+0x1f1ed74	0x201ed74	740	_ZN4Aska13DeleteManager9FlushMainEv	Aska::DeleteManager::FlushMain()	delete_manager	typed	
+0x1f1f058	0x201f058	484	_ZN4Aska13DeleteManager13PostFlushMainEv	Aska::DeleteManager::PostFlushMain()	delete_manager	typed	
+0x1f1f23c	0x201f23c	140	_ZN4Aska13DeleteManagerD0Ev	Aska::DeleteManager::~DeleteManager()	delete_manager	typed	
+0x1f1f2c8	0x201f2c8	32	_ZN4Aska13TDynamicQueueIPNS_13DeleteManager18_DeletePointerInfoELb0EED2Ev	Aska::TDynamicQueue<Aska::DeleteManager::_DeletePointerInfo*, false>::~TDynamicQueue()	delete_manager	typed	
+0x1f1f2e8	0x201f2e8	4	_ZN4Aska13TDynamicQueueIPNS_13DeleteManager18_DeletePointerInfoELb0EED0Ev	Aska::TDynamicQueue<Aska::DeleteManager::_DeletePointerInfo*, false>::~TDynamicQueue()	delete_manager	typed	
+0x1f40608	0x2040608	376	_ZNK4Aska19MemoryHandleManager8GetBlockEj	Aska::MemoryHandleManager::GetBlock(unsigned int) const	handles	typed	partial layout
+0x1f40780	0x2040780	564	_ZN4Aska19MemoryHandleManager6FreeExEPv	Aska::MemoryHandleManager::FreeEx(void*)	handles	typed	partial layout
+0x1f409b4	0x20409b4	24	_ZN4Aska19MemoryHandleManager12CalcSrbkSizeEm	Aska::MemoryHandleManager::CalcSrbkSize(unsigned long)	handles	typed	partial layout
+0x1f409cc	0x20409cc	16	_ZN4Aska19MemoryHandleManager14CalcBlocksSizeEi	Aska::MemoryHandleManager::CalcBlocksSize(int)	handles	typed	partial layout
+0x1f409dc	0x20409dc	36	_ZN4Aska19MemoryHandleManager21CalcSrbkAndBlocksSizeEmi	Aska::MemoryHandleManager::CalcSrbkAndBlocksSize(unsigned long, int)	handles	typed	partial layout
+0x1f40a00	0x2040a00	40	_ZN4Aska19MemoryHandleManager16CalcFullHeapSizeEm	Aska::MemoryHandleManager::CalcFullHeapSize(unsigned long)	handles	typed	partial layout
+0x1f40a28	0x2040a28	52	_ZN4Aska19MemoryHandleManager27CalcFullHeapSizeForOneBlockEmlb	Aska::MemoryHandleManager::CalcFullHeapSizeForOneBlock(unsigned long, long, bool)	handles	typed	partial layout
+0x1f40a5c	0x2040a5c	116	_ZN4Aska19MemoryHandleManagerC1Ev	Aska::MemoryHandleManager::MemoryHandleManager()	handles	typed	partial layout
+0x1f40ad0	0x2040ad0	228	_ZN4Aska19MemoryHandleManagerD2Ev	Aska::MemoryHandleManager::~MemoryHandleManager()	handles	typed	partial layout
+0x1f40bb4	0x2040bb4	160	_ZN4Aska19MemoryHandleManager6RemoveEPS0_	Aska::MemoryHandleManager::Remove(Aska::MemoryHandleManager*)	handles	typed	partial layout
+0x1f40c54	0x2040c54	492	_ZN4Aska19MemoryHandleManager10DeleteHeapEv	Aska::MemoryHandleManager::DeleteHeap()	handles	typed	partial layout
+0x1f40e40	0x2040e40	24	_ZN4Aska19MemoryHandleManagerD0Ev	Aska::MemoryHandleManager::~MemoryHandleManager()	handles	typed	partial layout
+0x1f40e58	0x2040e58	188	_ZN4Aska19MemoryHandleManager8InitHeapEPhlS1_l	Aska::MemoryHandleManager::InitHeap(unsigned char*, long, unsigned char*, long)	handles	typed	partial layout
+0x1f40f14	0x2040f14	32	_ZN4Aska19MemoryHandleManager17CalcNumberOfSrbksEl	Aska::MemoryHandleManager::CalcNumberOfSrbks(long)	handles	typed	partial layout
+0x1f40f34	0x2040f34	664	_ZN4Aska19MemoryHandleManager25AddUnusedMemoryBlockChunkEPNS0_23_UnusedMemoryBlockChunkEm	Aska::MemoryHandleManager::AddUnusedMemoryBlockChunk(Aska::MemoryHandleManager::_UnusedMemoryBlockChunk*, unsigned long)	handles	typed	partial layout
+0x1f411cc	0x20411cc	580	_ZN4Aska19MemoryHandleManager8InitSrbkEv	Aska::MemoryHandleManager::InitSrbk()	handles	typed	partial layout
+0x1f41410	0x2041410	468	_ZN4Aska19MemoryHandleManager12RegisterThisEv	Aska::MemoryHandleManager::RegisterThis()	handles	typed	partial layout
+0x1f415e4	0x20415e4	204	_ZN4Aska19MemoryHandleManager8InitHeapEPhlS1_lS1_l	Aska::MemoryHandleManager::InitHeap(unsigned char*, long, unsigned char*, long, unsigned char*, long)	handles	typed	partial layout
+0x1f416b0	0x20416b0	220	_ZN4Aska19MemoryHandleManager8InitHeapEPhl	Aska::MemoryHandleManager::InitHeap(unsigned char*, long)	handles	typed	partial layout
+0x1f4178c	0x204178c	260	_ZN4Aska19MemoryHandleManager8InitHeapEl	Aska::MemoryHandleManager::InitHeap(long)	handles	typed	partial layout
+0x1f41890	0x2041890	608	_ZN4Aska19MemoryHandleManager14DeregisterThisEv	Aska::MemoryHandleManager::DeregisterThis()	handles	typed	partial layout
+0x1f41af0	0x2041af0	384	_ZNK4Aska19MemoryHandleManager11IsAllocatedEjPm	Aska::MemoryHandleManager::IsAllocated(unsigned int, unsigned long*) const	handles	typed	partial layout
+0x1f41c70	0x2041c70	184	_ZN4Aska19MemoryHandleManager11IsAllocatedEPKvPm	Aska::MemoryHandleManager::IsAllocated(void const*, unsigned long*)	handles	typed	partial layout
+0x1f41d28	0x2041d28	660	_ZN4Aska19MemoryHandleManager19GetAllocatedManagerEPKvPm	Aska::MemoryHandleManager::GetAllocatedManager(void const*, unsigned long*)	handles	typed	partial layout
+0x1f41fbc	0x2041fbc	40	_ZN4Aska19MemoryHandleManager10StaticFreeEPKv	Aska::MemoryHandleManager::StaticFree(void const*)	handles	typed	partial layout
+0x1f41fe4	0x2041fe4	492	_ZN4Aska19MemoryHandleManager4FreeEPKv	Aska::MemoryHandleManager::Free(void const*)	handles	typed	partial layout
+0x1f421d0	0x20421d0	600	_ZN4Aska19MemoryHandleManager6MallocEm	Aska::MemoryHandleManager::Malloc(unsigned long)	handles	typed	partial layout
+0x1f42428	0x2042428	548	_ZN4Aska19MemoryHandleManager10MallocHighEm	Aska::MemoryHandleManager::MallocHigh(unsigned long)	handles	typed	partial layout
+0x1f4310c	0x204310c	608	_ZN4Aska19MemoryHandleManager13AlignedMallocEml	Aska::MemoryHandleManager::AlignedMalloc(unsigned long, long)	handles	typed	partial layout
+0x1f4336c	0x204336c	556	_ZN4Aska19MemoryHandleManager17AlignedMallocHighEml	Aska::MemoryHandleManager::AlignedMallocHigh(unsigned long, long)	handles	typed	partial layout
+0x1f44480	0x2044480	3088	_ZN4Aska19MemoryHandleManager7ReallocEmPvl	Aska::MemoryHandleManager::Realloc(unsigned long, void*, long)	handles	typed	partial layout
+0x1f45090	0x2045090	4	_ZN4Aska19MemoryHandleManager14LocalFreeBlockEPNS_18_MemoryHandleBlockE	Aska::MemoryHandleManager::LocalFreeBlock(Aska::_MemoryHandleBlock*)	handles	typed	partial layout
+0x1f45094	0x2045094	356	_ZNK4Aska19MemoryHandleManager9IsCreatedEv	Aska::MemoryHandleManager::IsCreated() const	handles	typed	partial layout
+0x1f451f8	0x20451f8	508	_ZNK4Aska19MemoryHandleManager12CalcFreeSizeEPlS1_	Aska::MemoryHandleManager::CalcFreeSize(long*, long*) const	handles	typed	partial layout
+0x1f453f4	0x20453f4	424	_ZN4Aska19MemoryHandleManager15CountFreeBlocksEv	Aska::MemoryHandleManager::CountFreeBlocks()	handles	typed	partial layout
+0x1f4559c	0x204559c	816	_ZNK4Aska19MemoryHandleManager7IsEmptyEb	Aska::MemoryHandleManager::IsEmpty(bool) const	handles	typed	partial layout
+0x1f458cc	0x20458cc	756	_ZN4Aska19MemoryHandleManager12CalcFreeSizeEb	Aska::MemoryHandleManager::CalcFreeSize(bool)	handles	typed	partial layout
+0x1f45bc0	0x2045bc0	4	_ZN4Aska19MemoryHandleManager16PrintMemoryChainEv	Aska::MemoryHandleManager::PrintMemoryChain()	handles	typed	partial layout
+0x1f45bc4	0x2045bc4	4	_ZN4Aska19MemoryHandleManager16PrintMemoryChainEPKc	Aska::MemoryHandleManager::PrintMemoryChain(char const*)	handles	typed	partial layout
+0x1f45bc8	0x2045bc8	588	_ZN4Aska19MemoryHandleManager15SearchNextBlockEPPNS0_5_SrbkEPPNS_18_MemoryHandleBlockEb	Aska::MemoryHandleManager::SearchNextBlock(Aska::MemoryHandleManager::_Srbk**, Aska::_MemoryHandleBlock**, bool)	handles	typed	partial layout
+0x1f45e14	0x2045e14	92	_ZN4Aska19MemoryHandleManager3AddEPS0_	Aska::MemoryHandleManager::Add(Aska::MemoryHandleManager*)	handles	typed	partial layout
+0x1f45e70	0x2045e70	1332	_ZN4Aska19MemoryHandleManager9LocalFreeEPNS_18_MemoryHandleBlockE	Aska::MemoryHandleManager::LocalFree(Aska::_MemoryHandleBlock*)	handles	typed	partial layout
+0x1f463a4	0x20463a4	368	_ZN4Aska19MemoryHandleManager4MoveEj	Aska::MemoryHandleManager::Move(unsigned int)	handles	typed	partial layout
+0x1f46514	0x2046514	860	_ZN4Aska19MemoryHandleManager9LocalMoveERNS_18_MemoryHandleBlockE	Aska::MemoryHandleManager::LocalMove(Aska::_MemoryHandleBlock&)	handles	typed	partial layout
+0x1f46870	0x2046870	368	_ZN4Aska19MemoryHandleManager10MoveToHighEj	Aska::MemoryHandleManager::MoveToHigh(unsigned int)	handles	typed	partial layout
+0x1f469e0	0x20469e0	860	_ZN4Aska19MemoryHandleManager15LocalMoveToHighERNS_18_MemoryHandleBlockE	Aska::MemoryHandleManager::LocalMoveToHigh(Aska::_MemoryHandleBlock&)	handles	typed	partial layout
+0x1f46d3c	0x2046d3c	692	_ZN4Aska19MemoryHandleManager10CompactionEm	Aska::MemoryHandleManager::Compaction(unsigned long)	handles	typed	partial layout
+0x1f46ff0	0x2046ff0	488	_ZN4Aska19MemoryHandleManager10CompactionEv	Aska::MemoryHandleManager::Compaction()	handles	typed	partial layout
+0x1f471d8	0x20471d8	8	_ZNK4Aska19MemoryHandleManager10IsPhysicalEv	Aska::MemoryHandleManager::IsPhysical() const	handles	typed	partial layout
+0x1f471e0	0x20471e0	4	_ZN4Aska19MemoryHandleManager13VirtualMallocEm	Aska::MemoryHandleManager::VirtualMalloc(unsigned long)	handles	typed	partial layout
+0x1f471e4	0x20471e4	4	_ZN4Aska19MemoryHandleManager17VirtualMallocHighEm	Aska::MemoryHandleManager::VirtualMallocHigh(unsigned long)	handles	typed	partial layout
+0x1f471e8	0x20471e8	4	_ZN4Aska19MemoryHandleManager20VirtualAlignedMallocEml	Aska::MemoryHandleManager::VirtualAlignedMalloc(unsigned long, long)	handles	typed	partial layout
+0x1f471ec	0x20471ec	4	_ZN4Aska19MemoryHandleManager24VirtualAlignedMallocHighEml	Aska::MemoryHandleManager::VirtualAlignedMallocHigh(unsigned long, long)	handles	typed	partial layout
+0x1f471f0	0x20471f0	4	_ZN4Aska19MemoryHandleManager14VirtualReallocEmPvl	Aska::MemoryHandleManager::VirtualRealloc(unsigned long, void*, long)	handles	typed	partial layout
+0x1f471f4	0x20471f4	872	_ZN4Aska19MemoryHandleManager12VirtualSplitEPvS1_	Aska::MemoryHandleManager::VirtualSplit(void*, void*)	handles	typed	partial layout
+0x1f4755c	0x204755c	368	_ZN4Aska19MemoryHandleManager11VirtualMoveEPvlb	Aska::MemoryHandleManager::VirtualMove(void*, long, bool)	handles	typed	partial layout
+0x1f476cc	0x20476cc	536	_ZN4Aska19MemoryHandleManager11VirtualFreeEPv	Aska::MemoryHandleManager::VirtualFree(void*)	handles	typed	partial layout
+0x1f478e4	0x20478e4	212	_ZN4Aska19MemoryHandleManager26VirtualGetAllocatedManagerEPKvPm	Aska::MemoryHandleManager::VirtualGetAllocatedManager(void const*, unsigned long*)	handles	typed	partial layout
+0x1f479b8	0x20479b8	516	_ZN4Aska19MemoryHandleManager21VirtualRegisterNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryHandleManager::VirtualRegisterNotify(void*, Aska::IMemoryNotify*)	handles	typed	partial layout
+0x1f47bbc	0x2047bbc	516	_ZN4Aska19MemoryHandleManager19VirtualRemoveNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryHandleManager::VirtualRemoveNotify(void*, Aska::IMemoryNotify*)	handles	typed	partial layout
+0x1f47dc0	0x2047dc0	516	_ZN4Aska19MemoryHandleManager25VirtualIsRegisteredNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryHandleManager::VirtualIsRegisteredNotify(void*, Aska::IMemoryNotify*)	handles	typed	partial layout
+0x1f47fc4	0x2047fc4	476	_ZN4Aska19MemoryHandleManager26VirtualGetRegisteredNotifyEPv	Aska::MemoryHandleManager::VirtualGetRegisteredNotify(void*)	handles	typed	partial layout
+0x1f481a0	0x20481a0	4	_ZN4Aska19MemoryHandleManager20CreateDebugMemoryMapEiib	Aska::MemoryHandleManager::CreateDebugMemoryMap(int, int, bool)	handles	typed	partial layout
+0x1f481a4	0x20481a4	4	_ZN4Aska19MemoryHandleManager20UpdateDebugMemoryMapEv	Aska::MemoryHandleManager::UpdateDebugMemoryMap()	handles	typed	partial layout
+0x1f481a8	0x20481a8	4	_ZN4Aska19MemoryHandleManager17GetDebugMemoryMapEPNS_4TextEffjff	Aska::MemoryHandleManager::GetDebugMemoryMap(Aska::Text*, float, float, unsigned int, float, float)	handles	typed	partial layout
+0x1f481ac	0x20481ac	4	_ZN4Aska19MemoryHandleManager21SetSwapDebugMemoryMapEb	Aska::MemoryHandleManager::SetSwapDebugMemoryMap(bool)	handles	typed	partial layout
+0x1f481b0	0x20481b0	40	_ZNK4Aska19MemoryHandleManager25GetUnusedMemoryBlockTotalEv	Aska::MemoryHandleManager::GetUnusedMemoryBlockTotal() const	handles	typed	partial layout
+0x1f481d8	0x20481d8	16	_ZN4Aska19MemoryHandleManager15VirtualMoveHighEPvl	Aska::MemoryHandleManager::VirtualMoveHigh(void*, long)	handles	typed	partial layout
+0x1f481e8	0x20481e8	8	_ZNK4Aska19MemoryHandleManager21VirtualGetHeapAddressEv	Aska::MemoryHandleManager::VirtualGetHeapAddress() const	handles	typed	partial layout
+0x1f481f0	0x20481f0	8	_ZNK4Aska19MemoryHandleManager17VirtualIsPhysicalEv	Aska::MemoryHandleManager::VirtualIsPhysical() const	handles	typed	partial layout
+0x1f481f8	0x20481f8	8	_ZN4Aska19MemoryHandleManager28VirtualIsMemoryHandleManagerEv	Aska::MemoryHandleManager::VirtualIsMemoryHandleManager()	handles	typed	partial layout
+0x1f48200	0x2048200	4	_ZNK4Aska19MemoryHandleManager19VirtualCalcFreeSizeEPlS1_	Aska::MemoryHandleManager::VirtualCalcFreeSize(long*, long*) const	handles	typed	partial layout
+0x1f48204	0x2048204	8	_ZNK4Aska19MemoryHandleManager14VirtualIsEmptyEb	Aska::MemoryHandleManager::VirtualIsEmpty(bool) const	handles	typed	partial layout
+0x1f4820c	0x204820c	8	_ZN4Aska19MemoryHandleManager29VirtualGetFastCriticalSectionEv	Aska::MemoryHandleManager::VirtualGetFastCriticalSection()	handles	typed	partial layout
+0x1f48214	0x2048214	16	_ZNK4Aska19MemoryHandleManager14VirtualGetSrbkEi	Aska::MemoryHandleManager::VirtualGetSrbk(int) const	handles	typed	partial layout
+0x1f48224	0x2048224	8	_ZNK4Aska19MemoryHandleManager24VirtualGetTopSrbkAddressEv	Aska::MemoryHandleManager::VirtualGetTopSrbkAddress() const	handles	typed	partial layout
+0x1f48234	0x2048234	4	_ZN4Aska19MemoryHandleManager23VirtualPrintMemoryChainEv	Aska::MemoryHandleManager::VirtualPrintMemoryChain()	handles	typed	partial layout
+0x1f48238	0x2048238	8	_ZNK4Aska19MemoryHandleManager18VirtualGetHeapSizeEv	Aska::MemoryHandleManager::VirtualGetHeapSize() const	handles	typed	partial layout
+0x1f49e3c	0x2049e3c	324	_ZN4Aska13MemoryManager8InitHeapEPhm	Aska::MemoryManager::InitHeap(unsigned char*, unsigned long)	memory_manager	typed	
+0x1f49fd0	0x2049fd0	20	_ZN4Aska13MemoryManager19GetAllocatedManagerEPKvPm	Aska::MemoryManager::GetAllocatedManager(void const*, unsigned long*)	memory_manager	typed	
+0x1f49fe4	0x2049fe4	8	_ZN4Aska13MemoryManager19GetAllocatedManagerEPKv	Aska::MemoryManager::GetAllocatedManager(void const*)	memory_manager	typed	
+0x1f49fec	0x2049fec	36	_ZN4Aska13MemoryManager19LocalRegisterNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::LocalRegisterNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4a010	0x204a010	36	_ZN4Aska13MemoryManager17LocalRemoveNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::LocalRemoveNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4a034	0x204a034	44	_ZN4Aska13MemoryManager23LocalIsRegisteredNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::LocalIsRegisteredNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4a060	0x204a060	8	_ZN4Aska13MemoryManager24LocalGetRegisteredNotifyEPv	Aska::MemoryManager::LocalGetRegisteredNotify(void*)	memory_manager	typed	
+0x1f4a068	0x204a068	380	_ZN4Aska13MemoryManager14RegisterNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::RegisterNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4a1e4	0x204a1e4	380	_ZN4Aska13MemoryManager12RemoveNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::RemoveNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4a360	0x204a360	380	_ZN4Aska13MemoryManager18IsRegisteredNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::IsRegisteredNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4a4dc	0x204a4dc	348	_ZN4Aska13MemoryManager19GetRegisteredNotifyEPv	Aska::MemoryManager::GetRegisteredNotify(void*)	memory_manager	typed	
+0x1f4a638	0x204a638	24	_ZN4Aska13MemoryManager12CalcSrbkSizeEm	Aska::MemoryManager::CalcSrbkSize(unsigned long)	memory_manager	typed	
+0x1f4a650	0x204a650	32	_ZN4Aska13MemoryManager16CalcFullHeapSizeEm	Aska::MemoryManager::CalcFullHeapSize(unsigned long)	memory_manager	typed	
+0x1f4a670	0x204a670	44	_ZN4Aska13MemoryManager27CalcFullHeapSizeForOneBlockEmlb	Aska::MemoryManager::CalcFullHeapSizeForOneBlock(unsigned long, long, bool)	memory_manager	typed	
+0x1f4a6b4	0x204a6b4	1492	_ZN4Aska13MemoryManager9LocalFreeEPNS_12_MemoryBlockE	Aska::MemoryManager::LocalFree(Aska::_MemoryBlock*)	memory_manager	typed	
+0x1f4acb8	0x204acb8	60	_ZN4Aska13MemoryManagerC2Ev	Aska::MemoryManager::MemoryManager()	memory_manager	typed	
+0x1f4acf4	0x204acf4	20	_ZN4Aska13MemoryManager10InitializeEv	Aska::MemoryManager::Initialize()	memory_manager	typed	
+0x1f4ad08	0x204ad08	80	_ZN4Aska13MemoryManagerC1Em	Aska::MemoryManager::MemoryManager(unsigned long)	memory_manager	typed	
+0x1f4ad58	0x204ad58	348	_ZN4Aska13MemoryManager8InitHeapEm	Aska::MemoryManager::InitHeap(unsigned long)	memory_manager	typed	
+0x1f4aeb4	0x204aeb4	264	_ZN4Aska13MemoryManagerD2Ev	Aska::MemoryManager::~MemoryManager()	memory_manager	typed	
+0x1f4afbc	0x204afbc	4	_ZN4Aska13MemoryManager9ClearHeapEv	Aska::MemoryManager::ClearHeap()	memory_manager	typed	
+0x1f4afc0	0x204afc0	148	_ZN4Aska13MemoryManager6RemoveEPS0_	Aska::MemoryManager::Remove(Aska::MemoryManager*)	memory_manager	typed	
+0x1f4b054	0x204b054	56	_ZN4Aska13MemoryManager10DeleteHeapEv	Aska::MemoryManager::DeleteHeap()	memory_manager	typed	
+0x1f4b08c	0x204b08c	40	_ZN4Aska13MemoryManagerD0Ev	Aska::MemoryManager::~MemoryManager()	memory_manager	typed	
+0x1f4b0b4	0x204b0b4	232	_ZN4Aska13MemoryManager8InitSrbkEm	Aska::MemoryManager::InitSrbk(unsigned long)	memory_manager	typed	
+0x1f4b19c	0x204b19c	332	_ZN4Aska13MemoryManager8InitHeapEPhmS1_m	Aska::MemoryManager::InitHeap(unsigned char*, unsigned long, unsigned char*, unsigned long)	memory_manager	typed	
+0x1f4b2e8	0x204b2e8	184	_ZN4Aska13MemoryManager8InitSrbkEmPh	Aska::MemoryManager::InitSrbk(unsigned long, unsigned char*)	memory_manager	typed	
+0x1f4b3a0	0x204b3a0	1248	_ZN4Aska13MemoryManager6MallocEm	Aska::MemoryManager::Malloc(unsigned long)	memory_manager	typed	
+0x1f4b880	0x204b880	1184	_ZN4Aska13MemoryManager10MallocHighEm	Aska::MemoryManager::MallocHigh(unsigned long)	memory_manager	typed	
+0x1f4bd20	0x204bd20	1460	_ZN4Aska13MemoryManager13AlignedMallocEml	Aska::MemoryManager::AlignedMalloc(unsigned long, long)	memory_manager	typed	
+0x1f4c2d4	0x204c2d4	1460	_ZN4Aska13MemoryManager17AlignedMallocHighEml	Aska::MemoryManager::AlignedMallocHigh(unsigned long, long)	memory_manager	typed	
+0x1f4c888	0x204c888	2124	_ZN4Aska13MemoryManager7ReallocEmPvl	Aska::MemoryManager::Realloc(unsigned long, void*, long)	memory_manager	typed	
+0x1f4d0d4	0x204d0d4	536	_ZN4Aska13MemoryManager5SplitEPvS1_	Aska::MemoryManager::Split(void*, void*)	memory_manager	typed	
+0x1f4d2ec	0x204d2ec	364	_ZN4Aska13MemoryManager4MoveEPvlb	Aska::MemoryManager::Move(void*, long, bool)	memory_manager	typed	
+0x1f4d458	0x204d458	12	_ZN4Aska13MemoryManager9LocalFreeEPv	Aska::MemoryManager::LocalFree(void*)	memory_manager	typed	
+0x1f4d464	0x204d464	356	_ZNK4Aska13MemoryManager9IsCreatedEv	Aska::MemoryManager::IsCreated() const	memory_manager	typed	
+0x1f4d5c8	0x204d5c8	8	_ZNK4Aska13MemoryManager10IsPhysicalEv	Aska::MemoryManager::IsPhysical() const	memory_manager	typed	
+0x1f4d5d0	0x204d5d0	8	_ZN4Aska13MemoryManager13GetMemorySizeEPKv	Aska::MemoryManager::GetMemorySize(void const*)	memory_manager	typed	
+0x1f4d5d8	0x204d5d8	524	_ZNK4Aska13MemoryManager12CalcFreeSizeEPlS1_	Aska::MemoryManager::CalcFreeSize(long*, long*) const	memory_manager	typed	
+0x1f4d7e4	0x204d7e4	424	_ZN4Aska13MemoryManager15CountFreeBlocksEv	Aska::MemoryManager::CountFreeBlocks()	memory_manager	typed	
+0x1f4d98c	0x204d98c	816	_ZNK4Aska13MemoryManager7IsEmptyEb	Aska::MemoryManager::IsEmpty(bool) const	memory_manager	typed	
+0x1f4dcbc	0x204dcbc	764	_ZN4Aska13MemoryManager12CalcFreeSizeEb	Aska::MemoryManager::CalcFreeSize(bool)	memory_manager	typed	
+0x1f4dfb8	0x204dfb8	4	_ZN4Aska13MemoryManager16PrintMemoryChainEv	Aska::MemoryManager::PrintMemoryChain()	memory_manager	typed	
+0x1f4dfbc	0x204dfbc	4	_ZN4Aska13MemoryManager16PrintMemoryChainEPKc	Aska::MemoryManager::PrintMemoryChain(char const*)	memory_manager	typed	
+0x1f4dfc0	0x204dfc0	600	_ZN4Aska13MemoryManager15SearchNextBlockEPPNS0_5_SrbkEPPNS_12_MemoryBlockEb	Aska::MemoryManager::SearchNextBlock(Aska::MemoryManager::_Srbk**, Aska::_MemoryBlock**, bool)	memory_manager	typed	
+0x1f4e218	0x204e218	176	_ZN4Aska13MemoryManager3AddEi	Aska::MemoryManager::Add(int)	memory_manager	typed	
+0x1f4e2c8	0x204e2c8	188	_ZN4Aska13MemoryManager3AddEPvi	Aska::MemoryManager::Add(void*, int)	memory_manager	typed	
+0x1f4e384	0x204e384	92	_ZN4Aska13MemoryManager3AddEPS0_	Aska::MemoryManager::Add(Aska::MemoryManager*)	memory_manager	typed	
+0x1f4e3e0	0x204e3e0	4	_ZN4Aska13MemoryManager20CreateDebugMemoryMapEiib	Aska::MemoryManager::CreateDebugMemoryMap(int, int, bool)	memory_manager	typed	
+0x1f4e3e4	0x204e3e4	4	_ZN4Aska13MemoryManager20UpdateDebugMemoryMapEv	Aska::MemoryManager::UpdateDebugMemoryMap()	memory_manager	typed	
+0x1f4e3e8	0x204e3e8	4	_ZN4Aska13MemoryManager17GetDebugMemoryMapEPNS_4TextEffjff	Aska::MemoryManager::GetDebugMemoryMap(Aska::Text*, float, float, unsigned int, float, float)	memory_manager	typed	
+0x1f4e3ec	0x204e3ec	4	_ZN4Aska13MemoryManager21SetSwapDebugMemoryMapEb	Aska::MemoryManager::SetSwapDebugMemoryMap(bool)	memory_manager	typed	
+0x1f4e3f0	0x204e3f0	368	_ZN4Aska13MemoryManager21VirtualRegisterNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::VirtualRegisterNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4e560	0x204e560	368	_ZN4Aska13MemoryManager19VirtualRemoveNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::VirtualRemoveNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4e6d0	0x204e6d0	368	_ZN4Aska13MemoryManager25VirtualIsRegisteredNotifyEPvPNS_13IMemoryNotifyE	Aska::MemoryManager::VirtualIsRegisteredNotify(void*, Aska::IMemoryNotify*)	memory_manager	typed	
+0x1f4e840	0x204e840	336	_ZN4Aska13MemoryManager26VirtualGetRegisteredNotifyEPv	Aska::MemoryManager::VirtualGetRegisteredNotify(void*)	memory_manager	typed	
+0x1f4e990	0x204e990	4	_ZN4Aska13MemoryManager13VirtualMallocEm	Aska::MemoryManager::VirtualMalloc(unsigned long)	memory_manager	typed	
+0x1f4e994	0x204e994	4	_ZN4Aska13MemoryManager17VirtualMallocHighEm	Aska::MemoryManager::VirtualMallocHigh(unsigned long)	memory_manager	typed	
+0x1f4e998	0x204e998	4	_ZN4Aska13MemoryManager20VirtualAlignedMallocEml	Aska::MemoryManager::VirtualAlignedMalloc(unsigned long, long)	memory_manager	typed	
+0x1f4e99c	0x204e99c	4	_ZN4Aska13MemoryManager24VirtualAlignedMallocHighEml	Aska::MemoryManager::VirtualAlignedMallocHigh(unsigned long, long)	memory_manager	typed	
+0x1f4e9a0	0x204e9a0	4	_ZN4Aska13MemoryManager14VirtualReallocEmPvl	Aska::MemoryManager::VirtualRealloc(unsigned long, void*, long)	memory_manager	typed	
+0x1f4e9a4	0x204e9a4	4	_ZN4Aska13MemoryManager12VirtualSplitEPvS1_	Aska::MemoryManager::VirtualSplit(void*, void*)	memory_manager	typed	
+0x1f4e9a8	0x204e9a8	8	_ZN4Aska13MemoryManager11VirtualMoveEPvlb	Aska::MemoryManager::VirtualMove(void*, long, bool)	memory_manager	typed	
+0x1f4e9b0	0x204e9b0	8	_ZN4Aska13MemoryManager15VirtualMoveHighEPvl	Aska::MemoryManager::VirtualMoveHigh(void*, long)	memory_manager	typed	
+0x1f4e9b8	0x204e9b8	20	_ZN4Aska13MemoryManager11VirtualFreeEPv	Aska::MemoryManager::VirtualFree(void*)	memory_manager	typed	
+0x1f4e9cc	0x204e9cc	8	_ZNK4Aska13MemoryManager21VirtualGetHeapAddressEv	Aska::MemoryManager::VirtualGetHeapAddress() const	memory_manager	typed	
+0x1f4e9d4	0x204e9d4	8	_ZNK4Aska13MemoryManager17VirtualIsPhysicalEv	Aska::MemoryManager::VirtualIsPhysical() const	memory_manager	typed	
+0x1f4e9e4	0x204e9e4	4	_ZNK4Aska13MemoryManager19VirtualCalcFreeSizeEPlS1_	Aska::MemoryManager::VirtualCalcFreeSize(long*, long*) const	memory_manager	typed	
+0x1f4e9e8	0x204e9e8	8	_ZNK4Aska13MemoryManager14VirtualIsEmptyEb	Aska::MemoryManager::VirtualIsEmpty(bool) const	memory_manager	typed	
+0x1f4e9f0	0x204e9f0	8	_ZN4Aska13MemoryManager29VirtualGetFastCriticalSectionEv	Aska::MemoryManager::VirtualGetFastCriticalSection()	memory_manager	typed	
+0x1f4e9f8	0x204e9f8	16	_ZNK4Aska13MemoryManager14VirtualGetSrbkEi	Aska::MemoryManager::VirtualGetSrbk(int) const	memory_manager	typed	
+0x1f4ea08	0x204ea08	8	_ZNK4Aska13MemoryManager24VirtualGetTopSrbkAddressEv	Aska::MemoryManager::VirtualGetTopSrbkAddress() const	memory_manager	typed	
+0x1f4ea10	0x204ea10	4	_ZN4Aska13MemoryManager23VirtualPrintMemoryChainEv	Aska::MemoryManager::VirtualPrintMemoryChain()	memory_manager	typed	
+0x1f4ea14	0x204ea14	8	_ZNK4Aska13MemoryManager18VirtualGetHeapSizeEv	Aska::MemoryManager::VirtualGetHeapSize() const	memory_manager	typed	
+0x1f4ea1c	0x204ea1c	20	_ZN4Aska13MemoryManager26VirtualGetAllocatedManagerEPKvPm	Aska::MemoryManager::VirtualGetAllocatedManager(void const*, unsigned long*)	memory_manager	typed	
+0x1f4ea30	0x204ea30	24	_ZN4Aska20MemoryManagerAdapter6MallocEm	Aska::MemoryManagerAdapter::Malloc(unsigned long)	memory_manager	typed	
+0x1f4ea48	0x204ea48	36	_ZN4Aska20MemoryManagerAdapter4FreeEPv	Aska::MemoryManagerAdapter::Free(void*)	memory_manager	typed	
+0x1f4ea6c	0x204ea6c	40	_ZN4Aska20MemoryManagerAdapter13AlignedMallocEmm	Aska::MemoryManagerAdapter::AlignedMalloc(unsigned long, unsigned long)	memory_manager	typed	
+0x1f4ea94	0x204ea94	36	_ZN4Aska20MemoryManagerAdapter11AlignedFreeEPv	Aska::MemoryManagerAdapter::AlignedFree(void*)	memory_manager	typed	
+0x1f63054	0x2063054	344	_ZN4Aska18TSharedPointerCode13CreateCounterEi	Aska::TSharedPointerCode::CreateCounter(int)	delete_manager	typed	
+0x1f631ac	0x20631ac	244	_ZN4Aska18TSharedPointerCode13DeleteCounterEPi	Aska::TSharedPointerCode::DeleteCounter(int*)	delete_manager	typed	

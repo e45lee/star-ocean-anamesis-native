@@ -179,7 +179,8 @@ public:
     void SetTriggerThreshold(u32 which, s32 value);   // slot 17 (empty)
     s32 GetTriggerThreshold(u32 which) const;         // slot 18 (0x7f)
     // Methods
-    void SetAnalogAsDigital(bool on);   // _ZN4Aska3Pad18SetAnalogAsDigitalEb (locked; hot: CPad::CUnit::Progress every frame)
+    void SetAnalogAsDigital(u8 on);     // _ZN4Aska3Pad18SetAnalogAsDigitalEb (locked; hot: CPad::CUnit::Progress every frame;
+                                        //   the guest keeps bit 0 of the bool register)
     bool IsAnalogAsDigital() const;     // _ZNK4Aska3Pad17IsAnalogAsDigitalEv
     void SetRepeatThreshold(u8 frames); // _ZN4Aska3Pad18SetRepeatThresholdEh (locked)
     void SetRepeatInterval(u8 frames);  // _ZN4Aska3Pad17SetRepeatIntervalEh (locked)
@@ -360,6 +361,7 @@ public:
     bool GetDeviceData();               // slot 12 _ZN4Aska10TouchPanel13GetDeviceDataEv
     // Methods
     s32 CopyMessages(TouchData* out);   // _ZN4Aska10TouchPanel12CopyMessagesEPNS_9TouchDataE (hottest input function)
+    static FastCriticalSection* CriGlobal();  // &TouchPanel::m_criGlobal (CopyMessages takes it before base.m_cs)
     void Enable(bool on);               // _ZN4Aska10TouchPanel6EnableEb
     void ClearGestureParam();           // _ZN4Aska10TouchPanel17ClearGestureParamEv
     s32 CalcDoublTapRange(s32 n);       // _ZN4Aska10TouchPanel17CalcDoublTapRangeEi (max(fb w, h) * n / a constant)
@@ -535,6 +537,8 @@ public:
     bool Set(u64 id, const void* in);   // slot 6 (0)
     void Handler();                     // slot 7  _ZN4Aska17PeripheralManager7HandlerEv
     void ResetAllPeripheral();          // _ZN4Aska17PeripheralManager18ResetAllPeripheralEv (slot 10 of both)
+    static PeripheralManager* Instance();  // Aska::Global::m_pPeripheralManager
+    static BasePeripheral* GetActivePad(); // Aska::Global::GetActivePad(): Instance() ? m_pad : 0 (kernel's Global; read here)
 
     const void* vtable;         // 0x00: _ZTVN4Aska17PeripheralManagerE + 0x10
     Thread m_thread;            // 0x08: Aska::Thread (sync); its vtable = _ZTV... + 0x60
@@ -668,6 +672,7 @@ public:
     u16 SingleWithEveryMode() const;
     u16 RepeatWithEveryMode() const;
     // GetNow(int) .. GetAnalogRYF(int): the merged value when mode matches (see the decompile)
+    static CPad* Instance();            // Framework::TSingleton<CPad>::m_pInstance (0 before Initialize)
 
     const void* vtable;         // 0x00: _ZTVN9Framework4CPadE + 0x10
     u8 unk_08[8];               // 0x08
@@ -806,6 +811,7 @@ public:
     bool Repeat(s32 key) const;         // _ZNK9Framework9CKeyboard6RepeatEi
     s32 Press() const;                  // _ZNK9Framework9CKeyboard5PressEv
     static bool IsDrawableCharacter(u32 c);
+    static CKeyboard* Instance();       // Framework::TSingleton<CKeyboard>::m_pInstance
 
     u8 m_down[32];              // 0x00: one bit per key
     u8 unk_20[0xe0];            // 0x20: cleared by Initialize (memset 0x100)

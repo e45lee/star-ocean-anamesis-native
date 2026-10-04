@@ -5,3 +5,7 @@
 # (static-initializer order, D8); name this subsystem's files input_*.cpp so they sort together.
 # Add here what is this subsystem's own, e.g. a host library at a clean boundary:
 #   target_link_libraries(soa PRIVATE ZLIB::ZLIB)
+#
+# No contraction of a * b + c into a fused multiply-add (the guest lib has none; math/subsystem.cmake).
+file(GLOB _soa_input_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/input_*.cpp)
+set_source_files_properties(${_soa_input_sources} PROPERTIES COMPILE_OPTIONS "-ffp-contract=off")

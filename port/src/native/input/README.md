@@ -35,8 +35,29 @@ accessors and with the decompile's arithmetic.
 
 ## Natives
 
+7 bound (`soa --list-native | grep input:`), the hottest input functions: the locked methods the game
+thread calls every frame and CPad::Merge. Their critical section is sync's
+`FastCriticalSection::Enter` / `Leave` on the guest's own words, so the guest code that still takes the
+same locks (the PeripheralManager thread's `GetStatus` / `GetDeviceData` / `UpdateKeyStatus`, `Release`)
+and these natives exclude each other. Live check: `soa --live-check input[:every=N][:out=FILE]` (default
+every=16; `input_check.h`: the guest original on a shadow of the object as the native saw it under the
+lock).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `Aska::Pad::SetAnalogAsDigital` / `SetRepeatThreshold` / `SetRepeatInterval` | `input_pad.cpp` | `input/pad-setters` (private pads from the guest's `Pad(short)`, edge and random values) | shadow (the pad's bytes) |
+| `Aska::Pad::Flip` (vtable slot 10 `ResetStatus` first, then the swap under the lock) | `input_pad.cpp` | `input/pad-flip` (random double-buffered keys, the guest's `Pad::ResetStatus`) | shadow |
+| `Framework::CPad::Merge` | `input_pad.cpp` | `input/pad-merge` (a test hook on Merge: on the game thread, the singleton's units and the active pad poked with random / edge masks, analog values, NaN / ±0 / inf floats, triggers) | the guest on a copy of `this` with m_merged poisoned |
+| `Aska::TouchPanel::CopyMessages` (m_criGlobal, then the panel's lock) | `input_touch.cpp` | `input/touch-copy-messages` (private panels, 0..64 random messages) | shadow + the copied messages |
+| `Aska::TouchPanel::ResetStatus` | `input_touch.cpp` | `input/touch-copy-messages` | shadow |
+
+Not bound: `TouchPanel::GetDeviceData` (83 samples; the system queue -> TouchReport conversion on the
+peripheral thread, with the frame-buffer scale: kernel's / render's Global state), `CPadReader::Run`
+(53; an Aska::Task: kernel's), `Pad::GetStatus` / `UpdateKeyStatus` / `UpdateKeyRepeat` (36; the pad is a
+stub on Android: zeros), the gesture recogniser (`UpdateGesture`, `ResetGestureParam`, the Get*
+accessors: small, and their inner parameter fields aren't typed yet), `CPad::CUnit::Progress` (14; it
+calls the three setters, now native). `Global::GetActivePad` / `GetPeripheral` and the TSingletons are
+read directly (`PeripheralManager::Instance`, `CPad::Instance`, `CKeyboard::Instance`).
 
 ## Dependencies
 

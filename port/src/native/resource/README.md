@@ -41,8 +41,8 @@ lock), its fields read through these classes and compared with the guest's acces
 | `LIBLManager` | >= 0x930 (not confirmed) | dtor, CopyTexture, Initialize | `-ahsl-libl` (sub-object vtables at 0x620 / 0x670 / 0x678 / 0x8e8 / 0x910; skipped while Global::m_pLIBLManager is null) |
 | `ResourceReadyQueue` | >= 0x248 (not confirmed) | ctor, Init | `-read-devices` (vtables at 0xb0 / 0x100 / 0x138, the work buffer, 0x21c) |
 
-Other subsystems' classes are held as sized bytes with the class named in the comment (the headers aren't
-merged yet): sync's FastCriticalSection (0x90), CMutex (0xb0), Event (0x68), CriticalSection (0x28). hash's
+Other subsystems' classes are embedded from their headers: sync's FastCriticalSection (0x90), CMutex (0xb0),
+Event (0x68), CriticalSection (0x28) from sync_layout.h; hash's
 CHash32 (`CHash32Bytes`) is hash_layout.h's class; kernel's classes come from kernel_layout.h: Aska::Task (`TaskBytes` 0x28;
 CResourceManager keeps inline bytes: data size 0x27, a derived class's first byte at +0x27) and
 Framework::CFiberUnit (0x38). The merged
@@ -51,8 +51,38 @@ TStaticString, TArray, TPoolLegacy, TSharedPointer, String, list, vector, ASON).
 
 ## Natives
 
+13 bound (`soa --list-native | grep resource:`). Live check: `soa --live-check resource[:every=N][:out=FILE]`
+(default every=16; `resource_check.h`). Result (2026-10-04, every=4, login and battle): 9,000 checks, 0 mismatches,
+0 races (Run 3,140, IsReadyDirectFile 3,322, the two GetData 1,895, IsLoading 628, NumLoading 15). IsReady,
+Num, NumByUniqueBitFlag and the four searches weren't called in these flows (differential tests only: status `native`).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `Framework::CResourceManager::Run` (done, unreferenced elements to `CDelayDelete::AddTask`, nodes freed) | `resource_manager.cpp` | `resource/manager-run` (twin private managers over fake elements, AddTask stubbed) | under the manager's own lock: the guest on a shadow manager over a copy of the list, AddTask / the STL Free answered by stubs on this thread; calls, frees and the list left compared |
+| `CResourceManager::IsReady` / `IsReadyDirectFile` | `resource_manager.cpp` | `resource/manager-searches` | getter (+ the `found` out-parameter) |
+| `CResourceManager::Num` / `NumByUniqueBitFlag` / `NumLoading` / `IsLoading` | `resource_manager.cpp` | `resource/manager-searches` (also with the mutex locked: NumLoading / IsLoading then don't lock) | getter |
+| `CResourceManager::pSearch` / `pSearchByDirectPath` (both const and not) | `resource_manager.cpp` | `resource/manager-searches` (hits, misses) | getter |
+| `Aska::AHSLDatabase<ShaderCache, 9>::GetData`, `<ShaderDiskCache, 9>::GetData` | `resource_ahsl.cpp` | `resource/ahsl-get-data` (a private database: inline / external arrays, shared tags, hits, misses) | getter |
+
+Inlined leaves written as members, not bound (a host trap costs more than the few JIT'd instructions):
+`tElement::rResourceElement` / `crResourceElement`, `CResourceElement::IsDone`, `CFileLoader::FileNumber` /
+`pFileName` (which calls the guest's `FileID::gpFileName` for numbered files), `ShaderKeyUtil::GetShaderKeySize`.
+
+Not done (the next wave): `LIBLManager::CopyTexture` (154 self samples in login + battle; 3.2 KB over the Aar
+texture loaders, `TextureManager`, `ResourceReadyQueue::Invoke`, StaticStream: render's types, untyped here),
+`AHSLCacheManagerV2::SearchBindedVS` / `SearchOrCompile` / `Init` (render-side shader cache logic),
+`CGameResourceDownloader::Progress*` / `CVerifyTask::*` (mostly waiting; large), `LocalKVS::GetBinary`
+(x8 result + JNI), `BaseReadDevice::Read` / `Handler` (ReadRequest / ReadRequestList not typed), the stream
+leaves (`MultiMediaStream::IsBufferingReady` / `IsBufferingEnd` / `Lock`, `StaticStream::Tell`,
+`StreamingStream::IsReady`: vtable leaves of the sound path, 15-43 samples each).
+
+## Measurements
+
+SOA_PROFILE at 1000 Hz over the login and battle flows, main's binary (before) and this branch (after),
+2026-10-04 on a shared machine: resource's guest self time 1,434 samples (1.2%) -> 1,318 (1.0%); the natives'
+own 255 -> 0 (CResourceManager::Run 163, IsReadyDirectFile 42, IsLoading 16, the two GetData 35). The rest is
+listed under "Not done". The full download flow (`SOA_PHONE=none rebase_inproc_session.sh`, 1,035 HTTP GETs)
+passes.
 
 ## Dependencies
 
@@ -63,8 +93,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   cache; TPoolLegacy in LIBLManager; TSharedPointer in the streams and the ready queue).
 - `sync` (731): FastCriticalSection (BaseReadDevice 0x18 / 0xa8, DecompressQueue 0x08, AHSLDatabase 0x00,
   AHSLCacheManagerV2, LIBLManager 0x590), CMutex (CResourceManager 0x40, the downloader 0x170), Event,
-  CriticalSection, Thread (BaseReadDevice / ResourceReadyQueue / AHSLCacheManagerV2 bases: vtable + m_thread).
-  **Swap the `u8 m_x[kFastCriticalSectionSize]` etc. for n-sync's classes once sync_layout.h is merged.**
+  CriticalSection (sync_layout.h's classes, embedded), Thread (BaseReadDevice / ResourceReadyQueue /
+  AHSLCacheManagerV2 bases: vtable + m_thread, kept as the two fields).
 - `hash` (80): CHash32 in CFileLoader (+0xa0) and CGameResourceManager::SearchFileMap's key.
 - `kernel` (co-developed, 3,444 samples resource -> kernel): Aska::Task is the base of CResourceManager (at 0)
   and CResourceElement (at +0xc0), LIBLManager's update task (+0x8e8); Framework::CFiberUnit is the

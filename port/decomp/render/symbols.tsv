@@ -1,0 +1,166 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x120232c	0x130232c	44	_ZNK4Aska4Task10GetClassIDEi	Aska::Task::GetClassID(int) const	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1202370	0x1302370	8	_ZN4Aska4Task14MessageHandlerEjiPvS1_	Aska::Task::MessageHandler(unsigned int, int, void*, void*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1202378	0x1302378	8	_ZNK4Aska4Task7IsMultiEv	Aska::Task::IsMulti() const	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1202380	0x1302380	4	_ZN4Aska4Task23OnDeleteFromTaskManagerEv	Aska::Task::OnDeleteFromTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1202384	0x1302384	4	_ZN4Aska4Task18OnAddToTaskManagerEv	Aska::Task::OnAddToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1202388	0x1302388	4	_ZN4Aska4Task21OnAddTopToTaskManagerEv	Aska::Task::OnAddTopToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x120238c	0x130238c	4	_ZN4Aska4Task21OnInsertToTaskManagerEv	Aska::Task::OnInsertToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x134e514	0x144e514	8	_ZNK4Aska4Task15GetDefaultLevelEv	Aska::Task::GetDefaultLevel() const	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1e68bc8	0x1f68bc8	8	_ZNK4Aska18HierarchicalObject15GetDefaultLevelEv	Aska::HierarchicalObject::GetDefaultLevel() const	hierarchical_object	typed	
+0x1e68bd0	0x1f68bd0	8	_ZNK4Aska18HierarchicalObject11WorldMatrixEv	Aska::HierarchicalObject::WorldMatrix() const	hierarchical_object	typed	
+0x1e68be0	0x1f68be0	76	_ZN4Aska18HierarchicalObject11SetPositionEfff	Aska::HierarchicalObject::SetPosition(float, float, float)	hierarchical_object	typed	
+0x1e68c2c	0x1f68c2c	76	_ZN4Aska18HierarchicalObject11SetPositionEPKNS_6VectorE	Aska::HierarchicalObject::SetPosition(Aska::Vector const*)	hierarchical_object	typed	
+0x1e68c78	0x1f68c78	80	_ZN4Aska18HierarchicalObject10SetPostureEfff	Aska::HierarchicalObject::SetPosture(float, float, float)	hierarchical_object	typed	
+0x1e68cc8	0x1f68cc8	60	_ZN4Aska18HierarchicalObject10SetPostureEPKNS_6VectorE	Aska::HierarchicalObject::SetPosture(Aska::Vector const*)	hierarchical_object	typed	
+0x1e68d04	0x1f68d04	76	_ZN4Aska18HierarchicalObject10SetPostureEPKNS_10QuaternionE	Aska::HierarchicalObject::SetPosture(Aska::Quaternion const*)	hierarchical_object	typed	
+0x1e68d50	0x1f68d50	72	_ZN4Aska18HierarchicalObject10SetPostureEffff	Aska::HierarchicalObject::SetPosture(float, float, float, float)	hierarchical_object	typed	
+0x1e68d98	0x1f68d98	68	_ZN4Aska18HierarchicalObject8SetScaleEfff	Aska::HierarchicalObject::SetScale(float, float, float)	hierarchical_object	typed	
+0x1e68ddc	0x1f68ddc	76	_ZN4Aska18HierarchicalObject8SetScaleEPKNS_6VectorE	Aska::HierarchicalObject::SetScale(Aska::Vector const*)	hierarchical_object	typed	
+0x1e68e28	0x1f68e28	36	_ZN4Aska18HierarchicalObject18SetPositionPassiveEfff	Aska::HierarchicalObject::SetPositionPassive(float, float, float)	hierarchical_object	typed	
+0x1e68e4c	0x1f68e4c	52	_ZN4Aska18HierarchicalObject18SetPositionPassiveEPKNS_6VectorE	Aska::HierarchicalObject::SetPositionPassive(Aska::Vector const*)	hierarchical_object	typed	
+0x1e68e80	0x1f68e80	32	_ZN4Aska18HierarchicalObject17SetPosturePassiveEfff	Aska::HierarchicalObject::SetPosturePassive(float, float, float)	hierarchical_object	typed	
+0x1e68ea0	0x1f68ea0	36	_ZN4Aska18HierarchicalObject17SetPosturePassiveEPKNS_6VectorE	Aska::HierarchicalObject::SetPosturePassive(Aska::Vector const*)	hierarchical_object	typed	
+0x1e68ec4	0x1f68ec4	52	_ZN4Aska18HierarchicalObject17SetPosturePassiveEPKNS_10QuaternionE	Aska::HierarchicalObject::SetPosturePassive(Aska::Quaternion const*)	hierarchical_object	typed	
+0x1e68ef8	0x1f68ef8	28	_ZN4Aska18HierarchicalObject17SetPosturePassiveEffff	Aska::HierarchicalObject::SetPosturePassive(float, float, float, float)	hierarchical_object	typed	
+0x1e68f14	0x1f68f14	28	_ZN4Aska18HierarchicalObject15SetScalePassiveEfff	Aska::HierarchicalObject::SetScalePassive(float, float, float)	hierarchical_object	typed	
+0x1e68f30	0x1f68f30	52	_ZN4Aska18HierarchicalObject15SetScalePassiveEPKNS_6VectorE	Aska::HierarchicalObject::SetScalePassive(Aska::Vector const*)	hierarchical_object	typed	
+0x1e68f64	0x1f68f64	12	_ZN4Aska18HierarchicalObject21VirtualBoundingSphereEv	Aska::HierarchicalObject::VirtualBoundingSphere()	hierarchical_object	typed	
+0x1e68f70	0x1f68f70	8	_ZN4Aska18HierarchicalObject14GetBoundingBoxEb	Aska::HierarchicalObject::GetBoundingBox(bool)	hierarchical_object	typed	
+0x1e68f78	0x1f68f78	4	_ZN4Aska18HierarchicalObject8OnActiveEb	Aska::HierarchicalObject::OnActive(bool)	hierarchical_object	typed	
+0x1e7666c	0x1f7666c	76	_ZN4Aska18HierarchicalObject14SetWorldMatrixEPKNS_6MatrixE	Aska::HierarchicalObject::SetWorldMatrix(Aska::Matrix const*)	hierarchical_object	typed	
+0x1e766b8	0x1f766b8	8	_ZN4Aska18HierarchicalObject10MakeMatrixEv	Aska::HierarchicalObject::MakeMatrix()	hierarchical_object	typed	
+0x1e766c0	0x1f766c0	48	_ZN4Aska16RenderableObject21VirtualBoundingSphereEv	Aska::RenderableObject::VirtualBoundingSphere()	renderable_object	typed	
+0x1e766f0	0x1f766f0	28	_ZN4Aska16RenderableObject8OnActiveEb	Aska::RenderableObject::OnActive(bool)	renderable_object	typed	
+0x1e7670c	0x1f7670c	8	_ZN4Aska16RenderableObject19UpdateMultiDrawVarsEv	Aska::RenderableObject::UpdateMultiDrawVars()	renderable_object	typed	
+0x1e76714	0x1f76714	4	_ZN4Aska16RenderableObject21SetShadowManagerIndexEim	Aska::RenderableObject::SetShadowManagerIndex(int, unsigned long)	renderable_object	typed	
+0x1e76718	0x1f76718	8	_ZN4Aska16RenderableObject21GetShadowManagerIndexEi	Aska::RenderableObject::GetShadowManagerIndex(int)	renderable_object	typed	
+0x1e76720	0x1f76720	8	_ZN4Aska16RenderableObject21GetShaderAdapterCacheEi	Aska::RenderableObject::GetShaderAdapterCache(int)	renderable_object	typed	
+0x1e76728	0x1f76728	8	_ZNK4Aska16RenderableObject25GetShaderAdapterCacheSizeEv	Aska::RenderableObject::GetShaderAdapterCacheSize() const	renderable_object	typed	
+0x1e76730	0x1f76730	4	_ZN4Aska16RenderableObject26SetShaderAdapterCacheCountEii	Aska::RenderableObject::SetShaderAdapterCacheCount(int, int)	renderable_object	typed	
+0x1e76734	0x1f76734	4	_ZN4Aska16RenderableObject26ResetDynamicShaderModifierEv	Aska::RenderableObject::ResetDynamicShaderModifier()	renderable_object	typed	
+0x1e76738	0x1f76738	24	_ZN4Aska16RenderableObject16EnableCastShadowEb	Aska::RenderableObject::EnableCastShadow(bool)	renderable_object	typed	
+0x1e76750	0x1f76750	24	_ZN4Aska16RenderableObject19EnableReceiveShadowEb	Aska::RenderableObject::EnableReceiveShadow(bool)	renderable_object	typed	
+0x1e76768	0x1f76768	24	_ZN4Aska16RenderableObject22EnableReceiveProjectorEb	Aska::RenderableObject::EnableReceiveProjector(bool)	renderable_object	typed	
+0x1e76780	0x1f76780	20	_ZN4Aska16RenderableObject19PrepareLightContextEPNS_12LightManagerE	Aska::RenderableObject::PrepareLightContext(Aska::LightManager*)	renderable_object	typed	
+0x1e76794	0x1f76794	8	_ZN4Aska16RenderableObject16IsAffectingLightEPNS_5LightE	Aska::RenderableObject::IsAffectingLight(Aska::Light*)	renderable_object	typed	
+0x1e7679c	0x1f7679c	8	_ZNK4Aska16RenderableObject22QueryPrebuiltVariationEv	Aska::RenderableObject::QueryPrebuiltVariation() const	renderable_object	typed	
+0x1e767a4	0x1f767a4	4	_ZN4Aska16RenderableObject20SetPrebuiltVariationEi	Aska::RenderableObject::SetPrebuiltVariation(int)	renderable_object	typed	
+0x1e767a8	0x1f767a8	8	_ZNK4Aska16RenderableObject27GetCurrentPrebuiltVariationEv	Aska::RenderableObject::GetCurrentPrebuiltVariation() const	renderable_object	typed	
+0x1e767b0	0x1f767b0	4	_ZN4Aska16RenderableObject19CheckRenderContextsEv	Aska::RenderableObject::CheckRenderContexts()	renderable_object	typed	
+0x1e767b4	0x1f767b4	8	_ZN4Aska16RenderableObject24DoesInsertToPaintingListEPNS0_3IPLEiiPKi	Aska::RenderableObject::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	typed	
+0x1e767bc	0x1f767bc	36	_ZN4Aska16RenderableObject18SetSystemColorRateEPKNS_6VectorE	Aska::RenderableObject::SetSystemColorRate(Aska::Vector const*)	renderable_object	typed	
+0x1e767e0	0x1f767e0	8	_ZNK4Aska16RenderableObject15SystemColorRateEv	Aska::RenderableObject::SystemColorRate() const	renderable_object	typed	
+0x1e767e8	0x1f767e8	36	_ZN4Aska16RenderableObject12SetColorRateEPKNS_6VectorE	Aska::RenderableObject::SetColorRate(Aska::Vector const*)	renderable_object	typed	
+0x1e7680c	0x1f7680c	8	_ZNK4Aska16RenderableObject9ColorRateEv	Aska::RenderableObject::ColorRate() const	renderable_object	typed	
+0x1e76814	0x1f76814	36	_ZN4Aska16RenderableObject20SetSystemColorOffsetEPKNS_6VectorE	Aska::RenderableObject::SetSystemColorOffset(Aska::Vector const*)	renderable_object	typed	
+0x1e76838	0x1f76838	8	_ZNK4Aska16RenderableObject17SystemColorOffsetEv	Aska::RenderableObject::SystemColorOffset() const	renderable_object	typed	
+0x1e76840	0x1f76840	36	_ZN4Aska16RenderableObject14SetColorOffsetEPKNS_6VectorE	Aska::RenderableObject::SetColorOffset(Aska::Vector const*)	renderable_object	typed	
+0x1e76864	0x1f76864	8	_ZNK4Aska16RenderableObject11ColorOffsetEv	Aska::RenderableObject::ColorOffset() const	renderable_object	typed	
+0x1e7686c	0x1f7686c	8	_ZN4Aska16RenderableObject27SetProgrammableTransparencyENS0_9ProgTransE	Aska::RenderableObject::SetProgrammableTransparency(Aska::RenderableObject::ProgTrans)	renderable_object	typed	
+0x1e76874	0x1f76874	8	_ZN4Aska16RenderableObject22SetIBLAcceptanceNumberEj	Aska::RenderableObject::SetIBLAcceptanceNumber(unsigned int)	renderable_object	typed	
+0x1e7687c	0x1f7687c	32	_ZN4Aska16RenderableObject21ComputeBoundingSphereEb	Aska::RenderableObject::ComputeBoundingSphere(bool)	renderable_object	typed	
+0x1e7689c	0x1f7689c	8	_ZN4Aska16RenderableObject20GetBoundingBoxDirectEPNS_19OrientedBoundingBoxE	Aska::RenderableObject::GetBoundingBoxDirect(Aska::OrientedBoundingBox*)	renderable_object	typed	
+0x1e768a4	0x1f768a4	8	_ZNK4Aska16RenderableObject14HasBoundingBoxEv	Aska::RenderableObject::HasBoundingBox() const	renderable_object	typed	
+0x1e768ac	0x1f768ac	44	_ZN4Aska16RenderableObject16RenderingDecidedEv	Aska::RenderableObject::RenderingDecided()	renderable_object	typed	
+0x1e768d8	0x1f768d8	8	_ZN4Aska16RenderableObject15ResolveTargetGLEii	Aska::RenderableObject::ResolveTargetGL(int, int)	renderable_object	typed	
+0x1e768e0	0x1f768e0	4	_ZN4Aska16RenderableObject16RoutineProcedureEv	Aska::RenderableObject::RoutineProcedure()	renderable_object	typed	
+0x1e768e4	0x1f768e4	4	_ZN4Aska16RenderableObject15FinishRenderingEv	Aska::RenderableObject::FinishRendering()	renderable_object	typed	
+0x1e768e8	0x1f768e8	8	_ZN4Aska16RenderableObject18ReleaseShaderCacheEv	Aska::RenderableObject::ReleaseShaderCache()	renderable_object	typed	
+0x1e768f0	0x1f768f0	28	_ZN4Aska16RenderableObject22EnableObjectMotionBlurEb	Aska::RenderableObject::EnableObjectMotionBlur(bool)	renderable_object	typed	
+0x1e7690c	0x1f7690c	4	_ZN4Aska16RenderableObject21ProcessTextureDiscardEv	Aska::RenderableObject::ProcessTextureDiscard()	renderable_object	typed	
+0x1e76910	0x1f76910	4	_ZN4Aska16RenderableObject22ProcessTextureAllocateEv	Aska::RenderableObject::ProcessTextureAllocate()	renderable_object	typed	
+0x1e77bb8	0x1f77bb8	8	_ZNK4Aska16RenderableObject15GetDefaultLevelEv	Aska::RenderableObject::GetDefaultLevel() const	renderable_object	typed	
+0x1f22454	0x2022454	116	_ZNK4Aska11IAnimatable8IsThisItEt	Aska::IAnimatable::IsThisIt(unsigned short) const	hierarchical_object	typed	
+0x1f224c8	0x20224c8	84	_ZN4Aska11IAnimatable5CloneEPKS0_	Aska::IAnimatable::Clone(Aska::IAnimatable const*)	hierarchical_object	typed	
+0x1f2251c	0x202251c	8	_ZN4Aska11IAnimatable11CreateCloneEPKS0_	Aska::IAnimatable::CreateClone(Aska::IAnimatable const*)	hierarchical_object	typed	
+0x1f22524	0x2022524	4	_ZN4Aska11IAnimatableD1Ev	Aska::IAnimatable::~IAnimatable()	hierarchical_object	typed	
+0x1f22528	0x2022528	4	_ZN4Aska11IAnimatableD0Ev	Aska::IAnimatable::~IAnimatable()	hierarchical_object	typed	
+0x1f2252c	0x202252c	8	_ZNK4Aska11IAnimatable10GetClassIDEi	Aska::IAnimatable::GetClassID(int) const	hierarchical_object	typed	
+0x1f7f564	0x207f564	60	_ZN4Aska4TaskD2Ev	Aska::Task::~Task()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f5a0	0x207f5a0	68	_ZN4Aska4TaskD0Ev	Aska::Task::~Task()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f5e4	0x207f5e4	32	_ZN4Aska4Task6RemoveEv	Aska::Task::Remove()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f604	0x207f604	48	_ZN4Aska4Task10DeleteThisEPNS_13DeleteManagerE	Aska::Task::DeleteThis(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f634	0x207f634	52	_ZN4Aska4Task19DeleteThisNextFrameEPNS_13DeleteManagerE	Aska::Task::DeleteThisNextFrame(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f668	0x207f668	52	_ZN4Aska4Task24DeleteThisAfterTwoFramesEPNS_13DeleteManagerE	Aska::Task::DeleteThisAfterTwoFrames(Aska::DeleteManager*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f69c	0x207f69c	20	_ZN4Aska4Task21DeleteThisImmediatelyEv	Aska::Task::DeleteThisImmediately()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f6b0	0x207f6b0	76	_ZN4Aska4Task5CloneEPKNS_11IAnimatableE	Aska::Task::Clone(Aska::IAnimatable const*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f6fc	0x207f6fc	156	_ZN4Aska4Task11CreateCloneEPKNS_11IAnimatableE	Aska::Task::CreateClone(Aska::IAnimatable const*)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f798	0x207f798	56	_ZN4Aska4Task11ChangeLevelEj	Aska::Task::ChangeLevel(unsigned int)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f7d0	0x207f7d0	16	_ZN4Aska4Task11ForceDeleteEv	Aska::Task::ForceDelete()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1f7f7e0	0x207f7e0	4	_ZN4Aska4Task3RunEi	Aska::Task::Run(int)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x209f540	0x219f540	152	_ZN4Aska18HierarchicalObjectD2Ev	Aska::HierarchicalObject::~HierarchicalObject()	hierarchical_object	typed	
+0x20c2680	0x21c2680	296	_ZN4Aska9AofObject27SetProgrammableTransparencyENS_16RenderableObject9ProgTransE	Aska::AofObject::SetProgrammableTransparency(Aska::RenderableObject::ProgTrans)	renderable_object	decompiled	
+0x20d48d4	0x21d48d4	140	_ZN4Aska18HierarchicalObject20EnableSimpleDynamicsEb	Aska::HierarchicalObject::EnableSimpleDynamics(bool)	hierarchical_object	typed	
+0x20e92bc	0x21e92bc	976	_ZN4Aska6CameraC2Ev	Aska::Camera::Camera()	renderable_object	decompiled	
+0x212f0c4	0x222f0c4	228	_ZN4Aska19FilterTextureObject24DoesInsertToPaintingListEPNS_16RenderableObject3IPLEiiPKi	Aska::FilterTextureObject::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	decompiled	
+0x21328fc	0x22328fc	140	_ZN4Aska18HierarchicalObject5CloneEPKNS_11IAnimatableE	Aska::HierarchicalObject::Clone(Aska::IAnimatable const*)	hierarchical_object	typed	
+0x2132988	0x2232988	408	_ZN4Aska18HierarchicalObject11CreateCloneEPKNS_11IAnimatableE	Aska::HierarchicalObject::CreateClone(Aska::IAnimatable const*)	hierarchical_object	typed	
+0x2132b20	0x2232b20	68	_ZN4Aska18HierarchicalObject20InitializeConditionsEv	Aska::HierarchicalObject::InitializeConditions()	hierarchical_object	typed	
+0x2132b64	0x2232b64	16	_ZN4Aska18HierarchicalObject22CheckSleepAvailabilityEv	Aska::HierarchicalObject::CheckSleepAvailability()	hierarchical_object	typed	
+0x2132b74	0x2232b74	24	_ZN4Aska18HierarchicalObject23SetAppropriateTaskLevelEv	Aska::HierarchicalObject::SetAppropriateTaskLevel()	hierarchical_object	typed	
+0x2132b8c	0x2232b8c	264	_ZN4Aska18HierarchicalObject3RunEi	Aska::HierarchicalObject::Run(int)	hierarchical_object	typed	
+0x2132c94	0x2232c94	152	_ZN4Aska18HierarchicalObject32MakeBillboardMatrixFromLocalAxisEPS0_PNS_6MatrixENS0_10TargetFaceE	Aska::HierarchicalObject::MakeBillboardMatrixFromLocalAxis(Aska::HierarchicalObject*, Aska::Matrix*, Aska::HierarchicalObject::TargetFace)	hierarchical_object	typed	
+0x2132d2c	0x2232d2c	1764	_ZN4Aska18HierarchicalObject35MakeBillboardMatrixFromLocalAxisSubEPS0_RNS_6MatrixEbbNS0_10TargetFaceE	Aska::HierarchicalObject::MakeBillboardMatrixFromLocalAxisSub(Aska::HierarchicalObject*, Aska::Matrix&, bool, bool, Aska::HierarchicalObject::TargetFace)	hierarchical_object	typed	
+0x2133410	0x2233410	340	_ZN4Aska18HierarchicalObject17EstimateScaleStatEv	Aska::HierarchicalObject::EstimateScaleStat()	hierarchical_object	typed	
+0x2133564	0x2233564	1340	_ZN4Aska18HierarchicalObject20UpdateSimpleDynamicsEPKNS_3AFF24SimpleDynamicsParametersE	Aska::HierarchicalObject::UpdateSimpleDynamics(Aska::AFF::SimpleDynamicsParameters const*)	hierarchical_object	typed	
+0x2133bd0	0x2233bd0	160	_ZN4Aska18HierarchicalObject14SwapChangelingEPS0_	Aska::HierarchicalObject::SwapChangeling(Aska::HierarchicalObject*)	hierarchical_object	typed	
+0x2133c70	0x2233c70	1336	_ZN4Aska18HierarchicalObject17InverseKinematicsEPKNS_6VectorEiiffb	Aska::HierarchicalObject::InverseKinematics(Aska::Vector const*, int, int, float, float, bool)	hierarchical_object	typed	
+0x21341a8	0x22341a8	372	_ZNK4Aska18HierarchicalObject3GetEmPv	Aska::HierarchicalObject::Get(unsigned long, void*) const	hierarchical_object	typed	
+0x213431c	0x223431c	280	_ZN4Aska18HierarchicalObject3SetEmPKv	Aska::HierarchicalObject::Set(unsigned long, void const*)	hierarchical_object	typed	
+0x2134434	0x2234434	24	_ZN4Aska18HierarchicalObjectD0Ev	Aska::HierarchicalObject::~HierarchicalObject()	hierarchical_object	typed	
+0x213444c	0x223444c	68	_ZNK4Aska18HierarchicalObject10GetClassIDEi	Aska::HierarchicalObject::GetClassID(int) const	hierarchical_object	typed	
+0x2134490	0x2234490	8	_ZN4Aska27HierarchicalObjectContainer13CopyParameterEPKNS_18HierarchicalObjectE	Aska::HierarchicalObjectContainer::CopyParameter(Aska::HierarchicalObject const*)	hierarchical_object	typed	
+0x2134498	0x2234498	340	_ZN4Aska27HierarchicalObjectContainer13CopyParameterEPKS0_	Aska::HierarchicalObjectContainer::CopyParameter(Aska::HierarchicalObjectContainer const*)	hierarchical_object	typed	
+0x21345ec	0x22345ec	532	_ZN4Aska27HierarchicalObjectContainer5CloneEPKNS_11IAnimatableE	Aska::HierarchicalObjectContainer::Clone(Aska::IAnimatable const*)	hierarchical_object	typed	
+0x2134800	0x2234800	280	_ZN4Aska27HierarchicalObjectContainer16DetachFromParentEv	Aska::HierarchicalObjectContainer::DetachFromParent()	hierarchical_object	typed	
+0x2134918	0x2234918	72	_ZN4Aska27HierarchicalObjectContainer11AttachChildEPS0_	Aska::HierarchicalObjectContainer::AttachChild(Aska::HierarchicalObjectContainer*)	hierarchical_object	typed	
+0x2134960	0x2234960	204	_ZN4Aska27HierarchicalObjectContainer11CreateCloneEPKNS_11IAnimatableE	Aska::HierarchicalObjectContainer::CreateClone(Aska::IAnimatable const*)	hierarchical_object	typed	
+0x2134a2c	0x2234a2c	124	_ZN4Aska27HierarchicalObjectContainer30InvalidateMatrixHierarchicallyEv	Aska::HierarchicalObjectContainer::InvalidateMatrixHierarchically()	hierarchical_object	typed	
+0x2134aa8	0x2234aa8	4	_ZN4Aska27HierarchicalObjectContainer20UpdateHierarchicallyEv	Aska::HierarchicalObjectContainer::UpdateHierarchically()	hierarchical_object	typed	
+0x2134cf8	0x2234cf8	4	_ZN4Aska27HierarchicalObjectContainer25ForceUpdateHierarchicallyEv	Aska::HierarchicalObjectContainer::ForceUpdateHierarchically()	hierarchical_object	typed	
+0x2134f5c	0x2234f5c	44	_ZNK4Aska27HierarchicalObjectContainer19GetChildObjectCountEv	Aska::HierarchicalObjectContainer::GetChildObjectCount() const	hierarchical_object	typed	
+0x2134f88	0x2234f88	44	_ZNK4Aska27HierarchicalObjectContainer11ChildObjectEi	Aska::HierarchicalObjectContainer::ChildObject(int) const	hierarchical_object	typed	
+0x2134fb4	0x2234fb4	364	_ZN4Aska27HierarchicalObjectContainer18MakeTransformParamEv	Aska::HierarchicalObjectContainer::MakeTransformParam()	hierarchical_object	typed	
+0x2135120	0x2235120	584	_ZN4Aska27HierarchicalObjectContainer10MakeMatrixEv	Aska::HierarchicalObjectContainer::MakeMatrix()	hierarchical_object	typed	
+0x2135368	0x2235368	1628	_ZN4Aska27HierarchicalObjectContainer20MakeTransformParamExEv	Aska::HierarchicalObjectContainer::MakeTransformParamEx()	hierarchical_object	typed	
+0x21359c4	0x22359c4	152	_ZN4Aska27HierarchicalObjectContainer10SwapParentEPS0_	Aska::HierarchicalObjectContainer::SwapParent(Aska::HierarchicalObjectContainer*)	hierarchical_object	typed	
+0x2135a5c	0x2235a5c	36	_ZN4Aska27HierarchicalObjectContainer16ReleaseHOCBufferEv	Aska::HierarchicalObjectContainer::ReleaseHOCBuffer()	hierarchical_object	typed	
+0x2135a80	0x2235a80	84	_ZN4Aska27HierarchicalObjectContainer12OpenIteratorEv	Aska::HierarchicalObjectContainer::OpenIterator()	hierarchical_object	typed	
+0x2135ad4	0x2235ad4	340	_ZN4Aska27HierarchicalObjectContainer13AddToIteratorEv	Aska::HierarchicalObjectContainer::AddToIterator()	hierarchical_object	typed	
+0x2135c28	0x2235c28	880	_ZN4Aska27HierarchicalObjectContainer17IterateMakeMatrixEv	Aska::HierarchicalObjectContainer::IterateMakeMatrix()	hierarchical_object	typed	
+0x2135f98	0x2235f98	524	_ZN4Aska27HierarchicalObjectContainer23CallCalcTransformMatrixEPNS_18HierarchicalObjectE	Aska::HierarchicalObjectContainer::CallCalcTransformMatrix(Aska::HierarchicalObject*)	hierarchical_object	typed	
+0x21361a4	0x22361a4	44	_ZN4Aska27HierarchicalObjectContainerD2Ev	Aska::HierarchicalObjectContainer::~HierarchicalObjectContainer()	hierarchical_object	typed	
+0x21361d0	0x22361d0	68	_ZN4Aska27HierarchicalObjectContainerD0Ev	Aska::HierarchicalObjectContainer::~HierarchicalObjectContainer()	hierarchical_object	typed	
+0x2136214	0x2236214	24	_ZNK4Aska27HierarchicalObjectContainer10GetClassIDEi	Aska::HierarchicalObjectContainer::GetClassID(int) const	hierarchical_object	typed	
+0x213622c	0x223622c	8	_ZNK4Aska27HierarchicalObjectContainer3GetEmPv	Aska::HierarchicalObjectContainer::Get(unsigned long, void*) const	hierarchical_object	typed	
+0x2136234	0x2236234	8	_ZN4Aska27HierarchicalObjectContainer3SetEmPKv	Aska::HierarchicalObjectContainer::Set(unsigned long, void const*)	hierarchical_object	typed	
+0x213a4ac	0x223a4ac	556	_ZN4Aska5LightC2Ev	Aska::Light::Light()	renderable_object	decompiled	
+0x21696e4	0x22696e4	92	_ZNK4Aska16RenderableObject10GetClassIDEi	Aska::RenderableObject::GetClassID(int) const	renderable_object	typed	
+0x2169740	0x2269740	52	_ZN4Aska17MSAAChangerObject24DoesInsertToPaintingListEPNS_16RenderableObject3IPLEiiPKi	Aska::MSAAChangerObject::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	decompiled	
+0x21a996c	0x22a996c	4	_ZN4Aska16RenderableObject6RenderEPNS_13RenderContextEi	Aska::RenderableObject::Render(Aska::RenderContext*, int)	renderable_object	typed	
+0x21aa828	0x22aa828	100	_ZN4Aska24PostProcessBufferManager24DoesInsertToPaintingListEPNS_16RenderableObject3IPLEiiPKi	Aska::PostProcessBufferManager::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	decompiled	
+0x21b6a98	0x22b6a98	36	_ZNK4Aska16RenderableObject11GetDeepestZEi	Aska::RenderableObject::GetDeepestZ(int) const	renderable_object	typed	
+0x21b6abc	0x22b6abc	36	_ZNK4Aska16RenderableObject14GetShallowestZEi	Aska::RenderableObject::GetShallowestZ(int) const	renderable_object	typed	
+0x21b6ae0	0x22b6ae0	476	_ZN4Aska16RenderableObjectC2Ev	Aska::RenderableObject::RenderableObject()	renderable_object	typed	
+0x21b6cbc	0x22b6cbc	4	_ZN4Aska16RenderableObjectD1Ev	Aska::RenderableObject::~RenderableObject()	renderable_object	typed	
+0x21b6cc0	0x22b6cc0	24	_ZN4Aska16RenderableObjectD0Ev	Aska::RenderableObject::~RenderableObject()	renderable_object	typed	
+0x21b6cd8	0x22b6cd8	336	_ZN4Aska16RenderableObject5CloneEPKNS_11IAnimatableE	Aska::RenderableObject::Clone(Aska::IAnimatable const*)	renderable_object	typed	
+0x21b6e28	0x22b6e28	104	_ZN4Aska16RenderableObject11CreateCloneEPKNS_11IAnimatableE	Aska::RenderableObject::CreateClone(Aska::IAnimatable const*)	renderable_object	typed	
+0x21b6e90	0x22b6e90	52	_ZN4Aska16RenderableObject23SetMultipassRenderingIDEPKmi	Aska::RenderableObject::SetMultipassRenderingID(unsigned long const*, int)	renderable_object	typed	
+0x21b6ec4	0x22b6ec4	52	_ZN4Aska16RenderableObject30SetMultipassRequestRenderingIDEPKmi	Aska::RenderableObject::SetMultipassRequestRenderingID(unsigned long const*, int)	renderable_object	typed	
+0x21b6ef8	0x22b6ef8	8	_ZN4Aska16RenderableObject20PreliminarilyPrepareEPNS_12LightManagerE	Aska::RenderableObject::PreliminarilyPrepare(Aska::LightManager*)	renderable_object	typed	
+0x21b6f00	0x22b6f00	8	_ZN4Aska16RenderableObject19PrepareForRenderingEPKNS_10RENDERINFOE	Aska::RenderableObject::PrepareForRendering(Aska::RENDERINFO const*)	renderable_object	typed	
+0x21b6f08	0x22b6f08	20	_ZN4Aska16RenderableObject22CheckSleepAvailabilityEv	Aska::RenderableObject::CheckSleepAvailability()	renderable_object	typed	
+0x21b6f1c	0x22b6f1c	20	_ZN4Aska16RenderableObject23SetAppropriateTaskLevelEv	Aska::RenderableObject::SetAppropriateTaskLevel()	renderable_object	typed	
+0x21b6f30	0x22b6f30	164	_ZN4Aska16RenderableObject20InitializeConditionsEv	Aska::RenderableObject::InitializeConditions()	renderable_object	typed	
+0x21b6fd4	0x22b6fd4	112	_ZN4Aska16RenderableObject13ProcFarObjectEv	Aska::RenderableObject::ProcFarObject()	renderable_object	typed	
+0x21b7044	0x22b7044	1928	_ZN4Aska16RenderableObject19MakeBillboardMatrixEPNS_6CameraE	Aska::RenderableObject::MakeBillboardMatrix(Aska::Camera*)	renderable_object	typed	
+0x21b77cc	0x22b77cc	88	_ZN4Aska16RenderableObject32MakeBillboardMatrixFromLocalAxisEPNS_6CameraE	Aska::RenderableObject::MakeBillboardMatrixFromLocalAxis(Aska::Camera*)	renderable_object	typed	
+0x21b7824	0x22b7824	124	_ZN4Aska16RenderableObject3RunEi	Aska::RenderableObject::Run(int)	renderable_object	typed	
+0x21b78a0	0x22b78a0	328	_ZN4Aska16RenderableObject13SetVisibilityEf	Aska::RenderableObject::SetVisibility(float)	renderable_object	typed	
+0x21b79e8	0x22b79e8	8	_ZN4Aska16RenderableObject16SetRenderLayerIDEh	Aska::RenderableObject::SetRenderLayerID(unsigned char)	renderable_object	typed	
+0x21b79f0	0x22b79f0	52	_ZNK4Aska16RenderableObject19IsPostProcessObjectEv	Aska::RenderableObject::IsPostProcessObject() const	renderable_object	typed	
+0x21b7a24	0x22b7a24	516	_ZNK4Aska16RenderableObject3GetEmPv	Aska::RenderableObject::Get(unsigned long, void*) const	renderable_object	typed	
+0x21b7c28	0x22b7c28	512	_ZN4Aska16RenderableObject3SetEmPKv	Aska::RenderableObject::Set(unsigned long, void const*)	renderable_object	typed	
+0x21b7e28	0x22b7e28	124	_ZN4Aska16RenderableObject10DeleteThisEPNS_13DeleteManagerE	Aska::RenderableObject::DeleteThis(Aska::DeleteManager*)	renderable_object	typed	

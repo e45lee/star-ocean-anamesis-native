@@ -1,0 +1,7 @@
+# port/decomp/anim/scope.txt: the guest functions the `anim` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Aska::(Aaf\w*|Aai\w*|Sequencer\d*|FastIk\w*|ILandscapeConstraint|GuideEffector)::
+^(\S+ )?Aska::(TAaf\w*|Aaf\w*)<
+^Framework::(CAnimation\w*|CBlendRatePlayer|Aai\w*)::
+^LocalSetController\w*

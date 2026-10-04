@@ -1,0 +1,6 @@
+{
+ "subsystem": "scene",
+ "generated_by": "tools/subsystem.py export-types scene",
+ "header": "port/src/native/scene/scene_layout.h",
+ "structs": []
+}

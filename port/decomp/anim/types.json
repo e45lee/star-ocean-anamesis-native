@@ -1,0 +1,6 @@
+{
+ "subsystem": "anim",
+ "generated_by": "tools/subsystem.py export-types anim",
+ "header": "port/src/native/anim/anim_layout.h",
+ "structs": []
+}

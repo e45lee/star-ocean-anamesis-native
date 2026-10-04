@@ -60,7 +60,7 @@ Status: **plan for review only, not queued (future work).** Written 2026-10-04 b
 | Step | What | Depends on |
 |---|---|---|
 | MC1 | Client sessions: per-session request state; `answer(Request, Session&)`; the in-process route as one session | — (a refactor; can land before S12) |
-| MC2 | The caller's player: `Ctx::player` from the session; the RequestHeader cross-check; session expiry; the replay's `device` lines | MC1; it is schema section 6's "request → player" |
+| MC2 | The caller's player: `Ctx::player` from the session; the RequestHeader cross-check; session retirement; the replay's `device` lines | MC1; it is schema section 6's "request → player" |
 | MC3 | Module globals per player: the campaign cache, `with_live_server` callers, the notice page, per-player RNG streams | MC2 |
 | MC4 | The scope check at run time: an SQLite authorizer that flags a per-player table touched without its player key | MC2, M1; runs beside M3 |
 | MC5 | Several players: CreatePlayer for a new device, search ids, the account policy, `soa --player` | M2, M3, MC2–MC4 |
@@ -111,14 +111,15 @@ Status: **plan for review only, not queued (future work).** Written 2026-10-04 b
   - `Decoded::header` is parsed today and dropped. MC2 carries it in `Request`, as a `header_player` and a `request_id`.
 - **Login.** It has no usable id field (b), so Login answers the **session's** player. A session whose device has no player gets 19001 (the client's new-player flow, docs/server-rules.md#session-and-login).
 - **NoLoginStart** comes before any session (b). It gets the playerless answer, `data.Time` (d). The Login that follows loads the full state.
-  - Today NoLoginStart sends the one player's state. Only the multi-user mode changes this: with one player bound to every device (MC2) the body stays the same, so the replays don't change.
+  - Today NoLoginStart sends the one player's state. **The trigger is the state, not a flag:** while the state DB holds at most one player, NoLoginStart keeps answering that player's full state, so today's games and every replay are unchanged. Once it holds two or more, NoLoginStart answers `data.Time` only.
   - The `tutorial` and `seeded` sessions prove the client doesn't need the full body there (MC5).
 - **CreatePlayer(name, uuid)** makes a new player bound to the uuid (schema M2's code part).
   - The wire's uuid must equal the session's (d): a client can't create an account for another device.
   - A device that already has a player gets its Login answered, so its client never sends CreatePlayer (b: the new-player flow starts only on 19001). A CreatePlayer from such a device is refused (d; Q1 has the policy for unknown devices).
 - **Reconnects.** A reconnect is bound to its session by trying the session keys, newest first (today's rule, net/game.cpp).
   - With several players this costs one AES-MAC check per live session per reconnect. That is cheap at LAN sizes (a trial is a MAC over one small body).
-  - **Sessions expire** (MC2): a session unused for 24 h is dropped (d), and the client simply bridges again. `tokens_` is already dropped when its connection closes.
+  - **Sessions are retired by supersession** (MC2, (d)). When a device bridges again, its older sessions are dropped. A session unused for 7 days is also dropped. `tokens_` is already dropped when its connection closes.
+    - A short idle expiry would break a logged-in client. `CApiNotify::OnDisconnect` / `OnError` (@014bb314 / @014bb1fc) keep the bridged flag while `LoggedIn` holds (b, online-server.md §4 flow 6). So such a client keeps sending with the old key: it would get 1002 until the player went back to the title.
   - The header's player id then confirms that the key's session is the right one.
 - **Search ids** (schema M2 proposes `LOCAL` + 5 digits of a hash).
   - **Recommended instead (Q2): sequential `LOCAL00001`, `LOCAL00002`, … in creation order**, unique by construction.
@@ -189,7 +190,7 @@ Lifecycle and wiring:
 |---|---|
 | `api/campaign/progress.cpp` `g_state` (one player's progress, cached) | Cache keyed by player id (`std::map<PlayerId, State>` under the existing lock), or no cache: since S12 the progress is two small tables, read per request. **Recommended: no cache**, measured against the `campaign` corpus. `--campaign-seed` seeds the first player only (d) |
 | `events::end_mission_talk` / `campaign::end_mission_talk` (`ext::with_live_server`) | Take the session's player: `with_live_server(session, fn)` |
-| `notice.cpp` `web_page` / `web_document` (an HTTP GET, which carries no session) | The `WebView` URL list is per player state. Each player's `information` URL names the player in the path, e.g. `/webview/information/<search id>` (d: the client appends only `?md5`). The page is built for that player; an unknown id gets the server-wide part |
+| `notice.cpp` `web_page` / `web_document` (an HTTP GET, which carries no session) | The `WebView` URL list is per player state. Each player's `information` URL names the player in the path, e.g. `/webview/information/<search id>` (d: the client appends `?md5`; check first what `GetWebInfo` replaces in the `information` value, docs/webview.md). The page is built for that player; an unknown id gets the server-wide part |
 | `Server::rng` (one `mt19937_64`, `--seed-rng`) | Per-player streams: a player's engine is seeded from (seed, player id). The first player keeps exactly today's seed, so every corpus stays byte-identical. With several players a replay is deterministic whatever the interleaving (Q8) |
 | `net/game.cpp` `with_state` (the device table) | None needed: shared table |
 | the clock, the event calendar, the client master, the gacha pools, the master caches (`enable_events.cpp`, `event_missions.cpp`) | Server-wide by design (section 4) |
@@ -204,6 +205,7 @@ Lifecycle and wiring:
 - **The HTTP port** (`net/http_server.cpp`) is cpp-httplib with its own threads. Each handler takes `Loop::lock_` (`HttpServer(router, &lock_)`), so the bridge, the CDN and the game connections take turns.
 - **The library** takes `Server::mu` in `submit`, `handle`, `error_code`, `logged_in` and `with_live_server` (`src/core/server.cpp`). `submit` and `handle` lock separately, so another thread could slip in between. Today nothing does, because only the loop thread calls them.
 - **SQLite:** one connection, `journal_mode = wal`, `synchronous = normal` (`src/core/server.cpp:75`), no `busy_timeout`. One transaction per request (`Server::handle_request`). Tools read with `mode=ro`.
+- **The CDN waits on the game loop.** `HttpServer` takes `Loop::lock_` for **every** handler (`net/http_server.cpp`), static asset downloads included. Yet `cdn::Tree::lookup` only reads, and is documented thread-safe (`include/soaserver/cdn.h`). Several clients downloading assets at start-up (about 100 s each from the shared phone, more from scratch) would hold up game packets for the duration of each file.
 - **Lock order today:** `Loop::lock_`, then `Server::mu` (the bridge handler → `record_device` → `with_live_server`). Nothing takes them the other way round.
 
 ### 3.2 Measured cost (2026-10-04, main 6970e2c, this machine)
@@ -234,6 +236,7 @@ Lifecycle and wiring:
   - Lobby and relay sockets join the same poll set (`Loop`), as GameServer's do. Forwarding (Snapshot, Message, AIParameter, Stamp, the barriers) touches only memory.
   - Only MissionStart, MissionEnd and MissionContinue call `answer`. Done synchronously, they hold the loop for one request (≤ 100 ms), which is well inside the client's tolerances: the 300 ms flush, and the spinner after 2.5 s with nothing received (multiplayer.md 1.7, (b)).
   - **If** the load test shows forwarding stalls over the target, MC9 moves `answer` calls onto **one DB worker thread**: the loop posts the Request and an eventfd wakes it with the reply. The worker is still the only writer.
+- **Only `/bridge` takes the loop's lock** (MC6). The bridge touches `GameServer`'s token and session maps; the CDN routes and static files don't take it. cpp-httplib's threads then serve downloads in parallel with the game port. The CDN's served-master build happens once at start-up, before listening.
 - **Lock order** (documented in `net/loop.h` and ARCHITECTURE.md, checked by a debug assertion): `Loop::lock_` → `GameServer`'s session map → `Server::mu`. Code holding `Server::mu` never takes the other two.
 
 ### 3.4 Performance targets (d; the load test of MC6 checks them)
@@ -350,11 +353,12 @@ Tests: schema M4's `social/*` tests on the two-player fixture, plus a two-player
   - at most 16 connections per peer address;
   - one CreatePlayer per device, and at most `--max-players` players;
   - the packet size limit the reader already enforces (`kBadSize`);
-  - sessions expire after 24 h unused;
+  - sessions retired by supersession or after 7 days unused (section 1.2);
   - bridge tokens are single-use (today);
   - the relay binding of section 6;
   - an unknown or failing peer gets ProtocolErrors and closed connections, as today.
-- **Retries.** The RequestHeader's request id is **kept on a retry** (b, `PresendApiCall` @015b7e48). The session remembers its last (request id → reply). A retried request with the same id is answered with the stored reply instead of being applied twice (d). This matters more on a LAN than on loopback: a lost reply must not mean a double gacha draw.
+- **Retries.** The RequestHeader's request id is **kept on a retry** (b, `PresendApiCall` @015b7e48). The session remembers its last ((fid, request id) → reply). A retried request with the same key is answered with the stored reply instead of being applied twice (d). This matters more on a LAN than on loopback: a lost reply must not mean a double gacha draw.
+  - **Only logged-in requests count.** In `PresendApiCall`'s not-`LoggedIn` branch the client zeroes the header's +0 and +0xe and skips the request-id block, so a pre-login request carries a stale id (b). Without a guard, CreatePlayer could be answered with a cached Login reply. The cache is consulted only when the header's player id is non-zero, and it is keyed with the fid.
 - **Owner lock.** `<db>.lock` with the owner's PID and host, taken at open by soa and soa-server (an advisory `flock`; Windows: `LockFileEx` on the shared Winsock / compat layer). The read-only tools don't take it.
 
 ---
@@ -417,14 +421,14 @@ Effort is agent time: **S** ≤ half a day, **M** 1–2 days, **L** 3 or more. E
   - `Ctx::player` and `ctx.player_id()` from the session;
   - `Request` carries `header_player` and `request_id`;
   - the header cross-check after login (refuse with 1002);
-  - NoLoginStart playerless in multi-user mode;
-  - session expiry;
+  - NoLoginStart playerless once the state holds more than one player;
+  - session retirement (supersession, 7 days idle);
   - the replay's `device` lines;
   - `make_ctx(rc, session)`.
 - **Depends on:** MC1. It is schema section 6's request → player work, which comes before M1.
 - **Proof:**
   - corpora byte-identical;
-  - new `net/` tests: a header with another player's id is refused, a reconnect after expiry bridges again, and two devices on a one-player state both get that player (today's behaviour, kept);
+  - new `net/` tests: a header with another player's id is refused, a device's new bridge retires its older session, and two devices on a one-player state both get that player (today's behaviour, kept);
   - the session gates.
 - **Effort:** M.
 - **Risks:**
@@ -486,6 +490,7 @@ Effort is agent time: **S** ≤ half a day, **M** 1–2 days, **L** 3 or more. E
   - the owner lock;
   - `busy_timeout`;
   - per-player log suffixes;
+  - the CDN routes off `Loop::lock_` (only `/bridge` keeps it);
   - connection and player limits;
   - the retry cache (request id → reply);
   - the lock-order assertion;
@@ -587,5 +592,5 @@ Effort is agent time: **S** ≤ half a day, **M** 1–2 days, **L** 3 or more. E
 | **Q7** | Unmodified Android phones as clients (a hosts override, an `https://` bridge needing a trusted certificate, cleartext HTTP)? | Out of scope: soa and soa-emu are the supported clients (both map the hosts already) |
 | **Q8** | Per-player RNG streams (`--seed-rng`), so multi-player replays are deterministic whatever the interleaving? | Yes, with the first player keeping today's stream (every existing corpus byte-identical) |
 | **Q9** | One server clock for every player (`--clock`, events, seasons, daily resets)? | Yes: per-player clocks would break shared rankings and the world boss |
-| **Q10** | Retries: store each session's last reply by request id and answer a retry with it? | Yes (b: the client keeps the request id on a retry); one reply per session, not a history |
+| **Q10** | Retries: store each session's last reply by (fid, request id) and answer a retry with it? | Yes (b: the client keeps the request id on a retry), only for logged-in requests (a pre-login header carries a stale id, (b)); one reply per session, not a history |
 | **Q11** | The schema plan's open Q3–Q9 (synthetic rentals as fill-up, multiplay per server, world boss scaling, `coop_battle_id` checked not declared, player deletion, friend gauge, follow caps) | Unchanged; this plan assumes their recommendations |

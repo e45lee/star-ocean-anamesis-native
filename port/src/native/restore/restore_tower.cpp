@@ -15,9 +15,16 @@
 //    the event menu's vanish_plate), so the guest dereferences null. While Setup runs, a search
 //    for exactly those four names that finds nothing returns a detached, empty CCocosNode (one per
 //    name, never shown): CCocosNode::SearchByName / SearchByTreeName are wrapped (with the opt-in
-//    only) and run the guest search first. Every other missing name keeps the guest's null: its callers check it
+//    only); the stand-in is given only by the outermost search on the thread, after the search
+//    proper found nothing. Every other missing name keeps the guest's null: its callers check it
 //    (btn_restart_old), or probe with it until it's missing (the
 //    "Button_mission_%d/new/icon_vanish_1" loop in SetupEventMissionSelect would never end).
+//    SearchByName itself is native (ui/cocos_node.h, bit-exact; test ui/cocos-search-by-name, live
+//    check `--live-check restore`): the guest's recurses once per node along the sibling lists, and
+//    a wrapper that ran the guest original nested one guest_call (a JIT level, ~4.6 KB of the
+//    thread's 256 KiB host stack) per node it visited. A long enough list (the tower menu's scenes
+//    reached 56 levels) overflowed the host stack: session:tower's client died with SIGSEGV on
+//    entering the tower menu. SearchByTreeName stays the guest's (it recurses once per path part).
 //    The remaining tries still show on the extra-dungeon menu's tower banner ("3/3").
 // 2. The mission buttons. The list items are cloned from the common-resource scene's
 //    "Button_mission" (CUIUtility::SetupCommonResource_ButtonMission, which the tower's item
@@ -35,6 +42,8 @@
 #include "core/options.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
+#include "native/common/shadow_check.h"
+#include "native/ui/cocos_node.h"
 
 namespace soa::native::restore_tower {
 namespace {
@@ -70,20 +79,53 @@ GuestArgs same_args(Cpu& c) {
 }
 
 // CCocosNode::SearchByName / SearchByTreeName(const std::string&): x0 this, x1 the name. The
-// guest search first; a miss inside Setup may get a stand-in.
+// search proper first; a miss of the outermost search inside Setup may get a stand-in.
 #define COCOS_STR "ERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE"
-u64 g_orig_search_name = 0, g_orig_search_tree = 0;
-template <u64* Orig>
-void h_search(Cpu& c) {
-    u64 node = c.x(0), name = c.x(1);
-    u64 r = guest_call(*Orig, {node, name});
-    if (!r && g_depth > 0) r = stand_in(node, ((const guest::String*)name)->view());
-    c.set_x(0, r);
+#define SEARCH_BY_NAME "_ZN9Framework5Cocos10CCocosNode12SearchByName" COCOS_STR
+#define SEARCH_BY_TREE_NAME "_ZN9Framework5Cocos10CCocosNode16SearchByTreeName" COCOS_STR
+
+// The live check (--live-check restore): SearchByName is a getter (check_getter: the native, then
+// the guest original on the same node and name; the original's own recursive calls reach the
+// native).
+live::ShadowFamily& family() {
+    static live::ShadowFamily f("restore", 16);
+    return f;
 }
-NATIVE_FUNCTION_ORIG_IF("_ZN9Framework5Cocos10CCocosNode12SearchByName" COCOS_STR, h_search<&g_orig_search_name>,
-                        "restore: tower menu, stand-ins for the lost play_plate nodes (--restore-tower)", on, &g_orig_search_name);
-NATIVE_FUNCTION_ORIG_IF("_ZN9Framework5Cocos10CCocosNode16SearchByTreeName" COCOS_STR, h_search<&g_orig_search_tree>,
-                        "restore: tower menu, stand-ins for the lost play_plate nodes (--restore-tower)", on, &g_orig_search_tree);
+live::ShadowFn g_search_name(family(), SEARCH_BY_NAME), g_search_tree(family(), SEARCH_BY_TREE_NAME);
+
+thread_local int t_search = 0;  // searches running on this thread (the guest's nest through the hooks)
+
+void search_by_name(Cpu& c) {
+    auto* node = reinterpret_cast<ui::CCocosNode*>(c.x(0));
+    c.set_x(0, (u64)node->SearchByName(*reinterpret_cast<const guest::String*>(c.x(1))));
+}
+
+void with_stand_in(Cpu& c, u64 node, u64 name) {
+    if (!c.x(0) && t_search == 0 && g_depth > 0) c.set_x(0, stand_in(node, ((const guest::String*)name)->view()));
+}
+
+void h_search_name(Cpu& c) {
+    u64 node = c.x(0), name = c.x(1);
+    t_search++;
+    if (live::check_due(g_search_name))
+        live::check_getter(c, g_search_name, search_by_name, ~0ull);
+    else
+        search_by_name(c);
+    t_search--;
+    with_stand_in(c, node, name);
+}
+void h_search_tree(Cpu& c) {
+    u64 node = c.x(0), name = c.x(1);
+    t_search++;
+    c.set_x(0, guest_call(g_search_tree.orig, {node, name}));
+    t_search--;
+    with_stand_in(c, node, name);
+}
+NATIVE_FUNCTION_ORIG_IF(SEARCH_BY_NAME, h_search_name,
+                        "restore: CCocosNode::SearchByName native; tower menu, stand-ins for the lost play_plate nodes (--restore-tower)",
+                        on, &g_search_name.orig);
+NATIVE_FUNCTION_ORIG_IF(SEARCH_BY_TREE_NAME, h_search_tree,
+                        "restore: tower menu, stand-ins for the lost play_plate nodes (--restore-tower)", on, &g_search_tree.orig);
 
 u64 g_orig_setup = 0;
 void h_setup(Cpu& c) {

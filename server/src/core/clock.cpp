@@ -1,5 +1,5 @@
 // The local server's event calendar (server.h event_now / event_time; port code, not guest
-// behaviour). Rule (d), docs/server-rules.md "Clock": with no --clock, dated content replays the
+// behaviour). Rule (d), docs/server-rules.md#conventions: with no --clock, dated content replays the
 // service's calendar: today's month, day and time are mapped onto the most recent year in which
 // some master_event_term covers that month-day. Nothing about which events exist is hard-coded;
 // the candidate years are the years the table's terms open in.

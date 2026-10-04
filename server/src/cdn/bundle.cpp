@@ -1,7 +1,7 @@
 // The CDN's bundles and answers (soaserver/cdn.h): the "\0ISF" bundle image built from its members,
 // its size and SHA-1, and a Response's body (in memory, a file, or a bundle streamed in pieces).
 // Our code; what the 3.7.0 client expects is labelled (b) client evidence, the rest (d) assumption
-// (docs/server-rules.md "soa-server: the CDN").
+// (docs/server-rules.md#cdn).
 #include <fcntl.h>
 #include <unistd.h>
 

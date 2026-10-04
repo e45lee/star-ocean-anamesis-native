@@ -11,6 +11,6 @@ The achievements are `../presents/achievements.cpp`.
 
 **State**: `login_bonus` (id, day_index = the last page granted (`day` until PLAN-schema S9), last_at), `player.login_bonus_popup_pending` (a counters key before PLAN-schema S3), `premium_pass` (id, granted_at, day_index = the last page granted, last_at: NULL before the first page) and `favor_bonus_state` (one row: `day_at` the favor bonus's last time, `bonus_id`, `lot_uid` its character → `roster` ON DELETE SET NULL, `healed_at` the last favor heal; the times NULL when never, 0 until PLAN-schema S10); the presents go to `presents` (with their line in `text`; `../presents/`). The favor levels come from `../favor/favor.h`.
 
-**Rules**: docs/server-rules.md "7. Login bonus", "Login bonus" (under "Growth and economy"), "Premium and favor login bonuses".
+**Rules**: docs/server-rules.md#login-bonus, docs/server-rules.md#login-bonus-modules (under "Growth and economy"), "Premium and favor login bonuses".
 
 **Tests**: `daily_tests.cpp` (`daily/login-bonus`: day 1, no second grant, day 2; `daily/premium-favor-bonus`). **Sessions**: `port/scripts/restore_session.sh`, `restore_favor_session.sh`, `home_session.sh` (the login popup).

@@ -16,7 +16,7 @@ constexpr u32 kFidGetPlayMission = 0x7c1b7a1b;
 
 // The story campaign's additions to an answer (soa-server's wire route): ActiveMissionList on every
 // reply, the campaign's Player / ActiveWorldMapMissionList on the mission replies, the party
-// fallback (docs/server-rules.md "Campaign progression"). Without them soa-server's mission
+// fallback (docs/server-rules.md#campaign). Without them soa-server's mission
 // select had no missions (GetMissionList is answered by the campaign alone).
 void campaign_reply(const Request& r, std::vector<u8>& body) {
     std::vector<char> b(body.begin(), body.end());

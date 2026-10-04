@@ -103,6 +103,8 @@ The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--
 
 ## Per-subsystem workflow (the native rebuild, port/PLAN.md task 6)
 
+Virtual functions, calls between native subsystems, and the later move to real C++ `virtual`s: [VIRTUALS.md](VIRTUALS.md).
+
 Each subsystem of the rebuild owns two folders and nothing else, so many agents can work at once
 (one per subsystem, type recovery a wave ahead) and their branches merge without conflicts
 (`control/tests/test_subsystem.py` proves it for two scaffolded subsystems):

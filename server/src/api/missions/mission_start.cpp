@@ -1,7 +1,7 @@
 // MissionStart: the cost, the surprise roll, the stages and the battle party (api/missions/missions.h).
 // Port code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "Server missions").
+// knowledge, (d) assumption (docs/server-rules.md#server-missions).
 #include "api/missions/missions.h"
 
 #include <algorithm>
@@ -459,7 +459,7 @@ std::vector<u8> start_mission(ext::Ctx& ctx, const Request& req, const ext::Miss
     if (std::vector<u8> refused = check_cost(ctx, req, start); !refused.empty()) return refused;
     roll_surprise(ctx, start);
     start.mission_parameter["mission_stage"] = stage_list(ctx, start.args.mission);
-    // (d) no pre-rolled drops: MissionEnd rolls them (docs/server-rules.md "Server missions")
+    // (d) no pre-rolled drops: MissionEnd rolls them (docs/server-rules.md#server-missions)
     start.mission_parameter["mission_drop"] = Value::array();
     start.mission_parameter["mission_drop_rare"] = Value::array();
     start.mission_parameter["common_drop"] = Value::array();
@@ -495,7 +495,7 @@ ext::MissionInfo mission_info(ext::Ctx& ctx, const MissionRef& ref, u32 mission,
 
 // MissionStart(u32 mission_type, u32 mission_id, u32 helper_index_plus_1, u64 own_helper_uid,
 //              u32 npc_helper_id, u64 rental_uid, u32) -> MissionStartRes          fid b7c62bc2
-// API: docs/api.md#missionstart   Rules: docs/server-rules.md "2.2 MissionStart", "Server missions", "Rental helpers"
+// API: docs/api.md#missionstart   Rules: docs/server-rules.md#mission-start, docs/server-rules.md#server-missions, docs/server-rules.md#rental-helpers
 //
 // Starts a battle: pays its cost and sends the stages and the battle party's statuses.
 //   (a) the mission row of the type's table (master_mission, master_event_mission,

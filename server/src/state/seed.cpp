@@ -1,5 +1,5 @@
 // Seeding a new state DB from a save (state/seed.h). Port code, not guest behaviour; every rule
-// is labelled here and in docs/server-rules.md "Seed".
+// is labelled here and in docs/server-rules.md#seed.
 #include "state/seed.h"
 
 #include <algorithm>
@@ -21,7 +21,7 @@ namespace soa::server {
 // data/saves/README.md); --seed overrides it. "" when it's missing.
 std::string real_seed_save() { return find_repo_file("data/saves/seed/Game.xml"); }
 
-// (d) seed defaults, labelled in docs/server-rules.md "Seed".
+// (d) seed defaults, labelled in docs/server-rules.md#seed.
 void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     std::string seedp = first_existing({explicit_seed, config().seed, real_seed_save(), config().game_xml});
     auto kv = read_kvs(seedp);

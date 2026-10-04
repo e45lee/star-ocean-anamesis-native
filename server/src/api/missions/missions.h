@@ -2,8 +2,8 @@
 // The missions (port code, not guest behaviour): MissionStart and its battle party
 // (mission_start.cpp), MissionEnd and its rewards (mission_end.cpp), the drop roll (drops.cpp),
 // the master_campaign rows (campaigns.cpp) and the play state (play_state.cpp: GetPlayMission,
-// MissionFailed, MissionTalk, MissionRestart, GetMissionList). docs/server-rules.md "Server
-// missions", "2. Missions".
+// MissionFailed, MissionTalk, MissionRestart, GetMissionList). docs/server-rules.md#server-missions,
+// docs/server-rules.md#missions-rules.
 #include <optional>
 #include <string>
 #include <vector>
@@ -47,7 +47,7 @@ std::vector<PlayMember> play_members(ext::Ctx& ctx);
 std::vector<u64> battle_uids(const std::vector<PlayMember>& members);
 
 // The master_campaign.type_id values the missions apply (a: the rows; b: what the client queries
-// them for, docs/server-rules.md "Type-8 campaigns").
+// them for, docs/server-rules.md#type-8-campaigns).
 enum class CampaignType : u32 {
     kDropLots = 0,  // Campaign_evo_*_prism: lot_drop_count_add more lots, and master_campaign_drop
     kStamina = 1,   // the stamina cost x magnification (0.5)
@@ -55,7 +55,7 @@ enum class CampaignType : u32 {
 };
 
 // Common::MissionDropType: the badge the result screen gives a drop (b: ResultUtility::GetRewardType
-// -> GetRewardBadgeIcon; docs/server-rules.md "MissionEnd drops").
+// -> GetRewardBadgeIcon; docs/server-rules.md#mission-end-drops).
 enum class DropType : u32 {
     kPlain = 0,           // no badge
     kHostBonus = 1,       // hostb_badge
@@ -91,7 +91,7 @@ inline u32 battle_log_u32(ext::Ctx& ctx, const char* name, u32 dflt) { return cu
 
 // The battle's evaluation value of `type` (1..6: 1 total damage, 2 enemies defeated, 3 rush-combo
 // total damage, 4 highest hit count, 5 highest single damage, 6 clear time in ms), or -1 when the
-// battle recorded none (docs/server-rules.md "Battle evaluation values").
+// battle recorded none (docs/server-rules.md#battle-evaluation-values).
 inline int64_t battle_evaluation_value(ext::Ctx& ctx, int type) { return current_log(ctx).evaluation(type); }
 
 struct Rolled {

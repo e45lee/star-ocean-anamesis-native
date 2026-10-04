@@ -7,11 +7,14 @@
 #      (API: / Rules: lines and an (a)-(d) label, or `Rules: none (transport)`); every module hook
 #      (soa-server --list-hooks) and every server/include/soaserver/ function has a doc comment;
 #   2. docs links: every docs/server-rules.md / docs/api.md section quoted or anchored in server/
-#      comments resolves (tools/server_evidence.py);
+#      comments resolves (tools/server_evidence.py); since R20 a docs/server-rules.md link is an
+#      anchor (docs/server-rules.md#titles), never a quoted title; docs/server-rules.md itself gives
+#      every section an explicit anchor and its register is fresh (tools/server_rules_doc.py --check);
 #   3. server/API-INDEX.md is fresh (tools/server_index.py --check; needs BIN, default build/server/soa-server),
 #      and so is the generated server/src/core/errors.h (tools/gen_error_codes.py --check);
 #   4. with --evidence REV: nothing lost against REV (tools/server_evidence.py --against REV):
-#      labels, client addresses / symbols / offsets, master tables, agent count, log lines, links.
+#      labels, client addresses / symbols / offsets, master tables, agent count, log lines, links
+#      (and their number), and the rules doc's evidence (docs/server-rules.md with its history).
 #      A commit that deletes code with its labels says so in its message: a line starting
 #      "Evidence removed:" in a commit of REV..HEAD (listing what went and why) lets the loss pass,
 #      reported;
@@ -45,7 +48,11 @@ python3 tools/server_doc_coverage.py --server "$server" | sed 's/^/  /'
 echo "== 2. docs links, 5. log lines, 6. agent mentions (tools/server_evidence.py)"
 ev=$(python3 tools/server_evidence.py)
 echo "$ev" | grep -E "^(doc links|log lines|agent mentions)" | sed 's/^/  /'
+echo "$ev" | grep -E "^server-rules links quoted" | sed 's/^/  /'
 echo "$ev" | grep -qE "^doc links .*, 0 broken" || findings=$((findings + 1))
+echo "$ev" | grep -qE "^server-rules links quoted 0 " || findings=$((findings + 1))
+python3 tools/server_rules_doc.py --check | sed 's/^/  /'
+[ "${PIPESTATUS[0]}" = 0 ] || findings=$((findings + 1))
 echo "$ev" | grep -qE "^log lines ([0-9]+)/\1 present" || { findings=$((findings + 1)); fail=1; }
 agents=$(echo "$ev" | sed -n 's/^agent mentions //p')
 [ "${agents:-0}" = 0 ] || findings=$((findings + 1))

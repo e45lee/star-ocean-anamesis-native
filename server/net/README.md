@@ -1,6 +1,6 @@
 # server/net: soa-server's wire layer (libsoanet)
 
-The 3.7.0 client's own protocol, so the unmodified client (soa-emu) can play against the server library: TCP packets, the Ninja cipher, the request decoder, the SQEX BRIDGE handshake, sessions, the HTTP server and the CDN routes. Linked only into `soa-server` (soa never needs it: its FakeApiCaller route builds the same `Request`s in process). The protocol and what happens on a connection are described in [../README.md](../README.md) "soa-server and the wire layer"; the client side in `docs/online-server.md` §3-4 and `docs/api.md` "Wire format"; the rules this layer applies (all (b) or (d)) in docs/server-rules.md "soa-server: the wire layer".
+The 3.7.0 client's own protocol, so the unmodified client (soa-emu) can play against the server library: TCP packets, the Ninja cipher, the request decoder, the SQEX BRIDGE handshake, sessions, the HTTP server and the CDN routes. Linked only into `soa-server` (soa never needs it: its FakeApiCaller route builds the same `Request`s in process). The protocol and what happens on a connection are described in [../README.md](../README.md) "soa-server and the wire layer"; the client side in `docs/online-server.md` §3-4 and `docs/api.md` "Wire format"; the rules this layer applies (all (b) or (d)) in docs/server-rules.md#wire-layer.
 
 | File | What |
 |---|---|

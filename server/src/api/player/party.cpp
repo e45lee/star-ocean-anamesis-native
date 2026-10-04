@@ -1,6 +1,6 @@
 // The parties: UpdateParty and UpdatePartySet (api/player/party.h). Port code, not
 // guest behaviour; every rule carries its source label, (a) master data, (b) client-side
-// evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md "Party").
+// evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md#party).
 #include "api/player/party.h"
 
 #include <algorithm>
@@ -21,7 +21,7 @@ using ext::body;
 namespace {}  // namespace
 
 // UpdateParty(u32 party_id, u64 uid1, u64 uid2, u64 uid3) -> UpdatePartyRes  fid ef02dd83
-// API: docs/api.md#updateparty   Rules: docs/server-rules.md "Party"
+// API: docs/api.md#updateparty   Rules: docs/server-rules.md#party
 //
 // Stores a party's three members in slots 0..2. No 3.7.0 caller is known (the party screen saves
 // with UpdatePartySet); the request shape is the method's signature (b).
@@ -118,7 +118,7 @@ bool parse_party_set_text(const std::string& text, PartySetText& out) {
 }
 
 // UpdatePartySet(PartySetInfo const&) -> UpdatePartySetRes                fid c119d0d8
-// API: docs/api.md#updatepartyset   Rules: docs/server-rules.md "Party sets"
+// API: docs/api.md#updatepartyset   Rules: docs/server-rules.md#party-sets
 //
 // Saves one party set from the party screen (CPartyComposition, when the player leaves the
 // member select). Received as PartySetInfo::Serialize() text (parse_party_set_text).

@@ -25,6 +25,7 @@
 
 #include "../containers/containers_layout.h"
 #include "../memory/memory_layout.h"
+#include "../sync/sync_layout.h"
 
 namespace soa::native::yayoi {
 
@@ -42,13 +43,12 @@ inline constexpr u64 kVaddrNetworkManager = 0x2d74ee0;        // Aska::Global::m
 inline constexpr u64 kVaddrNetworkAllocator = 0x2d74ed8;      // Aska::Global::m_pNetworkAllocator
 inline constexpr u64 kVaddrDownloadContentPath = 0x2d74f08;   // Aska::Global::m_pszDownloadContentPath (char*)
 
-// The `sync` subsystem's types (port/n-sync recovers them; not merged yet): opaque bytes here, swap in
-// sync's classes once both are merged. FastCriticalSection: +0x38 lock word, +0x3c spinners, +0x78
-// Semaphore (as in memory_layout.h).
-inline constexpr u64 kFastCriticalSectionSize = 0x90;
-inline constexpr u64 kThreadSize = 0x10;
-inline constexpr u64 kEventSize = 0x68;
-inline constexpr u64 kSemaphoreSize = 0x18;
+// The `sync` subsystem's classes (native/sync/sync_layout.h) are embedded where the guest embeds them:
+// FastCriticalSection (0x90), Thread (0x10), Event (0x68), Semaphore (0x18).
+using sync::Event;
+using sync::FastCriticalSection;
+using sync::Semaphore;
+using sync::Thread;
 
 // Aska::Status values the driver returns (through x8), from the decompile.
 namespace status {
@@ -65,9 +65,18 @@ inline constexpr s64 kNameNotFound = -0x3c8;// Get*(const char* name): no such c
 inline constexpr s64 kNoMemory = -0x3bf;    // CreateCacheBuffer
 inline constexpr s64 kNull = -0x38f;        // Get*: the value is NULL (SQLITE_NULL)
 inline constexpr s64 kStepFailed = -0x400;  // Fetch: another sqlite3_step result
+inline constexpr s64 kNotSupported = -0x3ba;// GetTime (both overloads, with an out buffer)
+inline constexpr s64 kEmpty = -0x3a4;       // Serialize: no columns or no rows (written to *size)
+inline constexpr s64 kBadType = -0x3b8;     // Serialize: a value type outside 1..5, or the statement gone
+inline constexpr s64 kNoBuffer = -0x3bd;    // Serialize: no text buffer
 }  // namespace status
 
 // ---- The SQLite driver ---------------------------------------------------------------------------
+//
+// The natives (yayoi_sqlite_driver.cpp, yayoi_entity_object.cpp, yayoi_column_map.cpp) call the host
+// SQLite directly: the handles below are the host objects lib_sqlite hands out (lib_sqlite/README.md).
+// Members returning an Aska::Status (s64) return it through x8 in the guest (hand-written HostFns in
+// yayoi_sqlite_hooks.cpp); the rest by AAPCS64.
 
 // Aska::Yayoi::QueryParam (0x28): one bound value; SQLiteDriver::_Execute binds params[i] as text
 // (sqlite3_bind_text(stmt, i + 1, m_text, m_length, SQLITE_STATIC)). The connectors fill the text with
@@ -90,17 +99,26 @@ public:
 };
 static_assert(sizeof(DBAddress) == 8);
 
+// Aska::TSharedArray<signed char>: EntityObject::Serialize's x8 result, {buffer (operator new[]), its
+// TSharedPointerCode counter}; the connectors (QueryToMsgPack) keep or release it.
+struct SharedBytes {
+    s8* m_ptr;          // 0x00
+    s32* m_counter;     // 0x08
+};
+static_assert(offsetof(SharedBytes, m_counter) == 0x08);
+static_assert(sizeof(SharedBytes) == 0x10);
+
 class EntityObject;
 
 // Aska::Yayoi::SQLiteDriver (0x68): one connection and its one live statement. Layout from the
-// constructor (clears 0x00..0x60), the destructor, Close, DoOpen, Open, _Prepare, _Execute, Find,
-// BeginTransaction / _BeginTransaction / Commit / Rollback (port/decomp/yayoi/sqlite_driver.c).
-// Users: CStaticTransaction (the master DB, :memory: + ATTACH) and CSqliteTransaction (game's side).
+// constructor (clears 0x00..0x2a, 0x30..0x60), the destructor, Close, DoOpen, Open, _Prepare, _Execute,
+// Find, BeginTransaction / _BeginTransaction / Commit / Rollback (port/decomp/yayoi/sqlite_driver.c).
+// Users: CStaticTransaction (the master DB, :memory: + ATTACH) and CSqliteTransaction (game's side);
+// the 170 SQLiteDriver::BuildQuery<Connector> templates (the `master` side) write m_queryBuffer.
 class SQLiteDriver {
 public:
     void Ctor();                        // _ZN4Aska5Yayoi12SQLiteDriverC1Ev
     void Dtor();                        // _ZN4Aska5Yayoi12SQLiteDriverD1Ev (ROLLBACK if in a transaction, finalize, close)
-    // Status-returning members take the result through x8 (hand-written HostFns).
     s64 Open(void* setting);            // _ZN4Aska5Yayoi12SQLiteDriver4OpenEPNS0_14IDriverSettingIS1_EE (m_setting)
     s64 DoOpen(u32 mode, const char* name, const DBAddress* address); // _ZN4Aska5Yayoi12SQLiteDriver6DoOpenENS0_6Entity4ModeEPKcPKNS0_9DBAddressE
     void Close();                       // _ZN4Aska5Yayoi12SQLiteDriver5CloseEv
@@ -108,17 +126,21 @@ public:
     s64 _BeginTransaction();            // _ZN4Aska5Yayoi12SQLiteDriver17_BeginTransactionEv ("BEGIN;")
     s64 Commit();                       // _ZN4Aska5Yayoi12SQLiteDriver6CommitEv
     s64 Rollback();                     // _ZN4Aska5Yayoi12SQLiteDriver8RollbackEv
-    s64 Execute(const char* sql, const QueryParam* params, u64 n);  // (tail call of _Execute with entity 0)
-    s64 _Execute(const char* sql, const QueryParam* params, u64 n, EntityObject* entity);
-    s64 Find(const char* sql, const QueryParam* params, u64 n, EntityObject* entity); // _Execute + entity->Store
+    s64 Execute(const char* sql, const QueryParam* params, u64 n);  // _ZN4Aska5Yayoi12SQLiteDriver7ExecuteEPKcPKNS0_10QueryParamEm (_Execute, no entity)
+    s64 _Execute(const char* sql, const QueryParam* params, u64 n, EntityObject* entity); // _ZN4Aska5Yayoi12SQLiteDriver8_ExecuteEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE
+    s64 Find(const char* sql, const QueryParam* params, u64 n, EntityObject* entity); // _ZN4Aska5Yayoi12SQLiteDriver4FindEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE (_Execute + entity->Store)
     s64 _Prepare(const char* sql, s32* paramCount);  // _ZN4Aska5Yayoi12SQLiteDriver8_PrepareEPKcPi
-    // template BuildQuery<Connector>(...): one per master table connector (170), callers' side
+    // template BuildQuery<Connector>(...): one per master table connector (170), the `master` side
+
+    // Inlined in the guest (Close, the destructor, DoOpen and _Prepare repeat it): ROLLBACK when in a
+    // transaction, finalize the statement, close the connection, forget the address.
+    void CloseConnection();
 
     void* m_setting;                    // 0x00: Aska::Yayoi::IDriverSetting<SQLiteDriver>* (Open); its vtable
-                                        //       slot 0 (mode) gives the DBAddress when DoOpen gets none
+                                        //       slot 0 (this, mode) gives the DBAddress when DoOpen gets none
     u64 m_value08;                      // 0x08: cleared by the constructor, meaning unknown
-    const QueryParam* m_lastParams;     // 0x10: the params bound to m_stmt (_Execute skips rebinding the same)
-    void* m_db;                         // 0x18: sqlite3* (lib_sqlite's opaque handle)
+    const QueryParam* m_lastParams;     // 0x10: the params bound to m_stmt (_Prepare clears it, _Execute sets it)
+    void* m_db;                         // 0x18: sqlite3* (lib_sqlite's host handle)
     void* m_stmt;                       // 0x20: sqlite3_stmt*: the one live statement (_Prepare finalizes the last)
     u8 m_inTransaction;                 // 0x28
     u8 m_beginRequested;                // 0x29: BeginTransaction; the next DoOpen / _BeginTransaction runs "BEGIN;"
@@ -144,33 +166,104 @@ static_assert(offsetof(SQLiteDriver, m_prepared) == 0x60);
 static_assert(sizeof(SQLiteDriver) == 0x68);
 
 // The column-name map of an EntityObject: Aska::THashMap<char const*, int, EntityObject::StringHasher,
-// StringEqualTo> (containers' THashMap: open addressing, buckets {u8 state; TPair<const char*, int>} of
-// 0x18). StringHasher = Aska::detail::SpookyHashV2::Hash128(name, strlen, seeds 0, 0)'s first word;
+// EntityObject::StringEqualTo, TAllocator<TPair<char const* const, int>>>: containers' THashMap table
+// (open addressing, buckets {u8 state; TPair<const char*, int>} of 0x18, linear probing (h + i) % count).
+// StringHasher = Aska::detail::SpookyHashV2::Hash128(name, strlen(name), seeds 0, 0)'s first word;
 // StringEqualTo = strcmp. The keys are SQLite's column-name pointers (valid while the statement lives).
-using ColumnMap = containers::THashMap<const char*, s32>;
+// This instantiation's members are the yayoi family's (their symbols name EntityObject): declared on a
+// yayoi class of containers' layout (the containers subsystem owns the generic THashMap).
+using ColumnPair = containers::TPair<const char*, s32>;
+using ColumnBucket = containers::THashMapBucket<ColumnPair>;
+static_assert(sizeof(ColumnBucket) == 0x18);
+static_assert(offsetof(ColumnBucket, m_value.first) == 0x08);
+static_assert(offsetof(ColumnBucket, m_value.second) == 0x10);
+
+// Aska::THashMapIterator<THashMapBucketArray<...>> of this map: {bucket, buckets begin, buckets end};
+// the end iterator has m_bucket == m_end. Insert<It> takes two by value (AAPCS64: by reference).
+struct ColumnMapIterator {
+    ColumnBucket* m_bucket;     // 0x00
+    ColumnBucket* m_begin;      // 0x08
+    ColumnBucket* m_end;        // 0x10
+};
+static_assert(sizeof(ColumnMapIterator) == 0x18);
+
+// Emplace_ / Insert_'s x8 result: TPair<iterator, bool> (inserted: a new key).
+struct ColumnMapInsertResult {
+    ColumnMapIterator m_it;     // 0x00
+    u8 m_inserted;              // 0x18
+    u8 unk_19[7];               // 0x19
+};
+static_assert(offsetof(ColumnMapInsertResult, m_inserted) == 0x18);
+static_assert(sizeof(ColumnMapInsertResult) == 0x20);
+
+class ColumnMap {
+public:
+    void Dtor();                        // _ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEED2Ev
+    void DtorDelete();                  // ...D0Ev (AlignedFree the buckets, operator delete)
+    ColumnMapInsertResult Emplace_(const char* const* key);       // ...8Emplace_ERSA_ (a new key: value left as is)
+    ColumnMapInsertResult Insert_(const ColumnPair* pair);        // ...7Insert_ERKSB_
+    void Rehash_(u64 count);            // ...7Rehash_Em (a whole temporary map, swapped in)
+    void Insert(ColumnMapIterator* first, const ColumnMapIterator* last);  // ...6InsertINS_16THashMapIterator...EEvT_SN_ (Rehash_'s range insert)
+
+    // Inlined in the guest:
+    static u64 Hash(const char* key);   // StringHasher
+    ColumnBucket* Find(const char* key) const;  // the Get*(name) lookup (end() when missing)
+    ColumnBucket* end() const { return table.m_buckets.m_data + table.m_buckets.m_count; }
+    void GrowFor(u64 extra);            // operator[]'s growth: Rehash_ when (size + deleted + extra) / maxLoad > count
+
+    containers::THashTable<ColumnPair> table;   // 0x00
+};
 static_assert(sizeof(ColumnMap) == 0x30);
-static_assert(sizeof(containers::THashMapBucket<containers::TPair<const char*, s32>>) == 0x18);
+static_assert(offsetof(ColumnMap, table.m_maxLoadFactor) == 0x0c);
+static_assert(offsetof(ColumnMap, table.m_size) == 0x10);
+static_assert(offsetof(ColumnMap, table.m_deleted) == 0x14);
+static_assert(offsetof(ColumnMap, table.m_buckets.m_data) == 0x20);
+static_assert(offsetof(ColumnMap, table.m_buckets.m_count) == 0x28);
 
 // Aska::Yayoi::SQLiteDriver::EntityObject (0x60): a cursor over the driver's statement. Layout from the
 // constructor, ~EntityObject, Release / ClearCache / CreateCacheBuffer / GetCacheBuffer, Store, Fetch,
 // the Get* accessors and Serialize (port/decomp/yayoi/sqlite_driver.c). The connectors build one on the
-// stack per query (CSimpleSqliteConnector::QueryToMsgPack).
+// stack per query (CSimpleSqliteConnector::QueryToMsgPack: Find, then Serialize).
+// The Get*(int column, ..., row) accessors read column `column` of the current row (`row` is unused);
+// the (const char* name, ...) overloads look the name up in m_columns first (kNameNotFound), the way
+// the guest's inlined operator[] does: a found name can still grow (rehash) the map.
 class EntityObject {
 public:
     void Ctor();                        // _ZN4Aska5Yayoi12SQLiteDriver12EntityObjectC1Ev (17 buckets)
     void Dtor();                        // _ZN4Aska5Yayoi12SQLiteDriver12EntityObjectD1Ev
-    void Release();                     // frees the cache buffer
-    void ClearCache();                  // (same)
-    s64 CreateCacheBuffer(u64 size);    // grows m_cache (new[])
-    u8* GetCacheBuffer(u64* size);
-    s64 Store(void* db, void* stmt);    // _ZN4Aska5Yayoi12SQLiteDriver12EntityObject5StoreEP7sqlite3P12sqlite3_stmt
-                                        //   (a new statement: m_numColumns, the name map rebuilt)
-    s64 Fetch();                        // _ZN4Aska5Yayoi12SQLiteDriver12EntityObject5FetchEv (sqlite3_step; kNoMoreRows at the end)
-    s32 GetType(s32 column, u64 row);   // sqlite3_value_type of the column
-    s64 GetInteger(s32 column, s32* out, u64 row);       // and the (const char* name, ...) overloads,
-    s64 GetString(s32 column, char* out, u64* size, u64 row); // which look the name up in m_columns
-    s64 Serialize(s64* size);           // _ZN4Aska5Yayoi12SQLiteDriver12EntityObject9SerializeEPl (the
-                                        //   rows as MessagePack: the yayoi hot spot, 754 self / 13k incl.)
+    void Release();                     // _ZN4Aska5Yayoi12SQLiteDriver12EntityObject7ReleaseEv (frees the cache buffer)
+    void ClearCache();                  // ...10ClearCacheEv (the same)
+    s64 CreateCacheBuffer(u64 size);    // ...17CreateCacheBufferEm (grows m_cache: new[] nothrow)
+    u8* GetCacheBuffer(u64* size);      // ...14GetCacheBufferEPm
+    s64 Store(void* db, void* stmt);    // ...5StoreEP7sqlite3P12sqlite3_stmt (a new statement: m_numColumns, the name map rebuilt)
+    s64 Fetch();                        // ...5FetchEv (sqlite3_step; kNoMoreRows at the end)
+    s32 GetType(s32 column, u64 row);   // ...7GetTypeEim (sqlite3_value_type; kNotReady as an int)
+    s32 GetType(const char* name, u64 row);  // ...7GetTypeEPKcm
+    s32 GetFieldLength(s32 column, s32 row); // ...14GetFieldLengthEii (sqlite3_value_bytes; 0 for NULL)
+    s64 GetStringLength(s32 column, u64* length, u64 row);  // ...15GetStringLengthEiPmm (strlen of the text)
+    s64 GetTime(s32 column, char* out, u64* size, u64 row); // ...7GetTimeEiPcPmm (kNotSupported)
+    s64 GetTime(const char* name, char* out, u64* size, u64 row);
+    s64 GetData(s32 column, char* out, u64* size, u64 row); // ...7GetDataEiPcPmm (the blob; *size not checked)
+    s64 GetData(const char* name, char* out, u64* size, u64 row);
+    s64 GetString(s32 column, char* out, u64* size, u64 row); // ...9GetStringEiPcPmm (__aska_snprintf_s("%s"))
+    s64 GetString(const char* name, char* out, u64* size, u64 row);
+    s64 GetTinyInt(s32 column, s8* out, u64 row);       // ...10GetTinyIntEiPam (sqlite3_value_int, cut)
+    s64 GetTinyInt(const char* name, s8* out, u64 row);
+    s64 GetShort(s32 column, s16* out, u64 row);        // ...8GetShortEiPsm
+    s64 GetShort(const char* name, s16* out, u64 row);
+    s64 GetInteger(s32 column, s32* out, u64 row);      // ...10GetIntegerEiPim
+    s64 GetInteger(const char* name, s32* out, u64 row);
+    s64 GetLong(s32 column, s64* out, u64 row);         // ...7GetLongEiPlm (sqlite3_value_int64)
+    s64 GetLong(const char* name, s64* out, u64 row);
+    s64 GetFloat(s32 column, float* out, u64 row);      // ...8GetFloatEiPfm (sqlite3_value_double, narrowed)
+    s64 GetFloat(const char* name, float* out, u64 row);
+    s64 GetDouble(s32 column, double* out, u64 row);    // ...9GetDoubleEiPdm
+    s64 GetDouble(const char* name, double* out, u64 row);
+    SharedBytes Serialize(s64* size);   // ...9SerializeEPl (x8: the rows as MessagePack: the yayoi hot spot)
+    u64 SerializeCache(u64* size);      // ...14SerializeCacheEPm (returns 0)
+
+    // Inlined in the guest: the name lookup of the Get*(name) overloads (false: kNameNotFound).
+    bool ColumnIndex(const char* name, s32* column);
 
     u64 m_value00;              // 0x00: cleared by the constructor, meaning unknown
     s32 m_numColumns;           // 0x08: sqlite3_column_count (Store)
@@ -356,7 +449,7 @@ public:
     void* m_value468;           // 0x468: &m_flag60 after Initialize
     void* m_value470;           // 0x470: &m_http after Initialize
     u8 unk_478[0x10];           // 0x478
-    u8 m_cs[kFastCriticalSectionSize]; // 0x488: guards m_status
+    FastCriticalSection m_cs;   // 0x488: guards m_status
     DownloadStatus m_status;    // 0x518
     u64 m_value678;             // 0x678: cleared by Reset
     u64 m_value680;             // 0x680
@@ -390,9 +483,9 @@ public:
 
     const void* vtable;                 // 0x00: _ZTVN4Aska5Yayoi10DownloaderE + 0x10
     // Downloader::WorkerThread (0x08..0x98): an Aska::Thread, an Aska::Event and its owner
-    u8 m_thread[kThreadSize];           // 0x08: vtable = _ZTVN4Aska5Yayoi10Downloader12WorkerThreadE + 0x10
+    Thread m_thread;                    // 0x08: vtable = _ZTVN4Aska5Yayoi10Downloader12WorkerThreadE + 0x10
     u8 unk_18[8];                       // 0x18
-    u8 m_event[kEventSize];             // 0x20: Aska::Event (sync)
+    Event m_event;                      // 0x20: Aska::Event (sync)
     u8 m_flag88;                        // 0x88
     u8 m_flag89;                        // 0x89
     u8 unk_8a[6];                       // 0x8a
@@ -405,8 +498,8 @@ public:
     memory::TDynamicQueue<DownloadElement*> m_freeElements;  // 0x3e0: Init fills it with the element block
     memory::TDynamicQueue<DownloadContext*> m_freeContexts;  // 0x400
     memory::TDynamicQueue<u32> m_finished;                   // 0x420: AddDownloadFinishQueue
-    u8 m_cs[kFastCriticalSectionSize];  // 0x440: guards the list and the queues
-    u8 m_cs2[kFastCriticalSectionSize]; // 0x4d0
+    FastCriticalSection m_cs;           // 0x440: guards the list and the queues
+    FastCriticalSection m_cs2;          // 0x4d0
     char m_path[0x104];                 // 0x560: SetPath (the download content directory)
     u8 unk_664[4];                      // 0x664
     u8* m_storage;                      // 0x668: Init's new[] block
@@ -445,14 +538,14 @@ public:
     void DoWakeup();
     s64 GetThreadID();
 
-    u8 m_thread[kThreadSize];   // 0x00: Aska::Thread (sync): vtable = _ZTVN4Aska5Yayoi20NetworkManagerThreadE + 0x10,
+    Thread m_thread;            // 0x00: Aska::Thread (sync): vtable = _ZTVN4Aska5Yayoi20NetworkManagerThreadE + 0x10,
                                 //       +0x08 the thread id (NetworkManager copies it to m_threadId)
     u8 unk_10[8];               // 0x10
     const void* m_wakeVtable;   // 0x18: the second base: _ZTV... + 0x48
     void* m_taskManager;        // 0x20: Aska::TaskManager* (kernel; operator new 0xff0)
     void* m_event;              // 0x28: Aska::Yayoi::NetworkEvent* (operator new 0x670)
     void* m_httpProcessor;      // 0x30: Aska::Yayoi::NativeHttpRequestProcessor* (operator new 0x8d0)
-    u8 m_wakeup[kSemaphoreSize];// 0x38: Aska::Semaphore (sync)
+    Semaphore m_wakeup;         // 0x38: Aska::Semaphore (sync)
     u8 m_quit;                  // 0x50
     u8 unk_51[7];               // 0x51
 };
@@ -481,7 +574,7 @@ public:
     // BeginPoll / BeginConnect / AddErrorCallback / AddHttpRequest / RegisterVersatileTask / Kill
 
     NetworkEventMap m_events;           // 0x00: thread id -> NetworkEvent*
-    u8 m_cs[kFastCriticalSectionSize];  // 0x30: guards m_events
+    FastCriticalSection m_cs;           // 0x30: guards m_events
     NetworkManagerThread* m_thread;     // 0xc0
     s64 m_threadId;                     // 0xc8: m_thread's id (GetNetworkEvent(0))
     void* m_paymentClient;              // 0xd0: Aska::Yayoi::PaymentClient* (0x30)
@@ -525,7 +618,7 @@ public:
     u32 m_queueRead;            // 0x0c
     u8 unk_10[0x108];           // 0x10: the queue's slots
     u8 m_pool[0x720];           // 0x118: TPoolAtomic<NativeHttpClient, 32> (containers; not mapped)
-    u8 m_cs[kFastCriticalSectionSize]; // 0x838
+    FastCriticalSection m_cs;   // 0x838
     u8 m_flag8c8;               // 0x8c8
     u8 unk_8c9[7];              // 0x8c9
 };

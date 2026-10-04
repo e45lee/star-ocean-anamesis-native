@@ -70,6 +70,8 @@ def test_roster_english_names():
     assert m.role(game.get_u32("player_home_pc_roleid"))["name_en"] == "Summer Maria"
 
 
+@pytest.mark.skipif(not sorted((ROOT / "apk").glob("*.xapk")) and not (ROOT / "data" / "basmaster-3.8.0.sqlite3").exists(),  # 380-ok: soa_save's master
+                    reason="needs the offline game's package in apk/ (untracked; absent in a worktree)")
 def test_unlock_all_keeps_existing(tmp_path):
     from soa_save.roster import roster, unlock_all
     game = KVSFile.load(ROOT / SEED)

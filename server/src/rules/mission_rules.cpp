@@ -1,5 +1,5 @@
-// The local server's mission-side rules; see mission_rules.h and docs/server-rules.md
-// "Server missions". Labels: (a) master data, (b) client-side evidence, (c) outside knowledge,
+// The local server's mission-side rules; see mission_rules.h and docs/server-rules.md#server-missions.
+// Labels: (a) master data, (b) client-side evidence, (c) outside knowledge,
 // (d) assumption.
 #include "rules/mission_rules.h"
 

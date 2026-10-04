@@ -1,5 +1,5 @@
 """Session `favor`: favorability in the restored game (the in-process local server;
-docs/server-rules.md section 8, docs/client-changes.md "Favorability"): boot once so the local
+docs/server-rules.md#favor-rules, docs/client-changes.md "Favorability"): boot once so the local
 server seeds itself, give the owned characters favor points in the server DB (test setup: the home
 character 9,900 points, one tap short of level 2; the others spread over levels 1..4), boot again,
 then home (favor heart, level 1) -> two taps on the home character (UpdateFavorByTap, +50 each: the

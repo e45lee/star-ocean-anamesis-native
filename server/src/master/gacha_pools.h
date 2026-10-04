@@ -4,7 +4,7 @@
 // The live server drew from tables (master_gacha.table_name = master_gacha_item_*) that the
 // client never had. tools/build_gacha_pools.py rebuilds a pool per gacha from the 3.7.0 master
 // data and writes data/gacha_pools.sqlite3; this is its read-only accessor. The
-// rules and their sources are in docs/server-rules.md, "Gacha pools (reconstructed)", and in the
+// rules and their sources are in docs/server-rules.md#gacha-pools, and in the
 // file's own `rule` table.
 //
 // A draw: pick a rank S/A/B/C/D by the gacha's rank rates (the bonus rates for the bonus draw of

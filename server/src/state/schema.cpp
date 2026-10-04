@@ -271,7 +271,7 @@ bool repair_columns(sqlite3* db, sqlite3*) {
 
 // ---- step 2: drop the dead (PLAN-schema S2, finding F1) ---------------------------------------
 // What nothing reads: roster.favor (favor lives per same role in `favor`), mission.best_rank (no
-// per-mission rank: docs/server-rules.md "Missions"), exchange_counts.shop_id (the contents row
+// per-mission rank: docs/server-rules.md#missions-rules), exchange_counts.shop_id (the contents row
 // names its shop in the master), and the tables nothing uses: view_flags (UpdateView keeps the
 // words in meta view_status / view_status2), gear (gear_items), box_gacha (box_state /
 // box_slots) and planets (written by the seed, never read: the open planets are the campaign's

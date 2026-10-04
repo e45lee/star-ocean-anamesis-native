@@ -1,7 +1,7 @@
 // The master_campaign rows that apply to a mission (api/missions/missions.h). Port code, not guest
 // behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "Server missions").
+// knowledge, (d) assumption (docs/server-rules.md#server-missions).
 #include "api/missions/missions.h"
 
 #include "core/server.h"  // event_clock_of

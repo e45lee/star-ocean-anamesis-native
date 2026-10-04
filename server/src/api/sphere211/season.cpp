@@ -1,7 +1,7 @@
 // Sphere 211: the seasons, the dive's season change, and the achievements that move with the
 // season (api/sphere211/README.md; declared in dive.h and sphere211.h). Port code, not guest
 // behaviour; every rule carries its source label, (a) master data, (b) client-side evidence,
-// (c) outside knowledge, (d) assumption. Rules in docs/server-rules.md "Sphere 211".
+// (c) outside knowledge, (d) assumption. Rules in docs/server-rules.md#sphere211.
 #include <algorithm>
 #include <climits>
 #include <string>

@@ -1,7 +1,7 @@
 // MissionEnd: EXP, favor, drops, first-clear presents and unlocks (api/missions/missions.h). Port
 // code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "Server missions").
+// knowledge, (d) assumption (docs/server-rules.md#server-missions).
 #include "api/missions/missions.h"
 
 #include <algorithm>
@@ -335,7 +335,7 @@ void mission_result_extras(ext::Ctx& ctx, const MissionEnd& end, Value& data) {
 }  // namespace
 
 // MissionEnd(u32 mission_id, u32) + the battle log -> MissionEndRes                     fid 8312a64c
-// API: docs/api.md#missionend   Rules: docs/server-rules.md "2.3 MissionEnd (win)", "MissionEnd drops", "Type-8 campaigns"
+// API: docs/api.md#missionend   Rules: docs/server-rules.md#mission-end, docs/server-rules.md#mission-end-drops, docs/server-rules.md#type-8-campaigns
 //
 // Ends a won battle (a loss sends MissionFailed): grants its rewards and ends the play record.
 //   (a) the mission's exp, pc_exp (each party member) and fol (capped at master_global

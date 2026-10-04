@@ -281,7 +281,7 @@ NATIVE_TEST("events/enable-exchange-shops") {
 
 // soa-server's asset index (cdn::asset_index_from_config, server/app/main.cpp) holds the stand-ins
 // the CDN serves, so the banner gate opens gacha_pickup_role_0054 / _0056, whose list banners only
-// standin-assets has (docs/server-rules.md "Enabling events by keyword", "Banner images"); --standin-assets off leaves them shut.
+// standin-assets has (docs/server-rules.md#enabling-events); --standin-assets off leaves them shut.
 NATIVE_TEST("events/enable-standin-banners") {
     KeepOptions keep;
     ServerConfig& opt = config();

@@ -1,7 +1,7 @@
 // Sphere 211: the treasure boxes ("T data") a dive gathers, their ranks and what they open into
 // (api/sphere211/README.md; declared in dive.h). Port code, not guest behaviour; every rule carries
 // its source label, (a) master data, (b) client-side evidence, (c) outside knowledge,
-// (d) assumption. Rules in docs/server-rules.md "Sphere 211".
+// (d) assumption. Rules in docs/server-rules.md#sphere211.
 #include <algorithm>
 #include <string>
 #include <utility>

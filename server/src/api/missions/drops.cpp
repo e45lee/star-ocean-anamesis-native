@@ -1,6 +1,6 @@
 // The drop roll of a won mission (api/missions/missions.h). Port code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "Server missions").
+// knowledge, (d) assumption (docs/server-rules.md#server-missions).
 #include "api/missions/missions.h"
 
 #include <algorithm>
@@ -123,7 +123,7 @@ void evaluation_drops(ext::Ctx& ctx, int64_t evaluation_group_id, Rolled& rolled
 
 }  // namespace
 
-// The whole drop roll of a won mission (docs/server-rules.md 2.4, "Server missions"). The lots are
+// The whole drop roll of a won mission (docs/server-rules.md#drops, docs/server-rules.md#server-missions). The lots are
 // drawn in a fixed order (the RNG's): normal, campaign, character bonus, campaign drops, the
 // bonus extra, surprise, common, evaluation.
 Rolled roll_drops(ext::Ctx& ctx, u32 mission, const std::string& table, u32 type, u32 area, bool surprise, const std::vector<u32>& party_roles) {

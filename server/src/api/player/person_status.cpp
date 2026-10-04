@@ -1,6 +1,6 @@
 // A battle member's status: CPersonStatusInfo (api/player/person_status.h).
 // Port code, not guest behaviour; every rule carries its source label, (a) master data, (b)
-// client-side evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md "3. Battle party status (`CPersonStatusInfo`)").
+// client-side evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md#battle-status).
 #include "api/player/person_status.h"
 
 #include <algorithm>
@@ -23,7 +23,7 @@ const char* const kEquipmentSlots[2] = {"weapon", "accessory"};
 // The role's stats at `level`, its rank and its skills (person_status_info, step 1).
 void base_stats(ext::Ctx& ctx, const Row& roster_row, RoleId role, u32 level, Value& status) {
     // (b) stats as the client's status screen computes them (PersonModel::
-    // CalculateParameter -> tCharaData::CalcStatus, docs/server-rules.md section 3):
+    // CalculateParameter -> tCharaData::CalcStatus, docs/server-rules.md#battle-status):
     // round_half_away(master_role.<stat> x master_character_common_parameter[level].<stat>
     // / 100), times the master_rank row of (role rank, limit break) / 100 (rounded again:
     // (d)), at least 1. The next steps add the equipment, favor, awakening and seeds; factors
@@ -105,7 +105,7 @@ void favor_and_awakening(ext::Ctx& ctx, const Row& roster_row, RoleId role, Valu
         favor::level_of(ctx.st.h, ctx.m.h, clock_now(), ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role}));
     status["ap"] = status["ap"].f + (double)ctx.m.one("select ifnull(ap_bonus, 0) from master_favor_level where id = ?", {favor_level});
     // (a) awakening: the master_awaken row of the role's category at its awaken_level replaces
-    // the rush skill and gauge (docs/server-rules.md 3); its talents (factors) aren't added (d)
+    // the rush skill and gauge (docs/server-rules.md#battle-status); its talents (factors) aren't added (d)
     if (roster_row.i("awaken") > 0)
         ctx.m.q("select a.* from master_awaken a join master_role r on r.role_category_id = a.role_category_id where r.id = ? and a.awaken_level = ?",
                 {role, roster_row.i("awaken")}, [&](const Row& awaken_row) {

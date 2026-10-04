@@ -79,7 +79,7 @@ PATH_RULES_TABLE = (
      "game loads `\"Image/\" + name + \".aif\"`, the `etc2/` folder is the texture-format directory of the asset "
      "manager; the ADLD key is CHash32 of `Image/etc2/<name>.aif` (verified here: the size reader decrypts "
      "existing files with exactly that key). The join `master_gacha.banner_id` = `master_banner.id_label` is (a) "
-     "and the list-banner use is (b) (docs/server-rules.md \"Banner images\")"),
+     "and the list-banner use is (b) (docs/server-rules.md#enabling-events)"),
     ("`talk_event_id_label`, `talk_message_file`", "`Script/<x>.msgp`, `Scenario/<x>.msgp`",
      "(b): `EventScenario::CEventScenario::SetEventId` formats `Script/%s.msgp` and `Scenario/%s.msgp` "
      "(docs/notes.md; both strings are in libSOA 3.7.0)"),

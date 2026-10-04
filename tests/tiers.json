@@ -41,7 +41,6 @@
      "cmd": ".venv/bin/python -m pytest -q control/tests",
      "covers": "the slot pool, the driver library control/soadrive (log cursor, FIFO, resend rules) and tools/tests_for.py's path rules (no game)"},
     {"name": "pytest-soa-save", "tier": "T0", "secs": 5, "kind": "check", "game": 0,
-     "known": "tests/test_kvs.py::test_unlock_all_keeps_existing needs the offline game's package in apk/, which a worktree lacks (untracked); passes in the main checkout",
      "cmd": ".venv/bin/python -m pytest -q tests",
      "covers": "soa_save's unit tests (no game)"},
     {"name": "soa-selftest", "tier": "T0", "secs": 70, "kind": "selftest", "apis": false, "game": 1,

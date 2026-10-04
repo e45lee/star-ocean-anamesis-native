@@ -88,6 +88,8 @@ The C++ parts share one CMake build, rooted at `CMakeLists.txt`:
 
 | Part | What | Output |
 |---|---|---|
+| `common/` | small libraries every program shares: `soa_env` (`soa/env.h`, the environment rule; `soa/paths.h`, the default data dirs; `soa/install.h`, the install-dir lookup), `soa_compat` (sockets, the Windows POSIX shims in `common/win32/`), `soa_zip` (ZIP on minizip-ng), `soa_gamefiles` (`file_tree.h`, `game_files.h`: the game files, a download folder or zip), `soa_codec` (Base64, the SharedPreferences XML, PNG) | `build/common/libsoa_*.a`, the tests `build/common/soa_{env,zip,gamefiles,codec}_tests` |
+| `webview/` | the web view's HTML renderer on litehtml (the notice board; `docs/webview.md`) | `build/webview/libsoawebview.a`, `build/webview/soa-webview-render`, `build/webview/soawebview_tests` |
 | `runtime/` | the JIT host runtime: ELF loader, dynarmic CPU, Android HLE, JVM, host loop (`runtime/README.md`) | `build/runtime/soaruntime_tests` |
 | `server/` | the local game server library and its standalone binary (`server/README.md`) | `build/server/soa-server` |
 | `port/` | the desktop port of the 3.7.0 client (`port/README.md`) | `build/port/soa` |
@@ -325,7 +327,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 - **Ghidra** (12.1.2, snap at `/snap/ghidra/current/ghidra`): `tools/decomp.sh` / `tools/decomp_at.sh` decompile from the quick projects (`ghidra/quick-v370`, local, not in git; re-imported by `tools/common.sh` when missing) through a pool of working copies in `work/ghidra-quick-v370*`. Ghidra refuses project paths with a component starting with `.`.
 - **PyGhidra**, in `.venv`, from Ghidra's own wheels (`requirements.txt` says how): `pyghidra.start()` with `GHIDRA_INSTALL_DIR` set.
 - **Ghidra over MCP for Claude Code**: `scripts/ghidra-mcp.sh` serves the 3.7.0 project with [pyghidra-mcp](https://github.com/clearbluejar/pyghidra-mcp) (through `uvx`), headless, on its own working copy `work/ghidra-mcp-v370` (so its analysis, renames and types never touch the committed project). `.mcp.json` registers it as the project's `ghidra-v370` server; Claude Code asks once to approve it. Before first use run `scripts/ghidra-mcp.sh --analyze` once (Ghidra's full auto-analysis plus pyghidra-mcp's indexes; the tools refuse until it's done). One server at a time can have the copy open.
-- **jadx** (the APK's Java), **lief**, **keystone**, **capstone**, **unicorn**, and the system tools in "Setup" (gdb-multiarch, clang tools, strace, …).
+- **jadx** (the APK's Java), **lief**, **keystone**, **capstone**, **unicorn**, and system tools from apt: gdb-multiarch (the guest's GDB stub: `runtime/README.md` "Debugging the guest with gdb"), clang-format 18 (`tools/format_server.sh`), clang++ (`tools/subsystem.py check` compiles the layout headers with it), strace, ltrace, valgrind, apktool (`sudo apt install gdb-multiarch clang-format-18 clang strace ltrace valgrind apktool`).
 
 ## Save editor and event scripts
 

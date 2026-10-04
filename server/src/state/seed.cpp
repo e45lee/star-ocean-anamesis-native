@@ -28,7 +28,16 @@ bool save_holds_player(const std::string& path) {
 }
 
 std::string seed_source(const std::string& explicit_seed) {
-    if (std::string p = first_existing({explicit_seed, config().seed, real_seed_save()}); !p.empty()) return p;
+    // (d) An explicit save (the caller's, --seed) that holds no player is a mistake, not a request for
+    // an empty player (the user, 2026-10-04): warned about and skipped, so the next source, or a fresh
+    // account, takes its place.
+    for (const std::string& e : {explicit_seed, config().seed}) {
+        std::string p = first_existing({e});
+        if (p.empty()) continue;
+        if (save_holds_player(p)) return p;
+        LOGW("server", "seed %s holds no player (no player_name or person_size): ignored", p.c_str());
+    }
+    if (std::string p = first_existing({real_seed_save()}); !p.empty()) return p;
     // (b)+(d) The client's own Game.xml (--game-xml; soa's default <data>/data/shared_prefs/Game.xml)
     // counts only when it holds a player: on a fresh data dir the client writes it at its first
     // start (its settings: BAS:EffectAlpha, BAS:VoiceLanguage, BAS:PlayerName 0, ...: 9 keys)

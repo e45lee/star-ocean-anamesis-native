@@ -1,0 +1,5 @@
+# port/decomp/input/scope.txt: the guest functions the `input` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?Aska::(TouchPanel|Pad|PadDroid|Mouse|Keyboard|PeripheralManager|BasePeripheral|BaseInputPeripheral)::
+^(\S+ )?Framework::(CPad\w*|CTouchPanel|CMouse|CKeyboard)::

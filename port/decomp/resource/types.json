@@ -1,0 +1,5954 @@
+{
+ "subsystem": "resource",
+ "generated_by": "tools/subsystem.py export-types resource",
+ "header": "port/src/native/resource/resource_layout.h",
+ "structs": [
+  {
+   "name": "File",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_isAsset",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "unk_09",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 16,
+     "name": "m_handle",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x15f6600",
+     "symbol": "_ZN4Aska4FileD0Ev",
+     "name": "~File"
+    },
+    {
+     "ghidra": "0x15f6634",
+     "symbol": "_ZN4Aska4FileD2Ev",
+     "name": "~File"
+    },
+    {
+     "ghidra": "0x201f510",
+     "symbol": "_ZN4Aska4File5CloseEv",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x201f570",
+     "symbol": "_ZN4Aska4File4OpenEPKcbbb",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x201f61c",
+     "symbol": "_ZN4Aska4File38DistanceToLineBreakOrEndOrNonPrintableEv",
+     "name": "DistanceToLineBreakOrEndOrNonPrintable"
+    },
+    {
+     "ghidra": "0x201f870",
+     "symbol": "_ZNK4Aska4File12GetFileSizeLEv",
+     "name": "GetFileSizeL"
+    },
+    {
+     "ghidra": "0x201f8f0",
+     "symbol": "_ZN4Aska4File4ReadEPvmPj",
+     "name": "Read"
+    },
+    {
+     "ghidra": "0x201f980",
+     "symbol": "_ZN4Aska4File5SeekLElNS0_6OriginE",
+     "name": "SeekL"
+    },
+    {
+     "ghidra": "0x201f9d0",
+     "symbol": "_ZN4Aska4File11SetFileSizeEm",
+     "name": "SetFileSize"
+    },
+    {
+     "ghidra": "0x201f9d8",
+     "symbol": "_ZN4Aska4File5FlushEv",
+     "name": "Flush"
+    },
+    {
+     "ghidra": "0x201f9f4",
+     "symbol": "_ZN4Aska4File14ReadWithOffsetEPvmmPj",
+     "name": "ReadWithOffset"
+    },
+    {
+     "ghidra": "0x201fb14",
+     "symbol": "_ZN4Aska4File5WriteEPKvm",
+     "name": "Write"
+    },
+    {
+     "ghidra": "0x201fb64",
+     "symbol": "_ZN4Aska4File4SeekElNS0_6OriginE",
+     "name": "Seek"
+    },
+    {
+     "ghidra": "0x201fbb4",
+     "symbol": "_ZNK4Aska4File11GetFileSizeEv",
+     "name": "GetFileSize"
+    },
+    {
+     "ghidra": "0x201fc68",
+     "symbol": "_ZN4Aska4File15CreateDirectoryEPKc",
+     "name": "CreateDirectory"
+    },
+    {
+     "ghidra": "0x201fd4c",
+     "symbol": "_ZN4Aska4File9DoesExistEPKcb",
+     "name": "DoesExist"
+    },
+    {
+     "ghidra": "0x201fdb4",
+     "symbol": "_ZN4Aska4File11TraverseDirEPKcPNS0_8FINDDATAEij",
+     "name": "TraverseDir"
+    },
+    {
+     "ghidra": "0x2020018",
+     "symbol": "_ZN4Aska4File9PutStringEPKcSt9__va_list",
+     "name": "PutString"
+    },
+    {
+     "ghidra": "0x2020148",
+     "symbol": "_ZN4Aska4File21GetNumberOfFoundFilesEPKcj",
+     "name": "GetNumberOfFoundFiles"
+    },
+    {
+     "ghidra": "0x202015c",
+     "symbol": "_ZN4Aska4File9FindFilesEPKcPNS0_8FINDDATAEij",
+     "name": "FindFiles"
+    },
+    {
+     "ghidra": "0x2020160",
+     "symbol": "_ZN4Aska4File10IsReadOnlyEPKc",
+     "name": "IsReadOnly"
+    },
+    {
+     "ghidra": "0x2020168",
+     "symbol": "_ZN4Aska4File12GetFileSizeLEPKcb",
+     "name": "GetFileSizeL"
+    },
+    {
+     "ghidra": "0x2020238",
+     "symbol": "_ZN4Aska4File11GetFileSizeEPKcb",
+     "name": "GetFileSize"
+    },
+    {
+     "ghidra": "0x2020240",
+     "symbol": "_ZN4Aska4File10DeleteFileEPKc",
+     "name": "DeleteFile"
+    },
+    {
+     "ghidra": "0x2020258",
+     "symbol": "_ZN4Aska4File8CopyFileEPKcS2_b",
+     "name": "CopyFile"
+    },
+    {
+     "ghidra": "0x2020260",
+     "symbol": "_ZN4Aska4File8MoveFileEPKcS2_",
+     "name": "MoveFile"
+    },
+    {
+     "ghidra": "0x2020278",
+     "symbol": "_ZN4Aska4File19OpenAndDumpToBufferEPKcbPcPmb",
+     "name": "OpenAndDumpToBuffer"
+    }
+   ]
+  },
+  {
+   "name": "IStream",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x18cff3c",
+     "symbol": "_ZN4Aska7IStream9ReadAsyncEPvlmmPNS_7INotifyEPVl",
+     "name": "ReadAsync"
+    },
+    {
+     "ghidra": "0x18e6a60",
+     "symbol": "_ZNK4Aska7IStream13PeekLastErrorEv",
+     "name": "PeekLastError"
+    },
+    {
+     "ghidra": "0x18e6aa0",
+     "symbol": "_ZNK4Aska7IStream12GetTotalSizeEv",
+     "name": "GetTotalSize"
+    },
+    {
+     "ghidra": "0x18e6bc0",
+     "symbol": "_ZNK4Aska7IStream7IsAsyncEv",
+     "name": "IsAsync"
+    },
+    {
+     "ghidra": "0x18e6bc8",
+     "symbol": "_ZNK4Aska7IStream6IsBusyEv",
+     "name": "IsBusy"
+    },
+    {
+     "ghidra": "0x18e6bd0",
+     "symbol": "_ZNK4Aska7IStream4WaitEi",
+     "name": "Wait"
+    },
+    {
+     "ghidra": "0x18e6bd8",
+     "symbol": "_ZN4Aska7IStream6CancelEm",
+     "name": "Cancel"
+    },
+    {
+     "ghidra": "0x18e6be0",
+     "symbol": "_ZN4Aska7IStream10WriteAsyncEPKvlmmPNS_7INotifyEPVl",
+     "name": "WriteAsync"
+    },
+    {
+     "ghidra": "0x200231c",
+     "symbol": "_ZN4Aska7IStream15ByteSwapInWriteEPS0_PKvmm",
+     "name": "ByteSwapInWrite"
+    },
+    {
+     "ghidra": "0x20229f8",
+     "symbol": "_ZN4Aska7IStream6PrintVEPS0_PKcSt9__va_list",
+     "name": "PrintV"
+    },
+    {
+     "ghidra": "0x2022ab0",
+     "symbol": "_ZN4Aska7IStream5AlignEPS0_iml",
+     "name": "Align"
+    },
+    {
+     "ghidra": "0x2022c34",
+     "symbol": "_ZN4Aska7IStream4FillEPS0_imPl",
+     "name": "Fill"
+    },
+    {
+     "ghidra": "0x2022cf4",
+     "symbol": "_ZN4Aska7IStream9SeekAlignEPS0_ml",
+     "name": "SeekAlign"
+    },
+    {
+     "ghidra": "0x2022d54",
+     "symbol": "_ZN4Aska7IStream8TransferEPS0_S1_mPl",
+     "name": "Transfer"
+    },
+    {
+     "ghidra": "0x2022d88",
+     "symbol": "_ZN4Aska7IStream8TransferEPS0_S1_mPvmPl",
+     "name": "Transfer"
+    },
+    {
+     "ghidra": "0x2022db0",
+     "symbol": "_ZN4Aska7IStream8TransferEPS0_S1_mmPvmPl",
+     "name": "Transfer"
+    },
+    {
+     "ghidra": "0x2023030",
+     "symbol": "_ZN4Aska7IStream8TransferEPS0_S1_mmPl",
+     "name": "Transfer"
+    },
+    {
+     "ghidra": "0x2023058",
+     "symbol": "_ZN4Aska7IStream7CompareEPS0_S1_mPl",
+     "name": "Compare"
+    },
+    {
+     "ghidra": "0x2023080",
+     "symbol": "_ZN4Aska7IStream7CompareEPS0_S1_mPvmPl",
+     "name": "Compare"
+    },
+    {
+     "ghidra": "0x2023210",
+     "symbol": "_ZN4Aska7IStream10CalcSeekPtElllliPl",
+     "name": "CalcSeekPt"
+    },
+    {
+     "ghidra": "0x2329aa4",
+     "symbol": "_ZN4Aska7IStream5PrintEPS0_PKcz",
+     "name": "Print"
+    }
+   ]
+  },
+  {
+   "name": "FileStream",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_file",
+     "type": {
+      "kind": "struct",
+      "name": "File"
+     },
+     "size": 24
+    },
+    {
+     "offset": 32,
+     "name": "m_lastError",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_swapBytes",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 41,
+     "name": "unk_29",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 48,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2021644",
+     "symbol": "_ZN4Aska10FileStream4OpenEPKcbbNS_7Machine6EndianE",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x20216d8",
+     "symbol": "_ZN4Aska10FileStream5CloseEv",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x20216ec",
+     "symbol": "_ZN4Aska10FileStream4SeekEli",
+     "name": "Seek"
+    },
+    {
+     "ghidra": "0x2021788",
+     "symbol": "_ZNK4Aska10FileStream4TellEv",
+     "name": "Tell"
+    },
+    {
+     "ghidra": "0x20217cc",
+     "symbol": "_ZN4Aska10FileStream4ReadEPvmm",
+     "name": "Read"
+    },
+    {
+     "ghidra": "0x2021ba0",
+     "symbol": "_ZN4Aska10FileStream5WriteEPKvmm",
+     "name": "Write"
+    },
+    {
+     "ghidra": "0x2022234",
+     "symbol": "_ZN4Aska10FileStream5FlushEv",
+     "name": "Flush"
+    },
+    {
+     "ghidra": "0x2022278",
+     "symbol": "_ZNK4Aska10FileStream5IsEndEPl",
+     "name": "IsEnd"
+    },
+    {
+     "ghidra": "0x20222f8",
+     "symbol": "_ZNK4Aska10FileStream12GetTotalSizeEv",
+     "name": "GetTotalSize"
+    },
+    {
+     "ghidra": "0x202235c",
+     "symbol": "_ZN4Aska10FileStreamD2Ev",
+     "name": "~FileStream"
+    },
+    {
+     "ghidra": "0x20223d0",
+     "symbol": "_ZN4Aska10FileStreamD0Ev",
+     "name": "~FileStream"
+    },
+    {
+     "ghidra": "0x2022430",
+     "symbol": "_ZNK4Aska10FileStream7IsReadyEv",
+     "name": "IsReady"
+    },
+    {
+     "ghidra": "0x2022440",
+     "symbol": "_ZNK4Aska10FileStream12SetLastErrorEl",
+     "name": "SetLastError"
+    },
+    {
+     "ghidra": "0x202244c",
+     "symbol": "_ZNK4Aska10FileStream12GetLastErrorEv",
+     "name": "GetLastError"
+    }
+   ]
+  },
+  {
+   "name": "StaticStream",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_owned",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TSharedPointer<signed char>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_owned2",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TSharedPointer<signed char>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 40,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_pos",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_lockedBytes",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 68,
+     "name": "unk_44",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 72,
+     "name": "m_lastError",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    }
+   ],
+   "size": 80,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x207b4ec",
+     "symbol": "_ZN4Aska12StaticStream4OpenEPKam",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x207b514",
+     "symbol": "_ZN4Aska12StaticStream4SeekEli",
+     "name": "Seek"
+    },
+    {
+     "ghidra": "0x207b5b0",
+     "symbol": "_ZNK4Aska12StaticStream4TellEv",
+     "name": "Tell"
+    },
+    {
+     "ghidra": "0x207b600",
+     "symbol": "_ZN4Aska12StaticStream4ReadEPvmm",
+     "name": "Read"
+    },
+    {
+     "ghidra": "0x207b6cc",
+     "symbol": "_ZN4Aska12StaticStream5WriteEPKvmm",
+     "name": "Write"
+    },
+    {
+     "ghidra": "0x207b798",
+     "symbol": "_ZN4Aska12StaticStream5FlushEv",
+     "name": "Flush"
+    },
+    {
+     "ghidra": "0x207b7d4",
+     "symbol": "_ZNK4Aska12StaticStream5IsEndEPl",
+     "name": "IsEnd"
+    },
+    {
+     "ghidra": "0x207b83c",
+     "symbol": "_ZN4Aska12StaticStream4LockEPPvm",
+     "name": "Lock"
+    },
+    {
+     "ghidra": "0x207b908",
+     "symbol": "_ZN4Aska12StaticStream6UnlockEm",
+     "name": "Unlock"
+    },
+    {
+     "ghidra": "0x207b9b0",
+     "symbol": "_ZNK4Aska12StaticStream12IsBufferableEimPl",
+     "name": "IsBufferable"
+    },
+    {
+     "ghidra": "0x207ba60",
+     "symbol": "_ZNK4Aska12StaticStream14IsBufferingEndEiPl",
+     "name": "IsBufferingEnd"
+    },
+    {
+     "ghidra": "0x207baf0",
+     "symbol": "_ZN4Aska12StaticStreamD2Ev",
+     "name": "~StaticStream"
+    },
+    {
+     "ghidra": "0x207bb80",
+     "symbol": "_ZN4Aska12StaticStreamD0Ev",
+     "name": "~StaticStream"
+    },
+    {
+     "ghidra": "0x207bc14",
+     "symbol": "_ZNK4Aska12StaticStream7IsReadyEv",
+     "name": "IsReady"
+    },
+    {
+     "ghidra": "0x207bc24",
+     "symbol": "_ZNK4Aska12StaticStream12SetLastErrorEl",
+     "name": "SetLastError"
+    },
+    {
+     "ghidra": "0x207bc30",
+     "symbol": "_ZNK4Aska12StaticStream12GetLastErrorEv",
+     "name": "GetLastError"
+    },
+    {
+     "ghidra": "0x207bc40",
+     "symbol": "_ZNK4Aska12StaticStream13PeekLastErrorEv",
+     "name": "PeekLastError"
+    },
+    {
+     "ghidra": "0x207bc48",
+     "symbol": "_ZNK4Aska12StaticStream12GetTotalSizeEv",
+     "name": "GetTotalSize"
+    },
+    {
+     "ghidra": "0x207bc68",
+     "symbol": "_ZNK4Aska12StaticStream16IsBufferingReadyEv",
+     "name": "IsBufferingReady"
+    }
+   ]
+  },
+  {
+   "name": "MultiMediaLoopParam",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_start",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_end",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_user",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "MultiMediaStream",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 64,
+     "name": "m_stream",
+     "type": {
+      "kind": "ptr",
+      "to": "IStream"
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_start",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "m_end",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_loop",
+     "type": {
+      "kind": "struct",
+      "name": "MultiMediaLoopParam"
+     },
+     "size": 32
+    },
+    {
+     "offset": 120,
+     "name": "unk_78",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 128,
+     "name": "m_loopsDone",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 136,
+     "name": "unk_88",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 140,
+     "name": "unk_8c",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 142,
+     "name": "m_bufferingSource",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 143,
+     "name": "unk_8f",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 144,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2074dc4",
+     "symbol": "_ZNK4Aska16MultiMediaStream7IsReadyEv",
+     "name": "IsReady"
+    },
+    {
+     "ghidra": "0x2074dd4",
+     "symbol": "_ZNK4Aska16MultiMediaStream16IsBufferingReadyEv",
+     "name": "IsBufferingReady"
+    },
+    {
+     "ghidra": "0x2334f48",
+     "symbol": "_ZN4Aska16MultiMediaStream4OpenEPNS_7IStreamEmmPNS0_9LoopParamE",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x2335000",
+     "symbol": "_ZN4Aska16MultiMediaStream5Open_EPNS_7IStreamEbmmPNS0_9LoopParamE",
+     "name": "Open_"
+    },
+    {
+     "ghidra": "0x23350d0",
+     "symbol": "_ZN4Aska16MultiMediaStream4OpenEPNS_16IBufferingStreamEmmPNS0_9LoopParamE",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x23351a4",
+     "symbol": "_ZN4Aska16MultiMediaStream5CloseEv",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x23351b8",
+     "symbol": "_ZN4Aska16MultiMediaStream4SeekEli",
+     "name": "Seek"
+    },
+    {
+     "ghidra": "0x23352dc",
+     "symbol": "_ZNK4Aska16MultiMediaStream14CalcStartEndPtEiPmS1_",
+     "name": "CalcStartEndPt"
+    },
+    {
+     "ghidra": "0x2335338",
+     "symbol": "_ZN4Aska16MultiMediaStream4ReadEPvmm",
+     "name": "Read"
+    },
+    {
+     "ghidra": "0x23355a0",
+     "symbol": "_ZN4Aska16MultiMediaStream12LoopDelegateEmm",
+     "name": "LoopDelegate"
+    },
+    {
+     "ghidra": "0x23355e8",
+     "symbol": "_ZNK4Aska16MultiMediaStream5IsEndEPl",
+     "name": "IsEnd"
+    },
+    {
+     "ghidra": "0x23356a8",
+     "symbol": "_ZNK4Aska16MultiMediaStream12GetTotalSizeEv",
+     "name": "GetTotalSize"
+    },
+    {
+     "ghidra": "0x23356e8",
+     "symbol": "_ZN4Aska16MultiMediaStream5WriteEPKvmm",
+     "name": "Write"
+    },
+    {
+     "ghidra": "0x2335708",
+     "symbol": "_ZN4Aska16MultiMediaStream5FlushEv",
+     "name": "Flush"
+    },
+    {
+     "ghidra": "0x2335718",
+     "symbol": "_ZNK4Aska16MultiMediaStream4TellEv",
+     "name": "Tell"
+    },
+    {
+     "ghidra": "0x2335740",
+     "symbol": "_ZNK4Aska16MultiMediaStream12SetLastErrorEl",
+     "name": "SetLastError"
+    },
+    {
+     "ghidra": "0x233575c",
+     "symbol": "_ZNK4Aska16MultiMediaStream12GetLastErrorEv",
+     "name": "GetLastError"
+    },
+    {
+     "ghidra": "0x2335778",
+     "symbol": "_ZNK4Aska16MultiMediaStream13PeekLastErrorEv",
+     "name": "PeekLastError"
+    },
+    {
+     "ghidra": "0x2335794",
+     "symbol": "_ZN4Aska16MultiMediaStream4LockEPPvm",
+     "name": "Lock"
+    },
+    {
+     "ghidra": "0x2335978",
+     "symbol": "_ZN4Aska16MultiMediaStream6UnlockEm",
+     "name": "Unlock"
+    },
+    {
+     "ghidra": "0x2335b1c",
+     "symbol": "_ZNK4Aska16MultiMediaStream12IsBufferableEimPl",
+     "name": "IsBufferable"
+    },
+    {
+     "ghidra": "0x2335c54",
+     "symbol": "_ZNK4Aska16MultiMediaStream14IsBufferingEndEiPl",
+     "name": "IsBufferingEnd"
+    },
+    {
+     "ghidra": "0x2335d34",
+     "symbol": "_ZN4Aska16MultiMediaStreamD2Ev",
+     "name": "~MultiMediaStream"
+    },
+    {
+     "ghidra": "0x2335d58",
+     "symbol": "_ZN4Aska16MultiMediaStreamD0Ev",
+     "name": "~MultiMediaStream"
+    }
+   ]
+  },
+  {
+   "name": "BaseReadDevice",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_queueCs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 168,
+     "name": "m_poolCs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 312,
+     "name": "unk_138",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 320,
+     "name": "m_queue",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 424,
+     "name": "m_freeHead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 428,
+     "name": "m_freeTail",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 432,
+     "name": "m_freeCapacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 436,
+     "name": "unk_1b4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 440,
+     "name": "m_freeRing",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 448,
+     "name": "m_decompressNotifies",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 456,
+     "name": "m_requestPool",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 464,
+     "name": "unk_1d0",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 468,
+     "name": "m_requestCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 472,
+     "name": "m_wakeEvent",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 576,
+     "name": "m_priority",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 580,
+     "name": "m_deviceId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 584,
+     "name": "unk_248",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 585,
+     "name": "m_isActive",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 586,
+     "name": "m_isIdle",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 587,
+     "name": "m_quit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 588,
+     "name": "unk_24c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 592,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x20215d4",
+     "symbol": "_ZN4Aska14BaseReadDeviceD2Ev",
+     "name": "~BaseReadDevice"
+    },
+    {
+     "ghidra": "0x2321a0c",
+     "symbol": "_ZN4Aska14BaseReadDevice13InitializeSubEiii",
+     "name": "InitializeSub"
+    },
+    {
+     "ghidra": "0x2321d44",
+     "symbol": "_ZN4Aska14BaseReadDevice8FinalizeEv",
+     "name": "Finalize"
+    },
+    {
+     "ghidra": "0x2321d98",
+     "symbol": "_ZN4Aska14BaseReadDevice9CancelAllEv",
+     "name": "CancelAll"
+    },
+    {
+     "ghidra": "0x2321f10",
+     "symbol": "_ZN4Aska14BaseReadDevice4ReadEPNS_11ReadRequestE",
+     "name": "Read"
+    },
+    {
+     "ghidra": "0x2322328",
+     "symbol": "_ZNK4Aska14BaseReadDevice19LocalGetGroupLengthEii",
+     "name": "LocalGetGroupLength"
+    },
+    {
+     "ghidra": "0x2322384",
+     "symbol": "_ZN4Aska14BaseReadDevice6CancelEi",
+     "name": "Cancel"
+    },
+    {
+     "ghidra": "0x232250c",
+     "symbol": "_ZN4Aska14BaseReadDevice13CancelByParamEiPhmmi",
+     "name": "CancelByParam"
+    },
+    {
+     "ghidra": "0x23227c4",
+     "symbol": "_ZN4Aska14BaseReadDevice10GetRequestEv",
+     "name": "GetRequest"
+    },
+    {
+     "ghidra": "0x2322920",
+     "symbol": "_ZN4Aska14BaseReadDevice7HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x2322c34",
+     "symbol": "_ZN4Aska14BaseReadDevice10DecompressEPhS1_PNS_7INotifyEmib",
+     "name": "Decompress"
+    },
+    {
+     "ghidra": "0x2322cf4",
+     "symbol": "_ZN4Aska14BaseReadDeviceD0Ev",
+     "name": "~BaseReadDevice"
+    },
+    {
+     "ghidra": "0x2322d0c",
+     "symbol": "_ZN4Aska14BaseReadDevice10InitializeEiii",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x2322d7c",
+     "symbol": "_ZNK4Aska14BaseReadDevice10FileExistsEi",
+     "name": "FileExists"
+    },
+    {
+     "ghidra": "0x2322d84",
+     "symbol": "_ZNK4Aska14BaseReadDevice10FileExistsEii",
+     "name": "FileExists"
+    },
+    {
+     "ghidra": "0x2322d8c",
+     "symbol": "_ZNK4Aska14BaseReadDevice14CalcFileLengthEi",
+     "name": "CalcFileLength"
+    },
+    {
+     "ghidra": "0x2322d98",
+     "symbol": "_ZNK4Aska14BaseReadDevice23GetCompressedFileLengthEi",
+     "name": "GetCompressedFileLength"
+    },
+    {
+     "ghidra": "0x2322da4",
+     "symbol": "_ZNK4Aska14BaseReadDevice25GetDecompressedFileLengthEi",
+     "name": "GetDecompressedFileLength"
+    },
+    {
+     "ghidra": "0x2322dac",
+     "symbol": "_ZNK4Aska14BaseReadDevice12GetReadAlignEv",
+     "name": "GetReadAlign"
+    },
+    {
+     "ghidra": "0x2322db4",
+     "symbol": "_ZNK4Aska14BaseReadDevice7GetTypeEv",
+     "name": "GetType"
+    },
+    {
+     "ghidra": "0x2322dbc",
+     "symbol": "_ZN4Aska14BaseReadDevice21InitProgressParameterEiPv",
+     "name": "InitProgressParameter"
+    },
+    {
+     "ghidra": "0x2322dc0",
+     "symbol": "_ZN4Aska14BaseReadDevice15SetReadProgressEm",
+     "name": "SetReadProgress"
+    },
+    {
+     "ghidra": "0x2322dc4",
+     "symbol": "_ZN4Aska14BaseReadDevice11CalcReadPosEimm",
+     "name": "CalcReadPos"
+    },
+    {
+     "ghidra": "0x2322dcc",
+     "symbol": "_ZNK4Aska14BaseReadDevice18LocalGetFileLengthEi",
+     "name": "LocalGetFileLength"
+    },
+    {
+     "ghidra": "0x2322dd4",
+     "symbol": "_ZNK4Aska14BaseReadDevice30LocalGetDecompressedFileLengthEi",
+     "name": "LocalGetDecompressedFileLength"
+    },
+    {
+     "ghidra": "0x2322ddc",
+     "symbol": "_ZNK4Aska14BaseReadDevice27LocalCalcExistingFileLengthEPNS_11ReadRequestE",
+     "name": "LocalCalcExistingFileLength"
+    },
+    {
+     "ghidra": "0x2322dec",
+     "symbol": "_ZN4Aska14BaseReadDevice15LocalInitializeEv",
+     "name": "LocalInitialize"
+    },
+    {
+     "ghidra": "0x2322df4",
+     "symbol": "_ZN4Aska14BaseReadDevice8ReadMainEPNS_11ReadRequestE",
+     "name": "ReadMain"
+    }
+   ]
+  },
+  {
+   "name": "FileReadManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_direct",
+     "type": {
+      "kind": "struct",
+      "name": "BaseReadDevice"
+     },
+     "size": 592
+    },
+    {
+     "offset": 600,
+     "name": "m_devices",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": "BaseReadDevice"
+      },
+      "count": 3
+     },
+     "size": 24
+    },
+    {
+     "offset": 624,
+     "name": "m_numDevices",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 628,
+     "name": "unk_274",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 632,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2020818",
+     "symbol": "_ZN4Aska15FileReadManager9AddDeviceEPNS_14BaseReadDeviceE",
+     "name": "AddDevice"
+    },
+    {
+     "ghidra": "0x20208ac",
+     "symbol": "_ZN4Aska15FileReadManager22EnableDirectReadDeviceEv",
+     "name": "EnableDirectReadDevice"
+    },
+    {
+     "ghidra": "0x2020938",
+     "symbol": "_ZN4Aska15FileReadManager8FinalizeEv",
+     "name": "Finalize"
+    },
+    {
+     "ghidra": "0x2020980",
+     "symbol": "_ZN4Aska15FileReadManager10SortDeviceEv",
+     "name": "SortDevice"
+    },
+    {
+     "ghidra": "0x20209d4",
+     "symbol": "_ZN4Aska15FileReadManager12RemoveDeviceEPNS_14BaseReadDeviceE",
+     "name": "RemoveDevice"
+    },
+    {
+     "ghidra": "0x2020b74",
+     "symbol": "_ZN4Aska15FileReadManager12RemoveDeviceEi",
+     "name": "RemoveDevice"
+    },
+    {
+     "ghidra": "0x2020c2c",
+     "symbol": "_ZN4Aska15FileReadManager9GetDeviceEi",
+     "name": "GetDevice"
+    },
+    {
+     "ghidra": "0x2020c74",
+     "symbol": "_ZN4Aska15FileReadManager16GetDeviceByIndexEi",
+     "name": "GetDeviceByIndex"
+    },
+    {
+     "ghidra": "0x2020c98",
+     "symbol": "_ZN4Aska15FileReadManager17GetReadableDeviceEi",
+     "name": "GetReadableDevice"
+    },
+    {
+     "ghidra": "0x2020d08",
+     "symbol": "_ZN4Aska15FileReadManager4ReadEiPhPNS_7INotifyEmmiib",
+     "name": "Read"
+    },
+    {
+     "ghidra": "0x2020de8",
+     "symbol": "_ZN4Aska15FileReadManager4ReadEPKcPhPNS_7INotifyEmmiibb",
+     "name": "Read"
+    },
+    {
+     "ghidra": "0x2020e18",
+     "symbol": "_ZN4Aska15FileReadManager9ReadGroupEiiPhPNS_7INotifyEmii",
+     "name": "ReadGroup"
+    },
+    {
+     "ghidra": "0x2020fbc",
+     "symbol": "_ZNK4Aska15FileReadManager10FileExistsEPNS_14BaseReadDeviceEii",
+     "name": "FileExists"
+    },
+    {
+     "ghidra": "0x2021014",
+     "symbol": "_ZN4Aska15FileReadManager9CancelAllEv",
+     "name": "CancelAll"
+    },
+    {
+     "ghidra": "0x2021050",
+     "symbol": "_ZN4Aska15FileReadManager6CancelEi",
+     "name": "Cancel"
+    },
+    {
+     "ghidra": "0x2021094",
+     "symbol": "_ZN4Aska15FileReadManager13CancelByParamEiPhmmi",
+     "name": "CancelByParam"
+    },
+    {
+     "ghidra": "0x2021108",
+     "symbol": "_ZNK4Aska15FileReadManager7IsEmptyEv",
+     "name": "IsEmpty"
+    },
+    {
+     "ghidra": "0x202114c",
+     "symbol": "_ZNK4Aska15FileReadManager10FileExistsEi",
+     "name": "FileExists"
+    },
+    {
+     "ghidra": "0x20211a8",
+     "symbol": "_ZNK4Aska15FileReadManager14CalcFileLengthEi",
+     "name": "CalcFileLength"
+    },
+    {
+     "ghidra": "0x2021228",
+     "symbol": "_ZNK4Aska15FileReadManager24CalcCompressedFileLengthEi",
+     "name": "CalcCompressedFileLength"
+    },
+    {
+     "ghidra": "0x20212a8",
+     "symbol": "_ZNK4Aska15FileReadManager15CalcGroupLengthEii",
+     "name": "CalcGroupLength"
+    },
+    {
+     "ghidra": "0x2021360",
+     "symbol": "_ZN4Aska15FileReadManager10FileExistsEPKcb",
+     "name": "FileExists"
+    },
+    {
+     "ghidra": "0x2021368",
+     "symbol": "_ZN4Aska15FileReadManager14CalcFileLengthEPKcb",
+     "name": "CalcFileLength"
+    },
+    {
+     "ghidra": "0x2021370",
+     "symbol": "_ZNK4Aska15FileReadManager18GetDirectReadAlignEv",
+     "name": "GetDirectReadAlign"
+    },
+    {
+     "ghidra": "0x20214b4",
+     "symbol": "_ZN4Aska15FileReadManagerD2Ev",
+     "name": "~FileReadManager"
+    },
+    {
+     "ghidra": "0x2021510",
+     "symbol": "_ZN4Aska15FileReadManagerD0Ev",
+     "name": "~FileReadManager"
+    }
+   ]
+  },
+  {
+   "name": "DecompressQueue",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_thread",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 152,
+     "name": "unk_98",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 156,
+     "name": "m_running",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 157,
+     "name": "unk_9d",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 160,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x201cc58",
+     "symbol": "_ZN4Aska15DecompressQueueC1Ei",
+     "name": "DecompressQueue"
+    },
+    {
+     "ghidra": "0x201cd04",
+     "symbol": "_ZN4Aska15DecompressQueue5ClearEv",
+     "name": "Clear"
+    },
+    {
+     "ghidra": "0x201cd0c",
+     "symbol": "_ZN4Aska15DecompressQueueD1Ev",
+     "name": "~DecompressQueue"
+    },
+    {
+     "ghidra": "0x201cd38",
+     "symbol": "_ZN4Aska15DecompressQueue3AddEPKvPNS_14DecompressInfoEiPNS_7INotifyEPNS_14IMemoryManagerES8_S8_S8_",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x201cfc4",
+     "symbol": "_ZN4Aska15DecompressQueue3AddEPKvPhiPNS_7INotifyE",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x201d20c",
+     "symbol": "_ZN4Aska15DecompressQueue10GetElementEj",
+     "name": "GetElement"
+    },
+    {
+     "ghidra": "0x201d3a8",
+     "symbol": "_ZN4Aska15DecompressQueue10GetElementEPv",
+     "name": "GetElement"
+    },
+    {
+     "ghidra": "0x201d544",
+     "symbol": "_ZNK4Aska15DecompressQueue6IsFullEPv",
+     "name": "IsFull"
+    },
+    {
+     "ghidra": "0x201d5a0",
+     "symbol": "_ZNK4Aska15DecompressQueue7IsEmptyEv",
+     "name": "IsEmpty"
+    },
+    {
+     "ghidra": "0x201d5c8",
+     "symbol": "_ZNK4Aska15DecompressQueue7GetSizeEv",
+     "name": "GetSize"
+    },
+    {
+     "ghidra": "0x201d5ec",
+     "symbol": "_ZN4Aska15DecompressQueue4StopEj",
+     "name": "Stop"
+    },
+    {
+     "ghidra": "0x201d750",
+     "symbol": "_ZN4Aska15DecompressQueue6IsSafeEj",
+     "name": "IsSafe"
+    },
+    {
+     "ghidra": "0x201d784",
+     "symbol": "_ZN4Aska15DecompressQueue6IsSafeEPv",
+     "name": "IsSafe"
+    }
+   ]
+  },
+  {
+   "name": "CFileLoader",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_fileNumber",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_pFileName",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_pBuffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_dummySize",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_isLoading",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 56,
+     "name": "m_directFile",
+     "type": {
+      "kind": "struct",
+      "name": "File"
+     },
+     "size": 24
+    },
+    {
+     "offset": 80,
+     "name": "m_directRelativeName",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 104,
+     "name": "m_directPath",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 128,
+     "name": "m_directLoadFolder",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 152,
+     "name": "m_isDirectOpened",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 153,
+     "name": "unk_99",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 160,
+     "name": "m_directNameHash",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 176,
+     "name": "unk_b0",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 177,
+     "name": "unk_b1",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 184,
+     "name": "m_bufferOffset",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 192,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f828f4",
+     "symbol": "_ZN9Framework11CFileLoaderC2Ev",
+     "name": "CFileLoader"
+    },
+    {
+     "ghidra": "0x1f82984",
+     "symbol": "_ZN9Framework11CFileLoader9DummySizeEm",
+     "name": "DummySize"
+    },
+    {
+     "ghidra": "0x1f829c8",
+     "symbol": "_ZN9Framework11CFileLoader10InitializeEjmb",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f82bf0",
+     "symbol": "_ZN9Framework11CFileLoader12BufferOffsetEm",
+     "name": "BufferOffset"
+    },
+    {
+     "ghidra": "0x1f82c34",
+     "symbol": "_ZN9Framework11CFileLoader27QueryToExternalProcessCacheEPKc",
+     "name": "QueryToExternalProcessCache"
+    },
+    {
+     "ghidra": "0x1f82c3c",
+     "symbol": "_ZN9Framework11CFileLoader33InitializeDefaultDirectLoadFolderEv",
+     "name": "InitializeDefaultDirectLoadFolder"
+    },
+    {
+     "ghidra": "0x1f82c90",
+     "symbol": "_ZN9Framework11CFileLoader30ReleaseDefaultDirectLoadFolderEv",
+     "name": "ReleaseDefaultDirectLoadFolder"
+    },
+    {
+     "ghidra": "0x1f82cd0",
+     "symbol": "_ZN9Framework11CFileLoader26SetDefaultDirectLoadFolderEPKc",
+     "name": "SetDefaultDirectLoadFolder"
+    },
+    {
+     "ghidra": "0x1f82dcc",
+     "symbol": "_ZN9Framework11CFileLoader28ResetDefaultDirectLoadFolderEv",
+     "name": "ResetDefaultDirectLoadFolder"
+    },
+    {
+     "ghidra": "0x1f82e2c",
+     "symbol": "_ZN9Framework11CFileLoader24pDefaultDirectLoadFolderEv",
+     "name": "pDefaultDirectLoadFolder"
+    },
+    {
+     "ghidra": "0x1f82e84",
+     "symbol": "_ZN9Framework11CFileLoader22InitializeByDirectFileEPKcmb",
+     "name": "InitializeByDirectFile"
+    },
+    {
+     "ghidra": "0x1f83430",
+     "symbol": "_ZN9Framework11CFileLoader18IsAssetManagerPathEPKc",
+     "name": "IsAssetManagerPath"
+    },
+    {
+     "ghidra": "0x1f83474",
+     "symbol": "_ZN9Framework11CFileLoader16EnableDirectLoadEPKc",
+     "name": "EnableDirectLoad"
+    },
+    {
+     "ghidra": "0x1f8354c",
+     "symbol": "_ZNK9Framework11CFileLoader29pDirectOpenedFileRelativeNameEv",
+     "name": "pDirectOpenedFileRelativeName"
+    },
+    {
+     "ghidra": "0x1f835d4",
+     "symbol": "_ZN9Framework11CFileLoader25InitializeByImmediateLoadEPKcmb",
+     "name": "InitializeByImmediateLoad"
+    },
+    {
+     "ghidra": "0x1f83780",
+     "symbol": "_ZN9Framework11CFileLoader21gIsImmediateFileExistEPKc",
+     "name": "gIsImmediateFileExist"
+    },
+    {
+     "ghidra": "0x1f83844",
+     "symbol": "_ZN9Framework11CFileLoader12gIsFileExistEPKcS2_",
+     "name": "gIsFileExist"
+    },
+    {
+     "ghidra": "0x1f83ad4",
+     "symbol": "_ZN9Framework11CFileLoader42SetFileNumberToInitializeByImmediateLoadedEj",
+     "name": "SetFileNumberToInitializeByImmediateLoaded"
+    },
+    {
+     "ghidra": "0x1f83b48",
+     "symbol": "_ZN9Framework11CFileLoader33SetAssetManagerEvaluationFunctionERKNSt6__ndk18functionIFbPKcEEE",
+     "name": "SetAssetManagerEvaluationFunction"
+    },
+    {
+     "ghidra": "0x1f83c10",
+     "symbol": "_ZN9Framework11CFileLoader18SetDecryptFunctionERKNSt6__ndk18functionIFvPS0_PKcS5_PPhRmEEE",
+     "name": "SetDecryptFunction"
+    },
+    {
+     "ghidra": "0x1f83ca8",
+     "symbol": "_ZN9Framework11CFileLoader7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f83d84",
+     "symbol": "_ZN9Framework11CFileLoader19DirectReleaseBufferEb",
+     "name": "DirectReleaseBuffer"
+    },
+    {
+     "ghidra": "0x1f83dd0",
+     "symbol": "_ZNK9Framework11CFileLoader10FileNumberEv",
+     "name": "FileNumber"
+    },
+    {
+     "ghidra": "0x1f83dd8",
+     "symbol": "_ZNK9Framework11CFileLoader9pFileNameEv",
+     "name": "pFileName"
+    },
+    {
+     "ghidra": "0x1f83e44",
+     "symbol": "_ZNK9Framework11CFileLoader12FileNameHashEv",
+     "name": "FileNameHash"
+    },
+    {
+     "ghidra": "0x1f83ebc",
+     "symbol": "_ZNK9Framework11CFileLoader7pBufferEv",
+     "name": "pBuffer"
+    },
+    {
+     "ghidra": "0x1f83f54",
+     "symbol": "_ZNK9Framework11CFileLoader12BufferOffsetEv",
+     "name": "BufferOffset"
+    },
+    {
+     "ghidra": "0x1f83f5c",
+     "symbol": "_ZNK9Framework11CFileLoader4SizeEv",
+     "name": "Size"
+    },
+    {
+     "ghidra": "0x1f83fc8",
+     "symbol": "_ZN9Framework11CFileLoader7HandlerEm",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x1f840a4",
+     "symbol": "_ZNK9Framework11CFileLoader10pBufferTopEv",
+     "name": "pBufferTop"
+    },
+    {
+     "ghidra": "0x1f840ac",
+     "symbol": "_ZNK9Framework11CFileLoader9IsLoadingEv",
+     "name": "IsLoading"
+    },
+    {
+     "ghidra": "0x1f840b4",
+     "symbol": "_ZN9Framework11CFileLoader17SwapBufferPointerEPvm",
+     "name": "SwapBufferPointer"
+    },
+    {
+     "ghidra": "0x1f8413c",
+     "symbol": "_ZN9Framework11CFileLoaderD2Ev",
+     "name": "~CFileLoader"
+    },
+    {
+     "ghidra": "0x1f841d0",
+     "symbol": "_ZN9Framework11CFileLoaderD0Ev",
+     "name": "~CFileLoader"
+    }
+   ]
+  },
+  {
+   "name": "tMemoryDescription",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_high",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "m_highArchive",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 2,
+     "name": "m_highMapping",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 3,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x1f90f70",
+     "symbol": "_ZN9Framework16CResourceElement18tMemoryDescriptionC2Ev",
+     "name": "tMemoryDescription"
+    },
+    {
+     "ghidra": "0x1f90f7c",
+     "symbol": "_ZNK9Framework16CResourceElement18tMemoryDescription6IsHighEv",
+     "name": "IsHigh"
+    },
+    {
+     "ghidra": "0x1f90fac",
+     "symbol": "_ZN9Framework16CResourceElement18tMemoryDescription6CreateEbbb",
+     "name": "Create"
+    }
+   ]
+  },
+  {
+   "name": "tMappingImage",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_image",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_name",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 40,
+     "name": "unk_28",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f90f48",
+     "symbol": "_ZN9Framework16CResourceElement13tMappingImageC2Ev",
+     "name": "tMappingImage"
+    },
+    {
+     "ghidra": "0x1f90f5c",
+     "symbol": "_ZN9Framework16CResourceElement13tMappingImageD2Ev",
+     "name": "~tMappingImage"
+    }
+   ]
+  },
+  {
+   "name": "CFinishNotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_done",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9,
+     "name": "unk_09",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 16,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": "CResourceElement"
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f92980",
+     "symbol": "_ZN9Framework16CResourceElement13CFinishNotify7HandlerEm",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x1f938c0",
+     "symbol": "_ZN9Framework16CResourceElement13CFinishNotifyD0Ev",
+     "name": "~CFinishNotify"
+    }
+   ]
+  },
+  {
+   "name": "CResourceElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CFileLoader"
+     },
+     "size": 192
+    },
+    {
+     "offset": 192,
+     "name": "m_task",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::Task",
+      "size": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 232,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 236,
+     "name": "m_phase",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 240,
+     "name": "unk_f0",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 248,
+     "name": "unk_f8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 256,
+     "name": "m_mappingImages",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::vector<tMappingImage>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 280,
+     "name": "unk_118",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 288,
+     "name": "m_finishNotify",
+     "type": {
+      "kind": "struct",
+      "name": "CFinishNotify"
+     },
+     "size": 24
+    },
+    {
+     "offset": 312,
+     "name": "m_decompressedSize",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 320,
+     "name": "m_pDecompressInfo",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328,
+     "name": "m_memDesc",
+     "type": {
+      "kind": "struct",
+      "name": "tMemoryDescription"
+     },
+     "size": 3
+    },
+    {
+     "offset": 331,
+     "name": "unk_14b",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    }
+   ],
+   "size": 336,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f904c0",
+     "symbol": "_ZN9Framework16CResourceElement13gpInstantiateEj",
+     "name": "gpInstantiate"
+    },
+    {
+     "ghidra": "0x1f91010",
+     "symbol": "_ZN9Framework16CResourceElementC1Ej",
+     "name": "CResourceElement"
+    },
+    {
+     "ghidra": "0x1f910b0",
+     "symbol": "_ZN9Framework16CResourceElement11_InitializeEjmRKNS0_18tMemoryDescriptionE",
+     "name": "_Initialize"
+    },
+    {
+     "ghidra": "0x1f91138",
+     "symbol": "_ZN9Framework16CResourceElement19_InitializeByMemoryEPvRKNS0_18tMemoryDescriptionE",
+     "name": "_InitializeByMemory"
+    },
+    {
+     "ghidra": "0x1f911e0",
+     "symbol": "_ZN9Framework16CResourceElement23_InitializeByDirectFileEPKcmRKNS0_18tMemoryDescriptionES2_",
+     "name": "_InitializeByDirectFile"
+    },
+    {
+     "ghidra": "0x1f9127c",
+     "symbol": "_ZN9Framework16CResourceElement7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f9136c",
+     "symbol": "_ZN9Framework16CResourceElement3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x1f92404",
+     "symbol": "_ZN9Framework16CResourceElement18PhaseLoadingFinishEv",
+     "name": "PhaseLoadingFinish"
+    },
+    {
+     "ghidra": "0x1f92580",
+     "symbol": "_ZNK9Framework16CResourceElement4TypeEv",
+     "name": "Type"
+    },
+    {
+     "ghidra": "0x1f92588",
+     "symbol": "_ZN9Framework16CResourceElement4DoneEv",
+     "name": "Done"
+    },
+    {
+     "ghidra": "0x1f926a4",
+     "symbol": "_ZN9Framework16CResourceElement25IsRquestMappingMemoryTypeEj",
+     "name": "IsRquestMappingMemoryType"
+    },
+    {
+     "ghidra": "0x1f926cc",
+     "symbol": "_ZN9Framework16CResourceElement20SwapDecompressBufferEv",
+     "name": "SwapDecompressBuffer"
+    },
+    {
+     "ghidra": "0x1f92750",
+     "symbol": "_ZNK9Framework16CResourceElement5PhaseEv",
+     "name": "Phase"
+    },
+    {
+     "ghidra": "0x1f92758",
+     "symbol": "_ZNK9Framework16CResourceElement13IsInitializedEv",
+     "name": "IsInitialized"
+    },
+    {
+     "ghidra": "0x1f92768",
+     "symbol": "_ZNK9Framework16CResourceElement6IsDoneEv",
+     "name": "IsDone"
+    },
+    {
+     "ghidra": "0x1f92778",
+     "symbol": "_ZNK9Framework16CResourceElement6pImageEv",
+     "name": "pImage"
+    },
+    {
+     "ghidra": "0x1f927c8",
+     "symbol": "_ZNK9Framework16CResourceElement17pFindMappingImageEPKc",
+     "name": "pFindMappingImage"
+    },
+    {
+     "ghidra": "0x1f928b4",
+     "symbol": "_ZN9Framework16CResourceElement13IsArchiveTypeEj",
+     "name": "IsArchiveType"
+    },
+    {
+     "ghidra": "0x1f928f8",
+     "symbol": "_ZN9Framework16CResourceElement13IsArchiveTypeEjb",
+     "name": "IsArchiveType"
+    },
+    {
+     "ghidra": "0x1f92948",
+     "symbol": "_ZN9Framework16CResourceElement7HandlerEm",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x1f92978",
+     "symbol": "_ZNK9Framework16CResourceElement19IsExpansionFinishedEv",
+     "name": "IsExpansionFinished"
+    },
+    {
+     "ghidra": "0x1f936a4",
+     "symbol": "_ZN9Framework16CResourceElementD0Ev",
+     "name": "~CResourceElement"
+    },
+    {
+     "ghidra": "0x1f93738",
+     "symbol": "_ZNK9Framework16CResourceElement7pBufferEv",
+     "name": "pBuffer"
+    },
+    {
+     "ghidra": "0x1f93760",
+     "symbol": "_ZNK9Framework16CResourceElement5AlignEv",
+     "name": "Align"
+    },
+    {
+     "ghidra": "0x1f93768",
+     "symbol": "_ZN9Framework16CResourceElement10InitializeEjRKNS0_18tMemoryDescriptionE",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f937bc",
+     "symbol": "_ZN9Framework16CResourceElement22InitializeByDirectFileEPKcRKNS0_18tMemoryDescriptionES2_",
+     "name": "InitializeByDirectFile"
+    },
+    {
+     "ghidra": "0x1f93818",
+     "symbol": "_ZN9Framework16CResourceElement20pResourceElement_BsbEv",
+     "name": "pResourceElement_Bsb"
+    },
+    {
+     "ghidra": "0x1f93820",
+     "symbol": "_ZNK9Framework16CResourceElement13pBufferDirectEv",
+     "name": "pBufferDirect"
+    },
+    {
+     "ghidra": "0x1f93824",
+     "symbol": "_ZN9Framework16CResourceElement14StartExpansionEv",
+     "name": "StartExpansion"
+    },
+    {
+     "ghidra": "0x1f945c0",
+     "symbol": "_ZN9Framework16CResourceElementD2Ev",
+     "name": "~CResourceElement"
+    }
+   ]
+  },
+  {
+   "name": "tElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_referenceCounter",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_uniqueBitFlag",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_pResourceElement",
+     "type": {
+      "kind": "ptr",
+      "to": "CResourceElement"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f94ecc",
+     "symbol": "_ZN9Framework16CResourceManager8tElementC2Ev",
+     "name": "tElement"
+    },
+    {
+     "ghidra": "0x1f94ed4",
+     "symbol": "_ZN9Framework16CResourceManager8tElementD2Ev",
+     "name": "~tElement"
+    },
+    {
+     "ghidra": "0x1f94ed8",
+     "symbol": "_ZN9Framework16CResourceManager8tElement10InitializeEjjjb",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f94fc0",
+     "symbol": "_ZN9Framework16CResourceManager8tElement25IncrementReferenceCounterEv",
+     "name": "IncrementReferenceCounter"
+    },
+    {
+     "ghidra": "0x1f94fd0",
+     "symbol": "_ZN9Framework16CResourceManager8tElement22InitializeByDirectFileEjPKcjb",
+     "name": "InitializeByDirectFile"
+    },
+    {
+     "ghidra": "0x1f950bc",
+     "symbol": "_ZN9Framework16CResourceManager8tElement32InitializeByDirectFileWithFolderEjPKcS3_jb",
+     "name": "InitializeByDirectFileWithFolder"
+    },
+    {
+     "ghidra": "0x1f951b4",
+     "symbol": "_ZN9Framework16CResourceManager8tElement7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f951d8",
+     "symbol": "_ZN9Framework16CResourceManager8tElement25DecrementReferenceCounterEv",
+     "name": "DecrementReferenceCounter"
+    },
+    {
+     "ghidra": "0x1f95218",
+     "symbol": "_ZNK9Framework16CResourceManager8tElement16ReferenceCounterEv",
+     "name": "ReferenceCounter"
+    },
+    {
+     "ghidra": "0x1f95220",
+     "symbol": "_ZN9Framework16CResourceManager8tElement12ForceReleaseEv",
+     "name": "ForceRelease"
+    },
+    {
+     "ghidra": "0x1f95244",
+     "symbol": "_ZN9Framework16CResourceManager8tElement16rResourceElementEv",
+     "name": "rResourceElement"
+    },
+    {
+     "ghidra": "0x1f95280",
+     "symbol": "_ZNK9Framework16CResourceManager8tElement17crResourceElementEv",
+     "name": "crResourceElement"
+    },
+    {
+     "ghidra": "0x1f952bc",
+     "symbol": "_ZNK9Framework16CResourceManager8tElement13UniqueBitFlagEv",
+     "name": "UniqueBitFlag"
+    },
+    {
+     "ghidra": "0x1f952c4",
+     "symbol": "_ZN9Framework16CResourceManager8tElement15OrUniqueBitFlagEj",
+     "name": "OrUniqueBitFlag"
+    },
+    {
+     "ghidra": "0x1f952d4",
+     "symbol": "_ZN9Framework16CResourceManager8tElement16AndUniqueBitFlagEj",
+     "name": "AndUniqueBitFlag"
+    },
+    {
+     "ghidra": "0x1f96f98",
+     "symbol": "_ZNK9Framework16CResourceManager8tElement6PrintSEj",
+     "name": "PrintS"
+    }
+   ]
+  },
+  {
+   "name": "CResourceManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "task_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 31
+     },
+     "size": 31
+    },
+    {
+     "offset": 39,
+     "name": "m_isInitialized",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 40,
+     "name": "m_elements",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::list<tElement>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 64,
+     "name": "m_mutex",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 176
+     },
+     "size": 176
+    }
+   ],
+   "size": 240,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f952e4",
+     "symbol": "_ZN9Framework16CResourceManagerC1EPKc",
+     "name": "CResourceManager"
+    },
+    {
+     "ghidra": "0x1f95340",
+     "symbol": "_ZN9Framework16CResourceManagerD1Ev",
+     "name": "~CResourceManager"
+    },
+    {
+     "ghidra": "0x1f953bc",
+     "symbol": "_ZN9Framework16CResourceManager7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f953c0",
+     "symbol": "_ZN9Framework16CResourceManagerD0Ev",
+     "name": "~CResourceManager"
+    },
+    {
+     "ghidra": "0x1f95444",
+     "symbol": "_ZN9Framework16CResourceManager10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f954e8",
+     "symbol": "_ZN9Framework16CResourceManager3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x1f955fc",
+     "symbol": "_ZNK9Framework16CResourceManager7pSearchEj",
+     "name": "pSearch"
+    },
+    {
+     "ghidra": "0x1f956a0",
+     "symbol": "_ZN9Framework16CResourceManager7pSearchEj",
+     "name": "pSearch"
+    },
+    {
+     "ghidra": "0x1f95744",
+     "symbol": "_ZNK9Framework16CResourceManager19pSearchByDirectPathEPKc",
+     "name": "pSearchByDirectPath"
+    },
+    {
+     "ghidra": "0x1f957ec",
+     "symbol": "_ZN9Framework16CResourceManager19pSearchByDirectPathEPKc",
+     "name": "pSearchByDirectPath"
+    },
+    {
+     "ghidra": "0x1f95894",
+     "symbol": "_ZN9Framework16CResourceManager3AddEjjjb",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x1f95a28",
+     "symbol": "_ZN9Framework16CResourceManager9AddByNameEjPKcjb",
+     "name": "AddByName"
+    },
+    {
+     "ghidra": "0x1f95a8c",
+     "symbol": "_ZN9Framework16CResourceManager16AddImmediateFileEjjPKcjb",
+     "name": "AddImmediateFile"
+    },
+    {
+     "ghidra": "0x1f95a90",
+     "symbol": "_ZN9Framework16CResourceManager13AddDirectFileEjPKcjb",
+     "name": "AddDirectFile"
+    },
+    {
+     "ghidra": "0x1f95c28",
+     "symbol": "_ZN9Framework16CResourceManager23AddDirectFileWithFolderEjPKcS2_jb",
+     "name": "AddDirectFileWithFolder"
+    },
+    {
+     "ghidra": "0x1f95dc8",
+     "symbol": "_ZN9Framework16CResourceManager6RemoveEj",
+     "name": "Remove"
+    },
+    {
+     "ghidra": "0x1f95ed4",
+     "symbol": "_ZN9Framework16CResourceManager12RemoveByNameEPKc",
+     "name": "RemoveByName"
+    },
+    {
+     "ghidra": "0x1f95f0c",
+     "symbol": "_ZN9Framework16CResourceManager16RemoveDirectFileEPKc",
+     "name": "RemoveDirectFile"
+    },
+    {
+     "ghidra": "0x1f96024",
+     "symbol": "_ZN9Framework16CResourceManager11RemoveForceEj",
+     "name": "RemoveForce"
+    },
+    {
+     "ghidra": "0x1f96108",
+     "symbol": "_ZN9Framework16CResourceManager17RemoveForceByNameEPKc",
+     "name": "RemoveForceByName"
+    },
+    {
+     "ghidra": "0x1f96148",
+     "symbol": "_ZN9Framework16CResourceManager21RemoveForceDirectFileEPKc",
+     "name": "RemoveForceDirectFile"
+    },
+    {
+     "ghidra": "0x1f96264",
+     "symbol": "_ZN9Framework16CResourceManager21RemoveByUniqueBitFlagEj",
+     "name": "RemoveByUniqueBitFlag"
+    },
+    {
+     "ghidra": "0x1f96344",
+     "symbol": "_ZNK9Framework16CResourceManager7IsReadyEjPb",
+     "name": "IsReady"
+    },
+    {
+     "ghidra": "0x1f9648c",
+     "symbol": "_ZNK9Framework16CResourceManager13IsReadyByNameEPKcPb",
+     "name": "IsReadyByName"
+    },
+    {
+     "ghidra": "0x1f964bc",
+     "symbol": "_ZNK9Framework16CResourceManager17IsReadyDirectFileEPKcPb",
+     "name": "IsReadyDirectFile"
+    },
+    {
+     "ghidra": "0x1f96608",
+     "symbol": "_ZN9Framework16CResourceManager4LockEv",
+     "name": "Lock"
+    },
+    {
+     "ghidra": "0x1f9663c",
+     "symbol": "_ZN9Framework16CResourceManager6UnlockEv",
+     "name": "Unlock"
+    },
+    {
+     "ghidra": "0x1f96670",
+     "symbol": "_ZNK9Framework16CResourceManager8IsLockedEv",
+     "name": "IsLocked"
+    },
+    {
+     "ghidra": "0x1f966a4",
+     "symbol": "_ZNK9Framework16CResourceManager11LockCounterEv",
+     "name": "LockCounter"
+    },
+    {
+     "ghidra": "0x1f966d8",
+     "symbol": "_ZN9Framework16CResourceManager16rResourceElementEj",
+     "name": "rResourceElement"
+    },
+    {
+     "ghidra": "0x1f96810",
+     "symbol": "_ZNK9Framework16CResourceManager17crResourceElementEj",
+     "name": "crResourceElement"
+    },
+    {
+     "ghidra": "0x1f96948",
+     "symbol": "_ZN9Framework16CResourceManager22rResourceElementByNameEPKc",
+     "name": "rResourceElementByName"
+    },
+    {
+     "ghidra": "0x1f9696c",
+     "symbol": "_ZNK9Framework16CResourceManager23crResourceElementByNameEPKc",
+     "name": "crResourceElementByName"
+    },
+    {
+     "ghidra": "0x1f96990",
+     "symbol": "_ZN9Framework16CResourceManager26rResourceElementDirectFileEPKc",
+     "name": "rResourceElementDirectFile"
+    },
+    {
+     "ghidra": "0x1f96ac4",
+     "symbol": "_ZNK9Framework16CResourceManager27crResourceElementDirectFileEPKc",
+     "name": "crResourceElementDirectFile"
+    },
+    {
+     "ghidra": "0x1f96bf8",
+     "symbol": "_ZNK9Framework16CResourceManager24crResourceElementByIndexEj",
+     "name": "crResourceElementByIndex"
+    },
+    {
+     "ghidra": "0x1f96c9c",
+     "symbol": "_ZNK9Framework16CResourceManager10NumLoadingEv",
+     "name": "NumLoading"
+    },
+    {
+     "ghidra": "0x1f96d78",
+     "symbol": "_ZNK9Framework16CResourceManager9IsLoadingEv",
+     "name": "IsLoading"
+    },
+    {
+     "ghidra": "0x1f96e94",
+     "symbol": "_ZNK9Framework16CResourceManager3NumEv",
+     "name": "Num"
+    },
+    {
+     "ghidra": "0x1f96efc",
+     "symbol": "_ZNK9Framework16CResourceManager18NumByUniqueBitFlagEj",
+     "name": "NumByUniqueBitFlag"
+    },
+    {
+     "ghidra": "0x1f96f9c",
+     "symbol": "_ZN9Framework16CResourceManager6PrintSEPKc",
+     "name": "PrintS"
+    },
+    {
+     "ghidra": "0x1f97010",
+     "symbol": "_ZNK9Framework16CResourceManager10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x1f97050",
+     "symbol": "_ZNK9Framework16CResourceManager15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    }
+   ]
+  },
+  {
+   "name": "CGameResourceManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_pSubstance",
+     "type": {
+      "kind": "ptr",
+      "to": "CResourceManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 32,
+     "name": "m_pDownLoader",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_fileMap",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THashMap<unsigned int, soa::native::containers::TStaticString<256> >",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 88,
+     "name": "m_resolutionPath",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 112,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x18f6de4",
+     "symbol": "_ZN20CGameResourceManagerC2EPKc",
+     "name": "CGameResourceManager"
+    },
+    {
+     "ghidra": "0x18f6f48",
+     "symbol": "_ZN20CGameResourceManager9SubstanceEPN9Framework16CResourceManagerE",
+     "name": "Substance"
+    },
+    {
+     "ghidra": "0x18f6f84",
+     "symbol": "_ZN20CGameResourceManagerD2Ev",
+     "name": "~CGameResourceManager"
+    },
+    {
+     "ghidra": "0x18f7014",
+     "symbol": "_ZN20CGameResourceManager7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x18f7110",
+     "symbol": "_ZN20CGameResourceManagerD0Ev",
+     "name": "~CGameResourceManager"
+    },
+    {
+     "ghidra": "0x18f71a4",
+     "symbol": "_ZN20CGameResourceManager10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x18f7e5c",
+     "symbol": "_ZN20CGameResourceManager10pSubstanceEv",
+     "name": "pSubstance"
+    },
+    {
+     "ghidra": "0x18f7e98",
+     "symbol": "_ZNK20CGameResourceManager12IsInitializeEv",
+     "name": "IsInitialize"
+    },
+    {
+     "ghidra": "0x18f7ed0",
+     "symbol": "_ZNK20CGameResourceManager11cpSubstanceEv",
+     "name": "cpSubstance"
+    },
+    {
+     "ghidra": "0x18f7f0c",
+     "symbol": "_ZN20CGameResourceManager13AddDirectFileEjPKcjbNS_13iPriorityModeE",
+     "name": "AddDirectFile"
+    },
+    {
+     "ghidra": "0x18f8104",
+     "symbol": "_ZNK20CGameResourceManager15ReplaceFileNameEPKc",
+     "name": "ReplaceFileName"
+    },
+    {
+     "ghidra": "0x18f8634",
+     "symbol": "_ZNK20CGameResourceManager17FileExistLanguageEPKcNS_13iPriorityModeEPN9Framework13TStaticStringILm256EEE",
+     "name": "FileExistLanguage"
+    },
+    {
+     "ghidra": "0x18f895c",
+     "symbol": "_ZN20CGameResourceManager18DownloadDirectFileEPKc",
+     "name": "DownloadDirectFile"
+    },
+    {
+     "ghidra": "0x18f8a2c",
+     "symbol": "_ZN20CGameResourceManager16RemoveDirectFileEPKc",
+     "name": "RemoveDirectFile"
+    },
+    {
+     "ghidra": "0x18f8b7c",
+     "symbol": "_ZNK20CGameResourceManager13SearchFileMapEPKc",
+     "name": "SearchFileMap"
+    },
+    {
+     "ghidra": "0x18f8c5c",
+     "symbol": "_ZNK20CGameResourceManager22RegisteredFileLanguageEPKcRN9Framework13TStaticStringILm256EEE",
+     "name": "RegisteredFileLanguage"
+    },
+    {
+     "ghidra": "0x18f8ef0",
+     "symbol": "_ZN20CGameResourceManager21RemoveForceDirectFileEPKc",
+     "name": "RemoveForceDirectFile"
+    },
+    {
+     "ghidra": "0x18f9040",
+     "symbol": "_ZN20CGameResourceManager21RemoveByUniqueBitFlagEj",
+     "name": "RemoveByUniqueBitFlag"
+    },
+    {
+     "ghidra": "0x18f9084",
+     "symbol": "_ZNK20CGameResourceManager17IsReadyDirectFileEPKc",
+     "name": "IsReadyDirectFile"
+    },
+    {
+     "ghidra": "0x18f9114",
+     "symbol": "_ZN20CGameResourceManager4LockEv",
+     "name": "Lock"
+    },
+    {
+     "ghidra": "0x18f9150",
+     "symbol": "_ZN20CGameResourceManager6UnlockEv",
+     "name": "Unlock"
+    },
+    {
+     "ghidra": "0x18f918c",
+     "symbol": "_ZNK20CGameResourceManager8IsLockedEv",
+     "name": "IsLocked"
+    },
+    {
+     "ghidra": "0x18f91c8",
+     "symbol": "_ZNK20CGameResourceManager11LockCounterEv",
+     "name": "LockCounter"
+    },
+    {
+     "ghidra": "0x18f9204",
+     "symbol": "_ZN20CGameResourceManager26rResourceElementDirectFileEPKc",
+     "name": "rResourceElementDirectFile"
+    },
+    {
+     "ghidra": "0x18f9280",
+     "symbol": "_ZNK20CGameResourceManager27crResourceElementDirectFileEPKc",
+     "name": "crResourceElementDirectFile"
+    },
+    {
+     "ghidra": "0x18f92fc",
+     "symbol": "_ZNK20CGameResourceManager24crResourceElementByIndexEj",
+     "name": "crResourceElementByIndex"
+    },
+    {
+     "ghidra": "0x18f9344",
+     "symbol": "_ZNK20CGameResourceManager10NumLoadingEv",
+     "name": "NumLoading"
+    },
+    {
+     "ghidra": "0x18f93bc",
+     "symbol": "_ZNK20CGameResourceManager9IsLoadingEv",
+     "name": "IsLoading"
+    },
+    {
+     "ghidra": "0x18f947c",
+     "symbol": "_ZNK20CGameResourceManager3NumEv",
+     "name": "Num"
+    },
+    {
+     "ghidra": "0x18f94b8",
+     "symbol": "_ZNK20CGameResourceManager18NumByUniqueBitFlagEj",
+     "name": "NumByUniqueBitFlag"
+    },
+    {
+     "ghidra": "0x18f94fc",
+     "symbol": "_ZN20CGameResourceManager6PrintSEPKc",
+     "name": "PrintS"
+    },
+    {
+     "ghidra": "0x18f9540",
+     "symbol": "_ZNK20CGameResourceManager11IsFileExistEPKcb",
+     "name": "IsFileExist"
+    },
+    {
+     "ghidra": "0x18f9590",
+     "symbol": "_ZNK20CGameResourceManager25IsFileExistDownloadFolderEPKc",
+     "name": "IsFileExistDownloadFolder"
+    },
+    {
+     "ghidra": "0x18f98f0",
+     "symbol": "_ZNK20CGameResourceManager11IsVoiceFileEPKc",
+     "name": "IsVoiceFile"
+    },
+    {
+     "ghidra": "0x18f9aa8",
+     "symbol": "_ZNK20CGameResourceManager19CheckResourceStatusEjNS_13iPriorityModeE",
+     "name": "CheckResourceStatus"
+    },
+    {
+     "ghidra": "0x18f9ad8",
+     "symbol": "_ZNK20CGameResourceManager29CheckResourceStatusByFileNameEPKcNS_13iPriorityModeE",
+     "name": "CheckResourceStatusByFileName"
+    },
+    {
+     "ghidra": "0x18f9ca4",
+     "symbol": "_ZN20CGameResourceManager18MakeResolutionPathEPKc",
+     "name": "MakeResolutionPath"
+    },
+    {
+     "ghidra": "0x18f9f84",
+     "symbol": "_ZN20CGameResourceManager25MakeCurrentResolutionPathEv",
+     "name": "MakeCurrentResolutionPath"
+    }
+   ]
+  },
+  {
+   "name": "CGameResourceDownloader",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "fiberUnit",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::CFiberUnit",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 56,
+     "name": "unk_038",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_nodes",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<void *, false>",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 120,
+     "name": "m_downloading",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<void *, false>",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 176,
+     "name": "m_nodeInitializers",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<unsigned char, false>",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 232,
+     "name": "unk_0e8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 80
+     },
+     "size": 80
+    },
+    {
+     "offset": 312,
+     "name": "unk_138",
+     "type": {
+      "kind": "bytes",
+      "ctype": "f32",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 316,
+     "name": "unk_13c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 320,
+     "name": "unk_140",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 328,
+     "name": "unk_148",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 332,
+     "name": "m_mode",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 336,
+     "name": "unk_150",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 340,
+     "name": "m_isReady",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 341,
+     "name": "unk_155",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 342,
+     "name": "m_readyFlag",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 343,
+     "name": "unk_157",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 9
+     },
+     "size": 9
+    },
+    {
+     "offset": 352,
+     "name": "m_errorStatus",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 360,
+     "name": "unk_168",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 368,
+     "name": "m_mutex",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 176
+     },
+     "size": 176
+    },
+    {
+     "offset": 544,
+     "name": "unk_220",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 96
+     },
+     "size": 96
+    },
+    {
+     "offset": 640,
+     "name": "m_ason",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "bytes",
+       "ctype": "data_formats::ASON"
+      },
+      "count": 3
+     },
+     "size": 432
+    },
+    {
+     "offset": 1072,
+     "name": "unk_430",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 1096,
+     "name": "m_names",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<soa::native::containers::TStaticString<256>, false>",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 1152,
+     "name": "unk_480",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 360
+     },
+     "size": 360
+    }
+   ],
+   "size": 1512,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x18d0034",
+     "symbol": "_ZN23CGameResourceDownloaderC1Ev",
+     "name": "CGameResourceDownloader"
+    },
+    {
+     "ghidra": "0x18d01d8",
+     "symbol": "_ZN23CGameResourceDownloaderD2Ev",
+     "name": "~CGameResourceDownloader"
+    },
+    {
+     "ghidra": "0x18d05cc",
+     "symbol": "_ZN23CGameResourceDownloaderD0Ev",
+     "name": "~CGameResourceDownloader"
+    },
+    {
+     "ghidra": "0x18d05e4",
+     "symbol": "_ZN23CGameResourceDownloader10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x18d0714",
+     "symbol": "_ZN23CGameResourceDownloader7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x18d081c",
+     "symbol": "_ZN23CGameResourceDownloader5ResetEb",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x18d08e0",
+     "symbol": "_ZN23CGameResourceDownloader29LoadLocalKVSEpisodeUpdateFlagEb",
+     "name": "LoadLocalKVSEpisodeUpdateFlag"
+    },
+    {
+     "ghidra": "0x18d0a78",
+     "symbol": "_ZN23CGameResourceDownloader16SetErrorCallbackENSt6__ndk18functionIFvjN4Aska6StatusEEEE",
+     "name": "SetErrorCallback"
+    },
+    {
+     "ghidra": "0x18d0b1c",
+     "symbol": "_ZN23CGameResourceDownloader15RequestDownloadEPKcNSt6__ndk18functionIFvS1_NS_10iErrorCodeEEEE",
+     "name": "RequestDownload"
+    },
+    {
+     "ghidra": "0x18d129c",
+     "symbol": "_ZNK23CGameResourceDownloader15IsReadyDownloadEv",
+     "name": "IsReadyDownload"
+    },
+    {
+     "ghidra": "0x18d12bc",
+     "symbol": "_ZNK23CGameResourceDownloader7IsIdeleEv",
+     "name": "IsIdele"
+    },
+    {
+     "ghidra": "0x18d12cc",
+     "symbol": "_ZNK23CGameResourceDownloader14IsNeedDownloadEPKc",
+     "name": "IsNeedDownload"
+    },
+    {
+     "ghidra": "0x18d1324",
+     "symbol": "_ZN23CGameResourceDownloader15RestartDownloadEv",
+     "name": "RestartDownload"
+    },
+    {
+     "ghidra": "0x18d13b8",
+     "symbol": "_ZNK23CGameResourceDownloader18SearchDownloadNodeEPKc",
+     "name": "SearchDownloadNode"
+    },
+    {
+     "ghidra": "0x18d1948",
+     "symbol": "_ZN23CGameResourceDownloader18RequestDownloadAllENSt6__ndk18functionIFvPKcNS_10iErrorCodeEEEE",
+     "name": "RequestDownloadAll"
+    },
+    {
+     "ghidra": "0x18d1af0",
+     "symbol": "_ZN23CGameResourceDownloader25RequestRemoveDownloadDataENSt6__ndk18functionIFvN4Aska6StatusEEEE",
+     "name": "RequestRemoveDownloadData"
+    },
+    {
+     "ghidra": "0x18d1bac",
+     "symbol": "_ZNK23CGameResourceDownloader26IsFinishRemoveDownloadDataEv",
+     "name": "IsFinishRemoveDownloadData"
+    },
+    {
+     "ghidra": "0x18d1bc0",
+     "symbol": "_ZNK23CGameResourceDownloader21NumRemoveDownloadDataEv",
+     "name": "NumRemoveDownloadData"
+    },
+    {
+     "ghidra": "0x18d1bc8",
+     "symbol": "_ZNK23CGameResourceDownloader24NumMaxRemoveDownloadDataEv",
+     "name": "NumMaxRemoveDownloadData"
+    },
+    {
+     "ghidra": "0x18d1bd0",
+     "symbol": "_ZN23CGameResourceDownloader36CheckLocalResourceFileToolVersionOldEv",
+     "name": "CheckLocalResourceFileToolVersionOld"
+    },
+    {
+     "ghidra": "0x18d2000",
+     "symbol": "_ZN23CGameResourceDownloader21LoadVersionFileToAsonERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEESA_",
+     "name": "LoadVersionFileToAson"
+    },
+    {
+     "ghidra": "0x18d2310",
+     "symbol": "_ZN23CGameResourceDownloader24RequestDeleteEpisodeDataENSt6__ndk18functionIFvN4Aska6StatusEEEE",
+     "name": "RequestDeleteEpisodeData"
+    },
+    {
+     "ghidra": "0x18d245c",
+     "symbol": "_ZN23CGameResourceDownloader14ScriptDownloadEv",
+     "name": "ScriptDownload"
+    },
+    {
+     "ghidra": "0x18d2c78",
+     "symbol": "_ZN23CGameResourceDownloader19InitAllDownloadListEv",
+     "name": "InitAllDownloadList"
+    },
+    {
+     "ghidra": "0x18d2d88",
+     "symbol": "_ZNK23CGameResourceDownloader15NeedNumDownloadEv",
+     "name": "NeedNumDownload"
+    },
+    {
+     "ghidra": "0x18d2e74",
+     "symbol": "_ZNK23CGameResourceDownloader22GetRequireDownloadSizeEv",
+     "name": "GetRequireDownloadSize"
+    },
+    {
+     "ghidra": "0x18d2f48",
+     "symbol": "_ZN23CGameResourceDownloader36GetRequireDownloadSize_withWorkSpaceEv",
+     "name": "GetRequireDownloadSize_withWorkSpace"
+    },
+    {
+     "ghidra": "0x18d2ffc",
+     "symbol": "_ZNK23CGameResourceDownloader24GetRequireHiDownloadSizeEv",
+     "name": "GetRequireHiDownloadSize"
+    },
+    {
+     "ghidra": "0x18d3004",
+     "symbol": "_ZNK23CGameResourceDownloader15CalcNumDownloadERjS0_",
+     "name": "CalcNumDownload"
+    },
+    {
+     "ghidra": "0x18d30d0",
+     "symbol": "_ZNK23CGameResourceDownloader20GetSetupProgressRateEv",
+     "name": "GetSetupProgressRate"
+    },
+    {
+     "ghidra": "0x18d30d8",
+     "symbol": "_ZN23CGameResourceDownloader21RequestDownloadCancelEv",
+     "name": "RequestDownloadCancel"
+    },
+    {
+     "ghidra": "0x18d30e8",
+     "symbol": "_ZNK23CGameResourceDownloader19IsExistDownloadListEPKc",
+     "name": "IsExistDownloadList"
+    },
+    {
+     "ghidra": "0x18d3118",
+     "symbol": "_ZNK23CGameResourceDownloader17IsExistDownloadDBEPKc",
+     "name": "IsExistDownloadDB"
+    },
+    {
+     "ghidra": "0x18d315c",
+     "symbol": "_ZNK23CGameResourceDownloader13IsBuildInDataEPKc",
+     "name": "IsBuildInData"
+    },
+    {
+     "ghidra": "0x18d358c",
+     "symbol": "_ZNK23CGameResourceDownloader13IsDownloadingEv",
+     "name": "IsDownloading"
+    },
+    {
+     "ghidra": "0x18d35ac",
+     "symbol": "_ZNK23CGameResourceDownloader14NumDownloadingEv",
+     "name": "NumDownloading"
+    },
+    {
+     "ghidra": "0x18d35c4",
+     "symbol": "_ZNK23CGameResourceDownloader18EndNodeDownloadingEv",
+     "name": "EndNodeDownloading"
+    },
+    {
+     "ghidra": "0x18d3740",
+     "symbol": "_ZNK23CGameResourceDownloader18NumNodeDownloadingEv",
+     "name": "NumNodeDownloading"
+    },
+    {
+     "ghidra": "0x18d3788",
+     "symbol": "_ZNK23CGameResourceDownloader26NumDownloadingExactWaitingEi",
+     "name": "NumDownloadingExactWaiting"
+    },
+    {
+     "ghidra": "0x18d38f0",
+     "symbol": "_ZNK23CGameResourceDownloader23NumUnpakingExactWaitingEi",
+     "name": "NumUnpakingExactWaiting"
+    },
+    {
+     "ghidra": "0x18d39f8",
+     "symbol": "_ZNK23CGameResourceDownloader19IsReadyDownloadFlagEv",
+     "name": "IsReadyDownloadFlag"
+    },
+    {
+     "ghidra": "0x18d3a00",
+     "symbol": "_ZN23CGameResourceDownloader17IsExistOldVersionEv",
+     "name": "IsExistOldVersion"
+    },
+    {
+     "ghidra": "0x18d3cf8",
+     "symbol": "_ZN23CGameResourceDownloader19IsExistLocalVersionEv",
+     "name": "IsExistLocalVersion"
+    },
+    {
+     "ghidra": "0x18d3ff0",
+     "symbol": "_ZN23CGameResourceDownloader24SetOldVersionFileCheckedEv",
+     "name": "SetOldVersionFileChecked"
+    },
+    {
+     "ghidra": "0x18d3ffc",
+     "symbol": "_ZN23CGameResourceDownloader23IsCheckedOldVersionFileEv",
+     "name": "IsCheckedOldVersionFile"
+    },
+    {
+     "ghidra": "0x18d4004",
+     "symbol": "_ZNK23CGameResourceDownloader14IsModeDownloadEv",
+     "name": "IsModeDownload"
+    },
+    {
+     "ghidra": "0x18d4014",
+     "symbol": "_ZNK23CGameResourceDownloader12IsExistCacheEv",
+     "name": "IsExistCache"
+    },
+    {
+     "ghidra": "0x18d407c",
+     "symbol": "_ZN23CGameResourceDownloader7ForEachEPKcRKNSt6__ndk18functionIFbS1_EEE",
+     "name": "ForEach"
+    },
+    {
+     "ghidra": "0x18d4300",
+     "symbol": "_ZN23CGameResourceDownloader21NotifyRequireDownLoadEPKN4Aska4ASON6AValueEPKcS6_j9CMetaList",
+     "name": "NotifyRequireDownLoad"
+    },
+    {
+     "ghidra": "0x18d4758",
+     "symbol": "_ZN23CGameResourceDownloader20RegisterDownloadNodeEPNS_13CDownloadNodeE",
+     "name": "RegisterDownloadNode"
+    },
+    {
+     "ghidra": "0x18d4bc0",
+     "symbol": "_ZN23CGameResourceDownloader8ProgressEv",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x18d4d0c",
+     "symbol": "_ZN23CGameResourceDownloader9PostErrorEiN4Aska6StatusE",
+     "name": "PostError"
+    },
+    {
+     "ghidra": "0x18d4d70",
+     "symbol": "_ZN23CGameResourceDownloader21Progress_StopDownloadEi",
+     "name": "Progress_StopDownload"
+    },
+    {
+     "ghidra": "0x18d4e60",
+     "symbol": "_ZN23CGameResourceDownloader26Progress_DeleteEpisodeDataEv",
+     "name": "Progress_DeleteEpisodeData"
+    },
+    {
+     "ghidra": "0x18d6254",
+     "symbol": "_ZN23CGameResourceDownloader14Progress_SetupEv",
+     "name": "Progress_Setup"
+    },
+    {
+     "ghidra": "0x18db7c4",
+     "symbol": "_ZN23CGameResourceDownloader17Progress_DownloadEv",
+     "name": "Progress_Download"
+    },
+    {
+     "ghidra": "0x18dbd98",
+     "symbol": "_ZN23CGameResourceDownloader27Progress_RemoveDownloadDataEv",
+     "name": "Progress_RemoveDownloadData"
+    },
+    {
+     "ghidra": "0x18dc0ec",
+     "symbol": "_ZN23CGameResourceDownloader32LoadVersionFileToAsonEpisodeDataERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE",
+     "name": "LoadVersionFileToAsonEpisodeData"
+    },
+    {
+     "ghidra": "0x18dc3d0",
+     "symbol": "_ZN23CGameResourceDownloader25SerializeLocalVersionJsonEb",
+     "name": "SerializeLocalVersionJson"
+    },
+    {
+     "ghidra": "0x18dc808",
+     "symbol": "_ZN23CGameResourceDownloader34episodeResourceFileListUpdateCheckERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEESA_",
+     "name": "episodeResourceFileListUpdateCheck"
+    },
+    {
+     "ghidra": "0x18ddc9c",
+     "symbol": "_ZNK23CGameResourceDownloader13IsErrorStatusEv",
+     "name": "IsErrorStatus"
+    },
+    {
+     "ghidra": "0x18ddcac",
+     "symbol": "_ZN23CGameResourceDownloader13IsVersionFileEPKc",
+     "name": "IsVersionFile"
+    },
+    {
+     "ghidra": "0x18dde40",
+     "symbol": "_ZN23CGameResourceDownloader21SetDownloadDataServerEPKc",
+     "name": "SetDownloadDataServer"
+    },
+    {
+     "ghidra": "0x18ddfe4",
+     "symbol": "_ZN23CGameResourceDownloader22SetServerAssetRevisionEPKc",
+     "name": "SetServerAssetRevision"
+    },
+    {
+     "ghidra": "0x18de128",
+     "symbol": "_ZNK23CGameResourceDownloader20GetLocalAssetevisionEv",
+     "name": "GetLocalAssetevision"
+    },
+    {
+     "ghidra": "0x18de274",
+     "symbol": "_ZN23CGameResourceDownloader24UpdateEpisodeDataMaxSizeEv",
+     "name": "UpdateEpisodeDataMaxSize"
+    },
+    {
+     "ghidra": "0x18de290",
+     "symbol": "_ZN23CGameResourceDownloader18PermissionDownloadEv",
+     "name": "PermissionDownload"
+    },
+    {
+     "ghidra": "0x18de394",
+     "symbol": "_ZN23CGameResourceDownloader8GetMutexEv",
+     "name": "GetMutex"
+    },
+    {
+     "ghidra": "0x18de39c",
+     "symbol": "_ZN23CGameResourceDownloader23WriteToTempDownloadListEPKcS1_jjjjjP9CMetaListS1_",
+     "name": "WriteToTempDownloadList"
+    },
+    {
+     "ghidra": "0x18de560",
+     "symbol": "_ZN23CGameResourceDownloader24EnableDefaultErrorHandleEb",
+     "name": "EnableDefaultErrorHandle"
+    },
+    {
+     "ghidra": "0x18de920",
+     "symbol": "_ZN23CGameResourceDownloader32checkLocalEpisodeFilelistVersionERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE",
+     "name": "checkLocalEpisodeFilelistVersion"
+    },
+    {
+     "ghidra": "0x18dec18",
+     "symbol": "_ZN23CGameResourceDownloader23ClearLocalAssetRevisionEv",
+     "name": "ClearLocalAssetRevision"
+    }
+   ]
+  },
+  {
+   "name": "ChaCha20State",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_constant",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_key",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 48,
+     "name": "m_counter",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "m_nonce",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 64,
+     "name": "unk_40",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    }
+   ],
+   "size": 128,
+   "align": 4
+  },
+  {
+   "name": "LocalKVS",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_name",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 256
+     },
+     "size": 256
+    },
+    {
+     "offset": 256,
+     "name": "m_cipher",
+     "type": {
+      "kind": "struct",
+      "name": "ChaCha20State"
+     },
+     "size": 128
+    },
+    {
+     "offset": 384,
+     "name": "m_keyReady",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 385,
+     "name": "m_keyDerived",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 386,
+     "name": "unk_182",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 388,
+     "name": "m_cipherEnabled",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 389,
+     "name": "unk_185",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 392,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x20279e0",
+     "symbol": "_ZN4Aska8LocalKVS4InitEPKcbPcS3_",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x2027a98",
+     "symbol": "_ZN4Aska8LocalKVS10SetKVSNameEPKc",
+     "name": "SetKVSName"
+    },
+    {
+     "ghidra": "0x2027af0",
+     "symbol": "_ZN4Aska8LocalKVS9SetCipherEbPcS1_",
+     "name": "SetCipher"
+    },
+    {
+     "ghidra": "0x2027c98",
+     "symbol": "_ZN4Aska8LocalKVS9SetBinaryEPKcPKal",
+     "name": "SetBinary"
+    },
+    {
+     "ghidra": "0x2027de8",
+     "symbol": "_ZNK4Aska8LocalKVS16CipherEncryptKeyEPKcPPcS2_m",
+     "name": "CipherEncryptKey"
+    },
+    {
+     "ghidra": "0x20280a8",
+     "symbol": "_ZNK4Aska8LocalKVS16CipherEncryptValEPKalPPaS2_m",
+     "name": "CipherEncryptVal"
+    },
+    {
+     "ghidra": "0x2028328",
+     "symbol": "_ZN4Aska8LocalKVS16SetBinaryAndroidEPKcPKal",
+     "name": "SetBinaryAndroid"
+    },
+    {
+     "ghidra": "0x202855c",
+     "symbol": "_ZNK4Aska8LocalKVS9GetBinaryEPKcPl",
+     "name": "GetBinary"
+    },
+    {
+     "ghidra": "0x2028850",
+     "symbol": "_ZNK4Aska8LocalKVS16GetBinaryAndroidEPKcPl",
+     "name": "GetBinaryAndroid"
+    },
+    {
+     "ghidra": "0x2028b4c",
+     "symbol": "_ZNK4Aska8LocalKVS16CipherDecryptValEPKalRNS_12TSharedArrayIaEE",
+     "name": "CipherDecryptVal"
+    },
+    {
+     "ghidra": "0x2028e8c",
+     "symbol": "_ZN4Aska8LocalKVS5ClearEPKc",
+     "name": "Clear"
+    },
+    {
+     "ghidra": "0x2028f5c",
+     "symbol": "_ZN4Aska8LocalKVS12ClearAndroidEPKc",
+     "name": "ClearAndroid"
+    },
+    {
+     "ghidra": "0x2029124",
+     "symbol": "_ZN4Aska8LocalKVS8ClearAllEv",
+     "name": "ClearAll"
+    },
+    {
+     "ghidra": "0x202913c",
+     "symbol": "_ZN4Aska8LocalKVS15ClearAllAndroidEv",
+     "name": "ClearAllAndroid"
+    }
+   ]
+  },
+  {
+   "name": "CGameLocalKVS",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_pKVS",
+     "type": {
+      "kind": "ptr",
+      "to": "LocalKVS"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_result",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 32,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x146c278",
+     "symbol": "_ZN13CGameLocalKVSC2Ev",
+     "name": "CGameLocalKVS"
+    },
+    {
+     "ghidra": "0x146c34c",
+     "symbol": "_ZN13CGameLocalKVS12VersionCheckEv",
+     "name": "VersionCheck"
+    },
+    {
+     "ghidra": "0x146c374",
+     "symbol": "_ZN13CGameLocalKVSD1Ev",
+     "name": "~CGameLocalKVS"
+    },
+    {
+     "ghidra": "0x146c3d0",
+     "symbol": "_ZN13CGameLocalKVSD0Ev",
+     "name": "~CGameLocalKVS"
+    },
+    {
+     "ghidra": "0x146c438",
+     "symbol": "_ZNK13CGameLocalKVS6ResultEv",
+     "name": "Result"
+    },
+    {
+     "ghidra": "0x146c440",
+     "symbol": "_ZNK13CGameLocalKVS10pSubstanceEv",
+     "name": "pSubstance"
+    },
+    {
+     "ghidra": "0x146c448",
+     "symbol": "_ZN13CGameLocalKVS13_VersionCheckEPN4Aska8LocalKVSE",
+     "name": "_VersionCheck"
+    },
+    {
+     "ghidra": "0x146c8a0",
+     "symbol": "_ZN13CGameLocalKVS13VersionUpdateEv",
+     "name": "VersionUpdate"
+    },
+    {
+     "ghidra": "0x146c8a4",
+     "symbol": "_ZN13CGameLocalKVS13_SetCipherKeyEPKcPN4Aska8LocalKVSE",
+     "name": "_SetCipherKey"
+    },
+    {
+     "ghidra": "0x146c958",
+     "symbol": "_ZN13CGameLocalKVS11_SetVersionEPKcPN4Aska8LocalKVSE",
+     "name": "_SetVersion"
+    },
+    {
+     "ghidra": "0x146c9ec",
+     "symbol": "_ZN13CGameLocalKVS3SetINSt6__ndk112basic_stringIcNS1_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS5_22CSTLStringAllocatorInfEEEEEEEvPKcRKT_",
+     "name": "Set<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >"
+    },
+    {
+     "ghidra": "0x146cb08",
+     "symbol": "_ZN13CGameLocalKVS3GetINSt6__ndk112basic_stringIcNS1_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS5_22CSTLStringAllocatorInfEEEEEEET_PKcRKSA_",
+     "name": "Get<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >"
+    },
+    {
+     "ghidra": "0x19efa40",
+     "symbol": "_ZN13CGameLocalKVS3GetIjEET_PKcRKS1_",
+     "name": "Get<unsigned int>"
+    },
+    {
+     "ghidra": "0x1ee85f4",
+     "symbol": "_ZN13CGameLocalKVS3GetIiEET_PKcRKS1_",
+     "name": "Get<int>"
+    },
+    {
+     "ghidra": "0x1eea294",
+     "symbol": "_ZN13CGameLocalKVS3GetIbEET_PKcRKS1_",
+     "name": "Get<bool>"
+    },
+    {
+     "ghidra": "0x1ef04f0",
+     "symbol": "_ZN13CGameLocalKVS3GetImEET_PKcRKS1_",
+     "name": "Get<unsigned long>"
+    }
+   ]
+  },
+  {
+   "name": "AHSLTagBucket",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_extTags",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_tags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "AHSLEntry<ShaderCache>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_key",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "AHSLNode<ShaderCache>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_ext",
+     "type": {
+      "kind": "ptr",
+      "to": "AHSLEntry<ShaderCache>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_entries",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "AHSLEntry<ShaderCache>"
+      },
+      "count": 8
+     },
+     "size": 128
+    }
+   ],
+   "size": 152,
+   "align": 8
+  },
+  {
+   "name": "AHSLDatabase<ShaderCache>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 144,
+     "name": "m_tags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "AHSLTagBucket"
+      },
+      "count": 512
+     },
+     "size": 16384
+    },
+    {
+     "offset": 16528,
+     "name": "m_nodes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "AHSLNode<ShaderCache>"
+      },
+      "count": 512
+     },
+     "size": 77824
+    },
+    {
+     "offset": 94352,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 94356,
+     "name": "unk_17094",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 94360,
+   "align": 8
+  },
+  {
+   "name": "AHSLEntry<ShaderDiskCache>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_key",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "AHSLNode<ShaderDiskCache>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_ext",
+     "type": {
+      "kind": "ptr",
+      "to": "AHSLEntry<ShaderDiskCache>"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_entries",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "AHSLEntry<ShaderDiskCache>"
+      },
+      "count": 8
+     },
+     "size": 128
+    }
+   ],
+   "size": 152,
+   "align": 8
+  },
+  {
+   "name": "AHSLDatabase<ShaderDiskCache>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 144,
+     "name": "m_tags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "AHSLTagBucket"
+      },
+      "count": 512
+     },
+     "size": 16384
+    },
+    {
+     "offset": 16528,
+     "name": "m_nodes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "AHSLNode<ShaderDiskCache>"
+      },
+      "count": 512
+     },
+     "size": 77824
+    },
+    {
+     "offset": 94352,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 94356,
+     "name": "unk_17094",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 94360,
+   "align": 8
+  },
+  {
+   "name": "AHSLCacheManagerV2",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_targetConsole",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "unk_28",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_l1",
+     "type": {
+      "kind": "struct",
+      "name": "AHSLDatabase<ShaderCache>"
+     },
+     "size": 94360
+    },
+    {
+     "offset": 94408,
+     "name": "m_l1Heap",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::memory::MemoryManager",
+      "size": 240
+     },
+     "size": 240
+    },
+    {
+     "offset": 94648,
+     "name": "unk_171b8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 94660,
+     "name": "m_frame",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 94664,
+     "name": "m_l1Cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 94808,
+     "name": "unk_17258",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 9824
+     },
+     "size": 9824
+    },
+    {
+     "offset": 104632,
+     "name": "m_l2",
+     "type": {
+      "kind": "struct",
+      "name": "AHSLDatabase<ShaderDiskCache>"
+     },
+     "size": 94360
+    },
+    {
+     "offset": 198992,
+     "name": "unk_30950",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 199024,
+     "name": "m_l2Cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 199168,
+     "name": "unk_30a00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 199192,
+     "name": "m_requestPending",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 199193,
+     "name": "unk_30a19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 199200,
+     "name": "m_requestEvent",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 199304,
+     "name": "m_doneEvent",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 199408,
+     "name": "unk_30af0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 199416,
+     "name": "m_threadEvent",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    }
+   ],
+   "size": 199520,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x21ab260",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV2C2Ev",
+     "name": "AHSLCacheManagerV2"
+    },
+    {
+     "ghidra": "0x21ab5f8",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV215UpdateTimestampEv",
+     "name": "UpdateTimestamp"
+    },
+    {
+     "ghidra": "0x21ab65c",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV2D2Ev",
+     "name": "~AHSLCacheManagerV2"
+    },
+    {
+     "ghidra": "0x21ab9d8",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV216CleanCacheSlotL3EPNS0_9CacheSlotE",
+     "name": "CleanCacheSlotL3"
+    },
+    {
+     "ghidra": "0x21abb50",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV225CleanAllLinkedDiskCacheL2Ev",
+     "name": "CleanAllLinkedDiskCacheL2"
+    },
+    {
+     "ghidra": "0x21abb54",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV2D0Ev",
+     "name": "~AHSLCacheManagerV2"
+    },
+    {
+     "ghidra": "0x21abc04",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV24InitEv",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x21abd9c",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV223InitFileCacheHeaderWorkEv",
+     "name": "InitFileCacheHeaderWork"
+    },
+    {
+     "ghidra": "0x21abe44",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV220SetShaderCacheInfoNoEi",
+     "name": "SetShaderCacheInfoNo"
+    },
+    {
+     "ghidra": "0x21abe48",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV217LoadBootDiskCacheEv",
+     "name": "LoadBootDiskCache"
+    },
+    {
+     "ghidra": "0x21abeec",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV230GetShaderCacheMajorShadersTextEPcPiS2_",
+     "name": "GetShaderCacheMajorShadersText"
+    },
+    {
+     "ghidra": "0x21abef4",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV219InformationDispMainEi",
+     "name": "InformationDispMain"
+    },
+    {
+     "ghidra": "0x21ac154",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV214SearchBindedVSEPNS_11ShaderCacheEmi",
+     "name": "SearchBindedVS"
+    },
+    {
+     "ghidra": "0x21ac5a8",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV218UpdateLastCreationEPNS_11ShaderCacheE",
+     "name": "UpdateLastCreation"
+    },
+    {
+     "ghidra": "0x21ac5ac",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV215SearchOrCompileEPKhPi",
+     "name": "SearchOrCompile"
+    },
+    {
+     "ghidra": "0x21acd58",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV212AddToL1CacheEPKNS_15ShaderDiskCacheES3_",
+     "name": "AddToL1Cache"
+    },
+    {
+     "ghidra": "0x21ad0ac",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV24TickEv",
+     "name": "Tick"
+    },
+    {
+     "ghidra": "0x21ad114",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV217Tick_RebuildCacheEv",
+     "name": "Tick_RebuildCache"
+    },
+    {
+     "ghidra": "0x21ad118",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV216ResetErrorShaderEv",
+     "name": "ResetErrorShader"
+    },
+    {
+     "ghidra": "0x21ad1fc",
+     "symbol": "_ZNK4Aska18AHSLCacheManagerV231GetBackendCompilingShaderCachesEv",
+     "name": "GetBackendCompilingShaderCaches"
+    },
+    {
+     "ghidra": "0x21ad20c",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV234EnableBackendCompilingShaderCachesEb",
+     "name": "EnableBackendCompilingShaderCaches"
+    },
+    {
+     "ghidra": "0x21ad220",
+     "symbol": "_ZNK4Aska18AHSLCacheManagerV237IsBackendCompilingShaderCachesEnabledEv",
+     "name": "IsBackendCompilingShaderCachesEnabled"
+    },
+    {
+     "ghidra": "0x21ad230",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV239SetBackendCompilingShaderCachesPerFrameEj",
+     "name": "SetBackendCompilingShaderCachesPerFrame"
+    },
+    {
+     "ghidra": "0x21ad240",
+     "symbol": "_ZNK4Aska18AHSLCacheManagerV239GetBackendCompilingShaderCachesPerFrameEv",
+     "name": "GetBackendCompilingShaderCachesPerFrame"
+    },
+    {
+     "ghidra": "0x21ad250",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV224EnableDeleteShaderCachesEb",
+     "name": "EnableDeleteShaderCaches"
+    },
+    {
+     "ghidra": "0x21ad264",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV212AddToL2CacheEPKNS_15ShaderDiskCacheE",
+     "name": "AddToL2Cache"
+    },
+    {
+     "ghidra": "0x21ad2a8",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV222BuildLinkedDiskCacheL2EPKNS_15ShaderDiskCacheE",
+     "name": "BuildLinkedDiskCacheL2"
+    },
+    {
+     "ghidra": "0x21ad8f4",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV222CleanLinkedDiskCacheL2EPKNS_15ShaderDiskCacheE",
+     "name": "CleanLinkedDiskCacheL2"
+    },
+    {
+     "ghidra": "0x21ad9ac",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV222IsValidFileCacheHeaderEPKNS_19AHSLFileCacheHeaderEb",
+     "name": "IsValidFileCacheHeader"
+    },
+    {
+     "ghidra": "0x21aea38",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV222Logging_WriteShaderKeyERNS_4FileEPhb",
+     "name": "Logging_WriteShaderKey"
+    },
+    {
+     "ghidra": "0x21aebe8",
+     "symbol": "_ZNK4Aska18AHSLCacheManagerV220DoesPrebuiltFinishedEv",
+     "name": "DoesPrebuiltFinished"
+    },
+    {
+     "ghidra": "0x21aebf0",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV217SetPrebuiltBinaryEPKvm",
+     "name": "SetPrebuiltBinary"
+    },
+    {
+     "ghidra": "0x21aebf8",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV215AttachDiskCacheEiPv",
+     "name": "AttachDiskCache"
+    },
+    {
+     "ghidra": "0x21aec88",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV215AttachDiskCacheEii",
+     "name": "AttachDiskCache"
+    },
+    {
+     "ghidra": "0x21aee54",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV221IsAttachmentCompletedEv",
+     "name": "IsAttachmentCompleted"
+    },
+    {
+     "ghidra": "0x21aee6c",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV215RemoveDiskCacheEi",
+     "name": "RemoveDiskCache"
+    },
+    {
+     "ghidra": "0x21aeec4",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV217WriteHDDDiskCacheEiPh",
+     "name": "WriteHDDDiskCache"
+    },
+    {
+     "ghidra": "0x21aeecc",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV221Compile_CreateLogNameEPcj",
+     "name": "Compile_CreateLogName"
+    },
+    {
+     "ghidra": "0x21aef8c",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV213MakeCachePathEPci",
+     "name": "MakeCachePath"
+    },
+    {
+     "ghidra": "0x21af074",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV220MakeCachePathPrivateEPciPKc",
+     "name": "MakeCachePathPrivate"
+    },
+    {
+     "ghidra": "0x21af150",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV27HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x21af1d4",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV220Tick_BG_AHSL_CompileEv",
+     "name": "Tick_BG_AHSL_Compile"
+    },
+    {
+     "ghidra": "0x21af204",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV212FlushProfileEv",
+     "name": "FlushProfile"
+    },
+    {
+     "ghidra": "0x21af208",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV218ProcDiskCacheEntryEv",
+     "name": "ProcDiskCacheEntry"
+    },
+    {
+     "ghidra": "0x21af2fc",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV225ProcDiskCacheEntry_HelperERbS1_",
+     "name": "ProcDiskCacheEntry_Helper"
+    },
+    {
+     "ghidra": "0x21af660",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV217RebuildL2DatabaseEv",
+     "name": "RebuildL2Database"
+    },
+    {
+     "ghidra": "0x21af94c",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV218RecompileDiskCacheEv",
+     "name": "RecompileDiskCache"
+    },
+    {
+     "ghidra": "0x21af950",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV223DynamicDiskCacheReplaceEv",
+     "name": "DynamicDiskCacheReplace"
+    },
+    {
+     "ghidra": "0x21af954",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV227InvalidateObjectShaderCacheEv",
+     "name": "InvalidateObjectShaderCache"
+    },
+    {
+     "ghidra": "0x21afafc",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV233ExportBackendCompilationDiskCacheEv",
+     "name": "ExportBackendCompilationDiskCache"
+    },
+    {
+     "ghidra": "0x21afb00",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV217CreateEmptyShaderEPKhPhb",
+     "name": "CreateEmptyShader"
+    },
+    {
+     "ghidra": "0x21afbb4",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV219Handler_ProcBGQueueEb",
+     "name": "Handler_ProcBGQueue"
+    },
+    {
+     "ghidra": "0x21afbbc",
+     "symbol": "_ZN4Aska18AHSLCacheManagerV214CheckOnHandlerEPh",
+     "name": "CheckOnHandler"
+    }
+   ]
+  },
+  {
+   "name": "ShaderLinkManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_aofAhsl",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 200272
+     },
+     "size": 200272
+    },
+    {
+     "offset": 200280,
+     "name": "m_filterShaders",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 200304,
+     "name": "unk_30e70",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 200308,
+     "name": "unk_30e74",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 200312,
+   "align": 8
+  },
+  {
+   "name": "LIBLManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_008",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1416
+     },
+     "size": 1416
+    },
+    {
+     "offset": 1424,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 1568,
+     "name": "m_loaderPool",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TPoolLegacy<unsigned char>",
+      "size": 80
+     },
+     "size": 80
+    },
+    {
+     "offset": 1648,
+     "name": "m_loaderList",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 1680,
+     "name": "m_blendTextureLoader",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 600
+     },
+     "size": 600
+    },
+    {
+     "offset": 2280,
+     "name": "m_updateTask",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::Task",
+      "size": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 2320,
+     "name": "m_detachHandlerVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 2328,
+     "name": "m_textureHandlerVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 2336,
+     "name": "unk_920",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 2344,
+     "name": "m_barrier",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 2352,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2236840",
+     "symbol": "_ZN4Aska11LIBLManager10InitializeEi",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x22369c8",
+     "symbol": "_ZN4Aska11LIBLManager6DeleteEv",
+     "name": "Delete"
+    },
+    {
+     "ghidra": "0x2236e10",
+     "symbol": "_ZN4Aska11LIBLManager12CreateNotifyEi",
+     "name": "CreateNotify"
+    },
+    {
+     "ghidra": "0x2236f3c",
+     "symbol": "_ZN4Aska11LIBLManager6UpdateEv",
+     "name": "Update"
+    },
+    {
+     "ghidra": "0x2237294",
+     "symbol": "_ZN4Aska11LIBLManager9IntersectEPPNS_16RenderableObjectEii",
+     "name": "Intersect"
+    },
+    {
+     "ghidra": "0x223770c",
+     "symbol": "_ZN4Aska11LIBLManager9SetResultEPPNS_16RenderableObjectEi",
+     "name": "SetResult"
+    },
+    {
+     "ghidra": "0x2237794",
+     "symbol": "_ZN4Aska11LIBLManager21MakeEffectiveLIBLListEv",
+     "name": "MakeEffectiveLIBLList"
+    },
+    {
+     "ghidra": "0x2237808",
+     "symbol": "_ZN4Aska11LIBLManager3AddEPNS_29IntegratedDynamicsEnvironmentEPKNS_10AsfHandlerE",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x223786c",
+     "symbol": "_ZN4Aska11LIBLManager3AddEPNS_29IntegratedDynamicsEnvironmentE",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x2237d2c",
+     "symbol": "_ZNK4Aska11LIBLManager3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2237d34",
+     "symbol": "_ZN4Aska11LIBLManager3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x2237d3c",
+     "symbol": "_ZN4Aska11LIBLManager6AddAarEPNS_10AarHandlerEim",
+     "name": "AddAar"
+    },
+    {
+     "ghidra": "0x2238048",
+     "symbol": "_ZNK4Aska11LIBLManager11ExistsLocalEPKNS_10AarHandlerE",
+     "name": "ExistsLocal"
+    },
+    {
+     "ghidra": "0x2238294",
+     "symbol": "_ZN4Aska11LIBLManager6AddAarEPNS_10AarHandlerEPNS_7IStreamE",
+     "name": "AddAar"
+    },
+    {
+     "ghidra": "0x2238658",
+     "symbol": "_ZN4Aska11LIBLManager9RemoveAarEPNS_10AarHandlerE",
+     "name": "RemoveAar"
+    },
+    {
+     "ghidra": "0x2238888",
+     "symbol": "_ZN4Aska11LIBLManager13UpdateTextureEPKNS_3BoxEf",
+     "name": "UpdateTexture"
+    },
+    {
+     "ghidra": "0x2238a70",
+     "symbol": "_ZN4Aska11LIBLManager9ExistsIDEEPKNS_29IntegratedDynamicsEnvironmentE",
+     "name": "ExistsIDE"
+    },
+    {
+     "ghidra": "0x2238d68",
+     "symbol": "_ZN4Aska11LIBLManager13DetachTextureEPv",
+     "name": "DetachTexture"
+    },
+    {
+     "ghidra": "0x2238f34",
+     "symbol": "_ZN4Aska11LIBLManager11CopyTextureEv",
+     "name": "CopyTexture"
+    },
+    {
+     "ghidra": "0x2239db4",
+     "symbol": "_ZN4Aska11LIBLManagerD2Ev",
+     "name": "~LIBLManager"
+    },
+    {
+     "ghidra": "0x2239f10",
+     "symbol": "_ZN4Aska11LIBLManagerD0Ev",
+     "name": "~LIBLManager"
+    },
+    {
+     "ghidra": "0x2239f28",
+     "symbol": "_ZNK4Aska11LIBLManager10GetClassIDEi",
+     "name": "GetClassID"
+    }
+   ]
+  },
+  {
+   "name": "ResourceReadyQueue",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "m_initialized",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 18,
+     "name": "unk_12",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 19,
+     "name": "unk_13",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    },
+    {
+     "offset": 24,
+     "name": "m_event",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 128,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 168,
+     "name": "unk_a8",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 172,
+     "name": "unk_ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 176,
+     "name": "m_portVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 184,
+     "name": "unk_b8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 208,
+     "name": "m_queue",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TSharedPointer<unsigned char>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 224,
+     "name": "unk_e0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 256,
+     "name": "m_fakeStreamVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 264,
+     "name": "unk_108",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 312,
+     "name": "m_fakeStream2Vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 320,
+     "name": "unk_140",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 384,
+     "name": "m_work",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TSharedPointer<signed char>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 400,
+     "name": "m_workData",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 408,
+     "name": "m_workSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 412,
+     "name": "unk_19c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 128
+     },
+     "size": 128
+    },
+    {
+     "offset": 540,
+     "name": "unk_21c",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 544,
+     "name": "m_cs2",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    }
+   ],
+   "size": 584,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2338384",
+     "symbol": "_ZN4Aska18ResourceReadyQueueC2Ej",
+     "name": "ResourceReadyQueue"
+    },
+    {
+     "ghidra": "0x233854c",
+     "symbol": "_ZN4Aska18ResourceReadyQueueC2Ejj",
+     "name": "ResourceReadyQueue"
+    },
+    {
+     "ghidra": "0x2338718",
+     "symbol": "_ZN4Aska18ResourceReadyQueueD2Ev",
+     "name": "~ResourceReadyQueue"
+    },
+    {
+     "ghidra": "0x2338a8c",
+     "symbol": "_ZN4Aska18ResourceReadyQueueD0Ev",
+     "name": "~ResourceReadyQueue"
+    },
+    {
+     "ghidra": "0x2338aa4",
+     "symbol": "_ZN4Aska18ResourceReadyQueue4InitEjj",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x2338f98",
+     "symbol": "_ZN4Aska18ResourceReadyQueue4TermEv",
+     "name": "Term"
+    },
+    {
+     "ghidra": "0x23390b4",
+     "symbol": "_ZNK4Aska18ResourceReadyQueue6IsBusyEv",
+     "name": "IsBusy"
+    },
+    {
+     "ghidra": "0x23390ec",
+     "symbol": "_ZNK4Aska18ResourceReadyQueue4WaitEv",
+     "name": "Wait"
+    },
+    {
+     "ghidra": "0x233915c",
+     "symbol": "_ZN4Aska18ResourceReadyQueue14CalcTargetSizeEPNS_7IStreamEPjm",
+     "name": "CalcTargetSize"
+    },
+    {
+     "ghidra": "0x2339228",
+     "symbol": "_ZN4Aska18ResourceReadyQueue6InvokeEPNS_7IStreamEPPvPlPNS_7INotifyEPNS_14IMemoryManagerENS0_14AllocationTypeEb",
+     "name": "Invoke"
+    },
+    {
+     "ghidra": "0x2339328",
+     "symbol": "_ZN4Aska18ResourceReadyQueue16PrepareForEvItemERNS0_6EvItemEPNS_14IMemoryManagerENS0_14AllocationTypeE",
+     "name": "PrepareForEvItem"
+    },
+    {
+     "ghidra": "0x2339598",
+     "symbol": "_ZN4Aska18ResourceReadyQueue9SequencerEPNS0_6EvItemE",
+     "name": "Sequencer"
+    },
+    {
+     "ghidra": "0x2339d44",
+     "symbol": "_ZN4Aska18ResourceReadyQueue3AddEPNS_7IStreamEPPvPlPNS_7INotifyEiPNS_14IMemoryManagerENS0_14AllocationTypeEb",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x2339ef0",
+     "symbol": "_ZN4Aska18ResourceReadyQueue3AddERNS_14TSharedPointerINS_7IStreamEEEPPvPlPNS_7INotifyEiPNS_14IMemoryManagerENS0_14AllocationTypeEb",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x233a0b8",
+     "symbol": "_ZN4Aska18ResourceReadyQueue6CancelEm",
+     "name": "Cancel"
+    },
+    {
+     "ghidra": "0x233a1a4",
+     "symbol": "_ZN4Aska18ResourceReadyQueue5FlushEv",
+     "name": "Flush"
+    },
+    {
+     "ghidra": "0x233a214",
+     "symbol": "_ZN4Aska18ResourceReadyQueue7HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x233a30c",
+     "symbol": "_ZNK4Aska18ResourceReadyQueue7IsReadyEv",
+     "name": "IsReady"
+    }
+   ]
+  }
+ ]
+}

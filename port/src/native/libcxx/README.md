@@ -12,7 +12,8 @@ This is the type part of the libc++ library track (port/PLAN.md task 6, "Per lib
 hostable; the game inlines its templates and embeds `std::__ndk1` objects in its own classes, so later
 natives work against the NDK layout and the hot out-of-line helpers become small natives against it).
 Every layout here is proven on real guest code by `libcxx_layout_test.cpp` (`soa --selftest libcxx/`).
-No natives are bound yet.
+Natives: the shared_ptr control blocks' counters (below); live-check family `libcxx` (`--live-check libcxx`,
+`libcxx_family.h`).
 
 **The NDK's libc++ is r16b's (libc++ 6.0, `_LIBCPP_VERSION` 6000, `_LIBCPP_ABI_VERSION` 1)**, not r11c's
 (1101): the lib instantiates `__libcpp_string_gets_noexcept_iterator` (in r16b's `<string>`, absent from
@@ -47,6 +48,12 @@ T*>`), `MapStringString`, `UMapU32U64`, `UMapU32Bool`, `UMapStringPtr`, the shar
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `__shared_count::__add_shared` / `__release_shared`, `__shared_weak_count::__add_shared` / `__add_weak` / `__release_shared` / `__release_weak` / `lock` (7) | `libcxx_shared_count.cpp` | `libcxx/shared-count`, `libcxx/shared-weak-count` (random operation sequences on two blocks with a counting fake vtable: counts, results, slot 2 / 4 callbacks) | `libcxx`: 0 mismatches (login → home, battle, gacha, story) |
+
+The counters are host atomics on the guest words (the JIT's exclusive store is a compare-and-swap,
+runtime/src/core/cpu.cpp, so they interleave with the guest's inlined LDXR / STXR increments); the
+zero-count callbacks (`__on_zero_shared`, `__on_zero_shared_weak`) are guest calls through the block's
+vtable (`live::out_call`, so the live check records and replays them).
 
 ## Dependencies
 

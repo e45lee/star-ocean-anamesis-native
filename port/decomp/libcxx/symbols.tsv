@@ -16,10 +16,10 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x18161ac	0x19161ac	108	_ZNKSt6__ndk110__function6__funcINS_8functionIFvblEEENS_9allocatorIS4_EEFvbmEE7__cloneEPNS0_6__baseIS7_EE	std::__ndk1::__function::__func<std::__ndk1::function<void (bool, long)>, std::__ndk1::allocator<std::__ndk1::function<void (bool, long)> >, void (bool, unsigned long)>::__clone(std::__ndk1::__function::__base<void (bool, unsigned long)>*) const	vector_list_function	typed	
 0x1dc5f88	0x1ec5f88	20	_ZNSt6__ndk112basic_stringIcNS_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS3_22CSTLStringAllocatorInfEEEED2Ev	std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> >::~basic_string()	string	typed	
 0x265aba8	0x275aba8	1868	_ZNSt6__ndk112__next_primeEm	std::__ndk1::__next_prime(unsigned long)	hash	typed	
-0x269537c	0x279537c	24	_ZNSt6__ndk114__shared_count12__add_sharedEv	std::__ndk1::__shared_count::__add_shared()	shared_ptr	typed	
-0x2695394	0x2795394	64	_ZNSt6__ndk114__shared_count16__release_sharedEv	std::__ndk1::__shared_count::__release_shared()	shared_ptr	typed	
-0x26953d8	0x27953d8	24	_ZNSt6__ndk119__shared_weak_count12__add_sharedEv	std::__ndk1::__shared_weak_count::__add_shared()	shared_ptr	typed	
-0x26953f0	0x27953f0	24	_ZNSt6__ndk119__shared_weak_count10__add_weakEv	std::__ndk1::__shared_weak_count::__add_weak()	shared_ptr	typed	
-0x2695408	0x2795408	116	_ZNSt6__ndk119__shared_weak_count16__release_sharedEv	std::__ndk1::__shared_weak_count::__release_shared()	shared_ptr	typed	
-0x269547c	0x279547c	40	_ZNSt6__ndk119__shared_weak_count14__release_weakEv	std::__ndk1::__shared_weak_count::__release_weak()	shared_ptr	typed	
-0x26954a4	0x27954a4	68	_ZNSt6__ndk119__shared_weak_count4lockEv	std::__ndk1::__shared_weak_count::lock()	shared_ptr	typed	
+0x269537c	0x279537c	24	_ZNSt6__ndk114__shared_count12__add_sharedEv	std::__ndk1::__shared_count::__add_shared()	shared_ptr	tested	native: libcxx_shared_count.cpp
+0x2695394	0x2795394	64	_ZNSt6__ndk114__shared_count16__release_sharedEv	std::__ndk1::__shared_count::__release_shared()	shared_ptr	tested	native: libcxx_shared_count.cpp
+0x26953d8	0x27953d8	24	_ZNSt6__ndk119__shared_weak_count12__add_sharedEv	std::__ndk1::__shared_weak_count::__add_shared()	shared_ptr	tested	native: libcxx_shared_count.cpp
+0x26953f0	0x27953f0	24	_ZNSt6__ndk119__shared_weak_count10__add_weakEv	std::__ndk1::__shared_weak_count::__add_weak()	shared_ptr	tested	native: libcxx_shared_count.cpp
+0x2695408	0x2795408	116	_ZNSt6__ndk119__shared_weak_count16__release_sharedEv	std::__ndk1::__shared_weak_count::__release_shared()	shared_ptr	tested	native: libcxx_shared_count.cpp
+0x269547c	0x279547c	40	_ZNSt6__ndk119__shared_weak_count14__release_weakEv	std::__ndk1::__shared_weak_count::__release_weak()	shared_ptr	tested	native: libcxx_shared_count.cpp
+0x26954a4	0x27954a4	68	_ZNSt6__ndk119__shared_weak_count4lockEv	std::__ndk1::__shared_weak_count::lock()	shared_ptr	tested	native: libcxx_shared_count.cpp

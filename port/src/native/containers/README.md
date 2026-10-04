@@ -10,7 +10,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 
 ## Types (classes with their methods attached)
 
-Type recovery only so far (task 6, a wave ahead of the code agents): no natives. Every layout marked
+Natives: see "Natives" below (live-check family `containers`, `containers_family.h`). Every layout marked
 "proven" is checked at runtime by a `containers/layout-*` selftest in
 [`containers_layout_test.cpp`](containers_layout_test.cpp): the guest's own code (its constructor, or
 the constructor it inlines, then its methods) builds and fills a real object, and the host reads it
@@ -45,6 +45,13 @@ to `types.json`.
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `Aska::StringUtility::Utf8ToMultiByte` | `containers_string_utility.cpp` | `containers/utf8-to-multibyte` (random strings, every argument combination) | `containers`: 0 mismatches |
+| `Framework::TObjectContainer<T>::NumElements` / `rElement` / `crElement` for T = `CSound::CElement`, `Collision::CollisionShapeGroup`, `IFixedLengthAllocator*`, `BehaviorQueue*` (12) | `containers_object_container.cpp` (+ `.h`: the instantiations) | `containers/object-container` (the guest's vtables, random counts / indices) | `containers`: 0 mismatches |
+
+`TObjectContainer` is memory's class (`memory_layout.h`, memory's `scope.txt`); its accessors are bound
+here because the containers code task took them (the hottest of the container code). Their
+`symbols.tsv` rows: `port/decomp/containers/object_container.c` (the client's instantiations) and
+memory's `stl_allocator.c` (`IFixedLengthAllocator*`, left untouched there).
 
 ## Dependencies
 

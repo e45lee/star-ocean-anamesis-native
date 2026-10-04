@@ -20,13 +20,9 @@
      "offset": 8,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -2614,13 +2610,9 @@
      "offset": 8,
      "name": "m_thread",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 16
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Thread",
+      "size": 16
      },
      "size": 16
     },
@@ -3266,13 +3258,9 @@
      "offset": 16,
      "name": "m_mutex",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 176
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CMutex",
+      "size": 176
      },
      "size": 176
     },

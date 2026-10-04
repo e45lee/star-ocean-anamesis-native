@@ -41,11 +41,11 @@ accessors and with the decompile's arithmetic.
 ## Dependencies
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):
-- `sync` (1,688 samples): Aska::FastCriticalSection (0x90) at BasePeripheral + 0x08 guards every
-  peripheral's state, Aska::Thread (0x10) at PeripheralManager + 0x08, Framework::CMutex (0xb0) at
-  CPad + 0x10. Opaque bytes here (`m_cs`, `m_thread`, `m_mutex`); swap in sync's classes once
-  port/n-sync is merged. Most of the input "self" time is that critical section inlined (the
-  LDAXR / STLXR spin in Pad::SetAnalogAsDigital / SetRepeat*, TouchPanel::CopyMessages, ResetStatus).
+- `sync` (1,688 samples): sync_layout.h's classes embedded: Aska::FastCriticalSection (0x90) at
+  BasePeripheral + 0x08 guards every peripheral's state, Aska::Thread (0x10) at PeripheralManager + 0x08,
+  Framework::CMutex (0xb0) at CPad + 0x10. Most of the input "self" time was that critical section
+  inlined (the LDAXR / STLXR spin in Pad::SetAnalogAsDigital / SetRepeat*, TouchPanel::CopyMessages,
+  ResetStatus); the natives call `FastCriticalSection::Enter` / `Leave`.
 - `kernel` (401 samples, same level): CPadReader is an Aska::Task (0x28, its fields opaque here);
   Aska::Global::Get/Register*Peripheral, GetActivePad, m_pVSync (UpdateKeyRepeat's frame count),
   m_pFrameBuffer (TouchPanel's pixel scale), GetCPUTime: kernel's Aska::Global.

@@ -23,6 +23,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../sync/sync_layout.h"
+
 namespace soa::native::input {
 
 using u8 = std::uint8_t;
@@ -47,12 +49,13 @@ inline constexpr u64 kVaddrCTouchPanelInstance = 0x2bebb10;   // Framework::TSin
 inline constexpr u64 kVaddrCMouseInstance = 0x2c00250;        // Framework::TSingleton<CMouse>::m_pInstance
 inline constexpr u64 kVaddrCKeyboardInstance = 0x2bffcd0;     // Framework::TSingleton<CKeyboard>::m_pInstance
 
-// Aska::FastCriticalSection (0x90) and Aska::Thread (0x10) are the `sync` subsystem's types (port/n-sync
-// recovers them; not merged yet): opaque bytes here, swap in sync's classes once both are merged. What
-// the input code shows of the critical section, inlined into every locked method: +0x38 s32 lock word
-// (-1 free, 0 held), +0x3c s32 spinners, +0x78 Aska::Semaphore (signalled on unlock past 20 spinners).
-inline constexpr u64 kFastCriticalSectionSize = 0x90;
-inline constexpr u64 kThreadSize = 0x10;
+// Aska::FastCriticalSection (0x90), Aska::Thread (0x10) and Framework::CMutex (0xb0) are the `sync`
+// subsystem's classes (sync_layout.h), embedded here. The input code inlines the critical section's
+// enter / leave into every locked method (the lock word at +0x38, the waiters at +0x3c, the semaphore at
+// +0x78): the natives call FastCriticalSection::Enter / Leave, the same algorithm on the same words.
+using sync::CMutex;
+using sync::FastCriticalSection;
+using sync::Thread;
 
 // The peripherals' vtable slots (byte offset = slot * 8), from _ZTVN4Aska14BasePeripheralE and the
 // calls in BasePeripheral::GetStatus / Set, PeripheralManager::Handler / ResetAllPeripheral and
@@ -93,7 +96,7 @@ public:
     void CheckConnection();             // _ZN4Aska14BasePeripheral15CheckConnectionEv (Initialize(m_port) unless -1)
 
     const void* vtable;                 // 0x00
-    u8 m_cs[kFastCriticalSectionSize];  // 0x08: Aska::FastCriticalSection (sync); guards the derived state
+    FastCriticalSection m_cs;           // 0x08: Aska::FastCriticalSection (sync); guards the derived state
     u8 m_attr98;                        // 0x98: Get / Set id 0; RegisterPeripheral clears it (0xff after construction)
     s8 m_port;                          // 0x99: Get id 1; -1 = none (Initialize stores the port)
     u8 m_connected;                     // 0x9a: Get id 2; GetStatus asks GetDeviceData only when set (TouchPanel::Initialize sets it)
@@ -534,7 +537,7 @@ public:
     void ResetAllPeripheral();          // _ZN4Aska17PeripheralManager18ResetAllPeripheralEv (slot 10 of both)
 
     const void* vtable;         // 0x00: _ZTVN4Aska17PeripheralManagerE + 0x10
-    u8 m_thread[kThreadSize];   // 0x08: Aska::Thread (sync); its vtable = _ZTV... + 0x60
+    Thread m_thread;            // 0x08: Aska::Thread (sync); its vtable = _ZTV... + 0x60
     u8 unk_18[8];               // 0x18: not written by the constructor (Aska::Thread's?)
     BasePeripheral* m_pad;      // 0x20: Global::GetPeripheral(0) / GetActivePad / RegisterPeripheral(0)
     BasePeripheral* m_ex;       // 0x28: Global::GetExPeripheral(0): the TouchPanel
@@ -668,7 +671,7 @@ public:
 
     const void* vtable;         // 0x00: _ZTVN9Framework4CPadE + 0x10
     u8 unk_08[8];               // 0x08
-    u8 m_mutex[0xb0];           // 0x10: Framework::CMutex (sync)
+    CMutex m_mutex;             // 0x10: Framework::CMutex (sync)
     u32 m_numUnits;             // 0xc0: 1 (Initialize)
     u8 unk_c4[4];               // 0xc4
     CUnit* m_units;             // 0xc8: new[] (count cookie at -8)

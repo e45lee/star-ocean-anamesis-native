@@ -108,8 +108,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   check the calling thread's OglStateSet0 (a pthread key per thread) before calling GL.
 - **GetTextureStateCaches** (479 self) looks a GL texture name up in an Aska::THashMap with 64-bit
   modulo probing, twice per call (count, then find).
-- **Unknowns.** RENDERINFO (not recovered: PrepareForRendering / TraversePaintingList's argument),
-  LightManager, ShadowManager, PostProcessCombinerTBR, RenderTarget / RenderTargetManagerGL,
+- **Unknowns.** RENDERINFO's +0x02, +0x04, +0x18 (the struct: render_layout.h, recovered by n-scene from
+  OnPostPaint and the object-manager worker's copy), LightManager, ShadowManager, PostProcessCombinerTBR, RenderTarget / RenderTargetManagerGL,
   RenderPassManager (0x3c0), UniformValueBuffer2, AhslConst, CameraManager (a TaskManager + Task;
   0xff0 the current camera, 0x1000 a CameraFilterManager: size not recovered); most of RenderDeviceGL's
   GpuResource (0x78) and the large paddings in Camera / Light / RenderDeviceData.

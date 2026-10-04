@@ -174,7 +174,29 @@ class Camera;
 class Light;
 class LightManager;
 class RenderContext;
-struct RENDERINFO;
+
+// Aska::RENDERINFO: what one painting pass passes to its objects' PrepareForRendering (slot 80). 0x20 bytes:
+// ObjectManager::OnPostPaint builds one on its stack (four 8-byte words, zeroed, then the pass bits) and
+// ObjectManagerJobDispatcher::SetPrepareForRenderingBasicParameter copies the four words into each worker
+// (ObjectManagerWorkerThread::m_renderInfo), which rewrites +6 / +8 (and +0x10 for job kind 1) per object
+// before the call (port/decomp/scene/object_manager.c: Handler_PrepareForRendering, OnPostPaint).
+struct RENDERINFO {
+    u16 m_index;                   // +0x00: OnPostPaint counts it up per multipass layer
+    u8 unk_02;                     // +0x02
+    u8 m_passBits;                 // +0x03: bits 0-2 the pass kind (0 color, 1 z-prepass, 2 shadow cast, 3 vertex,
+                                   //        4 object motion blur, 5 multi-draw: AofObject::PrepareForRendering),
+                                   //        3-4 and 5 set by OnPostPaint per layer
+    u8 unk_04[2];                  // +0x04
+    u16 m_contextCount;            // +0x06: per object: m_contextsWanted / m_contextDivisor (0 when the divisor is 0)
+    RenderContext* m_contexts;     // +0x08: per object: m_contexts + m_contextsUsed (0x230 bytes each)
+    Camera* m_camera;              // +0x10: the pass's camera (job kind 1: the object's own m_camera, else the default)
+    u64 unk_18;                    // +0x18: OnPostPaint's fourth word
+};
+static_assert(offsetof(RENDERINFO, m_passBits) == 0x03);
+static_assert(offsetof(RENDERINFO, m_contextCount) == 0x06);
+static_assert(offsetof(RENDERINFO, m_contexts) == 0x08);
+static_assert(offsetof(RENDERINFO, m_camera) == 0x10);
+static_assert(sizeof(RENDERINFO) == 0x20);
 
 // Aska::HierarchicalObject: Task + HierarchicalObjectContainer. Guest size 0x1a0 (HierarchicalObject::
 // CreateClone: operator new(0x1a0); data size 0x198); layout from the inlined constructor there, the setters, Get / Set
@@ -349,14 +371,16 @@ public:
     s32 m_contextsUsed;                // 0x1cc: render contexts used
     RenderContext* m_contexts;         // 0x1d0: the contexts (an array, 0x230 bytes each)
     const IAnimatable* m_cloneSource;  // 0x1d8: Clone stores the source
-    u8 unk_1e0[0x18];                  // 0x1e0: 0x1e8..0x1ff zeroed every frame (scene's decompile)
-    u64 unk_1f8;                       // 0x1f8: Clone copies
-    u64 unk_200;                       // 0x200: Clone copies
+    u64 unk_1e0;                       // 0x1e0
+    u64 m_frameScratch1e8[2];          // 0x1e8: zeroed every frame (ObjectManager's ResetSystemFlags job)
+    u64 unk_1f8;                       // 0x1f8: Clone copies; zeroed every frame (ResetSystemFlags)
+    u64 unk_200;                       // 0x200: Clone copies; zeroed every frame (ResetSystemFlags)
     u64 m_multipassRenderingID[2];     // 0x208: SetMultipassRenderingID
     u64 m_multipassRequestRenderingID[2];  // 0x218
     u32 m_multiDraw;                   // 0x228: UpdateMultiDrawVars zeroes it
     u32 m_multiDrawLimit;              // 0x22c: (scene's decompile)
-    u8 unk_230[0x18];                  // 0x230: 0x230 / 0x238 zeroed every frame
+    u64 m_frameScratch230[2];          // 0x230: zeroed every frame (ResetSystemFlags)
+    u64 unk_240;                       // 0x240
     u8 m_iblAcceptance;                // 0x248: SetIBLAcceptanceNumber
     u8 unk_249[0x17];                  // 0x249
     u64 unk_260;                       // 0x260: Clone copies
@@ -387,6 +411,10 @@ static_assert(offsetof(RenderableObject, m_progTrans) == 0x1b4);
 static_assert(offsetof(RenderableObject, m_shadowFlags) == 0x1b5);
 static_assert(offsetof(RenderableObject, unk_1b7) == 0x1b7);
 static_assert(offsetof(RenderableObject, m_cloneSource) == 0x1d8);
+static_assert(offsetof(RenderableObject, m_frameScratch1e8) == 0x1e8);
+static_assert(offsetof(RenderableObject, unk_1f8) == 0x1f8);
+static_assert(offsetof(RenderableObject, unk_200) == 0x200);
+static_assert(offsetof(RenderableObject, m_frameScratch230) == 0x230);
 static_assert(offsetof(RenderableObject, m_multipassRenderingID) == 0x208);
 static_assert(offsetof(RenderableObject, m_multipassRequestRenderingID) == 0x218);
 static_assert(offsetof(RenderableObject, m_multiDraw) == 0x228);

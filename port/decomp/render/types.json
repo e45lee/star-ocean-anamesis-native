@@ -384,6 +384,96 @@
    ]
   },
   {
+   "name": "RENDERINFO",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_index",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "unk_02",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3,
+     "name": "m_passBits",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 6,
+     "name": "m_contextCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 8,
+     "name": "m_contexts",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderContext"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_camera",
+     "type": {
+      "kind": "ptr",
+      "to": "Camera"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
    "name": "HierarchicalObject",
    "union": false,
    "fields": [
@@ -906,15 +996,25 @@
      "offset": 480,
      "name": "unk_1e0",
      "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 488,
+     "name": "m_frameScratch1e8",
+     "type": {
       "kind": "array",
       "of": {
        "kind": "int",
-       "size": 1,
+       "size": 8,
        "signed": false
       },
-      "count": 24
+      "count": 2
      },
-     "size": 24
+     "size": 16
     },
     {
      "offset": 504,
@@ -986,17 +1086,27 @@
     },
     {
      "offset": 560,
-     "name": "unk_230",
+     "name": "m_frameScratch230",
      "type": {
       "kind": "array",
       "of": {
        "kind": "int",
-       "size": 1,
+       "size": 8,
        "signed": false
       },
-      "count": 24
+      "count": 2
      },
-     "size": 24
+     "size": 16
+    },
+    {
+     "offset": 576,
+     "name": "unk_240",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
     },
     {
      "offset": 584,

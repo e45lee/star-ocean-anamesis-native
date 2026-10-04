@@ -117,7 +117,7 @@ NATIVE_TEST("growth/apis") {
             call(c, "EvolutionCharacter", {euid});
             u32 after = (u32)c.st.one("select role_id from roster where uid = ?", {euid});
             t.expect_eq((u32)c.m.one("select rarity from master_role where id = ?", {after}), 6u, "evolved to rarity 6");
-            // (b) back to level 1 (uimsg_next_strongth; agent server-rules)
+            // (b) back to level 1 (uimsg_next_strongth: the client's text says the level restarts)
             t.expect_eq((u32)c.st.one("select level from roster where uid = ?", {euid}), 1u, "level 1 after evolution");
             if (c.role_level_cap(RoleId(after)) <= cap) t.fail("the cap didn't rise");
         } else {

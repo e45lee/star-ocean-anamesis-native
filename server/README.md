@@ -53,8 +53,9 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
   player-visible (c) / (d) rules are also listed in its "Register of (c) and (d) rules".
 - **Evidence is never deleted:** labels, client symbols, addresses, offsets, master table names,
   test-data provenance and `380-ok` markers move with their code.
-- **Say what and why, not who.** No new "agent X" notes in code (`git log -S` finds the author;
-  docs/history/ keeps the narrative). Existing ones are rewritten by each domain's cleanup step.
+- **Say what and why, not who.** No "agent X" notes in code (`git log -S` finds the author;
+  docs/history/ keeps the narrative): describe the rule and its evidence instead. Enforced
+  (`tools/check_server_docs.sh`: 0 since R19).
 - **Remove what describes code that no longer exists** (canned files, removed options), and say so
   in the commit message.
 - **Link the docs** by section: `docs/server-rules.md "Section title"` (the start of a heading) or,
@@ -69,8 +70,14 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
   formats, `--check` lists what isn't formatted. It needs clang-format 18 (the system one; set
   `CLANG_FORMAT` for another binary). The Ninja cipher tables and the generated decoder table are
   left alone (`server/.clang-format-ignore`).
-- **Checks:** `tools/check_server_docs.sh [--evidence REV]` (links, the index, READMEs, the
-  evidence against REV, the log lines, handler doc blocks; report-only except lost evidence).
+- **Checks (enforced since R19; T0's `server-docs` and `server-format`, tests/TIERS.md):**
+  `tools/check_server_docs.sh [--evidence REV]` fails on any finding: a handler without the 2.5
+  block (with a label, or `Rules: none (transport)`), a hook or an `include/soaserver/` function
+  without a doc comment (`tools/server_doc_coverage.py`), a broken docs link, a stale API-INDEX.md
+  or errors.h, an "agent" note, a missing server/ path or README, evidence lost against REV (T0
+  passes `--evidence` the parent; a commit that deletes labelled code says so with a line starting
+  `Evidence removed:` in its message). `tools/format_server.sh --check` fails on any unformatted
+  file. `--report` prints the findings without failing (lost evidence and log lines still fail).
 
 ## API
 

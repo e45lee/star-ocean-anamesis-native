@@ -249,8 +249,14 @@ def dump_layouts(header, ns):
         raise RuntimeError("clang++ not found (export-types reads clang's record layouts)")
     with open(header) as f:
         src = re.sub(r"//[^\n]*|/\*.*?\*/", "", f.read(), flags=re.S)
-    names = sorted(set(re.findall(r"^\s*(?:struct|class|union)\s+(?:alignas\([^)]*\)\s+)?([A-Za-z_]\w*)\s*(?:final\s*)?[:{]",
-                                  src, re.M)))
+    names = set(re.findall(r"^\s*(?:struct|class|union)\s+(?:alignas\([^)]*\)\s+)?([A-Za-z_]\w*)\s*(?:final\s*)?[:{]",
+                           src, re.M))
+    # Class templates have no layout of their own: their instantiations do. A namespace-scope alias
+    # `using TArrayU32 = TArray<u32>;` instantiates one; it is exported under clang's name for it
+    # ("TArray<unsigned int>"; parse_layouts), so a header names the instantiations Ghidra should get.
+    names -= set(re.findall(r"template\s*<[^{};]*?>\s*(?:struct|class|union)\s+([A-Za-z_]\w*)", src))
+    names |= set(re.findall(r"^using\s+([A-Za-z_]\w*)\s*=\s*[^;]*<[^;]*;", src, re.M))
+    names = sorted(names)
     with tempfile.NamedTemporaryFile("w", suffix=".cpp", delete=False) as f:
         f.write(f'#include "{os.path.abspath(header)}"\n')
         for n in names:
@@ -279,9 +285,10 @@ def parse_layouts(text, ns):
         m = FIELD_RE.match(line)
         if m and cur is None:
             decl = m.group(5)
-            mm = re.match(r"(?:struct|class|union) (\S+)(?: \(empty\))?$", decl)
-            if mm and m.group(1) == "0" and mm.group(1).startswith(ns + "::") and "::" not in mm.group(1)[len(ns) + 2:]:
-                cur = {"name": mm.group(1)[len(ns) + 2:], "union": decl.startswith("union"), "fields": []}
+            mm = re.match(r"(?:struct|class|union) (.+?)(?: \(empty\))?$", decl)
+            rest = mm.group(1)[len(ns) + 2:] if mm and mm.group(1).startswith(ns + "::") else None
+            if rest is not None and m.group(1) == "0" and "::" not in re.sub(r"<.*>", "", rest):
+                cur = {"name": short_type(rest, ns), "union": decl.startswith("union"), "fields": []}
                 depth1 = len(m.group(4)) + 2
                 structs.append(cur)
             else:
@@ -305,9 +312,10 @@ def parse_layouts(text, ns):
         if vm:
             cur["fields"].append({"offset": off, "name": "vtable", "type": {"kind": "ptr", "to": None}})
             continue
-        bm = re.match(r"(?:struct|class) (\S+) \((?:primary |virtual )?base\)$", decl)
+        bm = re.match(r"(?:struct|class) (.+?) \((?:primary |virtual )?base\)$", decl)
         if bm:
-            base = bm.group(1).rsplit("::", 1)[-1]
+            base = short_type(bm.group(1), ns)
+            base = base if "<" in base else base.rsplit("::", 1)[-1]
             cur["fields"].append({"offset": off, "name": "base_" + base, "type": {"kind": "struct", "name": base}})
             continue
         tm = re.match(r"(.*?)\s*([A-Za-z_]\w*)$", decl)
@@ -317,7 +325,13 @@ def parse_layouts(text, ns):
     return [s for s in structs if "size" in s]
 
 
+def short_type(name, ns):
+    """A record name without this subsystem's namespace, also inside template arguments."""
+    return re.sub(r"\b(?:struct|class|union|enum) ", "", name.replace(ns + "::", ""))
+
+
 def type_of(ctype, ns, known):
+    ctype = short_type(ctype, ns)
     ctype = re.sub(r"\b(const|volatile|struct|class|union|enum)\b", "", ctype).strip()
     ctype = re.sub(r"\s+", " ", ctype)
     am = re.match(r"^(.*)\[(\d+)\]$", ctype)

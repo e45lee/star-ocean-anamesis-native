@@ -22,8 +22,12 @@ namespace soa::server {
 std::string real_seed_save() { return find_repo_file("data/saves/seed/Game.xml"); }
 
 // (d) seed defaults, labelled in docs/server-rules.md#seed.
+std::string seed_source(const std::string& explicit_seed) {
+    return first_existing({explicit_seed, config().seed, real_seed_save(), config().game_xml});
+}
+
 void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
-    std::string seedp = first_existing({explicit_seed, config().seed, real_seed_save(), config().game_xml});
+    std::string seedp = seed_source(explicit_seed);
     auto kv = read_kvs(seedp);
     LOGI("server", "seeding from %s (%zu keys)", seedp.empty() ? "(nothing)" : seedp.c_str(), kv.size());
     // (d) The local player's search id is always the sanitized kLocalPlayerId, never the save's

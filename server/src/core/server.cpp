@@ -74,7 +74,13 @@ bool Server::open_state(const std::string& path, u64 seed_rng, const std::string
     rng.seed(seed_rng);
     // --new-player (the entry flow): start without a player, so
     // the client's Login gets "no account" and it runs the new-player flow (CreatePlayer).
-    if (st.one("select count(*) from player", {}) == 0 && !new_player_mode()) {
+    // (d) With no save to seed from (a packaged build ships none: docs/server-rules.md#seed), a new
+    // state starts the same way: a fresh account through the client's own new-player flow, rather
+    // than a finished-tutorial player with no characters.
+    const bool no_seed = seed_source(seed_save).empty();
+    if (no_seed && st.one("select count(*) from player", {}) == 0 && !new_player_mode())
+        LOGI("server", "no seed save (--seed, data/saves/seed/Game.xml, --game-xml): starting a fresh account (the new-player flow)");
+    if (st.one("select count(*) from player", {}) == 0 && !new_player_mode() && !no_seed) {
         RequestContext rc = new_request();
         ext::Ctx ctx = make_ctx(rc);
         // one transaction: a seed is all there or not at all (PLAN-schema S1)

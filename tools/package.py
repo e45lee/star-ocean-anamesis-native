@@ -21,8 +21,6 @@ we link: the vcpkg ports' copyright files, dynarmic and the externals it links, 
                              game's text: gacha.name (master_text titles) and rule.text (our notes,
                              quoting banner text) are emptied here; the server takes the titles from
                              the user's master at run time (gacha_pools::name_from_master)
-  data/saves/seed/Game.xml   the server's default seed save (a sanitized real 3.7.0 player:
-                             data/saves/README.md; BAS:PlayerID = LOCAL00001)
   standin-assets/...         our made-up stand-in images (tools/make_standin_banners.py)
 
 No game file goes in: not the APK / XAPK (380-ok: excluded), the download, a master DB (data/basmaster-*.sqlite3 are
@@ -66,8 +64,9 @@ PROGRAMS = {
     "viewer": [("emulator-viewer", "soa-viewer")],
 }
 KINDS = ["port", "emulator", "viewer"]
-# The packages whose programs run a local server: they get our data (the gacha pools, the seed
-# save, the stand-ins).
+# The packages whose programs run a local server: they get our data (the gacha pools, the
+# stand-ins). No seed save (the user, 2026-10-04): data/saves/seed/Game.xml is a real player's,
+# sanitized; without one a new local server starts a fresh account (docs/server-rules.md#seed).
 WITH_DATA = {"port", "emulator"}
 
 # The allow-list: a packaged file's path (inside the top folder) must match one of these.
@@ -79,7 +78,6 @@ ALLOW = {
 ALLOW_COMMON = ["README.txt", "LICENSE.txt", "THIRD-PARTY-NOTICES.txt", "BUILD-INFO.txt", "game/PUT-GAME-FILES-HERE.txt"]
 ALLOW_DATA = [
     "data/gacha_pools.sqlite3",
-    "data/saves/seed/Game.xml",
     "standin-assets/Image/etc2/*.aif",
 ]
 ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
@@ -340,9 +338,8 @@ def stage_package(plat, kind, version, work, dbg_dir):
             if f.endswith(".sh"):
                 os.chmod(os.path.join(root, f), 0o755)
     if kind in WITH_DATA:
-        os.makedirs(os.path.join(root, "data", "saves", "seed"))
+        os.makedirs(os.path.join(root, "data"))
         clean_pools(os.path.join(ROOT, "data", "gacha_pools.sqlite3"), os.path.join(root, "data", "gacha_pools.sqlite3"))
-        shutil.copyfile(os.path.join(ROOT, "data", "saves", "seed", "Game.xml"), os.path.join(root, "data", "saves", "seed", "Game.xml"))
         for rel in git("ls-files", "standin-assets").splitlines():
             os.makedirs(os.path.join(root, os.path.dirname(rel)), exist_ok=True)
             shutil.copyfile(os.path.join(ROOT, rel), os.path.join(root, rel))

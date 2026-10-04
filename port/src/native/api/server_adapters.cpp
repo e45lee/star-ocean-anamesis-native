@@ -79,7 +79,7 @@ void config_from_options(const std::string& data_dir) {
     c.fail = o.fail;
     c.surprise = o.surprise;
     c.repo_roots = repo_roots();
-    c.data_root = data_dir;  // vfs_init's root (the campaign's server_campaign.txt; the CDN's scratch dir)
+    c.data_root = data_dir;  // vfs_init's root (the CDN's scratch dir; an old server_campaign.txt, imported once)
     // The CDN's source (server_cdn.cpp, --server inproc): the client's download tree and stand-ins,
     // as soa-server's --download-dir / --standin-assets.
     const ClientOptions& cl = options().client;

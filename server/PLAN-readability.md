@@ -971,7 +971,7 @@ Gate for each: RG1–RG4, RG6, RG8, RG10, RG11 and the sessions listed; RG5 once
   - UpdateHome with an unowned or 0 uid returns an empty body ("not handled": the host's fallback answers) rather than a refusal with an error code (api/player/home.cpp; found in R10).
 - **The wire format, response keys and the client's names.** They are fixed by the 3.7.0 client. Only internal names change.
 - **The state schema and migrations.** That is PLAN-schema's scope. This plan only places its steps.
-- **`server_campaign.txt`** (the campaign's progress in a text file, 1.2). This plan moves the campaign onto `Value` and the common registry (R6h, R18) but keeps its file. Folding it into the state DB is a schema change, proposed to PLAN-schema as a follow-up (an S12: `campaign_clear`, `campaign_last` tables, migrated from the file once).
+- **`server_campaign.txt`** (the campaign's progress in a text file, 1.2). This plan moves the campaign onto `Value` and the common registry (R6h, R18) but keeps its file. Folding it into the state DB is a schema change, proposed to PLAN-schema as a follow-up (an S12: `campaign_clear`, `campaign_last` tables, migrated from the file once). **Done (PLAN-schema S12, schema version 11):** the two tables, the file imported by step 11 and renamed `.migrated`; the campaign reads and writes the DB (`api/campaign/progress.cpp`).
 - **The `net/` cipher implementations** (`ninja_*`): verified by 700 vectors, data-like. They move to `net/ninja/` and get a README, nothing else.
 - **Multi-player, performance, an ORM or query builder** instead of SQL strings. The SQL stays readable SQL.
 - **Reorganising docs/api.md** (it is generated in part by `tools/api_wire.py` and keyed by API already). Its "Server:" lines will point at API-INDEX.md.

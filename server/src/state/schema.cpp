@@ -10,7 +10,9 @@
 #include "state/schema.h"
 
 #include <cerrno>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <iterator>
 #include <map>
 #include <optional>
@@ -1777,6 +1779,64 @@ bool rebuild_modules(sqlite3* db, sqlite3*) {
     return ok;
 }
 
+// ---- step 11: the story campaign's progress (PLAN-schema S12) ------------------------------
+//
+// Until version 11 the campaign (api/campaign/progress.cpp) kept its progress in a text file of
+// the data dir, <data>/server_campaign.txt: "clear <mission id>" per cleared mission and
+// "last <mission id>" for the last one played. Two tables hold it now:
+//   campaign_clear: one row per cleared mission (a master_mission or master_world_map_mission id:
+//     a master reference, state::check's, not a foreign key);
+//   campaign_last: the last mission played (one row, id 1; no row: none), a cleared mission:
+//     mission_id -> campaign_clear ON DELETE CASCADE (the last play goes with its clear; a
+//     clear is written before it, clear_mission's order).
+const char* const kCampaign[] = {
+    "create table campaign_clear (mission_id integer primary key) strict",
+    "create table campaign_last (id integer primary key check (id = 1), "
+    "mission_id integer not null references campaign_clear(mission_id) on delete cascade) strict",
+};
+
+// Step 11's import: the data dir's server_campaign.txt, read as the campaign read it (the same
+// fscanf loop: it stops at the first line that isn't "<word> <number>"; a number is cut to 32
+// bits; a repeated clear counts once; the last "last" line wins; "last 0" is none). Unknown
+// mission ids are kept (state::check reports them; the master isn't used). A "last" that isn't
+// among the clears (clear_mission records the clear first, so only an edited file has one) is
+// dropped (LOGW). No file: nothing (a state that never played the campaign, or a new data dir).
+bool import_campaign(sqlite3* db, const std::string& data_dir) {
+    std::string path = data_dir + "/" + kCampaignFile;
+    FILE* f = fopen(path.c_str(), "r");
+    if (!f) return true;
+    std::set<uint32_t> cleared;
+    uint32_t last = 0;
+    char word[32];
+    unsigned long value;
+    while (fscanf(f, "%31s %lu", word, &value) == 2) {
+        if (!strcmp(word, "clear")) cleared.insert((uint32_t)value);
+        else if (!strcmp(word, "last")) last = (uint32_t)value;
+    }
+    fclose(f);
+    bool ok = true;
+    for (uint32_t id : cleared) ok = ok && run(db, "insert into campaign_clear (mission_id) values (?)", {Bound::integer(id)});
+    if (last && !cleared.count(last)) {
+        LOGW("server", "migrate v11: campaign_last: the last play %u isn't a cleared mission: dropped", last);
+        last = 0;
+    }
+    if (last) ok = ok && run(db, "insert into campaign_last (id, mission_id) values (1, ?)", {Bound::integer(last)});
+    LOGI("server", "migrate v11: %s: %zu cleared missions%s imported", path.c_str(), cleared.size(), last ? " and the last play" : "");
+    return ok;
+}
+
+// After step 11's commit: the imported file becomes <file>.migrated (kept: with the .bak-v10 copy
+// of the state it is the way back to an older build); a stale file is never imported twice.
+void retire_campaign_file(const std::string& data_dir) {
+    std::string path = data_dir + "/" + kCampaignFile, to = data_dir + "/" + kCampaignFileMigrated;
+    if (FILE* f = fopen(path.c_str(), "r")) fclose(f);
+    else return;
+    if (rename(path.c_str(), to.c_str()) == 0) LOGI("server", "migrate v11: %s imported into the state DB, kept as %s", path.c_str(), to.c_str());
+    else
+        LOGW("server", "migrate v11: %s imported into the state DB, but it can't be renamed to %s (it is ignored from now on)", path.c_str(),
+             to.c_str());
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1821,6 +1881,12 @@ const std::vector<Step>& steps() {
          "the module tables: rebuilt STRICT with their foreign keys and checks, the 0 sentinels NULL (PLAN-schema S10)",
          {std::begin(kModules), std::end(kModules)},
          rebuild_modules},
+        {11,
+         "the story campaign's progress: campaign_clear and campaign_last, imported from the data dir's server_campaign.txt (PLAN-schema S12)",
+         {std::begin(kCampaign), std::end(kCampaign)},
+         nullptr,
+         import_campaign,
+         retire_campaign_file},
     };
     return s;
 }

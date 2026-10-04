@@ -90,10 +90,22 @@ primitives, and the shadow replay that does).
 
 ## Measurements
 
-The login and battle flows (REBUILD-QUEUE.md's scripts, `SOA_PROFILE`), before (main's binary) and
-after, run side by side: see the commit / branch report for the numbers. Sync's guest self time
-falls to the functions left guest (GPUSync, the getters without a trampoline): from 12.4% / 8.0% of
-the busy samples (login / battle) to under 0.1%.
+The login and battle flows (REBUILD-QUEUE.md's scripts, `SOA_PROFILE` at 1000 Hz), main's binary
+(before) and this branch (after) run side by side on the same machine load, 2026-10-04:
+
+| Flow | Busy samples before -> after | sync guest self before -> after | Guest JIT | Native | HLE working |
+|---|---|---|---|---|---|
+| login | 48,605 -> 40,832 (-16.0%) | 4,851 (10.0%) -> 32 (0.08%) | 39,262 -> 32,303 | 659 -> 3,829 | 8,681 -> 4,694 |
+| battle | 115,771 -> 108,888 (-5.9%) | 7,629 (6.6%) -> 43 (0.04%) | 94,290 -> 87,053 | 900 -> 9,427 | 20,566 -> 12,396 |
+
+`CMutex::Lock / Unlock` (79% of sync's guest time, mostly the memory subsystem's fixed-length
+allocators) cost 42 + 42 native samples in the battle run instead of ~6,000 guest ones. The native
+column grows because the host calls the guest made through HLE thunks now run inside the natives:
+`Event::Set`'s `pthread_cond_signal` (a futex wake, ~6,700 samples: the guest's
+`[hle]pthread_cond_signal` was 6,011) and `Semaphore::Signal`'s `sem_post`. What's left of sync's
+guest time: `GPUSync` (kernel's) and the getters without a trampoline. Frame rate: no measurable change
+(both runs at the 60 fps cap in steady state; the 10-second `I/perf` samples in loading and on a
+shared machine are too noisy to show more).
 
 ## Dependencies
 

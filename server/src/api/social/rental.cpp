@@ -84,6 +84,8 @@ const Value* roster_entry(const Value& roster, CharacterUid uid) {
 // master ids and levels (InitializeRental reads the weapon / accessory master item ids).
 Value follow_person_info(Ctx& ctx, const Value& character, u32 lender_player_id) {
     Value person = character;
+    // not the player's NEW badge (docs/server-rules.md#new-badges): a lender's character is never new
+    std::erase_if(person.map, [](const std::pair<std::string, Value>& kv) { return kv.first == "is_new"; });
     u64 uid = field(character, "id") ? field(character, "id")->u : 0;
     person["id"] = rental::id_of(CharacterUid(uid));
     person["player_id"] = lender_player_id;

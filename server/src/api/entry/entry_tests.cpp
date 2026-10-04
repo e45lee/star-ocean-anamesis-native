@@ -8,6 +8,8 @@
 
 #include "api/entry/entry.h"
 #include "soaserver/config.h"
+#include "soaserver/ext.h"
+#include "soaserver/msgpack.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
 
@@ -61,6 +63,31 @@ NATIVE_TEST("entry/create-player-references") {
     int fk_rows = 0;
     sv.st.q("pragma foreign_key_check", {}, [&](const Row&) { fk_rows++; });
     t.expect_eq(fk_rows, 0, "foreign_key_check");
+}
+
+// SendErrorLog and CbtCertification (docs/server-rules.md#client-reports): answered, nothing stored.
+NATIVE_TEST("entry/client-reports") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext request = sv.new_request();
+    ext::Ctx ctx = sv.make_ctx(request);
+    const int64_t coins = sv.st.one("select free_coin from player", {});
+    for (const char* m : {"SendErrorLog", "CbtCertification"}) {
+        const ext::Handler* h = ext::find(m);
+        if (!h) {
+            t.fail("%s: no handler", m);
+            continue;
+        }
+        Request r;
+        r.method = m;
+        r.strs = {"text"};
+        std::vector<u8> b = (*h)(ctx, r);
+        Value v = b.empty() ? Value() : mp_decode(b);
+        const Value* d = v.find("data");
+        t.expect_eq(d && d->find("Time") != nullptr, true, (std::string(m) + ": answered with data.Time").c_str());
+    }
+    t.expect_eq(sv.st.one("select free_coin from player", {}), coins, "nothing changed");
 }
 
 }  // namespace

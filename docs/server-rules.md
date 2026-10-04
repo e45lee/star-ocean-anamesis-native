@@ -232,6 +232,13 @@ From the register before R20 (with the area and how to check):
 ## Entry flow: login, new player, tutorial
 The APIs the 3.7.0 login and tutorial code issues; the client runs that code unchanged. Code: `server/src/api/entry/entry.cpp`.
 
+<a id="client-reports"></a>
+### The client's reports: `SendErrorLog`, `CbtCertification`
+Code: `server/src/api/entry/entry.cpp`.
+- **`SendErrorLog(text)`** (the coin shop's and the direct item shop's payment error report, `CCoinShop::SendErrorLog` / `CDirectItemShop::SendErrorLog`): logged as a warning, `SendErrorLog: <text>`; nothing stored; answered `{Time}`. **(b)** `OnSendErrorLogRes` (@014cd0e0) reads nothing back; **(d)** the log is the only place a local server can show it.
+- **`CbtCertification(code)`** (the closed beta's certification code, `CClosedBetaDialog::ToRelease`): any code is accepted, nothing stored; answered with the player state. **(a)** `master_global.cbt_end` 2016/11/28: the closed beta is over; **(d)** that any code passes. Before, the in-process route answered it with the canned `update_home.msgp`.
+- Tests: the `profile` replay corpus (38, 39).
+
 <a id="session-and-login"></a>
 ### Session and login
 - **`LoggedIn`** is false until a `Login` / `SimpleLogin` succeeds. **(b)**

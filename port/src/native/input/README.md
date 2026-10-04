@@ -35,17 +35,48 @@ accessors and with the decompile's arithmetic.
 
 ## Natives
 
+7 bound (`soa --list-native | grep input:`), the hottest input functions: the locked methods the game
+thread calls every frame and CPad::Merge. Their critical section is sync's
+`FastCriticalSection::Enter` / `Leave` on the guest's own words, so the guest code that still takes the
+same locks (the PeripheralManager thread's `GetStatus` / `GetDeviceData` / `UpdateKeyStatus`, `Release`)
+and these natives exclude each other. Live check: `soa --live-check input[:every=N][:out=FILE]` (default
+every=16; `input_check.h`: the guest original on a shadow of the object as the native saw it under the
+lock). Result (2026-10-04, every=4, the login and battle flows): 29,000 checks, 0 mismatches, 0 races; the
+scripted taps' pacing unchanged (login 9 / battle 14 taps released after a median 4 frames, 81 ms; no late steps, as on main).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `Aska::Pad::SetAnalogAsDigital` / `SetRepeatThreshold` / `SetRepeatInterval` | `input_pad.cpp` | `input/pad-setters` (private pads from the guest's `Pad(short)`, edge and random values) | shadow (the pad's bytes) |
+| `Aska::Pad::Flip` (vtable slot 10 `ResetStatus` first, then the swap under the lock) | `input_pad.cpp` | `input/pad-flip` (random double-buffered keys, the guest's `Pad::ResetStatus`) | shadow |
+| `Framework::CPad::Merge` | `input_pad.cpp` | `input/pad-merge` (a test hook on Merge: on the game thread, the singleton's units and the active pad poked with random / edge masks, analog values, NaN / ±0 / inf floats, triggers) | the guest on a copy of `this` with m_merged poisoned |
+| `Aska::TouchPanel::CopyMessages` (m_criGlobal, then the panel's lock) | `input_touch.cpp` | `input/touch-copy-messages` (private panels, 0..64 random messages) | shadow + the copied messages |
+| `Aska::TouchPanel::ResetStatus` | `input_touch.cpp` | `input/touch-copy-messages` | shadow |
+
+Not bound: `TouchPanel::GetDeviceData` (83 samples; the system queue -> TouchReport conversion on the
+peripheral thread, with the frame-buffer scale: kernel's / render's Global state), `CPadReader::Run`
+(53; an Aska::Task: kernel's), `Pad::GetStatus` / `UpdateKeyStatus` / `UpdateKeyRepeat` (36; the pad is a
+stub on Android: zeros), the gesture recogniser (`UpdateGesture`, `ResetGestureParam`, the Get*
+accessors: small, and their inner parameter fields aren't typed yet), `CPad::CUnit::Progress` (14; it
+calls the three setters, now native). `Global::GetActivePad` / `GetPeripheral` and the TSingletons are
+read directly (`PeripheralManager::Instance`, `CPad::Instance`, `CKeyboard::Instance`).
+
+## Measurements
+
+SOA_PROFILE at 1000 Hz over the login and battle flows, main's binary (before) and this branch (after),
+2026-10-04 on a shared machine: input's guest self time 1,566 samples (1.3% of 124,147 busy) -> 665 (0.5% of
+132,289); the seven natives' own 1,096 -> 0 (CopyMessages 240, Flip 179, SetRepeatThreshold 143,
+SetRepeatInterval 143, SetAnalogAsDigital 131, ResetStatus 118, Merge 62). What's left: GetDeviceData,
+CPadReader::Run, the peripherals' GetStatus, the gestures. The scripted taps: unchanged pacing on the host GPU
+(above) and on llvmpipe (a software-GL battle session: 17 taps, median 3 frames / 82 ms, no late steps).
 
 ## Dependencies
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):
-- `sync` (1,688 samples): Aska::FastCriticalSection (0x90) at BasePeripheral + 0x08 guards every
-  peripheral's state, Aska::Thread (0x10) at PeripheralManager + 0x08, Framework::CMutex (0xb0) at
-  CPad + 0x10. Opaque bytes here (`m_cs`, `m_thread`, `m_mutex`); swap in sync's classes once
-  port/n-sync is merged. Most of the input "self" time is that critical section inlined (the
-  LDAXR / STLXR spin in Pad::SetAnalogAsDigital / SetRepeat*, TouchPanel::CopyMessages, ResetStatus).
+- `sync` (1,688 samples): sync_layout.h's classes embedded: Aska::FastCriticalSection (0x90) at
+  BasePeripheral + 0x08 guards every peripheral's state, Aska::Thread (0x10) at PeripheralManager + 0x08,
+  Framework::CMutex (0xb0) at CPad + 0x10. Most of the input "self" time was that critical section
+  inlined (the LDAXR / STLXR spin in Pad::SetAnalogAsDigital / SetRepeat*, TouchPanel::CopyMessages,
+  ResetStatus); the natives call `FastCriticalSection::Enter` / `Leave`.
 - `kernel` (401 samples, same level): CPadReader is an Aska::Task (0x28, its fields opaque here);
   Aska::Global::Get/Register*Peripheral, GetActivePad, m_pVSync (UpdateKeyRepeat's frame count),
   m_pFrameBuffer (TouchPanel's pixel scale), GetCPUTime: kernel's Aska::Global.

@@ -11,8 +11,8 @@ namespace soa::server::app {
 //   OUT/<n>-<Method>.msgp   each reply body, as the library answered it (before the wire's envelope);
 //   OUT/replies.txt         the same bodies as text, one request per block (for reading a diff);
 //   OUT/errors.txt          "<n> <Method> <code>" per request (0 accepted, "not-handled" no handler);
-//   OUT/state.sql           the end state: every table's schema and rows (sorted), then the side
-//                           files of the data dir (server_campaign.txt);
+//   OUT/state.sql           the end state: every table's schema and rows (sorted; the campaign's
+//                           progress too since PLAN-schema S12: no side file is left);
 //   OUT/server.log          the server's log lines.
 // The server options (the master, the seed, --seed-rng, --clock, the modules' switches) must
 // already be in config(), as the corpus's DIR/options lists them. The state DB and the data dir

@@ -44,6 +44,8 @@ const std::vector<MasterRef>& master_refs() {
         {"wboss", "boss_id", "master_world_boss", "id", false},
         {"event_rank_score", "ranking_id", "master_event_ranking", "id", false},
         {"event_rank_received", "group_id", "master_event_ranking_group", "id", false},
+        // the story campaign's clears (PLAN-schema S12): Episode 1's missions and the world map's
+        {"campaign_clear", "mission_id", "master_mission|master_world_map_mission", "id", false},
     };
     return refs;
 }

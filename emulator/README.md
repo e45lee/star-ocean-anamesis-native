@@ -248,7 +248,7 @@ The title runs at 60 fps.
 The same seeded flow both ways, then the two server databases compared (agent `e6-end2end`, 2026-10-01):
 - **Port:** `port/scripts/restore_session.sh build/port/soa OUT TMP --campaign-seed mf01_001` (login, popups, mf01_001 through the `mission:` / `phase:` route, the results, the 10-draw of the first recommended banner, home; `--seed-rng 1`).
 - **Emulator:** `emulator/scripts/emulator_session.sh` (the same steps through the real UI: ミッション → planet Mere → 1-05, the same banner; `--seed-rng 1 --campaign-seed mf01_001`).
-- **Compared:** `tools/server_state.py` of both (`state-3-after-gacha.txt`), and every table of both `server.sqlite3` row by row with the time columns masked, plus `server_campaign.txt`.
+- **Compared:** `tools/server_state.py` of both (`state-3-after-gacha.txt`), and every table of both `server.sqlite3` row by row with the time columns masked, plus `server_campaign.txt` (the campaign's progress then; in the state DB since PLAN-schema S12).
 
 **Result: the same state.** `server_state.py`'s summaries are identical: rank 87 with EXP 1072, FOL 1,675,965, stamina 132, coins 300,000 → 297,500, party 1's four members at EXP 150, the drops (`item_W99St_01`, `item_W02Ro_04`, `item_W17Bo_10`, three chip stacks), mf01_001 cleared once, mc01_030 unlocked, the ten draws (same roles, same ranks, same uids), four presents. Every table matches row for row except:
 

@@ -61,9 +61,9 @@ Answered by the library: 106. Covered: 92. Only refused or not handled: 12. Only
 - `GetGachaInData` (server/src/api/gacha/gacha.cpp): economy, seeded
 - `GetGachaRate` (server/src/api/gacha/rates.cpp): economy
 - `GetGearInfo` (server/src/api/items/gear.cpp): items-party
-- `GetMissionList` (server/src/api/missions/play_state.cpp): missions, seeded, tutorial
+- `GetMissionList` (server/src/api/missions/play_state.cpp): campaign, missions, seeded, tutorial
 - `GetPlayMission` (server/src/api/missions/play_state.cpp): missions, tower
-- `GetPlayer` (server/src/api/player/player_info.cpp): deepspace, economy, event-extras, growth, hammers, items-party, missions, profile, sphere211, tower
+- `GetPlayer` (server/src/api/player/player_info.cpp): campaign, deepspace, economy, event-extras, growth, hammers, items-party, missions, profile, sphere211, tower
 - `GetPlayerDetailInfo` (server/src/api/events/ranking.cpp): event-extras
 - `GetPresent` (server/src/api/presents/presents.cpp): profile
 - `GetPresentArray` (server/src/api/presents/presents.cpp): profile
@@ -80,12 +80,12 @@ Answered by the library: 106. Covered: 92. Only refused or not handled: 12. Only
 - `LimitBreakCharacter_Legacy` (server/src/api/growth/growth.cpp): growth
 - `LockItem` (server/src/api/items/items.cpp): items-party
 - `LockItemArray` (server/src/api/items/items.cpp): profile
-- `Login` (server/src/api/entry/entry.cpp): deepspace, economy, event, event-extras, growth, hammers, items-party, missions, profile, seeded, sphere211, tower, tutorial
-- `MissionEnd` (server/src/api/missions/mission_end.cpp): event, event-extras, missions, seeded, tower, tutorial
-- `MissionFailed` (server/src/api/missions/play_state.cpp): missions, tower
+- `Login` (server/src/api/entry/entry.cpp): campaign, deepspace, economy, event, event-extras, growth, hammers, items-party, missions, profile, seeded, sphere211, tower, tutorial
+- `MissionEnd` (server/src/api/missions/mission_end.cpp): campaign, event, event-extras, missions, seeded, tower, tutorial
+- `MissionFailed` (server/src/api/missions/play_state.cpp): campaign, missions, tower
 - `MissionRestart` (server/src/api/missions/play_state.cpp): missions
-- `MissionStart` (server/src/api/missions/mission_start.cpp): event, event-extras, growth, missions, seeded, tower, tutorial
-- `MissionTalk` (server/src/api/missions/play_state.cpp): event, missions, tutorial
+- `MissionStart` (server/src/api/missions/mission_start.cpp): campaign, event, event-extras, growth, missions, seeded, tower, tutorial
+- `MissionTalk` (server/src/api/missions/play_state.cpp): campaign, event, missions, tutorial
 - `MultiMissionRestart` (server/src/api/missions/play_state.cpp): missions
 - `NoLoginStart` (server/src/api/player/player_info.cpp): event, seeded, tutorial
 - `PresentList` (server/src/api/presents/presents.cpp): profile

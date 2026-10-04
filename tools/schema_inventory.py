@@ -417,6 +417,10 @@ RELS = [
     ("wire_device", "player_id", "player", "id", None, "SET NULL (S10)", "the device's player (NULL: none yet, a new-player state; 0 before S10)"),
     ("player", "support_uid", "roster", "uid", None, "SET NULL (S4)", "Player.support_pc_id (meta support_uid before S3)"),
     ("player", "title_id", "titles", "id", None, "SET NULL (S4)", "Player.title (meta title before S3)"),
+    ("campaign_clear", "mission_id", "m:master_mission|master_world_map_mission", "id", None, "-",
+     "a cleared story mission (server_campaign.txt's clear lines before S12)"),
+    ("campaign_last", "mission_id", "campaign_clear", "mission_id", None, "CASCADE (S12)",
+     "the last story mission played (server_campaign.txt's last line before S12; no row: none)"),
 ]
 
 

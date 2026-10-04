@@ -75,7 +75,7 @@ int user_version(sqlite3* db) {
     return v;
 }
 
-bool open_and_migrate(sqlite3* db, const std::string& path, int target, sqlite3* master) {
+bool open_and_migrate(sqlite3* db, const std::string& path, int target, sqlite3* master, const std::string& data_dir) {
     int version = user_version(db);
     if (version > kSchemaVersion) {
         LOGE("server",
@@ -97,6 +97,7 @@ bool open_and_migrate(sqlite3* db, const std::string& path, int target, sqlite3*
         bool ok = true;
         for (const char* sql : step.sql) ok = ok && exec(db, sql, step.what);
         if (ok && step.fn) ok = step.fn(db, master);
+        if (ok && step.import && !data_dir.empty()) ok = step.import(db, data_dir);
         if (ok) {
             for (const std::string& v : foreign_key_violations(db)) {
                 LOGE("server", "state schema: version %d: foreign key violation: %s", step.version, v.c_str());
@@ -112,6 +113,7 @@ bool open_and_migrate(sqlite3* db, const std::string& path, int target, sqlite3*
             return false;
         }
         version = step.version;
+        if (step.committed && !data_dir.empty()) step.committed(data_dir);
     }
     // every connection, every open, before the first request's transaction
     return exec(db, "pragma foreign_keys = on", "pragma foreign_keys = on");

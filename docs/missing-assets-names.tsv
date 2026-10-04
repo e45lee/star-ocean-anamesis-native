@@ -1,0 +1,492 @@
+# Japanese name (NFKC-normalised master_text, whitespace collapsed)	English (hand-written for docs/missing-assets-3.7.0.md)
+# Read by tools/missing_assets.py --names; takes priority over the Global master's English. Character names follow the
+# Global master / soa_save/names_en.json (the fan wiki); collaboration characters use their own series' English names.
+# Difficulty tiers follow the Global master: 初級 Easy, 中級 Normal, 上級 Hard, 超級 Expert, 獄級 Misery 1, 滅級 Misery 2,
+# 絶級 Misery 3, 覇級 Misery 4; 神級 (JP only) is written "Divine". "(tr.)" marks an uncertain translation.
+# Corrections of the Global master's English (typos / wrong text):
+ラティクス確定ガチャ	Roddick Guaranteed Draw
+SO2発売日記念キャラガチャ(クロードorレナ確定)	SO2 Release Anniversary Character Draw (Claude or Rena guaranteed)
+ピックアップガチャ(エッジ/メリクル)	Edge & Meracle Campaign Draw
+青の経験値素材ミッション	Blue EXP Missions
+EoEイベントボックスガチャ5箱目	EoE Event Box Draw - Box 5
+EoEイベントボックスガチャ6箱目	EoE Event Box Draw - Box 6
+--	(no name)
+# Step-up draws (10 pulls per step, a pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定アイドル2018	Idol 2018 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定メイド3	Maid 3 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定水着2017	Swimsuit 2017 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定水着2018	Swimsuit 2018 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定水着2019	Swimsuit 2019 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定花嫁2017	Bride 2017 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定花嫁2018	Bride 2018 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定花嫁2019	Bride 2019 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定衣装コンテスト2018	Costume Contest 2018 Step-up Draw (pick-up guaranteed at step 10)
+10連10ステップ目PU1体確定衣装コンテスト2019	Costume Contest 2019 Step-up Draw (pick-up guaranteed at step 10)
+復刻2019アニバーサリー/10連10ステップ目PU1体確定	Rerun: 2019 Anniversary Step-up Draw (pick-up guaranteed at step 10)
+復刻SRF/10連10ステップ目PU1体確定	Rerun: SRF Step-up Draw (pick-up guaranteed at step 10)
+復刻xmas2019/10連10ステップ目PU1体確定	Rerun: Xmas 2019 Step-up Draw (pick-up guaranteed at step 10)
+復刻おとぎ世界/10連10ステップ目PU1体確定	Rerun: Fairy-Tale World Step-up Draw (pick-up guaranteed at step 10)
+復刻アイドル2019/10連10ステップ目PU1体確定	Rerun: Idol 2019 Step-up Draw (pick-up guaranteed at step 10)
+復刻バレンタイン2019/10連10ステップ目PU1体確定	Rerun: Valentine 2019 Step-up Draw (pick-up guaranteed at step 10)
+復刻メイド2019/10連10ステップ目PU1体確定	Rerun: Maid 2019 Step-up Draw (pick-up guaranteed at step 10)
+復刻正月2019/10連10ステップ目PU1体確定	Rerun: New Year 2019 Step-up Draw (pick-up guaranteed at step 10)
+復刻狐将/砲甲2020/10連10ステップ目PU1体確定	Rerun: General / Artillery 2020 Step-up Draw (pick-up guaranteed at step 10)
+復刻鬼炎/斬鬼2020/10連10ステップ目PU1体確定	Rerun: Demon Flame / Demon Blade 2020 Step-up Draw (pick-up guaranteed at step 10)
+# Box draws
+181129_アイドルキャラガチャおまけボックスガチャ	Idol Character Draw Bonus Box Draw (2018-11-29)
+1周年レオンイベントボックスガチャ1箱目	1st Anniversary Leon Event Box Draw - Box 1
+1周年レオンイベントボックスガチャ2箱目	1st Anniversary Leon Event Box Draw - Box 2
+1周年レオンイベントボックスガチャ3箱目	1st Anniversary Leon Event Box Draw - Box 3
+1周年レオンイベントボックスガチャ4箱目	1st Anniversary Leon Event Box Draw - Box 4
+2019ハロウィンイベント ようこそ 夢と幻のおとぎ世界へ ボックスガチャ1	Halloween 2019 "Welcome to the Fairy-Tale World of Dreams and Illusions" - Box Draw 1
+2019正月「わたしたちの初詣」ボックスガチャ1	New Year 2019 "Our First Shrine Visit" - Box Draw 1
+2019正月「わたしたちの初詣」ボックスガチャ2	New Year 2019 "Our First Shrine Visit" - Box Draw 2
+2019正月「わたしたちの初詣」ボックスガチャ3	New Year 2019 "Our First Shrine Visit" - Box Draw 3
+2019花嫁イベント ニ重想 -積み重ねた想いの形ーボックスガチャ1	Bride 2019 Event "Twofold Feelings: The Shape of Feelings Piled Up" - Box Draw 1 (tr.)
+2020ギルティギアコラボ2 「分かたれた翼と迅雷の結び手」ボックスガチャ1	Guilty Gear Collab 2 (2020) "Parted Wings and the Thunderbolt's Binder" - Box Draw 1 (tr.)
+End of Eternity ―Letters― ボックスガチャ1箱目	End of Eternity -Letters- - Box Draw 1
+End of Eternity ―Letters― ボックスガチャ2箱目	End of Eternity -Letters- - Box Draw 2
+End of Eternity ―Letters― ボックスガチャ3箱目	End of Eternity -Letters- - Box Draw 3
+End of Eternity ―Letters― ボックスガチャ4箱目	End of Eternity -Letters- - Box Draw 4
+EoEイベントボックスガチャ1箱目	EoE Event Box Draw - Box 1
+EoEイベントボックスガチャ2箱目	EoE Event Box Draw - Box 2
+EoEイベントボックスガチャ3箱目	EoE Event Box Draw - Box 3
+EoEイベントボックスガチャ4箱目	EoE Event Box Draw - Box 4
+Ganbling Satellite~ウサギの逆襲~ ボックスガチャ1箱目	Gambling Satellite ~The Rabbits Strike Back~ - Box Draw 1
+Ganbling Satellite~ウサギの逆襲~ ボックスガチャ2箱目	Gambling Satellite ~The Rabbits Strike Back~ - Box Draw 2
+Ganbling Satellite~ウサギの逆襲~ ボックスガチャ3箱目	Gambling Satellite ~The Rabbits Strike Back~ - Box Draw 3
+Siren’s Lament #02(ペルソナコラボ 後半) ボックスガチャ1	Siren's Lament #02 (Persona Collab, part 2) - Box Draw 1
+Siren’s Lament #1(ペルソナコラボ 前半) ボックスガチャ1	Siren's Lament #1 (Persona Collab, part 1) - Box Draw 1
+VPレザードイベント「慰霊の星の転生者たち」ボックスガチャ1	VP Lezard Event "The Reborn of the Memorial Star" - Box Draw 1 (tr.)
+「SHIMA OCEAN -FAKE JAGA-」(エイプリルフールシマダボックスガチャ)	"SHIMA OCEAN -FAKE JAGA-" (April Fools' Shimada Box Draw)
+「壊れた支配者と囚われの王妃」常夏イベント後編ボックスガチャ1箱目	"The Broken Ruler and the Captive Queen" Summer Event Part 2 - Box Draw 1
+「壊れた支配者と囚われの王妃」常夏イベント後編ボックスガチャ2箱目	"The Broken Ruler and the Captive Queen" Summer Event Part 2 - Box Draw 2
+お掃除、炊事にトラブル発生!? ボックスガチャ1	Trouble with the Cleaning and Cooking!? - Box Draw 1
+オバケとお菓子とお祭りと ボックスガチャ1箱目	Ghosts, Sweets and a Festival - Box Draw 1
+オバケとお菓子とお祭りと ボックスガチャ2箱目	Ghosts, Sweets and a Festival - Box Draw 2
+オバケとお菓子とお祭りと ボックスガチャ3箱目	Ghosts, Sweets and a Festival - Box Draw 3
+カジノダイス【赤】ボックスガチャ	Casino Dice [Red] Box Draw
+クリスマスイベント2019 プレシャス・プレゼンツボックスガチャ1	Christmas Event 2019 "Precious Presents" - Box Draw 1
+サクラ大戦「星海に吹く浪漫の風」ボックスガチャ1	Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 1 (tr.)
+サクラ大戦「星海に吹く浪漫の風」ボックスガチャ2	Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 2 (tr.)
+サクラ大戦「星海に吹く浪漫の風」ボックスガチャ3	Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 3 (tr.)
+サマー・リゾート・スクランブル SIDE:A ボックスガチャ1	Summer Resort Scramble SIDE:A - Box Draw 1
+サマー・リゾート・スクランブル SIDE:B ボックスガチャ1	Summer Resort Scramble SIDE:B - Box Draw 1
+ドタバタ遺跡探索と魅惑の花魁道中 ボックスガチャ1	A Chaotic Ruins Expedition and a Captivating Courtesan Procession - Box Draw 1 (tr.)
+ハートフルしっぽ ボックスガチャ1	Heartful Tails - Box Draw 1
+ハートフルしっぽ ボックスガチャ2	Heartful Tails - Box Draw 2
+ハートフルしっぽ ボックスガチャ3	Heartful Tails - Box Draw 3
+ラジオーシャン 「忘却の聖地ワドラム最終刻」ボックスガチャ1	Radi-Ocean "Wadram, Sanctuary of Oblivion: Final Hour" - Box Draw 1 (tr.)
+ウエディングイベント前編ボックスガチャ	Wedding Event Part 1 Box Draw
+ウエディングイベント後編ボックスガチャ	Wedding Event Part 2 Box Draw
+新サクラ大戦「星海に咲く新たなる花」ボックスガチャ1	Sakura Wars (2019) "A New Flower Blooming in the Sea of Stars" - Box Draw 1 (tr.)
+新サクラ大戦「星海に咲く新たなる花」ボックスガチャ追加1	Sakura Wars (2019) "A New Flower Blooming in the Sea of Stars" - Extra Box Draw 1 (tr.)
+星海幻想曲 ~夢に描いた場所~ボックスガチャ1(テイルズコラボ 前半)	Star Sea Fantasia ~The Place I Dreamed Of~ - Box Draw 1 (Tales Collab, part 1) (tr.)
+星海幻想曲 ~夢は終わらない~ボックスガチャ1(テイルズコラボ 後半)	Star Sea Fantasia ~The Dream Never Ends~ - Box Draw 1 (Tales Collab, part 2) (tr.)
+正義と救命のストラグル! ボックスガチャ1箱目	A Struggle for Justice and Rescue! - Box Draw 1 (tr.)
+正義と救命のストラグル! ボックスガチャ2箱目	A Struggle for Justice and Rescue! - Box Draw 2 (tr.)
+正義と救命のストラグル! ボックスガチャ3箱目	A Struggle for Justice and Rescue! - Box Draw 3 (tr.)
+歪んだ女神と三人の歌姫ボックスガチャ1箱目	The Twisted Goddess and the Three Divas - Box Draw 1
+歪んだ女神と三人の歌姫ボックスガチャ2箱目	The Twisted Goddess and the Three Divas - Box Draw 2
+歪んだ女神と三人の歌姫ボックスガチャ3箱目	The Twisted Goddess and the Three Divas - Box Draw 3
+海神の黙詩 ボックスガチャ1箱目	The Sea God's Silent Poem - Box Draw 1 (tr.)
+海神の黙詩 ボックスガチャ2箱目	The Sea God's Silent Poem - Box Draw 2 (tr.)
+海神の黙詩 ボックスガチャ3箱目	The Sea God's Silent Poem - Box Draw 3 (tr.)
+託した想い、明日への誓い ボックスガチャ1箱目	Entrusted Feelings, a Vow to Tomorrow - Box Draw 1
+託した想い、明日への誓い ボックスガチャ2箱目	Entrusted Feelings, a Vow to Tomorrow - Box Draw 2
+託した想い、明日への誓い ボックスガチャ3箱目	Entrusted Feelings, a Vow to Tomorrow - Box Draw 3
+連邦とクォークの正義ボックスガチャ1箱目	The Federation's and Quark's Justice - Box Draw 1
+連邦とクォークの正義ボックスガチャ2箱目	The Federation's and Quark's Justice - Box Draw 2
+連邦とクォークの正義ボックスガチャ滅級箱	The Federation's and Quark's Justice - Misery 2 Box
+静謐から零れし歯車たちボックスガチャ1(ギルティギアコラボ)	Gears Spilled from the Silence - Box Draw 1 (Guilty Gear Collab) (tr.)
+静謐から零れし歯車たちボックスガチャ2(ギルティギアコラボ)	Gears Spilled from the Silence - Box Draw 2 (Guilty Gear Collab) (tr.)
+静謐から零れし歯車たちボックスガチャ3(ギルティギアコラボ)	Gears Spilled from the Silence - Box Draw 3 (Guilty Gear Collab) (tr.)
+駆け出し技術者と凶つ星 ボックスガチャ1箱目	The Fledgling Engineer and the Ill-Omened Star - Box Draw 1 (tr.)
+駆け出し技術者と凶つ星 ボックスガチャ2箱目	The Fledgling Engineer and the Ill-Omened Star - Box Draw 2 (tr.)
+駆け出し技術者と凶つ星 ボックスガチャ3箱目	The Fledgling Engineer and the Ill-Omened Star - Box Draw 3 (tr.)
+龍と騎士 夢幻の如く(ラジアータコラボ)ボックスガチャ1	Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 1 (tr.)
+龍と騎士 夢幻の如く(ラジアータコラボ)ボックスガチャ2	Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 2 (tr.)
+龍と騎士 夢幻の如く(ラジアータコラボ)ボックスガチャ3	Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 3 (tr.)
+# Events
+2019イラコンイベント	Illustration Contest 2019 Event
+2019メイドイベント第三段	Maid Event 2019, Part 3
+3周年イベント	3rd Anniversary Event
+BASウェルチイベント	BAS Welch Event (tr.)
+BSチサトレオンイベント	BS Chisato & Leon Event (tr.)
+EP3CP3イベントミッション	EP3 Chapter 3 Event Missions
+UDイベント	UD Event (tr.)
+VPヴァルキリーレザードイベント	VP Valkyrie & Lezard Event
+アイドルイベント	Idol Event
+アイドルイベント第二弾	Idol Event, Part 2
+アリーシャルーファスイベント	Alicia & Rufus Event
+エイプリルフール2018	April Fools' 2018
+エイプリルフール2019	April Fools' 2019
+エイプリルフール2020	April Fools' 2020
+エイルマットカーリンイベント	Arumat & Caleen Event
+エリスヨシュアイベント	Erys & Ioshua Event
+カジノイベント	Casino Event
+クリスマス2018イベント	Christmas 2018 Event
+クリスマスイベント2019	Christmas Event 2019
+コロリンピック	Koro-lympics
+スフレノエルイベント	Peppita & Noel Event
+チョコレート・イン・ザ・ヘル	Chocolate in the Hell
+ハロウィン2018イベント	Halloween 2018 Event
+ハロウィン2019(童話イベント)	Halloween 2019 (Fairy-Tale Event)
+バレンタイン2019イベント	Valentine 2019 Event
+フィリア	Philia (tr.)
+メイドソフィア・執事レオン	Maid Sophia & Butler Leon
+ユーインBSオペライベント	Yrian & BS Opera Event (tr.)
+ラジアータコラボ	Radiata Collab
+ヴァルカアンリイベント	Vulcan & Henri Event
+大人ティカ・リカルドイベント	Adult Tika & Ricardo Event
+忘却の聖地ワドラム最終刻	Wadram, Sanctuary of Oblivion: Final Hour (tr.)
+恒常ボーマンイベント	Permanent Bowman Event
+正月&SRFイベント	New Year & SRF Event
+水着イベント2019前半	Swimsuit Event 2019, Part 1
+水着イベント2019後半	Swimsuit Event 2019, Part 2
+灼炎のアシュトンイベント	Blazing Ashton Event
+神級イベント	Divine-tier Event
+花嫁2019イベント	Bride 2019 Event
+花嫁前半	Bride, Part 1
+覇王の挑戦	The Conqueror's Challenge (tr.)
+【180809】水着後半イベント	Swimsuit Event Part 2 (2018-08-09)
+# Campaigns and login bonuses
+2周年カウントダウンログインボーナス	2nd Anniversary Countdown Login Bonus
+3周年記念ログインボーナス	3rd Anniversary Login Bonus
+4周年記念キャンペーンログインボーナス	4th Anniversary Campaign Login Bonus
+600万DL記念ログインボーナス	6M Downloads Login Bonus
+700万ダウンロード記念キャンペーン	7M Downloads Campaign
+800万ダウンロード記念キャンペーン	8M Downloads Campaign
+EP2-Twin Eclipse- カウントダウン	EP2 -Twin Eclipse- Countdown
+EP2-Twin Eclipse- 公開記念	EP2 -Twin Eclipse- Release Celebration
+EP3カウントダウンログインボーナス	EP3 Countdown Login Bonus
+EP3新章記念キャンペーンログインボーナス	EP3 New Chapter Campaign Login Bonus
+P5Rコラボ記念闇ネットログインボーナス	P5R Collab Dark Net Login Bonus (tr.)
+SOAx進撃の巨人コラボ記念キャンペーン	SOA x Attack on Titan Collab Campaign
+VALKYRIE PROFILEコラボ記念ログインボーナス	VALKYRIE PROFILE Collab Login Bonus
+★7リリース記念ログインボーナス	★7 Release Login Bonus
+なつやすみキャンペーン	Summer Vacation Campaign
+イラストコンテスト	Illustration Contest
+ウェディングキャンぺーン	Wedding Campaign
+ウェディングキャンぺーンログインボーナス第1弾	Wedding Campaign Login Bonus 1
+ウェディングキャンぺーンログインボーナス第2弾	Wedding Campaign Login Bonus 2
+オリジナル衣装コンテスト記念キャンペーン	Original Costume Contest Campaign
+ギルティギアコラボ記念キャンペーン	Guilty Gear Collab Campaign
+ゴールデンウィークキャンペーン	Golden Week Campaign
+スプリングキャンペーン	Spring Campaign
+テイルズ オブ ザ レイズコラボ記念	Tales of the Rays Collab Celebration
+バレンタインログインボーナス	Valentine Login Bonus
+新サクラ大戦コラボカウントダウンログインボーナス	Sakura Wars (2019) Collab Countdown Login Bonus
+新サクラ大戦コラボ記念ログインボーナス	Sakura Wars (2019) Collab Login Bonus
+新生活応援ログインボーナス	New Life Support Login Bonus
+残暑をのりきろうキャンペーン	Beat the Late-Summer Heat Campaign
+残暑を乗り切ろうキャンペーン	Beat the Late-Summer Heat Campaign
+渚のマーメイドキャンペーン	Seaside Mermaid Campaign
+銀河連邦UniverseChanceキャンペーンログインボーナス	Galactic Federation Universe Chance Campaign Login Bonus
+食欲の秋キャンペーン	Autumn Appetite Campaign
+# Character draws
+200万DL記念キャラガチャ(1人1回)	2M DL Milestone Draw (1 / person)
+2周年記念1人10回10連無料キャラガチャ	2nd Anniversary Free 10-pull Character Draw (10 per person)
+2周年記念武器ガチャ(10連★5武器1本確定)	2nd Anniversary Weapons Draw (one 5★ weapon guaranteed in a 10-pull)
+2020アニバーサリーPU武器ガチャ	2020 Anniversary Weapons Campaign Draw
+3倍!スターピックアップキャラガチャ	Triple! Star Character Campaign Draw (tr.)
+3周年ヒロインピックアップキャラガチャ	3rd Anniversary Heroine Character Campaign Draw
+3周年ピックアップ武器ガチャ	3rd Anniversary Weapons Campaign Draw
+3周年記念大還元ガチャ	3rd Anniversary Grand Thanksgiving Draw
+400万DL記念キャラガチャ(1人1回)	4M DL Milestone Draw (1 / person)
+4周年記念ガチャ	4th Anniversary Draw
+600万DL記念武器ガチャ(期間中1日1回)	6M DL Milestone Weapons Draw (1 / day while available)
+6月の花嫁ピックアップガチャ(ネル/マリア)	June Bride Campaign Draw (Nel & Maria)
+6月の花嫁ピックアップガチャ(レナ/イヴリーシュ)	June Bride Campaign Draw (Rena & Evelysse)
+CM放送記念★5エース1体確定キャラガチャ(10連のみ、期間中1人1回)	TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)
+CM放送記念キャラガチャ(1人1回)	TV Commercial Celebration Character Draw (1 / person)
+CM放送記念キャラガチャ(毎日1回)	TV Commercial Celebration Character Draw (1 / day)
+CM放送記念武器ガチャ(毎日1回)	TV Commercial Celebration Weapons Draw (1 / day)
+EP2 CHAPTER:10 公開記念キャラガチャ	EP2 Chapter 10 Release Character Draw
+EP2ピックアップキャラガチャ	EP2 Character Campaign Draw
+EP2公開記念ピックアップキャラガチャ	EP2 Release Character Campaign Draw
+EP3新章記念ガチャ	EP3 New Chapter Draw
+GWキャンペーン 1人10回10連無料武器ガチャ	Golden Week Campaign Free 10-pull Weapons Draw (10 per person)
+GWスペシャルピックアップ(1日1回)	Golden Week Special Campaign Draw (1 / day)
+PUキャラガチャ(天宮さくら/東雲初穂/クラリス)	Sakura Amamiya & Hatsuho Shinonome & Clarissa Character Campaign Draw
+PUキャラガチャ(望月あざみ/アナスタシア)	Azami Mochizuki & Anastasia Character Campaign Draw
+SO3メモリアルピックアップキャラガチャ2	SO3 Memorial Character Campaign Draw 2
+SO4HD発表記念エッジorレイミ確定ガチャ(1人1回)	SO4 HD Announcement Draw: Edge or Reimi Guaranteed (1 / person)
+SO4メモリアルピックアップキャラガチャ	SO4 Memorial Character Campaign Draw
+SOAメモリアルピックアップキャラガチャ	SOA Memorial Character Campaign Draw
+VPピックアップ武器ガチャ	VP Weapons Campaign Draw
+※ダミーホームテスト・狼アンリ	(dummy home test) Were-Henri
+★5エース確定キャラガチャ第1弾(10連、期間中1人1回)	5★ Ace Guaranteed Character Draw, Part 1 (10-chain only, 1 / person)
+★5武器1本確定ガチャ(10連、期間中毎日1人1回)	One 5★ Weapon Guaranteed Draw (10-chain, 1 / person / day)
+★5確定キャラガチャ	5★ Guaranteed Character Draw
+【復刻】ピックアップガチャ(カペル/アーヤ/シグムント)	Rerun: Capell & Aya & Sigmund Campaign Draw
+【復刻】ピックアップキャラガチャ 2017ハロウィン	Rerun: Halloween 2017 Character Campaign Draw
+【復刻】ピックアップキャラガチャ 2018ハロウィン	Rerun: Halloween 2018 Character Campaign Draw
+【復刻】ピックアップキャラガチャ メイド	Rerun: Maid Character Campaign Draw
+【復刻】ピックアップキャラガチャ(ナースフィオーレ/ヒーローベルダ)	Rerun: Nurse Fiore & Hero Verda Character Campaign Draw
+【復刻】ピックアップキャラガチャ(レイン/フィーナ)	Rerun: Rain & Fina Character Campaign Draw
+【復刻】ピックアップキャラガチャ(レナス/シルメリア)	Rerun: Lenneth & Silmeria Character Campaign Draw
+【復刻】ピックアップキャラガチャ(兎耳のマリア/兎耳のミラージュ)	Rerun: Bunny Maria & Bunny Mirage Character Campaign Draw
+アシュトン確定ガチャ	Ashton Guaranteed Draw
+アルベル確定ガチャ	Albel Guaranteed Draw
+クロウ確定ガチャ	Crowe Guaranteed Draw
+フィオーレ確定ガチャ	Fiore Guaranteed Draw
+プリシス確定ガチャ	Precis Guaranteed Draw
+マーヴェル確定ガチャ	Mavelle Guaranteed Draw
+ミラージュ確定ガチャ	Mirage Guaranteed Draw
+リリア確定ガチャ	Relia Guaranteed Draw
+連邦レイミ確定ガチャ	Official Reimi Guaranteed Draw
+ウェディングスペシャルキャラガチャ(花嫁ミラージュ/花婿クリフ)	Wedding Special Character Draw (Bride Mirage & Groom Cliff)
+カムバックチケットキャラガチャ	Comeback Ticket Character Draw
+ガールズピックアップ(1日1回)	Girls' Campaign Draw (1 / day)
+ギルティギアコラボピックアップ武器ガチャ	Guilty Gear Collab Weapons Campaign Draw
+クリスマスピックアップ武器ガチャ	Christmas Weapons Campaign Draw
+サマーステップアップキャラガチャ第1弾	Summer Step-up Character Draw, Part 1
+サマーステップアップキャラガチャ第2弾	Summer Step-up Character Draw, Part 2
+スターオーシャン2発売日記念ピックアップキャラガチャ	Star Ocean 2 Release Anniversary Character Campaign Draw
+スターオーシャン3発売日記念ピックアップキャラガチャ	Star Ocean 3 Release Anniversary Character Campaign Draw
+スターオーシャン4発売日記念ピックアップキャラガチャ	Star Ocean 4 Release Anniversary Character Campaign Draw
+スターオーシャン5発売日記念ピックアップキャラガチャ	Star Ocean 5 Release Anniversary Character Campaign Draw
+スターオーシャン発売日記念ピックアップキャラガチャ	Star Ocean Release Anniversary Character Campaign Draw
+ステップ3で★5武器確定ガチャ1(半額10連1500紋章石)	Step 3: 5★ Guaranteed Weapons Draw 1 (half price: 10-chain for 1,500 gems)
+ステップアップキャラガチャ2(10連★5確率1枠12%)	Step Character Campaign Draw 2 (5★ odds 12% for 1 slot of the 10-chain)
+ステップアップキャラガチャ3(10連★5確率1枠18%)	Step Character Campaign Draw 3 (5★ odds 18% for 1 slot of the 10-chain)
+ステップアップシグムントガチャ1(10連2500紋章石)	Step-up Sigmund Draw 1 (10-chain for 2,500 gems)
+ステップアップシグムントガチャ2(10連のみ1枠2%)	Step-up Sigmund Draw 2 (10-chain only, 1 slot 2%)
+ステップアップシグムントガチャ3(10連のみ1枠3%)	Step-up Sigmund Draw 3 (10-chain only, 1 slot 3%)
+スーパーピックアップキャラガチャ(アナスタシア)	Anastasia Super Character Campaign Draw
+スーパーピックアップキャラガチャ(クラリス)	Clarissa Super Character Campaign Draw
+スーパーピックアップキャラガチャ(ジョーカー)	Joker Super Character Campaign Draw
+スーパーピックアップキャラガチャ(ナビ)	Navi (Oracle) Super Character Campaign Draw
+スーパーピックアップキャラガチャ(天宮さくら)	Sakura Amamiya Super Character Campaign Draw
+スーパーピックアップキャラガチャ(望月あざみ)	Azami Mochizuki Super Character Campaign Draw
+スーパーピックアップキャラガチャ(東雲初穂)	Hatsuho Shinonome Super Character Campaign Draw
+スーパーピックアップキャラガチャ(結城 理)	Makoto Yuki Super Character Campaign Draw
+スーパーピックアップキャラガチャ(芳澤かすみ)	Kasumi Yoshizawa Super Character Campaign Draw
+スーパーピックアップキャラガチャ(鏡宮のレナ)	Mirror Palace Rena Super Character Campaign Draw (tr.)
+スーパーピックアップキャラガチャ(鳴上 悠)	Yu Narukami Super Character Campaign Draw
+バレンタインデーピックアップキャラガチャ	Valentine's Day Character Campaign Draw
+バレンタインピックアップ武器ガチャ	Valentine Weapons Campaign Draw
+ピックアップガチャ(アルベル/イリア)	Albel & Ilia Campaign Draw
+ピックアップガチャ(カペル/アーヤ)	Capell & Aya Campaign Draw
+ピックアップガチャ(クロウ/連邦エッジ/連邦レイミ)	Crowe & Official Edge & Official Reimi Campaign Draw
+ピックアップガチャ(フェイト/ソフィア)	Fayt & Sophia Campaign Draw
+ピックアップガチャ(ミラージュ/連邦アンヌ)	Mirage & Official Anne Campaign Draw
+ピックアップガチャ(リーンベル)	Leanne Campaign Draw
+ピックアップガチャ(レオン/青春のソフィア/チサト)	Leon & Youth Sophia & Chisato Campaign Draw
+ピックアップガチャ(渚のリーンベル/ヴァシュロン/ゼファー)	Seaside Leanne & Vashyron & Zephyr Campaign Draw
+ピックアップガチャ(雪花レナ/聖夜クレア/雪空アシュトン)	Winter Rena & Holiday Clair & Holiday Ashton Campaign Draw
+ピックアップキャラガチャ(EoE復刻)	Character Campaign Draw (EoE rerun)
+ピックアップキャラガチャ(SRFフェイト/SRFソフィア)	SRF Fayt & SRF Sophia Character Campaign Draw
+ピックアップキャラガチャ(VP復刻)	Character Campaign Draw (VP rerun)
+ピックアップキャラガチャ(さくら/エリカ/ジェミニ)	Sakura & Erica & Gemini Character Campaign Draw
+ピックアップキャラガチャ(アドレー)	Adray Character Campaign Draw
+ピックアップキャラガチャ(アリーシャ/ルーファス)	Alicia & Rufus Character Campaign Draw
+ピックアップキャラガチャ(アーチェ/チェスター)	Arche & Chester Character Campaign Draw
+ピックアップキャラガチャ(アーリィ/アリューゼ)	Hrist & Arngrim Character Campaign Draw
+ピックアップキャラガチャ(イヴリーシュ)	Evelysse Character Campaign Draw
+ピックアップキャラガチャ(ウェルチ)	Welch Character Campaign Draw
+ピックアップキャラガチャ(エイルマット/カーリン)	Arumat & Caleen Character Campaign Draw
+ピックアップキャラガチャ(エッジ/セリーヌ/ミリー)	Edge & Celine & Millie Character Campaign Draw
+ピックアップキャラガチャ(エマーソン)	Emmerson Character Campaign Draw
+ピックアップキャラガチャ(エリス/ヨシュア)	Erys & Ioshua Character Campaign Draw
+ピックアップキャラガチャ(エルネスト)	Ernest Character Campaign Draw
+ピックアップキャラガチャ(オペラ/黒将アルベル)	Opera & Dark Albel Character Campaign Draw
+ピックアップキャラガチャ(カイ/ディズィー)	Ky & Dizzy Character Campaign Draw
+ピックアップキャラガチャ(クリフ)	Cliff Character Campaign Draw
+ピックアップキャラガチャ(クレス/ミント)	Cress & Mint Character Campaign Draw
+ピックアップキャラガチャ(クロード)	Claude Character Campaign Draw
+ピックアップキャラガチャ(シウス)	Cyuss Character Campaign Draw
+ピックアップキャラガチャ(ジャック/リドリー)	Jack & Ridley Character Campaign Draw
+ピックアップキャラガチャ(ジャンヌ/ジヴェレーゼ)	Jeanne & Jivreth Character Campaign Draw
+ピックアップキャラガチャ(ジョーカー/鳴上 悠/結城 理)	Joker & Yu Narukami & Makoto Yuki Character Campaign Draw
+ピックアップキャラガチャ(スフレ/ノエル)	Peppita & Noel Character Campaign Draw
+ピックアップキャラガチャ(ソル/エルフェルト)	Sol & Elphelt Character Campaign Draw
+ピックアップキャラガチャ(ダオス)	Dhaos Character Campaign Draw
+ピックアップキャラガチャ(ディアス)	Dias Character Campaign Draw
+ピックアップキャラガチャ(ナースフィオーレ/ヒーローベルダ)	Nurse Fiore & Hero Verda Character Campaign Draw
+ピックアップキャラガチャ(ネル)	Nel Character Campaign Draw
+ピックアップキャラガチャ(ヒース/ラヴァーニア)	Heath & Laevonia Character Campaign Draw
+ピックアップキャラガチャ(フェイズ)	Faize Character Campaign Draw
+ピックアップキャラガチャ(フェイト)	Fayt Character Campaign Draw
+ピックアップキャラガチャ(ベルダ)	Verda Character Campaign Draw
+ピックアップキャラガチャ(ボーマン)	Bowman Character Campaign Draw
+ピックアップキャラガチャ(マリア)	Maria Character Campaign Draw
+ピックアップキャラガチャ(ミカサ/リヴァイ)	Mikasa & Levi Character Campaign Draw
+ピックアップキャラガチャ(ミキ)	Miki Character Campaign Draw
+ピックアップキャラガチャ(ミュリア)	Myuria Character Campaign Draw
+ピックアップキャラガチャ(メイドのソフィア/執事のレオン)	Maid Sophia & Butler Leon Character Campaign Draw
+ピックアップキャラガチャ(メイドのネル/メイドのクレア)	Maid Nel & Maid Clair Character Campaign Draw
+ピックアップキャラガチャ(メイドヴァルカ/メイドフィオーレ)	Maid Vulcan & Maid Fiore Character Campaign Draw
+ピックアップキャラガチャ(ユーイン/紅輝のオペラ)	Yrian & Crimson Opera Character Campaign Draw
+ピックアップキャラガチャ(リムル)	Lymle Character Campaign Draw
+ピックアップキャラガチャ(リリア)	Relia Character Campaign Draw
+ピックアップキャラガチャ(リーンベル)	Leanne Character Campaign Draw
+ピックアップキャラガチャ(レザード/メルティーナ)	Lezard & Mystina Character Campaign Draw
+ピックアップキャラガチャ(ロジャー/ティニーク)	Roger & T'nique Character Campaign Draw
+ピックアップキャラガチャ(ヴァルカ/アンリ/バッカス)	Vulcan & Henri & Bacchus Character Campaign Draw
+ピックアップキャラガチャ(ヴァルキリー/超越者レザード)	Valkyrie & Transcended Lezard Character Campaign Draw
+ピックアップキャラガチャ(ヴィクトル)	Victor Character Campaign Draw
+ピックアップキャラガチャ(兎耳のマリア/兎耳のミラージュ)	Bunny Maria & Bunny Mirage Character Campaign Draw
+ピックアップキャラガチャ(円舞曲のティカ/輪舞曲のベルダ)	Waltz Tika & Rondo Verda Character Campaign Draw
+ピックアップキャラガチャ(凛花リムル)	Flower Lymle Character Campaign Draw
+ピックアップキャラガチャ(刻星のティカ/リカルド)	Timeless Tika & Ricardo Character Campaign Draw
+ピックアップキャラガチャ(包帯フィオーレ/かぼちゃリリア)	Bandage Fiore & Pumpkin Relia Character Campaign Draw
+ピックアップキャラガチャ(堕天使ネル/狼アルベル)	Angel Nel & Were-Albel Character Campaign Draw
+ピックアップキャラガチャ(桜花のマリア/桜雲のディアス)	Blossom Maria & Blossom Dias Character Campaign Draw
+ピックアップキャラガチャ(歌星ソフィア/歌星イヴリーシュ)	Idol Sophia & Idol Evelysse Character Campaign Draw
+ピックアップキャラガチャ(歌星レイミ/歌星ミキ/歌星ベルダ)	Idol Reimi & Idol Miki & Idol Verda Character Campaign Draw
+ピックアップキャラガチャ(渚のイヴリーシュ/渚のラティクス)	Seaside Evelysse & Seaside Roddick Character Campaign Draw
+ピックアップキャラガチャ(渚のマリア/渚のミリー)	Seaside Maria & Seaside Millie Character Campaign Draw
+ピックアップキャラガチャ(渚のレナ)	Seaside Rena Character Campaign Draw
+ピックアップキャラガチャ(灼炎のアシュトン/ペリシー)	Blazing Ashton & Pericci Character Campaign Draw
+ピックアップキャラガチャ(甘狐のカーリン/天真のペリシー)	Sweet Caleen & Naive Pericci Character Campaign Draw
+ピックアップキャラガチャ(真夏のカーリン/真夏のティカ)	Summer Caleen & Summer Tika Character Campaign Draw
+ピックアップキャラガチャ(真夏のネル/真夏のエッジ)	Summer Nel & Summer Edge Character Campaign Draw
+ピックアップキャラガチャ(粛清のフレイ/フレイア)	Purging Freya & Frei Character Campaign Draw
+ピックアップキャラガチャ(花嫁クレア/花嫁プリシス)	Bride Clair & Bride Precis Character Campaign Draw
+ピックアップキャラガチャ(花嫁マリア/花嫁ネル)	Bride Maria & Bride Nel Character Campaign Draw
+ピックアップキャラガチャ(花嫁レイミ/花婿フェイト)	Bride Reimi & Groom Fayt Character Campaign Draw
+ピックアップキャラガチャ(花嫁レナ/花嫁イヴリーシュ)	Bride Rena & Bride Evelysse Character Campaign Draw
+ピックアップキャラガチャ(花魁ミュリア/ハンターセリーヌ)	Courtesan Myuria & Hunter Celine Character Campaign Draw
+ピックアップキャラガチャ(芳澤かすみ/ナビ/鏡宮のレナ)	Kasumi Yoshizawa & Navi (Oracle) & Mirror Palace Rena Character Campaign Draw (tr.)
+ピックアップキャラガチャ(蒼星のチサト/蒼星のレオン)	Blue Sphere Chisato & Blue Sphere Leon Character Campaign Draw
+ピックアップキャラガチャ(蒼星のレナ/蒼星のクロード)	Blue Sphere Rena & Blue Sphere Claude Character Campaign Draw
+ピックアップキャラガチャ(蒼穹のレナス/フレイ)	Azure Lenneth & Freya Character Campaign Draw
+ピックアップキャラガチャ(赤麗のフィア/シウス)	Crimson Phia & Cyuss Character Campaign Draw
+ピックアップキャラガチャ(迎春イヴリーシュ/迎春ティカ)	New Year's Evelysse & New Year's Tika Character Campaign Draw
+ピックアップキャラガチャ(銀雪マリア/雪猫ペリシー)	Winter Maria & Winter Pericci Character Campaign Draw
+ピックアップキャラガチャ(青春のメリクル/ルシフェル)	Youth Meracle & Lucifer Character Campaign Draw
+ピックアップキャラガチャ(魔女イヴリーシュ)	Witch Evelysse Character Campaign Draw
+ピックアップキャラガチャ(魔改のプリシス/祓魔師フェイズ)	Franken-Precis & Exorcist Faize Character Campaign Draw
+ピックアップ武器ガチャ (10連のみ、期間中1人1回)	Weapons Campaign Draw (10-chain only, 1 / person)
+ピックアップ武器ガチャ (10連のみ、期間中1人2回)	Weapons Campaign Draw (10-chain only, 2 / person)
+プレミアムキャラガチャ	Premium Character Draw
+メモリアル★5キャラピックアップ	Memorial 5★ Character Campaign Draw
+メモリアル★5武器ピックアップ	Memorial 5★ Weapons Campaign Draw
+メモリアルフェスガチャ	Memorial Fest Draw
+ロールピックアップキャラガチャ アタッカー	Role Campaign Draw: Attacker
+ロールピックアップキャラガチャ ディフェンダー	Role Campaign Draw: Defender
+ロールピックアップキャラガチャ ヒーラー	Role Campaign Draw: Healer
+光属性ピックアップ武器ガチャ	Light Weapons Campaign Draw
+地属性ピックアップ武器ガチャ	Earth Weapons Campaign Draw
+定常武器ガチャ【近接】【ナックル/双剣/剣&鞘/鎌】	Standard Weapons Draw [Melee] [Knuckles / Twin Swords / Sword & Sheath / Scythe]
+定常武器ガチャ【遠距離】	Standard Weapons Draw [Ranged]
+常夏キャラクターピックアップガチャ	Summer Character Campaign Draw
+復刻PUキャラガチャ(End of Eternity)	Rerun: End of Eternity Character Campaign Draw
+復刻PU神級武器ガチャ(神翼のフェイト)	Rerun: Divine-tier Weapons Campaign Draw (Divine Fayt)
+復刻SRFピックアップキャラガチャ	Rerun: SRF Character Campaign Draw
+復刻VP PUガチャ(レナス/アーリィ/アリューゼ/メルティーナ)	Rerun: VP Lenneth & Hrist & Arngrim & Mystina Campaign Draw
+復刻VP PUガチャ(蒼穹のレナス/フレイ/レザード/シルメリア)	Rerun: VP Azure Lenneth & Freya & Lezard & Silmeria Campaign Draw
+復刻VP ピックアップキャラガチャ(アリーシャ/ルーファス)	Rerun: VP Alicia & Rufus Character Campaign Draw
+復刻VP ピックアップキャラガチャ(ヴァルキリー/超越者レザード)	Rerun: VP Valkyrie & Transcended Lezard Character Campaign Draw
+復刻お正月ピックアップキャラガチャ	Rerun: New Year Character Campaign Draw
+復刻お正月ピックアップ武器ガチャ	Rerun: New Year Weapons Campaign Draw
+復刻アイドル2018ピックアップキャラガチャ	Rerun: Idol 2018 Character Campaign Draw
+復刻アイドル2019ピックアップキャラガチャ	Rerun: Idol 2019 Character Campaign Draw
+復刻ガチャ(聖夜プリシス/白雪イヴリーシュ/冬空フィデル)	Rerun Draw (Holiday Precis & Winter Evelysse & Winter Fidel)
+復刻ギルティギアコラボPUガチャ(ソル/エルフェルト)	Rerun: Guilty Gear Collab Sol & Elphelt Campaign Draw
+復刻ギルティギアコラボピックアップキャラガチャ(カイ/ディズィー)	Rerun: Guilty Gear Collab Ky & Dizzy Character Campaign Draw
+復刻ギルティギアコラボピックアップキャラガチャ(ソル/エルフェルト)	Rerun: Guilty Gear Collab Sol & Elphelt Character Campaign Draw
+復刻ギルティギアコラボピックアップ武器ガチャ	Rerun: Guilty Gear Collab Weapons Campaign Draw
+復刻クリスマス2017ピックアップキャラガチャ	Rerun: Christmas 2017 Character Campaign Draw
+復刻クリスマス2018ピックアップキャラガチャ	Rerun: Christmas 2018 Character Campaign Draw
+復刻サクラ大戦コラボピックアップ武器ガチャ	Rerun: Sakura Wars Collab Weapons Campaign Draw
+復刻サクラ大戦ピックアップキャラガチャ	Rerun: Sakura Wars Character Campaign Draw
+復刻テイルズ オブ ザ レイズコラボ PUガチャ (アーチェ/チェスター/ダオス)	Rerun: Tales of the Rays Collab Arche & Chester & Dhaos Campaign Draw
+復刻テイルズ オブ ザ レイズコラボ PUガチャ (クレス/ミント)	Rerun: Tales of the Rays Collab Cress & Mint Campaign Draw
+復刻テイルズ オブ ザ レイズコラボ PU武器ガチャ	Rerun: Tales of the Rays Collab Weapons Campaign Draw
+復刻バレンタイン2018ピックアップキャラガチャ	Rerun: Valentine 2018 Character Campaign Draw
+復刻バレンタイン2019ピックアップキャラガチャ	Rerun: Valentine 2019 Character Campaign Draw
+復刻ピックアップ(悪魔クレア/狼ミリー/吸血鬼ヴィクトル)	Rerun Campaign Draw (Devil Clair & Were-Millie & Vampire Victor)
+復刻ピックアップ(桜花のマリア/桜雲のディアス)	Rerun Campaign Draw (Blossom Maria & Blossom Dias)
+復刻ピックアップ(歌星レイミ/歌星ミキ/歌星ベルダ)	Rerun Campaign Draw (Idol Reimi & Idol Miki & Idol Verda)
+復刻ピックアップ(甘猫のレナ/夢想のウェルチ/純愛のベルダ)	Rerun Campaign Draw (Cat Rena & Dream Welch & Sweet Verda)
+復刻ピックアップキャラガチャ ウェディング2017	Rerun: Wedding 2017 Character Campaign Draw
+復刻ピックアップキャラガチャ ウェディング2018	Rerun: Wedding 2018 Character Campaign Draw
+復刻ピックアップキャラガチャ(2B/9S/A2)	Rerun: 2B & 9S & A2 Character Campaign Draw
+復刻ラジアータ ストーリーズコラボPUキャラガチャ	Rerun: Radiata Stories Collab Character Campaign Draw
+復刻ラジアータ ストーリーズコラボPU武器ガチャ	Rerun: Radiata Stories Collab Weapons Campaign Draw
+復刻闇属性ピックアップ武器ガチャ	Rerun: Dark Weapons Campaign Draw
+復刻限定ピックアップキャラガチャ	Rerun: Limited Character Campaign Draw
+新サクラ大戦ピックアップ武器ガチャ1	Sakura Wars (2019) Weapons Campaign Draw 1
+新サクラ大戦ピックアップ武器ガチャ2	Sakura Wars (2019) Weapons Campaign Draw 2
+新年お年玉ピックアップキャラガチャ	New Year's Gift Character Campaign Draw
+新生活応援フェス(10連のみ、期間中1人1回)	New Life Support Fest (10-chain only, 1 / person)
+氷属性ピックアップキャラガチャ1	Ice Character Campaign Draw 1
+氷属性ピックアップキャラガチャ2	Ice Character Campaign Draw 2
+氷属性ピックアップキャラガチャ3	Ice Character Campaign Draw 3
+氷属性ピックアップ武器ガチャ	Ice Weapons Campaign Draw
+火属性ピックアップ武器ガチャ	Fire Weapons Campaign Draw
+花嫁2020ピックアップ武器ガチャ	Bride 2020 Weapons Campaign Draw
+覚醒キャラピックアップガチャ	Awakened Character Campaign Draw
+覚醒キャラピックアップガチャ(アルベル/灼炎のアシュトン/ダリル)	Awakened Character Campaign Draw (Albel & Blazing Ashton & Daril)
+覚醒キャラピックアップガチャ(オペラ/メリクル/マーヴェル)	Awakened Character Campaign Draw (Opera & Meracle & Mavelle)
+覚醒キャラピックアップガチャ(フィオーレ/フィア/サラ)	Awakened Character Campaign Draw (Fiore & Phia & Sarah)
+覚醒キャラピックアップガチャ(レイミ/ソフィア/アンヌ)	Awakened Character Campaign Draw (Reimi & Sophia & Anne)
+覚醒キャラピックアップガチャ(青春のメリクル/ミラージュ/プリシス)	Awakened Character Campaign Draw (Youth Meracle & Mirage & Precis)
+週末10連1回無料キャラガチャ	Weekend Free 10-pull Character Draw (once)
+週末限定ピックアップキャラガチャ	Weekend-only Character Campaign Draw
+雷属性ピックアップ武器ガチャ	Thunder Weapons Campaign Draw
+風属性ピックアップ武器ガチャ	Wind Weapons Campaign Draw
+# Items, missions
+ダミー槍	Dummy Spear
+ダミー鞭	Dummy Whip
+友好度メダル	Affinity Medal
+指揮甲虫系テストミッション2	Commander Beetle Test Mission 2
+指揮甲虫系テストミッション4	Commander Beetle Test Mission 4
+指揮甲虫系テストミッション5	Commander Beetle Test Mission 5
+お菓子が襲ってきた!【初級】	The Sweets Attack! [Easy]
+オバケ退治【中級】	Ghost Busting [Normal]
+儀式の素材調達【初級】	Gathering Ritual Materials [Easy]
+儀式の練習【中級】	Ritual Practice [Normal]
+夢魔の本性【上級】	The Nightmare's True Nature [Hard]
+夢魔の本性【滅級】	The Nightmare's True Nature [Misery 2]
+夢魔の本性【獄級】	The Nightmare's True Nature [Misery 1]
+夢魔の本性【絶級】	The Nightmare's True Nature [Misery 3]
+夢魔の本性【超級】	The Nightmare's True Nature [Expert]
+爆・神殿に巣くう魔鳥【超級】	Blast: The Demon Bird Nesting in the Temple [Expert] (tr.)
+爆・祭りを守れ【超級】	Blast: Protect the Festival [Expert] (tr.)
+爆・虚夢へ誘う死神【超級】	Blast: The Reaper Luring into Empty Dreams [Expert] (tr.)
+爆・鹿角将軍の生誕【超級】	Blast: Birth of the Antlered General [Expert] (tr.)
+王城の秘密を探れ【中級】	Uncover the Royal Castle's Secret [Normal]
+神殿に巣くう魔鳥【上級】	The Demon Bird Nesting in the Temple [Hard]
+神殿に巣くう魔鳥【滅級】	The Demon Bird Nesting in the Temple [Misery 2]
+神殿に巣くう魔鳥【獄級】	The Demon Bird Nesting in the Temple [Misery 1]
+神殿に巣くう魔鳥【絶級】	The Demon Bird Nesting in the Temple [Misery 3]
+神殿に巣くう魔鳥【超級】	The Demon Bird Nesting in the Temple [Expert]
+祭りに現れた悪霊【滅級】	The Evil Spirit at the Festival [Misery 2]
+祭りに現れた悪霊【絶級】	The Evil Spirit at the Festival [Misery 3]
+祭りを守れ【上級】	Protect the Festival [Hard]
+祭りを守れ【滅級】	Protect the Festival [Misery 2]
+祭りを守れ【獄級】	Protect the Festival [Misery 1]
+祭りを守れ【絶級】	Protect the Festival [Misery 3]
+祭りを守れ【超級】	Protect the Festival [Expert]
+虚夢へ誘う死神【上級】	The Reaper Luring into Empty Dreams [Hard] (tr.)
+虚夢へ誘う死神【滅級】	The Reaper Luring into Empty Dreams [Misery 2] (tr.)
+虚夢へ誘う死神【獄級】	The Reaper Luring into Empty Dreams [Misery 1] (tr.)
+虚夢へ誘う死神【絶級】	The Reaper Luring into Empty Dreams [Misery 3] (tr.)
+虚夢へ誘う死神【超級】	The Reaper Luring into Empty Dreams [Expert] (tr.)
+魔物が襲ってきた!【中級】	The Monsters Attack! [Normal]
+鹿角将軍の生誕【滅級】	Birth of the Antlered General [Misery 2] (tr.)
+鹿角将軍の生誕【獄級】	Birth of the Antlered General [Misery 1] (tr.)
+鹿角将軍の生誕【絶級】	Birth of the Antlered General [Misery 3] (tr.)
+鹿角将軍の生誕【超級】	Birth of the Antlered General [Expert] (tr.)
+# Event areas whose master name is "--" (keyed "@<master_event_area.id_label>"; from their missions, box draws and
+# docs/event-notes.tsv)
+@event_TOP_1_71	Tales of the Rays Collab, Part 1 (Tales of Phantasia) (tr.)
+@event_TOP_2_72	Tales of the Rays Collab, Part 2 (Tales of Phantasia) (tr.)
+@event_Guilty_70	Guilty Gear Collab, Part 1 (tr.)
+@event_Guilty_88	Guilty Gear Collab, Part 2 (tr.)
+@event_eoe_14	End of Eternity Collab (tr.)
+@event_eoe_14_02	End of Eternity Collab, add-on area (tr.)
+@event_eoe_42	End of Eternity Collab, Part 2 "Letters" (tr.)
+@event_PSNC1_81	Persona Collab "Siren's Lament", Part 1 (tr.)
+@event_PSNC2_82	Persona Collab "Siren's Lament", Part 2 (tr.)
+@event_rad_44	Radio tie-in: the Jumbo Mud Snail (tr.)
+@event_radio2_69	Radio tie-in 2: the Metal Snail (tr.)
+@event_nier_36	NieR:Automata Collab (tr.)
+@event_sak_60	Sakura Wars Collab (tr.)
+@event_sak_90	Sakura Wars (2019) Collab (tr.)
+@event_ffbe_27	Final Fantasy Brave Exvius Collab (tr.)
+@event_shingeki_63	Attack on Titan Collab (tr.)

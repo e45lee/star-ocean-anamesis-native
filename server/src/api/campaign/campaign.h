@@ -81,12 +81,14 @@ struct State {
     bool seeded = false;      // --campaign-seed: a returning player
     u32 wm_episode = 0;  // the episode of the last GetWorldMapInfoList (0: all)
 };
-// The progress, loaded from <data>/server_campaign.txt on first use (and seeded); callers hold
-// the campaign's lock (lock()).
+// The progress, loaded from the state DB (campaign_clear, campaign_last; PLAN-schema S12) on first
+// use (and seeded); callers hold the campaign's lock (lock()). The campaign reads and writes the
+// DB through ext::with_live_server, so the lock order is the campaign's, then the server's: it
+// runs around a request (core/lifecycle.cpp), never inside a handler.
 State& state();
 std::mutex& lock();
-// Records a clear (first clear or again) as the last play and saves the progress; logs `why` and
-// what the clear unlocks.
+// Records a clear (first clear or again) as the last play and saves the progress (the state DB, in
+// its own transaction); logs `why` and what the clear unlocks.
 void clear_mission(State& state, u32 id, const char* why);
 
 // ---- the lists (lists.cpp) --------------------------------------------------------------------

@@ -348,11 +348,11 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e953bc	0x1f953bc	4	_ZN9Framework16CResourceManager7ReleaseEv	Framework::CResourceManager::Release()	resource_manager	typed	
 0x1e953c0	0x1f953c0	132	_ZN9Framework16CResourceManagerD0Ev	Framework::CResourceManager::~CResourceManager()	resource_manager	typed	
 0x1e95444	0x1f95444	164	_ZN9Framework16CResourceManager10InitializeEv	Framework::CResourceManager::Initialize()	resource_manager	typed	
-0x1e954e8	0x1f954e8	276	_ZN9Framework16CResourceManager3RunEi	Framework::CResourceManager::Run(int)	resource_manager	typed	
-0x1e955fc	0x1f955fc	164	_ZNK9Framework16CResourceManager7pSearchEj	Framework::CResourceManager::pSearch(unsigned int) const	resource_manager	typed	
-0x1e956a0	0x1f956a0	164	_ZN9Framework16CResourceManager7pSearchEj	Framework::CResourceManager::pSearch(unsigned int)	resource_manager	typed	
-0x1e95744	0x1f95744	168	_ZNK9Framework16CResourceManager19pSearchByDirectPathEPKc	Framework::CResourceManager::pSearchByDirectPath(char const*) const	resource_manager	typed	
-0x1e957ec	0x1f957ec	168	_ZN9Framework16CResourceManager19pSearchByDirectPathEPKc	Framework::CResourceManager::pSearchByDirectPath(char const*)	resource_manager	typed	
+0x1e954e8	0x1f954e8	276	_ZN9Framework16CResourceManager3RunEi	Framework::CResourceManager::Run(int)	resource_manager	tested	
+0x1e955fc	0x1f955fc	164	_ZNK9Framework16CResourceManager7pSearchEj	Framework::CResourceManager::pSearch(unsigned int) const	resource_manager	native	
+0x1e956a0	0x1f956a0	164	_ZN9Framework16CResourceManager7pSearchEj	Framework::CResourceManager::pSearch(unsigned int)	resource_manager	native	
+0x1e95744	0x1f95744	168	_ZNK9Framework16CResourceManager19pSearchByDirectPathEPKc	Framework::CResourceManager::pSearchByDirectPath(char const*) const	resource_manager	native	
+0x1e957ec	0x1f957ec	168	_ZN9Framework16CResourceManager19pSearchByDirectPathEPKc	Framework::CResourceManager::pSearchByDirectPath(char const*)	resource_manager	native	
 0x1e95894	0x1f95894	404	_ZN9Framework16CResourceManager3AddEjjjb	Framework::CResourceManager::Add(unsigned int, unsigned int, unsigned int, bool)	resource_manager	typed	
 0x1e95a28	0x1f95a28	100	_ZN9Framework16CResourceManager9AddByNameEjPKcjb	Framework::CResourceManager::AddByName(unsigned int, char const*, unsigned int, bool)	resource_manager	typed	
 0x1e95a8c	0x1f95a8c	4	_ZN9Framework16CResourceManager16AddImmediateFileEjjPKcjb	Framework::CResourceManager::AddImmediateFile(unsigned int, unsigned int, char const*, unsigned int, bool)	resource_manager	typed	
@@ -365,9 +365,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e96108	0x1f96108	64	_ZN9Framework16CResourceManager17RemoveForceByNameEPKc	Framework::CResourceManager::RemoveForceByName(char const*)	resource_manager	typed	
 0x1e96148	0x1f96148	284	_ZN9Framework16CResourceManager21RemoveForceDirectFileEPKc	Framework::CResourceManager::RemoveForceDirectFile(char const*)	resource_manager	typed	
 0x1e96264	0x1f96264	224	_ZN9Framework16CResourceManager21RemoveByUniqueBitFlagEj	Framework::CResourceManager::RemoveByUniqueBitFlag(unsigned int)	resource_manager	typed	
-0x1e96344	0x1f96344	328	_ZNK9Framework16CResourceManager7IsReadyEjPb	Framework::CResourceManager::IsReady(unsigned int, bool*) const	resource_manager	typed	
+0x1e96344	0x1f96344	328	_ZNK9Framework16CResourceManager7IsReadyEjPb	Framework::CResourceManager::IsReady(unsigned int, bool*) const	resource_manager	native	
 0x1e9648c	0x1f9648c	48	_ZNK9Framework16CResourceManager13IsReadyByNameEPKcPb	Framework::CResourceManager::IsReadyByName(char const*, bool*) const	resource_manager	typed	
-0x1e964bc	0x1f964bc	332	_ZNK9Framework16CResourceManager17IsReadyDirectFileEPKcPb	Framework::CResourceManager::IsReadyDirectFile(char const*, bool*) const	resource_manager	typed	
+0x1e964bc	0x1f964bc	332	_ZNK9Framework16CResourceManager17IsReadyDirectFileEPKcPb	Framework::CResourceManager::IsReadyDirectFile(char const*, bool*) const	resource_manager	tested	
 0x1e96608	0x1f96608	52	_ZN9Framework16CResourceManager4LockEv	Framework::CResourceManager::Lock()	resource_manager	typed	
 0x1e9663c	0x1f9663c	52	_ZN9Framework16CResourceManager6UnlockEv	Framework::CResourceManager::Unlock()	resource_manager	typed	
 0x1e96670	0x1f96670	52	_ZNK9Framework16CResourceManager8IsLockedEv	Framework::CResourceManager::IsLocked() const	resource_manager	typed	
@@ -379,10 +379,10 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e96990	0x1f96990	308	_ZN9Framework16CResourceManager26rResourceElementDirectFileEPKc	Framework::CResourceManager::rResourceElementDirectFile(char const*)	resource_manager	typed	
 0x1e96ac4	0x1f96ac4	308	_ZNK9Framework16CResourceManager27crResourceElementDirectFileEPKc	Framework::CResourceManager::crResourceElementDirectFile(char const*) const	resource_manager	typed	
 0x1e96bf8	0x1f96bf8	164	_ZNK9Framework16CResourceManager24crResourceElementByIndexEj	Framework::CResourceManager::crResourceElementByIndex(unsigned int) const	resource_manager	typed	
-0x1e96c9c	0x1f96c9c	220	_ZNK9Framework16CResourceManager10NumLoadingEv	Framework::CResourceManager::NumLoading() const	resource_manager	typed	
-0x1e96d78	0x1f96d78	284	_ZNK9Framework16CResourceManager9IsLoadingEv	Framework::CResourceManager::IsLoading() const	resource_manager	typed	
-0x1e96e94	0x1f96e94	104	_ZNK9Framework16CResourceManager3NumEv	Framework::CResourceManager::Num() const	resource_manager	typed	
-0x1e96efc	0x1f96efc	156	_ZNK9Framework16CResourceManager18NumByUniqueBitFlagEj	Framework::CResourceManager::NumByUniqueBitFlag(unsigned int) const	resource_manager	typed	
+0x1e96c9c	0x1f96c9c	220	_ZNK9Framework16CResourceManager10NumLoadingEv	Framework::CResourceManager::NumLoading() const	resource_manager	tested	
+0x1e96d78	0x1f96d78	284	_ZNK9Framework16CResourceManager9IsLoadingEv	Framework::CResourceManager::IsLoading() const	resource_manager	tested	
+0x1e96e94	0x1f96e94	104	_ZNK9Framework16CResourceManager3NumEv	Framework::CResourceManager::Num() const	resource_manager	native	
+0x1e96efc	0x1f96efc	156	_ZNK9Framework16CResourceManager18NumByUniqueBitFlagEj	Framework::CResourceManager::NumByUniqueBitFlag(unsigned int) const	resource_manager	native	
 0x1e96f98	0x1f96f98	4	_ZNK9Framework16CResourceManager8tElement6PrintSEj	Framework::CResourceManager::tElement::PrintS(unsigned int) const	resource_manager	typed	
 0x1e96f9c	0x1f96f9c	116	_ZN9Framework16CResourceManager6PrintSEPKc	Framework::CResourceManager::PrintS(char const*)	resource_manager	typed	
 0x1e97010	0x1f97010	64	_ZNK9Framework16CResourceManager10GetClassIDEi	Framework::CResourceManager::GetClassID(int) const	resource_manager	typed	
@@ -608,8 +608,8 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x20ac154	0x21ac154	1108	_ZN4Aska18AHSLCacheManagerV214SearchBindedVSEPNS_11ShaderCacheEmi	Aska::AHSLCacheManagerV2::SearchBindedVS(Aska::ShaderCache*, unsigned long, int)	ahsl	typed	
 0x20ac5a8	0x21ac5a8	4	_ZN4Aska18AHSLCacheManagerV218UpdateLastCreationEPNS_11ShaderCacheE	Aska::AHSLCacheManagerV2::UpdateLastCreation(Aska::ShaderCache*)	ahsl	typed	
 0x20ac5ac	0x21ac5ac	652	_ZN4Aska18AHSLCacheManagerV215SearchOrCompileEPKhPi	Aska::AHSLCacheManagerV2::SearchOrCompile(unsigned char const*, int*)	ahsl	typed	
-0x20ac838	0x21ac838	656	_ZN4Aska12AHSLDatabaseINS_11ShaderCacheELh9EE7GetDataEPKh	Aska::AHSLDatabase<Aska::ShaderCache, (unsigned char)9>::GetData(unsigned char const*)	ahsl	typed	
-0x20acac8	0x21acac8	656	_ZN4Aska12AHSLDatabaseINS_15ShaderDiskCacheELh9EE7GetDataEPKh	Aska::AHSLDatabase<Aska::ShaderDiskCache, (unsigned char)9>::GetData(unsigned char const*)	ahsl	typed	
+0x20ac838	0x21ac838	656	_ZN4Aska12AHSLDatabaseINS_11ShaderCacheELh9EE7GetDataEPKh	Aska::AHSLDatabase<Aska::ShaderCache, (unsigned char)9>::GetData(unsigned char const*)	ahsl	tested	
+0x20acac8	0x21acac8	656	_ZN4Aska12AHSLDatabaseINS_15ShaderDiskCacheELh9EE7GetDataEPKh	Aska::AHSLDatabase<Aska::ShaderDiskCache, (unsigned char)9>::GetData(unsigned char const*)	ahsl	tested	
 0x20acd58	0x21acd58	852	_ZN4Aska18AHSLCacheManagerV212AddToL1CacheEPKNS_15ShaderDiskCacheES3_	Aska::AHSLCacheManagerV2::AddToL1Cache(Aska::ShaderDiskCache const*, Aska::ShaderDiskCache const*)	ahsl	typed	
 0x20ad0ac	0x21ad0ac	104	_ZN4Aska18AHSLCacheManagerV24TickEv	Aska::AHSLCacheManagerV2::Tick()	ahsl	typed	
 0x20ad114	0x21ad114	4	_ZN4Aska18AHSLCacheManagerV217Tick_RebuildCacheEv	Aska::AHSLCacheManagerV2::Tick_RebuildCache()	ahsl	typed	

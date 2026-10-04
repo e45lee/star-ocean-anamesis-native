@@ -79,7 +79,7 @@ bool Server::open_state(const std::string& path, u64 seed_rng, const std::string
     // than a finished-tutorial player with no characters.
     const bool no_seed = seed_source(seed_save).empty();
     if (no_seed && st.one("select count(*) from player", {}) == 0 && !new_player_mode())
-        LOGI("server", "no seed save (--seed, data/saves/seed/Game.xml, --game-xml): starting a fresh account (the new-player flow)");
+        LOGI("server", "no seed save (--seed, data/saves/seed/Game.xml, or a --game-xml holding a player): starting a fresh account (the new-player flow)");
     if (st.one("select count(*) from player", {}) == 0 && !new_player_mode() && !no_seed) {
         RequestContext rc = new_request();
         ext::Ctx ctx = make_ctx(rc);

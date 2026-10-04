@@ -283,8 +283,10 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   of the vcpkg ports linked, dynarmic and its x86-64 externals, IJG libjpeg 9, zstd 1.3.4),
   `BUILD-INFO.txt`, and only data we made: `data/gacha_pools.sqlite3` **with the game's text
   removed** (`gacha.name`, `rule.text`; the server takes the titles from the master,
-  `docs/server-rules.md#gacha-pools`), `data/saves/seed/Game.xml` (the default seed player, sanitized:
-  `data/saves/README.md`) and `standin-assets/` (our images).
+  `docs/server-rules.md#gacha-pools`) and `standin-assets/` (our images). **No seed save** (the
+  user, 2026-10-04: `data/saves/seed/Game.xml` is a real player's): a package's first run starts a
+  new account through the game's own tutorial, unless `--seed FILE` names a save
+  (`docs/server-rules.md#seed`).
 - **What never goes in:** any game file: the APKs, the download, the master DBs
   (`data/basmaster-*.sqlite3` are decryptions of the game's own), `version.bin`, `libSOA.so`,
   `port/fakeapi/responses`, decompiles. Before a zip is written every file must be on the allow-list
@@ -306,8 +308,12 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 - **Checking a package:** unzip it outside the checkout, put the game files as its README.txt says,
   and run a session on it: `SOA_PACKAGE_DIR=<the unpacked folder>` makes `control/run.py` run the
   package's programs from their folder, with no `--master` / `--download-dir` / `--seed` (e.g.
-  `SOA_PACKAGE_DIR=$P control/run.py gacha $P/soa OUT TMP`; for the emulator `--target emu` with
-  `SOA_EMU=$P/soa-emu`; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your
+  `SOA_PACKAGE_DIR=$P port/scripts/tutorial_session.sh $P/soa OUT TMP`: the first run, a new
+  account (no `--new-player`: the package has no seed save) through the tutorial to home; for the
+  emulator `SOA_PACKAGE_DIR=$P emulator/scripts/emulator_session.sh --new-player $P/soa-emu
+  $P/soa-server OUT`, which then passes the server no `--new-player` either. A session that needs the
+  seeded player (e.g. `gacha`) gets a player only from a save: the port's client save
+  (`--game-xml`, holding a player) or `--seed`; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your
   stage). `DOWNLOAD_B=work/SOA-3.7.0-canonical-data.zip tools/server_cdn_check.sh BIN BIN` proves the
   CDN serves the same bytes from the zip as from the folder.
 

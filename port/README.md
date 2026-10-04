@@ -8,7 +8,7 @@ This port runs the game natively on x86-64 Linux: **the 3.7.0 online client** (t
   - native-activity lifecycle, looper, input queue
   - assets, read straight from the APKs
   - SharedPreferences
-  - movie player, via ffmpeg
+  - movie player, on FFmpeg's libraries (linked in)
   - text entry
 - **Graphics**: SDL2 owns the window and the OpenGL ES contexts (X11 or Wayland, whichever SDL picks; `SDL_VIDEODRIVER` chooses). The game's EGL calls are emulated over them (`runtime/src/hle/egl.cpp`, `runtime/README.md` "Graphics") and its GLES calls go to the host's Mesa. Android's buffer scaling is emulated with an offscreen framebuffer, letterboxed into a resizable window. The guest's `glReleaseShaderCompiler` after every shader compile is dropped: on Mesa it discards the GLSL built-ins, making the next compile and link about 10x slower (about 9 s of render-thread time per boot). `SOA_GL_RELEASE_SHADER_COMPILER=1` passes it through. Two more host-driver workarounds (`runtime/src/hle/gles.cpp`), both leaving the rendered texels and buffer contents unchanged:
   - **sRGB ETC2 textures** (`GL_COMPRESSED_SRGB8_ETC2`, `..._SRGB8_ALPHA8_ETC2_EAC`, `..._SRGB8_PUNCHTHROUGH_ALPHA1_ETC2`) are decoded by the port (`runtime/src/hle/etc2.cpp`) and uploaded as `GL_SRGB8_ALPHA8`. Mesa d3d12 has no ETC2, and its CPU decode of the sRGB variants is about 70x slower than of the linear ones (650 ms for one 1024x1024 level). They were ~20% of busy time in `restore_session.sh`. The selftest `hle/etc2-vs-host` compares the decode texel for texel with the driver's. `SOA_GL_HOST_SRGB_ETC2=1` hands them to the driver again.

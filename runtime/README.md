@@ -18,7 +18,7 @@ Whatever differs between hosts is set by the host through the extension points b
 | `src/hle/` | The Android imports: bionic libc / libm / pthreads over glibc, EGL emulated over the host's GL contexts (`egl.cpp`; `gfx.h`: `GfxHooks`, the host's contexts and window) and GLES to host GL (`gles.cpp`), OpenSL ES (mixed by the host through `audio.h`), `dlopen` |
 | `src/android/` | NDK objects: `AAssetManager` over APKs the host adds (`ndk.h`), `ANativeWindow`, input queue, SharedPreferences, zip; the platform state shared with the host (`platform.h`) |
 | `src/jni/` | The C++ JVM: the Java classes the game calls through JNI (`java_android.cpp`; `java_playcore.cpp`, the Play Core classes that only the viewer's lib, `emulator-viewer/`, uses) |
-| `src/frontend/` | Movie playback via ffmpeg (`movie.h`; the host draws and mixes it) |
+| `src/frontend/` | Movie playback (`movie.h`; the host draws and mixes it) on FFmpeg's libraries (`movie_decoder.h`: libavformat over the APK's or the data zip's entry in place, libavcodec's H.264 / AAC, libswresample; vcpkg's `ffmpeg`, LGPL), the YUV to RGB conversion in a GLES shader. `tools/movie_compare.py` checks the decoding against the `ffmpeg` program on the 12 movies |
 | `src/app/` | The desktop host loop (`app/host.h`): the SDL2 window and its GLES contexts (`app/sdl_gl.h`; X11 or Wayland), presentation and screenshots, mouse and keyboard input, text entry and its on-screen box (`app/text_overlay.h`; below, "Text entry"), the audio device and its null sink, the control commands (`--do`, `--shot`, `--control` FIFO), the `ANativeActivity` bring-up (`JNI_OnLoad`, `onCreate`, the start-up callbacks) and the main loop. Moved from `port/src/main.cpp`; a separate target because it links SDL2 |
 | `tests/` | `soaruntime_tests`: the extension points, exercised without a game |
 
@@ -97,6 +97,13 @@ app::run(*lib, cfg);    // optional desktop host loop (app/host.h): window, JNI_
 - **`audio_mix(out, frames, rate)`** and **`movie_mix_audio`**: the host's audio device pulls from these.
 - **`platform()`:** the surface size, the text-entry and movie state, `quit_requested`. `platform_post_ui` / `platform_run_ui_tasks` are the UI-thread queue, which the host runs from its main loop.
 
+### Movies (`frontend/movie.h`, `frontend/movie_decoder.h`)
+`SOAActivity.PlayMovie` plays an MP4 asset (or a file): the 12 story movies, H.264 Main + AAC-LC 48 kHz stereo. Until 2026-10-04 two `ffmpeg` processes (plus `ffprobe`) decoded them, so a machine without the program (every Windows install) played none; now the runtime decodes them itself with FFmpeg's libraries (vcpkg's `ffmpeg`: avcodec, avformat, swresample; an LGPL build):
+- **Bytes:** a custom `AVIOContext` over the asset where it is: the APK's stored entry or the download zip's (`SOA-3.7.0-canonical-data.zip`), in place in their mappings; a folder's file; an inflated copy for a compressed entry. No temporary file, no ffmpeg protocol.
+- **Decoding:** one demuxer + decoder per stream (video, audio), as the two processes were. Pictures stay yuv420p; a GLES shader converts them to RGB (BT.601, limited range: what swscale assumed for these untagged movies) and turns the portrait-stored picture upright (`transpose=2`). Sound goes through swresample to interleaved float stereo at 48 kHz. Pacing is unchanged: picture k at start + k / r_frame_rate, sound paced by the device and the wall clock (`drop_late_audio`).
+- **Proof** (`tools/movie_compare.py`, with `build/tools/movie_check/movie_check`, against Ubuntu's ffmpeg 6.1.1 on all 12): the same picture count as the program's output (default and `-fps_mode passthrough`) and the same yuv420p bytes; the same sound samples, bit for bit; the same pictures and sound when read from the data zip and the APK in place.
+- **Accepted differences:** (1) colour: the shader's float maths vs swscale's integer tables differ by at most 3/255 per channel (mean about 1; checked on a GPU screenshot too); (2) the end of the sound: FFmpeg 9 ends it where the MP4 edit list does and drops the AAC encoder's trailing padding (up to 984 samples, about 20 ms, inaudible) that FFmpeg 6.1 kept, so a movie can end up to 20 ms sooner; (3) a movie starts about 0.2 s sooner after `PlayMovie` (no `ffprobe` run first). Sound may also differ by rounding with another FFmpeg version (none does with 9.0.2 vs 6.1.1). `movie_compare.py` reports these and fails only on a picture count or decoded picture that differs, a source that decodes differently, or differences far beyond rounding (a broken decoder or shader).
+
 ### Assets (`android/ndk.h`)
 - **The APK list is the host's:** `asset_manager().add_apk(path)` for each APK, in order (a later APK wins). The runtime names no APK. The port and the emulator add the single 3.7.0 APK.
 - Play Asset Delivery packs: `platform_add_asset_pack(name)`.
@@ -112,7 +119,7 @@ A host can replace a guest function, or filter its calls, with host code:
 
 ### Self-tests (`core/selftest.h`)
 - `RUNTIME_TEST("area/name") { ... t.fail(...); t.expect_eq(a, b, "what"); }` registers a test of the runtime itself that needs no game code.
-- The host's runner runs `runtime_tests()`. `soa --selftest` runs them first, through an adapter in `port/src/native/common/test.cpp`, then the port's `NATIVE_TEST`s. Today there are four: `frontend/movie-ends-without-audio-device`, `audio/opensl-queue-drains`, `cpu/tbi-tagged-data-addresses` and `jni/references-low-byte` (below, "Platform fidelity"). `soaruntime_tests` also runs the `cpu/` and `jni/` ones.
+- The host's runner runs `runtime_tests()`. `soa --selftest` runs them first, through an adapter in `port/src/native/common/test.cpp`, then the port's `NATIVE_TEST`s. Among them: `frontend/movie-ends-without-audio-device` and `frontend/movie-decodes-clip` (a clip built into the program, `frontend/movie_test_clip.inc`: no ffmpeg program needed), `audio/opensl-queue-drains`, `cpu/tbi-tagged-data-addresses` and `jni/references-low-byte` (below, "Platform fidelity"). `soaruntime_tests` also runs the `cpu/`, `jni/` and `frontend/movie-` ones.
 - Tests that need the guest library or port code are `NATIVE_TEST`s in the port.
 - The extension-point tests are a separate program, `soaruntime_tests`, so that `soa --selftest` doesn't change:
 
@@ -244,8 +251,8 @@ used). The programs' own lists: `port/README.md` "Environment" (soa), `emulator/
 | `SOA_FAULT_LOG=1` | Windows: log every first-chance fault (module offsets of the host stack, the guest pc; `core/cpu.cpp`): a crash inside a system DLL can end the process without the crash report |
 
 Host variables: `HOME` (the programs' default data dirs); `TZ`, `HOME` and `TMPDIR` are the only
-host variables the guest's `getenv` sees (`hle/libc.cpp`); child processes (`ffmpeg` for movies,
-`fc-match` for the font) inherit the environment. SDL reads its own (`SDL_VIDEODRIVER`,
+host variables the guest's `getenv` sees (`hle/libc.cpp`); the one child process (`fc-match` for the
+font) inherits the environment. SDL reads its own (`SDL_VIDEODRIVER`,
 `SDL_AUDIODRIVER`, any `SDL_*` hint). The runtime sets `SDL_HINT_VIDEO_X11_FORCE_EGL` (`app/sdl_gl.cpp`)
 and `SDL_HINT_IME_SUPPORT_EXTENDED_TEXT` (`app/host.cpp`) at normal priority, so the environment's
 `SDL_VIDEO_X11_FORCE_EGL` / `SDL_IME_SUPPORT_EXTENDED_TEXT` override them: left so on purpose (SDL's

@@ -14,8 +14,8 @@ build-win-release/) unless --no-build, then makes, per platform:
 Each zip holds one top folder (soa-port-<V>-<platform>/ ...) with the binaries (stripped), the
 launchers, README.txt (from scripts/package/README.txt.in: per program, which game files it needs and
 where to put them), LICENSE.txt (ours, GPLv3), THIRD-PARTY-NOTICES.txt (the licenses of the libraries
-we link: the vcpkg ports' copyright files, dynarmic and the externals it links, IJG libjpeg 9, zstd
-1.3.4) and ONLY data we made:
+we link: the vcpkg ports' copyright files (FFmpeg's: the LGPL 2.1), dynarmic and the externals it
+links, IJG libjpeg 9, zstd 1.3.4) and ONLY data we made:
 
   data/gacha_pools.sqlite3   the reconstructed gacha pools (tools/build_gacha_pools.py) WITHOUT the
                              game's text: gacha.name (master_text titles) and rule.text (our notes,
@@ -40,6 +40,7 @@ in git under standin-assets/ and differ from any same-named file of a download t
 import argparse
 import fnmatch
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -88,8 +89,9 @@ ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
 GAME_EXTS = {".aif", ".asf", ".spk", ".msgp", ".csf", ".apk", ".xapk", ".so", ".aac", ".mp4", ".bin", ".bmd", ".bca"}  # 380-ok: .xapk excluded
 GAME_NAMES = re.compile(r"(basmaster|^version.*\.bin$|libSOA)", re.I)
 
-# The vcpkg ports' helper packages (build scripts, no code in the binaries).
-VCPKG_SKIP = re.compile(r"^(vcpkg-.*|boost-cmake|boost-uninstall|doc|man|pkgconfig|unofficial-.*|boost_.*|boost-1\..*|Vorbis|ogg|opengl|boost)$")
+# The vcpkg ports' helper packages (build scripts, no code in the binaries), and the build tools
+# ffmpeg's port installs for the host (pkgconf, ffmpeg-bin2c: not linked into the programs).
+VCPKG_SKIP = re.compile(r"^(vcpkg-.*|boost-cmake|boost-uninstall|doc|man|pkgconfig|unofficial-.*|boost_.*|boost-1\..*|Vorbis|ogg|opengl|boost|pkgconf|ffmpeg-bin2c)$")
 DYNARMIC_EXTERNALS = ["fmt", "mcl", "robin-map", "xbyak", "zycore", "zydis"]  # (x86-64: no biscuit / oaknut; catch is tests)
 
 
@@ -143,6 +145,28 @@ def clean_pools(src, dst):
     db.close()
 
 
+def ffmpeg_title(share):
+    """FFmpeg's notice heading: the version and source the vcpkg port built, and its license (an
+    LGPL build: vcpkg.json enables no gpl / nonfree / version3 feature)."""
+    version, source = "", ""
+    try:
+        with open(os.path.join(share, "ffmpeg", "vcpkg.spdx.json"), encoding="utf-8") as f:
+            for pkg in json.load(f).get("packages", []):
+                loc = pkg.get("downloadLocation") or ""
+                if "ffmpeg/ffmpeg@" in loc:
+                    source = loc.replace("git+", "")
+                elif pkg.get("name") == "ffmpeg" and pkg.get("versionInfo"):
+                    version = pkg["versionInfo"]
+    except (OSError, ValueError):
+        pass
+    return (f"FFmpeg {version} (ffmpeg.org; libavcodec, libavformat, libavutil, libswresample: the movie player; "
+            f"GNU LGPL version 2.1 or later; source: {source or 'https://ffmpeg.org/download.html'}) (vcpkg port ffmpeg)")
+
+
+# vcpkg ports whose notice heading says more than "<port> (vcpkg port)".
+PORT_TITLES = {"ffmpeg": ffmpeg_title}
+
+
 def notices(plat, out):
     b = os.path.join(ROOT, PLATFORMS[plat]["build"])
     share = os.path.join(b, "vcpkg_installed", PLATFORMS[plat]["triplet"], "share")
@@ -165,7 +189,7 @@ def notices(plat, out):
         if VCPKG_SKIP.match(p) and not p == "boost-headers":
             continue
         if os.path.isfile(cp):
-            add(f"{p} (vcpkg port)", cp)
+            add(PORT_TITLES[p](share) if p in PORT_TITLES else f"{p} (vcpkg port)", cp)
     deps = os.path.join(b, "_deps")
     add("dynarmic (github.com/lioncash/dynarmic, the ARM64 JIT)", os.path.join(deps, "dynarmic-src", "LICENSE.txt"))
     for e in DYNARMIC_EXTERNALS:

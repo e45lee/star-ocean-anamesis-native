@@ -82,7 +82,7 @@ void nested_tests(const std::string& dir) {
           "nested stored entry: method, size, CRC");
     check(ea && inner.stored_data(*ea) && memcmp(inner.stored_data(*ea), a.data(), a.size()) == 0, "nested stored_data in place");
     check(ea && pread_file(bundle, inner.data_offset_of(*ea), a.size()) == a,
-          "data_offset_of is an offset in the outer file (pread / ffmpeg subfile)");
+          "data_offset_of is an offset in the outer file (pread)");
     const auto* eb = inner.find("assets/big.bin");
     check(eb && eb->method == 8 && inner.extract(*eb, out) && out == big, "nested deflated entry extracts");
     char buf[64];

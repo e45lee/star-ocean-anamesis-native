@@ -219,6 +219,7 @@ namespace {
 TEST_PROBE(g_probeAddRenderQueue, "_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi");
 TEST_PROBE(g_probeGetRenderBatch, "_ZN4Aska19RenderContextServer14GetRenderBatchEi");
 TEST_PROBE(g_probeTextureStateCaches, "_ZN4Aska16RenderDeviceData21GetTextureStateCachesEj");
+TEST_PROBE(g_probeUpdateTexture, "_ZN4Aska10RenderPass13UpdateTextureEPNS_12MaterialListEPNS_22TextureModifierManagerEPKNS_10RENDERINFOEib");
 }  // namespace
 
 // RenderThread and its queue: two consecutive AddRenderQueue calls (on the painting thread); the entry
@@ -414,6 +415,88 @@ NATIVE_TEST("render/layout-render-device") {
         t.expect_eq((u32)checked <= tb.m_size, true, "used buckets <= m_size");
         return true;
     }, 20000, "RenderDeviceData::GetTextureStateCaches");
+}
+
+// ---- The materials section -------------------------------------------------------------------------
+
+// RenderPass / RenderPassBatch / ShaderConstantManager: a private pass through the guest's constructor,
+// Init(3) (new[] of batches after a count) and Create(0) (a ShaderNodeModifier in each batch), then
+// its destructor (the batches back through ~ShaderConstantManager).
+NATIVE_TEST("render/layout-render-pass") {
+    alignas(16) static u8 buf[sizeof(RenderPass)];
+    std::memset(buf, 0x3c, sizeof buf);
+    auto* rp = reinterpret_cast<RenderPass*>(buf);
+    t.call("_ZN4Aska10RenderPassC2Ev", {(u64)rp});
+    t.expect_eq(rp->vtable, vtable_of(t, "_ZTVN4Aska10RenderPassE"), "vtable");
+    t.expect_eq(rp->m_batches, (RenderPassBatch*)nullptr, "m_batches");
+    t.expect_eq(rp->unk_180, (u64)0xfefefefefefefefeull, "0x180 = 0xfe..");
+    t.expect_eq(rp->unk_188, (u16)0xfefe, "0x188 = 0xfefe");
+    t.expect_eq(rp->m_parent, (RenderPass*)nullptr, "m_parent");
+    t.expect_eq(rp->m_buffer, (u8*)nullptr, "m_buffer");
+    if (!t.expect_eq(t.call("_ZN4Aska10RenderPass4InitEiPv", {(u64)rp, 3, 0}) & 0xff, (u64)1, "Init(3)")) return;
+    t.expect_eq(rp->m_batchCount, (u8)3, "m_batchCount");
+    t.expect_eq(reinterpret_cast<const u64*>(rp->m_batches)[-1], (u64)3, "the batches' new[] count");
+    for (int i = 0; i < 3; i++) {
+        RenderPassBatch& b = rp->m_batches[i];
+        t.expect_eq(b.m_constants.m_ready, &b.m_constants.m_one, "batch: m_ready = &m_one");
+        t.expect_eq(b.m_constants.m_one, (u8)1, "batch: m_one");
+        t.expect_eq(b.m_constants.m_dirty & 3, 2, "batch: m_dirty bits 0-1 = 2");
+        t.expect_eq(b.m_constants.m_head, (void*)nullptr, "batch: no constants");
+    }
+    t.expect_eq(t.call("_ZN4Aska10RenderPass6CreateEi", {(u64)rp, 0}) & 0xff, (u64)1, "Create(0)");
+    for (int i = 0; i < 3; i++) {
+        RenderPassBatch& b = rp->m_batches[i];
+        t.expect_eq(b.m_shaderNode, (void*)b.m_modifier, "batch: m_shaderNode = &m_modifier");
+        t.expect_eq(*reinterpret_cast<const void* const*>(b.m_modifier), vtable_of(t, "_ZTVN4Aska18ShaderNodeModifierE"), "batch: a ShaderNodeModifier");
+    }
+    t.call("_ZN4Aska10RenderPassD2Ev", {(u64)rp});
+    t.expect_eq(rp->m_batches, (RenderPassBatch*)nullptr, "destructor: m_batches freed");
+}
+
+// MaterialContext: a private one (constructor, Reset).
+NATIVE_TEST("render/layout-material-context") {
+    alignas(16) static u8 buf[sizeof(MaterialContext)];
+    std::memset(buf, 0x3c, sizeof buf);
+    auto* mc = reinterpret_cast<MaterialContext*>(buf);
+    t.call("_ZN4Aska15MaterialContextC2Ev", {(u64)mc});
+    t.expect_eq(mc->vtable, vtable_of(t, "_ZTVN4Aska15MaterialContextE"), "vtable");
+    u16 fl = (u16)(mc->m_flags[0] | mc->m_flags[1] << 8);
+    t.expect_eq(fl & 0x7fff, 0x2001, "m_flags 0x2001");
+    t.expect_eq(mc->unk_248, (u8)3, "0x248 = 3");
+    t.expect_eq(mc->unk_230, (u8)0xff, "0x230 = 0xff");
+    mc->m_flags[0] = 0x5c;
+    mc->unk_248 = 9;
+    t.call("_ZN4Aska15MaterialContext5ResetEv", {(u64)mc});
+    t.expect_eq(mc->m_flags[0], (u8)0x01, "Reset: m_flags low byte");
+    t.expect_eq(mc->unk_248, (u8)3, "Reset: 0x248");
+}
+
+// MaterialList (+ MaterialEntry, the pass, the manager list): a live model's, on RenderPass::UpdateTexture
+// (a worker preparing the model; the list is its second argument). At home or in a battle (the title
+// has no models: noted, not failed).
+NATIVE_TEST("render/layout-material-list") {
+    probe_call(t, g_probeUpdateTexture, [&](Cpu& c) {
+        auto* ml = reinterpret_cast<MaterialList*>(c.x(1));
+        if (!ml || !ml->m_entries || ml->m_count == 0) return false;
+        t.expect_eq(ml->m_activeCount <= ml->m_count, true, "m_activeCount <= m_count");
+        t.expect_eq(ml->m_managers.vtable, vtable_of(t, "_ZTVN4Aska21RenderPassManagerListE"), "m_managers vtable");
+        t.expect_eq(ml->m_managers.m_linkVtable, vtable_of(t, "_ZTVN4Aska11LinkElementE"), "m_managers' sentinel");
+        t.expect_eq(ml->m_managers.m_count >= 1, true, "a RenderPassManager");
+        t.expect_eq(has_vtable(t, ml->m_managers.m_last, "_ZTVN4Aska17RenderPassManagerE"), true, "m_managers.m_last is a RenderPassManager");
+        t.expect_eq(ml->m_pass.vtable, vtable_of(t, "_ZTVN4Aska10RenderPassE"), "m_pass vtable");
+        t.expect_eq(ml->m_activePass, &ml->m_pass, "m_activePass = &m_pass");
+        t.expect_eq((u32)ml->m_pass.m_batchCount, (u32)ml->m_count, "m_pass has one batch per material");
+        bool punch = false;
+        for (int i = 0; i < ml->m_count; i++) {
+            MaterialEntry& e = ml->m_entries[i];
+            t.expect_eq(e.m_context.vtable, vtable_of(t, "_ZTVN4Aska15MaterialContextE"), "entry: a MaterialContext at +0x10");
+            if (i < ml->m_activeCount && (e.m_context.m_flags[0] & 0xc)) punch = true;
+        }
+        t.expect_eq(t.call("_ZN4Aska12MaterialList14IsPunchthroughEv", {(u64)ml}) & 0xff, (u64)punch, "IsPunchthrough from the entries' flags");
+        s32 ppl = (s32)t.call("_ZNK4Aska12MaterialList27GetActualPerPixelLightCountEv", {(u64)ml});
+        t.expect_eq(ppl, ml->m_perPixelLights == -1 ? 3 : (s32)ml->m_perPixelLights, "GetActualPerPixelLightCount");
+        return true;
+    }, live_screen() ? 30000 : 4000, "RenderPass::UpdateTexture (a model)", live_screen());
 }
 
 }  // namespace soa::native::render

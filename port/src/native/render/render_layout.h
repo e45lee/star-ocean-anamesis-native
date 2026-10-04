@@ -1086,6 +1086,263 @@ static_assert(sizeof(RenderDeviceGL) == 0xec0c8);
 // (MaterialList, MaterialContext, ShaderConstantManager / Handler, UniformValueBuffer2, AhslConst,
 // RenderPass / RenderPassManager, PostProcessCombinerTBR / PostProcessBufferManager, ShadowManager)
 
+// Aska::MaterialContext: one material's shader inputs (textures, samplers, constants) for the draw.
+// Guest size 0x290 (MaterialList::Alloc: one per material, 0x2a0 apart, at +0x10 of a MaterialEntry);
+// layout from MaterialContext(), Reset, MaterialList::Connect / IsPunchthrough / IsZprepassOFF /
+// SetShaderLod (port/decomp/render/material.c). vtable (_ZTVN4Aska15MaterialContextE): 0 D1, 1 D0, then
+// Apply(unsigned long, RenderDeviceGL*, ShaderNodeHandler*), ApplyToCommandBuffer.
+class MaterialContext {
+public:
+    void Ctor();                                               // _ZN4Aska15MaterialContextC2Ev
+    void Dtor();
+    void Reset();
+    void SetDefault(void* samplerMode);                        // Aska::TextureSamplerMode*
+    void AddShaderTexture(s32 kind, void* texInfo, s32 slot);  // ShaderContext::ShaderTexKind, TEXTUREINFO*
+    void RemoveShaderTexture(s32 kind, s32 slot);
+    void MakeShaderConstant(void* manager);                    // ShaderConstantManager*
+    void Apply(u64 a, void* device, void* shaderNodeHandler);
+    void ApplyToCommandBuffer(u64 a, void* b, void* c);
+
+    const void* vtable;          // 0x000: _ZTVN4Aska15MaterialContextE + 0x10
+    u64 unk_008;                 // 0x008: 0 at construction
+    u64 unk_010;                 // 0x010: 0 at construction (u64 at 0x17 too)
+    u8 unk_018[8];               // 0x018
+    u8 m_textures[0x200];        // 0x020: the shader textures (AddShaderTexture), zeroed by Reset
+    u64 unk_220;                 // 0x220
+    u64 unk_228;                 // 0x228
+    u8 unk_230;                  // 0x230: 0xff at construction
+    u8 unk_231[3];               // 0x231
+    u32 unk_234;                 // 0x234
+    u16 unk_238;                 // 0x238
+    u8 unk_23a[8];               // 0x23a: 0xff.. at construction
+    u8 unk_242;                  // 0x242: 0xff
+    u8 unk_243;                  // 0x243: 0xff
+    u8 unk_244;                  // 0x244
+    u8 m_flags[2];               // 0x245: (u16, unaligned) 0x2001 at construction; bit 0 connected (MaterialList::Connect),
+                                 //        bits 2-3 punch-through (IsPunchthrough), bit 3 Z-prepass off (IsZprepassOFF)
+    u8 unk_247;                  // 0x247
+    u8 unk_248;                  // 0x248: 3 at construction
+    u8 unk_249;                  // 0x249
+    u8 unk_24a[6];               // 0x24a
+    u16 unk_250;                 // 0x250
+    u8 unk_252[6];               // 0x252
+    u64 unk_258;                 // 0x258
+    u64 unk_260;                 // 0x260
+    u16 unk_268;                 // 0x268
+    u8 unk_26a[6];               // 0x26a
+    u64 unk_270[4];              // 0x270
+};
+static_assert(offsetof(MaterialContext, m_textures) == 0x20);
+static_assert(offsetof(MaterialContext, unk_230) == 0x230);
+static_assert(offsetof(MaterialContext, m_flags) == 0x245);
+static_assert(offsetof(MaterialContext, unk_248) == 0x248);
+static_assert(sizeof(MaterialContext) == 0x290);
+
+class MaterialData;  // Aska::MaterialData (the model's material record; opaque)
+
+// One material of a MaterialList (0x2a0 bytes; MaterialList::Alloc: a buffer of n of them + 0x10).
+struct MaterialEntry {
+    const MaterialData* m_data;  // 0x000: MaterialList::Connect
+    u64 unk_008;                 // 0x008
+    MaterialContext m_context;   // 0x010
+};
+static_assert(offsetof(MaterialEntry, m_context) == 0x10);
+static_assert(sizeof(MaterialEntry) == 0x2a0);
+
+// Aska::ShaderConstantManager: a pass batch's material constants, a singly linked list of records
+// {next, ..., u16 id & 0x7fff at +0x10, u8 slot & 0xf | 0x80 at +0x13} whose values come from a
+// TPoolFast<Aska::Vector> (SetShaderConstantF_lockable, SetShaderConstantRefF, SetShaderConstantFUC;
+// MaterialList::Activate fills it through AhslConst::AofConvertToNativeConstant: docs/render/
+// hair-shader.md). Partial; the start of a RenderPassBatch.
+class ShaderConstantManager {
+public:
+    void Dtor();
+    bool SetShaderConstantFUC(s32 id, s32 slot, const MathVector* v, s32 count);   // (147 self)
+    void SetShaderConstantRefF(s32 id, s32 slot, const MathVector* v, s32 count);
+    void UpdatePacket(void* buffer, void* shaderCache);                              // UniformValueBuffer2*, ShaderCache*
+    bool IsShaderConstantManagerDirty() const;
+
+    void* m_head;                // 0x00: the first constant record
+    u64 unk_08;                  // 0x08
+    u8* m_ready;                 // 0x10: points at m_one (RenderPass::Init's inlined constructor)
+    u16 unk_18;                  // 0x18
+    u16 m_count;                 // 0x1a: records
+    u8 m_dirty;                  // 0x1c: bit 0 set by a change; bits 0-1 = 2 after RenderPass::Init
+    u8 m_one;                    // 0x1d: 1 after RenderPass::Init
+    u8 unk_1e[2];                // 0x1e
+};
+static_assert(offsetof(ShaderConstantManager, m_count) == 0x1a);
+static_assert(offsetof(ShaderConstantManager, m_dirty) == 0x1c);
+static_assert(sizeof(ShaderConstantManager) == 0x20);
+
+// Aska::RenderPassBatch: one material's slot in a RenderPass (0x1b8 bytes; RenderPass::Init: new[] of
+// them after an 8-byte count; destroyed as ShaderConstantManagers). Layout from RenderPass::Init / Create / ~RenderPass.
+struct RenderPassBatch {
+    ShaderConstantManager m_constants;   // 0x000
+    void* m_shaderNode;                  // 0x020: ShaderNodeModifier / DirectShaderNode (Create: &m_modifier; deleted via slot 0)
+    u8 unk_028[0x10];                    // 0x028
+    void* m_shaderCache[2];              // 0x038: refcounted (+0x4c atomic count) shader caches
+    RenderState* m_renderState;          // 0x048: released by ~RenderPass
+    u8 unk_050[8];                       // 0x050
+    u8 unk_058;                          // 0x058: bits 0-2 cleared by Init
+    u8 unk_059[0xc7];                    // 0x059: (0x5c..0xdf zeroed by Init)
+    u8 m_modifier[0x98];                 // 0x120: Aska::ShaderNodeModifier (vtable) after Create(0) / DirectShaderNode after Create(1)
+};
+static_assert(offsetof(RenderPassBatch, m_shaderNode) == 0x20);
+static_assert(offsetof(RenderPassBatch, m_shaderCache) == 0x38);
+static_assert(offsetof(RenderPassBatch, m_renderState) == 0x48);
+static_assert(offsetof(RenderPassBatch, m_modifier) == 0x120);
+static_assert(sizeof(RenderPassBatch) == 0x1b8);
+
+// Aska::RenderPass: the draw setup of one pass (color, shadow cast, Z prepass, ...) of a model: one
+// RenderPassBatch per material. Guest size 0x1c8 (RenderPassManager::GetPass: operator new(0x1c8));
+// layout from RenderPass(), Init, Create, ~RenderPass (port/decomp/render/render_pass.c). The passes
+// derived from one (GetShadowCastPass, GetZprePass, ...) hang off m_children through m_nextSibling.
+// vtable (_ZTVN4Aska10RenderPassE): 0 D1, 1 D0, ...
+class RenderPass {
+public:
+    void Ctor();                                    // _ZN4Aska10RenderPassC2Ev
+    void Dtor();                                    // _ZN4Aska10RenderPassD2Ev
+    void DtorDelete();
+    bool Init(s32 batches, void* storage);          // new[] RenderPassBatch (count cookie at -8); m_batchCount
+    bool Create(s32 kind);                          // 0: ShaderNodeModifiers, 1: DirectShaderNodes, 2: ...
+    bool Clone(const RenderPass* a, const RenderPass* b, bool c);
+    void SetNoneModifyingShader();
+    void BeginModifyingShader();
+    void EndModifyingShader(void* materials);       // MaterialList*
+    void AddShaderAdapter(void* adapter, s32 n);
+    void InvalidateShaders();
+    void InvalidateShaderCaches();
+    void ReadyShaderKey(s32 a, s32 b, void* materials, bool c);
+    u32 GetShaderKeyFlags(const RenderPassBatch* b);
+    void ReadyShader();                             // (185 self)
+    void UpdatePacket();
+    void PrepareRenderState(void* materials, bool b);
+    void UpdateTexture(void* materials, void* modifiers, const RENDERINFO* info, s32 a, bool b);   // (343 self)
+    void UpdateMaterial(void* materials);
+    void ClearTexture();
+    void UpdateTextureShadowPass(void* materials, void* modifiers, const RENDERINFO* info, s32 a);
+    s32 GetVertexPassNum() const;
+
+    const void* vtable;              // 0x000: _ZTVN4Aska10RenderPassE + 0x10
+    RenderPassBatch* m_batches;      // 0x008: Init's new[]
+    u8 unk_010[0x10];                // 0x010
+    u8 unk_020[6];                   // 0x020: 0 at construction
+    u8 m_batchCount;                 // 0x026: Init's count
+    u8 unk_027[2];                   // 0x027
+    u8 unk_029;                      // 0x029: 0 after Init
+    u16 unk_02a;                     // 0x02a: 0 at construction
+    u8 unk_02c;                      // 0x02c
+    u8 unk_02d;                      // 0x02d: 0 at construction
+    u8 unk_02e;                      // 0x02e
+    u8 m_bits2f[3];                  // 0x02f: 24 flag bits (0x20013 set at construction)
+    u8 unk_032[6];                   // 0x032
+    RenderPass* m_parent;            // 0x038: the pass this one derives from (its m_children list)
+    RenderPass* m_children;          // 0x040: the derived passes
+    RenderPass* m_nextSibling;       // 0x048
+    u8 unk_050[0x130];               // 0x050: zeroed by the constructor (0x38..0x1c0)
+    u64 unk_180;                     // 0x180: 0xfefefefefefefefe at construction
+    u16 unk_188;                     // 0x188: 0xfefe at construction
+    u8 unk_18a[0x0e];                // 0x18a
+    u8* m_buffer;                    // 0x198: delete[]d by ~RenderPass
+    u8 unk_1a0[0x28];                // 0x1a0: (0x1a0..0x1bf zeroed by the constructor; 0x1c0.. allocation padding)
+};
+static_assert(offsetof(RenderPass, m_batches) == 0x08);
+static_assert(offsetof(RenderPass, m_batchCount) == 0x26);
+static_assert(offsetof(RenderPass, m_bits2f) == 0x2f);
+static_assert(offsetof(RenderPass, m_parent) == 0x38);
+static_assert(offsetof(RenderPass, m_children) == 0x40);
+static_assert(offsetof(RenderPass, m_nextSibling) == 0x48);
+static_assert(offsetof(RenderPass, unk_180) == 0x180);
+static_assert(offsetof(RenderPass, m_buffer) == 0x198);
+static_assert(sizeof(RenderPass) == 0x1c8);
+
+class RenderPassManager;  // Aska::RenderPassManager (0x3c0 bytes; MaterialList's constructor makes one): not recovered
+
+// Aska::RenderPassManagerList: MaterialList's list of RenderPassManagers (0x28 bytes: a vtable, then an
+// Aska::LinkElement sentinel whose links point at itself when empty, and a count).
+struct RenderPassManagerList {
+    const void* vtable;                  // 0x00: _ZTVN4Aska21RenderPassManagerListE + 0x10 (slot 2: Add)
+    const void* m_linkVtable;            // 0x08: _ZTVN4Aska11LinkElementE + 0x10 (the sentinel)
+    void* m_next;                        // 0x10: (self when empty; the first manager after the constructor's Add)
+    RenderPassManager* m_last;           // 0x18: MaterialList::Alloc uses it as the manager
+    u32 m_count;                         // 0x20
+    u8 unk_24[4];                        // 0x24
+};
+static_assert(offsetof(RenderPassManagerList, m_last) == 0x18);
+static_assert(sizeof(RenderPassManagerList) == 0x28);
+
+// Aska::MaterialList: a model's materials (one MaterialEntry each) and its passes. Embedded in
+// AofHandler at +0xe8 (scene; AofHandler::AofHandler calls MaterialList()); data size 0x228 (the
+// RenderPass member is last); layout from MaterialList(), Alloc, Connect, IsPunchthrough, IsZprepassOFF,
+// SetShaderLod, EnablePerMatLightContext, GetActualPerPixelLightCount, SetActiveMaterialCount, Activate
+// (port/decomp/render/material.c). Activate (docs/render/hair-shader.md) copies the model's
+// AFF::MaterialInfo flags into m_flags and each material's constants into m_pass.m_batches[i].m_constants.
+class MaterialList {
+public:
+    void Ctor();                                       // _ZN4Aska12MaterialListC2Ev (also makes a RenderPassManager, 0x3c0)
+    u32 GetAllocBufSize(s32 n, const void* meshset) const;   // n * 0x2a0 | 0x10, + extras per mesh
+    bool Alloc(s32 n, void* buffer);                   // n MaterialEntry in buffer; Init / Create the passes
+    void DeleteBuffer();
+    void Connect(s32 i, s32 j, const MaterialData* data);    // m_entries[i].m_data, its context's connected bit
+    void SetPerPixelLightCount(s32 n);
+    void EnablePerMatLightContext(bool on);            // m_flags bit 6
+    void SetPerMatLightContext(s32 a, s32 b, s32 freq);
+    void UpdatePunchthroughZprepass();
+    void SetAmbientBRDFCapability(s32 a, bool b);
+    void DisableAmbientBRDFCapability();
+    void Activate(const void* data, const void* info, s32 n, void* meshsets);   // AFF::MaterialInfo const*, AofhMeshset**
+    bool Create(s32 n);
+    void Clone(const MaterialList* src, bool b);
+    void SetDirectMaterial(s32 i, void* m, void* prim, u64 a);
+    void SetShaderConstantF(s32 i, s32 id, s32 slot, const MathVector* v, s32 count);
+    void SetMaterialColor(s32 i, MathVector* v);       // SetShaderConstantF(i, 0x14, 0, v, 1)
+    void SetTexSelector(s32 i, float v);
+    void SetColorMultiplier(s32 i, const MathVector& mul, const MathVector& add);
+    void SetUVMatrix(s32 i, const MathMatrix& m);
+    s32 GetActualPerPixelLightCount() const;           // m_perPixelLights, 3 when -1
+    void EnableAmbientBRDF(s32 type);
+    void EnableShadowNoise(bool on);
+    void EnableIBL(Light* light, bool b, s32 offsetType);
+    void EnableSecondaryIBL(Light* light);
+    void SetShaderLod(s32 lod);                        // every context's 0x1d and m_shaderLod
+    void ServeShaderConstantBody();
+    bool IsPunchthrough();                             // any active context with m_flags & 0xc
+    bool IsZprepassOFF();                              // any with m_flags bit 3
+    void UpdateMaterialContext();
+    void SetActiveMaterialCount(u8 n);
+
+    u8* m_ownedBuffer;                 // 0x000: delete[]d when m_flags & 3
+    const void* m_materialData;        // 0x008: Activate's data
+    u8* m_extra;                       // 0x010: after the entries (Alloc: buffer + (n * 0x2a0 | 0x10))
+    MaterialEntry* m_entries;          // 0x018
+    u16 m_flags;                       // 0x020: bits 0-1 owns the buffer, 2, 4-7 / 8 / 10 / 11 from AFF::MaterialInfo, 6 per-material light context, 9
+    u8 m_activeCount;                  // 0x022: materials in use
+    u8 m_count;                        // 0x023: Alloc's n
+    s8 m_perPixelLights;               // 0x024: -1 at construction (3 then)
+    u8 unk_025;                        // 0x025
+    u8 unk_026[4];                     // 0x026: (an unaligned u32) 0 by EnablePerMatLightContext
+    u8 unk_02a;                        // 0x02a
+    u8 unk_02b;                        // 0x02b: 0xff at construction (u16 store)
+    u8 m_shaderLod;                    // 0x02c
+    u8 unk_02d;                        // 0x02d
+    u8 unk_02e;                        // 0x02e: 0 at construction
+    u8 unk_02f;                        // 0x02f
+    RenderPass* m_activePass;          // 0x030: &m_pass after Alloc
+    RenderPassManagerList m_managers;  // 0x038 (its m_count at 0x058)
+    RenderPass m_pass;                 // 0x060
+};
+static_assert(offsetof(MaterialList, m_entries) == 0x18);
+static_assert(offsetof(MaterialList, m_flags) == 0x20);
+static_assert(offsetof(MaterialList, m_activeCount) == 0x22);
+static_assert(offsetof(MaterialList, m_count) == 0x23);
+static_assert(offsetof(MaterialList, m_perPixelLights) == 0x24);
+static_assert(offsetof(MaterialList, m_shaderLod) == 0x2c);
+static_assert(offsetof(MaterialList, m_activePass) == 0x30);
+static_assert(offsetof(MaterialList, m_managers) == 0x38);
+static_assert(offsetof(MaterialList, m_pass) == 0x60);
+static_assert(sizeof(MaterialList) == 0x228);
+
 // ==== End of section: materials ====================================================================
 
 }  // namespace soa::native::render

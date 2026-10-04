@@ -90,6 +90,18 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f7f7d0	0x207f7d0	16	_ZN4Aska4Task11ForceDeleteEv	Aska::Task::ForceDelete()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
 0x1f7f7e0	0x207f7e0	4	_ZN4Aska4Task3RunEi	Aska::Task::Run(int)	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
 0x209f540	0x219f540	152	_ZN4Aska18HierarchicalObjectD2Ev	Aska::HierarchicalObject::~HierarchicalObject()	hierarchical_object	typed	
+0x20bce30	0x21bce30	316	_ZN4Aska21ShaderConstantManagerD1Ev	Aska::ShaderConstantManager::~ShaderConstantManager()	material	typed	
+0x20bcf6c	0x21bcf6c	204	_ZNK4Aska21ShaderConstantManager9IsRGBZeroEii	Aska::ShaderConstantManager::IsRGBZero(int, int) const	material	typed	
+0x20bd038	0x21bd038	144	_ZNK4Aska21ShaderConstantManager21SearchShaderConstantFEiiPPNS_6VectorE	Aska::ShaderConstantManager::SearchShaderConstantF(int, int, Aska::Vector**) const	material	typed	
+0x20bd0c8	0x21bd0c8	400	_ZNK4Aska21ShaderConstantManager16GetConstImmStateEii	Aska::ShaderConstantManager::GetConstImmState(int, int) const	material	typed	
+0x20bd258	0x21bd258	632	_ZN4Aska21ShaderConstantManager20SetShaderConstantFUCEiiPKNS_6VectorEi	Aska::ShaderConstantManager::SetShaderConstantFUC(int, int, Aska::Vector const*, int)	material	typed	
+0x20bd4d0	0x21bd4d0	260	_ZN4Aska21ShaderConstantManager21SetShaderConstantRefFEiiPKNS_6VectorEi	Aska::ShaderConstantManager::SetShaderConstantRefF(int, int, Aska::Vector const*, int)	material	typed	
+0x20bd5d4	0x21bd5d4	80	_ZNK4Aska21ShaderConstantManager18GetShaderConstantFEiiPPNS_6VectorE	Aska::ShaderConstantManager::GetShaderConstantF(int, int, Aska::Vector**) const	material	typed	
+0x20bd624	0x21bd624	120	_ZNK4Aska21ShaderConstantManager15SearchConstInfoEii	Aska::ShaderConstantManager::SearchConstInfo(int, int) const	material	typed	
+0x20bd69c	0x21bd69c	72	_ZN4Aska21ShaderConstantManager5CloneEPKS0_	Aska::ShaderConstantManager::Clone(Aska::ShaderConstantManager const*)	material	typed	
+0x20bd6e4	0x21bd6e4	276	_ZN4Aska21ShaderConstantManager12UpdatePacketEPNS_19UniformValueBuffer2EPNS_11ShaderCacheE	Aska::ShaderConstantManager::UpdatePacket(Aska::UniformValueBuffer2*, Aska::ShaderCache*)	material	typed	
+0x20bd9f4	0x21bd9f4	552	_ZN4Aska21ShaderConstantManager27SetShaderConstantF_lockableILb1EEEbiiPKNS_6VectorEi	bool Aska::ShaderConstantManager::SetShaderConstantF_lockable<true>(int, int, Aska::Vector const*, int)	material	decompiled	
+0x20c15ac	0x21c15ac	372	_ZN4Aska12MaterialListC2Ev	Aska::MaterialList::MaterialList()	material	typed	
 0x20c2680	0x21c2680	296	_ZN4Aska9AofObject27SetProgrammableTransparencyENS_16RenderableObject9ProgTransE	Aska::AofObject::SetProgrammableTransparency(Aska::RenderableObject::ProgTrans)	renderable_object	decompiled	
 0x20d48d4	0x21d48d4	140	_ZN4Aska18HierarchicalObject20EnableSimpleDynamicsEb	Aska::HierarchicalObject::EnableSimpleDynamics(bool)	hierarchical_object	typed	
 0x20e92bc	0x21e92bc	976	_ZN4Aska6CameraC2Ev	Aska::Camera::Camera()	renderable_object	decompiled	
@@ -136,6 +148,50 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x213622c	0x223622c	8	_ZNK4Aska27HierarchicalObjectContainer3GetEmPv	Aska::HierarchicalObjectContainer::Get(unsigned long, void*) const	hierarchical_object	typed	
 0x2136234	0x2236234	8	_ZN4Aska27HierarchicalObjectContainer3SetEmPKv	Aska::HierarchicalObjectContainer::Set(unsigned long, void const*)	hierarchical_object	typed	
 0x213a4ac	0x223a4ac	556	_ZN4Aska5LightC2Ev	Aska::Light::Light()	renderable_object	decompiled	
+0x2143ef0	0x2243ef0	180	_ZN4Aska15MaterialContextC1Ev	Aska::MaterialContext::MaterialContext()	material	typed	
+0x2143fa4	0x2243fa4	164	_ZN4Aska15MaterialContext5ResetEv	Aska::MaterialContext::Reset()	material	typed	
+0x2144048	0x2244048	36	_ZN4Aska15MaterialContext10SetDefaultEPNS_18TextureSamplerModeE	Aska::MaterialContext::SetDefault(Aska::TextureSamplerMode*)	material	typed	
+0x214406c	0x224406c	364	_ZN4Aska15MaterialContext16AddShaderTextureENS_13ShaderContext13ShaderTexKindEPNS_11TEXTUREINFOEi	Aska::MaterialContext::AddShaderTexture(Aska::ShaderContext::ShaderTexKind, Aska::TEXTUREINFO*, int)	material	typed	
+0x21441d8	0x22441d8	316	_ZN4Aska15MaterialContext19RemoveShaderTextureENS_13ShaderContext13ShaderTexKindEi	Aska::MaterialContext::RemoveShaderTexture(Aska::ShaderContext::ShaderTexKind, int)	material	typed	
+0x2144314	0x2244314	1204	_ZN4Aska15MaterialContext18MakeShaderConstantEPNS_21ShaderConstantManagerE	Aska::MaterialContext::MakeShaderConstant(Aska::ShaderConstantManager*)	material	typed	
+0x21447c8	0x22447c8	84	_ZN4Aska15MaterialContext5ApplyEmPNS_14RenderDeviceGLEPNS_17ShaderNodeHandlerE	Aska::MaterialContext::Apply(unsigned long, Aska::RenderDeviceGL*, Aska::ShaderNodeHandler*)	material	typed	
+0x214481c	0x224481c	4	_ZN4Aska15MaterialContext20ApplyToCommandBufferEmPNS_8TLongIntImLi1EEEPNS_20CommandBufferManagerE	Aska::MaterialContext::ApplyToCommandBuffer(unsigned long, Aska::TLongInt<unsigned long, 1>*, Aska::CommandBufferManager*)	material	typed	
+0x2144820	0x2244820	4	_ZN4Aska21ShaderConstantHandlerD2Ev	Aska::ShaderConstantHandler::~ShaderConstantHandler()	material	decompiled	
+0x2144824	0x2244824	4	_ZN4Aska15MaterialContextD0Ev	Aska::MaterialContext::~MaterialContext()	material	typed	
+0x2144828	0x2244828	80	_ZNK4Aska12MaterialList15GetAllocBufSizeEiPKNS_3AFF7MeshsetE	Aska::MaterialList::GetAllocBufSize(int, Aska::AFF::Meshset const*) const	material	typed	
+0x2144878	0x2244878	280	_ZN4Aska12MaterialList5AllocEiPv	Aska::MaterialList::Alloc(int, void*)	material	typed	
+0x2144990	0x2244990	76	_ZN4Aska12MaterialList12DeleteBufferEv	Aska::MaterialList::DeleteBuffer()	material	typed	
+0x21449dc	0x22449dc	36	_ZN4Aska12MaterialList7ConnectEiiPKNS_12MaterialDataE	Aska::MaterialList::Connect(int, int, Aska::MaterialData const*)	material	typed	
+0x2144a00	0x2244a00	188	_ZN4Aska12MaterialList21SetPerPixelLightCountEi	Aska::MaterialList::SetPerPixelLightCount(int)	material	typed	
+0x2144abc	0x2244abc	32	_ZN4Aska12MaterialList24EnablePerMatLightContextEb	Aska::MaterialList::EnablePerMatLightContext(bool)	material	typed	
+0x2144adc	0x2244adc	56	_ZN4Aska12MaterialList21SetPerMatLightContextEiiNS0_9LightFreqE	Aska::MaterialList::SetPerMatLightContext(int, int, Aska::MaterialList::LightFreq)	material	typed	
+0x2144b14	0x2244b14	104	_ZN4Aska12MaterialList26UpdatePunchthroughZprepassEv	Aska::MaterialList::UpdatePunchthroughZprepass()	material	typed	
+0x2144b7c	0x2244b7c	112	_ZN4Aska12MaterialList24SetAmbientBRDFCapabilityEib	Aska::MaterialList::SetAmbientBRDFCapability(int, bool)	material	typed	
+0x2144bec	0x2244bec	64	_ZN4Aska12MaterialList28DisableAmbientBRDFCapabilityEv	Aska::MaterialList::DisableAmbientBRDFCapability()	material	typed	
+0x2144c2c	0x2244c2c	1680	_ZN4Aska12MaterialList8ActivateEPKvPKNS_3AFF12MaterialInfoEiPPNS_11AofhMeshsetE	Aska::MaterialList::Activate(void const*, Aska::AFF::MaterialInfo const*, int, Aska::AofhMeshset**)	material	typed	
+0x21452bc	0x22452bc	552	_ZN4Aska21ShaderConstantManager27SetShaderConstantF_lockableILb0EEEbiiPKNS_6VectorEi	bool Aska::ShaderConstantManager::SetShaderConstantF_lockable<false>(int, int, Aska::Vector const*, int)	material	decompiled	
+0x21454e4	0x22454e4	680	_ZN4Aska12MaterialList6CreateEi	Aska::MaterialList::Create(int)	material	typed	
+0x214578c	0x224578c	4	_ZN4Aska12MaterialList5CloneEPKS0_b	Aska::MaterialList::Clone(Aska::MaterialList const*, bool)	material	typed	
+0x2145790	0x2245790	1756	_ZN4Aska12MaterialList17SetDirectMaterialEiPNS_14DirectMaterialEPNS_19RenderablePrimitiveEm	Aska::MaterialList::SetDirectMaterial(int, Aska::DirectMaterial*, Aska::RenderablePrimitive*, unsigned long)	material	typed	
+0x2145e6c	0x2245e6c	60	_ZN4Aska12MaterialList15SetTexSelector_Eif	Aska::MaterialList::SetTexSelector_(int, float)	material	typed	
+0x2145ea8	0x2245ea8	100	_ZN4Aska12MaterialList19SetColorMultiplier_EiRKNS_6VectorES3_	Aska::MaterialList::SetColorMultiplier_(int, Aska::Vector const&, Aska::Vector const&)	material	typed	
+0x2145f0c	0x2245f0c	40	_ZN4Aska12MaterialList12SetUVMatrix_EiRKNS_6MatrixE	Aska::MaterialList::SetUVMatrix_(int, Aska::Matrix const&)	material	typed	
+0x2145f34	0x2245f34	24	_ZN4Aska12MaterialList16SetMaterialColorEiPNS_6VectorE	Aska::MaterialList::SetMaterialColor(int, Aska::Vector*)	material	typed	
+0x2145f4c	0x2245f4c	260	_ZN4Aska12MaterialList18SetShaderConstantFEiiiPKNS_6VectorEi	Aska::MaterialList::SetShaderConstantF(int, int, int, Aska::Vector const*, int)	material	typed	
+0x2146050	0x2246050	272	_ZN4Aska12MaterialList14SetTexSelectorEif	Aska::MaterialList::SetTexSelector(int, float)	material	typed	
+0x2146160	0x2246160	312	_ZN4Aska12MaterialList18SetColorMultiplierEiRKNS_6VectorES3_	Aska::MaterialList::SetColorMultiplier(int, Aska::Vector const&, Aska::Vector const&)	material	typed	
+0x2146298	0x2246298	264	_ZN4Aska12MaterialList11SetUVMatrixEiRKNS_6MatrixE	Aska::MaterialList::SetUVMatrix(int, Aska::Matrix const&)	material	typed	
+0x21463a0	0x22463a0	20	_ZNK4Aska12MaterialList27GetActualPerPixelLightCountEv	Aska::MaterialList::GetActualPerPixelLightCount() const	material	typed	
+0x21463b4	0x22463b4	376	_ZN4Aska12MaterialList17EnableAmbientBRDFENS0_15AmbientBRDFTypeE	Aska::MaterialList::EnableAmbientBRDF(Aska::MaterialList::AmbientBRDFType)	material	typed	
+0x214652c	0x224652c	340	_ZN4Aska12MaterialList17EnableShadowNoiseEb	Aska::MaterialList::EnableShadowNoise(bool)	material	typed	
+0x2146680	0x2246680	1064	_ZN4Aska12MaterialList9EnableIBLEPNS_5LightEbNS0_13IBLOffsetTypeE	Aska::MaterialList::EnableIBL(Aska::Light*, bool, Aska::MaterialList::IBLOffsetType)	material	typed	
+0x2146aa8	0x2246aa8	372	_ZN4Aska12MaterialList18EnableSecondaryIBLEPNS_5LightE	Aska::MaterialList::EnableSecondaryIBL(Aska::Light*)	material	typed	
+0x2146c1c	0x2246c1c	52	_ZN4Aska12MaterialList12SetShaderLodEi	Aska::MaterialList::SetShaderLod(int)	material	typed	
+0x2146c50	0x2246c50	484	_ZN4Aska12MaterialList23ServeShaderConstantBodyEv	Aska::MaterialList::ServeShaderConstantBody()	material	typed	
+0x2146e34	0x2246e34	72	_ZN4Aska12MaterialList14IsPunchthroughEv	Aska::MaterialList::IsPunchthrough()	material	typed	
+0x2146e7c	0x2246e7c	68	_ZN4Aska12MaterialList13IsZprepassOFFEv	Aska::MaterialList::IsZprepassOFF()	material	typed	
+0x2146ec0	0x2246ec0	256	_ZN4Aska12MaterialList21UpdateMaterialContextEv	Aska::MaterialList::UpdateMaterialContext()	material	typed	
+0x2146fc0	0x2246fc0	8	_ZN4Aska12MaterialList22SetActiveMaterialCountEh	Aska::MaterialList::SetActiveMaterialCount(unsigned char)	material	typed	
 0x21696e4	0x22696e4	92	_ZNK4Aska16RenderableObject10GetClassIDEi	Aska::RenderableObject::GetClassID(int) const	renderable_object	typed	
 0x2169740	0x2269740	52	_ZN4Aska17MSAAChangerObject24DoesInsertToPaintingListEPNS_16RenderableObject3IPLEiiPKi	Aska::MSAAChangerObject::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	decompiled	
 0x2173c58	0x2273c58	56	_ZN4Aska18RenderContextBatchC1Ev	Aska::RenderContextBatch::RenderContextBatch()	render_context	typed	
@@ -251,6 +307,14 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x218aa40	0x228aa40	92	_ZN4Aska18RenderStateManager6ReturnEPNS_11RenderStateE	Aska::RenderStateManager::Return(Aska::RenderState*)	render_context	decompiled	
 0x218aa9c	0x228aa9c	8	_ZNK4Aska18RenderStateManager23GetAvailableBufferCountEv	Aska::RenderStateManager::GetAvailableBufferCount() const	render_context	decompiled	
 0x218aaa4	0x228aaa4	8	_ZNK4Aska18RenderStateManager23GetAllocatedBufferCountEv	Aska::RenderStateManager::GetAllocatedBufferCount() const	render_context	decompiled	
+0x218ec8c	0x228ec8c	188	_ZN4Aska19UniformValueBuffer23AddEii	Aska::UniformValueBuffer2::Add(int, int)	material	decompiled	
+0x218ed48	0x228ed48	184	_ZN4Aska19UniformValueBuffer25AllocEii	Aska::UniformValueBuffer2::Alloc(int, int)	material	decompiled	
+0x218ee00	0x228ee00	220	_ZN4Aska19UniformValueBuffer23AddEiiPv	Aska::UniformValueBuffer2::Add(int, int, void*)	material	decompiled	
+0x218eedc	0x228eedc	120	_ZN4Aska19UniformValueBuffer27ReallocEi	Aska::UniformValueBuffer2::Realloc(int)	material	decompiled	
+0x218ef54	0x228ef54	116	_ZN4Aska19UniformValueBuffer215TrimExtraMemoryEv	Aska::UniformValueBuffer2::TrimExtraMemory()	material	decompiled	
+0x218efc8	0x228efc8	120	_ZN4Aska19UniformValueBuffer213ReserveMemoryEi	Aska::UniformValueBuffer2::ReserveMemory(int)	material	decompiled	
+0x218f040	0x228f040	48	_ZN4Aska19UniformValueBuffer25ResetENS0_15MemoryOperationE	Aska::UniformValueBuffer2::Reset(Aska::UniformValueBuffer2::MemoryOperation)	material	decompiled	
+0x218f070	0x228f070	108	_ZN4Aska19UniformValueBuffer25CloneERKS0_	Aska::UniformValueBuffer2::Clone(Aska::UniformValueBuffer2 const&)	material	decompiled	
 0x21a996c	0x22a996c	4	_ZN4Aska16RenderableObject6RenderEPNS_13RenderContextEi	Aska::RenderableObject::Render(Aska::RenderContext*, int)	renderable_object	typed	
 0x21aa828	0x22aa828	100	_ZN4Aska24PostProcessBufferManager24DoesInsertToPaintingListEPNS_16RenderableObject3IPLEiiPKi	Aska::PostProcessBufferManager::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	decompiled	
 0x21b6a98	0x22b6a98	36	_ZNK4Aska16RenderableObject11GetDeepestZEi	Aska::RenderableObject::GetDeepestZ(int) const	renderable_object	typed	
@@ -294,6 +358,57 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x21b97a8	0x22b97a8	56	_ZN4Aska19RenderContextServer14GetRenderBatchEi	Aska::RenderContextServer::GetRenderBatch(int)	render_thread	typed	
 0x21b97e0	0x22b97e0	52	_ZN4Aska19RenderContextServer18GetRenderBatchLiteEi	Aska::RenderContextServer::GetRenderBatchLite(int)	render_thread	typed	
 0x21b9814	0x22b9814	68	_ZN4Aska19RenderContextServer15GetLightContextEi	Aska::RenderContextServer::GetLightContext(int)	render_thread	typed	
+0x21bb3ac	0x22bb3ac	536	_ZN4Aska10RenderPass6CreateEi	Aska::RenderPass::Create(int)	render_pass	typed	
+0x21bb5c4	0x22bb5c4	576	_ZN4Aska10RenderPass5CloneEPKS0_S2_b	Aska::RenderPass::Clone(Aska::RenderPass const*, Aska::RenderPass const*, bool)	render_pass	typed	
+0x21bb804	0x22bb804	284	_ZN4Aska10RenderPass4InitEiPv	Aska::RenderPass::Init(int, void*)	render_pass	typed	
+0x21bb920	0x22bb920	132	_ZN4Aska10RenderPassC2Ev	Aska::RenderPass::RenderPass()	render_pass	typed	
+0x21bb9a4	0x22bb9a4	544	_ZN4Aska10RenderPassD1Ev	Aska::RenderPass::~RenderPass()	render_pass	typed	
+0x21bbbc4	0x22bbbc4	24	_ZN4Aska10RenderPassD0Ev	Aska::RenderPass::~RenderPass()	render_pass	typed	
+0x21bbbdc	0x22bbbdc	300	_ZN4Aska10RenderPass22SetNoneModifyingShaderEv	Aska::RenderPass::SetNoneModifyingShader()	render_pass	typed	
+0x21bbd08	0x22bbd08	32	_ZN4Aska10RenderPass20BeginModifyingShaderEv	Aska::RenderPass::BeginModifyingShader()	render_pass	typed	
+0x21bbd28	0x22bbd28	644	_ZN4Aska10RenderPass18EndModifyingShaderEPNS_12MaterialListE	Aska::RenderPass::EndModifyingShader(Aska::MaterialList*)	render_pass	typed	
+0x21bbfac	0x22bbfac	700	_ZN4Aska10RenderPass16AddShaderAdapterEPNS_17BaseShaderAdapterEi	Aska::RenderPass::AddShaderAdapter(Aska::BaseShaderAdapter*, int)	render_pass	typed	
+0x21bc268	0x22bc268	100	_ZN4Aska10RenderPass17InvalidateShadersEv	Aska::RenderPass::InvalidateShaders()	render_pass	typed	
+0x21bc2cc	0x22bc2cc	204	_ZN4Aska10RenderPass22InvalidateShaderCachesEv	Aska::RenderPass::InvalidateShaderCaches()	render_pass	typed	
+0x21bc398	0x22bc398	496	_ZN4Aska10RenderPass14ReadyShaderKeyEiiPNS_12MaterialListEb	Aska::RenderPass::ReadyShaderKey(int, int, Aska::MaterialList*, bool)	render_pass	typed	
+0x21bc588	0x22bc588	28	_ZN4Aska10RenderPass17GetShaderKeyFlagsEPKNS_15RenderPassBatchE	Aska::RenderPass::GetShaderKeyFlags(Aska::RenderPassBatch const*)	render_pass	typed	
+0x21bc5a4	0x22bc5a4	592	_ZN4Aska10RenderPass11ReadyShaderEv	Aska::RenderPass::ReadyShader()	render_pass	typed	
+0x21bc7f4	0x22bc7f4	268	_ZN4Aska10RenderPass12UpdatePacketEv	Aska::RenderPass::UpdatePacket()	render_pass	typed	
+0x21bc900	0x22bc900	84	_ZNK4Aska21ShaderConstantManager28IsShaderConstantManagerDirtyEv	Aska::ShaderConstantManager::IsShaderConstantManagerDirty() const	material	typed	
+0x21bc954	0x22bc954	1712	_ZN4Aska10RenderPass18PrepareRenderStateEPNS_12MaterialListEb	Aska::RenderPass::PrepareRenderState(Aska::MaterialList*, bool)	render_pass	typed	
+0x21bd004	0x22bd004	1152	_ZN4Aska10RenderPass22PrepareShadowCastStateEPNS_10AofHandlerEh	Aska::RenderPass::PrepareShadowCastState(Aska::AofHandler*, unsigned char)	render_pass	typed	
+0x21bd484	0x22bd484	24	_ZN4Aska10RenderPass21PrepareMultiDrawStateEPNS_10AofHandlerE	Aska::RenderPass::PrepareMultiDrawState(Aska::AofHandler*)	render_pass	typed	
+0x21bd49c	0x22bd49c	152	_ZN4Aska10RenderPass14SetObjectStateEPNS_20AofObjectRenderStateE	Aska::RenderPass::SetObjectState(Aska::AofObjectRenderState*)	render_pass	typed	
+0x21bd534	0x22bd534	1428	_ZN4Aska10RenderPass13UpdateTextureEPNS_12MaterialListEPNS_22TextureModifierManagerEPKNS_10RENDERINFOEib	Aska::RenderPass::UpdateTexture(Aska::MaterialList*, Aska::TextureModifierManager*, Aska::RENDERINFO const*, int, bool)	render_pass	typed	
+0x21bdac8	0x22bdac8	156	_ZN4Aska10RenderPass14UpdateMaterialEPNS_12MaterialListE	Aska::RenderPass::UpdateMaterial(Aska::MaterialList*)	render_pass	typed	
+0x21bdb64	0x22bdb64	92	_ZN4Aska10RenderPass12ClearTextureEv	Aska::RenderPass::ClearTexture()	render_pass	typed	
+0x21bdbc0	0x22bdbc0	1020	_ZN4Aska10RenderPass23UpdateTextureShadowPassEPNS_12MaterialListEPNS_22TextureModifierManagerEPKNS_10RENDERINFOEi	Aska::RenderPass::UpdateTextureShadowPass(Aska::MaterialList*, Aska::TextureModifierManager*, Aska::RENDERINFO const*, int)	render_pass	typed	
+0x21bdfbc	0x22bdfbc	452	_ZN4Aska10RenderPass26UpdateFrameTexturePointersEPNS_12MaterialListEPKNS_10RENDERINFOEi	Aska::RenderPass::UpdateFrameTexturePointers(Aska::MaterialList*, Aska::RENDERINFO const*, int)	render_pass	typed	
+0x21be180	0x22be180	4	_ZN4Aska10RenderPass10TickShaderEv	Aska::RenderPass::TickShader()	render_pass	typed	
+0x21be184	0x22be184	164	_ZNK4Aska10RenderPass16GetVertexPassNumEv	Aska::RenderPass::GetVertexPassNum() const	render_pass	typed	
+0x21be258	0x22be258	848	_ZN4Aska10RenderPass20RegisterFrameTextureEPNS_20FrameTextureEntitiesEPFPNS_7TextureEmjjjE	Aska::RenderPass::RegisterFrameTexture(Aska::FrameTextureEntities*, Aska::Texture* (*)(unsigned long, unsigned int, unsigned int, unsigned int))	render_pass	typed	
+0x21be66c	0x22be66c	372	_ZN4Aska17RenderPassManager4InitEi	Aska::RenderPassManager::Init(int)	render_pass	decompiled	
+0x21be7e0	0x22be7e0	188	_ZN4Aska17RenderPassManager12SetPrimitiveEiPNS_19RenderablePrimitiveE	Aska::RenderPassManager::SetPrimitive(int, Aska::RenderablePrimitive*)	render_pass	decompiled	
+0x21be89c	0x22be89c	496	_ZN4Aska17RenderPassManagerD1Ev	Aska::RenderPassManager::~RenderPassManager()	render_pass	decompiled	
+0x21bea8c	0x22bea8c	24	_ZN4Aska17RenderPassManagerD0Ev	Aska::RenderPassManager::~RenderPassManager()	render_pass	decompiled	
+0x21beaa4	0x22beaa4	764	_ZN4Aska17RenderPassManager7GetPassEii	Aska::RenderPassManager::GetPass(int, int)	render_pass	decompiled	
+0x21bef3c	0x22bef3c	236	_ZN4Aska17RenderPassManager10DeletePassEii	Aska::RenderPassManager::DeletePass(int, int)	render_pass	decompiled	
+0x21bf028	0x22bf028	284	_ZN4Aska17RenderPassManager13InvalidateAllEv	Aska::RenderPassManager::InvalidateAll()	render_pass	decompiled	
+0x21bf144	0x22bf144	204	_ZN4Aska17RenderPassManager17InvalidateShadersEb	Aska::RenderPassManager::InvalidateShaders(bool)	render_pass	decompiled	
+0x21bf210	0x22bf210	200	_ZN4Aska17RenderPassManager22InvalidateShaderCachesEv	Aska::RenderPassManager::InvalidateShaderCaches()	render_pass	decompiled	
+0x21bf2d8	0x22bf2d8	168	_ZN4Aska17RenderPassManager21InvalidateRenderStateEv	Aska::RenderPassManager::InvalidateRenderState()	render_pass	decompiled	
+0x21bf380	0x22bf380	168	_ZN4Aska17RenderPassManager27InvalidateObjectRenderStateEv	Aska::RenderPassManager::InvalidateObjectRenderState()	render_pass	decompiled	
+0x21bf428	0x22bf428	184	_ZN4Aska17RenderPassManager18InvalidateMaterialEv	Aska::RenderPassManager::InvalidateMaterial()	render_pass	decompiled	
+0x21bf4e0	0x22bf4e0	4	_ZN4Aska17RenderPassManager30InvalidateCommandBufferManagerEv	Aska::RenderPassManager::InvalidateCommandBufferManager()	render_pass	decompiled	
+0x21bf4e4	0x22bf4e4	148	_ZN4Aska17RenderPassManager31InvalidateDynamicShaderModifierEv	Aska::RenderPassManager::InvalidateDynamicShaderModifier()	render_pass	decompiled	
+0x21bf578	0x22bf578	148	_ZN4Aska17RenderPassManager36InvalidateDynamicShaderModifierCacheEv	Aska::RenderPassManager::InvalidateDynamicShaderModifierCache()	render_pass	decompiled	
+0x21bf60c	0x22bf60c	816	_ZN4Aska17RenderPassManager17GetShadowCastPassEPNS_10RenderPassEPNS_12MaterialListEhi	Aska::RenderPassManager::GetShadowCastPass(Aska::RenderPass*, Aska::MaterialList*, unsigned char, int)	render_pass	decompiled	
+0x21bf93c	0x22bf93c	400	_ZN4Aska17RenderPassManager23GetObjectMotionBlurPassEPNS_10RenderPassEPNS_12MaterialListEb	Aska::RenderPassManager::GetObjectMotionBlurPass(Aska::RenderPass*, Aska::MaterialList*, bool)	render_pass	decompiled	
+0x21bfacc	0x22bfacc	968	_ZN4Aska17RenderPassManager11GetZprePassEPNS_10RenderPassEPNS_12MaterialListEiNS_10RENDERINFO8ZprepassE	Aska::RenderPassManager::GetZprePass(Aska::RenderPass*, Aska::MaterialList*, int, Aska::RENDERINFO::Zprepass)	render_pass	decompiled	
+0x21bfe94	0x22bfe94	352	_ZN4Aska17RenderPassManager13GetVertexPassEPNS_10RenderPassE	Aska::RenderPassManager::GetVertexPass(Aska::RenderPass*)	render_pass	decompiled	
+0x21bfff4	0x22bfff4	8	_ZN4Aska17RenderPassManager16GetMultiDrawPassEPNS_10RenderPassEi	Aska::RenderPassManager::GetMultiDrawPass(Aska::RenderPass*, int)	render_pass	decompiled	
+0x21bfffc	0x22bfffc	188	_ZN4Aska17RenderPassManager34CreateShaderNodeMultiDrawModifiersEi	Aska::RenderPassManager::CreateShaderNodeMultiDrawModifiers(int)	render_pass	decompiled	
+0x21c00b8	0x22c00b8	188	_ZN4Aska17RenderPassManager31CreateShaderNodeSystemModifiersEi	Aska::RenderPassManager::CreateShaderNodeSystemModifiers(int)	render_pass	decompiled	
 0x21c0440	0x22c0440	404	_ZN4Aska9TPoolFastINS_11RenderState9StatePackELb0EE10SecurePoolEjPS2_	Aska::TPoolFast<Aska::RenderState::StatePack, false>::SecurePool(unsigned int, Aska::RenderState::StatePack*)	render_context	decompiled	
 0x21c0730	0x22c0730	516	_ZN4Aska9TPoolFastINS_11RenderState9StatePackELb0EE5ScoopEi	Aska::TPoolFast<Aska::RenderState::StatePack, false>::Scoop(int)	render_context	decompiled	
 0x21c0dc0	0x22c0dc0	124	_ZN4Aska9TPoolFastINS_11RenderState9StatePackELb0EED2Ev	Aska::TPoolFast<Aska::RenderState::StatePack, false>::~TPoolFast()	render_context	decompiled	
@@ -349,3 +464,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x21c6eec	0x22c6eec	1808	_ZN4Aska17ShaderCompression14CompressLZwordEPviS1_	Aska::ShaderCompression::CompressLZword(void*, int, void*)	shader_compression	typed	
 0x21c75fc	0x22c75fc	544	_ZN4Aska17ShaderCompression19DecompressLZwordDicEPtS1_Ph	Aska::ShaderCompression::DecompressLZwordDic(unsigned short*, unsigned short*, unsigned char*)	shader_compression	typed	
 0x21c781c	0x22c781c	2000	_ZN4Aska17ShaderCompression17CompressLZwordDicEPviS1_Ph	Aska::ShaderCompression::CompressLZwordDic(void*, int, void*, unsigned char*)	shader_compression	typed	
+0x21c8730	0x22c8730	116	_ZN4Aska21ShaderConstantHandler17SetShaderConstantEmPNS_17ShaderNodeHandlerE	Aska::ShaderConstantHandler::SetShaderConstant(unsigned long, Aska::ShaderNodeHandler*)	material	decompiled	
+0x21c87a4	0x22c87a4	4	_ZN4Aska21ShaderConstantHandler19StartOwnGpuConstantEv	Aska::ShaderConstantHandler::StartOwnGpuConstant()	material	decompiled	
+0x21c87a8	0x22c87a8	4	_ZN4Aska21ShaderConstantHandler17EndOwnGpuConstantEv	Aska::ShaderConstantHandler::EndOwnGpuConstant()	material	decompiled	
+0x2354db4	0x2454db4	124	_ZN4Aska9AhslConst5GetIdEPKcPS2_	Aska::AhslConst::GetId(char const*, char const**)	material	decompiled	
+0x2354e30	0x2454e30	912	_ZN4Aska9AhslConst26AofConvertToNativeConstantEiPKNS_6VectorEPS1_	Aska::AhslConst::AofConvertToNativeConstant(int, Aska::Vector const*, Aska::Vector*)	material	decompiled	
+0x23551c0	0x24551c0	136	_ZN4Aska9AhslConst28AofRecoverFromNativeConstantEiPKNS_6VectorEPS1_	Aska::AhslConst::AofRecoverFromNativeConstant(int, Aska::Vector const*, Aska::Vector*)	material	decompiled	

@@ -62,13 +62,30 @@ Bound: `soa --list-native | grep render:`. Live check: `soa --live-check render[
 | `RenderDeviceGL::BindVertexFormat(int, int, void*)` | `render_device.cpp` | `render/device-bind-vertex-format` (300 of the render thread's calls: the guest's and the native's GL calls recorded, the state set compared) | `gl_run_both` (both runs recorded on a saved state set) |
 | `RenderState::Apply`; `RenderDeviceGL::EnableAlphaBlend` / `EnableZTest` / `EnableZWrite` / `EnableStencil` / `SetZTestFunction` / `SetCullMode` / `SetDepthBias` / `SetAlphaBlendFunction` / `SetStencilOp` / `SetStencilOpCCW` / `SetTextureSampling{Filter, MipmapFilter, WrapMode, MaxAnisotropic}`; `RenderDeviceData::SetCullMode` / `SetAlphaBlendFunction` | `render_state.cpp` | `render/state-apply` (1,000 Apply calls: the guest's setter chain against the natives') | `gl_run_both` |
 | `RenderDeviceData::DrawIndexedPrimitive` / `UpdateRenderState` / `UpdateVertexAttribute` / `LastMinuteDrawCommands_Blending` / `LastMinuteDrawCommands_Depth` | `render_draw.cpp` | `render/device-draw` (the guest's chain against the natives' on the render thread's draws) | `gl_run_both`, the two guest callees recorded as markers (`t_mark_callees`); a draw with an upload pending: skipped |
-| (hooks) `RenderDeviceData::UpdateShaderProgram` / `LastMinuteDrawCommands_Textures` | `render_draw.cpp` | - | forward to the guest (the markers of the draw checks) |
+| `RenderDeviceGL::BindTexture` / `ActiveTexture` / `SetTexture` / `RemoveTexture` | `render_texture.cpp` | `render/device-textures` (1,000 SetTexture with the binds under it, 200 RemoveTexture) | `gl_run_both`; SetTexture with an upload pending: skipped |
+| `RenderDeviceData::UpdateShaderProgram` (finding a linked program; creating / linking one: the guest original) | `render_program.cpp` | `render/device-shader-program` | `gl_run_both` over state set 1 and the program fields, SetShaderProgramUniform a marker |
+| (hooks) `RenderDeviceData::LastMinuteDrawCommands_Textures` / `SetShaderProgramUniform` | `render_draw.cpp` | - | forward to the guest (the markers of the composite checks) |
 
-Not bound (the next wave): the texture path of a draw (`LastMinuteDrawCommands_Textures`, `UpdateTextureFilters`,
-`GetTextureStateCaches`, `GetBoundTextureID`; `RenderDeviceGL::BindTexture` / `ActiveTexture` / `SetTexture` /
-`RemoveTexture`), the program (`UpdateShaderProgram`, `GetThreadOglState1`, `SetShaderProgramUniform`), the
-shader constants (`SetVertexShaderConstant` / `SetPixelShaderConstant`), the instanced draw paths (the natives
+Not bound (the next wave): the texture state of a draw (`LastMinuteDrawCommands_Textures`, `UpdateTextureFilters`,
+`GetTextureStateCaches`, `GetBoundTextureID`), the program's creation and uniforms (`CompileShaderProgram`,
+`SetShaderProgramUniform`, `GetThreadOglState1`'s creation), `BindFrameBuffer`, `ResolveDepth`, the shader constants (`SetVertexShaderConstant` / `SetPixelShaderConstant`), the instanced draw paths (the natives
 run the guest originals when a draw has instance data), `LIBLManager::CopyTexture` (resource's; render's types).
+
+## Measurements
+
+The login and battle flows (REBUILD-QUEUE.md's scripts, `SOA_PROFILE` at 1000 Hz), main's binary (before,
+5c10fda) and this branch's (after: every native above but UpdateShaderProgram) run side by side on the
+same machine load, 2026-10-04:
+
+| | Busy samples | render guest self | RenderThread | RenderDeviceData | RenderDeviceGL | ShaderComprssionTree + ShaderCompression | RenderContextServer | RenderState |
+|---|---|---|---|---|---|---|---|---|
+| before | 97,424 | 16,720 (17.2%) | 2,662 | 2,189 | 2,019 | 2,008 | 746 | 367 |
+| after | 91,981 (-5.6%) | 10,140 (11.0%) | 812 | 1,248 | 885 | 0 | 0 | 81 |
+
+What is left of RenderThread is Render and Handler (the frame itself: guest); of the device, UpdateShaderProgram
+(now native, after this measurement), the texture state caches and filters, BindFrameBuffer, ResolveDepth.
+Frame rate: the battle runs at the 60 fps cap before and after (`I/perf`); a software-GL (llvmpipe) run under
+load passes the boot -> battle -> gacha session with the live checks on.
 
 ## Dependencies
 
@@ -139,6 +156,27 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   check the calling thread's OglStateSet0 (a pthread key per thread) before calling GL.
 - **GetTextureStateCaches** (479 self) looks a GL texture name up in an Aska::THashMap with 64-bit
   modulo probing, twice per call (count, then find).
+- **The draw path's state caches.** Every RenderDeviceGL / RenderDeviceData method looks up the calling
+  thread's ASKA_OGL_STATESET0 (0x3e0 bytes: textures per unit, the active unit, the array / element buffer
+  bindings, sampler records per unit, the cap bits wanted (0-6) and set in GL (7-12), color mask, front /
+  cull face, blend, viewport, depth function, polygon offset, the vertex arrays wanted and enabled) through a
+  pthread key (inlined get-or-create: the key with an LL/SC flag, the set allocated by
+  AllocateAndStoreStateSet0 and filled by SetDefaults from the GL state); a second set (0x10 bytes,
+  GetThreadOglState1) holds the program in use. The setters only record what they want there; the draw
+  (UpdateRenderState and the LastMinuteDrawCommands_*) compares and calls GL. The natives use the guest's
+  sets in place (`guest_getspecific`) and leave their creation to the guest originals.
+- **Ghidra misreads the draw path.** "Possible PIC construction" in UpdateRenderState, DrawIndexedPrimitive,
+  the LastMinuteDrawCommands, BindTexture / ActiveTexture and UpdateShaderProgram: the C drops the
+  arguments of glFrontFace / glCullFace / glBlendFunc / glDepthFunc / glPolygonOffset and the cache stores
+  after the GL calls, and returns early where the code goes on (UpdateShaderProgram's uniforms). The natives
+  follow the disassembly (`aarch64-linux-gnu-objdump`); the differential tests compare the GL call lists.
+- **Composite checks and guest callees with lasting effects.** A recorded run (glh::Recorder) doesn't execute
+  GL, so a callee that uploads and then marks something clean (a buffer's handler Update, UpdateShaderProgram's
+  uniforms, the texture commands) would leave the game believing GL has state it never got. The draw checks
+  therefore record those callees as markers instead of running them (`t_mark_callees`, hooks that forward to
+  the guest otherwise) and skip draws / SetTexture calls with an upload pending.
+- **GpuResource::m_handle** (+0x48) is a buffer's GL name but a texture's slot in the device's 0x400 texture
+  slots (SetTexture: `slot > 0x3ff` returns).
 - **Unknowns.** RENDERINFO (not recovered: PrepareForRendering / TraversePaintingList's argument),
   LightManager, ShadowManager, PostProcessCombinerTBR, RenderTarget / RenderTargetManagerGL,
   RenderPassManager (0x3c0), UniformValueBuffer2, AhslConst, CameraManager (a TaskManager + Task;

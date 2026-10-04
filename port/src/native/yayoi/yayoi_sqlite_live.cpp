@@ -82,7 +82,7 @@ void result(Fn k, const std::string& diff) {
         s.bad++;
         if (log_it) LOGE("yayoi_sqlite_check", "MISMATCH %s: %s", info(k).label + 7, diff.c_str());
         write_summary();
-    } else if (n % 20000 == 0) {
+    } else if (n % 1000 == 0) {
         write_summary();
         if (n % 1000000 == 0)
             LOGI("yayoi_sqlite_check", "%" PRIu64 " checks, %" PRIu64 " mismatches, %" PRIu64 " skipped", n, s.bad.load(), s.skipped.load());
@@ -384,6 +384,7 @@ void after(Cpu& c, Call& call) {
     if (k == kDoOpen && call.x[3]) {
         const DBAddress* a = (const DBAddress*)call.x[3];
         LOGI("yayoi_sqlite_check", "DoOpen %s (driver %" PRIx64 ", shadow %" PRIx64 ")", a->m_path ? a->m_path : "(null)", call.x[0], shadow);
+        write_summary();
     }
 }
 

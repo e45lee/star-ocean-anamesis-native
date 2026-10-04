@@ -19,6 +19,9 @@ library links):
   otherwise ignores it. Only the programs that have the flag warn (soa-server doesn't for
   `SOA_HEADLESS`).
 
+Each program's `--help` (CLI11, `common/include/soa/cli.h`) ends a replaced flag's line with the
+variable it replaced, "(was SOA_CLOCK)", generated from the same `kRemoved` table.
+
 Gate: `tests/env_removed.sh` runs every program with every removed variable set and checks the lines;
 `build/common/soa_env_tests` checks the helper (both in T0, `env-rule`).
 

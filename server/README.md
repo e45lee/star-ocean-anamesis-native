@@ -115,11 +115,14 @@ then the install dirs, `common/include/soa/install.h`: a release package's `data
 - **soa** fills it from its run options (`soa::options()`, `port/README.md` "Run options") in
   `server_port::config_from_options` (`port/src/native/api/server_adapters.cpp`), called by `main` once
   the options are final.
-- **soa-server** fills it from its command line, with the same flags as soa's server options
+- **soa-server** fills it from its command line (`app/cli.cpp`, CLI11), with the same flags as soa's
+  server options, defined once for both in `include/soaserver/cli.h` (`add_server_options`)
   (`--db`, `--master`, `--gacha-pools`, `--seed`, `--game-xml`, `--seed-rng`, `--new-player`,
   `--clock`, `--start-coins`, `--galaxy-pass`, `--enable-events`, `--event-keywords`,
   `--restore-tower`, `--home3d-all`, `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise`,
-  `--download-dir`, `--standin-assets`, `--repo`) plus its own `--data` (the state DB's directory).
+  `--log-packets`; and from `common/include/soa/cli.h` `--download` / `--download-dir`, `--standin-assets`,
+  `--repo`) plus its own `--data` (the state DB's directory). An invalid `--seed-rng` or `--start-coins`
+  is an error in both (soa-server read a prefix of it before).
   `soa-server --help` lists them. The events defaults are soa's too: `--event-keywords` defaults to
   the summer events (`kDefaultEventKeywords`, "水着,夏,サマー,!福袋").
 - **Neither reads a setting from the environment.** A `SOA_*` variable that was one prints one line naming

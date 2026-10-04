@@ -23,6 +23,8 @@ build/emulator/soa-emu --headless --control /tmp/emu.fifo
 control/soactl.py /tmp/emu.fifo tap:364:713 wait:3000 shot:/tmp/emu.png
 ```
 
+`soa-emu --help` lists the options (CLI11, `src/cli.cpp`; the ones it shares with `soa` are defined once: `runtime/src/app/cli.h`, `platform370/include/platform370/cli.h`, `common/include/soa/cli.h`). A value-taking option given twice: the last one wins (`--apk`, `--shot`, `--do`, `--map-host` collect); an error prints one line and exits 2.
+
 | Option | Meaning |
 |---|---|
 | `--lib PATH` | The client library. Default: `<repo>/work/libSOA-3.7.0.so`. |

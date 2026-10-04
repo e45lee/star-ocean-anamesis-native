@@ -367,13 +367,9 @@
      "offset": 96,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     }
@@ -2763,13 +2759,9 @@
      "offset": 8,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -3186,13 +3178,9 @@
      "offset": 624,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -3200,13 +3188,9 @@
      "offset": 768,
      "name": "m_blockCs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     }
@@ -3623,13 +3607,9 @@
      "offset": 8,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 40
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CriticalSection",
+      "size": 40
      },
      "size": 40
     },

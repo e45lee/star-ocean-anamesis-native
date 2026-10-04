@@ -77,11 +77,10 @@ undone, and the guest's original runs on a shadow of the manager (its bytes with
 itself, no bad-allocate notify) over the same heap; the guest's stores stand. The pools' CMutex is
 recursive: the check holds it, runs the native, records, puts the bytes back and runs the original.
 
-**Lock:** `memory_lock.{h,cpp}` is the guest's inlined FastCriticalSection enter / leave on the guest's
-words (the JIT's exclusive stores are host CAS, so guest and native lockers exclude each other;
-`heap-mixed-threads`). It stands in for sync's `FastCriticalSection::Enter / Leave` (n-sync) until both
-are on main; then the heap natives call sync's members and `memory_lock.*` goes. The pools' CMutex and
-the embedded Semaphore go through the guest symbols (sync's natives once installed).
+**Locks:** sync's classes, called directly: the heap natives `m_cs.Enter()` / `Leave()`
+(`sync::FastCriticalSection`: the guest's inlined protocol on the guest's words; the JIT's exclusive
+stores are host CAS, so guest and native lockers exclude each other: `heap-mixed-threads`), the pools
+`CMutex::IsInitialized / Initialize / Lock / Unlock` (`PoolLock`), as the guest calls them.
 
 Not native (cold, or cheaper as guest code): MallocHigh (never runs in the 3.7.0 flows), Realloc / Split /
 Move (rare), the 8-20-byte leaves (GetMemorySize, GetAllocatedManager, BlockSize: a native costs more
@@ -91,10 +90,9 @@ PostFlushMain (557 samples: next), MemoryHandleManager, the constructors / InitH
 ## Dependencies
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):
-- `sync`: Aska::FastCriticalSection (0x90 bytes, embedded in MemoryManager at 0x60, DeleteManager at 0x08,
-  MemoryHandleManager at 0x270 / 0x300) and Framework::CMutex (0xb0, the pools' and handle managers'
-  mutex pointers). Opaque bytes / `void*` here; once n-sync's layout header is merged, swap
-  `u8 m_cs[kFastCriticalSectionSize]` for its class.
+- `sync`: Aska::FastCriticalSection (embedded in MemoryManager at 0x60, DeleteManager at 0x08,
+  MemoryHandleManager at 0x270 / 0x300), Framework::CMutex (the pools' and handle managers' mutexes),
+  Aska::CriticalSection (MappedMemoryManager at 0x08): sync_layout.h's classes, their members called.
 - `containers`: Aska::THashMap<u32, u64> behind CHandleManager_Base::m_elements (a `void*` here).
 Upwards (callers): everything allocates; `containers` and `libcxx` reach it through
 Framework::CSTLAllocator -> CAssignedMemoryManagerForSTLAllocator::Allocate / Free.

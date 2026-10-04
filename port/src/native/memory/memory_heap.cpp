@@ -6,7 +6,8 @@
 // layout stays the state: guest code (Realloc, Split, Move, IsEmpty, the MappedMemoryManager, every
 // header reader) still walks and edits the same blocks, so every store here is the guest's, in the
 // guest's order, including the stale links an allocated block keeps. The lock is the guest's
-// FastCriticalSection at m_cs (memory_lock.h), so native and guest heap code exclude each other.
+// FastCriticalSection at m_cs (sync's Enter / Leave: the guest's inlined protocol on the guest's
+// words; the JIT's exclusive stores are host CAS), so native and guest heap code exclude each other.
 //
 // Not native (they share the lock and the layout, so mixing is safe): MallocHigh (never runs in
 // 3.7.0's flows; Malloc calls the guest's when m_allocHigh is set), Realloc, Split, Move, IsEmpty,
@@ -18,7 +19,6 @@
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
 #include "native/memory/memory_check.h"
-#include "native/memory/memory_lock.h"
 
 namespace soa::native::memory {
 
@@ -600,9 +600,9 @@ void* MemoryManager::AllocateFromRing(u64 size, s64 align, TryOne tryOne) {
     s32 retries = 0;
     MemoryManager* m = this;
     for (;;) {
-        FastLock::Enter(m->m_cs);
+        m->m_cs.Enter();
         void* p = tryOne(m);
-        FastLock::Leave(m->m_cs);
+        m->m_cs.Leave();
         if (p) {
             if (m != this) hit(kMallocRing);
             return p;
@@ -661,29 +661,29 @@ void* MemoryManager::AlignedMallocHigh(u64 size, s64 align) {
 
 void MemoryManager::LocalFree(MemoryBlock* b) {
     if (check::Due(check::kLocalFree) && check::LocalFree(this, b)) return;
-    FastLock::Enter(m_cs);
+    m_cs.Enter();
     if (b->m_used != 1) {  // not allocated (a double free): nothing
-        FastLock::Leave(m_cs);
+        m_cs.Leave();
         return;
     }
     if (b->m_notify) {
         // The registered IMemoryNotify hears of it first, outside the lock (it may free other blocks,
         // even this one).
         hit(kFreeNotify);
-        FastLock::Leave(m_cs);
+        m_cs.Leave();
         void* notify = b->m_notify;
         const u64* vt = *static_cast<const u64* const*>(notify);
         guest_call(vt[1], {(u64)notify, (u64)b->Data()});
-        FastLock::Enter(m_cs);
+        m_cs.Enter();
         const u8 used = b->m_used;
         b->m_notify = nullptr;
         if (used == 0) {
-            FastLock::Leave(m_cs);
+            m_cs.Leave();
             return;
         }
     }
     LocalFreeLocked(b, DirectStore{});
-    FastLock::Leave(m_cs);
+    m_cs.Leave();
 }
 
 void MemoryManager::LocalFree(void* p) {
@@ -692,8 +692,8 @@ void MemoryManager::LocalFree(void* p) {
 }
 
 bool MemoryManager::IsCreated() const {
-    u8* cs = const_cast<u8*>(m_cs);
-    FastLock::Enter(cs);
+    FastCriticalSection& cs = const_cast<FastCriticalSection&>(m_cs);
+    cs.Enter();
     bool created = false;
     const MemoryManager* m = this;
     do {
@@ -703,7 +703,7 @@ bool MemoryManager::IsCreated() const {
         }
         m = m->m_ringNext;
     } while (m != this);
-    FastLock::Leave(cs);
+    cs.Leave();
     return created;
 }
 
@@ -712,14 +712,14 @@ s64 MemoryManager::CalcFreeSize(bool onlyThis) {
     s64 total = 0;
     MemoryManager* m = this;
     do {
-        FastLock::Enter(m->m_cs);
+        m->m_cs.Enter();
         u32 idx = 0;
         do {
             const MemorySrbk& run = m->m_srbks[idx];
             idx = run.m_next;
             total += (s64)run.m_free + (s64)kHeader;
         } while (idx != 0);
-        FastLock::Leave(m->m_cs);
+        m->m_cs.Leave();
         m = m->m_ringNext;
     } while (!onlyThis && m != this);
     return total;
@@ -734,8 +734,8 @@ u64 MemoryManager::CalcFreeSize(s64* heapBytes, s64* usedBytes) const {
     s64 heap = 0, freeTotal = 0, largest = 0;
     const MemoryManager* m = this;
     do {
-        u8* cs = const_cast<u8*>(m->m_cs);
-        FastLock::Enter(cs);
+        FastCriticalSection& cs = const_cast<FastCriticalSection&>(m->m_cs);
+        cs.Enter();
         u32 idx = 0;
         do {
             const MemorySrbk& run = m->m_srbks[idx];
@@ -743,7 +743,7 @@ u64 MemoryManager::CalcFreeSize(s64* heapBytes, s64* usedBytes) const {
             if ((s64)run.m_largestFree > largest) largest = (s64)run.m_largestFree;
             freeTotal += (s64)run.m_free + (s64)kHeader;
         } while (idx != 0);
-        FastLock::Leave(cs);
+        cs.Leave();
         heap += (s64)(reinterpret_cast<u8*>(m->m_srbks) - m->m_heap);
         m = m->m_ringNext;
     } while (m != this);

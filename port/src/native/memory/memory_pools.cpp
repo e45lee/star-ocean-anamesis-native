@@ -4,8 +4,8 @@
 // Allocate / Free, on the guest's own pool objects.
 //
 // Readable C++ from the Ghidra decompile (port/decomp/memory/stl_allocator.c; the asserts' arguments
-// from the disassembly). Each pool's lock is its Framework::CMutex (m_mutex; sync's class, called
-// through the guest symbols, sync's natives once installed). The container's calls through the
+// from the disassembly). Each pool's lock is its Framework::CMutex (m_mutex: sync's class, its members
+// called directly). The container's calls through the
 // allocators' vtables go straight to these members when the vtable is a TFixedLengthAllocator<N>'s,
 // else to the guest's slot. Not native (cold): the constructors, NumAllocated, IsFree, the reports,
 // EnableMutex / DisableMutex, BlockSize (8 bytes: reached through the vtable only).
@@ -35,10 +35,6 @@ u64 Str(u64 vaddr) { return main_lib()->base + vaddr; }
 
 struct Calls {
     u64 assert_ = guest::sym("_ZN9Framework9gDoAssertEPKciS1_z");
-    u64 mutexIsInitialized = guest::sym("_ZNK9Framework6CMutex13IsInitializedEv");
-    u64 mutexInitialize = guest::sym("_ZN9Framework6CMutex10InitializeEv");
-    u64 mutexLock = guest::sym("_ZN9Framework6CMutex4LockEv");
-    u64 mutexUnlock = guest::sym("_ZN9Framework6CMutex6UnlockEv");
     u64 newArrayNothrow = guest::sym("_ZnamRKSt9nothrow_t");
     u64 nothrow = guest::sym("_ZSt7nothrow");
     u64 deleteArray = guest::sym("_ZdaPv");
@@ -61,13 +57,13 @@ const Calls& calls() {
 
 const u64* PoolVtables() { return calls().poolVtable; }
 
-PoolLock::PoolLock(void* mutex) : m_(mutex) {
+PoolLock::PoolLock(CMutex* mutex) : m_(mutex) {
     if (!m_) return;
-    if (!(guest_call(calls().mutexIsInitialized, {(u64)m_}) & 1)) guest_call(calls().mutexInitialize, {(u64)m_});
-    guest_call(calls().mutexLock, {(u64)m_});
+    if (!m_->IsInitialized()) m_->Initialize();
+    m_->Lock();
 }
 PoolLock::~PoolLock() {
-    if (m_) guest_call(calls().mutexUnlock, {(u64)m_});
+    if (m_) m_->Unlock();
 }
 
 namespace {

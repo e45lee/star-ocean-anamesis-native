@@ -16,7 +16,6 @@
 #include "native/common/test.h"
 #include "native/memory/memory_check.h"
 #include "native/memory/memory_heap.h"
-#include "native/memory/memory_lock.h"
 
 using namespace soa;
 using namespace soa::native::memory;
@@ -336,7 +335,7 @@ NATIVE_TEST("memory/heap-mixed-threads") {
     MemoryBlock* head = RunHead(m, 0);
     t.expect_eq(head->m_freeNext->m_freeNext, head, "one free block");
     t.expect_eq(head->m_freeNext->m_size, s0.m_free, "it holds the run's free bytes");
-    t.expect_eq(FastLock::IsHeld(m->m_cs), false, "lock free");
+    t.expect_eq(m->m_cs.m_lock, FastCriticalSection::kFree, "lock free");
 }
 
 // The live check's own machinery on private heaps (the originals are the guest symbols here): every

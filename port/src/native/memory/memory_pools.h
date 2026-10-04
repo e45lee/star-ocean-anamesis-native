@@ -6,17 +6,17 @@
 
 namespace soa::native::memory {
 
-// A pool's Framework::CMutex for a scope: the guest's IsInitialized / Initialize / Lock ... Unlock
-// (sync's class; recursive: the owner may enter again). Nothing when `mutex` is null.
+// A pool's Framework::CMutex for a scope: IsInitialized / Initialize / Lock ... Unlock as the guest
+// calls them (sync's members; recursive: the owner may enter again). Nothing when `mutex` is null.
 class PoolLock {
 public:
-    explicit PoolLock(void* mutex);
+    explicit PoolLock(CMutex* mutex);
     ~PoolLock();
     PoolLock(const PoolLock&) = delete;
     PoolLock& operator=(const PoolLock&) = delete;
 
 private:
-    void* m_;
+    CMutex* m_;
 };
 
 // CAssignedMemoryManagerForSTLAllocator::Allocate / Free without the live check (its fallback).

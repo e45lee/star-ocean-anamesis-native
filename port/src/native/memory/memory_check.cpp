@@ -13,7 +13,6 @@
 #include "core/log.h"
 #include "native/common/live_check.h"
 #include "native/memory/memory_heap.h"
-#include "native/memory/memory_lock.h"
 #include "native/memory/memory_pools.h"
 
 namespace soa::native::memory::check {
@@ -126,9 +125,8 @@ MemoryManager* Shadow(const MemoryManager* m) {
     alignas(16) static thread_local u8 buf[sizeof(MemoryManager)];
     auto* s = reinterpret_cast<MemoryManager*>(buf);
     std::memcpy(buf, (const void*)m, sizeof buf);
-    s32 freeWord = FastLock::kFree, bias = FastLock::kWaiterBias;
-    std::memcpy(s->m_cs + FastLock::kLockWord, &freeWord, 4);
-    std::memcpy(s->m_cs + FastLock::kWaiters, &bias, 4);
+    s->m_cs.m_lock = FastCriticalSection::kFree;
+    s->m_cs.m_waiters = FastCriticalSection::kWaiterBias;
     s->m_ringHead = s->m_ringNext = s->m_ringPrev = s;
     s->m_badAllocNotify = nullptr;
     return s;
@@ -176,7 +174,7 @@ struct DryRun {
 template <class Native, class Guest>
 void* CheckAlloc(Fn f, MemoryManager* m, Native native, Guest guest) {
     Scope scope;
-    FastLock::Enter(m->m_cs);
+    m->m_cs.Enter();
     DryRun dry;
     void* n = native(LoggedStore{&dry.log});
     dry.record(m);
@@ -188,7 +186,7 @@ void* CheckAlloc(Fn f, MemoryManager* m, Native native, Guest guest) {
         if (b->m_owner == sh) b->m_owner = m;
     }
     std::string why = n != g ? Hex("result", (u64)n, (u64)g) : dry.compare(m);
-    FastLock::Leave(m->m_cs);
+    m->m_cs.Leave();
     Result(f, why.empty() ? Outcome::Ok : Outcome::Mismatch, why);
     return g;  // the guest's allocation (and stores) stand
 }
@@ -301,9 +299,9 @@ bool LocalFree(MemoryManager* m, MemoryBlock* b) {
         return false;
     }
     Scope scope;
-    FastLock::Enter(m->m_cs);
+    m->m_cs.Enter();
     if (b->m_used != 1 || b->m_notify) {  // changed meanwhile: the normal path decides
-        FastLock::Leave(m->m_cs);
+        m->m_cs.Leave();
         return false;
     }
     DryRun dry;
@@ -312,7 +310,7 @@ bool LocalFree(MemoryManager* m, MemoryBlock* b) {
     dry.log.undo();
     guest_call(Orig(kLocalFree), {(u64)Shadow(m), (u64)b});
     std::string why = dry.compare(m);
-    FastLock::Leave(m->m_cs);
+    m->m_cs.Leave();
     Result(kLocalFree, why.empty() ? Outcome::Ok : Outcome::Mismatch, why);
     return true;
 }

@@ -18,6 +18,7 @@
 #include <cstdint>
 
 #include "../containers/containers_layout.h"  // MappedMemoryManager's hash tables (containers' classes)
+#include "../sync/sync_layout.h"              // FastCriticalSection, CMutex, CriticalSection (sync's classes)
 
 namespace soa::native::memory {
 
@@ -42,12 +43,12 @@ inline constexpr u64 kVaddrStlMemoryManager = 0x2c00528;          // CAssignedMe
 inline constexpr u64 kVaddrStlFixedLengthContainer = 0x2c00530;   // ...::m_pFixedLengthAllocatorContainer
 inline constexpr u64 kVaddrApplicationMemoryInstance = 0x2c00260; // TSingleton<CApplicationMemory>::m_pInstance
 
-// Aska::FastCriticalSection is the `sync` subsystem's type (n-sync recovers it): 0x90 bytes
-// (Aska::MemoryHandleManager::m_criGlobal is one: nm -S 0x90). What the memory code shows of it, inlined
-// into every MemoryManager / DeleteManager method: +0x38 s32 lock word (-1 free, 0 held; LDAXR/STLXR),
-// +0x3c s32 waiter count (spinners past 0x200 tries), +0x78 Aska::Semaphore (signalled on unlock when
-// more than 20 waiters). Here it is opaque bytes; swap in sync's class once both are merged.
-inline constexpr u64 kFastCriticalSectionSize = 0x90;
+// The locks are sync's classes (port/src/native/sync/sync_layout.h): Aska::FastCriticalSection (0x90,
+// embedded: lock word +0x38, waiter count +0x3c, Semaphore +0x78), Framework::CMutex (0xb0, the pools'
+// and handle managers' pointers), Aska::CriticalSection (0x28).
+using sync::CMutex;
+using sync::CriticalSection;
+using sync::FastCriticalSection;
 
 class MemoryManager;
 class MemoryBlock;
@@ -232,7 +233,7 @@ public:
     MemoryManager* m_ringNext;   // 0x48: the next manager of the ring (Malloc's fallback order)
     MemoryManager* m_ringPrev;   // 0x50
     MemoryManager* m_parent;     // 0x58: a manager whose heap holds this one (~MemoryManager deletes the children)
-    u8 m_cs[kFastCriticalSectionSize];  // 0x60: Aska::FastCriticalSection (sync; lock word at 0x98)
+    FastCriticalSection m_cs;    // 0x60: every heap method's lock (its word at 0x98)
 };
 static_assert(offsetof(MemoryManager, vtable) == 0x00);
 static_assert(offsetof(MemoryManager, m_allocHigh) == 0x08);
@@ -436,7 +437,7 @@ public:
     u32 m_numAllocated;                 // 0x34
     u32 m_freeHead;                     // 0x38: index of the first free block
     u8 unk_3c[4];                       // 0x3c
-    void* m_mutex;                      // 0x40: Framework::CMutex* (sync), or nullptr after DisableMutex
+    CMutex* m_mutex;                    // 0x40: EnableMutex's, or nullptr (DisableMutex)
 };
 using TFixedLengthAllocator16 = TFixedLengthAllocator<16>;
 using TFixedLengthAllocator32 = TFixedLengthAllocator<32>;
@@ -533,7 +534,7 @@ public:
     u32 m_instanceId;        // 0x08: from gInstanceUniqueNumber (handles' high word)
     u8 unk_0c[4];            // 0x0c
     void* m_elements;        // 0x10: Aska::THashMap<u32, u64>* (0x30 bytes, operator new; containers' type)
-    void* m_mutex;           // 0x18: Framework::CMutex* (EnableMutex)
+    CMutex* m_mutex;         // 0x18: EnableMutex's
     u32 m_nextSerial;        // 0x20: the next serial (skips 0 and [m_reservedStart, m_reservedEnd])
     u32 m_capacity;          // 0x24
     u32 m_count;             // 0x28
@@ -608,7 +609,7 @@ public:
     void PostFlushMain();
 
     const void* vtable;                       // 0x00: _ZTVN4Aska13DeleteManagerE + 0x10
-    u8 m_cs[kFastCriticalSectionSize];        // 0x08: Aska::FastCriticalSection (sync; lock word at 0x40)
+    FastCriticalSection m_cs;                 // 0x08: (its lock word at 0x40)
     DeletePointerInfo* m_infoStorage;         // 0x98: the operator new[] block (also the infos)
     DeletePointerInfo* m_infos;               // 0xa0
     TDynamicQueue<DeletePointerInfo*> m_free;     // 0xa8: unused infos (Clear refills it)
@@ -683,8 +684,8 @@ public:
     MemoryHandleManager* m_ringPrev;  // 0x248
     MemoryHandleManager* m_parent;    // 0x250
     u8 unk_258[0x18];             // 0x258
-    u8 m_cs[kFastCriticalSectionSize];       // 0x270: Aska::FastCriticalSection (IsAllocated)
-    u8 m_blockCs[kFastCriticalSectionSize];  // 0x300: Aska::FastCriticalSection (GetBlock)
+    FastCriticalSection m_cs;                // 0x270: (IsAllocated)
+    FastCriticalSection m_blockCs;           // 0x300: (GetBlock)
 };
 static_assert(offsetof(MemoryHandleManager, m_srbks) == 0x1e8);
 static_assert(offsetof(MemoryHandleManager, m_srbkCount) == 0x1f0);
@@ -735,7 +736,7 @@ public:
 
     const void* vtable;          // 0x000: _ZTVN4Aska19MappedMemoryManagerE + 0x10 (slot 3, +0x18: the deleting
                                  //        destructor Global::DeleteMappedMemoryManager calls)
-    u8 m_cs[0x28];               // 0x008: Aska::CriticalSection (sync's; a bionic pthread mutex)
+    CriticalSection m_cs;        // 0x008: (a bionic pthread mutex inside)
     void* m_auidElemPool;        // 0x030: TPoolLegacy<Aska::AUIDElem>* (operator new(0x50), SecurePool(mappingPool));
                                  //        its +0x08 u32 counts references (the destructor deletes it at 0)
     TCategorizeHashMappedMemoryPointer m_pointers;          // 0x038: PointerManager (registerTable / registerPool)

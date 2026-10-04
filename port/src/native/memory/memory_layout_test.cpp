@@ -65,7 +65,7 @@ NATIVE_TEST("memory/layout-memory-manager") {
     t.expect_eq(mm->m_parent, (MemoryManager*)nullptr, "parent");
     t.expect_eq(mm->m_heap, (u8*)nullptr, "no heap yet");
     t.expect_eq(mm->m_allocHigh, (u8)0, "allocHigh");
-    t.expect_eq(t.call("_ZN4Aska13MemoryManager29VirtualGetFastCriticalSectionEv", {(u64)mm}), (u64)mm->m_cs,
+    t.expect_eq(t.call("_ZN4Aska13MemoryManager29VirtualGetFastCriticalSectionEv", {(u64)mm}), (u64)&mm->m_cs,
                 "GetFastCriticalSection = &m_cs");
 
     const u64 kHeap = 0x40000;

@@ -1,0 +1,6 @@
+# port/decomp/lib_jpeg/scope.txt: the guest functions the `lib_jpeg` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Aska::JpegUtil::
+^(jpeg|jinit|jcopy|jdiv|jround|jzero)_\w*$
+^glj_\w*$

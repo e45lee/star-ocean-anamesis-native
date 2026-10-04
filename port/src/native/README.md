@@ -64,7 +64,9 @@ Families check their natives against the guest originals during a real session (
 `port/scripts/restore_session.sh ... --live-check FAMILY`, i.e. soa's `--live-check`) with the
 shared harness in `live_check.{h,cpp}`; the register file it records calls on is `a2c_regs.h`.
 Registered families: `sync`, `input`, `resource` (shadow checks, `common/shadow_check.h`), `lib_sqlite` (a shadow run: the game's databases also opened in the guest's
-SQLite and every call repeated there; `lib_sqlite/README.md`). The offline build's families were
+SQLite and every call repeated there; `lib_sqlite/README.md`), and the lockstep families of the other
+host libraries, `lib_vorbis`, `lib_zstd`, `lib_zlib`, `lib_jpeg`, `lib_crypto` (`common/lockstep.h`: the
+same shadow run, shared; each subsystem's README). The offline build's families were
 deleted with its natives; a rebuilt family should use the harness.
 A record / replay family (hand-written code whose outgoing calls go through `Family::gcall` /
 `gcall_n` / `gcall_sret` / `memop` / `live::ACall`) is a static `live::Family("tag", every,

@@ -1,0 +1,81 @@
+{
+ "subsystem": "lib_zstd",
+ "generated_by": "tools/subsystem.py export-types lib_zstd",
+ "header": "port/src/native/lib_zstd/lib_zstd_layout.h",
+ "structs": [
+  {
+   "name": "ZSTDInBuffer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "src",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "pos",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "ZSTDOutBuffer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "dst",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "pos",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  }
+ ]
+}

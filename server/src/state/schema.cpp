@@ -1238,6 +1238,545 @@ select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updat
     return ok;
 }
 
+// ---- step 10: the module tables (PLAN-schema S10, findings F5, F6) -----------------------------
+// The tables the modules made for themselves, rebuilt into their 3.2 form (STRICT, 3.2's not-null
+// columns and defaults, the boolean checks S9 left to this step) with the foreign keys between
+// them, one module group at a time (each group's DDL in kModules, its mapping in its rebuild_*
+// function below; all of them one step, version 10). The conventions of 3.1 and 4.1: "none" and
+// "never" are NULL (the 0 sentinels go), a dangling reference takes its declared action (NULL for
+// SET NULL, the row dropped for a CASCADE child), a NULL in a not-null column is what the readers
+// read for it (0), each case logged with its count. As in the earlier steps the tables are created
+// as new_X and renamed X after the old X is dropped (4.1), so every reference names the final
+// table.
+//
+// The foreign keys and their actions (PLAN-schema 3.1), by group:
+//   deep space:
+//     ds_offer.area_id   -> ds_area.area_id  ON DELETE CASCADE (an area's offers)
+//     ds_offer.ship_id   -> ds_ship.ship_id  ON DELETE SET NULL (NULL: not on a ship; 0 before)
+//     ds_ship.area_id    -> ds_area.area_id  ON DELETE CASCADE (an area's ships)
+//     ds_bonus.ship_id   -> ds_ship.ship_id  ON DELETE CASCADE (a ship's bonus values)
+//   gacha:
+//     gacha_history.character_uid -> roster.uid  ON DELETE SET NULL (the drawn character)
+//     gacha_history.item_uid      -> items.uid   ON DELETE SET NULL (the drawn weapon; NULL once
+//                                                sold or used up)
+//     box_slots.gacha_id          -> box_state.gacha_id  ON DELETE CASCADE (a box's drawn slots;
+//                                                BoxGacha writes the box_state row first)
+//   daily bonuses:
+//     favor_bonus_state.lot_uid -> roster.uid  ON DELETE SET NULL (the favor bonus's character)
+//   Sphere 211:
+//     sphere_departed.uid -> roster.uid  ON DELETE CASCADE (a character gone has no sortie)
+//   the rest (the core's and soa-server's):
+//     unlocks.by_mission    -> mission.mission_id  NO ACTION, deferred (MissionEnd records what a
+//                                                 first clear unlocks before its mission row)
+//     wire_device.player_id -> player.id           ON DELETE SET NULL (NULL: a device seen before
+//                                                 the player existed; 0 before)
+//   events:
+//     wboss_clear.boss_id -> wboss.boss_id  ON DELETE CASCADE, deferred (a boss's cleared waves;
+//                                           MissionEnd's contribute() records a clear before
+//                                           save() writes a boss met for the first time)
+// All immediate (every writer writes the parent first). No ON UPDATE action: a parent key never
+// changes. (ds_ship_member.ship_id -> ds_ship is S7's; it names the new ds_ship after the rename.)
+const char* const kModules[] = {
+    // ---- deep space (api/deepspace/) ----
+    // CDeepSpaceShipInfo (b): a ship out or back, until MissionEnd collects it; bonus_set_id /
+    // item_id are master references, 0 = none as the wire sends them
+    R"(create table new_ds_ship (
+  ship_id integer primary key,
+  area_id integer not null references ds_area(area_id) on delete cascade,
+  mission_id integer not null,
+  bonus_set_id integer,
+  item_id integer,
+  started_at integer not null,
+  closed_at integer
+) strict)",
+    // CDeepSpaceMissionInfo (b): a mission on offer; closed_at NULL: no limit (a rare offer has
+    // one); ship_id NULL: not on a ship; updated_at NULL: never (a row from before S10)
+    R"(create table new_ds_offer (
+  mission_id integer primary key,
+  area_id integer not null references ds_area(area_id) on delete cascade,
+  bonus_set_id integer,
+  closed_at integer,
+  ship_id integer references ds_ship(ship_id) on delete set null,
+  is_new integer not null default 0 check (is_new in (0, 1)),
+  play_count integer not null default 0,
+  play_count_daily integer not null default 0,
+  play_count_weekly integer not null default 0,
+  updated_at integer
+) strict)",
+    // DeepSpaceBonusAllApplyInfoList (b): a ship's bonus values
+    R"(create table new_ds_bonus (
+  ship_id integer not null references ds_ship(ship_id) on delete cascade,
+  bonus_id integer not null,
+  value real not null,
+  primary key (ship_id, bonus_id)
+) strict)",
+    // ---- gacha (api/gacha/) ----
+    // a drawn unit (d: our record; the achievements count draws per gacha): the character
+    // (role_id, character_uid) or, for a weapon draw (role_id NULL), the item (item_uid); the
+    // whole draw's coins on its first unit
+    R"(create table new_gacha_history (
+  id integer primary key autoincrement,
+  gacha_id integer not null,
+  at integer not null,
+  role_id integer,
+  character_uid integer references roster(uid) on delete set null,
+  item_uid integer references items(uid) on delete set null,
+  rank text not null,
+  duplicate integer not null default 0 check (duplicate in (0, 1)),
+  cost_free integer not null default 0,
+  cost_pay integer not null default 0
+) strict)",
+    // CStepupGachaInfo (b): a step-up chain's progress (no row: step 1)
+    R"(create table new_stepup (
+  head integer primary key,
+  try_count integer not null default 0,
+  restart_count integer not null default 0,
+  next_id integer
+) strict)",
+    // CBoxGachaInfo (b): a box's draws and resets (no row: none)
+    R"(create table new_box_state (
+  gacha_id integer primary key,
+  total_count integer not null default 0,
+  reset_count integer not null default 0
+) strict)",
+    // CBoxGachaDetailInfo (b): the copies drawn of a box's slot (no row: none)
+    R"(create table new_box_slots (
+  gacha_id integer not null references box_state(gacha_id) on delete cascade,
+  slot_id integer not null,
+  drawn integer not null default 0,
+  primary key (gacha_id, slot_id)
+) strict)",
+    // ---- events (api/events/) ----
+    // a world boss the player met (CWorldBossInfo / CT_WorldBossInfo (b)); columns as S9 left them
+    // but hunt_until: the big hunt's end, NULL: none (0 before)
+    R"(create table new_wboss (
+  boss_id integer primary key,
+  area_id integer,
+  wave integer default 1,
+  n1 integer default 0, n2 integer default 0, n3 integer default 0,
+  a1 integer default 0, a2 integer default 0, a3 integer default 0,
+  required integer default 0,
+  wave_started_at integer,
+  last_clear_secs integer default 0,
+  hunt_until integer,
+  hunt_new integer not null default 0 check (hunt_new in (0, 1))
+) strict)",
+    // a cleared wave (CWorldBossPlayerInfoList (b)); notified: listed once
+    R"(create table new_wboss_clear (
+  boss_id integer not null references wboss(boss_id) on delete cascade deferrable initially deferred,
+  wave integer not null,
+  cleared_at integer,
+  notified integer not null default 0 check (notified in (0, 1)),
+  primary key (boss_id, wave)
+) strict)",
+    // the last event mission started (is_last_play (b))
+    R"(create table new_event_last (
+  id integer primary key check (id = 1),
+  mission_id integer,
+  area_id integer
+) strict)",
+    // an event ranking group whose result was received
+    R"(create table new_event_rank_received (
+  group_id integer primary key,
+  received_at integer
+) strict)",
+    // the characters whose favor event-drop bonus the current play uses (same_role_id, its lots)
+    R"(create table new_favor_drop_play (
+  same_role_id integer primary key,
+  lots integer not null
+) strict)",
+    // ---- shop (api/shop/) ----
+    // CItemShopInfo (b): an item-shop row's count this period, the period's start, the count ever
+    // (no row: none)
+    R"(create table new_shop_counts (
+  id integer primary key,
+  num integer not null,
+  period integer,
+  total integer not null default 0
+) strict)",
+    // ExchangeShopExCount (b): a contents row's count exchanged (no row: none)
+    R"(create table new_exchange_counts (
+  id integer primary key,
+  num integer not null
+) strict)",
+    // Subscription (b): a pass the player has, its window and last grant
+    R"(create table new_subscription (
+  plan_id integer primary key,
+  opened_at integer,
+  closed_at integer,
+  updated_at integer
+) strict)",
+    // ---- Sphere 211 (api/sphere211/) ----
+    // the dive (one row; CSphere211Info / Player.sphere211_* (b)), with the keys that were
+    // sphere_meta's until S3 (cycle, season_wins, end_pending, debug_enemy_level: the port's test
+    // hook, NULL: off)
+    R"(create table new_sphere (
+  id integer primary key check (id = 1),
+  season_id integer,
+  floor_level integer not null default 0,
+  asset_group integer not null default 0,
+  streak integer not null default 0,
+  treasure_total integer not null default 0,
+  stamina integer,
+  stamina_at integer,
+  revive_count integer not null default 0,
+  best_floor integer not null default 0,
+  entered_at integer,
+  clear_asset integer not null default 0,
+  lot_floor_num integer not null default 0,
+  reroll_count integer not null default 0,
+  prev_season integer not null default 0,
+  prev_floor integer not null default 0,
+  prev_treasure integer not null default 0,
+  prev_rank integer not null default 0,
+  cycle integer not null default 0,
+  season_wins integer not null default 0,
+  end_pending integer not null default 0 check (end_pending in (0, 1)),
+  debug_enemy_level integer
+) strict)",
+    // a character that sortied in this dive (出撃済み (b), until 帰還)
+    R"(create table new_sphere_departed (
+  uid integer primary key references roster(uid) on delete cascade
+) strict)",
+    // a box gathered in this dive; rank -1 until 帰還 rolls it
+    R"(create table new_sphere_box (
+  id integer primary key autoincrement,
+  floor_level integer not null,
+  rank integer not null
+) strict)",
+    // the local ranking: a season's best floor
+    R"(create table new_sphere_rank (
+  season_id integer primary key,
+  floor_level integer not null,
+  entered_at integer
+) strict)",
+    // the achievements' log: a battle won (kind 1) or a floor entered (kind 2, value = the floor)
+    R"(create table new_sphere_log (
+  id integer primary key autoincrement,
+  kind integer not null,
+  value integer,
+  at integer not null
+) strict)",
+    // ---- daily bonuses (api/daily/) ----
+    // the favor login bonus (one row): the day it was last drawn (day_at, NULL: never), its tier
+    // (master_favor_bonus) and lot character, the last favor stamina heal (healed_at, NULL: never);
+    // Player.favor_bonus_received_at / stamina_update_by_favor (b)
+    R"(create table new_favor_bonus_state (
+  id integer primary key check (id = 1),
+  day_at integer,
+  bonus_id integer,
+  lot_uid integer references roster(uid) on delete set null,
+  healed_at integer
+) strict)",
+    // ---- the rest: the core's tables and soa-server's ----
+    // the state's bookkeeping: next_char_uid, next_item_uid, seed (state/state.h)
+    R"(create table new_meta (
+  key text primary key,
+  value text not null
+) strict)",
+    // StackItemInfo (b): a stack item's count (no row: none)
+    R"(create table new_stock (
+  master_item_id integer primary key,
+  item_type integer not null,
+  count integer not null default 0
+) strict)",
+    // the achievements' action counts (ext::count)
+    R"(create table new_counters (
+  key text primary key,
+  value integer not null
+) strict)",
+    // CAchievementInfo (b): an achievement's progress and when it was received
+    R"(create table new_achievements (
+  id integer primary key,
+  progress integer,
+  received_at integer
+) strict)",
+    // the current barney chance (Barney's mood, api/items/gear.cpp): its group and type
+    R"(create table new_gear_barney (
+  id integer primary key check (id = 1),
+  group_id integer,
+  type integer
+) strict)",
+    // a mission a first clear unlocked (the menus list them through ActiveMissionList)
+    R"(create table new_unlocks (
+  mission_id integer primary key,
+  mission_type integer not null,
+  by_mission integer references mission(mission_id) deferrable initially deferred,
+  at integer not null
+) strict)",
+    // soa-server's record of the bridge's device UUIDs (net/game.cpp map_device)
+    R"(create table new_wire_device (
+  uuid text primary key,
+  player_id integer references player(id) on delete set null,
+  device_type integer,
+  first_seen integer,
+  last_seen integer
+) strict)",
+};
+
+// The tables step 10 rebuilds (new_X -> X), in kModules' order.
+// clang-format off
+const char* const kModuleTables[] = {
+    "ds_ship", "ds_offer", "ds_bonus",
+    "gacha_history", "stepup", "box_state", "box_slots",
+    "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
+    "shop_counts", "exchange_counts", "subscription",
+    "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
+    "favor_bonus_state",
+    "meta", "stock", "counters", "achievements", "gear_barney", "unlocks", "wire_device",
+};
+// clang-format on
+
+// The AUTOINCREMENT counter of a table rebuilt from `table` (sqlite_sequence): the old one, -1
+// when it has none. The insert into new_X sets the new table's to its largest id (and leaves a 0
+// when it copies no row); keep_sequence puts the old one back over it after the rename (an id is
+// never reused, also when the old rows are gone: sphere_box after 帰還), and when the old table had
+// none, it takes the empty copy's 0 away again (a fresh state keeps no counter until its first row).
+int64_t sequence_of(sqlite3* db, const char* table) {
+    return count_of(db, ("select ifnull((select seq from sqlite_sequence where name = '" + std::string(table) + "'), -1)").c_str());
+}
+bool keep_sequence(sqlite3* db, const char* table, int64_t seq) {
+    const std::string name = table;
+    if (seq < 0) return run(db, ("delete from sqlite_sequence where name = '" + name + "' and seq = 0").c_str());
+    if (count_of(db, ("select count(*) from sqlite_sequence where name = '" + name + "'").c_str()))
+        return run(db, ("update sqlite_sequence set seq = max(seq, ?) where name = '" + name + "'").c_str(), {Bound::integer(seq)});
+    return run(db, ("insert into sqlite_sequence (name, seq) values ('" + name + "', ?)").c_str(), {Bound::integer(seq)});
+}
+
+// Deep space (PLAN-schema S10):
+//   ds_ship -> new_ds_ship: a ship of no explored area (area_id NULL or not in ds_area) -> dropped
+//     with its crew (ds_ship_member, S7's CASCADE child) and its bonus values; mission_id /
+//     started_at NULL -> 0;
+//   ds_offer -> new_ds_offer: an offer of no explored area -> dropped; closed_at 0 -> NULL (no
+//     limit), ship_id 0 or not a ship -> NULL (not on a ship: on offer again), updated_at 0 ->
+//     NULL; is_new not 0 -> 1; NULL counts -> 0;
+//   ds_bonus -> new_ds_bonus: a row of no ship, or without a bonus id -> dropped; value NULL -> 0.
+bool rebuild_deep_space(sqlite3* db) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from ds_ship where area_id is null or area_id not in (select area_id from ds_area)", "ds_ship.area_id",
+              "dangling -> dropped (with its crew and bonus values)", 10);
+    log_count(db, "select count(*) from ds_ship where mission_id is null or started_at is null", "ds_ship", "NULL in a not-null column -> 0", 10);
+    log_count(db, "select count(*) from ds_offer where area_id is null or area_id not in (select area_id from ds_area)", "ds_offer.area_id",
+              "dangling -> dropped", 10);
+    log_count(db, "select count(*) from ds_offer where closed_at = 0", "ds_offer.closed_at", "0 -> NULL (no limit)", 10);
+    log_count(db, "select count(*) from ds_offer where updated_at = 0", "ds_offer.updated_at", "0 -> NULL (never)", 10);
+    log_count(db, "select count(*) from ds_offer where ship_id = 0", "ds_offer.ship_id", "0 -> NULL (not on a ship)", 10);
+    log_count(db,
+              "select count(*) from ds_offer where ship_id != 0 and ship_id not in "
+              "(select ship_id from ds_ship where area_id in (select area_id from ds_area))",
+              "ds_offer.ship_id", "dangling -> NULL", 10);
+    log_count(db, "select count(*) from ds_offer where is_new is null or is_new not in (0, 1)", "ds_offer.is_new", "NULL -> 0, not 0 / 1 -> 1", 10);
+    log_count(db,
+              "select count(*) from ds_bonus where bonus_id is null or ship_id is null or ship_id not in "
+              "(select ship_id from ds_ship where area_id in (select area_id from ds_area))",
+              "ds_bonus", "no ship or no bonus id -> dropped", 10);
+
+    bool ok = run(db, R"(
+insert into new_ds_ship (ship_id, area_id, mission_id, bonus_set_id, item_id, started_at, closed_at)
+select ship_id, area_id, ifnull(mission_id, 0), bonus_set_id, item_id, ifnull(started_at, 0), closed_at
+from ds_ship where area_id in (select area_id from ds_area))");
+    ok = ok && run(db, "delete from ds_ship_member where ship_id not in (select ship_id from new_ds_ship)");
+    ok = ok && run(db, R"(
+insert into new_ds_offer (mission_id, area_id, bonus_set_id, closed_at, ship_id, is_new, play_count, play_count_daily, play_count_weekly,
+  updated_at)
+select mission_id, area_id, bonus_set_id, nullif(closed_at, 0),
+  case when ship_id in (select ship_id from new_ds_ship) then ship_id end,
+  case when ifnull(is_new, 0) != 0 then 1 else 0 end, ifnull(play_count, 0), ifnull(play_count_daily, 0), ifnull(play_count_weekly, 0),
+  nullif(updated_at, 0)
+from ds_offer where area_id in (select area_id from ds_area))");
+    ok = ok && run(db, R"(
+insert into new_ds_bonus (ship_id, bonus_id, value)
+select ship_id, bonus_id, ifnull(value, 0) from ds_bonus where bonus_id is not null and ship_id in (select ship_id from new_ds_ship))");
+    return ok;
+}
+
+// Gacha (PLAN-schema S10):
+//   gacha_history -> new_gacha_history: uid -> character_uid when role_id isn't 0 (a character
+//     draw) or item_uid when it is (a weapon draw), NULL when that character or item isn't owned
+//     (any more: a weapon sold or used up); role_id 0 -> NULL; duplicate not 0 / 1 -> 1, NULL
+//     -> 0; a NULL in a not-null column -> 0 ('' for rank); the AUTOINCREMENT counter kept;
+//   stepup, box_state: NULL counts -> 0;
+//   box_slots: a slot of a box without a box_state row -> the box's row (0 draws, 0 resets: what
+//     the readers read for no row), so the drawn slots stay drawn; a row without a gacha or slot
+//     id -> dropped; drawn NULL -> 0.
+bool rebuild_gacha(sqlite3* db) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from gacha_history where role_id = 0", "gacha_history.role_id", "0 -> NULL (a weapon draw)", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) != 0", "gacha_history.uid", "-> character_uid", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) = 0", "gacha_history.uid", "-> item_uid", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) != 0 and uid not in (select uid from roster)",
+              "gacha_history.character_uid", "not owned -> NULL", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) = 0 and uid not in (select uid from items)", "gacha_history.item_uid",
+              "not owned (sold, used up) -> NULL", 10);
+    log_count(db, "select count(*) from gacha_history where duplicate is null or duplicate not in (0, 1)", "gacha_history.duplicate",
+              "NULL -> 0, not 0 / 1 -> 1", 10);
+    log_count(db, "select count(distinct gacha_id) from box_slots where gacha_id is not null and gacha_id not in (select gacha_id from box_state)",
+              "box_slots.gacha_id", "a box without a box_state row -> its row", 10);
+    log_count(db, "select count(*) from box_slots where gacha_id is null or slot_id is null", "box_slots", "no gacha or slot id -> dropped", 10);
+
+    bool ok = run(db, R"(
+insert into new_gacha_history (id, gacha_id, at, role_id, character_uid, item_uid, rank, duplicate, cost_free, cost_pay)
+select id, ifnull(gacha_id, 0), ifnull(at, 0), nullif(role_id, 0),
+  case when ifnull(role_id, 0) != 0 and uid in (select uid from roster) then uid end,
+  case when ifnull(role_id, 0) = 0 and uid in (select uid from items) then uid end,
+  ifnull(rank, ''), case when ifnull(duplicate, 0) != 0 then 1 else 0 end, ifnull(cost_free, 0), ifnull(cost_pay, 0)
+from gacha_history order by id)");
+    ok = ok && run(db, R"(
+insert into new_stepup (head, try_count, restart_count, next_id)
+select head, ifnull(try_count, 0), ifnull(restart_count, 0), next_id from stepup)");
+    ok = ok && run(db, R"(
+insert into new_box_state (gacha_id, total_count, reset_count)
+select gacha_id, ifnull(total_count, 0), ifnull(reset_count, 0) from box_state)");
+    ok = ok && run(db, R"(
+insert into new_box_state (gacha_id)
+select distinct gacha_id from box_slots where gacha_id is not null and gacha_id not in (select gacha_id from box_state))");
+    ok = ok && run(db, R"(
+insert into new_box_slots (gacha_id, slot_id, drawn)
+select gacha_id, slot_id, ifnull(drawn, 0) from box_slots where gacha_id is not null and slot_id is not null)");
+    return ok;
+}
+
+// Events (PLAN-schema S10):
+//   wboss: hunt_until 0 -> NULL (no big hunt); every other column copied;
+//   wboss_clear: a clear of a boss without its wboss row, or without a wave -> dropped (the
+//     CASCADE child); notified not 0 / 1 -> 1, NULL -> 0;
+//   event_last, event_rank_received: copied;
+//   favor_drop_play: lots NULL -> 0.
+bool rebuild_events(sqlite3* db) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from wboss where hunt_until = 0", "wboss.hunt_until", "0 -> NULL (no big hunt)", 10);
+    log_count(db, "select count(*) from wboss_clear where wave is null or boss_id is null or boss_id not in (select boss_id from wboss)",
+              "wboss_clear", "no boss or no wave -> dropped", 10);
+    log_count(db, "select count(*) from wboss_clear where notified is null or notified not in (0, 1)", "wboss_clear.notified",
+              "NULL -> 0, not 0 / 1 -> 1", 10);
+    log_count(db, "select count(*) from favor_drop_play where lots is null", "favor_drop_play.lots", "NULL -> 0", 10);
+
+    bool ok = run(db, R"(
+insert into new_wboss (boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until, hunt_new)
+select boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, nullif(hunt_until, 0), hunt_new
+from wboss)");
+    ok = ok && run(db, R"(
+insert into new_wboss_clear (boss_id, wave, cleared_at, notified)
+select boss_id, wave, cleared_at, case when ifnull(notified, 0) != 0 then 1 else 0 end
+from wboss_clear where wave is not null and boss_id in (select boss_id from wboss))");
+    ok = ok && run(db, "insert into new_event_last (id, mission_id, area_id) select id, mission_id, area_id from event_last");
+    ok = ok && run(db, "insert into new_event_rank_received (group_id, received_at) select group_id, received_at from event_rank_received");
+    ok = ok && run(db, "insert into new_favor_drop_play (same_role_id, lots) select same_role_id, ifnull(lots, 0) from favor_drop_play");
+    return ok;
+}
+
+// Shop (PLAN-schema S10): shop_counts / exchange_counts NULL counts -> 0 (what the readers read);
+// subscription copied.
+bool rebuild_shop(sqlite3* db) {
+    log_count(db, "select count(*) from shop_counts where num is null or total is null", "shop_counts", "NULL count -> 0", 10);
+    log_count(db, "select count(*) from exchange_counts where num is null", "exchange_counts.num", "NULL -> 0", 10);
+    bool ok = run(db, "insert into new_shop_counts (id, num, period, total) select id, ifnull(num, 0), period, ifnull(total, 0) from shop_counts");
+    ok = ok && run(db, "insert into new_exchange_counts (id, num) select id, ifnull(num, 0) from exchange_counts");
+    ok = ok && run(db,
+                   "insert into new_subscription (plan_id, opened_at, closed_at, updated_at) select plan_id, opened_at, closed_at, updated_at "
+                   "from subscription");
+    return ok;
+}
+
+// Sphere 211 (PLAN-schema S10):
+//   sphere: a NULL in a not-null column -> 0 (what the readers read), end_pending not 0 / 1 -> 1;
+//   sphere_departed: a character not owned -> dropped (the CASCADE child);
+//   sphere_box, sphere_rank, sphere_log: a NULL in a not-null column -> 0; the AUTOINCREMENT
+//     counters kept (rebuild_modules).
+bool rebuild_sphere(sqlite3* db) {
+    log_count(db,
+              "select count(*) from sphere where floor_level is null or asset_group is null or streak is null or treasure_total is null or "
+              "revive_count is null or best_floor is null or clear_asset is null or lot_floor_num is null or reroll_count is null or "
+              "prev_season is null or prev_floor is null or prev_treasure is null or prev_rank is null",
+              "sphere", "NULL in a not-null column -> 0", 10);
+    log_count(db, "select count(*) from sphere_departed where uid is null or uid not in (select uid from roster)", "sphere_departed.uid",
+              "not owned -> dropped", 10);
+    log_count(db, "select count(*) from sphere_box where floor_level is null or rank is null", "sphere_box", "NULL -> 0", 10);
+    log_count(db, "select count(*) from sphere_rank where floor_level is null", "sphere_rank.floor_level", "NULL -> 0", 10);
+    log_count(db, "select count(*) from sphere_log where kind is null or at is null", "sphere_log", "NULL -> 0", 10);
+    bool ok = run(db, R"(
+insert into new_sphere (id, season_id, floor_level, asset_group, streak, treasure_total, stamina, stamina_at, revive_count, best_floor,
+  entered_at, clear_asset, lot_floor_num, reroll_count, prev_season, prev_floor, prev_treasure, prev_rank, cycle, season_wins, end_pending,
+  debug_enemy_level)
+select id, season_id, ifnull(floor_level, 0), ifnull(asset_group, 0), ifnull(streak, 0), ifnull(treasure_total, 0), stamina, stamina_at,
+  ifnull(revive_count, 0), ifnull(best_floor, 0), entered_at, ifnull(clear_asset, 0), ifnull(lot_floor_num, 0), ifnull(reroll_count, 0),
+  ifnull(prev_season, 0), ifnull(prev_floor, 0), ifnull(prev_treasure, 0), ifnull(prev_rank, 0), cycle, season_wins,
+  case when end_pending != 0 then 1 else 0 end, debug_enemy_level
+from sphere)");
+    ok = ok && run(db, "insert into new_sphere_departed (uid) select uid from sphere_departed where uid in (select uid from roster)");
+    ok = ok &&
+         run(db, "insert into new_sphere_box (id, floor_level, rank) select id, ifnull(floor_level, 0), ifnull(rank, 0) from sphere_box order by id");
+    ok =
+        ok &&
+        run(db,
+            "insert into new_sphere_rank (season_id, floor_level, entered_at) select season_id, ifnull(floor_level, 0), entered_at from sphere_rank");
+    ok = ok &&
+         run(db, "insert into new_sphere_log (id, kind, value, at) select id, ifnull(kind, 0), value, ifnull(at, 0) from sphere_log order by id");
+    return ok;
+}
+
+// Daily bonuses (PLAN-schema S10): favor_bonus_state.day_at / healed_at 0 -> NULL (never: the
+// heal's row started day_at at 0, and healed_at defaulted to 0); lot_uid 0 or not owned -> NULL.
+bool rebuild_daily(sqlite3* db) {
+    log_count(db, "select count(*) from favor_bonus_state where day_at = 0", "favor_bonus_state.day_at", "0 -> NULL (never)", 10);
+    log_count(db, "select count(*) from favor_bonus_state where healed_at = 0", "favor_bonus_state.healed_at", "0 -> NULL (never)", 10);
+    log_count(db, "select count(*) from favor_bonus_state where lot_uid != 0 and lot_uid not in (select uid from roster)",
+              "favor_bonus_state.lot_uid", "dangling -> NULL", 10);
+    return run(db, R"(
+insert into new_favor_bonus_state (id, day_at, bonus_id, lot_uid, healed_at)
+select id, nullif(day_at, 0), bonus_id, case when lot_uid in (select uid from roster) then lot_uid end, nullif(healed_at, 0)
+from favor_bonus_state)");
+}
+
+// The rest (PLAN-schema S10):
+//   meta: value NULL -> '' (what meta() reads);
+//   stock: item_type / count NULL -> 0;
+//   counters: value NULL -> 0;
+//   achievements, gear_barney: copied;
+//   unlocks: by_mission 0 or not a mission played -> NULL (nothing reads it but the tools: the
+//     record of who unlocked it); mission_type / at NULL -> 0;
+//   wire_device: player_id 0 or not the player -> NULL.
+bool rebuild_rest(sqlite3* db) {
+    log_count(db, "select count(*) from meta where value is null", "meta.value", "NULL -> ''", 10);
+    log_count(db, "select count(*) from stock where item_type is null or count is null", "stock", "NULL -> 0", 10);
+    log_count(db, "select count(*) from counters where value is null", "counters.value", "NULL -> 0", 10);
+    log_count(db, "select count(*) from unlocks where by_mission = 0", "unlocks.by_mission", "0 -> NULL", 10);
+    log_count(db, "select count(*) from unlocks where by_mission != 0 and by_mission not in (select mission_id from mission)", "unlocks.by_mission",
+              "dangling -> NULL", 10);
+    log_count(db, "select count(*) from unlocks where mission_type is null or at is null", "unlocks", "NULL -> 0", 10);
+    log_count(db, "select count(*) from wire_device where player_id = 0", "wire_device.player_id", "0 -> NULL (no player yet)", 10);
+    log_count(db, "select count(*) from wire_device where player_id != 0 and player_id not in (select id from player)", "wire_device.player_id",
+              "dangling -> NULL", 10);
+    bool ok = run(db, "insert into new_meta (key, value) select key, ifnull(value, '') from meta");
+    ok = ok &&
+         run(db, "insert into new_stock (master_item_id, item_type, count) select master_item_id, ifnull(item_type, 0), ifnull(count, 0) from stock");
+    ok = ok && run(db, "insert into new_counters (key, value) select key, ifnull(value, 0) from counters");
+    ok = ok && run(db, "insert into new_achievements (id, progress, received_at) select id, progress, received_at from achievements");
+    ok = ok && run(db, "insert into new_gear_barney (id, group_id, type) select id, group_id, type from gear_barney");
+    ok = ok && run(db, R"(
+insert into new_unlocks (mission_id, mission_type, by_mission, at)
+select mission_id, ifnull(mission_type, 0), case when by_mission in (select mission_id from mission) then by_mission end, ifnull(at, 0)
+from unlocks)");
+    ok = ok && run(db, R"(
+insert into new_wire_device (uuid, player_id, device_type, first_seen, last_seen)
+select uuid, case when player_id in (select id from player) then player_id end, device_type, first_seen, last_seen from wire_device)");
+    return ok;
+}
+
+// Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
+// above), then the old tables go and the new ones take their names; the AUTOINCREMENT counters
+// are kept.
+bool rebuild_modules(sqlite3* db, sqlite3*) {
+    std::vector<std::pair<const char*, int64_t>> counters;
+    for (const char* table : {"gacha_history", "sphere_box", "sphere_log"}) counters.emplace_back(table, sequence_of(db, table));
+    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db) && rebuild_sphere(db) && rebuild_daily(db) &&
+              rebuild_rest(db);
+    for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
+    for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
+    for (auto& [table, seq] : counters) ok = ok && keep_sequence(db, table, seq);
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1278,6 +1817,10 @@ const std::vector<Step>& steps() {
          "ds_area.is_last_play, the boolean checks; twelve tables rebuilt STRICT (PLAN-schema S9)",
          {std::begin(kTimesBooleans), std::end(kTimesBooleans)},
          rebuild_times_and_booleans},
+        {10,
+         "the module tables: rebuilt STRICT with their foreign keys and checks, the 0 sentinels NULL (PLAN-schema S10)",
+         {std::begin(kModules), std::end(kModules)},
+         rebuild_modules},
     };
     return s;
 }

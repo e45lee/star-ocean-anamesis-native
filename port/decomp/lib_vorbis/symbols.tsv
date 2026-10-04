@@ -1,0 +1,53 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x223f9a4	0x233f9a4	36	_ZN4Aska7AskaOGG16InitializeMemoryEv	Aska::AskaOGG::InitializeMemory()	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x223f9c8	0x233f9c8	64	_ZN4Aska7AskaOGGC2Ev	Aska::AskaOGG::AskaOGG()	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x223fa08	0x233fa08	424	_ZN4Aska7AskaOGG10DecodeInitEjj	Aska::AskaOGG::DecodeInit(unsigned int, unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x223fbb0	0x233fbb0	176	_ZN4Aska7AskaOGG6DecodeEPKajPPajjj	Aska::AskaOGG::Decode(signed char const*, unsigned int, signed char**, unsigned int, unsigned int, unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x223fc60	0x233fc60	636	_ZN4Aska7AskaOGG12DecodeHeaderEPKam	Aska::AskaOGG::DecodeHeader(signed char const*, unsigned long)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x223fedc	0x233fedc	596	_ZN4Aska7AskaOGG10DecodeBodyEPKajPPajjj	Aska::AskaOGG::DecodeBody(signed char const*, unsigned int, signed char**, unsigned int, unsigned int, unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240130	0x2340130	100	_ZN4Aska7AskaOGG20Decode_ReadSrcBufferEPKam	Aska::AskaOGG::Decode_ReadSrcBuffer(signed char const*, unsigned long)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240194	0x2340194	68	_ZN4Aska7AskaOGG13PacketDecoder4InitEj	Aska::AskaOGG::PacketDecoder::Init(unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x22401d8	0x23401d8	20	_ZN4Aska7AskaOGG13PacketDecoder7SetPageEP8ogg_page	Aska::AskaOGG::PacketDecoder::SetPage(ogg_page*)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x22401ec	0x23401ec	936	_ZN4Aska7AskaOGG16Decode_LoopStartEjj	Aska::AskaOGG::Decode_LoopStart(unsigned int, unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240594	0x2340594	252	_ZN4Aska7AskaOGG13DecodePacketsEjj	Aska::AskaOGG::DecodePackets(unsigned int, unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240690	0x2340690	80	_ZN4Aska7AskaOGG15DecodePageResetEv	Aska::AskaOGG::DecodePageReset()	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x22406e0	0x23406e0	20	_ZN4Aska7AskaOGG13PacketDecoder5ResetEv	Aska::AskaOGG::PacketDecoder::Reset()	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x22406f4	0x23406f4	24	_ZN4Aska7AskaOGG13PacketDecoder8ProgressEjPKaj	Aska::AskaOGG::PacketDecoder::Progress(unsigned int, signed char const*, unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x224070c	0x234070c	36	_ZNK4Aska7AskaOGG22Decode_CalcFrameSampleEj	Aska::AskaOGG::Decode_CalcFrameSample(unsigned int) const	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240730	0x2340730	540	_ZN4Aska7AskaOGG13Decode_PcmoutEj	Aska::AskaOGG::Decode_Pcmout(unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x224094c	0x234094c	224	_ZN4Aska7AskaOGG19Decode_GetDstBufferEjj	Aska::AskaOGG::Decode_GetDstBuffer(unsigned int, unsigned int)	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240a2c	0x2340a2c	16	_ZN4Aska7AskaOGG13PacketDecoderC1Ev	Aska::AskaOGG::PacketDecoder::PacketDecoder()	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240a3c	0x2340a3c	48	_ZN4Aska7AskaOGG13DecodeContextC2Ev	Aska::AskaOGG::DecodeContext::DecodeContext()	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2240a6c	0x2340a6c	188	_ZN4Aska7AskaOGG13DecodeContextD2Ev	Aska::AskaOGG::DecodeContext::~DecodeContext()	aska_ogg	decompiled	the caller (audio subsystem): read for the boundary (what it reads of the library structs)
+0x2603ac8	0x2703ac8	168	vorbis_block_init	vorbis_block_init	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2603c6c	0x2703c6c	208	vorbis_block_clear	vorbis_block_clear	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x260420c	0x270420c	724	vorbis_dsp_clear	vorbis_dsp_clear	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2604de4	0x2704de4	92	vorbis_synthesis_restart	vorbis_synthesis_restart	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2604e40	0x2704e40	148	vorbis_synthesis_init	vorbis_synthesis_init	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2604ed4	0x2704ed4	1524	vorbis_synthesis_blockin	vorbis_synthesis_blockin	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x26054c8	0x27054c8	168	vorbis_synthesis_pcmout	vorbis_synthesis_pcmout	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2605570	0x2705570	56	vorbis_synthesis_read	vorbis_synthesis_read	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2606494	0x2706494	12	vorbis_comment_init	vorbis_comment_init	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2606938	0x2706938	132	vorbis_comment_clear	vorbis_comment_clear	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x26069bc	0x27069bc	28	vorbis_info_blocksize	vorbis_info_blocksize	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x26069d8	0x27069d8	60	vorbis_info_init	vorbis_info_init	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2606a14	0x2706a14	472	vorbis_info_clear	vorbis_info_clear	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x2606cdc	0x2706cdc	1784	vorbis_synthesis_headerin	vorbis_synthesis_headerin	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x26136b4	0x27136b4	508	vorbis_synthesis	vorbis_synthesis	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x26138b0	0x27138b0	272	vorbis_synthesis_trackonly	vorbis_synthesis_trackonly	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x26139c0	0x27139c0	184	vorbis_packet_blocksize	vorbis_packet_blocksize	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261ad14	0x271ad14	16	ogg_page_eos	ogg_page_eos	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261ad68	0x271ad68	36	ogg_page_serialno	ogg_page_serialno	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261ae68	0x271ae68	208	ogg_stream_init	ogg_stream_init	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261af38	0x271af38	88	ogg_stream_clear	ogg_stream_clear	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261b928	0x271b928	20	ogg_sync_init	ogg_sync_init	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261b93c	0x271b93c	56	ogg_sync_clear	ogg_sync_clear	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261b9c0	0x271b9c0	212	ogg_sync_buffer	ogg_sync_buffer	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261ba94	0x271ba94	64	ogg_sync_wrote	ogg_sync_wrote	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261bce0	0x271bce0	108	ogg_sync_pageout	ogg_sync_pageout	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261bd4c	0x271bd4c	1124	ogg_stream_pagein	ogg_stream_pagein	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261c1b0	0x271c1b0	40	ogg_sync_reset	ogg_sync_reset	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261c1d8	0x271c1d8	76	ogg_stream_reset	ogg_stream_reset	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261c278	0x271c278	28	ogg_stream_packetout	ogg_stream_packetout	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261c380	0x271c380	216	ogg_stream_packetpeek	ogg_stream_packetpeek	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches
+0x261c488	0x271c488	52	ogg_memory_hook	ogg_memory_hook	api	tested	host libogg / libVorbis (lib_vorbis_api.cpp); live check 0 mismatches

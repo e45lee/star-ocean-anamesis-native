@@ -1,4 +1,4 @@
-// Mission NPC status from the master data (soaserver/npc_status.h, agent t1-tutorial-parity): the
+// Mission NPC status from the master data (soaserver/npc_status.h): the
 // tutorial battle's three NPCs against the values the client's NPC model gives
 // (MasterMissionNpcModel::CalculateParameter; docs/notes.md "Tutorial battle damage"). The port's
 // server/npc-status-master compares every master_mission_npc row with the live client model.

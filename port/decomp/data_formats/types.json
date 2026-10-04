@@ -22,200 +22,6 @@
    "align": 8
   },
   {
-   "name": "DfTArrayU32",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_data",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 16,
-     "name": "unk_10",
-     "type": {
-      "kind": "int",
-      "size": 8,
-      "signed": false
-     },
-     "size": 8
-    },
-    {
-     "offset": 24,
-     "name": "m_size",
-     "type": {
-      "kind": "int",
-      "size": 8,
-      "signed": false
-     },
-     "size": 8
-    },
-    {
-     "offset": 32,
-     "name": "unk_20",
-     "type": {
-      "kind": "int",
-      "size": 8,
-      "signed": false
-     },
-     "size": 8
-    },
-    {
-     "offset": 40,
-     "name": "m_granularity",
-     "type": {
-      "kind": "int",
-      "size": 8,
-      "signed": false
-     },
-     "size": 8
-    },
-    {
-     "offset": 48,
-     "name": "unk_30",
-     "type": {
-      "kind": "int",
-      "size": 2,
-      "signed": false
-     },
-     "size": 2
-    },
-    {
-     "offset": 50,
-     "name": "m_flags",
-     "type": {
-      "kind": "int",
-      "size": 2,
-      "signed": false
-     },
-     "size": 2
-    },
-    {
-     "offset": 52,
-     "name": "unk_34",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 4
-     },
-     "size": 4
-    }
-   ],
-   "size": 56,
-   "align": 8
-  },
-  {
-   "name": "DfTBitArrayU32",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "unk_08",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": false
-     },
-     "size": 4
-    },
-    {
-     "offset": 12,
-     "name": "unk_0c",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 4
-     },
-     "size": 4
-    },
-    {
-     "offset": 16,
-     "name": "m_words",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 24,
-     "name": "m_wordCount",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": false
-     },
-     "size": 4
-    },
-    {
-     "offset": 28,
-     "name": "m_bitCount",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": false
-     },
-     "size": 4
-    },
-    {
-     "offset": 32,
-     "name": "m_owned",
-     "type": {
-      "kind": "bytes",
-      "ctype": "_Bool",
-      "size": 1
-     },
-     "size": 1
-    },
-    {
-     "offset": 33,
-     "name": "unk_21",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 7
-     },
-     "size": 7
-    }
-   ],
-   "size": 40,
-   "align": 8
-  },
-  {
    "name": "AMap",
    "union": false,
    "fields": [
@@ -684,50 +490,6 @@
    "align": 8
   },
   {
-   "name": "DfTDynamicArrayWorkBuffer",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_begin",
-     "type": {
-      "kind": "ptr",
-      "to": "ASON_WorkBufferContext"
-     },
-     "size": 8
-    },
-    {
-     "offset": 16,
-     "name": "m_end",
-     "type": {
-      "kind": "ptr",
-      "to": "ASON_WorkBufferContext"
-     },
-     "size": 8
-    },
-    {
-     "offset": 24,
-     "name": "m_capEnd",
-     "type": {
-      "kind": "ptr",
-      "to": "ASON_WorkBufferContext"
-     },
-     "size": 8
-    }
-   ],
-   "size": 32,
-   "align": 8
-  },
-  {
    "name": "ASON",
    "union": false,
    "fields": [
@@ -773,8 +535,9 @@
      "offset": 32,
      "name": "m_work",
      "type": {
-      "kind": "struct",
-      "name": "DfTDynamicArrayWorkBuffer"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TDynamicArray<ASON_WorkBufferContext>",
+      "size": 32
      },
      "size": 32
     },
@@ -1338,125 +1101,6 @@
    "align": 8
   },
   {
-   "name": "DfTStack<unsigned int, 10>",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_inline",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 4,
-       "signed": false
-      },
-      "count": 10
-     },
-     "size": 40
-    },
-    {
-     "offset": 48,
-     "name": "m_data",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 56,
-     "name": "m_capacity",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    },
-    {
-     "offset": 60,
-     "name": "m_top",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    }
-   ],
-   "size": 64,
-   "align": 8
-  },
-  {
-   "name": "DfTStack<AValue *, 10>",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_inline",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "ptr",
-       "to": "AValue"
-      },
-      "count": 10
-     },
-     "size": 80
-    },
-    {
-     "offset": 88,
-     "name": "m_data",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 96,
-     "name": "m_capacity",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    },
-    {
-     "offset": 100,
-     "name": "m_top",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    }
-   ],
-   "size": 104,
-   "align": 8
-  },
-  {
    "name": "AsonSerializer_Prepare",
    "union": false,
    "fields": [
@@ -1493,8 +1137,9 @@
      "offset": 16,
      "name": "m_counts",
      "type": {
-      "kind": "struct",
-      "name": "DfTArrayU32"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<unsigned int, false>",
+      "size": 56
      },
      "size": 56
     },
@@ -1502,8 +1147,9 @@
      "offset": 72,
      "name": "m_levels",
      "type": {
-      "kind": "struct",
-      "name": "DfTStack<unsigned int, 10>"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TStack<unsigned int, 10>",
+      "size": 64
      },
      "size": 64
     }
@@ -1684,124 +1330,6 @@
    ]
   },
   {
-   "name": "DfTStack<AMap *, 10>",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_inline",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "ptr",
-       "to": "AMap"
-      },
-      "count": 10
-     },
-     "size": 80
-    },
-    {
-     "offset": 88,
-     "name": "m_data",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 96,
-     "name": "m_capacity",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    },
-    {
-     "offset": 100,
-     "name": "m_top",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    }
-   ],
-   "size": 104,
-   "align": 8
-  },
-  {
-   "name": "DfTStack<AArray *, 10>",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_inline",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "ptr",
-       "to": "AArray"
-      },
-      "count": 10
-     },
-     "size": 80
-    },
-    {
-     "offset": 88,
-     "name": "m_data",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 96,
-     "name": "m_capacity",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    },
-    {
-     "offset": 100,
-     "name": "m_top",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": true
-     },
-     "size": 4
-    }
-   ],
-   "size": 104,
-   "align": 8
-  },
-  {
    "name": "_AsonSerializer",
    "union": false,
    "fields": [
@@ -1842,8 +1370,9 @@
      "offset": 16,
      "name": "m_counts",
      "type": {
-      "kind": "struct",
-      "name": "DfTArrayU32"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<unsigned int, false>",
+      "size": 56
      },
      "size": 56
     },
@@ -1851,8 +1380,9 @@
      "offset": 72,
      "name": "m_indices",
      "type": {
-      "kind": "struct",
-      "name": "DfTArrayU32"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TArray<unsigned int, false>",
+      "size": 56
      },
      "size": 56
     },
@@ -1860,8 +1390,9 @@
      "offset": 128,
      "name": "m_levels",
      "type": {
-      "kind": "struct",
-      "name": "DfTStack<unsigned int, 10>"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TStack<unsigned int, 10>",
+      "size": 64
      },
      "size": 64
     },
@@ -1887,8 +1418,9 @@
      "offset": 208,
      "name": "m_values",
      "type": {
-      "kind": "struct",
-      "name": "DfTStack<AValue *, 10>"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TStack<AValue *, 10>",
+      "size": 104
      },
      "size": 104
     },
@@ -1896,8 +1428,9 @@
      "offset": 312,
      "name": "m_maps",
      "type": {
-      "kind": "struct",
-      "name": "DfTStack<AMap *, 10>"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TStack<AMap *, 10>",
+      "size": 104
      },
      "size": 104
     },
@@ -1905,8 +1438,9 @@
      "offset": 416,
      "name": "m_arrays",
      "type": {
-      "kind": "struct",
-      "name": "DfTStack<AArray *, 10>"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TStack<AArray *, 10>",
+      "size": 104
      },
      "size": 104
     },
@@ -2196,8 +1730,9 @@
      "offset": 8,
      "name": "m_blankBits",
      "type": {
-      "kind": "struct",
-      "name": "DfTBitArrayU32"
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TBitArray<unsigned int>",
+      "size": 40
      },
      "size": 40
     },
@@ -2933,41 +2468,6 @@
    ]
   },
   {
-   "name": "DfVector<DfVector<tElement> >",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "m_begin",
-     "type": {
-      "kind": "ptr",
-      "to": "DfVector<tElement>"
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_end",
-     "type": {
-      "kind": "ptr",
-      "to": "DfVector<tElement>"
-     },
-     "size": 8
-    },
-    {
-     "offset": 16,
-     "name": "m_capEnd",
-     "type": {
-      "kind": "ptr",
-      "to": "DfVector<tElement>"
-     },
-     "size": 8
-    }
-   ],
-   "size": 24,
-   "align": 8
-  },
-  {
    "name": "CCSV",
    "union": false,
    "fields": [
@@ -3029,8 +2529,9 @@
      "offset": 8,
      "name": "m_rows",
      "type": {
-      "kind": "struct",
-      "name": "DfVector<DfVector<tElement> >"
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::vector<soa::native::libcxx::vector<tElement> >",
+      "size": 24
      },
      "size": 24
     },
@@ -3158,41 +2659,6 @@
      "name": "gRegressionTest"
     }
    ]
-  },
-  {
-   "name": "DfVector<tElement>",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "m_begin",
-     "type": {
-      "kind": "ptr",
-      "to": "tElement"
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_end",
-     "type": {
-      "kind": "ptr",
-      "to": "tElement"
-     },
-     "size": 8
-    },
-    {
-     "offset": 16,
-     "name": "m_capEnd",
-     "type": {
-      "kind": "ptr",
-      "to": "tElement"
-     },
-     "size": 8
-    }
-   ],
-   "size": 24,
-   "align": 8
   }
  ]
 }

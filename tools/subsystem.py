@@ -256,6 +256,7 @@ def dump_layouts(header, ns):
     # ("TArray<unsigned int>"; parse_layouts), so a header names the instantiations Ghidra should get.
     names -= set(re.findall(r"template\s*<[^{};]*?>\s*(?:struct|class|union)\s+([A-Za-z_]\w*)", src))
     names |= set(re.findall(r"^using\s+([A-Za-z_]\w*)\s*=\s*[^;]*<[^;]*;", src, re.M))
+    names -= set(re.findall(r"template\s*<[^{};]*?>\s*using\s+([A-Za-z_]\w*)", src))  # alias templates
     names = sorted(names)
     with tempfile.NamedTemporaryFile("w", suffix=".cpp", delete=False) as f:
         f.write(f'#include "{os.path.abspath(header)}"\n')

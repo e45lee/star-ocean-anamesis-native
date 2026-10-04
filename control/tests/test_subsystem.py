@@ -136,7 +136,7 @@ def test_export_template_instantiations(scratch):
         text = f.read()
     text = text.replace("}  // namespace soa::native::dummyt",
                         "template <typename T>\nclass TVec {\npublic:\n    T* m_data;\n    u32 m_size;\n};\n"
-                        "struct Elem { u32 a; };\nusing TVecElem = TVec<Elem>;\nusing TVecU32 = TVec<u32>;\n"
+                        "template <typename T>\nusing TAlias = TVec<T>;\nstruct Elem { u32 a; };\nusing TVecElem = TVec<Elem>;\nusing TVecU32 = TVec<u32>;\n"
                         "struct Holder { TVec<Elem> v; };\n\n}  // namespace soa::native::dummyt")
     with open(p, "w") as f:
         f.write(text)

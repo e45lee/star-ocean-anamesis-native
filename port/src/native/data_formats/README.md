@@ -22,19 +22,19 @@ accessors or with the input it parsed, in `data_formats_layout_test.cpp` (`soa -
 | `ASON_Pair` (a map entry) | 0x40 | MakeAValue_Map (n * 0x40), Get_ (pair + 0x20) | proven (as above) |
 | `ASON_StringBody` / `ASON_BinaryBody` / `ASON_ValueBody` | 0x10 | SetString, AMap::Get_ cases 5, 8, 9 | proven (string, bin, ext type / size / data) |
 | `ASON_WorkBufferContext` (`Aska::ASON::WorkBufferContext`) | 0x20 | InitMemory, Malloc, Term | proven (`layout-ason-object`) |
-| `DfTDynamicArrayWorkBuffer` (`Aska::TDynamicArray<ASON::WorkBufferContext, ...>`) | 0x20 | ctor, InitMemory (reserve 4), Term | proven (vtable, begin / end / capacity) |
+| `TDynamicArrayWorkBuffer` (`Aska::TDynamicArray<ASON::WorkBufferContext, ...>`) | 0x20 | ctor, InitMemory (reserve 4), Term | proven (vtable, begin / end / capacity) |
 | `ASON_MessagePackContext` (`Aska::ASON::MessagePackContext`) | 0xa30 | DeserializeBinary (memset 0xa30, root = frame 0), UnpackMessagePack<true> | partly: m_scratch / m_pending / m_pendingLength / m_depth / the 32 frames of 0x50; a frame's bytes 0x20-0x50 except the work stamp at +0x28 unknown; not exercised by a test (stack-only object) |
 | `_AsonSerializer` | 0x218 | the inlined ctor in `AsonSerializer::Serialize<CBattleLogInfo>`, Increment, Serialize_Key / _Value / _StartObject / _EndObject / _StartArray | proven (`layout-ason-serializer`: a stub on `Serialize_Key` checks vtable, m_ason, the TStack capacities, m_level / m_indices / m_map and that the key lands in `m_map->m_pairs[m_indices[m_level]]`, over the live battle log's 27 keys); `unk_00c` unknown |
 | `AsonSerializer_Prepare` | 0x88 | the same inlined ctor, Increment, Serialize_Value, Serialize_EndObject | proven (`layout-ason-serializer`: a stub on `Serialize_EndObject` checks vtable, m_depth, m_levels, m_counts and the pops it makes) |
-| `DfTStack<T, 10>` (`Aska::TStack<T, 10>`) | 0x40 (u32), 0x68 (pointers) | the inlined ctors, Increment's grow path | proven through the two serializers (capacity 10, top) |
-| `DfTArrayU32` (`Aska::TArray<unsigned int, false>`) | 0x38 | the inlined ctors, Increment (`Resize(m_size + 1)`) | partly: m_data, m_size, m_granularity proven; `unk_10` / `unk_20` / `unk_30` unknown |
+| `TStack<T, 10>` (`Aska::TStack<T, 10>`) | 0x40 (u32), 0x68 (pointers) | the inlined ctors, Increment's grow path | proven through the two serializers (capacity 10, top) |
+| `TArrayU32` (`Aska::TArray<unsigned int, false>`) | 0x38 | the inlined ctors, Increment (`Resize(m_size + 1)`) | partly: m_data, m_size, m_minCapacity proven; `unk_10` / `unk_20` / `unk_30` unknown |
 | `ACSV` (`Aska::ACSV`) | 0xe8 | ctor (memset 0x78 at 0x70), Init, InitMemory, AllocateMemory, Term, GetValue; CACSV's accessors | proven (`layout-acsv`: NumRows / NumColumns, the column types, every cell's value through `CACSV::Value` / `String` / `IsBlank` and `ACSV::GetValue`'s raw copy, the work memories, Term) |
 | `ACSV_AValue` / `ACSV_WorkMemory` (`Aska::ACSV::AValue`, the work memory slots) | 0x10 / 0x20 | GetValue, CACSV::String, InitMemory | proven (as above) |
-| `DfTBitArrayU32` (`Aska::TBitArray<unsigned int, false>`) | 0x28 | ACSV ctor, InitMemory | proven (vtable; the blank bit of every cell == `CACSV::IsBlank`); `unk_08` unknown |
+| `TBitArrayU32` (`Aska::TBitArray<unsigned int, false>`) | 0x28 | ACSV ctor, InitMemory | proven (vtable; the blank bit of every cell == `CACSV::IsBlank`); `unk_08` unknown |
 | `CACSV` (`Framework::CACSV`) | 0xf8 | ctor, Parse, NumRows / NumColumns, Value, String, Release | proven (`layout-acsv`); `unk_f0` (0 after construction) unknown |
 | `CCSV` (`Framework::CCSV`) | 0x30 | ctor, Initialize, ~CCSV, NumRows, NumElements, Element, Separator, Quote | proven (`layout-ccsv`: separator / quote writes, the rows vector, `Element` == `&rows[r][i]`, `ElementSafe` falls back to `&m_empty`) |
 | `tElement` (`Framework::CCSV::tElement`) | 0x10 | ctors, Delete, Type / Value / String | proven (`layout-ccsv`: Type, Value, String per cell, both string forms) |
-| `DfVector<T>` (a guest `std::__ndk1::vector`) | 0x18 | CCSV::NumRows / NumElements | proven (`layout-ccsv`) |
+| `StlVector<T>` (a guest `std::__ndk1::vector`) | 0x18 | CCSV::NumRows / NumElements | proven (`layout-ccsv`) |
 | `Status` (`Aska::Status`) | 8 | every Status-returning method (x8) | proven (`layout-ason-build`: MakeAValue_Map / SetString's x8 results) |
 
 ## Natives
@@ -46,10 +46,10 @@ accessors or with the input it parsed, in `data_formats_layout_test.cpp` (`soa -
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):
 - `containers` (629 samples, same level): `Aska::TStack`, `TArray`, `TDynamicArray`, `TBitArray` are embedded
-  in ASON / ACSV / the serializers. Their shapes are repeated here as `DfTStack`, `DfTArrayU32`,
-  `DfTDynamicArrayWorkBuffer`, `DfTBitArrayU32` (only what these classes use); swap them for
-  `containers_layout.h`'s once both are merged (the static_asserts here then check both agree).
-- `libcxx`: CCSV's rows are a guest `std::__ndk1::vector` (`DfVector`) and its strings `basic_string` with
+  in ASON / ACSV / the serializers: data_formats_layout.h includes containers_layout.h and names the
+  instantiations (`TStack<T, 10>`, `TArrayU32`, `TDynamicArrayWorkBuffer`, `TBitArrayU32`); its static_asserts
+  check the embedding offsets.
+- `libcxx`: CCSV's rows are a guest `std::__ndk1::vector` (`StlVector` = libcxx_layout.h's `vector`) and its strings `basic_string` with
   `Framework::CSTLAllocator` (`native/common/guest_std.h` `guest::String`); CACSV::String returns one through x8.
 - `memory` (99 samples): ASON's blocks are `operator new[]` (nothrow), its block table
   `MemoryManagerAdapter::AlignedMalloc`; CCSV's strings come from `CFixedLengthAllocatorContainer` (the STL allocator).

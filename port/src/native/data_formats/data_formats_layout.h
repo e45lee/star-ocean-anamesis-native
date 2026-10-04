@@ -17,6 +17,9 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../containers/containers_layout.h"
+#include "../libcxx/libcxx_layout.h"
+
 namespace soa::native::data_formats {
 
 using u8 = std::uint8_t;
@@ -32,9 +35,8 @@ using s64 = std::int64_t;
 // sizeof()s every `class X {`); the short guest name is kept where it is unique in the subsystem (AValue,
 // AMap, AArray, tElement: tools/subsystem.py attaches symbols.tsv's methods by it), otherwise prefixed
 // with the owner (ACSV_AValue = Aska::ACSV::AValue). The Aska / Framework container templates the formats
-// embed (TArray, TDynamicArray, TStack, TBitArray) are the `containers` subsystem's types; their layouts are
-// repeated here with the prefix Df (data_formats) only as far as these classes need them, until
-// containers_layout.h lands and they can be swapped (port/src/native/data_formats/README.md).
+// embed (TArray, TDynamicArray, TStack, TBitArray) are the `containers` subsystem's types and the std::vector
+// libcxx's: included from their layout headers.
 // Most methods return Aska::Status (a 64-bit code, < 0 an error: -0x3bd (0xfffffffffffffc43) bad argument,
 // -0x3bf no memory, -0x3bc not initialized) through the x8 result pointer, not x0: a native for one of
 // those needs a hand-written HostFn (native_method.h: x8 results aren't covered by NATIVE_METHOD).
@@ -45,60 +47,14 @@ struct Status {
 };
 static_assert(sizeof(Status) == 8);
 
-// ---- the container shapes the formats embed (the containers subsystem's; see the note above) ---------
+// ---- the container shapes the formats embed: the containers / libcxx subsystems' types ----------------
 
-// Aska::TStack<T, N>: an inline buffer of N elements that spills to the heap. Layout from
-// AsonSerializer::Serialize<CBattleLogInfo> (the stack object's constructor, inlined) and
-// _AsonSerializer::Increment (the grow path: data == inline -> new[](cap * 16)).
-template <typename T, int N>
-class DfTStack {
-public:
-    // vtable slot 0: TStack<T, N>::CopyElement(T const*, T*) (the element copier the grow path calls)
-    const void* vtable;  // 0x00: _ZTVN4Aska6TStackI...EE + 0x10
-    T m_inline[N];       // 0x08
-    T* m_data;           // m_inline, or new[] once it has grown
-    s32 m_capacity;      // N, then 16 * the previous capacity
-    s32 m_top;           // -1 when empty
-};
-
-// Aska::TArray<unsigned int, false>: a growable array (vtable, data, ..., granularity). Layout from the
-// same inlined constructor and _AsonSerializer::Increment (Resize(size + 1); data[size] = 0).
-class DfTArrayU32 {
-public:
-    const void* vtable;  // 0x00: _ZTVN4Aska6TArrayIjLb0EEE + 0x10
-    u32* m_data;         // 0x08
-    u64 unk_10;          // 0x10: 0 after construction (capacity?)
-    u64 m_size;          // 0x18: element count (Increment reads it as the new level's index)
-    u64 unk_20;          // 0x20: 0 after construction
-    u64 m_granularity;   // 0x28: 8
-    u16 unk_30;          // 0x30
-    u16 m_flags;         // 0x32: bit 0 set by the destructor path
-    u8 unk_34[4];        // 0x34: padding
-};
-static_assert(offsetof(DfTArrayU32, m_data) == 0x08);
-static_assert(offsetof(DfTArrayU32, m_size) == 0x18);
-static_assert(offsetof(DfTArrayU32, m_granularity) == 0x28);
-static_assert(offsetof(DfTArrayU32, m_flags) == 0x32);
-static_assert(sizeof(DfTArrayU32) == 0x38);
-
-// Aska::TBitArray<unsigned int, false>: ACSV's blank-cell bits. Layout from Aska::ACSV::ACSV and
-// ACSV::InitMemory (WorkMemoryID 1: words = (bits + 31) / 32, a new[] it owns or the work area).
-class DfTBitArrayU32 {
-public:
-    const void* vtable;  // 0x00: _ZTVN4Aska9TBitArrayIjLb0EEE + 0x10
-    u32 unk_08;          // 0x08: 0 after construction
-    u8 unk_0c[4];        // 0x0c
-    u32* m_words;        // 0x10
-    u32 m_wordCount;     // 0x18
-    u32 m_bitCount;      // 0x1c
-    bool m_owned;        // 0x20: m_words is a new[] of its own
-    u8 unk_21[7];        // 0x21
-};
-static_assert(offsetof(DfTBitArrayU32, m_words) == 0x10);
-static_assert(offsetof(DfTBitArrayU32, m_wordCount) == 0x18);
-static_assert(offsetof(DfTBitArrayU32, m_bitCount) == 0x1c);
-static_assert(offsetof(DfTBitArrayU32, m_owned) == 0x20);
-static_assert(sizeof(DfTBitArrayU32) == 0x28);
+template <typename T, u32 N>
+using TStack = containers::TStack<T, N>;                 // Aska::TStack<T, N>
+using TArrayU32 = containers::TArray<u32, false>;        // Aska::TArray<unsigned int, false>
+using TBitArrayU32 = containers::TBitArray<u32>;         // Aska::TBitArray<unsigned int, false>
+template <typename T>
+using StlVector = libcxx::vector<T>;                     // std::__ndk1::vector<T, Framework::CSTLAllocator<...>>
 
 // ---- ASON: Aska's msgpack document --------------------------------------------------------------------
 
@@ -221,14 +177,8 @@ static_assert(sizeof(ASON_WorkBufferContext) == 0x20);
 
 // Aska::TDynamicArray<Aska::ASON::WorkBufferContext, Aska::TAllocator<...>>: begin / end / capacity
 // (ASON::InitMemory reserves 4 with MemoryManagerAdapter::AlignedMalloc(0x80, 8); Term pops to one).
-class DfTDynamicArrayWorkBuffer {
-public:
-    const void* vtable;                // 0x00: _ZTVN4Aska13TDynamicArrayINS_4ASON17WorkBufferContextE... + 0x10
-    ASON_WorkBufferContext* m_begin;   // 0x08
-    ASON_WorkBufferContext* m_end;     // 0x10
-    ASON_WorkBufferContext* m_capEnd;  // 0x18
-};
-static_assert(sizeof(DfTDynamicArrayWorkBuffer) == 0x20);
+using TDynamicArrayWorkBuffer = containers::TDynamicArray<ASON_WorkBufferContext>;
+static_assert(sizeof(TDynamicArrayWorkBuffer) == 0x20);
 
 // Aska::ASON (an Aska::IAnimatable / IDataFormatter): a msgpack document with its own bump allocator.
 // Size 0x90 (port/src/native/api/client_battle_log.cpp: the client's lambdas keep it on the stack).
@@ -296,7 +246,7 @@ public:
     static u64 u64FromAddress(const void* p);                        // _ZN4Aska4ASON14u64FromAddressEPKv
     void PushBackWorkBuffer(s8* buffer, u64 size, bool owned);       // _ZN4Aska4ASON18PushBackWorkBufferEPamb
     void* Malloc(u64 n);                                             // _ZN4Aska4ASON6MallocEm: bump, 4-aligned; grows by m_totalWorkSize
-    void RelocateAValueRef(AValue* v, const DfTDynamicArrayWorkBuffer* old, bool);  // _ZN4Aska4ASON17RelocateAValueRef...
+    void RelocateAValueRef(AValue* v, const TDynamicArrayWorkBuffer* old, bool);  // _ZN4Aska4ASON17RelocateAValueRef...
     void ClearWorkBuffer();                                          // _ZN4Aska4ASON15ClearWorkBufferEv
     void* TemporaryMalloc(u64 n);                                    // _ZN4Aska4ASON15TemporaryMallocEm: from m_temp, else new[]
     void TemporaryFree(void* p);                                     // _ZN4Aska4ASON13TemporaryFreeEPv
@@ -309,7 +259,7 @@ public:
     s8* m_temp;                             // 0x08: TemporaryMalloc's scratch (0x200 bytes from Malloc)
     u64 m_tempSize;                         // 0x10: 0x200
     u64 m_tempUsed;                         // 0x18
-    DfTDynamicArrayWorkBuffer m_work;       // 0x20: the bump allocator's blocks
+    TDynamicArrayWorkBuffer m_work;       // 0x20: the bump allocator's blocks
     u8 unk_40[8];                           // 0x40: not written by the constructor (TDynamicArray's allocator?)
     ASON_WorkBufferContext* m_currentWork;  // 0x48: the block Malloc bumps
     u64 m_totalWorkSize;                    // 0x50: sum of the blocks' sizes (also the next block's size)
@@ -367,16 +317,16 @@ static_assert(sizeof(ASON_MessagePackContext) == 0xa30);
 // ---- the client's serializer over ASON ---------------------------------------------------------------
 
 // The containers of _AsonSerializer (instantiations, exported for Ghidra).
-using DfTStackU32 = DfTStack<u32, 10>;           // Aska::TStack<unsigned int, 10>
-using DfTStackAValue = DfTStack<AValue*, 10>;    // Aska::TStack<Aska::ASON::AValue*, 10>
-using DfTStackAMap = DfTStack<AMap*, 10>;        // Aska::TStack<Aska::ASON::AValue::AMap*, 10>
-using DfTStackAArray = DfTStack<AArray*, 10>;    // Aska::TStack<Aska::ASON::AValue::AArray*, 10>
-static_assert(sizeof(DfTStackU32) == 0x40);
-static_assert(offsetof(DfTStackU32, m_data) == 0x30);
-static_assert(offsetof(DfTStackU32, m_capacity) == 0x38);
-static_assert(sizeof(DfTStackAValue) == 0x68);
-static_assert(offsetof(DfTStackAValue, m_data) == 0x58);
-static_assert(offsetof(DfTStackAValue, m_capacity) == 0x60);
+using TStackU32 = TStack<u32, 10>;           // Aska::TStack<unsigned int, 10>
+using TStackAValue = TStack<AValue*, 10>;    // Aska::TStack<Aska::ASON::AValue*, 10>
+using TStackAMap = TStack<AMap*, 10>;        // Aska::TStack<Aska::ASON::AValue::AMap*, 10>
+using TStackAArray = TStack<AArray*, 10>;    // Aska::TStack<Aska::ASON::AValue::AArray*, 10>
+static_assert(sizeof(TStackU32) == 0x40);
+static_assert(offsetof(TStackU32, m_data) == 0x30);
+static_assert(offsetof(TStackU32, m_capacity) == 0x38);
+static_assert(sizeof(TStackAValue) == 0x68);
+static_assert(offsetof(TStackAValue, m_data) == 0x58);
+static_assert(offsetof(TStackAValue, m_capacity) == 0x60);
 
 // AsonSerializer_Prepare (a _Serializer<SerializerImpl>): the first pass of AsonSerializer::Serialize<T>,
 // counting each object's / array's members. Layout from the inlined constructor in
@@ -386,8 +336,8 @@ public:
     const void* vtable;        // 0x00: _ZTV22AsonSerializer_Prepare + 0x10 (the Serialize_* slots as below)
     s32 m_level;               // 0x08: 0
     s32 m_depth;               // 0x0c: open objects (1 at construction; Increment ++, Serialize_EndObject --)
-    DfTArrayU32 m_counts;      // 0x10: members per object, in visiting order (handed to _AsonSerializer)
-    DfTStackU32 m_levels;      // 0x48
+    TArrayU32 m_counts;      // 0x10: members per object, in visiting order (handed to _AsonSerializer)
+    TStackU32 m_levels;      // 0x48
 };
 static_assert(offsetof(AsonSerializer_Prepare, m_counts) == 0x10);
 static_assert(offsetof(AsonSerializer_Prepare, m_levels) == 0x48);
@@ -441,14 +391,14 @@ public:
     const void* vtable;             // 0x000: _ZTV15_AsonSerializer + 0x10
     s32 m_level;                    // 0x008: the current object's index into m_counts / m_indices
     u8 unk_00c[4];                  // 0x00c
-    DfTArrayU32 m_counts;           // 0x010: AsonSerializer_Prepare's member counts (moved in)
-    DfTArrayU32 m_indices;          // 0x048: per open object, the next member's index
-    DfTStackU32 m_levels;           // 0x080: the enclosing m_level values
+    TArrayU32 m_counts;           // 0x010: AsonSerializer_Prepare's member counts (moved in)
+    TArrayU32 m_indices;          // 0x048: per open object, the next member's index
+    TStackU32 m_levels;           // 0x080: the enclosing m_level values
     ASON* m_ason;                   // 0x0c0: the document being built
     AValue* m_value;                // 0x0c8: the value the next member goes into (first &ason->m_root)
-    DfTStackAValue m_values;        // 0x0d0: the enclosing m_value
-    DfTStackAMap m_maps;            // 0x138: the enclosing m_map
-    DfTStackAArray m_arrays;        // 0x1a0: the enclosing m_array
+    TStackAValue m_values;        // 0x0d0: the enclosing m_value
+    TStackAMap m_maps;            // 0x138: the enclosing m_map
+    TStackAArray m_arrays;        // 0x1a0: the enclosing m_array
     AMap* m_map;                    // 0x208: the open object's members (Serialize_Key / _Value write m_map->m_pairs[index])
     AArray* m_array;                // 0x210: the open array
 };
@@ -551,7 +501,7 @@ public:
     static u32 UnpackTextType(const char* in, u64 n, void* priorityContext);                // _ZN4Aska4ACSV14UnpackTextTypeEPKcmPNS0_15PriorityContextE
 
     const void* vtable;              // 0x00: _ZTVN4Aska4ACSVE + 0x10
-    DfTBitArrayU32 m_blankBits;      // 0x08: bit (c + m_numColumns * r) set: the cell is blank
+    TBitArrayU32 m_blankBits;      // 0x08: bit (c + m_numColumns * r) set: the cell is blank
     ACSV_AValue* m_values;           // 0x30: WorkMemoryID 2
     u32* m_types;                    // 0x38: per column (WorkMemoryID 0)
     u64 m_numColumns;                // 0x40
@@ -656,17 +606,10 @@ public:
 static_assert(offsetof(tElement, m_data) == 0x08);
 static_assert(sizeof(tElement) == 0x10);
 
-// A guest std::__ndk1::vector<T, Framework::CSTLAllocator<...>>: begin / end / capacity end (the libcxx
-// subsystem's layout; repeated for CCSV's rows).
-template <typename T>
-struct DfVector {
-    T* m_begin;
-    T* m_end;
-    T* m_capEnd;
-};
-using DfVectorElement = DfVector<tElement>;            // a CCSV row
-using DfVectorRow = DfVector<DfVector<tElement>>;      // CCSV's rows
-static_assert(sizeof(DfVectorRow) == 0x18);
+// CCSV's rows: std::__ndk1::vector<std::__ndk1::vector<tElement, ...>, ...> (libcxx's vector).
+using StlVectorElement = StlVector<tElement>;            // a CCSV row
+using StlVectorRow = StlVector<StlVector<tElement>>;     // CCSV's rows
+static_assert(sizeof(StlVectorRow) == 0x18);
 
 // Framework::CCSV: rows of cells. Layout from CCSV::CCSV (separator ',', quote '"'), Initialize,
 // ~CCSV, NumRows (rows' size / 0x18), NumElements (row's size / 0x10), Element, Separator, Quote.
@@ -700,7 +643,7 @@ public:
     char m_separator;    // 0x02: ','
     char m_quote;        // 0x03: '"'
     u8 unk_04[4];        // 0x04
-    DfVectorRow m_rows;  // 0x08
+    StlVectorRow m_rows;  // 0x08
     tElement m_empty;    // 0x20: ElementSafe's fallback (blank)
 };
 static_assert(offsetof(CCSV, m_separator) == 0x02);

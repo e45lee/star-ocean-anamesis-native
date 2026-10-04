@@ -304,7 +304,7 @@ NATIVE_TEST("data_formats/layout-ason-serializer") {
         if ((u64)p->vtable != prep_vt) seen.fail("AsonSerializer_Prepare::vtable");
         if (p->m_depth < 1) seen.fail("AsonSerializer_Prepare::m_depth");
         if (p->m_levels.m_top < 0 || p->m_levels.m_capacity < 10) seen.fail("AsonSerializer_Prepare::m_levels");
-        if (!p->m_counts.m_data || p->m_counts.m_granularity != 8) seen.fail("AsonSerializer_Prepare::m_counts");
+        if (!p->m_counts.m_data || p->m_counts.m_minCapacity != 8) seen.fail("AsonSerializer_Prepare::m_counts");
         s32 depth = p->m_depth, top = p->m_levels.m_top;
         s32 restored = p->m_levels.m_data[top];
         guest_call(end_orig, {c.x(0)});
@@ -331,7 +331,7 @@ NATIVE_TEST("data_formats/layout-ason-serializer") {
 // ---- ACSV through Framework::CACSV ----------------------------------------------------------------------
 float cell_as_float(const ACSV& a, u64 row, u64 col) {
     u64 i = col + a.m_numColumns * row;
-    if (a.m_blankBits.m_words[i >> 5] & (1u << (i & 31))) return 0.0f;
+    if (a.m_blankBits.m_bits[i >> 5] & (1u << (i & 31))) return 0.0f;
     const ACSV_AValue& v = a.m_values[i];
     switch (a.m_types[col]) {
     case ACSV::kBool: return v.m_value.u8v ? 1.0f : 0.0f;
@@ -371,12 +371,12 @@ NATIVE_TEST("data_formats/layout-acsv") {
     t.expect_eq(c->m_acsv.m_extension, (u32)3, "ACSV::m_extension (CACSV::Parse inits with 3)");
     t.expect_eq((u64)c->m_acsv.m_memory[2].m_buffer, (u64)c->m_acsv.m_values, "WorkMemory 2 is m_values");
     t.expect_eq((u64)c->m_acsv.m_memory[0].m_buffer, (u64)c->m_acsv.m_types, "WorkMemory 0 is m_types");
-    t.expect_eq(c->m_acsv.m_blankBits.m_bitCount >= rows * cols, true, "TBitArray::m_bitCount");
+    t.expect_eq(c->m_acsv.m_blankBits.m_numBits >= rows * cols, true, "TBitArray::m_numBits");
     for (u64 r = 0; r < rows; r++)
         for (u64 col = 0; col < cols; col++) {
             u32 type = c->m_acsv.m_types[col];
             u64 i = col + cols * r;
-            bool blank = c->m_acsv.m_blankBits.m_words[i >> 5] & (1u << (i & 31));
+            bool blank = c->m_acsv.m_blankBits.m_bits[i >> 5] & (1u << (i & 31));
             t.expect_eq((u8)t.call("_ZNK9Framework5CACSV7IsBlankEmm", {o.addr(), r, col}), (u8)blank, "IsBlank == the blank bit");
             if (type == ACSV::kString) {
                 guest::String gs;
@@ -425,14 +425,14 @@ NATIVE_TEST("data_formats/layout-ccsv") {
     t.call("_ZN9Framework4CCSV5ParseEPKcb", {o.addr(), (u64)text, 0});
     t.expect_eq(c->m_isParsed, true, "CCSV::m_isParsed");
     u64 rows = t.call("_ZNK9Framework4CCSV7NumRowsEv", {o.addr()});
-    t.expect_eq(rows, (u64)(c->m_rows.m_end - c->m_rows.m_begin), "NumRows == m_rows' size");
+    t.expect_eq(rows, (u64)(c->m_rows.size()), "NumRows == m_rows' size");
     t.expect_eq(rows, (u64)3, "3 rows");
     for (u64 r = 0; r < rows; r++) {
-        const DfVectorElement& row = c->m_rows.m_begin[r];
+        const StlVectorElement& row = c->m_rows.begin_[r];
         u64 n = t.call("_ZNK9Framework4CCSV11NumElementsEm", {o.addr(), r});
-        t.expect_eq(n, (u64)(row.m_end - row.m_begin), "NumElements == the row's size");
+        t.expect_eq(n, (u64)(row.size()), "NumElements == the row's size");
         for (u64 i = 0; i < n; i++) {
-            const tElement* e = &row.m_begin[i];
+            const tElement* e = &row.begin_[i];
             t.expect_eq(t.call("_ZNK9Framework4CCSV7ElementEmm", {o.addr(), r, i}), (u64)e, "Element == &row[i]");
             t.expect_eq((u32)t.call("_ZNK9Framework4CCSV8tElement4TypeEv", {(u64)e}), e->m_kind, "tElement::Type == m_kind");
             if (e->m_kind == tElement::kValue)
@@ -444,8 +444,8 @@ NATIVE_TEST("data_formats/layout-ccsv") {
         }
     }
     // The cells as the input has them.
-    auto cell = [&](u64 r, u64 i) -> const tElement& { return c->m_rows.m_begin[r].m_begin[i]; };
-    if (c->m_rows.m_end - c->m_rows.m_begin == 3 && c->m_rows.m_begin[1].m_end - c->m_rows.m_begin[1].m_begin == 3) {
+    auto cell = [&](u64 r, u64 i) -> const tElement& { return c->m_rows.begin_[r].begin_[i]; };
+    if (c->m_rows.size() == 3 && c->m_rows.begin_[1].size() == 3) {
         t.expect_eq(cell(0, 0).m_kind, (u32)tElement::kString, "a: string");
         t.expect_eq(((const guest::String*)cell(0, 0).m_data.string)->str(), std::string("a"), "a");
         t.expect_eq(cell(0, 1).m_kind, (u32)tElement::kValue, "1.5: value");

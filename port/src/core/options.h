@@ -64,7 +64,7 @@ struct ServerOptions {
     bool has_seed_rng = false;        // --seed-rng: fixed RNG seed (else the time)
     uint64_t seed_rng = 0;
     // Free coins (紋章石) a new local player starts with, seeded or created (--start-coins; the
-    // user's choice, docs/server-rules.md "Seed").
+    // user's choice, docs/server-rules.md#seed).
     bool has_start_coins = false;
     uint32_t start_coins = 300000;
 
@@ -107,7 +107,7 @@ struct RunOptions {
 };
 
 // The default --event-keywords: the summer (swimsuit) events and banners; see
-// docs/server-rules.md "Enabling events by keyword" for what it matches.
+// docs/server-rules.md#enabling-events for what it matches.
 extern const char* const kDefaultEventKeywords;
 
 // The options of this run (read-only after main filled them).

@@ -1,7 +1,7 @@
 // Deep space: the drops of an expedition and the bonuses that change them (api/deepspace/README.md;
 // declared in deepspace.h). Port code, not guest behaviour; every rule carries its source label,
 // (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption. Rules in
-// docs/server-rules.md "Deep space".
+// docs/server-rules.md#deepspace.
 #include <algorithm>
 #include <cstdlib>
 #include <string>

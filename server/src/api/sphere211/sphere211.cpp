@@ -5,7 +5,7 @@
 // cells in floors.cpp, the boxes in rewards.cpp, the ranking in ranking.cpp, the rental slot in
 // rental.cpp, the state every answer carries in state.cpp (dive.h). Port code, not guest
 // behaviour; every rule carries its source label, (a) master data, (b) client-side evidence,
-// (c) outside knowledge, (d) assumption. Rules in docs/server-rules.md "Sphere 211".
+// (c) outside knowledge, (d) assumption. Rules in docs/server-rules.md#sphere211.
 //
 // Shape of a dive (c: how the mode played online; the client's screens agree, (b)):
 //  - a season (master_sphere211) runs for a few weeks; a dive starts at floor 0 and warps to a
@@ -57,7 +57,7 @@ enum class DropType : u32 { kBattle = 0, kStreak = 1, kBoss = 2, kRare = 3, kFlo
 
 // GetSphere211Info() -> GetSphere211InfoRes                                   fid 1e03058b
 // API: docs/api.md#getsphere211info
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // The board, when it opens (phase 5).
 //   (d) loads the dive (a season change ends the old one: season.cpp load_dive); a dive at floor 0
@@ -78,7 +78,7 @@ std::vector<u8> get_sphere211_info(Ctx& ctx, const Request&) {
 
 // Sphere211SelectedFloor(u32 offset) -> Sphere211SelectedFloorRes             fid f8371209
 // API: docs/api.md#sphere211selectedfloor
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // The floor chosen in the next-floor select.
 //   (b) the list is MissionUtility::Sphere211FloorData(floor, lot_floor_num): the next
@@ -147,7 +147,7 @@ u32 enemy_level(Ctx& ctx, const Floor& floor, u32 asset_id) {
 
 // Sphere211MissionStart(u32, u32 cell, u64 uid x3, u64 slot4, u32 owner) -> Sphere211MissionStartRes   fid 04ec9513
 // API: docs/api.md#sphere211missionstart
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // A cell's battle (b: CStageManager::CallMissionStart type 5; the arguments: sphere211_args.h).
 //   (d) an unknown cell (or one without a battle) is refused with 10208 (kItemUnusable).
@@ -234,7 +234,7 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
 
 // Sphere211MissionEnd(u32, u32 cell) -> Sphere211MissionEndRes                fid 03f169b2
 // API: docs/api.md#sphere211missionend
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // A won battle.
 //   (d) without a cell (the request's, else the one playing) it isn't answered.
@@ -301,7 +301,7 @@ std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
 
 // Sphere211MissionFailed(u32, u32 cell) -> Sphere211MissionFailedRes          fid 172f3b5f
 // API: docs/api.md#sphere211missionfailed
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // A lost or retired battle (the defeat dialog's いいえ, the pause menu's ミッションリタイア).
 //   (c)+(d) the cell stays uncleared (and playable), the clear streak resets and the stamina stays
@@ -320,7 +320,7 @@ std::vector<u8> sphere211_mission_failed(Ctx& ctx, const Request&) {
 
 // Sphere211MissionContinue(u32 +0x68, u32 +0x6c, bool) -> Sphere211MissionContinueRes   fid 5ac657b3
 // API: docs/api.md#sphere211missioncontinue
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // Continue after a defeat (b: the battle's defeat dialog "紋章石100個を使用することで全員が復活
 // できます" with the wallet before -> after, seen in game; the request carries the cell and 1).
@@ -342,7 +342,7 @@ std::vector<u8> sphere211_mission_continue(Ctx& ctx, const Request&) {
 
 // Sphere211FloorClear(u32 goal asset id) -> Sphere211FloorClearRes            fid 5187adb1
 // API: docs/api.md#sphere211floorclear
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // The goal reached (目標地点 -> 次のフロアへ -> 決定).
 //   (a) the floor's clear present (master_sphere211_floor_clear_present of the season's group at
@@ -397,7 +397,7 @@ std::vector<u8> sphere211_floor_clear(Ctx& ctx, const Request& req) {
 
 // Sphere211UseRerollItem() -> Sphere211UseRerollItemRes                       fid 19e61236
 // API: docs/api.md#sphere211usererollitem
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // The floor select's 再設定.
 //   (a) the season's reroll item x reroll_item_num re-lots the next-floor count; 10206
@@ -419,7 +419,7 @@ std::vector<u8> sphere211_use_reroll_item(Ctx& ctx, const Request&) {
 
 // Sphere211StaminaHeal() -> Sphere211StaminaHealRes                           fid 3a3ab3ed
 // API: docs/api.md#sphere211staminaheal
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // The S stamina ＋ -> the season's ticket -> 決定.
 //   (a) one of the season's heal_item_id adds its master_item heal_point (1 for every season's
@@ -449,7 +449,7 @@ std::vector<u8> sphere211_stamina_heal(Ctx& ctx, const Request&) {
 
 // ReturnSphere211() -> ReturnSphere211Res                                     fid 83390f3f
 // API: docs/api.md#returnsphere211
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // 帰還 -> 帰還.
 //   (b) every character that sortied comes back and can sortie again (master_text
@@ -496,7 +496,7 @@ std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
 
 // GetSphere211RankingInfo(bool) -> GetSphere211RankingInfoRes                 fid 5943ae5c
 // API: docs/api.md#getsphere211rankinginfo
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // (d) a local ranking of one player: the season's best floor, rank 1 (ranking.cpp).
 // Answers: the dive state, Sphere211RankingInfoMap and Sphere211RankingTopInfoMap (the same map).
@@ -513,7 +513,7 @@ std::vector<u8> get_sphere211_ranking_info(Ctx& ctx, const Request&) {
 
 // Sphere211AutoMemberSelect(u32, u32 cell, u32) -> Sphere211AutoMemberSelectRes   fid 2d0a3ab3
 // API: docs/api.md#sphere211automemberselect
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // 自動編成 on the party screen ((b) the request as the client sends it is (1, the cell's asset id,
 // 0); the response key Sphere211AutoMemberSelectResultInfo is an InfoBaseValueArray<u64> (its
@@ -542,7 +542,7 @@ std::vector<u8> sphere211_auto_member_select(Ctx& ctx, const Request&) {
 
 // Sphere211EquipAuto(u32, u32, vector<u64>) -> Sphere211EquipAutoRes          fid 9ce7e42e
 // API: docs/api.md#sphere211equipauto
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 // 自動設定: (d) answered with the state; the client keeps its own equipment.
 // Answers: the dive state.
@@ -555,7 +555,7 @@ std::vector<u8> sphere211_equip_auto(Ctx& ctx, const Request&) {
 
 // OnPlayerLoad: FooterMissionInfo.is_open_extra_dungeon, Sphere211CurrentId, the rental bonus
 //                                                          on Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart
-// Rules: docs/server-rules.md "Sphere 211"
+// Rules: docs/server-rules.md#sphere211
 //
 //   (b) every full player load opens the extra dungeon: FooterMissionInfo.is_open_extra_dungeon
 //       sets CParameterManager+0x1a38 (CParameterUtility::IsOpenExtraDungeon; the Sphere 211 menu

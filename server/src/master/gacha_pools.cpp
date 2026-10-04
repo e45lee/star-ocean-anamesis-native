@@ -1,5 +1,5 @@
 // Reconstructed gacha pools: the read-only accessor of data/gacha_pools.sqlite3.
-// See gacha_pools.h and docs/server-rules.md "Gacha pools (reconstructed)". Source labels:
+// See gacha_pools.h and docs/server-rules.md#gacha-pools. Source labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include "master/gacha_pools.h"
 

@@ -85,7 +85,7 @@ int client_banners(Sql& client_master) {
 //   (b: the shape of the event lists, ActiveEventMissionList; MissionUtility::GetEventAreaList
 //   type 2 walks the TowerArea map, CParameterManager+0x1c68, by area id; seen working in game),
 //   TowerSchedule [{opened_at, closed_at}].
-// Rules (docs/server-rules.md "Tower"): (a) the areas whose opened_at .. closed_at covers the
+// Rules (docs/server-rules.md#tower): (a) the areas whose opened_at .. closed_at covers the
 // event calendar (tower_01..05 run until 2030); (b)+(d) only areas whose banner the client finds
 // (area_banner_ok); (a) a mission is listed when it has no unlock_mission_id or that mission is
 // cleared; (d) missions whose battle maps are missing are left out (the files decide, at run

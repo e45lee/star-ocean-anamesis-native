@@ -212,7 +212,7 @@ def sweep(corpus, options, server, tz):
         if by != "-":
             methods.append((m, fid))
     # Login first (the player's day starts), then every method in name order; 03:58:00 + 5 s per
-    # request crosses the 04:00 reset (docs/server-rules.md "Clock") about a third of the way in.
+    # request crosses the 04:00 reset (docs/server-rules.md#conventions) about a third of the way in.
     order = [x for x in methods if x[0] == "Login"] + [x for x in methods if x[0] != "Login"]
     t0 = int(time.mktime(time.strptime("2026-10-01 03:58:00", "%Y-%m-%d %H:%M:%S")))
     os.makedirs(corpus, exist_ok=True)

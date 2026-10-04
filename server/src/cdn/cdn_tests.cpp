@@ -478,7 +478,7 @@ NATIVE_TEST("cdn/login-paths") {
             // master_global.a_ver_android: the app versions the client accepts (CallBackCore)
             t.expect_eq(d->find("a_ver") ? d->find("a_ver")->s : "", std::string("3.7.0"), "a_ver");
             // master_global.latest_episode_version: the episode count (CInfoManager+0xb0f0 =
-            // CParameterManager+0xb6f0, tEpisodeData's max; docs/server-rules.md "soa-server: the CDN", "Episode data")
+            // CParameterManager+0xb6f0, tEpisodeData's max; docs/server-rules.md#cdn)
             const Value* ev = d->find("LatestEpisodeVersion");
             t.expect_eq(ev ? (unsigned)ev->u : 0u, 3u, "LatestEpisodeVersion");
         }

@@ -1,6 +1,6 @@
 // GetGachaRate: the rate dialog (api/gacha/gacha.h). Port code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "4. Gacha").
+// knowledge, (d) assumption (docs/server-rules.md#gacha-rules).
 #include "api/gacha/gacha.h"
 
 #include "api/player/player_info.h"  // base_data
@@ -16,7 +16,7 @@ using ext::Row;
 namespace {
 
 // One CGachaRateInfo page {id, title, introduction_msg, bonus_msg, stepup_number,
-// GachaRateContentInfoList: [CGachaRateContentInfo]} (docs/server-rules.md 4.5).
+// GachaRateContentInfoList: [CGachaRateContentInfo]} (docs/server-rules.md#gacha-pools).
 Value gacha_rate_info(const gacha_pools::RateInfo& page) {
     Value info = Value::object();
     info["id"] = page.id;
@@ -56,7 +56,7 @@ std::vector<u8> gacha_rate_from_pools(ext::Ctx& ctx, const Request& req) {
 namespace {
 
 // GetGachaRate(u32 gacha, s8 const* hash) -> GetGachaRateRes             fid d6bcb49d
-// API: docs/api.md#getgacharate   Rules: docs/server-rules.md#45-gacha-pools-reconstructed
+// API: docs/api.md#getgacharate   Rules: docs/server-rules.md#gacha-pools
 //
 // The rate dialog of a banner (b: CGacha::CallRateWebView sends it; docs/api.md Callers).
 //   (b) GachaRateInfoList: CGachaRateInfo pages with their CGachaRateContentInfo lines.

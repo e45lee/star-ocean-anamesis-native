@@ -1,7 +1,7 @@
 // World bosses, big hunts and time bonuses: GetWorldBossInfo over master_world_boss /
 // master_world_boss_wave, played single-player; the time-bonus drops of master_time_bonus on
-// event-mission results. Port code, not guest behaviour. Rules in docs/server-rules.md "World
-// bosses and big hunts", "Time bonus"; labels:
+// event-mission results. Port code, not guest behaviour. Rules in docs/server-rules.md#world-bosses,
+// docs/server-rules.md#time-bonus; labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
 // Shape (b, CEventMissionBoard / CWorldBossDetailDialog / MissionUtility / ResultUtility):
@@ -253,7 +253,7 @@ u32 hunt_area(Ctx& ctx) {
 }
 
 // GetWorldBossInfo(u32 event_area_id) -> GetWorldBossInfoRes            fid 86d6a220
-// API: docs/api.md#getworldbossinfo   Rules: docs/server-rules.md "World bosses and big hunts"
+// API: docs/api.md#getworldbossinfo   Rules: docs/server-rules.md#world-bosses
 //
 // The boss plate of an event board (CEventMissionBoard::Progress sends it on a fresh board open).
 //   (a)+(d) the area's boss (event_type 1) while its window, moved by the year shift, covers the
@@ -288,7 +288,7 @@ std::vector<u8> get_world_boss_info(Ctx& ctx, const Request& req) {
 }
 
 // AreaExtra hook (each listed event area's CAreaInfo, events::add_area_extra).
-// Rules: docs/server-rules.md "World bosses and big hunts"
+// Rules: docs/server-rules.md#world-bosses
 //   (d) the event list's CAreaInfo.is_start_bighunt follows start_bigHunt_area_id (b: the client
 //       reads the latter; the flag is kept consistent).
 // Sets: is_start_bighunt of the big hunt's area.
@@ -298,13 +298,13 @@ void big_hunt_area_extra(Ctx& ctx, u32 area, Value& info) {
 }
 
 // OnPlayerLoad hook (Login, GetPlayer, NoLoginStart's full player state).
-// Rules: docs/server-rules.md "World bosses and big hunts"
+// Rules: docs/server-rules.md#world-bosses
 //   (b) the area list and the mission list read start_bigHunt_area_id from any response.
 // Adds: start_bigHunt_area_id (the running big hunt's area, 0 when none).
 void load_world_boss(Ctx& ctx, const Request&, Value& data) { data["start_bigHunt_area_id"] = hunt_area(ctx); }
 
 // MissionStartExtra hook (MissionStart).
-// Rules: docs/server-rules.md "World bosses and big hunts"
+// Rules: docs/server-rules.md#world-bosses
 //   (b) start_bigHunt_area_id from any response; (b) back on the board the cached
 //       CWorldBossPlayerInfo would replay the cut-in, so (d) a boss area's start sends is_new_open
 //       false.
@@ -370,7 +370,7 @@ void target_items(const Boss& boss, const Value& data, u64 out[3]) {
 
 // MissionResultExtra hook (a won MissionEnd), in a fixed order: the favor drops
 // (favor_drop.cpp), the time bonuses, then the world boss (event_extras.h).
-// Rules: docs/server-rules.md "World bosses and big hunts", "Time bonus", "Favor event drop bonus"
+// Rules: docs/server-rules.md#world-bosses, docs/server-rules.md#time-bonus, docs/server-rules.md#favor-event-drop-bonus
 //   (a)+(d) the target items the win brought fill the gauges (contribute), (a) bonus_rate % more
 //       during a big hunt (d: on the contribution); a full wave clears (its reward a present).
 // Adds: (the favor drop's and the time bonus's keys), start_bigHunt_area_id, and for a boss area

@@ -1,6 +1,6 @@
 #pragma once
 // Time value types (server/PLAN-readability.md 2.3, step R17; port code, not guest behaviour). The
-// server reads two clocks (soaserver/server.h, docs/server-rules.md "Clock"):
+// server reads two clocks (soaserver/server.h, docs/server-rules.md#conventions):
 //   - ServerTime: the server clock (clock_now(), ext::Ctx::now(): the real time, or --clock and
 //     running on from there). The wire's data.Time is this clock, so the client filters what it
 //     shows by it. Every time the state stores is a ServerTime: since PLAN-schema S9 an INTEGER of

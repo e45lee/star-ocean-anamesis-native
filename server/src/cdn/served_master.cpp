@@ -1,6 +1,6 @@
 // The master DB the CDN serves (soaserver/cdn.h make_served_master): the decrypted 3.7.0 master
 // with the server's client-master overrides, VACUUMed and ADLD-AES packed. Our code; labels as in
-// docs/server-rules.md "soa-server: the CDN".
+// docs/server-rules.md#cdn.
 #include <sqlite3.h>
 
 #include "cdn/files.h"

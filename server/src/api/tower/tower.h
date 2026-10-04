@@ -1,5 +1,5 @@
 // The tower (試練の遺跡) module of the local server (api/tower/tower.cpp; --restore-tower),
-// exposed for its unit tests (tower_tests.cpp). docs/server-rules.md "Tower".
+// exposed for its unit tests (tower_tests.cpp). docs/server-rules.md#tower.
 #pragma once
 #include <string>
 

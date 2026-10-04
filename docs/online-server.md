@@ -334,7 +334,7 @@ Addresses in this subsection are Ghidra addresses (ELF vaddr + 0x100000) in the 
   - 1006 (0x3ee, no `master_text` row): `OnResultUpdateSession` and `BridgeNotify::OnReceive` set it when the session completes while a request other than StartBridge, UpdateSession, CreatePlayer or CbtCertification is pending, and then restart the call. **[meaning inferred]**
   - 8000x: communication or version errors.
   - [confirmed codes; the meanings are from `master_text`]
-- **Server codes** (10001+): the 137 `error_message_text_*` rows in `master_text`. They're catalogued in [api.md "Appendix: server error codes"](api.md#appendix-server-error-codes) and used by [server-rules.md "Refusals and error codes"](server-rules.md#refusals-and-error-codes).
+- **Server codes** (10001+): the 137 `error_message_text_*` rows in `master_text`. They're catalogued in [api.md "Appendix: server error codes"](api.md#appendix-server-error-codes) and used by [server-rules.md#refusals](server-rules.md#refusals).
   - Special: **19001** is "no player for this device". The 3.7.0 Login result lambda treats exactly this code as "start the new-player flow". **[confirmed, see server/src/api/entry/entry.cpp `login`]**
 - **Retry.** Every method registers a closure, and `CErrorHandlerWrap` offers retry, back to title or give up (`ToRetry` / `ToTitle` / `ToGiveup`, `IsBusyRetry`). A retry re-sends with the same request id (section 1). **[confirmed]**
 
@@ -447,7 +447,7 @@ Addresses in this subsection are Ghidra addresses (ELF vaddr + 0x100000) in the 
   - `CGameResourceDownloader::SetServerAssetRevision` @018ddfe4 records the server's revision and flags a change (+0x155).
   - The game then returns to the data-download phase (`CPhase_DataDownload`; "更新されたデータがあります" 1013 / 10000001). **[inferred for the trigger]** **[confirmed, run]** for the login: a Login carrying `AssetPath` and `r_ver` 1472 (the APK's data is 1471) makes the client read `manifest/etc2/hi/version_latest_*` and offer the 3,138 MB download; on a phone that has it, only the `.version` files are read. A new player's `CreatePlayer` needs no CDN keys: the Login that follows carries them.
 - **The master DB** is downloaded like any asset, but encrypted (`encType` 2). `CStaticTransaction::Progress` decrypts it into memory (notes "Master DB load").
-- **What soa-server serves** (`server/src/cdn/`: `tree.cpp`, `bundle.cpp`, `served_master.cpp`; server/README.md "CDN"; rules and labels in server-rules.md "soa-server: the CDN"). The 3.7.0 download (work/download-3.7.0) holds every member of every bundle, unpacked: 24,625 members in 23,990 Individual and 1,027 Bulk bundles, plus 1,408 in the episode manifests.
+- **What soa-server serves** (`server/src/cdn/`: `tree.cpp`, `bundle.cpp`, `served_master.cpp`; server/README.md "CDN"; rules and labels in server-rules.md#cdn). The 3.7.0 download (work/download-3.7.0) holds every member of every bundle, unpacked: 24,625 members in 23,990 Individual and 1,027 Bulk bundles, plus 1,408 in the episode manifests.
   - soa-server rebuilds each bundle on request and lists our bundles' SHA-1 and size in the manifests it serves.
   - The master is the 3.7.0 one plus the client-master overrides, re-packed (`encrypt(decrypt(x))` reproduces the 3.7.0 file byte for byte).
   - `version.bin` gets revision 1472 and new version ids.
@@ -515,7 +515,7 @@ There are two ways to run our server (`server/`, rules in [server-rules.md](serv
 | Payments, push, SmartBeat, Play Games, WebViews | Not emulated. No payments (d); the port has no WebView | server-rules, docs/history/REMAINING.md |
 
 ### Out of process (`soa-server`)
-The same library answers; `server/net/` is the wire layer. Its own choices, where the client doesn't tell what the real server did, are labelled in [server-rules.md "soa-server: the wire layer"](server-rules.md).
+The same library answers; `server/net/` is the wire layer. Its own choices, where the client doesn't tell what the real server did, are labelled in [server-rules.md#wire-layer](server-rules.md).
 
 | Real piece | soa-server | Where |
 |---|---|---|

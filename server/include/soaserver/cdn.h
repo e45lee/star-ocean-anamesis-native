@@ -150,7 +150,7 @@ Options options_from_config();
 std::string standin_dir_from_config();
 // soa-server's asset index (hooks.h): the files the CDN serves, i.e. the download dir and then the
 // stand-in overlay (options_from_config's mirror and standins), so the server's content gates (an
-// enabled gacha's banner image, docs/server-rules.md "Enabling events by keyword", "Banner images") see the stand-ins as soa's
+// enabled gacha's banner image, docs/server-rules.md#enabling-events) see the stand-ins as soa's
 // AssetManager does with --standin-assets.
 std::shared_ptr<const AssetIndex> asset_index_from_config();
 // Builds the tree from config() and records its revision in config().cdn_revision (for Login's

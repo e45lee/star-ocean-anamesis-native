@@ -1,7 +1,7 @@
 #pragma once
 // The gear purification's pure rules (port code, not guest behaviour): the two formulas
 // CCustomGear::UpdatePurificationPlate shows on the purification screen. The handler is
-// GenerateGear (api/items/gear.cpp); docs/server-rules.md "Gear". Labels: (a) master data,
+// GenerateGear (api/items/gear.cpp); docs/server-rules.md#gear. Labels: (a) master data,
 // (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include <cstdint>
 

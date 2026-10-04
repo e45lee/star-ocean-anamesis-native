@@ -6,7 +6,7 @@
 // offers, ships and answer values are in state.cpp, the party bonuses in bonuses.cpp, the drops in
 // rewards.cpp (deepspace.h), the pure rules in rules/deepspace_rules. Port code, not guest
 // behaviour; every rule carries its source label, (a) master data, (b) client-side evidence,
-// (c) outside knowledge, (d) assumption. Rules in docs/server-rules.md "Deep space".
+// (c) outside knowledge, (d) assumption. Rules in docs/server-rules.md#deepspace.
 //
 // Request and response shapes (b) of the handlers' own keys:
 //   AutoSelectedResult     [uid, ...] (InfoBaseValueArray<u64>)
@@ -47,7 +47,7 @@ enum class BonusItemType : int { kAddBonus = 1, kMultiplyAll = 2 };
 
 // DeepSpaceActiveList() -> DeepSpaceActiveListRes                              fid a7a82ef5
 // API: docs/api.md#deepspaceactivelist
-// Rules: docs/server-rules.md "Deep space"
+// Rules: docs/server-rules.md#deepspace
 //
 // The expedition screen's lists (CDeepSpace::Progress sends it when the screen opens).
 //   (a)+(d) the areas the clocks, the exploration rates and the area images open, each with its
@@ -81,7 +81,7 @@ std::vector<u8> deep_space_active_list(Ctx& ctx, const Request&) {
 
 // DeepSpaceAutoMemberSelect(u32 bonus_set_id, u32 bonus_id) -> DeepSpaceAutoMemberSelectRes   fid ed9aae28
 // API: docs/api.md#deepspaceautomemberselect
-// Rules: docs/server-rules.md "Deep space"
+// Rules: docs/server-rules.md#deepspace
 //
 // The party screen's 自動選択 (b: the arguments are the captured request's; the screen's hint
 // "ボーナスを一つ選択すると、そのボーナスを強化する特性キャラクターを優先的に自動選択します").
@@ -190,7 +190,7 @@ void set_ship_bonuses(Ctx& ctx, u32 ship_id, u32 set_id, u32 item_id, const std:
 
 // DeepSpaceMissionStart(u32 mission_id, u32 item_id, vector<u64> uids) -> DeepSpaceMissionStartRes   fid 63c9927a
 // API: docs/api.md#deepspacemissionstart
-// Rules: docs/server-rules.md "Deep space"
+// Rules: docs/server-rules.md#deepspace
 //
 // Sends a party on an expedition (the arguments: deepspace_args.h). The area is the mission's.
 //   (d) refused with 10208 (kItemUnusable, the generic refusal, as the other modules) for a
@@ -307,7 +307,7 @@ bool pay_quick_return(Ctx& ctx, const Ship& ship, ServerTime t, QuickReturnPaid&
 
 // DeepSpaceMissionEndNow(u32 ship_id) -> DeepSpaceMissionEndNowRes            fid 2df0328c
 // API: docs/api.md#deepspacemissionendnow
-// Rules: docs/server-rules.md "Deep space"
+// Rules: docs/server-rules.md#deepspace
 //
 // Quick return (今すぐ帰還, CDeepSpaceQuickReturnDialog).
 //   (d) an unknown ship is refused with 10208 (kItemUnusable); a ship out costs the quick-return
@@ -467,7 +467,7 @@ void roll_rare_offer(Ctx& ctx, const Ship& ship, ServerTime t, double rare_missi
 
 // DeepSpaceMissionEnd(u32 ship_id) -> DeepSpaceMissionEndRes                  fid 140e365b
 // API: docs/api.md#deepspacemissionend
-// Rules: docs/server-rules.md "Deep space"
+// Rules: docs/server-rules.md#deepspace
 //
 // Collects a ship that is back (CDeepSpace::SetupPartySelect sends it for a 帰還済 mission).
 //   (d) an unknown ship, or one not back yet, is refused with 10208 (kItemUnusable).

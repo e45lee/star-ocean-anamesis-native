@@ -4,6 +4,9 @@
 // fields through the layout classes, or walks the running game's objects at a frame boundary
 // (testutil::on_frame) and compares their fields with the guest's getters. No natives here.
 #include <cstring>
+#include <memory>
+#include <set>
+#include <vector>
 
 #include "native/common/test.h"
 #include "native/render/render_layout.h"
@@ -159,4 +162,112 @@ NATIVE_TEST("render/layout-frame-hook") {
     t.expect_eq(om_seen != nullptr, true, "an ObjectManager");
 }
 
+// ---- The device section ----------------------------------------------------------------------------
+
+// ShaderComprssionTree: a private tree (host memory) built by the guest's constructor, filled through
+// InsertNode on a window of few distinct words (many matches); after every insert m_matchLen must be the
+// brute-force longest match among the positions still in the tree (with the same first word), and every
+// node's parent must link back to it (m_left / m_right, or the root slot m_right[0x1001 + word]).
+// Then a CompressLZwordDic -> DecompressLZwordDic round trip (the codec the tree serves).
+NATIVE_TEST("render/layout-shader-compression") {
+    auto mem = std::make_unique<ShaderComprssionTree>();
+    ShaderComprssionTree* tr = mem.get();
+    std::memset(tr, 0x5a, sizeof *tr);
+    t.call("_ZN4Aska20ShaderComprssionTreeC2Ev", {(u64)tr});
+    bool init_ok = true;
+    for (int i = 0; i < 0x1000; i++) init_ok &= tr->m_parent[i] == ShaderComprssionTree::kNil;
+    for (int w = 0; w < 0x10000; w++) init_ok &= tr->m_right[0x1001 + w] == ShaderComprssionTree::kNil;
+    t.expect_eq(init_ok, true, "constructor: every parent and root NIL");
+    const int kN = 600, kLen = ShaderComprssionTree::kMaxMatch;
+    for (int i = 0; i < 0x1000; i++) tr->m_text[i] = (s32)(t.rand_int(0, 2));
+    std::set<int> in;
+    int bad_len = 0, bad_link = 0;
+    for (int r = 0; r < kN; r++) {
+        t.call("_ZN4Aska20ShaderComprssionTree10InsertNodeEii", {(u64)tr, (u64)r, (u64)kLen});
+        int best = 0;
+        for (int p : in) {
+            if (tr->m_text[p & 0xfff] != tr->m_text[r & 0xfff]) continue;
+            int k = 1;
+            while (k < kLen && tr->m_text[(p + k) & 0xfff] == tr->m_text[(r + k) & 0xfff]) k++;
+            best = std::max(best, k);
+        }
+        if (tr->m_matchLen != best) bad_len++;
+        if (best == kLen) in.erase(tr->m_matchPos);  // a full match replaces the old node
+        in.insert(r);
+        for (int p : in) {
+            int par = tr->m_parent[p];
+            bool linked = par == ShaderComprssionTree::kNil ? false
+                          : (par > 0x1000 ? tr->m_right[par] == p : (tr->m_left[par] == p || tr->m_right[par] == p));
+            if (!linked) bad_link++;
+        }
+    }
+    t.expect_eq(bad_len, 0, "InsertNode: m_matchLen = the longest match");
+    t.expect_eq(bad_link, 0, "m_parent / m_left / m_right / the root slots link up");
+    t.call("_ZN4Aska20ShaderComprssionTree10DeleteNodeEi", {(u64)tr, (u64)(kN - 1)});
+    t.expect_eq(tr->m_parent[kN - 1], ShaderComprssionTree::kNil, "DeleteNode -> m_parent = NIL");
+
+    std::vector<u8> dic(0x2000), src(0x1000), packed(0x4000, 0), out(0x1000 + 0x40, 0);
+    for (auto& b : dic) b = (u8)t.rand_int(0, 255);
+    for (size_t i = 0; i < src.size(); i++) src[i] = (u8)(i % 7 == 0 ? t.rand_int(0, 255) : "shader cache words"[i % 18]);
+    s32 n = (s32)t.call("_ZN4Aska17ShaderCompression17CompressLZwordDicEPviS1_Ph", {(u64)src.data(), src.size(), (u64)packed.data(), (u64)dic.data()});
+    t.expect_eq(n > 0 && n < (s32)src.size(), true, "CompressLZwordDic compresses");
+    t.call("_ZN4Aska17ShaderCompression19DecompressLZwordDicEPtS1_Ph", {(u64)packed.data(), (u64)out.data(), (u64)dic.data()});
+    t.expect_eq(std::memcmp(out.data(), src.data(), src.size()), 0, "DecompressLZwordDic round trip");
+}
+
+namespace {
+TEST_PROBE(g_probeAddRenderQueue, "_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi");
+TEST_PROBE(g_probeGetRenderBatch, "_ZN4Aska19RenderContextServer14GetRenderBatchEi");
+}  // namespace
+
+// RenderThread and its queue: two consecutive AddRenderQueue calls (on the painting thread); the entry
+// the first one wrote (at the m_write it saw) must hold its arguments (type 0, object, context, pass)
+// when the second comes, and m_write must have moved on. The sync members and helper threads by vtable.
+NATIVE_TEST("render/layout-render-thread") {
+    struct Seen { RenderThread* rt = nullptr; s32 write = -1; u64 obj = 0, ctx = 0, pass = 0; } first;
+    int calls = 0;
+    probe_call(t, g_probeAddRenderQueue, [&](Cpu& c) {
+        auto* rt = reinterpret_cast<RenderThread*>(c.x(0));
+        if (calls++ == 0) {
+            first = {rt, rt->m_queue.m_write, c.x(1), c.x(2), (u64)(s64)(s32)c.x(3)};
+            return false;  // stay armed for the next call
+        }
+        t.expect_eq(rt, first.rt, "one RenderThread");
+        t.expect_eq(rt->vtable, vtable_of(t, "_ZTVN4Aska12RenderThreadE"), "RenderThread vtable");
+        t.expect_eq(vslot(rt, 2), t.sym("_ZN4Aska12RenderThread7HandlerEv"), "slot 2 = Handler");
+        t.expect_eq(rt->m_queue.vtable, vtable_of(t, "_ZTVN4Aska6TQueueINS_14RENDER_REQUESTELi8192EEE"), "m_queue's vtable (0x198)");
+        t.expect_eq(has_vtable(t, rt->m_finishCallbackThread, "_ZTVN4Aska26RenderFinishCallbackThreadE"), true, "m_finishCallbackThread");
+        t.expect_eq(has_vtable(t, rt->m_callbackThread, "_ZTVN4Aska26RenderThreadCallBackThreadE"), true, "m_callbackThread");
+        t.expect_eq(rt->m_blankTexture != nullptr, true, "m_blankTexture");
+        t.expect_eq(rt->m_initialized, (u8)1, "m_initialized (Handler_Init ran)");
+        t.expect_eq(first.write >= 0 && first.write <= 0x2000, true, "m_write in the ring");
+        const RENDER_REQUEST& e = rt->m_queue.m_entries[first.write];
+        t.expect_eq(e.m_type, (u8)0, "the first call's entry: type 0");
+        t.expect_eq(e.m_arg[0], first.obj, "entry: the object");
+        t.expect_eq(e.m_arg[1], first.ctx, "entry: the RenderContext");
+        t.expect_eq(e.m_arg[2], first.pass, "entry: the pass (sign-extended)");
+        t.expect_eq(rt->m_queue.m_write, first.write == 0x2000 ? 0 : first.write + 1, "m_write advanced by one");
+        u8 st = (u8)t.call("_ZNK4Aska12RenderThread9GetStatusEv", {(u64)rt});
+        t.expect_eq(st <= 3, true, "GetStatus (m_status under m_queueLock)");
+        return true;
+    }, 20000, "RenderThread::AddRenderQueue");
+}
+
+// RenderContextServer: on a GetRenderBatch call (a worker preparing an object). The arrays are new[]s
+// with the element count in the cookie at -8 (RenderContext, RenderContextBatch); the light contexts
+// are one new[] split in two buffers.
+NATIVE_TEST("render/layout-render-context-server") {
+    probe_call(t, g_probeGetRenderBatch, [&](Cpu& c) {
+        auto* sv = reinterpret_cast<RenderContextServer*>(c.x(0));
+        t.expect_eq(sv->vtable, vtable_of(t, "_ZTVN4Aska19RenderContextServerE"), "vtable");
+        t.expect_eq(sv->m_contexts != nullptr && sv->m_contextCount > 0, true, "m_contexts");
+        t.expect_eq(reinterpret_cast<const u64*>(sv->m_contexts)[-1], (u64)sv->m_contextCount, "RenderContext new[] cookie = m_contextCount");
+        t.expect_eq(reinterpret_cast<const u64*>(sv->m_batches)[-1], (u64)sv->m_batchCount, "RenderContextBatch new[] cookie = m_batchCount");
+        t.expect_eq((u64)sv->m_lightContexts[1] - (u64)sv->m_lightContexts[0], (u64)sv->m_lightContextCount * kLightContextSize,
+                    "m_lightContexts[1] = [0] + count");
+        t.expect_eq(sv->m_bufferIndex <= 1, true, "m_bufferIndex");
+        t.expect_eq((u64)sv->m_contextUsed <= (u64)sv->m_contextCount, true, "m_contextUsed <= m_contextCount");
+        return true;
+    }, 20000, "RenderContextServer::GetRenderBatch");
+}
 }  // namespace soa::native::render

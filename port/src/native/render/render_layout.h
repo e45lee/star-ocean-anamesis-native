@@ -387,7 +387,8 @@ public:
     u32 m_renderFlags;                 // 0x198: bit 13 inactive (OnActive), bit 26 object motion blur; Clone copies
     u8 unk_19c[4];                     // 0x19c
     u64 unk_1a0;                       // 0x1a0: Clone copies
-    u8 unk_1a8[8];                     // 0x1a8
+    s32 m_renderQueued;                // 0x1a8: RenderThread::AddRenderQueue adds 1 atomically per queued draw
+    u8 unk_1ac[4];                     // 0x1ac
     u32 m_passMask;                    // 0x1b0: RenderingDecided tests bits 0-2 and 9-10; Clone copies
     u8 m_progTrans;                    // 0x1b4: SetProgrammableTransparency
     u8 m_shadowFlags[2];               // 0x1b5: (u16, unaligned) bit 1 light context prepared, 4 cast shadow,
@@ -424,6 +425,7 @@ public:
 };
 static_assert(offsetof(RenderableObject, m_renderFlags) == 0x198);
 static_assert(offsetof(RenderableObject, unk_1a0) == 0x1a0);
+static_assert(offsetof(RenderableObject, m_renderQueued) == 0x1a8);
 static_assert(offsetof(RenderableObject, m_passMask) == 0x1b0);
 static_assert(offsetof(RenderableObject, m_progTrans) == 0x1b4);
 static_assert(offsetof(RenderableObject, m_shadowFlags) == 0x1b5);
@@ -451,6 +453,239 @@ static_assert(sizeof(RenderableObject) == 0x310);
 // (RenderThread, RenderContextServer, RenderContextBase / RenderContext / batches, RenderDeviceGL,
 // RenderDeviceData and the GL state caches, RenderState, RenderTarget / RenderTargetManagerGL,
 // ShaderCompression / ShaderComprssionTree, RENDERINFO)
+
+// Aska::ShaderComprssionTree (sic): the binary search tree of the LZ word compressor (Okumura's LZSS
+// tree over 16-bit words: a 4096-word window, matches of 2..17 words, 0x1000 = NIL). Guest size 0x50058
+// (ShaderCompression::CompressLZwordDic: operator new(0x50058) and the constructor inlined); layout from
+// ShaderComprssionTree(), InsertNode, DeleteNode (port/decomp/render/shader_compression.c). Node i
+// (a window position) has m_parent[i] / m_left[i] / m_right[i]; the roots are m_right[0x1001 + w], one
+// per first word w (0x10000 of them); m_text is the window (u32 per word) plus 0x11 words of lookahead
+// at the end, so a match can run past the wrap.
+// The hot spot: at boot the AHSL cache thread recompresses every compressed shader-cache entry after
+// creating its GL shader (AHSLCacheManagerV2::Handler -> ProcDiskCacheEntry -> RebuildL2Database ->
+// BuildLinkedDiskCacheL2 -> AHSLBase::CreateCompressedShaderCache -> CompressLZwordDic -> InsertNode).
+class ShaderComprssionTree {
+public:
+    void Ctor();                          // ShaderComprssionTree()  _ZN4Aska20ShaderComprssionTreeC2Ev: every parent and root = NIL
+    void InsertNode(s32 r, s32 maxLen);   // inserts window position r; sets m_matchPos / m_matchLen (the longest match, < maxLen... = maxLen replaces)
+    void DeleteNode(s32 p);               // removes window position p
+
+    static constexpr s32 kNil = 0x1000;       // also the window size (words)
+    static constexpr s32 kMaxMatch = 0x11;    // CompressLZwordDic's maxLen
+
+    s32 m_matchPos;              // 0x00000: InsertNode's result: the matched window position
+    s32 m_matchLen;              // 0x00004: and its length in words
+    s32 m_parent[0x1001];        // 0x00008
+    s32 m_left[0x1001];          // 0x0400c
+    s32 m_right[0x11001];        // 0x08010: [0x1001 + w] = the root for first word w
+    s32 m_text[0x1011];          // 0x4c014: the window, one word per u32 (big-endian bytes -> word)
+};
+static_assert(offsetof(ShaderComprssionTree, m_parent) == 0x8);
+static_assert(offsetof(ShaderComprssionTree, m_left) == 0x400c);
+static_assert(offsetof(ShaderComprssionTree, m_right) == 0x8010);
+static_assert(offsetof(ShaderComprssionTree, m_text) == 0x4c014);
+static_assert(sizeof(ShaderComprssionTree) == 0x50058);
+
+// Aska::ShaderCompression: the shader cache's LZ codecs (static functions; no data). The word codec with
+// a dictionary is the shipped cache's (docs/render/hair-shader.md "Compression"; tools/ahsl_extract.py):
+// 16-bit units, a big-endian flag word per 16 items (LSB first), a match = big-endian (len - 2) << 12 |
+// word distance, distance 0 ends; the 8 KiB dictionary (0x1000 words) primes the window (the tree's
+// m_text, all positions inserted first) and distances before the output read from its end.
+class ShaderCompression {
+public:
+    static void DecompressLZ(u8* src, u8* dst);                                  // _ZN4Aska17ShaderCompression12DecompressLZEPhS1_
+    static s32 CompressLZ(void* src, s32 size, void* dst);
+    static void DecompressLZword(u16* src, u16* dst);
+    static s32 CompressLZword(void* src, s32 size, void* dst);
+    static void DecompressLZwordDic(u16* src, u16* dst, u8* dic);               // dic: 0x2000 bytes
+    static s32 CompressLZwordDic(void* src, s32 size, void* dst, u8* dic);      // returns the compressed size (0: failed)
+};
+
+class RenderContextBatch;
+class LightContext;
+
+// Aska::RenderContextServer: the per-frame pools of render contexts, batches and light contexts the
+// objects take while they prepare (bump allocators, reset per frame by ResetServer). Guest size 0x58
+// (ObjectManager::ObjectManager: operator new(0x58), RenderContextServer(App+0x90, +0x94, +0x98, +0x9c));
+// layout from the constructor, the Realloc*, ResetServer and Get* (port/decomp/render/render_thread.c).
+// GetRenderBatch / GetRenderBatchLite / GetLightContext take n entries with an atomic add (LDXR/STXR)
+// on the used count, so the worker threads share them; GetRenderContext is not atomic. The light
+// contexts are double-buffered (m_lightContexts[m_bufferIndex]; ResetServer flips the index).
+// vtable (_ZTVN4Aska19RenderContextServerE): 0 D1, 1 D0.
+class RenderContextServer {
+public:
+    void Ctor(s32 contexts, s32 batches, s32 batchLites, s32 lightContexts);  // _ZN4Aska19RenderContextServerC2Eiiii
+    void DtorBase();
+    void DtorDelete();
+    void ReallocRenderContext(s32 n);       // new[] of RenderContext (0x230 each, count cookie at -8)
+    void ReallocBatch(s32 n);               // new[] of RenderContextBatch (0x130 each)
+    void ReallocBatchLite(s32 n);           // new[] of u32
+    void ReallocLightContext(s32 n);        // new[] of 2 * n LightContext (0x550 each)
+    void ResetServer();                     // every used count = 0; m_bufferIndex ^= 1
+    RenderContext* GetRenderContext(s32 n);
+    RenderContextBatch* GetRenderBatch(s32 n);   // atomic: null when the pool is exhausted
+    u32* GetRenderBatchLite(s32 n);              // atomic
+    LightContext* GetLightContext(s32 n);        // atomic; from the current buffer
+
+    const void* vtable;                     // 0x00
+    RenderContext* m_contexts;              // 0x08: new[] (RenderContext, 0x230 each)
+    s32 m_contextCount;                     // 0x10
+    s32 m_contextUsed;                      // 0x14
+    RenderContextBatch* m_batches;          // 0x18: new[] (0x130 each)
+    u32 m_batchCount;                       // 0x20
+    u32 m_batchUsed;                        // 0x24: atomic
+    u32* m_batchLites;                      // 0x28
+    u32 m_batchLiteCount;                   // 0x30
+    u32 m_batchLiteUsed;                    // 0x34: atomic
+    LightContext* m_lightContexts[2];       // 0x38: one new[] of 2 * count; [1] = [0] + count
+    u32 m_lightContextUsed;                 // 0x48: atomic
+    u32 m_lightContextCount;                // 0x4c: per buffer
+    u8 m_bufferIndex;                       // 0x50: which m_lightContexts the frame uses (ResetServer flips it)
+    u8 unk_51[7];                           // 0x51
+};
+static_assert(offsetof(RenderContextServer, m_contexts) == 0x08);
+static_assert(offsetof(RenderContextServer, m_contextCount) == 0x10);
+static_assert(offsetof(RenderContextServer, m_contextUsed) == 0x14);
+static_assert(offsetof(RenderContextServer, m_batches) == 0x18);
+static_assert(offsetof(RenderContextServer, m_batchCount) == 0x20);
+static_assert(offsetof(RenderContextServer, m_batchUsed) == 0x24);
+static_assert(offsetof(RenderContextServer, m_batchLites) == 0x28);
+static_assert(offsetof(RenderContextServer, m_batchLiteCount) == 0x30);
+static_assert(offsetof(RenderContextServer, m_batchLiteUsed) == 0x34);
+static_assert(offsetof(RenderContextServer, m_lightContexts) == 0x38);
+static_assert(offsetof(RenderContextServer, m_lightContextUsed) == 0x48);
+static_assert(offsetof(RenderContextServer, m_lightContextCount) == 0x4c);
+static_assert(offsetof(RenderContextServer, m_bufferIndex) == 0x50);
+static_assert(sizeof(RenderContextServer) == 0x58);
+inline constexpr u64 kRenderContextSize = 0x230;
+inline constexpr u64 kRenderContextBatchSize = 0x130;
+inline constexpr u64 kLightContextSize = 0x550;
+
+// Aska::RENDER_REQUEST: one entry of the render thread's command queue (0x28 bytes; written by the
+// RenderThread::Add* methods, read by RenderThread::Render). m_type 0 = an object to draw
+// (AddRenderQueue: a = RenderableObject*, b = RenderContext*, c = the pass), 1 = begin render
+// (AddBeginRender; the other Add* use other types, see the README).
+struct RENDER_REQUEST {
+    u8 m_type;          // 0x00
+    u8 unk_01[7];       // 0x01: (the begin-render entry copies 0x21 bytes from 0x01: whatever its stack held)
+    u64 m_arg[4];       // 0x08
+};
+static_assert(offsetof(RENDER_REQUEST, m_arg) == 0x08);
+static_assert(sizeof(RENDER_REQUEST) == 0x28);
+
+// Aska::TQueue<RENDER_REQUEST, 8192>: a ring of 8193 entries (an index wraps to 0 after 0x2000). Add*
+// writes the entry at m_write and advances it; it refuses (returns false: the request is dropped) when
+// m_write == m_read, i.e. the reader's index is the one slot it holds back (1 / 0 at construction).
+struct RenderRequestQueue {
+    const void* vtable;                 // 0x00: _ZTVN4Aska6TQueueINS_14RENDER_REQUESTELi8192EEE + 0x10
+    s32 m_write;                        // 0x08: the producers' index (1 at construction)
+    s32 m_read;                         // 0x0c: the render thread's index (0 at construction)
+    RENDER_REQUEST m_entries[0x2001];   // 0x10
+};
+static_assert(offsetof(RenderRequestQueue, m_write) == 0x08);
+static_assert(offsetof(RenderRequestQueue, m_read) == 0x0c);
+static_assert(offsetof(RenderRequestQueue, m_entries) == 0x10);
+static_assert(sizeof(RenderRequestQueue) == 0x50038);
+
+class Texture;  // Aska::Texture (opaque)
+
+// Aska::RenderThread: the thread that runs the GL device; the game side (ObjectManager::OnPostPaint,
+// TraversePaintingList) fills its queue with Add*, the thread drains it in Render(int&, bool&). Guest
+// size 0x50298 (ObjectManager::ObjectManager: operator new(0x50298)); layout from RenderThread(),
+// ~RenderThread, GetStatus, DeviceReset, AddRenderQueue, AddBeginRender (port/decomp/render/
+// render_thread.c). The sync members (Aska::Thread base, Event, CriticalSection, FastCriticalSection,
+// Semaphore) are the sync subsystem's: opaque bytes of their sizes here (n-sync: Event 0x68,
+// CriticalSection 0x28, FastCriticalSection 0x90 with its lock word at +0x38 and waiters at +0x3c).
+// AddRenderQueue writes without m_queueLock (one producer at a time: the painting traversal) and bumps
+// the object's RenderableObject::m_renderQueued atomically; the other Add* and GetStatus take
+// m_queueLock (a spinning FastCriticalSection: 0x1ff tries, then the semaphore) - the hot spots.
+// vtable (_ZTVN4Aska12RenderThreadE, 3 slots): 0 D1, 1 D0, 2 Handler().
+class RenderThread {
+public:
+    void Ctor();                          // RenderThread()  _ZN4Aska12RenderThreadC2Ev (starts the thread)
+    void DtorBase();
+    void DtorDelete();
+    void Handler();                       // slot 2: the thread's loop
+    u8 GetStatus() const;                 // m_status under m_queueLock
+    void DeviceReset();
+    void WaitForInit();
+    void Handler_Init();                  // m_initialized = 1
+    void BlockCallFunc();
+    void Render(s32& a, bool& b);         // drains the queue (41,152 inclusive samples: the whole GL frame)
+    void InsertCallBack(s32 id, u64 arg); // RenderThread::CALLBACK_ID
+    void SetExposureScale(float a, float b);
+    void EnableFastZ(bool on);
+    void DirectInsertCallBack(void (*fn)(u64, u64), u64 a, u64 b);
+    void CheckBoot();
+    bool AddCreateRenderTarget(u32 id, void* env);   // Aska::MULTIPASS_ENVIRONMENT*
+    bool AddChangeRenderTarget(u32 id, void* env);
+    bool AddReloadZCull();
+    bool AddEnableGnmOcclusionQuery(bool on);
+    bool AddExposureScale(float a, float b);
+    bool AddEnableFastZ(bool on);
+    bool AddFinishRenderTarget(u32 id, s32 a, s32 b);
+    bool AddTemporaryResolve(RenderableObject* obj, s32 a, s32 b);
+    bool AddRenderQueue(RenderableObject* obj, RenderContext* ctx, s32 pass);  // type 0, lock-free
+    bool AddBeginRender();                // type 1; m_status = 2 and m_wake set
+    bool AddEndRender(void* notify);      // Aska::INotify*
+    bool AddCallBack(void (*fn)(u64, u64), u64 a, u64 b);
+    void ReqCustomCommandBlock(void (*fn)(u64, u64), u64 a, u64 b);
+    void ReqDownloadResourceBlock(void* resource);   // Aska::GpuResource*
+    bool AddDataTransfer(void* dst, void* src, u32 size);
+    void ExecutePendingTileRegionOperationByAddress(void* p);
+    bool AddOcclusionQueryBegin(u32* result);
+    bool AddOcclusionQueryEnd();
+    void WaitDeviceReset();
+    void ReqDeviceReset();
+    void ReqExit();
+    void ReqSwap();
+    void ReqDeviceInit();
+    void ReqGpuWait();
+    static void GPUIdleCallBack(u64 arg);
+    static void FinishRenderCallBack(u64 arg);
+    static void RenderThreadCallBack(u64 arg);
+
+    const void* vtable;                 // 0x00000: _ZTVN4Aska12RenderThreadE + 0x10 (Aska::Thread's first word)
+    u8 m_thread[0x10];                  // 0x00008: the rest of the Aska::Thread base (sync)
+    u8 m_wake[0x68];                    // 0x00018: Aska::Event (AddBeginRender sets it)
+    u8 m_event80[0x68];                 // 0x00080: Aska::Event (DeviceReset sets it)
+    u8 m_cs[0x28];                      // 0x000e8: Aska::CriticalSection
+    u8 m_event110[0x68];                // 0x00110: Aska::Event
+    u64 unk_178;                        // 0x00178: 0 at construction
+    u8 unk_180[0x10];                   // 0x00180
+    u16 unk_190;                        // 0x00190: 0 at construction
+    u8 m_status;                        // 0x00192: GetStatus(); 2 after AddBeginRender
+    u8 unk_193[5];                      // 0x00193
+    RenderRequestQueue m_queue;         // 0x00198
+    u8 m_initialized;                   // 0x501d0: Handler_Init
+    u8 unk_501d1;                       // 0x501d1: 0 at construction; DeviceReset clears it
+    u8 unk_501d2;                       // 0x501d2
+    u8 m_needVSyncInit;                 // 0x501d3: 1 at construction; DeviceReset makes the context current, VSync::Initialize, clears it
+    u8 unk_501d4;                       // 0x501d4: 0 at construction (u16 store with 0x501d3)
+    u8 unk_501d5;                       // 0x501d5
+    u8 unk_501d6[2];                    // 0x501d6
+    void* m_finishCallbackThread;       // 0x501d8: Aska::RenderFinishCallbackThread (0x2040 bytes)
+    void* m_callbackThread;             // 0x501e0: Aska::RenderThreadCallBackThread (0x3088 bytes)
+    Texture* m_blankTexture;            // 0x501e8: a 1x1 texture the constructor allocates and clears
+    u8 m_queueLock[0x90];               // 0x501f0: Aska::FastCriticalSection (lock word 0x50228, waiters 0x5022c, semaphore 0x50268)
+    u64 unk_50280;                      // 0x50280: 0 at construction
+    u64 unk_50288;                      // 0x50288: 0 at construction
+    u8 unk_50290[8];                    // 0x50290
+};
+static_assert(offsetof(RenderThread, m_wake) == 0x18);
+static_assert(offsetof(RenderThread, m_event80) == 0x80);
+static_assert(offsetof(RenderThread, m_cs) == 0xe8);
+static_assert(offsetof(RenderThread, m_event110) == 0x110);
+static_assert(offsetof(RenderThread, m_status) == 0x192);
+static_assert(offsetof(RenderThread, m_queue) == 0x198);
+static_assert(offsetof(RenderThread, m_initialized) == 0x501d0);
+static_assert(offsetof(RenderThread, m_needVSyncInit) == 0x501d3);
+static_assert(offsetof(RenderThread, m_finishCallbackThread) == 0x501d8);
+static_assert(offsetof(RenderThread, m_callbackThread) == 0x501e0);
+static_assert(offsetof(RenderThread, m_blankTexture) == 0x501e8);
+static_assert(offsetof(RenderThread, m_queueLock) == 0x501f0);
+static_assert(offsetof(RenderThread, unk_50280) == 0x50280);
+static_assert(sizeof(RenderThread) == 0x50298);
 
 // ==== End of section: the device ====================================================================
 

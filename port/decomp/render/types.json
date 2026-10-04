@@ -1025,7 +1025,17 @@
     },
     {
      "offset": 424,
-     "name": "unk_1a8",
+     "name": "m_renderQueued",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 428,
+     "name": "unk_1ac",
      "type": {
       "kind": "array",
       "of": {
@@ -1033,9 +1043,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 8
+      "count": 4
      },
-     "size": 8
+     "size": 4
     },
     {
      "offset": 432,
@@ -1732,6 +1742,980 @@
      "ghidra": "0x22b7e28",
      "symbol": "_ZN4Aska16RenderableObject10DeleteThisEPNS_13DeleteManagerE",
      "name": "DeleteThis"
+    }
+   ]
+  },
+  {
+   "name": "ShaderComprssionTree",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_matchPos",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_matchLen",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_parent",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 4097
+     },
+     "size": 16388
+    },
+    {
+     "offset": 16396,
+     "name": "m_left",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 4097
+     },
+     "size": 16388
+    },
+    {
+     "offset": 32784,
+     "name": "m_right",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 69633
+     },
+     "size": 278532
+    },
+    {
+     "offset": 311316,
+     "name": "m_text",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 4113
+     },
+     "size": 16452
+    }
+   ],
+   "size": 327768,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x22c626c",
+     "symbol": "_ZN4Aska20ShaderComprssionTreeC2Ev",
+     "name": "ShaderComprssionTree"
+    },
+    {
+     "ghidra": "0x22c62a8",
+     "symbol": "_ZN4Aska20ShaderComprssionTree10InsertNodeEii",
+     "name": "InsertNode"
+    },
+    {
+     "ghidra": "0x22c6434",
+     "symbol": "_ZN4Aska20ShaderComprssionTree10DeleteNodeEi",
+     "name": "DeleteNode"
+    }
+   ]
+  },
+  {
+   "name": "RenderContextServer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_contexts",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_contextCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_contextUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_batches",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_batchCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_batchUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_batchLites",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_batchLiteCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "m_batchLiteUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_lightContexts",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 2
+     },
+     "size": 16
+    },
+    {
+     "offset": 72,
+     "name": "m_lightContextUsed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 76,
+     "name": "m_lightContextCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 80,
+     "name": "m_bufferIndex",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 81,
+     "name": "unk_51",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 88,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22b9258",
+     "symbol": "_ZN4Aska19RenderContextServerC2Eiiii",
+     "name": "RenderContextServer"
+    },
+    {
+     "ghidra": "0x22b9390",
+     "symbol": "_ZN4Aska19RenderContextServer20ReallocRenderContextEi",
+     "name": "ReallocRenderContext"
+    },
+    {
+     "ghidra": "0x22b947c",
+     "symbol": "_ZN4Aska19RenderContextServer12ReallocBatchEi",
+     "name": "ReallocBatch"
+    },
+    {
+     "ghidra": "0x22b9570",
+     "symbol": "_ZN4Aska19RenderContextServer16ReallocBatchLiteEi",
+     "name": "ReallocBatchLite"
+    },
+    {
+     "ghidra": "0x22b95f0",
+     "symbol": "_ZN4Aska19RenderContextServer19ReallocLightContextEi",
+     "name": "ReallocLightContext"
+    },
+    {
+     "ghidra": "0x22b9678",
+     "symbol": "_ZN4Aska19RenderContextServerD1Ev",
+     "name": "~RenderContextServer"
+    },
+    {
+     "ghidra": "0x22b9734",
+     "symbol": "_ZN4Aska19RenderContextServerD0Ev",
+     "name": "~RenderContextServer"
+    },
+    {
+     "ghidra": "0x22b974c",
+     "symbol": "_ZN4Aska19RenderContextServer11ResetServerEv",
+     "name": "ResetServer"
+    },
+    {
+     "ghidra": "0x22b976c",
+     "symbol": "_ZN4Aska19RenderContextServer16GetRenderContextEi",
+     "name": "GetRenderContext"
+    },
+    {
+     "ghidra": "0x22b97a8",
+     "symbol": "_ZN4Aska19RenderContextServer14GetRenderBatchEi",
+     "name": "GetRenderBatch"
+    },
+    {
+     "ghidra": "0x22b97e0",
+     "symbol": "_ZN4Aska19RenderContextServer18GetRenderBatchLiteEi",
+     "name": "GetRenderBatchLite"
+    },
+    {
+     "ghidra": "0x22b9814",
+     "symbol": "_ZN4Aska19RenderContextServer15GetLightContextEi",
+     "name": "GetLightContext"
+    }
+   ]
+  },
+  {
+   "name": "RENDER_REQUEST",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "unk_01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 8,
+     "name": "m_arg",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 32
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "RenderRequestQueue",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_entries",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "RENDER_REQUEST"
+      },
+      "count": 8193
+     },
+     "size": 327720
+    }
+   ],
+   "size": 327736,
+   "align": 8
+  },
+  {
+   "name": "RenderThread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_wake",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 128,
+     "name": "m_event80",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 232,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 272,
+     "name": "m_event110",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 376,
+     "name": "unk_178",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 384,
+     "name": "unk_180",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 400,
+     "name": "unk_190",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 402,
+     "name": "m_status",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 403,
+     "name": "unk_193",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    },
+    {
+     "offset": 408,
+     "name": "m_queue",
+     "type": {
+      "kind": "struct",
+      "name": "RenderRequestQueue"
+     },
+     "size": 327736
+    },
+    {
+     "offset": 328144,
+     "name": "m_initialized",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328145,
+     "name": "unk_501d1",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328146,
+     "name": "unk_501d2",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328147,
+     "name": "m_needVSyncInit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328148,
+     "name": "unk_501d4",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328149,
+     "name": "unk_501d5",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 328150,
+     "name": "unk_501d6",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 328152,
+     "name": "m_finishCallbackThread",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328160,
+     "name": "m_callbackThread",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328168,
+     "name": "m_blankTexture",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328176,
+     "name": "m_queueLock",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 328320,
+     "name": "unk_50280",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 328328,
+     "name": "unk_50288",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 328336,
+     "name": "unk_50290",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 328344,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22c1344",
+     "symbol": "_ZN4Aska12RenderThreadC2Ev",
+     "name": "RenderThread"
+    },
+    {
+     "ghidra": "0x22c1790",
+     "symbol": "_ZN4Aska12RenderThreadD1Ev",
+     "name": "~RenderThread"
+    },
+    {
+     "ghidra": "0x22c1888",
+     "symbol": "_ZN4Aska12RenderThreadD0Ev",
+     "name": "~RenderThread"
+    },
+    {
+     "ghidra": "0x22c18a0",
+     "symbol": "_ZNK4Aska12RenderThread9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x22c1a14",
+     "symbol": "_ZN4Aska12RenderThread11DeviceResetEv",
+     "name": "DeviceReset"
+    },
+    {
+     "ghidra": "0x22c1a8c",
+     "symbol": "_ZN4Aska12RenderThread11WaitForInitEv",
+     "name": "WaitForInit"
+    },
+    {
+     "ghidra": "0x22c1a90",
+     "symbol": "_ZN4Aska12RenderThread12Handler_InitEv",
+     "name": "Handler_Init"
+    },
+    {
+     "ghidra": "0x22c1aa4",
+     "symbol": "_ZN4Aska12RenderThread7HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x22c1da0",
+     "symbol": "_ZN4Aska12RenderThread13BlockCallFuncEv",
+     "name": "BlockCallFunc"
+    },
+    {
+     "ghidra": "0x22c1dd4",
+     "symbol": "_ZN4Aska12RenderThread6RenderERiRb",
+     "name": "Render"
+    },
+    {
+     "ghidra": "0x22c25a4",
+     "symbol": "_ZN4Aska12RenderThread14InsertCallBackENS0_11CALLBACK_IDEm",
+     "name": "InsertCallBack"
+    },
+    {
+     "ghidra": "0x22c262c",
+     "symbol": "_ZN4Aska12RenderThread16SetExposureScaleEff",
+     "name": "SetExposureScale"
+    },
+    {
+     "ghidra": "0x22c2670",
+     "symbol": "_ZN4Aska12RenderThread11EnableFastZEb",
+     "name": "EnableFastZ"
+    },
+    {
+     "ghidra": "0x22c2698",
+     "symbol": "_ZN4Aska12RenderThread20DirectInsertCallBackEPFvmmEmm",
+     "name": "DirectInsertCallBack"
+    },
+    {
+     "ghidra": "0x22c2734",
+     "symbol": "_ZN4Aska12RenderThread9CheckBootEv",
+     "name": "CheckBoot"
+    },
+    {
+     "ghidra": "0x22c2758",
+     "symbol": "_ZN4Aska12RenderThread21AddCreateRenderTargetEjPNS_21MULTIPASS_ENVIRONMENTE",
+     "name": "AddCreateRenderTarget"
+    },
+    {
+     "ghidra": "0x22c2760",
+     "symbol": "_ZN4Aska12RenderThread21AddChangeRenderTargetEjPNS_21MULTIPASS_ENVIRONMENTE",
+     "name": "AddChangeRenderTarget"
+    },
+    {
+     "ghidra": "0x22c2968",
+     "symbol": "_ZN4Aska12RenderThread14AddReloadZCullEv",
+     "name": "AddReloadZCull"
+    },
+    {
+     "ghidra": "0x22c2b54",
+     "symbol": "_ZN4Aska12RenderThread26AddEnableGnmOcclusionQueryEb",
+     "name": "AddEnableGnmOcclusionQuery"
+    },
+    {
+     "ghidra": "0x22c2d50",
+     "symbol": "_ZN4Aska12RenderThread16AddExposureScaleEff",
+     "name": "AddExposureScale"
+    },
+    {
+     "ghidra": "0x22c2f54",
+     "symbol": "_ZN4Aska12RenderThread14AddEnableFastZEb",
+     "name": "AddEnableFastZ"
+    },
+    {
+     "ghidra": "0x22c3150",
+     "symbol": "_ZN4Aska12RenderThread21AddFinishRenderTargetEjii",
+     "name": "AddFinishRenderTarget"
+    },
+    {
+     "ghidra": "0x22c3364",
+     "symbol": "_ZN4Aska12RenderThread19AddTemporaryResolveEPNS_16RenderableObjectEii",
+     "name": "AddTemporaryResolve"
+    },
+    {
+     "ghidra": "0x22c3574",
+     "symbol": "_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi",
+     "name": "AddRenderQueue"
+    },
+    {
+     "ghidra": "0x22c35f4",
+     "symbol": "_ZN4Aska12RenderThread14AddBeginRenderEv",
+     "name": "AddBeginRender"
+    },
+    {
+     "ghidra": "0x22c37e0",
+     "symbol": "_ZN4Aska12RenderThread12AddEndRenderEPNS_7INotifyE",
+     "name": "AddEndRender"
+    },
+    {
+     "ghidra": "0x22c39f4",
+     "symbol": "_ZN4Aska12RenderThread11AddCallBackEPFvmmEmm",
+     "name": "AddCallBack"
+    },
+    {
+     "ghidra": "0x22c3bfc",
+     "symbol": "_ZN4Aska12RenderThread21ReqCustomCommandBlockEPFvmmEmm",
+     "name": "ReqCustomCommandBlock"
+    },
+    {
+     "ghidra": "0x22c3c98",
+     "symbol": "_ZN4Aska12RenderThread24ReqDownloadResourceBlockEPNS_11GpuResourceE",
+     "name": "ReqDownloadResourceBlock"
+    },
+    {
+     "ghidra": "0x22c3d0c",
+     "symbol": "_ZN4Aska12RenderThread15AddDataTransferEPvS1_j",
+     "name": "AddDataTransfer"
+    },
+    {
+     "ghidra": "0x22c3f18",
+     "symbol": "_ZN4Aska12RenderThread42ExecutePendingTileRegionOperationByAddressEPv",
+     "name": "ExecutePendingTileRegionOperationByAddress"
+    },
+    {
+     "ghidra": "0x22c4120",
+     "symbol": "_ZN4Aska12RenderThread22AddOcclusionQueryBeginEPj",
+     "name": "AddOcclusionQueryBegin"
+    },
+    {
+     "ghidra": "0x22c4328",
+     "symbol": "_ZN4Aska12RenderThread20AddOcclusionQueryEndEv",
+     "name": "AddOcclusionQueryEnd"
+    },
+    {
+     "ghidra": "0x22c4514",
+     "symbol": "_ZN4Aska12RenderThread15WaitDeviceResetEv",
+     "name": "WaitDeviceReset"
+    },
+    {
+     "ghidra": "0x22c4534",
+     "symbol": "_ZN4Aska12RenderThread14ReqDeviceResetEv",
+     "name": "ReqDeviceReset"
+    },
+    {
+     "ghidra": "0x22c46cc",
+     "symbol": "_ZN4Aska12RenderThread7ReqExitEv",
+     "name": "ReqExit"
+    },
+    {
+     "ghidra": "0x22c485c",
+     "symbol": "_ZN4Aska12RenderThread7ReqSwapEv",
+     "name": "ReqSwap"
+    },
+    {
+     "ghidra": "0x22c4a48",
+     "symbol": "_ZN4Aska12RenderThread13ReqDeviceInitEv",
+     "name": "ReqDeviceInit"
+    },
+    {
+     "ghidra": "0x22c4c4c",
+     "symbol": "_ZN4Aska12RenderThread10ReqGpuWaitEv",
+     "name": "ReqGpuWait"
+    },
+    {
+     "ghidra": "0x22c4ddc",
+     "symbol": "_ZN4Aska12RenderThread15GPUIdleCallBackEm",
+     "name": "GPUIdleCallBack"
+    },
+    {
+     "ghidra": "0x22c4df0",
+     "symbol": "_ZN4Aska12RenderThread20FinishRenderCallBackEm",
+     "name": "FinishRenderCallBack"
+    },
+    {
+     "ghidra": "0x22c4e04",
+     "symbol": "_ZN4Aska12RenderThread20RenderThreadCallBackEm",
+     "name": "RenderThreadCallBack"
+    }
+   ]
+  },
+  {
+   "name": "ShaderCompression",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x22c654c",
+     "symbol": "_ZN4Aska17ShaderCompression12DecompressLZEPhS1_",
+     "name": "DecompressLZ"
+    },
+    {
+     "ghidra": "0x22c65d4",
+     "symbol": "_ZN4Aska17ShaderCompression10CompressLZEPviS1_",
+     "name": "CompressLZ"
+    },
+    {
+     "ghidra": "0x22c6df8",
+     "symbol": "_ZN4Aska17ShaderCompression16DecompressLZwordEPtS1_",
+     "name": "DecompressLZword"
+    },
+    {
+     "ghidra": "0x22c6eec",
+     "symbol": "_ZN4Aska17ShaderCompression14CompressLZwordEPviS1_",
+     "name": "CompressLZword"
+    },
+    {
+     "ghidra": "0x22c75fc",
+     "symbol": "_ZN4Aska17ShaderCompression19DecompressLZwordDicEPtS1_Ph",
+     "name": "DecompressLZwordDic"
+    },
+    {
+     "ghidra": "0x22c781c",
+     "symbol": "_ZN4Aska17ShaderCompression17CompressLZwordDicEPviS1_Ph",
+     "name": "CompressLZwordDic"
     }
    ]
   }

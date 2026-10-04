@@ -18,7 +18,7 @@
 # --release (after --windows, if any): the optimized build the release packages are made from
 # (scripts/package.sh; README.md "Packaging"), into build-release/ (build-win-release/):
 # CMAKE_BUILD_TYPE=Release (-O3, NDEBUG) plus -g1 (line tables: the packages' separate debug
-# symbols), only soa, soa-server and soa-emu's parts (no viewer, no aif2png); on Linux libstdc++
+# symbols), no aif2png; on Linux libstdc++
 # and libgcc linked statically (the binaries need only glibc, libEGL and libGLESv2). No
 # -march / -ffast-math: the natives are bit-exact only with the default x86-64 code (no FMA).
 #
@@ -46,7 +46,7 @@ rel_flags= rel_link=
 if [ "${1:-}" = "--release" ]; then
   shift
   bdir=$bdir-release
-  cfg_extra="$cfg_extra -DCMAKE_BUILD_TYPE=Release -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_TOOLS=OFF"
+  cfg_extra="$cfg_extra -DCMAKE_BUILD_TYPE=Release -DSOA_BUILD_TOOLS=OFF"
   rel_flags="-O3 -DNDEBUG -g1"
   [ -z "$windows" ] && rel_link="-static-libstdc++ -static-libgcc"
 fi

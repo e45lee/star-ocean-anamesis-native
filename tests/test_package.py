@@ -71,14 +71,17 @@ def test_pools_with_titles_fail(tmp_path):
     assert any("gacha.name" in x for x in package.check(str(stage), "port", None))
 
 
-@pytest.mark.parametrize("kind", ["port", "emulator"])
+@pytest.mark.parametrize("kind", ["port", "emulator", "viewer"])
 @pytest.mark.parametrize("windows", [False, True])
 def test_readme_renders(kind, windows):
     t = (ROOT / "scripts/package/README.txt.in").read_text(encoding="utf-8")
-    flags = {"windows": windows, "linux": not windows, "port": kind == "port", "emulator": kind == "emulator"}
+    flags = {"windows": windows, "linux": not windows, "port": kind == "port", "emulator": kind == "emulator", "viewer": kind == "viewer"}
     v = dict(VERSION="V", TOP="T", EXE=".exe" if windows else "", PLATFORM="P", COMMIT="C")
     text = package.render(t, flags, v)
     assert "{{" not in text and "}}" not in text
-    assert "SOA-3.7.0-canonical-data.zip" in text and "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" in text
-    for prog in (["soa"] if kind == "port" else ["soa-emu", "soa-server"]):
+    if kind == "viewer":
+        assert ".xapk" in text and "3.7.0_APKPure.apk" not in text  # 380-ok: soa-viewer's game file
+    else:
+        assert "SOA-3.7.0-canonical-data.zip" in text and "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" in text
+    for prog in {"port": ["soa"], "emulator": ["soa-emu", "soa-server"], "viewer": ["soa-viewer"]}[kind]:
         assert f"\n{prog}{v['EXE']}\n" in text  # a section per program

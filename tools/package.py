@@ -63,19 +63,24 @@ PLATFORMS = {
 PROGRAMS = {
     "port": [("port", "soa")],
     "emulator": [("emulator", "soa-emu"), ("server", "soa-server")],
+    "viewer": [("emulator-viewer", "soa-viewer")],
 }
+KINDS = ["port", "emulator", "viewer"]
+# The packages whose programs run a local server: they get our data (the gacha pools, the seed
+# save, the stand-ins).
+WITH_DATA = {"port", "emulator"}
 
 # The allow-list: a packaged file's path (inside the top folder) must match one of these.
 ALLOW = {
     "port": ["soa", "soa.exe", "run-port.sh", "run-port.cmd"],
     "emulator": ["soa-emu", "soa-server", "soa-emu.exe", "soa-server.exe", "run-emulator.sh", "run-emulator.cmd", "run-emulator.ps1"],
+    "viewer": ["soa-viewer", "soa-viewer.exe", "run-viewer.sh", "run-viewer.cmd"],
 }
-ALLOW_COMMON = [
-    "README.txt", "LICENSE.txt", "THIRD-PARTY-NOTICES.txt", "BUILD-INFO.txt",
+ALLOW_COMMON = ["README.txt", "LICENSE.txt", "THIRD-PARTY-NOTICES.txt", "BUILD-INFO.txt", "game/PUT-GAME-FILES-HERE.txt"]
+ALLOW_DATA = [
     "data/gacha_pools.sqlite3",
     "data/saves/seed/Game.xml",
     "standin-assets/Image/etc2/*.aif",
-    "game/PUT-GAME-FILES-HERE.txt",
 ]
 ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
 
@@ -104,7 +109,7 @@ def git(*args):
 # ---- build ---------------------------------------------------------------------------------------
 def build(plat):
     args = ["--windows"] if PLATFORMS[plat]["windows"] else []
-    run([os.path.join(ROOT, "scripts", "build.sh"), *args, "--release", "--target", "soa", "soa-server", "soa-emu"], cwd=ROOT)
+    run([os.path.join(ROOT, "scripts", "build.sh"), *args, "--release", "--target", "soa", "soa-server", "soa-emu", "soa-viewer"], cwd=ROOT)
 
 
 def tool(plat, name):
@@ -180,8 +185,9 @@ def notices(plat, out):
 
 # ---- README --------------------------------------------------------------------------------------
 def render(template, flags, values):
-    """{{IF name}} / {{IF !name}} ... [{{ELSE}} ...] {{END}} blocks (nested) and {{NAME}} values. A tag
-    alone on its line takes its line break with it."""
+    """{{IF name}} / {{IF !name}} ... [{{ELSE}} ...] {{END}} blocks (nested), {{NAME}} values and
+    {{# comments}}. A tag alone on its line takes its line break with it."""
+    template = re.sub(r"\{\{#[^}]*\}\}", "", template)  # {{# comments}} (e.g. the 380-ok markers)
     toks = re.split(r"((?<=\n)\{\{(?:IF [^}]+|ELSE|END)\}\}\n|\{\{(?:IF [^}]+|ELSE|END)\}\})", template)
     out, stack = [], []  # stack: [this block's condition, in the ELSE part, all enclosing on]
 
@@ -212,7 +218,7 @@ def readme(plat, kind, version, out):
     with open(os.path.join(PKG_SRC, "README.txt.in"), encoding="utf-8") as f:
         t = f.read()
     top = f"soa-{kind}-{version}-{plat}"
-    flags = {"windows": w, "linux": not w, "port": kind == "port", "emulator": kind == "emulator"}
+    flags = {"windows": w, "linux": not w, "port": kind == "port", "emulator": kind == "emulator", "viewer": kind == "viewer"}
     values = {"VERSION": version, "TOP": top, "EXE": ".exe" if w else "", "PLATFORM": "Windows (x64)" if w else "Linux (x86-64)",
               "COMMIT": git("rev-parse", "--short=12", "HEAD")}
     with open(out, "w", encoding="utf-8", newline="\r\n" if w else "\n") as f:
@@ -260,7 +266,7 @@ def game_file_reasons(path, rel):
 
 def check(stage, kind, download_ref):
     """The allow-list and the game-file scan over the staged folder; returns the list of problems."""
-    allow = ALLOW_DEBUG if kind == "debug" else ALLOW[kind] + ALLOW_COMMON
+    allow = ALLOW_DEBUG if kind == "debug" else ALLOW[kind] + ALLOW_COMMON + (ALLOW_DATA if kind in WITH_DATA else [])
     standins = tracked_standins()
     problems = []
     top = os.listdir(stage)
@@ -325,27 +331,25 @@ def stage_package(plat, kind, version, work, dbg_dir):
         if not os.path.isfile(src):
             raise SystemExit(f"package: {src} isn't built (run without --no-build)")
         strip_into(plat, src, os.path.join(root, exe), os.path.join(dbg_dir, exe + ".debug"))
-    if kind == "emulator":
-        for f in (["run-emulator.cmd", "run-emulator.ps1"] if P["windows"] else ["run-emulator.sh"]):
+    launchers = {"port": ["run-port"], "emulator": ["run-emulator"], "viewer": ["run-viewer"]}[kind]
+    for base in launchers:
+        for f in ([base + ".cmd"] + ([base + ".ps1"] if kind == "emulator" else [])) if P["windows"] else [base + ".sh"]:
             shutil.copy2(os.path.join(PKG_SRC, f), os.path.join(root, f))
             if f.endswith(".sh"):
                 os.chmod(os.path.join(root, f), 0o755)
-    else:
-        f = "run-port.cmd" if P["windows"] else "run-port.sh"
-        shutil.copy2(os.path.join(PKG_SRC, f), os.path.join(root, f))
-        if f.endswith(".sh"):
-            os.chmod(os.path.join(root, f), 0o755)
-    os.makedirs(os.path.join(root, "data", "saves", "seed"))
-    clean_pools(os.path.join(ROOT, "data", "gacha_pools.sqlite3"), os.path.join(root, "data", "gacha_pools.sqlite3"))
-    shutil.copyfile(os.path.join(ROOT, "data", "saves", "seed", "Game.xml"), os.path.join(root, "data", "saves", "seed", "Game.xml"))
-    for rel in git("ls-files", "standin-assets").splitlines():
-        os.makedirs(os.path.join(root, os.path.dirname(rel)), exist_ok=True)
-        shutil.copyfile(os.path.join(ROOT, rel), os.path.join(root, rel))
+    if kind in WITH_DATA:
+        os.makedirs(os.path.join(root, "data", "saves", "seed"))
+        clean_pools(os.path.join(ROOT, "data", "gacha_pools.sqlite3"), os.path.join(root, "data", "gacha_pools.sqlite3"))
+        shutil.copyfile(os.path.join(ROOT, "data", "saves", "seed", "Game.xml"), os.path.join(root, "data", "saves", "seed", "Game.xml"))
+        for rel in git("ls-files", "standin-assets").splitlines():
+            os.makedirs(os.path.join(root, os.path.dirname(rel)), exist_ok=True)
+            shutil.copyfile(os.path.join(ROOT, rel), os.path.join(root, rel))
     os.makedirs(os.path.join(root, "game"))
     with open(os.path.join(root, "game", "PUT-GAME-FILES-HERE.txt"), "w", newline="\r\n" if P["windows"] else "\n") as f:
-        f.write("Put the game files here (README.txt, \"Game files\"):\n"
-                "  STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk\n"
-                "  SOA-3.7.0-canonical-data.zip, or its contents extracted into a folder here\n")
+        f.write("Put the game files here (README.txt, \"Game files\"):\n" + (
+            "  the offline game's .xapk (APKPure's download)\n" if kind == "viewer" else  # 380-ok: soa-viewer's
+            "  STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk\n"
+            "  SOA-3.7.0-canonical-data.zip, or its contents extracted into a folder here\n"))
     readme(plat, kind, version, os.path.join(root, "README.txt"))
     shutil.copyfile(os.path.join(ROOT, "LICENSE"), os.path.join(root, "LICENSE.txt"))
     notices(plat, os.path.join(root, "THIRD-PARTY-NOTICES.txt"))
@@ -379,7 +383,7 @@ def main():
         with tempfile.TemporaryDirectory(prefix="soa-package-") as work:
             dbg_root = os.path.join(work, "debug", f"soa-{version}-{plat}-debug-symbols")
             os.makedirs(dbg_root)
-            stages = [(k, *stage_package(plat, k, version, work, dbg_root)) for k in ("port", "emulator")]
+            stages = [(k, *stage_package(plat, k, version, work, dbg_root)) for k in KINDS]
             with open(os.path.join(dbg_root, "README.txt"), "w") as f:
                 f.write("Debug info (DWARF line tables) of the programs in the soa release packages of the same version.\n"
                         + ("Linux: put the .debug files beside the programs; gdb finds them through .gnu_debuglink.\n"

@@ -986,17 +986,23 @@
     },
     {
      "offset": 32,
-     "name": "unk_20",
+     "name": "m_remaining",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 8
+      "kind": "int",
+      "size": 4,
+      "signed": false
      },
-     "size": 8
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_ct",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
     },
     {
      "offset": 40,
@@ -1018,9 +1024,18 @@
        "size": 1,
        "signed": false
       },
-      "count": 38
+      "count": 6
      },
-     "size": 38
+     "size": 6
+    },
+    {
+     "offset": 48,
+     "name": "m_mapKey",
+     "type": {
+      "kind": "struct",
+      "name": "AValue"
+     },
+     "size": 32
     }
    ],
    "size": 80,
@@ -1032,7 +1047,7 @@
    "fields": [
     {
      "offset": 0,
-     "name": "m_scratch",
+     "name": "m_value",
      "type": {
       "kind": "struct",
       "name": "AValue"
@@ -1041,7 +1056,7 @@
     },
     {
      "offset": 32,
-     "name": "m_pending",
+     "name": "m_state",
      "type": {
       "kind": "int",
       "size": 4,
@@ -1051,7 +1066,7 @@
     },
     {
      "offset": 36,
-     "name": "m_pendingLength",
+     "name": "m_trail",
      "type": {
       "kind": "int",
       "size": 4,
@@ -1061,7 +1076,7 @@
     },
     {
      "offset": 40,
-     "name": "m_depth",
+     "name": "m_top",
      "type": {
       "kind": "int",
       "size": 4,

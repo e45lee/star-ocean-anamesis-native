@@ -23,7 +23,7 @@ accessors or with the input it parsed, in `data_formats_layout_test.cpp` (`soa -
 | `ASON_StringBody` / `ASON_BinaryBody` / `ASON_ValueBody` | 0x10 | SetString, AMap::Get_ cases 5, 8, 9 | proven (string, bin, ext type / size / data) |
 | `ASON_WorkBufferContext` (`Aska::ASON::WorkBufferContext`) | 0x20 | InitMemory, Malloc, Term | proven (`layout-ason-object`) |
 | `TDynamicArrayWorkBuffer` (`Aska::TDynamicArray<ASON::WorkBufferContext, ...>`) | 0x20 | ctor, InitMemory (reserve 4), Term | proven (vtable, begin / end / capacity) |
-| `ASON_MessagePackContext` (`Aska::ASON::MessagePackContext`) | 0xa30 | DeserializeBinary (memset 0xa30, root = frame 0), UnpackMessagePack<true> | partly: m_scratch / m_pending / m_pendingLength / m_depth / the 32 frames of 0x50; a frame's bytes 0x20-0x50 except the work stamp at +0x28 unknown; not exercised by a test (stack-only object) |
+| `ASON_MessagePackContext` (`Aska::ASON::MessagePackContext`), `ASON_UnpackFrame` | 0xa30, 0x50 | DeserializeBinary (memset 0xa30, root = frame 0), UnpackMessagePack<true> / <false> (msgpack-c's template_context / template_unpack_stack) | proven by the natives' differential test `ason-unpack` (the whole context compared after every call): m_value, m_state (cs), m_trail, m_top, frames {m_value, m_remaining, m_ct, m_work, m_mapKey}; `unk_2c`, a frame's `unk_2a` never written |
 | `_AsonSerializer` | 0x218 | the inlined ctor in `AsonSerializer::Serialize<CBattleLogInfo>`, Increment, Serialize_Key / _Value / _StartObject / _EndObject / _StartArray | proven (`layout-ason-serializer`: a stub on `Serialize_Key` checks vtable, m_ason, the TStack capacities, m_level / m_indices / m_map and that the key lands in `m_map->m_pairs[m_indices[m_level]]`, over the live battle log's 27 keys); `unk_00c` unknown |
 | `AsonSerializer_Prepare` | 0x88 | the same inlined ctor, Increment, Serialize_Value, Serialize_EndObject | proven (`layout-ason-serializer`: a stub on `Serialize_EndObject` checks vtable, m_depth, m_levels, m_counts and the pops it makes) |
 | `TStack<T, 10>` (`Aska::TStack<T, 10>`) | 0x40 (u32), 0x68 (pointers) | the inlined ctors, Increment's grow path | proven through the two serializers (capacity 10, top) |
@@ -39,8 +39,33 @@ accessors or with the input it parsed, in `data_formats_layout_test.cpp` (`soa -
 
 ## Natives
 
+Live-check family `data_formats` (`data_formats_family.h`: live_leaf.h's family plus a region function
+per native for the memory it writes: the ASON's current work block tail and WorkBufferContext, the
+TemporaryMalloc scratch, a MessagePackContext, Pack's output buffer). Calls to the guest allocator
+(`operator new[](n, nothrow)`, `delete[]`, `MemoryManagerAdapter::AlignedMalloc / AlignedFree`) go
+through `live::out_call`, so a check records and replays them; calls between these natives are plain
+C++ (in a replay the guest original reaches the installed natives, which run for real against the
+restored state).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `Aska::ASON::UnpackMessagePack<true>` / `<false>` (x8 Status) | `data_formats_ason_unpack.cpp` | `data_formats/ason-unpack`: 400 random documents (every encoding and width, non-minimal forms, embedded NULs, strings over the 0x200 scratch, bin / ext / fixext, 30-36 deep nesting, a 700-element array crossing blocks, several roots, truncated, corrupt 0xc1), fed whole or in up to 3 pieces with repeated calls, both instantiations; status, *off, the whole context and every value tree compared (pointers into the ASON's blocks as block + offset) | `data_formats` |
+| `Aska::ASON::Malloc`, `UnpackValue_str` (w0 result, not a Status) | `data_formats_ason_memory.cpp` | `ason-malloc` (random sizes crossing / exceeding blocks: results, every block, m_workIndex, m_totalWorkSize), `ason-unpack-value-str` (null / empty / keep C strings, the scratch and its new[] overflow) | `data_formats` |
+| `Aska::ASON::PackMessagePack<true>` / `<false>` (x8), `PackValue_u64 / _s64 / _str / _ext<true>` | `data_formats_ason_pack.cpp` | `ason-pack` (parsed random trees, the count pass, then writes with every room size around the needed one and offsets: bytes, *written, status, m_status), `ason-pack-values` (3000 values x rooms) | `data_formats` |
+| `AValue::AMap::Get_(char const*)`, `Get_(AValue const*)`, `ASON::MakeAValue_Array` / `_Map` (x8), `AValue::SetString(char const*, ASON*)` / `(char const*, unsigned, ASON*)` (x8) | `data_formats_ason_values.cpp` | `ason-amap-get` (present / absent keys by name and by value, copies and the pairs' own keys, keep on / off), `ason-build-values` (null values, counts 0..400, strings shorter / longer than their length argument, embedded NULs) | `data_formats` |
+| `Aska::ACSV::GetValue`, `Framework::CACSV::Value(row, column)` (float) | `data_formats_acsv.cpp` | `data_formats/acsv-value` (CSV texts the guest's Parse typed: every column type, blanks, out-of-range rows / columns, every GetValue type) | `data_formats` |
+
+`TDynamicArray<WorkBufferContext>::Insert_` (Malloc's new block) is the containers subsystem's
+`TDynamicArray<T>::InsertFill` (`containers_dynamic_array.h`).
+
+Guest details the natives keep (the decompiles show them; see the files' comments): the msgpack reader
+is msgpack-c's resumable `template_execute`, but values write only the fields their kind uses (stale
+bytes of the previous value travel with copies), a container's body count is the 1-based slot being
+filled, running out of input at a header ends like a finished root (frame 0 = the last value, *off =
+length + 1), a finished root leaves `m_state` at its last token's state, strings / bin / ext are
+stamped with `frames[top].m_work`, and an empty fixstr points at the previous token's trail; `Pack`
+checks a string's / bin's room against the room before its header, and counts headers it wrote
+before failing.
 
 ## Dependencies
 

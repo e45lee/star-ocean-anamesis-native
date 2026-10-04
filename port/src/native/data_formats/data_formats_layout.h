@@ -217,16 +217,19 @@ public:
     void TermMemory();                               // _ZN4Aska4ASON10TermMemoryEv
     s64 DeserializeBinary(const void* in, u64 size); // _ZN4Aska4ASON17DeserializeBinaryEPKvm: msgpack -> m_root (bytes read)
     s64 SerializeBinary(void* out, u64 size, const AValue* v) const;  // _ZNK4Aska4ASON15SerializeBinaryEPvmPKNS0_6AValueE
-    // Status PackMessagePack<bool sizeOnly>(AValue const*, u8* out, u64 size, u64* written) const
+    // Status PackMessagePack<bool write>(AValue const*, u8* out, u64 size, u64* written) const:
+    //   <true> writes v at out (*written: bytes written so far, size: the buffer's), <false> only
+    //   counts (Serialize / SerializeBinary write; CalcSerializedSize / ..BinarySize count)
     //   _ZNK4Aska4ASON15PackMessagePackILb1EEENS_6StatusEPKNS0_6AValueEPhmPm / ...ILb0EE...
-    Status PackMessagePackSizeOnly(const AValue* v, u8* out, u64 size, u64* written) const;  // <true>
-    Status PackMessagePack(const AValue* v, u8* out, u64 size, u64* written) const;          // <false>
+    template <bool Write>
+    Status PackMessagePack(const AValue* v, u8* out, u64 size, u64* written) const;
     s64 CalcRootCount(const s8* in, u64 size);       // _ZN4Aska4ASON13CalcRootCountEPKam
     void AllFree();                                  // _ZN4Aska4ASON7AllFreeEv
     // Status UnpackMessagePack<bool build>(MessagePackContext*, s8 const* in, u64 size, u64* pos)
     //   <false> counts the roots, <true> builds the values (DeserializeBinary runs both)
-    Status UnpackMessagePackBuild(struct ASON_MessagePackContext* ctx, const s8* in, u64 size, u64* pos);  // <true>
-    Status UnpackMessagePackScan(struct ASON_MessagePackContext* ctx, const s8* in, u64 size, u64* pos);   // <false>
+    //   (msgpack-c's template_execute; both build the containers, only <true> the scalars and strings)
+    template <bool Build>
+    Status UnpackMessagePack(struct ASON_MessagePackContext* ctx, const s8* in, u64 size, u64* pos);
     s64 SerializeText(void* out, u64 size, const AValue* v) const;   // _ZNK4Aska4ASON13SerializeTextEPvmPKNS0_6AValueE
     void AValue2JValue(const AValue* v, void* jvalue);               // _ZN4Aska4ASON13AValue2JValueEPKNS0_6AValueEPNS_10JsonParser6JValueE
     s64 DeserializeText(const void* in, u64 size);                   // _ZN4Aska4ASON15DeserializeTextEPKvm (JSON)
@@ -251,9 +254,17 @@ public:
     void* TemporaryMalloc(u64 n);                                    // _ZN4Aska4ASON15TemporaryMallocEm: from m_temp, else new[]
     void TemporaryFree(void* p);                                     // _ZN4Aska4ASON13TemporaryFreeEPv
     void AValue2String(const AValue* v, char** out);                 // _ZN4Aska4ASON13AValue2StringEPKNS0_6AValueEPPc
-    // s64 PackValue_u64<true>(u8*, u64, u64) const / PackValue_s64<true> / PackValue_str<true> / PackValue_ext<true>
-    //   _ZNK4Aska4ASON13PackValue_u64ILb1EEElPhmm, ..._s64ILb1EEElPhlm, ..._strILb1EEElPhmm, ..._extILb1EEElPhmam
-    Status UnpackValue_str(AValue* v, const s8* p, const s8* end, u32 len, u16 work);  // _ZN4Aska4ASON15UnpackValue_strEPNS0_6AValueEPKaS4_jt
+    // The headers PackMessagePack<true> writes: bytes written (> 0), or -0x3c1 (also m_status) when
+    // `room` is too small. _ZNK4Aska4ASON13PackValue_u64ILb1EEElPhmm, ..._s64ILb1EEElPhlm,
+    // ..._strILb1EEElPhmm (a string's header), ..._extILb1EEElPhmam (an ext's header, its type byte)
+    s64 PackValue_u64(u8* out, u64 v, u64 room) const;
+    s64 PackValue_s64(u8* out, s64 v, u64 room) const;
+    s64 PackValue_str(u8* out, u64 len, u64 room) const;
+    s64 PackValue_ext(u8* out, u64 len, s8 type, u64 room) const;
+    // A string UnpackMessagePack<true> read (at p, len bytes of the input at `base`) into v: v points at
+    // the input; with m_keepCStrings a terminated copy from Malloc (through a temporary). 0, or < 0
+    // (-1, -0x3bf; also m_status). Returns an int (w0), not a Status.
+    s32 UnpackValue_str(AValue* v, const s8* base, const s8* p, u32 len, u16 work);  // _ZN4Aska4ASON15UnpackValue_strEPNS0_6AValueEPKaS4_jt
 
     const void* vtable;                     // 0x00: _ZTVN4Aska4ASONE + 0x10
     s8* m_temp;                             // 0x08: TemporaryMalloc's scratch (0x200 bytes from Malloc)
@@ -286,31 +297,43 @@ static_assert(offsetof(ASON, m_multiRoot) == 0x89);
 static_assert(offsetof(ASON, m_initialized) == 0x8a);
 static_assert(sizeof(ASON) == 0x90);
 
-// One level of UnpackMessagePack's value stack: the value being built and how far it got. Only the
-// value and the work-buffer stamp at +0x28 are known (UnpackMessagePack<true>: frames of 0x50 from
-// context + 0x30; DeserializeBinary stamps +0x28 with ASON::m_workIndex before each root).
+// One level of UnpackMessagePack's value stack (msgpack-c's unpack_template.h template_unpack_stack, with
+// Aska's values): the container being filled and how far it got. Layout from UnpackMessagePack<true> /
+// <false> (frames of 0x50 from context + 0x30: start_container, the push loop) and DeserializeBinary
+// (it stamps every frame's m_work with ASON::m_workIndex before a root).
 struct ASON_UnpackFrame {
-    AValue m_value;   // 0x00
-    u8 unk_20[8];     // 0x20
-    u16 m_work;       // 0x28: ASON::m_workIndex
-    u8 unk_2a[0x26];  // 0x2a
+    enum Ct : u32 { kArrayItem = 0, kMapKey = 1, kMapValue = 2 };
+    AValue m_value;    // 0x00: the array / map; its body's m_count is the 1-based slot being filled
+    u32 m_remaining;   // 0x20: items (pairs) still to read
+    u32 m_ct;          // 0x24: Ct, what the next value is
+    u16 m_work;        // 0x28: ASON::m_workIndex when the container started (strings / bin / ext read at
+                       //       this depth are stamped with it)
+    u8 unk_2a[6];      // 0x2a: never written
+    AValue m_mapKey;   // 0x30: a map's key until its value is read
 };
+static_assert(offsetof(ASON_UnpackFrame, m_remaining) == 0x20);
+static_assert(offsetof(ASON_UnpackFrame, m_ct) == 0x24);
 static_assert(offsetof(ASON_UnpackFrame, m_work) == 0x28);
+static_assert(offsetof(ASON_UnpackFrame, m_mapKey) == 0x30);
 static_assert(sizeof(ASON_UnpackFrame) == 0x50);
 
-// Aska::ASON::MessagePackContext: UnpackMessagePack's resumable state, 0xa30 bytes (DeserializeBinary
-// memsets that much on its stack). Layout from UnpackMessagePack<true> (it loads the three words at
-// 0x20 on entry and stores them back on exit) and DeserializeBinary (the root is frame 0's value).
+// Aska::ASON::MessagePackContext: UnpackMessagePack's resumable state (msgpack-c's template_context),
+// 0xa30 bytes (DeserializeBinary memsets that much on its stack). Layout from UnpackMessagePack<true>
+// (it loads the three words at 0x20 on entry and stores them back on exit) and DeserializeBinary (the
+// root is frame 0's value).
 struct ASON_MessagePackContext {
-    AValue m_scratch;                // 0x00: the value of the token being read
-    u32 m_pending;                   // 0x20: bytes / state of a token split across calls (0: at a token)
-    u32 m_pendingLength;             // 0x24
-    u32 m_depth;                     // 0x28: the open container's frame index
+    AValue m_value;                  // 0x00: the value just read (msgpack-c's obj)
+    u32 m_state;                     // 0x20: msgpack-c's cs: 0 at a header byte, else the trail being read
+                                     //       (4..0x1f: the header's low 5 bits; 0x20 str, 0x21 bin, 0x22 ext
+                                     //       data); after a finished root, the state of its last token
+    u32 m_trail;                     // 0x24: the trail's length in bytes
+    u32 m_top;                       // 0x28: open containers (m_frames[0..m_top))
     u8 unk_2c[4];                    // 0x2c
     ASON_UnpackFrame m_frames[32];   // 0x30: m_frames[0].m_value is the finished root
 };
-static_assert(offsetof(ASON_MessagePackContext, m_pending) == 0x20);
-static_assert(offsetof(ASON_MessagePackContext, m_depth) == 0x28);
+static_assert(offsetof(ASON_MessagePackContext, m_state) == 0x20);
+static_assert(offsetof(ASON_MessagePackContext, m_trail) == 0x24);
+static_assert(offsetof(ASON_MessagePackContext, m_top) == 0x28);
 static_assert(offsetof(ASON_MessagePackContext, m_frames) == 0x30);
 static_assert(sizeof(ASON_MessagePackContext) == 0xa30);
 

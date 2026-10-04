@@ -1,1 +1,413 @@
 vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x1e704d8	0x1f704d8	516	_ZN4Aska9AofObjectC2Ev	Aska::AofObject::AofObject()	aof_object	typed	
+0x1e76c9c	0x1f76c9c	76	_ZN9Framework27CDirectAofPrimitiveRendererC2Ev	Framework::CDirectAofPrimitiveRenderer::CDirectAofPrimitiveRenderer()	direct_aof	typed	
+0x1e76ce8	0x1f76ce8	360	_ZN9Framework27CDirectAofPrimitiveRenderer10InitializeENS0_5iTypeEjb	Framework::CDirectAofPrimitiveRenderer::Initialize(Framework::CDirectAofPrimitiveRenderer::iType, unsigned int, bool)	direct_aof	typed	
+0x1e76e50	0x1f76e50	700	_ZN9Framework27CDirectAofPrimitiveRenderer7ReserveEj	Framework::CDirectAofPrimitiveRenderer::Reserve(unsigned int)	direct_aof	typed	
+0x1e7710c	0x1f7710c	16	_ZNK9Framework27CDirectAofPrimitiveRenderer13IsInitializedEv	Framework::CDirectAofPrimitiveRenderer::IsInitialized() const	direct_aof	typed	
+0x1e7711c	0x1f7711c	68	_ZN9Framework27CDirectAofPrimitiveRenderer7ReleaseEv	Framework::CDirectAofPrimitiveRenderer::Release()	direct_aof	typed	
+0x1e77160	0x1f77160	72	_ZN9Framework27CDirectAofPrimitiveRenderer7TextureEPN4Aska7TextureE	Framework::CDirectAofPrimitiveRenderer::Texture(Aska::Texture*)	direct_aof	typed	
+0x1e771a8	0x1f771a8	228	_ZN9Framework27CDirectAofPrimitiveRenderer14DirectMaterialERN4Aska14DirectMaterialE	Framework::CDirectAofPrimitiveRenderer::DirectMaterial(Aska::DirectMaterial&)	direct_aof	typed	
+0x1e7728c	0x1f7728c	416	_ZN9Framework20DirectAofPrimitiveEx8AddDummyENS_27CDirectAofPrimitiveRenderer5iTypeEj	Framework::DirectAofPrimitiveEx::AddDummy(Framework::CDirectAofPrimitiveRenderer::iType, unsigned int)	direct_aof	decompiled	
+0x1e7742c	0x1f7742c	484	_ZN9Framework27CDirectAofPrimitiveRenderer20PreliminarilyPrepareEPN4Aska12LightManagerE	Framework::CDirectAofPrimitiveRenderer::PreliminarilyPrepare(Aska::LightManager*)	direct_aof	typed	
+0x1e77610	0x1f77610	28	_ZN9Framework27CDirectAofPrimitiveRenderer19PrepareForRenderingEPKN4Aska10RENDERINFOE	Framework::CDirectAofPrimitiveRenderer::PrepareForRendering(Aska::RENDERINFO const*)	direct_aof	typed	
+0x1e7762c	0x1f7762c	4	_ZN9Framework27CDirectAofPrimitiveRenderer6RenderEPN4Aska13RenderContextEi	Framework::CDirectAofPrimitiveRenderer::Render(Aska::RenderContext*, int)	direct_aof	typed	
+0x1e77630	0x1f77630	52	_ZNK9Framework27CDirectAofPrimitiveRenderer4TypeEv	Framework::CDirectAofPrimitiveRenderer::Type() const	direct_aof	typed	
+0x1e77664	0x1f77664	52	_ZNK9Framework27CDirectAofPrimitiveRenderer13NumPrimitivesEv	Framework::CDirectAofPrimitiveRenderer::NumPrimitives() const	direct_aof	typed	
+0x1e77698	0x1f77698	52	_ZNK9Framework27CDirectAofPrimitiveRenderer10PutCounterEv	Framework::CDirectAofPrimitiveRenderer::PutCounter() const	direct_aof	typed	
+0x1e776cc	0x1f776cc	56	_ZN9Framework27CDirectAofPrimitiveRenderer5ResetEv	Framework::CDirectAofPrimitiveRenderer::Reset()	direct_aof	typed	
+0x1e77704	0x1f77704	52	_ZNK9Framework27CDirectAofPrimitiveRenderer9cpTextureEv	Framework::CDirectAofPrimitiveRenderer::cpTexture() const	direct_aof	typed	
+0x1e77738	0x1f77738	52	_ZNK9Framework27CDirectAofPrimitiveRenderer16crDirectMaterialEv	Framework::CDirectAofPrimitiveRenderer::crDirectMaterial() const	direct_aof	typed	
+0x1e7776c	0x1f7776c	296	_ZN9Framework27CDirectAofPrimitiveRenderer3PutERKNS_21tSpriteParameter_RectE	Framework::CDirectAofPrimitiveRenderer::Put(Framework::tSpriteParameter_Rect const&)	direct_aof	typed	
+0x1e77894	0x1f77894	424	_ZN9Framework27CDirectAofPrimitiveRenderer3PutERKNS_21tSpriteParameter_QuadE	Framework::CDirectAofPrimitiveRenderer::Put(Framework::tSpriteParameter_Quad const&)	direct_aof	typed	
+0x1e77a3c	0x1f77a3c	68	_ZN9Framework27CDirectAofPrimitiveRenderer8PositionERKNS_7CVectorE	Framework::CDirectAofPrimitiveRenderer::Position(Framework::CVector const&)	direct_aof	typed	
+0x1e77a80	0x1f77a80	60	_ZN9Framework27CDirectAofPrimitiveRenderer8PriorityEf	Framework::CDirectAofPrimitiveRenderer::Priority(float)	direct_aof	typed	
+0x1e77abc	0x1f77abc	88	_ZN9Framework27CDirectAofPrimitiveRendererD2Ev	Framework::CDirectAofPrimitiveRenderer::~CDirectAofPrimitiveRenderer()	direct_aof	typed	
+0x1e77b14	0x1f77b14	96	_ZN9Framework27CDirectAofPrimitiveRendererD0Ev	Framework::CDirectAofPrimitiveRenderer::~CDirectAofPrimitiveRenderer()	direct_aof	typed	
+0x1e77b74	0x1f77b74	68	_ZNK4Aska9AofObject10GetClassIDEi	Aska::AofObject::GetClassID(int) const	aof_object	typed	
+0x1e77bc0	0x1f77bc0	48	_ZN4Aska9AofObject22CheckSleepAvailabilityEv	Aska::AofObject::CheckSleepAvailability()	aof_object	typed	
+0x1e77bf0	0x1f77bf0	52	_ZN4Aska9AofObject14GetBoundingBoxEb	Aska::AofObject::GetBoundingBox(bool)	aof_object	typed	
+0x1e77c24	0x1f77c24	24	_ZN4Aska9AofObject16EnableCastShadowEb	Aska::AofObject::EnableCastShadow(bool)	aof_object	typed	
+0x1e77c3c	0x1f77c3c	92	_ZN4Aska9AofObject18SetSystemColorRateEPKNS_6VectorE	Aska::AofObject::SetSystemColorRate(Aska::Vector const*)	aof_object	typed	
+0x1e77c98	0x1f77c98	8	_ZNK4Aska9AofObject15SystemColorRateEv	Aska::AofObject::SystemColorRate() const	aof_object	typed	
+0x1e77ca0	0x1f77ca0	92	_ZN4Aska9AofObject12SetColorRateEPKNS_6VectorE	Aska::AofObject::SetColorRate(Aska::Vector const*)	aof_object	typed	
+0x1e77cfc	0x1f77cfc	8	_ZNK4Aska9AofObject9ColorRateEv	Aska::AofObject::ColorRate() const	aof_object	typed	
+0x1e77d04	0x1f77d04	92	_ZN4Aska9AofObject20SetSystemColorOffsetEPKNS_6VectorE	Aska::AofObject::SetSystemColorOffset(Aska::Vector const*)	aof_object	typed	
+0x1e77d60	0x1f77d60	8	_ZNK4Aska9AofObject17SystemColorOffsetEv	Aska::AofObject::SystemColorOffset() const	aof_object	typed	
+0x1e77d68	0x1f77d68	92	_ZN4Aska9AofObject14SetColorOffsetEPKNS_6VectorE	Aska::AofObject::SetColorOffset(Aska::Vector const*)	aof_object	typed	
+0x1e77dc4	0x1f77dc4	8	_ZNK4Aska9AofObject11ColorOffsetEv	Aska::AofObject::ColorOffset() const	aof_object	typed	
+0x1e77dcc	0x1f77dcc	12	_ZN4Aska9AofObject22SetIBLAcceptanceNumberEj	Aska::AofObject::SetIBLAcceptanceNumber(unsigned int)	aof_object	typed	
+0x1e77dd8	0x1f77dd8	8	_ZN4Aska9AofObject21ComputeBoundingSphereEb	Aska::AofObject::ComputeBoundingSphere(bool)	aof_object	typed	
+0x1e77de0	0x1f77de0	104	_ZN4Aska9AofObject20GetBoundingBoxDirectEPNS_19OrientedBoundingBoxE	Aska::AofObject::GetBoundingBoxDirect(Aska::OrientedBoundingBox*)	aof_object	typed	
+0x1e77e48	0x1f77e48	12	_ZNK4Aska9AofObject14HasBoundingBoxEv	Aska::AofObject::HasBoundingBox() const	aof_object	typed	
+0x1e77e54	0x1f77e54	8	_ZN4Aska9AofObject15IsIntersectableEv	Aska::AofObject::IsIntersectable()	aof_object	typed	
+0x1e77e74	0x1f77e74	8	_ZNK4Aska16DirectAofHandler11IsDirectAofEv	Aska::DirectAofHandler::IsDirectAof() const	direct_aof	typed	
+0x1e77e7c	0x1f77e7c	4	_ZN4Aska10AofHandler13NotifyMappingEv	Aska::AofHandler::NotifyMapping()	aof_handler	typed	
+0x1e77ea4	0x1f77ea4	4	_ZThn152_N4Aska10AofHandler13NotifyMappingEv	non-virtual thunk to Aska::AofHandler::NotifyMapping()	aof_handler	typed	
+0x1e77ecc	0x1f77ecc	400	_ZN9Framework22CDirectAofTextRendererC2Ev	Framework::CDirectAofTextRenderer::CDirectAofTextRenderer()	direct_aof	typed	
+0x1e7805c	0x1f7805c	108	_ZN9Framework22CDirectAofTextRenderer8tPutPool5SetupEv	Framework::CDirectAofTextRenderer::tPutPool::Setup()	direct_aof	typed	
+0x1e780c8	0x1f780c8	192	_ZN9Framework22CDirectAofTextRendererD2Ev	Framework::CDirectAofTextRenderer::~CDirectAofTextRenderer()	direct_aof	typed	
+0x1e78188	0x1f78188	4	_ZN9Framework22CDirectAofTextRenderer7ReleaseEv	Framework::CDirectAofTextRenderer::Release()	direct_aof	typed	
+0x1e7818c	0x1f7818c	24	_ZN9Framework22CDirectAofTextRendererD0Ev	Framework::CDirectAofTextRenderer::~CDirectAofTextRenderer()	direct_aof	typed	
+0x1e781a4	0x1f781a4	480	_ZN9Framework22CDirectAofTextRenderer10InitializeEiN4Aska10FontHandleERKNS_10CSTLVectorImEEjb	Framework::CDirectAofTextRenderer::Initialize(int, Aska::FontHandle, Framework::CSTLVector<unsigned long> const&, unsigned int, bool)	direct_aof	typed	
+0x1e78384	0x1f78384	900	_ZN9Framework22CDirectAofTextRenderer7ReserveEj	Framework::CDirectAofTextRenderer::Reserve(unsigned int)	direct_aof	typed	
+0x1e78708	0x1f78708	24	_ZN9Framework22CDirectAofTextRenderer8PriorityEf	Framework::CDirectAofTextRenderer::Priority(float)	direct_aof	typed	
+0x1e78720	0x1f78720	904	_ZN9Framework22CDirectAofTextRenderer20PreliminarilyPrepareEPN4Aska12LightManagerE	Framework::CDirectAofTextRenderer::PreliminarilyPrepare(Aska::LightManager*)	direct_aof	typed	
+0x1e78aa8	0x1f78aa8	136	_ZN9Framework22CDirectAofTextRenderer5ResetEv	Framework::CDirectAofTextRenderer::Reset()	direct_aof	typed	
+0x1e78b30	0x1f78b30	440	_ZN9Framework22CDirectAofTextRenderer3PutEffPKcfffj	Framework::CDirectAofTextRenderer::Put(float, float, char const*, float, float, float, unsigned int)	direct_aof	typed	
+0x1e78ce8	0x1f78ce8	336	_ZN9Framework22CDirectAofTextRenderer8tPutPool12PushBackPoolERKNS0_7tStringE	Framework::CDirectAofTextRenderer::tPutPool::PushBackPool(Framework::CDirectAofTextRenderer::tString const&)	direct_aof	typed	
+0x1e78e38	0x1f78e38	272	_ZN9Framework22CDirectAofTextRenderer3PutERKNS0_7tStringE	Framework::CDirectAofTextRenderer::Put(Framework::CDirectAofTextRenderer::tString const&)	direct_aof	typed	
+0x1e78f48	0x1f78f48	196	_ZN9Framework22CDirectAofTextRenderer3PutERKNS0_7tStringEj	Framework::CDirectAofTextRenderer::Put(Framework::CDirectAofTextRenderer::tString const&, unsigned int)	direct_aof	typed	
+0x1e7900c	0x1f7900c	708	_ZN9Framework22CDirectAofTextRenderer13AddPutCounterEmRNS0_10tSizeCacheE	Framework::CDirectAofTextRenderer::AddPutCounter(unsigned long, Framework::CDirectAofTextRenderer::tSizeCache&)	direct_aof	typed	
+0x1e792d0	0x1f792d0	168	_ZNK9Framework22CDirectAofTextRenderer14CalcStringRectEPKcff	Framework::CDirectAofTextRenderer::CalcStringRect(char const*, float, float) const	direct_aof	typed	
+0x1e79378	0x1f79378	84	_ZNK9Framework22CDirectAofTextRenderer9CharCountEv	Framework::CDirectAofTextRenderer::CharCount() const	direct_aof	typed	
+0x1e793cc	0x1f793cc	84	_ZNK9Framework22CDirectAofTextRenderer10PutCounterEv	Framework::CDirectAofTextRenderer::PutCounter() const	direct_aof	typed	
+0x1e79420	0x1f79420	100	_ZN9Framework22CDirectAofTextRenderer8tPutPool9TerminateEv	Framework::CDirectAofTextRenderer::tPutPool::Terminate()	direct_aof	typed	
+0x1e79484	0x1f79484	464	_ZN9Framework22CDirectAofTextRenderer8tPutPool11_ExpandCoreEj	Framework::CDirectAofTextRenderer::tPutPool::_ExpandCore(unsigned int)	direct_aof	typed	
+0x1e79654	0x1f79654	40	_ZN9Framework22CDirectAofTextRenderer8tPutPool6ExpandEj	Framework::CDirectAofTextRenderer::tPutPool::Expand(unsigned int)	direct_aof	typed	
+0x20bf740	0x21bf740	352	_ZN4Aska10AofHandler14AttachTexturesEPKNS_3AFF8AskaFileEPNS_15ITextureHandlerEbii	Aska::AofHandler::AttachTextures(Aska::AFF::AskaFile const*, Aska::ITextureHandler*, bool, int, int)	aof_handler	typed	
+0x20bf8a0	0x21bf8a0	112	_ZN4Aska10AofHandler14DetachTexturesEPKNS_3AFF8AskaFileEPNS_15ITextureHandlerEb	Aska::AofHandler::DetachTextures(Aska::AFF::AskaFile const*, Aska::ITextureHandler*, bool)	aof_handler	typed	
+0x20bf910	0x21bf910	1308	_ZN4Aska10AofHandler6AttachEPKvbii	Aska::AofHandler::Attach(void const*, bool, int, int)	aof_handler	typed	
+0x20bfe2c	0x21bfe2c	280	_ZN4Aska10AofHandler16Attach_IndexListEPNS_11AofhMeshsetEPKNS_3AFF8MeshbodyEj	Aska::AofHandler::Attach_IndexList(Aska::AofhMeshset*, Aska::AFF::Meshbody const*, unsigned int)	aof_handler	typed	
+0x20bff44	0x21bff44	440	_ZN4Aska10AofHandler17Attach_VertexListEPNS_11AofhMeshsetEPKNS_3AFF8MeshbodyEjb	Aska::AofHandler::Attach_VertexList(Aska::AofhMeshset*, Aska::AFF::Meshbody const*, unsigned int, bool)	aof_handler	typed	
+0x20c00fc	0x21c00fc	16	_ZN4Aska10AofHandler24Attach_AdditionalBuffersEPNS_11AofhMeshsetEPKNS_3AFF7MeshsetE	Aska::AofHandler::Attach_AdditionalBuffers(Aska::AofhMeshset*, Aska::AFF::Meshset const*)	aof_handler	typed	
+0x20c010c	0x21c010c	136	_ZN4Aska10AofHandler24Attach_CalcPrimitiveInfoEPNS_11AofhMeshsetEPKNS_3AFF8MeshbodyE	Aska::AofHandler::Attach_CalcPrimitiveInfo(Aska::AofhMeshset*, Aska::AFF::Meshbody const*)	aof_handler	typed	
+0x20c0194	0x21c0194	188	_ZN4Aska10AofHandler11HookMeshsetEiPNS_11AofhMeshsetE	Aska::AofHandler::HookMeshset(int, Aska::AofhMeshset*)	aof_handler	typed	
+0x20c0250	0x21c0250	56	_ZN4Aska10AofHandler13UnhookMeshsetEi	Aska::AofHandler::UnhookMeshset(int)	aof_handler	typed	
+0x20c0288	0x21c0288	460	_ZN4Aska10AofHandler5CloneEPKS0_b	Aska::AofHandler::Clone(Aska::AofHandler const*, bool)	aof_handler	typed	
+0x20c0454	0x21c0454	156	_ZN4Aska10AofHandler19InitializeShaderKeyEPNS_10RenderPassEib	Aska::AofHandler::InitializeShaderKey(Aska::RenderPass*, int, bool)	aof_handler	typed	
+0x20c04f0	0x21c04f0	168	_ZN4Aska10AofHandler16InitializeShaderEPNS_10RenderPassEibb	Aska::AofHandler::InitializeShader(Aska::RenderPass*, int, bool, bool)	aof_handler	typed	
+0x20c0598	0x21c0598	4	_ZN4Aska10AofHandler38CheckShaderKeyIsInAHSLPrebuiltDatabaseEPNS_10RenderPassE	Aska::AofHandler::CheckShaderKeyIsInAHSLPrebuiltDatabase(Aska::RenderPass*)	aof_handler	typed	
+0x20c059c	0x21c059c	3464	_ZN4Aska10AofHandler17MakeRenderContextEPNS_13RenderContextEPNS_9AofObjectEPKNS_10RENDERINFOEPNS_10RenderPassEPNS_20CommandBufferManagerE	Aska::AofHandler::MakeRenderContext(Aska::RenderContext*, Aska::AofObject*, Aska::RENDERINFO const*, Aska::RenderPass*, Aska::CommandBufferManager*)	aof_handler	typed	
+0x20c1324	0x21c1324	248	_ZN4Aska10AofHandler6DetachEv	Aska::AofHandler::Detach()	aof_handler	typed	
+0x20c141c	0x21c141c	400	_ZN4Aska10AofHandlerC2Ev	Aska::AofHandler::AofHandler()	aof_handler	typed	
+0x20c1720	0x21c1720	208	_ZN4Aska10AofHandlerD1Ev	Aska::AofHandler::~AofHandler()	aof_handler	typed	
+0x20c17f0	0x21c17f0	208	_ZThn152_N4Aska10AofHandlerD1Ev	non-virtual thunk to Aska::AofHandler::~AofHandler()	aof_handler	typed	
+0x20c18c0	0x21c18c0	204	_ZThn160_N4Aska10AofHandlerD1Ev	non-virtual thunk to Aska::AofHandler::~AofHandler()	aof_handler	typed	
+0x20c198c	0x21c198c	196	_ZN4Aska10AofHandlerD0Ev	Aska::AofHandler::~AofHandler()	aof_handler	typed	
+0x20c1a50	0x21c1a50	196	_ZThn152_N4Aska10AofHandlerD0Ev	non-virtual thunk to Aska::AofHandler::~AofHandler()	aof_handler	typed	
+0x20c1b14	0x21c1b14	192	_ZThn160_N4Aska10AofHandlerD0Ev	non-virtual thunk to Aska::AofHandler::~AofHandler()	aof_handler	typed	
+0x20c1bd4	0x21c1bd4	224	_ZN4Aska10AofHandler13NotifyTextureEv	Aska::AofHandler::NotifyTexture()	aof_handler	typed	
+0x20c1cb4	0x21c1cb4	24	_ZN4Aska10AofHandler26UpdateForProceduralTextureEv	Aska::AofHandler::UpdateForProceduralTexture()	aof_handler	typed	
+0x20c1ccc	0x21c1ccc	8	_ZNK4Aska10AofHandler28UsesTexturePaletteBySkinningEv	Aska::AofHandler::UsesTexturePaletteBySkinning() const	aof_handler	typed	
+0x20c1cd4	0x21c1cd4	204	_ZN4Aska10AofHandler29InitializeSkinPaletteConstantEPNS_16SkinMatricesBaseE	Aska::AofHandler::InitializeSkinPaletteConstant(Aska::SkinMatricesBase*)	aof_handler	typed	
+0x20c1da0	0x21c1da0	8	_ZNK4Aska10AofHandler20GetShaderContextFlagEv	Aska::AofHandler::GetShaderContextFlag() const	aof_handler	typed	
+0x20c1da8	0x21c1da8	420	_ZN4Aska10AofHandler20SetShaderContextFlagEv	Aska::AofHandler::SetShaderContextFlag()	aof_handler	typed	
+0x20c1f4c	0x21c1f4c	60	_ZN4Aska10AofHandler14DeleteCallbackEiPv	Aska::AofHandler::DeleteCallback(int, void*)	aof_handler	typed	
+0x20c1f88	0x21c1f88	56	_ZThn160_N4Aska10AofHandler14DeleteCallbackEiPv	non-virtual thunk to Aska::AofHandler::DeleteCallback(int, void*)	aof_handler	typed	
+0x20c1fc0	0x21c1fc0	4	_ZN4Aska10AofHandler14CancelCallbackEiPv	Aska::AofHandler::CancelCallback(int, void*)	aof_handler	typed	
+0x20c1fc4	0x21c1fc4	4	_ZThn160_N4Aska10AofHandler14CancelCallbackEiPv	non-virtual thunk to Aska::AofHandler::CancelCallback(int, void*)	aof_handler	typed	
+0x20c1fc8	0x21c1fc8	32	_ZNK4Aska10AofHandler18CreateSkinMatricesEv	Aska::AofHandler::CreateSkinMatrices() const	aof_handler	typed	
+0x20c2038	0x21c2038	8	_ZNK4Aska10AofHandler11IsDirectAofEv	Aska::AofHandler::IsDirectAof() const	aof_handler	typed	
+0x20c2040	0x21c2040	4	_ZN4Aska10AofHandler21OnSkinMatricesCreatedERNS_9AofObjectE	Aska::AofHandler::OnSkinMatricesCreated(Aska::AofObject&)	aof_handler	typed	
+0x20c2060	0x21c2060	244	_ZN4Aska9AofObjectD1Ev	Aska::AofObject::~AofObject()	aof_object	typed	
+0x20c2154	0x21c2154	508	_ZN4Aska9AofObject27RemoveStandingShaderAdapterEPNS_17BaseShaderAdapterE	Aska::AofObject::RemoveStandingShaderAdapter(Aska::BaseShaderAdapter*)	aof_object	typed	
+0x20c2350	0x21c2350	24	_ZN4Aska9AofObjectD0Ev	Aska::AofObject::~AofObject()	aof_object	typed	
+0x20c2368	0x21c2368	4	_ZN4Aska9AofObject10DeleteThisEPNS_13DeleteManagerE	Aska::AofObject::DeleteThis(Aska::DeleteManager*)	aof_object	typed	
+0x20c236c	0x21c236c	88	_ZN4Aska9AofObject3RunEi	Aska::AofObject::Run(int)	aof_object	typed	
+0x20c23c4	0x21c23c4	180	_ZN4Aska9AofObject18ReleaseShaderCacheEv	Aska::AofObject::ReleaseShaderCache()	aof_object	typed	
+0x20c2478	0x21c2478	520	_ZN4Aska9AofObject20InitializeConditionsEv	Aska::AofObject::InitializeConditions()	aof_object	typed	
+0x20c2680	0x21c2680	296	_ZN4Aska9AofObject27SetProgrammableTransparencyENS_16RenderableObject9ProgTransE	Aska::AofObject::SetProgrammableTransparency(Aska::RenderableObject::ProgTrans)	aof_object	typed	
+0x20c27a8	0x21c27a8	56	_ZN4Aska9AofObject27InvalidateObjectRenderStateEv	Aska::AofObject::InvalidateObjectRenderState()	aof_object	typed	
+0x20c27e0	0x21c27e0	392	_ZN4Aska9AofObject26SetProgrammableForceOpaqueEb	Aska::AofObject::SetProgrammableForceOpaque(bool)	aof_object	typed	
+0x20c2968	0x21c2968	120	_ZN4Aska9AofObject16SetRenderLayerIDEh	Aska::AofObject::SetRenderLayerID(unsigned char)	aof_object	typed	
+0x20c29e0	0x21c29e0	2560	_ZN4Aska9AofObject13SetAofHandlerEPNS_10AofHandlerEb	Aska::AofObject::SetAofHandler(Aska::AofHandler*, bool)	aof_object	typed	
+0x20c33e0	0x21c33e0	240	_ZN4Aska9AofObject21UpdateBoundingVolumesEPNS_10AofHandlerE	Aska::AofObject::UpdateBoundingVolumes(Aska::AofHandler*)	aof_object	typed	
+0x20c34d0	0x21c34d0	264	_ZN4Aska9AofObject24AddStandingShaderAdapterEPNS_17BaseShaderAdapterE	Aska::AofObject::AddStandingShaderAdapter(Aska::BaseShaderAdapter*)	aof_object	typed	
+0x20c35d8	0x21c35d8	428	_ZN4Aska9AofObject19CheckRenderContextsEv	Aska::AofObject::CheckRenderContexts()	aof_object	typed	
+0x20c3784	0x21c3784	208	_ZN4Aska9AofObject29FlushRenderPassManager_unsafeEv	Aska::AofObject::FlushRenderPassManager_unsafe()	aof_object	typed	
+0x20c3854	0x21c3854	224	_ZN4Aska9AofObject22FlushRenderPassManagerEv	Aska::AofObject::FlushRenderPassManager()	aof_object	typed	
+0x20c3934	0x21c3934	72	_ZN4Aska9AofObject5CloneEPKNS_11IAnimatableE	Aska::AofObject::Clone(Aska::IAnimatable const*)	aof_object	typed	
+0x20c397c	0x21c397c	104	_ZN4Aska9AofObject11CreateCloneEPKNS_11IAnimatableE	Aska::AofObject::CreateClone(Aska::IAnimatable const*)	aof_object	typed	
+0x20c39e4	0x21c39e4	1064	_ZN4Aska9AofObject5CloneEPKS0_i	Aska::AofObject::Clone(Aska::AofObject const*, int)	aof_object	typed	
+0x20c3e0c	0x21c3e0c	12	_ZN4Aska9AofObject27MakeObjectRenderStateShadowEPNS_20AofObjectRenderStateEPNS_10RenderPassEb	Aska::AofObject::MakeObjectRenderStateShadow(Aska::AofObjectRenderState*, Aska::RenderPass*, bool)	aof_object	typed	
+0x20c3e18	0x21c3e18	1176	_ZN4Aska9AofObject21MakeObjectRenderStateILj1010EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<1010u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c42b0	0x21c42b0	368	_ZN4Aska9AofObject21MakeObjectRenderStateILj496EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<496u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c4420	0x21c4420	12	_ZN4Aska9AofObject24MakeObjectRenderStateOMBEPNS_20AofObjectRenderStateEPNS_10RenderPassEb	Aska::AofObject::MakeObjectRenderStateOMB(Aska::AofObjectRenderState*, Aska::RenderPass*, bool)	aof_object	typed	
+0x20c442c	0x21c442c	1344	_ZN4Aska9AofObject21MakeObjectRenderStateILj2027EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<2027u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c496c	0x21c496c	528	_ZN4Aska9AofObject21MakeObjectRenderStateILj1514EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<1514u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c4b7c	0x21c4b7c	4	_ZN4Aska9AofObject30MakeObjectRenderStateMultiDrawEPNS_20AofObjectRenderStateEPNS_10RenderPassE	Aska::AofObject::MakeObjectRenderStateMultiDraw(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c4b80	0x21c4b80	540	_ZN4Aska9AofObject21MakeObjectRenderStateILj2543EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<2543u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c4d9c	0x21c4d9c	252	_ZN4Aska9AofObject28MakePassRenderStateMultiDrawEjPNS_10RenderPassE	Aska::AofObject::MakePassRenderStateMultiDraw(unsigned int, Aska::RenderPass*)	aof_object	typed	
+0x20c4e98	0x21c4e98	12	_ZN4Aska9AofObject21MakeObjectRenderStateEPNS_20AofObjectRenderStateEPNS_10RenderPassEb	Aska::AofObject::MakeObjectRenderState(Aska::AofObjectRenderState*, Aska::RenderPass*, bool)	aof_object	typed	
+0x20c4ea4	0x21c4ea4	1500	_ZN4Aska9AofObject21MakeObjectRenderStateILj7151EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<7151u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c5480	0x21c5480	1476	_ZN4Aska9AofObject21MakeObjectRenderStateILj3055EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<3055u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20c5a44	0x21c5a44	8	_ZN4Aska9AofObject19InitializeRenderingEv	Aska::AofObject::InitializeRendering()	aof_object	typed	
+0x20c5a4c	0x21c5a4c	684	_ZN4Aska9AofObject18CalcBoundingExtentEb	Aska::AofObject::CalcBoundingExtent(bool)	aof_object	typed	
+0x20c5cf8	0x21c5cf8	220	_ZN4Aska9AofObject16RenderingDecidedEv	Aska::AofObject::RenderingDecided()	aof_object	typed	
+0x20c5dd4	0x21c5dd4	16	_ZN4Aska9AofObject26ResetDynamicShaderModifierEv	Aska::AofObject::ResetDynamicShaderModifier()	aof_object	typed	
+0x20c5de4	0x21c5de4	16	_ZN4Aska9AofObject31ResetDynamicShaderModifierCacheEv	Aska::AofObject::ResetDynamicShaderModifierCache()	aof_object	typed	
+0x20c5df4	0x21c5df4	224	_ZN4Aska9AofObject21SetShadowManagerIndexEim	Aska::AofObject::SetShadowManagerIndex(int, unsigned long)	aof_object	typed	
+0x20c5ed4	0x21c5ed4	44	_ZN4Aska9AofObject21GetShadowManagerIndexEi	Aska::AofObject::GetShadowManagerIndex(int)	aof_object	typed	
+0x20c5f00	0x21c5f00	212	_ZN4Aska9AofObject21GetShaderAdapterCacheEi	Aska::AofObject::GetShaderAdapterCache(int)	aof_object	typed	
+0x20c5fd4	0x21c5fd4	8	_ZNK4Aska9AofObject25GetShaderAdapterCacheSizeEv	Aska::AofObject::GetShaderAdapterCacheSize() const	aof_object	typed	
+0x20c5fdc	0x21c5fdc	208	_ZN4Aska9AofObject26SetShaderAdapterCacheCountEii	Aska::AofObject::SetShaderAdapterCacheCount(int, int)	aof_object	typed	
+0x20c60ac	0x21c60ac	112	_ZN4Aska9AofObject16IsAffectingLightEPNS_5LightE	Aska::AofObject::IsAffectingLight(Aska::Light*)	aof_object	typed	
+0x20c611c	0x21c611c	180	_ZN4Aska9AofObject19PrepareLightContextEPNS_12LightManagerE	Aska::AofObject::PrepareLightContext(Aska::LightManager*)	aof_object	typed	
+0x20c61d0	0x21c61d0	92	_ZN4Aska9AofObject23PrepareLightContextPostEPNS_12LightManagerE	Aska::AofObject::PrepareLightContextPost(Aska::LightManager*)	aof_object	typed	
+0x20c622c	0x21c622c	244	_ZN4Aska9AofObject17PrepareIBLContextEPNS_12LightManagerEPPNS_5LightE	Aska::AofObject::PrepareIBLContext(Aska::LightManager*, Aska::Light**)	aof_object	typed	
+0x20c6320	0x21c6320	236	_ZN4Aska9AofObject22EnableObjectMotionBlurEb	Aska::AofObject::EnableObjectMotionBlur(bool)	aof_object	typed	
+0x20c640c	0x21c640c	776	_ZN4Aska9AofObject20PreliminarilyPrepareEPNS_12LightManagerE	Aska::AofObject::PreliminarilyPrepare(Aska::LightManager*)	aof_object	typed	
+0x20c6714	0x21c6714	16	_ZNK4Aska9AofObject22IsPBAmbientBRDFEnabledEv	Aska::AofObject::IsPBAmbientBRDFEnabled() const	aof_object	typed	
+0x20c6724	0x21c6724	2028	_ZN4Aska9AofObject12GetColorPassEPKNS_10RENDERINFOE	Aska::AofObject::GetColorPass(Aska::RENDERINFO const*)	aof_object	typed	
+0x20c6f10	0x21c6f10	52	_ZNK4Aska9AofObject22QueryPrebuiltVariationEv	Aska::AofObject::QueryPrebuiltVariation() const	aof_object	typed	
+0x20c6f44	0x21c6f44	84	_ZNK4Aska9AofObject27GetCurrentPrebuiltVariationEv	Aska::AofObject::GetCurrentPrebuiltVariation() const	aof_object	typed	
+0x20c6f98	0x21c6f98	132	_ZN4Aska9AofObject20SetPrebuiltVariationEi	Aska::AofObject::SetPrebuiltVariation(int)	aof_object	typed	
+0x20c701c	0x21c701c	372	_ZN4Aska9AofObject16GetMultiDrawPassEjPKNS_10RENDERINFOE	Aska::AofObject::GetMultiDrawPass(unsigned int, Aska::RENDERINFO const*)	aof_object	typed	
+0x20c7190	0x21c7190	1276	_ZN4Aska9AofObject31PrepareForRendering_PreliminaryEv	Aska::AofObject::PrepareForRendering_Preliminary()	aof_object	typed	
+0x20c768c	0x21c768c	2224	_ZN4Aska9AofObject19PrepareForRenderingEPKNS_10RENDERINFOE	Aska::AofObject::PrepareForRendering(Aska::RENDERINFO const*)	aof_object	typed	
+0x20c7f3c	0x21c7f3c	356	_ZN4Aska9AofObject20GetObjectRenderStateEj	Aska::AofObject::GetObjectRenderState(unsigned int)	aof_object	typed	
+0x20c80a0	0x21c80a0	856	_ZN4Aska9AofObject27PrepareObjectScreenUVMatrixEPNS_6CameraEPNS_10RenderPassE	Aska::AofObject::PrepareObjectScreenUVMatrix(Aska::Camera*, Aska::RenderPass*)	aof_object	typed	
+0x20c83f8	0x21c83f8	268	_ZN4Aska9AofObject18PrepareColorShaderEPNS_10RenderPassEPKNS_10RENDERINFOE	Aska::AofObject::PrepareColorShader(Aska::RenderPass*, Aska::RENDERINFO const*)	aof_object	typed	
+0x20c8504	0x21c8504	84	_ZN4Aska9AofObject13PrepareShaderEPNS_10RenderPassEPKNS_10RENDERINFOEb	Aska::AofObject::PrepareShader(Aska::RenderPass*, Aska::RENDERINFO const*, bool)	aof_object	typed	
+0x20c8558	0x21c8558	28	_ZNK4Aska9AofObject27GetActualLightConfigurationEv	Aska::AofObject::GetActualLightConfiguration() const	aof_object	typed	
+0x20c8574	0x21c8574	56	_ZN4Aska9AofObject6RenderEPNS_13RenderContextEi	Aska::AofObject::Render(Aska::RenderContext*, int)	aof_object	typed	
+0x20c85ac	0x21c85ac	4	_ZN4Aska9AofObject18RenderProfileBeginEPNS_13RenderContextE	Aska::AofObject::RenderProfileBegin(Aska::RenderContext*)	aof_object	typed	
+0x20c85b0	0x21c85b0	4	_ZN4Aska9AofObject23RenderContextValidationEPNS_13RenderContextE	Aska::AofObject::RenderContextValidation(Aska::RenderContext*)	aof_object	typed	
+0x20c85b4	0x21c85b4	4	_ZN4Aska9AofObject16RenderProfileEndEv	Aska::AofObject::RenderProfileEnd()	aof_object	typed	
+0x20c85b8	0x21c85b8	40	_ZN4Aska9AofObject21SetPerPixelLightCountEi	Aska::AofObject::SetPerPixelLightCount(int)	aof_object	typed	
+0x20c85e0	0x21c85e0	4	_ZN4Aska9AofObject25EnableBoundingObjectDebugEb	Aska::AofObject::EnableBoundingObjectDebug(bool)	aof_object	typed	
+0x20c85e4	0x21c85e4	4	_ZN4Aska9AofObject14SetNormalDebugEi	Aska::AofObject::SetNormalDebug(int)	aof_object	typed	
+0x20c85e8	0x21c85e8	4	_ZN4Aska9AofObject16SetBinormalDebugEi	Aska::AofObject::SetBinormalDebug(int)	aof_object	typed	
+0x20c85ec	0x21c85ec	368	_ZNK4Aska9AofObject24GetPackedIndexByAttrTypeEPKcS2_	Aska::AofObject::GetPackedIndexByAttrType(char const*, char const*) const	aof_object	typed	
+0x20c875c	0x21c875c	472	_ZNK4Aska9AofObject27GetPackedIndexByTextureTypeEPKcNS0_11TextureTypeE	Aska::AofObject::GetPackedIndexByTextureType(char const*, Aska::AofObject::TextureType) const	aof_object	typed	
+0x20c8934	0x21c8934	68	_ZNK4Aska9AofObject15SearchTextureIDEPKcNS0_11TextureTypeE	Aska::AofObject::SearchTextureID(char const*, Aska::AofObject::TextureType) const	aof_object	typed	
+0x20c8978	0x21c8978	108	_ZN4Aska9AofObject15ChangeTextureIDEmPKcNS0_11TextureTypeE	Aska::AofObject::ChangeTextureID(unsigned long, char const*, Aska::AofObject::TextureType)	aof_object	typed	
+0x20c89e4	0x21c89e4	3900	_ZNK4Aska9AofObject3GetEmPv	Aska::AofObject::Get(unsigned long, void*) const	aof_object	typed	
+0x20c9920	0x21c9920	6472	_ZN4Aska9AofObject3SetEmPKv	Aska::AofObject::Set(unsigned long, void const*)	aof_object	typed	
+0x20cb418	0x21cb418	200	_ZNK4Aska9AofObject27GetRandomVertexPosAndNormalEPNS_6VectorES2_	Aska::AofObject::GetRandomVertexPosAndNormal(Aska::Vector*, Aska::Vector*) const	aof_object	typed	
+0x20cb4e0	0x21cb4e0	140	_ZNK4Aska9AofObject17GetVertexPositionEiPNS_6VectorE	Aska::AofObject::GetVertexPosition(int, Aska::Vector*) const	aof_object	typed	
+0x20cb56c	0x21cb56c	140	_ZNK4Aska9AofObject21GetVertexPosAndNormalEiPNS_6VectorES2_	Aska::AofObject::GetVertexPosAndNormal(int, Aska::Vector*, Aska::Vector*) const	aof_object	typed	
+0x20cb5f8	0x21cb5f8	32	_ZN4Aska9AofObject13StopModifiersEv	Aska::AofObject::StopModifiers()	aof_object	typed	
+0x20cb618	0x21cb618	32	_ZN4Aska9AofObject14StartModifiersEv	Aska::AofObject::StartModifiers()	aof_object	typed	
+0x20cb638	0x21cb638	120	_ZN4Aska9AofObject18GetRenderNodeIndexEPKc	Aska::AofObject::GetRenderNodeIndex(char const*)	aof_object	typed	
+0x20cb6b0	0x21cb6b0	68	_ZN4Aska9AofObject13GetRenderNodeEi	Aska::AofObject::GetRenderNode(int)	aof_object	typed	
+0x20cb6f4	0x21cb6f4	156	_ZN4Aska9AofObject17AllocateMeshArrayEj	Aska::AofObject::AllocateMeshArray(unsigned int)	aof_object	typed	
+0x20cb790	0x21cb790	492	_ZN4Aska9AofObject25SetStateDirtyToAllObjectsEv	Aska::AofObject::SetStateDirtyToAllObjects()	aof_object	typed	
+0x20cb97c	0x21cb97c	44	_ZN4Aska9AofObject19UpdateMultiDrawVarsEv	Aska::AofObject::UpdateMultiDrawVars()	aof_object	typed	
+0x20cbaa8	0x21cbaa8	1252	_ZN4Aska9AofObject21MakeObjectRenderStateILj1015EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<1015u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20cbf8c	0x21cbf8c	380	_ZN4Aska9AofObject21MakeObjectRenderStateILj497EEEbPNS_20AofObjectRenderStateEPNS_10RenderPassE	bool Aska::AofObject::MakeObjectRenderState<497u>(Aska::AofObjectRenderState*, Aska::RenderPass*)	aof_object	typed	
+0x20d44fc	0x21d44fc	176	_ZNK4Aska10AsfHandler21SearchTextureIDByNameEPKcS2_NS_9AofObject11TextureTypeE	Aska::AsfHandler::SearchTextureIDByName(char const*, char const*, Aska::AofObject::TextureType) const	aof_object	decompiled	
+0x2106454	0x2206454	516	_ZN4Aska16DirectAofHandler6CreateEibPKc	Aska::DirectAofHandler::Create(int, bool, char const*)	direct_aof	typed	
+0x2106658	0x2206658	4	_ZN4Aska16DirectAofHandler6OnOpenEv	Aska::DirectAofHandler::OnOpen()	direct_aof	typed	
+0x210665c	0x220665c	52	_ZN4Aska16DirectAofHandler4OpenEv	Aska::DirectAofHandler::Open()	direct_aof	typed	
+0x2106690	0x2206690	116	_ZN4Aska16DirectAofHandlerC1Ev	Aska::DirectAofHandler::DirectAofHandler()	direct_aof	typed	
+0x2106704	0x2206704	16	_ZN4Aska16DirectAofHandler10UpdatePrimEv	Aska::DirectAofHandler::UpdatePrim()	direct_aof	typed	
+0x2106714	0x2206714	200	_ZN4Aska16DirectAofHandlerD2Ev	Aska::DirectAofHandler::~DirectAofHandler()	direct_aof	typed	
+0x21067dc	0x22067dc	8	_ZThn152_N4Aska16DirectAofHandlerD1Ev	non-virtual thunk to Aska::DirectAofHandler::~DirectAofHandler()	direct_aof	decompiled	
+0x21067e4	0x22067e4	8	_ZThn160_N4Aska16DirectAofHandlerD1Ev	non-virtual thunk to Aska::DirectAofHandler::~DirectAofHandler()	direct_aof	decompiled	
+0x21067ec	0x22067ec	24	_ZN4Aska16DirectAofHandlerD0Ev	Aska::DirectAofHandler::~DirectAofHandler()	direct_aof	typed	
+0x2106804	0x2206804	28	_ZThn152_N4Aska16DirectAofHandlerD0Ev	non-virtual thunk to Aska::DirectAofHandler::~DirectAofHandler()	direct_aof	decompiled	
+0x2106820	0x2206820	28	_ZThn160_N4Aska16DirectAofHandlerD0Ev	non-virtual thunk to Aska::DirectAofHandler::~DirectAofHandler()	direct_aof	decompiled	
+0x210683c	0x220683c	4	_ZN4Aska16DirectAofHandler7OnCloseEPKNS_6VectorEb	Aska::DirectAofHandler::OnClose(Aska::Vector const*, bool)	direct_aof	typed	
+0x2106840	0x2206840	796	_ZN4Aska16DirectAofHandler5CloseEPKNS_6VectorEb	Aska::DirectAofHandler::Close(Aska::Vector const*, bool)	direct_aof	typed	
+0x2106b5c	0x2206b5c	352	_ZN4Aska16DirectAofHandler9BeginMeshEPNS_14DirectMaterialEii	Aska::DirectAofHandler::BeginMesh(Aska::DirectMaterial*, int, int)	direct_aof	typed	
+0x2106cbc	0x2206cbc	464	_ZN4Aska16DirectAofHandler10AddMeshsetEiRKNS_14DirectMaterialEii	Aska::DirectAofHandler::AddMeshset(int, Aska::DirectMaterial const&, int, int)	direct_aof	typed	
+0x2106e8c	0x2206e8c	276	_ZN4Aska16DirectAofHandler9BeginMeshEPNS_14DirectMaterialE	Aska::DirectAofHandler::BeginMesh(Aska::DirectMaterial*)	direct_aof	typed	
+0x2106fa0	0x2206fa0	16	_ZN4Aska16DirectAofHandler4SyncEPNS_19RenderablePrimitiveEjj	Aska::DirectAofHandler::Sync(Aska::RenderablePrimitive*, unsigned int, unsigned int)	direct_aof	typed	
+0x2106fb0	0x2206fb0	212	_ZN4Aska16DirectAofHandler7EndMeshEv	Aska::DirectAofHandler::EndMesh()	direct_aof	typed	
+0x2107084	0x2207084	164	_ZN4Aska16DirectAofHandler12SetPrimCountEiii	Aska::DirectAofHandler::SetPrimCount(int, int, int)	direct_aof	typed	
+0x2107128	0x2207128	176	_ZN4Aska16DirectAofHandler9AddVertexEPKNS_6VectorES3_j	Aska::DirectAofHandler::AddVertex(Aska::Vector const*, Aska::Vector const*, unsigned int)	direct_aof	typed	
+0x21071d8	0x22071d8	204	_ZN4Aska16DirectAofHandler10AddVertexTEPKNS_6VectorES3_S3_ffj	Aska::DirectAofHandler::AddVertexT(Aska::Vector const*, Aska::Vector const*, Aska::Vector const*, float, float, unsigned int)	direct_aof	typed	
+0x21072a4	0x22072a4	60	_ZN4Aska16DirectAofHandler14GetIndexBufferEiPi	Aska::DirectAofHandler::GetIndexBuffer(int, int*)	direct_aof	typed	
+0x21072e0	0x22072e0	52	_ZN4Aska16DirectAofHandler15GetVertexBufferEiPi	Aska::DirectAofHandler::GetVertexBuffer(int, int*)	direct_aof	typed	
+0x2107314	0x2207314	40	_ZN4Aska16DirectAofHandler10FlipBufferEi	Aska::DirectAofHandler::FlipBuffer(int)	direct_aof	typed	
+0x210733c	0x220733c	12	_ZNK4Aska16DirectAofHandler16GetVertexAsmbit_Ev	Aska::DirectAofHandler::GetVertexAsmbit_() const	direct_aof	typed	
+0x2107348	0x2207348	8	_ZNK4Aska16DirectAofHandler16GetVertexStride_Ev	Aska::DirectAofHandler::GetVertexStride_() const	direct_aof	typed	
+0x2107350	0x2207350	4	_ZN4Aska16DirectAofHandler12OnAddMeshsetEi	Aska::DirectAofHandler::OnAddMeshset(int)	direct_aof	typed	
+0x2107354	0x2207354	1636	_ZN4Aska16DirectAofHandler6SphereEPNS_14DirectMaterialEfiij	Aska::DirectAofHandler::Sphere(Aska::DirectMaterial*, float, int, int, unsigned int)	direct_aof	decompiled	
+0x21079b8	0x22079b8	1380	_ZN4Aska16DirectAofHandler6CircleEPNS_14DirectMaterialEfij	Aska::DirectAofHandler::Circle(Aska::DirectMaterial*, float, int, unsigned int)	direct_aof	decompiled	
+0x2107f1c	0x2207f1c	2864	_ZN4Aska16DirectAofHandler3BoxEPNS_14DirectMaterialEPKNS_6VectorEiiiPjS5_	Aska::DirectAofHandler::Box(Aska::DirectMaterial*, Aska::Vector const*, int, int, int, unsigned int*, Aska::Vector const*)	direct_aof	decompiled	
+0x2108a4c	0x2208a4c	40	_ZN4Aska16DirectAofHandler3BoxEPNS_14DirectMaterialEPKNS_6VectorEiiijS5_	Aska::DirectAofHandler::Box(Aska::DirectMaterial*, Aska::Vector const*, int, int, int, unsigned int, Aska::Vector const*)	direct_aof	decompiled	
+0x2108a74	0x2208a74	2796	_ZN4Aska16DirectAofHandler4BoxTEPNS_14DirectMaterialEPKNS_6VectorEiiiPj	Aska::DirectAofHandler::BoxT(Aska::DirectMaterial*, Aska::Vector const*, int, int, int, unsigned int*)	direct_aof	decompiled	
+0x2109560	0x2209560	40	_ZN4Aska16DirectAofHandler4BoxTEPNS_14DirectMaterialEPKNS_6VectorEiiij	Aska::DirectAofHandler::BoxT(Aska::DirectMaterial*, Aska::Vector const*, int, int, int, unsigned int)	direct_aof	decompiled	
+0x2109588	0x2209588	4776	_ZN4Aska16DirectAofHandler7CapsuleEPNS_14DirectMaterialEPKNS_7SegmentEfiij	Aska::DirectAofHandler::Capsule(Aska::DirectMaterial*, Aska::Segment const*, float, int, int, unsigned int)	direct_aof	decompiled	
+0x210a830	0x220a830	4248	_ZN4Aska16DirectAofHandler6SquareEPNS_14DirectMaterialEffiij	Aska::DirectAofHandler::Square(Aska::DirectMaterial*, float, float, int, int, unsigned int)	direct_aof	decompiled	
+0x210b8c8	0x220b8c8	3256	_ZN4Aska16DirectAofHandler4ConeEPNS_14DirectMaterialEffiijPKNS_6VectorEb	Aska::DirectAofHandler::Cone(Aska::DirectMaterial*, float, float, int, int, unsigned int, Aska::Vector const*, bool)	direct_aof	typed	
+0x210c580	0x220c580	4128	_ZN4Aska16DirectAofHandler8CylinderEPNS_14DirectMaterialEffiijPKNS_6VectorEb	Aska::DirectAofHandler::Cylinder(Aska::DirectMaterial*, float, float, int, int, unsigned int, Aska::Vector const*, bool)	direct_aof	typed	
+0x210d5a0	0x220d5a0	308	_ZN4Aska16DirectAofHandler17MakeRenderContextEPNS_13RenderContextEPNS_9AofObjectEPKNS_10RENDERINFOEPNS_10RenderPassEPNS_20CommandBufferManagerE	Aska::DirectAofHandler::MakeRenderContext(Aska::RenderContext*, Aska::AofObject*, Aska::RENDERINFO const*, Aska::RenderPass*, Aska::CommandBufferManager*)	direct_aof	typed	
+0x210d6d4	0x220d6d4	116	_ZN4Aska16DirectAofHandler16UpdateKickBufferEv	Aska::DirectAofHandler::UpdateKickBuffer()	direct_aof	typed	
+0x210d748	0x220d748	144	_ZN4Aska16DirectAofHandler17SetDirectMaterialEiPNS_14DirectMaterialE	Aska::DirectAofHandler::SetDirectMaterial(int, Aska::DirectMaterial*)	direct_aof	typed	
+0x210d7d8	0x220d7d8	144	_ZN4Aska16DirectAofHandler18SetDefaultMaterialEPNS_14DirectMaterialE	Aska::DirectAofHandler::SetDefaultMaterial(Aska::DirectMaterial*)	direct_aof	typed	
+0x210d918	0x220d918	96	_ZN4Aska18DirectAofPrimitive11InstantiateEv	Aska::DirectAofPrimitive::Instantiate()	direct_aof	decompiled	
+0x210d978	0x220d978	44	_ZN4Aska18DirectAofPrimitive18SetDefaultMaterialEPNS_14DirectMaterialE	Aska::DirectAofPrimitive::SetDefaultMaterial(Aska::DirectMaterial*)	direct_aof	decompiled	
+0x210d9a4	0x220d9a4	64	_ZN4Aska18DirectAofPrimitiveC2Ev	Aska::DirectAofPrimitive::DirectAofPrimitive()	direct_aof	decompiled	
+0x210d9e4	0x220d9e4	64	_ZN4Aska18DirectAofPrimitiveD1Ev	Aska::DirectAofPrimitive::~DirectAofPrimitive()	direct_aof	decompiled	
+0x210da24	0x220da24	64	_ZThn152_N4Aska18DirectAofPrimitiveD1Ev	non-virtual thunk to Aska::DirectAofPrimitive::~DirectAofPrimitive()	direct_aof	decompiled	
+0x210da64	0x220da64	64	_ZThn160_N4Aska18DirectAofPrimitiveD1Ev	non-virtual thunk to Aska::DirectAofPrimitive::~DirectAofPrimitive()	direct_aof	decompiled	
+0x210daa4	0x220daa4	72	_ZN4Aska18DirectAofPrimitiveD0Ev	Aska::DirectAofPrimitive::~DirectAofPrimitive()	direct_aof	decompiled	
+0x210daec	0x220daec	72	_ZThn152_N4Aska18DirectAofPrimitiveD0Ev	non-virtual thunk to Aska::DirectAofPrimitive::~DirectAofPrimitive()	direct_aof	decompiled	
+0x210db34	0x220db34	72	_ZThn160_N4Aska18DirectAofPrimitiveD0Ev	non-virtual thunk to Aska::DirectAofPrimitive::~DirectAofPrimitive()	direct_aof	decompiled	
+0x210db7c	0x220db7c	12	_ZNK4Aska18DirectAofPrimitive16GetVertexAsmbit_Ev	Aska::DirectAofPrimitive::GetVertexAsmbit_() const	direct_aof	decompiled	
+0x210db88	0x220db88	8	_ZNK4Aska18DirectAofPrimitive16GetVertexStride_Ev	Aska::DirectAofPrimitive::GetVertexStride_() const	direct_aof	decompiled	
+0x210db90	0x220db90	512	_ZN4Aska18DirectAofPrimitive11AddVerticesEiPKNS_6VectorERS2_PKj	Aska::DirectAofPrimitive::AddVertices(int, Aska::Vector const*, Aska::Vector const&, unsigned int const*)	direct_aof	decompiled	
+0x210dd90	0x220dd90	540	_ZN4Aska18DirectAofPrimitive12AddVerticesTEiPKNS_6VectorERS2_S3_PKj	Aska::DirectAofPrimitive::AddVerticesT(int, Aska::Vector const*, Aska::Vector const&, Aska::Vector const*, unsigned int const*)	direct_aof	decompiled	
+0x210dfac	0x220dfac	124	_ZN4Aska18DirectAofPrimitive11SetVerticesEiPvPKNS_6VectorERS3_PKj	Aska::DirectAofPrimitive::SetVertices(int, void*, Aska::Vector const*, Aska::Vector const&, unsigned int const*)	direct_aof	decompiled	
+0x210e028	0x220e028	144	_ZN4Aska18DirectAofPrimitive12SetVerticesTEiPvPKNS_6VectorERS3_S4_PKj	Aska::DirectAofPrimitive::SetVerticesT(int, void*, Aska::Vector const*, Aska::Vector const&, Aska::Vector const*, unsigned int const*)	direct_aof	decompiled	
+0x210e0b8	0x220e0b8	60	_ZN4Aska22DirectAofPrimitiveBaseC2Ev	Aska::DirectAofPrimitiveBase::DirectAofPrimitiveBase()	direct_aof	decompiled	
+0x210e0f4	0x220e0f4	64	_ZN4Aska22DirectAofPrimitiveBaseD1Ev	Aska::DirectAofPrimitiveBase::~DirectAofPrimitiveBase()	direct_aof	decompiled	
+0x210e134	0x220e134	64	_ZThn152_N4Aska22DirectAofPrimitiveBaseD1Ev	non-virtual thunk to Aska::DirectAofPrimitiveBase::~DirectAofPrimitiveBase()	direct_aof	decompiled	
+0x210e174	0x220e174	64	_ZThn160_N4Aska22DirectAofPrimitiveBaseD1Ev	non-virtual thunk to Aska::DirectAofPrimitiveBase::~DirectAofPrimitiveBase()	direct_aof	decompiled	
+0x210e1b4	0x220e1b4	72	_ZN4Aska22DirectAofPrimitiveBaseD0Ev	Aska::DirectAofPrimitiveBase::~DirectAofPrimitiveBase()	direct_aof	decompiled	
+0x210e1fc	0x220e1fc	72	_ZThn152_N4Aska22DirectAofPrimitiveBaseD0Ev	non-virtual thunk to Aska::DirectAofPrimitiveBase::~DirectAofPrimitiveBase()	direct_aof	decompiled	
+0x210e244	0x220e244	72	_ZThn160_N4Aska22DirectAofPrimitiveBaseD0Ev	non-virtual thunk to Aska::DirectAofPrimitiveBase::~DirectAofPrimitiveBase()	direct_aof	decompiled	
+0x210e28c	0x220e28c	32	_ZNK4Aska22DirectAofPrimitiveBase18CreateSkinMatricesEv	Aska::DirectAofPrimitiveBase::CreateSkinMatrices() const	direct_aof	decompiled	
+0x210e2ac	0x220e2ac	12	_ZN4Aska22DirectAofPrimitiveBase6OnOpenEv	Aska::DirectAofPrimitiveBase::OnOpen()	direct_aof	decompiled	
+0x210e2b8	0x220e2b8	92	_ZN4Aska22DirectAofPrimitiveBase7OnCloseEPKNS_6VectorEb	Aska::DirectAofPrimitiveBase::OnClose(Aska::Vector const*, bool)	direct_aof	decompiled	
+0x210e314	0x220e314	56	_ZN4Aska22DirectAofPrimitiveBase12OnAddMeshsetEi	Aska::DirectAofPrimitiveBase::OnAddMeshset(int)	direct_aof	decompiled	
+0x210e34c	0x220e34c	28	_ZN4Aska22DirectAofPrimitiveBase21OnSkinMatricesCreatedERNS_9AofObjectE	Aska::DirectAofPrimitiveBase::OnSkinMatricesCreated(Aska::AofObject&)	direct_aof	decompiled	
+0x210e368	0x220e368	4	_ZNK4Aska22DirectAofPrimitiveBase20GetShaderContextFlagEv	Aska::DirectAofPrimitiveBase::GetShaderContextFlag() const	direct_aof	decompiled	
+0x210e36c	0x220e36c	112	_ZN4Aska22DirectAofPrimitiveBase13UpdateMeshsetERKNS_12VertexHandleE	Aska::DirectAofPrimitiveBase::UpdateMeshset(Aska::VertexHandle const&)	direct_aof	decompiled	
+0x2140eec	0x2240eec	324	_ZNK4Aska9AofObject24CheckLightMaskMixerLightEPNS_5LightE	Aska::AofObject::CheckLightMaskMixerLight(Aska::Light*) const	aof_object	typed	
+0x215c918	0x225c918	3052	_ZN4Aska13ObjectManagerC1Ev	Aska::ObjectManager::ObjectManager()	object_manager	typed	
+0x215d504	0x225d504	480	_ZN4Aska13ObjectManager23MakeDefaultRenderLayersEv	Aska::ObjectManager::MakeDefaultRenderLayers()	object_manager	typed	
+0x215d6e4	0x225d6e4	72	_ZN4Aska13ObjectManager18SetTileEnvironmentEiijfi	Aska::ObjectManager::SetTileEnvironment(int, int, unsigned int, float, int)	object_manager	typed	
+0x215d72c	0x225d72c	1020	_ZN4Aska13ObjectManagerD1Ev	Aska::ObjectManager::~ObjectManager()	object_manager	typed	
+0x215db28	0x225db28	8	_ZThn40_N4Aska13ObjectManagerD1Ev	non-virtual thunk to Aska::ObjectManager::~ObjectManager()	object_manager	typed	
+0x215db30	0x225db30	24	_ZN4Aska13ObjectManagerD0Ev	Aska::ObjectManager::~ObjectManager()	object_manager	typed	
+0x215db48	0x225db48	28	_ZThn40_N4Aska13ObjectManagerD0Ev	non-virtual thunk to Aska::ObjectManager::~ObjectManager()	object_manager	typed	
+0x215db64	0x225db64	368	_ZN4Aska13ObjectManager21SetTilebasedRenderingEi	Aska::ObjectManager::SetTilebasedRendering(int)	object_manager	typed	
+0x215dcd4	0x225dcd4	100	_ZN4Aska13ObjectManager19FlushSystemTexturesEv	Aska::ObjectManager::FlushSystemTextures()	object_manager	typed	
+0x215dd38	0x225dd38	2344	_ZN4Aska13ObjectManager10OnPrePaintEv	Aska::ObjectManager::OnPrePaint()	object_manager	typed	
+0x215e660	0x225e660	52	_ZN4Aska13ObjectManager26UpdateRenderLayerConditionEv	Aska::ObjectManager::UpdateRenderLayerCondition()	object_manager	typed	
+0x215e694	0x225e694	204	_ZN4Aska13ObjectManager15UpdateMultiDrawEv	Aska::ObjectManager::UpdateMultiDraw()	object_manager	typed	
+0x215e760	0x225e760	3624	_ZN4Aska13ObjectManager11OnPostPaintEv	Aska::ObjectManager::OnPostPaint()	object_manager	typed	
+0x215f588	0x225f588	500	_ZN4Aska13ObjectManager29TraversePaintingListNoResolveEPNS_10RENDERINFOEiPPNS_16RenderableObjectEiiPNS_6CameraEb	Aska::ObjectManager::TraversePaintingListNoResolve(Aska::RENDERINFO*, int, Aska::RenderableObject**, int, int, Aska::Camera*, bool)	object_manager	typed	
+0x215f77c	0x225f77c	528	_ZN4Aska13ObjectManager20TraversePaintingListEPNS_10RENDERINFOEiPPNS_16RenderableObjectEiiiPNS_6CameraEb	Aska::ObjectManager::TraversePaintingList(Aska::RENDERINFO*, int, Aska::RenderableObject**, int, int, int, Aska::Camera*, bool)	object_manager	typed	
+0x215f98c	0x225f98c	184	_ZN4Aska13ObjectManager7OnPaintEv	Aska::ObjectManager::OnPaint()	object_manager	typed	
+0x215fa44	0x225fa44	264	_ZN4Aska13ObjectManager27MakeRenderInfoConditionListEPNS0_14RenderInfoCondEPtPiPbj	Aska::ObjectManager::MakeRenderInfoConditionList(Aska::ObjectManager::RenderInfoCond*, unsigned short*, int*, bool*, unsigned int)	object_manager	typed	
+0x215fb4c	0x225fb4c	2376	_ZN4Aska13ObjectManager16MakePaintingListEi	Aska::ObjectManager::MakePaintingList(int)	object_manager	typed	
+0x2160494	0x2260494	524	_ZN12TOMQuickSortIN4Aska16RenderableObjectEfLi64ELi10EE7DescendEPPS1_iiPNS0_13ObjectManager23RenderableObjectContextE	TOMQuickSort<Aska::RenderableObject, float, 64, 10>::Descend(Aska::RenderableObject**, int, int, Aska::ObjectManager::RenderableObjectContext*)	object_manager	decompiled	
+0x21606a0	0x22606a0	524	_ZN12TOMQuickSortIN4Aska16RenderableObjectEfLi64ELi10EE6AscendEPPS1_iiPNS0_13ObjectManager23RenderableObjectContextE	TOMQuickSort<Aska::RenderableObject, float, 64, 10>::Ascend(Aska::RenderableObject**, int, int, Aska::ObjectManager::RenderableObjectContext*)	object_manager	decompiled	
+0x21608ac	0x22608ac	696	_ZN4Aska13ObjectManager20MakePaintingListPostEv	Aska::ObjectManager::MakePaintingListPost()	object_manager	typed	
+0x2160b64	0x2260b64	12	_ZN4Aska13ObjectManager22MakePaintingListShadowEi	Aska::ObjectManager::MakePaintingListShadow(int)	object_manager	typed	
+0x2160b70	0x2260b70	1744	_ZN4Aska13ObjectManager25MakePaintingListMultipassEi	Aska::ObjectManager::MakePaintingListMultipass(int)	object_manager	typed	
+0x2161240	0x2261240	2248	_ZN4Aska13ObjectManager9PrerenderEv	Aska::ObjectManager::Prerender()	object_manager	typed	
+0x2161b08	0x2261b08	912	_ZN4Aska13ObjectManager15PrepareMatricesEiPPNS_16RenderableObjectE	Aska::ObjectManager::PrepareMatrices(int, Aska::RenderableObject**)	object_manager	typed	
+0x2161e98	0x2261e98	916	_ZN4Aska13ObjectManager29MultithreadViewFrustumCullingEPNS_6CameraEiiPPNS_16RenderableObjectES5_i	Aska::ObjectManager::MultithreadViewFrustumCulling(Aska::Camera*, int, int, Aska::RenderableObject**, Aska::RenderableObject**, int)	object_manager	typed	
+0x216222c	0x226222c	1660	_ZN4Aska13ObjectManager27MultithreadOcclusionCullingEPNS_6CameraEiibPPNS_16RenderableObjectES5_i	Aska::ObjectManager::MultithreadOcclusionCulling(Aska::Camera*, int, int, bool, Aska::RenderableObject**, Aska::RenderableObject**, int)	object_manager	typed	
+0x21628a8	0x22628a8	272	_ZN4Aska13ObjectManager31Prerender_SortForPostProcessingEiPPNS_16RenderableObjectEiS3_PiS3_S4_	Aska::ObjectManager::Prerender_SortForPostProcessing(int, Aska::RenderableObject**, int, Aska::RenderableObject**, int*, Aska::RenderableObject**, int*)	object_manager	typed	
+0x21629b8	0x22629b8	380	_ZN4Aska13ObjectManager32Prerender_VersatileAndMotionBlurEPPNS_16RenderableObjectEiPNS_6CameraE	Aska::ObjectManager::Prerender_VersatileAndMotionBlur(Aska::RenderableObject**, int, Aska::Camera*)	object_manager	typed	
+0x2162b34	0x2262b34	152	_ZN4Aska13ObjectManager24Prerender_TileCandidatesEPPNS_16RenderableObjectEiPNS_6CameraEiPNS_26ObjectManagerJobDispatcherE	Aska::ObjectManager::Prerender_TileCandidates(Aska::RenderableObject**, int, Aska::Camera*, int, Aska::ObjectManagerJobDispatcher*)	object_manager	typed	
+0x2162bcc	0x2262bcc	3756	_ZN4Aska13ObjectManager19Prerender_MultiPassEPNS_8TLongIntImLi2EEEiPNS_26ObjectManagerJobDispatcherE	Aska::ObjectManager::Prerender_MultiPass(Aska::TLongInt<unsigned long, 2>*, int, Aska::ObjectManagerJobDispatcher*)	object_manager	typed	
+0x2163a78	0x2263a78	172	_ZN4Aska13ObjectManager18MakeDetectLIBLListEPPNS_16RenderableObjectES3_i	Aska::ObjectManager::MakeDetectLIBLList(Aska::RenderableObject**, Aska::RenderableObject**, int)	object_manager	typed	
+0x2163b24	0x2263b24	244	_ZN4Aska13ObjectManager21MultithreadDetectLIBLEPPNS_16RenderableObjectEi	Aska::ObjectManager::MultithreadDetectLIBL(Aska::RenderableObject**, int)	object_manager	typed	
+0x2163c18	0x2263c18	476	_ZN4Aska13ObjectManager32MultithreadSubViewFrustumCullingEPNS_6CameraEiiPPNS_16RenderableObjectES5_i	Aska::ObjectManager::MultithreadSubViewFrustumCulling(Aska::Camera*, int, int, Aska::RenderableObject**, Aska::RenderableObject**, int)	object_manager	typed	
+0x2163df4	0x2263df4	7320	_ZN4Aska13ObjectManager18ViewFrustumCullingEPNS_6CameraEiiPPNS_16RenderableObjectEiiPm	Aska::ObjectManager::ViewFrustumCulling(Aska::Camera*, int, int, Aska::RenderableObject**, int, int, unsigned long*)	object_manager	typed	
+0x2165a8c	0x2265a8c	28	_ZN4Aska13ObjectManager10DetectLIBLEPPNS_16RenderableObjectEii	Aska::ObjectManager::DetectLIBL(Aska::RenderableObject**, int, int)	object_manager	typed	
+0x2165aa8	0x2265aa8	3196	_ZN4Aska13ObjectManager21SubViewFrustumCullingEPNS_6CameraEiiPPNS_16RenderableObjectEiiPm	Aska::ObjectManager::SubViewFrustumCulling(Aska::Camera*, int, int, Aska::RenderableObject**, int, int, unsigned long*)	object_manager	typed	
+0x2166724	0x2266724	3016	_ZN4Aska13ObjectManager16OcclusionCullingEPNS_6CameraEiibPPNS_16RenderableObjectEiiPm	Aska::ObjectManager::OcclusionCulling(Aska::Camera*, int, int, bool, Aska::RenderableObject**, int, int, unsigned long*)	object_manager	typed	
+0x21672ec	0x22672ec	228	_ZN4Aska13ObjectManager25AddPaintingListCandidatesEPNS_16RenderableObjectE	Aska::ObjectManager::AddPaintingListCandidates(Aska::RenderableObject*)	object_manager	typed	
+0x21673d0	0x22673d0	112	_ZN4Aska13ObjectManager34AddMultipassPaintingListCandidatesEPNS_16RenderableObjectEi	Aska::ObjectManager::AddMultipassPaintingListCandidates(Aska::RenderableObject*, int)	object_manager	typed	
+0x2167440	0x2267440	8	_ZN4Aska13ObjectManager20IsReducedBufferLayerEi	Aska::ObjectManager::IsReducedBufferLayer(int)	object_manager	typed	
+0x2167448	0x2267448	36	_ZN4Aska13ObjectManager12IsNeedZLayerEi	Aska::ObjectManager::IsNeedZLayer(int)	object_manager	typed	
+0x216746c	0x226746c	28	_ZN4Aska13ObjectManager25ClearMultipassEnvironmentEi	Aska::ObjectManager::ClearMultipassEnvironment(int)	object_manager	typed	
+0x2167488	0x2267488	560	_ZN4Aska13ObjectManager23SetMultipassEnvironmentEibiiiiiijfiPNS_6CameraEbbbb	Aska::ObjectManager::SetMultipassEnvironment(int, bool, int, int, int, int, int, int, unsigned int, float, int, Aska::Camera*, bool, bool, bool, bool)	object_manager	typed	
+0x21676b8	0x22676b8	580	_ZN4Aska13ObjectManager20SetShadowEnvironmentEibiiiiiijfiPNS_6CameraEiibh	Aska::ObjectManager::SetShadowEnvironment(int, bool, int, int, int, int, int, int, unsigned int, float, int, Aska::Camera*, int, int, bool, unsigned char)	object_manager	typed	
+0x21678fc	0x22678fc	304	_ZN4Aska13ObjectManager20SetShadowMapResolverEiPNS_13ShadowManagerE	Aska::ObjectManager::SetShadowMapResolver(int, Aska::ShadowManager*)	object_manager	typed	
+0x2167a2c	0x2267a2c	28	_ZN4Aska13ObjectManager17WaitForInitializeEv	Aska::ObjectManager::WaitForInitialize()	object_manager	typed	
+0x2167a48	0x2267a48	120	_ZN4Aska13ObjectManager34OrMultipassRenderingIDtoAllObjectsEPKNS_8TLongIntImLi2EEEb	Aska::ObjectManager::OrMultipassRenderingIDtoAllObjects(Aska::TLongInt<unsigned long, 2> const*, bool)	object_manager	typed	
+0x2167ac0	0x2267ac0	120	_ZN4Aska13ObjectManager35AndMultipassRenderingIDtoAllObjectsEPKNS_8TLongIntImLi2EEEb	Aska::ObjectManager::AndMultipassRenderingIDtoAllObjects(Aska::TLongInt<unsigned long, 2> const*, bool)	object_manager	typed	
+0x2167b38	0x2267b38	200	_ZN4Aska13ObjectManager15DeleteResourcesEv	Aska::ObjectManager::DeleteResources()	object_manager	typed	
+0x2167c00	0x2267c00	124	_ZN4Aska13ObjectManager10SetSceneEVEifff	Aska::ObjectManager::SetSceneEV(int, float, float, float)	object_manager	typed	
+0x2167c7c	0x2267c7c	76	_ZNK4Aska13ObjectManager10GetSceneEVEi	Aska::ObjectManager::GetSceneEV(int) const	object_manager	typed	
+0x2167cc8	0x2267cc8	104	_ZN4Aska13ObjectManager16SetMeteringScaleEif	Aska::ObjectManager::SetMeteringScale(int, float)	object_manager	typed	
+0x2167d30	0x2267d30	32	_ZN4Aska13ObjectManager24SetPostProcessDitherRateEf	Aska::ObjectManager::SetPostProcessDitherRate(float)	object_manager	typed	
+0x2167d50	0x2267d50	16	_ZNK4Aska13ObjectManager24GetPostProcessDitherRateEv	Aska::ObjectManager::GetPostProcessDitherRate() const	object_manager	typed	
+0x2167d60	0x2267d60	16	_ZN4Aska13ObjectManager19GetPostProcessBloomEv	Aska::ObjectManager::GetPostProcessBloom()	object_manager	typed	
+0x2167d70	0x2267d70	4	_ZN4Aska13ObjectManager28SetVertexShaderGprAllocationEi	Aska::ObjectManager::SetVertexShaderGprAllocation(int)	object_manager	typed	
+0x2167d74	0x2267d74	8	_ZNK4Aska13ObjectManager28GetVertexShaderGprAllocationEv	Aska::ObjectManager::GetVertexShaderGprAllocation() const	object_manager	typed	
+0x2167d7c	0x2267d7c	4	_ZN4Aska13ObjectManager18WaitBackBufferSyncEv	Aska::ObjectManager::WaitBackBufferSync()	object_manager	typed	
+0x2167d80	0x2267d80	8	_ZN4Aska13ObjectManager9SwapFrameEv	Aska::ObjectManager::SwapFrame()	object_manager	typed	
+0x2167d88	0x2267d88	44	_ZN4Aska13ObjectManager11WaitGPUSyncEv	Aska::ObjectManager::WaitGPUSync()	object_manager	typed	
+0x2167db4	0x2267db4	20	_ZN4Aska13ObjectManager16AddGPUSyncNotifyEPNS_7INotifyE	Aska::ObjectManager::AddGPUSyncNotify(Aska::INotify*)	object_manager	typed	
+0x2167dc8	0x2267dc8	16	_ZN4Aska13ObjectManager19RemoveGPUSyncNotifyEPNS_7INotifyE	Aska::ObjectManager::RemoveGPUSyncNotify(Aska::INotify*)	object_manager	typed	
+0x2167dd8	0x2267dd8	16	_ZN4Aska13ObjectManager18QueryGPUSyncNotifyEPNS_7INotifyE	Aska::ObjectManager::QueryGPUSyncNotify(Aska::INotify*)	object_manager	typed	
+0x2167de8	0x2267de8	20	_ZN4Aska13ObjectManager9IsGPUBusyEv	Aska::ObjectManager::IsGPUBusy()	object_manager	typed	
+0x2167dfc	0x2267dfc	20	_ZNK4Aska13ObjectManager12GetNoTextureEv	Aska::ObjectManager::GetNoTexture() const	object_manager	typed	
+0x2167e10	0x2267e10	188	_ZNK4Aska13ObjectManager3GetEmPv	Aska::ObjectManager::Get(unsigned long, void*) const	object_manager	typed	
+0x2167ecc	0x2267ecc	192	_ZThn40_NK4Aska13ObjectManager3GetEmPv	non-virtual thunk to Aska::ObjectManager::Get(unsigned long, void*) const	object_manager	typed	
+0x2167f8c	0x2267f8c	212	_ZN4Aska13ObjectManager3SetEmPKv	Aska::ObjectManager::Set(unsigned long, void const*)	object_manager	typed	
+0x2169060	0x2269060	216	_ZThn40_N4Aska13ObjectManager3SetEmPKv	non-virtual thunk to Aska::ObjectManager::Set(unsigned long, void const*)	object_manager	typed	
+0x216924c	0x226924c	20	_ZN4Aska13ObjectManager22BackBufferSyncCallbackEmm	Aska::ObjectManager::BackBufferSyncCallback(unsigned long, unsigned long)	object_manager	typed	
+0x2169260	0x2269260	156	_ZN4Aska13ObjectManager15ProfileCallBackEmm	Aska::ObjectManager::ProfileCallBack(unsigned long, unsigned long)	object_manager	typed	
+0x21692fc	0x22692fc	120	_ZNK4Aska13ObjectManager13GetPassFormatEi	Aska::ObjectManager::GetPassFormat(int) const	object_manager	typed	
+0x21693fc	0x22693fc	88	_ZNK4Aska13ObjectManager10GetClassIDEi	Aska::ObjectManager::GetClassID(int) const	object_manager	typed	
+0x2169454	0x2269454	88	_ZThn40_NK4Aska13ObjectManager10GetClassIDEi	non-virtual thunk to Aska::ObjectManager::GetClassID(int) const	object_manager	typed	
+0x216a048	0x226a048	108	_ZN4Aska25ObjectManagerWorkerThreadC2Ev	Aska::ObjectManagerWorkerThread::ObjectManagerWorkerThread()	object_manager	typed	
+0x216a0b4	0x226a0b4	80	_ZN4Aska25ObjectManagerWorkerThreadD1Ev	Aska::ObjectManagerWorkerThread::~ObjectManagerWorkerThread()	object_manager	typed	
+0x216a104	0x226a104	88	_ZN4Aska25ObjectManagerWorkerThreadD0Ev	Aska::ObjectManagerWorkerThread::~ObjectManagerWorkerThread()	object_manager	typed	
+0x216a15c	0x226a15c	68	_ZN4Aska25ObjectManagerWorkerThread10InitializeEi	Aska::ObjectManagerWorkerThread::Initialize(int)	object_manager	typed	
+0x216a1a0	0x226a1a0	796	_ZN4Aska25ObjectManagerWorkerThread7HandlerEv	Aska::ObjectManagerWorkerThread::Handler()	object_manager	typed	
+0x216a4bc	0x226a4bc	164	_ZN4Aska25ObjectManagerWorkerThread24Handler_MakePaintingListEv	Aska::ObjectManagerWorkerThread::Handler_MakePaintingList()	object_manager	typed	
+0x216a560	0x226a560	256	_ZN4Aska25ObjectManagerWorkerThread28Handler_PreliminarilyPrepareEv	Aska::ObjectManagerWorkerThread::Handler_PreliminarilyPrepare()	object_manager	typed	
+0x216a660	0x226a660	528	_ZN4Aska25ObjectManagerWorkerThread27Handler_PrepareForRenderingEv	Aska::ObjectManagerWorkerThread::Handler_PrepareForRendering()	object_manager	typed	
+0x216a870	0x226a870	232	_ZN4Aska25ObjectManagerWorkerThread26Handler_ViewFrustumCullingEv	Aska::ObjectManagerWorkerThread::Handler_ViewFrustumCulling()	object_manager	typed	
+0x216a958	0x226a958	96	_ZN4Aska25ObjectManagerWorkerThread18Handler_DetectLIBLEv	Aska::ObjectManagerWorkerThread::Handler_DetectLIBL()	object_manager	typed	
+0x216a9b8	0x226a9b8	332	_ZN4Aska25ObjectManagerWorkerThread24Handler_ResetSystemFlagsEv	Aska::ObjectManagerWorkerThread::Handler_ResetSystemFlags()	object_manager	typed	
+0x216ab04	0x226ab04	436	_ZN4Aska26ObjectManagerJobDispatcherC1EPNS_13ObjectManagerEiPi	Aska::ObjectManagerJobDispatcher::ObjectManagerJobDispatcher(Aska::ObjectManager*, int, int*)	object_manager	typed	
+0x216acb8	0x226acb8	204	_ZN4Aska26ObjectManagerJobDispatcherD1Ev	Aska::ObjectManagerJobDispatcher::~ObjectManagerJobDispatcher()	object_manager	typed	
+0x216ad84	0x226ad84	212	_ZN4Aska26ObjectManagerJobDispatcherD0Ev	Aska::ObjectManagerJobDispatcher::~ObjectManagerJobDispatcher()	object_manager	typed	
+0x216ae58	0x226ae58	272	_ZN4Aska26ObjectManagerJobDispatcher8WaitIdleEv	Aska::ObjectManagerJobDispatcher::WaitIdle()	object_manager	typed	
+0x216af68	0x226af68	200	_ZN4Aska26ObjectManagerJobDispatcher13WaitAllIssuedEv	Aska::ObjectManagerJobDispatcher::WaitAllIssued()	object_manager	typed	
+0x216b030	0x226b030	560	_ZN4Aska26ObjectManagerJobDispatcher10ChangeModeEi	Aska::ObjectManagerJobDispatcher::ChangeMode(int)	object_manager	typed	
+0x216b260	0x226b260	444	_ZN4Aska25ObjectManagerWorkerThread10ChangeModeEi	Aska::ObjectManagerWorkerThread::ChangeMode(int)	object_manager	typed	
+0x216b41c	0x226b41c	148	_ZN4Aska26ObjectManagerJobDispatcher15RetryChangeModeEi	Aska::ObjectManagerJobDispatcher::RetryChangeMode(int)	object_manager	typed	
+0x216b4b0	0x226b4b0	300	_ZN4Aska26ObjectManagerJobDispatcher33RetryChangeModeExceptRenderThreadEi	Aska::ObjectManagerJobDispatcher::RetryChangeModeExceptRenderThread(int)	object_manager	typed	
+0x216b5dc	0x226b5dc	280	_ZN4Aska26ObjectManagerJobDispatcher25Dispatch_ResetSystemFlagsEPNS_16RenderableObjectES2_	Aska::ObjectManagerJobDispatcher::Dispatch_ResetSystemFlags(Aska::RenderableObject*, Aska::RenderableObject*)	object_manager	typed	
+0x216b6f4	0x226b6f4	428	_ZN4Aska26ObjectManagerJobDispatcher25Dispatch_MakePaintingListEii	Aska::ObjectManagerJobDispatcher::Dispatch_MakePaintingList(int, int)	object_manager	typed	
+0x216b8a0	0x226b8a0	284	_ZN4Aska26ObjectManagerJobDispatcher29Dispatch_PreliminarilyPrepareEPPNS_16RenderableObjectEii	Aska::ObjectManagerJobDispatcher::Dispatch_PreliminarilyPrepare(Aska::RenderableObject**, int, int)	object_manager	typed	
+0x216b9bc	0x226b9bc	432	_ZN4Aska26ObjectManagerJobDispatcher28Dispatch_PrepareForRenderingEiPPNS_16RenderableObjectEm	Aska::ObjectManagerJobDispatcher::Dispatch_PrepareForRendering(int, Aska::RenderableObject**, unsigned long)	object_manager	typed	
+0x216bb6c	0x226bb6c	284	_ZN4Aska26ObjectManagerJobDispatcher27Dispatch_ViewFrustumCullingEiii	Aska::ObjectManagerJobDispatcher::Dispatch_ViewFrustumCulling(int, int, int)	object_manager	typed	
+0x216bc88	0x226bc88	164	_ZN4Aska26ObjectManagerJobDispatcher25Dispatch_RenderingDecidedEPPPNS_16RenderableObjectEPtiS5_Pi	Aska::ObjectManagerJobDispatcher::Dispatch_RenderingDecided(Aska::RenderableObject***, unsigned short*, int, unsigned short*, int*)	object_manager	typed	
+0x216bd2c	0x226bd2c	280	_ZN4Aska26ObjectManagerJobDispatcher19Dispatch_DetectLIBLEii	Aska::ObjectManagerJobDispatcher::Dispatch_DetectLIBL(int, int)	object_manager	typed	
+0x216be44	0x226be44	44	_ZN4Aska26ObjectManagerJobDispatcher37SetPreliminarilyPrepareBasicParameterEPNS_12LightManagerEPm	Aska::ObjectManagerJobDispatcher::SetPreliminarilyPrepareBasicParameter(Aska::LightManager*, unsigned long*)	object_manager	typed	
+0x216be70	0x226be70	64	_ZN4Aska26ObjectManagerJobDispatcher36SetPrepareForRenderingBasicParameterEPNS_10RENDERINFOEPmPNS_6CameraE	Aska::ObjectManagerJobDispatcher::SetPrepareForRenderingBasicParameter(Aska::RENDERINFO*, unsigned long*, Aska::Camera*)	object_manager	typed	
+0x216beb0	0x226beb0	60	_ZN4Aska26ObjectManagerJobDispatcher35SetViewFrustumCullingBasicParameterEPNS_6CameraEiiPPNS_16RenderableObjectEPm	Aska::ObjectManagerJobDispatcher::SetViewFrustumCullingBasicParameter(Aska::Camera*, int, int, Aska::RenderableObject**, unsigned long*)	object_manager	typed	
+0x216beec	0x226beec	40	_ZN4Aska26ObjectManagerJobDispatcher27SetDetectLIBLBasicParameterEPPNS_16RenderableObjectE	Aska::ObjectManagerJobDispatcher::SetDetectLIBLBasicParameter(Aska::RenderableObject**)	object_manager	typed	
+0x216bf14	0x226bf14	84	_ZN4Aska26ObjectManagerJobDispatcher5SleepEv	Aska::ObjectManagerJobDispatcher::Sleep()	object_manager	typed	
+0x21d531c	0x22d531c	48	_ZN4Aska12SkinMatricesC1Ev	Aska::SkinMatrices::SkinMatrices()	skinning	typed	
+0x21d534c	0x22d534c	24	_ZN4Aska12SkinMatricesD2Ev	Aska::SkinMatrices::~SkinMatrices()	skinning	typed	
+0x21d5364	0x22d5364	44	_ZN4Aska12SkinMatricesD0Ev	Aska::SkinMatrices::~SkinMatrices()	skinning	typed	
+0x21d5390	0x22d5390	80	_ZNK4Aska12SkinMatrices12GetAllocSizeEmmm	Aska::SkinMatrices::GetAllocSize(unsigned long, unsigned long, unsigned long) const	skinning	typed	
+0x21d53e0	0x22d53e0	104	_ZN4Aska12SkinMatrices6AssignEmmm	Aska::SkinMatrices::Assign(unsigned long, unsigned long, unsigned long)	skinning	typed	
+0x21d5448	0x22d5448	324	_ZN4Aska12SkinMatrices12InitPalette_EPNS_9AofObjectEPNS_10AsfHandlerE	Aska::SkinMatrices::InitPalette_(Aska::AofObject*, Aska::AsfHandler*)	skinning	typed	
+0x21d558c	0x22d558c	212	_ZN4Aska12SkinMatrices14InitPaletteEx_EPNS_9AofObjectEPNS_10AsfHandlerE	Aska::SkinMatrices::InitPaletteEx_(Aska::AofObject*, Aska::AsfHandler*)	skinning	typed	
+0x21d5660	0x22d5660	8	_ZNK4Aska12SkinMatrices25GetTexturePaletteMatricesEv	Aska::SkinMatrices::GetTexturePaletteMatrices() const	skinning	typed	
+0x21d5668	0x22d5668	32	_ZNK4Aska12SkinMatrices13GetBoneObjectEj	Aska::SkinMatrices::GetBoneObject(unsigned int) const	skinning	typed	
+0x21d5688	0x22d5688	892	_ZN4Aska12SkinMatrices16MakeSkinMatricesEv	Aska::SkinMatrices::MakeSkinMatrices()	skinning	typed	
+0x21d5a04	0x22d5a04	1012	_ZN4Aska12SkinMatrices20UpdateSimpleDynamicsEPKNS_3AFF24SimpleDynamicsParametersE	Aska::SkinMatrices::UpdateSimpleDynamics(Aska::AFF::SimpleDynamicsParameters const*)	skinning	typed	
+0x21d5df8	0x22d5df8	64	_ZN4Aska16SkinMatricesBaseC2Ev	Aska::SkinMatricesBase::SkinMatricesBase()	skinning	typed	
+0x21d5e38	0x22d5e38	236	_ZN4Aska16SkinMatricesBaseD2Ev	Aska::SkinMatricesBase::~SkinMatricesBase()	skinning	typed	
+0x21d5f24	0x22d5f24	4	_ZN4Aska16SkinMatricesBaseD0Ev	Aska::SkinMatricesBase::~SkinMatricesBase()	skinning	typed	
+0x21d5f28	0x22d5f28	8	_ZN4Aska16SkinMatricesBase12InitPalette_EPNS_9AofObjectEPNS_10AsfHandlerE	Aska::SkinMatricesBase::InitPalette_(Aska::AofObject*, Aska::AsfHandler*)	skinning	typed	
+0x21d5f30	0x22d5f30	24	_ZN4Aska16SkinMatricesBase11InitPaletteEPNS_9AofObjectEPNS_10AsfHandlerE	Aska::SkinMatricesBase::InitPalette(Aska::AofObject*, Aska::AsfHandler*)	skinning	typed	
+0x21d5f48	0x22d5f48	8	_ZN4Aska16SkinMatricesBase12InitPalette_EPNS_9AofObjectEPNS_22DirectAofPrimitiveBaseE	Aska::SkinMatricesBase::InitPalette_(Aska::AofObject*, Aska::DirectAofPrimitiveBase*)	skinning	typed	
+0x21d5f50	0x22d5f50	24	_ZN4Aska16SkinMatricesBase11InitPaletteEPNS_9AofObjectEPNS_22DirectAofPrimitiveBaseE	Aska::SkinMatricesBase::InitPalette(Aska::AofObject*, Aska::DirectAofPrimitiveBase*)	skinning	typed	
+0x21d5f68	0x22d5f68	4	_ZN4Aska16SkinMatricesBase14InitPaletteEx_EPNS_9AofObjectEPNS_10AsfHandlerE	Aska::SkinMatricesBase::InitPaletteEx_(Aska::AofObject*, Aska::AsfHandler*)	skinning	typed	
+0x21d5f6c	0x22d5f6c	12	_ZN4Aska16SkinMatricesBase13InitPaletteExEPNS_9AofObjectEPNS_10AsfHandlerE	Aska::SkinMatricesBase::InitPaletteEx(Aska::AofObject*, Aska::AsfHandler*)	skinning	typed	
+0x21d5f78	0x22d5f78	4	_ZN4Aska16SkinMatricesBase20UpdateSimpleDynamicsEPKNS_3AFF24SimpleDynamicsParametersE	Aska::SkinMatricesBase::UpdateSimpleDynamics(Aska::AFF::SimpleDynamicsParameters const*)	skinning	typed	
+0x21d5f7c	0x22d5f7c	80	_ZNK4Aska16SkinMatricesBase12GetAllocSizeEmmm	Aska::SkinMatricesBase::GetAllocSize(unsigned long, unsigned long, unsigned long) const	skinning	typed	
+0x21d5fcc	0x22d5fcc	244	_ZN4Aska16SkinMatricesBase6AssignEmmm	Aska::SkinMatricesBase::Assign(unsigned long, unsigned long, unsigned long)	skinning	typed	
+0x21d60c0	0x22d60c0	424	_ZN4Aska16SkinMatricesBase4InitEPNS_9AofObjectE	Aska::SkinMatricesBase::Init(Aska::AofObject*)	skinning	typed	
+0x21d6268	0x22d6268	84	_ZN4Aska16SkinMatricesBase19InitTexturePalette_Ev	Aska::SkinMatricesBase::InitTexturePalette_()	skinning	typed	
+0x21d62bc	0x22d62bc	60	_ZN4Aska16SkinMatricesBase21Init3rdTexturePaletteEv	Aska::SkinMatricesBase::Init3rdTexturePalette()	skinning	typed	
+0x21d62f8	0x22d62f8	256	_ZN4Aska16SkinMatricesBase20AllocPaletteTexture_Ei	Aska::SkinMatricesBase::AllocPaletteTexture_(int)	skinning	typed	
+0x21d63f8	0x22d63f8	28	_ZN4Aska16SkinMatricesBase28AllocUnmanagedPaletteTextureEv	Aska::SkinMatricesBase::AllocUnmanagedPaletteTexture()	skinning	typed	
+0x21d6414	0x22d6414	28	_ZNK4Aska16SkinMatricesBase18GetSkinMatrixCountEi	Aska::SkinMatricesBase::GetSkinMatrixCount(int) const	skinning	typed	
+0x21d6430	0x22d6430	40	_ZNK4Aska16SkinMatricesBase16GetVelocityArrayEi	Aska::SkinMatricesBase::GetVelocityArray(int) const	skinning	typed	
+0x21d6458	0x22d6458	32	_ZNK4Aska16SkinMatricesBase20GetVelocityArrayBackEi	Aska::SkinMatricesBase::GetVelocityArrayBack(int) const	skinning	typed	
+0x21d6478	0x22d6478	500	_ZN4Aska16SkinMatricesBase11KickPaletteEPNS_8Matrix34E	Aska::SkinMatricesBase::KickPalette(Aska::Matrix34*)	skinning	typed	
+0x21d666c	0x22d666c	8	_ZNK4Aska16SkinMatricesBase25GetTexturePaletteMatricesEv	Aska::SkinMatricesBase::GetTexturePaletteMatrices() const	skinning	typed	
+0x21d6674	0x22d6674	8	_ZNK4Aska16SkinMatricesBase13GetBoneObjectEj	Aska::SkinMatricesBase::GetBoneObject(unsigned int) const	skinning	typed	
+0x21d667c	0x22d667c	44	_ZN4Aska18SkinMatricesSimpleC1Ev	Aska::SkinMatricesSimple::SkinMatricesSimple()	skinning	typed	
+0x21d66a8	0x22d66a8	24	_ZN4Aska18SkinMatricesSimpleD2Ev	Aska::SkinMatricesSimple::~SkinMatricesSimple()	skinning	typed	
+0x21d66c0	0x22d66c0	44	_ZN4Aska18SkinMatricesSimpleD0Ev	Aska::SkinMatricesSimple::~SkinMatricesSimple()	skinning	typed	
+0x21d66ec	0x22d66ec	60	_ZNK4Aska18SkinMatricesSimple12GetAllocSizeEmmm	Aska::SkinMatricesSimple::GetAllocSize(unsigned long, unsigned long, unsigned long) const	skinning	typed	
+0x21d6728	0x22d6728	80	_ZN4Aska18SkinMatricesSimple6AssignEmmm	Aska::SkinMatricesSimple::Assign(unsigned long, unsigned long, unsigned long)	skinning	typed	
+0x21d6778	0x22d6778	32	_ZN4Aska18SkinMatricesSimple12InitPalette_EPNS_9AofObjectEPNS_22DirectAofPrimitiveBaseE	Aska::SkinMatricesSimple::InitPalette_(Aska::AofObject*, Aska::DirectAofPrimitiveBase*)	skinning	typed	
+0x21d6798	0x22d6798	268	_ZN4Aska18SkinMatricesSimple16MakeSkinMatricesEv	Aska::SkinMatricesSimple::MakeSkinMatrices()	skinning	typed	
+0x234bbe8	0x244bbe8	196	_ZN4Aska11JointObject10MakeMatrixEv	Aska::JointObject::MakeMatrix()	skinning	typed	
+0x234bcac	0x244bcac	96	_ZNK4Aska11JointObject3GetEmPv	Aska::JointObject::Get(unsigned long, void*) const	skinning	typed	
+0x234bd0c	0x244bd0c	112	_ZN4Aska11JointObject3SetEmPKv	Aska::JointObject::Set(unsigned long, void const*)	skinning	typed	
+0x234bd7c	0x244bd7c	24	_ZN4Aska11JointObjectD0Ev	Aska::JointObject::~JointObject()	skinning	typed	
+0x234bd94	0x244bd94	92	_ZNK4Aska11JointObject10GetClassIDEi	Aska::JointObject::GetClassID(int) const	skinning	typed	

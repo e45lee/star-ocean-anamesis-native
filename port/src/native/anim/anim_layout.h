@@ -31,7 +31,7 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-// The engine bases (render_layout.h: the object hierarchy) and the math values (opaque until math lands).
+// The engine bases (render_layout.h: the object hierarchy) and the math values (math_layout.h, via render's aliases).
 using render::HierarchicalObject;
 using render::IAnimatable;
 using render::MathMatrix;

@@ -18,6 +18,7 @@
 #include <cstdint>
 
 #include "../containers/containers_layout.h"
+#include "../math/math_layout.h"
 #include "../memory/memory_layout.h"
 
 namespace soa::native::render {
@@ -31,17 +32,12 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-// ---- Math value types (opaque here) ---------------------------------------------------------------
-// Aska::Vector / Quaternion / Matrix are the math subsystem's (n-hash-math's math_layout.h: {x, y, z, w},
-// {x, y, z, w} with w the scalar, m[4][4] with the translation in column 3), not on main yet. Until it
-// lands these are opaque values of the guest's size (alignment 4, as there); swap them for
-// `using MathVector = math::Vector;` etc. then.
-struct MathVector { float f[4]; };       // Aska::Vector, 0x10
-struct MathQuaternion { float f[4]; };   // Aska::Quaternion, 0x10
-struct MathMatrix { float f[16]; };      // Aska::Matrix, 0x40
-static_assert(sizeof(MathVector) == 0x10);
-static_assert(sizeof(MathQuaternion) == 0x10);
-static_assert(sizeof(MathMatrix) == 0x40);
+// ---- Math value types: the math subsystem's (math_layout.h: Vector / Quaternion {x, y, z, w}, Matrix
+// m[4][4] row-major with the translation in column 3). The Math* names are the aliases render, scene and
+// anim use.
+using MathVector = math::Vector;          // Aska::Vector, 0x10
+using MathQuaternion = math::Quaternion;  // Aska::Quaternion, 0x10
+using MathMatrix = math::Matrix;          // Aska::Matrix, 0x40
 
 // ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use ------
 inline constexpr u64 kVaddrGlobalObjectManager = 0x2cd0690;        // Aska::Global::m_pObjectManager

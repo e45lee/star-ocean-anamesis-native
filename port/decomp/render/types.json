@@ -4,69 +4,6 @@
  "header": "port/src/native/render/render_layout.h",
  "structs": [
   {
-   "name": "MathVector",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "f",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "float",
-       "size": 4
-      },
-      "count": 4
-     },
-     "size": 16
-    }
-   ],
-   "size": 16,
-   "align": 4
-  },
-  {
-   "name": "MathQuaternion",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "f",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "float",
-       "size": 4
-      },
-      "count": 4
-     },
-     "size": 16
-    }
-   ],
-   "size": 16,
-   "align": 4
-  },
-  {
-   "name": "MathMatrix",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "f",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "float",
-       "size": 4
-      },
-      "count": 16
-     },
-     "size": 64
-    }
-   ],
-   "size": 64,
-   "align": 4
-  },
-  {
    "name": "IAnimatable",
    "union": false,
    "fields": [
@@ -345,8 +282,9 @@
      "offset": 16,
      "name": "m_world",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     },
@@ -354,8 +292,9 @@
      "offset": 80,
      "name": "m_position",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -363,8 +302,9 @@
      "offset": 96,
      "name": "m_posture",
      "type": {
-      "kind": "struct",
-      "name": "MathQuaternion"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
      },
      "size": 16
     },
@@ -372,8 +312,9 @@
      "offset": 112,
      "name": "m_scale",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -381,8 +322,9 @@
      "offset": 128,
      "name": "m_param9",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -390,8 +332,9 @@
      "offset": 144,
      "name": "m_vec90",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -399,8 +342,9 @@
      "offset": 160,
      "name": "m_param10",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -408,8 +352,9 @@
      "offset": 176,
      "name": "m_param11",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -472,7 +417,7 @@
      "name": "m_pWorld",
      "type": {
       "kind": "ptr",
-      "to": "MathMatrix"
+      "to": null
      },
      "size": 8
     },
@@ -677,8 +622,9 @@
      "offset": 304,
      "name": "m_param9Matrix",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     },
@@ -1282,8 +1228,9 @@
      "offset": 624,
      "name": "m_colorRate",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -1291,8 +1238,9 @@
      "offset": 640,
      "name": "m_colorOffset",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -1314,8 +1262,9 @@
      "offset": 720,
      "name": "m_boundingSphere",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -1323,8 +1272,9 @@
      "offset": 736,
      "name": "unk_2e0",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },

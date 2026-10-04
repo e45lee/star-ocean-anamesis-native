@@ -31,7 +31,7 @@ struct PrivateRenderable {
     RenderableObject* get() { return reinterpret_cast<RenderableObject*>(storage); }
 };
 
-bool vec_eq(const MathVector& a, const float (&b)[4]) { return std::memcmp(a.f, b, sizeof b) == 0; }
+bool vec_eq(const MathVector& a, const float (&b)[4]) { return std::memcmp(&a, b, sizeof b) == 0; }
 
 }  // namespace
 
@@ -133,7 +133,7 @@ NATIVE_TEST("render/layout-renderable-object") {
     t.expect_eq(o->m_multiDraw, (u32)0, "UpdateMultiDrawVars -> m_multiDraw = 0");
     t.expect_eq(vcall(o, 41), (u64)&o->m_boundingSphere, "VirtualBoundingSphere = &m_boundingSphere");
     const float* def = at_vaddr<float>(kVaddrDefaultSphere);
-    t.expect_eq(std::memcmp(o->m_boundingSphere.f, def, 16), 0, "bounding sphere = m_vDefaultSphere (ComputeBoundingSphere)");
+    t.expect_eq(std::memcmp(&o->m_boundingSphere, def, 16), 0, "bounding sphere = m_vDefaultSphere (ComputeBoundingSphere)");
 
     // The scene graph: b under a, then detached.
     HierarchicalObjectContainer& bh = b->base.m_hoc;

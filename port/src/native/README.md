@@ -66,7 +66,10 @@ shared harness in `live_check.{h,cpp}`; the register file it records calls on is
 Registered families: `sync`, `input`, `resource` (shadow checks, `common/shadow_check.h`), `lib_sqlite` (a shadow run: the game's databases also opened in the guest's
 SQLite and every call repeated there; `lib_sqlite/README.md`), and the lockstep families of the other
 host libraries, `lib_vorbis`, `lib_zstd`, `lib_zlib`, `lib_jpeg`, `lib_crypto` (`common/lockstep.h`: the
-same shadow run, shared; each subsystem's README). The offline build's families were
+same shadow run, shared; each subsystem's README), and `render` (a run-both family; its GL-issuing natives
+are checked by `gl_run_both`, `render/render_check.h`: the guest original and the native each run with the
+thread's GL calls recorded by `glh::Recorder` on a saved copy of the memory they write, and the call lists and
+the memory are compared). The offline build's families were
 deleted with its natives; a rebuilt family should use the harness.
 A record / replay family (hand-written code whose outgoing calls go through `Family::gcall` /
 `gcall_n` / `gcall_sret` / `memop` / `live::ACall`) is a static `live::Family("tag", every,

@@ -48,8 +48,17 @@ and driven by its methods, or the running game's objects read at a frame boundar
 
 ## Natives
 
+Bound: `soa --list-native | grep render:`. Live check: `soa --live-check render[:every=N][:budget=N][:only=..][:out=FILE]`
+(default every=1; [`render_check.h`](render_check.h): a run-both family, the guest original on private memory).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `ShaderComprssionTree` ctor / `InsertNode` / `DeleteNode` | `render_shader_compression.cpp` | `render/shader-compression-tree` (guest vs native tree, every word, after each of 18,000 calls) | inside CompressLZwordDic's |
+| `ShaderCompression::CompressLZwordDic` | `render_shader_compression.cpp` | `render/shader-compression-edge` (sizes 0..0x40, odd, negative, long matches, none), `render/shader-compression-cache` (all 1,523 entries of the shipped cache, byte for byte) | the original into a scratch buffer: size and bytes |
+| `RenderContextServer::GetRenderBatch` / `GetRenderBatchLite` / `GetLightContext` | `render_context_server.cpp` | `render/context-server-alloc` | the original on a copy taken before the native (race: the counter moved by more than n) |
+| `RenderThread::AddRenderQueue` and the other `Add*` (`ChangeRenderTarget`, `ReloadZCull`, `EnableGnmOcclusionQuery`, `ExposureScale`, `EnableFastZ`, `FinishRenderTarget`, `TemporaryResolve`, `BeginRender`, `EndRender`, `CallBack`, `DataTransfer`, `OcclusionQueryBegin` / `End`), `ExecutePendingTileRegionOperationByAddress`, `ReqSwap` / `ReqDeviceInit` / `ReqDeviceReset` / `ReqExit` / `ReqGpuWait` | `render_thread.cpp` (bound in `render_thread_check.cpp`) | `render/thread-requests` (20,000 random requests, a full ring, the consumer simulated) | shadow replay: the original on a private RenderThread loaded with the state the native saw under m_queueLock; the ring slot (the guest-defined bytes), indices, status, flags, events |
+| `RenderThread::GetStatus` (+ the wait for a request) | `render_thread.cpp` | `render/thread-requests` | getter (the original on the real object; race on a rerun) |
+| `RenderThread::ReqCustomCommandBlock` / `ReqDownloadResourceBlock` | `render_thread.cpp` | `render/thread-block-call` (a host thread serving the call) | - (a replay would run the call twice) |
 
 ## Dependencies
 
@@ -94,16 +103,28 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   the header, CompressLZwordDic of the rest, the entry's flags = 3). So, unlike what
   docs/render/hair-shader.md's "no shader is generated at runtime" suggests, the client does
   shader-cache work at run time: no GLSL is generated, but every compressed entry is recompressed
-  (an O(n * tree depth) LZSS encoder over 16-bit words, 0x50058-byte tree per call). A native
-  CompressLZwordDic (or skipping the recompression where the result is never read again: check
-  AddToL1Cache / SearchOrCompile) is the single biggest render win.
+  (an O(n * tree depth) LZSS encoder over 16-bit words, 0x50058-byte tree per call; each call first
+  inserts the 4,079 dictionary positions). Measured with the live check: about 1,540 calls in a
+  boot -> battle -> gacha session (one per compressed entry, 1,523 in the shipped cache). Now native (bit-exact: `render/shader-compression-*`,
+  the live check), as a port and not a skip: the recompressed entries are stored back.
 - **Atomic bump allocators.** RenderContextServer::GetRenderBatch / GetRenderBatchLite / GetLightContext
   are LDXR/STXR adds on a shared counter (1,376 / 494 self samples: contention among the
   ObjectManager worker threads); the pools are reset per frame by ResetServer.
 - **The render queue.** RenderThread::AddRenderQueue writes a 0x28-byte RENDER_REQUEST without a lock
   (and bumps RenderableObject::m_renderQueued atomically); the other Add* take m_queueLock, a
   FastCriticalSection that spins 0x1ff times before the semaphore. GetStatus (831 self) is the render
-  thread polling m_status under that lock.
+  thread polling m_status under that lock: Handler loops `while (GetStatus() == 2) Render(...)`, and
+  Render returns at once when the ring is empty (m_read + 1 == m_write), so between two requests of a
+  frame the thread spun. The native GetStatus returns the same status but, when it is 2 and there is
+  nothing to do (the ring empty, no block call), first waits for the next request: every producer is a
+  native that bumps a sequence number and wakes it (a host condition variable), with a 2 ms timeout as
+  the safety net. The ring stays the only state; the wait never changes what Handler sees.
+- **Request entries carry stack garbage.** Add* build the entry in a stack temporary and copy all 0x28
+  bytes: the bytes a request type doesn't define (BeginRender's arguments, EndRender's second and third,
+  the floats' upper halves of ExposureScale) are whatever the stack held. The natives write zeros there;
+  Render reads only the defined ones (render_thread_check.cpp's mask table).
+- **AddRenderQueue's recheck.** After writing the entry it advances m_write only if m_read != m_write
+  still, and returns 1 either way (the reader stops one short of m_write, so it can't fail).
 - **RenderState is a command list**, replayed by Apply (769 self) through RenderDeviceGL setters that
   check the calling thread's OglStateSet0 (a pthread key per thread) before calling GL.
 - **GetTextureStateCaches** (479 self) looks a GL texture name up in an Aska::THashMap with 64-bit

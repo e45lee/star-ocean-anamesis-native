@@ -3273,86 +3273,67 @@
    "fields": [
     {
      "offset": 0,
-     "name": "vtable",
+     "name": "base",
      "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_thread",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 16
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Thread",
+      "size": 16
      },
      "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
     },
     {
      "offset": 24,
      "name": "m_wake",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
     {
      "offset": 128,
-     "name": "m_event80",
+     "name": "m_resetDone",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
     {
      "offset": 232,
-     "name": "m_cs",
+     "name": "m_blockCallCs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 40
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CriticalSection",
+      "size": 40
      },
      "size": 40
     },
     {
      "offset": 272,
-     "name": "m_event110",
+     "name": "m_blockCallDone",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
     {
      "offset": 376,
-     "name": "unk_178",
+     "name": "m_blockCall",
      "type": {
       "kind": "int",
       "size": 8,
@@ -3362,21 +3343,21 @@
     },
     {
      "offset": 384,
-     "name": "unk_180",
+     "name": "m_blockCallArg",
      "type": {
       "kind": "array",
       "of": {
        "kind": "int",
-       "size": 1,
+       "size": 8,
        "signed": false
       },
-      "count": 16
+      "count": 2
      },
      "size": 16
     },
     {
      "offset": 400,
-     "name": "unk_190",
+     "name": "m_endRenderCount",
      "type": {
       "kind": "int",
       "size": 2,
@@ -3429,7 +3410,7 @@
     },
     {
      "offset": 328145,
-     "name": "unk_501d1",
+     "name": "m_resetRequested",
      "type": {
       "kind": "int",
       "size": 1,
@@ -3439,7 +3420,7 @@
     },
     {
      "offset": 328146,
-     "name": "unk_501d2",
+     "name": "m_gpuWaitRequested",
      "type": {
       "kind": "int",
       "size": 1,
@@ -3459,7 +3440,7 @@
     },
     {
      "offset": 328148,
-     "name": "unk_501d4",
+     "name": "m_exitRequested",
      "type": {
       "kind": "int",
       "size": 1,
@@ -3469,7 +3450,7 @@
     },
     {
      "offset": 328149,
-     "name": "unk_501d5",
+     "name": "m_fastZ",
      "type": {
       "kind": "int",
       "size": 1,
@@ -3522,13 +3503,9 @@
      "offset": 328176,
      "name": "m_queueLock",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -3554,15 +3531,14 @@
     },
     {
      "offset": 328336,
-     "name": "unk_50290",
+     "name": "m_exposureScale",
      "type": {
       "kind": "array",
       "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
+       "kind": "float",
+       "size": 4
       },
-      "count": 8
+      "count": 2
      },
      "size": 8
     }
@@ -4770,7 +4746,24 @@
     }
    ],
    "size": 24,
-   "align": 4
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x22812c4",
+     "symbol": "_ZN4Aska20StateCacheThreadSafe14ThreadDestructEv",
+     "name": "ThreadDestruct"
+    },
+    {
+     "ghidra": "0x2285e8c",
+     "symbol": "_ZN4Aska20StateCacheThreadSafe25AllocateAndStoreStateSet0Ev",
+     "name": "AllocateAndStoreStateSet0"
+    },
+    {
+     "ghidra": "0x2285f9c",
+     "symbol": "_ZN4Aska20StateCacheThreadSafe11SetDefaultsEPNS_18ASKA_OGL_STATESET0E",
+     "name": "SetDefaults"
+    }
+   ]
   },
   {
    "name": "DeviceTextureSlot",
@@ -5252,6 +5245,16 @@
      "ghidra": "0x2288158",
      "symbol": "_ZN4Aska16RenderDeviceData21UpdateVertexAttributeEPNS_18ASKA_OGL_STATESET0E",
      "name": "UpdateVertexAttribute"
+    },
+    {
+     "ghidra": "0x228861c",
+     "symbol": "_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_BlendingEPNS_18ASKA_OGL_STATESET0E",
+     "name": "LastMinuteDrawCommands_Blending"
+    },
+    {
+     "ghidra": "0x22887a0",
+     "symbol": "_ZN4Aska16RenderDeviceData28LastMinuteDrawCommands_DepthEPNS_18ASKA_OGL_STATESET0E",
+     "name": "LastMinuteDrawCommands_Depth"
     },
     {
      "ghidra": "0x228887c",

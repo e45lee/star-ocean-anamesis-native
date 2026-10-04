@@ -18,10 +18,10 @@
 #include <cstdint>
 
 #include "../containers/containers_layout.h"
-#include "../containers/containers_layout.h"
 #include "../kernel/kernel_layout.h"
 #include "../math/math_layout.h"
 #include "../memory/memory_layout.h"
+#include "../sync/sync_layout.h"
 
 namespace soa::native::render {
 
@@ -758,16 +758,34 @@ class Texture;  // Aska::Texture (opaque)
 // Aska::RenderThread: the thread that runs the GL device; the game side (ObjectManager::OnPostPaint,
 // TraversePaintingList) fills its queue with Add*, the thread drains it in Render(int&, bool&). Guest
 // size 0x50298 (ObjectManager::ObjectManager: operator new(0x50298)); layout from RenderThread(),
-// ~RenderThread, GetStatus, DeviceReset, AddRenderQueue, AddBeginRender (port/decomp/render/
-// render_thread.c). The sync members (Aska::Thread base, Event, CriticalSection, FastCriticalSection,
-// Semaphore) are the sync subsystem's: opaque bytes of their sizes here (n-sync: Event 0x68,
-// CriticalSection 0x28, FastCriticalSection 0x90 with its lock word at +0x38 and waiters at +0x3c).
-// AddRenderQueue writes without m_queueLock (one producer at a time: the painting traversal) and bumps
-// the object's RenderableObject::m_renderQueued atomically; the other Add* and GetStatus take
-// m_queueLock (a spinning FastCriticalSection: 0x1ff tries, then the semaphore) - the hot spots.
+// ~RenderThread, GetStatus, DeviceReset, the Add* / Req*, Handler and Render (port/decomp/render/
+// render_thread.c). The sync members are sync's classes (sync_layout.h), in place.
+// The protocol: producers write the entry at m_queue.m_write and advance it (refused when m_write ==
+// m_read); Render consumes from m_read + 1 until it reaches m_write. AddRenderQueue writes without
+// m_queueLock (one producer at a time: the painting traversal) and bumps the object's
+// RenderableObject::m_renderQueued atomically; the other Add* / Req* take m_queueLock (a
+// FastCriticalSection) and, when m_status isn't 2 (rendering), set it to 2 and Set m_wake. The thread
+// (Handler) loops GetStatus -> Render while the status is 2, so with an empty queue it spins on
+// GetStatus until the next request; with status 0 it waits on m_wake (unless m_endRenderCount says a
+// frame is still pending: then status 2 again). Render's swap entry (type 10) sets the status to 0.
+// Request types (RENDER_REQUEST::m_type; Render's switch): 0 AddRenderQueue, 1 AddBeginRender,
+// 2 AddChangeRenderTarget, 3 AddFinishRenderTarget, 4 AddTemporaryResolve, 6 AddEndRender, 7 AddCallBack,
+// 8 AddOcclusionQueryBegin, 9 AddOcclusionQueryEnd, 10 ReqSwap, 0xb AddReloadZCull, 0xc AddDataTransfer,
+// 0xe ExecutePendingTileRegionOperationByAddress, 0x10 AddExposureScale, 0x11 AddEnableFastZ,
+// 0x13 ReqDeviceInit, 0x14 AddEnableGnmOcclusionQuery.
 // vtable (_ZTVN4Aska12RenderThreadE, 3 slots): 0 D1, 1 D0, 2 Handler().
 class RenderThread {
 public:
+    // request types (above)
+    enum : u8 {
+        kReqRenderQueue = 0, kReqBeginRender = 1, kReqChangeRenderTarget = 2, kReqFinishRenderTarget = 3,
+        kReqTemporaryResolve = 4, kReqEndRender = 6, kReqCallBack = 7, kReqOcclusionQueryBegin = 8,
+        kReqOcclusionQueryEnd = 9, kReqSwap = 10, kReqReloadZCull = 0xb, kReqDataTransfer = 0xc,
+        kReqTileRegion = 0xe, kReqExposureScale = 0x10, kReqEnableFastZ = 0x11, kReqDeviceInit = 0x13,
+        kReqGnmOcclusionQuery = 0x14,
+    };
+    static constexpr u8 kStatusIdle = 0, kStatusRendering = 2;
+
     void Ctor();                          // RenderThread()  _ZN4Aska12RenderThreadC2Ev (starts the thread)
     void DtorBase();
     void DtorDelete();
@@ -796,7 +814,7 @@ public:
     bool AddEndRender(void* notify);      // Aska::INotify*
     bool AddCallBack(void (*fn)(u64, u64), u64 a, u64 b);
     void ReqCustomCommandBlock(void (*fn)(u64, u64), u64 a, u64 b);
-    void ReqDownloadResourceBlock(void* resource);   // Aska::GpuResource*
+    bool ReqDownloadResourceBlock(void* resource);   // Aska::GpuResource*
     bool AddDataTransfer(void* dst, void* src, u32 size);
     void ExecutePendingTileRegionOperationByAddress(void* p);
     bool AddOcclusionQueryBegin(u32* result);
@@ -811,46 +829,59 @@ public:
     static void FinishRenderCallBack(u64 arg);
     static void RenderThreadCallBack(u64 arg);
 
-    const void* vtable;                 // 0x00000: _ZTVN4Aska12RenderThreadE + 0x10 (Aska::Thread's first word)
-    u8 m_thread[0x10];                  // 0x00008: the rest of the Aska::Thread base (sync)
-    u8 m_wake[0x68];                    // 0x00018: Aska::Event (AddBeginRender sets it)
-    u8 m_event80[0x68];                 // 0x00080: Aska::Event (DeviceReset sets it)
-    u8 m_cs[0x28];                      // 0x000e8: Aska::CriticalSection
-    u8 m_event110[0x68];                // 0x00110: Aska::Event
-    u64 unk_178;                        // 0x00178: 0 at construction
-    u8 unk_180[0x10];                   // 0x00180
-    u16 unk_190;                        // 0x00190: 0 at construction
-    u8 m_status;                        // 0x00192: GetStatus(); 2 after AddBeginRender
+    // The natives' shared steps (render_thread.cpp, not guest symbols): a request appended (false when
+    // the ring is full) with the idle thread's wakeup, m_queueLock held / taken; a Req* flag set under
+    // the lock with the wakeup; the ring as Render sees it; GetStatus's wait for the next request.
+    bool PushLocked(u8 type, u64 a0, u64 a1, u64 a2);
+    bool Push(u8 type, u64 a0, u64 a1, u64 a2);
+    void RequestFlag(u8 RenderThread::*flag);
+    bool QueueEmpty() const;              // Render would return at once (m_read + 1 == m_write)
+    void WaitForRequest() const;
+
+    sync::Thread base;                  // 0x00000: Aska::Thread (vtable _ZTVN4Aska12RenderThreadE + 0x10, the pthread)
+    u64 unk_10;                         // 0x00010
+    sync::Event m_wake;                 // 0x00018: Set by a request that finds the thread idle (status != 2)
+    sync::Event m_resetDone;            // 0x00080: DeviceReset / Render's swap Set it, ReqDeviceReset resets it, WaitDeviceReset waits
+    sync::CriticalSection m_blockCallCs;   // 0x000e8: one ReqCustomCommandBlock / ReqDownloadResourceBlock at a time
+    sync::Event m_blockCallDone;        // 0x00110: the thread Sets it after running m_blockCall
+    u64 m_blockCall;                    // 0x00178: void (*)(u64, u64): run by the thread (Handler / Render), then cleared
+    u64 m_blockCallArg[2];              // 0x00180
+    u16 m_endRenderCount;               // 0x00190: AddEndRender adds one (under the lock); Handler re-enters status 2 while it's not 0
+    u8 m_status;                        // 0x00192: GetStatus(); 2 rendering, 0 idle
     u8 unk_193[5];                      // 0x00193
     RenderRequestQueue m_queue;         // 0x00198
     u8 m_initialized;                   // 0x501d0: Handler_Init
-    u8 unk_501d1;                       // 0x501d1: 0 at construction; DeviceReset clears it
-    u8 unk_501d2;                       // 0x501d2
+    u8 m_resetRequested;                // 0x501d1: ReqDeviceReset sets it; DeviceReset / the swap clear it (WaitDeviceReset waits while set)
+    u8 m_gpuWaitRequested;              // 0x501d2: ReqGpuWait sets it; Handler's idle path clears it
     u8 m_needVSyncInit;                 // 0x501d3: 1 at construction; DeviceReset makes the context current, VSync::Initialize, clears it
-    u8 unk_501d4;                       // 0x501d4: 0 at construction (u16 store with 0x501d3)
-    u8 unk_501d5;                       // 0x501d5
+    u8 m_exitRequested;                 // 0x501d4: ReqExit sets it; Handler's idle path tears the device down and exits the thread
+    u8 m_fastZ;                         // 0x501d5: EnableFastZ / the 0x11 request
     u8 unk_501d6[2];                    // 0x501d6
     void* m_finishCallbackThread;       // 0x501d8: Aska::RenderFinishCallbackThread (0x2040 bytes)
     void* m_callbackThread;             // 0x501e0: Aska::RenderThreadCallBackThread (0x3088 bytes)
     Texture* m_blankTexture;            // 0x501e8: a 1x1 texture the constructor allocates and clears
-    u8 m_queueLock[0x90];               // 0x501f0: Aska::FastCriticalSection (lock word 0x50228, waiters 0x5022c, semaphore 0x50268)
+    sync::FastCriticalSection m_queueLock;  // 0x501f0: the Add* / Req* / GetStatus lock (word 0x50228, waiters 0x5022c, semaphore 0x50268)
     u64 unk_50280;                      // 0x50280: 0 at construction
     u64 unk_50288;                      // 0x50288: 0 at construction
-    u8 unk_50290[8];                    // 0x50290
+    float m_exposureScale[2];           // 0x50290: SetExposureScale / the 0x10 request
 };
 static_assert(offsetof(RenderThread, m_wake) == 0x18);
-static_assert(offsetof(RenderThread, m_event80) == 0x80);
-static_assert(offsetof(RenderThread, m_cs) == 0xe8);
-static_assert(offsetof(RenderThread, m_event110) == 0x110);
+static_assert(offsetof(RenderThread, m_resetDone) == 0x80);
+static_assert(offsetof(RenderThread, m_blockCallCs) == 0xe8);
+static_assert(offsetof(RenderThread, m_blockCallDone) == 0x110);
+static_assert(offsetof(RenderThread, m_blockCall) == 0x178);
+static_assert(offsetof(RenderThread, m_endRenderCount) == 0x190);
 static_assert(offsetof(RenderThread, m_status) == 0x192);
 static_assert(offsetof(RenderThread, m_queue) == 0x198);
 static_assert(offsetof(RenderThread, m_initialized) == 0x501d0);
 static_assert(offsetof(RenderThread, m_needVSyncInit) == 0x501d3);
+static_assert(offsetof(RenderThread, m_exitRequested) == 0x501d4);
 static_assert(offsetof(RenderThread, m_finishCallbackThread) == 0x501d8);
 static_assert(offsetof(RenderThread, m_callbackThread) == 0x501e0);
 static_assert(offsetof(RenderThread, m_blankTexture) == 0x501e8);
 static_assert(offsetof(RenderThread, m_queueLock) == 0x501f0);
 static_assert(offsetof(RenderThread, unk_50280) == 0x50280);
+static_assert(offsetof(RenderThread, m_exposureScale) == 0x50290);
 static_assert(sizeof(RenderThread) == 0x50298);
 
 // Aska::RenderState: a recorded list of render-state commands, replayed on the device by Apply (769 self

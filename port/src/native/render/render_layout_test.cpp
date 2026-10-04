@@ -237,7 +237,7 @@ NATIVE_TEST("render/layout-render-thread") {
             return false;  // stay armed for the next call
         }
         t.expect_eq(rt, first.rt, "one RenderThread");
-        t.expect_eq(rt->vtable, vtable_of(t, "_ZTVN4Aska12RenderThreadE"), "RenderThread vtable");
+        t.expect_eq(rt->base.vtable, vtable_of(t, "_ZTVN4Aska12RenderThreadE"), "RenderThread vtable");
         t.expect_eq(vslot(rt, 2), t.sym("_ZN4Aska12RenderThread7HandlerEv"), "slot 2 = Handler");
         t.expect_eq(rt->m_queue.vtable, vtable_of(t, "_ZTVN4Aska6TQueueINS_14RENDER_REQUESTELi8192EEE"), "m_queue's vtable (0x198)");
         t.expect_eq(has_vtable(t, rt->m_finishCallbackThread, "_ZTVN4Aska26RenderFinishCallbackThreadE"), true, "m_finishCallbackThread");

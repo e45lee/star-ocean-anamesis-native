@@ -419,8 +419,10 @@ def write_md(gl: Global, files: dict, story: list, path: str, jp_play: set = fro
       "as the Japanese voice, see [Method](#method)).")
     w(f"- **Global-only names: the {len(derived)} `-en` companions**, the English dub. The master doesn't name them; "
       "the client builds them from the Japanese pack's name when the voice language is English. Which ones Global "
-      "shipped is inferred from the characters whose profile names an English voice actor. None is in hand: the JP "
-      "download has no `-en` file.")
+      "shipped is inferred from the characters whose profile names an English voice actor. "
+      f"{sum(1 for f in derived if not any(gl.persons[u].released for u in f.users if u in gl.persons))} of them "
+      "belong only to variants scheduled after the end of service (recorded, probably never shipped). None is in "
+      "hand: the JP download has no `-en` file.")
     w(f"- **In hand: {hand} of {len(fs)}** ({sum(bool(f.in_hand) for f in master)} of the {len(master)} master-named "
       f"files, in the 3.7.0 download or APK). Missing master-named files: "
       + (", ".join(f"`{f.path}`" for f in master if not f.in_hand) or "none") + ".")
@@ -579,9 +581,10 @@ def write_md(gl: Global, files: dict, story: list, path: str, jp_play: set = fro
       "English version's voice-actor name goes here\").")
     w("")
     w("Assumption (d): the Global 1.5.0 client isn't in hand, so the list assumes it had the same rule and shipped "
-      "an `-en` pack for each battle and gacha pack (and the skill SE pack) of a person whose profile names an "
-      "English voice actor, and none for packs used only by persons without one (unreleased characters, enemies, "
-      "NPCs) or for the event-menu packs, whose speakers the master doesn't say.")
+      "an `-en` pack for every `Voice_*.spk` (battle, gacha, the skill SE pack) of a playable person whose profile "
+      "names an English voice actor, released or not, and none for packs used only by persons with no English "
+      "voice actor (enemies, NPCs, persons whose profile holds the Japanese placeholder) or by no playable person "
+      "(the event-menu packs, whose speakers the master doesn't say).")
     w("")
     w("**JP same-name and in hand.** \"JP\" is yes when the JP 3.7.0 master names the path under the same column "
       "rules (plus `menu_voice_*`, `home_voice_*`, `master_voice_switch`, `master_menu_common_voice`, "

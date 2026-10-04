@@ -56,7 +56,7 @@ Framework::CSTLAllocator -> CAssignedMemoryManagerForSTLAllocator::Allocate / Fr
 ## RE notes
 
 - **The heap (Aska::MemoryManager).** First fit over 64 KiB superblocks. InitHeap(size): one operator
-  new[](size + 0x10): count = (size - 0x52) / 0x10028 superblocks, then the srbk table
+  new[](size + 0x10): count = (size + 0xffbe) / 0x10028 superblocks, then the srbk table
   (count * 0x28) after them (m_srbks = m_heap + m_heapSize). Each run of superblocks starts with a
   0x40-byte sentinel block (m_used = 1) heading its free list; blocks are 0x40 header + data, sizes
   16-aligned, Malloc(n) takes (n + 0x4f) & ~0xf and splits unless under 0x50 remains. The first

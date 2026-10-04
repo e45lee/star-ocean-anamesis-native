@@ -202,7 +202,7 @@ public:
     u8 m_allocHigh;              // 0x08: 1: Malloc allocates from the top (MallocHigh)
     u8 unk_09[7];                // 0x09
     MemorySrbk* m_srbks;         // 0x10: the superblock table (m_srbkCount entries)
-    u32 m_srbkCount;             // 0x18: superblocks in the heap ((size - 0x52) / 0x10028 per InitHeap)
+    u32 m_srbkCount;             // 0x18: superblocks in the heap ((size + 0xffbe) / 0x10028 per InitHeap(size))
     u8 unk_1c[4];                // 0x1c
     u8* m_heap;                  // 0x20: superblock 0 (nullptr: no heap)
     u64 m_heapSize;              // 0x28: the bytes before the superblock table (m_srbks = m_heap + m_heapSize):

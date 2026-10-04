@@ -84,7 +84,7 @@ original runs with the property natives recording instead of deserializing); `Ad
 copy of the chain. Nested natives run unchecked inside a check, so each layer is checked with `only=`.
 Results (2026-10-04, the four flows of port/REBUILD-QUEUE.md, `every=1`, each PASS, 0 mismatches, 0 races,
 0 skipped): the whole family (only the outermost natives checked): 12.4M checks; `only=` the properties,
-CryptString, AddProperty and CParameterBase: 20.5M; `only=CParameterParser`: 11.1M (`GetValue<unsigned>` 4.9M, `GetParserValue` and `GetValue<std::string>` 1.9M each (inside the elements' Deserialize: through the key-hash cache), `GetValue<float>` 773K, `<int>` 552K, `<bool>` 482K, `GetValueUInt(key)` 319K, `GetValueString(key)` 181K, `<unsigned char>` 22K, `<unsigned long>` 14K). Not called in the flows: the other by-key getters, `GetValue(AValue const*)`, `Find`, the by-hash typed wrappers (the tests cover them).
+CryptString, AddProperty and CParameterBase: 20.5M; `only=CParameterParser`: 11.1M (`GetValue<unsigned>` 4.9M, `GetParserValue` and `GetValue<std::string>` 1.9M each (inside the elements' Deserialize: through the key-hash cache), `GetValue<float>` 773K, `<int>` 552K, `<bool>` 482K, `GetValueUInt(key)` 319K, `GetValueString(key)` 181K, `<unsigned char>` 22K, `<unsigned long>` 14K). Windows (soa.exe, the battle-gacha session, `every=4`): 2.0M checks, 0 mismatches. Not called in the flows: the other by-key getters, `GetValue(AValue const*)`, `Find`, the by-hash typed wrappers (the tests cover them).
 
 ## Tests
 
@@ -100,6 +100,18 @@ copy with the guest's code and one with the natives, comparing every property. T
 directory of recordings: 479,878 records with the sample, 0 mismatches, 29 s; no recorded list was self-linked). [`testdata/flows.corpus`](testdata/flows.corpus) is the committed
 sample: 2 records per class and property-list shape per flow (`tools/params_corpus_sample.py`; 341 records,
 66 classes, 1.3 MB; the "Player" parameter left out).
+
+## Measurements
+
+Guest self time (`SOA_PROFILE` at 1000 Hz, `port/scripts/rebuild_queue.py`, the four flows of
+port/REBUILD-QUEUE.md, 2026-10-04): before (main a1d2854) params was 12,594 of 313,337 busy samples, **4.0%**
+(`CParameterElementBase::Deserialize` 5,744, `GetParserValue` 5,599, CryptString 457, the value
+Deserializes 308, string Deserializes 276, AddProperty 260; plus ~1,700 samples of the native `CHash32` it
+called); after (this branch merged with main), **98 samples, 0.03%** (what is left: the concrete
+elements' constructors / Initialize, typed only). The natives in its place take ~1,100 samples
+(`ElementBase::Deserialize` 726, `pGetRoot` 98, CryptString ~130, AddProperty 69): about a tenth of the
+guest time. Busy samples of the four flows 313,337 -> 301,961 (main also gained other natives between the
+runs; fps not measured: the sessions pace the battle).
 
 ## Dependencies
 

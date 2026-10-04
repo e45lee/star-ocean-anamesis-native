@@ -34,6 +34,7 @@ void register_growth();        // api/growth/growth.cpp
 void register_home();          // api/player/home_footer.cpp: the home footer flags
 void register_social();        // api/social/social.cpp: the follow menu's lists (Blacklist, GetRecentlyPlayedList, SearchPlayer)
 void register_items();         // api/items/items.cpp
+void register_new_flags();     // api/items/new_flags.cpp: the NEW badges (ClearNewCharacter, ClearNewItem, ClearNewStackItem)
 void register_notice();        // api/player/notice.cpp
 void register_shop();          // api/shop/shop.cpp
 void register_sphere211();     // api/sphere211/sphere211.cpp

@@ -40,6 +40,7 @@ One package for the port (`soa`, in-process server or `--server`) and the emulat
 | `battle`, `party`, `favor`, `missions` | `battle_session.sh`, `party_session.sh`, `restore_favor_session.sh`, `restore_missions.sh` | port-inproc (the `mission:` / `phase:0xf` shortcut) |
 | `gacha` | `gacha_session.sh` | port-inproc, port-server, emu |
 | `campaign`, `rental`, `events`, `tower`, `home`, `growth`, `deepspace`, `sphere211`, `sphere211-continue`, `episode-movie` | `<name>_session.sh` | port-inproc (the phase lines, the in-process server's lines) |
+| `badges` | `badges_session.sh` | port-inproc, port-server: a 10-draw, the character list's NEW badges, 戻る -> ClearNewCharacter, cleared, and still cleared after a re-login |
 | `tutorial`, `entry` | `tutorial_session.sh`, `newplayer_session.sh` | port-inproc |
 | `seeded`, `newplayer` | `emulator/scripts/emulator_session.sh [--new-player]` | emu, port-server, port-inproc |
 | `summer-demo` | `emulator/scripts/summer_demo.sh` | emu, port-server, port-inproc |

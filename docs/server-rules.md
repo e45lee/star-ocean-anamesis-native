@@ -232,6 +232,13 @@ From the register before R20 (with the area and how to check):
 ## Entry flow: login, new player, tutorial
 The APIs the 3.7.0 login and tutorial code issues; the client runs that code unchanged. Code: `server/src/api/entry/entry.cpp`.
 
+<a id="client-reports"></a>
+### The client's reports: `SendErrorLog`, `CbtCertification`
+Code: `server/src/api/entry/entry.cpp`.
+- **`SendErrorLog(text)`** (the coin shop's and the direct item shop's payment error report, `CCoinShop::SendErrorLog` / `CDirectItemShop::SendErrorLog`): logged as a warning, `SendErrorLog: <text>`; nothing stored; answered `{Time}`. **(b)** `OnSendErrorLogRes` (@014cd0e0) reads nothing back; **(d)** the log is the only place a local server can show it.
+- **`CbtCertification(code)`** (the closed beta's certification code, `CClosedBetaDialog::ToRelease`): any code is accepted, nothing stored; answered with the player state. **(a)** `master_global.cbt_end` 2016/11/28: the closed beta is over; **(d)** that any code passes. Before, the in-process route answered it with the canned `update_home.msgp`.
+- Tests: the `profile` replay corpus (38, 39).
+
 <a id="session-and-login"></a>
 ### Session and login
 - **`LoggedIn`** is false until a `Login` / `SimpleLogin` succeeds. **(b)**
@@ -1106,6 +1113,7 @@ From the growth and economy modules (items, shops, login bonus and achievements 
 
 | Rule | Label |
 |---|---|
+| NEW badges ([NEW badges](#new-badges)): what is gained from now on is new until viewed; the seed's and an older state's characters and items are not; a stack item is new only when its first stack arrives | (d) |
 | Big success: `*_up_rate` is a percent chance, × `*_bonus_rate` | (d) |
 | FOL campaigns (types 2, 4, 5) and big-success campaigns (6, 7) not applied | (d) |
 | Seed FOL per seed | (d) |
@@ -1147,6 +1155,22 @@ Code: `server/src/api/items/` (compose, grade up, sell, lock, heal items; gear).
 - **Sell:** price = `round(master_item.sale_fol × master_item_sale_rate[level].sale_rate)` for weapons (item kind 1; `sale_rate` 1.0 at level 1, +0.1 per level), else `sale_fol` (b: `CParameterUtility::tItemData::SellingPrice`). Stack items: `sale_fol` × count (a).
 - **Material compose:** `master_material_compose`: up to five (item, num) → `result_item_id` × `result_item_num`, `use_fol` (a).
 - **Gear:** `master_gear*`, `master_global.coin_for_generate_gears` 10,000, `attach_gear_coin` 10,000, `extraction_facter_1..3` (a). Implemented by agent server-rules: see "Server rules added by agent `server-rules`" (now [Gear](#gear) and the domains' sections; the heading: `docs/history/server-rules-history.md`).
+
+<a id="new-badges"></a>
+### NEW badges (`ClearNewCharacter`, `ClearNewItem`, `ClearNewStackItem`)
+Code: `server/src/api/items/new_flags.cpp`; the flags `roster.is_new`, `items.is_new`, `stock.is_new` (schema step 13).
+
+| Rule | Source | Notes |
+|---|---|---|
+| The player state's `Character` (`CPersonInfo`), `Item` (`CItemInfo`) and `StockItem` (`CStackItemInfo`) entries carry `is_new` (u32 0 / 1): the client's NEW badge. | (b) | `CPersonInfo::Initialize` (@014f9bf0) registers `is_new`, a u32 at +0x400; `CItemInfo` and `CStackItemInfo` list `is_new` among their fields. Only the player's own Character list carries it (not the battle status or the rental clones). |
+| A character, weapon / accessory or stack item gained is new: every row added to `roster`, `items` or `stock` (a draw, a drop, a present, a shop) starts new; a gacha's or reward's `AddCharacter` entry for a new character says `is_new` 1 too. | (d) | The server never sent the flag before, so the client showed no badge; when the online game set it isn't known. |
+| A stack item is new only when its first stack arrives (its `stock` row is created); more of an item held, or held before at 0, isn't new again. | (d) | |
+| What the seed save holds, the new player's starters, and every row of a state from before step 13 are not new. | (d) | The seed restores a player who had seen them; existing rows had no badge. |
+| `ClearNewCharacter(uids)`: clears the owned characters named and answers `UpdateCharacterList` [{`id`, `is_new`: 0}]; unknown uids are skipped. | (b) + (d) | (b): `OnClearNewCharacterRes` (@014d2ef8) copies each entry's `is_new` (its `CUpdateCharacterInfo` +0x2a0; keys `id`, `is_new` from `CUpdateCharacterInfo::Initialize` @0163f48c) into the Character of that id. (d): the ownership check. |
+| `ClearNewItem(uids)`: clears the owned items named and answers `ItemClearNewList` [uid...]. | (b) + (d) | (b): `OnClearNewItemRes` (@014d28a8) reads a list of u32 ids and sets the Item's `is_new` (+0x240) to 0. |
+| `ClearNewStackItem(master item ids)`: clears the held stack items named and answers `StackItemClearNewList` [id...]. | (b) + (d) | (b): `OnClearNewStackItemRes` (@014d2bd0) reads a list of u32 master item ids and sets the StockItem's `is_new` (+0x120) to 0. |
+
+Tests: `items/new-badges`, `server/schema-migrate-new-badges`; the `badges` replay corpus (a character draw, the flags in GetPlayer, the three ClearNew* with owned and unknown ids).
 
 <a id="items-and-stamina"></a>
 ### Items and stamina
@@ -1891,6 +1915,7 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [gacha](#gacha-register) | Gacha | duplicate over the max → `master_role_duplication_item`; chip amount | (c)/(d) | the matching and limit-break steps are (b) |
 | [gacha](#gacha-register) | Gacha | box draw without replacement; last box resettable any time | (c)/(d) |  |
 | [gacha](#gacha-register) | Gacha | gift gacha always granted; `is_mutation` 0 | (d) |  |
+| [growth](#growth-register) |  | NEW badges ([NEW badges](#new-badges)): what is gained from now on is new until viewed; the seed's and an older state's characters and items are not; a stack item is new only when its first stack arrives | (d) |  |
 | [growth](#growth-register) |  | Big success: `*_up_rate` is a percent chance, × `*_bonus_rate` | (d) |  |
 | [growth](#growth-register) |  | FOL campaigns (types 2, 4, 5) and big-success campaigns (6, 7) not applied | (d) |  |
 | [growth](#growth-register) |  | Seed FOL per seed | (d) |  |

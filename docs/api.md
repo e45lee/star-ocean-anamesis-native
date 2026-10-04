@@ -299,7 +299,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): status
 - **Handler / effect**: Plain apply; fid exempt from the error dialog. Dead since CBT ended (`master_global.cbt_end` 2016).
 - **Callers** (fid constant scan): `BridgeNotify::OnReceive`, `CClosedBetaDialog::ToRelease`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/entry/entry.cpp`: accepts any code (docs/server-rules.md#client-reports))
 - **FakeApiCaller**: `FakeApi/update_home.msgp`
 
 ### CreatePlayer
@@ -378,7 +378,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): status
 - **Handler / effect**: Plain apply. Payment error reports from the coin / direct shop. Local server: log and ignore.
 - **Callers** (fid constant scan): `CCoinShop::SendErrorLog`, `CDirectItemShop::SendErrorLog`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/entry/entry.cpp`: logs the report (docs/server-rules.md#client-reports))
 - **FakeApiCaller**: `FakeApi/send_error_log.msgp` (**fid `e5af488c` in FakeApiCaller**, not the network fid)
 
 ### SimpleLogin
@@ -1134,7 +1134,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `UpdateCharacterList` (CParameterManager+0x4f68: the listed characters with their new flag)
 - **Handler / effect**: Inline (native): new flag.
 - **Callers** (fid constant scan): `CParameterUtility::tCharaData::ClearNewStatus`, `CPartyComposition::Progress`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/items/new_flags.cpp`: clears `roster.is_new`, docs/server-rules.md#new-badges), in-process through the port's FakeApiCaller route (docs/client-changes.md)
 - **FakeApiCaller**: `FakeApi/sale.msgp` (**fid `00ee45f7` in FakeApiCaller**, not the network fid)
 - **Notes**: 3.7.0 `CPartyComposition::Progress` also calls it.
 
@@ -1408,7 +1408,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `ItemClearNewList`
 - **Handler / effect**: Inline (native).
 - **Callers** (fid constant scan): `CCustomGear::Progress`, `CItemPossessionList::ClearIsNewItem`, `CItemStorage::Progress`, `CItemStrengtheningList::ClearIsNewItem`, `CPartyCompositionAccessoryList::WatchNewDelete`, `CPartyCompositionWeaponList::WatchNewDelete`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/items/new_flags.cpp`: clears `items.is_new`, docs/server-rules.md#new-badges), in-process through the port's FakeApiCaller route (docs/client-changes.md)
 - **FakeApiCaller**: `FakeApi/sale.msgp` (**fid `00ee45f7` in FakeApiCaller**, not the network fid)
 
 ### ClearNewOneTimeStorageItem
@@ -1429,7 +1429,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `StackItemClearNewList`
 - **Handler / effect**: Inline (native).
 - **Callers** (fid constant scan): `CItemPossessionList::ClearIsNewStackItem`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/items/new_flags.cpp`: clears `stock.is_new`, docs/server-rules.md#new-badges), in-process through the port's FakeApiCaller route (docs/client-changes.md)
 - **FakeApiCaller**: `FakeApi/sale.msgp` (**fid `00ee45f7` in FakeApiCaller**, not the network fid)
 
 ### DepositItem

@@ -1,0 +1,12 @@
+# soa-server replay corpus (server/tests/replay/README.md): badges, hand-written (docs/unimplemented-apis.md
+# part 3 step 6), the `economy` options: a 10-draw of a character gacha (new characters and items are
+# new), GetPlayer (is_new in Character / Item / StockItem), ClearNewCharacter / ClearNewItem /
+# ClearNewStackItem with owned and unknown ids, GetPlayer (cleared).
+# tz: America/Toronto
+req 1 1603641600 Login a01c67ef - - - -
+req 2 1603641610 Gacha a0a1940b 3589601563,0 78 - -
+req 3 1603641615 GetPlayer 9a056905 - - - -
+req 4 1603641620 ClearNewCharacter 36ce009c - - 2114977792,2113929216,12345 -
+req 5 1603641625 ClearNewItem 22b15407 - - 12345 -
+req 6 1603641630 ClearNewStackItem aabac605 - - 1276770673,99 -
+req 7 1603641635 GetPlayer 9a056905 - - - -

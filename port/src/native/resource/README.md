@@ -41,8 +41,8 @@ lock), its fields read through these classes and compared with the guest's acces
 | `LIBLManager` | >= 0x930 (not confirmed) | dtor, CopyTexture, Initialize | `-ahsl-libl` (sub-object vtables at 0x620 / 0x670 / 0x678 / 0x8e8 / 0x910; skipped while Global::m_pLIBLManager is null) |
 | `ResourceReadyQueue` | >= 0x248 (not confirmed) | ctor, Init | `-read-devices` (vtables at 0xb0 / 0x100 / 0x138, the work buffer, 0x21c) |
 
-Other subsystems' classes are held as sized bytes with the class named in the comment (the headers aren't
-merged yet): sync's FastCriticalSection (0x90), CMutex (0xb0), Event (0x68), CriticalSection (0x28). hash's
+Other subsystems' classes are embedded from their headers: sync's FastCriticalSection (0x90), CMutex (0xb0),
+Event (0x68), CriticalSection (0x28) from sync_layout.h; hash's
 CHash32 (`CHash32Bytes`) is hash_layout.h's class; kernel's classes come from kernel_layout.h: Aska::Task (`TaskBytes` 0x28;
 CResourceManager keeps inline bytes: data size 0x27, a derived class's first byte at +0x27) and
 Framework::CFiberUnit (0x38). The merged
@@ -63,8 +63,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   cache; TPoolLegacy in LIBLManager; TSharedPointer in the streams and the ready queue).
 - `sync` (731): FastCriticalSection (BaseReadDevice 0x18 / 0xa8, DecompressQueue 0x08, AHSLDatabase 0x00,
   AHSLCacheManagerV2, LIBLManager 0x590), CMutex (CResourceManager 0x40, the downloader 0x170), Event,
-  CriticalSection, Thread (BaseReadDevice / ResourceReadyQueue / AHSLCacheManagerV2 bases: vtable + m_thread).
-  **Swap the `u8 m_x[kFastCriticalSectionSize]` etc. for n-sync's classes once sync_layout.h is merged.**
+  CriticalSection (sync_layout.h's classes, embedded), Thread (BaseReadDevice / ResourceReadyQueue /
+  AHSLCacheManagerV2 bases: vtable + m_thread, kept as the two fields).
 - `hash` (80): CHash32 in CFileLoader (+0xa0) and CGameResourceManager::SearchFileMap's key.
 - `kernel` (co-developed, 3,444 samples resource -> kernel): Aska::Task is the base of CResourceManager (at 0)
   and CResourceElement (at +0xc0), LIBLManager's update task (+0x8e8); Framework::CFiberUnit is the

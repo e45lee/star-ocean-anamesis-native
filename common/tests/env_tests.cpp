@@ -11,6 +11,7 @@
 using namespace soa::env;
 
 int paths_tests();
+int install_tests();
 
 namespace {
 int g_failures = 0;
@@ -62,6 +63,7 @@ int main() {
         check(!is_live_check_var(r.name), std::string(r.name) + ": not a live-check name");
     }
     g_failures += paths_tests();  // the default data dirs (soa/paths.h; paths_tests.cpp)
+    g_failures += install_tests();  // the install-dir lookup (soa/install.h; install_tests.cpp)
     fprintf(stderr, "%s\n", g_failures ? "FAILED" : "all passed");
     return g_failures ? 1 : 0;
 }

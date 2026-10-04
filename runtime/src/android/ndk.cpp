@@ -71,23 +71,38 @@ bool AssetManager::find(const std::string& name, Found& out) const {
 static const char kBuiltinData[] = "builtin_data/";
 
 namespace {
-// <dir>/<rel> for a "builtin_data/<rel>" asset name, if that regular file exists.
-bool find_under(const std::string& dir, const std::string& n, std::string& host) {
-    if (dir.empty() || n.compare(0, sizeof(kBuiltinData) - 1, kBuiltinData) != 0) return false;
+// <rel> of a "builtin_data/<rel>" asset name ("" when it isn't one, or escapes the tree).
+std::string builtin_rel(const std::string& n) {
+    if (n.compare(0, sizeof(kBuiltinData) - 1, kBuiltinData) != 0) return "";
     std::string rel = n.substr(sizeof(kBuiltinData) - 1);
-    if (rel.empty() || rel.find("..") != std::string::npos) return false;
-    host = dir + "/" + rel;
-    struct stat st;
-    return stat(host.c_str(), &st) == 0 && S_ISREG(st.st_mode);
+    return rel.find("..") == std::string::npos ? rel : "";
 }
 }  // namespace
 
-bool AssetManager::find_download(const std::string& name, std::string& host) const {
-    if (download_dir_.empty() && standin_dir_.empty()) return false;
-    std::string n = normalize(name);
-    if (find_under(download_dir_, n, host)) return true;
+bool AssetManager::set_download_dir(const std::string& path, bool prefer) {
+    std::string err;
+    download_ = path.empty() ? nullptr : FileTree::open(path, &err);
+    download_prefer_ = prefer;
+    if (!path.empty() && !download_) LOGE("assets", "the download: %s", err.c_str());
+    return download_ != nullptr || path.empty();
+}
+
+bool AssetManager::find_download(const std::string& name, Download& out) const {
+    if (!download_ && standin_dir_.empty()) return false;
+    std::string n = normalize(name), rel = builtin_rel(n);
+    if (rel.empty()) return false;
+    if (download_ && download_->locate(rel, &out.loc)) {
+        out.tree = download_;
+        out.rel = rel;
+        return true;
+    }
     // the stand-in overlay: only for assets no real source has
-    return !standin_dir_.empty() && !index_.count(n) && find_under(standin_dir_, n, host);
+    if (standin_dir_.empty() || index_.count(n)) return false;
+    auto standins = FileTree::open(standin_dir_);
+    if (!standins || !standins->locate(rel, &out.loc)) return false;
+    out.tree = std::move(standins);
+    out.rel = rel;
+    return true;
 }
 
 std::vector<std::string> AssetManager::list_files(const std::string& dir) const {
@@ -100,23 +115,15 @@ std::vector<std::string> AssetManager::list_files(const std::string& dir) const 
         std::string rest = name.substr(prefix.size());
         if (rest.find('/') == std::string::npos) out.insert(rest);
     }
-    // --download-dir / --standin-assets: merge the files of <dir>/<rel> for "builtin_data/<rel>"
+    // --download / --standin-assets: merge the files of <tree>/<rel> for "builtin_data/<rel>"
     // (read now, not cached).
-    for (const std::string* root : {&download_dir_, &standin_dir_})
-        if (!root->empty() && prefix.compare(0, sizeof(kBuiltinData) - 1, kBuiltinData) == 0) {
-            std::string host = *root + "/" + prefix.substr(sizeof(kBuiltinData) - 1);
-            if (DIR* dh = opendir(host.c_str())) {
-                while (dirent* e = readdir(dh)) {
-#ifdef _WIN32  // (MinGW's dirent has no d_type)
-                    struct stat st;
-                    if (stat((host + "/" + e->d_name).c_str(), &st) == 0 && S_ISREG(st.st_mode)) out.insert(e->d_name);
-#else
-                    if (e->d_type == DT_REG) out.insert(e->d_name);
-#endif
-                }
-                closedir(dh);
-            }
-        }
+    if (prefix.compare(0, sizeof(kBuiltinData) - 1, kBuiltinData) == 0) {
+        std::string rel = prefix.substr(sizeof(kBuiltinData) - 1);
+        std::shared_ptr<const FileTree> standins = standin_dir_.empty() ? nullptr : FileTree::open(standin_dir_);
+        for (const auto& tree : {download_, standins})
+            if (tree)
+                for (auto& f : tree->list(rel)) out.insert(f);
+    }
     return {out.begin(), out.end()};
 }
 
@@ -132,24 +139,16 @@ struct AssetDir {
     size_t idx = 0;
 };
 
-// --download-dir: an asset read from <download dir>/<rel>.
-bool open_download(Cpu& c, const char* name, const std::string& host) {
-    FILE* fp = fopen(host.c_str(), "rb");
-    if (!fp) return false;
+// --download: an asset read from the download (a folder or its zip) or the stand-ins.
+bool open_download(Cpu& c, const char* name, const AssetManager::Download& d) {
     auto* a = new Asset();
-    fseek(fp, 0, SEEK_END);
-    long n = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    a->owned.resize(n > 0 ? (size_t)n : 0);
-    size_t got = n > 0 ? fread(a->owned.data(), 1, (size_t)n, fp) : 0;
-    fclose(fp);
-    if (got != a->owned.size()) {
+    if (!d.tree->read(d.rel, a->owned)) {
         delete a;
         return false;
     }
     a->size = a->owned.size();
     a->data = a->owned.data();
-    LOGD("assets", "open(%s) = %" PRIu64 " bytes from %s", name, a->size, host.c_str());
+    LOGD("assets", "open(%s) = %" PRIu64 " bytes from %s/%s", name, a->size, d.tree->path().c_str(), d.rel.c_str());
     ret_ptr(c, a);
     return true;
 }
@@ -157,7 +156,7 @@ bool open_download(Cpu& c, const char* name, const std::string& host) {
 void th_AAssetManager_open(Cpu& c) {
     const char* name = arg_str(c, 1);
     auto& am = asset_manager();
-    std::string host;
+    AssetManager::Download host;
     if (am.download_prefer() && am.find_download(name, host) && open_download(c, name, host)) return;
     AssetManager::Found f;
     if (!am.find(name, f)) {

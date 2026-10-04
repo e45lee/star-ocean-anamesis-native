@@ -29,7 +29,8 @@ struct AssetIndex {
 std::shared_ptr<const AssetIndex> set_asset_index(std::shared_ptr<const AssetIndex> index);
 const AssetIndex& asset_index();
 // A filesystem index: "builtin_data/<rel>" is <dir>/<rel> for each dir in order (as the port's
-// --download-dir); other names are absent. empty() when `dirs` is.
+// --download-dir); a dir may be a zip of the tree (the download's SOA-3.7.0-canonical-data.zip,
+// soa/file_tree.h); other names are absent. empty() when no dir opens.
 std::shared_ptr<const AssetIndex> dir_asset_index(std::vector<std::string> dirs);
 
 }  // namespace soa::server

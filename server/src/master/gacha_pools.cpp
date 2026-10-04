@@ -12,9 +12,47 @@
 #include <map>
 
 #include "core/log.h"
+#include "master/master.h"  // text
 #include "soaserver/config.h"
 
 namespace soa::server::gacha_pools {
+
+std::string zen2han(const std::string& s) {
+    std::string out;
+    out.reserve(s.size());
+    for (size_t i = 0; i < s.size();) {
+        unsigned char c = (unsigned char)s[i];
+        // the 3-byte UTF-8 forms: U+3000 is E3 80 80, U+FF01..U+FF5E are EF BC 81..EF BD 9E
+        if (c == 0xE3 && i + 2 < s.size() && (unsigned char)s[i + 1] == 0x80 && (unsigned char)s[i + 2] == 0x80) {
+            out += ' ';
+            i += 3;
+            continue;
+        }
+        if (c == 0xEF && i + 2 < s.size()) {
+            unsigned cp = ((c & 0x0Fu) << 12) | (((unsigned char)s[i + 1] & 0x3Fu) << 6) | ((unsigned char)s[i + 2] & 0x3Fu);
+            if (cp >= 0xFF01 && cp <= 0xFF5E) {
+                out += (char)(cp - 0xFEE0);
+                i += 3;
+                continue;
+            }
+        }
+        out += s[i++];
+    }
+    return out;
+}
+
+std::string name_from_master(sqlite3* master, uint32_t gacha_id) {
+    if (!master) return "";
+    sqlite3_stmt* st = nullptr;
+    std::string mid;
+    if (sqlite3_prepare_v2(master, "select name_message_id from master_gacha where id = ?", -1, &st, nullptr) == SQLITE_OK) {
+        sqlite3_bind_int64(st, 1, gacha_id);
+        if (sqlite3_step(st) == SQLITE_ROW && sqlite3_column_text(st, 0)) mid = (const char*)sqlite3_column_text(st, 0);
+    }
+    sqlite3_finalize(st);
+    return mid.empty() ? "" : zen2han(master::text(master, mid));
+}
+
 namespace {
 
 bool exists(const std::string& p) {

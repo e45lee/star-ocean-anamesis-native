@@ -11,6 +11,10 @@ __pycache__/
 # The build (cmake -S . -B build), the Windows cross build (scripts/build.sh --windows) and the log
 /build/
 /build-win/
+# the release builds and packages (scripts/build.sh --release, scripts/package.sh; README.md "Packaging")
+/build-release/
+/build-win-release/
+/dist/
 /build.log
 # vcpkg (scripts/vcpkg-bootstrap.sh) and a stray `vcpkg install`'s output
 /.vcpkg

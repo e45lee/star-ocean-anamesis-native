@@ -10,6 +10,7 @@
 #include "core/log.h"
 #include "core/time.h"  // parse_time
 #include "soaserver/config.h"
+#include "soaserver/master_source.h"
 #include "soaserver/scratch.h"
 #include "soaserver/testing.h"
 
@@ -20,14 +21,14 @@ ext::Sql* test_master() {
     static bool tried = false;
     if (!tried) {
         tried = true;
-        std::string p = find_repo_file("data/basmaster-3.7.0.sqlite3");
+        std::string p = master_source::resolve();  // the repo's, else derived (soaserver/master_source.h)
         if (!p.empty()) m.open(p, true);
     }
     return m.h ? &m : nullptr;
 }
 
 bool scratch_inputs(std::string& master, std::string& save) {
-    master = find_repo_file("data/basmaster-3.7.0.sqlite3");
+    master = master_source::resolve();
     save = find_repo_file("server/tests/fixtures/test-seed.xml");
     if (!master.empty() && !save.empty()) return true;
     std::string why;

@@ -50,6 +50,8 @@ T*>`), `MapStringString`, `UMapU32U64`, `UMapU32Bool`, `UMapStringPtr`, the shar
 |---|---|---|---|
 | `__shared_count::__add_shared` / `__release_shared`, `__shared_weak_count::__add_shared` / `__add_weak` / `__release_shared` / `__release_weak` / `lock` (7) | `libcxx_shared_count.cpp` | `libcxx/shared-count`, `libcxx/shared-weak-count` (random operation sequences on two blocks with a counting fake vtable: counts, results, slot 2 / 4 callbacks) | `libcxx`: 0 mismatches (login → home, battle, gacha, story) |
 
+| `basic_string<char, ..., CSTLAllocator>::__grow_by`, `__grow_by_and_replace`, `replace(pos, n1, s, n2)`, `reserve` (4) | `libcxx_string.cpp` (+ `libcxx_string.h`: replace, the inlined copy constructor / destructor for other natives) | `libcxx/string-replace-reserve` (random replaces incl. sources inside the string, reserves up and down), `libcxx/string-grow-by` | `libcxx` |
+
 The counters are host atomics on the guest words (the JIT's exclusive store is a compare-and-swap,
 runtime/src/core/cpu.cpp, so they interleave with the guest's inlined LDXR / STXR increments); the
 zero-count callbacks (`__on_zero_shared`, `__on_zero_shared_weak`) are guest calls through the block's

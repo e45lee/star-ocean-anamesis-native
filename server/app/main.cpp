@@ -53,7 +53,7 @@ void usage() {
             "                       (server/tests/replay/README.md; tools/server_replay_diff.sh)\n"
             "  --list-apis          every method and what answers it (core, a module file, - none)\n"
             "  --list-hooks         every module hook in its run order (kind, module, file:line, detail)\n"
-            "  --repo DIR           the source checkout (master DBs, seed saves, port/server-data); default: found\n"
+            "  --repo DIR           the source checkout (master DBs, seed saves, server/tests/fixtures); default: found\n"
             "                       upwards from the executable, then the working directory\n"
             "  --data DIR           the server's data dir (state DB default DIR/server.sqlite3, side files)\n"
             "  --db FILE            the state DB (default DATA/server.sqlite3, without --data ./server.sqlite3)\n"
@@ -74,6 +74,7 @@ void usage() {
             "  --event-keywords L   names to match, comma list (\"!\" excludes); default, as soa: the summer\n"
             "                       events \"水着,夏,サマー,!福袋\"\n"
             "  --restore-tower      serve the tower (as soa --restore-tower)\n"
+            "  --home3d-all         debug: the 3D home for every character (as soa --home3d-all)\n"
             "  --download PATH      the 3.7.0 download: a folder (work/download-3.7.0) or SOA-3.7.0-canonical-data.zip,\n"
             "                       read in place; content is gated on it (as soa --download) and the CDN serves it\n"
             "                       (server/README.md \"CDN\"); default: none, except a packaged soa-server's: a\n"
@@ -207,6 +208,7 @@ int main(int argc, char** argv) {
         else if (a == "--enable-events") c.enable_events = true;
         else if (a == "--event-keywords") c.event_keywords = next();
         else if (a == "--restore-tower") c.restore_tower = true;
+        else if (a == "--home3d-all") c.home3d_all = true;
         else if (a == "--download-dir" || a == "--download") download_dir = c.download_dir = next();
         else if (a == "--cdn-url") c.cdn_url = next();
         else if (a == "--standin-assets") {

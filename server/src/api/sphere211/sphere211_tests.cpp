@@ -218,7 +218,7 @@ NATIVE_TEST("sphere211/season") {
         t.expect_eq((u32)num(info, "Sphere211EndResult", "rank"), 1u, "the cycle's rank");
         c.st.exec("rollback");
     });
-    if (!ran) t.fail("needs the 3.7.0 master (data/basmaster-3.7.0.sqlite3) and the test seed save (port/server-data/test-seed.xml)");
+    if (!ran) t.fail("needs the 3.7.0 master (data/basmaster-3.7.0.sqlite3) and the test seed save (server/tests/fixtures/test-seed.xml)");
 }
 
 // The floor and cell lottery: repeatable for a seed, cells as the map template lists them, each

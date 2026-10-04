@@ -74,6 +74,7 @@ void config_from_options(const std::string& data_dir) {
     c.enable_events = o.enable_events;
     c.event_keywords = o.event_keywords;
     c.restore_tower = o.restore_tower;
+    c.home3d_all = o.home3d_all;
     c.campaign_master_db = o.campaign_master_db;
     c.campaign_seed = o.campaign_seed;
     c.fail = o.fail;

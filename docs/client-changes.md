@@ -64,6 +64,13 @@ These change data the unmodified client code reads, as the online server's data 
 - **Why not in a response:** the master DB is client data the online game downloaded; the client's copy is the server-side equivalent (as for the other master overrides above).
 - **Switch:** `--restore-tower`. Off by default.
 
+### `master_person.home3d_disable` cleared in the client's master copy (`--home3d-all`, debug; agent `nier-home`)
+- **Symbols affected:** none changed. `CHome::GetAdjutant` (@01aebe38) reports the home character's `home3d_disable` (person+0x9a8) as "3D not allowed"; `CHome::Update` (@01aeafa8) then forces the 2D home and darkens the 2D/3D switch (`docs/home3d.md`).
+- **Guest behaviour (3.7.0 master data):** 16 persons have `home3d_disable` = 1, among them the NieR:Automata collab (2B `cc0015_b01a`, 9S `cc0016_b01a`, A2 `cc0017_b01a`): the game never shows them in 3D on the home, although their models and `Parameter/Home3D/home3d_<person>.msgp` exist.
+- **Change:** under `--home3d-all` the local server sets `home3d_disable` = 0 on every `master_person` row of the client's master copy (`enable_home3d` / `client_home3d_all` in `server/src/api/player/home.cpp`, an `ext::ClientMaster`; the master both server modes' CDNs serve). The server's own master is untouched.
+- **Why not in a response:** the flag is master data the client downloads.
+- **Switch:** `--home3d-all` (a flag only; soa and soa-server). Off by default: a debug view of what 3.7.0 doesn't show.
+
 ## Code changes
 The server core made none: in-process every other behaviour is the local server answering on the port's `FakeApiCaller` route (`--server inproc`).
 
@@ -122,6 +129,13 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp`):** with the in-process server, on the FakeApiCaller, the request is queued like the base-class methods above, answered by `CApiNotify::OnDeepSpaceActiveListRes` (the handler `NetworkApiCaller`'s response goes to) with the local server's body (`server/src/api/deepspace/deepspace.cpp`). The other four deep-space requests (`DeepSpaceAutoMemberSelect`, `DeepSpaceMissionStart`, `DeepSpaceMissionEnd`, `DeepSpaceMissionEndNow`) are ordinary FakeApiCaller requests and need no change. The deep space client code (`CDeepSpace*`, `CPhase_DeepSpace`, the dialogs and the three guest response handlers) is unchanged.
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
 - **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
+
+### `FakeApiCaller::Home3DAnd2DSwitching` on the FakeApiCaller route (agent `nier-home`)
+- **Symbol:** `FakeApiCaller::Home3DAnd2DSwitching(unsigned char)` (a status-only method of the fake caller: Status 1, nothing queued).
+- **Guest behaviour:** `CHome::Progress` sends it for a home character the client shows in 2D only (`master_person.home3d_disable`: 2B, 9S, A2, ...) and continues only when it is answered, so the home stayed empty (no model, no illustration); the 会話モード 2D/3D変更 button sends it too and nothing changed. `NetworkApiCaller` sends the request.
+- **Change (port-specific, `port/src/native/api/fakeapi.cpp`):** with the in-process server, on the FakeApiCaller, the request is queued like `DeepSpaceActiveList` above and answered by `CApiNotify::OnHome3DAnd2DSwitchingRes` with the local server's body (`server/src/api/player/home.cpp`: the mode stored, `Player.is_3d_home`). Otherwise the guest's Status 1.
+- **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
+- **Switch:** the in-process server (`--server inproc`, the default).
 
 ### The Sphere 211 requests on the FakeApiCaller route (agent `sphere211`)
 - **Symbols:** the base-class stubs `IApiCaller::GetSphere211Info()`, `GetSphere211RankingInfo(bool)`, `Sphere211AutoMemberSelect(u32, u32, u32)`, `Sphere211EquipAuto(u32, u32, vector<u64>)`, `Sphere211MissionContinue(u32, u32, bool)`, `Sphere211MissionEnd(u32, u32)`, `Sphere211MissionFailed(u32, u32)`, `Sphere211MissionStart(u32, u32, u64, u64, u64, u64, u32)`, which `FakeApiCaller` inherits, and `FakeApiCaller`'s own status-only overrides `ReturnSphere211()`, `Sphere211StaminaHeal()`, `Sphere211UseRerollItem()`, `Sphere211FloorClear(u32)`, `Sphere211SelectedFloor(u32)`: the 13 Sphere211 APIs.

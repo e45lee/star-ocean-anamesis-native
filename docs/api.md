@@ -502,10 +502,10 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `a092292c`, encrypted: RequestHeader(16) · u8 = 17 bytes; reply `Home3DAnd2DSwitchingRes` fid `002d3011`
 - **Request**: `u8 is_3d`
 - **Response** (`data.*`): `Player.is_3d_home`
-- **Handler / effect**: Plain apply. Server stores the flag.
+- **Handler / effect**: Plain apply. Server stores the flag (`player.is_3d_home`; docs/server-rules.md#home-2d-3d).
 - **Callers** (fid constant scan): `CHome::Progress`, unnamed code near `std::__ndk1::__hash_table<std::__ndk1::_`
-- **Status**: **online** (its only callers are in code the offline build removed)
-- **Notes**: Only 3.7.0's `CHome::Progress` calls it.
+- **Status**: **online** (its only callers are in code the offline build removed); answered by the local server (`server/src/api/player/home.cpp`), in-process through the port's FakeApiCaller route
+- **Notes**: 3.7.0's `CHome::Progress` sends 0 for a home character it can't show in 3D (`master_person.home3d_disable`) and continues only on the answer; the 会話モード 2D/3D変更 button sends the other mode (docs/home3d.md).
 
 ### ReadExpirationInfo
 - **FunctionID** `dc269365`

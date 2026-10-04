@@ -18,6 +18,7 @@
 // The follow menu's lists (Blacklist, GetRecentlyPlayedList, SearchPlayer) are api/social/social.cpp's.
 #include <cstdio>
 
+#include "api/player/home.h"  // client_home3d_all
 #include "core/log.h"
 #include "soaserver/native_test.h"
 #include "soaserver/ext.h"
@@ -85,6 +86,9 @@ NATIVE_TEST("player/home-footer") {
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").
-void register_home() { ext::add_player_load(load_footer); }
+void register_home() {
+    ext::add_player_load(load_footer);
+    ext::add_client_master(client_home3d_all);  // --home3d-all (home.cpp)
+}
 
 }  // namespace soa::server

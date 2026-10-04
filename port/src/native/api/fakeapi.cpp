@@ -863,6 +863,24 @@ void h_deep_space_active_list(Cpu& c) {
     queue_base_method(c, 0xa7a82ef5, "_ZN10CApiNotify24OnDeepSpaceActiveListResEPaRj", "FakeApi/deep_space_active_list.msgp");
 }
 
+// FakeApiCaller::Home3DAnd2DSwitching(u8 is_3d): the guest returns Status 1 and queues nothing, so
+// the home that sent it (CHome::Progress, a home character shown in 2D only, or the 会話モード
+// 2D/3D変更 button) never continues: with a 2D-only character it stays empty. In-process server
+// (--server inproc; port code, not guest behaviour): queued like the base-class methods above and
+// answered by CApiNotify::OnHome3DAnd2DSwitchingRes, the handler NetworkApiCaller's response goes
+// to; the local server (server/src/api/player/home.cpp) stores the mode. Otherwise the guest's
+// Status 1.
+constexpr char kHome3DAnd2DSwitching[] = "_ZN13FakeApiCaller20Home3DAnd2DSwitchingEh";
+void h_home3d_and_2d_switching(Cpu& c) {
+    if (!on_fake_caller(c.x(0))) {
+        at<u64>(c.x(8), 0) = 1;  // guest behaviour
+        return;
+    }
+    u64 x[8] = {c.x(0), c.x(1) & 0xff};
+    server_port::capture(kHome3DAnd2DSwitching, 0xa092292c, x);
+    queue_base_method(c, 0xa092292c, "_ZN10CApiNotify25OnHome3DAnd2DSwitchingResEPaRj", "FakeApi/home3d_switching.msgp");
+}
+
 // Sphere 211 (restore run, --server inproc; agent sphere211): the Sphere211* requests. The
 // IApiCaller base methods return Status 0 and send nothing, and FakeApiCaller's own overrides
 // (ReturnSphere211, StaminaHeal, UseRerollItem, FloorClear, SelectedFloor) only return a Status.
@@ -1009,7 +1027,8 @@ bool register_all() {
     }
 #define FAKEAPI_ST(sym, v) \
     if (strcmp(sym, kGetGachaInData) != 0 && strcmp(sym, kGetWorldMapInfoList) != 0 && !is_served_status_only(sym) && \
-        strcmp(sym, kDeepSpaceActiveList) != 0 && !is_sphere_method(sym) && !is_event_api(sym)) \
+        strcmp(sym, kDeepSpaceActiveList) != 0 && strcmp(sym, kHome3DAnd2DSwitching) != 0 && !is_sphere_method(sym) && \
+        !is_event_api(sym)) \
         reg({sym, &h_status<v>, "FakeApiCaller status"});
     FAKEAPI_STATUS_ONLY(FAKEAPI_ST)
 #undef FAKEAPI_ST
@@ -1023,6 +1042,7 @@ bool register_all() {
     reg({kEndMissionTalk, h_end_mission_talk, "IApiCaller::EndMissionTalk (served by the local server in-process)"});
     reg({kGetWorldMapInfoList, h_get_world_map_info_list, "FakeApiCaller status (served in-process)"});
     reg({kDeepSpaceActiveList, h_deep_space_active_list, "FakeApiCaller status (served by the local server in-process)"});
+    reg({kHome3DAnd2DSwitching, h_home3d_and_2d_switching, "FakeApiCaller status (served by the local server in-process)"});
     for (int i = 0; i < kNumSphere; i++)
         reg({kSphere[i].sym, kSphereHooks[i], "Sphere 211 request (served by the local server in-process)"});
     for (int i = 0; i < kNumEventApi; i++)

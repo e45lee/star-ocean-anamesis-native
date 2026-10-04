@@ -158,7 +158,7 @@ insert into items (uid, master_item_id, item_type, level, exp, limit_break, lock
 insert into login_bonus (id, day, last_at) values (3511586374, 2, 1790841675);
 insert into meta (key, value) values ('next_char_uid', '2114977792');
 insert into meta (key, value) values ('next_item_uid', '2097152030');
-insert into meta (key, value) values ('seed', 'port/server-data/test-seed.xml');
+insert into meta (key, value) values ('seed', 'server/tests/fixtures/test-seed.xml');
 insert into meta (key, value) values ('title', '340997325');
 insert into meta (key, value) values ('tutorial_status', '9');
 insert into meta (key, value) values ('view_status', '18446744073709551615');

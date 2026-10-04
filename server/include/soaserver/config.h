@@ -42,6 +42,7 @@ struct ServerConfig {
     bool enable_events = false;    // --enable-events (enable_events.h)
     std::string event_keywords;    // --event-keywords; "" = kDefaultEventKeywords
     bool restore_tower = false;    // --restore-tower (api/tower/tower.cpp)
+    bool home3d_all = false;       // --home3d-all: the 3D home for every character (api/player/home.cpp; debug)
     std::string campaign_master_db;  // --campaign-master-db: the campaign module's master DB
     std::string campaign_seed;       // --campaign-seed <mission label>
 
@@ -50,7 +51,7 @@ struct ServerConfig {
     bool surprise = false;         // --surprise: force surprise missions
 
     // ---- files ----------------------------------------------------------------------------------
-    // The source checkouts repo files (master DBs, seed saves, port/server-data) are looked up in,
+    // The source checkouts repo files (master DBs, seed saves, server/tests/fixtures) are looked up in,
     // in order (find_repo_file); empty = relative to the working directory.
     std::vector<std::string> repo_roots;
     // The server's data dir (the CDN's scratch files; a server_campaign.txt there from before the

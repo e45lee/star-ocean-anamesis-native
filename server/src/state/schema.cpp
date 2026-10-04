@@ -1837,6 +1837,14 @@ void retire_campaign_file(const std::string& data_dir) {
              to.c_str());
 }
 
+// ---- step 12: the player's 2D / 3D home (Home3DAnd2DSwitching) ---------------------------------
+//
+// player.is_3d_home: 1 the 3D home, 0 the 2D one (Player.is_3d_home; api/player/home.cpp). The
+// server sent true always before; an existing player keeps that (the default), a boolean 0 / 1.
+const char* const kHome3D[] = {
+    "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1887,6 +1895,7 @@ const std::vector<Step>& steps() {
          nullptr,
          import_campaign,
          retire_campaign_file},
+        {12, "the player's 2D / 3D home: player.is_3d_home (Home3DAnd2DSwitching)", {std::begin(kHome3D), std::end(kHome3D)}, nullptr},
     };
     return s;
 }

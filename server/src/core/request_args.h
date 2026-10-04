@@ -86,6 +86,13 @@ struct UpdateHomeArgs {
     static UpdateHomeArgs from(const Request& r) { return {CharacterUid(int_at(r, 0))}; }
 };
 
+// Home3DAnd2DSwitching(u8 is_3d): 1 the 3D home, 0 the 2D one (b: CHome::Progress sends 0 for a
+// home character the client can't show in 3D; docs/api.md#home3dand2dswitching). Any non-zero is 3D.
+struct Home3DAnd2DSwitchingArgs {
+    bool is_3d = true;
+    static Home3DAnd2DSwitchingArgs from(const Request& r) { return {int_at(r, 0, 1) != 0}; }
+};
+
 // MissionStart(u32 type, u32 mission, u32 helper index + 1, u64 own helper uid, u32 NPC helper id,
 // u64 rental uid, u32) (b: CStageManager::CallMissionStart; docs/api.md).
 struct MissionStartArgs {

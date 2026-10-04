@@ -167,6 +167,8 @@ void usage() {
             "                  \"水着,夏,サマー,!福袋\"\n"
             "  --restore-tower open the tower mode, which 3.7.0 had closed: the server serves it and the client's\n"
             "                  tower hooks open the menu\n"
+            "  --home3d-all    debug: the client's master copy offers the 3D home for every character, also the\n"
+            "                  ones 3.7.0 shows in 2D only (master_person.home3d_disable; docs/home3d.md)\n"
             "  --campaign-master-db FILE  the campaign module's master DB; --campaign-seed LABEL  seed the campaign\n"
             "                  progress up to a mission; --fail M:CODE[,..]  force error replies; --surprise  force\n"
             "                  surprise missions\n"
@@ -313,6 +315,7 @@ int main(int argc, char** argv) {
             return 2;
         }
         else if (a == "--restore-tower") srv.restore_tower = true, server_flags.push_back(a);
+        else if (a == "--home3d-all") srv.home3d_all = true, server_flags.push_back(a);
         else if (a == "--clock") {
             std::string c = next();
             if (!set_clock(srv, c)) {

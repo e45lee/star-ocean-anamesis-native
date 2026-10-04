@@ -1,6 +1,8 @@
 """The guest debugger at a milestone (PLAN-consolidate step 7's control-layer part): a run started
-with Config(gdb=True) gets `--gdb 127.0.0.1:PORT` (the runtime's GDB remote stub for the AArch64
-guest: soa, soa-emu, soa-viewer), and Run.gdb() connects control/gdbclient.py's GdbClient to it, e.g.
+with Config(gdb=True) gets `--gdb 127.0.0.1:0` (the runtime's GDB remote stub for the AArch64
+guest: soa, soa-emu, soa-viewer; `[::1]:0` with Config(loopback="::1"); port 0: the client picks
+one and logs it, which works for a Windows client too: a port tried from WSL stays refused to
+Windows for a while), and Run.gdb() connects control/gdbclient.py's GdbClient to it, e.g.
 
     s = Run(target, layout, Config(..., gdb=True))
     ... s.wait_for("home", ...)                      # a milestone
@@ -41,18 +43,38 @@ def available():
     return _client_module() is not None
 
 
-def client_args(port):
-    """The client's options for a stub on 127.0.0.1:PORT."""
-    return ["--gdb", "127.0.0.1:%d" % port]
+def host_port(host, port):
+    return "[%s]:%d" % (host, port) if ":" in host else "%s:%d" % (host, port)
+
+
+def client_args(port, host="127.0.0.1"):
+    """The client's options for a stub on HOST:PORT (port 0: the client picks it, listen_port)."""
+    return ["--gdb", host_port(host, port)]
+
+
+LISTENING = "I/gdb: GDB stub listening on "
+
+
+def listen_port(log):
+    """The port the client's stub listens on, from its log line ("I/gdb: GDB stub listening on
+    HOST:PORT (...)", core/gdbstub.cpp); None until it is there."""
+    try:
+        with open(log, errors="replace") as f:
+            for line in f:
+                if line.startswith(LISTENING):
+                    return int(line[len(LISTENING):].split()[0].rsplit(":", 1)[1])
+    except (OSError, ValueError, IndexError):
+        pass
+    return None
 
 
 @contextlib.contextmanager
-def attach(port, timeout=30.0):
-    """A GdbClient connected to the stub on 127.0.0.1:PORT (the guest stopped); detached on exit."""
+def attach(port, timeout=30.0, host="127.0.0.1"):
+    """A GdbClient connected to the stub on HOST:PORT (the guest stopped); detached on exit."""
     mod = _client_module()
     if mod is None:
         raise GdbUnavailable("control/gdbclient.py isn't in this checkout (the runtime's GDB stub, agent rebuild-tooling)")
-    g = mod.GdbClient("127.0.0.1", port, timeout=timeout)
+    g = mod.GdbClient(host, port, timeout=timeout)
     try:
         yield g
     finally:

@@ -5,48 +5,31 @@
 // their JIT returns with kGdbHalt, or when they enter the JIT while the guest is stopped) and wait for
 // the server's resume / step order. Only the owning thread runs its JIT (Run, Step); the server
 // reads and writes a parked thread's registers directly (they are plain memory while the JIT is
-// stopped) and guest memory through process_vm_readv / writev (an unmapped address is an error
-// reply, not a crash).
+// stopped) and guest memory through process_vm_readv / writev (Linux) or Read/WriteProcessMemory
+// (Windows) on its own process: an unmapped address is an error reply, not a crash.
 #include "core/gdbstub.h"
 
+#include <soa/sock.h>  // (Winsock on Windows: first, before <windows.h>)
+
 #ifdef _WIN32
-// Not on Windows yet (port/PLAN.md 5b): --gdb says so; the hooks stay off (g_gdb_enabled false).
-#include <signal.h>
-
-#include "core/log.h"
-
-namespace soa {
-bool g_gdb_enabled = false;
-bool gdb_listen(const std::string&, std::string* err) {
-    if (err) *err = "the GDB stub isn't available on Windows yet";
-    return false;
-}
-int gdb_port() { return -1; }
-void gdb_shutdown() {}
-bool gdb_stopped() { return false; }
-void gdb_park(Cpu&) {}
-bool gdb_breakpoint_hit(Cpu&, u64) { return false; }
-void gdb_fault(Cpu*, int) {}
-}  // namespace soa
+#include <windows.h>
 #else
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <poll.h>
-#include <signal.h>
-#include <sys/socket.h>
-#include <sys/syscall.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#endif
+
+#include <cxxabi.h>
 
 #include <atomic>
 #include <chrono>
+#include <cinttypes>
 #include <condition_variable>
+#include <cstdlib>
 #include <cstring>
 #include <map>
 #include <mutex>
 #include <optional>
+#include <set>
 #include <thread>
 
 #include "core/gdb_protocol.h"
@@ -69,13 +52,13 @@ constexpr u64 kTbiMask = 0x00ffffffffffffffull;    // data addresses ignore the 
 enum class Act { None, Cont, Step };
 struct ThreadCtl {
     Cpu* cpu = nullptr;  // the level that parked
-    bool parked = false;
+    bool parked = false;  // waiting in gdb_park or gdb_call_native: registers readable and writable
     bool faulted = false;  // waiting in gdb_fault (a signal handler): registers readable, can't run
     Act act = Act::None;
 };
 struct Stop {
     int tid = 0;
-    int sig = SIGTRAP;
+    int sig = kGdbSigTrap;
     bool swbreak = false;
 };
 
@@ -87,14 +70,16 @@ bool g_attached = false;
 std::map<int, ThreadCtl> g_ctl;  // by tid
 std::optional<Stop> g_pending;   // a stop not yet reported
 std::map<u64, u32> g_bps;        // inserted breakpoints: address -> original instruction
+std::set<u64> g_native_bps;      // breakpoints on natives' hooked entries (no BRK: see gdb_call_native)
+std::atomic<int> g_native_bp_count{0};
 int g_listen_fd = -1;
 std::atomic<int> g_port{0};
 std::atomic<bool> g_shutdown{false};
 std::thread g_server;
 
 thread_local int t_tid = 0;
-int my_tid() {
-    if (!t_tid) t_tid = (int)syscall(SYS_gettid);
+int my_tid() {  // the id guest_threads() reports (ThreadState::tid): gettid(), GetCurrentThreadId on Windows
+    if (!t_tid) t_tid = (int)gettid();
     return t_tid;
 }
 
@@ -109,16 +94,26 @@ void stop_world_locked(const Stop& s) {
 
 // ---- guest memory ----
 
+// One copy within this process, failing (not faulting) on unmapped memory: the number of bytes
+// copied, -1 when none could be.
+ssize_t copy_mem(void* dst, const void* src, size_t n, bool to_guest) {
+#ifdef _WIN32
+    SIZE_T done = 0;
+    BOOL ok = to_guest ? WriteProcessMemory(GetCurrentProcess(), dst, src, n, &done) : ReadProcessMemory(GetCurrentProcess(), src, dst, n, &done);
+    return ok ? (ssize_t)done : -1;
+#else
+    iovec l{to_guest ? (void*)src : dst, n}, r{to_guest ? dst : (void*)src, n};
+    return to_guest ? process_vm_writev(getpid(), &l, 1, &r, 1, 0) : process_vm_readv(getpid(), &l, 1, &r, 1, 0);
+#endif
+}
+
 size_t read_mem(u64 addr, void* out, size_t n) {
     addr &= kTbiMask;
-    iovec l{out, n}, r{(void*)addr, n};
-    ssize_t got = process_vm_readv(getpid(), &l, 1, &r, 1, 0);
+    ssize_t got = copy_mem(out, (const void*)addr, n, false);
     if (got < 0) {  // a range crossing into an unmapped page: byte by byte up to it
         size_t k = 0;
-        for (; k < n; k++) {
-            iovec l1{(char*)out + k, 1}, r1{(void*)(addr + k), 1};
-            if (process_vm_readv(getpid(), &l1, 1, &r1, 1, 0) != 1) break;
-        }
+        for (; k < n; k++)
+            if (copy_mem((char*)out + k, (const void*)(addr + k), 1, false) != 1) break;
         return k;
     }
     return (size_t)got;
@@ -126,8 +121,7 @@ size_t read_mem(u64 addr, void* out, size_t n) {
 
 bool write_mem(u64 addr, const void* in, size_t n) {
     addr &= kTbiMask;
-    iovec l{(void*)in, n}, r{(void*)addr, n};
-    return process_vm_writev(getpid(), &l, 1, &r, 1, 0) == (ssize_t)n;
+    return copy_mem((void*)addr, in, n, true) == (ssize_t)n;
 }
 
 // Memory as the program has it: the breakpoints' original instructions shown instead of the BRKs.
@@ -144,9 +138,13 @@ std::string read_program_mem(u64 addr, size_t n) {
 // ---- breakpoints (g_m held) ----
 
 bool insert_bp_locked(u64 addr) {
-    if (g_bps.count(addr)) return true;
+    if (g_bps.count(addr) || g_native_bps.count(addr)) return true;
     if (addr & 3) return false;
-    if (hooked_host_fn(addr)) return false;  // a native replacement: its first word is the hook's SVC
+    if (hooked_host_fn(addr)) {  // a native: its first word is the hook's SVC; gdb_call_native stops there
+        g_native_bps.insert(addr);
+        g_native_bp_count.store((int)g_native_bps.size(), std::memory_order_release);
+        return true;
+    }
     u32 orig;
     if (read_mem(addr, &orig, 4) != 4) return false;
     if (!write_mem(addr, &kBrk, 4)) return false;
@@ -156,12 +154,22 @@ bool insert_bp_locked(u64 addr) {
 }
 
 bool remove_bp_locked(u64 addr) {
+    if (g_native_bps.erase(addr)) {
+        g_native_bp_count.store((int)g_native_bps.size(), std::memory_order_release);
+        return true;
+    }
     auto it = g_bps.find(addr);
     if (it == g_bps.end()) return true;
     write_mem(addr, &it->second, 4);
     g_bps.erase(it);
     invalidate_guest_code(addr, 4);
     return true;
+}
+
+void remove_all_bps_locked() {
+    while (!g_bps.empty()) remove_bp_locked(g_bps.begin()->first);
+    g_native_bps.clear();
+    g_native_bp_count.store(0, std::memory_order_release);
 }
 
 // ---- registers ----
@@ -236,7 +244,7 @@ std::string libraries_xml() {
     for (LoadedLib* l : loaded_libs()) {
         if (!l || l->path.empty()) continue;
         char b[32];
-        snprintf(b, sizeof b, "0x%lx", (unsigned long)l->base);
+        snprintf(b, sizeof b, "0x%" PRIx64, (u64)l->base);
         x += "<library name=\"" + l->path + "\"><segment address=\"" + b + "\"/></library>\n";
     }
     return x + "</library-list>\n";
@@ -268,7 +276,7 @@ public:
             std::optional<std::string> p;
             bool bad = false;
             while (!(p = rd_.next(&bad))) {
-                ssize_t n = recv(fd_, b, sizeof b, 0);
+                ssize_t n = sock::recv(fd_, b, sizeof b);
                 if (n <= 0 || g_shutdown) return finish();
                 rd_.buf.append(b, (size_t)n);
             }
@@ -278,7 +286,7 @@ public:
             }
             if (!noack_) raw("+");
             if (*p == "\x03") {  // interrupt while stopped: report the stop again
-                ensure_stopped(SIGINT);
+                ensure_stopped(kGdbSigInt);
                 send(stop_reply());
                 continue;
             }
@@ -297,7 +305,7 @@ private:
     void raw(const std::string& s) {
         size_t off = 0;
         while (off < s.size()) {
-            ssize_t n = ::send(fd_, s.data() + off, s.size() - off, MSG_NOSIGNAL);
+            ssize_t n = sock::send(fd_, s.data() + off, s.size() - off);
             if (n <= 0) return;
             off += (size_t)n;
         }
@@ -312,7 +320,7 @@ private:
     // Removes every breakpoint and lets every thread run.
     void detach() {
         std::lock_guard lk(g_m);
-        while (!g_bps.empty()) remove_bp_locked(g_bps.begin()->first);
+        remove_all_bps_locked();
         g_attached = false;
         g_pending.reset();
         g_stopped = false;
@@ -419,7 +427,7 @@ private:
             g_pending.reset();
             if (step_unparked) {
                 // A thread in host code can't execute one instruction: report it stopped where it is.
-                g_pending = Stop{unparked_tid, SIGTRAP, false};
+                g_pending = Stop{unparked_tid, kGdbSigTrap, false};
             } else {
                 if (def) g_stopped = false;  // the default action resumes every other thread
                 g_cv_thr.notify_all();
@@ -434,9 +442,9 @@ private:
                 g_cv_srv.wait_for(lk, std::chrono::milliseconds(20));
                 if (g_pending) break;
             }
-            pollfd pf{fd_, POLLIN, 0};
-            if (poll(&pf, 1, 0) > 0) {
-                ssize_t n = recv(fd_, b, sizeof b, 0);
+            sock::PollFd pf{fd_, POLLIN, 0};
+            if (sock::poll(&pf, 1, 0) > 0) {
+                ssize_t n = sock::recv(fd_, b, sizeof b);
                 if (n <= 0) return false;
                 rd_.buf.append(b, (size_t)n);
                 if (rd_.buf.find('\x03') != std::string::npos) {
@@ -445,12 +453,12 @@ private:
                     int tid = 0;  // report a thread that was running guest code, else the first
                     for (auto& v : guest_threads())
                         if (!tid || (v.in_jit && !g_ctl[v.tid].parked)) tid = v.tid;
-                    stop_world_locked({tid, SIGINT, false});
+                    stop_world_locked({tid, kGdbSigInt, false});
                 }
             }
             if (g_shutdown) return false;
         }
-        ensure_stopped(SIGTRAP);
+        ensure_stopped(kGdbSigTrap);
         send(stop_reply());
         return true;
     }
@@ -460,12 +468,12 @@ private:
         if (cmd == "base" || cmd == "libs") {
             for (LoadedLib* l : loaded_libs()) {
                 char b[64];
-                snprintf(b, sizeof b, "0x%lx", (unsigned long)l->base);
+                snprintf(b, sizeof b, "0x%" PRIx64, (u64)l->base);
                 out += std::string(b) + " " + l->path + "\n";
             }
             if (LoadedLib* m = main_lib()) {
                 char b[64];
-                snprintf(b, sizeof b, "0x%lx", (unsigned long)m->base);
+                snprintf(b, sizeof b, "0x%" PRIx64, (u64)m->base);
                 out += "symbols: add-symbol-file work/libSOA-3.7.0.so -o " + std::string(b) + "\n";
             }
         } else if (cmd == "threads") {
@@ -477,10 +485,39 @@ private:
                 snprintf(b, sizeof b, "%d (0x%x) %s, entry ", v.tid, v.tid, st);
                 out += b + describe_guest_addr(v.entry) + ", pc " + describe_guest_addr(v.cpu ? v.cpu->pc() : 0) + "\n";
             }
+        } else if (cmd == "natives" || cmd.rfind("natives ", 0) == 0) {
+            out = natives(cmd.size() > 8 ? cmd.substr(8) : "");
         } else {
-            out = "monitor commands: base (the loaded images and their load addresses), threads, help\n";
+            out = "monitor commands: base (the loaded images and their load addresses), threads, natives [TEXT] (the guest\n"
+                  "functions replaced by native code: guest address, symbol, demangled, the C++ native, its host address;\n"
+                  "TEXT filters), help\n";
         }
         return out;
+    }
+
+    // `monitor natives [TEXT]`: one line per guest function that is now a native (hooked), tab-separated:
+    // guest address, guest symbol, demangled, the C++ that replaces it, the host function's address.
+    static std::string natives(const std::string& filter) {
+        std::string out;
+        size_t n = 0;
+        for (const HookedFunction& h : hooked_functions()) {
+            std::string sym = h.name ? h.name : "", dem = sym;
+            int st = 0;
+            if (char* d = sym.rfind("_Z", 0) == 0 ? abi::__cxa_demangle(sym.c_str(), nullptr, nullptr, &st) : nullptr) {
+                dem = d;
+                free(d);
+            }
+            std::string host = h.host_name ? h.host_name : "?";
+            if (!filter.empty() && sym.find(filter) == std::string::npos && dem.find(filter) == std::string::npos &&
+                host.find(filter) == std::string::npos)
+                continue;
+            char a[40], f[40];
+            snprintf(a, sizeof a, "0x%" PRIx64, h.guest_addr);
+            snprintf(f, sizeof f, "0x%" PRIx64, (u64)(uintptr_t)h.fn);
+            out += std::string(a) + "\t" + sym + "\t" + dem + "\t" + host + "\t" + f + "\n";
+            n++;
+        }
+        return "# " + std::to_string(n) + " natives: guest address, guest symbol, demangled, native (C++), host function\n" + out;
     }
 
     // One packet. False: close the connection.
@@ -496,7 +533,7 @@ private:
         } else if (p.rfind("qXfer:libraries:read::", 0) == 0) {
             send(xfer_slice(libraries_xml(), p.substr(22)));
         } else if (p == "?") {
-            ensure_stopped(SIGTRAP);
+            ensure_stopped(kGdbSigTrap);
             send(stop_reply());
         } else if (p == "qAttached") {
             send("1");
@@ -525,7 +562,8 @@ private:
         } else if (p.rfind("qRcmd,", 0) == 0) {
             std::string cmd;
             from_hex(p.substr(6), cmd);
-            send("O" + to_hex(monitor(cmd)));
+            std::string text = monitor(cmd);
+            for (size_t off = 0; off < text.size(); off += 1024) send("O" + to_hex(text.substr(off, 1024)));  // console output, in pieces
             send("OK");
         } else if (c == 'H' && p.size() >= 2) {
             size_t i = 2;
@@ -624,18 +662,34 @@ private:
 
 void server_main() {
     while (!g_shutdown) {
-        sockaddr_storage ss{};
-        socklen_t sl = sizeof ss;
-        int fd = accept(g_listen_fd, (sockaddr*)&ss, &sl);
+        int fd = sock::accept(g_listen_fd);  // (gdb_shutdown closes the listener: accept fails)
         if (fd < 0) {
             if (g_shutdown) break;
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
-        int one = 1;
-        setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof one);
         Session(fd).run();
-        close(fd);
+        sock::close(fd);
     }
+}
+
+// With g_m held: wait as a parked thread (registers readable and writable) until the debugger
+// resumes this thread (Act::Cont, or every thread) or steps it (returns true).
+bool wait_parked_locked(std::unique_lock<std::mutex>& lk, ThreadCtl& t) {
+    bool step = false;
+    for (;;) {
+        if (t.act == Act::Step) {
+            step = true;
+            break;
+        }
+        if (t.act == Act::Cont || !g_stopped) break;
+        t.parked = true;
+        g_cv_srv.notify_all();
+        g_cv_thr.wait(lk);
+    }
+    t.parked = false;
+    t.act = Act::None;
+    return step;
 }
 
 }  // namespace
@@ -654,7 +708,7 @@ void gdb_park(Cpu& c) {
             lk.unlock();
             c.jit()->Step();
             lk.lock();
-            stop_world_locked({tid, SIGTRAP, false});
+            stop_world_locked({tid, kGdbSigTrap, false});
             continue;
         }
         if (t.act == Act::Cont || !g_stopped) break;
@@ -670,11 +724,44 @@ void gdb_park(Cpu& c) {
 bool gdb_breakpoint_hit(Cpu& c, u64 pc) {
     std::lock_guard lk(g_m);
     if (!g_bps.count(pc)) return false;
-    stop_world_locked({my_tid(), SIGTRAP, true});
+    stop_world_locked({my_tid(), kGdbSigTrap, true});
     return true;
 }
 
-void gdb_fault(Cpu* c, int signo) {
+bool gdb_native_breakpoints() { return g_native_bp_count.load(std::memory_order_acquire) != 0; }
+
+void gdb_call_native(Cpu& c, u64 hook, HostFn fn, bool in_jit) {
+    bool step = false;
+    {
+        std::unique_lock lk(g_m);
+        if (g_attached && g_native_bps.count(hook)) {
+            const int tid = my_tid();
+            ThreadCtl& t = g_ctl[tid];
+            t.cpu = &c;
+            const u64 ret_pc = c.pc();  // hook + 4: the hook's RET
+            c.xregs()[32] = hook;       // (the pc) reported where the breakpoint is, the guest's arguments as they are
+            stop_world_locked({tid, kGdbSigTrap, true});
+            step = wait_parked_locked(lk, t);
+            if (c.pc() != hook) return;  // the debugger moved the PC: the native doesn't run; the JIT goes on there
+            c.xregs()[32] = ret_pc;
+        }
+    }
+    fn(c);
+    if (!step) return;
+    // A step from the native's entry: all of it ran; stop at the hook's RET.
+    std::unique_lock lk(g_m);
+    if (!g_attached) return;
+    const int tid = my_tid();
+    stop_world_locked({tid, kGdbSigTrap, false});  // (halts this JIT too: it parks in gdb_park on return)
+    if (in_jit) return;
+    // A direct host call has no JIT to return to: wait here (a further step can't run guest code:
+    // reported stopped where it is).
+    ThreadCtl& t = g_ctl[tid];
+    t.cpu = &c;
+    while (wait_parked_locked(lk, t)) stop_world_locked({tid, kGdbSigTrap, false});
+}
+
+void gdb_fault(Cpu* c, int gdb_sig) {
     std::unique_lock lk(g_m);
     if (!g_attached) return;
     const int tid = my_tid();
@@ -682,37 +769,35 @@ void gdb_fault(Cpu* c, int signo) {
     t.cpu = c;
     t.faulted = true;
     g_pending.reset();
-    stop_world_locked({tid, signo, false});
-    LOGE("gdb", "guest fault (signal %d) on thread %d: reported to the debugger; waiting for it to continue or detach", signo, tid);
+    stop_world_locked({tid, gdb_sig, false});
+    LOGE("gdb", "guest fault (signal %d) on thread %d: reported to the debugger; waiting for it to continue or detach", gdb_sig, tid);
     while (g_attached && g_stopped) g_cv_thr.wait(lk);
     t.faulted = false;
 }
 
 bool gdb_listen(const std::string& host_port, std::string* err) {
-    std::string host = "127.0.0.1", port = host_port;
-    size_t colon = host_port.rfind(':');
-    if (colon != std::string::npos) {
-        if (colon > 0) host = host_port.substr(0, colon);
-        port = host_port.substr(colon + 1);
-    }
-    if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
-        if (err) *err = "--gdb: expected HOST:PORT, :PORT or PORT, got \"" + host_port + "\"";
+    std::string host, port;
+    if (host_port.find_first_not_of("0123456789") == std::string::npos) port = host_port;  // "PORT"
+    else if (!sock::split_host_port(host_port, &host, &port)) port.clear();
+    if (host.empty()) host = "127.0.0.1";
+    if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos || port.size() > 5 || atoi(port.c_str()) > 65535) {
+        if (err) *err = "--gdb: expected HOST:PORT, [IPV6]:PORT, :PORT or PORT, got \"" + host_port + "\"";
         return false;
     }
     addrinfo hints{}, *res = nullptr;
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
+    sock::startup();
     if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0 || !res) {
         if (err) *err = "--gdb: can't resolve " + host;
         return false;
     }
-    int fd = socket(res->ai_family, SOCK_STREAM | SOCK_CLOEXEC, 0);
-    int one = 1;
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof one);
-    if (fd < 0 || bind(fd, res->ai_addr, res->ai_addrlen) != 0 || listen(fd, 1) != 0) {
-        if (err) *err = "--gdb: can't listen on " + host_port + ": " + strerror(errno);
-        if (fd >= 0) close(fd);
+    int fd = sock::tcp_socket(false, res->ai_family);
+    if (fd >= 0) sock::set_reuse_addr(fd);
+    if (fd < 0 || bind(fd, res->ai_addr, (int)res->ai_addrlen) != 0 || listen(fd, 1) != 0) {
+        if (err) *err = "--gdb: can't listen on " + host_port + ": " + sock::last_error();
+        if (fd >= 0) sock::close(fd);
         freeaddrinfo(res);
         return false;
     }
@@ -725,7 +810,9 @@ bool gdb_listen(const std::string& host_port, std::string* err) {
     g_gdb_enabled = true;
     g_shutdown = false;
     g_server = std::thread(server_main);
-    LOGI("gdb", "GDB stub listening on %s:%d (gdb-multiarch -x control/gdbinit-soa, or control/gdbclient.py)", host.c_str(), g_port.load());
+    // (soadrive reads the port from this line: control/soadrive/gdb.py listen_port)
+    LOGI("gdb", "GDB stub listening on %s (gdb-multiarch -x control/gdbinit-soa, or control/gdbclient.py)",
+         sock::join_host_port(host, g_port.load()).c_str());
     return true;
 }
 
@@ -734,12 +821,14 @@ int gdb_port() { return g_port; }
 void gdb_shutdown() {
     if (g_listen_fd < 0) return;
     g_shutdown = true;
-    shutdown(g_listen_fd, SHUT_RDWR);
-    close(g_listen_fd);
+#ifndef _WIN32
+    shutdown(g_listen_fd, SHUT_RDWR);  // wakes accept() (closing the socket does on Windows)
+#endif
+    sock::close(g_listen_fd);
     g_listen_fd = -1;
     if (g_server.joinable()) g_server.join();
     std::lock_guard lk(g_m);
-    while (!g_bps.empty()) remove_bp_locked(g_bps.begin()->first);
+    remove_all_bps_locked();
     g_attached = false;
     g_stopped = false;
     g_pending.reset();
@@ -747,4 +836,3 @@ void gdb_shutdown() {
 }
 
 }  // namespace soa
-#endif

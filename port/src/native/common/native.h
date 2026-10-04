@@ -27,6 +27,10 @@ struct NativeFunction {
     // Optional group: nullptr = an ordinary native; kGroupRoute = the in-process server route's own
     // hooks (the FakeApiCaller replacements, native/api/fakeapi.cpp), left out with --server HOST.
     const char* group = nullptr;
+    // Optional: the C++ that replaces it, as written at the registration (the NATIVE_* macros fill
+    // it: the member of NATIVE_METHOD, the function of NATIVE_FUNCTION); shown by the GDB stub's
+    // `monitor natives` (runtime/README.md "Debugging the guest with gdb"). nullptr: the note.
+    const char* host = nullptr;
 };
 
 constexpr const char* kGroupRoute = "route";
@@ -54,17 +58,13 @@ void list_native_functions(FILE* out);
 
 #define NATIVE_CONCAT2(a, b) a##b
 #define NATIVE_CONCAT(a, b) NATIVE_CONCAT2(a, b)
-#define NATIVE_FUNCTION(sym, fn, note) \
-    static bool NATIVE_CONCAT(native_reg_, __LINE__) = ::soa::register_native_function({sym, fn, note})
-#define NATIVE_FUNCTION_ORIG(sym, fn, note, orig) \
-    static bool NATIVE_CONCAT(native_reg_, __LINE__) = ::soa::register_native_function({sym, fn, note, nullptr, orig})
-#define NATIVE_FUNCTION_IF(sym, fn, note, cond) \
-    static bool NATIVE_CONCAT(native_reg_, __LINE__) = ::soa::register_native_function({sym, fn, note, cond})
+#define NATIVE_REGISTER(sym, fn, note, cond, orig, group, host) \
+    static bool NATIVE_CONCAT(native_reg_, __LINE__) = ::soa::register_native_function({sym, fn, note, cond, orig, group, host})
+#define NATIVE_FUNCTION(sym, fn, note) NATIVE_REGISTER(sym, fn, note, nullptr, nullptr, nullptr, #fn)
+#define NATIVE_FUNCTION_ORIG(sym, fn, note, orig) NATIVE_REGISTER(sym, fn, note, nullptr, orig, nullptr, #fn)
+#define NATIVE_FUNCTION_IF(sym, fn, note, cond) NATIVE_REGISTER(sym, fn, note, cond, nullptr, nullptr, #fn)
 // The in-process server route's own hooks (group kGroupRoute; not installed with --server HOST).
-#define NATIVE_ROUTE_FUNCTION(sym, fn, note) \
-    static bool NATIVE_CONCAT(native_reg_, __LINE__) = ::soa::register_native_function({sym, fn, note, nullptr, nullptr, ::soa::kGroupRoute})
-#define NATIVE_ROUTE_FUNCTION_ORIG_IF(sym, fn, note, cond, orig) \
-    static bool NATIVE_CONCAT(native_reg_, __LINE__) = ::soa::register_native_function({sym, fn, note, cond, orig, ::soa::kGroupRoute})
+#define NATIVE_ROUTE_FUNCTION(sym, fn, note) NATIVE_REGISTER(sym, fn, note, nullptr, nullptr, ::soa::kGroupRoute, #fn)
+#define NATIVE_ROUTE_FUNCTION_ORIG_IF(sym, fn, note, cond, orig) NATIVE_REGISTER(sym, fn, note, cond, orig, ::soa::kGroupRoute, #fn)
 // Like NATIVE_FUNCTION_IF, and stores a trampoline to the original guest code in *orig (u64).
-#define NATIVE_FUNCTION_ORIG_IF(sym, fn, note, cond, orig) \
-    static bool NATIVE_CONCAT(native_reg_, __LINE__) = ::soa::register_native_function({sym, fn, note, cond, orig})
+#define NATIVE_FUNCTION_ORIG_IF(sym, fn, note, cond, orig) NATIVE_REGISTER(sym, fn, note, cond, orig, nullptr, #fn)

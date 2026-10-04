@@ -129,57 +129,89 @@ build/runtime/soaruntime_tests     # prints ok/FAIL per check, PASS/FAIL at the 
 
 ## Debugging the guest with gdb (`core/gdbstub.h`)
 
-`--gdb HOST:PORT` (soa, soa-emu, soa-viewer; `:PORT` / `PORT` = 127.0.0.1; off by default) serves the GDB
-remote serial protocol for the **guest**: gdb-multiarch, or `control/gdbclient.py` from a test, attaches to
-the running client, stops every guest thread, reads and writes registers and memory, sets breakpoints,
-single-steps and continues; after `detach` the client keeps running (breakpoints removed).
+`--gdb HOST:PORT` (soa, soa-emu, soa-viewer; `[IPV6]:PORT` e.g. `[::1]:1234`; `:PORT` / `PORT` = 127.0.0.1;
+port 0 picks a free one, logged as `I/gdb: GDB stub listening on HOST:PORT`; off by default) serves the GDB
+remote serial protocol for the **guest**, on Linux and Windows: gdb-multiarch, or `control/gdbclient.py` from a
+test, attaches to the running client, stops every guest thread, reads and writes registers and memory, sets
+breakpoints (also on natives), single-steps and continues; after `detach` the client keeps running
+(breakpoints removed).
 
 ```sh
-build/port/soa --gdb 127.0.0.1:1234 ...                 # or soa-emu / soa-viewer
-gdb-multiarch -x control/gdbinit-soa -ex 'target remote 127.0.0.1:1234'
+build/port/soa --gdb 127.0.0.1:1234 ...                 # or soa-emu / soa-viewer; soa.exe the same
+gdb-multiarch -x control/gdbinit-soa -ex 'target remote 127.0.0.1:1234'      # or [::1]:1234
 (gdb) break Framework::CMutex::Lock                       # the game library's symbols are loaded at its base
 (gdb) continue
 (gdb) bt 5
 (gdb) x/4gx $x0
 (gdb) stepi
+(gdb) monitor natives ASON                                # the guest functions now native
 (gdb) detach
 control/gdbclient.py :1234 --break _ZN9Framework6CMutex4LockEv --regs --read x0:0x40   # one shot from a script
+control/gdbclient.py [::1]:1234 --monitor "natives Find_"
 ```
 
 - **Registers:** the target description (`qXfer:features:read`) is gdb's `aarch64.core` (x0-x30, sp, pc,
   cpsr) and `aarch64.fpu` (v0-v31, fpsr, fpcr), read from and written to the JIT state of the thread's
   innermost guest_call level. **Memory:** `m` / `M` / `X` on guest memory through
-  `process_vm_readv/writev` (an unmapped address answers `E14`; the data top byte is ignored as on the
-  phone); a write invalidates the JIT's translations of the range.
-- **Threads:** each host thread that runs guest code is a gdb thread (its kernel tid; `info threads` shows its
-  entry function). **All-stop:** a stop halts every guest CPU at its next block boundary (dynarmic
-  `HaltExecution`, `kGdbHalt` = UserDefined4) and the thread parks in `gdb_park` until resumed. A thread that is
-  inside a host function (an HLE import, a native, a blocking wait) counts as stopped and parks when it returns
-  to guest code; its registers are those at the call. `vCont` actions per thread (`s:tid` with or without a
-  default `c`), `c`, `s`, `^C`.
+  `process_vm_readv/writev` (Linux) or `Read/WriteProcessMemory` on the own process (Windows): an unmapped
+  address answers `E14`; the data top byte is ignored as on the phone; a write invalidates the JIT's
+  translations of the range.
+- **Threads:** each host thread that runs guest code is a gdb thread (its kernel tid; the Win32 thread id on
+  Windows; `info threads` shows its entry function). **All-stop:** a stop halts every guest CPU at its next
+  block boundary (dynarmic `HaltExecution`, `kGdbHalt` = UserDefined4) and the thread parks in `gdb_park` until
+  resumed. A thread that is inside a host function (an HLE import, a native, a blocking wait) counts as stopped
+  and parks when it returns to guest code; its registers are those at the call. `vCont` actions per thread
+  (`s:tid` with or without a default `c`), `c`, `s`, `^C`.
 - **Breakpoints:** `Z0` / `Z1` write `BRK #0x7d0` over the instruction and invalidate the word in every JIT;
   memory reads show the original instruction. A hit stops the world with `T05 ... swbreak`; gdb steps over it
-  as usual (remove, step the thread, re-insert). A native replacement's entry (its `SVC` hook) can't take one
-  (`E01`). Watchpoints are not supported.
+  as usual (remove, step the thread, re-insert). Watchpoints are not supported.
+- **Natives** (a guest function replaced by C++: its entry is the hook's `SVC; RET`, the original prologue is
+  gone, which is what memory reads and `x/2i` show there): a breakpoint on the entry writes nothing; the
+  hook's call (`gdb_call_native`, from the JIT's `CallSVC` or a host `guest_call`'s direct call) stops the
+  world before the native runs, reported at the entry (`swbreak`) with the guest's arguments in the
+  registers (writable: the native sees the change). Continuing runs the native; a step runs all of it and
+  stops at the hook's `RET` (entry + 4); a pc moved away from the entry skips it. Not seen: a native that
+  calls another native's C++ directly (no guest call in between). `monitor natives [TEXT]` lists every
+  guest function that is now a native, tab-separated: guest address, guest symbol, demangled, the C++ that
+  replaces it (the member of `NATIVE_METHOD`, the function of `NATIVE_FUNCTION`, else the registration's
+  note), the host function's address; TEXT filters. `control/gdbclient.py`'s `natives()` reads it.
+- **The natives' C++ from a host gdb** on the same process: `control/gdbinit-soa` in a gdb whose program
+  file is soa (`gdb -x control/gdbinit-soa --args build/port/soa ...`, or `-p PID` where ptrace allows it)
+  adds `soa-native-break SYMBOL|0xGUESTADDR` (a host breakpoint on the host function behind a guest symbol,
+  mangled or demangled; it may be a wrapper: `wrap_method`, a live-check dispatcher; `step` into it) and
+  `soa-natives [TEXT]`. They read the runtime's thunk table (`soa_gdb_thunks`, core/cpu.cpp; no debug
+  info needed), filled when the natives are installed: break on `soa::install_native_functions` and
+  `finish` first, or interrupt the running client. The guest stub and a host gdb on one process don't
+  mix (the host gdb stops the stub's thread too).
 - **Stepping:** `Step()` of the thread's own JIT, one instruction (a step into an `SVC` runs the whole host
   function).
-- **Faults:** a host signal in guest context, an unimplemented instruction or a guest exception is reported to an
-  attached debugger first (`T0b` for SIGSEGV), and the thread waits until gdb continues or detaches; then the
-  client crashes as before. Registers at a fault are the last synchronised ones (the JIT keeps some in host
-  registers within a block).
+- **Faults:** a fatal fault in guest context (a host signal on Linux; on Windows a vectored handler, which
+  leaves faults in JIT code to dynarmic's own handler: its fastmem faults are normal), an unimplemented
+  instruction or a guest exception is reported to an attached debugger first (`T0b` for SIGSEGV / an access
+  violation; the protocol's own signal numbers on both hosts), and the thread waits until gdb continues or
+  detaches; then the client crashes as before. Registers at a fault are the last synchronised ones (the JIT
+  keeps some in host registers within a block).
 - **Symbols:** the stub lists the loaded images (`qXfer:libraries:read`, `osabi none`), and
   `control/gdbinit-soa` has gdb read them right after `target remote`; `monitor base` prints each image's load
-  address and the `add-symbol-file work/libSOA-3.7.0.so -o BASE` line for a library file gdb can't open.
-  `monitor threads` lists the threads and their state.
+  address and the `add-symbol-file work/libSOA-3.7.0.so -o BASE` line for a library file gdb can't open (a
+  Windows client's paths are Windows paths). `monitor threads` lists the threads and their state.
+- **IPv6:** `--gdb [::1]:PORT` listens on IPv6 (`soa/sock.h`'s `split_host_port`); gdb-multiarch takes
+  `target remote [::1]:PORT`, gdbclient `[::1]:PORT`. From WSL, a Windows client's stub is reachable on
+  127.0.0.1 only (mirrored networking shares the IPv4 loopback, not `::1`); on `::1` a Windows debugger or
+  python attaches (`python.exe control/gdbclient.py [::1]:PORT ...`).
 - **Cost:** none when off: the JIT's run loop handles `kGdbHalt` only when `Run()` returns, plus one
   predictable branch per guest_call entry and per host-function call (`core/zz-bench-transitions`: 22-25 ns
   per nested guest call with and without `--gdb`). With `--gdb` and no debugger attached, the same.
   Profiling (`SOA_PROFILE`) and `--gdb` together lose the profiler's host-function attribution.
 - **Tests:** `soaruntime_tests` drives the stub end to end over a socket against a guest loop
-  (`tests/gdbstub_test.cpp`: stop, registers, memory, breakpoint, step, write, detach) and the protocol's
-  encodings (`gdb/protocol-*`); `soaruntime_tests --gdb-demo HOST:PORT [--fault]` runs that loop for a
-  debugger, which `control/tests/test_gdbclient.py` attaches `control/gdbclient.py` and gdb-multiarch to (T0's
-  `pytest-control`).
+  (`tests/gdbstub_test.cpp`: stop, registers, memory, breakpoint, step, write, detach; the loop's leaf as a
+  native: a breakpoint before it, a register write it sees, a step through it, `monitor natives`; the stub on
+  `[::1]`) and the protocol's encodings (`gdb/protocol-*`), on Linux and as `soaruntime_tests.exe`;
+  `soaruntime_tests --gdb-demo HOST:PORT [--fault] [--native]` runs that loop for a debugger, which
+  `control/tests/test_gdbclient.py` attaches `control/gdbclient.py` and gdb-multiarch to over 127.0.0.1 and
+  `::1`, and a host gdb with `control/gdbinit-soa`'s `soa-native-break` (T0's `pytest-control`;
+  `SOA_GDB_DEMO=PATH` runs it against another build, e.g. the staged `soaruntime_tests.exe`). In a game:
+  `control/run.py gdb-probe` (soadrive; also with a `soa.exe`, and `--target port-server --ipv6`).
 
 ## Graphics: the guest's EGL over SDL's GL contexts
 

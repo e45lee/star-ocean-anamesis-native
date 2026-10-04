@@ -1,18 +1,131 @@
-# gdb-multiarch setup for the runtime's GDB stub (`--gdb HOST:PORT` on soa / soa-emu / soa-viewer;
-# runtime/README.md "Debugging the guest with gdb"):
-#   gdb-multiarch -x control/gdbinit-soa -ex 'target remote 127.0.0.1:1234'
+# gdb setup for soa / soa-emu / soa-viewer (runtime/README.md "Debugging the guest with gdb"), two uses:
+#
+# The guest, through the runtime's GDB stub (`--gdb HOST:PORT`), with gdb-multiarch and no program file:
+#   gdb-multiarch -x control/gdbinit-soa -ex 'target remote 127.0.0.1:1234'     (or [::1]:1234)
 # The stub describes an aarch64 target (osabi none) and lists the loaded images
 # (qXfer:libraries:read), so gdb loads the game library's symbols at its load base itself
 # (`info sharedlibrary`). When that file isn't readable here, `monitor base` prints the load base and
-# the add-symbol-file line for work/libSOA-3.7.0.so.
-set architecture aarch64
-set osabi none
+# the add-symbol-file line for work/libSOA-3.7.0.so. `monitor natives [TEXT]` lists the guest
+# functions that are now natives; a breakpoint on one stops before the native runs.
+#
+# The host, a gdb on the process itself (the program file is soa, soa-emu, ...), for the natives'
+# C++:
+#   gdb -x control/gdbinit-soa --args build/port/soa ...      (or gdb -x control/gdbinit-soa -p PID)
+#   (gdb) soa-native-break _ZN4Aska4ASON6MallocEm              a guest symbol (mangled, demangled, or
+#                                                              0xGUESTADDR): a breakpoint on its native
+#   (gdb) soa-natives ASON                                     the natives whose names contain TEXT
+# The natives are installed at start-up: before that (e.g. at `starti`) the commands say so; break on
+# soa::install_native_functions and `finish` first, or interrupt the running client. The table they
+# read is the runtime's thunk table (soa_gdb_thunks, core/cpu.cpp): no debug info needed.
 set pagination off
 set confirm off
 set print asm-demangle on
 set print demangle on
 set breakpoint pending on
-# Detaching leaves the client running (breakpoints removed); `kill` detaches too.
+
+python
+import gdb
+
+
+def _soa_has_thunk_table():
+    try:
+        gdb.parse_and_eval("&soa_gdb_thunks")
+        return True
+    except gdb.error:
+        return False
+
+
+SOA_HOST = _soa_has_thunk_table()
+if not SOA_HOST:
+    gdb.execute("set architecture aarch64")
+    gdb.execute("set osabi none")
+
+
+def soa_hooks():
+    """[(guest_addr, guest_name, host_name, host_fn)] of the hooked guest functions (the natives).
+    The table: {HostFn fn; const char* name; u64 hook; const char* host_name}, 32 bytes each, in
+    order from entry 1 (0 is the return to the host), ended by fn == 0 (core/cpu.cpp)."""
+    table = int(gdb.parse_and_eval("*(unsigned long *)&soa_gdb_thunks"))
+    if not table:
+        raise gdb.GdbError("soa: the runtime's thunk table isn't set up yet (run further: the natives are installed at start-up)")
+    inf = gdb.selected_inferior()
+    charp = gdb.lookup_type("char").pointer()
+
+    def string(p):
+        return gdb.Value(p).cast(charp).string() if p else ""
+
+    out, i, chunk = [], 0, 1024
+    while i < 0x10000:
+        raw = bytes(inf.read_memory(table + 32 * i, 32 * chunk))
+        for k in range(chunk):
+            fn, name, hook, host = (int.from_bytes(raw[32 * k + 8 * j:32 * k + 8 * j + 8], "little") for j in range(4))
+            if not fn and i + k > 0:
+                return out
+            if hook and (int.from_bytes(bytes(inf.read_memory(hook, 4)), "little") & 0xffe0001f) == 0xd4000001:
+                out.append((hook, string(name), string(host), fn))
+        i += chunk
+    return out
+
+
+def _demangled(name):
+    if not name.startswith("_Z"):
+        return name
+    try:
+        return gdb.execute("demangle " + name, to_string=True).strip()
+    except gdb.error:
+        return name
+
+
+def _matches(arg, hooks):
+    if arg.startswith("0x"):
+        return [h for h in hooks if h[0] == int(arg, 16)]
+    exact = [h for h in hooks if h[1] == arg or h[2] == arg]
+    if exact:
+        return exact
+    return [h for h in hooks if _demangled(h[1]) == arg or _demangled(h[1]).startswith(arg + "(")]
+
+
+class SoaNativeBreak(gdb.Command):
+    """soa-native-break SYMBOL|0xGUESTADDR: a host breakpoint on the native (C++) that replaces the guest
+function SYMBOL (its mangled or demangled name, or its guest address): it stops when the native
+starts, from guest code or from another native's guest call."""
+
+    def __init__(self):
+        super().__init__("soa-native-break", gdb.COMMAND_BREAKPOINTS)
+
+    def invoke(self, arg, from_tty):
+        arg = arg.strip()
+        if not arg:
+            raise gdb.GdbError("usage: soa-native-break SYMBOL|0xGUESTADDR")
+        found = _matches(arg, soa_hooks())
+        if not found:
+            raise gdb.GdbError("soa: %s isn't a native in this run (soa-natives TEXT lists them)" % arg)
+        for guest, name, host, fn in found:
+            where = gdb.execute("info symbol %#x" % fn, to_string=True).strip()
+            b = gdb.Breakpoint("*%#x" % fn)
+            print("soa: breakpoint %d on the native for %s (guest %#x): %s; host function %s" % (b.number, name, guest, host or "?", where))
+
+
+class SoaNatives(gdb.Command):
+    """soa-natives [TEXT]: the guest functions that are natives in this run (guest address, symbol, the
+C++, host function), those whose names contain TEXT."""
+
+    def __init__(self):
+        super().__init__("soa-natives", gdb.COMMAND_DATA)
+
+    def invoke(self, arg, from_tty):
+        arg = arg.strip()
+        for guest, name, host, fn in soa_hooks():
+            if not arg or arg in name or arg in host:
+                print("%#x  %s  %s  %#x" % (guest, name, host or "?", fn))
+
+
+if SOA_HOST:
+    SoaNativeBreak()
+    SoaNatives()
+end
+
+# The guest stub: detaching leaves the client running (breakpoints removed); `kill` detaches too.
 # gdb lists the images on connect but reads their symbols only on request: do it right away.
 define target hookpost-remote
 sharedlibrary

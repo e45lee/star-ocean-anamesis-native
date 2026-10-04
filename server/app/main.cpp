@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <soa/env.h>
+#include <soa/sock.h>
 #include <soa/game_files.h>
 
 #include "net/cdn_http.h"
@@ -215,8 +216,9 @@ int main(int argc, char** argv) {
     signal(SIGINT, on_signal);
     signal(SIGTERM, on_signal);
     signal(SIGPIPE, SIG_IGN);
-    fprintf(stderr, "soa-server: game %s:%u, http %s:%u (bridge %s)%s%s\n", game_host.c_str(), loop.game_port(), http_host.c_str(), loop.http_port(),
-            go.bridge_url.c_str(), log_packets.empty() ? "" : ", packets logged to ", log_packets.c_str());
+    fprintf(stderr, "soa-server: game %s, http %s (bridge %s)%s%s\n", soa::sock::join_host_port(game_host, loop.game_port()).c_str(),
+            soa::sock::join_host_port(http_host, loop.http_port()).c_str(), go.bridge_url.c_str(), log_packets.empty() ? "" : ", packets logged to ",
+            log_packets.c_str());
     if (cdn)
         fprintf(stderr, "soa-server: CDN %s/download/%s/Android/<name> (%s)\n", c.cdn_url.c_str(), cdn->revision().c_str(), cdn->summary().c_str());
     loop.run(g_stop);

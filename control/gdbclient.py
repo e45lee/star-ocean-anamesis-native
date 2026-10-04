@@ -12,12 +12,16 @@ Library:
     regs = g.regs()                             # {"x0": ..., "sp": ..., "pc": ..., "v0": int(128-bit), ...}
     data = g.read(regs["x0"], 0x40)
     g.step(); g.detach()                        # breakpoints removed, the client keeps running
+    g.natives("Find_")                          # the guest functions now native: [{"addr", "symbol", "demangled", "native", "host"}]
+A breakpoint on a native (a guest function replaced by C++) stops before the native runs, the
+guest's arguments in the registers; a step runs all of it (runtime/README.md).
 
 CLI (one shot; exits after detaching):
     control/gdbclient.py HOST:PORT [--break SYMBOL|0xADDR] [--timeout S] [--regs] [--read REG_OR_ADDR:LEN] [--monitor CMD]
 e.g. control/gdbclient.py :1234 --break _ZN5CHome11GetAdjutant... --regs --read x0:0x40
-SYMBOL is an ELF symbol of the game library (work/libSOA-3.7.0.so; --lib for another), resolved
-at the load base the stub reports.
+     control/gdbclient.py [::1]:1234 --monitor "natives ASON"
+HOST may be an IPv6 address in brackets. SYMBOL is an ELF symbol of the game library
+(work/libSOA-3.7.0.so; --lib for another), resolved at the load base the stub reports.
 """
 import argparse
 import os
@@ -103,9 +107,18 @@ def parse_stop(r: str):
     return st
 
 
+def split_addr(addr):
+    """'HOST:PORT', '[V6]:PORT' or ':PORT' -> (host, port); the host defaults to 127.0.0.1."""
+    host, _, port = addr.rpartition(":")
+    if host.startswith("[") and host.endswith("]"):
+        host = host[1:-1]
+    return host or "127.0.0.1", int(port)
+
+
 class GdbClient:
     def __init__(self, host="127.0.0.1", port=1234, timeout=30.0, stop=True):
-        self.sock = socket.create_connection((host or "127.0.0.1", port), timeout=timeout)
+        host = (host or "127.0.0.1").strip("[]")  # an IPv6 address with or without its brackets
+        self.sock = socket.create_connection((host, port), timeout=timeout)
         self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.buf = b""
         self.noack = False
@@ -216,6 +229,16 @@ class GdbClient:
                 out.append((int(a, 16), p))
         return out
 
+    def natives(self, text=""):
+        """The guest functions now native (`monitor natives [TEXT]`): [{"addr", "symbol", "demangled",
+        "native" (the C++), "host" (its host address)}]."""
+        out = []
+        for line in self.monitor(("natives " + text).strip()).splitlines():
+            f = line.split("\t")
+            if len(f) == 5 and f[0].startswith("0x"):
+                out.append({"addr": int(f[0], 16), "symbol": f[1], "demangled": f[2], "native": f[3], "host": int(f[4], 16)})
+        return out
+
     def lib_base(self, name="libSOA"):
         for base, path in self.libs():
             if name in os.path.basename(path):
@@ -289,7 +312,7 @@ def symbol_vaddr(symbol, lib=None):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("addr", help="HOST:PORT or :PORT of --gdb")
+    ap.add_argument("addr", help="HOST:PORT, [IPV6]:PORT or :PORT of --gdb")
     ap.add_argument("--break", dest="brk", help="a symbol (mangled) or 0xADDR (absolute) to run to")
     ap.add_argument("--lib", help="the ELF file for --break symbols (default work/libSOA-3.7.0.so)")
     ap.add_argument("--timeout", type=float, default=120)
@@ -297,8 +320,7 @@ def main():
     ap.add_argument("--read", action="append", default=[], help="REG_OR_ADDR:LEN, hex dump")
     ap.add_argument("--monitor")
     a = ap.parse_args()
-    host, _, port = a.addr.rpartition(":")
-    g = GdbClient(host or "127.0.0.1", int(port))
+    g = GdbClient(*split_addr(a.addr))
     try:
         print(f"stopped: {g.stop_info}")
         if a.monitor:

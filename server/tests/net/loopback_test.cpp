@@ -40,6 +40,45 @@ const Value* path(const Value& v, std::initializer_list<const char*> keys) {
     return p;
 }
 
+// soa-server over IPv6: --listen / --http [::1]:PORT (parse_host_port), a NoLoginStart on ::1. A
+// host without an IPv6 loopback passes with a note.
+NATIVE_TEST("net/loopback-ipv6") {
+    std::string host;
+    uint16_t port = 0;
+    t.expect_eq(parse_host_port("[::1]:44300", &host, &port) && host == "::1" && port == 44300, true, "[::1]:44300 parses");
+    t.expect_eq(parse_host_port("127.0.0.1:44300", &host, &port) && host == "127.0.0.1", true, "127.0.0.1:44300 parses");
+    t.expect_eq(parse_host_port("::1:44300", &host, &port) || parse_host_port("[::1", &host, &port) || parse_host_port(":1", &host, &port), false,
+                "a bare IPv6 address with a port, a missing ']' and no host are refused");
+    testing::Scratch S(t.rand_u64());
+    if (!S.ok()) return;
+    ScratchBackend backend(S);
+    GameServer game(backend, GameOptions{});
+    HttpRouter router;
+    router.route("/bridge", game.bridge_handler());
+    Loop loop(game, router);
+    std::string err;
+    if (!loop.listen_game("::1", 0, &err)) {
+        printf("      (no IPv6 loopback here: %s)\n", err.c_str());
+        return;
+    }
+    if (!loop.listen_http("::1", 0, &err)) return t.fail("listen_http [::1]: %s", err.c_str());
+    std::atomic<bool> stop{false};
+    std::thread th([&] {
+        while (!stop) loop.run_once(20);
+    });
+    WireClient c;
+    WireReply r;
+    bool ok = c.connect("::1", loop.game_port(), &err);
+    WireArg id, dev;
+    id.s = "abcdefghijklmnop";
+    dev.i = 2;
+    ok = ok && c.call("NoLoginStart", {id, dev}, &r, &err);
+    stop = true;
+    th.join();
+    if (!ok) return t.fail("NoLoginStart over [::1]: %s", err.c_str());
+    t.expect_eq(path(r.msgpack, {"data", "Player"}) != nullptr, true, "NoLoginStartRes over ::1");
+}
+
 NATIVE_TEST("net/loopback") {
     testing::Scratch S(t.rand_u64());
     if (!S.ok()) return;  // (the constructor failed the test: no master / seed)

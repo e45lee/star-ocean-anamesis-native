@@ -176,7 +176,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e9ea64	0x1f9ea64	120	_ZN9Framework12CTimeElement13UpdateDTForceEv	Framework::CTimeElement::UpdateDTForce()	timing	typed	
 0x1e9eadc	0x1f9eadc	108	_ZN9Framework12CTimeElement16DetachFromParentEv	Framework::CTimeElement::DetachFromParent()	timing	typed	
 0x1e9eb48	0x1f9eb48	28	_ZN9Framework12CTimeElement10DetachSelfEv	Framework::CTimeElement::DetachSelf()	timing	typed	
-0x1e9ec64	0x1f9ec64	268	_ZN9Framework12CTimeElement3AddEf	Framework::CTimeElement::Add(float)	timing	typed	
+0x1e9ec64	0x1f9ec64	268	_ZN9Framework12CTimeElement3AddEf	Framework::CTimeElement::Add(float)	timing	native	
 0x1e9ed70	0x1f9ed70	44	_ZNK9Framework12CTimeElement10DetailRateEv	Framework::CTimeElement::DetailRate() const	timing	typed	
 0x1e9ed9c	0x1f9ed9c	20	_ZN9Framework12CTimeElement14ResetInterposeEv	Framework::CTimeElement::ResetInterpose()	timing	typed	
 0x1e9edb0	0x1f9edb0	8	_ZN9Framework12CTimeElement4RateEf	Framework::CTimeElement::Rate(float)	timing	typed	
@@ -214,10 +214,10 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f56f34	0x2056f34	112	_ZN4Aska18PerformanceCounterC1Ev	Aska::PerformanceCounter::PerformanceCounter()	timing	typed	
 0x1f56fa4	0x2056fa4	4	_ZN4Aska18PerformanceCounterD2Ev	Aska::PerformanceCounter::~PerformanceCounter()	timing	typed	
 0x1f56fa8	0x2056fa8	4	_ZN4Aska18PerformanceCounterD0Ev	Aska::PerformanceCounter::~PerformanceCounter()	timing	typed	
-0x1f56fac	0x2056fac	56	_ZN4Aska18PerformanceCounter4MarkEi	Aska::PerformanceCounter::Mark(int)	timing	typed	
-0x1f56fe4	0x2056fe4	104	_ZN4Aska18PerformanceCounter3SetEi	Aska::PerformanceCounter::Set(int)	timing	typed	
-0x1f5704c	0x205704c	96	_ZN4Aska18PerformanceCounter3SetEil	Aska::PerformanceCounter::Set(int, long)	timing	typed	
-0x1f570ac	0x20570ac	108	_ZN4Aska18PerformanceCounter6AddSetEi	Aska::PerformanceCounter::AddSet(int)	timing	typed	
+0x1f56fac	0x2056fac	56	_ZN4Aska18PerformanceCounter4MarkEi	Aska::PerformanceCounter::Mark(int)	timing	native	
+0x1f56fe4	0x2056fe4	104	_ZN4Aska18PerformanceCounter3SetEi	Aska::PerformanceCounter::Set(int)	timing	native	
+0x1f5704c	0x205704c	96	_ZN4Aska18PerformanceCounter3SetEil	Aska::PerformanceCounter::Set(int, long)	timing	native	
+0x1f570ac	0x20570ac	108	_ZN4Aska18PerformanceCounter6AddSetEi	Aska::PerformanceCounter::AddSet(int)	timing	native	
 0x1f57118	0x2057118	12	_ZNK4Aska18PerformanceCounter7GetMarkEi	Aska::PerformanceCounter::GetMark(int) const	timing	typed	
 0x1f57124	0x2057124	32	_ZNK4Aska18PerformanceCounter27GetAvailableTotalMemorySizeEv	Aska::PerformanceCounter::GetAvailableTotalMemorySize() const	timing	typed	
 0x1f57144	0x2057144	32	_ZNK4Aska18PerformanceCounter22GetAvailableMemorySizeEv	Aska::PerformanceCounter::GetAvailableMemorySize() const	timing	typed	
@@ -227,48 +227,48 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f572c4	0x20572c4	76	_ZN4Aska6Global18RegisterPeripheralEiPNS_14BasePeripheralE	Aska::Global::RegisterPeripheral(int, Aska::BasePeripheral*)	global	typed	
 0x1f57338	0x2057338	36	_ZN4Aska6Global13GetPeripheralEi	Aska::Global::GetPeripheral(int)	global	typed	
 0x1f573d0	0x20573d0	32	_ZN4Aska6Global15GetExPeripheralEi	Aska::Global::GetExPeripheral(int)	global	typed	
-0x1f5cd28	0x205cd28	752	_ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_Pja	Aska::SimpleMessageDispatcher::PostMessage(unsigned short, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	typed	
-0x1f5d018	0x205d018	200	_ZN4Aska23SimpleMessageDispatcher10AddMessageEa	Aska::SimpleMessageDispatcher::AddMessage(signed char)	message_dispatcher	typed	
-0x1f5d0e0	0x205d0e0	132	_ZN4Aska23SimpleMessageDispatcher18WakeupWorkerThreadEv	Aska::SimpleMessageDispatcher::WakeupWorkerThread()	message_dispatcher	typed	
-0x1f5d164	0x205d164	784	_ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_mmPja	Aska::SimpleMessageDispatcher::PostMessage(unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	typed	
+0x1f5cd28	0x205cd28	752	_ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_Pja	Aska::SimpleMessageDispatcher::PostMessage(unsigned short, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	native	
+0x1f5d018	0x205d018	200	_ZN4Aska23SimpleMessageDispatcher10AddMessageEa	Aska::SimpleMessageDispatcher::AddMessage(signed char)	message_dispatcher	native	
+0x1f5d0e0	0x205d0e0	132	_ZN4Aska23SimpleMessageDispatcher18WakeupWorkerThreadEv	Aska::SimpleMessageDispatcher::WakeupWorkerThread()	message_dispatcher	native	
+0x1f5d164	0x205d164	784	_ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_mmPja	Aska::SimpleMessageDispatcher::PostMessage(unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	native	
 0x1f5d474	0x205d474	876	_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS0_8ArgumentEia	Aska::SimpleMessageDispatcher::PostMultiMessages(Aska::SimpleMessageDispatcher::Argument*, int, signed char)	message_dispatcher	typed	
-0x1f5d7e0	0x205d7e0	120	_ZN4Aska23SimpleMessageDispatcher13DeleteMessageEi	Aska::SimpleMessageDispatcher::DeleteMessage(int)	message_dispatcher	typed	
-0x1f5d858	0x205d858	76	_ZN4Aska23SimpleMessageDispatcher22WakeupAllWorkerThreadsEv	Aska::SimpleMessageDispatcher::WakeupAllWorkerThreads()	message_dispatcher	typed	
+0x1f5d7e0	0x205d7e0	120	_ZN4Aska23SimpleMessageDispatcher13DeleteMessageEi	Aska::SimpleMessageDispatcher::DeleteMessage(int)	message_dispatcher	native	
+0x1f5d858	0x205d858	76	_ZN4Aska23SimpleMessageDispatcher22WakeupAllWorkerThreadsEv	Aska::SimpleMessageDispatcher::WakeupAllWorkerThreads()	message_dispatcher	native	
 0x1f5d8a4	0x205d8a4	876	_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS0_10ArgumentExEia	Aska::SimpleMessageDispatcher::PostMultiMessages(Aska::SimpleMessageDispatcher::ArgumentEx*, int, signed char)	message_dispatcher	typed	
 0x1f5dc10	0x205dc10	1132	_ZN4Aska23SimpleMessageDispatcher16PostSyncMessagesEPNS0_8ArgumentEiPia	Aska::SimpleMessageDispatcher::PostSyncMessages(Aska::SimpleMessageDispatcher::Argument*, int, int*, signed char)	message_dispatcher	typed	
 0x1f5e07c	0x205e07c	1148	_ZN4Aska23SimpleMessageDispatcher16PostSyncMessagesEPNS0_10ArgumentExEiPia	Aska::SimpleMessageDispatcher::PostSyncMessages(Aska::SimpleMessageDispatcher::ArgumentEx*, int, int*, signed char)	message_dispatcher	typed	
-0x1f5e4f8	0x205e4f8	760	_ZN4Aska23SimpleMessageDispatcher21PostSyncMessageSingleEtPiPNS_7INotifyEPvS4_Pja	Aska::SimpleMessageDispatcher::PostSyncMessageSingle(unsigned short, int*, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	typed	
-0x1f5e7f0	0x205e7f0	808	_ZN4Aska23SimpleMessageDispatcher21PostSyncMessageSingleEtPiPNS_7INotifyEPvS4_mmPja	Aska::SimpleMessageDispatcher::PostSyncMessageSingle(unsigned short, int*, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	typed	
-0x1f5eb18	0x205eb18	764	_ZN4Aska23SimpleMessageDispatcher18PostSyncMessageEndEtPiPNS_7INotifyEPvS4_Pja	Aska::SimpleMessageDispatcher::PostSyncMessageEnd(unsigned short, int*, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	typed	
-0x1f5ee14	0x205ee14	812	_ZN4Aska23SimpleMessageDispatcher18PostSyncMessageEndEtPiPNS_7INotifyEPvS4_mmPja	Aska::SimpleMessageDispatcher::PostSyncMessageEnd(unsigned short, int*, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	typed	
-0x1f5f140	0x205f140	896	_ZN4Aska23SimpleMessageDispatcher11SendMessageEtPNS_7INotifyEPvS3_a	Aska::SimpleMessageDispatcher::SendMessage(unsigned short, Aska::INotify*, void*, void*, signed char)	message_dispatcher	typed	
-0x1f5f4c0	0x205f4c0	920	_ZN4Aska23SimpleMessageDispatcher11SendMessageEtPNS_7INotifyEPvS3_mma	Aska::SimpleMessageDispatcher::SendMessage(unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, signed char)	message_dispatcher	typed	
-0x1f5f858	0x205f858	832	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEtPNS_7INotifyEPvS3_	Aska::SimpleMessageDispatcher::SendMessageHigh(unsigned short, Aska::INotify*, void*, void*)	message_dispatcher	typed	
-0x1f5fb98	0x205fb98	144	_ZN4Aska23SimpleMessageDispatcher17AddMessageToFrontEv	Aska::SimpleMessageDispatcher::AddMessageToFront()	message_dispatcher	typed	
-0x1f5fc28	0x205fc28	848	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEtPNS_7INotifyEPvS3_mm	Aska::SimpleMessageDispatcher::SendMessageHigh(unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long)	message_dispatcher	typed	
-0x1f5ff78	0x205ff78	840	_ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_Pja	Aska::SimpleMessageDispatcher::PostMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	typed	
-0x1f602c0	0x20602c0	900	_ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mmPja	Aska::SimpleMessageDispatcher::PostMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	typed	
+0x1f5e4f8	0x205e4f8	760	_ZN4Aska23SimpleMessageDispatcher21PostSyncMessageSingleEtPiPNS_7INotifyEPvS4_Pja	Aska::SimpleMessageDispatcher::PostSyncMessageSingle(unsigned short, int*, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	native	
+0x1f5e7f0	0x205e7f0	808	_ZN4Aska23SimpleMessageDispatcher21PostSyncMessageSingleEtPiPNS_7INotifyEPvS4_mmPja	Aska::SimpleMessageDispatcher::PostSyncMessageSingle(unsigned short, int*, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	native	
+0x1f5eb18	0x205eb18	764	_ZN4Aska23SimpleMessageDispatcher18PostSyncMessageEndEtPiPNS_7INotifyEPvS4_Pja	Aska::SimpleMessageDispatcher::PostSyncMessageEnd(unsigned short, int*, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	native	
+0x1f5ee14	0x205ee14	812	_ZN4Aska23SimpleMessageDispatcher18PostSyncMessageEndEtPiPNS_7INotifyEPvS4_mmPja	Aska::SimpleMessageDispatcher::PostSyncMessageEnd(unsigned short, int*, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	native	
+0x1f5f140	0x205f140	896	_ZN4Aska23SimpleMessageDispatcher11SendMessageEtPNS_7INotifyEPvS3_a	Aska::SimpleMessageDispatcher::SendMessage(unsigned short, Aska::INotify*, void*, void*, signed char)	message_dispatcher	native	
+0x1f5f4c0	0x205f4c0	920	_ZN4Aska23SimpleMessageDispatcher11SendMessageEtPNS_7INotifyEPvS3_mma	Aska::SimpleMessageDispatcher::SendMessage(unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, signed char)	message_dispatcher	native	
+0x1f5f858	0x205f858	832	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEtPNS_7INotifyEPvS3_	Aska::SimpleMessageDispatcher::SendMessageHigh(unsigned short, Aska::INotify*, void*, void*)	message_dispatcher	native	
+0x1f5fb98	0x205fb98	144	_ZN4Aska23SimpleMessageDispatcher17AddMessageToFrontEv	Aska::SimpleMessageDispatcher::AddMessageToFront()	message_dispatcher	native	
+0x1f5fc28	0x205fc28	848	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEtPNS_7INotifyEPvS3_mm	Aska::SimpleMessageDispatcher::SendMessageHigh(unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long)	message_dispatcher	native	
+0x1f5ff78	0x205ff78	840	_ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_Pja	Aska::SimpleMessageDispatcher::PostMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned int*, signed char)	message_dispatcher	native	
+0x1f602c0	0x20602c0	900	_ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mmPja	Aska::SimpleMessageDispatcher::PostMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, unsigned int*, signed char)	message_dispatcher	native	
 0x1f60644	0x2060644	1072	_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS_4TaskEPNS0_19ArgumentWithBarrierEia	Aska::SimpleMessageDispatcher::PostMultiMessages(Aska::Task*, Aska::SimpleMessageDispatcher::ArgumentWithBarrier*, int, signed char)	message_dispatcher	typed	
 0x1f60a74	0x2060a74	1096	_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS_4TaskEPNS0_21ArgumentWithBarrierExEia	Aska::SimpleMessageDispatcher::PostMultiMessages(Aska::Task*, Aska::SimpleMessageDispatcher::ArgumentWithBarrierEx*, int, signed char)	message_dispatcher	typed	
-0x1f60ebc	0x2060ebc	976	_ZN4Aska23SimpleMessageDispatcher11SendMessageEPNS_4TaskEitPNS_7INotifyEPvS5_a	Aska::SimpleMessageDispatcher::SendMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, signed char)	message_dispatcher	typed	
-0x1f6128c	0x206128c	1048	_ZN4Aska23SimpleMessageDispatcher11SendMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mma	Aska::SimpleMessageDispatcher::SendMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, signed char)	message_dispatcher	typed	
-0x1f616a4	0x20616a4	904	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEPNS_4TaskEitPNS_7INotifyEPvS5_	Aska::SimpleMessageDispatcher::SendMessageHigh(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*)	message_dispatcher	typed	
-0x1f61a2c	0x2061a2c	984	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEPNS_4TaskEitPNS_7INotifyEPvS5_mm	Aska::SimpleMessageDispatcher::SendMessageHigh(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long)	message_dispatcher	typed	
+0x1f60ebc	0x2060ebc	976	_ZN4Aska23SimpleMessageDispatcher11SendMessageEPNS_4TaskEitPNS_7INotifyEPvS5_a	Aska::SimpleMessageDispatcher::SendMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, signed char)	message_dispatcher	native	
+0x1f6128c	0x206128c	1048	_ZN4Aska23SimpleMessageDispatcher11SendMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mma	Aska::SimpleMessageDispatcher::SendMessage(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long, signed char)	message_dispatcher	native	
+0x1f616a4	0x20616a4	904	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEPNS_4TaskEitPNS_7INotifyEPvS5_	Aska::SimpleMessageDispatcher::SendMessageHigh(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*)	message_dispatcher	native	
+0x1f61a2c	0x2061a2c	984	_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEPNS_4TaskEitPNS_7INotifyEPvS5_mm	Aska::SimpleMessageDispatcher::SendMessageHigh(Aska::Task*, int, unsigned short, Aska::INotify*, void*, void*, unsigned long, unsigned long)	message_dispatcher	native	
 0x1f61e04	0x2061e04	256	_ZN4Aska23SimpleMessageDispatcher5SetupEii	Aska::SimpleMessageDispatcher::Setup(int, int)	message_dispatcher	typed	
 0x1f61f04	0x2061f04	616	_ZN4Aska23SimpleMessageDispatcher24AllocateWorkerThreadListEPNS_32MessageDispatherWorkerThreadInfoEi	Aska::SimpleMessageDispatcher::AllocateWorkerThreadList(Aska::MessageDispatherWorkerThreadInfo*, int)	message_dispatcher	typed	
 0x1f6216c	0x206216c	216	_ZN4Aska23SimpleMessageDispatcher5ClearEv	Aska::SimpleMessageDispatcher::Clear()	message_dispatcher	typed	
-0x1f62244	0x2062244	448	_ZN4Aska23SimpleMessageDispatcher13_WorkerThread12MessageReadyEv	Aska::SimpleMessageDispatcher::_WorkerThread::MessageReady()	message_dispatcher	typed	
+0x1f62244	0x2062244	448	_ZN4Aska23SimpleMessageDispatcher13_WorkerThread12MessageReadyEv	Aska::SimpleMessageDispatcher::_WorkerThread::MessageReady()	message_dispatcher	native	
 0x1f62404	0x2062404	500	_ZN4Aska23SimpleMessageDispatcher24AllocateWorkerThreadListEiPKciii	Aska::SimpleMessageDispatcher::AllocateWorkerThreadList(int, char const*, int, int, int)	message_dispatcher	typed	
-0x1f625f8	0x20625f8	344	_ZN4Aska23SimpleMessageDispatcher19SuspendWorkerThreadEv	Aska::SimpleMessageDispatcher::SuspendWorkerThread()	message_dispatcher	typed	
-0x1f62750	0x2062750	400	_ZN4Aska23SimpleMessageDispatcher18ResumeWorkerThreadEv	Aska::SimpleMessageDispatcher::ResumeWorkerThread()	message_dispatcher	typed	
-0x1f628e0	0x20628e0	8	_ZNK4Aska23SimpleMessageDispatcher23IsWorkerThreadSuspendedEv	Aska::SimpleMessageDispatcher::IsWorkerThreadSuspended() const	message_dispatcher	typed	
+0x1f625f8	0x20625f8	344	_ZN4Aska23SimpleMessageDispatcher19SuspendWorkerThreadEv	Aska::SimpleMessageDispatcher::SuspendWorkerThread()	message_dispatcher	native	
+0x1f62750	0x2062750	400	_ZN4Aska23SimpleMessageDispatcher18ResumeWorkerThreadEv	Aska::SimpleMessageDispatcher::ResumeWorkerThread()	message_dispatcher	native	
+0x1f628e0	0x20628e0	8	_ZNK4Aska23SimpleMessageDispatcher23IsWorkerThreadSuspendedEv	Aska::SimpleMessageDispatcher::IsWorkerThreadSuspended() const	message_dispatcher	native	
 0x1f628e8	0x20628e8	40	_ZN4Aska23SimpleMessageDispatcher10InitializeEv	Aska::SimpleMessageDispatcher::Initialize()	message_dispatcher	typed	
 0x1f62910	0x2062910	4	_ZN4Aska23SimpleMessageDispatcher7ReleaseEv	Aska::SimpleMessageDispatcher::Release()	message_dispatcher	typed	
 0x1f62914	0x2062914	20	_ZN4Aska23SimpleMessageDispatcher13_WorkerThread4ExitEv	Aska::SimpleMessageDispatcher::_WorkerThread::Exit()	message_dispatcher	typed	
 0x1f62928	0x2062928	40	_ZN4Aska23SimpleMessageDispatcher13_WorkerThreadD2Ev	Aska::SimpleMessageDispatcher::_WorkerThread::~_WorkerThread()	message_dispatcher	typed	
-0x1f62950	0x2062950	756	_ZN4Aska23SimpleMessageDispatcher10GetMessageEPNS_22MessageDispatcherBlockEi	Aska::SimpleMessageDispatcher::GetMessage(Aska::MessageDispatcherBlock*, int)	message_dispatcher	typed	
+0x1f62950	0x2062950	756	_ZN4Aska23SimpleMessageDispatcher10GetMessageEPNS_22MessageDispatcherBlockEi	Aska::SimpleMessageDispatcher::GetMessage(Aska::MessageDispatcherBlock*, int)	message_dispatcher	native	
 0x1f62c44	0x2062c44	200	_ZN4Aska23SimpleMessageDispatcher13_WorkerThread7HandlerEv	Aska::SimpleMessageDispatcher::_WorkerThread::Handler()	message_dispatcher	typed	
-0x1f62d0c	0x2062d0c	520	_ZN4Aska23SimpleMessageDispatcher13_WorkerThread10GetMessageEPNS_22MessageDispatcherBlockE	Aska::SimpleMessageDispatcher::_WorkerThread::GetMessage(Aska::MessageDispatcherBlock*)	message_dispatcher	typed	
+0x1f62d0c	0x2062d0c	520	_ZN4Aska23SimpleMessageDispatcher13_WorkerThread10GetMessageEPNS_22MessageDispatcherBlockE	Aska::SimpleMessageDispatcher::_WorkerThread::GetMessage(Aska::MessageDispatcherBlock*)	message_dispatcher	native	
 0x1f62f14	0x2062f14	48	_ZN4Aska23SimpleMessageDispatcher13_WorkerThreadD0Ev	Aska::SimpleMessageDispatcher::_WorkerThread::~_WorkerThread()	message_dispatcher	typed	
 0x1f62f44	0x2062f44	108	_ZN4Aska23SimpleMessageDispatcherD2Ev	Aska::SimpleMessageDispatcher::~SimpleMessageDispatcher()	message_dispatcher	typed	
 0x1f62fb0	0x2062fb0	116	_ZN4Aska23SimpleMessageDispatcherD0Ev	Aska::SimpleMessageDispatcher::~SimpleMessageDispatcher()	message_dispatcher	typed	
@@ -308,7 +308,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f807c0	0x20807c0	52	_ZN4Aska11TaskManager25DeletePreAllocateTaskListEv	Aska::TaskManager::DeletePreAllocateTaskList()	task	typed	
 0x1f807f4	0x20807f4	416	_ZN4Aska11TaskManager12MergeManagerEPS0_	Aska::TaskManager::MergeManager(Aska::TaskManager*)	task	typed	
 0x1f80994	0x2080994	104	_ZN4Aska11TaskManager20ReleaseMergedManagerEv	Aska::TaskManager::ReleaseMergedManager()	task	typed	
-0x1f809fc	0x20809fc	348	_ZNK4Aska11TaskManager18GetTotalTaskNumberEv	Aska::TaskManager::GetTotalTaskNumber() const	task	typed	
+0x1f809fc	0x20809fc	348	_ZNK4Aska11TaskManager18GetTotalTaskNumberEv	Aska::TaskManager::GetTotalTaskNumber() const	task	native	
 0x1f80b58	0x2080b58	76	_ZN4Aska11TaskManager17AllocateBroadcastEv	Aska::TaskManager::AllocateBroadcast()	task	typed	
 0x1f80ba4	0x2080ba4	124	_ZN4Aska11TaskManager17AllocateBroadcastEi	Aska::TaskManager::AllocateBroadcast(int)	task	typed	
 0x1f80c20	0x2080c20	16	_ZN4Aska11TaskManager16ReleaseBroadcastEh	Aska::TaskManager::ReleaseBroadcast(unsigned char)	task	typed	
@@ -327,13 +327,13 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f80e44	0x2080e44	168	_ZN4Aska11TaskManager19CreateEndNotifyListEi	Aska::TaskManager::CreateEndNotifyList(int)	task	typed	
 0x1f80eec	0x2080eec	204	_ZN4Aska11TaskManager12AddEndNotifyEPNS_7INotifyEm	Aska::TaskManager::AddEndNotify(Aska::INotify*, unsigned long)	task	typed	
 0x1f80fb8	0x2080fb8	144	_ZN4Aska11TaskManager15RemoveEndNotifyEPNS_7INotifyEm	Aska::TaskManager::RemoveEndNotify(Aska::INotify*, unsigned long)	task	typed	
-0x1f81048	0x2081048	192	_ZN4Aska11TaskManager16AddThreadBarrierEi	Aska::TaskManager::AddThreadBarrier(int)	task	typed	
-0x1f81108	0x2081108	88	_ZN4Aska11TaskManager19DeleteThreadBarrierEi	Aska::TaskManager::DeleteThreadBarrier(int)	task	typed	
-0x1f81160	0x2081160	176	_ZN4Aska11TaskManager27IncrementThreadBarrierCountEi	Aska::TaskManager::IncrementThreadBarrierCount(int)	task	typed	
-0x1f81210	0x2081210	124	_ZN4Aska11TaskManager27DecrementThreadBarrierCountEi	Aska::TaskManager::DecrementThreadBarrierCount(int)	task	typed	
+0x1f81048	0x2081048	192	_ZN4Aska11TaskManager16AddThreadBarrierEi	Aska::TaskManager::AddThreadBarrier(int)	task	native	
+0x1f81108	0x2081108	88	_ZN4Aska11TaskManager19DeleteThreadBarrierEi	Aska::TaskManager::DeleteThreadBarrier(int)	task	native	
+0x1f81160	0x2081160	176	_ZN4Aska11TaskManager27IncrementThreadBarrierCountEi	Aska::TaskManager::IncrementThreadBarrierCount(int)	task	native	
+0x1f81210	0x2081210	124	_ZN4Aska11TaskManager27DecrementThreadBarrierCountEi	Aska::TaskManager::DecrementThreadBarrierCount(int)	task	native	
 0x1f8128c	0x208128c	124	_ZN4Aska11TaskManager8IsCalledEPNS_4TaskE	Aska::TaskManager::IsCalled(Aska::Task*)	task	typed	
 0x1f81308	0x2081308	648	_ZN4Aska11TaskManager14OwnersKickTaskEv	Aska::TaskManager::OwnersKickTask()	task	typed	
-0x1f81590	0x2081590	2116	_ZN4Aska11TaskManager12MakeTaskListEv	Aska::TaskManager::MakeTaskList()	task	typed	
+0x1f81590	0x2081590	2116	_ZN4Aska11TaskManager12MakeTaskListEv	Aska::TaskManager::MakeTaskList()	task	native	
 0x1f81dd4	0x2081dd4	984	_ZN4Aska11TaskManager6DeleteEPNS_4TaskE	Aska::TaskManager::Delete(Aska::Task*)	task	typed	
 0x1f82568	0x2082568	40	_ZN4Aska17TaskThreadManager4ExitEv	Aska::TaskThreadManager::Exit()	task	decompiled	
 0x1f82590	0x2082590	56	_ZN4Aska13TDynamicQueueIPNS_17TaskThreadManagerELb1EED2Ev	Aska::TDynamicQueue<Aska::TaskThreadManager*, true>::~TDynamicQueue()	task	decompiled	
@@ -370,7 +370,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f8d930	0x208d930	152	_ZN4Aska5VSync8UpdateDtEi	Aska::VSync::UpdateDt(int)	timing	typed	
 0x1f8d9c8	0x208d9c8	8	_ZN4Aska5VSync6NotifyEv	Aska::VSync::Notify()	timing	typed	
 0x1f8d9d0	0x208d9d0	4	_ZThn8_N4Aska5VSync6NotifyEv	non-virtual thunk to Aska::VSync::Notify()	timing	typed	
-0x1f8d9d4	0x208d9d4	32	_ZNK4Aska5VSync5GetDtEi	Aska::VSync::GetDt(int) const	timing	typed	
+0x1f8d9d4	0x208d9d4	32	_ZNK4Aska5VSync5GetDtEi	Aska::VSync::GetDt(int) const	timing	native	
 0x1f8d9f4	0x208d9f4	8	_ZNK4Aska5VSync17GetBasicFrameRateEv	Aska::VSync::GetBasicFrameRate() const	timing	typed	
 0x1f8d9fc	0x208d9fc	68	_ZN4Aska5VSyncD2Ev	Aska::VSync::~VSync()	timing	typed	
 0x1f8da40	0x208da40	88	_ZN4Aska5VSyncD0Ev	Aska::VSync::~VSync()	timing	typed	
@@ -392,6 +392,10 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2169ee8	0x2269ee8	8	_ZNK4Aska9WaitVSync15GetDefaultLevelEv	Aska::WaitVSync::GetDefaultLevel() const	timing	decompiled	
 0x2169f50	0x2269f50	64	_ZNK4Aska8WaitDraw10GetClassIDEi	Aska::WaitDraw::GetClassID(int) const	timing	decompiled	
 0x2169f90	0x2269f90	8	_ZNK4Aska8WaitDraw15GetDefaultLevelEv	Aska::WaitDraw::GetDefaultLevel() const	timing	decompiled	
+0x21c4e30	0x22c4e30	220	_ZN4Aska7GPUSync11WaitGPUSyncEv	Aska::GPUSync::WaitGPUSync()	gpu_sync	native	
+0x21c4f0c	0x22c4f0c	72	_ZN4Aska7GPUSync6NotifyEv	Aska::GPUSync::Notify()	gpu_sync	native	
+0x21c53e0	0x22c53e0	64	_ZN4Aska7GPUSyncD2Ev	Aska::GPUSync::~GPUSync()	gpu_sync	decompiled	
+0x21c5420	0x22c5420	72	_ZN4Aska7GPUSyncD0Ev	Aska::GPUSync::~GPUSync()	gpu_sync	decompiled	
 0x220fa98	0x230fa98	908	_ZN4Aska6Global7InitAllEv	Aska::Global::InitAll()	global	typed	
 0x220fe24	0x230fe24	92	_ZN4Aska6Global17InitAll_RootPathsEv	Aska::Global::InitAll_RootPaths()	global	typed	
 0x220fe80	0x230fe80	152	_ZN4Aska6Global18InitAll_SeedRandomEv	Aska::Global::InitAll_SeedRandom()	global	typed	
@@ -404,7 +408,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2210db0	0x2310db0	4	_ZN4Aska6Global25GetNumberOfHighProcessorsEv	Aska::Global::GetNumberOfHighProcessors()	global	typed	
 0x2210db4	0x2310db4	4	_ZN4Aska6Global24GetNumberOfLowProcessorsEv	Aska::Global::GetNumberOfLowProcessors()	global	typed	
 0x2210db8	0x2310db8	44	_ZN4Aska6Global21GetCurrentThreadCpuIdEv	Aska::Global::GetCurrentThreadCpuId()	global	typed	
-0x2210de4	0x2310de4	72	_ZN4Aska6Global10GetCPUTimeEv	Aska::Global::GetCPUTime()	global	typed	
+0x2210de4	0x2310de4	72	_ZN4Aska6Global10GetCPUTimeEv	Aska::Global::GetCPUTime()	global	native	
 0x2210e64	0x2310e64	272	_ZN4Aska6Global15DeleteEndNotify7HandlerEm	Aska::Global::DeleteEndNotify::Handler(unsigned long)	messages	decompiled	
 0x2210f74	0x2310f74	32	_ZN4Aska6Global15GetMainThreadIDEv	Aska::Global::GetMainThreadID()	global	typed	
 0x2210f94	0x2310f94	4	_ZN4Aska6Global15DeleteEndNotifyD0Ev	Aska::Global::DeleteEndNotify::~DeleteEndNotify()	messages	decompiled	
@@ -426,4 +430,4 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2236728	0x2336728	104	_ZN4Aska14NotifierThread11QueryNotifyEPNS_7INotifyE	Aska::NotifierThread::QueryNotify(Aska::INotify*)	timing	typed	
 0x2236798	0x2336798	104	_ZN4Aska9TPoolFastINS_14NotifierThread13NotifyElementELb0EED0Ev	Aska::TPoolFast<Aska::NotifierThread::NotifyElement, false>::~TPoolFast()	timing	decompiled	
 0x2236800	0x2336800	4	_ZN4Aska14NotifierThread13NotifyElementD0Ev	Aska::NotifierThread::NotifyElement::~NotifyElement()	timing	typed	
-0x2236fc8	0x2336fc8	348	_ZN4Aska23SimpleMessageDispatcher13CancelMessageEj	Aska::SimpleMessageDispatcher::CancelMessage(unsigned int)	message_dispatcher	typed	
+0x2236fc8	0x2336fc8	348	_ZN4Aska23SimpleMessageDispatcher13CancelMessageEj	Aska::SimpleMessageDispatcher::CancelMessage(unsigned int)	message_dispatcher	native	

@@ -74,18 +74,22 @@ run the guest originals when a draw has instance data), `LIBLManager::CopyTextur
 ## Measurements
 
 The login and battle flows (REBUILD-QUEUE.md's scripts, `SOA_PROFILE` at 1000 Hz), main's binary (before,
-5c10fda) and this branch's (after: every native above but UpdateShaderProgram) run side by side on the
-same machine load, 2026-10-04:
+5c10fda) and this branch's run side by side on the same machine load, 2026-10-04, twice (the machine was
+shared with other agents' runs: the absolute counts move, the shares hold):
 
-| | Busy samples | render guest self | RenderThread | RenderDeviceData | RenderDeviceGL | ShaderComprssionTree + ShaderCompression | RenderContextServer | RenderState |
+| Run | Busy samples | render guest self | RenderThread | RenderDeviceData | RenderDeviceGL | ShaderComprssionTree + ShaderCompression | RenderContextServer | RenderState |
 |---|---|---|---|---|---|---|---|---|
-| before | 97,424 | 16,720 (17.2%) | 2,662 | 2,189 | 2,019 | 2,008 | 746 | 367 |
-| after | 91,981 (-5.6%) | 10,140 (11.0%) | 812 | 1,248 | 885 | 0 | 0 | 81 |
+| 1 before | 97,424 | 16,720 (17.2%) | 2,662 | 2,189 | 2,019 | 2,008 | 746 | 367 |
+| 1 after (all but UpdateShaderProgram) | 91,981 (-5.6%) | 10,140 (11.0%) | 812 | 1,248 | 885 | 0 | 0 | 81 |
+| 2 before | 123,856 | 22,031 (17.8%) | 3,203 | 3,031 | 2,864 | 2,485 | 1,048 | 544 |
+| 2 after (every native above) | 117,861 (-4.8%) | 13,256 (11.2%) | 1,074 | 1,370 | 1,252 | 0 | 0 | 106 |
 
-What is left of RenderThread is Render and Handler (the frame itself: guest); of the device, UpdateShaderProgram
-(now native, after this measurement), the texture state caches and filters, BindFrameBuffer, ResolveDepth.
+What is left: RenderThread's Render and Handler (the frame itself: guest); the device's shader constants
+(SetVertexShaderConstant / SetPixelShaderConstant, ~520), the texture state caches and filters
+(GetTextureStateCaches, LastMinuteDrawCommands_Textures, UpdateTextureFilters, GetBoundTextureID, ~570),
+BindFrameBuffer, ResolveDepth, SetShaderProgramUniform, SetScissorRect / EnableScissorTest, BindVertexBuffer.
 Frame rate: the battle runs at the 60 fps cap before and after (`I/perf`); a software-GL (llvmpipe) run under
-load passes the boot -> battle -> gacha session with the live checks on.
+load passes the boot -> battle -> gacha session with the live checks on (0 mismatches).
 
 ## Dependencies
 

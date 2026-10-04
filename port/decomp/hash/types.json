@@ -4,13 +4,6 @@
  "header": "port/src/native/hash/hash_layout.h",
  "structs": [
   {
-   "name": "GuestString",
-   "union": false,
-   "fields": [],
-   "size": 24,
-   "align": 8
-  },
-  {
    "name": "CHash32",
    "union": false,
    "fields": [

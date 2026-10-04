@@ -63,12 +63,12 @@ std::string rand_string(TestContext& t, size_t maxlen) {
 GuestString guest_string(const std::string& s) {
     GuestString g{};
     if (s.size() < 23) {
-        g.s.size2 = (u8)(s.size() << 1);
-        std::memcpy(g.s.data, s.data(), s.size());
+        g.r.s.head.size = (u8)(s.size() << 1);
+        std::memcpy(g.r.s.data, s.data(), s.size());
     } else {
-        g.l.cap1 = (s.size() + 16) | 1;
-        g.l.size = s.size();
-        g.l.data = const_cast<char*>(s.data());
+        g.r.l.cap = (s.size() + 16) | 1;
+        g.r.l.size = s.size();
+        g.r.l.data = const_cast<char*>(s.data());
     }
     return g;
 }

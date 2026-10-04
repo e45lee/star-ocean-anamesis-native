@@ -54,7 +54,7 @@ void CHash32::Ctor(const char* s, u64 n) {
 }
 void CHash32::Ctor(const GuestString& s) {
     vtable = vtable_addr();
-    m_hash = Of(s.chars(), s.size());
+    m_hash = Of(s.data(), s.size());
 }
 void CHash32::Ctor(u32 v) {
     vtable = vtable_addr();
@@ -88,14 +88,14 @@ CHash32* CHash32::Assign(const char* s) {
     m_hash = Of(s, std::strlen(s));  // (faults on null after the assert, as the guest does)
     return this;
 }
-void CHash32::Assign(const GuestString& s) { m_hash = Of(s.chars(), s.size()); }
+void CHash32::Assign(const GuestString& s) { m_hash = Of(s.data(), s.size()); }
 
 // ---- natives ----
 
 using C = CHash32;
 using live::kInt;
 using live::kVoid;
-constexpr u32 kObj = sizeof(CHash32);
+constexpr u32 kObj = sizeof(CHash32);  // (the const members snapshot no `this`: it is input only)
 
 LEAF_METHOD(family(), "_ZN9Framework7CHash32C2Ev", static_cast<void (C::*)()>(&C::Ctor), kObj, kVoid, "Framework::CHash32::CHash32()", {});
 LEAF_METHOD(family(), "_ZN9Framework7CHash32C2EPKc", static_cast<void (C::*)(const char*)>(&C::Ctor), kObj, kVoid, "Framework::CHash32::CHash32(char const*)", {});
@@ -105,18 +105,18 @@ LEAF_METHOD(family(), "_ZN9Framework7CHash32C1ERKNSt6__ndk112basic_stringIcNS1_1
             static_cast<void (C::*)(const GuestString&)>(&C::Ctor), kObj, kVoid, "Framework::CHash32::CHash32(std::string const&)", {});
 LEAF_METHOD(family(), "_ZN9Framework7CHash32C1Ej", static_cast<void (C::*)(u32)>(&C::Ctor), kObj, kVoid, "Framework::CHash32::CHash32(unsigned int)", {});
 LEAF_METHOD(family(), "_ZN9Framework7CHash32C2Ei", static_cast<void (C::*)(s32)>(&C::Ctor), kObj, kVoid, "Framework::CHash32::CHash32(int)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash323GetEv", &C::Get, kObj, kInt, "Framework::CHash32::Get", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32cvjEv", &C::ToU32, kObj, kInt, "Framework::CHash32::operator unsigned int", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32eqERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Eq), kObj, kInt, "Framework::CHash32::operator==(CHash32 const&)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32eqERKj", static_cast<bool (C::*)(const u32&) const>(&C::Eq), kObj, kInt, "Framework::CHash32::operator==(unsigned int const&)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32neERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Ne), kObj, kInt, "Framework::CHash32::operator!=(CHash32 const&)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32neERKj", static_cast<bool (C::*)(const u32&) const>(&C::Ne), kObj, kInt, "Framework::CHash32::operator!=(unsigned int const&)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32ltERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Lt), kObj, kInt, "Framework::CHash32::operator<(CHash32 const&)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32gtERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Gt), kObj, kInt, "Framework::CHash32::operator>(CHash32 const&)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32ltEPKc", static_cast<bool (C::*)(const char*) const>(&C::Lt), kObj, kInt, "Framework::CHash32::operator<(char const*)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32gtEPKc", static_cast<bool (C::*)(const char*) const>(&C::Gt), kObj, kInt, "Framework::CHash32::operator>(char const*)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32ltERKj", static_cast<bool (C::*)(const u32&) const>(&C::Lt), kObj, kInt, "Framework::CHash32::operator<(unsigned int const&)", {});
-LEAF_METHOD(family(), "_ZNK9Framework7CHash32gtERKj", static_cast<bool (C::*)(const u32&) const>(&C::Gt), kObj, kInt, "Framework::CHash32::operator>(unsigned int const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash323GetEv", &C::Get, 0, kInt, "Framework::CHash32::Get", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32cvjEv", &C::ToU32, 0, kInt, "Framework::CHash32::operator unsigned int", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32eqERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Eq), 0, kInt, "Framework::CHash32::operator==(CHash32 const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32eqERKj", static_cast<bool (C::*)(const u32&) const>(&C::Eq), 0, kInt, "Framework::CHash32::operator==(unsigned int const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32neERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Ne), 0, kInt, "Framework::CHash32::operator!=(CHash32 const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32neERKj", static_cast<bool (C::*)(const u32&) const>(&C::Ne), 0, kInt, "Framework::CHash32::operator!=(unsigned int const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32ltERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Lt), 0, kInt, "Framework::CHash32::operator<(CHash32 const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32gtERKS0_", static_cast<bool (C::*)(const C&) const>(&C::Gt), 0, kInt, "Framework::CHash32::operator>(CHash32 const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32ltEPKc", static_cast<bool (C::*)(const char*) const>(&C::Lt), 0, kInt, "Framework::CHash32::operator<(char const*)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32gtEPKc", static_cast<bool (C::*)(const char*) const>(&C::Gt), 0, kInt, "Framework::CHash32::operator>(char const*)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32ltERKj", static_cast<bool (C::*)(const u32&) const>(&C::Lt), 0, kInt, "Framework::CHash32::operator<(unsigned int const&)", {});
+LEAF_METHOD(family(), "_ZNK9Framework7CHash32gtERKj", static_cast<bool (C::*)(const u32&) const>(&C::Gt), 0, kInt, "Framework::CHash32::operator>(unsigned int const&)", {});
 LEAF_METHOD(family(), "_ZN9Framework7CHash32aSEPKc", static_cast<C* (C::*)(const char*)>(&C::Assign), kObj, kInt, "Framework::CHash32::operator=(char const*)", {});
 LEAF_METHOD(family(), "_ZN9Framework7CHash32aSERKNSt6__ndk112basic_stringIcNS1_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE",
             static_cast<void (C::*)(const GuestString&)>(&C::Assign), kObj, kVoid, "Framework::CHash32::operator=(std::string const&)", {});

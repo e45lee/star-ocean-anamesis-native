@@ -22,6 +22,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "native/libcxx/libcxx_layout.h"
+
 namespace soa::native::hash {
 
 using u8 = std::uint8_t;
@@ -33,26 +35,9 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-// The guest's std::__ndk1::basic_string<char, ..., Framework::CSTLAllocator<char, ...>> (libc++'s
-// layout, 24 bytes): short form when bit 0 of the first byte is clear (size = byte0 >> 1, the
-// characters from byte 1), else long form {cap | 1, size, data}. Only read here.
-struct GuestString {
-    union {
-        struct {
-            u8 size2;      // 0x00: size << 1 (short form)
-            char data[23];  // 0x01
-        } s;
-        struct {
-            u64 cap1;   // 0x00: capacity | 1 (long form)
-            u64 size;   // 0x08
-            char* data;  // 0x10
-        } l;
-    };
-    bool is_long() const { return s.size2 & 1; }
-    u64 size() const { return is_long() ? l.size : s.size2 >> 1; }
-    const char* chars() const { return is_long() ? l.data : s.data; }
-};
-static_assert(sizeof(GuestString) == 0x18);
+// The guest's std::string (basic_string<char, ..., Framework::CSTLAllocator<char, ...>>): the libcxx
+// subsystem's layout.
+using GuestString = libcxx::String;
 
 // Framework::CHash32: guest size 0x10; layout from its constructors (port/decomp/hash/chash32.c:
 // the vtable at +0, the hash at +8). The hash is a table CRC-32 (reflected 0xEDB88320, the

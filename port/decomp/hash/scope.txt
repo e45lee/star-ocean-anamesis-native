@@ -5,3 +5,4 @@
 ^Aska::Hash::
 ^Aska::detail::SpookyHashV2::
 ^Aska::Utf8::
+^Framework::CStringHash::

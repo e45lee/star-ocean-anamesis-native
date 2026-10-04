@@ -97,10 +97,7 @@ def parse_time(s: str):
     if not s:
         return None
     s = s.strip().replace("/", "-")
-    d, _, t = s.partition(" ")
-    y, m, dd = (int(x) for x in d.split("-"))
-    hh, mm, ss = (int(x) for x in (t or "0:0:0").split(":"))
-    return datetime.datetime(y, m, dd, hh, mm, ss)
+    return datetime.datetime.strptime(s, "%Y-%m-%d %H:%M:%S" if " " in s else "%Y-%m-%d")
 
 
 def en_companion(path: str) -> str:

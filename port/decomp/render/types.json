@@ -2019,8 +2019,9 @@
      "offset": 3488,
      "name": "unk_da0",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     },
@@ -2296,8 +2297,9 @@
      "offset": 3840,
      "name": "m_fogColor",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -2321,8 +2323,8 @@
      "type": {
       "kind": "array",
       "of": {
-       "kind": "struct",
-       "name": "MathVector"
+       "kind": "bytes",
+       "ctype": "MathVector"
       },
       "count": 3
      },
@@ -2332,8 +2334,9 @@
      "offset": 3920,
      "name": "unk_f50",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     }
@@ -2579,6 +2582,454 @@
    ]
   },
   {
+   "name": "Light",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObject"
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "m_aiming",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 93
+     },
+     "size": 93
+    },
+    {
+     "offset": 501,
+     "name": "unk_1f5",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 502,
+     "name": "unk_1f6",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 26
+     },
+     "size": 26
+    },
+    {
+     "offset": 528,
+     "name": "m_direction",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 544,
+     "name": "m_attenuation",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 4
+     },
+     "size": 16
+    },
+    {
+     "offset": 560,
+     "name": "m_color",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 576,
+     "name": "m_color2",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 592,
+     "name": "m_vec250",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 608,
+     "name": "m_vec260",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 624,
+     "name": "m_vec270",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 640,
+     "name": "m_groundColor",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 656,
+     "name": "unk_290",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 672,
+     "name": "m_2a0",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 673,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 674,
+     "name": "m_2a2",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 675,
+     "name": "unk_2a3",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 677,
+     "name": "m_lightFlags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 680,
+     "name": "m_2a8",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 688,
+     "name": "unk_2b0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 384
+     },
+     "size": 384
+    }
+   ],
+   "size": 1072,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x223a4ac",
+     "symbol": "_ZN4Aska5LightC2Ev",
+     "name": "Light"
+    },
+    {
+     "ghidra": "0x223a6d8",
+     "symbol": "_ZN4Aska5Light19CalcSpotCoefficientEv",
+     "name": "CalcSpotCoefficient"
+    },
+    {
+     "ghidra": "0x223a740",
+     "symbol": "_ZN4Aska5Light15CalcAttenuationEv",
+     "name": "CalcAttenuation"
+    },
+    {
+     "ghidra": "0x223a8d4",
+     "symbol": "_ZN4Aska5Light5CloneEPKS0_",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x223ac88",
+     "symbol": "_ZN4Aska5Light12SetLightTypeEi",
+     "name": "SetLightType"
+    },
+    {
+     "ghidra": "0x223ac98",
+     "symbol": "_ZN4Aska5Light15SetIBLTextureIDEmm",
+     "name": "SetIBLTextureID"
+    },
+    {
+     "ghidra": "0x223ad44",
+     "symbol": "_ZN4Aska5Light12InitNoiseBufEv",
+     "name": "InitNoiseBuf"
+    },
+    {
+     "ghidra": "0x223af64",
+     "symbol": "_ZN4Aska5Light8GetNoiseEf",
+     "name": "GetNoise"
+    },
+    {
+     "ghidra": "0x223afd0",
+     "symbol": "_ZN4Aska5Light18MakeNoiseIntensionEv",
+     "name": "MakeNoiseIntension"
+    },
+    {
+     "ghidra": "0x223b100",
+     "symbol": "_ZNK4Aska5Light16CalcIBLIntensityEv",
+     "name": "CalcIBLIntensity"
+    },
+    {
+     "ghidra": "0x223b140",
+     "symbol": "_ZNK4Aska5Light15CalcIntensityTSEPNS_16RenderableObjectEPNS0_17CalcIntensityWorkEbbPfS5_S5_",
+     "name": "CalcIntensityTS"
+    },
+    {
+     "ghidra": "0x223b49c",
+     "symbol": "_ZNK4Aska5Light19CalcBounceIntensityEPS0_PNS_6VectorE",
+     "name": "CalcBounceIntensity"
+    },
+    {
+     "ghidra": "0x223b818",
+     "symbol": "_ZNK4Aska5Light15GetIBLTextureIDEi",
+     "name": "GetIBLTextureID"
+    },
+    {
+     "ghidra": "0x223b9b4",
+     "symbol": "_ZN4Aska5Light13SetIBLProfileEj",
+     "name": "SetIBLProfile"
+    },
+    {
+     "ghidra": "0x223bc3c",
+     "symbol": "_ZN4Aska5Light13GetIBLTextureEv",
+     "name": "GetIBLTexture"
+    },
+    {
+     "ghidra": "0x223bcb4",
+     "symbol": "_ZN4Aska5Light21GetIBLTextureUniqueIDEv",
+     "name": "GetIBLTextureUniqueID"
+    },
+    {
+     "ghidra": "0x223bd30",
+     "symbol": "_ZNK4Aska5Light15GetIBLLodOffsetEv",
+     "name": "GetIBLLodOffset"
+    },
+    {
+     "ghidra": "0x223bd48",
+     "symbol": "_ZN4Aska5Light14DownconvertIBLEib",
+     "name": "DownconvertIBL"
+    },
+    {
+     "ghidra": "0x223c168",
+     "symbol": "_ZN4Aska5Light16EnableDebugGuideEb",
+     "name": "EnableDebugGuide"
+    },
+    {
+     "ghidra": "0x223c16c",
+     "symbol": "_ZN4Aska5Light15EnableTileDebugEb",
+     "name": "EnableTileDebug"
+    },
+    {
+     "ghidra": "0x223c170",
+     "symbol": "_ZN4Aska5LightD2Ev",
+     "name": "~Light"
+    },
+    {
+     "ghidra": "0x223c25c",
+     "symbol": "_ZN4Aska5Light24UnregisterDiffuseCubeMapEv",
+     "name": "UnregisterDiffuseCubeMap"
+    },
+    {
+     "ghidra": "0x223c2c4",
+     "symbol": "_ZN4Aska5LightD0Ev",
+     "name": "~Light"
+    },
+    {
+     "ghidra": "0x223c2dc",
+     "symbol": "_ZN4Aska5Light10DeleteThisEPNS_13DeleteManagerE",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x223c348",
+     "symbol": "_ZNK4Aska5Light3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x223c844",
+     "symbol": "_ZNK4Aska5Light14GetIlluminanceEv",
+     "name": "GetIlluminance"
+    },
+    {
+     "ghidra": "0x223caa0",
+     "symbol": "_ZNK4Aska5Light19GetColorTemperatureEv",
+     "name": "GetColorTemperature"
+    },
+    {
+     "ghidra": "0x223cd10",
+     "symbol": "_ZN4Aska5Light3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x223d758",
+     "symbol": "_ZN4Aska5Light14SetIlluminanceEf",
+     "name": "SetIlluminance"
+    },
+    {
+     "ghidra": "0x223d9c8",
+     "symbol": "_ZN4Aska5Light21SetColorByTemperatureEf",
+     "name": "SetColorByTemperature"
+    },
+    {
+     "ghidra": "0x223db0c",
+     "symbol": "_ZN4Aska5Light23CalcHemisphereIntensityEPNS_16RenderableObjectE",
+     "name": "CalcHemisphereIntensity"
+    },
+    {
+     "ghidra": "0x223dc10",
+     "symbol": "_ZN4Aska5Light22RegisterDiffuseCubeMapEv",
+     "name": "RegisterDiffuseCubeMap"
+    },
+    {
+     "ghidra": "0x223decc",
+     "symbol": "_ZN4Aska5Light18DoesAffectLightOFFEj",
+     "name": "DoesAffectLightOFF"
+    },
+    {
+     "ghidra": "0x223def8",
+     "symbol": "_ZN4Aska5Light24DoesAffectRangeReductionEj",
+     "name": "DoesAffectRangeReduction"
+    },
+    {
+     "ghidra": "0x223df24",
+     "symbol": "_ZNK4Aska5Light10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x223df68",
+     "symbol": "_ZNK4Aska5Light15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    },
+    {
+     "ghidra": "0x223df70",
+     "symbol": "_ZN4Aska5Light8OnActiveEb",
+     "name": "OnActive"
+    },
+    {
+     "ghidra": "0x223e668",
+     "symbol": "_ZN4Aska5Light18CalcIBLLocalMatrixEPNS_6MatrixE",
+     "name": "CalcIBLLocalMatrix"
+    }
+   ]
+  },
+  {
+   "name": "LightContext",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_bytes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1360
+     },
+     "size": 1360
+    }
+   ],
+   "size": 1360,
+   "align": 1
+  },
+  {
    "name": "ShaderComprssionTree",
    "union": false,
    "fields": [
@@ -2786,7 +3237,7 @@
       "kind": "array",
       "of": {
        "kind": "ptr",
-       "to": null
+       "to": "LightContext"
       },
       "count": 2
      },
@@ -3729,8 +4180,9 @@
      "offset": 0,
      "name": "m_pixelConst",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -4131,8 +4583,9 @@
      "offset": 96,
      "name": "m_vc0",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     },
@@ -4140,8 +4593,9 @@
      "offset": 160,
      "name": "m_vc10",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     },
@@ -4162,8 +4616,9 @@
      "offset": 272,
      "name": "m_vc14",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -4171,8 +4626,9 @@
      "offset": 288,
      "name": "m_pixelConst",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -4180,8 +4636,9 @@
      "offset": 304,
      "name": "unk_130",
      "type": {
-      "kind": "struct",
-      "name": "MathVector"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },
@@ -4214,7 +4671,7 @@
      "name": "m_vc11",
      "type": {
       "kind": "ptr",
-      "to": "MathVector"
+      "to": null
      },
      "size": 8
     },
@@ -4236,8 +4693,9 @@
      "offset": 368,
      "name": "m_vc9",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     },
@@ -4259,8 +4717,9 @@
      "offset": 448,
      "name": "m_vc15",
      "type": {
-      "kind": "struct",
-      "name": "MathMatrix"
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
      },
      "size": 64
     },
@@ -4284,8 +4743,8 @@
      "type": {
       "kind": "array",
       "of": {
-       "kind": "struct",
-       "name": "MathVector"
+       "kind": "bytes",
+       "ctype": "MathVector"
       },
       "count": 2
      },

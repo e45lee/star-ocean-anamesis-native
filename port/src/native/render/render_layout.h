@@ -585,6 +585,72 @@ static_assert(offsetof(Camera, m_fogColor) == 0xf00);
 static_assert(offsetof(Camera, m_fogConst) == 0xf20);
 static_assert(sizeof(Camera) == 0xf90);
 
+// Aska::Light (: AimingObject): guest size 0x430 (AsfHandler::CreateInstanceOfObject: operator new(0x430));
+// layout partly from Light(), SetLightType, GetIlluminance, Get (port/decomp/render/light.c). Get's
+// property ids: 0x10 m_color (rgb + intensity), 0x11 m_intensity, 0x13 m_direction (0x210), 0x16
+// m_groundColor, 0x17 m_type, 0x18 m_lightFlags bit 0, 0x1a m_2a8 (u64), 0x1d m_2a0, 0x29 m_color2,
+// 0x2a..0x2c three more vectors (0x250, 0x260, 0x270), 0x12 / 0x14 / 0x15 / 0x1c / 0x31..0x33 floats.
+// Type (SetLightType, < 9): 4 hemisphere (the average of m_color and m_groundColor), 5 m_color2 is the
+// colour, others m_color.
+class Light {
+public:
+    void Ctor();                                  // Light()  _ZN4Aska5LightC2Ev
+    void Dtor();
+    void DtorDelete();
+    void CalcSpotCoefficient();
+    void CalcAttenuation();                       // m_attenuation from the range
+    void SetLightType(s32 type);                  // < 9 -> m_type
+    float GetIlluminance() const;
+    float GetColorTemperature() const;
+    void SetIlluminance(float lux);
+    void SetColorByTemperature(float kelvin);
+    float CalcHemisphereIntensity(RenderableObject* obj);
+    bool Get(u64 id, void* out) const;
+    bool Set(u64 id, const void* in);
+    void OnActive(bool on);
+
+    HierarchicalObject base;              // 0x000: vtable _ZTVN4Aska5LightE + 0x10
+    u8 m_aiming[0x5d];                    // 0x198: AimingObject's members (see Camera)
+    u8 unk_1f5;                           // 0x1f5: 0 at construction
+    u8 unk_1f6[0x1a];                     // 0x1f6
+    MathVector m_direction;               // 0x210: property 0x13
+    float m_attenuation[4];               // 0x220: GetIlluminance: 1 / (a + b r + c r^2) - d (CalcAttenuation)
+    MathVector m_color;                   // 0x230: property 0x10 (rgb; w = m_intensity)
+    // (m_color.w at 0x23c is the intensity: property 0x11; 100 at construction)
+    MathVector m_color2;                  // 0x240: property 0x29 (the colour of type 5)
+    MathVector m_vec250;                  // 0x250: property 0x2a
+    MathVector m_vec260;                  // 0x260: property 0x2b
+    MathVector m_vec270;                  // 0x270: property 0x2c
+    MathVector m_groundColor;             // 0x280: property 0x16 (hemisphere lights: the lower colour)
+    u8 unk_290[0x10];                     // 0x290
+    u8 m_2a0;                             // 0x2a0: property 0x1d
+    u8 m_type;                            // 0x2a1: property 0x17 (SetLightType)
+    u8 m_2a2;                             // 0x2a2: property 0x27
+    u8 unk_2a3[2];                        // 0x2a3
+    u8 m_lightFlags[3];                   // 0x2a5: bit 0 property 0x18, 3 (0x1b), 6 (0x21), 7 (0x2e), 11, 12; 0x2a6 bit 0 (0x2d)
+    u64 m_2a8;                            // 0x2a8: property 0x1a
+    u8 unk_2b0[0x430 - 0x2b0];            // 0x2b0
+};
+static_assert(offsetof(Light, m_aiming) == 0x198);
+static_assert(offsetof(Light, m_direction) == 0x210);
+static_assert(offsetof(Light, m_attenuation) == 0x220);
+static_assert(offsetof(Light, m_color) == 0x230);
+static_assert(offsetof(Light, m_color2) == 0x240);
+static_assert(offsetof(Light, m_groundColor) == 0x280);
+static_assert(offsetof(Light, m_2a0) == 0x2a0);
+static_assert(offsetof(Light, m_type) == 0x2a1);
+static_assert(offsetof(Light, m_lightFlags) == 0x2a5);
+static_assert(offsetof(Light, m_2a8) == 0x2a8);
+static_assert(sizeof(Light) == 0x430);
+
+// Aska::LightManager::LightContext: what an object's draw gets of the lights (0x550 bytes:
+// RenderContextServer::ReallocLightContext; LightManager::MakeLightContext fills it). Opaque.
+class LightContext {
+public:
+    u8 m_bytes[0x550];
+};
+static_assert(sizeof(LightContext) == 0x550);  // kLightContextSize
+
 // ==== End of section: cameras, aiming and lights ====================================================
 
 

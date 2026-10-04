@@ -107,6 +107,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x20bd9f4	0x21bd9f4	552	_ZN4Aska21ShaderConstantManager27SetShaderConstantF_lockableILb1EEEbiiPKNS_6VectorEi	bool Aska::ShaderConstantManager::SetShaderConstantF_lockable<true>(int, int, Aska::Vector const*, int)	material	decompiled	
 0x20c15ac	0x21c15ac	372	_ZN4Aska12MaterialListC2Ev	Aska::MaterialList::MaterialList()	material	typed	
 0x20c2680	0x21c2680	296	_ZN4Aska9AofObject27SetProgrammableTransparencyENS_16RenderableObject9ProgTransE	Aska::AofObject::SetProgrammableTransparency(Aska::RenderableObject::ProgTrans)	renderable_object	decompiled	
+0x20cba90	0x21cba90	16	_ZN27AofObjectDeleteArrayHandlerIN4Aska12LightManager12LightContextEE14DeleteCallbackEiPv	AofObjectDeleteArrayHandler<Aska::LightManager::LightContext>::DeleteCallback(int, void*)	light	decompiled	
+0x20cbaa0	0x21cbaa0	4	_ZN27AofObjectDeleteArrayHandlerIN4Aska12LightManager12LightContextEE14CancelCallbackEiPv	AofObjectDeleteArrayHandler<Aska::LightManager::LightContext>::CancelCallback(int, void*)	light	decompiled	
+0x20cbaa4	0x21cbaa4	4	_ZN27AofObjectDeleteArrayHandlerIN4Aska12LightManager12LightContextEED0Ev	AofObjectDeleteArrayHandler<Aska::LightManager::LightContext>::~AofObjectDeleteArrayHandler()	light	decompiled	
 0x20d48d4	0x21d48d4	140	_ZN4Aska18HierarchicalObject20EnableSimpleDynamicsEb	Aska::HierarchicalObject::EnableSimpleDynamics(bool)	hierarchical_object	typed	
 0x20e56ac	0x21e56ac	332	_ZN4Aska12AimingObject5CloneEPKNS_11IAnimatableE	Aska::AimingObject::Clone(Aska::IAnimatable const*)	camera	typed	
 0x20e57f8	0x21e57f8	104	_ZN4Aska12AimingObject11CreateCloneEPKNS_11IAnimatableE	Aska::AimingObject::CreateClone(Aska::IAnimatable const*)	camera	typed	
@@ -219,7 +222,66 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2136214	0x2236214	24	_ZNK4Aska27HierarchicalObjectContainer10GetClassIDEi	Aska::HierarchicalObjectContainer::GetClassID(int) const	hierarchical_object	typed	
 0x213622c	0x223622c	8	_ZNK4Aska27HierarchicalObjectContainer3GetEmPv	Aska::HierarchicalObjectContainer::Get(unsigned long, void*) const	hierarchical_object	typed	
 0x2136234	0x2236234	8	_ZN4Aska27HierarchicalObjectContainer3SetEmPKv	Aska::HierarchicalObjectContainer::Set(unsigned long, void const*)	hierarchical_object	typed	
-0x213a4ac	0x223a4ac	556	_ZN4Aska5LightC2Ev	Aska::Light::Light()	renderable_object	decompiled	
+0x213a4ac	0x223a4ac	556	_ZN4Aska5LightC2Ev	Aska::Light::Light()	light	typed	
+0x213a6d8	0x223a6d8	104	_ZN4Aska5Light19CalcSpotCoefficientEv	Aska::Light::CalcSpotCoefficient()	light	decompiled	
+0x213a740	0x223a740	404	_ZN4Aska5Light15CalcAttenuationEv	Aska::Light::CalcAttenuation()	light	decompiled	
+0x213a8d4	0x223a8d4	948	_ZN4Aska5Light5CloneEPKS0_	Aska::Light::Clone(Aska::Light const*)	light	decompiled	
+0x213ac88	0x223ac88	16	_ZN4Aska5Light12SetLightTypeEi	Aska::Light::SetLightType(int)	light	typed	
+0x213ac98	0x223ac98	172	_ZN4Aska5Light15SetIBLTextureIDEmm	Aska::Light::SetIBLTextureID(unsigned long, unsigned long)	light	decompiled	
+0x213ad44	0x223ad44	544	_ZN4Aska5Light12InitNoiseBufEv	Aska::Light::InitNoiseBuf()	light	decompiled	
+0x213af64	0x223af64	108	_ZN4Aska5Light8GetNoiseEf	Aska::Light::GetNoise(float)	light	decompiled	
+0x213afd0	0x223afd0	304	_ZN4Aska5Light18MakeNoiseIntensionEv	Aska::Light::MakeNoiseIntension()	light	decompiled	
+0x213b100	0x223b100	64	_ZNK4Aska5Light16CalcIBLIntensityEv	Aska::Light::CalcIBLIntensity() const	light	decompiled	
+0x213b140	0x223b140	860	_ZNK4Aska5Light15CalcIntensityTSEPNS_16RenderableObjectEPNS0_17CalcIntensityWorkEbbPfS5_S5_	Aska::Light::CalcIntensityTS(Aska::RenderableObject*, Aska::Light::CalcIntensityWork*, bool, bool, float*, float*, float*) const	light	decompiled	
+0x213b49c	0x223b49c	892	_ZNK4Aska5Light19CalcBounceIntensityEPS0_PNS_6VectorE	Aska::Light::CalcBounceIntensity(Aska::Light*, Aska::Vector*) const	light	decompiled	
+0x213b818	0x223b818	44	_ZNK4Aska5Light15GetIBLTextureIDEi	Aska::Light::GetIBLTextureID(int) const	light	decompiled	
+0x213b9b4	0x223b9b4	648	_ZN4Aska5Light13SetIBLProfileEj	Aska::Light::SetIBLProfile(unsigned int)	light	decompiled	
+0x213bc3c	0x223bc3c	120	_ZN4Aska5Light13GetIBLTextureEv	Aska::Light::GetIBLTexture()	light	decompiled	
+0x213bcb4	0x223bcb4	124	_ZN4Aska5Light21GetIBLTextureUniqueIDEv	Aska::Light::GetIBLTextureUniqueID()	light	decompiled	
+0x213bd30	0x223bd30	24	_ZNK4Aska5Light15GetIBLLodOffsetEv	Aska::Light::GetIBLLodOffset() const	light	decompiled	
+0x213bd48	0x223bd48	1056	_ZN4Aska5Light14DownconvertIBLEib	Aska::Light::DownconvertIBL(int, bool)	light	decompiled	
+0x213c168	0x223c168	4	_ZN4Aska5Light16EnableDebugGuideEb	Aska::Light::EnableDebugGuide(bool)	light	decompiled	
+0x213c16c	0x223c16c	4	_ZN4Aska5Light15EnableTileDebugEb	Aska::Light::EnableTileDebug(bool)	light	decompiled	
+0x213c170	0x223c170	236	_ZN4Aska5LightD2Ev	Aska::Light::~Light()	light	decompiled	
+0x213c25c	0x223c25c	104	_ZN4Aska5Light24UnregisterDiffuseCubeMapEv	Aska::Light::UnregisterDiffuseCubeMap()	light	decompiled	
+0x213c2c4	0x223c2c4	24	_ZN4Aska5LightD0Ev	Aska::Light::~Light()	light	decompiled	
+0x213c2dc	0x223c2dc	108	_ZN4Aska5Light10DeleteThisEPNS_13DeleteManagerE	Aska::Light::DeleteThis(Aska::DeleteManager*)	light	decompiled	
+0x213c348	0x223c348	1276	_ZNK4Aska5Light3GetEmPv	Aska::Light::Get(unsigned long, void*) const	light	typed	
+0x213c844	0x223c844	604	_ZNK4Aska5Light14GetIlluminanceEv	Aska::Light::GetIlluminance() const	light	typed	
+0x213caa0	0x223caa0	624	_ZNK4Aska5Light19GetColorTemperatureEv	Aska::Light::GetColorTemperature() const	light	decompiled	
+0x213cd10	0x223cd10	2632	_ZN4Aska5Light3SetEmPKv	Aska::Light::Set(unsigned long, void const*)	light	decompiled	
+0x213d758	0x223d758	624	_ZN4Aska5Light14SetIlluminanceEf	Aska::Light::SetIlluminance(float)	light	decompiled	
+0x213d9c8	0x223d9c8	324	_ZN4Aska5Light21SetColorByTemperatureEf	Aska::Light::SetColorByTemperature(float)	light	decompiled	
+0x213db0c	0x223db0c	260	_ZN4Aska5Light23CalcHemisphereIntensityEPNS_16RenderableObjectE	Aska::Light::CalcHemisphereIntensity(Aska::RenderableObject*)	light	decompiled	
+0x213dc10	0x223dc10	700	_ZN4Aska5Light22RegisterDiffuseCubeMapEv	Aska::Light::RegisterDiffuseCubeMap()	light	decompiled	
+0x213decc	0x223decc	44	_ZN4Aska5Light18DoesAffectLightOFFEj	Aska::Light::DoesAffectLightOFF(unsigned int)	light	decompiled	
+0x213def8	0x223def8	44	_ZN4Aska5Light24DoesAffectRangeReductionEj	Aska::Light::DoesAffectRangeReduction(unsigned int)	light	decompiled	
+0x213df24	0x223df24	68	_ZNK4Aska5Light10GetClassIDEi	Aska::Light::GetClassID(int) const	light	decompiled	
+0x213df68	0x223df68	8	_ZNK4Aska5Light15GetDefaultLevelEv	Aska::Light::GetDefaultLevel() const	light	decompiled	
+0x213df70	0x223df70	20	_ZN4Aska5Light8OnActiveEb	Aska::Light::OnActive(bool)	light	decompiled	
+0x213e2c4	0x223e2c4	96	_ZN4Aska12LightManager3RunEi	Aska::LightManager::Run(int)	light	decompiled	
+0x213e324	0x223e324	96	_ZThn40_N4Aska12LightManager3RunEi	non-virtual thunk to Aska::LightManager::Run(int)	light	decompiled	
+0x213e384	0x223e384	64	_ZNK4Aska12LightManager17GetActualSunLightEv	Aska::LightManager::GetActualSunLight() const	light	decompiled	
+0x213e3c4	0x223e3c4	676	_ZN4Aska12LightManager14MakeIBLContextEPPNS_5LightEPfPNS0_12LightContextEPh	Aska::LightManager::MakeIBLContext(Aska::Light**, float*, Aska::LightManager::LightContext*, unsigned char*)	light	decompiled	
+0x213e668	0x223e668	436	_ZN4Aska5Light18CalcIBLLocalMatrixEPNS_6MatrixE	Aska::Light::CalcIBLLocalMatrix(Aska::Matrix*)	light	decompiled	
+0x213e81c	0x223e81c	7716	_ZN4Aska12LightManager16MakeLightContextEPNS_9AofObjectEPNS0_12LightContextEPh	Aska::LightManager::MakeLightContext(Aska::AofObject*, Aska::LightManager::LightContext*, unsigned char*)	light	decompiled	
+0x2140640	0x2240640	1136	_ZN4Aska12LightManager25CalcHemisphereLightCoeffsEPNS0_10SHAmbConstEPKNS_5LightEPNS_6VectorE	Aska::LightManager::CalcHemisphereLightCoeffs(Aska::LightManager::SHAmbConst*, Aska::Light const*, Aska::Vector*)	light	decompiled	
+0x2140ab0	0x2240ab0	1084	_ZN4Aska12LightManager21CalcBounceLightCoeffsEPNS0_10SHAmbConstEPNS_16RenderableObjectEPPNS_5LightEiS7_i	Aska::LightManager::CalcBounceLightCoeffs(Aska::LightManager::SHAmbConst*, Aska::RenderableObject*, Aska::Light**, int, Aska::Light**, int)	light	decompiled	
+0x2141030	0x2241030	672	_ZN4Aska12LightManager20MakeLightContextPostEPNS_9AofObjectEPNS0_12LightContextEPh	Aska::LightManager::MakeLightContextPost(Aska::AofObject*, Aska::LightManager::LightContext*, unsigned char*)	light	decompiled	
+0x21412d0	0x22412d0	1172	_Z16ProcIBLforSHAmbiPN4Aska16RenderableObjectEPNS_12LightManager10SHAmbConstEb	ProcIBLforSHAmbi(Aska::RenderableObject*, Aska::LightManager::SHAmbConst*, bool)	light	decompiled	
+0x2141764	0x2241764	1968	_ZN4Aska12LightManager16MakeLightContextEPNS_16RenderableObjectEPNS0_18LightContextSimpleE	Aska::LightManager::MakeLightContext(Aska::RenderableObject*, Aska::LightManager::LightContextSimple*)	light	decompiled	
+0x2141f14	0x2241f14	532	_ZN4Aska12LightManager6CalcSHEPNS0_18LightContextSimpleEPKNS_6MatrixE	Aska::LightManager::CalcSH(Aska::LightManager::LightContextSimple*, Aska::Matrix const*)	light	decompiled	
+0x2142128	0x2242128	1348	_ZN4Aska12LightManager20PickOutPrimaryLightsEPNS_16RenderableObjectEPPNS_5LightEi	Aska::LightManager::PickOutPrimaryLights(Aska::RenderableObject*, Aska::Light**, int)	light	decompiled	
+0x214266c	0x224266c	2148	_ZN4Aska12LightManager25PrepareLightsForRenderingEPPNS_16RenderableObjectEi	Aska::LightManager::PrepareLightsForRendering(Aska::RenderableObject**, int)	light	decompiled	
+0x2142ed0	0x2242ed0	56	_ZN4Aska12LightManager17PrepareForTextureEv	Aska::LightManager::PrepareForTexture()	light	decompiled	
+0x214300c	0x224300c	24	_ZN4Aska12LightManagerD0Ev	Aska::LightManager::~LightManager()	light	decompiled	
+0x2143024	0x2243024	88	_ZNK4Aska12LightManager10GetClassIDEi	Aska::LightManager::GetClassID(int) const	light	decompiled	
+0x214307c	0x224307c	24	_ZN4Aska12LightManager6DeleteEPNS_4TaskE	Aska::LightManager::Delete(Aska::Task*)	light	decompiled	
+0x2143094	0x2243094	8	_ZNK4Aska12LightManager15GetDefaultLevelEv	Aska::LightManager::GetDefaultLevel() const	light	decompiled	
+0x214309c	0x224309c	8	_ZThn40_N4Aska12LightManagerD1Ev	non-virtual thunk to Aska::LightManager::~LightManager()	light	decompiled	
+0x21430a4	0x22430a4	28	_ZThn40_N4Aska12LightManagerD0Ev	non-virtual thunk to Aska::LightManager::~LightManager()	light	decompiled	
+0x21430c0	0x22430c0	88	_ZThn40_NK4Aska12LightManager10GetClassIDEi	non-virtual thunk to Aska::LightManager::GetClassID(int) const	light	decompiled	
+0x2143118	0x2243118	8	_ZThn40_NK4Aska12LightManager15GetDefaultLevelEv	non-virtual thunk to Aska::LightManager::GetDefaultLevel() const	light	decompiled	
 0x2143ef0	0x2243ef0	180	_ZN4Aska15MaterialContextC1Ev	Aska::MaterialContext::MaterialContext()	material	typed	
 0x2143fa4	0x2243fa4	164	_ZN4Aska15MaterialContext5ResetEv	Aska::MaterialContext::Reset()	material	typed	
 0x2144048	0x2244048	36	_ZN4Aska15MaterialContext10SetDefaultEPNS_18TextureSamplerModeE	Aska::MaterialContext::SetDefault(Aska::TextureSamplerMode*)	material	typed	
@@ -279,7 +341,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2173f18	0x2273f18	16	_ZN4Aska13RenderContext13GetBatchArrayEi	Aska::RenderContext::GetBatchArray(int)	render_context	typed	
 0x2173f28	0x2273f28	1136	_ZN4Aska13RenderContext7OnPaintEv	Aska::RenderContext::OnPaint()	render_context	typed	
 0x2174398	0x2274398	128	_ZN4Aska13RenderContext16PrepairMatriciesEv	Aska::RenderContext::PrepairMatricies()	render_context	typed	
-0x2174418	0x2274418	224	_ZN4Aska13RenderContext6Static31SetShaderConstantLightMaskGroupEPNS_14RenderDeviceGLEPNS_12LightManager12LightContextE	Aska::RenderContext::Static::SetShaderConstantLightMaskGroup(Aska::RenderDeviceGL*, Aska::LightManager::LightContext*)	render_context	typed	
+0x2174418	0x2274418	224	_ZN4Aska13RenderContext6Static31SetShaderConstantLightMaskGroupEPNS_14RenderDeviceGLEPNS_12LightManager12LightContextE	Aska::RenderContext::Static::SetShaderConstantLightMaskGroup(Aska::RenderDeviceGL*, Aska::LightManager::LightContext*)	light	typed	
 0x2174804	0x2274804	256	_ZN4Aska14RenderDeviceGL11BindTextureEjj	Aska::RenderDeviceGL::BindTexture(unsigned int, unsigned int)	render_device	typed	
 0x2175964	0x2275964	20	_ZNK4Aska14RenderDeviceGL12GetGLVersionEv	Aska::RenderDeviceGL::GetGLVersion() const	render_device	typed	
 0x2176244	0x2276244	192	_ZN4Aska14RenderDeviceGLC1Ev	Aska::RenderDeviceGL::RenderDeviceGL()	render_device	typed	
@@ -387,6 +449,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x218efc8	0x228efc8	120	_ZN4Aska19UniformValueBuffer213ReserveMemoryEi	Aska::UniformValueBuffer2::ReserveMemory(int)	material	decompiled	
 0x218f040	0x228f040	48	_ZN4Aska19UniformValueBuffer25ResetENS0_15MemoryOperationE	Aska::UniformValueBuffer2::Reset(Aska::UniformValueBuffer2::MemoryOperation)	material	decompiled	
 0x218f070	0x228f070	108	_ZN4Aska19UniformValueBuffer25CloneERKS0_	Aska::UniformValueBuffer2::Clone(Aska::UniformValueBuffer2 const&)	material	decompiled	
+0x21a77b4	0x22a77b4	1076	_ZN4Aska12LightManager18LightContextSimpleaSERKS1_	Aska::LightManager::LightContextSimple::operator=(Aska::LightManager::LightContextSimple const&)	light	decompiled	
 0x21a996c	0x22a996c	4	_ZN4Aska16RenderableObject6RenderEPNS_13RenderContextEi	Aska::RenderableObject::Render(Aska::RenderContext*, int)	renderable_object	typed	
 0x21aa828	0x22aa828	100	_ZN4Aska24PostProcessBufferManager24DoesInsertToPaintingListEPNS_16RenderableObject3IPLEiiPKi	Aska::PostProcessBufferManager::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	decompiled	
 0x21b6a98	0x22b6a98	36	_ZNK4Aska16RenderableObject11GetDeepestZEi	Aska::RenderableObject::GetDeepestZ(int) const	renderable_object	typed	

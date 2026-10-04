@@ -316,13 +316,13 @@ NATIVE_TEST("render/layout-render-context") {
     auto* rc = reinterpret_cast<RenderContext*>(cbuf);
     t.call("_ZN4Aska13RenderContextC2Ev", {(u64)rc});
     const float ident[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-    t.expect_eq(std::memcmp(rc->m_vc0.f, ident, 64), 0, "m_vc0 identity");
-    t.expect_eq(std::memcmp(rc->m_vc10.f, ident, 64), 0, "m_vc10 identity");
-    t.expect_eq(std::memcmp(rc->m_vc9.f, ident, 64), 0, "m_vc9 identity");
-    t.expect_eq(std::memcmp(rc->m_world, ident, 48), 0, "m_world 3x4 identity");
+    t.expect_eq(std::memcmp(&rc->m_vc0, ident, 64), 0, "m_vc0 identity");
+    t.expect_eq(std::memcmp(&rc->m_vc10, ident, 64), 0, "m_vc10 identity");
+    t.expect_eq(std::memcmp(&rc->m_vc9, ident, 64), 0, "m_vc9 identity");
+    t.expect_eq(std::memcmp(&rc->m_world, ident, 48), 0, "m_world 3x4 identity");
     const float one4[4] = {1, 1, 1, 1}, w1[4] = {0, 0, 0, 1};
-    t.expect_eq(std::memcmp(rc->m_pixelConst.f, one4, 16), 0, "m_pixelConst (1, 1, 1, 1)");
-    t.expect_eq(std::memcmp(rc->m_vc14.f, w1, 16), 0, "m_vc14 (0, 0, 0, 1)");
+    t.expect_eq(std::memcmp(&rc->m_pixelConst, one4, 16), 0, "m_pixelConst (1, 1, 1, 1)");
+    t.expect_eq(std::memcmp(&rc->m_vc14, w1, 16), 0, "m_vc14 (0, 0, 0, 1)");
     t.expect_eq(rc->m_batches, (RenderContextBatch*)nullptr, "m_batches");
     t.expect_eq(rc->m_batchCount, (u16)0, "m_batchCount");
     rc->m_batches = reinterpret_cast<RenderContextBatch*>(0x100000);
@@ -510,8 +510,8 @@ NATIVE_TEST("render/layout-camera") {
     probe_call(t, g_probeFrustumPlane, [&](Cpu& c) {
         auto* cam = reinterpret_cast<Camera*>(c.x(0));
         if (!has_vtable(t, cam, "_ZTVN4Aska6CameraE")) return false;  // a derived camera: wait for a plain one
-        const float* w = cam->base.m_hoc.m_world.f;
-        const float* v = cam->base.m_param9Matrix.f;
+        const float* w = &cam->base.m_hoc.m_world.m[0][0];
+        const float* v = &cam->base.m_param9Matrix.m[0][0];
         float maxerr = 0;
         for (int r = 0; r < 4; r++)
             for (int k = 0; k < 4; k++) {
@@ -533,7 +533,7 @@ NATIVE_TEST("render/layout-camera") {
         get(0x17, &f); t.expect_eq(f, (float)cam->m_zRange0, "Get(0x17) = (float)m_zRange0");
         get(0x1c, &f); t.expect_eq(f, (float)cam->m_fogMode, "Get(0x1c) = m_fogMode");
         alignas(16) float col[4] = {};
-        get(0x1b, col); t.expect_eq(std::memcmp(col, cam->m_fogColor.f, 16), 0, "Get(0x1b) = m_fogColor");
+        get(0x1b, col); t.expect_eq(std::memcmp(col, &cam->m_fogColor, 16), 0, "Get(0x1b) = m_fogColor");
         t.expect_eq(cam->m_zRange0F == (float)cam->m_zRange0 && cam->m_zRange1F == (float)cam->m_zRange1, true, "the float copies of the z range");
         AimingObject* ao = cam->AsAimingObject();
         t.expect_eq(t.call("_ZNK4Aska12AimingObject12TargetObjectEv", {(u64)cam}), (u64)ao->m_target, "TargetObject = m_target");
@@ -543,6 +543,41 @@ NATIVE_TEST("render/layout-camera") {
         t.expect_eq(roll, ao->m_roll, "AimingObject::Get(0xf) = m_roll");
         return true;
     }, 20000, "Camera::MakeViewFrustumPlane");
+}
+
+// Light: a private one (Light() runs AimingObject's constructor and CalcAttenuation), Get's properties
+// against the fields, SetLightType, then its destructor.
+NATIVE_TEST("render/layout-light") {
+    alignas(16) static u8 buf[sizeof(Light)];
+    std::memset(buf, 0, sizeof buf);
+    auto* l = reinterpret_cast<Light*>(buf);
+    t.call("_ZN4Aska5LightC2Ev", {(u64)l});
+    t.expect_eq(l->base.base.base.base.vtable, vtable_of(t, "_ZTVN4Aska5LightE"), "vtable");
+    auto* ao = reinterpret_cast<AimingObject*>(l);
+    t.expect_eq(ao->m_aimNode, &l->base.m_hoc, "AimingObject part: m_aimNode = &m_hoc");
+    t.expect_eq(l->m_color.w, 100.0f, "intensity 100 at construction");
+    alignas(16) float v[4] = {};
+    t.call("_ZNK4Aska5Light3GetEmPv", {(u64)l, 0x10, (u64)v});
+    t.expect_eq(std::memcmp(v, &l->m_color, 16), 0, "Get(0x10) = m_color");
+    float f = -1;
+    t.call("_ZNK4Aska5Light3GetEmPv", {(u64)l, 0x11, (u64)&f});
+    t.expect_eq(f, l->m_color.w, "Get(0x11) = intensity (0x23c)");
+    t.call("_ZNK4Aska5Light3GetEmPv", {(u64)l, 0x13, (u64)v});
+    t.expect_eq(std::memcmp(v, &l->m_direction, 16), 0, "Get(0x13) = m_direction");
+    t.call("_ZNK4Aska5Light3GetEmPv", {(u64)l, 0x16, (u64)v});
+    t.expect_eq(std::memcmp(v, &l->m_groundColor, 16), 0, "Get(0x16) = m_groundColor");
+    t.call("_ZN4Aska5Light12SetLightTypeEi", {(u64)l, 4});
+    t.expect_eq(l->m_type, (u8)4, "SetLightType -> m_type");
+    u32 ty = 0xdead;
+    t.call("_ZNK4Aska5Light3GetEmPv", {(u64)l, 0x17, (u64)&ty});
+    if (ty != 4) t.fail("Get(0x17) = m_type: got 0x%x", ty);  // an integer (Ghidra shows a float conversion)
+    t.call("_ZN4Aska5Light12SetLightTypeEi", {(u64)l, 9});
+    t.expect_eq(l->m_type, (u8)4, "SetLightType(9) ignored");
+    l->m_2a8 = 0x1234;
+    u64 q = 0;
+    t.call("_ZNK4Aska5Light3GetEmPv", {(u64)l, 0x1a, (u64)&q});
+    t.expect_eq(q, (u64)0x1234, "Get(0x1a) = 0x2a8");
+    t.call("_ZN4Aska5LightD2Ev", {(u64)l});
 }
 
 }  // namespace soa::native::render

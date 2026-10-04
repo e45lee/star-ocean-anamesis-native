@@ -28,7 +28,8 @@
 
 // For a host gdb attached to the process (control/gdbinit-soa: soa-native-break): the thunk table,
 // kMaxThunks entries of {HostFn fn; const char* name; u64 hook; const char* host_name} (32 bytes),
-// filled in order (an entry with fn 0 ends it). Set by cpu_global_init.
+// filled in order from entry 1 (0 is the return to the host; a later entry with fn 0 ends it). Set
+// by cpu_global_init.
 extern "C" {
 void* soa_gdb_thunks = nullptr;
 }

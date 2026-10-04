@@ -20,6 +20,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, os.path.join(REPO, "control"))
 import gdbclient  # noqa: E402
 
+GDBINIT = os.path.join(REPO, "control", "gdbinit-soa")
 DEMO = os.environ.get("SOA_GDB_DEMO") or os.path.join(REPO, "build", "runtime", "soaruntime_tests")
 WINDOWS = DEMO.lower().endswith(".exe")
 needs_demo = pytest.mark.skipif(not os.access(DEMO, os.X_OK), reason=DEMO + " not built")
@@ -154,10 +155,26 @@ def test_gdb_multiarch_attaches(host):
         target = "[%s]:%d" % (host, d["port"]) if ":" in host else "%s:%d" % (host, d["port"])
         cmds = ["set pagination off", "target remote " + target, "info registers x19", f"break *{d['leaf']:#x}",
                 "continue", "p/x $pc", "stepi", "p/x $pc", "delete", f"set {{long}}({d['data'] + 8:#x}) = 1", "detach"]
-        r = subprocess.run(["gdb-multiarch", "-batch", "-nx"] + [x for c in cmds for x in ("-ex", c)], capture_output=True, text=True, timeout=60)
+        r = subprocess.run(["gdb-multiarch", "-batch", "-nx", "-x", GDBINIT] + [x for c in cmds for x in ("-ex", c)], capture_output=True,
+                           text=True, timeout=60)
         assert f"{d['data']:#x}" in r.stdout, r.stdout + r.stderr
         assert "Breakpoint 1," in r.stdout and f"= {d['leaf'] + 4:#x}" in r.stdout, r.stdout + r.stderr
         finish(p)
     finally:
         if p.poll() is None:
             p.kill()
+
+
+@needs_demo
+@pytest.mark.skipif(WINDOWS or not shutil.which("gdb"), reason="needs the host gdb on a Linux demo")
+def test_gdbinit_host_native_break():
+    """control/gdbinit-soa in a host gdb on the process: soa-native-break on a guest symbol stops in its
+    native (the C++), called from the guest through the hook."""
+    cmds = ["break soa::hook_guest_function", "run", "finish", "soa-natives gdb_demo", "soa-native-break gdb_demo_leaf", "delete 1",
+            "continue", "bt 2", "kill"]
+    r = subprocess.run(["gdb", "-batch", "-nx", "-x", GDBINIT] + [x for c in cmds for x in ("-ex", c)] +
+                       ["--args", DEMO, "--gdb-demo", "127.0.0.1:0", "--native"], capture_output=True, text=True, timeout=120)
+    out = r.stdout + r.stderr
+    assert "gdb_demo_leaf  host_leaf" in out, out
+    assert "soa: breakpoint 2 on the native for gdb_demo_leaf" in out and "hit Breakpoint 2" in out, out
+    assert "host_leaf" in out.split("hit Breakpoint 2", 1)[1].splitlines()[0] and "CallSVC" in out, out

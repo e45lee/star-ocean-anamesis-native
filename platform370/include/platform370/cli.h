@@ -12,11 +12,20 @@
 
 namespace soa::platform370 {
 
-// "HOST[:PORT]": the host and the port (0 when none). A value with more than one ':' is all host
-// (no port). false when the host is empty or a port is given and isn't positive.
+// "HOST[:PORT]" or "[IPV6][:PORT]": the host (without the brackets) and the port (0 when none). A
+// value with more than one ':' and no brackets is all host (a bare IPv6 address, no port). false
+// when the host is empty, a "[" has no "]", or a port is given and isn't positive.
 inline bool split_host_port(const std::string& v, std::string* host, int* port) {
     *host = v;
     *port = 0;
+    if (!v.empty() && v[0] == '[') {
+        size_t e = v.find(']');
+        if (e == std::string::npos || (e + 1 < v.size() && v[e + 1] != ':')) return false;
+        *host = v.substr(1, e - 1);
+        if (e + 1 == v.size()) return !host->empty();
+        *port = atoi(v.c_str() + e + 2);
+        return !host->empty() && *port > 0;
+    }
     size_t c = v.rfind(':');
     if (c != std::string::npos && v.find(':') == c) *host = v.substr(0, c), *port = atoi(v.c_str() + c + 1);
     return !host->empty() && (c == std::string::npos || *port > 0);

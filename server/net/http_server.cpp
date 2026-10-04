@@ -88,7 +88,7 @@ HttpServer::HttpServer(const HttpRouter& router, std::mutex* lock) : impl_(std::
     svr.Patch(".*", serve);
     svr.set_payload_max_length(kMaxBody);
     svr.set_keep_alive_max_count(1000);
-    svr.set_address_family(AF_INET);
+    svr.set_address_family(AF_INET);  // (listen: AF_INET6 for an IPv6 address)
     svr.set_tcp_nodelay(true);
     // SO_REUSEADDR as the game port's listener (sock::set_reuse_addr: nothing on Windows)
     svr.set_socket_options([](socket_t s) { sock::set_reuse_addr((int)s); });
@@ -99,9 +99,10 @@ HttpServer::~HttpServer() { stop(); }
 bool HttpServer::listen(const std::string& host, uint16_t port, std::string* err) {
     httplib::Server& svr = impl_->svr;
     sock::startup();
+    if (host.find(':') != std::string::npos) svr.set_address_family(AF_INET6);  // --http [::1]:PORT
     int bound = port ? (svr.bind_to_port(host, port) ? port : -1) : svr.bind_to_any_port(host);
     if (bound <= 0) {
-        *err = host + ":" + std::to_string(port) + ": " + sock::last_error();
+        *err = sock::join_host_port(host, port) + ": " + sock::last_error();
         return false;
     }
     port_ = (uint16_t)bound;

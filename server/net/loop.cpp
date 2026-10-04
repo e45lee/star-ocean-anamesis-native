@@ -11,12 +11,12 @@
 namespace soa::server::net {
 
 bool parse_host_port(const std::string& s, std::string* host, uint16_t* port) {
-    size_t c = s.rfind(':');
-    if (c == std::string::npos || c == 0) return false;
+    std::string h, ps;
+    if (!sock::split_host_port(s, &h, &ps) || h.empty() || ps.empty()) return false;
     char* e = nullptr;
-    unsigned long p = strtoul(s.c_str() + c + 1, &e, 10);
+    unsigned long p = strtoul(ps.c_str(), &e, 10);
     if (!e || *e || p > 65535) return false;
-    *host = s.substr(0, c);
+    *host = h;
     *port = (uint16_t)p;
     return true;
 }
@@ -32,28 +32,30 @@ Loop::~Loop() {
 
 bool Loop::listen_on(const std::string& host, uint16_t port, int* fd, uint16_t* bound, std::string* err) {
     addrinfo hints = {}, *res = nullptr;
-    hints.ai_family = AF_INET;
+    hints.ai_family = AF_UNSPEC;  // (an IPv6 host too: --listen [::1]:PORT)
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
     sock::startup();  // (Winsock, before the name lookup)
-    if (int r = getaddrinfo(host.c_str(), nullptr, &hints, &res); r != 0 || !res) {
+    const std::string port_s = std::to_string(port);
+    if (int r = getaddrinfo(host.c_str(), port_s.c_str(), &hints, &res); r != 0 || !res) {
         *err = host + ": " + gai_strerror(r);
         return false;
     }
-    sockaddr_in a = *(sockaddr_in*)res->ai_addr;
+    sockaddr_storage a = {};
+    socklen_t alen = (socklen_t)res->ai_addrlen;
+    memcpy(&a, res->ai_addr, res->ai_addrlen);
     freeaddrinfo(res);
-    a.sin_port = htons(port);
-    int s = sock::tcp_socket(true);
+    int s = sock::tcp_socket(true, a.ss_family);
     if (s >= 0) sock::set_reuse_addr(s);
-    if (s < 0 || bind(s, (sockaddr*)&a, sizeof a) != 0 || listen(s, 16) != 0) {
-        *err = host + ":" + std::to_string(port) + ": " + sock::last_error();
+    if (s < 0 || bind(s, (sockaddr*)&a, alen) != 0 || listen(s, 16) != 0) {
+        *err = sock::join_host_port(host, port) + ": " + sock::last_error();
         if (s >= 0) sock::close(s);
         return false;
     }
     socklen_t len = sizeof a;
     getsockname(s, (sockaddr*)&a, &len);
     *fd = s;
-    *bound = ntohs(a.sin_port);
+    *bound = ntohs(a.ss_family == AF_INET6 ? ((sockaddr_in6*)&a)->sin6_port : ((sockaddr_in*)&a)->sin_port);
     return true;
 }
 

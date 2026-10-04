@@ -9,6 +9,8 @@ ChaCha20 restarts at counter 0 for every key and value. See docs/notes.md.
 import base64
 import re
 import struct
+import xml.etree.ElementTree as ET
+
 from Crypto.Cipher import ChaCha20
 
 KEY_V11 = b"xp1666a2P7QGhOCRxCjG8aWj5PmxZOrY"
@@ -18,7 +20,6 @@ NONCE_V10_BASE = b"vH9=-2.OP(VN"
 
 HEADER = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n"
 FOOTER = "</map>\n"
-ENTRY_RE = re.compile(r'    <string name="([^"]*)">([^<]*)</string>\n')
 
 
 def legacy_key(uid8: bytes):
@@ -44,9 +45,9 @@ def native_b64(data: bytes) -> str:
 
 
 def java_b64(data: bytes) -> str:
-    """android.util.Base64.encodeToString(data, DEFAULT): 76-char lines, trailing newline."""
-    s = base64.b64encode(data).decode()
-    return "".join(s[i:i + 76] + "\n" for i in range(0, len(s), 76))
+    """android.util.Base64.encodeToString(data, DEFAULT): 76-char lines, each ending in a newline
+    (the MIME layout base64.encodebytes writes)."""
+    return base64.encodebytes(data).decode()
 
 
 class KVSFile:
@@ -61,18 +62,16 @@ class KVSFile:
         raw = open(path, encoding="utf-8").read()
         if not raw.startswith(HEADER) or not raw.endswith(FOOTER):
             raise ValueError(f"{path}: unexpected SharedPreferences layout")
-        body = raw[len(HEADER):-len(FOOTER)]
         self = cls(key=key, nonce=nonce)
-        pos = 0
-        for m in ENTRY_RE.finditer(body):
-            if m.start() != pos:
-                raise ValueError(f"{path}: unparsed data at offset {pos}")
-            pos = m.end()
-            name = crypt(_b64decode_lenient(m.group(1)), key, nonce).decode("utf-8")
-            text = m.group(2).replace("&#10;", "\n")
-            self.entries[name] = crypt(_b64decode_lenient(text), key, nonce)
-        if pos != len(body):
-            raise ValueError(f"{path}: unparsed data at offset {pos}")
+        try:
+            root = ET.fromstring(raw)
+        except ET.ParseError as e:
+            raise ValueError(f"{path}: {e}") from e
+        for el in root:
+            if el.tag != "string" or set(el.attrib) != {"name"} or len(el):
+                raise ValueError(f"{path}: unexpected <{el.tag}> entry")
+            name = crypt(_b64decode_lenient(el.attrib["name"]), key, nonce).decode("utf-8")
+            self.entries[name] = crypt(_b64decode_lenient(el.text or ""), key, nonce)
         return self
 
     def dumps(self) -> str:

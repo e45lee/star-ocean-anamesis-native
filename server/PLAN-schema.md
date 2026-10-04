@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables and version 12's `player.is_3d_home` added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home` and version 13's `is_new` columns added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1070,7 +1070,8 @@ create table roster (
   weapon_uid integer references items(uid) on delete set null,          -- 0 -> NULL
   accessory_uid integer references items(uid) on delete set null,       -- 0 -> NULL
   assist_uid integer references roster(uid) on delete set null,         -- from assist
-  created_at integer not null
+  created_at integer not null,
+  is_new integer not null default 1 check (is_new in (0,1))  -- **new** (v13): the NEW badge (ClearNewCharacter)
   -- ~~favor~~ (F1)
 ) strict;
 create unique index roster_weapon on roster(weapon_uid) where weapon_uid is not null;
@@ -1095,10 +1096,12 @@ create table items (
   uid integer primary key, master_item_id integer not null,          -- m: master_item.id
   item_type integer not null, level integer not null default 1, exp integer not null default 0,
   limit_break integer not null default 0,
-  locked integer not null default 0 check (locked in (0,1)), created_at integer not null
+  locked integer not null default 0 check (locked in (0,1)), created_at integer not null,
+  is_new integer not null default 1 check (is_new in (0,1))  -- **new** (v13): the NEW badge (ClearNewItem)
 ) strict;
 create table stock (master_item_id integer primary key, item_type integer not null,
-                    count integer not null default 0) strict;          -- m: master_item.id
+                    count integer not null default 0,           -- m: master_item.id
+                    is_new integer not null default 1 check (is_new in (0,1))) strict;  -- **new** (v13): ClearNewStackItem
 create table gear_items (
   uid integer primary key, type integer not null default 0,
   master_item_id integer not null,                                   -- m: master_item
@@ -1621,6 +1624,11 @@ Lockstep changes:
   - **Step 12** (`state/schema.cpp` `kHome3D`; `kSchemaVersion` 12): `alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))`: an existing player keeps the 3D home it was always sent; a boolean by 3.1's convention. No rebuild (an added column with a default and a check on a STRICT table), no data mapping.
   - **Code:** `api/player/home.cpp` `home3d_and_2d_switching` stores the mode; `player_info` sends the column.
   - **Tests:** `server/schema-migrate-v12` ((1) v0 → v12: every other table's rows as the same file at 11, the player 3D, `.bak-v0`; (2) a v11 file → 12 without the master: 3D, the check refuses 2, `.bak-v11` without the column), `server/schema-fresh-equals-migrated` (unchanged: the same 53 tables), `player/home3d-switching`; the `profile` replay corpus gained Home3DAnd2DSwitching 0 / 1 with a GetPlayer after each.
+
+**v13: the NEW badges** (docs/unimplemented-apis.md part 3 step 6, 2026-10-04; not a plan step). The server never sent `is_new`, so no NEW badge showed and `ClearNewCharacter` / `ClearNewItem` / `ClearNewStackItem` had no handler.
+  - **Step 13** (`state/schema.cpp` `kNewFlags`; `kSchemaVersion` 13): `roster.is_new`, `items.is_new`, `stock.is_new`, each `integer not null default 1 check (is_new in (0,1))`, then every existing row set to 0: a row added later is new by the column's default (every place that gains a character, item or stack item inserts a row), the rows the state already had are not. No rebuild (added columns with a default and a check on STRICT tables). The seed and the new player's starters insert 0.
+  - **Code:** `api/items/new_flags.cpp` (the three ClearNew*); `roster_info`, `item_info_list`, `stack_item_info_list` send the flags.
+  - **Tests:** `server/schema-migrate-new-badges` ((1) v0 → 13: every existing roster / items / stock row not new, every other table's rows as at 12; (2) a 12 file → 13 without the master: a new row is new, the check refuses 2, `.bak-v12` without the column), `items/new-badges`; the `badges` replay corpus.
 ---
 
 ## 5. Order and gates

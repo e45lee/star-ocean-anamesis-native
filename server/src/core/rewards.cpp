@@ -44,6 +44,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
             e["id"] = a.uid.v;
             e["master_role_id"] = d.id;
             e["drop_type"] = d.drop_type;
+            e["is_new"] = 1u;  // the NEW badge until ClearNewCharacter (docs/server-rules.md#new-badges)
             chars.push(e);
         }
     } else if (d.type == 3) {  // (a) master_global item_fol_max_num caps FOL

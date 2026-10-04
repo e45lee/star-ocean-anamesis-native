@@ -616,8 +616,43 @@ namespace {
 
 // ---- hooks --------------------------------------------------------------------------------
 
+// Request methods whose offline FakeApiCaller lambda answers through another method's handler
+// (port code, not guest behaviour): the three ClearNew* queue FakeApi/sale.msgp under SellItem's
+// FunctionID and call CApiNotify::OnSellItemRes, so the client never clears a NEW badge. On the
+// in-process route they are queued like the served base-class methods instead: NetworkApiCaller's
+// FunctionID (docs/api.md) and the handler its response goes to (docs/client-changes.md
+// "FakeApiCaller::ClearNew*").
+bool on_fake_caller(u64 self);
+void queue_base_method(Cpu& c, u32 fid, const char* handler, const char* file);
+struct RoutedRequest {
+    const char* sym;
+    u32 fid;  // NetworkApiCaller's FunctionID
+    const char* handler;
+    const char* file;  // the name the queue entry and the logs show
+};
+const RoutedRequest kRoutedRequests[] = {
+    {"_ZN13FakeApiCaller17ClearNewCharacterERKN9Framework10CSTLVectorImEE", 0x36ce009c, "_ZN10CApiNotify22OnClearNewCharacterResEPaRj",
+     "FakeApi/clear_new_character.msgp"},
+    {"_ZN13FakeApiCaller12ClearNewItemERKN9Framework10CSTLVectorImEE", 0x22b15407, "_ZN10CApiNotify17OnClearNewItemResEPaRj",
+     "FakeApi/clear_new_item.msgp"},
+    {"_ZN13FakeApiCaller17ClearNewStackItemERKN9Framework10CSTLVectorIjEE", 0xaabac605, "_ZN10CApiNotify22OnClearNewStackItemResEPaRj",
+     "FakeApi/clear_new_stack_item.msgp"},
+};
+const RoutedRequest* routed_request(const char* sym) {
+    for (const RoutedRequest& r : kRoutedRequests)
+        if (!strcmp(r.sym, sym)) return &r;
+    return nullptr;
+}
+
 template <int I>
 void h_request(Cpu& c) {
+    if (const RoutedRequest* routed = routed_request(kRequests[I].sym); routed && on_fake_caller(c.x(0))) {
+        u64 x[8];
+        for (int k = 0; k < 8; k++) x[k] = c.x(k);
+        server_port::capture(routed->sym, routed->fid, x);
+        queue_base_method(c, routed->fid, routed->handler, routed->file);
+        return;
+    }
     // The in-process server (--server inproc; not guest behaviour): the request's arguments, kept
     // until Progress answers it (server::answer).
     if (server::enabled()) {

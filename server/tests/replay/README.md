@@ -48,6 +48,8 @@ What it does not cover: the wire layer's own work (the bridge, the Ninja cipher,
 
 | `stubs` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 8), the `profile` options: Login, every stub once (the social calls with arguments: a player id, a location as f32 bits; the 27 `Debug*` without), GetPlayer: each answers `{Time}`, logs `stub: ...`, and the state is unchanged | 37 |
 
+| `badges` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 6), the `economy` options: Login, a 10-draw of a character gacha (two new characters, new stack items), GetPlayer (`is_new` in Character / StockItem), ClearNewCharacter (a new, a seeded and an unknown uid), ClearNewItem (an unknown uid), ClearNewStackItem (a new and an unknown id), GetPlayer (cleared) | 7 |
+
 The sweep is the coverage floor: with no arguments, some handlers decline (`not-handled`: 14 of 106 today) or refuse; the flows exercise the real arguments.
 
 **Fidelity.** Replayed on the build they were recorded with, the flows' replies equal the recorded ones byte for byte, except Login's `r_ver` (the CDN's revision: no CDN is built in a replay, so it is empty).

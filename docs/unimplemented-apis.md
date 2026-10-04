@@ -16,11 +16,11 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **142** (35 of them stubs: section 2.5). Of the **57 without a handler**:
+The wire knows **199 methods**; the server has handlers for **145** (35 of them stubs: section 2.5). Of the **54 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
-| **Empty reply** | 14 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
+| **Empty reply** | 11 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
 | **Canned reply** | 2 | The named file exists in `port/fakeapi/responses/`, but it is a fixed reply made for another method by `tools/fakeapi_responses.py`: `TrainingMissionStart` gets `mission_start.msgp` (a normal mission's start), `CbtCertification` gets `update_home.msgp`. Nothing is stored. |
 | **No reply** | 31 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
@@ -102,7 +102,6 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | | [ChangeRole](api.md#changerole) | ★ | |
 | | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
 | | [FavoriteDecoObject](api.md#favoritedecoobject) / [UnFavoriteDecoObject](api.md#unfavoritedecoobject) | {} | |
-| **"New" badges** | [ClearNewCharacter](api.md#clearnewcharacter) / [ClearNewItem](api.md#clearnewitem) / [ClearNewStackItem](api.md#clearnewstackitem) | {} | badges never clear |
 | **Settings and account** | [GetConfig](api.md#getconfig) / [UpdateConfig](api.md#updateconfig) / [ResetConfig](api.md#resetconfig) | ★ | the options the server keeps |
 | | [GetBirthYearMonth](api.md#getbirthyearmonth) / [UpdateBirthYearMonth](api.md#updatebirthyearmonth) | ★ | age check before purchases |
 | | [GetScenarioLibraryInfoList](api.md#getscenariolibraryinfolist) | ★ | the story library (replaying scenes) |
@@ -204,7 +203,13 @@ tables, rules section). New state goes through the state module's migrations
    picks), `InheritAccessory`, `UpdateItemStock`, `GetMasteryInfo`/`TrainMastery`/`ResetMastery`.
 5. **Home and decorations:** `ChangeMascot`, `ChangeRole`, the deco methods
    (`Home3DAnd2DSwitching` is already being done).
-6. **"New" badges:** the three `ClearNew*` (flags on the stored characters and items).
+6. **"New" badges (done 2026-10-04):** the three `ClearNew*` (flags on the stored characters and items).
+   Found: the server never sent `is_new`, so no badge ever showed (not "never cleared"). Now
+   `roster` / `items` / `stock` keep `is_new` (schema step 13), what is gained later is new until
+   viewed, and the three methods clear it ([`server-rules.md#new-badges`](server-rules.md#new-badges)).
+   Assumptions (d): what the seed and an older state hold is not new; a stack item is new only when
+   its first stack arrives. Server-runnable screens: the character, item, weapon / accessory and
+   stack lists' NEW badges (both hosts; in-process these were already answered, with `{}`).
 7. **Paid currency (decided: allow):** `CoinList`, `DirectItemShopList` and the `CoinDeposit*`
    purchase flow complete without payment and credit what the product gives (see Decisions).
 8. **Stubs (decided; done 2026-10-04, section 2.5):** social (2.2) and the debug APIs (2.4) answer

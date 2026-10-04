@@ -48,6 +48,7 @@ const Module kModules[] = {
     {"home", register_home},
     {"social", register_social},
     {"items", register_items},
+    {"new_flags", register_new_flags},
     {"notice", register_notice},
     {"shop", register_shop},
     {"sphere211", register_sphere211},

@@ -1845,6 +1845,23 @@ const char* const kHome3D[] = {
     "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
 };
 
+// ---- step 13: the "new" badges (ClearNewCharacter, ClearNewItem, ClearNewStackItem) -----------
+//
+// roster.is_new, items.is_new, stock.is_new: 1 while the client shows the NEW badge (Character /
+// Item / StockItem is_new; api/items/new_flags.cpp), 0 once a ClearNew* cleared it. A row added
+// from now on is new (the column's default: every place that gains a character, a weapon or a
+// stack item inserts a row); the rows of an existing state are not (the server never sent the
+// flag before, so the client showed no badge for them). The seed and the new player's starters
+// insert 0. Booleans 0 / 1.
+const char* const kNewFlags[] = {
+    "alter table roster add column is_new integer not null default 1 check (is_new in (0,1))",
+    "alter table items add column is_new integer not null default 1 check (is_new in (0,1))",
+    "alter table stock add column is_new integer not null default 1 check (is_new in (0,1))",
+    "update roster set is_new = 0",
+    "update items set is_new = 0",
+    "update stock set is_new = 0",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1896,6 +1913,10 @@ const std::vector<Step>& steps() {
          import_campaign,
          retire_campaign_file},
         {12, "the player's 2D / 3D home: player.is_3d_home (Home3DAnd2DSwitching)", {std::begin(kHome3D), std::end(kHome3D)}, nullptr},
+        {13,
+         "the new badges: roster.is_new, items.is_new, stock.is_new (ClearNewCharacter, ClearNewItem, ClearNewStackItem)",
+         {std::begin(kNewFlags), std::end(kNewFlags)},
+         nullptr},
     };
     return s;
 }

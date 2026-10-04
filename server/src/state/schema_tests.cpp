@@ -1480,6 +1480,66 @@ NATIVE_TEST("server/schema-migrate-v12") {
     }
 }
 
+// The new badges' step (renumbered when steps land in another order: its version in one place).
+constexpr int kNewFlagsV = 13;
+NATIVE_TEST("server/schema-migrate-new-badges") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    const std::string prev = std::to_string(kNewFlagsV - 1);
+    // ---- (1) v0 -> the step: every existing row not new, the rest as before ---------------------------
+    {
+        TempDb ref_file("newflags-ref"), old("newflags");
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kNewFlagsV - 1, m), true, "the reference: the version before");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, kNewFlagsV, m), true, "v0 -> the new badges' version");
+        t.expect_eq(state::user_version(db.h), kNewFlagsV, "user_version");
+        for (const char* table : {"roster", "items", "stock"}) {
+            const std::string n = std::string("select count(*) from ") + table;
+            t.expect_eq(db.one(n, {}) > 0, true, (std::string("the fixture has ") + table + " rows").c_str());
+            t.expect_eq(db.one(n + " where is_new = 0", {}), db.one(n, {}), (std::string(table) + ": every existing row not new").c_str());
+        }
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        for (const char* table : {"roster", "items", "stock"}) {
+            ra.erase(table);
+            rb.erase(table);
+        }
+        t.expect_eq(ra == rb, true, "every other table's rows as before");
+        t.expect_eq(rows_over(db, "roster", "uid, role_id, level"), rows_over(ref, "roster", "uid, role_id, level"), "roster's other columns kept");
+        t.expect_eq(rows_over(db, "items", "uid, master_item_id, level"), rows_over(ref, "items", "uid, master_item_id, level"),
+                    "items' other columns kept");
+        t.expect_eq(rows_over(db, "stock", "master_item_id, count"), rows_over(ref, "stock", "master_item_id, count"), "stock's other columns kept");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) the version before -> the step, without the master; a new row is new --------------------
+    {
+        TempDb before("newflags-from-prev");
+        if (!write_fixture(t, before.path)) return;
+        Sql f;
+        if (!f.open(before.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(f.h, before.path, kNewFlagsV - 1, m), true, "migrated to the version before");
+        f.close();
+        unlink((before.path + ".bak-v0").c_str());
+        if (!f.open(before.path, false)) return t.fail("reopen");
+        t.expect_eq(state::open_and_migrate(f.h, before.path, kNewFlagsV), true, "the version before -> the step");
+        t.expect_eq(state::user_version(f.h), kNewFlagsV, "user_version");
+        t.expect_eq(f.one("select max(is_new) from items", {}), (int64_t)0, "existing items not new");
+        t.expect_eq(sqlite3_exec(f.h, "insert into stock (master_item_id, item_type, count) values (987654, 5, 1)", nullptr, nullptr, nullptr),
+                    SQLITE_OK, "a new stock row");
+        t.expect_eq(f.one("select is_new from stock where master_item_id = 987654", {}), (int64_t)1, "a row added later is new");
+        t.expect_eq(sqlite3_exec(f.h, "update stock set is_new = 2", nullptr, nullptr, nullptr) != SQLITE_OK, true, "is_new is 0 or 1");
+        f.close();
+        Sql bak;
+        if (!bak.open(before.path + ".bak-v" + prev, true)) return t.fail("no %s.bak-v%s", before.path.c_str(), prev.c_str());
+        t.expect_eq(state::user_version(bak.h), kNewFlagsV - 1, "the backup is the version before");
+        t.expect_eq(bak.one("select count(*) from pragma_table_info('items') where name = 'is_new'", {}), (int64_t)0, "the backup has no is_new");
+        bak.close();
+    }
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;

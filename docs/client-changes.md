@@ -130,6 +130,13 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
 - **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
 
+### `FakeApiCaller::ClearNewCharacter` / `ClearNewItem` / `ClearNewStackItem` on the FakeApiCaller route
+- **Symbol:** `FakeApiCaller::ClearNewCharacter(CSTLVector<u64> const&)`, `ClearNewItem(CSTLVector<u64> const&)`, `ClearNewStackItem(CSTLVector<u32> const&)` (request methods of the fake caller).
+- **Guest behaviour:** the offline build's lambdas queue `FakeApi/sale.msgp` under SellItem's FunctionID and hand the answer to `CApiNotify::OnSellItemRes`, so a NEW badge never clears. `NetworkApiCaller` sends each request with its own FunctionID, answered by `OnClearNewCharacterRes` / `OnClearNewItemRes` / `OnClearNewStackItemRes`.
+- **Change (port-specific, `port/src/native/api/fakeapi.cpp` `kRoutedRequests`):** with the in-process server, on the FakeApiCaller, the three are queued like the served base-class methods: NetworkApiCaller's FunctionID and the handler its response goes to, with the local server's body (`server/src/api/items/new_flags.cpp`). Otherwise the guest's lambdas.
+- **Why not server-side:** this *is* the route to the server; the fake caller wired these requests to another method's handler.
+- **Switch:** the in-process server (`--server inproc`, the default).
+
 ### `FakeApiCaller::Home3DAnd2DSwitching` on the FakeApiCaller route (agent `nier-home`)
 - **Symbol:** `FakeApiCaller::Home3DAnd2DSwitching(unsigned char)` (a status-only method of the fake caller: Status 1, nothing queued).
 - **Guest behaviour:** `CHome::Progress` sends it for a home character the client shows in 2D only (`master_person.home3d_disable`: 2B, 9S, A2, ...) and continues only when it is answered, so the home stayed empty (no model, no illustration); the 会話モード 2D/3D変更 button sends it too and nothing changed. `NetworkApiCaller` sends the request.

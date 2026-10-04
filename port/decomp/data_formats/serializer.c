@@ -4,6 +4,486 @@
 // lib      libSOA-3.7.0.so  sha256 698d55b9fdf93c3573b2e71dd614451529e0f396779e5021c68cc423b2b98c5e  (45988160 bytes)
 // tool     Ghidra 12.1.2 analyzeHeadless -noanalysis, tools/ghidra_scripts/DecompileMatching.java, tools/resolve_decomp.py
 // run      2026-10-04 05:12 UTC: tools/decomp.sh '--into' 'data_formats/serializer' '_AsonSerializer::' 'SerializerImpl::'
+// run      2026-10-04 05:22 UTC: tools/decomp.sh '--into' 'data_formats/serializer' 'AsonSerializer_Prepare::'
+
+// ==== AsonSerializer_Prepare::Serialize_Key(char const*)
+// vaddr 0x14a9964 | ghidra 0x15a9964 | size 4 | symbol _ZN22AsonSerializer_Prepare13Serialize_KeyEPKc | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare13Serialize_KeyEPKc(void)
+
+{
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(bool&)
+// vaddr 0x14a9968 | ghidra 0x15a9968 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERb | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERb(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(unsigned char&)
+// vaddr 0x14a9984 | ghidra 0x15a9984 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERh | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERh(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(signed char&)
+// vaddr 0x14a99a0 | ghidra 0x15a99a0 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERa | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERa(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(unsigned short&)
+// vaddr 0x14a99bc | ghidra 0x15a99bc | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERt | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERt(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(short&)
+// vaddr 0x14a99d8 | ghidra 0x15a99d8 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERs | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERs(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(unsigned int&)
+// vaddr 0x14a99f4 | ghidra 0x15a99f4 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERj(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(int&)
+// vaddr 0x14a9a10 | ghidra 0x15a9a10 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERi | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERi(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(unsigned long&)
+// vaddr 0x14a9a2c | ghidra 0x15a9a2c | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERm | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERm(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(long&)
+// vaddr 0x14a9a48 | ghidra 0x15a9a48 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERl | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERl(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(float&)
+// vaddr 0x14a9a64 | ghidra 0x15a9a64 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERf | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERf(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_Value(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> >&)
+// vaddr 0x14a9a80 | ghidra 0x15a9a80 | size 28 | symbol _ZN22AsonSerializer_Prepare15Serialize_ValueERNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare15Serialize_ValueERNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE
+               (long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_StartObject()
+// vaddr 0x14a9a9c | ghidra 0x15a9a9c | size 4 | symbol _ZN22AsonSerializer_Prepare21Serialize_StartObjectEv | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare21Serialize_StartObjectEv(void)
+
+{
+  (*(code *)PTR__ZN22AsonSerializer_Prepare9IncrementEv_02ca34b8)();
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_EndObject()
+// vaddr 0x14a9aa0 | ghidra 0x15a9aa0 | size 60 | symbol _ZN22AsonSerializer_Prepare19Serialize_EndObjectEv | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare19Serialize_EndObjectEv(long param_1)
+
+{
+  int iVar1;
+  long lVar2;
+  
+  iVar1 = *(int *)(param_1 + 0x84);
+  *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + -1;
+  *(int *)(param_1 + 0x84) = iVar1 + -1;
+  iVar1 = *(int *)(*(long *)(param_1 + 0x78) + (long)iVar1 * 4);
+  *(int *)(param_1 + 8) = iVar1;
+  lVar2 = (long)iVar1 * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar2) = *(int *)(*(long *)(param_1 + 0x18) + lVar2) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_StartArray(char const*, unsigned int)
+// vaddr 0x14a9adc | ghidra 0x15a9adc | size 4 | symbol _ZN22AsonSerializer_Prepare20Serialize_StartArrayEPKcj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_StartArrayEPKcj(void)
+
+{
+  (*(code *)PTR__ZN22AsonSerializer_Prepare9IncrementEv_02ca34b8)();
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(bool&)
+// vaddr 0x14a9ae0 | ghidra 0x15a9ae0 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERb | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERb(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(unsigned char&)
+// vaddr 0x14a9afc | ghidra 0x15a9afc | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERh | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERh(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(signed char&)
+// vaddr 0x14a9b18 | ghidra 0x15a9b18 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERa | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERa(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(unsigned short&)
+// vaddr 0x14a9b34 | ghidra 0x15a9b34 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERt | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERt(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(short&)
+// vaddr 0x14a9b50 | ghidra 0x15a9b50 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERs | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERs(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(unsigned int&)
+// vaddr 0x14a9b6c | ghidra 0x15a9b6c | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERj(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(int&)
+// vaddr 0x14a9b88 | ghidra 0x15a9b88 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERi | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERi(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(unsigned long&)
+// vaddr 0x14a9ba4 | ghidra 0x15a9ba4 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERm | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERm(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(long&)
+// vaddr 0x14a9bc0 | ghidra 0x15a9bc0 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERl | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERl(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(float&)
+// vaddr 0x14a9bdc | ghidra 0x15a9bdc | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERf | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERf(long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_ArrayValue(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> >&)
+// vaddr 0x14a9bf8 | ghidra 0x15a9bf8 | size 28 | symbol _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare20Serialize_ArrayValueERNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE
+               (long param_1)
+
+{
+  long lVar1;
+  
+  lVar1 = (long)*(int *)(param_1 + 8) * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar1) = *(int *)(*(long *)(param_1 + 0x18) + lVar1) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_StartArrayObject(unsigned int)
+// vaddr 0x14a9c14 | ghidra 0x15a9c14 | size 4 | symbol _ZN22AsonSerializer_Prepare26Serialize_StartArrayObjectEj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare26Serialize_StartArrayObjectEj(void)
+
+{
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_EndArrayObject(unsigned int)
+// vaddr 0x14a9c18 | ghidra 0x15a9c18 | size 4 | symbol _ZN22AsonSerializer_Prepare24Serialize_EndArrayObjectEj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare24Serialize_EndArrayObjectEj(void)
+
+{
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_EndArray(char const*, unsigned int)
+// vaddr 0x14a9c1c | ghidra 0x15a9c1c | size 60 | symbol _ZN22AsonSerializer_Prepare18Serialize_EndArrayEPKcj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare18Serialize_EndArrayEPKcj(long param_1)
+
+{
+  int iVar1;
+  long lVar2;
+  
+  iVar1 = *(int *)(param_1 + 0x84);
+  *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + -1;
+  *(int *)(param_1 + 0x84) = iVar1 + -1;
+  iVar1 = *(int *)(*(long *)(param_1 + 0x78) + (long)iVar1 * 4);
+  *(int *)(param_1 + 8) = iVar1;
+  lVar2 = (long)iVar1 * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar2) = *(int *)(*(long *)(param_1 + 0x18) + lVar2) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_StartMap(char const*, unsigned int)
+// vaddr 0x14a9c58 | ghidra 0x15a9c58 | size 4 | symbol _ZN22AsonSerializer_Prepare18Serialize_StartMapEPKcj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare18Serialize_StartMapEPKcj(void)
+
+{
+  (*(code *)PTR__ZN22AsonSerializer_Prepare9IncrementEv_02ca34b8)();
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_StartMapObject(char const*, unsigned int)
+// vaddr 0x14a9c5c | ghidra 0x15a9c5c | size 4 | symbol _ZN22AsonSerializer_Prepare24Serialize_StartMapObjectEPKcj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare24Serialize_StartMapObjectEPKcj(void)
+
+{
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_EndMapObject(char const*, unsigned int)
+// vaddr 0x14a9c60 | ghidra 0x15a9c60 | size 4 | symbol _ZN22AsonSerializer_Prepare22Serialize_EndMapObjectEPKcj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare22Serialize_EndMapObjectEPKcj(void)
+
+{
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Serialize_EndMap(char const*, unsigned int)
+// vaddr 0x14a9c64 | ghidra 0x15a9c64 | size 60 | symbol _ZN22AsonSerializer_Prepare16Serialize_EndMapEPKcj | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare16Serialize_EndMapEPKcj(long param_1)
+
+{
+  int iVar1;
+  long lVar2;
+  
+  iVar1 = *(int *)(param_1 + 0x84);
+  *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + -1;
+  *(int *)(param_1 + 0x84) = iVar1 + -1;
+  iVar1 = *(int *)(*(long *)(param_1 + 0x78) + (long)iVar1 * 4);
+  *(int *)(param_1 + 8) = iVar1;
+  lVar2 = (long)iVar1 * 4;
+  *(int *)(*(long *)(param_1 + 0x18) + lVar2) = *(int *)(*(long *)(param_1 + 0x18) + lVar2) + 1;
+  return;
+}
+
+// ==== AsonSerializer_Prepare::Increment()
+// vaddr 0x14a9d3c | ghidra 0x15a9d3c | size 424 | symbol _ZN22AsonSerializer_Prepare9IncrementEv | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN22AsonSerializer_Prepare9IncrementEv(long param_1)
+
+{
+  int iVar1;
+  undefined8 *puVar2;
+  int iVar3;
+  undefined1 auVar4 [16];
+  ulong uVar5;
+  long lVar6;
+  long *plVar7;
+  int iVar8;
+  long lVar9;
+  undefined4 uStack_44;
+  
+  uStack_44 = *(undefined4 *)(param_1 + 8);
+  puVar2 = (undefined8 *)(param_1 + 0x48);
+  *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + 1;
+  iVar3 = *(int *)(param_1 + 0x80);
+  iVar8 = *(int *)(param_1 + 0x84);
+  iVar1 = iVar8 + 1;
+  if (iVar3 <= iVar1) {
+    plVar7 = (long *)(param_1 + 0x78);
+    lVar6 = *plVar7;
+    lVar9 = param_1 + 0x50;
+    if (iVar3 < 1) {
+      if (lVar6 != lVar9) {
+        if (lVar6 != 0) {
+          operator delete[](void*)(lVar6);
+          iVar8 = *(int *)(param_1 + 0x84);
+        }
+        *plVar7 = lVar9;
+      }
+      *(undefined4 *)(param_1 + 0x80) = 10;
+      if (9 < iVar8) {
+        *(undefined4 *)(param_1 + 0x84) = 9;
+      }
+    }
+    else {
+      if (lVar6 != lVar9) goto code_r0x015a9dc4;
+      uVar5 = (long)iVar3 << 4;
+      auVar4._8_8_ = 0;
+      auVar4._0_8_ = uVar5;
+      lVar9 = (long)iVar3 << 6;
+      if (SUB168(auVar4 * ZEXT816(4),8) != 0) {
+        lVar9 = -1;
+      }
+      lVar9 = operator new[](unsigned long, std::nothrow_t const&)(lVar9,PTR__ZSt7nothrow_02cb9a80);
+      *plVar7 = lVar9;
+      if (lVar9 == 0) {
+        *plVar7 = lVar6;
+        goto code_r0x015a9dc4;
+      }
+      *(int *)(param_1 + 0x80) = (int)uVar5;
+      if (-1 < iVar8) {
+        lVar6 = (long)iVar8 * 4;
+        uVar5 = (*(code *)**(undefined8 **)(param_1 + 0x48))
+                          (puVar2,(long)(param_1 + 0x48) + lVar6 + 8,lVar9 + lVar6);
+        if ((uVar5 & 1) != 0) {
+          lVar9 = (long)iVar8 + 1;
+          do {
+            lVar6 = lVar6 + -4;
+            lVar9 = lVar9 + -1;
+            if (lVar9 < 1) goto code_r0x015a9d80;
+            uVar5 = (*(code *)**(undefined8 **)(param_1 + 0x48))
+                              (puVar2,param_1 + lVar6 + 0x50,*(long *)(param_1 + 0x78) + lVar6);
+          } while ((uVar5 & 1) != 0);
+        }
+        goto code_r0x015a9dc4;
+      }
+    }
+  }
+code_r0x015a9d80:
+  uVar5 = (**(code **)*puVar2)(puVar2,&uStack_44,*(long *)(param_1 + 0x78) + (long)iVar1 * 4);
+  if ((uVar5 & 1) != 0) {
+    *(int *)(param_1 + 0x84) = iVar1;
+  }
+code_r0x015a9dc4:
+  lVar6 = *(long *)(param_1 + 0x28);
+  *(int *)(param_1 + 8) = (int)lVar6;
+  if (-1 < lVar6) {
+    Aska::TArray<unsigned int, false>::Resize(long, bool)(param_1 + 0x10,lVar6 + 1,0);
+    *(undefined4 *)(*(long *)(param_1 + 0x18) + lVar6 * 4) = 0;
+  }
+  return;
+}
+
+
+// FAILED to create function at 02ac6c98 AsonSerializer_Prepare::vtable
+// FAILED to create function at 02ac6dc0 AsonSerializer_Prepare::typeinfo
 
 // ==== SerializerImpl::_Serializer_Impl<KeyValuePair<SerializableArray<CPlayerCharacterCheatInfo_C2S> > >::Accept(_Serializer<SerializerImpl>&, KeyValuePair<SerializableArray<CPlayerCharacterCheatInfo_C2S> >&, unsigned int)
 // vaddr 0x14ab1e8 | ghidra 0x15ab1e8 | size 340 | symbol _ZN14SerializerImpl16_Serializer_ImplI12KeyValuePairI17SerializableArrayI29CPlayerCharacterCheatInfo_C2SEEE6AcceptER11_SerializerIS_ERS5_j | lib libSOA-3.7.0.so | 2026-10-04

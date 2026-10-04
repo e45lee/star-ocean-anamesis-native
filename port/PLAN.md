@@ -130,6 +130,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
   - recover each class or struct as a C++ struct with `static_assert`ed offsets before porting the code that uses it;
   - order leaves first: values, then containers, then objects, then managers and phases;
   - unknown bytes become named padding, never offset arithmetic;
+  - **virtual functions:** the guest's vtables stay data (a field, slots hooked); real C++ `virtual`s only for a family sealed off from guest code ([`port/src/native/VIRTUALS.md`](src/native/VIRTUALS.md));
   - **classes with their methods attached, not structs + free functions** (the user, 2026-10-03): the guest's `Class::Method` becomes a member of the recovered class (constructors, virtuals in vtable order, statics as static members); when porting makes it possible, existing struct + free-function natives are rewritten that way;
   - mirror the structs as data types in the committed Ghidra project.
 - **Among subsystems whose types are ready, hottest first** (the profile from 5: [`REBUILD-QUEUE.md`](REBUILD-QUEUE.md), the ranking and the dependency waves).

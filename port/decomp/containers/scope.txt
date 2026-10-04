@@ -2,5 +2,5 @@
 # demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
 # tools/subsystem.py check warns about a function claimed by two subsystems.
 ^(\S+ )?Aska::(TArray|TDynamicArray|TArrayQuickSort|THashMap|THashSet|THash|TCategorizeHash|TBinaryTree|TBinaryNode|TPool\w*|TList|TStack|TPriorityQueue|TPair|TBitArray|TMultipleBuffer|TAddressManager|TSharedPointer|TDelegate|StringUtility|String\w*|RingBuffer|PathUtil)\b
-^(\S+ )?Framework::(TObjectContainer|TStaticString|CSTLStringUtility_Base|CSTLMap|CSTLString\w*|CString(?!Hash)\w*|THierarchy)\b
+^(\S+ )?Framework::(TStaticString|CSTLStringUtility_Base|CSTLMap|CSTLString\w*|CString(?!Hash)\w*|THierarchy)\b
 ^(\S+ )?TOMQuickSort<

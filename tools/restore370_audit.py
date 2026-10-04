@@ -21,6 +21,7 @@ initialisers built), when that keeps the page offset.
 
 Usage: tools/restore370_audit.py [--calls] [--emit FILE] SYM...   (SOA_LIB defaults to work/libSOA-3.7.0.so)
 """
+import argparse
 import os
 import sys
 
@@ -32,14 +33,12 @@ from elfinfo import Lib  # noqa: E402
 
 
 def main():
-    show_calls = "--calls" in sys.argv
-    argv = sys.argv[1:]
-    emit = None
-    if "--emit" in argv:
-        k = argv.index("--emit")
-        emit = argv[k + 1]
-        del argv[k:k + 2]
-    names = [a for a in argv if not a.startswith("--")]
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("names", nargs="+", metavar="SYM", help="mangled names of the 3.7.0 functions to audit")
+    ap.add_argument("--calls", action="store_true", help="also list each function's PLT calls")
+    ap.add_argument("--emit", metavar="FILE", help="write the private-static relocation table here")
+    a = ap.parse_args()
+    show_calls, emit, names = a.calls, a.emit, a.names
     L = Lib(os.environ["SOA_LIB"])
     dynsym = L.elf.get_section_by_name(".dynsym")
     exported = {s["st_value"] for s in dynsym.iter_symbols() if s["st_value"] and s["st_shndx"] != "SHN_UNDEF"}

@@ -997,9 +997,11 @@ static_assert(sizeof(RenderDeviceData) == 0xc6b0);
 
 // One vertex format of the device (RenderDeviceGL::m_vertexFormats; 0x2c bytes, 0x80 of them):
 // BindVertexFormat(format, stream, base) walks m_count attributes {offset, type, semantic, index}.
+struct VertexAttrGL {
+    u8 m_offset, m_type, m_semantic, m_index;   // 0x9c / 0x9d / 0x9e / 0x9f in BindVertexFormat
+};
 struct VertexFormatGL {
-    struct Attr { u8 m_offset, m_type, m_semantic, m_index; };   // 0x9c / 0x9d / 0x9e / 0x9f in BindVertexFormat
-    Attr m_attrs[10];       // 0x00
+    VertexAttrGL m_attrs[10];   // 0x00
     u8 m_count;             // 0x28: the attribute count
     u8 unk_29[3];           // 0x29
 };

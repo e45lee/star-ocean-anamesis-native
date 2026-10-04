@@ -3495,6 +3495,1140 @@
    ]
   },
   {
+   "name": "TextureStateCache",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_state",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_valid",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 20,
+   "align": 4
+  },
+  {
+   "name": "OglStateSet0",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_texture2D",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 64
+    },
+    {
+     "offset": 72,
+     "name": "m_textureCube",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 64
+    },
+    {
+     "offset": 136,
+     "name": "m_texture3D",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 64
+    },
+    {
+     "offset": 200,
+     "name": "m_activeUnit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 204,
+   "align": 4
+  },
+  {
+   "name": "StateCacheThreadSafe",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_keySet0",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_keySet1",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_keySet0Created",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_keySet1Created",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 24,
+   "align": 4
+  },
+  {
+   "name": "DeviceTextureSlot",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_target",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 12,
+     "name": "m_glName",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 32,
+   "align": 4
+  },
+  {
+   "name": "RenderDeviceData",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_000",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "unk_028",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "unk_030",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 272
+     },
+     "size": 272
+    },
+    {
+     "offset": 320,
+     "name": "unk_140",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 32
+    },
+    {
+     "offset": 352,
+     "name": "unk_160",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 354,
+     "name": "unk_162",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 86
+     },
+     "size": 86
+    },
+    {
+     "offset": 440,
+     "name": "m_textureStatePool",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TPoolFast<TextureStateCache>",
+      "size": 72
+     },
+     "size": 72
+    },
+    {
+     "offset": 512,
+     "name": "m_textureStates",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THashMap<unsigned int, TextureStateCache *>",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 560,
+     "name": "unk_230",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 568,
+     "name": "unk_238",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 569,
+     "name": "unk_239",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 576,
+     "name": "m_event",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 680,
+     "name": "m_vertexAttribCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 684,
+     "name": "unk_2ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 688,
+     "name": "m_stateCache",
+     "type": {
+      "kind": "ptr",
+      "to": "StateCacheThreadSafe"
+     },
+     "size": 8
+    },
+    {
+     "offset": 696,
+     "name": "m_textureSlots",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "DeviceTextureSlot"
+      },
+      "count": 1024
+     },
+     "size": 32768
+    },
+    {
+     "offset": 33464,
+     "name": "m_resourceArray",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33504,
+     "name": "m_shaderKeys",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33544,
+     "name": "m_programs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33584,
+     "name": "m_shaderKeySet",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 33632,
+     "name": "unk_8360",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 33664,
+     "name": "m_bytes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 33704,
+     "name": "m_programSet",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 33752,
+     "name": "unk_83d8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 33816,
+     "name": "m_vertexShader",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 33824,
+     "name": "unk_8420",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 33856,
+     "name": "m_program",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 33864,
+     "name": "unk_8448",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 17000
+     },
+     "size": 17000
+    }
+   ],
+   "size": 50864,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2276558",
+     "symbol": "_ZN4Aska16RenderDeviceDataC2Ev",
+     "name": "RenderDeviceData"
+    },
+    {
+     "ghidra": "0x227a4cc",
+     "symbol": "_ZN4Aska16RenderDeviceData15BindFrameBufferEPNS_11GpuResourceE",
+     "name": "BindFrameBuffer"
+    },
+    {
+     "ghidra": "0x227d0f8",
+     "symbol": "_ZN4Aska16RenderDeviceData20DrawIndexedPrimitiveEPNS_14RenderDeviceGLENS_8PrimType4TypeERNS_11IndexBufferEmi",
+     "name": "DrawIndexedPrimitive"
+    },
+    {
+     "ghidra": "0x2282ed8",
+     "symbol": "_ZN4Aska16RenderDeviceData17GetBoundTextureIDEj",
+     "name": "GetBoundTextureID"
+    },
+    {
+     "ghidra": "0x2283b98",
+     "symbol": "_ZN4Aska16RenderDeviceData21GetTextureStateCachesEj",
+     "name": "GetTextureStateCaches"
+    },
+    {
+     "ghidra": "0x2285de4",
+     "symbol": "_ZN4Aska16RenderDeviceData18GetThreadOglState1Ev",
+     "name": "GetThreadOglState1"
+    },
+    {
+     "ghidra": "0x22871a0",
+     "symbol": "_ZN4Aska16RenderDeviceData19UpdateShaderProgramEv",
+     "name": "UpdateShaderProgram"
+    },
+    {
+     "ghidra": "0x2287ee4",
+     "symbol": "_ZN4Aska16RenderDeviceData17UpdateRenderStateEPNS_14RenderDeviceGLE",
+     "name": "UpdateRenderState"
+    },
+    {
+     "ghidra": "0x2288158",
+     "symbol": "_ZN4Aska16RenderDeviceData21UpdateVertexAttributeEPNS_18ASKA_OGL_STATESET0E",
+     "name": "UpdateVertexAttribute"
+    },
+    {
+     "ghidra": "0x228887c",
+     "symbol": "_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_TexturesEPNS_18ASKA_OGL_STATESET0EPNS_14RenderDeviceGLE",
+     "name": "LastMinuteDrawCommands_Textures"
+    },
+    {
+     "ghidra": "0x228926c",
+     "symbol": "_ZN4Aska16RenderDeviceData20UpdateTextureFiltersEPNS_18ASKA_OGL_STATESET0Eij",
+     "name": "UpdateTextureFilters"
+    }
+   ]
+  },
+  {
+   "name": "VertexAttrGL",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_offset",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 2,
+     "name": "m_semantic",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3,
+     "name": "m_index",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 4,
+   "align": 1
+  },
+  {
+   "name": "VertexFormatGL",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_attrs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "VertexAttrGL"
+      },
+      "count": 10
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 41,
+     "name": "unk_29",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 44,
+   "align": 1
+  },
+  {
+   "name": "RenderDeviceGL",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_resourceUsed",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1008
+     },
+     "size": 1008
+    },
+    {
+     "offset": 1016,
+     "name": "m_resources",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "array",
+       "of": {
+        "kind": "int",
+        "size": 1,
+        "signed": false
+       },
+       "count": 8000
+      },
+      "count": 120
+     },
+     "size": 960000
+    },
+    {
+     "offset": 961016,
+     "name": "unk_ea9f8",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961020,
+     "name": "unk_ea9fc",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961024,
+     "name": "unk_eaa00",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 961025,
+     "name": "unk_eaa01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 961032,
+     "name": "m_tempSurfaces",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 72
+     },
+     "size": 72
+    },
+    {
+     "offset": 961104,
+     "name": "unk_eaa50",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 961152,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderDeviceData"
+     },
+     "size": 8
+    },
+    {
+     "offset": 961160,
+     "name": "m_textureStageCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961164,
+     "name": "m_extraTextureStageCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961168,
+     "name": "unk_eaa90",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 2
+     },
+     "size": 8
+    },
+    {
+     "offset": 961176,
+     "name": "unk_eaa98",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 961180,
+     "name": "m_vertexFormats",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "VertexFormatGL"
+      },
+      "count": 128
+     },
+     "size": 5632
+    },
+    {
+     "offset": 966812,
+     "name": "unk_ec09c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 966816,
+     "name": "unk_ec0a0",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 966820,
+     "name": "unk_ec0a4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 966824,
+     "name": "unk_ec0a8",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 966828,
+     "name": "unk_ec0ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 28
+     },
+     "size": 28
+    }
+   ],
+   "size": 966856,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2274804",
+     "symbol": "_ZN4Aska14RenderDeviceGL11BindTextureEjj",
+     "name": "BindTexture"
+    },
+    {
+     "ghidra": "0x2275964",
+     "symbol": "_ZNK4Aska14RenderDeviceGL12GetGLVersionEv",
+     "name": "GetGLVersion"
+    },
+    {
+     "ghidra": "0x2276244",
+     "symbol": "_ZN4Aska14RenderDeviceGLC1Ev",
+     "name": "RenderDeviceGL"
+    },
+    {
+     "ghidra": "0x227a15c",
+     "symbol": "_ZN4Aska14RenderDeviceGL12EnableZWriteEb",
+     "name": "EnableZWrite"
+    },
+    {
+     "ghidra": "0x227ad24",
+     "symbol": "_ZN4Aska14RenderDeviceGL13ActiveTextureEj",
+     "name": "ActiveTexture"
+    },
+    {
+     "ghidra": "0x227b138",
+     "symbol": "_ZN4Aska14RenderDeviceGL16BindVertexFormatEPNS_12VertexBufferE",
+     "name": "BindVertexFormat"
+    },
+    {
+     "ghidra": "0x227b1b8",
+     "symbol": "_ZN4Aska14RenderDeviceGL16BindVertexFormatEiiPv",
+     "name": "BindVertexFormat"
+    },
+    {
+     "ghidra": "0x227b548",
+     "symbol": "_ZN4Aska14RenderDeviceGL10SetTextureEjPKPNS_11GpuResourceE",
+     "name": "SetTexture"
+    },
+    {
+     "ghidra": "0x227b798",
+     "symbol": "_ZN4Aska14RenderDeviceGL13RemoveTextureEj",
+     "name": "RemoveTexture"
+    },
+    {
+     "ghidra": "0x227cd0c",
+     "symbol": "_ZN4Aska14RenderDeviceGL14SetScissorRectEPK4RECTb",
+     "name": "SetScissorRect"
+    },
+    {
+     "ghidra": "0x227d3c0",
+     "symbol": "_ZN4Aska14RenderDeviceGL16BindVertexBufferEmPv",
+     "name": "BindVertexBuffer"
+    },
+    {
+     "ghidra": "0x227dcc0",
+     "symbol": "_ZN4Aska14RenderDeviceGL16EnableAlphaBlendEb",
+     "name": "EnableAlphaBlend"
+    },
+    {
+     "ghidra": "0x227dfc0",
+     "symbol": "_ZN4Aska14RenderDeviceGL24SetTextureSamplingFilterEjNS_7TexSamp6FilterE",
+     "name": "SetTextureSamplingFilter"
+    },
+    {
+     "ghidra": "0x227e060",
+     "symbol": "_ZN4Aska14RenderDeviceGL30SetTextureSamplingMipmapFilterEjNS_7TexSamp9MipFilterE",
+     "name": "SetTextureSamplingMipmapFilter"
+    },
+    {
+     "ghidra": "0x227e100",
+     "symbol": "_ZN4Aska14RenderDeviceGL26SetTextureSamplingWrapModeEjNS_7TexWrap4ModeES2_S2_",
+     "name": "SetTextureSamplingWrapMode"
+    },
+    {
+     "ghidra": "0x227e1c4",
+     "symbol": "_ZN4Aska14RenderDeviceGL32SetTextureSamplingMaxAnisotropicEjj",
+     "name": "SetTextureSamplingMaxAnisotropic"
+    },
+    {
+     "ghidra": "0x227e288",
+     "symbol": "_ZN4Aska14RenderDeviceGL11EnableZTestEb",
+     "name": "EnableZTest"
+    },
+    {
+     "ghidra": "0x227e3e4",
+     "symbol": "_ZN4Aska14RenderDeviceGL12SetDepthBiasEff",
+     "name": "SetDepthBias"
+    },
+    {
+     "ghidra": "0x227e494",
+     "symbol": "_ZN4Aska14RenderDeviceGL13EnableStencilENS_11StencilMode4ModeE",
+     "name": "EnableStencil"
+    },
+    {
+     "ghidra": "0x227e794",
+     "symbol": "_ZN4Aska14RenderDeviceGL11SetCullModeENS_4Cull4ModeE",
+     "name": "SetCullMode"
+    },
+    {
+     "ghidra": "0x227ea54",
+     "symbol": "_ZN4Aska14RenderDeviceGL15SetVertexShaderEPNS_12VertexShaderE",
+     "name": "SetVertexShader"
+    },
+    {
+     "ghidra": "0x227ea6c",
+     "symbol": "_ZN4Aska14RenderDeviceGL14SetPixelShaderEPNS_11PixelShaderE",
+     "name": "SetPixelShader"
+    },
+    {
+     "ghidra": "0x227ea84",
+     "symbol": "_ZN4Aska14RenderDeviceGL23SetVertexShaderConstantEiPKvi",
+     "name": "SetVertexShaderConstant"
+    },
+    {
+     "ghidra": "0x227eb20",
+     "symbol": "_ZN4Aska14RenderDeviceGL22SetPixelShaderConstantEiPKvi",
+     "name": "SetPixelShaderConstant"
+    },
+    {
+     "ghidra": "0x227ebbc",
+     "symbol": "_ZN4Aska14RenderDeviceGL23SetVertexShaderConstantEPNS_19UniformValueBuffer2E",
+     "name": "SetVertexShaderConstant"
+    },
+    {
+     "ghidra": "0x227ec74",
+     "symbol": "_ZN4Aska14RenderDeviceGL22SetPixelShaderConstantEPNS_19UniformValueBuffer2E",
+     "name": "SetPixelShaderConstant"
+    }
+   ]
+  },
+  {
    "name": "ShaderCompression",
    "union": false,
    "fields": [],

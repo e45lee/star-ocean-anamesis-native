@@ -1136,14 +1136,19 @@ NATIVE_TEST("server/schema-migrate-v10") {
                 ", null, 2, null, null), (901, 1, 5, 77, 12345, 'S', 0, 1, 2);"
                 "update sqlite_sequence set seq = 950 where name = 'gacha_history';"
                 "insert into stepup (head, try_count, restart_count, next_id) values (66, null, null, null);"
-                "insert into box_slots (gacha_id, slot_id, drawn) values (77, 1, 2), (77, 2, null), (78, null, 1);"),
+                "insert into box_slots (gacha_id, slot_id, drawn) values (77, 1, 2), (77, 2, null), (78, null, 1);"
+                // events: a boss in a big hunt, clears of a boss never met (and without a wave), notified 5, NULL lots
+                "insert into wboss (boss_id, area_id, wave, wave_started_at, hunt_until, hunt_new) values (55, 1, 2, 1790841600, 1790900000, 1);"
+                "insert into wboss_clear (boss_id, wave, cleared_at, notified) values (55, 1, 1790841700, 5), (4242, 1, 1, 0), (55, null, 1, 0);"
+                "insert into favor_drop_play (same_role_id, lots) values (66, null);"),
             true, "the S10 cases planted");
     t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 9, m), true, "the reference: migrated to 9");
     t.expect_eq(state::open_and_migrate(db.h, old.path, 10, m), true, "migrated to 10");
     t.expect_eq(state::user_version(db.h), 10, "user_version 10");
     t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
     t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
-    const std::set<std::string> rebuilt = {"ds_ship", "ds_offer", "ds_bonus", "gacha_history", "stepup", "box_state", "box_slots"};
+    const std::set<std::string> rebuilt = {"ds_ship", "ds_offer",    "ds_bonus",   "gacha_history",       "stepup",         "box_state", "box_slots",
+                                           "wboss",   "wboss_clear", "event_last", "event_rank_received", "favor_drop_play"};
     std::vector<std::string> tables;
     ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
           [&](const Row& r) { tables.push_back(r.s("name")); });
@@ -1192,6 +1197,17 @@ NATIVE_TEST("server/schema-migrate-v10") {
     t.expect_eq(rows_over(db, "box_slots", "*", "gacha_id in (77, 78)"), (std::vector<std::string>{"1:77|1:1|1:2|", "1:77|1:2|1:0|"}),
                 "box_slots: kept (NULL drawn -> 0), no slot id -> dropped");
     t.expect_eq(rows_over(db, "box_slots", "*", "gacha_id < 77"), rows_over(ref, "box_slots", "*", "gacha_id < 77"), "the fixture's slots kept");
+    // events
+    t.expect_eq(rows_over(db, "wboss", "boss_id, hunt_until"), (std::vector<std::string>{"1:55|1:1790900000|", "1:959907062|5:|"}),
+                "wboss.hunt_until 0 -> NULL (no big hunt), a hunt's end kept");
+    const std::string wboss_cols = "boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_new";
+    t.expect_eq(rows_over(db, "wboss", wboss_cols), rows_over(ref, "wboss", wboss_cols), "wboss's other columns kept");
+    t.expect_eq(rows_over(db, "wboss_clear", "*"), (std::vector<std::string>{"1:55|1:1|1:1790841700|1:1|", "1:959907062|1:1|1:1790841600|1:0|"}),
+                "wboss_clear: a boss never met or no wave -> dropped, notified 5 -> 1");
+    t.expect_eq(rows_over(db, "favor_drop_play", "*", "same_role_id = 66"), (std::vector<std::string>{"1:66|1:0|"}),
+                "favor_drop_play: NULL lots -> 0");
+    for (const char* table : {"event_last", "event_rank_received"})
+        t.expect_eq(rows_over(db, table, "*"), rows_over(ref, table, "*"), (std::string(table) + " copied").c_str());
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");
     ref.close();
     db.close();
@@ -1358,11 +1374,21 @@ NATIVE_TEST("server/schema-fk-actions") {
                 "gacha_history.item_uid: refused at once (S10)");
     t.expect_eq(rc("insert into box_slots (gacha_id, slot_id, drawn) values (9999, 1, 1)"), SQLITE_CONSTRAINT_FOREIGNKEY,
                 "box_slots without its box: refused at once (S10)");
-    for (const std::string& sql : {std::string("update ds_offer set is_new = 2"), std::string("update gacha_history set duplicate = 2")})
+    // a boss's clear: deferred, so a first meeting's clear can come before the boss's row (MissionEnd)
+    t.expect_eq(txn("insert into wboss_clear (boss_id, wave) values (4242, 1)"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "a clear of a boss never met: refused at commit (S10)");
+    t.expect_eq(txn("insert into wboss_clear (boss_id, wave) values (4242, 1); insert into wboss (boss_id, area_id) values (4242, 1)"), SQLITE_OK,
+                "deferred: the boss's row before commit (S10)");
+    for (const std::string& sql : {std::string("update ds_offer set is_new = 2"), std::string("update gacha_history set duplicate = 2"),
+                                   std::string("update wboss_clear set notified = 2")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_CHECK, (sql + ": refused (S10)").c_str());
-    for (const std::string& sql : {std::string("update ds_offer set closed_at = 'x'"), std::string("update ds_ship set started_at = 'x'"),
-                                   std::string("update ds_bonus set value = 'x'"), std::string("update gacha_history set at = 'x'"),
-                                   std::string("update stepup set try_count = 'x'"), std::string("update box_slots set drawn = 'x'")})
+    for (const std::string& sql :
+         {std::string("update ds_offer set closed_at = 'x'"), std::string("update ds_ship set started_at = 'x'"),
+          std::string("update ds_bonus set value = 'x'"), std::string("update gacha_history set at = 'x'"),
+          std::string("update stepup set try_count = 'x'"), std::string("update box_slots set drawn = 'x'"),
+          std::string("update wboss set hunt_until = 'x'"), std::string("update wboss_clear set cleared_at = 'x'"),
+          std::string("update event_last set mission_id = 'x'"), std::string("update event_rank_received set received_at = 'x'"),
+          std::string("update favor_drop_play set lots = 'x'")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S10)").c_str());
     t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
                 "a present has its created_at (S8)");
@@ -1377,6 +1403,10 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(box != 0, true, "the fixture's box has drawn slots");
     t.expect_eq(rc("delete from box_state where gacha_id = " + std::to_string(box)), SQLITE_OK, "the box deleted");
     t.expect_eq(db.one("select count(*) from box_slots where gacha_id = ?", {box}), (int64_t)0, "ON DELETE CASCADE: its slots are gone");
+    // S10, events: a boss's clears go with it
+    t.expect_eq(db.one("select count(*) from wboss_clear where boss_id = 4242", {}), (int64_t)1, "boss 4242's clear");
+    t.expect_eq(rc("delete from wboss where boss_id = 4242"), SQLITE_OK, "boss 4242 deleted");
+    t.expect_eq(db.one("select count(*) from wboss_clear where boss_id = 4242", {}), (int64_t)0, "ON DELETE CASCADE: its clears are gone");
 
     // ON DELETE SET NULL
     t.expect_eq(rc("delete from items where uid = " + item1), SQLITE_OK, "an item deleted");

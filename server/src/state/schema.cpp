@@ -1261,6 +1261,10 @@ select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updat
 //                                                sold or used up)
 //     box_slots.gacha_id          -> box_state.gacha_id  ON DELETE CASCADE (a box's drawn slots;
 //                                                BoxGacha writes the box_state row first)
+//   events:
+//     wboss_clear.boss_id -> wboss.boss_id  ON DELETE CASCADE, deferred (a boss's cleared waves;
+//                                           MissionEnd's contribute() records a clear before
+//                                           save() writes a boss met for the first time)
 // All immediate (every writer writes the parent first). No ON UPDATE action: a parent key never
 // changes. (ds_ship_member.ship_id -> ds_ship is S7's; it names the new ds_ship after the rename.)
 const char* const kModules[] = {
@@ -1333,10 +1337,50 @@ const char* const kModules[] = {
   drawn integer not null default 0,
   primary key (gacha_id, slot_id)
 ) strict)",
+    // ---- events (api/events/) ----
+    // a world boss the player met (CWorldBossInfo / CT_WorldBossInfo (b)); columns as S9 left them
+    // but hunt_until: the big hunt's end, NULL: none (0 before)
+    R"(create table new_wboss (
+  boss_id integer primary key,
+  area_id integer,
+  wave integer default 1,
+  n1 integer default 0, n2 integer default 0, n3 integer default 0,
+  a1 integer default 0, a2 integer default 0, a3 integer default 0,
+  required integer default 0,
+  wave_started_at integer,
+  last_clear_secs integer default 0,
+  hunt_until integer,
+  hunt_new integer not null default 0 check (hunt_new in (0, 1))
+) strict)",
+    // a cleared wave (CWorldBossPlayerInfoList (b)); notified: listed once
+    R"(create table new_wboss_clear (
+  boss_id integer not null references wboss(boss_id) on delete cascade deferrable initially deferred,
+  wave integer not null,
+  cleared_at integer,
+  notified integer not null default 0 check (notified in (0, 1)),
+  primary key (boss_id, wave)
+) strict)",
+    // the last event mission started (is_last_play (b))
+    R"(create table new_event_last (
+  id integer primary key check (id = 1),
+  mission_id integer,
+  area_id integer
+) strict)",
+    // an event ranking group whose result was received
+    R"(create table new_event_rank_received (
+  group_id integer primary key,
+  received_at integer
+) strict)",
+    // the characters whose favor event-drop bonus the current play uses (same_role_id, its lots)
+    R"(create table new_favor_drop_play (
+  same_role_id integer primary key,
+  lots integer not null
+) strict)",
 };
 
 // The tables step 10 rebuilds (new_X -> X), in kModules' order.
-const char* const kModuleTables[] = {"ds_ship", "ds_offer", "ds_bonus", "gacha_history", "stepup", "box_state", "box_slots"};
+const char* const kModuleTables[] = {"ds_ship", "ds_offer",    "ds_bonus",   "gacha_history",       "stepup",         "box_state", "box_slots",
+                                     "wboss",   "wboss_clear", "event_last", "event_rank_received", "favor_drop_play"};
 
 // The AUTOINCREMENT counter of a table rebuilt from `table` (sqlite_sequence): the old one, -1
 // when it has none. The insert into new_X sets the new table's to its largest id (and leaves a 0
@@ -1447,13 +1491,42 @@ select gacha_id, slot_id, ifnull(drawn, 0) from box_slots where gacha_id is not 
     return ok;
 }
 
+// Events (PLAN-schema S10):
+//   wboss: hunt_until 0 -> NULL (no big hunt); every other column copied;
+//   wboss_clear: a clear of a boss without its wboss row, or without a wave -> dropped (the
+//     CASCADE child); notified not 0 / 1 -> 1, NULL -> 0;
+//   event_last, event_rank_received: copied;
+//   favor_drop_play: lots NULL -> 0.
+bool rebuild_events(sqlite3* db) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from wboss where hunt_until = 0", "wboss.hunt_until", "0 -> NULL (no big hunt)", 10);
+    log_count(db, "select count(*) from wboss_clear where wave is null or boss_id is null or boss_id not in (select boss_id from wboss)",
+              "wboss_clear", "no boss or no wave -> dropped", 10);
+    log_count(db, "select count(*) from wboss_clear where notified is null or notified not in (0, 1)", "wboss_clear.notified",
+              "NULL -> 0, not 0 / 1 -> 1", 10);
+    log_count(db, "select count(*) from favor_drop_play where lots is null", "favor_drop_play.lots", "NULL -> 0", 10);
+
+    bool ok = run(db, R"(
+insert into new_wboss (boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, hunt_until, hunt_new)
+select boss_id, area_id, wave, n1, n2, n3, a1, a2, a3, required, wave_started_at, last_clear_secs, nullif(hunt_until, 0), hunt_new
+from wboss)");
+    ok = ok && run(db, R"(
+insert into new_wboss_clear (boss_id, wave, cleared_at, notified)
+select boss_id, wave, cleared_at, case when ifnull(notified, 0) != 0 then 1 else 0 end
+from wboss_clear where wave is not null and boss_id in (select boss_id from wboss))");
+    ok = ok && run(db, "insert into new_event_last (id, mission_id, area_id) select id, mission_id, area_id from event_last");
+    ok = ok && run(db, "insert into new_event_rank_received (group_id, received_at) select group_id, received_at from event_rank_received");
+    ok = ok && run(db, "insert into new_favor_drop_play (same_role_id, lots) select same_role_id, ifnull(lots, 0) from favor_drop_play");
+    return ok;
+}
+
 // Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
 // above), then the old tables go and the new ones take their names; the AUTOINCREMENT counters
 // are kept.
 bool rebuild_modules(sqlite3* db, sqlite3*) {
     std::vector<std::pair<const char*, int64_t>> counters;
     for (const char* table : {"gacha_history"}) counters.emplace_back(table, sequence_of(db, table));
-    bool ok = rebuild_deep_space(db) && rebuild_gacha(db);
+    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db);
     for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
     for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
     for (auto& [table, seq] : counters) ok = ok && keep_sequence(db, table, seq);

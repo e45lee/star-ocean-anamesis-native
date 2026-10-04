@@ -405,7 +405,7 @@ RELS = [
     ("sphere_cell", "asset_id", "m:master_sphere211_floor_asset", "id", None, "-", ""),
     ("sphere", "season_id", "m:master_sphere211", "id", 0, "-", ""),
     ("wboss", "boss_id", "m:master_world_boss", "id", None, "-", ""),
-    ("wboss_clear", "boss_id", "wboss", "boss_id", None, "CASCADE", ""),
+    ("wboss_clear", "boss_id", "wboss", "boss_id", None, "CASCADE, deferred (S10)", "a boss's cleared waves (a first meeting's clear is written before the boss)"),
     ("event_rank_score", "ranking_id", "m:master_event_ranking", "id", None, "-", ""),
     ("event_rank_received", "group_id", "m:master_event_ranking_group", "id", None, "-", ""),
     ("wire_device", "player_id", "player", "id", 0, "SET NULL", ""),

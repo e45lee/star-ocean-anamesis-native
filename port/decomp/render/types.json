@@ -1746,6 +1746,889 @@
    ]
   },
   {
+   "name": "AimingObject",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObject"
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "unk_198",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 416,
+     "name": "unk_1a0",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 420,
+     "name": "unk_1a4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 3
+     },
+     "size": 12
+    },
+    {
+     "offset": 432,
+     "name": "m_target",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 440,
+     "name": "m_upTarget",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 448,
+     "name": "m_aimNode",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 456,
+     "name": "unk_1c8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 472,
+     "name": "m_upNode",
+     "type": {
+      "kind": "ptr",
+      "to": "HierarchicalObjectContainer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 480,
+     "name": "unk_1e0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 496,
+     "name": "m_roll",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 500,
+     "name": "m_aimFlags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 501,
+     "name": "unk_1f5",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 11
+     },
+     "size": 11
+    }
+   ],
+   "size": 512,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f68f7c",
+     "symbol": "_ZNK4Aska12AimingObject12TargetObjectEv",
+     "name": "TargetObject"
+    },
+    {
+     "ghidra": "0x1f68f84",
+     "symbol": "_ZNK4Aska12AimingObject14UpTargetObjectEv",
+     "name": "UpTargetObject"
+    },
+    {
+     "ghidra": "0x21e56ac",
+     "symbol": "_ZN4Aska12AimingObject5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x21e57f8",
+     "symbol": "_ZN4Aska12AimingObject11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x21e5934",
+     "symbol": "_ZN4Aska12AimingObjectC2Ev",
+     "name": "AimingObject"
+    },
+    {
+     "ghidra": "0x24577c8",
+     "symbol": "_ZN4Aska12AimingObject14MakeMatrixMainEv",
+     "name": "MakeMatrixMain"
+    },
+    {
+     "ghidra": "0x2457988",
+     "symbol": "_ZN4Aska12AimingObject10MakeMatrixEv",
+     "name": "MakeMatrix"
+    },
+    {
+     "ghidra": "0x24579e4",
+     "symbol": "_ZNK4Aska12AimingObject3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2457a2c",
+     "symbol": "_ZN4Aska12AimingObject3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x2457a74",
+     "symbol": "_ZN4Aska12AimingObjectD2Ev",
+     "name": "~AimingObject"
+    },
+    {
+     "ghidra": "0x2457ad8",
+     "symbol": "_ZN4Aska12AimingObjectD0Ev",
+     "name": "~AimingObject"
+    },
+    {
+     "ghidra": "0x2457b54",
+     "symbol": "_ZNK4Aska12AimingObject10GetClassIDEi",
+     "name": "GetClassID"
+    }
+   ]
+  },
+  {
+   "name": "Camera",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "HierarchicalObject"
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "m_aiming",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 93
+     },
+     "size": 93
+    },
+    {
+     "offset": 501,
+     "name": "unk_1f5",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 502,
+     "name": "unk_1f6",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1882
+     },
+     "size": 1882
+    },
+    {
+     "offset": 2384,
+     "name": "unk_950",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 2392,
+     "name": "unk_958",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1016
+     },
+     "size": 1016
+    },
+    {
+     "offset": 3408,
+     "name": "unk_d50",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3412,
+     "name": "unk_d54",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 3
+     },
+     "size": 12
+    },
+    {
+     "offset": 3424,
+     "name": "unk_d60",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 3488,
+     "name": "unk_da0",
+     "type": {
+      "kind": "struct",
+      "name": "MathMatrix"
+     },
+     "size": 64
+    },
+    {
+     "offset": 3552,
+     "name": "unk_de0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3556,
+     "name": "m_de4",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3560,
+     "name": "unk_de8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 3584,
+     "name": "m_e00",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3588,
+     "name": "m_e04",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3592,
+     "name": "unk_e08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 3600,
+     "name": "m_lens",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 3608,
+     "name": "unk_e18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 3632,
+     "name": "m_optical",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 3640,
+     "name": "unk_e38",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 118
+     },
+     "size": 118
+    },
+    {
+     "offset": 3758,
+     "name": "m_targetIndex",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3759,
+     "name": "unk_eaf",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 3762,
+     "name": "m_fogMode",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3763,
+     "name": "m_camFlags",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 3765,
+     "name": "unk_eb5",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 3768,
+     "name": "m_zRange0",
+     "type": {
+      "kind": "float",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 3776,
+     "name": "m_zRange1",
+     "type": {
+      "kind": "float",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 3784,
+     "name": "m_zRange1F",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3788,
+     "name": "m_zRange0F",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3792,
+     "name": "unk_ed0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 3816,
+     "name": "m_fogFar",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3820,
+     "name": "m_fogNear",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3824,
+     "name": "m_fogDensity",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 3828,
+     "name": "unk_ef4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 3840,
+     "name": "m_fogColor",
+     "type": {
+      "kind": "struct",
+      "name": "MathVector"
+     },
+     "size": 16
+    },
+    {
+     "offset": 3856,
+     "name": "unk_f10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 3872,
+     "name": "m_fogConst",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "MathVector"
+      },
+      "count": 3
+     },
+     "size": 48
+    },
+    {
+     "offset": 3920,
+     "name": "unk_f50",
+     "type": {
+      "kind": "struct",
+      "name": "MathMatrix"
+     },
+     "size": 64
+    }
+   ],
+   "size": 3984,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f68b84",
+     "symbol": "_ZNK4Aska6Camera10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x1f68bd8",
+     "symbol": "_ZN4Aska6Camera22CheckSleepAvailabilityEv",
+     "name": "CheckSleepAvailability"
+    },
+    {
+     "ghidra": "0x21e92bc",
+     "symbol": "_ZN4Aska6CameraC2Ev",
+     "name": "Camera"
+    },
+    {
+     "ghidra": "0x21e968c",
+     "symbol": "_ZN4Aska6Camera19SetNumberOfAFPointsEl",
+     "name": "SetNumberOfAFPoints"
+    },
+    {
+     "ghidra": "0x21e96e0",
+     "symbol": "_ZN4Aska6Camera10SetAFPointElff",
+     "name": "SetAFPoint"
+    },
+    {
+     "ghidra": "0x21e970c",
+     "symbol": "_ZN4Aska6Camera11GetFogConstEv",
+     "name": "GetFogConst"
+    },
+    {
+     "ghidra": "0x21e9890",
+     "symbol": "_ZN4Aska6Camera24SetRawScatteringFogConstEfffPNS_6VectorE",
+     "name": "SetRawScatteringFogConst"
+    },
+    {
+     "ghidra": "0x21e98fc",
+     "symbol": "_ZN4Aska6Camera14ConvertFromOLSEv",
+     "name": "ConvertFromOLS"
+    },
+    {
+     "ghidra": "0x21e9cac",
+     "symbol": "_ZN4Aska6Camera16MakeCameraMatrixEv",
+     "name": "MakeCameraMatrix"
+    },
+    {
+     "ghidra": "0x21ea6c0",
+     "symbol": "_ZN4Aska6Camera7DefaultEv",
+     "name": "Default"
+    },
+    {
+     "ghidra": "0x21ea978",
+     "symbol": "_ZN4Aska6Camera13DefaultCommonEv",
+     "name": "DefaultCommon"
+    },
+    {
+     "ghidra": "0x21eabc8",
+     "symbol": "_ZN4Aska6Camera15SetZBufferRangeEdd",
+     "name": "SetZBufferRange"
+    },
+    {
+     "ghidra": "0x21eb0f0",
+     "symbol": "_ZN4Aska6Camera14AdjustCameraEVEv",
+     "name": "AdjustCameraEV"
+    },
+    {
+     "ghidra": "0x21eb24c",
+     "symbol": "_ZN4Aska6Camera28DefaultForMultipassRenderingEjiiii",
+     "name": "DefaultForMultipassRendering"
+    },
+    {
+     "ghidra": "0x21eb3b4",
+     "symbol": "_ZNK4Aska6Camera22CalcReprojectionMatrixEfPNS_6MatrixE",
+     "name": "CalcReprojectionMatrix"
+    },
+    {
+     "ghidra": "0x21eb840",
+     "symbol": "_ZN4Aska6Camera10GetAFPointElPfS1_",
+     "name": "GetAFPoint"
+    },
+    {
+     "ghidra": "0x21eb884",
+     "symbol": "_ZNK4Aska6Camera21GetExposureMeterValueEv",
+     "name": "GetExposureMeterValue"
+    },
+    {
+     "ghidra": "0x21eb948",
+     "symbol": "_ZN4Aska6Camera15SetMeteringModeEi",
+     "name": "SetMeteringMode"
+    },
+    {
+     "ghidra": "0x21eb94c",
+     "symbol": "_ZNK4Aska6Camera15GetMeteringModeEPi",
+     "name": "GetMeteringMode"
+    },
+    {
+     "ghidra": "0x21eb95c",
+     "symbol": "_ZN4Aska6Camera26SetAutoExposureSensitivityEfff",
+     "name": "SetAutoExposureSensitivity"
+    },
+    {
+     "ghidra": "0x21eb96c",
+     "symbol": "_ZN4Aska6Camera33SetCenterweightedMetringGaussCoefEf",
+     "name": "SetCenterweightedMetringGaussCoef"
+    },
+    {
+     "ghidra": "0x21eb974",
+     "symbol": "_ZNK4Aska6Camera20CalcMotionBlurMatrixEfPNS_6MatrixEPKS1_",
+     "name": "CalcMotionBlurMatrix"
+    },
+    {
+     "ghidra": "0x21ebba0",
+     "symbol": "_ZN4Aska6Camera17CloneForMultipassEPKS0_",
+     "name": "CloneForMultipass"
+    },
+    {
+     "ghidra": "0x21ebdb0",
+     "symbol": "_ZN4Aska6Camera9CloneLensEv",
+     "name": "CloneLens"
+    },
+    {
+     "ghidra": "0x21ebe40",
+     "symbol": "_ZN4Aska6Camera22CloneOpticalPhenomenonEv",
+     "name": "CloneOpticalPhenomenon"
+    },
+    {
+     "ghidra": "0x21ebeb8",
+     "symbol": "_ZN4Aska6Camera11CloneCommonEPKS0_",
+     "name": "CloneCommon"
+    },
+    {
+     "ghidra": "0x21ebf54",
+     "symbol": "_ZN4Aska6Camera5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x21ec4bc",
+     "symbol": "_ZN4Aska6Camera11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x21ec524",
+     "symbol": "_ZN4Aska6Camera16ResetViewFrustumEv",
+     "name": "ResetViewFrustum"
+    },
+    {
+     "ghidra": "0x21ec530",
+     "symbol": "_ZN4Aska6Camera14SetWorldMatrixEPKNS_6MatrixE",
+     "name": "SetWorldMatrix"
+    },
+    {
+     "ghidra": "0x21ec58c",
+     "symbol": "_ZN4Aska6Camera10MakeMatrixEv",
+     "name": "MakeMatrix"
+    },
+    {
+     "ghidra": "0x21ec5b0",
+     "symbol": "_ZN4Aska6Camera23PrepareScreenProjectionEv",
+     "name": "PrepareScreenProjection"
+    },
+    {
+     "ghidra": "0x21ec6c4",
+     "symbol": "_ZN4Aska6Camera13ProjectScreenEPNS_6VectorE",
+     "name": "ProjectScreen"
+    },
+    {
+     "ghidra": "0x21ec6fc",
+     "symbol": "_ZN4Aska6Camera18ProjectFrontScreenEPNS_6VectorE",
+     "name": "ProjectFrontScreen"
+    },
+    {
+     "ghidra": "0x21ec734",
+     "symbol": "_ZN4Aska6Camera13SetViewMatrixEPKNS_6MatrixE",
+     "name": "SetViewMatrix"
+    },
+    {
+     "ghidra": "0x21ec870",
+     "symbol": "_ZN4Aska6Camera19SetViewObjectMatrixEPKNS_6MatrixE",
+     "name": "SetViewObjectMatrix"
+    },
+    {
+     "ghidra": "0x21ec8d0",
+     "symbol": "_ZN4Aska6Camera19GetFrameBufferDepthEff",
+     "name": "GetFrameBufferDepth"
+    },
+    {
+     "ghidra": "0x21eca88",
+     "symbol": "_ZNK4Aska6Camera15MeasureExposureEPf",
+     "name": "MeasureExposure"
+    },
+    {
+     "ghidra": "0x21ecb70",
+     "symbol": "_ZN4Aska6Camera3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x21ed198",
+     "symbol": "_ZNK4Aska6Camera3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x21ed888",
+     "symbol": "_ZN4Aska6Camera3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x21ee2f4",
+     "symbol": "_ZN4Aska6Camera28EnableViewFrustumObjectDebugEb",
+     "name": "EnableViewFrustumObjectDebug"
+    },
+    {
+     "ghidra": "0x21ee2f8",
+     "symbol": "_ZN4Aska6Camera9CrossFadeEv",
+     "name": "CrossFade"
+    },
+    {
+     "ghidra": "0x21ee3c4",
+     "symbol": "_ZN4Aska6CameraD1Ev",
+     "name": "~Camera"
+    },
+    {
+     "ghidra": "0x21ee514",
+     "symbol": "_ZN4Aska6CameraD0Ev",
+     "name": "~Camera"
+    },
+    {
+     "ghidra": "0x21ee52c",
+     "symbol": "_ZN4Aska6Camera20MakeViewFrustumPlaneEi",
+     "name": "MakeViewFrustumPlane"
+    },
+    {
+     "ghidra": "0x21eefdc",
+     "symbol": "_ZN4Aska6Camera28MakeLocalViewFrustumVerticesEPNS_6VectorEi",
+     "name": "MakeLocalViewFrustumVertices"
+    }
+   ]
+  },
+  {
    "name": "ShaderComprssionTree",
    "union": false,
    "fields": [

@@ -3,6 +3,7 @@
 // it with the guest's methods (t.call / vcall: natives are not installed in --selftest), then reads the
 // fields through the layout classes, or walks the running game's objects at a frame boundary
 // (testutil::on_frame) and compares their fields with the guest's getters. No natives here.
+#include <cmath>
 #include <cstring>
 #include <memory>
 #include <set>
@@ -219,6 +220,7 @@ namespace {
 TEST_PROBE(g_probeAddRenderQueue, "_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi");
 TEST_PROBE(g_probeGetRenderBatch, "_ZN4Aska19RenderContextServer14GetRenderBatchEi");
 TEST_PROBE(g_probeTextureStateCaches, "_ZN4Aska16RenderDeviceData21GetTextureStateCachesEj");
+TEST_PROBE(g_probeFrustumPlane, "_ZN4Aska6Camera20MakeViewFrustumPlaneEi");
 TEST_PROBE(g_probeUpdateTexture, "_ZN4Aska10RenderPass13UpdateTextureEPNS_12MaterialListEPNS_22TextureModifierManagerEPKNS_10RENDERINFOEib");
 }  // namespace
 
@@ -497,6 +499,50 @@ NATIVE_TEST("render/layout-material-list") {
         t.expect_eq(ppl, ml->m_perPixelLights == -1 ? 3 : (s32)ml->m_perPixelLights, "GetActualPerPixelLightCount");
         return true;
     }, live_screen() ? 30000 : 4000, "RenderPass::UpdateTexture (a model)", live_screen());
+}
+
+// ---- Cameras -----------------------------------------------------------------------------------------
+
+// AimingObject / Camera: a live camera on its MakeViewFrustumPlane call (after this frame's
+// MakeCameraMatrix): the view matrix (base.m_param9Matrix) is the world matrix's inverse, Get's
+// properties are the named fields, TargetObject / UpTargetObject are AimingObject's fields.
+NATIVE_TEST("render/layout-camera") {
+    probe_call(t, g_probeFrustumPlane, [&](Cpu& c) {
+        auto* cam = reinterpret_cast<Camera*>(c.x(0));
+        if (!has_vtable(t, cam, "_ZTVN4Aska6CameraE")) return false;  // a derived camera: wait for a plain one
+        const float* w = cam->base.m_hoc.m_world.f;
+        const float* v = cam->base.m_param9Matrix.f;
+        float maxerr = 0;
+        for (int r = 0; r < 4; r++)
+            for (int k = 0; k < 4; k++) {
+                float sum = 0;
+                for (int j = 0; j < 4; j++) sum += v[r * 4 + j] * w[j * 4 + k];
+                float e = std::fabs(sum - (r == k ? 1.0f : 0.0f));
+                if (e > maxerr) maxerr = e;
+            }
+        t.expect_eq(maxerr < 1e-3f, true, "view (0x130) * world = identity");
+        auto get = [&](u64 id, void* out) { return t.call("_ZNK4Aska6Camera3GetEmPv", {(u64)cam, id, (u64)out}) & 0xff; };
+        float f = -1;
+        get(0x18, &f); t.expect_eq(f, cam->m_fogFar, "Get(0x18) = m_fogFar");
+        get(0x19, &f); t.expect_eq(f, cam->m_fogNear, "Get(0x19) = m_fogNear");
+        get(0x1a, &f); t.expect_eq(f, cam->m_fogDensity, "Get(0x1a) = m_fogDensity");
+        get(0x10, &f); t.expect_eq(f, cam->m_de4, "Get(0x10) = 0xde4");
+        get(0x11, &f); t.expect_eq(f, cam->m_e04, "Get(0x11) = 0xe04");
+        get(0x12, &f); t.expect_eq(f, cam->m_e00, "Get(0x12) = 0xe00");
+        get(0x16, &f); t.expect_eq(f, (float)cam->m_zRange1, "Get(0x16) = (float)m_zRange1");
+        get(0x17, &f); t.expect_eq(f, (float)cam->m_zRange0, "Get(0x17) = (float)m_zRange0");
+        get(0x1c, &f); t.expect_eq(f, (float)cam->m_fogMode, "Get(0x1c) = m_fogMode");
+        alignas(16) float col[4] = {};
+        get(0x1b, col); t.expect_eq(std::memcmp(col, cam->m_fogColor.f, 16), 0, "Get(0x1b) = m_fogColor");
+        t.expect_eq(cam->m_zRange0F == (float)cam->m_zRange0 && cam->m_zRange1F == (float)cam->m_zRange1, true, "the float copies of the z range");
+        AimingObject* ao = cam->AsAimingObject();
+        t.expect_eq(t.call("_ZNK4Aska12AimingObject12TargetObjectEv", {(u64)cam}), (u64)ao->m_target, "TargetObject = m_target");
+        t.expect_eq(t.call("_ZNK4Aska12AimingObject14UpTargetObjectEv", {(u64)cam}), (u64)ao->m_upTarget, "UpTargetObject = m_upTarget");
+        float roll = -7;
+        t.call("_ZNK4Aska12AimingObject3GetEmPv", {(u64)cam, 0xf, (u64)&roll});
+        t.expect_eq(roll, ao->m_roll, "AimingObject::Get(0xf) = m_roll");
+        return true;
+    }, 20000, "Camera::MakeViewFrustumPlane");
 }
 
 }  // namespace soa::native::render

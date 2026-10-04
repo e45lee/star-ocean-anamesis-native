@@ -445,6 +445,150 @@ static_assert(sizeof(RenderableObject) == 0x310);
 // ==== Section: cameras, aiming and lights (n-types-render) ==========================================
 // (AimingObject, Camera, CameraManager, Light, LightManager)
 
+// Aska::AimingObject: a HierarchicalObject that aims at a target (and an "up" target): Camera's base.
+// Guest size 0x200 (AimingObject::CreateClone: operator new(0x200)), data size 0x1f5 (Camera's first
+// member is the byte at 0x1f5); layout from AimingObject(), TargetObject, UpTargetObject, Get / Set
+// (property 0xf: m_roll, most likely) (port/decomp/render/camera.c). Moved to render's scope from anim's
+// (it is Camera's base). Because a derived class's members start inside its 8-byte tail, Camera holds
+// these bytes as `m_aiming` and reinterprets them as an AimingObject (AsAimingObject()).
+class AimingObject {
+public:
+    void CtorBase();                               // AimingObject()  _ZN4Aska12AimingObjectC2Ev
+    void DtorBase();
+    void DtorDelete();
+    HierarchicalObject* TargetObject() const;      // m_target
+    HierarchicalObject* UpTargetObject() const;    // m_upTarget
+    bool Clone(const IAnimatable* src);
+    AimingObject* CreateClone(const IAnimatable* src);
+    void MakeMatrixMain();
+    void MakeMatrix();                             // slot 21
+    bool Get(u64 id, void* out) const;             // HierarchicalObject's, then 0xf: m_roll
+    bool Set(u64 id, const void* in);
+    u64 GetClassID(s32 depth) const;
+
+    HierarchicalObject base;                       // 0x000
+    u64 unk_198;                                   // 0x198
+    u32 unk_1a0;                                   // 0x1a0: 0 at construction
+    float unk_1a4[3];                              // 0x1a4: (1, 0, 1) at construction
+    HierarchicalObject* m_target;                  // 0x1b0: TargetObject()
+    HierarchicalObject* m_upTarget;                // 0x1b8: UpTargetObject()
+    HierarchicalObjectContainer* m_aimNode;        // 0x1c0: &base.m_hoc at construction
+    u8 unk_1c8[0x10];                              // 0x1c8
+    HierarchicalObjectContainer* m_upNode;         // 0x1d8: &base.m_hoc at construction
+    u8 unk_1e0[0x10];                              // 0x1e0
+    float m_roll;                                  // 0x1f0: property 0xf
+    u8 m_aimFlags;                                 // 0x1f4: 0 at construction
+    u8 unk_1f5[0x0b];                              // 0x1f5: (the derived class's: Camera's members start here)
+};
+static_assert(offsetof(AimingObject, unk_1a0) == 0x1a0);
+static_assert(offsetof(AimingObject, m_target) == 0x1b0);
+static_assert(offsetof(AimingObject, m_upTarget) == 0x1b8);
+static_assert(offsetof(AimingObject, m_aimNode) == 0x1c0);
+static_assert(offsetof(AimingObject, m_upNode) == 0x1d8);
+static_assert(offsetof(AimingObject, m_roll) == 0x1f0);
+static_assert(offsetof(AimingObject, m_aimFlags) == 0x1f4);
+static_assert(sizeof(AimingObject) == 0x200);
+
+class Lens;               // Aska::Lens (opaque): Camera::m_lens
+class OpticalPhenomenon;  // Aska::OpticalPhenomenon (opaque)
+
+// Aska::Camera: guest size 0xf90 (CameraFactory / Camera::CreateClone: operator new(0xf90)); layout
+// partly from Camera(), Get (the property ids below), GetFogConst, MakeCameraMatrix,
+// MakeViewFrustumPlane, CameraManager::UpdateAllCameras (port/decomp/render/camera.c). Most of it is
+// still padding: the matrices between 0x170 and 0xd50 are named where MakeCameraMatrix's products show
+// them. Property ids (Get / Set): 0x10 m_fov0de4, 0x11 m_e04, 0x12 m_e00, 0x13..0x15 the lens'
+// +0xc..+0x14, 0x16 m_zRange1, 0x17 m_zRange0 (doubles: SetZBufferRange(double, double)), 0x18 m_fogFar, 0x19
+// m_fogNear, 0x1a m_fogDensity, 0x1b m_fogColor, 0x1c m_fogMode, 0x20 m_d50.
+class Camera {
+public:
+    void Ctor();                                    // Camera()  _ZN4Aska6CameraC2Ev
+    void Dtor();
+    void DtorDelete();
+    AimingObject* AsAimingObject() { return reinterpret_cast<AimingObject*>(this); }
+    u64 GetClassID(s32 depth) const;
+    void CheckSleepAvailability();
+    const MathVector* GetFogConst();                // the fog constants (0xf20..0xf4f) for cvFogCoef; (13 self)
+    void MakeCameraMatrix();                        // (430 self): the view = inverse(world) into base.m_param9Matrix (0x130), the projections, the products
+    void MakeViewFrustumPlane(s32 target);          // (244 self)
+    void MakeLocalViewFrustumVertices(MathVector* out, s32 target);
+    void Run(s32 frames);
+    void SetWorldMatrix(const MathMatrix* m);        // slot 20
+    void MakeMatrix();                              // slot 21
+    void PrepareScreenProjection();
+    void ProjectScreen(MathVector* v);
+    void ProjectFrontScreen(MathVector* v);
+    void SetViewMatrix(const MathMatrix* m);
+    void SetViewObjectMatrix(const MathMatrix* m);
+    void Default();
+    void DefaultCommon();
+    void SetZBufferRange(double zNear, double zFar);
+    void AdjustCameraEV();
+    void ResetViewFrustum();
+    void SetNumberOfAFPoints(s64 n);
+    void SetAFPoint(s64 i, float x, float y);
+    bool Get(u64 id, void* out) const;
+    bool Set(u64 id, const void* in);
+
+    HierarchicalObject base;              // 0x000: vtable _ZTVN4Aska6CameraE + 0x10
+    u8 m_aiming[0x5d];                    // 0x198: AimingObject's members (AsAimingObject())
+    u8 unk_1f5;                           // 0x1f5: 0 at construction
+    u8 unk_1f6[0x75a];                    // 0x1f6: (MakeCameraMatrix's products at 0x9a0, 0x9e0, 0xa20)
+    u64 unk_950;                          // 0x950: (0x950: the view's Euler angles, CalcEuler)
+    u8 unk_958[0x3f8];                    // 0x958
+    float unk_d50;                        // 0xd50: property 0x20 (a vector at 0xd50)
+    float unk_d54[3];                     // 0xd54
+    u8 unk_d60[0x40];                     // 0xd60
+    MathMatrix unk_da0;                   // 0xda0: MakeCameraMatrix: MulFromLeft(0x9a0)
+    u8 unk_de0[4];                        // 0xde0
+    float m_de4;                          // 0xde4: property 0x10
+    u8 unk_de8[0x18];                     // 0xde8
+    float m_e00;                          // 0xe00: property 0x12
+    float m_e04;                          // 0xe04: property 0x11
+    u8 unk_e08[8];                        // 0xe08
+    Lens* m_lens;                         // 0xe10: properties 0x13.. read through it
+    u8 unk_e18[0x18];                     // 0xe18
+    OpticalPhenomenon* m_optical;         // 0xe30: property 0x2b reads +0x5c
+    u8 unk_e38[0x76];                     // 0xe38
+    u8 m_targetIndex;                     // 0xeae: the render target (Get: the ObjectManager's target table)
+    u8 unk_eaf[3];                        // 0xeaf
+    u8 m_fogMode;                         // 0xeb2: property 0x1c (0 none, 2 linear, else exponential)
+    u8 m_camFlags[2];                     // 0xeb3: (u16, unaligned) bit 1 update requested (UpdateAllCameras), bit 2 fog, bit 11
+    u8 unk_eb5[3];                        // 0xeb5
+    double m_zRange0;                     // 0xeb8: property 0x17; SetZBufferRange's first argument (near or far: not checked)
+    double m_zRange1;                     // 0xec0: property 0x16; its second
+    float m_zRange1F;                     // 0xec8: (float)m_zRange1
+    float m_zRange0F;                     // 0xecc: (float)m_zRange0
+    u8 unk_ed0[0x18];                     // 0xed0
+    float m_fogFar;                       // 0xee8: property 0x18
+    float m_fogNear;                      // 0xeec: property 0x19
+    float m_fogDensity;                   // 0xef0: property 0x1a
+    u8 unk_ef4[0xc];                      // 0xef4
+    MathVector m_fogColor;                // 0xf00: property 0x1b
+    u8 unk_f10[0x10];                     // 0xf10
+    MathVector m_fogConst[3];             // 0xf20: GetFogConst's result
+    MathMatrix unk_f50;                   // 0xf50: MakeCameraMatrix multiplies it with the view (0x130)
+};
+static_assert(offsetof(Camera, m_aiming) == 0x198);
+static_assert(offsetof(Camera, unk_1f5) == 0x1f5);
+static_assert(offsetof(Camera, unk_d50) == 0xd50);
+static_assert(offsetof(Camera, m_de4) == 0xde4);
+static_assert(offsetof(Camera, m_e00) == 0xe00);
+static_assert(offsetof(Camera, m_e04) == 0xe04);
+static_assert(offsetof(Camera, m_lens) == 0xe10);
+static_assert(offsetof(Camera, m_optical) == 0xe30);
+static_assert(offsetof(Camera, m_targetIndex) == 0xeae);
+static_assert(offsetof(Camera, m_fogMode) == 0xeb2);
+static_assert(offsetof(Camera, m_camFlags) == 0xeb3);
+static_assert(offsetof(Camera, m_zRange0) == 0xeb8);
+static_assert(offsetof(Camera, m_zRange1) == 0xec0);
+static_assert(offsetof(Camera, m_zRange0F) == 0xecc);
+static_assert(offsetof(Camera, m_fogFar) == 0xee8);
+static_assert(offsetof(Camera, m_fogNear) == 0xeec);
+static_assert(offsetof(Camera, m_fogDensity) == 0xef0);
+static_assert(offsetof(Camera, m_fogColor) == 0xf00);
+static_assert(offsetof(Camera, m_fogConst) == 0xf20);
+static_assert(sizeof(Camera) == 0xf90);
+
 // ==== End of section: cameras, aiming and lights ====================================================
 
 

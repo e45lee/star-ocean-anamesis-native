@@ -7,8 +7,10 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1202388	0x1302388	4	_ZN4Aska4Task21OnAddTopToTaskManagerEv	Aska::Task::OnAddTopToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
 0x120238c	0x130238c	4	_ZN4Aska4Task21OnInsertToTaskManagerEv	Aska::Task::OnInsertToTaskManager()	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
 0x134e514	0x144e514	8	_ZNK4Aska4Task15GetDefaultLevelEv	Aska::Task::GetDefaultLevel() const	hierarchical_object	typed	kernel's class (Aska::Task); typed here as the scene objects' base
+0x1e68b84	0x1f68b84	68	_ZNK4Aska6Camera10GetClassIDEi	Aska::Camera::GetClassID(int) const	camera	typed	
 0x1e68bc8	0x1f68bc8	8	_ZNK4Aska18HierarchicalObject15GetDefaultLevelEv	Aska::HierarchicalObject::GetDefaultLevel() const	hierarchical_object	typed	
 0x1e68bd0	0x1f68bd0	8	_ZNK4Aska18HierarchicalObject11WorldMatrixEv	Aska::HierarchicalObject::WorldMatrix() const	hierarchical_object	typed	
+0x1e68bd8	0x1f68bd8	8	_ZN4Aska6Camera22CheckSleepAvailabilityEv	Aska::Camera::CheckSleepAvailability()	camera	typed	
 0x1e68be0	0x1f68be0	76	_ZN4Aska18HierarchicalObject11SetPositionEfff	Aska::HierarchicalObject::SetPosition(float, float, float)	hierarchical_object	typed	
 0x1e68c2c	0x1f68c2c	76	_ZN4Aska18HierarchicalObject11SetPositionEPKNS_6VectorE	Aska::HierarchicalObject::SetPosition(Aska::Vector const*)	hierarchical_object	typed	
 0x1e68c78	0x1f68c78	80	_ZN4Aska18HierarchicalObject10SetPostureEfff	Aska::HierarchicalObject::SetPosture(float, float, float)	hierarchical_object	typed	
@@ -28,6 +30,8 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e68f64	0x1f68f64	12	_ZN4Aska18HierarchicalObject21VirtualBoundingSphereEv	Aska::HierarchicalObject::VirtualBoundingSphere()	hierarchical_object	typed	
 0x1e68f70	0x1f68f70	8	_ZN4Aska18HierarchicalObject14GetBoundingBoxEb	Aska::HierarchicalObject::GetBoundingBox(bool)	hierarchical_object	typed	
 0x1e68f78	0x1f68f78	4	_ZN4Aska18HierarchicalObject8OnActiveEb	Aska::HierarchicalObject::OnActive(bool)	hierarchical_object	typed	
+0x1e68f7c	0x1f68f7c	8	_ZNK4Aska12AimingObject12TargetObjectEv	Aska::AimingObject::TargetObject() const	camera	typed	
+0x1e68f84	0x1f68f84	8	_ZNK4Aska12AimingObject14UpTargetObjectEv	Aska::AimingObject::UpTargetObject() const	camera	typed	
 0x1e7666c	0x1f7666c	76	_ZN4Aska18HierarchicalObject14SetWorldMatrixEPKNS_6MatrixE	Aska::HierarchicalObject::SetWorldMatrix(Aska::Matrix const*)	hierarchical_object	typed	
 0x1e766b8	0x1f766b8	8	_ZN4Aska18HierarchicalObject10MakeMatrixEv	Aska::HierarchicalObject::MakeMatrix()	hierarchical_object	typed	
 0x1e766c0	0x1f766c0	48	_ZN4Aska16RenderableObject21VirtualBoundingSphereEv	Aska::RenderableObject::VirtualBoundingSphere()	renderable_object	typed	
@@ -104,7 +108,75 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x20c15ac	0x21c15ac	372	_ZN4Aska12MaterialListC2Ev	Aska::MaterialList::MaterialList()	material	typed	
 0x20c2680	0x21c2680	296	_ZN4Aska9AofObject27SetProgrammableTransparencyENS_16RenderableObject9ProgTransE	Aska::AofObject::SetProgrammableTransparency(Aska::RenderableObject::ProgTrans)	renderable_object	decompiled	
 0x20d48d4	0x21d48d4	140	_ZN4Aska18HierarchicalObject20EnableSimpleDynamicsEb	Aska::HierarchicalObject::EnableSimpleDynamics(bool)	hierarchical_object	typed	
-0x20e92bc	0x21e92bc	976	_ZN4Aska6CameraC2Ev	Aska::Camera::Camera()	renderable_object	decompiled	
+0x20e56ac	0x21e56ac	332	_ZN4Aska12AimingObject5CloneEPKNS_11IAnimatableE	Aska::AimingObject::Clone(Aska::IAnimatable const*)	camera	typed	
+0x20e57f8	0x21e57f8	104	_ZN4Aska12AimingObject11CreateCloneEPKNS_11IAnimatableE	Aska::AimingObject::CreateClone(Aska::IAnimatable const*)	camera	typed	
+0x20e5934	0x21e5934	352	_ZN4Aska12AimingObjectC2Ev	Aska::AimingObject::AimingObject()	camera	typed	
+0x20e92bc	0x21e92bc	976	_ZN4Aska6CameraC2Ev	Aska::Camera::Camera()	camera	typed	
+0x20e968c	0x21e968c	84	_ZN4Aska6Camera19SetNumberOfAFPointsEl	Aska::Camera::SetNumberOfAFPoints(long)	camera	typed	
+0x20e96e0	0x21e96e0	44	_ZN4Aska6Camera10SetAFPointElff	Aska::Camera::SetAFPoint(long, float, float)	camera	typed	
+0x20e970c	0x21e970c	388	_ZN4Aska6Camera11GetFogConstEv	Aska::Camera::GetFogConst()	camera	typed	
+0x20e9890	0x21e9890	108	_ZN4Aska6Camera24SetRawScatteringFogConstEfffPNS_6VectorE	Aska::Camera::SetRawScatteringFogConst(float, float, float, Aska::Vector*)	camera	typed	
+0x20e98fc	0x21e98fc	944	_ZN4Aska6Camera14ConvertFromOLSEv	Aska::Camera::ConvertFromOLS()	camera	typed	
+0x20e9cac	0x21e9cac	2580	_ZN4Aska6Camera16MakeCameraMatrixEv	Aska::Camera::MakeCameraMatrix()	camera	typed	
+0x20ea6c0	0x21ea6c0	392	_ZN4Aska6Camera7DefaultEv	Aska::Camera::Default()	camera	typed	
+0x20ea978	0x21ea978	592	_ZN4Aska6Camera13DefaultCommonEv	Aska::Camera::DefaultCommon()	camera	typed	
+0x20eabc8	0x21eabc8	44	_ZN4Aska6Camera15SetZBufferRangeEdd	Aska::Camera::SetZBufferRange(double, double)	camera	typed	
+0x20eb0f0	0x21eb0f0	348	_ZN4Aska6Camera14AdjustCameraEVEv	Aska::Camera::AdjustCameraEV()	camera	typed	
+0x20eb24c	0x21eb24c	360	_ZN4Aska6Camera28DefaultForMultipassRenderingEjiiii	Aska::Camera::DefaultForMultipassRendering(unsigned int, int, int, int, int)	camera	typed	
+0x20eb3b4	0x21eb3b4	524	_ZNK4Aska6Camera22CalcReprojectionMatrixEfPNS_6MatrixE	Aska::Camera::CalcReprojectionMatrix(float, Aska::Matrix*) const	camera	typed	
+0x20eb744	0x21eb744	252	_ZN4Aska6TArrayINS_6Camera7AFPointELb1EE6ResizeElb	Aska::TArray<Aska::Camera::AFPoint, true>::Resize(long, bool)	camera	decompiled	
+0x20eb840	0x21eb840	68	_ZN4Aska6Camera10GetAFPointElPfS1_	Aska::Camera::GetAFPoint(long, float*, float*)	camera	typed	
+0x20eb884	0x21eb884	196	_ZNK4Aska6Camera21GetExposureMeterValueEv	Aska::Camera::GetExposureMeterValue() const	camera	typed	
+0x20eb948	0x21eb948	4	_ZN4Aska6Camera15SetMeteringModeEi	Aska::Camera::SetMeteringMode(int)	camera	typed	
+0x20eb94c	0x21eb94c	16	_ZNK4Aska6Camera15GetMeteringModeEPi	Aska::Camera::GetMeteringMode(int*) const	camera	typed	
+0x20eb95c	0x21eb95c	16	_ZN4Aska6Camera26SetAutoExposureSensitivityEfff	Aska::Camera::SetAutoExposureSensitivity(float, float, float)	camera	typed	
+0x20eb96c	0x21eb96c	8	_ZN4Aska6Camera33SetCenterweightedMetringGaussCoefEf	Aska::Camera::SetCenterweightedMetringGaussCoef(float)	camera	typed	
+0x20eb974	0x21eb974	556	_ZNK4Aska6Camera20CalcMotionBlurMatrixEfPNS_6MatrixEPKS1_	Aska::Camera::CalcMotionBlurMatrix(float, Aska::Matrix*, Aska::Matrix const*) const	camera	typed	
+0x20ebba0	0x21ebba0	528	_ZN4Aska6Camera17CloneForMultipassEPKS0_	Aska::Camera::CloneForMultipass(Aska::Camera const*)	camera	typed	
+0x20ebdb0	0x21ebdb0	144	_ZN4Aska6Camera9CloneLensEv	Aska::Camera::CloneLens()	camera	typed	
+0x20ebe40	0x21ebe40	120	_ZN4Aska6Camera22CloneOpticalPhenomenonEv	Aska::Camera::CloneOpticalPhenomenon()	camera	typed	
+0x20ebeb8	0x21ebeb8	156	_ZN4Aska6Camera11CloneCommonEPKS0_	Aska::Camera::CloneCommon(Aska::Camera const*)	camera	typed	
+0x20ebf54	0x21ebf54	1384	_ZN4Aska6Camera5CloneEPKNS_11IAnimatableE	Aska::Camera::Clone(Aska::IAnimatable const*)	camera	typed	
+0x20ec4bc	0x21ec4bc	104	_ZN4Aska6Camera11CreateCloneEPKNS_11IAnimatableE	Aska::Camera::CreateClone(Aska::IAnimatable const*)	camera	typed	
+0x20ec524	0x21ec524	12	_ZN4Aska6Camera16ResetViewFrustumEv	Aska::Camera::ResetViewFrustum()	camera	typed	
+0x20ec530	0x21ec530	92	_ZN4Aska6Camera14SetWorldMatrixEPKNS_6MatrixE	Aska::Camera::SetWorldMatrix(Aska::Matrix const*)	camera	typed	
+0x20ec58c	0x21ec58c	36	_ZN4Aska6Camera10MakeMatrixEv	Aska::Camera::MakeMatrix()	camera	typed	
+0x20ec5b0	0x21ec5b0	276	_ZN4Aska6Camera23PrepareScreenProjectionEv	Aska::Camera::PrepareScreenProjection()	camera	typed	
+0x20ec6c4	0x21ec6c4	56	_ZN4Aska6Camera13ProjectScreenEPNS_6VectorE	Aska::Camera::ProjectScreen(Aska::Vector*)	camera	typed	
+0x20ec6fc	0x21ec6fc	56	_ZN4Aska6Camera18ProjectFrontScreenEPNS_6VectorE	Aska::Camera::ProjectFrontScreen(Aska::Vector*)	camera	typed	
+0x20ec734	0x21ec734	316	_ZN4Aska6Camera13SetViewMatrixEPKNS_6MatrixE	Aska::Camera::SetViewMatrix(Aska::Matrix const*)	camera	typed	
+0x20ec870	0x21ec870	96	_ZN4Aska6Camera19SetViewObjectMatrixEPKNS_6MatrixE	Aska::Camera::SetViewObjectMatrix(Aska::Matrix const*)	camera	typed	
+0x20ec8d0	0x21ec8d0	440	_ZN4Aska6Camera19GetFrameBufferDepthEff	Aska::Camera::GetFrameBufferDepth(float, float)	camera	typed	
+0x20eca88	0x21eca88	232	_ZNK4Aska6Camera15MeasureExposureEPf	Aska::Camera::MeasureExposure(float*) const	camera	typed	
+0x20ecb70	0x21ecb70	1576	_ZN4Aska6Camera3RunEi	Aska::Camera::Run(int)	camera	typed	
+0x20ed198	0x21ed198	1776	_ZNK4Aska6Camera3GetEmPv	Aska::Camera::Get(unsigned long, void*) const	camera	typed	
+0x20ed888	0x21ed888	2668	_ZN4Aska6Camera3SetEmPKv	Aska::Camera::Set(unsigned long, void const*)	camera	typed	
+0x20ee2f4	0x21ee2f4	4	_ZN4Aska6Camera28EnableViewFrustumObjectDebugEb	Aska::Camera::EnableViewFrustumObjectDebug(bool)	camera	typed	
+0x20ee2f8	0x21ee2f8	204	_ZN4Aska6Camera9CrossFadeEv	Aska::Camera::CrossFade()	camera	typed	
+0x20ee3c4	0x21ee3c4	268	_ZN4Aska6CameraD1Ev	Aska::Camera::~Camera()	camera	typed	
+0x20ee4d0	0x21ee4d0	68	_ZN4Aska6TArrayINS_6Camera7AFPointELb1EED2Ev	Aska::TArray<Aska::Camera::AFPoint, true>::~TArray()	camera	decompiled	
+0x20ee514	0x21ee514	24	_ZN4Aska6CameraD0Ev	Aska::Camera::~Camera()	camera	typed	
+0x20ee52c	0x21ee52c	2736	_ZN4Aska6Camera20MakeViewFrustumPlaneEi	Aska::Camera::MakeViewFrustumPlane(int)	camera	typed	
+0x20eefdc	0x21eefdc	1044	_ZN4Aska6Camera28MakeLocalViewFrustumVerticesEPNS_6VectorEi	Aska::Camera::MakeLocalViewFrustumVertices(Aska::Vector*, int)	camera	typed	
+0x20ef458	0x21ef458	60	_ZN4Aska6TArrayINS_6Camera7AFPointELb1EED0Ev	Aska::TArray<Aska::Camera::AFPoint, true>::~TArray()	camera	decompiled	
+0x20f065c	0x21f065c	516	_ZN4Aska13CameraManager12CreateCameraENS0_10CameraType4descEf	Aska::CameraManager::CreateCamera(Aska::CameraManager::CameraType::desc, float)	camera	decompiled	
+0x20f09f4	0x21f09f4	80	_ZN4Aska13CameraManagerD1Ev	Aska::CameraManager::~CameraManager()	camera	decompiled	
+0x20f0a44	0x21f0a44	92	_ZThn40_N4Aska13CameraManagerD1Ev	non-virtual thunk to Aska::CameraManager::~CameraManager()	camera	decompiled	
+0x20f0aa0	0x21f0aa0	88	_ZN4Aska13CameraManagerD0Ev	Aska::CameraManager::~CameraManager()	camera	decompiled	
+0x20f0af8	0x21f0af8	100	_ZThn40_N4Aska13CameraManagerD0Ev	non-virtual thunk to Aska::CameraManager::~CameraManager()	camera	decompiled	
+0x20f0b5c	0x21f0b5c	124	_ZN4Aska13CameraManager3RunEi	Aska::CameraManager::Run(int)	camera	decompiled	
+0x20f0bd8	0x21f0bd8	124	_ZThn40_N4Aska13CameraManager3RunEi	non-virtual thunk to Aska::CameraManager::Run(int)	camera	decompiled	
+0x20f0c54	0x21f0c54	120	_ZN4Aska13CameraManager22InitScreenEffectCameraEv	Aska::CameraManager::InitScreenEffectCamera()	camera	decompiled	
+0x20f0ccc	0x21f0ccc	64	_ZN4Aska13CameraManager16UpdateAllCamerasEv	Aska::CameraManager::UpdateAllCameras()	camera	decompiled	
+0x20f0d0c	0x21f0d0c	72	_ZN4Aska13CameraManager17AdjustAllCameraEVEi	Aska::CameraManager::AdjustAllCameraEV(int)	camera	decompiled	
+0x20f0d54	0x21f0d54	56	_ZN4Aska13CameraManager14UpdatePrevViewEv	Aska::CameraManager::UpdatePrevView()	camera	decompiled	
+0x20f0d8c	0x21f0d8c	188	_ZN4Aska13CameraManager20UpdateProjectorRectsEi	Aska::CameraManager::UpdateProjectorRects(int)	camera	decompiled	
+0x20f0e48	0x21f0e48	8	_ZNK4Aska13CameraManager3GetEmPv	Aska::CameraManager::Get(unsigned long, void*) const	camera	decompiled	
+0x20f0e50	0x21f0e50	8	_ZThn40_NK4Aska13CameraManager3GetEmPv	non-virtual thunk to Aska::CameraManager::Get(unsigned long, void*) const	camera	decompiled	
+0x20f0e58	0x21f0e58	88	_ZNK4Aska13CameraManager10GetClassIDEi	Aska::CameraManager::GetClassID(int) const	camera	decompiled	
+0x20f0eb0	0x21f0eb0	8	_ZNK4Aska13CameraManager15GetDefaultLevelEv	Aska::CameraManager::GetDefaultLevel() const	camera	decompiled	
+0x20f0eb8	0x21f0eb8	88	_ZThn40_NK4Aska13CameraManager10GetClassIDEi	non-virtual thunk to Aska::CameraManager::GetClassID(int) const	camera	decompiled	
+0x20f0f10	0x21f0f10	8	_ZThn40_NK4Aska13CameraManager15GetDefaultLevelEv	non-virtual thunk to Aska::CameraManager::GetDefaultLevel() const	camera	decompiled	
 0x212f0c4	0x222f0c4	228	_ZN4Aska19FilterTextureObject24DoesInsertToPaintingListEPNS_16RenderableObject3IPLEiiPKi	Aska::FilterTextureObject::DoesInsertToPaintingList(Aska::RenderableObject::IPL*, int, int, int const*)	renderable_object	decompiled	
 0x21328fc	0x22328fc	140	_ZN4Aska18HierarchicalObject5CloneEPKNS_11IAnimatableE	Aska::HierarchicalObject::Clone(Aska::IAnimatable const*)	hierarchical_object	typed	
 0x2132988	0x2232988	408	_ZN4Aska18HierarchicalObject11CreateCloneEPKNS_11IAnimatableE	Aska::HierarchicalObject::CreateClone(Aska::IAnimatable const*)	hierarchical_object	typed	
@@ -470,3 +542,10 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2354db4	0x2454db4	124	_ZN4Aska9AhslConst5GetIdEPKcPS2_	Aska::AhslConst::GetId(char const*, char const**)	material	decompiled	
 0x2354e30	0x2454e30	912	_ZN4Aska9AhslConst26AofConvertToNativeConstantEiPKNS_6VectorEPS1_	Aska::AhslConst::AofConvertToNativeConstant(int, Aska::Vector const*, Aska::Vector*)	material	decompiled	
 0x23551c0	0x24551c0	136	_ZN4Aska9AhslConst28AofRecoverFromNativeConstantEiPKNS_6VectorEPS1_	Aska::AhslConst::AofRecoverFromNativeConstant(int, Aska::Vector const*, Aska::Vector*)	material	decompiled	
+0x23577c8	0x24577c8	448	_ZN4Aska12AimingObject14MakeMatrixMainEv	Aska::AimingObject::MakeMatrixMain()	camera	typed	
+0x2357988	0x2457988	92	_ZN4Aska12AimingObject10MakeMatrixEv	Aska::AimingObject::MakeMatrix()	camera	typed	
+0x23579e4	0x24579e4	72	_ZNK4Aska12AimingObject3GetEmPv	Aska::AimingObject::Get(unsigned long, void*) const	camera	typed	
+0x2357a2c	0x2457a2c	72	_ZN4Aska12AimingObject3SetEmPKv	Aska::AimingObject::Set(unsigned long, void const*)	camera	typed	
+0x2357a74	0x2457a74	100	_ZN4Aska12AimingObjectD2Ev	Aska::AimingObject::~AimingObject()	camera	typed	
+0x2357ad8	0x2457ad8	124	_ZN4Aska12AimingObjectD0Ev	Aska::AimingObject::~AimingObject()	camera	typed	
+0x2357b54	0x2457b54	92	_ZNK4Aska12AimingObject10GetClassIDEi	Aska::AimingObject::GetClassID(int) const	camera	typed	

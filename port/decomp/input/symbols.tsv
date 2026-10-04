@@ -1,1 +1,277 @@
 vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x1e88d64	0x1f88d64	60	_ZN9Framework9CKeyboard10InitializeEv	Framework::CKeyboard::Initialize()	framework	typed	
+0x1e88da0	0x1f88da0	4	_ZN9Framework9CKeyboard7ReleaseEv	Framework::CKeyboard::Release()	framework	typed	
+0x1e88da4	0x1f88da4	312	_ZN9Framework9CKeyboard8ProgressEf	Framework::CKeyboard::Progress(float)	framework	typed	
+0x1e88edc	0x1f88edc	148	_ZNK9Framework9CKeyboard3NowEi	Framework::CKeyboard::Now(int) const	framework	typed	
+0x1e88f70	0x1f88f70	80	_ZNK9Framework9CKeyboard6RepeatEi	Framework::CKeyboard::Repeat(int) const	framework	typed	
+0x1e88fc0	0x1f88fc0	40	_ZNK9Framework9CKeyboard5PressEv	Framework::CKeyboard::Press() const	framework	typed	
+0x1e88fe8	0x1f88fe8	56	_ZN9Framework9CKeyboard19IsDrawableCharacterEj	Framework::CKeyboard::IsDrawableCharacter(unsigned int)	framework	typed	
+0x1e8b7f4	0x1f8b7f4	68	_ZN9Framework6CMouse10InitializeEv	Framework::CMouse::Initialize()	framework	typed	
+0x1e8b838	0x1f8b838	68	_ZN9Framework6CMouse5ResetEv	Framework::CMouse::Reset()	framework	typed	
+0x1e8b87c	0x1f8b87c	372	_ZN9Framework6CMouse8ProgressEf	Framework::CMouse::Progress(float)	framework	typed	
+0x1e8b9f0	0x1f8b9f0	196	_ZN9Framework6CMouse14InputFromPanelEv	Framework::CMouse::InputFromPanel()	framework	typed	
+0x1e8bfbc	0x1f8bfbc	96	_ZN9Framework4CPadC1Ev	Framework::CPad::CPad()	framework	typed	
+0x1e8c01c	0x1f8c01c	244	_ZN9Framework4CPadD2Ev	Framework::CPad::~CPad()	framework	typed	
+0x1e8c110	0x1f8c110	164	_ZN9Framework4CPad7ReleaseEv	Framework::CPad::Release()	framework	typed	
+0x1e8c1b4	0x1f8c1b4	24	_ZN9Framework4CPadD0Ev	Framework::CPad::~CPad()	framework	typed	
+0x1e8c1cc	0x1f8c1cc	612	_ZN9Framework4CPad10InitializeEv	Framework::CPad::Initialize()	framework	typed	
+0x1e8c430	0x1f8c430	68	_ZN9Framework4CPad4ModeEj	Framework::CPad::Mode(unsigned int)	framework	typed	
+0x1e8c474	0x1f8c474	112	_ZN9Framework4CPad5rUnitEj	Framework::CPad::rUnit(unsigned int)	framework	typed	
+0x1e8c4e4	0x1f8c4e4	364	_ZN9Framework4CPad5CUnit10InitializeEj	Framework::CPad::CUnit::Initialize(unsigned int)	framework	typed	
+0x1e8c650	0x1f8c650	192	_ZN9Framework4CPad5ClearEv	Framework::CPad::Clear()	framework	typed	
+0x1e8c710	0x1f8c710	24	_ZN9Framework4CPad7tMerged5ResetEv	Framework::CPad::tMerged::Reset()	framework	typed	
+0x1e8c728	0x1f8c728	8	_ZNK9Framework4CPad8NumUnitsEv	Framework::CPad::NumUnits() const	framework	typed	
+0x1e8c730	0x1f8c730	112	_ZNK9Framework4CPad4UnitEj	Framework::CPad::Unit(unsigned int) const	framework	typed	
+0x1e8c7a0	0x1f8c7a0	484	_ZN9Framework4CPad8ProgressEf	Framework::CPad::Progress(float)	framework	typed	
+0x1e8c984	0x1f8c984	12	_ZN9Framework4CPad5CUnit9UnlockAllEv	Framework::CPad::CUnit::UnlockAll()	framework	typed	
+0x1e8c990	0x1f8c990	188	_ZN9Framework4CPad5CUnit8ProgressEf	Framework::CPad::CUnit::Progress(float)	framework	typed	
+0x1e8ca4c	0x1f8ca4c	192	_ZN9Framework4CPad5CUnit4CopyEv	Framework::CPad::CUnit::Copy()	framework	typed	
+0x1e8cb0c	0x1f8cb0c	1388	_ZN9Framework4CPad5MergeEv	Framework::CPad::Merge()	framework	typed	
+0x1e8d078	0x1f8d078	4	_ZN9Framework4CPad6PrintSEi	Framework::CPad::PrintS(int)	framework	typed	
+0x1e8d07c	0x1f8d07c	8	_ZNK9Framework4CPad4ModeEv	Framework::CPad::Mode() const	framework	typed	
+0x1e8d084	0x1f8d084	76	_ZNK9Framework4CPad16NowWithEveryModeEv	Framework::CPad::NowWithEveryMode() const	framework	typed	
+0x1e8d0d0	0x1f8d0d0	184	_ZN9Framework4CPad6GetNowEi	Framework::CPad::GetNow(int)	framework	typed	
+0x1e8d188	0x1f8d188	76	_ZNK9Framework4CPad19SingleWithEveryModeEv	Framework::CPad::SingleWithEveryMode() const	framework	typed	
+0x1e8d1d4	0x1f8d1d4	184	_ZN9Framework4CPad9GetSingleEi	Framework::CPad::GetSingle(int)	framework	typed	
+0x1e8d28c	0x1f8d28c	76	_ZNK9Framework4CPad19RepeatWithEveryModeEv	Framework::CPad::RepeatWithEveryMode() const	framework	typed	
+0x1e8d2d8	0x1f8d2d8	184	_ZN9Framework4CPad9GetRepeatEi	Framework::CPad::GetRepeat(int)	framework	typed	
+0x1e8d390	0x1f8d390	20	_ZN9Framework4CPad5CUnit5ClearEv	Framework::CPad::CUnit::Clear()	framework	typed	
+0x1e8d3a4	0x1f8d3a4	28	_ZN9Framework4CPad5CUnitC2Ev	Framework::CPad::CUnit::CUnit()	framework	typed	
+0x1e8d3c0	0x1f8d3c0	80	_ZN9Framework4CPad5CUnitD2Ev	Framework::CPad::CUnit::~CUnit()	framework	typed	
+0x1e8d410	0x1f8d410	64	_ZN9Framework4CPad5CUnit7ReleaseEv	Framework::CPad::CUnit::Release()	framework	typed	
+0x1e8d450	0x1f8d450	344	_ZN4Aska3Pad18SetAnalogAsDigitalEb	Aska::Pad::SetAnalogAsDigital(bool)	aska	typed	
+0x1e8d5a8	0x1f8d5a8	344	_ZN4Aska3Pad18SetRepeatThresholdEh	Aska::Pad::SetRepeatThreshold(unsigned char)	aska	typed	
+0x1e8d700	0x1f8d700	344	_ZN4Aska3Pad17SetRepeatIntervalEh	Aska::Pad::SetRepeatInterval(unsigned char)	aska	typed	
+0x1e8d858	0x1f8d858	8	_ZN9Framework4CPad5CUnit5rKeysEv	Framework::CPad::CUnit::rKeys()	framework	typed	
+0x1e8d860	0x1f8d860	8	_ZNK9Framework4CPad5CUnit4KeysEv	Framework::CPad::CUnit::Keys() const	framework	typed	
+0x1e8d868	0x1f8d868	20	_ZN9Framework4CPad5CUnit7LockAllEv	Framework::CPad::CUnit::LockAll()	framework	typed	
+0x1e8d87c	0x1f8d87c	12	_ZN9Framework4CPad5CUnit11LockButtonsEv	Framework::CPad::CUnit::LockButtons()	framework	typed	
+0x1e8d888	0x1f8d888	12	_ZN9Framework4CPad5CUnit16LockAnalogLeverLEv	Framework::CPad::CUnit::LockAnalogLeverL()	framework	typed	
+0x1e8d894	0x1f8d894	12	_ZN9Framework4CPad5CUnit16LockAnalogLeverREv	Framework::CPad::CUnit::LockAnalogLeverR()	framework	typed	
+0x1e8d8a0	0x1f8d8a0	12	_ZN9Framework4CPad5CUnit18LockAnalogTriggerLEv	Framework::CPad::CUnit::LockAnalogTriggerL()	framework	typed	
+0x1e8d8ac	0x1f8d8ac	12	_ZN9Framework4CPad5CUnit18LockAnalogTriggerREv	Framework::CPad::CUnit::LockAnalogTriggerR()	framework	typed	
+0x1e8d8b8	0x1f8d8b8	184	_ZN9Framework4CPad9GetBeforeEi	Framework::CPad::GetBefore(int)	framework	typed	
+0x1e8d970	0x1f8d970	184	_ZN9Framework4CPad8GetStockEi	Framework::CPad::GetStock(int)	framework	typed	
+0x1e8da28	0x1f8da28	184	_ZN9Framework4CPad10GetReleaseEi	Framework::CPad::GetRelease(int)	framework	typed	
+0x1e8dae0	0x1f8dae0	184	_ZN9Framework4CPad13GetRepeatEachEi	Framework::CPad::GetRepeatEach(int)	framework	typed	
+0x1e8db98	0x1f8db98	180	_ZN9Framework4CPad11GetAnalogLTEi	Framework::CPad::GetAnalogLT(int)	framework	typed	
+0x1e8dc4c	0x1f8dc4c	180	_ZN9Framework4CPad11GetAnalogRTEi	Framework::CPad::GetAnalogRT(int)	framework	typed	
+0x1e8dd00	0x1f8dd00	196	_ZN9Framework4CPad12GetAnalogLTFEi	Framework::CPad::GetAnalogLTF(int)	framework	typed	
+0x1e8ddc4	0x1f8ddc4	196	_ZN9Framework4CPad12GetAnalogRTFEi	Framework::CPad::GetAnalogRTF(int)	framework	typed	
+0x1e8de88	0x1f8de88	180	_ZN9Framework4CPad11GetAnalogLXEi	Framework::CPad::GetAnalogLX(int)	framework	typed	
+0x1e8df3c	0x1f8df3c	180	_ZN9Framework4CPad11GetAnalogLYEi	Framework::CPad::GetAnalogLY(int)	framework	typed	
+0x1e8dff0	0x1f8dff0	180	_ZN9Framework4CPad11GetAnalogRXEi	Framework::CPad::GetAnalogRX(int)	framework	typed	
+0x1e8f0a4	0x1f8f0a4	180	_ZN9Framework4CPad11GetAnalogRYEi	Framework::CPad::GetAnalogRY(int)	framework	typed	
+0x1e8f158	0x1f8f158	184	_ZN9Framework4CPad12GetAnalogLXFEi	Framework::CPad::GetAnalogLXF(int)	framework	typed	
+0x1e8f210	0x1f8f210	184	_ZN9Framework4CPad12GetAnalogLYFEi	Framework::CPad::GetAnalogLYF(int)	framework	typed	
+0x1e8f2c8	0x1f8f2c8	184	_ZN9Framework4CPad12GetAnalogRXFEi	Framework::CPad::GetAnalogRXF(int)	framework	typed	
+0x1e8f380	0x1f8f380	184	_ZN9Framework4CPad12GetAnalogRYFEi	Framework::CPad::GetAnalogRYF(int)	framework	typed	
+0x1e8f438	0x1f8f438	24	_ZNK9Framework4CPad5CUnit6GetNowEv	Framework::CPad::CUnit::GetNow() const	framework	typed	
+0x1e8f450	0x1f8f450	24	_ZNK9Framework4CPad5CUnit9GetBeforeEv	Framework::CPad::CUnit::GetBefore() const	framework	typed	
+0x1e8f468	0x1f8f468	24	_ZNK9Framework4CPad5CUnit8GetStockEv	Framework::CPad::CUnit::GetStock() const	framework	typed	
+0x1e8f480	0x1f8f480	24	_ZNK9Framework4CPad5CUnit9GetSingleEv	Framework::CPad::CUnit::GetSingle() const	framework	typed	
+0x1e8f498	0x1f8f498	24	_ZNK9Framework4CPad5CUnit10GetReleaseEv	Framework::CPad::CUnit::GetRelease() const	framework	typed	
+0x1e8f4b0	0x1f8f4b0	24	_ZNK9Framework4CPad5CUnit9GetRepeatEv	Framework::CPad::CUnit::GetRepeat() const	framework	typed	
+0x1e8f4c8	0x1f8f4c8	24	_ZNK9Framework4CPad5CUnit13GetRepeatEachEv	Framework::CPad::CUnit::GetRepeatEach() const	framework	typed	
+0x1e8f4e0	0x1f8f4e0	24	_ZNK9Framework4CPad5CUnit11GetAnalogLXEv	Framework::CPad::CUnit::GetAnalogLX() const	framework	typed	
+0x1e8f4f8	0x1f8f4f8	24	_ZNK9Framework4CPad5CUnit11GetAnalogLYEv	Framework::CPad::CUnit::GetAnalogLY() const	framework	typed	
+0x1e8f510	0x1f8f510	24	_ZNK9Framework4CPad5CUnit11GetAnalogRXEv	Framework::CPad::CUnit::GetAnalogRX() const	framework	typed	
+0x1e8f528	0x1f8f528	24	_ZNK9Framework4CPad5CUnit11GetAnalogRYEv	Framework::CPad::CUnit::GetAnalogRY() const	framework	typed	
+0x1e8f540	0x1f8f540	24	_ZNK9Framework4CPad5CUnit11GetAnalogLTEv	Framework::CPad::CUnit::GetAnalogLT() const	framework	typed	
+0x1e8f558	0x1f8f558	24	_ZNK9Framework4CPad5CUnit11GetAnalogRTEv	Framework::CPad::CUnit::GetAnalogRT() const	framework	typed	
+0x1e8f570	0x1f8f570	40	_ZNK9Framework4CPad5CUnit12GetAnalogLTFEv	Framework::CPad::CUnit::GetAnalogLTF() const	framework	typed	
+0x1e8f598	0x1f8f598	40	_ZNK9Framework4CPad5CUnit12GetAnalogRTFEv	Framework::CPad::CUnit::GetAnalogRTF() const	framework	typed	
+0x1e8f5c0	0x1f8f5c0	24	_ZNK9Framework4CPad5CUnit12GetAnalogLXFEv	Framework::CPad::CUnit::GetAnalogLXF() const	framework	typed	
+0x1e8f5d8	0x1f8f5d8	24	_ZNK9Framework4CPad5CUnit12GetAnalogLYFEv	Framework::CPad::CUnit::GetAnalogLYF() const	framework	typed	
+0x1e8f5f0	0x1f8f5f0	24	_ZNK9Framework4CPad5CUnit12GetAnalogRXFEv	Framework::CPad::CUnit::GetAnalogRXF() const	framework	typed	
+0x1e8f608	0x1f8f608	24	_ZNK9Framework4CPad5CUnit12GetAnalogRYFEv	Framework::CPad::CUnit::GetAnalogRYF() const	framework	typed	
+0x1e8f620	0x1f8f620	36	_ZNK9Framework4CPad5CUnit5IsNowEt	Framework::CPad::CUnit::IsNow(unsigned short) const	framework	typed	
+0x1e8f644	0x1f8f644	36	_ZNK9Framework4CPad5CUnit8IsBeforeEt	Framework::CPad::CUnit::IsBefore(unsigned short) const	framework	typed	
+0x1e8f668	0x1f8f668	36	_ZNK9Framework4CPad5CUnit8IsSingleEt	Framework::CPad::CUnit::IsSingle(unsigned short) const	framework	typed	
+0x1e8f68c	0x1f8f68c	36	_ZNK9Framework4CPad5CUnit9IsReleaseEt	Framework::CPad::CUnit::IsRelease(unsigned short) const	framework	typed	
+0x1e8f6b0	0x1f8f6b0	36	_ZNK9Framework4CPad5CUnit8IsRepeatEt	Framework::CPad::CUnit::IsRepeat(unsigned short) const	framework	typed	
+0x1e8f6d4	0x1f8f6d4	36	_ZNK9Framework4CPad5CUnit12IsRepeatEachEt	Framework::CPad::CUnit::IsRepeatEach(unsigned short) const	framework	typed	
+0x1e8f6f8	0x1f8f6f8	72	_ZN9Framework10CPadReaderD2Ev	Framework::CPadReader::~CPadReader()	framework	typed	
+0x1e8f740	0x1f8f740	80	_ZN9Framework10CPadReaderD0Ev	Framework::CPadReader::~CPadReader()	framework	typed	
+0x1e8f790	0x1f8f790	32	_ZNK9Framework10CPadReader10GetClassIDEi	Framework::CPadReader::GetClassID(int) const	framework	typed	
+0x1e8f7b0	0x1f8f7b0	8	_ZNK9Framework10CPadReader15GetDefaultLevelEv	Framework::CPadReader::GetDefaultLevel() const	framework	typed	
+0x1e8f7b8	0x1f8f7b8	388	_ZN9Framework10CPadReader3RunEi	Framework::CPadReader::Run(int)	framework	typed	
+0x1e9f178	0x1f9f178	220	_ZN9Framework11CTouchPanelC1Ev	Framework::CTouchPanel::CTouchPanel()	framework	typed	
+0x1e9f254	0x1f9f254	356	_ZN9Framework11CTouchPanel10InitializeEv	Framework::CTouchPanel::Initialize()	framework	typed	
+0x1e9f3b8	0x1f9f3b8	48	_ZN9Framework11CTouchPanel7ReleaseEv	Framework::CTouchPanel::Release()	framework	typed	
+0x1e9f3e8	0x1f9f3e8	24	_ZN9Framework11CTouchPanel5ResetEv	Framework::CTouchPanel::Reset()	framework	typed	
+0x1e9f400	0x1f9f400	1320	_ZN9Framework11CTouchPanel8ProgressEf	Framework::CTouchPanel::Progress(float)	framework	typed	
+0x1e9f928	0x1f9f928	4	_ZN9Framework11CTouchPanel14InputFromMouseEv	Framework::CTouchPanel::InputFromMouse()	framework	typed	
+0x1e9f92c	0x1f9f92c	672	_ZN4Aska10TouchPanel12CopyMessagesEPNS_9TouchDataE	Aska::TouchPanel::CopyMessages(Aska::TouchData*)	aska	typed	
+0x1e9fbcc	0x1f9fbcc	52	_ZNK9Framework11CTouchPanel11IsConnectedEv	Framework::CTouchPanel::IsConnected() const	framework	typed	
+0x1e9fc00	0x1f9fc00	8	_ZNK9Framework11CTouchPanel14rAnalogVirtualEv	Framework::CTouchPanel::rAnalogVirtual() const	framework	typed	
+0x1e9fc08	0x1f9fc08	8	_ZNK9Framework11CTouchPanel16rTouchDataBufferEv	Framework::CTouchPanel::rTouchDataBuffer() const	framework	typed	
+0x1e9fc10	0x1f9fc10	8	_ZNK9Framework11CTouchPanel12NumTouchDataEv	Framework::CTouchPanel::NumTouchData() const	framework	typed	
+0x1e9fc18	0x1f9fc18	84	_ZNK9Framework11CTouchPanel9rTapParamEj	Framework::CTouchPanel::rTapParam(unsigned int) const	framework	typed	
+0x1e9fc6c	0x1f9fc6c	12	_ZNK9Framework11CTouchPanel10IsTapParamEv	Framework::CTouchPanel::IsTapParam() const	framework	typed	
+0x1e9fc78	0x1f9fc78	12	_ZNK9Framework11CTouchPanel15rDoubleTapParamEv	Framework::CTouchPanel::rDoubleTapParam() const	framework	typed	
+0x1e9fc84	0x1f9fc84	12	_ZNK9Framework11CTouchPanel16IsDoubleTapParamEv	Framework::CTouchPanel::IsDoubleTapParam() const	framework	typed	
+0x1e9fc90	0x1f9fc90	12	_ZNK9Framework11CTouchPanel10rDragParamEv	Framework::CTouchPanel::rDragParam() const	framework	typed	
+0x1e9fc9c	0x1f9fc9c	12	_ZNK9Framework11CTouchPanel11IsDragParamEv	Framework::CTouchPanel::IsDragParam() const	framework	typed	
+0x1e9fca8	0x1f9fca8	12	_ZNK9Framework11CTouchPanel18rTouchAndHoldParamEv	Framework::CTouchPanel::rTouchAndHoldParam() const	framework	typed	
+0x1e9fcb4	0x1f9fcb4	12	_ZNK9Framework11CTouchPanel19IsTouchAndHoldParamEv	Framework::CTouchPanel::IsTouchAndHoldParam() const	framework	typed	
+0x1e9fcc0	0x1f9fcc0	12	_ZNK9Framework11CTouchPanel16rPinchOutInParamEv	Framework::CTouchPanel::rPinchOutInParam() const	framework	typed	
+0x1e9fccc	0x1f9fccc	12	_ZNK9Framework11CTouchPanel17IsPinchOutInParamEv	Framework::CTouchPanel::IsPinchOutInParam() const	framework	typed	
+0x1e9fcd8	0x1f9fcd8	8	_ZNK9Framework11CTouchPanel20PinchOutInDeltaScaleEv	Framework::CTouchPanel::PinchOutInDeltaScale() const	framework	typed	
+0x1e9fce0	0x1f9fce0	8	_ZNK9Framework11CTouchPanel24AnalogVirtualMaxDistanceEv	Framework::CTouchPanel::AnalogVirtualMaxDistance() const	framework	typed	
+0x1e9fce8	0x1f9fce8	8	_ZN9Framework11CTouchPanel24AnalogVirtualMaxDistanceEf	Framework::CTouchPanel::AnalogVirtualMaxDistance(float)	framework	typed	
+0x1e9fcf0	0x1f9fcf0	8	_ZNK9Framework11CTouchPanel22AnalogVirtualThresholdEv	Framework::CTouchPanel::AnalogVirtualThreshold() const	framework	typed	
+0x1e9fcf8	0x1f9fcf8	8	_ZN9Framework11CTouchPanel22AnalogVirtualThresholdEf	Framework::CTouchPanel::AnalogVirtualThreshold(float)	framework	typed	
+0x1e9fd00	0x1f9fd00	108	_ZN9Framework11CTouchPanelD2Ev	Framework::CTouchPanel::~CTouchPanel()	framework	typed	
+0x1e9fd6c	0x1f9fd6c	120	_ZN9Framework11CTouchPanelD0Ev	Framework::CTouchPanel::~CTouchPanel()	framework	typed	
+0x1f06128	0x2006128	40	_ZN4Aska8PadDroidC1Ev	Aska::PadDroid::PadDroid()	pad_droid	typed	
+0x1f06150	0x2006150	40	_ZN4Aska14BasePeripheralD2Ev	Aska::BasePeripheral::~BasePeripheral()	aska	typed	
+0x1f06178	0x2006178	48	_ZN4Aska8PadDroidD0Ev	Aska::PadDroid::~PadDroid()	pad_droid	typed	
+0x1f061a8	0x20061a8	100	_ZNK4Aska8PadDroid10GetClassIDEi	Aska::PadDroid::GetClassID(int) const	pad_droid	typed	
+0x1f0620c	0x200620c	8	_ZNK4Aska8PadDroid3GetEmPv	Aska::PadDroid::Get(unsigned long, void*) const	pad_droid	typed	
+0x1f06214	0x2006214	8	_ZN4Aska8PadDroid3SetEmPKv	Aska::PadDroid::Set(unsigned long, void const*)	pad_droid	typed	
+0x1f0621c	0x200621c	4	_ZN4Aska8PadDroid10InitializeEh	Aska::PadDroid::Initialize(unsigned char)	pad_droid	typed	
+0x1f06220	0x2006220	4	_ZN4Aska8PadDroid7ReleaseEv	Aska::PadDroid::Release()	pad_droid	typed	
+0x1f06224	0x2006224	4	_ZN4Aska8PadDroid11ResetStatusEv	Aska::PadDroid::ResetStatus()	pad_droid	typed	
+0x1f06228	0x2006228	4	_ZN4Aska8PadDroid19GetDeviceDataNoPortEv	Aska::PadDroid::GetDeviceDataNoPort()	pad_droid	typed	
+0x1f0622c	0x200622c	8	_ZN4Aska8PadDroid13GetDeviceDataEv	Aska::PadDroid::GetDeviceData()	pad_droid	typed	
+0x1f06234	0x2006234	8	_ZNK4Aska8PadDroid15GetRawInputDataEv	Aska::PadDroid::GetRawInputData() const	pad_droid	typed	
+0x1f0623c	0x200623c	8	_ZNK4Aska8PadDroid19GetRawInputDataSizeEv	Aska::PadDroid::GetRawInputDataSize() const	pad_droid	typed	
+0x1f06244	0x2006244	4	_ZN4Aska8PadDroid16SetRawOutputDataEPKv	Aska::PadDroid::SetRawOutputData(void const*)	pad_droid	typed	
+0x1f06248	0x2006248	8	_ZNK4Aska8PadDroid20GetRawOutputDataSizeEv	Aska::PadDroid::GetRawOutputDataSize() const	pad_droid	typed	
+0x1f06250	0x2006250	4	_ZN4Aska8PadDroid19SetTriggerThresholdENS_3Pad16TriggerThresholdEi	Aska::PadDroid::SetTriggerThreshold(Aska::Pad::TriggerThreshold, int)	pad_droid	typed	
+0x1f06254	0x2006254	8	_ZNK4Aska8PadDroid19GetTriggerThresholdENS_3Pad16TriggerThresholdE	Aska::PadDroid::GetTriggerThreshold(Aska::Pad::TriggerThreshold) const	pad_droid	typed	
+0x1f0625c	0x200625c	192	_ZN4Aska10TouchPanel10InitializeEh	Aska::TouchPanel::Initialize(unsigned char)	aska	typed	
+0x1f0631c	0x200631c	16	_ZN4Aska10TouchPanel6EnableEb	Aska::TouchPanel::Enable(bool)	aska	typed	
+0x1f0632c	0x200632c	160	_ZN4Aska10TouchPanel17ClearGestureParamEv	Aska::TouchPanel::ClearGestureParam()	aska	typed	
+0x1f063cc	0x20063cc	56	_ZN4Aska10TouchPanel17CalcDoublTapRangeEi	Aska::TouchPanel::CalcDoublTapRange(int)	aska	typed	
+0x1f06404	0x2006404	324	_ZN4Aska10TouchPanel17ResetGestureParamEv	Aska::TouchPanel::ResetGestureParam()	aska	typed	
+0x1f06548	0x2006548	2428	_ZN4Aska10TouchPanel13UpdateGestureEPNS_9TouchDataEi	Aska::TouchPanel::UpdateGesture(Aska::TouchData*, int)	aska	typed	
+0x1f06ec4	0x2006ec4	256	_ZN4Aska10TouchPanel18UpdateGestureFlagsEj	Aska::TouchPanel::UpdateGestureFlags(unsigned int)	aska	typed	
+0x1f06fc4	0x2006fc4	996	_ZN4Aska10TouchPanel23SetOrRegisterOriginInfoERNS_11TouchReportEj	Aska::TouchPanel::SetOrRegisterOriginInfo(Aska::TouchReport&, unsigned int)	aska	typed	
+0x1f073a8	0x20073a8	516	_ZN4Aska10TouchPanel17StartGestureCheckEPNS_11TouchOriginE	Aska::TouchPanel::StartGestureCheck(Aska::TouchOrigin*)	aska	typed	
+0x1f075ac	0x20075ac	140	_ZN4Aska10TouchPanel12SetDragBeginERNS_11TouchReportE	Aska::TouchPanel::SetDragBegin(Aska::TouchReport&)	aska	typed	
+0x1f07638	0x2007638	60	_ZN4Aska10TouchPanel10FindOriginEj	Aska::TouchPanel::FindOrigin(unsigned int)	aska	typed	
+0x1f07674	0x2007674	224	_ZN4Aska10TouchPanel6SetTapEPNS_11TouchOriginEi	Aska::TouchPanel::SetTap(Aska::TouchOrigin*, int)	aska	typed	
+0x1f07754	0x2007754	332	_ZN4Aska10TouchPanel16ClearGlobalFlagsEPNS_11TouchOriginEh	Aska::TouchPanel::ClearGlobalFlags(Aska::TouchOrigin*, unsigned char)	aska	typed	
+0x1f078a0	0x20078a0	324	_ZN4Aska10TouchPanel16SetPinchOutInEndEv	Aska::TouchPanel::SetPinchOutInEnd()	aska	typed	
+0x1f079e4	0x20079e4	348	_ZN4Aska10TouchPanel26OffAndDeregisterOriginInfoEPNS_11TouchOriginEj	Aska::TouchPanel::OffAndDeregisterOriginInfo(Aska::TouchOrigin*, unsigned int)	aska	typed	
+0x1f07b40	0x2007b40	180	_ZN4Aska10TouchPanel10SetDragEndERNS_11TouchReportE	Aska::TouchPanel::SetDragEnd(Aska::TouchReport&)	aska	typed	
+0x1f07bf4	0x2007bf4	576	_ZN4Aska10TouchPanel10CheckRangeERNS_11TouchReportE	Aska::TouchPanel::CheckRange(Aska::TouchReport&)	aska	typed	
+0x1f07e34	0x2007e34	192	_ZN4Aska10TouchPanel13SetDragActiveERNS_11TouchReportE	Aska::TouchPanel::SetDragActive(Aska::TouchReport&)	aska	typed	
+0x1f07ef4	0x2007ef4	152	_ZN4Aska10TouchPanel18SetPinchOutInBeginEv	Aska::TouchPanel::SetPinchOutInBegin()	aska	typed	
+0x1f07f8c	0x2007f8c	348	_ZN4Aska10TouchPanel19SetPinchOutInActiveEv	Aska::TouchPanel::SetPinchOutInActive()	aska	typed	
+0x1f080e8	0x20080e8	452	_ZN4Aska10TouchPanel19ClearDoubleTapFlagsEi	Aska::TouchPanel::ClearDoubleTapFlags(int)	aska	typed	
+0x1f082ac	0x20082ac	76	_ZN4Aska10TouchPanel15SetTouchAndHoldEPNS_11TouchOriginE	Aska::TouchPanel::SetTouchAndHold(Aska::TouchOrigin*)	aska	typed	
+0x1f082f8	0x20082f8	88	_ZN4Aska10TouchPanel13FindDragParamEj	Aska::TouchPanel::FindDragParam(unsigned int)	aska	typed	
+0x1f08350	0x2008350	60	_ZN4Aska10TouchPanel10SetDragPosERNS_11TouchReportEPNS0_9DragParamE	Aska::TouchPanel::SetDragPos(Aska::TouchReport&, Aska::TouchPanel::DragParam*)	aska	typed	
+0x1f0838c	0x200838c	300	_ZN4Aska10TouchPanel6GetTapEPNS0_7Vector2Ei	Aska::TouchPanel::GetTap(Aska::TouchPanel::Vector2*, int)	aska	typed	
+0x1f084b8	0x20084b8	300	_ZN4Aska10TouchPanel12GetDoubleTapEPNS0_7Vector2Ei	Aska::TouchPanel::GetDoubleTap(Aska::TouchPanel::Vector2*, int)	aska	typed	
+0x1f085e4	0x20085e4	64	_ZN4Aska10TouchPanel7GetDragEPNS0_9DragParamE	Aska::TouchPanel::GetDrag(Aska::TouchPanel::DragParam*)	aska	typed	
+0x1f08624	0x2008624	392	_ZN4Aska10TouchPanel12GetDragMultiERA8_NS0_9DragParamE	Aska::TouchPanel::GetDragMulti(Aska::TouchPanel::DragParam (&) [8])	aska	typed	
+0x1f087ac	0x20087ac	48	_ZN4Aska10TouchPanel15GetTouchAndHoldEPNS0_17TouchAndHoldParamE	Aska::TouchPanel::GetTouchAndHold(Aska::TouchPanel::TouchAndHoldParam*)	aska	typed	
+0x1f087dc	0x20087dc	64	_ZN4Aska10TouchPanel20GetTouchAndHoldMultiERA8_NS0_17TouchAndHoldParamE	Aska::TouchPanel::GetTouchAndHoldMulti(Aska::TouchPanel::TouchAndHoldParam (&) [8])	aska	typed	
+0x1f0881c	0x200881c	64	_ZN4Aska10TouchPanel13GetPinchOutInEPNS0_15PinchOutInParamE	Aska::TouchPanel::GetPinchOutIn(Aska::TouchPanel::PinchOutInParam*)	aska	typed	
+0x1f08860	0x2008860	20	_ZN4Aska10TouchPanel9GetStatusEv	Aska::TouchPanel::GetStatus()	aska	typed	
+0x1f08874	0x2008874	1208	_ZN4Aska10TouchPanel13GetDeviceDataEv	Aska::TouchPanel::GetDeviceData()	aska	typed	
+0x1f08d2c	0x2008d2c	340	_ZN4Aska10TouchPanel11ResetStatusEv	Aska::TouchPanel::ResetStatus()	aska	typed	
+0x1f08e80	0x2008e80	8	_ZN4Aska10TouchPanel17InitializeGestureEv	Aska::TouchPanel::InitializeGesture()	aska	typed	
+0x1f08e88	0x2008e88	4	_ZN4Aska10TouchPanel15FinalizeGestureEv	Aska::TouchPanel::FinalizeGesture()	aska	typed	
+0x1f0a0b8	0x200a0b8	48	_ZN4Aska10TouchPanelD0Ev	Aska::TouchPanel::~TouchPanel()	aska	typed	
+0x1f0a0e8	0x200a0e8	24	_ZNK4Aska14BasePeripheral10GetClassIDEi	Aska::BasePeripheral::GetClassID(int) const	aska	typed	
+0x1f0a100	0x200a100	12	_ZN4Aska10TouchPanel19GetDeviceDataNoPortEv	Aska::TouchPanel::GetDeviceDataNoPort()	aska	typed	
+0x1f17664	0x2017664	124	_ZN4Aska14BasePeripheral9GetStatusEv	Aska::BasePeripheral::GetStatus()	aska	typed	
+0x1f176e0	0x20176e0	28	_ZN4Aska14BasePeripheral15CheckConnectionEv	Aska::BasePeripheral::CheckConnection()	aska	typed	
+0x1f176fc	0x20176fc	364	_ZN4Aska14BasePeripheral7ReleaseEv	Aska::BasePeripheral::Release()	aska	typed	
+0x1f17868	0x2017868	108	_ZNK4Aska14BasePeripheral3GetEmPv	Aska::BasePeripheral::Get(unsigned long, void*) const	aska	typed	
+0x1f178d4	0x20178d4	72	_ZN4Aska14BasePeripheral3SetEmPKv	Aska::BasePeripheral::Set(unsigned long, void const*)	aska	typed	
+0x1f1791c	0x201791c	4	_ZN4Aska14BasePeripheralD0Ev	Aska::BasePeripheral::~BasePeripheral()	aska	typed	
+0x1f27680	0x2027680	52	_ZN4Aska8KeyboardC2Ev	Aska::Keyboard::Keyboard()	aska	typed	
+0x1f276b4	0x20276b4	4	_ZN4Aska8KeyboardD1Ev	Aska::Keyboard::~Keyboard()	aska	typed	
+0x1f276b8	0x20276b8	24	_ZN4Aska8KeyboardD0Ev	Aska::Keyboard::~Keyboard()	aska	typed	
+0x1f276d0	0x20276d0	4	_ZN4Aska8Keyboard10InitializeEh	Aska::Keyboard::Initialize(unsigned char)	aska	typed	
+0x1f276d4	0x20276d4	4	_ZN4Aska8Keyboard7ReleaseEv	Aska::Keyboard::Release()	aska	typed	
+0x1f276d8	0x20276d8	8	_ZN4Aska8Keyboard9GetStatusEv	Aska::Keyboard::GetStatus()	aska	typed	
+0x1f276e0	0x20276e0	4	_ZN4Aska8Keyboard11ResetStatusEv	Aska::Keyboard::ResetStatus()	aska	typed	
+0x1f276e4	0x20276e4	4	_ZN4Aska8Keyboard19GetDeviceDataNoPortEv	Aska::Keyboard::GetDeviceDataNoPort()	aska	typed	
+0x1f276e8	0x20276e8	8	_ZN4Aska8Keyboard13GetDeviceDataEv	Aska::Keyboard::GetDeviceData()	aska	typed	
+0x1f276f0	0x20276f0	16	_ZN4Aska8Keyboard18ClearKeyRepeatDataEv	Aska::Keyboard::ClearKeyRepeatData()	aska	typed	
+0x1f27700	0x2027700	8	_ZNK4Aska8Keyboard25GetIsControlledViaNetworkEv	Aska::Keyboard::GetIsControlledViaNetwork() const	aska	typed	
+0x1f27708	0x2027708	4	_ZN4Aska8Keyboard25StopNetworkControlRequestEv	Aska::Keyboard::StopNetworkControlRequest()	aska	typed	
+0x1f2770c	0x202770c	4	_ZN4Aska8Keyboard33CancelNetworkControlAutoStopTimerEv	Aska::Keyboard::CancelNetworkControlAutoStopTimer()	aska	typed	
+0x1f27710	0x2027710	160	_ZN4Aska8Keyboard8MapKeyExEib	Aska::Keyboard::MapKeyEx(int, bool)	aska	typed	
+0x1f277b0	0x20277b0	248	_ZN4Aska8Keyboard10KeyEventExEib	Aska::Keyboard::KeyEventEx(int, bool)	aska	typed	
+0x1f278a8	0x20278a8	148	_ZN4Aska8Keyboard11GetInstanceEv	Aska::Keyboard::GetInstance()	aska	typed	
+0x1f2793c	0x202793c	16	_ZN4Aska8Keyboard19GetInstanceNoCreateEv	Aska::Keyboard::GetInstanceNoCreate()	aska	typed	
+0x1f4fd0c	0x204fd0c	68	_ZN4Aska5MouseC2Ev	Aska::Mouse::Mouse()	aska	typed	
+0x1f4fd50	0x204fd50	4	_ZN4Aska5MouseD1Ev	Aska::Mouse::~Mouse()	aska	typed	
+0x1f4fd54	0x204fd54	24	_ZN4Aska5MouseD0Ev	Aska::Mouse::~Mouse()	aska	typed	
+0x1f4fd6c	0x204fd6c	4	_ZN4Aska5Mouse10InitializeEh	Aska::Mouse::Initialize(unsigned char)	aska	typed	
+0x1f4fd70	0x204fd70	4	_ZN4Aska5Mouse7ReleaseEv	Aska::Mouse::Release()	aska	typed	
+0x1f4fd74	0x204fd74	8	_ZN4Aska5Mouse9GetStatusEv	Aska::Mouse::GetStatus()	aska	typed	
+0x1f4fd7c	0x204fd7c	4	_ZN4Aska5Mouse11ResetStatusEv	Aska::Mouse::ResetStatus()	aska	typed	
+0x1f4fd80	0x204fd80	160	_ZN4Aska5Mouse17SetCursorPositionEiib	Aska::Mouse::SetCursorPosition(int, int, bool)	aska	typed	
+0x1f4fe20	0x204fe20	76	_ZN4Aska5Mouse8MouseKeyENS0_7MsgCodeEb	Aska::Mouse::MouseKey(Aska::Mouse::MsgCode, bool)	aska	typed	
+0x1f4fe6c	0x204fe6c	4	_ZN4Aska5Mouse19GetDeviceDataNoPortEv	Aska::Mouse::GetDeviceDataNoPort()	aska	typed	
+0x1f4fe70	0x204fe70	8	_ZN4Aska5Mouse13GetDeviceDataEv	Aska::Mouse::GetDeviceData()	aska	typed	
+0x1f4fe78	0x204fe78	8	_ZNK4Aska5Mouse25GetIsControlledViaNetworkEv	Aska::Mouse::GetIsControlledViaNetwork() const	aska	typed	
+0x1f4fe80	0x204fe80	4	_ZN4Aska5Mouse24StopNetworkConrolRequestEv	Aska::Mouse::StopNetworkConrolRequest()	aska	typed	
+0x1f4fe84	0x204fe84	8	_ZNK4Aska5Mouse28GetIsControlledViaTouchPanelEv	Aska::Mouse::GetIsControlledViaTouchPanel() const	aska	typed	
+0x1f4fe8c	0x204fe8c	8	_ZN4Aska5Mouse27StopTouchPanelConrolRequestEv	Aska::Mouse::StopTouchPanelConrolRequest()	aska	typed	
+0x1f4fe94	0x204fe94	16	_ZN4Aska5Mouse19GetInstanceNoCreateEv	Aska::Mouse::GetInstanceNoCreate()	aska	typed	
+0x1f4fea4	0x204fea4	164	_ZN4Aska5Mouse11GetInstanceEv	Aska::Mouse::GetInstance()	aska	typed	
+0x1f4ff48	0x204ff48	204	_ZN4Aska5Mouse12EmulateMouseEPNS_10TouchPanelE	Aska::Mouse::EmulateMouse(Aska::TouchPanel*)	aska	typed	
+0x1f50014	0x2050014	604	_ZN4Aska5Mouse25MakeMessageFromTouchPanelEPNS_10TouchPanelEPNS0_16MouseCommonParamEPNS0_16TouchPanelStatusE	Aska::Mouse::MakeMessageFromTouchPanel(Aska::TouchPanel*, Aska::Mouse::MouseCommonParam*, Aska::Mouse::TouchPanelStatus*)	aska	typed	
+0x1f50270	0x2050270	4	_ZN4Aska5Mouse10ShowCursorEb	Aska::Mouse::ShowCursor(bool)	aska	typed	
+0x1f533b8	0x20533b8	220	_ZN4Aska3PadC2Es	Aska::Pad::Pad(short)	aska	typed	
+0x1f53494	0x2053494	416	_ZN4Aska3Pad7ReleaseEv	Aska::Pad::Release()	aska	typed	
+0x1f53634	0x2053634	352	_ZN4Aska3Pad9GetStatusEv	Aska::Pad::GetStatus()	aska	typed	
+0x1f53794	0x2053794	400	_ZN4Aska3Pad15UpdateKeyStatusEv	Aska::Pad::UpdateKeyStatus()	aska	typed	
+0x1f53924	0x2053924	448	_ZN4Aska3Pad15UpdateKeyRepeatEPNS0_4KeysE	Aska::Pad::UpdateKeyRepeat(Aska::Pad::Keys*)	aska	typed	
+0x1f53ae4	0x2053ae4	104	_ZN4Aska3Pad22EmulateAnalogAsDigitalEPNS0_4KeysE	Aska::Pad::EmulateAnalogAsDigital(Aska::Pad::Keys*)	aska	typed	
+0x1f53b4c	0x2053b4c	408	_ZN4Aska3Pad18CalcAnalogPositionEPsS1_S1_S1_	Aska::Pad::CalcAnalogPosition(short*, short*, short*, short*)	aska	typed	
+0x1f53ce4	0x2053ce4	20	_ZN4Aska3Pad17CalcAnalogTriggerEPhS1_	Aska::Pad::CalcAnalogTrigger(unsigned char*, unsigned char*)	aska	typed	
+0x1f53cf8	0x2053cf8	36	_ZN4Aska3Pad11ResetStatusEv	Aska::Pad::ResetStatus()	aska	typed	
+0x1f53d1c	0x2053d1c	384	_ZN4Aska3Pad4FlipEv	Aska::Pad::Flip()	aska	typed	
+0x1f53e9c	0x2053e9c	28	_ZN4Aska3Pad12EnableRumbleEb	Aska::Pad::EnableRumble(bool)	aska	typed	
+0x1f53eb8	0x2053eb8	28	_ZN4Aska3Pad9SetRumbleEtt	Aska::Pad::SetRumble(unsigned short, unsigned short)	aska	typed	
+0x1f53ed4	0x2053ed4	96	_ZN4Aska3Pad12SetAnalogMaxEssss	Aska::Pad::SetAnalogMax(short, short, short, short)	aska	typed	
+0x1f53f34	0x2053f34	88	_ZNK4Aska3Pad17GetAnalogPositionEPsS1_S1_S1_	Aska::Pad::GetAnalogPosition(short*, short*, short*, short*) const	aska	typed	
+0x1f53f8c	0x2053f8c	88	_ZNK4Aska3Pad17GetAnalogPositionEPfS1_S1_S1_	Aska::Pad::GetAnalogPosition(float*, float*, float*, float*) const	aska	typed	
+0x1f53fe4	0x2053fe4	80	_ZN4Aska3Pad21CalcAnalogPositionMaxEv	Aska::Pad::CalcAnalogPositionMax()	aska	typed	
+0x1f54034	0x2054034	48	_ZNK4Aska3Pad16GetAnalogTriggerEPhS1_	Aska::Pad::GetAnalogTrigger(unsigned char*, unsigned char*) const	aska	typed	
+0x1f54064	0x2054064	96	_ZN4Aska3Pad14SetCalibrationEsssss	Aska::Pad::SetCalibration(short, short, short, short, short)	aska	typed	
+0x1f540c4	0x20540c4	200	_ZN4Aska3Pad22SetRepeatEachThresholdEth	Aska::Pad::SetRepeatEachThreshold(unsigned short, unsigned char)	aska	typed	
+0x1f5418c	0x205418c	200	_ZN4Aska3Pad21SetRepeatEachIntervalEth	Aska::Pad::SetRepeatEachInterval(unsigned short, unsigned char)	aska	typed	
+0x1f54254	0x2054254	508	_ZNK4Aska3Pad3GetEmPv	Aska::Pad::Get(unsigned long, void*) const	aska	typed	
+0x1f54450	0x2054450	336	_ZNK4Aska3Pad17IsAnalogAsDigitalEv	Aska::Pad::IsAnalogAsDigital() const	aska	typed	
+0x1f545a0	0x20545a0	3308	_ZN4Aska3Pad3SetEmPKv	Aska::Pad::Set(unsigned long, void const*)	aska	typed	
+0x1f5528c	0x205528c	48	_ZN4Aska3Pad25InstantiateAppropriatePadEv	Aska::Pad::InstantiateAppropriatePad()	aska	typed	
+0x1f552bc	0x20552bc	8	_ZN4Aska3Pad19InstantiateDebugPadEv	Aska::Pad::InstantiateDebugPad()	aska	typed	
+0x1f552c4	0x20552c4	8	_ZN4Aska3Pad21InstantiatePadCaptureEv	Aska::Pad::InstantiatePadCapture()	aska	typed	
+0x1f552cc	0x20552cc	4	_ZN4Aska3PadD0Ev	Aska::Pad::~Pad()	aska	typed	
+0x1f552d0	0x20552d0	72	_ZNK4Aska3Pad10GetClassIDEi	Aska::Pad::GetClassID(int) const	aska	typed	
+0x1f55318	0x2055318	4	_ZN4Aska3Pad19SetTriggerThresholdENS0_16TriggerThresholdEi	Aska::Pad::SetTriggerThreshold(Aska::Pad::TriggerThreshold, int)	aska	typed	
+0x1f5531c	0x205531c	8	_ZNK4Aska3Pad19GetTriggerThresholdENS0_16TriggerThresholdE	Aska::Pad::GetTriggerThreshold(Aska::Pad::TriggerThreshold) const	aska	typed	
+0x1f573f0	0x20573f0	76	_ZN4Aska17PeripheralManagerC1Ev	Aska::PeripheralManager::PeripheralManager()	aska	typed	
+0x1f5743c	0x205743c	100	_ZN4Aska17PeripheralManagerD2Ev	Aska::PeripheralManager::~PeripheralManager()	aska	typed	
+0x1f574a0	0x20574a0	96	_ZThn8_N4Aska17PeripheralManagerD1Ev	non-virtual thunk to Aska::PeripheralManager::~PeripheralManager()	aska	typed	
+0x1f57500	0x2057500	108	_ZN4Aska17PeripheralManagerD0Ev	Aska::PeripheralManager::~PeripheralManager()	aska	typed	
+0x1f5756c	0x205756c	104	_ZThn8_N4Aska17PeripheralManagerD0Ev	non-virtual thunk to Aska::PeripheralManager::~PeripheralManager()	aska	typed	
+0x1f575d4	0x20575d4	60	_ZN4Aska17PeripheralManager18ResetAllPeripheralEv	Aska::PeripheralManager::ResetAllPeripheral()	aska	typed	
+0x1f57610	0x2057610	88	_ZN4Aska17PeripheralManager7HandlerEv	Aska::PeripheralManager::Handler()	aska	typed	
+0x1f57668	0x2057668	88	_ZThn8_N4Aska17PeripheralManager7HandlerEv	non-virtual thunk to Aska::PeripheralManager::Handler()	aska	typed	
+0x1f576c0	0x20576c0	8	_ZNK4Aska17PeripheralManager3GetEmPv	Aska::PeripheralManager::Get(unsigned long, void*) const	aska	typed	
+0x1f576c8	0x20576c8	8	_ZN4Aska17PeripheralManager3SetEmPKv	Aska::PeripheralManager::Set(unsigned long, void const*)	aska	typed	
+0x2221864	0x2321864	88	_ZN4Aska19BaseInputPeripheralC2Ev	Aska::BaseInputPeripheral::BaseInputPeripheral()	base_input	typed	
+0x22218bc	0x23218bc	40	_ZN4Aska19BaseInputPeripheralD1Ev	Aska::BaseInputPeripheral::~BaseInputPeripheral()	base_input	typed	
+0x22218e4	0x23218e4	48	_ZN4Aska19BaseInputPeripheralD0Ev	Aska::BaseInputPeripheral::~BaseInputPeripheral()	base_input	typed	
+0x2221914	0x2321914	4	_ZN4Aska19BaseInputPeripheral10InitializeEh	Aska::BaseInputPeripheral::Initialize(unsigned char)	base_input	typed	
+0x2221918	0x2321918	4	_ZN4Aska19BaseInputPeripheral7ReleaseEv	Aska::BaseInputPeripheral::Release()	base_input	typed	
+0x222191c	0x232191c	8	_ZN4Aska19BaseInputPeripheral9GetStatusEv	Aska::BaseInputPeripheral::GetStatus()	base_input	typed	
+0x2221924	0x2321924	4	_ZN4Aska19BaseInputPeripheral11ResetStatusEv	Aska::BaseInputPeripheral::ResetStatus()	base_input	typed	
+0x2221928	0x2321928	144	_ZNK4Aska19BaseInputPeripheral12CopyMessagesEPNS0_7MessageE	Aska::BaseInputPeripheral::CopyMessages(Aska::BaseInputPeripheral::Message*) const	base_input	typed	
+0x22219b8	0x23219b8	12	_ZN4Aska19BaseInputPeripheral13ClearMessagesEv	Aska::BaseInputPeripheral::ClearMessages()	base_input	typed	
+0x22219c4	0x23219c4	60	_ZN4Aska19BaseInputPeripheral10AddMessageEPKNS0_7MessageE	Aska::BaseInputPeripheral::AddMessage(Aska::BaseInputPeripheral::Message const*)	base_input	typed	
+0x2221a00	0x2321a00	4	_ZN4Aska19BaseInputPeripheral19GetDeviceDataNoPortEv	Aska::BaseInputPeripheral::GetDeviceDataNoPort()	base_input	typed	
+0x2221a04	0x2321a04	8	_ZN4Aska19BaseInputPeripheral13GetDeviceDataEv	Aska::BaseInputPeripheral::GetDeviceData()	base_input	typed	

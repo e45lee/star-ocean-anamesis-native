@@ -32,6 +32,10 @@
 #include "soaserver/hooks.h"
 #include "soaserver/msgpack.h"
 
+namespace soa {
+class FileTree;  // soa/file_tree.h
+}
+
 namespace soa::server::cdn {
 
 struct Member;
@@ -52,6 +56,10 @@ struct Response {
     std::string content_type;
     std::vector<uint8_t> body;
     std::string file;
+    // With file_range: only bytes [file_offset, file_offset + file_len) of `file` (a stored entry of
+    // the download's zip, soa/file_tree.h, served in place).
+    bool file_range = false;
+    uint64_t file_offset = 0, file_len = 0;
     std::shared_ptr<const std::vector<Member>> bundle;  // keeps its Tree alive
     uint64_t size() const;               // the body's length (stats the file)
     bool read(std::vector<uint8_t>& out) const;  // the body's bytes (reads the file, builds the bundle)
@@ -61,7 +69,7 @@ struct Response {
 };
 
 struct Options {
-    std::string mirror;          // the 3.7.0 download tree (work/download-3.7.0)
+    std::string mirror;          // the 3.7.0 download: a folder (work/download-3.7.0) or its zip (soa/file_tree.h)
     std::string master;          // the decrypted 3.7.0 master DB (data/basmaster-3.7.0.sqlite3)
     std::string scratch;         // the served master and the bundle-hash cache are written here
     std::string standins;        // stand-in overlay ("" = none): <rel> files added as members
@@ -140,6 +148,7 @@ private:
     std::map<std::string, Bundle> bundles_;              // by name ("I/86c7aec3/3a05a888.bin")
     std::map<std::string, std::map<std::string, std::string>> member_bundle_;  // manifest -> member -> bundle
     std::map<std::string, std::string> overlay_;         // member name -> file (served master, stand-ins)
+    std::shared_ptr<const FileTree> src_;                // the download (opts_.mirror), a folder or a zip
     size_t standins_ = 0;
 };
 

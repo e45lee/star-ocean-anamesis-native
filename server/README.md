@@ -130,14 +130,14 @@ The server's 3.7.0 master is `--master`, else the checkout's `data/basmaster-3.7
 **derived at startup from the user's game files**: the 3.7.0 download's `sqlite/basmaster.sqlite3`
 decrypted (the client's own ADLD code, `adld.h`) into `DATA/master/` under a name keyed by the
 source's SHA-1, once (about a second), then reused; the APK's built-in, older master is the last
-resort (soa only, with a warning). `master_source::resolve()` sets `config().master`; soa-server calls
+resort (with a warning). `master_source::resolve()` sets `config().master`; soa-server calls
 it at startup (it exits without a master), soa before its in-process CDN starts, the tests through
 the scratch servers. The rule and its labels: `docs/server-rules.md#master-source`. This is how a
 release package (README.md "Packaging"), which ships no game data, and a fresh clone without
 `data/basmaster-3.7.0.sqlite3` get their master. soa-server also finds a download beside it (or in
 its `game/` folder) when `--download-dir` isn't given; in a checkout's build dir there is none, so
-nothing changes there. New flag: `--apk FILE` (the last-resort source; soa-server has no zip reader
-yet, so it only logs it).
+nothing changes there. New flags: `--apk FILE` (the last-resort source), `--download PATH` (=
+`--download-dir`; a folder or the download's zip, read in place: `common/include/soa/file_tree.h`).
 
 ### The host interface (`hooks.h`)
 

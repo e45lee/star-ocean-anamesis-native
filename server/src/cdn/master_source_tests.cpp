@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#include <soa/file_tree.h>
+
 #include "cdn/files.h"
 #include "master/gacha_pools.h"
 #include "soaserver/config.h"
@@ -70,9 +72,7 @@ NATIVE_TEST("cdn/master-source") {
     // a changed source gets its own file (keyed by the source's SHA-1); a non-ADLD file is refused
     std::vector<uint8_t> junk(64, 7);
     if (!master_source::derive(junk, "download", dir, &err).empty()) t.fail("a non-ADLD file was accepted");
-    if (!master_source::has_zip_reader()) {
-        fprintf(stderr, "    no zip reader in this program (soa-server): the APK's master is checked by soa --selftest\n");
-    } else if (apk.empty()) {
+    if (apk.empty()) {
         t.fail("apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk not found");
     } else {
         std::string a = master_source::derive_from_apk(apk, dir, &err, &reused);
@@ -158,6 +158,49 @@ NATIVE_TEST("gacha/pools-name-from-master") {
     sqlite3_close(m);
     if (n < 1000) t.fail("only %d gachas in the pools", n);
     if (bad) t.fail("%d of %d titles differ", bad, n);
+}
+
+// The download as SOA-3.7.0-canonical-data.zip (stored, read in place) is the same tree as the
+// extracted folder: the same files, sampled files' bytes equal through locate() (a range of the zip)
+// and read(); the master derived from the zip is byte-identical too. (The whole CDN served from
+// either is compared by soa-server --cdn-check: README.md "Packaging".)
+NATIVE_TEST("cdn/download-zip") {
+    std::string folder = find_repo_file("work/download-3.7.0"), zip = find_repo_file("work/SOA-3.7.0-canonical-data.zip");
+    if (folder.empty() || zip.empty()) return t.fail("work/download-3.7.0 or work/SOA-3.7.0-canonical-data.zip not found");
+    std::string err;
+    auto a = FileTree::open(folder, &err), b = FileTree::open(zip, &err);
+    if (!a || !b) return t.fail("FileTree::open: %s", err.c_str());
+    t.expect_eq(b->is_zip(), true, "the zip opens as a zip");
+    t.expect_eq(is_download_tree(*b), true, "the zip is a download tree");
+    std::vector<std::string> fa = a->files(), fb = b->files();
+    if (fa != fb) t.fail("the file lists differ (%zu in the folder, %zu in the zip)", fa.size(), fb.size());
+    if (fb.empty()) return;
+    int checked = 0;
+    for (int i = 0; i < 200; i++) {
+        const std::string& rel = fb[t.rand_u64() % fb.size()];
+        FileTree::Loc la, lb;
+        std::vector<uint8_t> da, db;
+        if (!a->locate(rel, &la) || !b->locate(rel, &lb) || la.size != lb.size) {
+            t.fail("%s: not in both, or sizes differ", rel.c_str());
+            continue;
+        }
+        if (!a->read(rel, da) || !b->read(rel, db) || da != db) t.fail("%s: read() differs", rel.c_str());
+        if (lb.in_place) {
+            std::vector<uint8_t> r(lb.size);
+            FILE* f = fopen(lb.file.c_str(), "rb");
+            bool ok = f && fseeko(f, (off_t)lb.offset, SEEK_SET) == 0 && fread(r.data(), 1, r.size(), f) == r.size();
+            if (f) fclose(f);
+            if (!ok || r != da) t.fail("%s: the zip's range at %llu differs", rel.c_str(), (unsigned long long)lb.offset);
+        }
+        checked++;
+    }
+    std::string dir = "/tmp/soa-cdn-test-zipmaster-" + std::to_string(getpid());
+    std::string p = master_source::derive_from_download(zip, dir, &err);
+    if (p.empty()) t.fail("derive_from_download(zip): %s", err.c_str());
+    else t.expect_eq(sha1_of(p), std::string(kMasterSha1), "the master derived from the zip");
+    remove(p.c_str());
+    rmdir(dir.c_str());
+    fprintf(stderr, "    %zu files in both; %d sampled\n", fb.size(), checked);
 }
 
 }  // namespace soa::server

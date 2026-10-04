@@ -9,11 +9,11 @@
 //   2. data/basmaster-3.7.0.sqlite3 in the repo roots (a source checkout; find_repo_file);
 //   3. derived from the 3.7.0 download's sqlite/basmaster.sqlite3 (ADLD v2, the full 3.7.0 master
 //      the client fetches after login): config().download_dir, else the repo's
-//      work/download-3.7.0, else a download tree in the install dirs (soa/install.h);
+//      work/download-3.7.0, else the download in the install dirs (soa/game_files.h
+//      find_download); the download a folder or the zip, read in place (soa/file_tree.h);
 //   4. derived from the 3.7.0 APK's assets/builtin_data/sqlite/basmaster.sqlite3 (the app's
 //      built-in, OLDER master: logged as a warning; content added after the APK was built is
-//      missing from it): config().apk, else the repo's apk/, else the install dirs' *.apk; only
-//      with a zip reader (set_zip_reader: soa has one, soa-server not).
+//      missing from it): config().apk, else the repo's apk/, else the install dirs' *.apk.
 // A derived master is written once into the cache dir (config().data_root + "/master", else this
 // platform's default data dir of soa-server + "/master"), named by the SHA-1 of the encrypted
 // source (basmaster-3.7.0-<download|apk>-<sha1 12>.sqlite3), so a changed download derives a new
@@ -31,17 +31,10 @@ namespace soa::server::master_source {
 // the cached file was there.
 std::string derive(const std::vector<uint8_t>& encrypted, const std::string& tag, const std::string& cache_dir, std::string* err,
                    bool* reused = nullptr);
-// The same from a download tree's sqlite/basmaster.sqlite3 / an APK's built-in master (a stored
-// zip entry).
+// The same from a download's sqlite/basmaster.sqlite3 (a folder or a zip) / an APK's built-in
+// master.
 std::string derive_from_download(const std::string& download_dir, const std::string& cache_dir, std::string* err, bool* reused = nullptr);
 std::string derive_from_apk(const std::string& apk, const std::string& cache_dir, std::string* err, bool* reused = nullptr);
-
-// The embedder's zip reader (the library reads no zips itself): one entry of a zip into `out`;
-// false when the file, the entry or the read fails. soa sets the runtime's (runtime/src/android/zip.h
-// read_zip_entry); without one (soa-server) step 4 (the APK) is skipped with a note.
-using ZipReader = bool (*)(const std::string& zip, const std::string& entry, std::vector<uint8_t>& out);
-void set_zip_reader(ZipReader reader);
-bool has_zip_reader();
 
 // The cache dir derived masters go to (see above).
 std::string cache_dir();

@@ -16,7 +16,7 @@
 #include <vector>
 
 #include <soa/env.h>
-#include <soa/install.h>
+#include <soa/game_files.h>
 
 #include "net/cdn_http.h"
 #include "net/game.h"
@@ -74,10 +74,11 @@ void usage() {
             "  --event-keywords L   names to match, comma list (\"!\" excludes); default, as soa: the summer\n"
             "                       events \"水着,夏,サマー,!福袋\"\n"
             "  --restore-tower      serve the tower (as soa --restore-tower)\n"
-            "  --download-dir DIR   the 3.7.0 download (work/download-3.7.0): content is gated on it (as soa\n"
-            "                       --download-dir) and the CDN serves it (server/README.md \"CDN\"); default: none,\n"
-            "                       except a packaged soa-server's: a download tree beside the program or in its\n"
-            "                       game/ folder (README.txt)\n"
+            "  --download PATH      the 3.7.0 download: a folder (work/download-3.7.0) or SOA-3.7.0-canonical-data.zip,\n"
+            "                       read in place; content is gated on it (as soa --download) and the CDN serves it\n"
+            "                       (server/README.md \"CDN\"); default: none, except a packaged soa-server's: a\n"
+            "                       download folder or zip beside the program or in its game/ folder (README.txt).\n"
+            "                       --download-dir PATH is the same\n"
             "  --cdn-url URL        the CDN base Login sends (AssetPath = URL/download, MasterPath, r_ver); default\n"
             "                       http://production-game.so-ana.com\n"
             "  The default URLs name the client's own host, without a port: the 3.7.0 client's URI parser can't\n"
@@ -206,7 +207,7 @@ int main(int argc, char** argv) {
         else if (a == "--enable-events") c.enable_events = true;
         else if (a == "--event-keywords") c.event_keywords = next();
         else if (a == "--restore-tower") c.restore_tower = true;
-        else if (a == "--download-dir") download_dir = c.download_dir = next();
+        else if (a == "--download-dir" || a == "--download") download_dir = c.download_dir = next();
         else if (a == "--cdn-url") c.cdn_url = next();
         else if (a == "--standin-assets") {
             std::string v = next();
@@ -237,7 +238,9 @@ int main(int argc, char** argv) {
     if (serving && download_dir.empty()) {
         // A packaged soa-server (README.md "Packaging"): the download beside the program or in its
         // game/ folder (soa/install.h). A checkout's build dir has none, so there nothing changes.
-        std::string d = soa::install::find_download_dir(soa::install::install_dirs());
+        std::vector<std::string> notes;
+        std::string d = soa::install::find_download(soa::install::install_dirs(), &notes);
+        for (auto& n : notes) fprintf(stderr, "soa-server: %s\n", n.c_str());
         if (!d.empty()) {
             download_dir = c.download_dir = d;
             fprintf(stderr, "soa-server: the 3.7.0 download %s (found beside the program)\n", d.c_str());

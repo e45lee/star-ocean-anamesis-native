@@ -13,7 +13,8 @@
 //   - the 3.7.0 download: a folder holding version.bin, manifest/ and sqlite/basmaster.sqlite3
 //     (is_download_dir), whatever it is called: the install dir itself, or one of its immediate
 //     subfolders (download-3.7.0, SOA_*, the user's SOA-3.7.0-canonical-data.zip extracted into
-//     game/, ...).
+//     game/, ...); else that zip itself, unextracted (soa/game_files.h find_download: the
+//     zip-aware half, target soa_gamefiles).
 // The programs' own generated data (data/gacha_pools.sqlite3, data/saves/seed/Game.xml,
 // standin-assets/) sits in the install dir at its repository path: the install dir is the last
 // "repo root" the repo-file lookups search (port core/paths.cpp, soa-server's repo_roots()).
@@ -45,6 +46,9 @@ inline constexpr const char* kApk370Name = "STAR+OCEAN+-anamnesis-_3.7.0_APKPure
 // (3.8.0's is another size) without inflating it.
 inline constexpr const char* kLibEntry = "lib/arm64-v8a/libSOA.so";
 inline constexpr uint64_t kLib370Size = 45988160u;
+// The user's archive of the 3.7.0 download (the tree at its top level, stored), read in place
+// without extracting it (soa/game_files.h find_download, soa/file_tree.h).
+inline constexpr const char* kDataZipName = "SOA-3.7.0-canonical-data.zip";
 // What README.txt (the packages') calls the folder for the game files.
 inline constexpr const char* kGameSubdir = "game";
 
@@ -160,7 +164,7 @@ inline std::string find_download_dir(const std::vector<std::string>& dirs) {
 inline std::string missing_hint() {
     std::string d = exe_dir();
     return "put the game files in " + (d.empty() ? std::string(kGameSubdir) : d + "/" + kGameSubdir) +
-           " (the 3.7.0 APK and the 3.7.0 download, SOA-3.7.0-canonical-data.zip extracted there): see README.txt";
+           " (the 3.7.0 APK, and the 3.7.0 download: SOA-3.7.0-canonical-data.zip, zipped or extracted): see README.txt";
 }
 
 }  // namespace soa::install

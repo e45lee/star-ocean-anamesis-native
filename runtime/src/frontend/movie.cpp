@@ -256,9 +256,21 @@ bool movie_start(const std::string& path, bool is_file, float volume) {
         m->input = host_path(path.c_str());
     } else {
         AssetManager::Found f;
-        std::string dl;
+        AssetManager::Download dl;
         if (asset_manager().find_download(path, dl) && (asset_manager().download_prefer() || !asset_manager().find(path, f))) {
-            m->input = dl;  // --download-dir: builtin_data/<rel> served from the download tree
+            // --download: builtin_data/<rel> served from the download: a folder's file, a stored
+            // entry of the download's zip in place (ffmpeg's subfile protocol), else extracted
+            if (dl.loc.in_place && dl.tree->is_zip()) {
+                m->input = "subfile,,start," + std::to_string(dl.loc.offset) + ",end," + std::to_string(dl.loc.offset + dl.loc.size) + ",,:" + dl.loc.file;
+            } else if (dl.loc.in_place) {
+                m->input = dl.loc.file;
+            } else {
+                std::vector<uint8_t> data;
+                dl.tree->read(dl.rel, data);
+                g_tmp_file = vfs_config().root + "/movie.tmp.mp4";
+                std::ofstream(g_tmp_file, std::ios::binary).write((const char*)data.data(), data.size());
+                m->input = g_tmp_file;
+            }
         } else if (!asset_manager().find(path, f)) {
             LOGE("movie", "asset %s not found", path.c_str());
             return false;

@@ -3,7 +3,9 @@
 // client's own (soaserver/adld.h), the rule ours (docs/server-rules.md#core).
 #include "soaserver/master_source.h"
 
-#include <soa/install.h>
+#include <soa/file_tree.h>
+#include <soa/game_files.h>
+#include <soa/zip.h>
 #include <soa/paths.h>
 
 #include <cstring>
@@ -25,12 +27,8 @@ constexpr const char kSqliteMagic[16] = "SQLite format 3";  // + NUL: 16 bytes
 
 std::mutex g_mu;
 bool g_resolved = false;
-ZipReader g_zip = nullptr;
 
 }  // namespace
-
-void set_zip_reader(ZipReader reader) { g_zip = reader; }
-bool has_zip_reader() { return g_zip != nullptr; }
 
 std::string cache_dir() {
     const ServerConfig& c = config();
@@ -65,22 +63,22 @@ std::string derive(const std::vector<uint8_t>& encrypted, const std::string& tag
     return path;
 }
 
-std::string derive_from_download(const std::string& download_dir, const std::string& dir, std::string* err, bool* reused) {
+std::string derive_from_download(const std::string& download, const std::string& dir, std::string* err, bool* reused) {
     std::vector<uint8_t> enc;
-    if (!cdn::files::read_file(download_dir + "/" + kName, enc)) {
-        if (err) *err = "can't read " + download_dir + "/" + kName;
+    auto tree = FileTree::open(download, err);
+    if (!tree) return "";
+    if (!tree->read(kName, enc)) {
+        if (err) *err = "can't read " + std::string(kName) + " in " + download;
         return "";
     }
     return derive(enc, "download", dir, err, reused);
 }
 
 std::string derive_from_apk(const std::string& apk, const std::string& dir, std::string* err, bool* reused) {
+    ZipArchive z;
     std::vector<uint8_t> enc;
-    if (!g_zip) {
-        if (err) *err = "no zip reader in this program (soa-server: give --download-dir or --master)";
-        return "";
-    }
-    if (!g_zip(apk, kApkEntry, enc)) {
+    const ZipArchive::Entry* e = z.open(apk) ? z.find(kApkEntry) : nullptr;
+    if (!e || !z.extract(*e, enc)) {
         if (err) *err = apk + ": can't read " + kApkEntry;
         return "";
     }
@@ -103,12 +101,12 @@ const std::string& resolve() {
     }
     const std::vector<std::string> dirs = install::install_dirs();
     std::string download = !c.download_dir.empty() ? c.download_dir : find_repo_file("work/download-3.7.0");
-    if (download.empty() || !install::is_download_dir(download)) {
-        if (std::string d = install::find_download_dir(dirs); !d.empty()) download = d;
+    if (download.empty() || !install::is_download(download)) {
+        if (std::string d = install::find_download(dirs); !d.empty()) download = d;
     }
     std::string dir = cache_dir(), err;
     bool reused = false;
-    if (!download.empty() && install::is_download_dir(download)) {
+    if (!download.empty() && install::is_download(download)) {
         std::string p = derive_from_download(download, dir, &err, &reused);
         if (!p.empty()) {
             c.master = p;
@@ -121,8 +119,7 @@ const std::string& resolve() {
     if (!c.apk.empty()) apks.push_back(c.apk);
     else if (std::string a = find_repo_file(std::string("apk/") + install::kApk370Name); !a.empty()) apks.push_back(a);
     else apks = install::apk_candidates(dirs);
-    if (!apks.empty() && !g_zip) LOGW("server", "the APK's built-in master: %s", "this program has no zip reader (give --download-dir or --master)");
-    for (auto& apk : g_zip ? apks : std::vector<std::string>{}) {
+    for (auto& apk : apks) {
         std::string p = derive_from_apk(apk, dir, &err, &reused);
         if (!p.empty()) {
             c.master = p;

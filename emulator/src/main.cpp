@@ -6,7 +6,7 @@
 // client runs on the real date. This file maps the command line onto platform370::Config and
 // brings the runtime up. emulator/README.md, platform370/README.md.
 #include <soa/env.h>
-#include <soa/install.h>
+#include <soa/game_files.h>
 #include <soa/paths.h>
 #include <limits.h>
 #include <signal.h>
@@ -96,8 +96,9 @@ void usage() {
             "                  ~/.local/share/soa-emulator-370/phone, beside the port's ~/.local/share/soa-linux-370;\n"
             "                  Windows %%LOCALAPPDATA%%\\soa\\emulator-370\\phone; never the port's: its cached\n"
             "                  libSOA.so and save don't belong here)\n"
-            "  --download-dir DIR  temporary stand-in for the CDN: serve assets missing from the APK from DIR\n"
-            "                  (e.g. work/download-3.7.0); off by default\n"
+            "  --download PATH temporary stand-in for the CDN: serve assets missing from the APK from the\n"
+            "                  3.7.0 download (a folder, e.g. work/download-3.7.0, or SOA-3.7.0-canonical-data.zip);\n"
+            "                  off by default (soa-server's CDN serves them). --download-dir PATH is the same\n"
             "  --download-prefer  with --download-dir: DIR wins over the APK (as soa / soa-viewer)\n"
             "  --repo DIR      the source checkout (default: found from the executable)\n"
             "  --device-clock \"YYYY-MM-DD HH:MM:SS\"|host  the phone's clock (local time) at start; it runs on from\n"
@@ -161,7 +162,7 @@ int main(int argc, char** argv) {
         if (a == "--lib") lib_path = next();
         else if (a == "--apk") apks.push_back(next());
         else if (a == "--data") data_dir = next();
-        else if (a == "--download-dir") download_dir = next();
+        else if (a == "--download-dir" || a == "--download") download_dir = next();
         else if (a == "--download-prefer") download_prefer = true;
         else if (a == "--repo") repo_arg = next();
         else if (a == "--device-clock") p370.device_clock = next();
@@ -224,8 +225,7 @@ int main(int argc, char** argv) {
         if (apk.empty()) {
             // a release package (README.md "Packaging"): a 3.7.0 APK beside the program or in game/
             std::vector<std::string> notes;
-            apk = soa::install::find_apk_370(soa::install::install_dirs(),
-                                             [](const std::string& a) { return zip_entry_size(a, soa::install::kLibEntry); }, &notes);
+            apk = soa::install::find_apk(soa::install::install_dirs(), &notes);
             for (auto& n : notes) LOGW("emu", "%s", n.c_str());
             if (apk.empty()) fatal("the 3.7.0 APK wasn't found (give --apk); %s", soa::install::missing_hint().c_str());
             LOGI("emu", "the 3.7.0 APK %s (found beside the program)", apk.c_str());
@@ -244,7 +244,7 @@ int main(int argc, char** argv) {
             lib_path = data_dir + "/libSOA-3.7.0.so";
             if (!exists(lib_path)) {
                 LOGI("emu", "extracting %s from %s", soa::install::kLibEntry, apks[0].c_str());
-                if (!extract_zip_entry(apks[0], soa::install::kLibEntry, lib_path))
+                if (!soa::install::extract_entry(apks[0], soa::install::kLibEntry, lib_path))
                     fatal("couldn't extract %s from %s (give --lib)", soa::install::kLibEntry, apks[0].c_str());
             }
         }
@@ -287,7 +287,7 @@ int main(int argc, char** argv) {
 
     auto& am = asset_manager();
     if (!download_dir.empty()) {
-        am.set_download_dir(download_dir, download_prefer);
+        if (!am.set_download_dir(download_dir, download_prefer)) fatal("--download %s: neither a folder nor a zip", download_dir.c_str());
         LOGI("emu", "download dir %s: a temporary stand-in for the CDN (%s the APK)", download_dir.c_str(), download_prefer ? "preferred over" : "fallback for");
     }
     // The 3.7.0 APK is a single APK (no splits, no asset packs); the asset manager indexes the zip.

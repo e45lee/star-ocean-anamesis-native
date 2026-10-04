@@ -57,6 +57,7 @@ target_compile_definitions(soaruntime_iface INTERFACE _GNU_SOURCE GL_GLEXT_PROTO
 target_link_libraries(soaruntime_iface INTERFACE
   soa_env
   soa_zip
+  soa_gamefiles
   dynarmic
   soa::EGL
   soa::GLESv2

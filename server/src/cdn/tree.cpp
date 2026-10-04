@@ -20,6 +20,8 @@
 #include "soaserver/adld.h"
 #include "soaserver/cdn.h"
 #include "soaserver/chash32.h"
+#include <soa/file_tree.h>
+
 #include "soaserver/config.h"
 #include "soaserver/master_source.h"
 #include "soaserver/server.h"
@@ -113,6 +115,7 @@ struct TreeBuilder {
     std::string* err;
     std::shared_ptr<Tree> t;
     const std::string& mirror;
+    std::shared_ptr<const FileTree> src;  // the download (mirror): a folder or the zip
     std::string manifest_dir, scratch;
     int64_t now = 0;
     Value *assets = nullptr, *revision = nullptr, *version_id = nullptr;  // version.bin's entries
@@ -134,6 +137,8 @@ struct TreeBuilder {
     }
 
     std::shared_ptr<Tree> build() {
+        std::string why;
+        if (!(src = t->src_ = FileTree::open(mirror, &why))) return fail("cdn: the download: " + why);
         if (!read_version_bin()) return nullptr;
         scratch = opts.scratch.empty() ? "/tmp/soa-server-cdn" : opts.scratch;
         files::mkdirs(scratch);
@@ -152,7 +157,7 @@ struct TreeBuilder {
     // 0. version.bin of the download: its assets, revision and version id.
     bool read_version_bin() {
         std::vector<uint8_t> raw;
-        if (!read_file(mirror + "/version.bin", raw)) return (bool)fail("cdn: no version.bin in " + mirror);
+        if (!src->read("version.bin", raw)) return (bool)fail("cdn: no version.bin in " + mirror);
         t->version_ = mp_decode(raw);
         assets = map_find(t->version_, "assets");
         revision = map_find(t->version_, "revision");
@@ -203,8 +208,8 @@ struct TreeBuilder {
     bool read_manifests() {
         std::vector<uint8_t> raw;
         for (const char* name : kManifests) {
-            std::string path = mirror + "/" + manifest_dir + "/version_latest_" + name + ".bin";
-            if (!read_file(path, raw)) continue;
+            std::string rel = manifest_dir + "/version_latest_" + name + ".bin", path = mirror + "/" + rel;
+            if (!src->read(rel, raw)) continue;
             Manifest manifest{name, mp_decode(raw)};
             Value* manifest_assets = map_find(manifest.v, "assets");
             Value* id = map_find(manifest.v, "version");
@@ -223,12 +228,29 @@ struct TreeBuilder {
         member.name = name;
         member.enc = enc;
         auto overlay = t->overlay_.find(name);
-        member.file = overlay != t->overlay_.end() ? overlay->second : mirror + "/" + name;
-        uint64_t size = 0;
-        if (!stat_file(member.file, &size)) return false;
+        uint64_t size = 0, base = 0;
+        if (overlay != t->overlay_.end()) {
+            member.file = overlay->second;
+            if (!stat_file(member.file, &size)) return false;
+        } else {
+            // the download's file: a range of a host file (a folder's file, a stored zip entry in
+            // place), else (a deflated zip entry) its bytes in memory
+            FileTree::Loc loc;
+            if (!src->locate(name, &loc)) return false;
+            size = loc.size;
+            if (loc.in_place) {
+                member.file = loc.file;
+                base = loc.offset;
+            } else {
+                auto bytes = std::make_shared<std::vector<uint8_t>>();
+                if (!src->read(name, *bytes)) return false;
+                member.mem = std::move(bytes);
+            }
+        }
         member.skip = enc ? kAdldHeaderSize : 0;
         if (size < member.skip) return false;
         member.len = size - member.skip;
+        member.skip += base;
         return true;
     }
 
@@ -473,10 +495,23 @@ bool Tree::lookup(const std::string& url_path, Response& out, bool stream) const
         return true;
     }
     auto o = overlay_.find(name);
-    std::string file = o != overlay_.end() ? o->second : opts_.mirror + "/" + name;
-    if (!stat_file(file, nullptr)) return false;
+    if (o != overlay_.end()) {
+        if (!stat_file(o->second, nullptr)) return false;
+        out.status = 200;
+        out.file = o->second;
+        return true;
+    }
+    // the download's own file: a folder's file whole, a stored zip entry as its range, a deflated one read
+    FileTree::Loc loc;
+    if (!src_ || !src_->locate(name, &loc)) return false;
     out.status = 200;
-    out.file = file;
+    if (!loc.in_place) return src_->read(name, out.body) || (out.status = 500, false);
+    out.file = loc.file;
+    if (src_->is_zip()) {
+        out.file_range = true;
+        out.file_offset = loc.offset;
+        out.file_len = loc.size;
+    }
     return true;
 }
 

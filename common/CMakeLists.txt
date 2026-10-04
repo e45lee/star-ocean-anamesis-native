@@ -47,6 +47,18 @@ target_include_directories(soa_zip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(soa_zip PRIVATE MINIZIP::minizip-ng PUBLIC ZLIB::ZLIB)
 target_compile_options(soa_zip PRIVATE -Wall -Wno-unused-parameter)
 
+# soa_gamefiles: the game files where a program finds them (README.md "Packaging"): include/soa/file_tree.h
+# (the 3.7.0 download, a folder or the user's zip read in place), include/soa/game_files.h (the
+# zip-aware half of the install-dir lookup of soa/install.h). The server and the runtime link it.
+#   soa_gamefiles_tests  its unit tests (build/common/soa_gamefiles_tests)
+add_library(soa_gamefiles STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/file_tree.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/game_files.cpp)
+target_link_libraries(soa_gamefiles PUBLIC soa_zip soa_env)
+target_link_libraries(soa_gamefiles PRIVATE soa_compat)  # (64-bit stat on Windows)
+target_compile_options(soa_gamefiles PRIVATE -Wall -Wno-unused-parameter)
+
 find_package(Threads REQUIRED)
 add_executable(soa_zip_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/zip_tests.cpp)
 target_link_libraries(soa_zip_tests PRIVATE soa_zip soa_compat ZLIB::ZLIB Threads::Threads)  # (soa_compat: mkdir on Windows)
+
+add_executable(soa_gamefiles_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/gamefiles_tests.cpp)
+target_link_libraries(soa_gamefiles_tests PRIVATE soa_gamefiles soa_compat ZLIB::ZLIB)

@@ -143,3 +143,24 @@ Some scripts also pass their caller's environment on (tests/diff's `proc.py`, `s
 variable in the caller's shell then shows up as its warning line in the program's log, nothing else.
 `port/scripts/restore_session.sh` passes extra arguments after its three to soa (e.g.
 `--campaign-seed mf01_001`, `--live-check FAMILY`).
+
+## How the programs find the game files
+
+Flags first; then the source checkout (`--repo`, else found upwards from the executable, then the
+working directory: `data/basmaster-3.7.0.sqlite3`, `data/gacha_pools.sqlite3`, `apk/`,
+`work/download-3.7.0`, `standin-assets/`); then the **install dirs**, the executable's own folder and
+its `game/` subfolder (`common/include/soa/install.h`, `game_files.h`; a release package, README.md
+"Packaging"):
+
+| What | Flag | In the install dirs |
+|---|---|---|
+| the 3.7.0 APK (soa, soa-emu) | `--apk FILE` | any top-level `*.apk` whose `lib/arm64-v8a/libSOA.so` has 3.7.0's size (`STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk` first) |
+| the 3.7.0 download (soa, soa-server; soa-emu's optional fallback) | `--download PATH` (= `--download-dir`): a folder or a zip | a folder holding `version.bin`, `manifest/`, `sqlite/basmaster.sqlite3` (the dir itself or an immediate subfolder, any name), else `SOA-3.7.0-canonical-data.zip` or another top-level zip holding that tree, read in place |
+| the master DB (soa, soa-server) | `--master FILE` | none: decrypted from the download's `sqlite/basmaster.sqlite3` into `DATA/master/` (soa-server without `--data`: its default data dir `~/.local/share/soa-server-370`, `%LOCALAPPDATA%\soa\server-370`), or the APK's older built-in one as a last resort (`docs/server-rules.md#master-source`) |
+| libSOA.so (soa, soa-emu) | `--lib PATH` | none: extracted from the APK into the data dir once |
+| the gacha pools, the seed save, the stand-ins | `--gacha-pools`, `--seed`, `--standin-assets` | `data/gacha_pools.sqlite3`, `data/saves/seed/Game.xml`, `standin-assets/` at their repo paths |
+
+In a checkout's build dir (`build/port/`, ...) the install dirs hold none of these, so a checkout
+behaves as before. soa-server looks for a download in its install dirs only when it serves (not for
+`--selftest`, `--replay`, `--list-*`). Each program logs what it found and where ("found beside the
+program"), and a missing file stops it with a message that names the file and points to README.txt.

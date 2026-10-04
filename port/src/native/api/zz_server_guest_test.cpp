@@ -123,10 +123,10 @@ NATIVE_TEST("server/standin-assets") {
     t.expect_eq(events::asset_exists("Image/__standin_probe__.aif"), false, "absent without the overlay");
     am.set_standin_dir(dir);
     t.expect_eq(events::asset_exists("Image/__standin_probe__.aif"), true, "present through the overlay");
-    std::string host;
-    t.expect_eq(am.find_download("builtin_data/Image/etc2/__standin_probe__.aif", host) && host == made[0], true, "opened from the overlay");
+    AssetManager::Download host;
+    t.expect_eq(am.find_download("builtin_data/Image/etc2/__standin_probe__.aif", host) && host.loc.file == made[0], true, "opened from the overlay");
     if (!bg.empty()) {
-        bool shadowed = am.find_download("builtin_data/BG/" + bg.front(), host) && host.compare(0, dir.size(), dir) == 0;
+        bool shadowed = am.find_download("builtin_data/BG/" + bg.front(), host) && host.loc.file.compare(0, dir.size(), dir) == 0;
         t.expect_eq(shadowed, false, "an APK asset is not served from the overlay");
     }
     am.set_standin_dir(saved);

@@ -25,7 +25,7 @@
 #include <thread>
 
 #include <soa/env.h>
-#include <soa/install.h>
+#include <soa/game_files.h>
 #include <soa/paths.h>
 
 #include "android/ndk.h"
@@ -83,11 +83,12 @@ void usage() {
             "                  DATA/libSOA-3.7.0.so; else <repo>/work/libSOA-3.7.0.so)\n"
             "  --data DIR      the phone's data dir: game data, saves, and in-process the server's state\n"
             "                  (default ~/.local/share/soa-linux-370; Windows %%LOCALAPPDATA%%\\soa\\port-370)\n"
-            "  --download-dir DIR  the client's asset fallback for builtin_data/ files the APK lacks (the online\n"
-            "                  game's downloaded tree). Required with --server inproc, whose CDN serves it too\n"
-            "                  (default <repo>/work/download-3.7.0, else a download tree beside the program or in\n"
-            "                  its game/ folder); off by default with --server HOST, whose\n"
-            "                  client downloads from soa-server's CDN\n"
+            "  --download PATH the 3.7.0 download (the online game's downloaded tree): a folder, or the zip\n"
+            "                  SOA-3.7.0-canonical-data.zip read in place; the client's asset fallback for\n"
+            "                  builtin_data/ files the APK lacks. Required with --server inproc, whose CDN serves it\n"
+            "                  too (default <repo>/work/download-3.7.0, else a download folder or zip beside the\n"
+            "                  program or in its game/ folder); off by default with --server HOST, whose client\n"
+            "                  downloads from soa-server's CDN. --download-dir PATH is the same\n"
             "  --download-prefer  with --download-dir: DIR wins over the APK (as soa-emu / soa-viewer)\n"
             "  --standin-assets DIR|off  made-up stand-in files (e.g. lost gacha banners) for builtin_data/ assets\n"
             "                  that neither the APK nor --download-dir have; --server inproc defaults it to\n"
@@ -275,7 +276,7 @@ int main(int argc, char** argv) {
         else if (a == "--do") actions.push_back(next());
         else if (a == "--control") control_path = next();
         else if (a == "--gdb") gdb_addr = next();
-        else if (a == "--download-dir") opt.client.download_dir = next();
+        else if (a == "--download-dir" || a == "--download") opt.client.download_dir = next();
         else if (a == "--download-prefer") opt.client.download_prefer = true;
         else if (a == "--fake-server") opt.client.fake_server_dir = next();
         else if (a == "--fake-server-schema") opt.client.fake_server_schema = next();
@@ -418,7 +419,7 @@ int main(int argc, char** argv) {
         if (apk_path.empty()) {
             // a release package (README.md "Packaging"): a 3.7.0 APK beside the program or in game/
             std::vector<std::string> notes;
-            apk_path = install::find_apk_370(install::install_dirs(), [](const std::string& a) { return zip_entry_size(a, install::kLibEntry); }, &notes);
+            apk_path = install::find_apk(install::install_dirs(), &notes);
             for (auto& n : notes) LOGW("main", "%s", n.c_str());
             if (apk_path.empty()) {
                 usage();
@@ -434,7 +435,7 @@ int main(int argc, char** argv) {
         lib_path = data_dir + "/libSOA-3.7.0.so";
         if (!file_exists(lib_path)) {
             LOGI("main", "extracting libSOA.so from %s", apk_path.c_str());
-            if (!extract_zip_entry(apk_path, install::kLibEntry, lib_path)) {
+            if (!install::extract_entry(apk_path, install::kLibEntry, lib_path)) {
                 lib_path = find_repo_file("work/libSOA-3.7.0.so");
                 if (lib_path.empty()) fatal("couldn't extract lib/arm64-v8a/libSOA.so from %s (and work/libSOA-3.7.0.so wasn't found)", apk_path.c_str());
             }
@@ -455,11 +456,13 @@ int main(int argc, char** argv) {
         if (download_dir.empty()) download_dir = find_repo_file("work/download-3.7.0");
         if (download_dir.empty()) {
             // a release package: a download tree beside the program or in game/ (soa/install.h)
-            download_dir = install::find_download_dir(install::install_dirs());
+            std::vector<std::string> notes;
+            download_dir = install::find_download(install::install_dirs(), &notes);
+            for (auto& n : notes) LOGW("main", "%s", n.c_str());
             if (!download_dir.empty()) LOGI("main", "the 3.7.0 download %s (found beside the program)", download_dir.c_str());
         }
         if (download_dir.empty() || !file_exists(download_dir))
-            fatal("--server inproc needs the 3.7.0 download tree: give --download-dir DIR (default <repo>/work/download-3.7.0, %s); %s",
+            fatal("--server inproc needs the 3.7.0 download: give --download PATH (a folder or SOA-3.7.0-canonical-data.zip; default <repo>/work/download-3.7.0, %s); %s",
                   download_dir.empty() ? "not found" : "missing", install::missing_hint().c_str());
         if (cl.standin_dir.empty() && !cl.standin_off) cl.standin_dir = find_repo_file("standin-assets");
         if (srv.db.empty()) srv.db = data_dir + "/server.sqlite3";
@@ -473,7 +476,6 @@ int main(int argc, char** argv) {
     // The server library's configuration (top-level server/) from the final run options.
     soa::server_port::config_from_options(data_dir);
     server::config().apk = apk_path;
-    server::master_source::set_zip_reader(read_zip_entry);  // the APK's built-in master (the last resort)
     if (srv.enabled) {
         // The in-process server's master (the CDN serves it, the campaign reads it): --master, the
         // repo's, else decrypted from the download (or the APK) into DATA/master/ (soaserver/master_source.h).
@@ -538,7 +540,7 @@ int main(int argc, char** argv) {
 
     auto& am = asset_manager();
     if (!download_dir.empty()) {
-        am.set_download_dir(download_dir, cl.download_prefer);
+        if (!am.set_download_dir(download_dir, cl.download_prefer)) fatal("--download %s: neither a folder nor a zip", download_dir.c_str());
         LOGI("main", "download dir %s (%s the APK)", download_dir.c_str(), am.download_prefer() ? "preferred over" : "fallback for");
     }
     if (!cl.standin_off && !cl.standin_dir.empty()) {

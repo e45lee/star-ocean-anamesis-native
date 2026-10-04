@@ -40,6 +40,8 @@ void register_sphere211();     // api/sphere211/sphere211.cpp
 void register_subscription();  // api/shop/subscription.cpp
 void register_title();         // api/player/titles.cpp
 void register_worldboss();     // api/events/world_boss.cpp
+void register_storage();       // api/storage/storage.cpp: the equipment storage (and the overflow box's below)
+void register_one_time_storage();  // api/storage/one_time.cpp: the overflow box (一時保管庫); called by register_storage
 }  // namespace soa::server
 namespace soa::server::events {
 void register_event();  // api/events/event_missions.cpp: event missions, campaigns (master_campaign)

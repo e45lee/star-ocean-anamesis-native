@@ -810,6 +810,39 @@ NATIVE_TEST("wire/inproc-parity") {
         }
     }
     {
+        // BulkWithdrawItemFromOneTimeStorage(CSTLVector<u32> const& ids, CSTLVector<u32> const&
+        // counts): two u32 vectors, the second mangled as a substitution ("S4_")
+        std::vector<u32> ids = {2201000101u, 2201000202u}, counts = {3, 1};
+        Arg pi, pc;
+        pi.code = pc.code = 'P';
+        pi.mem.assign((const u8*)ids.data(), (const u8*)(ids.data() + ids.size()));
+        pc.mem.assign((const u8*)counts.data(), (const u8*)(counts.data() + counts.size()));
+        u64 vi[3] = {(u64)ids.data(), (u64)(ids.data() + ids.size()), (u64)(ids.data() + ids.size())};
+        u64 vc[3] = {(u64)counts.data(), (u64)(counts.data() + counts.size()), (u64)(counts.data() + counts.size())};
+        server::net::Decoded d;
+        if (wire_decode(t, "BulkWithdrawItemFromOneTimeStorage", {pi, u('I', ids.size()), pc, u('I', counts.size())}, &d)) {
+            u64 x[8] = {0x5150, (u64)vi, (u64)vc};
+            compare(t, "BulkWithdrawItemFromOneTimeStorage",
+                    server_port::inproc_request("_ZN13FakeApiCaller34BulkWithdrawItemFromOneTimeStorageERKN9Framework10CSTLVectorIjEES4_", 0x59f02ddd, x), d);
+        }
+        // ClearNewOneTimeStorageItem(CSTLVector<u32> const& ids)
+        server::net::Decoded d2;
+        if (wire_decode(t, "ClearNewOneTimeStorageItem", {pi, u('I', ids.size())}, &d2)) {
+            u64 x[8] = {0x5150, (u64)vi};
+            compare(t, "ClearNewOneTimeStorageItem",
+                    server_port::inproc_request("_ZN13FakeApiCaller26ClearNewOneTimeStorageItemERKN9Framework10CSTLVectorIjEE", 0xd4f178a3, x), d2);
+        }
+        // DepositItem(CSTLVector<u64> const& uids)
+        Arg p;
+        p.code = 'P';
+        p.mem = item_bytes;
+        server::net::Decoded d3;
+        if (wire_decode(t, "DepositItem", {p, u('I', items.size())}, &d3)) {
+            u64 x[8] = {0x5150, (u64)vec};
+            compare(t, "DepositItem", server_port::inproc_request("_ZN13FakeApiCaller11DepositItemERKN9Framework10CSTLVectorImEE", 0xc4cd3b1a, x), d3);
+        }
+    }
+    {
         // SaleGacha(u32 gacha, s8 const* token): the token is a fixed char[32] on the wire
         const char* token = "0123456789abcdef0123456789abcdef";
         Arg s;

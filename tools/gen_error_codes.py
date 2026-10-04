@@ -24,9 +24,12 @@ OUT = os.path.join(REPO, "server/src/core/errors.h")
 NAMES = {
     10002: ("kPlayerNotFound", "(b) the client's own dialog for SearchPlayer (api/player/home_footer.cpp)"),
     10004: ("kStaminaShort", "(a) the text; MissionStart, Sphere211MissionStart"),
+    10202: ("kEquipSlotsShort", "(a) the text; withdraws past item_stock (api/storage)"),
+    10203: ("kEquippedItem", "(a) the text; DepositItem (api/storage)"),
     10204: ("kLockedItem", "(a) the text"),
     10206: ("kItemCountError", "(a) the text: items, tickets, vanish items short (d: the code)"),
     10208: ("kItemUnusable", "(d) the server's generic refusal"),
+    10211: ("kStorageShort", "(a) the text; DepositItem (api/storage)"),
     10403: ("kInvalidOperation", "(a) the text; (d) the gacha refusals"),
     10710: ("kFolShort", "(d) which of the FOL codes (10706 / 10710 / 11001): ext.h \"refuse\""),
     11001: ("kFolShortGrowth", "(d) the FOL code of the item compose / grade-up refusals"),

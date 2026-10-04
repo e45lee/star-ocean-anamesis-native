@@ -137,6 +137,13 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
 - **Switch:** the in-process server (`--server inproc`, the default).
 
+### The equipment storage and overflow box requests on the FakeApiCaller route
+- **Symbols:** `FakeApiCaller::GetStorageInfo()`, `DepositItem(vector<u64>)`, `WithdrawItemFromStorage(vector<u64>)`, `SellItemsFromStorage(vector<u64>)`, `LockStorageItem(vector<u64>)`, `UnlockStorageItem(vector<u64>)`, `GetOneTimeStorageInfo()`, `WithdrawItemFromOneTimeStorage(u32, u32)`, `BulkWithdrawItemFromOneTimeStorage(vector<u32>, vector<u32>)`, `ClearNewOneTimeStorageItem(vector<u32>)`: status-only methods of the fake caller (Status 0, nothing queued).
+- **Guest behaviour:** the item menu's 装備倉庫 and 一時保管庫 screens (`CItemStorage`) took each call as done with no reply: both stayed empty and nothing moved on the server. `NetworkApiCaller` sends the requests.
+- **Change (port-specific, `port/src/native/api/fakeapi.cpp` `kServedStatusOnly`):** with the in-process server, on the FakeApiCaller, the arguments go to the local server (`server/src/api/storage/`) and the request is queued with NetworkApiCaller's FunctionID, answered by its `CApiNotify::On<Method>Res`, as the gear requests above. `server_port::capture` now reads a vector argument mangled as a substitution (`S4_`: Bulk's second vector). Otherwise the guest's Status.
+- **Why not server-side:** this *is* the route to the server; the fake caller never implemented the requests.
+- **Switch:** the in-process server (`--server inproc`, the default).
+
 ### The Sphere 211 requests on the FakeApiCaller route (agent `sphere211`)
 - **Symbols:** the base-class stubs `IApiCaller::GetSphere211Info()`, `GetSphere211RankingInfo(bool)`, `Sphere211AutoMemberSelect(u32, u32, u32)`, `Sphere211EquipAuto(u32, u32, vector<u64>)`, `Sphere211MissionContinue(u32, u32, bool)`, `Sphere211MissionEnd(u32, u32)`, `Sphere211MissionFailed(u32, u32)`, `Sphere211MissionStart(u32, u32, u64, u64, u64, u64, u32)`, which `FakeApiCaller` inherits, and `FakeApiCaller`'s own status-only overrides `ReturnSphere211()`, `Sphere211StaminaHeal()`, `Sphere211UseRerollItem()`, `Sphere211FloorClear(u32)`, `Sphere211SelectedFloor(u32)`: the 13 Sphere211 APIs.
 - **Guest behaviour:** each returns a Status and sends nothing, so the Sphere 211 board (`CPhase_Mission` with mission type 5, `CSphere*`) never gets its floor, cells, stamina or results. `NetworkApiCaller` sends them.

@@ -474,7 +474,8 @@ std::vector<u8> equip_item(Ctx& ctx, const Request& req) {
     const std::optional<ItemUid> item = args.item_uid;  // none: take it off
     if (!owns_character(ctx, uid)) return refuse(ctx, req.method.c_str(), "unknown character", ErrorCode::kItemUnusable);
     u32 want_type = weapon ? kWeaponItemType : kAccessoryItemType;  // (a) master_item.type 1 weapons, 3 accessories
-    if (item && ctx.st.one("select item_type from items where uid = ?", {*item}) != want_type)
+    // (b) an item in the equipment storage can't be equipped (api/items/items.h owns_item)
+    if (item && ctx.st.one("select item_type from items where uid = ? and stored_at is null", {*item}) != want_type)
         return refuse(ctx, req.method.c_str(), "not an owned item of that kind", ErrorCode::kItemUnusable);
     const char* column = weapon ? "weapon_uid" : "accessory_uid";
     std::optional<CharacterUid> previous_owner;

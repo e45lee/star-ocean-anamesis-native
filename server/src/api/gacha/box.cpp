@@ -205,7 +205,7 @@ BoxDraws draw_slots(ext::Ctx& ctx, u32 gacha, std::vector<BoxSlot>& slots, std::
         BoxSlot& slot = slots[i];
         ctx.st.q("insert into box_slots (gacha_id, slot_id, drawn) values (?,?,1) on conflict(gacha_id, slot_id) do update set drawn = drawn + 1",
                  {gacha, slot.id});
-        grant(ctx, Drop{slot.content_type, slot.content_id, slot.num, 0}, draws.items, draws.stocks, draws.characters);
+        grant(ctx, Drop{slot.content_type, slot.content_id, slot.num, 0, storage::EquipSource::kGacha}, draws.items, draws.stocks, draws.characters);
         // (b) CBoxGachaResultInfo {id, master_box_gacha_id, content_id, content_type, num,
         // duplication} (its Initialize; the result list shows "×num"); id = the draw's index (d)
         Value result = Value::object();

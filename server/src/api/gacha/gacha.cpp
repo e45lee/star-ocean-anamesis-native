@@ -222,28 +222,37 @@ void record_history(ext::Ctx& ctx, const GachaDraw& draw, const Drawn& drawn, in
          k == 0 ? draw.use_free : 0u, k == 0 ? draw.use_pay : 0u});
 }
 
-// 4a. A drawn weapon: a new unique item (AddItem) and the history row.
+// 4a. A drawn weapon: a new unique item (AddItem) and the history row; with no room in the
+// inventory it goes to the overflow box (storage::to_one_time_storage; AddOneTimeStorageInfo):
+// (d) then the GachaItems entry has no item (player_item_id 0) and the history row no uid.
 void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, int rank, u32 k) {
-    const ItemUid item_uid = next_item_uid(ctx);
-    u32 item_type = (u32)ctx.m.one("select type from master_item where id = ?", {unit.content_id});
-    ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {item_uid, unit.content_id, item_type, clock_now()});
-    Value item = Value::object();  // CItemInfo
-    item["id"] = item_uid.v;
-    item["player_id"] = player_id(ctx).v;
-    item["master_item_id"] = unit.content_id;
-    item["item_type"] = item_type;
-    item["boosted_point"] = 0u;
-    item["limit_break_count"] = 0u;
-    draw.new_items.push(item);
+    std::optional<ItemUid> drawn;
+    if (storage::to_one_time_storage(ctx, storage::EquipSource::kGacha)) {
+        storage::add_one_time(ctx, MasterItemId(unit.content_id), 1);
+    } else {
+        const ItemUid item_uid = next_item_uid(ctx);
+        drawn = item_uid;
+        u32 item_type = (u32)ctx.m.one("select type from master_item where id = ?", {unit.content_id});
+        ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)",
+                 {item_uid, unit.content_id, item_type, clock_now()});
+        Value item = Value::object();  // CItemInfo
+        item["id"] = item_uid.v;
+        item["player_id"] = player_id(ctx).v;
+        item["master_item_id"] = unit.content_id;
+        item["item_type"] = item_type;
+        item["boosted_point"] = 0u;
+        item["limit_break_count"] = 0u;
+        draw.new_items.push(item);
+    }
     Value result = Value::object();  // the GachaItems entry
     result["master_item_id"] = unit.content_id;
-    result["player_item_id"] = item_uid.v;
+    result["player_item_id"] = drawn ? drawn->v : (u64)0;
     result["master_role_id"] = 0u;
     result["player_character_id"] = 0u;
     result["duplication"] = 0u;
     result["is_mutation"] = false;
     draw.items.push(result);
-    record_history(ctx, draw, Drawn{std::nullopt, std::nullopt, item_uid}, rank, false, k);
+    record_history(ctx, draw, Drawn{std::nullopt, std::nullopt, drawn}, rank, false, k);
 }
 
 // (b) LimitBreakCharacter: map uid -> CLimitBreakInfo; the result screen assigns the steps to the

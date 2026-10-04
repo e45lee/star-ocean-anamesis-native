@@ -19,4 +19,5 @@ One folder per API group of `docs/api.md`, so the catalogue, the code and the ru
 | `shop/` | item shop, exchange, subscriptions (passes) |
 | `social/` | follow lists and rental helpers; the follow menu's lists (Blacklist, GetRecentlyPlayedList, SearchPlayer) |
 | `sphere211/` | Sphere 211 |
+| `storage/` | the equipment storage (装備倉庫) and the overflow box (一時保管庫); `to_one_time_storage`, which the grants and the gacha ask |
 | `tower/` | the tower (`--restore-tower`) |

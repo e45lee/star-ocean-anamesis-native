@@ -1845,6 +1845,26 @@ const char* const kHome3D[] = {
     "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
 };
 
+// ---- step 13: the equipment storage and the overflow box (装備倉庫, 一時保管庫) ------------------
+//
+// items.stored_at: NULL for an item in the inventory (装備所持), else the time it was deposited in
+// the equipment storage (DepositItem; api/storage/storage.cpp). A stored item keeps its row, so
+// its gear, lock and the history's references stay as they are; it is sent in StorageItem instead
+// of Item, with stored_at as CStorageItemInfo.update_at_time.
+// one_time_storage: the overflow box, one row per master item (b: the client matches its entries by
+// master_item_id, CApiNotify::DeleteOneTimeStorage @014d4e44): the count held, the "new" badge, the
+// time it last changed (update_at_time; unique per row, api/storage/one_time.cpp). No foreign key:
+// the master item is a master reference (state::master_refs).
+const char* const kStorage[] = {
+    "alter table items add column stored_at integer",
+    R"(create table one_time_storage (
+  master_item_id integer primary key,
+  num integer not null check (num > 0),
+  is_new integer not null default 1 check (is_new in (0, 1)),
+  updated_at integer not null
+) strict)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1896,6 +1916,7 @@ const std::vector<Step>& steps() {
          import_campaign,
          retire_campaign_file},
         {12, "the player's 2D / 3D home: player.is_3d_home (Home3DAnd2DSwitching)", {std::begin(kHome3D), std::end(kHome3D)}, nullptr},
+        {13, "the equipment storage and the overflow box: items.stored_at, one_time_storage", {std::begin(kStorage), std::end(kStorage)}, nullptr},
     };
     return s;
 }

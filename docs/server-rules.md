@@ -93,7 +93,7 @@ Code: `server/src/api/player/` (the player state and its load, parties, assist, 
   - `data.PartySet` (map keyed by party id as a string; `PartySetCharacter` entries);
   - `data.StockItem`, `data.Item`.
 - 3.7.0's title sends `NoLoginStart` and then `Login`, which loads the player again; both carry the whole state.
-- `item_stock` and `gear_stock` are `master_global.item_stock_max` / `gear_stock_max` (500). **(a)** `storage_stock` is 500. **(d)**
+- `item_stock` and `gear_stock` are `master_global.item_stock_max` / `gear_stock_max` (500). **(a)** `storage_stock` is 100, plus `master_global.subscription_storage_stock` (400) while the Galaxy Pass runs ([Storage](#storage)). **(b)** + **(a)**
 - `follow_max` is `master_global.follow_default`. **(a)**
 - `support_pc_id` is the character the player lends (UpdateSupport's, "Rental helpers"); unset or no longer owned, the highest-level character. **(b)** for the key; **(d)** for the fallback.
 - `is_3d_home` is the player's 2D / 3D home choice ([Home 2D / 3D](#home-2d-3d)): `player.is_3d_home`, 3D (true) for a player who never chose. **(d)** for the default. `updated_at` is the answer's time. **(d)**
@@ -223,7 +223,7 @@ From the register before R20 (with the area and how to check):
 | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
-| Player | `is_3d_home` true until the player switches; `storage_stock` 500; `updated_at` the answer's time; Wallet `total_coin` = free + paid, `android_coin` = paid | (d) | "Player load" |
+| Player | `is_3d_home` true until the player switches; `updated_at` the answer's time; Wallet `total_coin` = free + paid, `android_coin` = paid | (d) | "Player load"; `storage_stock` (500 before schema version 13, (d)) is (b)+(a) since: [Storage](#storage) |
 | Home | the default titles are owned; a player who never chose wears title_other_0001; SetTitle of an unowned id is refused (10208) | (d) | 12 "Titles"; the lists and keys are (b) |
 | Home | the notice board shows a local page: clock, open events, login bonus, present count | (d) | 12 "Notice board page"; the `WebView` key is (b) |
 
@@ -1190,6 +1190,44 @@ Code: `server/src/api/items/` (compose, grade up, sell, lock, heal items; gear).
 | Answer: `GearGenerationInfoResult` {`is_barney_chance`, `use_master_item_id` = the carrot, `barney_chance_type`, `AddGearInfoList`, `CDeleteItemList` (the weapon uids), `UpdateGearList` (the material gears)}, plus top-level `AddGearInfoList`, `UpdateGearList`, `Item`, `StockItem`. | fields (b); `CDeleteItemList` shape (d) |
 | Refusal codes: 10208 bad arguments / slot / kind, 10204 locked or equipped, 10206 no grease / carrot, 10710 FOL short, 11006 stock at maximum. | (d) (the texts are (a)) |
 
+<a id="storage"></a>
+## Storage: the equipment storage and the overflow box
+Code: `server/src/api/storage/` (`storage.cpp`: the equipment storage 装備倉庫; `one_time.cpp`: the overflow box 一時保管庫). The item menu's 装備倉庫にしまう / 取り出す / 売却 and 一時保管庫から取り出す screens (`CItemStorage`). State (schema version 13): `items.stored_at` (NULL: in the inventory; else the deposit time) and `one_time_storage` (one row per master item: `num`, `is_new`, `updated_at`).
+
+<a id="storage-client"></a>
+### What the client keeps (b)
+- `StorageItem` / `OneTimeStorageItem`: arrays of `CStorageItemInfo` (CItemInfo's keys plus `update_at_time`, a u64 number: `CStorageItemInfo::Initialize` @014ff30c, `CParameterParser::GetValue<unsigned long>`). `UpdateStorageItem` / `UpdateOneTimeStorageItem`: maps {key: CStorageItemInfo} (`IInfoBaseMap<u64, CStorageItemInfo>`: an array isn't read, `DeserializeArray` @0166be20 returns 0; the key a number or a numeric string). `UpdateStorageLockList`, `OneTimeStorageItemClearNewList`, `AddOneTimeStorageInfo`: arrays of u32.
+- Deposit / withdraw / sell answers are applied by `CApiNotify::AddStorage` (@014d437c: the entries join the storage list and leave the item list, by id) and `DeleteStorage(bool)` (@014d4864: back to the item list, or (sale) just out of the storage). The overflow box's withdraw answers by `DeleteOneTimeStorage` (@014d4e44: the entry with the same **master_item_id** is removed when its `num` is 0, else gets the new `num`, `is_new`, `update_at_time`) and `AddItem` (@014c207c).
+- So the overflow box holds **one entry per master item with a count**; its ids (WithdrawItemFromOneTimeStorage's `id`, the Bulk ids, ClearNew's ids) are master item ids (`CItemStorage::Progress` @01f43efc sends the entries' master ids).
+- `AddItem` is a map {uid: CItemInfo} (`CAddItemList`, `IInfoBaseMap<u64, CItemInfo>`: its `DeserializeArray` @0163d574 returns 0). The overflow box's withdraw sends it so; the server's other answers send an array, which the client doesn't read (their items reach the client with the next full player load; not changed here).
+
+<a id="storage-rules"></a>
+### Rules
+| Rule | Label |
+|---|---|
+| `Player.storage_stock` = 100 (`CItemStorage::GetStartStorageItemCount` @01f4623c; `GetMaxStorageItemCount` @01f45f50 reads `storage_stock`, CParameterManager+0x948; the screen shows the rest as `+N`, `GetExtendStorageItemCount`) + `master_global.subscription_storage_stock` (400) while a pass with `master_subscription` type 2 runs (the Galaxy Pass: `subscmsg_gpass_warehouse_title` 倉庫装備所持数＋４００個). | (b) + (a) |
+| **DepositItem(uids):** items of the inventory only; an equipped one (a character's or a party set's) is refused with 10203 (b: the deposit list leaves them out, `CItemStorage::GetAllItemList` @01f409a4 skips `is_equip` and the party sets' items; a: the text 装備中のアイテムが含まれています). A locked item may be deposited and keeps its lock (b: `AddStorage` copies the whole CItemInfo). More than `storage_stock` stored is refused with 10211 (a: 倉庫枠が不足しています; b: the client's own check, `uimsg_equipstorage_itemmax_error`). | (b) + (a) |
+| **WithdrawItemFromStorage(uids):** more than `item_stock` in the inventory is refused with 10202 (a: 装備アイテム所持枠が不足しています; b: `uimsg_equipstorage_out_itemmax_error`). A storage over its slots (a pass that ended) still lets items out and be sold (a: `subscmsg_gpass_warehouse_manual`). | (a) + (b) |
+| **SellItemsFromStorage(uids):** each pays what `SellItem` pays (b: `tItemData::SellingPrice`, one function: `stored_item_sale_fol`); a locked one is refused with 10204, as in the inventory. Answers `UpdateStorageItem` and `SellResult` as SellItem's. | (b); the lock (d) |
+| **Lock / UnlockStorageItem(uids):** the item's own lock (`items.locked`); answered as `UpdateStorageLockList` (the uids as u32: `OnLockStorageItemRes` @014d58d0 compares them with the u64 id; the local uids fit in 32 bits). Uids not in the storage change nothing. | (b); unknown uids (d) |
+| A stored item isn't in the inventory: not in `Item`, not equippable, composable or sellable through the inventory's APIs (a: `cp0003_tutorial_151` 装備倉庫の中に入っている武器やアクセサリーの装備や強化はできない). | (a) |
+| **Filling the overflow box:** a weapon or accessory that a grant (presents, drops, the shops, the exchange: the core's `grant`) or a gacha draw (`draw_weapon`, box gacha) would add to a **full** inventory (equipment count + 1 > `item_stock`: `CItemNumWarning::IsWarningDraw` @01b42884) goes to the box instead (a: `cp0003_tutorial_160`, `uimsg_gacha_wapon_itemmax`, `uimsg_itemexchange_wapon_itemmax`, `uimsg_pshop_wapon_itemmax`: equipment beyond the slots goes to the box). The client lets a weapon gacha run on a full inventory while the box is open (`CGacha::IsNumWarning` @01ab6e54) and lets a present / a mission start at exactly full (`CPresentbox::IsNumWarning` @01e0cd14 warns only when over). The answer lists each unit's master id in `AddOneTimeStorageInfo` (top level, and in `PresentGetResult.result`); a gacha's `GachaItems` entry for it has `player_item_id` 0. | (b) + (a); the answer's shape (d) |
+| The player's その他設定 options (`master_config` `is_one_time_storage`: gacha draws, `is_one_time_storage_except_gacha`: the rest; `CUIUtility::IsOneTimeStorageEnable` @01eea5f8 / `IsOneTimeStorageExceptGachaEnable` @01eea8e0) send every piece of equipment to the box while on: the settings' (GetConfig / UpdateConfig) to store; `storage::to_one_time_storage` is where they plug in. Until then only the full case. | (b); not done |
+| **GetOneTimeStorageInfo:** one entry per row: `id` = the master item id (the entries have no uid), level 1, unboosted, unlocked, `num`, `is_new`, `update_at_time` = the row's last change in seconds, **unique per row** (one second after the latest when two would be equal: `CItemStorage::ItemInfo`'s constructor @01f46244 puts it where the other lists keep the uid and `CUISort::SortFilter_Weapon<CItemStorage::ItemInfo>` @01f438ac finds entries by it). | (b); the values (d) |
+| **Withdraw / BulkWithdrawItemFromOneTimeStorage(ids, counts):** a count of 0 or more than held, or an id not held: 10206; an id twice counts together; more than `item_stock` in the inventory: 10202 (b: `uimsg_equipstorage_out_itemmax_error`). Each unit becomes a new owned item (level 1; content type 1, drop type 0). Answers `UpdateOneTimeStorageItem` {master id: the entry with the count left, 0 when gone} and `AddItem` {uid: CItemInfo}. | (b); codes and the new items' values (d) |
+| **ClearNewOneTimeStorageItem(ids):** clears `is_new` of the entries held; answers `OneTimeStorageItemClearNewList` with them. | (b) |
+
+Tests: `storage/deposit-withdraw`, `storage/sell-lock`, `storage/stock-caps`, `storage/one-time` (`server/src/api/storage/storage_tests.cpp`), `server/schema-migrate-v13`; the `storage` replay corpus (50 weapon draws fill the inventory, a draw into the box, every API with its refusals); session `storage` (`port/scripts/storage_session.sh`, in-process and `--target port-server`: deposit, withdraw, sell, a present's weapon into the box on a full inventory, the box listed and its badge cleared, then after a re-login the storage and the box still hold their items and the box's weapon is taken out).
+
+<a id="storage-register"></a>
+### Player-visible (c) and (d) rules (storage)
+
+| Area | Rule | Label | Why it's needed / how to check |
+|---|---|---|---|
+| Storage | a locked stored item can't be sold (10204) | (d) | as in the inventory; the client's sale list wasn't read |
+| Overflow box | a present / drop / shop / exchange / gacha weapon on a full inventory goes to the box; the gacha's result entry has no item id (`player_item_id` 0); the present receipt dialog doesn't mention the box | (d) | the answer's shape; the client's messages for the box (`uimsg_gacha_wapon_itemmax` ...) aren't shown yet: which key they read wasn't found |
+| Overflow box | withdrawn items are new level-1 items; refusals 10206 (count) / 10202 (slots) | (d) | the box keeps no item's state |
+
 <a id="favor"></a>
 ## Favor
 Code: `server/src/api/favor/` (the favorability rules; UpdateFavorByTap, UseFavorItem).
@@ -1835,7 +1873,7 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [player](#player-register) | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | [player](#player-register) | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | [player](#player-register) | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
-| [player](#player-register) | Player | `is_3d_home` true until the player switches; `storage_stock` 500; `updated_at` the answer's time; Wallet `total_coin` = free + paid, `android_coin` = paid | (d) | "Player load" |
+| [player](#player-register) | Player | `is_3d_home` true until the player switches; `updated_at` the answer's time; Wallet `total_coin` = free + paid, `android_coin` = paid | (d) | "Player load"; `storage_stock` (500 before schema version 13, (d)) is (b)+(a) since: [Storage](#storage) |
 | [player](#player-register) | Home | the default titles are owned; a player who never chose wears title_other_0001; SetTitle of an unowned id is refused (10208) | (d) | 12 "Titles"; the lists and keys are (b) |
 | [player](#player-register) | Home | the notice board shows a local page: clock, open events, login bonus, present count | (d) | 12 "Notice board page"; the `WebView` key is (b) |
 | [entry](#entry-register) |  | New player: 300,000 free coins (`--start-coins`), level-1 starters, the name unchecked | (d) |  |
@@ -1893,6 +1931,9 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [growth](#growth-register) | Growth | big-success chance 11.5 %, ×1.5 | (d) | key names only |
 | [growth](#growth-register) | Growth | seed FOL per seed used | (d) | amounts are (a)/(b) |
 | [growth](#growth-register) | Growth | limit break leaves the level cap | (d) |  |
+| [storage](#storage-register) | Storage | a locked stored item can't be sold (10204) | (d) | as in the inventory; the client's sale list wasn't read |
+| [storage](#storage-register) | Overflow box | a present / drop / shop / exchange / gacha weapon on a full inventory goes to the box; the gacha's result entry has no item id (`player_item_id` 0); the present receipt dialog doesn't mention the box | (d) | the answer's shape; the client's messages for the box (`uimsg_gacha_wapon_itemmax` ...) aren't shown yet: which key they read wasn't found |
+| [storage](#storage-register) | Overflow box | withdrawn items are new level-1 items; refusals 10206 (count) / 10202 (slots) | (d) | the box keeps no item's state |
 | [favor](#favor-register) |  | Favor: seed 0 points; points stop at the max level's threshold; the tap day starts at 04:00 local; the load's tap count is the home character's; favor item `target_type` reading | (d) (agent restore-favor, section 8) |  |
 | [daily](#daily-register) | Login | `LoginBonus` sent in the first home response of the day, `is_received_now` only then | (d) | the popup condition is (b) |
 | [daily](#daily-register) | Login | rewards go to the present box; day index counts login days | (c) |  |

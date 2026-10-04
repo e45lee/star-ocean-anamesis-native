@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables and version 12's `player.is_3d_home` added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home` and version 13's `items.stored_at` / `one_time_storage` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1621,6 +1621,11 @@ Lockstep changes:
   - **Step 12** (`state/schema.cpp` `kHome3D`; `kSchemaVersion` 12): `alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))`: an existing player keeps the 3D home it was always sent; a boolean by 3.1's convention. No rebuild (an added column with a default and a check on a STRICT table), no data mapping.
   - **Code:** `api/player/home.cpp` `home3d_and_2d_switching` stores the mode; `player_info` sends the column.
   - **Tests:** `server/schema-migrate-v12` ((1) v0 → v12: every other table's rows as the same file at 11, the player 3D, `.bak-v0`; (2) a v11 file → 12 without the master: 3D, the check refuses 2, `.bak-v11` without the column), `server/schema-fresh-equals-migrated` (unchanged: the same 53 tables), `player/home3d-switching`; the `profile` replay corpus gained Home3DAnd2DSwitching 0 / 1 with a GetPlayer after each.
+
+**v13: the equipment storage and the overflow box** (task U step 3.1, 2026-10-04, branch `port/server-u-storage`; not a plan step: a feature that needed state). `docs/server-rules.md#storage`.
+  - **Step 13** (`state/schema.cpp` `kStorage`; `kSchemaVersion` 13): `alter table items add column stored_at integer` (NULL: the item is in the inventory; else the time it was deposited in the equipment storage; an existing item stays in the inventory) and `create table one_time_storage (master_item_id integer primary key, num integer not null check (num > 0), is_new integer not null default 1 check (is_new in (0, 1)), updated_at integer not null) strict` (the overflow box, one row per master item; `master_item_id` a master reference, in `state::master_refs` and RELS). No rebuild, no data mapping. A stored item keeps its row so `gear_items`, `roster` / `party_member` and `gacha_history` keep their references (deposit refuses an equipped item).
+  - **Code:** `api/storage/storage.cpp`, `one_time.cpp`; `item_info_list` sends the inventory (`stored_at is null`) as `Item`; `owns_item` / the inventory APIs ignore stored items.
+  - **Tests:** `server/schema-migrate-v13` (v0 → 13 and a planted v12 → 13 without the master, `.bak-v12`, the box's checks), `server/schema-fresh-equals-migrated` (54 tables), `storage/*`; the `storage` replay corpus.
 ---
 
 ## 5. Order and gates

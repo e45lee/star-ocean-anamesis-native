@@ -31,6 +31,10 @@ struct RequestContext {
     // The titles this request granted (api/player/titles.cpp: a Grant adds them, its OnResponse hook
     // reports them as AddTitleList).
     std::vector<TitleId> titles_added;
+    // The equipment this request sent to the overflow box (一時保管庫), one master item id per unit
+    // (api/storage/one_time.cpp: add_one_time adds them, its OnResponse hook reports them as
+    // AddOneTimeStorageInfo).
+    std::vector<MasterItemId> one_time_added;
 
     // The request's battle log, or an empty one (every value its default).
     const BattleLog& log() const {

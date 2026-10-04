@@ -10,9 +10,12 @@ namespace soa::server {
 enum class ErrorCode : u32 {
     kPlayerNotFound = 10002,  // プレイヤーデータが見つかりません。 (b) the client's own dialog for SearchPlayer (api/player/home_footer.cpp)
     kStaminaShort = 10004,  // スタミナが不足しています。 (a) the text; MissionStart, Sphere211MissionStart
+    kEquipSlotsShort = 10202,  // 装備アイテム所持枠が不足しています。 (a) the text; withdraws past item_stock (api/storage)
+    kEquippedItem = 10203,  // 装備中のアイテムが含まれています。 (a) the text; DepositItem (api/storage)
     kLockedItem = 10204,  // ロック中のアイテムが含まれています。 (a) the text
     kItemCountError = 10206,  // アイテムの所持数エラーが発生しました。 (a) the text: items, tickets, vanish items short (d: the code)
     kItemUnusable = 10208,  // アイテムは使用できませんでした。 (d) the server's generic refusal
+    kStorageShort = 10211,  // 倉庫枠が不足しています。 (a) the text; DepositItem (api/storage)
     kInvalidOperation = 10403,  // 不正なデータ処理です。 (a) the text; (d) the gacha refusals
     kFolShort = 10710,  // FOLが不足しています。 (d) which of the FOL codes (10706 / 10710 / 11001): ext.h "refuse"
     kFolShortGrowth = 11001,  // FOLが不足しています。 (d) the FOL code of the item compose / grade-up refusals
@@ -55,12 +58,9 @@ inline std::vector<u8> refuse(Ctx& c, const char* method, const char* why, Error
 //   10008  プレイヤーIDにエラーが発生しました。
 //   10009  誕生年月が確認できません。
 //   10201  サーバ内部エラーが発生しました。
-//   10202  装備アイテム所持枠が不足しています。
-//   10203  装備中のアイテムが含まれています。
 //   10205  不正なデータ処理です。
 //   10207  サーバ内部エラーが発生しました。
 //   10209  現在パーティのロック機能のメンテナンス中です。\nこの装備アイテムはパーティ編成で\nロックされているため、強化・錬成素材にしたり、\n売却したりすることはできません。
-//   10211  倉庫枠が不足しています。
 //   10213  ギア所持枠が不足しています。
 //   10214  スロット枠が不足しています。
 //   10215  ギアをセットできない武器か、スロット条件を満たしていません。

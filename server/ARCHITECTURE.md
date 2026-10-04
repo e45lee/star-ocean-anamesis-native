@@ -9,7 +9,7 @@ How a request becomes a reply, what owns which part, and where state and master 
 | The library (`libsoaserver`) | `src/`, `include/soaserver/` | the request lifecycle, the state DB, the master lookups, every game rule, the CDN content |
 | The core | `src/core/server.cpp`: `struct Server` | the two DB handles, the gacha pools, the RNG, the pending requests and their error codes, the transaction and refusal path, `Server::dispatch` (the registry's handler of the method). `src/core/context.cpp` defines `ext::Ctx`'s services, `src/core/clock.cpp` the server clock and the event calendar. Its shared helpers beside it in `src/core/` (`time`, `errors.h`, `response`, `wallet`, `rewards`, `request_args.h`, `request_context.h`, `assets`, `ids.h`), `src/state/` (the state module: the schema and its migrations, the meta helpers, the master-reference check, the one SQLite wrapper, the Game.xml codec, seeding) and `src/master/master` |
 | The core's APIs | `src/api/entry/`, `src/api/player/`, `src/api/missions/`, `src/api/gacha/`, `src/api/presents/`, `src/api/favor/favor_api.cpp` | 37 methods: the entry flow (8); the player load and the parties (6, with the player state builders); the missions (8); the gacha (10); the present box (3); the favor APIs (2). Registered first, with `ext::add_core_api` |
-| The modules | `src/api/<domain>/` | 69 more methods, and hooks into the core's responses, registered through `include/soaserver/ext.h` in `src/core/modules.cpp`'s order |
+| The modules | `src/api/<domain>/` | 79 more methods, and hooks into the core's responses, registered through `include/soaserver/ext.h` in `src/core/modules.cpp`'s order |
 | The story campaign | `src/api/campaign/` (`campaign.cpp` the hooks and the splice; `master_data.cpp`, `progress.cpp`, `lists.cpp`), `soaserver/api_campaign.h` | the campaign's own progress (a text file, below); called around each request by `server::answer` (`src/core/lifecycle.cpp`), not by the dispatcher |
 | Host 1: soa (in-process) | `port/src/native/api/` (not in `server/`) | the FakeApiCaller hooks: the guest's arguments -> `Request`, the reply -> the client's `On<Api>Res` |
 | Host 2: soa-server (out of process) | `net/`, `app/main.cpp` | the wire protocol: TCP packets, the Ninja cipher, the bridge handshake, the request decoder, the HTTP server and CDN routes |
@@ -53,7 +53,7 @@ The same in text, with the functions to look up:
               -> submit(): pending[fid] = Request; campaign::on_request(r)
               -> handle(fid): Server::handle: a RequestContext for the request (its battle log); ext::Ctx = Server::make_ctx
                    -> Server::handle_request: "begin"; forced_error (--fail)
-                   -> Server::dispatch: ext::find(method) (37 core methods, 69 module methods)
+                   -> Server::dispatch: ext::find(method) (37 core methods, 79 module methods)
                         core handler and module handler alike: (ext::Ctx&, const Request&) -> body
                    -> RequestContext::refusal != 0: "rollback", errors[fid] = code, body = {Time, Player, Wallet}
                    -> else ext::on_response hooks (decode, add keys, re-encode), "commit"
@@ -96,9 +96,9 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 
 | Kind | Registered with | What it does | Count today |
 |---|---|---|---|
-| Api | `ext::add_core_api({"Method", ...}, fn)` (the core's, first) / `ext::add_api` (a module's) | answers its methods | core: 29 registrations, 37 methods; modules: 57 registrations, 69 methods |
+| Api | `ext::add_core_api({"Method", ...}, fn)` (the core's, first) / `ext::add_api` (a module's) | answers its methods | core: 29 registrations, 37 methods; modules: 63 registrations, 79 methods |
 | `OnPlayerLoad` | `ext::add_player_load(fn)` | adds keys to the full player state (Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart) | 14 |
-| `OnResponse` | `ext::add_response_hook(fn)` | sees and may add keys to every answered response | 2 |
+| `OnResponse` | `ext::add_response_hook(fn)` | sees and may add keys to every answered response | 3 |
 | `MissionStartExtra` / `MissionResultExtra` | `ext::add_mission_start_extra` / `add_mission_result_extra` | adds to MissionStart / MissionEnd after the core built them | 2 / 3 |
 | `Grant` | `ext::add_grant(type, fn)` | grants a content type the core's `grant()` doesn't handle | 5 |
 | `ItemExtra` | `ext::add_item_extra(fn)` | adds keys to each owned item in `Item` | 1 |
@@ -115,7 +115,7 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 
 | Data | Where | Who writes it |
 |---|---|---|
-| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (53) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
+| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (54) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
 | The story campaign's progress | the state DB's `campaign_clear` / `campaign_last` (since schema version 11, PLAN-schema S12; before, `<data_root>/server_campaign.txt`, which step 11 imports and renames `.migrated`) | `src/api/campaign/progress.cpp` only, through `ext::with_live_server` (around a request, not in a handler) |
 | The master data | `data/basmaster-3.7.0.sqlite3` (read-only; `--master`) | nobody: the server reads it |
 | The client's master copy | the CDN's `basmaster-served.sqlite3` (`<scratch>`), the 3.7.0 master with `apply_client_master` | `cdn::Tree::build` (`src/cdn/tree.cpp`), `make_served_master` (`src/cdn/served_master.cpp`) |

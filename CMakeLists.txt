@@ -113,6 +113,9 @@ endif()
 if(SOA_BUILD_VIEWER)
   add_subdirectory(emulator-viewer)  # soa-viewer: runtime + emulator-viewer/src
 endif()
+if(SOA_BUILD_PORT AND SOA_BUILD_EMULATOR AND SOA_BUILD_VIEWER)
+  add_subdirectory(tests/cli)  # soa_cli_tests: the four programs' command lines vs the parsers they replaced
+endif()
 if(SOA_BUILD_TOOLS)
   add_subdirectory(tools/aif2png)  # aif2png: links soa::jpeg9
 endif()

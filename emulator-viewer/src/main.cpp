@@ -38,6 +38,7 @@
 #include "core/profile.h"
 #include "core/vfs.h"
 #include "jni/jvm.h"
+#include "cli.h"
 
 using namespace soa;
 namespace soa {
@@ -46,7 +47,7 @@ void install_traces(LoadedLib& lib);  // core/trace.cpp: SOA_TRACE
 
 namespace {
 
-const char* const kBaseApk = "com.square_enix.android_googleplay.StarOceanj.apk";
+using viewer::kBaseApk;
 
 bool exists(const std::string& p) {
     struct stat st;
@@ -203,47 +204,6 @@ std::string find_xapk(const std::string& repo) {
     return "";
 }
 
-void usage() {
-    fprintf(stderr,
-            "usage: soa-viewer [options]\n"
-            "Runs the offline 3.8.0 client unmodified (pure JIT, no natives, no server). emulator-viewer/README.md.\n"
-            "  --xapk FILE     the 3.8.0 XAPK, read in place (its APKs aren't unpacked; libSOA.so is extracted\n"
-            "                  into the data dir). Default: a *.xapk beside the executable, in its game/ folder\n"
-            "                  or in <repo>/apk/, else --apk-dir's default\n"
-            "  --apk-dir DIR   the XAPK unpacked (tools/extract.sh): %s, assetinstalltime.apk,\n"
-            "                  config.arm64_v8a.apk; optional assetfastfollow.apk / assetondemand1.apk\n"
-            "                  (default <repo>/work/extracted/xapk when no XAPK is found)\n"
-            "  --apk FILE      read assets from FILE too (after the XAPK's; repeatable, later wins)\n"
-            "  --download-dir DIR  serve builtin_data/ assets missing from the APKs from DIR, an online\n"
-            "                  asset tree such as work/download-3.7.0 (as soa / soa-emu --download-dir); off by\n"
-            "                  default\n"
-            "  --download-prefer  with --download-dir: DIR wins over the APKs (as soa / soa-emu)\n"
-            "  --lib PATH      the client library (default: extracted from config.arm64_v8a.apk into the data dir)\n"
-            "  --data DIR      the emulated device's data (saves, prefs, asset packs; default\n"
-            "                  ~/.local/share/soa-viewer-380, like the port's ~/.local/share/soa-linux-370;\n"
-            "                  Windows %%LOCALAPPDATA%%\\soa\\viewer-380; never the port's)\n"
-            "  --repo DIR      the source checkout (default: found from the executable)\n"
-            "  --guest-cpus N|host  CPUs the game sees (default 8)\n"
-            "  --size WxH      window size (default: portrait 9:16 at 90%% of the desktop height)\n"
-            "  --landscape     default to a 16:9 landscape window\n"
-            "  --render-size S the game's screen size: 'desktop' (default), 'window' or WxH\n"
-            "  --fullscreen    start in (desktop) fullscreen\n"
-            "  --font PATH     the on-screen text box's font (default: a system Japanese font; 'none': off)\n"
-            "  --headless      don't show the window (it still renders; screenshots and the control FIFO work)\n"
-            "  --windowed      show the window (the default; undoes an earlier --headless)\n"
-            "  --shot S:PATH   save a screenshot S seconds after start (repeatable; F12 any time)\n"
-            "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
-            "                  wheel:X:Y:DY, back, text:STRING, shot:PATH, quit\n"
-            "  --control FIFO  read the same commands, one per line, from a named pipe (control/soactl.py;\n"
-            "                  Windows: \\\\.\\pipe\\NAME); --control tcp:HOST:PORT: from TCP connections\n"
-            "  --gdb HOST:PORT serve the GDB remote protocol for the guest (gdb-multiarch -x control/gdbinit-soa,\n"
-            "                  control/gdbclient.py; runtime/README.md \"Debugging the guest with gdb\")\n"
-            "  -v / -vv        verbose / trace logging\n"
-            "Diagnostic switches are environment variables (SOA_TRACE, SOA_PROFILE, SOA_WATCHDOG, ...:\n"
-            "runtime/README.md \"Environment\"); settings are flags only.\n",
-            kBaseApk);
-}
-
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -251,60 +211,20 @@ int main(int argc, char** argv) {
     env::warn_removed_env("soa-viewer", env::kViewer);  // SOA_* settings that are flags now
     signal(SIGPIPE, SIG_IGN);
     app::install_host_hooks();
-    std::string apk_dir, xapk_path, lib_path, data_dir, repo_arg;
-    std::vector<std::string> extra_apks;
-    std::string download_dir;
-    bool download_prefer = false;
-    int guest_cpus = 8;
-    app::HostConfig host;
+    // The command line (cli.cpp: the runtime programs' shared options and soa-viewer's).
+    viewer::ViewerArgs args;
     // "EMULATED" first, so it shows in a truncated taskbar entry too; soa's title has no such tag.
-    host.title = "[EMULATED] STAR OCEAN -anamnesis- 3.8.0 offline client (soa-viewer)";
-    host.size_note = " (the game's own resolution: no natives)";
-    for (int i = 1; i < argc; i++) {
-        std::string a = argv[i];
-        auto next = [&]() -> std::string {
-            if (i + 1 >= argc) {
-                usage();
-                exit(2);
-            }
-            return argv[++i];
-        };
-        if (a == "--apk-dir") apk_dir = next();
-        else if (a == "--xapk") xapk_path = next();
-        else if (a == "--apk") extra_apks.push_back(next());
-        else if (a == "--download-dir") download_dir = next();
-        else if (a == "--download-prefer") download_prefer = true;
-        else if (a == "--lib") lib_path = next();
-        else if (a == "--data") data_dir = next();
-        else if (a == "--repo") repo_arg = next();
-        else if (a == "--guest-cpus") {
-            std::string c = next();
-            char* end = nullptr;
-            long v = strtol(c.c_str(), &end, 10);
-            if (c != "host" && (c.empty() || *end || v < 1 || v > 256)) {
-                fprintf(stderr, "--guest-cpus: expected 1..256 or \"host\", got \"%s\"\n", c.c_str());
-                return 2;
-            }
-            guest_cpus = c == "host" ? 0 : (int)v;
-        }
-        else if (a == "--size") sscanf(next().c_str(), "%dx%d", &host.width, &host.height);
-        else if (a == "--landscape") host.landscape = true;
-        else if (a == "--render-size") host.render_size = next();
-        else if (a == "--font") host.font = next();
-        else if (a == "--fullscreen") host.fullscreen = true;
-        else if (a == "--headless") host.hidden = true;
-        else if (a == "--windowed") host.hidden = false;
-        else if (a == "--shot") host.shots.push_back(next());
-        else if (a == "--do") host.actions.push_back(next());
-        else if (a == "--control") host.control_path = next();
-        else if (a == "--gdb") gdb_addr = next();
-        else if (a == "-v") g_log_level = LogLevel::Debug;
-        else if (a == "-vv") g_log_level = LogLevel::Trace;
-        else {
-            usage();
-            return a == "-h" || a == "--help" ? 0 : 2;
-        }
-    }
+    args.host.title = "[EMULATED] STAR OCEAN -anamnesis- 3.8.0 offline client (soa-viewer)";
+    args.host.size_note = " (the game's own resolution: no natives)";
+    if (int rc = viewer::parse_args(argc, argv, args); rc >= 0) return rc;
+    if (args.verbose) g_log_level = args.verbose > 1 ? LogLevel::Trace : LogLevel::Debug;
+    gdb_addr = args.gdb;
+    std::string &apk_dir = args.apk_dir, &xapk_path = args.xapk_path, &lib_path = args.lib_path, &data_dir = args.data_dir,
+                &repo_arg = args.repo, &download_dir = args.download_dir;
+    const std::vector<std::string>& extra_apks = args.extra_apks;
+    const bool download_prefer = args.download_prefer;
+    const int guest_cpus = args.guest_cpus;
+    app::HostConfig& host = args.host;
 
     std::string repo = find_repo(repo_arg);
     if (repo.empty()) LOGI("viewer", "no source checkout: the XAPK is looked up beside the program (README.txt)");

@@ -38,6 +38,7 @@
 #include "core/hle.h"
 #include "core/loader.h"
 #include "core/log.h"
+#include "core/cli.h"
 #include "core/options.h"
 #include "core/paths.h"
 #include "core/profile.h"
@@ -64,118 +65,6 @@ bool file_exists(const std::string& p) {
     return stat(p.c_str(), &st) == 0;
 }
 
-void usage() {
-    fprintf(stderr,
-            "usage: soa [options]\n"
-            "The 3.7.0 client on the desktop (port/README.md), with the game server in-process (--server inproc,\n"
-            "the default) or soa-server (--server HOST[:PORT]).\n"
-            "\n"
-            "General:\n"
-            "  -h, --help      this text\n"
-            "  --repo DIR      the source checkout to read repo files from (master DBs, seed saves, gacha pools,\n"
-            "                  fakeapi responses, work/...); default: found from the executable\n"
-            "  -v / -vv        verbose / trace logging\n"
-            "\n"
-            "Client options (the 3.7.0 client and its emulated phone):\n"
-            "  --apk FILE      the 3.7.0 APK (default <repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk, else a\n"
-            "                  3.7.0 APK beside the program or in its game/ folder: a release package, README.txt)\n"
-            "  --lib PATH      the libSOA.so (default: lib/arm64-v8a/libSOA.so of the APK, extracted once into\n"
-            "                  DATA/libSOA-3.7.0.so; else <repo>/work/libSOA-3.7.0.so)\n"
-            "  --data DIR      the phone's data dir: game data, saves, and in-process the server's state\n"
-            "                  (default ~/.local/share/soa-linux-370; Windows %%LOCALAPPDATA%%\\soa\\port-370)\n"
-            "  --download PATH the 3.7.0 download (the online game's downloaded tree): a folder, or the zip\n"
-            "                  SOA-3.7.0-canonical-data.zip read in place; the client's asset fallback for\n"
-            "                  builtin_data/ files the APK lacks. Required with --server inproc, whose CDN serves it\n"
-            "                  too (default <repo>/work/download-3.7.0, else a download folder or zip beside the\n"
-            "                  program or in its game/ folder); off by default with --server HOST, whose client\n"
-            "                  downloads from soa-server's CDN. --download-dir PATH is the same\n"
-            "  --download-prefer  with --download-dir: DIR wins over the APK (as soa-emu / soa-viewer)\n"
-            "  --standin-assets DIR|off  made-up stand-in files (e.g. lost gacha banners) for builtin_data/ assets\n"
-            "                  that neither the APK nor --download-dir have; --server inproc defaults it to\n"
-            "                  standin-assets and its CDN serves them (off / 0 = none)\n"
-            "  --device-clock \"YYYY-MM-DD HH:MM:SS\"|host  the phone's clock (default host; platform370)\n"
-            "  --no-patch      no service_stop_day patch (platform370/src/patch_370.cpp)\n"
-            "  --guest-cpus N|host  CPUs the game sees (sysconf, /sys/devices/system/cpu/present; default 8, an\n"
-            "                  octa-core phone); the engine starts N - 2 dynamics and N resource workers\n"
-            "  --natives route|none  native replacements (default route: every registered one,\n"
-            "                  i.e. the in-process route's FakeApiCaller hooks (not with --server HOST) and the\n"
-            "                  port's own hooks; \"all\" is a synonym). none = --no-native\n"
-            "  --no-native     the same as --natives none\n"
-            "  --http HOST:PORT  (--server HOST) soa-server's --http (default <server host>:44380)\n"
-            "  --lobby HOST:PORT (--server HOST) where the client's lobby connections (port 4001) go\n"
-            "  --map-host NAME[=ADDR]  (--server HOST) also resolve NAME to ADDR (default the server host)\n"
-            "  Window:\n"
-            "  --size WxH      window size (default: portrait 9:16 at 90%% of the desktop height)\n"
-            "  --landscape     default to a 16:9 landscape window (the game is designed for portrait)\n"
-            "  --render-size S the window's surface: 'desktop' (default: the window's aspect ratio scaled to fill the\n"
-            "                  desktop, so resizing/fullscreen stays sharp), 'window' (the initial window size) or WxH\n"
-            "  --fullscreen    start in (desktop) fullscreen\n"
-            "  --font PATH     the font of the on-screen text box and of the web view's pages (a Japanese one;\n"
-            "                  default: a system Japanese font; 'none': no text box, the web view searches)\n"
-            "  --headless      don't show the window; it still renders at the same size, so screenshots, --shot/--do\n"
-            "                  and --control work the same (--selftest is headless by default)\n"
-            "  --windowed      show the window (the default, except with --selftest)\n"
-            "  --hires, --legacy-res  no effect (the game renders at its own resolution)\n"
-            "  Driving and testing:\n"
-            "  --shot S:PATH   save a screenshot S seconds after start (repeatable; F12 saves one any time)\n"
-            "  --do S:ACTION   scripted input S seconds after start (repeatable): tap:X:Y, drag:X1:Y1:X2:Y2,\n"
-            "                  wheel:X:Y:DY (pinch), back, text:STRING, shot:PATH, quit\n"
-            "  --control FIFO  read the same commands, one per line, from a named pipe (plus the port's\n"
-            "                  phase:/call:/mission:/uiset:/clock:/debugwin:/memstats commands, port_debug.cpp;\n"
-            "                  Windows: \\\\.\\pipe\\NAME); --control tcp:HOST:PORT: from TCP connections\n"
-            "  --gdb HOST:PORT serve the GDB remote protocol for the guest (gdb-multiarch -x control/gdbinit-soa,\n"
-            "                  control/gdbclient.py; runtime/README.md \"Debugging the guest with gdb\")\n"
-            "  --selftest [F]  the self-tests (tests matching F) on the booted game, no natives installed\n"
-            "  --smoke         load the library, run a quick self-test and exit\n"
-            "  --list-native   print the native replacements (symbol, note) and exit\n"
-            "  --apk-dir DIR   ignored (kept for old scripts; the port runs the 3.7.0 APK, --apk)\n"
-            "  Diagnostics:\n"
-            "  --fake-server DIR  the FakeApiCaller route's canned responses (default <repo>/port/fakeapi/responses;\n"
-            "                  --server inproc only)\n"
-            "  --fake-server-schema FILE  write the response key schema there at CGame::OnInitialize\n"
-            "  --memstats [S]  a memory snapshot in the log at every phase change; with S (> 1) also every S\n"
-            "                  seconds (control \"memstats\" takes one on demand)\n"
-            "  --live-check FAMILY[,FAMILY..][:KEY[=VALUE]..]  check a native family against the guest in the run\n"
-            "                  (port/src/native/README.md \"Live checks\"; no family is registered now)\n"
-            "  Diagnostic and test switches are environment variables (SOA_TRACE, SOA_PROFILE, SOA_WATCHDOG,\n"
-            "  SOA_SELFTEST_*, ...: port/README.md \"Environment\"); settings are flags only.\n"
-            "\n"
-            "Server options (the local server's rules and state; only with --server inproc: with --server HOST\n"
-            "give them to soa-server, which takes the same flags):\n"
-            "  --server inproc|HOST[:PORT]  the game server. inproc (default): the local server library answers\n"
-            "                  in-process through the FakeApiCaller route, its CDN in memory (state in\n"
-            "                  DATA/server.sqlite3); HOST[:PORT]: the client's own NetworkApiCaller talks to\n"
-            "                  soa-server's --listen (default port 44300), production-game.so-ana.com resolving to\n"
-            "                  HOST (platform370's network glue)\n"
-            "  --db FILE       the state DB (default DATA/server.sqlite3)\n"
-            "  --master FILE   the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3, else decrypted once from the\n"
-            "                  download's sqlite/basmaster.sqlite3 into DATA/master/; server/README.md)\n"
-            "  --gacha-pools FILE  the reconstructed gacha pools (default data/gacha_pools.sqlite3)\n"
-            "  --seed FILE     the save a new state is seeded from, e.g. a 3.7.0 or offline Game.xml; an existing\n"
-            "                  state DB keeps its player\n"
-            "  --game-xml FILE the last seed fallback (default DATA/data/shared_prefs/Game.xml)\n"
-            "  --seed-rng N    fixed RNG seed (default the time)\n"
-            "  --new-player    start without a player: the new-player tutorial\n"
-            "  --clock \"YYYY-MM-DD HH:MM:SS\"  the server's clock starts at that time and runs on; without it,\n"
-            "                  event terms replay the calendar (server::event_now)\n"
-            "  --start-coins N free coins a new local player starts with (default 300000); an existing state DB\n"
-            "                  keeps its balance\n"
-            "  --galaxy-pass   the local player has the Galaxy Pass, renewed when it runs out (+2 deep space ships)\n"
-            "  --enable-events also open, all year, every event area and gacha banner whose name matches\n"
-            "                  --event-keywords, assets permitting\n"
-            "  --event-keywords \"a,b,!c\"  names to match (\"!\" excludes); default: the summer events\n"
-            "                  \"水着,夏,サマー,!福袋\"\n"
-            "  --restore-tower open the tower mode, which 3.7.0 had closed: the server serves it and the client's\n"
-            "                  tower hooks open the menu\n"
-            "  --home3d-all    debug: the client's master copy offers the 3D home for every character, also the\n"
-            "                  ones 3.7.0 shows in 2D only (master_person.home3d_disable; docs/home3d.md)\n"
-            "  --campaign-master-db FILE  the campaign module's master DB; --campaign-seed LABEL  seed the campaign\n"
-            "                  progress up to a mission; --fail M:CODE[,..]  force error replies; --surprise  force\n"
-            "                  surprise missions\n"
-            "  --log-packets DIR  log every request and reply as soa-server --log-packets does (DIR/packets.log,\n"
-            "                  the reply bodies and battle logs as DIR/<n>-<name>.*)\n");
-}
-
 }  // namespace
 
 namespace soa::server_port {
@@ -186,214 +75,53 @@ bool start_inproc_cdn(std::string* err);                // native/api/server_cdn
 int main(int argc, char** argv) {
     env::warn_removed_env("soa", env::kSoa);  // SOA_* settings that are flags now: one line each
     signal(SIGPIPE, SIG_IGN);
+    // The runtime's calls into this frontend (runtime/src/android/platform.h).
+    app::install_host_hooks();
+    // The command line (core/cli.cpp: the client options and soa-server's server options).
+    RunOptions& opt = mutable_options();  // from the command line only
+    ServerOptions& srv = opt.server;
+    SoaArgs args;
+    args.opt = &opt;
+    if (int rc = parse_soa_args(argc, argv, args); rc >= 0) return rc;
+    if (args.verbose) g_log_level = args.verbose > 1 ? LogLevel::Trace : LogLevel::Debug;
+    if (args.list_native) {
+        list_native_functions(stdout);
+        return 0;
+    }
+    if (args.apk_dir_given) LOGW("main", "--apk-dir is ignored: the rebased port runs the 3.7.0 APK (--apk FILE)");
+    if (args.legacy_res) LOGW("main", "--legacy-res has no effect: the game renders at its own resolution (no --hires natives since the rebase's revision 2)");
+    // --natives: route (every registered native) or none.
+    NativeSet natives = NativeSet::Route;
+    if (!parse_native_set(args.natives, natives)) {
+        fprintf(stderr, "--natives: expected route or none, got \"%s\"\n", args.natives.c_str());
+        return 2;
+    }
+    for (auto& spec : args.live_checks) {
+        std::string err;
+        if (!live::parse_live_check(spec, &err)) {
+            fprintf(stderr, "--live-check %s: %s\n", spec.c_str(), err.c_str());
+            return 2;
+        }
+    }
     // A data dir of its own (soa/paths.h): ~/.local/share/soa-linux-370 (the old offline-build port's
     // ~/.local/share/soa-linux holds a cached libSOA.so of that build and its save), on Windows
     // %LOCALAPPDATA%\soa\port-370.
-    std::string data_dir = soa::default_data_dir("soa-linux-370", "port-370");
-    std::string apk_path, lib_path;
-    bool smoke = false, selftest = false;
-    // --natives: route (every registered native) or none.
-    NativeSet natives = NativeSet::Route;
+    std::string data_dir = args.data_dir.empty() ? soa::default_data_dir("soa-linux-370", "port-370") : args.data_dir;
+    std::string &apk_path = args.apk_path, &lib_path = args.lib_path;
+    const bool smoke = args.smoke, selftest = args.selftest;
     // --server: "inproc" (default) or HOST[:PORT].
-    std::string server_mode;
-    bool server_given = false;
+    const std::string server_mode = args.server_mode.empty() ? "inproc" : args.server_mode;
     // The 3.7.0 platform layer (platform370/README.md); net/http only with --server HOST.
-    platform370::Config p370;
-    std::string test_filter;
-    int width = 0, height = 0;  // default: portrait, sized from the desktop
-    bool landscape = false;
-    std::string render_size = "desktop";
-    std::string font;  // --font
-    bool fullscreen = false;
-    int headless = -1;  // -1: not given (headless only for --selftest)
-    std::vector<std::string> shots, actions;
-    std::string control_path;
-    std::string gdb_addr;  // --gdb HOST:PORT (core/gdbstub.h)
-    RunOptions& opt = mutable_options();  // from the command line only
-    ServerOptions& srv = opt.server;
-    std::vector<std::string> server_flags;  // server options given on the command line (for the --server HOST warning)
-    // The runtime's calls into this frontend (runtime/src/android/platform.h).
-    app::install_host_hooks();
-    for (int i = 1; i < argc; i++) {
-        std::string a = argv[i];
-        auto next = [&]() -> std::string {
-            if (i + 1 >= argc) {
-                usage();
-                exit(2);
-            }
-            return argv[++i];
-        };
-        if (a == "--apk-dir") {
-            next();
-            LOGW("main", "--apk-dir is ignored: the rebased port runs the 3.7.0 APK (--apk FILE)");
-        }
-        else if (a == "--apk") apk_path = next();
-        else if (a == "--server") server_mode = next(), server_given = true;
-        else if (a == "--http" || a == "--lobby") {
-            std::string v = next();
-            size_t c = v.rfind(':');
-            int port = c == std::string::npos ? 0 : atoi(v.c_str() + c + 1);
-            if (c == std::string::npos || c == 0 || port <= 0) {
-                fprintf(stderr, "%s: expected HOST:PORT, got \"%s\"\n", a.c_str(), v.c_str());
-                return 2;
-            }
-            auto& n = p370.netcfg;
-            if (a == "--http") n.http_host = v.substr(0, c), n.http_port = port;
-            else n.lobby_host = v.substr(0, c), n.lobby_port = port;
-        }
-        else if (a == "--map-host") {
-            std::string v = next();
-            size_t eq = v.find('=');
-            std::string name = v.substr(0, eq);
-            for (auto& ch : name) ch = (char)tolower((unsigned char)ch);
-            p370.netcfg.hosts[name] = eq == std::string::npos ? "" : v.substr(eq + 1);
-        }
-        else if (a == "--device-clock") p370.device_clock = next();
-        else if (a == "--no-patch") p370.patch = false;
-        else if (a == "--natives") {
-            std::string v = next();
-            if (!parse_native_set(v, natives)) {
-                fprintf(stderr, "--natives: expected route or none, got \"%s\"\n", v.c_str());
-                return 2;
-            }
-        }
-        else if (a == "--lib") lib_path = next();
-        else if (a == "--data") data_dir = next();
-        else if (a == "--size") sscanf(next().c_str(), "%dx%d", &width, &height);
-        else if (a == "--smoke") smoke = true;
-        else if (a == "--selftest") {
-            selftest = true;
-            if (i + 1 < argc && argv[i + 1][0] != '-') test_filter = argv[++i];
-        }
-        else if (a == "--no-native") natives = NativeSet::None;
-        else if (a == "--hires") {}  // no effect (kept for compatibility; see usage)
-        else if (a == "--legacy-res") LOGW("main", "--legacy-res has no effect: the game renders at its own resolution (no --hires natives since the rebase's revision 2)");
-        else if (a == "--render-size") render_size = next();
-        else if (a == "--font") font = next();
-        else if (a == "--fullscreen") fullscreen = true;
-        else if (a == "--headless") headless = 1;
-        else if (a == "--windowed") headless = 0;
-        else if (a == "--landscape") landscape = true;
-        else if (a == "--shot") shots.push_back(next() );
-        else if (a == "--do") actions.push_back(next());
-        else if (a == "--control") control_path = next();
-        else if (a == "--gdb") gdb_addr = next();
-        else if (a == "--download-dir" || a == "--download") opt.client.download_dir = next();
-        else if (a == "--download-prefer") opt.client.download_prefer = true;
-        else if (a == "--fake-server") opt.client.fake_server_dir = next();
-        else if (a == "--fake-server-schema") opt.client.fake_server_schema = next();
-        else if (a == "--memstats") {
-            // an optional S: the next argument when it is a number
-            opt.client.memstats = 1;
-            if (i + 1 < argc && argv[i + 1][0] != '-') {
-                std::string c = argv[++i];
-                char* end = nullptr;
-                long v = strtol(c.c_str(), &end, 10);
-                if (c.empty() || *end || v < 1 || v > 86400) {
-                    fprintf(stderr, "--memstats: expected seconds 1..86400, got \"%s\"\n", c.c_str());
-                    return 2;
-                }
-                opt.client.memstats = (int)v;
-            }
-        }
-        else if (a == "--live-check") {
-            std::string v = next(), err;
-            if (!live::parse_live_check(v, &err)) {
-                fprintf(stderr, "--live-check %s: %s\n", v.c_str(), err.c_str());
-                return 2;
-            }
-        }
-        else if (a == "--repo") opt.repo_dir = next();
-        else if (a == "--standin-assets") {
-            std::string d = next();
-            if (d == "off" || d == "0") opt.client.standin_off = true;
-            else opt.client.standin_dir = d;
-        }
-        // ---- server options (soa-server's flags; core/options.h ServerOptions) ----
-        else if (a == "--restore") {
-            fprintf(stderr, "soa: --restore is gone: the in-process server is the default (--server inproc)\n");
-            return 2;
-        }
-        else if (a == "--restore-tower") srv.restore_tower = true, server_flags.push_back(a);
-        else if (a == "--home3d-all") srv.home3d_all = true, server_flags.push_back(a);
-        else if (a == "--clock") {
-            std::string c = next();
-            if (!set_clock(srv, c)) {
-                fprintf(stderr, "--clock: expected \"YYYY-MM-DD HH:MM:SS\", got \"%s\"\n", c.c_str());
-                return 2;
-            }
-            server_flags.push_back(a);
-        }
-        else if (a == "--enable-events") srv.enable_events = true, server_flags.push_back(a);
-        else if (a == "--galaxy-pass") srv.galaxy_pass = true, server_flags.push_back(a);
-        else if (a == "--new-player") srv.new_player = true, server_flags.push_back(a);
-        else if (a == "--surprise") srv.surprise = true, server_flags.push_back(a);
-        else if (a == "--db") srv.db = next(), server_flags.push_back(a);
-        else if (a == "--master") srv.master = next(), server_flags.push_back(a);
-        else if (a == "--gacha-pools") srv.gacha_pools = next(), server_flags.push_back(a);
-        else if (a == "--seed") srv.seed = next(), server_flags.push_back(a);
-        else if (a == "--game-xml") srv.game_xml = next(), server_flags.push_back(a);
-        else if (a == "--campaign-master-db") srv.campaign_master_db = next(), server_flags.push_back(a);
-        else if (a == "--campaign-seed") srv.campaign_seed = next(), server_flags.push_back(a);
-        else if (a == "--fail") srv.fail = next(), server_flags.push_back(a);
-        else if (a == "--log-packets") srv.log_packets = next(), server_flags.push_back(a);
-        else if (a == "--seed-rng") {
-            std::string c = next();
-            char* end = nullptr;
-            unsigned long long v = strtoull(c.c_str(), &end, 0);
-            if (c.empty() || *end) {
-                fprintf(stderr, "--seed-rng: expected a number, got \"%s\"\n", c.c_str());
-                return 2;
-            }
-            srv.has_seed_rng = true, srv.seed_rng = v;
-            server_flags.push_back(a);
-        }
-        else if (a == "--guest-cpus") {
-            std::string c = next();
-            char* end = nullptr;
-            long v = strtol(c.c_str(), &end, 10);
-            if (c != "host" && (c.empty() || *end || v < 1 || v > 256)) {
-                fprintf(stderr, "--guest-cpus: expected 1..256 or \"host\", got \"%s\"\n", c.c_str());
-                return 2;
-            }
-            opt.client.has_guest_cpus = true;
-            opt.client.guest_cpus = c == "host" ? 0 : (int)v;
-        }
-        else if (a == "--event-keywords") srv.event_keywords = next(), server_flags.push_back(a);
-        else if (a == "--start-coins") {
-            std::string c = next();
-            char* end = nullptr;
-            unsigned long long v = strtoull(c.c_str(), &end, 10);  // (not strtoul: 32-bit long on Windows)
-            if (c.empty() || *end || c[0] == '-' || v > 0xffffffffULL) {
-                fprintf(stderr, "--start-coins: expected a number, got \"%s\"\n", c.c_str());
-                return 2;
-            }
-            srv.has_start_coins = true;
-            srv.start_coins = (uint32_t)v;
-            server_flags.push_back(a);
-        }
-        else if (a == "--list-native") {
-            list_native_functions(stdout);
-            return 0;
-        }
-        else if (a == "-v") g_log_level = LogLevel::Debug;
-        else if (a == "-vv") g_log_level = LogLevel::Trace;
-        else {
-            usage();
-            return a == "-h" || a == "--help" ? 0 : 2;
-        }
-    }
-    {
-        std::string err;
-        if (!live::apply_live_check(&err)) {
-            fprintf(stderr, "--live-check: %s\n", err.c_str());
-            return 2;
-        }
-    }
+    platform370::Config& p370 = args.p370;
+    const std::string& test_filter = args.test_filter;
+    app::HostConfig& host = args.host;
+    const std::string& font = host.font;  // --font
+    int headless = args.headless;  // -1: not given (headless only for --selftest)
+    const std::string& gdb_addr = args.gdb;  // --gdb HOST:PORT (core/gdbstub.h)
+    const std::vector<std::string>& server_flags = args.server_flags;  // server options given on the command line (for the --server HOST warning)
     // --font: the keyboard's text box (host.font below) and the web view's pages (one Japanese font).
     if (!font.empty()) webview::set_font(font);
     // --server inproc|HOST[:PORT].
-    if (!server_given) server_mode = "inproc";
     const bool inproc = server_mode == "inproc";
     if (!inproc) {
         if (!server_flags.empty()) {
@@ -401,13 +129,7 @@ int main(int argc, char** argv) {
             for (auto& f : server_flags) l += (l.empty() ? "" : " ") + f;
             LOGW("main", "server options (%s) have no effect with --server %s: give them to soa-server", l.c_str(), server_mode.c_str());
         }
-        std::string host = server_mode;
-        int port = 0;
-        size_t c = host.rfind(':');
-        if (c != std::string::npos && host.find(':') == c) port = atoi(host.c_str() + c + 1), host = host.substr(0, c);
-        if (host.empty() || (c != std::string::npos && port <= 0)) fatal("--server: expected inproc or HOST[:PORT], got \"%s\"", server_mode.c_str());
-        p370.netcfg.server_host = host;
-        if (port) p370.netcfg.server_port = port;
+        // (p370.netcfg's server_host / server_port: core/cli.cpp, as soa-emu --server)
     } else {
         srv.enabled = true;  // the local server on the FakeApiCaller route
     }
@@ -424,11 +146,9 @@ int main(int argc, char** argv) {
             std::vector<std::string> notes;
             apk_path = install::find_apk(install::install_dirs(), &notes);
             for (auto& n : notes) LOGW("main", "%s", n.c_str());
-            if (apk_path.empty()) {
-                usage();
+            if (apk_path.empty())
                 fatal("the 3.7.0 APK wasn't found (--apk FILE, or apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk in the repo); %s",
                       install::missing_hint().c_str());
-            }
             LOGI("main", "the 3.7.0 APK %s (found beside the program)", apk_path.c_str());
         }
     }
@@ -569,21 +289,12 @@ int main(int argc, char** argv) {
     }
 
     // ---- window, activity, event loop: the runtime's desktop host loop (runtime/src/app/host.h) ----
-    app::HostConfig host;
-    host.width = width, host.height = height;
-    host.landscape = landscape;
-    host.fullscreen = fullscreen;
     // --headless / --windowed, else headless for --selftest only. The hidden window renders like a
     // shown one (runtime/src/app/host.h: HostConfig::hidden).
     if (headless < 0) headless = selftest;
     host.hidden = headless != 0;
     if (host.hidden) LOGI("main", "headless: the window isn't shown");
-    host.render_size = render_size;
-    host.font = font;
     host.size_note = " (the game's own resolution: 720 wide, a 0.75 back buffer, upscaled)";
-    host.shots = shots;
-    host.actions = actions;
-    host.control_path = control_path;
     host.command = [](const std::string& cmd) { return native::port_debug::command(cmd); };  // phase:N, call:SYM[:ARGS], debugwin:W:H
     host.tick = [&] {
         if (selftest) {

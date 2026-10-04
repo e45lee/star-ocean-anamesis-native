@@ -20,7 +20,6 @@
 namespace soa::server {
 
 // ---- configuration ---------------------------------------------------------------------------
-const char* const kDefaultEventKeywords = "水着,夏,サマー,!福袋";
 
 ServerConfig& config() {
     static ServerConfig c;

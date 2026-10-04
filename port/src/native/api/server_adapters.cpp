@@ -54,31 +54,10 @@ bool g_installed = [] {
 }  // namespace
 
 void config_from_options(const std::string& data_dir) {
-    // ServerOptions is ServerConfig field for field (core/options.h).
+    // ServerOptions is the ServerConfig (core/options.h): the flags, then the files this run found.
     const ServerOptions& o = options().server;
     server::ServerConfig& c = server::config();
-    c.enabled = o.enabled;
-    c.new_player = o.new_player;
-    c.master = o.master;
-    c.gacha_pools = o.gacha_pools;
-    c.db = o.db;
-    c.seed = o.seed;
-    c.game_xml = o.game_xml;
-    c.has_seed_rng = o.has_seed_rng;
-    c.seed_rng = o.seed_rng;
-    c.start_coins = o.start_coins;
-    c.has_clock = o.has_clock;
-    c.clock = o.clock;
-    c.clock_offset = o.clock_offset;
-    c.galaxy_pass = o.galaxy_pass;
-    c.enable_events = o.enable_events;
-    c.event_keywords = o.event_keywords;
-    c.restore_tower = o.restore_tower;
-    c.home3d_all = o.home3d_all;
-    c.campaign_master_db = o.campaign_master_db;
-    c.campaign_seed = o.campaign_seed;
-    c.fail = o.fail;
-    c.surprise = o.surprise;
+    c = o;
     c.repo_roots = repo_roots();
     c.data_root = data_dir;  // vfs_init's root (the CDN's scratch dir; an old server_campaign.txt, imported once)
     // The CDN's source (server_cdn.cpp, --server inproc): the client's download tree and stand-ins,

@@ -7,8 +7,12 @@
 # the server, the web view (none depends on another for it).
 #   soa_env_tests  its unit tests (build/common/soa_env_tests); tests/env_removed.sh checks the
 #                  programs' warnings.
+# include/soa/cli.h, the programs' command lines on CLI11 (the rules every program shares; the
+# option groups shared by several programs live beside the types they fill: runtime/src/app/cli.h,
+# platform370/include/platform370/cli.h, server/include/soaserver/cli.h), so soa_env carries CLI11.
 add_library(soa_env INTERFACE)
 target_include_directories(soa_env INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(soa_env INTERFACE CLI11::CLI11)
 
 add_executable(soa_env_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/env_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/paths_tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/tests/install_tests.cpp)

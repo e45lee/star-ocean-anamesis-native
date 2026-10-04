@@ -1,7 +1,8 @@
 #pragma once
 // The local server's configuration (library code): every setting the server has. The port (soa)
 // fills it from its command line (soa::options(), port/src/native/api/server_adapters.cpp) before
-// the game starts, soa-server from its own (server/app/main.cpp, the same flags). The library reads
+// the game starts, soa-server from its own (server/app/cli.cpp); both define the flags with
+// soaserver/cli.h, one flag per field. The library reads
 // no setting from the environment; its one environment variable is a self-test dump
 // (SOA_NOTICE_HTML_DUMP, docs/environment.md). Tests change fields of config() directly and
 // restore them.
@@ -14,7 +15,7 @@ namespace soa::server {
 
 // The default --event-keywords: the summer (swimsuit) events and banners; see
 // docs/server-rules.md#enabling-events for what it matches.
-extern const char* const kDefaultEventKeywords;
+inline constexpr const char* kDefaultEventKeywords = "水着,夏,サマー,!福袋";
 
 struct ServerConfig {
     // ---- the server -----------------------------------------------------------------------------
@@ -49,6 +50,9 @@ struct ServerConfig {
     // ---- test hooks -----------------------------------------------------------------------------
     std::string fail;              // --fail "Method:code[,Method:code]"
     bool surprise = false;         // --surprise: force surprise missions
+    // --log-packets DIR: every request and reply logged there (soa-server's wire layer, net/game.h;
+    // soa's in-process route, port/src/native/api/packet_log.h; tests/diff compares the two)
+    std::string log_packets;
 
     // ---- files ----------------------------------------------------------------------------------
     // The source checkouts repo files (master DBs, seed saves, server/tests/fixtures) are looked up in,

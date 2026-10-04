@@ -173,7 +173,7 @@ build/port/soa                      # in-process server (--server inproc)
 build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-emulator-370.sh starts one)
 ```
 
-`soa --help` lists the options in two groups, as `core/options.h` holds them (`ClientOptions`, `ServerOptions`): **client options** are about the 3.7.0 client and its emulated phone; **server options** are the local server's rules and state, used only with `--server inproc` (with `--server HOST` they belong to `soa-server`, which takes the same flags; `soa` warns and ignores them).
+`soa --help` lists the options in two groups, as `core/options.h` holds them (`ClientOptions`, `ServerOptions`): **client options** are about the 3.7.0 client and its emulated phone; **server options** are the local server's rules and state, used only with `--server inproc` (with `--server HOST` they belong to `soa-server`, which takes the same flags; `soa` warns and ignores them). The command line is CLI11's (`src/core/cli.cpp`): the options `soa` shares with the other programs are defined once (`common/include/soa/cli.h`: the rules, `--repo`, `--download`, `--standin-assets`, `-v`; `runtime/src/app/cli.h`: the window and the driving options, `--guest-cpus`, `--gdb`; `platform370/include/platform370/cli.h`: `--device-clock`, `--no-patch`, `--http`, `--lobby`, `--map-host`; `server/include/soaserver/cli.h`: the server options, `soa-server`'s too). A value-taking option given twice: the last one wins (`--shot`, `--do`, `--map-host`, `--live-check` collect); any error prints one line and exits 2. `soa --help` notes which removed `SOA_*` variable each flag replaced. `build/tests/cli/soa_cli_tests` checks every option against the parser this replaced.
 
 **General**
 
@@ -234,7 +234,7 @@ When the game asks for text (e.g. a name), type it: a text box at the bottom of 
 
 ## Run options
 
-Every option that changes what a run does lives in one typed struct, `RunOptions` (`port/src/core/options.h`): `repo_dir`, `ClientOptions client` and `ServerOptions server`. `main` fills it once, before the game starts, from the command line: settings are flags only (the `SOA_*` variables that were settings print one warning line naming their flag and are ignored; `docs/environment.md`), and the port never `setenv()`s game or run state (selftest `server/no-setenv-state`). Code reads them through `options()`. The window, the data dir, `--natives` and the control / test flags stay in `main`.
+Every option that changes what a run does lives in one typed struct, `RunOptions` (`port/src/core/options.h`): `repo_dir`, `ClientOptions client` and `ServerOptions server`. `main` fills it once, before the game starts, from the command line (`core/cli.cpp`): settings are flags only (the `SOA_*` variables that were settings print one warning line naming their flag and are ignored; `docs/environment.md`), and the port never `setenv()`s game or run state (selftest `server/no-setenv-state`). Code reads them through `options()`. The window, the data dir, `--natives` and the control / test flags stay in `main`.
 
 **`ClientOptions`**
 
@@ -243,10 +243,10 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 | `--download-dir DIR`, `--download-prefer` | `download_dir`, `download_prefer` |
 | `--standin-assets DIR\|off` (inproc: `standin-assets`; `0` / `off` = none) | `standin_dir`, `standin_off` |
 | `--fake-server DIR` (inproc: `port/fakeapi/responses`), `--fake-server-schema FILE` | `fake_server_dir`, `fake_server_schema` (the FakeApiCaller route) |
-| `--guest-cpus N\|host` (default 8) | `guest_cpus` (0 = host), `has_guest_cpus` |
+| `--guest-cpus N\|host` (default 8) | `guest_cpus` (0 = host) |
 | `--memstats [S]` | `memstats` (1 = at every phase change, S > 1 also every S seconds) |
 
-**`ServerOptions`**: one field per `server::ServerConfig` field (`server/include/soaserver/config.h`), copied 1:1 by `config_from_options` (`src/native/api/server_adapters.cpp`), plus the CDN's source from `ClientOptions` (`download_dir`, `standin_dir` / `standin_off`), the repo roots and the data dir.
+**`ServerOptions`**: `server::ServerConfig` itself (`server/include/soaserver/config.h`), its flags defined once for `soa` and `soa-server` (`server/include/soaserver/cli.h`). `config_from_options` (`src/native/api/server_adapters.cpp`) copies it into `server::config()` with the CDN's source from `ClientOptions` (`download_dir`, `standin_dir` / `standin_off`), the repo roots and the data dir.
 
 | Command line (= `soa-server`'s) | Field |
 |---|---|
@@ -258,7 +258,7 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 | `--seed FILE` | `seed` |
 | `--game-xml FILE` (inproc: `DATA/data/shared_prefs/Game.xml`) | `game_xml` |
 | `--seed-rng N` | `has_seed_rng`, `seed_rng` |
-| `--start-coins N` (default 300000) | `has_start_coins`, `start_coins`: free coins (紋章石) of a new local player; an existing state keeps its balance |
+| `--start-coins N` (default 300000) | `start_coins`: free coins (紋章石) of a new local player; an existing state keeps its balance |
 | `--clock "YYYY-MM-DD HH:MM:SS"` | `has_clock`, `clock`, `clock_offset` |
 | `--galaxy-pass` | `galaxy_pass`: the local player holds the Galaxy Pass (`pshop_galaxypass_001`), granted again whenever a player load finds it expired (`docs/server-rules.md` "Deep space") |
 | `--enable-events`, `--event-keywords "a,b,!c"` | `enable_events`, `event_keywords` (empty = `kDefaultEventKeywords`; `docs/server-rules.md` "Enabling events by keyword") |
@@ -266,7 +266,7 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 | `--home3d-all` (debug) | `home3d_all`: the client's master copy offers the 3D home for every character (`docs/home3d.md`) |
 | `--campaign-master-db FILE`, `--campaign-seed LABEL` | `campaign_master_db`, `campaign_seed` |
 | `--fail M:CODE[,..]`, `--surprise` (test hooks) | `fail`, `surprise` |
-| `--log-packets DIR` | `log_packets` (port-side: `packet_log::open`, not a ServerConfig field) |
+| `--log-packets DIR` | `log_packets` (soa: `packet_log::open`; soa-server: its wire layer's log) |
 
 The local server is the library in the top-level `server/` (`server/README.md`). It reads no run options itself: `main` calls `config_from_options` once the options are final.
 

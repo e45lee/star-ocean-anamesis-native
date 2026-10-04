@@ -8,7 +8,7 @@
 // own memory stream is limited to 2 GB), so:
 //   - ZIP64 archives work (more than 65,535 entries, offsets and sizes past 4 GB);
 //   - a stored (uncompressed) entry is served in place: stored_data() points into the mapping and
-//     data_offset_of() is its offset in path(), for pread / mmap / ffmpeg's subfile protocol;
+//     data_offset_of() is its offset in path(), for pread / mmap (the movie player reads stored_data());
 //   - an archive stored inside another one (an app bundle's APKs) opens in place, without extracting
 //     it: open_member(), or open(path, offset, length) for any byte range of a file.
 // Deflated entries are inflated by minizip-ng's zlib stream (extract(), read()).

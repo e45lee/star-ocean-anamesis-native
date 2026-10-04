@@ -62,6 +62,8 @@ Worktrees made by `port/scripts/agent-worktree.sh` share the main checkout's `.v
 ```sh
 # build tools (vcpkg needs curl, zip, unzip, tar, git and pkg-config (pkgconf on 24.04); it downloads its own ninja and CMake if needed)
 sudo apt install build-essential cmake git curl zip unzip tar pkg-config perl python3 autoconf automake libtool
+# nasm: the x86-64 assembly of vcpkg's ffmpeg port (the movie player's H.264 / AAC decoders); vcpkg fetches it only on Windows hosts
+sudo apt install nasm
 # optional, faster builds: scripts/build.sh configures with Ninja and compiles through ccache when they are installed
 sudo apt install ninja-build ccache
 # SDL2's X11 and Wayland video and PulseAudio audio (vcpkg builds SDL2 against the system's headers; it loads the
@@ -276,8 +278,15 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   `-march` and no `-ffast-math` (the natives are bit-exact only with x86-64's default code). No LTO.
   On Linux libstdc++ and libgcc are linked statically: the binaries need glibc 2.39 (the build
   host's, Ubuntu 24.04), `libEGL.so.1` and `libGLESv2.so.2`; SDL loads X11 / Wayland / PulseAudio
-  at run time; ffmpeg runs the movies. The Windows `.exe` files are static (Windows' DLLs only;
-  `ffmpeg.exe` beside them or on PATH for the movies).
+  at run time. The Windows `.exe` files are static (Windows' DLLs only). Nothing else is needed for
+  the movies: the programs decode them with FFmpeg's libraries, linked in (vcpkg's `ffmpeg`).
+- **FFmpeg inside the packages:** soa, soa-emu and soa-viewer link FFmpeg 9 statically (libavcodec,
+  libavformat, libavutil, libswresample; an LGPL 2.1-or-later build: no `gpl` / `nonfree` /
+  `version3` feature) with all of FFmpeg's built-in codecs and formats (the port offers no subset),
+  the H.264 and AAC decoders among them. Its license text and source are in `THIRD-PARTY-NOTICES.txt`; our
+  sources (GPLv3) are what one relinks it with. A fact to be aware of, not legal advice: H.264 and
+  AAC are covered by patent pools (Via LA) in some countries, so packages that ship these decoders
+  carry them; before, the user's own ffmpeg program did the decoding.
 - **What goes in** (an allow-list in `tools/package.py`): the binaries, the launchers, `README.txt`
   (from `scripts/package/README.txt.in`, one template for the four packages: per program, which game
   files it needs, where to put them, the lookup order, the flags, the data dirs, the first run, the

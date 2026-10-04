@@ -1,5 +1,6 @@
 #pragma once
-// MoviePlayerActivity replacement: decodes MP4s with ffmpeg subprocesses.
+// MoviePlayerActivity replacement: plays the game's MP4s, decoded with FFmpeg's libraries
+// (frontend/movie_decoder.h) and drawn by the host over the game's frame (YUV to RGB in a shader).
 #include <string>
 
 namespace soa {

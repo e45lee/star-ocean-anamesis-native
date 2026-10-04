@@ -88,11 +88,12 @@ Put the file as in 1. and start again.
 {{IF linux}}
 Linux needs: glibc 2.39 or newer (Ubuntu 24.04, Debian 13, Fedora 40 or later), libEGL and
 libGLESv2 (Mesa: libegl1, libgles2, libegl-mesa0, libgl1-mesa-dri), X11 or Wayland, PulseAudio
-or PipeWire (pipewire-pulse) for sound, ffmpeg for the story movies, and a Japanese font for
-the name-entry box (e.g. fonts-ipaexfont-gothic or fonts-noto-cjk).
+or PipeWire (pipewire-pulse) for sound, and a Japanese font for the name-entry box (e.g.
+fonts-ipaexfont-gothic or fonts-noto-cjk). The story movies need nothing else: the program
+decodes them itself (FFmpeg's libraries, built in).
 {{ELSE}}
-Windows needs: Windows 10 or 11 (x64). Everything else is built in, except ffmpeg for the story
-movies: put ffmpeg.exe beside the program or on PATH (without it the movies do not play).
+Windows needs: Windows 10 or 11 (x64). Everything else is built in, the story movies' decoder
+too (FFmpeg's libraries).
 {{END}}
 {{ELSE}}
 {{IF port}}
@@ -337,11 +338,12 @@ An APK of another version is skipped with "another version of the game (its libS
 {{IF linux}}
 Linux needs: glibc 2.39 or newer (Ubuntu 24.04, Debian 13, Fedora 40 or later), libEGL and
 libGLESv2 (Mesa: libegl1, libgles2, libegl-mesa0, libgl1-mesa-dri), X11 or Wayland, PulseAudio
-or PipeWire (pipewire-pulse) for sound, ffmpeg for the story movies, and a Japanese font for
-the name-entry box (e.g. fonts-ipaexfont-gothic or fonts-noto-cjk).
+or PipeWire (pipewire-pulse) for sound, and a Japanese font for the name-entry box (e.g.
+fonts-ipaexfont-gothic or fonts-noto-cjk). The story movies need nothing else: the program
+decodes them itself (FFmpeg's libraries, built in).
 {{ELSE}}
-Windows needs: Windows 10 or 11 (x64). Everything else is built in, except ffmpeg for the story
-movies: put ffmpeg.exe beside the program or on PATH (without it the movies do not play).
+Windows needs: Windows 10 or 11 (x64). Everything else is built in, the story movies' decoder
+too (FFmpeg's libraries).
 {{END}}
 {{END}}
 STAR OCEAN: anamnesis is (C) SQUARE ENIX. This project is not affiliated with Square Enix.

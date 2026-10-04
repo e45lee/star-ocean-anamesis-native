@@ -10,7 +10,7 @@ The runtime (`runtime/src/`) holds what any host of the Android `libSOA.so` need
 | `runtime/src/hle/` | High-level emulation of the Android imports: libc, pthreads, EGL emulated over the host's GL contexts (`egl.cpp`), GLES → host GL (`gles.cpp`, `etc2.cpp`), OpenSL ES, `dlopen` |
 | `runtime/src/android/` | NDK surface: `AAssetManager` over the APKs, the download dir and the stand-in overlay; SharedPreferences (`prefs`); zip; the platform state and the host's hooks (`platform.h`) |
 | `runtime/src/jni/` | The C++ JVM emulation: the Java classes the game calls through JNI |
-| `runtime/src/frontend/` | Movie playback (ffmpeg) |
+| `runtime/src/frontend/` | Movie playback (FFmpeg's libraries) |
 
 This folder is the port:
 

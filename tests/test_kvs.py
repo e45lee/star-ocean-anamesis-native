@@ -70,7 +70,7 @@ def test_roster_english_names():
     assert m.role(game.get_u32("player_home_pc_roleid"))["name_en"] == "Summer Maria"
 
 
-@pytest.mark.skipif(not sorted((ROOT / "apk").glob("*.xapk")),
+@pytest.mark.skipif(not sorted((ROOT / "apk").glob("*.xapk")),  # 380-ok: soa_save edits the offline build
                     reason="needs the offline game's package in apk/ (untracked; absent in a worktree)")
 def test_unlock_all_keeps_existing(tmp_path):
     from soa_save.roster import roster, unlock_all

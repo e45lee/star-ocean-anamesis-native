@@ -2,7 +2,7 @@
 #
 # From vcpkg (vcpkg.json, manifest mode: configured through the vcpkg toolchain, which the root
 # CMakeLists.txt picks up from $VCPKG_ROOT or .vcpkg/): imported targets
-#   ZLIB::ZLIB  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
+#   ZLIB::ZLIB  MINIZIP::minizip-ng  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
 #   OpenSSL::Crypto  msgpack-cxx  httplib::httplib  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
 #   runtime/src/app/text_overlay.cpp)  litehtml  soa::stb (headers; the web view, webview/)  and the
 #   EGL/GLES/KHR headers.
@@ -22,6 +22,7 @@ find_package(zstd CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED)
 find_package(Vorbis CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(minizip-ng CONFIG REQUIRED)  # MINIZIP::minizip-ng (zlib only): common/ soa_zip
 find_package(msgpack-cxx CONFIG REQUIRED)  # target msgpack-cxx (headers; the server's MessagePack codec)
 find_package(httplib CONFIG REQUIRED)  # target httplib::httplib (headers; soa-server's HTTP server and client)
 # The web view's page renderer (webview/, docs/webview.md): litehtml lays out HTML/CSS (gumbo

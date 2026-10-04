@@ -210,6 +210,7 @@ MasteryInheritance mastery_inheritance(Ctx& ctx, CharacterUid uid) {
     Member master = member(ctx, p.master);
     if (!master.found) return inh;
     inh.graduated = true;
+    inh.active = member(ctx, uid).category_type == master.category_type;
     inh.parent_master_role_id = master.role.v;
     inh.mastery_talent_id = mastery_talent_of(ctx, master.role, master.awaken);
     return inh;

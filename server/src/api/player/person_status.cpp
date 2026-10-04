@@ -165,10 +165,11 @@ Value person_status_info(ext::Ctx& ctx, u64 uid) {
         status["is_subscription"] = false;
         status["is_multi_main_character"] = false;
         // (b) the inherited mastery talent and its master's role (api/growth/mastery.cpp; 0 for
-        // a character that isn't a graduated 弟子)
+        // a character that isn't a graduated 弟子); the talent only while the disciple's role type
+        // is the master's (uimsg_evolution_role_change_confirm: another role makes it 無効)
         MasteryInheritance inh = mastery_inheritance(ctx, CharacterUid(uid));
         status["parent_master_role_id"] = inh.parent_master_role_id;
-        status["mastery_talent_id"] = inh.mastery_talent_id;
+        status["mastery_talent_id"] = inh.active ? inh.mastery_talent_id : 0u;
         seed_stats(roster_row, status);
     });
     return status;

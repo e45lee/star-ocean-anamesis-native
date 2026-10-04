@@ -430,11 +430,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `d1bcebee`
 - **Method** `ChangeMascot(unsigned int)`; wire `SendChangeMascot(RequestHeader, unsigned int)`
 - **Wire**: request fid `d1bcebee`, encrypted: RequestHeader(16) · u32 = 20 bytes; reply `ChangeMascotRes` fid `a37ae622`
-- **Request**: `u32 mascot master_role / person id`
+- **Request**: `u32 master_person id` (a `master_home_message` type-3 mascot's person)
 - **Response** (`data.*`): `Player.mascot_id`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): unnamed code near `CAdjutantSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/home.cpp`; docs/server-rules.md#home-mascot), in-process through the port's FakeApiCaller route
 - **Notes**: Caller changed with `CAdjutantSelect` (3.7.0 and offline-build layouts differ).
 
 ### FavoriteDecoObject
@@ -1123,7 +1123,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `UpdateCharacter`
 - **Handler / effect**: Inline (native): role fields and skill slots.
 - **Callers** (fid constant scan): unnamed code near `CRoleSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/growth.cpp`; docs/server-rules.md#role-change), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_role_change`
 
 ### ClearNewCharacter

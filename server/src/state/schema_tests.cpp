@@ -1482,7 +1482,8 @@ NATIVE_TEST("server/schema-migrate-v12") {
     }
 }
 
-// Version 13: the mastery table (GetMasteryInfo / TrainMastery / ResetMastery). The version is
+// Version 13: the mastery table (GetMasteryInfo / TrainMastery / ResetMastery) and
+// player.mascot_id (ChangeMascot). The version is
 // written once here (kV) so a renumbering at merge changes one line. (1) v0 -> v13: every table's
 // rows as the same file at version 12, an empty mastery table; .bak-v0. (2) a planted v12 file ->
 // 13 without the master: the table, its checks and cascades, .bak-v12 without it.
@@ -1503,7 +1504,12 @@ NATIVE_TEST("server/schema-migrate-v13") {
         std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
         t.expect_eq(rb.count("mastery") == 1 && rb["mastery"].empty(), true, "an empty mastery table");
         rb.erase("mastery");
+        ra.erase("player");
+        rb.erase("player");
         t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
+        t.expect_eq(rows_over(db, "player", "id, name, level, home_uid, is_3d_home"),
+                    rows_over(ref, "player", "id, name, level, home_uid, is_3d_home"), "the player's other columns kept");
+        t.expect_eq(db.one("select count(*) from player where mascot_id is not null", {}), (int64_t)0, "no mascot chosen");
         t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
         t.expect_eq(fk_violations(db), 0, "foreign_key_check");
         ref.close();
@@ -1538,6 +1544,8 @@ NATIVE_TEST("server/schema-migrate-v13") {
         t.expect_eq(ok("insert into mastery (uid, master_uid, dojo_no, type_id, created_at, updated_at) values (" + A + ", " + B + ", 1, 7, 0, 0)"),
                     true, "a pair");
         t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        t.expect_eq(f.one("select count(*) from player where mascot_id is null", {}), f.one("select count(*) from player", {}),
+                    "player.mascot_id: NULL (never chosen)");
         t.expect_eq(ok("delete from roster where uid = " + B), true, "the master goes");
         t.expect_eq(f.one("select count(*) from mastery", {}), (int64_t)0, "its pair with it (cascade)");
         f.close();
@@ -1545,6 +1553,8 @@ NATIVE_TEST("server/schema-migrate-v13") {
         if (!bak.open(prev.path + bak_prev, true)) return t.fail("no %s%s", prev.path.c_str(), bak_prev.c_str());
         t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is at the version before");
         t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'mastery'", {}), (int64_t)0, "the backup has no mastery table");
+        t.expect_eq(bak.one("select count(*) from pragma_table_info('player') where name = 'mascot_id'", {}), (int64_t)0,
+                    "the backup has no mascot_id");
         bak.close();
     }
 }

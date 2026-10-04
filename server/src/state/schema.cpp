@@ -1845,7 +1845,7 @@ const char* const kHome3D[] = {
     "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
 };
 
-// ---- step 13: mastery (師弟: GetMasteryInfo, TrainMastery, ResetMastery) ----------------------
+// ---- step 13: mastery (師弟), the home mascot -------------------------------------------------
 //
 // mastery: one 師弟 pair per disciple (CPlayerCharacterMasteryInfo; api/growth/mastery.cpp):
 // uid the 弟子 (character_id), master_uid the 師匠 (parent_character_id; one pair each), the
@@ -1866,6 +1866,9 @@ const char* const kMastery[] = {
   updated_at integer not null,
   check (master_uid <> uid)
 ) strict)",
+    // player.mascot_id: the home's mascot (ChangeMascot; Player.mascot_id), a master_person id;
+    // NULL: never chosen
+    "alter table player add column mascot_id integer",
 };
 
 }  // namespace
@@ -1919,7 +1922,10 @@ const std::vector<Step>& steps() {
          import_campaign,
          retire_campaign_file},
         {12, "the player's 2D / 3D home: player.is_3d_home (Home3DAnd2DSwitching)", {std::begin(kHome3D), std::end(kHome3D)}, nullptr},
-        {13, "mastery: the 師弟 pairs (GetMasteryInfo, TrainMastery, ResetMastery)", {std::begin(kMastery), std::end(kMastery)}, nullptr},
+        {13,
+         "mastery: the 師弟 pairs (GetMasteryInfo, TrainMastery, ResetMastery); player.mascot_id (ChangeMascot)",
+         {std::begin(kMastery), std::end(kMastery)},
+         nullptr},
     };
     return s;
 }

@@ -52,7 +52,7 @@ player, screens opened by hand through `--control`.
 | 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player) |
 | `MissionContinue`, `MissionLose` (`CPauseMenu::ReqeustContinue` @01dad704 -> `Auto`) | decompile | not reproduced (losing needs a long battle); the continue would go ahead with no stones taken on the server |
 | Paid currency (`CoinList`, `CoinDeposit*`, `Get`/`UpdateBirthYearMonth`) | I, S | no entry point found on the shop or gacha screens with 300000 stones (step 7 finds the opener) |
-| `ChangeMascot`, `ChangeRole`, `InheritAccessory`, `EquipAuto`, `UpdateItemStock`, the `ClearNew*`, `ReadExpirationInfo`, `SendGuideInformation`, `SetStampSlot` | callers (`CAdjutantSelect`, `CRoleSelect`, `CItemStrengtheningPotal`, `CTermInfoUI`, `CGuideInformation`, `CStampSelect`) | the same `Auto` pattern: no hang, the change isn't stored |
+| `InheritAccessory`, `EquipAuto`, `UpdateItemStock`, the `ClearNew*`, `ReadExpirationInfo`, `SendGuideInformation`, `SetStampSlot` | callers (`CItemStrengtheningPotal`, `CTermInfoUI`, `CGuideInformation`, `CStampSelect`) | the same `Auto` pattern: no hang, the change isn't stored (`ChangeMascot` and `ChangeRole`, from `CAdjutantSelect` / `CRoleSelect`, were the same: done in step 3.5) |
 
 Priority (play impact): storage and the overflow box (empty screens, lost moves), missions (the
 simulator's wrong battle, continues), settings (lost at once; one of them routes items to the
@@ -96,9 +96,7 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | **Equipment** | [EquipAuto](api.md#equipauto) | {} | auto-equip |
 | | [InheritAccessory](api.md#inheritaccessory) | ★ | |
 | | [UpdateItemStock](api.md#updateitemstock) | {} | |
-| **Home and decorations** | [ChangeMascot](api.md#changemascot) | ★ | |
-| | [ChangeRole](api.md#changerole) | ★ | |
-| | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
+| **Home and decorations** | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
 | | [FavoriteDecoObject](api.md#favoritedecoobject) / [UnFavoriteDecoObject](api.md#unfavoritedecoobject) | {} | |
 | **"New" badges** | [ClearNewCharacter](api.md#clearnewcharacter) / [ClearNewItem](api.md#clearnewitem) / [ClearNewStackItem](api.md#clearnewstackitem) | {} | badges never clear |
 | **Settings and account** | [GetConfig](api.md#getconfig) / [UpdateConfig](api.md#updateconfig) / [ResetConfig](api.md#resetconfig) | ★ | the options the server keeps |
@@ -283,6 +281,20 @@ assumptions, each (d) in the code and in server-rules.md:
   parent role follow the 師匠's later growth (computed from the stored pair, not snapshotted), and
   `UpdateAwakenLevel` reports the 弟子's talent whenever the awakened character has one.
 - Parting returns nothing paid (the dialog offers nothing back).
+
+**Mascot and role (step 3.5, done: `server/src/api/player/home.cpp` `change_mascot`,
+`server/src/api/growth/growth.cpp` `change_role`; docs/server-rules.md#home-mascot, #role-change).**
+Both were status-only; two `kServedStatusOnly` rows route them in-process (docs/client-changes.md
+"Mascot and role"). Assumptions, (d) in the code and in server-rules.md:
+- ChangeMascot takes any `master_person` id: the mascot list (type-3 `master_home_message` rows
+  the story progress opens) is the client's, and the client keeps its own copy (KVS
+  `HomeMascotID`); `Player.mascot_id` is sent only once a mascot was chosen (no key before, as the
+  server always did).
+- ChangeRole resets the character's set skills in the party sets too (the client says the set
+  skills are reset; the sets hold their own copies), and keeps level, skill levels, limit break,
+  awakening and equipment (the dialog mentions only the skills).
+- Not played on screen: the mascot change (the seeded player's progress opens one mascot, so the
+  button is hidden); unit test and replay corpus only.
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

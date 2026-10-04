@@ -12,6 +12,7 @@
 
 #include "api/growth/growth_args.h"
 #include "api/growth/mastery.h"
+#include "api/player/party_set.h"  // party_set_info
 #include "api/player/roster.h"  // has_growth
 #include "core/errors.h"
 #include "core/log.h"
@@ -537,6 +538,48 @@ std::vector<u8> equip_skill(Ctx& ctx, const Request& req) {
     return body(data);
 }
 
+// ChangeRole(u64 character_uid, u32 master_role_id) -> ChangeRoleRes                  fid 720e2bac
+// API: docs/api.md#changerole   Rules: docs/server-rules.md#role-change
+//
+// Switches a role-changeable character to another of its roles (装備・技・アシスト変更 -> ロール選択,
+// CRoleSelect; its request lambda @01c72678 sends the screen's character and the chosen role).
+//   (a) master_role_change: the new role has a row whose person_id is the character's role's
+//       master_person_id and whose rarity is the character's (b: uimsg_evolution_role_change_description
+//       "このキャラクターは進化した為 ... ロールを変更できるようになります": the evolved form), inside the
+//       row's opened_at / closed_at when it sets them.
+//   (b) The set skills are reset (uimsg_evolution_role_change_done "セットしたスキルが初期化されます"):
+//       roster equip_skill1..3 and (d) the character's skills in every party set.
+//   (d) Level, EXP, skill levels, limit break, awakening and equipment are kept.
+//   Refused: unknown character, a role it can't take, its own role (10208).
+// Answers: the player state, UpdateCharacter (OnChangeRoleRes copies it into the character), and
+// PartySet when a party set's skills were reset.
+std::vector<u8> change_role(Ctx& ctx, const Request& req) {
+    const auto args = args::ChangeRoleArgs::from(req);
+    const CharacterUid uid = args.character_uid;
+    Character chara = load_character(ctx, uid);
+    if (!chara.found) return refuse(ctx, "ChangeRole", "unknown character", ErrorCode::kItemUnusable);
+    if (chara.role_id == args.role_id) return refuse(ctx, "ChangeRole", "its own role", ErrorCode::kItemUnusable);
+    const int64_t person = ctx.m.one("select master_person_id from master_role where id = ?", {chara.role_id});
+    bool allowed = false;
+    const std::string now = ctx.fmt_time(ctx.now());
+    ctx.m.q("select * from master_role_change where master_role_id = ? and person_id = ? and rarity = ?", {args.role_id, person, chara.rarity},
+            [&](const Row& change_row) {
+                const std::string from = change_row.s("opened_at"), to = change_row.s("closed_at");
+                if ((from.empty() || from <= now) && (to.empty() || now <= to)) allowed = true;
+            });
+    if (!allowed) return refuse(ctx, "ChangeRole", "not one of the character's roles (master_role_change)", ErrorCode::kItemUnusable);
+    ctx.st.q("update roster set role_id = ?, equip_skill1 = null, equip_skill2 = null, equip_skill3 = null where uid = ?", {args.role_id, uid});
+    const int64_t in_sets = ctx.st.one(
+        "select count(*) from party_member where uid = ? and (skill_id1 is not null or skill_id2 is not null or skill_id3 is not null)", {uid});
+    ctx.st.q("update party_member set skill_id1 = null, skill_id2 = null, skill_id3 = null where uid = ?", {uid});
+    Value data = ctx.base_data();
+    data["UpdateCharacter"] = update_character_info(ctx, uid, true);
+    if (in_sets) data["PartySet"] = party_set_info(ctx);
+    // read by mastery_session.sh
+    LOGI("server", "ChangeRole %llx: role %u -> %u", (unsigned long long)uid.v, chara.role_id.v, args.role_id.v);
+    return body(data);
+}
+
 }  // namespace
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
@@ -550,6 +593,7 @@ void register_growth() {
     add_api({"AddStatusCharacter"}, add_status_character);
     add_api({"EquipWeapon", "EquipAccessory"}, equip_item);
     add_api({"EquipSkill"}, equip_skill);
+    add_api({"ChangeRole"}, change_role);
 }
 
 }  // namespace soa::server

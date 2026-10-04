@@ -10,6 +10,9 @@ namespace soa::server {
 // (b: tCharaData::InitializeMastery takes a non-zero parent role as a finished training).
 struct MasteryInheritance {
     bool graduated = false;
+    // (b) the talent counts only while the disciple's role type is its master's
+    // (uimsg_evolution_role_change_confirm: ChangeRole to another role makes it 無効, back again 有効)
+    bool active = false;
     u32 parent_master_role_id = 0;
     u32 mastery_talent_id = 0;
 };

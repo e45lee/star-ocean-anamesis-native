@@ -10,6 +10,8 @@
   "Blacklist": "server/src/api/social/social.cpp",
   "BoostCharacter": "server/src/api/growth/growth.cpp",
   "BoxGacha": "server/src/api/gacha/box.cpp",
+  "ChangeMascot": "server/src/api/player/home.cpp",
+  "ChangeRole": "server/src/api/growth/growth.cpp",
   "CheckEventRankingResult": "server/src/api/events/ranking.cpp",
   "ClearNewEventRanking": "server/src/api/events/ranking.cpp",
   "ClearNewGear": "server/src/api/items/gear.cpp",
@@ -430,6 +432,8 @@
   "replay:mastery": {
    "apis": [
     "BoostCharacter",
+    "ChangeMascot",
+    "ChangeRole",
     "ExItemShop",
     "GetMasteryInfo",
     "GetPlayer",
@@ -1008,6 +1012,7 @@
   },
   "session:mastery": {
    "apis": [
+    "ChangeRole",
     "GetMasteryInfo",
     "GetPlayer",
     "GetServerTime",
@@ -1020,6 +1025,7 @@
   },
   "session:mastery-server": {
    "apis": [
+    "ChangeRole",
     "GetMasteryInfo",
     "GetPlayer",
     "GetServerTime",

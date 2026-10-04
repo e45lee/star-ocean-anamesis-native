@@ -48,6 +48,8 @@ const std::vector<MasterRef>& master_refs() {
         {"campaign_clear", "mission_id", "master_mission|master_world_map_mission", "id", false},
         // the 師弟 pairs' mastery type (schema version 13)
         {"mastery", "type_id", "master_mastery_step", "type_id", false},
+        // the home's mascot (schema version 13; NULL: never chosen)
+        {"player", "mascot_id", "master_person", "id", false},
     };
     return refs;
 }

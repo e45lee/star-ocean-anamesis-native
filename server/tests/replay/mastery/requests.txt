@@ -3,7 +3,9 @@
 # role_cp0011_b02a_6121 with mastery_type_attacker_01, the 弟子 role_cp0303_b04a_6131), then
 # GetMasteryInfo, TrainMastery (pairing refused and accepted; the first training refused, then
 # accepted with item_set_00003 bought twice; a pass-medal training refused),
-# ResetMastery both ways round, and GetPlayer.
+# ResetMastery both ways round, and GetPlayer; then ChangeRole (the seed's cp0010_b01a_6165 to
+# role_cp0010_b01a_6161, again, another person's character) and ChangeMascot (a type-3
+# master_home_message person, an unknown id), GetPlayer.
 # tz: America/Toronto
 req 1 1790856005 Login a01c67ef - - - -
 req 2 1790856010 ExItemShop 33d09fb7 1875469583 - - -
@@ -33,3 +35,9 @@ req 25 1790856125 ResetMastery 614fa7ea 2113929230,2113929270 - - -
 req 26 1790856130 TrainMastery bb0e7ef9 2113929230,2113929270,3,1012696816,0,0 - - -
 req 27 1790856135 GetMasteryInfo 45bea005 - - - -
 req 28 1790856140 GetPlayer 9a056905 - - - -
+req 29 1790856145 ChangeRole 720e2bac 2113929272,2696629700 - - -
+req 30 1790856150 ChangeRole 720e2bac 2113929272,2696629700 - - -
+req 31 1790856155 ChangeRole 720e2bac 2113929230,2696629700 - - -
+req 32 1790856160 ChangeMascot d1bcebee 1858102629 - - -
+req 33 1790856165 ChangeMascot d1bcebee 12345 - - -
+req 34 1790856170 GetPlayer 9a056905 - - - -

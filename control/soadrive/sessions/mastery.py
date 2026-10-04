@@ -1,8 +1,9 @@
 """Session `mastery`: キャラクター > マスタリー (CMasteryTop) under the local server, in-process or
-soa-server (docs/server-rules.md#mastery). The state is planted before the first boot: the seed
+soa-server (docs/server-rules.md#mastery), and ChangeRole (docs/server-rules.md#role-change). The state is planted before the first boot: the seed
 save's player (a one-request soa-server replay of Login, the session's seed and RNG) with a master-type
 role and a role of its category without one at LV70, the materials of their mastery type's trainings
-and a few pass medals (item_Mastery_01). Then, at home:
+and a few pass medals (item_Mastery_01). Then, at home: 装備・技・アシスト変更 -> the seed's role-changeable ★6
+(cp0010_b01a_6165) -> ロール選択 -> アタッカー (ChangeRole);
   道場1 -> 師匠 and 弟子 picked -> 決定 (TrainMastery pairing), the five trainings (the first four with
   the material cards, the fifth with the pass medal) -> 皆伝 (the reward dialog), 皆伝師弟 listed;
 then a second boot on the same phone: the マスタリー screen again (GetMasteryInfo: the pair kept,
@@ -107,6 +108,10 @@ ALL_CLEAR_CLOSE = "364:890"  # Full Mastership! -> 閉じる
 GRADUATED_TAB = "515:275"  # 皆伝師弟
 GRADUATED_PAIR = "180:460"  # the 皆伝 list's first pair
 PART = "515:890"           # its dialog's 師弟解消
+EQUIPMENT = "364:435"      # the character menu: 装備・技・アシスト変更
+ROLE_CHANGER = "495:330"   # its list's fourth: the seed's cp0010_b01a_6165 (★6 ヒーラー, master_role_change)
+ROLE_SELECT = "380:353"    # ロール選択
+ATTACKER = "364:410"       # the role dialog's アタッカー
 
 
 def step(s, name, rx, cmds, secs=40):
@@ -140,6 +145,11 @@ def main(o):
 
     def body(s):
         common.port_login(s, notice=None, bonus=None)
+        # ---- ChangeRole: 装備・技・アシスト変更 -> the role-changeable ★6 -> ロール選択 -> アタッカー
+        c("tap:" + CHARACTER, "wait:6000", "tap:" + EQUIPMENT, "wait:5000", "tap:" + ROLE_CHANGER, "wait:5000", s.shot_cmd("03a-equipment"),
+          "tap:" + ROLE_SELECT, "wait:4000", s.shot_cmd("03b-role-select"))
+        step(s, "ロール選択 -> アタッカー -> ChangeRole", r"ChangeRole [0-9a-f]+: role [0-9]+ -> [0-9]+", ["tap:" + ATTACKER, "wait:3000"])
+        c("wait:2000", s.shot_cmd("03c-role-changed"), "tap:" + CLOSE, "wait:4000", s.shot_cmd("03d-attacker"))
         open_mastery(s, 0, "03-mastery")
         # 道場1 -> 師匠 (the list's first: the LV70 master-type role) -> 決定 -> 弟子 -> 決定 -> 決定
         c("tap:" + DOJO1, "wait:5000", s.shot_cmd("04-select-master"), "tap:" + FIRST_CELL, "wait:2500", "tap:" + DECIDE, "wait:3500",
@@ -184,7 +194,13 @@ def main(o):
         ok = common.drive(s2, again) and ok
         st = sqlite3.connect("file:%s?mode=ro" % s2.state_db, uri=True)
         s2.check("parted: no pair left", st.execute("select count(*) from mastery").fetchone()[0] == 0)
+        m = sqlite3.connect("file:%s?mode=ro" % repo_file("data/basmaster-3.7.0.sqlite3"), uri=True)
+        attackers = {r for (r,) in m.execute("select master_role_id from master_role_change c join master_role r on r.id = c.master_role_id "
+                                             "where r.category_type = 1")}
+        s2.check("the role change kept (an attacker role of master_role_change)",
+                 any(r in attackers for (r,) in st.execute("select role_id from roster")))
         st.close()
         if s2.failed:
             fails.append("the second boot")
-    return common.verdict(s, fails, "mastery: paired, five trainings (one with the pass medal), 皆伝, kept after a re-login, parted")
+    return common.verdict(s, fails, "mastery: a role changed, paired, five trainings (one with the pass medal), 皆伝, kept after a re-login, "
+                          "parted")

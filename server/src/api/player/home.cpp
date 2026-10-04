@@ -3,6 +3,7 @@
 #include "api/player/home.h"
 
 #include "api/player/roster.h"  // owns_character
+#include "core/errors.h"
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/response.h"
@@ -73,10 +74,33 @@ std::vector<u8> home3d_and_2d_switching(ext::Ctx& ctx, const Request& req) {
     return with_player_state(ctx);
 }
 
+// ChangeMascot(u32 master_person_id) -> ChangeMascotRes                           fid d1bcebee
+// API: docs/api.md#changemascot   Rules: docs/server-rules.md#home-mascot
+//
+// The home's mascot (マスコット変更 in お気に入り変更, CAdjutantSelect -> CMascotSelectDialog).
+//   (b) The mascots are master_home_message rows of type 3 the player's story progress opens
+//       (CHome builds the list; CAdjutantSelect shows Button_mascot_change for two or more), each a
+//       master_person; the dialog names them from master_person and the request lambda (@01913cc8)
+//       sends the chosen one's id.
+//   (a) The id must be a master_person id (10208 otherwise); (d) the server doesn't re-check the
+//       story progress (the list is the client's).
+//   (d) Stored in player.mascot_id and sent as Player.mascot_id from then on (the client keeps
+//       its own copy too, the KVS HomeMascotID: CUIUtility::SetMascot).
+// Answers: the player state (Player.mascot_id).
+std::vector<u8> change_mascot(ext::Ctx& ctx, const Request& req) {
+    const u32 person = args::ChangeMascotArgs::from(req).master_person_id;
+    if (!ctx.m.one("select count(*) from master_person where id = ?", {person}))
+        return ext::refuse(ctx, "ChangeMascot", "not a master_person id", (u32)ErrorCode::kItemUnusable);
+    ctx.st.q("update player set mascot_id = ?", {person});
+    LOGI("server", "ChangeMascot: %u", person);
+    return with_player_state(ctx);
+}
+
 // The home character's APIs (src/core/modules.cpp: the core's APIs first).
 void register_home_character() {
     ext::add_core_api({"UpdateHome"}, update_home);
     ext::add_core_api({"Home3DAnd2DSwitching"}, home3d_and_2d_switching);
+    ext::add_core_api({"ChangeMascot"}, change_mascot);
 }
 
 }  // namespace soa::server

@@ -5,7 +5,7 @@
 | `growth.cpp` (module `growth`) | the growth APIs, each with its doc block (signature, fid, rules with their labels, refusal codes, answer) |
 | `growth_args.h` | their request arguments by name (`args::BoostCharacterArgs`, ...) |
 | `mastery.cpp` (module `mastery`) | マスタリー (師弟): GetMasteryInfo, TrainMastery, ResetMastery; the inheritance (`mastery_inheritance`, `mastery_talent_of`) the roster, the battle status and UpdateAwakenLevel send |
-| `mastery_tests.cpp` | `growth/mastery-pairing`, `growth/mastery-training`, `growth/mastery-awakening` |
+| `mastery_tests.cpp` | `growth/mastery-pairing`, `growth/mastery-training`, `growth/mastery-awakening`, `growth/change-role` |
 | `growth_tests.cpp` | `growth/apis`: Boost, LimitBreak (by item and by the screen's row id), Evolution, AddStatus on a scratch server, with refusals (`server/economy-apis` is gone: its login bonus and achievement parts are `daily/login-bonus` and `presents/achievement-chain` since R16, its shop and exchange part `shop/item-shop-and-exchange` in `api/shop/shop_tests.cpp` since R18) |
 
 | API | Handler | Rules (docs/server-rules.md) |
@@ -17,6 +17,7 @@
 | AddStatusCharacter | `add_status_character` | "5.1 Character EXP and level" (seeds) |
 | EquipWeapon, EquipAccessory | `equip_item` | "Character growth" |
 | EquipSkill | `equip_skill` | "Character growth" |
+| ChangeRole | `change_role` | "Role change" (#role-change) |
 | GetMasteryInfo, TrainMastery, ResetMastery | `get_mastery_info`, `train_mastery`, `reset_mastery` (`mastery.cpp`) | "Mastery" (#mastery) |
 
 - **Hooks:** none; the modules register their APIs (`register_growth`, `register_mastery`, in `core/modules.cpp`'s order). Its state is the core's `roster` (`state/schema.cpp`).

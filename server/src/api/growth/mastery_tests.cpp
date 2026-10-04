@@ -301,5 +301,54 @@ NATIVE_TEST("growth/mastery-awakening") {
     if (!ran) return;
 }
 
+// ChangeRole (docs/server-rules.md#role-change): a role-changeable character (master_role_change:
+// its person's rows at its rarity) takes another of its roles, its set skills reset in the roster
+// and the party sets; another person's role and its own are refused. A graduated disciple's
+// talent stops counting in the battle status while its role type isn't its master's.
+NATIVE_TEST("growth/change-role") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        u32 code = 0;
+        c.test.on_refuse = [&](u32 e) { code = e; };
+        std::vector<std::pair<u32, u32>> roles;  // (role, category) of one person's role_change rows
+        c.m.q(
+            "select c.master_role_id, r.category_type from master_role_change c join master_role r on r.id = c.master_role_id "
+            "where c.person_id = (select person_id from master_role_change order by id limit 1) order by c.master_role_id",
+            {}, [&](const Row& r) { roles.push_back({(u32)r.i("master_role_id"), (u32)r.i("category_type")}); });
+        if (roles.size() < 2) return t.fail("master_role_change has no person with two roles");
+        Cast k = cast(c);
+        u64 uid = (u64)c.st.one("select uid from roster where uid not in (?, ?, ?) order by uid limit 1", {k.master, k.disciple, k.other_category});
+        c.st.q("update roster set role_id = ?, equip_skill1 = 11, equip_skill2 = 22 where uid = ?", {roles[0].first, uid});
+        c.st.q("update party_member set skill_id1 = 5 where party_id = 1 and slot = 0", {});
+        c.st.q("update party_member set uid = ? where party_id = 1 and slot = 0", {uid});
+        code = 0;
+        std::vector<u8> b = call(c, "ChangeRole", {uid, roles[1].first});
+        t.expect_eq(code, 0u, "changed");
+        t.expect_eq(c.st.one("select role_id from roster where uid = ?", {uid}), (int64_t)roles[1].first, "the new role");
+        t.expect_eq(c.st.one("select count(*) from roster where uid = ? and equip_skill1 is null and equip_skill2 is null", {uid}), (int64_t)1,
+                    "the set skills reset");
+        t.expect_eq(c.st.one("select count(*) from party_member where uid = ? and skill_id1 is not null", {uid}), (int64_t)0, "and in the sets");
+        t.expect_eq(field(data_of(b, "UpdateCharacter"), "master_role_id"), (u64)roles[1].first, "UpdateCharacter");
+        t.expect_eq(data_of(b, "PartySet").type != Value::Nil, true, "PartySet with the reset skills");
+        code = 0;
+        call(c, "ChangeRole", {uid, roles[1].first});
+        t.expect_eq(code, 10208u, "its own role");
+        code = 0;
+        call(c, "ChangeRole", {uid, k.master_role});
+        t.expect_eq(code, 10208u, "another person's role");
+        // the talent of a graduated disciple whose role type leaves its master's
+        c.st.q(
+            "insert into mastery (uid, master_uid, dojo_no, type_id, step1, step2, step3, step4, step5, created_at, updated_at) "
+            "values (?, ?, 1, ?, 1, 1, 1, 1, 1, 0, 0)",
+            {k.disciple, k.master, k.type_id});
+        u32 talent = mastery_inheritance(c, CharacterUid(k.disciple)).mastery_talent_id;
+        t.expect_eq(field(person_status_info(c, k.disciple), "mastery_talent_id"), (u64)talent, "the same role type: the talent counts");
+        c.st.q("update roster set role_id = (select role_id from roster where uid = ?) where uid = ?", {k.other_category, k.disciple});
+        t.expect_eq(field(person_status_info(c, k.disciple), "mastery_talent_id"), (u64)0, "another role type: not in the battle status");
+        c.st.exec("commit");
+    });
+    if (!ran) return;
+}
+
 }  // namespace
 }  // namespace soa::server

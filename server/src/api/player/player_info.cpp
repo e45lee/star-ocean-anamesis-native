@@ -111,6 +111,9 @@ Value player_info(ext::Ctx& ctx) {
         // mode; Home3DAnd2DSwitching stores the player's choice (api/player/home.cpp). (d) 3D for a
         // player who never chose (the column's default; what the server always sent before v12).
         player["is_3d_home"] = player_row.i("is_3d_home") != 0;
+        // The home's mascot (ChangeMascot, api/player/home.cpp): (d) sent once chosen
+        // (player.mascot_id; NULL: never chosen, the key left out as before)
+        if (!player_row.null("mascot_id")) player["mascot_id"] = (u32)player_row.i("mascot_id");
         // 4. the state other domains keep in the player row
         add_domain_state(player_row, player);
     });

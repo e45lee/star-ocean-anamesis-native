@@ -59,6 +59,14 @@ struct EquipSkillArgs {
     static EquipSkillArgs from(const Request& r) { return {CharacterUid(int_at(r, 0)), {int_at(r, 1), int_at(r, 2), int_at(r, 3)}}; }
 };
 
+// ChangeRole(u64 character_uid, u32 master_role_id) (b: CRoleSelect's request lambda @01c72678:
+// the screen's character, the role chosen).
+struct ChangeRoleArgs {
+    CharacterUid character_uid;
+    RoleId role_id;
+    static ChangeRoleArgs from(const Request& r) { return {CharacterUid(int_at(r, 0)), RoleId((u32)int_at(r, 1))}; }
+};
+
 // TrainMastery(u64 disciple_uid, u64 master_uid, u8 dojo_no, u32 step_type_id, u8 step, u8 option)
 // (b: the two request lambdas; docs/server-rules.md#mastery):
 //   - pairing (CMasteryTrainingSelect, @01ba2880): (+0x3530 the 弟子 card, +0x800 the 師匠 card,

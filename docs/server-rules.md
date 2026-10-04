@@ -208,6 +208,13 @@ What the client reads (b): `TitleList` is a plain array of master_title ids (`CT
 - **The page** (`server::web_page`, built when the popup opens): the server clock (and the event calendar when it differs), the event areas open now (`events::open_areas`, the list the event menu shows; names from `master_event_area.name_message_id` **(a)**; at most 12 listed), the running login bonuses with the day reached **(a)**, and the number of presents waiting. Plain text, rows wrapped at 48 columns **(d)**; what it lists is the server's choice **(d)**.
 - The desktop has no web view: the port shows the page's text in the popup's page area (client change, `docs/client-changes.md` "Notice board page"). Other web pages (help, terms, gacha rates, ...) aren't hosted and stay blank.
 
+<a id="home-mascot"></a>
+### Home mascot (`ChangeMascot(u32 master_person_id)`; `server/src/api/player/home.cpp`)
+- **What the client does (b):** `CHome` builds the mascot list from `master_home_message` rows of type 3 (`mascot_*`) inside their dates and story-progress range; お気に入り変更 (`CAdjutantSelect`) shows `Button_mascot_change` when two or more are open, `CMascotSelectDialog` names them from `master_person`, and the request lambda (@01913cc8) sends the chosen one's `master_person` id. The client keeps its own copy too (the KVS `HomeMascotID`, `CUIUtility::SetMascot`).
+- **The rule:** the id must be a `master_person` id **(a)** (10208 otherwise); the server doesn't re-check the story progress **(d)** (the list is the client's). Stored in `player.mascot_id` (schema version 13) and sent as `Player.mascot_id` from then on; a player who never chose has no key, as before **(d)**.
+- **Route:** in-process a status-only method of the fake caller (Status 1, nothing queued); the port now queues it for the local server (`docs/client-changes.md` "Mascot and role").
+- Code: `server/src/api/player/home.cpp` (`change_mascot`), `player_info.cpp`. Tests: `player/change-mascot`, `server/schema-migrate-v13`, the `mastery` replay corpus. Not played on screen: the seeded player's story progress opens one mascot, so the button is hidden.
+
 <a id="player-register"></a>
 ### Player-visible (c) and (d) rules (player)
 
@@ -220,6 +227,7 @@ From the register before R20 (with the area and how to check):
 | Stamina | coin refill / heal items add to the current stamina (overflow allowed) | (d) | amounts are (b) |
 | Stamina | halved costs round up, minimum 1 | (d) | no evidence |
 | Wallet | free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (c) | (a) | |
+| Home | ChangeMascot takes any master_person id (the story-progress list is the client's); Player.mascot_id sent only once chosen | (d) | the client keeps HomeMascotID itself |
 | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
@@ -1112,6 +1120,14 @@ The growth, item, shop and daily-system APIs, as the local server applies them. 
 - **State:** table `mastery` (schema version 13): the 弟子 `uid` (key), `master_uid` (unique: one pair each), `dojo_no` 1-3, `type_id` (a `master_mastery_step.type_id`), `step1..5` (the card cleared, 0 not yet), the times; both characters cascade.
 - Code: `server/src/api/growth/mastery.cpp`. Tests: `growth/mastery-pairing`, `growth/mastery-training`, `growth/mastery-awakening`, `server/schema-migrate-v13`; the `mastery` replay corpus; the session `mastery` (`port/scripts/mastery_session.sh`).
 
+<a id="role-change"></a>
+### Role change (`ChangeRole(u64 character, u32 master_role_id)`; `server/src/api/growth/growth.cpp`)
+- **What the client does (b):** 装備・技・アシスト変更 shows ロール選択 for a character of a person with `master_role_change` rows (`uimsg_evolution_role_change_description`: "このキャラクターは進化した為 ... ロールを変更できるようになります"); `CRoleSelect` lists the five role types and its request lambda (@01c72678) sends the character and the chosen role; `OnChangeRoleRes` copies `UpdateCharacter` into the character.
+- **The rule:** the new role has a `master_role_change` row whose `person_id` is the character's role's `master_person_id` and whose `rarity` is the character's, inside the row's `opened_at` / `closed_at` when set **(a)**; another role, or its own, is refused (10208). The set skills are reset **(b)** (`uimsg_evolution_role_change_done`: "セットしたスキルが初期化されます"): `roster.equip_skill1..3` and **(d)** the character's skills in every party set (`PartySet` answered when one changed). Level, EXP, skill levels, limit break, awakening and equipment stay **(d)**.
+- **Mastery:** a graduated 弟子 whose new role type isn't its 師匠's keeps the pair, but its talent stops counting (`uimsg_evolution_role_change_confirm`: "伝授されているタレントが無効になります ... ロールを戻すと再度タレントが有効になります") **(b)**: `CPersonStatusInfo.mastery_talent_id` is 0 then ([Mastery](#mastery)).
+- **Route:** in-process a status-only method (Status 0); the port queues it for the local server (`docs/client-changes.md` "Mascot and role").
+- Code: `change_role`. Tests: `growth/change-role`, the `mastery` replay corpus; the session `mastery` (cp0010_b01a_6165 ヒーラー -> アタッカー, kept after a re-login).
+
 <a id="growth-register"></a>
 ### Player-visible (c) and (d) rules (growth and economy)
 
@@ -1138,6 +1154,7 @@ From the growth and economy modules (items, shops, login bonus and achievements 
 | Mastery: the pass medal stores the card it was used on | (d) |
 | Mastery: an awakening's talent in the mastery slot replaces the role's; the inheritance follows the master's later growth | (d) |
 | Mastery: parting returns nothing paid | (d) |
+| ChangeRole resets the character's skills in the party sets too; level, skills' levels, equipment kept | (d) |
 
 From the register before R20 (with the area and how to check):
 
@@ -1850,6 +1867,7 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [player](#player-register) | Stamina | coin refill / heal items add to the current stamina (overflow allowed) | (d) | amounts are (b) |
 | [player](#player-register) | Stamina | halved costs round up, minimum 1 | (d) | no evidence |
 | [player](#player-register) | Wallet | free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (c) | (a) |  |
+| [player](#player-register) | Home | ChangeMascot takes any master_person id (the story-progress list is the client's); Player.mascot_id sent only once chosen | (d) | the client keeps HomeMascotID itself |
 | [player](#player-register) | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | [player](#player-register) | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | [player](#player-register) | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
@@ -1912,6 +1930,7 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [growth](#growth-register) |  | Mastery: the pass medal stores the card it was used on | (d) |  |
 | [growth](#growth-register) |  | Mastery: an awakening's talent in the mastery slot replaces the role's; the inheritance follows the master's later growth | (d) |  |
 | [growth](#growth-register) |  | Mastery: parting returns nothing paid | (d) |  |
+| [growth](#growth-register) |  | ChangeRole resets the character's skills in the party sets too; level, skills' levels, equipment kept | (d) |  |
 | [growth](#growth-register) | Growth | big-success chance 11.5 %, ×1.5 | (d) | key names only |
 | [growth](#growth-register) | Growth | seed FOL per seed used | (d) | amounts are (a)/(b) |
 | [growth](#growth-register) | Growth | limit break leaves the level cap | (d) |  |

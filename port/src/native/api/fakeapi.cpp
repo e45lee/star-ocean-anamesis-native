@@ -836,8 +836,8 @@ void h_get_mission_list(Cpu& c) {
 // local server answers in-process (agent server-rules; port code, not guest behaviour): the
 // arguments go to server_port::capture and the request is queued with NetworkApiCaller's FunctionID,
 // answered by the CApiNotify handler NetworkApiCaller's response goes to. On another caller
-// the guest's Status. The gear screens (CCustomGear) and the favor-achievement
-// receive (CAdjutantSelect -> AchievementListReceive) use them.
+// the guest's Status. The gear screens (CCustomGear), the favor-achievement receive
+// (CAdjutantSelect -> AchievementListReceive), the mascot and the role change use them.
 struct ServedStatusOnly {
     const char* sym;
     u64 status;  // the guest's Status
@@ -857,6 +857,9 @@ const ServedStatusOnly kServedStatusOnly[] = {
     {"_ZN13FakeApiCaller15UpdateGearStockEv", 0, 0xd10e6806, "_ZN10CApiNotify20OnUpdateGearStockResEPaRj", "FakeApi/update_gear_stock.msgp"},
     {"_ZN13FakeApiCaller22AchievementListReceiveERKN9Framework10CSTLVectorImEE", 1, 0xbbc99ccf,
      "_ZN10CApiNotify27OnAchievementListReceiveResEPaRj", "FakeApi/achievement_list_receive.msgp"},
+    // the home's mascot (CAdjutantSelect -> CMascotSelectDialog) and a character's role (CRoleSelect)
+    {"_ZN13FakeApiCaller12ChangeMascotEj", 1, 0xd1bcebee, "_ZN10CApiNotify17OnChangeMascotResEPaRj", "FakeApi/change_mascot.msgp"},
+    {"_ZN13FakeApiCaller10ChangeRoleEmj", 0, 0x720e2bac, "_ZN10CApiNotify15OnChangeRoleResEPaRj", "FakeApi/change_role.msgp"},
 };
 bool is_served_status_only(const char* sym) {
     for (const auto& s : kServedStatusOnly)

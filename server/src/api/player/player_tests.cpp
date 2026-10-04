@@ -140,4 +140,33 @@ NATIVE_TEST("player/home3d-switching") {
     t.expect_eq(loaded(), 1, "3D on the next load");
 }
 
+// ChangeMascot (docs/server-rules.md#home-mascot): no mascot key until one is chosen; a
+// master_person id is stored and answered as Player.mascot_id, every later load sends it; another
+// id is refused and changes nothing.
+NATIVE_TEST("player/change-mascot") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext request = sv.new_request();
+    ext::Ctx ctx = sv.make_ctx(request);
+    u32 code = 0;
+    ctx.test.on_refuse = [&](u32 e) { code = e; };
+    t.expect_eq(player_info(ctx).find("mascot_id") == nullptr, true, "no mascot key before a choice");
+    const u32 person = (u32)sv.m.one("select master_person_id from master_home_message where type = 3 order by id limit 1", {});
+    Request r;
+    r.method = "ChangeMascot";
+    r.ints = {person};
+    Value v = mp_decode(change_mascot(ctx, r));
+    const Value* d = v.find("data");
+    const Value* p = d ? d->find("Player") : nullptr;
+    const Value* m = p ? p->find("mascot_id") : nullptr;
+    t.expect_eq(m ? m->u : 0, (u64)person, "answered as Player.mascot_id");
+    const Value* again = player_info(ctx).find("mascot_id");
+    t.expect_eq(again ? again->u : 0, (u64)person, "sent on the next load");
+    r.ints = {12345};
+    change_mascot(ctx, r);
+    t.expect_eq(code, 10208u, "not a master_person id: refused");
+    t.expect_eq(sv.st.one("select mascot_id from player", {}), (int64_t)person, "unchanged");
+}
+
 }  // namespace soa::server

@@ -424,6 +424,7 @@ RELS = [
     ("mastery", "uid", "roster", "uid", None, "CASCADE (v13)", "a 師弟 pair's disciple (CPlayerCharacterMasteryInfo.character_id)"),
     ("mastery", "master_uid", "roster", "uid", None, "CASCADE (v13)", "a 師弟 pair's master (parent_character_id; one pair each)"),
     ("mastery", "type_id", "m:master_mastery_step", "type_id", None, "-", "the pair's mastery type"),
+    ("player", "mascot_id", "m:master_person", "id", None, "-", "the home's mascot (ChangeMascot, v13; NULL: never chosen)"),
 ]
 
 

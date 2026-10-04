@@ -41,7 +41,8 @@ struct TempDb {
                                    ".bak-v5", ".bak-v5-journal",
                                    ".bak-v6", ".bak-v6-journal",
                                    ".bak-v7", ".bak-v7-journal",
-                                   ".bak-v8", ".bak-v8-journal"})
+                                   ".bak-v8", ".bak-v8-journal",
+                                   ".bak-v9", ".bak-v9-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -1098,6 +1099,95 @@ NATIVE_TEST("server/schema-migrate-v9") {
     bak.close();
 }
 
+// Version 10 (PLAN-schema S10: the module tables). (1) v0 -> v10 at once, against the same file
+// migrated to 9, with the fixture's S10 dirt and planted cases per module group; the rebuilt
+// tables row by row, every other table's rows equal (but the CASCADE children the mapping drops
+// with their parent: listed). (2) v9 -> v10 without the master (.bak-v9).
+NATIVE_TEST("server/schema-migrate-v10") {
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v10 ------------------------------------------------------------------------------
+    TempDb ref_file("v10-ref"), old("v10");
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    const std::string area = "3129394740", crew_uid = "2113929216";  // the fixture's explored area, ship 1's first member
+    // the S10 dirt, in both files
+    for (Sql* d : {&ref, &db})
+        t.expect_eq(
+            d->exec(
+                // deep space: an offer on a ship that doesn't exist (is_new 3, a NULL count, updated_at 0), one of no explored
+                // area, one on a ship of no explored area; that ship (with a crew member) and one with NULLs; bonus values of
+                // the dropped ship, without a bonus id, without a value
+                "insert into ds_offer (mission_id, area_id, bonus_set_id, closed_at, ship_id, is_new, play_count, play_count_daily, "
+                "play_count_weekly, updated_at) values (11, " +
+                area + ", 5, 1790900000, 77, 3, null, 2, 0, 0), (12, 999, 5, 0, 0, 0, 0, 0, 0, 1), (13, " + area +
+                ", 5, 0, 2, 0, 0, 0, 0, 1);"
+                "insert into ds_ship (ship_id, area_id, mission_id, bonus_set_id, item_id, uids, started_at, closed_at) values (2, 999, 13, 0, 0, '" +
+                crew_uid + ",', 1, 2), (3, " + area +
+                ", null, null, 0, '', null, 5);"
+                "insert into ds_bonus (ship_id, bonus_id, value) values (2, 1, 2.0), (1, null, 1.0), (3, 4, null);"),
+            true, "the S10 cases planted");
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 9, m), true, "the reference: migrated to 9");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, 10, m), true, "migrated to 10");
+    t.expect_eq(state::user_version(db.h), 10, "user_version 10");
+    t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
+    t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
+    const std::set<std::string> rebuilt = {"ds_ship", "ds_offer", "ds_bonus"};
+    std::vector<std::string> tables;
+    ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
+          [&](const Row& r) { tables.push_back(r.s("name")); });
+    auto ref_rows = rows_of(ref), db_rows = rows_of(db);
+    for (const std::string& table : tables) {
+        if (rebuilt.count(table) || table == "ds_ship_member") continue;
+        if (ref_rows[table] != db_rows[table]) t.fail("%s: rows changed", table.c_str());
+    }
+    t.expect_eq(db.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51, "51 tables");
+    t.expect_eq(db.one("select count(*) from sqlite_master where name like 'new_%'", {}), (int64_t)0, "no new_X");
+    for (const std::string& table : rebuilt)
+        t.expect_eq(db.one("select count(*) from sqlite_master where name = ? and sql like '%) strict'", {table}), (int64_t)1,
+                    (table + " is STRICT").c_str());
+    // deep space
+    t.expect_eq(
+        rows_over(db, "ds_ship", "*"),
+        (std::vector<std::string>{"1:1|1:" + area + "|1:2081363|1:0|1:0|1:1790841600|1:1790845200|", "1:3|1:" + area + "|1:0|5:|1:0|1:0|1:5|"}),
+        "ds_ship: a ship of no area dropped, NULLs -> 0, item_id 0 kept");
+    t.expect_eq(rows_over(db, "ds_ship_member", "ship_id, slot, uid"), rows_over(ref, "ds_ship_member", "ship_id, slot, uid", "ship_id != 2"),
+                "ds_ship_member: the dropped ship's crew gone with it");
+    t.expect_eq(ref.one("select count(*) from ds_ship_member where ship_id = 2", {}), (int64_t)1, "(the reference has it)");
+    t.expect_eq(
+        rows_over(db, "ds_offer", "*"),
+        (std::vector<std::string>{"1:11|1:" + area + "|1:5|1:1790900000|5:|1:1|1:0|1:2|1:0|5:|", "1:13|1:" + area + "|1:5|5:|5:|1:0|1:0|1:0|1:0|1:1|",
+                                  "1:2081363|1:" + area + "|1:0|5:|1:1|1:0|1:1|1:1|1:1|1:1790841600|"}),
+        "ds_offer: closed_at / updated_at 0 -> NULL, ship_id dangling -> NULL, is_new 3 -> 1, no area -> dropped");
+    t.expect_eq(rows_over(db, "ds_bonus", "*"), (std::vector<std::string>{"1:1|1:1|2:1.5|", "1:3|1:4|2:0.0|"}),
+                "ds_bonus: no ship or no bonus id -> dropped, NULL value -> 0");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    ref.close();
+    db.close();
+
+    // ---- (2) v9 -> v10, without the master -------------------------------------------------------------
+    TempDb v9("v10-from-v9");
+    if (!write_fixture(t, v9.path)) return;
+    Sql f;
+    if (!f.open(v9.path, false)) return t.fail("open v9");
+    t.expect_eq(state::open_and_migrate(f.h, v9.path, 9, m), true, "migrated to 9");
+    f.close();
+    unlink((v9.path + ".bak-v0").c_str());
+    if (!f.open(v9.path, false)) return t.fail("reopen v9");
+    t.expect_eq(state::user_version(f.h), 9, "a version 9 file");
+    t.expect_eq(state::open_and_migrate(f.h, v9.path, 10), true, "v9 -> v10");
+    t.expect_eq(state::user_version(f.h), 10, "user_version 10");
+    t.expect_eq(f.one("select count(*) from ds_offer where closed_at is null and ship_id = 1", {}), (int64_t)1, "the offer: no limit, on ship 1");
+    t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+    f.close();
+    Sql bak;
+    if (!bak.open(v9.path + ".bak-v9", true)) return t.fail("no %s.bak-v9", v9.path.c_str());
+    t.expect_eq(state::user_version(bak.h), 9, "the backup is version 9");
+    t.expect_eq(bak.one("select count(*) from ds_offer where closed_at = 0", {}), (int64_t)1, "the backup keeps the 0");
+    bak.close();
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;
@@ -1227,6 +1317,16 @@ NATIVE_TEST("server/schema-fk-actions") {
           std::string("update wboss set wave = 'x'"), std::string("update sphere_cell set floor_level = 'x'")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S9)").c_str());
     t.expect_eq(rc("insert into login_bonus (id, last_at) values (1, 0)"), SQLITE_CONSTRAINT_NOTNULL, "login_bonus.day_index not null (S9)");
+    // S10: the module tables' references refused when dangling, their checks and STRICT
+    for (const std::string& sql : {std::string("update ds_offer set ship_id = 99"), std::string("update ds_offer set area_id = 99"),
+                                   std::string("insert into ds_ship (ship_id, area_id, mission_id, started_at) values (9, 99, 1, 0)"),
+                                   std::string("insert into ds_bonus (ship_id, bonus_id, value) values (99, 1, 1.0)")})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once (S10)").c_str());
+    for (const std::string& sql : {std::string("update ds_offer set is_new = 2")})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_CHECK, (sql + ": refused (S10)").c_str());
+    for (const std::string& sql : {std::string("update ds_offer set closed_at = 'x'"), std::string("update ds_ship set started_at = 'x'"),
+                                   std::string("update ds_bonus set value = 'x'")})
+        t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S10)").c_str());
     t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
                 "a present has its created_at (S8)");
 
@@ -1244,8 +1344,22 @@ NATIVE_TEST("server/schema-fk-actions") {
                 "the set's accessory_uid -> NULL");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and accessory_uid is null", {std::stoll(a)}), (int64_t)1, "accessory_uid -> NULL");
     t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_CONSTRAINT_FOREIGNKEY, "a character out on a ship: refused (NO ACTION)");
+    t.expect_eq(db.one("select count(*) from ds_offer where ship_id = 1", {}), (int64_t)1, "the fixture's offer: on ship 1");
+    t.expect_eq(db.one("select count(*) from ds_bonus where ship_id = 1", {}), (int64_t)1, "the fixture's ship 1: a bonus value");
     t.expect_eq(rc("delete from ds_ship where ship_id = 1"), SQLITE_OK, "ship 1 deleted");
     t.expect_eq(db.one("select count(*) from ds_ship_member", {}), (int64_t)0, "ON DELETE CASCADE: its crew is gone");
+    t.expect_eq(db.one("select count(*) from ds_bonus", {}), (int64_t)0, "ON DELETE CASCADE: its bonus values are gone (S10)");
+    t.expect_eq(db.one("select count(*) from ds_offer where ship_id is null", {}), db.one("select count(*) from ds_offer", {}),
+                "ON DELETE SET NULL: its offer is on no ship (S10)");
+    // S10, deep space: an area's offers and ships go with it
+    t.expect_eq(rc("insert into ds_ship (ship_id, area_id, mission_id, started_at) values (5, (select min(area_id) from ds_area), 1, 0);"
+                   "insert into ds_bonus (ship_id, bonus_id, value) values (5, 1, 1.0);"
+                   "update ds_offer set ship_id = 5"),
+                SQLITE_OK, "ship 5 out, the offer on it");
+    t.expect_eq(rc("delete from ds_area"), SQLITE_OK, "the area deleted");
+    t.expect_eq(
+        db.one("select count(*) from ds_offer", {}) + db.one("select count(*) from ds_ship", {}) + db.one("select count(*) from ds_bonus", {}),
+        (int64_t)0, "ON DELETE CASCADE: its offers, its ship and the ship's bonus values are gone");
     t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_OK, "the assist and support character deleted");
     t.expect_eq(db.one("select count(*) from play_member where slot = 1 and uid is null", {}), (int64_t)1, "play_member.uid -> NULL (b)");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and assist_uid is null", {std::stoll(a)}), (int64_t)1, "assist_uid -> NULL");

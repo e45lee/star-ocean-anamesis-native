@@ -1238,6 +1238,120 @@ select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updat
     return ok;
 }
 
+// ---- step 10: the module tables (PLAN-schema S10, findings F5, F6) -----------------------------
+// The tables the modules made for themselves, rebuilt into their 3.2 form (STRICT, 3.2's not-null
+// columns and defaults, the boolean checks S9 left to this step) with the foreign keys between
+// them, one module group at a time (each group's DDL in kModules, its mapping in its rebuild_*
+// function below; all of them one step, version 10). The conventions of 3.1 and 4.1: "none" and
+// "never" are NULL (the 0 sentinels go), a dangling reference takes its declared action (NULL for
+// SET NULL, the row dropped for a CASCADE child), a NULL in a not-null column is what the readers
+// read for it (0), each case logged with its count. As in the earlier steps the tables are created
+// as new_X and renamed X after the old X is dropped (4.1), so every reference names the final
+// table.
+//
+// The foreign keys and their actions (PLAN-schema 3.1), by group:
+//   deep space:
+//     ds_offer.area_id   -> ds_area.area_id  ON DELETE CASCADE (an area's offers)
+//     ds_offer.ship_id   -> ds_ship.ship_id  ON DELETE SET NULL (NULL: not on a ship; 0 before)
+//     ds_ship.area_id    -> ds_area.area_id  ON DELETE CASCADE (an area's ships)
+//     ds_bonus.ship_id   -> ds_ship.ship_id  ON DELETE CASCADE (a ship's bonus values)
+// All immediate (every writer writes the parent first). No ON UPDATE action: a parent key never
+// changes. (ds_ship_member.ship_id -> ds_ship is S7's; it names the new ds_ship after the rename.)
+const char* const kModules[] = {
+    // ---- deep space (api/deepspace/) ----
+    // CDeepSpaceShipInfo (b): a ship out or back, until MissionEnd collects it; bonus_set_id /
+    // item_id are master references, 0 = none as the wire sends them
+    R"(create table new_ds_ship (
+  ship_id integer primary key,
+  area_id integer not null references ds_area(area_id) on delete cascade,
+  mission_id integer not null,
+  bonus_set_id integer,
+  item_id integer,
+  started_at integer not null,
+  closed_at integer
+) strict)",
+    // CDeepSpaceMissionInfo (b): a mission on offer; closed_at NULL: no limit (a rare offer has
+    // one); ship_id NULL: not on a ship; updated_at NULL: never (a row from before S10)
+    R"(create table new_ds_offer (
+  mission_id integer primary key,
+  area_id integer not null references ds_area(area_id) on delete cascade,
+  bonus_set_id integer,
+  closed_at integer,
+  ship_id integer references ds_ship(ship_id) on delete set null,
+  is_new integer not null default 0 check (is_new in (0, 1)),
+  play_count integer not null default 0,
+  play_count_daily integer not null default 0,
+  play_count_weekly integer not null default 0,
+  updated_at integer
+) strict)",
+    // DeepSpaceBonusAllApplyInfoList (b): a ship's bonus values
+    R"(create table new_ds_bonus (
+  ship_id integer not null references ds_ship(ship_id) on delete cascade,
+  bonus_id integer not null,
+  value real not null,
+  primary key (ship_id, bonus_id)
+) strict)",
+};
+
+// The tables step 10 rebuilds (new_X -> X), in kModules' order.
+const char* const kModuleTables[] = {"ds_ship", "ds_offer", "ds_bonus"};
+
+// Deep space (PLAN-schema S10):
+//   ds_ship -> new_ds_ship: a ship of no explored area (area_id NULL or not in ds_area) -> dropped
+//     with its crew (ds_ship_member, S7's CASCADE child) and its bonus values; mission_id /
+//     started_at NULL -> 0;
+//   ds_offer -> new_ds_offer: an offer of no explored area -> dropped; closed_at 0 -> NULL (no
+//     limit), ship_id 0 or not a ship -> NULL (not on a ship: on offer again), updated_at 0 ->
+//     NULL; is_new not 0 -> 1; NULL counts -> 0;
+//   ds_bonus -> new_ds_bonus: a row of no ship, or without a bonus id -> dropped; value NULL -> 0.
+bool rebuild_deep_space(sqlite3* db) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from ds_ship where area_id is null or area_id not in (select area_id from ds_area)", "ds_ship.area_id",
+              "dangling -> dropped (with its crew and bonus values)", 10);
+    log_count(db, "select count(*) from ds_ship where mission_id is null or started_at is null", "ds_ship", "NULL in a not-null column -> 0", 10);
+    log_count(db, "select count(*) from ds_offer where area_id is null or area_id not in (select area_id from ds_area)", "ds_offer.area_id",
+              "dangling -> dropped", 10);
+    log_count(db, "select count(*) from ds_offer where closed_at = 0", "ds_offer.closed_at", "0 -> NULL (no limit)", 10);
+    log_count(db, "select count(*) from ds_offer where updated_at = 0", "ds_offer.updated_at", "0 -> NULL (never)", 10);
+    log_count(db, "select count(*) from ds_offer where ship_id = 0", "ds_offer.ship_id", "0 -> NULL (not on a ship)", 10);
+    log_count(db,
+              "select count(*) from ds_offer where ship_id != 0 and ship_id not in "
+              "(select ship_id from ds_ship where area_id in (select area_id from ds_area))",
+              "ds_offer.ship_id", "dangling -> NULL", 10);
+    log_count(db, "select count(*) from ds_offer where is_new is null or is_new not in (0, 1)", "ds_offer.is_new", "NULL -> 0, not 0 / 1 -> 1", 10);
+    log_count(db,
+              "select count(*) from ds_bonus where bonus_id is null or ship_id is null or ship_id not in "
+              "(select ship_id from ds_ship where area_id in (select area_id from ds_area))",
+              "ds_bonus", "no ship or no bonus id -> dropped", 10);
+
+    bool ok = run(db, R"(
+insert into new_ds_ship (ship_id, area_id, mission_id, bonus_set_id, item_id, started_at, closed_at)
+select ship_id, area_id, ifnull(mission_id, 0), bonus_set_id, item_id, ifnull(started_at, 0), closed_at
+from ds_ship where area_id in (select area_id from ds_area))");
+    ok = ok && run(db, "delete from ds_ship_member where ship_id not in (select ship_id from new_ds_ship)");
+    ok = ok && run(db, R"(
+insert into new_ds_offer (mission_id, area_id, bonus_set_id, closed_at, ship_id, is_new, play_count, play_count_daily, play_count_weekly,
+  updated_at)
+select mission_id, area_id, bonus_set_id, nullif(closed_at, 0),
+  case when ship_id in (select ship_id from new_ds_ship) then ship_id end,
+  case when ifnull(is_new, 0) != 0 then 1 else 0 end, ifnull(play_count, 0), ifnull(play_count_daily, 0), ifnull(play_count_weekly, 0),
+  nullif(updated_at, 0)
+from ds_offer where area_id in (select area_id from ds_area))");
+    ok = ok && run(db, R"(
+insert into new_ds_bonus (ship_id, bonus_id, value)
+select ship_id, bonus_id, ifnull(value, 0) from ds_bonus where bonus_id is not null and ship_id in (select ship_id from new_ds_ship))");
+    return ok;
+}
+
+// Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
+// above), then the old tables go and the new ones take their names.
+bool rebuild_modules(sqlite3* db, sqlite3*) {
+    bool ok = rebuild_deep_space(db);
+    for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
+    for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
+    return ok;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1278,6 +1392,10 @@ const std::vector<Step>& steps() {
          "ds_area.is_last_play, the boolean checks; twelve tables rebuilt STRICT (PLAN-schema S9)",
          {std::begin(kTimesBooleans), std::end(kTimesBooleans)},
          rebuild_times_and_booleans},
+        {10,
+         "the module tables: rebuilt STRICT with their foreign keys and checks, the 0 sentinels NULL (PLAN-schema S10)",
+         {std::begin(kModules), std::end(kModules)},
+         rebuild_modules},
     };
     return s;
 }

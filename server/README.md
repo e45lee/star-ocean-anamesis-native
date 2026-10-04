@@ -84,6 +84,8 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
 
 ## API
 
+Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/unimplemented-apis.md) lists the 93 that don't, what the client gets for each today, and the plan (`tools/unhandled_apis.py` regenerates the list).
+
 | Header | What |
 |---|---|
 | `server.h` | `Request` (method, fid, ints, strs, vecs, optional battle log); `answer(Request, fallback)` (the request lifecycle both hosts use: EndMissionTalk, the story campaign, `submit` / `handle(fid, out)` / `error_code(fid)`; a `Reply` {body, error_code, handled}), `end_mission_talk(mission)`; `enabled()`; clocks `clock_now()` / `set_server_clock()` / `event_now()`, the test seam `set_clock_source()`; `logged_in()`, `new_player_mode()`, `web_page(url)`; `apply_client_master(db, now, event_now, master)`; the pure `rules::` |

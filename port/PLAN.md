@@ -28,6 +28,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 | **5b** | **W: native Windows runner** (the user, 2026-10-02: before N) | below | 🔄 phase 1 ✅, **phase 2 ✅** (2026-10-03): the restore and seeded sessions, the viewer boot and a tests/diff shard pass on Windows (win:* in T2), launchers, %LOCALAPPDATA% data dirs. Left: Wine CI, the remaining sessions / shards on Windows, the listed libc gaps ("As built") |
 | **6** | **N: rebuild the natives** | below | ⏳ ongoing after 5b |
 | **7** | **H: trim the server hooks** | below | ✅ done with P3 (25fd054) |
+| **U** | **Unimplemented server APIs** ([`docs/unimplemented-apis.md`](../docs/unimplemented-apis.md) part 3: steps 1-9) | that doc | ⏳ queued (the user, 2026-10-04): after the library agents' `libs-cli`, **before N's Wave A**. Decisions: paid currency allowed, social stubbed (deferred to multiplayer), debug APIs stubbed; every stub logs; assumptions documented there; then the canned responses (`port/fakeapi/responses`) retire |
 
 ### 1. D11: dependencies through vcpkg
 - **vcpkg in manifest mode** (`vcpkg.json`) on Linux and Windows. **No source-build fallback.**

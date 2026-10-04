@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables and version 12's `player.is_3d_home` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1050,6 +1050,7 @@ create table player (
   time_saving_count integer not null default 0,        -- meta ds_time_saving_count
   time_saving_day integer,                             -- meta ds_time_saving_day
   login_bonus_popup_pending integer not null default 0 check (login_bonus_popup_pending in (0,1)),  -- counters
+  is_3d_home integer not null default 1 check (is_3d_home in (0,1)),  -- **new** (v12): Home3DAnd2DSwitching
   created_at integer not null, last_login_at integer
 ) strict;
 
@@ -1615,6 +1616,11 @@ Lockstep changes:
   - **Declared (RG4 vs main, all 15 corpora):** replies and error codes byte-identical, the tier-1 log identical; the tier-2 log differs only in the load line (`campaign: N missions cleared (<OUT>/data/server_campaign.txt)` → `(the state DB)`, the same N); the end state differs exactly by the mapping, proven two ways with an independent Python version of it (the parent's file section parsed in Python, its rows added to the parent's tables, dumped in the replay's format with the child's schema text): (1) equal to the child's `state.sql`, and (2) equal to the parent's end state with its file beside it **migrated by the child's step** (G4, `state::open_and_migrate` with the data dir: user_version 11, `foreign_key_check` empty, schema equal to a fresh state's, the file renamed `.migrated` unchanged, `.bak-v10`). Corpora with campaign progress: missions (10 clears), seeded (8), tower (8), tutorial (5), campaign (10); the rest have no file (none cleared a campaign mission).
   - **Gates:** `tools/gate.sh T0` on every commit (PASS; `pytest-soa-save` KNOWN), after `git merge main` (S11 + R19) too. At the end (`--git-diff main`, the step's selection): `replay-parent` FAIL as declared (above: the mapping and G4 PASS on all 15 corpora against main 9312a6c); `session:campaign`, `session:tower`, `session:events`, `shard:battle` PASS (with S11's strict end-state check: version 11, foreign keys, the campaign's master references). An end-to-end import through soa-server (`--data` with a version-10 state and its file: `.bak-v10`, the file `.migrated`, `campaign: 10 missions cleared (the state DB)`, the same after a restart). Not run: the other tests/diff shards and flows, `smoke`, `session:rebase-inproc`, the `emu:*` gates (no client or wire change; replies and codes identical on 15 corpora).
 
+
+**v12: the player's 2D / 3D home** (agent `nier-home`, 2026-10-04, branch `port/nier-home`; not a plan step: a fix that needed a column). The server answered `Player.is_3d_home` true always and had no `Home3DAnd2DSwitching` handler, so a home character the client shows in 2D only (`master_person.home3d_disable`: 2B, 9S, A2, ...) left the home empty (`docs/home3d.md`).
+  - **Step 12** (`state/schema.cpp` `kHome3D`; `kSchemaVersion` 12): `alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))`: an existing player keeps the 3D home it was always sent; a boolean by 3.1's convention. No rebuild (an added column with a default and a check on a STRICT table), no data mapping.
+  - **Code:** `api/player/home.cpp` `home3d_and_2d_switching` stores the mode; `player_info` sends the column.
+  - **Tests:** `server/schema-migrate-v12` ((1) v0 → v12: every other table's rows as the same file at 11, the player 3D, `.bak-v0`; (2) a v11 file → 12 without the master: 3D, the check refuses 2, `.bak-v11` without the column), `server/schema-fresh-equals-migrated` (unchanged: the same 53 tables), `player/home3d-switching`; the `profile` replay corpus gained Home3DAnd2DSwitching 0 / 1 with a GetPlayer after each.
 ---
 
 ## 5. Order and gates

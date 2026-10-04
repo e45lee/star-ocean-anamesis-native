@@ -18,6 +18,7 @@
 #include <cinttypes>
 #include <cmath>
 #include <chrono>
+#include <deque>
 #include <functional>
 #include <mutex>
 #include <vector>
@@ -79,8 +80,28 @@ struct Gfx final : GfxHooks {
     bool offscreen_present() override { return offscreen; }
     const char* last_error() override { return SDL_GetError(); }
     std::atomic<int> vx{0}, vy{0}, vw{0}, vh{0};
-    std::atomic<bool> shot_requested{false};
+    // Screenshot requests (shot:PATH, F12, --shot): a queue, one written per presented frame in
+    // request order, so a request made before the previous one is written neither replaces its
+    // path nor is dropped. The control thread adds, the render thread takes (shot_mu); shot_path
+    // is the render thread's own (the one being written).
+    std::mutex shot_mu;
+    std::deque<std::string> shot_queue;
     std::string shot_path;
+    void request_shot(std::string path) {
+        std::lock_guard<std::mutex> lock(shot_mu);
+        shot_queue.push_back(std::move(path));
+    }
+    bool shot_pending() {
+        std::lock_guard<std::mutex> lock(shot_mu);
+        return !shot_queue.empty();
+    }
+    bool next_shot() {
+        std::lock_guard<std::mutex> lock(shot_mu);
+        if (shot_queue.empty()) return false;
+        shot_path = std::move(shot_queue.front());
+        shot_queue.pop_front();
+        return true;
+    }
     void set_viewport_rect(int x, int y, int w, int h) override {
         vx = x, vy = y, vw = w, vh = h;
     }
@@ -89,7 +110,7 @@ struct Gfx final : GfxHooks {
         // a host-drawn page (app/page_overlay.h; no GL call unless one is shown)
         if (app::page_overlay::visible()) app::page_overlay::draw(target_fbo, vx, vy, vw, vh, platform().width, platform().height);
         app::text_overlay::draw(ww, wh, target_fbo, vx, vy, vw, vh);  // no-op unless the keyboard is open
-        if (shot_requested.exchange(false)) write_screenshot(ww, wh, target_fbo);
+        if (next_shot()) write_screenshot(ww, wh, target_fbo);
     }
     void write_screenshot(int w, int h, unsigned fbo);
     std::atomic<u64> total_frames{0};
@@ -624,8 +645,7 @@ void run_command(const std::string& cmd) {
     } else if (cmd.rfind("key:", 0) == 0) {
         command_key(cmd.substr(4));
     } else if (cmd.rfind("shot:", 0) == 0) {
-        g_gfx.shot_path = cmd.substr(5);
-        g_gfx.shot_requested = true;
+        g_gfx.request_shot(cmd.substr(5));
     } else if (cmd.rfind("movie:", 0) == 0) {  // test hook: movie:asset/path.mp4
         auto& p = platform();
         p.movie_path = cmd.substr(6);
@@ -949,8 +969,7 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
             case SDL_KEYUP:
                 if (ev.key.repeat) break;
                 if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F12) {
-                    g_gfx.shot_path = vfs_config().root + "/screenshot-" + std::to_string(shot_counter++) + ".png";
-                    g_gfx.shot_requested = true;
+                    g_gfx.request_shot(vfs_config().root + "/screenshot-" + std::to_string(shot_counter++) + ".png");
                     break;
                 }
                 if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F11) {
@@ -996,12 +1015,11 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
             run_command(act.substr(c1 + 1));
         }
 
-        if (!shots.empty() && !g_gfx.shot_requested) {
+        if (!shots.empty() && !g_gfx.shot_pending()) {
             auto colon = shots.front().find(':');
             double when = atof(shots.front().substr(0, colon).c_str());
             if (std::chrono::duration<double>(now - start_time).count() >= when) {
-                g_gfx.shot_path = shots.front().substr(colon + 1);
-                g_gfx.shot_requested = true;
+                g_gfx.request_shot(shots.front().substr(colon + 1));
                 shots.erase(shots.begin());
             }
         }

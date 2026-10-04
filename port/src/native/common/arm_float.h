@@ -60,6 +60,34 @@ inline int32_t cvtzs(float f) {
     return (int32_t)f;
 }
 
+// The double -> integer conversions (FCVTZS / FCVTZU, w and x forms, toward zero): saturating,
+// NaN -> 0, a negative value -> 0 for the unsigned ones. x86's cvttsd2si gives the "integer
+// indefinite" (0x80000000 / 0x8000000000000000) out of range, and C++ leaves it undefined.
+// (FCVT double -> float needs no helper: x86's cvtsd2ss rounds and treats a NaN the same way,
+// keeping the sign and the top payload bits and quieting it, as FPCR.DN = 0 does.)
+inline int32_t cvtzs_w(double d) {
+    if (std::isnan(d)) return 0;
+    if (d >= 2147483648.0) return INT32_MAX;
+    if (d <= -2147483649.0) return INT32_MIN;
+    return (int32_t)d;
+}
+inline uint32_t cvtzu_w(double d) {
+    if (std::isnan(d) || d <= -1.0) return 0;
+    if (d >= 4294967296.0) return UINT32_MAX;
+    return (uint32_t)d;
+}
+inline int64_t cvtzs_x(double d) {
+    if (std::isnan(d)) return 0;
+    if (d >= 9223372036854775808.0) return INT64_MAX;
+    if (d < -9223372036854775808.0) return INT64_MIN;
+    return (int64_t)d;
+}
+inline uint64_t cvtzu_x(double d) {
+    if (std::isnan(d) || d <= -1.0) return 0;
+    if (d >= 18446744073709551616.0) return UINT64_MAX;
+    return (uint64_t)d;
+}
+
 }  // namespace soa::armf
 
 namespace soa::armf {

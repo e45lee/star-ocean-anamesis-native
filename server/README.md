@@ -36,8 +36,8 @@ Build: part of the repository's build (`cmake -S . -B build && cmake --build bui
 "Building"): `build/server/libsoaserver.a`, `build/server/libsoanet.a` and `build/server/soa-server`
 (`cmake --build build --target soa-server` for the server alone; `-DSOA_BUILD_PORT=OFF
 -DSOA_BUILD_EMULATOR=OFF -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_PLATFORM370=OFF` configures only the server, without dynarmic, the runtime, SDL2 or EGL). It needs
-SQLite and OpenSSL's libcrypto (and zlib for `soa-server`), static from vcpkg
-(`unofficial::sqlite3::sqlite3`, `OpenSSL::Crypto`, `ZLIB::ZLIB`; `cmake/deps.cmake`). Link it whole (`$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>`):
+SQLite, OpenSSL's libcrypto and msgpack-cxx (and zlib for `soa-server`), static from vcpkg
+(`unofficial::sqlite3::sqlite3`, `OpenSSL::Crypto`, `msgpack-cxx` (headers), `ZLIB::ZLIB`; `cmake/deps.cmake`). Link it whole (`$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>`):
 the tests register from static initializers. The modules register from their `register_<module>()`
 functions, in the one order of `src/core/modules.cpp` (ARCHITECTURE.md "The module registry and its order").
 
@@ -93,7 +93,7 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
 | `log.h` | `set_log_sink(write, enabled)`: where the server's log lines go (default stderr, `I/server: ...`) |
 | `ext.h` | Extension modules: the registration functions (`add_api`, `add_player_load`, `add_response_hook`, `add_grant`, `add_item_extra`, `add_mission_start_extra`, `add_mission_result_extra`, `add_client_master`), `hook_order`; `Ctx`; shared state helpers |
 | `events.h`, `api_campaign.h` | The event and campaign modules' entry points the port calls (`events::end_mission_talk`, `campaign::on_request` / `on_response` / `end_mission_talk`) |
-| `msgpack.h` | `Value`, `mp_encode` / `mp_decode` (the response bodies) |
+| `msgpack.h` | `Value`, `mp_encode` / `mp_decode` (the response bodies; msgpack-cxx, `src/core/msgpack.cpp`) |
 | `chash32.h` | `chash32`: the game's `Framework::CHash32` (the port's CHash32 natives use it too) |
 | `adld.h` | ADLD packing: `decrypt` / `encrypt` (XOR, AES + DCNE), `Encrypt::CEncryptAES128`'s functions (the port's natives and the ADLD callback use them) |
 | `cdn.h` | The CDN content: `cdn::Tree::build(Options)` / `build_from_config()`, `Tree::lookup(url_path, Response&)`, the bundle (`bundle_bytes`, `bundle_sha1`) and served-master (`make_served_master`) pieces |

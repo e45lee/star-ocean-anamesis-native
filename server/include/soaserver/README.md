@@ -10,7 +10,7 @@ What the port (`port/src/native/api/*`, `common/test.cpp`, `ui/webview_local.cpp
 | `sql.h` | the one SQLite wrapper (`sql::Row`, `Arg`, `Sql`, `one_null_as_zero`; defined in `src/state/sql.cpp`); typed ids read as `row.id<T>` / `row.opt<T>` (NULL = none), bound as `Arg`, `one_id<T>` / `one_opt<T>`; server-clock times read as `row.time` / `row.opt<ServerTime>` (NULL = never), `one_time`, bound as `Arg` (no `EventTime` overload: the event calendar is never stored) |
 | `ids.h` | the typed ids (`CharacterUid`, `ItemUid`, `PlayerId`, `RoleId`, `SameRoleId`, `MasterItemId`, `MissionId`, `GachaId`, `TitleId`, `AreaId`, `SkillId`; PLAN-readability R12): no implicit conversion between kinds; `or_zero` / `nonzero` between an optional reference and the wire's 0 |
 | `times.h` | the time value types (PLAN-readability R17): `ServerTime` (the server clock, every stored time) and `EventTime` (the event calendar); no mixing, no implicit number in or out; a time plus seconds, two times of one clock subtract to seconds; formatted at the boundary (`format_time`, `Ctx::fmt_time`) |
-| `msgpack.h` | `Value` and its encoder / decoder (response bodies) |
+| `msgpack.h` | `Value` and its encoder / decoder (response bodies; msgpack-cxx underneath, `src/core/msgpack.cpp`) |
 | `battle_log.h` | the battle log a MissionEnd carries |
 | `hooks.h` | what the server asks its host: the asset index |
 | `log.h` | the log sink |

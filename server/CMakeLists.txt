@@ -30,6 +30,8 @@ add_library(soaserver STATIC ${SOASERVER_SOURCES})
 target_include_directories(soaserver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_compile_options(soaserver PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing)
 target_link_libraries(soaserver PUBLIC soa_env unofficial::sqlite3::sqlite3 OpenSSL::Crypto pthread soa_compat)
+# msgpack-cxx (headers): core/msgpack.cpp only; soaserver/msgpack.h stays free of it
+target_link_libraries(soaserver PRIVATE msgpack-cxx)
 
 # soanet: soa-server's wire layer (net/: packets, the Ninja cipher, the request decoder, the game
 # session and bridge, the HTTP server, the poll loop). Not part of libsoaserver: soa never needs it.

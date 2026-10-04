@@ -4,47 +4,6 @@
  "header": "port/src/native/params/params_layout.h",
  "structs": [
   {
-   "name": "CHash32Ref",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_hash",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": false
-     },
-     "size": 4
-    },
-    {
-     "offset": 12,
-     "name": "unk_0c",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 4
-     },
-     "size": 4
-    }
-   ],
-   "size": 16,
-   "align": 8
-  },
-  {
    "name": "IParameterProperty",
    "union": false,
    "fields": [
@@ -123,8 +82,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -200,8 +160,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -277,8 +238,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -380,8 +342,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -457,8 +420,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -534,8 +498,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -610,8 +575,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -799,8 +765,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -876,8 +843,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -953,8 +921,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -1030,8 +999,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -1301,8 +1271,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -1378,8 +1349,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }
@@ -1455,8 +1427,9 @@
      "offset": 24,
      "name": "m_name",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Ref"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     }

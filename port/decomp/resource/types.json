@@ -4,47 +4,6 @@
  "header": "port/src/native/resource/resource_layout.h",
  "structs": [
   {
-   "name": "CHash32Bytes",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_hash",
-     "type": {
-      "kind": "int",
-      "size": 4,
-      "signed": false
-     },
-     "size": 4
-    },
-    {
-     "offset": 12,
-     "name": "unk_0c",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 4
-     },
-     "size": 4
-    }
-   ],
-   "size": 16,
-   "align": 8
-  },
-  {
    "name": "File",
    "union": false,
    "fields": [
@@ -1929,8 +1888,9 @@
      "offset": 160,
      "name": "m_directNameHash",
      "type": {
-      "kind": "struct",
-      "name": "CHash32Bytes"
+      "kind": "bytes",
+      "ctype": "soa::native::hash::CHash32",
+      "size": 16
      },
      "size": 16
     },

@@ -25,6 +25,7 @@
 
 #include "../containers/containers_layout.h"
 #include "../data_formats/data_formats_layout.h"
+#include "../hash/hash_layout.h"
 #include "../kernel/kernel_layout.h"
 #include "../libcxx/libcxx_layout.h"
 #include "../memory/memory_layout.h"
@@ -64,13 +65,8 @@ inline constexpr u64 kTaskDataSize = 0x27;
 using TaskBytes = kernel::Task;
 static_assert(sizeof(TaskBytes) == 0x28);
 
-// hash (n-hash-math): Framework::CHash32 {vtable, u32 hash}, 0x10 bytes.
-struct CHash32Bytes {
-    const void* vtable;  // 0x00: _ZTVN9Framework7CHash32E + 0x10
-    u32 m_hash;          // 0x08
-    u8 unk_0c[4];        // 0x0c: padding
-};
-static_assert(offsetof(CHash32Bytes, m_hash) == 0x08);
+// Framework::CHash32: the `hash` subsystem's class (hash_layout.h: {vtable, u32 m_hash}, 0x10).
+using CHash32Bytes = hash::CHash32;
 static_assert(sizeof(CHash32Bytes) == 0x10);
 
 // ==== Files and streams ===============================================================================

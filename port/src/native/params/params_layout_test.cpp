@@ -102,7 +102,7 @@ template <u32 N>
 void check_name(TestContext& t, const CParameterPropertyBase<N>& b, const char* name) {
     u32 h = guest_hash(t, name);
     t.expect_eq(b.m_named, true, "m_named after Initialize");
-    t.expect_eq(b.m_name.vtable, (const void*)vtable_of(t, "_ZTVN9Framework7CHash32E"), "m_name: a CHash32");
+    t.expect_eq(b.m_name.vtable, vtable_of(t, "_ZTVN9Framework7CHash32E"), "m_name: a CHash32");
     t.expect_eq(b.m_name.m_hash, h, "m_name.m_hash = CHash32(name)");
     t.expect_eq((u32)guest_call(slot(b.base.vtable, IParameterProperty::kSlotNameHash), {(u64)&b}), h,
                 "NameHash (slot 2) = m_name");

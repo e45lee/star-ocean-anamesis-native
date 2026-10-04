@@ -23,6 +23,7 @@
 #include <cstdint>
 
 #include "../data_formats/data_formats_layout.h"
+#include "../hash/hash_layout.h"
 #include "../libcxx/libcxx_layout.h"
 
 namespace soa::native::params {
@@ -41,16 +42,8 @@ using AArray = data_formats::AArray;  // Aska::ASON::AValue::AArray
 using AValue = data_formats::AValue;  // Aska::ASON::AValue
 using String = libcxx::String;        // the game's std::string (Framework::CSTLAllocator)
 
-// Framework::CHash32 is the `hash` subsystem's class (port/n-hash-math recovers it: {vtable, u32 m_hash},
-// 0x10, the hash of a name; CHash32(char const*) / operator== / operator unsigned int). Not merged yet:
-// this stand-in has the same bytes; swap in hash's class once both are merged.
-class CHash32Ref {
-public:
-    const void* vtable;  // 0x00: _ZTVN9Framework7CHash32E + 0x10
-    u32 m_hash;          // 0x08: the name's hash (0 for a default-constructed one)
-    u8 unk_0c[4];        // 0x0c: padding
-};
-static_assert(offsetof(CHash32Ref, m_hash) == 0x08);
+// Framework::CHash32: the `hash` subsystem's class (hash_layout.h: {vtable, u32 m_hash}, 0x10).
+using CHash32Ref = hash::CHash32;
 static_assert(sizeof(CHash32Ref) == 0x10);
 
 // ---- the properties ------------------------------------------------------------------------------------

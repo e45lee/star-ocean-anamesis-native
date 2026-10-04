@@ -42,8 +42,8 @@ lock), its fields read through these classes and compared with the guest's acces
 | `ResourceReadyQueue` | >= 0x248 (not confirmed) | ctor, Init | `-read-devices` (vtables at 0xb0 / 0x100 / 0x138, the work buffer, 0x21c) |
 
 Other subsystems' classes are held as sized bytes with the class named in the comment (the headers aren't
-merged yet): sync's FastCriticalSection (0x90), CMutex (0xb0), Event (0x68), CriticalSection (0x28); hash's
-CHash32 (`CHash32Bytes`, 0x10). kernel's classes come from kernel_layout.h: Aska::Task (`TaskBytes` 0x28;
+merged yet): sync's FastCriticalSection (0x90), CMutex (0xb0), Event (0x68), CriticalSection (0x28). hash's
+CHash32 (`CHash32Bytes`) is hash_layout.h's class; kernel's classes come from kernel_layout.h: Aska::Task (`TaskBytes` 0x28;
 CResourceManager keeps inline bytes: data size 0x27, a derived class's first byte at +0x27) and
 Framework::CFiberUnit (0x38). The merged
 memory / containers / libcxx / data_formats classes are embedded directly (MemoryManager, THashMap,

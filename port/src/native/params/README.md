@@ -32,7 +32,7 @@ data-carrying bases, nested as the first member `base` (as in containers_layout.
 | `CParameterPlayer` | 0x180 | ctor, Deserialize, pParameter, Initialize | `-player` (m_valid, pParameter = &m_element) | typed (example of a concrete parameter) |
 | `CParameterCocosCommonResourceElement` | 0xd0 | ctor, Initialize, dtor, DeserializeParameter | `-live-cocos-common-resource` (vtable, list, names, the key) | typed |
 | `CParameterCocosCommonResource` | 0x30 | ctor, Release, dtor, rParameter, Deserialize | `-live-cocos-common-resource` (unordered_map nodes: count = size, mlf 1.0, rParameter) | typed |
-| `CHash32Ref` (stand-in for hash's `Framework::CHash32`) | 0x10 | | through every m_name above | stand-in until hash merges |
+| `CHash32Ref` (= hash_layout.h's `Framework::CHash32`) | 0x10 | | through every m_name above | hash's class |
 
 The `using` aliases at the end of the property section are the instantiations exported to Ghidra
 (`port/decomp/params/types.json`).
@@ -49,8 +49,8 @@ hash 7,930, memory 2,200, libcxx 1,130 samples):
 - `data_formats`: the parser's input is an `Aska::ASON` map (`AMap`, `AValue`, `ASON_Pair`): included.
 - `libcxx`: string properties hold the game's `std::string` (`libcxx::String`), CocosCommonResource an
   `unordered_map` (`libcxx::hash_table`): included.
-- `hash`: every property name is a `Framework::CHash32`; not merged yet, so `CHash32Ref` stands in with
-  the same bytes ({vtable, u32 m_hash}, 0x10; port/n-hash-math's class). Swap it once hash merges. Nearly
+- `hash`: every property name is a `Framework::CHash32`; `CHash32Ref` is hash_layout.h's class
+  ({vtable, u32 m_hash}, 0x10). Nearly
   all of params' inclusive time beyond its own is `CHash32::CHash32(char const*)`.
 - `memory`: string values and map nodes come from the STL allocator (`CAssignedMemoryManagerForSTLAllocator`).
 Upwards (callers; interfaces only): `info`'s `CParameterManager` keeps a `std::list<CParameterBase*>`

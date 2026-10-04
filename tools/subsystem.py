@@ -264,7 +264,9 @@ def dump_layouts(header, ns):
             f.write(f"static_assert(sizeof({ns}::{n}) > 0);\n")
         tu = f.name
     try:
-        r = subprocess.run([clang, "-std=c++20", "-fsyntax-only", "-Xclang", "-fdump-record-layouts", tu],
+        # (-I port/src: a layout header may include a lower subsystem's, e.g. "native/libcxx/libcxx_layout.h")
+        src_root = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(header)))))
+        r = subprocess.run([clang, "-std=c++20", "-fsyntax-only", "-I", src_root, "-Xclang", "-fdump-record-layouts", tu],
                            capture_output=True, text=True)
     finally:
         os.unlink(tu)

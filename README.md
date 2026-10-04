@@ -265,7 +265,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 
 | ZIP | Holds |
 |---|---|
-| `soa-port-<V>-<platform>.zip` | `soa` (the port, its server in-process), `run-port.sh` / `run-port.cmd` |
+| `soa-port-<V>-<platform>.zip` | `soa` (the port, its server in-process), `soa-server` (the same server as its own program), `run-port.sh` / `run-port.cmd` (soa alone: the usual way), `run-port-server.sh` / `run-port-server.cmd` + `.ps1` (start soa-server, then `soa --server` against it, and stop the server when soa exits) |
 | `soa-emulator-<V>-<platform>.zip` | `soa-emu` (the unmodified 3.7.0 client), `soa-server` (its server; runs alone too), `run-emulator.sh` / `run-emulator.cmd` + `.ps1` (start the server, then the client) |
 | `soa-<V>-<platform>-debug-symbols.zip` | the programs' debug info (line tables), stripped from the binaries |
 
@@ -315,7 +315,10 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   emulator `SOA_PACKAGE_DIR=$P emulator/scripts/emulator_session.sh --new-player $P/soa-emu
   $P/soa-server OUT`, which then passes the server no `--new-player` either. A session that needs the
   seeded player (e.g. `gacha`) gets a player only from a save: the port's client save
-  (`--game-xml`, holding a player) or `--seed`; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your
+  (`--game-xml`, holding a player) or `--seed`. `--target port-server` (e.g.
+  `SOA_PACKAGE_DIR=$P control/run.py newplayer --target port-server $P/soa OUT`) runs the package's
+  `run-port-server` launcher with its default data dir under a scratch `HOME` / `LOCALAPPDATA`, and
+  fails when its soa-server outlives the client; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your
   stage). `DOWNLOAD_B=work/SOA-3.7.0-canonical-data.zip tools/server_cdn_check.sh BIN BIN` proves the
   CDN serves the same bytes from the zip as from the folder.
 

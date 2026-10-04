@@ -6,7 +6,9 @@
 Builds the optimized programs (scripts/build.sh --release, --windows --release: build-release/,
 build-win-release/) unless --no-build, then makes, per platform:
 
-  soa-port-<V>-<platform>.zip           soa (the 3.7.0 client with its in-process server)
+  soa-port-<V>-<platform>.zip           soa (the 3.7.0 client with its in-process server: run-port) +
+                                        soa-server (the server as its own program: run-port-server
+                                        runs soa --server against it)
   soa-emulator-<V>-<platform>.zip       soa-emu (the unmodified 3.7.0 client) + soa-server (its server;
                                         it also runs alone) + the run-emulator launcher
   soa-<V>-<platform>-debug-symbols.zip  the programs' separate debug info (line tables)
@@ -59,7 +61,7 @@ PLATFORMS = {
 
 # What each package holds: (program target dir, program name).
 PROGRAMS = {
-    "port": [("port", "soa")],
+    "port": [("port", "soa"), ("server", "soa-server")],
     "emulator": [("emulator", "soa-emu"), ("server", "soa-server")],
     "viewer": [("emulator-viewer", "soa-viewer")],
 }
@@ -71,7 +73,8 @@ WITH_DATA = {"port", "emulator"}
 
 # The allow-list: a packaged file's path (inside the top folder) must match one of these.
 ALLOW = {
-    "port": ["soa", "soa.exe", "run-port.sh", "run-port.cmd"],
+    "port": ["soa", "soa.exe", "soa-server", "soa-server.exe", "run-port.sh", "run-port.cmd",
+             "run-port-server.sh", "run-port-server.cmd", "run-port-server.ps1"],
     "emulator": ["soa-emu", "soa-server", "soa-emu.exe", "soa-server.exe", "run-emulator.sh", "run-emulator.cmd", "run-emulator.ps1"],
     "viewer": ["soa-viewer", "soa-viewer.exe", "run-viewer.sh", "run-viewer.cmd"],
 }
@@ -317,6 +320,21 @@ def write_zip(stage, out):
     os.replace(tmp, out)
 
 
+# Each package's launchers (scripts/package/): on Windows NAME.cmd, plus NAME.ps1 when the .cmd
+# hands over to one; on Linux NAME.sh.
+LAUNCHERS = {"port": ["run-port", "run-port-server"], "emulator": ["run-emulator"], "viewer": ["run-viewer"]}
+
+
+def launcher_files(kind, windows):
+    out = []
+    for base in LAUNCHERS[kind]:
+        if windows:
+            out += [base + ".cmd"] + ([base + ".ps1"] if os.path.isfile(os.path.join(PKG_SRC, base + ".ps1")) else [])
+        else:
+            out.append(base + ".sh")
+    return out
+
+
 def stage_package(plat, kind, version, work, dbg_dir):
     P = PLATFORMS[plat]
     top = f"soa-{kind}-{version}-{plat}"
@@ -331,12 +349,10 @@ def stage_package(plat, kind, version, work, dbg_dir):
         if os.path.getmtime(src) < int(git("log", "-1", "--format=%ct")):
             log(f"WARNING: {src} is older than the last commit (BUILD-INFO.txt names HEAD): rebuild, or run without --no-build")
         strip_into(plat, src, os.path.join(root, exe), os.path.join(dbg_dir, exe + ".debug"))
-    launchers = {"port": ["run-port"], "emulator": ["run-emulator"], "viewer": ["run-viewer"]}[kind]
-    for base in launchers:
-        for f in ([base + ".cmd"] + ([base + ".ps1"] if kind == "emulator" else [])) if P["windows"] else [base + ".sh"]:
-            shutil.copy2(os.path.join(PKG_SRC, f), os.path.join(root, f))
-            if f.endswith(".sh"):
-                os.chmod(os.path.join(root, f), 0o755)
+    for f in launcher_files(kind, P["windows"]):
+        shutil.copy2(os.path.join(PKG_SRC, f), os.path.join(root, f))
+        if f.endswith(".sh"):
+            os.chmod(os.path.join(root, f), 0o755)
     if kind in WITH_DATA:
         os.makedirs(os.path.join(root, "data"))
         clean_pools(os.path.join(ROOT, "data", "gacha_pools.sqlite3"), os.path.join(root, "data", "gacha_pools.sqlite3"))

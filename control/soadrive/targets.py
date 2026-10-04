@@ -44,6 +44,54 @@ import soaslot  # noqa: E402  (control/soaslot.py: the machine-wide game-process
 # --master / --download-dir / --seed, so they find the game files the way the package's README.txt
 # says (soa/install.h). Unset: the checkout's own files, as always.
 PACKAGE_DIR = os.environ.get("SOA_PACKAGE_DIR") or None
+# With a package, the port-server target runs its launcher run-port-server.sh / .cmd (the package's
+# README.txt "2. Running" b): soa-server, then soa --server against it, the server stopped when soa
+# exits. No launcher options: its default data dir (soa's, the server in DATA/server/) under a
+# scratch HOME (Linux) / LOCALAPPDATA (Windows), its default port unless that one is taken; the
+# client's options (--control, --headless, ...) and the server's (--seed-rng, --log-packets, ...)
+# go through it. The run fails when the launcher leaves its soa-server running after the client.
+LAUNCHER_PORT = 44310
+# the server options the launcher passes on to soa-server (the others go to soa)
+LAUNCHER_SERVER_FLAGS = {"--new-player", "--galaxy-pass", "--enable-events", "--restore-tower"}
+LAUNCHER_SERVER_VALUES = {"--seed", "--download", "--download-dir", "--master", "--log-packets", "--seed-rng", "--clock",
+                          "--start-coins", "--event-keywords"}
+
+
+def package_launcher(win):
+    """The package's run-port-server launcher, or None (no package, or one without it)."""
+    if not PACKAGE_DIR:
+        return None
+    p = os.path.join(PACKAGE_DIR, "run-port-server.cmd" if win else "run-port-server.sh")
+    return p if os.path.isfile(p) else None
+
+
+def launcher_server_args(args):
+    """args checked to be options the launcher hands to soa-server (Abort otherwise: soa would
+    get them and only warn)."""
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a in LAUNCHER_SERVER_VALUES:
+            i += 2
+        elif a in LAUNCHER_SERVER_FLAGS:
+            i += 1
+        else:
+            raise Abort("server option %s: run-port-server doesn't pass it to soa-server" % a)
+    return list(args)
+
+
+def port_in_use(port):
+    """Someone listens on 127.0.0.1:port (here; on Windows also what WSL sees of it)."""
+    import socket
+    s = socket.socket()
+    # (WSL's mirrored networking may let a connect to a closed port hang: no answer counts as free)
+    s.settimeout(2)
+    try:
+        return s.connect_ex(("127.0.0.1", port)) == 0
+    except OSError:
+        return False
+    finally:
+        s.close()
 
 TARGETS = ("emu", "port-server", "port-inproc")
 W, H = 729, 1296
@@ -317,6 +365,26 @@ class Run:
             self.note("release package %s: no --master / --download-dir / --seed; the programs look beside themselves" % PACKAGE_DIR)
         elif (cfg.explicit_data or server_side) and (not master or not download):
             raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not found")
+        self.launcher = package_launcher(self.win) if self.target == "port-server" else None
+        launcher_env = {}
+        if self.launcher:
+            if cfg.phone:
+                raise Abort("a phone given (EMU_DATA) and the package's launcher: the launcher keeps its own")
+            # its default data dir, under a scratch HOME / LOCALAPPDATA (see LAUNCHER_PORT)
+            root = os.path.join(self.dir, "launcher-home")
+            if self.win:
+                root = winhost.local_dir(root)
+                launcher_env["LOCALAPPDATA"] = winhost.winpath(root)
+                data = os.path.join(root, "soa", "port-370")
+            else:
+                if os.path.isdir(root):
+                    shutil.rmtree(root)
+                launcher_env["HOME"] = root
+                data = os.path.join(root, ".local", "share", "soa-linux-370")
+            self.phone, self.state_db = data, os.path.join(data, "server", "server.sqlite3")
+            self.server_log = os.path.join(data, "server.log")
+            self.layout.phone_cleanup = os.path.join(data, "data")
+            self.note("release package launcher %s, data %s" % (self.launcher, data))
         if cfg.phone:
             os.makedirs(self.phone, exist_ok=True)
             if cfg.fresh_kvs and os.path.exists(os.path.join(self.phone, "data/shared_prefs/Aska.xml")):
@@ -329,6 +397,7 @@ class Run:
             self.note("phone: %s (%d ms)" % (note, int((time.monotonic() - t) * 1000)))
         if cfg.prepared:
             # the whole server state (the campaign's progress too, PLAN-schema S12: no side file)
+            os.makedirs(os.path.dirname(self.state_db), exist_ok=True)
             shutil.copyfile(cfg.prepared, self.state_db)
             self.note("server state: a copy of %s" % cfg.prepared)
         if cfg.client_save == "session":
@@ -349,8 +418,8 @@ class Run:
             srv += ["--seed", wp(os.path.join(winhost.STAGE if self.win else REPO, "data/saves/seed/Game.xml"))]
         elif cfg.seed:
             srv += ["--seed", wp(cfg.seed)]
-        client = ["--data", wp(self.phone), "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H),
-                  "--control", self.fifo]
+        client = ([] if self.launcher else ["--data", wp(self.phone)]) + [
+            "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H), "--control", self.fifo]
         if cfg.gdb:
             if not gdb.available():
                 raise Abort("a GDB stub was asked for, but control/gdbclient.py (the runtime's --gdb) isn't in this checkout")
@@ -371,7 +440,28 @@ class Run:
             names = [k for k in env if k not in os.environ.get("WSLENV", "").split(":")]
             env["WSLENV"] = ":".join([x for x in os.environ.get("WSLENV", "").split(":") if x] + names)
         pkt = ["--log-packets", wp(os.path.dirname(self.packets))] if cfg.log_packets else []
-        if self.target == "port-inproc":
+        if self.launcher:
+            env.update(launcher_env)
+            if self.win:
+                names = [k for k in launcher_env if k not in env["WSLENV"].split(":")]
+                env["WSLENV"] = ":".join([x for x in env["WSLENV"].split(":") if x] + names)
+                argv = ["cmd.exe", "/c", wp(self.launcher)]
+            else:
+                argv = [self.launcher]
+            argv += client + cfg.client_args + launcher_server_args(srv + pkt)
+            if port_in_use(LAUNCHER_PORT) or port_in_use(LAUNCHER_PORT + 80):
+                gp = (winhost.free_ports if self.win else proc.free_ports)(1)[0]
+                self.note("the launcher's port %d is taken: --port %d" % (LAUNCHER_PORT, gp))
+                argv += ["--port", str(gp)]
+            self.client = proc.Proc(os.path.basename(self.launcher), argv, self.client_log, env=env, limit=cfg.limit,
+                                    slot_fd=self.slot, cwd=cwd)
+            # the server listening first (its first start prepares the master and the CDN), then soa
+            end = time.monotonic() + 300
+            while not self.grep(self.client_log, r"^== soa \(pid"):
+                if not self.client.running() or time.monotonic() > end:
+                    raise Abort("the launcher didn't start soa (see %s, %s)" % (self.client_log, self.server_log))
+                time.sleep(0.5)
+        elif self.target == "port-inproc":
             extra = []
             if cfg.explicit_data or not self.layout.inproc_db_default:
                 extra += ["--db", wp(self.state_db)]
@@ -425,6 +515,8 @@ class Run:
         if self.client and self.client.running():
             fifo.send(self.fifo, ["quit"], timeout=10)
             self.client.wait(15)
+        if getattr(self, "launcher", None) and self.client:
+            self.launcher_check()
         for p in (self.client, self.server):
             if p:
                 p.stop()
@@ -454,6 +546,38 @@ class Run:
             shutil.rmtree(cleanup, ignore_errors=True)
         with open(self.layout.steps, "w") as f:
             f.write("\n".join(self.results) + "\n" + ("FAIL" if self.failed else "PASS") + "\n")
+
+    def launcher_check(self):
+        """The launcher stopped its soa-server when soa exited: the server's PID (its "== soa-server
+        (pid N)" line) gone within 15 s of the launcher's exit."""
+        m = re.search(r"^== soa-server \(pid (\d+)\)", open(self.client_log, errors="replace").read(), re.M)
+        if not m:
+            return
+        pid = int(m.group(1))
+        self.client.wait(15)
+
+        def running():
+            if self.win:
+                r = subprocess.run(["tasklist.exe", "/FI", "PID eq %d" % pid, "/NH"], capture_output=True, text=True)
+                return re.search(r"\b%d\b" % pid, r.stdout) is not None
+            try:
+                os.kill(pid, 0)
+                return True
+            except ProcessLookupError:
+                return False
+        end = time.monotonic() + 15
+        while running() and time.monotonic() < end:
+            time.sleep(0.5)
+        if self.client.running():
+            self.miss("the launcher still runs after soa's exit")
+        elif running():
+            self.miss("the launcher left its soa-server (pid %d) running after the client exited" % pid)
+            if not self.win:
+                os.kill(pid, 9)
+            else:
+                subprocess.run(["taskkill.exe", "/F", "/PID", str(pid)], capture_output=True)
+        else:
+            self.ok("the launcher stopped its soa-server (pid %d) when the client exited" % pid)
 
     # Why a client is gone though its process may still be there (it can hang after these lines: a
     # wedged GL driver): a crash (its signal handler's lines), or the host's GPU dropping out

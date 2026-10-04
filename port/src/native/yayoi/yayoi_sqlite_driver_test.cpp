@@ -104,8 +104,17 @@ void master_test(TestContext& t, size_t per_template) {
     if (!m.open(host_copy)) return t.fail("can't open %s", host_copy.c_str());
     std::vector<lib_sqlite::Query> qs;
     for (auto& tb : gt) qs.push_back({"SELECT * FROM " + tb, {}});  // every table, whole
-    for (auto& q : lib_sqlite::corpus(t, m, per_template))
-        if (q.sql.rfind("--", 0) != 0) qs.push_back(q);
+    // (a query that doesn't prepare would close the driver's database, on both sides: the edges test
+    // has that case; here such queries are left out)
+    size_t failing = 0;
+    for (auto& q : lib_sqlite::corpus(t, m, per_template)) {
+        if (q.sql.rfind("--", 0) == 0) continue;
+        sqlite3_stmt* st = nullptr;
+        bool ok = sqlite3_prepare_v2(m.db, q.sql.c_str(), -1, &st, nullptr) == SQLITE_OK;
+        sqlite3_finalize(st);
+        if (ok) qs.push_back(q);
+        else failing++;
+    }
     size_t rows = 0, bytes = 0, bad = 0, serialized = 0;
     for (size_t k = 0; k < qs.size(); k++) {
         g.log.clear();
@@ -126,18 +135,23 @@ void master_test(TestContext& t, size_t per_template) {
             t.fail("%.200s: MessagePack differs at byte %zu (%zu vs %zu bytes)", qs[k].sql.c_str(), i, gm.size(), nm.size());
             ok = false;
         }
+        if (!((const SQLiteDriver*)gd)->m_db || !((const SQLiteDriver*)nd)->m_db) {
+            t.fail("%.200s: the database was closed", qs[k].sql.c_str());
+            break;
+        }
         if (!ok && ++bad >= 10) {
             t.fail("(stopping after 10 differing queries)");
             break;
         }
     }
     t.expect_eq(serialized > 1000, true, "most queries serialize rows");
+    t.expect_eq(failing < 5, true, "few corpus queries fail to prepare");
     g.delete_driver(gd);
     n.delete_driver(nd);
     remove(host_copy.c_str());
     double secs = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
-    LOGI("yayoi_test", "driver: %zu queries (%zu tables whole), %zu rows walked, %zu serialized (%zu MessagePack bytes), %zu differing, %.1f s", qs.size(),
-         gt.size(), rows, serialized, bytes, bad, secs);
+    LOGI("yayoi_test", "driver: %zu queries (%zu tables whole; %zu not preparing left out), %zu rows walked, %zu serialized (%zu MessagePack bytes), %zu differing, %.1f s",
+         qs.size(), gt.size(), failing, rows, serialized, bytes, bad, secs);
 }
 
 }  // namespace

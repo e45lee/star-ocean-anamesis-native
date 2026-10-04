@@ -56,5 +56,5 @@ constexpr HostFn wrap_method() { return &wrapped_method<M>; }
 }  // namespace soa
 
 // A guest member function replaced by a member of the recovered class.
-#define NATIVE_METHOD(sym, method, note) NATIVE_FUNCTION(sym, ::soa::wrap_method<method>(), note)
-#define NATIVE_METHOD_IF(sym, method, note, cond) NATIVE_FUNCTION_IF(sym, ::soa::wrap_method<method>(), note, cond)
+#define NATIVE_METHOD(sym, method, note) NATIVE_REGISTER(sym, ::soa::wrap_method<method>(), note, nullptr, nullptr, nullptr, #method)
+#define NATIVE_METHOD_IF(sym, method, note, cond) NATIVE_REGISTER(sym, ::soa::wrap_method<method>(), note, cond, nullptr, nullptr, #method)

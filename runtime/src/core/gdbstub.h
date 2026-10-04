@@ -11,21 +11,27 @@
 // is concerned and parks when it returns to guest code. Breakpoints are BRK instructions written
 // over the guest code (and hidden from memory reads); the JIT's translations of the word are
 // invalidated in every thread. Single-step runs one instruction with dynarmic's Step() on the
-// thread's own JIT.
+// thread's own JIT. A breakpoint on a native (a guest function replaced by host code) stops the
+// thread before the native runs (gdb_call_native). Linux and Windows (sockets through soa/sock.h).
 #include <string>
 
 #include "core/cpu.h"
 
 namespace soa {
 
-// Starts the stub's server thread on HOST:PORT (also ":PORT" / "PORT": 127.0.0.1; port 0 picks a
-// free one, see gdb_port()) and turns the debugger hooks on. Call it once, before guest code runs.
-// Returns false (and sets *err) when the address doesn't parse or can't be bound.
+// Starts the stub's server thread on HOST:PORT (also "[IPV6]:PORT", ":PORT" / "PORT": 127.0.0.1;
+// port 0 picks a free one, see gdb_port()) and turns the debugger hooks on. Call it once, before
+// guest code runs. Returns false (and sets *err) when the address doesn't parse or can't be bound.
 bool gdb_listen(const std::string& host_port, std::string* err = nullptr);
 // The bound TCP port (0 before gdb_listen).
 int gdb_port();
 // Detaches any debugger (breakpoints removed, guest resumed) and stops the server (tests).
 void gdb_shutdown();
+
+// Stop signals as the GDB remote protocol numbers them (gdb's own numbering: Linux's, except BUS),
+// on every host.
+constexpr int kGdbSigInt = 2, kGdbSigIll = 4, kGdbSigTrap = 5, kGdbSigAbrt = 6, kGdbSigFpe = 8, kGdbSigBus = 10,
+              kGdbSigSegv = 11;
 
 // ---- hooks for core/cpu.cpp ----
 extern bool g_gdb_enabled;                 // set by gdb_listen, before guest code runs
@@ -38,9 +44,22 @@ void gdb_park(Cpu& c);
 // A BRK at `pc` raised by the JIT: true when it is one of the debugger's breakpoints (the world is
 // then being stopped; the caller resets the PC to `pc`).
 bool gdb_breakpoint_hit(Cpu& c, u64 pc);
-// A fatal guest fault (host signal in guest context, an unimplemented instruction, a guest
-// exception): an attached debugger gets the stop (signal `signo`) and the thread waits until it
-// continues or detaches; then the caller goes on to crash as before.
-void gdb_fault(Cpu* c, int signo);
+// A fatal guest fault (a host fault in guest context: a signal on Linux, an unhandled exception on
+// Windows; an unimplemented instruction; a guest exception): an attached debugger gets the stop
+// (`gdb_sig`, one of the kGdbSig* above) and the thread waits until it continues or detaches; then
+// the caller goes on to crash as before.
+void gdb_fault(Cpu* c, int gdb_sig);
+
+// Breakpoints on natives (a guest entry replaced by hook_guest_function: its first word is the
+// hook's SVC, so no BRK goes there). True while the debugger has at least one: then CallSVC and the
+// direct host call run a hooked function through gdb_call_native instead of calling it.
+bool gdb_native_breakpoints();
+// Runs `fn`, the native behind the hooked guest entry `hook`, on `c` (PC = hook + 4, the guest's
+// arguments in its registers). With a breakpoint at `hook`, the world stops first, reported at
+// `hook` (swbreak) with the arguments as the native will see them; continuing runs the native, a
+// step runs all of it and stops at hook + 4 (the hook's RET), a PC moved by the debugger skips it.
+// `in_jit`: called from the JIT (CallSVC), so a stop after the native parks when the JIT returns;
+// false for a direct host call (no JIT to return to: the thread waits here).
+void gdb_call_native(Cpu& c, u64 hook, HostFn fn, bool in_jit);
 
 }  // namespace soa

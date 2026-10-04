@@ -121,13 +121,17 @@ class Config:
       fresh_kvs     delete the phone's local KVS (Aska.xml: the client makes a new device UUID)
       phone         a phone directory to use as it is (EMU_DATA): never prepared nor deleted
       binary        the client binary (default by target: SOA / SOA_EMU), server_binary (SOA_SERVER)
-      gdb           the runtime's GDB stub on a free port (--gdb 127.0.0.1:PORT; Run.gdb() attaches:
-                    soadrive/gdb.py)
+      gdb           the runtime's GDB stub (--gdb 127.0.0.1:0, the port from the client's log; Run.gdb()
+                    attaches: soadrive/gdb.py)
+      loopback      the loopback address the programs use with each other: 127.0.0.1, or "::1" for IPv6
+                    (port-server: soa-server's --listen / --http and the client's --server / --http;
+                    the GDB stub, except for a Windows client: WSL reaches it on 127.0.0.1 only)
     """
 
     def __init__(self, server_args=(), clock=None, client_save=False, new_player=False, prepared=None, seed=None,
                  seed_rng=1, client_args=(), env=None, limit=3600, windowed=False, explicit_data=True, log_packets=True,
-                 state_master=True, fresh_kvs=True, phone=None, binary=None, server_binary=None, gdb=False):
+                 state_master=True, fresh_kvs=True, phone=None, binary=None, server_binary=None, gdb=False,
+                 loopback="127.0.0.1"):
         self.server_args, self.clock, self.client_save, self.new_player = list(server_args), clock, client_save, new_player
         # a prepared server state (soadrive/prepared.py: a state DB every target starts from a
         # copy of), or None: a fresh state
@@ -136,6 +140,7 @@ class Config:
         self.limit, self.windowed, self.explicit_data, self.log_packets = limit, windowed, explicit_data, log_packets
         self.state_master, self.fresh_kvs, self.phone = state_master, fresh_kvs, phone
         self.binary, self.server_binary, self.gdb = binary, server_binary, gdb
+        self.loopback = loopback
 
 
 def binaries():
@@ -423,8 +428,11 @@ class Run:
         if cfg.gdb:
             if not gdb.available():
                 raise Abort("a GDB stub was asked for, but control/gdbclient.py (the runtime's --gdb) isn't in this checkout")
-            self.gdb_port = proc.free_ports(1)[0]
-            client += gdb.client_args(self.gdb_port)
+            # port 0: the client logs the one it took (Run.gdb reads it). WSL's mirrored networking
+            # shares 127.0.0.1 with Windows, not ::1.
+            self.gdb_host = "127.0.0.1" if self.win else cfg.loopback
+            self.gdb_port = 0
+            client += gdb.client_args(0, self.gdb_host)
         if cfg.clock:
             client += ["--device-clock", cfg.clock]
         env = {"SDL_AUDIODRIVER": os.environ.get("SDL_AUDIODRIVER", "dummy")}
@@ -472,8 +480,9 @@ class Run:
         else:
             for attempt in range(4):
                 gp, hp = (winhost.free_ports if self.win else proc.free_ports)(2)
-                self.server = proc.Proc("soa-server", [server_binary, "--listen", "127.0.0.1:%d" % gp,
-                                                       "--http", "127.0.0.1:%d" % hp, "--data", wp(os.path.dirname(self.state_db))] +
+                lo = cfg.loopback
+                self.server = proc.Proc("soa-server", [server_binary, "--listen", gdb.host_port(lo, gp),
+                                                       "--http", gdb.host_port(lo, hp), "--data", wp(os.path.dirname(self.state_db))] +
                                         ([] if PACKAGE_DIR else ["--download-dir", wp(download)]) + pkt + srv, self.server_log,
                                         limit=cfg.limit, cwd=cwd)
                 end = time.monotonic() + 120
@@ -489,7 +498,8 @@ class Run:
                     raise Abort("soa-server didn't start (see %s)" % self.server_log)
                 self.note("soa-server: ports %d/%d in use on Windows; trying others" % (gp, hp))
             self.client = proc.Proc(os.path.basename(binary), [binary] + client + cfg.client_args +
-                                    ["--server", "127.0.0.1:%d" % gp, "--http", "127.0.0.1:%d" % hp], self.client_log, env=env,
+                                    ["--server", gdb.host_port(cfg.loopback, gp), "--http", gdb.host_port(cfg.loopback, hp)],
+                                    self.client_log, env=env,
                                     limit=cfg.limit, slot_fd=self.slot, cwd=cwd)
         emu_link = os.path.join(self.dir, "emu.log")
         if self.layout.kind == "diff" and not os.path.lexists(emu_link):
@@ -822,9 +832,13 @@ class Run:
     def gdb(self, timeout=30.0):
         """A GdbClient attached to this run's client (Config(gdb=True)), as a context manager: the
         guest is stopped inside the block and runs on after it (detached)."""
-        if not getattr(self, "gdb_port", None):
+        if getattr(self, "gdb_port", None) is None:
             raise gdb.GdbUnavailable("this run wasn't started with Config(gdb=True)")
-        return gdb.attach(self.gdb_port, timeout)
+        if not self.gdb_port:
+            self.gdb_port = gdb.listen_port(self.client_log)
+            if not self.gdb_port:
+                raise gdb.GdbUnavailable("the client didn't log its GDB stub's port (%s)" % self.client_log)
+        return gdb.attach(self.gdb_port, timeout, self.gdb_host)
 
     # ---- the server's state -----------------------------------------------------------------------
     def _read_state(self, tool_args):

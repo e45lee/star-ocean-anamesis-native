@@ -12,6 +12,32 @@
 
 namespace soa::sock {
 
+bool split_host_port(const std::string& s, std::string* host, std::string* port) {
+    host->clear();
+    port->clear();
+    if (!s.empty() && s[0] == '[') {
+        size_t e = s.find(']');
+        if (e == std::string::npos) return false;
+        *host = s.substr(1, e - 1);
+        if (e + 1 == s.size()) return true;
+        if (s[e + 1] != ':') return false;
+        *port = s.substr(e + 2);
+        return true;
+    }
+    size_t c = s.find(':');
+    if (c == std::string::npos || s.find(':', c + 1) != std::string::npos) {
+        *host = s;  // no port, or a bare IPv6 address
+        return true;
+    }
+    *host = s.substr(0, c);
+    *port = s.substr(c + 1);
+    return true;
+}
+
+std::string join_host_port(const std::string& host, int port) {
+    return (host.find(':') != std::string::npos ? "[" + host + "]" : host) + ":" + std::to_string(port);
+}
+
 #ifdef _WIN32
 
 namespace {
@@ -47,6 +73,13 @@ int accept_nonblocking(int listen_fd) {
     SOCKET s = ::accept((SOCKET)listen_fd, nullptr, nullptr);
     if (s == INVALID_SOCKET) return -1;
     set_nonblocking((int)s, true);
+    set_nodelay((int)s);
+    return (int)s;
+}
+
+int accept(int listen_fd) {
+    SOCKET s = ::accept((SOCKET)listen_fd, nullptr, nullptr);
+    if (s == INVALID_SOCKET) return -1;
     set_nodelay((int)s);
     return (int)s;
 }
@@ -104,6 +137,12 @@ bool set_nonblocking(int fd, bool on) {
 
 int accept_nonblocking(int listen_fd) {
     int fd = accept4(listen_fd, nullptr, nullptr, SOCK_NONBLOCK | SOCK_CLOEXEC);
+    if (fd >= 0) set_nodelay(fd);
+    return fd;
+}
+
+int accept(int listen_fd) {
+    int fd = accept4(listen_fd, nullptr, nullptr, SOCK_CLOEXEC);
     if (fd >= 0) set_nodelay(fd);
     return fd;
 }

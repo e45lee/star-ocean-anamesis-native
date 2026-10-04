@@ -71,7 +71,9 @@ a time by readable C++ ("natives"), each checked against the original. Programs:
   (`SOA_PHONE=none` for a full download; [port/README.md "The shared pre-downloaded phone"](port/README.md)).
 - Diagnostics: `SOA_TRACE`, `SOA_PROFILE`, `SOA_COVERAGE`, `SOA_WATCHDOG`, `--memstats`
   ([port/README.md "Profiling"](port/README.md), [runtime/README.md "Environment"](runtime/README.md));
-  guest debugging with `--gdb HOST:PORT` (runtime/README.md "Debugging the guest with gdb").
+  guest debugging with `--gdb HOST:PORT` (Linux and Windows; breakpoints on natives, `monitor natives`;
+  `control/gdbinit-soa` also in a host gdb: `soa-native-break SYMBOL`; runtime/README.md "Debugging the guest
+  with gdb").
 - Ground truth for rendering questions: the real game on Android (e.g. Waydroid via adb), or the
   unmodified `soa-emu`, before theorizing.
 

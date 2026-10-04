@@ -436,6 +436,8 @@ int main() {
         {{"--http", "a:b:80"}, "--http / --lobby HOST:PORT are soa-emu's rule in both programs now (platform370/cli.h): a "
                                "value with two ':' is an error (soa took host \"a:b\")", 2},
         {{"-vv", "-v"}, "-v counts: -vv -v is trace (the old loop's last -v / -vv won: debug)", -1},
+        {{"--server", "[::1]:44300", "--http", "[::1]:44380"}, "an IPv6 address in brackets, [V6]:PORT (platform370/cli.h; the old "
+                                                              "one took host \"[::1]:44300\" and refused the --http)", -1},
     };
     std::vector<Row> soa_rows = concat({&client_common, &download, &phone, &server_opts, &soa_only});
 
@@ -445,6 +447,7 @@ int main() {
         {{"--help"}},
         {{"-h"}},
         {{"--listen", "0.0.0.0:44300", "--http", "0.0.0.0:44380"}},
+        {{"--listen", "[::1]:44300", "--http", "[::1]:44380"}},
         {{"--bridge-url", "http://127.0.0.1:44380/bridge", "--cdn-url", "http://127.0.0.1:44380"}},
         {{"--cdn-scratch", "/tmp/cdn"}},
         {{"--keep-open-after-error"}},
@@ -486,6 +489,8 @@ int main() {
         {{"--server", ":1"}},
         {{"--server", "h:0"}},
         {{"--server", "a:b:c"}},
+        {{"--server", "[::1]:44301"}, "an IPv6 address in brackets, [V6]:PORT (platform370/cli.h; the old one took host "
+                                      "\"[::1]:44301\")", -1},
         {{"-vv", "-v"}, "-v counts: -vv -v is trace (the old loop's last -v / -vv won: debug)", -1},
     };
     std::vector<Row> emu_rows = concat({&client_common, &download, &phone, &emu_only});

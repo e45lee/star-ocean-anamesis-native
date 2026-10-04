@@ -18,22 +18,24 @@ namespace {
 
 int connect_to(const std::string& host, uint16_t port, std::string* err) {
     addrinfo hints = {}, *res = nullptr;
-    hints.ai_family = AF_INET;
+    hints.ai_family = host.find(':') != std::string::npos ? AF_INET6 : AF_INET;  // (an IPv6 address: ::1)
     hints.ai_socktype = SOCK_STREAM;
     sock::startup();  // (Winsock, before the name lookup)
-    if (int r = getaddrinfo(host.c_str(), nullptr, &hints, &res); r != 0 || !res) {
+    const std::string port_s = std::to_string(port);
+    if (int r = getaddrinfo(host.c_str(), port_s.c_str(), &hints, &res); r != 0 || !res) {
         *err = host + ": " + gai_strerror(r);
         return -1;
     }
-    sockaddr_in a = *(sockaddr_in*)res->ai_addr;
+    sockaddr_storage a = {};
+    socklen_t alen = (socklen_t)res->ai_addrlen;
+    memcpy(&a, res->ai_addr, res->ai_addrlen);
     freeaddrinfo(res);
-    a.sin_port = htons(port);
-    int fd = sock::tcp_socket(false);
+    int fd = sock::tcp_socket(false, a.ss_family);
     if (fd < 0) return *err = "socket: " + sock::last_error(), -1;
     sock::set_timeouts(fd, 10);
     sock::set_nodelay(fd);
-    if (::connect(fd, (sockaddr*)&a, sizeof a) != 0) {
-        *err = "connect " + host + ":" + std::to_string(port) + ": " + sock::last_error();
+    if (::connect(fd, (sockaddr*)&a, alen) != 0) {
+        *err = "connect " + sock::join_host_port(host, port) + ": " + sock::last_error();
         sock::close(fd);
         return -1;
     }

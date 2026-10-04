@@ -170,6 +170,11 @@ def test_gdb_needs_a_run_started_with_it(tmp_path):
     with pytest.raises(gdb.GdbUnavailable):
         r.gdb()
     assert gdb.client_args(1234) == ["--gdb", "127.0.0.1:1234"]
+    assert gdb.client_args(0, "::1") == ["--gdb", "[::1]:0"]
+    log = tmp_path / "client.log"
+    assert gdb.listen_port(str(log)) is None
+    log.write_text("I/x: y\nI/gdb: GDB stub listening on [::1]:40123 (gdb-multiarch -x control/gdbinit-soa, or ...)\n")
+    assert gdb.listen_port(str(log)) == 40123
 
 
 def test_every_session_module_declares_its_interface():

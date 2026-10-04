@@ -79,8 +79,11 @@ void barrier_checked(Cpu& c, CheckedFn& f, HostFn native) {
     std::memcpy(sh->m_barrierCounts, pre->m_barrierCounts, sizeof sh->m_barrierCounts);
     if (obs.refs_read >= 0 && (u32)x1 < 32) sh->m_barrierRefs[x1] = obs.refs_read;  // (Increment: as read before the lock)
     for (int k = 0; k < TaskManager::kNumLevels; k++) {
-        sh->m_barrierEvents[k].m_signaled = pre->m_barrierEvents[k].m_signaled;
-        sh->m_barrierEvents[k].m_manualReset = pre->m_barrierEvents[k].m_manualReset;
+        Event& e = sh->m_barrierEvents[k];
+        if (!pre->m_barrierEvents[k].m_pMutex && e.m_pMutex) e.Exit();  // (not created yet: the guest's AddThreadBarrier creates it)
+        if (pre->m_barrierEvents[k].m_pMutex && !e.m_pMutex) e.Create(true, false);
+        e.m_signaled = pre->m_barrierEvents[k].m_signaled;
+        e.m_manualReset = pre->m_barrierEvents[k].m_manualReset;
     }
     guest_call(f.orig, {(u64)sh, x1});
     if (obs.refs_read >= 0 && (u32)x1 < 32) sh->m_barrierRefs[x1] = reinterpret_cast<const TaskManager*>(obs.post)->m_barrierRefs[x1];

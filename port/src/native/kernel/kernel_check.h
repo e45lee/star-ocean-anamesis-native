@@ -34,6 +34,9 @@ struct DispatchObservation {
     // the native Set its event.
     static constexpr u8 kRead = 0x80, kWaiting = 1, kBusy = 2, kSignaled = 4, kSet = 0x40;
     u8 wake[kMaxWorkers] = {};
+    // GetMessage(block, int): the other workers' m_busy as it read them (MessageReady clears it
+    // outside the lock): kRead | kBusy.
+    u8 busy[kMaxWorkers] = {};
     void note_worker(s32 i, u8 flags) {
         if (i >= 0 && i < kMaxWorkers) wake[i] |= (u8)(kRead | flags);
     }

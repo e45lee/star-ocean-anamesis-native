@@ -371,6 +371,9 @@ void run_checked(Cpu& c, CheckedFn& f, HostFn native, const Spec& spec) {
     Arena& a = arena_for(sh);
     a.load(obs.pre, obs.counters, g_get_message_orig);
     load_wake(a, obs, spec.kind != kWorkerGet);
+    // The other workers' m_busy as the native's GetMessage read it.
+    for (s32 i = 0; i < a.shape.nworkers && i < kMaxWorkers; i++)
+        if (obs.busy[i] & DispatchObservation::kRead) a.worker(i)->m_busy = (obs.busy[i] & DispatchObservation::kBusy) ? 1 : 0;
     u64 gx[8];
     std::memcpy(gx, x, sizeof gx);
     s32 self = -1;

@@ -435,8 +435,12 @@ bool SimpleMessageDispatcher::GetMessage(MessageDispatcherBlock* out, s32 worker
     const u32 self = (u32)workerIndex;
     s32 n = m_workerCount;
     u32 busy = 0;
-    for (s32 i = 0; i < n; i++)
-        if ((u32)i != self && m_workers[i].m_busy) busy |= 1u << (i & 31);
+    for (s32 i = 0; i < n; i++) {
+        if ((u32)i == self) continue;
+        u8 b = m_workers[i].m_busy;
+        if (t_dobs && i < kMaxWorkers) t_dobs->busy[i] = (u8)(DispatchObservation::kRead | (b ? DispatchObservation::kBusy : 0));
+        if (b) busy |= 1u << (i & 31);
+    }
     MessageDispatcherBlockForList* b = nullptr;
     if (n > 0 && busy) {
         for (; l != sentinel; l = l->m_next) {

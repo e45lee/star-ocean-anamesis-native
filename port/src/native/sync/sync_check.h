@@ -62,6 +62,11 @@ struct Observation {
 // Set by a check around its native run; the natives note their observations here.
 extern thread_local Observation* t_obs;
 
+// Set by another family's shadow check around a guest replay of a blocking caller (kernel's
+// SendMessage: it waits on an event only a worker would set): Event::Wait on this thread then
+// returns at once, as if the event were signaled.
+extern thread_local bool t_replay_no_wait;
+
 // A zeroed, 16-aligned, per-thread scratch buffer for shadows (guest-visible host memory: guest
 // memory is identity-mapped). `slot` keeps two shadows apart.
 u8* shadow_buffer(int slot);

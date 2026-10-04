@@ -98,6 +98,8 @@ class CriticalSection {
 public:
     void CtorBase();       // Aska::CriticalSection::CriticalSection()  _ZN4Aska15CriticalSectionC2Ev
     bool TryEnter() const; // Aska::CriticalSection::TryEnter() const   _ZNK4Aska15CriticalSection8TryEnterEv
+    void Enter() const;    // Aska::CriticalSection::Enter() const      (pthread_mutex_lock: a 4-byte tail call, not bound)
+    void Leave() const;    // Aska::CriticalSection::Leave() const      (pthread_mutex_unlock: likewise)
 
     u8 m_mutex[40];  // 0x00: bionic pthread_mutex_t (recursive)
 };

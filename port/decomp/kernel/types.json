@@ -2,5 +2,3420 @@
  "subsystem": "kernel",
  "generated_by": "tools/subsystem.py export-types kernel",
  "header": "port/src/native/kernel/kernel_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "Event",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    }
+   ],
+   "size": 104,
+   "align": 1
+  },
+  {
+   "name": "Semaphore",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 24,
+   "align": 1
+  },
+  {
+   "name": "CriticalSection",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    }
+   ],
+   "size": 40,
+   "align": 1
+  },
+  {
+   "name": "FastCriticalSection",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    }
+   ],
+   "size": 144,
+   "align": 1
+  },
+  {
+   "name": "Thread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "MessageDispatcherBlock",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_serial",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "m_message",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_notify",
+     "type": {
+      "kind": "ptr",
+      "to": "INotify"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_event",
+     "type": {
+      "kind": "ptr",
+      "to": "Event"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_barrierManager",
+     "type": {
+      "kind": "ptr",
+      "to": "TaskManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_barrier",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_counter",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_arg0",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_arg1",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_key0",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_key1",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 80,
+   "align": 8
+  },
+  {
+   "name": "MessageDispatcherBlockForList",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "link",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::LinkElement",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 24,
+     "name": "m_block",
+     "type": {
+      "kind": "struct",
+      "name": "MessageDispatcherBlock"
+     },
+     "size": 80
+    },
+    {
+     "offset": 104,
+     "name": "m_priority",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": true
+     },
+     "size": 1
+    },
+    {
+     "offset": 105,
+     "name": "unk_69",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 112,
+   "align": 8
+  },
+  {
+   "name": "MessageBlockList",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sentinel",
+     "type": {
+      "kind": "struct",
+      "name": "MessageDispatcherBlockForList"
+     },
+     "size": 112
+    },
+    {
+     "offset": 120,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 124,
+     "name": "unk_7c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 128,
+   "align": 8
+  },
+  {
+   "name": "WorkerThread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "Thread"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_wakeup",
+     "type": {
+      "kind": "struct",
+      "name": "Event"
+     },
+     "size": 104
+    },
+    {
+     "offset": 128,
+     "name": "m_started",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 129,
+     "name": "m_exit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 130,
+     "name": "m_signalEvent",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 131,
+     "name": "m_busy",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 132,
+     "name": "m_waiting",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 133,
+     "name": "unk_85",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 134,
+     "name": "m_index",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 135,
+     "name": "unk_87",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 136,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": "SimpleMessageDispatcher"
+     },
+     "size": 8
+    },
+    {
+     "offset": 144,
+     "name": "m_current",
+     "type": {
+      "kind": "struct",
+      "name": "MessageDispatcherBlock"
+     },
+     "size": 80
+    }
+   ],
+   "size": 224,
+   "align": 8
+  },
+  {
+   "name": "SimpleMessageDispatcher",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_cs",
+     "type": {
+      "kind": "struct",
+      "name": "FastCriticalSection"
+     },
+     "size": 144
+    },
+    {
+     "offset": 152,
+     "name": "m_queue",
+     "type": {
+      "kind": "struct",
+      "name": "MessageBlockList"
+     },
+     "size": 128
+    },
+    {
+     "offset": 280,
+     "name": "m_freeBlocks",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::memory::TDynamicQueue<MessageDispatcherBlockForList *>",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 312,
+     "name": "m_blocks",
+     "type": {
+      "kind": "ptr",
+      "to": "MessageDispatcherBlockForList"
+     },
+     "size": 8
+    },
+    {
+     "offset": 320,
+     "name": "m_blockStorage",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328,
+     "name": "m_freeBlockEvent",
+     "type": {
+      "kind": "struct",
+      "name": "Event"
+     },
+     "size": 104
+    },
+    {
+     "offset": 432,
+     "name": "m_full",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 433,
+     "name": "unk_1b1",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 436,
+     "name": "m_threadPriority",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 440,
+     "name": "m_workerCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 444,
+     "name": "unk_1bc",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 448,
+     "name": "m_workers",
+     "type": {
+      "kind": "ptr",
+      "to": "WorkerThread"
+     },
+     "size": 8
+    },
+    {
+     "offset": 456,
+     "name": "m_suspended",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 457,
+     "name": "unk_1c9",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 458,
+     "name": "m_nextSerial",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 460,
+     "name": "unk_1cc",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 464,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x205cd28",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_Pja",
+     "name": "PostMessage"
+    },
+    {
+     "ghidra": "0x205d018",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher10AddMessageEa",
+     "name": "AddMessage"
+    },
+    {
+     "ghidra": "0x205d0e0",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher18WakeupWorkerThreadEv",
+     "name": "WakeupWorkerThread"
+    },
+    {
+     "ghidra": "0x205d164",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_mmPja",
+     "name": "PostMessage"
+    },
+    {
+     "ghidra": "0x205d474",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS0_8ArgumentEia",
+     "name": "PostMultiMessages"
+    },
+    {
+     "ghidra": "0x205d7e0",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher13DeleteMessageEi",
+     "name": "DeleteMessage"
+    },
+    {
+     "ghidra": "0x205d858",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher22WakeupAllWorkerThreadsEv",
+     "name": "WakeupAllWorkerThreads"
+    },
+    {
+     "ghidra": "0x205d8a4",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS0_10ArgumentExEia",
+     "name": "PostMultiMessages"
+    },
+    {
+     "ghidra": "0x205dc10",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher16PostSyncMessagesEPNS0_8ArgumentEiPia",
+     "name": "PostSyncMessages"
+    },
+    {
+     "ghidra": "0x205e07c",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher16PostSyncMessagesEPNS0_10ArgumentExEiPia",
+     "name": "PostSyncMessages"
+    },
+    {
+     "ghidra": "0x205e4f8",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher21PostSyncMessageSingleEtPiPNS_7INotifyEPvS4_Pja",
+     "name": "PostSyncMessageSingle"
+    },
+    {
+     "ghidra": "0x205e7f0",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher21PostSyncMessageSingleEtPiPNS_7INotifyEPvS4_mmPja",
+     "name": "PostSyncMessageSingle"
+    },
+    {
+     "ghidra": "0x205eb18",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher18PostSyncMessageEndEtPiPNS_7INotifyEPvS4_Pja",
+     "name": "PostSyncMessageEnd"
+    },
+    {
+     "ghidra": "0x205ee14",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher18PostSyncMessageEndEtPiPNS_7INotifyEPvS4_mmPja",
+     "name": "PostSyncMessageEnd"
+    },
+    {
+     "ghidra": "0x205f140",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11SendMessageEtPNS_7INotifyEPvS3_a",
+     "name": "SendMessage"
+    },
+    {
+     "ghidra": "0x205f4c0",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11SendMessageEtPNS_7INotifyEPvS3_mma",
+     "name": "SendMessage"
+    },
+    {
+     "ghidra": "0x205f858",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEtPNS_7INotifyEPvS3_",
+     "name": "SendMessageHigh"
+    },
+    {
+     "ghidra": "0x205fb98",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher17AddMessageToFrontEv",
+     "name": "AddMessageToFront"
+    },
+    {
+     "ghidra": "0x205fc28",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEtPNS_7INotifyEPvS3_mm",
+     "name": "SendMessageHigh"
+    },
+    {
+     "ghidra": "0x205ff78",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_Pja",
+     "name": "PostMessage"
+    },
+    {
+     "ghidra": "0x20602c0",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mmPja",
+     "name": "PostMessage"
+    },
+    {
+     "ghidra": "0x2060644",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS_4TaskEPNS0_19ArgumentWithBarrierEia",
+     "name": "PostMultiMessages"
+    },
+    {
+     "ghidra": "0x2060a74",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher17PostMultiMessagesEPNS_4TaskEPNS0_21ArgumentWithBarrierExEia",
+     "name": "PostMultiMessages"
+    },
+    {
+     "ghidra": "0x2060ebc",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11SendMessageEPNS_4TaskEitPNS_7INotifyEPvS5_a",
+     "name": "SendMessage"
+    },
+    {
+     "ghidra": "0x206128c",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher11SendMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mma",
+     "name": "SendMessage"
+    },
+    {
+     "ghidra": "0x20616a4",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEPNS_4TaskEitPNS_7INotifyEPvS5_",
+     "name": "SendMessageHigh"
+    },
+    {
+     "ghidra": "0x2061a2c",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher15SendMessageHighEPNS_4TaskEitPNS_7INotifyEPvS5_mm",
+     "name": "SendMessageHigh"
+    },
+    {
+     "ghidra": "0x2061e04",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher5SetupEii",
+     "name": "Setup"
+    },
+    {
+     "ghidra": "0x2061f04",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher24AllocateWorkerThreadListEPNS_32MessageDispatherWorkerThreadInfoEi",
+     "name": "AllocateWorkerThreadList"
+    },
+    {
+     "ghidra": "0x206216c",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher5ClearEv",
+     "name": "Clear"
+    },
+    {
+     "ghidra": "0x2062404",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher24AllocateWorkerThreadListEiPKciii",
+     "name": "AllocateWorkerThreadList"
+    },
+    {
+     "ghidra": "0x20625f8",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher19SuspendWorkerThreadEv",
+     "name": "SuspendWorkerThread"
+    },
+    {
+     "ghidra": "0x2062750",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher18ResumeWorkerThreadEv",
+     "name": "ResumeWorkerThread"
+    },
+    {
+     "ghidra": "0x20628e0",
+     "symbol": "_ZNK4Aska23SimpleMessageDispatcher23IsWorkerThreadSuspendedEv",
+     "name": "IsWorkerThreadSuspended"
+    },
+    {
+     "ghidra": "0x20628e8",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x2062910",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x2062950",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher10GetMessageEPNS_22MessageDispatcherBlockEi",
+     "name": "GetMessage"
+    },
+    {
+     "ghidra": "0x2062f44",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcherD2Ev",
+     "name": "~SimpleMessageDispatcher"
+    },
+    {
+     "ghidra": "0x2062fb0",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcherD0Ev",
+     "name": "~SimpleMessageDispatcher"
+    },
+    {
+     "ghidra": "0x2063024",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher15CheckToDispatchEPNS_29MessageDispatcherBlockForListE",
+     "name": "CheckToDispatch"
+    },
+    {
+     "ghidra": "0x2336fc8",
+     "symbol": "_ZN4Aska23SimpleMessageDispatcher13CancelMessageEj",
+     "name": "CancelMessage"
+    }
+   ]
+  },
+  {
+   "name": "MessageDispatcher",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "SimpleMessageDispatcher"
+     },
+     "size": 464
+    }
+   ],
+   "size": 464,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2310f98",
+     "symbol": "_ZN4Aska17MessageDispatcherD2Ev",
+     "name": "~MessageDispatcher"
+    },
+    {
+     "ghidra": "0x231101c",
+     "symbol": "_ZN4Aska17MessageDispatcherD0Ev",
+     "name": "~MessageDispatcher"
+    },
+    {
+     "ghidra": "0x2333858",
+     "symbol": "_ZN4Aska17MessageDispatcher10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x233385c",
+     "symbol": "_ZN4Aska17MessageDispatcher7ReleaseEv",
+     "name": "Release"
+    }
+   ]
+  },
+  {
+   "name": "Task",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "link",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::LinkElement",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 24,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": "TaskManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_level",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 37,
+     "name": "unk_25",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 38,
+     "name": "unk_26",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 39,
+     "name": "unk_27",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x130232c",
+     "symbol": "_ZNK4Aska4Task10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x1302370",
+     "symbol": "_ZN4Aska4Task14MessageHandlerEjiPvS1_",
+     "name": "MessageHandler"
+    },
+    {
+     "ghidra": "0x1302378",
+     "symbol": "_ZNK4Aska4Task7IsMultiEv",
+     "name": "IsMulti"
+    },
+    {
+     "ghidra": "0x1302380",
+     "symbol": "_ZN4Aska4Task23OnDeleteFromTaskManagerEv",
+     "name": "OnDeleteFromTaskManager"
+    },
+    {
+     "ghidra": "0x1302384",
+     "symbol": "_ZN4Aska4Task18OnAddToTaskManagerEv",
+     "name": "OnAddToTaskManager"
+    },
+    {
+     "ghidra": "0x1302388",
+     "symbol": "_ZN4Aska4Task21OnAddTopToTaskManagerEv",
+     "name": "OnAddTopToTaskManager"
+    },
+    {
+     "ghidra": "0x130238c",
+     "symbol": "_ZN4Aska4Task21OnInsertToTaskManagerEv",
+     "name": "OnInsertToTaskManager"
+    },
+    {
+     "ghidra": "0x144e514",
+     "symbol": "_ZNK4Aska4Task15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    },
+    {
+     "ghidra": "0x207f564",
+     "symbol": "_ZN4Aska4TaskD2Ev",
+     "name": "~Task"
+    },
+    {
+     "ghidra": "0x207f5a0",
+     "symbol": "_ZN4Aska4TaskD0Ev",
+     "name": "~Task"
+    },
+    {
+     "ghidra": "0x207f5e4",
+     "symbol": "_ZN4Aska4Task6RemoveEv",
+     "name": "Remove"
+    },
+    {
+     "ghidra": "0x207f604",
+     "symbol": "_ZN4Aska4Task10DeleteThisEPNS_13DeleteManagerE",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x207f634",
+     "symbol": "_ZN4Aska4Task19DeleteThisNextFrameEPNS_13DeleteManagerE",
+     "name": "DeleteThisNextFrame"
+    },
+    {
+     "ghidra": "0x207f668",
+     "symbol": "_ZN4Aska4Task24DeleteThisAfterTwoFramesEPNS_13DeleteManagerE",
+     "name": "DeleteThisAfterTwoFrames"
+    },
+    {
+     "ghidra": "0x207f69c",
+     "symbol": "_ZN4Aska4Task21DeleteThisImmediatelyEv",
+     "name": "DeleteThisImmediately"
+    },
+    {
+     "ghidra": "0x207f6b0",
+     "symbol": "_ZN4Aska4Task5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x207f6fc",
+     "symbol": "_ZN4Aska4Task11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x207f798",
+     "symbol": "_ZN4Aska4Task11ChangeLevelEj",
+     "name": "ChangeLevel"
+    },
+    {
+     "ghidra": "0x207f7d0",
+     "symbol": "_ZN4Aska4Task11ForceDeleteEv",
+     "name": "ForceDelete"
+    },
+    {
+     "ghidra": "0x207f7e0",
+     "symbol": "_ZN4Aska4Task3RunEi",
+     "name": "Run"
+    }
+   ]
+  },
+  {
+   "name": "TaskEndNotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_notify",
+     "type": {
+      "kind": "ptr",
+      "to": "INotify"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_arg",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_used",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "m_next",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 18,
+     "name": "m_last",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 19,
+     "name": "unk_13",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "TaskManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sentinel",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::LinkElement",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 32,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "task",
+     "type": {
+      "kind": "struct",
+      "name": "Task"
+     },
+     "size": 40
+    },
+    {
+     "offset": 80,
+     "name": "m_levelCount",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 32
+     },
+     "size": 128
+    },
+    {
+     "offset": 208,
+     "name": "m_totalCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 212,
+     "name": "m_runLevel",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 216,
+     "name": "m_runIndex",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 220,
+     "name": "m_runCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 224,
+     "name": "m_messageQueue",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 232,
+     "name": "m_taskList",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 240,
+     "name": "unk_f0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 248,
+     "name": "m_levelEnds",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 256,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 260,
+     "name": "unk_104",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 264,
+     "name": "m_ringHead",
+     "type": {
+      "kind": "ptr",
+      "to": "TaskManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 272,
+     "name": "m_ringPrev",
+     "type": {
+      "kind": "ptr",
+      "to": "TaskManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 280,
+     "name": "m_ringNext",
+     "type": {
+      "kind": "ptr",
+      "to": "TaskManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 288,
+     "name": "m_broadcastIds",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 289,
+     "name": "unk_121",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 290,
+     "name": "m_endNotifyCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 292,
+     "name": "unk_124",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 296,
+     "name": "m_endNotifies",
+     "type": {
+      "kind": "ptr",
+      "to": "TaskEndNotify"
+     },
+     "size": 8
+    },
+    {
+     "offset": 304,
+     "name": "m_barrierEvents",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "Event"
+      },
+      "count": 32
+     },
+     "size": 3328
+    },
+    {
+     "offset": 3632,
+     "name": "m_barrierCreated",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 3636,
+     "name": "m_barrierPending",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 3640,
+     "name": "m_barrierRefs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 32
+     },
+     "size": 128
+    },
+    {
+     "offset": 3768,
+     "name": "m_barrierCounts",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 32
+     },
+     "size": 128
+    },
+    {
+     "offset": 3896,
+     "name": "m_barrierCs",
+     "type": {
+      "kind": "struct",
+      "name": "CriticalSection"
+     },
+     "size": 40
+    },
+    {
+     "offset": 3936,
+     "name": "m_cs",
+     "type": {
+      "kind": "struct",
+      "name": "FastCriticalSection"
+     },
+     "size": 144
+    }
+   ],
+   "size": 4080,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x207f7e4",
+     "symbol": "_ZN4Aska11TaskManagerC1Ev",
+     "name": "TaskManager"
+    },
+    {
+     "ghidra": "0x207f9d4",
+     "symbol": "_ZN4Aska11TaskManagerD1Ev",
+     "name": "~TaskManager"
+    },
+    {
+     "ghidra": "0x207fbf0",
+     "symbol": "_ZN4Aska11TaskManager18DeleteMessageQueueEv",
+     "name": "DeleteMessageQueue"
+    },
+    {
+     "ghidra": "0x207fc3c",
+     "symbol": "_ZN4Aska11TaskManager11ForceDeleteEv",
+     "name": "ForceDelete"
+    },
+    {
+     "ghidra": "0x207feec",
+     "symbol": "_ZN4Aska11TaskManagerD0Ev",
+     "name": "~TaskManager"
+    },
+    {
+     "ghidra": "0x207ff20",
+     "symbol": "_ZN4Aska11TaskManager3AddEPNS_4TaskE",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x207ff28",
+     "symbol": "_ZN4Aska11TaskManager3AddEPNS_4TaskEj",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x2080104",
+     "symbol": "_ZN4Aska11TaskManager23IncrementTaskLevelCountEj",
+     "name": "IncrementTaskLevelCount"
+    },
+    {
+     "ghidra": "0x2080134",
+     "symbol": "_ZN4Aska11TaskManager6AddTopEPNS_4TaskE",
+     "name": "AddTop"
+    },
+    {
+     "ghidra": "0x208013c",
+     "symbol": "_ZN4Aska11TaskManager6AddTopEPNS_4TaskEj",
+     "name": "AddTop"
+    },
+    {
+     "ghidra": "0x2080318",
+     "symbol": "_ZN4Aska11TaskManager6InsertEPNS_4TaskES2_",
+     "name": "Insert"
+    },
+    {
+     "ghidra": "0x2080320",
+     "symbol": "_ZN4Aska11TaskManager6InsertEPNS_4TaskES2_j",
+     "name": "Insert"
+    },
+    {
+     "ghidra": "0x2080564",
+     "symbol": "_ZN4Aska11TaskManager11ChangeLevelEPNS_4TaskEj",
+     "name": "ChangeLevel"
+    },
+    {
+     "ghidra": "0x2080720",
+     "symbol": "_ZN4Aska11TaskManager23DecrementTaskLevelCountEj",
+     "name": "DecrementTaskLevelCount"
+    },
+    {
+     "ghidra": "0x2080754",
+     "symbol": "_ZN4Aska11TaskManager19PreAllocateTaskListEi",
+     "name": "PreAllocateTaskList"
+    },
+    {
+     "ghidra": "0x20807c0",
+     "symbol": "_ZN4Aska11TaskManager25DeletePreAllocateTaskListEv",
+     "name": "DeletePreAllocateTaskList"
+    },
+    {
+     "ghidra": "0x20807f4",
+     "symbol": "_ZN4Aska11TaskManager12MergeManagerEPS0_",
+     "name": "MergeManager"
+    },
+    {
+     "ghidra": "0x2080994",
+     "symbol": "_ZN4Aska11TaskManager20ReleaseMergedManagerEv",
+     "name": "ReleaseMergedManager"
+    },
+    {
+     "ghidra": "0x20809fc",
+     "symbol": "_ZNK4Aska11TaskManager18GetTotalTaskNumberEv",
+     "name": "GetTotalTaskNumber"
+    },
+    {
+     "ghidra": "0x2080b58",
+     "symbol": "_ZN4Aska11TaskManager17AllocateBroadcastEv",
+     "name": "AllocateBroadcast"
+    },
+    {
+     "ghidra": "0x2080ba4",
+     "symbol": "_ZN4Aska11TaskManager17AllocateBroadcastEi",
+     "name": "AllocateBroadcast"
+    },
+    {
+     "ghidra": "0x2080c20",
+     "symbol": "_ZN4Aska11TaskManager16ReleaseBroadcastEh",
+     "name": "ReleaseBroadcast"
+    },
+    {
+     "ghidra": "0x2080c30",
+     "symbol": "_ZN4Aska11TaskManager9BroadcastEh",
+     "name": "Broadcast"
+    },
+    {
+     "ghidra": "0x2080cb8",
+     "symbol": "_ZN4Aska11TaskManager17SetupMessageQueueEPNS_12MessageQueueE",
+     "name": "SetupMessageQueue"
+    },
+    {
+     "ghidra": "0x2080d30",
+     "symbol": "_ZN4Aska11TaskManager11PostMessageEtPvS1_",
+     "name": "PostMessage"
+    },
+    {
+     "ghidra": "0x2080d50",
+     "symbol": "_ZN4Aska11TaskManager17PostMessageToTaskEtPNS_4TaskEPvS3_",
+     "name": "PostMessageToTask"
+    },
+    {
+     "ghidra": "0x2080d6c",
+     "symbol": "_ZN4Aska11TaskManager11PostMessageEtPvS1_PNS_21MessageBlockConditionEPj",
+     "name": "PostMessage"
+    },
+    {
+     "ghidra": "0x2080d84",
+     "symbol": "_ZN4Aska11TaskManager17PostMessageToTaskEtPNS_4TaskEPvS3_Pj",
+     "name": "PostMessageToTask"
+    },
+    {
+     "ghidra": "0x2080d9c",
+     "symbol": "_ZN4Aska11TaskManager11SendMessageEtPvS1_",
+     "name": "SendMessage"
+    },
+    {
+     "ghidra": "0x2080db8",
+     "symbol": "_ZN4Aska11TaskManager11SendMessageEtPvS1_PNS_21MessageBlockConditionE",
+     "name": "SendMessage"
+    },
+    {
+     "ghidra": "0x2080dd0",
+     "symbol": "_ZN4Aska11TaskManager17SendMessageToTaskEtPNS_4TaskEPvS3_",
+     "name": "SendMessageToTask"
+    },
+    {
+     "ghidra": "0x2080de8",
+     "symbol": "_ZN4Aska11TaskManager10GetMessageEPNS_12MessageBlockE",
+     "name": "GetMessage"
+    },
+    {
+     "ghidra": "0x2080e0c",
+     "symbol": "_ZN4Aska11TaskManager11PeekMessageEv",
+     "name": "PeekMessage"
+    },
+    {
+     "ghidra": "0x2080e28",
+     "symbol": "_ZN4Aska11TaskManager15DispatchMessageEPNS_12MessageBlockE",
+     "name": "DispatchMessage"
+    },
+    {
+     "ghidra": "0x2080e44",
+     "symbol": "_ZN4Aska11TaskManager19CreateEndNotifyListEi",
+     "name": "CreateEndNotifyList"
+    },
+    {
+     "ghidra": "0x2080eec",
+     "symbol": "_ZN4Aska11TaskManager12AddEndNotifyEPNS_7INotifyEm",
+     "name": "AddEndNotify"
+    },
+    {
+     "ghidra": "0x2080fb8",
+     "symbol": "_ZN4Aska11TaskManager15RemoveEndNotifyEPNS_7INotifyEm",
+     "name": "RemoveEndNotify"
+    },
+    {
+     "ghidra": "0x2081048",
+     "symbol": "_ZN4Aska11TaskManager16AddThreadBarrierEi",
+     "name": "AddThreadBarrier"
+    },
+    {
+     "ghidra": "0x2081108",
+     "symbol": "_ZN4Aska11TaskManager19DeleteThreadBarrierEi",
+     "name": "DeleteThreadBarrier"
+    },
+    {
+     "ghidra": "0x2081160",
+     "symbol": "_ZN4Aska11TaskManager27IncrementThreadBarrierCountEi",
+     "name": "IncrementThreadBarrierCount"
+    },
+    {
+     "ghidra": "0x2081210",
+     "symbol": "_ZN4Aska11TaskManager27DecrementThreadBarrierCountEi",
+     "name": "DecrementThreadBarrierCount"
+    },
+    {
+     "ghidra": "0x208128c",
+     "symbol": "_ZN4Aska11TaskManager8IsCalledEPNS_4TaskE",
+     "name": "IsCalled"
+    },
+    {
+     "ghidra": "0x2081308",
+     "symbol": "_ZN4Aska11TaskManager14OwnersKickTaskEv",
+     "name": "OwnersKickTask"
+    },
+    {
+     "ghidra": "0x2081590",
+     "symbol": "_ZN4Aska11TaskManager12MakeTaskListEv",
+     "name": "MakeTaskList"
+    },
+    {
+     "ghidra": "0x2081dd4",
+     "symbol": "_ZN4Aska11TaskManager6DeleteEPNS_4TaskE",
+     "name": "Delete"
+    },
+    {
+     "ghidra": "0x2083b34",
+     "symbol": "_ZNK4Aska11TaskManager10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2083b74",
+     "symbol": "_ZNK4Aska11TaskManager11GetThisTypeEv",
+     "name": "GetThisType"
+    },
+    {
+     "ghidra": "0x2083b7c",
+     "symbol": "_ZN4Aska11TaskManager6DeleteEPNS_11LinkElementE",
+     "name": "Delete"
+    }
+   ]
+  },
+  {
+   "name": "CFiberUnit",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "CFiberUnit"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "CFiberUnit"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_unk18",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_handle",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_priority",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_kernel",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_status",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "m_group",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x124bca0",
+     "symbol": "_ZN9Framework10CFiberUnit9OnCreatedEv",
+     "name": "OnCreated"
+    },
+    {
+     "ghidra": "0x124bca4",
+     "symbol": "_ZN9Framework10CFiberUnit11OnDestroyedEv",
+     "name": "OnDestroyed"
+    },
+    {
+     "ghidra": "0x1f7f74c",
+     "symbol": "_ZN9Framework10CFiberUnitC2Ej",
+     "name": "CFiberUnit"
+    },
+    {
+     "ghidra": "0x1f7f790",
+     "symbol": "_ZN9Framework10CFiberUnitD2Ev",
+     "name": "~CFiberUnit"
+    },
+    {
+     "ghidra": "0x1f7fc3c",
+     "symbol": "_ZNK9Framework10CFiberUnit6StatusEv",
+     "name": "Status"
+    },
+    {
+     "ghidra": "0x1f7fc44",
+     "symbol": "_ZN9Framework10CFiberUnit22ActivateFromActivatingEv",
+     "name": "ActivateFromActivating"
+    },
+    {
+     "ghidra": "0x1f7fc5c",
+     "symbol": "_ZN9Framework10CFiberUnit7DestroyEb",
+     "name": "Destroy"
+    },
+    {
+     "ghidra": "0x1f7fe70",
+     "symbol": "_ZNK9Framework10CFiberUnit8PriorityEv",
+     "name": "Priority"
+    },
+    {
+     "ghidra": "0x1f7ffd4",
+     "symbol": "_ZNK9Framework10CFiberUnit9IsCreatedEv",
+     "name": "IsCreated"
+    },
+    {
+     "ghidra": "0x1f800e4",
+     "symbol": "_ZN9Framework10CFiberUnitD0Ev",
+     "name": "~CFiberUnit"
+    },
+    {
+     "ghidra": "0x1f800e8",
+     "symbol": "_ZNK9Framework10CFiberUnit7pKernelEv",
+     "name": "pKernel"
+    },
+    {
+     "ghidra": "0x1f800f0",
+     "symbol": "_ZNK9Framework10CFiberUnit5GroupEv",
+     "name": "Group"
+    },
+    {
+     "ghidra": "0x1f800f8",
+     "symbol": "_ZN9Framework10CFiberUnit5GroupEj",
+     "name": "Group"
+    },
+    {
+     "ghidra": "0x1f80100",
+     "symbol": "_ZN9Framework10CFiberUnit8ActivateEv",
+     "name": "Activate"
+    },
+    {
+     "ghidra": "0x1f8011c",
+     "symbol": "_ZN9Framework10CFiberUnit4WaitEv",
+     "name": "Wait"
+    },
+    {
+     "ghidra": "0x1f80130",
+     "symbol": "_ZNK9Framework10CFiberUnit8IsActiveEv",
+     "name": "IsActive"
+    },
+    {
+     "ghidra": "0x1f80144",
+     "symbol": "_ZNK9Framework10CFiberUnit11IsDestroyedEv",
+     "name": "IsDestroyed"
+    },
+    {
+     "ghidra": "0x1f80154",
+     "symbol": "_ZN9Framework10CFiberUnit14CreateSubFiberEPS0_",
+     "name": "CreateSubFiber"
+    },
+    {
+     "ghidra": "0x1f801f0",
+     "symbol": "_ZN9Framework10CFiberUnit6AttachEPS0_",
+     "name": "Attach"
+    },
+    {
+     "ghidra": "0x1f80298",
+     "symbol": "_ZN9Framework10CFiberUnit4pTopEv",
+     "name": "pTop"
+    },
+    {
+     "ghidra": "0x1f802ac",
+     "symbol": "_ZN9Framework10CFiberUnit7pBottomEv",
+     "name": "pBottom"
+    }
+   ]
+  },
+  {
+   "name": "CFiberKernel",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CFiberUnit"
+     },
+     "size": 56
+    },
+    {
+     "offset": 56,
+     "name": "m_numAttached",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_numActive",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_units",
+     "type": {
+      "kind": "ptr",
+      "to": "CFiberUnit"
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_unk48",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 80,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f7f704",
+     "symbol": "_ZN9Framework12CFiberKernelC1Ej",
+     "name": "CFiberKernel"
+    },
+    {
+     "ghidra": "0x1f7f864",
+     "symbol": "_ZN9Framework12CFiberKernelD1Ev",
+     "name": "~CFiberKernel"
+    },
+    {
+     "ghidra": "0x1f7f938",
+     "symbol": "_ZN9Framework12CFiberKernelD0Ev",
+     "name": "~CFiberKernel"
+    },
+    {
+     "ghidra": "0x1f7fa10",
+     "symbol": "_ZN9Framework12CFiberKernel10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f7fa48",
+     "symbol": "_ZN9Framework12CFiberKernel7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f7fa50",
+     "symbol": "_ZNK9Framework12CFiberKernel16NumAttachedUnitsEv",
+     "name": "NumAttachedUnits"
+    },
+    {
+     "ghidra": "0x1f7fa84",
+     "symbol": "_ZNK9Framework12CFiberKernel14NumActiveUnitsEv",
+     "name": "NumActiveUnits"
+    },
+    {
+     "ghidra": "0x1f7fab8",
+     "symbol": "_ZNK9Framework12CFiberKernel15pSearchByHandleEj",
+     "name": "pSearchByHandle"
+    },
+    {
+     "ghidra": "0x1f7fb10",
+     "symbol": "_ZN9Framework12CFiberKernel15pSearchByHandleEj",
+     "name": "pSearchByHandle"
+    },
+    {
+     "ghidra": "0x1f7fb68",
+     "symbol": "_ZN9Framework12CFiberKernel8ProgressEv",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f7fc94",
+     "symbol": "_ZN9Framework12CFiberKernel6AttachEPNS_10CFiberUnitE",
+     "name": "Attach"
+    },
+    {
+     "ghidra": "0x1f7fe78",
+     "symbol": "_ZN9Framework12CFiberKernel6DetachEPNS_10CFiberUnitE",
+     "name": "Detach"
+    },
+    {
+     "ghidra": "0x1f7ff68",
+     "symbol": "_ZN9Framework12CFiberKernel6CreateEPNS_10CFiberUnitE",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x1f7ffe4",
+     "symbol": "_ZN9Framework12CFiberKernel7DestroyEPNS_10CFiberUnitE",
+     "name": "Destroy"
+    },
+    {
+     "ghidra": "0x1f802c0",
+     "symbol": "_ZN9Framework12CFiberKernel14CreateSubFiberEPNS_10CFiberUnitE",
+     "name": "CreateSubFiber"
+    }
+   ]
+  },
+  {
+   "name": "CMainTask",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "task",
+     "type": {
+      "kind": "struct",
+      "name": "Task"
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "unk_28",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_frameCounter",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_camera",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_systemDefaultCamera",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_iso",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_fader",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "m_faderViewColor",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_soundManager",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 96,
+     "name": "m_resourceManager",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 104,
+     "name": "unk_68",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 144,
+     "name": "m_rootFiberKernel",
+     "type": {
+      "kind": "ptr",
+      "to": "CFiberKernel"
+     },
+     "size": 8
+    },
+    {
+     "offset": 152,
+     "name": "m_screenPrintPools",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 160,
+     "name": "unk_a0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 216,
+     "name": "m_debugPrimitiveManager",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 224,
+     "name": "m_responderChainManager",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 232,
+     "name": "unk_e8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 248,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f62758",
+     "symbol": "_ZN9Framework12CApplication9CMainTaskC2Ev",
+     "name": "CMainTask"
+    },
+    {
+     "ghidra": "0x1f62854",
+     "symbol": "_ZN9Framework12CApplication9CMainTaskD1Ev",
+     "name": "~CMainTask"
+    },
+    {
+     "ghidra": "0x1f628e0",
+     "symbol": "_ZN9Framework12CApplication9CMainTaskD0Ev",
+     "name": "~CMainTask"
+    },
+    {
+     "ghidra": "0x1f62974",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask12FrameCounterEv",
+     "name": "FrameCounter"
+    },
+    {
+     "ghidra": "0x1f6297c",
+     "symbol": "_ZN9Framework12CApplication9CMainTask16rRootFiberKernelEv",
+     "name": "rRootFiberKernel"
+    },
+    {
+     "ghidra": "0x1f629b8",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask16rResourceManagerEv",
+     "name": "rResourceManager"
+    },
+    {
+     "ghidra": "0x1f629f4",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask19rFrameworkArgumentsEv",
+     "name": "rFrameworkArguments"
+    },
+    {
+     "ghidra": "0x1f62a00",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask20rSystemDefaultCameraEv",
+     "name": "rSystemDefaultCamera"
+    },
+    {
+     "ghidra": "0x1f62a3c",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask7rCameraEv",
+     "name": "rCamera"
+    },
+    {
+     "ghidra": "0x1f62a78",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask8crCameraEv",
+     "name": "crCamera"
+    },
+    {
+     "ghidra": "0x1f62ab4",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask6rFaderEv",
+     "name": "rFader"
+    },
+    {
+     "ghidra": "0x1f62af0",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask16rFaderView_ColorEv",
+     "name": "rFaderView_Color"
+    },
+    {
+     "ghidra": "0x1f62b2c",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask13rSoundManagerEv",
+     "name": "rSoundManager"
+    },
+    {
+     "ghidra": "0x1f62b68",
+     "symbol": "_ZN9Framework12CApplication9CMainTask16pScreenPrintPoolEj",
+     "name": "pScreenPrintPool"
+    },
+    {
+     "ghidra": "0x1f62bc0",
+     "symbol": "_ZN9Framework12CApplication9CMainTask16rScreenPrintPoolEj",
+     "name": "rScreenPrintPool"
+    },
+    {
+     "ghidra": "0x1f62c3c",
+     "symbol": "_ZN9Framework12CApplication9CMainTask22rDebugPrimitiveManagerEv",
+     "name": "rDebugPrimitiveManager"
+    },
+    {
+     "ghidra": "0x1f62c78",
+     "symbol": "_ZN9Framework12CApplication9CMainTask22rResponderChainManagerEv",
+     "name": "rResponderChainManager"
+    },
+    {
+     "ghidra": "0x1f62cb4",
+     "symbol": "_ZN9Framework12CApplication9CMainTask25TakeHighQualityScreenShotEv",
+     "name": "TakeHighQualityScreenShot"
+    },
+    {
+     "ghidra": "0x1f62cc0",
+     "symbol": "_ZN9Framework12CApplication9CMainTask15ResolutionWidthEv",
+     "name": "ResolutionWidth"
+    },
+    {
+     "ghidra": "0x1f62cd4",
+     "symbol": "_ZN9Framework12CApplication9CMainTask16ResolutionHeightEv",
+     "name": "ResolutionHeight"
+    },
+    {
+     "ghidra": "0x1f62ce8",
+     "symbol": "_ZN9Framework12CApplication9CMainTask22ChangeScreenResolutionEjjjj",
+     "name": "ChangeScreenResolution"
+    },
+    {
+     "ghidra": "0x1f62d34",
+     "symbol": "_ZN9Framework12CApplication9CMainTask21EnableApeDefaultLightEb",
+     "name": "EnableApeDefaultLight"
+    },
+    {
+     "ghidra": "0x1f62d38",
+     "symbol": "_ZN9Framework12CApplication9CMainTask18UpdateTitleBarTextEv",
+     "name": "UpdateTitleBarText"
+    },
+    {
+     "ghidra": "0x1f62d3c",
+     "symbol": "_ZN9Framework12CApplication9CMainTask4rISOEv",
+     "name": "rISO"
+    },
+    {
+     "ghidra": "0x1f62d44",
+     "symbol": "_ZN9Framework12CApplication9CMainTask13OnDevelopmentEv",
+     "name": "OnDevelopment"
+    },
+    {
+     "ghidra": "0x1f62d4c",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask17pBuildInformationEv",
+     "name": "pBuildInformation"
+    },
+    {
+     "ghidra": "0x1f62d80",
+     "symbol": "_ZN9Framework12CApplication9CMainTask24UnlockGlobalPauseAndStepEv",
+     "name": "UnlockGlobalPauseAndStep"
+    },
+    {
+     "ghidra": "0x1f62d84",
+     "symbol": "_ZN9Framework12CApplication9CMainTask9OnReleaseEv",
+     "name": "OnRelease"
+    },
+    {
+     "ghidra": "0x1f62e20",
+     "symbol": "_ZN9Framework12CApplication9CMainTask11DeleteTasksEv",
+     "name": "DeleteTasks"
+    },
+    {
+     "ghidra": "0x1f62e38",
+     "symbol": "_ZN9Framework12CApplication9CMainTask3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x1f63b08",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x1f63b44",
+     "symbol": "_ZNK9Framework12CApplication9CMainTask15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    }
+   ]
+  },
+  {
+   "name": "PerformanceCounter",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_scale",
+     "type": {
+      "kind": "float",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_marks",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": true
+      },
+      "count": 48
+     },
+     "size": 384
+    },
+    {
+     "offset": 400,
+     "name": "m_values",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 48
+     },
+     "size": 192
+    },
+    {
+     "offset": 592,
+     "name": "m_baseTime",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 600,
+     "name": "unk_258",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 608,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2056f34",
+     "symbol": "_ZN4Aska18PerformanceCounterC1Ev",
+     "name": "PerformanceCounter"
+    },
+    {
+     "ghidra": "0x2056fa4",
+     "symbol": "_ZN4Aska18PerformanceCounterD2Ev",
+     "name": "~PerformanceCounter"
+    },
+    {
+     "ghidra": "0x2056fa8",
+     "symbol": "_ZN4Aska18PerformanceCounterD0Ev",
+     "name": "~PerformanceCounter"
+    },
+    {
+     "ghidra": "0x2056fac",
+     "symbol": "_ZN4Aska18PerformanceCounter4MarkEi",
+     "name": "Mark"
+    },
+    {
+     "ghidra": "0x2056fe4",
+     "symbol": "_ZN4Aska18PerformanceCounter3SetEi",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x205704c",
+     "symbol": "_ZN4Aska18PerformanceCounter3SetEil",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x20570ac",
+     "symbol": "_ZN4Aska18PerformanceCounter6AddSetEi",
+     "name": "AddSet"
+    },
+    {
+     "ghidra": "0x2057118",
+     "symbol": "_ZNK4Aska18PerformanceCounter7GetMarkEi",
+     "name": "GetMark"
+    },
+    {
+     "ghidra": "0x2057124",
+     "symbol": "_ZNK4Aska18PerformanceCounter27GetAvailableTotalMemorySizeEv",
+     "name": "GetAvailableTotalMemorySize"
+    },
+    {
+     "ghidra": "0x2057144",
+     "symbol": "_ZNK4Aska18PerformanceCounter22GetAvailableMemorySizeEv",
+     "name": "GetAvailableMemorySize"
+    },
+    {
+     "ghidra": "0x2057164",
+     "symbol": "_ZNK4Aska18PerformanceCounter19GetMemorySizeSystemEPlS1_",
+     "name": "GetMemorySizeSystem"
+    }
+   ]
+  },
+  {
+   "name": "CTimeElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THierarchy<CTimeElement>",
+      "size": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_time",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_rate",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_dt",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "m_suspend",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "m_interposeStarted",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 57,
+     "name": "unk_39",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 60,
+     "name": "m_interposeTime",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_interposeRate",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 68,
+     "name": "m_lock",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 69,
+     "name": "unk_45",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 72,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f9e85c",
+     "symbol": "_ZN9Framework12CTimeElementC1Ev",
+     "name": "CTimeElement"
+    },
+    {
+     "ghidra": "0x1f9e894",
+     "symbol": "_ZN9Framework12CTimeElement10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f9e8bc",
+     "symbol": "_ZN9Framework12CTimeElementD1Ev",
+     "name": "~CTimeElement"
+    },
+    {
+     "ghidra": "0x1f9e8e8",
+     "symbol": "_ZN9Framework12CTimeElementD0Ev",
+     "name": "~CTimeElement"
+    },
+    {
+     "ghidra": "0x1f9e914",
+     "symbol": "_ZN9Framework12CTimeElement8AddChildEPS0_",
+     "name": "AddChild"
+    },
+    {
+     "ghidra": "0x1f9ea64",
+     "symbol": "_ZN9Framework12CTimeElement13UpdateDTForceEv",
+     "name": "UpdateDTForce"
+    },
+    {
+     "ghidra": "0x1f9eadc",
+     "symbol": "_ZN9Framework12CTimeElement16DetachFromParentEv",
+     "name": "DetachFromParent"
+    },
+    {
+     "ghidra": "0x1f9eb48",
+     "symbol": "_ZN9Framework12CTimeElement10DetachSelfEv",
+     "name": "DetachSelf"
+    },
+    {
+     "ghidra": "0x1f9ec64",
+     "symbol": "_ZN9Framework12CTimeElement3AddEf",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x1f9ed70",
+     "symbol": "_ZNK9Framework12CTimeElement10DetailRateEv",
+     "name": "DetailRate"
+    },
+    {
+     "ghidra": "0x1f9ed9c",
+     "symbol": "_ZN9Framework12CTimeElement14ResetInterposeEv",
+     "name": "ResetInterpose"
+    },
+    {
+     "ghidra": "0x1f9edb0",
+     "symbol": "_ZN9Framework12CTimeElement4RateEf",
+     "name": "Rate"
+    },
+    {
+     "ghidra": "0x1f9edb8",
+     "symbol": "_ZNK9Framework12CTimeElement4RateEv",
+     "name": "Rate"
+    },
+    {
+     "ghidra": "0x1f9edec",
+     "symbol": "_ZNK9Framework12CTimeElement17IsLockTimeElementEv",
+     "name": "IsLockTimeElement"
+    },
+    {
+     "ghidra": "0x1f9edf4",
+     "symbol": "_ZN9Framework12CTimeElement2DTEf",
+     "name": "DT"
+    },
+    {
+     "ghidra": "0x1f9ee34",
+     "symbol": "_ZNK9Framework12CTimeElement2DTEv",
+     "name": "DT"
+    },
+    {
+     "ghidra": "0x1f9ee3c",
+     "symbol": "_ZN9Framework12CTimeElement17IsLockTimeElementEb",
+     "name": "IsLockTimeElement"
+    },
+    {
+     "ghidra": "0x1f9ee48",
+     "symbol": "_ZN9Framework12CTimeElement7SuspendEf",
+     "name": "Suspend"
+    },
+    {
+     "ghidra": "0x1f9ee50",
+     "symbol": "_ZN9Framework12CTimeElement10AddSuspendEf",
+     "name": "AddSuspend"
+    },
+    {
+     "ghidra": "0x1f9ee60",
+     "symbol": "_ZNK9Framework12CTimeElement7SuspendEv",
+     "name": "Suspend"
+    },
+    {
+     "ghidra": "0x1f9ee68",
+     "symbol": "_ZN9Framework12CTimeElement9InterposeEff",
+     "name": "Interpose"
+    },
+    {
+     "ghidra": "0x1f9eef8",
+     "symbol": "_ZNK9Framework12CTimeElement11IsInterposeEv",
+     "name": "IsInterpose"
+    },
+    {
+     "ghidra": "0x1f9ef08",
+     "symbol": "_ZNK9Framework12CTimeElement13InterposeRateEv",
+     "name": "InterposeRate"
+    },
+    {
+     "ghidra": "0x1f9ef10",
+     "symbol": "_ZNK9Framework12CTimeElement13InterposeTimeEv",
+     "name": "InterposeTime"
+    },
+    {
+     "ghidra": "0x1f9ef18",
+     "symbol": "_ZNK9Framework12CTimeElement6PrintSEv",
+     "name": "PrintS"
+    },
+    {
+     "ghidra": "0x1f9ef1c",
+     "symbol": "_ZN9Framework12CTimeElement18IsCheckParentExistEb",
+     "name": "IsCheckParentExist"
+    }
+   ]
+  },
+  {
+   "name": "NotifyElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "link",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::LinkElement",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 24,
+     "name": "m_notify",
+     "type": {
+      "kind": "ptr",
+      "to": "INotify"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2336800",
+     "symbol": "_ZN4Aska14NotifierThread13NotifyElementD0Ev",
+     "name": "~NotifyElement"
+    }
+   ]
+  },
+  {
+   "name": "NotifierThread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "Thread"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_list",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TList<soa::native::containers::LinkElement>",
+      "size": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 64,
+     "name": "m_lock",
+     "type": {
+      "kind": "struct",
+      "name": "Semaphore"
+     },
+     "size": 24
+    },
+    {
+     "offset": 88,
+     "name": "m_signal",
+     "type": {
+      "kind": "struct",
+      "name": "Semaphore"
+     },
+     "size": 24
+    },
+    {
+     "offset": 112,
+     "name": "m_pool",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TPoolFast<NotifyElement>",
+      "size": 72
+     },
+     "size": 72
+    }
+   ],
+   "size": 184,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x208db34",
+     "symbol": "_ZNK4Aska14NotifierThread17GetThreadPriorityEv",
+     "name": "GetThreadPriority"
+    },
+    {
+     "ghidra": "0x208db3c",
+     "symbol": "_ZNK4Aska14NotifierThread13GetThreadNameEv",
+     "name": "GetThreadName"
+    },
+    {
+     "ghidra": "0x2335d80",
+     "symbol": "_ZN4Aska14NotifierThreadC2Ei",
+     "name": "NotifierThread"
+    },
+    {
+     "ghidra": "0x233607c",
+     "symbol": "_ZN4Aska14NotifierThreadD1Ev",
+     "name": "~NotifierThread"
+    },
+    {
+     "ghidra": "0x2336238",
+     "symbol": "_ZN4Aska14NotifierThread9AddNotifyEPNS_7INotifyEj",
+     "name": "AddNotify"
+    },
+    {
+     "ghidra": "0x23363b8",
+     "symbol": "_ZN4Aska14NotifierThreadD0Ev",
+     "name": "~NotifierThread"
+    },
+    {
+     "ghidra": "0x23363d0",
+     "symbol": "_ZN4Aska14NotifierThread4InitEv",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x2336400",
+     "symbol": "_ZN4Aska14NotifierThread7HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x233642c",
+     "symbol": "_ZN4Aska14NotifierThread6NotifyEv",
+     "name": "Notify"
+    },
+    {
+     "ghidra": "0x2336568",
+     "symbol": "_ZN4Aska14NotifierThread17AddPriorityNotifyEPNS_7INotifyEj",
+     "name": "AddPriorityNotify"
+    },
+    {
+     "ghidra": "0x2336668",
+     "symbol": "_ZN4Aska14NotifierThread12RemoveNotifyEPNS_7INotifyE",
+     "name": "RemoveNotify"
+    },
+    {
+     "ghidra": "0x2336728",
+     "symbol": "_ZN4Aska14NotifierThread11QueryNotifyEPNS_7INotifyE",
+     "name": "QueryNotify"
+    }
+   ]
+  },
+  {
+   "name": "VSync",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_notifier",
+     "type": {
+      "kind": "struct",
+      "name": "NotifierThread"
+     },
+     "size": 184
+    },
+    {
+     "offset": 192,
+     "name": "m_lastCounter",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 216,
+     "name": "m_prevCounter",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 240,
+     "name": "m_dFrame",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 2,
+       "signed": true
+      },
+      "count": 6
+     },
+     "size": 12
+    },
+    {
+     "offset": 252,
+     "name": "m_invDFrame",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 276,
+     "name": "m_dt",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 300,
+     "name": "m_dtScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 304,
+     "name": "m_basicFrameRate",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 308,
+     "name": "m_divisor",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 312,
+     "name": "m_useFixedDt",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 313,
+     "name": "unk_139",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 316,
+     "name": "unk_13c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 324,
+     "name": "m_fixedDt",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 348,
+     "name": "unk_15c",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 352,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x208d328",
+     "symbol": "_ZN4Aska5VSyncC1Ei",
+     "name": "VSync"
+    },
+    {
+     "ghidra": "0x208d378",
+     "symbol": "_ZN4Aska5VSync10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x208d418",
+     "symbol": "_ZN4Aska5VSync20VSyncCallback_EnableEv",
+     "name": "VSyncCallback_Enable"
+    },
+    {
+     "ghidra": "0x208d440",
+     "symbol": "_ZN4Aska5VSync25WakeupForInitRenderThreadEv",
+     "name": "WakeupForInitRenderThread"
+    },
+    {
+     "ghidra": "0x208d44c",
+     "symbol": "_ZN4Aska5VSync20InitializeForAndroidEv",
+     "name": "InitializeForAndroid"
+    },
+    {
+     "ghidra": "0x208d4b0",
+     "symbol": "_ZN4Aska5VSync23WaitForInitRenderThreadEv",
+     "name": "WaitForInitRenderThread"
+    },
+    {
+     "ghidra": "0x208d4c0",
+     "symbol": "_ZN4Aska5VSync4ExitEv",
+     "name": "Exit"
+    },
+    {
+     "ghidra": "0x208d4d4",
+     "symbol": "_ZN4Aska5VSync21VSyncCallback_DisableEv",
+     "name": "VSyncCallback_Disable"
+    },
+    {
+     "ghidra": "0x208d504",
+     "symbol": "_ZNK4Aska5VSync15GetVSyncCounterEv",
+     "name": "GetVSyncCounter"
+    },
+    {
+     "ghidra": "0x208d514",
+     "symbol": "_ZN4Aska5VSync9WaitVSyncEii",
+     "name": "WaitVSync"
+    },
+    {
+     "ghidra": "0x208d638",
+     "symbol": "_ZN4Aska5VSync17UpdateVSyncEventsEjjib",
+     "name": "UpdateVSyncEvents"
+    },
+    {
+     "ghidra": "0x208d8a4",
+     "symbol": "_ZN4Aska5VSync15CalcDtAndDFrameEij",
+     "name": "CalcDtAndDFrame"
+    },
+    {
+     "ghidra": "0x208d930",
+     "symbol": "_ZN4Aska5VSync8UpdateDtEi",
+     "name": "UpdateDt"
+    },
+    {
+     "ghidra": "0x208d9c8",
+     "symbol": "_ZN4Aska5VSync6NotifyEv",
+     "name": "Notify"
+    },
+    {
+     "ghidra": "0x208d9d4",
+     "symbol": "_ZNK4Aska5VSync5GetDtEi",
+     "name": "GetDt"
+    },
+    {
+     "ghidra": "0x208d9f4",
+     "symbol": "_ZNK4Aska5VSync17GetBasicFrameRateEv",
+     "name": "GetBasicFrameRate"
+    },
+    {
+     "ghidra": "0x208d9fc",
+     "symbol": "_ZN4Aska5VSyncD2Ev",
+     "name": "~VSync"
+    },
+    {
+     "ghidra": "0x208da40",
+     "symbol": "_ZN4Aska5VSyncD0Ev",
+     "name": "~VSync"
+    }
+   ]
+  },
+  {
+   "name": "Global",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x2049d14",
+     "symbol": "_ZN4Aska6Global25GetAvailableMemoryManagerEv",
+     "name": "GetAvailableMemoryManager"
+    },
+    {
+     "ghidra": "0x2056e5c",
+     "symbol": "_ZN4Aska6Global29InstantiatePerformanceCounterEv",
+     "name": "InstantiatePerformanceCounter"
+    },
+    {
+     "ghidra": "0x205720c",
+     "symbol": "_ZN4Aska6Global13GetPadCaptureEPi",
+     "name": "GetPadCapture"
+    },
+    {
+     "ghidra": "0x20572a4",
+     "symbol": "_ZN4Aska6Global12GetActivePadEv",
+     "name": "GetActivePad"
+    },
+    {
+     "ghidra": "0x20572c4",
+     "symbol": "_ZN4Aska6Global18RegisterPeripheralEiPNS_14BasePeripheralE",
+     "name": "RegisterPeripheral"
+    },
+    {
+     "ghidra": "0x2057338",
+     "symbol": "_ZN4Aska6Global13GetPeripheralEi",
+     "name": "GetPeripheral"
+    },
+    {
+     "ghidra": "0x20573d0",
+     "symbol": "_ZN4Aska6Global15GetExPeripheralEi",
+     "name": "GetExPeripheral"
+    },
+    {
+     "ghidra": "0x2083d00",
+     "symbol": "_ZN4Aska6Global7GetTextEv",
+     "name": "GetText"
+    },
+    {
+     "ghidra": "0x230fa98",
+     "symbol": "_ZN4Aska6Global7InitAllEv",
+     "name": "InitAll"
+    },
+    {
+     "ghidra": "0x230fe24",
+     "symbol": "_ZN4Aska6Global17InitAll_RootPathsEv",
+     "name": "InitAll_RootPaths"
+    },
+    {
+     "ghidra": "0x230fe80",
+     "symbol": "_ZN4Aska6Global18InitAll_SeedRandomEv",
+     "name": "InitAll_SeedRandom"
+    },
+    {
+     "ghidra": "0x230ff8c",
+     "symbol": "_ZN4Aska6Global28InstantiateMessageDispatcherEv",
+     "name": "InstantiateMessageDispatcher"
+    },
+    {
+     "ghidra": "0x23100e0",
+     "symbol": "_ZN4Aska6Global22InitAll_SectionAddressEv",
+     "name": "InitAll_SectionAddress"
+    },
+    {
+     "ghidra": "0x23103e8",
+     "symbol": "_ZN4Aska6Global20GetRemoteHostMachineEPcjPji",
+     "name": "GetRemoteHostMachine"
+    },
+    {
+     "ghidra": "0x2310dac",
+     "symbol": "_ZN4Aska6Global21GetNumberOfProcessorsEv",
+     "name": "GetNumberOfProcessors"
+    },
+    {
+     "ghidra": "0x2310db0",
+     "symbol": "_ZN4Aska6Global25GetNumberOfHighProcessorsEv",
+     "name": "GetNumberOfHighProcessors"
+    },
+    {
+     "ghidra": "0x2310db4",
+     "symbol": "_ZN4Aska6Global24GetNumberOfLowProcessorsEv",
+     "name": "GetNumberOfLowProcessors"
+    },
+    {
+     "ghidra": "0x2310db8",
+     "symbol": "_ZN4Aska6Global21GetCurrentThreadCpuIdEv",
+     "name": "GetCurrentThreadCpuId"
+    },
+    {
+     "ghidra": "0x2310de4",
+     "symbol": "_ZN4Aska6Global10GetCPUTimeEv",
+     "name": "GetCPUTime"
+    },
+    {
+     "ghidra": "0x2310f74",
+     "symbol": "_ZN4Aska6Global15GetMainThreadIDEv",
+     "name": "GetMainThreadID"
+    }
+   ]
+  },
+  {
+   "name": "INotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8
+  }
+ ]
 }

@@ -735,7 +735,7 @@ The 3.7.0 party screen saves a party set with `UpdatePartySet` when the player l
   - Beyond the maximum, the `master_role_duplication_item` material (by `limitbreak_id`, else by rank) is added to the stack items and listed in `LimitBreakItem`. **(a)+(c)**
   - The result says `duplication` 1. **(c)** for duplicates becoming limit breaks; **(a)** for the cap.
 - **New characters:** level 1, uid `0x7e100000+`, in `AddCharacter` (map keyed by uid as a string).
-- **History:** every draw goes into `gacha_history` (gacha, role, uid, rank, duplicate, the coins spent).
+- **History:** every draw goes into `gacha_history` (gacha, role, the drawn character's or weapon's uid, rank, duplicate, the coins spent; a weapon draw has no role).
 
 #### Play state (`GetPlayMission`, `MissionFailed`, `MissionTalk`)
 - `GetPlayMission`: `PlayMission.is_play` is 1 while a `MissionStart` hasn't been ended.

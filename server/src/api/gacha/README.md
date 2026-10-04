@@ -11,7 +11,7 @@
 
 Every handler carries the 2.5 doc block (signature, fid, API and rules links, the rules with their labels, the refusal codes, the answer). The core's APIs register with `ext::add_core_api`, before the modules; no hook adds keys to their responses.
 
-**State** (`server.sqlite3`, the core's schema in `core/server.cpp`): `gacha_history` (one row per unit drawn; the achievements count it), `stepup` (per chain: `next_id` the current step, `try_count`, `restart_count`; no row = step 1), `box_state` (per box: `total_count`, `reset_count`), `box_slots` (per slot: copies drawn), the wallet (`player.free_coin` / `pay_coin`), `stock` (tickets, chips), `roster` and `items` (the units).
+**State** (`server.sqlite3`; the tables are `../../state/schema.cpp`'s, STRICT with their foreign keys since PLAN-schema S10): `gacha_history` (one row per unit drawn; the achievements count it; a character draw's `role_id` and `character_uid`, a weapon draw's `item_uid` with `role_id` NULL, each → `roster` / `items` ON DELETE SET NULL; one `uid` column, `role_id` 0 for a weapon, until S10), `stepup` (per chain: `next_id` the current step, `try_count`, `restart_count`; no row = step 1), `box_state` (per box: `total_count`, `reset_count`), `box_slots` (per slot: copies drawn; → `box_state` ON DELETE CASCADE, so BoxGacha writes the box's row before its slots), the wallet (`player.free_coin` / `pay_coin`), `stock` (tickets, chips), `roster` and `items` (the units).
 
 **Rules**: docs/server-rules.md "4. Gacha" (4.1 what's open, 4.2 cost, 4.3 rates and pool, 4.4 step-up and box, 4.5 the reconstructed pools), "Gacha: step-up and box", "Step-up gacha state", "Single and bulk draws of `Gacha`", "Step-up and box gacha lists".
 

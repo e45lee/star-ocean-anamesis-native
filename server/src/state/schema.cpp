@@ -1255,6 +1255,12 @@ select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updat
 //     ds_offer.ship_id   -> ds_ship.ship_id  ON DELETE SET NULL (NULL: not on a ship; 0 before)
 //     ds_ship.area_id    -> ds_area.area_id  ON DELETE CASCADE (an area's ships)
 //     ds_bonus.ship_id   -> ds_ship.ship_id  ON DELETE CASCADE (a ship's bonus values)
+//   gacha:
+//     gacha_history.character_uid -> roster.uid  ON DELETE SET NULL (the drawn character)
+//     gacha_history.item_uid      -> items.uid   ON DELETE SET NULL (the drawn weapon; NULL once
+//                                                sold or used up)
+//     box_slots.gacha_id          -> box_state.gacha_id  ON DELETE CASCADE (a box's drawn slots;
+//                                                BoxGacha writes the box_state row first)
 // All immediate (every writer writes the parent first). No ON UPDATE action: a parent key never
 // changes. (ds_ship_member.ship_id -> ds_ship is S7's; it names the new ds_ship after the rename.)
 const char* const kModules[] = {
@@ -1291,10 +1297,62 @@ const char* const kModules[] = {
   value real not null,
   primary key (ship_id, bonus_id)
 ) strict)",
+    // ---- gacha (api/gacha/) ----
+    // a drawn unit (d: our record; the achievements count draws per gacha): the character
+    // (role_id, character_uid) or, for a weapon draw (role_id NULL), the item (item_uid); the
+    // whole draw's coins on its first unit
+    R"(create table new_gacha_history (
+  id integer primary key autoincrement,
+  gacha_id integer not null,
+  at integer not null,
+  role_id integer,
+  character_uid integer references roster(uid) on delete set null,
+  item_uid integer references items(uid) on delete set null,
+  rank text not null,
+  duplicate integer not null default 0 check (duplicate in (0, 1)),
+  cost_free integer not null default 0,
+  cost_pay integer not null default 0
+) strict)",
+    // CStepupGachaInfo (b): a step-up chain's progress (no row: step 1)
+    R"(create table new_stepup (
+  head integer primary key,
+  try_count integer not null default 0,
+  restart_count integer not null default 0,
+  next_id integer
+) strict)",
+    // CBoxGachaInfo (b): a box's draws and resets (no row: none)
+    R"(create table new_box_state (
+  gacha_id integer primary key,
+  total_count integer not null default 0,
+  reset_count integer not null default 0
+) strict)",
+    // CBoxGachaDetailInfo (b): the copies drawn of a box's slot (no row: none)
+    R"(create table new_box_slots (
+  gacha_id integer not null references box_state(gacha_id) on delete cascade,
+  slot_id integer not null,
+  drawn integer not null default 0,
+  primary key (gacha_id, slot_id)
+) strict)",
 };
 
 // The tables step 10 rebuilds (new_X -> X), in kModules' order.
-const char* const kModuleTables[] = {"ds_ship", "ds_offer", "ds_bonus"};
+const char* const kModuleTables[] = {"ds_ship", "ds_offer", "ds_bonus", "gacha_history", "stepup", "box_state", "box_slots"};
+
+// The AUTOINCREMENT counter of a table rebuilt from `table` (sqlite_sequence): the old one, -1
+// when it has none. The insert into new_X sets the new table's to its largest id (and leaves a 0
+// when it copies no row); keep_sequence puts the old one back over it after the rename (an id is
+// never reused, also when the old rows are gone: sphere_box after 帰還), and when the old table had
+// none, it takes the empty copy's 0 away again (a fresh state keeps no counter until its first row).
+int64_t sequence_of(sqlite3* db, const char* table) {
+    return count_of(db, ("select ifnull((select seq from sqlite_sequence where name = '" + std::string(table) + "'), -1)").c_str());
+}
+bool keep_sequence(sqlite3* db, const char* table, int64_t seq) {
+    const std::string name = table;
+    if (seq < 0) return run(db, ("delete from sqlite_sequence where name = '" + name + "' and seq = 0").c_str());
+    if (count_of(db, ("select count(*) from sqlite_sequence where name = '" + name + "'").c_str()))
+        return run(db, ("update sqlite_sequence set seq = max(seq, ?) where name = '" + name + "'").c_str(), {Bound::integer(seq)});
+    return run(db, ("insert into sqlite_sequence (name, seq) values ('" + name + "', ?)").c_str(), {Bound::integer(seq)});
+}
 
 // Deep space (PLAN-schema S10):
 //   ds_ship -> new_ds_ship: a ship of no explored area (area_id NULL or not in ds_area) -> dropped
@@ -1343,12 +1401,62 @@ select ship_id, bonus_id, ifnull(value, 0) from ds_bonus where bonus_id is not n
     return ok;
 }
 
+// Gacha (PLAN-schema S10):
+//   gacha_history -> new_gacha_history: uid -> character_uid when role_id isn't 0 (a character
+//     draw) or item_uid when it is (a weapon draw), NULL when that character or item isn't owned
+//     (any more: a weapon sold or used up); role_id 0 -> NULL; duplicate not 0 / 1 -> 1, NULL
+//     -> 0; a NULL in a not-null column -> 0 ('' for rank); the AUTOINCREMENT counter kept;
+//   stepup, box_state: NULL counts -> 0;
+//   box_slots: a slot of a box without a box_state row -> the box's row (0 draws, 0 resets: what
+//     the readers read for no row), so the drawn slots stay drawn; a row without a gacha or slot
+//     id -> dropped; drawn NULL -> 0.
+bool rebuild_gacha(sqlite3* db) {
+    // the counts, for the log (before anything changes)
+    log_count(db, "select count(*) from gacha_history where role_id = 0", "gacha_history.role_id", "0 -> NULL (a weapon draw)", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) != 0", "gacha_history.uid", "-> character_uid", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) = 0", "gacha_history.uid", "-> item_uid", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) != 0 and uid not in (select uid from roster)",
+              "gacha_history.character_uid", "not owned -> NULL", 10);
+    log_count(db, "select count(*) from gacha_history where ifnull(role_id, 0) = 0 and uid not in (select uid from items)", "gacha_history.item_uid",
+              "not owned (sold, used up) -> NULL", 10);
+    log_count(db, "select count(*) from gacha_history where duplicate is null or duplicate not in (0, 1)", "gacha_history.duplicate",
+              "NULL -> 0, not 0 / 1 -> 1", 10);
+    log_count(db, "select count(distinct gacha_id) from box_slots where gacha_id is not null and gacha_id not in (select gacha_id from box_state)",
+              "box_slots.gacha_id", "a box without a box_state row -> its row", 10);
+    log_count(db, "select count(*) from box_slots where gacha_id is null or slot_id is null", "box_slots", "no gacha or slot id -> dropped", 10);
+
+    bool ok = run(db, R"(
+insert into new_gacha_history (id, gacha_id, at, role_id, character_uid, item_uid, rank, duplicate, cost_free, cost_pay)
+select id, ifnull(gacha_id, 0), ifnull(at, 0), nullif(role_id, 0),
+  case when ifnull(role_id, 0) != 0 and uid in (select uid from roster) then uid end,
+  case when ifnull(role_id, 0) = 0 and uid in (select uid from items) then uid end,
+  ifnull(rank, ''), case when ifnull(duplicate, 0) != 0 then 1 else 0 end, ifnull(cost_free, 0), ifnull(cost_pay, 0)
+from gacha_history order by id)");
+    ok = ok && run(db, R"(
+insert into new_stepup (head, try_count, restart_count, next_id)
+select head, ifnull(try_count, 0), ifnull(restart_count, 0), next_id from stepup)");
+    ok = ok && run(db, R"(
+insert into new_box_state (gacha_id, total_count, reset_count)
+select gacha_id, ifnull(total_count, 0), ifnull(reset_count, 0) from box_state)");
+    ok = ok && run(db, R"(
+insert into new_box_state (gacha_id)
+select distinct gacha_id from box_slots where gacha_id is not null and gacha_id not in (select gacha_id from box_state))");
+    ok = ok && run(db, R"(
+insert into new_box_slots (gacha_id, slot_id, drawn)
+select gacha_id, slot_id, ifnull(drawn, 0) from box_slots where gacha_id is not null and slot_id is not null)");
+    return ok;
+}
+
 // Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
-// above), then the old tables go and the new ones take their names.
+// above), then the old tables go and the new ones take their names; the AUTOINCREMENT counters
+// are kept.
 bool rebuild_modules(sqlite3* db, sqlite3*) {
-    bool ok = rebuild_deep_space(db);
+    std::vector<std::pair<const char*, int64_t>> counters;
+    for (const char* table : {"gacha_history"}) counters.emplace_back(table, sequence_of(db, table));
+    bool ok = rebuild_deep_space(db) && rebuild_gacha(db);
     for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
     for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
+    for (auto& [table, seq] : counters) ok = ok && keep_sequence(db, table, seq);
     return ok;
 }
 

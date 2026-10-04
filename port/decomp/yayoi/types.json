@@ -2,5 +2,2645 @@
  "subsystem": "yayoi",
  "generated_by": "tools/subsystem.py export-types yayoi",
  "header": "port/src/native/yayoi/yayoi_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "QueryParam",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_text",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_length",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "DBAddress",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_path",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8
+  },
+  {
+   "name": "SQLiteDriver",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_setting",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_value08",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_lastParams",
+     "type": {
+      "kind": "ptr",
+      "to": "QueryParam"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_db",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_stmt",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_inTransaction",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 41,
+     "name": "m_beginRequested",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 42,
+     "name": "unk_2a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 48,
+     "name": "m_address",
+     "type": {
+      "kind": "ptr",
+      "to": "DBAddress"
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_queryBuffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_queryBufferSize",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_value48",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "m_buffer50",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_buffer50Size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 96,
+     "name": "m_prepared",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 97,
+     "name": "unk_61",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 104,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22f4bd0",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriverC1Ev",
+     "name": "SQLiteDriver"
+    },
+    {
+     "ghidra": "0x22f4bf0",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriverD1Ev",
+     "name": "~SQLiteDriver"
+    },
+    {
+     "ghidra": "0x22f4c90",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver5CloseEv",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x22f4d08",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver16BeginTransactionEv",
+     "name": "BeginTransaction"
+    },
+    {
+     "ghidra": "0x22f4d44",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver17_BeginTransactionEv",
+     "name": "_BeginTransaction"
+    },
+    {
+     "ghidra": "0x22f4db4",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver6CommitEv",
+     "name": "Commit"
+    },
+    {
+     "ghidra": "0x22f4e3c",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver8RollbackEv",
+     "name": "Rollback"
+    },
+    {
+     "ghidra": "0x22f4e9c",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver7ExecuteEPKcPKNS0_10QueryParamEm",
+     "name": "Execute"
+    },
+    {
+     "ghidra": "0x22f4ea4",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver8_ExecuteEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE",
+     "name": "_Execute"
+    },
+    {
+     "ghidra": "0x22f4fa8",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver4FindEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE",
+     "name": "Find"
+    },
+    {
+     "ghidra": "0x22f4ff8",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver8_PrepareEPKcPi",
+     "name": "_Prepare"
+    },
+    {
+     "ghidra": "0x22f50f4",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver6DoOpenENS0_6Entity4ModeEPKcPKNS0_9DBAddressE",
+     "name": "DoOpen"
+    },
+    {
+     "ghidra": "0x22f5250",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver4OpenEPNS0_14IDriverSettingIS1_EE",
+     "name": "Open"
+    }
+   ]
+  },
+  {
+   "name": "EntityObject",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_value00",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_numColumns",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_cache",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_cacheSize",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_columns",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THashMap< char *, int>",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 80,
+     "name": "m_stmt",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_db",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 96,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22f2b04",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x22f2b28",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10ClearCacheEv",
+     "name": "ClearCache"
+    },
+    {
+     "ghidra": "0x22f2b4c",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject17CreateCacheBufferEm",
+     "name": "CreateCacheBuffer"
+    },
+    {
+     "ghidra": "0x22f2bbc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject14GetCacheBufferEPm",
+     "name": "GetCacheBuffer"
+    },
+    {
+     "ghidra": "0x22f2bcc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectC1Ev",
+     "name": "EntityObject"
+    },
+    {
+     "ghidra": "0x22f2ca4",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectD2Ev",
+     "name": "~EntityObject"
+    },
+    {
+     "ghidra": "0x22f2d34",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTimeEPKcPcPmm",
+     "name": "GetTime"
+    },
+    {
+     "ghidra": "0x22f2e88",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTimeEiPcPmm",
+     "name": "GetTime"
+    },
+    {
+     "ghidra": "0x22f2ea0",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetDataEPKcPcPmm",
+     "name": "GetData"
+    },
+    {
+     "ghidra": "0x22f3054",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetDataEiPcPmm",
+     "name": "GetData"
+    },
+    {
+     "ghidra": "0x22f30e8",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetStringEPKcPcPmm",
+     "name": "GetString"
+    },
+    {
+     "ghidra": "0x22f329c",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetStringEiPcPmm",
+     "name": "GetString"
+    },
+    {
+     "ghidra": "0x22f3330",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetTinyIntEPKcPam",
+     "name": "GetTinyInt"
+    },
+    {
+     "ghidra": "0x22f34c4",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetTinyIntEiPam",
+     "name": "GetTinyInt"
+    },
+    {
+     "ghidra": "0x22f352c",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetIntegerEPKcPim",
+     "name": "GetInteger"
+    },
+    {
+     "ghidra": "0x22f36c0",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetIntegerEiPim",
+     "name": "GetInteger"
+    },
+    {
+     "ghidra": "0x22f3728",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetLongEPKcPlm",
+     "name": "GetLong"
+    },
+    {
+     "ghidra": "0x22f38bc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetLongEiPlm",
+     "name": "GetLong"
+    },
+    {
+     "ghidra": "0x22f3924",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetFloatEPKcPfm",
+     "name": "GetFloat"
+    },
+    {
+     "ghidra": "0x22f3abc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetFloatEiPfm",
+     "name": "GetFloat"
+    },
+    {
+     "ghidra": "0x22f3b28",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetDoubleEPKcPdm",
+     "name": "GetDouble"
+    },
+    {
+     "ghidra": "0x22f3cbc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetDoubleEiPdm",
+     "name": "GetDouble"
+    },
+    {
+     "ghidra": "0x22f3d24",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetShortEPKcPsm",
+     "name": "GetShort"
+    },
+    {
+     "ghidra": "0x22f3eb8",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetShortEiPsm",
+     "name": "GetShort"
+    },
+    {
+     "ghidra": "0x22f3f20",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTypeEim",
+     "name": "GetType"
+    },
+    {
+     "ghidra": "0x22f3f40",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTypeEPKcm",
+     "name": "GetType"
+    },
+    {
+     "ghidra": "0x22f4090",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject15GetStringLengthEiPmm",
+     "name": "GetStringLength"
+    },
+    {
+     "ghidra": "0x22f40fc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject5StoreEP7sqlite3P12sqlite3_stmt",
+     "name": "Store"
+    },
+    {
+     "ghidra": "0x22f4240",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject5FetchEv",
+     "name": "Fetch"
+    },
+    {
+     "ghidra": "0x22f42bc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject14GetFieldLengthEii",
+     "name": "GetFieldLength"
+    },
+    {
+     "ghidra": "0x22f42fc",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9SerializeEPl",
+     "name": "Serialize"
+    },
+    {
+     "ghidra": "0x22f4bc8",
+     "symbol": "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject14SerializeCacheEPm",
+     "name": "SerializeCache"
+    }
+   ]
+  },
+  {
+   "name": "IPAddress",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_family",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 132
+     },
+     "size": 132
+    }
+   ],
+   "size": 136,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x22f587c",
+     "symbol": "_ZN4Aska5Yayoi9IPAddress7SetPortEt",
+     "name": "SetPort"
+    },
+    {
+     "ghidra": "0x22f58b0",
+     "symbol": "_ZN4Aska5Yayoi9IPAddressC2Ev",
+     "name": "IPAddress"
+    },
+    {
+     "ghidra": "0x22f58b8",
+     "symbol": "_ZNK4Aska5Yayoi9IPAddress7GetHostEPaji",
+     "name": "GetHost"
+    },
+    {
+     "ghidra": "0x22f5900",
+     "symbol": "_ZNK4Aska5Yayoi9IPAddress7GetPortEv",
+     "name": "GetPort"
+    },
+    {
+     "ghidra": "0x22f5928",
+     "symbol": "_ZNK4Aska5Yayoi9IPAddress9IsTheSameERKS1_",
+     "name": "IsTheSame"
+    },
+    {
+     "ghidra": "0x22f5948",
+     "symbol": "_ZNK4Aska5Yayoi9IPAddress10GetAddressEPPK8sockaddrPj",
+     "name": "GetAddress"
+    },
+    {
+     "ghidra": "0x22f5960",
+     "symbol": "_ZN4Aska5Yayoi9IPAddress12InitAsServerEtNS0_13AddressFamilyE",
+     "name": "InitAsServer"
+    },
+    {
+     "ghidra": "0x22f5a24",
+     "symbol": "_ZN4Aska5Yayoi9IPAddress3SetERK8sockaddrj",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x22f5a50",
+     "symbol": "_ZN4Aska5Yayoi9IPAddress4CopyERKS1_",
+     "name": "Copy"
+    },
+    {
+     "ghidra": "0x22f5a58",
+     "symbol": "_ZN4Aska5Yayoi9IPAddress6CreateEPKcNS0_10SocketTypeEtNS0_13AddressFamilyEPS1_",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x22f5ac8",
+     "symbol": "_ZN4Aska5Yayoi9IPAddress3SetERK25__kernel_sockaddr_storagej",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x22f5af4",
+     "symbol": "_ZN4Aska5Yayoi9IPAddress5ClearEv",
+     "name": "Clear"
+    }
+   ]
+  },
+  {
+   "name": "URI",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_scheme",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_length",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_host",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_hostLength",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_path",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_pathLength",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_query",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_queryLength",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_fragment",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_fragmentLength",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "m_buffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "m_work",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 96,
+     "name": "m_workSize",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 104,
+     "name": "m_ownsBuffer",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 105,
+     "name": "unk_69",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 112,
+     "name": "m_address",
+     "type": {
+      "kind": "struct",
+      "name": "IPAddress"
+     },
+     "size": 136
+    },
+    {
+     "offset": 248,
+     "name": "m_resolved",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 249,
+     "name": "unk_f9",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 256,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x230f234",
+     "symbol": "_ZN4Aska5Yayoi3URI14CalcBufferSizeEPKc",
+     "name": "CalcBufferSize"
+    },
+    {
+     "ghidra": "0x230f24c",
+     "symbol": "_ZN4Aska5Yayoi3URI13GetBufferSizeEm",
+     "name": "GetBufferSize"
+    },
+    {
+     "ghidra": "0x230f258",
+     "symbol": "_ZN4Aska5Yayoi3URI12DeleteBufferEv",
+     "name": "DeleteBuffer"
+    },
+    {
+     "ghidra": "0x230f290",
+     "symbol": "_ZN4Aska5Yayoi3URI11DeserializeEPKctNS0_13AddressFamilyEPam",
+     "name": "Deserialize"
+    },
+    {
+     "ghidra": "0x230f9ac",
+     "symbol": "_ZN4Aska5Yayoi3URI11ResolveThisENS0_13AddressFamilyEt",
+     "name": "ResolveThis"
+    },
+    {
+     "ghidra": "0x230fa3c",
+     "symbol": "_ZN4Aska5Yayoi3URI5ClearEv",
+     "name": "Clear"
+    },
+    {
+     "ghidra": "0x230fa74",
+     "symbol": "_ZN4Aska5Yayoi3URI7SetPortEt",
+     "name": "SetPort"
+    },
+    {
+     "ghidra": "0x230fa90",
+     "symbol": "_ZNK4Aska5Yayoi3URI9SerializeEPam",
+     "name": "Serialize"
+    }
+   ]
+  },
+  {
+   "name": "HttpProtocol",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_flag00",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "unk_01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 4,
+     "name": "m_value04",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_value08",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_value10",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_value18",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "m_flag1c",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 29,
+     "name": "unk_1d",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 32,
+     "name": "m_value20",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_value28",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_flag30",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "unk_31",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 56,
+     "name": "m_value38",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "m_value40",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 66,
+     "name": "unk_42",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 72,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x23066b0",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocolC2Ev",
+     "name": "HttpProtocol"
+    },
+    {
+     "ghidra": "0x23066e0",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocolD2Ev",
+     "name": "~HttpProtocol"
+    },
+    {
+     "ghidra": "0x23067c8",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol12SetUserAgentEPKc",
+     "name": "SetUserAgent"
+    },
+    {
+     "ghidra": "0x23068a4",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol10MakeHeaderEPNS0_18HttpProtocoledDataENS_14TSharedPointerINS0_3URIEEES6_",
+     "name": "MakeHeader"
+    },
+    {
+     "ghidra": "0x2306e00",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol14MakePostHeaderEPNS0_18HttpProtocoledDataE",
+     "name": "MakePostHeader"
+    },
+    {
+     "ghidra": "0x2306e28",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol4OpenEPNS0_6SocketERKNS0_9IPAddressENS_14TSharedPointerINS0_3URIEEE",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x2306fc8",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol17SerializeResponseEPNS0_18HttpProtocoledDataEPPamPKvmPm",
+     "name": "SerializeResponse"
+    },
+    {
+     "ghidra": "0x230708c",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol9SerializeEPNS0_18HttpProtocoledDataEPPamPKvmPm",
+     "name": "Serialize"
+    },
+    {
+     "ghidra": "0x2307528",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol14SetEnableFieldENS1_12EnableFieldsEb",
+     "name": "SetEnableField"
+    },
+    {
+     "ghidra": "0x230754c",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol19SetEnableOtherFieldEPKcb",
+     "name": "SetEnableOtherField"
+    },
+    {
+     "ghidra": "0x2307848",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol11ParseHeaderEPKamPNS0_18HttpProtocoledDataENS_14TSharedPointerINS0_3URIEEE",
+     "name": "ParseHeader"
+    },
+    {
+     "ghidra": "0x2307ad4",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol11DeserializeEPKamPmPNS0_18HttpProtocoledDataERNS_6StatusE",
+     "name": "Deserialize"
+    },
+    {
+     "ghidra": "0x2308124",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol16ParseMessageBodyEPKamPNS0_18HttpProtocoledDataE",
+     "name": "ParseMessageBody"
+    },
+    {
+     "ghidra": "0x23081bc",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol15_SetHeaderFieldEPNS0_18HttpProtocoledDataEPKaS5_mS5_m",
+     "name": "_SetHeaderField"
+    },
+    {
+     "ghidra": "0x23087ac",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol15_SetMessageBodyEPKamPNS0_18HttpProtocoledDataEPNS0_13_decodingDataE",
+     "name": "_SetMessageBody"
+    },
+    {
+     "ghidra": "0x2308b0c",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol18FreeSerializedDataENS_6StatusEPKv",
+     "name": "FreeSerializedData"
+    },
+    {
+     "ghidra": "0x2308b1c",
+     "symbol": "_ZN4Aska5Yayoi12HttpProtocol9AllocDataEv",
+     "name": "AllocData"
+    }
+   ]
+  },
+  {
+   "name": "DownloadElement",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "DownloadElement"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "DownloadElement"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_value18",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_id",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_notify",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_uri",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TSharedPointer<URI>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 64,
+     "name": "m_path",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 328
+     },
+     "size": 328
+    },
+    {
+     "offset": 392,
+     "name": "m_longPath",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 400,
+     "name": "m_stream",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 384
+     },
+     "size": 384
+    },
+    {
+     "offset": 784,
+     "name": "m_streamInUse",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 792,
+     "name": "m_params",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 800,
+     "name": "m_numParams",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 808,
+     "name": "m_paramBuffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 816,
+     "name": "m_flag330",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 817,
+     "name": "m_flag331",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 818,
+     "name": "unk_332",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 824,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22f09c8",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadElement3SetEjNS_14TSharedPointerINS0_3URIEEEPNS_7INotifyEPKcPNS1_15IDownloadStreamEPKNS1_8UriParamEm",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x22f0c6c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadElement5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x22f0d78",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadElementC1Ev",
+     "name": "DownloadElement"
+    },
+    {
+     "ghidra": "0x22f1d54",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadElementD2Ev",
+     "name": "~DownloadElement"
+    },
+    {
+     "ghidra": "0x22f1e0c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadElementD0Ev",
+     "name": "~DownloadElement"
+    }
+   ]
+  },
+  {
+   "name": "DownloadStatus",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_flag00",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "unk_01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 351
+     },
+     "size": 351
+    }
+   ],
+   "size": 352,
+   "align": 1
+  },
+  {
+   "name": "DownloadContext",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_clientVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_http",
+     "type": {
+      "kind": "struct",
+      "name": "HttpProtocol"
+     },
+     "size": 72
+    },
+    {
+     "offset": 96,
+     "name": "m_flag60",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 97,
+     "name": "unk_61",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 104,
+     "name": "m_recordQueueVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "unk_70",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1008
+     },
+     "size": 1008
+    },
+    {
+     "offset": 1120,
+     "name": "m_initialized460",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1121,
+     "name": "unk_461",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 1128,
+     "name": "m_value468",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1136,
+     "name": "m_value470",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1144,
+     "name": "unk_478",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 1160,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 1304,
+     "name": "m_status",
+     "type": {
+      "kind": "struct",
+      "name": "DownloadStatus"
+     },
+     "size": 352
+    },
+    {
+     "offset": 1656,
+     "name": "m_value678",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 1664,
+     "name": "m_value680",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 1672,
+     "name": "m_value688",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1676,
+     "name": "m_initialized",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1677,
+     "name": "unk_68d",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 1680,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22eeb40",
+     "symbol": "_ZNK4Aska5Yayoi10Downloader15DownloadContext17GetDownloadStatusEPNS1_14DownloadStatusE",
+     "name": "GetDownloadStatus"
+    },
+    {
+     "ghidra": "0x22ef980",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x22f01d4",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext14FinishDownloadEv",
+     "name": "FinishDownload"
+    },
+    {
+     "ghidra": "0x22f04cc",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext12StopDownloadEv",
+     "name": "StopDownload"
+    },
+    {
+     "ghidra": "0x22f06dc",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext13PauseDownloadEv",
+     "name": "PauseDownload"
+    },
+    {
+     "ghidra": "0x22f06e8",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext14ResumeDownloadEv",
+     "name": "ResumeDownload"
+    },
+    {
+     "ghidra": "0x22f072c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext13StartDownloadEPS1_jNS_14TSharedPointerINS0_3URIEEEPKcPNS_7INotifyEPNS1_15IDownloadStreamEPKNS1_8UriParamEm",
+     "name": "StartDownload"
+    },
+    {
+     "ghidra": "0x22f0d5c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x22f0ddc",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContextC1Ev",
+     "name": "DownloadContext"
+    },
+    {
+     "ghidra": "0x22f0fa8",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContextD2Ev",
+     "name": "~DownloadContext"
+    },
+    {
+     "ghidra": "0x22f1018",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext8FinalizeEv",
+     "name": "Finalize"
+    },
+    {
+     "ghidra": "0x22f106c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContextD0Ev",
+     "name": "~DownloadContext"
+    },
+    {
+     "ghidra": "0x22f10e4",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext17SetDownloadStatusENS_6StatusE",
+     "name": "SetDownloadStatus"
+    },
+    {
+     "ghidra": "0x22f1240",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext11OnReceivingENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEEPKc",
+     "name": "OnReceiving"
+    },
+    {
+     "ghidra": "0x22f1438",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext17SetDownloadStatusENS_6StatusEifm",
+     "name": "SetDownloadStatus"
+    },
+    {
+     "ghidra": "0x22f15c4",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext9OnReceiveENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEEPKc",
+     "name": "OnReceive"
+    },
+    {
+     "ghidra": "0x22f1830",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext7OnErrorENS_6StatusEPKcNS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEE",
+     "name": "OnError"
+    },
+    {
+     "ghidra": "0x22f196c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext17SetDownloadStatusENS_6StatusEi",
+     "name": "SetDownloadStatus"
+    },
+    {
+     "ghidra": "0x22f1d30",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext7OnStartENS_6StatusEPKc",
+     "name": "OnStart"
+    },
+    {
+     "ghidra": "0x22f1d34",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext8OnAcceptENS_6StatusENS0_6SocketEPKc",
+     "name": "OnAccept"
+    },
+    {
+     "ghidra": "0x22f1d38",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext6OnSendENS_6StatusElPKc",
+     "name": "OnSend"
+    },
+    {
+     "ghidra": "0x22f1d3c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext12OnReceiveUDPENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEERKNS0_9IPAddressEPKc",
+     "name": "OnReceiveUDP"
+    },
+    {
+     "ghidra": "0x22f1d40",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext14OnReceivingUDPENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEERKNS0_9IPAddressEPKc",
+     "name": "OnReceivingUDP"
+    },
+    {
+     "ghidra": "0x22f1d48",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext12OnDisconnectENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEEPKc",
+     "name": "OnDisconnect"
+    },
+    {
+     "ghidra": "0x22f1d4c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader15DownloadContext10OnShutdownENS_6StatusEPKc",
+     "name": "OnShutdown"
+    }
+   ]
+  },
+  {
+   "name": "Downloader",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_event",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 136,
+     "name": "m_flag88",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 137,
+     "name": "m_flag89",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 138,
+     "name": "unk_8a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 144,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": "Downloader"
+     },
+     "size": 8
+    },
+    {
+     "offset": 152,
+     "name": "m_listVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 160,
+     "name": "m_listHead",
+     "type": {
+      "kind": "struct",
+      "name": "DownloadElement"
+     },
+     "size": 824
+    },
+    {
+     "offset": 984,
+     "name": "m_listCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 988,
+     "name": "unk_3dc",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 992,
+     "name": "m_freeElements",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::memory::TDynamicQueue<DownloadElement *>",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 1024,
+     "name": "m_freeContexts",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::memory::TDynamicQueue<DownloadContext *>",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 1056,
+     "name": "m_finished",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::memory::TDynamicQueue<unsigned int>",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 1088,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 1232,
+     "name": "m_cs2",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 1376,
+     "name": "m_path",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 260
+     },
+     "size": 260
+    },
+    {
+     "offset": 1636,
+     "name": "unk_664",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1640,
+     "name": "m_storage",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1648,
+     "name": "m_value670",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1652,
+     "name": "m_parallel",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1656,
+     "name": "m_queueSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1660,
+     "name": "unk_67c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 1664,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22ee0c8",
+     "symbol": "_ZN4Aska5Yayoi10Downloader8DownloadEjPKcPNS_7INotifyES3_S3_PKNS1_8UriParamEmPNS1_15IDownloadStreamE",
+     "name": "Download"
+    },
+    {
+     "ghidra": "0x22ee35c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader20AddDownloadQueueListEjNS_14TSharedPointerINS0_3URIEEEPNS_7INotifyEPKcPNS1_15IDownloadStreamEPKNS1_8UriParamEm",
+     "name": "AddDownloadQueueList"
+    },
+    {
+     "ghidra": "0x22ee688",
+     "symbol": "_ZN4Aska5Yayoi10Downloader4StopEj",
+     "name": "Stop"
+    },
+    {
+     "ghidra": "0x22ee6a4",
+     "symbol": "_ZN4Aska5Yayoi10Downloader14OrFlagDownloadEjh",
+     "name": "OrFlagDownload"
+    },
+    {
+     "ghidra": "0x22ee8d0",
+     "symbol": "_ZN4Aska5Yayoi10Downloader5PauseEj",
+     "name": "Pause"
+    },
+    {
+     "ghidra": "0x22ee8ec",
+     "symbol": "_ZN4Aska5Yayoi10Downloader6ResumeEj",
+     "name": "Resume"
+    },
+    {
+     "ghidra": "0x22ee908",
+     "symbol": "_ZN4Aska5Yayoi10Downloader7SetPathEPKc",
+     "name": "SetPath"
+    },
+    {
+     "ghidra": "0x22ee978",
+     "symbol": "_ZNK4Aska5Yayoi10Downloader17GetDownloadStatusEjPNS1_14DownloadStatusE",
+     "name": "GetDownloadStatus"
+    },
+    {
+     "ghidra": "0x22ee9c8",
+     "symbol": "_ZNK4Aska5Yayoi10Downloader20QueryDownloadElementEj",
+     "name": "QueryDownloadElement"
+    },
+    {
+     "ghidra": "0x22eeca8",
+     "symbol": "_ZN4Aska5Yayoi10DownloaderC2Ev",
+     "name": "Downloader"
+    },
+    {
+     "ghidra": "0x22eee0c",
+     "symbol": "_ZN4Aska5Yayoi10DownloaderD2Ev",
+     "name": "~Downloader"
+    },
+    {
+     "ghidra": "0x22eeea4",
+     "symbol": "_ZN4Aska5Yayoi10Downloader4TermEv",
+     "name": "Term"
+    },
+    {
+     "ghidra": "0x22ef29c",
+     "symbol": "_ZN4Aska5Yayoi10DownloaderD0Ev",
+     "name": "~Downloader"
+    },
+    {
+     "ghidra": "0x22ef33c",
+     "symbol": "_ZN4Aska5Yayoi10Downloader4InitEii",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x22efad0",
+     "symbol": "_ZN4Aska5Yayoi10Downloader13ThreadHandlerEv",
+     "name": "ThreadHandler"
+    },
+    {
+     "ghidra": "0x22f02b0",
+     "symbol": "_ZN4Aska5Yayoi10Downloader26ReleaseFreeDownloadContextEPNS1_15DownloadContextE",
+     "name": "ReleaseFreeDownloadContext"
+    },
+    {
+     "ghidra": "0x22f0308",
+     "symbol": "_ZN4Aska5Yayoi10Downloader23RemoveDownloadQueueListEPNS1_15DownloadElementE",
+     "name": "RemoveDownloadQueueList"
+    },
+    {
+     "ghidra": "0x22f04f4",
+     "symbol": "_ZN4Aska5Yayoi10Downloader22AddDownloadFinishQueueEj",
+     "name": "AddDownloadFinishQueue"
+    },
+    {
+     "ghidra": "0x22f06f4",
+     "symbol": "_ZN4Aska5Yayoi10Downloader26AcquireFreeDownloadContextEv",
+     "name": "AcquireFreeDownloadContext"
+    }
+   ]
+  },
+  {
+   "name": "NetworkManagerThread",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_thread",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_wakeVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_taskManager",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_event",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_httpProcessor",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_wakeup",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 80,
+     "name": "m_quit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 81,
+     "name": "unk_51",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 88,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2303aa0",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThreadC2Ev",
+     "name": "NetworkManagerThread"
+    },
+    {
+     "ghidra": "0x2303adc",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThreadD1Ev",
+     "name": "~NetworkManagerThread"
+    },
+    {
+     "ghidra": "0x2303b8c",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThreadD0Ev",
+     "name": "~NetworkManagerThread"
+    },
+    {
+     "ghidra": "0x2303bc0",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThread4KillEv",
+     "name": "Kill"
+    },
+    {
+     "ghidra": "0x2303c00",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThread7HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x2303c98",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThread4InitEv",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x2304b58",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThread8DoWakeupEv",
+     "name": "DoWakeup"
+    },
+    {
+     "ghidra": "0x2304b60",
+     "symbol": "_ZN4Aska5Yayoi20NetworkManagerThread11GetThreadIDEv",
+     "name": "GetThreadID"
+    }
+   ]
+  },
+  {
+   "name": "NetworkManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_events",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THashMap<long, void *>",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 48,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 192,
+     "name": "m_thread",
+     "type": {
+      "kind": "ptr",
+      "to": "NetworkManagerThread"
+     },
+     "size": 8
+    },
+    {
+     "offset": 200,
+     "name": "m_threadId",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 208,
+     "name": "m_paymentClient",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 216,
+     "name": "m_httpProcessor",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 224,
+     "name": "m_dnsCache",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 192
+     },
+     "size": 192
+    },
+    {
+     "offset": 416,
+     "name": "m_cookieManager",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 424,
+     "name": "m_downloader",
+     "type": {
+      "kind": "ptr",
+      "to": "Downloader"
+     },
+     "size": 8
+    }
+   ],
+   "size": 432,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2303ec4",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager20RegisterNetworkEventElPNS0_12NetworkEventE",
+     "name": "RegisterNetworkEvent"
+    },
+    {
+     "ghidra": "0x230414c",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager28RegisterHttpRequestProcessorEPNS0_26NativeHttpRequestProcessorE",
+     "name": "RegisterHttpRequestProcessor"
+    },
+    {
+     "ghidra": "0x230415c",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManagerC1Ev",
+     "name": "NetworkManager"
+    },
+    {
+     "ghidra": "0x2304240",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManagerD2Ev",
+     "name": "~NetworkManager"
+    },
+    {
+     "ghidra": "0x2304330",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager4KillEv",
+     "name": "Kill"
+    },
+    {
+     "ghidra": "0x23043bc",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager17InitializeThreadsEv",
+     "name": "InitializeThreads"
+    },
+    {
+     "ghidra": "0x23044e4",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x2304694",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager15GetNetworkEventEl",
+     "name": "GetNetworkEvent"
+    },
+    {
+     "ghidra": "0x23046bc",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager9BeginPollEPNS0_21TransportProtocolBaseEPNS0_13ISocketNotifyENS0_10SelectModeEtll",
+     "name": "BeginPoll"
+    },
+    {
+     "ghidra": "0x2304740",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager12BeginConnectEPNS0_21TransportProtocolBaseEPNS0_13ISocketNotifyERKNS0_9IPAddressEl",
+     "name": "BeginConnect"
+    },
+    {
+     "ghidra": "0x23047ac",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager16AddErrorCallbackEPNS0_13ISocketNotifyENS_6StatusEPKcbl",
+     "name": "AddErrorCallback"
+    },
+    {
+     "ghidra": "0x2304830",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager14AddHttpRequestEPNS0_11TPeerNotifyINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEENS_14TSharedPointerINS0_3URIEEENSB_INS0_10TDataSuiteIS8_EEEEPS8_PS4_",
+     "name": "AddHttpRequest"
+    },
+    {
+     "ghidra": "0x2304954",
+     "symbol": "_ZN4Aska5Yayoi14NetworkManager21RegisterVersatileTaskEPNS_4TaskE",
+     "name": "RegisterVersatileTask"
+    }
+   ]
+  },
+  {
+   "name": "NativeHttpClient",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_words",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 56
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x26a4e84",
+     "symbol": "_ZN4Aska5Yayoi16NativeHttpClientC1Ev",
+     "name": "NativeHttpClient"
+    },
+    {
+     "ghidra": "0x26a4e98",
+     "symbol": "_ZN4Aska5Yayoi16NativeHttpClientD2Ev",
+     "name": "~NativeHttpClient"
+    },
+    {
+     "ghidra": "0x26a4f40",
+     "symbol": "_ZN4Aska5Yayoi16NativeHttpClient10_doRequestEv",
+     "name": "_doRequest"
+    }
+   ]
+  },
+  {
+   "name": "NativeHttpRequestProcessor",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_queueVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_queueWrite",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_queueRead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 264
+     },
+     "size": 264
+    },
+    {
+     "offset": 280,
+     "name": "m_pool",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1824
+     },
+     "size": 1824
+    },
+    {
+     "offset": 2104,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 2248,
+     "name": "m_flag8c8",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 2249,
+     "name": "unk_8c9",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 2256,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x269e3ec",
+     "symbol": "_ZN4Aska5Yayoi26NativeHttpRequestProcessorC1Ev",
+     "name": "NativeHttpRequestProcessor"
+    },
+    {
+     "ghidra": "0x269e578",
+     "symbol": "_ZN4Aska5Yayoi26NativeHttpRequestProcessorD1Ev",
+     "name": "~NativeHttpRequestProcessor"
+    },
+    {
+     "ghidra": "0x269e6c8",
+     "symbol": "_ZN4Aska5Yayoi26NativeHttpRequestProcessor10AddRequestEPNS0_11TPeerNotifyINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEENS_14TSharedPointerINS0_3URIEEENSB_INS0_10TDataSuiteIS8_EEEEPS8_PS4_",
+     "name": "AddRequest"
+    },
+    {
+     "ghidra": "0x269eba4",
+     "symbol": "_ZN4Aska5Yayoi26NativeHttpRequestProcessor13FlushRequestsEPb",
+     "name": "FlushRequests"
+    },
+    {
+     "ghidra": "0x269f080",
+     "symbol": "_ZN4Aska5Yayoi26NativeHttpRequestProcessor10InitializeEv",
+     "name": "Initialize"
+    }
+   ]
+  }
+ ]
 }

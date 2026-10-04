@@ -20,6 +20,7 @@ namespace soa::server {
 // nothing is gated (unit tests).
 struct AssetIndex {
     virtual ~AssetIndex() = default;
+    // Whether the asset `name` ("builtin_data/<rel>" or "assetpack/<rel>") can be loaded.
     virtual bool exists(const std::string& name) const = 0;
     // No asset source at all.
     virtual bool empty() const = 0;

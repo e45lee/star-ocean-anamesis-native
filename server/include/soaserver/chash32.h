@@ -8,6 +8,7 @@
 
 namespace soa::server {
 
+// The client's CHash32 of `len` bytes at `data`, and of a C string.
 uint32_t chash32(const void* data, size_t len);
 uint32_t chash32(const char* s);  // nullptr -> 0
 

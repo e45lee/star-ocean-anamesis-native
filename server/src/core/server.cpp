@@ -70,7 +70,7 @@ bool Server::open_state(const std::string& path, u64 seed_rng, const std::string
     }
     st.exec("pragma journal_mode = wal; pragma synchronous = normal;");
     rng.seed(seed_rng);
-    // --new-player (entry flow, agent restore-title): start without a player, so
+    // --new-player (the entry flow): start without a player, so
     // the client's Login gets "no account" and it runs the new-player flow (CreatePlayer).
     if (st.one("select count(*) from player", {}) == 0 && !new_player_mode()) {
         RequestContext rc = new_request();

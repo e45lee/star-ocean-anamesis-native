@@ -429,6 +429,8 @@ class Run:
             self.miss("the client lost the host GPU: %s (see %s)" % (self.death, self.client_log))
         if self.grep(self.client_log, r"glx: failed to create|X Error of failed request"):
             self.note("the host's GL/GLX failed for this client (see %s): a host problem, not the game's" % self.client_log)
+        if (self.client is not None or self.server is not None) and os.path.exists(self.state_db):
+            self.state_check()
         if self.layout.state_end and os.path.exists(self.state_db):
             self.state("end")
         cleanup = self.layout.phone_cleanup
@@ -689,10 +691,9 @@ class Run:
         return gdb.attach(self.gdb_port, timeout)
 
     # ---- the server's state -----------------------------------------------------------------------
-    def state(self, tag):
-        """state-TAG.txt: tools/server_state.py's dump of the server's state (its text)."""
-        out = os.path.join(self.layout.state_dir, "state-%s.txt" % tag)
-        db = proc.repo_file("data/basmaster-3.7.0.sqlite3") if self.cfg.state_master else None
+    def _read_state(self, tool_args):
+        """Runs a tools/ script over the server's state DB (tool_args with STATE where its path goes);
+        a Windows server's state is read from a snapshot. Returns the CompletedProcess."""
         py = os.path.join(REPO, ".venv/bin/python")
         state_db, snap = self.state_db, None
         if self.win and os.path.exists(state_db):
@@ -709,11 +710,39 @@ class Run:
             con.execute("pragma wal_checkpoint(TRUNCATE)")
             con.close()
         try:
-            r = subprocess.run([py if os.path.exists(py) else sys.executable, os.path.join(REPO, "tools/server_state.py"),
-                                state_db] + (["--db", db] if db else []), capture_output=True, text=True, cwd=REPO)
+            return subprocess.run([py if os.path.exists(py) else sys.executable] + [state_db if a == "STATE" else a for a in tool_args],
+                                  capture_output=True, text=True, cwd=REPO)
         finally:
             if snap:
                 shutil.rmtree(snap, ignore_errors=True)
+
+    def state(self, tag):
+        """state-TAG.txt: tools/server_state.py's dump of the server's state (its text)."""
+        out = os.path.join(self.layout.state_dir, "state-%s.txt" % tag)
+        db = proc.repo_file("data/basmaster-3.7.0.sqlite3") if self.cfg.state_master else None
+        r = self._read_state([os.path.join(REPO, "tools/server_state.py"), "STATE"] + (["--db", db] if db else []))
         with open(out, "w") as f:
             f.write(r.stdout + r.stderr)
         return r.stdout
+
+    # G9 of server/PLAN-schema.md, permanent since S11: every run's end state (sessions, tests/diff,
+    # the Windows runs) has its declared foreign keys holding, its master references resolved
+    # against the master the server ran with, and this build's schema version. Run by stop(); a
+    # violation is a failed step (so the session's or the flow's verdict is FAIL) and is recorded
+    # in STATE_CHECKS for control/run.py's exit status.
+    STATE_CHECKS = []  # (Run, ok, the check's summary line)
+
+    def state_check(self):
+        master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
+        r = self._read_state([os.path.join(REPO, "tools/schema_inventory.py"), "--check", "--strict", "STATE", master])
+        lines = [ln for ln in (r.stdout + r.stderr).splitlines() if ln.strip()]
+        summary = lines[-1].split(": ", 1)[-1] if lines else "no output (exit %d)" % r.returncode
+        ok = r.returncode == 0
+        Run.STATE_CHECKS.append((self, ok, summary))
+        if ok:
+            self.ok("state check: %s" % summary)
+        else:
+            for ln in lines[:-1][:20]:
+                self.note("state check: " + ln)
+            self.miss("state check (G9): %s (tools/schema_inventory.py --check --strict %s)" % (summary, self.state_db))
+        return ok

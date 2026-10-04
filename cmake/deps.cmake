@@ -3,7 +3,7 @@
 # From vcpkg (vcpkg.json, manifest mode: configured through the vcpkg toolchain, which the root
 # CMakeLists.txt picks up from $VCPKG_ROOT or .vcpkg/): imported targets
 #   ZLIB::ZLIB  MINIZIP::minizip-ng  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
-#   OpenSSL::Crypto  pugixml::pugixml  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
+#   OpenSSL::Crypto  pugixml::pugixml  msgpack-cxx  httplib::httplib  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
 #   runtime/src/app/text_overlay.cpp)  litehtml  soa::stb (headers; soa_codec's PNG writer, the web view)  and the
 #   EGL/GLES/KHR headers.
 # From the system (README.md, "Setup": what vcpkg can't replace on Linux), only when the runtime is
@@ -29,6 +29,8 @@ find_package(pugixml CONFIG REQUIRED)  # pugixml::pugixml: SharedPreferences XML
 find_path(SOA_STB_INCLUDE_DIR stb_image_write.h REQUIRED)
 add_library(soa::stb INTERFACE IMPORTED)
 target_include_directories(soa::stb INTERFACE ${SOA_STB_INCLUDE_DIR})
+find_package(msgpack-cxx CONFIG REQUIRED)  # target msgpack-cxx (headers; the server's MessagePack codec)
+find_package(httplib CONFIG REQUIRED)  # target httplib::httplib (headers; soa-server's HTTP server and client)
 # The web view's page renderer (webview/, docs/webview.md): litehtml lays out HTML/CSS (gumbo
 # parses it; the overlay port cmake/vcpkg-ports/litehtml).
 if(SOA_BUILD_WEBVIEW)

@@ -1,55 +1,95 @@
-// soa-server's HTTP pieces (server/net/http.h) and the bridge's JSON.
+// soa-server's HTTP pieces (server/net/http.h, http_server.h) and the bridge's JSON.
+// cpp-httplib first (net/use_httplib.h: winsock2.h before windows.h): the server test talks to the server with its client.
+#include "net/use_httplib.h"
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <algorithm>
+#include <memory>
+#include <mutex>
 #include <string>
 
 #include "net/game.h"
+#include "net/client.h"
 #include "net/http.h"
+#include "net/http_server.h"
 #include "soaserver/native_test.h"
 
 namespace {
 
 using namespace soa::server::net;
 
-NATIVE_TEST("net/http-parser") {
-    std::string reqs =
-        "POST /bridge HTTP/1.1\r\nHost: x\r\nContent-Length: 5\r\n\r\nhello"
-        "GET /Android/a%20b.bin?x=1 HTTP/1.1\r\nconnection: close\r\n\r\n"
-        "GET http://example/Android/c HTTP/1.0\r\n\r\n";
-    // byte by byte, then all at once: the same three requests
-    for (int mode = 0; mode < 2; mode++) {
-        HttpParser p;
-        std::vector<HttpRequest> got;
-        auto drain = [&] {
-            HttpRequest r;
-            HttpParser::Result res;
-            while ((res = p.next(&r)) == HttpParser::kRequest) got.push_back(r);
-            if (res == HttpParser::kBad) t.fail("bad");
-        };
-        if (mode == 0)
-            for (char c : reqs) p.feed(&c, 1), drain();
-        else p.feed(reqs.data(), reqs.size()), drain();
-        if (got.size() != 3) {
-            t.fail("mode %d: %zu requests", mode, got.size());
-            continue;
+// make_request: the target split at '?', the path URL-decoded, an absolute-form target's path.
+NATIVE_TEST("net/http-request") {
+    HttpRequest a = make_request("GET", "/Android/a%20b+c.bin?x=1", {{"connection", "close"}});
+    t.expect_eq(a.path, std::string("/Android/a b c.bin"), "decoded path ('+' is a space)");
+    t.expect_eq(a.query, std::string("x=1"), "query");
+    t.expect_eq(*a.header("Connection"), std::string("close"), "header lookup ignores case");
+    t.expect_eq(a.version, std::string("HTTP/1.1"), "version");
+    HttpRequest b = make_request("GET", "http://example/Android/c", {}, {}, "HTTP/1.0");
+    t.expect_eq(b.path, std::string("/Android/c"), "absolute-form target");
+    t.expect_eq(b.version, std::string("HTTP/1.0"), "version");
+    t.expect_eq(make_request("GET", "https://example").path, std::string("/"), "absolute-form without a path");
+}
+
+// The HTTP server (http_server.h) on a loopback port: GET, HEAD, POST bodies, 404, keep-alive (two
+// requests on one connection), a streamed body whole and by Range (206), the log line's counts.
+NATIVE_TEST("net/http-server") {
+    // a 300,000-byte streamed body: byte k is k * 7 mod 251
+    struct Counting : HttpBodyStream {
+        uint64_t pos = 0;
+        uint64_t size() const override { return 300000; }
+        int64_t read(char* buf, size_t n) override {
+            size_t k = (size_t)std::min<uint64_t>(n, size() - pos);
+            for (size_t i = 0; i < k; i++) buf[i] = (char)((pos + i) * 7 % 251);
+            pos += k;
+            return (int64_t)k;
         }
-        t.expect_eq(got[0].method, std::string("POST"), "method");
-        t.expect_eq(got[0].body, std::string("hello"), "body");
-        t.expect_eq(got[1].path, std::string("/Android/a b.bin"), "decoded path");
-        t.expect_eq(got[1].query, std::string("x=1"), "query");
-        t.expect_eq(*got[1].header("Connection"), std::string("close"), "header lookup ignores case");
-        t.expect_eq(got[2].path, std::string("/Android/c"), "absolute-form target");
-        t.expect_eq(got[2].version, std::string("HTTP/1.0"), "version");
-    }
-    HttpParser bad;
-    std::string b = "NONSENSE\r\n\r\n";
-    bad.feed(b.data(), b.size());
-    HttpRequest r;
-    t.expect_eq((int)bad.next(&r), (int)HttpParser::kBad, "malformed request line");
-    std::string resp = serialize_response(HttpResponse{200, {{"Content-Type", "text/plain"}}, "abc"}, true);
-    t.expect_eq(resp, std::string("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\nConnection: keep-alive\r\n\r\nabc"),
-                "response bytes");
+    };
+    std::string whole;
+    for (uint64_t k = 0; k < 300000; k++) whole += (char)(k * 7 % 251);
+    HttpRouter router;
+    router.route("/s/", [](const HttpRequest& req, const std::string&, HttpResponse& r) {
+        r.set_header("Content-Type", "application/octet-stream");
+        r.stream = std::make_shared<Counting>();
+        return true;
+    });
+    router.route("/echo", [](const HttpRequest& req, const std::string& rest, HttpResponse& r) {
+        r.set_header("Content-Type", "text/plain");
+        r.set_header("X-Method", req.method);
+        r.body = req.method + " " + rest + " " + req.query + " " + req.body;
+        return true;
+    });
+    std::mutex lock;
+    HttpServer server(router, &lock);
+    std::string err;
+    if (!server.listen("127.0.0.1", 0, &err)) return t.fail("listen: %s", err.c_str());
+    const std::string base = "http://127.0.0.1:" + std::to_string(server.port());
+    int status = 0;
+    std::string body;
+    t.expect_eq(http_get(base + "/echo/a%20b?q=1", &status, &body, &err) && status == 200, true, "GET");
+    t.expect_eq(body, std::string("GET /a b q=1 "), "GET reaches the router decoded");
+    std::string post = std::string("{\"x\":1}") + '\0';  // a NUL-terminated body, as the bridge's
+    t.expect_eq(http_post(base + "/echo", post, &status, &body, &err) && status == 200, true, "POST");
+    t.expect_eq(body, "POST   " + post, "POST body intact");
+    t.expect_eq(http_get(base + "/nothing", &status, &body, &err) && status == 404, true, "404");
+    t.expect_eq(http_get(base + "/s/x", &status, &body, &err) && status == 200, true, "stream");
+    t.expect_eq(body == whole, true, "streamed body whole");
+    // keep-alive, HEAD and Range with one client
+    httplib::Client cli("127.0.0.1", server.port());
+    cli.set_keep_alive(true);
+    auto h = cli.Head("/s/x");
+    t.expect_eq(h && h->status == 200 && h->body.empty() && h->get_header_value("Content-Length") == "300000", true, "HEAD: length, no body");
+    auto e = cli.Head("/echo");
+    t.expect_eq(e && e->get_header_value("X-Method") == "HEAD", true, "HEAD reaches the router as HEAD");
+    auto r = cli.Get("/s/x", httplib::Headers{{"Range", "bytes=100000-100099"}});
+    t.expect_eq(r && r->status == 206 && r->body == whole.substr(100000, 100), true, "Range: 206 and the slice");
+    auto tail = cli.Get("/s/x", httplib::Headers{{"Range", "bytes=-10"}});
+    t.expect_eq(tail && tail->status == 206 && tail->body == whole.substr(299990), true, "suffix Range");
+    auto again = cli.Get("/echo/k");
+    t.expect_eq(again && again->status == 200 && again->get_header_value("Connection") != "close", true, "connection kept alive");
+    server.stop();
+    t.expect_eq(http_get(base + "/echo", &status, &body, &err), false, "stopped");
 }
 
 NATIVE_TEST("net/http-router-static") {

@@ -1,19 +1,14 @@
 // soa-server's poll() loop (loop.h). Our code.
 #include "loop.h"
 
-#include <strings.h>
-
+#include <chrono>
 #include <cstring>
+#include <thread>
 
 #include "soa/sock.h"
 #include "soaserver/log.h"
 
 namespace soa::server::net {
-
-#define NLOG(level, ...)                                                                  \
-    do {                                                                                  \
-        if (log_enabled(LogLevel::level)) log_write(LogLevel::level, "net", __VA_ARGS__); \
-    } while (0)
 
 bool parse_host_port(const std::string& s, std::string* host, uint16_t* port) {
     size_t c = s.rfind(':');
@@ -27,12 +22,12 @@ bool parse_host_port(const std::string& s, std::string* host, uint16_t* port) {
 }
 
 Loop::~Loop() {
+    http_server_.reset();  // (stops it: no handler runs after this)
     for (auto& [fd, c] : conns_) {
-        if (!c.http) game_.close(c.game_id);
+        game_.close(c.game_id);
         sock::close(fd);
     }
     if (game_fd_ >= 0) sock::close(game_fd_);
-    if (http_fd_ >= 0) sock::close(http_fd_);
 }
 
 bool Loop::listen_on(const std::string& host, uint16_t port, int* fd, uint16_t* bound, std::string* err) {
@@ -63,23 +58,28 @@ bool Loop::listen_on(const std::string& host, uint16_t port, int* fd, uint16_t* 
 }
 
 bool Loop::listen_game(const std::string& host, uint16_t port, std::string* err) { return listen_on(host, port, &game_fd_, &game_port_, err); }
-bool Loop::listen_http(const std::string& host, uint16_t port, std::string* err) { return listen_on(host, port, &http_fd_, &http_port_, err); }
+bool Loop::listen_http(const std::string& host, uint16_t port, std::string* err) {
+    auto server = std::make_unique<HttpServer>(http_, &lock_);
+    if (!server->listen(host, port, err)) return false;
+    http_port_ = server->port();
+    http_server_ = std::move(server);
+    return true;
+}
 
-void Loop::accept_on(int lfd, bool http) {
+void Loop::accept_on(int lfd) {
     for (;;) {
         int fd = sock::accept_nonblocking(lfd);
         if (fd < 0) return;
         Conn& c = conns_[fd];
         c = Conn();
-        c.http = http;
-        if (!http) c.game_id = game_.open();
+        c.game_id = game_.open();
     }
 }
 
 void Loop::drop(int fd) {
     auto it = conns_.find(fd);
     if (it == conns_.end()) return;
-    if (!it->second.http) game_.close(it->second.game_id);
+    game_.close(it->second.game_id);
     sock::close(fd);
     conns_.erase(it);
 }
@@ -98,54 +98,25 @@ void Loop::on_readable(int fd, Conn& c) {
             if (sock::interrupted()) continue;
             return drop(fd);
         }
-        if (!c.http) {
-            if (!game_.on_data(c.game_id, buf, (size_t)n, &c.out)) c.close_after = true;
-            continue;
-        }
-        c.parser.feed((const char*)buf, (size_t)n);
-        for (;;) {
-            HttpRequest req;
-            HttpParser::Result r = c.parser.next(&req);
-            if (r == HttpParser::kNeedMore) break;
-            HttpResponse resp;
-            bool keep = false;
-            if (r == HttpParser::kBad) {
-                resp.status = 400;
-                resp.body = "bad request\n";
-            } else {
-                http_.handle(req, resp);
-                // A streamed body (the CDN's files and bundles) is sent from memory like any other.
-                if (!resp.materialize()) {
-                    resp = HttpResponse();
-                    resp.status = 500;
-                    resp.body = "read error\n";
-                }
-                const std::string* conn = req.header("Connection");
-                keep =
-                    req.version == "HTTP/1.1" ? !(conn && !strcasecmp(conn->c_str(), "close")) : (conn && !strcasecmp(conn->c_str(), "keep-alive"));
-                NLOG(Info, "http %s %s -> %d (%zu bytes)", req.method.c_str(), req.target.c_str(), resp.status, resp.body.size());
-            }
-            std::string s = serialize_response(resp, keep, req.method == "HEAD");
-            c.out.insert(c.out.end(), s.begin(), s.end());
-            if (!keep) {
-                c.close_after = true;
-                break;
-            }
-        }
+        if (!game_.on_data(c.game_id, buf, (size_t)n, &c.out)) c.close_after = true;
     }
 }
 
 void Loop::run_once(int timeout_ms) {
     std::vector<sock::PollFd> fds;
     if (game_fd_ >= 0) fds.push_back({game_fd_, POLLIN, 0});
-    if (http_fd_ >= 0) fds.push_back({http_fd_, POLLIN, 0});
     for (auto& [fd, c] : conns_) fds.push_back({fd, (short)(POLLIN | (c.out.empty() ? 0 : POLLOUT)), 0});
+    if (fds.empty()) {  // HTTP only (WSAPoll refuses an empty set at once)
+        std::this_thread::sleep_for(std::chrono::milliseconds(timeout_ms));
+        return;
+    }
     int r = sock::poll(fds.data(), fds.size(), timeout_ms);
     if (r <= 0) return;
+    std::lock_guard<std::mutex> held(lock_);
     for (const sock::PollFd& p : fds) {
         if (!p.revents) continue;
-        if (p.fd == game_fd_ || p.fd == http_fd_) {
-            accept_on(p.fd, p.fd == http_fd_);
+        if (p.fd == game_fd_) {
+            accept_on(p.fd);
             continue;
         }
         auto it = conns_.find(p.fd);

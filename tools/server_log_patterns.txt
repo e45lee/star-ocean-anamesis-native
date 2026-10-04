@@ -16,3 +16,4 @@ Sphere211MissionEnd: floor %u cell %u mission %u cleared, streak %u, %u boxes	Sp
 tower: %d areas, %d missions listed	server: tower: \d+ areas
 seeding from %s (%zu keys)	seeding from
 DeepSpaceActiveList: %zu areas, %zu ships out, %zu back, %u ships (%u by the pass)	^I/server: Deep
+http %s %s -> %d (	^I/net: http \S+ \S+ -> 

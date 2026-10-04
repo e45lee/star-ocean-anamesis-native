@@ -3,6 +3,7 @@
 // their seeds (testing.h): they keep the names they had in core/server.cpp.
 #include <unistd.h>
 
+#include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
@@ -141,6 +142,81 @@ NATIVE_TEST("server/msgpack") {
     const std::vector<u8> want = {0x86, 0xa1, 'a', 0x01, 0xa1, 'b',  0xff, 0xa1, 'c', 0xcd, 0x01, 0x2c, 0xa1, 'd',
                                   0xa2, 'x',  'y', 0xa1, 'e',  0x91, 0xc3, 0xa1, 'f', 0xce, 0x7e, 0x00, 0x00, 0x00};
     t.expect_eq(b, want, "encoding");
+}
+
+// The forms the encoder picks at each width boundary (the server's encoder before msgpack-cxx
+// picked these; the replay corpora depend on them), and the decoder's round trip and refusals.
+NATIVE_TEST("server/msgpack-forms") {
+    auto head = [](const Value& v, size_t n) {
+        std::vector<u8> b = mp_encode(v);
+        b.resize(std::min(b.size(), n));
+        return b;
+    };
+    struct Case {
+        Value v;
+        std::vector<u8> want;  // the first bytes
+    };
+    const Case cases[] = {
+        {Value(), {0xc0}},
+        {Value(false), {0xc2}},
+        {Value(true), {0xc3}},
+        {Value(0u), {0x00}},
+        {Value(127u), {0x7f}},
+        {Value(128u), {0xcc, 0x80}},
+        {Value(255u), {0xcc, 0xff}},
+        {Value(256u), {0xcd, 0x01, 0x00}},
+        {Value(65535u), {0xcd, 0xff, 0xff}},
+        {Value(65536u), {0xce, 0x00, 0x01, 0x00, 0x00}},
+        {Value(0xffffffffull), {0xce, 0xff, 0xff, 0xff, 0xff}},
+        {Value(0x100000000ull), {0xcf, 0, 0, 0, 1, 0, 0, 0, 0}},
+        {Value(5), {0x05}},  // a non-negative int is unsigned
+        {Value(-1), {0xff}},
+        {Value(-32), {0xe0}},
+        {Value(-33), {0xd0, 0xdf}},
+        {Value(-128), {0xd0, 0x80}},
+        {Value(-129), {0xd1, 0xff, 0x7f}},
+        {Value(-32768), {0xd1, 0x80, 0x00}},
+        {Value(-32769), {0xd2, 0xff, 0xff, 0x7f, 0xff}},
+        {Value((long long)-2147483648ll), {0xd2, 0x80, 0, 0, 0}},
+        {Value((long long)-2147483649ll), {0xd3, 0xff, 0xff, 0xff, 0xff, 0x7f, 0xff, 0xff, 0xff}},
+        {Value(1.5), {0xcb, 0x3f, 0xf8, 0, 0, 0, 0, 0, 0}},
+        {Value(std::string(31, 'x')), {0xbf}},
+        {Value(std::string(32, 'x')), {0xd9, 32}},
+        {Value(std::string(255, 'x')), {0xd9, 0xff}},
+        {Value(std::string(256, 'x')), {0xda, 0x01, 0x00}},
+        {Value(std::string(65536, 'x')), {0xdb, 0x00, 0x01, 0x00, 0x00}},
+    };
+    for (const Case& c : cases) t.expect_eq(head(c.v, c.want.size()), c.want, "form");
+    for (size_t n : {0u, 15u, 16u, 65535u, 65536u}) {
+        Value a = Value::array(), m = Value::object();
+        for (size_t k = 0; k < n; k++) a.push(Value(0u));
+        for (size_t k = 0; k < std::min<size_t>(n, 17); k++) m[std::to_string(k)] = 0u;
+        std::vector<u8> wa = n < 16        ? std::vector<u8>{(u8)(0x90 | n)}
+                             : n <= 0xffff ? std::vector<u8>{0xdc, (u8)(n >> 8), (u8)n}
+                                           : std::vector<u8>{0xdd, 0, (u8)(n >> 16), (u8)(n >> 8), (u8)n};
+        t.expect_eq(head(a, wa.size()), wa, "array form");
+        size_t mn = m.map.size();
+        std::vector<u8> wm = mn < 16 ? std::vector<u8>{(u8)(0x80 | mn)} : std::vector<u8>{0xde, (u8)(mn >> 8), (u8)mn};
+        t.expect_eq(head(m, wm.size()), wm, "map form");
+        t.expect_eq(mp_encode(mp_decode(mp_encode(a))), mp_encode(a), "array round trip");
+        t.expect_eq(mp_encode(mp_decode(mp_encode(m))), mp_encode(m), "map round trip");
+    }
+    for (const Case& c : cases) t.expect_eq(mp_encode(mp_decode(mp_encode(c.v))), mp_encode(c.v), "round trip");
+    // decoding: float32 widens, integer keys read in decimal, the pointer advances past one value
+    const std::vector<u8> mixed = {0x82, 0x05, 0xa1, 'x', 0xd0, 0x85, 0xca, 0x3f, 0xc0, 0x00, 0x00, 0x2a};
+    const u8* p = mixed.data();
+    Value d = mp_decode(p, mixed.data() + mixed.size());
+    t.expect_eq((int)d.type, (int)Value::Map, "map");
+    t.expect_eq(d.find("5") ? d.find("5")->s : std::string(), std::string("x"), "integer key");
+    t.expect_eq(d.find("-123") ? d.find("-123")->f : 0.0, 1.5, "float32 value under a negative key");
+    t.expect_eq((size_t)(p - mixed.data()), mixed.size() - 1, "advanced past the map");
+    t.expect_eq(mp_decode(p, mixed.data() + mixed.size()).u, (uint64_t)42, "the next value");
+    // malformed: Nil, the pointer left alone
+    const std::vector<u8> cut = {0x92, 0x01};
+    const u8* q = cut.data();
+    t.expect_eq((int)mp_decode(q, cut.data() + cut.size()).type, (int)Value::Nil, "truncated: Nil");
+    t.expect_eq(q, cut.data(), "truncated: not advanced");
+    t.expect_eq((int)mp_decode(std::vector<u8>{0xc1}).type, (int)Value::Nil, "reserved byte: Nil");
 }
 
 }  // namespace

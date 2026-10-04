@@ -1,4 +1,4 @@
-// soa-server's minimal HTTP/1.1 server pieces (http.h). Our code.
+// soa-server's HTTP requests, responses and router (http.h). Our code.
 #include "http.h"
 
 #include <fcntl.h>
@@ -43,65 +43,6 @@ void HttpRouter::handle(const HttpRequest& req, HttpResponse& resp) const {
     resp.body = "not found\n";
 }
 
-namespace {
-std::string trim(std::string s) {
-    while (!s.empty() && (s.back() == ' ' || s.back() == '\t' || s.back() == '\r')) s.pop_back();
-    size_t i = 0;
-    while (i < s.size() && (s[i] == ' ' || s[i] == '\t')) i++;
-    return s.substr(i);
-}
-constexpr size_t kMaxHeader = 64 * 1024;
-constexpr size_t kMaxBody = 16 * 1024 * 1024;
-}  // namespace
-
-HttpParser::Result HttpParser::next(HttpRequest* out) {
-    size_t end = buf_.find("\r\n\r\n");
-    size_t sep = 4;
-    if (end == std::string::npos) {
-        end = buf_.find("\n\n");
-        sep = 2;
-    }
-    if (end == std::string::npos) return buf_.size() > kMaxHeader ? kBad : kNeedMore;
-    HttpRequest r;
-    size_t pos = 0;
-    bool first = true;
-    while (pos < end) {
-        size_t nl = buf_.find('\n', pos);
-        if (nl == std::string::npos || nl > end) nl = end;
-        std::string line = trim(buf_.substr(pos, nl - pos));
-        pos = nl + 1;
-        if (first) {
-            first = false;
-            size_t a = line.find(' '), b = line.rfind(' ');
-            if (a == std::string::npos || b == a) return kBad;
-            r.method = line.substr(0, a);
-            r.target = line.substr(a + 1, b - a - 1);
-            r.version = line.substr(b + 1);
-            if (r.version.rfind("HTTP/", 0) != 0) return kBad;
-            continue;
-        }
-        if (line.empty()) continue;
-        size_t c = line.find(':');
-        if (c == std::string::npos) return kBad;
-        r.headers.emplace_back(trim(line.substr(0, c)), trim(line.substr(c + 1)));
-    }
-    if (first) return kBad;
-    size_t body_len = 0;
-    if (const std::string* cl = r.header("Content-Length")) {
-        char* e = nullptr;
-        unsigned long long v = strtoull(cl->c_str(), &e, 10);
-        if (!e || *e || v > kMaxBody) return kBad;
-        body_len = (size_t)v;
-    }
-    if (const std::string* te = r.header("Transfer-Encoding"); te && strcasecmp(te->c_str(), "identity")) return kBad;
-    size_t start = end + sep;
-    if (buf_.size() < start + body_len) return kNeedMore;
-    std::string body = buf_.substr(start, body_len);
-    buf_.erase(0, start + body_len);
-    *out = make_request(std::move(r.method), std::move(r.target), std::move(r.headers), std::move(body), std::move(r.version));
-    return kRequest;
-}
-
 HttpRequest make_request(std::string method, std::string target, std::vector<std::pair<std::string, std::string>> headers, std::string body,
                          std::string version) {
     HttpRequest r;
@@ -120,58 +61,6 @@ HttpRequest make_request(std::string method, std::string target, std::vector<std
     r.path = url_decode(path);
     r.query = q == std::string::npos ? "" : r.target.substr(q + 1);
     return r;
-}
-
-bool HttpResponse::materialize() {
-    if (!stream) return true;
-    std::shared_ptr<HttpBodyStream> s = std::move(stream);
-    stream.reset();
-    uint64_t n = s->size();
-    body.clear();
-    body.reserve((size_t)n);
-    char buf[1 << 16];
-    while (body.size() < n) {
-        int64_t k = s->read(buf, (size_t)std::min<uint64_t>(sizeof buf, n - body.size()));
-        if (k <= 0) {
-            body.clear();
-            return false;
-        }
-        body.append(buf, (size_t)k);
-    }
-    return true;
-}
-
-const char* status_text(int status) {
-    switch (status) {
-        case 200:
-            return "OK";
-        case 204:
-            return "No Content";
-        case 400:
-            return "Bad Request";
-        case 403:
-            return "Forbidden";
-        case 404:
-            return "Not Found";
-        case 405:
-            return "Method Not Allowed";
-        case 500:
-            return "Internal Server Error";
-    }
-    return "Status";
-}
-
-std::string serialize_response(const HttpResponse& r, bool keep_alive, bool head) {
-    std::string s = "HTTP/1.1 " + std::to_string(r.status) + " " + status_text(r.status) + "\r\n";
-    for (auto& [k, v] : r.headers) {
-        if (!strcasecmp(k.c_str(), "Content-Length") || !strcasecmp(k.c_str(), "Connection")) continue;
-        s += k + ": " + v + "\r\n";
-    }
-    s += "Content-Length: " + std::to_string(r.body.size()) + "\r\n";
-    s += keep_alive ? "Connection: keep-alive\r\n" : "Connection: close\r\n";
-    s += "\r\n";
-    if (!head) s += r.body;
-    return s;
 }
 
 std::string url_decode(const std::string& s) {

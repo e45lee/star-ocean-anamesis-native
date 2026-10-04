@@ -1,10 +1,9 @@
 #pragma once
-// A small MessagePack value tree and encoder for the local server's responses (port code, not
-// guest behaviour). Maps keep insertion order; the game's ASON reader doesn't care about order.
-#include <algorithm>
+// A small MessagePack value tree for the local server's responses (port code, not guest
+// behaviour), encoded and decoded with msgpack-cxx (core/msgpack.cpp). Maps keep insertion order;
+// the game's ASON reader doesn't care about order.
 #include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -80,206 +79,22 @@ struct Value {
     }
 };
 
-// Appends the low `n` bytes of `v`, big-endian.
-inline void mp_put_be(std::vector<uint8_t>& o, uint64_t v, int n) {
-    for (int k = n - 1; k >= 0; k--) o.push_back((uint8_t)(v >> (8 * k)));
-}
-
-// Appends `v`'s MessagePack encoding to `o`.
-inline void mp_encode(const Value& v, std::vector<uint8_t>& o) {
-    switch (v.type) {
-        case Value::Nil:
-            o.push_back(0xc0);
-            break;
-        case Value::Bool:
-            o.push_back(v.b ? 0xc3 : 0xc2);
-            break;
-        case Value::UInt:
-            if (v.u < 0x80) o.push_back((uint8_t)v.u);
-            else if (v.u <= 0xff) {
-                o.push_back(0xcc);
-                mp_put_be(o, v.u, 1);
-            } else if (v.u <= 0xffff) {
-                o.push_back(0xcd);
-                mp_put_be(o, v.u, 2);
-            } else if (v.u <= 0xffffffffull) {
-                o.push_back(0xce);
-                mp_put_be(o, v.u, 4);
-            } else {
-                o.push_back(0xcf);
-                mp_put_be(o, v.u, 8);
-            }
-            break;
-        case Value::Int:
-            if (v.i >= -32) o.push_back((uint8_t)(int8_t)v.i);
-            else if (v.i >= -128) {
-                o.push_back(0xd0);
-                mp_put_be(o, (uint64_t)v.i, 1);
-            } else if (v.i >= -32768) {
-                o.push_back(0xd1);
-                mp_put_be(o, (uint64_t)v.i, 2);
-            } else if (v.i >= -2147483648ll) {
-                o.push_back(0xd2);
-                mp_put_be(o, (uint64_t)v.i, 4);
-            } else {
-                o.push_back(0xd3);
-                mp_put_be(o, (uint64_t)v.i, 8);
-            }
-            break;
-        case Value::Float: {
-        // float64 (as python msgpack writes the generator's floats)
-            o.push_back(0xcb);
-            uint64_t bits;
-            static_assert(sizeof(double) == 8);
-            __builtin_memcpy(&bits, &v.f, 8);
-            mp_put_be(o, bits, 8);
-            break;
-        }
-        case Value::Str: {
-            size_t n = v.s.size();
-            if (n < 32) o.push_back((uint8_t)(0xa0 | n));
-            else if (n <= 0xff) {
-                o.push_back(0xd9);
-                mp_put_be(o, n, 1);
-            } else if (n <= 0xffff) {
-                o.push_back(0xda);
-                mp_put_be(o, n, 2);
-            } else {
-                o.push_back(0xdb);
-                mp_put_be(o, n, 4);
-            }
-            o.insert(o.end(), v.s.begin(), v.s.end());
-            break;
-        }
-        case Value::Arr: {
-            size_t n = v.arr.size();
-            if (n < 16) o.push_back((uint8_t)(0x90 | n));
-            else if (n <= 0xffff) {
-                o.push_back(0xdc);
-                mp_put_be(o, n, 2);
-            } else {
-                o.push_back(0xdd);
-                mp_put_be(o, n, 4);
-            }
-            for (auto& e : v.arr) mp_encode(e, o);
-            break;
-        }
-        case Value::Map: {
-            size_t n = v.map.size();
-            if (n < 16) o.push_back((uint8_t)(0x80 | n));
-            else if (n <= 0xffff) {
-                o.push_back(0xde);
-                mp_put_be(o, n, 2);
-            } else {
-                o.push_back(0xdf);
-                mp_put_be(o, n, 4);
-            }
-            for (auto& e : v.map) {
-                mp_encode(Value(e.first), o);
-                mp_encode(e.second, o);
-            }
-            break;
-        }
-    }
-}
+// Appends `v`'s MessagePack encoding to `o` (msgpack-cxx's packer, core/msgpack.cpp): the smallest
+// form of each value, as the server always wrote it: positive ints (`UInt`) as fixint / uint8..64,
+// negative ones (`Int`) as negative fixint / int8..64, floats as float64, strings as fixstr / str8 /
+// str16 / str32, arrays and maps as fix / 16 / 32. The replay corpora pin the bytes.
+void mp_encode(const Value& v, std::vector<uint8_t>& o);
 
 // `v`'s MessagePack encoding.
-inline std::vector<uint8_t> mp_encode(const Value& v) {
-    std::vector<uint8_t> o;
-    mp_encode(v, o);
-    return o;
-}
+std::vector<uint8_t> mp_encode(const Value& v);
 
-// Decodes one MessagePack value at `p` (advanced past it); Nil on malformed input. Used by server
-// modules that re-read a core response (e.g. api/sphere211/sphere211.cpp wraps the core MissionStart).
-inline uint64_t mp_get_be(const uint8_t*& p, const uint8_t* e, int n) {
-    uint64_t v = 0;
-    for (int k = 0; k < n && p < e; k++) v = (v << 8) | *p++;
-    return v;
-}
-inline Value mp_decode(const uint8_t*& p, const uint8_t* e) {
-    if (p >= e) return Value();
-    uint8_t t = *p++;
-    auto str = [&](size_t n) {
-        Value v(std::string((const char*)p, (size_t)std::min<ptrdiff_t>(n, e - p)));
-        p += std::min<ptrdiff_t>(n, e - p);
-        return v;
-    };
-    auto arr = [&](size_t n) {
-        Value v = Value::array();
-        for (size_t k = 0; k < n && p < e; k++) v.push(mp_decode(p, e));
-        return v;
-    };
-    auto map = [&](size_t n) {
-        Value v = Value::object();
-        for (size_t k = 0; k < n && p < e; k++) {
-            Value key = mp_decode(p, e);
-            std::string ks = key.type == Value::Str ? key.s : std::to_string(key.type == Value::Int ? key.i : (int64_t)key.u);
-            v.map.emplace_back(ks, mp_decode(p, e));
-        }
-        return v;
-    };
-    if (t < 0x80) return Value((unsigned)t);
-    if (t >= 0xe0) return Value((int)(int8_t)t);
-    if ((t & 0xe0) == 0xa0) return str(t & 0x1f);
-    if ((t & 0xf0) == 0x90) return arr(t & 0x0f);
-    if ((t & 0xf0) == 0x80) return map(t & 0x0f);
-    switch (t) {
-        case 0xc0:
-            return Value();
-        case 0xc2:
-            return Value(false);
-        case 0xc3:
-            return Value(true);
-        case 0xcc:
-            return Value((unsigned long long)mp_get_be(p, e, 1));
-        case 0xcd:
-            return Value((unsigned long long)mp_get_be(p, e, 2));
-        case 0xce:
-            return Value((unsigned long long)mp_get_be(p, e, 4));
-        case 0xcf:
-            return Value((unsigned long long)mp_get_be(p, e, 8));
-        case 0xd0:
-            return Value((int64_t)(int8_t)mp_get_be(p, e, 1));
-        case 0xd1:
-            return Value((int64_t)(int16_t)mp_get_be(p, e, 2));
-        case 0xd2:
-            return Value((int64_t)(int32_t)mp_get_be(p, e, 4));
-        case 0xd3:
-            return Value((int64_t)mp_get_be(p, e, 8));
-        case 0xca: {
-            uint32_t b = (uint32_t)mp_get_be(p, e, 4);
-            float f;
-            __builtin_memcpy(&f, &b, 4);
-            return Value((double)f);
-        }
-        case 0xcb: {
-            uint64_t b = mp_get_be(p, e, 8);
-            double d;
-            __builtin_memcpy(&d, &b, 8);
-            return Value(d);
-        }
-        case 0xd9:
-            return str(mp_get_be(p, e, 1));
-        case 0xda:
-            return str(mp_get_be(p, e, 2));
-        case 0xdb:
-            return str(mp_get_be(p, e, 4));
-        case 0xdc:
-            return arr(mp_get_be(p, e, 2));
-        case 0xdd:
-            return arr(mp_get_be(p, e, 4));
-        case 0xde:
-            return map(mp_get_be(p, e, 2));
-        case 0xdf:
-            return map(mp_get_be(p, e, 4));
-        default:
-            return Value();
-    }
-}
-inline Value mp_decode(const std::vector<uint8_t>& b) {
-    const uint8_t* p = b.data();
-    return mp_decode(p, b.data() + b.size());
-}
+// Decodes one MessagePack value at `p` (advanced past it) with msgpack-cxx; Nil (and `p` left
+// alone) on malformed or truncated input. Map keys become strings (an integer key its decimal
+// spelling); bin / ext values, which the server never writes, decode as Nil. Used by server modules
+// that re-read a core response (e.g. api/sphere211/sphere211.cpp wraps the core MissionStart).
+Value mp_decode(const uint8_t*& p, const uint8_t* e);
+
+// The one MessagePack value in `b` (Nil when malformed).
+Value mp_decode(const std::vector<uint8_t>& b);
 
 }  // namespace soa::server

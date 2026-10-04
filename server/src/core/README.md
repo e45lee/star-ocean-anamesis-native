@@ -21,6 +21,7 @@ The library's core: the server object, the request lifecycle, the module registr
 | `assets.{h,cpp}` | the one asset gate: `available(rel)` (the tests' one override, else everything without an asset source, else `found`), `found(rel)` (the host's `AssetIndex` under builtin_data/ and assetpack/ with the quality subdirectories), `set_override` (= `events::set_asset_check` = `sphere211::set_asset_check`) and `generation()` (verdict caches start over when the override changes) |
 | `clock.cpp` | the server clock (`clock_now`, `set_server_clock`, the test seam `set_clock_source`) and the event calendar (`event_now`: today's date replayed onto the service years; docs/server-rules.md#conventions) |
 | `log.h` | the `LOG*` macros the library logs with (the sink is `soaserver/log.h`) |
+| `msgpack.cpp` | the MessagePack codec of `soaserver/msgpack.h` (`mp_encode` / `mp_decode`) over msgpack-cxx: the encoder's forms are the ones the server always wrote (`server_tests.cpp` `server/msgpack-forms` pins them) |
 | `battle_log.cpp` | the ASON battle log MissionEnd and co. carry (`soaserver/battle_log.h`) |
 | `support.cpp` | the configuration (`config()`), the log sink, the asset index, CHash32. Split by R6 (config, log, asset index, chash32) |
 

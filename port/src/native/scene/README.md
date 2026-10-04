@@ -18,7 +18,7 @@ come from render_layout.h). Layouts are proven by the `scene/layout-*` selftests
 before the frame's jobs are dispatched), compared with the guest's own getters and the decompiles'
 invariants. `soa --selftest scene/` runs them at the title (5/5: 9 painting candidates, 6 AofObjects,
 the Cocos UI's 5 primitive and 1 text renderers; no bones); `port/scripts/selftest_live.sh SOA OUT TMP
-scene/ --at home` on the home screen (4/4 before layout-direct-aof was added: 27 candidates, 23
+scene/ --at home` on the home screen (5/5: 27 candidates, 23
 AofObjects, 30 render states, 19 skinned AofObjects, 157 bones of which 93 JointObjects).
 
 | Class (guest) | Guest size | Found from | Proven by (scene/layout-...) | Status |

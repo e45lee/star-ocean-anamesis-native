@@ -1,7 +1,7 @@
 #pragma once
 // The entry flow (port code, not guest behaviour): Login / SimpleLogin, CreatePlayer, the
 // tutorial, the UI tutorials seen, the terms version, the player's name, the server time
-// (api/entry/entry.cpp, api/entry/README.md; docs/server-rules.md "Entry flow").
+// (api/entry/entry.cpp, api/entry/README.md; docs/server-rules.md#entry).
 #include <vector>
 
 #include "soaserver/ext.h"

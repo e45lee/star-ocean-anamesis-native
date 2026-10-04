@@ -15,11 +15,16 @@ The manifest counts, in the comments of every server/ C++ file (string literals 
   agents       "agent <name>" history notes in code;
   links        the docs/server-rules.md / docs/api.md sections quoted in comments ("Title") or
                linked by anchor (#anchor), and whether each resolves to a heading;
-  log lines    the format strings of tools/server_log_patterns.txt still present in the sources.
+  log lines    the format strings of tools/server_log_patterns.txt still present in the sources;
+  rules doc    the evidence of docs/server-rules.md and its history (docs/history/server-rules-history.md,
+               R20): the labels, client addresses / symbols / offsets, master tables and `code` spans
+               of the text, and every table row that carries a (c) or (d) label.
 
 --against REV is RG10's evidence check: it exits 1 when, compared with REV, a label count fell, an
 address appeared or went (outside net/ninja), a symbol / offset / table went missing, the agent
-count grew, a log-line pattern went missing or a link stopped resolving. Moved files are fine:
+count grew, a log-line pattern went missing, a link stopped resolving, fewer docs/server-rules.md
+links were used, or the rules doc (with its history) lost a label, a client address / symbol /
+offset, a master table, a `code` span or a (c) / (d) row. Moved files and sections are fine:
 the sets are compared over the whole tree. A commit that deletes code may lose labels; its message
 then lists them (the check still reports them).
 """
@@ -41,6 +46,8 @@ SYM_RE = re.compile(r"\b([A-Z]\w+::~?\w+)")
 OFF_RE = re.compile(r"\+0x[0-9a-fA-F]+\b")
 TABLE_RE = re.compile(r"\bmaster_[a-z0-9_]+\b")
 AGENT_RE = re.compile(r"\bagents? `?([a-z0-9][a-z0-9-]*)`?")
+RULES_DOCS = ("docs/server-rules.md", "docs/history/server-rules-history.md")
+CODE_SPAN_RE = re.compile(r"`([^`\n]+)`")
 QUOTED_LINK_RE = re.compile(r'docs/(server-rules|api)\.md[,:]?\s*(?:section\s+)?"([^"]+)"')
 ANCHOR_LINK_RE = re.compile(r"docs/(server-rules|api)\.md#([A-Za-z0-9_-]+)")
 
@@ -116,7 +123,7 @@ def headings(root, doc):
     hs = set()
     if not os.path.exists(p):
         return hs, set()
-    anchors = set()
+    anchors, explicit = set(), set()
     in_code = False
     for ln in open(p, encoding="utf-8"):
         if ln.startswith("```"):
@@ -128,8 +135,9 @@ def headings(root, doc):
             hs.add(m.group(1).strip())
             anchors.add(slug(m.group(1)))
         for a in re.findall(r'<a (?:id|name)="([^"]+)"', ln):
-            anchors.add(a)
-    return hs, anchors
+            explicit.add(a)
+    # a doc with explicit anchors (docs/server-rules.md since R20) is linked by those only
+    return hs, explicit or anchors
 
 
 def link_ok(kind, target, heads):
@@ -143,6 +151,29 @@ def link_ok(kind, target, heads):
         if h.startswith(t) or re.sub(r"^[\d.]+\s+", "", h).startswith(t):
             return True
     return False
+
+
+def rules_doc(root):
+    """The evidence of the rules doc and its history (R20): what a re-heading must keep. Fenced code
+    blocks count too; a table row counts when it carries a (c) or (d) label (whitespace-normalized)."""
+    d = {"labels": collections.Counter(), "addresses": set(), "symbols": set(), "offsets": collections.Counter(),
+         "tables": set(), "spans": set(), "cd_rows": set()}
+    for rel in RULES_DOCS:
+        p = os.path.join(root, rel)
+        if not os.path.exists(p):
+            continue
+        for ln in open(p, encoding="utf-8"):
+            for g in LABEL_RE.findall(ln):
+                d["labels"][next(x for x in g if x)] += 1
+            d["addresses"].update(ADDR_RE.findall(ln))
+            d["symbols"].update(SYM_RE.findall(ln))
+            d["offsets"].update(OFF_RE.findall(ln))
+            d["tables"].update(TABLE_RE.findall(ln))
+            d["spans"].update(CODE_SPAN_RE.findall(ln))
+            row = ln.strip()
+            if row.startswith("|") and re.search(r"\([cd]\)", row):
+                d["cd_rows"].add(re.sub(r"\s+", " ", row))
+    return d
 
 
 def manifest(root):
@@ -208,11 +239,13 @@ def manifest(root):
             continue
         frag = ln.split("\t", 1)[0]
         m["log_lines"][frag] = frag in code
+    m["rules_doc"] = rules_doc(root)
     return m
 
 
 def summary(m):
     lab = m["labels"]
+    rd = m["rules_doc"]
     broken = [k for k, v in m["links"].items() if not v["ok"]]
     return [
         "files %d" % len(m["files"]),
@@ -225,6 +258,11 @@ def summary(m):
         "agent mentions %d" % m["agents"],
         "doc links %d uses, %d distinct, %d broken%s" % (sum(len(v["uses"]) for v in m["links"].values()), len(m["links"]), len(broken),
                                                         (": " + "; ".join(broken)) if broken else ""),
+        "server-rules links quoted %d (anchors only since R20: docs/server-rules.md#anchor)" % sum(
+            len(v["uses"]) for k, v in m["links"].items() if k.startswith('docs/server-rules.md "')),
+        "rules doc labels (a) %d (b) %d (c) %d (d) %d; %d symbols, %d addresses, %d offsets, %d tables, %d code spans, %d (c)/(d) rows" % (
+            rd["labels"]["a"], rd["labels"]["b"], rd["labels"]["c"], rd["labels"]["d"], len(rd["symbols"]), len(rd["addresses"]),
+            sum(rd["offsets"].values()), len(rd["tables"]), len(rd["spans"]), len(rd["cd_rows"])),
         "log lines %d/%d present%s" % (sum(m["log_lines"].values()), len(m["log_lines"]),
                                        "" if all(m["log_lines"].values()) else " (missing: %s)" % "; ".join(k for k, v in m["log_lines"].items() if not v)),
     ]
@@ -233,6 +271,9 @@ def summary(m):
 def at_rev(rev):
     d = tempfile.mkdtemp(prefix="server-evidence.")
     paths = ["server", "docs/server-rules.md", "docs/api.md"]
+    for opt in ("docs/history/server-rules-history.md",):
+        if subprocess.run(["git", "cat-file", "-e", "%s:%s" % (rev, opt)], cwd=REPO, capture_output=True).returncode == 0:
+            paths.append(opt)
     if subprocess.run(["git", "cat-file", "-e", "%s:tools/server_log_patterns.txt" % rev], cwd=REPO, capture_output=True).returncode == 0:
         paths.append("tools/server_log_patterns.txt")
     a = subprocess.run(["git", "archive", rev] + paths, cwd=REPO, capture_output=True, check=True)
@@ -267,6 +308,21 @@ def against(old, new):
     for k, v in new["links"].items():
         if not v["ok"] and old["links"].get(k, {}).get("ok", False):
             probs.append("link broken: %s" % k)
+    uses = lambda m: sum(len(v["uses"]) for k, v in m["links"].items() if k.startswith("docs/server-rules.md"))
+    if uses(new) < uses(old):
+        probs.append("docs/server-rules.md links used: %d -> %d" % (uses(old), uses(new)))
+    o, n = old["rules_doc"], new["rules_doc"]
+    for lab in "abcd":
+        if n["labels"][lab] < o["labels"][lab]:
+            probs.append("rules doc labels (%s): %d -> %d" % (lab, o["labels"][lab], n["labels"][lab]))
+    for key, what in (("addresses", "client addresses"), ("symbols", "client symbols"), ("tables", "master tables"),
+                      ("spans", "code spans"), ("cd_rows", "(c)/(d) rows")):
+        gone = sorted(o[key] - n[key])
+        if gone:
+            probs.append("rules doc %s gone: %s" % (what, "; ".join(gone)))
+    lost = o["offsets"] - n["offsets"]
+    if lost:
+        probs.append("rules doc +0x offsets gone: %s" % ", ".join("%s x%d" % kv for kv in sorted(lost.items())))
     return probs
 
 
@@ -279,7 +335,7 @@ def main():
     a = ap.parse_args()
     m = manifest(os.path.abspath(a.root))
     if a.json:
-        print(json.dumps(m, indent=1, sort_keys=True, default=dict))
+        print(json.dumps(m, indent=1, sort_keys=True, default=lambda x: sorted(x) if isinstance(x, set) else dict(x)))
         return 0
     if not a.against:
         for ln in summary(m):

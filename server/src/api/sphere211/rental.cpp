@@ -1,7 +1,7 @@
 // Sphere 211: the rental slot (the party's 4th) and the Sphere 211 rental bonus
 // (api/sphere211/README.md; declared in dive.h). Port code, not guest behaviour; every rule carries
 // its source label, (a) master data, (b) client-side evidence, (c) outside knowledge,
-// (d) assumption. Rules in docs/server-rules.md "Sphere 211".
+// (d) assumption. Rules in docs/server-rules.md#sphere211.
 #include <string>
 #include <tuple>
 #include <vector>

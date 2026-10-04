@@ -17,7 +17,7 @@ namespace {
 
 using ext::Row;
 
-// Player.home_pc_id is the home character's uid (docs/server-rules.md "Home character"): 3.7.0's
+// Player.home_pc_id is the home character's uid (docs/server-rules.md#home-character): 3.7.0's
 // CHome::GetAdjutant finds it among the owned characters by CPersonInfo uid and otherwise shows
 // party 1's first member, so a role id would show the party leader after a restart. UpdateHome
 // to a character outside party 1 answers it, and the next player load (a restart's Login) too.

@@ -164,7 +164,9 @@ def api_doc_entries():
 
 
 def rules_sections():
-    """[(heading, anchor, text)] of docs/server-rules.md (## to ####)."""
+    """[(heading, anchor, text)] of docs/server-rules.md (## to ####). The anchor is the section's
+    explicit one (`<a id="..."></a>` on the line above, R20), else GitHub's slug. The generated
+    register is left out (it repeats the domains' tables)."""
     secs, cur, buf, seen = [], None, [], collections.Counter()
 
     def anchor(t):  # GitHub's: a repeated heading gets -1, -2, ...
@@ -173,7 +175,7 @@ def rules_sections():
         seen[a] += 1
         return a if n == 0 else "%s-%d" % (a, n)
 
-    in_code = False
+    in_code, prev = False, ""
     for ln in read(os.path.join(REPO, "docs/server-rules.md")):
         if ln.startswith("```"):
             in_code = not in_code
@@ -181,12 +183,16 @@ def rules_sections():
         if m:
             if cur:
                 secs.append((cur, cur_a, "\n".join(buf)))
-            cur, cur_a, buf = m.group(2), anchor(m.group(2)), []
-        else:
+            ex = re.match(r'<a id="([^"]+)"></a>\s*$', prev)
+            slugged = anchor(m.group(2))
+            cur, cur_a, buf = m.group(2), ex.group(1) if ex else slugged, []
+        elif not re.match(r'<a id="[^"]+"></a>\s*$', ln):
             buf.append(ln)
+        if ln.strip():
+            prev = ln
     if cur:
         secs.append((cur, cur_a, "\n".join(buf)))
-    return secs
+    return [x for x in secs if x[1] != "register"]
 
 
 def generate(server):
@@ -273,7 +279,7 @@ def generate(server):
     o.append("")
     o.append("## 3. Rules sections and the code that links them")
     o.append("")
-    o.append("`docs/server-rules.md` sections quoted (`docs/server-rules.md \"Title\"`) or linked (`#anchor`) in `server/` comments.")
+    o.append("`docs/server-rules.md` sections linked (`docs/server-rules.md#anchor`) in `server/` comments.")
     o.append("")
     links = collections.defaultdict(set)
     for d, _, fs in os.walk(os.path.join(REPO, "server")):

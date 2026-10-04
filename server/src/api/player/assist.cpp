@@ -1,6 +1,6 @@
 // The assist pairs: SetAssist (README.md). Port code, not guest behaviour; every rule carries its
 // source label, (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption
-// (docs/server-rules.md "Assist").
+// (docs/server-rules.md#assist).
 #include "api/player/player_info.h"  // base_data
 #include "api/player/roster.h"       // owns_character
 #include "core/log.h"
@@ -14,7 +14,7 @@ using ext::body;
 namespace {
 
 // SetAssist(u64 character_uid, u64 assist_uid) -> SetAssistRes   fid 741e0072
-// API: docs/api.md#setassist   Rules: docs/server-rules.md "Assist"
+// API: docs/api.md#setassist   Rules: docs/server-rules.md#assist
 //
 // Gives an owned character an assist character, or takes it off with assist 0 (the equipment
 // screen's assist icon, CAssistCharacterList::Progress).

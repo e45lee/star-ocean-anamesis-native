@@ -1,6 +1,6 @@
 // The shops: the item shop (ItemShopList, ExItemShop; master_item_shop) and the exchange shops
 // (ExshopExchangeList, ExshopExchange; master_exchange_shop*). Port code, not guest behaviour.
-// Rules in docs/server-rules.md "9. Shops", "Shops" and "Exchange shops on the event calendar";
+// Rules in docs/server-rules.md#shops, docs/server-rules.md#shops-modules and docs/server-rules.md#event-exchange-shops;
 // labels: (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include <ctime>
 #include <tuple>
@@ -38,7 +38,7 @@ struct ExshopExchangeArgs {
 namespace {
 using namespace ext;
 
-// Exchange shops on the event calendar (docs/server-rules.md "Exchange shops on the event calendar"):
+// Exchange shops on the event calendar (docs/server-rules.md#event-exchange-shops):
 // (a) master_exchange_shop opened_at / closed_at; (d) a shop is open when the clock is inside its
 // window, or inside it moved by the calendar's whole years (events::client_years, the shift the
 // event module applies to the event tables): the event shops (e.g. an event's coin exchange) open
@@ -109,7 +109,7 @@ Value item_shop_list(Ctx& ctx) {
 }
 
 // ItemShopList() -> ItemShopListRes                                     fid b04c111c
-// API: docs/api.md#itemshoplist   Rules: docs/server-rules.md#9-shops, docs/server-rules.md#shops
+// API: docs/api.md#itemshoplist   Rules: docs/server-rules.md#shops, docs/server-rules.md#shops-modules
 //
 // The item shop's rows and the player's counts (b: CShop::ProgressItemShop sends it; docs/api.md Callers).
 //   (b) CItemShop::CreateItemSetList lists only the rows in ItemShopInfoList; (a) every row open
@@ -146,7 +146,7 @@ Refusal buy_item_shop_row(Ctx& ctx, const Row& shop_row, ServerTime t) {
 }
 
 // ExItemShop(u32 master_item_shop_id) -> ExItemShopRes                  fid 33d09fb7
-// API: docs/api.md#exitemshop   Rules: docs/server-rules.md#9-shops, docs/server-rules.md#shops
+// API: docs/api.md#exitemshop   Rules: docs/server-rules.md#shops, docs/server-rules.md#shops-modules
 //
 // Buys one item-shop row (b: code near CItemShop sends it; docs/api.md Callers).
 //   (a) the row open at the clock, else kExchangeExpired (17001); (b)+(d) limit_count per period
@@ -209,7 +209,7 @@ Value exchange_counts(Ctx& ctx) {
 }
 
 // ExshopExchangeList() -> ExshopExchangeListRes                         fid 7329eff2
-// API: docs/api.md#exshopexchangelist   Rules: docs/server-rules.md#9-shops, docs/server-rules.md#shops
+// API: docs/api.md#exshopexchangelist   Rules: docs/server-rules.md#shops, docs/server-rules.md#shops-modules
 //
 // The exchange shops open and the player's counts (b: CShop::Progress sends it; docs/api.md Callers).
 //   (b) CShop lists only the shops keyed in ExchangeShopExCount (exchange_counts).
@@ -261,7 +261,7 @@ Value exchange_data(Ctx& ctx, const Row& contents_row, u32 count, u32 free_coins
 
 // ExshopExchange(u32 master_exchange_shop_contents_id, u32 num) -> ExshopExchangeRes
 //                                                                       fid 70d0f3ce
-// API: docs/api.md#exshopexchange   Rules: docs/server-rules.md#9-shops, docs/server-rules.md#shops
+// API: docs/api.md#exshopexchange   Rules: docs/server-rules.md#shops, docs/server-rules.md#shops-modules
 //
 // Exchanges `num` times one row of an exchange shop.
 //   (a) the shop's window and the row's opened_at (or the event calendar's, d), else
@@ -330,7 +330,7 @@ void client_master_shops(Sql& db, ServerTime now, EventTime ev) {
 }
 
 // OnPlayerLoad hook (Login, GetPlayer, NoLoginStart's full player state).
-// Rules: docs/server-rules.md#shops
+// Rules: docs/server-rules.md#shops-modules
 //   (b) ItemShopInfoList and ExchangeShopExCount are owned state the client keeps; the full-state
 //       responses carry them (d: which responses).
 // Adds: ItemShopInfoList, ExchangeShopExCount.

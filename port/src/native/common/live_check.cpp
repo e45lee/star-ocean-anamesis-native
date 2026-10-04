@@ -1081,8 +1081,12 @@ void check(Cpu& c, int i) {
                         LOGI(fam.log_tag.c_str(), "    buf x%d at %llx: %s)", bf.reg, (unsigned long long)k.x[bf.reg], h.c_str());
                     }
                 }
-            auto replay = [&](Cpu& cc) {
-                u64 at = cc.pc() - 4;
+            // `stub_at`: the address of the stub that answered (each stub name is answered with its
+            // own). Not the CPU's pc - 4: that is the stub only for a call through the JIT (its
+            // SVC); a direct native->native call (a2c_gcall / guest_call's hooked-function path,
+            // e.g. a native the original reaches calling a recorded callee) leaves pc at its caller.
+            auto replay = [&](Cpu& cc, u64 stub_at) {
+                u64 at = stub_at;
                 char b[256];
                 if (fam.dump)
                     LOGI(fam.log_tag.c_str(), "  hit %zu %llx x0 %llx x1 %llx x2 %llx x8 %llx sp %llx", next, (unsigned long long)(at - main_lib()->base), (unsigned long long)cc.x(0),
@@ -1149,9 +1153,15 @@ void check(Cpu& c, int i) {
                 cc.set_x(1, k.rx1);
                 for (int a = 0; a < 4; a++) cc.set_v(a, to_v128(k.rv[a]));
             };
-            for (const char* n : names) ss.answer(n, replay);
+            for (size_t q = 0; q < names.size(); q++) {
+                u64 tgt = rec.calls[q].target;
+                ss.answer(names[q], [&replay, tgt](Cpu& cc) { replay(cc, tgt); });
+            }
             if (alt)
-                for (const char* n : alt->names) ss.answer(n, replay);
+                for (size_t q = 0; q < alt->names.size(); q++) {
+                    u64 tgt = alt->at[q];
+                    ss.answer(alt->names[q], [&replay, tgt](Cpu& cc) { replay(cc, tgt); });
+                }
             // (also where the call went in: the JIT may have compiled a lone B together with its
             // target's first instructions, as one block keyed by the B)
             for (auto& k : rec.calls) drop_stale_code(k.target), drop_stale_code(k.via);

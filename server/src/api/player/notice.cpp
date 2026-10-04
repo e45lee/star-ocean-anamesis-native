@@ -1,6 +1,6 @@
 // The notice board's page (お知らせ; api/player/README.md). Port code, not guest behaviour; every
 // rule carries its source label, (a) master data, (b) client-side evidence, (c) outside knowledge,
-// (d) assumption. Rules in docs/server-rules.md "Notice board page".
+// (d) assumption. Rules in docs/server-rules.md#notice-board.
 //
 // (b) The notice board (CNoticeBoard, the first popup 3.7.0's login arms; also the home side
 // menu's お知らせ) opens CWebView::OpenView(1). Its URL comes from WebViewUtility::GetWebInfo(1),
@@ -42,7 +42,7 @@ constexpr int kPageColumns = 48;
 constexpr int kMaxListedAreas = 12;
 
 // OnPlayerLoad: WebView                                   on Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart
-// Rules: docs/server-rules.md "Notice board page"
+// Rules: docs/server-rules.md#notice-board
 //
 //   (b) The notice board's URL is the value of key "information" in WebView (above).
 //   (b) `WebView` is a state key (docs/api.md "Player state": not reset between responses), so the

@@ -1,5 +1,5 @@
 // The home character: UpdateHome (api/player/home.h). Port code, not guest behaviour; every
-// rule carries its source label (docs/server-rules.md "Home character").
+// rule carries its source label (docs/server-rules.md#home-character).
 #include "api/player/home.h"
 
 #include "api/player/roster.h"  // owns_character
@@ -13,7 +13,7 @@ using ext::with_player_state;
 
 // UpdateHome(u64 character_uid) -> UpdateHomeRes                               fid 46e0807c
 // API: docs/api.md#updatehome
-// Rules: docs/server-rules.md "Home character"
+// Rules: docs/server-rules.md#home-character
 //
 // The home (お気に入り) character, from 3.7.0's CAdjutantSelect.
 //   (b) The request carries the owned character's id (tCharaData::CharaId), a uid.

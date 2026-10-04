@@ -25,6 +25,7 @@
 
 #include "../containers/containers_layout.h"
 #include "../memory/memory_layout.h"
+#include "../sync/sync_layout.h"
 
 namespace soa::native::kernel {
 
@@ -55,21 +56,17 @@ inline constexpr u64 kVaddrMainTaskInstance = 0x2beb310;          // TSingleton<
 inline constexpr u64 kVaddrFrameworkArguments = 0x2c00050;        // Framework::CApplication::m_FrameworkArguments (0xa0)
 
 
-// ---- The `sync` subsystem's classes, opaque here ------------------------------------------------------
-// n-sync recovers them (port/src/native/sync/sync_layout.h on port/n-sync, not merged yet). Same sizes
-// and names; swap these for sync's classes once it is merged (one edit here, the static_asserts below
-// keep every embedding offset). What kernel's code shows of FastCriticalSection, inlined into every
-// dispatcher / task manager method: +0x38 s32 lock word (-1 free, 0 held; LDAXR/STLXR), +0x3c s32
-// waiters (spinners past 0x200 tries), +0x78 Aska::Semaphore (signalled on unlock with > 20 waiters).
-struct Event { u8 opaque[0x68]; };                // Aska::Event (Create / Set / Reset / Wait / IsSignal / Exit)
-struct Semaphore { u8 opaque[0x18]; };            // Aska::Semaphore
-struct CriticalSection { u8 opaque[0x28]; };      // Aska::CriticalSection (a recursive pthread mutex)
-struct FastCriticalSection { u8 opaque[0x90]; };  // Aska::FastCriticalSection (spin + semaphore)
-// Aska::Thread: {vtable, the pthread}; vtable slot 0 / 1 the destructors, slot 2 Handler().
-struct Thread {
-    const void* vtable;  // 0x00
-    u64 m_thread;        // 0x08: the pthread_t once Create succeeded
-};
+// ---- The `sync` subsystem's classes (native/sync/sync_layout.h) ----------------------------------------
+// Embedded everywhere here: the dispatcher's lock (+0x08) and free-block event (+0x148), the workers'
+// wake-up events, the task manager's 32 barrier events and its two locks, the notifier's semaphores.
+// What kernel's code shows of FastCriticalSection, inlined into every dispatcher / task manager method:
+// +0x38 s32 lock word (-1 free, 0 held; LDAXR/STLXR), +0x3c s32 waiters (spinners past 0x200 tries),
+// +0x78 Aska::Semaphore (signalled on unlock with > 20 waiters): sync's Enter() / Leave().
+using Event = sync::Event;                              // Aska::Event (0x68)
+using Semaphore = sync::Semaphore;                      // Aska::Semaphore (0x18)
+using CriticalSection = sync::CriticalSection;          // Aska::CriticalSection (0x28, a recursive pthread mutex)
+using FastCriticalSection = sync::FastCriticalSection;  // Aska::FastCriticalSection (0x90, spin + semaphore)
+using Thread = sync::Thread;                            // Aska::Thread {vtable, the pthread}; slot 2 Handler()
 static_assert(sizeof(Event) == 0x68);
 static_assert(sizeof(Semaphore) == 0x18);
 static_assert(sizeof(CriticalSection) == 0x28);
@@ -78,7 +75,9 @@ static_assert(sizeof(Thread) == 0x10);
 
 using LinkElement = containers::LinkElement;  // Aska::LinkElement {vtable, m_prev, m_next}
 
+class Task;
 class TaskManager;
+struct PostFields;  // what a Post* / Send* form writes into its block (kernel_dispatcher.cpp)
 class CTimeElement;
 class SimpleMessageDispatcher;
 
@@ -247,9 +246,9 @@ public:
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_Pja
     bool PostMessage(u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_mmPja
-    bool PostMessage(void* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u32* serialOut, s8 priority);
+    bool PostMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u32* serialOut, s8 priority);
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_Pja
-    bool PostMessage(void* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
+    bool PostMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mmPja
     bool PostSyncMessageSingle(u16 msg, s32* counter, INotify* notify, void* a0, void* a1, u32* serialOut, s8 priority);
     bool PostSyncMessageSingle(u16 msg, s32* counter, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
@@ -261,6 +260,17 @@ public:
     bool SendMessage(u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, s8 priority);
     bool SendMessageHigh(u16 msg, INotify* notify, void* a0, void* a1);
     bool SendMessageHigh(u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1);
+    bool SendMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, s8 priority);
+    bool SendMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, s8 priority);
+    bool SendMessageHigh(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1);
+    bool SendMessageHigh(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1);
+
+    // Host helpers (not guest symbols): the pieces every Post* / Send* form inlines.
+    MessageDispatcherBlockForList* LinkFreeBlock(s8 priority, bool atFront);  // under m_cs; nullptr when full
+    bool Post(const PostFields& f, u32* serialOut, s8 priority);
+    bool Send(const PostFields& f, s8 priority, bool high);
+    s32 WakeIdleWorker();  // the Post* forms' wake pass (WakeupWorkerThread's loop): the index woken, or -1
+    void WakeWaitingWorkers();  // Set every m_waiting worker's event (WakeupAllWorkerThreads' loop)
 
     const void* vtable;              // 0x00
     FastCriticalSection m_cs;        // 0x08: guards everything below
@@ -752,6 +762,31 @@ static_assert(offsetof(NotifierThread, m_pool.m_pool) == 0xa0);
 static_assert(offsetof(NotifierThread, m_pool.m_count) == 0xac);
 static_assert(sizeof(NotifierThread) == 0xb8);
 
+// Aska::EventNotify: an INotify whose Handler sets an event (a stack object in GPUSync::WaitGPUSync).
+class EventNotify {
+public:
+    const void* vtable;  // 0x00: _ZTVN4Aska11EventNotifyE + 0x10 (slot 0 Handler: m_event->Set())
+    Event* m_event;      // 0x08
+};
+static_assert(sizeof(EventNotify) == 0x10);
+
+// Aska::GPUSync: a NotifierThread the render thread signals when the GPU has finished a frame
+// (RenderThread::m_pGPUSync). Layout from WaitGPUSync / Notify / the destructors
+// (port/decomp/kernel/gpu_sync.c): the notifier, a "frame pending" flag, a binary semaphore guarding both.
+class GPUSync {
+public:
+    void WaitGPUSync();  // _ZN4Aska7GPUSync11WaitGPUSyncEv
+    void Notify();       // _ZN4Aska7GPUSync6NotifyEv (NotifierThread vtable slot 5)
+
+    NotifierThread base;  // 0x00: vtable _ZTVN4Aska7GPUSyncE + 0x10
+    u8 m_pending;         // 0xb8: set by the render thread when a frame is queued; Notify clears it
+    u8 unk_b9[7];         // 0xb9
+    Semaphore m_lock;     // 0xc0: guards m_pending and the notify list (Wait / Signal)
+};
+static_assert(offsetof(GPUSync, m_pending) == 0xb8);
+static_assert(offsetof(GPUSync, m_lock) == 0xc0);
+static_assert(sizeof(GPUSync) == 0xd8);
+
 // Aska::VSync: the frame clock. An IVSync (vtable at +0) and a NotifierThread (+0x08: VSync's vtable
 // + 0x50, the thunks). Layout from VSync::VSync(int), Initialize, CalcDtAndDFrame / UpdateDt, GetDt,
 // GetBasicFrameRate (port/decomp/kernel/timing.c); size not confirmed (no allocation site read).
@@ -806,7 +841,7 @@ static_assert(sizeof(VSync) == 0x160);  // at least: the last field read; no all
 // GetActivePad, the Instantiate* family, InitAll, DeleteEndNotify::Handler) are kernel's.
 class Global {
 public:
-    static s64 GetCPUTime();              // _ZN4Aska6Global10GetCPUTimeEv (CLOCK_THREAD_CPUTIME_ID in us)
+    static s64 GetCPUTime();              // _ZN4Aska6Global10GetCPUTimeEv (CLOCK_BOOTTIME in ms)
     static void* GetPeripheral(s32 i);    // _ZN4Aska6Global13GetPeripheralEi
     static void* GetActivePad();          // _ZN4Aska6Global12GetActivePadEv
     static bool InstantiateMessageDispatcher();   // _ZN4Aska6Global28InstantiateMessageDispatcherEv

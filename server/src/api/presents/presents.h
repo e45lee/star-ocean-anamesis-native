@@ -1,6 +1,6 @@
 #pragma once
 // The present box (port code, not guest behaviour): PresentList and GetPresent /
-// GetPresentArray (api/presents/presents.cpp; docs/server-rules.md "6. Presents").
+// GetPresentArray (api/presents/presents.cpp; docs/server-rules.md#presents-rules).
 #include <vector>
 
 #include "soaserver/ext.h"

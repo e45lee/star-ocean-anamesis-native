@@ -137,7 +137,7 @@ HostFn hooked_host_fn(u64 guest_addr);
 extern thread_local bool (*t_hook_filter)(Cpu& c, u64 hook_addr);
 // Builds a trampoline that runs a function's original code (its first two instructions,
 // relocated, then a jump back). Call it before hooking. Returns 0 if the prologue is
-// PC-relative and can't be relocated.
+// PC-relative and can't be relocated (ADRP is relocated; ADR, branches, literal loads aren't).
 u64 make_original_trampoline(u64 guest_addr);
 // Address of the "return to host" stub used as LR for host->guest calls.
 u64 host_return_addr();

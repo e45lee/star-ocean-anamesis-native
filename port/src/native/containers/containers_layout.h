@@ -17,6 +17,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../sync/sync_layout.h"
+
 namespace soa::native::containers {
 
 using u8 = std::uint8_t;
@@ -172,6 +174,15 @@ struct THashMapBucketArray {
     u64 m_count;    // +0x08: number of buckets
 };
 
+// Aska::THashMapIterator<THashMapBucketArray<...>>: {bucket, buckets begin, buckets end} (Find_'s x8
+// result; the end iterator has m_bucket == m_end).
+template <typename B>
+struct THashMapIterator {
+    B* m_bucket;  // 0x00
+    B* m_begin;   // 0x08
+    B* m_end;     // 0x10
+};
+
 // The common shape of THashMap and THashSet (V = the bucket's value type: TPair<K, V> or K).
 template <typename V>
 class THashTable {
@@ -195,6 +206,8 @@ public:
     void Dtor();                    // ~THashMap() D2: frees the buckets (AlignedFree), size = 0
     void DtorDelete();              // ~THashMap() D0
     V* OpIndex(const K* key);       // operator[](K const&): inserts a default V when missing
+    // Find_(K const&) const: the key's bucket, or the end iterator (an x8 result)
+    THashMapIterator<THashMapBucket<TPair<K, V>>> Find_(const K& key) const;
     void Rehash_(u64 count);        // Rehash_(unsigned long)
     // template Insert<THashMapIterator<...>>(first, last): range insert (Rehash_ uses it)
 
@@ -474,6 +487,35 @@ static_assert(offsetof(TPoolFastVector, m_count) == 0x3c);
 static_assert(offsetof(TPoolFastVector, m_ownsPool) == 0x41);
 static_assert(sizeof(TPoolFastVector) == 0x48);
 
+// Aska::TPoolFast<T, true>: the thread-safe pool, TPoolFast's fields with a FastCriticalSection (sync's
+// class, inlined enter / leave around Scoop / Sink) at +0x40 and the pool-ownership flag after it.
+// Layout from TPoolFast<unsigned char[90], true>::SecurePool (+0xd0 owned, +0x38 / +0x3c cleared),
+// Scoop and Sink (the lock word at +0x78 = lock + 0x38, the semaphore at +0xb8 = lock + 0x78).
+template <typename T>
+class TPoolFastLocked {
+public:
+    T* Scoop(s32 n);         // Scoop(int): n contiguous free slots (from m_cursor, else from 0), or null
+    bool Sink(T* p, s32 n);  // Sink(T*, int): frees n slots from p (true)
+
+    const void* vtable;              // 0x00
+    TBitArray<u64> m_used;           // 0x08: m_used.m_numBits = capacity
+    T* m_pool;                       // 0x30
+    u32 m_cursor;                    // 0x38: where the next Scoop looks first
+    u32 m_count;                     // 0x3c: slots in use
+    sync::FastCriticalSection m_lock;  // 0x40
+    u8 m_ownsPool;                   // 0xd0
+    u8 unk_d1[7];                    // 0xd1
+};
+using TPoolFastLockedBytes90 = TPoolFastLocked<Opaque<90>>;  // TPoolFast<unsigned char[90], true> (ObjectManager's)
+static_assert(offsetof(TPoolFastLockedBytes90, m_pool) == 0x30);
+static_assert(offsetof(TPoolFastLockedBytes90, m_cursor) == 0x38);
+static_assert(offsetof(TPoolFastLockedBytes90, m_count) == 0x3c);
+static_assert(offsetof(TPoolFastLockedBytes90, m_lock) == 0x40);
+static_assert(offsetof(TPoolFastLockedBytes90, m_lock.m_lock) == 0x78);
+static_assert(offsetof(TPoolFastLockedBytes90, m_lock.m_sem) == 0xb8);
+static_assert(offsetof(TPoolFastLockedBytes90, m_ownsPool) == 0xd0);
+static_assert(sizeof(TPoolFastLockedBytes90) == 0xd8);
+
 // Aska::TPoolHandler<T>: CreateNode / DeleteNode / AttachPool(TPoolLegacy<T>*) / DetachPool (pool.c);
 // layout not recovered.
 
@@ -521,7 +563,9 @@ template <typename T>
 class TDynamicArray {
 public:
     void Reserve(u64 n);   // Reserve(unsigned long)
-    // TArrayIterator<...> Insert_<Memory::TUninitializedFillN<T>>(TArrayIterator<...>, unsigned long, ...)
+    // TArrayIterator<...> Insert_<Memory::TUninitializedFillN<T>>(TArrayIterator<...>, unsigned long, ...):
+    // n slots at pos, the first `copies` copies of *value (containers_dynamic_array.h)
+    T* InsertFill(T* pos, u64 n, u64 copies, const T* value);
     void Dtor();           // ~TDynamicArray() D2
     void DtorDelete();     // ~TDynamicArray() D0
 

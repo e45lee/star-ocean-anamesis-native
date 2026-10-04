@@ -25,7 +25,14 @@ while [ $n -lt "${MAX_RUNS:-100}" ]; do
     if grep -q 'native tests passed' "$out/log-$n.txt"; then
         echo "done after $n boots: $(grep 'native tests passed' "$out/log-$n.txt")"
         awk '{print $1}' "$out/results.txt" | sort | uniq -c
-        rm -rf "${out:?}/data"; exit 0
+        rm -rf "${out:?}/data"
+        # Pass only when every test passed: a crashed test (CRASH / TIMEOUT, carried past) or a FAIL fails
+        # the run (until 2026-10-04 this exited 0 whenever the last boot finished, hiding a "260/261").
+        if grep -qvE '^ok ' "$out/results.txt"; then
+            echo "FAIL: $(grep -vcE '^ok ' "$out/results.txt") test(s) did not pass:"; grep -vE '^ok ' "$out/results.txt"
+            exit 1
+        fi
+        exit 0
     fi
     last=$(grep '^run   ' "$out/log-$n.txt" | tail -1 | awk '{print $2}')
     [ -n "$last" ] || { echo "boot $n: died before any test (rc=$rc; $out/log-$n.txt)"; exit 1; }

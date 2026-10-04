@@ -1,6 +1,6 @@
 // The present box: PresentList and GetPresent / GetPresentArray. Port code, not guest
 // behaviour; every rule carries its source label, (a) master data, (b) client-side evidence,
-// (c) outside knowledge, (d) assumption (docs/server-rules.md "6. Presents").
+// (c) outside knowledge, (d) assumption (docs/server-rules.md#presents-rules).
 #include "api/presents/presents.h"
 
 #include <algorithm>
@@ -81,7 +81,7 @@ bool receive_present(ext::Ctx& ctx, u64 present_id, Received& added) {
 Value present_box_info(ext::Ctx& ctx, const Row& present_row) { return present_box_info(ctx, present_row, ctx.player_id()); }
 
 // PresentList() -> PresentListRes                                       fid fa782a45
-// API: docs/api.md#presentlist   Rules: docs/server-rules.md#6-presents, docs/server-rules.md#presents-presentlist
+// API: docs/api.md#presentlist   Rules: docs/server-rules.md#presents-rules, docs/server-rules.md#present-list
 //
 // The present box (CPresentbox::Initialize sends it when the box opens).
 //   (b) PresentBox is a list of CPresentBoxInfo; each line is the finished text
@@ -96,7 +96,7 @@ std::vector<u8> present_list(ext::Ctx& ctx, const Request&) {
 
 // GetPresentArray(vector<u64> present_ids) / GetPresent(u64 present_id, ...) -> GetPresentRes
 //                                                                        fid 4072d7e1
-// API: docs/api.md#getpresentarray   Rules: docs/server-rules.md#6-presents, docs/server-rules.md#presents-presentlist
+// API: docs/api.md#getpresentarray   Rules: docs/server-rules.md#presents-rules, docs/server-rules.md#present-list
 //
 // Receives the presents: each unreceived one's content is granted as drops are
 // (core/rewards.cpp grant) and the present marked received; ids already received or unknown are

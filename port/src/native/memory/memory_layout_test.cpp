@@ -65,7 +65,7 @@ NATIVE_TEST("memory/layout-memory-manager") {
     t.expect_eq(mm->m_parent, (MemoryManager*)nullptr, "parent");
     t.expect_eq(mm->m_heap, (u8*)nullptr, "no heap yet");
     t.expect_eq(mm->m_allocHigh, (u8)0, "allocHigh");
-    t.expect_eq(t.call("_ZN4Aska13MemoryManager29VirtualGetFastCriticalSectionEv", {(u64)mm}), (u64)mm->m_cs,
+    t.expect_eq(t.call("_ZN4Aska13MemoryManager29VirtualGetFastCriticalSectionEv", {(u64)mm}), (u64)&mm->m_cs,
                 "GetFastCriticalSection = &m_cs");
 
     const u64 kHeap = 0x40000;
@@ -339,4 +339,83 @@ NATIVE_TEST("memory/layout-helpers") {
     t.expect_eq(m->m_blockChunks, (void*)nullptr, "block chunks");
     t.expect_eq(m->m_heap, (u8*)nullptr, "heap");
     t.call("_ZN4Aska19MemoryHandleManagerD1Ev", {(u64)m});
+}
+
+// Aska::MappedMemoryManager: a private one built by the guest's constructor with small, distinct sizes
+// (each member's table size and pool capacity read back through the containers' classes), the
+// PointerManager / TAddressManager members used through the guest's own Register / IsRegistered, then
+// the guest's destructor; and the live one (Global::m_pMappedMemoryManager) against the sizes
+// AppProjectDependentProxy hands InstantiateMappedMemoryManager.
+NATIVE_TEST("memory/layout-mapped-memory-manager") {
+    namespace containers = soa::native::containers;
+    using containers::TPoolLegacy;
+    alignas(16) static u8 storage[sizeof(MappedMemoryManager)];
+    std::memset(storage, 0xa5, sizeof storage);
+    auto* m = reinterpret_cast<MappedMemoryManager*>(storage);
+    // registerTable, registerPool, mappingTable, mappingPool, handlerTable, handlerPool, returnTable, returnPool
+    const u32 sz[8] = {3, 5, 7, 9, 11, 13, 17, 19};
+    GuestArgs ga;
+    ga.i((u64)m);
+    for (u32 v : sz) ga.i(v);
+    t.call("_ZN4Aska19MappedMemoryManagerC1Ejjjjjjjj", ga);
+    t.expect_eq((u64)m->vtable, vtable_of(t, "_ZTVN4Aska19MappedMemoryManagerE"), "vtable");
+    auto vt = [](const void* member) { return (u64) * reinterpret_cast<const void* const*>(member); };
+    t.expect_eq(vt(&m->m_pointers), vtable_of(t, "_ZTVN4Aska19MappedMemoryManager14PointerManagerE"), "0x038 PointerManager");
+    t.expect_eq(vt(&m->m_relations), vtable_of(t, "_ZTVN4Aska19MappedMemoryManager15RelationManagerE"), "0x0d8 RelationManager");
+    t.expect_eq(vt(&m->m_locations), vtable_of(t, "_ZTVN4Aska19MappedMemoryManager15LocationManagerE"), "0x168 LocationManager");
+    t.expect_eq(vt(&m->m_handlers), vtable_of(t, "_ZTVN4Aska19MappedMemoryManager14PointerManagerE"), "0x208 PointerManager");
+    t.expect_eq(vt(&m->m_identifiers), vtable_of(t, "_ZTVN4Aska19MappedMemoryManager17IdentifierManagerE"), "0x2a8 IdentifierManager");
+    t.expect_eq(vt(&m->m_auids), vtable_of(t, "_ZTVN4Aska8AUIDHashE"), "0x348 AUIDHash");
+    t.expect_eq(vt(&m->m_addresses), vtable_of(t, "_ZTVN4Aska15TAddressManagerINS_11AddressNodeEEE"), "0x3d8 TAddressManager");
+    // Bucket counts and pool capacities (the ctor's argument -> member mapping).
+    t.expect_eq(m->m_pointers.base.base.m_tableSize, sz[0], "pointers table = registerTable");
+    t.expect_eq(m->m_pointers.base.base.base.m_used.m_numBits, sz[1], "pointers pool = registerPool");
+    t.expect_eq(m->m_relations.base.m_tableSize, sz[0], "relations table = registerTable");
+    t.expect_eq(m->m_relations.base.base.m_used.m_numBits, sz[1], "relations pool = registerPool");
+    t.expect_eq(m->m_locations.base.base.m_tableSize, sz[2], "locations table = mappingTable");
+    t.expect_eq(m->m_locations.base.base.base.m_used.m_numBits, sz[3], "locations pool = mappingPool");
+    t.expect_eq(m->m_handlers.base.base.m_tableSize, sz[4], "handlers table = handlerTable");
+    t.expect_eq(m->m_handlers.base.base.base.m_used.m_numBits, sz[5], "handlers pool = handlerPool");
+    t.expect_eq(m->m_identifiers.base.base.m_tableSize, sz[4], "identifiers table = handlerTable");
+    t.expect_eq(m->m_identifiers.base.base.base.m_used.m_numBits, sz[5], "identifiers pool = handlerPool");
+    t.expect_eq(m->m_auids.base.m_tableSize, sz[6], "auids table = returnTable");
+    t.expect_eq(m->m_auids.base.base.m_used.m_numBits, sz[7], "auids pool = returnPool");
+    t.expect_eq(m->m_addresses.base.base.m_tableSize, sz[6], "addresses table = returnTable");
+    t.expect_eq(m->m_addresses.base.base.base.m_used.m_numBits, sz[7] * 4, "addresses pool = returnPool * 4");
+    if (t.expect_eq(m->m_auidElemPool != nullptr, true, "AUIDElem pool")) {
+        auto* pool = reinterpret_cast<TPoolLegacy<containers::Opaque<8>>*>(m->m_auidElemPool);
+        t.expect_eq(pool->m_used.m_numBits, sz[3], "AUIDElem pool = mappingPool");
+        t.expect_eq(*reinterpret_cast<u32*>(pool->unk_08), 1u, "AUIDElem pool: one reference");
+    }
+    // The members work as the classes say: PointerManager::Register adds a node to m_pointers' list,
+    // TAddressManager::Register one to m_addresses'.
+    static u64 key = 0x1234;
+    t.call("_ZN4Aska19MappedMemoryManager14PointerManager8RegisterEPKv", {(u64)&m->m_pointers, (u64)&key});
+    t.expect_eq(t.call("_ZN4Aska19MappedMemoryManager14PointerManager12IsRegisteredEPKv", {(u64)&m->m_pointers, (u64)&key}) & 0xff, (u64)1,
+                "PointerManager IsRegistered");
+    t.expect_eq(m->m_pointers.base.base.m_nodeCount, 1u, "m_pointers: one node");
+    t.expect_eq(m->m_handlers.base.base.m_nodeCount, 0u, "m_handlers untouched");
+    t.call("_ZN4Aska15TAddressManagerINS_11AddressNodeEE8RegisterEPKv", {(u64)&m->m_addresses, (u64)&key});
+    t.expect_eq(m->m_addresses.base.base.m_nodeCount, 1u, "m_addresses: one node");
+    t.call("_ZN4Aska19MappedMemoryManagerD1Ev", {(u64)m});
+
+    // The live one: the proxy's sizes.
+    auto* live = *at_vaddr<MappedMemoryManager*>(kVaddrMappedMemoryManager);
+    if (!live) return;  // not instantiated in this build's boot
+    t.expect_eq((u64)live->vtable, vtable_of(t, "_ZTVN4Aska19MappedMemoryManagerE"), "live vtable");
+    alignas(16) u8 proxy[64] = {};
+    t.call("_ZN4Aska24AppProjectDependentProxyC1Ev", {(u64)proxy});
+    auto get = [&](const char* s) { return (u32)t.call(s, {(u64)proxy}); };
+    u32 regTable = get("_ZNK4Aska24AppProjectDependentProxy35GetMappedMemoryManagerRegisterTableEv");
+    u32 mapTable = get("_ZNK4Aska24AppProjectDependentProxy34GetMappedMemoryManagerMappingTableEv");
+    u32 hTable = get("_ZNK4Aska24AppProjectDependentProxy34GetMappedMemoryManagerHandlerTableEv");
+    u32 retTable = get("_ZNK4Aska24AppProjectDependentProxy33GetMappedMemoryManagerReturnTableEv");
+    u32 retPool = get("_ZNK4Aska24AppProjectDependentProxy32GetMappedMemoryManagerReturnPoolEv");
+    t.call("_ZN4Aska24AppProjectDependentProxyD1Ev", {(u64)proxy});
+    auto bucket = [](u32 want) { return want < 2 ? 1u : want; };  // the ctor's single inline slot
+    t.expect_eq(live->m_pointers.base.base.m_tableSize, bucket(regTable), "live pointers table");
+    t.expect_eq(live->m_locations.base.base.m_tableSize, bucket(mapTable), "live locations table");
+    t.expect_eq(live->m_handlers.base.base.m_tableSize, bucket(hTable), "live handlers table");
+    t.expect_eq(live->m_auids.base.m_tableSize, bucket(retTable), "live auids table");
+    t.expect_eq(live->m_addresses.base.base.base.m_used.m_numBits, retPool * 4, "live addresses pool");
 }

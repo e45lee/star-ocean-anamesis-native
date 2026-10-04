@@ -16,7 +16,7 @@ namespace {
 // Blacklist() -> BlacklistRes                                          fid 36ed89b2
 // GetRecentlyPlayedList() -> GetRecentlyPlayedListRes                  fid c5316c8e
 // API: docs/api.md#blacklist, docs/api.md#getrecentlyplayedlist
-// Rules: docs/server-rules.md "12. Home" (Follow menu)
+// Rules: docs/server-rules.md#home (Follow menu)
 //
 // The follow menu's blocked and recently-played lists.
 //   (d) Both are empty: there are no other players. Answering with the player state (instead of
@@ -26,7 +26,7 @@ std::vector<u8> empty_social_list(ext::Ctx& ctx, const Request&) { return ext::w
 
 // SearchPlayer(search id) -> SearchPlayerRes                           fid 5e598152
 // API: docs/api.md#searchplayer
-// Rules: docs/server-rules.md "12. Home" (Follow menu)
+// Rules: docs/server-rules.md#home (Follow menu)
 //
 // The follow menu's player search.
 //   (d) Nobody is found: there are no other players.

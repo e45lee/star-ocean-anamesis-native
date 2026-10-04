@@ -12,7 +12,7 @@
 namespace soa::server::sphere211 {
 
 // The season of the event calendar `ev` and how many seconds its master dates move to be current
-// on the client's clock `clock` (rules in api/sphere211/season.cpp, docs/server-rules.md "Sphere 211").
+// on the client's clock `clock` (rules in api/sphere211/season.cpp, docs/server-rules.md#sphere211).
 // `cycle` counts the repetitions of the last season past the service's end (0 otherwise): a new
 // cycle is a new season (its dive and ranking start over).
 struct SeasonPick {

@@ -1,5 +1,5 @@
 vaddr	ghidra	size	symbol	demangled	topic	status	note
-0x148ed90	0x158ed90	320	_ZN4Aska4ASON6AValue9SetStringEPKcPS0_	Aska::ASON::AValue::SetString(char const*, Aska::ASON*)	ason	typed	
+0x148ed90	0x158ed90	320	_ZN4Aska4ASON6AValue9SetStringEPKcPS0_	Aska::ASON::AValue::SetString(char const*, Aska::ASON*)	ason	tested	
 0x14a9964	0x15a9964	4	_ZN22AsonSerializer_Prepare13Serialize_KeyEPKc	AsonSerializer_Prepare::Serialize_Key(char const*)	serializer	typed	
 0x14a9968	0x15a9968	28	_ZN22AsonSerializer_Prepare15Serialize_ValueERb	AsonSerializer_Prepare::Serialize_Value(bool&)	serializer	typed	
 0x14a9984	0x15a9984	28	_ZN22AsonSerializer_Prepare15Serialize_ValueERh	AsonSerializer_Prepare::Serialize_Value(unsigned char&)	serializer	typed	
@@ -140,7 +140,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1ecec4c	0x1fcec4c	92	_ZNK9Framework5CACSV7IsValueEmm	Framework::CACSV::IsValue(unsigned long, unsigned long) const	csv	typed	
 0x1ececa8	0x1fceca8	88	_ZNK9Framework5CACSV8IsStringEmm	Framework::CACSV::IsString(unsigned long, unsigned long) const	csv	typed	
 0x1eced00	0x1fced00	344	_ZNK9Framework5CACSV6StringEmm	Framework::CACSV::String(unsigned long, unsigned long) const	csv	typed	
-0x1ecee58	0x1fcee58	480	_ZNK9Framework5CACSV5ValueEmm	Framework::CACSV::Value(unsigned long, unsigned long) const	csv	typed	
+0x1ecee58	0x1fcee58	480	_ZNK9Framework5CACSV5ValueEmm	Framework::CACSV::Value(unsigned long, unsigned long) const	csv	tested	
 0x1ecf038	0x1fcf038	224	_ZN9Framework5CACSV5ValueEmmf	Framework::CACSV::Value(unsigned long, unsigned long, float)	csv	typed	
 0x1ecf118	0x1fcf118	224	_ZN9Framework5CACSV6StringEmmRKNSt6__ndk112basic_stringIcNS1_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE	Framework::CACSV::String(unsigned long, unsigned long, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	csv	typed	
 0x1ecf1f8	0x1fcf1f8	4	_ZNK9Framework5CACSV6PrintCEv	Framework::CACSV::PrintC() const	csv	typed	
@@ -165,7 +165,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1efea98	0x1ffea98	456	_ZNK4Aska4ACSV13SerializeTextEPvm	Aska::ACSV::SerializeText(void*, unsigned long) const	acsv	typed	
 0x1efec60	0x1ffec60	300	_ZN4Aska4ACSV14PackTextValuesILi1ELb1EEElPcm	long Aska::ACSV::PackTextValues<1, true>(char*, unsigned long)	acsv	typed	
 0x1efed8c	0x1ffed8c	300	_ZN4Aska4ACSV14PackTextValuesILi1ELb0EEElPcm	long Aska::ACSV::PackTextValues<1, false>(char*, unsigned long)	acsv	typed	
-0x1efeeb8	0x1ffeeb8	232	_ZNK4Aska4ACSV8GetValueENS0_4TypeEmmPv	Aska::ACSV::GetValue(Aska::ACSV::Type, unsigned long, unsigned long, void*) const	acsv	typed	
+0x1efeeb8	0x1ffeeb8	232	_ZNK4Aska4ACSV8GetValueENS0_4TypeEmmPv	Aska::ACSV::GetValue(Aska::ACSV::Type, unsigned long, unsigned long, void*) const	acsv	native	
 0x1efefa0	0x1ffefa0	236	_ZN4Aska4ACSV8SetValueENS0_4TypeEmmPKv	Aska::ACSV::SetValue(Aska::ACSV::Type, unsigned long, unsigned long, void const*)	acsv	typed	
 0x1eff08c	0x1fff08c	92	_ZN4Aska4ACSV11ClearValuesEv	Aska::ACSV::ClearValues()	acsv	typed	
 0x1eff0e8	0x1fff0e8	64	_ZN4Aska4ACSV14ClearBlankBitsEv	Aska::ACSV::ClearBlankBits()	acsv	typed	
@@ -220,16 +220,16 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f0cf50	0x200cf50	1128	_ZN4Aska4ASON17DeserializeBinaryEPKvm	Aska::ASON::DeserializeBinary(void const*, unsigned long)	ason	typed	
 0x1f0d3b8	0x200d3b8	228	_ZNK4Aska4ASON18CalcSerializedSizeEv	Aska::ASON::CalcSerializedSize() const	ason	typed	
 0x1f0d49c	0x200d49c	288	_ZNK4Aska4ASON15SerializeBinaryEPvmPKNS0_6AValueE	Aska::ASON::SerializeBinary(void*, unsigned long, Aska::ASON::AValue const*) const	ason	typed	
-0x1f0d5bc	0x200d5bc	1620	_ZNK4Aska4ASON15PackMessagePackILb1EEENS_6StatusEPKNS0_6AValueEPhmPm	Aska::Status Aska::ASON::PackMessagePack<true>(Aska::ASON::AValue const*, unsigned char*, unsigned long, unsigned long*) const	ason	typed	
+0x1f0d5bc	0x200d5bc	1620	_ZNK4Aska4ASON15PackMessagePackILb1EEENS_6StatusEPKNS0_6AValueEPhmPm	Aska::Status Aska::ASON::PackMessagePack<true>(Aska::ASON::AValue const*, unsigned char*, unsigned long, unsigned long*) const	ason	tested	
 0x1f0dc10	0x200dc10	128	_ZN4Aska4ASON13CalcRootCountEPKam	Aska::ASON::CalcRootCount(signed char const*, unsigned long)	ason	typed	
 0x1f0dc90	0x200dc90	180	_ZN4Aska4ASON7AllFreeEv	Aska::ASON::AllFree()	ason	typed	
-0x1f0dd44	0x200dd44	4732	_ZN4Aska4ASON17UnpackMessagePackILb1EEENS_6StatusEPNS0_18MessagePackContextEPKamPm	Aska::Status Aska::ASON::UnpackMessagePack<true>(Aska::ASON::MessagePackContext*, signed char const*, unsigned long, unsigned long*)	ason	typed	
+0x1f0dd44	0x200dd44	4732	_ZN4Aska4ASON17UnpackMessagePackILb1EEENS_6StatusEPNS0_18MessagePackContextEPKamPm	Aska::Status Aska::ASON::UnpackMessagePack<true>(Aska::ASON::MessagePackContext*, signed char const*, unsigned long, unsigned long*)	ason	tested	
 0x1f0efc0	0x200efc0	380	_ZNK4Aska4ASON13SerializeTextEPvmPKNS0_6AValueE	Aska::ASON::SerializeText(void*, unsigned long, Aska::ASON::AValue const*) const	ason	typed	
 0x1f0f13c	0x200f13c	1324	_ZN4Aska4ASON13AValue2JValueEPKNS0_6AValueEPNS_10JsonParser6JValueE	Aska::ASON::AValue2JValue(Aska::ASON::AValue const*, Aska::JsonParser::JValue*)	ason	typed	
 0x1f0f668	0x200f668	684	_ZN4Aska4ASON15DeserializeTextEPKvm	Aska::ASON::DeserializeText(void const*, unsigned long)	ason	typed	
 0x1f0f914	0x200f914	1260	_ZN4Aska4ASON13JValue2AValueEPKNS_10JsonParser6JValueEPNS0_6AValueE	Aska::ASON::JValue2AValue(Aska::JsonParser::JValue const*, Aska::ASON::AValue*)	ason	typed	
 0x1f0fe00	0x200fe00	220	_ZNK4Aska4ASON24CalcSerializedBinarySizeEPKNS0_6AValueE	Aska::ASON::CalcSerializedBinarySize(Aska::ASON::AValue const*) const	ason	typed	
-0x1f0fedc	0x200fedc	924	_ZNK4Aska4ASON15PackMessagePackILb0EEENS_6StatusEPKNS0_6AValueEPhmPm	Aska::Status Aska::ASON::PackMessagePack<false>(Aska::ASON::AValue const*, unsigned char*, unsigned long, unsigned long*) const	ason	typed	
+0x1f0fedc	0x200fedc	924	_ZNK4Aska4ASON15PackMessagePackILb0EEENS_6StatusEPKNS0_6AValueEPhmPm	Aska::Status Aska::ASON::PackMessagePack<false>(Aska::ASON::AValue const*, unsigned char*, unsigned long, unsigned long*) const	ason	tested	
 0x1f10278	0x2010278	32	_ZNK4Aska4ASON9GetAValueEPKNS0_3KeyElPPNS0_6AValueE	Aska::ASON::GetAValue(Aska::ASON::Key const*, long, Aska::ASON::AValue**) const	ason	typed	
 0x1f10298	0x2010298	340	_ZN4Aska4ASON9GetAValueEPKNS0_6AValueEPKNS0_3KeyElPPS1_	Aska::ASON::GetAValue(Aska::ASON::AValue const*, Aska::ASON::Key const*, long, Aska::ASON::AValue**)	ason	typed	
 0x1f103ec	0x20103ec	172	_ZNK4Aska4ASON8GetValueEPKNS0_3KeyElPv	Aska::ASON::GetValue(Aska::ASON::Key const*, long, void*) const	ason	typed	
@@ -241,25 +241,25 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f10800	0x2010800	276	_ZN4Aska4ASON7SetRootEPKNS0_6AValueE	Aska::ASON::SetRoot(Aska::ASON::AValue const*)	ason	typed	
 0x1f10914	0x2010914	800	_ZN4Aska4ASON18SetAValueRecursiveEPNS0_6AValueEPKS1_	Aska::ASON::SetAValueRecursive(Aska::ASON::AValue*, Aska::ASON::AValue const*)	ason	typed	
 0x1f10c34	0x2010c34	240	_ZN4Aska4ASON16CalcFreeWorkSizeEPlS1_	Aska::ASON::CalcFreeWorkSize(long*, long*)	ason	typed	
-0x1f10d24	0x2010d24	156	_ZN4Aska4ASON16MakeAValue_ArrayEPNS0_6AValueEj	Aska::ASON::MakeAValue_Array(Aska::ASON::AValue*, unsigned int)	ason	typed	
-0x1f10dc0	0x2010dc0	172	_ZN4Aska4ASON14MakeAValue_MapEPNS0_6AValueEj	Aska::ASON::MakeAValue_Map(Aska::ASON::AValue*, unsigned int)	ason	typed	
+0x1f10d24	0x2010d24	156	_ZN4Aska4ASON16MakeAValue_ArrayEPNS0_6AValueEj	Aska::ASON::MakeAValue_Array(Aska::ASON::AValue*, unsigned int)	ason	tested	
+0x1f10dc0	0x2010dc0	172	_ZN4Aska4ASON14MakeAValue_MapEPNS0_6AValueEj	Aska::ASON::MakeAValue_Map(Aska::ASON::AValue*, unsigned int)	ason	tested	
 0x1f10e6c	0x2010e6c	8	_ZNK4Aska4ASON3GetEmPv	Aska::ASON::Get(unsigned long, void*) const	ason	typed	
 0x1f10e74	0x2010e74	8	_ZN4Aska4ASON3SetEmPKv	Aska::ASON::Set(unsigned long, void const*)	ason	typed	
-0x1f10e7c	0x2010e7c	416	_ZN4Aska4ASON6AValue4AMap4Get_EPKS1_	Aska::ASON::AValue::AMap::Get_(Aska::ASON::AValue const*)	ason	typed	
-0x1f1101c	0x201101c	172	_ZN4Aska4ASON6AValue4AMap4Get_EPKc	Aska::ASON::AValue::AMap::Get_(char const*)	ason	typed	
+0x1f10e7c	0x2010e7c	416	_ZN4Aska4ASON6AValue4AMap4Get_EPKS1_	Aska::ASON::AValue::AMap::Get_(Aska::ASON::AValue const*)	ason	native	
+0x1f1101c	0x201101c	172	_ZN4Aska4ASON6AValue4AMap4Get_EPKc	Aska::ASON::AValue::AMap::Get_(char const*)	ason	tested	
 0x1f110c8	0x20110c8	44	_ZN4Aska4ASON14u64FromAddressEPKv	Aska::ASON::u64FromAddress(void const*)	ason	typed	
-0x1f110f4	0x20110f4	312	_ZN4Aska4ASON6AValue9SetStringEPKcjPS0_	Aska::ASON::AValue::SetString(char const*, unsigned int, Aska::ASON*)	ason	typed	
-0x1f1122c	0x201122c	3960	_ZN4Aska4ASON17UnpackMessagePackILb0EEENS_6StatusEPNS0_18MessagePackContextEPKamPm	Aska::Status Aska::ASON::UnpackMessagePack<false>(Aska::ASON::MessagePackContext*, signed char const*, unsigned long, unsigned long*)	ason	typed	
+0x1f110f4	0x20110f4	312	_ZN4Aska4ASON6AValue9SetStringEPKcjPS0_	Aska::ASON::AValue::SetString(char const*, unsigned int, Aska::ASON*)	ason	native	
+0x1f1122c	0x201122c	3960	_ZN4Aska4ASON17UnpackMessagePackILb0EEENS_6StatusEPNS0_18MessagePackContextEPKamPm	Aska::Status Aska::ASON::UnpackMessagePack<false>(Aska::ASON::MessagePackContext*, signed char const*, unsigned long, unsigned long*)	ason	tested	
 0x1f121a4	0x20121a4	120	_ZN4Aska4ASON18PushBackWorkBufferEPamb	Aska::ASON::PushBackWorkBuffer(signed char*, unsigned long, bool)	ason	typed	
-0x1f1221c	0x201221c	224	_ZN4Aska4ASON6MallocEm	Aska::ASON::Malloc(unsigned long)	ason	typed	
+0x1f1221c	0x201221c	224	_ZN4Aska4ASON6MallocEm	Aska::ASON::Malloc(unsigned long)	ason	tested	
 0x1f122fc	0x20122fc	1136	_ZN4Aska4ASON17RelocateAValueRefEPNS0_6AValueERKNS_13TDynamicArrayINS0_17WorkBufferContextENS_10TAllocatorIS4_EEEEb	Aska::ASON::RelocateAValueRef(Aska::ASON::AValue*, Aska::TDynamicArray<Aska::ASON::WorkBufferContext, Aska::TAllocator<Aska::ASON::WorkBufferContext> > const&, bool)	ason	typed	
 0x1f1276c	0x201276c	180	_ZN4Aska4ASON15ClearWorkBufferEv	Aska::ASON::ClearWorkBuffer()	ason	typed	
 0x1f12820	0x2012820	68	_ZN4Aska4ASON15TemporaryMallocEm	Aska::ASON::TemporaryMalloc(unsigned long)	ason	typed	
 0x1f12864	0x2012864	48	_ZN4Aska4ASON13TemporaryFreeEPv	Aska::ASON::TemporaryFree(void*)	ason	typed	
 0x1f12894	0x2012894	788	_ZN4Aska4ASON13AValue2StringEPKNS0_6AValueEPPc	Aska::ASON::AValue2String(Aska::ASON::AValue const*, char**)	ason	typed	
 0x1f12ba8	0x2012ba8	44	_ZNK4Aska4ASON10GetClassIDEi	Aska::ASON::GetClassID(int) const	ason	typed	
-0x1f13524	0x2013524	376	_ZNK4Aska4ASON13PackValue_u64ILb1EEElPhmm	long Aska::ASON::PackValue_u64<true>(unsigned char*, unsigned long, unsigned long) const	ason	typed	
-0x1f1369c	0x201369c	632	_ZNK4Aska4ASON13PackValue_s64ILb1EEElPhlm	long Aska::ASON::PackValue_s64<true>(unsigned char*, long, unsigned long) const	ason	typed	
-0x1f13914	0x2013914	344	_ZNK4Aska4ASON13PackValue_strILb1EEElPhmm	long Aska::ASON::PackValue_str<true>(unsigned char*, unsigned long, unsigned long) const	ason	typed	
-0x1f13a6c	0x2013a6c	452	_ZNK4Aska4ASON13PackValue_extILb1EEElPhmam	long Aska::ASON::PackValue_ext<true>(unsigned char*, unsigned long, signed char, unsigned long) const	ason	typed	
-0x1f13c30	0x2013c30	416	_ZN4Aska4ASON15UnpackValue_strEPNS0_6AValueEPKaS4_jt	Aska::ASON::UnpackValue_str(Aska::ASON::AValue*, signed char const*, signed char const*, unsigned int, unsigned short)	ason	typed	
+0x1f13524	0x2013524	376	_ZNK4Aska4ASON13PackValue_u64ILb1EEElPhmm	long Aska::ASON::PackValue_u64<true>(unsigned char*, unsigned long, unsigned long) const	ason	native	
+0x1f1369c	0x201369c	632	_ZNK4Aska4ASON13PackValue_s64ILb1EEElPhlm	long Aska::ASON::PackValue_s64<true>(unsigned char*, long, unsigned long) const	ason	native	
+0x1f13914	0x2013914	344	_ZNK4Aska4ASON13PackValue_strILb1EEElPhmm	long Aska::ASON::PackValue_str<true>(unsigned char*, unsigned long, unsigned long) const	ason	native	
+0x1f13a6c	0x2013a6c	452	_ZNK4Aska4ASON13PackValue_extILb1EEElPhmam	long Aska::ASON::PackValue_ext<true>(unsigned char*, unsigned long, signed char, unsigned long) const	ason	native	
+0x1f13c30	0x2013c30	416	_ZN4Aska4ASON15UnpackValue_strEPNS0_6AValueEPKaS4_jt	Aska::ASON::UnpackValue_str(Aska::ASON::AValue*, signed char const*, signed char const*, unsigned int, unsigned short)	ason	native	

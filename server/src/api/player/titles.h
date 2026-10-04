@@ -1,6 +1,6 @@
 #pragma once
 // Player titles (port code, not guest behaviour): what the player's creation calls
-// (api/player/titles.cpp; docs/server-rules.md "Titles").
+// (api/player/titles.cpp; docs/server-rules.md#titles).
 #include "soaserver/ext.h"
 
 namespace soa::server {

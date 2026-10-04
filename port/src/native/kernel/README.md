@@ -35,14 +35,66 @@ classes and compared with the guest's accessors and with what the test did.
 | `PerformanceCounter` (Aska) | 0x260 (Instantiate) | ctor, Mark, Set | `-performance-counter` (private + live) | typed |
 | `CTimeElement` (Framework) | 0x48 | ctor, Initialize, Add, AddChild, DetachFromParent, setters | `-time-element` (tree links, Add's scaled dt down the tree, Suspend, Interpose, DetailRate) | typed; base = containers' THierarchy |
 | `NotifierThread` (Aska) + `NotifyElement` | 0xb8 / 0x28 | ctor, AddNotify, Notify, RemoveNotify, QueryNotify | `-notifier-thread` (private), `-live-vsync` (VSync's) | typed |
+| `EventNotify` (Aska) | 0x10 | GPUSync::WaitGPUSync's stack object | `kernel/gpu-sync` | typed |
+| `GPUSync` (Aska) | 0xd8 | WaitGPUSync, Notify, the destructors (`gpu_sync.c`) | `kernel/gpu-sync` | typed, native |
 | `VSync` (Aska) | >= 0x160 | ctor, Initialize, UpdateDt / CalcDtAndDFrame, GetDt | `-live-vsync` (vtables, frame rate, GetDt, the counter) | partial: size not confirmed |
 | `Global` (Aska) | statics | `nm -DCS`, Instantiate* | (addresses used by the live tests) | `kVaddrGlobal*` constants |
 | not recovered | | | | `CMessageManager`, `ResponderChain::CManager`, `LifeCycleManager`, `AskaMainThread`, `TaskThread` / `TaskThreadManager` (multi-threaded task managers), `WaitVSync` / `WaitDraw` (Tasks: 0x40 with a bool at +0x38), `CApplication::CAskaAppWithoutAPE`, `AndroidUtil`, `Platform::Android` |
 
 ## Natives
 
+43 bound (`soa --list-native | grep kernel:`). Live check: `soa --live-check kernel[:every=N][:out=FILE]`
+(default every=16; `kernel_check.h`: shadow replays as sync's, `common/shadow_check.h`).
+
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
+| `SimpleMessageDispatcher::PostMessage` (4 forms), `PostSyncMessageSingle` / `End` (2 each) | `kernel_dispatcher.cpp` | `kernel/dispatcher-sequence` | shadow replay (dispatcher, workers, blocks; the wake pass) |
+| `SimpleMessageDispatcher::SendMessage` / `SendMessageHigh` (4 each) | `kernel_dispatcher.cpp` | `kernel/dispatcher-sequence` (the guest's Event::Wait stubbed) | shadow replay (the replay's Event::Wait doesn't block: `sync::t_replay_no_wait`) |
+| `SimpleMessageDispatcher::GetMessage(block, int)` | `kernel_dispatcher.cpp` | `kernel/dispatcher-sequence` | inside the worker's (the shadow's vtable slot 2 = the guest original) |
+| `_WorkerThread::GetMessage`, `_WorkerThread::MessageReady` | `kernel_dispatcher.cpp` | `kernel/dispatcher-sequence` | shadow replay |
+| `AddMessage`, `AddMessageToFront`, `DeleteMessage`, `CancelMessage` | `kernel_dispatcher.cpp` | `kernel/dispatcher-sequence` | shadow replay |
+| `SuspendWorkerThread`, `ResumeWorkerThread`, `WakeupWorkerThread`, `WakeupAllWorkerThreads` | `kernel_dispatcher.cpp` | `kernel/dispatcher-sequence` | shadow replay (wake passes) |
+| `IsWorkerThreadSuspended` | `kernel_dispatcher_check.cpp` | `kernel/dispatcher-sequence` | - (8 bytes, no trampoline) |
+| `TaskManager::Add` / `DeleteThreadBarrier`, `Increment` / `DecrementThreadBarrierCount` | `kernel_task.cpp` | `kernel/task-barriers` | shadow replay (barrier state) |
+| `TaskManager::MakeTaskList`, `GetTotalTaskNumber` | `kernel_task.cpp` | `kernel/task-list` (a merged ring of 3) | run-both on the real manager / getter |
+| `PerformanceCounter::Mark` / `Set` (2) / `AddSet`, `Global::GetCPUTime` | `kernel_timing.cpp` | `kernel/clock-readers` | bracketed by the guest before and after |
+| `VSync::GetDt` | `kernel_timing.cpp` | `kernel/vsync-getdt` | getter (s0) |
+| `CTimeElement::Add` | `kernel_timing.cpp` | `kernel/time-element-add` (random trees, NaNs) | run-both on the tree |
+| `GPUSync::WaitGPUSync`, `GPUSync::Notify` | `kernel_gpu_sync.cpp` | `kernel/gpu-sync` | none (runs handlers / blocks on another thread: not replayable) |
+
+Live coverage (story, battle-gacha, battle-gacha on software GL; 226,759 checks, 0 mismatches, 45 races):
+the Post / PostSync / SendMessage forms the flows use, worker GetMessage (with GetMessage(block, int)
+inside it), MessageReady, Suspend / Resume, Delete / DecrementThreadBarrier, MakeTaskList,
+GetTotalTaskNumber, PerformanceCounter Mark / Set, GetCPUTime, GetDt, CTimeElement::Add. Not reached
+live in these flows (covered by the differential tests only): AddMessage / ToFront, Delete / Cancel
+Message, the Wakeup* passes, Set(int, long), AddSet, the Send / SendHigh variants other than
+SendMessage(msg, notify, a0, a1, prio), Add / IncrementThreadBarrierCount (the native Post* call them
+as members; only guest callers reach their hooks). CTimeElement::Add's live replay recurses into
+siblings through the patched entry (natively): the live check proves a node and its first-child chain,
+`kernel/time-element-add` the sibling branches.
+
+Not bound (left to the guest, mixed locking on the same lock word is safe): `PostMultiMessages` (4),
+`PostSyncMessages` (2) (not executed in the four flows), `Setup`, `Clear`, `AllocateWorkerThreadList` (2),
+`Initialize`, the destructors, `CheckToDispatch` (8 bytes; GetMessage skips the call when the slot is
+it), `_WorkerThread::Handler` (the worker's main loop: its exit is `Thread::Exit` -> `pthread_exit`,
+which halts the guest CPU at its JIT level; it never touches the lock), `TaskManager::OwnersKickTask`
+and the rest of TaskManager / CFiberKernel / NotifierThread.
+
+## Measurements
+
+The login and battle flows (`SOA_PROFILE` at 1000 Hz), the binary before these natives (main at a1d2854)
+and after (this branch before the merge of main) run side by side, 2026-10-04 (`port/scripts/rebuild_queue.py`):
+
+| | kernel guest self (login / battle) | rank | battle fps (`I/perf`, steady) |
+|---|---|---|---|
+| before | 17,175 (12.7%: 11.1% / 13.4%) | 3 | ~56-59 |
+| after | 3,700 (3.1%: 2.8% / 3.3%) | 6 | ~56-60 (the cap) |
+
+The win is moving the dispatcher's and the task manager's critical sections off the JIT (the guest
+spun on the FastCriticalSection's word through the JIT's exclusive monitor while the holder ran its
+critical section as JIT code); the lock design is unchanged (the guest's word, sync's Enter / Leave).
+What is left of kernel's guest self: OwnersKickTask, CFiberKernel::Progress, CMainTask::Run,
+VSync::UpdateVSyncEvents, the unbound dispatcher forms.
 
 ## Dependencies
 
@@ -50,9 +102,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
 - `sync` (11,870 samples): Aska::Event (0x68), Semaphore (0x18), CriticalSection (0x28),
   FastCriticalSection (0x90), Thread (0x10) are embedded everywhere (the dispatcher's lock at +0x08 and
   event at +0x148, the workers' wake-up events, the task manager's 32 barrier events, its two locks,
-  the notifier's semaphores). **Opaque sized structs in kernel_layout.h** with sync's names (n-sync
-  recovers them on `port/n-sync`, not merged yet): once merged, replace the five `struct X { u8 opaque[N]; }`
-  with `using X = sync::X;` (the static_asserts keep every embedding offset).
+  the notifier's semaphores): `kernel_layout.h` uses sync's classes (`using Event = sync::Event;` ...),
+  and the natives call their members (`FastCriticalSection::Enter` / `Leave`, `Event::Set`, ...).
 - `memory` (1,384): `memory::TDynamicQueue<T>` (the dispatcher's free-block queue); DeleteManager
   (Task::DeleteThis*); blocks / task lists come from `operator new[]`.
 - `containers`: `LinkElement` (dispatcher blocks, tasks, notify elements), `TList<LinkElement>`
@@ -107,8 +158,18 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   ascending priority; Progress runs every Active unit's slot 5 and deletes units whose Destroy(true)
   was requested. The constructor doesn't clear m_numAttached / m_numActive (Initialize does).
 - **Quirks.** SimpleMessageDispatcher::DeleteMessage unlinks the block but doesn't return it to the free
-  queue (the block leaks until Setup runs again). CFiberKernel::Detach decrements m_numAttached even
-  when the unit isn't in its chain.
+  queue (the block leaks until Setup runs again); DeleteMessage(-1) empties the list without touching
+  the count; the serial is compared as a u32 with the u16 field. A Send* form whose stack event can't be
+  created and whose event pool is empty returns false with its zeroed block left queued.
+  TaskManager::IncrementThreadBarrierCount caps the count at the reference count it read before taking
+  m_barrierCs. CFiberKernel::Detach decrements m_numAttached even when the unit isn't in its chain.
+  CTimeElement::Add: a suspended node counts its suspension down by dt times its *interpose time* when
+  one is set (not the rate); an interposition that ends is cleared down the first-child chain only.
+- **Global::GetCPUTime** is CLOCK_BOOTTIME (bionic id 7) in milliseconds, not a CPU time.
+- **GPUSync** (from sync's list): a NotifierThread (0xb8) + a pending flag (+0xb8) + a binary semaphore
+  (+0xc0). WaitGPUSync registers a stack EventNotify (vtable + Event*), releases the semaphore, waits,
+  removes it; without an event it polls the flag with Sleep(1). Notify clears the flag, stamps
+  performance counter 2 and runs NotifierThread::Notify under the semaphore.
 
 ## For the code agent (hot functions, guest self samples over login + battle + gacha + story = 293,654 busy)
 

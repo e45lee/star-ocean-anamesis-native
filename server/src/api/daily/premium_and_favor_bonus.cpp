@@ -1,6 +1,6 @@
 // The premium login bonus and the favor ("friendly", フレンドリープレゼント) login bonus, with
-// StaminaHealByFavor. Port code, not guest behaviour. Rules: docs/server-rules.md "Premium and
-// favor login bonuses"; every rule carries its source label: (a) master data, (b) client-side
+// StaminaHealByFavor. Port code, not guest behaviour. Rules: docs/server-rules.md#premium-and-favor-bonuses;
+// every rule carries its source label: (a) master data, (b) client-side
 // evidence, (c) outside knowledge, (d) assumption.
 //
 // State: `premium_pass` (one row per pass owned: the page reached, the last grant) and
@@ -39,7 +39,7 @@ Value* player_map(Value& data) {
 // ---- premium login bonus ------------------------------------------------------------------
 
 // Grant hook for content type 11 (core/rewards.cpp grant: a present, an item set).
-// Rules: docs/server-rules.md "Premium and favor login bonuses"
+// Rules: docs/server-rules.md#premium-and-favor-bonuses
 //   (a) content type 11 = a premium login bonus pass, content_id = its master_premium_login_bonus
 //       (the pass was sold in master_direct_item_shop, pshop_ploginbonus_001; docs/api.md "Content
 //       types"). There is no purchase route in the port, so the bonus is off unless the state
@@ -245,7 +245,7 @@ void favor_player_keys(Ctx& ctx, Value& data) {
 
 // OnPlayerLoad hook (after the login bonus and the achievements: core/modules.cpp): the premium
 // and favor login bonuses on a full-state player response.
-// Rules: docs/server-rules.md "Premium and favor login bonuses"
+// Rules: docs/server-rules.md#premium-and-favor-bonuses
 // Adds: PremiumLoginBonus (CPremiumLoginBonusInfo list), FavorBonusContetsResultInfo on the
 // day's favor bonus, Player.favor_bonus_received_at / stamina_update_by_favor, and
 // PresentBoxCount when a page or a favor bonus was granted.
@@ -258,7 +258,7 @@ void load_daily_bonuses(Ctx& ctx, const Request&, Value& data) {
 }
 
 // StaminaHealByFavor() -> StaminaHealByFavorRes                           fid 960546a3
-// API: docs/api.md#staminahealbyfavor   Rules: docs/server-rules.md "Premium and favor login bonuses"
+// API: docs/api.md#staminahealbyfavor   Rules: docs/server-rules.md#premium-and-favor-bonuses
 //
 // The favor tier's daily stamina heal.
 //   (a) the favor tier's stamina_recovery_value, added to the current stamina (d: overflow kept,

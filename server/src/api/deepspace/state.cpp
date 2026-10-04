@@ -1,7 +1,7 @@
 // Deep space: the areas, the offers, the ships and the values the answers carry (api/deepspace/
 // README.md; declared in deepspace.h). Port code, not guest behaviour; every rule carries its
 // source label, (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
-// Rules in docs/server-rules.md "Deep space".
+// Rules in docs/server-rules.md#deepspace.
 //
 // Response shapes (b), from the client's info classes (port/fakeapi/fields.txt, schema.txt and
 // the Initialize functions of the classes):

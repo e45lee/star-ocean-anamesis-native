@@ -1,7 +1,7 @@
 // Local server: the rental ("helper") list of the mission menu, FollowList, and the
 // rental bonus. Our code (port), not guest behaviour; every rule carries its source label:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
-// docs/server-rules.md "Rental helpers" has the same rules in prose.
+// docs/server-rules.md#rental-helpers has the same rules in prose.
 //
 // Client side (3.7.0, b): CMissionMenu::CreateRentalCharactorList ->
 // CParameterUtility::CreateRentalListAuto(mission type, mission id):
@@ -171,7 +171,7 @@ void load_follow(Ctx& ctx, const Request&, Value& data) {
 }
 
 // FollowList() -> FollowListRes                                                  fid 9bddc9d7
-// API: docs/api.md#followlist   Rules: docs/server-rules.md "Rental helpers"
+// API: docs/api.md#followlist   Rules: docs/server-rules.md#rental-helpers
 //
 // The follow menu's lists (CFriendMenu, CSphereFloor, CFollowNeighbor send it).
 //   (b) the response keys Follow, FollowPlayerList, FollowID, MutualFollowID (docs/api.md);
@@ -188,7 +188,7 @@ std::vector<u8> follow_list(Ctx& ctx, const Request&) {
 }
 
 // UpdateSupport(u64 character_uid) -> UpdateSupportRes                           fid 3e77af96
-// API: docs/api.md#updatesupport   Rules: docs/server-rules.md "Rental helpers"
+// API: docs/api.md#updatesupport   Rules: docs/server-rules.md#rental-helpers
 //
 // The character the player lends to other players (the character dialog's レンタル button,
 // uimsg_ch_dialog_rental).

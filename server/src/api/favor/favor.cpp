@@ -1,6 +1,6 @@
 // The favorability (bond, 好感度) rules: levels, points, the daily tap, favor items, the battle
 // gain and the event drop bonus's daily use. Port code, not guest behaviour. See favor.h and
-// docs/server-rules.md "8. Favor"; every rule carries its source label: (a) master data,
+// docs/server-rules.md#favor-rules; every rule carries its source label: (a) master data,
 // (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include "api/favor/favor.h"
 
@@ -161,7 +161,7 @@ u32 level_of(sqlite3* st, sqlite3* m, ServerTime now, SameRoleId same_role_id) {
     return rules::level(load(st, same_role_id).point, thresholds(m), max);
 }
 
-// ---- the event drop bonus (docs/server-rules.md "Event extras"; api/events/favor_drop.cpp) -------
+// ---- the event drop bonus (docs/server-rules.md#event-extras; api/events/favor_drop.cpp) -------
 // (b) a character's bonus is spent for the favor day once added_event_drop_at is set inside it
 // (3.7.0 CParameterUtility::GetFavorDropIconImageName: the icon returns after the next
 // login_bonus_reset_hour); (a) master_global favor_event_drop_bonus_limit uses a day, (d) counted

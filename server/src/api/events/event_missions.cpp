@@ -3,7 +3,7 @@
 // and its own master copy allows at the client's clock; the battles are master_event_mission rows
 // played through the core MissionStart / MissionEnd (api/missions/), the story scenes end through the
 // client's EndMissionTalk (CEventScenario::Exit -> events::end_mission_talk). Rules in
-// docs/server-rules.md "Events"; labels:
+// docs/server-rules.md#events; labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
 // Client facts this module builds on ((b), docs/notes.md "Events"):
@@ -423,7 +423,7 @@ const std::set<std::string>& list_methods() {
 }
 
 // OnPlayerLoad hook (Login, GetPlayer, NoLoginStart's full player state).
-// Rules: docs/server-rules.md "What is listed", "Other data"
+// Rules: docs/server-rules.md#what-is-listed, docs/server-rules.md#other-data
 //   (b) the event menu sends no request: it reads the ActiveEventMissionList the client holds;
 //       (b) CampaignInfo feeds the campaign badges (CUIUtility::GetCampaignSituation*).
 //   (d) no event is under maintenance (CEventMaintenanceInfoMap {area: {master_event_area_id, status}}).
@@ -441,7 +441,7 @@ void load_events(Ctx& ctx, const Request&, Value& data) {
 }
 
 // OnResponse hook (every response).
-// Rules: docs/server-rules.md "What is listed"
+// Rules: docs/server-rules.md#what-is-listed
 //   (d) is_last_play: a MissionStart of an event mission records it (and its area) as the last.
 //   (b)+(d) the mission flow's answers (list_methods) carry the new ActiveEventMissionList, and
 //       GetMissionList's CampaignInfo.
@@ -512,7 +512,7 @@ void enable_client_master(Sql& db) {
 }
 
 // ClientMaster hook (the master copy the client is served, before it is sent).
-// Rules: docs/server-rules.md "Two clocks", "Enabling events by keyword"
+// Rules: docs/server-rules.md#two-clocks, docs/server-rules.md#enabling-events
 //   (d) the dated event tables moved by the year shift (shift_client_master), then (d) the
 //       --enable-events windows (enable_client_master); docs/client-changes.md lists both.
 void client_master_events(Sql& db, ServerTime now, EventTime event_now) {

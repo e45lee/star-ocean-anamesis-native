@@ -11,7 +11,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 ## Types (classes with their methods attached)
 
 Type recovery a wave ahead of the code (port/REBUILD-QUEUE.md: memory is wave 2). Layouts are proven by
-the layout tests in [`memory_layout_test.cpp`](memory_layout_test.cpp) (`soa --selftest memory/`, all 7 pass):
+the layout tests in [`memory_layout_test.cpp`](memory_layout_test.cpp) (`soa --selftest memory/`, all 8 pass):
 private objects built and driven by the guest's own constructors and methods, or the running game's
 objects walked read-only, their fields read through these classes and compared with the guest's
 accessors and the invariants the decompile shows.
@@ -19,7 +19,7 @@ accessors and the invariants the decompile shows.
 | Class (guest) | Guest size | Found from | Proven by (memory/layout-...) | Status |
 |---|---|---|---|---|
 | `MemoryManager` (Aska::MemoryManager) | 0xf0 (operator new) | ctors, InitHeap, Malloc, Remove, ~MemoryManager | `-memory-manager` (private heap: the virtual getters, Malloc / LocalFree, free lists vs srbks), `-live-managers` (the live ring) | typed; FastCriticalSection opaque |
-| `MemoryBlock` (Aska::_MemoryBlock) | 0x40 header | Malloc, LocalFree, GetAllocatedManager, GetMemorySize | `-memory-manager` | typed; 0x30 / 0x38 meaning unknown |
+| `MemoryBlock` (Aska::_MemoryBlock) | 0x40 header | Malloc, MallocHigh, LocalFree, LocalRegisterNotify, GetAllocatedManager, GetMemorySize | `-memory-manager` | typed (0x30: the high flag; 0x38: the registered IMemoryNotify*) |
 | `MemorySrbk` (MemoryManager::_Srbk) | 0x28 | InitHeap, Malloc | `-memory-manager` (VirtualGetSrbk, run links, free bytes) | typed |
 | `MemoryManagerAdapter` | static only | | | typed |
 | `MemoryManagerHelper` | 0x28 | ctor, Init, InitMemoryHandleManager, dtor | `-helpers` | typed |
@@ -27,7 +27,7 @@ accessors and the invariants the decompile shows.
 | `CAssignedMemoryManagerForSTLAllocator` | statics | Allocate / Free / Attach* | `-live-managers` (pAttached* vs the statics) | typed |
 | `IFixedLengthAllocator` | 0x08 (vtable) | the container's calls | `-live-managers` (slots 2, 3, 6, 10) | typed |
 | `TFixedLengthAllocator<N>` (N = 16..512) + `FixedLengthBlockHeader` / `TFixedLengthBlock<N>` | 0x48 (operator new in CGame::OnInitialize) | ctor, pAllocate, Free, IsMine, accessors | `-fixed-length-allocator` (private pool), `-live-managers` (the six STL pools) | typed; 0x08..0x17 unknown |
-| `TObjectContainer<T>` (Framework) | 0x18 | Initialize, NumElements, rElement | `-live-managers` | typed (moved here from containers: the container's base) |
+| `TObjectContainer<T>` (Framework) | 0x18 | Initialize, NumElements, rElement | `-live-managers` | typed (the container's base; its functions and natives are `containers`') |
 | `CFixedLengthAllocatorContainer` | 0x18 (operator new) | ctor, Initialize, pAllocate, Free | `-live-managers` | typed |
 | `CHandleManager_Base` (Framework) | 0x38 (rounded: the last field ends at 0x34) | ctor, Initialize, Register, Refer, Unregister, dtor | `-handle-manager` (private: Register / Refer / Unregister) | typed |
 | `DeleteManager` (Aska) | 0x138 (nm -S Global::m_systemDeleteManager) | Initialize, Clear, AddMain, IsEmpty, dtor | `-delete-manager` (the live system manager's queues) | typed |
@@ -35,20 +35,71 @@ accessors and the invariants the decompile shows.
 | `TDynamicQueue<T>` (Aska::TDynamicQueue<T, false>) | 0x20 | DeleteManager's inlined queue code | `-delete-manager` | typed |
 | `TSharedPointerCode` + `TSharedPointerCodePool` | 0x42c static (no symbol) | CreateCounter, DeleteCounter | `-shared-pointer-code` | typed |
 | `MemoryHandleManager` (Aska) | 0x390 (ctor; no allocation site) | ctor, InitSrbk, GetBlock, IsAllocated, dtor | `-helpers` (ctor: ring fields) | partial: most of 0x009..0x1e7 unknown |
-| Aska::MappedMemoryManager (0x468, operator new in Global::InstantiateMappedMemoryManager) | | | | not recovered (the AFF mapping tables; resource's side) |
+| `BadAllocateRequest` (no guest name) | 0x30 (stack) | Malloc, MallocHigh, AlignedMalloc, AlignedMallocHigh | (the natives' tests) | typed |
+| `MappedMemoryManager` (Aska) | 0x468 (operator new in Global::InstantiateMappedMemoryManager) | its ctor (inlines every member's construction), dtor, RemoveHandlerEx (`mapped.c`) | `-mapped-memory-manager` (private: the ctor's eight sizes -> each member's table / pool, PointerManager / TAddressManager Register; the live one vs AppProjectDependentProxy) | typed: seven containers members (TCategorizeHash 0xa0, THash 0x90, TAddressManager 0x90), the CriticalSection opaque |
 
 ## Natives
 
-| Class::Method (guest symbol) | File | Differential tests | Live check |
+34 natives, one family (they share the heap and pool state; `soa --list-native | grep memory:`). The guest
+layout is the state: guest code that stays (Realloc, Split, Move, IsEmpty, MallocHigh, InitHeap, the
+MappedMemoryManager, DeleteManager, every header reader) walks and edits the same blocks, so each native
+makes the guest's stores in the guest's order (stale links included) under the guest's lock.
+
+| Class::Method (guest symbol) | File | Differential tests | Live check (`--live-check memory`) |
 |---|---|---|---|
+| `MemoryManager::Malloc` | `memory_heap.cpp` | `memory/heap-differential` (+ `heap-mixed-threads`, `heap-live-check`) | dry run + shadow manager |
+| `MemoryManager::AlignedMalloc` | `memory_heap.cpp` | `memory/heap-differential` | dry run + shadow manager |
+| `MemoryManager::AlignedMallocHigh` | `memory_heap.cpp` | `memory/heap-differential` (incl. every run-split shape) | dry run + shadow manager |
+| `MemoryManager::LocalFree(_MemoryBlock*)` | `memory_heap.cpp` | `memory/heap-differential` (incl. the IMemoryNotify path) | dry run + shadow manager (a block with a notify: skipped) |
+| `MemoryManager::LocalFree(void*)` | `memory_heap.cpp` | `memory/heap-differential` | (its callee's) |
+| `MemoryManager::IsCreated` | `memory_heap.cpp` | `memory/heap-differential` | getter |
+| `MemoryManager::CalcFreeSize(bool)` | `memory_heap.cpp` | `memory/heap-differential` | getter |
+| `MemoryManager::CalcFreeSize(long*, long*)` | `memory_heap.cpp` | `memory/heap-differential` | - (no check; 1 call per run) |
+| `TFixedLengthAllocator<N>::pAllocate` (N = 16, 32, 64, 128, 192, 256, 512) | `memory_pools.cpp` | `memory/pools-differential` (with / without the CMutex) | under the pool's CMutex: native, state put back, original |
+| `TFixedLengthAllocator<N>::Free` (7) | `memory_pools.cpp` | `memory/pools-differential` | same |
+| `TFixedLengthAllocator<N>::IsMine` (7) | `memory_pools.cpp` | `memory/pools-differential` | getter |
+| `CFixedLengthAllocatorContainer::pAllocate` / `Free` | `memory_pools.cpp` | `memory/pools-container-differential` | the chosen pool's check with the dispatcher's original |
+| `CFixedLengthAllocatorContainer::IsMine` | `memory_pools.cpp` | `memory/pools-container-differential` | getter |
+| `CAssignedMemoryManagerForSTLAllocator::Allocate` / `Free` | `memory_pools.cpp` | `memory/pools-stl-live-check` (the live statics, every call checked) | pool path: as the container's; heap path: skipped here (Malloc / LocalFree check it) |
+
+The tests: private heaps over host buffers (guest constructor + `InitHeap(u8*, u64)`), the same seeded
+operation sequence through the guest and the natives from one snapshot, results and every byte of the
+managers and heaps compared; the heap bodies count their 23 rare paths (`memory_heap.h` `HeapBranch`)
+and `heap-differential` fails unless each ran. `heap-mixed-threads`: 4 native and 4 guest threads on one
+heap (the lock protocol). `heap-live-check` / `pools-stl-live-check`: the live check's own code with the
+guest symbols as the originals (selftest installs no natives), 0 mismatches required.
+
+The live check (`memory_check.h`): the heap's FastCriticalSection isn't recursive and the guest's
+original can't be replayed on the real heap, so with the real lock held the native body runs as a dry
+run whose stores are logged (`LoggedStore`), its result, written bytes and the srbk table are recorded and
+undone, and the guest's original runs on a shadow of the manager (its bytes with a free lock, a ring of
+itself, no bad-allocate notify) over the same heap; the guest's stores stand. The pools' CMutex is
+recursive: the check holds it, runs the native, records, puts the bytes back and runs the original.
+
+**Results (2026-10-04).** Live check (`--live-check memory,sync`, every 64th call, the final build on sync's
+classes): login 105,000 checks, battle 140,000, gacha 120,000, story 143,000, tutorial (a fresh player)
+202,000: 0 mismatches, 0 races (skipped, ~4%: STL allocations served by the heap, LocalFree of blocks with
+a notify); every flow PASSed (sync's own check: 0 mismatches too). Guest time (SOA_PROFILE, the four flows
+of port/REBUILD-QUEUE.md, main 6029ba4 vs this branch): memory's guest self 2.9% -> 0.6% of busy samples
+(10,068 -> 1,995), inclusive 8.4% -> 1.5%; what stays guest is mostly DeleteManager::FlushMain /
+PostFlushMain (~600 samples) and code inlined into callers. Battle fps unchanged (59.6: vsync-bound).
+
+**Locks:** sync's classes, called directly: the heap natives `m_cs.Enter()` / `Leave()`
+(`sync::FastCriticalSection`: the guest's inlined protocol on the guest's words; the JIT's exclusive
+stores are host CAS, so guest and native lockers exclude each other: `heap-mixed-threads`), the pools
+`CMutex::IsInitialized / Initialize / Lock / Unlock` (`PoolLock`), as the guest calls them.
+
+Not native (cold, or cheaper as guest code): MallocHigh (never runs in the 3.7.0 flows), Realloc / Split /
+Move (rare), the 8-20-byte leaves (GetMemorySize, GetAllocatedManager, BlockSize: a native costs more
+than the guest's two instructions), TSharedPointerCode (35 samples), DeleteManager::FlushMain /
+PostFlushMain (557 samples: next), MemoryHandleManager, the constructors / InitHeap.
 
 ## Dependencies
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):
-- `sync`: Aska::FastCriticalSection (0x90 bytes, embedded in MemoryManager at 0x60, DeleteManager at 0x08,
-  MemoryHandleManager at 0x270 / 0x300) and Framework::CMutex (0xb0, the pools' and handle managers'
-  mutex pointers). Opaque bytes / `void*` here; once n-sync's layout header is merged, swap
-  `u8 m_cs[kFastCriticalSectionSize]` for its class.
+- `sync`: Aska::FastCriticalSection (embedded in MemoryManager at 0x60, DeleteManager at 0x08,
+  MemoryHandleManager at 0x270 / 0x300), Framework::CMutex (the pools' and handle managers' mutexes),
+  Aska::CriticalSection (MappedMemoryManager at 0x08): sync_layout.h's classes, their members called.
 - `containers`: Aska::THashMap<u32, u64> behind CHandleManager_Base::m_elements (a `void*` here).
 Upwards (callers): everything allocates; `containers` and `libcxx` reach it through
 Framework::CSTLAllocator -> CAssignedMemoryManagerForSTLAllocator::Allocate / Free.
@@ -78,6 +129,6 @@ Framework::CSTLAllocator -> CAssignedMemoryManagerForSTLAllocator::Allocate / Fr
   pAllocate / Free, TFixedLengthAllocator<32/64>::pAllocate / IsMine. Malloc / LocalFree / the pools
   share the heap state with every guest allocation, so they move as one family (port/src/native/
   README.md "Port whole families"); the lock is sync's FastCriticalSection.
-- **Unknown:** MemoryBlock 0x30 and 0x38 (written 0 on allocation), TFixedLengthAllocator 0x08..0x17,
-  MemoryHandleManager's middle (0x009..0x1e7, 0x200..0x217, 0x258..0x26f), MappedMemoryManager
-  (not recovered), the bad-allocate request struct's fields beyond the decompile.
+- **Unknown:** TFixedLengthAllocator 0x08..0x17, MemoryHandleManager's middle (0x009..0x1e7,
+  0x200..0x217, 0x258..0x26f), BadAllocateRequest 0x18 (always 0), MappedMemoryManager's node types
+  (MappedMemoryPointer / Relation / Location / Identifier, AUIDNode: only pointers to them here).

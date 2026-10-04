@@ -36,15 +36,19 @@ struct Heaps {
     int count = 0;
 
     static u8* Align(u8* p, u64 a) { return reinterpret_cast<u8*>(((u64)p + a - 1) & ~(a - 1)); }
-    void Build(TestContext& t, u64 size0, u64 size1 = 0) {
+    // `phase`: the first heap buffer starts `phase` bytes past a 4 KiB boundary. The aligned / high
+    // allocators' paths depend on the buffer's address modulo the alignment, so the placement is fixed
+    // (it used to follow std::vector's address, and a rare path ran or not from run to run).
+    void Build(TestContext& t, u64 size0, u64 size1 = 0, u64 phase = 0) {
         count = size1 ? 2 : 1;
-        storage.assign(0x400 + size0 + size1 + 0x100, 0);
+        storage.assign(0x2000 + 0x400 + size0 + size1 + 0x100 + phase, 0);
         u8* p = Align(storage.data(), 0x40);
         for (int i = 0; i < count; i++) {
             m[i] = reinterpret_cast<MemoryManager*>(p);
             p += 0x100;
         }
         size[0] = size0, size[1] = size1;
+        p = Align(p, 0x1000) + phase;
         for (int i = 0; i < count; i++) {
             buf[i] = Align(p, 0x10);
             p = buf[i] + size[i] + 0x10;
@@ -260,13 +264,15 @@ static bool RingRounds(TestContext& t) {
 static bool HighRunSplitRounds(TestContext& t) {
     for (u64 size : {u64{0x8000}, u64{0x10000}, u64{0x1ff00}, u64{0x2ff80}}) {
         for (s64 align : {s64{16}, s64{64}, s64{4096}}) {
-            for (int k = 0; k < 8; k++) {
+            for (int k = 0; k < 8; k++)
+            for (u64 phase : {u64{0}, u64{0x10}, u64{0x40}, u64{0x800}}) {
                 Heaps h;
-                h.Build(t, 0x80000);
+                h.Build(t, 0x80000, 0, phase);
                 std::vector<Op> ops{{kOpAlignedHigh, size + (u64)k * 0x18, (u64)align}, {kOpMalloc, 100, 0}, {kOpAlignedHigh, 0x200, 64},
                                     {kOpAligned, 0x300, 256}, {kOpFree, 1, 0}, {kOpFree, 0, 0}, {kOpFree, 0, 0}, {kOpFree, 0, 0}};
                 char what[96];
-                snprintf(what, sizeof what, "high size %#llx align %lld k %d", (unsigned long long)size, (long long)align, k);
+                snprintf(what, sizeof what, "high size %#llx align %lld k %d phase %#llx", (unsigned long long)size, (long long)align, k,
+                         (unsigned long long)phase);
                 if (!Round(t, h, ops, nullptr, what)) return false;
             }
         }

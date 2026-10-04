@@ -1,7 +1,7 @@
 // The play state: GetPlayMission, MissionFailed, MissionTalk, MissionRestart, GetMissionList
 // (api/missions/missions.h). Port code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "Server missions").
+// knowledge, (d) assumption (docs/server-rules.md#server-missions).
 #include "api/missions/missions.h"
 
 #include "api/entry/entry.h"          // time_only
@@ -51,7 +51,7 @@ std::vector<u64> battle_uids(const std::vector<PlayMember>& members) {
 }
 
 // MissionRestart() / MultiMissionRestart() -> MissionRestartRes (as MissionStartRes)     fid 1f96f310
-// API: docs/api.md#missionrestart   Rules: docs/server-rules.md "2.6 Failure, continue, restart", "Server missions"
+// API: docs/api.md#missionrestart   Rules: docs/server-rules.md#failure-continue-restart, docs/server-rules.md#server-missions
 //
 // Resumes the mission in progress after an interruption (CStageManager::Progress, after
 // GetPlayMission.is_play).
@@ -90,7 +90,7 @@ std::vector<u8> mission_restart(ext::Ctx& ctx, const Request&) {
 }
 
 // GetPlayMission() -> GetPlayMissionRes                                            fid 7c1b7a1b
-// API: docs/api.md#getplaymission   Rules: docs/server-rules.md "Play state"
+// API: docs/api.md#getplaymission   Rules: docs/server-rules.md#play-state
 //
 // Whether a mission was interrupted (CPhase_BattleResumeCheck: resume or give up).
 //   (b) PlayMission.is_play is 1 while a MissionStart hasn't been ended (MissionEnd / Failed).
@@ -98,7 +98,7 @@ std::vector<u8> mission_restart(ext::Ctx& ctx, const Request&) {
 std::vector<u8> get_play_mission(ext::Ctx& ctx, const Request& req) { return play_mission_answer(ctx, req); }
 
 // MissionFailed(u32 mission_type, u32 mission_id) + the battle log -> MissionFailedRes  fid 479604f6
-// API: docs/api.md#missionfailed   Rules: docs/server-rules.md "2.6 Failure, continue, restart", "Play state"
+// API: docs/api.md#missionfailed   Rules: docs/server-rules.md#failure-continue-restart, docs/server-rules.md#play-state
 //
 // A lost or retired battle, or an interrupted one given up.
 //   (c) no rewards, and the stamina stays spent (docs/api.md); the play record ends, all of it
@@ -111,7 +111,7 @@ std::vector<u8> mission_failed(ext::Ctx& ctx, const Request& req) {
 }
 
 // MissionTalk(u32 mission_type, u32 mission_id, u32 talk_id, u8 flag) -> MissionTalkRes  fid 816dc8b4
-// API: docs/api.md#missiontalk   Rules: docs/server-rules.md "Play state"
+// API: docs/api.md#missiontalk   Rules: docs/server-rules.md#play-state
 //
 // A story (talk-only) mission: no battle.
 //   (d) it counts as cleared and played (first_clear_at on the first time); a request without a
@@ -138,7 +138,7 @@ std::vector<u8> play_state(ext::Ctx& ctx, const Request& req) {
 
 namespace {
 // GetMissionList(int) -> GetMissionListRes                                         fid 57308f4d
-// API: docs/api.md#getmissionlist   Rules: docs/server-rules.md "2.1 Opening missions"
+// API: docs/api.md#getmissionlist   Rules: docs/server-rules.md#opening-missions
 //
 // The mission select's lists.
 //   (d) the core answers data.Time only; the story campaign adds ActiveMissionList

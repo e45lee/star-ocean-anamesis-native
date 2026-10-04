@@ -1,5 +1,5 @@
 // The favor event drop bonus (好感度イベントドロップ). Port code, not guest behaviour. Rules in
-// docs/server-rules.md "Favor event drop bonus"; labels:
+// docs/server-rules.md#favor-event-drop-bonus; labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 // (b) The client never computes the bonus: the party screens show a per-character drop icon
 // (CParameterUtility::GetFavorDropIconImageName: favor level >= 4, not spent since the day's reset,
@@ -28,7 +28,7 @@ u32 bonus_of_level(Ctx& ctx, u32 level) { return (u32)ctx.m.one("select event_dr
 }  // namespace
 
 // MissionStartExtra hook (MissionStart, registered below; favor_start's other half is favor_result).
-// Rules: docs/server-rules.md "Favor event drop bonus"
+// Rules: docs/server-rules.md#favor-event-drop-bonus
 //   (a)+(d) MissionStart of an event mission (d: master_event_mission only, like the Galaxy Pass's
 //       extra event drop slot, subscmsg_gpass_drop_manual): the party's own characters (slot order)
 //       whose favor level gives an event_drop_bonus and whose bonus isn't spent today, up to the
@@ -59,7 +59,7 @@ void favor_start(Ctx& ctx, const MissionInfo& mission, Value& param, Value&) {
 }
 
 // favor_result: run by world_boss.cpp's MissionResultExtra hook (event_extras.h: first of the three).
-// Rules: docs/server-rules.md "Favor event drop bonus"
+// Rules: docs/server-rules.md#favor-event-drop-bonus
 // MissionEnd (win): (d) each character's event_drop_bonus lots from the mission's own drop rows
 // (non-fixed, non-surprise, no host bonus; by rate_weigh), as drop_type 4 (b: the heart badge);
 // the characters' bonus is spent (added_event_drop_at = now, sent in MissionResultCharacterFavor)

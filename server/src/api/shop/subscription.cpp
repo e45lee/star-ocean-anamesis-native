@@ -1,6 +1,6 @@
 // Passes / subscriptions (ギャラクシーパス and the other content-type-20 products) as player state
-// (api/shop/subscription.h). Port code, not guest behaviour. Rules in docs/server-rules.md "Deep
-// space" ("Subscription ships") and "Passes (subscriptions)"; labels:
+// (api/shop/subscription.h). Port code, not guest behaviour. Rules in docs/server-rules.md#deepspace-rules
+// ("Subscription ships") and docs/server-rules.md#passes; labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
 // What the client reads (b):
@@ -61,7 +61,7 @@ void grant_plan(Ctx& ctx, u32 plan, u32 days, ServerTime t) {
 namespace {
 
 // Grant hook for content type 20 (a pass; the core can't grant it): the plan `id` for `num` days.
-// Rules: docs/server-rules.md "Passes"
+// Rules: docs/server-rules.md#passes
 //   (a) num the days (30 for the Galaxy Pass, 14 for the character passes); (d) 30 when 0.
 // Adds nothing to the grant's lists (the pass reaches the client through Subscription).
 void grant_subscription_plan(Ctx& ctx, u32 id, u32 num, Value&, Value&, Value&) { grant_plan(ctx, id, num ? num : kDefaultPassDays, ctx.now()); }
@@ -128,7 +128,7 @@ Value subscription_plan_info(Ctx& ctx) {
 namespace {
 
 // OnPlayerLoad hook (Login, GetPlayer, NoLoginStart's full player state).
-// Rules: docs/server-rules.md "Passes"
+// Rules: docs/server-rules.md#passes
 //   (b) the keys and fields (EnableSubscriptionType reads Subscription); (d) which responses.
 //   (d) --galaxy-pass: the Galaxy Pass granted first when it isn't running (keep_galaxy_pass).
 // Adds: Subscription, SubscriptionPlan.

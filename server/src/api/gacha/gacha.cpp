@@ -1,7 +1,7 @@
 // The gacha: GetGachaInData and the draws (Gacha, GachaOnce, SaleGacha, SaleGachaOnce, GachaTicket;
 // api/gacha/gacha.h). Port code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "4. Gacha").
+// knowledge, (d) assumption (docs/server-rules.md#gacha-rules).
 #include "api/gacha/gacha.h"
 
 #include <algorithm>
@@ -77,7 +77,7 @@ Value gacha_hash_entry(ext::Ctx& ctx, const Row& gacha_row) {
 }  // namespace
 
 // GetGachaInData() -> GetGachaInDataRes                                fid 8e4a88d7
-// API: docs/api.md#getgachaindata   Rules: docs/server-rules.md#41-whats-open, docs/server-rules.md#44-step-up-and-box-gacha
+// API: docs/api.md#getgachaindata   Rules: docs/server-rules.md#gacha-open, docs/server-rules.md#gacha-step-up-box-rules
 //
 // The gacha screen's banners (b: CGacha::Initialize sends it; docs/api.md Callers).
 //   (a) every master_gacha row open at the server clock (gacha_open; --enable-events adds the
@@ -106,7 +106,7 @@ std::vector<u8> get_gacha_in_data(ext::Ctx& ctx, const Request&) {
 
 namespace {
 // Pools (d, the method): master_gacha's table_name tables aren't in either master DB, so
-// the pool is rebuilt from master_role (docs/server-rules.md 4.3): S and A = ★5 and up
+// the pool is rebuilt from master_role (docs/server-rules.md#gacha-rates): S and A = ★5 and up
 // (rarity 5 and 6, role ranks 3..5), S from the banner's master_gacha_pickup group when it
 // has one; B = rarity 4; C and D = rarity 3 ((a)+(c): the rates and banner texts, e.g.
 // gacha_role_0001's bonus rates C 0 / B 84 and "10連で★4以上のキャラが1体確定!"). Only roles
@@ -340,7 +340,7 @@ void draw_units(ext::Ctx& ctx, const Row& gacha_row, GachaDraw& draw) {
         u64 sum = 0;
         for (u32 w : weights) sum += w;
         int rank = sum ? rules::weighted_pick(weights, (*ctx.rng)() % sum) : 3;
-        // The reconstructed pools (docs/server-rules.md 4.5) when present: the rank by the
+        // The reconstructed pools (docs/server-rules.md#gacha-pools) when present: the rank by the
         // banner's rates over ranks with a released unit, then a unit of that rank.
         // Without them, draw_role's rarity pools.
         gacha_pools::Unit unit;
@@ -401,7 +401,7 @@ Value gacha_data(ext::Ctx& ctx, const Request& req, const Row& gacha_row, GachaD
 // SaleGacha(u32 gacha, hash) / SaleGachaOnce(u32 gacha, hash) /
 // GachaTicket(u32 gacha, u32 ticket_count, hash) -> <Method>Res
 //                                       fids a0a1940b, 992ccbe5, b164b4c5, 2d230806, ee11c3d3
-// API: docs/api.md#gacha   Rules: docs/server-rules.md#4-gacha, docs/server-rules.md#gacha-step-up-and-box
+// API: docs/api.md#gacha   Rules: docs/server-rules.md#gacha-rules, docs/server-rules.md#gacha-step-up-box
 //
 // A draw: GachaOnce one unit for `coin`, Gacha the bulk draw (or the single one, once = 1),
 // SaleGacha / SaleGachaOnce at the sale prices, GachaTicket ticket_item_id x ticket_num per draw.

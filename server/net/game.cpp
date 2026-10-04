@@ -1,5 +1,5 @@
 // soa-server's game-server session logic (game.h). Our code; every behaviour the client can't
-// tell us is labelled (d) here and in docs/server-rules.md "soa-server: the wire layer".
+// tell us is labelled (d) here and in docs/server-rules.md#wire-layer.
 #include "game.h"
 
 #include <sys/stat.h>
@@ -58,8 +58,8 @@ std::string json_escape(const std::string& s) {
 }
 
 // The LoginResult body: the server library's Login answer plus a top-level "Player" map, the
-// client's legacy CParameterPlayer (docs/server-rules.md "soa-server: the wire
-// layer"). (b) CApiNotify::OnLoginResult (3.7.0 @014be668) hands the body's root map to
+// client's legacy CParameterPlayer (docs/server-rules.md#wire-layer).
+// (b) CApiNotify::OnLoginResult (3.7.0 @014be668) hands the body's root map to
 // CParameterManager::Deserialize, whose CParameterPlayer (pParseName "Player", 3.7.0 @017f84d4)
 // reads root["Player"] (CParameterBase::pGetRoot) into its element {Id u32, Token u32, Level u32,
 // Role s32, PersonID u32, Weapon u32, Name string} (CParameterPlayerElement::Initialize

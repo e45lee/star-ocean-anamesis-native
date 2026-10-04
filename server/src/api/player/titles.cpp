@@ -1,6 +1,6 @@
 // Player titles (称号; api/player/README.md). Port code, not guest behaviour; every rule carries its
 // source label, (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
-// Rules in docs/server-rules.md "Titles".
+// Rules in docs/server-rules.md#titles.
 //
 // What the client reads (b):
 //  - `TitleList`: the owned titles. CTitleList is an InfoBaseValueArray<u32> (its vtable's
@@ -82,7 +82,7 @@ void set_player_title(Value& data, std::optional<TitleId> title) {
 }
 
 // Grant (content type 13): a title                        from the present box (achievement rewards)
-// Rules: docs/server-rules.md "Titles" (Grant)
+// Rules: docs/server-rules.md#titles (Grant)
 //
 //   (a) Content type 13 is a master_title id (docs/api.md "Content types",
 //       master_achievement.content_type 13 -> master_title ids); an id not in master_title is
@@ -102,7 +102,7 @@ void grant_title(ext::Ctx& ctx, u32 content_id, u32, Value&, Value&, Value&) {
 }
 
 // OnPlayerLoad: TitleList, Player.title                   on Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart
-// Rules: docs/server-rules.md "Titles"
+// Rules: docs/server-rules.md#titles
 //
 //   (b) TitleList and Player.title are what CHonorMenu and the status bar read (above).
 //   (d) Nothing without a player (the new-player flow's NoLoginStart).
@@ -115,7 +115,7 @@ void load_titles(ext::Ctx& ctx, const Request&, Value& data) {
 
 // SetTitle(u32 master_title_id) -> SetTitleRes                                 fid 4332363c
 // API: docs/api.md#settitle
-// Rules: docs/server-rules.md "Titles"
+// Rules: docs/server-rules.md#titles
 //
 // Selects the title the status bar's plate shows.
 //   (b) CHonorMenu::CallApiSetTitle sends it; CHonorMenu::UpdateTitleData expects Player.title back.
@@ -137,7 +137,7 @@ std::vector<u8> set_title(ext::Ctx& ctx, const Request& req) {
 }
 
 // OnResponse: the titles this request granted             on every answered response
-// Rules: docs/server-rules.md "Titles" (Grant)
+// Rules: docs/server-rules.md#titles (Grant)
 //
 //   (b) The keys (docs/api.md; CPresentBoxReceiveTitleInfo): a response that granted titles
 //       carries the new list TitleList (state), AddTitleList (the per-response result) and, for a

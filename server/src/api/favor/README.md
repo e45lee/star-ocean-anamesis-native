@@ -9,6 +9,6 @@ The core's APIs register with `ext::add_core_api`, before the modules. `favor.cp
 
 **State**: `favor` (one row per same_role_id: point, tap_count, tapped_at, event_drop_at; the times are seconds, NULL for never (PLAN-schema S9; `event_drop_at` was the sent text before), formatted with `format_time_or_empty` in the responses; created with every other table in `../../state/schema.cpp`).
 
-**Rules**: docs/server-rules.md "8. Favor" (State, Levels, Gains, Responses), "Favor achievements", "Type-8 campaigns", "Event extras" (the event drop bonus).
+**Rules**: docs/server-rules.md#favor-rules (State, Levels, Gains, Responses), "Favor achievements", "Type-8 campaigns", "Event extras" (the event drop bonus).
 
 **Tests**: `favor_tests.cpp` (`favor/favor-rules`, `favor/friendship-campaign`); `../daily/daily_tests.cpp` (the favor login bonus), `../presents/achievements_tests.cpp` (type-52 achievements), `../events/event_extras_tests.cpp` `events/favor-drop`. **Session**: `port/scripts/restore_favor_session.sh` (two taps, level 1 -> 2, battle favor; reads the `favor: tap same_role` and `favor: mission (stamina` log lines).

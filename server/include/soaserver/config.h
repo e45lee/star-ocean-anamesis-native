@@ -13,7 +13,7 @@
 namespace soa::server {
 
 // The default --event-keywords: the summer (swimsuit) events and banners; see
-// docs/server-rules.md "Enabling events by keyword" for what it matches.
+// docs/server-rules.md#enabling-events for what it matches.
 extern const char* const kDefaultEventKeywords;
 
 struct ServerConfig {
@@ -27,7 +27,7 @@ struct ServerConfig {
     std::string gacha_pools;       // --gacha-pools: the reconstructed gacha pools ("" = data/gacha_pools.sqlite3 in the repo)
     bool has_seed_rng = false;     // --seed-rng: a fixed RNG seed, else the time
     uint64_t seed_rng = 0;
-    // Free coins a new local player starts with (--start-coins; docs/server-rules.md "Seed").
+    // Free coins a new local player starts with (--start-coins; docs/server-rules.md#seed).
     uint32_t start_coins = 300000;
 
     // ---- clock (--clock "YYYY-MM-DD HH:MM:SS"): the server clock starts there and runs on.

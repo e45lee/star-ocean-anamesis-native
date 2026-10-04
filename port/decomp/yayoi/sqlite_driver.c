@@ -4,6 +4,7 @@
 // lib      libSOA-3.7.0.so  sha256 698d55b9fdf93c3573b2e71dd614451529e0f396779e5021c68cc423b2b98c5e  (45988160 bytes)
 // tool     Ghidra 12.1.2 analyzeHeadless -noanalysis, tools/ghidra_scripts/DecompileAt.java, tools/resolve_decomp.py
 // run      2026-10-04 06:27 UTC: tools/decomp_at.sh '--into' 'yayoi/sqlite_driver' '0x22f26cc' '0x22f2224' '0x22f210c' '0x22f2084' '0x22f2310' '0x22f2020' '0x22f23e4' '0x22f27d8' '0x22f28e4' '0x22f25c0' '0x22f219c' '0x22f29f4' '0x22f20bc' '0x22f24c4' '0x22f22dc' '0x22f1fe0' '0x22f1fe0' '0x22f1fec' '0x22f1fec' '0x22f2b28' '0x22f352c' '0x22f36c0' '0x22f3330' '0x22f34c4' '0x22f2bbc' '0x22f42bc' '0x22f4bc8' '0x22f4090' '0x22f2b4c' '0x22f4240' '0x22f40fc' '0x22f2ea0' '0x22f3054' '0x22f3728' '0x22f38bc' '0x22f2d34' '0x22f2e88' '0x22f3f40' '0x22f3f20' '0x22f2b04' '0x22f3924' '0x22f3abc' '0x22f3d24' '0x22f3eb8' '0x22f3b28' '0x22f3cbc' '0x22f30e8' '0x22f329c' '0x22f42fc' '0x22f2bcc' '0x22f2bcc' '0x22f2ca4' '0x22f2ca4' '0x22f2b00' '0x22f2b00' '0x22f4d08' '0x22f4d44' '0x22f4fa8' '0x22f5250' '0x22f4c90' '0x22f4db4' '0x22f50f4' '0x22f4e9c' '0x22f4e3c' '0x22f4ea4' '0x22f4ff8' '0x22f4bd0' '0x22f4bd0' '0x22f4bf0' '0x22f4bf0' '0x22f5714' '0x22f5410' '0x22f52a0' '0x22f5270' '0x22f2cf4' '0x22f2008' '0x22f1ff0'
+// run      2026-10-04 07:42 UTC: tools/decomp_at.sh '--into' 'yayoi/sqlite_driver' '0x22f5614'
 
 // ==== Aska::Yayoi::EntityCache::EntityCache()
 // vaddr 0x21f1fe0 | ghidra 0x22f1fe0 | size 12 | symbol _ZN4Aska5Yayoi11EntityCacheC2Ev | lib libSOA-3.7.0.so | 2026-10-04
@@ -3348,6 +3349,60 @@ code_r0x022f5538:
     Aska::MemoryManagerAdapter::AlignedFree(void*)();
   }
   return;
+}
+
+// ==== void Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::Insert<Aska::THashMapIterator<Aska::detail::THashMapBucketArray<Aska::detail::THashMapBucket<Aska::TPair<char const* const, int> >, Aska::TAllocator<Aska::detail::THashMapBucket<Aska::TPair<char const* const, int> > > > > >(Aska::THashMapIterator<Aska::detail::THashMapBucketArray<Aska::detail::THashMapBucket<Aska::TPair<char const* const, int> >, Aska::TAllocator<Aska::detail::THashMapBucket<Aska::TPair<char const* const, int> > > > >, Aska::THashMapIterator<Aska::detail::THashMapBucketArray<Aska::detail::THashMapBucket<Aska::TPair<char const* const, int> >, Aska::TAllocator<Aska::detail::THashMapBucket<Aska::TPair<char const* const, int> > > > >)
+// vaddr 0x21f5614 | ghidra 0x22f5614 | size 256 | symbol _ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEE6InsertINS_16THashMapIteratorINS_6detail19THashMapBucketArrayINSG_14THashMapBucketISB_EENS8_ISJ_EEEEEEEEvT_SN_ | lib libSOA-3.7.0.so | 2026-10-04
+void _ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEE6InsertINS_16THashMapIteratorINS_6detail19THashMapBucketArrayINSG_14THashMapBucketISB_EENS8_ISJ_EEEEEEEEvT_SN_
+               (long param_1,long *param_2,undefined8 *param_3)
+
+{
+  char *pcVar1;
+  char *pcVar2;
+  char *pcVar3;
+  long lVar4;
+  ulong uVar5;
+  char *pcVar6;
+  undefined1 auStack_40 [32];
+  
+  pcVar2 = (char *)*param_2;
+  pcVar3 = (char *)*param_3;
+  lVar4 = 0;
+  if (pcVar2 != pcVar3) {
+    pcVar6 = pcVar2;
+    do {
+      lVar4 = lVar4 + 1;
+      do {
+        pcVar1 = (char *)param_2[2];
+        if ((char *)param_2[2] == pcVar6) break;
+        pcVar6 = pcVar6 + 0x18;
+        pcVar1 = pcVar6;
+      } while (*pcVar6 != '\x01');
+      pcVar6 = pcVar1;
+    } while (pcVar6 != pcVar3);
+  }
+  uVar5 = (ulong)((float)(lVar4 + (ulong)*(uint *)(param_1 + 0x10) +
+                         (ulong)*(uint *)(param_1 + 0x14)) / *(float *)(param_1 + 0xc));
+  if (uVar5 <= *(ulong *)(param_1 + 0x28)) goto code_r0x022f56b8;
+  Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::Rehash_(unsigned long)(param_1,uVar5 << 1 | 1);
+  pcVar2 = (char *)*param_2;
+  do {
+    pcVar3 = (char *)*param_3;
+code_r0x022f56b8:
+    if (pcVar2 == pcVar3) {
+      return;
+    }
+    Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::Insert_(Aska::TPair<char const* const, int> const&)(auStack_40,param_1,pcVar2 + 8);
+    pcVar3 = (char *)*param_2;
+    do {
+      pcVar2 = (char *)param_2[2];
+      if ((char *)param_2[2] == pcVar3) break;
+      pcVar2 = pcVar3 + 0x18;
+      *param_2 = (long)pcVar2;
+      pcVar6 = pcVar3 + 0x18;
+      pcVar3 = pcVar2;
+    } while (*pcVar6 != '\x01');
+  } while( true );
 }
 
 // ==== Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::Insert_(Aska::TPair<char const* const, int> const&)

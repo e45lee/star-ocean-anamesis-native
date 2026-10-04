@@ -1,7 +1,7 @@
 #pragma once
 // The gacha (port code, not guest behaviour): the draws and GetGachaInData (gacha.cpp), step-up
 // chains (stepup.cpp), box gacha (box.cpp) and the rate dialog (rates.cpp). The pools are
-// master/gacha_pools.h's (ctx.pools). docs/server-rules.md "4. Gacha", "Gacha: step-up and box".
+// master/gacha_pools.h's (ctx.pools). docs/server-rules.md#gacha-rules, docs/server-rules.md#gacha-step-up-box.
 #include <vector>
 
 #include "soaserver/ext.h"

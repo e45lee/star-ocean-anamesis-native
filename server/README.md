@@ -58,9 +58,12 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
   (`tools/check_server_docs.sh`: 0 since R19).
 - **Remove what describes code that no longer exists** (canned files, removed options), and say so
   in the commit message.
-- **Link the docs** by section: `docs/server-rules.md "Section title"` (the start of a heading) or,
-  once the doc has them, an anchor `docs/server-rules.md#titles`. `tools/server_evidence.py` reports
-  links that don't resolve.
+- **Link the docs** by anchor: `docs/server-rules.md#titles`, the explicit `<a id="titles"></a>` above
+  a section of that doc (one section per `api/<domain>`; `tools/server_rules_doc.py --anchors` lists
+  them). A quoted title (`docs/server-rules.md "Titles"`) is no longer accepted (R20), and a link
+  that doesn't resolve fails `tools/check_server_docs.sh`. A new (c) / (d) rule the player sees gets
+  a row in its domain's "Player-visible (c) and (d) rules" table; `tools/server_rules_doc.py
+  --write` regenerates the register from those tables.
 - **A log line a script reads** (`tools/server_log_patterns.txt`) keeps its text exactly; mark it
   `// read by <script>` when you touch it.
 - **Handlers** get a doc block: the method signature and reply, the `API:` / `Rules:` links, a

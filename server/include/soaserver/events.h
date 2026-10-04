@@ -1,6 +1,6 @@
 #pragma once
 // Event missions (api/events/event_missions.cpp). The parts other modules and the
-// unit tests (api/events/event_missions_tests.cpp) reach directly. Rules and labels in docs/server-rules.md "Events":
+// unit tests (api/events/event_missions_tests.cpp) reach directly. Rules and labels in docs/server-rules.md#events:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
 // Two clocks meet here (server.h; their types soaserver/times.h): the client's clock `now`, a

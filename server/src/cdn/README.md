@@ -1,6 +1,6 @@
 # server/src/cdn: what the server's CDN serves
 
-The content of the CDN both server modes serve to the client (soa-server over HTTP, `../../net/cdn_http.cpp`; soa in memory, `port/src/native/api/server_cdn.cpp`). Public API: `../../include/soaserver/cdn.h`, `adld.h`. Rules and labels: docs/server-rules.md "soa-server: the CDN".
+The content of the CDN both server modes serve to the client (soa-server over HTTP, `../../net/cdn_http.cpp`; soa in memory, `port/src/native/api/server_cdn.cpp`). Public API: `../../include/soaserver/cdn.h`, `adld.h`. Rules and labels: docs/server-rules.md#cdn.
 
 | File | What |
 |---|---|

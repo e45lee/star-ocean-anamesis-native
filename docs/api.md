@@ -350,7 +350,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Method** `Login(void)`; wire `SendLogin(RequestHeader, signed char const*, signed char const*, unsigned int, signed char const*, unsigned int, unsigned char)`
 - **Wire**: request fid `a01c67ef`, encrypted: RequestHeader(16) · char[36] · u32 len + len bytes · u32 len + len bytes · u8 = 61 bytes + payload; reply `LoginResult` fid `2acff1ed`
 - **Request**: none at the IApiCaller level; `NetworkApiCaller` fills the wire call from the bridge session: (uuid, secret, device type, os version, ..., flag).
-- **Response** (`data.*`): `data.Player` (CPlayerInfo), `data.HostPlayer`, `GameID`, `AssetPath`/`MasterPath`/`a_ver`/`r_ver`, `LatestEpisodeVersion` (the episode-pack count; docs/server-rules.md "soa-server: the CDN", "Episode data"), `ServerBuildInfo`, maintenance keys (`MainteMode`, `MainteAnnounce`, `PartialMaintenance`), `Time`.
+- **Response** (`data.*`): `data.Player` (CPlayerInfo), `data.HostPlayer`, `GameID`, `AssetPath`/`MasterPath`/`a_ver`/`r_ver`, `LatestEpisodeVersion` (the episode-pack count; docs/server-rules.md#cdn), `ServerBuildInfo`, maintenance keys (`MainteMode`, `MainteAnnounce`, `PartialMaintenance`), `Time`.
 - **Handler / effect**: `OnLoginResult` (session bookkeeping, not `On*Res`). The server authenticates, returns the player and the asset/master versions.
 - **Callers** (fid constant scan): `CPhase_Login::Progress`, `CPhase_Relogin::Progress`
 - **Status**: **online**
@@ -724,7 +724,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `1f96f310`, encrypted: RequestHeader(16) = 16 bytes; reply `MissionRestartRes` fid `42ff2e75`
 - **Request**: none
 - **Response** (`data.*`): as MissionStart
-- **Handler / effect**: `OnMissionStart` + acknowledge. Resume an interrupted mission (after `GetPlayMission.is_play`). The client builds the resumed battle's party from the reply's `BattleParameter.PlayerCharacter` as for MissionStart (`CStageManager::Progress` → `CPartyManager::InitializePlayer(ulong*, bool*, int)`), so the server sends the play's party and helper again (docs/server-rules.md 2.6).
+- **Handler / effect**: `OnMissionStart` + acknowledge. Resume an interrupted mission (after `GetPlayMission.is_play`). The client builds the resumed battle's party from the reply's `BattleParameter.PlayerCharacter` as for MissionStart (`CStageManager::Progress` → `CPartyManager::InitializePlayer(ulong*, bool*, int)`), so the server sends the play's party and helper again (docs/server-rules.md#failure-continue-restart).
 - **Callers** (fid constant scan): `CStageManager::Progress`
 - **Status**: **online**
 - **FakeApiCaller**: `FakeApi/mission_start.msgp`
@@ -882,7 +882,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `DeepSpaceAreaList`, `DeepSpaceActiveShipInfoList`, `DeepSpaceBonusAllApplyInfoList`, `DeepSpaceEndShipInfoList`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CDeepSpace::Progress`
-- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md "Deep space".
+- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md#deepspace.
 - **Master tables**: `master_deep_space_area`, `_mission`, `_ship`, `_bonus*`
 
 ### DeepSpaceAutoMemberSelect
@@ -893,7 +893,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `AutoSelectedResult` (array of uids)
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::enable_if<__is_forward_iter`
-- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md "Deep space".
+- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md#deepspace.
 - **FakeApiCaller**: `FakeApi/compose.msgp`
 
 ### DeepSpaceMissionEnd
@@ -904,7 +904,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `DeepSpaceShip` (erased from both ship maps), `DeepMissionPlayer` (level, exp, stamina, stamina_max, fol, is_level_up, tower_try_count, time_saving_use_count, stamina_update), `DeepSpaceEndShipInfoList`, `DeepSpaceActiveShipInfoList`, `add_characters_exp` (with add_exp, order_id), `CContentInfoMap` (the result's reward items), `LimitBreakCharacter`, `AddItem`, `StockItem`, `DeepSpaceArea`
 - **Handler / effect**: Inline (guest). Rewards: exp / player_exp / character_exp / fol, drop_count lots from `master_deep_space_drop_item`, bonuses.
 - **Callers** (fid constant scan): `CDeepSpace::SetupPartySelect`
-- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md "Deep space".
+- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md#deepspace.
 - **Master tables**: `master_deep_space_mission` (`exp`, `player_exp`, `character_exp`, `fol`, `drop_count`, `drop_type_id`, `rare_*`), `master_deep_space_drop_item`, `master_deep_space_bonus*`
 - **FakeApiCaller**: `FakeApi/compose.msgp`
 
@@ -916,7 +916,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `DeepSpaceShip` (moved into the End map), `DeepMissionPlayer`, the ship lists, `StockItem`
 - **Handler / effect**: Inline (guest). Brings the ship home at once for quick-return items / coins; the rewards come with the following `DeepSpaceMissionEnd`.
 - **Callers** (fid constant scan): unnamed code near `void std::__ndk1::vector<std::__ndk1::ba`
-- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md "Deep space".
+- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md#deepspace.
 - **Master tables**: `master_deep_space_time_saving`, `master_global.deep_space_quick_return_item`
 - **FakeApiCaller**: `FakeApi/compose.msgp`
 
@@ -928,7 +928,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `DeepSpaceShip`, `DeepSpaceActiveShipInfoList`, `DeepSpaceArea(List)`, `UpdateDeepSpaceBonusAllApplyInfoList`, `characters`
 - **Handler / effect**: Inline (guest). Sends characters on an expedition for `master_deep_space_mission.time`.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::enable_if<__is_forward_iter`
-- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md "Deep space".
+- **Status**: **online**; local server: `server/src/api/deepspace/deepspace.cpp`; docs/server-rules.md#deepspace.
 - **Master tables**: `master_deep_space_mission`, `master_deep_space_ship`
 - **FakeApiCaller**: `FakeApi/compose.msgp`
 
@@ -942,7 +942,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player; the first call of a dive lots floor 1
 - **Handler / effect**: Apply + AddItem + UpdateStackItem. Season, floor, stamina, treasure state.
 - **Callers** (fid constant scan): `CSphereMissionMenu::Initialize`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### GetSphere211RankingInfo
@@ -953,7 +953,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `Sphere211RankingInfoMap` / `Sphere211RankingTopInfoMap` {player id: {player_id, floor_level, entered_at, rank}}
 - **Handler / effect**: Apply + UpdateStackItem.
 - **Callers** (fid constant scan): `CSphereRanking::Initialize`, `CSphereRanking::tRankingInfo::tRankingInfo`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### ReturnSphere211
@@ -964,7 +964,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `Sphere211TreasureResultLotInfoMap` {0..4: {lot_num}}, `Sphere211TreasureResultInfoMap` {0..4: [{content_id, content_type, num}]} (key 0 = D .. 4 = S), `StockItem`, `Item` / `Character` when granted
 - **Handler / effect**: Inline (native): clears the Sphere211 character map.
 - **Callers** (fid constant scan): `ResultUtility::OpenSphere211ReturnResult`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211AutoMemberSelect
@@ -975,7 +975,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `Sphere211AutoMemberSelectResultInfo` (array of uids: the proposed party, `InfoBaseValueArray<u64>`)
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::vector<CParameterUtility::t`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211EquipAuto
@@ -986,7 +986,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player
 - **Handler / effect**: Apply + ApplyAutoEquipResult.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::vector<CParameterUtility::t`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211FloorClear
@@ -997,7 +997,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `Sphere211FloorClearResultInfo` {clear_present_id, clear_present_content_type, clear_present_num}, `Sphere211TreasureDropInfoList` [{type 4, num}], `StockItem`
 - **Handler / effect**: Inline (guest).
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::function<bool (MissionUtili`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211MissionContinue
@@ -1008,7 +1008,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `is_mission_continue`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CPauseMenu::ReqeustContinue`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211MissionEnd
@@ -1019,7 +1019,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the core MissionEnd's result keys (EXP, FOL, drops), the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `Sphere211TreasureDropInfoList` [{type, num}] (type 1 streak bonus, 2 boss, 3 rare enemy: the result badges)
 - **Handler / effect**: `OnSphere211MissionEndRes` (the OnMissionEnd chain).
 - **Callers** (fid constant scan): `CStageManager::Progress`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211MissionFailed
@@ -1030,7 +1030,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CPhase_InterruptionResume::CallMissionFaild`, `CStageManager::Progress`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211MissionStart
@@ -1041,7 +1041,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the core MissionStart's `MissionParameter` (enemy level) / `PlayMission` / `BattleParameter`, the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player
 - **Handler / effect**: Apply + UpdateStackItem (via CStageManager, mission type 5).
 - **Callers** (fid constant scan): `CStageManager::Progress`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211SelectedFloor
@@ -1052,7 +1052,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player; the new floor's cells
 - **Handler / effect**: Inline (native).
 - **Callers** (fid constant scan): unnamed code near `CSphereFloorClear`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211StaminaHeal
@@ -1063,7 +1063,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `StockItem`
 - **Handler / effect**: Apply + UpdateStackItem.
 - **Callers** (fid constant scan): unnamed code near `CStaminaHeal`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ### Sphere211UseRerollItem
@@ -1074,7 +1074,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `StockItem`
 - **Handler / effect**: Apply + UpdateStackItem.
 - **Callers** (fid constant scan): unnamed code near `CSphereFloorClear`
-- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md "Sphere 211".
+- **Status**: **online**; local server: `server/src/api/sphere211/sphere211.cpp`, queued on the FakeApiCaller route; docs/server-rules.md#sphere211.
 - **Master tables**: `master_sphere211*`, `master_global.sphere_stamina_max` / `sphere_stamina_recovery_time`
 
 ## Character growth

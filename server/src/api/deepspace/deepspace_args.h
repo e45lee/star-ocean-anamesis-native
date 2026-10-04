@@ -1,8 +1,8 @@
 #pragma once
 // The deep space APIs' request arguments by name (port code, not guest behaviour), as
 // core/request_args.h does for the core's: each struct reads one method's positional arguments
-// (docs/api.md's **Method** / **Request** lines; docs/server-rules.md "Deep space", "Requests as the
-// client sends them"), with the defaults the handlers used when one is missing (0 / none; none of
+// (docs/api.md's **Method** / **Request** lines; docs/server-rules.md#deepspace-requests),
+// with the defaults the handlers used when one is missing (0 / none; none of
 // them logs).
 #include <vector>
 

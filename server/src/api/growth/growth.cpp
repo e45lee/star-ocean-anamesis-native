@@ -1,6 +1,6 @@
 // Character growth: BoostCharacter, LimitBreakCharacter(_Legacy), EvolutionCharacter,
 // UpdateAwakenLevel, AddStatusCharacter, EquipWeapon / EquipAccessory, EquipSkill (README.md).
-// Port code, not guest behaviour. Rules in docs/server-rules.md "5. Growth" (the evidence) and
+// Port code, not guest behaviour. Rules in docs/server-rules.md#growth-rules (the evidence) and
 // "Growth and economy" (what the server does with it); every rule carries its source label:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 // The pure rules are rules/growth_rules.{h,cpp}. Refusals answer the player state with a client
@@ -139,7 +139,7 @@ Value update_character_info(Ctx& ctx, CharacterUid uid, bool equipped_skills) {
 }
 
 // BoostCharacter(u64 character_uid, u32 master_item_id, u32 count) -> BoostCharacterRes   fid e5a04db6
-// API: docs/api.md#boostcharacter   Rules: docs/server-rules.md "5.1 Character EXP and level"
+// API: docs/api.md#boostcharacter   Rules: docs/server-rules.md#character-exp
 //
 // Feeds `count` EXP items to an owned character (the strengthening screen,
 // CPartyStrengthening::StrengtheningExecAPI).
@@ -236,7 +236,7 @@ int64_t limit_break_items(Ctx& ctx, const Character& chara, u32& item) {
 
 // LimitBreakCharacter(u64 character_uid, u32 row_or_item_id) -> LimitBreakCharacterRes   fid 78972d03
 // LimitBreakCharacter_Legacy (the same arguments) -> LimitBreakCharacterRes_Legacy         fid 1d7cbc6a
-// API: docs/api.md#limitbreakcharacter   Rules: docs/server-rules.md "5.2 Limit break"
+// API: docs/api.md#limitbreakcharacter   Rules: docs/server-rules.md#limit-break
 //
 // Raises an owned character's limit break by one (CPartyCompositionLimitBreak).
 //   (b) the maximum is the master_rank rows of the role's rank - 1
@@ -287,7 +287,7 @@ std::vector<u8> limit_break_character(Ctx& ctx, const Request& req) {
 }
 
 // EvolutionCharacter(u64 character_uid) -> EvolutionCharacterRes   fid 990921b6
-// API: docs/api.md#evolutioncharacter   Rules: docs/server-rules.md "5.3 Evolution"
+// API: docs/api.md#evolutioncharacter   Rules: docs/server-rules.md#evolution
 //
 // Evolves an owned character into the next rarity of its category (CPartyCompositionEvolution).
 //   (b) only at the level cap (the screen enables the button only then); else 11002.
@@ -350,7 +350,7 @@ std::vector<u8> evolution_character(Ctx& ctx, const Request& req) {
 }
 
 // UpdateAwakenLevel(u64 character_uid, u32 awaken_level) -> UpdateAwakenLevelRes   fid 2d714808
-// API: docs/api.md#updateawakenlevel   Rules: docs/server-rules.md "5.4 Awakening, skills, mastery, universe"
+// API: docs/api.md#updateawakenlevel   Rules: docs/server-rules.md#awakening
 //
 // Awakens an owned character one level (CPartyAwakening::ExecAwakeningAPI).
 //   (d) one level at a time: the request's level must be the current one + 1, else 10208.
@@ -394,7 +394,7 @@ std::vector<u8> update_awaken_level(Ctx& ctx, const Request& req) {
 }
 
 // AddStatusCharacter(u64 character_uid, u32 master_item_id, u32 count) -> AddStatusCharacterRes   fid 74e09417
-// API: docs/api.md#addstatuscharacter   Rules: docs/server-rules.md "5.1 Character EXP and level"
+// API: docs/api.md#addstatuscharacter   Rules: docs/server-rules.md#character-exp
 //
 // Feeds `count` seeds (item_seed_*) to an owned character: its add_<stat> rises.
 //   (a) the seed's stat is its own positive stat column of master_item (item_seed_*: 1, hp 5);
@@ -458,7 +458,7 @@ std::vector<u8> add_status_character(Ctx& ctx, const Request& req) {
 
 // EquipWeapon(u64 character_uid, u64 item_uid) -> EquipWeaponRes          fid 1f3c9eca
 // EquipAccessory(u64 character_uid, u64 item_uid) -> EquipAccessoryRes    fid 99750e8d
-// API: docs/api.md#equipweapon   Rules: docs/server-rules.md "Character growth"
+// API: docs/api.md#equipweapon   Rules: docs/server-rules.md#character-growth
 //
 // Equips an owned weapon / accessory on an owned character; item 0 takes it off
 // (CPartyCompositionWeaponList::ReturnEquipHome).
@@ -509,7 +509,7 @@ std::vector<u8> equip_item(Ctx& ctx, const Request& req) {
 }
 
 // EquipSkill(u64 character_uid, u32 skill1, u32 skill2, u32 skill3) -> EquipSkillRes   fid 4656d729
-// API: docs/api.md#equipskill   Rules: docs/server-rules.md "Character growth"
+// API: docs/api.md#equipskill   Rules: docs/server-rules.md#character-growth
 //
 // Stores the three skill slots of an owned character (CPartyCompositionSkillList::ReturnButton).
 //   (d) the slots are stored as sent: not checked against the role's open skills.

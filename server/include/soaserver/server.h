@@ -75,7 +75,7 @@ void set_clock_source(ClockSource source);
 // mapped onto the most recent year in which some master_event_term covers that month-day (the
 // years the table's terms open in, 2016-2021 in the 3.7.0 DB; open-ended terms that close after
 // the last of those years don't count), so the service's calendar replays year after year.
-// docs/server-rules.md "Clock".
+// docs/server-rules.md#conventions.
 EventTime event_now();
 // The mapping itself for the real time `t` over the master DB `master` (core/clock.cpp; t
 // itself when no year qualifies or the table is missing). Cached per local day.

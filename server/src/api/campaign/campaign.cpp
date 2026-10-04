@@ -5,7 +5,7 @@
 // progress.cpp and lists.cpp (api/campaign/campaign.h).
 //
 // Rule sources: (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
-// docs/server-rules.md "Campaign progression" lists the same rules.
+// docs/server-rules.md#campaign lists the same rules.
 #include <cinttypes>
 #include <mutex>
 #include <string>

@@ -33,7 +33,7 @@ NAME = "Tessa"          # made up
 LEVEL = 60
 EXP = 0
 FOL = 250000
-PLAYER_ID = "LOCAL00001"  # the sanitized local id (docs/server-rules.md "Seed")
+PLAYER_ID = "LOCAL00001"  # the sanitized local id (docs/server-rules.md#seed)
 PER_RARITY = {3: 12, 4: 10, 5: 12, 6: 4}  # roles taken per rarity (lowest ids first): 38
 PLANETS = 10
 

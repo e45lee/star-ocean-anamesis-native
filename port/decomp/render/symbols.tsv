@@ -94,6 +94,8 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f7f7d0	0x207f7d0	16	_ZN4Aska4Task11ForceDeleteEv	Aska::Task::ForceDelete()	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
 0x1f7f7e0	0x207f7e0	4	_ZN4Aska4Task3RunEi	Aska::Task::Run(int)	hierarchical_object	typed	kernel's class (kernel_layout.h Task; render aliases it)
 0x209f540	0x219f540	152	_ZN4Aska18HierarchicalObjectD2Ev	Aska::HierarchicalObject::~HierarchicalObject()	hierarchical_object	typed	
+0x20ad2a8	0x21ad2a8	616	_ZN4Aska18AHSLCacheManagerV222BuildLinkedDiskCacheL2EPKNS_15ShaderDiskCacheE	Aska::AHSLCacheManagerV2::BuildLinkedDiskCacheL2(Aska::ShaderDiskCache const*)	shader_cache	decompiled	
+0x20b2eec	0x21b2eec	148	_ZN4Aska8AHSLBase27CreateCompressedShaderCacheEPNS_15ShaderDiskCacheEPvPh	Aska::AHSLBase::CreateCompressedShaderCache(Aska::ShaderDiskCache*, void*, unsigned char*)	shader_cache	decompiled	
 0x20bce30	0x21bce30	316	_ZN4Aska21ShaderConstantManagerD1Ev	Aska::ShaderConstantManager::~ShaderConstantManager()	material	typed	
 0x20bcf6c	0x21bcf6c	204	_ZNK4Aska21ShaderConstantManager9IsRGBZeroEii	Aska::ShaderConstantManager::IsRGBZero(int, int) const	material	typed	
 0x20bd038	0x21bd038	144	_ZNK4Aska21ShaderConstantManager21SearchShaderConstantFEiiPPNS_6VectorE	Aska::ShaderConstantManager::SearchShaderConstantF(int, int, Aska::Vector**) const	material	typed	
@@ -342,42 +344,55 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2173f28	0x2273f28	1136	_ZN4Aska13RenderContext7OnPaintEv	Aska::RenderContext::OnPaint()	render_context	typed	
 0x2174398	0x2274398	128	_ZN4Aska13RenderContext16PrepairMatriciesEv	Aska::RenderContext::PrepairMatricies()	render_context	typed	
 0x2174418	0x2274418	224	_ZN4Aska13RenderContext6Static31SetShaderConstantLightMaskGroupEPNS_14RenderDeviceGLEPNS_12LightManager12LightContextE	Aska::RenderContext::Static::SetShaderConstantLightMaskGroup(Aska::RenderDeviceGL*, Aska::LightManager::LightContext*)	light	typed	
-0x2174804	0x2274804	256	_ZN4Aska14RenderDeviceGL11BindTextureEjj	Aska::RenderDeviceGL::BindTexture(unsigned int, unsigned int)	render_device	typed	
+0x2174804	0x2274804	256	_ZN4Aska14RenderDeviceGL11BindTextureEjj	Aska::RenderDeviceGL::BindTexture(unsigned int, unsigned int)	render_device	tested	
 0x2175964	0x2275964	20	_ZNK4Aska14RenderDeviceGL12GetGLVersionEv	Aska::RenderDeviceGL::GetGLVersion() const	render_device	typed	
 0x2176244	0x2276244	192	_ZN4Aska14RenderDeviceGLC1Ev	Aska::RenderDeviceGL::RenderDeviceGL()	render_device	typed	
 0x2176558	0x2276558	1068	_ZN4Aska16RenderDeviceDataC2Ev	Aska::RenderDeviceData::RenderDeviceData()	render_device	typed	
-0x217a15c	0x227a15c	188	_ZN4Aska14RenderDeviceGL12EnableZWriteEb	Aska::RenderDeviceGL::EnableZWrite(bool)	render_device	decompiled	
+0x217a15c	0x227a15c	188	_ZN4Aska14RenderDeviceGL12EnableZWriteEb	Aska::RenderDeviceGL::EnableZWrite(bool)	render_device_setters	tested	
 0x217a4cc	0x227a4cc	296	_ZN4Aska16RenderDeviceData15BindFrameBufferEPNS_11GpuResourceE	Aska::RenderDeviceData::BindFrameBuffer(Aska::GpuResource*)	render_device	decompiled	
-0x217ad24	0x227ad24	224	_ZN4Aska14RenderDeviceGL13ActiveTextureEj	Aska::RenderDeviceGL::ActiveTexture(unsigned int)	render_device	typed	
+0x217ad24	0x227ad24	224	_ZN4Aska14RenderDeviceGL13ActiveTextureEj	Aska::RenderDeviceGL::ActiveTexture(unsigned int)	render_device	tested	
 0x217b138	0x227b138	128	_ZN4Aska14RenderDeviceGL16BindVertexFormatEPNS_12VertexBufferE	Aska::RenderDeviceGL::BindVertexFormat(Aska::VertexBuffer*)	render_device	typed	
-0x217b1b8	0x227b1b8	912	_ZN4Aska14RenderDeviceGL16BindVertexFormatEiiPv	Aska::RenderDeviceGL::BindVertexFormat(int, int, void*)	render_device	typed	
-0x217b548	0x227b548	592	_ZN4Aska14RenderDeviceGL10SetTextureEjPKPNS_11GpuResourceE	Aska::RenderDeviceGL::SetTexture(unsigned int, Aska::GpuResource* const*)	render_device	typed	
-0x217b798	0x227b798	164	_ZN4Aska14RenderDeviceGL13RemoveTextureEj	Aska::RenderDeviceGL::RemoveTexture(unsigned int)	render_device	typed	
+0x217b1b8	0x227b1b8	912	_ZN4Aska14RenderDeviceGL16BindVertexFormatEiiPv	Aska::RenderDeviceGL::BindVertexFormat(int, int, void*)	render_device	tested	
+0x217b548	0x227b548	592	_ZN4Aska14RenderDeviceGL10SetTextureEjPKPNS_11GpuResourceE	Aska::RenderDeviceGL::SetTexture(unsigned int, Aska::GpuResource* const*)	render_device	tested	
+0x217b798	0x227b798	164	_ZN4Aska14RenderDeviceGL13RemoveTextureEj	Aska::RenderDeviceGL::RemoveTexture(unsigned int)	render_device	tested	
 0x217cd0c	0x227cd0c	564	_ZN4Aska14RenderDeviceGL14SetScissorRectEPK4RECTb	Aska::RenderDeviceGL::SetScissorRect(RECT const*, bool)	render_device	decompiled	
-0x217d0f8	0x227d0f8	704	_ZN4Aska16RenderDeviceData20DrawIndexedPrimitiveEPNS_14RenderDeviceGLENS_8PrimType4TypeERNS_11IndexBufferEmi	Aska::RenderDeviceData::DrawIndexedPrimitive(Aska::RenderDeviceGL*, Aska::PrimType::Type, Aska::IndexBuffer&, unsigned long, int)	render_device	decompiled	
+0x217d0f8	0x227d0f8	704	_ZN4Aska16RenderDeviceData20DrawIndexedPrimitiveEPNS_14RenderDeviceGLENS_8PrimType4TypeERNS_11IndexBufferEmi	Aska::RenderDeviceData::DrawIndexedPrimitive(Aska::RenderDeviceGL*, Aska::PrimType::Type, Aska::IndexBuffer&, unsigned long, int)	render_device	tested	
 0x217d3c0	0x227d3c0	188	_ZN4Aska14RenderDeviceGL16BindVertexBufferEmPv	Aska::RenderDeviceGL::BindVertexBuffer(unsigned long, void*)	render_device	decompiled	
-0x217dcc0	0x227dcc0	180	_ZN4Aska14RenderDeviceGL16EnableAlphaBlendEb	Aska::RenderDeviceGL::EnableAlphaBlend(bool)	render_device	decompiled	
-0x217dfc0	0x227dfc0	160	_ZN4Aska14RenderDeviceGL24SetTextureSamplingFilterEjNS_7TexSamp6FilterE	Aska::RenderDeviceGL::SetTextureSamplingFilter(unsigned int, Aska::TexSamp::Filter)	render_device	typed	
-0x217e060	0x227e060	160	_ZN4Aska14RenderDeviceGL30SetTextureSamplingMipmapFilterEjNS_7TexSamp9MipFilterE	Aska::RenderDeviceGL::SetTextureSamplingMipmapFilter(unsigned int, Aska::TexSamp::MipFilter)	render_device	typed	
-0x217e100	0x227e100	196	_ZN4Aska14RenderDeviceGL26SetTextureSamplingWrapModeEjNS_7TexWrap4ModeES2_S2_	Aska::RenderDeviceGL::SetTextureSamplingWrapMode(unsigned int, Aska::TexWrap::Mode, Aska::TexWrap::Mode, Aska::TexWrap::Mode)	render_device	typed	
-0x217e1c4	0x227e1c4	196	_ZN4Aska14RenderDeviceGL32SetTextureSamplingMaxAnisotropicEjj	Aska::RenderDeviceGL::SetTextureSamplingMaxAnisotropic(unsigned int, unsigned int)	render_device	typed	
-0x217e288	0x227e288	180	_ZN4Aska14RenderDeviceGL11EnableZTestEb	Aska::RenderDeviceGL::EnableZTest(bool)	render_device	decompiled	
-0x217e3e4	0x227e3e4	176	_ZN4Aska14RenderDeviceGL12SetDepthBiasEff	Aska::RenderDeviceGL::SetDepthBias(float, float)	render_device	decompiled	
-0x217e494	0x227e494	184	_ZN4Aska14RenderDeviceGL13EnableStencilENS_11StencilMode4ModeE	Aska::RenderDeviceGL::EnableStencil(Aska::StencilMode::Mode)	render_device	decompiled	
-0x217e794	0x227e794	16	_ZN4Aska14RenderDeviceGL11SetCullModeENS_4Cull4ModeE	Aska::RenderDeviceGL::SetCullMode(Aska::Cull::Mode)	render_device	decompiled	
+0x217dcc0	0x227dcc0	180	_ZN4Aska14RenderDeviceGL16EnableAlphaBlendEb	Aska::RenderDeviceGL::EnableAlphaBlend(bool)	render_device	tested	
+0x217dd74	0x227dd74	16	_ZN4Aska14RenderDeviceGL21SetAlphaBlendFunctionENS_10AlphaBlend9OperationENS_22SeparateAlphaBlendMode1EE	Aska::RenderDeviceGL::SetAlphaBlendFunction(Aska::AlphaBlend::Operation, Aska::SeparateAlphaBlendMode::E)	render_device_setters	tested	
+0x217dd84	0x227dd84	288	_ZN4Aska16RenderDeviceData21SetAlphaBlendFunctionENS_10AlphaBlend9OperationENS_22SeparateAlphaBlendMode1EE	Aska::RenderDeviceData::SetAlphaBlendFunction(Aska::AlphaBlend::Operation, Aska::SeparateAlphaBlendMode::E)	render_device_setters	native	
+0x217dfc0	0x227dfc0	160	_ZN4Aska14RenderDeviceGL24SetTextureSamplingFilterEjNS_7TexSamp6FilterE	Aska::RenderDeviceGL::SetTextureSamplingFilter(unsigned int, Aska::TexSamp::Filter)	render_device	tested	
+0x217e060	0x227e060	160	_ZN4Aska14RenderDeviceGL30SetTextureSamplingMipmapFilterEjNS_7TexSamp9MipFilterE	Aska::RenderDeviceGL::SetTextureSamplingMipmapFilter(unsigned int, Aska::TexSamp::MipFilter)	render_device	tested	
+0x217e100	0x227e100	196	_ZN4Aska14RenderDeviceGL26SetTextureSamplingWrapModeEjNS_7TexWrap4ModeES2_S2_	Aska::RenderDeviceGL::SetTextureSamplingWrapMode(unsigned int, Aska::TexWrap::Mode, Aska::TexWrap::Mode, Aska::TexWrap::Mode)	render_device	tested	
+0x217e1c4	0x227e1c4	196	_ZN4Aska14RenderDeviceGL32SetTextureSamplingMaxAnisotropicEjj	Aska::RenderDeviceGL::SetTextureSamplingMaxAnisotropic(unsigned int, unsigned int)	render_device	native	
+0x217e288	0x227e288	180	_ZN4Aska14RenderDeviceGL11EnableZTestEb	Aska::RenderDeviceGL::EnableZTest(bool)	render_device	tested	
+0x217e33c	0x227e33c	168	_ZN4Aska14RenderDeviceGL16SetZTestFunctionENS_5ZTest4FuncE	Aska::RenderDeviceGL::SetZTestFunction(Aska::ZTest::Func)	render_device_setters	tested	
+0x217e3e4	0x227e3e4	176	_ZN4Aska14RenderDeviceGL12SetDepthBiasEff	Aska::RenderDeviceGL::SetDepthBias(float, float)	render_device	tested	
+0x217e494	0x227e494	184	_ZN4Aska14RenderDeviceGL13EnableStencilENS_11StencilMode4ModeE	Aska::RenderDeviceGL::EnableStencil(Aska::StencilMode::Mode)	render_device	tested	
+0x217e54c	0x227e54c	172	_ZN4Aska14RenderDeviceGL12SetStencilOpENS_11StencilTest4FuncENS_9StencilOp9OperationES4_S4_i	Aska::RenderDeviceGL::SetStencilOp(Aska::StencilTest::Func, Aska::StencilOp::Operation, Aska::StencilOp::Operation, Aska::StencilOp::Operation, int)	render_device_setters	native	
+0x217e5f8	0x227e5f8	172	_ZN4Aska14RenderDeviceGL15SetStencilOpCCWENS_11StencilTest4FuncENS_9StencilOp9OperationES4_S4_i	Aska::RenderDeviceGL::SetStencilOpCCW(Aska::StencilTest::Func, Aska::StencilOp::Operation, Aska::StencilOp::Operation, Aska::StencilOp::Operation, int)	render_device_setters	native	
+0x217e794	0x227e794	16	_ZN4Aska14RenderDeviceGL11SetCullModeENS_4Cull4ModeE	Aska::RenderDeviceGL::SetCullMode(Aska::Cull::Mode)	render_device	tested	
+0x217e7a4	0x227e7a4	292	_ZN4Aska16RenderDeviceData11SetCullModeENS_4Cull4ModeE	Aska::RenderDeviceData::SetCullMode(Aska::Cull::Mode)	render_device_setters	tested	
 0x217ea54	0x227ea54	24	_ZN4Aska14RenderDeviceGL15SetVertexShaderEPNS_12VertexShaderE	Aska::RenderDeviceGL::SetVertexShader(Aska::VertexShader*)	render_device	typed	
 0x217ea6c	0x227ea6c	24	_ZN4Aska14RenderDeviceGL14SetPixelShaderEPNS_11PixelShaderE	Aska::RenderDeviceGL::SetPixelShader(Aska::PixelShader*)	render_device	typed	
 0x217ea84	0x227ea84	156	_ZN4Aska14RenderDeviceGL23SetVertexShaderConstantEiPKvi	Aska::RenderDeviceGL::SetVertexShaderConstant(int, void const*, int)	render_device	decompiled	
 0x217eb20	0x227eb20	156	_ZN4Aska14RenderDeviceGL22SetPixelShaderConstantEiPKvi	Aska::RenderDeviceGL::SetPixelShaderConstant(int, void const*, int)	render_device	decompiled	
 0x217ebbc	0x227ebbc	184	_ZN4Aska14RenderDeviceGL23SetVertexShaderConstantEPNS_19UniformValueBuffer2E	Aska::RenderDeviceGL::SetVertexShaderConstant(Aska::UniformValueBuffer2*)	render_device	decompiled	
 0x217ec74	0x227ec74	184	_ZN4Aska14RenderDeviceGL22SetPixelShaderConstantEPNS_19UniformValueBuffer2E	Aska::RenderDeviceGL::SetPixelShaderConstant(Aska::UniformValueBuffer2*)	render_device	decompiled	
+0x21812c4	0x22812c4	284	_ZN4Aska20StateCacheThreadSafe14ThreadDestructEv	Aska::StateCacheThreadSafe::ThreadDestruct()	state_cache	decompiled	
+0x21816f8	0x22816f8	72	_ZN4Aska20StateCacheThreadSafe6Static15ThreadDestruct0EPv	Aska::StateCacheThreadSafe::Static::ThreadDestruct0(void*)	state_cache	decompiled	
+0x2181740	0x2281740	60	_ZN4Aska20StateCacheThreadSafe6Static15ThreadDestruct1EPv	Aska::StateCacheThreadSafe::Static::ThreadDestruct1(void*)	state_cache	decompiled	
 0x2182ed8	0x2282ed8	292	_ZN4Aska16RenderDeviceData17GetBoundTextureIDEj	Aska::RenderDeviceData::GetBoundTextureID(unsigned int)	render_device	typed	
 0x2183b98	0x2283b98	704	_ZN4Aska16RenderDeviceData21GetTextureStateCachesEj	Aska::RenderDeviceData::GetTextureStateCaches(unsigned int)	render_device	typed	
 0x2185de4	0x2285de4	168	_ZN4Aska16RenderDeviceData18GetThreadOglState1Ev	Aska::RenderDeviceData::GetThreadOglState1()	render_device	decompiled	
-0x21871a0	0x22871a0	948	_ZN4Aska16RenderDeviceData19UpdateShaderProgramEv	Aska::RenderDeviceData::UpdateShaderProgram()	render_device	decompiled	
-0x2187ee4	0x2287ee4	628	_ZN4Aska16RenderDeviceData17UpdateRenderStateEPNS_14RenderDeviceGLE	Aska::RenderDeviceData::UpdateRenderState(Aska::RenderDeviceGL*)	render_device	decompiled	
-0x2188158	0x2288158	1220	_ZN4Aska16RenderDeviceData21UpdateVertexAttributeEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::UpdateVertexAttribute(Aska::ASKA_OGL_STATESET0*)	render_device	decompiled	
-0x218887c	0x228887c	2544	_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_TexturesEPNS_18ASKA_OGL_STATESET0EPNS_14RenderDeviceGLE	Aska::RenderDeviceData::LastMinuteDrawCommands_Textures(Aska::ASKA_OGL_STATESET0*, Aska::RenderDeviceGL*)	render_device	decompiled	
+0x2185e8c	0x2285e8c	272	_ZN4Aska20StateCacheThreadSafe25AllocateAndStoreStateSet0Ev	Aska::StateCacheThreadSafe::AllocateAndStoreStateSet0()	state_cache	decompiled	
+0x2185f9c	0x2285f9c	668	_ZN4Aska20StateCacheThreadSafe11SetDefaultsEPNS_18ASKA_OGL_STATESET0E	Aska::StateCacheThreadSafe::SetDefaults(Aska::ASKA_OGL_STATESET0*)	state_cache	decompiled	
+0x21871a0	0x22871a0	948	_ZN4Aska16RenderDeviceData19UpdateShaderProgramEv	Aska::RenderDeviceData::UpdateShaderProgram()	render_device	tested	
+0x2187ee4	0x2287ee4	628	_ZN4Aska16RenderDeviceData17UpdateRenderStateEPNS_14RenderDeviceGLE	Aska::RenderDeviceData::UpdateRenderState(Aska::RenderDeviceGL*)	render_device	tested	
+0x2188158	0x2288158	1220	_ZN4Aska16RenderDeviceData21UpdateVertexAttributeEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::UpdateVertexAttribute(Aska::ASKA_OGL_STATESET0*)	render_device	native	
+0x218861c	0x228861c	388	_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_BlendingEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::LastMinuteDrawCommands_Blending(Aska::ASKA_OGL_STATESET0*)	state_cache	native	
+0x21887a0	0x22887a0	220	_ZN4Aska16RenderDeviceData28LastMinuteDrawCommands_DepthEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::LastMinuteDrawCommands_Depth(Aska::ASKA_OGL_STATESET0*)	state_cache	native	
+0x218887c	0x228887c	2544	_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_TexturesEPNS_18ASKA_OGL_STATESET0EPNS_14RenderDeviceGLE	Aska::RenderDeviceData::LastMinuteDrawCommands_Textures(Aska::ASKA_OGL_STATESET0*, Aska::RenderDeviceGL*)	render_device	decompiled	guest code behind a forwarding hook (render_draw.cpp: the draw checks record it as a marker)
 0x218926c	0x228926c	996	_ZN4Aska16RenderDeviceData20UpdateTextureFiltersEPNS_18ASKA_OGL_STATESET0Eij	Aska::RenderDeviceData::UpdateTextureFilters(Aska::ASKA_OGL_STATESET0*, int, unsigned int)	render_device	decompiled	
 0x2189e9c	0x2289e9c	12	_ZN4Aska11RenderStateC1Ev	Aska::RenderState::RenderState()	render_context	typed	
 0x2189ea8	0x2289ea8	72	_ZN4Aska11RenderStateD2Ev	Aska::RenderState::~RenderState()	render_context	typed	
@@ -407,7 +422,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x218a2fc	0x228a2fc	4	_ZN4Aska11RenderState32SetTextureSamplingTrilinearClampEij	Aska::RenderState::SetTextureSamplingTrilinearClamp(int, unsigned int)	render_context	typed	
 0x218a300	0x228a300	60	_ZN4Aska11RenderState32SetTextureSamplingMaxAnisotropicEij	Aska::RenderState::SetTextureSamplingMaxAnisotropic(int, unsigned int)	render_context	typed	
 0x218a33c	0x228a33c	4	_ZN4Aska11RenderState33SetTextureSamplingAnisotropicBiasEii	Aska::RenderState::SetTextureSamplingAnisotropicBias(int, int)	render_context	typed	
-0x218a340	0x228a340	620	_ZN4Aska11RenderState5ApplyEPNS_14RenderDeviceGLE	Aska::RenderState::Apply(Aska::RenderDeviceGL*)	render_context	typed	
+0x218a340	0x228a340	620	_ZN4Aska11RenderState5ApplyEPNS_14RenderDeviceGLE	Aska::RenderState::Apply(Aska::RenderDeviceGL*)	render_context	tested	
 0x218a5ac	0x228a5ac	4	_ZN4Aska11RenderState6Static11SetFillModeEPNS_14RenderDeviceGLENS_4Fill4ModeE	Aska::RenderState::Static::SetFillMode(Aska::RenderDeviceGL*, Aska::Fill::Mode)	render_context	typed	
 0x218a5b0	0x228a5b0	4	_ZN4Aska11RenderState6Static11SetCullModeEPNS_14RenderDeviceGLENS_4Cull4ModeE	Aska::RenderState::Static::SetCullMode(Aska::RenderDeviceGL*, Aska::Cull::Mode)	render_context	typed	
 0x218a5b4	0x228a5b4	8	_ZN4Aska11RenderState6Static11EnableZTestEPNS_14RenderDeviceGLEb	Aska::RenderState::Static::EnableZTest(Aska::RenderDeviceGL*, bool)	render_context	typed	
@@ -490,9 +505,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x21b9734	0x22b9734	24	_ZN4Aska19RenderContextServerD0Ev	Aska::RenderContextServer::~RenderContextServer()	render_thread	typed	
 0x21b974c	0x22b974c	32	_ZN4Aska19RenderContextServer11ResetServerEv	Aska::RenderContextServer::ResetServer()	render_thread	typed	
 0x21b976c	0x22b976c	60	_ZN4Aska19RenderContextServer16GetRenderContextEi	Aska::RenderContextServer::GetRenderContext(int)	render_thread	typed	
-0x21b97a8	0x22b97a8	56	_ZN4Aska19RenderContextServer14GetRenderBatchEi	Aska::RenderContextServer::GetRenderBatch(int)	render_thread	typed	
-0x21b97e0	0x22b97e0	52	_ZN4Aska19RenderContextServer18GetRenderBatchLiteEi	Aska::RenderContextServer::GetRenderBatchLite(int)	render_thread	typed	
-0x21b9814	0x22b9814	68	_ZN4Aska19RenderContextServer15GetLightContextEi	Aska::RenderContextServer::GetLightContext(int)	render_thread	typed	
+0x21b97a8	0x22b97a8	56	_ZN4Aska19RenderContextServer14GetRenderBatchEi	Aska::RenderContextServer::GetRenderBatch(int)	render_thread	tested	
+0x21b97e0	0x22b97e0	52	_ZN4Aska19RenderContextServer18GetRenderBatchLiteEi	Aska::RenderContextServer::GetRenderBatchLite(int)	render_thread	native	
+0x21b9814	0x22b9814	68	_ZN4Aska19RenderContextServer15GetLightContextEi	Aska::RenderContextServer::GetLightContext(int)	render_thread	tested	
 0x21bb3ac	0x22bb3ac	536	_ZN4Aska10RenderPass6CreateEi	Aska::RenderPass::Create(int)	render_pass	typed	
 0x21bb5c4	0x22bb5c4	576	_ZN4Aska10RenderPass5CloneEPKS0_S2_b	Aska::RenderPass::Clone(Aska::RenderPass const*, Aska::RenderPass const*, bool)	render_pass	typed	
 0x21bb804	0x22bb804	284	_ZN4Aska10RenderPass4InitEiPv	Aska::RenderPass::Init(int, void*)	render_pass	typed	
@@ -551,7 +566,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x21c1344	0x22c1344	1100	_ZN4Aska12RenderThreadC2Ev	Aska::RenderThread::RenderThread()	render_thread	typed	
 0x21c1790	0x22c1790	244	_ZN4Aska12RenderThreadD1Ev	Aska::RenderThread::~RenderThread()	render_thread	typed	
 0x21c1888	0x22c1888	24	_ZN4Aska12RenderThreadD0Ev	Aska::RenderThread::~RenderThread()	render_thread	typed	
-0x21c18a0	0x22c18a0	372	_ZNK4Aska12RenderThread9GetStatusEv	Aska::RenderThread::GetStatus() const	render_thread	typed	
+0x21c18a0	0x22c18a0	372	_ZNK4Aska12RenderThread9GetStatusEv	Aska::RenderThread::GetStatus() const	render_thread	tested	
 0x21c1a14	0x22c1a14	120	_ZN4Aska12RenderThread11DeviceResetEv	Aska::RenderThread::DeviceReset()	render_thread	typed	
 0x21c1a8c	0x22c1a8c	4	_ZN4Aska12RenderThread11WaitForInitEv	Aska::RenderThread::WaitForInit()	render_thread	typed	
 0x21c1a90	0x22c1a90	20	_ZN4Aska12RenderThread12Handler_InitEv	Aska::RenderThread::Handler_Init()	render_thread	typed	
@@ -564,41 +579,41 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x21c2698	0x22c2698	104	_ZN4Aska12RenderThread20DirectInsertCallBackEPFvmmEmm	Aska::RenderThread::DirectInsertCallBack(void (*)(unsigned long, unsigned long), unsigned long, unsigned long)	render_thread	typed	
 0x21c2734	0x22c2734	36	_ZN4Aska12RenderThread9CheckBootEv	Aska::RenderThread::CheckBoot()	render_thread	typed	
 0x21c2758	0x22c2758	8	_ZN4Aska12RenderThread21AddCreateRenderTargetEjPNS_21MULTIPASS_ENVIRONMENTE	Aska::RenderThread::AddCreateRenderTarget(unsigned int, Aska::MULTIPASS_ENVIRONMENT*)	render_thread	typed	
-0x21c2760	0x22c2760	520	_ZN4Aska12RenderThread21AddChangeRenderTargetEjPNS_21MULTIPASS_ENVIRONMENTE	Aska::RenderThread::AddChangeRenderTarget(unsigned int, Aska::MULTIPASS_ENVIRONMENT*)	render_thread	typed	
-0x21c2968	0x22c2968	492	_ZN4Aska12RenderThread14AddReloadZCullEv	Aska::RenderThread::AddReloadZCull()	render_thread	typed	
-0x21c2b54	0x22c2b54	508	_ZN4Aska12RenderThread26AddEnableGnmOcclusionQueryEb	Aska::RenderThread::AddEnableGnmOcclusionQuery(bool)	render_thread	typed	
-0x21c2d50	0x22c2d50	516	_ZN4Aska12RenderThread16AddExposureScaleEff	Aska::RenderThread::AddExposureScale(float, float)	render_thread	typed	
-0x21c2f54	0x22c2f54	508	_ZN4Aska12RenderThread14AddEnableFastZEb	Aska::RenderThread::AddEnableFastZ(bool)	render_thread	typed	
-0x21c3150	0x22c3150	532	_ZN4Aska12RenderThread21AddFinishRenderTargetEjii	Aska::RenderThread::AddFinishRenderTarget(unsigned int, int, int)	render_thread	typed	
-0x21c3364	0x22c3364	528	_ZN4Aska12RenderThread19AddTemporaryResolveEPNS_16RenderableObjectEii	Aska::RenderThread::AddTemporaryResolve(Aska::RenderableObject*, int, int)	render_thread	typed	
-0x21c3574	0x22c3574	128	_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi	Aska::RenderThread::AddRenderQueue(Aska::RenderableObject*, Aska::RenderContext*, int)	render_thread	typed	
-0x21c35f4	0x22c35f4	492	_ZN4Aska12RenderThread14AddBeginRenderEv	Aska::RenderThread::AddBeginRender()	render_thread	typed	
-0x21c37e0	0x22c37e0	532	_ZN4Aska12RenderThread12AddEndRenderEPNS_7INotifyE	Aska::RenderThread::AddEndRender(Aska::INotify*)	render_thread	typed	
-0x21c39f4	0x22c39f4	520	_ZN4Aska12RenderThread11AddCallBackEPFvmmEmm	Aska::RenderThread::AddCallBack(void (*)(unsigned long, unsigned long), unsigned long, unsigned long)	render_thread	typed	
-0x21c3bfc	0x22c3bfc	108	_ZN4Aska12RenderThread21ReqCustomCommandBlockEPFvmmEmm	Aska::RenderThread::ReqCustomCommandBlock(void (*)(unsigned long, unsigned long), unsigned long, unsigned long)	render_thread	typed	
-0x21c3c98	0x22c3c98	116	_ZN4Aska12RenderThread24ReqDownloadResourceBlockEPNS_11GpuResourceE	Aska::RenderThread::ReqDownloadResourceBlock(Aska::GpuResource*)	render_thread	typed	
-0x21c3d0c	0x22c3d0c	524	_ZN4Aska12RenderThread15AddDataTransferEPvS1_j	Aska::RenderThread::AddDataTransfer(void*, void*, unsigned int)	render_thread	typed	
-0x21c3f18	0x22c3f18	520	_ZN4Aska12RenderThread42ExecutePendingTileRegionOperationByAddressEPv	Aska::RenderThread::ExecutePendingTileRegionOperationByAddress(void*)	render_thread	typed	
-0x21c4120	0x22c4120	520	_ZN4Aska12RenderThread22AddOcclusionQueryBeginEPj	Aska::RenderThread::AddOcclusionQueryBegin(unsigned int*)	render_thread	typed	
-0x21c4328	0x22c4328	492	_ZN4Aska12RenderThread20AddOcclusionQueryEndEv	Aska::RenderThread::AddOcclusionQueryEnd()	render_thread	typed	
+0x21c2760	0x22c2760	520	_ZN4Aska12RenderThread21AddChangeRenderTargetEjPNS_21MULTIPASS_ENVIRONMENTE	Aska::RenderThread::AddChangeRenderTarget(unsigned int, Aska::MULTIPASS_ENVIRONMENT*)	render_thread	tested	
+0x21c2968	0x22c2968	492	_ZN4Aska12RenderThread14AddReloadZCullEv	Aska::RenderThread::AddReloadZCull()	render_thread	native	
+0x21c2b54	0x22c2b54	508	_ZN4Aska12RenderThread26AddEnableGnmOcclusionQueryEb	Aska::RenderThread::AddEnableGnmOcclusionQuery(bool)	render_thread	native	
+0x21c2d50	0x22c2d50	516	_ZN4Aska12RenderThread16AddExposureScaleEff	Aska::RenderThread::AddExposureScale(float, float)	render_thread	tested	
+0x21c2f54	0x22c2f54	508	_ZN4Aska12RenderThread14AddEnableFastZEb	Aska::RenderThread::AddEnableFastZ(bool)	render_thread	tested	
+0x21c3150	0x22c3150	532	_ZN4Aska12RenderThread21AddFinishRenderTargetEjii	Aska::RenderThread::AddFinishRenderTarget(unsigned int, int, int)	render_thread	tested	
+0x21c3364	0x22c3364	528	_ZN4Aska12RenderThread19AddTemporaryResolveEPNS_16RenderableObjectEii	Aska::RenderThread::AddTemporaryResolve(Aska::RenderableObject*, int, int)	render_thread	native	
+0x21c3574	0x22c3574	128	_ZN4Aska12RenderThread14AddRenderQueueEPNS_16RenderableObjectEPNS_13RenderContextEi	Aska::RenderThread::AddRenderQueue(Aska::RenderableObject*, Aska::RenderContext*, int)	render_thread	tested	
+0x21c35f4	0x22c35f4	492	_ZN4Aska12RenderThread14AddBeginRenderEv	Aska::RenderThread::AddBeginRender()	render_thread	tested	
+0x21c37e0	0x22c37e0	532	_ZN4Aska12RenderThread12AddEndRenderEPNS_7INotifyE	Aska::RenderThread::AddEndRender(Aska::INotify*)	render_thread	tested	
+0x21c39f4	0x22c39f4	520	_ZN4Aska12RenderThread11AddCallBackEPFvmmEmm	Aska::RenderThread::AddCallBack(void (*)(unsigned long, unsigned long), unsigned long, unsigned long)	render_thread	native	
+0x21c3bfc	0x22c3bfc	108	_ZN4Aska12RenderThread21ReqCustomCommandBlockEPFvmmEmm	Aska::RenderThread::ReqCustomCommandBlock(void (*)(unsigned long, unsigned long), unsigned long, unsigned long)	render_thread	native	
+0x21c3c98	0x22c3c98	116	_ZN4Aska12RenderThread24ReqDownloadResourceBlockEPNS_11GpuResourceE	Aska::RenderThread::ReqDownloadResourceBlock(Aska::GpuResource*)	render_thread	native	
+0x21c3d0c	0x22c3d0c	524	_ZN4Aska12RenderThread15AddDataTransferEPvS1_j	Aska::RenderThread::AddDataTransfer(void*, void*, unsigned int)	render_thread	native	
+0x21c3f18	0x22c3f18	520	_ZN4Aska12RenderThread42ExecutePendingTileRegionOperationByAddressEPv	Aska::RenderThread::ExecutePendingTileRegionOperationByAddress(void*)	render_thread	native	
+0x21c4120	0x22c4120	520	_ZN4Aska12RenderThread22AddOcclusionQueryBeginEPj	Aska::RenderThread::AddOcclusionQueryBegin(unsigned int*)	render_thread	native	
+0x21c4328	0x22c4328	492	_ZN4Aska12RenderThread20AddOcclusionQueryEndEv	Aska::RenderThread::AddOcclusionQueryEnd()	render_thread	native	
 0x21c4514	0x22c4514	32	_ZN4Aska12RenderThread15WaitDeviceResetEv	Aska::RenderThread::WaitDeviceReset()	render_thread	typed	
-0x21c4534	0x22c4534	408	_ZN4Aska12RenderThread14ReqDeviceResetEv	Aska::RenderThread::ReqDeviceReset()	render_thread	typed	
-0x21c46cc	0x22c46cc	400	_ZN4Aska12RenderThread7ReqExitEv	Aska::RenderThread::ReqExit()	render_thread	typed	
-0x21c485c	0x22c485c	492	_ZN4Aska12RenderThread7ReqSwapEv	Aska::RenderThread::ReqSwap()	render_thread	typed	
-0x21c4a48	0x22c4a48	516	_ZN4Aska12RenderThread13ReqDeviceInitEv	Aska::RenderThread::ReqDeviceInit()	render_thread	typed	
-0x21c4c4c	0x22c4c4c	400	_ZN4Aska12RenderThread10ReqGpuWaitEv	Aska::RenderThread::ReqGpuWait()	render_thread	typed	
+0x21c4534	0x22c4534	408	_ZN4Aska12RenderThread14ReqDeviceResetEv	Aska::RenderThread::ReqDeviceReset()	render_thread	tested	
+0x21c46cc	0x22c46cc	400	_ZN4Aska12RenderThread7ReqExitEv	Aska::RenderThread::ReqExit()	render_thread	native	
+0x21c485c	0x22c485c	492	_ZN4Aska12RenderThread7ReqSwapEv	Aska::RenderThread::ReqSwap()	render_thread	tested	
+0x21c4a48	0x22c4a48	516	_ZN4Aska12RenderThread13ReqDeviceInitEv	Aska::RenderThread::ReqDeviceInit()	render_thread	native	
+0x21c4c4c	0x22c4c4c	400	_ZN4Aska12RenderThread10ReqGpuWaitEv	Aska::RenderThread::ReqGpuWait()	render_thread	native	
 0x21c4ddc	0x22c4ddc	20	_ZN4Aska12RenderThread15GPUIdleCallBackEm	Aska::RenderThread::GPUIdleCallBack(unsigned long)	render_thread	typed	
 0x21c4df0	0x22c4df0	20	_ZN4Aska12RenderThread20FinishRenderCallBackEm	Aska::RenderThread::FinishRenderCallBack(unsigned long)	render_thread	typed	
 0x21c4e04	0x22c4e04	44	_ZN4Aska12RenderThread20RenderThreadCallBackEm	Aska::RenderThread::RenderThreadCallBack(unsigned long)	render_thread	typed	
-0x21c626c	0x22c626c	60	_ZN4Aska20ShaderComprssionTreeC2Ev	Aska::ShaderComprssionTree::ShaderComprssionTree()	shader_compression	typed	
-0x21c62a8	0x22c62a8	396	_ZN4Aska20ShaderComprssionTree10InsertNodeEii	Aska::ShaderComprssionTree::InsertNode(int, int)	shader_compression	typed	
-0x21c6434	0x22c6434	280	_ZN4Aska20ShaderComprssionTree10DeleteNodeEi	Aska::ShaderComprssionTree::DeleteNode(int)	shader_compression	typed	
+0x21c626c	0x22c626c	60	_ZN4Aska20ShaderComprssionTreeC2Ev	Aska::ShaderComprssionTree::ShaderComprssionTree()	shader_compression	native	
+0x21c62a8	0x22c62a8	396	_ZN4Aska20ShaderComprssionTree10InsertNodeEii	Aska::ShaderComprssionTree::InsertNode(int, int)	shader_compression	native	
+0x21c6434	0x22c6434	280	_ZN4Aska20ShaderComprssionTree10DeleteNodeEi	Aska::ShaderComprssionTree::DeleteNode(int)	shader_compression	native	
 0x21c654c	0x22c654c	136	_ZN4Aska17ShaderCompression12DecompressLZEPhS1_	Aska::ShaderCompression::DecompressLZ(unsigned char*, unsigned char*)	shader_compression	typed	
 0x21c65d4	0x22c65d4	2084	_ZN4Aska17ShaderCompression10CompressLZEPviS1_	Aska::ShaderCompression::CompressLZ(void*, int, void*)	shader_compression	typed	
 0x21c6df8	0x22c6df8	244	_ZN4Aska17ShaderCompression16DecompressLZwordEPtS1_	Aska::ShaderCompression::DecompressLZword(unsigned short*, unsigned short*)	shader_compression	typed	
 0x21c6eec	0x22c6eec	1808	_ZN4Aska17ShaderCompression14CompressLZwordEPviS1_	Aska::ShaderCompression::CompressLZword(void*, int, void*)	shader_compression	typed	
 0x21c75fc	0x22c75fc	544	_ZN4Aska17ShaderCompression19DecompressLZwordDicEPtS1_Ph	Aska::ShaderCompression::DecompressLZwordDic(unsigned short*, unsigned short*, unsigned char*)	shader_compression	typed	
-0x21c781c	0x22c781c	2000	_ZN4Aska17ShaderCompression17CompressLZwordDicEPviS1_Ph	Aska::ShaderCompression::CompressLZwordDic(void*, int, void*, unsigned char*)	shader_compression	typed	
+0x21c781c	0x22c781c	2000	_ZN4Aska17ShaderCompression17CompressLZwordDicEPviS1_Ph	Aska::ShaderCompression::CompressLZwordDic(void*, int, void*, unsigned char*)	shader_compression	tested	
 0x21c8730	0x22c8730	116	_ZN4Aska21ShaderConstantHandler17SetShaderConstantEmPNS_17ShaderNodeHandlerE	Aska::ShaderConstantHandler::SetShaderConstant(unsigned long, Aska::ShaderNodeHandler*)	material	decompiled	
 0x21c87a4	0x22c87a4	4	_ZN4Aska21ShaderConstantHandler19StartOwnGpuConstantEv	Aska::ShaderConstantHandler::StartOwnGpuConstant()	material	decompiled	
 0x21c87a8	0x22c87a8	4	_ZN4Aska21ShaderConstantHandler17EndOwnGpuConstantEv	Aska::ShaderConstantHandler::EndOwnGpuConstant()	material	decompiled	

@@ -2,7 +2,7 @@
 // The story campaign's internals (api/campaign/; the public API is soaserver/api_campaign.h): the
 // master data it reads (master_data.cpp), the player's progress (progress.cpp), the lists it
 // builds (lists.cpp) and the response splice (campaign.cpp). Port code, not guest behaviour; rules
-// in docs/server-rules.md "Campaign progression", labels (a) master data, (b) client-side evidence,
+// in docs/server-rules.md#campaign, labels (a) master data, (b) client-side evidence,
 // (c) outside knowledge, (d) assumption.
 #include <map>
 #include <mutex>

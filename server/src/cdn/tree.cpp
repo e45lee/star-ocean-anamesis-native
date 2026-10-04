@@ -1,7 +1,7 @@
 // soa-server's CDN tree (soaserver/cdn.h Tree): built from the 3.7.0 download (Tree::build, in the
 // steps of TreeBuilder), then answered by URL path (Tree::lookup). The served master is
 // served_master.cpp's, the bundles bundle.cpp's. Our code; what the 3.7.0 client expects is
-// labelled (b) client evidence, the rest (d) assumption (docs/server-rules.md "soa-server: the CDN").
+// labelled (b) client evidence, the rest (d) assumption (docs/server-rules.md#cdn).
 #include <unistd.h>
 
 #include <algorithm>

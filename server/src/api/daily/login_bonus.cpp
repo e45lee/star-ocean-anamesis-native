@@ -1,6 +1,6 @@
 // The login bonus (ログインボーナス): a player-load hook, sent with the full-state player
 // responses. Port code, not guest behaviour. The achievements are api/presents/achievements.cpp.
-// Rules: docs/server-rules.md "7. Login bonus" and "Login bonus" (under "Growth and economy");
+// Rules: docs/server-rules.md#login-bonus and docs/server-rules.md#login-bonus-modules;
 // every rule carries its source label: (a) master data, (b) client-side evidence, (c) outside
 // knowledge, (d) assumption.
 //
@@ -53,7 +53,7 @@ u32 grant_next_page(Ctx& ctx, const Row& bonus_row, u32 day) {
 }
 
 // OnPlayerLoad hook (the first player-load hook: core/modules.cpp): the login bonus.
-// Rules: docs/server-rules.md#7-login-bonus, docs/server-rules.md#login-bonus
+// Rules: docs/server-rules.md#login-bonus, docs/server-rules.md#login-bonus-modules
 //
 // On a full-state player response (Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart):
 // every open master_login_bonus (a) advances one day the first time after the daily reset (a)+(b)

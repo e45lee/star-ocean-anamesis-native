@@ -1,6 +1,6 @@
 // Event rankings (イベントランキング): the five ranking APIs over master_event_ranking_group /
 // master_event_ranking / master_event_ranking_reward, with a local ranking in which the player is
-// the only entrant. Port code, not guest behaviour. Rules in docs/server-rules.md "Event rankings";
+// the only entrant. Port code, not guest behaviour. Rules in docs/server-rules.md#event-rankings;
 // labels: (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
 // Shape (b, CEventRanking / CEventMissionMenu / CEventRankingResult):
@@ -89,7 +89,7 @@ std::string party_roles(const MissionInfo& mission) {
 }
 
 // MissionResultExtra hook (a won MissionEnd).
-// Rules: docs/server-rules.md "Event rankings"
+// Rules: docs/server-rules.md#event-rankings
 //   (a) every ranking of the won event mission whose group is open (master_event_ranking.
 //       master_event_mission_id, the group's opened_at..closed_at moved by the year shift) keeps
 //       the best evaluation value (b: the battle's CBattleEvaluationInfo of the ranking's type);
@@ -155,7 +155,7 @@ Value event_ranking_info(Ctx& ctx, const Row& score_row) {
 }
 
 // GetEventRankingInfo(u32 group_id) -> GetEventRankingInfoRes          fid 94456167
-// API: docs/api.md#geteventrankinginfo   Rules: docs/server-rules.md "Event rankings"
+// API: docs/api.md#geteventrankinginfo   Rules: docs/server-rules.md#event-rankings
 //
 // The ranking screen of a group (CEventRanking: the group running by the client clock, and the
 // previous one from the 報酬 tab).
@@ -189,7 +189,7 @@ std::vector<u8> get_event_ranking_info(Ctx& ctx, const Request& req) {
 }
 
 // ClearNewEventRanking(vector<u32> ranking_ids) -> ClearNewEventRankingRes   fid cb1a5781
-// API: docs/api.md#clearneweventranking   Rules: docs/server-rules.md "Event rankings"
+// API: docs/api.md#clearneweventranking   Rules: docs/server-rules.md#event-rankings
 //
 // The ranking screen closes (b): its rankings are no longer new.
 //   (b)+(d) the badge list is answered empty.
@@ -237,7 +237,7 @@ Value result_info(Ctx& ctx, u32 group) {
 }
 
 // CheckEventRankingResult() -> CheckEventRankingResultRes                fid 83809bfb
-// API: docs/api.md#checkeventrankingresult   Rules: docs/server-rules.md "Event rankings"
+// API: docs/api.md#checkeventrankingresult   Rules: docs/server-rules.md#event-rankings
 //
 // The event menu asks whether a result is due (CEventMissionMenu::Initialize).
 //   (a)+(d) the latest group between ranking_closed_at and result_closed_at, played and not
@@ -268,7 +268,7 @@ Reward reward_for(Ctx& ctx, u32 ranking, u32 rank) {
 }
 
 // ReceiveEventRankingResult() -> ReceiveEventRankingResultRes            fid 4700c6f7
-// API: docs/api.md#receiveeventrankingresult   Rules: docs/server-rules.md "Event rankings"
+// API: docs/api.md#receiveeventrankingresult   Rules: docs/server-rules.md#event-rankings
 //
 // Pays the due group's rewards (the event menu, when CheckEventRankingResult named a group).
 //   (a) each ranking played pays its rank-1 tier (reward_for), item sets expanded; (d) the group
@@ -302,7 +302,7 @@ std::vector<u8> receive_event_ranking_result(Ctx& ctx, const Request&) {
 }
 
 // GetPlayerDetailInfo(u32 player_id) -> GetPlayerDetailInfoRes          fid 626e1e5f
-// API: docs/api.md#getplayerdetailinfo   Rules: docs/server-rules.md "Event rankings"
+// API: docs/api.md#getplayerdetailinfo   Rules: docs/server-rules.md#event-rankings
 //
 // Another entrant's detail dialog (CEventRanking::OpenDetailDialog; the reply handler is a plain
 // apply).

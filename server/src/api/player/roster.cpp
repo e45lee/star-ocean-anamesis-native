@@ -1,6 +1,6 @@
 // The roster as the client receives it: CPersonInfo (api/player/roster.h). Port code, not guest
 // behaviour; every rule carries its source label, (a) master data, (b) client-side evidence,
-// (c) outside knowledge, (d) assumption (docs/server-rules.md "Player load").
+// (c) outside knowledge, (d) assumption (docs/server-rules.md#player-load).
 #include "api/player/roster.h"
 
 #include "api/player/player_info.h"  // player_id

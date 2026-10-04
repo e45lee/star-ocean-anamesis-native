@@ -1,6 +1,6 @@
 // The favor APIs: UpdateFavorByTap and UseFavorItem (api/favor/favor.h has the rules). Port code,
 // not guest behaviour; every rule carries its source label, (a) master data, (b) client-side
-// evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md "8. Favor").
+// evidence, (c) outside knowledge, (d) assumption (docs/server-rules.md#favor-rules).
 #include "api/favor/favor.h"
 #include "api/player/player_info.h"  // base_data, home_same_role, stack_item_info_list
 #include "core/request_args.h"       // args::int_at
@@ -29,11 +29,11 @@ struct UseFavorItemArgs {
 };
 
 // (b) the favor achievements follow the favor: the `Achievement` state (ext::achievement_state;
-// docs/server-rules.md "Favor achievements").
+// docs/server-rules.md#favor-achievements).
 void add_achievements(ext::Ctx& ctx, Value& data) { data["Achievement"] = ext::achievement_state(ctx); }
 
 // UpdateFavorByTap(u32 same_role_id) -> UpdateFavorByTapRes                fid e06ec7b3
-// API: docs/api.md#updatefavorbytap   Rules: docs/server-rules.md#gains, docs/server-rules.md#responses
+// API: docs/api.md#updatefavorbytap   Rules: docs/server-rules.md#favor-gains, docs/server-rules.md#favor-responses
 //
 // A tap on the home character (CHome::UpdateFavorPointByTap sends it).
 //   (a) master_global favor_tap_bonus_point (50) points, at most favor_tap_bonus_limit (5) taps per
@@ -50,7 +50,7 @@ std::vector<u8> update_favor_by_tap(ext::Ctx& ctx, const Request& req) {
 }
 
 // UseFavorItem(u32 master_item_id, u32 count, u32 same_role_id) -> UseFavorItemRes   fid 88af959e
-// API: docs/api.md#usefavoritem   Rules: docs/server-rules.md#gains, docs/server-rules.md#responses
+// API: docs/api.md#usefavoritem   Rules: docs/server-rules.md#favor-gains, docs/server-rules.md#favor-responses
 //
 // Favor items on a character.
 //   (a) master_favor_item_effect.favor_up_point per item; (d) target_type 0 works on any

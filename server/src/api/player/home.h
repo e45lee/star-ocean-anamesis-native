@@ -1,6 +1,6 @@
 #pragma once
 // The home character (port code, not guest behaviour): UpdateHome (api/player/home.cpp;
-// docs/server-rules.md "Home character").
+// docs/server-rules.md#home-character).
 #include <vector>
 
 #include "soaserver/ext.h"

@@ -1,8 +1,8 @@
 // Box gacha: BoxGacha, ResetBoxGacha, GetBoxGacha and the box lists (api/gacha/gacha.h). Port
 // code, not guest behaviour.
 // Every rule carries its source label, (a) master data, (b) client-side evidence, (c) outside
-// knowledge, (d) assumption (docs/server-rules.md "4. Gacha", "Gacha: step-up and box",
-// "Step-up and box gacha lists").
+// knowledge, (d) assumption (docs/server-rules.md#gacha-rules, docs/server-rules.md#gacha-step-up-box,
+// docs/server-rules.md#gacha-lists).
 #include "api/gacha/gacha.h"
 
 #include <algorithm>
@@ -236,7 +236,7 @@ void refill_last_box(ext::Ctx& ctx, u32 gacha) {
 }  // namespace
 
 // BoxGacha(u32 gacha_id, u32 count) -> BoxGachaRes                      fid 5be25d4b
-// API: docs/api.md#boxgacha   Rules: docs/server-rules.md#44-step-up-and-box-gacha, docs/server-rules.md#gacha-step-up-and-box
+// API: docs/api.md#boxgacha   Rules: docs/server-rules.md#gacha-step-up-box-rules, docs/server-rules.md#gacha-step-up-box
 //
 // Draws `count` copies from a box (b: CGacha::RequestGacha sends it; docs/api.md Callers).
 //   (a) ticket_item_id x ticket_num per draw (event coins).
@@ -287,7 +287,7 @@ std::vector<u8> box_gacha(ext::Ctx& ctx, const Request& req) {
 }
 
 // ResetBoxGacha(u32 gacha_id) -> ResetBoxGachaRes                        fid c292cf48
-// API: docs/api.md#resetboxgacha   Rules: docs/server-rules.md#44-step-up-and-box-gacha
+// API: docs/api.md#resetboxgacha   Rules: docs/server-rules.md#gacha-step-up-box-rules
 //
 // Refills a box (b: CGacha::ProgressBoxDetail sends it; docs/api.md Callers).
 //   (a) only a box with is_manual_reset (the last of a series) resets; (d) at any time, not only
@@ -311,7 +311,7 @@ std::vector<u8> reset_box_gacha(ext::Ctx& ctx, const Request& req) {
 }
 
 // GetBoxGacha() -> GetBoxGachaRes                                        fid af250236
-// API: docs/api.md#getboxgacha   Rules: docs/server-rules.md#gacha-step-up-and-box
+// API: docs/api.md#getboxgacha   Rules: docs/server-rules.md#gacha-step-up-box
 //
 // The box series and their current boxes (b: code near CGachaRatio sends it; docs/api.md Callers).
 //   (b) BoxGachaList and BoxGacha are maps keyed by id ("Step-up and box gacha lists").

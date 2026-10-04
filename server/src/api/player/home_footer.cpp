@@ -1,6 +1,6 @@
 // The 3.7.0 home's footer flags (api/player/README.md). Port code, not guest behaviour; every rule
 // carries its source label, (a) master data, (b) client-side evidence, (c) outside knowledge, (d)
-// assumption. Rules in docs/server-rules.md "12. Home".
+// assumption. Rules in docs/server-rules.md#home.
 //
 // FooterMissionInfo {ep1_new_area_count, is_open_extra_dungeon, is_open_event_mission,
 // is_open_evolution, is_open_multiplay} (port/fakeapi/fields.txt) is the object the client keeps
@@ -49,7 +49,7 @@ Value footer_mission_info() {
 }
 
 // OnPlayerLoad: FooterMissionInfo                         on Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart
-// Rules: docs/server-rules.md "12. Home"
+// Rules: docs/server-rules.md#home
 //
 // Every full-state player response carries the footer flags (footer_mission_info above).
 //   (d) The 3.7.0 server's exact choice of responses isn't known; the login responses are the

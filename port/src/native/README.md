@@ -66,7 +66,10 @@ shared harness in `live_check.{h,cpp}`; the register file it records calls on is
 Registered families: `sync`, `input`, `resource` (shadow checks, `common/shadow_check.h`), `lib_sqlite` (a shadow run: the game's databases also opened in the guest's
 SQLite and every call repeated there; `lib_sqlite/README.md`), and the lockstep families of the other
 host libraries, `lib_vorbis`, `lib_zstd`, `lib_zlib`, `lib_jpeg`, `lib_crypto` (`common/lockstep.h`: the
-same shadow run, shared; each subsystem's README). The offline build's families were
+same shadow run, shared; each subsystem's README), and `render` (a run-both family; its GL-issuing natives
+are checked by `gl_run_both`, `render/render_check.h`: the guest original and the native each run with the
+thread's GL calls recorded by `glh::Recorder` on a saved copy of the memory they write, and the call lists and
+the memory are compared). The offline build's families were
 deleted with its natives; a rebuilt family should use the harness.
 A record / replay family (hand-written code whose outgoing calls go through `Family::gcall` /
 `gcall_n` / `gcall_sret` / `memop` / `live::ACall`) is a static `live::Family("tag", every,
@@ -102,6 +105,8 @@ families.
 The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/native_method.h` (`NATIVE_METHOD`: a recovered class's member as the native), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/shadow_check.*` (live checks of natives over shared, stateful objects: the guest original on a shadow, or a getter rerun; families sync, input, resource), `common/guest_assert.*` (`Framework::gDoAssert` with the guest's strings), `common/arm_float.h`, `common/memstats.*` (`--memstats`), `common/core_bench_test.cpp` (guest-call costs).
 
 ## Per-subsystem workflow (the native rebuild, port/PLAN.md task 6)
+
+Virtual functions, calls between native subsystems, and the later move to real C++ `virtual`s: [VIRTUALS.md](VIRTUALS.md).
 
 Each subsystem of the rebuild owns two folders and nothing else, so many agents can work at once
 (one per subsystem, type recovery a wave ahead) and their branches merge without conflicts

@@ -162,8 +162,8 @@ def training_group(master: MasterIndex) -> ContentGroup:
 # ---------------------------------------------------------------- Sphere 211
 SPHERE211_DESCRIPTION = (
     "Floors need their battle map; a cell battle is lotted from the floor's mission "
-    "box, and the server lots only playable missions (docs/server-rules.md \"Sphere 211\", "
-    "\"Missing maps\"; the same check as above). Floor backgrounds and BGM are listed but don't block.")
+    "box, and the server lots only playable missions (docs/server-rules.md#sphere211, "
+    "docs/server-rules.md#sphere211-rules; the same check as above). Floor backgrounds and BGM are listed but don't block.")
 
 
 def sphere211_kind(master: MasterIndex) -> ContentKind:

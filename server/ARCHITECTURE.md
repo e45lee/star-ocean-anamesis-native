@@ -86,7 +86,7 @@ Every handler, the core's and the modules', is `std::vector<u8> handler(ext::Ctx
 Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp`):
 
 - **`clock_now()`, the server clock**: the real time, or `--clock "YYYY-MM-DD HH:MM:SS"` running on from there. Stamina, login days, wallets, rentals and every `*_at` the server stores use it.
-- **`event_now()`, the event calendar**: for dated content (event terms, deep-space missions, the Sphere 211 season). With `--clock` it is the clock; without, today's month-day and time mapped onto the most recent year in which some `master_event_term` covers that day (`src/core/clock.cpp`; docs/server-rules.md "Clocks"), so the service's calendar replays year after year.
+- **`event_now()`, the event calendar**: for dated content (event terms, deep-space missions, the Sphere 211 season). With `--clock` it is the clock; without, today's month-day and time mapped onto the most recent year in which some `master_event_term` covers that day (`src/core/clock.cpp`; docs/server-rules.md#conventions), so the service's calendar replays year after year.
 - **Formats**: every time the server sends or reads is local `YYYY-MM-DD HH:MM:SS`; `src/core/time.h` has the one formatter (`format_time`), the parsers, the reset day (`day_start`, at master_global `login_bonus_reset_hour`) and the opened_at..closed_at window (`open_at`).
 - **Test seam**: `set_clock_source(fn)` replaces the wall-clock read under `clock_now()` (`time(nullptr)` by default); the replay sets it to each recorded request's time. `set_server_clock(t)` is the tests' `--clock`.
 

@@ -2,7 +2,7 @@
 // The local server's mission-side rules (restore run; our code, not guest behaviour):
 // pure functions over master-data values, unit-tested in mission_rules.cpp. Every rule carries its
 // source label: (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption;
-// see docs/server-rules.md "Server missions".
+// see docs/server-rules.md#server-missions.
 #include <cstdint>
 #include <string>
 #include <vector>

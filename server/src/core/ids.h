@@ -1,6 +1,6 @@
 #pragma once
-// The server's uid scheme for owned objects (port code, not guest behaviour; docs/server-rules.md
-// "Seed"). The typed ids (CharacterUid, ItemUid, ...: PLAN-readability R12) are soaserver/ids.h;
+// The server's uid scheme for owned objects (port code, not guest behaviour; docs/server-rules.md#seed).
+// The typed ids (CharacterUid, ItemUid, ...: PLAN-readability R12) are soaserver/ids.h;
 // these stay plain numbers, the first of a range (`CharacterUid(kRosterUid0 + i)`).
 #include "soaserver/ids.h"
 #include "soaserver/server.h"

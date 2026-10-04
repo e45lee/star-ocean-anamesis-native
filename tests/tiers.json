@@ -8,7 +8,7 @@
   },
   "tests": [
     {"name": "build", "tier": "T0", "secs": 1, "kind": "build", "game": 0,
-     "cmd": "scripts/build.sh --target soa soa-server soa-emu soa-viewer soa-webview-render soaruntime_tests soa_env_tests soa_codec_tests",
+     "cmd": "scripts/build.sh --target soa soa-server soa-emu soa-viewer soa-webview-render soaruntime_tests soa_env_tests soa_zip_tests soa_codec_tests",
      "covers": "the incremental build (0.1 s with nothing to do; a header change rebuilds minutes)"},
     {"name": "server-selftest", "tier": "T0", "secs": 45, "kind": "check", "game": 0,
      "cmd": "build/server/soa-server --selftest",
@@ -16,6 +16,9 @@
     {"name": "runtime-tests", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "build/runtime/soaruntime_tests",
      "covers": "the runtime's unit tests (jvm, cpu, jni)"},
+    {"name": "zip-tests", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
+     "cmd": "build/common/soa_zip_tests",
+     "covers": "the ZIP reader (common/ soa_zip on minizip-ng): synthetic archives, an archive nested in another read in place, byte ranges, CRC checks, ZIP64 past 4 GiB (sparse file), concurrent readers"},
     {"name": "env-rule", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "build/common/soa_env_tests && tests/env_removed.sh",
      "covers": "the environment rule (soa/env.h: the on/off words, numbers checked) and every removed SOA_* setting's one warning line naming its flag, in each program (docs/environment.md)"},

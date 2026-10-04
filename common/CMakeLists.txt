@@ -33,6 +33,22 @@ if(WIN32)
   target_link_libraries(soa_compat PUBLIC ${SOA_MINGW_BINMODE} ws2_32)
 endif()
 
+# soa_zip: read-only ZIP archives on minizip-ng (vcpkg.json): include/soa/zip.h, src/zip.cpp. APKs,
+# APKs inside another zip read in place (an archive inside an archive), ZIP64 data zips; stored entries are
+# served from the file mapping (pointer + file offset), deflated ones inflated; const methods are
+# thread-safe. The runtime's ZipArchive (runtime/src/android/zip.h) is this class; the server can
+# link it without the runtime.
+#   soa_zip_tests  its unit tests (build/common/soa_zip_tests): synthetic archives, nested,
+#                  ranges, CRC, ZIP64 (a sparse file past 4 GiB), concurrent readers.
+add_library(soa_zip STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/zip.cpp)
+target_include_directories(soa_zip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(soa_zip PRIVATE MINIZIP::minizip-ng PUBLIC ZLIB::ZLIB)
+target_compile_options(soa_zip PRIVATE -Wall -Wno-unused-parameter)
+
+find_package(Threads REQUIRED)
+add_executable(soa_zip_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/zip_tests.cpp)
+target_link_libraries(soa_zip_tests PRIVATE soa_zip soa_compat ZLIB::ZLIB Threads::Threads)  # (soa_compat: mkdir on Windows)
+
 # soa_codec: file formats more than one part reads or writes, on well-known libraries (vcpkg):
 #   include/soa/png.h     PNG files (stb_image_write, zlib's deflate): the runtime's screenshots
 #                         (runtime/src/app/host.cpp), tools/aif2png

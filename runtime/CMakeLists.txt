@@ -5,7 +5,7 @@
 # it uses (cmake/deps.cmake):
 #   dynarmic          the `dynarmic` target (FetchContent)
 #   soa::EGL, soa::GLESv2  Mesa's libEGL / libGLESv2 with the Khronos headers from vcpkg
-#   ZLIB::ZLIB, soa::SDL2, Freetype::Freetype (vcpkg)
+#   ZLIB::ZLIB, soa::SDL2, Freetype::Freetype (vcpkg); soa_zip (common/: the ZIP reader, on minizip-ng)
 #   soa_codec         common/: Base64 (SharedPreferences values; OpenSSL), PNG (screenshots; stb)
 #
 # Targets:
@@ -33,9 +33,10 @@ list(SORT SOA_RUNTIME_SOURCES)
 
 # The runtime must not depend on its users: every quoted #include in runtime/ must name a file in
 # runtime/src (or next to the including file), or dynarmic. Nothing from port/, server/ or
-# emulator/. The one other include is the header-only soa_env (`#include <soa/env.h>`,
-# common/include: the environment rule every program shares), a dependency like dynarmic, not a
-# user of the runtime. (Also enforced by the include path, which is runtime/src only, and by
+# emulator/. The other includes are common/include's (`#include <soa/env.h>`, the environment rule
+# every program shares; `<soa/zip.h>`, the ZIP reader soa_zip; `<soa/base64.h>`, `<soa/prefs_xml.h>`,
+# `<soa/png.h>`, the formats of soa_codec), dependencies like dynarmic, not
+# users of the runtime. (Also enforced by the include path, which is runtime/src only, and by
 # soaruntime_tests, which links the whole archive without any port code.)
 file(GLOB_RECURSE _rt_check CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/* ${SOA_RUNTIME_DIR}/tests/*)
 foreach(_f ${_rt_check})
@@ -57,6 +58,7 @@ target_include_directories(soaruntime_iface INTERFACE ${SOA_RUNTIME_DIR}/src)
 target_compile_definitions(soaruntime_iface INTERFACE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)
 target_link_libraries(soaruntime_iface INTERFACE
   soa_env
+  soa_zip
   soa_codec
   dynarmic
   soa::EGL

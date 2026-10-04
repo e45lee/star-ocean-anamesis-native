@@ -237,7 +237,7 @@ NATIVE_TEST("render/layout-render-thread") {
             return false;  // stay armed for the next call
         }
         t.expect_eq(rt, first.rt, "one RenderThread");
-        t.expect_eq(rt->vtable, vtable_of(t, "_ZTVN4Aska12RenderThreadE"), "RenderThread vtable");
+        t.expect_eq(rt->base.vtable, vtable_of(t, "_ZTVN4Aska12RenderThreadE"), "RenderThread vtable");
         t.expect_eq(vslot(rt, 2), t.sym("_ZN4Aska12RenderThread7HandlerEv"), "slot 2 = Handler");
         t.expect_eq(rt->m_queue.vtable, vtable_of(t, "_ZTVN4Aska6TQueueINS_14RENDER_REQUESTELi8192EEE"), "m_queue's vtable (0x198)");
         t.expect_eq(has_vtable(t, rt->m_finishCallbackThread, "_ZTVN4Aska26RenderFinishCallbackThreadE"), true, "m_finishCallbackThread");
@@ -387,7 +387,7 @@ NATIVE_TEST("render/layout-render-device") {
         RenderDeviceData* d = dev->m_data;
         if (!t.expect_eq(d != nullptr, true, "m_data")) return;
         t.expect_eq(dev->m_textureStageCount >= 1 && dev->m_textureStageCount <= 32, true, "m_textureStageCount");
-        t.expect_eq((u32)t.call("_ZNK4Aska14RenderDeviceGL12GetGLVersionEv", {(u64)dev}), *reinterpret_cast<u32*>(&d->unk_230), "GetGLVersion = m_data's 0x230");
+        t.expect_eq((u32)t.call("_ZNK4Aska14RenderDeviceGL12GetGLVersionEv", {(u64)dev}), (u32)d->m_glVersion, "GetGLVersion = m_data's 0x230");
         t.expect_eq(d->m_textureStatePool.vtable, vtable_of(t, "_ZTVN4Aska9TPoolFastINS_15_RenderDeviceGL17TextureStateCacheELb0EEE"), "m_textureStatePool vtable");
         t.expect_eq(d->m_textureStatePool.m_used.vtable, vtable_of(t, "_ZTVN4Aska9TBitArrayImLb0EEE"), "m_textureStatePool.m_used vtable");
         t.expect_eq(d->m_textureStates.table.vtable, vtable_of(t, "_ZTVN4Aska8THashMapIjPNS_15_RenderDeviceGL17TextureStateCacheENS_7THasherIjEENS_8TEqualToIjEENS_10TAllocatorINS_5TPairIKjS3_EEEEEE"), "m_textures vtable");

@@ -30,6 +30,7 @@ to `types.json`.
 | `Aska::TBinaryTree<T>`, `THash<T>`, `TAddressManager<T>` | 0x90 | `AllocNode`, `FreeNode`, `FreeTable`, `Regist`, `Register`, `CalcHashValue`, the inlined construction | proven: `layout-taddressmanager` |
 | `Aska::TCategorizeHash<T>` | 0xa0? | `Regist`, `Search`, `GetNext` | fields from the decompile; size not confirmed; not run |
 | `Aska::TPoolFast<T>` | 0x48 | `SecurePool`, `Scoop`, dtors | proven: `layout-tpoolfast` |
+| `Aska::TPoolFast<T, true>` (`TPoolFastLocked<T>`) | 0xd8 | `SecurePool` (+0xd0 owned), `Scoop` / `Sink` (the lock at +0x40: lock word +0x78, semaphore +0xb8) | proven by `containers/pool-fast-locked` (the guest's SecurePool / Scoop / Sink on it) |
 | `Aska::TArray<T, B>` | 0x38 | `Resize`, dtors, the constructor inlined in `MasterNpcBaseParameterModel::GetParameter` | proven: `layout-tarray` |
 | `Aska::TDynamicArray<T, A>` | 0x20 | `Insert_`, `Reserve`, dtors | proven: `layout-tdynamicarray` |
 | `Aska::TStack<T, N>` | 8 + N*sizeof(T) + 0x10 | dtors, `CopyElement` | proven: `layout-tstack` |
@@ -45,18 +46,18 @@ to `types.json`.
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
-| `Aska::StringUtility::Utf8ToMultiByte` | `containers_string_utility.cpp` | `containers/utf8-to-multibyte` (random strings, every argument combination) | `containers`: 0 mismatches |
-| `Framework::TObjectContainer<T>::NumElements` / `rElement` / `crElement` for T = `CSound::CElement`, `Collision::CollisionShapeGroup`, `IFixedLengthAllocator*`, `BehaviorQueue*` (12) | `containers_object_container.cpp` (+ `.h`: the instantiations) | `containers/object-container` (the guest's vtables, random counts / indices) | `containers`: 0 mismatches |
+| `Aska::StringUtility::Utf8ToMultiByte` | `containers_string_utility.cpp` | `containers/utf8-to-multibyte` (random strings, every argument combination) | `containers`: 0 mismatches (login; since UnpackValue_str is native no guest code calls it in these flows) |
+| `Framework::TObjectContainer<T>::NumElements` / `rElement` / `crElement` for T = `CSound::CElement`, `Collision::CollisionShapeGroup`, `IFixedLengthAllocator*`, `BehaviorQueue*` (12) | `containers_object_container.cpp` (+ `.h`: the instantiations) | `containers/object-container` (the guest's vtables, random counts / indices) | `containers`: 0 mismatches (login, battle, gacha, story) |
 
-| `Aska::THashMap<std::string, CAssetInfo, Hasher_CSTLString>::Find_` (x8 iterator) | `containers_hash_map.cpp` | `containers/hash-map-find-asset` (hand-built tables: used / deleted / empty buckets, short and long keys, collisions, absent keys) | `containers` |
-| `TOMQuickSort<Aska::RenderableObject, float, 64, 10>::Descend` / `Ascend` | `containers_quick_sort.cpp` | `containers/tom-quick-sort` (random keys with many ties, random ranges: the exact order) | `containers` |
-| `Framework::CSTLStringUtility_Base<std::string>::ReplaceSelf` / `Replace` (x8) | `containers_stl_string_utility.cpp` | `containers/stl-string-replace` (guest-built strings, 0..n matches, growing / shrinking, null flag) | `containers` |
+| `Aska::THashMap<std::string, CAssetInfo, Hasher_CSTLString>::Find_` (x8 iterator) | `containers_hash_map.cpp` | `containers/hash-map-find-asset` (hand-built tables: used / deleted / empty buckets, short and long keys, collisions, absent keys) | `containers`: 0 mismatches (4 flows) |
+| `TOMQuickSort<Aska::RenderableObject, float, 64, 10>::Descend` / `Ascend` | `containers_quick_sort.cpp` | `containers/tom-quick-sort` (random keys with many ties, random ranges: the exact order) | `containers`: 0 mismatches (4 flows; their PC-relative prologues need main's relocating trampoline, merged 2026-10-04) |
+| `Framework::CSTLStringUtility_Base<std::string>::ReplaceSelf` / `Replace` (x8) | `containers_stl_string_utility.cpp` | `containers/stl-string-replace` (guest-built strings, 0..n matches, growing / shrinking, null flag) | `containers`: 0 mismatches (4 flows) |
+
+| `Aska::TPoolFast<unsigned char[90], true>::Scoop(int)` / `Sink(T*, int)` (class `TPoolFastLocked<T>`: TPoolFast with sync's FastCriticalSection at +0x40, Enter / Leave around the bit search) | `containers_pool.cpp` | `containers/pool-fast-locked` (two guest-built pools, random scoops of 0..80 and sinks: slots, bit words, cursor, count, the lock words) | `containers`: 0 mismatches (4 flows) |
 
 `TDynamicArray<T>::InsertFill` (`containers_dynamic_array.h`: `Insert_<TUninitializedFillN<T>>`) is a
 template for other subsystems' natives (data_formats' ASON::Malloc); not bound on its own.
-The CHash32 Find_ uses is a local copy of the hash subsystem's CRC (switch to `hash::CHash32::Of` once
-that subsystem is on main). Left guest (see the queue below): `TPoolFast<u8[90], true>::Scoop` / `Sink`
-(their thread-safe form inlines sync's FastCriticalSection enter / leave: after sync's natives merge).
+Find_ hashes with the hash subsystem's `hash::CHash32::Of`.
 
 `TObjectContainer` is memory's class (`memory_layout.h`, memory's `scope.txt`); its accessors are bound
 here because the containers code task took them (the hottest of the container code). Their

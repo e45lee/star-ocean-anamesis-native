@@ -48,14 +48,20 @@ T*>`), `MapStringString`, `UMapU32U64`, `UMapU32Bool`, `UMapStringPtr`, the shar
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
-| `__shared_count::__add_shared` / `__release_shared`, `__shared_weak_count::__add_shared` / `__add_weak` / `__release_shared` / `__release_weak` / `lock` (7) | `libcxx_shared_count.cpp` | `libcxx/shared-count`, `libcxx/shared-weak-count` (random operation sequences on two blocks with a counting fake vtable: counts, results, slot 2 / 4 callbacks) | `libcxx`: 0 mismatches (login → home, battle, gacha, story) |
+| `__shared_count::__add_shared` / `__release_shared`, `__shared_weak_count::__add_shared` / `__add_weak` / `__release_shared` / `__release_weak` / `lock` (7) | `libcxx_shared_count.cpp` | `libcxx/shared-count`, `libcxx/shared-weak-count` (random operation sequences on two blocks with a counting fake vtable: counts, results, slot 2 / 4 callbacks) | `libcxx`: 0 mismatches (login → home, gacha, story; `__add_weak`, `__release_weak`, `lock` not reached) |
 
-| `basic_string<char, ..., CSTLAllocator>::__grow_by`, `__grow_by_and_replace`, `replace(pos, n1, s, n2)`, `reserve` (4) | `libcxx_string.cpp` (+ `libcxx_string.h`: replace, the inlined copy constructor / destructor for other natives) | `libcxx/string-replace-reserve` (random replaces incl. sources inside the string, reserves up and down), `libcxx/string-grow-by` | `libcxx` |
+| `basic_string<char, ..., CSTLAllocator>::__grow_by`, `__grow_by_and_replace`, `replace(pos, n1, s, n2)`, `reserve` (4) | `libcxx_string.cpp` (+ `libcxx_string.h`: replace, the inlined copy constructor / destructor for other natives) | `libcxx/string-replace-reserve` (random replaces incl. sources inside the string, reserves up and down), `libcxx/string-grow-by` | `libcxx`: 0 mismatches (login, battle, gacha, story) |
 
 The counters are host atomics on the guest words (the JIT's exclusive store is a compare-and-swap,
 runtime/src/core/cpu.cpp, so they interleave with the guest's inlined LDXR / STXR increments); the
 zero-count callbacks (`__on_zero_shared`, `__on_zero_shared_weak`) are guest calls through the block's
 vtable (`live::out_call`, so the live check records and replays them).
+
+**Live-checking the counters in a multithreaded flow is unsafe:** a check's replay rewinds the control
+block (its region) while other threads may change the same counts, and a lost increment / decrement
+frees a block early. The battle flow with the counters checked crashed in the heap
+(`MemoryManager::Malloc`); without them (`--live-check libcxx:only=basic_string`) it passes. Check the
+counters only where they are mostly single-threaded (login, gacha, story above), or not at all.
 
 ## Dependencies
 

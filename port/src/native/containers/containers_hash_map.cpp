@@ -1,11 +1,12 @@
 // Aska::THashMap<std::string, CAssetInfo, Hasher_CSTLString>::Find_: the resource manager's asset
 // table lookup (containers_layout.h; port/decomp/containers/hash.c). Open addressing, linear probing
-// from h = Framework::CHash32 of the key; equal = same length and bytes.
+// from h = Framework::CHash32 of the key (the hash subsystem's); equal = same length and bytes.
 #include <cstring>
 
 #include "native/common/live_leaf.h"
 #include "native/containers/containers_family.h"
 #include "native/containers/containers_layout.h"
+#include "native/hash/hash_layout.h"
 #include "native/libcxx/libcxx_layout.h"
 
 namespace soa::native::containers {
@@ -19,25 +20,6 @@ using AssetBucket = THashMapBucket<TPair<String, CAssetInfo>>;
 static_assert(sizeof(AssetBucket) == 0xc0 && offsetof(AssetBucket, m_value) == 8);
 static_assert(sizeof(AssetMap) == 0x30);
 
-// Framework::CHash32 of a string (Hasher_CSTLString): zlib's CRC-32 table, seeded with the length, no
-// final xor (the hash subsystem's CHash32::Of; kept here until that subsystem is on main).
-u32 chash32(const char* s, u64 n) {
-    struct Table {
-        u32 t[256];
-        constexpr Table() : t{} {
-            for (u32 i = 0; i < 256; i++) {
-                u32 c = i;
-                for (int k = 0; k < 8; k++) c = (c & 1) ? (c >> 1) ^ 0xEDB88320u : c >> 1;
-                t[i] = c;
-            }
-        }
-    };
-    static constexpr Table kTable;
-    u32 h = (u32)n;
-    for (u64 i = 0; i < n; i++) h = kTable.t[(h ^ (u8)s[i]) & 0xff] ^ (h >> 8);
-    return h;
-}
-
 }  // namespace
 
 template <>
@@ -45,7 +27,7 @@ THashMapIterator<AssetBucket> AssetMap::Find_(const String& key) const {
     AssetBucket* buckets = table.m_buckets.m_data;
     u64 count = table.m_buckets.m_count;
     THashMapIterator<AssetBucket> it{buckets + count, buckets, buckets + count};
-    u64 h = chash32(key.data(), key.size());
+    u64 h = hash::CHash32::Of(key.data(), key.size());  // Hasher_CSTLString
     for (u64 i = 0; i < count; i++) {
         AssetBucket& b = buckets[(i + h) % count];
         if (b.m_state == 1) {

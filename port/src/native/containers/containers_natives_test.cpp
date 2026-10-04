@@ -185,6 +185,58 @@ NATIVE_TEST("containers/stl-string-replace") {
 #undef UTIL_SYM
 }
 
+// TPoolFast<unsigned char[90], true>::Scoop / Sink: two pools built by the guest (FastCriticalSection's
+// constructor, SecurePool), the same random sequence of scoops and sinks on each (the guest's on one,
+// the natives on the other): slots, bit words, cursor and count must agree.
+NATIVE_TEST("containers/pool-fast-locked") {
+    using Pool = TPoolFastLocked<Opaque<90>>;
+    struct Side {
+        alignas(16) unsigned char raw[sizeof(Pool) + 0x40] = {};
+        Pool* p() { return reinterpret_cast<Pool*>(raw); }
+    };
+    for (int k = 0; k < 20; k++) {
+        u32 cap = (u32)t.rand_int(1, 300);
+        Side g, n;
+        for (Side* sd : {&g, &n}) {
+            t.call("_ZN4Aska19FastCriticalSectionC2Ev", {(u64)&sd->p()->m_lock});
+            t.call("_ZN4Aska9TPoolFastIA90_hLb1EE10SecurePoolEjPS1_", {(u64)sd->p(), cap, 0});
+        }
+        std::vector<std::pair<s64, int>> held_g, held_n;  // (slot, n)
+        for (int step = 0; step < 300; step++) {
+            bool scoop = held_g.empty() || t.rand_int(0, 2) != 0;
+            if (scoop) {
+                int cnt = t.rand_int(0, 5) == 0 ? t.rand_int(0, 80) : t.rand_int(1, 6);
+                u64 gp = t.call("_ZN4Aska9TPoolFastIA90_hLb1EE5ScoopEi", {(u64)g.p(), (u64)cnt});
+                Opaque<90>* np = n.p()->Scoop(cnt);
+                s64 gi = gp ? (s64)((gp - (u64)g.p()->m_pool) / 90) : -1, ni = np ? (s64)(np - n.p()->m_pool) : -1;
+                if (gi != ni) {
+                    t.fail("case %d step %d: Scoop(%d) slot %lld vs %lld (cap %u)", k, step, cnt, (long long)gi, (long long)ni, cap);
+                    return;
+                }
+                if (gp && cnt) held_g.push_back({gi, cnt});
+            } else {
+                size_t which = (size_t)t.rand_int(0, (int)held_g.size() - 1);
+                auto [slot, cnt] = held_g[which];
+                held_g.erase(held_g.begin() + (long)which);
+                u64 gr = t.call("_ZN4Aska9TPoolFastIA90_hLb1EE4SinkEPS1_i", {(u64)g.p(), (u64)(g.p()->m_pool + slot), (u64)cnt}) & 0xff;
+                bool nr = n.p()->Sink(n.p()->m_pool + slot, cnt);
+                if (gr != (u64)nr) t.fail("Sink's result");
+            }
+            const Pool &a = *g.p(), &b = *n.p();
+            if (a.m_cursor != b.m_cursor || a.m_count != b.m_count ||
+                std::memcmp(a.m_used.m_bits, b.m_used.m_bits, a.m_used.m_numWords * 8) != 0 || a.m_lock.m_lock != b.m_lock.m_lock ||
+                a.m_lock.m_waiters != b.m_lock.m_waiters) {
+                t.fail("case %d step %d: state differs (cursor %u/%u, count %u/%u)", k, step, a.m_cursor, b.m_cursor, a.m_count, b.m_count);
+                return;
+            }
+        }
+        for (Side* sd : {&g, &n}) {
+            t.call("_ZdaPv", {(u64)sd->p()->m_used.m_bits});
+            t.call("_ZdaPv", {(u64)sd->p()->m_pool});
+        }
+    }
+}
+
 NATIVE_TEST("containers/tom-quick-sort") {
     constexpr int kObjs = 400;
     std::vector<u8> objs(kObjs * 0x1c0);

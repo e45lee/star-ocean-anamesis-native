@@ -17,6 +17,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../sync/sync_layout.h"
+
 namespace soa::native::containers {
 
 using u8 = std::uint8_t;
@@ -484,6 +486,35 @@ static_assert(offsetof(TPoolFastVector, m_cursor) == 0x38);
 static_assert(offsetof(TPoolFastVector, m_count) == 0x3c);
 static_assert(offsetof(TPoolFastVector, m_ownsPool) == 0x41);
 static_assert(sizeof(TPoolFastVector) == 0x48);
+
+// Aska::TPoolFast<T, true>: the thread-safe pool, TPoolFast's fields with a FastCriticalSection (sync's
+// class, inlined enter / leave around Scoop / Sink) at +0x40 and the pool-ownership flag after it.
+// Layout from TPoolFast<unsigned char[90], true>::SecurePool (+0xd0 owned, +0x38 / +0x3c cleared),
+// Scoop and Sink (the lock word at +0x78 = lock + 0x38, the semaphore at +0xb8 = lock + 0x78).
+template <typename T>
+class TPoolFastLocked {
+public:
+    T* Scoop(s32 n);         // Scoop(int): n contiguous free slots (from m_cursor, else from 0), or null
+    bool Sink(T* p, s32 n);  // Sink(T*, int): frees n slots from p (true)
+
+    const void* vtable;              // 0x00
+    TBitArray<u64> m_used;           // 0x08: m_used.m_numBits = capacity
+    T* m_pool;                       // 0x30
+    u32 m_cursor;                    // 0x38: where the next Scoop looks first
+    u32 m_count;                     // 0x3c: slots in use
+    sync::FastCriticalSection m_lock;  // 0x40
+    u8 m_ownsPool;                   // 0xd0
+    u8 unk_d1[7];                    // 0xd1
+};
+using TPoolFastLockedBytes90 = TPoolFastLocked<Opaque<90>>;  // TPoolFast<unsigned char[90], true> (ObjectManager's)
+static_assert(offsetof(TPoolFastLockedBytes90, m_pool) == 0x30);
+static_assert(offsetof(TPoolFastLockedBytes90, m_cursor) == 0x38);
+static_assert(offsetof(TPoolFastLockedBytes90, m_count) == 0x3c);
+static_assert(offsetof(TPoolFastLockedBytes90, m_lock) == 0x40);
+static_assert(offsetof(TPoolFastLockedBytes90, m_lock.m_lock) == 0x78);
+static_assert(offsetof(TPoolFastLockedBytes90, m_lock.m_sem) == 0xb8);
+static_assert(offsetof(TPoolFastLockedBytes90, m_ownsPool) == 0xd0);
+static_assert(sizeof(TPoolFastLockedBytes90) == 0xd8);
 
 // Aska::TPoolHandler<T>: CreateNode / DeleteNode / AttachPool(TPoolLegacy<T>*) / DetachPool (pool.c);
 // layout not recovered.

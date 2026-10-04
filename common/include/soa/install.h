@@ -43,7 +43,7 @@ namespace soa::install {
 // The 3.7.0 APK as downloaded from APKPure (README.md "Game files"), the name tried first.
 inline constexpr const char* kApk370Name = "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk";
 // The 3.7.0 client library inside it and its size, which tells the 3.7.0 APK from other versions'
-// (3.8.0's is another size) without inflating it.
+// (another version's is another size) without inflating it.
 inline constexpr const char* kLibEntry = "lib/arm64-v8a/libSOA.so";
 inline constexpr uint64_t kLib370Size = 45988160u;
 // The user's archive of the 3.7.0 download (the tree at its top level, stored), read in place

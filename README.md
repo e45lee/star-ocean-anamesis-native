@@ -282,7 +282,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   removed** (`gacha.name`, `rule.text`; the server takes the titles from the master,
   `docs/server-rules.md#gacha-pools`), `data/saves/seed/Game.xml` (the default seed player, sanitized:
   `data/saves/README.md`) and `standin-assets/` (our images).
-- **What never goes in:** any game file: the APK / XAPK, the download, the master DBs
+- **What never goes in:** any game file: the APKs, the download, the master DBs
   (`data/basmaster-*.sqlite3` are decryptions of the game's own), `version.bin`, `libSOA.so`,
   `port/fakeapi/responses`, decompiles. Before a zip is written every file must be on the allow-list
   and pass a game-file scan (the ADLD magic, the game's asset extensions, an ARM64 ELF, a zip, a

@@ -25,7 +25,7 @@ we link: the vcpkg ports' copyright files, dynarmic and the externals it links, 
                              data/saves/README.md; BAS:PlayerID = LOCAL00001)
   standin-assets/...         our made-up stand-in images (tools/make_standin_banners.py)
 
-No game file goes in: not the APK / XAPK, the download, a master DB (data/basmaster-*.sqlite3 are
+No game file goes in: not the APK / XAPK (380-ok: excluded), the download, a master DB (data/basmaster-*.sqlite3 are
 decryptions of the game's own), version.bin, libSOA.so, port/fakeapi/responses, decompiles. The
 programs derive what they need from the user's own game files at run time (soaserver/master_source.h).
 This script holds no decryption logic.
@@ -80,7 +80,7 @@ ALLOW_COMMON = [
 ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
 
 # Game-file patterns (GAME_FILE): any file matching one fails the check unless it is an approved stand-in.
-GAME_EXTS = {".aif", ".asf", ".spk", ".msgp", ".csf", ".apk", ".xapk", ".so", ".aac", ".mp4", ".bin", ".bmd", ".bca"}
+GAME_EXTS = {".aif", ".asf", ".spk", ".msgp", ".csf", ".apk", ".xapk", ".so", ".aac", ".mp4", ".bin", ".bmd", ".bca"}  # 380-ok: .xapk excluded
 GAME_NAMES = re.compile(r"(basmaster|^version.*\.bin$|libSOA)", re.I)
 
 # The vcpkg ports' helper packages (build scripts, no code in the binaries).

@@ -355,8 +355,16 @@ int hle_cond_wait(u64 guest_cv, u64 guest_m) {
     }
 }
 int hle_cond_timedwait(u64 cv, u64 m, u64 guest_abstime) {
-    // (the guest's timespec has a 64-bit tv_nsec; winpthreads reads its low 32 bits: the same value)
-    return guest_errno(pthread_cond_timedwait(fix_cond(cv), fix_mutex(m), (const timespec*)guest_abstime));
+    // The guest's timespec is two 64-bit words. bionic (and glibc) refuse a tv_nsec outside
+    // [0, 1e9) with EINVAL before waiting; winpthreads' 32-bit tv_nsec would take its low half
+    // (Aska::Event::Wait builds tv_nsec >= 1e9 for timeouts of a second or more: a wait that never
+    // ends on Windows when the low half is negative), so the check is made here for both.
+    const s64* g = (const s64*)guest_abstime;
+    if (g[1] < 0 || g[1] >= 1000000000) return guest_errno(EINVAL);
+    timespec t;
+    t.tv_sec = (time_t)g[0];
+    t.tv_nsec = (long)g[1];
+    return guest_errno(pthread_cond_timedwait(fix_cond(cv), fix_mutex(m), &t));
 }
 int hle_sem_wait(u64 guest_sem) {
     sem_t* s = get_sem(guest_sem);

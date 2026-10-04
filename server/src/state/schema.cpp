@@ -1376,11 +1376,38 @@ const char* const kModules[] = {
   same_role_id integer primary key,
   lots integer not null
 ) strict)",
+    // ---- shop (api/shop/) ----
+    // CItemShopInfo (b): an item-shop row's count this period, the period's start, the count ever
+    // (no row: none)
+    R"(create table new_shop_counts (
+  id integer primary key,
+  num integer not null,
+  period integer,
+  total integer not null default 0
+) strict)",
+    // ExchangeShopExCount (b): a contents row's count exchanged (no row: none)
+    R"(create table new_exchange_counts (
+  id integer primary key,
+  num integer not null
+) strict)",
+    // Subscription (b): a pass the player has, its window and last grant
+    R"(create table new_subscription (
+  plan_id integer primary key,
+  opened_at integer,
+  closed_at integer,
+  updated_at integer
+) strict)",
 };
 
 // The tables step 10 rebuilds (new_X -> X), in kModules' order.
-const char* const kModuleTables[] = {"ds_ship", "ds_offer",    "ds_bonus",   "gacha_history",       "stepup",         "box_state", "box_slots",
-                                     "wboss",   "wboss_clear", "event_last", "event_rank_received", "favor_drop_play"};
+// clang-format off
+const char* const kModuleTables[] = {
+    "ds_ship", "ds_offer", "ds_bonus",
+    "gacha_history", "stepup", "box_state", "box_slots",
+    "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
+    "shop_counts", "exchange_counts", "subscription",
+};
+// clang-format on
 
 // The AUTOINCREMENT counter of a table rebuilt from `table` (sqlite_sequence): the old one, -1
 // when it has none. The insert into new_X sets the new table's to its largest id (and leaves a 0
@@ -1520,13 +1547,26 @@ from wboss_clear where wave is not null and boss_id in (select boss_id from wbos
     return ok;
 }
 
+// Shop (PLAN-schema S10): shop_counts / exchange_counts NULL counts -> 0 (what the readers read);
+// subscription copied.
+bool rebuild_shop(sqlite3* db) {
+    log_count(db, "select count(*) from shop_counts where num is null or total is null", "shop_counts", "NULL count -> 0", 10);
+    log_count(db, "select count(*) from exchange_counts where num is null", "exchange_counts.num", "NULL -> 0", 10);
+    bool ok = run(db, "insert into new_shop_counts (id, num, period, total) select id, ifnull(num, 0), period, ifnull(total, 0) from shop_counts");
+    ok = ok && run(db, "insert into new_exchange_counts (id, num) select id, ifnull(num, 0) from exchange_counts");
+    ok = ok && run(db,
+                   "insert into new_subscription (plan_id, opened_at, closed_at, updated_at) select plan_id, opened_at, closed_at, updated_at "
+                   "from subscription");
+    return ok;
+}
+
 // Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
 // above), then the old tables go and the new ones take their names; the AUTOINCREMENT counters
 // are kept.
 bool rebuild_modules(sqlite3* db, sqlite3*) {
     std::vector<std::pair<const char*, int64_t>> counters;
     for (const char* table : {"gacha_history"}) counters.emplace_back(table, sequence_of(db, table));
-    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db);
+    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db);
     for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
     for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
     for (auto& [table, seq] : counters) ok = ok && keep_sequence(db, table, seq);

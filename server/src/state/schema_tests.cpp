@@ -1140,15 +1140,24 @@ NATIVE_TEST("server/schema-migrate-v10") {
                 // events: a boss in a big hunt, clears of a boss never met (and without a wave), notified 5, NULL lots
                 "insert into wboss (boss_id, area_id, wave, wave_started_at, hunt_until, hunt_new) values (55, 1, 2, 1790841600, 1790900000, 1);"
                 "insert into wboss_clear (boss_id, wave, cleared_at, notified) values (55, 1, 1790841700, 5), (4242, 1, 1, 0), (55, null, 1, 0);"
-                "insert into favor_drop_play (same_role_id, lots) values (66, null);"),
+                "insert into favor_drop_play (same_role_id, lots) values (66, null);"
+                // shop: NULL counts
+                "insert into shop_counts (id, num, period, total) values (67, null, 5, null);"
+                "insert into exchange_counts (id, num) values (68, null);"),
             true, "the S10 cases planted");
     t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 9, m), true, "the reference: migrated to 9");
     t.expect_eq(state::open_and_migrate(db.h, old.path, 10, m), true, "migrated to 10");
     t.expect_eq(state::user_version(db.h), 10, "user_version 10");
     t.expect_eq(db.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
     t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK) == 0, true, "the v0 file backed up");
-    const std::set<std::string> rebuilt = {"ds_ship", "ds_offer",    "ds_bonus",   "gacha_history",       "stepup",         "box_state", "box_slots",
-                                           "wboss",   "wboss_clear", "event_last", "event_rank_received", "favor_drop_play"};
+    // clang-format off
+    const std::set<std::string> rebuilt = {
+        "ds_ship", "ds_offer", "ds_bonus",
+        "gacha_history", "stepup", "box_state", "box_slots",
+        "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
+        "shop_counts", "exchange_counts", "subscription",
+    };
+    // clang-format on
     std::vector<std::string> tables;
     ref.q("select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name", {},
           [&](const Row& r) { tables.push_back(r.s("name")); });
@@ -1206,7 +1215,10 @@ NATIVE_TEST("server/schema-migrate-v10") {
                 "wboss_clear: a boss never met or no wave -> dropped, notified 5 -> 1");
     t.expect_eq(rows_over(db, "favor_drop_play", "*", "same_role_id = 66"), (std::vector<std::string>{"1:66|1:0|"}),
                 "favor_drop_play: NULL lots -> 0");
-    for (const char* table : {"event_last", "event_rank_received"})
+    // shop
+    t.expect_eq(rows_over(db, "shop_counts", "*", "id = 67"), (std::vector<std::string>{"1:67|1:0|1:5|1:0|"}), "shop_counts: NULL counts -> 0");
+    t.expect_eq(rows_over(db, "exchange_counts", "*", "id = 68"), (std::vector<std::string>{"1:68|1:0|"}), "exchange_counts: NULL num -> 0");
+    for (const char* table : {"event_last", "event_rank_received", "subscription"})
         t.expect_eq(rows_over(db, table, "*"), rows_over(ref, table, "*"), (std::string(table) + " copied").c_str());
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");
     ref.close();
@@ -1388,7 +1400,8 @@ NATIVE_TEST("server/schema-fk-actions") {
           std::string("update stepup set try_count = 'x'"), std::string("update box_slots set drawn = 'x'"),
           std::string("update wboss set hunt_until = 'x'"), std::string("update wboss_clear set cleared_at = 'x'"),
           std::string("update event_last set mission_id = 'x'"), std::string("update event_rank_received set received_at = 'x'"),
-          std::string("update favor_drop_play set lots = 'x'")})
+          std::string("update favor_drop_play set lots = 'x'"), std::string("update shop_counts set total = 'x'"),
+          std::string("update exchange_counts set num = 'x'"), std::string("update subscription set closed_at = 'x'")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S10)").c_str());
     t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
                 "a present has its created_at (S8)");

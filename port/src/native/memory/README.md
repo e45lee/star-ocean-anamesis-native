@@ -40,8 +40,53 @@ accessors and the invariants the decompile shows.
 
 ## Natives
 
-| Class::Method (guest symbol) | File | Differential tests | Live check |
+35 natives, one family (they share the heap and pool state; `soa --list-native | grep memory:`). The guest
+layout is the state: guest code that stays (Realloc, Split, Move, IsEmpty, MallocHigh, InitHeap, the
+MappedMemoryManager, DeleteManager, every header reader) walks and edits the same blocks, so each native
+makes the guest's stores in the guest's order (stale links included) under the guest's lock.
+
+| Class::Method (guest symbol) | File | Differential tests | Live check (`--live-check memory`) |
 |---|---|---|---|
+| `MemoryManager::Malloc` | `memory_heap.cpp` | `memory/heap-differential` (+ `heap-mixed-threads`, `heap-live-check`) | dry run + shadow manager |
+| `MemoryManager::AlignedMalloc` | `memory_heap.cpp` | `memory/heap-differential` | dry run + shadow manager |
+| `MemoryManager::AlignedMallocHigh` | `memory_heap.cpp` | `memory/heap-differential` (incl. every run-split shape) | dry run + shadow manager |
+| `MemoryManager::LocalFree(_MemoryBlock*)` | `memory_heap.cpp` | `memory/heap-differential` (incl. the IMemoryNotify path) | dry run + shadow manager (a block with a notify: skipped) |
+| `MemoryManager::LocalFree(void*)` | `memory_heap.cpp` | `memory/heap-differential` | (its callee's) |
+| `MemoryManager::IsCreated` | `memory_heap.cpp` | `memory/heap-differential` | getter |
+| `MemoryManager::CalcFreeSize(bool)` | `memory_heap.cpp` | `memory/heap-differential` | getter |
+| `MemoryManager::CalcFreeSize(long*, long*)` | `memory_heap.cpp` | `memory/heap-differential` | - (no check; 1 call per run) |
+| `TFixedLengthAllocator<N>::pAllocate` (N = 16, 32, 64, 128, 192, 256, 512) | `memory_pools.cpp` | `memory/pools-differential` (with / without the CMutex) | under the pool's CMutex: native, state put back, original |
+| `TFixedLengthAllocator<N>::Free` (7) | `memory_pools.cpp` | `memory/pools-differential` | same |
+| `TFixedLengthAllocator<N>::IsMine` (7) | `memory_pools.cpp` | `memory/pools-differential` | getter |
+| `CFixedLengthAllocatorContainer::pAllocate` / `Free` | `memory_pools.cpp` | `memory/pools-container-differential` | the chosen pool's check with the dispatcher's original |
+| `CFixedLengthAllocatorContainer::IsMine` | `memory_pools.cpp` | `memory/pools-container-differential` | getter |
+| `TObjectContainer<IFixedLengthAllocator*>::NumElements` | `memory_pools.cpp` | `memory/pools-container-differential` | getter |
+| `CAssignedMemoryManagerForSTLAllocator::Allocate` / `Free` | `memory_pools.cpp` | `memory/pools-stl-live-check` (the live statics, every call checked) | pool path: as the container's; heap path: skipped here (Malloc / LocalFree check it) |
+
+The tests: private heaps over host buffers (guest constructor + `InitHeap(u8*, u64)`), the same seeded
+operation sequence through the guest and the natives from one snapshot, results and every byte of the
+managers and heaps compared; the heap bodies count their 23 rare paths (`memory_heap.h` `HeapBranch`)
+and `heap-differential` fails unless each ran. `heap-mixed-threads`: 4 native and 4 guest threads on one
+heap (the lock protocol). `heap-live-check` / `pools-stl-live-check`: the live check's own code with the
+guest symbols as the originals (selftest installs no natives), 0 mismatches required.
+
+The live check (`memory_check.h`): the heap's FastCriticalSection isn't recursive and the guest's
+original can't be replayed on the real heap, so with the real lock held the native body runs as a dry
+run whose stores are logged (`LoggedStore`), its result, written bytes and the srbk table are recorded and
+undone, and the guest's original runs on a shadow of the manager (its bytes with a free lock, a ring of
+itself, no bad-allocate notify) over the same heap; the guest's stores stand. The pools' CMutex is
+recursive: the check holds it, runs the native, records, puts the bytes back and runs the original.
+
+**Lock:** `memory_lock.{h,cpp}` is the guest's inlined FastCriticalSection enter / leave on the guest's
+words (the JIT's exclusive stores are host CAS, so guest and native lockers exclude each other;
+`heap-mixed-threads`). It stands in for sync's `FastCriticalSection::Enter / Leave` (n-sync) until both
+are on main; then the heap natives call sync's members and `memory_lock.*` goes. The pools' CMutex and
+the embedded Semaphore go through the guest symbols (sync's natives once installed).
+
+Not native (cold, or cheaper as guest code): MallocHigh (never runs in the 3.7.0 flows), Realloc / Split /
+Move (rare), the 8-20-byte leaves (GetMemorySize, GetAllocatedManager, BlockSize: a native costs more
+than the guest's two instructions), TSharedPointerCode (35 samples), DeleteManager::FlushMain /
+PostFlushMain (557 samples: next), MemoryHandleManager, the constructors / InitHeap.
 
 ## Dependencies
 

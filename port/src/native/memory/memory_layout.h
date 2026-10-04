@@ -203,6 +203,16 @@ public:
     void UpdateDebugMemoryMap();
     void GetDebugMemoryMap(void* text, float x, float y, u32 color, float w, float h);
     void SetSwapDebugMemoryMap(bool swap);
+    // Native internals (no guest symbols; memory_heap.cpp): the bodies the guest runs between its inlined
+    // lock enter and leave, storing through `st` (memory_heap.h: DirectStore, or the live check's
+    // LoggedStore). Each returns nullptr when nothing in this manager fits (no store made then).
+    template <class St> MemoryBlock* MallocLocked(u64 need, const St& st);
+    template <class St> void* AlignedMallocLocked(u64 size, s64 align, u64 need, const St& st);
+    template <class St> void* AlignedMallocHighLocked(s64 align, u64 need, const St& st);
+    template <class St> void LocalFreeLocked(MemoryBlock* block, const St& st);  // after the notify part
+    template <class St> void UpdateLargestFree(MemorySrbk* run, const St& st);
+    // Malloc's / AlignedMalloc*'s fallback: the ring, then m_badAllocNotify (BadAllocateRequest).
+    template <class TryOne> void* AllocateFromRing(u64 size, s64 align, TryOne tryOne);
 
     const void* vtable;          // 0x00: _ZTVN4Aska13MemoryManagerE + 0x10
     u8 m_allocHigh;              // 0x08: 1: Malloc allocates from the top (MallocHigh)
@@ -353,6 +363,13 @@ public:
 // 9 ActivityRatio, 10 TotalMemoryAmount, 11 UsedMemoryAmount, 12 EnableMutex, 13 DisableMutex.
 class IFixedLengthAllocator {
 public:
+    // Calls through the vtable (memory_pools.cpp): a TFixedLengthAllocator<N> natively when the vtable
+    // is one of the seven instantiations', else the guest's slot.
+    u64 BlockSize() const;                        // slot 2
+    void* pAllocate(const char* file, u32 line);  // slot 4
+    void Free(void* p);                           // slot 5
+    bool IsMine(void* p) const;                   // slot 6
+
     const void* vtable;  // 0x00
 };
 static_assert(sizeof(IFixedLengthAllocator) == 0x08);
@@ -403,6 +420,9 @@ public:
     u64 UsedMemoryAmount() const;       // slot 11: m_numAllocated * (N + 0x10)
     void EnableMutex();                 // slot 12: new Framework::CMutex (0xb0 bytes)
     void DisableMutex();                // slot 13
+    // Native internals (memory_pools.cpp): pAllocate's / Free's bodies under m_mutex.
+    void* AllocateLocked();
+    void FreeLocked(void* p);
 
     const void* vtable;                 // 0x00: _ZTVN9Framework21TFixedLengthAllocatorILm<N>EEE + 0x10
     u8 unk_08[0x10];                    // 0x08: not written by the constructor; meaning unknown
@@ -478,6 +498,10 @@ public:
     void ReportS();
     void ReportC();
     void ReportL();
+    // Native internals (memory_pools.cpp): the pool pAllocate / Free / IsMine pick, with the guest's
+    // asserts on the way (nullptr: none).
+    IFixedLengthAllocator* AllocatorFor(u64 size);
+    IFixedLengthAllocator* AllocatorOwning(void* p) const;
 
     TObjectContainer<IFixedLengthAllocator*> m_allocators;  // 0x00
 };

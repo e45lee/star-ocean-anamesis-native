@@ -9,9 +9,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x11491e8	0x12491e8	72	_ZN9Framework21TFixedLengthAllocatorILm16EED0Ev	Framework::TFixedLengthAllocator<16ul>::~TFixedLengthAllocator()	stl_allocator	typed	
 0x1149230	0x1249230	8	_ZNK9Framework21TFixedLengthAllocatorILm16EE9BlockSizeEv	Framework::TFixedLengthAllocator<16ul>::BlockSize() const	stl_allocator	typed	
 0x1149238	0x1249238	8	_ZNK9Framework21TFixedLengthAllocatorILm16EE8MaxBlockEv	Framework::TFixedLengthAllocator<16ul>::MaxBlock() const	stl_allocator	typed	
-0x1149240	0x1249240	236	_ZN9Framework21TFixedLengthAllocatorILm16EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<16ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
-0x114932c	0x124932c	208	_ZN9Framework21TFixedLengthAllocatorILm16EE4FreeEPv	Framework::TFixedLengthAllocator<16ul>::Free(void*)	stl_allocator	typed	
-0x11493fc	0x12493fc	124	_ZNK9Framework21TFixedLengthAllocatorILm16EE6IsMineEPv	Framework::TFixedLengthAllocator<16ul>::IsMine(void*) const	stl_allocator	typed	
+0x1149240	0x1249240	236	_ZN9Framework21TFixedLengthAllocatorILm16EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<16ul>::pAllocate(char const*, unsigned int)	stl_allocator	native	
+0x114932c	0x124932c	208	_ZN9Framework21TFixedLengthAllocatorILm16EE4FreeEPv	Framework::TFixedLengthAllocator<16ul>::Free(void*)	stl_allocator	native	
+0x11493fc	0x12493fc	124	_ZNK9Framework21TFixedLengthAllocatorILm16EE6IsMineEPv	Framework::TFixedLengthAllocator<16ul>::IsMine(void*) const	stl_allocator	native	
 0x1149478	0x1249478	84	_ZNK9Framework21TFixedLengthAllocatorILm16EE12NumAllocatedEv	Framework::TFixedLengthAllocator<16ul>::NumAllocated() const	stl_allocator	typed	
 0x11494cc	0x12494cc	92	_ZNK9Framework21TFixedLengthAllocatorILm16EE6IsFreeEv	Framework::TFixedLengthAllocator<16ul>::IsFree() const	stl_allocator	typed	
 0x1149528	0x1249528	104	_ZNK9Framework21TFixedLengthAllocatorILm16EE13ActivityRatioEv	Framework::TFixedLengthAllocator<16ul>::ActivityRatio() const	stl_allocator	typed	
@@ -23,9 +23,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x11496b0	0x12496b0	72	_ZN9Framework21TFixedLengthAllocatorILm32EED0Ev	Framework::TFixedLengthAllocator<32ul>::~TFixedLengthAllocator()	stl_allocator	typed	
 0x11496f8	0x12496f8	8	_ZNK9Framework21TFixedLengthAllocatorILm32EE9BlockSizeEv	Framework::TFixedLengthAllocator<32ul>::BlockSize() const	stl_allocator	typed	
 0x1149700	0x1249700	8	_ZNK9Framework21TFixedLengthAllocatorILm32EE8MaxBlockEv	Framework::TFixedLengthAllocator<32ul>::MaxBlock() const	stl_allocator	typed	
-0x1149708	0x1249708	244	_ZN9Framework21TFixedLengthAllocatorILm32EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<32ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
-0x11497fc	0x12497fc	208	_ZN9Framework21TFixedLengthAllocatorILm32EE4FreeEPv	Framework::TFixedLengthAllocator<32ul>::Free(void*)	stl_allocator	typed	
-0x11498cc	0x12498cc	128	_ZNK9Framework21TFixedLengthAllocatorILm32EE6IsMineEPv	Framework::TFixedLengthAllocator<32ul>::IsMine(void*) const	stl_allocator	typed	
+0x1149708	0x1249708	244	_ZN9Framework21TFixedLengthAllocatorILm32EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<32ul>::pAllocate(char const*, unsigned int)	stl_allocator	native	
+0x11497fc	0x12497fc	208	_ZN9Framework21TFixedLengthAllocatorILm32EE4FreeEPv	Framework::TFixedLengthAllocator<32ul>::Free(void*)	stl_allocator	native	
+0x11498cc	0x12498cc	128	_ZNK9Framework21TFixedLengthAllocatorILm32EE6IsMineEPv	Framework::TFixedLengthAllocator<32ul>::IsMine(void*) const	stl_allocator	native	
 0x114994c	0x124994c	84	_ZNK9Framework21TFixedLengthAllocatorILm32EE12NumAllocatedEv	Framework::TFixedLengthAllocator<32ul>::NumAllocated() const	stl_allocator	typed	
 0x11499a0	0x12499a0	92	_ZNK9Framework21TFixedLengthAllocatorILm32EE6IsFreeEv	Framework::TFixedLengthAllocator<32ul>::IsFree() const	stl_allocator	typed	
 0x11499fc	0x12499fc	104	_ZNK9Framework21TFixedLengthAllocatorILm32EE13ActivityRatioEv	Framework::TFixedLengthAllocator<32ul>::ActivityRatio() const	stl_allocator	typed	
@@ -37,9 +37,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1149b88	0x1249b88	72	_ZN9Framework21TFixedLengthAllocatorILm64EED0Ev	Framework::TFixedLengthAllocator<64ul>::~TFixedLengthAllocator()	stl_allocator	typed	
 0x1149bd0	0x1249bd0	8	_ZNK9Framework21TFixedLengthAllocatorILm64EE9BlockSizeEv	Framework::TFixedLengthAllocator<64ul>::BlockSize() const	stl_allocator	typed	
 0x1149bd8	0x1249bd8	8	_ZNK9Framework21TFixedLengthAllocatorILm64EE8MaxBlockEv	Framework::TFixedLengthAllocator<64ul>::MaxBlock() const	stl_allocator	typed	
-0x1149be0	0x1249be0	244	_ZN9Framework21TFixedLengthAllocatorILm64EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<64ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
-0x1149cd4	0x1249cd4	208	_ZN9Framework21TFixedLengthAllocatorILm64EE4FreeEPv	Framework::TFixedLengthAllocator<64ul>::Free(void*)	stl_allocator	typed	
-0x1149da4	0x1249da4	128	_ZNK9Framework21TFixedLengthAllocatorILm64EE6IsMineEPv	Framework::TFixedLengthAllocator<64ul>::IsMine(void*) const	stl_allocator	typed	
+0x1149be0	0x1249be0	244	_ZN9Framework21TFixedLengthAllocatorILm64EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<64ul>::pAllocate(char const*, unsigned int)	stl_allocator	native	
+0x1149cd4	0x1249cd4	208	_ZN9Framework21TFixedLengthAllocatorILm64EE4FreeEPv	Framework::TFixedLengthAllocator<64ul>::Free(void*)	stl_allocator	native	
+0x1149da4	0x1249da4	128	_ZNK9Framework21TFixedLengthAllocatorILm64EE6IsMineEPv	Framework::TFixedLengthAllocator<64ul>::IsMine(void*) const	stl_allocator	native	
 0x1149e24	0x1249e24	84	_ZNK9Framework21TFixedLengthAllocatorILm64EE12NumAllocatedEv	Framework::TFixedLengthAllocator<64ul>::NumAllocated() const	stl_allocator	typed	
 0x1149e78	0x1249e78	92	_ZNK9Framework21TFixedLengthAllocatorILm64EE6IsFreeEv	Framework::TFixedLengthAllocator<64ul>::IsFree() const	stl_allocator	typed	
 0x1149ed4	0x1249ed4	104	_ZNK9Framework21TFixedLengthAllocatorILm64EE13ActivityRatioEv	Framework::TFixedLengthAllocator<64ul>::ActivityRatio() const	stl_allocator	typed	
@@ -51,9 +51,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x114a060	0x124a060	72	_ZN9Framework21TFixedLengthAllocatorILm128EED0Ev	Framework::TFixedLengthAllocator<128ul>::~TFixedLengthAllocator()	stl_allocator	typed	
 0x114a0a8	0x124a0a8	8	_ZNK9Framework21TFixedLengthAllocatorILm128EE9BlockSizeEv	Framework::TFixedLengthAllocator<128ul>::BlockSize() const	stl_allocator	typed	
 0x114a0b0	0x124a0b0	8	_ZNK9Framework21TFixedLengthAllocatorILm128EE8MaxBlockEv	Framework::TFixedLengthAllocator<128ul>::MaxBlock() const	stl_allocator	typed	
-0x114a0b8	0x124a0b8	244	_ZN9Framework21TFixedLengthAllocatorILm128EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<128ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
-0x114a1ac	0x124a1ac	208	_ZN9Framework21TFixedLengthAllocatorILm128EE4FreeEPv	Framework::TFixedLengthAllocator<128ul>::Free(void*)	stl_allocator	typed	
-0x114a27c	0x124a27c	128	_ZNK9Framework21TFixedLengthAllocatorILm128EE6IsMineEPv	Framework::TFixedLengthAllocator<128ul>::IsMine(void*) const	stl_allocator	typed	
+0x114a0b8	0x124a0b8	244	_ZN9Framework21TFixedLengthAllocatorILm128EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<128ul>::pAllocate(char const*, unsigned int)	stl_allocator	native	
+0x114a1ac	0x124a1ac	208	_ZN9Framework21TFixedLengthAllocatorILm128EE4FreeEPv	Framework::TFixedLengthAllocator<128ul>::Free(void*)	stl_allocator	native	
+0x114a27c	0x124a27c	128	_ZNK9Framework21TFixedLengthAllocatorILm128EE6IsMineEPv	Framework::TFixedLengthAllocator<128ul>::IsMine(void*) const	stl_allocator	native	
 0x114a2fc	0x124a2fc	84	_ZNK9Framework21TFixedLengthAllocatorILm128EE12NumAllocatedEv	Framework::TFixedLengthAllocator<128ul>::NumAllocated() const	stl_allocator	typed	
 0x114a350	0x124a350	92	_ZNK9Framework21TFixedLengthAllocatorILm128EE6IsFreeEv	Framework::TFixedLengthAllocator<128ul>::IsFree() const	stl_allocator	typed	
 0x114a3ac	0x124a3ac	104	_ZNK9Framework21TFixedLengthAllocatorILm128EE13ActivityRatioEv	Framework::TFixedLengthAllocator<128ul>::ActivityRatio() const	stl_allocator	typed	
@@ -65,9 +65,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x114a538	0x124a538	72	_ZN9Framework21TFixedLengthAllocatorILm256EED0Ev	Framework::TFixedLengthAllocator<256ul>::~TFixedLengthAllocator()	stl_allocator	typed	
 0x114a580	0x124a580	8	_ZNK9Framework21TFixedLengthAllocatorILm256EE9BlockSizeEv	Framework::TFixedLengthAllocator<256ul>::BlockSize() const	stl_allocator	typed	
 0x114a588	0x124a588	8	_ZNK9Framework21TFixedLengthAllocatorILm256EE8MaxBlockEv	Framework::TFixedLengthAllocator<256ul>::MaxBlock() const	stl_allocator	typed	
-0x114a590	0x124a590	244	_ZN9Framework21TFixedLengthAllocatorILm256EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<256ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
-0x114a684	0x124a684	208	_ZN9Framework21TFixedLengthAllocatorILm256EE4FreeEPv	Framework::TFixedLengthAllocator<256ul>::Free(void*)	stl_allocator	typed	
-0x114a754	0x124a754	128	_ZNK9Framework21TFixedLengthAllocatorILm256EE6IsMineEPv	Framework::TFixedLengthAllocator<256ul>::IsMine(void*) const	stl_allocator	typed	
+0x114a590	0x124a590	244	_ZN9Framework21TFixedLengthAllocatorILm256EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<256ul>::pAllocate(char const*, unsigned int)	stl_allocator	native	
+0x114a684	0x124a684	208	_ZN9Framework21TFixedLengthAllocatorILm256EE4FreeEPv	Framework::TFixedLengthAllocator<256ul>::Free(void*)	stl_allocator	native	
+0x114a754	0x124a754	128	_ZNK9Framework21TFixedLengthAllocatorILm256EE6IsMineEPv	Framework::TFixedLengthAllocator<256ul>::IsMine(void*) const	stl_allocator	native	
 0x114a7d4	0x124a7d4	84	_ZNK9Framework21TFixedLengthAllocatorILm256EE12NumAllocatedEv	Framework::TFixedLengthAllocator<256ul>::NumAllocated() const	stl_allocator	typed	
 0x114a828	0x124a828	92	_ZNK9Framework21TFixedLengthAllocatorILm256EE6IsFreeEv	Framework::TFixedLengthAllocator<256ul>::IsFree() const	stl_allocator	typed	
 0x114a884	0x124a884	104	_ZNK9Framework21TFixedLengthAllocatorILm256EE13ActivityRatioEv	Framework::TFixedLengthAllocator<256ul>::ActivityRatio() const	stl_allocator	typed	
@@ -79,9 +79,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x114aa10	0x124aa10	72	_ZN9Framework21TFixedLengthAllocatorILm512EED0Ev	Framework::TFixedLengthAllocator<512ul>::~TFixedLengthAllocator()	stl_allocator	typed	
 0x114aa58	0x124aa58	8	_ZNK9Framework21TFixedLengthAllocatorILm512EE9BlockSizeEv	Framework::TFixedLengthAllocator<512ul>::BlockSize() const	stl_allocator	typed	
 0x114aa60	0x124aa60	8	_ZNK9Framework21TFixedLengthAllocatorILm512EE8MaxBlockEv	Framework::TFixedLengthAllocator<512ul>::MaxBlock() const	stl_allocator	typed	
-0x114aa68	0x124aa68	244	_ZN9Framework21TFixedLengthAllocatorILm512EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<512ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
-0x114ab5c	0x124ab5c	208	_ZN9Framework21TFixedLengthAllocatorILm512EE4FreeEPv	Framework::TFixedLengthAllocator<512ul>::Free(void*)	stl_allocator	typed	
-0x114ac2c	0x124ac2c	128	_ZNK9Framework21TFixedLengthAllocatorILm512EE6IsMineEPv	Framework::TFixedLengthAllocator<512ul>::IsMine(void*) const	stl_allocator	typed	
+0x114aa68	0x124aa68	244	_ZN9Framework21TFixedLengthAllocatorILm512EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<512ul>::pAllocate(char const*, unsigned int)	stl_allocator	native	
+0x114ab5c	0x124ab5c	208	_ZN9Framework21TFixedLengthAllocatorILm512EE4FreeEPv	Framework::TFixedLengthAllocator<512ul>::Free(void*)	stl_allocator	native	
+0x114ac2c	0x124ac2c	128	_ZNK9Framework21TFixedLengthAllocatorILm512EE6IsMineEPv	Framework::TFixedLengthAllocator<512ul>::IsMine(void*) const	stl_allocator	native	
 0x114acac	0x124acac	84	_ZNK9Framework21TFixedLengthAllocatorILm512EE12NumAllocatedEv	Framework::TFixedLengthAllocator<512ul>::NumAllocated() const	stl_allocator	typed	
 0x114ad00	0x124ad00	92	_ZNK9Framework21TFixedLengthAllocatorILm512EE6IsFreeEv	Framework::TFixedLengthAllocator<512ul>::IsFree() const	stl_allocator	typed	
 0x114ad5c	0x124ad5c	104	_ZNK9Framework21TFixedLengthAllocatorILm512EE13ActivityRatioEv	Framework::TFixedLengthAllocator<512ul>::ActivityRatio() const	stl_allocator	typed	
@@ -94,9 +94,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x13b661c	0x14b661c	72	_ZN9Framework21TFixedLengthAllocatorILm192EED0Ev	Framework::TFixedLengthAllocator<192ul>::~TFixedLengthAllocator()	stl_allocator	typed	
 0x13b6664	0x14b6664	8	_ZNK9Framework21TFixedLengthAllocatorILm192EE9BlockSizeEv	Framework::TFixedLengthAllocator<192ul>::BlockSize() const	stl_allocator	typed	
 0x13b666c	0x14b666c	8	_ZNK9Framework21TFixedLengthAllocatorILm192EE8MaxBlockEv	Framework::TFixedLengthAllocator<192ul>::MaxBlock() const	stl_allocator	typed	
-0x13b6674	0x14b6674	244	_ZN9Framework21TFixedLengthAllocatorILm192EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<192ul>::pAllocate(char const*, unsigned int)	stl_allocator	typed	
-0x13b6768	0x14b6768	208	_ZN9Framework21TFixedLengthAllocatorILm192EE4FreeEPv	Framework::TFixedLengthAllocator<192ul>::Free(void*)	stl_allocator	typed	
-0x13b6838	0x14b6838	128	_ZNK9Framework21TFixedLengthAllocatorILm192EE6IsMineEPv	Framework::TFixedLengthAllocator<192ul>::IsMine(void*) const	stl_allocator	typed	
+0x13b6674	0x14b6674	244	_ZN9Framework21TFixedLengthAllocatorILm192EE9pAllocateEPKcj	Framework::TFixedLengthAllocator<192ul>::pAllocate(char const*, unsigned int)	stl_allocator	native	
+0x13b6768	0x14b6768	208	_ZN9Framework21TFixedLengthAllocatorILm192EE4FreeEPv	Framework::TFixedLengthAllocator<192ul>::Free(void*)	stl_allocator	native	
+0x13b6838	0x14b6838	128	_ZNK9Framework21TFixedLengthAllocatorILm192EE6IsMineEPv	Framework::TFixedLengthAllocator<192ul>::IsMine(void*) const	stl_allocator	native	
 0x13b68b8	0x14b68b8	84	_ZNK9Framework21TFixedLengthAllocatorILm192EE12NumAllocatedEv	Framework::TFixedLengthAllocator<192ul>::NumAllocated() const	stl_allocator	typed	
 0x13b690c	0x14b690c	92	_ZNK9Framework21TFixedLengthAllocatorILm192EE6IsFreeEv	Framework::TFixedLengthAllocator<192ul>::IsFree() const	stl_allocator	typed	
 0x13b6968	0x14b6968	104	_ZNK9Framework21TFixedLengthAllocatorILm192EE13ActivityRatioEv	Framework::TFixedLengthAllocator<192ul>::ActivityRatio() const	stl_allocator	typed	
@@ -148,8 +148,8 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e9b4b4	0x1f9b4b4	32	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator7ReportCEv	Framework::CAssignedMemoryManagerForSTLAllocator::ReportC()	stl_allocator	typed	
 0x1e9b4d4	0x1f9b4d4	68	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator26AttachFixedLengthAllocatorEPNS_30CFixedLengthAllocatorContainerE	Framework::CAssignedMemoryManagerForSTLAllocator::AttachFixedLengthAllocator(Framework::CFixedLengthAllocatorContainer*)	stl_allocator	typed	
 0x1e9b518	0x1f9b518	16	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator27pAttachFixedLengthAllocatorEv	Framework::CAssignedMemoryManagerForSTLAllocator::pAttachFixedLengthAllocator()	stl_allocator	typed	
-0x1e9b528	0x1f9b528	112	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj	Framework::CAssignedMemoryManagerForSTLAllocator::Allocate(unsigned long, char const*, unsigned int)	stl_allocator	typed	
-0x1e9b598	0x1f9b598	88	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv	Framework::CAssignedMemoryManagerForSTLAllocator::Free(void*)	stl_allocator	typed	
+0x1e9b528	0x1f9b528	112	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj	Framework::CAssignedMemoryManagerForSTLAllocator::Allocate(unsigned long, char const*, unsigned int)	stl_allocator	native	
+0x1e9b598	0x1f9b598	88	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv	Framework::CAssignedMemoryManagerForSTLAllocator::Free(void*)	stl_allocator	native	
 0x1e9b5f0	0x1f9b5f0	32	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator7ReportSEv	Framework::CAssignedMemoryManagerForSTLAllocator::ReportS()	stl_allocator	typed	
 0x1e9b610	0x1f9b610	28	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator26IsEnableReportByEachAccessEb	Framework::CAssignedMemoryManagerForSTLAllocator::IsEnableReportByEachAccess(bool)	stl_allocator	typed	
 0x1e9b62c	0x1f9b62c	16	_ZN9Framework37CAssignedMemoryManagerForSTLAllocator22pAttachedMemoryManagerEv	Framework::CAssignedMemoryManagerForSTLAllocator::pAttachedMemoryManager()	stl_allocator	typed	
@@ -159,12 +159,12 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e9d80c	0x1f9d80c	48	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEED2Ev	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::~TObjectContainer()	stl_allocator	typed	
 0x1e9d83c	0x1f9d83c	340	_ZN9Framework30CFixedLengthAllocatorContainer10InitializeEPPNS_21IFixedLengthAllocatorEj	Framework::CFixedLengthAllocatorContainer::Initialize(Framework::IFixedLengthAllocator**, unsigned int)	stl_allocator	typed	
 0x1e9d990	0x1f9d990	100	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE10InitializeEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::Initialize(unsigned long)	stl_allocator	typed	
-0x1e9d9f4	0x1f9d9f4	52	_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE11NumElementsEv	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::NumElements() const	stl_allocator	typed	
+0x1e9d9f4	0x1f9d9f4	52	_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE11NumElementsEv	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::NumElements() const	stl_allocator	native	
 0x1e9da28	0x1f9da28	140	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE8rElementEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::rElement(unsigned long)	stl_allocator	typed	
 0x1e9dab4	0x1f9dab4	16	_ZNK9Framework30CFixedLengthAllocatorContainer13IsInitializedEv	Framework::CFixedLengthAllocatorContainer::IsInitialized() const	stl_allocator	typed	
-0x1e9dac4	0x1f9dac4	336	_ZN9Framework30CFixedLengthAllocatorContainer9pAllocateEmPKcj	Framework::CFixedLengthAllocatorContainer::pAllocate(unsigned long, char const*, unsigned int)	stl_allocator	typed	
-0x1e9dc14	0x1f9dc14	308	_ZN9Framework30CFixedLengthAllocatorContainer4FreeEPv	Framework::CFixedLengthAllocatorContainer::Free(void*)	stl_allocator	typed	
-0x1e9dd48	0x1f9dd48	284	_ZNK9Framework30CFixedLengthAllocatorContainer6IsMineEPv	Framework::CFixedLengthAllocatorContainer::IsMine(void*) const	stl_allocator	typed	
+0x1e9dac4	0x1f9dac4	336	_ZN9Framework30CFixedLengthAllocatorContainer9pAllocateEmPKcj	Framework::CFixedLengthAllocatorContainer::pAllocate(unsigned long, char const*, unsigned int)	stl_allocator	native	
+0x1e9dc14	0x1f9dc14	308	_ZN9Framework30CFixedLengthAllocatorContainer4FreeEPv	Framework::CFixedLengthAllocatorContainer::Free(void*)	stl_allocator	native	
+0x1e9dd48	0x1f9dd48	284	_ZNK9Framework30CFixedLengthAllocatorContainer6IsMineEPv	Framework::CFixedLengthAllocatorContainer::IsMine(void*) const	stl_allocator	native	
 0x1e9de64	0x1f9de64	140	_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE9crElementEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::crElement(unsigned long) const	stl_allocator	typed	
 0x1e9def0	0x1f9def0	252	_ZN9Framework30CFixedLengthAllocatorContainer11EnableMutexEv	Framework::CFixedLengthAllocatorContainer::EnableMutex()	stl_allocator	typed	
 0x1e9dfec	0x1f9dfec	252	_ZN9Framework30CFixedLengthAllocatorContainer12DisableMutexEv	Framework::CFixedLengthAllocatorContainer::DisableMutex()	stl_allocator	typed	
@@ -311,7 +311,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f4a638	0x204a638	24	_ZN4Aska13MemoryManager12CalcSrbkSizeEm	Aska::MemoryManager::CalcSrbkSize(unsigned long)	memory_manager	typed	
 0x1f4a650	0x204a650	32	_ZN4Aska13MemoryManager16CalcFullHeapSizeEm	Aska::MemoryManager::CalcFullHeapSize(unsigned long)	memory_manager	typed	
 0x1f4a670	0x204a670	44	_ZN4Aska13MemoryManager27CalcFullHeapSizeForOneBlockEmlb	Aska::MemoryManager::CalcFullHeapSizeForOneBlock(unsigned long, long, bool)	memory_manager	typed	
-0x1f4a6b4	0x204a6b4	1492	_ZN4Aska13MemoryManager9LocalFreeEPNS_12_MemoryBlockE	Aska::MemoryManager::LocalFree(Aska::_MemoryBlock*)	memory_manager	typed	
+0x1f4a6b4	0x204a6b4	1492	_ZN4Aska13MemoryManager9LocalFreeEPNS_12_MemoryBlockE	Aska::MemoryManager::LocalFree(Aska::_MemoryBlock*)	memory_manager	native	
 0x1f4acb8	0x204acb8	60	_ZN4Aska13MemoryManagerC2Ev	Aska::MemoryManager::MemoryManager()	memory_manager	typed	
 0x1f4acf4	0x204acf4	20	_ZN4Aska13MemoryManager10InitializeEv	Aska::MemoryManager::Initialize()	memory_manager	typed	
 0x1f4ad08	0x204ad08	80	_ZN4Aska13MemoryManagerC1Em	Aska::MemoryManager::MemoryManager(unsigned long)	memory_manager	typed	
@@ -324,21 +324,21 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f4b0b4	0x204b0b4	232	_ZN4Aska13MemoryManager8InitSrbkEm	Aska::MemoryManager::InitSrbk(unsigned long)	memory_manager	typed	
 0x1f4b19c	0x204b19c	332	_ZN4Aska13MemoryManager8InitHeapEPhmS1_m	Aska::MemoryManager::InitHeap(unsigned char*, unsigned long, unsigned char*, unsigned long)	memory_manager	typed	
 0x1f4b2e8	0x204b2e8	184	_ZN4Aska13MemoryManager8InitSrbkEmPh	Aska::MemoryManager::InitSrbk(unsigned long, unsigned char*)	memory_manager	typed	
-0x1f4b3a0	0x204b3a0	1248	_ZN4Aska13MemoryManager6MallocEm	Aska::MemoryManager::Malloc(unsigned long)	memory_manager	typed	
+0x1f4b3a0	0x204b3a0	1248	_ZN4Aska13MemoryManager6MallocEm	Aska::MemoryManager::Malloc(unsigned long)	memory_manager	native	
 0x1f4b880	0x204b880	1184	_ZN4Aska13MemoryManager10MallocHighEm	Aska::MemoryManager::MallocHigh(unsigned long)	memory_manager	typed	
-0x1f4bd20	0x204bd20	1460	_ZN4Aska13MemoryManager13AlignedMallocEml	Aska::MemoryManager::AlignedMalloc(unsigned long, long)	memory_manager	typed	
-0x1f4c2d4	0x204c2d4	1460	_ZN4Aska13MemoryManager17AlignedMallocHighEml	Aska::MemoryManager::AlignedMallocHigh(unsigned long, long)	memory_manager	typed	
+0x1f4bd20	0x204bd20	1460	_ZN4Aska13MemoryManager13AlignedMallocEml	Aska::MemoryManager::AlignedMalloc(unsigned long, long)	memory_manager	native	
+0x1f4c2d4	0x204c2d4	1460	_ZN4Aska13MemoryManager17AlignedMallocHighEml	Aska::MemoryManager::AlignedMallocHigh(unsigned long, long)	memory_manager	native	
 0x1f4c888	0x204c888	2124	_ZN4Aska13MemoryManager7ReallocEmPvl	Aska::MemoryManager::Realloc(unsigned long, void*, long)	memory_manager	typed	
 0x1f4d0d4	0x204d0d4	536	_ZN4Aska13MemoryManager5SplitEPvS1_	Aska::MemoryManager::Split(void*, void*)	memory_manager	typed	
 0x1f4d2ec	0x204d2ec	364	_ZN4Aska13MemoryManager4MoveEPvlb	Aska::MemoryManager::Move(void*, long, bool)	memory_manager	typed	
-0x1f4d458	0x204d458	12	_ZN4Aska13MemoryManager9LocalFreeEPv	Aska::MemoryManager::LocalFree(void*)	memory_manager	typed	
-0x1f4d464	0x204d464	356	_ZNK4Aska13MemoryManager9IsCreatedEv	Aska::MemoryManager::IsCreated() const	memory_manager	typed	
+0x1f4d458	0x204d458	12	_ZN4Aska13MemoryManager9LocalFreeEPv	Aska::MemoryManager::LocalFree(void*)	memory_manager	native	
+0x1f4d464	0x204d464	356	_ZNK4Aska13MemoryManager9IsCreatedEv	Aska::MemoryManager::IsCreated() const	memory_manager	native	
 0x1f4d5c8	0x204d5c8	8	_ZNK4Aska13MemoryManager10IsPhysicalEv	Aska::MemoryManager::IsPhysical() const	memory_manager	typed	
 0x1f4d5d0	0x204d5d0	8	_ZN4Aska13MemoryManager13GetMemorySizeEPKv	Aska::MemoryManager::GetMemorySize(void const*)	memory_manager	typed	
-0x1f4d5d8	0x204d5d8	524	_ZNK4Aska13MemoryManager12CalcFreeSizeEPlS1_	Aska::MemoryManager::CalcFreeSize(long*, long*) const	memory_manager	typed	
+0x1f4d5d8	0x204d5d8	524	_ZNK4Aska13MemoryManager12CalcFreeSizeEPlS1_	Aska::MemoryManager::CalcFreeSize(long*, long*) const	memory_manager	native	
 0x1f4d7e4	0x204d7e4	424	_ZN4Aska13MemoryManager15CountFreeBlocksEv	Aska::MemoryManager::CountFreeBlocks()	memory_manager	typed	
 0x1f4d98c	0x204d98c	816	_ZNK4Aska13MemoryManager7IsEmptyEb	Aska::MemoryManager::IsEmpty(bool) const	memory_manager	typed	
-0x1f4dcbc	0x204dcbc	764	_ZN4Aska13MemoryManager12CalcFreeSizeEb	Aska::MemoryManager::CalcFreeSize(bool)	memory_manager	typed	
+0x1f4dcbc	0x204dcbc	764	_ZN4Aska13MemoryManager12CalcFreeSizeEb	Aska::MemoryManager::CalcFreeSize(bool)	memory_manager	native	
 0x1f4dfb8	0x204dfb8	4	_ZN4Aska13MemoryManager16PrintMemoryChainEv	Aska::MemoryManager::PrintMemoryChain()	memory_manager	typed	
 0x1f4dfbc	0x204dfbc	4	_ZN4Aska13MemoryManager16PrintMemoryChainEPKc	Aska::MemoryManager::PrintMemoryChain(char const*)	memory_manager	typed	
 0x1f4dfc0	0x204dfc0	600	_ZN4Aska13MemoryManager15SearchNextBlockEPPNS0_5_SrbkEPPNS_12_MemoryBlockEb	Aska::MemoryManager::SearchNextBlock(Aska::MemoryManager::_Srbk**, Aska::_MemoryBlock**, bool)	memory_manager	typed	

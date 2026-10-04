@@ -1,7 +1,10 @@
 """tools/global_voice_files.py on a tiny synthetic Global master, JP master and download tree."""
+import datetime
 import pathlib
 import sqlite3
 import sys
+
+import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
@@ -108,7 +111,11 @@ def test_helpers():
     assert gv.is_language_pack("Sound/Voice_UI_100.spk")
     assert not gv.is_language_pack("Parameter/Battle/voice_cp0302.msgp")
     assert gv.norm("assets/builtin_data/Sound/etc2/hi/x.spk") == "Sound/x.spk"
-    assert gv.parse_time("2019/11/6 14:00:00") == gv.parse_time("2019-11-06 14:00:00")
+    assert gv.parse_time("2019/11/6 14:00:00") == gv.parse_time("2019-11-06 14:00:00") == datetime.datetime(2019, 11, 6, 14)
+    assert gv.parse_time(" 2019/1/2 ") == datetime.datetime(2019, 1, 2)
+    assert gv.parse_time("") is None and gv.parse_time(None) is None
+    with pytest.raises(ValueError):
+        gv.parse_time("2019-11-06 14:00")
     assert gv.CODE.findall("TS_2014_090_0100_cp0003") == ["cp0003"]
 
 

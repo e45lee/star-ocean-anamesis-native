@@ -21,6 +21,7 @@ player character and both are shown as HOST.
 """
 import argparse, socket, struct, threading, time, binascii, os, collections
 import msgpack
+from Crypto.Cipher import ChaCha20  # pycryptodome
 
 PERM = [6, 4, 3, 0, 7, 1, 2, 5]
 L = dict(EnterLobby=0xfb5d0d73, EnterLobbyResult=0x4e466d87, CreateRoom=0x6a1b49a5, CreateRoomResult=0xeac42001,
@@ -46,23 +47,10 @@ ROOMINFO = 0x450
 # ---- ChaCha20 (RFC 7539), the client's fixed key / nonce (InitBattleRPCClient @015a7568) ----
 KEY = bytes.fromhex('2f725c277a702075747730385b2d3d2c27552a7d5f2820565e49427b25493300')
 NONCE = b'A^#g2074RaJG'
-def _rotl(v, c): return ((v << c) & 0xffffffff) | (v >> (32 - c))
-def _qr(s, a, b, c, d):
-    s[a] = (s[a] + s[b]) & 0xffffffff; s[d] = _rotl(s[d] ^ s[a], 16)
-    s[c] = (s[c] + s[d]) & 0xffffffff; s[b] = _rotl(s[b] ^ s[c], 12)
-    s[a] = (s[a] + s[b]) & 0xffffffff; s[d] = _rotl(s[d] ^ s[a], 8)
-    s[c] = (s[c] + s[d]) & 0xffffffff; s[b] = _rotl(s[b] ^ s[c], 7)
 def chacha20_xor(data, counter=0):
-    k = struct.unpack('<8I', KEY); n = struct.unpack('<3I', NONCE); out = bytearray()
-    for blk in range(0, len(data), 64):
-        st = [0x61707865, 0x3320646e, 0x79622d32, 0x6b206574, *k, (counter + blk // 64) & 0xffffffff, *n]
-        w = st[:]
-        for _ in range(10):
-            _qr(w, 0, 4, 8, 12); _qr(w, 1, 5, 9, 13); _qr(w, 2, 6, 10, 14); _qr(w, 3, 7, 11, 15)
-            _qr(w, 0, 5, 10, 15); _qr(w, 1, 6, 11, 12); _qr(w, 2, 7, 8, 13); _qr(w, 3, 4, 9, 14)
-        ks = struct.pack('<16I', *[(w[i] + st[i]) & 0xffffffff for i in range(16)])
-        out += bytes(a ^ b for a, b in zip(data[blk:blk + 64], ks))
-    return bytes(out)
+    c = ChaCha20.new(key=KEY, nonce=NONCE)
+    c.seek(64 * counter)
+    return c.encrypt(bytes(data))
 
 def unscramble(b):
     t = 0

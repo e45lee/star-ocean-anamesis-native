@@ -22,6 +22,8 @@ import struct
 import subprocess
 import sys
 
+import msgpack
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ninja_client import F, Client  # noqa: E402
 
@@ -292,31 +294,6 @@ def mangled_setters():
     return out
 
 
-def mp(v):
-    """A tiny MessagePack encoder (the venv has no msgpack module): dict, list, str, bool, int >= 0."""
-    if isinstance(v, bool):
-        return b"\xc3" if v else b"\xc2"
-    if isinstance(v, int):
-        if v < 0x80:
-            return bytes([v])
-        if v <= 0xFF:
-            return b"\xcc" + bytes([v])
-        if v <= 0xFFFF:
-            return b"\xcd" + struct.pack(">H", v)
-        if v <= 0xFFFFFFFF:
-            return b"\xce" + struct.pack(">I", v)
-        return b"\xcf" + struct.pack(">Q", v)
-    if isinstance(v, str):
-        b = v.encode()
-        return (bytes([0xA0 | len(b)]) if len(b) < 32 else b"\xd9" + bytes([len(b)])) + b
-    if isinstance(v, list):
-        return bytes([0x90 | len(v)]) + b"".join(mp(e) for e in v)
-    if isinstance(v, dict):
-        hdr = bytes([0x80 | len(v)]) if len(v) < 16 else b"\xde" + struct.pack(">H", len(v))
-        return hdr + b"".join(mp(k) + mp(e) for k, e in v.items())
-    raise TypeError(v)
-
-
 # A battle log like the client's CBattleLogInfo serialization (docs/ason.md "Battle log"), shortened:
 # a few u32 properties, the bool, and the BattleEvaluationInfo array the server reads.
 FAKE_LOG = {"is_defeat": False, "damage_total": 48210, "damage_total_party": 48210, "hit_max": 12, "hit_total": 57,
@@ -339,7 +316,7 @@ def requests(out):
         b = text.encode() + b"\0"
         return c.alloc(max(len(b), n or 0) + 64, b)
 
-    log = mp(FAKE_LOG)
+    log = msgpack.packb(FAKE_LOG)
     uuid = "3f2a9c4e-8b1d-4e7a-9c3f-1b2d3e4f5a6b"
     cases = [  # (name, args after (this, header), expected: method, ints, strs, vecs, dev, log props)
         ("SetTitle", lambda: [0xA0B0C0D0], ("SetTitle", [0xA0B0C0D0], [], [], None, None)),

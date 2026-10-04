@@ -2,10 +2,10 @@
 // ANativeActivity bring-up and the main loop. Moved from port/src/main.cpp unchanged; the port's
 // own pieces (its debug commands, --selftest) plug in through HostConfig's hooks.
 #include <soa/env.h>
+#include <soa/png.h>
 #include <soa/sock.h>
 #include <GLES3/gl3.h>
 #include <SDL.h>
-#include <zlib.h>
 #include <signal.h>
 #ifdef _WIN32
 #include <windows.h>
@@ -140,17 +140,6 @@ void app::start_watchdog() {
 
 namespace {
 
-
-void png_chunk(std::string& out, const char* type, const std::string& data) {
-    auto be32 = [&](u32 v) {
-        out.push_back(v >> 24), out.push_back(v >> 16), out.push_back(v >> 8), out.push_back(v);
-    };
-    be32((u32)data.size());
-    std::string td = std::string(type, 4) + data;
-    out += td;
-    be32((u32)crc32(0, (const Bytef*)td.data(), td.size()));
-}
-
 void Gfx::write_screenshot(int w, int h, unsigned fbo) {
     std::vector<u8> px((size_t)w * h * 4);
     GLint prev = 0;
@@ -158,22 +147,11 @@ void Gfx::write_screenshot(int w, int h, unsigned fbo) {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
     glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, px.data());
     glBindFramebuffer(GL_READ_FRAMEBUFFER, prev);
-    std::string raw;
-    for (int y = h - 1; y >= 0; y--) {
-        raw.push_back(0);
-        for (int x = 0; x < w; x++) raw.append((const char*)&px[((size_t)y * w + x) * 4], 3);
-    }
-    uLongf zlen = compressBound(raw.size());
-    std::string z(zlen, 0);
-    compress2((Bytef*)z.data(), &zlen, (const Bytef*)raw.data(), raw.size(), 6);
-    z.resize(zlen);
-    std::string png = "\x89PNG\r\n\x1a\n", ihdr;
-    for (u32 v : {(u32)w, (u32)h}) ihdr.push_back(v >> 24), ihdr.push_back(v >> 16), ihdr.push_back(v >> 8), ihdr.push_back(v);
-    ihdr += std::string("\x08\x02\x00\x00\x00", 5);
-    png_chunk(png, "IHDR", ihdr);
-    png_chunk(png, "IDAT", z);
-    png_chunk(png, "IEND", "");
-    std::ofstream(shot_path, std::ios::binary) << png;
+    // RGB rows top first (GL's are bottom first), as PNG colour type 2
+    std::vector<u8> rgb((size_t)w * h * 3);
+    for (int y = 0; y < h; y++)
+        for (int x = 0; x < w; x++) memcpy(&rgb[((size_t)y * w + x) * 3], &px[((size_t)(h - 1 - y) * w + x) * 4], 3);
+    png_write(shot_path, w, h, 3, rgb.data());
     LOGI("main", "screenshot saved to %s", shot_path.c_str());
 }
 

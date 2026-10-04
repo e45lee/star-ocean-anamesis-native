@@ -189,8 +189,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   the guest otherwise) and skip draws / SetTexture calls with an upload pending.
 - **GpuResource::m_handle** (+0x48) is a buffer's GL name but a texture's slot in the device's 0x400 texture
   slots (SetTexture: `slot > 0x3ff` returns).
-- **Unknowns.** RENDERINFO (not recovered: PrepareForRendering / TraversePaintingList's argument),
-  LightManager, ShadowManager, PostProcessCombinerTBR, RenderTarget / RenderTargetManagerGL,
+- **Unknowns.** RENDERINFO's +0x02, +0x04, +0x18 (the struct: render_layout.h, recovered by n-scene from
+  OnPostPaint and the object-manager worker's copy), LightManager, ShadowManager, PostProcessCombinerTBR, RenderTarget / RenderTargetManagerGL,
   RenderPassManager (0x3c0), UniformValueBuffer2, AhslConst, CameraManager (a TaskManager + Task;
   0xff0 the current camera, 0x1000 a CameraFilterManager: size not recovered); most of RenderDeviceGL's
   GpuResource (0x78) and the large paddings in Camera / Light / RenderDeviceData.

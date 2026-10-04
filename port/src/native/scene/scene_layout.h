@@ -18,6 +18,7 @@
 #include <cstdint>
 
 #include "../render/render_layout.h"
+#include "../sync/sync_layout.h"
 
 namespace soa::native::scene {
 
@@ -86,6 +87,9 @@ enum ObjectManagerJob : s32 {
 // m_waiting = 0 and m_job = job, then sets m_event. The worker clears m_job when done (the dispatcher
 // polls it). ChangeMode(m) takes m_lock (a FastCriticalSection: spin 0x1ff tries, then its semaphore),
 // sets m_nextMode / m_modeChangePending and wakes the worker, which adopts it at its next loop.
+// The port runs the jobs inline instead (scene_dispatch.cpp, README "The job dispatcher"): the Run*
+// members are the bodies of the Handler_* loops, run by the dispatcher's natives on the posting thread
+// over the parameters stored here; the worker thread itself stays parked in mode 7 (its construction state).
 // vtable (_ZTVN4Aska25ObjectManagerWorkerThreadE): 0 D1, 1 D0, 2 Handler (the thread body).
 class ObjectManagerWorkerThread {
 public:
@@ -102,9 +106,21 @@ public:
     void Handler_ResetSystemFlags();
     void ChangeMode(s32);
 
-    u8 base_thread[0x18];                    // 0x000: Aska::Thread (sync; vptr = _ZTVN4Aska25ObjectManagerWorkerThreadE + 0x10)
-    u8 m_event[0x68];                        // 0x018: Aska::Event (sync): a job or a mode change was posted
-    u8 m_lock[0x90];                         // 0x080: Aska::FastCriticalSection (sync): lock word at 0xb8 (-1 free), waiters 0xbc, semaphore 0xf8
+    // The job bodies (one iteration of each Handler_* loop with m_job == the job; scene_dispatch.cpp).
+    void RunMakePaintingList();       // job 1
+    void RunPreliminarilyPrepare();   // job 2 (Handler's inlined case 2 = Handler_PreliminarilyPrepare)
+    void RunPrepareForRendering();    // job 3
+    void RunViewFrustumCulling();     // job 4
+    void RunDetectLIBL();             // job 5 (Handler's inlined case 5 = Handler_DetectLIBL)
+    void RunResetSystemFlags();       // job 6
+    // The 2-bit result of object `index` (1 skipped, 2 done, 3 failed), ORed in atomically as the guest's
+    // LDXR / ORR / STXR loop does.
+    void SetResult(s32 index, u64 result);
+
+    sync::Thread base_thread;                // 0x000: Aska::Thread (vptr = _ZTVN4Aska25ObjectManagerWorkerThreadE + 0x10)
+    u8 unk_010[8];                           // 0x010
+    sync::Event m_event;                     // 0x018: a job or a mode change was posted (auto-reset)
+    sync::FastCriticalSection m_lock;        // 0x080: taken by ChangeMode and the Handler's mode switch
     s32 m_mode;                              // 0x110: the current mode (ObjectManagerJob); 7 at construction
     s32 m_nextMode;                          // 0x114: the requested mode (-1 none pending)
     u8 m_waiting;                            // 0x118: 1 while the worker waits on m_event (a job may be posted)
@@ -124,10 +140,10 @@ public:
     RenderableObject** m_prelimObjects;      // 0x160: job 2: the batch (objects m_prelimFirst..m_prelimLast)
     s32 m_prelimFirst;                       // 0x168
     s32 m_prelimLast;                        // 0x16c
-    u8 m_renderInfo[0x20];                   // 0x170: job 3: a copy of the RENDERINFO head (SetPrepareForRenderingBasicParameter),
-                                             //        0x176 / 0x178 rewritten per object (its context count / RenderContext*)
-    void* unk_190;                           // 0x190: job 3: the default for an object's 0x1a0 (the Camera argument)
-    s32 m_prepareKind;                       // 0x198: job 3: 0 / 1 (1 also stores the object's camera at 0x180)
+    RENDERINFO m_renderInfo;                 // 0x170: job 3: a copy of the pass's RENDERINFO (SetPrepareForRenderingBasicParameter);
+                                             //        m_contextCount / m_contexts (and m_camera for kind 1) rewritten per object
+    Camera* m_defaultCamera;                 // 0x190: job 3, kind 1: the camera of objects without one (SetPrepare...'s Camera*)
+    s32 m_prepareKind;                       // 0x198: job 3: 0 (TraversePaintingList*'s int argument) / 1 (also sets m_renderInfo.m_camera)
     u8 unk_19c[4];                           // 0x19c
     RenderableObject** m_prepareObjects;     // 0x1a0: job 3: the batch
     s32 m_prepareFirst;                      // 0x1a8
@@ -158,20 +174,26 @@ static_assert(offsetof(ObjectManagerWorkerThread, m_objectManager) == 0x130);
 static_assert(offsetof(ObjectManagerWorkerThread, m_lightManager) == 0x138);
 static_assert(offsetof(ObjectManagerWorkerThread, m_resultBits) == 0x140);
 static_assert(offsetof(ObjectManagerWorkerThread, m_resetFirst) == 0x148);
+static_assert(offsetof(ObjectManagerWorkerThread, m_resetLast) == 0x150);
 static_assert(offsetof(ObjectManagerWorkerThread, m_paintingListKind) == 0x158);
 static_assert(offsetof(ObjectManagerWorkerThread, m_paintingListIndex) == 0x15c);
 static_assert(offsetof(ObjectManagerWorkerThread, m_prelimObjects) == 0x160);
 static_assert(offsetof(ObjectManagerWorkerThread, m_prelimFirst) == 0x168);
+static_assert(offsetof(ObjectManagerWorkerThread, m_prelimLast) == 0x16c);
 static_assert(offsetof(ObjectManagerWorkerThread, m_renderInfo) == 0x170);
-static_assert(offsetof(ObjectManagerWorkerThread, unk_190) == 0x190);
+static_assert(offsetof(ObjectManagerWorkerThread, m_defaultCamera) == 0x190);
 static_assert(offsetof(ObjectManagerWorkerThread, m_prepareKind) == 0x198);
 static_assert(offsetof(ObjectManagerWorkerThread, m_prepareObjects) == 0x1a0);
 static_assert(offsetof(ObjectManagerWorkerThread, m_prepareFirst) == 0x1a8);
 static_assert(offsetof(ObjectManagerWorkerThread, m_prepareLast) == 0x1ac);
 static_assert(offsetof(ObjectManagerWorkerThread, m_cullCamera) == 0x1b0);
+static_assert(offsetof(ObjectManagerWorkerThread, m_cullArg1) == 0x1b8);
 static_assert(offsetof(ObjectManagerWorkerThread, m_cullObjects) == 0x1c0);
 static_assert(offsetof(ObjectManagerWorkerThread, m_cullKind) == 0x1c8);
+static_assert(offsetof(ObjectManagerWorkerThread, m_cullFirst) == 0x1cc);
+static_assert(offsetof(ObjectManagerWorkerThread, m_cullLast) == 0x1d0);
 static_assert(offsetof(ObjectManagerWorkerThread, m_liblObjects) == 0x200);
+static_assert(offsetof(ObjectManagerWorkerThread, m_liblFirst) == 0x208);
 static_assert(offsetof(ObjectManagerWorkerThread, m_liblLast) == 0x20c);
 static_assert(sizeof(ObjectManagerWorkerThread) == 0x210);
 
@@ -182,33 +204,41 @@ static_assert(sizeof(ObjectManagerWorkerThread) == 0x210);
 // object_manager.c). Dispatch_X(...) posts job X to the first idle worker in mode X and returns true;
 // with none it calls ChangeMode(X) on idle workers in another mode and returns false: the caller
 // (OnPrePaint, TraversePaintingList, ...) keeps polling, doing nothing else in between (see the README:
-// busy-waits). m_exceptIndex >= 0 keeps one worker out (the "except render thread" variants).
+// busy-waits). m_exceptIndex >= 0 keeps one worker out (the "except render thread" variants; only the
+// constructor writes it, -1). The port's natives (scene_dispatch.cpp) run each posted job at once on the
+// calling thread and return true.
 // vtable (_ZTVN4Aska26ObjectManagerJobDispatcherE): 0 D1, 1 D0.
 class ObjectManagerJobDispatcher {
 public:
-    void Ctor(ObjectManager*, s32, void*);
+    void Ctor(ObjectManager*, s32, s32*);
     void Dtor();
     void DtorDelete();
     void WaitIdle();
     void WaitAllIssued();
-    void ChangeMode(s32);
-    void RetryChangeMode(s32);
-    void RetryChangeModeExceptRenderThread(s32);
-    bool Dispatch_ResetSystemFlags(void*, void*);
-    void Dispatch_MakePaintingList(s32, s32);
-    bool Dispatch_PreliminarilyPrepare(void*, s32, s32);
-    bool Dispatch_PrepareForRendering(s32, void*, u64);
-    bool Dispatch_ViewFrustumCulling(s32, s32, s32);
+    void ChangeMode(s32 mode);
+    void RetryChangeMode(s32 mode);
+    void RetryChangeModeExceptRenderThread(s32 mode);
+    bool Dispatch_ResetSystemFlags(RenderableObject* first, RenderableObject* last);
+    void Dispatch_MakePaintingList(s32 kind, s32 index);
+    bool Dispatch_PreliminarilyPrepare(RenderableObject** objects, s32 first, s32 last);
+    bool Dispatch_PrepareForRendering(s32 kind, RenderableObject** objects, u64 firstLast);  // first | last << 32
+    bool Dispatch_ViewFrustumCulling(s32 kind, s32 first, s32 last);
     void Dispatch_RenderingDecided(void*, void*, s32, void*, void*);
-    bool Dispatch_DetectLIBL(s32, s32);
-    void SetPreliminarilyPrepareBasicParameter(void*, void*);
-    void SetPrepareForRenderingBasicParameter(void*, void*, void*);
-    void SetViewFrustumCullingBasicParameter(void*, s32, s32, void*, void*);
-    void SetDetectLIBLBasicParameter(void*);
+    bool Dispatch_DetectLIBL(s32 first, s32 last);
+    void SetPreliminarilyPrepareBasicParameter(LightManager* lm, u64* resultBits);
+    void SetPrepareForRenderingBasicParameter(const RENDERINFO* info, u64* resultBits, Camera* camera);
+    void SetViewFrustumCullingBasicParameter(Camera* camera, s32 a1, s32 a2, RenderableObject** objects, u64* resultBits);
+    void SetDetectLIBLBasicParameter(RenderableObject** objects);
     void Sleep();
 
+    // The worker a job goes to in the port (the first one; m_exceptIndex's for job 3), or null without any.
+    ObjectManagerWorkerThread* InlineWorker(bool exceptRenderThread);
+    // Whether worker `w` takes a ChangeMode(mode) in the guest: running, waiting, no change pending, no job,
+    // none requested, in another mode (the test every Dispatch_* and RetryChangeMode* make).
+    static bool WantsModeChange(const ObjectManagerWorkerThread& w, s32 mode);
+
     const void* vtable;                      // 0x00
-    u8 m_lock[0x90];                         // 0x08: Aska::FastCriticalSection (sync)
+    sync::FastCriticalSection m_lock;        // 0x08
     ObjectManagerWorkerThread* m_workers;    // 0x98: operator new[] (count at m_workers[-8 bytes])
     ObjectManager* m_objectManager;          // 0xa0
     s32 m_workerCountSeen;                   // 0xa8: ChangeMode stores m_workerCount here

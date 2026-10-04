@@ -18,6 +18,9 @@ class AssetManager {
 public:
     // Adds an APK whose assets/ directory is merged into the asset namespace (later wins).
     bool add_apk(const std::string& path);
+    // The same for an archive already open, e.g. an APK read in place inside an app bundle
+    // (ZipArchive::open_member); `label` names it in the log.
+    bool add_zip(std::unique_ptr<ZipArchive> zip, const std::string& label);
     struct Found {
         const ZipArchive* zip;
         const ZipArchive::Entry* entry;

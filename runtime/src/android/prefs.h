@@ -1,6 +1,6 @@
 #pragma once
 // android.content.SharedPreferences, as used through jb.Aska.SharedPreferencesBridge:
-// string values holding Base64 (DEFAULT flags) of raw bytes.
+// string values holding Base64 (DEFAULT flags) of raw bytes (soa/base64.h).
 //
 // Files are written in the same byte format as Android's, so soa_save (the save editor)
 // works on desktop saves unchanged: <data>/shared_prefs/<name>.xml
@@ -31,8 +31,5 @@ private:
     std::mutex m_;
     std::map<std::string, File> files_;
 };
-
-std::string java_base64(const std::vector<unsigned char>& data);  // android.util.Base64 DEFAULT
-std::vector<unsigned char> base64_decode(const std::string& s);   // lenient
 
 }  // namespace soa

@@ -26,13 +26,18 @@ bool AssetManager::add_apk(const std::string& path) {
         LOGE("assets", "cannot open %s", path.c_str());
         return false;
     }
+    return add_zip(std::move(z), path);
+}
+
+bool AssetManager::add_zip(std::unique_ptr<ZipArchive> z, const std::string& label) {
+    if (!z) return false;
     size_t n = 0;
     for (auto& [name, e] : z->entries()) {
         if (name.compare(0, 7, "assets/") != 0 || name.back() == '/') continue;
         index_[name.substr(7)] = {z.get(), &e};
         n++;
     }
-    LOGI("assets", "%s: %zu assets", path.c_str(), n);
+    LOGI("assets", "%s: %zu assets", label.c_str(), n);
     zips_.push_back(std::move(z));
     return true;
 }

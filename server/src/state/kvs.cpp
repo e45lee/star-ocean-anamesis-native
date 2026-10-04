@@ -3,6 +3,8 @@
 #include "state/kvs.h"
 
 #include <openssl/evp.h>
+#include <soa/base64.h>
+#include <soa/prefs_xml.h>
 
 #include <cstdio>
 #include <cstring>
@@ -10,31 +12,6 @@
 namespace soa::server {
 
 namespace {
-std::string b64decode(const std::string& in) {
-    static int8_t T[256];
-    static bool init = false;
-    if (!init) {
-        memset(T, -1, sizeof T);
-        const char* a = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        for (int i = 0; i < 64; i++) T[(u8)a[i]] = (int8_t)i;
-        init = true;
-    }
-    std::string out;
-    u32 acc = 0;
-    int bits = 0;
-    for (char c : in) {
-        int8_t v = T[(u8)c];
-        if (v < 0) continue;  // whitespace, '=', "&#10;" leftovers are skipped
-        acc = (acc << 6) | (u32)v;
-        bits += 6;
-        if (bits >= 8) {
-            bits -= 8;
-            out.push_back((char)((acc >> bits) & 0xff));
-        }
-    }
-    return out;
-}
-
 std::string chacha(const std::string& in) {
     static const u8 key[] = "xp1666a2P7QGhOCRxCjG8aWj5PmxZOrY";
     static const u8 nonce[] = "g7TtZVIKyqc0";
@@ -60,20 +37,7 @@ std::vector<std::pair<std::string, std::string>> read_kvs_ordered(const std::str
     size_t k;
     while ((k = fread(buf, 1, sizeof buf, f)) > 0) s.append(buf, k);
     fclose(f);
-    size_t p = 0;
-    const std::string open = "<string name=\"";
-    while ((p = s.find(open, p)) != std::string::npos) {
-        p += open.size();
-        size_t q = s.find("\">", p);
-        size_t e = s.find("</string>", q);
-        if (q == std::string::npos || e == std::string::npos) break;
-        std::string name = chacha(b64decode(s.substr(p, q - p)));
-        std::string text = s.substr(q + 2, e - q - 2);
-        size_t amp;
-        while ((amp = text.find("&#10;")) != std::string::npos) text.replace(amp, 5, "\n");
-        kv.emplace_back(name, chacha(b64decode(text)));
-        p = e;
-    }
+    for (auto& [name, text] : prefs_xml::parse(s)) kv.emplace_back(chacha(base64::decode(name)), chacha(base64::decode(text)));
     return kv;
 }
 std::map<std::string, std::string> read_kvs(const std::string& path) {
@@ -82,41 +46,13 @@ std::map<std::string, std::string> read_kvs(const std::string& path) {
     return kv;
 }
 
-namespace {
-std::string b64encode(const std::string& in) {
-    static const char* a = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    std::string out;
-    size_t i = 0;
-    for (; i + 2 < in.size(); i += 3) {
-        u32 v = ((u8)in[i] << 16) | ((u8)in[i + 1] << 8) | (u8)in[i + 2];
-        for (int k = 3; k >= 0; k--) out.push_back(a[(v >> (6 * k)) & 63]);
-    }
-    if (i + 1 == in.size()) {
-        u32 v = (u8)in[i] << 16;
-        out += {a[(v >> 18) & 63], a[(v >> 12) & 63], '=', '='};
-    } else if (i + 2 == in.size()) {
-        u32 v = ((u8)in[i] << 16) | ((u8)in[i + 1] << 8);
-        out += {a[(v >> 18) & 63], a[(v >> 12) & 63], a[(v >> 6) & 63], '='};
-    }
-    return out;
-}
-
-}  // namespace
-
 // Writes an Aska::LocalKVS SharedPreferences file (the layout soa_save/kvs.py documents): the
 // name is Aska's Base64 of ChaCha20(key) ("====" appended when no padding is needed), the value
 // Android's Base64.DEFAULT (76-column lines) of ChaCha20(value) plus four spaces.
 bool write_kvs(const std::string& path, const std::vector<std::pair<std::string, std::string>>& kv) {
-    std::string out = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n";
-    for (auto& [k, v] : kv) {
-        std::string ek = chacha(k), n = b64encode(ek);
-        if (ek.size() % 3 == 0) n += "====";
-        std::string b = b64encode(chacha(v)), t;
-        for (size_t i = 0; i < b.size(); i += 76) t += b.substr(i, 76) + "&#10;";
-        t += "    ";
-        out += "    <string name=\"" + n + "\">" + t + "</string>\n";
-    }
-    out += "</map>\n";
+    prefs_xml::Entries e;
+    for (auto& [k, v] : kv) e.emplace_back(base64::aska_name(chacha(k)), base64::android_default(chacha(v)) + "    ");
+    std::string out = prefs_xml::serialize(e);
     std::string tmp = path + ".tmp";
     FILE* f = fopen(tmp.c_str(), "wb");
     if (!f) return false;

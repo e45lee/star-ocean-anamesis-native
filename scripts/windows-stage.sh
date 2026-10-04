@@ -14,7 +14,9 @@
 # links on the Windows drive). Its files.txt is re-stamped there: the drive keeps whole-second
 # mtimes through WSL, not the source's nanoseconds (the content is the same: sha256sums.txt).
 #
-# --viewer: also the unpacked 3.8.0 XAPK (work/extracted/xapk, 0.9 GB): soa-viewer.exe's game.
+# --viewer: also soa-viewer.exe's game, the 3.8.0 XAPK (0.9 GB; 380-ok): apk/*.xapk into DEST/apk/, read in
+# place there (in a git worktree the main checkout's apk/, which holds the untracked file); without
+# one, the unpacked one (work/extracted/..., tools/extract.sh).
 #
 # --quick: the tracked files and the .exe files only (seconds), when the work/ data is staged already
 # (scripts/windows-test.sh before each Windows gate test).
@@ -49,8 +51,16 @@ if [ "$phone" = 1 ]; then
   (cd "$dest/work/phone-3.7.0" && rm -f files.txt && find data -type f -printf '%s %T@ %p\n' | LC_ALL=C sort -k3 > files.txt)
 fi
 if [ "$viewer" = 1 ]; then
-  mkdir -p "$dest/work/extracted"
-  rsync -aL --delete --modify-window=1 work/extracted/xapk "$dest/work/extracted/"  # 380-ok: soa-viewer.exe's game
+  pkg=$(ls apk/*.xapk 2>/dev/null | head -n1 || true)  # 380-ok: soa-viewer.exe's game
+  main=$(dirname "$(readlink -f work)")
+  [ -n "$pkg" ] || pkg=$(ls "$main"/apk/*.xapk 2>/dev/null | head -n1 || true)  # 380-ok: (a worktree: the main checkout's)
+  if [ -n "$pkg" ]; then
+    mkdir -p "$dest/apk"
+    rsync -aL --modify-window=1 "$pkg" "$dest/apk/"  # soa-viewer.exe's game, read in place
+  else
+    mkdir -p "$dest/work/extracted"
+    rsync -aL --delete --modify-window=1 work/extracted/xapk "$dest/work/extracted/"  # 380-ok: soa-viewer.exe's game
+  fi
 fi
 # the Windows programs, at their build-win/ paths
 if [ -d build-win ]; then

@@ -3,8 +3,8 @@
 # From vcpkg (vcpkg.json, manifest mode: configured through the vcpkg toolchain, which the root
 # CMakeLists.txt picks up from $VCPKG_ROOT or .vcpkg/): imported targets
 #   ZLIB::ZLIB  MINIZIP::minizip-ng  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
-#   OpenSSL::Crypto  msgpack-cxx  httplib::httplib  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
-#   runtime/src/app/text_overlay.cpp)  litehtml  soa::stb (headers; the web view, webview/)  and the
+#   OpenSSL::Crypto  pugixml::pugixml  msgpack-cxx  httplib::httplib  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
+#   runtime/src/app/text_overlay.cpp)  litehtml  soa::stb (headers; soa_codec's PNG writer, the web view)  and the
 #   EGL/GLES/KHR headers.
 # From the system (README.md, "Setup": what vcpkg can't replace on Linux), only when the runtime is
 # built (SOA_NEED_RUNTIME, like soa::SDL2 and dynarmic):
@@ -23,16 +23,18 @@ find_package(Ogg CONFIG REQUIRED)
 find_package(Vorbis CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(minizip-ng CONFIG REQUIRED)  # MINIZIP::minizip-ng (zlib only): common/ soa_zip
+find_package(pugixml CONFIG REQUIRED)  # pugixml::pugixml: SharedPreferences XML (soa_codec, common/src/prefs_xml.cpp)
+# stb (headers): stb_image_write writes every PNG (soa_codec, common/src/png.cpp: screenshots,
+# tools/aif2png; the web view's render tool), stb_truetype / stb_image the web view's text and images.
+find_path(SOA_STB_INCLUDE_DIR stb_image_write.h REQUIRED)
+add_library(soa::stb INTERFACE IMPORTED)
+target_include_directories(soa::stb INTERFACE ${SOA_STB_INCLUDE_DIR})
 find_package(msgpack-cxx CONFIG REQUIRED)  # target msgpack-cxx (headers; the server's MessagePack codec)
 find_package(httplib CONFIG REQUIRED)  # target httplib::httplib (headers; soa-server's HTTP server and client)
 # The web view's page renderer (webview/, docs/webview.md): litehtml lays out HTML/CSS (gumbo
-# parses it; the overlay port cmake/vcpkg-ports/litehtml), stb_truetype draws the text, stb_image
-# decodes the images, stb_image_write writes the render tool's PNGs.
+# parses it; the overlay port cmake/vcpkg-ports/litehtml).
 if(SOA_BUILD_WEBVIEW)
   find_package(litehtml CONFIG REQUIRED)     # target litehtml (+ unofficial::gumbo::gumbo)
-  find_path(SOA_STB_INCLUDE_DIR stb_truetype.h REQUIRED)
-  add_library(soa::stb INTERFACE IMPORTED)
-  target_include_directories(soa::stb INTERFACE ${SOA_STB_INCLUDE_DIR})
 endif()
 if(SOA_NEED_RUNTIME)  # the JIT host runtime and what links it (not for a server-only build)
   find_package(SDL2 CONFIG REQUIRED)

@@ -59,6 +59,16 @@ Bound: `soa --list-native | grep render:`. Live check: `soa --live-check render[
 | `RenderThread::AddRenderQueue` and the other `Add*` (`ChangeRenderTarget`, `ReloadZCull`, `EnableGnmOcclusionQuery`, `ExposureScale`, `EnableFastZ`, `FinishRenderTarget`, `TemporaryResolve`, `BeginRender`, `EndRender`, `CallBack`, `DataTransfer`, `OcclusionQueryBegin` / `End`), `ExecutePendingTileRegionOperationByAddress`, `ReqSwap` / `ReqDeviceInit` / `ReqDeviceReset` / `ReqExit` / `ReqGpuWait` | `render_thread.cpp` (bound in `render_thread_check.cpp`) | `render/thread-requests` (20,000 random requests, a full ring, the consumer simulated) | shadow replay: the original on a private RenderThread loaded with the state the native saw under m_queueLock; the ring slot (the guest-defined bytes), indices, status, flags, events |
 | `RenderThread::GetStatus` (+ the wait for a request) | `render_thread.cpp` | `render/thread-requests` | getter (the original on the real object; race on a rerun) |
 | `RenderThread::ReqCustomCommandBlock` / `ReqDownloadResourceBlock` | `render_thread.cpp` | `render/thread-block-call` (a host thread serving the call) | - (a replay would run the call twice) |
+| `RenderDeviceGL::BindVertexFormat(int, int, void*)` | `render_device.cpp` | `render/device-bind-vertex-format` (300 of the render thread's calls: the guest's and the native's GL calls recorded, the state set compared) | `gl_run_both` (both runs recorded on a saved state set) |
+| `RenderState::Apply`; `RenderDeviceGL::EnableAlphaBlend` / `EnableZTest` / `EnableZWrite` / `EnableStencil` / `SetZTestFunction` / `SetCullMode` / `SetDepthBias` / `SetAlphaBlendFunction` / `SetStencilOp` / `SetStencilOpCCW` / `SetTextureSampling{Filter, MipmapFilter, WrapMode, MaxAnisotropic}`; `RenderDeviceData::SetCullMode` / `SetAlphaBlendFunction` | `render_state.cpp` | `render/state-apply` (1,000 Apply calls: the guest's setter chain against the natives') | `gl_run_both` |
+| `RenderDeviceData::DrawIndexedPrimitive` / `UpdateRenderState` / `UpdateVertexAttribute` / `LastMinuteDrawCommands_Blending` / `LastMinuteDrawCommands_Depth` | `render_draw.cpp` | `render/device-draw` (the guest's chain against the natives' on the render thread's draws) | `gl_run_both`, the two guest callees recorded as markers (`t_mark_callees`); a draw with an upload pending: skipped |
+| (hooks) `RenderDeviceData::UpdateShaderProgram` / `LastMinuteDrawCommands_Textures` | `render_draw.cpp` | - | forward to the guest (the markers of the draw checks) |
+
+Not bound (the next wave): the texture path of a draw (`LastMinuteDrawCommands_Textures`, `UpdateTextureFilters`,
+`GetTextureStateCaches`, `GetBoundTextureID`; `RenderDeviceGL::BindTexture` / `ActiveTexture` / `SetTexture` /
+`RemoveTexture`), the program (`UpdateShaderProgram`, `GetThreadOglState1`, `SetShaderProgramUniform`), the
+shader constants (`SetVertexShaderConstant` / `SetPixelShaderConstant`), the instanced draw paths (the natives
+run the guest originals when a draw has instance data), `LIBLManager::CopyTexture` (resource's; render's types).
 
 ## Dependencies
 

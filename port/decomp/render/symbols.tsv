@@ -344,29 +344,35 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2173f28	0x2273f28	1136	_ZN4Aska13RenderContext7OnPaintEv	Aska::RenderContext::OnPaint()	render_context	typed	
 0x2174398	0x2274398	128	_ZN4Aska13RenderContext16PrepairMatriciesEv	Aska::RenderContext::PrepairMatricies()	render_context	typed	
 0x2174418	0x2274418	224	_ZN4Aska13RenderContext6Static31SetShaderConstantLightMaskGroupEPNS_14RenderDeviceGLEPNS_12LightManager12LightContextE	Aska::RenderContext::Static::SetShaderConstantLightMaskGroup(Aska::RenderDeviceGL*, Aska::LightManager::LightContext*)	light	typed	
-0x2174804	0x2274804	256	_ZN4Aska14RenderDeviceGL11BindTextureEjj	Aska::RenderDeviceGL::BindTexture(unsigned int, unsigned int)	render_device	typed	
+0x2174804	0x2274804	256	_ZN4Aska14RenderDeviceGL11BindTextureEjj	Aska::RenderDeviceGL::BindTexture(unsigned int, unsigned int)	render_device	native	
 0x2175964	0x2275964	20	_ZNK4Aska14RenderDeviceGL12GetGLVersionEv	Aska::RenderDeviceGL::GetGLVersion() const	render_device	typed	
 0x2176244	0x2276244	192	_ZN4Aska14RenderDeviceGLC1Ev	Aska::RenderDeviceGL::RenderDeviceGL()	render_device	typed	
 0x2176558	0x2276558	1068	_ZN4Aska16RenderDeviceDataC2Ev	Aska::RenderDeviceData::RenderDeviceData()	render_device	typed	
-0x217a15c	0x227a15c	188	_ZN4Aska14RenderDeviceGL12EnableZWriteEb	Aska::RenderDeviceGL::EnableZWrite(bool)	render_device	decompiled	
+0x217a15c	0x227a15c	188	_ZN4Aska14RenderDeviceGL12EnableZWriteEb	Aska::RenderDeviceGL::EnableZWrite(bool)	render_device_setters	native	
 0x217a4cc	0x227a4cc	296	_ZN4Aska16RenderDeviceData15BindFrameBufferEPNS_11GpuResourceE	Aska::RenderDeviceData::BindFrameBuffer(Aska::GpuResource*)	render_device	decompiled	
-0x217ad24	0x227ad24	224	_ZN4Aska14RenderDeviceGL13ActiveTextureEj	Aska::RenderDeviceGL::ActiveTexture(unsigned int)	render_device	typed	
+0x217ad24	0x227ad24	224	_ZN4Aska14RenderDeviceGL13ActiveTextureEj	Aska::RenderDeviceGL::ActiveTexture(unsigned int)	render_device	native	
 0x217b138	0x227b138	128	_ZN4Aska14RenderDeviceGL16BindVertexFormatEPNS_12VertexBufferE	Aska::RenderDeviceGL::BindVertexFormat(Aska::VertexBuffer*)	render_device	typed	
-0x217b1b8	0x227b1b8	912	_ZN4Aska14RenderDeviceGL16BindVertexFormatEiiPv	Aska::RenderDeviceGL::BindVertexFormat(int, int, void*)	render_device	typed	
-0x217b548	0x227b548	592	_ZN4Aska14RenderDeviceGL10SetTextureEjPKPNS_11GpuResourceE	Aska::RenderDeviceGL::SetTexture(unsigned int, Aska::GpuResource* const*)	render_device	typed	
-0x217b798	0x227b798	164	_ZN4Aska14RenderDeviceGL13RemoveTextureEj	Aska::RenderDeviceGL::RemoveTexture(unsigned int)	render_device	typed	
+0x217b1b8	0x227b1b8	912	_ZN4Aska14RenderDeviceGL16BindVertexFormatEiiPv	Aska::RenderDeviceGL::BindVertexFormat(int, int, void*)	render_device	native	
+0x217b548	0x227b548	592	_ZN4Aska14RenderDeviceGL10SetTextureEjPKPNS_11GpuResourceE	Aska::RenderDeviceGL::SetTexture(unsigned int, Aska::GpuResource* const*)	render_device	native	
+0x217b798	0x227b798	164	_ZN4Aska14RenderDeviceGL13RemoveTextureEj	Aska::RenderDeviceGL::RemoveTexture(unsigned int)	render_device	native	
 0x217cd0c	0x227cd0c	564	_ZN4Aska14RenderDeviceGL14SetScissorRectEPK4RECTb	Aska::RenderDeviceGL::SetScissorRect(RECT const*, bool)	render_device	decompiled	
-0x217d0f8	0x227d0f8	704	_ZN4Aska16RenderDeviceData20DrawIndexedPrimitiveEPNS_14RenderDeviceGLENS_8PrimType4TypeERNS_11IndexBufferEmi	Aska::RenderDeviceData::DrawIndexedPrimitive(Aska::RenderDeviceGL*, Aska::PrimType::Type, Aska::IndexBuffer&, unsigned long, int)	render_device	decompiled	
+0x217d0f8	0x227d0f8	704	_ZN4Aska16RenderDeviceData20DrawIndexedPrimitiveEPNS_14RenderDeviceGLENS_8PrimType4TypeERNS_11IndexBufferEmi	Aska::RenderDeviceData::DrawIndexedPrimitive(Aska::RenderDeviceGL*, Aska::PrimType::Type, Aska::IndexBuffer&, unsigned long, int)	render_device	native	
 0x217d3c0	0x227d3c0	188	_ZN4Aska14RenderDeviceGL16BindVertexBufferEmPv	Aska::RenderDeviceGL::BindVertexBuffer(unsigned long, void*)	render_device	decompiled	
-0x217dcc0	0x227dcc0	180	_ZN4Aska14RenderDeviceGL16EnableAlphaBlendEb	Aska::RenderDeviceGL::EnableAlphaBlend(bool)	render_device	decompiled	
-0x217dfc0	0x227dfc0	160	_ZN4Aska14RenderDeviceGL24SetTextureSamplingFilterEjNS_7TexSamp6FilterE	Aska::RenderDeviceGL::SetTextureSamplingFilter(unsigned int, Aska::TexSamp::Filter)	render_device	typed	
-0x217e060	0x227e060	160	_ZN4Aska14RenderDeviceGL30SetTextureSamplingMipmapFilterEjNS_7TexSamp9MipFilterE	Aska::RenderDeviceGL::SetTextureSamplingMipmapFilter(unsigned int, Aska::TexSamp::MipFilter)	render_device	typed	
-0x217e100	0x227e100	196	_ZN4Aska14RenderDeviceGL26SetTextureSamplingWrapModeEjNS_7TexWrap4ModeES2_S2_	Aska::RenderDeviceGL::SetTextureSamplingWrapMode(unsigned int, Aska::TexWrap::Mode, Aska::TexWrap::Mode, Aska::TexWrap::Mode)	render_device	typed	
-0x217e1c4	0x227e1c4	196	_ZN4Aska14RenderDeviceGL32SetTextureSamplingMaxAnisotropicEjj	Aska::RenderDeviceGL::SetTextureSamplingMaxAnisotropic(unsigned int, unsigned int)	render_device	typed	
-0x217e288	0x227e288	180	_ZN4Aska14RenderDeviceGL11EnableZTestEb	Aska::RenderDeviceGL::EnableZTest(bool)	render_device	decompiled	
-0x217e3e4	0x227e3e4	176	_ZN4Aska14RenderDeviceGL12SetDepthBiasEff	Aska::RenderDeviceGL::SetDepthBias(float, float)	render_device	decompiled	
-0x217e494	0x227e494	184	_ZN4Aska14RenderDeviceGL13EnableStencilENS_11StencilMode4ModeE	Aska::RenderDeviceGL::EnableStencil(Aska::StencilMode::Mode)	render_device	decompiled	
-0x217e794	0x227e794	16	_ZN4Aska14RenderDeviceGL11SetCullModeENS_4Cull4ModeE	Aska::RenderDeviceGL::SetCullMode(Aska::Cull::Mode)	render_device	decompiled	
+0x217dcc0	0x227dcc0	180	_ZN4Aska14RenderDeviceGL16EnableAlphaBlendEb	Aska::RenderDeviceGL::EnableAlphaBlend(bool)	render_device	native	
+0x217dd74	0x227dd74	16	_ZN4Aska14RenderDeviceGL21SetAlphaBlendFunctionENS_10AlphaBlend9OperationENS_22SeparateAlphaBlendMode1EE	Aska::RenderDeviceGL::SetAlphaBlendFunction(Aska::AlphaBlend::Operation, Aska::SeparateAlphaBlendMode::E)	render_device_setters	native	
+0x217dd84	0x227dd84	288	_ZN4Aska16RenderDeviceData21SetAlphaBlendFunctionENS_10AlphaBlend9OperationENS_22SeparateAlphaBlendMode1EE	Aska::RenderDeviceData::SetAlphaBlendFunction(Aska::AlphaBlend::Operation, Aska::SeparateAlphaBlendMode::E)	render_device_setters	native	
+0x217dfc0	0x227dfc0	160	_ZN4Aska14RenderDeviceGL24SetTextureSamplingFilterEjNS_7TexSamp6FilterE	Aska::RenderDeviceGL::SetTextureSamplingFilter(unsigned int, Aska::TexSamp::Filter)	render_device	native	
+0x217e060	0x227e060	160	_ZN4Aska14RenderDeviceGL30SetTextureSamplingMipmapFilterEjNS_7TexSamp9MipFilterE	Aska::RenderDeviceGL::SetTextureSamplingMipmapFilter(unsigned int, Aska::TexSamp::MipFilter)	render_device	native	
+0x217e100	0x227e100	196	_ZN4Aska14RenderDeviceGL26SetTextureSamplingWrapModeEjNS_7TexWrap4ModeES2_S2_	Aska::RenderDeviceGL::SetTextureSamplingWrapMode(unsigned int, Aska::TexWrap::Mode, Aska::TexWrap::Mode, Aska::TexWrap::Mode)	render_device	native	
+0x217e1c4	0x227e1c4	196	_ZN4Aska14RenderDeviceGL32SetTextureSamplingMaxAnisotropicEjj	Aska::RenderDeviceGL::SetTextureSamplingMaxAnisotropic(unsigned int, unsigned int)	render_device	native	
+0x217e288	0x227e288	180	_ZN4Aska14RenderDeviceGL11EnableZTestEb	Aska::RenderDeviceGL::EnableZTest(bool)	render_device	native	
+0x217e33c	0x227e33c	168	_ZN4Aska14RenderDeviceGL16SetZTestFunctionENS_5ZTest4FuncE	Aska::RenderDeviceGL::SetZTestFunction(Aska::ZTest::Func)	render_device_setters	native	
+0x217e3e4	0x227e3e4	176	_ZN4Aska14RenderDeviceGL12SetDepthBiasEff	Aska::RenderDeviceGL::SetDepthBias(float, float)	render_device	native	
+0x217e494	0x227e494	184	_ZN4Aska14RenderDeviceGL13EnableStencilENS_11StencilMode4ModeE	Aska::RenderDeviceGL::EnableStencil(Aska::StencilMode::Mode)	render_device	native	
+0x217e54c	0x227e54c	172	_ZN4Aska14RenderDeviceGL12SetStencilOpENS_11StencilTest4FuncENS_9StencilOp9OperationES4_S4_i	Aska::RenderDeviceGL::SetStencilOp(Aska::StencilTest::Func, Aska::StencilOp::Operation, Aska::StencilOp::Operation, Aska::StencilOp::Operation, int)	render_device_setters	native	
+0x217e5f8	0x227e5f8	172	_ZN4Aska14RenderDeviceGL15SetStencilOpCCWENS_11StencilTest4FuncENS_9StencilOp9OperationES4_S4_i	Aska::RenderDeviceGL::SetStencilOpCCW(Aska::StencilTest::Func, Aska::StencilOp::Operation, Aska::StencilOp::Operation, Aska::StencilOp::Operation, int)	render_device_setters	native	
+0x217e794	0x227e794	16	_ZN4Aska14RenderDeviceGL11SetCullModeENS_4Cull4ModeE	Aska::RenderDeviceGL::SetCullMode(Aska::Cull::Mode)	render_device	native	
+0x217e7a4	0x227e7a4	292	_ZN4Aska16RenderDeviceData11SetCullModeENS_4Cull4ModeE	Aska::RenderDeviceData::SetCullMode(Aska::Cull::Mode)	render_device_setters	native	
 0x217ea54	0x227ea54	24	_ZN4Aska14RenderDeviceGL15SetVertexShaderEPNS_12VertexShaderE	Aska::RenderDeviceGL::SetVertexShader(Aska::VertexShader*)	render_device	typed	
 0x217ea6c	0x227ea6c	24	_ZN4Aska14RenderDeviceGL14SetPixelShaderEPNS_11PixelShaderE	Aska::RenderDeviceGL::SetPixelShader(Aska::PixelShader*)	render_device	typed	
 0x217ea84	0x227ea84	156	_ZN4Aska14RenderDeviceGL23SetVertexShaderConstantEiPKvi	Aska::RenderDeviceGL::SetVertexShaderConstant(int, void const*, int)	render_device	decompiled	
@@ -381,12 +387,12 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2185de4	0x2285de4	168	_ZN4Aska16RenderDeviceData18GetThreadOglState1Ev	Aska::RenderDeviceData::GetThreadOglState1()	render_device	decompiled	
 0x2185e8c	0x2285e8c	272	_ZN4Aska20StateCacheThreadSafe25AllocateAndStoreStateSet0Ev	Aska::StateCacheThreadSafe::AllocateAndStoreStateSet0()	state_cache	decompiled	
 0x2185f9c	0x2285f9c	668	_ZN4Aska20StateCacheThreadSafe11SetDefaultsEPNS_18ASKA_OGL_STATESET0E	Aska::StateCacheThreadSafe::SetDefaults(Aska::ASKA_OGL_STATESET0*)	state_cache	decompiled	
-0x21871a0	0x22871a0	948	_ZN4Aska16RenderDeviceData19UpdateShaderProgramEv	Aska::RenderDeviceData::UpdateShaderProgram()	render_device	decompiled	
-0x2187ee4	0x2287ee4	628	_ZN4Aska16RenderDeviceData17UpdateRenderStateEPNS_14RenderDeviceGLE	Aska::RenderDeviceData::UpdateRenderState(Aska::RenderDeviceGL*)	render_device	decompiled	
-0x2188158	0x2288158	1220	_ZN4Aska16RenderDeviceData21UpdateVertexAttributeEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::UpdateVertexAttribute(Aska::ASKA_OGL_STATESET0*)	render_device	decompiled	
-0x218861c	0x228861c	388	_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_BlendingEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::LastMinuteDrawCommands_Blending(Aska::ASKA_OGL_STATESET0*)	state_cache	decompiled	
-0x21887a0	0x22887a0	220	_ZN4Aska16RenderDeviceData28LastMinuteDrawCommands_DepthEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::LastMinuteDrawCommands_Depth(Aska::ASKA_OGL_STATESET0*)	state_cache	decompiled	
-0x218887c	0x228887c	2544	_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_TexturesEPNS_18ASKA_OGL_STATESET0EPNS_14RenderDeviceGLE	Aska::RenderDeviceData::LastMinuteDrawCommands_Textures(Aska::ASKA_OGL_STATESET0*, Aska::RenderDeviceGL*)	render_device	decompiled	
+0x21871a0	0x22871a0	948	_ZN4Aska16RenderDeviceData19UpdateShaderProgramEv	Aska::RenderDeviceData::UpdateShaderProgram()	render_device	native	
+0x2187ee4	0x2287ee4	628	_ZN4Aska16RenderDeviceData17UpdateRenderStateEPNS_14RenderDeviceGLE	Aska::RenderDeviceData::UpdateRenderState(Aska::RenderDeviceGL*)	render_device	native	
+0x2188158	0x2288158	1220	_ZN4Aska16RenderDeviceData21UpdateVertexAttributeEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::UpdateVertexAttribute(Aska::ASKA_OGL_STATESET0*)	render_device	native	
+0x218861c	0x228861c	388	_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_BlendingEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::LastMinuteDrawCommands_Blending(Aska::ASKA_OGL_STATESET0*)	state_cache	native	
+0x21887a0	0x22887a0	220	_ZN4Aska16RenderDeviceData28LastMinuteDrawCommands_DepthEPNS_18ASKA_OGL_STATESET0E	Aska::RenderDeviceData::LastMinuteDrawCommands_Depth(Aska::ASKA_OGL_STATESET0*)	state_cache	native	
+0x218887c	0x228887c	2544	_ZN4Aska16RenderDeviceData31LastMinuteDrawCommands_TexturesEPNS_18ASKA_OGL_STATESET0EPNS_14RenderDeviceGLE	Aska::RenderDeviceData::LastMinuteDrawCommands_Textures(Aska::ASKA_OGL_STATESET0*, Aska::RenderDeviceGL*)	render_device	decompiled	guest code behind a forwarding hook (render_draw.cpp: the draw checks record it as a marker)
 0x218926c	0x228926c	996	_ZN4Aska16RenderDeviceData20UpdateTextureFiltersEPNS_18ASKA_OGL_STATESET0Eij	Aska::RenderDeviceData::UpdateTextureFilters(Aska::ASKA_OGL_STATESET0*, int, unsigned int)	render_device	decompiled	
 0x2189e9c	0x2289e9c	12	_ZN4Aska11RenderStateC1Ev	Aska::RenderState::RenderState()	render_context	typed	
 0x2189ea8	0x2289ea8	72	_ZN4Aska11RenderStateD2Ev	Aska::RenderState::~RenderState()	render_context	typed	
@@ -416,7 +422,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x218a2fc	0x228a2fc	4	_ZN4Aska11RenderState32SetTextureSamplingTrilinearClampEij	Aska::RenderState::SetTextureSamplingTrilinearClamp(int, unsigned int)	render_context	typed	
 0x218a300	0x228a300	60	_ZN4Aska11RenderState32SetTextureSamplingMaxAnisotropicEij	Aska::RenderState::SetTextureSamplingMaxAnisotropic(int, unsigned int)	render_context	typed	
 0x218a33c	0x228a33c	4	_ZN4Aska11RenderState33SetTextureSamplingAnisotropicBiasEii	Aska::RenderState::SetTextureSamplingAnisotropicBias(int, int)	render_context	typed	
-0x218a340	0x228a340	620	_ZN4Aska11RenderState5ApplyEPNS_14RenderDeviceGLE	Aska::RenderState::Apply(Aska::RenderDeviceGL*)	render_context	typed	
+0x218a340	0x228a340	620	_ZN4Aska11RenderState5ApplyEPNS_14RenderDeviceGLE	Aska::RenderState::Apply(Aska::RenderDeviceGL*)	render_context	native	
 0x218a5ac	0x228a5ac	4	_ZN4Aska11RenderState6Static11SetFillModeEPNS_14RenderDeviceGLENS_4Fill4ModeE	Aska::RenderState::Static::SetFillMode(Aska::RenderDeviceGL*, Aska::Fill::Mode)	render_context	typed	
 0x218a5b0	0x228a5b0	4	_ZN4Aska11RenderState6Static11SetCullModeEPNS_14RenderDeviceGLENS_4Cull4ModeE	Aska::RenderState::Static::SetCullMode(Aska::RenderDeviceGL*, Aska::Cull::Mode)	render_context	typed	
 0x218a5b4	0x228a5b4	8	_ZN4Aska11RenderState6Static11EnableZTestEPNS_14RenderDeviceGLEb	Aska::RenderState::Static::EnableZTest(Aska::RenderDeviceGL*, bool)	render_context	typed	

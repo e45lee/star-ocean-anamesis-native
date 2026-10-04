@@ -897,6 +897,8 @@ static_assert(sizeof(RenderThread) == 0x50298);
 // EnableZWrite (1), 0xdd SetZTestFunction (1), 0xde SetDepthBias (f32, f32), 0xdf SetCullMode (1),
 // 0xe2 EnableStencil (1), 0xe3 SetStencilOp / 0xe4 SetStencilOpCCW (func, fail, zfail, pass, ref, ccw
 // flag: the last byte swaps which of the two device calls is made).
+class RenderDeviceGL;
+
 class RenderState {
 public:
     enum Op : u8 {
@@ -933,7 +935,7 @@ public:
     void SetTextureSamplingTrilinearClamp(s32 stage, u32 v);         // (no command)
     void SetTextureSamplingMaxAnisotropic(s32 stage, u32 n);
     void SetTextureSamplingAnisotropicBias(s32 stage, s32 bias);     // (no command)
-    void Apply(void* device);                 // RenderDeviceGL* (null: g_pRenderDev)
+    void Apply(RenderDeviceGL* device);       // (null: g_pRenderDev)
     static void ReadyDefaultRenderState(void* device);
     static void RestoreDefaultRenderState(void* device);
     // RenderState::Static::* (the device setters the opcodes map to) are free functions of the guest.
@@ -949,7 +951,36 @@ static_assert(offsetof(RenderState, m_count) == 0x14);
 static_assert(sizeof(RenderState) == 0x18);
 
 class ShaderConstantHandler;
-class GpuResource;  // Aska::GpuResource (opaque: textures, buffers)
+// Aska::GpuResource (partial): a device resource (texture, buffer) in RenderDeviceGL's pool (0x78
+// bytes each); layout from DrawIndexedPrimitive (port/decomp/render/render_device.c): before a draw uses
+// a buffer, its handler (vtable slot 0, with the resource) uploads it when m_dirty is set or it has no
+// GL object yet.
+class GpuResource {
+public:
+    // The upload before use (DrawIndexedPrimitive, SetTexture): when m_dirty or no handle yet, the
+    // handler's Update; true when it ran and succeeded (m_dirty cleared then) or wasn't needed.
+    bool NeedsUpload() const { return m_dirty != 0 || m_handle == 0; }
+    bool EnsureUploaded();
+
+    u8 unk_00[0x40];        // 0x00
+    void* m_handler;        // 0x40: an object whose vtable slot 0 is bool Update(GpuResource*)
+    u64 m_handle;           // 0x48: 0 until uploaded; a buffer's GL name (low 32 bits), a texture's slot in
+                            //       RenderDeviceData::m_textureSlots (< 0x400)
+    u8 unk_50[0x18];        // 0x50
+    u32 m_dirty;            // 0x68: cleared by a successful Update
+    u8 unk_6c[0xc];         // 0x6c
+};
+static_assert(offsetof(GpuResource, m_handler) == 0x40);
+static_assert(offsetof(GpuResource, m_handle) == 0x48);
+static_assert(offsetof(GpuResource, m_dirty) == 0x68);
+static_assert(sizeof(GpuResource) == 0x78);
+
+// Aska::IndexBuffer (partial): DrawIndexedPrimitive's argument; its GpuResource (null: client memory
+// only, GetData). GetData / Is32BitBuffer stay guest code.
+class IndexBuffer {
+public:
+    GpuResource* m_resource;  // 0x00
+};
 
 // Aska::RenderContextBatch (: RenderContextBatchBase): one draw of a RenderContext: its textures, render
 // state and constants. Guest size 0x130 (RenderContextServer::ReallocBatch: new[] of 0x130); layout from
@@ -1075,25 +1106,100 @@ struct TextureStateCache {
 };
 static_assert(sizeof(TextureStateCache) == 0x14);
 
+// One texture unit's sampler state in OglStateSet0 (the RenderDeviceGL::SetTextureSampling* setters
+// record it; applied to the texture's own state at the draw). 0x18 bytes.
+struct OglSampler {
+    s32 m_wrapU;            // +0x00 (TexWrap::Mode; 10 in a setter: unchanged)
+    s32 m_wrapV;            // +0x04
+    u32 m_maxAnisotropy;    // +0x08
+    s32 m_filter;           // +0x0c (TexSamp::Filter; 1 by default)
+    s32 m_mipFilter;        // +0x10 (TexSamp::MipFilter; 0 by default)
+    u8 m_textureFlag;       // +0x14: SetTexture copies bit 0 of the texture slot's m_flags (0 by default)
+    u8 unk_15[3];           // +0x15
+};
+static_assert(sizeof(OglSampler) == 0x18);
+
 // Aska::ASKA_OGL_STATESET0: the GL state the calling thread last set (one per thread: a pthread key of
-// StateCacheThreadSafe), so the device skips redundant glBindTexture / glActiveTexture. Layout from
-// RenderDeviceGL::BindTexture and RenderDeviceData::GetBoundTextureID (port/decomp/render/
-// render_device.c); size not recovered (StateCacheThreadSafe::AllocateAndStoreStateSet0 allocates it).
+// StateCacheThreadSafe), so the device skips redundant GL calls. Guest size 0x3e0
+// (StateCacheThreadSafe::AllocateAndStoreStateSet0: operator new(0x3e0), then SetDefaults: 0xff
+// everywhere, the GL defaults read back); layout from RenderDeviceGL::BindTexture, GetBoundTextureID,
+// BindVertexFormat, UpdateVertexAttribute, UpdateRenderState, DrawIndexedPrimitive (port/decomp/render/
+// render_device.c, state_cache.c).
 struct OglStateSet0 {
-    u8 unk_00[8];               // 0x00
-    u32 m_texture2D[16];        // 0x08: the texture bound to GL_TEXTURE_2D per unit
-    u32 m_textureCube[16];      // 0x48: GL_TEXTURE_CUBE_MAP (0x8513)
-    u32 m_texture3D[16];        // 0x88: GL_TEXTURE_3D (0x806f)
-    u8 m_activeUnit;            // 0xc8: glActiveTexture's unit
+    u64 m_owner;                // 0x000: the StateCacheThreadSafe (SetDefaults' last store)
+    u32 m_texture2D[16];        // 0x008: the texture bound to GL_TEXTURE_2D per unit
+    u32 m_textureCube[16];      // 0x048: GL_TEXTURE_CUBE_MAP (0x8513)
+    u32 m_texture3D[16];        // 0x088: GL_TEXTURE_3D (0x806f)
+    u8 m_activeUnit;            // 0x0c8: glActiveTexture's unit
+    u8 unk_0c9[3];              // 0x0c9
+    u32 m_arrayBuffer;          // 0x0cc: GL_ARRAY_BUFFER's binding (UpdateVertexAttribute)
+    u32 m_elementBuffer;        // 0x0d0: GL_ELEMENT_ARRAY_BUFFER's (DrawIndexedPrimitive)
+    u8 unk_0d4[0x98];           // 0x0d4
+    OglSampler m_samplers[16];  // 0x16c: the sampler state per texture unit the next draw wants
+    u8 m_depthWrite;            // 0x2ec: EnableZWrite's (glDepthMask called on a change)
+    u8 unk_2ed[3];              // 0x2ed
+    float m_clearColor[4];      // 0x2f0: (SetDefaults: GL_COLOR_CLEAR_VALUE)
+    u16 m_capFlags;             // 0x300: the glEnable caps: bits 0-6 wanted (0 cull face, 1 depth test, 2 stencil,
+                                //        3 blend, 4 alpha to coverage, 5 dither, 6 scissor), 7-12 set in GL
+    u8 unk_302[2];              // 0x302
+    u32 m_colorMask;            // 0x304: wanted (bits 0-3 RGBA)
+    u32 m_colorMaskGL;          // 0x308
+    u32 m_frontFace;            // 0x30c: wanted (SetCullMode: GL_CW / GL_CCW)
+    u32 m_frontFaceGL;          // 0x310
+    u32 m_cullFace;             // 0x314: wanted (GL_BACK)
+    u32 m_cullFaceGL;           // 0x318
+    u32 m_blendGL[6];           // 0x31c: the blend state set in GL (src, dst, equation; alpha src, dst, equation)
+    s32 m_viewportGL[4];        // 0x334
+    u32 m_blend[6];             // 0x344: wanted (SetAlphaBlendFunction)
+    s32 m_viewport[4];          // 0x35c: wanted
+    u32 m_depthFunc;            // 0x36c: wanted (SetZTestFunction)
+    u32 m_depthFuncGL;          // 0x370
+    u8 unk_374[8];              // 0x374: (the clear depth, the clear stencil: SetDefaults)
+    float m_polygonOffset[2];   // 0x37c: wanted (SetDepthBias: factor, units)
+    float m_polygonOffsetGL[2]; // 0x384
+    u8 m_attribWant[0x20];      // 0x38c: the vertex attribute arrays the next draw needs (BindVertexFormat sets them)
+    u8 m_attribGL[0x20];        // 0x3ac: the arrays enabled in GL (UpdateVertexAttribute syncs them)
+    u8 unk_3cc[0x14];           // 0x3cc
 };
 static_assert(offsetof(OglStateSet0, m_texture2D) == 0x08);
 static_assert(offsetof(OglStateSet0, m_textureCube) == 0x48);
 static_assert(offsetof(OglStateSet0, m_texture3D) == 0x88);
 static_assert(offsetof(OglStateSet0, m_activeUnit) == 0xc8);
+static_assert(offsetof(OglStateSet0, m_arrayBuffer) == 0xcc);
+static_assert(offsetof(OglStateSet0, m_elementBuffer) == 0xd0);
+static_assert(offsetof(OglStateSet0, m_samplers) == 0x16c);
+static_assert(offsetof(OglStateSet0, m_depthWrite) == 0x2ec);
+static_assert(offsetof(OglStateSet0, m_capFlags) == 0x300);
+static_assert(offsetof(OglStateSet0, m_colorMask) == 0x304);
+static_assert(offsetof(OglStateSet0, m_frontFace) == 0x30c);
+static_assert(offsetof(OglStateSet0, m_cullFace) == 0x314);
+static_assert(offsetof(OglStateSet0, m_blendGL) == 0x31c);
+static_assert(offsetof(OglStateSet0, m_viewportGL) == 0x334);
+static_assert(offsetof(OglStateSet0, m_blend) == 0x344);
+static_assert(offsetof(OglStateSet0, m_viewport) == 0x35c);
+static_assert(offsetof(OglStateSet0, m_depthFunc) == 0x36c);
+static_assert(offsetof(OglStateSet0, m_polygonOffset) == 0x37c);
+static_assert(offsetof(OglStateSet0, m_attribWant) == 0x38c);
+static_assert(offsetof(OglStateSet0, m_attribGL) == 0x3ac);
+static_assert(sizeof(OglStateSet0) == 0x3e0);
+
+// The calling thread's second GL state set (RenderDeviceData::GetThreadOglState1: operator new(0x10), a
+// StateCacheThreadSafe key of its own): the program in use.
+struct OglStateSet1 {
+    u64 m_owner;                        // 0x00: the StateCacheThreadSafe
+    u32 m_programWant;                  // 0x08: (-1 at first)
+    u32 m_programGL;                    // 0x0c: glUseProgram's
+};
+static_assert(sizeof(OglStateSet1) == 0x10);
 
 // Aska::StateCacheThreadSafe: the per-thread GL state caches (pthread keys created on first use, guarded
 // by an atomic flag each). Partial: from BindTexture / GetBoundTextureID / GetThreadOglState1.
 struct StateCacheThreadSafe {
+    // The calling thread's state set 0 when its key exists and the thread has one, else null (the guest
+    // creates both on first use: natives leave that to the guest original).
+    OglStateSet0* StateSet0() const;
+    OglStateSet1* StateSet1() const;   // likewise for state set 1 (m_keySet1)
+
     u8 unk_00[8];               // 0x00
     u32 m_keySet0;              // 0x08: pthread key of the thread's OglStateSet0
     u32 m_keySet1;              // 0x0c: the second state set's (GetThreadOglState1), most likely
@@ -1118,8 +1224,48 @@ static_assert(offsetof(DeviceTextureSlot, m_glName) == 0x0c);
 static_assert(offsetof(DeviceTextureSlot, m_flags) == 0x18);
 static_assert(sizeof(DeviceTextureSlot) == 0x20);
 
-class VertexShader;
-class PixelShader;
+// Aska::VertexShader (partial): the attribute locations of the linked program by vertex semantic and
+// index (RenderDeviceGL::BindVertexFormat: m_attribLocation[semantic][index], -1 when unused). Size not
+// recovered: the semantic count (16 here) is (d).
+class VertexShader {
+public:
+    u8 unk_00[0x30];                    // 0x00
+    u64 m_key;                          // 0x30: the shader's key (a program is looked up by its VS / PS keys)
+    u8 unk_38[0x10];                    // 0x38
+    s32 m_attribLocation[9][8];         // 0x48: [semantic][index] (UpdateVertexAttribute's instanced path: [1..] or [8])
+    s32 m_attribCount;                  // 0x168: the program's attribute count (UpdateVertexAttribute)
+};
+static_assert(offsetof(VertexShader, m_key) == 0x30);
+static_assert(offsetof(VertexShader, m_attribLocation) == 0x48);
+
+// Aska::PixelShader (partial): its key (UpdateShaderProgram).
+class PixelShader {
+public:
+    u8 unk_00[0x30];                    // 0x00
+    u64 m_key;                          // 0x30
+};
+static_assert(offsetof(PixelShader, m_key) == 0x30);
+static_assert(offsetof(VertexShader, m_attribCount) == 0x168);
+
+// Aska::ShaderProgramValue (partial): a linked program (RenderDeviceData::m_program).
+// Guest size 0x40 (UpdateShaderProgram: operator new(0x40) on a miss).
+class ShaderProgramValue {
+public:
+    u64 m_hash;                         // 0x00: SpookyHash of {VS key, PS key} (the set's hash)
+    u64 m_vsKey;                        // 0x08
+    u64 m_psKey;                        // 0x10
+    u32 m_glProgram;                    // 0x18: 0 until linked (CompileShaderProgram)
+    u8 unk_1c[4];                       // 0x1c
+    s32* m_attribLocations;             // 0x20: per attribute of the vertex shader, -1 when unused
+    void* m_uniformLocations;           // 0x28: (SetVertexShaderConstant)
+    u8 unk_30[0x10];                    // 0x30
+};
+static_assert(offsetof(ShaderProgramValue, m_vsKey) == 0x08);
+static_assert(offsetof(ShaderProgramValue, m_glProgram) == 0x18);
+static_assert(offsetof(ShaderProgramValue, m_attribLocations) == 0x20);
+static_assert(sizeof(ShaderProgramValue) == 0x40);
+
+
 
 // Aska::RenderDeviceData: the GL device's data (RenderDeviceGL::m_data). Guest size 0xc6b0
 // (RenderDeviceGL::RenderDeviceGL: operator new(0xc6b0)); layout from RenderDeviceData() (its first
@@ -1132,26 +1278,42 @@ public:
     void Ctor();                                       // _ZN4Aska16RenderDeviceDataC2Ev
     TextureStateCache* GetTextureStateCaches(u32 glName);
     u32 GetBoundTextureID(u32 target);                 // from the thread's OglStateSet0 (else glGetIntegerv)
-    void* GetThreadOglState1();
-    void UpdateShaderProgram();                        // (587 self) links / picks the program, uploads constants
-    void UpdateRenderState(void* device);              // (280 self) before a draw: vertex attributes, textures, blending
-    void UpdateVertexAttribute(void* stateSet0);       // ASKA_OGL_STATESET0*
-    void LastMinuteDrawCommands_Textures(void* stateSet0, void* device);
-    void LastMinuteDrawCommands_Blending(void* stateSet0);
+    OglStateSet1* GetThreadOglState1();                // (natives: the existing one; creating it is the guest's)
+    void UpdateShaderProgram();                        // (587 self) picks the program of the current VS / PS, uploads its uniforms
+    bool UseProgram(u32 program);                      // UpdateShaderProgram's glUseProgram through the thread's state set 1
+    bool ProgramReady() const;                         // UpdateShaderProgram only finds (the native's case): no program to create or link
+    bool UpdateRenderState(RenderDeviceGL* device);    // (280 self) before a draw: the program, vertex arrays, caps, blending, depth, textures
+    void UpdateVertexAttribute(OglStateSet0* ss);      // the arrays the program uses enabled, the others disabled
+    void LastMinuteDrawCommands_Textures(OglStateSet0* ss, RenderDeviceGL* device);
+    void LastMinuteDrawCommands_Blending(OglStateSet0* ss);
+    void LastMinuteDrawCommands_Depth(OglStateSet0* ss);
     void UpdateTextureFilters(void* stateSet0, s32 unit, u32 glName);
-    void DrawIndexedPrimitive(void* device, s32 prim, void* indexBuffer, u64 start, s32 count);  // (788 self)
+    void DrawIndexedPrimitive(RenderDeviceGL* device, u32 prim, IndexBuffer& indexBuffer, u64 start, s32 count);  // (788 self)
+    bool UsesInstancing() const { return m_instanceVbo != 0 || m_instanceData != nullptr || m_instanceDivisorMask != 0; }
     void BindFrameBuffer(GpuResource* target);
     void SetShaderProgramUniform(void* program);       // ShaderProgramValue*
+    void SetCullMode(u32 mode);                        // Cull::Mode (< 3; the static iNewMode table maps it)
+    void SetAlphaBlendFunction(u32 op, s32 separate);  // AlphaBlend::Operation, SeparateAlphaBlendMode::E
 
-    u8 unk_000[0x28];                                                  // 0x000
+    u8 unk_000[6];                                                     // 0x000
+    u8 m_anisotropySupported;                                          // 0x006: SetTextureSamplingMaxAnisotropic does nothing without it
+    u8 unk_007[0x21];                                                  // 0x007
     u64 unk_028;                                                       // 0x028: 0 at construction
     u8 unk_030[0x110];                                                 // 0x030
-    u64 unk_140[4];                                                    // 0x140: 0 at construction
-    u16 unk_160;                                                       // 0x160: 0x101 at construction
+    u32 unk_140;                                                       // 0x140: 0 at construction
+    u32 m_instanceVbo;                                                 // 0x144: an instance-data vertex buffer (instanced draws)
+    u8* m_instanceData;                                                // 0x148: or client memory
+    u32 m_instanceAttribMask;                                          // 0x150: the instance attributes (bit per attribute)
+    u32 m_instanceDivisorMask;                                         // 0x154: the arrays given a divisor (reset next draw)
+    u32 m_instanceStride;                                              // 0x158
+    u32 m_instanceCount;                                               // 0x15c: glDrawElementsInstanced from 2 on
+    u8 m_drawEnabled;                                                  // 0x160: 1 at construction (with 0x161); 0: draws do nothing
+    u8 unk_161;                                                        // 0x161
     u8 unk_162[0x56];                                                  // 0x162
     containers::TPoolFast<TextureStateCache> m_textureStatePool;       // 0x1b8
     containers::THashMap<u32, TextureStateCache*> m_textureStates;     // 0x200: GL name -> its cache (0x400 buckets at first)
-    u64 unk_230;                                                       // 0x230: 0 at construction (u32 at 0x230: the GL version, GetGLVersion)
+    s32 m_glVersion;                                                   // 0x230: 0 at construction; GetGLVersion (0: GLES 2; BindVertexFormat's half-float / packed formats need it)
+    u32 unk_234;                                                       // 0x234
     u8 unk_238;                                                        // 0x238: 1 at construction
     u8 unk_239[7];                                                     // 0x239
     u8 m_event[0x68];                                                  // 0x240: Aska::Event (sync)
@@ -1165,13 +1327,23 @@ public:
     u8 m_shaderKeySet[0x30];                                           // 0x8330: THashSet<ShaderKeyValue*> (0x11 buckets at first)
     u8 unk_8360[0x20];                                                 // 0x8360
     u8 m_bytes[0x28];                                                  // 0x8380: TDynamicArray<u8>
-    u8 m_programSet[0x30];                                             // 0x83a8: THashSet<ShaderProgramValue*>
-    u8 unk_83d8[0x40];                                                 // 0x83d8
+    containers::THashSet<ShaderProgramValue*> m_programSet;           // 0x83a8: the linked programs, by their keys' hash
+    u64 m_programHash;                                                 // 0x83d8: UpdateShaderProgram's last lookup
+    u64 m_programKey[2];                                               // 0x83e0: {VS key, PS key} hashed
+    u8 unk_83f0[0x28];                                                 // 0x83f0
     VertexShader* m_vertexShader;                                      // 0x8418: SetVertexShader
-    u8 unk_8420[0x20];                                                 // 0x8420
-    void* m_program;                                                   // 0x8440: the current program (SetVertexShaderConstant: +0x28 its uniform locations)
+    PixelShader* m_pixelShader;                                        // 0x8420: SetPixelShader (null: m_defaultPixelShader)
+    PixelShader* m_defaultPixelShader;                                 // 0x8428
+    u8 unk_8430[0x10];                                                 // 0x8430
+    ShaderProgramValue* m_program;                                     // 0x8440: the current program
     u8 unk_8448[0xc6b0 - 0x8448];                                      // 0x8448
 };
+static_assert(offsetof(RenderDeviceData, m_anisotropySupported) == 0x6);
+static_assert(offsetof(RenderDeviceData, m_instanceVbo) == 0x144);
+static_assert(offsetof(RenderDeviceData, m_instanceData) == 0x148);
+static_assert(offsetof(RenderDeviceData, m_instanceAttribMask) == 0x150);
+static_assert(offsetof(RenderDeviceData, m_instanceCount) == 0x15c);
+static_assert(offsetof(RenderDeviceData, m_drawEnabled) == 0x160);
 static_assert(offsetof(RenderDeviceData, m_textureStatePool) == 0x1b8);
 static_assert(offsetof(RenderDeviceData, m_textureStatePool.m_used.m_bits) == 0x1d0);
 static_assert(offsetof(RenderDeviceData, m_textureStatePool.m_cursor) == 0x1f0);
@@ -1179,7 +1351,7 @@ static_assert(offsetof(RenderDeviceData, m_textureStatePool.m_count) == 0x1f4);
 static_assert(offsetof(RenderDeviceData, m_textureStates) == 0x200);
 static_assert(offsetof(RenderDeviceData, m_textureStates.table.m_maxLoadFactor) == 0x20c);
 static_assert(offsetof(RenderDeviceData, m_textureStates.table.m_buckets.m_data) == 0x220);
-static_assert(offsetof(RenderDeviceData, unk_230) == 0x230);
+static_assert(offsetof(RenderDeviceData, m_glVersion) == 0x230);
 static_assert(offsetof(RenderDeviceData, m_event) == 0x240);
 static_assert(offsetof(RenderDeviceData, m_vertexAttribCount) == 0x2a8);
 static_assert(offsetof(RenderDeviceData, m_stateCache) == 0x2b0);
@@ -1187,6 +1359,11 @@ static_assert(offsetof(RenderDeviceData, m_textureSlots) == 0x2b8);
 static_assert(offsetof(RenderDeviceData, m_resourceArray) == 0x82b8);
 static_assert(offsetof(RenderDeviceData, m_shaderKeySet) == 0x8330);
 static_assert(offsetof(RenderDeviceData, m_programSet) == 0x83a8);
+static_assert(offsetof(RenderDeviceData, m_programSet.table.m_buckets.m_data) == 0x83c8);
+static_assert(offsetof(RenderDeviceData, m_programHash) == 0x83d8);
+static_assert(offsetof(RenderDeviceData, m_programKey) == 0x83e0);
+static_assert(offsetof(RenderDeviceData, m_pixelShader) == 0x8420);
+static_assert(offsetof(RenderDeviceData, m_defaultPixelShader) == 0x8428);
 static_assert(offsetof(RenderDeviceData, m_vertexShader) == 0x8418);
 static_assert(offsetof(RenderDeviceData, m_program) == 0x8440);
 static_assert(sizeof(RenderDeviceData) == 0xc6b0);
@@ -1215,9 +1392,9 @@ class RenderDeviceGL {
 public:
     void Ctor();                                           // _ZN4Aska14RenderDeviceGLC2Ev
     void BindTexture(u32 target, u32 glName);              // skipped when the thread's state has it
-    void ActiveTexture(u32 unit);
+    void ActiveTexture(u32 unit);                          // skipped past the stage count or when active
     s32 GetGLVersion() const;                              // m_data's 0x230
-    void BindVertexFormat(s32 format, s32 stream, void* base);   // (1371 self: the hottest device method)
+    void BindVertexFormat(s32 format, s32 stride, void* base);   // (1371 self: the hottest device method)
     void BindVertexFormat(void* vertexBuffer);
     void SetTexture(u32 stage, GpuResource* const* res);
     void RemoveTexture(u32 stage);
@@ -1229,12 +1406,19 @@ public:
     void SetPixelShaderConstant(void* buffer);
     void SetVertexShader(VertexShader* vs);                // m_data->m_vertexShader
     void SetPixelShader(PixelShader* ps);
+    // The render-state setters (RenderState::Apply's targets): they record the wanted state in the calling
+    // thread's OglStateSet0, applied at the next draw (UpdateRenderState); the natives require the state
+    // set to exist (render_state.cpp).
     void EnableZTest(bool on);
-    void EnableZWrite(bool on);
-    void SetCullMode(s32 mode);
+    void EnableZWrite(bool on);                            // glDepthMask on a change
+    void SetZTestFunction(u32 func);                       // ZTest::Func (< 8)
+    void SetCullMode(u32 mode);                            // m_data->SetCullMode
     void SetDepthBias(float a, float b);
     void EnableStencil(s32 mode);
+    void SetStencilOp(u32 func, u32 fail, u32 zfail, u32 pass, s32 ref);      // GL_FRONT's, at once
+    void SetStencilOpCCW(u32 func, u32 fail, u32 zfail, u32 pass, s32 ref);   // GL_BACK's
     void EnableAlphaBlend(bool on);
+    void SetAlphaBlendFunction(u32 op, s32 separate);      // m_data->SetAlphaBlendFunction
     void SetTextureSamplingFilter(u32 stage, s32 filter);
     void SetTextureSamplingMipmapFilter(u32 stage, s32 filter);
     void SetTextureSamplingWrapMode(u32 stage, s32 u, s32 v, s32 w);
@@ -1256,10 +1440,12 @@ public:
     u32 unk_eaa98;                          // 0xeaa98: 0x100 at construction
     VertexFormatGL m_vertexFormats[0x80];   // 0xeaa9c
     u8 unk_ec09c[4];                        // 0xec09c
-    u32 unk_ec0a0;                          // 0xec0a0: 0 at construction
-    u8 unk_ec0a4[4];                        // 0xec0a4
+    u32 m_gpuKind;                          // 0xec0a0: 0 at construction; 3 + m_gpuNumber >= 300 + an old driver: no separate blending
+    u32 m_gpuNumber;                        // 0xec0a4    (LastMinuteDrawCommands_Blending; names (d))
     u32 unk_ec0a8;                          // 0xec0a8: 0 at construction
-    u8 unk_ec0ac[0x1c];                     // 0xec0ac
+    u8 unk_ec0ac[0xc];                      // 0xec0ac
+    s32 m_driverVersion[2];                 // 0xec0b8: major, minor (Blending: < 4.3 is old)
+    u8 unk_ec0c0[8];                        // 0xec0c0
 };
 static_assert(offsetof(RenderDeviceGL, m_resources) == 0x3f8);
 static_assert(offsetof(RenderDeviceGL, unk_ea9f8) == 0xea9f8);
@@ -1269,7 +1455,8 @@ static_assert(offsetof(RenderDeviceGL, m_textureStageCount) == 0xeaa88);
 static_assert(offsetof(RenderDeviceGL, m_extraTextureStageCount) == 0xeaa8c);
 static_assert(offsetof(RenderDeviceGL, unk_eaa98) == 0xeaa98);
 static_assert(offsetof(RenderDeviceGL, m_vertexFormats) == 0xeaa9c);
-static_assert(offsetof(RenderDeviceGL, unk_ec0a0) == 0xec0a0);
+static_assert(offsetof(RenderDeviceGL, m_gpuKind) == 0xec0a0);
+static_assert(offsetof(RenderDeviceGL, m_driverVersion) == 0xec0b8);
 static_assert(offsetof(RenderDeviceGL, unk_ec0a8) == 0xec0a8);
 static_assert(sizeof(RenderDeviceGL) == 0xec0c8);
 

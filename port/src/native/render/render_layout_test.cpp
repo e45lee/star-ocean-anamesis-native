@@ -387,7 +387,7 @@ NATIVE_TEST("render/layout-render-device") {
         RenderDeviceData* d = dev->m_data;
         if (!t.expect_eq(d != nullptr, true, "m_data")) return;
         t.expect_eq(dev->m_textureStageCount >= 1 && dev->m_textureStageCount <= 32, true, "m_textureStageCount");
-        t.expect_eq((u32)t.call("_ZNK4Aska14RenderDeviceGL12GetGLVersionEv", {(u64)dev}), *reinterpret_cast<u32*>(&d->unk_230), "GetGLVersion = m_data's 0x230");
+        t.expect_eq((u32)t.call("_ZNK4Aska14RenderDeviceGL12GetGLVersionEv", {(u64)dev}), (u32)d->m_glVersion, "GetGLVersion = m_data's 0x230");
         t.expect_eq(d->m_textureStatePool.vtable, vtable_of(t, "_ZTVN4Aska9TPoolFastINS_15_RenderDeviceGL17TextureStateCacheELb0EEE"), "m_textureStatePool vtable");
         t.expect_eq(d->m_textureStatePool.m_used.vtable, vtable_of(t, "_ZTVN4Aska9TBitArrayImLb0EEE"), "m_textureStatePool.m_used vtable");
         t.expect_eq(d->m_textureStates.table.vtable, vtable_of(t, "_ZTVN4Aska8THashMapIjPNS_15_RenderDeviceGL17TextureStateCacheENS_7THasherIjEENS_8TEqualToIjEENS_10TAllocatorINS_5TPairIKjS3_EEEEEE"), "m_textures vtable");

@@ -1,6 +1,6 @@
 # The one build of the repository: the JIT host runtime (runtime/), the 3.7.0 platform layer
 # (platform370/), the local game server (server/), the desktop port (port/), the 3.7.0 emulator
-# (emulator/), the 3.8.0 viewer (emulator-viewer/) and the host tools (tools/aif2png).
+# (emulator/), the 3.8.0 viewer (emulator-viewer/) and the host tools (tools/aif2png, tools/movie_check).
 #
 #   scripts/build.sh                    # bootstraps vcpkg (.vcpkg/) if needed, configures, builds
 # or by hand, with vcpkg at $VCPKG_ROOT or .vcpkg/ (scripts/vcpkg-bootstrap.sh):
@@ -19,6 +19,7 @@
 #   build/runtime/soaruntime_tests  the runtime's extension-point tests (runtime/README.md)
 #   build/platform370/libsoaplatform370.a  the 3.7.0 platform layer soa-emu and soa link (platform370/README.md)
 #   build/tools/aif2png/aif2png     the AIF -> PNG converter (tools/aif2png)
+#   build/tools/movie_check/movie_check  the movie player's decoder on one movie (tools/movie_compare.py)
 #   build/webview/soa-webview-render  renders an HTML page to a PNG with the web view's renderer (docs/webview.md)
 #
 # One part: `cmake --build build --target soa` (or soa-server, soa-emu, soa-viewer,
@@ -55,7 +56,7 @@ option(SOA_BUILD_SERVER "build server/ (libsoaserver, soa-server)" ON)
 option(SOA_BUILD_EMULATOR "build emulator/ (soa-emu); needs platform370" ON)
 option(SOA_BUILD_PLATFORM370 "build platform370/ (libsoaplatform370, the 3.7.0 platform layer)" ON)
 option(SOA_BUILD_VIEWER "build emulator-viewer/ (soa-viewer)" ON)
-option(SOA_BUILD_TOOLS "build the host tools (tools/aif2png)" ON)
+option(SOA_BUILD_TOOLS "build the host tools (tools/aif2png, tools/movie_check)" ON)
 option(SOA_BUILD_RUNTIME "build runtime/ even when nothing above needs it (the runtime tests alone: the Windows bring-up, port/PLAN.md 5b)" OFF)
 option(SOA_BUILD_WEBVIEW "build webview/ (libsoawebview, soa-webview-render: the HTML page renderer, docs/webview.md)" ON)
 if(SOA_BUILD_PORT AND NOT SOA_BUILD_SERVER)
@@ -115,4 +116,7 @@ if(SOA_BUILD_VIEWER)
 endif()
 if(SOA_BUILD_TOOLS)
   add_subdirectory(tools/aif2png)  # aif2png: links soa::jpeg9
+  if(SOA_NEED_RUNTIME)
+    add_subdirectory(tools/movie_check)  # movie_check: the movie player's decoder (soa::ffmpeg)
+  endif()
 endif()

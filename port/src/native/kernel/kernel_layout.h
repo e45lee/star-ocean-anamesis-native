@@ -75,7 +75,9 @@ static_assert(sizeof(Thread) == 0x10);
 
 using LinkElement = containers::LinkElement;  // Aska::LinkElement {vtable, m_prev, m_next}
 
+class Task;
 class TaskManager;
+struct PostFields;  // what a Post* / Send* form writes into its block (kernel_dispatcher.cpp)
 class CTimeElement;
 class SimpleMessageDispatcher;
 
@@ -244,9 +246,9 @@ public:
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_Pja
     bool PostMessage(u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEtPNS_7INotifyEPvS3_mmPja
-    bool PostMessage(void* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u32* serialOut, s8 priority);
+    bool PostMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u32* serialOut, s8 priority);
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_Pja
-    bool PostMessage(void* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
+    bool PostMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
         // _ZN4Aska23SimpleMessageDispatcher11PostMessageEPNS_4TaskEitPNS_7INotifyEPvS5_mmPja
     bool PostSyncMessageSingle(u16 msg, s32* counter, INotify* notify, void* a0, void* a1, u32* serialOut, s8 priority);
     bool PostSyncMessageSingle(u16 msg, s32* counter, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, u32* serialOut, s8 priority);
@@ -258,6 +260,17 @@ public:
     bool SendMessage(u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, s8 priority);
     bool SendMessageHigh(u16 msg, INotify* notify, void* a0, void* a1);
     bool SendMessageHigh(u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1);
+    bool SendMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, s8 priority);
+    bool SendMessage(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1, s8 priority);
+    bool SendMessageHigh(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1);
+    bool SendMessageHigh(Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1);
+
+    // Host helpers (not guest symbols): the pieces every Post* / Send* form inlines.
+    MessageDispatcherBlockForList* LinkFreeBlock(s8 priority, bool atFront);  // under m_cs; nullptr when full
+    bool Post(const PostFields& f, u32* serialOut, s8 priority);
+    bool Send(const PostFields& f, s8 priority, bool high);
+    s32 WakeIdleWorker();  // the Post* forms' wake pass (WakeupWorkerThread's loop): the index woken, or -1
+    void WakeWaitingWorkers();  // Set every m_waiting worker's event (WakeupAllWorkerThreads' loop)
 
     const void* vtable;              // 0x00
     FastCriticalSection m_cs;        // 0x08: guards everything below
@@ -749,6 +762,31 @@ static_assert(offsetof(NotifierThread, m_pool.m_pool) == 0xa0);
 static_assert(offsetof(NotifierThread, m_pool.m_count) == 0xac);
 static_assert(sizeof(NotifierThread) == 0xb8);
 
+// Aska::EventNotify: an INotify whose Handler sets an event (a stack object in GPUSync::WaitGPUSync).
+class EventNotify {
+public:
+    const void* vtable;  // 0x00: _ZTVN4Aska11EventNotifyE + 0x10 (slot 0 Handler: m_event->Set())
+    Event* m_event;      // 0x08
+};
+static_assert(sizeof(EventNotify) == 0x10);
+
+// Aska::GPUSync: a NotifierThread the render thread signals when the GPU has finished a frame
+// (RenderThread::m_pGPUSync). Layout from WaitGPUSync / Notify / the destructors
+// (port/decomp/kernel/gpu_sync.c): the notifier, a "frame pending" flag, a binary semaphore guarding both.
+class GPUSync {
+public:
+    void WaitGPUSync();  // _ZN4Aska7GPUSync11WaitGPUSyncEv
+    void Notify();       // _ZN4Aska7GPUSync6NotifyEv (NotifierThread vtable slot 5)
+
+    NotifierThread base;  // 0x00: vtable _ZTVN4Aska7GPUSyncE + 0x10
+    u8 m_pending;         // 0xb8: set by the render thread when a frame is queued; Notify clears it
+    u8 unk_b9[7];         // 0xb9
+    Semaphore m_lock;     // 0xc0: guards m_pending and the notify list (Wait / Signal)
+};
+static_assert(offsetof(GPUSync, m_pending) == 0xb8);
+static_assert(offsetof(GPUSync, m_lock) == 0xc0);
+static_assert(sizeof(GPUSync) == 0xd8);
+
 // Aska::VSync: the frame clock. An IVSync (vtable at +0) and a NotifierThread (+0x08: VSync's vtable
 // + 0x50, the thunks). Layout from VSync::VSync(int), Initialize, CalcDtAndDFrame / UpdateDt, GetDt,
 // GetBasicFrameRate (port/decomp/kernel/timing.c); size not confirmed (no allocation site read).
@@ -803,7 +841,7 @@ static_assert(sizeof(VSync) == 0x160);  // at least: the last field read; no all
 // GetActivePad, the Instantiate* family, InitAll, DeleteEndNotify::Handler) are kernel's.
 class Global {
 public:
-    static s64 GetCPUTime();              // _ZN4Aska6Global10GetCPUTimeEv (CLOCK_THREAD_CPUTIME_ID in us)
+    static s64 GetCPUTime();              // _ZN4Aska6Global10GetCPUTimeEv (CLOCK_BOOTTIME in ms)
     static void* GetPeripheral(s32 i);    // _ZN4Aska6Global13GetPeripheralEi
     static void* GetActivePad();          // _ZN4Aska6Global12GetActivePadEv
     static bool InstantiateMessageDispatcher();   // _ZN4Aska6Global28InstantiateMessageDispatcherEv

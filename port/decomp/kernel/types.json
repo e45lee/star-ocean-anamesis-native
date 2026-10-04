@@ -2910,6 +2910,105 @@
    ]
   },
   {
+   "name": "EventNotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_event",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "GPUSync",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "NotifierThread"
+     },
+     "size": 184
+    },
+    {
+     "offset": 184,
+     "name": "m_pending",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 185,
+     "name": "unk_b9",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 192,
+     "name": "m_lock",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Semaphore",
+      "size": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 216,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x22c4e30",
+     "symbol": "_ZN4Aska7GPUSync11WaitGPUSyncEv",
+     "name": "WaitGPUSync"
+    },
+    {
+     "ghidra": "0x22c4f0c",
+     "symbol": "_ZN4Aska7GPUSync6NotifyEv",
+     "name": "Notify"
+    },
+    {
+     "ghidra": "0x22c53e0",
+     "symbol": "_ZN4Aska7GPUSyncD2Ev",
+     "name": "~GPUSync"
+    },
+    {
+     "ghidra": "0x22c5420",
+     "symbol": "_ZN4Aska7GPUSyncD0Ev",
+     "name": "~GPUSync"
+    }
+   ]
+  },
+  {
    "name": "VSync",
    "union": false,
    "fields": [

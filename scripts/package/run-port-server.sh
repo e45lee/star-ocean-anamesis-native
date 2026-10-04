@@ -60,9 +60,13 @@ cleanup() {
   [ -n "$cpid" ] && kill -9 "$cpid" 2>/dev/null || true
   [ -n "$spid" ] && kill -9 "$spid" 2>/dev/null || true
   wait 2>/dev/null || true
+  cpid= spid=
 }
 trap cleanup EXIT
-trap 'exit 130' INT TERM HUP
+# Ctrl-C reaches this script twice when a wrapper (timeout, a terminal) forwards it too: the
+# handler ignores the second one before anything else
+on_signal() { trap '' INT TERM HUP; cleanup; exit 130; }
+trap on_signal INT TERM HUP
 
 # --game-xml: a new server state takes the player of the phone's save, as soa's in-process server
 # does with the same data dir (soa --help: --game-xml)

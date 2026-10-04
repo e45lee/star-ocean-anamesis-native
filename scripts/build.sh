@@ -15,14 +15,23 @@
 # x64-mingw-static triplet (cmake/vcpkg-triplets/), cmake/toolchains/llvm-mingw-x64.cmake, the
 # vcpkg feature "angle" (EGL / GLES).
 #
-# Usage: scripts/build.sh [--windows] [cmake --build options...]   e.g. scripts/build.sh --target soa
+# --release (after --windows, if any): the optimized build the release packages are made from
+# (scripts/package.sh; README.md "Packaging"), into build-release/ (build-win-release/):
+# CMAKE_BUILD_TYPE=Release (-O3, NDEBUG) plus -g1 (line tables: the packages' separate debug
+# symbols), only soa, soa-server and soa-emu's parts (no viewer, no aif2png); on Linux libstdc++
+# and libgcc linked statically (the binaries need only glibc, libEGL and libGLESv2). No
+# -march / -ffast-math: the natives are bit-exact only with the default x86-64 code (no FMA).
+#
+# Usage: scripts/build.sh [--windows] [--release] [cmake --build options...]   e.g. scripts/build.sh --target soa
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
 bdir=build
 cfg_extra=
+windows=
 if [ "${1:-}" = "--windows" ]; then
   shift
+  windows=1
   bdir=build-win
   llvm_mingw=${SOA_LLVM_MINGW:-$HOME/tools/llvm-mingw}
   [ -x "$llvm_mingw/bin/x86_64-w64-mingw32-clang++" ] ||
@@ -32,6 +41,14 @@ if [ "${1:-}" = "--windows" ]; then
   cfg_extra="-DVCPKG_TARGET_TRIPLET=x64-mingw-static -DVCPKG_HOST_TRIPLET=x64-linux
     -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$repo/cmake/toolchains/llvm-mingw-x64.cmake
     -DVCPKG_MANIFEST_FEATURES=angle"
+fi
+rel_flags= rel_link=
+if [ "${1:-}" = "--release" ]; then
+  shift
+  bdir=$bdir-release
+  cfg_extra="$cfg_extra -DCMAKE_BUILD_TYPE=Release -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_TOOLS=OFF"
+  rel_flags="-O3 -DNDEBUG -g1"
+  [ -z "$windows" ] && rel_link="-static-libstdc++ -static-libgcc"
 fi
 
 vcpkg_root=$(scripts/vcpkg-bootstrap.sh)
@@ -48,12 +65,14 @@ if [ ! -f "$bdir/CMakeCache.txt" ]; then
   echo "== configuring $bdir/ (vcpkg: $vcpkg_root${gen:+, Ninja}${launcher:+, ccache})"
   # shellcheck disable=SC2086
   VCPKG_MAX_CONCURRENCY=${VCPKG_MAX_CONCURRENCY:-$jobs} \
-    cmake -S . -B "$bdir" $gen $launcher -DCMAKE_TOOLCHAIN_FILE="$vcpkg_root/scripts/buildsystems/vcpkg.cmake" $cfg_extra
+    cmake -S . -B "$bdir" $gen $launcher -DCMAKE_TOOLCHAIN_FILE="$vcpkg_root/scripts/buildsystems/vcpkg.cmake" $cfg_extra \
+      ${rel_flags:+"-DCMAKE_C_FLAGS_RELEASE=$rel_flags" "-DCMAKE_CXX_FLAGS_RELEASE=$rel_flags"} \
+      ${rel_link:+"-DCMAKE_EXE_LINKER_FLAGS=$rel_link"}
 fi
 echo "== building (cmake --build $bdir -j$jobs $*)"
 cmake --build "$bdir" -j"$jobs" "$@"
-if [ "$bdir" = build ]; then
-  echo "== done: build/port/soa, build/server/soa-server, build/emulator/soa-emu, build/emulator-viewer/soa-viewer"
+if [ -z "$windows" ]; then
+  echo "== done: $bdir/port/soa, $bdir/server/soa-server, $bdir/emulator/soa-emu, $bdir/emulator-viewer/soa-viewer"
 else
   echo "== done: $bdir/port/soa.exe, $bdir/server/soa-server.exe, $bdir/emulator/soa-emu.exe, $bdir/emulator-viewer/soa-viewer.exe"
   echo "   (from WSL: scripts/windows-stage.sh, then run them in /mnt/c/soa-win; README.md \"Windows\")"

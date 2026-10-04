@@ -39,6 +39,12 @@ from .proc import REPO
 sys.path.insert(0, os.path.join(REPO, "control"))
 import soaslot  # noqa: E402  (control/soaslot.py: the machine-wide game-process slot pool)
 
+# SOA_PACKAGE_DIR: the unpacked release package (README.md "Packaging") whose programs a run tests
+# (scripts/package-verify.sh): they run with that folder as their working directory and get no
+# --master / --download-dir / --seed, so they find the game files the way the package's README.txt
+# says (soa/install.h). Unset: the checkout's own files, as always.
+PACKAGE_DIR = os.environ.get("SOA_PACKAGE_DIR") or None
+
 TARGETS = ("emu", "port-server", "port-inproc")
 W, H = 729, 1296
 
@@ -285,7 +291,7 @@ class Run:
             server_binary = winhost.staged_binary(cfg.server_binary if winhost.is_windows(cfg.server_binary) else
                                                   os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(built))), "server", "soa-server.exe"))
             master, download = winhost.stage_file("data/basmaster-3.7.0.sqlite3"), winhost.stage_file("work/download-3.7.0")
-            if not master or not download:
+            if (not master or not download) and not PACKAGE_DIR:
                 raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not staged in %s (scripts/windows-stage.sh)"
                             % winhost.STAGE)
             wp, cwd = winhost.winpath, winhost.STAGE
@@ -303,7 +309,13 @@ class Run:
             download = proc.repo_file("work/download-3.7.0")
             server_binary = cfg.server_binary or b["server"]
             wp, cwd = (lambda p: p), REPO
-        if (cfg.explicit_data or server_side) and (not master or not download):
+        if PACKAGE_DIR:
+            server_binary = os.path.join(PACKAGE_DIR, "soa-server.exe" if self.win else "soa-server")
+            # a release package under test (scripts/package-verify.sh): its programs find the game
+            # files beside them (soa/install.h) and run outside any checkout
+            cwd = PACKAGE_DIR
+            self.note("release package %s: no --master / --download-dir / --seed; the programs look beside themselves" % PACKAGE_DIR)
+        elif (cfg.explicit_data or server_side) and (not master or not download):
             raise Abort("data/basmaster-3.7.0.sqlite3 or work/download-3.7.0 not found")
         if cfg.phone:
             os.makedirs(self.phone, exist_ok=True)
@@ -326,14 +338,14 @@ class Run:
         if self.before_client:
             self.before_client()
         srv = []
-        if cfg.explicit_data or server_side:
+        if (cfg.explicit_data or server_side) and not PACKAGE_DIR:
             srv += ["--master", wp(master)]
         if cfg.seed_rng is not None:
             srv += ["--seed-rng", str(cfg.seed_rng)]
         if cfg.clock:
             srv += ["--clock", cfg.clock]
         srv += cfg.server_args
-        if cfg.seed is None and not cfg.new_player:
+        if cfg.seed is None and not cfg.new_player and not PACKAGE_DIR:
             srv += ["--seed", wp(os.path.join(winhost.STAGE if self.win else REPO, "data/saves/seed/Game.xml"))]
         elif cfg.seed:
             srv += ["--seed", wp(cfg.seed)]
@@ -363,7 +375,7 @@ class Run:
             extra = []
             if cfg.explicit_data or not self.layout.inproc_db_default:
                 extra += ["--db", wp(self.state_db)]
-            if cfg.explicit_data:
+            if cfg.explicit_data and not PACKAGE_DIR:
                 extra += ["--download-dir", wp(download)]
             self.client = proc.Proc("soa", [binary] + client + cfg.client_args + srv + extra + pkt, self.client_log,
                                     limit=cfg.limit, env=env, slot_fd=self.slot, cwd=cwd)
@@ -371,8 +383,8 @@ class Run:
             for attempt in range(4):
                 gp, hp = (winhost.free_ports if self.win else proc.free_ports)(2)
                 self.server = proc.Proc("soa-server", [server_binary, "--listen", "127.0.0.1:%d" % gp,
-                                                       "--http", "127.0.0.1:%d" % hp, "--data", wp(os.path.dirname(self.state_db)),
-                                                       "--download-dir", wp(download)] + pkt + srv, self.server_log,
+                                                       "--http", "127.0.0.1:%d" % hp, "--data", wp(os.path.dirname(self.state_db))] +
+                                        ([] if PACKAGE_DIR else ["--download-dir", wp(download)]) + pkt + srv, self.server_log,
                                         limit=cfg.limit, cwd=cwd)
                 end = time.monotonic() + 120
                 while not self.grep(self.server_log, r"^soa-server: game"):

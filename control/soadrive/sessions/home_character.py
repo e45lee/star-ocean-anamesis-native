@@ -60,14 +60,16 @@ def options(ap):
 
 
 def seed_for(master, home, homes, extra, path):
-    sys.path.insert(0, os.path.join(proc.REPO, "tools"))
-    import make_test_seed
+    """The seed save at path (tools/make_test_seed.py, run with the repo's .venv: soa_save needs
+    pycryptodome) and the home role's (id, person label, home3d_disable)."""
+    py = os.path.join(proc.REPO, ".venv", "bin", "python")
+    subprocess.run([py if os.path.exists(py) else sys.executable, os.path.join(proc.REPO, "tools", "make_test_seed.py"), "--master", master,
+                    "--out", path, "--extra-roles", ",".join(list(homes) + list(extra)), "--home", home], check=True, capture_output=True)
     db = sqlite3.connect("file:%s?mode=ro" % master, uri=True)
-    k, _, home_id = make_test_seed.build(db, list(homes) + list(extra), home)
-    k.save(path)
-    row = db.execute("select p.id_label, p.home3d_disable from master_role r join master_person p on p.id = r.master_person_id "
-                     "where r.id = ?", (home_id,)).fetchone()
-    return home_id, row[0], bool(row[1])
+    ref = home.strip()
+    row = db.execute("select r.id, p.id_label, p.home3d_disable from master_role r join master_person p on p.id = r.master_person_id "
+                     "where r.id = ? or r.id_label = ?", (int(ref) if ref.isdigit() else -1, ref)).fetchone()
+    return row[0], row[1], bool(row[2])
 
 
 def count(s, rx):

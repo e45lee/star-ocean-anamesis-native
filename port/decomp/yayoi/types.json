@@ -76,6 +76,32 @@
    "align": 8
   },
   {
+   "name": "SharedBytes",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_ptr",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_counter",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
    "name": "SQLiteDriver",
    "union": false,
    "fields": [
@@ -312,6 +338,100 @@
    ]
   },
   {
+   "name": "ColumnMapIterator",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_bucket",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_begin",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_end",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "ColumnMapInsertResult",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_it",
+     "type": {
+      "kind": "struct",
+      "name": "ColumnMapIterator"
+     },
+     "size": 24
+    },
+    {
+     "offset": 24,
+     "name": "m_inserted",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 25,
+     "name": "unk_19",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "ColumnMap",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "table",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THashTable<soa::native::containers::TPair< char *, int> >",
+      "size": 48
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
    "name": "EntityObject",
    "union": false,
    "fields": [
@@ -372,9 +492,8 @@
      "offset": 32,
      "name": "m_columns",
      "type": {
-      "kind": "bytes",
-      "ctype": "soa::native::containers::THashMap< char *, int>",
-      "size": 48
+      "kind": "struct",
+      "name": "ColumnMap"
      },
      "size": 48
     },
@@ -1569,13 +1688,9 @@
      "offset": 1160,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -1790,13 +1905,9 @@
      "offset": 8,
      "name": "m_thread",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 16
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Thread",
+      "size": 16
      },
      "size": 16
     },
@@ -1818,13 +1929,9 @@
      "offset": 32,
      "name": "m_event",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -1947,13 +2054,9 @@
      "offset": 1088,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -1961,13 +2064,9 @@
      "offset": 1232,
      "name": "m_cs2",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -2161,13 +2260,9 @@
      "offset": 0,
      "name": "m_thread",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 16
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Thread",
+      "size": 16
      },
      "size": 16
     },
@@ -2225,13 +2320,9 @@
      "offset": 56,
      "name": "m_wakeup",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 24
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Semaphore",
+      "size": 24
      },
      "size": 24
     },
@@ -2323,13 +2414,9 @@
      "offset": 48,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -2577,13 +2664,9 @@
      "offset": 2104,
      "name": "m_cs",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },

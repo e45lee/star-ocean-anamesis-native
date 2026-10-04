@@ -14,6 +14,8 @@ namespace soa::native::sync {
 
 // ---- Aska::Event ----
 
+thread_local bool t_replay_no_wait = false;
+
 void Event::Ctor() { m_pMutex = 0; }
 
 bool Event::Create(bool manualReset, bool initialState) {
@@ -34,7 +36,7 @@ bool Event::Wait(u32 timeoutMs) const {
         hle_mutex_lock(m_pMutex);
     }
     auto* self = const_cast<Event*>(this);
-    if (!m_signaled) {
+    if (!m_signaled && !t_replay_no_wait) {
         ProfNativeWait wait;
         if (timeoutMs == 0) {
             hle_cond_wait((u64)m_cond, m_pMutex);
@@ -106,6 +108,13 @@ void CriticalSection::CtorBase() {
 }
 
 bool CriticalSection::TryEnter() const { return hle_mutex_trylock((u64)m_mutex) == 0; }
+
+void CriticalSection::Enter() const {
+    ProfNativeWait wait;
+    hle_mutex_lock((u64)m_mutex);
+}
+
+void CriticalSection::Leave() const { hle_mutex_unlock((u64)m_mutex); }
 
 namespace {
 

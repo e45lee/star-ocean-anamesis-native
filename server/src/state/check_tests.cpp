@@ -51,13 +51,13 @@ NATIVE_TEST("server/schema-integrity") {
     auto dangling = state::check(sv.st.h, sv.m.h);
     for (const auto& d : dangling) t.fail("%s", state::describe(d).c_str());
 
-    // a role id and an item id the master doesn't have are reported; a weapon draw's role_id 0 isn't
+    // a role id and an item id the master doesn't have are reported; a weapon draw's role_id (NULL) isn't
     int64_t bad_role = 7, bad_item = 11;
     t.expect_eq(sv.m.one("select count(*) from master_role where id = ?", {bad_role}), (int64_t)0, "7 is no role id");
     t.expect_eq(sv.m.one("select count(*) from master_item where id = ?", {bad_item}), (int64_t)0, "11 is no item id");
     sv.st.q("insert into roster (uid, role_id, level, exp, created_at) values (?, ?, 1, 0, 0)", {0x7e7fffffll, bad_role});
     sv.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?, ?, 1, 0)", {0x7d7fffffll, bad_item});
-    sv.st.q("update gacha_history set role_id = 0 where id = (select min(id) from gacha_history)", {});
+    sv.st.q("update gacha_history set role_id = null where id = (select min(id) from gacha_history)", {});
     dangling = state::check(sv.st.h, sv.m.h);
     t.expect_eq(dangling.size(), (size_t)2, "two references dangle");
     if (dangling.size() == 2) {

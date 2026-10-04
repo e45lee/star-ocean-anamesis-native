@@ -11,7 +11,8 @@
 #   soa::EGL, soa::GLESv2  Mesa's libEGL / libGLESv2 (the libraries only; headers from vcpkg)
 # From CMake FetchContent, pinned by URL + SHA256 (not in vcpkg), into build/_deps:
 #   dynarmic               the ARM64 -> x86-64 JIT (runtime/)
-#   soa::jpeg9             IJG libjpeg 9e, static (cmake/libjpeg9/); tools/aif2png
+#   soa::jpeg9             IJG libjpeg 9b (the game's), static (cmake/libjpeg9/); soa (lib_jpeg), tools/aif2png
+#   soa::zstd134           zstd 1.3.4, the game's version, static (cmake/zstd134/); soa's lib_zstd natives
 include(FetchContent)
 
 # ---- vcpkg packages
@@ -79,11 +80,21 @@ if(SOA_NEED_RUNTIME)  # the JIT host runtime and what links it (not for a server
   endif()
 endif()
 
-# ---- IJG libjpeg 9e (the game bundles 9b; 9e is what Ubuntu's libjpeg9 package, used before, ships)
+# ---- IJG libjpeg 9b, the game's version ("9b 17-Jan-2016"): port/src/native/lib_jpeg decodes
+# bit-exactly with it (9e, used before, is what Ubuntu's libjpeg9 package ships)
 FetchContent_Declare(jpeg9
-  URL https://www.ijg.org/files/jpegsrc.v9e.tar.gz
-  URL_HASH SHA256=4077d6a6a75aeb01884f708919d25934c93305e49f7e3f36db9129320e6f4f3d
+  URL https://www.ijg.org/files/jpegsrc.v9b.tar.gz
+  URL_HASH SHA256=566241ad815df935390b341a5d3d15a73a4000e5aab40c58505324c2855cbbb8
   SOURCE_SUBDIR no-cmake)  # the tarball has no CMakeLists.txt: only unpack it; cmake/libjpeg9/ builds it
 FetchContent_MakeAvailable(jpeg9)
 set(JPEG9_SOURCE_DIR ${jpeg9_SOURCE_DIR})
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libjpeg9 ${jpeg9_BINARY_DIR} EXCLUDE_FROM_ALL)
+
+# ---- zstd 1.3.4, the game's (port/src/native/lib_zstd: byte-exact with the guest, errors included)
+FetchContent_Declare(zstd134
+  URL https://github.com/facebook/zstd/archive/refs/tags/v1.3.4.tar.gz
+  URL_HASH SHA256=92e41b6e8dd26bbd46248e8aa1d86f1551bc221a796277ae9362954f26d605a9
+  SOURCE_SUBDIR no-cmake)  # only unpack it; cmake/zstd134/ builds the library
+FetchContent_MakeAvailable(zstd134)
+set(ZSTD134_SOURCE_DIR ${zstd134_SOURCE_DIR})
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/zstd134 ${zstd134_BINARY_DIR} EXCLUDE_FROM_ALL)

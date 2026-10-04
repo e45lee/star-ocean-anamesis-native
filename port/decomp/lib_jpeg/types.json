@@ -1,0 +1,75 @@
+{
+ "subsystem": "lib_jpeg",
+ "generated_by": "tools/subsystem.py export-types lib_jpeg",
+ "header": "port/src/native/lib_jpeg/lib_jpeg_layout.h",
+ "structs": [
+  {
+   "name": "IAllocator",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8
+  },
+  {
+   "name": "ILineScanner",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8
+  },
+  {
+   "name": "JpegUtil",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x26e9fc0",
+     "symbol": "_ZN4Aska8JpegUtil7GetInfoEPjS1_PNS0_10ColorSpaceEPbS4_PKvm",
+     "name": "GetInfo"
+    },
+    {
+     "ghidra": "0x26ea338",
+     "symbol": "_ZN4Aska8JpegUtil6DecodeEPvmjjPKvmRKNS0_12ILineScannerES6_S6_RKNS0_10IAllocatorE",
+     "name": "Decode"
+    },
+    {
+     "ghidra": "0x26ea3e0",
+     "symbol": "_ZN4Aska8JpegUtil12GetPlaneInfoEPjS1_S1_S1_S1_PKvm",
+     "name": "GetPlaneInfo"
+    },
+    {
+     "ghidra": "0x26ea894",
+     "symbol": "_ZN4Aska8JpegUtil15DecodeQuantCoefEPfPsPKvm",
+     "name": "DecodeQuantCoef"
+    },
+    {
+     "ghidra": "0x26eacf0",
+     "symbol": "_ZN4Aska8JpegUtil9DecodeYuvEPPjPKvm",
+     "name": "DecodeYuv"
+    }
+   ]
+  }
+ ]
+}

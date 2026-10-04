@@ -25,7 +25,8 @@ const std::vector<MasterRef>& master_refs() {
         {"play", "mission_id", "master_mission|master_event_mission|master_world_map_mission|master_tower_mission|master_deep_space_mission", "id",
          true},
         {"gacha_history", "gacha_id", "master_gacha", "id", false},
-        {"gacha_history", "role_id", "master_role", "id", true},  // 0: a weapon draw
+        // NULL: a weapon draw (0 before PLAN-schema S10, which the migration tests check on the older versions)
+        {"gacha_history", "role_id", "master_role", "id", true},
         {"stepup", "head", "master_gacha", "id", false},
         {"box_state", "gacha_id", "master_gacha", "id", false},
         {"login_bonus", "id", "master_login_bonus", "id", false},

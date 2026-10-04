@@ -14,6 +14,8 @@ using LogEnabledFn = bool (*)(LogLevel level);
 // nullptr restores the default (stderr; Info and above).
 void set_log_sink(LogWriteFn write, LogEnabledFn enabled = nullptr);
 
+// Whether the sink wants lines of `level`; and one line, printf-formatted, to the sink (the LOG*
+// macros call these).
 bool log_enabled(LogLevel level);
 void log_write(LogLevel level, const char* tag, const char* fmt, ...) __attribute__((format(printf, 3, 4)));
 

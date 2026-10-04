@@ -35,12 +35,18 @@ plus an insert: with foreign keys on, it would run the children's ON DELETE acti
 `insert ... on conflict(pk) do update set` instead. Checks server/ (the joined literals) and the
 consumers' SQL (port/scripts, emulator/scripts, tools, tests: line by line). Exit 1 on a finding.
 
-    tools/schema_inventory.py --check STATE_DB [MASTER_DB]
+    tools/schema_inventory.py --check [--strict] STATE_DB [MASTER_DB]
 
 Gate G9 of server/PLAN-schema.md (from S4): a state DB's `pragma foreign_key_check` is empty
 (every declared foreign key holds), and its references into the master resolve (the `m:` rows of
 RELS, reported; a master can change under a saved state, so they don't fail it). Exit 1 on a
-foreign key violation.
+foreign key violation. --strict (S11: the end state of every session and tests/diff run, which
+ran with that master: control/soadrive/targets.py Run.stop) also fails on a dangling master
+reference, a missing master and a state not at this build's schema version (state/schema.h
+kSchemaVersion).
+
+The plain run (T0's `schema-inventory`) also checks that RELS's `m:` rows are the server's own list,
+state::master_refs() in server/src/state/check.cpp (the one list, S11), and exits 1 if they differ.
 """
 import argparse
 import collections
@@ -371,17 +377,19 @@ RELS = [
      "four disjoint id spaces (the tower's floors too: S0 found them in the tower replay)"),
     ("unlocks", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-", ""),
     ("unlocks", "by_mission", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", 0, "-", ""),
-    ("unlocks", "by_mission", "mission", "mission_id", 0, "NO ACTION, deferred", "the mission whose clear opened it"),
+    ("unlocks", "by_mission", "mission", "mission_id", None, "NO ACTION, deferred (S10)", "the mission whose clear opened it (0 before S10)"),
     ("play", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission|master_deep_space_mission", "id", 0, "-", ""),
     ("play", "party_id", "party_set", "party_id", None, "SET NULL (S7)", "the battle's party set (play_ext merged in, S7)"),
     ("play_member", "play_id", "play", "id", None, "CASCADE (S7)", "the play's members (play.uids text before S7)"),
     ("play_member", "uid", "roster", "uid", None, "SET NULL (S7)", "an owned member (NULL: a mission NPC, npc_uid 0x7f0000xx, or gone)"),
     ("gacha_history", "gacha_id", "m:master_gacha", "id", None, "-", ""),
-    ("gacha_history", "role_id", "m:master_role", "id", 0, "-", ""),
-    ("gacha_history", "uid", "roster|items", "uid", 0, "SET NULL (split: character_uid / item_uid, S10)", "a character uid, or an item uid for a weapon draw (role_id 0)"),
+    ("gacha_history", "role_id", "m:master_role", "id", 0, "-", "NULL: a weapon draw (0 before S10)"),
+    ("gacha_history", "character_uid", "roster", "uid", None, "SET NULL (S10)", "the drawn character (uid where role_id != 0 before S10)"),
+    ("gacha_history", "item_uid", "items", "uid", None, "SET NULL (S10)",
+     "the drawn weapon (uid where role_id = 0 before S10; NULL once sold or used up)"),
     ("stepup", "head", "m:master_gacha", "id", None, "-", ""),
     ("box_state", "gacha_id", "m:master_gacha", "id", None, "-", ""),
-    ("box_slots", "gacha_id", "box_state", "gacha_id", None, "CASCADE", ""),
+    ("box_slots", "gacha_id", "box_state", "gacha_id", None, "CASCADE (S10)", "a box's drawn slots (BoxGacha writes box_state first)"),
     ("login_bonus", "id", "m:master_login_bonus", "id", None, "-", ""),
     ("achievements", "id", "m:master_achievement", "id", None, "-", ""),
     ("titles", "id", "m:master_title", "id", None, "-", ""),
@@ -389,41 +397,77 @@ RELS = [
     ("subscription", "plan_id", "m:master_subscription_plan", "id", None, "-", ""),
     ("favor", "same_role_id", "m:master_role", "same_role_id", None, "-", "favor per same role"),
     ("favor_drop_play", "same_role_id", "m:master_role", "same_role_id", None, "-", ""),
-    ("favor_bonus_state", "lot_uid", "roster", "uid", 0, "SET NULL", "the favor bonus character"),
+    ("favor_bonus_state", "lot_uid", "roster", "uid", None, "SET NULL (S10)", "the favor bonus character (a plain uid before S10)"),
     ("shop_counts", "id", "m:master_item_shop", "id", None, "-", ""),
     ("ds_area", "area_id", "m:master_deep_space_area", "id", None, "-", ""),
     ("ds_offer", "mission_id", "m:master_deep_space_mission", "id", None, "-", ""),
-    ("ds_offer", "area_id", "ds_area", "area_id", None, "CASCADE", ""),
-    ("ds_offer", "ship_id", "ds_ship", "ship_id", 0, "SET NULL", ""),
-    ("ds_ship", "area_id", "ds_area", "area_id", None, "CASCADE", ""),
+    ("ds_offer", "area_id", "ds_area", "area_id", None, "CASCADE (S10)", "an area's offers"),
+    ("ds_offer", "ship_id", "ds_ship", "ship_id", None, "SET NULL (S10)", "the ship the offer is on (NULL: on offer; 0 before S10)"),
+    ("ds_ship", "area_id", "ds_area", "area_id", None, "CASCADE (S10)", "an area's ships"),
     ("ds_ship_member", "ship_id", "ds_ship", "ship_id", None, "CASCADE (S7)", "a ship's crew (ds_ship.uids text before S7)"),
     ("ds_ship_member", "uid", "roster", "uid", None, "NO ACTION (S7)", "the ship's crew: a character out on a ship"),
-    ("ds_bonus", "ship_id", "ds_ship", "ship_id", None, "CASCADE", ""),
-    ("sphere_departed", "uid", "roster", "uid", None, "CASCADE", ""),
+    ("ds_bonus", "ship_id", "ds_ship", "ship_id", None, "CASCADE (S10)", "a ship's bonus values (deleted by hand at MissionEnd before S10)"),
+    ("sphere_departed", "uid", "roster", "uid", None, "CASCADE (S10)", "a character that sortied (出撃済み until 帰還)"),
     ("sphere_cell", "asset_id", "m:master_sphere211_floor_asset", "id", None, "-", ""),
     ("sphere", "season_id", "m:master_sphere211", "id", 0, "-", ""),
     ("wboss", "boss_id", "m:master_world_boss", "id", None, "-", ""),
-    ("wboss_clear", "boss_id", "wboss", "boss_id", None, "CASCADE", ""),
+    ("wboss_clear", "boss_id", "wboss", "boss_id", None, "CASCADE, deferred (S10)", "a boss's cleared waves (a first meeting's clear is written before the boss)"),
     ("event_rank_score", "ranking_id", "m:master_event_ranking", "id", None, "-", ""),
     ("event_rank_received", "group_id", "m:master_event_ranking_group", "id", None, "-", ""),
-    ("wire_device", "player_id", "player", "id", 0, "SET NULL", ""),
+    ("wire_device", "player_id", "player", "id", None, "SET NULL (S10)", "the device's player (NULL: none yet, a new-player state; 0 before S10)"),
     ("player", "support_uid", "roster", "uid", None, "SET NULL (S4)", "Player.support_pc_id (meta support_uid before S3)"),
     ("player", "title_id", "titles", "id", None, "SET NULL (S4)", "Player.title (meta title before S3)"),
 ]
 
 
-def check(st_path, master_path):
-    """Gate G9: the state's foreign_key_check rows (fatal) and its master references (reported)."""
+def schema_version():
+    """kSchemaVersion of server/src/state/schema.h (the version this build writes)."""
+    m = re.search(r"constexpr int kSchemaVersion = (\d+);", open(os.path.join(ROOT, "server/src/state/schema.h"), encoding="utf-8").read())
+    return int(m.group(1)) if m else None
+
+
+def check(st_path, master_path, strict=False):
+    """Gate G9: the state's foreign_key_check rows (fatal) and its master references (reported;
+    fatal with strict, as are a missing master and a state at another schema version)."""
+    if not os.path.exists(st_path):
+        print("schema_inventory --check %s: no such file" % st_path)
+        return False
     c = sqlite3.connect("file:%s?mode=ro" % st_path, uri=True)
     bad = [tuple(r) for r in c.execute("pragma foreign_key_check")]
     for table, rowid, parent, fkid in bad:
         print("foreign key violation: %s rowid %s -> %s" % (table, rowid, parent))
+    problems = ["%d foreign key violation(s)" % len(bad)] if bad else []
+    version, want = c.execute("pragma user_version").fetchone()[0], schema_version()
+    c.close()
+    if strict and version != want:
+        problems.append("schema version %s, this build's is %s" % (version, want))
+    if strict and not (master_path and os.path.exists(master_path)):
+        problems.append("no master DB %s" % master_path)
+        master_path = None
+    ndangling = 0
     for ch, col, par, pcol, none, act, n, nnull, nzero, dangling in fk_report(st_path, master_path):
         if par.startswith("m:") and isinstance(dangling, list) and dangling:
+            ndangling += 1
             print("master reference: %s.%s -> %s.%s: %d dangling (%s)" % (ch, col, par[2:], pcol, len(dangling),
                                                                         ", ".join(str(v) for v in dangling[:5])))
-    print("schema_inventory --check %s: %s" % (st_path, "%d foreign key violation(s)" % len(bad) if bad else "foreign keys hold"))
-    return not bad
+    if strict and ndangling:
+        problems.append("%d master reference(s) dangling" % ndangling)
+    print("schema_inventory --check %s: %s" % (st_path, "; ".join(problems) if problems else "foreign keys hold" + (
+        ", master references resolve, version %s" % version if strict else "")))
+    return not problems
+
+
+def server_master_refs():
+    """state::master_refs() of server/src/state/check.cpp: (table, column, "m:" + tables, master column, 0 or None)."""
+    src = open(os.path.join(ROOT, "server/src/state/check.cpp"), encoding="utf-8").read()
+    body = src[src.index("master_refs() {"):]
+    body = body[:body.index("return refs;")]
+    rows = re.findall(r'\{\s*"(\w+)",\s*"(\w+)",\s*"([\w|]+)",\s*"(\w+)",\s*(true|false)\s*\}', body)
+    return [(t, c, "m:" + m, mc, 0 if z == "true" else None) for t, c, m, mc, z in rows]
+
+
+def rels_master_rows():
+    return [(ch, col, par, pcol, none) for ch, col, par, pcol, none, _act, _note in RELS if par.startswith("m:")]
 
 
 def fk_report(st_path, master_path):
@@ -518,8 +562,15 @@ def lint():
 
 
 def main():
-    if sys.argv[1:2] == ["--check"] and len(sys.argv) in (3, 4):
-        sys.exit(0 if check(sys.argv[2], sys.argv[3] if len(sys.argv) == 4 else os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3")) else 1)
+    if sys.argv[1:2] == ["--check"]:
+        rest = sys.argv[2:]
+        strict = "--strict" in rest
+        rest = [x for x in rest if x != "--strict"]
+        if len(rest) not in (1, 2):
+            print("usage: schema_inventory.py --check [--strict] STATE_DB [MASTER_DB]", file=sys.stderr)
+            sys.exit(2)
+        master = rest[1] if len(rest) == 2 else os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3")
+        sys.exit(0 if check(rest[0], master, strict) else 1)
     if sys.argv[1:] == ["--lint"]:
         found = lint()
         for f in found:
@@ -790,6 +841,19 @@ def main():
         open(a.update, "w", encoding="utf-8").write(doc[:i] + "\n" + text + "\n" + doc[j:])
     else:
         sys.stdout.write(text + "\n")
+    # the one list of master references (S11): RELS's m: rows are state::master_refs()
+    ours, theirs = rels_master_rows(), server_master_refs()
+    if ours != theirs:
+        print("schema_inventory: RELS's m: rows differ from state::master_refs() (server/src/state/check.cpp):", file=sys.stderr)
+        for r in ours:
+            if r not in theirs:
+                print("  only in RELS: %s" % (r,), file=sys.stderr)
+        for r in theirs:
+            if r not in ours:
+                print("  only in check.cpp: %s" % (r,), file=sys.stderr)
+        if sorted(ours) == sorted(theirs):
+            print("  (the same rows in another order)", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

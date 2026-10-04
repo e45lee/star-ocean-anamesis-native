@@ -35,6 +35,7 @@ struct Value {
     Value(const char* v) : type(Str), s(v) {}
     Value(std::string v) : type(Str), s(std::move(v)) {}
 
+    // An empty array and an empty map.
     static Value array() {
         Value v;
         v.type = Arr;
@@ -79,10 +80,12 @@ struct Value {
     }
 };
 
+// Appends the low `n` bytes of `v`, big-endian.
 inline void mp_put_be(std::vector<uint8_t>& o, uint64_t v, int n) {
     for (int k = n - 1; k >= 0; k--) o.push_back((uint8_t)(v >> (8 * k)));
 }
 
+// Appends `v`'s MessagePack encoding to `o`.
 inline void mp_encode(const Value& v, std::vector<uint8_t>& o) {
     switch (v.type) {
         case Value::Nil:
@@ -180,6 +183,7 @@ inline void mp_encode(const Value& v, std::vector<uint8_t>& o) {
     }
 }
 
+// `v`'s MessagePack encoding.
 inline std::vector<uint8_t> mp_encode(const Value& v) {
     std::vector<uint8_t> o;
     mp_encode(v, o);

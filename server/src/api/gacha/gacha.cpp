@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <optional>
 
 #include "api/events/enable_events.h"  // --enable-events
 #include "api/player/player_info.h"    // base_data, player_id, stack_item_info_list
@@ -206,12 +207,19 @@ bool pay_draw(ext::Ctx& ctx, const Request& req, const Row& gacha_row, GachaDraw
     return true;
 }
 
-// The gacha_history row of one unit: the coins of the whole draw on its first unit (k == 0).
-// (gacha_history.uid is an item's or a character's uid, a plain number until PLAN-schema S10)
-void record_history(ext::Ctx& ctx, const GachaDraw& draw, u32 role, u64 uid, int rank, bool duplicate, u32 k) {
-    ctx.st.q("insert into gacha_history (gacha_id, at, role_id, uid, rank, duplicate, cost_free, cost_pay) values (?,?,?,?,?,?,?,?)",
-             {draw.id, clock_now(), role, uid, std::string(1, kRankLetters[rank]), duplicate ? 1 : 0, k == 0 ? draw.use_free : 0u,
-              k == 0 ? draw.use_pay : 0u});
+// The gacha_history row of one unit: a character (its role and uid) or a weapon (its item uid;
+// no role); the coins of the whole draw on its first unit (k == 0).
+struct Drawn {
+    std::optional<RoleId> role;
+    std::optional<CharacterUid> character;
+    std::optional<ItemUid> item;
+};
+void record_history(ext::Ctx& ctx, const GachaDraw& draw, const Drawn& drawn, int rank, bool duplicate, u32 k) {
+    ctx.st.q(
+        "insert into gacha_history (gacha_id, at, role_id, character_uid, item_uid, rank, duplicate, cost_free, cost_pay) "
+        "values (?,?,?,?,?,?,?,?,?)",
+        {draw.id, clock_now(), drawn.role, drawn.character, drawn.item, std::string(1, kRankLetters[rank]), duplicate ? 1 : 0,
+         k == 0 ? draw.use_free : 0u, k == 0 ? draw.use_pay : 0u});
 }
 
 // 4a. A drawn weapon: a new unique item (AddItem) and the history row.
@@ -235,7 +243,7 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     result["duplication"] = 0u;
     result["is_mutation"] = false;
     draw.items.push(result);
-    record_history(ctx, draw, 0, item_uid.v, rank, false, k);
+    record_history(ctx, draw, Drawn{std::nullopt, std::nullopt, item_uid}, rank, false, k);
 }
 
 // (b) LimitBreakCharacter: map uid -> CLimitBreakInfo; the result screen assigns the steps to the
@@ -311,7 +319,7 @@ void add_drawn_role(ext::Ctx& ctx, GachaDraw& draw, u32 role, int rank, u32 k, b
         character["awaken_level"] = 0u;
         draw.added_characters[std::to_string(uid.v)] = character;
     }
-    record_history(ctx, draw, role, uid.v, rank, duplicate, k);
+    record_history(ctx, draw, Drawn{RoleId(role), uid, std::nullopt}, rank, duplicate, k);
 }
 
 // 4. The draws: a rank by the rates, a unit from the pools (or by rarity), duplicates, limit

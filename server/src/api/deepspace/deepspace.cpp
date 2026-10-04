@@ -428,7 +428,8 @@ void grant_drops(Ctx& ctx, const Ship& ship, Expedition& done, double& rare_miss
 
 // The offer: back on the list with a new bonus set (d); a rare offer is used up (d).
 void renew_offer(Ctx& ctx, const Ship& ship, ServerTime t) {
-    bool rare_offer = ctx.st.one("select closed_at from ds_offer where mission_id = ?", {ship.mission_id}) != 0;
+    // a rare offer has a limit; 0 = none (a sentinel PLAN-schema S10 maps to NULL)
+    bool rare_offer = ctx.st.one_time("select closed_at from ds_offer where mission_id = ?", {ship.mission_id}).v != 0;
     if (rare_offer) {
         ctx.st.q("delete from ds_offer where mission_id = ?", {ship.mission_id});
     } else {

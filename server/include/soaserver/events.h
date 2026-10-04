@@ -3,12 +3,13 @@
 // unit tests (api/events/event_missions_tests.cpp) reach directly. Rules and labels in docs/server-rules.md "Events":
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 //
-// Two clocks meet here (server.h): the client's clock `now` (data.Time = the server clock; the
-// client filters the event areas and missions by it, (b) MissionUtility::GetEventAreaList /
-// GetEventMissionList) and the event calendar `ev` (event_now: the replayed service calendar).
-// The dated master tables are moved by the whole years between the two (year_shift), in the
-// client's master copy (ext::ClientMaster) and in every server-side window check alike, so both
-// sides agree on what is open.
+// Two clocks meet here (server.h; their types soaserver/times.h): the client's clock `now`, a
+// ServerTime (data.Time = the server clock; the client filters the event areas and missions by
+// it, (b) MissionUtility::GetEventAreaList / GetEventMissionList) and the event calendar `ev`, an
+// EventTime (event_now: the replayed service calendar). The dated master tables are moved by the
+// whole years between the two (year_shift), in the client's master copy (ext::ClientMaster) and in
+// every server-side window check alike, so both sides agree on what is open: a master date moved
+// by the shift is on the client's clock and compares with a ServerTime.
 #include <cstdint>
 #include <functional>
 #include <string>

@@ -16,14 +16,16 @@ using ext::Ctx;
 using ext::Row;
 
 // ---- clocks (state.cpp) --------------------------------------------------------------------
-// Expedition timers (a ship's started_at / closed_at, a rare offer's limit, the quick-return price
-// and its daily count) run on the server clock ctx.now() (clock_now: --clock / the tests
-// fast-forward them). Dated master rows use the event calendar ctx.event_now() when only the
-// server reads them (bonus sets, drop items, bonus items): calendar(). Rows the client also filters
-// by its own clock (data.Time = the server clock): areas and missions (b: CDeepSpace::
-// GetDeepSpaceAreaList / GetDeepSpaceMissionList drop those outside opened_at..closed_at) must be
-// open by both, or the server would offer what the client hides: open_by_both_clocks(). The ship
-// count reads the server clock only (b: CUIUtility::GetMaxShipCount).
+// Each time names its clock by its type (soaserver/times.h, PLAN-readability R17). Expedition
+// timers (a ship's started_at / closed_at, a rare offer's limit, the quick-return price and its
+// daily count, the play-limit days) are ServerTimes: the server clock ctx.now() (clock_now:
+// --clock / the tests fast-forward them), as everything the state stores. Dated master rows only
+// the server reads (bonus sets, drop items, bonus items) are tested against the event calendar,
+// an EventTime: calendar(). Rows the client also filters by its own clock (data.Time = the server
+// clock): areas and missions (b: CDeepSpace::GetDeepSpaceAreaList / GetDeepSpaceMissionList drop
+// those outside opened_at..closed_at) must be open on both clocks, or the server would offer what
+// the client hides: open_by_both_clocks() tests the window with an EventTime and a ServerTime. The
+// ship count reads the server clock only (b: CUIUtility::GetMaxShipCount: a ServerTime).
 EventTime calendar(Ctx& ctx);
 bool open_by_both_clocks(Ctx& ctx, const std::string& opened_at, const std::string& closed_at);
 

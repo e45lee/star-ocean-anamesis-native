@@ -33,8 +33,8 @@ namespace soa::server::deepspace {
 namespace dr = rules::deepspace;
 
 // ---- clocks ----------------------------------------------------------------------------------
-// open_at (core/time.h): (a) a dated master row's opened_at / closed_at window. The two clocks:
-// deepspace.h.
+// open_at (core/time.h): (a) a dated master row's opened_at / closed_at window, tested on the clock
+// its argument's type names. The two clocks: deepspace.h.
 EventTime calendar(Ctx& ctx) { return ctx.event_now(); }
 bool open_by_both_clocks(Ctx& ctx, const std::string& opened_at, const std::string& closed_at) {
     return open_at(opened_at, closed_at, calendar(ctx)) && open_at(opened_at, closed_at, ctx.now());
@@ -248,7 +248,7 @@ Value mission_info(Ctx& ctx, const Row& offer_row) {
     // mission with a weekly limit; "" otherwise (all of the 3.7.0 data).
     int limit_type = (int)ctx.m.one("select ifnull(limit_type, 0) from master_deep_space_mission where id = ?", {offer_row.i("mission_id")});
     info["count_weekly_at"] = limit_type == (int)dr::LimitType::kWeekly ? ctx.fmt_time(dr::week_start(limit_day(ctx, ctx.now()).v)) : std::string("");
-    info["updated_at"] = ctx.fmt_time(offer_row.i("updated_at"));
+    info["updated_at"] = ctx.fmt_time(offer_row.time("updated_at"));
     info["is_new"] = offer_row.i("is_new") != 0;
     info["play_count_daily"] = (u32)offer_row.i("play_count_daily");
     info["play_count_weekly"] = (u32)offer_row.i("play_count_weekly");
@@ -298,8 +298,8 @@ Value ship_info(Ctx& ctx, const Row& ship_row) {
     info["master_mission_id"] = (u32)ship_row.i("mission_id");
     info["bonus_set_id"] = (u32)ship_row.i("bonus_set_id");
     info["item_id"] = (u32)ship_row.i("item_id");
-    info["started_at"] = ctx.fmt_time(ship_row.i("started_at"));
-    info["closed_at"] = ctx.fmt_time(ship_row.i("closed_at"));
+    info["started_at"] = ctx.fmt_time(ship_row.time("started_at"));
+    info["closed_at"] = ctx.fmt_time(ship_row.time("closed_at"));
     return info;
 }
 // (b) CUIUtility::GetUnusedShipCount counts both maps: a ship is busy until MissionEnd collects
@@ -355,7 +355,7 @@ Value deep_mission_player(Ctx& ctx, ServerTime t, bool level_up) {
         player["is_level_up"] = level_up;
         player["tower_try_count"] = 0u;  // (d) deep space has no tower tries
         player["time_saving_use_count"] = time_saving_count(ctx, t);
-        player["stamina_update"] = ctx.fmt_time(player_row.i("stamina_at"));
+        player["stamina_update"] = ctx.fmt_time(player_row.time("stamina_at"));
     });
     return player;
 }

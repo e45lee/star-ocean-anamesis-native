@@ -28,7 +28,7 @@ std::string present_line(ext::Ctx& ctx, const Row& present_row) {
 // (b) CPresentbox::CreateAllPresentList lists only presents whose deadline_at isn't past
 // (an empty one parses as 0: hidden); (a) master_global present_deadline_day (30) after
 // the present was created.
-std::string present_deadline(ext::Ctx& ctx, int64_t created_at) {
+std::string present_deadline(ext::Ctx& ctx, ServerTime created_at) {
     return format_time(created_at + (int64_t)ctx.global_u32("present_deadline_day", 30) * 86400);
 }
 
@@ -43,7 +43,7 @@ Value present_box_info(ext::Ctx& ctx, const Row& present_row, PlayerId player) {
     info["reason_param"] = (u32)present_row.i("reason_param");
     info["is_receive"] = 0u;
     info["free_text_message_id"] = present_line(ctx, present_row);
-    info["deadline_at"] = present_deadline(ctx, present_row.i("created_at"));
+    info["deadline_at"] = present_deadline(ctx, present_row.time("created_at"));
     return info;
 }
 

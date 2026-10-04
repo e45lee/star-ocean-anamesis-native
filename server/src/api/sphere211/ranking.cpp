@@ -67,7 +67,7 @@ Value ranking_info_map(Ctx& ctx, const Season& season) {
         Value info = Value::object();
         info["player_id"] = player_id;
         info["floor_level"] = (u32)rank_row.i("floor_level");
-        info["entered_at"] = ctx.fmt_time(rank_row.i("entered_at"));
+        info["entered_at"] = ctx.fmt_time(rank_row.time("entered_at"));
         info["rank"] = 1u;
         map[std::to_string(player_id)] = info;
     });

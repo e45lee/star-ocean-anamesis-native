@@ -39,18 +39,17 @@ int64_t add_years(int64_t t, int years);
 int year_of(int64_t t);
 
 // A master row's opened_at..closed_at window, both ends inclusive; an empty end is open-ended.
-// The ends are parsed with parse_time (so an unparsable one reads as 0).
+// The ends are parsed with parse_time (so an unparsable one reads as 0): the master's own dates,
+// raw seconds of no clock. A test names the clock it reads by its argument's type
+// (soaserver/times.h): the server clock (what the client sees, data.Time) or the event calendar.
 struct Window {
     int64_t opened = INT64_MIN, closed = INT64_MAX;
     static Window of(const std::string& opened_at, const std::string& closed_at);
-    bool contains(int64_t t) const { return opened <= t && t <= closed; }
-    // The window tested on a clock: the server clock (what the client sees, data.Time) or the event
-    // calendar (soaserver/times.h); the overload names the clock.
-    bool contains(ServerTime t) const { return contains(t.v); }
-    bool contains(EventTime t) const { return contains(t.v); }
+    bool contains(ServerTime t) const { return opened <= t.v && t.v <= closed; }
+    bool contains(EventTime t) const { return opened <= t.v && t.v <= closed; }
 };
-// Window::of(opened_at, closed_at).contains(t): whether a dated master row is open at t.
-inline bool open_at(const std::string& opened_at, const std::string& closed_at, int64_t t) { return Window::of(opened_at, closed_at).contains(t); }
+// Window::of(opened_at, closed_at).contains(t): whether a dated master row is open at t, on the
+// server clock or on the event calendar.
 inline bool open_at(const std::string& opened_at, const std::string& closed_at, ServerTime t) { return Window::of(opened_at, closed_at).contains(t); }
 inline bool open_at(const std::string& opened_at, const std::string& closed_at, EventTime t) { return Window::of(opened_at, closed_at).contains(t); }
 

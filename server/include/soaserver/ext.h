@@ -68,11 +68,14 @@ struct Ctx {
     // A live server (soa or soa-server): the client's data (the request's battle log, the asset
     // index) is there; false in the unit tests' scratch servers.
     bool live() const;
-    ServerTime now();                               // the server clock (--clock aware)
-    // The event calendar (server.h event_now): dated content (event terms, deep-space missions,
-    // Sphere 211 seasons) uses it; wallet, stamina and other real-time rules use now().
+    // The two clocks, each its own type (soaserver/times.h): now() the server clock (--clock
+    // aware; wallet, stamina, every stored time, the wire's data.Time), event_now() the event
+    // calendar (server.h event_now: dated content only the server decides, e.g. event terms,
+    // deep space's bonus sets, Sphere 211's season).
+    ServerTime now();
     EventTime event_now();
-    std::string fmt_time(int64_t t);               // "YYYY-MM-DD HH:MM:SS", local time
+    // "YYYY-MM-DD HH:MM:SS", local time: a time of either clock, or a master date's raw seconds.
+    std::string fmt_time(int64_t t);
     std::string fmt_time(ServerTime t) { return fmt_time(t.v); }
     std::string fmt_time(EventTime t) { return fmt_time(t.v); }
     int64_t parse_time(const std::string& s);
@@ -99,7 +102,7 @@ struct Ctx {
     // Tests only (the scratch servers' callers): fixed clocks instead of the server's, and an
     // observer of refusals. Unset in a live server.
     struct TestHooks {
-        std::function<int64_t()> now, event_now;
+        std::function<int64_t()> now, event_now;  // seconds: now() / event_now() wrap them in their clock's type
         std::function<void(u32 code)> on_refuse;
     } test;
 };

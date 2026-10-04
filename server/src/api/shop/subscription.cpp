@@ -117,9 +117,9 @@ Value subscription_plan_info(Ctx& ctx) {
     ctx.st.q("select * from subscription order by plan_id", {}, [&](const Row& plan_row) {
         Value entry = Value::object();
         entry["master_subscription_plan_id"] = (u32)plan_row.i("plan_id");
-        entry["updated_at"] = ctx.fmt_time(plan_row.i("updated_at"));
-        entry["opened_at"] = ctx.fmt_time(plan_row.i("opened_at"));
-        entry["closed_at"] = ctx.fmt_time(plan_row.i("closed_at"));
+        entry["updated_at"] = ctx.fmt_time(plan_row.time("updated_at"));
+        entry["opened_at"] = ctx.fmt_time(plan_row.time("opened_at"));
+        entry["closed_at"] = ctx.fmt_time(plan_row.time("closed_at"));
         info[std::to_string(plan_row.i("plan_id"))] = entry;
     });
     return info;

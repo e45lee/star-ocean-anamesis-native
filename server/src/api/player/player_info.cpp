@@ -91,7 +91,7 @@ Value player_info(ext::Ctx& ctx) {
         player["fol"] = (u32)player_row.i("fol");
         player["stamina"] = (u32)player_row.i("stamina");
         player["stamina_max"] = ctx.stamina_max(level);  // (a) master_player_level.stamina
-        player["stamina_update"] = format_time(player_row.i("stamina_at"));
+        player["stamina_update"] = format_time(player_row.time("stamina_at"));
         // The home character's uid (b): 3.7.0's CHome::GetAdjutant (@01aebe38) takes
         // CParameterManager+0x8698 (FavorBonusContetsResultInfo.lot_character_id, also a uid:
         // CFavorCharacterLoginBonus::Setup builds its card from it) when set, else +0xd08
@@ -104,9 +104,9 @@ Value player_info(ext::Ctx& ctx) {
         // 2. the stock caps
         add_stock_caps(ctx, player);
         // 3. the times; (d) updated_at is the answer's time
-        player["created_at"] = format_time(player_row.i("created_at"));
+        player["created_at"] = format_time(player_row.time("created_at"));
         player["updated_at"] = format_time(clock_now());
-        player["last_login_at"] = format_time(player_row.i("last_login_at"));
+        player["last_login_at"] = format_time(player_row.time("last_login_at"));
         // (d) the 3D home: Home3DAnd2DSwitching (3.7.0's CHome::Progress) has no handler, so the
         // flag never changes
         player["is_3d_home"] = true;

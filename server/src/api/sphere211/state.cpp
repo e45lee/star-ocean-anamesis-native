@@ -79,8 +79,8 @@ Value floor_cells(Ctx& ctx, u32 player_id) {
         info["is_playing"] = cell_row.i("playing") != 0;
         info["can_play"] = playable[(u32)cell_row.i("asset_id")];
         info["is_new"] = playable[(u32)cell_row.i("asset_id")];
-        info["updated_at"] = ctx.fmt_time(cell_row.i("updated_at"));
-        info["created_at"] = ctx.fmt_time(cell_row.i("created_at"));
+        info["updated_at"] = ctx.fmt_time(cell_row.time("updated_at"));
+        info["created_at"] = ctx.fmt_time(cell_row.time("created_at"));
         cells[std::to_string((u32)cell_row.i("asset_id"))] = info;
     });
     return cells;

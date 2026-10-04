@@ -64,7 +64,8 @@ int64_t deep_space_exploration_rate(Ctx& ctx, int64_t area_id) {
 int64_t deep_space_expeditions(Ctx& ctx, const Row& achievement_row) {
     if (!achievement_row.null("is_unlimited") && achievement_row.i("is_unlimited")) return ctx.st.one("select count(*) from ds_log", {});
     std::string opened_at = achievement_row.s("opened_at"), closed_at = achievement_row.s("closed_at");
-    int64_t from = opened_at.empty() ? 0 : ctx.parse_time(opened_at), to = closed_at.empty() ? INT64_MAX : ctx.parse_time(closed_at);
+    // the master's dates against the departures' times (the server clock)
+    ServerTime from(opened_at.empty() ? 0 : ctx.parse_time(opened_at)), to(closed_at.empty() ? INT64_MAX : ctx.parse_time(closed_at));
     return ctx.st.one("select count(*) from ds_log where started_at >= ? and started_at <= ?", {from, to});
 }
 

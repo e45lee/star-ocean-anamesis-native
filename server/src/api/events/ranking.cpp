@@ -150,7 +150,7 @@ Value event_ranking_info(Ctx& ctx, const Row& score_row) {
         info["party_role_id" + slot] = filled ? roles[k] : 0u;
     }
     info["battle_id"] = 0u;
-    info["created_at"] = ctx.fmt_time(score_row.i("created_at"));
+    info["created_at"] = ctx.fmt_time(score_row.time("created_at"));
     return info;
 }
 

@@ -1154,7 +1154,13 @@ NATIVE_TEST("server/schema-migrate-v10") {
                 "update sqlite_sequence set seq = 42 where name = 'sphere_log';"
                 "insert into sphere_rank (season_id, floor_level, entered_at) values (69, null, null);"
                 // daily: the fixture's favor bonus row has healed_at 0; its lot character not owned
-                "update favor_bonus_state set lot_uid = 12345;"),
+                "update favor_bonus_state set lot_uid = 12345;"
+                // the rest: a meta key without a value, NULL counts, an unlock by a mission never played (the fixture's
+                // wire_device has player_id 0)
+                "insert into meta (key, value) values ('x_key', null);"
+                "insert into stock (master_item_id, item_type, count) values (70, null, null);"
+                "insert into counters (key, value) values ('x_count', null);"
+                "insert into unlocks (mission_id, mission_type, by_mission, at) values (71, null, 4242, null), (72, 1, 0, 5);"),
             true, "the S10 cases planted");
     t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 9, m), true, "the reference: migrated to 9");
     t.expect_eq(state::open_and_migrate(db.h, old.path, 10, m), true, "migrated to 10");
@@ -1169,6 +1175,7 @@ NATIVE_TEST("server/schema-migrate-v10") {
         "shop_counts", "exchange_counts", "subscription",
         "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
         "favor_bonus_state",
+        "meta", "stock", "counters", "achievements", "gear_barney", "unlocks", "wire_device",
     };
     // clang-format on
     std::vector<std::string> tables;
@@ -1247,7 +1254,20 @@ NATIVE_TEST("server/schema-migrate-v10") {
     // daily: (id, day_at, bonus_id, lot_uid, healed_at)
     t.expect_eq(rows_over(db, "favor_bonus_state", "*"), (std::vector<std::string>{"1:1|1:1790755200|1:0|5:|5:|"}),
                 "favor_bonus_state: healed_at 0 -> NULL (never), lot_uid not owned -> NULL, day_at kept");
-    for (const char* table : {"event_last", "event_rank_received", "subscription"})
+    // the rest
+    t.expect_eq(rows_over(db, "meta", "*", "key = 'x_key'"), (std::vector<std::string>{"3:x_key|3:|"}), "meta: NULL value -> ''");
+    t.expect_eq(rows_over(db, "stock", "*", "master_item_id = 70"), (std::vector<std::string>{"1:70|1:0|1:0|"}), "stock: NULLs -> 0");
+    t.expect_eq(rows_over(db, "counters", "*", "key = 'x_count'"), (std::vector<std::string>{"3:x_count|1:0|"}), "counters: NULL -> 0");
+    t.expect_eq(rows_over(db, "unlocks", "*", "mission_id in (71, 72)"), (std::vector<std::string>{"1:71|1:0|5:|1:0|", "1:72|1:1|5:|1:5|"}),
+                "unlocks: by_mission never played or 0 -> NULL, NULLs -> 0");
+    t.expect_eq(rows_over(db, "unlocks", "*", "mission_id < 71"), rows_over(ref, "unlocks", "*", "mission_id < 71"), "the fixture's unlock kept");
+    t.expect_eq(rows_over(db, "wire_device", "uuid, player_id"), (std::vector<std::string>{"3:00000000-0000-4000-8000-000000000001|5:|"}),
+                "wire_device.player_id 0 -> NULL (a device seen before the player)");
+    for (const char* table : {"meta", "stock", "counters"}) {
+        const std::string other = std::string(table) == "stock" ? "master_item_id != 70" : "key not like 'x_%'";
+        t.expect_eq(rows_over(db, table, "*", other), rows_over(ref, table, "*", other), (std::string(table) + "'s rows kept").c_str());
+    }
+    for (const char* table : {"event_last", "event_rank_received", "subscription", "achievements", "gear_barney"})
         t.expect_eq(rows_over(db, table, "*"), rows_over(ref, table, "*"), (std::string(table) + " copied").c_str());
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");
     ref.close();
@@ -1268,6 +1288,7 @@ NATIVE_TEST("server/schema-migrate-v10") {
     t.expect_eq(f.one("select count(*) from ds_offer where closed_at is null and ship_id = 1", {}), (int64_t)1, "the offer: no limit, on ship 1");
     t.expect_eq(f.one("select count(*) from favor_bonus_state where healed_at is null and lot_uid is not null", {}), (int64_t)1,
                 "the favor bonus: never healed, its character kept");
+    t.expect_eq(f.one("select count(*) from wire_device where player_id is null", {}), (int64_t)1, "the device: no player");
     t.expect_eq(fk_violations(f), 0, "foreign_key_check");
     f.close();
     Sql bak;
@@ -1413,6 +1434,16 @@ NATIVE_TEST("server/schema-fk-actions") {
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once (S10)").c_str());
     t.expect_eq(rc("insert into sphere_departed (uid) values (9999)"), SQLITE_CONSTRAINT_FOREIGNKEY, "sphere_departed: refused at once (S10)");
     t.expect_eq(rc("update favor_bonus_state set lot_uid = 9999"), SQLITE_CONSTRAINT_FOREIGNKEY, "favor_bonus_state.lot_uid: refused at once (S10)");
+    t.expect_eq(rc("update wire_device set player_id = 9999"), SQLITE_CONSTRAINT_FOREIGNKEY, "wire_device.player_id: refused at once (S10)");
+    t.expect_eq(rc("update wire_device set player_id = (select id from player)"), SQLITE_OK, "the device: the player's");
+    t.expect_eq(txn("insert into unlocks (mission_id, mission_type, by_mission, at) values (73, 1, 4243, 0)"), SQLITE_CONSTRAINT_FOREIGNKEY,
+                "an unlock by a mission never played: refused at commit (S10)");
+    t.expect_eq(txn("insert into unlocks (mission_id, mission_type, by_mission, at) values (73, 1, 4243, 0);"
+                    "insert into mission (mission_id) values (4243)"),
+                SQLITE_OK, "deferred: the mission's row before commit (MissionEnd's order, S10)");
+    t.expect_eq(rc("delete from mission where mission_id = 4243"), SQLITE_CONSTRAINT_FOREIGNKEY, "a mission that unlocked one: NO ACTION");
+    t.expect_eq(rc("insert into meta (key) values ('y')"), SQLITE_CONSTRAINT_NOTNULL, "meta.value not null (S10)");
+    t.expect_eq(rc("update gear_barney set id = 2"), SQLITE_CONSTRAINT_CHECK, "gear_barney: one row");
     t.expect_eq(rc("update favor_bonus_state set id = 2"), SQLITE_CONSTRAINT_CHECK, "favor_bonus_state: one row");
     t.expect_eq(rc("insert into gacha_history (gacha_id, at, character_uid, rank) values (1, 0, 9999, 'S')"), SQLITE_CONSTRAINT_FOREIGNKEY,
                 "gacha_history.character_uid: refused at once (S10)");
@@ -1428,17 +1459,31 @@ NATIVE_TEST("server/schema-fk-actions") {
     for (const std::string& sql : {std::string("update ds_offer set is_new = 2"), std::string("update gacha_history set duplicate = 2"),
                                    std::string("update wboss_clear set notified = 2")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_CHECK, (sql + ": refused (S10)").c_str());
-    for (const std::string& sql :
-         {std::string("update ds_offer set closed_at = 'x'"), std::string("update ds_ship set started_at = 'x'"),
-          std::string("update ds_bonus set value = 'x'"), std::string("update gacha_history set at = 'x'"),
-          std::string("update stepup set try_count = 'x'"), std::string("update box_slots set drawn = 'x'"),
-          std::string("update wboss set hunt_until = 'x'"), std::string("update wboss_clear set cleared_at = 'x'"),
-          std::string("update event_last set mission_id = 'x'"), std::string("update event_rank_received set received_at = 'x'"),
-          std::string("update favor_drop_play set lots = 'x'"), std::string("update shop_counts set total = 'x'"),
-          std::string("update exchange_counts set num = 'x'"), std::string("update subscription set closed_at = 'x'"),
-          std::string("update sphere set streak = 'x'"), std::string("update sphere_box set rank = 'x'"),
-          std::string("update sphere_rank set floor_level = 'x'"), std::string("update sphere_log set at = 'x'"),
-          std::string("update favor_bonus_state set healed_at = 'x'")})
+    for (const std::string& sql : {std::string("update ds_offer set closed_at = 'x'"),
+                                   std::string("update ds_ship set started_at = 'x'"),
+                                   std::string("update ds_bonus set value = 'x'"),
+                                   std::string("update gacha_history set at = 'x'"),
+                                   std::string("update stepup set try_count = 'x'"),
+                                   std::string("update box_slots set drawn = 'x'"),
+                                   std::string("update wboss set hunt_until = 'x'"),
+                                   std::string("update wboss_clear set cleared_at = 'x'"),
+                                   std::string("update event_last set mission_id = 'x'"),
+                                   std::string("update event_rank_received set received_at = 'x'"),
+                                   std::string("update favor_drop_play set lots = 'x'"),
+                                   std::string("update shop_counts set total = 'x'"),
+                                   std::string("update exchange_counts set num = 'x'"),
+                                   std::string("update subscription set closed_at = 'x'"),
+                                   std::string("update sphere set streak = 'x'"),
+                                   std::string("update sphere_box set rank = 'x'"),
+                                   std::string("update sphere_rank set floor_level = 'x'"),
+                                   std::string("update sphere_log set at = 'x'"),
+                                   std::string("update favor_bonus_state set healed_at = 'x'"),
+                                   std::string("update stock set count = 'x'"),
+                                   std::string("update counters set value = 'x'"),
+                                   std::string("update achievements set progress = 'x'"),
+                                   std::string("update gear_barney set type = 'x'"),
+                                   std::string("update unlocks set at = 'x'"),
+                                   std::string("update wire_device set last_seen = 'x'")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S10)").c_str());
     t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
                 "a present has its created_at (S8)");
@@ -1517,6 +1562,8 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(db.one("select count(*) from play_member", {}), (int64_t)0, "ON DELETE CASCADE: its members are gone");
     t.expect_eq(rc("delete from titles where id = " + title), SQLITE_OK, "the worn title deleted");
     t.expect_eq(db.one("select count(*) from player where title_id is null", {}), (int64_t)1, "title_id -> NULL");
+    t.expect_eq(txn("delete from player"), SQLITE_OK, "the player deleted");
+    t.expect_eq(db.one("select count(*) from wire_device where player_id is null", {}), (int64_t)1, "wire_device.player_id -> NULL (S10)");
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");
     db.close();
 }

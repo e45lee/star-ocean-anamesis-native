@@ -1265,6 +1265,11 @@ select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updat
 //     favor_bonus_state.lot_uid -> roster.uid  ON DELETE SET NULL (the favor bonus's character)
 //   Sphere 211:
 //     sphere_departed.uid -> roster.uid  ON DELETE CASCADE (a character gone has no sortie)
+//   the rest (the core's and soa-server's):
+//     unlocks.by_mission    -> mission.mission_id  NO ACTION, deferred (MissionEnd records what a
+//                                                 first clear unlocks before its mission row)
+//     wire_device.player_id -> player.id           ON DELETE SET NULL (NULL: a device seen before
+//                                                 the player existed; 0 before)
 //   events:
 //     wboss_clear.boss_id -> wboss.boss_id  ON DELETE CASCADE, deferred (a boss's cleared waves;
 //                                           MissionEnd's contribute() records a clear before
@@ -1463,6 +1468,50 @@ const char* const kModules[] = {
   lot_uid integer references roster(uid) on delete set null,
   healed_at integer
 ) strict)",
+    // ---- the rest: the core's tables and soa-server's ----
+    // the state's bookkeeping: next_char_uid, next_item_uid, seed (state/state.h)
+    R"(create table new_meta (
+  key text primary key,
+  value text not null
+) strict)",
+    // StackItemInfo (b): a stack item's count (no row: none)
+    R"(create table new_stock (
+  master_item_id integer primary key,
+  item_type integer not null,
+  count integer not null default 0
+) strict)",
+    // the achievements' action counts (ext::count)
+    R"(create table new_counters (
+  key text primary key,
+  value integer not null
+) strict)",
+    // CAchievementInfo (b): an achievement's progress and when it was received
+    R"(create table new_achievements (
+  id integer primary key,
+  progress integer,
+  received_at integer
+) strict)",
+    // the current barney chance (Barney's mood, api/items/gear.cpp): its group and type
+    R"(create table new_gear_barney (
+  id integer primary key check (id = 1),
+  group_id integer,
+  type integer
+) strict)",
+    // a mission a first clear unlocked (the menus list them through ActiveMissionList)
+    R"(create table new_unlocks (
+  mission_id integer primary key,
+  mission_type integer not null,
+  by_mission integer references mission(mission_id) deferrable initially deferred,
+  at integer not null
+) strict)",
+    // soa-server's record of the bridge's device UUIDs (net/game.cpp map_device)
+    R"(create table new_wire_device (
+  uuid text primary key,
+  player_id integer references player(id) on delete set null,
+  device_type integer,
+  first_seen integer,
+  last_seen integer
+) strict)",
 };
 
 // The tables step 10 rebuilds (new_X -> X), in kModules' order.
@@ -1474,6 +1523,7 @@ const char* const kModuleTables[] = {
     "shop_counts", "exchange_counts", "subscription",
     "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
     "favor_bonus_state",
+    "meta", "stock", "counters", "achievements", "gear_barney", "unlocks", "wire_device",
 };
 // clang-format on
 
@@ -1678,13 +1728,49 @@ select id, nullif(day_at, 0), bonus_id, case when lot_uid in (select uid from ro
 from favor_bonus_state)");
 }
 
+// The rest (PLAN-schema S10):
+//   meta: value NULL -> '' (what meta() reads);
+//   stock: item_type / count NULL -> 0;
+//   counters: value NULL -> 0;
+//   achievements, gear_barney: copied;
+//   unlocks: by_mission 0 or not a mission played -> NULL (nothing reads it but the tools: the
+//     record of who unlocked it); mission_type / at NULL -> 0;
+//   wire_device: player_id 0 or not the player -> NULL.
+bool rebuild_rest(sqlite3* db) {
+    log_count(db, "select count(*) from meta where value is null", "meta.value", "NULL -> ''", 10);
+    log_count(db, "select count(*) from stock where item_type is null or count is null", "stock", "NULL -> 0", 10);
+    log_count(db, "select count(*) from counters where value is null", "counters.value", "NULL -> 0", 10);
+    log_count(db, "select count(*) from unlocks where by_mission = 0", "unlocks.by_mission", "0 -> NULL", 10);
+    log_count(db, "select count(*) from unlocks where by_mission != 0 and by_mission not in (select mission_id from mission)", "unlocks.by_mission",
+              "dangling -> NULL", 10);
+    log_count(db, "select count(*) from unlocks where mission_type is null or at is null", "unlocks", "NULL -> 0", 10);
+    log_count(db, "select count(*) from wire_device where player_id = 0", "wire_device.player_id", "0 -> NULL (no player yet)", 10);
+    log_count(db, "select count(*) from wire_device where player_id != 0 and player_id not in (select id from player)", "wire_device.player_id",
+              "dangling -> NULL", 10);
+    bool ok = run(db, "insert into new_meta (key, value) select key, ifnull(value, '') from meta");
+    ok = ok &&
+         run(db, "insert into new_stock (master_item_id, item_type, count) select master_item_id, ifnull(item_type, 0), ifnull(count, 0) from stock");
+    ok = ok && run(db, "insert into new_counters (key, value) select key, ifnull(value, 0) from counters");
+    ok = ok && run(db, "insert into new_achievements (id, progress, received_at) select id, progress, received_at from achievements");
+    ok = ok && run(db, "insert into new_gear_barney (id, group_id, type) select id, group_id, type from gear_barney");
+    ok = ok && run(db, R"(
+insert into new_unlocks (mission_id, mission_type, by_mission, at)
+select mission_id, ifnull(mission_type, 0), case when by_mission in (select mission_id from mission) then by_mission end, ifnull(at, 0)
+from unlocks)");
+    ok = ok && run(db, R"(
+insert into new_wire_device (uuid, player_id, device_type, first_seen, last_seen)
+select uuid, case when player_id in (select id from player) then player_id end, device_type, first_seen, last_seen from wire_device)");
+    return ok;
+}
+
 // Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
 // above), then the old tables go and the new ones take their names; the AUTOINCREMENT counters
 // are kept.
 bool rebuild_modules(sqlite3* db, sqlite3*) {
     std::vector<std::pair<const char*, int64_t>> counters;
     for (const char* table : {"gacha_history", "sphere_box", "sphere_log"}) counters.emplace_back(table, sequence_of(db, table));
-    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db) && rebuild_sphere(db) && rebuild_daily(db);
+    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db) && rebuild_sphere(db) && rebuild_daily(db) &&
+              rebuild_rest(db);
     for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
     for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
     for (auto& [table, seq] : counters) ok = ok && keep_sequence(db, table, seq);

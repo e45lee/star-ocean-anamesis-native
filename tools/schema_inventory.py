@@ -371,7 +371,7 @@ RELS = [
      "four disjoint id spaces (the tower's floors too: S0 found them in the tower replay)"),
     ("unlocks", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", None, "-", ""),
     ("unlocks", "by_mission", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission", "id", 0, "-", ""),
-    ("unlocks", "by_mission", "mission", "mission_id", 0, "NO ACTION, deferred", "the mission whose clear opened it"),
+    ("unlocks", "by_mission", "mission", "mission_id", None, "NO ACTION, deferred (S10)", "the mission whose clear opened it (0 before S10)"),
     ("play", "mission_id", "m:master_mission|master_event_mission|master_world_map_mission|master_tower_mission|master_deep_space_mission", "id", 0, "-", ""),
     ("play", "party_id", "party_set", "party_id", None, "SET NULL (S7)", "the battle's party set (play_ext merged in, S7)"),
     ("play_member", "play_id", "play", "id", None, "CASCADE (S7)", "the play's members (play.uids text before S7)"),
@@ -408,7 +408,7 @@ RELS = [
     ("wboss_clear", "boss_id", "wboss", "boss_id", None, "CASCADE, deferred (S10)", "a boss's cleared waves (a first meeting's clear is written before the boss)"),
     ("event_rank_score", "ranking_id", "m:master_event_ranking", "id", None, "-", ""),
     ("event_rank_received", "group_id", "m:master_event_ranking_group", "id", None, "-", ""),
-    ("wire_device", "player_id", "player", "id", 0, "SET NULL", ""),
+    ("wire_device", "player_id", "player", "id", None, "SET NULL (S10)", "the device's player (NULL: none yet, a new-player state; 0 before S10)"),
     ("player", "support_uid", "roster", "uid", None, "SET NULL (S4)", "Player.support_pc_id (meta support_uid before S3)"),
     ("player", "title_id", "titles", "id", None, "SET NULL (S4)", "Player.title (meta title before S3)"),
 ]

@@ -1,0 +1,1372 @@
+{
+ "subsystem": "math",
+ "generated_by": "tools/subsystem.py export-types math",
+ "header": "port/src/native/math/math_layout.h",
+ "structs": [
+  {
+   "name": "Vector",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "x",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "y",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "z",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "w",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x208c4e4",
+     "symbol": "_ZN4Aska6Vector11ApplyMatrixEPKNS_6MatrixE",
+     "name": "ApplyMatrix"
+    },
+    {
+     "ghidra": "0x208c590",
+     "symbol": "_ZNK4Aska6Vector11ApplyMatrixEPS0_PKNS_6MatrixE",
+     "name": "ApplyMatrix"
+    },
+    {
+     "ghidra": "0x208c608",
+     "symbol": "_ZN4Aska6Vector21ApplyMatrixNoWeightedEPKNS_6MatrixE",
+     "name": "ApplyMatrixNoWeighted"
+    },
+    {
+     "ghidra": "0x208c688",
+     "symbol": "_ZNK4Aska6Vector21ApplyMatrixNoWeightedEPS0_PKNS_6MatrixE",
+     "name": "ApplyMatrixNoWeighted"
+    },
+    {
+     "ghidra": "0x208c704",
+     "symbol": "_ZN4Aska6Vector22ApplyMatrixNoTransportEPKNS_6MatrixE",
+     "name": "ApplyMatrixNoTransport"
+    },
+    {
+     "ghidra": "0x208c778",
+     "symbol": "_ZNK4Aska6Vector22ApplyMatrixNoTransportEPS0_PKNS_6MatrixE",
+     "name": "ApplyMatrixNoTransport"
+    },
+    {
+     "ghidra": "0x208c7e8",
+     "symbol": "_ZN4Aska6Vector15ApplyQuaternionEPKNS_10QuaternionE",
+     "name": "ApplyQuaternion"
+    },
+    {
+     "ghidra": "0x208c8c0",
+     "symbol": "_ZNK4Aska6Vector15ApplyQuaternionEPS0_PKNS_10QuaternionE",
+     "name": "ApplyQuaternion"
+    },
+    {
+     "ghidra": "0x208c9ac",
+     "symbol": "_ZN4Aska6Vector8GetEulerEPKNS_6MatrixE",
+     "name": "GetEuler"
+    },
+    {
+     "ghidra": "0x208cd9c",
+     "symbol": "_ZNK4Aska6Vector25SquaredDistanceToTriangleEPKS0_S2_S2_PS0_",
+     "name": "SquaredDistanceToTriangle"
+    },
+    {
+     "ghidra": "0x208d128",
+     "symbol": "_ZN4Aska6Vector17IsInsideWithAngleEPKS0_f",
+     "name": "IsInsideWithAngle"
+    }
+   ]
+  },
+  {
+   "name": "Quaternion",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "x",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "y",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "z",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "w",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x20576d0",
+     "symbol": "_ZN4Aska10Quaternion6CreateEPKNS_6MatrixE",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x2057868",
+     "symbol": "_ZN4Aska10Quaternion6CreateEPKNS_6VectorE",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x2057a50",
+     "symbol": "_ZN4Aska10Quaternion6CreateEPKNS_6VectorES3_",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x2057cec",
+     "symbol": "_ZN4Aska10Quaternion15CreateFromEulerEfff14EnumRotateType",
+     "name": "CreateFromEuler"
+    },
+    {
+     "ghidra": "0x20580b0",
+     "symbol": "_ZNK4Aska10Quaternion3MulEPS0_i",
+     "name": "Mul"
+    },
+    {
+     "ghidra": "0x205825c",
+     "symbol": "_ZN4Aska10Quaternion5SlerpEPKS0_S2_f",
+     "name": "Slerp"
+    },
+    {
+     "ghidra": "0x20585fc",
+     "symbol": "_ZN4Aska10Quaternion5SquadEPKS0_S2_S2_S2_f",
+     "name": "Squad"
+    },
+    {
+     "ghidra": "0x205866c",
+     "symbol": "_ZN4Aska10Quaternion10SquadSlerpEPKS0_S2_f",
+     "name": "SquadSlerp"
+    },
+    {
+     "ghidra": "0x20589e8",
+     "symbol": "_ZNK4Aska10Quaternion9CalcEulerEPNS_6VectorE14EnumRotateType",
+     "name": "CalcEuler"
+    },
+    {
+     "ghidra": "0x2058d18",
+     "symbol": "_ZNK4Aska10Quaternion10IsRotationEv",
+     "name": "IsRotation"
+    },
+    {
+     "ghidra": "0x2058e30",
+     "symbol": "_ZNK4Aska10Quaternion2LnEPS0_",
+     "name": "Ln"
+    },
+    {
+     "ghidra": "0x2058ff0",
+     "symbol": "_ZNK4Aska10Quaternion3ExpEPS0_",
+     "name": "Exp"
+    },
+    {
+     "ghidra": "0x20591bc",
+     "symbol": "_ZN4Aska10Quaternion12IntermediateEPS0_PKS0_S3_S3_",
+     "name": "Intermediate"
+    }
+   ]
+  },
+  {
+   "name": "Matrix",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "array",
+       "of": {
+        "kind": "float",
+        "size": 4
+       },
+       "count": 4
+      },
+      "count": 4
+     },
+     "size": 64
+    }
+   ],
+   "size": 64,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x12acee8",
+     "symbol": "_ZN4Aska6Matrix3MulEPKS0_S2_",
+     "name": "Mul"
+    },
+    {
+     "ghidra": "0x139574c",
+     "symbol": "_ZNK4Aska6Matrix14InvertLowErrorEPS0_",
+     "name": "InvertLowError"
+    },
+    {
+     "ghidra": "0x1f890f4",
+     "symbol": "_ZN4Aska6Matrix7RotateYEf",
+     "name": "RotateY"
+    },
+    {
+     "ghidra": "0x1f89480",
+     "symbol": "_ZN4Aska6Matrix6InvertEv",
+     "name": "Invert"
+    },
+    {
+     "ghidra": "0x2038c08",
+     "symbol": "_ZN4Aska6Matrix6CreateEPKNS_10QuaternionE",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x2038cc4",
+     "symbol": "_ZN4Aska6Matrix6CreateEPKNS_10QuaternionEPKNS_6VectorE",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x2038d74",
+     "symbol": "_ZN4Aska6Matrix22CreateWithoutNormalizeEPKNS_10QuaternionE",
+     "name": "CreateWithoutNormalize"
+    },
+    {
+     "ghidra": "0x2038e2c",
+     "symbol": "_ZN4Aska6Matrix22CreateWithoutNormalizeEPKNS_10QuaternionEPKNS_6VectorE",
+     "name": "CreateWithoutNormalize"
+    },
+    {
+     "ghidra": "0x2038ef0",
+     "symbol": "_ZN4Aska6Matrix19CreateWithNormalizeEPKNS_10QuaternionE",
+     "name": "CreateWithNormalize"
+    },
+    {
+     "ghidra": "0x203900c",
+     "symbol": "_ZN4Aska6Matrix19CreateWithNormalizeEPKNS_10QuaternionEPKNS_6VectorE",
+     "name": "CreateWithNormalize"
+    },
+    {
+     "ghidra": "0x2039140",
+     "symbol": "_ZN4Aska6Matrix3MulEPKS0_",
+     "name": "Mul"
+    },
+    {
+     "ghidra": "0x20391cc",
+     "symbol": "_ZN4Aska6Matrix11MulFromLeftEPKS0_",
+     "name": "MulFromLeft"
+    },
+    {
+     "ghidra": "0x2039488",
+     "symbol": "_ZN4Aska6Matrix11SetRotationEPKNS_6VectorE14EnumRotateType",
+     "name": "SetRotation"
+    },
+    {
+     "ghidra": "0x2039954",
+     "symbol": "_ZN4Aska6Matrix6RotateEPKNS_10QuaternionE",
+     "name": "Rotate"
+    },
+    {
+     "ghidra": "0x2039a28",
+     "symbol": "_ZN4Aska6Matrix23SetRotationByUnitVectorEPKNS_6VectorE",
+     "name": "SetRotationByUnitVector"
+    },
+    {
+     "ghidra": "0x2039be0",
+     "symbol": "_ZN4Aska6Matrix6RotateEPKNS_6VectorE14EnumRotateType",
+     "name": "Rotate"
+    },
+    {
+     "ghidra": "0x203a5b8",
+     "symbol": "_ZN4Aska6Matrix18RotateByUnitVectorEPKNS_6VectorE",
+     "name": "RotateByUnitVector"
+    },
+    {
+     "ghidra": "0x203a84c",
+     "symbol": "_ZN4Aska6Matrix12SetTranslateEPKNS_6VectorE",
+     "name": "SetTranslate"
+    },
+    {
+     "ghidra": "0x203a868",
+     "symbol": "_ZN4Aska6Matrix9TranslateEPKNS_6VectorE",
+     "name": "Translate"
+    },
+    {
+     "ghidra": "0x203a94c",
+     "symbol": "_ZN4Aska6Matrix5ScaleEPKNS_6VectorE",
+     "name": "Scale"
+    },
+    {
+     "ghidra": "0x203a97c",
+     "symbol": "_ZN4Aska6Matrix8MakeClipEffPNS_6VectorES2_",
+     "name": "MakeClip"
+    },
+    {
+     "ghidra": "0x203aa20",
+     "symbol": "_ZN4Aska6Matrix16MakeClipToScreenEfPNS_6VectorES2_ffff",
+     "name": "MakeClipToScreen"
+    },
+    {
+     "ghidra": "0x203aab0",
+     "symbol": "_ZN4Aska6Matrix9MulVectorEPKNS_6VectorE",
+     "name": "MulVector"
+    },
+    {
+     "ghidra": "0x203ab94",
+     "symbol": "_ZNK4Aska6Matrix9MulVectorEPS0_PKNS_6VectorE",
+     "name": "MulVector"
+    },
+    {
+     "ghidra": "0x203ac98",
+     "symbol": "_ZNK4Aska6Matrix11ApplyVectorEPNS_6VectorEPKS1_",
+     "name": "ApplyVector"
+    },
+    {
+     "ghidra": "0x203ade0",
+     "symbol": "_ZN4Aska6Matrix17SetLookAtMatrixXPEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixXP"
+    },
+    {
+     "ghidra": "0x203b138",
+     "symbol": "_ZN4Aska6Matrix17SetLookAtMatrixXNEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixXN"
+    },
+    {
+     "ghidra": "0x203b484",
+     "symbol": "_ZN4Aska6Matrix17SetLookAtMatrixYPEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixYP"
+    },
+    {
+     "ghidra": "0x203b7e4",
+     "symbol": "_ZN4Aska6Matrix17SetLookAtMatrixYNEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixYN"
+    },
+    {
+     "ghidra": "0x203bb30",
+     "symbol": "_ZN4Aska6Matrix19SetLookAtMatrixZPUpEPKNS_6VectorES3_S3_f",
+     "name": "SetLookAtMatrixZPUp"
+    },
+    {
+     "ghidra": "0x203bed0",
+     "symbol": "_ZN4Aska6Matrix17SetLookAtMatrixZPEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixZP"
+    },
+    {
+     "ghidra": "0x203c2d4",
+     "symbol": "_ZN4Aska6Matrix17SetLookAtMatrixZNEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixZN"
+    },
+    {
+     "ghidra": "0x203c620",
+     "symbol": "_ZN4Aska6Matrix37SetProjectionShadowMatrixForOmniLightEPKNS_6VectorES3_",
+     "name": "SetProjectionShadowMatrixForOmniLight"
+    },
+    {
+     "ghidra": "0x203c754",
+     "symbol": "_ZN4Aska6Matrix44SetProjectionShadowMatrixForDirectionalLightEPKNS_6VectorES3_",
+     "name": "SetProjectionShadowMatrixForDirectionalLight"
+    },
+    {
+     "ghidra": "0x203c850",
+     "symbol": "_ZNK4Aska6Matrix6PutPRSEPNS_6VectorEPNS_10QuaternionES2_",
+     "name": "PutPRS"
+    },
+    {
+     "ghidra": "0x203fe34",
+     "symbol": "_ZNK4Aska6Matrix9CalcEulerEPNS_6VectorE14EnumRotateType",
+     "name": "CalcEuler"
+    },
+    {
+     "ghidra": "0x21e8d80",
+     "symbol": "_ZN4Aska6Matrix14InvertLowErrorEv",
+     "name": "InvertLowError"
+    },
+    {
+     "ghidra": "0x21eb5c0",
+     "symbol": "_ZN4Aska6Matrix4LerpEPKS0_S2_f",
+     "name": "Lerp"
+    }
+   ]
+  },
+  {
+   "name": "Matrix34",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "array",
+       "of": {
+        "kind": "float",
+        "size": 4
+       },
+       "count": 3
+      },
+      "count": 4
+     },
+     "size": 48
+    }
+   ],
+   "size": 48,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x203cbb8",
+     "symbol": "_ZN4Aska8Matrix346CreateEPKNS_10QuaternionE",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x203cc68",
+     "symbol": "_ZN4Aska8Matrix346CreateEPKNS_10QuaternionEPKNS_6VectorE",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x203cd24",
+     "symbol": "_ZN4Aska8Matrix3419CreateWithNormalizeEPKNS_10QuaternionE",
+     "name": "CreateWithNormalize"
+    },
+    {
+     "ghidra": "0x203ce34",
+     "symbol": "_ZN4Aska8Matrix3419CreateWithNormalizeEPKNS_10QuaternionEPKNS_6VectorE",
+     "name": "CreateWithNormalize"
+    },
+    {
+     "ghidra": "0x203cf5c",
+     "symbol": "_ZN4Aska8Matrix3411SetRotationEPKNS_6VectorE14EnumRotateType",
+     "name": "SetRotation"
+    },
+    {
+     "ghidra": "0x203d428",
+     "symbol": "_ZN4Aska8Matrix3423SetRotationByUnitVectorEPKNS_6VectorE",
+     "name": "SetRotationByUnitVector"
+    },
+    {
+     "ghidra": "0x203d5e0",
+     "symbol": "_ZN4Aska8Matrix346RotateEPKNS_6VectorE14EnumRotateType",
+     "name": "Rotate"
+    },
+    {
+     "ghidra": "0x203dfb8",
+     "symbol": "_ZN4Aska8Matrix3418RotateByUnitVectorEPKNS_6VectorE",
+     "name": "RotateByUnitVector"
+    },
+    {
+     "ghidra": "0x203e24c",
+     "symbol": "_ZN4Aska8Matrix3412SetTranslateEPKNS_6VectorE",
+     "name": "SetTranslate"
+    },
+    {
+     "ghidra": "0x203e268",
+     "symbol": "_ZN4Aska8Matrix349TranslateEPKNS_6VectorE",
+     "name": "Translate"
+    },
+    {
+     "ghidra": "0x203e29c",
+     "symbol": "_ZN4Aska8Matrix3414InvertLowErrorEv",
+     "name": "InvertLowError"
+    },
+    {
+     "ghidra": "0x203e404",
+     "symbol": "_ZN4Aska8Matrix349MulVectorEPKNS_6VectorE",
+     "name": "MulVector"
+    },
+    {
+     "ghidra": "0x203e4b0",
+     "symbol": "_ZNK4Aska8Matrix349MulVectorEPS0_PKNS_6VectorE",
+     "name": "MulVector"
+    },
+    {
+     "ghidra": "0x203e574",
+     "symbol": "_ZNK4Aska8Matrix3411ApplyVectorEPNS_6VectorEPKS1_",
+     "name": "ApplyVector"
+    },
+    {
+     "ghidra": "0x203e674",
+     "symbol": "_ZN4Aska8Matrix3417SetLookAtMatrixXPEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixXP"
+    },
+    {
+     "ghidra": "0x203ea74",
+     "symbol": "_ZN4Aska8Matrix3417SetLookAtMatrixXNEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixXN"
+    },
+    {
+     "ghidra": "0x203ee70",
+     "symbol": "_ZN4Aska8Matrix3417SetLookAtMatrixYPEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixYP"
+    },
+    {
+     "ghidra": "0x203f258",
+     "symbol": "_ZN4Aska8Matrix3417SetLookAtMatrixYNEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixYN"
+    },
+    {
+     "ghidra": "0x203f648",
+     "symbol": "_ZN4Aska8Matrix3417SetLookAtMatrixZPEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixZP"
+    },
+    {
+     "ghidra": "0x203fa40",
+     "symbol": "_ZN4Aska8Matrix3417SetLookAtMatrixZNEPKNS_6VectorES3_f",
+     "name": "SetLookAtMatrixZN"
+    },
+    {
+     "ghidra": "0x224ab78",
+     "symbol": "_ZN4Aska8Matrix343MulEPKS0_S2_",
+     "name": "Mul"
+    }
+   ]
+  },
+  {
+   "name": "Segment",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_origin",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_direction",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    }
+   ],
+   "size": 32,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x21aa82c",
+     "symbol": "_ZNK4Aska7Segment15SquaredDistanceEPKS0_PfS3_",
+     "name": "SquaredDistance"
+    },
+    {
+     "ghidra": "0x21ab14c",
+     "symbol": "_ZNK4Aska7Segment15SquaredDistanceEPKNS_6VectorEPf",
+     "name": "SquaredDistance"
+    }
+   ]
+  },
+  {
+   "name": "Sphere",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_center_radius",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    }
+   ],
+   "size": 16,
+   "align": 4
+  },
+  {
+   "name": "Plane",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_point",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_normal",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    }
+   ],
+   "size": 32,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x2432f0c",
+     "symbol": "_ZN4Aska5Plane11ApplyMatrixEPKNS_6MatrixE",
+     "name": "ApplyMatrix"
+    },
+    {
+     "ghidra": "0x2434360",
+     "symbol": "_ZNK4Aska5Plane15ComputeVerticesEPNS_6VectorEf",
+     "name": "ComputeVertices"
+    }
+   ]
+  },
+  {
+   "name": "AABB",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_center",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_extent",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    }
+   ],
+   "size": 32,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x2430c3c",
+     "symbol": "_ZNK4Aska4AABB15ComputeVerticesEPNS_6VectorE",
+     "name": "ComputeVertices"
+    },
+    {
+     "ghidra": "0x2430c7c",
+     "symbol": "_ZNK4Aska4AABB15ComputeVerticesEPNS_6VectorEPKS1_",
+     "name": "ComputeVertices"
+    },
+    {
+     "ghidra": "0x2431ecc",
+     "symbol": "_ZNK4Aska4AABB15SquaredDistanceEPKNS_6VectorEPfS4_",
+     "name": "SquaredDistance"
+    },
+    {
+     "ghidra": "0x2432214",
+     "symbol": "_ZNK4Aska4AABB12CalcDistanceEPKNS_5PlaneE",
+     "name": "CalcDistance"
+    },
+    {
+     "ghidra": "0x24322ac",
+     "symbol": "_ZNK4Aska4AABB12CalcDistanceEPKNS_6VectorE",
+     "name": "CalcDistance"
+    },
+    {
+     "ghidra": "0x2432318",
+     "symbol": "_ZN4Aska4AABB16ClipIntersectionEPKS0_",
+     "name": "ClipIntersection"
+    },
+    {
+     "ghidra": "0x24323d8",
+     "symbol": "_ZNK4Aska4AABB11IsContainedEPKNS_6VectorEf",
+     "name": "IsContained"
+    },
+    {
+     "ghidra": "0x243246c",
+     "symbol": "_ZNK4Aska4AABB20CalcOverlappedStatusEPKNS_6SphereEf",
+     "name": "CalcOverlappedStatus"
+    },
+    {
+     "ghidra": "0x2432638",
+     "symbol": "_ZNK4Aska4AABB20CalcOverlappedStatusEPKNS_3BoxEf",
+     "name": "CalcOverlappedStatus"
+    },
+    {
+     "ghidra": "0x2432850",
+     "symbol": "_ZN4Aska4AABB18SeparateByPositiveERKNS_15OrthogonalPlaneE",
+     "name": "SeparateByPositive"
+    },
+    {
+     "ghidra": "0x2432874",
+     "symbol": "_ZNK4Aska4AABB8SeparateERKNS_15OrthogonalPlaneEPS0_S4_",
+     "name": "Separate"
+    },
+    {
+     "ghidra": "0x2432a30",
+     "symbol": "_ZN4Aska4AABB18SeparateByPositiveEif",
+     "name": "SeparateByPositive"
+    },
+    {
+     "ghidra": "0x2432a64",
+     "symbol": "_ZN4Aska4AABB18SeparateByNegativeERKNS_15OrthogonalPlaneE",
+     "name": "SeparateByNegative"
+    },
+    {
+     "ghidra": "0x2432a88",
+     "symbol": "_ZN4Aska4AABB18SeparateByNegativeEif",
+     "name": "SeparateByNegative"
+    },
+    {
+     "ghidra": "0x2433f14",
+     "symbol": "_ZN4Aska4AABB7SetConeEPKNS_6VectorES3_ff",
+     "name": "SetCone"
+    },
+    {
+     "ghidra": "0x2434240",
+     "symbol": "_ZN4Aska4AABB10SetCapsuleEPKNS_6VectorES3_f",
+     "name": "SetCapsule"
+    },
+    {
+     "ghidra": "0x2434278",
+     "symbol": "_ZN4Aska4AABB6SetBoxEPKNS_3BoxE",
+     "name": "SetBox"
+    },
+    {
+     "ghidra": "0x2434330",
+     "symbol": "_ZN4Aska4AABB9SetSphereEPKNS_6SphereE",
+     "name": "SetSphere"
+    }
+   ]
+  },
+  {
+   "name": "AABB_MinMax",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_min",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_max",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    }
+   ],
+   "size": 32,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x2431fac",
+     "symbol": "_ZNK4Aska11AABB_MinMax15SquaredDistanceEPKNS_6VectorEPfS4_",
+     "name": "SquaredDistance"
+    },
+    {
+     "ghidra": "0x24320e8",
+     "symbol": "_ZNK4Aska11AABB_MinMax12CalcDistanceEPKNS_6VectorE",
+     "name": "CalcDistance"
+    },
+    {
+     "ghidra": "0x2432174",
+     "symbol": "_ZNK4Aska11AABB_MinMax15SquaredDistanceEPKNS_7SegmentEPf",
+     "name": "SquaredDistance"
+    }
+   ]
+  },
+  {
+   "name": "Box",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_center",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_extent",
+     "type": {
+      "kind": "struct",
+      "name": "Vector"
+     },
+     "size": 16
+    },
+    {
+     "offset": 32,
+     "name": "m_axis",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "Vector"
+      },
+      "count": 3
+     },
+     "size": 48
+    }
+   ],
+   "size": 80,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x2430f20",
+     "symbol": "_ZNK4Aska3Box15ComputeVerticesEPNS_6VectorE",
+     "name": "ComputeVertices"
+    },
+    {
+     "ghidra": "0x2431004",
+     "symbol": "_ZNK4Aska3Box13ComputePlanesEPNS_5PlaneEb",
+     "name": "ComputePlanes"
+    },
+    {
+     "ghidra": "0x2431238",
+     "symbol": "_ZNK4Aska3Box15SquaredDistanceEPKNS_4LineEPfS4_S4_S4_",
+     "name": "SquaredDistance"
+    },
+    {
+     "ghidra": "0x2431788",
+     "symbol": "_ZNK4Aska3Box11CaseNoZerosEPNS_6VectorEPKS1_PfS5_",
+     "name": "CaseNoZeros"
+    },
+    {
+     "ghidra": "0x2431860",
+     "symbol": "_ZNK4Aska3Box5Case0EiiiPNS_6VectorEPKS1_PfS5_",
+     "name": "Case0"
+    },
+    {
+     "ghidra": "0x2431a50",
+     "symbol": "_ZNK4Aska3Box6Case00EiiiPNS_6VectorEPKS1_PfS5_",
+     "name": "Case00"
+    },
+    {
+     "ghidra": "0x2431b58",
+     "symbol": "_ZNK4Aska3Box7Case000EPNS_6VectorEPf",
+     "name": "Case000"
+    },
+    {
+     "ghidra": "0x2431c64",
+     "symbol": "_ZNK4Aska3Box15SquaredDistanceEPKNS_7SegmentEPfS4_S4_S4_",
+     "name": "SquaredDistance"
+    },
+    {
+     "ghidra": "0x2431d94",
+     "symbol": "_ZNK4Aska3Box15SquaredDistanceEPKNS_6VectorEPfS4_S4_",
+     "name": "SquaredDistance"
+    },
+    {
+     "ghidra": "0x2432abc",
+     "symbol": "_ZNK4Aska3Box12CalcDistanceEPKNS_5PlaneE",
+     "name": "CalcDistance"
+    },
+    {
+     "ghidra": "0x2432ba8",
+     "symbol": "_ZNK4Aska3Box12CalcDistanceEPKNS_5PlaneEPKNS_6MatrixE",
+     "name": "CalcDistance"
+    },
+    {
+     "ghidra": "0x2432d04",
+     "symbol": "_ZNK4Aska3Box18CalcDistanceByAABBEPKNS_5PlaneEPKNS_6MatrixE",
+     "name": "CalcDistanceByAABB"
+    },
+    {
+     "ghidra": "0x2433030",
+     "symbol": "_ZNK4Aska3Box11IsContainedEPKNS_6VectorEPKNS_6MatrixEf",
+     "name": "IsContained"
+    },
+    {
+     "ghidra": "0x243322c",
+     "symbol": "_ZNK4Aska3Box20CalcOverlappedStatusEPKNS_6SphereEPKNS_6MatrixEf",
+     "name": "CalcOverlappedStatus"
+    },
+    {
+     "ghidra": "0x2433478",
+     "symbol": "_ZN4Aska3Box13IsIntersectedEPKS0_",
+     "name": "IsIntersected"
+    },
+    {
+     "ghidra": "0x2433a3c",
+     "symbol": "_ZNK4Aska3Box4FaceEiiiPNS_6VectorEPKS1_S4_PfS5_",
+     "name": "Face"
+    }
+   ]
+  },
+  {
+   "name": "CVector",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "x",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "y",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "z",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "w",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x12d5728",
+     "symbol": "_ZNK9Framework7CVector7IsLegalEv",
+     "name": "IsLegal"
+    },
+    {
+     "ghidra": "0x1f8a26c",
+     "symbol": "_ZN9Framework7CVector22ToConstrainSelfInRangeERKS0_f",
+     "name": "ToConstrainSelfInRange"
+    },
+    {
+     "ghidra": "0x1f8a36c",
+     "symbol": "_ZN9Framework7CVector30ToConstrainSelfInRangeWithoutYERKS0_f",
+     "name": "ToConstrainSelfInRangeWithoutY"
+    },
+    {
+     "ghidra": "0x1f8a46c",
+     "symbol": "_ZN9Framework7CVector23ToConstrainSelfOutRangeERKS0_f",
+     "name": "ToConstrainSelfOutRange"
+    },
+    {
+     "ghidra": "0x1f8a56c",
+     "symbol": "_ZN9Framework7CVector31ToConstrainSelfOutRangeWithoutYERKS0_f",
+     "name": "ToConstrainSelfOutRangeWithoutY"
+    },
+    {
+     "ghidra": "0x1f8a670",
+     "symbol": "_ZN9Framework7CVector15TransformNormalERKNS_7CMatrixE",
+     "name": "TransformNormal"
+    },
+    {
+     "ghidra": "0x1f8a688",
+     "symbol": "_ZNK9Framework7CVector6PrintCEPKc",
+     "name": "PrintC"
+    },
+    {
+     "ghidra": "0x1f8a68c",
+     "symbol": "_ZNK9Framework7CVector7PrintfCEPKc",
+     "name": "PrintfC"
+    },
+    {
+     "ghidra": "0x1f8a690",
+     "symbol": "_ZNK9Framework7CVector6PrintSEPKc",
+     "name": "PrintS"
+    },
+    {
+     "ghidra": "0x1f8a694",
+     "symbol": "_ZNK9Framework7CVector7PrintfSEPKc",
+     "name": "PrintfS"
+    },
+    {
+     "ghidra": "0x1f8a698",
+     "symbol": "_ZN9Framework7CVector14RegressionTestEv",
+     "name": "RegressionTest"
+    }
+   ]
+  },
+  {
+   "name": "CQuaternion",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "x",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "y",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "z",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "w",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x1f8a1ec",
+     "symbol": "_ZNK9Framework11CQuaternion6MatrixEv",
+     "name": "Matrix"
+    },
+    {
+     "ghidra": "0x1f8a224",
+     "symbol": "_ZN9Framework11CQuaternion3SetERKNS_7CMatrixE",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x1f8a228",
+     "symbol": "_ZN9Framework11CQuaternion6CreateERKNS_7CVectorEf",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x1f8a258",
+     "symbol": "_ZN9Framework11CQuaternion6CreateERKNS_7CVectorES3_",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x1f8a25c",
+     "symbol": "_ZNK9Framework11CQuaternion6PrintCEPKc",
+     "name": "PrintC"
+    },
+    {
+     "ghidra": "0x1f8a260",
+     "symbol": "_ZNK9Framework11CQuaternion7PrintfCEPKc",
+     "name": "PrintfC"
+    },
+    {
+     "ghidra": "0x1f8a264",
+     "symbol": "_ZNK9Framework11CQuaternion6PrintSEPKc",
+     "name": "PrintS"
+    },
+    {
+     "ghidra": "0x1f8a268",
+     "symbol": "_ZNK9Framework11CQuaternion7PrintfSEPKc",
+     "name": "PrintfS"
+    }
+   ]
+  },
+  {
+   "name": "CMatrix",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "array",
+       "of": {
+        "kind": "float",
+        "size": 4
+       },
+       "count": 4
+      },
+      "count": 4
+     },
+     "size": 64
+    }
+   ],
+   "size": 64,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x133b6ec",
+     "symbol": "_ZNK9Framework7CMatrix7IsLegalEv",
+     "name": "IsLegal"
+    },
+    {
+     "ghidra": "0x1f89020",
+     "symbol": "_ZN9Framework7CMatrix9TranslateERKNS_7CVectorE",
+     "name": "Translate"
+    },
+    {
+     "ghidra": "0x1f89038",
+     "symbol": "_ZN9Framework7CMatrix12AddTranslateERKNS_7CVectorE",
+     "name": "AddTranslate"
+    },
+    {
+     "ghidra": "0x1f89068",
+     "symbol": "_ZNK9Framework7CMatrix9TranslateEv",
+     "name": "Translate"
+    },
+    {
+     "ghidra": "0x1f89084",
+     "symbol": "_ZN9Framework7CMatrix13AddTranslateXEf",
+     "name": "AddTranslateX"
+    },
+    {
+     "ghidra": "0x1f89094",
+     "symbol": "_ZN9Framework7CMatrix13AddTranslateYEf",
+     "name": "AddTranslateY"
+    },
+    {
+     "ghidra": "0x1f890a4",
+     "symbol": "_ZN9Framework7CMatrix13AddTranslateZEf",
+     "name": "AddTranslateZ"
+    },
+    {
+     "ghidra": "0x1f890b4",
+     "symbol": "_ZN9Framework7CMatrix23RotateYWithoutTranslateEf",
+     "name": "RotateYWithoutTranslate"
+    },
+    {
+     "ghidra": "0x1f8929c",
+     "symbol": "_ZNK9Framework7CMatrix6AngleYEv",
+     "name": "AngleY"
+    },
+    {
+     "ghidra": "0x1f8934c",
+     "symbol": "_ZNK9Framework7CMatrix13ExtractRotateEv",
+     "name": "ExtractRotate"
+    },
+    {
+     "ghidra": "0x1f89394",
+     "symbol": "_ZN9Framework7CMatrix13ExtractRotateERKS0_",
+     "name": "ExtractRotate"
+    },
+    {
+     "ghidra": "0x1f893d0",
+     "symbol": "_ZN9Framework7CMatrix7InverseEv",
+     "name": "Inverse"
+    },
+    {
+     "ghidra": "0x1f89468",
+     "symbol": "_ZN9Framework7CMatrix19InverseMathematicalEv",
+     "name": "InverseMathematical"
+    },
+    {
+     "ghidra": "0x1f897d8",
+     "symbol": "_ZN9Framework7CMatrix16LookAtMatrixZPUpERKNS_7CVectorES3_S3_f",
+     "name": "LookAtMatrixZPUp"
+    },
+    {
+     "ghidra": "0x1f897f0",
+     "symbol": "_ZN9Framework7CMatrix12SetRowVectorEjRKNS_7CVectorE",
+     "name": "SetRowVector"
+    },
+    {
+     "ghidra": "0x1f89818",
+     "symbol": "_ZN9Framework7CMatrix10ApplyScaleEf",
+     "name": "ApplyScale"
+    },
+    {
+     "ghidra": "0x1f89838",
+     "symbol": "_ZN9Framework7CMatrix10ApplyScaleERKNS_7CVectorE",
+     "name": "ApplyScale"
+    },
+    {
+     "ghidra": "0x1f898a4",
+     "symbol": "_ZNK9Framework7CMatrix14PutBasisVectorEi",
+     "name": "PutBasisVector"
+    },
+    {
+     "ghidra": "0x1f89904",
+     "symbol": "_ZNK9Framework7CMatrix6PutPRSEPNS_7CVectorEPNS_11CQuaternionES2_",
+     "name": "PutPRS"
+    },
+    {
+     "ghidra": "0x1f89908",
+     "symbol": "_ZNK9Framework7CMatrix14ExtractRotateXEv",
+     "name": "ExtractRotateX"
+    },
+    {
+     "ghidra": "0x1f8993c",
+     "symbol": "_ZNK9Framework7CMatrix14ExtractRotateYEv",
+     "name": "ExtractRotateY"
+    },
+    {
+     "ghidra": "0x1f8997c",
+     "symbol": "_ZNK9Framework7CMatrix14ExtractRotateZEv",
+     "name": "ExtractRotateZ"
+    },
+    {
+     "ghidra": "0x1f899ac",
+     "symbol": "_ZNK9Framework7CMatrix16ExtractTranslateEv",
+     "name": "ExtractTranslate"
+    },
+    {
+     "ghidra": "0x1f899ec",
+     "symbol": "_ZNK9Framework7CMatrix10QuaternionEv",
+     "name": "Quaternion"
+    },
+    {
+     "ghidra": "0x1f89a1c",
+     "symbol": "_ZNK9Framework7CMatrix10GetInverseEv",
+     "name": "GetInverse"
+    },
+    {
+     "ghidra": "0x1f89ad0",
+     "symbol": "_ZNK9Framework7CMatrix22GetInverseMathematicalEv",
+     "name": "GetInverseMathematical"
+    },
+    {
+     "ghidra": "0x1f89af8",
+     "symbol": "_ZN9Framework7CMatrix12MakeIdentityEv",
+     "name": "MakeIdentity"
+    },
+    {
+     "ghidra": "0x1f89b24",
+     "symbol": "_ZN9Framework7CMatrix13MakeTranslateERKNS_7CVectorE",
+     "name": "MakeTranslate"
+    },
+    {
+     "ghidra": "0x1f89b64",
+     "symbol": "_ZN9Framework7CMatrix14MakeTranslateXEf",
+     "name": "MakeTranslateX"
+    },
+    {
+     "ghidra": "0x1f89b9c",
+     "symbol": "_ZN9Framework7CMatrix14MakeTranslateYEf",
+     "name": "MakeTranslateY"
+    },
+    {
+     "ghidra": "0x1f89bd4",
+     "symbol": "_ZN9Framework7CMatrix14MakeTranslateZEf",
+     "name": "MakeTranslateZ"
+    },
+    {
+     "ghidra": "0x1f89c0c",
+     "symbol": "_ZN9Framework7CMatrix10MakeRotateERKNS_7CVectorEj",
+     "name": "MakeRotate"
+    },
+    {
+     "ghidra": "0x1f89c4c",
+     "symbol": "_ZN9Framework7CMatrix11MakeRotateXEf",
+     "name": "MakeRotateX"
+    },
+    {
+     "ghidra": "0x1f89dbc",
+     "symbol": "_ZN9Framework7CMatrix11MakeRotateYEf",
+     "name": "MakeRotateY"
+    },
+    {
+     "ghidra": "0x1f89f34",
+     "symbol": "_ZN9Framework7CMatrix11MakeRotateZEf",
+     "name": "MakeRotateZ"
+    },
+    {
+     "ghidra": "0x1f8a0a4",
+     "symbol": "_ZN9Framework7CMatrix9MakeScaleERKNS_7CVectorE",
+     "name": "MakeScale"
+    },
+    {
+     "ghidra": "0x1f8a0e4",
+     "symbol": "_ZN9Framework7CMatrix10MakeScaleXEf",
+     "name": "MakeScaleX"
+    },
+    {
+     "ghidra": "0x1f8a10c",
+     "symbol": "_ZN9Framework7CMatrix10MakeScaleYEf",
+     "name": "MakeScaleY"
+    },
+    {
+     "ghidra": "0x1f8a134",
+     "symbol": "_ZN9Framework7CMatrix10MakeScaleZEf",
+     "name": "MakeScaleZ"
+    },
+    {
+     "ghidra": "0x1f8a15c",
+     "symbol": "_ZN9Framework7CMatrix18MakeLookAtMatrixZNERKNS_7CVectorES3_f",
+     "name": "MakeLookAtMatrixZN"
+    },
+    {
+     "ghidra": "0x1f8a19c",
+     "symbol": "_ZN9Framework7CMatrix20MakeLookAtMatrixZPUpERKNS_7CVectorES3_S3_f",
+     "name": "MakeLookAtMatrixZPUp"
+    },
+    {
+     "ghidra": "0x1f8a1e4",
+     "symbol": "_ZNK9Framework7CMatrix6PrintCEPKc",
+     "name": "PrintC"
+    },
+    {
+     "ghidra": "0x1f8a1e8",
+     "symbol": "_ZNK9Framework7CMatrix6PrintSEPKc",
+     "name": "PrintS"
+    }
+   ]
+  }
+ ]
+}

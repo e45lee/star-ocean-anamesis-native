@@ -216,7 +216,7 @@ NATIVE_TEST("scene/layout-skinning") {
                     auto* j = reinterpret_cast<JointObject*>(b);
                     float q[4] = {};
                     t.expect_eq(t.call("_ZNK4Aska11JointObject3GetEmPv", {(u64)j, 15, (u64)q}) & 1, (u64)1, "JointObject::Get(15)");
-                    t.expect_eq(std::memcmp(q, &j->base.m_hoc.m_vec90, 16), 0, "Get(15) = the joint orientation (m_hoc 0x90)");
+                    t.expect_eq(std::memcmp(q, &j->base.m_hoc.m_jointOrientation, 16), 0, "Get(15) = the joint orientation (m_hoc 0x90)");
                     t.expect_eq(j->m_noParentScale <= 1, true, "JointObject::m_noParentScale is a bool");
                 }
             }

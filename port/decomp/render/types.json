@@ -330,7 +330,7 @@
     },
     {
      "offset": 144,
-     "name": "m_vec90",
+     "name": "m_jointOrientation",
      "type": {
       "kind": "bytes",
       "ctype": "soa::native::math::Vector",
@@ -620,7 +620,7 @@
     },
     {
      "offset": 304,
-     "name": "m_param9Matrix",
+     "name": "m_invWorld",
      "type": {
       "kind": "bytes",
       "ctype": "soa::native::math::Matrix",
@@ -961,11 +961,10 @@
     },
     {
      "offset": 416,
-     "name": "unk_1a0",
+     "name": "m_camera",
      "type": {
-      "kind": "int",
-      "size": 8,
-      "signed": false
+      "kind": "ptr",
+      "to": "Camera"
      },
      "size": 8
     },
@@ -981,15 +980,11 @@
     },
     {
      "offset": 428,
-     "name": "unk_1ac",
+     "name": "m_contextDivisor",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 4
+      "kind": "int",
+      "size": 4,
+      "signed": true
      },
      "size": 4
     },
@@ -1047,9 +1042,19 @@
        "size": 1,
        "signed": false
       },
-      "count": 12
+      "count": 8
      },
-     "size": 12
+     "size": 8
+    },
+    {
+     "offset": 448,
+     "name": "m_contextsWanted",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
     },
     {
      "offset": 452,
@@ -1073,17 +1078,22 @@
     },
     {
      "offset": 460,
-     "name": "unk_1cc",
+     "name": "m_contextsUsed",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 12
+      "kind": "int",
+      "size": 4,
+      "signed": true
      },
-     "size": 12
+     "size": 4
+    },
+    {
+     "offset": 464,
+     "name": "m_contexts",
+     "type": {
+      "kind": "ptr",
+      "to": "RenderContext"
+     },
+     "size": 8
     },
     {
      "offset": 472,
@@ -1168,7 +1178,17 @@
     },
     {
      "offset": 556,
-     "name": "unk_22c",
+     "name": "m_multiDrawLimit",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 560,
+     "name": "unk_230",
      "type": {
       "kind": "array",
       "of": {
@@ -1176,9 +1196,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 28
+      "count": 24
      },
-     "size": 28
+     "size": 24
     },
     {
      "offset": 584,

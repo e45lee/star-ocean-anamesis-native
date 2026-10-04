@@ -865,7 +865,7 @@ static_assert(sizeof(SkinMatricesBase) == 0x78);
 // palette[i] = inverse(object world) * bone world * bind[i] as a Matrix34 (0x30 bytes) and hands the
 // palette to KickPalette. Guest size 0x98 (AofHandler::CreateSkinMatrices: operator new(0x98)); layout
 // from SkinMatrices::SkinMatrices, GetBoneObject, MakeSkinMatrices (port/decomp/scene/skinning.c). The
-// object's inverse world matrix is cached in HierarchicalObject 0x130 (render's m_param9Matrix; its
+// object's inverse world matrix is cached in HierarchicalObject 0x130 (render's m_invWorld; its
 // validity is m_hoc.m_flags bit 2).
 class SkinMatrices {
 public:
@@ -915,7 +915,7 @@ static_assert(offsetof(SkinMatricesSimple, unk_88) == 0x88);
 static_assert(sizeof(SkinMatricesSimple) == 0x90);
 
 // Aska::JointObject: a bone (a HierarchicalObject whose matrix also applies a joint orientation).
-// MakeMatrix (slot 21): MatrixCalcFunc(world, position, posture, joint orientation (m_hoc.m_vec90:
+// MakeMatrix (slot 21): MatrixCalcFunc(world, position, posture, joint orientation (m_hoc.m_jointOrientation:
 // property 15), scale, parent scale (only when the parent's owner has 0x195 bit 0 and m_noParentScale is
 // 0), parent world). No constructor or allocation in the lib's exports: data size 0x199 (the bool at 0x198,
 // in HierarchicalObject's tail padding), allocation presumably 0x1a0 (unverified).

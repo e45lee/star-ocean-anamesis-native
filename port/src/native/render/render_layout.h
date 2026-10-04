@@ -189,8 +189,8 @@ public:
     MathVector m_position;                       // 0x50: property 5 (SetPosition; w = 1)
     MathQuaternion m_posture;                    // 0x60: property 6 (SetPosture; the Euler setters convert)
     MathVector m_scale;                          // 0x70: property 7 (SetScale)
-    MathVector m_param9;                         // 0x80: property 9 (Set also copies a matrix to HierarchicalObject::m_param9Matrix)
-    MathVector m_vec90;                          // 0x90: (0, 0, 0, 1) at construction; meaning unknown
+    MathVector m_param9;                         // 0x80: property 9 (Set also copies a matrix to HierarchicalObject::m_invWorld)
+    MathVector m_jointOrientation;               // 0x90: (0, 0, 0, 1) at construction; a JointObject's joint orientation (property 15)
     MathVector m_param10;                        // 0xa0: property 10
     MathVector m_param11;                        // 0xb0: property 11
     HierarchicalObjectContainer* m_parent;       // 0xc0
@@ -231,7 +231,7 @@ struct RENDERINFO;
 // Aska::HierarchicalObject: Task + HierarchicalObjectContainer. Guest size 0x1a0 (HierarchicalObject::
 // CreateClone: operator new(0x1a0); data size 0x198); layout from the inlined constructor there, the setters, Get / Set
 // (port/decomp/render/hierarchical_object.c). The property ids of Get / Set: 5 position, 6 posture,
-// 7 scale, 8 m_hoc.m_flags2 & 3, 9 m_param9 (+ m_param9Matrix), 10, 11, 12 the world matrix (slot 19),
+// 7 scale, 8 m_hoc.m_flags2 & 3, 9 m_param9 (+ m_invWorld), 10, 11, 12 the world matrix (slot 19),
 // 13 m_active (Set calls slot 43 OnActive).
 // vtable (_ZTVN4Aska18HierarchicalObjectE, 44 slots): 0-18 as Task (2-6, 11, 13 its own), then the members
 // below from slot 19 on.
@@ -282,7 +282,8 @@ public:
     Task base;                          // 0x000: vtable _ZTVN4Aska18HierarchicalObjectE + 0x10
     void (*m_onDestroy)(HierarchicalObject*);  // 0x028: called by ~HierarchicalObject when set (0 at construction)
     HierarchicalObjectContainer m_hoc;  // 0x030: the second base (its own vptr)
-    MathMatrix m_param9Matrix;          // 0x130: property 9's matrix (copied by CreateClone when m_hoc.m_flags bit 2)
+    MathMatrix m_invWorld;              // 0x130: the cached inverse world matrix, valid when m_hoc.m_flags bit 2 (MakeSkinMatrices,
+                                        //        Camera::MakeCameraMatrix: the view); property 9's Set and CreateClone copy it
     u8 unk_170[0x10];                   // 0x170
     void* m_simpleDynamics;             // 0x180: EnableSimpleDynamics' 0x90-byte state (operator new; freed by the destructor)
     u64 unk_188;                        // 0x188: 0 at construction; RenderableObject::RenderingDecided clears it
@@ -297,7 +298,7 @@ public:
 };
 static_assert(offsetof(HierarchicalObject, m_onDestroy) == 0x28);
 static_assert(offsetof(HierarchicalObject, m_hoc) == 0x30);
-static_assert(offsetof(HierarchicalObject, m_param9Matrix) == 0x130);
+static_assert(offsetof(HierarchicalObject, m_invWorld) == 0x130);
 static_assert(offsetof(HierarchicalObject, m_simpleDynamics) == 0x180);
 static_assert(offsetof(HierarchicalObject, unk_188) == 0x188);
 static_assert(offsetof(HierarchicalObject, m_active) == 0x194);
@@ -381,28 +382,33 @@ public:
     bool IsPostProcessObject() const;
 
     HierarchicalObject base;           // 0x000: vtable _ZTVN4Aska16RenderableObjectE + 0x10 (base.base...)
-    u32 m_renderFlags;                 // 0x198: bit 13 inactive (OnActive), bit 26 object motion blur; Clone copies
+    u32 m_renderFlags;                 // 0x198: bit 9 skinned, 13 inactive (OnActive), 21, 25 (scene's decompile), 26 object
+                                       //        motion blur; Clone copies
     u8 unk_19c[4];                     // 0x19c
-    u64 unk_1a0;                       // 0x1a0: Clone copies
+    Camera* m_camera;                  // 0x1a0: the camera it is drawn with (scene's decompile); Clone copies
     s32 m_renderQueued;                // 0x1a8: RenderThread::AddRenderQueue adds 1 atomically per queued draw
-    u8 unk_1ac[4];                     // 0x1ac
+    s32 m_contextDivisor;              // 0x1ac: per-object context divisor / multi-draw count (scene's decompile)
     u32 m_passMask;                    // 0x1b0: RenderingDecided tests bits 0-2 and 9-10; Clone copies
     u8 m_progTrans;                    // 0x1b4: SetProgrammableTransparency
     u8 m_shadowFlags[2];               // 0x1b5: (u16, unaligned) bit 1 light context prepared, 4 cast shadow,
-                                       //        5 receive shadow, 7 receive projector; 0x40 at construction
+                                       //        5 receive shadow, 7 receive projector; bit 0 prepared this frame (scene's
+                                       //        decompile); 0x40 at construction
     u8 unk_1b7;                        // 0x1b7: 3 at construction; Clone copies (AofObject: a transparency mode, < 5)
-    u8 unk_1b8[0x0c];                  // 0x1b8
+    u8 unk_1b8[8];                     // 0x1b8
+    s32 m_contextsWanted;              // 0x1c0: render contexts wanted this frame (scene's decompile)
     u32 unk_1c4;                       // 0x1c4: 0 at construction
     u32 unk_1c8;                       // 0x1c8: 0 at construction
-    u8 unk_1cc[0x0c];                  // 0x1cc
+    s32 m_contextsUsed;                // 0x1cc: render contexts used
+    RenderContext* m_contexts;         // 0x1d0: the contexts (an array, 0x230 bytes each)
     const IAnimatable* m_cloneSource;  // 0x1d8: Clone stores the source
-    u8 unk_1e0[0x18];                  // 0x1e0
+    u8 unk_1e0[0x18];                  // 0x1e0: 0x1e8..0x1ff zeroed every frame (scene's decompile)
     u64 unk_1f8;                       // 0x1f8: Clone copies
     u64 unk_200;                       // 0x200: Clone copies
     u64 m_multipassRenderingID[2];     // 0x208: SetMultipassRenderingID
     u64 m_multipassRequestRenderingID[2];  // 0x218
     u32 m_multiDraw;                   // 0x228: UpdateMultiDrawVars zeroes it
-    u8 unk_22c[0x1c];                  // 0x22c
+    u32 m_multiDrawLimit;              // 0x22c: (scene's decompile)
+    u8 unk_230[0x18];                  // 0x230: 0x230 / 0x238 zeroed every frame
     u8 m_iblAcceptance;                // 0x248: SetIBLAcceptanceNumber
     u8 unk_249[0x17];                  // 0x249
     u64 unk_260;                       // 0x260: Clone copies
@@ -421,7 +427,12 @@ public:
     u8 unk_308[8];                     // 0x308
 };
 static_assert(offsetof(RenderableObject, m_renderFlags) == 0x198);
-static_assert(offsetof(RenderableObject, unk_1a0) == 0x1a0);
+static_assert(offsetof(RenderableObject, m_camera) == 0x1a0);
+static_assert(offsetof(RenderableObject, m_contextDivisor) == 0x1ac);
+static_assert(offsetof(RenderableObject, m_contextsWanted) == 0x1c0);
+static_assert(offsetof(RenderableObject, m_contextsUsed) == 0x1cc);
+static_assert(offsetof(RenderableObject, m_contexts) == 0x1d0);
+static_assert(offsetof(RenderableObject, m_multiDrawLimit) == 0x22c);
 static_assert(offsetof(RenderableObject, m_renderQueued) == 0x1a8);
 static_assert(offsetof(RenderableObject, m_passMask) == 0x1b0);
 static_assert(offsetof(RenderableObject, m_progTrans) == 0x1b4);
@@ -504,7 +515,7 @@ public:
     u64 GetClassID(s32 depth) const;
     void CheckSleepAvailability();
     const MathVector* GetFogConst();                // the fog constants (0xf20..0xf4f) for cvFogCoef; (13 self)
-    void MakeCameraMatrix();                        // (430 self): the view = inverse(world) into base.m_param9Matrix (0x130), the projections, the products
+    void MakeCameraMatrix();                        // (430 self): the view = inverse(world) into base.m_invWorld (0x130), the projections, the products
     void MakeViewFrustumPlane(s32 target);          // (244 self)
     void MakeLocalViewFrustumVertices(MathVector* out, s32 target);
     void Run(s32 frames);

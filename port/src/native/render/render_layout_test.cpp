@@ -504,14 +504,14 @@ NATIVE_TEST("render/layout-material-list") {
 // ---- Cameras -----------------------------------------------------------------------------------------
 
 // AimingObject / Camera: a live camera on its MakeViewFrustumPlane call (after this frame's
-// MakeCameraMatrix): the view matrix (base.m_param9Matrix) is the world matrix's inverse, Get's
+// MakeCameraMatrix): the view matrix (base.m_invWorld) is the world matrix's inverse, Get's
 // properties are the named fields, TargetObject / UpTargetObject are AimingObject's fields.
 NATIVE_TEST("render/layout-camera") {
     probe_call(t, g_probeFrustumPlane, [&](Cpu& c) {
         auto* cam = reinterpret_cast<Camera*>(c.x(0));
         if (!has_vtable(t, cam, "_ZTVN4Aska6CameraE")) return false;  // a derived camera: wait for a plain one
         const float* w = &cam->base.m_hoc.m_world.m[0][0];
-        const float* v = &cam->base.m_param9Matrix.m[0][0];
+        const float* v = &cam->base.m_invWorld.m[0][0];
         float maxerr = 0;
         for (int r = 0; r < 4; r++)
             for (int k = 0; k < 4; k++) {

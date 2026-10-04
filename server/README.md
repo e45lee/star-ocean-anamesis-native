@@ -104,7 +104,9 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
 `enabled`, `new_player`, `master`, `db`, `seed`, `game_xml`, `has_seed_rng` / `seed_rng`,
 `start_coins`, `has_clock` / `clock` / `clock_offset`, `galaxy_pass`, `enable_events`,
 `event_keywords`, `restore_tower`, `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
-`repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `port/server-data` are found),
+`repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `port/server-data` are found;
+then the install dirs, `common/include/soa/install.h`: a release package's `data/` and `standin-assets/`),
+`apk` (the 3.7.0 APK: the master's last-resort source),
 `data_root` (the data dir: the CDN's scratch files; a `server_campaign.txt` there from before the state DB's version 11 is imported once, PLAN-schema S12).
 
 - **soa** fills it from its run options (`soa::options()`, `port/README.md` "Run options") in
@@ -121,6 +123,21 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
   its flag and is ignored
   (`common/include/soa/env.h`, `docs/environment.md`). The library's only environment variable is
   a self-test dump, `SOA_NOTICE_HTML_DUMP=FILE` (`player/notice` writes the notice page's HTML there).
+
+### The master DB (`master_source.h`)
+
+The server's 3.7.0 master is `--master`, else the checkout's `data/basmaster-3.7.0.sqlite3`, else
+**derived at startup from the user's game files**: the 3.7.0 download's `sqlite/basmaster.sqlite3`
+decrypted (the client's own ADLD code, `adld.h`) into `DATA/master/` under a name keyed by the
+source's SHA-1, once (about a second), then reused; the APK's built-in, older master is the last
+resort (soa only, with a warning). `master_source::resolve()` sets `config().master`; soa-server calls
+it at startup (it exits without a master), soa before its in-process CDN starts, the tests through
+the scratch servers. The rule and its labels: `docs/server-rules.md#master-source`. This is how a
+release package (README.md "Packaging"), which ships no game data, and a fresh clone without
+`data/basmaster-3.7.0.sqlite3` get their master. soa-server also finds a download beside it (or in
+its `game/` folder) when `--download-dir` isn't given; in a checkout's build dir there is none, so
+nothing changes there. New flag: `--apk FILE` (the last-resort source; soa-server has no zip reader
+yet, so it only logs it).
 
 ### The host interface (`hooks.h`)
 

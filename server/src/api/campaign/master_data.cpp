@@ -10,6 +10,7 @@
 #include "api/campaign/campaign.h"
 #include "core/log.h"
 #include "soaserver/config.h"
+#include "soaserver/master_source.h"
 
 namespace soa::server::campaign {
 namespace {
@@ -39,6 +40,8 @@ constexpr long kMinMasterBytes = 1000000;
 sqlite3* open_master() {
     std::vector<std::string> paths;
     if (!config().campaign_master_db.empty()) paths.push_back(config().campaign_master_db);
+    // the server's master (--master, the repo's, else derived: soaserver/master_source.h)
+    if (std::string m = master_source::resolve(); !m.empty()) paths.push_back(m);
     for (const char* p : {"data/basmaster-3.7.0.sqlite3", "data/basmaster-3.8.0.sqlite3"})  // 380-ok: fallback
         if (std::string f = find_repo_file(p); !f.empty()) paths.push_back(f);
     for (auto& path : paths) {

@@ -25,11 +25,13 @@
 #include <thread>
 
 #include <soa/env.h>
+#include <soa/install.h>
 #include <soa/paths.h>
 
 #include "android/ndk.h"
 #include "app/host.h"
 #include "android/platform.h"
+#include "android/zip.h"
 #include "core/cpu.h"
 #include "core/device.h"
 #include "core/gdbstub.h"
@@ -47,6 +49,8 @@
 #include "native/common/test.h"
 #include "platform370/platform370.h"
 #include "soawebview/page.h"
+#include "soaserver/config.h"
+#include "soaserver/master_source.h"
 
 using namespace soa;
 namespace soa {
@@ -54,18 +58,6 @@ void install_traces(LoadedLib& lib);
 }
 
 namespace {
-
-bool extract_lib(const std::string& apk, const std::string& out) {
-    ZipArchive z;
-    if (!z.open(apk)) return false;
-    auto* e = z.find("lib/arm64-v8a/libSOA.so");
-    if (!e) return false;
-    std::vector<uint8_t> data;
-    if (!z.extract(*e, data)) return false;
-    std::ofstream o(out, std::ios::binary);
-    o.write((const char*)data.data(), data.size());
-    return o.good();
-}
 
 bool file_exists(const std::string& p) {
     struct stat st;
@@ -85,14 +77,16 @@ void usage() {
             "  -v / -vv        verbose / trace logging\n"
             "\n"
             "Client options (the 3.7.0 client and its emulated phone):\n"
-            "  --apk FILE      the 3.7.0 APK (default <repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk)\n"
+            "  --apk FILE      the 3.7.0 APK (default <repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk, else a\n"
+            "                  3.7.0 APK beside the program or in its game/ folder: a release package, README.txt)\n"
             "  --lib PATH      the libSOA.so (default: lib/arm64-v8a/libSOA.so of the APK, extracted once into\n"
             "                  DATA/libSOA-3.7.0.so; else <repo>/work/libSOA-3.7.0.so)\n"
             "  --data DIR      the phone's data dir: game data, saves, and in-process the server's state\n"
             "                  (default ~/.local/share/soa-linux-370; Windows %%LOCALAPPDATA%%\\soa\\port-370)\n"
             "  --download-dir DIR  the client's asset fallback for builtin_data/ files the APK lacks (the online\n"
             "                  game's downloaded tree). Required with --server inproc, whose CDN serves it too\n"
-            "                  (default <repo>/work/download-3.7.0); off by default with --server HOST, whose\n"
+            "                  (default <repo>/work/download-3.7.0, else a download tree beside the program or in\n"
+            "                  its game/ folder); off by default with --server HOST, whose\n"
             "                  client downloads from soa-server's CDN\n"
             "  --download-prefer  with --download-dir: DIR wins over the APK (as soa-emu / soa-viewer)\n"
             "  --standin-assets DIR|off  made-up stand-in files (e.g. lost gacha banners) for builtin_data/ assets\n"
@@ -153,7 +147,8 @@ void usage() {
             "                  soa-server's --listen (default port 44300), production-game.so-ana.com resolving to\n"
             "                  HOST (platform370's network glue)\n"
             "  --db FILE       the state DB (default DATA/server.sqlite3)\n"
-            "  --master FILE   the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3)\n"
+            "  --master FILE   the 3.7.0 master DB (default data/basmaster-3.7.0.sqlite3, else decrypted once from the\n"
+            "                  download's sqlite/basmaster.sqlite3 into DATA/master/; server/README.md)\n"
             "  --gacha-pools FILE  the reconstructed gacha pools (default data/gacha_pools.sqlite3)\n"
             "  --seed FILE     the save a new state is seeded from, e.g. a 3.7.0 or offline Game.xml; an existing\n"
             "                  state DB keeps its player\n"
@@ -421,8 +416,16 @@ int main(int argc, char** argv) {
     if (apk_path.empty()) {
         apk_path = find_repo_file("apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk");
         if (apk_path.empty()) {
-            usage();
-            fatal("--apk not given and apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk (in the repo) wasn't found");
+            // a release package (README.md "Packaging"): a 3.7.0 APK beside the program or in game/
+            std::vector<std::string> notes;
+            apk_path = install::find_apk_370(install::install_dirs(), [](const std::string& a) { return zip_entry_size(a, install::kLibEntry); }, &notes);
+            for (auto& n : notes) LOGW("main", "%s", n.c_str());
+            if (apk_path.empty()) {
+                usage();
+                fatal("the 3.7.0 APK wasn't found (--apk FILE, or apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk in the repo); %s",
+                      install::missing_hint().c_str());
+            }
+            LOGI("main", "the 3.7.0 APK %s (found beside the program)", apk_path.c_str());
         }
     }
     if (!file_exists(apk_path)) fatal("--apk: %s not found", apk_path.c_str());
@@ -431,8 +434,7 @@ int main(int argc, char** argv) {
         lib_path = data_dir + "/libSOA-3.7.0.so";
         if (!file_exists(lib_path)) {
             LOGI("main", "extracting libSOA.so from %s", apk_path.c_str());
-            if (!extract_lib(apk_path, lib_path)) {
-                unlink(lib_path.c_str());
+            if (!extract_zip_entry(apk_path, install::kLibEntry, lib_path)) {
                 lib_path = find_repo_file("work/libSOA-3.7.0.so");
                 if (lib_path.empty()) fatal("couldn't extract lib/arm64-v8a/libSOA.so from %s (and work/libSOA-3.7.0.so wasn't found)", apk_path.c_str());
             }
@@ -451,9 +453,14 @@ int main(int argc, char** argv) {
         }
         // Required in-process: the route's client has no CDN to download from.
         if (download_dir.empty()) download_dir = find_repo_file("work/download-3.7.0");
+        if (download_dir.empty()) {
+            // a release package: a download tree beside the program or in game/ (soa/install.h)
+            download_dir = install::find_download_dir(install::install_dirs());
+            if (!download_dir.empty()) LOGI("main", "the 3.7.0 download %s (found beside the program)", download_dir.c_str());
+        }
         if (download_dir.empty() || !file_exists(download_dir))
-            fatal("--server inproc needs the 3.7.0 download tree: give --download-dir DIR (default <repo>/work/download-3.7.0, %s)",
-                  download_dir.empty() ? "not found" : "missing");
+            fatal("--server inproc needs the 3.7.0 download tree: give --download-dir DIR (default <repo>/work/download-3.7.0, %s); %s",
+                  download_dir.empty() ? "not found" : "missing", install::missing_hint().c_str());
         if (cl.standin_dir.empty() && !cl.standin_off) cl.standin_dir = find_repo_file("standin-assets");
         if (srv.db.empty()) srv.db = data_dir + "/server.sqlite3";
         if (srv.game_xml.empty()) srv.game_xml = data_dir + "/data/shared_prefs/Game.xml";
@@ -465,6 +472,15 @@ int main(int argc, char** argv) {
     }
     // The server library's configuration (top-level server/) from the final run options.
     soa::server_port::config_from_options(data_dir);
+    server::config().apk = apk_path;
+    server::master_source::set_zip_reader(read_zip_entry);  // the APK's built-in master (the last resort)
+    if (srv.enabled) {
+        // The in-process server's master (the CDN serves it, the campaign reads it): --master, the
+        // repo's, else decrypted from the download (or the APK) into DATA/master/ (soaserver/master_source.h).
+        if (server::master_source::resolve().empty())
+            fatal("--server inproc: no 3.7.0 master DB (--master FILE, data/basmaster-3.7.0.sqlite3, or the download's); %s",
+                  install::missing_hint().c_str());
+    }
     if (srv.enabled) {
         // The in-process server's CDN (native/api/server_cdn.cpp): Login sends the CDN keys and the
         // client downloads (or checks) its game data from it through platform370's HTTP client, as

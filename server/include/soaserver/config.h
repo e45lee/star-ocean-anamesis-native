@@ -20,7 +20,8 @@ struct ServerConfig {
     // ---- the server -----------------------------------------------------------------------------
     bool enabled = false;          // the server answers (soa: --server inproc, the default)
     bool new_player = false;       // --new-player: start without a player
-    std::string master;            // --master: the 3.7.0 master DB ("" = data/basmaster-3.7.0.sqlite3 in the repo)
+    std::string master;            // --master: the 3.7.0 master DB ("" = soaserver/master_source.h's rule, which sets it)
+    std::string apk;               // the 3.7.0 APK (soa's --apk, soa-server's --apk): the master's last-resort source
     std::string db;                // --db: the state DB ("" = server.sqlite3 in the working directory)
     std::string seed;              // --seed: the save a new state is seeded from
     std::string game_xml;          // --game-xml: the client's Game.xml, the last seed fallback

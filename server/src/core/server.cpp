@@ -18,6 +18,7 @@
 #include "core/request_context.h"
 #include "core/response.h"  // ext::body
 #include "soaserver/config.h"
+#include "soaserver/master_source.h"
 #include "soaserver/server.h"
 #include "state/seed.h"  // seeding a new state
 
@@ -45,9 +46,10 @@ using ext::body;  // core/response.cpp
 // ---- the server (core/server.h) -------------------------------------------------------------
 bool Server::init() {
     if (config().has_clock) set_clock_offset(config().clock_offset);  // --clock
-    std::string master = first_existing({config().master, find_repo_file("data/basmaster-3.7.0.sqlite3")});
+    // --master, the repo's data/basmaster-3.7.0.sqlite3, else derived from the game files (soaserver/master_source.h)
+    std::string master = first_existing({master_source::resolve()});
     if (master.empty() || !m.open(master, true)) {
-        LOGE("server", "the 3.7.0 master DB (data/basmaster-3.7.0.sqlite3, or --master) wasn't found");
+        LOGE("server", "the 3.7.0 master DB (--master, data/basmaster-3.7.0.sqlite3, or one derived from the 3.7.0 download) wasn't found");
         return false;
     }
     std::string path = !config().db.empty() ? config().db : "server.sqlite3";

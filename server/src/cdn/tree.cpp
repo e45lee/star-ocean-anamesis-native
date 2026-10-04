@@ -21,6 +21,7 @@
 #include "soaserver/cdn.h"
 #include "soaserver/chash32.h"
 #include "soaserver/config.h"
+#include "soaserver/master_source.h"
 #include "soaserver/server.h"
 
 namespace soa::server::cdn {
@@ -494,7 +495,7 @@ Options options_from_config() {
     const ServerConfig& c = config();
     Options o;
     o.mirror = c.download_dir.empty() ? find_repo_file("work/download-3.7.0") : c.download_dir;
-    o.master = c.master.empty() ? find_repo_file("data/basmaster-3.7.0.sqlite3") : c.master;
+    o.master = master_source::resolve();  // --master, the repo's, else derived (soaserver/master_source.h)
     o.standins = standin_dir_from_config();
     o.scratch = !c.cdn_scratch.empty() ? c.cdn_scratch
                 : !c.data_root.empty() ? c.data_root + "/cdn"

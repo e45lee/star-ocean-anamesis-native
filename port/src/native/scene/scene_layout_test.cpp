@@ -230,4 +230,47 @@ NATIVE_TEST("scene/layout-skinning") {
     });
 }
 
+// The DirectAof drawables (the Cocos UI's sprite and text renderers: on screen at the title too).
+NATIVE_TEST("scene/layout-direct-aof") {
+    on_frame(t, [&] {
+        ObjectManager* om = object_manager();
+        int prim = 0, text = 0;
+        for (int i = 0; i < om->m_candidateCount; i++) {
+            void* o = om->m_candidates[i];
+            if (has_vtable(t, o, "_ZTVN9Framework27CDirectAofPrimitiveRendererE")) {
+                auto* r = static_cast<CDirectAofPrimitiveRenderer*>(o);
+                prim++;
+                t.expect_eq(t.call("_ZNK9Framework27CDirectAofPrimitiveRenderer13IsInitializedEv", {(u64)r}) & 1,
+                            (u64)(r->m_primitive != nullptr), "IsInitialized = m_primitive != null");
+                if (!r->m_primitive) continue;
+                t.expect_eq((u32)t.call("_ZNK9Framework27CDirectAofPrimitiveRenderer10PutCounterEv", {(u64)r}), r->m_putCount,
+                            "PutCounter = m_putCount");
+                t.expect_eq((s32)t.call("_ZNK9Framework27CDirectAofPrimitiveRenderer4TypeEv", {(u64)r}), r->m_type, "Type = m_type");
+                t.expect_eq(r->m_putCount <= r->m_reserved, true, "m_putCount <= m_reserved");
+                if (r->base.m_handler) t.expect_eq(vcall(r->base.m_handler, 6) & 1, (u64)1, "its handler IsDirectAof");
+            } else if (has_vtable(t, o, "_ZTVN9Framework22CDirectAofTextRendererE")) {
+                auto* r = static_cast<CDirectAofTextRenderer*>(o);
+                text++;
+                t.expect_eq(r->m_putPoolIndex <= 1, true, "m_putPoolIndex is 0 or 1");
+                t.expect_eq((u32)t.call("_ZNK9Framework22CDirectAofTextRenderer10PutCounterEv", {(u64)r}),
+                            r->m_putPools[r->m_putPoolIndex & 1].m_putCount, "PutCounter = the current pool's m_putCount");
+                t.expect_eq(r->m_putPools[0].m_capacity >= 4 && r->m_putPools[1].m_capacity >= 4, true, "put pools' capacity >= 4");
+                t.expect_eq(has_vtable(t, &r->m_compositorVtable, "_ZTVN4Aska15TTextCompositorINS_4Utf8EEE"), true,
+                            "the TTextCompositor<Utf8> at 0x6c0");
+                if (r->base.m_handler) t.expect_eq(vcall(r->base.m_handler, 6) & 1, (u64)1, "its handler IsDirectAof");
+                if (r->base.m_handler && has_vtable(t, r->base.m_handler, "_ZTVN4Aska16DirectAofHandlerE")) {
+                    auto* h = reinterpret_cast<DirectAofHandler*>(r->base.m_handler);
+                    u64 zt = t.sym("_ZTVN4Aska16DirectAofHandlerE");
+                    t.expect_eq(h->base.vtable2, (const void*)(zt + 0xb8), "DirectAofHandler's vptr at 0x98");
+                    t.expect_eq(h->base.vtable3, (const void*)(zt + 0xe0), "DirectAofHandler's vptr at 0xa0");
+                }
+            }
+        }
+        if (prim + text == 0)
+            std::fprintf(stderr, "scene/layout-direct-aof: no DirectAof renderer among the candidates (skipped)\n");
+        else
+            std::fprintf(stderr, "scene/layout-direct-aof: %d primitive renderers, %d text renderers\n", prim, text);
+    });
+}
+
 }  // namespace soa::native::scene

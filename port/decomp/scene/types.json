@@ -4578,6 +4578,869 @@
      "name": "GetClassID"
     }
    ]
+  },
+  {
+   "name": "DirectAofHandler",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "AofHandler"
+     },
+     "size": 816
+    },
+    {
+     "offset": 816,
+     "name": "unk_330",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 848,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 849,
+     "name": "unk_351",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 850,
+     "name": "unk_352",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 851,
+     "name": "unk_353",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    },
+    {
+     "offset": 856,
+     "name": "unk_358",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 32
+    },
+    {
+     "offset": 888,
+     "name": "unk_378",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 892,
+     "name": "unk_37c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 896,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f77e74",
+     "symbol": "_ZNK4Aska16DirectAofHandler11IsDirectAofEv",
+     "name": "IsDirectAof"
+    },
+    {
+     "ghidra": "0x2206454",
+     "symbol": "_ZN4Aska16DirectAofHandler6CreateEibPKc",
+     "name": "Create"
+    },
+    {
+     "ghidra": "0x2206658",
+     "symbol": "_ZN4Aska16DirectAofHandler6OnOpenEv",
+     "name": "OnOpen"
+    },
+    {
+     "ghidra": "0x220665c",
+     "symbol": "_ZN4Aska16DirectAofHandler4OpenEv",
+     "name": "Open"
+    },
+    {
+     "ghidra": "0x2206690",
+     "symbol": "_ZN4Aska16DirectAofHandlerC1Ev",
+     "name": "DirectAofHandler"
+    },
+    {
+     "ghidra": "0x2206704",
+     "symbol": "_ZN4Aska16DirectAofHandler10UpdatePrimEv",
+     "name": "UpdatePrim"
+    },
+    {
+     "ghidra": "0x2206714",
+     "symbol": "_ZN4Aska16DirectAofHandlerD2Ev",
+     "name": "~DirectAofHandler"
+    },
+    {
+     "ghidra": "0x22067ec",
+     "symbol": "_ZN4Aska16DirectAofHandlerD0Ev",
+     "name": "~DirectAofHandler"
+    },
+    {
+     "ghidra": "0x220683c",
+     "symbol": "_ZN4Aska16DirectAofHandler7OnCloseEPKNS_6VectorEb",
+     "name": "OnClose"
+    },
+    {
+     "ghidra": "0x2206840",
+     "symbol": "_ZN4Aska16DirectAofHandler5CloseEPKNS_6VectorEb",
+     "name": "Close"
+    },
+    {
+     "ghidra": "0x2206b5c",
+     "symbol": "_ZN4Aska16DirectAofHandler9BeginMeshEPNS_14DirectMaterialEii",
+     "name": "BeginMesh"
+    },
+    {
+     "ghidra": "0x2206cbc",
+     "symbol": "_ZN4Aska16DirectAofHandler10AddMeshsetEiRKNS_14DirectMaterialEii",
+     "name": "AddMeshset"
+    },
+    {
+     "ghidra": "0x2206e8c",
+     "symbol": "_ZN4Aska16DirectAofHandler9BeginMeshEPNS_14DirectMaterialE",
+     "name": "BeginMesh"
+    },
+    {
+     "ghidra": "0x2206fa0",
+     "symbol": "_ZN4Aska16DirectAofHandler4SyncEPNS_19RenderablePrimitiveEjj",
+     "name": "Sync"
+    },
+    {
+     "ghidra": "0x2206fb0",
+     "symbol": "_ZN4Aska16DirectAofHandler7EndMeshEv",
+     "name": "EndMesh"
+    },
+    {
+     "ghidra": "0x2207084",
+     "symbol": "_ZN4Aska16DirectAofHandler12SetPrimCountEiii",
+     "name": "SetPrimCount"
+    },
+    {
+     "ghidra": "0x2207128",
+     "symbol": "_ZN4Aska16DirectAofHandler9AddVertexEPKNS_6VectorES3_j",
+     "name": "AddVertex"
+    },
+    {
+     "ghidra": "0x22071d8",
+     "symbol": "_ZN4Aska16DirectAofHandler10AddVertexTEPKNS_6VectorES3_S3_ffj",
+     "name": "AddVertexT"
+    },
+    {
+     "ghidra": "0x22072a4",
+     "symbol": "_ZN4Aska16DirectAofHandler14GetIndexBufferEiPi",
+     "name": "GetIndexBuffer"
+    },
+    {
+     "ghidra": "0x22072e0",
+     "symbol": "_ZN4Aska16DirectAofHandler15GetVertexBufferEiPi",
+     "name": "GetVertexBuffer"
+    },
+    {
+     "ghidra": "0x2207314",
+     "symbol": "_ZN4Aska16DirectAofHandler10FlipBufferEi",
+     "name": "FlipBuffer"
+    },
+    {
+     "ghidra": "0x220733c",
+     "symbol": "_ZNK4Aska16DirectAofHandler16GetVertexAsmbit_Ev",
+     "name": "GetVertexAsmbit_"
+    },
+    {
+     "ghidra": "0x2207348",
+     "symbol": "_ZNK4Aska16DirectAofHandler16GetVertexStride_Ev",
+     "name": "GetVertexStride_"
+    },
+    {
+     "ghidra": "0x2207350",
+     "symbol": "_ZN4Aska16DirectAofHandler12OnAddMeshsetEi",
+     "name": "OnAddMeshset"
+    },
+    {
+     "ghidra": "0x2207354",
+     "symbol": "_ZN4Aska16DirectAofHandler6SphereEPNS_14DirectMaterialEfiij",
+     "name": "Sphere"
+    },
+    {
+     "ghidra": "0x22079b8",
+     "symbol": "_ZN4Aska16DirectAofHandler6CircleEPNS_14DirectMaterialEfij",
+     "name": "Circle"
+    },
+    {
+     "ghidra": "0x2207f1c",
+     "symbol": "_ZN4Aska16DirectAofHandler3BoxEPNS_14DirectMaterialEPKNS_6VectorEiiiPjS5_",
+     "name": "Box"
+    },
+    {
+     "ghidra": "0x2208a4c",
+     "symbol": "_ZN4Aska16DirectAofHandler3BoxEPNS_14DirectMaterialEPKNS_6VectorEiiijS5_",
+     "name": "Box"
+    },
+    {
+     "ghidra": "0x2208a74",
+     "symbol": "_ZN4Aska16DirectAofHandler4BoxTEPNS_14DirectMaterialEPKNS_6VectorEiiiPj",
+     "name": "BoxT"
+    },
+    {
+     "ghidra": "0x2209560",
+     "symbol": "_ZN4Aska16DirectAofHandler4BoxTEPNS_14DirectMaterialEPKNS_6VectorEiiij",
+     "name": "BoxT"
+    },
+    {
+     "ghidra": "0x2209588",
+     "symbol": "_ZN4Aska16DirectAofHandler7CapsuleEPNS_14DirectMaterialEPKNS_7SegmentEfiij",
+     "name": "Capsule"
+    },
+    {
+     "ghidra": "0x220a830",
+     "symbol": "_ZN4Aska16DirectAofHandler6SquareEPNS_14DirectMaterialEffiij",
+     "name": "Square"
+    },
+    {
+     "ghidra": "0x220b8c8",
+     "symbol": "_ZN4Aska16DirectAofHandler4ConeEPNS_14DirectMaterialEffiijPKNS_6VectorEb",
+     "name": "Cone"
+    },
+    {
+     "ghidra": "0x220c580",
+     "symbol": "_ZN4Aska16DirectAofHandler8CylinderEPNS_14DirectMaterialEffiijPKNS_6VectorEb",
+     "name": "Cylinder"
+    },
+    {
+     "ghidra": "0x220d5a0",
+     "symbol": "_ZN4Aska16DirectAofHandler17MakeRenderContextEPNS_13RenderContextEPNS_9AofObjectEPKNS_10RENDERINFOEPNS_10RenderPassEPNS_20CommandBufferManagerE",
+     "name": "MakeRenderContext"
+    },
+    {
+     "ghidra": "0x220d6d4",
+     "symbol": "_ZN4Aska16DirectAofHandler16UpdateKickBufferEv",
+     "name": "UpdateKickBuffer"
+    },
+    {
+     "ghidra": "0x220d748",
+     "symbol": "_ZN4Aska16DirectAofHandler17SetDirectMaterialEiPNS_14DirectMaterialE",
+     "name": "SetDirectMaterial"
+    },
+    {
+     "ghidra": "0x220d7d8",
+     "symbol": "_ZN4Aska16DirectAofHandler18SetDefaultMaterialEPNS_14DirectMaterialE",
+     "name": "SetDefaultMaterial"
+    }
+   ]
+  },
+  {
+   "name": "CDirectAofPrimitiveRenderer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "AofObject"
+     },
+     "size": 1712
+    },
+    {
+     "offset": 1712,
+     "name": "m_material",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 176
+     },
+     "size": 176
+    },
+    {
+     "offset": 1888,
+     "name": "m_primitive",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1896,
+     "name": "unk_768",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 1928,
+     "name": "m_reserved",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1932,
+     "name": "m_putCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1936,
+     "name": "unk_790",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1940,
+     "name": "unk_794",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1944,
+     "name": "unk_798",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1948,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1952,
+     "name": "unk_7a0",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1953,
+     "name": "m_flag7a1",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1954,
+     "name": "m_dirty",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1955,
+     "name": "unk_7a3",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 13
+     },
+     "size": 13
+    }
+   ],
+   "size": 1968,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f76c9c",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRendererC2Ev",
+     "name": "CDirectAofPrimitiveRenderer"
+    },
+    {
+     "ghidra": "0x1f76ce8",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer10InitializeENS0_5iTypeEjb",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f76e50",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer7ReserveEj",
+     "name": "Reserve"
+    },
+    {
+     "ghidra": "0x1f7710c",
+     "symbol": "_ZNK9Framework27CDirectAofPrimitiveRenderer13IsInitializedEv",
+     "name": "IsInitialized"
+    },
+    {
+     "ghidra": "0x1f7711c",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f77160",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer7TextureEPN4Aska7TextureE",
+     "name": "Texture"
+    },
+    {
+     "ghidra": "0x1f771a8",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer14DirectMaterialERN4Aska14DirectMaterialE",
+     "name": "DirectMaterial"
+    },
+    {
+     "ghidra": "0x1f7742c",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer20PreliminarilyPrepareEPN4Aska12LightManagerE",
+     "name": "PreliminarilyPrepare"
+    },
+    {
+     "ghidra": "0x1f77610",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer19PrepareForRenderingEPKN4Aska10RENDERINFOE",
+     "name": "PrepareForRendering"
+    },
+    {
+     "ghidra": "0x1f7762c",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer6RenderEPN4Aska13RenderContextEi",
+     "name": "Render"
+    },
+    {
+     "ghidra": "0x1f77630",
+     "symbol": "_ZNK9Framework27CDirectAofPrimitiveRenderer4TypeEv",
+     "name": "Type"
+    },
+    {
+     "ghidra": "0x1f77664",
+     "symbol": "_ZNK9Framework27CDirectAofPrimitiveRenderer13NumPrimitivesEv",
+     "name": "NumPrimitives"
+    },
+    {
+     "ghidra": "0x1f77698",
+     "symbol": "_ZNK9Framework27CDirectAofPrimitiveRenderer10PutCounterEv",
+     "name": "PutCounter"
+    },
+    {
+     "ghidra": "0x1f776cc",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x1f77704",
+     "symbol": "_ZNK9Framework27CDirectAofPrimitiveRenderer9cpTextureEv",
+     "name": "cpTexture"
+    },
+    {
+     "ghidra": "0x1f77738",
+     "symbol": "_ZNK9Framework27CDirectAofPrimitiveRenderer16crDirectMaterialEv",
+     "name": "crDirectMaterial"
+    },
+    {
+     "ghidra": "0x1f7776c",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer3PutERKNS_21tSpriteParameter_RectE",
+     "name": "Put"
+    },
+    {
+     "ghidra": "0x1f77894",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer3PutERKNS_21tSpriteParameter_QuadE",
+     "name": "Put"
+    },
+    {
+     "ghidra": "0x1f77a3c",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer8PositionERKNS_7CVectorE",
+     "name": "Position"
+    },
+    {
+     "ghidra": "0x1f77a80",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRenderer8PriorityEf",
+     "name": "Priority"
+    },
+    {
+     "ghidra": "0x1f77abc",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRendererD2Ev",
+     "name": "~CDirectAofPrimitiveRenderer"
+    },
+    {
+     "ghidra": "0x1f77b14",
+     "symbol": "_ZN9Framework27CDirectAofPrimitiveRendererD0Ev",
+     "name": "~CDirectAofPrimitiveRenderer"
+    }
+   ]
+  },
+  {
+   "name": "DirectAofTextPutPool",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_strings",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_putCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "CDirectAofTextRenderer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "AofObject"
+     },
+     "size": 1712
+    },
+    {
+     "offset": 1712,
+     "name": "m_font",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 1728,
+     "name": "m_compositorVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1736,
+     "name": "m_compositorFont",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 1752,
+     "name": "unk_6d8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 256
+     },
+     "size": 256
+    },
+    {
+     "offset": 2008,
+     "name": "m_pendingPuts",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 2012,
+     "name": "unk_7dc",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 2016,
+     "name": "m_putPools",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "DirectAofTextPutPool"
+      },
+      "count": 2
+     },
+     "size": 64
+    },
+    {
+     "offset": 2080,
+     "name": "m_putPoolIndex",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 2084,
+     "name": "unk_824",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    }
+   ],
+   "size": 2096,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f77ecc",
+     "symbol": "_ZN9Framework22CDirectAofTextRendererC2Ev",
+     "name": "CDirectAofTextRenderer"
+    },
+    {
+     "ghidra": "0x1f780c8",
+     "symbol": "_ZN9Framework22CDirectAofTextRendererD2Ev",
+     "name": "~CDirectAofTextRenderer"
+    },
+    {
+     "ghidra": "0x1f78188",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f7818c",
+     "symbol": "_ZN9Framework22CDirectAofTextRendererD0Ev",
+     "name": "~CDirectAofTextRenderer"
+    },
+    {
+     "ghidra": "0x1f781a4",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer10InitializeEiN4Aska10FontHandleERKNS_10CSTLVectorImEEjb",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f78384",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer7ReserveEj",
+     "name": "Reserve"
+    },
+    {
+     "ghidra": "0x1f78708",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer8PriorityEf",
+     "name": "Priority"
+    },
+    {
+     "ghidra": "0x1f78720",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer20PreliminarilyPrepareEPN4Aska12LightManagerE",
+     "name": "PreliminarilyPrepare"
+    },
+    {
+     "ghidra": "0x1f78aa8",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x1f78b30",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer3PutEffPKcfffj",
+     "name": "Put"
+    },
+    {
+     "ghidra": "0x1f78e38",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer3PutERKNS0_7tStringE",
+     "name": "Put"
+    },
+    {
+     "ghidra": "0x1f78f48",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer3PutERKNS0_7tStringEj",
+     "name": "Put"
+    },
+    {
+     "ghidra": "0x1f7900c",
+     "symbol": "_ZN9Framework22CDirectAofTextRenderer13AddPutCounterEmRNS0_10tSizeCacheE",
+     "name": "AddPutCounter"
+    },
+    {
+     "ghidra": "0x1f792d0",
+     "symbol": "_ZNK9Framework22CDirectAofTextRenderer14CalcStringRectEPKcff",
+     "name": "CalcStringRect"
+    },
+    {
+     "ghidra": "0x1f79378",
+     "symbol": "_ZNK9Framework22CDirectAofTextRenderer9CharCountEv",
+     "name": "CharCount"
+    },
+    {
+     "ghidra": "0x1f793cc",
+     "symbol": "_ZNK9Framework22CDirectAofTextRenderer10PutCounterEv",
+     "name": "PutCounter"
+    }
+   ]
   }
  ]
 }

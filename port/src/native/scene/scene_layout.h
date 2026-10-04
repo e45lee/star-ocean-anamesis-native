@@ -934,6 +934,135 @@ public:
 };
 static_assert(offsetof(JointObject, m_noParentScale) == 0x198);
 static_assert(sizeof(JointObject) == 0x1a0);
+// ---- The DirectAof drawables (the UI's sprites and text: Framework::Cocos draws through them) -------
+
+// Aska::DirectAofHandler: an AofHandler whose meshes are built at run time (BeginMesh / AddVertex /
+// EndMesh, Open / Close, the shape helpers). Guest size 0x380 (CCocosScene::AddSceneRenderer: operator
+// new(0x380)); layout from DirectAofHandler::DirectAofHandler, Create (port/decomp/scene/direct_aof.c).
+// IsDirectAof (slot 6) returns 1.
+class DirectAofHandler {
+public:
+    void CtorBase();                       // DirectAofHandler()  _ZN4Aska16DirectAofHandlerC2Ev
+    bool IsDirectAof() const;              // slot 6
+    bool Create(s32 meshsets, bool flag, const char* name);  // operator new(0xd0) model header (name at +0xb0, 31 chars)
+    void Open();
+    void OnOpen();
+    void Close(const MathVector* v, bool b);
+    void OnClose(const MathVector* v, bool b);
+    void UpdatePrim();
+    bool BeginMesh(void* material, s32 a, s32 b);  // Aska::DirectMaterial*
+    bool BeginMesh(void* material);
+    bool AddMeshset(s32 index, const void* material, s32 a, s32 b);
+    void Sync(void* prim, u32 a, u32 b);   // Aska::RenderablePrimitive*
+    void EndMesh();
+    void SetPrimCount(s32 a, s32 b, s32 c);
+    void AddVertex(const MathVector* pos, const MathVector* color, u32 c);
+    void* GetIndexBuffer(s32 index, s32* count);
+    void* GetVertexBuffer(s32 index, s32* count);
+    void FlipBuffer(s32 index);
+    void OnAddMeshset(s32 index);
+    bool MakeRenderContext(RenderContext* ctx, AofObject* obj, const RENDERINFO* info, RenderPass* pass, void* arg);  // slot 7
+
+    AofHandler base;          // 0x000: vtable _ZTVN4Aska16DirectAofHandlerE + 0x10 (+0xb8 at 0x98, +0xe0 at 0xa0)
+    u8 unk_330[0x20];         // 0x330
+    u8 m_flags;               // 0x350: bit 0 Create's flag; bits 0-4 = 8 at construction
+    u8 unk_351;               // 0x351: 1 at construction
+    u8 unk_352;               // 0x352: (a u32 zeroed at construction; Create clears the byte)
+    u8 unk_353[5];            // 0x353
+    u64 unk_358[4];           // 0x358: 0 at construction
+    u32 unk_378;              // 0x378: 1 at construction
+    u8 unk_37c[4];            // 0x37c
+};
+static_assert(offsetof(DirectAofHandler, m_flags) == 0x350);
+static_assert(offsetof(DirectAofHandler, unk_358) == 0x358);
+static_assert(offsetof(DirectAofHandler, unk_378) == 0x378);
+static_assert(sizeof(DirectAofHandler) == 0x380);
+
+// Framework::CDirectAofPrimitiveRenderer: an AofObject that draws a batch of sprites / quads put during the
+// frame (Put; the Cocos UI's images, the faders). Guest size 0x7b0 (CCocosScene::AddSceneRenderer:
+// operator new(0x7b0)); layout from its constructor, Reset, Reserve, PutCounter (port/decomp/scene/
+// direct_aof.c).
+class CDirectAofPrimitiveRenderer {
+public:
+    void CtorBase();                       // _ZN9Framework27CDirectAofPrimitiveRendererC2Ev
+    void Initialize(s32 type, u32 count, bool flag);
+    void Reserve(u32 count);               // creates m_primitive (operator new(0x410): a DirectAofPrimitiveEx)
+    bool IsInitialized() const;
+    void Release();
+    void Reset();                          // m_putCount = 0, m_dirty = 0 (asserts IsInitialized)
+    u32 PutCounter() const;
+    bool PreliminarilyPrepare(LightManager* lm);       // slot 79
+    bool PrepareForRendering(const RENDERINFO* info);  // slot 80
+    void Render(RenderContext* ctx, s32 pass);          // slot 81
+
+    AofObject base;                        // 0x000
+    u8 m_material[0xb0];                   // 0x6b0: Aska::DirectMaterial (zeroed with what follows: 0xdc bytes)
+    void* m_primitive;                     // 0x760: Framework::DirectAofPrimitiveEx (a DirectAofPrimitive) ("m_pDirectAofHandler")
+    u8 unk_768[0x20];                      // 0x768
+    u32 m_reserved;                        // 0x788: Reserve's high-water mark
+    u32 m_putCount;                        // 0x78c: Put calls this frame (Reset zeroes it)
+    u32 unk_790;                           // 0x790
+    u32 unk_794;                           // 0x794
+    u32 unk_798;                           // 0x798
+    s32 m_type;                            // 0x79c: 2 = quads (Reserve: BeginQuadMesh)
+    u8 unk_7a0;                            // 0x7a0
+    u8 m_flag7a1;                          // 0x7a1: DirectAofHandler::Create's flag
+    u8 m_dirty;                            // 0x7a2: Reset clears it
+    u8 unk_7a3[0x0d];                      // 0x7a3
+};
+static_assert(offsetof(CDirectAofPrimitiveRenderer, m_material) == 0x6b0);
+static_assert(offsetof(CDirectAofPrimitiveRenderer, m_primitive) == 0x760);
+static_assert(offsetof(CDirectAofPrimitiveRenderer, m_reserved) == 0x788);
+static_assert(offsetof(CDirectAofPrimitiveRenderer, m_putCount) == 0x78c);
+static_assert(offsetof(CDirectAofPrimitiveRenderer, m_type) == 0x79c);
+static_assert(offsetof(CDirectAofPrimitiveRenderer, m_dirty) == 0x7a2);
+static_assert(sizeof(CDirectAofPrimitiveRenderer) == 0x7b0);
+
+// Framework::CDirectAofTextRenderer: an AofObject that draws the text put during the frame (CCocosLabel::
+// DrawSelf -> Put; a font and a UTF-8 text compositor). Guest size 0x830 (CCocosScene::AddSceneRenderer:
+// operator new(0x830)); layout from its constructor, Reset, PutCounter (port/decomp/scene/direct_aof.c).
+// The put pool is double-buffered: m_putPools[m_putPoolIndex] is the current one.
+struct DirectAofTextPutPool {
+    void* m_strings;          // +0x00: operator new[](200): 4 entries of 0x30 (a count word before them)
+    u32 m_capacity;           // +0x08: 4 at construction (the constructor stores 4 as a u64 over +0x08..+0x0f)
+    u32 m_putCount;           // +0x0c: Put calls (PutCounter); Reset zeroes +0x0c..+0x13
+    u32 unk_10;               // +0x10
+    u32 unk_14;               // +0x14
+    u32 unk_18;               // +0x18
+    u32 unk_1c;               // +0x1c
+};
+static_assert(offsetof(DirectAofTextPutPool, m_putCount) == 0x0c);
+static_assert(sizeof(DirectAofTextPutPool) == 0x20);
+
+class CDirectAofTextRenderer {
+public:
+    void CtorBase();                       // _ZN9Framework22CDirectAofTextRendererC2Ev
+    bool Initialize(s32 a, void* font, const void* list);  // (int, Aska::FontHandle, CSTLVector<unsigned long> const&)
+    void Reserve(u32 count);
+    void Release();
+    void Reset();                          // the other put pool becomes current, its count zeroed
+    u32 PutCounter() const;                // m_putPools[m_putPoolIndex].m_putCount
+    u32 CharCount() const;
+    bool PreliminarilyPrepare(LightManager* lm);  // slot 79 (builds the glyph meshes: 357 self samples)
+
+    AofObject base;                        // 0x000
+    u8 m_font[0x10];                       // 0x6b0: Aska::FontHandle
+    const void* m_compositorVtable;        // 0x6c0: Aska::TTextCompositor<Aska::Utf8> (vptr; the compositor runs to 0x7d5)
+    u8 m_compositorFont[0x10];             // 0x6c8: Aska::FontHandle
+    u8 unk_6d8[0x100];                     // 0x6d8: the compositor's state (zeroed)
+    u32 m_pendingPuts;                     // 0x7d8: atomic; Reset swaps the pools when != 0
+    u8 unk_7dc[4];                         // 0x7dc
+    DirectAofTextPutPool m_putPools[2];    // 0x7e0
+    u32 m_putPoolIndex;                    // 0x820
+    u8 unk_824[0x0c];                      // 0x824
+};
+static_assert(offsetof(CDirectAofTextRenderer, m_font) == 0x6b0);
+static_assert(offsetof(CDirectAofTextRenderer, m_compositorVtable) == 0x6c0);
+static_assert(offsetof(CDirectAofTextRenderer, m_pendingPuts) == 0x7d8);
+static_assert(offsetof(CDirectAofTextRenderer, m_putPools) == 0x7e0);
+static_assert(offsetof(CDirectAofTextRenderer, m_putPoolIndex) == 0x820);
+static_assert(sizeof(CDirectAofTextRenderer) == 0x830);
+
 }  // namespace soa::native::scene
 
 #endif  // SOA_NATIVE_SCENE_LAYOUT_H

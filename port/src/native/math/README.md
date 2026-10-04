@@ -55,8 +55,8 @@ compared bit for bit.
 | `Quaternion::CreateFromEuler(float, float, float, EnumRotateType)` | `math_quaternion.cpp` | `math/quaternion-euler` | 353K checks, 0 mismatches |
 | `Quaternion::Slerp(Quaternion const*, Quaternion const*, float)` | `math_quaternion.cpp` | `math/quaternion-slerp` | 2.4M checks, 0 mismatches |
 | `Matrix::Mul(Matrix const*, Matrix const*)` | `math_matrix.cpp` | `math/matrix-mul` | 1.1M checks, 0 mismatches |
-| `Matrix::Invert()` | `math_matrix.cpp` | `math/matrix-invert` | LIVE_MINV |
-| `Matrix::ApplyVector(Vector*, Vector const*) const` | `math_matrix.cpp` | `math/matrix-applyvector` | LIVE_MAV |
+| `Matrix::Invert()` | `math_matrix.cpp` | `math/matrix-invert` | ~10K checks, 0 mismatches |
+| `Matrix::ApplyVector(Vector*, Vector const*) const` | `math_matrix.cpp` | `math/matrix-applyvector` | ~43K checks, 0 mismatches |
 | `Matrix::SetLookAtMatrixZPUp(Vector const*, Vector const*, Vector const*, float)` | `math_matrix.cpp` | `math/matrix-lookat` | 83K checks, 0 mismatches |
 | `Matrix::PutPRS(Vector*, Quaternion*, Vector*) const` | `math_matrix.cpp` | `math/matrix-putprs` | 26K checks, 0 mismatches |
 | `Matrix::CalcEuler(Vector*, EnumRotateType) const` | `math_matrix.cpp` | `math/matrix-euler` | 63K checks, 0 mismatches |
@@ -66,7 +66,8 @@ them; the check counts a difference it can attribute to another thread as a race
 the first story run one more such call showed up as a mismatch: `Segment::SquaredDistance(Segment)`
 whose `this` bytes (which it never writes) differed between the native run and the replay, i.e.
 another thread's write. Since then the const members snapshot no `this` (restoring it for the replay
-would rewind that thread's write); the final run (all 12 natives with `hash`) is below.
+would rewind that thread's write). **The final run** (all 12 natives, with `hash`, every call checked):
+login 634K checks, battle 2.8M (113 races), gacha 1.6M, story 2.4M (30 races): 0 mismatches.
 
 12 natives; `math/constants` checks every `.rodata` constant they copy (`math_constants.h`) against
 the lib. The rest of the scope's 189 functions stay guest code (`symbols.tsv` status `decompiled`).
@@ -105,5 +106,10 @@ port's guest exactly (not necessarily a phone's bionic).
   eye position after the product; `Quaternion::Create(Matrix)` uses `sqrt(trace)` with m33 in the
   trace, and the identity when the selected diagonal's root is 0; `CreateFromEuler`'s order 0 (and
   any order outside 1-5) is qz * qy * qx.
-- **Guest time** (SOA_PROFILE, guest self samples): before 3,097 of 359,202 busy samples (0.86%) over
-  login, battle, gacha and story, ~2,500 of them in the functions above; after: see the report.
+- **Guest time** (SOA_PROFILE at 1000 Hz, guest self samples of this scope): task 5's four flows:
+  2,657 of 359,202 busy samples (0.74%; the queue's 3,097 / 0.86% included the families left out
+  above), 2,508 of them in the 12 functions ported. Before -> after, one pair per flow on the same
+  machine and load: login 293 (0.58%) -> 8 guest + 68 native; battle 988 (1.00%) -> 71 guest + 235
+  native (`Segment::SquaredDistance(Segment)` 74, `Slerp` 45, `Matrix::Mul` 40). Battle frame rate:
+  52.4 -> 51.5 fps mean over the session's perf lines (noise: the run is paced by its taps and the
+  host load).

@@ -4,7 +4,8 @@ A subsystem of the native rebuild (port/PLAN.md task 6). The workflow (decompile
 tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 
 - Scope: the demangled-name patterns in [`port/decomp/hash/scope.txt`](../../../decomp/hash/scope.txt):
-  `Framework::CHash32`, `Aska::Hash`, `Aska::detail::SpookyHashV2`, `Aska::Utf8`. The queue's proposal
+  `Framework::CHash32`, `Aska::Hash`, `Aska::detail::SpookyHashV2`, `Aska::Utf8`, `Framework::CStringHash`
+  (the containers subsystem left it to this one; decompiled, not ported yet). The queue's proposal
   (`port/scripts/rebuild_queue.py`) also took the whole `Aska::detail` family (DirectAofPrimitiveImpl,
   AnimationGroup, FontManager, SmallHeap: scene, text and memory code) and `Aska::Cryption` (ChaCha20,
   RSA, BigNumber: crypto, 13 samples); scope.txt leaves both out.
@@ -18,7 +19,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 |---|---|---|---|
 | `Framework::CHash32` | 0x10 | its constructors (`chash32.c`): vptr at 0, the hash at 8 | typed, all members native |
 | `Aska::detail::SpookyHashV2` | 0x130 | Init / Update / Final (`spooky.c`) = Bob Jenkins' reference class | typed, native |
-| `GuestString` (libc++ `basic_string<char, ..., CSTLAllocator>`) | 0x18 | CHash32's string overloads | read-only helper |
+| `GuestString` = `libcxx::String` (the game's `std::string`) | 0x18 | the libcxx subsystem's layout (`native/libcxx/libcxx_layout.h`) | used by CHash32's string overloads |
 | `Aska::Hash`, `Aska::Utf8` | - | free functions (namespaces here; the mangling can't tell a namespace from a class of statics) | native |
 
 **What other subsystems can rely on:** `CHash32::Of(s, n)` / `OfCString(s)` are the game's name hash
@@ -42,13 +43,16 @@ cases, and real inputs: the 3.7.0 download's paths and file bytes).
 | `Aska::Hash::CRC(unsigned char const*, unsigned long, unsigned short*)`, `(…, unsigned int*)` | `hash_digest.cpp` | `hash/crc`, `hash/tables` | not called |
 | `Aska::Utf8::GetByteSizeAt_`, `ToUcs4`, `ToUcs2` | `hash_utf8.cpp` | `hash/utf8` | `ToUcs4`: 822K checks, 0 mismatches |
 
+**The final run** (with `math`, every call checked): login 171M checks, battle 193M, gacha 202M,
+story 198M: 0 mismatches, 0 races.
+
 31 natives. Left to the guest (`symbols.tsv` status `skip`): the 4-byte destructors (too small to
 hook), `SpookyHashV2::Mix` (only called by Hash128 / Update / Final), and `MD5`, the HMACs, `RSA_SHA1`
 and the `IStream` variants (not executed in the profiled flows).
 
 ## Dependencies
 
-None (level 0). The natives call no other guest code (`CHash32::operator=(nullptr)` calls the guest's
+Types: `libcxx::String` (the libcxx subsystem's string layout). Functions: none (level 0). The natives call no other guest code (`CHash32::operator=(nullptr)` calls the guest's
 `Framework::gDoAssert` before faulting, as the original does).
 
 ## RE notes
@@ -70,8 +74,17 @@ None (level 0). The natives call no other guest code (`CHash32::operator=(nullpt
   (no copy to an aligned buffer); `Final` leaves its zero padding in `m_data`.
 - **Utf8:** an invalid lead byte (a continuation byte, 0xf8-0xff) is copied as one code unit; a 4-byte
   sequence reads its continuation bytes unchecked (also past a NUL), and `ToUcs2` stores its lead byte.
+- **CStringHash** (`port/decomp/hash/cstringhash.c`): a string-interning table (`CSubstance`) built on
+  the containers' templates `Aska::THash`, `TBinaryTree` and `TPoolLegacy` instantiated for
+  `CStringHash::tElement` (their rows in `symbols.tsv` are `skip` here: containers owns `Aska::T*<>`). Not ported in
+  wave 0 (it needs the containers' template natives first).
 - **Floating point:** none here. (The whole 3.7.0 lib has no fused multiply-add instruction: see
   `math`'s README.)
-- **Guest time** (SOA_PROFILE, guest self samples of these functions): before 9,927 of 359,202 busy
-  samples (2.76%; `CHash32::CHash32(char const*)` alone 8,158) over login, battle, gacha and story
-  (the queue's 10,695 / 3.0% included the `Aska::detail` classes above); after: see the commit's report.
+- **Guest time** (SOA_PROFILE at 1000 Hz, guest self samples of this scope; the task-5 profile and
+  one before / after pair per flow on the same machine and load, `perf.py`-style over
+  `port/scripts/profile_report.py`'s tables): task 5's four flows: 9,927 of 359,202 busy samples
+  (2.76%; `CHash32::CHash32(char const*)` alone 8,158; the queue's 10,695 / 3.0% included the
+  `Aska::detail` classes above). Before -> after: login 2,274 (4.54% of busy) -> 21 guest + 625
+  native (`CHash32(char const*)` 403, `SHA1` 181); battle 2,548 (2.59%) -> 19 guest + 684 native.
+  The rest of a native call is the trap into the host (`SVC`) and back. `CStringHash` runs (15-20
+  functions executed per flow) but is cold (about 5 samples per flow).

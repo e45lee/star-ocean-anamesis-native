@@ -24,9 +24,8 @@
 // function at most), out=FILE (per-function counts, record / replay families), only=SUB[|SUB..]
 // (check only functions whose symbol contains one of these: the others run natively without a
 // check, so the chosen ones are checked also where they are nested callees of other natives),
-// trace, dump (debugging). E.g. --live-check arena:every=4:only=Alloc|Free. No family is registered
-// now (the natives were rebuilt on 3.7.0, docs/history/PLAN-rebase-370.md): the harness waits for
-// the next ported family, and --live-check names none until then.
+// trace, dump (debugging). E.g. --live-check arena:every=4:only=Alloc|Free. Registered: lib_sqlite
+// (its own shadow run: native/lib_sqlite/lib_sqlite_api.cpp; it uses the switch and out=).
 #include <atomic>
 #include <cstdio>
 #include <cstring>

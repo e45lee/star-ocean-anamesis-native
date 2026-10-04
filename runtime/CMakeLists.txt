@@ -61,6 +61,7 @@ target_link_libraries(soaruntime_iface INTERFACE
   soa_zip
   soa_gamefiles
   soa_codec
+  soa::ffmpeg  # the movie player (src/frontend/movie_decoder.cpp)
   dynarmic
   soa::EGL
   soa::GLESv2

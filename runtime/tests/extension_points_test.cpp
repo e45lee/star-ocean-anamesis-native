@@ -141,6 +141,7 @@ int main(int argc, char** argv) {
     run_runtime_tests("jni/");
     run_runtime_tests("frontend/text-");  // the text-entry editor (frontend/text_entry_tests.cpp)
     run_runtime_tests("frontend/touch-");  // scripted taps paced by frames (frontend/touch_script_tests.cpp)
+    run_runtime_tests("frontend/movie-");  // the movie player on FFmpeg's libraries, with a built-in clip (frontend/movie_tests.cpp)
     run_runtime_tests("gdb/");             // the GDB protocol's encodings (core/gdb_protocol_tests.cpp)
     run_runtime_tests("hle/libc-");        // the guest libc helpers that differ by host (hle/format_tests.cpp)
     run_gdbstub_tests(check);              // the GDB stub end to end (gdbstub_test.cpp; last: it turns the debugger hooks on)

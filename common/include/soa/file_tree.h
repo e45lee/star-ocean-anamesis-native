@@ -9,7 +9,7 @@
 // Paths are relative, '/'-separated ("sqlite/basmaster.sqlite3"). A zip whose only top-level entry
 // is one folder holding the tree (e.g. download-3.7.0/...) is read from inside that folder.
 // locate() gives where a file's bytes are: a range of a host file (the folder's file itself, or a
-// stored zip entry in place: no copy, pread / mmap / ffmpeg's subfile), or not in place (a deflated
+// stored zip entry in place: no copy, pread / mmap / the movie player's reader), or not in place (a deflated
 // entry: read() inflates it). Const methods are thread-safe (soa::ZipArchive's rule).
 #include <cstdint>
 #include <memory>

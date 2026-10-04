@@ -10,7 +10,9 @@
 # Env:
 #   EMU_DATA=DIR   a pre-downloaded emulated phone (DIR/data/files/download: a KEEP_DATA=1
 #                  emulator_session.sh run's OUT/emu, or any phone the 3.7.0 client filled from
-#                  soa-server's or the port's CDN). It is copied (never modified); in the copy the
+#                  soa-server's or the port's CDN), or the stamped shared phone work/phone-3.7.0
+#                  (scripts/shared-phone.sh: hard-linked, writable directories, version.bin and
+#                  manifest copied). Never modified; in the run's phone the
 #                  stand-ins are removed (below), so the client's data check only fetches them and
 #                  what else the phone lacks. Without EMU_DATA each run downloads the whole 3 GB.
 #   STANDIN_MODES  the runs (default "on off", in parallel): on = soa-server --standin-assets
@@ -125,18 +127,23 @@ finish() {
     echo "FAIL"; exit 1
 }
 
-# The phone: a copy of EMU_DATA without the stand-ins, or an empty one.
+# The phone: EMU_DATA without the stand-ins, or an empty one. A stamped shared phone
+# (scripts/shared-phone.sh, e.g. work/phone-3.7.0) is hard-linked with writable directories and
+# real copies of version.bin / manifest (the files rewritten below), any other phone copied.
 if [ -n "${EMU_DATA:-}" ]; then
-    cp -a "$EMU_DATA" "$phone" || { miss "copy of EMU_DATA"; finish; }
+    . "$repo/scripts/shared-phone.sh"
+    shared_phone_link "$EMU_DATA" "$phone" > "$out/phone-link.txt" 2>&1 || { miss "phone from EMU_DATA ($(tail -n 1 "$out/phone-link.txt"))"; finish; }
     while read -r rel; do rm -f "$dl/$rel"; done < "$out/standins.txt"
     if ! python3 - "$dl/version.bin" "$out/standins.txt" > "$out/phone-prep.txt" 2>&1 <<'EOF'
-import sys, msgpack
+import os, sys, msgpack
 path, names = sys.argv[1], set(open(sys.argv[2]).read().split())
 v = msgpack.unpackb(open(path, "rb").read(), raw=False, strict_map_key=False)
 a = v["assets"]
 drop = [k for k in a if k in names or "/5374616e/" in k]
 for k in drop: del a[k]
-open(path, "wb").write(msgpack.packb(v, use_bin_type=True))
+data = msgpack.packb(v, use_bin_type=True)
+os.remove(path)  # a new file, never written through a link into EMU_DATA
+open(path, "wb").write(data)
 print(f"removed {len(drop)} entries from the phone's version.bin: {', '.join(sorted(drop))}")
 EOF
     then miss "phone: version.bin ($(tail -n 1 "$out/phone-prep.txt"))"; finish; fi
@@ -188,6 +195,9 @@ if mode == "on": print(f"{len(names)} stand-ins in version.bin, B/5374616e/stand
 else: print(f"none of the {len(names)} stand-ins in version.bin or the manifests, no 5374616e bundle")
 EOF
 ); then pass "served (rev $rev): $check"; else miss "served (rev $rev): $check"; finish; fi
+# The client's own requests are the server log's lines after these (check 1's curl GETs of the
+# manifests must not count as the client's data check).
+slog_base=$(wc -l < "$slog")
 
 # 2. The client.
 timeout -k 10 2400 "$emu" --data "$phone" --headless --size ${W}x$H --control "$fifo" \
@@ -202,7 +212,7 @@ alive() {
 ctl() { python3 "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
 in_plog() { grep -q -- "$1" "$out/packets/packets.log" 2>/dev/null; }
 in_elog() { grep -q -- "$1" "$elog" 2>/dev/null; }
-in_slog() { grep -q -- "$1" "$slog" 2>/dev/null; }
+in_slog() { tail -n +$((slog_base + 1)) "$slog" 2>/dev/null | grep -q -- "$1"; }
 wait_for() {   # NAME SECONDS CMD...
     local name=$1 end=$(( $(date +%s) + $2 )); shift 2
     while ! "$@"; do
@@ -232,21 +242,24 @@ tap_until "title: NoLoginStart -> NoLoginStartRes" 240 364:713 in_plog "< NoLogi
 sleep 5
 ctl "shot:$out/title.png"
 tap_until "TAP TO START -> Login -> LoginResult" 180 364:713 in_plog "< LoginResult "
-# The data check. An empty phone: the "episode data" dialog's 決定 first.
+# The data check. An empty phone: the Episode data dialog (Episodeデータ管理) first; its 決定
+# starts the client's GETs of version.bin and the manifests.
 if [ -z "${EMU_DATA:-}" ]; then
     tap_until "data check (version_latest_Bulk.bin)" 120 364:1043 in_slog "GET [^ ]*/manifest/etc2/hi/version_latest_Bulk.bin"
 else
     wait_for "data check (version_latest_Bulk.bin)" 120 in_slog "GET [^ ]*/manifest/etc2/hi/version_latest_Bulk.bin"
 fi
-# A download dialog (ダウンロード 515:800) when the phone lacks something, else home. Then the
+# A download dialog (ダウンロード 515:800) when the phone lacks something, else home; an Episode
+# data dialog that comes instead (決定 364:1043) is answered too, the two taps in turn. Then the
 # bundles until the GETs stop for 20 s, the download's 完了 (364:790), home.
-end=$(( $(date +%s) + 120 )) next=$(( $(date +%s) + 8 ))
+end=$(( $(date +%s) + 120 )) next=$(( $(date +%s) + 8 )) k=0
 while ! bundle_get && ! home; do
     alive || { miss "download dialog (soa-emu exited)"; finish; }
     [ "$(date +%s)" -lt $end ] || { miss "data check: neither a download nor home within 120 s"; finish; }
     if [ "$(date +%s)" -ge $next ]; then
         [ -f "$out/download-dialog.png" ] || ctl "shot:$out/download-dialog.png"
-        ctl tap:515:800; next=$(( $(date +%s) + 6 ))
+        if [ $((k % 2)) = 0 ]; then ctl tap:515:800; else ctl tap:364:1043; fi
+        k=$((k + 1)) next=$(( $(date +%s) + 6 ))
     fi
     sleep 1
 done

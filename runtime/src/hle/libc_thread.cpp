@@ -9,6 +9,7 @@
 #include <semaphore.h>
 #include <string.h>
 #ifndef _WIN32
+#include <link.h>
 #include <sys/resource.h>
 #endif
 #include <time.h>
@@ -140,6 +141,38 @@ void* thread_body(void* p) {
     return (void*)r;
 }
 
+}  // namespace
+
+size_t hle_static_tls_size() {
+#ifdef _WIN32
+    return 0;  // TLS isn't on the thread's stack
+#else
+    // The PT_TLS segments of the modules loaded at start-up (the program's own thread_locals and
+    // its shared libraries'): glibc places them at the top of every new thread's stack, inside
+    // the size pthread_attr_setstacksize asked for (glibc bug 11787).
+    static const size_t n = [] {
+        size_t sum = 0;
+        dl_iterate_phdr(
+            [](dl_phdr_info* info, size_t, void* p) {
+                for (int i = 0; i < info->dlpi_phnum; i++) {
+                    const auto& ph = info->dlpi_phdr[i];
+                    if (ph.p_type != PT_TLS) continue;
+                    size_t align = ph.p_align ? ph.p_align : 1;
+                    *(size_t*)p += (ph.p_memsz + align - 1) / align * align;
+                }
+                return 0;
+            },
+            &sum);
+        return sum;
+    }();
+    return n;
+#endif
+}
+
+size_t hle_guest_thread_host_stack() { return kGuestThreadHostStack + hle_static_tls_size(); }
+
+namespace {
+
 void th_create(Cpu& c) {
     auto* out = (u64*)c.x(0);
     auto* a = (BionicAttr*)c.x(1);
@@ -147,7 +180,7 @@ void th_create(Cpu& c) {
     if (si->stack_size < (256 << 10)) si->stack_size = 256 << 10;
     pthread_attr_t ha;
     pthread_attr_init(&ha);
-    pthread_attr_setstacksize(&ha, 256 << 10);  // host side only runs the JIT + thunks
+    pthread_attr_setstacksize(&ha, hle_guest_thread_host_stack());  // host side only runs the JIT + thunks
     if (a && (a->flags & 1)) pthread_attr_setdetachstate(&ha, PTHREAD_CREATE_DETACHED);
     pthread_t t;
     int r = pthread_create(&t, &ha, thread_body, si);

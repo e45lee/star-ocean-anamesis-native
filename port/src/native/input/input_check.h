@@ -60,7 +60,7 @@ template <typename T, auto M>
 void locked_checked(Cpu& c, CheckedFn& f) {
     if (!live::check_due(f)) return wrap_method<M>()(c);
     live::CheckScope scope;
-    static thread_local Observation obs;
+    Observation& obs = live::thread_scratch<Observation>();
     obs.have_pre = obs.have_post = false;
     u64 x[4] = {c.x(0), c.x(1), c.x(2), c.x(3)};
     t_obs = &obs;

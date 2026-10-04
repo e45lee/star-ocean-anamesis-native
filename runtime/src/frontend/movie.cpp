@@ -1,22 +1,13 @@
 #include "frontend/movie.h"
 
 #include <GLES3/gl3.h>
-#include <fcntl.h>
-#include <unistd.h>
-#ifdef _WIN32
-#include <io.h>
-#include <windows.h>
-#else
-#include <signal.h>
-#include <spawn.h>
-#include <sys/wait.h>
-#endif
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cstring>
 #include <deque>
-#include <fstream>
+#include <iterator>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -25,153 +16,26 @@
 #include "android/platform.h"
 #include "core/log.h"
 #include "core/vfs.h"
-
-#ifndef _WIN32
-extern char** environ;
-#endif
+#include "frontend/movie_decoder.h"
 
 namespace soa {
 
 namespace {
 
-#ifdef _WIN32
-// ffmpeg as a Windows process, its stdout on a pipe (a CRT descriptor, read like the POSIX one).
-struct Proc {
-    HANDLE process = nullptr;
-    int fd = -1;
-    bool running() const { return process != nullptr; }
-};
-
-std::string quote_arg(const std::string& a) {  // CommandLineToArgvW's rules
-    if (!a.empty() && a.find_first_of(" \t\"") == std::string::npos) return a;
-    std::string q = "\"";
-    size_t bs = 0;
-    for (char ch : a) {
-        if (ch == '\\') {
-            bs++;
-            continue;
-        }
-        q.append(ch == '"' ? bs * 2 + 1 : bs, '\\');
-        bs = 0;
-        q += ch;
-    }
-    q.append(bs * 2, '\\');
-    return q + "\"";
-}
-
-Proc spawn_reader(const std::vector<std::string>& args) {
-    SECURITY_ATTRIBUTES sa{sizeof sa, nullptr, TRUE};
-    HANDLE rd, wr;
-    if (!CreatePipe(&rd, &wr, &sa, 1 << 16)) return {};
-    SetHandleInformation(rd, HANDLE_FLAG_INHERIT, 0);
-    std::string cmd;
-    for (auto& a : args) cmd += (cmd.empty() ? "" : " ") + quote_arg(a);
-    STARTUPINFOA si{};
-    si.cb = sizeof si;
-    si.dwFlags = STARTF_USESTDHANDLES;
-    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    si.hStdOutput = wr;
-    si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-    PROCESS_INFORMATION pi{};
-    BOOL ok = CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi);
-    CloseHandle(wr);
-    if (!ok) {
-        CloseHandle(rd);
-        return {};
-    }
-    CloseHandle(pi.hThread);
-    return {pi.hProcess, _open_osfhandle((intptr_t)rd, _O_RDONLY | _O_BINARY)};
-}
-
-void wait_proc(Proc& p) {
-    if (p.process) {
-        WaitForSingleObject(p.process, INFINITE);
-        CloseHandle(p.process);
-    }
-}
-
-void kill_proc(Proc& p) {
-    if (p.fd >= 0) close(p.fd);
-    if (p.process) TerminateProcess(p.process, 1);
-    wait_proc(p);
-    p = {};
-}
-#else
-struct Proc {
-    pid_t pid = -1;
-    int fd = -1;
-    bool running() const { return pid > 0; }
-};
-
-// Runs argv with stdout on a pipe.
-Proc spawn_reader(const std::vector<std::string>& args) {
-    int p[2];
-    if (pipe2(p, O_CLOEXEC) != 0) return {};
-    posix_spawn_file_actions_t fa;
-    posix_spawn_file_actions_init(&fa);
-    posix_spawn_file_actions_adddup2(&fa, p[1], 1);
-    // Don't leak the game's (or the other decoder's) descriptors into the child.
-    posix_spawn_file_actions_addclosefrom_np(&fa, 3);
-    std::vector<char*> argv;
-    for (auto& a : args) argv.push_back((char*)a.c_str());
-    argv.push_back(nullptr);
-    pid_t pid;
-    int r = posix_spawnp(&pid, argv[0], &fa, nullptr, argv.data(), environ);
-    posix_spawn_file_actions_destroy(&fa);
-    close(p[1]);
-    if (r != 0) {
-        close(p[0]);
-        return {};
-    }
-    return {pid, p[0]};
-}
-
-void wait_proc(Proc& p) { waitpid(p.pid, nullptr, 0); }
-
-void kill_proc(Proc& p) {
-    if (p.fd >= 0) close(p.fd);
-    if (p.pid > 0) {
-        kill(p.pid, SIGKILL);
-        waitpid(p.pid, nullptr, 0);
-    }
-    p = {};
-}
-#endif
-
-std::string run_capture(const std::vector<std::string>& args) {
-    Proc p = spawn_reader(args);
-    if (p.fd < 0) return {};
-    std::string out;
-    char buf[4096];
-    ssize_t n;
-    while ((n = read(p.fd, buf, sizeof buf)) > 0) out.append(buf, n);
-    close(p.fd);
-    wait_proc(p);
-    return out;
-}
-
-bool read_full(int fd, void* dst, size_t n) {
-    auto* d = (char*)dst;
-    while (n) {
-        ssize_t r = read(fd, d, n);
-        if (r <= 0) return false;
-        d += r;
-        n -= r;
-    }
-    return true;
-}
-
 struct Movie {
-    std::string input;
-    int w = 0, h = 0;
+    MovieSource source;
+    int w = 0, h = 0;  // the picture as shown (after the rotation below)
+    int src_w = 0, src_h = 0;  // as decoded
+    bool rotate = false;
     double fps = 30;
     float volume = 1;
-    Proc video, audio;
+    MovieStream video, audio;
+    bool has_audio = false;
     std::thread video_thread, audio_thread;
     std::atomic<bool> stop{false}, video_done{false}, audio_done{false};
 
     std::mutex frame_m;
-    std::vector<unsigned char> frame;  // latest decoded frame (RGBA)
+    MovieFrame frame;  // latest decoded picture (yuv420p planes)
     bool frame_dirty = false;
 
     std::mutex audio_m;
@@ -180,7 +44,7 @@ struct Movie {
     std::chrono::steady_clock::time_point start;
 };
 
-constexpr int kMovieRate = 48000;
+constexpr int kMovieRate = MovieStream::kAudioRate;
 // How far audio may lag the wall clock before it is dropped (device latency allowance).
 constexpr double kAudioSlack = 0.5;
 
@@ -203,39 +67,41 @@ std::mutex g_m;
 std::unique_ptr<Movie> g_movie;
 std::atomic<bool> g_active{false};
 std::atomic<bool> g_mixer_stalled{false};  // test hook: movie_mix_audio takes nothing
-std::string g_tmp_file;
 
-// GL objects (render thread only)
-GLuint g_tex = 0, g_fbo = 0;
-int g_tex_w = 0, g_tex_h = 0;
-
+// Frame k is shown at start + k / fps (the stream's r_frame_rate), as when the frames came from
+// the ffmpeg program's constant-rate output.
 void video_loop(Movie* m) {
-    size_t sz = (size_t)m->w * m->h * 4;
-    std::vector<unsigned char> buf(sz);
+    MovieFrame buf;
+    std::string err;
     for (u64 k = 0; !m->stop; k++) {
-        if (!read_full(m->video.fd, buf.data(), sz)) break;
+        if (!m->video.next_video(buf, &err)) {
+            if (!err.empty() && !m->stop) LOGE("movie", "video: %s", err.c_str());
+            break;
+        }
         auto due = m->start + std::chrono::microseconds((u64)(k * 1e6 / m->fps));
         while (!m->stop && std::chrono::steady_clock::now() < due) std::this_thread::sleep_for(std::chrono::milliseconds(2));
         std::lock_guard lk(m->frame_m);
-        m->frame.swap(buf);
-        buf.resize(sz);
+        std::swap(m->frame, buf);
         m->frame_dirty = true;
     }
     m->video_done = true;
 }
 
 void audio_loop(Movie* m) {
-    std::vector<float> buf(4096);
+    std::vector<float> buf;
+    std::string err;
     while (!m->stop) {
-        ssize_t n = read(m->audio.fd, buf.data(), buf.size() * sizeof(float));
-        if (n <= 0) break;
+        if (!m->audio.next_audio(buf, &err)) {
+            if (!err.empty() && !m->stop) LOGE("movie", "audio: %s", err.c_str());
+            break;
+        }
         // Don't run far ahead of playback.
         for (;;) {
             {
                 std::lock_guard lk(m->audio_m);
                 drop_late_audio(m);
                 if (m->samples.size() < kMovieRate * 2) {
-                    m->samples.insert(m->samples.end(), buf.begin(), buf.begin() + n / sizeof(float));
+                    m->samples.insert(m->samples.end(), buf.begin(), buf.end());
                     break;
                 }
             }
@@ -246,6 +112,206 @@ void audio_loop(Movie* m) {
     m->audio_done = true;
 }
 
+// Where an asset's bytes are: the APK's entry (stored: in place in the APK's mapping), or with
+// --download the download tree's file (a folder's file, or the data zip's stored entry in place).
+// A compressed entry is inflated into memory.
+bool asset_source(const std::string& path, MovieSource& out) {
+    AssetManager::Found f;
+    AssetManager::Download dl;
+    if (asset_manager().find_download(path, dl) && (asset_manager().download_prefer() || !asset_manager().find(path, f))) {
+        const ZipArchive* zip = dl.tree->zip();
+        if (!zip) {
+            out = MovieSource::file(dl.loc.file);
+            return true;
+        }
+        const ZipArchive::Entry* e = zip->find(dl.tree->prefix() + dl.rel);
+        if (const uint8_t* p = e ? zip->stored_data(*e) : nullptr) {
+            out = MovieSource::memory(p, e->size, dl.tree);  // the tree keeps the zip mapped
+            return true;
+        }
+        std::vector<uint8_t> data;
+        if (!dl.tree->read(dl.rel, data)) return false;
+        out = MovieSource::owned(std::move(data));
+        return true;
+    }
+    if (!asset_manager().find(path, f)) return false;
+    if (const uint8_t* p = f.zip->stored_data(*f.entry)) {
+        out = MovieSource::memory(p, f.entry->size);  // the asset manager's APKs stay open
+        return true;
+    }
+    std::vector<uint8_t> data;
+    if (!f.zip->extract(*f.entry, data)) return false;
+    out = MovieSource::owned(std::move(data));
+    return true;
+}
+
+// ---------------------------------------------------------------------------
+// GL (render thread only): the planes go to three R8 textures; a shader converts them to RGBA
+// (BT.601, limited range: what the ffmpeg program's swscale used for these movies, which don't
+// tag their colour space) and turns the picture upright into g_tex, which is blitted to the window.
+
+const char* kVs = R"(#version 300 es
+void main() {  // one triangle over the whole viewport
+    gl_Position = vec4(float((gl_VertexID & 1) << 2) - 1.0, float((gl_VertexID & 2) << 1) - 1.0, 0.0, 1.0);
+}
+)";
+// Row 0 of g_tex is the picture's top (as the decoded rows; the blit flips). Rotated: output
+// (x, y) is source (src_w - y, x), ffmpeg's transpose=2 (90 degrees counter-clockwise). Chroma is
+// taken from the 2x2 block's sample (no interpolation), as swscale's unscaled yuv420p -> rgba.
+const char* kFs = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform highp sampler2D u_y, u_u, u_v;
+uniform ivec2 u_src;
+uniform int u_rotate;
+out vec4 o;
+void main() {
+    ivec2 d = ivec2(gl_FragCoord.xy);
+    ivec2 s = u_rotate != 0 ? ivec2(u_src.x - 1 - d.y, d.x) : d;
+    float y = 1.1643836 * (texelFetch(u_y, s, 0).r - 0.0627451);
+    float u = texelFetch(u_u, s / 2, 0).r - 0.5019608;
+    float v = texelFetch(u_v, s / 2, 0).r - 0.5019608;
+    o = vec4(clamp(vec3(y + 1.5960268 * v, y - 0.3917623 * u - 0.8129676 * v, y + 2.0172321 * u), 0.0, 1.0), 1.0);
+}
+)";
+
+struct Gl {
+    bool failed = false;
+    GLuint prog = 0, vao = 0;
+    GLint u_src = -1, u_rotate = -1;
+    GLuint planes[3] = {};  // Y, U, V
+    GLuint tex = 0, fbo = 0;
+    int tex_w = 0, tex_h = 0, plane_w = 0, plane_h = 0;
+};
+Gl g_gl;
+
+GLuint compile(GLenum type, const char* src) {
+    GLuint s = glCreateShader(type);
+    glShaderSource(s, 1, &src, nullptr);
+    glCompileShader(s);
+    GLint ok = 0;
+    glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
+    if (!ok) {
+        char log[512] = {};
+        glGetShaderInfoLog(s, sizeof log, nullptr, log);
+        LOGE("movie", "shader: %s", log);
+        glDeleteShader(s);
+        return 0;
+    }
+    return s;
+}
+
+bool gl_setup(Gl& g) {
+    if (g.prog || g.failed) return !g.failed;
+    GLuint vs = compile(GL_VERTEX_SHADER, kVs), fs = compile(GL_FRAGMENT_SHADER, kFs);
+    if (vs && fs) {
+        g.prog = glCreateProgram();
+        glAttachShader(g.prog, vs);
+        glAttachShader(g.prog, fs);
+        glLinkProgram(g.prog);
+        GLint ok = 0;
+        glGetProgramiv(g.prog, GL_LINK_STATUS, &ok);
+        if (!ok) glDeleteProgram(g.prog), g.prog = 0;
+    }
+    if (vs) glDeleteShader(vs);
+    if (fs) glDeleteShader(fs);
+    if (!g.prog) {
+        LOGE("movie", "the movie's GL program failed; movies show black");
+        g.failed = true;
+        return false;
+    }
+    g.u_src = glGetUniformLocation(g.prog, "u_src");
+    g.u_rotate = glGetUniformLocation(g.prog, "u_rotate");
+    GLint prev_prog;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &prev_prog);
+    glUseProgram(g.prog);
+    glUniform1i(glGetUniformLocation(g.prog, "u_y"), 0);
+    glUniform1i(glGetUniformLocation(g.prog, "u_u"), 1);
+    glUniform1i(glGetUniformLocation(g.prog, "u_v"), 2);
+    glUseProgram(prev_prog);
+    glGenVertexArrays(1, &g.vao);
+    glGenTextures(3, g.planes);
+    glGenTextures(1, &g.tex);
+    glGenFramebuffers(1, &g.fbo);
+    return true;
+}
+
+// Converts `f` into g.tex (m's shown size), saving and restoring the GL state it changes.
+void gl_convert(Gl& g, const Movie* m, const MovieFrame& f) {
+    GLint prog, vao, active, draw_fb, unpack_buf, ua, url, usr, usp, vp[4], tex[3], sampler[3];
+    GLboolean mask[4];
+    glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vao);
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &active);
+    for (int i = 0; i < 3; i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &tex[i]);
+        glGetIntegerv(GL_SAMPLER_BINDING, &sampler[i]);
+    }
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_fb);
+    glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &unpack_buf);
+    glGetIntegerv(GL_UNPACK_ALIGNMENT, &ua);
+    glGetIntegerv(GL_UNPACK_ROW_LENGTH, &url);
+    glGetIntegerv(GL_UNPACK_SKIP_ROWS, &usr);
+    glGetIntegerv(GL_UNPACK_SKIP_PIXELS, &usp);
+    glGetIntegerv(GL_VIEWPORT, vp);
+    glGetBooleanv(GL_COLOR_WRITEMASK, mask);
+    const GLenum caps[] = {GL_BLEND, GL_DEPTH_TEST, GL_STENCIL_TEST, GL_CULL_FACE, GL_SAMPLE_ALPHA_TO_COVERAGE, GL_SAMPLE_COVERAGE, GL_SCISSOR_TEST, GL_RASTERIZER_DISCARD};
+    GLboolean was[std::size(caps)];
+    for (size_t i = 0; i < std::size(caps); i++) was[i] = glIsEnabled(caps[i]);
+
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    bool resize = g.plane_w != f.w || g.plane_h != f.h;
+    const uint8_t* p = f.planes.data();
+    for (int i = 0; i < 3; i++) {
+        int pw = i ? f.chroma_w() : f.w, ph = i ? f.chroma_h() : f.h;
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindSampler(i, 0);
+        glBindTexture(GL_TEXTURE_2D, g.planes[i]);
+        if (resize) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, pw, ph, 0, GL_RED, GL_UNSIGNED_BYTE, p);
+        } else {
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, pw, ph, GL_RED, GL_UNSIGNED_BYTE, p);
+        }
+        p += (size_t)pw * ph;
+    }
+    g.plane_w = f.w, g.plane_h = f.h;
+    // A picture of an unexpected size (none of the game's) is drawn into the top-left corner.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, g.fbo);
+    glViewport(0, 0, std::min(g.tex_w, m->rotate ? f.h : f.w), std::min(g.tex_h, m->rotate ? f.w : f.h));
+    for (GLenum c : caps) glDisable(c);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glUseProgram(g.prog);
+    glUniform2i(g.u_src, f.w, f.h);
+    glUniform1i(g.u_rotate, m->rotate ? 1 : 0);
+    glBindVertexArray(g.vao);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glBindVertexArray(vao);
+    glUseProgram(prog);
+    for (size_t i = 0; i < std::size(caps); i++) (was[i] ? glEnable : glDisable)(caps[i]);
+    glColorMask(mask[0], mask[1], mask[2], mask[3]);
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, draw_fb);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, ua);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, url);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, usr);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, usp);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, unpack_buf);
+    for (int i = 2; i >= 0; i--) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, tex[i]);
+        glBindSampler(i, sampler[i]);
+    }
+    glActiveTexture(active);
+}
+
 }  // namespace
 
 bool movie_start(const std::string& path, bool is_file, float volume) {
@@ -253,69 +319,35 @@ bool movie_start(const std::string& path, bool is_file, float volume) {
     auto m = std::make_unique<Movie>();
     m->volume = volume;
     if (is_file) {
-        m->input = host_path(path.c_str());
-    } else {
-        AssetManager::Found f;
-        AssetManager::Download dl;
-        if (asset_manager().find_download(path, dl) && (asset_manager().download_prefer() || !asset_manager().find(path, f))) {
-            // --download: builtin_data/<rel> served from the download: a folder's file, a stored
-            // entry of the download's zip in place (ffmpeg's subfile protocol), else extracted
-            if (dl.loc.in_place && dl.tree->is_zip()) {
-                m->input = "subfile,,start," + std::to_string(dl.loc.offset) + ",end," + std::to_string(dl.loc.offset + dl.loc.size) + ",,:" + dl.loc.file;
-            } else if (dl.loc.in_place) {
-                m->input = dl.loc.file;
-            } else {
-                std::vector<uint8_t> data;
-                dl.tree->read(dl.rel, data);
-                g_tmp_file = vfs_config().root + "/movie.tmp.mp4";
-                std::ofstream(g_tmp_file, std::ios::binary).write((const char*)data.data(), data.size());
-                m->input = g_tmp_file;
-            }
-        } else if (!asset_manager().find(path, f)) {
-            LOGE("movie", "asset %s not found", path.c_str());
-            return false;
-        } else {
-            // ffmpeg's subfile protocol reads the (uncompressed) entry in place inside the APK.
-            u64 start = f.zip->data_offset_of(*f.entry);
-            if (f.entry->method == 0) {
-                m->input = "subfile,,start," + std::to_string(start) + ",end," + std::to_string(start + f.entry->size) + ",,:" + f.zip->path();
-            } else {
-                std::vector<uint8_t> data;
-                f.zip->extract(*f.entry, data);
-                g_tmp_file = vfs_config().root + "/movie.tmp.mp4";
-                std::ofstream(g_tmp_file, std::ios::binary).write((const char*)data.data(), data.size());
-                m->input = g_tmp_file;
-            }
-        }
-    }
-    std::string probe = run_capture({"ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height,r_frame_rate", "-of", "csv=p=0", m->input});
-    int num = 30, den = 1;
-    if (sscanf(probe.c_str(), "%d,%d,%d/%d", &m->w, &m->h, &num, &den) < 2 || m->w <= 0 || m->h <= 0) {
-        LOGE("movie", "ffprobe failed for %s (is ffmpeg installed?): %s", m->input.c_str(), probe.c_str());
+        m->source = MovieSource::file(host_path(path.c_str()));
+    } else if (!asset_source(path, m->source)) {
+        LOGE("movie", "asset %s not found", path.c_str());
         return false;
     }
-    m->fps = den ? (double)num / den : 30.0;
+    Movie* raw = m.get();
+    auto stopping = [raw] { return raw->stop.load(); };
+    std::string err;
+    if (!m->video.open(m->source, MovieStream::Kind::video, &err, stopping)) {
+        LOGE("movie", "can't play %s: %s", path.c_str(), err.c_str());
+        return false;
+    }
+    m->src_w = m->video.width(), m->src_h = m->video.height();
+    if (m->src_w <= 0 || m->src_h <= 0) {
+        LOGE("movie", "can't play %s: no picture size", path.c_str());
+        return false;
+    }
+    m->fps = m->video.frame_rate();
     if (m->fps <= 1 || m->fps > 240) m->fps = 30;
     // The game's movies are stored portrait with the picture rotated; Android shows them in a
     // portrait-locked activity while the phone is held landscape. Rotate them upright.
-    std::vector<std::string> vargs = {"ffmpeg", "-v", "error", "-nostdin", "-i", m->input};
-    if (m->h > m->w) {
-        vargs.insert(vargs.end(), {"-vf", "transpose=2"});
-        std::swap(m->w, m->h);
-    }
-    vargs.insert(vargs.end(), {"-f", "rawvideo", "-pix_fmt", "rgba", "-"});
-    m->video = spawn_reader(vargs);
-    m->audio = spawn_reader({"ffmpeg", "-v", "error", "-nostdin", "-i", m->input, "-vn", "-f", "f32le", "-ac", "2", "-ar", "48000", "-"});
-    if (m->video.fd < 0) {
-        LOGE("movie", "couldn't run ffmpeg");
-        kill_proc(m->audio);
-        return false;
-    }
-    LOGI("movie", "playing %s (%dx%d @ %.2f fps)", path.c_str(), m->w, m->h, m->fps);
+    m->rotate = m->src_h > m->src_w;
+    m->w = m->rotate ? m->src_h : m->src_w;
+    m->h = m->rotate ? m->src_w : m->src_h;
+    m->has_audio = m->audio.open(m->source, MovieStream::Kind::audio, &err, stopping);
+    LOGI("movie", "playing %s (%dx%d @ %.2f fps%s)", path.c_str(), m->w, m->h, m->fps, m->has_audio ? "" : ", no audio");
     m->start = std::chrono::steady_clock::now();
-    Movie* raw = m.get();
     m->video_thread = std::thread(video_loop, raw);
-    if (m->audio.fd >= 0) m->audio_thread = std::thread(audio_loop, raw);
+    if (m->has_audio) m->audio_thread = std::thread(audio_loop, raw);
     else m->audio_done = true;
     std::lock_guard lk(g_m);
     g_movie = std::move(m);
@@ -332,11 +364,8 @@ void movie_stop() {
     }
     if (!m) return;
     m->stop = true;
-    kill_proc(m->video);
-    kill_proc(m->audio);
     if (m->video_thread.joinable()) m->video_thread.join();
     if (m->audio_thread.joinable()) m->audio_thread.join();
-    if (!g_tmp_file.empty()) unlink(g_tmp_file.c_str()), g_tmp_file.clear();
     LOGI("movie", "stopped");
 }
 
@@ -356,35 +385,40 @@ void movie_draw(int ww, int wh, unsigned target_fbo) {
     std::lock_guard lk(g_m);
     Movie* m = g_movie.get();
     if (!m) return;
-    if (!g_tex) {
-        glGenTextures(1, &g_tex);
-        glGenFramebuffers(1, &g_fbo);
-    }
-    GLint prev_tex, prev_unpack, prev_align, prev_read;
+    Gl& g = g_gl;
+    if (!gl_setup(g)) return;
+    GLint prev_tex, prev_read, prev_active;
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &prev_active);
+    glActiveTexture(GL_TEXTURE0);
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_tex);
-    glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &prev_unpack);
-    glGetIntegerv(GL_UNPACK_ALIGNMENT, &prev_align);
     glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &prev_read);
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    glBindTexture(GL_TEXTURE_2D, g_tex);
-    if (g_tex_w != m->w || g_tex_h != m->h) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m->w, m->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    if (g.tex_w != m->w || g.tex_h != m->h) {
+        glBindTexture(GL_TEXTURE_2D, g.tex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m->w, m->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        g_tex_w = m->w, g_tex_h = m->h;
-        std::vector<unsigned char> black((size_t)m->w * m->h * 4, 0);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m->w, m->h, GL_RGBA, GL_UNSIGNED_BYTE, black.data());
+        glBindTexture(GL_TEXTURE_2D, prev_tex);
+        g.tex_w = m->w, g.tex_h = m->h;
+        // black until the first picture
+        GLint prev_draw;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &prev_draw);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, g.fbo);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, g.tex, 0);
+        GLboolean scissor = glIsEnabled(GL_SCISSOR_TEST);
+        glDisable(GL_SCISSOR_TEST);
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        if (scissor) glEnable(GL_SCISSOR_TEST);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, prev_draw);
     }
     {
         std::lock_guard fl(m->frame_m);
         if (m->frame_dirty) {
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m->w, m->h, GL_RGBA, GL_UNSIGNED_BYTE, m->frame.data());
+            gl_convert(g, m, m->frame);
             m->frame_dirty = false;
         }
     }
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, g_fbo);
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, g_tex, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, g.fbo);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target_fbo);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -393,12 +427,10 @@ void movie_draw(int ww, int wh, unsigned target_fbo) {
     if (da > sa) dw = (int)(wh * sa + 0.5);
     else dh = (int)(ww / sa + 0.5);
     int dx = (ww - dw) / 2, dy = (wh - dh) / 2;
-    // Decoded rows are top-down; flip while blitting.
+    // The picture's rows are top-down; flip while blitting.
     glBlitFramebuffer(0, 0, m->w, m->h, dx, dy + dh, dx + dw, dy, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, prev_read);
-    glBindTexture(GL_TEXTURE_2D, prev_tex);
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, prev_unpack);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, prev_align);
+    glActiveTexture(prev_active);
 }
 
 void movie_test_stall_mixer(bool stalled) { g_mixer_stalled = stalled; }

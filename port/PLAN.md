@@ -1,15 +1,15 @@
 # Plan (current)
 
-Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). The rebase's own plan, with its revisions, is [`docs/history/PLAN-rebase-370.md`](../docs/history/PLAN-rebase-370.md); its inventory is [`docs/history/REBASE-370.md`](../docs/history/REBASE-370.md). Earlier plans and status documents are in `docs/history/`. What is left, in one list: [`REMAINING.md`](REMAINING.md).
+Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc; commit hashes from before 2026-10-03 are in the pre-squash history: "Working rules"). The rebase's own plan, with its revisions, is [`docs/history/PLAN-rebase-370.md`](../docs/history/PLAN-rebase-370.md); its inventory is [`docs/history/REBASE-370.md`](../docs/history/REBASE-370.md). Earlier plans and status documents are in `docs/history/`. What is left, in one list: [`REMAINING.md`](REMAINING.md).
 
 ## Where things stand
 - **The port (`soa`) runs the 3.7.0 client:** the library and the single APK from the 3.7.0 APK, plus the 3.7.0 download. Two server modes:
   - `--server inproc` (default): the FakeApiCaller route into the server library, with the CDN served in memory (no sockets);
   - `--server HOST[:PORT]`: the client's own network code against `soa-server`.
-- **Natives start fresh:** the old ~18,000 were dumped. 301 remain: the in-process route, the phase observer, the tower, the notice-board webview. The pre-rebase port (the offline build) with all its natives is the tag `pre-rebase-370` (19a08b5).
+- **Natives start fresh:** the old ~18,000 were dumped. 301 remain: the in-process route, the phase observer, the tower, the notice-board webview. The pre-rebase port (the offline build) with all its natives is commit 19a08b5 of the pre-squash history (the tag `pre-rebase-370` that named it no longer exists: "Working rules").
 - **Programs:** `soa` (port), `soa-server`, `soa-emu` (3.7.0 emulator), `soa-viewer` (3.8.0 viewer). Libraries: `runtime/`, `server/`, `platform370/`. One CMake build at the root.
-- **Green on `linux-port`:**
-  - `soa --selftest` 96/96, `soa-server --selftest` 87/87;
+- **Green when the rebase merged (2026-10-01, on `linux-port`; today's gates: [`tests/TIERS.md`](../tests/TIERS.md)):**
+  - `soa --selftest` and `soa-server --selftest` all passing;
   - in-process to home, including the full 1,032-file download;
   - the restore, events, home, tower, newplayer and tutorial sessions;
   - the out-of-process packets equal `soa-emu`'s;
@@ -23,7 +23,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 | **2b** | **Faster test setup: a shared, linked pre-downloaded 3.7.0 phone** | below | ✅ done (45b5403) |
 | **3** | **P5b: `tests/diff/`, port-vs-emulator differential flows** | below | ✅ done (32ff1d9; `tests/diff/README.md`) |
 | **4** | **P3 + P4: offline-build cleanup and references** | below | ✅ done (25fd054, 7940bac; `tools/check_no_380.sh` strict since e229364) |
-| **4b** | **Server code: readability, then the database schema** (`server/PLAN-readability.md` R0-R20, then `server/PLAN-schema.md` S0-S12; R12/R17 after S4/S9) | the two plans | ✅ done 2026-10-04: readability R0-R20 (R20, the last: `docs/server-rules.md` by domain, code links on anchors) and schema S0-S12 (state DB schema version 11, foreign keys, the permanent gates of R19/S11) |
+| **4b** | **Server code: readability, then the database schema** (`server/PLAN-readability.md` R0-R20, then `server/PLAN-schema.md` S0-S12; R12/R17 after S4/S9) | the two plans | ✅ done 2026-10-04: readability R0-R20 (R20, the last: `docs/server-rules.md` by domain, code links on anchors) and schema S0-S12 (state DB schema version 11, foreign keys, the permanent gates of R19/S11); version 12 since (`player.is_3d_home`, the home's 2D / 3D switch: [`docs/server-rules.md#home-2d-3d`](../docs/server-rules.md#home-2d-3d)) |
 | **5** | **Rebuild tooling, together with the control-script consolidation** (`control/PLAN-consolidate.md`, incl. the runtime's GDB stub) | below | ✅ done 2026-10-03: decomp --into, per-subsystem scaffolding (classes + methods), the GDB stub, the rebuild queue (port/REBUILD-QUEUE.md); the consolidation (control/soadrive, run.py, thin wrappers, fail fast) |
 | **5b** | **W: native Windows runner** (the user, 2026-10-02: before N) | below | 🔄 phase 1 ✅, **phase 2 ✅** (2026-10-03): the restore and seeded sessions, the viewer boot and a tests/diff shard pass on Windows (win:* in T2), launchers, %LOCALAPPDATA% data dirs. Left: Wine CI, the remaining sessions / shards on Windows, the listed libc gaps ("As built") |
 | **5c** | **R: release packages** (the user, 2026-10-04) | README.md "Packaging" | ✅ done 2026-10-04: `scripts/package.sh` (Linux + Windows ZIPs of the port and the emulator, optimized `--release` builds, stripped + a debug-symbols zip, only our data, allow-list + game-file scan); the programs find the game files beside them (`game/`), the download as a folder or `SOA-3.7.0-canonical-data.zip` read in place, and derive the master from it at startup (`docs/server-rules.md#master-source`) |
@@ -155,7 +155,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 
 **Well-known libraries: call the host library (vcpkg) at a clean boundary instead of decompiling:**
 - **The game's copies:** zlib 1.2.5, IJG libjpeg 9b (via `FetchContent`, bit-exact), SQLite 3.13.0, libVorbis 1.3.5 + libogg, zstd, libc++.
-- **Starting point:** the pre-dump `libs/lib_*.cpp` and `libcxx_*.cpp`, recoverable from `pre-rebase-370`.
+- **Starting point:** the pre-dump `libs/lib_*.cpp` and `libcxx_*.cpp`, recoverable from commit 19a08b5 of the pre-squash history ("Working rules"; the tag `pre-rebase-370` no longer exists).
 - **Boundaries where data is opaque or plain** (SQLite handles; `Aska::JpegUtil`, not `jpeg_*`).
 - **Bridge what crosses:** structs, callbacks, paths, allocators.
 - **Version-match where bytes matter.**
@@ -197,12 +197,13 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 
 ## Future work (not queued; needs the user's review)
 - **Multiplayer state: the schema for several players** ([`server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md), steps M1…): a plan only, written for review (agent mp-schema, 2026-10-03). Not a task until the user has reviewed it and queued it; if queued, it starts only after 4b's S0–S12 have landed.
+- **Multi-user server: the code** ([`server/PLAN-multiplayer-code.md`](../server/PLAN-multiplayer-code.md), steps MC1…): accounts and identity per device, the request lifecycle per player (client sessions, the caller's player, scoping checks), concurrency, shared state, social features (task U's stubs made real), co-op through the lobby and relay, admin and operations, tests across players; built on the schema plan's M steps. A plan only, written for review (agent mp-code, 2026-10-04); not a task until the user has reviewed it and queued it.
 
 ## Working rules
-- **Branches:** commits go on `main` (since 2026-10-03; until then on `linux-port`, which was squash-merged into main as one commit on 2026-10-03); each agent gets a worktree on `port/<name>` off main, merged back into main.
+- **Branches:** commits go on `main` (since 2026-10-03; until then on `linux-port`, which was squash-merged into main as one commit on 2026-10-03). That squash made main a new root commit: the hashes this plan names from before it (e5cdcbc, 19a08b5, ...) and the tag `pre-rebase-370` are not in this repository; the old history is in the earlier repository, star-ocean-anamesis-reverse. Each agent gets a worktree on `port/<name>` off main, merged back into main.
 - **Gates:**
   - rebuild ALL targets after a merge;
-  - run independent gate tasks in parallel (up to 6 game processes, at least 8 GB free, separate folders and ports);
+  - run independent gate tasks in parallel, in separate folders and ports; every game client takes a slot of the machine-wide pool, which also waits while free memory is below `SOA_SLOT_MIN_FREE_GB` ([`control/README.md`](../control/README.md) "The slot pool"; the gate tiers: [`tests/TIERS.md`](../tests/TIERS.md));
   - run emulator checks only when `emulator/`, `platform370/`, `runtime/`, `server/` or the root build changed, and viewer checks only when `emulator-viewer/`, `runtime/` or the root build changed.
 - **Server-first:** client changes are logged in `docs/client-changes.md`; server rules are labelled (a)–(d) in `docs/server-rules.md`.
 - **Prefer regenerating over investigating; prefer Ghidra over raw a2c.**
@@ -220,7 +221,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 - Both server modes, for diff tests.
 - Real CDN download, with a shared phone for tests.
 - The offline build's master DB and Ghidra project kept.
-- Smoke baselines stay in `work/`.
+- Smoke baselines: in git, `tests/smoke-base/` (decided 2026-10-01 to stay in `work/`; committed since 2026-10-03, port/README.md "The smoke baselines").
 - Natives dumped and rebuilt fresh.
 - Merge bar: correctness only. Merged right after the dump.
 - vcpkg with no source fallback.

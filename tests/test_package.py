@@ -18,10 +18,9 @@ TOP = "soa-port-test-linux-x64"
 def make_stage(tmp_path):
     """A stage like stage_package's, without the binaries' build (placeholder x86-64 ELF)."""
     root = tmp_path / "stage" / TOP
-    (root / "data/saves/seed").mkdir(parents=True)
+    (root / "data").mkdir(parents=True)
     (root / "soa").write_bytes(b"\x7fELF\x02\x01\x01" + b"\0" * 11 + b"\x3e\x00" + b"\0" * 44)
     package.clean_pools(ROOT / "data/gacha_pools.sqlite3", root / "data/gacha_pools.sqlite3")
-    shutil.copyfile(ROOT / "data/saves/seed/Game.xml", root / "data/saves/seed/Game.xml")
     for rel in package.git("ls-files", "standin-assets").splitlines():
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / rel, root / rel)
@@ -85,3 +84,11 @@ def test_readme_renders(kind, windows):
         assert "SOA-3.7.0-canonical-data.zip" in text and "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" in text
     for prog in {"port": ["soa"], "emulator": ["soa-emu", "soa-server"], "viewer": ["soa-viewer"]}[kind]:
         assert f"\n{prog}{v['EXE']}\n" in text  # a section per program
+
+
+def test_seed_save_is_not_packaged(tmp_path):
+    """The user, 2026-10-04: no seed save in the packages (data/saves/seed/Game.xml is a real player's)."""
+    stage, root = make_stage(tmp_path)
+    (root / "data/saves/seed").mkdir(parents=True)
+    shutil.copyfile(ROOT / "data/saves/seed/Game.xml", root / "data/saves/seed/Game.xml")
+    assert package.check(str(stage), "port", None) != []

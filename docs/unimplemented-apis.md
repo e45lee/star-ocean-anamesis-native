@@ -48,9 +48,9 @@ player, screens opened by hand through `--control`.
 | 初期設定に戻す (`ResetConfig`) | decompile | same pattern |
 | キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters |
 | 惑星選択 > シナリオライブラリ (`GetScenarioLibraryInfoList`) | S | opens; メインストーリー / サブストーリー with no chapters |
-| キャラクター > バトルシミュレーター (`TrainingMissionStart`, canned `mission_start.msgp`) | I | **wrong data**: the battle starts with the canned reply's party and stages (other characters, STAGE 1/2), not the chosen party; シミュレーター終了 returns to the character menu (no `MissionLose`) |
+| キャラクター > バトルシミュレーター (`TrainingMissionStart`, canned `mission_start.msgp`) | I | **wrong data**: the battle starts with the canned reply's party and stages (other characters, STAGE 1/2), not the chosen party; シミュレーター終了 returns to the character menu (no `MissionLose`). **Done** (step 3.2): the simulator's mission and stage with the current party, no stamina, no play record ([server-rules "Battle simulator"](server-rules.md#battle-simulator)) |
 | 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player) |
-| `MissionContinue`, `MissionLose` (`CPauseMenu::ReqeustContinue` @01dad704 -> `Auto`) | decompile | not reproduced (losing needs a long battle); the continue would go ahead with no stones taken on the server |
+| `MissionContinue`, `MissionLose` (`CPauseMenu::ReqeustContinue` @01dad704 -> `Auto`) | decompile | not reproduced (losing needs a long battle); the continue would go ahead with no stones taken on the server. **Done** (step 3.2): the continue's coins and campaigns; `MissionLose` has no 3.7.0 caller ([server-rules 2.6](server-rules.md#failure-continue-restart)) |
 | Paid currency (`CoinList`, `CoinDeposit*`, `Get`/`UpdateBirthYearMonth`) | I, S | no entry point found on the shop or gacha screens with 300000 stones (step 7 finds the opener) |
 | `ChangeMascot`, `ChangeRole`, `InheritAccessory`, `EquipAuto`, `UpdateItemStock`, the `ClearNew*`, `ReadExpirationInfo`, `SendGuideInformation`, `SetStampSlot` | callers (`CAdjutantSelect`, `CRoleSelect`, `CItemStrengtheningPotal`, `CTermInfoUI`, `CGuideInformation`, `CStampSelect`) | the same `Auto` pattern: no hang, the change isn't stored |
 
@@ -90,14 +90,8 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | **One-time storage** (overflow box) | [GetOneTimeStorageInfo](api.md#getonetimestorageinfo) | ★ | where items go when the inventory is full |
 | | [WithdrawItemFromOneTimeStorage](api.md#withdrawitemfromonetimestorage) / [BulkWithdrawItemFromOneTimeStorage](api.md#bulkwithdrawitemfromonetimestorage) | ★ | |
 | | [ClearNewOneTimeStorageItem](api.md#clearnewonetimestorageitem) | ★ | the "new" badge |
-| **Missions** | [MissionContinue](api.md#missioncontinue) | ★ | continuing a lost battle |
-| | [MissionLose](api.md#missionlose) | ★ | |
-| | [TrainingMissionStart](api.md#trainingmissionstart) | canned `mission_start.msgp` | |
 | **Mastery** | [GetMasteryInfo](api.md#getmasteryinfo) | {} | |
 | | [TrainMastery](api.md#trainmastery) / [ResetMastery](api.md#resetmastery) | {} | |
-| **Equipment** | [EquipAuto](api.md#equipauto) | {} | auto-equip |
-| | [InheritAccessory](api.md#inheritaccessory) | ★ | |
-| | [UpdateItemStock](api.md#updateitemstock) | {} | |
 | **Home and decorations** | [ChangeMascot](api.md#changemascot) | ★ | |
 | | [ChangeRole](api.md#changerole) | ★ | |
 | | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
@@ -180,12 +174,13 @@ tables, rules section). New state goes through the state module's migrations
    decides "full" and match it.
 2. **Missions: `MissionContinue`, `MissionLose`, `TrainingMissionStart`:** continue costs and limits
    from the master, the mission's state kept open across a continue; training missions give no
-   rewards (check).
+   rewards (check). **Done** (agent server-u-missions; the assumptions below).
 3. **Settings and account:** `GetConfig`/`UpdateConfig`/`ResetConfig` (store the options),
    `Get/UpdateBirthYearMonth`, `ReadExpirationInfo`, `UpdateSession`, `SendGuideInformation`,
    `GetScenarioLibraryInfoList` (from the story progress the server already keeps).
 4. **Equipment and mastery:** `EquipAuto` (the client's or the server's choice — check which side
    picks), `InheritAccessory`, `UpdateItemStock`, `GetMasteryInfo`/`TrainMastery`/`ResetMastery`.
+   The equipment part is **done** (agent server-u-missions: the server picks; the assumptions below).
 5. **Home and decorations:** `ChangeMascot`, `ChangeRole`, the deco methods
    (`Home3DAnd2DSwitching` is already being done).
 6. **"New" badges:** the three `ClearNew*` (flags on the stored characters and items).
@@ -273,3 +268,36 @@ evidence against one replaces it and records why.
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the
 step records it here and in `server-rules.md` as (c).
 
+**Missions and equipment (steps 3.2 and 3.4's equipment; agent server-u-missions).** Evidence in
+[`server-rules.md`](server-rules.md) ([2.6](server-rules.md#failure-continue-restart),
+[Battle simulator](server-rules.md#battle-simulator), [Auto-equip](server-rules.md#equip-auto),
+[Accessory inheritance](server-rules.md#accessory-inheritance),
+[Stocks and wallet](server-rules.md#stocks-and-wallet)); what had to be assumed, and why:
+- `MissionContinue`: the play stays open across a continue (same mission, party, stamina, surprise
+  roll), since the battle goes on and the client ends it later with `MissionEnd` / `MissionFailed`
+  as for any battle. A continue with nothing in progress or for a mission without `is_continue` is
+  refused with 10403, coins short with 20000: the client never sends either (it declines by itself),
+  so the codes are only the server's choice. When several continue campaigns run, the first in the
+  master's order counts (the client takes the first in its own list, whose order wasn't read).
+  The campaign windows are read on the event calendar, as the stamina campaigns are.
+- `MissionLose`: no 3.7.0 caller, so it is answered as `MissionFailed` (the play ends, nothing given).
+- `TrainingMissionStart`: no play record and no play count, because nothing ends a simulator battle
+  on the server (the client sends neither `MissionEnd` nor `MissionFailed` for type 4): a record
+  would make the next login offer to resume it. Nothing is granted (the row's EXP and FOL are 0;
+  there is no end request to grant at). The party is MissionStart's current party (the simulator's
+  own party screen saves the party as the mission menu does; seen on screen in the session).
+- `EquipAuto`: the online server's choice isn't known. The server takes the owned weapon of the
+  role's kind with the highest attack + intelligence and the accessory with the highest sum of its
+  five stats (base stats over the level, as `gear.cpp` already estimates weapons), never an item
+  another character wears (`auto_equip_steal` is false by default), fills only the empty skill
+  slots with the role's open skills (so a player's chosen skills stay), and leaves the assist alone
+  (no rule for picking an assist could be found). The `master_config` defaults stand for the
+  player's settings until `UpdateConfig` stores them (the settings group; the parent wires them at
+  merge).
+- `InheritAccessory`: one inheritance per accessory (the client only tests `max_inheritance_num` for
+  non-zero and offers the inheritance only while none is stored), any other owned accessory may be
+  the lost one if it isn't locked or equipped (as compose materials), no FOL, and the base doesn't
+  grow (`ComposeResult` before = after): the client's material filter for an inheritance base and
+  any cost weren't found in the code read.
+- `UpdateItemStock`: refused with 11006, as `UpdateGearStock`: the stock starts at the maximum
+  `item_stock_max` (the starting capacity isn't in the master), where the client hides the button.

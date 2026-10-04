@@ -5,12 +5,12 @@ Owned weapons and accessories (the state's `items`), stack items (`stock`, throu
 | File | Module | What |
 |---|---|---|
 | `items.h` | | what the two modules share: `item_type::` (master_item types 1 / 3 / 10), `uid_list` (the uid-list argument), `item_equipped` (the one "worn by a character" query) |
-| `items.cpp` | `items` | ItemCompose(Array), ItemGradeUp(Array), MaterialCompose, SellItem(Array) / SellStackItem, LockItem(Array) / UnlockItem(Array), UseHealItem, StaminaHeal; the item rules of `../../rules/growth_rules.h` (`compose_points`, `item_level`, `sell_price`, `heal_points`) |
+| `items.cpp` | `items` | ItemCompose(Array), ItemGradeUp(Array), MaterialCompose, SellItem(Array) / SellStackItem, LockItem(Array) / UnlockItem(Array), UseHealItem, StaminaHeal, InheritAccessory (the inheritance in `items.inherited_*`), UpdateItemStock (refused); the item rules of `../../rules/growth_rules.h` (`compose_points`, `item_level`, `sell_price`, `heal_points`) |
 | `gear.cpp` | `gear` | GetGearInfo, ClearNewGear, AttachGear, RemoveGear, SellGear, UpdateGearStock, GenerateGear (the purification, as named steps); the hooks below; the purification's formulas are `../../rules/gear_rules.{h,cpp}` |
-| `items_tests.cpp` | | `items/apis` (compose with a copy, lock / sell, stack sale, heal items, StaminaHeal; moved from `growth/apis`), `items/limit-break-achievement` (type 6 counts raises), `items/limit-break-items` (hammers: generic, ALL, family, the accessory thread, one that doesn't fit, the cap) |
+| `items_tests.cpp` | | `items/apis` (compose with a copy, lock / sell, stack sale, heal items, StaminaHeal; moved from `growth/apis`), `items/limit-break-achievement` (type 6 counts raises), `items/limit-break-items` (hammers: generic, ALL, family, the accessory thread, one that doesn't fit, the cap), `items/inherit-accessory` (InheritAccessory accepted and refused, the Item list's InheritItemInfo, type 58; UpdateItemStock refused) |
 | `gear_tests.cpp` | | `items/gear-apis`, `items/gear-barney-chance` (`../../rules/gear_rules_tests.cpp`: `items/gear-rules`) |
 
-**APIs** (`../../../API-INDEX.md` has the fids): the fourteen above, registered in `register_items()` / `register_gear()`, in that order (`../../core/modules.cpp`).
+**APIs** (`../../../API-INDEX.md` has the fids): the sixteen above, registered in `register_items()` / `register_gear()`, in that order (`../../core/modules.cpp`).
 
 **Hooks** (`soa-server --list-hooks`): `gear` adds each weapon's `AttachedGearInfoList` (ItemExtra), the content grants 15 (a gear item) and 98 (a gear lottery) (Grant), and `GearInfoList` + `GearBarneyChanceInfo` on every full-state response (OnPlayerLoad).
 

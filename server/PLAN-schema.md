@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables and version 12's `player.is_3d_home` added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home` and version 13's `items.inherited_*` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1095,7 +1095,9 @@ create table items (
   uid integer primary key, master_item_id integer not null,          -- m: master_item.id
   item_type integer not null, level integer not null default 1, exp integer not null default 0,
   limit_break integer not null default 0,
-  locked integer not null default 0 check (locked in (0,1)), created_at integer not null
+  locked integer not null default 0 check (locked in (0,1)), created_at integer not null,
+  inherited_master_item_id integer,                                  -- **new** (v13), m: master_item.id; InheritAccessory
+  inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)  -- **new** (v13)
 ) strict;
 create table stock (master_item_id integer primary key, item_type integer not null,
                     count integer not null default 0) strict;          -- m: master_item.id
@@ -1621,6 +1623,11 @@ Lockstep changes:
   - **Step 12** (`state/schema.cpp` `kHome3D`; `kSchemaVersion` 12): `alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))`: an existing player keeps the 3D home it was always sent; a boolean by 3.1's convention. No rebuild (an added column with a default and a check on a STRICT table), no data mapping.
   - **Code:** `api/player/home.cpp` `home3d_and_2d_switching` stores the mode; `player_info` sends the column.
   - **Tests:** `server/schema-migrate-v12` ((1) v0 → v12: every other table's rows as the same file at 11, the player 3D, `.bak-v0`; (2) a v11 file → 12 without the master: 3D, the check refuses 2, `.bak-v11` without the column), `server/schema-fresh-equals-migrated` (unchanged: the same 53 tables), `player/home3d-switching`; the `profile` replay corpus gained Home3DAnd2DSwitching 0 / 1 with a GetPlayer after each.
+
+**v13: an accessory's inherited factor** (agent `server-u-missions`, 2026-10-04, branch `port/server-u-missions`; task U of `port/PLAN.md`, `docs/unimplemented-apis.md` part 3; not a plan step: a handler that needed columns; the parent renumbers parallel groups' steps at merge). The server had no `InheritAccessory` handler, so an inheritance accessory never kept what it took in.
+  - **Step 13** (`state/schema.cpp` `kInherit`, `kInheritVersion`; `kSchemaVersion` 13): `alter table items add column inherited_master_item_id integer` (NULL: none; a master reference, `tools/schema_inventory.py` RELS) and `alter table items add column inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)`. No rebuild (added columns on a STRICT table), no data mapping: no item had one.
+  - **Code:** `api/items/items.cpp` `inherit_accessory` writes them; `api/player/player_info.cpp` `item_info_list` sends `InheritItemInfo` for an item that has one.
+  - **Tests:** `server/schema-migrate-v13` ((1) v0 → v13: every other table's rows as the same file at 12, the items' other columns kept, none inherited, `.bak-v0`; (2) a v12 file → 13 without the master: none inherited, the check refuses -1, `.bak-v12` without the columns; the version is one constant in the test), `server/schema-fresh-equals-migrated` (unchanged), `items/inherit-accessory`; the `items-party` replay corpus gained the inheritance.
 ---
 
 ## 5. Order and gates

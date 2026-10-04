@@ -836,8 +836,10 @@ void h_get_mission_list(Cpu& c) {
 // local server answers in-process (agent server-rules; port code, not guest behaviour): the
 // arguments go to server_port::capture and the request is queued with NetworkApiCaller's FunctionID,
 // answered by the CApiNotify handler NetworkApiCaller's response goes to. On another caller
-// the guest's Status. The gear screens (CCustomGear) and the favor-achievement
-// receive (CAdjutantSelect -> AchievementListReceive) use them.
+// the guest's Status. The gear screens (CCustomGear), the favor-achievement receive
+// (CAdjutantSelect -> AchievementListReceive), the defeat dialog's continue (CPauseMenu ->
+// MissionContinue; MissionLose has no 3.7.0 caller) and the accessory inheritance
+// (CItemStrengtheningPotal -> InheritAccessory) use them.
 struct ServedStatusOnly {
     const char* sym;
     u64 status;  // the guest's Status
@@ -857,6 +859,9 @@ const ServedStatusOnly kServedStatusOnly[] = {
     {"_ZN13FakeApiCaller15UpdateGearStockEv", 0, 0xd10e6806, "_ZN10CApiNotify20OnUpdateGearStockResEPaRj", "FakeApi/update_gear_stock.msgp"},
     {"_ZN13FakeApiCaller22AchievementListReceiveERKN9Framework10CSTLVectorImEE", 1, 0xbbc99ccf,
      "_ZN10CApiNotify27OnAchievementListReceiveResEPaRj", "FakeApi/achievement_list_receive.msgp"},
+    {"_ZN13FakeApiCaller15MissionContinueEb", 0, 0x755cba3d, "_ZN10CApiNotify20OnMissionContinueResEPaRj", "FakeApi/mission_continue.msgp"},
+    {"_ZN13FakeApiCaller11MissionLoseEv", 0, 0x863bb1ec, "_ZN10CApiNotify16OnMissionLoseResEPaRj", "FakeApi/mission_lose.msgp"},
+    {"_ZN13FakeApiCaller16InheritAccessoryEmm", 1, 0xd9feb3e8, "_ZN10CApiNotify21OnInheritAccessoryResEPaRj", "FakeApi/inherit_accessory.msgp"},
 };
 bool is_served_status_only(const char* sym) {
     for (const auto& s : kServedStatusOnly)

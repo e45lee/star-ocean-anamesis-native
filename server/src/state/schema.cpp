@@ -1845,6 +1845,18 @@ const char* const kHome3D[] = {
     "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
 };
 
+// ---- step 13: an accessory's inherited factor (InheritAccessory) --------------------------------
+//
+// items.inherited_master_item_id: the master item an inheritance accessory took in
+// (InheritItemInfo.inherited_master_item_id; NULL: none yet), items.inherited_limit_break that
+// accessory's limit break (inherited_master_item_limit_break_count; api/items/items.cpp). No item
+// had one before (the server never answered InheritAccessory).
+constexpr int kInheritVersion = 13;
+const char* const kInherit[] = {
+    "alter table items add column inherited_master_item_id integer",  // m: master_item.id
+    "alter table items add column inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1896,6 +1908,10 @@ const std::vector<Step>& steps() {
          import_campaign,
          retire_campaign_file},
         {12, "the player's 2D / 3D home: player.is_3d_home (Home3DAnd2DSwitching)", {std::begin(kHome3D), std::end(kHome3D)}, nullptr},
+        {kInheritVersion,
+         "an accessory's inherited factor: items.inherited_master_item_id, inherited_limit_break (InheritAccessory)",
+         {std::begin(kInherit), std::end(kInherit)},
+         nullptr},
     };
     return s;
 }

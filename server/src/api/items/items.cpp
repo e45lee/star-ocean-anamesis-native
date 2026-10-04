@@ -1,6 +1,6 @@
-// Local server: items and stamina. ItemCompose(Array), ItemGradeUp(Array),
+// Local server: items and stamina. ItemCompose(Array), ItemGradeUp(Array), InheritAccessory,
 // MaterialCompose, SellItem(Array) / SellStackItem, LockItem(Array) / UnlockItem(Array),
-// UseHealItem, StaminaHeal (SellGear: gear.cpp). Rules in docs/server-rules.md#player-rank-stamina,
+// UseHealItem, StaminaHeal, UpdateItemStock (SellGear: gear.cpp). Rules in docs/server-rules.md#player-rank-stamina,
 // docs/server-rules.md#weapons-and-accessories, docs/server-rules.md#growth-and-economy, docs/server-rules.md#items-and-stamina; labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 #include <cmath>
@@ -533,6 +533,98 @@ std::vector<u8> stamina_heal(Ctx& ctx, const Request&) {
     return body(data);
 }
 
+// InheritAccessory's arguments: (u64 base accessory uid, u64 lost accessory uid) (b:
+// CItemStrengtheningPotal::SetStrengtheningExec's request lambda @01b8dc5c sends the base +0x210
+// and the first material +0x218).
+struct InheritAccessoryArgs {
+    ItemUid base_uid, lost_uid;
+    static InheritAccessoryArgs from(const Request& req) {
+        return {ItemUid(req.ints.size() > 0 ? req.ints[0] : 0), ItemUid(req.ints.size() > 1 ? req.ints[1] : 0)};
+    }
+};
+
+// InheritAccessory(u64 base uid, u64 lost uid) -> InheritAccessoryRes               fid d9feb3e8
+// API: docs/api.md#inheritaccessory   Rules: docs/server-rules.md#accessory-inheritance
+//
+// ファクター継承: an inheritance accessory (＜INHERIT＞) takes in another accessory's factor; the
+// other one is used up.
+//   (b) the strengthening screen sends it instead of ItemCompose when the base can inherit
+//       (CItemStrengtheningPotal::SetStrengtheningExec @01b89d08: CUIUtility::CheckInheriteType
+//       @01ed0bec is 1 when the base's master_item.max_inheritance_num isn't 0 and it has no
+//       inherited item yet, 2 once it has one); the base and the first material;
+//   (a) max_inheritance_num (21 accessories, all 2; b: the client tests it for non-zero only, so
+//       (d) one inheritance per accessory);
+//   (b) the answer's InheritResultInfo {base_player_item_id, lost_master_item_id,
+//       lost_player_item_id, lost_item_limit_break_count} is applied by
+//       CApiNotify::OnInheritAccessoryRes (@014cb410): the base's InheritItemInfo
+//       {inherited_master_item_id, inherited_master_item_limit_break_count} (CItemInfo+0x248) takes
+//       the lost item's master id and limit break, the lost item leaves the list; ComposeResult's
+//       after_level / after_boosted_point / after_limit_break_count are copied to the base;
+//   (d) the lost item is an owned accessory other than the base, not locked or equipped (as
+//       ItemCompose's materials); no FOL, and the base's level, points and limit break don't
+//       change (ComposeResult before = after);
+//   counted as `accessory_inherit` (achievement type 58, アクセサリーにファクターを N回継承させる);
+//   (d) Refusals: kItemUnusable (10208) for a base that can't inherit or a lost item that isn't an
+//       owned accessory, kLockedItem (10204) for a locked or equipped one.
+// Answers: the player state, InheritResultInfo, ComposeResult and Item (the base's InheritItemInfo).
+std::vector<u8> inherit_accessory(Ctx& ctx, const Request& req) {
+    const auto args = InheritAccessoryArgs::from(req);
+    Item base = find_item(ctx, args.base_uid), lost = find_item(ctx, args.lost_uid);
+    if (!base.ok || base.type != item_type::kAccessory) return refuse(ctx, "InheritAccessory", "no base accessory", ErrorCode::kItemUnusable);
+    // (a)+(b) the base can inherit: max_inheritance_num, and nothing inherited yet
+    if (ctx.m.one("select ifnull(max_inheritance_num, 0) from master_item where id = ?", {base.id}) == 0 ||
+        ctx.st.one("select inherited_master_item_id is not null from items where uid = ?", {args.base_uid}) != 0)
+        return refuse(ctx, "InheritAccessory", "the base can't inherit (max_inheritance_num 0, or inherited already)", ErrorCode::kItemUnusable);
+    if (!lost.ok || lost.type != item_type::kAccessory || args.lost_uid == args.base_uid)
+        return refuse(ctx, "InheritAccessory", "the lost item isn't another owned accessory", ErrorCode::kItemUnusable);
+    if (lost.locked || lost.equipped) return refuse(ctx, "InheritAccessory", "the lost accessory is locked or equipped", ErrorCode::kLockedItem);
+    ctx.st.q("update items set inherited_master_item_id = ?, inherited_limit_break = ? where uid = ?", {lost.id, lost.lb, args.base_uid});
+    ctx.st.q("delete from items where uid = ?", {args.lost_uid});
+    count(ctx, "accessory_inherit");
+    Value data = ctx.base_data();
+    Value inherited = Value::object();
+    inherited["base_player_item_id"] = args.base_uid.v;
+    inherited["lost_master_item_id"] = lost.id.v;
+    inherited["lost_player_item_id"] = args.lost_uid.v;
+    inherited["lost_item_limit_break_count"] = lost.lb;
+    data["InheritResultInfo"] = inherited;
+    Value result = Value::object();
+    const u32 level = item_level_of(ctx, base);
+    result["id"] = args.base_uid.v;
+    result["before_level"] = level;
+    result["before_boosted_point"] = base.points;
+    result["before_limit_break_count"] = base.lb;
+    result["after_level"] = level;
+    result["after_boosted_point"] = base.points;
+    result["after_limit_break_count"] = base.lb;
+    result["is_big_success"] = false;
+    result["use_fol"] = 0u;
+    Value lost_ids = Value::array();
+    lost_ids.push(args.lost_uid.v);
+    result["lost_item_ids"] = lost_ids;
+    result["UpdateGearList"] = Value::array();
+    data["ComposeResult"] = result;
+    data["Item"] = ctx.items();
+    // read by port/scripts/equipment_session.sh
+    LOGI("server", "InheritAccessory %llx: inherited item %u (limit break %u) from %llx", (unsigned long long)args.base_uid.v, lost.id.v, lost.lb,
+         (unsigned long long)args.lost_uid.v);
+    return body(data);
+}
+
+// UpdateItemStock() -> UpdateItemStockRes                                  fid cf39cc5c
+// API: docs/api.md#updateitemstock   Rules: docs/server-rules.md#stocks-and-wallet
+//
+// Buys more weapon / accessory slots; always refused, as UpdateGearStock.
+//   (a) item_stock_up_num 5 more slots for item_stock_use_coin 100 coins; (b) the maximum is
+//   master_global item_stock_max (CParameterUtility::ItemStockMax @0181b990, 300 without the row),
+//   and CItemFrame::Progress (@01b2d454) hides the expansion button once
+//   CParameterUtility::NowItemStockMax reaches it. The server sends Player.item_stock =
+//   item_stock_max (d: the starting capacity isn't in the master), so there is nothing to buy.
+// Answers: the refusal kLimitReached (11006, (d) the code) with the player state.
+std::vector<u8> update_item_stock(Ctx& ctx, const Request&) {
+    return refuse(ctx, "UpdateItemStock", "item stock already at item_stock_max", ErrorCode::kLimitReached);
+}
+
 }  // namespace
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
@@ -546,6 +638,8 @@ void register_items() {
     add_api({"LockItem", "LockItemArray", "UnlockItem", "UnlockItemArray"}, lock_item);
     add_api({"UseHealItem"}, use_heal_item);
     add_api({"StaminaHeal"}, stamina_heal);
+    add_api({"InheritAccessory"}, inherit_accessory);
+    add_api({"UpdateItemStock"}, update_item_stock);
 }
 
 }  // namespace soa::server

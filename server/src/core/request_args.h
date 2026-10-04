@@ -131,6 +131,25 @@ struct MissionTalkArgs {
     }
 };
 
+// MissionContinue(bool): 1 the defeat dialog's はい (b: CPauseMenu's button lambda @01daf13c calls
+// CPauseMenu::ReqeustContinue(true), which sends it); 0 its いいえ, and the decline OpenContinue
+// sends by itself when the player can't continue (b: CPauseMenu::OpenContinue @01dacf90: coins
+// short, or the mission's is_continue 0). Any non-zero continues.
+struct MissionContinueArgs {
+    bool continue_battle = false;
+    static MissionContinueArgs from(const Request& r) { return {int_at(r, 0) != 0}; }
+};
+
+// TrainingMissionStart(u32 mission (+0x54), u32 helper index + 1 (+0x18), u64 own helper uid
+// (+0x20)) (b: CStageManager::CallMissionStart @013ca114 for mission type 4: MissionStart's
+// second, third and fourth arguments, from the same CStageManager fields; docs/api.md).
+struct TrainingMissionStartArgs {
+    u32 mission = 0;
+    u32 helper_index_plus_1 = 0;
+    u64 own_helper_uid = 0;
+    static TrainingMissionStartArgs from(const Request& r) { return {(u32)int_at(r, 0), (u32)int_at(r, 1), int_at(r, 2)}; }
+};
+
 // BoxGacha(u32 gacha_id, u32 count): count at least 1, 1 when missing.
 struct BoxGachaArgs {
     u32 gacha_id = 0, count = 1;

@@ -59,4 +59,11 @@ struct EquipSkillArgs {
     static EquipSkillArgs from(const Request& r) { return {CharacterUid(int_at(r, 0)), {int_at(r, 1), int_at(r, 2), int_at(r, 3)}}; }
 };
 
+// EquipAuto(u64 character_uid): the character the equipment screen's 自動設定 is for (b: a lambda
+// among CPartyEquip's (@01d94a88) waits on EquipAuto's fid; the request has one u64, docs/api.md).
+struct EquipAutoArgs {
+    CharacterUid character_uid;
+    static EquipAutoArgs from(const Request& r) { return {CharacterUid(int_at(r, 0))}; }
+};
+
 }  // namespace soa::server::args

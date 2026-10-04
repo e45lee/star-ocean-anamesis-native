@@ -45,7 +45,8 @@ struct TempDb {
                                    ".bak-v8",  ".bak-v8-journal",
                                    ".bak-v9",  ".bak-v9-journal",
                                    ".bak-v10", ".bak-v10-journal",
-                                   ".bak-v11", ".bak-v11-journal"})
+                                   ".bak-v11", ".bak-v11-journal",
+                                   ".bak-v12", ".bak-v12-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -1476,6 +1477,67 @@ NATIVE_TEST("server/schema-migrate-v12") {
         t.expect_eq(state::user_version(bak.h), 11, "the backup is version 11");
         t.expect_eq(bak.one("select count(*) from pragma_table_info('player') where name = 'is_3d_home'", {}), (int64_t)0,
                     "the backup has no is_3d_home");
+        bak.close();
+    }
+}
+
+// Version 13: items.inherited_master_item_id / inherited_limit_break (InheritAccessory). (1) v0 ->
+// v13: every table's rows as the same file at version 12, the items' plus no inheritance (NULL, 0);
+// .bak-v0. (2) v12 -> v13 (a planted v12 file, without the master): the items without an
+// inheritance, .bak-v12 at 12 without the columns; the limit break refuses a negative count.
+NATIVE_TEST("server/schema-migrate-v13") {
+    constexpr int kV = 13;  // this step's version (the parent renumbers parallel steps at merge)
+    const std::string at = std::to_string(kV), before = std::to_string(kV - 1);
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v13 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file(("v" + at + "-ref").c_str()), old(("v" + at).c_str());
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kV - 1, m), true, "the reference: migrated to the version before");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "v0 -> this version");
+        t.expect_eq(state::user_version(db.h), kV, "user_version");
+        t.expect_eq(db.one("select count(*) from items", {}) > 0, true, "the fixture has items");
+        t.expect_eq(db.one("select count(*) from items where inherited_master_item_id is null and inherited_limit_break = 0", {}),
+                    db.one("select count(*) from items", {}), "no item has an inheritance");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        ra.erase("items");
+        rb.erase("items");
+        t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
+        t.expect_eq(rows_over(db, "items", "uid, master_item_id, item_type, level, exp, limit_break, locked"),
+                    rows_over(ref, "items", "uid, master_item_id, item_type, level, exp, limit_break, locked"), "the items' other columns kept");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v12 -> v13, without the master ------------------------------------------------------------
+    {
+        TempDb prev(("v" + at + "-from-v" + before).c_str());
+        if (!write_fixture(t, prev.path)) return;
+        Sql f;
+        if (!f.open(prev.path, false)) return t.fail("open the earlier file");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV - 1, m), true, "migrated to the version before");
+        f.close();
+        unlink((prev.path + ".bak-v0").c_str());
+        if (!f.open(prev.path, false)) return t.fail("reopen the earlier file");
+        t.expect_eq(state::user_version(f.h), kV - 1, "a file of the version before");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV), true, "the version before -> this version");
+        t.expect_eq(state::user_version(f.h), kV, "user_version");
+        t.expect_eq(f.one("select count(*) from items where inherited_master_item_id is not null", {}), (int64_t)0, "no inheritance");
+        t.expect_eq(sqlite3_exec(f.h, "update items set inherited_limit_break = -1", nullptr, nullptr, nullptr) != SQLITE_OK, true,
+                    "inherited_limit_break >= 0");
+        t.expect_eq(sqlite3_exec(f.h, "update items set inherited_master_item_id = 1, inherited_limit_break = 2", nullptr, nullptr, nullptr),
+                    SQLITE_OK, "an inheritance");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        f.close();
+        Sql bak;
+        if (!bak.open(prev.path + ".bak-v" + before, true)) return t.fail("no %s.bak-v%s", prev.path.c_str(), before.c_str());
+        t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is the version before");
+        t.expect_eq(bak.one("select count(*) from pragma_table_info('items') where name like 'inherited_%'", {}), (int64_t)0,
+                    "the backup has no inheritance columns");
         bak.close();
     }
 }

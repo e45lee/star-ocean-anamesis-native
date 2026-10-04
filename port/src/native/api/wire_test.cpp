@@ -822,6 +822,39 @@ NATIVE_TEST("wire/inproc-parity") {
             compare(t, "SaleGacha", server_port::inproc_request("_ZN13FakeApiCaller9SaleGachaEjPKa", 0xb164b4c5, x), d);
         }
     }
+    {
+        // MissionContinue(bool) (a status-only method the route serves): the wire adds the device
+        // UUID (char[36]) and DeviceType, which the server's handlers don't read and the FakeApiCaller
+        // method doesn't have (docs/server-rules.md "Wire-only arguments"), so only the method, fid
+        // and ints are compared; the bool is the register's low byte only
+        const char* uuid = "3f2a9c4e-8b1d-4e7a-9c3f-1b2d3e4f5a6b";
+        Arg s;
+        s.code = 'S';
+        s.mem.assign(uuid, uuid + 36);
+        s.mem.resize(36 + 1024, 0);
+        server::net::Decoded d;
+        if (wire_decode(t, "MissionContinue", {s, u('D', 2), u('B', 1)}, &d)) {
+            u64 x[8] = {0x5150, 0xdead000000000001ull};
+            server::Request r = server_port::inproc_request("_ZN13FakeApiCaller15MissionContinueEb", 0x755cba3d, x);
+            if (r.method != d.req.method || r.fid != d.req.fid || r.ints != d.req.ints)
+                t.fail("MissionContinue: inproc %s(%s) fid %x, wire %s(%s) fid %x", r.method.c_str(), ints_text(r.ints).c_str(), r.fid,
+                       d.req.method.c_str(), ints_text(d.req.ints).c_str(), d.req.fid);
+            if (d.req.strs != std::vector<std::string>{uuid}) t.fail("MissionContinue: the wire's strings aren't the device UUID alone");
+        }
+    }
+    {
+        // MissionLose() and InheritAccessory(u64 base, u64 lost) (status-only methods the route serves)
+        server::net::Decoded d;
+        if (wire_decode(t, "MissionLose", {}, &d)) {
+            u64 x[8] = {0x5150};
+            compare(t, "MissionLose", server_port::inproc_request("_ZN13FakeApiCaller11MissionLoseEv", 0x863bb1ec, x), d);
+        }
+        server::net::Decoded d2;
+        if (wire_decode(t, "InheritAccessory", {u('Q', 0x7d000005), u('Q', 0x7d000009)}, &d2)) {
+            u64 x[8] = {0x5150, 0x7d000005, 0x7d000009};
+            compare(t, "InheritAccessory", server_port::inproc_request("_ZN13FakeApiCaller16InheritAccessoryEmm", 0xd9feb3e8, x), d2);
+        }
+    }
 }
 
 }  // namespace

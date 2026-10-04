@@ -4,7 +4,10 @@
 // rules/growth_rules_tests.cpp.
 #include "soaserver/native_test.h"
 #include "soaserver/ext.h"
+#include "soaserver/msgpack.h"
+#include "core/errors.h"
 #include "rules/growth_rules.h"
+#include "testing/scratch.h"
 
 namespace soa::server {
 namespace {
@@ -200,6 +203,68 @@ NATIVE_TEST("items/limit-break-items") {
         c.st.exec("rollback");
     });
     if (!ran) return;  // no 3.7.0 master or save
+}
+
+// InheritAccessory (docs/server-rules.md#accessory-inheritance): an inheritance accessory
+// (master_item.max_inheritance_num) takes in another owned accessory's master item and limit
+// break, once; the other is used up; the answer's InheritResultInfo / ComposeResult, and the Item
+// list's InheritItemInfo (on this and every later load); counted for achievement type 58. A base
+// that can't inherit, a second inheritance, the base itself and a locked or equipped accessory are
+// refused. UpdateItemStock is refused at item_stock_max.
+NATIVE_TEST("items/inherit-accessory") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext rc = sv.new_request();
+    Ctx c = sv.make_ctx(rc);
+    const u32 inherit = (u32)c.m.one("select id from master_item where type = 3 and max_inheritance_num > 0 order by id limit 1", {});
+    const u32 plain =
+        (u32)c.m.one("select id from master_item where type = 3 and max_inheritance_num is null and rarity = 3 order by id limit 1", {});
+    if (!inherit || !plain) return t.fail("no accessories in the master");
+    auto grant_one = [&](u32 id) {
+        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+        c.grant(1, id, 1, items, stocks, chars);
+        return items.arr.empty() ? (u64)0 : items.arr[0].get_u("id");
+    };
+    const u64 base = grant_one(inherit), lost = grant_one(plain), other = grant_one(plain), plain_base = grant_one(plain);
+    if (!base || !lost || !other || !plain_base) return t.fail("granting accessories");
+    c.st.q("update items set limit_break = 2 where uid = ?", {lost});
+    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {plain_base, lost}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+                "(a) max_inheritance_num 0: refused");
+    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, base}, {}, {}}), (u32)ErrorCode::kItemUnusable, "the base itself: refused");
+    c.st.q("update items set locked = 1 where uid = ?", {lost});
+    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, lost}, {}, {}}), (u32)ErrorCode::kLockedItem, "a locked one: refused");
+    c.st.q("update items set locked = 0 where uid = ?", {lost});
+    std::vector<u8> out;
+    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, lost}, {}, {}}, &out), 0u, "inherited");
+    Value d = out.empty() ? Value() : mp_decode(out);
+    const Value* data = d.find("data");
+    const Value* r = data ? data->find("InheritResultInfo") : nullptr;
+    t.expect_eq(r ? r->get_u("base_player_item_id") : 0, base, "InheritResultInfo.base_player_item_id");
+    t.expect_eq(r ? r->get_u("lost_master_item_id") : 0, (u64)plain, "lost_master_item_id");
+    t.expect_eq(r ? r->get_u("lost_player_item_id") : 0, lost, "lost_player_item_id");
+    t.expect_eq(r ? r->get_u("lost_item_limit_break_count") : 9, (u64)2, "lost_item_limit_break_count");
+    const Value* cr = data ? data->find("ComposeResult") : nullptr;
+    t.expect_eq(cr && cr->get_u("before_level") == cr->get_u("after_level") && cr->get_u("after_limit_break_count") == 0, true,
+                "(d) the base doesn't grow");
+    t.expect_eq((u32)c.st.one("select count(*) from items where uid = ?", {lost}), 0u, "the lost accessory is gone");
+    t.expect_eq((u32)c.st.one("select inherited_master_item_id from items where uid = ?", {base}), plain, "stored");
+    t.expect_eq((u32)c.st.one("select inherited_limit_break from items where uid = ?", {base}), 2u, "its limit break stored");
+    auto inherit_info = [&](const Value& list, u64 uid) -> const Value* {
+        for (const Value& item : list.arr)
+            if (item.get_u("id") == uid) return item.find("InheritItemInfo");
+        return nullptr;
+    };
+    const Value items = c.items();
+    const Value* info = inherit_info(items, base);
+    t.expect_eq(info ? info->get_u("inherited_master_item_id") : 0, (u64)plain, "Item[base].InheritItemInfo on a load");
+    t.expect_eq(info ? info->get_u("inherited_master_item_limit_break_count") : 0, (u64)2, "and its limit break");
+    t.expect_eq(inherit_info(items, other) == nullptr, true, "other items carry none");
+    t.expect_eq(counter(c, "accessory_inherit"), (int64_t)1, "counted (achievement type 58)");
+    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, other}, {}, {}}), (u32)ErrorCode::kItemUnusable, "(b) a second inheritance: refused");
+    t.expect_eq((u32)c.st.one("select count(*) from items where uid = ?", {other}), 1u, "nothing taken");
+    // UpdateItemStock: Player.item_stock is item_stock_max already
+    t.expect_eq(S.call({"UpdateItemStock", 0xcf39cc5c, {}, {}, {}}), (u32)ErrorCode::kLimitReached, "UpdateItemStock refused at the max");
 }
 
 }  // namespace

@@ -43,6 +43,7 @@ struct MissionNpc {
 struct MissionStart {
     const ext::MissionOverride* module_override = nullptr;  // a module's changes (ext::Ctx::core_mission)
     bool restarting = false;                                // MissionRestart: no stamina, no new play count
+    bool training = false;                                  // TrainingMissionStart: no play record, no extras
     args::MissionStartArgs args;                            // with a module's own helper applied
     MissionRef mission_ref;
     Value mission_parameter;  // MissionParameter
@@ -434,7 +435,7 @@ std::vector<u8> mission_start_response(ext::Ctx& ctx, MissionStart& start) {
     battle_parameter["PlayerCharacter"] = start.player_characters;
     data["BattleParameter"] = battle_parameter;
     if (!start.restarting && (start.ticket_item_id || start.vanish_item_id)) data["StockItem"] = stack_item_info_list(ctx);
-    {  // extension modules' additions (ext::MissionStartExtra)
+    if (!start.training) {  // extension modules' additions (ext::MissionStartExtra); (d) none for the simulator
         ext::MissionInfo info = mission_info(ctx, start.mission_ref, mission, start.party_uids);
         info.restart = start.restarting;
         ext::mission_start_extra(ctx, info, data["MissionParameter"], data);
@@ -450,10 +451,12 @@ std::vector<u8> mission_start_response(ext::Ctx& ctx, MissionStart& start) {
 
 // MissionStart, and the same start for a module (ext::Ctx::core_mission: `module_override`, the
 // module's changes) or a MissionRestart (`restarting`: no stamina, no new play count).
-std::vector<u8> start_mission(ext::Ctx& ctx, const Request& req, const ext::MissionOverride* module_override, bool restarting) {
+namespace {
+std::vector<u8> run_start(ext::Ctx& ctx, const Request& req, const ext::MissionOverride* module_override, bool restarting, bool training) {
     MissionStart start;
     start.module_override = module_override;
     start.restarting = restarting;
+    start.training = training;
     if (!resolve_mission(ctx, req, start)) return {};
     read_cost(ctx, start);
     if (std::vector<u8> refused = check_cost(ctx, req, start); !refused.empty()) return refused;
@@ -474,8 +477,18 @@ std::vector<u8> start_mission(ext::Ctx& ctx, const Request& req, const ext::Miss
     party_members(ctx, start);
     helper_member(ctx, start);
     drop_npc_party(ctx, start);
-    record_play(ctx, start);
+    // (b) nothing ends a simulator battle on the server: CStageManager::Progress sends neither
+    // MissionEnd nor MissionFailed for mission type 4, and シミュレーター終了 sends nothing; so (d)
+    // it leaves no play record (else the next login's GetPlayMission would offer to resume it)
+    // and no play count
+    if (!start.training) record_play(ctx, start);
     return mission_start_response(ctx, start);
+}
+
+}  // namespace
+
+std::vector<u8> start_mission(ext::Ctx& ctx, const Request& req, const ext::MissionOverride* module_override, bool restarting) {
+    return run_start(ctx, req, module_override, restarting, false);
 }
 
 // What a mission played, for the extension modules (ext::MissionInfo).
@@ -512,7 +525,39 @@ ext::MissionInfo mission_info(ext::Ctx& ctx, const MissionRef& ref, u32 mission,
 // a ticket or vanish item was taken, and the modules' MissionStartExtra additions.
 std::vector<u8> mission_start(ext::Ctx& ctx, const Request& req) { return start_mission(ctx, req, nullptr, false); }
 
-// MissionStart (src/core/modules.cpp: the core's APIs first).
-void register_mission_start() { ext::add_core_api({"MissionStart"}, mission_start); }
+// TrainingMissionStart(u32 mission, u32 helper index + 1, u64 own helper uid)
+//   -> TrainingMissionStartRes (as MissionStartRes)                              fid 0a16fd90
+// API: docs/api.md#trainingmissionstart   Rules: docs/server-rules.md#battle-simulator
+//
+// The battle simulator (キャラクター > バトルシミュレーター): a battle of the training mission.
+//   (b) CStageManager::CallMissionStart sends it for mission type 4 with MissionStart's mission,
+//       helper index + 1 and own helper uid; its answer is read as a MissionStart's (the same
+//       CApiNotify apply), so the battle's stages and party are the answer's;
+//   (a) the mission row from master_training_mission (master_global training_mission_id_label
+//       names the one row, simulator_mission01) and its stages from master_mission_stage;
+//   (a) no stamina, ticket or vanish item (the table has no use_stamina; the row names none);
+//   the party as MissionStart's: the player's current party (d), an own helper as member 4;
+//   (b)+(d) no play record and no play count: nothing ends a simulator battle (start_mission
+//       above), and the row's exp / pc_exp / fol are 0, so it gives nothing (d: no rewards).
+// Answers: as MissionStart (MissionParameter, PlayMission, BattleParameter), without the modules'
+// MissionStartExtra.
+std::vector<u8> training_mission_start(ext::Ctx& ctx, const Request& req) {
+    const auto training = args::TrainingMissionStartArgs::from(req);
+    Request as_start{"MissionStart",
+                     0xb7c62bc2,
+                     {(u64)MissionType::kTraining, training.mission, training.helper_index_plus_1, training.own_helper_uid, 0, 0, 0},
+                     {},
+                     {}};
+    std::vector<u8> answer = run_start(ctx, as_start, nullptr, false, true);
+    // read by port/scripts/missions_session.sh
+    if (!answer.empty()) LOGI("server", "TrainingMissionStart: mission %u, no play record", training.mission);
+    return answer;
+}
+
+// MissionStart and TrainingMissionStart (src/core/modules.cpp: the core's APIs first).
+void register_mission_start() {
+    ext::add_core_api({"MissionStart"}, mission_start);
+    ext::add_core_api({"TrainingMissionStart"}, training_mission_start);
+}
 
 }  // namespace soa::server

@@ -172,6 +172,17 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
         info["is_lock"] = item_row.i("locked") != 0;
         info["is_equip"] = item_equipped(ctx, item_row.id<ItemUid>("uid"));
         info["num"] = 1u;
+        // (b) an inheritance accessory's inherited item: CItemInfo's InheritItemInfo child
+        // (CItemInfo+0x248; InheritItemInfo::pParseName "InheritItemInfo", its fields
+        // inherited_master_item_id / inherited_master_item_limit_break_count; CUIUtility::
+        // CheckInheriteType reads the id). Sent only once InheritAccessory stored one (the
+        // client's default is 0, none), so the other items' answers stay as they were.
+        if (!item_row.null("inherited_master_item_id")) {
+            Value inherited = Value::object();
+            inherited["inherited_master_item_id"] = (u32)item_row.i("inherited_master_item_id");
+            inherited["inherited_master_item_limit_break_count"] = (u32)item_row.i("inherited_limit_break");
+            info["InheritItemInfo"] = inherited;
+        }
         ext::item_extra(state, master, item_row.id<ItemUid>("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
         list.push(info);
     });

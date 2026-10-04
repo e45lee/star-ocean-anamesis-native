@@ -57,8 +57,8 @@ NATIVE_TEST("sync/event-sequence") {
                 same_flags(t, g.get(), n.get(), "Wait(timeout)");
                 auto gms = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
                 auto nms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-                // From 1000 ms on tv_nsec is >= 1e9 whatever the time: both fail at once (EINVAL) instead of
-                // waiting. (5 ms waits, except in the last 5 ms of a second, when it fails at once too.)
+                // From 1000 ms on tv_nsec is >= 1e9 whatever the time: pthread_cond_timedwait fails at once
+                // (EINVAL, as bionic's; the HLE checks it for winpthreads too) instead of waiting.
                 if (ms >= 1000 && (gms >= 500 || nms >= 500)) t.fail("Wait(%u): guest took %lld ms, native %lld ms", ms, (long long)gms, (long long)nms);
             }
             t.expect_eq((u8)t.call(kSet, {g.addr()}), (u8)n->Set(), "Set");

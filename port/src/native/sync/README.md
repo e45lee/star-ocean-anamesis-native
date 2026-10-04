@@ -112,7 +112,7 @@ None below it (level 1). Calls up: `Framework::gDoAssert` (Mutex.cpp's asserts, 
 - `Event::Wait(ms)` returns `pthread_mutex_unlock(...) != 0`: false on success, timeout or not. The
   timed path builds `tv_nsec = (u32)(ms * 1000000) + usec * 1000` without carrying into `tv_sec`: from
   about 1 s on (and in the last `ms` of any second) it is >= 1e9, and `pthread_cond_timedwait` fails
-  with EINVAL at once instead of waiting. It doesn't loop on spurious wakeups, and an auto-reset
+  with EINVAL at once instead of waiting (bionic's and glibc's check). It doesn't loop on spurious wakeups, and an auto-reset
   event is cleared after a timeout too. Kept as is (`sync/event-sequence`).
 - `Event::Create(manualReset, initialState)`: the first bool is +0x61, the second +0x60.
 - `Semaphore::Create(initial, max)` ignores `max`; `Signal_Legacy` returns the guest `sem_t`'s first
@@ -123,3 +123,8 @@ None below it (level 1). Calls up: `Framework::gDoAssert` (Mutex.cpp's asserts, 
   passed bionic's number through, so on Windows every guest recursive mutex
   (`Aska::CriticalSection`, ...) was an errorcheck one (a recursive enter failed with EDEADLK without
   locking) and errorcheck ones were recursive. `host_mutex_type` maps them now.
+- **Windows (fixed in the HLE, `hle_cond_timedwait`):** the guest's timespec has a 64-bit `tv_nsec`;
+  winpthreads read its low 32 bits, so `Event::Wait(1000..2147)` waited (carried into seconds) where
+  bionic returns EINVAL, and from about 2148 ms on the low half is negative and the wait never ended
+  (found by `sync/event-sequence` on Windows). The HLE now refuses a `tv_nsec` outside [0, 1e9) with
+  EINVAL on both platforms, as bionic does, and passes a host timespec.

@@ -62,6 +62,8 @@ Worktrees made by `port/scripts/agent-worktree.sh` share the main checkout's `.v
 ```sh
 # build tools (vcpkg needs curl, zip, unzip, tar, git and pkg-config (pkgconf on 24.04); it downloads its own ninja and CMake if needed)
 sudo apt install build-essential cmake git curl zip unzip tar pkg-config perl python3 autoconf automake libtool
+# nasm: the x86-64 assembly of vcpkg's ffmpeg port (the movie player's H.264 / AAC decoders); vcpkg fetches it only on Windows hosts
+sudo apt install nasm
 # optional, faster builds: scripts/build.sh configures with Ninja and compiles through ccache when they are installed
 sudo apt install ninja-build ccache
 # SDL2's X11 and Wayland video and PulseAudio audio (vcpkg builds SDL2 against the system's headers; it loads the

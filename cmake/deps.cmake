@@ -4,7 +4,7 @@
 # CMakeLists.txt picks up from $VCPKG_ROOT or .vcpkg/): imported targets
 #   ZLIB::ZLIB  MINIZIP::minizip-ng  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
 #   OpenSSL::Crypto  pugixml::pugixml  msgpack-cxx  httplib::httplib  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
-#   runtime/src/app/text_overlay.cpp)  litehtml  soa::stb (headers; soa_codec's PNG writer, the web view)  and the
+#   runtime/src/app/text_overlay.cpp)  soa::ffmpeg (FFmpeg's libraries: the movie player)  litehtml  soa::stb (headers; soa_codec's PNG writer, the web view)  and the
 #   EGL/GLES/KHR headers.
 # From the system (README.md, "Setup": what vcpkg can't replace on Linux), only when the runtime is
 # built (SOA_NEED_RUNTIME, like soa::SDL2 and dynarmic):
@@ -39,6 +39,14 @@ endif()
 if(SOA_NEED_RUNTIME)  # the JIT host runtime and what links it (not for a server-only build)
   find_package(SDL2 CONFIG REQUIRED)
   find_package(Freetype REQUIRED)  # vcpkg's freetype (zlib only): soaruntime_app's text box
+  # FFmpeg's libraries (vcpkg's ffmpeg: avcodec, avformat, swresample; LGPL): the movie player
+  # (runtime/src/frontend/movie_decoder.cpp). The port's FindFFMPEG gives the static libraries in
+  # link order plus their system libraries (Linux: m, atomic, pthread; MinGW: bcrypt and the like).
+  find_package(FFMPEG REQUIRED)
+  add_library(soa::ffmpeg INTERFACE IMPORTED)
+  target_include_directories(soa::ffmpeg INTERFACE ${FFMPEG_INCLUDE_DIRS})
+  target_link_directories(soa::ffmpeg INTERFACE ${FFMPEG_LIBRARY_DIRS})
+  target_link_libraries(soa::ffmpeg INTERFACE ${FFMPEG_LIBRARIES})
   add_library(soa::SDL2 INTERFACE IMPORTED)
   target_link_libraries(soa::SDL2 INTERFACE $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
   # egl-registry / opengl-registry: headers only (EGL/, KHR/, GLES2/, GLES3/).

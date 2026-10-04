@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "native/common/guest_std.h"
+#include "native/common/guest_stub.h"
 #include "native/common/live_check.h"
 #include "native/common/native_method.h"
 #include "native/scene/scene_dispatch.h"
@@ -229,6 +230,12 @@ void check_job(Cpu& c, JobFn& f, HostFn native) {
     size_t cursor = 0;
     std::string err;
     for (const JobCall& k : rec.calls) {
+        // A callee that is itself a native (hooked, and not by a stub) can't be stubbed: stubbing it would
+        // replace the native for the whole process.
+        if (hooked_host_fn(k.target) && native::stub_name(k.target).empty()) {
+            zfree16(copies);
+            return check_result(f, Outcome::Skipped, "a callee is native");
+        }
         const char* name = live::ensure_stub(k.target);
         if (!name) {
             zfree16(copies);

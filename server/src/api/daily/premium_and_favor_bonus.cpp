@@ -5,9 +5,10 @@
 //
 // State: `premium_pass` (one row per pass owned: the page reached, the last grant) and
 // `favor_bonus_state` (one row: the last favor bonus day, its tier and lot character, the last
-// stamina heal).
+// stamina heal; the times NULL when never, the character a roster reference: PLAN-schema S10).
 #include <algorithm>
 #include <ctime>
+#include <optional>
 
 #include "core/log.h"
 #include "core/time.h"
@@ -132,19 +133,19 @@ struct FavorTier {
 
 // The favor tier the player meets now (id 0: none); *lot_uids = one character uid per qualifying
 // same_role_id.
-FavorTier favor_tier(Ctx& ctx, std::vector<u64>* lot_uids = nullptr) {
+FavorTier favor_tier(Ctx& ctx, std::vector<CharacterUid>* lot_uids = nullptr) {
     ServerTime t = ctx.now();
-    std::map<SameRoleId, u64> uid_by_same_role;  // same_role_id -> a character (lot_uid: plain until S10)
+    std::map<SameRoleId, CharacterUid> uid_by_same_role;  // same_role_id -> a character
     ctx.st.q("select uid, role_id from roster order by uid", {}, [&](const Row& roster_row) {
         const SameRoleId same_role_id = ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {roster_row.i("role_id")});
-        if (same_role_id.v && !uid_by_same_role.count(same_role_id)) uid_by_same_role[same_role_id] = (u64)roster_row.i("uid");
+        if (same_role_id.v && !uid_by_same_role.count(same_role_id)) uid_by_same_role.emplace(same_role_id, roster_row.id<CharacterUid>("uid"));
     });
     FavorTier best;
     u32 best_count = 0;
     ctx.m.q("select * from master_favor_bonus order by required_count", {}, [&](const Row& tier_row) {
         if (!open_at(tier_row.s("opened_at"), tier_row.s("closed_at"), t)) return;
         u32 min_level = (u32)tier_row.i("required_min_master_favor_level"), required = (u32)tier_row.i("required_count");
-        std::vector<u64> qualifying;
+        std::vector<CharacterUid> qualifying;
         for (auto& [same_role_id, uid] : uid_by_same_role)
             if (favor::level_of(ctx.st.h, ctx.m.h, t, same_role_id) >= min_level) qualifying.push_back(uid);
         if (qualifying.size() >= required && required >= best_count) {
@@ -187,12 +188,12 @@ std::string favor_lot_line(Ctx& ctx, u32 role_id) {
 // FavorBonusContetsResultInfo to `data` (`granted` counts it).
 void favor_login_bonus(Ctx& ctx, Value& data, int& granted) {
     ServerTime today = login_day_start(ctx), t = ctx.now();
-    ServerTime done_at = ctx.st.one_time("select day_at from favor_bonus_state where id = 1", {});
-    if (done_at >= today) return;
-    std::vector<u64> lot_uids;
+    const std::optional<ServerTime> done_at = ctx.st.one_opt<ServerTime>("select day_at from favor_bonus_state where id = 1", {});  // none: never
+    if (done_at && *done_at >= today) return;
+    std::vector<CharacterUid> lot_uids;
     FavorTier tier = favor_tier(ctx, &lot_uids);
     if (!tier.id || lot_uids.empty()) return;
-    u64 lot_uid = lot_uids[(*ctx.rng)() % lot_uids.size()];
+    const CharacterUid lot_uid = lot_uids[(*ctx.rng)() % lot_uids.size()];
     u32 lot_role = (u32)ctx.st.one("select role_id from roster where uid = ?", {lot_uid});
     std::vector<FavorLot> pool = favor_lot_pool(ctx, t);
     Value drawn = Value::array();
@@ -217,16 +218,17 @@ void favor_login_bonus(Ctx& ctx, Value& data, int& granted) {
             x -= lot.weight;
         }
     }
+    // (the heal's time stays: NULL, never, on a new row)
     ctx.st.q(
-        "insert or replace into favor_bonus_state (id, day_at, bonus_id, lot_uid, healed_at) values (1, ?, ?, ?, "
-        "ifnull((select healed_at from favor_bonus_state where id = 1), 0))",
+        "insert into favor_bonus_state (id, day_at, bonus_id, lot_uid) values (1, ?, ?, ?) "
+        "on conflict(id) do update set day_at = excluded.day_at, bonus_id = excluded.bonus_id, lot_uid = excluded.lot_uid",
         {t, tier.id, lot_uid});
     Value result = Value::object();
-    result["lot_character_id"] = lot_uid;
+    result["lot_character_id"] = lot_uid.v;
     result["FavorBonusContetsInfoList"] = drawn;
     data["FavorBonusContetsResultInfo"] = result;
     granted++;
-    LOGI("server", "favor login bonus %u: %zu present(s) from character %llu", tier.id, drawn.arr.size(), (unsigned long long)lot_uid);
+    LOGI("server", "favor login bonus %u: %zu present(s) from character %llu", tier.id, drawn.arr.size(), (unsigned long long)lot_uid.v);
 }
 
 // Player keys the favor bonus reports (a: CPlayerInfo fields favor_bonus_received_at,
@@ -234,12 +236,11 @@ void favor_login_bonus(Ctx& ctx, Value& data, int& granted) {
 void favor_player_keys(Ctx& ctx, Value& data) {
     Value* player = player_map(data);
     if (!player) return;
-    // 0 = never in both (day_at: the heal's row starts it at 0; healed_at: one of the 0 sentinels
-    // PLAN-schema S10 maps to NULL), as no row.
-    ServerTime bonus_at = ctx.st.one_time("select day_at from favor_bonus_state where id = 1", {});
-    ServerTime healed_at = ctx.st.one_time("select healed_at from favor_bonus_state where id = 1", {});
-    (*player)["favor_bonus_received_at"] = bonus_at.v ? ctx.fmt_time(bonus_at) : std::string();
-    (*player)["stamina_update_by_favor"] = healed_at.v ? ctx.fmt_time(healed_at) : std::string();
+    // none: never (NULL, or no row; 0 before PLAN-schema S10)
+    const std::optional<ServerTime> bonus_at = ctx.st.one_opt<ServerTime>("select day_at from favor_bonus_state where id = 1", {});
+    const std::optional<ServerTime> healed_at = ctx.st.one_opt<ServerTime>("select healed_at from favor_bonus_state where id = 1", {});
+    (*player)["favor_bonus_received_at"] = bonus_at ? ctx.fmt_time(*bonus_at) : std::string();
+    (*player)["stamina_update_by_favor"] = healed_at ? ctx.fmt_time(*healed_at) : std::string();
 }
 
 // OnPlayerLoad hook (after the login bonus and the achievements: core/modules.cpp): the premium
@@ -267,16 +268,17 @@ void load_daily_bonuses(Ctx& ctx, const Request&, Value& data) {
 std::vector<u8> stamina_heal_by_favor(Ctx& ctx, const Request&) {
     ctx.tick_stamina();
     ServerTime today = login_day_start(ctx), t = ctx.now();
-    ServerTime healed_at = ctx.st.one_time("select healed_at from favor_bonus_state where id = 1", {});  // 0 = never (S10's sentinel)
+    const std::optional<ServerTime> healed_at =
+        ctx.st.one_opt<ServerTime>("select healed_at from favor_bonus_state where id = 1", {});  // none: never
     FavorTier tier = favor_tier(ctx);
-    bool healed = tier.id && tier.stamina && healed_at < today;
+    bool healed = tier.id && tier.stamina && (!healed_at || *healed_at < today);
     if (healed) {
         ctx.st.q("update player set stamina = stamina + ?", {tier.stamina});
         // the regeneration clock restarts at the maximum, as the other heals (api/items/items.cpp)
         u32 level = (u32)ctx.st.one("select level from player", {});
         if ((u32)ctx.st.one("select stamina from player", {}) >= ctx.stamina_max(level)) ctx.st.q("update player set stamina_at = ?", {t});
         ctx.st.q(
-            "insert into favor_bonus_state (id, day_at, healed_at) values (1, 0, ?) on conflict(id) do update set healed_at = excluded.healed_at",
+            "insert into favor_bonus_state (id, healed_at) values (1, ?) on conflict(id) do update set healed_at = excluded.healed_at",  // day_at NULL: never
             {t});
         LOGI("server", "StaminaHealByFavor: +%u (tier %u)", tier.stamina, tier.id);
     }

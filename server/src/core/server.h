@@ -54,8 +54,10 @@ struct Server {
     bool init();
     // Opens the state DB at this build's schema version (state::open_and_migrate: false for a file
     // newer than the build), seeds it when it has no player (one transaction), and reports its
-    // references into the master (state::report_master_refs); the master must be open.
-    bool open_state(const std::string& path, u64 seed_rng, const std::string& seed_save);
+    // references into the master (state::report_master_refs); the master must be open. `data_dir`:
+    // the data dir whose side files a migration imports (the live server's config().data_root: the
+    // campaign's server_campaign.txt, PLAN-schema S12); "" none (scratch servers).
+    bool open_state(const std::string& path, u64 seed_rng, const std::string& seed_save, const std::string& data_dir = "");
 
     // A request's fresh state, and the context its handlers get.
     RequestContext new_request() const;

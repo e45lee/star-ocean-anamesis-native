@@ -21,18 +21,24 @@
 #include <string>
 
 #include "core/cpu.h"
+#include "native/common/shadow_check.h"
 #include "native/sync/sync_layout.h"
 
 namespace soa::native::sync {
 
-// One checked guest function: its symbol, the trampoline to the original (set when installed) and
-// its counters.
-struct CheckedFn {
-    const char* sym;
-    u64 orig = 0;
-    std::atomic<u64> calls{0}, checks{0}, ok{0}, bad{0}, skipped{0}, races{0};
-    explicit CheckedFn(const char* s);
+// The family (--live-check sync; native/common/shadow_check.h has the switch, the counters, the
+// byte comparison and the getter check).
+live::ShadowFamily& family();
+// One checked guest function of the family.
+struct CheckedFn : live::ShadowFn {
+    explicit CheckedFn(const char* s) : ShadowFn(family(), s) {}
 };
+using live::check_due;
+using live::check_getter;
+using live::check_result;
+using live::CheckScope;
+using live::diff_bytes;
+using live::Outcome;
 
 // What a mutator saw at its linearization point (filled by the native when t_obs is set).
 struct Observation {
@@ -56,26 +62,14 @@ struct Observation {
 // Set by a check around its native run; the natives note their observations here.
 extern thread_local Observation* t_obs;
 
-// True when this call is to be checked: the family is on (--live-check sync), the function is in
-// only=, its budget isn't spent, it's the every-th call, and no check runs on this thread already.
-bool check_due(CheckedFn& f);
-// Inside a check on this thread (also live::t_busy, so other families leave the callees alone).
-struct CheckScope {
-    CheckScope();
-    ~CheckScope();
-};
-enum class Outcome { Ok, Mismatch, Skipped, Race };
-// Counts one check's outcome; a mismatch (and the first few skips) is logged with `why`.
-void check_result(CheckedFn& f, Outcome o, const std::string& why = {});
-
 // A zeroed, 16-aligned, per-thread scratch buffer for shadows (guest-visible host memory: guest
 // memory is identity-mapped). `slot` keeps two shadows apart.
 u8* shadow_buffer(int slot);
-// "+0xNN: native XX guest YY" for the first differing byte of [from, to) outside `skip` ranges.
-std::string diff_bytes(const u8* native, const u8* guest, size_t from, size_t to, std::initializer_list<std::pair<size_t, size_t>> skip = {});
-
-// A read-only method: runs the native, then the guest original on the same object, and compares
-// x0 (masked to the result's width); a difference that a rerun of both doesn't reproduce is a race.
-void check_getter(Cpu& c, CheckedFn& f, HostFn native, u64 mask);
+// A FastCriticalSection of a shadow object made ready for a guest original to run on it: `waiters`
+// waiters and the semaphore the shadow's own (a guest Signal / sem_destroy on it reaches nothing
+// real; the HLE's host semaphore for it is created here when the original had one); the lock word is
+// the caller's. release_shadow_lock destroys that host semaphore again.
+void make_shadow_lock(FastCriticalSection& cs, s32 waiters = FastCriticalSection::kWaiterBias);
+void release_shadow_lock(FastCriticalSection& cs);
 
 }  // namespace soa::native::sync

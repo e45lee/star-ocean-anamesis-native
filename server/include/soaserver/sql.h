@@ -24,6 +24,7 @@ namespace soa::server::sql {
 // a column the row doesn't have reads as 0 / 0.0 / "".
 struct Row {
     std::map<std::string, sqlite3_value*> v;
+    // Column `k` as an integer, a double, text; whether it is NULL (or missing).
     int64_t i(const char* k) const;
     double f(const char* k) const;
     std::string s(const char* k) const;

@@ -235,3 +235,45 @@ def test_gacha_result_probe(tmp_path):
     plain = str(tmp_path / "plain.png")
     subprocess.run(["convert", "-size", "729x1296", "xc:#3060a0", plain], check=True)
     assert not popups.is_gacha_result(plain)
+
+
+def _state_db(path, orphan):
+    """A state DB at this build's schema version with one declared foreign key (and an orphan row)."""
+    import sqlite3
+    sys.path.insert(0, os.path.join(proc.REPO, "tools"))
+    import schema_inventory
+    con = sqlite3.connect(str(path))
+    con.executescript("create table p (id integer primary key); create table c (pid integer references p(id));"
+                      "insert into p values (1); insert into c values (1);" + ("insert into c values (2);" if orphan else ""))
+    con.execute("pragma user_version = %d" % schema_inventory.schema_version())
+    con.commit()
+    con.close()
+
+
+def test_the_end_state_is_checked_when_a_run_stops(tmp_path):
+    """G9 (server/PLAN-schema.md S11): Run.stop checks the server's end state; an orphan row is a
+    failed step and is recorded for control/run.py, a clean state a passed one."""
+    from soadrive import targets
+
+    class Stopped:  # a server that already ran
+        def stop(self):
+            pass
+
+        def running(self):
+            return False
+
+    for orphan in (False, True):
+        sub = tmp_path / ("orphan" if orphan else "clean")
+        r = targets.Run("port-inproc", targets.Layout.port_session(str(sub / "out"), str(sub / "tmp")), targets.Config())
+        r.layout.prepare()
+        os.makedirs(os.path.dirname(r.state_db), exist_ok=True)
+        _state_db(r.state_db, orphan)
+        r.server = Stopped()
+        n = len(targets.Run.STATE_CHECKS)
+        r.stop()
+        assert len(targets.Run.STATE_CHECKS) == n + 1
+        assert targets.Run.STATE_CHECKS[-1][1] == (not orphan)
+        assert r.failed == orphan, r.results
+        assert any(x.startswith("FAIL") and "state check (G9): 1 foreign key violation" in x for x in r.results) == orphan, r.results
+        steps = open(r.layout.steps).read()
+        assert ("state check" in steps) and steps.rstrip().endswith("FAIL" if orphan else "PASS")

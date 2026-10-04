@@ -25,7 +25,7 @@ NATIVE_TEST("server/schema-integrity") {
     S.set_clock("2021-05-25 12:00:00");
     t.expect_eq(state::user_version(sv.st.h), state::kSchemaVersion, "the state is at this build's version");
     t.expect_eq(sv.st.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
-    t.expect_eq(sv.st.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)51,
+    t.expect_eq(sv.st.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)53,
                 "every table exists before the first request");
     int seeded_fk_rows = 0;
     sv.st.q("pragma foreign_key_check", {}, [&](const Row&) { seeded_fk_rows++; });
@@ -51,16 +51,25 @@ NATIVE_TEST("server/schema-integrity") {
     auto dangling = state::check(sv.st.h, sv.m.h);
     for (const auto& d : dangling) t.fail("%s", state::describe(d).c_str());
 
-    // a role id and an item id the master doesn't have are reported; a weapon draw's role_id 0 isn't
+    // a role id, an item id and a campaign mission id the master doesn't have are reported; a weapon
+    // draw's role_id (NULL) isn't
     int64_t bad_role = 7, bad_item = 11;
     t.expect_eq(sv.m.one("select count(*) from master_role where id = ?", {bad_role}), (int64_t)0, "7 is no role id");
     t.expect_eq(sv.m.one("select count(*) from master_item where id = ?", {bad_item}), (int64_t)0, "11 is no item id");
     sv.st.q("insert into roster (uid, role_id, level, exp, created_at) values (?, ?, 1, 0, 0)", {0x7e7fffffll, bad_role});
     sv.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?, ?, 1, 0)", {0x7d7fffffll, bad_item});
-    sv.st.q("update gacha_history set role_id = 0 where id = (select min(id) from gacha_history)", {});
+    sv.st.q("update gacha_history set role_id = null where id = (select min(id) from gacha_history)", {});
+    // the campaign's clears (S12): an Episode 1 mission and a world map mission resolve, 13 doesn't
+    int64_t bad_mission = 13, world_map_mission = sv.m.one("select min(id) from master_world_map_mission", {});
+    t.expect_eq(sv.m.one("select count(*) from master_mission where id = ?", {bad_mission}) +
+                    sv.m.one("select count(*) from master_world_map_mission where id = ?", {bad_mission}),
+                (int64_t)0, "13 is no campaign mission id");
+    sv.st.q("insert into campaign_clear (mission_id) values (?), (?), (?)", {(int64_t)mission, world_map_mission, bad_mission});
     dangling = state::check(sv.st.h, sv.m.h);
-    t.expect_eq(dangling.size(), (size_t)2, "two references dangle");
-    if (dangling.size() == 2) {
+    t.expect_eq(dangling.size(), (size_t)3, "three references dangle");
+    if (dangling.size() == 3) {
+        t.expect_eq(std::string(dangling[2].ref.table) + "." + dangling[2].ref.column, std::string("campaign_clear.mission_id"), "the campaign's");
+        t.expect_eq(dangling[2].ids, std::vector<int64_t>{bad_mission}, "its id");
         t.expect_eq(std::string(dangling[0].ref.table) + "." + dangling[0].ref.column, std::string("roster.role_id"), "the roster's");
         t.expect_eq(dangling[0].ids, std::vector<int64_t>{bad_role}, "its id");
         t.expect_eq(std::string(dangling[1].ref.table) + "." + dangling[1].ref.column, std::string("items.master_item_id"), "the item's");

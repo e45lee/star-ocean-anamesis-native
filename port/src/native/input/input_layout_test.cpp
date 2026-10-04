@@ -236,7 +236,7 @@ NATIVE_TEST("input/layout-live") {
     auto* pm = instance<PeripheralManager>(kVaddrPeripheralManager);
     if (!t.expect_eq(pm != nullptr, true, "Global::m_pPeripheralManager")) return;
     t.expect_eq((u64)pm->vtable, vtable_of(t, "_ZTVN4Aska17PeripheralManagerE"), "PeripheralManager vtable");
-    t.expect_eq((u64)*reinterpret_cast<const void* const*>(pm->m_thread), vtable_of(t, "_ZTVN4Aska17PeripheralManagerE") + 0x50,
+    t.expect_eq((u64)pm->m_thread.vtable, vtable_of(t, "_ZTVN4Aska17PeripheralManagerE") + 0x50,
                 "PeripheralManager's Thread vtable (+0x60)");
     t.expect_eq((u64)pm->m_pad, t.call("_ZN4Aska6Global13GetPeripheralEi", {0}), "m_pad = GetPeripheral(0)");
     t.expect_eq((u64)pm->m_pad, call0(t, "_ZN4Aska6Global12GetActivePadEv"), "m_pad = GetActivePad");

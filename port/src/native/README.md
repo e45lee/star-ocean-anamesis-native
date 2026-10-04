@@ -63,8 +63,10 @@ thunks and native code alike, as text instead of executing it; recorded calls re
 Families check their natives against the guest originals during a real session (e.g.
 `port/scripts/restore_session.sh ... --live-check FAMILY`, i.e. soa's `--live-check`) with the
 shared harness in `live_check.{h,cpp}`; the register file it records calls on is `a2c_regs.h`.
-Registered families: `lib_sqlite` (a shadow run: the game's databases also opened in the guest's
-SQLite and every call repeated there; `lib_sqlite/README.md`). The offline build's families were
+Registered families: `sync`, `input`, `resource` (shadow checks, `common/shadow_check.h`), `lib_sqlite` (a shadow run: the game's databases also opened in the guest's
+SQLite and every call repeated there; `lib_sqlite/README.md`), and the lockstep families of the other
+host libraries, `lib_vorbis`, `lib_zstd`, `lib_zlib`, `lib_jpeg`, `lib_crypto` (`common/lockstep.h`: the
+same shadow run, shared; each subsystem's README). The offline build's families were
 deleted with its natives; a rebuilt family should use the harness.
 A record / replay family (hand-written code whose outgoing calls go through `Family::gcall` /
 `gcall_n` / `gcall_sret` / `memop` / `live::ACall`) is a static `live::Family("tag", every,
@@ -97,7 +99,7 @@ families.
 | `restore/restore_tower.cpp` | Port, `--restore-tower` only: `CParameterUtility::IsOpenTowerMission` = 1, stand-in `play_plate/0..3` nodes for `CTowerMissionMenu::Setup` (wrappers of the guest `CCocosNode::SearchByName` / `SearchByTreeName`), the common-resource scene for `CTowerMissionMenu::Initialize` (`docs/client-changes.md` "Tower"). |
 | `ui/webview_local.cpp` | Port, `--server inproc`: `CWebView::OpenView` + `SOAActivity.ShowWebView`: pages the local server hosts (the notice board) shown as text in the popup (`docs/client-changes.md` "Notice board page"). |
 
-The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/native_method.h` (`NATIVE_METHOD`: a recovered class's member as the native), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/arm_float.h`, `common/memstats.*` (`--memstats`), `common/core_bench_test.cpp` (guest-call costs).
+The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/native_method.h` (`NATIVE_METHOD`: a recovered class's member as the native), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/shadow_check.*` (live checks of natives over shared, stateful objects: the guest original on a shadow, or a getter rerun; families sync, input, resource), `common/guest_assert.*` (`Framework::gDoAssert` with the guest's strings), `common/arm_float.h`, `common/memstats.*` (`--memstats`), `common/core_bench_test.cpp` (guest-call costs).
 
 ## Per-subsystem workflow (the native rebuild, port/PLAN.md task 6)
 

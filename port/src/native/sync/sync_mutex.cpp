@@ -230,17 +230,10 @@ constexpr size_t kSemOff = offsetof(CMutex, m_substance) + offsetof(FastCritical
 CMutex* make_shadow(const u8* state, s32 waiters) {
     auto* sh = (CMutex*)shadow_buffer(0);
     std::memcpy(sh, state, sizeof(CMutex));
-    sh->m_substance.m_waiters = waiters;
-    Semaphore& s = sh->m_substance.m_sem;
-    if (s.m_pSem) {
-        s.m_pSem = (u64)s.m_sem;
-        hle_host_sem_init(s.m_pSem, 0);
-    }
+    make_shadow_lock(sh->m_substance, waiters);
     return sh;
 }
-void release_shadow(CMutex* sh) {
-    if (u64 p = sh->m_substance.m_sem.m_pSem) hle_host_sem_destroy(p);
-}
+void release_shadow(CMutex* sh) { release_shadow_lock(sh->m_substance); }
 int shadow_sem_value(CMutex* sh) {
     int v = 0;
     if (u64 p = sh->m_substance.m_sem.m_pSem) hle_sem_getvalue(p, &v);

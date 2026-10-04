@@ -21,6 +21,15 @@ tools/gate.sh T1 --git-diff main --software-gl   # the clients on llvmpipe, not 
 
 `tools/gate.sh` runs the build first and alone, then everything else at once: the checks on 4 workers, the game tests in parallel (each queues for a game slot: control/README.md "The slot pool"), and the selected tests/diff shards and flows in one tests/diff run. Each test writes `OUT/<test>/` and `OUT/<test>.log`; the summary table (PASS / FAIL, the time against the measured one) goes to the terminal and `OUT/summary.txt`; exit 1 when anything fails.
 
+## The permanent gates (server/PLAN-schema.md S11, PLAN-readability.md R19)
+
+These hold on every commit and every merge to main; none has a `known` failure, so any finding fails the gate:
+
+- **T0 `server-docs`**: `tools/check_server_docs.sh --evidence {base}`, enforcing: every handler's 2.5 block (with a label, or `Rules: none (transport)`), every hook's and every `server/include/soaserver/` function's doc comment, docs links resolve, API-INDEX.md and errors.h fresh, no "agent" notes in server/ code, every server/ path named exists, a README in every server/src folder, and the evidence manifest not shrunk against `{base}` (a merge: its first parent). A commit that deletes labelled code lists what went in a message line starting `Evidence removed:` (server/README.md "Comment conventions").
+- **T0 `server-format`**: `tools/format_server.sh --check` (clang-format 18) fails on any unformatted server/ file.
+- **G9, the end state of every game run**: soadrive's `Run.stop()` (control/soadrive/targets.py `Run.state_check`), so every session (control/run.py and its wrapper scripts), every tests/diff run and the Windows runs, checks the server's end state with `tools/schema_inventory.py --check --strict STATE MASTER`: `pragma foreign_key_check` empty, every master reference resolved against the master the server ran with, the state at this build's schema version. A violation is a failed step (`FAIL  state check (G9): ...` in the run's steps.txt; the session's or the flow's verdict FAIL, and control/run.py exits 1 whatever the session's own verdict); a clean state is the step `PASS  state check: foreign keys hold, master references resolve, version N`.
+- **T0 `schema-inventory`**: RELS's `m:` rows equal the server's `state::master_refs()` (one list for both checks), and the SQL lint of S0.
+
 ## How tests_for.py chooses (T1)
 
 `tests/impact.json` (generated) records which server APIs each test exercises: the replay corpora from their requests.txt, the tests/diff shards and flows from their packet logs, the sessions from their logs (`request X`) or, until a run is recorded, from the API names in their script. A change maps to tests by path:
@@ -47,9 +56,9 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T0 | `env-rule` | 1 s | - | the environment rule (soa/env.h: the on/off words, numbers checked) and every removed SOA_* setting's one warning line naming its flag, in each program (docs/environment.md) | `build/common/soa_env_tests && tests/env_removed.sh` |
 | T0 | `replay` | 15 s | - | every replay corpus twice with this build (determinism, no crash); T1 compares with the parent build instead (replay-parent) | `tools/server_replay_diff.sh build/server/soa-server build/server/soa-server` |
 | T0 | `replay-coverage` | 4 s | - | server/tests/replay/COVERAGE.md is current (the APIs without a corpus) | `python3 tools/replay_coverage.py --check` |
-| T0 | `server-docs` | 1 s | - | the server's doc blocks, docs links, API-INDEX.md fresh, the evidence labels | `tools/check_server_docs.sh` |
-| T0 | `server-format` | 6 s | - | server/ C++ formatted (clang-format 18) | `tools/format_server.sh --check` |
-| T0 | `schema-inventory` | 1 s | - | the state schema inventory parses (server/PLAN-schema.md) | `python3 tools/schema_inventory.py` |
+| T0 | `server-docs` | 1 s | - | enforcing (R19): every handler's 2.5 block with a label, every hook's and include/soaserver function's doc comment, docs links, API-INDEX.md fresh, no agent mentions in server/ code, the evidence manifest not shrunk against {base} (HEAD~1, or the --git-diff rev) | `tools/check_server_docs.sh --evidence {base}` |
+| T0 | `server-format` | 6 s | - | server/ C++ formatted (clang-format 18; enforced: any unformatted file fails) | `tools/format_server.sh --check` |
+| T0 | `schema-inventory` | 1 s | - | the state schema inventory parses (server/PLAN-schema.md), its master references (RELS m: rows) are the server's state::master_refs() (S11), and the SQL lint (S0: INSERTs name their columns, no INSERT OR REPLACE on an FK parent) | `python3 tools/schema_inventory.py > /dev/null && python3 tools/schema_inventory.py --lint` |
 | T0 | `no-380` | 1 s | - | no reference to the offline build outside the allowed places (tools/check_no_380.sh) | `tools/check_no_380.sh` |
 | T0 | `pytest-control` | 50 s | - | the slot pool, the driver library control/soadrive (log cursor, FIFO, resend rules) and tools/tests_for.py's path rules (no game) | `.venv/bin/python -m pytest -q control/tests` |
 | T0 | `pytest-soa-save` | 5 s | - | soa_save's unit tests (no game) **Known failure:** tests/test_kvs.py::test_unlock_all_keeps_existing needs the offline game's package in apk/, which a worktree lacks (untracked); passes in the main checkout | `.venv/bin/python -m pytest -q tests` |
@@ -85,6 +94,8 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `emu:seeded` | 4.7 min | 1 | the 3.7.0 emulator against soa-server: login, battle, gacha (emulator gate scope) | `emulator/scripts/emulator_session.sh build/emulator/soa-emu build/server/soa-server {out}` |
 | T2 | `emu:newplayer` | 11.3 min | 1 | the emulator's new player and tutorial (emulator gate scope) | `emulator/scripts/emulator_session.sh --new-player build/emulator/soa-emu build/server/soa-server {out}` |
 | T2 | `emu:summer` | 6.1 min | 1 | the summer event demo on the emulator (emulator gate scope) | `emulator/scripts/summer_demo.sh {out}` |
+| T2 | `selftest-live:home` | 4.0 min | 1 | the layout selftests of render / scene / anim on home's live objects (soa --selftest on the wire, started at home: the character model, its animation) | `port/scripts/selftest_live.sh build/port/soa {out} {tmp} layout- --at home` |
+| T3 | `selftest-live:battle` | 5.0 min | 1 | the same layout selftests 15 s into mf01_001's battle | `port/scripts/selftest_live.sh build/port/soa {out} {tmp} layout- --at battle` |
 | T2 | `viewer:boot` | 40 s | 1 | soa-viewer boots (viewer gate scope) | `emulator-viewer/scripts/viewer_boot.sh build/emulator-viewer/soa-viewer {out}` |
 | T2 | `viewer:session` | 4.6 min | 1 | soa-viewer's session (viewer gate scope) | `emulator-viewer/scripts/viewer_session.sh build/emulator-viewer/soa-viewer {out}` |
 | T2 | `win:battle-gacha` | 5.2 min | 1 | Windows (soa.exe from WSL through interop, staged in C:\soa-win): the restore session: home, a battle, a 10-draw, the server state after each | `scripts/windows-test.sh battle-gacha {out} {tmp}` |

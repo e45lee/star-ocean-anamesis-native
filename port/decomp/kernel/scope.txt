@@ -1,5 +1,11 @@
 # port/decomp/kernel/scope.txt: the guest functions the `kernel` subsystem owns, as Python regexes on the
 # demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
 # tools/subsystem.py check warns about a function claimed by two subsystems.
-^(\S+ )?Aska::(SimpleMessageDispatcher|MessageDispatcher\w*|TaskManager|Task|TaskThread\w*|TaskList\w*|NotifierThread|AskaMainThread|LifeCycleManager|VSync|WaitVSync|WaitDraw|PerformanceCounter|Global|INotify|Functor\w*|AndroidUtil)::
-^(\S+ )?Framework::(CFiberKernel|CFiber\w*|CApplication|CTimeElement|ResponderChain|CMessageManager)::
+# Classes only: the queue's catch-all families "Aska" / "Framework" (free functions) mix math, render
+# and scene code (Aska::MatrixCalcFunc, Aska::FrustumCulling*, Aska::MakeDirectShaderNodeShaders,
+# Function_UpdateHierarchicallyByUsingStack<>, Functor_ExternalForceEmitterCalculation<>), so kernel
+# claims only the free functions named below; the rest belong to math / render / scene / dynamics.
+^(\S+ )?Aska::(SimpleMessageDispatcher|MessageDispatcher\w*|TaskManager|Task|TaskThread\w*|TaskList\w*|AnimatableLinkElement|AnimatableList|NotifierThread|AskaMainThread|LifeCycleManager|VSync|WaitVSync|WaitDraw|PerformanceCounter|Global|INotify|AndroidUtil)::
+^(\S+ )?Framework::(CFiberKernel|CFiberUnit|CApplication|CTimeElement|ResponderChain|CMessageManager)::
+^(\S+ )?Aska::(InitializeAska\w*)\(
+^(\S+ )?Platform::Android::

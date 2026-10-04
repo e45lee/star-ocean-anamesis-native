@@ -47,7 +47,6 @@ NATIVE_TEST("server/seed-from-380-save") {
     for (const char* suffix : {"", "-wal", "-shm"}) unlink((db + suffix).c_str());
 }
 
-
 // Which save a new state is seeded from (docs/server-rules.md#seed): with no seed save (a packaged
 // build ships none) and no --new-player, a new state has no player, so the client runs its own
 // new-player flow; the client's own Game.xml (--game-xml) counts only when it holds a player (the

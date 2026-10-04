@@ -1,0 +1,4287 @@
+{
+ "subsystem": "input",
+ "generated_by": "tools/subsystem.py export-types input",
+ "header": "port/src/native/input/input_layout.h",
+ "structs": [
+  {
+   "name": "BasePeripheral",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 152,
+     "name": "m_attr98",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 153,
+     "name": "m_port",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": true
+     },
+     "size": 1
+    },
+    {
+     "offset": 154,
+     "name": "m_connected",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 155,
+     "name": "m_updated",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 156,
+     "name": "m_attr9c",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 157,
+     "name": "m_attr9d",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 158,
+     "name": "m_attr9e",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 160,
+     "name": "m_attra0",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 161,
+     "name": "m_noPort",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 162,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x2006150",
+     "symbol": "_ZN4Aska14BasePeripheralD2Ev",
+     "name": "~BasePeripheral"
+    },
+    {
+     "ghidra": "0x200a0e8",
+     "symbol": "_ZNK4Aska14BasePeripheral10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2017664",
+     "symbol": "_ZN4Aska14BasePeripheral9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x20176e0",
+     "symbol": "_ZN4Aska14BasePeripheral15CheckConnectionEv",
+     "name": "CheckConnection"
+    },
+    {
+     "ghidra": "0x20176fc",
+     "symbol": "_ZN4Aska14BasePeripheral7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x2017868",
+     "symbol": "_ZNK4Aska14BasePeripheral3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x20178d4",
+     "symbol": "_ZN4Aska14BasePeripheral3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x201791c",
+     "symbol": "_ZN4Aska14BasePeripheralD0Ev",
+     "name": "~BasePeripheral"
+    }
+   ]
+  },
+  {
+   "name": "PadKeys",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_now",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "m_before",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 4,
+     "name": "m_stock",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 6,
+     "name": "m_single",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 8,
+     "name": "m_release",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_repeat",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_repeatEach",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 14,
+     "name": "m_lx",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 16,
+     "name": "m_ly",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 18,
+     "name": "m_rx",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 20,
+     "name": "m_ry",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 22,
+     "name": "m_lt",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 23,
+     "name": "m_rt",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 24,
+     "name": "m_lxf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "m_lyf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_rxf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_ryf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 4
+  },
+  {
+   "name": "PadRepeatEach",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_counter",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "m_threshold",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3,
+     "name": "m_interval",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 4,
+   "align": 2
+  },
+  {
+   "name": "Pad",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "BasePeripheral"
+     },
+     "size": 162
+    },
+    {
+     "offset": 162,
+     "name": "m_attra2",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 163,
+     "name": "m_attra3",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 164,
+     "name": "m_rumbleSupported",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 165,
+     "name": "m_rumbleEnabled",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 166,
+     "name": "m_rawButtons",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 168,
+     "name": "m_rawTrigger",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 170,
+     "name": "m_rawAnalog",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 2,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 8
+    },
+    {
+     "offset": 178,
+     "name": "m_rumble",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 2,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 4
+    },
+    {
+     "offset": 182,
+     "name": "unk_b6",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 184,
+     "name": "m_keys",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "PadKeys"
+      },
+      "count": 2
+     },
+     "size": 80
+    },
+    {
+     "offset": 264,
+     "name": "m_front",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 268,
+     "name": "m_repeatCounter",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 270,
+     "name": "m_repeatThreshold",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 271,
+     "name": "m_repeatInterval",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 272,
+     "name": "m_repeatEach",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "PadRepeatEach"
+      },
+      "count": 16
+     },
+     "size": 64
+    },
+    {
+     "offset": 336,
+     "name": "m_lastFrame",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 340,
+     "name": "m_analogMax",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 2,
+       "signed": true
+      },
+      "count": 4
+     },
+     "size": 8
+    },
+    {
+     "offset": 348,
+     "name": "m_calibration",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 2,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 8
+    },
+    {
+     "offset": 356,
+     "name": "m_analogScale",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 2,
+       "signed": true
+      },
+      "count": 4
+     },
+     "size": 8
+    },
+    {
+     "offset": 364,
+     "name": "m_deadZone",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 366,
+     "name": "m_analogAsDigital",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 367,
+     "name": "unk_16f",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1
+     },
+     "size": 1
+    }
+   ],
+   "size": 368,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x1f8d450",
+     "symbol": "_ZN4Aska3Pad18SetAnalogAsDigitalEb",
+     "name": "SetAnalogAsDigital"
+    },
+    {
+     "ghidra": "0x1f8d5a8",
+     "symbol": "_ZN4Aska3Pad18SetRepeatThresholdEh",
+     "name": "SetRepeatThreshold"
+    },
+    {
+     "ghidra": "0x1f8d700",
+     "symbol": "_ZN4Aska3Pad17SetRepeatIntervalEh",
+     "name": "SetRepeatInterval"
+    },
+    {
+     "ghidra": "0x20533b8",
+     "symbol": "_ZN4Aska3PadC2Es",
+     "name": "Pad"
+    },
+    {
+     "ghidra": "0x2053494",
+     "symbol": "_ZN4Aska3Pad7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x2053634",
+     "symbol": "_ZN4Aska3Pad9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x2053794",
+     "symbol": "_ZN4Aska3Pad15UpdateKeyStatusEv",
+     "name": "UpdateKeyStatus"
+    },
+    {
+     "ghidra": "0x2053924",
+     "symbol": "_ZN4Aska3Pad15UpdateKeyRepeatEPNS0_4KeysE",
+     "name": "UpdateKeyRepeat"
+    },
+    {
+     "ghidra": "0x2053ae4",
+     "symbol": "_ZN4Aska3Pad22EmulateAnalogAsDigitalEPNS0_4KeysE",
+     "name": "EmulateAnalogAsDigital"
+    },
+    {
+     "ghidra": "0x2053b4c",
+     "symbol": "_ZN4Aska3Pad18CalcAnalogPositionEPsS1_S1_S1_",
+     "name": "CalcAnalogPosition"
+    },
+    {
+     "ghidra": "0x2053ce4",
+     "symbol": "_ZN4Aska3Pad17CalcAnalogTriggerEPhS1_",
+     "name": "CalcAnalogTrigger"
+    },
+    {
+     "ghidra": "0x2053cf8",
+     "symbol": "_ZN4Aska3Pad11ResetStatusEv",
+     "name": "ResetStatus"
+    },
+    {
+     "ghidra": "0x2053d1c",
+     "symbol": "_ZN4Aska3Pad4FlipEv",
+     "name": "Flip"
+    },
+    {
+     "ghidra": "0x2053e9c",
+     "symbol": "_ZN4Aska3Pad12EnableRumbleEb",
+     "name": "EnableRumble"
+    },
+    {
+     "ghidra": "0x2053eb8",
+     "symbol": "_ZN4Aska3Pad9SetRumbleEtt",
+     "name": "SetRumble"
+    },
+    {
+     "ghidra": "0x2053ed4",
+     "symbol": "_ZN4Aska3Pad12SetAnalogMaxEssss",
+     "name": "SetAnalogMax"
+    },
+    {
+     "ghidra": "0x2053f34",
+     "symbol": "_ZNK4Aska3Pad17GetAnalogPositionEPsS1_S1_S1_",
+     "name": "GetAnalogPosition"
+    },
+    {
+     "ghidra": "0x2053f8c",
+     "symbol": "_ZNK4Aska3Pad17GetAnalogPositionEPfS1_S1_S1_",
+     "name": "GetAnalogPosition"
+    },
+    {
+     "ghidra": "0x2053fe4",
+     "symbol": "_ZN4Aska3Pad21CalcAnalogPositionMaxEv",
+     "name": "CalcAnalogPositionMax"
+    },
+    {
+     "ghidra": "0x2054034",
+     "symbol": "_ZNK4Aska3Pad16GetAnalogTriggerEPhS1_",
+     "name": "GetAnalogTrigger"
+    },
+    {
+     "ghidra": "0x2054064",
+     "symbol": "_ZN4Aska3Pad14SetCalibrationEsssss",
+     "name": "SetCalibration"
+    },
+    {
+     "ghidra": "0x20540c4",
+     "symbol": "_ZN4Aska3Pad22SetRepeatEachThresholdEth",
+     "name": "SetRepeatEachThreshold"
+    },
+    {
+     "ghidra": "0x205418c",
+     "symbol": "_ZN4Aska3Pad21SetRepeatEachIntervalEth",
+     "name": "SetRepeatEachInterval"
+    },
+    {
+     "ghidra": "0x2054254",
+     "symbol": "_ZNK4Aska3Pad3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2054450",
+     "symbol": "_ZNK4Aska3Pad17IsAnalogAsDigitalEv",
+     "name": "IsAnalogAsDigital"
+    },
+    {
+     "ghidra": "0x20545a0",
+     "symbol": "_ZN4Aska3Pad3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x205528c",
+     "symbol": "_ZN4Aska3Pad25InstantiateAppropriatePadEv",
+     "name": "InstantiateAppropriatePad"
+    },
+    {
+     "ghidra": "0x20552bc",
+     "symbol": "_ZN4Aska3Pad19InstantiateDebugPadEv",
+     "name": "InstantiateDebugPad"
+    },
+    {
+     "ghidra": "0x20552c4",
+     "symbol": "_ZN4Aska3Pad21InstantiatePadCaptureEv",
+     "name": "InstantiatePadCapture"
+    },
+    {
+     "ghidra": "0x20552cc",
+     "symbol": "_ZN4Aska3PadD0Ev",
+     "name": "~Pad"
+    },
+    {
+     "ghidra": "0x20552d0",
+     "symbol": "_ZNK4Aska3Pad10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2055318",
+     "symbol": "_ZN4Aska3Pad19SetTriggerThresholdENS0_16TriggerThresholdEi",
+     "name": "SetTriggerThreshold"
+    },
+    {
+     "ghidra": "0x205531c",
+     "symbol": "_ZNK4Aska3Pad19GetTriggerThresholdENS0_16TriggerThresholdE",
+     "name": "GetTriggerThreshold"
+    }
+   ]
+  },
+  {
+   "name": "PadDroid",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "pad",
+     "type": {
+      "kind": "struct",
+      "name": "Pad"
+     },
+     "size": 368
+    },
+    {
+     "offset": 368,
+     "name": "unk_170",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 376,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x2006128",
+     "symbol": "_ZN4Aska8PadDroidC1Ev",
+     "name": "PadDroid"
+    },
+    {
+     "ghidra": "0x2006178",
+     "symbol": "_ZN4Aska8PadDroidD0Ev",
+     "name": "~PadDroid"
+    },
+    {
+     "ghidra": "0x20061a8",
+     "symbol": "_ZNK4Aska8PadDroid10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x200620c",
+     "symbol": "_ZNK4Aska8PadDroid3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2006214",
+     "symbol": "_ZN4Aska8PadDroid3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x200621c",
+     "symbol": "_ZN4Aska8PadDroid10InitializeEh",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x2006220",
+     "symbol": "_ZN4Aska8PadDroid7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x2006224",
+     "symbol": "_ZN4Aska8PadDroid11ResetStatusEv",
+     "name": "ResetStatus"
+    },
+    {
+     "ghidra": "0x2006228",
+     "symbol": "_ZN4Aska8PadDroid19GetDeviceDataNoPortEv",
+     "name": "GetDeviceDataNoPort"
+    },
+    {
+     "ghidra": "0x200622c",
+     "symbol": "_ZN4Aska8PadDroid13GetDeviceDataEv",
+     "name": "GetDeviceData"
+    },
+    {
+     "ghidra": "0x2006234",
+     "symbol": "_ZNK4Aska8PadDroid15GetRawInputDataEv",
+     "name": "GetRawInputData"
+    },
+    {
+     "ghidra": "0x200623c",
+     "symbol": "_ZNK4Aska8PadDroid19GetRawInputDataSizeEv",
+     "name": "GetRawInputDataSize"
+    },
+    {
+     "ghidra": "0x2006244",
+     "symbol": "_ZN4Aska8PadDroid16SetRawOutputDataEPKv",
+     "name": "SetRawOutputData"
+    },
+    {
+     "ghidra": "0x2006248",
+     "symbol": "_ZNK4Aska8PadDroid20GetRawOutputDataSizeEv",
+     "name": "GetRawOutputDataSize"
+    },
+    {
+     "ghidra": "0x2006250",
+     "symbol": "_ZN4Aska8PadDroid19SetTriggerThresholdENS_3Pad16TriggerThresholdEi",
+     "name": "SetTriggerThreshold"
+    },
+    {
+     "ghidra": "0x2006254",
+     "symbol": "_ZNK4Aska8PadDroid19GetTriggerThresholdENS_3Pad16TriggerThresholdE",
+     "name": "GetTriggerThreshold"
+    }
+   ]
+  },
+  {
+   "name": "TouchVector2",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "x",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "y",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    }
+   ],
+   "size": 4,
+   "align": 2
+  },
+  {
+   "name": "TouchReport",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_id",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_pressure",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 5,
+     "name": "unk_05",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 6,
+     "name": "m_x",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 8,
+     "name": "m_y",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_phase",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 4
+  },
+  {
+   "name": "TouchData",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_time",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_numReports",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_flag10",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_reports",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchReport"
+      },
+      "count": 8
+     },
+     "size": 128
+    }
+   ],
+   "size": 152,
+   "align": 4
+  },
+  {
+   "name": "TouchDragParam",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_value08",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 20,
+     "name": "m_id",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 24,
+   "align": 4
+  },
+  {
+   "name": "TouchPinchParam",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 28
+     },
+     "size": 28
+    }
+   ],
+   "size": 32,
+   "align": 4
+  },
+  {
+   "name": "TouchHoldParam",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 1
+  },
+  {
+   "name": "TouchOrigin",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_x",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_y",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "unk_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_value10",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_id",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "m_active",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 29,
+     "name": "m_tapCount",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 30,
+     "name": "unk_1e",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 36,
+   "align": 4
+  },
+  {
+   "name": "TouchPanel",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "BasePeripheral"
+     },
+     "size": 162
+    },
+    {
+     "offset": 162,
+     "name": "unk_a2",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 168,
+     "name": "m_data",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchData"
+      },
+      "count": 64
+     },
+     "size": 9728
+    },
+    {
+     "offset": 9896,
+     "name": "m_numData",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 9900,
+     "name": "unk_26ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 9904,
+     "name": "m_value26b0",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 9912,
+     "name": "m_doubleTapRange",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 9916,
+     "name": "m_value26bc",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 9920,
+     "name": "m_lastX",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 9922,
+     "name": "m_lastY",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 9924,
+     "name": "m_attached",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9925,
+     "name": "m_enabled",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9926,
+     "name": "m_taps",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchVector2"
+      },
+      "count": 8
+     },
+     "size": 32
+    },
+    {
+     "offset": 9958,
+     "name": "m_tapWork",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchVector2"
+      },
+      "count": 8
+     },
+     "size": 32
+    },
+    {
+     "offset": 9990,
+     "name": "unk_2706",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 9992,
+     "name": "m_tapWorkCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 9996,
+     "name": "unk_270c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 10000,
+     "name": "unk_2710",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 10016,
+     "name": "m_origins",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchOrigin"
+      },
+      "count": 8
+     },
+     "size": 288
+    },
+    {
+     "offset": 10304,
+     "name": "unk_2840",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 10368,
+     "name": "m_tapCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 10372,
+     "name": "m_lastTapCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 10376,
+     "name": "m_tapKind",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 10380,
+     "name": "m_lastTapKind",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 10384,
+     "name": "unk_2890",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 10388,
+     "name": "m_holds",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchHoldParam"
+      },
+      "count": 8
+     },
+     "size": 64
+    },
+    {
+     "offset": 10452,
+     "name": "m_numHolds",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 10456,
+     "name": "m_pinch",
+     "type": {
+      "kind": "struct",
+      "name": "TouchPinchParam"
+     },
+     "size": 32
+    },
+    {
+     "offset": 10488,
+     "name": "unk_28f8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 10492,
+     "name": "m_holdTime",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 10496,
+     "name": "unk_2900",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 10500,
+     "name": "m_value2904",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 10504,
+     "name": "unk_2908",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 10508,
+     "name": "m_drag",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchDragParam"
+      },
+      "count": 8
+     },
+     "size": 192
+    },
+    {
+     "offset": 10700,
+     "name": "unk_29cc",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    }
+   ],
+   "size": 10712,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f9f92c",
+     "symbol": "_ZN4Aska10TouchPanel12CopyMessagesEPNS_9TouchDataE",
+     "name": "CopyMessages"
+    },
+    {
+     "ghidra": "0x200625c",
+     "symbol": "_ZN4Aska10TouchPanel10InitializeEh",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x200631c",
+     "symbol": "_ZN4Aska10TouchPanel6EnableEb",
+     "name": "Enable"
+    },
+    {
+     "ghidra": "0x200632c",
+     "symbol": "_ZN4Aska10TouchPanel17ClearGestureParamEv",
+     "name": "ClearGestureParam"
+    },
+    {
+     "ghidra": "0x20063cc",
+     "symbol": "_ZN4Aska10TouchPanel17CalcDoublTapRangeEi",
+     "name": "CalcDoublTapRange"
+    },
+    {
+     "ghidra": "0x2006404",
+     "symbol": "_ZN4Aska10TouchPanel17ResetGestureParamEv",
+     "name": "ResetGestureParam"
+    },
+    {
+     "ghidra": "0x2006548",
+     "symbol": "_ZN4Aska10TouchPanel13UpdateGestureEPNS_9TouchDataEi",
+     "name": "UpdateGesture"
+    },
+    {
+     "ghidra": "0x2006ec4",
+     "symbol": "_ZN4Aska10TouchPanel18UpdateGestureFlagsEj",
+     "name": "UpdateGestureFlags"
+    },
+    {
+     "ghidra": "0x2006fc4",
+     "symbol": "_ZN4Aska10TouchPanel23SetOrRegisterOriginInfoERNS_11TouchReportEj",
+     "name": "SetOrRegisterOriginInfo"
+    },
+    {
+     "ghidra": "0x20073a8",
+     "symbol": "_ZN4Aska10TouchPanel17StartGestureCheckEPNS_11TouchOriginE",
+     "name": "StartGestureCheck"
+    },
+    {
+     "ghidra": "0x20075ac",
+     "symbol": "_ZN4Aska10TouchPanel12SetDragBeginERNS_11TouchReportE",
+     "name": "SetDragBegin"
+    },
+    {
+     "ghidra": "0x2007638",
+     "symbol": "_ZN4Aska10TouchPanel10FindOriginEj",
+     "name": "FindOrigin"
+    },
+    {
+     "ghidra": "0x2007674",
+     "symbol": "_ZN4Aska10TouchPanel6SetTapEPNS_11TouchOriginEi",
+     "name": "SetTap"
+    },
+    {
+     "ghidra": "0x2007754",
+     "symbol": "_ZN4Aska10TouchPanel16ClearGlobalFlagsEPNS_11TouchOriginEh",
+     "name": "ClearGlobalFlags"
+    },
+    {
+     "ghidra": "0x20078a0",
+     "symbol": "_ZN4Aska10TouchPanel16SetPinchOutInEndEv",
+     "name": "SetPinchOutInEnd"
+    },
+    {
+     "ghidra": "0x20079e4",
+     "symbol": "_ZN4Aska10TouchPanel26OffAndDeregisterOriginInfoEPNS_11TouchOriginEj",
+     "name": "OffAndDeregisterOriginInfo"
+    },
+    {
+     "ghidra": "0x2007b40",
+     "symbol": "_ZN4Aska10TouchPanel10SetDragEndERNS_11TouchReportE",
+     "name": "SetDragEnd"
+    },
+    {
+     "ghidra": "0x2007bf4",
+     "symbol": "_ZN4Aska10TouchPanel10CheckRangeERNS_11TouchReportE",
+     "name": "CheckRange"
+    },
+    {
+     "ghidra": "0x2007e34",
+     "symbol": "_ZN4Aska10TouchPanel13SetDragActiveERNS_11TouchReportE",
+     "name": "SetDragActive"
+    },
+    {
+     "ghidra": "0x2007ef4",
+     "symbol": "_ZN4Aska10TouchPanel18SetPinchOutInBeginEv",
+     "name": "SetPinchOutInBegin"
+    },
+    {
+     "ghidra": "0x2007f8c",
+     "symbol": "_ZN4Aska10TouchPanel19SetPinchOutInActiveEv",
+     "name": "SetPinchOutInActive"
+    },
+    {
+     "ghidra": "0x20080e8",
+     "symbol": "_ZN4Aska10TouchPanel19ClearDoubleTapFlagsEi",
+     "name": "ClearDoubleTapFlags"
+    },
+    {
+     "ghidra": "0x20082ac",
+     "symbol": "_ZN4Aska10TouchPanel15SetTouchAndHoldEPNS_11TouchOriginE",
+     "name": "SetTouchAndHold"
+    },
+    {
+     "ghidra": "0x20082f8",
+     "symbol": "_ZN4Aska10TouchPanel13FindDragParamEj",
+     "name": "FindDragParam"
+    },
+    {
+     "ghidra": "0x2008350",
+     "symbol": "_ZN4Aska10TouchPanel10SetDragPosERNS_11TouchReportEPNS0_9DragParamE",
+     "name": "SetDragPos"
+    },
+    {
+     "ghidra": "0x200838c",
+     "symbol": "_ZN4Aska10TouchPanel6GetTapEPNS0_7Vector2Ei",
+     "name": "GetTap"
+    },
+    {
+     "ghidra": "0x20084b8",
+     "symbol": "_ZN4Aska10TouchPanel12GetDoubleTapEPNS0_7Vector2Ei",
+     "name": "GetDoubleTap"
+    },
+    {
+     "ghidra": "0x20085e4",
+     "symbol": "_ZN4Aska10TouchPanel7GetDragEPNS0_9DragParamE",
+     "name": "GetDrag"
+    },
+    {
+     "ghidra": "0x2008624",
+     "symbol": "_ZN4Aska10TouchPanel12GetDragMultiERA8_NS0_9DragParamE",
+     "name": "GetDragMulti"
+    },
+    {
+     "ghidra": "0x20087ac",
+     "symbol": "_ZN4Aska10TouchPanel15GetTouchAndHoldEPNS0_17TouchAndHoldParamE",
+     "name": "GetTouchAndHold"
+    },
+    {
+     "ghidra": "0x20087dc",
+     "symbol": "_ZN4Aska10TouchPanel20GetTouchAndHoldMultiERA8_NS0_17TouchAndHoldParamE",
+     "name": "GetTouchAndHoldMulti"
+    },
+    {
+     "ghidra": "0x200881c",
+     "symbol": "_ZN4Aska10TouchPanel13GetPinchOutInEPNS0_15PinchOutInParamE",
+     "name": "GetPinchOutIn"
+    },
+    {
+     "ghidra": "0x2008860",
+     "symbol": "_ZN4Aska10TouchPanel9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x2008874",
+     "symbol": "_ZN4Aska10TouchPanel13GetDeviceDataEv",
+     "name": "GetDeviceData"
+    },
+    {
+     "ghidra": "0x2008d2c",
+     "symbol": "_ZN4Aska10TouchPanel11ResetStatusEv",
+     "name": "ResetStatus"
+    },
+    {
+     "ghidra": "0x2008e80",
+     "symbol": "_ZN4Aska10TouchPanel17InitializeGestureEv",
+     "name": "InitializeGesture"
+    },
+    {
+     "ghidra": "0x2008e88",
+     "symbol": "_ZN4Aska10TouchPanel15FinalizeGestureEv",
+     "name": "FinalizeGesture"
+    },
+    {
+     "ghidra": "0x200a0b8",
+     "symbol": "_ZN4Aska10TouchPanelD0Ev",
+     "name": "~TouchPanel"
+    },
+    {
+     "ghidra": "0x200a100",
+     "symbol": "_ZN4Aska10TouchPanel19GetDeviceDataNoPortEv",
+     "name": "GetDeviceDataNoPort"
+    }
+   ]
+  },
+  {
+   "name": "SystemTouchEvent",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_action",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_id",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_x",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_y",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_pressure",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 20,
+   "align": 4
+  },
+  {
+   "name": "SystemTouchQueue",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_written",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_consumed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_events",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "SystemTouchEvent"
+      },
+      "count": 65
+     },
+     "size": 1300
+    },
+    {
+     "offset": 1316,
+     "name": "unk_524",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 1320,
+   "align": 4
+  },
+  {
+   "name": "BaseInputPeripheral",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "BasePeripheral"
+     },
+     "size": 162
+    },
+    {
+     "offset": 162,
+     "name": "unk_a2",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 164,
+     "name": "m_messages",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "array",
+       "of": {
+        "kind": "int",
+        "size": 4,
+        "signed": false
+       },
+       "count": 64
+      },
+      "count": 2
+     },
+     "size": 512
+    },
+    {
+     "offset": 676,
+     "name": "m_readIndex",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 680,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    }
+   ],
+   "size": 684,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x2321864",
+     "symbol": "_ZN4Aska19BaseInputPeripheralC2Ev",
+     "name": "BaseInputPeripheral"
+    },
+    {
+     "ghidra": "0x23218bc",
+     "symbol": "_ZN4Aska19BaseInputPeripheralD1Ev",
+     "name": "~BaseInputPeripheral"
+    },
+    {
+     "ghidra": "0x23218e4",
+     "symbol": "_ZN4Aska19BaseInputPeripheralD0Ev",
+     "name": "~BaseInputPeripheral"
+    },
+    {
+     "ghidra": "0x2321914",
+     "symbol": "_ZN4Aska19BaseInputPeripheral10InitializeEh",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x2321918",
+     "symbol": "_ZN4Aska19BaseInputPeripheral7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x232191c",
+     "symbol": "_ZN4Aska19BaseInputPeripheral9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x2321924",
+     "symbol": "_ZN4Aska19BaseInputPeripheral11ResetStatusEv",
+     "name": "ResetStatus"
+    },
+    {
+     "ghidra": "0x2321928",
+     "symbol": "_ZNK4Aska19BaseInputPeripheral12CopyMessagesEPNS0_7MessageE",
+     "name": "CopyMessages"
+    },
+    {
+     "ghidra": "0x23219b8",
+     "symbol": "_ZN4Aska19BaseInputPeripheral13ClearMessagesEv",
+     "name": "ClearMessages"
+    },
+    {
+     "ghidra": "0x23219c4",
+     "symbol": "_ZN4Aska19BaseInputPeripheral10AddMessageEPKNS0_7MessageE",
+     "name": "AddMessage"
+    },
+    {
+     "ghidra": "0x2321a00",
+     "symbol": "_ZN4Aska19BaseInputPeripheral19GetDeviceDataNoPortEv",
+     "name": "GetDeviceDataNoPort"
+    },
+    {
+     "ghidra": "0x2321a04",
+     "symbol": "_ZN4Aska19BaseInputPeripheral13GetDeviceDataEv",
+     "name": "GetDeviceData"
+    }
+   ]
+  },
+  {
+   "name": "Mouse",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "input",
+     "type": {
+      "kind": "struct",
+      "name": "BaseInputPeripheral"
+     },
+     "size": 684
+    },
+    {
+     "offset": 684,
+     "name": "unk_2ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 20
+     },
+     "size": 20
+    },
+    {
+     "offset": 704,
+     "name": "m_buttonL",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 708,
+     "name": "m_buttonR",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 712,
+     "name": "m_buttonM",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 716,
+     "name": "unk_2cc",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 764,
+     "name": "m_x",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 768,
+     "name": "m_y",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 772,
+     "name": "unk_304",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    }
+   ],
+   "size": 784,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x204fd0c",
+     "symbol": "_ZN4Aska5MouseC2Ev",
+     "name": "Mouse"
+    },
+    {
+     "ghidra": "0x204fd50",
+     "symbol": "_ZN4Aska5MouseD1Ev",
+     "name": "~Mouse"
+    },
+    {
+     "ghidra": "0x204fd54",
+     "symbol": "_ZN4Aska5MouseD0Ev",
+     "name": "~Mouse"
+    },
+    {
+     "ghidra": "0x204fd6c",
+     "symbol": "_ZN4Aska5Mouse10InitializeEh",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x204fd70",
+     "symbol": "_ZN4Aska5Mouse7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x204fd74",
+     "symbol": "_ZN4Aska5Mouse9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x204fd7c",
+     "symbol": "_ZN4Aska5Mouse11ResetStatusEv",
+     "name": "ResetStatus"
+    },
+    {
+     "ghidra": "0x204fd80",
+     "symbol": "_ZN4Aska5Mouse17SetCursorPositionEiib",
+     "name": "SetCursorPosition"
+    },
+    {
+     "ghidra": "0x204fe20",
+     "symbol": "_ZN4Aska5Mouse8MouseKeyENS0_7MsgCodeEb",
+     "name": "MouseKey"
+    },
+    {
+     "ghidra": "0x204fe6c",
+     "symbol": "_ZN4Aska5Mouse19GetDeviceDataNoPortEv",
+     "name": "GetDeviceDataNoPort"
+    },
+    {
+     "ghidra": "0x204fe70",
+     "symbol": "_ZN4Aska5Mouse13GetDeviceDataEv",
+     "name": "GetDeviceData"
+    },
+    {
+     "ghidra": "0x204fe78",
+     "symbol": "_ZNK4Aska5Mouse25GetIsControlledViaNetworkEv",
+     "name": "GetIsControlledViaNetwork"
+    },
+    {
+     "ghidra": "0x204fe80",
+     "symbol": "_ZN4Aska5Mouse24StopNetworkConrolRequestEv",
+     "name": "StopNetworkConrolRequest"
+    },
+    {
+     "ghidra": "0x204fe84",
+     "symbol": "_ZNK4Aska5Mouse28GetIsControlledViaTouchPanelEv",
+     "name": "GetIsControlledViaTouchPanel"
+    },
+    {
+     "ghidra": "0x204fe8c",
+     "symbol": "_ZN4Aska5Mouse27StopTouchPanelConrolRequestEv",
+     "name": "StopTouchPanelConrolRequest"
+    },
+    {
+     "ghidra": "0x204fe94",
+     "symbol": "_ZN4Aska5Mouse19GetInstanceNoCreateEv",
+     "name": "GetInstanceNoCreate"
+    },
+    {
+     "ghidra": "0x204fea4",
+     "symbol": "_ZN4Aska5Mouse11GetInstanceEv",
+     "name": "GetInstance"
+    },
+    {
+     "ghidra": "0x204ff48",
+     "symbol": "_ZN4Aska5Mouse12EmulateMouseEPNS_10TouchPanelE",
+     "name": "EmulateMouse"
+    },
+    {
+     "ghidra": "0x2050014",
+     "symbol": "_ZN4Aska5Mouse25MakeMessageFromTouchPanelEPNS_10TouchPanelEPNS0_16MouseCommonParamEPNS0_16TouchPanelStatusE",
+     "name": "MakeMessageFromTouchPanel"
+    },
+    {
+     "ghidra": "0x2050270",
+     "symbol": "_ZN4Aska5Mouse10ShowCursorEb",
+     "name": "ShowCursor"
+    }
+   ]
+  },
+  {
+   "name": "Keyboard",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "input",
+     "type": {
+      "kind": "struct",
+      "name": "BaseInputPeripheral"
+     },
+     "size": 684
+    },
+    {
+     "offset": 684,
+     "name": "m_keyDown",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 256
+     },
+     "size": 1024
+    },
+    {
+     "offset": 1708,
+     "name": "unk_6ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 1710,
+     "name": "unk_6ae",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    }
+   ],
+   "size": 1712,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x2027680",
+     "symbol": "_ZN4Aska8KeyboardC2Ev",
+     "name": "Keyboard"
+    },
+    {
+     "ghidra": "0x20276b4",
+     "symbol": "_ZN4Aska8KeyboardD1Ev",
+     "name": "~Keyboard"
+    },
+    {
+     "ghidra": "0x20276b8",
+     "symbol": "_ZN4Aska8KeyboardD0Ev",
+     "name": "~Keyboard"
+    },
+    {
+     "ghidra": "0x20276d0",
+     "symbol": "_ZN4Aska8Keyboard10InitializeEh",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x20276d4",
+     "symbol": "_ZN4Aska8Keyboard7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x20276d8",
+     "symbol": "_ZN4Aska8Keyboard9GetStatusEv",
+     "name": "GetStatus"
+    },
+    {
+     "ghidra": "0x20276e0",
+     "symbol": "_ZN4Aska8Keyboard11ResetStatusEv",
+     "name": "ResetStatus"
+    },
+    {
+     "ghidra": "0x20276e4",
+     "symbol": "_ZN4Aska8Keyboard19GetDeviceDataNoPortEv",
+     "name": "GetDeviceDataNoPort"
+    },
+    {
+     "ghidra": "0x20276e8",
+     "symbol": "_ZN4Aska8Keyboard13GetDeviceDataEv",
+     "name": "GetDeviceData"
+    },
+    {
+     "ghidra": "0x20276f0",
+     "symbol": "_ZN4Aska8Keyboard18ClearKeyRepeatDataEv",
+     "name": "ClearKeyRepeatData"
+    },
+    {
+     "ghidra": "0x2027700",
+     "symbol": "_ZNK4Aska8Keyboard25GetIsControlledViaNetworkEv",
+     "name": "GetIsControlledViaNetwork"
+    },
+    {
+     "ghidra": "0x2027708",
+     "symbol": "_ZN4Aska8Keyboard25StopNetworkControlRequestEv",
+     "name": "StopNetworkControlRequest"
+    },
+    {
+     "ghidra": "0x202770c",
+     "symbol": "_ZN4Aska8Keyboard33CancelNetworkControlAutoStopTimerEv",
+     "name": "CancelNetworkControlAutoStopTimer"
+    },
+    {
+     "ghidra": "0x2027710",
+     "symbol": "_ZN4Aska8Keyboard8MapKeyExEib",
+     "name": "MapKeyEx"
+    },
+    {
+     "ghidra": "0x20277b0",
+     "symbol": "_ZN4Aska8Keyboard10KeyEventExEib",
+     "name": "KeyEventEx"
+    },
+    {
+     "ghidra": "0x20278a8",
+     "symbol": "_ZN4Aska8Keyboard11GetInstanceEv",
+     "name": "GetInstance"
+    },
+    {
+     "ghidra": "0x202793c",
+     "symbol": "_ZN4Aska8Keyboard19GetInstanceNoCreateEv",
+     "name": "GetInstanceNoCreate"
+    }
+   ]
+  },
+  {
+   "name": "PeripheralManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_thread",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_pad",
+     "type": {
+      "kind": "ptr",
+      "to": "BasePeripheral"
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_ex",
+     "type": {
+      "kind": "ptr",
+      "to": "BasePeripheral"
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_quit",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 49,
+     "name": "m_started",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 50,
+     "name": "unk_32",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x20573f0",
+     "symbol": "_ZN4Aska17PeripheralManagerC1Ev",
+     "name": "PeripheralManager"
+    },
+    {
+     "ghidra": "0x205743c",
+     "symbol": "_ZN4Aska17PeripheralManagerD2Ev",
+     "name": "~PeripheralManager"
+    },
+    {
+     "ghidra": "0x2057500",
+     "symbol": "_ZN4Aska17PeripheralManagerD0Ev",
+     "name": "~PeripheralManager"
+    },
+    {
+     "ghidra": "0x20575d4",
+     "symbol": "_ZN4Aska17PeripheralManager18ResetAllPeripheralEv",
+     "name": "ResetAllPeripheral"
+    },
+    {
+     "ghidra": "0x2057610",
+     "symbol": "_ZN4Aska17PeripheralManager7HandlerEv",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x20576c0",
+     "symbol": "_ZNK4Aska17PeripheralManager3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x20576c8",
+     "symbol": "_ZN4Aska17PeripheralManager3SetEmPKv",
+     "name": "Set"
+    }
+   ]
+  },
+  {
+   "name": "CUnit",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_port",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_keys",
+     "type": {
+      "kind": "struct",
+      "name": "PadKeys"
+     },
+     "size": 40
+    },
+    {
+     "offset": 52,
+     "name": "m_stock",
+     "type": {
+      "kind": "struct",
+      "name": "PadKeys"
+     },
+     "size": 40
+    },
+    {
+     "offset": 92,
+     "name": "m_lockButtons",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 93,
+     "name": "m_lockLeverL",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 94,
+     "name": "m_lockLeverR",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 95,
+     "name": "m_lockTriggerL",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 96,
+     "name": "m_lockTriggerR",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 97,
+     "name": "unk_61",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 104,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f8c4e4",
+     "symbol": "_ZN9Framework4CPad5CUnit10InitializeEj",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f8c984",
+     "symbol": "_ZN9Framework4CPad5CUnit9UnlockAllEv",
+     "name": "UnlockAll"
+    },
+    {
+     "ghidra": "0x1f8c990",
+     "symbol": "_ZN9Framework4CPad5CUnit8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f8ca4c",
+     "symbol": "_ZN9Framework4CPad5CUnit4CopyEv",
+     "name": "Copy"
+    },
+    {
+     "ghidra": "0x1f8d390",
+     "symbol": "_ZN9Framework4CPad5CUnit5ClearEv",
+     "name": "Clear"
+    },
+    {
+     "ghidra": "0x1f8d3a4",
+     "symbol": "_ZN9Framework4CPad5CUnitC2Ev",
+     "name": "CUnit"
+    },
+    {
+     "ghidra": "0x1f8d3c0",
+     "symbol": "_ZN9Framework4CPad5CUnitD2Ev",
+     "name": "~CUnit"
+    },
+    {
+     "ghidra": "0x1f8d410",
+     "symbol": "_ZN9Framework4CPad5CUnit7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f8d858",
+     "symbol": "_ZN9Framework4CPad5CUnit5rKeysEv",
+     "name": "rKeys"
+    },
+    {
+     "ghidra": "0x1f8d860",
+     "symbol": "_ZNK9Framework4CPad5CUnit4KeysEv",
+     "name": "Keys"
+    },
+    {
+     "ghidra": "0x1f8d868",
+     "symbol": "_ZN9Framework4CPad5CUnit7LockAllEv",
+     "name": "LockAll"
+    },
+    {
+     "ghidra": "0x1f8d87c",
+     "symbol": "_ZN9Framework4CPad5CUnit11LockButtonsEv",
+     "name": "LockButtons"
+    },
+    {
+     "ghidra": "0x1f8d888",
+     "symbol": "_ZN9Framework4CPad5CUnit16LockAnalogLeverLEv",
+     "name": "LockAnalogLeverL"
+    },
+    {
+     "ghidra": "0x1f8d894",
+     "symbol": "_ZN9Framework4CPad5CUnit16LockAnalogLeverREv",
+     "name": "LockAnalogLeverR"
+    },
+    {
+     "ghidra": "0x1f8d8a0",
+     "symbol": "_ZN9Framework4CPad5CUnit18LockAnalogTriggerLEv",
+     "name": "LockAnalogTriggerL"
+    },
+    {
+     "ghidra": "0x1f8d8ac",
+     "symbol": "_ZN9Framework4CPad5CUnit18LockAnalogTriggerREv",
+     "name": "LockAnalogTriggerR"
+    },
+    {
+     "ghidra": "0x1f8f438",
+     "symbol": "_ZNK9Framework4CPad5CUnit6GetNowEv",
+     "name": "GetNow"
+    },
+    {
+     "ghidra": "0x1f8f450",
+     "symbol": "_ZNK9Framework4CPad5CUnit9GetBeforeEv",
+     "name": "GetBefore"
+    },
+    {
+     "ghidra": "0x1f8f468",
+     "symbol": "_ZNK9Framework4CPad5CUnit8GetStockEv",
+     "name": "GetStock"
+    },
+    {
+     "ghidra": "0x1f8f480",
+     "symbol": "_ZNK9Framework4CPad5CUnit9GetSingleEv",
+     "name": "GetSingle"
+    },
+    {
+     "ghidra": "0x1f8f498",
+     "symbol": "_ZNK9Framework4CPad5CUnit10GetReleaseEv",
+     "name": "GetRelease"
+    },
+    {
+     "ghidra": "0x1f8f4b0",
+     "symbol": "_ZNK9Framework4CPad5CUnit9GetRepeatEv",
+     "name": "GetRepeat"
+    },
+    {
+     "ghidra": "0x1f8f4c8",
+     "symbol": "_ZNK9Framework4CPad5CUnit13GetRepeatEachEv",
+     "name": "GetRepeatEach"
+    },
+    {
+     "ghidra": "0x1f8f4e0",
+     "symbol": "_ZNK9Framework4CPad5CUnit11GetAnalogLXEv",
+     "name": "GetAnalogLX"
+    },
+    {
+     "ghidra": "0x1f8f4f8",
+     "symbol": "_ZNK9Framework4CPad5CUnit11GetAnalogLYEv",
+     "name": "GetAnalogLY"
+    },
+    {
+     "ghidra": "0x1f8f510",
+     "symbol": "_ZNK9Framework4CPad5CUnit11GetAnalogRXEv",
+     "name": "GetAnalogRX"
+    },
+    {
+     "ghidra": "0x1f8f528",
+     "symbol": "_ZNK9Framework4CPad5CUnit11GetAnalogRYEv",
+     "name": "GetAnalogRY"
+    },
+    {
+     "ghidra": "0x1f8f540",
+     "symbol": "_ZNK9Framework4CPad5CUnit11GetAnalogLTEv",
+     "name": "GetAnalogLT"
+    },
+    {
+     "ghidra": "0x1f8f558",
+     "symbol": "_ZNK9Framework4CPad5CUnit11GetAnalogRTEv",
+     "name": "GetAnalogRT"
+    },
+    {
+     "ghidra": "0x1f8f570",
+     "symbol": "_ZNK9Framework4CPad5CUnit12GetAnalogLTFEv",
+     "name": "GetAnalogLTF"
+    },
+    {
+     "ghidra": "0x1f8f598",
+     "symbol": "_ZNK9Framework4CPad5CUnit12GetAnalogRTFEv",
+     "name": "GetAnalogRTF"
+    },
+    {
+     "ghidra": "0x1f8f5c0",
+     "symbol": "_ZNK9Framework4CPad5CUnit12GetAnalogLXFEv",
+     "name": "GetAnalogLXF"
+    },
+    {
+     "ghidra": "0x1f8f5d8",
+     "symbol": "_ZNK9Framework4CPad5CUnit12GetAnalogLYFEv",
+     "name": "GetAnalogLYF"
+    },
+    {
+     "ghidra": "0x1f8f5f0",
+     "symbol": "_ZNK9Framework4CPad5CUnit12GetAnalogRXFEv",
+     "name": "GetAnalogRXF"
+    },
+    {
+     "ghidra": "0x1f8f608",
+     "symbol": "_ZNK9Framework4CPad5CUnit12GetAnalogRYFEv",
+     "name": "GetAnalogRYF"
+    },
+    {
+     "ghidra": "0x1f8f620",
+     "symbol": "_ZNK9Framework4CPad5CUnit5IsNowEt",
+     "name": "IsNow"
+    },
+    {
+     "ghidra": "0x1f8f644",
+     "symbol": "_ZNK9Framework4CPad5CUnit8IsBeforeEt",
+     "name": "IsBefore"
+    },
+    {
+     "ghidra": "0x1f8f668",
+     "symbol": "_ZNK9Framework4CPad5CUnit8IsSingleEt",
+     "name": "IsSingle"
+    },
+    {
+     "ghidra": "0x1f8f68c",
+     "symbol": "_ZNK9Framework4CPad5CUnit9IsReleaseEt",
+     "name": "IsRelease"
+    },
+    {
+     "ghidra": "0x1f8f6b0",
+     "symbol": "_ZNK9Framework4CPad5CUnit8IsRepeatEt",
+     "name": "IsRepeat"
+    },
+    {
+     "ghidra": "0x1f8f6d4",
+     "symbol": "_ZNK9Framework4CPad5CUnit12IsRepeatEachEt",
+     "name": "IsRepeatEach"
+    }
+   ]
+  },
+  {
+   "name": "CPadMerged",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_now",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "m_before",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 4,
+     "name": "m_stock",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 6,
+     "name": "m_single",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 8,
+     "name": "m_release",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 10,
+     "name": "m_repeat",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 12,
+     "name": "m_repeatEach",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 14,
+     "name": "unk_0e",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 16,
+     "name": "m_lt",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_rt",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_lx",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "m_ly",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_rx",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_ry",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_lxf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_lyf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_rxf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "m_ryf",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 56,
+   "align": 4
+  },
+  {
+   "name": "CPad",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_mutex",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 176
+     },
+     "size": 176
+    },
+    {
+     "offset": 192,
+     "name": "m_numUnits",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 196,
+     "name": "unk_c4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 200,
+     "name": "m_units",
+     "type": {
+      "kind": "ptr",
+      "to": "CUnit"
+     },
+     "size": 8
+    },
+    {
+     "offset": 208,
+     "name": "m_mode",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 212,
+     "name": "m_merged",
+     "type": {
+      "kind": "struct",
+      "name": "CPadMerged"
+     },
+     "size": 56
+    },
+    {
+     "offset": 268,
+     "name": "unk_10c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 272,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f8bfbc",
+     "symbol": "_ZN9Framework4CPadC1Ev",
+     "name": "CPad"
+    },
+    {
+     "ghidra": "0x1f8c01c",
+     "symbol": "_ZN9Framework4CPadD2Ev",
+     "name": "~CPad"
+    },
+    {
+     "ghidra": "0x1f8c110",
+     "symbol": "_ZN9Framework4CPad7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f8c1b4",
+     "symbol": "_ZN9Framework4CPadD0Ev",
+     "name": "~CPad"
+    },
+    {
+     "ghidra": "0x1f8c1cc",
+     "symbol": "_ZN9Framework4CPad10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f8c430",
+     "symbol": "_ZN9Framework4CPad4ModeEj",
+     "name": "Mode"
+    },
+    {
+     "ghidra": "0x1f8c474",
+     "symbol": "_ZN9Framework4CPad5rUnitEj",
+     "name": "rUnit"
+    },
+    {
+     "ghidra": "0x1f8c650",
+     "symbol": "_ZN9Framework4CPad5ClearEv",
+     "name": "Clear"
+    },
+    {
+     "ghidra": "0x1f8c728",
+     "symbol": "_ZNK9Framework4CPad8NumUnitsEv",
+     "name": "NumUnits"
+    },
+    {
+     "ghidra": "0x1f8c730",
+     "symbol": "_ZNK9Framework4CPad4UnitEj",
+     "name": "Unit"
+    },
+    {
+     "ghidra": "0x1f8c7a0",
+     "symbol": "_ZN9Framework4CPad8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f8cb0c",
+     "symbol": "_ZN9Framework4CPad5MergeEv",
+     "name": "Merge"
+    },
+    {
+     "ghidra": "0x1f8d078",
+     "symbol": "_ZN9Framework4CPad6PrintSEi",
+     "name": "PrintS"
+    },
+    {
+     "ghidra": "0x1f8d07c",
+     "symbol": "_ZNK9Framework4CPad4ModeEv",
+     "name": "Mode"
+    },
+    {
+     "ghidra": "0x1f8d084",
+     "symbol": "_ZNK9Framework4CPad16NowWithEveryModeEv",
+     "name": "NowWithEveryMode"
+    },
+    {
+     "ghidra": "0x1f8d0d0",
+     "symbol": "_ZN9Framework4CPad6GetNowEi",
+     "name": "GetNow"
+    },
+    {
+     "ghidra": "0x1f8d188",
+     "symbol": "_ZNK9Framework4CPad19SingleWithEveryModeEv",
+     "name": "SingleWithEveryMode"
+    },
+    {
+     "ghidra": "0x1f8d1d4",
+     "symbol": "_ZN9Framework4CPad9GetSingleEi",
+     "name": "GetSingle"
+    },
+    {
+     "ghidra": "0x1f8d28c",
+     "symbol": "_ZNK9Framework4CPad19RepeatWithEveryModeEv",
+     "name": "RepeatWithEveryMode"
+    },
+    {
+     "ghidra": "0x1f8d2d8",
+     "symbol": "_ZN9Framework4CPad9GetRepeatEi",
+     "name": "GetRepeat"
+    },
+    {
+     "ghidra": "0x1f8d8b8",
+     "symbol": "_ZN9Framework4CPad9GetBeforeEi",
+     "name": "GetBefore"
+    },
+    {
+     "ghidra": "0x1f8d970",
+     "symbol": "_ZN9Framework4CPad8GetStockEi",
+     "name": "GetStock"
+    },
+    {
+     "ghidra": "0x1f8da28",
+     "symbol": "_ZN9Framework4CPad10GetReleaseEi",
+     "name": "GetRelease"
+    },
+    {
+     "ghidra": "0x1f8dae0",
+     "symbol": "_ZN9Framework4CPad13GetRepeatEachEi",
+     "name": "GetRepeatEach"
+    },
+    {
+     "ghidra": "0x1f8db98",
+     "symbol": "_ZN9Framework4CPad11GetAnalogLTEi",
+     "name": "GetAnalogLT"
+    },
+    {
+     "ghidra": "0x1f8dc4c",
+     "symbol": "_ZN9Framework4CPad11GetAnalogRTEi",
+     "name": "GetAnalogRT"
+    },
+    {
+     "ghidra": "0x1f8dd00",
+     "symbol": "_ZN9Framework4CPad12GetAnalogLTFEi",
+     "name": "GetAnalogLTF"
+    },
+    {
+     "ghidra": "0x1f8ddc4",
+     "symbol": "_ZN9Framework4CPad12GetAnalogRTFEi",
+     "name": "GetAnalogRTF"
+    },
+    {
+     "ghidra": "0x1f8de88",
+     "symbol": "_ZN9Framework4CPad11GetAnalogLXEi",
+     "name": "GetAnalogLX"
+    },
+    {
+     "ghidra": "0x1f8df3c",
+     "symbol": "_ZN9Framework4CPad11GetAnalogLYEi",
+     "name": "GetAnalogLY"
+    },
+    {
+     "ghidra": "0x1f8dff0",
+     "symbol": "_ZN9Framework4CPad11GetAnalogRXEi",
+     "name": "GetAnalogRX"
+    },
+    {
+     "ghidra": "0x1f8f0a4",
+     "symbol": "_ZN9Framework4CPad11GetAnalogRYEi",
+     "name": "GetAnalogRY"
+    },
+    {
+     "ghidra": "0x1f8f158",
+     "symbol": "_ZN9Framework4CPad12GetAnalogLXFEi",
+     "name": "GetAnalogLXF"
+    },
+    {
+     "ghidra": "0x1f8f210",
+     "symbol": "_ZN9Framework4CPad12GetAnalogLYFEi",
+     "name": "GetAnalogLYF"
+    },
+    {
+     "ghidra": "0x1f8f2c8",
+     "symbol": "_ZN9Framework4CPad12GetAnalogRXFEi",
+     "name": "GetAnalogRXF"
+    },
+    {
+     "ghidra": "0x1f8f380",
+     "symbol": "_ZN9Framework4CPad12GetAnalogRYFEi",
+     "name": "GetAnalogRYF"
+    }
+   ]
+  },
+  {
+   "name": "CPadReader",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_task",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f8f6f8",
+     "symbol": "_ZN9Framework10CPadReaderD2Ev",
+     "name": "~CPadReader"
+    },
+    {
+     "ghidra": "0x1f8f740",
+     "symbol": "_ZN9Framework10CPadReaderD0Ev",
+     "name": "~CPadReader"
+    },
+    {
+     "ghidra": "0x1f8f790",
+     "symbol": "_ZNK9Framework10CPadReader10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x1f8f7b0",
+     "symbol": "_ZNK9Framework10CPadReader15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    },
+    {
+     "ghidra": "0x1f8f7b8",
+     "symbol": "_ZN9Framework10CPadReader3RunEi",
+     "name": "Run"
+    }
+   ]
+  },
+  {
+   "name": "CTouchPanel",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_panel",
+     "type": {
+      "kind": "ptr",
+      "to": "TouchPanel"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_x",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_y",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 40,
+     "name": "m_analogVirtualMaxDistance",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_analogVirtualThreshold",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_analogVirtual",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_touching",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 57,
+     "name": "unk_39",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 10
+     },
+     "size": 10
+    },
+    {
+     "offset": 70,
+     "name": "m_flag46",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 71,
+     "name": "unk_47",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 72,
+     "name": "m_data",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchData"
+      },
+      "count": 64
+     },
+     "size": 9728
+    },
+    {
+     "offset": 9800,
+     "name": "m_numData",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 9804,
+     "name": "m_tap",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "TouchVector2"
+      },
+      "count": 2
+     },
+     "size": 8
+    },
+    {
+     "offset": 9812,
+     "name": "m_isTap",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9813,
+     "name": "unk_2655",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 9814,
+     "name": "m_doubleTap",
+     "type": {
+      "kind": "struct",
+      "name": "TouchVector2"
+     },
+     "size": 4
+    },
+    {
+     "offset": 9818,
+     "name": "m_isDoubleTap",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9819,
+     "name": "unk_265b",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 9820,
+     "name": "m_drag",
+     "type": {
+      "kind": "struct",
+      "name": "TouchDragParam"
+     },
+     "size": 24
+    },
+    {
+     "offset": 9844,
+     "name": "m_isDrag",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9845,
+     "name": "unk_2675",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 9848,
+     "name": "m_hold",
+     "type": {
+      "kind": "struct",
+      "name": "TouchHoldParam"
+     },
+     "size": 8
+    },
+    {
+     "offset": 9856,
+     "name": "m_isHold",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9857,
+     "name": "unk_2681",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 9860,
+     "name": "m_pinch",
+     "type": {
+      "kind": "struct",
+      "name": "TouchPinchParam"
+     },
+     "size": 32
+    },
+    {
+     "offset": 9892,
+     "name": "m_isPinch",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 9893,
+     "name": "unk_26a5",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 9896,
+     "name": "m_pinchDeltaScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 9900,
+     "name": "unk_26ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 9904,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f9f178",
+     "symbol": "_ZN9Framework11CTouchPanelC1Ev",
+     "name": "CTouchPanel"
+    },
+    {
+     "ghidra": "0x1f9f254",
+     "symbol": "_ZN9Framework11CTouchPanel10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f9f3b8",
+     "symbol": "_ZN9Framework11CTouchPanel7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f9f3e8",
+     "symbol": "_ZN9Framework11CTouchPanel5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x1f9f400",
+     "symbol": "_ZN9Framework11CTouchPanel8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f9f928",
+     "symbol": "_ZN9Framework11CTouchPanel14InputFromMouseEv",
+     "name": "InputFromMouse"
+    },
+    {
+     "ghidra": "0x1f9fbcc",
+     "symbol": "_ZNK9Framework11CTouchPanel11IsConnectedEv",
+     "name": "IsConnected"
+    },
+    {
+     "ghidra": "0x1f9fc00",
+     "symbol": "_ZNK9Framework11CTouchPanel14rAnalogVirtualEv",
+     "name": "rAnalogVirtual"
+    },
+    {
+     "ghidra": "0x1f9fc08",
+     "symbol": "_ZNK9Framework11CTouchPanel16rTouchDataBufferEv",
+     "name": "rTouchDataBuffer"
+    },
+    {
+     "ghidra": "0x1f9fc10",
+     "symbol": "_ZNK9Framework11CTouchPanel12NumTouchDataEv",
+     "name": "NumTouchData"
+    },
+    {
+     "ghidra": "0x1f9fc18",
+     "symbol": "_ZNK9Framework11CTouchPanel9rTapParamEj",
+     "name": "rTapParam"
+    },
+    {
+     "ghidra": "0x1f9fc6c",
+     "symbol": "_ZNK9Framework11CTouchPanel10IsTapParamEv",
+     "name": "IsTapParam"
+    },
+    {
+     "ghidra": "0x1f9fc78",
+     "symbol": "_ZNK9Framework11CTouchPanel15rDoubleTapParamEv",
+     "name": "rDoubleTapParam"
+    },
+    {
+     "ghidra": "0x1f9fc84",
+     "symbol": "_ZNK9Framework11CTouchPanel16IsDoubleTapParamEv",
+     "name": "IsDoubleTapParam"
+    },
+    {
+     "ghidra": "0x1f9fc90",
+     "symbol": "_ZNK9Framework11CTouchPanel10rDragParamEv",
+     "name": "rDragParam"
+    },
+    {
+     "ghidra": "0x1f9fc9c",
+     "symbol": "_ZNK9Framework11CTouchPanel11IsDragParamEv",
+     "name": "IsDragParam"
+    },
+    {
+     "ghidra": "0x1f9fca8",
+     "symbol": "_ZNK9Framework11CTouchPanel18rTouchAndHoldParamEv",
+     "name": "rTouchAndHoldParam"
+    },
+    {
+     "ghidra": "0x1f9fcb4",
+     "symbol": "_ZNK9Framework11CTouchPanel19IsTouchAndHoldParamEv",
+     "name": "IsTouchAndHoldParam"
+    },
+    {
+     "ghidra": "0x1f9fcc0",
+     "symbol": "_ZNK9Framework11CTouchPanel16rPinchOutInParamEv",
+     "name": "rPinchOutInParam"
+    },
+    {
+     "ghidra": "0x1f9fccc",
+     "symbol": "_ZNK9Framework11CTouchPanel17IsPinchOutInParamEv",
+     "name": "IsPinchOutInParam"
+    },
+    {
+     "ghidra": "0x1f9fcd8",
+     "symbol": "_ZNK9Framework11CTouchPanel20PinchOutInDeltaScaleEv",
+     "name": "PinchOutInDeltaScale"
+    },
+    {
+     "ghidra": "0x1f9fce0",
+     "symbol": "_ZNK9Framework11CTouchPanel24AnalogVirtualMaxDistanceEv",
+     "name": "AnalogVirtualMaxDistance"
+    },
+    {
+     "ghidra": "0x1f9fce8",
+     "symbol": "_ZN9Framework11CTouchPanel24AnalogVirtualMaxDistanceEf",
+     "name": "AnalogVirtualMaxDistance"
+    },
+    {
+     "ghidra": "0x1f9fcf0",
+     "symbol": "_ZNK9Framework11CTouchPanel22AnalogVirtualThresholdEv",
+     "name": "AnalogVirtualThreshold"
+    },
+    {
+     "ghidra": "0x1f9fcf8",
+     "symbol": "_ZN9Framework11CTouchPanel22AnalogVirtualThresholdEf",
+     "name": "AnalogVirtualThreshold"
+    },
+    {
+     "ghidra": "0x1f9fd00",
+     "symbol": "_ZN9Framework11CTouchPanelD2Ev",
+     "name": "~CTouchPanel"
+    },
+    {
+     "ghidra": "0x1f9fd6c",
+     "symbol": "_ZN9Framework11CTouchPanelD0Ev",
+     "name": "~CTouchPanel"
+    }
+   ]
+  },
+  {
+   "name": "CKeyboardKey",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1,
+     "name": "unk_01",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 4,
+     "name": "m_timer",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 8,
+   "align": 4
+  },
+  {
+   "name": "CKeyboard",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_down",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "unk_20",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 224
+     },
+     "size": 224
+    },
+    {
+     "offset": 256,
+     "name": "m_keys",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "CKeyboardKey"
+      },
+      "count": 256
+     },
+     "size": 2048
+    }
+   ],
+   "size": 2304,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x1f88d64",
+     "symbol": "_ZN9Framework9CKeyboard10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f88da0",
+     "symbol": "_ZN9Framework9CKeyboard7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f88da4",
+     "symbol": "_ZN9Framework9CKeyboard8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f88edc",
+     "symbol": "_ZNK9Framework9CKeyboard3NowEi",
+     "name": "Now"
+    },
+    {
+     "ghidra": "0x1f88f70",
+     "symbol": "_ZNK9Framework9CKeyboard6RepeatEi",
+     "name": "Repeat"
+    },
+    {
+     "ghidra": "0x1f88fc0",
+     "symbol": "_ZNK9Framework9CKeyboard5PressEv",
+     "name": "Press"
+    },
+    {
+     "ghidra": "0x1f88fe8",
+     "symbol": "_ZN9Framework9CKeyboard19IsDrawableCharacterEj",
+     "name": "IsDrawableCharacter"
+    }
+   ]
+  },
+  {
+   "name": "CMouse",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_x",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_y",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_button",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 20
+    }
+   ],
+   "size": 28,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x1f8b7f4",
+     "symbol": "_ZN9Framework6CMouse10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f8b838",
+     "symbol": "_ZN9Framework6CMouse5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x1f8b87c",
+     "symbol": "_ZN9Framework6CMouse8ProgressEf",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x1f8b9f0",
+     "symbol": "_ZN9Framework6CMouse14InputFromPanelEv",
+     "name": "InputFromPanel"
+    }
+   ]
+  }
+ ]
+}

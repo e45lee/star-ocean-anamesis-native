@@ -1,0 +1,10 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x25a5c58	0x26a5c58	4	_ZN7Encrypt14CEncryptAES128C1Ev	Encrypt::CEncryptAES128::CEncryptAES128()	encrypt_aes	decompiled	the caller: read for the boundary
+0x25a5c5c	0x26a5c5c	4	_ZN7Encrypt14CEncryptAES128C1EPKhS2_	Encrypt::CEncryptAES128::CEncryptAES128(unsigned char const*, unsigned char const*)	encrypt_aes	decompiled	the caller: read for the boundary
+0x25a5c60	0x26a5c60	224	_ZN7Encrypt14CEncryptAES12810InitializeEPKhS2_	Encrypt::CEncryptAES128::Initialize(unsigned char const*, unsigned char const*)	encrypt_aes	decompiled	the caller: read for the boundary
+0x25a5d40	0x26a5d40	212	_ZN7Encrypt14CEncryptAES1287EncryptEPKvjPvj	Encrypt::CEncryptAES128::Encrypt(void const*, unsigned int, void*, unsigned int)	encrypt_aes	decompiled	the caller: read for the boundary
+0x25a5e14	0x26a5e14	116	_ZN7Encrypt14CEncryptAES1287DecryptEPKvjPvj	Encrypt::CEncryptAES128::Decrypt(void const*, unsigned int, void*, unsigned int)	encrypt_aes	decompiled	the caller: read for the boundary
+0x25a5e88	0x26a5e88	12	_ZN7Encrypt14CEncryptAES12821CalcEncryptBufferSizeEj	Encrypt::CEncryptAES128::CalcEncryptBufferSize(unsigned int)	encrypt_aes	decompiled	the caller: read for the boundary
+0x25a5e94	0x26a5e94	28	AES_cbc_encrypt	AES_cbc_encrypt	api	tested	host libcrypto (lib_crypto_api.cpp); live check 0 mismatches
+0x25a5eb0	0x26a5eb0	832	private_AES_set_encrypt_key	private_AES_set_encrypt_key	api	tested	host libcrypto (lib_crypto_api.cpp); live check 0 mismatches
+0x25a61f0	0x26a61f0	552	private_AES_set_decrypt_key	private_AES_set_decrypt_key	api	tested	host libcrypto (lib_crypto_api.cpp); live check 0 mismatches

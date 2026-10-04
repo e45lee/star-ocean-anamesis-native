@@ -1,0 +1,6 @@
+# port/decomp/sync/scope.txt: the guest functions the `sync` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+# (Aska::GPUSync is a NotifierThread: kernel's. Aska::StateCacheThreadSafe is render's GL state cache.)
+^~?Framework::(CMutex|CThread)::
+^~?Aska::(Event|Semaphore|Thread|Mutex|CriticalSection|FastCriticalSection)::

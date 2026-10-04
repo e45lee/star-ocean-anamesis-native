@@ -1,0 +1,15 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x25a6fc8	0x26a6fc8	184	_Z16AskaCompressZlibPhPmS_m	AskaCompressZlib(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a7080	0x26a7080	188	_Z12AskaCompressPhPmS_mi	AskaCompress(unsigned char*, unsigned long*, unsigned char*, unsigned long, int)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a713c	0x26a713c	200	_Z18AskaUncompressZlibPhPmS_m	AskaUncompressZlib(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a7204	0x26a7204	200	_Z14AskaUncompressPhPmS_mi	AskaUncompress(unsigned char*, unsigned long*, unsigned char*, unsigned long, int)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a72cc	0x26a72cc	184	_Z22AskaCompressGzipStrictPhPmS_m	AskaCompressGzipStrict(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a7384	0x26a7384	200	_Z24AskaUncompressGzipStrictPhPmS_m	AskaUncompressGzipStrict(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a744c	0x26a744c	184	_Z21AskaCompressRawFormatPhPmS_m	AskaCompressRawFormat(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a7504	0x26a7504	200	_Z23AskaUncompressRawFormatPhPmS_m	AskaUncompressRawFormat(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a75cc	0x26a75cc	200	_Z18AskaUncompressAutoPhPmS_m	AskaUncompressAuto(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a7694	0x26a7694	184	_Z16AskaCompressGzipPhPmS_m	AskaCompressGzip(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25a774c	0x26a774c	200	_Z18AskaUncompressGzipPhPmS_m	AskaUncompressGzip(unsigned char*, unsigned long*, unsigned char*, unsigned long)	aska_compress	decompiled	the caller: read for the boundary (AskaCompress* have no caller)
+0x25aacd0	0x26aacd0	384	inflateInit2_	inflateInit2_	api	tested	host zlib (lib_zlib_api.cpp; a host z_stream twin per guest stream); live check 0 mismatches
+0x25aaef0	0x26aaef0	6188	inflate	inflate	api	tested	host zlib (lib_zlib_api.cpp; a host z_stream twin per guest stream); live check 0 mismatches
+0x25ac840	0x26ac840	116	inflateEnd	inflateEnd	api	tested	host zlib (lib_zlib_api.cpp; a host z_stream twin per guest stream); live check 0 mismatches

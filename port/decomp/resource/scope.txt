@@ -1,0 +1,6 @@
+# port/decomp/resource/scope.txt: the guest functions the `resource` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?Aska::(BaseReadDevice|\w*ReadDevice|\w*Stream|Decompress\w*|LocalKVS|AHSL\w*|LIBLManager|File\w*|Archive\w*|ResourceReadyQueue|MappedResourceFilter|Decode\w*)(<|::)
+^(\S+ )?Framework::(CFileLoader|CResource\w*)::
+^(\S+ )?(CGameResource\w*|CGameDataDownload\w*|CAssetInfo|CDownload\w*|CPhase_DataDownload|CGameLocalKVS)::

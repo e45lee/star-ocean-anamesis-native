@@ -629,7 +629,7 @@ NATIVE_TEST("sphere211/achievements") {
         c.test.event_now = [&] { return evc; };
         sphere211::set_asset_check([](const std::string&) { return true; });
         auto entry = [&](const Value& list, u32 id) -> const Value* {
-            for (auto& e : list.arr)  // the list (before agent a6-deepspace) or
+            for (auto& e : list.arr)  // the list (the older form) or
                 if ((u32)num(e.find("master_achievement_id")) == id) return &e;
             for (auto& [k, e] : list.map)  // the id-keyed map
                 if ((u32)num(e.find("master_achievement_id")) == id) return &e;

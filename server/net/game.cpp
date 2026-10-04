@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <optional>
 
 #include "ninja/ninja_ref.h"
 #include "soaserver/log.h"
@@ -57,7 +58,7 @@ std::string json_escape(const std::string& s) {
 }
 
 // The LoginResult body: the server library's Login answer plus a top-level "Player" map, the
-// client's legacy CParameterPlayer (agent e6-end2end; docs/server-rules.md "soa-server: the wire
+// client's legacy CParameterPlayer (docs/server-rules.md "soa-server: the wire
 // layer"). (b) CApiNotify::OnLoginResult (3.7.0 @014be668) hands the body's root map to
 // CParameterManager::Deserialize, whose CParameterPlayer (pParseName "Player", 3.7.0 @017f84d4)
 // reads root["Player"] (CParameterBase::pGetRoot) into its element {Id u32, Token u32, Level u32,
@@ -124,15 +125,18 @@ std::string json_string_field(const std::string& json, const std::string& key) {
 // (d) The device table. The real server bound a device UUID to its player at CreatePlayer and
 // re-bound it through SQEX BRIDGE's data transfer [unknown how]. Ours has one player per state DB
 // (the seeded LOCAL00001, or the one CreatePlayer made), so every device gets that player; with no
-// player yet (soa-server --new-player on a fresh state) the device has none and its Login is
-// refused with 19001, which starts the client's new-player flow. The table (state/schema.cpp,
+// player yet (soa-server --new-player on a fresh state) the device has none (player_id NULL; 0
+// before PLAN-schema S10; the function returns 0) and its Login is refused with 19001, which
+// starts the client's new-player flow. The table (state/schema.cpp,
 // on both routes since PLAN-schema S1; only this one writes it) records who connected.
 uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, ServerTime now) {
     uint32_t pid = (uint32_t)st.one("select id from player limit 1", {}, 0);
+    // the table's player_id: NULL while there is no player (a reference to player.id, PLAN-schema S10)
+    const std::optional<PlayerId> player = pid ? std::optional<PlayerId>(PlayerId(pid)) : std::nullopt;
     if (st.one("select count(*) from wire_device where uuid = ?", {uuid}) == 0)
         st.q("insert into wire_device (uuid, player_id, device_type, first_seen, last_seen) values (?, ?, ?, ?, ?)",
-             {uuid, pid, device_type, now, now});
-    else st.q("update wire_device set player_id = ?, device_type = ?, last_seen = ? where uuid = ?", {pid, device_type, now, uuid});
+             {uuid, player, device_type, now, now});
+    else st.q("update wire_device set player_id = ?, device_type = ?, last_seen = ? where uuid = ?", {player, device_type, now, uuid});
     return pid;
 }
 
@@ -227,7 +231,7 @@ bool GameServer::on_data(uint64_t id, const uint8_t* p, size_t n, std::vector<ui
             return false;  // a ProtocolError ends the connection (below)
         }
         handle_packet(id, c, pk, out);
-        // A ProtocolError ends the connection (agent e6-end2end). (b) the client opens a
+        // A ProtocolError ends the connection. (b) the client opens a
         // connection per request and closes it after the reply (soa-emu's packet logs), and a
         // logged-in client's next request reconnects with the session key (handle_packet). (d)
         // that the server closes after a ProtocolError: the client tears the socket down on its
@@ -235,7 +239,7 @@ bool GameServer::on_data(uint64_t id, const uint8_t* p, size_t n, std::vector<ui
         // (3.7.0 @0220dd98), which re-reads the socket's fd after select() returns; with the
         // connection still open the read raced the main thread's Socket::Close (fd = -1) and
         // soa-emu crashed (a top-byte-tagged address, which an ARM64 phone ignores and the JIT
-        // didn't; the runtime emulates TBI since agent r2-runtime-fixes: emulator/README.md).
+        // didn't; the runtime emulates TBI now: emulator/README.md).
         // Closing first lets the network thread see the end of the connection and close the
         // socket itself. GameOptions::close_after_refusal (--keep-open-after-error) turns it off.
         if (c.refused) {
@@ -296,7 +300,7 @@ void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vecto
     if (p.flags & kFlagEncrypted) {
         auto s = sessions_.find(c.session);
         if (s == sessions_.end()) {
-            // A reconnect of a logged-in client (agent e6-end2end): the client closes its game
+            // A reconnect of a logged-in client: the client closes its game
             // connection after the login and reconnects for the next request with no StartBridge
             // or UpdateSession. (b) CApiNotify::OnDisconnect / OnError (3.7.0 @014bb314 /
             // @014bb1fc) keep the bridged flag (+0x4d0) while CApiNotify::LoggedIn holds, and

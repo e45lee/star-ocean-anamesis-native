@@ -1,0 +1,227 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x21ee0c8	0x22ee0c8	660	_ZN4Aska5Yayoi10Downloader8DownloadEjPKcPNS_7INotifyES3_S3_PKNS1_8UriParamEmPNS1_15IDownloadStreamE	Aska::Yayoi::Downloader::Download(unsigned int, char const*, Aska::INotify*, char const*, char const*, Aska::Yayoi::Downloader::UriParam const*, unsigned long, Aska::Yayoi::Downloader::IDownloadStream*)	downloader	typed	
+0x21ee35c	0x22ee35c	812	_ZN4Aska5Yayoi10Downloader20AddDownloadQueueListEjNS_14TSharedPointerINS0_3URIEEEPNS_7INotifyEPKcPNS1_15IDownloadStreamEPKNS1_8UriParamEm	Aska::Yayoi::Downloader::AddDownloadQueueList(unsigned int, Aska::TSharedPointer<Aska::Yayoi::URI>, Aska::INotify*, char const*, Aska::Yayoi::Downloader::IDownloadStream*, Aska::Yayoi::Downloader::UriParam const*, unsigned long)	downloader	typed	
+0x21ee688	0x22ee688	28	_ZN4Aska5Yayoi10Downloader4StopEj	Aska::Yayoi::Downloader::Stop(unsigned int)	downloader	typed	
+0x21ee6a4	0x22ee6a4	556	_ZN4Aska5Yayoi10Downloader14OrFlagDownloadEjh	Aska::Yayoi::Downloader::OrFlagDownload(unsigned int, unsigned char)	downloader	typed	
+0x21ee8d0	0x22ee8d0	28	_ZN4Aska5Yayoi10Downloader5PauseEj	Aska::Yayoi::Downloader::Pause(unsigned int)	downloader	typed	
+0x21ee8ec	0x22ee8ec	28	_ZN4Aska5Yayoi10Downloader6ResumeEj	Aska::Yayoi::Downloader::Resume(unsigned int)	downloader	typed	
+0x21ee908	0x22ee908	112	_ZN4Aska5Yayoi10Downloader7SetPathEPKc	Aska::Yayoi::Downloader::SetPath(char const*)	downloader	typed	
+0x21ee978	0x22ee978	80	_ZNK4Aska5Yayoi10Downloader17GetDownloadStatusEjPNS1_14DownloadStatusE	Aska::Yayoi::Downloader::GetDownloadStatus(unsigned int, Aska::Yayoi::Downloader::DownloadStatus*) const	downloader	typed	
+0x21ee9c8	0x22ee9c8	376	_ZNK4Aska5Yayoi10Downloader20QueryDownloadElementEj	Aska::Yayoi::Downloader::QueryDownloadElement(unsigned int) const	downloader	typed	
+0x21eeb40	0x22eeb40	360	_ZNK4Aska5Yayoi10Downloader15DownloadContext17GetDownloadStatusEPNS1_14DownloadStatusE	Aska::Yayoi::Downloader::DownloadContext::GetDownloadStatus(Aska::Yayoi::Downloader::DownloadStatus*) const	downloader	typed	
+0x21eeca8	0x22eeca8	356	_ZN4Aska5Yayoi10DownloaderC2Ev	Aska::Yayoi::Downloader::Downloader()	downloader	typed	
+0x21eee0c	0x22eee0c	152	_ZN4Aska5Yayoi10DownloaderD2Ev	Aska::Yayoi::Downloader::~Downloader()	downloader	typed	
+0x21eeea4	0x22eeea4	564	_ZN4Aska5Yayoi10Downloader4TermEv	Aska::Yayoi::Downloader::Term()	downloader	typed	
+0x21ef208	0x22ef208	148	_ZN4Aska5Yayoi10Downloader12WorkerThreadD2Ev	Aska::Yayoi::Downloader::WorkerThread::~WorkerThread()	downloader	typed	
+0x21ef29c	0x22ef29c	160	_ZN4Aska5Yayoi10DownloaderD0Ev	Aska::Yayoi::Downloader::~Downloader()	downloader	typed	
+0x21ef33c	0x22ef33c	1604	_ZN4Aska5Yayoi10Downloader4InitEii	Aska::Yayoi::Downloader::Init(int, int)	downloader	typed	
+0x21ef980	0x22ef980	88	_ZN4Aska5Yayoi10Downloader15DownloadContext10InitializeEv	Aska::Yayoi::Downloader::DownloadContext::Initialize()	downloader	typed	
+0x21ef9d8	0x22ef9d8	144	_ZN4Aska5Yayoi10Downloader12WorkerThread4InitEv	Aska::Yayoi::Downloader::WorkerThread::Init()	downloader	typed	
+0x21efa68	0x22efa68	104	_ZN4Aska5Yayoi10Downloader12WorkerThread4TermEv	Aska::Yayoi::Downloader::WorkerThread::Term()	downloader	typed	
+0x21efad0	0x22efad0	1796	_ZN4Aska5Yayoi10Downloader13ThreadHandlerEv	Aska::Yayoi::Downloader::ThreadHandler()	downloader	typed	
+0x21f01d4	0x22f01d4	220	_ZN4Aska5Yayoi10Downloader15DownloadContext14FinishDownloadEv	Aska::Yayoi::Downloader::DownloadContext::FinishDownload()	downloader	typed	
+0x21f02b0	0x22f02b0	88	_ZN4Aska5Yayoi10Downloader26ReleaseFreeDownloadContextEPNS1_15DownloadContextE	Aska::Yayoi::Downloader::ReleaseFreeDownloadContext(Aska::Yayoi::Downloader::DownloadContext*)	downloader	typed	
+0x21f0308	0x22f0308	452	_ZN4Aska5Yayoi10Downloader23RemoveDownloadQueueListEPNS1_15DownloadElementE	Aska::Yayoi::Downloader::RemoveDownloadQueueList(Aska::Yayoi::Downloader::DownloadElement*)	downloader	typed	
+0x21f04cc	0x22f04cc	40	_ZN4Aska5Yayoi10Downloader15DownloadContext12StopDownloadEv	Aska::Yayoi::Downloader::DownloadContext::StopDownload()	downloader	typed	
+0x21f04f4	0x22f04f4	488	_ZN4Aska5Yayoi10Downloader22AddDownloadFinishQueueEj	Aska::Yayoi::Downloader::AddDownloadFinishQueue(unsigned int)	downloader	typed	
+0x21f06dc	0x22f06dc	12	_ZN4Aska5Yayoi10Downloader15DownloadContext13PauseDownloadEv	Aska::Yayoi::Downloader::DownloadContext::PauseDownload()	downloader	typed	
+0x21f06e8	0x22f06e8	12	_ZN4Aska5Yayoi10Downloader15DownloadContext14ResumeDownloadEv	Aska::Yayoi::Downloader::DownloadContext::ResumeDownload()	downloader	typed	
+0x21f06f4	0x22f06f4	56	_ZN4Aska5Yayoi10Downloader26AcquireFreeDownloadContextEv	Aska::Yayoi::Downloader::AcquireFreeDownloadContext()	downloader	typed	
+0x21f072c	0x22f072c	668	_ZN4Aska5Yayoi10Downloader15DownloadContext13StartDownloadEPS1_jNS_14TSharedPointerINS0_3URIEEEPKcPNS_7INotifyEPNS1_15IDownloadStreamEPKNS1_8UriParamEm	Aska::Yayoi::Downloader::DownloadContext::StartDownload(Aska::Yayoi::Downloader*, unsigned int, Aska::TSharedPointer<Aska::Yayoi::URI>, char const*, Aska::INotify*, Aska::Yayoi::Downloader::IDownloadStream*, Aska::Yayoi::Downloader::UriParam const*, unsigned long)	downloader	typed	
+0x21f09c8	0x22f09c8	640	_ZN4Aska5Yayoi10Downloader15DownloadElement3SetEjNS_14TSharedPointerINS0_3URIEEEPNS_7INotifyEPKcPNS1_15IDownloadStreamEPKNS1_8UriParamEm	Aska::Yayoi::Downloader::DownloadElement::Set(unsigned int, Aska::TSharedPointer<Aska::Yayoi::URI>, Aska::INotify*, char const*, Aska::Yayoi::Downloader::IDownloadStream*, Aska::Yayoi::Downloader::UriParam const*, unsigned long)	downloader	typed	
+0x21f0c6c	0x22f0c6c	176	_ZN4Aska5Yayoi10Downloader15DownloadElement5ResetEv	Aska::Yayoi::Downloader::DownloadElement::Reset()	downloader	typed	
+0x21f0d5c	0x22f0d5c	28	_ZN4Aska5Yayoi10Downloader15DownloadContext5ResetEv	Aska::Yayoi::Downloader::DownloadContext::Reset()	downloader	typed	
+0x21f0d78	0x22f0d78	100	_ZN4Aska5Yayoi10Downloader15DownloadElementC1Ev	Aska::Yayoi::Downloader::DownloadElement::DownloadElement()	downloader	typed	
+0x21f0ddc	0x22f0ddc	460	_ZN4Aska5Yayoi10Downloader15DownloadContextC1Ev	Aska::Yayoi::Downloader::DownloadContext::DownloadContext()	downloader	typed	
+0x21f0fa8	0x22f0fa8	112	_ZN4Aska5Yayoi10Downloader15DownloadContextD2Ev	Aska::Yayoi::Downloader::DownloadContext::~DownloadContext()	downloader	typed	
+0x21f1018	0x22f1018	84	_ZN4Aska5Yayoi10Downloader15DownloadContext8FinalizeEv	Aska::Yayoi::Downloader::DownloadContext::Finalize()	downloader	typed	
+0x21f106c	0x22f106c	120	_ZN4Aska5Yayoi10Downloader15DownloadContextD0Ev	Aska::Yayoi::Downloader::DownloadContext::~DownloadContext()	downloader	typed	
+0x21f10e4	0x22f10e4	348	_ZN4Aska5Yayoi10Downloader15DownloadContext17SetDownloadStatusENS_6StatusE	Aska::Yayoi::Downloader::DownloadContext::SetDownloadStatus(Aska::Status)	downloader	typed	
+0x21f1240	0x22f1240	504	_ZN4Aska5Yayoi10Downloader15DownloadContext11OnReceivingENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEEPKc	Aska::Yayoi::Downloader::DownloadContext::OnReceiving(Aska::Status, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >, char const*)	downloader	typed	
+0x21f1438	0x22f1438	396	_ZN4Aska5Yayoi10Downloader15DownloadContext17SetDownloadStatusENS_6StatusEifm	Aska::Yayoi::Downloader::DownloadContext::SetDownloadStatus(Aska::Status, int, float, unsigned long)	downloader	typed	
+0x21f15c4	0x22f15c4	620	_ZN4Aska5Yayoi10Downloader15DownloadContext9OnReceiveENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEEPKc	Aska::Yayoi::Downloader::DownloadContext::OnReceive(Aska::Status, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >, char const*)	downloader	typed	
+0x21f1830	0x22f1830	316	_ZN4Aska5Yayoi10Downloader15DownloadContext7OnErrorENS_6StatusEPKcNS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEE	Aska::Yayoi::Downloader::DownloadContext::OnError(Aska::Status, char const*, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >)	downloader	typed	
+0x21f196c	0x22f196c	368	_ZN4Aska5Yayoi10Downloader15DownloadContext17SetDownloadStatusENS_6StatusEi	Aska::Yayoi::Downloader::DownloadContext::SetDownloadStatus(Aska::Status, int)	downloader	typed	
+0x21f1adc	0x22f1adc	160	_ZN4Aska5Yayoi10Downloader14DownloadStream4OpenEPKc	Aska::Yayoi::Downloader::DownloadStream::Open(char const*)	downloader	typed	
+0x21f1b7c	0x22f1b7c	168	_ZN4Aska5Yayoi10Downloader14DownloadStream5CloseEb	Aska::Yayoi::Downloader::DownloadStream::Close(bool)	downloader	typed	
+0x21f1c24	0x22f1c24	92	_ZN4Aska5Yayoi10Downloader14DownloadStreamD2Ev	Aska::Yayoi::Downloader::DownloadStream::~DownloadStream()	downloader	typed	
+0x21f1c80	0x22f1c80	92	_ZN4Aska5Yayoi10Downloader14DownloadStreamD0Ev	Aska::Yayoi::Downloader::DownloadStream::~DownloadStream()	downloader	typed	
+0x21f1cdc	0x22f1cdc	16	_ZNK4Aska5Yayoi10Downloader14DownloadStream7IsReadyEv	Aska::Yayoi::Downloader::DownloadStream::IsReady() const	downloader	typed	
+0x21f1cec	0x22f1cec	8	_ZNK4Aska5Yayoi10Downloader14DownloadStream4TellEv	Aska::Yayoi::Downloader::DownloadStream::Tell() const	downloader	typed	
+0x21f1cf4	0x22f1cf4	8	_ZN4Aska5Yayoi10Downloader14DownloadStream4SeekEli	Aska::Yayoi::Downloader::DownloadStream::Seek(long, int)	downloader	typed	
+0x21f1cfc	0x22f1cfc	8	_ZN4Aska5Yayoi10Downloader14DownloadStream4ReadEPvmm	Aska::Yayoi::Downloader::DownloadStream::Read(void*, unsigned long, unsigned long)	downloader	typed	
+0x21f1d04	0x22f1d04	8	_ZN4Aska5Yayoi10Downloader14DownloadStream5WriteEPKvmm	Aska::Yayoi::Downloader::DownloadStream::Write(void const*, unsigned long, unsigned long)	downloader	typed	
+0x21f1d0c	0x22f1d0c	8	_ZN4Aska5Yayoi10Downloader14DownloadStream5FlushEv	Aska::Yayoi::Downloader::DownloadStream::Flush()	downloader	typed	
+0x21f1d14	0x22f1d14	8	_ZNK4Aska5Yayoi10Downloader14DownloadStream5IsEndEPl	Aska::Yayoi::Downloader::DownloadStream::IsEnd(long*) const	downloader	typed	
+0x21f1d1c	0x22f1d1c	12	_ZNK4Aska5Yayoi10Downloader14DownloadStream12SetLastErrorEl	Aska::Yayoi::Downloader::DownloadStream::SetLastError(long) const	downloader	typed	
+0x21f1d28	0x22f1d28	8	_ZNK4Aska5Yayoi10Downloader14DownloadStream12GetLastErrorEv	Aska::Yayoi::Downloader::DownloadStream::GetLastError() const	downloader	typed	
+0x21f1d30	0x22f1d30	4	_ZN4Aska5Yayoi10Downloader15DownloadContext7OnStartENS_6StatusEPKc	Aska::Yayoi::Downloader::DownloadContext::OnStart(Aska::Status, char const*)	downloader	typed	
+0x21f1d34	0x22f1d34	4	_ZN4Aska5Yayoi10Downloader15DownloadContext8OnAcceptENS_6StatusENS0_6SocketEPKc	Aska::Yayoi::Downloader::DownloadContext::OnAccept(Aska::Status, Aska::Yayoi::Socket, char const*)	downloader	typed	
+0x21f1d38	0x22f1d38	4	_ZN4Aska5Yayoi10Downloader15DownloadContext6OnSendENS_6StatusElPKc	Aska::Yayoi::Downloader::DownloadContext::OnSend(Aska::Status, long, char const*)	downloader	typed	
+0x21f1d3c	0x22f1d3c	4	_ZN4Aska5Yayoi10Downloader15DownloadContext12OnReceiveUDPENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEERKNS0_9IPAddressEPKc	Aska::Yayoi::Downloader::DownloadContext::OnReceiveUDP(Aska::Status, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >, Aska::Yayoi::IPAddress const&, char const*)	downloader	typed	
+0x21f1d40	0x22f1d40	8	_ZN4Aska5Yayoi10Downloader15DownloadContext14OnReceivingUDPENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEERKNS0_9IPAddressEPKc	Aska::Yayoi::Downloader::DownloadContext::OnReceivingUDP(Aska::Status, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >, Aska::Yayoi::IPAddress const&, char const*)	downloader	typed	
+0x21f1d48	0x22f1d48	4	_ZN4Aska5Yayoi10Downloader15DownloadContext12OnDisconnectENS_6StatusENS_14TSharedPointerINS0_10TDataSuiteINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEEEEPKc	Aska::Yayoi::Downloader::DownloadContext::OnDisconnect(Aska::Status, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >, char const*)	downloader	typed	
+0x21f1d4c	0x22f1d4c	8	_ZN4Aska5Yayoi10Downloader15DownloadContext10OnShutdownENS_6StatusEPKc	Aska::Yayoi::Downloader::DownloadContext::OnShutdown(Aska::Status, char const*)	downloader	typed	
+0x21f1d54	0x22f1d54	184	_ZN4Aska5Yayoi10Downloader15DownloadElementD2Ev	Aska::Yayoi::Downloader::DownloadElement::~DownloadElement()	downloader	typed	
+0x21f1e0c	0x22f1e0c	188	_ZN4Aska5Yayoi10Downloader15DownloadElementD0Ev	Aska::Yayoi::Downloader::DownloadElement::~DownloadElement()	downloader	typed	
+0x21f1ec8	0x22f1ec8	24	_ZN4Aska5Yayoi10Downloader12WorkerThreadD0Ev	Aska::Yayoi::Downloader::WorkerThread::~WorkerThread()	downloader	typed	
+0x21f1fe0	0x22f1fe0	12	_ZN4Aska5Yayoi11EntityCacheC2Ev	Aska::Yayoi::EntityCache::EntityCache()	sqlite_driver	typed	
+0x21f1fec	0x22f1fec	4	_ZN4Aska5Yayoi11EntityCacheD1Ev	Aska::Yayoi::EntityCache::~EntityCache()	sqlite_driver	typed	
+0x21f1ff0	0x22f1ff0	24	_ZNK4Aska5Yayoi11EntityCache9GetRowNumEv	Aska::Yayoi::EntityCache::GetRowNum() const	sqlite_driver	typed	
+0x21f2008	0x22f2008	24	_ZNK4Aska5Yayoi11EntityCache9GetColNumEv	Aska::Yayoi::EntityCache::GetColNum() const	sqlite_driver	typed	
+0x21f2020	0x22f2020	100	_ZN4Aska5Yayoi11EntityCache13SetRowAddrtblEim	Aska::Yayoi::EntityCache::SetRowAddrtbl(int, unsigned long)	sqlite_driver	typed	
+0x21f2084	0x22f2084	56	_ZN4Aska5Yayoi11EntityCache13GetRowAddressEi	Aska::Yayoi::EntityCache::GetRowAddress(int)	sqlite_driver	typed	
+0x21f20bc	0x22f20bc	80	_ZN4Aska5Yayoi11EntityCache9GetRowPtrEi	Aska::Yayoi::EntityCache::GetRowPtr(int)	sqlite_driver	typed	
+0x21f210c	0x22f210c	144	_ZN4Aska5Yayoi11EntityCache13GetColAddressEii	Aska::Yayoi::EntityCache::GetColAddress(int, int)	sqlite_driver	typed	
+0x21f219c	0x22f219c	136	_ZN4Aska5Yayoi11EntityCache9GetColPtrEii	Aska::Yayoi::EntityCache::GetColPtr(int, int)	sqlite_driver	typed	
+0x21f2224	0x22f2224	184	_ZN4Aska5Yayoi11EntityCache11GetColValueEiiPm	Aska::Yayoi::EntityCache::GetColValue(int, int, unsigned long*)	sqlite_driver	typed	
+0x21f22dc	0x22f22dc	52	_ZN4Aska5Yayoi11EntityCache9SetHeaderEii	Aska::Yayoi::EntityCache::SetHeader(int, int)	sqlite_driver	typed	
+0x21f2310	0x22f2310	212	_ZN4Aska5Yayoi11EntityCache13SetColAddrtblEiim	Aska::Yayoi::EntityCache::SetColAddrtbl(int, int, unsigned long)	sqlite_driver	typed	
+0x21f23e4	0x22f23e4	224	_ZN4Aska5Yayoi11EntityCache7GetDataEiPcPmm	Aska::Yayoi::EntityCache::GetData(int, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f24c4	0x22f24c4	252	_ZN4Aska5Yayoi11EntityCache9GetStringEiPcPmm	Aska::Yayoi::EntityCache::GetString(int, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f25c0	0x22f25c0	268	_ZN4Aska5Yayoi11EntityCache8GetShortEiPsm	Aska::Yayoi::EntityCache::GetShort(int, short*, unsigned long)	sqlite_driver	typed	
+0x21f26cc	0x22f26cc	268	_ZN4Aska5Yayoi11EntityCache10GetIntegerEiPim	Aska::Yayoi::EntityCache::GetInteger(int, int*, unsigned long)	sqlite_driver	typed	
+0x21f27d8	0x22f27d8	268	_ZN4Aska5Yayoi11EntityCache7GetLongEiPlm	Aska::Yayoi::EntityCache::GetLong(int, long*, unsigned long)	sqlite_driver	typed	
+0x21f28e4	0x22f28e4	272	_ZN4Aska5Yayoi11EntityCache8GetFloatEiPfm	Aska::Yayoi::EntityCache::GetFloat(int, float*, unsigned long)	sqlite_driver	typed	
+0x21f29f4	0x22f29f4	268	_ZN4Aska5Yayoi11EntityCache9GetDoubleEiPdm	Aska::Yayoi::EntityCache::GetDouble(int, double*, unsigned long)	sqlite_driver	typed	
+0x21f2b00	0x22f2b00	4	_ZN4Aska5Yayoi12SQLiteDriver13ConnectionSetD2Ev	Aska::Yayoi::SQLiteDriver::ConnectionSet::~ConnectionSet()	sqlite_driver	typed	
+0x21f2b04	0x22f2b04	36	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7ReleaseEv	Aska::Yayoi::SQLiteDriver::EntityObject::Release()	sqlite_driver	typed	
+0x21f2b28	0x22f2b28	36	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10ClearCacheEv	Aska::Yayoi::SQLiteDriver::EntityObject::ClearCache()	sqlite_driver	typed	
+0x21f2b4c	0x22f2b4c	112	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject17CreateCacheBufferEm	Aska::Yayoi::SQLiteDriver::EntityObject::CreateCacheBuffer(unsigned long)	sqlite_driver	typed	
+0x21f2bbc	0x22f2bbc	16	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject14GetCacheBufferEPm	Aska::Yayoi::SQLiteDriver::EntityObject::GetCacheBuffer(unsigned long*)	sqlite_driver	typed	
+0x21f2bcc	0x22f2bcc	216	_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectC1Ev	Aska::Yayoi::SQLiteDriver::EntityObject::EntityObject()	sqlite_driver	typed	
+0x21f2ca4	0x22f2ca4	80	_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectD2Ev	Aska::Yayoi::SQLiteDriver::EntityObject::~EntityObject()	sqlite_driver	typed	
+0x21f2cf4	0x22f2cf4	64	_ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEED2Ev	Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::~THashMap()	sqlite_driver	typed	EntityObject column map instantiation (containers THashMap layout)
+0x21f2d34	0x22f2d34	340	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTimeEPKcPcPmm	Aska::Yayoi::SQLiteDriver::EntityObject::GetTime(char const*, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f2e88	0x22f2e88	24	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTimeEiPcPmm	Aska::Yayoi::SQLiteDriver::EntityObject::GetTime(int, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f2ea0	0x22f2ea0	436	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetDataEPKcPcPmm	Aska::Yayoi::SQLiteDriver::EntityObject::GetData(char const*, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f3054	0x22f3054	148	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetDataEiPcPmm	Aska::Yayoi::SQLiteDriver::EntityObject::GetData(int, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f30e8	0x22f30e8	436	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetStringEPKcPcPmm	Aska::Yayoi::SQLiteDriver::EntityObject::GetString(char const*, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f329c	0x22f329c	148	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetStringEiPcPmm	Aska::Yayoi::SQLiteDriver::EntityObject::GetString(int, char*, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f3330	0x22f3330	404	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetTinyIntEPKcPam	Aska::Yayoi::SQLiteDriver::EntityObject::GetTinyInt(char const*, signed char*, unsigned long)	sqlite_driver	typed	
+0x21f34c4	0x22f34c4	104	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetTinyIntEiPam	Aska::Yayoi::SQLiteDriver::EntityObject::GetTinyInt(int, signed char*, unsigned long)	sqlite_driver	typed	
+0x21f352c	0x22f352c	404	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetIntegerEPKcPim	Aska::Yayoi::SQLiteDriver::EntityObject::GetInteger(char const*, int*, unsigned long)	sqlite_driver	typed	
+0x21f36c0	0x22f36c0	104	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject10GetIntegerEiPim	Aska::Yayoi::SQLiteDriver::EntityObject::GetInteger(int, int*, unsigned long)	sqlite_driver	typed	
+0x21f3728	0x22f3728	404	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetLongEPKcPlm	Aska::Yayoi::SQLiteDriver::EntityObject::GetLong(char const*, long*, unsigned long)	sqlite_driver	typed	
+0x21f38bc	0x22f38bc	104	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetLongEiPlm	Aska::Yayoi::SQLiteDriver::EntityObject::GetLong(int, long*, unsigned long)	sqlite_driver	typed	
+0x21f3924	0x22f3924	408	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetFloatEPKcPfm	Aska::Yayoi::SQLiteDriver::EntityObject::GetFloat(char const*, float*, unsigned long)	sqlite_driver	typed	
+0x21f3abc	0x22f3abc	108	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetFloatEiPfm	Aska::Yayoi::SQLiteDriver::EntityObject::GetFloat(int, float*, unsigned long)	sqlite_driver	typed	
+0x21f3b28	0x22f3b28	404	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetDoubleEPKcPdm	Aska::Yayoi::SQLiteDriver::EntityObject::GetDouble(char const*, double*, unsigned long)	sqlite_driver	typed	
+0x21f3cbc	0x22f3cbc	104	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9GetDoubleEiPdm	Aska::Yayoi::SQLiteDriver::EntityObject::GetDouble(int, double*, unsigned long)	sqlite_driver	typed	
+0x21f3d24	0x22f3d24	404	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetShortEPKcPsm	Aska::Yayoi::SQLiteDriver::EntityObject::GetShort(char const*, short*, unsigned long)	sqlite_driver	typed	
+0x21f3eb8	0x22f3eb8	104	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject8GetShortEiPsm	Aska::Yayoi::SQLiteDriver::EntityObject::GetShort(int, short*, unsigned long)	sqlite_driver	typed	
+0x21f3f20	0x22f3f20	32	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTypeEim	Aska::Yayoi::SQLiteDriver::EntityObject::GetType(int, unsigned long)	sqlite_driver	typed	
+0x21f3f40	0x22f3f40	336	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject7GetTypeEPKcm	Aska::Yayoi::SQLiteDriver::EntityObject::GetType(char const*, unsigned long)	sqlite_driver	typed	
+0x21f4090	0x22f4090	108	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject15GetStringLengthEiPmm	Aska::Yayoi::SQLiteDriver::EntityObject::GetStringLength(int, unsigned long*, unsigned long)	sqlite_driver	typed	
+0x21f40fc	0x22f40fc	324	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject5StoreEP7sqlite3P12sqlite3_stmt	Aska::Yayoi::SQLiteDriver::EntityObject::Store(sqlite3*, sqlite3_stmt*)	sqlite_driver	typed	
+0x21f4240	0x22f4240	124	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject5FetchEv	Aska::Yayoi::SQLiteDriver::EntityObject::Fetch()	sqlite_driver	typed	
+0x21f42bc	0x22f42bc	64	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject14GetFieldLengthEii	Aska::Yayoi::SQLiteDriver::EntityObject::GetFieldLength(int, int)	sqlite_driver	typed	
+0x21f42fc	0x22f42fc	2252	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9SerializeEPl	Aska::Yayoi::SQLiteDriver::EntityObject::Serialize(long*)	sqlite_driver	typed	
+0x21f4bc8	0x22f4bc8	8	_ZN4Aska5Yayoi12SQLiteDriver12EntityObject14SerializeCacheEPm	Aska::Yayoi::SQLiteDriver::EntityObject::SerializeCache(unsigned long*)	sqlite_driver	typed	
+0x21f4bd0	0x22f4bd0	32	_ZN4Aska5Yayoi12SQLiteDriverC1Ev	Aska::Yayoi::SQLiteDriver::SQLiteDriver()	sqlite_driver	typed	
+0x21f4bf0	0x22f4bf0	160	_ZN4Aska5Yayoi12SQLiteDriverD1Ev	Aska::Yayoi::SQLiteDriver::~SQLiteDriver()	sqlite_driver	typed	
+0x21f4c90	0x22f4c90	120	_ZN4Aska5Yayoi12SQLiteDriver5CloseEv	Aska::Yayoi::SQLiteDriver::Close()	sqlite_driver	typed	
+0x21f4d08	0x22f4d08	60	_ZN4Aska5Yayoi12SQLiteDriver16BeginTransactionEv	Aska::Yayoi::SQLiteDriver::BeginTransaction()	sqlite_driver	typed	
+0x21f4d44	0x22f4d44	112	_ZN4Aska5Yayoi12SQLiteDriver17_BeginTransactionEv	Aska::Yayoi::SQLiteDriver::_BeginTransaction()	sqlite_driver	typed	
+0x21f4db4	0x22f4db4	136	_ZN4Aska5Yayoi12SQLiteDriver6CommitEv	Aska::Yayoi::SQLiteDriver::Commit()	sqlite_driver	typed	
+0x21f4e3c	0x22f4e3c	96	_ZN4Aska5Yayoi12SQLiteDriver8RollbackEv	Aska::Yayoi::SQLiteDriver::Rollback()	sqlite_driver	typed	
+0x21f4e9c	0x22f4e9c	8	_ZN4Aska5Yayoi12SQLiteDriver7ExecuteEPKcPKNS0_10QueryParamEm	Aska::Yayoi::SQLiteDriver::Execute(char const*, Aska::Yayoi::QueryParam const*, unsigned long)	sqlite_driver	typed	
+0x21f4ea4	0x22f4ea4	260	_ZN4Aska5Yayoi12SQLiteDriver8_ExecuteEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE	Aska::Yayoi::SQLiteDriver::_Execute(char const*, Aska::Yayoi::QueryParam const*, unsigned long, Aska::Yayoi::SQLiteDriver::EntityObject*)	sqlite_driver	typed	
+0x21f4fa8	0x22f4fa8	80	_ZN4Aska5Yayoi12SQLiteDriver4FindEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE	Aska::Yayoi::SQLiteDriver::Find(char const*, Aska::Yayoi::QueryParam const*, unsigned long, Aska::Yayoi::SQLiteDriver::EntityObject*)	sqlite_driver	typed	
+0x21f4ff8	0x22f4ff8	252	_ZN4Aska5Yayoi12SQLiteDriver8_PrepareEPKcPi	Aska::Yayoi::SQLiteDriver::_Prepare(char const*, int*)	sqlite_driver	typed	
+0x21f50f4	0x22f50f4	348	_ZN4Aska5Yayoi12SQLiteDriver6DoOpenENS0_6Entity4ModeEPKcPKNS0_9DBAddressE	Aska::Yayoi::SQLiteDriver::DoOpen(Aska::Yayoi::Entity::Mode, char const*, Aska::Yayoi::DBAddress const*)	sqlite_driver	typed	
+0x21f5250	0x22f5250	32	_ZN4Aska5Yayoi12SQLiteDriver4OpenEPNS0_14IDriverSettingIS1_EE	Aska::Yayoi::SQLiteDriver::Open(Aska::Yayoi::IDriverSetting<Aska::Yayoi::SQLiteDriver>*)	sqlite_driver	typed	
+0x21f5270	0x22f5270	48	_ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEED0Ev	Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::~THashMap()	sqlite_driver	typed	EntityObject column map instantiation (containers THashMap layout)
+0x21f52a0	0x22f52a0	368	_ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEE8Emplace_ERSA_	Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::Emplace_(char const* const&)	sqlite_driver	typed	EntityObject column map instantiation (containers THashMap layout)
+0x21f5410	0x22f5410	516	_ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEE7Rehash_Em	Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::Rehash_(unsigned long)	sqlite_driver	typed	EntityObject column map instantiation (containers THashMap layout)
+0x21f5714	0x22f5714	360	_ZN4Aska8THashMapIPKciNS_5Yayoi12SQLiteDriver12EntityObject12StringHasherENS5_13StringEqualToENS_10TAllocatorINS_5TPairIKS2_iEEEEE7Insert_ERKSB_	Aska::THashMap<char const*, int, Aska::Yayoi::SQLiteDriver::EntityObject::StringHasher, Aska::Yayoi::SQLiteDriver::EntityObject::StringEqualTo, Aska::TAllocator<Aska::TPair<char const* const, int> > >::Insert_(Aska::TPair<char const* const, int> const&)	sqlite_driver	typed	EntityObject column map instantiation (containers THashMap layout)
+0x21f587c	0x22f587c	52	_ZN4Aska5Yayoi9IPAddress7SetPortEt	Aska::Yayoi::IPAddress::SetPort(unsigned short)	network	typed	
+0x21f58b0	0x22f58b0	8	_ZN4Aska5Yayoi9IPAddressC2Ev	Aska::Yayoi::IPAddress::IPAddress()	network	typed	
+0x21f58b8	0x22f58b8	72	_ZNK4Aska5Yayoi9IPAddress7GetHostEPaji	Aska::Yayoi::IPAddress::GetHost(signed char*, unsigned int, int) const	network	typed	
+0x21f5900	0x22f5900	40	_ZNK4Aska5Yayoi9IPAddress7GetPortEv	Aska::Yayoi::IPAddress::GetPort() const	network	typed	
+0x21f5928	0x22f5928	32	_ZNK4Aska5Yayoi9IPAddress9IsTheSameERKS1_	Aska::Yayoi::IPAddress::IsTheSame(Aska::Yayoi::IPAddress const&) const	network	typed	
+0x21f5948	0x22f5948	24	_ZNK4Aska5Yayoi9IPAddress10GetAddressEPPK8sockaddrPj	Aska::Yayoi::IPAddress::GetAddress(sockaddr const**, unsigned int*) const	network	typed	
+0x21f5960	0x22f5960	196	_ZN4Aska5Yayoi9IPAddress12InitAsServerEtNS0_13AddressFamilyE	Aska::Yayoi::IPAddress::InitAsServer(unsigned short, Aska::Yayoi::AddressFamily)	network	typed	
+0x21f5a24	0x22f5a24	44	_ZN4Aska5Yayoi9IPAddress3SetERK8sockaddrj	Aska::Yayoi::IPAddress::Set(sockaddr const&, unsigned int)	network	typed	
+0x21f5a50	0x22f5a50	8	_ZN4Aska5Yayoi9IPAddress4CopyERKS1_	Aska::Yayoi::IPAddress::Copy(Aska::Yayoi::IPAddress const&)	network	typed	
+0x21f5a58	0x22f5a58	112	_ZN4Aska5Yayoi9IPAddress6CreateEPKcNS0_10SocketTypeEtNS0_13AddressFamilyEPS1_	Aska::Yayoi::IPAddress::Create(char const*, Aska::Yayoi::SocketType, unsigned short, Aska::Yayoi::AddressFamily, Aska::Yayoi::IPAddress*)	network	typed	
+0x21f5ac8	0x22f5ac8	44	_ZN4Aska5Yayoi9IPAddress3SetERK25__kernel_sockaddr_storagej	Aska::Yayoi::IPAddress::Set(__kernel_sockaddr_storage const&, unsigned int)	network	typed	
+0x21f5af4	0x22f5af4	12	_ZN4Aska5Yayoi9IPAddress5ClearEv	Aska::Yayoi::IPAddress::Clear()	network	typed	
+0x21fd350	0x22fd350	52	_ZN4Aska5Yayoi16NetworkAllocator6DeleteEv	Aska::Yayoi::NetworkAllocator::Delete()	network	typed	
+0x21fd384	0x22fd384	16	_ZN4Aska5Yayoi16NetworkAllocator3SetEPNS_13MemoryManagerEb	Aska::Yayoi::NetworkAllocator::Set(Aska::MemoryManager*, bool)	network	typed	
+0x2203aa0	0x2303aa0	60	_ZN4Aska5Yayoi20NetworkManagerThreadC2Ev	Aska::Yayoi::NetworkManagerThread::NetworkManagerThread()	network	typed	
+0x2203adc	0x2303adc	168	_ZN4Aska5Yayoi20NetworkManagerThreadD1Ev	Aska::Yayoi::NetworkManagerThread::~NetworkManagerThread()	network	typed	
+0x2203b84	0x2303b84	8	_ZThn24_N4Aska5Yayoi20NetworkManagerThreadD1Ev	non-virtual thunk to Aska::Yayoi::NetworkManagerThread::~NetworkManagerThread()	network	typed	
+0x2203b8c	0x2303b8c	24	_ZN4Aska5Yayoi20NetworkManagerThreadD0Ev	Aska::Yayoi::NetworkManagerThread::~NetworkManagerThread()	network	typed	
+0x2203ba4	0x2303ba4	28	_ZThn24_N4Aska5Yayoi20NetworkManagerThreadD0Ev	non-virtual thunk to Aska::Yayoi::NetworkManagerThread::~NetworkManagerThread()	network	typed	
+0x2203bc0	0x2303bc0	64	_ZN4Aska5Yayoi20NetworkManagerThread4KillEv	Aska::Yayoi::NetworkManagerThread::Kill()	network	typed	
+0x2203c00	0x2303c00	152	_ZN4Aska5Yayoi20NetworkManagerThread7HandlerEv	Aska::Yayoi::NetworkManagerThread::Handler()	network	typed	
+0x2203c98	0x2303c98	556	_ZN4Aska5Yayoi20NetworkManagerThread4InitEv	Aska::Yayoi::NetworkManagerThread::Init()	network	typed	
+0x2203ec4	0x2303ec4	648	_ZN4Aska5Yayoi14NetworkManager20RegisterNetworkEventElPNS0_12NetworkEventE	Aska::Yayoi::NetworkManager::RegisterNetworkEvent(long, Aska::Yayoi::NetworkEvent*)	network	typed	
+0x220414c	0x230414c	16	_ZN4Aska5Yayoi14NetworkManager28RegisterHttpRequestProcessorEPNS0_26NativeHttpRequestProcessorE	Aska::Yayoi::NetworkManager::RegisterHttpRequestProcessor(Aska::Yayoi::NativeHttpRequestProcessor*)	network	typed	
+0x220415c	0x230415c	228	_ZN4Aska5Yayoi14NetworkManagerC1Ev	Aska::Yayoi::NetworkManager::NetworkManager()	network	typed	
+0x2204240	0x2304240	240	_ZN4Aska5Yayoi14NetworkManagerD2Ev	Aska::Yayoi::NetworkManager::~NetworkManager()	network	typed	
+0x2204330	0x2304330	76	_ZN4Aska5Yayoi14NetworkManager4KillEv	Aska::Yayoi::NetworkManager::Kill()	network	typed	
+0x22043bc	0x23043bc	296	_ZN4Aska5Yayoi14NetworkManager17InitializeThreadsEv	Aska::Yayoi::NetworkManager::InitializeThreads()	network	typed	
+0x22044e4	0x23044e4	112	_ZN4Aska5Yayoi14NetworkManager10InitializeEv	Aska::Yayoi::NetworkManager::Initialize()	network	typed	
+0x2204694	0x2304694	40	_ZN4Aska5Yayoi14NetworkManager15GetNetworkEventEl	Aska::Yayoi::NetworkManager::GetNetworkEvent(long)	network	typed	
+0x22046bc	0x23046bc	132	_ZN4Aska5Yayoi14NetworkManager9BeginPollEPNS0_21TransportProtocolBaseEPNS0_13ISocketNotifyENS0_10SelectModeEtll	Aska::Yayoi::NetworkManager::BeginPoll(Aska::Yayoi::TransportProtocolBase*, Aska::Yayoi::ISocketNotify*, Aska::Yayoi::SelectMode, unsigned short, long, long)	network	typed	
+0x2204740	0x2304740	108	_ZN4Aska5Yayoi14NetworkManager12BeginConnectEPNS0_21TransportProtocolBaseEPNS0_13ISocketNotifyERKNS0_9IPAddressEl	Aska::Yayoi::NetworkManager::BeginConnect(Aska::Yayoi::TransportProtocolBase*, Aska::Yayoi::ISocketNotify*, Aska::Yayoi::IPAddress const&, long)	network	typed	
+0x22047ac	0x23047ac	132	_ZN4Aska5Yayoi14NetworkManager16AddErrorCallbackEPNS0_13ISocketNotifyENS_6StatusEPKcbl	Aska::Yayoi::NetworkManager::AddErrorCallback(Aska::Yayoi::ISocketNotify*, Aska::Status, char const*, bool, long)	network	typed	
+0x2204830	0x2304830	292	_ZN4Aska5Yayoi14NetworkManager14AddHttpRequestEPNS0_11TPeerNotifyINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEENS_14TSharedPointerINS0_3URIEEENSB_INS0_10TDataSuiteIS8_EEEEPS8_PS4_	Aska::Yayoi::NetworkManager::AddHttpRequest(Aska::Yayoi::TPeerNotify<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > >*, Aska::TSharedPointer<Aska::Yayoi::URI>, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >, Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> >*, Aska::Yayoi::HttpProtocol*)	network	typed	
+0x2204954	0x2304954	12	_ZN4Aska5Yayoi14NetworkManager21RegisterVersatileTaskEPNS_4TaskE	Aska::Yayoi::NetworkManager::RegisterVersatileTask(Aska::Task*)	network	typed	
+0x2204b58	0x2304b58	8	_ZN4Aska5Yayoi20NetworkManagerThread8DoWakeupEv	Aska::Yayoi::NetworkManagerThread::DoWakeup()	network	typed	
+0x2204b60	0x2304b60	8	_ZN4Aska5Yayoi20NetworkManagerThread11GetThreadIDEv	Aska::Yayoi::NetworkManagerThread::GetThreadID()	network	typed	
+0x2204b68	0x2304b68	8	_ZThn24_N4Aska5Yayoi20NetworkManagerThread8DoWakeupEv	non-virtual thunk to Aska::Yayoi::NetworkManagerThread::DoWakeup()	network	typed	
+0x2204b70	0x2304b70	8	_ZThn24_N4Aska5Yayoi20NetworkManagerThread11GetThreadIDEv	non-virtual thunk to Aska::Yayoi::NetworkManagerThread::GetThreadID()	network	typed	
+0x22066b0	0x23066b0	48	_ZN4Aska5Yayoi12HttpProtocolC2Ev	Aska::Yayoi::HttpProtocol::HttpProtocol()	http	typed	
+0x22066e0	0x23066e0	232	_ZN4Aska5Yayoi12HttpProtocolD2Ev	Aska::Yayoi::HttpProtocol::~HttpProtocol()	http	typed	
+0x22067c8	0x23067c8	220	_ZN4Aska5Yayoi12HttpProtocol12SetUserAgentEPKc	Aska::Yayoi::HttpProtocol::SetUserAgent(char const*)	http	typed	
+0x22068a4	0x23068a4	1372	_ZN4Aska5Yayoi12HttpProtocol10MakeHeaderEPNS0_18HttpProtocoledDataENS_14TSharedPointerINS0_3URIEEES6_	Aska::Yayoi::HttpProtocol::MakeHeader(Aska::Yayoi::HttpProtocoledData*, Aska::TSharedPointer<Aska::Yayoi::URI>, Aska::TSharedPointer<Aska::Yayoi::URI>)	http	typed	
+0x2206e00	0x2306e00	40	_ZN4Aska5Yayoi12HttpProtocol14MakePostHeaderEPNS0_18HttpProtocoledDataE	Aska::Yayoi::HttpProtocol::MakePostHeader(Aska::Yayoi::HttpProtocoledData*)	http	typed	
+0x2206e28	0x2306e28	416	_ZN4Aska5Yayoi12HttpProtocol4OpenEPNS0_6SocketERKNS0_9IPAddressENS_14TSharedPointerINS0_3URIEEE	Aska::Yayoi::HttpProtocol::Open(Aska::Yayoi::Socket*, Aska::Yayoi::IPAddress const&, Aska::TSharedPointer<Aska::Yayoi::URI>)	http	typed	
+0x2206fc8	0x2306fc8	196	_ZN4Aska5Yayoi12HttpProtocol17SerializeResponseEPNS0_18HttpProtocoledDataEPPamPKvmPm	Aska::Yayoi::HttpProtocol::SerializeResponse(Aska::Yayoi::HttpProtocoledData*, signed char**, unsigned long, void const*, unsigned long, unsigned long*)	http	typed	
+0x220708c	0x230708c	1180	_ZN4Aska5Yayoi12HttpProtocol9SerializeEPNS0_18HttpProtocoledDataEPPamPKvmPm	Aska::Yayoi::HttpProtocol::Serialize(Aska::Yayoi::HttpProtocoledData*, signed char**, unsigned long, void const*, unsigned long, unsigned long*)	http	typed	
+0x2207528	0x2307528	36	_ZN4Aska5Yayoi12HttpProtocol14SetEnableFieldENS1_12EnableFieldsEb	Aska::Yayoi::HttpProtocol::SetEnableField(Aska::Yayoi::HttpProtocol::EnableFields, bool)	http	typed	
+0x220754c	0x230754c	444	_ZN4Aska5Yayoi12HttpProtocol19SetEnableOtherFieldEPKcb	Aska::Yayoi::HttpProtocol::SetEnableOtherField(char const*, bool)	http	typed	
+0x2207848	0x2307848	652	_ZN4Aska5Yayoi12HttpProtocol11ParseHeaderEPKamPNS0_18HttpProtocoledDataENS_14TSharedPointerINS0_3URIEEE	Aska::Yayoi::HttpProtocol::ParseHeader(signed char const*, unsigned long, Aska::Yayoi::HttpProtocoledData*, Aska::TSharedPointer<Aska::Yayoi::URI>)	http	typed	
+0x2207ad4	0x2307ad4	1616	_ZN4Aska5Yayoi12HttpProtocol11DeserializeEPKamPmPNS0_18HttpProtocoledDataERNS_6StatusE	Aska::Yayoi::HttpProtocol::Deserialize(signed char const*, unsigned long, unsigned long*, Aska::Yayoi::HttpProtocoledData*, Aska::Status&)	http	typed	
+0x2208124	0x2308124	152	_ZN4Aska5Yayoi12HttpProtocol16ParseMessageBodyEPKamPNS0_18HttpProtocoledDataE	Aska::Yayoi::HttpProtocol::ParseMessageBody(signed char const*, unsigned long, Aska::Yayoi::HttpProtocoledData*)	http	typed	
+0x22081bc	0x23081bc	1520	_ZN4Aska5Yayoi12HttpProtocol15_SetHeaderFieldEPNS0_18HttpProtocoledDataEPKaS5_mS5_m	Aska::Yayoi::HttpProtocol::_SetHeaderField(Aska::Yayoi::HttpProtocoledData*, signed char const*, signed char const*, unsigned long, signed char const*, unsigned long)	http	typed	
+0x22087ac	0x23087ac	864	_ZN4Aska5Yayoi12HttpProtocol15_SetMessageBodyEPKamPNS0_18HttpProtocoledDataEPNS0_13_decodingDataE	Aska::Yayoi::HttpProtocol::_SetMessageBody(signed char const*, unsigned long, Aska::Yayoi::HttpProtocoledData*, Aska::Yayoi::_decodingData*)	http	typed	
+0x2208b0c	0x2308b0c	16	_ZN4Aska5Yayoi12HttpProtocol18FreeSerializedDataENS_6StatusEPKv	Aska::Yayoi::HttpProtocol::FreeSerializedData(Aska::Status, void const*)	http	typed	
+0x2208b1c	0x2308b1c	64	_ZN4Aska5Yayoi12HttpProtocol9AllocDataEv	Aska::Yayoi::HttpProtocol::AllocData()	http	typed	
+0x22093d0	0x23093d0	456	_ZN4Aska5Yayoi18HttpProtocoledDataC2Ev	Aska::Yayoi::HttpProtocoledData::HttpProtocoledData()	http	typed	
+0x2209598	0x2309598	268	_ZN4Aska5Yayoi18HttpProtocoledDataD2Ev	Aska::Yayoi::HttpProtocoledData::~HttpProtocoledData()	http	typed	
+0x22096a4	0x23096a4	560	_ZN4Aska5Yayoi18HttpProtocoledData8ClearAllEv	Aska::Yayoi::HttpProtocoledData::ClearAll()	http	typed	
+0x22098d4	0x23098d4	84	_ZN4Aska5Yayoi18HttpProtocoledData12ClearContentEv	Aska::Yayoi::HttpProtocoledData::ClearContent()	http	typed	
+0x2209928	0x2309928	92	_ZN4Aska5Yayoi18HttpProtocoledData19AllocateHeaderCacheEl	Aska::Yayoi::HttpProtocoledData::AllocateHeaderCache(long)	http	typed	
+0x2209984	0x2309984	152	_ZN4Aska5Yayoi18HttpProtocoledData21BuildPostHeaderStringEv	Aska::Yayoi::HttpProtocoledData::BuildPostHeaderString()	http	typed	
+0x2209a1c	0x2309a1c	916	_ZN4Aska5Yayoi18HttpProtocoledData15MakeParamStringEPcm	Aska::Yayoi::HttpProtocoledData::MakeParamString(char*, unsigned long)	http	typed	
+0x2209db0	0x2309db0	216	_ZN4Aska5Yayoi18HttpProtocoledData9SetCookieENS_14TSharedPointerINS0_6CookieEEE	Aska::Yayoi::HttpProtocoledData::SetCookie(Aska::TSharedPointer<Aska::Yayoi::Cookie>)	http	typed	
+0x2209e88	0x2309e88	56	_ZN4Aska5Yayoi18HttpProtocoledData10SetContentEPamb	Aska::Yayoi::HttpProtocoledData::SetContent(signed char*, unsigned long, bool)	http	typed	
+0x2209ec0	0x2309ec0	60	_ZN4Aska5Yayoi18HttpProtocoledData20ParseContentEncodingEPKc	Aska::Yayoi::HttpProtocoledData::ParseContentEncoding(char const*)	http	typed	
+0x2209efc	0x2309efc	736	_ZN4Aska5Yayoi18HttpProtocoledData16ParseContentTypeEPKc	Aska::Yayoi::HttpProtocoledData::ParseContentType(char const*)	http	typed	
+0x220a1dc	0x230a1dc	156	_ZN4Aska5Yayoi18HttpProtocoledData11RemoveParamEPKam	Aska::Yayoi::HttpProtocoledData::RemoveParam(signed char const*, unsigned long)	http	typed	
+0x220a278	0x230a278	76	_ZN4Aska5Yayoi18HttpProtocoledData8GetParamEPKamPm	Aska::Yayoi::HttpProtocoledData::GetParam(signed char const*, unsigned long, unsigned long*)	http	typed	
+0x220a2c4	0x230a2c4	104	_ZN4Aska5Yayoi18HttpProtocoledData14GetStringParamEPKcPm	Aska::Yayoi::HttpProtocoledData::GetStringParam(char const*, unsigned long*)	http	typed	
+0x220a32c	0x230a32c	248	_ZN4Aska5Yayoi18HttpProtocoledData8SetParamEPKamS3_m	Aska::Yayoi::HttpProtocoledData::SetParam(signed char const*, unsigned long, signed char const*, unsigned long)	http	typed	
+0x220a424	0x230a424	264	_ZN4Aska5Yayoi18HttpProtocoledData14SetStringParamEPKcS3_	Aska::Yayoi::HttpProtocoledData::SetStringParam(char const*, char const*)	http	typed	
+0x220a52c	0x230a52c	216	_ZN4Aska5Yayoi18HttpProtocoledData10ClearParamEv	Aska::Yayoi::HttpProtocoledData::ClearParam()	http	typed	
+0x220a604	0x230a604	16	_ZNK4Aska5Yayoi18HttpProtocoledData15GetForecastSizeEm	Aska::Yayoi::HttpProtocoledData::GetForecastSize(unsigned long) const	http	typed	
+0x220f234	0x230f234	24	_ZN4Aska5Yayoi3URI14CalcBufferSizeEPKc	Aska::Yayoi::URI::CalcBufferSize(char const*)	network	typed	
+0x220f24c	0x230f24c	12	_ZN4Aska5Yayoi3URI13GetBufferSizeEm	Aska::Yayoi::URI::GetBufferSize(unsigned long)	network	typed	
+0x220f258	0x230f258	56	_ZN4Aska5Yayoi3URI12DeleteBufferEv	Aska::Yayoi::URI::DeleteBuffer()	network	typed	
+0x220f290	0x230f290	1820	_ZN4Aska5Yayoi3URI11DeserializeEPKctNS0_13AddressFamilyEPam	Aska::Yayoi::URI::Deserialize(char const*, unsigned short, Aska::Yayoi::AddressFamily, signed char*, unsigned long)	network	typed	
+0x220f9ac	0x230f9ac	144	_ZN4Aska5Yayoi3URI11ResolveThisENS0_13AddressFamilyEt	Aska::Yayoi::URI::ResolveThis(Aska::Yayoi::AddressFamily, unsigned short)	network	typed	
+0x220fa3c	0x230fa3c	56	_ZN4Aska5Yayoi3URI5ClearEv	Aska::Yayoi::URI::Clear()	network	typed	
+0x220fa74	0x230fa74	28	_ZN4Aska5Yayoi3URI7SetPortEt	Aska::Yayoi::URI::SetPort(unsigned short)	network	typed	
+0x220fa90	0x230fa90	8	_ZNK4Aska5Yayoi3URI9SerializeEPam	Aska::Yayoi::URI::Serialize(signed char*, unsigned long) const	network	typed	
+0x259e3ec	0x269e3ec	64	_ZN4Aska5Yayoi26NativeHttpRequestProcessorC1Ev	Aska::Yayoi::NativeHttpRequestProcessor::NativeHttpRequestProcessor()	network	typed	
+0x259e578	0x269e578	28	_ZN4Aska5Yayoi26NativeHttpRequestProcessorD1Ev	Aska::Yayoi::NativeHttpRequestProcessor::~NativeHttpRequestProcessor()	network	typed	
+0x259e6c8	0x269e6c8	1244	_ZN4Aska5Yayoi26NativeHttpRequestProcessor10AddRequestEPNS0_11TPeerNotifyINS0_14TProtocolSuiteINS0_12HttpProtocolENS0_11SSLProtocolENS0_10NoProtocolILi2EEEEEEENS_14TSharedPointerINS0_3URIEEENSB_INS0_10TDataSuiteIS8_EEEEPS8_PS4_	Aska::Yayoi::NativeHttpRequestProcessor::AddRequest(Aska::Yayoi::TPeerNotify<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > >*, Aska::TSharedPointer<Aska::Yayoi::URI>, Aska::TSharedPointer<Aska::Yayoi::TDataSuite<Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> > > >, Aska::Yayoi::TProtocolSuite<Aska::Yayoi::HttpProtocol, Aska::Yayoi::SSLProtocol, Aska::Yayoi::NoProtocol<2> >*, Aska::Yayoi::HttpProtocol*)	network	typed	
+0x259eba4	0x269eba4	1244	_ZN4Aska5Yayoi26NativeHttpRequestProcessor13FlushRequestsEPb	Aska::Yayoi::NativeHttpRequestProcessor::FlushRequests(bool*)	network	typed	
+0x259f080	0x269f080	8	_ZN4Aska5Yayoi26NativeHttpRequestProcessor10InitializeEv	Aska::Yayoi::NativeHttpRequestProcessor::Initialize()	network	typed	
+0x25a4e84	0x26a4e84	20	_ZN4Aska5Yayoi16NativeHttpClientC1Ev	Aska::Yayoi::NativeHttpClient::NativeHttpClient()	network	typed	
+0x25a4e98	0x26a4e98	168	_ZN4Aska5Yayoi16NativeHttpClientD2Ev	Aska::Yayoi::NativeHttpClient::~NativeHttpClient()	network	typed	
+0x25a4f40	0x26a4f40	2968	_ZN4Aska5Yayoi16NativeHttpClient10_doRequestEv	Aska::Yayoi::NativeHttpClient::_doRequest()	network	typed	

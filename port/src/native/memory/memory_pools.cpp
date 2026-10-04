@@ -1,6 +1,6 @@
 // memory_pools.cpp: the STL allocator's fixed-length pools as natives: Framework::TFixedLengthAllocator<N>
 // (pAllocate, Free, IsMine for the seven N), CFixedLengthAllocatorContainer (pAllocate, Free, IsMine),
-// TObjectContainer<IFixedLengthAllocator*>::NumElements and CAssignedMemoryManagerForSTLAllocator::
+// and CAssignedMemoryManagerForSTLAllocator::
 // Allocate / Free, on the guest's own pool objects.
 //
 // Readable C++ from the Ghidra decompile (port/decomp/memory/stl_allocator.c; the asserts' arguments
@@ -170,33 +170,25 @@ template class TFixedLengthAllocator<192>;
 template class TFixedLengthAllocator<256>;
 template class TFixedLengthAllocator<512>;
 
-// ---- TObjectContainer<IFixedLengthAllocator*> ----
+// ---- the container's element access (TObjectContainer's accessors, inlined in the guest's loops) ----
+// Framework::TObjectContainer belongs to `containers` (its NumElements / rElement / crElement natives);
+// the pool loops inline them, so the same reads and asserts are written out here.
+namespace {
+using AllocatorList = TObjectContainer<IFixedLengthAllocator*>;
 
-template <>
-u64 TObjectContainer<IFixedLengthAllocator*>::NumElements() const {
-    if (!m_elements) Assert(kStrObjectContainerH, 0x3e, kStrElementsNull);
-    return m_count;
+// NumElements (the container's vtable slot 4): the guest's own function unless it is the known one.
+u64 Count(const AllocatorList* c) {
+    if ((u64)c->vtable != calls().objectContainerVtable) return guest_call(Slot(c, 4), {(u64)c});
+    if (!c->m_elements) Assert(kStrObjectContainerH, 0x3e, kStrElementsNull);
+    return c->m_count;
 }
-
-// The container's own NumElements (vtable slot 4).
-static u64 ContainerCount(const TObjectContainer<IFixedLengthAllocator*>* c) {
-    if ((u64)c->vtable == calls().objectContainerVtable) return c->NumElements();
-    return guest_call(Slot(c, 4), {(u64)c});
+// rElement (lines 0x44 / 0x45) or crElement (0x4b / 0x4c).
+IFixedLengthAllocator* ElementAt(const AllocatorList* c, u64 i, bool constAccess) {
+    if (!c->m_elements) Assert(kStrObjectContainerH, constAccess ? 0x4b : 0x44, kStrElementsNull);
+    if (Count(c) <= i) Assert(kStrObjectContainerH, constAccess ? 0x4c : 0x45, kStrOutOfRange, i, Count(c));
+    return c->m_elements[i];
 }
-
-template <>
-IFixedLengthAllocator** TObjectContainer<IFixedLengthAllocator*>::rElement(u64 i) {
-    if (!m_elements) Assert(kStrObjectContainerH, 0x44, kStrElementsNull);
-    if (ContainerCount(this) <= i) Assert(kStrObjectContainerH, 0x45, kStrOutOfRange, i, ContainerCount(this));
-    return &m_elements[i];
-}
-
-template <>
-IFixedLengthAllocator* const* TObjectContainer<IFixedLengthAllocator*>::crElement(u64 i) const {
-    if (!m_elements) Assert(kStrObjectContainerH, 0x4b, kStrElementsNull);
-    if (ContainerCount(this) <= i) Assert(kStrObjectContainerH, 0x4c, kStrOutOfRange, i, ContainerCount(this));
-    return &m_elements[i];
-}
+}  // namespace
 
 // ---- CFixedLengthAllocatorContainer ----
 
@@ -209,7 +201,7 @@ IFixedLengthAllocator* CFixedLengthAllocatorContainer::AllocatorFor(u64 size) {
     for (u64 i = 0;; i++) {
         if (!c.m_elements) Assert(kStrObjectContainerH, 0x3e, kStrElementsNull);
         if (c.m_count <= i) return nullptr;
-        IFixedLengthAllocator* a = *c.rElement(i);
+        IFixedLengthAllocator* a = ElementAt(&c, i, false);
         if (size <= a->BlockSize()) return a;
     }
 }
@@ -220,7 +212,7 @@ IFixedLengthAllocator* CFixedLengthAllocatorContainer::AllocatorOwning(void* p) 
     for (u64 i = 0;; i++) {
         if (!c.m_elements) Assert(kStrObjectContainerH, 0x3e, kStrElementsNull);
         if (c.m_count <= i) return nullptr;
-        IFixedLengthAllocator* a = *c.crElement(i);
+        IFixedLengthAllocator* a = ElementAt(&c, i, true);
         if (a->IsMine(p)) return a;
     }
 }
@@ -239,7 +231,7 @@ bool CFixedLengthAllocatorContainer::Free(void* p) {
     for (u64 i = 0;; i++) {
         if (!c.m_elements) Assert(kStrObjectContainerH, 0x3e, kStrElementsNull);
         if (c.m_count <= i) return false;
-        IFixedLengthAllocator* a = *c.rElement(i);
+        IFixedLengthAllocator* a = ElementAt(&c, i, false);
         if (a->IsMine(p)) {
             a->Free(p);
             return true;
@@ -300,9 +292,6 @@ MEMORY_POOL_NATIVES(512);
 #undef MEMORY_POOL_NATIVES
 #undef MEMORY_REG
 
-NATIVE_FUNCTION_ORIG("_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE11NumElementsEv",
-                     (check::Getter<check::kNumElements, wrap_method<&TObjectContainer<IFixedLengthAllocator*>::NumElements>()>),
-                     "memory: TObjectContainer<IFixedLengthAllocator*>::NumElements", &check::Orig(check::kNumElements));
 NATIVE_FUNCTION_ORIG("_ZN9Framework30CFixedLengthAllocatorContainer9pAllocateEmPKcj", wrap_method<&CFixedLengthAllocatorContainer::pAllocate>(),
                      "memory: CFixedLengthAllocatorContainer::pAllocate", &check::Orig(check::kContainerAllocate));
 NATIVE_FUNCTION_ORIG("_ZN9Framework30CFixedLengthAllocatorContainer4FreeEPv", wrap_method<&CFixedLengthAllocatorContainer::Free>(),

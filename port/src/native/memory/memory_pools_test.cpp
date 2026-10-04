@@ -186,7 +186,7 @@ NATIVE_TEST("memory/pools-container-differential") {
     auto n = run(true);
     t.expect_eq(g == n, true, "results");
     t.expect_eq(snapAll() == after, true, "pool state");
-    t.expect_eq(c->m_allocators.NumElements(), (u64)6, "NumElements");
+    t.expect_eq(c->m_allocators.m_count, (u64)6, "6 pools");
     t.call("_ZdlPv", {heapPtr});
     t.call("_ZN9Framework30CFixedLengthAllocatorContainerD1Ev", {(u64)c});  // deletes the pools
 }
@@ -195,7 +195,7 @@ NATIVE_TEST("memory/pools-container-differential") {
 // (memory_check.cpp: the pool's mutex held, the native, the state put back, the guest original).
 NATIVE_TEST("memory/pools-stl-live-check") {
     using namespace check;
-    std::vector<Fn> fns{kStlAllocate, kStlFree, kContainerAllocate, kContainerFree, kContainerIsMine, kNumElements};
+    std::vector<Fn> fns{kStlAllocate, kStlFree, kContainerAllocate, kContainerFree, kContainerIsMine};
     for (u64 n : {16, 32, 64, 128, 192, 256, 512})
         for (int op = 0; op < 3; op++) fns.push_back(PoolFn(n, op));
     for (Fn f : fns) Orig(f) = t.sym(Symbol(f));

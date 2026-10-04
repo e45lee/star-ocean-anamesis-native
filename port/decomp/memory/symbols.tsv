@@ -156,23 +156,16 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1e9d6c0	0x1f9d6c0	24	_ZN9Framework30CFixedLengthAllocatorContainerC2Ev	Framework::CFixedLengthAllocatorContainer::CFixedLengthAllocatorContainer()	stl_allocator	typed	
 0x1e9d6d8	0x1f9d6d8	52	_ZN9Framework30CFixedLengthAllocatorContainerD2Ev	Framework::CFixedLengthAllocatorContainer::~CFixedLengthAllocatorContainer()	stl_allocator	typed	
 0x1e9d70c	0x1f9d70c	256	_ZN9Framework30CFixedLengthAllocatorContainer7ReleaseEv	Framework::CFixedLengthAllocatorContainer::Release()	stl_allocator	typed	
-0x1e9d80c	0x1f9d80c	48	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEED2Ev	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::~TObjectContainer()	stl_allocator	typed	
 0x1e9d83c	0x1f9d83c	340	_ZN9Framework30CFixedLengthAllocatorContainer10InitializeEPPNS_21IFixedLengthAllocatorEj	Framework::CFixedLengthAllocatorContainer::Initialize(Framework::IFixedLengthAllocator**, unsigned int)	stl_allocator	typed	
-0x1e9d990	0x1f9d990	100	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE10InitializeEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::Initialize(unsigned long)	stl_allocator	typed	
-0x1e9d9f4	0x1f9d9f4	52	_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE11NumElementsEv	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::NumElements() const	stl_allocator	tested	
-0x1e9da28	0x1f9da28	140	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE8rElementEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::rElement(unsigned long)	stl_allocator	typed	
 0x1e9dab4	0x1f9dab4	16	_ZNK9Framework30CFixedLengthAllocatorContainer13IsInitializedEv	Framework::CFixedLengthAllocatorContainer::IsInitialized() const	stl_allocator	typed	
 0x1e9dac4	0x1f9dac4	336	_ZN9Framework30CFixedLengthAllocatorContainer9pAllocateEmPKcj	Framework::CFixedLengthAllocatorContainer::pAllocate(unsigned long, char const*, unsigned int)	stl_allocator	tested	
 0x1e9dc14	0x1f9dc14	308	_ZN9Framework30CFixedLengthAllocatorContainer4FreeEPv	Framework::CFixedLengthAllocatorContainer::Free(void*)	stl_allocator	tested	
 0x1e9dd48	0x1f9dd48	284	_ZNK9Framework30CFixedLengthAllocatorContainer6IsMineEPv	Framework::CFixedLengthAllocatorContainer::IsMine(void*) const	stl_allocator	tested	
-0x1e9de64	0x1f9de64	140	_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE9crElementEm	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::crElement(unsigned long) const	stl_allocator	typed	
 0x1e9def0	0x1f9def0	252	_ZN9Framework30CFixedLengthAllocatorContainer11EnableMutexEv	Framework::CFixedLengthAllocatorContainer::EnableMutex()	stl_allocator	typed	
 0x1e9dfec	0x1f9dfec	252	_ZN9Framework30CFixedLengthAllocatorContainer12DisableMutexEv	Framework::CFixedLengthAllocatorContainer::DisableMutex()	stl_allocator	typed	
 0x1e9e0e8	0x1f9e0e8	272	_ZN9Framework30CFixedLengthAllocatorContainer7ReportSEv	Framework::CFixedLengthAllocatorContainer::ReportS()	stl_allocator	typed	
 0x1e9e1f8	0x1f9e1f8	272	_ZN9Framework30CFixedLengthAllocatorContainer7ReportCEv	Framework::CFixedLengthAllocatorContainer::ReportC()	stl_allocator	typed	
 0x1e9e308	0x1f9e308	272	_ZN9Framework30CFixedLengthAllocatorContainer7ReportLEv	Framework::CFixedLengthAllocatorContainer::ReportL()	stl_allocator	typed	
-0x1e9e418	0x1f9e418	48	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEED0Ev	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::~TObjectContainer()	stl_allocator	typed	
-0x1e9e448	0x1f9e448	4	_ZN9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE5ResetEv	Framework::TObjectContainer<Framework::IFixedLengthAllocator*>::Reset()	stl_allocator	typed	
 0x1f0aaac	0x200aaac	32	_ZN4Aska19MemoryManagerHelperC1Ev	Aska::MemoryManagerHelper::MemoryManagerHelper()	helpers	typed	
 0x1f0aacc	0x200aacc	72	_ZN4Aska19MemoryManagerHelperD2Ev	Aska::MemoryManagerHelper::~MemoryManagerHelper()	helpers	typed	
 0x1f0ab14	0x200ab14	108	_ZN4Aska19MemoryManagerHelper4InitEmj	Aska::MemoryManagerHelper::Init(unsigned long, unsigned int)	helpers	typed	

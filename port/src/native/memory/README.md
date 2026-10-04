@@ -27,7 +27,7 @@ accessors and the invariants the decompile shows.
 | `CAssignedMemoryManagerForSTLAllocator` | statics | Allocate / Free / Attach* | `-live-managers` (pAttached* vs the statics) | typed |
 | `IFixedLengthAllocator` | 0x08 (vtable) | the container's calls | `-live-managers` (slots 2, 3, 6, 10) | typed |
 | `TFixedLengthAllocator<N>` (N = 16..512) + `FixedLengthBlockHeader` / `TFixedLengthBlock<N>` | 0x48 (operator new in CGame::OnInitialize) | ctor, pAllocate, Free, IsMine, accessors | `-fixed-length-allocator` (private pool), `-live-managers` (the six STL pools) | typed; 0x08..0x17 unknown |
-| `TObjectContainer<T>` (Framework) | 0x18 | Initialize, NumElements, rElement | `-live-managers` | typed (moved here from containers: the container's base) |
+| `TObjectContainer<T>` (Framework) | 0x18 | Initialize, NumElements, rElement | `-live-managers` | typed (the container's base; its functions and natives are `containers`') |
 | `CFixedLengthAllocatorContainer` | 0x18 (operator new) | ctor, Initialize, pAllocate, Free | `-live-managers` | typed |
 | `CHandleManager_Base` (Framework) | 0x38 (rounded: the last field ends at 0x34) | ctor, Initialize, Register, Refer, Unregister, dtor | `-handle-manager` (private: Register / Refer / Unregister) | typed |
 | `DeleteManager` (Aska) | 0x138 (nm -S Global::m_systemDeleteManager) | Initialize, Clear, AddMain, IsEmpty, dtor | `-delete-manager` (the live system manager's queues) | typed |
@@ -40,7 +40,7 @@ accessors and the invariants the decompile shows.
 
 ## Natives
 
-35 natives, one family (they share the heap and pool state; `soa --list-native | grep memory:`). The guest
+34 natives, one family (they share the heap and pool state; `soa --list-native | grep memory:`). The guest
 layout is the state: guest code that stays (Realloc, Split, Move, IsEmpty, MallocHigh, InitHeap, the
 MappedMemoryManager, DeleteManager, every header reader) walks and edits the same blocks, so each native
 makes the guest's stores in the guest's order (stale links included) under the guest's lock.
@@ -60,7 +60,6 @@ makes the guest's stores in the guest's order (stale links included) under the g
 | `TFixedLengthAllocator<N>::IsMine` (7) | `memory_pools.cpp` | `memory/pools-differential` | getter |
 | `CFixedLengthAllocatorContainer::pAllocate` / `Free` | `memory_pools.cpp` | `memory/pools-container-differential` | the chosen pool's check with the dispatcher's original |
 | `CFixedLengthAllocatorContainer::IsMine` | `memory_pools.cpp` | `memory/pools-container-differential` | getter |
-| `TObjectContainer<IFixedLengthAllocator*>::NumElements` | `memory_pools.cpp` | `memory/pools-container-differential` | getter |
 | `CAssignedMemoryManagerForSTLAllocator::Allocate` / `Free` | `memory_pools.cpp` | `memory/pools-stl-live-check` (the live statics, every call checked) | pool path: as the container's; heap path: skipped here (Malloc / LocalFree check it) |
 
 The tests: private heaps over host buffers (guest constructor + `InitHeap(u8*, u64)`), the same seeded

@@ -13,7 +13,7 @@
 namespace soa::server::rules {
 
 // A mission NPC's battle status from the master data, as the client's NPC model computes it
-// (agent t1-tutorial-parity; docs/server-rules.md "Tutorial battle"). (b) The client's
+// (docs/server-rules.md "Tutorial battle"). (b) The client's
 // MasterMissionNpcModel::CalculateParameter -> MasterNpcBaseParameterModel::GetCharacterParameter
 // / GetParameter (3.7.0 decompiles work/decomp/tutorial-dmg-e.resolved.c,
 // server-rules-factor.resolved.c), in the guest's single-precision steps:

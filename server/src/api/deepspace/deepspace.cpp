@@ -122,8 +122,8 @@ struct Offer {
 Offer find_offer(Ctx& ctx, u32 mission_id, ServerTime t) {
     Offer offer;
     ctx.st.q("select * from ds_offer where mission_id = ?", {mission_id}, [&](const Row& offer_row) {
-        ServerTime closed = offer_row.time("closed_at");  // 0: no limit (a sentinel PLAN-schema S10 maps to NULL)
-        offer.open = offer_row.i("ship_id") == 0 && !(closed.v && closed < t);
+        const std::optional<ServerTime> closed = offer_row.opt<ServerTime>("closed_at");  // NULL: no limit
+        offer.open = offer_row.null("ship_id") && !(closed && *closed < t);               // ship_id NULL: not on a ship
         offer.bonus_set_id = (u32)offer_row.i("bonus_set_id");
     });
     return offer;
@@ -428,13 +428,13 @@ void grant_drops(Ctx& ctx, const Ship& ship, Expedition& done, double& rare_miss
 
 // The offer: back on the list with a new bonus set (d); a rare offer is used up (d).
 void renew_offer(Ctx& ctx, const Ship& ship, ServerTime t) {
-    // a rare offer has a limit; 0 = none (a sentinel PLAN-schema S10 maps to NULL)
-    bool rare_offer = ctx.st.one_time("select closed_at from ds_offer where mission_id = ?", {ship.mission_id}).v != 0;
+    // a rare offer has a limit (closed_at NULL: none)
+    bool rare_offer = ctx.st.one_opt<ServerTime>("select closed_at from ds_offer where mission_id = ?", {ship.mission_id}).has_value();
     if (rare_offer) {
         ctx.st.q("delete from ds_offer where mission_id = ?", {ship.mission_id});
     } else {
         u32 set_type = (u32)ctx.m.one("select bonus_set_type_id from master_deep_space_mission where id = ?", {ship.mission_id});
-        ctx.st.q("update ds_offer set ship_id = 0, bonus_set_id = ?, play_count = play_count + 1, updated_at = ? where mission_id = ?",
+        ctx.st.q("update ds_offer set ship_id = null, bonus_set_id = ?, play_count = play_count + 1, updated_at = ? where mission_id = ?",
                  {roll_bonus_set(ctx, set_type), t, ship.mission_id});
     }
 }
@@ -499,8 +499,7 @@ std::vector<u8> deep_space_mission_end(Ctx& ctx, const Request& req) {
     // 2. the offers and the ship
     renew_offer(ctx, ship, t);
     roll_rare_offer(ctx, ship, t, rare_mission_mul, done);
-    ctx.st.q("delete from ds_ship where ship_id = ?", {ship.ship_id});  // and its crew (ON DELETE CASCADE)
-    ctx.st.q("delete from ds_bonus where ship_id = ?", {ship.ship_id});
+    ctx.st.q("delete from ds_ship where ship_id = ?", {ship.ship_id});  // and its crew and bonus values (ON DELETE CASCADE)
     refresh_offers(ctx, t);  // areas the new exploration rate opens
     // 3. the answer
     Value data = ctx.base_data();

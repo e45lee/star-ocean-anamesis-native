@@ -264,10 +264,11 @@ std::vector<u8> box_gacha(ext::Ctx& ctx, const Request& req) {
     if (ticket.item && stock_count(ctx, ticket.item) < ticket.per_draw * count)
         return ext::refusef(ctx, req.method.c_str(), ErrorCode::kItemCountError, "box %u: tickets short (%u needed)", id, ticket.per_draw * count);
     if (ticket.item) ext::add_stock(ctx, ticket.item, -(int64_t)(ticket.per_draw * count));  // checked above: never below 0
-    BoxDraws draws = draw_slots(ctx, id, slots, left, count);
+    // the box's row first: its slots reference it (box_slots.gacha_id, PLAN-schema S10)
     ctx.st.q(
         "insert into box_state (gacha_id, total_count) values (?, ?) on conflict(gacha_id) do update set total_count = total_count + excluded.total_count",
         {id, count});
+    BoxDraws draws = draw_slots(ctx, id, slots, left, count);
     refill_last_box(ctx, id);
     Value data = base_data(ctx);
     data["BoxGachaItems"] = draws.results;

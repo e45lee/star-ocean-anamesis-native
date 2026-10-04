@@ -49,7 +49,7 @@ NATIVE_TEST("deepspace/expedition") {
         t.expect_eq((u32)c.st.one("select count(*) from ds_ship", {}), 1u, "one ship out");
         t.expect_eq(c.st.one("select closed_at - started_at from ds_ship", {}), minutes * 60, "time in minutes");
         // the same characters can't go twice
-        u32 other = (u32)c.st.one("select mission_id from ds_offer where area_id = ? and ship_id = 0 limit 1", {area});
+        u32 other = (u32)c.st.one("select mission_id from ds_offer where area_id = ? and ship_id is null limit 1", {area});
         code = 0;
         call(c, "DeepSpaceMissionStart", {other, 0}, {{party[0]}});
         t.expect_eq(code, 10208u, "busy member refused");
@@ -81,7 +81,7 @@ NATIVE_TEST("deepspace/expedition") {
         t.expect_eq(area_exp(c, area), (u32)c.m.one("select exp from master_deep_space_mission where id = ?", {mission}), "area exp");
         // quick return: a new expedition returned at once with coins / items
         clock += 10;
-        u32 m2 = (u32)c.st.one("select mission_id from ds_offer where area_id = ? and ship_id = 0 order by mission_id desc limit 1", {area});
+        u32 m2 = (u32)c.st.one("select mission_id from ds_offer where area_id = ? and ship_id is null order by mission_id desc limit 1", {area});
         c.st.q("update player set free_coin = 1000", {});
         code = 0;
         call(c, "DeepSpaceMissionStart", {m2, 0}, {party});
@@ -162,7 +162,7 @@ NATIVE_TEST("deepspace/extras") {
         c.st.q("select uid from roster order by uid limit 3", {}, [&](const Row& r) { uids.push_back((u64)r.i("uid")); });
         if (uids.size() < 3) return t.fail("seed roster too small");
         std::vector<u32> missions;
-        c.st.q("select mission_id from ds_offer where ship_id = 0 order by area_id, mission_id limit 4", {},
+        c.st.q("select mission_id from ds_offer where ship_id is null order by area_id, mission_id limit 4", {},
                [&](const Row& r) { missions.push_back((u32)r.i("mission_id")); });
         if (missions.size() < 4) return t.fail("fewer than 4 offers");
         for (int k = 0; k < 3; k++) {

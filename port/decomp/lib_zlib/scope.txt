@@ -1,0 +1,4 @@
+# port/decomp/lib_zlib/scope.txt: the guest functions the `lib_zlib` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(deflate\w*|inflate\w*|zError|zlibVersion|zlibCompileFlags|crc32\w*|adler32\w*|_tr_\w*|zcalloc|zcfree|compress\w*|uncompress\w*|get_crc_table)$

@@ -1,0 +1,5 @@
+# port/decomp/lib_vorbis/scope.txt: the guest functions the `lib_vorbis` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(ogg|vorbis|oggpack|oggpackB|mdct|drft|floor0|floor1|res0|res1|res2|mapping0|ov|_vorbis|_ve|_vp|_vi|_book|book|_ogg)_\w*$
+^(_make_words|_best|_float32_(un)?pack|_ilog|_book_maptype1_quantvals|vorbis_book_\w*|_mdct\w*)$

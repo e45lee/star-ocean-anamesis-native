@@ -1,8 +1,8 @@
 # IJG libjpeg 9 (the library only), static, from the source tarball FetchContent unpacks
-# (cmake/deps.cmake: JPEG9_SOURCE_DIR). The game bundles libjpeg 9b; vcpkg has only libjpeg-turbo,
-# whose output isn't bit-exact with IJG's. The sources are makefile.ansi's LIBSOURCES with the
-# jmemnobs memory manager, as the tarball's ./configure builds libjpeg.so.9 (and as Ubuntu's libjpeg9
-# package, 9e, which the port used before vcpkg). jconfig.h is ours (next to this file).
+# (cmake/deps.cmake: JPEG9_SOURCE_DIR): 9b, the version the game bundles (port/src/native/lib_jpeg);
+# vcpkg has only libjpeg-turbo, whose output isn't bit-exact with IJG's. The sources are
+# makefile.ansi's LIBSOURCES with the jmemnobs memory manager, as the tarball's ./configure builds
+# libjpeg.so.9. jconfig.h is ours (next to this file).
 #
 # Target: soa::jpeg9 (STATIC). Its include dirs come first for every consumer, ahead of any system
 # jpeglib.h (libjpeg-turbo's).

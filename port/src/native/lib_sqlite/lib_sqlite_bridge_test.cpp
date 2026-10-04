@@ -24,7 +24,7 @@ int exec_cb(u64 arg, int n, char** values, char** names) {
     return arg == 7 && g_rows.size() >= 2 ? 1 : 0;  // (arg 7: abort after two rows)
 }
 std::vector<std::string> g_freed;
-void destructor(const char* p) { g_freed.push_back(p); }
+void destructor(const char* p) { g_freed.push_back(p ? p : "(null)"); }
 
 struct Trace {
     std::vector<std::string> v;
@@ -65,10 +65,13 @@ Trace session(const Api& a) {
     char buf[16] = "transient";
     t.add("params", guest_invoke<int>(a.bind_parameter_count, st));
     t.add("bind 1", guest_invoke<int>(a.bind_text, st, 1, owned, -1, dtor));
+    t.add("bind 2 null", guest_invoke<int>(a.bind_text, st, 2, (const char*)nullptr, -1, dtor));  // (no destructor call)
     t.add("bind 2", guest_invoke<int>(a.bind_text, st, 2, buf, -1, (u64)-1));
     strcpy(buf, "changed");
     t.add("bind 3", guest_invoke<int>(a.bind_text, st, 3, "abcdef", 3, (u64)0));
     t.add("bind 9", guest_invoke<int>(a.bind_text, st, 9, "range", -1, (u64)0));  // SQLITE_RANGE
+    t.add("bind 9 dtor", guest_invoke<int>(a.bind_text, st, 9, "failed bind", -1, dtor));  // (destructor at once)
+    t.add("destructor calls after a failed bind", (long long)g_freed.size());
     t.add("step", guest_invoke<int>(a.step, st));
     for (int i = 0; i < 4; i++) {
         u64 v = guest_invoke<u64>(a.column_value, st, i);

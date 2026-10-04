@@ -39,7 +39,7 @@ What crosses (lib_sqlite_api.cpp):
   '/data/data/<pkg>/files/download/temp.sqlite3'` reads the file the guest's own I/O wrote.
 - **Callbacks** are guest functions: `sqlite3_exec`'s row callback runs through `guest_call` (the game
   passes none); `sqlite3_bind_text`'s destructor: SQLITE_STATIC / SQLITE_TRANSIENT pass through, a guest
-  function makes the bind transient and is called right after it (the game passes SQLITE_STATIC).
+  function is called when the host SQLite releases the text (a host destructor looks it up by the text's address), as 3.13.0 does: a failed bind at once, a NULL text that binds never (the game passes SQLITE_STATIC).
 - **Allocators**: SQLite's memory is the host's; `sqlite3_free` is bound for what it hands out.
 
 **Versions.** The host is 3.45.1, not 3.13.0. A newer planner may order rows differently where a query
@@ -104,7 +104,8 @@ driven through guest calls):
   text, bytes: the conversions), up to 3 tuples per template: 3,821 queries, 561,091 rows, equal. ~11 s.
 - `lib_sqlite/bridge`: one scripted session on each side: `sqlite3_exec` with a guest row callback and
   its argument, a callback abort (`SQLITE_ABORT`), the error message and `sqlite3_free`, a guest
-  destructor on `sqlite3_bind_text` (called once, with the pointer), SQLITE_TRANSIENT with the buffer
+  destructor on `sqlite3_bind_text` (called when SQLite releases the text: the same calls at the same
+  steps as 3.13.0; a NULL text never, a failed bind at once), SQLITE_TRANSIENT with the buffer
   changed after the bind, explicit lengths, an out-of-range bind, `pzTail`, blobs (also empty), NULLs,
   `1e300`, `sqlite3_finalize(NULL)`.
 - `lib_sqlite/live-check`: the live check on the natives: the bridge session shadowed (checks, no

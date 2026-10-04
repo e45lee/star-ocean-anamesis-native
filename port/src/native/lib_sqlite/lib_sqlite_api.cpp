@@ -6,7 +6,7 @@
 //   - strings and blobs SQLite returns are host memory, readable by guest code (identity-mapped);
 //   - file names are the guest's Android paths: the guest-path VFS (lib_sqlite_vfs.cpp) maps them;
 //   - callbacks are guest functions: sqlite3_exec's row callback and sqlite3_bind_text's destructor run
-//     through guest_call;
+//     through guest_call (the destructor when SQLite releases the text, as 3.13.0 does);
 //   - memory SQLite hands out (sqlite3_exec's error message) is the host SQLite's: sqlite3_free is bound
 //     too, so the game frees it there.
 //
@@ -135,6 +135,8 @@ void result(Fn k, bool ok, sqlite3_stmt* ctx, const char* fmt, ...) {
         write_summary();
     } else if (n % 20000 == 0) {
         write_summary();
+        if (n % 1000000 == 0)
+            LOGI("lib_sqlite_check", "%" PRIu64 " checks, %" PRIu64 " mismatches, %" PRIu64 " skipped", n, s.bad.load(), s.skipped.load());
     }
 }
 void skipped() { shadow().skipped++; }
@@ -267,17 +269,39 @@ int n_bind_parameter_count(sqlite3_stmt* st) {
     return n;
 }
 
-// The destructor: SQLITE_STATIC (0) and SQLITE_TRANSIENT (-1) pass through; a guest function is called
-// (guest_call) once SQLite has its own copy, i.e. right after the bind (SQLite may call it any time
-// after the bind, also when the bind fails).
+// The destructor: SQLITE_STATIC (0) and SQLITE_TRANSIENT (-1) pass through. A guest function: the host
+// SQLite gets release_text, which calls it (guest_call) when SQLite releases the text, as 3.13.0 would
+// (a failed bind at once, a NULL text that binds never: bindText is the same in both versions).
+std::mutex g_dtor_m;
+std::unordered_multimap<const void*, u64> g_dtors;  // text -> its guest destructor
+void release_text(void* p) {
+    u64 fn = 0;
+    {
+        std::lock_guard lk(g_dtor_m);
+        auto it = g_dtors.find(p);
+        if (it == g_dtors.end()) return;
+        fn = it->second;
+        g_dtors.erase(it);
+    }
+    guest_invoke<void>(fn, p);
+}
 int n_bind_text(sqlite3_stmt* st, int i, const char* text, int bytes, u64 destructor) {
     bool guest_fn = destructor != 0 && destructor != (u64)-1;
-    int rc = sqlite3_bind_text(st, i, text, bytes, destructor == 0 ? SQLITE_STATIC : SQLITE_TRANSIENT);
+    if (guest_fn) {
+        std::lock_guard lk(g_dtor_m);
+        g_dtors.insert({text, destructor});
+    }
+    int rc = sqlite3_bind_text(st, i, text, bytes, destructor == 0 ? SQLITE_STATIC : guest_fn ? release_text : SQLITE_TRANSIENT);
+    if (guest_fn && rc == SQLITE_OK && !text) {  // (never released)
+        std::lock_guard lk(g_dtor_m);
+        auto it = g_dtors.find(text);
+        if (it != g_dtors.end()) g_dtors.erase(it);
+    }
     if (u64 g = checking() ? map_get(shadow().stmt, st) : 0) {
+        // (the shadow binds a copy: the guest's text may be released before the shadow lets it go)
         int grc = gcall<int>(k_bind_text, g, i, text, bytes, destructor == 0 ? (u64)0 : (u64)-1);
         result(k_bind_text, rc == grc, st, "rc %d vs %d (?%d)", rc, grc, i);
     }
-    if (guest_fn) guest_invoke<void>(destructor, text);
     return rc;
 }
 

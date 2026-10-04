@@ -58,7 +58,9 @@ bool Server::init() {
     if (!open_state(path, seed_rng, "", config().data_root)) return false;
     if (pools.open(config().gacha_pools)) LOGI("server", "gacha pools %s", pools.path().c_str());
     else LOGW("server", "gacha pools (data/gacha_pools.sqlite3) not found; drawing by rarity");
-    LOGI("server", "local server state %s (master %s)%s", path.c_str(), master.c_str(), fresh ? ", seeded" : "");
+    // a new state: seeded, or no player (--new-player, or no seed save: docs/server-rules.md#seed)
+    const char* fresh_note = !fresh ? "" : st.one("select count(*) from player", {}) ? ", seeded" : ", new (no player: the new-player flow)";
+    LOGI("server", "local server state %s (master %s)%s", path.c_str(), master.c_str(), fresh_note);
     return true;
 }
 

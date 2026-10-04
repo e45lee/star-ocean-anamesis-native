@@ -223,9 +223,9 @@ NATIVE_TEST("yayoi/layout-live-network") {
     NetworkManagerThread* th = nm->m_thread;
     if (t.expect_eq(th != nullptr, true, "m_thread")) {
         const u64 vt = t.sym("_ZTVN4Aska5Yayoi20NetworkManagerThreadE");
-        t.expect_eq(*reinterpret_cast<const u64*>(th->m_thread), vt + 0x10, "thread vtable");
+        t.expect_eq((u64)th->m_thread.vtable, vt + 0x10, "thread vtable");
         t.expect_eq((u64)th->m_wakeVtable, vt + 0x48, "second base vtable (+0x48)");
-        t.expect_eq((u64)nm->m_threadId, *reinterpret_cast<const u64*>(th->m_thread + 8), "m_threadId = the thread's id");
+        t.expect_eq((u64)nm->m_threadId, th->m_thread.m_thread, "m_threadId = the thread's id");
         t.expect_eq(th->m_quit, (u8)0, "thread running");
         t.expect_eq(th->m_taskManager != nullptr, true, "the thread's TaskManager");
         t.expect_eq(t.call("_ZN4Aska5Yayoi14NetworkManager15GetNetworkEventEl", {(u64)nm, 0}), (u64)th->m_event,
@@ -239,7 +239,7 @@ NATIVE_TEST("yayoi/layout-live-network") {
     Downloader* dl = nm->m_downloader;
     if (!t.expect_eq(dl != nullptr, true, "m_downloader")) return;
     t.expect_eq((u64)dl->vtable, vtable_of(t, "_ZTVN4Aska5Yayoi10DownloaderE"), "Downloader vtable");
-    t.expect_eq(*reinterpret_cast<const u64*>(dl->m_thread), vtable_of(t, "_ZTVN4Aska5Yayoi10Downloader12WorkerThreadE"),
+    t.expect_eq((u64)dl->m_thread.vtable, vtable_of(t, "_ZTVN4Aska5Yayoi10Downloader12WorkerThreadE"),
                 "WorkerThread vtable");
     t.expect_eq(dl->m_owner, dl, "m_owner");
     t.expect_eq((u64)dl->m_listVtable, vtable_of(t, "_ZTVN4Aska5TListINS_5Yayoi10Downloader15DownloadElementEEE"), "TList vtable");

@@ -137,6 +137,11 @@ third of what it did under the JIT; guest JIT code 80.6% -> 79.8% of busy sample
 (The after runs shared the machine with other agents' sessions: more busy samples for the same flows, so
 the shares compare, the sample counts less so; fps not measured: the battle is paced by the session.)
 
+**Since yayoi's driver went native** (port/src/native/yayoi/README.md, family `yayoi_sqlite`): the driver
+calls the host SQLite directly, so these natives are reached only by guest code that still calls
+`sqlite3_*` (none in the flows) and by yayoi's live check (its shadow drivers run the guest's driver code
+over these natives). Don't switch both live checks on in one run.
+
 ## Dependencies
 
 None in the guest: the boundary's only caller is `yayoi` (`Aska::Yayoi::SQLiteDriver`, port/REBUILD-QUEUE.md

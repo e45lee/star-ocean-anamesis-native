@@ -5,3 +5,6 @@
 # (static-initializer order, D8); name this subsystem's files yayoi_*.cpp so they sort together.
 # Add here what is this subsystem's own, e.g. a host library at a clean boundary:
 #   target_link_libraries(soa PRIVATE ZLIB::ZLIB)
+# The SQLite driver's natives call the host SQLite directly (lib_sqlite's boundary: README.md "The SQLite
+# driver").
+target_link_libraries(soa PRIVATE unofficial::sqlite3::sqlite3)

@@ -32,10 +32,82 @@ the offline client keeps running.
 | `NativeHttpClient` | 0x38 | ctor | - | words only |
 | HttpProtocoledData, NetworkEvent (0x670), DNSCache, CookieManager (0x6e0), PaymentClient (0x30), Socket, TCP, THttpClient<TCP, 5>, TPeer, SSL | | | | not recovered (decompiles of HttpProtocoledData / HttpProtocol in http.c) |
 
-## Natives
+## Natives: the SQLite driver (family `yayoi_sqlite`, 51 functions)
 
-| Class::Method (guest symbol) | File | Differential tests | Live check |
-|---|---|---|---|
+`Aska::Yayoi::SQLiteDriver`, its `EntityObject` and the column map's `THashMap<char const*, int,
+StringHasher, StringEqualTo>` members, as members of the classes in [`yayoi_layout.h`](yayoi_layout.h),
+calling the **host SQLite directly** (lib_sqlite's boundary: the handles are the host objects; databases
+open on lib_sqlite's guest-path VFS so `ATTACH '<android path>'` resolves). Files:
+[`yayoi_sqlite_driver.cpp`](yayoi_sqlite_driver.cpp) (SQLiteDriver), [`yayoi_entity_object.cpp`](yayoi_entity_object.cpp)
+(EntityObject, Serialize), [`yayoi_column_map.cpp`](yayoi_column_map.cpp) (the map),
+[`yayoi_sqlite_hooks.cpp`](yayoi_sqlite_hooks.cpp) (the HostFns: Status / struct results through x8, the
+registration table), [`yayoi_sqlite_live.cpp`](yayoi_sqlite_live.cpp) (the live check),
+[`yayoi_guest.cpp`](yayoi_guest.cpp) (the guest functions still called: memory's AlignedMalloc / Free,
+TSharedPointerCode's counters, data_formats' ASON). `soa --list-native | grep "yayoi:"`.
+
+| Class::Method | Notes | Live check (4 flows) |
+|---|---|---|
+| `SQLiteDriver::SQLiteDriver` / `~SQLiteDriver` / `Open` / `DoOpen` / `Close` | DoOpen: `m_setting`'s vtable slot 0 (guest call) when no address; reopens only for another address; "BEGIN;" when requested | 8 / 4 / 8 / 1,218 / 4 |
+| `BeginTransaction` / `_BeginTransaction` / `Commit` / `Rollback` | the flags and statuses of the decompile | - / - / - / 4 |
+| `Execute` / `_Execute` / `Find` / `_Prepare` | `_Prepare` clears `m_lastParams` (so only null params skip the binds); a failing prepare closes the database; no entity: one step | 1,440 / - / 2,367 / - |
+| `EntityObject::EntityObject` / `~EntityObject` / `Release` / `ClearCache` / `CreateCacheBuffer` / `GetCacheBuffer` / `SerializeCache` | the map's constructor inlined (17 buckets from AlignedMalloc) | 2,370 / 2,367 / - |
+| `Store` / `Fetch` | Store rebuilds the map only for another statement pointer (a reused entity keeps stale keys when SQLite reuses the address: the game makes one per query) | - (inside Find) / 1,416 |
+| `GetType` (index, name) / `GetFieldLength` / `GetStringLength` / `GetTime` x2 / `GetData` x2 / `GetString` x2 / `GetTinyInt`, `GetShort`, `GetInteger`, `GetLong`, `GetFloat`, `GetDouble` (index, name) | by name: the inlined find, then operator[] (a found name can still rehash); `GetString` = `__aska_snprintf_s(out, *size, -1, "%s")` (-1 when it doesn't fit; an exact fit returns *size); `GetData` doesn't check *size | GetType(int) 1,408, GetString(int) 1,408, the rest not called |
+| `Serialize` | the rows as MessagePack through a guest ASON (Init(rows * cols * 0x80, min 0x2000, C strings), MakeAValue_Array / _Map, ASON::Malloc per string, CalcSerializedSize, Serialize into `new[]`); INTEGER -> signed int from `sqlite3_value_int` (32 bits), FLOAT -> double, TEXT and BLOB -> string, NULL -> nil | 2,359 |
+| `THashMap<char const*, int>`: `~THashMap` (D2, D0), `Emplace_`, `Insert_`, `Rehash_`, `Insert<THashMapIterator>` | growth: `FCVTPU((size + deleted + n) / maxLoad)` (rounded up) > count -> `Rehash_(2x + 1)`; Rehash_'s temporary takes this load only when > 0 (a NaN keeps 0.75: the guest's B.PL) | called only inside the family (and its shadow) |
+
+Not bound: `Aska::Yayoi::EntityCache` (19 functions: only its 12-byte constructor and a RET destructor
+run, from the connectors; a trap would cost more than the JIT's three stores) and
+`ConnectionSet::~ConnectionSet` (a 4-byte RET). symbols.tsv: `skip`.
+
+**Deviations** (none observable by the game): Serialize's index -> name table is host memory, zeroed
+(the guest's is an uninitialised 64-entry stack array, or for > 64 columns a `MemoryManager::Malloc`
+block of `Global::m_pNetworkAllocator` freed with `operator delete[]`: a mismatched free; in --selftest
+a second such allocation never returns); a duplicate column name therefore gives a nil key where the
+guest reads garbage; a text value is copied straight from `sqlite3_value_text` (the guest goes through
+a 0x100-byte buffer regrown from the network allocator: the same bytes); ASON::Malloc running out of
+memory gives `kNoMemory` (the guest returns size 0 with an uninitialised counter register).
+
+**Differential tests** (`soa --selftest yayoi/`; the guest's functions, on the guest's SQLite 3.13.0,
+vs thunks of the HostFns on the host SQLite, each side on its own objects; logs of every status,
+value and object state compared, Serialize byte for byte; [`yayoi_sqlite_test_util.h`](yayoi_sqlite_test_util.h)):
+- `yayoi/sqlite-driver-master` ([`yayoi_sqlite_driver_test.cpp`](yayoi_sqlite_driver_test.cpp)): the 3.7.0
+  master loaded the game's way through the driver (DoOpen :memory:, ATTACH, CStaticTransaction::Progress's
+  table walk, create table ... as select, DETACH), then every table whole and lib_sqlite's corpus of the
+  game's queries (lib_sqlite_master.h, 3 fills per template): Find + Serialize, then a row walk with the
+  typed getters by index (and by name every 7th / 97th row). 3,996 queries, 813,771 rows, 3,506
+  serialized (322 MB of MessagePack): equal; ~37 s.
+- `yayoi/sqlite-driver-edges` ([`yayoi_sqlite_edges_test.cpp`](yayoi_sqlite_edges_test.cpp)): a fresh
+  entity, the cache buffer, Open / DoOpen through an IDriverSetting, the transaction flags, parameter
+  counts, null params, a failing prepare, every getter on INTEGER (> 32 bits) / REAL / TEXT (empty, 300 B,
+  70 KB, UTF-8) / BLOB / NULL by index and by name with truncating buffers, a duplicate name, Serialize
+  on long texts, > 64 columns and no rows.
+- `yayoi/column-map` ([`yayoi_column_map_test.cpp`](yayoi_column_map_test.cpp)): Emplace_ into a full
+  table, Insert_, deleted buckets, Rehash_ (to 37, 5, 0 buckets; load -1, NaN), the range Insert, D2, D0.
+- `yayoi/live-check` ([`yayoi_sqlite_live_test.cpp`](yayoi_sqlite_live_test.cpp)): the shadow run itself.
+
+**Live check** (`soa --live-check yayoi_sqlite[:out=FILE]`, [`yayoi_sqlite_live.h`](yayoi_sqlite_live.h)):
+a shadow run. Every SQLiteDriver / EntityObject the game constructs gets a shadow driven by the guest's
+own code (the trampolines); each call is repeated on the shadow (the family's objects and out-buffers
+swapped for the shadow's) and the status / result, the out-values (bytes), Serialize's MessagePack and
+the objects' states (every field, every map bucket with its key text) must match. The shadow driver
+opens its own connection through lib_sqlite's natives; inside a shadow call the guest's calls to the
+family run the originals. Results (2026-10-04, the four flows of port/REBUILD-QUEUE.md, each PASS):
+**0 mismatches in 16,381 checks, 0 skipped** (login 2,067, gacha 3,249, battle 5,065, story 6,000; every
+database opened was `:memory:`). With the family native, nothing calls the guest's `sqlite3_*` any more
+outside a shadow, so lib_sqlite's own live check sees no calls (it shadows the shadow if both are on:
+don't combine them).
+
+**Guest time** (`SOA_PROFILE` 1000 Hz, login and battle side by side, main df7dfdf vs this branch
+merged with it): `yayoi` guest self 749 -> 196 samples (login 0.8% -> 0.2%, battle 0.5% -> 0.1%; what remains is
+the network code); the driver inclusive (SQLiteDriver anywhere on the stack) 1,086 -> 944 (login) and
+1,877 -> 1,617 (battle), -13%, now 77% / 85% native self (host SQLite and the natives; the rest is the
+guest ASON calls); `QueryToMsgPack` inclusive 804 -> 653 / 1,598 -> 1,317 (-19%); the master load
+(`CStaticTransaction` inclusive, ms) 3,963 -> 3,816 / 4,339 -> 3,834 (the ATTACH and table copies are
+host SQLite work either way); busy samples login 38,513 -> 38,941 (noise), battle 85,020 -> 82,290 (-3%).
+What Serialize still spends in guest code is data_formats' ASON (one MakeAValue_Map per row, two
+ASON::Malloc per string): a native ASON (data_formats) is the next step for this path.
+
 
 ## Dependencies
 
@@ -49,9 +121,9 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
 - `memory`: `Aska::TDynamicQueue<T, false>` (the Downloader's three rings); MemoryManagerAdapter::
   AlignedMalloc (the maps' buckets), MemoryManager::Malloc (URI buffers from Global::m_pNetworkAllocator).
 - `hash`: SpookyHashV2::Hash128 (the column map's StringHasher).
-- `sync` (not merged): FastCriticalSection (Downloader 0x440 / 0x4d0, DownloadContext 0x488,
-  NetworkManager 0x30, NativeHttpRequestProcessor 0x838), Thread / Event / Semaphore in the worker
-  threads: opaque sized arrays (`kFastCriticalSectionSize` ...), swap in sync's classes when merged.
+- `sync`: FastCriticalSection (Downloader 0x440 / 0x4d0, DownloadContext 0x488, NetworkManager 0x30,
+  NativeHttpRequestProcessor 0x838), Thread / Event / Semaphore in the worker threads: sync_layout.h's
+  classes embedded.
 - `kernel` (sibling, opaque here): Aska::INotify* (DownloadElement::m_notify), Aska::TaskManager*
   (NetworkManagerThread::m_taskManager), Aska::Global (m_pNetworkManager, m_pNetworkAllocator,
   m_pszDownloadContentPath).
@@ -97,6 +169,6 @@ miss: the yayoi hot spot; with lib_sqlite native its callees are host SQLite), `
 11 / 55, `SQLiteDriver::_Prepare` 3 / 757, `DoOpen` 6 / 51, the 170 `SQLiteDriver::BuildQuery<Connector>`
 instantiations (~5 each; per-connector templates: the `master` side), `NativeHttpClient::_doRequest`
 23 / 170, `THttpClient<TCP, 5>::CreateRequest` 13, `Downloader::ThreadHandler` 7 / 1,121. The driver
-family (SQLiteDriver + EntityObject: 67 functions, all decompiled in sqlite_driver.c) is small and
-self-contained: port it as one family against the host SQLite directly (lib_sqlite's README), keeping
-the statuses, the truncations and the column-map semantics (duplicate names: the last index wins).
+family is native (above, 2026-10-04); what is left of yayoi's guest time is the network code. The
+driver's callers (`master`: the 170 BuildQuery<Connector> and the connectors' QueryToMsgPack /
+QueryToResultObject) and Serialize's ASON calls (data_formats) are the next targets on this path.

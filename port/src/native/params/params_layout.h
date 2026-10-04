@@ -41,6 +41,7 @@ using AMap = data_formats::AMap;      // Aska::ASON::AValue::AMap (the parser's 
 using AArray = data_formats::AArray;  // Aska::ASON::AValue::AArray
 using AValue = data_formats::AValue;  // Aska::ASON::AValue
 using String = libcxx::String;        // the game's std::string (Framework::CSTLAllocator)
+using ASON_Pair = data_formats::ASON_Pair;  // a map entry: key, value
 
 // Framework::CHash32: the `hash` subsystem's class (hash_layout.h: {vtable, u32 m_hash}, 0x10).
 using CHash32Ref = hash::CHash32;
@@ -163,37 +164,60 @@ static_assert(sizeof(CParameterPropertyString42) == 0x40);
 
 // ---- the parser ----------------------------------------------------------------------------------------
 
+// std::pair<T, bool> as the parser returns it: a composite of at most 16 bytes, so in x0 (and x1 for an
+// 8-byte T) as if loaded from the pair in memory: the bool at bit 32 for a 4-byte T (float, int,
+// unsigned), at bit 8 for bool / unsigned char, in x1 for long / unsigned long / char*. `found` is the
+// pair's bool byte as the guest leaves it: GetValueUTiny's double case returns ((int)v | 0x100) & 0xffff,
+// so the byte is (v >> 8) | 1 there (a guest quirk, kept; every caller only tests it for zero).
+template <typename T>
+struct ParserResult {
+    T value;
+    u8 found;
+};
+
 // CParameterParser: no data, static lookups in an ASON map (port/decomp/params/parser.c;
-// ParameterParser.h asserts "apParser is null."). By key: Get*(map, char const* key) compares the keys'
-// C strings; by hash: Get*(map, u32 hash) walks the pairs and compares CHash32(key C string) with the
-// hash (string keys only), so the ASON must keep C strings (ASON::Init(size, true)). GetValue<T> returns
-// std::pair<T, bool found> (in x0 for the scalars: the bool at bit 32 for 4-byte T, bit 8 for bool / u8;
-// x8 for the string); the kind must fit T (see the RE notes in README.md).
+// ParameterParser.h asserts "apParser is null."). By key: Get*(map, char const* key) is AMap::Get_(key)
+// (the keys' C strings); by hash: Get*(map, u32 hash) is GetParserValue, which walks the pairs and
+// compares CHash32(key C string) with the hash (string keys only), so the ASON must keep C strings
+// (ASON::Init(size, true)). The kinds each getter accepts and how it converts them differ per getter
+// (README.md "The parser's kinds"); a key that is missing or of a kind it doesn't take gives {0, false}
+// (the by-key getters also build a "not found" message string and drop it: a log compiled out).
 class CParameterParser {
 public:
-    // The pair's value (&pair.value: the AValue at pair + 0x20) whose string key hashes to `hash`, or null.
+    // The pair's value (&pair.value: the AValue at pair + 0x20) whose string key hashes to `hash`, or
+    // null (also for hash 0: no scan).
     static const AValue* GetParserValue(const AMap* map, u32 hash);  // _ZN16CParameterParser14GetParserValueEPKN4Aska4ASON6AValue4AMapEj
-    static const AValue* GetValue(const AValue* v);                    // _ZN16CParameterParser8GetValueEPKN4Aska4ASON6AValueE
-    // The typed getters, each by key and by hash (_ZN16CParameterParser<n>GetValue<Type>EPKN4Aska4ASON6AValue4AMapE{PKc,j}):
-    static void GetValueString(const AMap* map, const char* key);  // (x8: std::string)
-    static void GetValueString(const AMap* map, u32 hash);
-    static float GetValueFloat(const AMap* map, const char* key);
-    static float GetValueFloat(const AMap* map, u32 hash);
-    static s32 GetValueInt(const AMap* map, const char* key);
-    static s32 GetValueInt(const AMap* map, u32 hash);
-    static u32 GetValueUInt(const AMap* map, const char* key);
-    static u32 GetValueUInt(const AMap* map, u32 hash);
-    static s64 GetValueLong(const AMap* map, const char* key);
-    static s64 GetValueLong(const AMap* map, u32 hash);
-    static u64 GetValueULong(const AMap* map, const char* key);
-    static u64 GetValueULong(const AMap* map, u32 hash);
-    static bool GetValueBool(const AMap* map, const char* key);
-    static bool GetValueBool(const AMap* map, u32 hash);
-    static u8 GetValueUTiny(const AMap* map, const char* key);
-    static u8 GetValueUTiny(const AMap* map, u32 hash);
-    // template <T> std::pair<T, bool> GetValue<T>(map, key / hash): T in float, int, unsigned, long,
-    // unsigned long, bool, unsigned char, char*, std::string (18 instantiations; named by hand in symbols.tsv).
+    // A number value as a double (kinds 2, 3, 4; 0 otherwise). _ZN16CParameterParser8GetValueEPKN4Aska4ASON6AValueE
+    static double GetValue(const AValue* v);
+
+    // By hash (_ZN16CParameterParser<n>GetValue<Type>EPKN4Aska4ASON6AValue4AMapEj; the GetValue<T>(map,
+    // unsigned) instantiations are the same code: bound to the same members).
+    static ParserResult<const char*> GetValueString(const AMap* map, u32 hash);  // the C string, "" when not found
+    static ParserResult<float> GetValueFloat(const AMap* map, u32 hash);
+    static ParserResult<s32> GetValueInt(const AMap* map, u32 hash);
+    static ParserResult<u32> GetValueUInt(const AMap* map, u32 hash);
+    static ParserResult<s64> GetValueLong(const AMap* map, u32 hash);
+    static ParserResult<u64> GetValueULong(const AMap* map, u32 hash);
+    static ParserResult<u8> GetValueBool(const AMap* map, u32 hash);  // (bool: 0 / 1 only, else not found)
+    static ParserResult<u8> GetValueUTiny(const AMap* map, u32 hash);
+    // GetValue<std::string>(map, unsigned): the pair through x8.
+    static void GetValueStdString(libcxx::pair<String, bool>* out, const AMap* map, u32 hash);
+
+    // By key (_ZN16CParameterParser<n>GetValue<Type>EPKN4Aska4ASON6AValue4AMapEPKc; the GetValue<T>(map,
+    // char const*) instantiations are 4-byte tail branches to these, or a call and a return).
+    static ParserResult<const char*> GetValueString(const AMap* map, const char* key);
+    static ParserResult<float> GetValueFloat(const AMap* map, const char* key);
+    static ParserResult<s32> GetValueInt(const AMap* map, const char* key);
+    static ParserResult<u32> GetValueUInt(const AMap* map, const char* key);
+    static ParserResult<s64> GetValueLong(const AMap* map, const char* key);
+    static ParserResult<u64> GetValueULong(const AMap* map, const char* key);
+    static ParserResult<u8> GetValueBool(const AMap* map, const char* key);
+    static ParserResult<u8> GetValueUTiny(const AMap* map, const char* key);
+    static void GetValueStdString(libcxx::pair<String, bool>* out, const AMap* map, const char* key);
 };
+using StdStringResult = libcxx::pair<String, bool>;  // GetValue<std::string>'s pair
+static_assert(sizeof(StdStringResult) == 0x20);
+static_assert(offsetof(StdStringResult, second) == 0x18);
 
 // ---- the elements and parameters -----------------------------------------------------------------------
 

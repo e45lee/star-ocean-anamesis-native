@@ -55,7 +55,7 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   RenderContextServer, RenderLayer, MaterialList (embedded in AofHandler at 0xe8, 0x230 bytes, opaque here).
 - `kernel`: `Aska::TaskManager` (ObjectManager's base) is parked here as `TaskManagerBase` until kernel types it.
 - `sync`: Thread / Event / FastCriticalSection are opaque byte arrays of their sizes (0x18 / 0x68 / 0x90).
-- `math`: render's opaque MathVector / MathMatrix.
+- `math`: render's MathVector / MathMatrix (aliases of math::Vector / Matrix since 19a4682).
 - `anim`: the models' animation (AafHandler, CAnimationBlendContainer, CAnimationModel) are anim_layout.h's.
 For render (fields of its RenderableObject that scene's code reads, not yet named there): 0x1ac s32
 (context divisor / multi-draw count), 0x1c0 s32 (contexts wanted), 0x1cc s32 (contexts used), 0x1d0

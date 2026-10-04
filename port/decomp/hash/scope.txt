@@ -1,0 +1,7 @@
+# port/decomp/hash/scope.txt: the guest functions the `hash` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Framework::CHash32::
+^Aska::Hash::
+^Aska::detail::SpookyHashV2::
+^Aska::Utf8::

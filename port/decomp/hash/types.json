@@ -1,0 +1,270 @@
+{
+ "subsystem": "hash",
+ "generated_by": "tools/subsystem.py export-types hash",
+ "header": "port/src/native/hash/hash_layout.h",
+ "structs": [
+  {
+   "name": "GuestString",
+   "union": false,
+   "fields": [],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "CHash32",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_hash",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "pad_0c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 16,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f859f8",
+     "symbol": "_ZN9Framework7CHash32C2Ev",
+     "name": "CHash32"
+    },
+    {
+     "ghidra": "0x1f85a10",
+     "symbol": "_ZN9Framework7CHash32C2EPKc",
+     "name": "CHash32"
+    },
+    {
+     "ghidra": "0x1f85a80",
+     "symbol": "_ZN9Framework7CHash32C1EPKcm",
+     "name": "CHash32"
+    },
+    {
+     "ghidra": "0x1f85acc",
+     "symbol": "_ZN9Framework7CHash32C1ERKNSt6__ndk112basic_stringIcNS1_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE",
+     "name": "CHash32"
+    },
+    {
+     "ghidra": "0x1f85b3c",
+     "symbol": "_ZN9Framework7CHash32C1Ej",
+     "name": "CHash32"
+    },
+    {
+     "ghidra": "0x1f85bc0",
+     "symbol": "_ZN9Framework7CHash32C2Ei",
+     "name": "CHash32"
+    },
+    {
+     "ghidra": "0x1f85c44",
+     "symbol": "_ZN9Framework7CHash32D2Ev",
+     "name": "~CHash32"
+    },
+    {
+     "ghidra": "0x1f85c48",
+     "symbol": "_ZN9Framework7CHash32D0Ev",
+     "name": "~CHash32"
+    },
+    {
+     "ghidra": "0x1f85c4c",
+     "symbol": "_ZNK9Framework7CHash323GetEv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x1f85c54",
+     "symbol": "_ZNK9Framework7CHash32cvjEv",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85c5c",
+     "symbol": "_ZNK9Framework7CHash32eqERKS0_",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85c70",
+     "symbol": "_ZNK9Framework7CHash32eqERKj",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85c84",
+     "symbol": "_ZNK9Framework7CHash32neERKS0_",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85c98",
+     "symbol": "_ZNK9Framework7CHash32neERKj",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85cac",
+     "symbol": "_ZNK9Framework7CHash32ltERKS0_",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85cc0",
+     "symbol": "_ZNK9Framework7CHash32gtERKS0_",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85cd4",
+     "symbol": "_ZNK9Framework7CHash32ltEPKc",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85d2c",
+     "symbol": "_ZNK9Framework7CHash32gtEPKc",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85d84",
+     "symbol": "_ZNK9Framework7CHash32ltERKj",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85d98",
+     "symbol": "_ZNK9Framework7CHash32gtERKj",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85dac",
+     "symbol": "_ZN9Framework7CHash32aSEPKc",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x1f85e20",
+     "symbol": "_ZN9Framework7CHash32aSERKNSt6__ndk112basic_stringIcNS1_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE",
+     "name": "operator"
+    }
+   ]
+  },
+  {
+   "name": "SpookyHashV2",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 192
+    },
+    {
+     "offset": 192,
+     "name": "m_state",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 96
+    },
+    {
+     "offset": 288,
+     "name": "m_length",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 296,
+     "name": "m_remainder",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 297,
+     "name": "pad_129",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 304,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x208b154",
+     "symbol": "_ZN4Aska6detail12SpookyHashV25ShortEPKvmPmS4_",
+     "name": "Short"
+    },
+    {
+     "ghidra": "0x208b5a8",
+     "symbol": "_ZN4Aska6detail12SpookyHashV27Hash128EPKvmPmS4_",
+     "name": "Hash128"
+    },
+    {
+     "ghidra": "0x208b984",
+     "symbol": "_ZN4Aska6detail12SpookyHashV23MixEPKmRmS4_S4_S4_S4_S4_S4_S4_S4_S4_S4_S4_",
+     "name": "Mix"
+    },
+    {
+     "ghidra": "0x208beb0",
+     "symbol": "_ZN4Aska6detail12SpookyHashV24InitEmm",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x208bec0",
+     "symbol": "_ZN4Aska6detail12SpookyHashV26UpdateEPKvm",
+     "name": "Update"
+    },
+    {
+     "ghidra": "0x208c168",
+     "symbol": "_ZN4Aska6detail12SpookyHashV25FinalEPmS2_",
+     "name": "Final"
+    }
+   ]
+  }
+ ]
+}

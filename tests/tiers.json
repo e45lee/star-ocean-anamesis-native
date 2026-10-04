@@ -112,7 +112,7 @@
      "cmd": "port/scripts/growth_session.sh build/port/soa {out} {tmp}", "covers": "strengthening, evolution, limit break, weapon custom (gear set, removed, purified)"},
     {"name": "session:deepspace", "tier": "T2", "secs": 325, "kind": "session", "game": 1,
      "cmd": "port/scripts/deepspace_session.sh build/port/soa {out} {tmp}", "covers": "deep-space expeditions: started, returned, collected, a quick return, two ships, achievements"},
-    {"name": "session:tower", "tier": "T2", "secs": 260, "kind": "session", "game": 1,
+    {"name": "session:tower", "tier": "T2", "secs": 260, "kind": "session", "game": 1, "area": ["port/src/native/restore/", "port/src/native/ui/cocos_node", "server/src/api/tower/", "control/soadrive/sessions/tower.py"],
      "cmd": "port/scripts/tower_session.sh build/port/soa {out} {tmp}", "covers": "the tower's floor list, a floor's battle, the next floor unlocked (--restore-tower)"},
     {"name": "session:restore", "tier": "T2", "secs": 285, "kind": "session", "game": 1,
      "cmd": "port/scripts/restore_session.sh build/port/soa {out} {tmp}", "covers": "home, a battle, a 10-draw, the server state after each"},

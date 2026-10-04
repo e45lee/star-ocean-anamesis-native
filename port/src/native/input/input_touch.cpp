@@ -56,7 +56,7 @@ void reset_checked(Cpu& c) { locked_checked<TouchPanel, &TouchPanel::ResetStatus
 void copy_checked(Cpu& c) {
     if (!live::check_due(g_copy)) return wrap_method<&TouchPanel::CopyMessages>()(c);
     live::CheckScope scope;
-    static thread_local Observation obs;
+    Observation& obs = live::thread_scratch<Observation>();
     obs.have_pre = false;
     auto* out = reinterpret_cast<const u8*>(c.x(1));
     t_obs = &obs;
@@ -70,8 +70,11 @@ void copy_checked(Cpu& c) {
     std::memcpy((void*)sh, obs.pre, sizeof(TouchPanel));
     sh->base.m_cs.m_lock = FastCriticalSection::kFree;
     sync::make_shadow_lock(sh->base.m_cs);
-    alignas(16) static thread_local TouchData scratch[kMaxMessages];
-    std::memset(scratch, 0xa5, sizeof scratch);
+    struct Out {
+        alignas(16) TouchData m[kMaxMessages];
+    };
+    TouchData* scratch = live::thread_scratch<Out>().m;
+    std::memset(scratch, 0xa5, sizeof(Out::m));
     s32 n_guest = (s32)guest_call(g_copy.orig, {(u64)sh, (u64)scratch});
     std::string why;
     if (n_guest != n) why = "count: native " + std::to_string(n) + " guest " + std::to_string(n_guest);

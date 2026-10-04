@@ -14,8 +14,11 @@ namespace {
 thread_local Observation* t_obs = nullptr;
 
 u8* shadow_object() {
-    alignas(16) static thread_local u8 buf[sizeof(TouchPanel)];
-    std::memset(buf, 0, sizeof buf);
+    struct Shadow {
+        alignas(16) u8 buf[sizeof(TouchPanel)];
+    };
+    u8* buf = live::thread_scratch<Shadow>().buf;
+    std::memset(buf, 0, sizeof(Shadow::buf));
     return buf;
 }
 

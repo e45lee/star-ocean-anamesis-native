@@ -3,6 +3,8 @@
 // interoperate with guest code using the same guest objects.
 #include <semaphore.h>
 
+#include <cstddef>
+
 #include "core/cpu.h"
 
 namespace soa {
@@ -35,5 +37,13 @@ int hle_sem_wait(u64 guest_sem);  // (EINTR retried)
 int hle_sem_trywait(u64 guest_sem);
 int hle_sem_post(u64 guest_sem);
 int hle_sem_getvalue(u64 guest_sem, int* value);
+
+// The host stack a guest thread (the HLE'd pthread_create) gets: kGuestThreadHostStack for the JIT
+// levels and thunks (~1.7 KB per nested guest_call), plus the static TLS that glibc carves out of
+// it (hle_static_tls_size: the PT_TLS segments of the modules loaded at start-up; 0 on Windows,
+// where TLS isn't on the stack). Selftest runtime/guest-thread-host-stack.
+inline constexpr size_t kGuestThreadHostStack = 256 << 10;
+size_t hle_static_tls_size();
+size_t hle_guest_thread_host_stack();
 
 }  // namespace soa

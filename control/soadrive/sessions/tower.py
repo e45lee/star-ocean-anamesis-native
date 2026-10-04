@@ -11,7 +11,8 @@ server/src/api/tower/tower.cpp, port/src/native/restore/restore_tower.cpp, docs/
 
 Every step waits for its log line, then screenshots (<out>/shots); the cleared floor in the state
 (OUT/state.txt). About 5 minutes.
-Usage: port/scripts/tower_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
+Usage: port/scripts/tower_session.sh <soa> <out-dir> <scratch-dir> [soa flags...]   (from any directory)
+The extra flags go to soa, e.g. --live-check restore (the native CCocosNode::SearchByName).
 Env: SOA_PHONE (scripts/shared-phone.sh), SEED_RNG, WATCH=1. Ends with "PASS tower_session" or
 "FAIL tower_session (N)" (exit 1).
 Targets: port-inproc (--restore-tower's client changes are the port's)."""
@@ -30,7 +31,7 @@ P5 = mission.phase(5)
 
 
 def options(ap):
-    common.port_options(ap, extra=False)
+    common.port_options(ap)
 
 
 def main(o):

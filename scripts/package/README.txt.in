@@ -135,9 +135,10 @@ The programs prepare what they need from your game files, once:
   - the game's master database is decrypted from the download's sqlite/basmaster.sqlite3 into
     the data dir's master/ folder (a few seconds). Its file name holds a hash of the source, so a
     different download is decrypted again; nothing else changes the cached copy. Without a
-    download, the APK's built-in master is used as a last resort (soa only; it is older: some
-    content is missing; a warning says so);
-  - the local CDN indexes the download (cdn/; up to a minute the first time).
+    download, the APK's built-in master is used as a last resort (it is older: some content is
+    missing; a warning says so), but the local CDN still needs the download;
+  - the local CDN indexes the download (cdn/; seconds from a fast disk, up to a minute from a
+    slow one; zipped or extracted makes no difference).
 {{IF emulator}}
   - soa-emu's client then downloads its data from soa-server (about 3 GB, a few minutes), as the
     real game did on a phone.
@@ -151,11 +152,13 @@ The program stops with a message naming the file, and where it looked, for examp
 
 {{IF port}}
   fatal: the 3.7.0 APK wasn't found (--apk FILE, ...); put the game files in <here>/game
-         (the 3.7.0 APK and the 3.7.0 download, SOA-3.7.0-canonical-data.zip extracted there): see README.txt
-  fatal: --server inproc needs the 3.7.0 download tree: give --download-dir DIR (...); put the game files in ...
+         (the 3.7.0 APK, and the 3.7.0 download: SOA-3.7.0-canonical-data.zip, zipped or extracted): see README.txt
+  fatal: --server inproc needs the 3.7.0 download: give --download PATH (a folder or
+         SOA-3.7.0-canonical-data.zip; ...); put the game files in ...
 {{ELSE}}
   soa-emu:    fatal: the 3.7.0 APK wasn't found (give --apk); put the game files in <here>/game ...
-  soa-server: E/server: no 3.7.0 master DB: give --master FILE, or --download-dir DIR ...
+  soa-server: E/server: no 3.7.0 master DB: give --master FILE, or --download-dir DIR (the 3.7.0
+              download, ...; a folder or SOA-3.7.0-canonical-data.zip), or put the game files in ...
   run-emulator: soa-server found no 3.7.0 download (see README.txt); log: .../server.log
 {{END}}
 

@@ -687,6 +687,186 @@ static_assert(offsetof(RenderThread, m_queueLock) == 0x501f0);
 static_assert(offsetof(RenderThread, unk_50280) == 0x50280);
 static_assert(sizeof(RenderThread) == 0x50298);
 
+// Aska::RenderState: a recorded list of render-state commands, replayed on the device by Apply (769 self
+// samples: the per-draw state switch). Guest size 0x18 (RenderState(): three words zeroed); layout from
+// Alloc, Reset, Release, ~RenderState, the setters and Apply (port/decomp/render/render_context.c).
+// The commands live in a block of Global::m_pRenderStatePool (Alloc(capacity)); each setter appends
+// an opcode byte and its operands (no bounds check except in the 3- and 9-byte ones) and counts it;
+// Apply walks m_count commands from m_commands, calling the RenderDeviceGL setter of each opcode.
+// Opcodes (operand bytes): 0xc8 EnableAlphaBlend (1), 0xc9 SetAlphaBlendFunction (op, separate mode),
+// 0xcb / 0xce (AlphaToCoverage) / 0xe0 skipped (1), 0xcc skipped (2), 0xcf SetTextureSamplingFilter
+// (stage, filter), 0xd0 ...MipmapFilter (stage, filter), 0xd1 ...WrapMode (stage, mode: U = V), 0xd2
+// ...WrapModeU, 0xd3 ...WrapModeV, 0xd9 ...MaxAnisotropic (stage, n), 0xdb EnableZTest (1), 0xdc
+// EnableZWrite (1), 0xdd SetZTestFunction (1), 0xde SetDepthBias (f32, f32), 0xdf SetCullMode (1),
+// 0xe2 EnableStencil (1), 0xe3 SetStencilOp / 0xe4 SetStencilOpCCW (func, fail, zfail, pass, ref, ccw
+// flag: the last byte swaps which of the two device calls is made).
+class RenderState {
+public:
+    enum Op : u8 {
+        kAlphaBlend = 0xc8, kAlphaBlendFunction = 0xc9, kAlphaToCoverage = 0xce, kSamplingFilter = 0xcf,
+        kSamplingMipmapFilter = 0xd0, kSamplingWrapMode = 0xd1, kSamplingWrapModeU = 0xd2, kSamplingWrapModeV = 0xd3,
+        kSamplingMaxAnisotropic = 0xd9, kZTest = 0xdb, kZWrite = 0xdc, kZTestFunction = 0xdd, kDepthBias = 0xde,
+        kCullMode = 0xdf, kStencil = 0xe2, kStencilOp = 0xe3, kStencilOpCCW = 0xe4,
+    };
+    void Ctor();                              // RenderState()  _ZN4Aska11RenderStateC2Ev
+    void Dtor();                              // ~RenderState(): the block back to the pool
+    bool Alloc(s32 capacity);                 // a block from Global::m_pRenderStatePool; m_cursor = m_commands
+    void Reset();                             // m_count = 0, m_cursor = m_commands
+    void Release();                           // the block back, then RenderStateManager::Return(this)
+    void SetFillMode(s32 mode);               // (no command)
+    void SetCullMode(s32 mode);
+    void EnableZTest(bool on);
+    void EnableZWrite(bool on);
+    void SetZTestFunction(s32 func);
+    void SetDepthBias(float a, float b);
+    void EnableAlphaBlend(bool on);
+    void SetAlphaBlendFunction(s32 op, s32 separate);   // AlphaBlend::Operation (< 0x11), SeparateAlphaBlendMode (< 3)
+    void EnableAlphaTest(bool on);            // (no command)
+    void SetAlphaTestFunction(s32 func, s32 ref);  // (no command)
+    void SetAlphaToCoverage(s32 mode);
+    void EnableStencil(s32 mode);             // StencilMode::Mode
+    void SetStencilOp(s32 func, s32 fail, s32 zfail, s32 pass, s32 ref, s16 mask);
+    void SetStencilOpCCW(s32 func, s32 fail, s32 zfail, s32 pass, s32 ref, s16 mask);
+    void SetTextureSamplingFilter(s32 stage, s32 filter);
+    void SetTextureSamplingMipmapFilter(s32 stage, s32 filter);
+    void SetTextureSamplingWrapMode(s32 stage, s32 mode);
+    void SetTextureSamplingWrapModeU(s32 stage, s32 mode);
+    void SetTextureSamplingWrapModeV(s32 stage, s32 mode);
+    void SetTextureSamplingMipmapLODBias(s32 stage, s32 bias);       // (no command)
+    void SetTextureSamplingTrilinearClamp(s32 stage, u32 v);         // (no command)
+    void SetTextureSamplingMaxAnisotropic(s32 stage, u32 n);
+    void SetTextureSamplingAnisotropicBias(s32 stage, s32 bias);     // (no command)
+    void Apply(void* device);                 // RenderDeviceGL* (null: g_pRenderDev)
+    static void ReadyDefaultRenderState(void* device);
+    static void RestoreDefaultRenderState(void* device);
+    // RenderState::Static::* (the device setters the opcodes map to) are free functions of the guest.
+
+    u8* m_commands;     // 0x00: the pool block (null: nothing recorded)
+    u8* m_cursor;       // 0x08: where the next command goes
+    u32 m_capacity;     // 0x10: Alloc's argument (commands)
+    u32 m_count;        // 0x14: commands recorded
+};
+static_assert(offsetof(RenderState, m_cursor) == 0x08);
+static_assert(offsetof(RenderState, m_capacity) == 0x10);
+static_assert(offsetof(RenderState, m_count) == 0x14);
+static_assert(sizeof(RenderState) == 0x18);
+
+class ShaderConstantHandler;
+class GpuResource;  // Aska::GpuResource (opaque: textures, buffers)
+
+// Aska::RenderContextBatch (: RenderContextBatchBase): one draw of a RenderContext: its textures, render
+// state and constants. Guest size 0x130 (RenderContextServer::ReallocBatch: new[] of 0x130); layout from
+// RenderContextBatch(), ApplyState, ApplyTextures, GetTexturesTextureStage, ApplyShaderConstants and
+// RenderContext::OnPaint (port/decomp/render/render_context.c). No vtable.
+class RenderContextBatch {
+public:
+    void Ctor();                                        // _ZN4Aska18RenderContextBatchC2Ev
+    void Dtor();                                        // (nothing)
+    void ApplyState();                                  // (m_stateOverride ?: m_state)->Apply(null)
+    void ApplyTextures();                               // m_textures[] -> SetTexture / RemoveTexture, m_extraTextures
+    s32 GetTexturesTextureStage(s32 n);                 // the stage of the n-th bound texture
+    void PrepairMatricies();                            // (sic; nothing)
+    void ApplyShaderConstants(u64 a, void* shaderNodeHandler);  // Base::Apply, then m_constants
+    void ApplyBase(u64 a, void* device, void* shaderNodeHandler);  // RenderContextBatchBase::Apply: m_pixelConst -> PS c20
+
+    MathVector m_pixelConst;            // 0x000: RenderContextBatchBase::Apply: pixel constant register 20
+    u8 unk_010[0x10];                   // 0x010
+    GpuResource* m_textures[16];        // 0x020: per stage (ApplyTextures: up to the device's stage count; 0 = remove)
+    GpuResource* m_extraTextures[3];    // 0x0a0: stages 0..2 again, set when non-null (vertex textures?)
+    void* m_draw;                       // 0x0b8: what is drawn (OnPaint: +0x10 its VertexBuffer)
+    RenderState* m_state;               // 0x0c0
+    RenderState* m_stateOverride;       // 0x0c8: wins over m_state when set
+    u8 unk_0d0[0x10];                   // 0x0d0
+    u64 m_primArg0;                     // 0x0e0: the draw call's arguments (OnPaint)
+    u64 m_primArg1;                     // 0x0e8
+    u8 unk_0f0[0x10];                   // 0x0f0
+    u64 unk_100;                        // 0x100: 0 at construction
+    ShaderConstantHandler* m_constants; // 0x108: ApplyShaderConstants calls its SetShaderConstant
+    u8 unk_110[2];                      // 0x110
+    u16 unk_112;                        // 0x112: 0 at construction
+    u8 m_shaderSlot;                    // 0x114: OnPaint: an index (stride 0x1b8) into the context's +0x20 table
+    u8 unk_115[0x1b];                   // 0x115
+};
+static_assert(offsetof(RenderContextBatch, m_textures) == 0x20);
+static_assert(offsetof(RenderContextBatch, m_extraTextures) == 0xa0);
+static_assert(offsetof(RenderContextBatch, m_draw) == 0xb8);
+static_assert(offsetof(RenderContextBatch, m_state) == 0xc0);
+static_assert(offsetof(RenderContextBatch, m_stateOverride) == 0xc8);
+static_assert(offsetof(RenderContextBatch, m_primArg0) == 0xe0);
+static_assert(offsetof(RenderContextBatch, m_constants) == 0x108);
+static_assert(offsetof(RenderContextBatch, unk_112) == 0x112);
+static_assert(offsetof(RenderContextBatch, m_shaderSlot) == 0x114);
+static_assert(sizeof(RenderContextBatch) == kRenderContextBatchSize);
+
+// Aska::RenderContext (: RenderContextBase): one object's draw for one pass: its batches and the per-draw
+// vertex / pixel shader constants. Guest size 0x230 (RenderContextServer::ReallocRenderContext: new[] of
+// 0x230); layout from RenderContext(), AllocBatch, GetBatchArray, OnPaint, RenderContextBase::
+// SetShaderConstant_Vertex / _Pixel / _Vertex_ForInstancing (port/decomp/render/render_context.c). No
+// vtable. The register numbers are the AHSL vertex constants (docs/render/hair-shader.md: cmWVS, cmWorld
+// [3] ...); which name goes with which register is (d).
+class RenderContext {
+public:
+    void Ctor();                                    // _ZN4Aska13RenderContextC2Ev: the matrices identity
+    void Dtor();                                    // m_batches = 0, m_batchCount = 0
+    void AllocBatch(s32 n);                         // RenderContextBase::AllocBatch: n batches from the server (atomic)
+    RenderContextBatch* GetBatchArray(s32 i);       // &m_batches[i]
+    void OnPaint();                                 // the draw (render thread): every batch's state, textures, constants, draw call
+    void PrepairMatricies();
+    void SetShaderConstant_Vertex(u64 a, void* shaderNodeHandler);   // the flags at 0x140 pick the registers below
+    void SetShaderConstant_Pixel(u64 a, void* shaderNodeHandler);    // m_pixelConst -> PS c20
+    void SetShaderConstant_Vertex_ForInstancing(u32 i);              // m_instanceMatrices[m_instanceIndex ? [i] : i] -> VS c17 (3)
+
+    RenderContextBatch* m_batches;      // 0x000: AllocBatch (GetRenderBatch from Global::m_pObjectManager's server)
+    u16 m_batchCount;                   // 0x008
+    u8 unk_00a;                         // 0x00a: flags (bit 2: instanced / screen-space draw in OnPaint; bits 5-6 cleared by AllocBatch)
+    u8 unk_00b[0x0d];                   // 0x00b
+    u64 unk_018;                        // 0x018: 0 at construction
+    void* m_shaderTable;                // 0x020: OnPaint: +8 an array of 0x1b8-byte entries (indexed by the batch's m_shaderSlot)
+    u8* m_instanceMatrices;             // 0x028: 0x40 bytes per instance (3 registers used)
+    u32* m_instanceIndex;               // 0x030: optional remap of the instance index
+    u32 m_instanceCount;                // 0x038
+    u8 m_instanceFlags;                 // 0x03c: OnPaint: instancing on (bit 0), bit 1
+    u8 unk_03d[3];                      // 0x03d
+    GpuResource* m_instanceBuffer;      // 0x040: BindInstanceVertexBuffer
+    void* m_target;                     // 0x048: OnPaint: u16 width at +0x28, height at +0x2a (the 2D projection)
+    u64 unk_050;                        // 0x050
+    u32 unk_058;                        // 0x058: 0 at construction
+    u8 unk_05c[4];                      // 0x05c
+    MathMatrix m_vc0;                   // 0x060: VS c0..c3 (identity at construction; OnPaint's 2D ortho; cmWVS most likely)
+    MathMatrix m_vc10;                  // 0x0a0: VS c10..c13 when flag bit 9
+    float m_world[12];                  // 0x0e0: VS c1..c3, a 3x4 (cmWorld most likely)
+    MathVector m_vc14;                  // 0x110: VS c14 ((0, 0, 0, 1) at construction)
+    MathVector m_pixelConst;            // 0x120: PS c20 ((1, 1, 1, 1) at construction)
+    MathVector unk_130;                 // 0x130: (0, 0, 0, 1) at construction
+    u64 m_constFlags;                   // 0x140: bit 0 c0 only, 1 c1..c3, 2, 6 screen UV, 9, 14, 15, 16 (SetShaderConstant_Vertex)
+    u8 unk_148[8];                      // 0x148
+    const MathVector* m_vc11;           // 0x150: VS c11..c13 (3) by pointer
+    u8 unk_158[0x18];                   // 0x158
+    MathMatrix m_vc9;                   // 0x170: VS c9..c11 (3 used; identity at construction)
+    u8 unk_1b0[0x10];                   // 0x1b0
+    MathMatrix m_vc15;                  // 0x1c0: VS c15..c18 (4) when flag bit 14
+    u8 unk_200[0x10];                   // 0x200
+    MathVector m_vc12[2];               // 0x210: VS c12..c13 when flag bit 16
+};
+static_assert(offsetof(RenderContext, m_batchCount) == 0x08);
+static_assert(offsetof(RenderContext, m_shaderTable) == 0x20);
+static_assert(offsetof(RenderContext, m_instanceMatrices) == 0x28);
+static_assert(offsetof(RenderContext, m_instanceCount) == 0x38);
+static_assert(offsetof(RenderContext, m_instanceFlags) == 0x3c);
+static_assert(offsetof(RenderContext, m_instanceBuffer) == 0x40);
+static_assert(offsetof(RenderContext, m_target) == 0x48);
+static_assert(offsetof(RenderContext, m_vc0) == 0x60);
+static_assert(offsetof(RenderContext, m_vc10) == 0xa0);
+static_assert(offsetof(RenderContext, m_world) == 0xe0);
+static_assert(offsetof(RenderContext, m_vc14) == 0x110);
+static_assert(offsetof(RenderContext, m_pixelConst) == 0x120);
+static_assert(offsetof(RenderContext, m_constFlags) == 0x140);
+static_assert(offsetof(RenderContext, m_vc11) == 0x150);
+static_assert(offsetof(RenderContext, m_vc9) == 0x170);
+static_assert(offsetof(RenderContext, m_vc15) == 0x1c0);
+static_assert(offsetof(RenderContext, m_vc12) == 0x210);
+static_assert(sizeof(RenderContext) == kRenderContextSize);
+
 // ==== End of section: the device ====================================================================
 
 

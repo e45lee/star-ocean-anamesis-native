@@ -270,4 +270,105 @@ NATIVE_TEST("render/layout-render-context-server") {
         return true;
     }, 20000, "RenderContextServer::GetRenderBatch");
 }
+// RenderState: a private one, its block from the guest's pool (Alloc), commands recorded by the guest's
+// setters and read back as opcode + operand bytes through m_commands / m_cursor / m_count; Reset;
+// the destructor returns the block.
+NATIVE_TEST("render/layout-render-state") {
+    RenderState rs;
+    std::memset(&rs, 0x77, sizeof rs);
+    t.call("_ZN4Aska11RenderStateC2Ev", {(u64)&rs});
+    t.expect_eq(rs.m_commands, (u8*)nullptr, "constructor: m_commands");
+    if (!t.expect_eq(t.call("_ZN4Aska11RenderState5AllocEi", {(u64)&rs, 16}) & 0xff, (u64)1, "Alloc")) return;
+    t.expect_eq(rs.m_cursor, rs.m_commands, "Alloc: m_cursor = m_commands");
+    t.expect_eq(rs.m_capacity, (u32)16, "Alloc: m_capacity");
+    t.expect_eq(rs.m_count, (u32)0, "Alloc: m_count");
+    t.call("_ZN4Aska11RenderState11SetCullModeEi", {(u64)&rs, 2});
+    t.call("_ZN4Aska11RenderState11EnableZTestEb", {(u64)&rs, 1});
+    t.call("_ZN4Aska11RenderState21SetAlphaBlendFunctionENS_10AlphaBlend9OperationENS_22SeparateAlphaBlendMode1EE", {(u64)&rs, 5, 1});
+    GuestArgs db;
+    db.i((u64)&rs);
+    db.f(0.5f);
+    db.f(-2.0f);
+    t.call("_ZN4Aska11RenderState12SetDepthBiasEff", db);
+    t.call("_ZN4Aska11RenderState12SetStencilOpEiiiiis", {(u64)&rs, 3, 1, 2, 4, 0x7f, 1});
+    const u8 want[] = {RenderState::kCullMode, 2, RenderState::kZTest, 1, RenderState::kAlphaBlendFunction, 5, 1,
+                       RenderState::kDepthBias, 0, 0, 0, 0x3f, 0, 0, 0, 0xc0, RenderState::kStencilOp, 3, 1, 2, 4, 0x7f, 1};
+    t.expect_eq(rs.m_count, (u32)5, "m_count = 5 commands");
+    t.expect_eq((u64)(rs.m_cursor - rs.m_commands), (u64)sizeof want, "m_cursor after the operands");
+    t.expect_eq(std::memcmp(rs.m_commands, want, sizeof want), 0, "the command bytes");
+    t.call("_ZN4Aska11RenderState5ResetEv", {(u64)&rs});
+    t.expect_eq(rs.m_count, (u32)0, "Reset: m_count");
+    t.expect_eq(rs.m_cursor, rs.m_commands, "Reset: m_cursor");
+    t.call("_ZN4Aska11RenderStateD1Ev", {(u64)&rs});
+    t.expect_eq(rs.m_commands, (u8*)nullptr, "destructor: the block returned");
+}
+
+// RenderContext / RenderContextBatch: private ones through their constructors (the identity matrices,
+// the zeroed batch), GetBatchArray's stride; then live: the context of an AddRenderQueue call, every
+// batch's render state a consistent RenderState and something to draw.
+NATIVE_TEST("render/layout-render-context") {
+    alignas(16) static u8 cbuf[sizeof(RenderContext)];
+    std::memset(cbuf, 0x66, sizeof cbuf);
+    auto* rc = reinterpret_cast<RenderContext*>(cbuf);
+    t.call("_ZN4Aska13RenderContextC2Ev", {(u64)rc});
+    const float ident[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    t.expect_eq(std::memcmp(rc->m_vc0.f, ident, 64), 0, "m_vc0 identity");
+    t.expect_eq(std::memcmp(rc->m_vc10.f, ident, 64), 0, "m_vc10 identity");
+    t.expect_eq(std::memcmp(rc->m_vc9.f, ident, 64), 0, "m_vc9 identity");
+    t.expect_eq(std::memcmp(rc->m_world, ident, 48), 0, "m_world 3x4 identity");
+    const float one4[4] = {1, 1, 1, 1}, w1[4] = {0, 0, 0, 1};
+    t.expect_eq(std::memcmp(rc->m_pixelConst.f, one4, 16), 0, "m_pixelConst (1, 1, 1, 1)");
+    t.expect_eq(std::memcmp(rc->m_vc14.f, w1, 16), 0, "m_vc14 (0, 0, 0, 1)");
+    t.expect_eq(rc->m_batches, (RenderContextBatch*)nullptr, "m_batches");
+    t.expect_eq(rc->m_batchCount, (u16)0, "m_batchCount");
+    rc->m_batches = reinterpret_cast<RenderContextBatch*>(0x100000);
+    t.expect_eq(t.call("_ZN4Aska13RenderContext13GetBatchArrayEi", {(u64)rc, 3}), (u64)0x100000 + 3 * sizeof(RenderContextBatch),
+                "GetBatchArray(3) = &m_batches[3]");
+    t.call("_ZN4Aska13RenderContextD2Ev", {(u64)rc});
+    t.expect_eq(rc->m_batches, (RenderContextBatch*)nullptr, "destructor: m_batches = 0");
+
+    alignas(16) static u8 bbuf[sizeof(RenderContextBatch)];
+    std::memset(bbuf, 0x66, sizeof bbuf);
+    auto* b = reinterpret_cast<RenderContextBatch*>(bbuf);
+    t.call("_ZN4Aska18RenderContextBatchC2Ev", {(u64)b});
+    bool tex0 = true;
+    for (auto* p : b->m_textures) tex0 &= p == nullptr;
+    t.expect_eq(tex0, true, "batch: m_textures zeroed");
+    t.expect_eq(b->m_state, (RenderState*)nullptr, "batch: m_state");
+    t.expect_eq(b->m_stateOverride, (RenderState*)nullptr, "batch: m_stateOverride");
+    t.expect_eq(b->m_constants, (ShaderConstantHandler*)nullptr, "batch: m_constants");
+    t.expect_eq(b->m_shaderSlot, (u8)0, "batch: m_shaderSlot");
+    t.call("_ZN4Aska18RenderContextBatch10ApplyStateEv", {(u64)b});  // both null: returns
+
+    int states = 0;
+    probe_call(t, g_probeAddRenderQueue, [&](Cpu& c) {
+        auto* ctx = reinterpret_cast<RenderContext*>(c.x(2));
+        if (!ctx || ctx->m_batchCount == 0 || !ctx->m_batches) return false;  // (a context whose AllocBatch got nothing)
+        for (int i = 0; i < ctx->m_batchCount; i++) {
+            RenderContextBatch* bt = &ctx->m_batches[i];
+            t.expect_eq(t.call("_ZN4Aska13RenderContext13GetBatchArrayEi", {(u64)ctx, (u64)i}), (u64)bt, "live GetBatchArray");
+            for (RenderState* st : {bt->m_state, bt->m_stateOverride}) {
+                if (!st) continue;
+                states++;
+                t.expect_eq(st->m_count <= st->m_capacity, true, "live RenderState: m_count <= m_capacity");
+                t.expect_eq(st->m_count == 0 || st->m_commands != nullptr, true, "live RenderState: m_commands");
+                // every recorded opcode is one Apply knows
+                const u8* p = st->m_commands;
+                bool known = true;
+                for (u32 k = 0; k < st->m_count && known; k++) {
+                    switch (p[0]) {
+                    case 0xc8: case 0xcb: case 0xce: case 0xe0: case 0xdb: case 0xdc: case 0xdd: case 0xdf: case 0xe2: p += 2; break;
+                    case 0xc9: case 0xcc: case 0xcf: case 0xd0: case 0xd1: case 0xd2: case 0xd3: case 0xd9: p += 3; break;
+                    case 0xde: p += 9; break;
+                    case 0xe3: case 0xe4: p += 7; break;
+                    default: known = false;
+                    }
+                }
+                t.expect_eq(known, true, "live RenderState: every opcode is Apply's");
+            }
+        }
+        return states > 0;
+    }, 20000, "RenderThread::AddRenderQueue (a context with a render state)");
+}
+
 }  // namespace soa::native::render

@@ -487,7 +487,8 @@ def association_note(association: Association) -> str:
     n = association.by_rule
     return (f"Banners placed by the bonus-character rule: {n[RULE_BONUS]}; released together: {n[RULE_RELEASE]}; "
             f"several candidate events (left unassociated): {n[RULE_AMBIGUOUS]}; no candidate: {n['none']} "
-            "(all banners, with or without missing files).")
+            f"(all banners, with or without missing files; {association.excluded} of the unplaced ones are not event "
+            "draws and skip rule 2).")
 
 
 def render_document(presence: Presence, guesser: Guesser, events: list[ContentItem], gachas: list[ContentItem],
@@ -520,15 +521,18 @@ def render_document(presence: Presence, guesser: Guesser, events: list[ContentIt
       "content_type 2, `master_gacha_pickup`; by `master_role.role_category_id`), and the banner opens inside one "
       "of the event's windows; several such events: those also passing (2). (2) **Released together** ((d)): "
       "the banner opens within an hour of the first window start of exactly one story event (an event with a "
-      "talk-script mission). A banner_id reused for a later release is placed by its earliest opening. "
+      "talk-script mission). Rule 2 skips banners that are not event draws ((a) the columns, (d) what they mean): "
+      "every gacha row is a step-up row (`is_stepup`), a ticket draw (not a box, `coin` 0, paid with "
+      "`ticket_item_id`) or a free limited draw (not a box, `coin` 0, no ticket, `limit_count` > 0: download "
+      "milestone and campaign \"once per person\" draws); box draws paid with event coins stay in. A banner_id reused for a later release is placed by its earliest opening. "
       + association_note(association) + "\n")
     for e in layout.events:
         write_item_section(w, guesser, e, status, 3, anchors.tag(event_anchor(e)))
         for g in layout.banners_of[e.label]:
             write_item_section(w, guesser, g, status, 4, anchors.tag(gacha_anchor(g)))
     w(f"## {anchors.tag(A_UNASSOCIATED)}Gacha banners without an event\n")
-    w("Banners that neither rule places (standard, step-up and ticket banners, reruns without an event, and "
-      "banners with several candidate events), ordered by the first row's `opened_at`.\n")
+    w("Banners that neither rule places (standard, step-up, ticket and milestone banners, reruns without an "
+      "event, and banners with several candidate events), ordered by the first row's `opened_at`.\n")
     for g in layout.unassociated:
         write_item_section(w, guesser, g, status, 3, anchors.tag(gacha_anchor(g)))
     if dangling:

@@ -9,7 +9,12 @@ what it does record; the first that gives exactly one event wins:
    (`master_event_term`, else the area's own opened_at..closed_at). Several such events: those
    that also pass rule 2; still several: unassociated.
 2. **Released together** ((d)): the banner opens within an hour of the first window start of
-   exactly one story event (an event with a mission that has a talk script).
+   exactly one story event (an event with a mission that has a talk script). Banners that are
+   not event draws are excluded from this rule (they stay unassociated unless rule 1 places
+   them; (a) the columns, (d) what they mean): every gacha row of the banner is a step-up row
+   (`is_stepup`), a ticket draw (not a box, `coin` 0, paid with `ticket_item_id`) or a free
+   limited draw (not a box, `coin` 0, no ticket, `limit_count` > 0: the download-milestone and
+   campaign "once per person" draws such as banner212). Box draws paid with event coins stay in.
 
 A banner opens at the earliest opened_at of its gacha rows. A banner_id reused for a later
 release (e.g. `banner_20180426_3001` opening on 2018-10-11) is one group and is placed by its
@@ -33,6 +38,20 @@ RULE_AMBIGUOUS = "several events"
 Window = tuple[dt.datetime, dt.datetime]
 
 
+def not_an_event_draw(row) -> bool:
+    """A step-up row, a ticket draw or a free limited (milestone / campaign) draw (see rule 2)."""
+    if row["is_stepup"]:
+        return True
+    if row["is_box"] or (row["coin"] or 0) > 0:
+        return False
+    return bool(row["ticket_item_id"]) or (row["limit_count"] or 0) > 0
+
+
+def excluded_from_release_rule(rows) -> bool:
+    """Every gacha row of the banner is not an event draw."""
+    return bool(rows) and all(not_an_event_draw(r) for r in rows)
+
+
 def parse_time(s: Optional[str]) -> Optional[dt.datetime]:
     """A master date-time (`YYYY-MM-DD hh:mm:ss`), or None."""
     try:
@@ -46,6 +65,7 @@ class Association:
     """banner key -> event label, and how many banners each rule placed."""
     event_of: dict[str, str] = field(default_factory=dict)
     by_rule: collections.Counter = field(default_factory=collections.Counter)
+    excluded: int = 0  # banners rule 2 skipped (not event draws) that rule 1 did not place
 
     def banners_of(self, event_label: str, banners: list[ContentItem]) -> list[ContentItem]:
         return [b for b in banners if self.event_of.get(b.key) == event_label]
@@ -122,7 +142,7 @@ class Associator:
         bonus = {e for e in bonus if any(a <= opening <= b for a, b in self.windows.get(e, []))}
         if len(bonus) == 1:
             return next(iter(bonus)), RULE_BONUS
-        released = self.released_with(opening)
+        released = set() if excluded_from_release_rule(rows) else self.released_with(opening)
         if bonus:
             both = bonus & released
             return (next(iter(both)), RULE_BONUS) if len(both) == 1 else (None, RULE_AMBIGUOUS)
@@ -137,8 +157,11 @@ def associate(master: MasterIndex, gachas: list[ContentItem]) -> Association:
     associator = Associator(master)
     result = Association()
     for banner in gachas:
-        event, rule = associator.event_for([rows_by_label[g.label] for g in banner.gachas])
+        rows = [rows_by_label[g.label] for g in banner.gachas]
+        event, rule = associator.event_for(rows)
         if event:
             result.event_of[banner.key] = event
+        elif excluded_from_release_rule(rows):
+            result.excluded += 1
         result.by_rule[rule or "none"] += 1
     return result

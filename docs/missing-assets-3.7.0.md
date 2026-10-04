@@ -11,7 +11,7 @@
 - [About this list](#about) (sources, names, guesses; part 2's summary)
 - [Path rules and how they were checked](#path-rules)
 - [Summary: missing file references per kind and year](#summary)
-- [Events and their gacha banners](#events): 136 events, 209 banners
+- [Events and their gacha banners](#events): 134 events, 174 banners
   - [チケットミッション — Ticket Mission](#ev-event_ticket) · 2016-01-01 · 1 missing
   - [SO1イベント(ゲレル) — SOFD Gerel Event](#ev-event_so1_01) · 2016-12-01 · 2 missing
   - [聖夜の贈り物大作戦(1) — Christmas Eve: The Great Present Plan 1](#ev-event_wel_04_01) · 2016-12-08 · 1 missing
@@ -19,7 +19,6 @@
   - [聖夜の贈り物大作戦(3) — Christmas Eve: The Great Present Plan 3](#ev-event_wel_04_03) · 2016-12-22 · 5 missing
   - [SO1イベント(ジエ・リヴォース) — Jie Revorse Event](#ev-event_so1_02) · 2016-12-22 · 2 missing
   - [大そうじの心得 — In the Spirit of Deep Cleaning](#ev-event_new_01) · 2016-12-28 · 2 missing
-    - [300万DL記念キャラガチャ(1人1回) — 3M DL Milestone Draw (1 / person)](#g-banner212) · 2016-12-28 · 2 missing
   - [ハッピーニューイヤー — Happy New Year!](#ev-event_new_02) · 2017-01-01 · 2 missing
   - [慰霊祭(1) — Memorial Service 1](#ev-event_mem_01) · 2017-01-05 · 1 missing
   - [慰霊祭(2) — Memorial Service 2](#ev-event_mem_02) · 2017-01-12 · 2 missing
@@ -39,7 +38,6 @@
   - [SO3エクスキューショナー襲来 — The Executioner Attacks](#ev-event_spo_08) · 2017-03-09 · 3 missing
     - [ピックアップガチャ(アルベル/イリア) — Albel & Ilia Campaign Draw](#g-banner239) · 2017-03-09 · 2 missing
   - [女ゴコロとひなあられ(3) — A Maiden's Mind 3](#ev-event_mik_10) · 2017-03-16 · 5 missing
-    - [400万DL記念キャラガチャ(1人1回) — 4M DL Milestone Draw (1 / person)](#g-banner240) · 2017-03-16 · 1 missing
   - [紫の経験値素材ミッション — Purple EXP Missions](#ev-event_exp_purple) · 2017-03-23 · 1 missing
   - [赤の経験値素材ミッション — Red EXP Missions](#ev-event_exp_red) · 2017-03-23 · 1 missing
   - [SO3ルシファー降臨 — Luther's Descent](#ev-event_luc_13) · 2017-03-23 · 3 missing
@@ -47,7 +45,6 @@
   - [SO3ルシファー降臨 滅級 — Luther's Descent \[Misery 2\]](#ev-event_luc_13_02) · 2017-03-30 · 1 missing
   - [エイプリルフール — April Fools!](#ev-event_apr_12) · 2017-04-01 · 2 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner244) · 2017-04-01 · 3 missing
-    - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner245) · 2017-04-01 · 3 missing
   - [続・エイプリルフール — April Fools! (Continued)](#ev-event_apr_12_02) · 2017-04-06 · 6 missing
     - [ピックアップガチャ(イヴリーシュ/ミカエル) — Evelysse & Michael Campaign Draw](#g-banner246) · 2017-04-06 · 1 missing
   - [緑の経験値素材ミッション — Green EXP Mission](#ev-event_exp_green) · 2017-04-07 · 1 missing
@@ -72,14 +69,12 @@
   - [SO4ボスイベント — SO4 Big Boss Event](#ev-event_alm_16) · 2017-05-25 · 3 missing
     - [ピックアップガチャ(エッジ/メリクル) — Edge & Meracle Campaign Draw](#g-banner273) · 2017-05-25 · 2 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner274) · 2017-05-25 · 3 missing
-    - [ピックアップ武器ガチャ(1人1回) — Weapons Campaign Draw (1 / person)](#g-banner275) · 2017-05-25 · 3 missing
   - [黄の経験値素材ミッション — Yellow EXP Missions](#ev-event_exp_yellow) · 2017-05-25 · 1 missing
   - [ウェディング妄想シナリオ — Wedding of Delusion](#ev-event_wed_20) · 2017-05-31 · 1 missing
   - [SO5アドヒジョン・アルマ戦+後日談 — SO5 Transmogrified Alma Battle & Sequel](#ev-event_arm_21) · 2017-06-29 · 8 missing
     - [ピックアップガチャ(フィオーレ/リリア) — Fiore & Relia Campaign Draw](#g-banner296) · 2017-06-29 · 3 missing
   - [水着イベント前半 — Swimsuit Summer Event Pt. 1](#ev-event_sum_22) · 2017-07-13 · 12 missing
   - [水着イベント後半 — Swimsuit Summer Event Pt. 2](#ev-event_sum_23) · 2017-07-27 · 11 missing
-    - [CM放送記念★5エース1体確定キャラガチャ(10連のみ、期間中1人1回) — TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner312) · 2017-07-27 · 2 missing
   - [副官イベント — The Ensign Event](#ev-event_mir_24) · 2017-08-10 · 8 missing
     - [ピックアップガチャ(ミラージュ/連邦アンヌ) — Mirage & Official Anne Campaign Draw](#g-banner318) · 2017-08-10 · 3 missing
   - [弓クロードイベント — The Archer Claude Event](#ev-event_cra_25) · 2017-08-24 · 5 missing
@@ -90,16 +85,11 @@
     - [ピックアップガチャ(プリシス/ベルダ) — Precis & Verda Campaign Draw](#g-banner1000) · 2017-09-14 · 2 missing
   - [-- — Final Fantasy Brave Exvius Collab (tr.)](#ev-event_ffbe_27) · 2017-09-28 · 14 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner1015) · 2017-09-28 · 4 missing
-    - [ピックアップ武器ガチャ(1人1回) — Weapons Campaign Draw (1 / person)](#g-banner1016) · 2017-09-28 · 2 missing
-    - [ラスウェル確定ガチャ — Lasswell Character Draw](#g-banner1012) · 2017-09-28 · 1 missing
     - [ピックアップガチャ(レイン/フィーナ) — Rain & Fina Campaign Draw](#g-banner1013) · 2017-09-28 · 4 missing
-    - [★5エース確定キャラガチャ(10連、期間中1人1回) — 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner1014) · 2017-09-28 · 2 missing
   - [アカデミー時代イベント — Academy Days Event](#ev-event_aca_28) · 2017-10-12 · 9 missing
     - [ピックアップガチャ(クロウ/連邦エッジ/連邦レイミ) — Crowe & Official Edge & Official Reimi Campaign Draw](#g-banner1023) · 2017-10-12 · 4 missing
-    - [SO2キャラピックアップガチャ(期間中3回) — SO2 Characters Campaign Draw (3 times while available)](#g-banner1024) · 2017-10-12 · 5 missing
   - [ハロウィンイベント — Halloween Fun](#ev-event_hall_29) · 2017-10-26 · 13 missing
     - [ピックアップ(悪魔クレア/吸血鬼ヴィクトル/狼ミリー) — Campaign Draw (Devil Clair/Vampire Victor/Were-Mille)](#g-banner1031) · 2017-10-26 · 3 missing
-    - [SO4キャラピックアップガチャ(期間中3回) — SO4 Characters Campaign Draw (3 times while available)](#g-banner1032) · 2017-10-26 · 5 missing
   - [チケットミッション — Ticket Mission](#ev-event_ticket_02) · 2017-10-26 · 1 missing
     - [復刻ピックアップ(桜花のマリア/桜雲のディアス) — Rerun Campaign Draw (Blossom Maria & Blossom Dias)](#g-banner_20190404_1001) · 2019-04-04 · 4 missing
   - [UDイベント — UD Event (tr.)](#ev-event_ud1_30) · 2017-11-16 · 16 missing
@@ -113,14 +103,9 @@
     - [戦乙女(VPイベント)ボックスガチャ4箱目 — VP Event Box Draw - Box 4](#g-banner1107) · 2017-12-28 · 3 missing
     - [ピックアップキャラガチャ(蒼穹のレナス/フレイ) — Azure Lenneth & Freya Character Campaign Draw](#g-banner1108) · 2017-12-28 · 3 missing
     - [【復刻】ピックアップキャラガチャ(レナス/シルメリア) — Rerun: Lenneth & Silmeria Character Campaign Draw](#g-banner1109) · 2017-12-28 · 5 missing
-    - [10連で★5エース1体確定キャラガチャ(1人1回) — One 5★ Ace Character Guaranteed with 10-chain (1 / person)](#g-banner1110) · 2017-12-28 · 2 missing
     - [定常武器ガチャ【近接】【ナックル/双剣/剣&鞘/鎌】 — Standard Weapons Draw \[Melee\] \[Knuckles / Twin Swords / Sword & Sheath / Scythe\]](#g-banner1124) · 2017-12-28 · 1 missing
   - [VPイベント Bパート — VP Event, Part B](#ev-event_ren_33_02) · 2018-01-11 · 13 missing
     - [ピックアップキャラガチャ(アーリィ/アリューゼ) — Hrist & Arngrim Character Campaign Draw](#g-banner1111) · 2018-01-11 · 3 missing
-    - [ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1118) · 2018-01-11 · 4 missing
-    - [ステップ3で★5武器確定ガチャ2(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1119) · 2018-01-11 · 4 missing
-    - [ステップ3で★5武器確定ガチャ3(10連★5新武器確定) — Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1120) · 2018-01-11 · 4 missing
-    - [ピックアップ武器ガチャ(10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1121) · 2018-01-11 · 3 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner1122) · 2018-01-11 · 3 missing
   - [VPイベント Cパート — VP Event, Part C](#ev-event_ren_33_03) · 2018-01-18 · 24 missing
     - [ピックアップキャラガチャ(レザード/メルティーナ) — Lezard & Mystina Character Campaign Draw](#g-banner1125) · 2018-01-18 · 3 missing
@@ -129,13 +114,11 @@
     - [ピックアップキャラガチャ(イヴリーシュ) — Evelysse Character Campaign Draw](#g-banner1132) · 2018-01-31 · 3 missing
   - [シウスイベント — Cyuss Event](#ev-event_sius_35) · 2018-02-15 · 9 missing
     - [ピックアップキャラガチャ(赤麗のフィア/シウス) — Crimson Phia & Cyuss Character Campaign Draw](#g-banner1144) · 2018-02-15 · 3 missing
-    - [600万DL記念武器ガチャ(期間中1日1回) — 6M DL Milestone Weapons Draw (1 / day while available)](#g-banner1155) · 2018-02-15 · 2 missing
   - [マリアディアスイベント — Maria and Dias Event](#ev-event_mar_37) · 2018-03-15 · 12 missing
     - [ピックアップキャラガチャ(桜花のマリア/桜雲のディアス) — Blossom Maria & Blossom Dias Character Campaign Draw](#g-banner1165) · 2018-03-15 · 3 missing
   - [メイドネルクレアイベント — Master Must Be Punished](#ev-event_maid_39) · 2018-03-29 · 7 missing
     - [ピックアップキャラガチャ(メイドのネル/メイドのクレア) — Maid Nel & Maid Clair Character Campaign Draw](#g-banner1171) · 2018-03-29 · 3 missing
     - [ピックアップキャラガチャ(マリア) — Maria Character Campaign Draw](#g-banner1172) · 2018-03-29 · 3 missing
-    - [新生活応援フェス(10連のみ、期間中1人1回) — New Life Support Fest (10-chain only, 1 / person)](#g-banner1177) · 2018-03-29 · 2 missing
   - [エイプリルフール2018 — April Fools' 2018](#ev-event_afl_40) · 2018-04-01 · 3 missing
   - [オペラアルベルイベント — Love Across the Stars](#ev-event_ope_41) · 2018-04-12 · 8 missing
     - [ピックアップキャラガチャ(オペラ/黒将アルベル) — Opera & Dark Albel Character Campaign Draw](#g-banner_20180412_1001) · 2018-04-12 · 3 missing
@@ -167,7 +150,6 @@
   - [ユーインBSオペライベント — Yrian & BS Opera Event (tr.)](#ev-event_yuin_52) · 2018-09-13 · 8 missing
     - [ピックアップキャラガチャ(ユーイン/紅輝のオペラ) — Yrian & Crimson Opera Character Campaign Draw](#g-banner_20180913_1001) · 2018-09-13 · 2 missing
     - [ピックアップキャラガチャ(リムル) — Lymle Character Campaign Draw](#g-banner_20180913_1002) · 2018-09-13 · 2 missing
-    - [ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180913_2001) · 2018-09-13 · 8 missing
   - [カジノイベント — Casino Event](#ev-event_casino_53) · 2018-09-27 · 7 missing
     - [ピックアップキャラガチャ(兎耳のマリア/兎耳のミラージュ) — Bunny Maria & Bunny Mirage Character Campaign Draw](#g-banner_20180927_1001) · 2018-09-27 · 2 missing
     - [ピックアップキャラガチャ(クリフ) — Cliff Character Campaign Draw](#g-banner_20180927_1002) · 2018-09-27 · 2 missing
@@ -184,7 +166,6 @@
     - [ハロウィンボックスガチャ4箱目(∞) — Halloween Box Draw - Box 4 (∞)](#g-banner1043) · 2018-10-25 · 3 missing
     - [ピックアップキャラガチャ(堕天使ネル/狼アルベル) — Angel Nel & Were-Albel Character Campaign Draw](#g-banner_20181025_1001) · 2018-10-25 · 3 missing
     - [復刻ピックアップ(悪魔クレア/狼ミリー/吸血鬼ヴィクトル) — Rerun Campaign Draw (Devil Clair & Were-Millie & Vampire Victor)](#g-banner_20181025_1003) · 2018-10-25 · 5 missing
-    - [ピックアップキャラガチャ(堕天使ネル/狼アルベル) — Angel Nel & Were-Albel Character Campaign Draw](#g-banner_20181025_1004) · 2018-10-25 · 3 missing
   - [覇級イベント — Misery 4 Event](#ev-event_max_38) · 2018-10-25 · 7 missing
   - [エイルマットカーリンイベント — Arumat & Caleen Event](#ev-event_aru_56) · 2018-11-15 · 8 missing
     - [ピックアップキャラガチャ(エイルマット/カーリン) — Arumat & Caleen Character Campaign Draw](#g-banner_20181115_1001) · 2018-11-15 · 2 missing
@@ -193,18 +174,13 @@
   - [クリスマス2018イベント — Christmas 2018 Event](#ev-event_Xmas_57) · 2018-12-13 · 12 missing
     - [ピックアップガチャ(雪花レナ/聖夜クレア/雪空アシュトン) — Winter Rena & Holiday Clair & Holiday Ashton Campaign Draw](#g-banner_20181213_1001) · 2018-12-13 · 4 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner_20181213_2001) · 2018-12-13 · 4 missing
-    - [ピックアップ武器ガチャ (10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181213_2002) · 2018-12-13 · 4 missing
-    - [ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181213_2003) · 2018-12-13 · 5 missing
   - [逆襲の三巨頭 — Revenge Comes in Threes](#ev-event_BossRush_33) · 2018-12-27 · 1 missing
   - [-- — NieR:Automata Collab (tr.)](#ev-event_nier_36) · 2018-12-27 · 13 missing
   - [クリスマスイベント — Christmas Event](#ev-event_xmas_31) · 2018-12-27 · 13 missing
   - [-- — Sakura Wars Collab (tr.)](#ev-event_sak_60) · 2019-01-17 · 15 missing
     - [復刻ピックアップキャラガチャ(2B/9S/A2) — Rerun: 2B & 9S & A2 Character Campaign Draw](#g-banner_20181227_1001) · 2019-01-17 · 1 missing
-    - [ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181227_2001) · 2019-01-17 · 5 missing
     - [ピックアップキャラガチャ(さくら/エリカ/ジェミニ) — Sakura & Erica & Gemini Character Campaign Draw](#g-banner_20190117_1001) · 2019-01-17 · 4 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner_20190117_2001) · 2019-01-17 · 4 missing
-    - [ピックアップ武器ガチャ (10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20190117_2002) · 2019-01-17 · 4 missing
-    - [ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190117_2003) · 2019-01-17 · 5 missing
     - [復刻サクラ大戦ピックアップキャラガチャ — Rerun: Sakura Wars Character Campaign Draw](#g-banner_20200319_1001) · 2020-03-19 · 4 missing
   - [バレンタイン2019イベント — Valentine 2019 Event](#ev-event_valentine_61) · 2019-02-01 · 9 missing
     - [贈り物に込めた想いボックスガチャ1箱目 — A Package Sent with Love - Box 1](#g-banner1133) · 2019-02-01 · 2 missing
@@ -220,8 +196,6 @@
   - [-- — Attack on Titan Collab (tr.)](#ev-event_shingeki_63) · 2019-02-28 · 18 missing
     - [ピックアップキャラガチャ(ミカサ/リヴァイ) — Mikasa & Levi Character Campaign Draw](#g-banner_20190228_1001) · 2019-02-28 · 3 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner_20190228_2001) · 2019-02-28 · 3 missing
-    - [ピックアップ武器ガチャ (10連のみ、期間中1人2回) — Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190228_2002) · 2019-02-28 · 4 missing
-    - [ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190228_2003) · 2019-02-28 · 4 missing
   - [エイプリルフール2019 — April Fools' 2019](#ev-event_afl2019_65) · 2019-04-01 · 5 missing
     - [「SHIMA OCEAN -FAKE JAGA-」(エイプリルフールシマダボックスガチャ) — "SHIMA OCEAN -FAKE JAGA-" (April Fools' Shimada Box Draw)](#g-banner_20190328_3001) · 2019-04-01 · 2 missing
   - [大人ティカ・リカルドイベント — Adult Tika & Ricardo Event](#ev-event_tic_67) · 2019-04-11 · 8 missing
@@ -237,9 +211,6 @@
     - [ピックアップキャラガチャ(ソル/エルフェルト) — Sol & Elphelt Character Campaign Draw](#g-banner_20190425_1001) · 2019-04-25 · 3 missing
     - [覚醒キャラピックアップガチャ(レイミ/ソフィア/アンヌ) — Awakened Character Campaign Draw (Reimi & Sophia & Anne)](#g-banner_20190425_1002) · 2019-04-25 · 2 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner_20190425_2001) · 2019-04-25 · 3 missing
-    - [ピックアップ武器ガチャ (10連のみ、期間中1人2回) — Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190425_2002) · 2019-04-25 · 3 missing
-    - [ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190425_2003) · 2019-04-25 · 4 missing
-    - [GWキャンペーン 1人10回10連無料武器ガチャ — Golden Week Campaign Free 10-pull Weapons Draw (10 per person)](#g-banner_20190501_2001) · 2019-04-25 · 1 missing
     - [復刻ギルティギアコラボピックアップキャラガチャ(ソル/エルフェルト) — Rerun: Guilty Gear Collab Sol & Elphelt Character Campaign Draw](#g-banner_20210121_1003) · 2021-01-21 · 3 missing
   - [覇王の挑戦 — The Conqueror's Challenge (tr.)](#ev-event_OverRoad) · 2019-05-01 · 1 missing
   - [スフレノエルイベント — Peppita & Noel Event](#ev-event_Souffle_68) · 2019-05-09 · 9 missing
@@ -282,7 +253,6 @@
     - [スーパーピックアップキャラガチャ(鳴上 悠) — Yu Narukami Super Character Campaign Draw](#g-banner_20191010_1003) · 2019-10-10 · 2 missing
     - [スーパーピックアップキャラガチャ(ジョーカー) — Joker Super Character Campaign Draw](#g-banner_20191010_1004) · 2019-10-10 · 2 missing
     - [【復刻】ピックアップキャラガチャ 2017ハロウィン — Rerun: Halloween 2017 Character Campaign Draw](#g-banner_20191010_1005) · 2019-10-10 · 4 missing
-    - [カムバックチケットキャラガチャ — Comeback Ticket Character Draw](#g-banner_20191010_1006) · 2019-10-10 · 2 missing
   - [-- — Persona Collab "Siren's Lament", Part 2 (tr.)](#ev-event_PSNC2_82) · 2019-10-24 · 17 missing
     - [ピックアップキャラガチャ(芳澤かすみ/ナビ/鏡宮のレナ) — Kasumi Yoshizawa & Navi (Oracle) & Mirror Palace Rena Character Campaign Draw (tr.)](#g-banner_20191024_1001) · 2019-10-24 · 4 missing
     - [スーパーピックアップキャラガチャ(芳澤かすみ) — Kasumi Yoshizawa Super Character Campaign Draw](#g-banner_20191024_1002) · 2019-10-24 · 2 missing
@@ -292,7 +262,6 @@
   - [3周年イベント — 3rd Anniversary Event](#ev-event_3year_85) · 2019-11-28 · 16 missing
     - [ピックアップキャラガチャ(円舞曲のティカ/輪舞曲のベルダ) — Waltz Tika & Rondo Verda Character Campaign Draw](#g-banner_20191128_1001) · 2019-11-28 · 3 missing
     - [復刻アイドル2019ピックアップキャラガチャ — Rerun: Idol 2019 Character Campaign Draw](#g-banner_20191128_1003) · 2019-11-28 · 1 missing
-    - [3周年記念大還元ガチャ — 3rd Anniversary Grand Thanksgiving Draw](#g-banner_20191128_1004) · 2019-11-28 · 2 missing
     - [復刻2019アニバーサリー/10連10ステップ目PU1体確定 — Rerun: 2019 Anniversary Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20201119_1001) · 2020-11-19 · 3 missing
   - [神級イベント — Divine-tier Event](#ev-event_god_86) · 2019-11-28 · 7 missing
   - [クリスマスイベント2019 — Christmas Event 2019](#ev-event_Xmas3_84) · 2019-12-12 · 12 missing
@@ -337,10 +306,6 @@
   - [EP3CP3イベントミッション — EP3 Chapter 3 Event Missions](#ev-event_EP3CP3) · 2020-08-27 · 1 missing
   - [ハロウィン2019(童話イベント) — Halloween 2019 (Fairy-Tale Event)](#ev-event_FT2019_83) · 2020-11-05 · 15 missing
     - [復刻おとぎ世界/10連10ステップ目PU1体確定 — Rerun: Fairy-Tale World Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20201105_1001) · 2020-11-05 · 4 missing
-  - [4周年イベント — 4 AnniversaryEvent](#ev-event_4year_95) · 2020-11-26 · 0 missing
-    - [4周年記念ガチャ — 4th Anniversary Draw](#g-banner_20201126_1002) · 2020-11-26 · 2 missing
-  - [忘却の聖地ワドラム第7弾 — 忘却 聖地ワドラムPart 7 (tr.)](#ev-event_Memory_07) · 2021-01-14 · 0 missing
-    - [復刻SRF/10連10ステップ目PU1体確定 — Rerun: SRF Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210114_1003) · 2021-01-14 · 1 missing
   - [忘却の聖地ワドラム第8弾 — 忘却 聖地ワドラムPart 8 (tr.)](#ev-event_Memory_08) · 2021-02-10 · 0 missing
     - [ピックアップキャラガチャ(粛清のフレイ/フレイア) — Purging Freya & Frei Character Campaign Draw](#g-banner_20210210_1001) · 2021-02-10 · 3 missing
     - [復刻VP ピックアップキャラガチャ(アリーシャ/ルーファス) — Rerun: VP Alicia & Rufus Character Campaign Draw](#g-banner_20210210_1002) · 2021-02-10 · 3 missing
@@ -351,19 +316,17 @@
     - [ピックアップキャラガチャ(ジャンヌ/ジヴェレーゼ) — Jeanne & Jivreth Character Campaign Draw](#g-banner_20210225_1001) · 2021-02-25 · 3 missing
   - [忘却の聖地ワドラム第10弾 — 忘却 聖地ワドラムPart 10 (tr.)](#ev-event_Memory_10) · 2021-04-08 · 0 missing
     - [ピックアップキャラガチャ(ロジャー/ティニーク) — Roger & T'nique Character Campaign Draw](#g-banner_20210408_1001) · 2021-04-08 · 4 missing
-    - [復刻狐将/砲甲2020/10連10ステップ目PU1体確定 — Rerun: General / Artillery 2020 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210408_1002) · 2021-04-08 · 1 missing
-    - [復刻鬼炎/斬鬼2020/10連10ステップ目PU1体確定 — Rerun: Demon Flame / Demon Blade 2020 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210408_1003) · 2021-04-08 · 1 missing
     - [ピックアップ武器ガチャ — Weapons Campaign Draw](#g-banner_20210408_2001) · 2021-04-08 · 4 missing
   - [忘却の聖地ワドラム最終刻 — Wadram, Sanctuary of Oblivion: Final Hour (tr.)](#ev-event_Memory_Last) · 2021-04-22 · 14 missing
   - [覇級イベント — Misery 4 Event](#ev-event_Sphere211_01) · undated · 1 missing
   - [コロリンピック — Koro-lympics](#ev-event_kororin2018) · undated · 1 missing
-- [Gacha banners without an event](#unassociated-banners): 508 banners
-  - 2016: [Weapons Draw](#g-banner202), [5★ Character Ticket](#g-banner205), [5★ Weapon Ticket](#g-banner209), [5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner1072), [2M DL Milestone Draw (1 / person)](#g-banner210), [Campaign Draws](#g-banner211)
-  - 2017: [Campaign Draws](#g-banner213), [Daily Weapons Campaign Draw: One-handed Swords](#g-banner214), [Daily Weapons Campaign Draw: Staffs](#g-banner215), [Daily Weapons Campaign Draw: Sword & Sheaths](#g-banner216), [Daily Weapons Campaign Draw: Guns and Bows](#g-banner217), [Daily Weapons Campaign Draw: Daggers](#g-banner218), [Daily Weapons Campaign Draw: Knuckles](#g-banner219), [Daily Weapons Campaign Draw: One-handed Swords](#g-banner220), [Daily Weapons Campaign Draw: Staffs](#g-banner221), [Daily Weapons Campaign Draw: Sword & Sheaths](#g-banner222), [Daily Weapons Campaign Draw: Guns and Bows](#g-banner223), [Daily Weapons Campaign Draw: Daggers](#g-banner224), [Daily Weapons Campaign Draw: Knuckles](#g-banner225), [Campaign Draws](#g-banner234), [Campaign Draws](#g-banner235), [Campaign Draws](#g-banner236), [Weapons Campaign Draw](#g-banner238), [Popular Characters Draw](#g-banner241), [Popular Characters Draw](#g-banner242), [Maria & Cliff Campaign Draw](#g-banner247), [Leanne Campaign Draw](#g-banner254), [Weapons Campaign Draw](#g-banner256), [Weapons Campaign Draw](#g-banner257), [Golden Week Special Campaign Draw (1 / day)](#g-banner258), [Golden Week Special Campaign Draw (1 / day)](#g-banner259), [Golden Week Special Campaign Draw (1 / day)](#g-banner260), [Golden Week Special Campaign Draw (1 / day)](#g-banner261), [Golden Week Special Campaign Draw (1 / day)](#g-banner262), [Golden Week Special Campaign Draw (1 / day)](#g-banner263), [Golden Week Special Campaign Draw (1 / day)](#g-banner264), [Girls' Campaign Draw (1 / day)](#g-banner266), [Girls' Campaign Draw (1 / day)](#g-banner267), [Girls' Campaign Draw (1 / day)](#g-banner268), [Girls' Campaign Draw (1 / day)](#g-banner269), [Leanne Campaign Draw](#g-banner255), [Girls' Campaign Draw (1 / day)](#g-banner270), [Girls' Campaign Draw (1 / day)](#g-banner271), [Girls' Campaign Draw (1 / day)](#g-banner272), [TV Commercial Celebration Character Draw (1 / person)](#g-banner282), [June Bride Campaign Draw (Nel & Maria)](#g-banner283), [Weapons Campaign Draw](#g-banner286), [Weapons Campaign Draw (1 / person)](#g-banner287), [5M DL Milestone Character Draw (1 / person)](#g-banner289), [TV Commercial Celebration Character Draw (1 / day)](#g-banner290), [June Bride Campaign Draw (Rena & Evelysse)](#g-banner291), [TV Commercial Celebration Weapons Draw (1 / day)](#g-banner292), [Day 200 Milestone Character Draw (1 / day)](#g-banner293), [Weapons Campaign Draw](#g-banner294), [Weapons Campaign Draw (1 / person)](#g-banner295), [Invoker Guaranteed Campaign Draw (1 / day)](#g-banner297), [Melee Weapons Draw](#g-banner298), [Standard Weapons Draw \[Ranged\]](#g-banner299), [Weapons Campaign Draw](#g-banner301), [Weapons Campaign Draw (1 / person)](#g-banner302), [Roddick& Millie SO1 Release Anniversary Character Draw](#g-banner304), [Weapons Campaign Draw](#g-banner307), [Weapons Campaign Draw (1 / day)](#g-banner308), [Weapons Campaign Draw (1 / day)](#g-banner309), [SO2 Release Anniversary Character Draw (Claude or Rena guaranteed)](#g-banner311), [Weapons Campaign Draw](#g-banner313), [Weapons Campaign Draw (1 / person)](#g-banner314), [Popular Characters Campaign Draw (1 / day while available)](#g-banner319), [Weapons Campaign Draw](#g-banner322), [Weapons Campaign Draw (1 / person)](#g-banner323), [Weapons Campaign Draw](#g-banner326), [Weapons Campaign Draw (1 / person)](#g-banner327), [Elemental Weapons Campaign Draw (1 / day)](#g-banner1001), [Weapons Campaign Draw](#g-banner1009), [Weapons Campaign Draw (1 / person)](#g-banner1010), [Elemental Weapons Campaign Draw (1 / day)](#g-banner1011), [Weapons Campaign Draw (1 / person)](#g-banner1017), [SO1 Characters Campaign Draw (3 times while available)](#g-banner1018), [Weapons Campaign Draw (4★+ with 10-chain)](#g-banner1021), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1022), [One 5★+ Guaranteed Character Draw (1 / day)](#g-banner1019), [SO4 HD Announcement Draw: Edge or Reimi Guaranteed (1 / person)](#g-banner1020), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1025), [SO3 Characters Campaign Draw (3 times while available)](#g-banner1027), [Weapons Campaign Draw (4★+ with 10-chain)](#g-banner1029), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1030), [Rain & Fina Campaign Draw](#g-banner1026), [One 5★+ Guaranteed Character Draw (1 / day)](#g-banner1028), [SO5 Characters Campaign Draw (3 times while available)](#g-banner1033), [One 5★+ Guaranteed Character Draw](#g-banner1034), [Weapons Campaign Draw](#g-banner1035), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1036), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1037), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1038), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1039), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1044), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1045), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ light-affinity weapon with 10-chain)](#g-banner1046), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner1047), [Step Character Campaign Draw 2 (Odds to win 5★ Character 10% up for 1 slot)](#g-banner1048), [Step Character Campaign Draw 3 (Odds to win 5★ Character 15% up for 1 slot)](#g-banner1049), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1050), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1051), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ fire-affinity weapon with 10-chain)](#g-banner1052), [Step-up Sigmund Draw 1 (10-chain for 2,500 gems)](#g-banner1054), [Step-up Sigmund Draw 2 (10-chain only, 1 slot 2%)](#g-banner1055), [Step-up Sigmund Draw 3 (10-chain only, 1 slot 3%)](#g-banner1056), [Sigmund Campaign Draw](#g-banner1057), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1059), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1060), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1061), [Weapons Campaign Draw](#g-banner1062), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1063), [One 5★+ Guaranteed Character Draw (3 times while available)](#g-banner1058), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner1069), [Step Character Campaign Draw 2 (Odds to win 5★ Character 10% up for 1 slot)](#g-banner1070), [Step Character Campaign Draw 3 (Odds to win 5★ Character 15% up for 1 slot)](#g-banner1071), [Roddick Guaranteed Draw](#g-banner1073), [Mavelle Guaranteed Draw](#g-banner1074), [Ashton Guaranteed Draw](#g-banner1075), [Precis Guaranteed Draw](#g-banner1076), [Mirage Guaranteed Draw](#g-banner1077), [Albel Guaranteed Draw](#g-banner1078), [Crowe Guaranteed Draw](#g-banner1079), [Official Reimi Guaranteed Draw](#g-banner1080), [Fiore Guaranteed Draw](#g-banner1081), [Relia Guaranteed Draw](#g-banner1082), [Step Weapons Campaign Draw 1 (4★+ with 10-chain)](#g-banner1085), [Step Weapons Campaign Draw 2 (4★+ with 10-chain)](#g-banner1086), [Step Weapons Campaign Draw 3 (5★ with 10-chain)](#g-banner1087), [Weapons Campaign Draw](#g-banner1088), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1089), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1090), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1091), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ ice-affinity weapon with 10-chain)](#g-banner1092), [Christmas Character Campaign Draw](#g-banner1093), [Fidel Campaign Draw](#g-banner1097), [Christmas Character Campaign Draw](#g-banner1098), [Ice Character Campaign Draw 1](#g-banner1094), [Ice Character Campaign Draw 2](#g-banner1095), [Ice Character Campaign Draw 3](#g-banner1096), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1099), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1100), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1101), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1102), [Weapons Campaign Draw](#g-banner1103)
-  - 2018: [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1113), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1114), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1115), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1116), [Weapons Campaign Draw](#g-banner1117), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1126), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1127), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1128), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1129), [Weapons Campaign Draw](#g-banner1130), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1136), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1137), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1138), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1139), [Weapons Campaign Draw](#g-banner1140), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1141), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1142), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ ice-affinity weapon with 10-chain)](#g-banner1143), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner1145), [Step Character Campaign Draw 2 (5★ odds 12% for 1 slot of the 10-chain)](#g-banner1146), [Step Character Campaign Draw 3 (5★ odds 18% for 1 slot of the 10-chain)](#g-banner1147), [Star Ocean 4 Release Anniversary Character Campaign Draw](#g-banner1148), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1150), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1151), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1152), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1153), [Weapons Campaign Draw](#g-banner1154), [Star Ocean 3 Release Anniversary Character Campaign Draw](#g-banner1149), [2B/9S/A2 Campaign Draw](#g-banner1156), [Dias Character Campaign Draw](#g-banner1157), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1162), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1163), [Weapons Campaign Draw](#g-banner1164), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1166), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1169), [Weapons Campaign Draw](#g-banner1170), [Star Ocean 5 Release Anniversary Character Campaign Draw](#g-banner1173), [Weapons Campaign Draw](#g-banner_20180405_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180405_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180405_2003), [Edge & Celine & Millie Character Campaign Draw](#g-banner_20180419_1001), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner_20180419_1002), [Weapons Campaign Draw](#g-banner_20180419_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180419_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180419_2003), [Weapons Campaign Draw](#g-banner_20180426_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180426_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180426_2003), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner_20180510_1001), [Step 3: 5★ Guaranteed Weapons Draw 1 (half price: 10-chain for 1,500 gems)](#g-banner_20180510_2001), [5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner_20180524_1001), [Weapons Campaign Draw](#g-banner_20180524_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180524_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180524_2003), [Weapons Campaign Draw](#g-banner_20180607_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180607_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180607_2003), [Weapons Campaign Draw](#g-banner_20180621_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180621_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180621_2003), [Weapons Campaign Draw](#g-banner_20180705_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180705_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180705_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (half price: 10-chain for 1,500 gems)](#g-banner_20180712_2001), [Roddick& Millie SO1 Release Anniversary Character Draw](#g-banner_20180712_1003), [EP2 Release Character Campaign Draw](#g-banner_20180719_1001), [Weapons Campaign Draw](#g-banner_20180719_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180719_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180719_2003), [Seaside Maria & Seaside Millie Character Campaign Draw](#g-banner_20180726_1001), [Claude Character Campaign Draw](#g-banner_20180726_1002), [5★ Ace Guaranteed Character Draw, Part 1 (10-chain only, 1 / person)](#g-banner_20180726_1003), [SO2 Release Anniversary Character Draw (Claude or Rena guaranteed)](#g-banner_20180726_1004), [Summer Character Campaign Draw](#g-banner_20180726_1005), ["The Broken Ruler and the Captive Queen" Summer Event Part 2 - Box Draw 1](#g-banner_20180726_3004), ["The Broken Ruler and the Captive Queen" Summer Event Part 2 - Box Draw 2](#g-banner_20180726_3005), [Weapons Campaign Draw](#g-banner_20180726_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180726_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180726_2003), [Seaside Evelysse & Seaside Roddick Character Campaign Draw](#g-banner_20180809_1001), [Miki Character Campaign Draw](#g-banner_20180809_1003), [One 5★ Weapon Guaranteed Draw (10-chain, 1 / person / day)](#g-banner_20180809_2004), [Seaside Rena Character Campaign Draw](#g-banner_20180809_1002), [Weapons Campaign Draw](#g-banner_20180809_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180809_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180809_2003), [Memorial 5★ Character Campaign Draw](#g-banner_20180823_1001), [Memorial 5★ Weapons Campaign Draw](#g-banner_20180823_2001), [Premium Character Draw](#g-banner_20180830_1003), [Weapons Campaign Draw](#g-banner_20180906_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180906_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180906_2003), [Character Campaign Draw (VP rerun)](#g-banner_20180920_1001), [Weapons Campaign Draw](#g-banner_20180920_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180920_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180920_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180920_2004), [Premium Character Draw](#g-banner_20180927_1003), [Weapons Campaign Draw](#g-banner_20180927_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180927_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180927_2003), [One 5★ Ace Character Guaranteed with 10-chain (1 / person)](#g-banner_20181004_1001), [EoE Event Box Draw - Box 1](#g-banner276), [EoE Event Box Draw - Box 2](#g-banner277), [EoE Event Box Draw - Box 3](#g-banner278), [EoE Event Box Draw - Box 4](#g-banner279), [EoE Event Box Draw - Box 5](#g-banner280), [EoE Event Box Draw - Box 6](#g-banner281), [End of Eternity -Letters- - Box Draw 1](#g-banner_20180426_3001), [End of Eternity -Letters- - Box Draw 2](#g-banner_20180426_3002), [End of Eternity -Letters- - Box Draw 3](#g-banner_20180426_3003), [End of Eternity -Letters- - Box Draw 4](#g-banner_20180426_3004), [Welch Character Campaign Draw](#g-banner_20181011_1001), [Verda Character Campaign Draw](#g-banner_20181011_1002), [Character Campaign Draw (EoE rerun)](#g-banner_20181011_1003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181011_2001), [Memorial Fest Draw](#g-banner_20181018_1001), [Weapons Campaign Draw](#g-banner_20181018_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181018_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181018_2003), [Relia Character Campaign Draw](#g-banner_20181025_1002), [Bandage Fiore & Pumpkin Relia Character Campaign Draw](#g-banner_20181031_1001), [Bandage Fiore & Pumpkin Relia Character Campaign Draw](#g-banner_20181031_1003), [Weapons Campaign Draw](#g-banner_20181031_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181031_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181031_2003), [Weapons Campaign Draw](#g-banner_20181108_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181108_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181108_2003), [Weapons Campaign Draw](#g-banner_20181122_2002), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181122_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181122_2004), [Idol Reimi & Idol Miki & Idol Verda Character Campaign Draw](#g-banner_20181129_1001), [Cyuss Character Campaign Draw](#g-banner_20181129_1002), [5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner_20181129_1003), [Idol Character Draw Bonus Box Draw (2018-11-29)](#g-banner_20181129_3001), [2nd Anniversary Weapons Draw (one 5★ weapon guaranteed in a 10-pull)](#g-banner_20181122_2001), [2nd Anniversary Free 10-pull Character Draw (10 per person)](#g-banner_20181206_1001), [Weapons Campaign Draw](#g-banner_20181206_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181206_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181206_2003), [Rerun Draw (Holiday Precis & Winter Evelysse & Winter Fidel)](#g-banner_20181220_1001), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181220_2004), [Tomb of Remembrance - Box 1](#g-banner1158), [Tomb of Remembrance - Box 2](#g-banner1159), [Tomb of Remembrance - Box 3](#g-banner1160), [Tomb of Remembrance - Box 4](#g-banner1161)
-  - 2019: [New Year's Evelysse & New Year's Tika Character Campaign Draw](#g-banner_20190101_1001), [Weapons Campaign Draw](#g-banner_20190101_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20190101_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190101_2003), [New Year 2019 "Our First Shrine Visit" - Box Draw 1](#g-banner_20190101_3001), [New Year 2019 "Our First Shrine Visit" - Box Draw 2](#g-banner_20190101_3002), [New Year 2019 "Our First Shrine Visit" - Box Draw 3](#g-banner_20190101_3003), [SRF Fayt & SRF Sophia Character Campaign Draw](#g-banner_20190110_1001), [Weapons Campaign Draw](#g-banner_20190110_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20190110_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190110_2003), [5★ Guaranteed Character Draw](#g-banner_20190124_1001), [Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 1 (tr.)](#g-banner_20190124_3001), [Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 2 (tr.)](#g-banner_20190124_3002), [Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 3 (tr.)](#g-banner_20190124_3003), [Awakened Character Campaign Draw](#g-banner_20190131_1003), [Weapons Campaign Draw](#g-banner_20190207_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190207_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190207_2003), [Heartful Tails - Box Draw 1](#g-banner_20190207_3001), [Heartful Tails - Box Draw 2](#g-banner_20190207_3002), [Heartful Tails - Box Draw 3](#g-banner_20190207_3003), [Star Ocean 4 Release Anniversary Character Campaign Draw](#g-banner_20190214_1001), [Weapons Campaign Draw](#g-banner_20190221_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190221_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190221_2003), [Rerun: Dark Weapons Campaign Draw](#g-banner_20190221_2004), [Star Ocean 3 Release Anniversary Character Campaign Draw](#g-banner_20190221_1001), [Idol Sophia & Idol Evelysse Character Campaign Draw](#g-banner_20190314_1001), [Awakened Character Campaign Draw](#g-banner_20190314_1002), [Rerun Campaign Draw (Idol Reimi & Idol Miki & Idol Verda)](#g-banner_20190314_1003), [Blue Sphere Rena & Blue Sphere Claude Character Campaign Draw](#g-banner_20190320_1001), [Ice Weapons Campaign Draw](#g-banner_20190320_1002), [Weapons Campaign Draw](#g-banner_20190320_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190320_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190320_2003), [Jack & Ridley Character Campaign Draw](#g-banner_20190328_1001), [Weapons Campaign Draw](#g-banner_20190328_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190328_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190328_2003), [Star Ocean 5 Release Anniversary Character Campaign Draw](#g-banner_20190328_1002), [Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 1 (tr.)](#g-banner_20190404_3001), [Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 2 (tr.)](#g-banner_20190404_3002), [Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 3 (tr.)](#g-banner_20190404_3003), [Weapons Campaign Draw](#g-banner_20190418_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190418_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190418_2003), [Wind Weapons Campaign Draw](#g-banner_20190418_2004), [Weekend Free 10-pull Character Draw (once)](#g-banner_20190425_1003), [EP2 Chapter 10 Release Character Draw](#g-banner_20190501_1001), [Gears Spilled from the Silence - Box Draw 1 (Guilty Gear Collab) (tr.)](#g-banner_20190502_3001), [Gears Spilled from the Silence - Box Draw 2 (Guilty Gear Collab) (tr.)](#g-banner_20190502_3002), [Gears Spilled from the Silence - Box Draw 3 (Guilty Gear Collab) (tr.)](#g-banner_20190502_3003), [Weapons Campaign Draw](#g-banner_20190516_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190516_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190516_2003), [Earth Weapons Campaign Draw](#g-banner_20190516_2004), [Weapons Campaign Draw](#g-banner_20190530_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190530_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190530_2003), [Star Sea Fantasia ~The Place I Dreamed Of~ - Box Draw 1 (Tales Collab, part 1) (tr.)](#g-banner_20190530_3001), [Weapons Campaign Draw](#g-banner_20190613_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190613_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190613_2003), [Star Sea Fantasia ~The Dream Never Ends~ - Box Draw 1 (Tales Collab, part 2) (tr.)](#g-banner_20190613_3001), [Rerun: Wedding 2017 Character Campaign Draw](#g-banner_20190620_1002), [Entrusted Feelings, a Vow to Tomorrow - Box Draw 1](#g-banner_20180531_3001), [Entrusted Feelings, a Vow to Tomorrow - Box Draw 2](#g-banner_20180531_3002), [Entrusted Feelings, a Vow to Tomorrow - Box Draw 3](#g-banner_20180531_3003), [The Fledgling Engineer and the Ill-Omened Star - Box Draw 1 (tr.)](#g-banner_20180614_3001), [The Fledgling Engineer and the Ill-Omened Star - Box Draw 2 (tr.)](#g-banner_20180614_3002), [The Fledgling Engineer and the Ill-Omened Star - Box Draw 3 (tr.)](#g-banner_20180614_3003), [Rerun: Wedding 2018 Character Campaign Draw](#g-banner_20190620_1001), [Wedding Special Character Draw (Bride Mirage & Groom Cliff)](#g-banner_20190627_1001), [Weapons Campaign Draw](#g-banner_20190704_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190704_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190704_2003), [Thunder Weapons Campaign Draw](#g-banner_20190704_2004), [Bride 2019 Event "Twofold Feelings: The Shape of Feelings Piled Up" - Box Draw 1 (tr.)](#g-banner_20190704_3001), [Bowman Character Campaign Draw](#g-banner_20190711_1001), [Rerun: Capell & Aya & Sigmund Campaign Draw](#g-banner_20190711_1002), [Descendants of the Azure Dragon - Box Draw 1](#g-banner_20180726_3001), [Descendants of the Azure Dragon - Box Draw 2](#g-banner_20180726_3002), [Descendants of the Azure Dragon - Box Draw 3](#g-banner_20180726_3003), [Star Ocean Release Anniversary Character Campaign Draw](#g-banner_20190718_1004), [Weekend-only Character Campaign Draw](#g-banner_20190718_1003), [Weapons Campaign Draw](#g-banner_20190725_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190725_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190725_2003), [Summer Resort Scramble SIDE:A - Box Draw 1](#g-banner_20190725_3001), [Weekend-only Character Campaign Draw](#g-banner_20190725_1001), [Star Ocean 2 Release Anniversary Character Campaign Draw](#g-banner_20190725_1002), [The Sea God's Silent Poem - Box Draw 1 (tr.)](#g-banner_20180809_3001), [The Sea God's Silent Poem - Box Draw 2 (tr.)](#g-banner_20180809_3002), [The Sea God's Silent Poem - Box Draw 3 (tr.)](#g-banner_20180809_3003), [Awakened Character Campaign Draw (Albel & Blazing Ashton & Daril)](#g-banner_20190731_1003), [FFBE Event Box Draw - Box 1](#g-banner1002), [FFBE Event Box Draw - Box 2](#g-banner1003), [FFBE Event Box Draw - Box 3](#g-banner1004), [FFBE Event Box Draw - Box 4 (∞)](#g-banner1005), [(M) FFBE Event Box Draw - Box 1](#g-banner1006), [(M) FFBE Event Box Draw - Box 2](#g-banner1007), [(M) FFBE Event Box Draw - Box 3](#g-banner1008), [Rerun: Rain & Fina Character Campaign Draw](#g-banner_20190808_1001), [Weapons Campaign Draw](#g-banner_20190808_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190808_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190808_2003), [Summer Resort Scramble SIDE:B - Box Draw 1](#g-banner_20190808_3001), [Erys & Ioshua Character Campaign Draw](#g-banner_20190815_1001), [Rerun: Bunny Maria & Bunny Mirage Character Campaign Draw](#g-banner_20190822_1001), [Weapons Campaign Draw](#g-banner_20190822_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190822_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190822_2003), [Light Weapons Campaign Draw](#g-banner_20190822_2004), [A Struggle for Justice and Rescue! - Box Draw 1 (tr.)](#g-banner_20180705_3001), [A Struggle for Justice and Rescue! - Box Draw 2 (tr.)](#g-banner_20180705_3002), [A Struggle for Justice and Rescue! - Box Draw 3 (tr.)](#g-banner_20180705_3003), [Rerun: Nurse Fiore & Hero Verda Character Campaign Draw](#g-banner_20190829_1002), [Weapons Campaign Draw](#g-banner_20190905_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190905_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190905_2003), [A Chaotic Ruins Expedition and a Captivating Courtesan Procession - Box Draw 1 (tr.)](#g-banner_20190905_3001), [Weapons Campaign Draw](#g-banner_20190919_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190919_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190919_2003), [Fire Weapons Campaign Draw](#g-banner_20190919_2004), [Weapons Campaign Draw](#g-banner_20191003_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191003_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191003_2003), [Trouble with the Cleaning and Cooking!? - Box Draw 1](#g-banner_20191003_3001), [Rerun: Halloween 2018 Character Campaign Draw](#g-banner_20191017_1001), [Weapons Campaign Draw](#g-banner_20191017_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191017_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191017_2003), [Siren's Lament #1 (Persona Collab, part 1) - Box Draw 1](#g-banner_20191017_3001), [Rerun: Limited Character Campaign Draw](#g-banner_20191031_1001), [Weapons Campaign Draw](#g-banner_20191031_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191031_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191031_2003), [Siren's Lament #02 (Persona Collab, part 2) - Box Draw 1](#g-banner_20191031_3001), [Franken-Precis & Exorcist Faize Character Campaign Draw](#g-banner_20191107_1001), [Witch Evelysse Character Campaign Draw](#g-banner_20191114_1001), [Weapons Campaign Draw](#g-banner_20191114_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191114_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191114_2003), [Halloween 2019 "Welcome to the Fairy-Tale World of Dreams and Illusions" - Box Draw 1](#g-banner_20191114_3001), [The Twisted Goddess and the Three Divas - Box Draw 1](#g-banner_20181206_3001), [The Twisted Goddess and the Three Divas - Box Draw 2](#g-banner_20181206_3002), [The Twisted Goddess and the Three Divas - Box Draw 3](#g-banner_20181206_3003), [Rerun: Idol 2018 Character Campaign Draw](#g-banner_20191121_1001), [3rd Anniversary Heroine Character Campaign Draw](#g-banner_20191128_1002), [3rd Anniversary Weapons Campaign Draw](#g-banner_20191205_2001), [Rerun: Christmas 2017 Character Campaign Draw](#g-banner_20191219_1002), [Christmas Weapons Campaign Draw](#g-banner_20191219_2001), [Christmas Event 2019 "Precious Presents" - Box Draw 1](#g-banner_20191219_3001), [Rerun: VP Azure Lenneth & Freya & Lezard & Silmeria Campaign Draw](#g-banner_20191226_1001), [Rerun: VP Lenneth & Hrist & Arngrim & Mystina Campaign Draw](#g-banner_20191226_1002)
-  - 2020: [Rerun: New Year Character Campaign Draw](#g-banner_20200102_1001), [Rerun: New Year Weapons Campaign Draw](#g-banner_20200109_2001), [Rerun: SRF Character Campaign Draw](#g-banner_20200116_1001), [SO4 Memorial Character Campaign Draw](#g-banner_20200116_1002), [SO3 Memorial Character Campaign Draw 2](#g-banner_20200206_1001), [Guilty Gear Collab Weapons Campaign Draw](#g-banner_20200206_2001), [Guilty Gear Collab 2 (2020) "Parted Wings and the Thunderbolt's Binder" - Box Draw 1 (tr.)](#g-banner_20200206_3001), [Rerun: Valentine 2018 Character Campaign Draw](#g-banner_20200220_1001), [Valentine Weapons Campaign Draw](#g-banner_20200220_2001), [Rerun: Sakura Wars Collab Weapons Campaign Draw](#g-banner_20200319_2001), [Sakura Wars (2019) Weapons Campaign Draw 1](#g-banner_20200402_2001), [Sakura Wars (2019) "A New Flower Blooming in the Sea of Stars" - Box Draw 1 (tr.)](#g-banner_20200402_3001), [Weekend-only Character Campaign Draw](#g-banner_20200402_1001), [Sakura Wars (2019) Weapons Campaign Draw 2](#g-banner_20200409_2001), [Sakura Wars (2019) "A New Flower Blooming in the Sea of Stars" - Extra Box Draw 1 (tr.)](#g-banner_20200409_3001), [Idol 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200416_1002), [Weekend-only Character Campaign Draw](#g-banner_20200416_1001), [EP2 Character Campaign Draw](#g-banner_20200423_1001), [Rerun: End of Eternity Character Campaign Draw](#g-banner_20200423_1003), [EoE Event Box Draw - Box 1](#g-banner_20200423_3001), [Weekend-only Character Campaign Draw](#g-banner_20200423_1002), [Weekend-only Character Campaign Draw](#g-banner_20200521_1003), [Bride 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200611_1002), [Bride 2017 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200618_1001), [Role Campaign Draw: Defender](#g-banner_20200618_1003), [Bride 2020 Weapons Campaign Draw](#g-banner_20200618_2001), [Weekend-only Character Campaign Draw](#g-banner_20200618_1002), [Triple! Star Character Campaign Draw (tr.)](#g-banner_20200625_1002), [SOA Memorial Character Campaign Draw](#g-banner_20200625_1003), [Rerun: VP Lenneth & Hrist & Arngrim & Mystina Campaign Draw](#g-banner_20200716_1001), [VP Event Box Draw - Box 1](#g-banner_20200716_3001), [Swimsuit 2017 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200722_1001), [Swimsuit 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200722_1002), [SO4 Memorial Character Campaign Draw](#g-banner_20200722_1003), [Swimsuit 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200806_1001), [EP3 New Chapter Draw](#g-banner_20200820_1001), [Costume Contest 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200903_1002), [Role Campaign Draw: Healer](#g-banner_20200917_1001), [Costume Contest 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200917_1002), [Weekend-only Character Campaign Draw](#g-banner_20200917_1003), [Valkyrie & Transcended Lezard Character Campaign Draw](#g-banner_20200924_1001), [Rerun: VP Azure Lenneth & Freya & Lezard & Silmeria Campaign Draw](#g-banner_20200924_1003), [Rerun: VP Lenneth & Hrist & Arngrim & Mystina Campaign Draw](#g-banner_20200924_1004), [VP Weapons Campaign Draw](#g-banner_20200924_2001), [VP Lezard Event "The Reborn of the Memorial Star" - Box Draw 1 (tr.)](#g-banner_20200924_3001), [Weekend-only Character Campaign Draw](#g-banner_20200924_1002), [Rerun: Tales of the Rays Collab Weapons Campaign Draw](#g-banner_20201022_2002), [Ernest Character Campaign Draw](#g-banner_20201029_1001), [Weapons Campaign Draw](#g-banner_20201029_2001), [Rerun: Divine-tier Weapons Campaign Draw (Divine Fayt)](#g-banner_20201119_2001), [2020 Anniversary Weapons Campaign Draw](#g-banner_20201203_2001), [Weekend-only Character Campaign Draw](#g-banner_20201203_1001)
-  - 2021: [Rerun: New Year 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210101_1003), [Rerun: Guilty Gear Collab Weapons Campaign Draw](#g-banner_20210121_2002), [Weapons Campaign Draw](#g-banner_20210304_2001), [Radi-Ocean "Wadram, Sanctuary of Oblivion: Final Hour" - Box Draw 1 (tr.)](#g-banner_20210422_3001), [Rerun: Idol 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210520_1001), [Rerun: Maid 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210520_1002)
+- [Gacha banners without an event](#unassociated-banners): 543 banners
+  - 2016: [Weapons Draw](#g-banner202), [5★ Character Ticket](#g-banner205), [5★ Weapon Ticket](#g-banner209), [5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner1072), [2M DL Milestone Draw (1 / person)](#g-banner210), [Campaign Draws](#g-banner211), [3M DL Milestone Draw (1 / person)](#g-banner212)
+  - 2017: [Campaign Draws](#g-banner213), [Daily Weapons Campaign Draw: One-handed Swords](#g-banner214), [Daily Weapons Campaign Draw: Staffs](#g-banner215), [Daily Weapons Campaign Draw: Sword & Sheaths](#g-banner216), [Daily Weapons Campaign Draw: Guns and Bows](#g-banner217), [Daily Weapons Campaign Draw: Daggers](#g-banner218), [Daily Weapons Campaign Draw: Knuckles](#g-banner219), [Daily Weapons Campaign Draw: One-handed Swords](#g-banner220), [Daily Weapons Campaign Draw: Staffs](#g-banner221), [Daily Weapons Campaign Draw: Sword & Sheaths](#g-banner222), [Daily Weapons Campaign Draw: Guns and Bows](#g-banner223), [Daily Weapons Campaign Draw: Daggers](#g-banner224), [Daily Weapons Campaign Draw: Knuckles](#g-banner225), [Campaign Draws](#g-banner234), [Campaign Draws](#g-banner235), [Campaign Draws](#g-banner236), [Weapons Campaign Draw](#g-banner238), [4M DL Milestone Draw (1 / person)](#g-banner240), [Popular Characters Draw](#g-banner241), [Popular Characters Draw](#g-banner242), [Weapons Campaign Draw](#g-banner245), [Maria & Cliff Campaign Draw](#g-banner247), [Leanne Campaign Draw](#g-banner254), [Weapons Campaign Draw](#g-banner256), [Weapons Campaign Draw](#g-banner257), [Golden Week Special Campaign Draw (1 / day)](#g-banner258), [Golden Week Special Campaign Draw (1 / day)](#g-banner259), [Golden Week Special Campaign Draw (1 / day)](#g-banner260), [Golden Week Special Campaign Draw (1 / day)](#g-banner261), [Golden Week Special Campaign Draw (1 / day)](#g-banner262), [Golden Week Special Campaign Draw (1 / day)](#g-banner263), [Golden Week Special Campaign Draw (1 / day)](#g-banner264), [Girls' Campaign Draw (1 / day)](#g-banner266), [Girls' Campaign Draw (1 / day)](#g-banner267), [Girls' Campaign Draw (1 / day)](#g-banner268), [Girls' Campaign Draw (1 / day)](#g-banner269), [Leanne Campaign Draw](#g-banner255), [Girls' Campaign Draw (1 / day)](#g-banner270), [Girls' Campaign Draw (1 / day)](#g-banner271), [Girls' Campaign Draw (1 / day)](#g-banner272), [Weapons Campaign Draw (1 / person)](#g-banner275), [TV Commercial Celebration Character Draw (1 / person)](#g-banner282), [June Bride Campaign Draw (Nel & Maria)](#g-banner283), [Weapons Campaign Draw](#g-banner286), [Weapons Campaign Draw (1 / person)](#g-banner287), [5M DL Milestone Character Draw (1 / person)](#g-banner289), [TV Commercial Celebration Character Draw (1 / day)](#g-banner290), [June Bride Campaign Draw (Rena & Evelysse)](#g-banner291), [TV Commercial Celebration Weapons Draw (1 / day)](#g-banner292), [Day 200 Milestone Character Draw (1 / day)](#g-banner293), [Weapons Campaign Draw](#g-banner294), [Weapons Campaign Draw (1 / person)](#g-banner295), [Invoker Guaranteed Campaign Draw (1 / day)](#g-banner297), [Melee Weapons Draw](#g-banner298), [Standard Weapons Draw \[Ranged\]](#g-banner299), [Weapons Campaign Draw](#g-banner301), [Weapons Campaign Draw (1 / person)](#g-banner302), [Roddick& Millie SO1 Release Anniversary Character Draw](#g-banner304), [Weapons Campaign Draw](#g-banner307), [Weapons Campaign Draw (1 / day)](#g-banner308), [Weapons Campaign Draw (1 / day)](#g-banner309), [TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner312), [SO2 Release Anniversary Character Draw (Claude or Rena guaranteed)](#g-banner311), [Weapons Campaign Draw](#g-banner313), [Weapons Campaign Draw (1 / person)](#g-banner314), [Popular Characters Campaign Draw (1 / day while available)](#g-banner319), [Weapons Campaign Draw](#g-banner322), [Weapons Campaign Draw (1 / person)](#g-banner323), [Weapons Campaign Draw](#g-banner326), [Weapons Campaign Draw (1 / person)](#g-banner327), [Elemental Weapons Campaign Draw (1 / day)](#g-banner1001), [Weapons Campaign Draw](#g-banner1009), [Weapons Campaign Draw (1 / person)](#g-banner1010), [Elemental Weapons Campaign Draw (1 / day)](#g-banner1011), [Weapons Campaign Draw (1 / person)](#g-banner1016), [Lasswell Character Draw](#g-banner1012), [5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner1014), [Weapons Campaign Draw (1 / person)](#g-banner1017), [SO1 Characters Campaign Draw (3 times while available)](#g-banner1018), [Weapons Campaign Draw (4★+ with 10-chain)](#g-banner1021), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1022), [One 5★+ Guaranteed Character Draw (1 / day)](#g-banner1019), [SO4 HD Announcement Draw: Edge or Reimi Guaranteed (1 / person)](#g-banner1020), [SO2 Characters Campaign Draw (3 times while available)](#g-banner1024), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1025), [SO3 Characters Campaign Draw (3 times while available)](#g-banner1027), [Weapons Campaign Draw (4★+ with 10-chain)](#g-banner1029), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1030), [Rain & Fina Campaign Draw](#g-banner1026), [One 5★+ Guaranteed Character Draw (1 / day)](#g-banner1028), [SO4 Characters Campaign Draw (3 times while available)](#g-banner1032), [SO5 Characters Campaign Draw (3 times while available)](#g-banner1033), [One 5★+ Guaranteed Character Draw](#g-banner1034), [Weapons Campaign Draw](#g-banner1035), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1036), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1037), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1038), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1039), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1044), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1045), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ light-affinity weapon with 10-chain)](#g-banner1046), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner1047), [Step Character Campaign Draw 2 (Odds to win 5★ Character 10% up for 1 slot)](#g-banner1048), [Step Character Campaign Draw 3 (Odds to win 5★ Character 15% up for 1 slot)](#g-banner1049), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1050), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1051), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ fire-affinity weapon with 10-chain)](#g-banner1052), [Step-up Sigmund Draw 1 (10-chain for 2,500 gems)](#g-banner1054), [Step-up Sigmund Draw 2 (10-chain only, 1 slot 2%)](#g-banner1055), [Step-up Sigmund Draw 3 (10-chain only, 1 slot 3%)](#g-banner1056), [Sigmund Campaign Draw](#g-banner1057), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1059), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1060), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1061), [Weapons Campaign Draw](#g-banner1062), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1063), [One 5★+ Guaranteed Character Draw (3 times while available)](#g-banner1058), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner1069), [Step Character Campaign Draw 2 (Odds to win 5★ Character 10% up for 1 slot)](#g-banner1070), [Step Character Campaign Draw 3 (Odds to win 5★ Character 15% up for 1 slot)](#g-banner1071), [Roddick Guaranteed Draw](#g-banner1073), [Mavelle Guaranteed Draw](#g-banner1074), [Ashton Guaranteed Draw](#g-banner1075), [Precis Guaranteed Draw](#g-banner1076), [Mirage Guaranteed Draw](#g-banner1077), [Albel Guaranteed Draw](#g-banner1078), [Crowe Guaranteed Draw](#g-banner1079), [Official Reimi Guaranteed Draw](#g-banner1080), [Fiore Guaranteed Draw](#g-banner1081), [Relia Guaranteed Draw](#g-banner1082), [Step Weapons Campaign Draw 1 (4★+ with 10-chain)](#g-banner1085), [Step Weapons Campaign Draw 2 (4★+ with 10-chain)](#g-banner1086), [Step Weapons Campaign Draw 3 (5★ with 10-chain)](#g-banner1087), [Weapons Campaign Draw](#g-banner1088), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1089), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1090), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1091), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ ice-affinity weapon with 10-chain)](#g-banner1092), [Christmas Character Campaign Draw](#g-banner1093), [Fidel Campaign Draw](#g-banner1097), [Christmas Character Campaign Draw](#g-banner1098), [Ice Character Campaign Draw 1](#g-banner1094), [Ice Character Campaign Draw 2](#g-banner1095), [Ice Character Campaign Draw 3](#g-banner1096), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1099), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1100), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1101), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1102), [Weapons Campaign Draw](#g-banner1103), [One 5★ Ace Character Guaranteed with 10-chain (1 / person)](#g-banner1110)
+  - 2018: [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1113), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1114), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1115), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1116), [Weapons Campaign Draw](#g-banner1117), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1118), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1119), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1120), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1121), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1126), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1127), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1128), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1129), [Weapons Campaign Draw](#g-banner1130), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1136), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1137), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1138), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1139), [Weapons Campaign Draw](#g-banner1140), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1141), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1142), [Step 3: 5★ Guaranteed Weapons Draw 3 (5★ ice-affinity weapon with 10-chain)](#g-banner1143), [6M DL Milestone Weapons Draw (1 / day while available)](#g-banner1155), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner1145), [Step Character Campaign Draw 2 (5★ odds 12% for 1 slot of the 10-chain)](#g-banner1146), [Step Character Campaign Draw 3 (5★ odds 18% for 1 slot of the 10-chain)](#g-banner1147), [Star Ocean 4 Release Anniversary Character Campaign Draw](#g-banner1148), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1150), [Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)](#g-banner1151), [Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)](#g-banner1152), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1153), [Weapons Campaign Draw](#g-banner1154), [Star Ocean 3 Release Anniversary Character Campaign Draw](#g-banner1149), [2B/9S/A2 Campaign Draw](#g-banner1156), [Dias Character Campaign Draw](#g-banner1157), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1162), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1163), [Weapons Campaign Draw](#g-banner1164), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner1166), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner1169), [Weapons Campaign Draw](#g-banner1170), [New Life Support Fest (10-chain only, 1 / person)](#g-banner1177), [Star Ocean 5 Release Anniversary Character Campaign Draw](#g-banner1173), [Weapons Campaign Draw](#g-banner_20180405_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180405_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180405_2003), [Edge & Celine & Millie Character Campaign Draw](#g-banner_20180419_1001), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner_20180419_1002), [Weapons Campaign Draw](#g-banner_20180419_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180419_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180419_2003), [Weapons Campaign Draw](#g-banner_20180426_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180426_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180426_2003), [Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain)](#g-banner_20180510_1001), [Step 3: 5★ Guaranteed Weapons Draw 1 (half price: 10-chain for 1,500 gems)](#g-banner_20180510_2001), [5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner_20180524_1001), [Weapons Campaign Draw](#g-banner_20180524_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180524_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180524_2003), [Weapons Campaign Draw](#g-banner_20180607_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180607_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180607_2003), [Weapons Campaign Draw](#g-banner_20180621_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180621_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180621_2003), [Weapons Campaign Draw](#g-banner_20180705_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180705_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180705_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (half price: 10-chain for 1,500 gems)](#g-banner_20180712_2001), [Roddick& Millie SO1 Release Anniversary Character Draw](#g-banner_20180712_1003), [EP2 Release Character Campaign Draw](#g-banner_20180719_1001), [Weapons Campaign Draw](#g-banner_20180719_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180719_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180719_2003), [Seaside Maria & Seaside Millie Character Campaign Draw](#g-banner_20180726_1001), [Claude Character Campaign Draw](#g-banner_20180726_1002), [5★ Ace Guaranteed Character Draw, Part 1 (10-chain only, 1 / person)](#g-banner_20180726_1003), [SO2 Release Anniversary Character Draw (Claude or Rena guaranteed)](#g-banner_20180726_1004), [Summer Character Campaign Draw](#g-banner_20180726_1005), ["The Broken Ruler and the Captive Queen" Summer Event Part 2 - Box Draw 1](#g-banner_20180726_3004), ["The Broken Ruler and the Captive Queen" Summer Event Part 2 - Box Draw 2](#g-banner_20180726_3005), [Weapons Campaign Draw](#g-banner_20180726_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180726_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180726_2003), [Seaside Evelysse & Seaside Roddick Character Campaign Draw](#g-banner_20180809_1001), [Miki Character Campaign Draw](#g-banner_20180809_1003), [One 5★ Weapon Guaranteed Draw (10-chain, 1 / person / day)](#g-banner_20180809_2004), [Seaside Rena Character Campaign Draw](#g-banner_20180809_1002), [Weapons Campaign Draw](#g-banner_20180809_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180809_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180809_2003), [Memorial 5★ Character Campaign Draw](#g-banner_20180823_1001), [Memorial 5★ Weapons Campaign Draw](#g-banner_20180823_2001), [Premium Character Draw](#g-banner_20180830_1003), [Weapons Campaign Draw](#g-banner_20180906_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180906_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180906_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180913_2001), [Character Campaign Draw (VP rerun)](#g-banner_20180920_1001), [Weapons Campaign Draw](#g-banner_20180920_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180920_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180920_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180920_2004), [Premium Character Draw](#g-banner_20180927_1003), [Weapons Campaign Draw](#g-banner_20180927_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20180927_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20180927_2003), [One 5★ Ace Character Guaranteed with 10-chain (1 / person)](#g-banner_20181004_1001), [EoE Event Box Draw - Box 1](#g-banner276), [EoE Event Box Draw - Box 2](#g-banner277), [EoE Event Box Draw - Box 3](#g-banner278), [EoE Event Box Draw - Box 4](#g-banner279), [EoE Event Box Draw - Box 5](#g-banner280), [EoE Event Box Draw - Box 6](#g-banner281), [End of Eternity -Letters- - Box Draw 1](#g-banner_20180426_3001), [End of Eternity -Letters- - Box Draw 2](#g-banner_20180426_3002), [End of Eternity -Letters- - Box Draw 3](#g-banner_20180426_3003), [End of Eternity -Letters- - Box Draw 4](#g-banner_20180426_3004), [Welch Character Campaign Draw](#g-banner_20181011_1001), [Verda Character Campaign Draw](#g-banner_20181011_1002), [Character Campaign Draw (EoE rerun)](#g-banner_20181011_1003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181011_2001), [Memorial Fest Draw](#g-banner_20181018_1001), [Weapons Campaign Draw](#g-banner_20181018_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181018_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181018_2003), [Angel Nel & Were-Albel Character Campaign Draw](#g-banner_20181025_1004), [Relia Character Campaign Draw](#g-banner_20181025_1002), [Bandage Fiore & Pumpkin Relia Character Campaign Draw](#g-banner_20181031_1001), [Bandage Fiore & Pumpkin Relia Character Campaign Draw](#g-banner_20181031_1003), [Weapons Campaign Draw](#g-banner_20181031_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181031_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181031_2003), [Weapons Campaign Draw](#g-banner_20181108_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181108_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181108_2003), [Weapons Campaign Draw](#g-banner_20181122_2002), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181122_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181122_2004), [Idol Reimi & Idol Miki & Idol Verda Character Campaign Draw](#g-banner_20181129_1001), [Cyuss Character Campaign Draw](#g-banner_20181129_1002), [5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)](#g-banner_20181129_1003), [Idol Character Draw Bonus Box Draw (2018-11-29)](#g-banner_20181129_3001), [2nd Anniversary Weapons Draw (one 5★ weapon guaranteed in a 10-pull)](#g-banner_20181122_2001), [2nd Anniversary Free 10-pull Character Draw (10 per person)](#g-banner_20181206_1001), [Weapons Campaign Draw](#g-banner_20181206_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181206_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181206_2003), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20181213_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181213_2003), [Rerun Draw (Holiday Precis & Winter Evelysse & Winter Fidel)](#g-banner_20181220_1001), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181220_2004), [Tomb of Remembrance - Box 1](#g-banner1158), [Tomb of Remembrance - Box 2](#g-banner1159), [Tomb of Remembrance - Box 3](#g-banner1160), [Tomb of Remembrance - Box 4](#g-banner1161)
+  - 2019: [New Year's Evelysse & New Year's Tika Character Campaign Draw](#g-banner_20190101_1001), [Weapons Campaign Draw](#g-banner_20190101_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20190101_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190101_2003), [New Year 2019 "Our First Shrine Visit" - Box Draw 1](#g-banner_20190101_3001), [New Year 2019 "Our First Shrine Visit" - Box Draw 2](#g-banner_20190101_3002), [New Year 2019 "Our First Shrine Visit" - Box Draw 3](#g-banner_20190101_3003), [SRF Fayt & SRF Sophia Character Campaign Draw](#g-banner_20190110_1001), [Weapons Campaign Draw](#g-banner_20190110_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20190110_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190110_2003), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20181227_2001), [Weapons Campaign Draw (10-chain only, 1 / person)](#g-banner_20190117_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190117_2003), [5★ Guaranteed Character Draw](#g-banner_20190124_1001), [Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 1 (tr.)](#g-banner_20190124_3001), [Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 2 (tr.)](#g-banner_20190124_3002), [Sakura Wars "A Romantic Wind Across the Sea of Stars" - Box Draw 3 (tr.)](#g-banner_20190124_3003), [Awakened Character Campaign Draw](#g-banner_20190131_1003), [Weapons Campaign Draw](#g-banner_20190207_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190207_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190207_2003), [Heartful Tails - Box Draw 1](#g-banner_20190207_3001), [Heartful Tails - Box Draw 2](#g-banner_20190207_3002), [Heartful Tails - Box Draw 3](#g-banner_20190207_3003), [Star Ocean 4 Release Anniversary Character Campaign Draw](#g-banner_20190214_1001), [Weapons Campaign Draw](#g-banner_20190221_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190221_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190221_2003), [Rerun: Dark Weapons Campaign Draw](#g-banner_20190221_2004), [Star Ocean 3 Release Anniversary Character Campaign Draw](#g-banner_20190221_1001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190228_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190228_2003), [Idol Sophia & Idol Evelysse Character Campaign Draw](#g-banner_20190314_1001), [Awakened Character Campaign Draw](#g-banner_20190314_1002), [Rerun Campaign Draw (Idol Reimi & Idol Miki & Idol Verda)](#g-banner_20190314_1003), [Blue Sphere Rena & Blue Sphere Claude Character Campaign Draw](#g-banner_20190320_1001), [Ice Weapons Campaign Draw](#g-banner_20190320_1002), [Weapons Campaign Draw](#g-banner_20190320_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190320_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190320_2003), [Jack & Ridley Character Campaign Draw](#g-banner_20190328_1001), [Weapons Campaign Draw](#g-banner_20190328_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190328_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190328_2003), [Star Ocean 5 Release Anniversary Character Campaign Draw](#g-banner_20190328_1002), [Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 1 (tr.)](#g-banner_20190404_3001), [Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 2 (tr.)](#g-banner_20190404_3002), [Dragon and Knight, Like a Dream (Radiata Collab) - Box Draw 3 (tr.)](#g-banner_20190404_3003), [Weapons Campaign Draw](#g-banner_20190418_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190418_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190418_2003), [Wind Weapons Campaign Draw](#g-banner_20190418_2004), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190425_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190425_2003), [Golden Week Campaign Free 10-pull Weapons Draw (10 per person)](#g-banner_20190501_2001), [Weekend Free 10-pull Character Draw (once)](#g-banner_20190425_1003), [EP2 Chapter 10 Release Character Draw](#g-banner_20190501_1001), [Gears Spilled from the Silence - Box Draw 1 (Guilty Gear Collab) (tr.)](#g-banner_20190502_3001), [Gears Spilled from the Silence - Box Draw 2 (Guilty Gear Collab) (tr.)](#g-banner_20190502_3002), [Gears Spilled from the Silence - Box Draw 3 (Guilty Gear Collab) (tr.)](#g-banner_20190502_3003), [Weapons Campaign Draw](#g-banner_20190516_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190516_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190516_2003), [Earth Weapons Campaign Draw](#g-banner_20190516_2004), [Weapons Campaign Draw](#g-banner_20190530_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190530_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190530_2003), [Star Sea Fantasia ~The Place I Dreamed Of~ - Box Draw 1 (Tales Collab, part 1) (tr.)](#g-banner_20190530_3001), [Weapons Campaign Draw](#g-banner_20190613_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190613_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190613_2003), [Star Sea Fantasia ~The Dream Never Ends~ - Box Draw 1 (Tales Collab, part 2) (tr.)](#g-banner_20190613_3001), [Rerun: Wedding 2017 Character Campaign Draw](#g-banner_20190620_1002), [Entrusted Feelings, a Vow to Tomorrow - Box Draw 1](#g-banner_20180531_3001), [Entrusted Feelings, a Vow to Tomorrow - Box Draw 2](#g-banner_20180531_3002), [Entrusted Feelings, a Vow to Tomorrow - Box Draw 3](#g-banner_20180531_3003), [The Fledgling Engineer and the Ill-Omened Star - Box Draw 1 (tr.)](#g-banner_20180614_3001), [The Fledgling Engineer and the Ill-Omened Star - Box Draw 2 (tr.)](#g-banner_20180614_3002), [The Fledgling Engineer and the Ill-Omened Star - Box Draw 3 (tr.)](#g-banner_20180614_3003), [Rerun: Wedding 2018 Character Campaign Draw](#g-banner_20190620_1001), [Wedding Special Character Draw (Bride Mirage & Groom Cliff)](#g-banner_20190627_1001), [Weapons Campaign Draw](#g-banner_20190704_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190704_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190704_2003), [Thunder Weapons Campaign Draw](#g-banner_20190704_2004), [Bride 2019 Event "Twofold Feelings: The Shape of Feelings Piled Up" - Box Draw 1 (tr.)](#g-banner_20190704_3001), [Bowman Character Campaign Draw](#g-banner_20190711_1001), [Rerun: Capell & Aya & Sigmund Campaign Draw](#g-banner_20190711_1002), [Descendants of the Azure Dragon - Box Draw 1](#g-banner_20180726_3001), [Descendants of the Azure Dragon - Box Draw 2](#g-banner_20180726_3002), [Descendants of the Azure Dragon - Box Draw 3](#g-banner_20180726_3003), [Star Ocean Release Anniversary Character Campaign Draw](#g-banner_20190718_1004), [Weekend-only Character Campaign Draw](#g-banner_20190718_1003), [Weapons Campaign Draw](#g-banner_20190725_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190725_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190725_2003), [Summer Resort Scramble SIDE:A - Box Draw 1](#g-banner_20190725_3001), [Weekend-only Character Campaign Draw](#g-banner_20190725_1001), [Star Ocean 2 Release Anniversary Character Campaign Draw](#g-banner_20190725_1002), [The Sea God's Silent Poem - Box Draw 1 (tr.)](#g-banner_20180809_3001), [The Sea God's Silent Poem - Box Draw 2 (tr.)](#g-banner_20180809_3002), [The Sea God's Silent Poem - Box Draw 3 (tr.)](#g-banner_20180809_3003), [Awakened Character Campaign Draw (Albel & Blazing Ashton & Daril)](#g-banner_20190731_1003), [FFBE Event Box Draw - Box 1](#g-banner1002), [FFBE Event Box Draw - Box 2](#g-banner1003), [FFBE Event Box Draw - Box 3](#g-banner1004), [FFBE Event Box Draw - Box 4 (∞)](#g-banner1005), [(M) FFBE Event Box Draw - Box 1](#g-banner1006), [(M) FFBE Event Box Draw - Box 2](#g-banner1007), [(M) FFBE Event Box Draw - Box 3](#g-banner1008), [Rerun: Rain & Fina Character Campaign Draw](#g-banner_20190808_1001), [Weapons Campaign Draw](#g-banner_20190808_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190808_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190808_2003), [Summer Resort Scramble SIDE:B - Box Draw 1](#g-banner_20190808_3001), [Erys & Ioshua Character Campaign Draw](#g-banner_20190815_1001), [Rerun: Bunny Maria & Bunny Mirage Character Campaign Draw](#g-banner_20190822_1001), [Weapons Campaign Draw](#g-banner_20190822_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190822_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190822_2003), [Light Weapons Campaign Draw](#g-banner_20190822_2004), [A Struggle for Justice and Rescue! - Box Draw 1 (tr.)](#g-banner_20180705_3001), [A Struggle for Justice and Rescue! - Box Draw 2 (tr.)](#g-banner_20180705_3002), [A Struggle for Justice and Rescue! - Box Draw 3 (tr.)](#g-banner_20180705_3003), [Rerun: Nurse Fiore & Hero Verda Character Campaign Draw](#g-banner_20190829_1002), [Weapons Campaign Draw](#g-banner_20190905_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190905_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190905_2003), [A Chaotic Ruins Expedition and a Captivating Courtesan Procession - Box Draw 1 (tr.)](#g-banner_20190905_3001), [Weapons Campaign Draw](#g-banner_20190919_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20190919_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20190919_2003), [Fire Weapons Campaign Draw](#g-banner_20190919_2004), [Weapons Campaign Draw](#g-banner_20191003_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191003_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191003_2003), [Trouble with the Cleaning and Cooking!? - Box Draw 1](#g-banner_20191003_3001), [Comeback Ticket Character Draw](#g-banner_20191010_1006), [Rerun: Halloween 2018 Character Campaign Draw](#g-banner_20191017_1001), [Weapons Campaign Draw](#g-banner_20191017_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191017_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191017_2003), [Siren's Lament #1 (Persona Collab, part 1) - Box Draw 1](#g-banner_20191017_3001), [Rerun: Limited Character Campaign Draw](#g-banner_20191031_1001), [Weapons Campaign Draw](#g-banner_20191031_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191031_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191031_2003), [Siren's Lament #02 (Persona Collab, part 2) - Box Draw 1](#g-banner_20191031_3001), [Franken-Precis & Exorcist Faize Character Campaign Draw](#g-banner_20191107_1001), [Witch Evelysse Character Campaign Draw](#g-banner_20191114_1001), [Weapons Campaign Draw](#g-banner_20191114_2001), [Weapons Campaign Draw (10-chain only, 2 / person)](#g-banner_20191114_2002), [Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)](#g-banner_20191114_2003), [Halloween 2019 "Welcome to the Fairy-Tale World of Dreams and Illusions" - Box Draw 1](#g-banner_20191114_3001), [The Twisted Goddess and the Three Divas - Box Draw 1](#g-banner_20181206_3001), [The Twisted Goddess and the Three Divas - Box Draw 2](#g-banner_20181206_3002), [The Twisted Goddess and the Three Divas - Box Draw 3](#g-banner_20181206_3003), [Rerun: Idol 2018 Character Campaign Draw](#g-banner_20191121_1001), [3rd Anniversary Grand Thanksgiving Draw](#g-banner_20191128_1004), [3rd Anniversary Heroine Character Campaign Draw](#g-banner_20191128_1002), [3rd Anniversary Weapons Campaign Draw](#g-banner_20191205_2001), [Rerun: Christmas 2017 Character Campaign Draw](#g-banner_20191219_1002), [Christmas Weapons Campaign Draw](#g-banner_20191219_2001), [Christmas Event 2019 "Precious Presents" - Box Draw 1](#g-banner_20191219_3001), [Rerun: VP Azure Lenneth & Freya & Lezard & Silmeria Campaign Draw](#g-banner_20191226_1001), [Rerun: VP Lenneth & Hrist & Arngrim & Mystina Campaign Draw](#g-banner_20191226_1002)
+  - 2020: [Rerun: New Year Character Campaign Draw](#g-banner_20200102_1001), [Rerun: New Year Weapons Campaign Draw](#g-banner_20200109_2001), [Rerun: SRF Character Campaign Draw](#g-banner_20200116_1001), [SO4 Memorial Character Campaign Draw](#g-banner_20200116_1002), [SO3 Memorial Character Campaign Draw 2](#g-banner_20200206_1001), [Guilty Gear Collab Weapons Campaign Draw](#g-banner_20200206_2001), [Guilty Gear Collab 2 (2020) "Parted Wings and the Thunderbolt's Binder" - Box Draw 1 (tr.)](#g-banner_20200206_3001), [Rerun: Valentine 2018 Character Campaign Draw](#g-banner_20200220_1001), [Valentine Weapons Campaign Draw](#g-banner_20200220_2001), [Rerun: Sakura Wars Collab Weapons Campaign Draw](#g-banner_20200319_2001), [Sakura Wars (2019) Weapons Campaign Draw 1](#g-banner_20200402_2001), [Sakura Wars (2019) "A New Flower Blooming in the Sea of Stars" - Box Draw 1 (tr.)](#g-banner_20200402_3001), [Weekend-only Character Campaign Draw](#g-banner_20200402_1001), [Sakura Wars (2019) Weapons Campaign Draw 2](#g-banner_20200409_2001), [Sakura Wars (2019) "A New Flower Blooming in the Sea of Stars" - Extra Box Draw 1 (tr.)](#g-banner_20200409_3001), [Idol 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200416_1002), [Weekend-only Character Campaign Draw](#g-banner_20200416_1001), [EP2 Character Campaign Draw](#g-banner_20200423_1001), [Rerun: End of Eternity Character Campaign Draw](#g-banner_20200423_1003), [EoE Event Box Draw - Box 1](#g-banner_20200423_3001), [Weekend-only Character Campaign Draw](#g-banner_20200423_1002), [Weekend-only Character Campaign Draw](#g-banner_20200521_1003), [Bride 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200611_1002), [Bride 2017 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200618_1001), [Role Campaign Draw: Defender](#g-banner_20200618_1003), [Bride 2020 Weapons Campaign Draw](#g-banner_20200618_2001), [Weekend-only Character Campaign Draw](#g-banner_20200618_1002), [Triple! Star Character Campaign Draw (tr.)](#g-banner_20200625_1002), [SOA Memorial Character Campaign Draw](#g-banner_20200625_1003), [Rerun: VP Lenneth & Hrist & Arngrim & Mystina Campaign Draw](#g-banner_20200716_1001), [VP Event Box Draw - Box 1](#g-banner_20200716_3001), [Swimsuit 2017 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200722_1001), [Swimsuit 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200722_1002), [SO4 Memorial Character Campaign Draw](#g-banner_20200722_1003), [Swimsuit 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200806_1001), [EP3 New Chapter Draw](#g-banner_20200820_1001), [Costume Contest 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200903_1002), [Role Campaign Draw: Healer](#g-banner_20200917_1001), [Costume Contest 2018 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20200917_1002), [Weekend-only Character Campaign Draw](#g-banner_20200917_1003), [Valkyrie & Transcended Lezard Character Campaign Draw](#g-banner_20200924_1001), [Rerun: VP Azure Lenneth & Freya & Lezard & Silmeria Campaign Draw](#g-banner_20200924_1003), [Rerun: VP Lenneth & Hrist & Arngrim & Mystina Campaign Draw](#g-banner_20200924_1004), [VP Weapons Campaign Draw](#g-banner_20200924_2001), [VP Lezard Event "The Reborn of the Memorial Star" - Box Draw 1 (tr.)](#g-banner_20200924_3001), [Weekend-only Character Campaign Draw](#g-banner_20200924_1002), [Rerun: Tales of the Rays Collab Weapons Campaign Draw](#g-banner_20201022_2002), [Ernest Character Campaign Draw](#g-banner_20201029_1001), [Weapons Campaign Draw](#g-banner_20201029_2001), [Rerun: Divine-tier Weapons Campaign Draw (Divine Fayt)](#g-banner_20201119_2001), [4th Anniversary Draw](#g-banner_20201126_1002), [2020 Anniversary Weapons Campaign Draw](#g-banner_20201203_2001), [Weekend-only Character Campaign Draw](#g-banner_20201203_1001)
+  - 2021: [Rerun: New Year 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210101_1003), [Rerun: SRF Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210114_1003), [Rerun: Guilty Gear Collab Weapons Campaign Draw](#g-banner_20210121_2002), [Weapons Campaign Draw](#g-banner_20210304_2001), [Rerun: General / Artillery 2020 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210408_1002), [Rerun: Demon Flame / Demon Blade 2020 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210408_1003), [Radi-Ocean "Wadram, Sanctuary of Oblivion: Final Hour" - Box Draw 1 (tr.)](#g-banner_20210422_3001), [Rerun: Idol 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210520_1001), [Rerun: Maid 2019 Step-up Draw (pick-up guaranteed at step 10)](#g-banner_20210520_1002)
 - [Gacha rows whose banner_id has no master_banner row](#dangling-banners)
 - [Part 2: content beyond events and gacha blocked only by missing files](#part-2)
   - [Missions and story chapters](#p2-missions-and-story-chapters)
@@ -514,7 +477,7 @@ Stand-in? **yes (2D image)**: a made-up image in the game's format shows in its 
 
 Events ordered by first opening (master_event_term; else the area's window); weekly and undated areas last. Each event is followed by its gacha banners (one per `master_gacha.banner_id`: the list banner; step-up chains and their steps share one), ordered by the first row's `opened_at`. An event is listed when it or one of its banners misses files, so this part can list more events than the summary's count of events with missing files.
 
-Which event a banner belongs to: the master has no gacha -> event column, so two rules join what it records, the first giving exactly one event wins. (1) **Bonus characters** ((a) the join, (d) the time check): one of the event's bonus characters (`master_mission_character_bonus.master_role_category_id`, its `master_area_id` = the event's `master_event_area.id`) is a pick-up of the banner (`master_gacha_image` content_type 2, `master_gacha_pickup`; by `master_role.role_category_id`), and the banner opens inside one of the event's windows; several such events: those also passing (2). (2) **Released together** ((d)): the banner opens within an hour of the first window start of exactly one story event (an event with a talk-script mission). A banner_id reused for a later release is placed by its earliest opening. Banners placed by the bonus-character rule: 94; released together: 185; several candidate events (left unassociated): 36; no candidate: 567 (all banners, with or without missing files).
+Which event a banner belongs to: the master has no gacha -> event column, so two rules join what it records, the first giving exactly one event wins. (1) **Bonus characters** ((a) the join, (d) the time check): one of the event's bonus characters (`master_mission_character_bonus.master_role_category_id`, its `master_area_id` = the event's `master_event_area.id`) is a pick-up of the banner (`master_gacha_image` content_type 2, `master_gacha_pickup`; by `master_role.role_category_id`), and the banner opens inside one of the event's windows; several such events: those also passing (2). (2) **Released together** ((d)): the banner opens within an hour of the first window start of exactly one story event (an event with a talk-script mission). Rule 2 skips banners that are not event draws ((a) the columns, (d) what they mean): every gacha row is a step-up row (`is_stepup`), a ticket draw (not a box, `coin` 0, paid with `ticket_item_id`) or a free limited draw (not a box, `coin` 0, no ticket, `limit_count` > 0: download milestone and campaign "once per person" draws); box draws paid with event coins stay in. A banner_id reused for a later release is placed by its earliest opening. Banners placed by the bonus-character rule: 94; released together: 138; several candidate events (left unassociated): 33; no candidate: 617 (all banners, with or without missing files; 327 of the unplaced ones are not event draws and skip rule 2).
 
 ### <a id="ev-event_ticket"></a>チケットミッション — Ticket Mission *GL*
 
@@ -589,17 +552,6 @@ Missions playable by the local server's check (maps and enemy models; story: scr
 |---|---|---|---|---|---|---|
 | `Image/etc2/banner_event_newyear_001.aif` | event list banner | `master_event_area.bg_resource`: `event_new_01` | event list banner for "In the Spirit of Deep Cleaning" | medium | no existing `banner_event_newyear_#` file | yes (2D image) |
 | `Script/5012_010.msgp` | story scene script | `master_event_mission.talk_event_id_label`: `mc99_010` | story scene command script for mission mc99_010 "大そうじの心得 (In the Spirit of Deep Cleaning)" | high | path rule (b) | partly (end scene) |
-
-#### <a id="g-banner212"></a>300万DL記念キャラガチャ(1人1回) — 3M DL Milestone Draw (1 / person) *GL*
-
-`banner212` (id banner212) · 2016-12-28 15:00:00 → 2017-01-05 15:00:00 · 1 gacha row(s), character · 2 missing of 4 files
-
-Gacha rows: `gacha_fes_role_0003`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/pickup_img_chara_1612_004.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_fes_role_0003` | pick-up panel 1 of "3M DL Milestone Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1612_005.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_fes_role_0003` | pick-up panel 2 of "3M DL Milestone Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
 ### <a id="ev-event_new_02"></a>ハッピーニューイヤー — Happy New Year! *GL*
 
@@ -805,16 +757,6 @@ Missions playable by the local server's check (maps and enemy models; story: scr
 | `Script/5041_020.msgp` | story scene script | `master_event_mission.talk_event_id_label`: `mc99_027` | story scene command script for mission mc99_027 "女ゴコロとひなあられ(2) (A Maiden's Mind 2)" | high | path rule (b) | partly (end scene) |
 | `Script/5041_030.msgp` | story scene script | `master_event_mission.talk_event_id_label`: `mc99_028` | story scene command script for mission mc99_028 "女ゴコロとひなあられ(3) (A Maiden's Mind 3)" | high | path rule (b) | partly (end scene) |
 
-#### <a id="g-banner240"></a>400万DL記念キャラガチャ(1人1回) — 4M DL Milestone Draw (1 / person)
-
-`banner240` (id banner240) · 2017-03-16 15:00:00 → 2017-03-21 04:00:00 · 1 gacha row(s), character · 1 missing of 1 files
-
-Gacha rows: `gacha_fes_role_0004`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/pickup_img_chara_1703_003.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_fes_role_0004` | pick-up panel 1 of "4M DL Milestone Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_exp_purple"></a>紫の経験値素材ミッション — Purple EXP Missions *GL*
 
 `event_exp_purple` (id 4022841824) · 2017-03-23 15:00:00 → 2021-04-23 23:59:59 · 38 term(s) · 1 missing of 16 files
@@ -890,18 +832,6 @@ Gacha rows: `gacha_pickup_weapon_0003`
 | `Image/etc2/pickup_img_weapon_014.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0003` | pick-up panel 1 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_015.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0003` | pick-up panel 2 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_016.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0003` | pick-up panel 3 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner245"></a>ピックアップ武器ガチャ — Weapons Campaign Draw *GL*
-
-`banner245` (id banner245) · 2017-04-01 00:00:00 → 2017-04-13 15:00:00 · 1 gacha row(s), weapon · 3 missing of 3 files
-
-Gacha rows: `gacha_pickup_weapon_0004`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/pickup_img_weapon_014.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0004` | pick-up panel 1 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_015.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0004` | pick-up panel 2 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_016.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0004` | pick-up panel 3 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
 ### <a id="ev-event_apr_12_02"></a>続・エイプリルフール — April Fools! (Continued) *GL*
 
@@ -1180,18 +1110,6 @@ Gacha rows: `gacha_pickup_weapon_0007`
 | `Image/etc2/pickup_img_weapon_022.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0007` | pick-up panel 3 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_023.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_weapon_0007` | pick-up panel 4 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner275"></a>ピックアップ武器ガチャ(1人1回) — Weapons Campaign Draw (1 / person) *GL*
-
-`banner275` (id banner275) · 2017-05-25 14:30:00 → 2017-06-08 13:59:59 · 1 gacha row(s), weapon · 3 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_0008`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/pickup_img_weapon_020.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0008` | pick-up panel 1 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_022.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0008` | pick-up panel 3 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_023.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_weapon_0008` | pick-up panel 4 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_exp_yellow"></a>黄の経験値素材ミッション — Yellow EXP Missions *GL*
 
 `event_exp_yellow` (id 3578146713) · 2017-05-25 14:30:00 → 2021-04-08 23:59:59 · 32 term(s) · 1 missing of 18 files
@@ -1279,17 +1197,6 @@ Missions playable by the local server's check (maps and enemy models; story: scr
 | `Script/5083_060.msgp` | story scene script | `master_event_mission.talk_event_id_label`: `mc99_092` | story scene command script for mission mc99_092 "必殺魔球? ~ソフィアの場合~ (A Diabolical Pitch? (Sophia))" | high | path rule (b) | partly (end scene) |
 | `Scenario/TS_5082.msgp` | story dialogue text pack | `master_event_mission.talk_message_file`: `mc99_086`, `mc99_087`, `mc99_088` (+1) | dialogue text for story chapter `TS_5082` (missions mc99_086, mc99_087, mc99_088…) | high | path rule (b) | partly (text) |
 | `Scenario/TS_5083.msgp` | story dialogue text pack | `master_event_mission.talk_message_file`: `mc99_090`, `mc99_091`, `mc99_092` | dialogue text for story chapter `TS_5083` (missions mc99_090, mc99_091, mc99_092) | high | path rule (b) | partly (text) |
-
-#### <a id="g-banner312"></a>CM放送記念★5エース1体確定キャラガチャ(10連のみ、期間中1人1回) — TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)
-
-`banner312` (id banner312) · 2017-07-27 14:30:00 → 2017-09-07 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0058`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_role_0057.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner312` | list banner for the gacha "TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1707_007.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0058` | pick-up panel 1 of "TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
 ### <a id="ev-event_mir_24"></a>副官イベント — The Ensign Event *GL*
 
@@ -1444,27 +1351,6 @@ Gacha rows: `gacha_pickup_weapon_0039`
 | `Image/etc2/pickup_img_weapon_048.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0039` | pick-up panel 2 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_050.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_weapon_0039` | pick-up panel 4 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner1016"></a>ピックアップ武器ガチャ(1人1回) — Weapons Campaign Draw (1 / person) *GL*
-
-`banner1016` (id banner1016) · 2017-09-28 14:29:59 → 2017-10-12 13:59:59 · 1 gacha row(s), weapon · 2 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_0040`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/pickup_img_weapon_048.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0040` | pick-up panel 1 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_050.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0040` | pick-up panel 3 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1012"></a>ラスウェル確定ガチャ — Lasswell Character Draw *GL*
-
-`banner1012` (id banner1012) · 2017-09-28 14:30:00 → 2017-10-26 13:59:59 · 1 gacha row(s), character · 1 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0066`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/pickup_img_chara_1709_004.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0066` | pick-up panel 1 of "Lasswell Character Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-
 #### <a id="g-banner1013"></a>ピックアップガチャ(レイン/フィーナ) — Rain & Fina Campaign Draw *GL*
 
 `banner1013` (id banner1013) · 2017-09-28 14:30:00 → 2017-10-12 13:59:59 · 1 gacha row(s), character · 4 missing of 4 files
@@ -1477,17 +1363,6 @@ Gacha rows: `gacha_pickup_role_0067`
 | `Image/etc2/pickup_img_chara_1709_012.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0067` | pick-up panel 1 of "Rain & Fina Campaign Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1709_005.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0067` | pick-up panel 2 of "Rain & Fina Campaign Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1709_006.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0067` | pick-up panel 3 of "Rain & Fina Campaign Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1014"></a>★5エース確定キャラガチャ(10連、期間中1人1回) — 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person) *GL*
-
-`banner1014` (id banner1014) · 2017-09-28 14:30:00 → 2017-10-26 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0068`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_role_0068.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1014` | list banner for the gacha "5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1709_011.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0068` | pick-up panel 1 of "5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
 ### <a id="ev-event_aca_28"></a>アカデミー時代イベント — Academy Days Event *GL*
 
@@ -1520,20 +1395,6 @@ Gacha rows: `gacha_pickup_role_0074`
 | `Image/etc2/pickup_img_chara_1710_007.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0074` | pick-up panel 2 of "Crowe & Official Edge & Official Reimi Campaign Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1710_008.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0074` | pick-up panel 3 of "Crowe & Official Edge & Official Reimi Campaign Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner1024"></a>SO2キャラピックアップガチャ(期間中3回) — SO2 Characters Campaign Draw (3 times while available) *GL*
-
-`banner1024` (id banner1024) · 2017-10-12 14:30:00 → 2017-10-19 13:59:59 · 1 gacha row(s), character · 5 missing of 5 files
-
-Gacha rows: `gacha_pickup_role_0075`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_role_0074.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1024` | list banner for the gacha "SO2 Characters Campaign Draw (3 times while available)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1710_009.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0075` | pick-up panel 1 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1702_001.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0075` | pick-up panel 2 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1702_006.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0075` | pick-up panel 3 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1704_001.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_role_0075` | pick-up panel 4 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_hall_29"></a>ハロウィンイベント — Halloween Fun *GL*
 
 `event_hall_29` (id 3543525715) · 2017-10-26 14:30:00 → 2021-05-06 13:59:59 · 3 term(s) · 13 missing of 42 files
@@ -1565,20 +1426,6 @@ Gacha rows: `gacha_pickup_role_0081`
 | `Image/etc2/banner_gacha_pickup_role_0077.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1031` | list banner for the gacha "Campaign Draw (Devil Clair/Vampire Victor/Were-Mille)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1710_018.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0081` | pick-up panel 2 of "Campaign Draw (Devil Clair/Vampire Victor/Were-Mille)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1710_017.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0081` | pick-up panel 3 of "Campaign Draw (Devil Clair/Vampire Victor/Were-Mille)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1032"></a>SO4キャラピックアップガチャ(期間中3回) — SO4 Characters Campaign Draw (3 times while available) *GL*
-
-`banner1032` (id banner1032) · 2017-10-26 14:30:00 → 2017-11-02 13:59:59 · 1 gacha row(s), character · 5 missing of 5 files
-
-Gacha rows: `gacha_pickup_role_0082`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_role_0078.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1032` | list banner for the gacha "SO4 Characters Campaign Draw (3 times while available)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1710_013.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0082` | pick-up panel 1 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1705_004.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0082` | pick-up panel 2 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1710_006.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0082` | pick-up panel 3 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1701_001.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_role_0082` | pick-up panel 4 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
 ### <a id="ev-event_ticket_02"></a>チケットミッション — Ticket Mission *GL*
 
@@ -1773,17 +1620,6 @@ Gacha rows: `gacha_pickup_role_0106`
 | `Image/etc2/pickup_img_chara_1712_014.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0106` | pick-up panel 3 of "Rerun: Lenneth & Silmeria Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1712_015.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_role_0106` | pick-up panel 4 of "Rerun: Lenneth & Silmeria Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner1110"></a>10連で★5エース1体確定キャラガチャ(1人1回) — One 5★ Ace Character Guaranteed with 10-chain (1 / person) *GL*
-
-`banner1110` (id banner1110) · 2017-12-28 14:30:00 → 2018-01-16 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0107`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_role_0117.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1110` | list banner for the gacha "One 5★ Ace Character Guaranteed with 10-chain (1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_1712_016.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0107` | pick-up panel 1 of "One 5★ Ace Character Guaranteed with 10-chain (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
-
 #### <a id="g-banner1124"></a>定常武器ガチャ【近接】【ナックル/双剣/剣&鞘/鎌】 — Standard Weapons Draw [Melee] [Knuckles / Twin Swords / Sword & Sheath / Scythe]
 
 `banner1124` (id banner1124) · 2017-12-28 14:30:00 → 2020-06-25 13:59:59 · 1 gacha row(s), weapon · 1 missing of 2 files
@@ -1827,57 +1663,6 @@ Gacha rows: `gacha_pickup_role_0108`
 | `Image/etc2/banner_gacha_pickup_role_0119.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1111` | list banner for the gacha "Hrist & Arngrim Character Campaign Draw"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0001.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0108` | pick-up panel 1 of "Hrist & Arngrim Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0002.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0108` | pick-up panel 2 of "Hrist & Arngrim Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1118"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
-
-`banner1118` (id banner1118) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon, step-up · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_step_0019`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_weapon_0084.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1118` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_097.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_step_0019` | pick-up panel 1 of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_step_0019` | pick-up panel 2 of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_step_0019` | pick-up panel 3 of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1119"></a>ステップ3で★5武器確定ガチャ2(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain) *GL*
-
-`banner1119` (id banner1119) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon, step-up · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_step_0020`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_weapon_0084.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1119` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_097.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_step_0020` | pick-up panel 1 of "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_step_0020` | pick-up panel 2 of "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_step_0020` | pick-up panel 3 of "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1120"></a>ステップ3で★5武器確定ガチャ3(10連★5新武器確定) — Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain) *GL*
-
-`banner1120` (id banner1120) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon, step-up · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_step_0021`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_weapon_0084.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1120` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_097.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_step_0021` | pick-up panel 1 of "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_step_0021` | pick-up panel 2 of "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_step_0021` | pick-up panel 3 of "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1121"></a>ピックアップ武器ガチャ(10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person) *GL*
-
-`banner1121` (id banner1121) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon · 3 missing of 3 files
-
-Gacha rows: `gacha_pickup_weapon_0068`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_weapon_0083.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1121` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0068` | pick-up panel 1 of "Weapons Campaign Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0068` | pick-up panel 2 of "Weapons Campaign Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
 #### <a id="g-banner1122"></a>ピックアップ武器ガチャ — Weapons Campaign Draw *GL*
 
@@ -2004,17 +1789,6 @@ Gacha rows: `gacha_pickup_role_0113`
 | `Image/etc2/pickup_img_chara_0010.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0113` | pick-up panel 1 of "Crimson Phia & Cyuss Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0011.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0113` | pick-up panel 2 of "Crimson Phia & Cyuss Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner1155"></a>600万DL記念武器ガチャ(期間中1日1回) — 6M DL Milestone Weapons Draw (1 / day while available)
-
-`banner1155` (id banner1155) · 2018-02-15 14:30:00 → 2018-02-28 13:59:59 · 14 gacha row(s), weapon · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_weapon_0076`, `gacha_pickup_weapon_0077`, `gacha_pickup_weapon_0078`, `gacha_pickup_weapon_0079`, `gacha_pickup_weapon_0080`, `gacha_pickup_weapon_0081` … (+8)
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_weapon_0095.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1155` | list banner for the gacha "6M DL Milestone Weapons Draw (1 / day while available)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_112.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0076`, `gacha_pickup_weapon_0077`, `gacha_pickup_weapon_0078` (+11) | pick-up panel 1 of "6M DL Milestone Weapons Draw (1 / day while available)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_mar_37"></a>マリアディアスイベント — Maria and Dias Event *GL*
 
 `event_mar_37` (id 129818307) · 2018-03-15 14:30:00 → 2021-05-20 13:59:59 · 3 term(s) · 12 missing of 46 files
@@ -2085,17 +1859,6 @@ Gacha rows: `gacha_pickup_role_0120`
 | `Image/etc2/banner_gacha_pickup_role_0131.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1172` | list banner for the gacha "Maria Character Campaign Draw"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0026.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0120` | pick-up panel 1 of "Maria Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0027.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0120` | pick-up panel 2 of "Maria Character Campaign Draw"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner1177"></a>新生活応援フェス(10連のみ、期間中1人1回) — New Life Support Fest (10-chain only, 1 / person)
-
-`banner1177` (id banner1177) · 2018-03-29 14:30:00 → 2018-04-26 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0122`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_role_0133.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1177` | list banner for the gacha "New Life Support Fest (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_0029.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0122` | pick-up panel 1 of "New Life Support Fest (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 
 ### <a id="ev-event_afl_40"></a>エイプリルフール2018 — April Fools' 2018
 
@@ -2545,25 +2308,6 @@ Pick-ups: ★6 リムル (Lymle)
 | `Image/etc2/banner_gacha_pickup_role_0167.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20180913_1002` | list banner for the gacha "Lymle Character Campaign Draw", featuring ★6 リムル (Lymle); 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0095.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0155` | pick-up panel for ★6 リムル (Lymle); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner_20180913_2001"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
-
-`banner_20180913_2001` (id banner_20180913_2001) · 2018-09-13 14:30:00 → 2018-09-27 13:59:59 · 3 gacha row(s), weapon, step-up · 8 missing of 8 files
-
-Gacha rows: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081`
-
-Pick-ups: 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); パルスライフル (Pulse Rifle)
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_weapon_0142.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20180913_2001` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_161.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | medium | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_139.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for 幸福機・サムシング・フォー; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_138.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for 祝華刀・カラーリリィ; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_125.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_124.aif` | pick-up panel (view 5) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for パルスライフル (Pulse Rifle); 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_098.aif` | main panel (view 6) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | medium | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_103.aif` | main panel (view 7) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | medium | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_casino_53"></a>カジノイベント — Casino Event
 
 `event_casino_53` (id 1465223133) · 2018-09-27 14:30:00 → 2018-10-18 13:59:59 · 1 term(s) · 7 missing of 40 files
@@ -2792,20 +2536,6 @@ Pick-ups: ★6 悪魔クレア (Devil Clair); ★6 狼ミリー (Were-Millie); �
 | `Image/etc2/pickup_img_chara_0111.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_role_0166` | pick-up panel for ★6 狼ミリー (Were-Millie); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0110.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_role_0166` | pick-up panel for ★6 吸血鬼ヴィクトル (Vampire Victor); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner_20181025_1004"></a>ピックアップキャラガチャ(堕天使ネル/狼アルベル) — Angel Nel & Were-Albel Character Campaign Draw
-
-`banner_20181025_1004` (id banner_20181025_1004) · 2018-10-25 14:30:00 → 2018-11-22 13:59:59 · 1 gacha row(s), character · 3 missing of 3 files
-
-Gacha rows: `gacha_pickup_role_0173`
-
-Pick-ups: ★6 堕天使ネル (Angel Nel); ★6 狼アルベル (Were-Albel)
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/banner_gacha_pickup_role_0176_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181025_1004` | list banner for the gacha "Angel Nel & Were-Albel Character Campaign Draw", featuring ★6 堕天使ネル (Angel Nel); ★6 狼アルベル (Were-Albel) | medium | no existing `banner_gacha_pickup_role_#_#` file | yes (2D image) |
-| `Image/etc2/pickup_img_chara_0106.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0173` | pick-up panel for ★6 堕天使ネル (Angel Nel); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_chara_0105.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_role_0173` | pick-up panel for ★6 狼アルベル (Were-Albel); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_max_38"></a>覇級イベント — Misery 4 Event *GL*
 
 `event_max_38` (id 4173210422) · 2018-10-25 14:30:00 → 2021-06-22 23:59:59 · 165 term(s) · 7 missing of 25 files
@@ -2925,37 +2655,6 @@ Pick-ups: スノープラズマガン; 嵐の聖夜物語; ジングルベルサ
 | `Image/etc2/20181213_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0140` | pick-up panel for 嵐の聖夜物語; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20181213_weapon_PU_004.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0140` | pick-up panel for ジングルベルサイス; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner_20181213_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person)
-
-`banner_20181213_2002` (id banner_20181213_2002) · 2018-12-13 14:30:00 → 2019-01-03 23:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_0139`
-
-Pick-ups: スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20181213_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181213_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 1 / person)", featuring スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20181213_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0139` | pick-up panel for スノープラズマガン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20181213_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0139` | pick-up panel for 嵐の聖夜物語; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20181213_weapon_PU_004.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0139` | pick-up panel for ジングルベルサイス; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20181213_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
-
-`banner_20181213_2003` (id banner_20181213_2003) · 2018-12-13 14:30:00 → 2019-01-03 23:59:59 · 3 gacha row(s), weapon, step-up · 5 missing of 5 files
-
-Gacha rows: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111`
-
-Pick-ups: スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20181213_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181213_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20181213_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20181213_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | pick-up panel for スノープラズマガン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20181213_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | pick-up panel for 嵐の聖夜物語; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20181213_weapon_PU_004.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | pick-up panel for ジングルベルサイス; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_BossRush_33"></a>逆襲の三巨頭 — Revenge Comes in Threes *GL*
 
 `event_BossRush_33` (id 1597053931) · 2018-12-27 14:30:00 → 2018-12-31 23:59:59 · 1 term(s) · 1 missing of 18 files
@@ -3044,20 +2743,6 @@ Pick-ups: ★6 2B (2B); ★6 9S (9S); ★6 A2 (A2)
 
 Stand-ins (made-up, `standin-assets/`): `Image/etc2/pickup_img_chara_0015.aif` (pick-up panel (view 1)), `Image/etc2/pickup_img_chara_0016.aif` (pick-up panel (view 2)), `Image/etc2/pickup_img_chara_0017.aif` (pick-up panel (view 3))
 
-#### <a id="g-banner_20181227_2001"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
-
-`banner_20181227_2001` (id banner_20181227_2001) · 2019-01-17 14:30:00 → 2019-01-24 13:59:59 · 3 gacha row(s), weapon, step-up · 5 missing of 5 files
-
-Gacha rows: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20181227_weapon_001.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181227_2001` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_113.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_114.aif` | main panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_115.aif` | main panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-| `Image/etc2/pickup_img_weapon_116.aif` | main panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
-
 #### <a id="g-banner_20190117_1001"></a>ピックアップキャラガチャ(さくら/エリカ/ジェミニ) — Sakura & Erica & Gemini Character Campaign Draw
 
 `banner_20190117_1001` (id banner_20190117_1001) · 2019-01-17 14:30:00 → 2019-02-07 13:59:59 · 1 gacha row(s), character · 4 missing of 4 files
@@ -3087,37 +2772,6 @@ Pick-ups: 光刀・無形; ガブリエル (Gabriel); レッド・サン
 | `Image/etc2/20190117_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0146` | pick-up panel for 光刀・無形; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20190117_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0146` | pick-up panel for ガブリエル (Gabriel); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20190117_weapon_PU_004.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0146` | pick-up panel for レッド・サン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20190117_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person)
-
-`banner_20190117_2002` (id banner_20190117_2002) · 2019-01-17 14:30:00 → 2019-02-07 13:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_0145`
-
-Pick-ups: 光刀・無形; ガブリエル (Gabriel); レッド・サン
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20190117_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190117_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 1 / person)", featuring 光刀・無形; ガブリエル (Gabriel); レッド・サン; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20190117_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0145` | pick-up panel for 光刀・無形; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190117_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0145` | pick-up panel for ガブリエル (Gabriel); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190117_weapon_PU_004.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0145` | pick-up panel for レッド・サン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20190117_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
-
-`banner_20190117_2003` (id banner_20190117_2003) · 2019-01-17 14:30:00 → 2019-02-07 13:59:59 · 3 gacha row(s), weapon, step-up · 5 missing of 5 files
-
-Gacha rows: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126`
-
-Pick-ups: 光刀・無形; ガブリエル (Gabriel); レッド・サン
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20190117_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190117_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring 光刀・無形; ガブリエル (Gabriel); レッド・サン; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20190117_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 光刀・無形; ガブリエル (Gabriel); レッド・サン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190117_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | pick-up panel for 光刀・無形; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190117_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | pick-up panel for ガブリエル (Gabriel); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190117_weapon_PU_004.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | pick-up panel for レッド・サン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 
 #### <a id="g-banner_20200319_1001"></a>復刻サクラ大戦ピックアップキャラガチャ — Rerun: Sakura Wars Character Campaign Draw
 
@@ -3338,36 +2992,6 @@ Pick-ups: 強化型スナップブレード【地】; 強化型スナップブ�
 | `Image/etc2/20190228_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0153` | pick-up panel for 強化型スナップブレード【地】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20190228_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0153` | pick-up panel for 強化型スナップブレード【人】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner_20190228_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人2回) — Weapons Campaign Draw (10-chain only, 2 / person)
-
-`banner_20190228_2002` (id banner_20190228_2002) · 2019-02-28 14:30:00 → 2019-03-14 13:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_0152`
-
-Pick-ups: 強化型スナップブレード【地】; 強化型スナップブレード【人】
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20190228_weapon_001.aif` | home / notice banner | `master_banner.image (target_content_type 1)`: `banner_20190228_9005` | home-screen / notice banner announcing "Weapons Campaign Draw (10-chain only, 2 / person)"; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128); banner row `banner_20190228_9005` | yes (2D image) |
-| `Image/etc2/20190228_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190228_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 2 / person)", featuring 強化型スナップブレード【地】; 強化型スナップブレード【人】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20190228_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0152` | pick-up panel for 強化型スナップブレード【地】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190228_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0152` | pick-up panel for 強化型スナップブレード【人】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20190228_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
-
-`banner_20190228_2003` (id banner_20190228_2003) · 2019-02-28 14:30:00 → 2019-03-14 13:59:59 · 3 gacha row(s), weapon, step-up · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135`
-
-Pick-ups: 強化型スナップブレード【地】; 強化型スナップブレード【人】
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20190228_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190228_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring 強化型スナップブレード【地】; 強化型スナップブレード【人】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20190228_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 強化型スナップブレード【地】; 強化型スナップブレード【人】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190228_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135` | pick-up panel for 強化型スナップブレード【地】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190228_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135` | pick-up panel for 強化型スナップブレード【人】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_afl2019_65"></a>エイプリルフール2019 — April Fools' 2019
 
 `event_afl2019_65` (id 3041611542) · 2019-04-01 00:00:00 → 2019-04-01 23:59:59 · 1 term(s) · 5 missing of 13 files
@@ -3568,45 +3192,6 @@ Pick-ups: ジャンクヤード・ドッグ【焔】; Missコンフィール【�
 | `Image/etc2/20190425_weapon_001.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190425_2001` | list banner for the gacha "Weapons Campaign Draw", featuring ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
 | `Image/etc2/20190425_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0163` | pick-up panel for ジャンクヤード・ドッグ【焔】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20190425_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0163` | pick-up panel for Missコンフィール【烈】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20190425_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人2回) — Weapons Campaign Draw (10-chain only, 2 / person)
-
-`banner_20190425_2002` (id banner_20190425_2002) · 2019-04-25 14:30:00 → 2019-05-16 13:59:59 · 1 gacha row(s), weapon · 3 missing of 3 files
-
-Gacha rows: `gacha_pickup_weapon_0162`
-
-Pick-ups: ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20190425_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190425_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 2 / person)", featuring ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20190425_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0162` | pick-up panel for ジャンクヤード・ドッグ【焔】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190425_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0162` | pick-up panel for Missコンフィール【烈】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20190425_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
-
-`banner_20190425_2003` (id banner_20190425_2003) · 2019-04-25 14:30:00 → 2019-05-16 13:59:59 · 3 gacha row(s), weapon, step-up · 4 missing of 4 files
-
-Gacha rows: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147`
-
-Pick-ups: ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20190425_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190425_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
-| `Image/etc2/20190425_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190425_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147` | pick-up panel for ジャンクヤード・ドッグ【焔】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-| `Image/etc2/20190425_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147` | pick-up panel for Missコンフィール【烈】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20190501_2001"></a>GWキャンペーン 1人10回10連無料武器ガチャ — Golden Week Campaign Free 10-pull Weapons Draw (10 per person)
-
-`banner_20190501_2001` (id banner_20190501_2001) · 2019-04-25 14:30:00 → 2019-05-16 13:59:59 · 1 gacha row(s), weapon · 1 missing of 2 files
-
-Gacha rows: `gacha_pickup_weapon_0164`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20190501_weapon_001.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190501_2001` | list banner for the gacha "Golden Week Campaign Free 10-pull Weapons Draw (10 per person)"; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
 
 #### <a id="g-banner_20210121_1003"></a>復刻ギルティギアコラボピックアップキャラガチャ(ソル/エルフェルト) — Rerun: Guilty Gear Collab Sol & Elphelt Character Campaign Draw
 
@@ -4225,17 +3810,6 @@ Pick-ups: ★6 悪魔クレア (Devil Clair); ★6 狼ミリー (Were-Millie); �
 | `Image/etc2/pickup_img_chara_0111.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_role_0235` | pick-up panel for ★6 狼ミリー (Were-Millie); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_0110.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_role_0235` | pick-up panel for ★6 吸血鬼ヴィクトル (Vampire Victor); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner_20191010_1006"></a>カムバックチケットキャラガチャ — Comeback Ticket Character Draw
-
-`banner_20191010_1006` (id banner_20191010_1006) · 2019-10-10 14:30:00 → 2019-11-07 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0236`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20191010_chara_005.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20191010_1006` | list banner for the gacha "Comeback Ticket Character Draw"; 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
-| `Image/etc2/20191010_chara_PU_004.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0236` | main (first) panel of "Comeback Ticket Character Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_PSNC2_82"></a>-- — Persona Collab "Siren's Lament", Part 2 (tr.)
 
 `event_PSNC2_82` (id 3061770059) · 2019-10-24 14:30:00 → 2019-11-07 13:59:59 · 1 term(s) · 17 missing of 55 files
@@ -4373,17 +3947,6 @@ Pick-ups: ★6 歌星ソフィア (Idol Sophia); ★6 歌星イヴリーシュ (
 | Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
 |---|---|---|---|---|---|---|
 | `Image/etc2/20191128_chara_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20191128_1003` | list banner for the gacha "Rerun: Idol 2019 Character Campaign Draw", featuring ★6 歌星ソフィア (Idol Sophia); ★6 歌星イヴリーシュ (Idol Evelysse); 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
-
-#### <a id="g-banner_20191128_1004"></a>3周年記念大還元ガチャ — 3rd Anniversary Grand Thanksgiving Draw
-
-`banner_20191128_1004` (id banner_20191128_1004) · 2019-11-28 14:30:00 → 2019-12-19 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0250`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20191128_chara_004.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20191128_1004` | list banner for the gacha "3rd Anniversary Grand Thanksgiving Draw"; 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
-| `Image/etc2/20191128_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0250` | main (first) panel of "3rd Anniversary Grand Thanksgiving Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 
 #### <a id="g-banner_20201119_1001"></a>復刻2019アニバーサリー/10連10ステップ目PU1体確定 — Rerun: 2019 Anniversary Step-up Draw (pick-up guaranteed at step 10)
 
@@ -5066,39 +4629,6 @@ Pick-ups: ★6 魔改のプリシス (Franken-Precis); ★6 祓魔師フェイ�
 | `Image/etc2/20191107_chara_PU_002.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_role_0566`, `gacha_pickup_role_0567`, `gacha_pickup_role_0568` (+7) | pick-up panel for ★6 祓魔師フェイズ (Exorcist Faize); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/20191114_chara_PU_001.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_role_0566`, `gacha_pickup_role_0567`, `gacha_pickup_role_0568` (+7) | pick-up panel for ★6 魔女イヴリーシュ (Witch Evelysse); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 
-### <a id="ev-event_4year_95"></a>4周年イベント — 4 AnniversaryEvent *gloss*
-
-`event_4year_95` (id 1125341846) · 2020-11-26 14:30:00 → 2021-06-17 13:59:59 · 3 term(s) · 0 missing of 67 files
-
-Missions playable by the local server's check (maps and enemy models; story: script and text): **16 of 16**
-
-#### <a id="g-banner_20201126_1002"></a>4周年記念ガチャ — 4th Anniversary Draw
-
-`banner_20201126_1002` (id banner_20201126_1002) · 2020-11-26 14:30:00 → 2020-12-31 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0624`
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20201126_chara_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20201126_1002` | list banner for the gacha "4th Anniversary Draw"; 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
-| `Image/etc2/20201126_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0624` | main (first) panel of "4th Anniversary Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
-
-### <a id="ev-event_Memory_07"></a>忘却の聖地ワドラム第7弾 — 忘却 聖地ワドラムPart 7 (tr.) *gloss*
-
-`event_Memory_07` (id 3538720260) · 2021-01-14 14:30:00 → 2021-06-24 13:59:59 · 2 term(s) · 0 missing of 34 files
-
-Missions playable by the local server's check (maps and enemy models; story: script and text): **9 of 9**
-
-#### <a id="g-banner_20210114_1003"></a>復刻SRF/10連10ステップ目PU1体確定 — Rerun: SRF Step-up Draw (pick-up guaranteed at step 10)
-
-`banner_20210114_1003` (id banner_20210114_1003) · 2021-01-14 14:30:00 → 2021-06-03 13:59:59 · 20 gacha row(s), character, step-up · 1 missing of 2 files
-
-Gacha rows: `gacha_pickup_role_0693`, `gacha_pickup_role_0694`, `gacha_pickup_role_0695`, `gacha_pickup_role_0696`, `gacha_pickup_role_0697`, `gacha_pickup_role_0698` … (+14)
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20210114_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0693`, `gacha_pickup_role_0694`, `gacha_pickup_role_0695` (+17) | main (first) panel of "Rerun: SRF Step-up Draw (pick-up guaranteed at step 10)"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
-
 ### <a id="ev-event_Memory_08"></a>忘却の聖地ワドラム第8弾 — 忘却 聖地ワドラムPart 8 (tr.) *gloss*
 
 `event_Memory_08` (id 1112771477) · 2021-02-10 14:30:00 → 2021-06-24 13:59:59 · 2 term(s) · 0 missing of 34 files
@@ -5230,30 +4760,6 @@ Pick-ups: ★6 ロジャー (Roger); ★6 ティニーク (T'nique)
 | `Image/etc2/20210408_chara_PU_001.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_role_0839` | pick-up panel for ★6 ロジャー (Roger); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/20210408_chara_PU_002.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_role_0839` | pick-up panel for ★6 ティニーク (T'nique); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 
-#### <a id="g-banner_20210408_1002"></a>復刻狐将/砲甲2020/10連10ステップ目PU1体確定 — Rerun: General / Artillery 2020 Step-up Draw (pick-up guaranteed at step 10)
-
-`banner_20210408_1002` (id banner_20210408_1002) · 2021-04-08 14:30:00 → 2021-06-17 13:59:59 · 20 gacha row(s), character, step-up · 1 missing of 5 files
-
-Gacha rows: `gacha_pickup_role_0840`, `gacha_pickup_role_0841`, `gacha_pickup_role_0842`, `gacha_pickup_role_0843`, `gacha_pickup_role_0844`, `gacha_pickup_role_0845` … (+14)
-
-Pick-ups: ★6 狐将のカーリン (General Caleen); ★6 砲甲のリカルド (Artillery Ricardo)
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20210408_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0840`, `gacha_pickup_role_0841`, `gacha_pickup_role_0842` (+7) | main (first) panel of "Rerun: General / Artillery 2020 Step-up Draw (pick-up guaranteed at step 10)" showing ★6 狐将のカーリン (General Caleen); ★6 砲甲のリカルド (Artillery Ricardo); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
-
-#### <a id="g-banner_20210408_1003"></a>復刻鬼炎/斬鬼2020/10連10ステップ目PU1体確定 — Rerun: Demon Flame / Demon Blade 2020 Step-up Draw (pick-up guaranteed at step 10)
-
-`banner_20210408_1003` (id banner_20210408_1003) · 2021-04-08 14:30:00 → 2021-06-17 13:59:59 · 20 gacha row(s), character, step-up · 1 missing of 5 files
-
-Gacha rows: `gacha_pickup_role_0850`, `gacha_pickup_role_0851`, `gacha_pickup_role_0852`, `gacha_pickup_role_0853`, `gacha_pickup_role_0854`, `gacha_pickup_role_0855` … (+14)
-
-Pick-ups: ★6 斬鬼のネル (Demon Nel); ★6 鬼炎のアルベル (Demon Albel)
-
-| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
-|---|---|---|---|---|---|---|
-| `Image/etc2/20210408_chara_PU_004.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0850`, `gacha_pickup_role_0851`, `gacha_pickup_role_0852` (+7) | main (first) panel of "Rerun: Demon Flame / Demon Blade 2020 Step-up Draw (pick-up guaranteed at step 10)" showing ★6 斬鬼のネル (Demon Nel); ★6 鬼炎のアルベル (Demon Albel); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
-
 #### <a id="g-banner_20210408_2001"></a>ピックアップ武器ガチャ — Weapons Campaign Draw *GL*
 
 `banner_20210408_2001` (id banner_20210408_2001) · 2021-04-08 14:30:00 → 2021-04-29 13:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
@@ -5314,7 +4820,7 @@ Missions playable by the local server's check (maps and enemy models; story: scr
 
 ## <a id="unassociated-banners"></a>Gacha banners without an event
 
-Banners that neither rule places (standard, step-up and ticket banners, reruns without an event, and banners with several candidate events), ordered by the first row's `opened_at`.
+Banners that neither rule places (standard, step-up, ticket and milestone banners, reruns without an event, and banners with several candidate events), ordered by the first row's `opened_at`.
 
 ### <a id="g-banner202"></a>武器ガチャ — Weapons Draw *GL*
 
@@ -5380,6 +4886,17 @@ Gacha rows: `gacha_pickup_role_0002`
 | `Image/etc2/pickup_img_chara_1612_005.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0002` | pick-up panel 2 of "Campaign Draws"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1612_002.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0002` | pick-up panel 3 of "Campaign Draws"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1612_003.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_role_0002` | pick-up panel 4 of "Campaign Draws"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner212"></a>300万DL記念キャラガチャ(1人1回) — 3M DL Milestone Draw (1 / person) *GL*
+
+`banner212` (id banner212) · 2016-12-28 15:00:00 → 2017-01-05 15:00:00 · 1 gacha row(s), character · 2 missing of 4 files
+
+Gacha rows: `gacha_fes_role_0003`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/pickup_img_chara_1612_004.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_fes_role_0003` | pick-up panel 1 of "3M DL Milestone Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1612_005.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_fes_role_0003` | pick-up panel 2 of "3M DL Milestone Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner213"></a>ピックアップガチャ — Campaign Draws *GL*
 
@@ -5582,6 +5099,16 @@ Gacha rows: `gacha_pickup_weapon_0002`
 | `Image/etc2/pickup_img_weapon_012.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0002` | pick-up panel 3 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_013.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_weapon_0002` | pick-up panel 4 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner240"></a>400万DL記念キャラガチャ(1人1回) — 4M DL Milestone Draw (1 / person)
+
+`banner240` (id banner240) · 2017-03-16 15:00:00 → 2017-03-21 04:00:00 · 1 gacha row(s), character · 1 missing of 1 files
+
+Gacha rows: `gacha_fes_role_0004`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/pickup_img_chara_1703_003.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_fes_role_0004` | pick-up panel 1 of "4M DL Milestone Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner241"></a>人気キャラピックアップ — Popular Characters Draw *GL*
 
 `banner241` (id banner241) · 2017-03-17 04:00:00 → 2017-03-20 03:59:59 · 1 gacha row(s), character · 1 missing of 1 files
@@ -5601,6 +5128,18 @@ Gacha rows: `gacha_pickup_role_0011`
 | Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
 |---|---|---|---|---|---|---|
 | `Image/etc2/pickup_img_chara_1703_005.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0011` | pick-up panel 1 of "Popular Characters Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner245"></a>ピックアップ武器ガチャ — Weapons Campaign Draw *GL*
+
+`banner245` (id banner245) · 2017-04-01 00:00:00 → 2017-04-13 15:00:00 · 1 gacha row(s), weapon · 3 missing of 3 files
+
+Gacha rows: `gacha_pickup_weapon_0004`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/pickup_img_weapon_014.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0004` | pick-up panel 1 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_015.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0004` | pick-up panel 2 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_016.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0004` | pick-up panel 3 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner247"></a>ピックアップガチャ(マリア/クリフ) — Maria & Cliff Campaign Draw *GL*
 
@@ -5796,6 +5335,18 @@ Gacha rows: `gacha_pickup_role_0037`
 | Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
 |---|---|---|---|---|---|---|
 | `Image/etc2/pickup_img_chara_1705_003.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0037` | pick-up panel 1 of "Girls' Campaign Draw (1 / day)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner275"></a>ピックアップ武器ガチャ(1人1回) — Weapons Campaign Draw (1 / person) *GL*
+
+`banner275` (id banner275) · 2017-05-25 14:30:00 → 2017-06-08 13:59:59 · 1 gacha row(s), weapon · 3 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_0008`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/pickup_img_weapon_020.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0008` | pick-up panel 1 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_022.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0008` | pick-up panel 3 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_023.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_weapon_0008` | pick-up panel 4 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner282"></a>CM放送記念キャラガチャ(1人1回) — TV Commercial Celebration Character Draw (1 / person)
 
@@ -6027,6 +5578,17 @@ Gacha rows: `gacha_pickup_weapon_0021`, `gacha_pickup_weapon_0022`, `gacha_picku
 | `Image/etc2/banner_gacha_pickup_weapon_0021.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner309` | list banner for the gacha "Weapons Campaign Draw (1 / day)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_037.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0021`, `gacha_pickup_weapon_0022`, `gacha_pickup_weapon_0023` (+1) | pick-up panel 1 of "Weapons Campaign Draw (1 / day)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner312"></a>CM放送記念★5エース1体確定キャラガチャ(10連のみ、期間中1人1回) — TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)
+
+`banner312` (id banner312) · 2017-07-27 14:30:00 → 2017-09-07 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0058`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_role_0057.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner312` | list banner for the gacha "TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1707_007.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0058` | pick-up panel 1 of "TV Commercial Celebration: One 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner311"></a>SO2発売日記念キャラガチャ(クロードorレナ確定) — SO2 Release Anniversary Character Draw (Claude or Rena guaranteed)
 
 `banner311` (id banner311) · 2017-07-30 00:00:00 → 2017-07-30 23:59:59 · 1 gacha row(s), character · 4 missing of 4 files
@@ -6165,6 +5727,38 @@ Gacha rows: `gacha_pickup_weapon_0036`, `gacha_pickup_weapon_0037`, `gacha_picku
 | `Image/etc2/pickup_img_weapon_018.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0036`, `gacha_pickup_weapon_0037`, `gacha_pickup_weapon_0038` | pick-up panel 3 of "Elemental Weapons Campaign Draw (1 / day)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_016.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_weapon_0036`, `gacha_pickup_weapon_0037`, `gacha_pickup_weapon_0038` | pick-up panel 4 of "Elemental Weapons Campaign Draw (1 / day)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner1016"></a>ピックアップ武器ガチャ(1人1回) — Weapons Campaign Draw (1 / person) *GL*
+
+`banner1016` (id banner1016) · 2017-09-28 14:29:59 → 2017-10-12 13:59:59 · 1 gacha row(s), weapon · 2 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_0040`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/pickup_img_weapon_048.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0040` | pick-up panel 1 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_050.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0040` | pick-up panel 3 of "Weapons Campaign Draw (1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1012"></a>ラスウェル確定ガチャ — Lasswell Character Draw *GL*
+
+`banner1012` (id banner1012) · 2017-09-28 14:30:00 → 2017-10-26 13:59:59 · 1 gacha row(s), character · 1 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0066`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/pickup_img_chara_1709_004.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0066` | pick-up panel 1 of "Lasswell Character Draw"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1014"></a>★5エース確定キャラガチャ(10連、期間中1人1回) — 5★ Ace Guaranteed Character Draw (10-chain only, 1 / person) *GL*
+
+`banner1014` (id banner1014) · 2017-09-28 14:30:00 → 2017-10-26 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0068`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_role_0068.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1014` | list banner for the gacha "5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1709_011.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0068` | pick-up panel 1 of "5★ Ace Guaranteed Character Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner1017"></a>ピックアップ武器ガチャ(1人1回) — Weapons Campaign Draw (1 / person) *GL*
 
 `banner1017` (id banner1017) · 2017-10-01 00:00:00 → 2017-10-05 13:59:59 · 4 gacha row(s), weapon · 2 missing of 2 files
@@ -6240,6 +5834,20 @@ Gacha rows: `gacha_pickup_role_0073`
 | `Image/etc2/pickup_img_chara_1705_004.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0073` | pick-up panel 2 of "SO4 HD Announcement Draw: Edge or Reimi Guaranteed (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1612_002.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0073` | pick-up panel 3 of "SO4 HD Announcement Draw: Edge or Reimi Guaranteed (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner1024"></a>SO2キャラピックアップガチャ(期間中3回) — SO2 Characters Campaign Draw (3 times while available) *GL*
+
+`banner1024` (id banner1024) · 2017-10-12 14:30:00 → 2017-10-19 13:59:59 · 1 gacha row(s), character · 5 missing of 5 files
+
+Gacha rows: `gacha_pickup_role_0075`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_role_0074.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1024` | list banner for the gacha "SO2 Characters Campaign Draw (3 times while available)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1710_009.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0075` | pick-up panel 1 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1702_001.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0075` | pick-up panel 2 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1702_006.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0075` | pick-up panel 3 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1704_001.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_role_0075` | pick-up panel 4 of "SO2 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner1025"></a>ピックアップ武器ガチャ(10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person) *GL*
 
 `banner1025` (id banner1025) · 2017-10-16 00:00:00 → 2017-10-19 13:59:59 · 3 gacha row(s), weapon · 2 missing of 2 files
@@ -6312,6 +5920,20 @@ Gacha rows: `gacha_pickup_role_0078`, `gacha_pickup_role_0079`, `gacha_pickup_ro
 |---|---|---|---|---|---|---|
 | `Image/etc2/banner_gacha_pickup_role_0076.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1028` | list banner for the gacha "One 5★+ Guaranteed Character Draw (1 / day)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_chara_1710_011.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0078`, `gacha_pickup_role_0079`, `gacha_pickup_role_0080` | pick-up panel 1 of "One 5★+ Guaranteed Character Draw (1 / day)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1032"></a>SO4キャラピックアップガチャ(期間中3回) — SO4 Characters Campaign Draw (3 times while available) *GL*
+
+`banner1032` (id banner1032) · 2017-10-26 14:30:00 → 2017-11-02 13:59:59 · 1 gacha row(s), character · 5 missing of 5 files
+
+Gacha rows: `gacha_pickup_role_0082`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_role_0078.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1032` | list banner for the gacha "SO4 Characters Campaign Draw (3 times while available)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1710_013.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0082` | pick-up panel 1 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1705_004.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_role_0082` | pick-up panel 2 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1710_006.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_role_0082` | pick-up panel 3 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1701_001.aif` | pick-up panel 4 (HTML-era gacha screen) | `master_gacha.image4`: `gacha_pickup_role_0082` | pick-up panel 4 of "SO4 Characters Campaign Draw (3 times while available)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner1033"></a>SO5キャラピックアップガチャ(期間中3回) — SO5 Characters Campaign Draw (3 times while available) *GL*
 
@@ -6981,6 +6603,17 @@ Gacha rows: `gacha_pickup_weapon_0065`
 | `Image/etc2/pickup_img_weapon_090.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0065` | pick-up panel 1 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_092.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_0065` | pick-up panel 3 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner1110"></a>10連で★5エース1体確定キャラガチャ(1人1回) — One 5★ Ace Character Guaranteed with 10-chain (1 / person) *GL*
+
+`banner1110` (id banner1110) · 2017-12-28 14:30:00 → 2018-01-16 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0107`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_role_0117.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1110` | list banner for the gacha "One 5★ Ace Character Guaranteed with 10-chain (1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_1712_016.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0107` | pick-up panel 1 of "One 5★ Ace Character Guaranteed with 10-chain (1 / person)"; 1024×512 ETC2 RGBA | high | 10 existing `pickup_img_chara_#_#` (e.g. `pickup_img_chara_0008_02`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner1113"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
 
 `banner1113` (id banner1113) · 2018-01-01 00:00:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon, step-up · 4 missing of 4 files
@@ -7043,6 +6676,57 @@ Gacha rows: `gacha_pickup_weapon_0067`
 | `Image/etc2/banner_gacha_pickup_weapon_0079.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1117` | list banner for the gacha "Weapons Campaign Draw"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_095.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0067` | pick-up panel 1 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_096.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0067` | pick-up panel 2 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1118"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
+
+`banner1118` (id banner1118) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon, step-up · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_step_0019`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_weapon_0084.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1118` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_097.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_step_0019` | pick-up panel 1 of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_step_0019` | pick-up panel 2 of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_step_0019` | pick-up panel 3 of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1119"></a>ステップ3で★5武器確定ガチャ2(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain) *GL*
+
+`banner1119` (id banner1119) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon, step-up · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_step_0020`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_weapon_0084.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1119` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_097.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_step_0020` | pick-up panel 1 of "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_step_0020` | pick-up panel 2 of "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_step_0020` | pick-up panel 3 of "Step 3: 5★ Guaranteed Weapons Draw 2 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1120"></a>ステップ3で★5武器確定ガチャ3(10連★5新武器確定) — Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain) *GL*
+
+`banner1120` (id banner1120) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon, step-up · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_step_0021`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_weapon_0084.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1120` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_097.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_step_0021` | pick-up panel 1 of "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_step_0021` | pick-up panel 2 of "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 3 (HTML-era gacha screen) | `master_gacha.image3`: `gacha_pickup_weapon_step_0021` | pick-up panel 3 of "Step 3: 5★ Guaranteed Weapons Draw 3 (New 5★ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1121"></a>ピックアップ武器ガチャ(10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person) *GL*
+
+`banner1121` (id banner1121) · 2018-01-11 14:30:00 → 2018-01-31 13:59:59 · 1 gacha row(s), weapon · 3 missing of 3 files
+
+Gacha rows: `gacha_pickup_weapon_0068`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_weapon_0083.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1121` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_098.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0068` | pick-up panel 1 of "Weapons Campaign Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_099.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0068` | pick-up panel 2 of "Weapons Campaign Draw (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner1126"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
 
@@ -7207,6 +6891,17 @@ Gacha rows: `gacha_pickup_weapon_step_0030`
 |---|---|---|---|---|---|---|
 | `Image/etc2/banner_gacha_pickup_weapon_0091.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1143` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 3 (5★ ice-affinity weapon with 10-chain)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_108.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_step_0030` | pick-up panel 1 of "Step 3: 5★ Guaranteed Weapons Draw 3 (5★ ice-affinity weapon with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1155"></a>600万DL記念武器ガチャ(期間中1日1回) — 6M DL Milestone Weapons Draw (1 / day while available)
+
+`banner1155` (id banner1155) · 2018-02-15 14:30:00 → 2018-02-28 13:59:59 · 14 gacha row(s), weapon · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_weapon_0076`, `gacha_pickup_weapon_0077`, `gacha_pickup_weapon_0078`, `gacha_pickup_weapon_0079`, `gacha_pickup_weapon_0080`, `gacha_pickup_weapon_0081` … (+8)
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_weapon_0095.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1155` | list banner for the gacha "6M DL Milestone Weapons Draw (1 / day while available)"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_112.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0076`, `gacha_pickup_weapon_0077`, `gacha_pickup_weapon_0078` (+11) | pick-up panel 1 of "6M DL Milestone Weapons Draw (1 / day while available)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner1145"></a>ステップアップキャラガチャ1(半額10連2500紋章石) — Step Character Campaign Draw 1 (50% off on 2,500 gems with 10-chain) *GL*
 
@@ -7426,6 +7121,17 @@ Gacha rows: `gacha_pickup_weapon_0093`
 | `Image/etc2/banner_gacha_pickup_weapon_0099.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1170` | list banner for the gacha "Weapons Campaign Draw"; 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_118.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_weapon_0093` | pick-up panel 1 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_119.aif` | pick-up panel 2 (HTML-era gacha screen) | `master_gacha.image2`: `gacha_pickup_weapon_0093` | pick-up panel 2 of "Weapons Campaign Draw"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner1177"></a>新生活応援フェス(10連のみ、期間中1人1回) — New Life Support Fest (10-chain only, 1 / person)
+
+`banner1177` (id banner1177) · 2018-03-29 14:30:00 → 2018-04-26 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0122`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_role_0133.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner1177` | list banner for the gacha "New Life Support Fest (10-chain only, 1 / person)"; 512×128 ETC2 RGBA | high | 27 existing `banner_gacha_pickup_role_#` (e.g. `banner_gacha_pickup_role_0066`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_0029.aif` | pick-up panel 1 (HTML-era gacha screen) | `master_gacha.image1`: `gacha_pickup_role_0122` | pick-up panel 1 of "New Life Support Fest (10-chain only, 1 / person)"; 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner1173"></a>スターオーシャン5発売日記念ピックアップキャラガチャ — Star Ocean 5 Release Anniversary Character Campaign Draw
 
@@ -8196,6 +7902,25 @@ Pick-ups: クラシックリボルバー; 王家の銀食器
 | `Image/etc2/pickup_img_weapon_156.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0076`, `gacha_pickup_weapon_step_0077`, `gacha_pickup_weapon_step_0078` | pick-up panel for クラシックリボルバー; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_157.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0076`, `gacha_pickup_weapon_step_0077`, `gacha_pickup_weapon_step_0078` | pick-up panel for 王家の銀食器; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner_20180913_2001"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
+
+`banner_20180913_2001` (id banner_20180913_2001) · 2018-09-13 14:30:00 → 2018-09-27 13:59:59 · 3 gacha row(s), weapon, step-up · 8 missing of 8 files
+
+Gacha rows: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081`
+
+Pick-ups: 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); パルスライフル (Pulse Rifle)
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_weapon_0142.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20180913_2001` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 512×128 ETC2 RGBA | high | 30 existing `banner_gacha_pickup_weapon_#` (e.g. `banner_gacha_pickup_weapon_0009`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_161.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | medium | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_139.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for 幸福機・サムシング・フォー; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_138.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for 祝華刀・カラーリリィ; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_125.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_124.aif` | pick-up panel (view 5) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | pick-up panel for パルスライフル (Pulse Rifle); 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_098.aif` | main panel (view 6) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | medium | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_103.aif` | main panel (view 7) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0079`, `gacha_pickup_weapon_step_0080`, `gacha_pickup_weapon_step_0081` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 幸福機・サムシング・フォー; 祝華刀・カラーリリィ; 雷大刀・紅月 (Red Moon Thunder Blade); 1024×512 ETC2 RGBA | medium | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner_20180920_1001"></a>ピックアップキャラガチャ(VP復刻) — Character Campaign Draw (VP rerun)
 
 `banner_20180920_1001` (id banner_20180920_1001) · 2018-09-20 14:30:00 → 2018-09-30 23:59:59 · 1 gacha row(s), character · 6 missing of 6 files
@@ -8575,6 +8300,20 @@ Pick-ups: ロケットハンマー; 穿孔腕・ダイヤモンドドリル
 | `Image/etc2/pickup_img_weapon_168.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0094`, `gacha_pickup_weapon_step_0095`, `gacha_pickup_weapon_step_0096` | pick-up panel for ロケットハンマー; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/pickup_img_weapon_169.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0094`, `gacha_pickup_weapon_step_0095`, `gacha_pickup_weapon_step_0096` | pick-up panel for 穿孔腕・ダイヤモンドドリル; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner_20181025_1004"></a>ピックアップキャラガチャ(堕天使ネル/狼アルベル) — Angel Nel & Were-Albel Character Campaign Draw
+
+`banner_20181025_1004` (id banner_20181025_1004) · 2018-10-25 14:30:00 → 2018-11-22 13:59:59 · 1 gacha row(s), character · 3 missing of 3 files
+
+Gacha rows: `gacha_pickup_role_0173`
+
+Pick-ups: ★6 堕天使ネル (Angel Nel); ★6 狼アルベル (Were-Albel)
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/banner_gacha_pickup_role_0176_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181025_1004` | list banner for the gacha "Angel Nel & Were-Albel Character Campaign Draw", featuring ★6 堕天使ネル (Angel Nel); ★6 狼アルベル (Were-Albel) | medium | no existing `banner_gacha_pickup_role_#_#` file | yes (2D image) |
+| `Image/etc2/pickup_img_chara_0106.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0173` | pick-up panel for ★6 堕天使ネル (Angel Nel); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_chara_0105.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_role_0173` | pick-up panel for ★6 狼アルベル (Were-Albel); 1024×512 ETC2 RGBA | high | 16 existing `pickup_img_chara_#` (e.g. `pickup_img_chara_001`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner_20181025_1002"></a>ピックアップキャラガチャ(リリア) — Relia Character Campaign Draw
 
 `banner_20181025_1002` (id banner_20181025_1002) · 2018-10-31 14:30:00 → 2018-11-15 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
@@ -8857,6 +8596,37 @@ Pick-ups: サイリウムオブエッジ; ハートよりケーキ; うちわな
 | `Image/etc2/20181206_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0106`, `gacha_pickup_weapon_step_0107`, `gacha_pickup_weapon_step_0108` | pick-up panel for ハートよりケーキ; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20181206_weapon_PU_004.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0106`, `gacha_pickup_weapon_step_0107`, `gacha_pickup_weapon_step_0108` | pick-up panel for うちわなのじゃ; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner_20181213_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person)
+
+`banner_20181213_2002` (id banner_20181213_2002) · 2018-12-13 14:30:00 → 2019-01-03 23:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_0139`
+
+Pick-ups: スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20181213_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181213_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 1 / person)", featuring スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20181213_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0139` | pick-up panel for スノープラズマガン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20181213_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0139` | pick-up panel for 嵐の聖夜物語; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20181213_weapon_PU_004.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0139` | pick-up panel for ジングルベルサイス; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20181213_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
+
+`banner_20181213_2003` (id banner_20181213_2003) · 2018-12-13 14:30:00 → 2019-01-03 23:59:59 · 3 gacha row(s), weapon, step-up · 5 missing of 5 files
+
+Gacha rows: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111`
+
+Pick-ups: スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20181213_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181213_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20181213_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing スノープラズマガン; 嵐の聖夜物語; ジングルベルサイス; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20181213_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | pick-up panel for スノープラズマガン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20181213_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | pick-up panel for 嵐の聖夜物語; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20181213_weapon_PU_004.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0109`, `gacha_pickup_weapon_step_0110`, `gacha_pickup_weapon_step_0111` | pick-up panel for ジングルベルサイス; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner_20181220_1001"></a>復刻ガチャ(聖夜プリシス/白雪イヴリーシュ/冬空フィデル) — Rerun Draw (Holiday Precis & Winter Evelysse & Winter Fidel)
 
 `banner_20181220_1001` (id banner_20181220_1001) · 2018-12-20 14:30:00 → 2019-01-03 23:59:59 · 1 gacha row(s), character · 5 missing of 5 files
@@ -9081,6 +8851,51 @@ Pick-ups: 機壊剣・ディバインカッター; シャイニーストリン�
 | `Image/etc2/20190110_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0121`, `gacha_pickup_weapon_step_0122`, `gacha_pickup_weapon_step_0123` | pick-up panel for 機壊剣・ディバインカッター; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20190110_weapon_PU_002.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0121`, `gacha_pickup_weapon_step_0122`, `gacha_pickup_weapon_step_0123` | pick-up panel for シャイニーストリンガー; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner_20181227_2001"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
+
+`banner_20181227_2001` (id banner_20181227_2001) · 2019-01-17 14:30:00 → 2019-01-24 13:59:59 · 3 gacha row(s), weapon, step-up · 5 missing of 5 files
+
+Gacha rows: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20181227_weapon_001.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20181227_2001` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_113.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_114.aif` | main panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_115.aif` | main panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+| `Image/etc2/pickup_img_weapon_116.aif` | main panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0115`, `gacha_pickup_weapon_step_0116`, `gacha_pickup_weapon_step_0117` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)"; 1024×512 ETC2 RGBA | high | 17 existing `pickup_img_weapon_#` (e.g. `pickup_img_weapon_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20190117_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人1回) — Weapons Campaign Draw (10-chain only, 1 / person)
+
+`banner_20190117_2002` (id banner_20190117_2002) · 2019-01-17 14:30:00 → 2019-02-07 13:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_0145`
+
+Pick-ups: 光刀・無形; ガブリエル (Gabriel); レッド・サン
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20190117_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190117_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 1 / person)", featuring 光刀・無形; ガブリエル (Gabriel); レッド・サン; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20190117_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0145` | pick-up panel for 光刀・無形; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190117_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0145` | pick-up panel for ガブリエル (Gabriel); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190117_weapon_PU_004.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0145` | pick-up panel for レッド・サン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20190117_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
+
+`banner_20190117_2003` (id banner_20190117_2003) · 2019-01-17 14:30:00 → 2019-02-07 13:59:59 · 3 gacha row(s), weapon, step-up · 5 missing of 5 files
+
+Gacha rows: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126`
+
+Pick-ups: 光刀・無形; ガブリエル (Gabriel); レッド・サン
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20190117_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190117_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring 光刀・無形; ガブリエル (Gabriel); レッド・サン; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20190117_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 光刀・無形; ガブリエル (Gabriel); レッド・サン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190117_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | pick-up panel for 光刀・無形; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190117_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | pick-up panel for ガブリエル (Gabriel); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190117_weapon_PU_004.aif` | pick-up panel (view 4) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0124`, `gacha_pickup_weapon_step_0125`, `gacha_pickup_weapon_step_0126` | pick-up panel for レッド・サン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner_20190124_1001"></a>★5確定キャラガチャ — 5★ Guaranteed Character Draw
 
 `banner_20190124_1001` (id banner_20190124_1001) · 2019-01-24 14:30:00 → 2019-02-07 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
@@ -9293,6 +9108,36 @@ Gacha rows: `gacha_pickup_role_0191`
 |---|---|---|---|---|---|---|
 | `Image/etc2/20190221_chara_001.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190221_1001` | list banner for the gacha "Star Ocean 3 Release Anniversary Character Campaign Draw"; 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
 | `Image/etc2/20190221_chara_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0191` | main (first) panel of "Star Ocean 3 Release Anniversary Character Campaign Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20190228_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人2回) — Weapons Campaign Draw (10-chain only, 2 / person)
+
+`banner_20190228_2002` (id banner_20190228_2002) · 2019-02-28 14:30:00 → 2019-03-14 13:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_0152`
+
+Pick-ups: 強化型スナップブレード【地】; 強化型スナップブレード【人】
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20190228_weapon_001.aif` | home / notice banner | `master_banner.image (target_content_type 1)`: `banner_20190228_9005` | home-screen / notice banner announcing "Weapons Campaign Draw (10-chain only, 2 / person)"; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128); banner row `banner_20190228_9005` | yes (2D image) |
+| `Image/etc2/20190228_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190228_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 2 / person)", featuring 強化型スナップブレード【地】; 強化型スナップブレード【人】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20190228_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0152` | pick-up panel for 強化型スナップブレード【地】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190228_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0152` | pick-up panel for 強化型スナップブレード【人】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20190228_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
+
+`banner_20190228_2003` (id banner_20190228_2003) · 2019-02-28 14:30:00 → 2019-03-14 13:59:59 · 3 gacha row(s), weapon, step-up · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135`
+
+Pick-ups: 強化型スナップブレード【地】; 強化型スナップブレード【人】
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20190228_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190228_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring 強化型スナップブレード【地】; 強化型スナップブレード【人】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20190228_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing 強化型スナップブレード【地】; 強化型スナップブレード【人】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190228_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135` | pick-up panel for 強化型スナップブレード【地】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190228_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0133`, `gacha_pickup_weapon_step_0134`, `gacha_pickup_weapon_step_0135` | pick-up panel for 強化型スナップブレード【人】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner_20190314_1001"></a>ピックアップキャラガチャ(歌星ソフィア/歌星イヴリーシュ) — Idol Sophia & Idol Evelysse Character Campaign Draw
 
@@ -9560,6 +9405,45 @@ Gacha rows: `gacha_pickup_weapon_0161`
 |---|---|---|---|---|---|---|
 | `Image/etc2/20190418_weapon_004.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190418_2004` | list banner for the gacha "Wind Weapons Campaign Draw"; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
 | `Image/etc2/20190418_weapon_PU_004.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0161` | main (first) panel of "Wind Weapons Campaign Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20190425_2002"></a>ピックアップ武器ガチャ (10連のみ、期間中1人2回) — Weapons Campaign Draw (10-chain only, 2 / person)
+
+`banner_20190425_2002` (id banner_20190425_2002) · 2019-04-25 14:30:00 → 2019-05-16 13:59:59 · 1 gacha row(s), weapon · 3 missing of 3 files
+
+Gacha rows: `gacha_pickup_weapon_0162`
+
+Pick-ups: ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20190425_weapon_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190425_2002` | list banner for the gacha "Weapons Campaign Draw (10-chain only, 2 / person)", featuring ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20190425_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0162` | pick-up panel for ジャンクヤード・ドッグ【焔】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190425_weapon_PU_003.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0162` | pick-up panel for Missコンフィール【烈】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20190425_2003"></a>ステップ3で★5武器確定ガチャ1(10連★4以上確定) — Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain) *GL*
+
+`banner_20190425_2003` (id banner_20190425_2003) · 2019-04-25 14:30:00 → 2019-05-16 13:59:59 · 3 gacha row(s), weapon, step-up · 4 missing of 4 files
+
+Gacha rows: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147`
+
+Pick-ups: ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20190425_weapon_003.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190425_2003` | list banner for the gacha "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)", featuring ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
+| `Image/etc2/20190425_weapon_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147` | main (first) panel of "Step 3: 5★ Guaranteed Weapons Draw 1 (4★+ with 10-chain)" showing ジャンクヤード・ドッグ【焔】; Missコンフィール【烈】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190425_weapon_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147` | pick-up panel for ジャンクヤード・ドッグ【焔】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+| `Image/etc2/20190425_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_step_0145`, `gacha_pickup_weapon_step_0146`, `gacha_pickup_weapon_step_0147` | pick-up panel for Missコンフィール【烈】; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20190501_2001"></a>GWキャンペーン 1人10回10連無料武器ガチャ — Golden Week Campaign Free 10-pull Weapons Draw (10 per person)
+
+`banner_20190501_2001` (id banner_20190501_2001) · 2019-04-25 14:30:00 → 2019-05-16 13:59:59 · 1 gacha row(s), weapon · 1 missing of 2 files
+
+Gacha rows: `gacha_pickup_weapon_0164`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20190501_weapon_001.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20190501_2001` | list banner for the gacha "Golden Week Campaign Free 10-pull Weapons Draw (10 per person)"; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
 
 ### <a id="g-banner_20190425_1003"></a>週末10連1回無料キャラガチャ — Weekend Free 10-pull Character Draw (once)
 
@@ -10614,6 +10498,17 @@ Gacha rows: `box_event_gacha_2019_osouji_suiji_001`, `box_event_gacha_2019_osouj
 | `Image/etc2/20191003_event_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20191003_3001` | list banner for the gacha "Trouble with the Cleaning and Cooking!? - Box Draw 1"; 512×128 ETC2 RGBA | high | 69 existing `#_event_#` (e.g. `20190314_event_001`: 512×128) | yes (2D image) |
 | `Image/etc2/20191003_event_PU_001.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `box_event_gacha_2019_osouji_suiji_001`, `box_event_gacha_2019_osouji_suiji_002`, `box_event_gacha_2019_osouji_suiji_003` (+9) | main (first) panel of "Trouble with the Cleaning and Cooking!? - Box Draw 1"; 1024×512 ETC2 RGBA | high | 15 existing `#_event_PU_#` (e.g. `20181031_event_PU_001`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner_20191010_1006"></a>カムバックチケットキャラガチャ — Comeback Ticket Character Draw
+
+`banner_20191010_1006` (id banner_20191010_1006) · 2019-10-10 14:30:00 → 2019-11-07 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0236`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20191010_chara_005.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20191010_1006` | list banner for the gacha "Comeback Ticket Character Draw"; 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
+| `Image/etc2/20191010_chara_PU_004.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0236` | main (first) panel of "Comeback Ticket Character Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner_20191017_1001"></a>【復刻】ピックアップキャラガチャ 2018ハロウィン — Rerun: Halloween 2018 Character Campaign Draw
 
 `banner_20191017_1001` (id banner_20191017_1001) · 2019-10-17 14:30:00 → 2019-11-07 13:59:59 · 1 gacha row(s), character · 5 missing of 5 files
@@ -10889,6 +10784,17 @@ Pick-ups: ★6 歌星レイミ (Idol Reimi); ★6 歌星ミキ (Idol Miki); ★6
 | `Image/etc2/20181129_chara_PU_001.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0246` | pick-up panel for ★6 歌星レイミ (Idol Reimi); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/20181129_chara_PU_002.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_role_0246` | pick-up panel for ★6 歌星ミキ (Idol Miki); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 | `Image/etc2/20181129_chara_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_role_0246` | pick-up panel for ★6 歌星ベルダ (Idol Verda); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20191128_1004"></a>3周年記念大還元ガチャ — 3rd Anniversary Grand Thanksgiving Draw
+
+`banner_20191128_1004` (id banner_20191128_1004) · 2019-11-28 14:30:00 → 2019-12-19 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0250`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20191128_chara_004.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20191128_1004` | list banner for the gacha "3rd Anniversary Grand Thanksgiving Draw"; 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
+| `Image/etc2/20191128_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0250` | main (first) panel of "3rd Anniversary Grand Thanksgiving Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner_20191128_1002"></a>3周年ヒロインピックアップキャラガチャ — 3rd Anniversary Heroine Character Campaign Draw
 
@@ -11671,6 +11577,17 @@ Pick-ups: ヘラルドリー・オルター; フレアプラズマガン; エタ
 |---|---|---|---|---|---|---|
 | `Image/etc2/20201119_weapon_001.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20201119_2001` | list banner for the gacha "Rerun: Divine-tier Weapons Campaign Draw (Divine Fayt)", featuring ヘラルドリー・オルター; フレアプラズマガン; エターナル・ストレート; 512×128 ETC2 RGBA | high | 25 existing `#_weapon_#` (e.g. `20200101_weapon_001`: 512×128) | yes (2D image) |
 
+### <a id="g-banner_20201126_1002"></a>4周年記念ガチャ — 4th Anniversary Draw
+
+`banner_20201126_1002` (id banner_20201126_1002) · 2020-11-26 14:30:00 → 2020-12-31 13:59:59 · 1 gacha row(s), character · 2 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0624`
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20201126_chara_002.aif` | gacha list banner | `master_banner.image (master_gacha.banner_id)`: `banner_20201126_1002` | list banner for the gacha "4th Anniversary Draw"; 512×128 ETC2 RGBA | high | 141 existing `#_chara_#` (e.g. `20191219_chara_002`: 512×128) | yes (2D image) |
+| `Image/etc2/20201126_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0624` | main (first) panel of "4th Anniversary Draw"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner_20201203_2001"></a>2020アニバーサリーPU武器ガチャ — 2020 Anniversary Weapons Campaign Draw
 
 `banner_20201203_2001` (id banner_20201203_2001) · 2020-12-03 14:30:00 → 2020-12-24 13:59:59 · 1 gacha row(s), weapon · 4 missing of 4 files
@@ -11709,6 +11626,16 @@ Gacha rows: `gacha_pickup_role_0671`, `gacha_pickup_role_0672`, `gacha_pickup_ro
 |---|---|---|---|---|---|---|
 | `Image/etc2/20210101_chara_PU_004.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0671`, `gacha_pickup_role_0672`, `gacha_pickup_role_0673` (+17) | main (first) panel of "Rerun: New Year 2019 Step-up Draw (pick-up guaranteed at step 10)"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 
+### <a id="g-banner_20210114_1003"></a>復刻SRF/10連10ステップ目PU1体確定 — Rerun: SRF Step-up Draw (pick-up guaranteed at step 10)
+
+`banner_20210114_1003` (id banner_20210114_1003) · 2021-01-14 14:30:00 → 2021-06-03 13:59:59 · 20 gacha row(s), character, step-up · 1 missing of 2 files
+
+Gacha rows: `gacha_pickup_role_0693`, `gacha_pickup_role_0694`, `gacha_pickup_role_0695`, `gacha_pickup_role_0696`, `gacha_pickup_role_0697`, `gacha_pickup_role_0698` … (+14)
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20210114_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0693`, `gacha_pickup_role_0694`, `gacha_pickup_role_0695` (+17) | main (first) panel of "Rerun: SRF Step-up Draw (pick-up guaranteed at step 10)"; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
+
 ### <a id="g-banner_20210121_2002"></a>復刻ギルティギアコラボピックアップ武器ガチャ — Rerun: Guilty Gear Collab Weapons Campaign Draw
 
 `banner_20210121_2002` (id banner_20210121_2002) · 2021-01-21 14:30:00 → 2021-02-18 13:59:59 · 1 gacha row(s), weapon · 5 missing of 5 files
@@ -11739,6 +11666,30 @@ Pick-ups: 火杖槍・ヴァルカン; 氷章剣・アブソリュート・ゼ�
 | `Image/etc2/20210304_weapon_PU_002.aif` | pick-up panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0236` | pick-up panel for 火杖槍・ヴァルカン; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20210304_weapon_PU_001.aif` | pick-up panel (view 2) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0236` | pick-up panel for 氷章剣・アブソリュート・ゼロ; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
 | `Image/etc2/20210304_weapon_PU_003.aif` | pick-up panel (view 3) | `master_gacha_image.image_resource`: `gacha_pickup_weapon_0236` | pick-up panel for フローズンティータイム; 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 74 existing `#_weapon_PU_#` (e.g. `20181108_weapon_PU_001`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20210408_1002"></a>復刻狐将/砲甲2020/10連10ステップ目PU1体確定 — Rerun: General / Artillery 2020 Step-up Draw (pick-up guaranteed at step 10)
+
+`banner_20210408_1002` (id banner_20210408_1002) · 2021-04-08 14:30:00 → 2021-06-17 13:59:59 · 20 gacha row(s), character, step-up · 1 missing of 5 files
+
+Gacha rows: `gacha_pickup_role_0840`, `gacha_pickup_role_0841`, `gacha_pickup_role_0842`, `gacha_pickup_role_0843`, `gacha_pickup_role_0844`, `gacha_pickup_role_0845` … (+14)
+
+Pick-ups: ★6 狐将のカーリン (General Caleen); ★6 砲甲のリカルド (Artillery Ricardo)
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20210408_chara_PU_003.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0840`, `gacha_pickup_role_0841`, `gacha_pickup_role_0842` (+7) | main (first) panel of "Rerun: General / Artillery 2020 Step-up Draw (pick-up guaranteed at step 10)" showing ★6 狐将のカーリン (General Caleen); ★6 砲甲のリカルド (Artillery Ricardo); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
+
+### <a id="g-banner_20210408_1003"></a>復刻鬼炎/斬鬼2020/10連10ステップ目PU1体確定 — Rerun: Demon Flame / Demon Blade 2020 Step-up Draw (pick-up guaranteed at step 10)
+
+`banner_20210408_1003` (id banner_20210408_1003) · 2021-04-08 14:30:00 → 2021-06-17 13:59:59 · 20 gacha row(s), character, step-up · 1 missing of 5 files
+
+Gacha rows: `gacha_pickup_role_0850`, `gacha_pickup_role_0851`, `gacha_pickup_role_0852`, `gacha_pickup_role_0853`, `gacha_pickup_role_0854`, `gacha_pickup_role_0855` … (+14)
+
+Pick-ups: ★6 斬鬼のネル (Demon Nel); ★6 鬼炎のアルベル (Demon Albel)
+
+| Missing file | Kind | Referenced by | What it probably is | Conf. | Evidence | Stand-in? |
+|---|---|---|---|---|---|---|
+| `Image/etc2/20210408_chara_PU_004.aif` | main panel (view 1) | `master_gacha_image.image_resource`: `gacha_pickup_role_0850`, `gacha_pickup_role_0851`, `gacha_pickup_role_0852` (+7) | main (first) panel of "Rerun: Demon Flame / Demon Blade 2020 Step-up Draw (pick-up guaranteed at step 10)" showing ★6 斬鬼のネル (Demon Nel); ★6 鬼炎のアルベル (Demon Albel); 1024×512 ETC2 RGBA / 1024×512 ETC2 RGB+A1 | medium | 140 existing `#_chara_PU_#` (e.g. `20181115_chara_PU_002`: 1024×512) | yes (2D image) |
 
 ### <a id="g-banner_20210422_3001"></a>ラジオーシャン 「忘却の聖地ワドラム最終刻」ボックスガチャ1 — Radi-Ocean "Wadram, Sanctuary of Oblivion: Final Hour" - Box Draw 1 (tr.)
 

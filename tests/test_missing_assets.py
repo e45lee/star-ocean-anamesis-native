@@ -303,7 +303,8 @@ create table master_mission_character_bonus (master_area_id, master_role_categor
 create table master_role (id, role_category_id);
 create table master_gacha_image (master_gacha_id, content_id, content_type);
 create table master_gacha_pickup (pickup_group_id, master_role_id);
-create table master_gacha (id, id_label, opened_at, gacha_pickup_group_id);
+create table master_gacha (id, id_label, opened_at, gacha_pickup_group_id, is_stepup, is_box, coin,
+  ticket_item_id, limit_count);
 insert into master_event_area values (1, 'ev_bonus', null, null), (2, 'ev_story', null, null),
   (3, 'ev_twin_a', null, null), (4, 'ev_twin_b', null, null), (5, 'ev_nostory', null, null);
 insert into master_event_term values
@@ -318,10 +319,16 @@ insert into master_mission_character_bonus values (1, 77);
 insert into master_role values (500, 77), (501, 78);
 insert into master_gacha_image values (10, 500, 2);
 insert into master_gacha_pickup values (9, 500);
-insert into master_gacha values (10, 'g_bonus', '2019-01-17 14:30:00', null),
-  (11, 'g_pickup_group', '2019-01-12 00:00:00', 9), (12, 'g_late', '2019-06-01 14:30:00', 9),
-  (13, 'g_story', '2019-02-07 15:00:00', null), (14, 'g_twin', '2019-03-07 14:30:00', null),
-  (15, 'g_nostory', '2019-04-04 14:30:00', null);
+insert into master_gacha values (10, 'g_bonus', '2019-01-17 14:30:00', null, null, 0, 0, null, 0),
+  (11, 'g_pickup_group', '2019-01-12 00:00:00', 9, 1, 0, 0, null, 0),
+  (12, 'g_late', '2019-06-01 14:30:00', 9, null, 0, 300, null, 0),
+  (13, 'g_story', '2019-02-07 15:00:00', null, null, 0, 300, null, 0),
+  (14, 'g_twin', '2019-03-07 14:30:00', null, null, 0, 300, null, 0),
+  (15, 'g_nostory', '2019-04-04 14:30:00', null, null, 0, 300, null, 0),
+  (16, 'g_stepup', '2019-02-07 14:30:00', null, 1, 0, 300, null, 0),
+  (17, 'g_ticket', '2019-02-07 14:30:00', null, null, 0, 0, 555, 0),
+  (18, 'g_milestone', '2019-02-07 14:30:00', null, null, 0, 0, null, 1),
+  (19, 'g_box', '2019-02-07 14:30:00', null, null, 1, 0, 556, 0);
 """
 
 
@@ -330,12 +337,17 @@ def test_association_rules():
         o = ContentItem("gacha", label, label, "", "", "none", "", "", "")
         o.gachas = [GachaRow(label, "", None, None)]
         return o
-    labels = ["g_bonus", "g_pickup_group", "g_late", "g_story", "g_twin", "g_nostory"]
+    labels = ["g_bonus", "g_pickup_group", "g_late", "g_story", "g_twin", "g_nostory",
+              "g_stepup", "g_ticket", "g_milestone", "g_box"]
     result = associate(FakeMaster(ASSOC_MASTER), [banner(x) for x in labels])
-    assert result.event_of == {"g_bonus": "ev_bonus", "g_pickup_group": "ev_bonus", "g_story": "ev_story"}
+    # g_pickup_group is a step-up but rule 1 still places it; g_box (event coins) is an event draw
+    assert result.event_of == {"g_bonus": "ev_bonus", "g_pickup_group": "ev_bonus", "g_story": "ev_story",
+                               "g_box": "ev_story"}
     # g_late: bonus character but outside the event's window; g_twin: two story events start then;
-    # g_nostory: the only event starting then has no talk script
-    assert result.by_rule == {RULE_BONUS: 2, RULE_RELEASE: 1, RULE_AMBIGUOUS: 1, "none": 2}
+    # g_nostory: the only event starting then has no talk script; g_stepup, g_ticket, g_milestone open
+    # with ev_story but are not event draws, so rule 2 skips them
+    assert result.by_rule == {RULE_BONUS: 2, RULE_RELEASE: 2, RULE_AMBIGUOUS: 1, "none": 5}
+    assert result.excluded == 3
 
 
 # ---------------------------------------------------------------- the real documents

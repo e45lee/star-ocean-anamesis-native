@@ -92,8 +92,8 @@ def record_movie(s, o, out_mp4):
         if i in taps:
             batch.append("tap:" + o.character)
         batch += ["shot:" + os.path.join(frames, "frame_%05d.png" % i), "wait:%d" % gap]
-    # The client takes a shot per presented frame: two requested before one present keep only the
-    # later, so a few frames are missing; the wait gives up on them after the movie's own length.
+    # The client queues the shots and writes one per presented frame, every one under its own name
+    # (runtime/src/app/host.cpp); the wait gives up after the movie's own length plus a margin.
     s.send(batch, timeout=o.movie * 1.5 + 30)
     files = sorted(os.path.join(frames, f) for f in os.listdir(frames) if f.endswith(".png"))
     if len(files) < 2:

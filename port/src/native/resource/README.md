@@ -76,6 +76,14 @@ texture loaders, `TextureManager`, `ResourceReadyQueue::Invoke`, StaticStream: r
 leaves (`MultiMediaStream::IsBufferingReady` / `IsBufferingEnd` / `Lock`, `StaticStream::Tell`,
 `StreamingStream::IsReady`: vtable leaves of the sound path, 15-43 samples each).
 
+## Measurements
+
+SOA_PROFILE at 1000 Hz over the login and battle flows, main's binary (before) and this branch (after),
+2026-10-04 on a shared machine: resource's guest self time 1,434 samples (1.2%) -> 1,318 (1.0%); the natives'
+own 255 -> 0 (CResourceManager::Run 163, IsReadyDirectFile 42, IsLoading 16, the two GetData 35). The rest is
+listed under "Not done". The full download flow (`SOA_PHONE=none rebase_inproc_session.sh`, 1,035 HTTP GETs)
+passes.
+
 ## Dependencies
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):

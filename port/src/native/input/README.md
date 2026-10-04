@@ -60,6 +60,15 @@ accessors: small, and their inner parameter fields aren't typed yet), `CPad::CUn
 calls the three setters, now native). `Global::GetActivePad` / `GetPeripheral` and the TSingletons are
 read directly (`PeripheralManager::Instance`, `CPad::Instance`, `CKeyboard::Instance`).
 
+## Measurements
+
+SOA_PROFILE at 1000 Hz over the login and battle flows, main's binary (before) and this branch (after),
+2026-10-04 on a shared machine: input's guest self time 1,566 samples (1.3% of 124,147 busy) -> 665 (0.5% of
+132,289); the seven natives' own 1,096 -> 0 (CopyMessages 240, Flip 179, SetRepeatThreshold 143,
+SetRepeatInterval 143, SetAnalogAsDigital 131, ResetStatus 118, Merge 62). What's left: GetDeviceData,
+CPadReader::Run, the peripherals' GetStatus, the gestures. The scripted taps: unchanged pacing on the host GPU
+(above) and on llvmpipe (a software-GL battle session: 17 taps, median 3 frames / 82 ms, no late steps).
+
 ## Dependencies
 
 Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the measured call edges):

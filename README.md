@@ -31,13 +31,16 @@ The C++ dependencies come from **vcpkg** in manifest mode (`vcpkg.json`, pinned 
 Wayland video), OpenSSL, and the Khronos EGL/GLES headers. All are built from source by vcpkg, as static
 libraries (`cmake/vcpkg-triplets/x64-linux.cmake`: release only), on the first configure, into
 `build/vcpkg_installed/`; vcpkg's binary cache (`~/.cache/vcpkg/archives`) makes later configures,
-other build dirs and worktrees fast. Two libraries vcpkg doesn't have come from CMake
-`FetchContent`, pinned by URL and SHA-256, into `build/_deps/` (`cmake/deps.cmake`):
+other build dirs and worktrees fast. Three libraries come from CMake
+`FetchContent` instead, pinned by URL and SHA-256, into `build/_deps/` (`cmake/deps.cmake`):
 - **dynarmic** (the ARM64 JIT) at `lioncash/dynarmic` commit `a41c380`;
 - **IJG libjpeg 9e**, built static by `cmake/libjpeg9/` (target `soa::jpeg9`). The game bundles 9b
   and vcpkg has only libjpeg-turbo, which isn't bit-exact with IJG's; 9e is what Ubuntu's
   `libjpeg9` ships, which the port used before. Used by `tools/aif2png`, and kept for the
-  host-library natives (`port/PLAN.md`, N).
+  host-library natives (`port/PLAN.md`, N);
+- **zstd 1.3.4**, the game's version, built static by `cmake/zstd134/` (target `soa::zstd134`): the
+  `lib_zstd` natives (`port/src/native/lib_zstd/`) match the game's results byte for byte, errors
+  included, which vcpkg's zstd 1.5 doesn't (vcpkg's stays for `tools/aif2png`).
 
 **SQLite is pinned to 3.45.1** (`overrides` in `vcpkg.json`) and built with the compile options of
 Ubuntu 24.04's `libsqlite3` (the triplet file), the library the server linked before vcpkg. The

@@ -1,0 +1,20 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x1f1b2f4	0x201b2f4	172	_ZN4Aska11_DecodeMainILb0ELi7EE6DecodeEPhS2_i	Aska::_DecodeMain<false, 7>::Decode(unsigned char*, unsigned char*, int)	decode_main	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eaa0	0x231eaa0	8	_ZN4Aska12CompressZSTDEPvlPKvl	Aska::CompressZSTD(void*, long, void const*, long)	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eaa8	0x231eaa8	4	_ZN4Aska14DecompressZSTDEPvlPKvl	Aska::DecompressZSTD(void*, long, void const*, long)	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eaac	0x231eaac	4	_ZN4Aska16CreateZSTDStreamEv	Aska::CreateZSTDStream()	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eab0	0x231eab0	4	_ZN4Aska16DeleteZSTDStreamEPPv	Aska::DeleteZSTDStream(void**)	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eab4	0x231eab4	4	_ZN4Aska19GetStreamInSizeZSTDEv	Aska::GetStreamInSizeZSTD()	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eab8	0x231eab8	4	_ZN4Aska20GetStreamOutSizeZSTDEv	Aska::GetStreamOutSizeZSTD()	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eabc	0x231eabc	4	_ZN4Aska30InitializeDecompressStreamZSTDEPPv	Aska::InitializeDecompressStreamZSTD(void**)	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eac0	0x231eac0	4	_ZN4Aska20DecompressStreamZSTDEPPvPNS_13ZSTDOutBufferEPNS_12ZSTDInBufferE	Aska::DecompressStreamZSTD(void**, Aska::ZSTDOutBuffer*, Aska::ZSTDInBuffer*)	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eac4	0x231eac4	4	_ZN4Aska16CompressSizeZSTDEl	Aska::CompressSizeZSTD(long)	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x221eac8	0x231eac8	24	_ZN4Aska11IsErrorZSTDEl	Aska::IsErrorZSTD(long)	aska_zstd	decompiled	the caller (Aska::*ZSTD* are 4-byte tail calls into ZSTD_*): read for the boundary
+0x25b0800	0x26b0800	12	ZSTD_isError	ZSTD_isError	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); live check 0 mismatches
+0x25bbb04	0x26bbb04	408	ZSTD_decompress	ZSTD_decompress	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); live check 0 mismatches
+0x25bc8c0	0x26bc8c0	124	ZSTD_createDStream	ZSTD_createDStream	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); differential tests; the streamed path (chunks > 64 KiB) isn't reached by the four flows
+0x25bca64	0x26bca64	220	ZSTD_freeDStream	ZSTD_freeDStream	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); differential tests; the streamed path (chunks > 64 KiB) isn't reached by the four flows
+0x25bcb40	0x26bcb40	12	ZSTD_DStreamInSize	ZSTD_DStreamInSize	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); differential tests; the streamed path (chunks > 64 KiB) isn't reached by the four flows
+0x25bcb4c	0x26bcb4c	8	ZSTD_DStreamOutSize	ZSTD_DStreamOutSize	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); differential tests; the streamed path (chunks > 64 KiB) isn't reached by the four flows
+0x25bd104	0x26bd104	136	ZSTD_initDStream	ZSTD_initDStream	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); differential tests; the streamed path (chunks > 64 KiB) isn't reached by the four flows
+0x25bd3fc	0x26bd3fc	2576	ZSTD_decompressStream	ZSTD_decompressStream	api	tested	host zstd 1.3.4 (lib_zstd_api.cpp, pinned: cmake/zstd134); differential tests; the streamed path (chunks > 64 KiB) isn't reached by the four flows

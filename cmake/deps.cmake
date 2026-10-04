@@ -12,6 +12,7 @@
 # From CMake FetchContent, pinned by URL + SHA256 (not in vcpkg), into build/_deps:
 #   dynarmic               the ARM64 -> x86-64 JIT (runtime/)
 #   soa::jpeg9             IJG libjpeg 9e, static (cmake/libjpeg9/); tools/aif2png
+#   soa::zstd134           zstd 1.3.4, the game's version, static (cmake/zstd134/); soa's lib_zstd natives
 include(FetchContent)
 
 # ---- vcpkg packages
@@ -87,3 +88,12 @@ FetchContent_Declare(jpeg9
 FetchContent_MakeAvailable(jpeg9)
 set(JPEG9_SOURCE_DIR ${jpeg9_SOURCE_DIR})
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libjpeg9 ${jpeg9_BINARY_DIR} EXCLUDE_FROM_ALL)
+
+# ---- zstd 1.3.4, the game's (port/src/native/lib_zstd: byte-exact with the guest, errors included)
+FetchContent_Declare(zstd134
+  URL https://github.com/facebook/zstd/archive/refs/tags/v1.3.4.tar.gz
+  URL_HASH SHA256=92e41b6e8dd26bbd46248e8aa1d86f1551bc221a796277ae9362954f26d605a9
+  SOURCE_SUBDIR no-cmake)  # only unpack it; cmake/zstd134/ builds the library
+FetchContent_MakeAvailable(zstd134)
+set(ZSTD134_SOURCE_DIR ${zstd134_SOURCE_DIR})
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/zstd134 ${zstd134_BINARY_DIR} EXCLUDE_FROM_ALL)

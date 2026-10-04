@@ -136,7 +136,7 @@ void add_grant(u32 content_type, GrantFn fn, const char* file = __builtin_FILE()
 using ItemExtraFn = std::function<void(Sql& st, Sql& m, ItemUid uid, Value& item)>;
 void add_item_extra(ItemExtraFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 
-// What the core MissionStart / MissionEnd played (agent events-extras), for modules that add to
+// What the core MissionStart / MissionEnd played, for modules that add to
 // their responses: event drops, time bonuses, world-boss damage, ranking scores.
 struct MissionInfo {
     u32 mission = 0;         // the master mission id
@@ -184,6 +184,7 @@ struct HookInfo {
     std::string kind, module, file, detail;
     int line = 0;
 };
+// Every registered hook, in run order.
 std::vector<HookInfo> hook_order();
 // Duplicate registrations found by register_all (empty when there are none); each is also logged.
 std::vector<std::string> registration_errors();
@@ -228,7 +229,7 @@ int64_t counter(Ctx& c, const std::string& key);
 // The active achievements as the `Achievement` state key sends them (api/presents/achievements.cpp). (b) The
 // client's favor-achievement reward popup and home badge (CParameterUtility::
 // GetNotReceiveGoaledFavorabilityAchievement, CHome::UpdateBadge) read this state and never
-// request it, so responses that change favor carry it (agent server-rules).
+// request it, so responses that change favor carry it.
 Value achievement_state(Ctx& c);
 // Passes (api/shop/subscription.cpp): whether a master_subscription type (e.g. 3 = the deep space
 // ships) is on at t, and the `Subscription` state key {type: {master_subscription_type_id,
@@ -262,7 +263,7 @@ std::string format_present(const std::string& tmpl, const std::string& s, int64_
 // reason_param.
 std::string present_text(Sql& m, const std::string& stored, u32 reason_type, u32 reason_param);
 // A request refused (not enough materials, FOL, ...): nothing changes; the core's error path
-// (agent server-missions) rolls the request back, answers the player state only and the client
+// (core/errors.h, server.cpp's handle_request) rolls the request back, answers the player state only and the client
 // shows its own error dialog, master_text error_message_text_<code>. Codes (b: the texts):
 // 10206 items short, 10204 locked items, 10710 / 11001 FOL short (d: which of the three FOL
 // codes), 20000 coins short, 11006 limit reached, 11002 level cap, 17001 exchange period over,

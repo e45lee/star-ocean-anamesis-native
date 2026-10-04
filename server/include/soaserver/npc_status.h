@@ -1,6 +1,6 @@
 #pragma once
 // A mission NPC's battle status (CPersonStatusInfo) from the master data, as the client's NPC
-// model computes it (library code; agent t1-tutorial-parity). docs/server-rules.md "Tutorial
+// model computes it (library code). docs/server-rules.md "Tutorial
 // battle". soa and soa-server both use this; the port test server/npc-status-master compares it
 // with the client's own model.
 #include <cstdint>

@@ -18,6 +18,7 @@ public:
     Scratch(const Scratch&) = delete;
     Scratch& operator=(const Scratch&) = delete;
 
+    // The scratch server is usable (its master and seed save were found).
     bool ok() const;
     // The master or the seed save is missing (logged; a library test is failed by the constructor,
     // others should fail themselves).

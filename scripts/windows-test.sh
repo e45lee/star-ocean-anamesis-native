@@ -21,7 +21,7 @@ stage=${SOA_WIN_STAGE:-/mnt/c/soa-win}
 case $test in
   battle-gacha) targets="soa" need="work/download-3.7.0 work/phone-3.7.0/PHONE.txt" ;;
   seeded) targets="soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
-  viewer-boot) targets="soa-viewer" need="work/extracted/xapk" ;;
+  viewer-boot) targets="soa-viewer" need="" ;;  # (its game: checked below)
   shard-login) targets="soa soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   *) echo "windows-test: unknown test $test" >&2; exit 2 ;;
 esac
@@ -29,6 +29,9 @@ esac
 for n in $need; do
   [ -e "$stage/$n" ] || { echo "FAIL: $stage/$n isn't staged (scripts/windows-stage.sh --phone --viewer)"; exit 1; }
 done
+if [ "$test" = viewer-boot ] && ! ls "$stage"/apk/*.xapk > /dev/null 2>&1 && [ ! -e "$stage/work/extracted/xapk" ]; then  # 380-ok: soa-viewer's game
+  echo "FAIL: soa-viewer's game isn't staged in $stage/apk (scripts/windows-stage.sh --viewer)"; exit 1
+fi
 mkdir -p "$out"
 # shellcheck disable=SC2086
 scripts/build.sh --windows --target $targets > "$out/build-win.log" 2>&1 ||

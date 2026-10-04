@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home` and version 13's `is_new` columns added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns and version 14's `config`, `player.birth_year` / `birth_month` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1051,6 +1051,8 @@ create table player (
   time_saving_day integer,                             -- meta ds_time_saving_day
   login_bonus_popup_pending integer not null default 0 check (login_bonus_popup_pending in (0,1)),  -- counters
   is_3d_home integer not null default 1 check (is_3d_home in (0,1)),  -- **new** (v12): Home3DAnd2DSwitching
+  birth_year integer check (birth_year between 1900 and 2100),  -- **new** (v14): UpdateBirthYearMonth; NULL: never entered
+  birth_month integer check (birth_month between 1 and 12),      -- **new** (v14)
   created_at integer not null, last_login_at integer
 ) strict;
 
@@ -1132,6 +1134,10 @@ create table party_member (
 -- ~~party~~ (merged into party_member)
 
 -- ---- missions and the battle in progress ----------------------------------------------------
+create table config (                                 -- **new** (v14): the options the player changed (UpdateConfig)
+  master_config_id integer primary key,                -- m: master_config
+  value text not null, type integer not null
+) strict;
 create table mission (
   mission_id integer primary key,              -- m: master_mission | master_event_mission | master_world_map_mission
   cleared integer not null default 0 check (cleared in (0,1)),
@@ -1629,6 +1635,11 @@ Lockstep changes:
   - **Step 13** (`state/schema.cpp` `kNewFlags`; `kSchemaVersion` 13): `roster.is_new`, `items.is_new`, `stock.is_new`, each `integer not null default 1 check (is_new in (0,1))`, then every existing row set to 0: a row added later is new by the column's default (every place that gains a character, item or stack item inserts a row), the rows the state already had are not. No rebuild (added columns with a default and a check on STRICT tables). The seed and the new player's starters insert 0.
   - **Code:** `api/items/new_flags.cpp` (the three ClearNew*); `roster_info`, `item_info_list`, `stack_item_info_list` send the flags.
   - **Tests:** `server/schema-migrate-new-badges` ((1) v0 → 13: every existing roster / items / stock row not new, every other table's rows as at 12; (2) a 12 file → 13 without the master: a new row is new, the check refuses 2, `.bak-v12` without the column), `items/new-badges`; the `badges` replay corpus.
+
+**v14: the player's options and birth month** (agent `server-u-settings`, 2026-10-04, branch `port/server-u-settings`; docs/unimplemented-apis.md part 3 step 3.3, not a plan step). The server had no handler for GetConfig / UpdateConfig / ResetConfig and Get/UpdateBirthYearMonth, so a changed option was lost at once and the birth month never kept.
+  - **Step 14** (`state/schema.cpp` `kSettings`; `kSchemaVersion` 14; written as 13 on its branch, renumbered at the merge: the NEW badges landed first): `create table config (master_config_id integer primary key, value text not null, type integer not null) strict` (a master reference into `master_config`, `state::check`'s and `schema_inventory.py`'s); `alter table player add column birth_year integer check (birth_year between 1900 and 2100)`, `birth_month ... check (birth_month between 1 and 12)` (NULL: never entered; the client's own ranges, `CNetworkUtility::BirthYearMonthString2Number`). No rebuild, no data mapping (54 tables).
+  - **Code:** `api/settings/config.cpp` (the options; `ConfigInfoList` on the player load), `api/settings/account.cpp` (the birth month).
+  - **Tests:** `server/schema-migrate-v14` ((1) v0 → v14: every other table's rows as at 13, no options, no birth month, `.bak-v0`; (2) a v13 file → 14 without the master: `.bak-v13` without the table and columns, the checks, STRICT), `server/schema-fresh-equals-migrated` (54 tables), `settings/config`, `settings/birth-year-month`; the `profile` replay corpus.
 ---
 
 ## 5. Order and gates

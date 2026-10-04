@@ -1862,6 +1862,20 @@ const char* const kNewFlags[] = {
     "update stock set is_new = 0",
 };
 
+// ---- step 14: the player's options and birth month (settings and account) -----------------------
+//
+// config: the options the player changed (UpdateConfig; api/settings/config.cpp), one row per
+//   master_config id (a master reference, state::check's): the value string as sent and its type.
+//   No row: the master's default (master_config.value); ResetConfig deletes them all.
+// player.birth_year / birth_month: the birth month the player entered (UpdateBirthYearMonth;
+//   api/settings/account.cpp); NULL: never entered. The ranges are the client's own
+//   (CNetworkUtility::BirthYearMonthString2Number @015f7cc0: 1900..2100, 1..12).
+const char* const kSettings[] = {
+    "create table config (master_config_id integer primary key, value text not null, type integer not null) strict",
+    "alter table player add column birth_year integer check (birth_year between 1900 and 2100)",
+    "alter table player add column birth_month integer check (birth_month between 1 and 12)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1916,6 +1930,10 @@ const std::vector<Step>& steps() {
         {13,
          "the new badges: roster.is_new, items.is_new, stock.is_new (ClearNewCharacter, ClearNewItem, ClearNewStackItem)",
          {std::begin(kNewFlags), std::end(kNewFlags)},
+         nullptr},
+        {14,
+         "the player's options and birth month: config, player.birth_year / birth_month (UpdateConfig, UpdateBirthYearMonth)",
+         {std::begin(kSettings), std::end(kSettings)},
          nullptr},
     };
     return s;

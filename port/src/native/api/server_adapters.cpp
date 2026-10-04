@@ -1,6 +1,7 @@
 // The port's side of the server library (see server_adapters.h). Port code, not guest behaviour.
 #include "native/api/server_adapters.h"
 
+#include <cstdio>
 #include <cstring>
 #include <map>
 #include <memory>
@@ -113,8 +114,26 @@ server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint
     return r;
 }
 
+// The requests whose NetworkApiCaller method sends its arguments in another shape than the
+// FakeApiCaller method takes them: the in-process request gets the wire's shape, so the server
+// reads one form (wire/inproc-parity checks it).
+//  - UpdateBirthYearMonth(u16 year, u8 month): NetworkApiCaller::UpdateBirthYearMonth sends the
+//    string CNetworkUtility::BirthYearMonthNumber2String (@015f7c60) makes, "%u-%02u" in a char[8],
+//    and nothing for a year outside 1900..2100 or a month outside 1..12 (here: the empty string,
+//    which the server refuses).
+static void to_wire_shape(server::Request& r) {
+    if (r.method == "UpdateBirthYearMonth" && r.ints.size() == 2 && r.strs.empty()) {
+        const u64 year = r.ints[0], month = r.ints[1];
+        char text[8] = "";
+        if (year >= 1900 && year <= 2100 && month >= 1 && month <= 12) snprintf(text, sizeof text, "%u-%02u", (unsigned)year, (unsigned)month);
+        r.ints.clear();
+        r.strs.push_back(text);
+    }
+}
+
 server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t* x) {
     server::Request r = capture_from_guest(mangled, fid, x);
+    to_wire_shape(r);
     if (!server::carries_battle_log(r.method)) {
         packet_log::request(r, {});
         return r;

@@ -10,6 +10,7 @@ namespace soa::server {
 enum class ErrorCode : u32 {
     kPlayerNotFound = 10002,  // プレイヤーデータが見つかりません。 (b) the client's own dialog for SearchPlayer (api/player/home_footer.cpp)
     kStaminaShort = 10004,  // スタミナが不足しています。 (a) the text; MissionStart, Sphere211MissionStart
+    kBirthUnknown = 10009,  // 誕生年月が確認できません。 (b) RequestGetAge's lambda @019587d8 opens the birth dialog
     kLockedItem = 10204,  // ロック中のアイテムが含まれています。 (a) the text
     kItemCountError = 10206,  // アイテムの所持数エラーが発生しました。 (a) the text: items, tickets, vanish items short (d: the code)
     kItemUnusable = 10208,  // アイテムは使用できませんでした。 (d) the server's generic refusal
@@ -53,7 +54,6 @@ inline std::vector<u8> refuse(Ctx& c, const char* method, const char* why, Error
 //   10006  スタミナは既に全回復しています。
 //   10007  サーバ内部エラーが発生しました。
 //   10008  プレイヤーIDにエラーが発生しました。
-//   10009  誕生年月が確認できません。
 //   10201  サーバ内部エラーが発生しました。
 //   10202  装備アイテム所持枠が不足しています。
 //   10203  装備中のアイテムが含まれています。

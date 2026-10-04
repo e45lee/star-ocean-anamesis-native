@@ -204,7 +204,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | `--selftest [F]`, `--smoke`, `--list-native` | The self-tests (tests matching F), a quick library check, the native list |
 | `--fake-server DIR`, `--fake-server-schema FILE` | The FakeApiCaller route's canned responses (default `port/fakeapi/responses`; `--server inproc` only) and a dump of the response key schema at `CGame::OnInitialize` (`docs/api.md`) |
 | `--memstats [S]` | Memory snapshots in the log at every phase change, and every S seconds (see "Memory diagnostics") |
-| `--live-check FAMILY[,..][:KEY[=VALUE]..]` | Check a native family against the guest during the run (`src/native/README.md` "Live checks"; no family is registered now) |
+| `--live-check FAMILY[,..][:KEY[=VALUE]..]` | Check a native family against the guest during the run (`src/native/README.md` "Live checks"; families: `lib_sqlite`) |
 
 **Server options** (the same flags as `soa-server`; only with `--server inproc`)
 

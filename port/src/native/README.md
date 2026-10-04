@@ -63,8 +63,9 @@ thunks and native code alike, as text instead of executing it; recorded calls re
 Families check their natives against the guest originals during a real session (e.g.
 `port/scripts/restore_session.sh ... --live-check FAMILY`, i.e. soa's `--live-check`) with the
 shared harness in `live_check.{h,cpp}`; the register file it records calls on is `a2c_regs.h`.
-**No family is registered at the moment** (they were deleted with the offline build's natives), so
-`--live-check` names none and refuses any name ("registered: none"); a rebuilt family should use it.
+Registered families: `lib_sqlite` (a shadow run: the game's databases also opened in the guest's
+SQLite and every call repeated there; `lib_sqlite/README.md`). The offline build's families were
+deleted with its natives; a rebuilt family should use the harness.
 A record / replay family (hand-written code whose outgoing calls go through `Family::gcall` /
 `gcall_n` / `gcall_sret` / `memop` / `live::ACall`) is a static `live::Family("tag", every,
 sret_marked)` plus `Family::add(sym, host_fn | body, obj_bytes, ret, enabled, label)` per function;

@@ -1,0 +1,22 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x0224e04c	0x234e04c	152	sqlite3_free	sqlite3_free	api	native	host SQLite 3.45.1; differential tests (lib_sqlite/); not called in the live-check flows
+0x0225788c	0x235788c	352	sqlite3_finalize	sqlite3_finalize	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x02257a80	0x2357a80	220	sqlite3_reset	sqlite3_reset	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x02257e50	0x2357e50	224	sqlite3_value_blob	sqlite3_value_blob	api	native	host SQLite 3.45.1; differential tests (lib_sqlite/); not called in the live-check flows
+0x02257f30	0x2357f30	60	sqlite3_value_text	sqlite3_value_text	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x02257f6c	0x2357f6c	84	sqlite3_value_bytes	sqlite3_value_bytes	api	native	host SQLite 3.45.1; differential tests (lib_sqlite/); not called in the live-check flows
+0x02258014	0x2358014	96	sqlite3_value_double	sqlite3_value_double	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x02258074	0x2358074	144	sqlite3_value_int	sqlite3_value_int	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x02258104	0x2358104	144	sqlite3_value_int64	sqlite3_value_int64	api	native	host SQLite 3.45.1; differential tests (lib_sqlite/); not called in the live-check flows
+0x02258260	0x2358260	24	sqlite3_value_type	sqlite3_value_type	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x02258fb8	0x2358fb8	5892	sqlite3_step	sqlite3_step	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x0225a988	0x235a988	12	sqlite3_column_count	sqlite3_column_count	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x0225b324	0x235b324	276	sqlite3_column_value	sqlite3_column_value	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x0225b680	0x235b680	284	sqlite3_column_name	sqlite3_column_name	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x0225c0cc	0x235c0cc	8	sqlite3_bind_text	sqlite3_bind_text	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x0225c578	0x235c578	12	sqlite3_bind_parameter_count	sqlite3_bind_parameter_count	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x0225fb9c	0x235fb9c	1976	sqlite3_exec	sqlite3_exec	api	native	host SQLite 3.45.1; differential tests (lib_sqlite/); not called in the live-check flows
+0x02260354	0x2360354	28	sqlite3_prepare_v2	sqlite3_prepare_v2	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x02260370	0x2360370	376	sqlite3_errmsg	sqlite3_errmsg	api	native	host SQLite 3.45.1; differential tests (lib_sqlite/); not called in the live-check flows
+0x02264724	0x2364724	8	sqlite3_close	sqlite3_close	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)
+0x022668c4	0x23668c4	12	sqlite3_open	sqlite3_open	api	tested	host SQLite 3.45.1; differential tests (lib_sqlite/); live check 0 mismatches (4 flows)

@@ -2782,7 +2782,7 @@
      "name": "m_colorRate",
      "type": {
       "kind": "bytes",
-      "ctype": "soa::native::render::MathVector",
+      "ctype": "soa::native::math::Vector",
       "size": 16
      },
      "size": 16
@@ -2792,7 +2792,7 @@
      "name": "m_colorOffset",
      "type": {
       "kind": "bytes",
-      "ctype": "soa::native::render::MathVector",
+      "ctype": "soa::native::math::Vector",
       "size": 16
      },
      "size": 16
@@ -2802,7 +2802,7 @@
      "name": "m_systemColorRate",
      "type": {
       "kind": "bytes",
-      "ctype": "soa::native::render::MathVector",
+      "ctype": "soa::native::math::Vector",
       "size": 16
      },
      "size": 16
@@ -2812,7 +2812,7 @@
      "name": "m_systemColorOffset",
      "type": {
       "kind": "bytes",
-      "ctype": "soa::native::render::MathVector",
+      "ctype": "soa::native::math::Vector",
       "size": 16
      },
      "size": 16
@@ -2850,7 +2850,7 @@
      "name": "m_vec620",
      "type": {
       "kind": "bytes",
-      "ctype": "soa::native::render::MathVector",
+      "ctype": "soa::native::math::Vector",
       "size": 16
      },
      "size": 16

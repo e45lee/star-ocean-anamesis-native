@@ -67,7 +67,14 @@ bool owns_character(ext::Ctx& ctx, CharacterUid uid) { return uid.v && ctx.st.on
 Value roster_info(ext::Ctx& ctx) {
     Value characters = Value::array();
     const PlayerId owner = player_id(ctx);
-    ctx.st.q("select * from roster order by uid", {}, [&](const Row& roster_row) { characters.push(person_info(ctx, roster_row, owner)); });
+    ctx.st.q("select * from roster order by uid", {}, [&](const Row& roster_row) {
+        Value info = person_info(ctx, roster_row, owner);
+        // the NEW badge (docs/server-rules.md#new-badges): (b) CPersonInfo::Initialize (@014f9bf0)
+        // registers is_new, a u32 at +0x400, which OnClearNewCharacterRes clears; only in the
+        // player's own list (not the battle status or the rental clones)
+        info["is_new"] = (u32)roster_row.i("is_new");
+        characters.push(info);
+    });
     return characters;
 }
 

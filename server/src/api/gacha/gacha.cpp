@@ -317,6 +317,7 @@ void add_drawn_role(ext::Ctx& ctx, GachaDraw& draw, u32 role, int rank, u32 k, b
         character["exp"] = 0u;
         character["limit_break_count"] = 0u;
         character["awaken_level"] = 0u;
+        character["is_new"] = 1u;  // the NEW badge until ClearNewCharacter (docs/server-rules.md#new-badges)
         draw.added_characters[std::to_string(uid.v)] = character;
     }
     record_history(ctx, draw, Drawn{RoleId(role), uid, std::nullopt}, rank, duplicate, k);

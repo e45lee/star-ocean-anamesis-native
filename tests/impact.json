@@ -13,8 +13,11 @@
   "BoostCharacter": "server/src/api/growth/growth.cpp",
   "BoxGacha": "server/src/api/gacha/box.cpp",
   "CheckEventRankingResult": "server/src/api/events/ranking.cpp",
+  "ClearNewCharacter": "server/src/api/items/new_flags.cpp",
   "ClearNewEventRanking": "server/src/api/events/ranking.cpp",
   "ClearNewGear": "server/src/api/items/gear.cpp",
+  "ClearNewItem": "server/src/api/items/new_flags.cpp",
+  "ClearNewStackItem": "server/src/api/items/new_flags.cpp",
   "CreatePlayer": "server/src/api/entry/entry.cpp",
   "DebugBarneyChance": "server/src/api/debug/debug_stubs.cpp",
   "DebugCharacterBoost": "server/src/api/debug/debug_stubs.cpp",
@@ -319,6 +322,17 @@
     "UpdateView",
     "UseFavorItem",
     "UseHealItem"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:badges": {
+   "apis": [
+    "ClearNewCharacter",
+    "ClearNewItem",
+    "ClearNewStackItem",
+    "Gacha",
+    "GetPlayer",
+    "Login"
    ],
    "source": "observed (requests.txt)"
   },

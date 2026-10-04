@@ -147,6 +147,7 @@ Value stack_item_info_list(ext::Ctx& ctx) {
         // sort_name_idx, is_new, use_count, player_id; the count held is `num` (the shops
         // and the exchange show it as 所持数)
         info["num"] = (u32)stock_row.i("count");
+        info["is_new"] = (u32)stock_row.i("is_new");  // the NEW badge (docs/server-rules.md#new-badges)
         list.push(info);
     });
     return list;
@@ -172,6 +173,7 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
         info["is_lock"] = item_row.i("locked") != 0;
         info["is_equip"] = item_equipped(ctx, item_row.id<ItemUid>("uid"));
         info["num"] = 1u;
+        info["is_new"] = (u32)item_row.i("is_new");  // the NEW badge (docs/server-rules.md#new-badges)
         ext::item_extra(state, master, item_row.id<ItemUid>("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
         list.push(info);
     });

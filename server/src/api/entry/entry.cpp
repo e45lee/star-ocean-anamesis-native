@@ -87,7 +87,7 @@ std::vector<CharacterUid> add_starters(ext::Ctx& ctx, ServerTime now) {
         // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
         // every other column's default (excluded.<col>), as the REPLACE gave it
         ctx.st.q(
-            "insert into roster (uid, role_id, level, exp, created_at) values (?,?,?,?,?)"
+            "insert into roster (uid, role_id, level, exp, created_at, is_new) values (?,?,?,?,?,0)"
             " on conflict(uid) do update set role_id = excluded.role_id, level = excluded.level, "
             "exp = excluded.exp, limit_break = excluded.limit_break, awaken = excluded.awaken, "
             "skill1_level = excluded.skill1_level, skill2_level = excluded.skill2_level, skill3_level = excluded.skill3_level, "
@@ -95,7 +95,7 @@ std::vector<CharacterUid> add_starters(ext::Ctx& ctx, ServerTime now) {
             "add_hp = excluded.add_hp, add_attack = excluded.add_attack, add_intelligence = excluded.add_intelligence, "
             "add_defence = excluded.add_defence, add_hit = excluded.add_hit, add_guard = excluded.add_guard, add_ap = excluded.add_ap, "
             "weapon_uid = excluded.weapon_uid, accessory_uid = excluded.accessory_uid, assist_uid = excluded.assist_uid, "
-            "created_at = excluded.created_at",
+            "created_at = excluded.created_at, is_new = excluded.is_new",
             {uid, role_id, 1u, 0u, now});
         party.push_back(uid);
     }

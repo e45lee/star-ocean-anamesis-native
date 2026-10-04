@@ -10,6 +10,7 @@ Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_google
 - `docs/online-server.md`: how the online game server (shut down in 2021) worked, reconstructed from the client: hosts, the TCP RPC protocol and its encryption, the SQEX BRIDGE session handshake, asset delivery, multiplayer and payments.
 - `docs/history/`: finished plans and comparisons, e.g. [`docs/history/libsoa-3.7.0-vs-3.8.0.md`](docs/history/libsoa-3.7.0-vs-3.8.0.md), what the offline build changed against 3.7.0.
 - `docs/environment.md`: the environment rule (settings are command-line flags; the environment holds diagnostics and test switches only), the removed `SOA_*` settings and their flags, and the variables the programs and scripts still read.
+- `docs/home3d.md`: the 3D home character: when the client shows a model or a 2D illustration (`master_person.home3d_disable`; the NieR:Automata collab is 2D only), the Home3D parameters, motions, lines and voices; `--home3d-all`.
 - `docs/api.md`: every API the client calls, with the wire format of each request and reply. `docs/ason.md`: ASON, the engine's MessagePack (reply bodies, request payloads). `docs/server-rules.md`: the game rules the port's local server applies.
 - `soa_save/`: Python library and CLI for reading, editing and writing saves, and for decoding the event scripts ([`soa_save/README.md`](soa_save/README.md)).
 - `tools/`: helpers used for the reverse engineering: Ghidra headless scripts, ELF/PLT resolver, xref/caller scanners, unicorn emulator harness.

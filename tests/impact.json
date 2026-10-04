@@ -139,6 +139,7 @@
    "OnPlayerLoad"
   ],
   "server/src/api/player/home_footer.cpp": [
+   "ClientMaster",
    "OnPlayerLoad"
   ],
   "server/src/api/player/notice.cpp": [
@@ -1389,6 +1390,17 @@
     "Login",
     "NoLoginStart"
    ]
+  },
+  "session:home-character": {
+   "apis": [
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Home3DAnd2DSwitching",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
   },
   "session:debug": {
    "apis": [

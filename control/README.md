@@ -43,6 +43,7 @@ One package for the port (`soa`, in-process server or `--server`) and the emulat
 | `tutorial`, `entry` | `tutorial_session.sh`, `newplayer_session.sh` | port-inproc |
 | `seeded`, `newplayer` | `emulator/scripts/emulator_session.sh [--new-player]` | emu, port-server, port-inproc |
 | `summer-demo` | `emulator/scripts/summer_demo.sh` | emu, port-server, port-inproc |
+| `home-character` | (`control/run.py home-character SOA OUT TMP [--home ROLE]... [--home3d-all]`; T3) | port-inproc: a boot per `--home` role from a seed variant (`tools/make_test_seed.py --home`), the home's idle, long idle, talk and interactive-mode shots, the files the client loaded for the character (`docs/home3d.md`) |
 | `gdb-probe` | (`control/run.py gdb-probe SOA OUT TMP`; T3) | port-inproc, port-server, emu: the guest debugger at home (attach, a breakpoint, registers and memory, a step, detach) |
 
 A session refuses a target it doesn't list, with the reason (`TARGETS_WHY`): most port sessions use the port's own commands and log lines (`phase:`, `mission:`, `clock:`, `port_debug: phase N`), which soa-emu lacks. The scripts keep their names, arguments, environment knobs, output files and exit codes. Not converted (one program's own tools, PLAN-consolidate.md "Stays"): `smoke.sh`, the selftests, the debug-window sessions, `profile_extra.sh`, `smoke_vs_emu.sh`, `rebase_server_diff.sh` (it runs `emulator_session.sh`), `emulator_boot.sh`, `nier_demo.sh`, `standin_fetch_test.sh`, the viewer's scripts.

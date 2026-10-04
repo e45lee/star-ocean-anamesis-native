@@ -77,6 +77,14 @@ undone, and the guest's original runs on a shadow of the manager (its bytes with
 itself, no bad-allocate notify) over the same heap; the guest's stores stand. The pools' CMutex is
 recursive: the check holds it, runs the native, records, puts the bytes back and runs the original.
 
+**Results (2026-10-04).** Live check (`--live-check memory,sync`, every 64th call, the final build on sync's
+classes): login 105,000 checks, battle 140,000, gacha 120,000, story 143,000, tutorial (a fresh player)
+202,000: 0 mismatches, 0 races (skipped, ~4%: STL allocations served by the heap, LocalFree of blocks with
+a notify); every flow PASSed (sync's own check: 0 mismatches too). Guest time (SOA_PROFILE, the four flows
+of port/REBUILD-QUEUE.md, main 6029ba4 vs this branch): memory's guest self 2.9% -> 0.6% of busy samples
+(10,068 -> 1,995), inclusive 8.4% -> 1.5%; what stays guest is mostly DeleteManager::FlushMain /
+PostFlushMain (~600 samples) and code inlined into callers. Battle fps unchanged (59.6: vsync-bound).
+
 **Locks:** sync's classes, called directly: the heap natives `m_cs.Enter()` / `Leave()`
 (`sync::FastCriticalSection`: the guest's inlined protocol on the guest's words; the JIT's exclusive
 stores are host CAS, so guest and native lockers exclude each other: `heap-mixed-threads`), the pools

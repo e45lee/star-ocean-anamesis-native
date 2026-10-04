@@ -17,6 +17,9 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "../containers/containers_layout.h"  // MappedMemoryManager's hash tables (containers' classes)
+#include "../sync/sync_layout.h"              // FastCriticalSection, CMutex, CriticalSection (sync's classes)
+
 namespace soa::native::memory {
 
 using u8 = std::uint8_t;
@@ -40,12 +43,12 @@ inline constexpr u64 kVaddrStlMemoryManager = 0x2c00528;          // CAssignedMe
 inline constexpr u64 kVaddrStlFixedLengthContainer = 0x2c00530;   // ...::m_pFixedLengthAllocatorContainer
 inline constexpr u64 kVaddrApplicationMemoryInstance = 0x2c00260; // TSingleton<CApplicationMemory>::m_pInstance
 
-// Aska::FastCriticalSection is the `sync` subsystem's type (n-sync recovers it): 0x90 bytes
-// (Aska::MemoryHandleManager::m_criGlobal is one: nm -S 0x90). What the memory code shows of it, inlined
-// into every MemoryManager / DeleteManager method: +0x38 s32 lock word (-1 free, 0 held; LDAXR/STLXR),
-// +0x3c s32 waiter count (spinners past 0x200 tries), +0x78 Aska::Semaphore (signalled on unlock when
-// more than 20 waiters). Here it is opaque bytes; swap in sync's class once both are merged.
-inline constexpr u64 kFastCriticalSectionSize = 0x90;
+// The locks are sync's classes (port/src/native/sync/sync_layout.h): Aska::FastCriticalSection (0x90,
+// embedded: lock word +0x38, waiter count +0x3c, Semaphore +0x78), Framework::CMutex (0xb0, the pools'
+// and handle managers' pointers), Aska::CriticalSection (0x28).
+using sync::CMutex;
+using sync::CriticalSection;
+using sync::FastCriticalSection;
 
 class MemoryManager;
 class MemoryBlock;
@@ -64,10 +67,13 @@ public:
     MemoryBlock* m_freeNext;// 0x18: the free list (in the superblock's sentinel: its head)
     MemoryBlock* m_freePrev;// 0x20
     MemoryManager* m_owner; // 0x28: the manager it came from (GetAllocatedManager: *(p - 0x18))
-    u8 m_flag30;            // 0x30: 0 when allocated (Malloc stores u16 0x100), meaning unknown
+    u8 m_high;              // 0x30: 1 from MallocHigh / AlignedMallocHigh (they store u16 0x101), 0 from
+                            //       Malloc / AlignedMalloc (0x100) and in the run heads' sentinels
     u8 m_used;              // 0x31: 1 allocated / sentinel, 0 free (Malloc's "!= 1" tests)
     u8 unk_32[6];           // 0x32
-    u64 m_extra;            // 0x38: 0 on allocation; meaning unknown (aligned allocations?)
+    void* m_notify;         // 0x38: Aska::IMemoryNotify* registered on the block (LocalRegisterNotify writes
+                            //       it, *(p - 8)); LocalFree calls its vtable slot 1 (notify, p) outside
+                            //       the lock before freeing; 0 on allocation
 
     void* Data() { return reinterpret_cast<u8*>(this) + 0x40; }
     static MemoryBlock* FromData(const void* p) {
@@ -80,9 +86,9 @@ static_assert(offsetof(MemoryBlock, m_physPrev) == 0x10);
 static_assert(offsetof(MemoryBlock, m_freeNext) == 0x18);
 static_assert(offsetof(MemoryBlock, m_freePrev) == 0x20);
 static_assert(offsetof(MemoryBlock, m_owner) == 0x28);
-static_assert(offsetof(MemoryBlock, m_flag30) == 0x30);
+static_assert(offsetof(MemoryBlock, m_high) == 0x30);
 static_assert(offsetof(MemoryBlock, m_used) == 0x31);
-static_assert(offsetof(MemoryBlock, m_extra) == 0x38);
+static_assert(offsetof(MemoryBlock, m_notify) == 0x38);
 static_assert(sizeof(MemoryBlock) == 0x40);
 
 // Aska::MemoryManager::_Srbk: one per 64 KiB superblock of the heap, in an array at MemoryManager::
@@ -134,7 +140,7 @@ public:
     u8* VirtualGetHeapAddress() const;                    // slot 9
     bool VirtualIsPhysical() const;                       // slot 10
     // slot 11: Aska::IMemoryManager::VirtualIsMemoryHandleManager() (inherited; false)
-    void VirtualCalcFreeSize(s64* total, s64* largest) const;  // slot 12
+    u64 VirtualCalcFreeSize(s64* heapBytes, s64* usedBytes) const;  // slot 12
     bool VirtualIsEmpty(bool all) const;                  // slot 13
     void* VirtualGetFastCriticalSection();                // slot 14: &m_cs
     MemorySrbk* VirtualGetSrbk(s32 index) const;          // slot 15
@@ -168,15 +174,16 @@ public:
     void* Realloc(u64 size, void* p, s64 align);
     bool Split(void* p, void* at);
     void* Move(void* p, s64 delta, bool high);
-    static void LocalFree(MemoryManager* owner, MemoryBlock* block);  // LocalFree(Aska::_MemoryBlock*): `this` is the owner
-    void LocalFree(void* p);                              // LocalFree(void*): the owner's LocalFree(block)
+    void LocalFree(MemoryBlock* block);                   // LocalFree(Aska::_MemoryBlock*): `this` is the block's owner
+    void LocalFree(void* p);                              // LocalFree(void*): block->m_owner->LocalFree(block) (`this` unused)
     bool IsCreated() const;                               // any manager of the ring has a heap
     bool IsPhysical() const;
     u64 GetMemorySize(const void* p);                     // the block's m_size
     static MemoryManager* GetAllocatedManager(const void* p, u64* size);  // the block's owner (+ m_size)
     static MemoryManager* GetAllocatedManager(const void* p);
-    void CalcFreeSize(s64* total, s64* largest) const;
-    u64 CalcFreeSize(bool all);
+    u64 CalcFreeSize(s64* heapBytes, s64* usedBytes) const;  // over the ring; returns the largest free block's
+                                                          // usable bytes ((largest - 0x40) & ~0xf, 0 when none)
+    s64 CalcFreeSize(bool onlyThis);                      // free bytes (+ 0x40 per run) of this manager or the ring
     s32 CountFreeBlocks();
     bool IsEmpty(bool all) const;
     bool SearchNextBlock(MemorySrbk** srbk, MemoryBlock** block, bool used);
@@ -197,6 +204,16 @@ public:
     void UpdateDebugMemoryMap();
     void GetDebugMemoryMap(void* text, float x, float y, u32 color, float w, float h);
     void SetSwapDebugMemoryMap(bool swap);
+    // Native internals (no guest symbols; memory_heap.cpp): the bodies the guest runs between its inlined
+    // lock enter and leave, storing through `st` (memory_heap.h: DirectStore, or the live check's
+    // LoggedStore). Each returns nullptr when nothing in this manager fits (no store made then).
+    template <class St> MemoryBlock* MallocLocked(u64 need, const St& st);
+    template <class St> void* AlignedMallocLocked(u64 size, s64 align, u64 need, const St& st);
+    template <class St> void* AlignedMallocHighLocked(s64 align, u64 need, const St& st);
+    template <class St> void LocalFreeLocked(MemoryBlock* block, const St& st);  // after the notify part
+    template <class St> void UpdateLargestFree(MemorySrbk* run, const St& st);
+    // Malloc's / AlignedMalloc*'s fallback: the ring, then m_badAllocNotify (BadAllocateRequest).
+    template <class TryOne> void* AllocateFromRing(u64 size, s64 align, TryOne tryOne);
 
     const void* vtable;          // 0x00: _ZTVN4Aska13MemoryManagerE + 0x10
     u8 m_allocHigh;              // 0x08: 1: Malloc allocates from the top (MallocHigh)
@@ -216,7 +233,7 @@ public:
     MemoryManager* m_ringNext;   // 0x48: the next manager of the ring (Malloc's fallback order)
     MemoryManager* m_ringPrev;   // 0x50
     MemoryManager* m_parent;     // 0x58: a manager whose heap holds this one (~MemoryManager deletes the children)
-    u8 m_cs[kFastCriticalSectionSize];  // 0x60: Aska::FastCriticalSection (sync; lock word at 0x98)
+    FastCriticalSection m_cs;    // 0x60: every heap method's lock (its word at 0x98)
 };
 static_assert(offsetof(MemoryManager, vtable) == 0x00);
 static_assert(offsetof(MemoryManager, m_allocHigh) == 0x08);
@@ -232,6 +249,27 @@ static_assert(offsetof(MemoryManager, m_ringPrev) == 0x50);
 static_assert(offsetof(MemoryManager, m_parent) == 0x58);
 static_assert(offsetof(MemoryManager, m_cs) == 0x60);
 static_assert(sizeof(MemoryManager) == 0xf0);
+
+// The request MemoryManager::Malloc / MallocHigh / AlignedMalloc / AlignedMallocHigh pass to
+// m_badAllocNotify's vtable slot 0 when no manager of the ring can satisfy them (built on the caller's
+// stack; the handler, e.g. Framework::CBadAllocateNotifyRetry, frees memory and may allocate into
+// m_result). Layout from the four callers (memory_manager.c).
+class BadAllocateRequest {
+public:
+    MemoryManager* m_manager;  // 0x00: the manager Malloc was called on
+    u64 m_size;                // 0x08: the size asked for
+    s64 m_align;               // 0x10: 4 for Malloc / MallocHigh, the alignment (at least 4) for AlignedMalloc*
+    u32 m_zero18;              // 0x18: 0 (meaning unknown)
+    u8 unk_1c[4];              // 0x1c: not written (the guest leaves stack garbage)
+    s32* m_retries;            // 0x20: the caller's handler-call count (1 during the call; a second failure returns 0)
+    void* m_result;            // 0x28: 0; the handler's allocation, returned when non-null
+};
+static_assert(offsetof(BadAllocateRequest, m_size) == 0x08);
+static_assert(offsetof(BadAllocateRequest, m_align) == 0x10);
+static_assert(offsetof(BadAllocateRequest, m_zero18) == 0x18);
+static_assert(offsetof(BadAllocateRequest, m_retries) == 0x20);
+static_assert(offsetof(BadAllocateRequest, m_result) == 0x28);
+static_assert(sizeof(BadAllocateRequest) == 0x30);
 
 // Aska::MemoryManagerAdapter: static entry points over Aska::Global's manager (no fields).
 class MemoryManagerAdapter {
@@ -326,6 +364,13 @@ public:
 // 9 ActivityRatio, 10 TotalMemoryAmount, 11 UsedMemoryAmount, 12 EnableMutex, 13 DisableMutex.
 class IFixedLengthAllocator {
 public:
+    // Calls through the vtable (memory_pools.cpp): a TFixedLengthAllocator<N> natively when the vtable
+    // is one of the seven instantiations', else the guest's slot.
+    u64 BlockSize() const;                        // slot 2
+    void* pAllocate(const char* file, u32 line);  // slot 4
+    void Free(void* p);                           // slot 5
+    bool IsMine(void* p) const;                   // slot 6
+
     const void* vtable;  // 0x00
 };
 static_assert(sizeof(IFixedLengthAllocator) == 0x08);
@@ -376,6 +421,9 @@ public:
     u64 UsedMemoryAmount() const;       // slot 11: m_numAllocated * (N + 0x10)
     void EnableMutex();                 // slot 12: new Framework::CMutex (0xb0 bytes)
     void DisableMutex();                // slot 13
+    // Native internals (memory_pools.cpp): pAllocate's / Free's bodies under m_mutex.
+    void* AllocateLocked();
+    void FreeLocked(void* p);
 
     const void* vtable;                 // 0x00: _ZTVN9Framework21TFixedLengthAllocatorILm<N>EEE + 0x10
     u8 unk_08[0x10];                    // 0x08: not written by the constructor; meaning unknown
@@ -389,7 +437,7 @@ public:
     u32 m_numAllocated;                 // 0x34
     u32 m_freeHead;                     // 0x38: index of the first free block
     u8 unk_3c[4];                       // 0x3c
-    void* m_mutex;                      // 0x40: Framework::CMutex* (sync), or nullptr after DisableMutex
+    CMutex* m_mutex;                    // 0x40: EnableMutex's, or nullptr (DisableMutex)
 };
 using TFixedLengthAllocator16 = TFixedLengthAllocator<16>;
 using TFixedLengthAllocator32 = TFixedLengthAllocator<32>;
@@ -451,6 +499,10 @@ public:
     void ReportS();
     void ReportC();
     void ReportL();
+    // Native internals (memory_pools.cpp): the pool pAllocate / Free / IsMine pick, with the guest's
+    // asserts on the way (nullptr: none).
+    IFixedLengthAllocator* AllocatorFor(u64 size);
+    IFixedLengthAllocator* AllocatorOwning(void* p) const;
 
     TObjectContainer<IFixedLengthAllocator*> m_allocators;  // 0x00
 };
@@ -482,7 +534,7 @@ public:
     u32 m_instanceId;        // 0x08: from gInstanceUniqueNumber (handles' high word)
     u8 unk_0c[4];            // 0x0c
     void* m_elements;        // 0x10: Aska::THashMap<u32, u64>* (0x30 bytes, operator new; containers' type)
-    void* m_mutex;           // 0x18: Framework::CMutex* (EnableMutex)
+    CMutex* m_mutex;         // 0x18: EnableMutex's
     u32 m_nextSerial;        // 0x20: the next serial (skips 0 and [m_reservedStart, m_reservedEnd])
     u32 m_capacity;          // 0x24
     u32 m_count;             // 0x28
@@ -557,7 +609,7 @@ public:
     void PostFlushMain();
 
     const void* vtable;                       // 0x00: _ZTVN4Aska13DeleteManagerE + 0x10
-    u8 m_cs[kFastCriticalSectionSize];        // 0x08: Aska::FastCriticalSection (sync; lock word at 0x40)
+    FastCriticalSection m_cs;                 // 0x08: (its lock word at 0x40)
     DeletePointerInfo* m_infoStorage;         // 0x98: the operator new[] block (also the infos)
     DeletePointerInfo* m_infos;               // 0xa0
     TDynamicQueue<DeletePointerInfo*> m_free;     // 0xa8: unused infos (Clear refills it)
@@ -632,8 +684,8 @@ public:
     MemoryHandleManager* m_ringPrev;  // 0x248
     MemoryHandleManager* m_parent;    // 0x250
     u8 unk_258[0x18];             // 0x258
-    u8 m_cs[kFastCriticalSectionSize];       // 0x270: Aska::FastCriticalSection (IsAllocated)
-    u8 m_blockCs[kFastCriticalSectionSize];  // 0x300: Aska::FastCriticalSection (GetBlock)
+    FastCriticalSection m_cs;                // 0x270: (IsAllocated)
+    FastCriticalSection m_blockCs;           // 0x300: (GetBlock)
 };
 static_assert(offsetof(MemoryHandleManager, m_srbks) == 0x1e8);
 static_assert(offsetof(MemoryHandleManager, m_srbkCount) == 0x1f0);
@@ -645,6 +697,70 @@ static_assert(offsetof(MemoryHandleManager, m_ringHead) == 0x238);
 static_assert(offsetof(MemoryHandleManager, m_cs) == 0x270);
 static_assert(offsetof(MemoryHandleManager, m_blockCs) == 0x300);
 static_assert(sizeof(MemoryHandleManager) == 0x390);
+
+// Aska::MappedMemoryManager: the AFF mapping tables (which loaded asset buffers are mapped, relocated
+// and by whom). Guest size 0x468 (operator new(0x468, nothrow) in Global::InstantiateMappedMemoryManager,
+// which passes the eight AppProjectDependentProxy::GetMappedMemoryManager* sizes). Layout from its
+// constructor, which inlines the construction of every member (each a containers class: TPoolLegacy,
+// then the TBinaryTree table, then the final vtable), ~MappedMemoryManager, and RemoveHandlerEx
+// (port/decomp/memory/mapped.c). The node types are other code's (only pointers to them here).
+class MappedMemoryPointer;     // Aska::MappedMemoryPointer (PointerManager's nodes)
+class MappedMemoryRelation;    // Aska::MappedMemoryRelation
+class MappedMemoryLocation;    // Aska::MappedMemoryLocation
+class MappedMemoryIdentifier;  // Aska::MappedMemoryIdentifier
+class AUIDNode;                // Aska::AUIDNode
+using TCategorizeHashMappedMemoryPointer = containers::TCategorizeHash<MappedMemoryPointer>;
+using TCategorizeHashMappedMemoryLocation = containers::TCategorizeHash<MappedMemoryLocation>;
+using TCategorizeHashMappedMemoryIdentifier = containers::TCategorizeHash<MappedMemoryIdentifier>;
+using THashMappedMemoryRelation = containers::THash<MappedMemoryRelation>;
+using THashAUIDNode = containers::THash<AUIDNode>;
+static_assert(sizeof(TCategorizeHashMappedMemoryPointer) == 0xa0);  // the next member follows at +0xa0
+static_assert(sizeof(THashMappedMemoryRelation) == 0x90);
+class MappedMemoryManager {
+public:
+    // MappedMemoryManager(registerTable, registerPool, mappingTable, mappingPool, handlerTable,
+    // handlerPool, returnTable, returnPool): the hash tables' bucket counts and the node pools' sizes
+    void Ctor(u32 registerTable, u32 registerPool, u32 mappingTable, u32 mappingPool, u32 handlerTable,
+              u32 handlerPool, u32 returnTable, u32 returnPool);  // _ZN4Aska19MappedMemoryManagerC1Ejjjjjjjj
+    void DtorBase();     // ~MappedMemoryManager() D1: drops the AUIDElem pool's reference, frees every table
+    void DtorDelete();   // D0
+    // Methods (none native; the names the decompiles use)
+    bool ShouldBeMappedEx(const void* askaFile);
+    bool RegisterMappingEx(void* p, void* askaFile, const void** out);
+    bool AttachMappingEx(void* p, void* askaFile, const void** out);
+    bool DetachMappingEx(void* p, const void* auid, bool flag);
+    bool RemoveMappingEx(void* p, bool flag);
+    bool MoveMappingEx(void* from, void* to);
+    void RemoveHandlerEx(const void* handler);  // Aska::IMappingHandler const*
+    void FlushMappingEx();
+
+    const void* vtable;          // 0x000: _ZTVN4Aska19MappedMemoryManagerE + 0x10 (slot 3, +0x18: the deleting
+                                 //        destructor Global::DeleteMappedMemoryManager calls)
+    CriticalSection m_cs;        // 0x008: (a bionic pthread mutex inside)
+    void* m_auidElemPool;        // 0x030: TPoolLegacy<Aska::AUIDElem>* (operator new(0x50), SecurePool(mappingPool));
+                                 //        its +0x08 u32 counts references (the destructor deletes it at 0)
+    TCategorizeHashMappedMemoryPointer m_pointers;          // 0x038: PointerManager (registerTable / registerPool)
+    THashMappedMemoryRelation m_relations;                  // 0x0d8: RelationManager (registerTable / registerPool)
+    TCategorizeHashMappedMemoryLocation m_locations;        // 0x168: LocationManager (mappingTable / mappingPool)
+    TCategorizeHashMappedMemoryPointer m_handlers;          // 0x208: PointerManager keyed by IMappingHandler*
+                                                            //        (RemoveHandlerEx) (handlerTable / handlerPool)
+    TCategorizeHashMappedMemoryIdentifier m_identifiers;    // 0x2a8: IdentifierManager: a handler's identifiers
+                                                            //        (handlerTable / handlerPool)
+    THashAUIDNode m_auids;                                  // 0x348: Aska::AUIDHash (returnTable / returnPool)
+    containers::TAddressManagerAddressNode m_addresses;     // 0x3d8: TAddressManager<AddressNode>
+                                                            //        (returnTable / returnPool * 4)
+};
+static_assert(offsetof(MappedMemoryManager, m_cs) == 0x008);
+static_assert(offsetof(MappedMemoryManager, m_auidElemPool) == 0x030);
+static_assert(offsetof(MappedMemoryManager, m_pointers) == 0x038);
+static_assert(offsetof(MappedMemoryManager, m_relations) == 0x0d8);
+static_assert(offsetof(MappedMemoryManager, m_locations) == 0x168);
+static_assert(offsetof(MappedMemoryManager, m_handlers) == 0x208);
+static_assert(offsetof(MappedMemoryManager, m_identifiers) == 0x2a8);
+static_assert(offsetof(MappedMemoryManager, m_auids) == 0x348);
+static_assert(offsetof(MappedMemoryManager, m_addresses) == 0x3d8);
+static_assert(sizeof(MappedMemoryManager) == 0x468);
+inline constexpr u64 kVaddrMappedMemoryManager = 0x2ccc5e0;  // Aska::Global::m_pMappedMemoryManager
 
 }  // namespace soa::native::memory
 

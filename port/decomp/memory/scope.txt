@@ -4,4 +4,3 @@
 ^Aska::(MemoryManager\w*|MappedMemory\w*|MemoryHandleManager|DeleteManager|_MemoryBlock|MemoryPool\w*|TSharedPointerCode)::
 ^Framework::(CApplicationMemory|CAssignedMemoryManager\w*|CMemory\w*|CFixedLengthAllocatorContainer|TFixedLengthAllocator<\w+>|IFixedLengthAllocator|CHandleManager\w*)::
 ^Framework::CSTLAllocator<.*>::(allocate|deallocate|construct|destroy|max_size)\(
-^(\S+ )?Framework::TObjectContainer<

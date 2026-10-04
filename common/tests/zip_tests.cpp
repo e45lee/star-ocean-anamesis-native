@@ -1,5 +1,5 @@
 // Unit tests of soa/zip.h (build/common/soa_zip_tests): synthetic archives written here, then read
-// back: stored and deflated entries, an archive nested in another (an XAPK's APK) read in place,
+// back: stored and deflated entries, an archive nested in another (an app bundle's APK) read in place,
 // byte ranges, CRC checks, ZIP64 offsets past 4 GiB (a sparse file), concurrent readers.
 #include <soa/zip.h>
 #include <zlib.h>
@@ -98,22 +98,22 @@ Bytes pattern(size_t n, uint32_t seed) {
 }
 Bytes text(const std::string& s) { return Bytes(s.begin(), s.end()); }
 
-// ---- an XAPK: stored APKs (zips) and a deflated one, the APK's entries stored and deflated --------
+// ---- an app bundle: stored APKs (zips) and a deflated one, the APK's entries stored and deflated --------
 void nested_tests(const std::string& dir) {
     Bytes a = text("hello from a stored asset");
     Bytes big = pattern(300000, 1);
     Bytes apk = make_zip({{"assets/a.txt", a}, {"assets/big.bin", big, true}, {"lib/arm64-v8a/libSOA.so", pattern(5000, 2), true}});
     Bytes apk2 = make_zip({{"assets/other.txt", text("second apk")}});
-    std::string xapk = dir + "/test.xapk";
-    check(write_file(xapk, make_zip({{"manifest.json", text("{}"), true},
+    std::string bundle = dir + "/bundle.zip";
+    check(write_file(bundle, make_zip({{"manifest.json", text("{}"), true},
                                      {"base.apk", apk},
                                      {"split.apk", apk2},
                                      {"packed.apk", apk2, true}})),
-          "write the synthetic XAPK");
+          "write the synthetic bundle");
 
     soa::ZipArchive outer;
-    check(outer.open(xapk), "open the XAPK");
-    check(outer.entries().size() == 4, "XAPK: 4 entries");
+    check(outer.open(bundle), "open the bundle");
+    check(outer.entries().size() == 4, "bundle: 4 entries");
     const auto* m = outer.find("manifest.json");
     check(m && m->method == 8 && !outer.stored_data(*m), "a deflated entry has no stored_data");
     std::vector<uint8_t> out;
@@ -121,7 +121,7 @@ void nested_tests(const std::string& dir) {
 
     soa::ZipArchive inner;
     check(inner.open_member(outer, "base.apk"), "open_member: the stored base.apk, in place");
-    check(inner.path() == xapk, "a nested archive's path() is the outer file");
+    check(inner.path() == bundle, "a nested archive's path() is the outer file");
     const auto* be = outer.find("base.apk");
     check(be && inner.base_offset() == outer.data_offset_of(*be) && inner.size() == apk.size(),
           "the nested archive spans the member's bytes in the outer file");
@@ -129,7 +129,7 @@ void nested_tests(const std::string& dir) {
     check(ea && ea->method == 0 && ea->size == a.size() && ea->crc == (uint32_t)crc32(0, a.data(), (uInt)a.size()),
           "nested stored entry: method, size, CRC");
     check(ea && inner.stored_data(*ea) && memcmp(inner.stored_data(*ea), a.data(), a.size()) == 0, "nested stored_data in place");
-    check(ea && pread_file(xapk, inner.data_offset_of(*ea), a.size()) == a,
+    check(ea && pread_file(bundle, inner.data_offset_of(*ea), a.size()) == a,
           "data_offset_of is an offset in the outer file (pread / ffmpeg subfile)");
     const auto* eb = inner.find("assets/big.bin");
     check(eb && eb->method == 8 && inner.extract(*eb, out) && out == big, "nested deflated entry extracts");
@@ -148,9 +148,9 @@ void nested_tests(const std::string& dir) {
 
     // the same through open(path, offset, length)
     soa::ZipArchive ranged;
-    check(be && ranged.open(xapk, outer.data_offset_of(*be), be->size) && ranged.find("assets/big.bin"),
+    check(be && ranged.open(bundle, outer.data_offset_of(*be), be->size) && ranged.find("assets/big.bin"),
           "open(path, offset, length)");
-    check(!ranged.open(xapk, 1u << 30, 10), "open(): a range past the end fails");
+    check(!ranged.open(bundle, 1u << 30, 10), "open(): a range past the end fails");
 
     // a corrupted deflated entry: the CRC check catches it
     Bytes bad = apk;
@@ -159,7 +159,7 @@ void nested_tests(const std::string& dir) {
     write_file(apk_path, apk);
     tmp.open(apk_path);
     uint64_t at = tmp.data_offset_of(*tmp.find("assets/big.bin"));
-    tmp.open(dir + "/test.xapk");  // (unmaps bad.apk before it is rewritten)
+    tmp.open(dir + "/test.bundle");  // (unmaps bad.apk before it is rewritten)
     bad[at + 100] ^= 0x55;
     write_file(apk_path, bad);
     soa::ZipArchive corrupt;
@@ -293,7 +293,7 @@ int main() {
     nested_tests(dir);
     concurrency_tests(dir);
     zip64_tests(dir);
-    for (const char* f : {"test.xapk", "bad.apk", "many.zip", "notzip.bin"}) unlink((dir + "/" + f).c_str());
+    for (const char* f : {"test.bundle", "bad.apk", "many.zip", "notzip.bin"}) unlink((dir + "/" + f).c_str());
     rmdir(dir.c_str());
     fprintf(stderr, "%s (%d failure%s)\n", g_failures ? "FAIL" : "PASS", g_failures, g_failures == 1 ? "" : "s");
     return g_failures ? 1 : 0;

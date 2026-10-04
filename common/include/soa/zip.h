@@ -1,5 +1,5 @@
 #pragma once
-// Read-only ZIP archives (APKs, the XAPK and the APKs inside it, the data zips), on minizip-ng
+// Read-only ZIP archives (APKs, app bundles and the APKs inside them, the data zips), on minizip-ng
 // (vcpkg.json; target soa_zip, common/CMakeLists.txt). Shared by the runtime (runtime/src/android/zip.h:
 // the AAssetManager, the movie player, the programs' library extraction) and anything else that
 // reads a zip (the server's data zips) without depending on the runtime.
@@ -9,7 +9,7 @@
 //   - ZIP64 archives work (more than 65,535 entries, offsets and sizes past 4 GB);
 //   - a stored (uncompressed) entry is served in place: stored_data() points into the mapping and
 //     data_offset_of() is its offset in path(), for pread / mmap / ffmpeg's subfile protocol;
-//   - an archive stored inside another one (an XAPK's APKs) opens in place, without extracting
+//   - an archive stored inside another one (an app bundle's APKs) opens in place, without extracting
 //     it: open_member(), or open(path, offset, length) for any byte range of a file.
 // Deflated entries are inflated by minizip-ng's zlib stream (extract(), read()).
 //
@@ -47,7 +47,7 @@ public:
     bool open(const std::string& path);
     // The zip occupying bytes [offset, offset + length) of the file at `path` (length 0: to the end).
     bool open(const std::string& path, uint64_t offset, uint64_t length);
-    // The zip that is the stored member `name` of `outer` (an APK inside an XAPK), read in place.
+    // The zip that is the stored member `name` of `outer` (an APK inside an app bundle), read in place.
     // False when there is no such member, or it is compressed (extract it instead).
     bool open_member(const ZipArchive& outer, const std::string& name);
 

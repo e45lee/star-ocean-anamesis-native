@@ -164,7 +164,7 @@ std::string Page::html() const {
 }
 
 // (a) The open event areas, named by master_event_area.name_message_id (notice_page, step 2).
-void add_event_areas(ext::Ctx& ctx, int64_t now, int64_t event_now, Page& page) {
+void add_event_areas(ext::Ctx& ctx, ServerTime now, EventTime event_now, Page& page) {
     auto areas = events::open_areas(ctx, now, event_now);
     page.line("■ 開催中のイベント (" + std::to_string(areas.size()) + ")");
     int shown = 0;
@@ -184,7 +184,7 @@ void add_event_areas(ext::Ctx& ctx, int64_t now, int64_t event_now, Page& page) 
 
 // (a) The login bonuses running at the server clock with the day reached (api/daily/login_bonus.cpp's
 // table) (notice_page, step 3).
-void add_login_bonuses(ext::Ctx& ctx, int64_t now, Page& page) {
+void add_login_bonuses(ext::Ctx& ctx, ServerTime now, Page& page) {
     page.line("■ ログインボーナス");
     int bonuses = 0;
     ctx.m.q("select id, name_message_id, opened_at, closed_at from master_login_bonus order by order_id", {}, [&](const Row& bonus_row) {
@@ -199,12 +199,14 @@ void add_login_bonuses(ext::Ctx& ctx, int64_t now, Page& page) {
 // The notice page: (d) what it lists is the server's choice.
 Page notice_lines(ext::Ctx& ctx) {
     Page page;
-    int64_t now = ctx.now(), event_now = ctx.event_now();
+    ServerTime now = ctx.now();
+    EventTime event_now = ctx.event_now();
     // 1. the clocks
     page.line("【お知らせ】");
     page.line("このゲームはローカルサーバーで動作しています。");
-    page.line("日時: " + format_local(now, "%Y/%m/%d %H:%M"));
-    if (format_local(event_now, "%Y/%m/%d") != format_local(now, "%Y/%m/%d")) page.line("イベントカレンダー: " + format_local(event_now, "%Y/%m/%d"));
+    page.line("日時: " + format_local(now.v, "%Y/%m/%d %H:%M"));
+    if (format_local(event_now.v, "%Y/%m/%d") != format_local(now.v, "%Y/%m/%d"))
+        page.line("イベントカレンダー: " + format_local(event_now.v, "%Y/%m/%d"));
     page.line("");
     // 2. the open event areas
     add_event_areas(ctx, now, event_now, page);

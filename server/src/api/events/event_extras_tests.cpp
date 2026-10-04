@@ -104,14 +104,14 @@ NATIVE_TEST("events/exchange-shop-calendar") {
         if (m && m->find(std::to_string(shop))) t.fail("shop %u listed after its window", shop);
         // the client's copy: moved by the whole years so the clock is inside
         sqlite3* db = client_copy(c, {"master_exchange_shop", "master_exchange_shop_contents"});
-        client_master(db, clock, ev);
+        client_master(db, ServerTime(clock), EventTime(ev));
         Sql cm{db};
         std::string no, ncl;
         cm.q("select opened_at, closed_at from master_exchange_shop where id = ?", {shop}, [&](const Row& r) {
             no = r.s("opened_at");
             ncl = r.s("closed_at");
         });
-        if (!events::window_open(no, ncl, 0, clock))
+        if (!events::window_open(no, ncl, 0, ServerTime(clock)))
             t.fail("client copy %s .. %s doesn't cover the clock %s", no.c_str(), ncl.c_str(), c.fmt_time(clock).c_str());
         t.expect_eq(cm.one("select count(*) from master_exchange_shop where opened_at like '2016%' and closed_at like '2030%'", {}),
                     c.m.one("select count(*) from master_exchange_shop where opened_at like '2016%' and closed_at like '2030%'", {}),

@@ -33,9 +33,9 @@ namespace soa::server::deepspace {
 namespace dr = rules::deepspace;
 
 // ---- clocks ----------------------------------------------------------------------------------
-// open_at (core/time.h): (a) a dated master row's opened_at / closed_at window. The two clocks:
-// deepspace.h.
-int64_t calendar(Ctx& ctx) { return ctx.event_now(); }
+// open_at (core/time.h): (a) a dated master row's opened_at / closed_at window, tested on the clock
+// its argument's type names. The two clocks: deepspace.h.
+EventTime calendar(Ctx& ctx) { return ctx.event_now(); }
 bool open_by_both_clocks(Ctx& ctx, const std::string& opened_at, const std::string& closed_at) {
     return open_at(opened_at, closed_at, calendar(ctx)) && open_at(opened_at, closed_at, ctx.now());
 }
@@ -78,13 +78,13 @@ bool area_unlocked(Ctx& ctx, const Area& area, const std::vector<Area>& all) {
 // The play-limit periods: (d) the offers' play_count_daily restart at the daily reset (04:00),
 // play_count_weekly at the week's start (rules::deepspace::week_start). The period starts are kept
 // in ds_state (limit_day, limit_week; NULL or no row: none yet, read as 0).
-void restart_limit_periods(Ctx& ctx, int64_t t) {
-    int64_t day = limit_day(ctx, t), week = dr::week_start(day);
-    if (ctx.st.one("select limit_day from ds_state where id = 1", {}) != day) {
+void restart_limit_periods(Ctx& ctx, ServerTime t) {
+    ServerTime day = limit_day(ctx, t), week(dr::week_start(day.v));
+    if (ctx.st.one_time("select limit_day from ds_state where id = 1", {}) != day) {
         ctx.st.q("update ds_offer set play_count_daily = 0", {});
         ctx.st.q("insert into ds_state (id, limit_day) values (1, ?) on conflict(id) do update set limit_day = excluded.limit_day", {day});
     }
-    if (ctx.st.one("select limit_week from ds_state where id = 1", {}) != week) {
+    if (ctx.st.one_time("select limit_week from ds_state where id = 1", {}) != week) {
         ctx.st.q("update ds_offer set play_count_weekly = 0", {});
         ctx.st.q("insert into ds_state (id, limit_week) values (1, ?) on conflict(id) do update set limit_week = excluded.limit_week", {week});
     }
@@ -92,7 +92,7 @@ void restart_limit_periods(Ctx& ctx, int64_t t) {
 
 // (a) master_deep_space_mission rows: normal missions have no rare_type_id; (d) every normal
 // mission of an opened area open by the clock is always offered.
-void offer_normal_missions(Ctx& ctx, const Area& area, int64_t t) {
+void offer_normal_missions(Ctx& ctx, const Area& area, ServerTime t) {
     ctx.m.q(
         "select id, bonus_set_type_id, opened_at, closed_at from master_deep_space_mission where master_deep_area_id = ? and "
         "ifnull(rare_type_id, 0) = 0 order by order_id",
@@ -106,10 +106,11 @@ void offer_normal_missions(Ctx& ctx, const Area& area, int64_t t) {
 
 // Offers that ran out and aren't on a ship: (a) a rare offer's rare_limit_time, (a) a mission
 // whose closed_at passed.
-void drop_expired_offers(Ctx& ctx, int64_t t) {
+void drop_expired_offers(Ctx& ctx, ServerTime t) {
     std::vector<u32> gone;
     ctx.st.q("select mission_id, closed_at from ds_offer where ship_id = 0", {}, [&](const Row& offer_row) {
-        bool open = !(offer_row.i("closed_at") && offer_row.i("closed_at") < t);
+        ServerTime closed = offer_row.time("closed_at");  // 0: no limit (a sentinel PLAN-schema S10 maps to NULL)
+        bool open = !(closed.v && closed < t);
         ctx.m.q("select opened_at, closed_at from master_deep_space_mission where id = ?", {offer_row.i("mission_id")},
                 [&](const Row& mission_row) { open = open && open_by_both_clocks(ctx, mission_row.s("opened_at"), mission_row.s("closed_at")); });
         if (!open) gone.push_back((u32)offer_row.i("mission_id"));
@@ -142,7 +143,7 @@ std::vector<Area> areas(Ctx& ctx) {
 }
 u32 area_exp(Ctx& ctx, u32 area_id) { return (u32)ctx.st.one("select exp from ds_area where area_id = ?", {area_id}); }
 
-void refresh_offers(Ctx& ctx, int64_t t) {
+void refresh_offers(Ctx& ctx, ServerTime t) {
     restart_limit_periods(ctx, t);
     auto all = areas(ctx);
     for (auto& area : all) {
@@ -170,7 +171,7 @@ u32 roll_bonus_set(Ctx& ctx, u32 set_type) {
     return ids[rules::weighted_pick(weights, (*ctx.rng)() % sum)];
 }
 
-int64_t limit_day(Ctx& ctx, int64_t t) { return day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4)); }
+ServerTime limit_day(Ctx& ctx, ServerTime t) { return day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4)); }
 
 // rules::deepspace::limit_reached with (a) the mission's limit_type / limit_count.
 bool at_limit(Ctx& ctx, const Row& offer_row) {
@@ -202,7 +203,7 @@ bool at_limit(Ctx& ctx, const Row& offer_row) {
 namespace {
 constexpr int kShipUseLimitBreak = 1;           // (b) master_deep_space_ship.use_type GetMaxShipCount counts
 constexpr u32 kSubscriptionTypeDeepSpace = 3;  // (b) EnableSubscriptionType(3): the pass's ships
-u32 limit_break_ships(Ctx& ctx, int64_t t) {
+u32 limit_break_ships(Ctx& ctx, ServerTime t) {
     u32 limit_breaks = (u32)ctx.st.one("select ifnull(sum(limit_break), 0) from roster", {});
     u32 ships = 0;
     ctx.m.q("select required_num, opened_at, closed_at from master_deep_space_ship where use_type = ?", {kShipUseLimitBreak},
@@ -212,10 +213,10 @@ u32 limit_break_ships(Ctx& ctx, int64_t t) {
     return ships;
 }
 }  // namespace
-u32 subscription_ships(Ctx& ctx, int64_t t) {
+u32 subscription_ships(Ctx& ctx, ServerTime t) {
     return ext::subscription_active(ctx, kSubscriptionTypeDeepSpace, t) ? ctx.global_u32("subscription_deepspace_ship", 2) : 0;
 }
-u32 max_ships(Ctx& ctx, int64_t t) { return limit_break_ships(ctx, t) + subscription_ships(ctx, t); }
+u32 max_ships(Ctx& ctx, ServerTime t) { return limit_break_ships(ctx, t) + subscription_ships(ctx, t); }
 
 std::vector<CharacterUid> ship_members(Ctx& ctx, u32 ship_id) {
     std::vector<CharacterUid> members;
@@ -226,9 +227,9 @@ std::vector<CharacterUid> ship_members(Ctx& ctx, u32 ship_id) {
 
 // Quick returns used today: (d) a day from master_global login_bonus_reset_hour (4:00), like the
 // other daily counters. Kept in the player row (time_saving_count, time_saving_day; Player.time_saving_use_count reads it).
-u32 time_saving_count(Ctx& ctx, int64_t t) {
-    int64_t day = day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4));
-    int64_t counted_day = ctx.st.one("select time_saving_day from player", {});  // NULL: never counted (0)
+u32 time_saving_count(Ctx& ctx, ServerTime t) {
+    ServerTime day = day_start(t, (int)ctx.global_u32("login_bonus_reset_hour", 4));
+    ServerTime counted_day = ctx.st.one_time("select time_saving_day from player", {});  // NULL: never counted (0)
     if (counted_day != day) ctx.st.q("update player set time_saving_day = ?, time_saving_count = 0", {day});
     return (u32)ctx.st.one("select time_saving_count from player", {});
 }
@@ -241,12 +242,13 @@ Value mission_info(Ctx& ctx, const Row& offer_row) {
     info["master_mission_id"] = (u32)offer_row.i("mission_id");
     info["bonus_set_id"] = (u32)offer_row.i("bonus_set_id");
     info["ship_id"] = (u32)offer_row.i("ship_id");
-    info["closed_at"] = offer_row.i("closed_at") ? ctx.fmt_time(offer_row.i("closed_at")) : std::string("");  // (b) "" = no limit
+    ServerTime closed = offer_row.time("closed_at");  // 0: no limit (S10's sentinel)
+    info["closed_at"] = closed.v ? ctx.fmt_time(closed) : std::string("");  // (b) "" = no limit
     // (d) the start of the week the weekly count runs in (rules::deepspace::week_start), for a
     // mission with a weekly limit; "" otherwise (all of the 3.7.0 data).
     int limit_type = (int)ctx.m.one("select ifnull(limit_type, 0) from master_deep_space_mission where id = ?", {offer_row.i("mission_id")});
-    info["count_weekly_at"] = limit_type == (int)dr::LimitType::kWeekly ? ctx.fmt_time(dr::week_start(limit_day(ctx, ctx.now()))) : std::string("");
-    info["updated_at"] = ctx.fmt_time(offer_row.i("updated_at"));
+    info["count_weekly_at"] = limit_type == (int)dr::LimitType::kWeekly ? ctx.fmt_time(dr::week_start(limit_day(ctx, ctx.now()).v)) : std::string("");
+    info["updated_at"] = ctx.fmt_time(offer_row.time("updated_at"));
     info["is_new"] = offer_row.i("is_new") != 0;
     info["play_count_daily"] = (u32)offer_row.i("play_count_daily");
     info["play_count_weekly"] = (u32)offer_row.i("play_count_weekly");
@@ -255,7 +257,7 @@ Value mission_info(Ctx& ctx, const Row& offer_row) {
 }
 }  // namespace
 
-Value area_info(Ctx& ctx, const Area& area, int64_t t) {
+Value area_info(Ctx& ctx, const Area& area, ServerTime t) {
     Value info = Value::object();
     info["master_area_id"] = area.id;
     info["current_exp"] = area_exp(ctx, area.id);
@@ -276,11 +278,11 @@ Value area_info(Ctx& ctx, const Area& area, int64_t t) {
     info["DeepSpaceMissionList"] = missions;
     return info;
 }
-void put_area_info(Ctx& ctx, Value& data, u32 area_id, int64_t t) {
+void put_area_info(Ctx& ctx, Value& data, u32 area_id, ServerTime t) {
     for (auto& area : areas(ctx))
         if (area.id == area_id) data["DeepSpaceArea"] = area_info(ctx, area, t);
 }
-Value area_list(Ctx& ctx, int64_t t) {
+Value area_list(Ctx& ctx, ServerTime t) {
     Value list = Value::object();
     auto all = areas(ctx);
     for (auto& area : all)
@@ -296,13 +298,13 @@ Value ship_info(Ctx& ctx, const Row& ship_row) {
     info["master_mission_id"] = (u32)ship_row.i("mission_id");
     info["bonus_set_id"] = (u32)ship_row.i("bonus_set_id");
     info["item_id"] = (u32)ship_row.i("item_id");
-    info["started_at"] = ctx.fmt_time(ship_row.i("started_at"));
-    info["closed_at"] = ctx.fmt_time(ship_row.i("closed_at"));
+    info["started_at"] = ctx.fmt_time(ship_row.time("started_at"));
+    info["closed_at"] = ctx.fmt_time(ship_row.time("closed_at"));
     return info;
 }
 // (b) CUIUtility::GetUnusedShipCount counts both maps: a ship is busy until MissionEnd collects
 // it. Active = still out, End = back (closed_at reached) and waiting for MissionEnd.
-Value ship_list(Ctx& ctx, int64_t t, bool ended) {
+Value ship_list(Ctx& ctx, ServerTime t, bool ended) {
     Value list = Value::object();
     ctx.st.q(std::string("select * from ds_ship where closed_at ") + (ended ? "<= ?" : "> ?") + " order by ship_id", {t},
              [&](const Row& ship_row) { list[std::to_string(ship_row.i("ship_id"))] = ship_info(ctx, ship_row); });
@@ -342,7 +344,7 @@ Value bonus_apply_list(Ctx& ctx, int64_t only_ship) {
 
 // DeepMissionPlayer (b: DeepMissionEndResultPlayerInfo; the MissionEnd handler copies it into
 // the player, time_saving_use_count included).
-Value deep_mission_player(Ctx& ctx, int64_t t, bool level_up) {
+Value deep_mission_player(Ctx& ctx, ServerTime t, bool level_up) {
     Value player = Value::object();
     ctx.st.q("select * from player", {}, [&](const Row& player_row) {
         player["level"] = (u32)player_row.i("level");
@@ -353,7 +355,7 @@ Value deep_mission_player(Ctx& ctx, int64_t t, bool level_up) {
         player["is_level_up"] = level_up;
         player["tower_try_count"] = 0u;  // (d) deep space has no tower tries
         player["time_saving_use_count"] = time_saving_count(ctx, t);
-        player["stamina_update"] = ctx.fmt_time(player_row.i("stamina_at"));
+        player["stamina_update"] = ctx.fmt_time(player_row.time("stamina_at"));
     });
     return player;
 }

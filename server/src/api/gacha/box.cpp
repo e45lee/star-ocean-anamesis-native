@@ -114,7 +114,7 @@ u32 box_series_head(ext::Ctx& ctx, u32 box) {  // (a) the default_release box wh
 }
 
 // The series to list: the one holding `only`, else every open series whose banner is shown.
-std::vector<u32> listed_series_heads(ext::Ctx& ctx, u32 only, int64_t t) {
+std::vector<u32> listed_series_heads(ext::Ctx& ctx, u32 only, ServerTime t) {
     std::vector<u32> heads;
     if (only) {
         heads.push_back(box_series_head(ctx, only));
@@ -146,7 +146,7 @@ std::vector<u32> listed_series_heads(ext::Ctx& ctx, u32 only, int64_t t) {
 Value box_gacha_list_info(ext::Ctx& ctx, u32 only, Value* slots) {
     Value info = Value::object();
     const PlayerId player = player_id(ctx);
-    int64_t t = clock_now();
+    ServerTime t = clock_now();
     for (u32 head : listed_series_heads(ctx, only, t)) {
         auto series = box_series(ctx, head);
         if (series.empty()) continue;

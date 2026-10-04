@@ -20,7 +20,7 @@ struct SeasonPick {
     int64_t shift = 0;
     u32 cycle = 0;
 };
-SeasonPick pick_season(ext::Sql& master, int64_t clock, int64_t ev);
+SeasonPick pick_season(ext::Sql& master, ServerTime clock, EventTime ev);
 
 // Whether the game can load an asset ("BG/<map>.aaf"): by default the port's asset lookup (APKs +
 // download dir). Tests install their own predicate; an empty function restores the default. Either

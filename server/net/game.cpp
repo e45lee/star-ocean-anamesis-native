@@ -127,12 +127,12 @@ std::string json_string_field(const std::string& json, const std::string& key) {
 // player yet (soa-server --new-player on a fresh state) the device has none and its Login is
 // refused with 19001, which starts the client's new-player flow. The table (state/schema.cpp,
 // on both routes since PLAN-schema S1; only this one writes it) records who connected.
-uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, int64_t now) {
+uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, ServerTime now) {
     uint32_t pid = (uint32_t)st.one("select id from player limit 1", {}, 0);
     if (st.one("select count(*) from wire_device where uuid = ?", {uuid}) == 0)
         st.q("insert into wire_device (uuid, player_id, device_type, first_seen, last_seen) values (?, ?, ?, ?, ?)",
-             {uuid, pid, device_type, (long long)now, (long long)now});
-    else st.q("update wire_device set player_id = ?, device_type = ?, last_seen = ? where uuid = ?", {pid, device_type, (long long)now, uuid});
+             {uuid, pid, device_type, now, now});
+    else st.q("update wire_device set player_id = ?, device_type = ?, last_seen = ? where uuid = ?", {pid, device_type, now, uuid});
     return pid;
 }
 

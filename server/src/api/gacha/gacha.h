@@ -9,7 +9,7 @@
 namespace soa::server {
 
 // (a) master_gacha.opened_at / closed_at, or --enable-events (gacha.cpp).
-bool gacha_open(ext::Ctx& ctx, const ext::Row& gacha_row, int64_t t);
+bool gacha_open(ext::Ctx& ctx, const ext::Row& gacha_row, ServerTime t);
 // The step-up chain of gacha `id`, step 1 first (stepup.cpp).
 std::vector<u32> stepup_chain(ext::Ctx& ctx, u32 id);
 // Whether the step `current` is closed after `restarts` laps.

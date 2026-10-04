@@ -52,7 +52,7 @@ Season season_by_id(Ctx& ctx, u32 season_id);
 SeasonPick current_pick(Ctx& ctx);
 Season current_season(Ctx& ctx);
 // ClientMaster: the client's master copy gets the current season's moved dates.
-void client_seasons(ext::Sql& db, int64_t clock, int64_t ev);
+void client_seasons(ext::Sql& db, ServerTime clock, EventTime ev);
 // Loads the dive (a new player's, or a new season's: the old one ends) and ticks the stamina.
 Season load_dive(Ctx& ctx);
 
@@ -87,7 +87,7 @@ void open_boxes(Ctx& ctx, const Season& season, Value* items, Value* stocks, Val
 // ---- the season ranking (ranking.cpp) ----------------------------------------------------------
 u32 ranking_group_of(ext::Sql& master, u32 season_id);
 // ClientMaster: the last season's ranking reward group in the client's master copy.
-void client_ranking_groups(ext::Sql& db, int64_t, int64_t);
+void client_ranking_groups(ext::Sql& db, ServerTime, EventTime);
 void ranking_reward(Ctx& ctx, u32 season_id, u32 rank);
 // Sphere211RankingInfoMap: the local ranking of one player.
 Value ranking_info_map(Ctx& ctx, const Season& season);
@@ -98,7 +98,7 @@ void put_rental(Ctx& ctx, u32 floor, Value& data);
 // Whether `lender` may lend the rental character `rental_id` on this floor.
 bool rental_available(Ctx& ctx, u32 lender, u64 rental_id);
 // A rental made at t: the lender has lent on this floor; the day's count for the rental bonus.
-void record_rental(Ctx& ctx, const Season& season, u32 lender, int64_t t);
+void record_rental(Ctx& ctx, const Season& season, u32 lender, ServerTime t);
 void rental_bonus(Ctx& ctx, Value& data);
 
 // ---- the dive state in every answer (state.cpp) ------------------------------------------------

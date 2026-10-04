@@ -210,7 +210,7 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
     Value data = ctx.core_mission(core, &override_);
     if (data.type != Value::Map) return refuse(ctx, method, "core MissionStart refused", ErrorCode::kItemUnusable);
     // 4. the dive
-    int64_t t = ctx.now();
+    ServerTime t = ctx.now();
     if (stamina >= stamina_max(ctx)) ctx.st.q("update sphere set stamina_at = ?", {t});  // (d) regen starts when leaving full
     ctx.st.q("update sphere set stamina = stamina - ?", {floor.use_stamina});
     ctx.st.q("update sphere_cell set playing = case when asset_id = ? then 1 else 0 end, updated_at = ?", {asset_id, t});

@@ -31,7 +31,7 @@ u32 ranking_group_of(ext::Sql& master, u32 season_id) {
             {opened_at});
     return group;
 }
-void client_ranking_groups(ext::Sql& db, int64_t, int64_t) {
+void client_ranking_groups(ext::Sql& db, ServerTime, EventTime) {
     std::vector<u32> without_group;
     db.q("select id from master_sphere211 where coalesce(nullif(master_sphere211_ranking_reward_id, ''), 0) = 0", {},
          [&](const Row& season_row) { without_group.push_back((u32)season_row.i("id")); });
@@ -67,7 +67,7 @@ Value ranking_info_map(Ctx& ctx, const Season& season) {
         Value info = Value::object();
         info["player_id"] = player_id;
         info["floor_level"] = (u32)rank_row.i("floor_level");
-        info["entered_at"] = ctx.fmt_time(rank_row.i("entered_at"));
+        info["entered_at"] = ctx.fmt_time(rank_row.time("entered_at"));
         info["rank"] = 1u;
         map[std::to_string(player_id)] = info;
     });

@@ -43,6 +43,8 @@ control/soactl.py /tmp/viewer.fifo tap:364:1000 wait:3000 shot:/tmp/viewer.png
 | `--shot S:PATH`, `--do S:ACTION`, `--control FIFO` | Scripted input and screenshots, as in `soa`: `tap`, `drag`, `wheel`, `back`, `text`, `shot`, `resize`, `fullscreen`, `quit` (`control/soactl.py`). `soa`'s `phase:` / `call:` debug commands need natives and don't exist here. |
 | `-v` / `-vv` | Verbose / trace logging. |
 
+Reading the XAPK costs nothing measurable over the unpacked tree (2026-10-04, page cache warm): its 23-entry directory plus the two APKs' directories are indexed in about 0.015 s either way (`game assets indexed from ... in` in the log), libSOA.so is extracted on the first run only, and a start-to-quit run takes 0.82-1.16 s for both, as before minizip-ng. Time to the title in `viewer_boot.sh`: 36 s from the XAPK, 32 s from the tree, run side by side under the same load; Windows 40 s from the XAPK.
+
 Settings are flags only (a `SOA_*` variable that was a setting prints one warning naming its flag; `docs/environment.md`). The runtime's diagnostic switches work too (`SOA_TRACE`, `SOA_PROFILE` / `SOA_COVERAGE`, `SOA_WATCHDOG`, ...): [`runtime/README.md`](../runtime/README.md) "Environment".
 
 ## What is viewer-specific

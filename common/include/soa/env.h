@@ -68,6 +68,7 @@ inline constexpr Removed kRemoved[] = {
     {"SOA_ENABLE_EVENTS", "--enable-events", kSoa | kServer},
     {"SOA_EVENT_KEYWORDS", "--event-keywords", kSoa | kServer},
     {"SOA_RESTORE_TOWER", "--restore-tower", kSoa | kServer},
+    {"SOA_HOME3D_ALL", "--home3d-all", kSoa | kServer},
     {"SOA_MASTER_DB", "--campaign-master-db", kSoa | kServer},
     {"SOA_CAMPAIGN_SEED", "--campaign-seed", kSoa | kServer},
     {"SOA_SERVER_FAIL", "--fail", kSoa | kServer},

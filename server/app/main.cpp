@@ -67,6 +67,7 @@ void usage() {
             "  --event-keywords L   names to match, comma list (\"!\" excludes); default, as soa: the summer\n"
             "                       events \"水着,夏,サマー,!福袋\"\n"
             "  --restore-tower      serve the tower (as soa --restore-tower)\n"
+            "  --home3d-all         debug: the 3D home for every character (as soa --home3d-all)\n"
             "  --download-dir DIR   the 3.7.0 download (work/download-3.7.0): content is gated on it (as soa\n"
             "                       --download-dir) and the CDN serves it (server/README.md \"CDN\")\n"
             "  --cdn-url URL        the CDN base Login sends (AssetPath = URL/download, MasterPath, r_ver); default\n"
@@ -189,6 +190,7 @@ int main(int argc, char** argv) {
         else if (a == "--enable-events") c.enable_events = true;
         else if (a == "--event-keywords") c.event_keywords = next();
         else if (a == "--restore-tower") c.restore_tower = true;
+        else if (a == "--home3d-all") c.home3d_all = true;
         else if (a == "--download-dir") download_dir = c.download_dir = next();
         else if (a == "--cdn-url") c.cdn_url = next();
         else if (a == "--standin-assets") {

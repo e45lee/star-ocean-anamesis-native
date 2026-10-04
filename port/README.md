@@ -215,6 +215,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | `--clock "YYYY-MM-DD HH:MM:SS"` | The server's clock starts there and runs on; without it event terms replay the calendar |
 | `--start-coins N`, `--galaxy-pass` | Free coins of a new local player (default 300000); the Galaxy Pass, renewed when it runs out |
 | `--enable-events`, `--event-keywords "a,b,!c"` | Also open, all year, every event area and gacha banner whose name matches the keywords (default the summer events `水着,夏,サマー,!福袋`), assets permitting |
+| `--home3d-all` | Debug: clears `master_person.home3d_disable` in the client's master copy, so the 2D-only characters (2B, 9S, A2 and the other collab characters) get the 3D home (`docs/home3d.md`) |
 | `--restore-tower` | Opens the tower (試練の遺跡), which 3.7.0 had closed: the server serves its areas and the client's tower hooks (`src/native/restore/restore_tower.cpp`) open the menu (`docs/client-changes.md` "Tower") |
 | `--campaign-master-db FILE`, `--campaign-seed LABEL`, `--fail M:CODE[,..]`, `--surprise` | The campaign module's master DB and test seed, failing requests, forced surprise missions (test hooks) |
 | `--log-packets DIR` | Every request and reply of the in-process route in `DIR/packets.log`, in soa-server `--log-packets`' form (the reply bodies and battle logs as `DIR/<n>-<name>.msgp`; `src/native/api/packet_log.h`); `tests/diff` compares it with soa-server's |
@@ -262,6 +263,7 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 | `--galaxy-pass` | `galaxy_pass`: the local player holds the Galaxy Pass (`pshop_galaxypass_001`), granted again whenever a player load finds it expired (`docs/server-rules.md` "Deep space") |
 | `--enable-events`, `--event-keywords "a,b,!c"` | `enable_events`, `event_keywords` (empty = `kDefaultEventKeywords`; `docs/server-rules.md` "Enabling events by keyword") |
 | `--restore-tower` | `restore_tower` |
+| `--home3d-all` (debug) | `home3d_all`: the client's master copy offers the 3D home for every character (`docs/home3d.md`) |
 | `--campaign-master-db FILE`, `--campaign-seed LABEL` | `campaign_master_db`, `campaign_seed` |
 | `--fail M:CODE[,..]`, `--surprise` (test hooks) | `fail`, `surprise` |
 | `--log-packets DIR` | `log_packets` (port-side: `packet_log::open`, not a ServerConfig field) |

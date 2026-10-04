@@ -41,6 +41,7 @@ struct ServerConfig {
     bool enable_events = false;    // --enable-events (enable_events.h)
     std::string event_keywords;    // --event-keywords; "" = kDefaultEventKeywords
     bool restore_tower = false;    // --restore-tower (api/tower/tower.cpp)
+    bool home3d_all = false;       // --home3d-all: the 3D home for every character (api/player/home.cpp; debug)
     std::string campaign_master_db;  // --campaign-master-db: the campaign module's master DB
     std::string campaign_seed;       // --campaign-seed <mission label>
 

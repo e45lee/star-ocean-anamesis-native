@@ -87,6 +87,9 @@ struct ServerOptions {
     // --restore-tower: serve the tower's areas (server/src/api/tower/tower.cpp); in soa
     // the client's tower hooks (native/restore/restore_tower.cpp) open the menu. Off by default.
     bool restore_tower = false;
+    // --home3d-all (debug): master_person.home3d_disable cleared in the client's master copy
+    // (server/src/api/player/home.cpp; docs/home3d.md). Off by default.
+    bool home3d_all = false;
     std::string campaign_master_db;   // --campaign-master-db: the campaign module's master DB
     std::string campaign_seed;        // --campaign-seed <mission label>
 

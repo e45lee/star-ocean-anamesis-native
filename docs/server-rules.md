@@ -618,6 +618,7 @@ The game's save keeps a summary of the player (`player_name`, `player_level`, `p
 - `follow_max` is `master_global.follow_default`. **(a)**
 - `support_pc_id` is the character the player lends (UpdateSupport's, "Rental helpers"); unset or no longer owned, the highest-level character. **(b)** for the key; **(d)** for the fallback.
 - `is_3d_home` is always true: the 3D home. **(d)** `Home3DAnd2DSwitching` has no handler. `updated_at` is the answer's time. **(d)**
+  - **Known gap (seen 2026-10-04, agent `nier-home`):** a home character whose `master_person.home3d_disable` is set (2B, 9S, A2 and 13 more) makes the client force the 2D home and send `Home3DAnd2DSwitching(0)`; `CHome::Progress` continues only on its answer (b: `docs/home3d.md`). The FakeApiCaller route returns 1 without answering, so in-process the home stays empty (no model, no illustration; the talk lines work). The fix is a handler that stores the flag and answers `Player.is_3d_home` from it. `--home3d-all` (debug) clears `home3d_disable` in the client's master copy instead.
 - `Wallet`: `total_coin` = free + paid, `android_coin` = the paid coins. **(d)** The local server has no other store.
 - Code: `server/src/api/player/player_info.cpp` (`player_info`, `wallet_info`, `full_player_state`).
 

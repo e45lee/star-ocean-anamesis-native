@@ -1,6 +1,7 @@
 // Unit tests of the player state and the home character (api/player/player_info.h, home.h). Run in --selftest;
 // not differential (the server has no guest counterpart). Test names are their seeds (testing.h); they are
 // named player/... after their domain.
+#include <sqlite3.h>
 #include <unistd.h>
 
 #include <set>
@@ -81,4 +82,29 @@ NATIVE_TEST("player/view-status-bits") {
 }
 
 }  // namespace
+// --home3d-all (docs/home3d.md): the client's master copy loses every home3d_disable flag; the
+// other master_person columns and rows stay as they were.
+NATIVE_TEST("player/home3d-all") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    RequestContext request = S.sv.new_request();
+    ext::Ctx ctx = S.sv.make_ctx(request);
+    sqlite3* db = nullptr;
+    sqlite3_open(":memory:", &db);
+    ext::Sql cm{db};
+    cm.exec("attach '" + std::string(sqlite3_db_filename(ctx.m.h, "main")) + "' as src");
+    cm.exec("create table master_person as select * from src.master_person");
+    cm.exec("detach src");
+    int64_t rows = cm.one("select count(*) from master_person", {});
+    int64_t off = cm.one("select count(*) from master_person where coalesce(home3d_disable, 0) != 0", {});
+    int64_t file_sum = cm.one("select count(*) from master_person where home3d_file is not null and home3d_file != ''", {});
+    t.expect_eq(off > 0, true, "3.7.0 has 2D-only persons (2B, 9S, A2, ...)");
+    t.expect_eq((int64_t)enable_home3d(cm), off, "the changed persons counted");
+    t.expect_eq(cm.one("select count(*) from master_person where coalesce(home3d_disable, 0) != 0", {}), (int64_t)0, "none left");
+    t.expect_eq(cm.one("select count(*) from master_person", {}), rows, "no row added or removed");
+    t.expect_eq(cm.one("select count(*) from master_person where home3d_file is not null and home3d_file != ''", {}), file_sum,
+                "home3d_file untouched");
+    sqlite3_close(db);
+}
+
 }  // namespace soa::server

@@ -23,7 +23,7 @@ const char* const kExpected[] = {
     "MissionResultExtra: event_ranking, tower, worldboss",
     "Grant: daily (content type 11), gear (content type 15), gear (content type 98), subscription (content type 20), title (content type 13)",
     "ItemExtra: gear",
-    "ClientMaster: event, shop, sphere211, sphere211, tower",
+    "ClientMaster: event, home, shop, sphere211, sphere211, tower",
     "AreaExtra: worldboss",
 };
 

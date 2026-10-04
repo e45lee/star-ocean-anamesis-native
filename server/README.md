@@ -106,7 +106,7 @@ Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/un
 
 `enabled`, `new_player`, `master`, `db`, `seed`, `game_xml`, `has_seed_rng` / `seed_rng`,
 `start_coins`, `has_clock` / `clock` / `clock_offset`, `galaxy_pass`, `enable_events`,
-`event_keywords`, `restore_tower`, `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
+`event_keywords`, `restore_tower`, `home3d_all`, `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
 `repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `port/server-data` are found),
 `data_root` (the data dir: the CDN's scratch files; a `server_campaign.txt` there from before the state DB's version 11 is imported once, PLAN-schema S12).
 
@@ -116,7 +116,7 @@ Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/un
 - **soa-server** fills it from its command line, with the same flags as soa's server options
   (`--db`, `--master`, `--gacha-pools`, `--seed`, `--game-xml`, `--seed-rng`, `--new-player`,
   `--clock`, `--start-coins`, `--galaxy-pass`, `--enable-events`, `--event-keywords`,
-  `--restore-tower`, `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise`,
+  `--restore-tower`, `--home3d-all`, `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise`,
   `--download-dir`, `--standin-assets`, `--repo`) plus its own `--data` (the state DB's directory).
   `soa-server --help` lists them. The events defaults are soa's too: `--event-keywords` defaults to
   the summer events (`kDefaultEventKeywords`, "水着,夏,サマー,!福袋").

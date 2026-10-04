@@ -107,9 +107,10 @@ Value player_info(ext::Ctx& ctx) {
         player["created_at"] = format_time(player_row.time("created_at"));
         player["updated_at"] = format_time(clock_now());
         player["last_login_at"] = format_time(player_row.time("last_login_at"));
-        // (d) the 3D home: Home3DAnd2DSwitching (3.7.0's CHome::Progress) has no handler, so the
-        // flag never changes
-        player["is_3d_home"] = true;
+        // The 2D / 3D home (b): CHome::Setup takes CParameterManager+0xd38 (this flag) as the home's
+        // mode; Home3DAnd2DSwitching stores the player's choice (api/player/home.cpp). (d) 3D for a
+        // player who never chose (the column's default; what the server always sent before v12).
+        player["is_3d_home"] = player_row.i("is_3d_home") != 0;
         // 4. the state other domains keep in the player row
         add_domain_state(player_row, player);
     });

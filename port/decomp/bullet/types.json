@@ -1,0 +1,362 @@
+{
+ "subsystem": "bullet",
+ "generated_by": "tools/subsystem.py export-types bullet",
+ "header": "port/src/native/bullet/bullet_layout.h",
+ "structs": [
+  {
+   "name": "BtTransform",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "basis",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "array",
+       "of": {
+        "kind": "float",
+        "size": 4
+       },
+       "count": 3
+      },
+      "count": 4
+     },
+     "size": 48
+    },
+    {
+     "offset": 48,
+     "name": "origin",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 4
+     },
+     "size": 16
+    }
+   ],
+   "size": 64,
+   "align": 4
+  },
+  {
+   "name": "BtCollisionObjectHead",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_worldTransform",
+     "type": {
+      "kind": "struct",
+      "name": "BtTransform"
+     },
+     "size": 64
+    }
+   ],
+   "size": 72,
+   "align": 8
+  },
+  {
+   "name": "RigidBodyPrimitiveBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "prev",
+     "type": {
+      "kind": "ptr",
+      "to": "RigidBodyPrimitiveBase"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "RigidBodyPrimitiveBase"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "target",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "chunk",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "body",
+     "type": {
+      "kind": "ptr",
+      "to": "BtCollisionObjectHead"
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "shape",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "motion_state",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 72,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x244e674",
+     "symbol": "_ZN4Aska22RigidBodyPrimitiveBase17LocalCreateBulletEv",
+     "name": "LocalCreateBullet"
+    }
+   ]
+  },
+  {
+   "name": "RigidBodyManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "task_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 40,
+     "name": "world",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "collision_config",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "dispatcher",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 64,
+     "name": "broadphase",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "solver",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "list_vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "list_sentinel",
+     "type": {
+      "kind": "struct",
+      "name": "RigidBodyPrimitiveBase"
+     },
+     "size": 72
+    },
+    {
+     "offset": 160,
+     "name": "count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 164,
+     "name": "pad_a4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 168,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x244d980",
+     "symbol": "_ZN4Aska16RigidBodyManager10InitBulletEv",
+     "name": "InitBullet"
+    },
+    {
+     "ghidra": "0x244db98",
+     "symbol": "_ZN4Aska16RigidBodyManagerC1Ev",
+     "name": "RigidBodyManager"
+    },
+    {
+     "ghidra": "0x244dc40",
+     "symbol": "_ZN4Aska16RigidBodyManagerD2Ev",
+     "name": "~RigidBodyManager"
+    },
+    {
+     "ghidra": "0x244dd00",
+     "symbol": "_ZN4Aska16RigidBodyManager12DeleteBulletEv",
+     "name": "DeleteBullet"
+    },
+    {
+     "ghidra": "0x244dda8",
+     "symbol": "_ZN4Aska16RigidBodyManagerD0Ev",
+     "name": "~RigidBodyManager"
+    },
+    {
+     "ghidra": "0x244ddc0",
+     "symbol": "_ZN4Aska16RigidBodyManager3AddEPNS_22RigidBodyPrimitiveBaseE",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x244de08",
+     "symbol": "_ZN4Aska16RigidBodyManager6RemoveEPNS_22RigidBodyPrimitiveBaseE",
+     "name": "Remove"
+    },
+    {
+     "ghidra": "0x244de88",
+     "symbol": "_ZN4Aska16RigidBodyManager8SimulateEv",
+     "name": "Simulate"
+    },
+    {
+     "ghidra": "0x244df98",
+     "symbol": "_ZN4Aska16RigidBodyManager10ResetSceneEv",
+     "name": "ResetScene"
+    },
+    {
+     "ghidra": "0x244e000",
+     "symbol": "_ZN4Aska16RigidBodyManager3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x244e014",
+     "symbol": "_ZNK4Aska16RigidBodyManager3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x244e01c",
+     "symbol": "_ZN4Aska16RigidBodyManager3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x244e098",
+     "symbol": "_ZNK4Aska16RigidBodyManager10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x244e0d8",
+     "symbol": "_ZNK4Aska16RigidBodyManager15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    }
+   ]
+  }
+ ]
+}

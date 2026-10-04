@@ -1,0 +1,24 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x20ceec0	0x21ceec0	364	_ZN4Aska10AsfHandler27ClearRigidBodyPrimitiveListEv	Aska::AsfHandler::ClearRigidBodyPrimitiveList()	aska_rigidbody	decompiled	
+0x20cf088	0x21cf088	1012	_ZN4Aska10AsfHandler23SetupRigidBodyPrimitiveEv	Aska::AsfHandler::SetupRigidBodyPrimitive()	aska_rigidbody	decompiled	
+0x20cf47c	0x21cf47c	428	_ZN4Aska10AsfHandler24SetupRigidBodyConstraintEv	Aska::AsfHandler::SetupRigidBodyConstraint()	aska_rigidbody	decompiled	
+0x20d0850	0x21d0850	340	_ZN4Aska10AsfHandler24RemoveRigidBodyPrimitiveEv	Aska::AsfHandler::RemoveRigidBodyPrimitive()	aska_rigidbody	decompiled	
+0x234be5c	0x244be5c	96	_ZN4Aska23RigidBodyConstraintBase6AttachEPKNS_10AsfHandlerEPKNS_3AFF9AskaChunkE	Aska::RigidBodyConstraintBase::Attach(Aska::AsfHandler const*, Aska::AFF::AskaChunk const*)	aska_rigidbody	decompiled	
+0x234c150	0x244c150	1256	_ZN4Aska24RigidBodyConstraintHinge12CreateBulletEv	Aska::RigidBodyConstraintHinge::CreateBullet()	aska_rigidbody	decompiled	
+0x234d84c	0x244d84c	308	_ZN4Aska6Global27InstantiateRigidBodyManagerEv	Aska::Global::InstantiateRigidBodyManager()	aska_rigidbody	decompiled	
+0x234d980	0x244d980	488	_ZN4Aska16RigidBodyManager10InitBulletEv	Aska::RigidBodyManager::InitBullet()	aska_rigidbody	typed	
+0x234db98	0x244db98	168	_ZN4Aska16RigidBodyManagerC1Ev	Aska::RigidBodyManager::RigidBodyManager()	aska_rigidbody	typed	
+0x234dc40	0x244dc40	192	_ZN4Aska16RigidBodyManagerD2Ev	Aska::RigidBodyManager::~RigidBodyManager()	aska_rigidbody	typed	
+0x234dd00	0x244dd00	148	_ZN4Aska16RigidBodyManager12DeleteBulletEv	Aska::RigidBodyManager::DeleteBullet()	aska_rigidbody	typed	
+0x234dda8	0x244dda8	24	_ZN4Aska16RigidBodyManagerD0Ev	Aska::RigidBodyManager::~RigidBodyManager()	aska_rigidbody	typed	
+0x234ddc0	0x244ddc0	36	_ZN4Aska16RigidBodyManager3AddEPNS_22RigidBodyPrimitiveBaseE	Aska::RigidBodyManager::Add(Aska::RigidBodyPrimitiveBase*)	aska_rigidbody	typed	
+0x234de08	0x244de08	64	_ZN4Aska16RigidBodyManager6RemoveEPNS_22RigidBodyPrimitiveBaseE	Aska::RigidBodyManager::Remove(Aska::RigidBodyPrimitiveBase*)	aska_rigidbody	typed	
+0x234de88	0x244de88	272	_ZN4Aska16RigidBodyManager8SimulateEv	Aska::RigidBodyManager::Simulate()	aska_rigidbody	typed	
+0x234df98	0x244df98	104	_ZN4Aska16RigidBodyManager10ResetSceneEv	Aska::RigidBodyManager::ResetScene()	aska_rigidbody	typed	
+0x234e000	0x244e000	20	_ZN4Aska16RigidBodyManager3RunEi	Aska::RigidBodyManager::Run(int)	aska_rigidbody	typed	
+0x234e014	0x244e014	8	_ZNK4Aska16RigidBodyManager3GetEmPv	Aska::RigidBodyManager::Get(unsigned long, void*) const	aska_rigidbody	typed	
+0x234e01c	0x244e01c	124	_ZN4Aska16RigidBodyManager3SetEmPKv	Aska::RigidBodyManager::Set(unsigned long, void const*)	aska_rigidbody	typed	
+0x234e098	0x244e098	64	_ZNK4Aska16RigidBodyManager10GetClassIDEi	Aska::RigidBodyManager::GetClassID(int) const	aska_rigidbody	typed	
+0x234e0d8	0x244e0d8	8	_ZNK4Aska16RigidBodyManager15GetDefaultLevelEv	Aska::RigidBodyManager::GetDefaultLevel() const	aska_rigidbody	typed	
+0x234e674	0x244e674	916	_ZN4Aska22RigidBodyPrimitiveBase17LocalCreateBulletEv	Aska::RigidBodyPrimitiveBase::LocalCreateBullet()	aska_rigidbody	typed	
+0x234eb9c	0x244eb9c	164	_ZN4Aska24RigidBodyPrimitiveSphere12CreateBulletEv	Aska::RigidBodyPrimitiveSphere::CreateBullet()	aska_rigidbody	typed	

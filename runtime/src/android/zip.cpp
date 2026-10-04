@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <zlib.h>
 
+#include <cstdio>
 #include <cstring>
 
 #include "core/log.h"
@@ -110,6 +111,36 @@ bool ZipArchive::extract(const Entry& e, std::vector<uint8_t>& out) const {
     int r = inflate(&zs, Z_FINISH);
     inflateEnd(&zs);
     return r == Z_STREAM_END;
+}
+
+bool read_zip_entry(const std::string& zip_path, const std::string& name, std::vector<uint8_t>& out) {
+    ZipArchive z;
+    if (!z.open(zip_path)) return false;
+    const ZipArchive::Entry* e = z.find(name);
+    return e && z.extract(*e, out);
+}
+
+int64_t zip_entry_size(const std::string& zip_path, const std::string& name) {
+    ZipArchive z;
+    if (!z.open(zip_path)) return -1;
+    const ZipArchive::Entry* e = z.find(name);
+    return e ? (int64_t)e->size : -1;
+}
+
+bool extract_zip_entry(const std::string& zip_path, const std::string& name, const std::string& out) {
+    std::vector<uint8_t> data;
+    if (!read_zip_entry(zip_path, name, data)) return false;
+    std::string tmp = out + ".tmp";
+    FILE* f = fopen(tmp.c_str(), "wb");
+    if (!f) return false;
+    bool ok = fwrite(data.data(), 1, data.size(), f) == data.size();
+    ok = fclose(f) == 0 && ok;
+    if (ok) {
+        remove(out.c_str());  // (Windows: rename doesn't replace)
+        ok = rename(tmp.c_str(), out.c_str()) == 0;
+    }
+    if (!ok) remove(tmp.c_str());
+    return ok;
 }
 
 }  // namespace soa

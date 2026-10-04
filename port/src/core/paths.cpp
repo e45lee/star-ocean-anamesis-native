@@ -2,9 +2,12 @@
 #include "core/paths.h"
 
 #include <limits.h>
+#include <algorithm>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <soa/install.h>
 
 #include "core/log.h"
 #include "core/options.h"
@@ -61,7 +64,12 @@ struct Roots {
             root = upwards(real("."));
         }
         if (root.empty()) {
-            LOGW("paths", "the repository wasn't found (use --repo DIR); repo files are looked up in the working directory");
+            // A packaged soa (README.md "Packaging"): our data files sit at their repo paths in the
+            // install dir (soa/install.h); then, as before, the working directory.
+            for (auto& d : install::install_dirs()) all.push_back(d);
+            if (!all.empty()) all.push_back(".");
+            LOGI("paths", "no source checkout: data files are looked up in %s%s, then the working directory",
+                 all.empty() ? "(nothing)" : all[0].c_str(), all.size() > 2 ? " and its game/" : "");
             return;
         }
         all.push_back(root);
@@ -74,6 +82,9 @@ struct Roots {
         }
         LOGI("paths", "repo %s (from %s)%s%s", root.c_str(), how, all.size() > 1 ? ", main checkout " : "",
              all.size() > 1 ? all[1].c_str() : "");
+        // then the install dirs (soa/install.h): a no-op in a build tree (build/port has no data/)
+        for (auto& d : install::install_dirs())
+            if (std::find(all.begin(), all.end(), d) == all.end()) all.push_back(d);
     }
 };
 

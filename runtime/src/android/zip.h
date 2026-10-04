@@ -39,4 +39,15 @@ private:
     std::unordered_map<std::string, Entry> entries_;
 };
 
+// Extracts the entry `name` of the zip `zip_path` to the file `out` (written through "<out>.tmp" and
+// a rename, so a reader never sees half a file). False when the zip, the entry or the write fails.
+// soa and soa-emu extract the APK's lib/arm64-v8a/libSOA.so with it.
+bool extract_zip_entry(const std::string& zip_path, const std::string& name, const std::string& out);
+// The entry `name` of the zip `zip_path` into `out` (the server's master derivation reads the APK's
+// built-in master with it: soaserver/master_source.h set_zip_reader).
+bool read_zip_entry(const std::string& zip_path, const std::string& name, std::vector<uint8_t>& out);
+// The uncompressed size of the entry `name`, -1 when the file isn't a zip or has no such entry (the
+// install-dir APK lookup's probe, soa/install.h find_apk_370).
+int64_t zip_entry_size(const std::string& zip_path, const std::string& name);
+
 }  // namespace soa

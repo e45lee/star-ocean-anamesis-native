@@ -10,7 +10,10 @@
 //   3. else upwards from the working directory, the same way.
 // In a git worktree whose work/ is a symlink into the main checkout, files the worktree lacks
 // (untracked data such as data/basmaster-3.7.0.sqlite3) are also looked up
-// in that main checkout.
+// in that main checkout. After them come the install dirs (common soa/install.h: the executable's
+// folder and its game/): a packaged soa (README.md "Packaging") has no checkout, and its data files
+// (data/gacha_pools.sqlite3, data/saves/seed/Game.xml, standin-assets/) sit at their repo paths
+// beside the executable; without a checkout the working directory is searched last, as before.
 //
 // Paths the user gives explicitly (command line, SOA_* variables) are never resolved here: they
 // stay as given, relative to the working directory.
@@ -22,7 +25,7 @@ namespace soa {
 
 // The repo root (absolute, no trailing slash), "" when none was found.
 const std::string& repo_root();
-// The roots searched by find_repo_file: repo_root(), then the main checkout (see above).
+// The roots searched by find_repo_file: repo_root(), the main checkout, the install dirs (see above).
 const std::vector<std::string>& repo_roots();
 // repo_root() + "/" + rel ("rel" unchanged when no root was found).
 std::string repo_path(const std::string& rel);

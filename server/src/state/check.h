@@ -3,8 +3,10 @@
 // guest behaviour). SQLite can't enforce them: the master is another file, read-only, replaced per
 // version. So the check is report-only: a dangling id is reported, never fixed or refused (a
 // master can change under a saved state). The server runs it when the state is opened
-// (state::report_master_refs: LOGW per dangling reference, PLAN-schema S1); S11 exports it
-// (soa-server --check-state). The test server/schema-integrity (check_tests.cpp) checks it.
+// (state::report_master_refs: LOGW per dangling reference, PLAN-schema S1). The same check on a
+// run's end state is tools/schema_inventory.py --check --strict (PLAN-schema S11: every session and
+// tests/diff run), over the same list (below). The test server/schema-integrity (check_tests.cpp)
+// checks it.
 #include <sqlite3.h>
 
 #include <cstdint>
@@ -13,8 +15,8 @@
 
 namespace soa::server::state {
 
-// One state column holding master ids: the "m:" rows of PLAN-schema 1.6 (tools/schema_inventory.py
-// RELS, which S11 makes the one list). `master_tables` is one table or several separated by '|'
+// One state column holding master ids: the "m:" rows of PLAN-schema 1.6. The one list: tools/
+// schema_inventory.py's RELS `m:` rows must equal master_refs() (its plain run, T0, fails otherwise). `master_tables` is one table or several separated by '|'
 // (the id is in one of them: the mission id spaces). `zero_is_none`: 0 means "none", not an id.
 struct MasterRef {
     const char* table;

@@ -1,0 +1,317 @@
+{
+ "subsystem": "lib_vorbis",
+ "generated_by": "tools/subsystem.py export-types lib_vorbis",
+ "header": "port/src/native/lib_vorbis/lib_vorbis_layout.h",
+ "structs": [
+  {
+   "name": "OggPacket",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "packet",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "bytes",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "b_o_s",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "e_o_s",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "granulepos",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "packetno",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "OggPage",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "header",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "header_len",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "body",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "body_len",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "VorbisInfo",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "version",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "channels",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "rate",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "bitrate_upper",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "bitrate_nominal",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "bitrate_lower",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "bitrate_window",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "codec_setup",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 56,
+   "align": 8
+  },
+  {
+   "name": "VorbisComment",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    }
+   ],
+   "size": 32,
+   "align": 1
+  },
+  {
+   "name": "OggStreamState",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 408
+     },
+     "size": 408
+    }
+   ],
+   "size": 408,
+   "align": 1
+  },
+  {
+   "name": "OggSyncState",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    }
+   ],
+   "size": 32,
+   "align": 1
+  },
+  {
+   "name": "VorbisBlock",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 192
+     },
+     "size": 192
+    }
+   ],
+   "size": 192,
+   "align": 1
+  },
+  {
+   "name": "VorbisDspState",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "opaque",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 144
+     },
+     "size": 144
+    }
+   ],
+   "size": 144,
+   "align": 1
+  }
+ ]
+}

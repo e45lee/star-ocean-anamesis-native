@@ -898,6 +898,11 @@ Gate for each: RG1–RG4, RG6, RG8, RG10, RG11 and the sessions listed; RG5 once
   - the evidence manifest doesn't shrink.
 - `tools/format_server.sh --check`.
 - Both are wired into the session scripts' common preamble next to PLAN-schema's `--check-state`, and into the merge gate (docs/merge-gating-lessons).
+- **As built (2026-10-04, with S11):**
+  - `tools/check_server_docs.sh` exits 1 on any finding (`--report`: the old report mode; lost evidence and log lines always fail). Section 1 is `tools/server_doc_coverage.py`: handlers (the 2.5 block with a label or `Rules: none (transport)`), hooks (`--list-hooks`' registration line -> the function, or a lambda's callee, found in the module's folder, with a comment above its definition or declaration), `include/soaserver/` declarations (the comment above it or its declaration group, or a trailing one; ctors, dtors, operators, `= default`, macros exempt). A missing soa-server is a finding. Evidence: T0 runs `--evidence {base}` (HEAD~1 or the `--git-diff` rev); a commit that deletes labelled code lets the loss pass with a message line `Evidence removed: ...`.
+  - **Where, instead of the session preamble:** the docs and format checks are T0's `server-docs` and `server-format` (tests/tiers.json), which every tier runs first; a session runs a built binary, so checking the sources there would only repeat T0. The merge gate is tests/TIERS.md "The permanent gates" (no `known` failure for either; a merge commit is compared with its first parent). PLAN-schema's state check is in soadrive's `Run.stop()` (PLAN-schema S11's as-built).
+  - **Found and fixed:** 15 agent mentions -> 0 (net/game.cpp 4, ext.h 3, server.h, npc_status.h, core/server.cpp, core/lifecycle.cpp, master/npc_status.cpp and its test, growth and sphere211 tests; reworded to the rule and its evidence); 21 `include/soaserver/` declarations without a doc comment, documented. Handlers (86) and hooks (33) already complete; links, API-INDEX.md, errors.h, paths and READMEs clean. Evidence vs main: nothing lost.
+  - **Gates:** see PLAN-schema S11's as-built.
 
 **R20 (later): `docs/server-rules.md` by domain.**
 - One section per `api/<domain>` with stable explicit anchors (`<a id="titles"></a>`).

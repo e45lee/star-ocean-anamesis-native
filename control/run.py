@@ -12,7 +12,9 @@ default target (the program its wrapper always ran) and runs against any target 
 doesn't support is refused with the reason.
 
 The run takes one game slot (control/soaslot.py) for its lifetime (every client it starts runs
-under it), prints its steps, and ends with the session's verdict: exit 0 (PASS) or 1 (FAIL).
+under it), prints its steps, and ends with the session's verdict: exit 0 (PASS) or 1 (FAIL). Every
+boot's end state is checked when it stops (G9: foreign keys, master references, schema version;
+soadrive/targets.py Run.state_check): a violation fails the session.
 """
 import argparse
 import importlib
@@ -81,7 +83,14 @@ def main(argv):
     # one game slot for the whole session (its clients run one at a time under it)
     o.slot = soaslot.acquire("%s %s" % (getattr(mod, "WRAPPER", name), target))
     try:
-        return mod.main(o)
+        rc = mod.main(o)
+        # G9 (server/PLAN-schema.md S11): each boot's end state was checked when it stopped
+        # (targets.Run.state_check); a violation fails the session whatever its own verdict said
+        bad = [summary for _run, ok, summary in targets.Run.STATE_CHECKS if not ok]
+        if bad and not rc:
+            print("FAIL: the server's end state: %s" % "; ".join(bad))
+            return 1
+        return rc
     except targets.Abort:
         return 1
     except KeyboardInterrupt:

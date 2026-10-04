@@ -16,6 +16,8 @@ class Context {
 public:
     Context(const char* name, uint64_t seed) : name_(name), rng_(seed) {}
 
+    // The test's RNG (seeded from its name) and draws from it: a u64, an int in [lo, hi], `n` bytes
+    // below `alphabet`.
     std::mt19937_64& rng() { return rng_; }
     uint64_t rand_u64() { return rng_(); }
     int rand_int(int lo, int hi) { return std::uniform_int_distribution<int>(lo, hi)(rng_); }
@@ -40,9 +42,11 @@ private:
 
 struct Test {
     const char* name;
+    // The test body.
     void (*fn)(Context&);
 };
 
+// Adds a test (SOASERVER_TEST does); returns true for the static initialiser.
 bool register_test(const Test& t);
 // In registration (link) order.
 const std::vector<Test>& tests();

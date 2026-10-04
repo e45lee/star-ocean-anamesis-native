@@ -35,12 +35,18 @@ plus an insert: with foreign keys on, it would run the children's ON DELETE acti
 `insert ... on conflict(pk) do update set` instead. Checks server/ (the joined literals) and the
 consumers' SQL (port/scripts, emulator/scripts, tools, tests: line by line). Exit 1 on a finding.
 
-    tools/schema_inventory.py --check STATE_DB [MASTER_DB]
+    tools/schema_inventory.py --check [--strict] STATE_DB [MASTER_DB]
 
 Gate G9 of server/PLAN-schema.md (from S4): a state DB's `pragma foreign_key_check` is empty
 (every declared foreign key holds), and its references into the master resolve (the `m:` rows of
 RELS, reported; a master can change under a saved state, so they don't fail it). Exit 1 on a
-foreign key violation.
+foreign key violation. --strict (S11: the end state of every session and tests/diff run, which
+ran with that master: control/soadrive/targets.py Run.stop) also fails on a dangling master
+reference, a missing master and a state not at this build's schema version (state/schema.h
+kSchemaVersion).
+
+The plain run (T0's `schema-inventory`) also checks that RELS's `m:` rows are the server's own list,
+state::master_refs() in server/src/state/check.cpp (the one list, S11), and exits 1 if they differ.
 """
 import argparse
 import collections
@@ -414,18 +420,54 @@ RELS = [
 ]
 
 
-def check(st_path, master_path):
-    """Gate G9: the state's foreign_key_check rows (fatal) and its master references (reported)."""
+def schema_version():
+    """kSchemaVersion of server/src/state/schema.h (the version this build writes)."""
+    m = re.search(r"constexpr int kSchemaVersion = (\d+);", open(os.path.join(ROOT, "server/src/state/schema.h"), encoding="utf-8").read())
+    return int(m.group(1)) if m else None
+
+
+def check(st_path, master_path, strict=False):
+    """Gate G9: the state's foreign_key_check rows (fatal) and its master references (reported;
+    fatal with strict, as are a missing master and a state at another schema version)."""
+    if not os.path.exists(st_path):
+        print("schema_inventory --check %s: no such file" % st_path)
+        return False
     c = sqlite3.connect("file:%s?mode=ro" % st_path, uri=True)
     bad = [tuple(r) for r in c.execute("pragma foreign_key_check")]
     for table, rowid, parent, fkid in bad:
         print("foreign key violation: %s rowid %s -> %s" % (table, rowid, parent))
+    problems = ["%d foreign key violation(s)" % len(bad)] if bad else []
+    version, want = c.execute("pragma user_version").fetchone()[0], schema_version()
+    c.close()
+    if strict and version != want:
+        problems.append("schema version %s, this build's is %s" % (version, want))
+    if strict and not (master_path and os.path.exists(master_path)):
+        problems.append("no master DB %s" % master_path)
+        master_path = None
+    ndangling = 0
     for ch, col, par, pcol, none, act, n, nnull, nzero, dangling in fk_report(st_path, master_path):
         if par.startswith("m:") and isinstance(dangling, list) and dangling:
+            ndangling += 1
             print("master reference: %s.%s -> %s.%s: %d dangling (%s)" % (ch, col, par[2:], pcol, len(dangling),
                                                                         ", ".join(str(v) for v in dangling[:5])))
-    print("schema_inventory --check %s: %s" % (st_path, "%d foreign key violation(s)" % len(bad) if bad else "foreign keys hold"))
-    return not bad
+    if strict and ndangling:
+        problems.append("%d master reference(s) dangling" % ndangling)
+    print("schema_inventory --check %s: %s" % (st_path, "; ".join(problems) if problems else "foreign keys hold" + (
+        ", master references resolve, version %s" % version if strict else "")))
+    return not problems
+
+
+def server_master_refs():
+    """state::master_refs() of server/src/state/check.cpp: (table, column, "m:" + tables, master column, 0 or None)."""
+    src = open(os.path.join(ROOT, "server/src/state/check.cpp"), encoding="utf-8").read()
+    body = src[src.index("master_refs() {"):]
+    body = body[:body.index("return refs;")]
+    rows = re.findall(r'\{\s*"(\w+)",\s*"(\w+)",\s*"([\w|]+)",\s*"(\w+)",\s*(true|false)\s*\}', body)
+    return [(t, c, "m:" + m, mc, 0 if z == "true" else None) for t, c, m, mc, z in rows]
+
+
+def rels_master_rows():
+    return [(ch, col, par, pcol, none) for ch, col, par, pcol, none, _act, _note in RELS if par.startswith("m:")]
 
 
 def fk_report(st_path, master_path):
@@ -520,8 +562,15 @@ def lint():
 
 
 def main():
-    if sys.argv[1:2] == ["--check"] and len(sys.argv) in (3, 4):
-        sys.exit(0 if check(sys.argv[2], sys.argv[3] if len(sys.argv) == 4 else os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3")) else 1)
+    if sys.argv[1:2] == ["--check"]:
+        rest = sys.argv[2:]
+        strict = "--strict" in rest
+        rest = [x for x in rest if x != "--strict"]
+        if len(rest) not in (1, 2):
+            print("usage: schema_inventory.py --check [--strict] STATE_DB [MASTER_DB]", file=sys.stderr)
+            sys.exit(2)
+        master = rest[1] if len(rest) == 2 else os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3")
+        sys.exit(0 if check(rest[0], master, strict) else 1)
     if sys.argv[1:] == ["--lint"]:
         found = lint()
         for f in found:
@@ -792,6 +841,19 @@ def main():
         open(a.update, "w", encoding="utf-8").write(doc[:i] + "\n" + text + "\n" + doc[j:])
     else:
         sys.stdout.write(text + "\n")
+    # the one list of master references (S11): RELS's m: rows are state::master_refs()
+    ours, theirs = rels_master_rows(), server_master_refs()
+    if ours != theirs:
+        print("schema_inventory: RELS's m: rows differ from state::master_refs() (server/src/state/check.cpp):", file=sys.stderr)
+        for r in ours:
+            if r not in theirs:
+                print("  only in RELS: %s" % (r,), file=sys.stderr)
+        for r in theirs:
+            if r not in ours:
+                print("  only in check.cpp: %s" % (r,), file=sys.stderr)
+        if sorted(ours) == sorted(theirs):
+            print("  (the same rows in another order)", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

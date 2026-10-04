@@ -56,7 +56,6 @@ recommendations) is [`docs/history/environment-audit-2026-10-03.md`](history/env
 | `SOA_ENABLE_EVENTS` | `--enable-events` | soa, soa-server |
 | `SOA_EVENT_KEYWORDS` | `--event-keywords "a,b,!c"` | soa, soa-server |
 | `SOA_RESTORE_TOWER` | `--restore-tower` | soa, soa-server |
-| `SOA_HOME3D_ALL` | `--home3d-all` | soa, soa-server |
 | `SOA_MASTER_DB` | `--campaign-master-db FILE` | soa, soa-server |
 | `SOA_CAMPAIGN_SEED` | `--campaign-seed LABEL` | soa, soa-server |
 | `SOA_SERVER_FAIL` | `--fail M:CODE[,..]` | soa, soa-server |

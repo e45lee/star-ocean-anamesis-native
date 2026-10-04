@@ -69,7 +69,7 @@ These change data the unmodified client code reads, as the online server's data 
 - **Guest behaviour (3.7.0 master data):** 16 persons have `home3d_disable` = 1, among them the NieR:Automata collab (2B `cc0015_b01a`, 9S `cc0016_b01a`, A2 `cc0017_b01a`): the game never shows them in 3D on the home, although their models and `Parameter/Home3D/home3d_<person>.msgp` exist.
 - **Change:** under `--home3d-all` the local server sets `home3d_disable` = 0 on every `master_person` row of the client's master copy (`enable_home3d` / `client_home3d_all` in `server/src/api/player/home.cpp`, an `ext::ClientMaster`; the master both server modes' CDNs serve). The server's own master is untouched.
 - **Why not in a response:** the flag is master data the client downloads.
-- **Switch:** `--home3d-all` (`SOA_HOME3D_ALL`; soa and soa-server). Off by default: a debug view of what 3.7.0 doesn't show.
+- **Switch:** `--home3d-all` (a flag only; soa and soa-server). Off by default: a debug view of what 3.7.0 doesn't show.
 
 ## Code changes
 The server core made none: in-process every other behaviour is the local server answering on the port's `FakeApiCaller` route (`--server inproc`).

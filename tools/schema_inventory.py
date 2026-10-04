@@ -401,7 +401,7 @@ RELS = [
     ("ds_ship_member", "ship_id", "ds_ship", "ship_id", None, "CASCADE (S7)", "a ship's crew (ds_ship.uids text before S7)"),
     ("ds_ship_member", "uid", "roster", "uid", None, "NO ACTION (S7)", "the ship's crew: a character out on a ship"),
     ("ds_bonus", "ship_id", "ds_ship", "ship_id", None, "CASCADE (S10)", "a ship's bonus values (deleted by hand at MissionEnd before S10)"),
-    ("sphere_departed", "uid", "roster", "uid", None, "CASCADE", ""),
+    ("sphere_departed", "uid", "roster", "uid", None, "CASCADE (S10)", "a character that sortied (出撃済み until 帰還)"),
     ("sphere_cell", "asset_id", "m:master_sphere211_floor_asset", "id", None, "-", ""),
     ("sphere", "season_id", "m:master_sphere211", "id", 0, "-", ""),
     ("wboss", "boss_id", "m:master_world_boss", "id", None, "-", ""),

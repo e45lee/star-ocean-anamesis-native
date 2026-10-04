@@ -1261,6 +1261,8 @@ select follow_player_id, case when ifnull(used, 0) != 0 then 1 else 0 end, updat
 //                                                sold or used up)
 //     box_slots.gacha_id          -> box_state.gacha_id  ON DELETE CASCADE (a box's drawn slots;
 //                                                BoxGacha writes the box_state row first)
+//   Sphere 211:
+//     sphere_departed.uid -> roster.uid  ON DELETE CASCADE (a character gone has no sortie)
 //   events:
 //     wboss_clear.boss_id -> wboss.boss_id  ON DELETE CASCADE, deferred (a boss's cleared waves;
 //                                           MissionEnd's contribute() records a clear before
@@ -1397,6 +1399,57 @@ const char* const kModules[] = {
   closed_at integer,
   updated_at integer
 ) strict)",
+    // ---- Sphere 211 (api/sphere211/) ----
+    // the dive (one row; CSphere211Info / Player.sphere211_* (b)), with the keys that were
+    // sphere_meta's until S3 (cycle, season_wins, end_pending, debug_enemy_level: the port's test
+    // hook, NULL: off)
+    R"(create table new_sphere (
+  id integer primary key check (id = 1),
+  season_id integer,
+  floor_level integer not null default 0,
+  asset_group integer not null default 0,
+  streak integer not null default 0,
+  treasure_total integer not null default 0,
+  stamina integer,
+  stamina_at integer,
+  revive_count integer not null default 0,
+  best_floor integer not null default 0,
+  entered_at integer,
+  clear_asset integer not null default 0,
+  lot_floor_num integer not null default 0,
+  reroll_count integer not null default 0,
+  prev_season integer not null default 0,
+  prev_floor integer not null default 0,
+  prev_treasure integer not null default 0,
+  prev_rank integer not null default 0,
+  cycle integer not null default 0,
+  season_wins integer not null default 0,
+  end_pending integer not null default 0 check (end_pending in (0, 1)),
+  debug_enemy_level integer
+) strict)",
+    // a character that sortied in this dive (出撃済み (b), until 帰還)
+    R"(create table new_sphere_departed (
+  uid integer primary key references roster(uid) on delete cascade
+) strict)",
+    // a box gathered in this dive; rank -1 until 帰還 rolls it
+    R"(create table new_sphere_box (
+  id integer primary key autoincrement,
+  floor_level integer not null,
+  rank integer not null
+) strict)",
+    // the local ranking: a season's best floor
+    R"(create table new_sphere_rank (
+  season_id integer primary key,
+  floor_level integer not null,
+  entered_at integer
+) strict)",
+    // the achievements' log: a battle won (kind 1) or a floor entered (kind 2, value = the floor)
+    R"(create table new_sphere_log (
+  id integer primary key autoincrement,
+  kind integer not null,
+  value integer,
+  at integer not null
+) strict)",
 };
 
 // The tables step 10 rebuilds (new_X -> X), in kModules' order.
@@ -1406,6 +1459,7 @@ const char* const kModuleTables[] = {
     "gacha_history", "stepup", "box_state", "box_slots",
     "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
     "shop_counts", "exchange_counts", "subscription",
+    "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
 };
 // clang-format on
 
@@ -1560,13 +1614,50 @@ bool rebuild_shop(sqlite3* db) {
     return ok;
 }
 
+// Sphere 211 (PLAN-schema S10):
+//   sphere: a NULL in a not-null column -> 0 (what the readers read), end_pending not 0 / 1 -> 1;
+//   sphere_departed: a character not owned -> dropped (the CASCADE child);
+//   sphere_box, sphere_rank, sphere_log: a NULL in a not-null column -> 0; the AUTOINCREMENT
+//     counters kept (rebuild_modules).
+bool rebuild_sphere(sqlite3* db) {
+    log_count(db,
+              "select count(*) from sphere where floor_level is null or asset_group is null or streak is null or treasure_total is null or "
+              "revive_count is null or best_floor is null or clear_asset is null or lot_floor_num is null or reroll_count is null or "
+              "prev_season is null or prev_floor is null or prev_treasure is null or prev_rank is null",
+              "sphere", "NULL in a not-null column -> 0", 10);
+    log_count(db, "select count(*) from sphere_departed where uid is null or uid not in (select uid from roster)", "sphere_departed.uid",
+              "not owned -> dropped", 10);
+    log_count(db, "select count(*) from sphere_box where floor_level is null or rank is null", "sphere_box", "NULL -> 0", 10);
+    log_count(db, "select count(*) from sphere_rank where floor_level is null", "sphere_rank.floor_level", "NULL -> 0", 10);
+    log_count(db, "select count(*) from sphere_log where kind is null or at is null", "sphere_log", "NULL -> 0", 10);
+    bool ok = run(db, R"(
+insert into new_sphere (id, season_id, floor_level, asset_group, streak, treasure_total, stamina, stamina_at, revive_count, best_floor,
+  entered_at, clear_asset, lot_floor_num, reroll_count, prev_season, prev_floor, prev_treasure, prev_rank, cycle, season_wins, end_pending,
+  debug_enemy_level)
+select id, season_id, ifnull(floor_level, 0), ifnull(asset_group, 0), ifnull(streak, 0), ifnull(treasure_total, 0), stamina, stamina_at,
+  ifnull(revive_count, 0), ifnull(best_floor, 0), entered_at, ifnull(clear_asset, 0), ifnull(lot_floor_num, 0), ifnull(reroll_count, 0),
+  ifnull(prev_season, 0), ifnull(prev_floor, 0), ifnull(prev_treasure, 0), ifnull(prev_rank, 0), cycle, season_wins,
+  case when end_pending != 0 then 1 else 0 end, debug_enemy_level
+from sphere)");
+    ok = ok && run(db, "insert into new_sphere_departed (uid) select uid from sphere_departed where uid in (select uid from roster)");
+    ok = ok &&
+         run(db, "insert into new_sphere_box (id, floor_level, rank) select id, ifnull(floor_level, 0), ifnull(rank, 0) from sphere_box order by id");
+    ok =
+        ok &&
+        run(db,
+            "insert into new_sphere_rank (season_id, floor_level, entered_at) select season_id, ifnull(floor_level, 0), entered_at from sphere_rank");
+    ok = ok &&
+         run(db, "insert into new_sphere_log (id, kind, value, at) select id, ifnull(kind, 0), value, ifnull(at, 0) from sphere_log order by id");
+    return ok;
+}
+
 // Step 10's data mapping (PLAN-schema S10): each group's rows into its new tables (the functions
 // above), then the old tables go and the new ones take their names; the AUTOINCREMENT counters
 // are kept.
 bool rebuild_modules(sqlite3* db, sqlite3*) {
     std::vector<std::pair<const char*, int64_t>> counters;
-    for (const char* table : {"gacha_history"}) counters.emplace_back(table, sequence_of(db, table));
-    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db);
+    for (const char* table : {"gacha_history", "sphere_box", "sphere_log"}) counters.emplace_back(table, sequence_of(db, table));
+    bool ok = rebuild_deep_space(db) && rebuild_gacha(db) && rebuild_events(db) && rebuild_shop(db) && rebuild_sphere(db);
     for (const char* table : kModuleTables) ok = ok && run(db, ("drop table " + std::string(table)).c_str());
     for (const char* table : kModuleTables) ok = ok && run(db, ("alter table new_" + std::string(table) + " rename to " + table).c_str());
     for (auto& [table, seq] : counters) ok = ok && keep_sequence(db, table, seq);

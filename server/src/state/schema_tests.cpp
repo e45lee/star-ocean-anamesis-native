@@ -1143,7 +1143,16 @@ NATIVE_TEST("server/schema-migrate-v10") {
                 "insert into favor_drop_play (same_role_id, lots) values (66, null);"
                 // shop: NULL counts
                 "insert into shop_counts (id, num, period, total) values (67, null, 5, null);"
-                "insert into exchange_counts (id, num) values (68, null);"),
+                "insert into exchange_counts (id, num) values (68, null);"
+                // Sphere 211: a NULL count in the dive, a departed character not owned, a box with NULLs and the counter
+                // above it, the log emptied with its counter kept, a ranking without a floor
+                "update sphere set streak = null;"
+                "insert into sphere_departed (uid) values (12345);"
+                "insert into sphere_box (id, floor_level, rank) values (5, null, null);"
+                "update sqlite_sequence set seq = 99 where name = 'sphere_box';"
+                "delete from sphere_log;"
+                "update sqlite_sequence set seq = 42 where name = 'sphere_log';"
+                "insert into sphere_rank (season_id, floor_level, entered_at) values (69, null, null);"),
             true, "the S10 cases planted");
     t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, 9, m), true, "the reference: migrated to 9");
     t.expect_eq(state::open_and_migrate(db.h, old.path, 10, m), true, "migrated to 10");
@@ -1156,6 +1165,7 @@ NATIVE_TEST("server/schema-migrate-v10") {
         "gacha_history", "stepup", "box_state", "box_slots",
         "wboss", "wboss_clear", "event_last", "event_rank_received", "favor_drop_play",
         "shop_counts", "exchange_counts", "subscription",
+        "sphere", "sphere_departed", "sphere_box", "sphere_rank", "sphere_log",
     };
     // clang-format on
     std::vector<std::string> tables;
@@ -1218,6 +1228,19 @@ NATIVE_TEST("server/schema-migrate-v10") {
     // shop
     t.expect_eq(rows_over(db, "shop_counts", "*", "id = 67"), (std::vector<std::string>{"1:67|1:0|1:5|1:0|"}), "shop_counts: NULL counts -> 0");
     t.expect_eq(rows_over(db, "exchange_counts", "*", "id = 68"), (std::vector<std::string>{"1:68|1:0|"}), "exchange_counts: NULL num -> 0");
+    // Sphere 211
+    t.expect_eq(db.one("select streak from sphere where id = 1", {}) == 0 && !db.one("select streak is null from sphere", {}), true,
+                "sphere: NULL streak -> 0");
+    const std::string sphere_cols =
+        "id, season_id, floor_level, asset_group, treasure_total, stamina, stamina_at, revive_count, best_floor, entered_at, clear_asset, "
+        "lot_floor_num, reroll_count, prev_season, prev_floor, prev_treasure, prev_rank, cycle, season_wins, end_pending, debug_enemy_level";
+    t.expect_eq(rows_over(db, "sphere", sphere_cols), rows_over(ref, "sphere", sphere_cols), "sphere's other columns kept");
+    t.expect_eq(rows_over(db, "sphere_departed", "*"), (std::vector<std::string>{"1:2113929217|"}), "sphere_departed: not owned -> dropped");
+    t.expect_eq(rows_over(db, "sphere_box", "*"), (std::vector<std::string>{"1:1|1:1|1:1|", "1:5|1:0|1:0|"}), "sphere_box: NULLs -> 0");
+    t.expect_eq(db.one("select seq from sqlite_sequence where name = 'sphere_box'", {}), (int64_t)99, "sphere_box's counter kept");
+    t.expect_eq(db.one("select count(*) from sphere_log", {}), (int64_t)0, "(the log empty)");
+    t.expect_eq(db.one("select seq from sqlite_sequence where name = 'sphere_log'", {}), (int64_t)42, "sphere_log's counter kept without rows");
+    t.expect_eq(rows_over(db, "sphere_rank", "*", "season_id = 69"), (std::vector<std::string>{"1:69|1:0|5:|"}), "sphere_rank: NULL floor -> 0");
     for (const char* table : {"event_last", "event_rank_received", "subscription"})
         t.expect_eq(rows_over(db, table, "*"), rows_over(ref, table, "*"), (std::string(table) + " copied").c_str());
     t.expect_eq(fk_violations(db), 0, "foreign_key_check");
@@ -1380,6 +1403,7 @@ NATIVE_TEST("server/schema-fk-actions") {
                                    std::string("insert into ds_ship (ship_id, area_id, mission_id, started_at) values (9, 99, 1, 0)"),
                                    std::string("insert into ds_bonus (ship_id, bonus_id, value) values (99, 1, 1.0)")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_FOREIGNKEY, (sql + ": refused at once (S10)").c_str());
+    t.expect_eq(rc("insert into sphere_departed (uid) values (9999)"), SQLITE_CONSTRAINT_FOREIGNKEY, "sphere_departed: refused at once (S10)");
     t.expect_eq(rc("insert into gacha_history (gacha_id, at, character_uid, rank) values (1, 0, 9999, 'S')"), SQLITE_CONSTRAINT_FOREIGNKEY,
                 "gacha_history.character_uid: refused at once (S10)");
     t.expect_eq(rc("insert into gacha_history (gacha_id, at, item_uid, rank) values (1, 0, 9999, 'S')"), SQLITE_CONSTRAINT_FOREIGNKEY,
@@ -1401,7 +1425,9 @@ NATIVE_TEST("server/schema-fk-actions") {
           std::string("update wboss set hunt_until = 'x'"), std::string("update wboss_clear set cleared_at = 'x'"),
           std::string("update event_last set mission_id = 'x'"), std::string("update event_rank_received set received_at = 'x'"),
           std::string("update favor_drop_play set lots = 'x'"), std::string("update shop_counts set total = 'x'"),
-          std::string("update exchange_counts set num = 'x'"), std::string("update subscription set closed_at = 'x'")})
+          std::string("update exchange_counts set num = 'x'"), std::string("update subscription set closed_at = 'x'"),
+          std::string("update sphere set streak = 'x'"), std::string("update sphere_box set rank = 'x'"),
+          std::string("update sphere_rank set floor_level = 'x'"), std::string("update sphere_log set at = 'x'")})
         t.expect_eq(rc(sql), SQLITE_CONSTRAINT_DATATYPE, (sql + ": STRICT (S10)").c_str());
     t.expect_eq(rc("insert into presents (content_type, num, reason_type) values (4, 1, 1)"), SQLITE_CONSTRAINT_NOTNULL,
                 "a present has its created_at (S8)");
@@ -1453,7 +1479,10 @@ NATIVE_TEST("server/schema-fk-actions") {
     t.expect_eq(
         db.one("select count(*) from ds_offer", {}) + db.one("select count(*) from ds_ship", {}) + db.one("select count(*) from ds_bonus", {}),
         (int64_t)0, "ON DELETE CASCADE: its offers, its ship and the ship's bonus values are gone");
+    t.expect_eq(db.one("select count(*) from sphere_departed where uid = ?", {std::stoll(b)}), (int64_t)1, "b departed (the fixture's)");
     t.expect_eq(rc("delete from roster where uid = " + b), SQLITE_OK, "the assist and support character deleted");
+    t.expect_eq(db.one("select count(*) from sphere_departed where uid = ?", {std::stoll(b)}), (int64_t)0,
+                "ON DELETE CASCADE: b's sortie is gone (S10)");
     t.expect_eq(db.one("select count(*) from play_member where slot = 1 and uid is null", {}), (int64_t)1, "play_member.uid -> NULL (b)");
     t.expect_eq(db.one("select count(*) from roster where uid = ? and assist_uid is null", {std::stoll(a)}), (int64_t)1, "assist_uid -> NULL");
     t.expect_eq(db.one("select count(*) from player where support_uid is null", {}), (int64_t)1, "support_uid -> NULL");

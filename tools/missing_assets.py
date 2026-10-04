@@ -620,7 +620,11 @@ class Build:
                       "(`Character/<asf>.asf`) are present; a story mission (no stages) needs its `Script/` and "
                       "`Scenario/` file (server/src/api/events/event_missions.cpp `battle_files` / `story_playable`, "
                       "the rule Sphere 211 and the tower use too; docs/server-rules.md). Stage BGM, enemy "
-                      "animation / motion files and story scripts of battle missions are listed but don't block.",
+                      "animation / motion files and story scripts of battle missions are listed but don't block. "
+                      "The episode packs (`EP1`-`EP3`: the main story's scripts, scenario text, talk scenes, voices, "
+                      "SE and movies) are complete: every member of the ep1-3 manifests is in the download. Event "
+                      "story voices and SE (`Sound/TS_*`, `Voice_TS_*`) are named inside the scripts, not by the "
+                      "master, and are gone with the missing event scripts (part 1).",
                       groups))
 
         # Sphere 211: floors (their map, background, BGM) and the mission boxes' missions
@@ -819,6 +823,16 @@ class Build:
         rows_kind("Exchange shops", "`master_exchange_shop` names no file; a shop needs the icons of its prices "
                   "and goods (`master_exchange_shop_contents` -> `master_item.thumbnail_id`).",
                   "select * from master_exchange_shop order by opened_at, id", ex)
+
+        def sk(r):
+            o = item("skill", r["id"], r["id_label"], r["name_message_id"])
+            if r["skill_icon"]:
+                o.add(f"Image/{r['skill_icon']}.aif", "skill icon", "master_skill.skill_icon", r["id_label"], o.ja)
+                o.gate.add(f"Image/{r['skill_icon']}.aif")
+            return o
+        rows_kind("Skills", "`master_skill.skill_icon` (images). Skill effects (`Effect/<id>.asf/.apk/.aaf`, "
+                  "loaded per battle) are not checked here.",
+                  "select * from master_skill order by id", sk)
 
         def sb(r):
             o = item("studio background", r["id"], r["id_label"], r["name_id_label"])

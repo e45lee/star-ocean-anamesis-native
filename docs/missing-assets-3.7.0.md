@@ -27,6 +27,7 @@ Names: the heading gives the Japanese name from `master_text`, then an English n
 | Deco (accessories worn on the model) | 194 | 194 | 0 | — |
 | Stamps | 290 | 290 | 0 | — |
 | Exchange shops | 1001 | 1001 | 0 | — |
+| Skills | 4117 | 4117 | 0 | — |
 | Photo studio backgrounds | 15 | 15 | 0 | — |
 
 So yes: the blocked rows above would run with their files back. Blocked by 2D images only (icons, banners, portraits), they would run with made-up stand-ins too; blocked by battle maps, models or story scripts, they need the real files (a stand-in map or model would only be another one under the same name). Details per row and file are in part 2.
@@ -11439,7 +11440,7 @@ Stand-in? **yes (2D image)**: a made-up image in the game's format shows in its 
 
 ### Missions and story chapters
 
-Each mission is playable when the local server's check passes: every stage's battle map (`BG/<map>.asf/.aaf/.acf`) and every enemy's model (`Character/<asf>.asf`) are present; a story mission (no stages) needs its `Script/` and `Scenario/` file (server/src/api/events/event_missions.cpp `battle_files` / `story_playable`, the rule Sphere 211 and the tower use too; docs/server-rules.md). Stage BGM, enemy animation / motion files and story scripts of battle missions are listed but don't block.
+Each mission is playable when the local server's check passes: every stage's battle map (`BG/<map>.asf/.aaf/.acf`) and every enemy's model (`Character/<asf>.asf`) are present; a story mission (no stages) needs its `Script/` and `Scenario/` file (server/src/api/events/event_missions.cpp `battle_files` / `story_playable`, the rule Sphere 211 and the tower use too; docs/server-rules.md). Stage BGM, enemy animation / motion files and story scripts of battle missions are listed but don't block. The episode packs (`EP1`-`EP3`: the main story's scripts, scenario text, talk scenes, voices, SE and movies) are complete: every member of the ep1-3 manifests is in the download. Event story voices and SE (`Sound/TS_*`, `Voice_TS_*`) are named inside the scripts, not by the master, and are gone with the missing event scripts (part 1).
 
 2440 rows: **2430 usable** (every gating file present), **10 blocked by missing files**; 12 of the usable ones miss only non-blocking files.
 
@@ -11784,6 +11785,12 @@ Blocked: `login_2016_release_memorial` リリース記念ログインボーナ�
 `master_exchange_shop` names no file; a shop needs the icons of its prices and goods (`master_exchange_shop_contents` -> `master_item.thumbnail_id`).
 
 1001 rows: **1001 usable** (every gating file present), **0 blocked by missing files**; 0 of the usable ones miss only non-blocking files.
+
+### Skills
+
+`master_skill.skill_icon` (images). Skill effects (`Effect/<id>.asf/.apk/.aaf`, loaded per battle) are not checked here.
+
+4117 rows: **4117 usable** (every gating file present), **0 blocked by missing files**; 0 of the usable ones miss only non-blocking files.
 
 ### Photo studio backgrounds
 

@@ -213,6 +213,11 @@ void concurrency_tests(const std::string& dir) {
 
 // ---- ZIP64: an entry whose local header is past 4 GiB (a sparse file; the hole reads as zeros) ----
 void zip64_tests(const std::string& dir) {
+#ifdef _WIN32
+    // (NTFS files aren't sparse unless asked: the gap would be 4 GiB written to disk)
+    fprintf(stderr, "skip  zip64: no sparse files here (run on Linux)\n");
+    return;
+#endif
     std::string path = dir + "/zip64.zip";
     const uint64_t far = (4ull << 30) + 12345;  // past 4 GiB
     Bytes a = text("near"), b = text("far away, past four gigabytes");
@@ -256,8 +261,12 @@ void zip64_tests(const std::string& dir) {
               fwrite(tail.data(), 1, tail.size(), f) == tail.size() && fwrite(cd.data(), 1, cd.size(), f) == cd.size() &&
               fwrite(end.data(), 1, end.size(), f) == end.size();
     ok = fclose(f) == 0 && ok;
+    bool sparse = false;
+#ifndef _WIN32
     struct stat st;
-    if (!ok || stat(path.c_str(), &st) != 0 || (uint64_t)st.st_blocks * 512 > (64u << 20)) {
+    sparse = stat(path.c_str(), &st) == 0 && (uint64_t)st.st_blocks * 512 <= (64u << 20);
+#endif
+    if (!ok || !sparse) {
         fprintf(stderr, "skip  zip64: no sparse 4 GiB file here\n");
         unlink(path.c_str());
         return;

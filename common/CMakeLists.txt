@@ -47,4 +47,4 @@ target_compile_options(soa_zip PRIVATE -Wall -Wno-unused-parameter)
 
 find_package(Threads REQUIRED)
 add_executable(soa_zip_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/zip_tests.cpp)
-target_link_libraries(soa_zip_tests PRIVATE soa_zip ZLIB::ZLIB Threads::Threads)
+target_link_libraries(soa_zip_tests PRIVATE soa_zip soa_compat ZLIB::ZLIB Threads::Threads)  # (soa_compat: mkdir on Windows)

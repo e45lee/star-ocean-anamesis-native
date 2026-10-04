@@ -205,12 +205,13 @@ NATIVE_TEST("items/limit-break-items") {
     if (!ran) return;  // no 3.7.0 master or save
 }
 
-// InheritAccessory (docs/server-rules.md#accessory-inheritance): an inheritance accessory
-// (master_item.max_inheritance_num) takes in another owned accessory's master item and limit
-// break, once; the other is used up; the answer's InheritResultInfo / ComposeResult, and the Item
-// list's InheritItemInfo (on this and every later load); counted for achievement type 58. A base
-// that can't inherit, a second inheritance, the base itself and a locked or equipped accessory are
-// refused. UpdateItemStock is refused at item_stock_max.
+// InheritAccessory (docs/server-rules.md#accessory-inheritance): a compose of an inheritance
+// accessory (master_item.max_inheritance_num) that also takes in its ordinary material's master item
+// and limit break, once; the material is used up, the base gains its points and the FOL is paid; the
+// answer's InheritResultInfo / ComposeResult, and the Item list's InheritItemInfo (on this and every
+// later load); counted for achievement type 58. A base that can't inherit, a second inheritance,
+// the base itself, another inheritance accessory and a locked accessory are refused.
+// UpdateItemStock is refused at item_stock_max.
 NATIVE_TEST("items/inherit-accessory") {
     ScratchServer S(t.rand_u64());
     if (!S.ok) return;
@@ -226,12 +227,19 @@ NATIVE_TEST("items/inherit-accessory") {
         c.grant(1, id, 1, items, stocks, chars);
         return items.arr.empty() ? (u64)0 : items.arr[0].get_u("id");
     };
-    const u64 base = grant_one(inherit), lost = grant_one(plain), other = grant_one(plain), plain_base = grant_one(plain);
-    if (!base || !lost || !other || !plain_base) return t.fail("granting accessories");
+    const u32 inherit2 =
+        (u32)c.m.one("select id from master_item where type = 3 and max_inheritance_num > 0 and id != ? order by id limit 1", {inherit});
+    const u64 base = grant_one(inherit), lost = grant_one(plain), other = grant_one(plain), plain_base = grant_one(plain),
+              base2 = grant_one(inherit2);
+    if (!base || !lost || !other || !plain_base || !base2) return t.fail("granting accessories");
+    add_fol(c, 10000000);
+    const u32 fol0 = fol(c);
     c.st.q("update items set limit_break = 2 where uid = ?", {lost});
     t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {plain_base, lost}, {}, {}}), (u32)ErrorCode::kItemUnusable,
                 "(a) max_inheritance_num 0: refused");
     t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, base}, {}, {}}), (u32)ErrorCode::kItemUnusable, "the base itself: refused");
+    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, base2}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+                "(b) another inheritance accessory: refused");
     c.st.q("update items set locked = 1 where uid = ?", {lost});
     t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, lost}, {}, {}}), (u32)ErrorCode::kLockedItem, "a locked one: refused");
     c.st.q("update items set locked = 0 where uid = ?", {lost});
@@ -245,8 +253,9 @@ NATIVE_TEST("items/inherit-accessory") {
     t.expect_eq(r ? r->get_u("lost_player_item_id") : 0, lost, "lost_player_item_id");
     t.expect_eq(r ? r->get_u("lost_item_limit_break_count") : 9, (u64)2, "lost_item_limit_break_count");
     const Value* cr = data ? data->find("ComposeResult") : nullptr;
-    t.expect_eq(cr && cr->get_u("before_level") == cr->get_u("after_level") && cr->get_u("after_limit_break_count") == 0, true,
-                "(d) the base doesn't grow");
+    t.expect_eq(cr && cr->get_u("after_boosted_point") > cr->get_u("before_boosted_point"), true, "(b) the base gains the compose's points");
+    t.expect_eq((u32)c.st.one("select exp from items where uid = ?", {base}), cr ? (u32)cr->get_u("after_boosted_point") : 0u, "stored");
+    t.expect_eq(fol(c) < fol0, true, "(b) the compose's FOL paid");
     t.expect_eq((u32)c.st.one("select count(*) from items where uid = ?", {lost}), 0u, "the lost accessory is gone");
     t.expect_eq((u32)c.st.one("select inherited_master_item_id from items where uid = ?", {base}), plain, "stored");
     t.expect_eq((u32)c.st.one("select inherited_limit_break from items where uid = ?", {base}), 2u, "its limit break stored");

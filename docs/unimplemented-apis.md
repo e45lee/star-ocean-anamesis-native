@@ -294,10 +294,10 @@ step records it here and in `server-rules.md` as (c).
   (no rule for picking an assist could be found). The `master_config` defaults stand for the
   player's settings until `UpdateConfig` stores them (the settings group; the parent wires them at
   merge).
-- `InheritAccessory`: one inheritance per accessory (the client only tests `max_inheritance_num` for
-  non-zero and offers the inheritance only while none is stored), any other owned accessory may be
-  the lost one if it isn't locked or equipped (as compose materials), no FOL, and the base doesn't
-  grow (`ComposeResult` before = after): the client's material filter for an inheritance base and
-  any cost weren't found in the code read.
+- `InheritAccessory`: seen on the strengthening screen, it is a compose that also takes in the
+  material's factor, once, from an ordinary accessory (the other inheritance accessories are
+  greyed out); assumed: a locked or equipped material is refused as for any compose, and the
+  material's limit break is kept as `inherited_master_item_limit_break_count` (the client sends it
+  back as the lost item's; what it changes wasn't read).
 - `UpdateItemStock`: refused with 11006, as `UpdateGearStock`: the stock starts at the maximum
   `item_stock_max` (the starting capacity isn't in the master), where the client hides the button.

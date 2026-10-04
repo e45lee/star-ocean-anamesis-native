@@ -549,7 +549,7 @@ std::vector<u8> training_mission_start(ext::Ctx& ctx, const Request& req) {
                      {},
                      {}};
     std::vector<u8> answer = run_start(ctx, as_start, nullptr, false, true);
-    // read by port/scripts/missions_session.sh
+    // read by port/scripts/simulator_continue_session.sh
     if (!answer.empty()) LOGI("server", "TrainingMissionStart: mission %u, no play record", training.mission);
     return answer;
 }

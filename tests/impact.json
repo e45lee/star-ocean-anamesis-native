@@ -1368,6 +1368,30 @@
     "Sphere211StaminaHeal"
    ]
   },
+  "session:simulator-continue": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "MissionContinue",
+    "MissionFailed",
+    "MissionStart",
+    "NoLoginStart",
+    "TrainingMissionStart"
+   ],
+   "source": "declared"
+  },
+  "session:equipment": {
+   "apis": [
+    "EquipAuto",
+    "GetPlayer",
+    "GetServerTime",
+    "InheritAccessory",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
   "session:episode-movie": {
    "apis": [
     "EndMissionTalk",

@@ -17,3 +17,8 @@ tower: %d areas, %d missions listed	server: tower: \d+ areas
 seeding from %s (%zu keys)	seeding from
 DeepSpaceActiveList: %zu areas, %zu ships out, %zu back, %u ships (%u by the pass)	^I/server: Deep
 http %s %s -> %d (	^I/net: http \S+ \S+ -> 
+TrainingMissionStart: mission %u, no play record	TrainingMissionStart: mission \d+, no play record
+MissionContinue: mission %u continued for %u coins	MissionContinue: mission \d+ continued for
+MissionContinue: declined (mission %u)	MissionContinue: declined
+InheritAccessory %llx: inherited item %u (limit break %u) from %llx	InheritAccessory [0-9a-f]+: inherited item
+EquipAuto %llx:%s	EquipAuto [0-9a-f]+:

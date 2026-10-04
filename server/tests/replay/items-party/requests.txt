@@ -49,13 +49,13 @@ req 43 1790841690 EquipAccessory 99750e8d 2113929217,2097152004 - - -
 req 44 1790841695 EquipWeapon 1f3c9eca 2113929216,2097152009 - - -
 req 45 1790841700 EquipWeapon 1f3c9eca 2113929216,0 - - -
 req 46 1790841705 GetPlayer 9a056905 - - - -
-# (agent server-u-missions, schema v13) two inheritance accessories from the fixed drops of me99_875
-# and me99_1113 (MissionEnd naming them, no play), then InheritAccessory: a weapon as the base
+# (agent server-u-missions, schema v13) an inheritance accessory and an ordinary one from the fixed drops of me99_875
+# and me99_341 (MissionEnd naming them, no play), then InheritAccessory: a weapon as the base
 # (refused 10208), the first takes in the second, again (refused: inherited already), GetPlayer
 # (Item's InheritItemInfo); EquipAuto for a party character; UpdateItemStock (refused 11006: at
 # item_stock_max); GetPlayer
 req 47 1790841710 MissionEnd 8312a64c 2976091844,0 - - -
-req 48 1790841715 MissionEnd 8312a64c 704308814,0 - - -
+req 48 1790841715 MissionEnd 8312a64c 2440492799,0 - - -
 req 49 1790841720 InheritAccessory d9feb3e8 2097152004,2097152031 - - -
 req 50 1790841725 InheritAccessory d9feb3e8 2097152030,2097152031 - - -
 req 51 1790841730 InheritAccessory d9feb3e8 2097152030,2097152031 - - -

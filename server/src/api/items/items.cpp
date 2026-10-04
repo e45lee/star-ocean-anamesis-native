@@ -139,9 +139,11 @@ struct Composed {
     bool big = false;
     Value lost = Value::array();
 };
-// ComposeResult (CItemComposeResultInfo's fields, b), with the player state and Item.
-std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
+// ComposeResult (CItemComposeResultInfo's fields, b), with the player state and Item (and
+// InheritAccessory's InheritResultInfo).
+std::vector<u8> compose_response(Ctx& ctx, const Composed& composed, const Value* inherited = nullptr) {
     Value data = ctx.base_data();
+    if (inherited) data["InheritResultInfo"] = *inherited;  // InheritAccessory's
     Value result = Value::object();
     result["id"] = composed.base.uid.v;
     result["before_level"] = composed.level_before;
@@ -158,6 +160,8 @@ std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
     data["Item"] = ctx.items();
     return body(data);
 }
+
+std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const std::vector<ItemUid>& materials, Composed& composed);
 
 // ItemCompose(u64 base uid, vector<u64> material uids) -> ItemComposeRes   fid 02a5cd1d
 //   (also ItemComposeArray, the same request)
@@ -179,13 +183,18 @@ std::vector<u8> compose_response(Ctx& ctx, const Composed& composed) {
 // Answers: the player state, ComposeResult and Item.
 std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     const auto args = BaseAndMaterialsArgs::from(req);
-    const ItemUid base_uid = args.base_uid;
-    const auto& materials = args.material_uids;
     Composed composed;
+    if (std::vector<u8> refused = compose(ctx, "ItemCompose", args.base_uid, args.material_uids, composed); !refused.empty()) return refused;
+    return compose_response(ctx, composed);
+}
+
+// The compose itself (ItemCompose's rules above; also InheritAccessory's): the base grows, the
+// materials go, the FOL is paid, the counters count. A refusal's answer, or empty when composed.
+std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const std::vector<ItemUid>& materials, Composed& composed) {
     Item& base = composed.base;
     base = find_item(ctx, base_uid);
     if (!base.ok || (base.type != item_type::kWeapon && base.type != item_type::kAccessory) || materials.empty())
-        return refuse(ctx, "ItemCompose", "no base item or no materials", ErrorCode::kItemUnusable);
+        return refuse(ctx, method, "no base item or no materials", ErrorCode::kItemUnusable);
     const char* table = compose_table(base.type);
     u32 next = (u32)ctx.m.one(std::string("select next_level_boosted_point from ") + table + " where rarity = ?", {base.rarity});
     u32 fol_one = (u32)ctx.m.one(std::string("select use_fol_one from ") + table + " where rarity = ?", {base.rarity});
@@ -196,7 +205,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
         Item material = find_item(ctx, material_uid);
         // (d) locked or equipped items and the base itself can't be fed
         if (!material.ok || material.locked || material.equipped || material_uid == base_uid)
-            return refuse(ctx, "ItemCompose", "a material is locked, equipped or missing", ErrorCode::kLockedItem);
+            return refuse(ctx, method, "a material is locked, equipped or missing", ErrorCode::kLockedItem);
         // (a) a copy of the same item raises the limit break (master_item_limit_break_level_max);
         // (b) so does a limit-break item that fits the base, one raise each
         // (CItemStrengtheningPotal::GetAddLimitReleaseWeaponNum @01b899d8 /
@@ -207,7 +216,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
             // (b) the material list never offers one that doesn't fit (CItemStrengtheningList::
             // CreateWeaponList / CreateAccessoryList skip it); (d) refused, with kItemUnusable
             if (hammer == LimitBreakItem::kOtherBase)
-                return refuse(ctx, "ItemCompose", "a limit-break item that doesn't fit the base", ErrorCode::kItemUnusable);
+                return refuse(ctx, method, "a limit-break item that doesn't fit the base", ErrorCode::kItemUnusable);
             raises = hammer == LimitBreakItem::kFits;
         }
         if (raises && lb < lb_max) lb++;
@@ -216,7 +225,7 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     }
     // (a) use_fol_one per material; (d) at the base item's rarity
     composed.cost = (u64)fol_one * materials.size();
-    if (fol(ctx) < composed.cost) return refuse(ctx, "ItemCompose", "not enough FOL", ErrorCode::kFolShortGrowth);
+    if (fol(ctx) < composed.cost) return refuse(ctx, method, "not enough FOL", ErrorCode::kFolShortGrowth);
     // (a) weapon_compose_up_rate (percent, (d) the meaning) / weapon_compose_bonus_rate
     composed.big = (double)((*ctx.rng)() % 10000) < global_f(ctx, "weapon_compose_up_rate", 11.5) * 100.0;
     if (composed.big) gain = (u64)std::floor((double)gain * global_f(ctx, "weapon_compose_bonus_rate", 1.5));
@@ -243,11 +252,10 @@ std::vector<u8> item_compose(Ctx& ctx, const Request& req) {
     // master_item_limit_break_level_max's highest limit_break (5). The raises counted are the ones
     // applied above (lb - base.lb), so nothing is counted past the cap.
     if (lb > base.lb) count(ctx, base.type == item_type::kAccessory ? "accessory_limit_break" : "weapon_limit_break", (int64_t)(lb - base.lb));
-    std::vector<u8> response = compose_response(ctx, composed);
-    LOGI("server", "ItemCompose %llx: +%llu points%s, level %u -> %u, limit break %u -> %u, FOL -%llu", (unsigned long long)base_uid.v,
+    LOGI("server", "%s %llx: +%llu points%s, level %u -> %u, limit break %u -> %u, FOL -%llu", method, (unsigned long long)base_uid.v,
          (unsigned long long)gain, composed.big ? " (big success)" : "", composed.level_before, composed.level_after, base.lb, lb,
          (unsigned long long)composed.cost);
-    return response;
+    return {};
 }
 
 // ItemGradeUp(u64 base uid, vector<u64> material uids) -> ItemGradeUpRes   fid 8952aa02
@@ -546,69 +554,57 @@ struct InheritAccessoryArgs {
 // InheritAccessory(u64 base uid, u64 lost uid) -> InheritAccessoryRes               fid d9feb3e8
 // API: docs/api.md#inheritaccessory   Rules: docs/server-rules.md#accessory-inheritance
 //
-// ファクター継承: an inheritance accessory (＜INHERIT＞) takes in another accessory's factor; the
-// other one is used up.
+// ファクター継承: a strengthening (強化合成) of an inheritance accessory (＜INHERIT＞), which also
+// takes in its material's factor, once.
 //   (b) the strengthening screen sends it instead of ItemCompose when the base can inherit
 //       (CItemStrengtheningPotal::SetStrengtheningExec @01b89d08: CUIUtility::CheckInheriteType
 //       @01ed0bec is 1 when the base's master_item.max_inheritance_num isn't 0 and it has no
 //       inherited item yet, 2 once it has one); the base and the first material;
-//   (a) max_inheritance_num (21 accessories, all 2; b: the client tests it for non-zero only, so
-//       (d) one inheritance per accessory);
+//   (a) max_inheritance_num (21 accessories, all 2; b: the client tests it for non-zero only, and
+//       its dialog says 一度合成するとファクターを変更できません: one inheritance per accessory);
+//   (b) the material list greys out the other inheritance accessories (seen on screen), so the lost
+//       one is another, ordinary accessory;
+//   (b) the screen previews it as a compose (強化ポイント, 必要FOL) and its dialog says the factor is
+//       inherited 強化合成時に: the compose's rules apply (compose above: points, FOL, big success,
+//       limit break, `accessory_boost`);
 //   (b) the answer's InheritResultInfo {base_player_item_id, lost_master_item_id,
 //       lost_player_item_id, lost_item_limit_break_count} is applied by
 //       CApiNotify::OnInheritAccessoryRes (@014cb410): the base's InheritItemInfo
 //       {inherited_master_item_id, inherited_master_item_limit_break_count} (CItemInfo+0x248) takes
 //       the lost item's master id and limit break, the lost item leaves the list; ComposeResult's
 //       after_level / after_boosted_point / after_limit_break_count are copied to the base;
-//   (d) the lost item is an owned accessory other than the base, not locked or equipped (as
-//       ItemCompose's materials); no FOL, and the base's level, points and limit break don't
-//       change (ComposeResult before = after);
 //   counted as `accessory_inherit` (achievement type 58, アクセサリーにファクターを N回継承させる);
-//   (d) Refusals: kItemUnusable (10208) for a base that can't inherit or a lost item that isn't an
-//       owned accessory, kLockedItem (10204) for a locked or equipped one.
+//   (d) Refusals: kItemUnusable (10208) for a base that can't inherit or a lost item that isn't
+//       another owned ordinary accessory; the compose's for the rest (10204 locked or equipped,
+//       11001 FOL).
 // Answers: the player state, InheritResultInfo, ComposeResult and Item (the base's InheritItemInfo).
 std::vector<u8> inherit_accessory(Ctx& ctx, const Request& req) {
     const auto args = InheritAccessoryArgs::from(req);
     Item base = find_item(ctx, args.base_uid), lost = find_item(ctx, args.lost_uid);
     if (!base.ok || base.type != item_type::kAccessory) return refuse(ctx, "InheritAccessory", "no base accessory", ErrorCode::kItemUnusable);
+    auto can_inherit = [&](const Item& item) {
+        return ctx.m.one("select ifnull(max_inheritance_num, 0) from master_item where id = ?", {item.id}) != 0;
+    };
     // (a)+(b) the base can inherit: max_inheritance_num, and nothing inherited yet
-    if (ctx.m.one("select ifnull(max_inheritance_num, 0) from master_item where id = ?", {base.id}) == 0 ||
-        ctx.st.one("select inherited_master_item_id is not null from items where uid = ?", {args.base_uid}) != 0)
+    if (!can_inherit(base) || ctx.st.one("select inherited_master_item_id is not null from items where uid = ?", {args.base_uid}) != 0)
         return refuse(ctx, "InheritAccessory", "the base can't inherit (max_inheritance_num 0, or inherited already)", ErrorCode::kItemUnusable);
-    if (!lost.ok || lost.type != item_type::kAccessory || args.lost_uid == args.base_uid)
-        return refuse(ctx, "InheritAccessory", "the lost item isn't another owned accessory", ErrorCode::kItemUnusable);
-    if (lost.locked || lost.equipped) return refuse(ctx, "InheritAccessory", "the lost accessory is locked or equipped", ErrorCode::kLockedItem);
+    // (b) another accessory, not an inheritance one (greyed out in the material list)
+    if (!lost.ok || lost.type != item_type::kAccessory || args.lost_uid == args.base_uid || can_inherit(lost))
+        return refuse(ctx, "InheritAccessory", "the lost item isn't another ordinary owned accessory", ErrorCode::kItemUnusable);
+    Composed composed;
+    if (std::vector<u8> refused = compose(ctx, "InheritAccessory", args.base_uid, {args.lost_uid}, composed); !refused.empty()) return refused;
     ctx.st.q("update items set inherited_master_item_id = ?, inherited_limit_break = ? where uid = ?", {lost.id, lost.lb, args.base_uid});
-    ctx.st.q("delete from items where uid = ?", {args.lost_uid});
     count(ctx, "accessory_inherit");
-    Value data = ctx.base_data();
     Value inherited = Value::object();
     inherited["base_player_item_id"] = args.base_uid.v;
     inherited["lost_master_item_id"] = lost.id.v;
     inherited["lost_player_item_id"] = args.lost_uid.v;
     inherited["lost_item_limit_break_count"] = lost.lb;
-    data["InheritResultInfo"] = inherited;
-    Value result = Value::object();
-    const u32 level = item_level_of(ctx, base);
-    result["id"] = args.base_uid.v;
-    result["before_level"] = level;
-    result["before_boosted_point"] = base.points;
-    result["before_limit_break_count"] = base.lb;
-    result["after_level"] = level;
-    result["after_boosted_point"] = base.points;
-    result["after_limit_break_count"] = base.lb;
-    result["is_big_success"] = false;
-    result["use_fol"] = 0u;
-    Value lost_ids = Value::array();
-    lost_ids.push(args.lost_uid.v);
-    result["lost_item_ids"] = lost_ids;
-    result["UpdateGearList"] = Value::array();
-    data["ComposeResult"] = result;
-    data["Item"] = ctx.items();
+    std::vector<u8> answer = compose_response(ctx, composed, &inherited);
     // read by port/scripts/equipment_session.sh
     LOGI("server", "InheritAccessory %llx: inherited item %u (limit break %u) from %llx", (unsigned long long)args.base_uid.v, lost.id.v, lost.lb,
          (unsigned long long)args.lost_uid.v);
-    return body(data);
+    return answer;
 }
 
 // UpdateItemStock() -> UpdateItemStockRes                                  fid cf39cc5c

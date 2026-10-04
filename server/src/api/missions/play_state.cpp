@@ -182,7 +182,7 @@ std::vector<u8> mission_continue(ext::Ctx& ctx, const Request& req) {
     Value data = base_data(ctx);
     data["is_mission_continue"] = false;
     if (!continue_battle) {
-        // read by port/scripts/missions_session.sh
+        // read by port/scripts/simulator_continue_session.sh
         LOGI("server", "MissionContinue: declined (mission %u)", mission);
         return body(data);
     }
@@ -194,7 +194,7 @@ std::vector<u8> mission_continue(ext::Ctx& ctx, const Request& req) {
     if (!wallet::spend_coins(ctx.st.h, price)) return ext::refuse(ctx, "MissionContinue", "coins short", ErrorCode::kCoinsShort);
     data = base_data(ctx);  // the wallet after the payment
     data["is_mission_continue"] = true;
-    // read by port/scripts/missions_session.sh
+    // read by port/scripts/simulator_continue_session.sh
     LOGI("server", "MissionContinue: mission %u continued for %u coins", mission, price);
     return body(data);
 }

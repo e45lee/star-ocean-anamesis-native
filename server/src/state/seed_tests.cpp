@@ -99,6 +99,11 @@ NATIVE_TEST("server/seed-source-rule") {
     t.expect_eq(players(test_seed), 1LL, "an explicit seed save: seeded");
     c.new_player = true;
     t.expect_eq(players(""), 0LL, "--new-player with --seed: no player");
+    c.new_player = false;
+    c.seed = settings;
+    t.expect_eq(seed_source(), std::string(), "a --seed FILE that holds no player: ignored");
+    t.expect_eq(players(""), 0LL, "a --seed FILE that holds no player: a fresh account");
+    t.expect_eq(seed_source(settings), std::string(), "an explicit save that holds no player: ignored");
     c = saved;
     unlink(settings.c_str());
 }

@@ -117,6 +117,14 @@ void add_api(std::initializer_list<const char*> methods, Handler h, const char* 
 // modules' tables weren't created before a core API; every table now exists once the state is
 // open.)
 void add_core_api(std::initializer_list<const char*> methods, Handler h, const char* file = __builtin_FILE(), int line = __builtin_LINE());
+// `ext::add_stub({"Method", ...}, data)`: a stub, the one shape every stub has
+// (docs/unimplemented-apis.md "Stub logging"; port code, not guest behaviour): a registered handler
+// (so --list-apis names its file) that changes nothing and answers success, {Time} plus what `data`
+// adds (e.g. an empty list the client reads; nullptr: nothing). Every call logs one warning:
+// `stub: <Method> (fid <fid>) called; answered success, nothing stored (docs/unimplemented-apis.md)`
+// and the request's arguments in short form.
+using StubData = std::function<void(Value& data)>;
+void add_stub(std::initializer_list<const char*> methods, StubData data = nullptr, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 using PlayerLoadFn = std::function<void(Ctx&, const Request&, Value& data)>;
 void add_player_load(PlayerLoadFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 // `ext::add_response_hook(fn)`: sees (and may add keys to) the data of every response the server

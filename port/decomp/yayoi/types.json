@@ -1,0 +1,6 @@
+{
+ "subsystem": "yayoi",
+ "generated_by": "tools/subsystem.py export-types yayoi",
+ "header": "port/src/native/yayoi/yayoi_layout.h",
+ "structs": []
+}

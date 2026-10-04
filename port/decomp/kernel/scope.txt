@@ -1,0 +1,5 @@
+# port/decomp/kernel/scope.txt: the guest functions the `kernel` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?Aska::(SimpleMessageDispatcher|MessageDispatcher\w*|TaskManager|Task|TaskThread\w*|TaskList\w*|NotifierThread|AskaMainThread|LifeCycleManager|VSync|WaitVSync|WaitDraw|PerformanceCounter|Global|INotify|Functor\w*|AndroidUtil)::
+^(\S+ )?Framework::(CFiberKernel|CFiber\w*|CApplication|CTimeElement|ResponderChain|CMessageManager)::

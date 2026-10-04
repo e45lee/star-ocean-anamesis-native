@@ -1,0 +1,6 @@
+{
+ "subsystem": "resource",
+ "generated_by": "tools/subsystem.py export-types resource",
+ "header": "port/src/native/resource/resource_layout.h",
+ "structs": []
+}

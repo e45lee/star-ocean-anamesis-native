@@ -1,0 +1,6 @@
+{
+ "subsystem": "kernel",
+ "generated_by": "tools/subsystem.py export-types kernel",
+ "header": "port/src/native/kernel/kernel_layout.h",
+ "structs": []
+}

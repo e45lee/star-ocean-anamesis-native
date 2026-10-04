@@ -1,0 +1,6 @@
+{
+ "subsystem": "params",
+ "generated_by": "tools/subsystem.py export-types params",
+ "header": "port/src/native/params/params_layout.h",
+ "structs": []
+}

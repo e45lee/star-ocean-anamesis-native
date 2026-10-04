@@ -1,0 +1,6 @@
+{
+ "subsystem": "input",
+ "generated_by": "tools/subsystem.py export-types input",
+ "header": "port/src/native/input/input_layout.h",
+ "structs": []
+}

@@ -90,6 +90,8 @@ The C++ parts share one CMake build, rooted at `CMakeLists.txt`:
 
 | Part | What | Output |
 |---|---|---|
+| `common/` | small libraries every program shares: `soa_env` (`soa/env.h`, the environment rule; `soa/paths.h`, the default data dirs; `soa/install.h`, the install-dir lookup), `soa_compat` (sockets, the Windows POSIX shims in `common/win32/`), `soa_zip` (ZIP on minizip-ng), `soa_gamefiles` (`file_tree.h`, `game_files.h`: the game files, a download folder or zip), `soa_codec` (Base64, the SharedPreferences XML, PNG) | `build/common/libsoa_*.a`, the tests `build/common/soa_{env,zip,gamefiles,codec}_tests` |
+| `webview/` | the web view's HTML renderer on litehtml (the notice board; `docs/webview.md`) | `build/webview/libsoawebview.a`, `build/webview/soa-webview-render`, `build/webview/soawebview_tests` |
 | `runtime/` | the JIT host runtime: ELF loader, dynarmic CPU, Android HLE, JVM, host loop (`runtime/README.md`) | `build/runtime/soaruntime_tests` |
 | `server/` | the local game server library and its standalone binary (`server/README.md`) | `build/server/soa-server` |
 | `port/` | the desktop port of the 3.7.0 client (`port/README.md`) | `build/port/soa` |
@@ -292,8 +294,10 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   of the vcpkg ports linked, dynarmic and its x86-64 externals, IJG libjpeg 9, zstd 1.3.4),
   `BUILD-INFO.txt`, and only data we made: `data/gacha_pools.sqlite3` **with the game's text
   removed** (`gacha.name`, `rule.text`; the server takes the titles from the master,
-  `docs/server-rules.md#gacha-pools`), `data/saves/seed/Game.xml` (the default seed player, sanitized:
-  `data/saves/README.md`) and `standin-assets/` (our images).
+  `docs/server-rules.md#gacha-pools`) and `standin-assets/` (our images). **No seed save** (the
+  user, 2026-10-04: `data/saves/seed/Game.xml` is a real player's): a package's first run starts a
+  new account through the game's own tutorial, unless `--seed FILE` names a save
+  (`docs/server-rules.md#seed`).
 - **What never goes in:** any game file: the APKs, the download, the master DBs
   (`data/basmaster-*.sqlite3` are decryptions of the game's own), `version.bin`, `libSOA.so`,
   `port/fakeapi/responses`, decompiles. Before a zip is written every file must be on the allow-list
@@ -315,8 +319,12 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 - **Checking a package:** unzip it outside the checkout, put the game files as its README.txt says,
   and run a session on it: `SOA_PACKAGE_DIR=<the unpacked folder>` makes `control/run.py` run the
   package's programs from their folder, with no `--master` / `--download-dir` / `--seed` (e.g.
-  `SOA_PACKAGE_DIR=$P control/run.py gacha $P/soa OUT TMP`; for the emulator `--target emu` with
-  `SOA_EMU=$P/soa-emu`; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your
+  `SOA_PACKAGE_DIR=$P port/scripts/tutorial_session.sh $P/soa OUT TMP`: the first run, a new
+  account (no `--new-player`: the package has no seed save) through the tutorial to home; for the
+  emulator `SOA_PACKAGE_DIR=$P emulator/scripts/emulator_session.sh --new-player $P/soa-emu
+  $P/soa-server OUT`, which then passes the server no `--new-player` either. A session that needs the
+  seeded player (e.g. `gacha`) gets a player only from a save: the port's client save
+  (`--game-xml`, holding a player) or `--seed`; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your
   stage). `DOWNLOAD_B=work/SOA-3.7.0-canonical-data.zip tools/server_cdn_check.sh BIN BIN` proves the
   CDN serves the same bytes from the zip as from the folder.
 
@@ -325,7 +333,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 - **Ghidra** (12.1.2, snap at `/snap/ghidra/current/ghidra`): `tools/decomp.sh` / `tools/decomp_at.sh` decompile from the quick projects (`ghidra/quick-v370`, local, not in git; re-imported by `tools/common.sh` when missing) through a pool of working copies in `work/ghidra-quick-v370*`. Ghidra refuses project paths with a component starting with `.`.
 - **PyGhidra**, in `.venv`, from Ghidra's own wheels (`requirements.txt` says how): `pyghidra.start()` with `GHIDRA_INSTALL_DIR` set.
 - **Ghidra over MCP for Claude Code**: `scripts/ghidra-mcp.sh` serves the 3.7.0 project with [pyghidra-mcp](https://github.com/clearbluejar/pyghidra-mcp) (through `uvx`), headless, on its own working copy `work/ghidra-mcp-v370` (so its analysis, renames and types never touch the committed project). `.mcp.json` registers it as the project's `ghidra-v370` server; Claude Code asks once to approve it. Before first use run `scripts/ghidra-mcp.sh --analyze` once (Ghidra's full auto-analysis plus pyghidra-mcp's indexes; the tools refuse until it's done). One server at a time can have the copy open.
-- **jadx** (the APK's Java), **lief**, **keystone**, **capstone**, **unicorn**, and the system tools in "Setup" (gdb-multiarch, clang tools, strace, …).
+- **jadx** (the APK's Java), **lief**, **keystone**, **capstone**, **unicorn**, and system tools from apt: gdb-multiarch (the guest's GDB stub: `runtime/README.md` "Debugging the guest with gdb"), clang-format 18 (`tools/format_server.sh`), clang++ (`tools/subsystem.py check` compiles the layout headers with it), strace, ltrace, valgrind, apktool (`sudo apt install gdb-multiarch clang-format-18 clang strace ltrace valgrind apktool`).
 
 ## Save editor and event scripts
 

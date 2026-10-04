@@ -54,8 +54,9 @@ import time
 # pool's size"): 16 game clients at once (9 in the pool + 7 other agents') kept every client near
 # 60 fps (p10 55) and every run passed; at 20 the load reached the core count, MemAvailable fell
 # to 10 GB, booting clients dropped to 20-28 fps and a run timed out. 12 leaves room for the
-# clients and builds outside the pool.
-DEFAULT_SLOTS = 12
+# clients and builds outside the pool. Raised to 15 (the user, 2026-10-04): the machine holds about
+# 16 clients; SOA_SLOT_MIN_FREE_GB still holds runs back when memory runs low.
+DEFAULT_SLOTS = 15
 
 
 # What SOA_SLOT_SOFTWARE_GL=1 puts in the clients' environment (docs/testing-software-gl.md). The

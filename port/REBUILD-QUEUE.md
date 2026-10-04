@@ -126,6 +126,18 @@ Hottest unassigned families: (free functions) (1019), ~(before first export) (44
 
 ## The queue
 
+**Rule (the user, 2026-10-04): don't port code the local server can't run.** A function, class or
+subsystem is ported only when the local server (`server/`) serves the feature that executes it, so the
+code can be exercised end to end, differential-tested against the guest and live-checked through a real
+flow. Code only reachable through features the server doesn't implement stays guest code until it does —
+namely **multiplayer** (co-op battles, the bridge's live sessions, rooms/matching, friends and other real
+players: [`server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md), the code plan
+`server/PLAN-multiplayer-code.md`), and likewise the stubbed online-only features
+([`docs/unimplemented-apis.md`](../docs/unimplemented-apis.md) 2.2: social, paid-shop flows until task U
+lands). When a wave's candidate list includes such functions (coverage shows them unexecuted, or only
+reached from those screens), leave them out and note them in the subsystem's README as "waits for
+<feature>".
+
 Among subsystems whose types are ready, hottest first (port/PLAN.md task 6):
 
 1. **From day one, independent tracks** (no dependency on the waves): the libraries, `lib_sqlite` first (5.1%:

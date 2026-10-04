@@ -181,6 +181,9 @@ soa{{EXE}}
               --data DIR           where your save and the server's state go (default below)
               --fullscreen, --size WxH, --new-player, --seed FILE, --enable-events, ...
               soa{{EXE}} --help lists them all.
+  first run:  a new account: the game's own tutorial and starter characters. To continue from
+              your own 3.7.0 save instead, give it once on the first run: --seed Game.xml (the
+              phone's shared_prefs/Game.xml).
   writes to:  {{IF windows}}%LOCALAPPDATA%\soa\port-370\{{ELSE}}~/.local/share/soa-linux-370/{{END}}  (unless --data DIR):
               the phone's data and save, server.sqlite3 (your player), libSOA-3.7.0.so (taken from
               the APK on the first run), master/ (the master DB, 3.), cdn/ (the local CDN's cache)
@@ -190,6 +193,8 @@ soa{{EXE}}
 {{ELSE}}
   ./run-emulator.sh [options]
 {{END}}
+  First run: a new account (the game's tutorial and starter characters), unless --seed FILE
+  (your own 3.7.0 or offline Game.xml) is given on the first run.
   Options: --new-player (start a fresh account), --seed FILE (start from a 3.7.0 or offline
   Game.xml), --enable-events, --port N, --home DIR; others go to soa-emu (e.g. --fullscreen).
   run-emulator{{IF windows}}.cmd{{ELSE}}.sh{{END}} --help lists them.
@@ -272,9 +277,6 @@ An APK of another version is skipped with "another version of the game (its libS
 {{END}}
   data/gacha_pools.sqlite3    our reconstruction of the gacha draw pools (ids and rates; the gacha
                               titles come from your master at run time)
-  data/saves/seed/Game.xml    the server's default starting player (a 3.7.0 end-of-service save,
-                              its player id replaced): the state of a new local server unless
-                              --new-player or --seed FILE
   standin-assets/             made-up stand-in images (marked "STAND-IN") for banners the online
                               server had already deleted
   LICENSE.txt                 this software's license (GNU GPL v3)

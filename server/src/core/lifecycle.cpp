@@ -4,6 +4,7 @@
 // server/PLAN-readability.md each host wired the story campaign and EndMissionTalk itself.
 #include <vector>
 
+#include "core/log.h"
 #include "soaserver/api_campaign.h"
 #include "soaserver/events.h"
 #include "soaserver/server.h"
@@ -55,7 +56,13 @@ Reply answer(const Request& r, const Fallback& fallback) {
     campaign::on_request(r);
     if (!handle(r.fid, reply.body)) {
         // no handler: the host's answer, with the campaign's data (as soa adds it to the file it
-        // falls back to)
+        // falls back to). Logged in both hosts (docs/unimplemented-apis.md "Stub logging");
+        // GetWorldMapInfoList is the campaign's (its data is the answer), not a missing handler.
+        if (!r.method.empty() && r.method != "GetWorldMapInfoList")
+            LOGW("server",
+                 "no handler: %s (fid %08x); answered with the host's fallback, nothing stored "
+                 "(docs/unimplemented-apis.md)",
+                 r.method.c_str(), r.fid);
         reply.body = fallback ? fallback() : std::vector<u8>();
         campaign_reply(r, reply.body);
         return reply;

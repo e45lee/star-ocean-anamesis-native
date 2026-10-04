@@ -16,23 +16,49 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **106**. Of the **93 without a handler**:
+The wire knows **199 methods**; the server has handlers for **107**. Of the **92 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
 | **Empty reply** | 22 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
 | **Canned reply** | 2 | The named file exists in `port/fakeapi/responses/`, but it is a fixed reply made for another method by `tools/fakeapi_responses.py`: `TrainingMissionStart` gets `mission_start.msgp` (a normal mission's start), `CbtCertification` gets `update_home.msgp`. Nothing is stored. |
-| **No reply** | 32 | The offline build only stores a status and never sends a reply. **A screen that waits for the reply hangs.** |
+| **No reply** | 31 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 37 | Not in the 3.7.0 client's API table (debug APIs, removed features). Only a modified client or a test can send them. |
 
 Over the network (`soa-server`, `soa-emu`, `soa --server HOST`), every unhandled method gets an
 **empty success reply** (only `data.Time`), whatever its kind: the client carries on with empty data
 (an empty list, an unchanged screen) and nothing is stored.
 
-**Verified so far:** only `Home3DAnd2DSwitching` (no reply) is confirmed to hang a screen: with a
-2D-only character on the home, the home never finishes loading and shows no character
-(found by the NieR home-screen investigation; `docs/home3d.md` arrives with it). It is being fixed (agent nier-home, schema v12). For every other method
-the effect on its screen has **not been checked yet**; part 3 step 1 checks them.
+**Checked (part 3 step 1, 2026-10-04): no screen hangs; they show empty or wrong data, and every
+change is lost.** Why nothing hangs: the screens send these calls through
+`CErrorHandlerWrap::Auto(fid, callback)`, whose `Progress` (@01584900) calls the callback as soon as
+`IsRequesting(fid)` is false, with `IsSuccess(fid)`. A status-only method queues nothing, so the
+callback runs on the next frame with success (FakeApiCaller's `IsSuccess` is the constant 1) and no
+reply data; over the wire the client gets `{data: {Time}}` and does the same. The one exception was
+`Home3DAnd2DSwitching`, whose screen (`CHome::Progress`) waits for its own flag set by the reply
+(fixed: schema v12, `docs/home3d.md`). Sessions: in-process (I) and `soa --server` (S), the seeded
+player, screens opened by hand through `--control`.
+
+| Screen (method) | Seen | What happens |
+|---|---|---|
+| アイテム > 装備倉庫にしまう / 取り出す / 売却 (`GetStorageInfo`) | I, S | opens; the storage is empty (倉庫装備所持 0/500) |
+| アイテム > 一時保管庫から取り出す (`GetOneTimeStorageInfo`) | I | opens; empty |
+| `DepositItem`, `WithdrawItemFromStorage`, `SellItemsFromStorage`, `Lock`/`UnlockStorageItem` | decompile | the screen takes the call as done; nothing moves on the server, so the item is back after a reload (the seeded player has no loose weapons to move; the storage session plants some) |
+| 設定 > その他設定 / バトル設定 (`GetConfig`, `UpdateConfig`) | I, S | opens with the master defaults; a toggled option (一時保管庫設定) is **lost at once**: reopened, it is off again (S: `UpdateConfig(4025152546, "true", 4)` answered with `Time` only) |
+| 初期設定に戻す (`ResetConfig`) | decompile | same pattern |
+| キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters |
+| 惑星選択 > シナリオライブラリ (`GetScenarioLibraryInfoList`) | S | opens; メインストーリー / サブストーリー with no chapters |
+| キャラクター > バトルシミュレーター (`TrainingMissionStart`, canned `mission_start.msgp`) | I | **wrong data**: the battle starts with the canned reply's party and stages (other characters, STAGE 1/2), not the chosen party; シミュレーター終了 returns to the character menu (no `MissionLose`) |
+| 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player) |
+| `MissionContinue`, `MissionLose` (`CPauseMenu::ReqeustContinue` @01dad704 -> `Auto`) | decompile | not reproduced (losing needs a long battle); the continue would go ahead with no stones taken on the server |
+| Paid currency (`CoinList`, `CoinDeposit*`, `Get`/`UpdateBirthYearMonth`) | I, S | no entry point found on the shop or gacha screens with 300000 stones (step 7 finds the opener) |
+| `ChangeMascot`, `ChangeRole`, `InheritAccessory`, `EquipAuto`, `UpdateItemStock`, the `ClearNew*`, `ReadExpirationInfo`, `SendGuideInformation`, `SetStampSlot` | callers (`CAdjutantSelect`, `CRoleSelect`, `CItemStrengtheningPotal`, `CTermInfoUI`, `CGuideInformation`, `CStampSelect`) | the same `Auto` pattern: no hang, the change isn't stored |
+
+Priority (play impact): storage and the overflow box (empty screens, lost moves), missions (the
+simulator's wrong battle, continues), settings (lost at once; one of them routes items to the
+overflow box), equipment and mastery, home and decorations, badges, paid currency, the stubs.
+In-process, the status-only methods logged nothing at all; they now log `no handler: <Method>`
+(below, "Stub logging").
 
 ### Where the fallback replies come from: `port/fakeapi/`
 
@@ -72,8 +98,7 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | **Equipment** | [EquipAuto](api.md#equipauto) | {} | auto-equip |
 | | [InheritAccessory](api.md#inheritaccessory) | ★ | |
 | | [UpdateItemStock](api.md#updateitemstock) | {} | |
-| **Home and decorations** | [Home3DAnd2DSwitching](api.md#home3dand2dswitching) | ★ (**confirmed hang**) | being fixed |
-| | [ChangeMascot](api.md#changemascot) | ★ | |
+| **Home and decorations** | [ChangeMascot](api.md#changemascot) | ★ | |
 | | [ChangeRole](api.md#changerole) | ★ | |
 | | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
 | | [FavoriteDecoObject](api.md#favoritedecoobject) / [UnFavoriteDecoObject](api.md#unfavoritedecoobject) | {} | |
@@ -125,7 +150,7 @@ Server-first ([`server-rules.md`](server-rules.md)): every behaviour goes into t
 its rule labelled by evidence; a client change only where the server can't do it, logged in
 [`client-changes.md`](client-changes.md). One feature group per step, each landing on its own.
 
-### Step 1: find what actually breaks
+### Step 1: find what actually breaks (done 2026-10-04: section 1, "Checked")
 
 For each method in 2.1: open the screen that calls it in a session
 (`control/run.py`, in-process and with `--server HOST`), and record whether it **hangs**, shows

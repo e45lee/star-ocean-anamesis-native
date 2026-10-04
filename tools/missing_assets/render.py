@@ -68,8 +68,8 @@ def merge_bg(refs: list[AssetRef]) -> list[tuple[str, AssetRef, list[str]]]:
     for disp, r, paths in rows:
         if len(paths) > 1:
             disp = disp + "." + "/.".join(p.rsplit(".", 1)[1] for p in paths)
-        else:
-            disp = rules.display_path(disp)
+        else:  # a lone file of a map keeps its extension
+            disp = rules.display_path(paths[0])
         out.append((disp, r, paths))
     return out
 

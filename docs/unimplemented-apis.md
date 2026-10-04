@@ -16,14 +16,14 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **107**. Of the **92 without a handler**:
+The wire knows **199 methods**; the server has handlers for **142** (35 of them stubs: section 2.5). Of the **57 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
-| **Empty reply** | 22 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
+| **Empty reply** | 14 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
 | **Canned reply** | 2 | The named file exists in `port/fakeapi/responses/`, but it is a fixed reply made for another method by `tools/fakeapi_responses.py`: `TrainingMissionStart` gets `mission_start.msgp` (a normal mission's start), `CbtCertification` gets `update_home.msgp`. Nothing is stored. |
 | **No reply** | 31 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
-| **Not callable** | 37 | Not in the 3.7.0 client's API table (debug APIs, removed features). Only a modified client or a test can send them. |
+| **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
 
 Over the network (`soa-server`, `soa-emu`, `soa --server HOST`), every unhandled method gets an
 **empty success reply** (only `data.Time`), whatever its kind: the client carries on with empty data
@@ -115,12 +115,10 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 
 ### 2.2 Online-only features
 
-Not needed for single-player play; a stub reply that keeps the screens working may be enough.
+Not needed for single-player play. The social calls are stubs now (2.5).
 
 | Feature | Methods | In-process |
 |---|---|---|
-| **Social** | [FollowAdd](api.md#followadd), [FollowRemove](api.md#followremove), [UpdateFollowMax](api.md#updatefollowmax), [BlacklistAdd](api.md#blacklistadd), [BlacklistRemove](api.md#blacklistremove) | {} |
-| | [NeighborList](api.md#neighborlist), [NeighborRegist](api.md#neighborregist), [LocationRegist](api.md#locationregist) | {} |
 | **Paid currency and shop** | [CoinList](api.md#coinlist), [CoinDepositCreate](api.md#coindepositcreate), [CoinDepositAndroidUpdate](api.md#coindepositandroidupdate), [CoinDepositIOSUpdate](api.md#coindepositiosupdate), [CoinDepositAmazonUpdate](api.md#coindepositamazonupdate), [DirectItemShopList](api.md#directitemshoplist) | ★ |
 
 ### 2.3 Answered another way
@@ -130,19 +128,37 @@ Not needed for single-player play; a stub reply that keeps the screens working m
   campaign's data (`server/src/core/lifecycle.cpp`, `server/src/api/campaign/`), and in-process by
   the port's own hooks (`port/src/native/api/fakeapi.cpp`). They work.
 
-### 2.4 Not callable by the 3.7.0 client (37)
+### 2.4 Not callable by the 3.7.0 client (10 without a handler)
 
-- **Debug APIs (27):** `DebugBarneyChance`, `DebugCharacterBoost`, `DebugCreatePlayer`,
+- **"Universe" features:** `AcquireUniverse`, `ExchangingUniverseCurrency`,
+  `GetUniverseBoardIdList`, `UniverseReset`.
+- **Others:** `EquipAutoParty`, `GetSubscriptionHistory`, `SetDeity`, `StartBridge`,
+  `UpdateRelationship`, and `EndMissionTalk` (answered, 2.3).
+- The 27 debug APIs are stubs now (2.5).
+
+### 2.5 Stubs (step 8, done 2026-10-04)
+
+Answered success with `{Time}`, nothing stored, every call logged `stub: <Method> ...`
+(`ext::add_stub`; [`server-rules.md#social-stubs`](server-rules.md#social-stubs)):
+
+- **Social (8):** [FollowAdd](api.md#followadd), [FollowRemove](api.md#followremove),
+  [UpdateFollowMax](api.md#updatefollowmax), [BlacklistAdd](api.md#blacklistadd),
+  [BlacklistRemove](api.md#blacklistremove), [NeighborList](api.md#neighborlist),
+  [NeighborRegist](api.md#neighborregist), [LocationRegist](api.md#locationregist)
+  (`server/src/api/social/social.cpp`; replaced by the multiplayer server's MC7,
+  `server/PLAN-multiplayer-code.md`).
+- **Debug (27):** `DebugBarneyChance`, `DebugCharacterBoost`, `DebugCreatePlayer`,
   `DebugDeepBonus`, `DebugDeepBonusRareMission`, `DebugDeepMissionDrop`, `DebugDeletePlayer`,
   `DebugFavorLoginBonus`, `DebugGacha`, `DebugGachaMutation`, `DebugGear`, `DebugGearDrop`,
   `DebugGetCharacter`, `DebugGetCoin`, `DebugGetFol`, `DebugGetItem`, `DebugGradeUpCharacter`,
   `DebugItemBoost`, `DebugLotDeity`, `DebugMissionDrop`, `DebugOpenMission`,
   `DebugSphere211LotAsset`, `DebugSphere211LotEnemyLevel`, `DebugSphere211LotFloorNum`,
-  `DebugSphere211LotMission`, `DebugSphere211TreasureBox`, `DebugTowerMax`.
-- **"Universe" features:** `AcquireUniverse`, `ExchangingUniverseCurrency`,
-  `GetUniverseBoardIdList`, `UniverseReset`.
-- **Others:** `EquipAutoParty`, `GetSubscriptionHistory`, `SetDeity`, `StartBridge`,
-  `UpdateRelationship`, and `EndMissionTalk` (answered, 2.3).
+  `DebugSphere211LotMission`, `DebugSphere211TreasureBox`, `DebugTowerMax`
+  (`server/src/api/debug/debug_stubs.cpp`; not callable by the 3.7.0 client).
+
+Server-runnable screens (the rebuild queue's rule, `port/REBUILD-QUEUE.md`: code the local server
+can't run isn't ported): the follow menu's add / remove / block buttons and the follow-slot
+extension now get an answer from the local server in both hosts (the lists stay empty).
 
 ## 3. Plan: implementing them (queued: task U in `port/PLAN.md`)
 
@@ -191,8 +207,8 @@ tables, rules section). New state goes through the state module's migrations
 6. **"New" badges:** the three `ClearNew*` (flags on the stored characters and items).
 7. **Paid currency (decided: allow):** `CoinList`, `DirectItemShopList` and the `CoinDeposit*`
    purchase flow complete without payment and credit what the product gives (see Decisions).
-8. **Stubs (decided):** social (2.2) and the debug APIs (2.4) answer success through explicit stub
-   handlers, each logged when called (see Decisions).
+8. **Stubs (decided; done 2026-10-04, section 2.5):** social (2.2) and the debug APIs (2.4) answer
+   success through explicit stub handlers, each logged when called (see Decisions).
 9. **Retire the canned responses** (the user asked, 2026-10-04; they are no longer needed): once
    steps 3–8 give every callable method a handler or stub, nothing reaches the file fallback. Remove
    `port/fakeapi/responses/` (10 files + `json/`), `tools/fakeapi_responses.py`,
@@ -238,6 +254,13 @@ evidence against one replaces it and records why.
   readable; a per-method count can be added if one turns out to be chatty).
 - Methods still without a handler or stub (until their step lands) log the same way, as
   `no handler: <Method>`, in both hosts (`soa-server` and in-process), instead of answering silently.
+- **Done (2026-10-04):** `ext::add_stub` (`server/src/core/stub.cpp`) logs
+  `stub: <Method> (fid <fid>) called; answered success, nothing stored (docs/unimplemented-apis.md); <args>`;
+  the library logs `no handler: <Method> (fid <fid>); answered with the host's fallback, nothing
+  stored` for a request no handler answers (`server/src/core/lifecycle.cpp`; GetWorldMapInfoList,
+  which the campaign answers, excepted), and in-process a status-only FakeApiCaller call logs
+  `no handler: <Method> (status only, not served in-process: ...)` (`port/src/native/api/fakeapi.cpp`;
+  nothing reaches the server for those).
 
 **Paid currency (assumptions, all (c) until checked against the client in step 2).**
 - `CoinList` lists the products from the master's coin/product table, as the store would; prices are
@@ -261,6 +284,9 @@ evidence against one replaces it and records why.
   server, so an "added" friend just doesn't appear — checked in step 1).
 - `NeighborList`: an empty list; `NeighborRegist` / `LocationRegist`: success, nothing stored (the
   location is never stored, which is also the privacy-safe choice).
+- **As implemented:** every social stub answers `{Time}` only, with no list key: an absent list is
+  the empty list the client had before (the wire answered `{Time}` and the in-process route `{}`, and
+  the screens carried on, section 1). Assumption (d), recorded in `server-rules.md#social-stubs`.
 - Helpers for missions keep coming from the existing rental/assist handling, which doesn't depend on
   follows.
 

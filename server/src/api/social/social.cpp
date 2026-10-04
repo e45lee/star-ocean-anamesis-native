@@ -44,6 +44,25 @@ std::vector<u8> search_player(ext::Ctx& ctx, const Request& req) {
 void register_social() {
     ext::add_api({"Blacklist", "GetRecentlyPlayedList"}, empty_social_list);
     ext::add_api({"SearchPlayer"}, search_player);
+    // FollowAdd(player id) / FollowRemove(player id) / BlacklistAdd(player id) /
+    // BlacklistRemove(player id) / UpdateFollowMax() / NeighborList(lat, lon) /
+    // NeighborRegist(lat, lon) / LocationRegist(lat, lon): stubs (ext::add_stub)
+    // API: docs/api.md#followadd, docs/api.md#followremove, docs/api.md#blacklistadd,
+    //      docs/api.md#blacklistremove, docs/api.md#updatefollowmax, docs/api.md#neighborlist,
+    //      docs/api.md#neighborregist, docs/api.md#locationregist
+    // Rules: docs/server-rules.md#social-stubs
+    //
+    // The social calls of a server without other players: the user's decision (2026-10-04,
+    // docs/unimplemented-apis.md "Decisions": stub, and defer real friends to the multiplayer
+    // server, server/PLAN-multiplayer-code.md MC7, which replaces these).
+    //   (d) Answered success with {Time} only, nothing stored: the follow and block lists stay
+    //       empty, follow_max and the wallet are unchanged (UpdateFollowMax spends nothing), no
+    //       location is kept (also the privacy-safe choice). {Time} is what the wire answered for
+    //       them before, and the in-process route an empty map; the client carried on with both
+    //       (docs/unimplemented-apis.md section 1).
+    // Answers: {Time}; each call logs "stub: <Method> ...".
+    ext::add_stub(
+        {"FollowAdd", "FollowRemove", "BlacklistAdd", "BlacklistRemove", "UpdateFollowMax", "NeighborList", "NeighborRegist", "LocationRegist"});
 }
 
 }  // namespace soa::server

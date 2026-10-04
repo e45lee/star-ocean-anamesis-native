@@ -1,0 +1,41 @@
+# soa-server replay corpus (server/tests/replay/README.md): stubs, hand-written (docs/unimplemented-apis.md part 3
+# step 8): Login, every stub once (the social calls with arguments: a player id, a location as f32 bits;
+# the Debug* APIs without), then GetPlayer: each answers {Time}, logs 'stub: ...', and the state is unchanged.
+# tz: America/Toronto
+req 1 1790841485 Login a01c67ef - - - -
+req 2 1790841490 BlacklistAdd 3ba507e7 7 - - -
+req 3 1790841495 BlacklistRemove cde8ce84 7 - - -
+req 4 1790841500 DebugBarneyChance bd4c143a - - - -
+req 5 1790841505 DebugCharacterBoost 9e6b12d6 - - - -
+req 6 1790841510 DebugCreatePlayer 1145eeb1 - - - -
+req 7 1790841515 DebugDeepBonus 0a9bbfc6 - - - -
+req 8 1790841520 DebugDeepBonusRareMission a523e5c7 - - - -
+req 9 1790841525 DebugDeepMissionDrop 82c3b9e0 - - - -
+req 10 1790841530 DebugDeletePlayer f3274abd - - - -
+req 11 1790841535 DebugFavorLoginBonus 4ff23fbb - - - -
+req 12 1790841540 DebugGacha e774b925 - - - -
+req 13 1790841545 DebugGachaMutation b5d548e1 - - - -
+req 14 1790841550 DebugGear 45ebe6cf - - - -
+req 15 1790841555 DebugGearDrop ecf973a6 - - - -
+req 16 1790841560 DebugGetCharacter c49021d4 - - - -
+req 17 1790841565 DebugGetCoin a6730b41 - - - -
+req 18 1790841570 DebugGetFol d236524d - - - -
+req 19 1790841575 DebugGetItem a74f38cf - - - -
+req 20 1790841580 DebugGradeUpCharacter 6da21fe9 - - - -
+req 21 1790841585 DebugItemBoost 14e81e78 - - - -
+req 22 1790841590 DebugLotDeity cfcf2ca6 - - - -
+req 23 1790841595 DebugMissionDrop f26ec3f0 - - - -
+req 24 1790841600 DebugOpenMission 717cc46f - - - -
+req 25 1790841605 DebugSphere211LotAsset c924a6f2 - - - -
+req 26 1790841610 DebugSphere211LotEnemyLevel be9c22dc - - - -
+req 27 1790841615 DebugSphere211LotFloorNum 20059792 - - - -
+req 28 1790841620 DebugSphere211LotMission 4af4eaf3 - - - -
+req 29 1790841625 DebugSphere211TreasureBox dacb9b66 - - - -
+req 30 1790841630 DebugTowerMax 22e8e9d7 - - - -
+req 31 1790841635 FollowAdd 2559b5a1 7 - - -
+req 32 1790841640 FollowRemove 408f02f6 7 - - -
+req 33 1790841645 LocationRegist 49898ba4 1110704128,1124073472 - - -
+req 34 1790841650 NeighborList 451d30bf 1110704128,1124073472 - - -
+req 35 1790841655 NeighborRegist 9a57cfc9 1110704128,1124073472 - - -
+req 36 1790841660 UpdateFollowMax 7c2b82bf - - - -
+req 37 1790841665 GetPlayer 9a056905 - - - -

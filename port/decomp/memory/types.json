@@ -64,7 +64,7 @@
     },
     {
      "offset": 48,
-     "name": "m_flag30",
+     "name": "m_high",
      "type": {
       "kind": "int",
       "size": 1,
@@ -98,11 +98,10 @@
     },
     {
      "offset": 56,
-     "name": "m_extra",
+     "name": "m_notify",
      "type": {
-      "kind": "int",
-      "size": 8,
-      "signed": false
+      "kind": "ptr",
+      "to": null
      },
      "size": 8
     }
@@ -758,6 +757,85 @@
      "name": "VirtualGetAllocatedManager"
     }
    ]
+  },
+  {
+   "name": "BadAllocateRequest",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_manager",
+     "type": {
+      "kind": "ptr",
+      "to": "MemoryManager"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_align",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_zero18",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_retries",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "m_result",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 48,
+   "align": 8
   },
   {
    "name": "MemoryManagerHelper",
@@ -3525,6 +3603,178 @@
      "ghidra": "0x2048238",
      "symbol": "_ZNK4Aska19MemoryHandleManager18VirtualGetHeapSizeEv",
      "name": "VirtualGetHeapSize"
+    }
+   ]
+  },
+  {
+   "name": "MappedMemoryManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_cs",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 48,
+     "name": "m_auidElemPool",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_pointers",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TCategorizeHash<MappedMemoryPointer>",
+      "size": 160
+     },
+     "size": 160
+    },
+    {
+     "offset": 216,
+     "name": "m_relations",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THash<MappedMemoryRelation>",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 360,
+     "name": "m_locations",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TCategorizeHash<MappedMemoryLocation>",
+      "size": 160
+     },
+     "size": 160
+    },
+    {
+     "offset": 520,
+     "name": "m_handlers",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TCategorizeHash<MappedMemoryPointer>",
+      "size": 160
+     },
+     "size": 160
+    },
+    {
+     "offset": 680,
+     "name": "m_identifiers",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TCategorizeHash<MappedMemoryIdentifier>",
+      "size": 160
+     },
+     "size": 160
+    },
+    {
+     "offset": 840,
+     "name": "m_auids",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::THash<AUIDNode>",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 984,
+     "name": "m_addresses",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::containers::TAddressManager<soa::native::containers::AddressNode>",
+      "size": 144
+     },
+     "size": 144
+    }
+   ],
+   "size": 1128,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x202a83c",
+     "symbol": "_ZN4Aska19MappedMemoryManagerC1Ejjjjjjjj",
+     "name": "MappedMemoryManager"
+    },
+    {
+     "ghidra": "0x202af08",
+     "symbol": "_ZN4Aska19MappedMemoryManagerD1Ev",
+     "name": "~MappedMemoryManager"
+    },
+    {
+     "ghidra": "0x202b184",
+     "symbol": "_ZN4Aska19MappedMemoryManagerD0Ev",
+     "name": "~MappedMemoryManager"
+    },
+    {
+     "ghidra": "0x202b1ac",
+     "symbol": "_ZN4Aska19MappedMemoryManager15RemoveHandlerExEPKNS_15IMappingHandlerE",
+     "name": "RemoveHandlerEx"
+    },
+    {
+     "ghidra": "0x202b3bc",
+     "symbol": "_ZN4Aska19MappedMemoryManager16ShouldBeMappedExEPKNS_3AFF8AskaFileE",
+     "name": "ShouldBeMappedEx"
+    },
+    {
+     "ghidra": "0x202b5c0",
+     "symbol": "_ZN4Aska19MappedMemoryManager17RegisterMappingExEPvPNS_3AFF8AskaFileEPPKv",
+     "name": "RegisterMappingEx"
+    },
+    {
+     "ghidra": "0x202b614",
+     "symbol": "_ZN4Aska19MappedMemoryManager15AttachMappingExEPvPNS_3AFF8AskaFileEPPKv",
+     "name": "AttachMappingEx"
+    },
+    {
+     "ghidra": "0x202c8c4",
+     "symbol": "_ZN4Aska19MappedMemoryManager15DetachMappingExEPvPKNS_4AUIDEb",
+     "name": "DetachMappingEx"
+    },
+    {
+     "ghidra": "0x202cfc4",
+     "symbol": "_ZN4Aska19MappedMemoryManager14QueryMappingExEPKNS_15IMappingHandlerEPKNS_4AUIDEPmPNS_12MappedTargetE",
+     "name": "QueryMappingEx"
+    },
+    {
+     "ghidra": "0x202d530",
+     "symbol": "_ZN4Aska19MappedMemoryManager14FlushMappingExEv",
+     "name": "FlushMappingEx"
+    },
+    {
+     "ghidra": "0x2031024",
+     "symbol": "_ZN4Aska19MappedMemoryManager11MoveHandlerEPKvS2_",
+     "name": "MoveHandler"
+    },
+    {
+     "ghidra": "0x2031078",
+     "symbol": "_ZN4Aska19MappedMemoryManager11FreeHandlerEPKv",
+     "name": "FreeHandler"
     }
    ]
   },

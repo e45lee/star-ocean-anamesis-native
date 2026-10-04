@@ -11,7 +11,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 ## Types (classes with their methods attached)
 
 Type recovery a wave ahead of the code (port/REBUILD-QUEUE.md: memory is wave 2). Layouts are proven by
-the layout tests in [`memory_layout_test.cpp`](memory_layout_test.cpp) (`soa --selftest memory/`, all 7 pass):
+the layout tests in [`memory_layout_test.cpp`](memory_layout_test.cpp) (`soa --selftest memory/`, all 8 pass):
 private objects built and driven by the guest's own constructors and methods, or the running game's
 objects walked read-only, their fields read through these classes and compared with the guest's
 accessors and the invariants the decompile shows.
@@ -19,7 +19,7 @@ accessors and the invariants the decompile shows.
 | Class (guest) | Guest size | Found from | Proven by (memory/layout-...) | Status |
 |---|---|---|---|---|
 | `MemoryManager` (Aska::MemoryManager) | 0xf0 (operator new) | ctors, InitHeap, Malloc, Remove, ~MemoryManager | `-memory-manager` (private heap: the virtual getters, Malloc / LocalFree, free lists vs srbks), `-live-managers` (the live ring) | typed; FastCriticalSection opaque |
-| `MemoryBlock` (Aska::_MemoryBlock) | 0x40 header | Malloc, LocalFree, GetAllocatedManager, GetMemorySize | `-memory-manager` | typed; 0x30 / 0x38 meaning unknown |
+| `MemoryBlock` (Aska::_MemoryBlock) | 0x40 header | Malloc, MallocHigh, LocalFree, LocalRegisterNotify, GetAllocatedManager, GetMemorySize | `-memory-manager` | typed (0x30: the high flag; 0x38: the registered IMemoryNotify*) |
 | `MemorySrbk` (MemoryManager::_Srbk) | 0x28 | InitHeap, Malloc | `-memory-manager` (VirtualGetSrbk, run links, free bytes) | typed |
 | `MemoryManagerAdapter` | static only | | | typed |
 | `MemoryManagerHelper` | 0x28 | ctor, Init, InitMemoryHandleManager, dtor | `-helpers` | typed |
@@ -35,7 +35,8 @@ accessors and the invariants the decompile shows.
 | `TDynamicQueue<T>` (Aska::TDynamicQueue<T, false>) | 0x20 | DeleteManager's inlined queue code | `-delete-manager` | typed |
 | `TSharedPointerCode` + `TSharedPointerCodePool` | 0x42c static (no symbol) | CreateCounter, DeleteCounter | `-shared-pointer-code` | typed |
 | `MemoryHandleManager` (Aska) | 0x390 (ctor; no allocation site) | ctor, InitSrbk, GetBlock, IsAllocated, dtor | `-helpers` (ctor: ring fields) | partial: most of 0x009..0x1e7 unknown |
-| Aska::MappedMemoryManager (0x468, operator new in Global::InstantiateMappedMemoryManager) | | | | not recovered (the AFF mapping tables; resource's side) |
+| `BadAllocateRequest` (no guest name) | 0x30 (stack) | Malloc, MallocHigh, AlignedMalloc, AlignedMallocHigh | (the natives' tests) | typed |
+| `MappedMemoryManager` (Aska) | 0x468 (operator new in Global::InstantiateMappedMemoryManager) | its ctor (inlines every member's construction), dtor, RemoveHandlerEx (`mapped.c`) | `-mapped-memory-manager` (private: the ctor's eight sizes -> each member's table / pool, PointerManager / TAddressManager Register; the live one vs AppProjectDependentProxy) | typed: seven containers members (TCategorizeHash 0xa0, THash 0x90, TAddressManager 0x90), the CriticalSection opaque |
 
 ## Natives
 
@@ -78,6 +79,6 @@ Framework::CSTLAllocator -> CAssignedMemoryManagerForSTLAllocator::Allocate / Fr
   pAllocate / Free, TFixedLengthAllocator<32/64>::pAllocate / IsMine. Malloc / LocalFree / the pools
   share the heap state with every guest allocation, so they move as one family (port/src/native/
   README.md "Port whole families"); the lock is sync's FastCriticalSection.
-- **Unknown:** MemoryBlock 0x30 and 0x38 (written 0 on allocation), TFixedLengthAllocator 0x08..0x17,
-  MemoryHandleManager's middle (0x009..0x1e7, 0x200..0x217, 0x258..0x26f), MappedMemoryManager
-  (not recovered), the bad-allocate request struct's fields beyond the decompile.
+- **Unknown:** TFixedLengthAllocator 0x08..0x17, MemoryHandleManager's middle (0x009..0x1e7,
+  0x200..0x217, 0x258..0x26f), BadAllocateRequest 0x18 (always 0), MappedMemoryManager's node types
+  (MappedMemoryPointer / Relation / Location / Identifier, AUIDNode: only pointers to them here).

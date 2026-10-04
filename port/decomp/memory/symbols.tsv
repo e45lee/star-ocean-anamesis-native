@@ -194,6 +194,31 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f1f23c	0x201f23c	140	_ZN4Aska13DeleteManagerD0Ev	Aska::DeleteManager::~DeleteManager()	delete_manager	typed	
 0x1f1f2c8	0x201f2c8	32	_ZN4Aska13TDynamicQueueIPNS_13DeleteManager18_DeletePointerInfoELb0EED2Ev	Aska::TDynamicQueue<Aska::DeleteManager::_DeletePointerInfo*, false>::~TDynamicQueue()	delete_manager	typed	
 0x1f1f2e8	0x201f2e8	4	_ZN4Aska13TDynamicQueueIPNS_13DeleteManager18_DeletePointerInfoELb0EED0Ev	Aska::TDynamicQueue<Aska::DeleteManager::_DeletePointerInfo*, false>::~TDynamicQueue()	delete_manager	typed	
+0x1f29c54	0x2029c54	272	_ZN4Aska6Global30InstantiateMappedMemoryManagerEv	Aska::Global::InstantiateMappedMemoryManager()	mapped	decompiled	
+0x1f29d64	0x2029d64	44	_ZN4Aska6Global25DeleteMappedMemoryManagerEv	Aska::Global::DeleteMappedMemoryManager()	mapped	decompiled	
+0x1f2a02c	0x202a02c	236	_ZN4Aska19MappedMemoryManager14PointerManagerC2Ejj	Aska::MappedMemoryManager::PointerManager::PointerManager(unsigned int, unsigned int)	mapped	decompiled	
+0x1f2a1ac	0x202a1ac	52	_ZN4Aska19MappedMemoryManager14PointerManager8RegisterEPKv	Aska::MappedMemoryManager::PointerManager::Register(void const*)	mapped	decompiled	
+0x1f2a1e0	0x202a1e0	4	_ZN4Aska19MappedMemoryManager14PointerManager8RegisterEPKvj	Aska::MappedMemoryManager::PointerManager::Register(void const*, unsigned int)	mapped	decompiled	
+0x1f2a364	0x202a364	72	_ZN4Aska19MappedMemoryManager14PointerManager12IsRegisteredEPKv	Aska::MappedMemoryManager::PointerManager::IsRegistered(void const*)	mapped	decompiled	
+0x1f2a3ac	0x202a3ac	32	_ZN4Aska19MappedMemoryManager14PointerManager12IsRegisteredEPKvj	Aska::MappedMemoryManager::PointerManager::IsRegistered(void const*, unsigned int)	mapped	decompiled	
+0x1f2a3ec	0x202a3ec	236	_ZN4Aska19MappedMemoryManager15RelationManagerC2Ejj	Aska::MappedMemoryManager::RelationManager::RelationManager(unsigned int, unsigned int)	mapped	decompiled	
+0x1f2a55c	0x202a55c	236	_ZN4Aska19MappedMemoryManager15LocationManagerC2Ejj	Aska::MappedMemoryManager::LocationManager::LocationManager(unsigned int, unsigned int)	mapped	decompiled	
+0x1f2a6cc	0x202a6cc	236	_ZN4Aska19MappedMemoryManager17IdentifierManagerC2Ejj	Aska::MappedMemoryManager::IdentifierManager::IdentifierManager(unsigned int, unsigned int)	mapped	decompiled	
+0x1f2a83c	0x202a83c	1740	_ZN4Aska19MappedMemoryManagerC1Ejjjjjjjj	Aska::MappedMemoryManager::MappedMemoryManager(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)	mapped	decompiled	
+0x1f2af08	0x202af08	428	_ZN4Aska19MappedMemoryManagerD1Ev	Aska::MappedMemoryManager::~MappedMemoryManager()	mapped	decompiled	
+0x1f2b184	0x202b184	24	_ZN4Aska19MappedMemoryManagerD0Ev	Aska::MappedMemoryManager::~MappedMemoryManager()	mapped	decompiled	
+0x1f2b1ac	0x202b1ac	460	_ZN4Aska19MappedMemoryManager15RemoveHandlerExEPKNS_15IMappingHandlerE	Aska::MappedMemoryManager::RemoveHandlerEx(Aska::IMappingHandler const*)	mapped	decompiled	
+0x1f2b3bc	0x202b3bc	404	_ZN4Aska19MappedMemoryManager16ShouldBeMappedExEPKNS_3AFF8AskaFileE	Aska::MappedMemoryManager::ShouldBeMappedEx(Aska::AFF::AskaFile const*)	mapped	decompiled	
+0x1f2b5c0	0x202b5c0	84	_ZN4Aska19MappedMemoryManager17RegisterMappingExEPvPNS_3AFF8AskaFileEPPKv	Aska::MappedMemoryManager::RegisterMappingEx(void*, Aska::AFF::AskaFile*, void const**)	mapped	decompiled	
+0x1f2b614	0x202b614	2868	_ZN4Aska19MappedMemoryManager15AttachMappingExEPvPNS_3AFF8AskaFileEPPKv	Aska::MappedMemoryManager::AttachMappingEx(void*, Aska::AFF::AskaFile*, void const**)	mapped	decompiled	
+0x1f2c890	0x202c890	52	_ZN4Aska19MappedMemoryManager15LocationManager8RegisterEPKv	Aska::MappedMemoryManager::LocationManager::Register(void const*)	mapped	decompiled	
+0x1f2c8c4	0x202c8c4	1032	_ZN4Aska19MappedMemoryManager15DetachMappingExEPvPKNS_4AUIDEb	Aska::MappedMemoryManager::DetachMappingEx(void*, Aska::AUID const*, bool)	mapped	decompiled	
+0x1f2cfc4	0x202cfc4	108	_ZN4Aska19MappedMemoryManager14QueryMappingExEPKNS_15IMappingHandlerEPKNS_4AUIDEPmPNS_12MappedTargetE	Aska::MappedMemoryManager::QueryMappingEx(Aska::IMappingHandler const*, Aska::AUID const*, unsigned long*, Aska::MappedTarget*)	mapped	decompiled	
+0x1f2d3e8	0x202d3e8	52	_ZN4Aska19MappedMemoryManager17IdentifierManager8RegisterEPKv	Aska::MappedMemoryManager::IdentifierManager::Register(void const*)	mapped	decompiled	
+0x1f2d530	0x202d530	1184	_ZN4Aska19MappedMemoryManager14FlushMappingExEv	Aska::MappedMemoryManager::FlushMappingEx()	mapped	decompiled	
+0x1f2eecc	0x202eecc	72	_ZN4Aska19MappedMemoryManager14PointerManagerD0Ev	Aska::MappedMemoryManager::PointerManager::~PointerManager()	mapped	decompiled	
+0x1f31024	0x2031024	84	_ZN4Aska19MappedMemoryManager11MoveHandlerEPKvS2_	Aska::MappedMemoryManager::MoveHandler(void const*, void const*)	mapped	decompiled	
+0x1f31078	0x2031078	76	_ZN4Aska19MappedMemoryManager11FreeHandlerEPKv	Aska::MappedMemoryManager::FreeHandler(void const*)	mapped	decompiled	
 0x1f40608	0x2040608	376	_ZNK4Aska19MemoryHandleManager8GetBlockEj	Aska::MemoryHandleManager::GetBlock(unsigned int) const	handles	typed	partial layout
 0x1f40780	0x2040780	564	_ZN4Aska19MemoryHandleManager6FreeExEPv	Aska::MemoryHandleManager::FreeEx(void*)	handles	typed	partial layout
 0x1f409b4	0x20409b4	24	_ZN4Aska19MemoryHandleManager12CalcSrbkSizeEm	Aska::MemoryHandleManager::CalcSrbkSize(unsigned long)	handles	typed	partial layout

@@ -25,6 +25,7 @@
 
 #include "../containers/containers_layout.h"
 #include "../memory/memory_layout.h"
+#include "../sync/sync_layout.h"
 
 namespace soa::native::kernel {
 
@@ -55,21 +56,17 @@ inline constexpr u64 kVaddrMainTaskInstance = 0x2beb310;          // TSingleton<
 inline constexpr u64 kVaddrFrameworkArguments = 0x2c00050;        // Framework::CApplication::m_FrameworkArguments (0xa0)
 
 
-// ---- The `sync` subsystem's classes, opaque here ------------------------------------------------------
-// n-sync recovers them (port/src/native/sync/sync_layout.h on port/n-sync, not merged yet). Same sizes
-// and names; swap these for sync's classes once it is merged (one edit here, the static_asserts below
-// keep every embedding offset). What kernel's code shows of FastCriticalSection, inlined into every
-// dispatcher / task manager method: +0x38 s32 lock word (-1 free, 0 held; LDAXR/STLXR), +0x3c s32
-// waiters (spinners past 0x200 tries), +0x78 Aska::Semaphore (signalled on unlock with > 20 waiters).
-struct Event { u8 opaque[0x68]; };                // Aska::Event (Create / Set / Reset / Wait / IsSignal / Exit)
-struct Semaphore { u8 opaque[0x18]; };            // Aska::Semaphore
-struct CriticalSection { u8 opaque[0x28]; };      // Aska::CriticalSection (a recursive pthread mutex)
-struct FastCriticalSection { u8 opaque[0x90]; };  // Aska::FastCriticalSection (spin + semaphore)
-// Aska::Thread: {vtable, the pthread}; vtable slot 0 / 1 the destructors, slot 2 Handler().
-struct Thread {
-    const void* vtable;  // 0x00
-    u64 m_thread;        // 0x08: the pthread_t once Create succeeded
-};
+// ---- The `sync` subsystem's classes (native/sync/sync_layout.h) ----------------------------------------
+// Embedded everywhere here: the dispatcher's lock (+0x08) and free-block event (+0x148), the workers'
+// wake-up events, the task manager's 32 barrier events and its two locks, the notifier's semaphores.
+// What kernel's code shows of FastCriticalSection, inlined into every dispatcher / task manager method:
+// +0x38 s32 lock word (-1 free, 0 held; LDAXR/STLXR), +0x3c s32 waiters (spinners past 0x200 tries),
+// +0x78 Aska::Semaphore (signalled on unlock with > 20 waiters): sync's Enter() / Leave().
+using Event = sync::Event;                              // Aska::Event (0x68)
+using Semaphore = sync::Semaphore;                      // Aska::Semaphore (0x18)
+using CriticalSection = sync::CriticalSection;          // Aska::CriticalSection (0x28, a recursive pthread mutex)
+using FastCriticalSection = sync::FastCriticalSection;  // Aska::FastCriticalSection (0x90, spin + semaphore)
+using Thread = sync::Thread;                            // Aska::Thread {vtable, the pthread}; slot 2 Handler()
 static_assert(sizeof(Event) == 0x68);
 static_assert(sizeof(Semaphore) == 0x18);
 static_assert(sizeof(CriticalSection) == 0x28);

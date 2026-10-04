@@ -4,121 +4,6 @@
  "header": "port/src/native/kernel/kernel_layout.h",
  "structs": [
   {
-   "name": "Event",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "opaque",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 104
-     },
-     "size": 104
-    }
-   ],
-   "size": 104,
-   "align": 1
-  },
-  {
-   "name": "Semaphore",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "opaque",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 24
-     },
-     "size": 24
-    }
-   ],
-   "size": 24,
-   "align": 1
-  },
-  {
-   "name": "CriticalSection",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "opaque",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 40
-     },
-     "size": 40
-    }
-   ],
-   "size": 40,
-   "align": 1
-  },
-  {
-   "name": "FastCriticalSection",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "opaque",
-     "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 144
-     },
-     "size": 144
-    }
-   ],
-   "size": 144,
-   "align": 1
-  },
-  {
-   "name": "Thread",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_thread",
-     "type": {
-      "kind": "int",
-      "size": 8,
-      "signed": false
-     },
-     "size": 8
-    }
-   ],
-   "size": 16,
-   "align": 8
-  },
-  {
    "name": "MessageDispatcherBlock",
    "union": false,
    "fields": [
@@ -170,7 +55,7 @@
      "name": "m_event",
      "type": {
       "kind": "ptr",
-      "to": "Event"
+      "to": null
      },
      "size": 8
     },
@@ -367,8 +252,9 @@
      "offset": 0,
      "name": "base",
      "type": {
-      "kind": "struct",
-      "name": "Thread"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Thread",
+      "size": 16
      },
      "size": 16
     },
@@ -390,8 +276,9 @@
      "offset": 24,
      "name": "m_wakeup",
      "type": {
-      "kind": "struct",
-      "name": "Event"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -514,8 +401,9 @@
      "offset": 8,
      "name": "m_cs",
      "type": {
-      "kind": "struct",
-      "name": "FastCriticalSection"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     },
@@ -560,8 +448,9 @@
      "offset": 328,
      "name": "m_freeBlockEvent",
      "type": {
-      "kind": "struct",
-      "name": "Event"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
      },
      "size": 104
     },
@@ -1437,8 +1326,8 @@
      "type": {
       "kind": "array",
       "of": {
-       "kind": "struct",
-       "name": "Event"
+       "kind": "bytes",
+       "ctype": "Event"
       },
       "count": 32
      },
@@ -1496,8 +1385,9 @@
      "offset": 3896,
      "name": "m_barrierCs",
      "type": {
-      "kind": "struct",
-      "name": "CriticalSection"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CriticalSection",
+      "size": 40
      },
      "size": 40
     },
@@ -1505,8 +1395,9 @@
      "offset": 3936,
      "name": "m_cs",
      "type": {
-      "kind": "struct",
-      "name": "FastCriticalSection"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
      },
      "size": 144
     }
@@ -2892,8 +2783,9 @@
      "offset": 0,
      "name": "base",
      "type": {
-      "kind": "struct",
-      "name": "Thread"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Thread",
+      "size": 16
      },
      "size": 16
     },
@@ -2925,8 +2817,9 @@
      "offset": 64,
      "name": "m_lock",
      "type": {
-      "kind": "struct",
-      "name": "Semaphore"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Semaphore",
+      "size": 24
      },
      "size": 24
     },
@@ -2934,8 +2827,9 @@
      "offset": 88,
      "name": "m_signal",
      "type": {
-      "kind": "struct",
-      "name": "Semaphore"
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Semaphore",
+      "size": 24
      },
      "size": 24
     },

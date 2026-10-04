@@ -50,9 +50,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
 - `sync` (11,870 samples): Aska::Event (0x68), Semaphore (0x18), CriticalSection (0x28),
   FastCriticalSection (0x90), Thread (0x10) are embedded everywhere (the dispatcher's lock at +0x08 and
   event at +0x148, the workers' wake-up events, the task manager's 32 barrier events, its two locks,
-  the notifier's semaphores). **Opaque sized structs in kernel_layout.h** with sync's names (n-sync
-  recovers them on `port/n-sync`, not merged yet): once merged, replace the five `struct X { u8 opaque[N]; }`
-  with `using X = sync::X;` (the static_asserts keep every embedding offset).
+  the notifier's semaphores): `kernel_layout.h` uses sync's classes (`using Event = sync::Event;` ...),
+  and the natives call their members (`FastCriticalSection::Enter` / `Leave`, `Event::Set`, ...).
 - `memory` (1,384): `memory::TDynamicQueue<T>` (the dispatcher's free-block queue); DeleteManager
   (Task::DeleteThis*); blocks / task lists come from `operator new[]`.
 - `containers`: `LinkElement` (dispatcher blocks, tasks, notify elements), `TList<LinkElement>`

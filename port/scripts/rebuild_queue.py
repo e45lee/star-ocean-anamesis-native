@@ -43,7 +43,7 @@ SUBSYSTEMS = [
     ("lib_jpeg", 0, "library", r"^~?(jpeg_\*|jinit_\*|jcopy_\*|jdiv_\*|jround_\*|jzero_\*|j[a-z]+_\*)", "IJG libjpeg 9b"),
     ("lib_zlib", 0, "library", r"^~?(deflate\w*|inflate\w*|z_\*|crc32\w*|adler32\w*|_tr_\*|zcalloc|zcfree)", "zlib 1.2.5"),
     ("lib_crypto", 0, "library", r"^~?(AES_\*|CRYPTO_\*|EVP_\*|SHA\d*_\*|MD5_\*|HMAC\w*|RSA_\*|BN_\*)", "the bundled OpenSSL pieces"),
-    ("bullet", 0, "track", r"^~?(bt[A-Z]\w*|gContact\w*)", "Bullet Physics 2.7x (the version pin)"),
+    ("bullet", 0, "track", r"^~?(bt[A-Z]\w*|gContact\w*)", "Bullet Physics 2.75, modified (stays on the guest: unused by 3.7.0 content)"),
     ("hash", 0, "rewrite", r"^~?(Framework::CHash\d*|Aska::Hash|Aska::detail|Aska::SpookyHash\w*|Aska::CRC\w*|Aska::Cryption|Aska::Utf8)$", "CHash32, SpookyHash, CRC, UTF-8"),
     ("math", 0, "rewrite", r"^~?(Aska::(Matrix\w*|Quaternion|Vector\w*|Segment|Box|Sphere|Plane|Frustum|Math\w*|Random\w*|Spline\w*|Curve\w*|_HO_\w*<?>?|Collision|AffUtil)|Framework::CMatrix|Collision|NormalVisitor)$", "vectors, matrices, intersection"),
     ("sync", 1, "rewrite", r"^~?(Framework::(CMutex|CThread\w*|CEvent|CSemaphore|CCriticalSection|CSpinLock)|Aska::(Event|Semaphore|Thread|Mutex|CriticalSection|SpinLock|Atomic\w*|GPUSync|StateCacheThreadSafe))$", "mutexes, events, semaphores, threads"),

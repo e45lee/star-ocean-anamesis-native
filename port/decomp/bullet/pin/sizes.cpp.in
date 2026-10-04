@@ -1,0 +1,4 @@
+#include "btBulletDynamicsCommon.h"
+template<int N> struct SZ;
+#define P(T) SZ<sizeof(T)> T##_sz;
+P(btDefaultCollisionConfiguration) P(btCollisionDispatcher) P(btDbvtBroadphase) P(btSequentialImpulseConstraintSolver) P(btDiscreteDynamicsWorld) P(btRigidBody) P(btHingeConstraint) P(btGeneric6DofConstraint) P(btSliderConstraint) P(btConeTwistConstraint) P(btPoint2PointConstraint) P(btBoxShape) P(btSphereShape) P(btCapsuleShape) P(btCylinderShape) P(btConeShape) P(btStaticPlaneShape) P(btDefaultMotionState) P(btCollisionObject)

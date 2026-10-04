@@ -144,4 +144,19 @@ NATIVE_TEST("render/layout-renderable-object") {
     t.expect_eq(bh.m_nextSibling, &bh, "DetachFromParent: ring = self");
 }
 
+// The frame hook itself (testutil::on_frame, which the live layout tests of render, scene and anim use):
+// the body runs on the game thread inside Aska::ObjectManager::OnPrePaint, where the globals are set.
+NATIVE_TEST("render/layout-frame-hook") {
+    void* om_seen = nullptr;
+    bool ran = on_frame(t, [&] {
+        om_seen = global_ptr<void>(kVaddrGlobalObjectManager);
+        t.expect_eq(has_vtable(t, om_seen, "_ZTVN4Aska13ObjectManagerE"), true, "Global::m_pObjectManager's vtable");
+        t.expect_eq(global_ptr<void>(kVaddrGlobalCameraManager) != nullptr, true, "Global::m_pCameraManager");
+        t.expect_eq(global_ptr<void>(kVaddrGlobalLightManager) != nullptr, true, "Global::m_pLightManager");
+        t.expect_eq(global_ptr<void>(kVaddrRenderDev) != nullptr, true, "g_pRenderDev");
+    });
+    t.expect_eq(ran, true, "on_frame ran");
+    t.expect_eq(om_seen != nullptr, true, "an ObjectManager");
+}
+
 }  // namespace soa::native::render

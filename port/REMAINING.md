@@ -17,7 +17,7 @@ P3 + H (battle log from the client's own serializer, `InGameHooks` dropped), P4 
 1. **4b, the server schema:** S0–S4 and R12 are done; S5 (items and gear) is running; then S6, S7 (fixes the two mission play-state bugs), S8, S9 + R17, S10, S11 + R19, S12.
 2. **W phase 2 (5b):** a control channel on Windows (named pipe or TCP) so the sessions, tests/diff and smoke drive the .exe files; the full download and the viewer on Windows; the known gaps (port/PLAN.md 5b "As built").
 3. **N: rebuild the natives** after all of W, in parallel waves from `port/REBUILD-QUEUE.md`; the tooling (decomp --into, tools/subsystem.py, NATIVE_METHOD, the GDB stub) is on main.
-   - **Bullet version pin:** build Bullet 2.76–2.79 with NDK r16b / r11c (`work/toolchains/`) and compare with the game's to choose a host build or a rewrite.
+   - ~~**Bullet version pin**~~: done: a modified 2.75, unused by the 3.7.0 content; stays on the guest (`port/src/native/bullet/README.md`).
    - **`Framework::Cocos`** is tri-Ace's own UI framework: a Ghidra rewrite, with cocos2d-x only as a reference.
 
 - **Multiplayer (co-op) in the server (later; `docs/multiplayer/HANDOFF.md`):** a prototype lobby + relay (`docs/multiplayer/prototype/`) already ran a full 2-player co-op mission between two soa-emu clients. Real support needs soa-server to serve several players first (one state DB per device is the cheapest route), then the lobby (port 4001) and per-room relay as soa-server listeners behind a flag, with the relay calling the in-process backend for each player's MissionStart/MissionEnd. About 2-3 agent-days. The in-process port can't reach a lobby today (its port-4001 redirect is off). Opening the stamp picker crashes soa-emu (`CStampUI::GetCsfFilePath`).

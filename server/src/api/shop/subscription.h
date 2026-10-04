@@ -11,9 +11,9 @@ constexpr u32 kContentTypePass = 20;
 
 // Grants `days` of the master_subscription_plan `plan` at `t`: (d) extends a running plan, else
 // runs from `t`.
-void grant_plan(ext::Ctx& ctx, u32 plan, u32 days, int64_t t);
+void grant_plan(ext::Ctx& ctx, u32 plan, u32 days, ServerTime t);
 // --galaxy-pass: grants the Galaxy Pass when it isn't running at `t`.
-void keep_galaxy_pass(ext::Ctx& ctx, int64_t t);
+void keep_galaxy_pass(ext::Ctx& ctx, ServerTime t);
 // Subscription: {type id: SubscriptionInfo} of the recorded plans.
 Value subscription_info(ext::Ctx& ctx);
 // SubscriptionPlan: {plan id: SubscriptionPlanInfo}.

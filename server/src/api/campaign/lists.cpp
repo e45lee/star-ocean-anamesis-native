@@ -23,7 +23,7 @@ using MissionsBy = std::map<u32, std::vector<const Mission*>>;
 // core/time.h's open_at with its own semantics (a string compare), kept apart on purpose.
 bool in_window(const std::string& opened, const std::string& closed) {
     char now[32];
-    time_t t = (time_t)clock_now();  // the server clock (--clock)
+    time_t t = (time_t)clock_now().v;  // the server clock (--clock)
     strftime(now, sizeof now, "%Y-%m-%d %H:%M:%S", localtime(&t));
     if (!opened.empty() && opened > now) return false;
     if (!closed.empty() && closed < now) return false;

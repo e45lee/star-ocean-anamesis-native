@@ -152,9 +152,9 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
 - **Bridge what crosses:** structs, callbacks, paths, allocators.
 - **Version-match where bytes matter.**
 - **Per library (agreed with the user, 2026-10-03; shares from `port/REBUILD-QUEUE.md`):**
-  - **Host library at the boundary, wave 0, one agent each:** SQLite 3.13.0 (5.1%; vcpkg's newer SQLite, compared with the guest because a newer planner can order rows differently without `ORDER BY`; pin 3.13.0 via `FetchContent` if it does), libVorbis + ogg (1.3%; callbacks through `guest_call`), zstd (0.3%), zlib 1.2.5 (0.1%; decompression identical, compression bytes may differ: matters only where the game stores or compares them; on Windows `z_stream`'s `uLong` fields are 32-bit, so a layout shim), IJG libjpeg 9b (`FetchContent`, bit-exact; boundary `Aska::JpegUtil`), the OpenSSL pieces (0.6%, 4 functions). About 7.4% of guest time without decompiling.
+  - **Host library at the boundary, wave 0, one agent each:** SQLite 3.13.0 (5.1%; vcpkg's newer SQLite, compared with the guest because a newer planner can order rows differently without `ORDER BY`; pin 3.13.0 via `FetchContent` if it does; **done 2026-10-04** (agent n-sqlite, `port/src/native/lib_sqlite/`): the 21 functions the game calls on the host 3.45.1, rows equal to 3.13.0's on every query of the lib, live check 0 mismatches over the four flows, no pin needed), libVorbis + ogg (1.3%; callbacks through `guest_call`), zstd (0.3%), zlib 1.2.5 (0.1%; decompression identical, compression bytes may differ: matters only where the game stores or compares them; on Windows `z_stream`'s `uLong` fields are 32-bit, so a layout shim), IJG libjpeg 9b (`FetchContent`, bit-exact; boundary `Aska::JpegUtil`), the OpenSSL pieces (0.6%, 4 functions). About 7.4% of guest time without decompiling.
   - **libc++ is not hostable:** guest code inlines its templates and embeds `std::string` and containers using the NDK's layout, so the hot out-of-line helpers become small natives against that layout.
-  - **Bullet:** the version-pin task below decides.
+  - **Bullet:** decided by the version-pin task below: stays on the guest.
   - **Hashes** (`hash`, 3.0%): SpookyHash / CRC rewritten from their reference implementations, checked bit-exact against the guest; CHash32 from the decompile.
 
 **Exceptions:**
@@ -165,6 +165,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc). T
     2. compare function sizes and object layouts with the game's;
     3. then choose a `FetchContent` host build or a Ghidra rewrite.
   - Also trace what the game uses Bullet for.
+  - **Done (port/n-bullet, 2026-10-04; `port/src/native/bullet/README.md`):** a locally modified **2.75** (constraints without the obsolete solver path, slider, BVH serialization, containers), built with r11c's clang 3.8 `-O3 -fno-exceptions -fstack-protector` (710 of 822 functions the same size, 697 byte-identical); used only by `Aska::RigidBodyManager` for `.asf` `DyPr` chunks, which no 3.7.0 asset has (the world is built at boot and never stepped; 0.0% guest time). **Decision: leave it on the guest**; no upstream version is bit-exact, so no `FetchContent` boundary, and no rewrite.
 
 **Open items carried over from the rebase:**
 - ~~Tutorial party check~~ and ~~the NPC status mismatch~~: resolved without the natives (agent open-issues, 2026-10-02; `port/REMAINING.md` "Open issues").

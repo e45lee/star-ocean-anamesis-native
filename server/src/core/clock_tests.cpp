@@ -46,13 +46,13 @@ NATIVE_TEST("server/event-now") {
     t.expect_eq(event_year(m, 12, 25), 2020, "Dec 25 -> 2020");
     t.expect_eq(event_year(m, 2, 29), 2020, "Feb 29 -> the leap year 2020");
     // The mapped time keeps month, day and time of day.
-    int64_t e = event_time(m, local(2026, 10, 1, 9, 30, 15));
+    int64_t e = event_time(m, ServerTime(local(2026, 10, 1, 9, 30, 15))).v;
     t.expect_eq(e, local(2019, 10, 1, 9, 30, 15), "2026-10-01 09:30:15 -> 2019-10-01 09:30:15");
-    t.expect_eq(event_time(m, local(2026, 10, 1, 23, 59, 59)), local(2019, 10, 1, 23, 59, 59), "same day, cached");
-    t.expect_eq(event_time(m, local(2027, 1, 3, 0, 0, 0)), local(2021, 1, 3, 0, 0, 0), "next day re-queried");
+    t.expect_eq(event_time(m, ServerTime(local(2026, 10, 1, 23, 59, 59))).v, local(2019, 10, 1, 23, 59, 59), "same day, cached");
+    t.expect_eq(event_time(m, ServerTime(local(2027, 1, 3, 0, 0, 0))).v, local(2021, 1, 3, 0, 0, 0), "next day re-queried");
     // Every day of a leap year maps into a year where a (closing) term is open that day.
     for (int64_t d = local(2024, 1, 1); d < local(2025, 1, 1); d += 86400) {
-        int64_t x = event_time(m, d);
+        int64_t x = event_time(m, ServerTime(d)).v;
         char day[16];
         time_t tt = (time_t)x;
         strftime(day, sizeof day, "%Y-%m-%d", localtime(&tt));
@@ -69,14 +69,14 @@ NATIVE_TEST("server/event-now") {
     // Through a server: without a clock the calendar is replayed; with one (--clock) it is the clock.
     ext::with_scratch_server(t.rand_u64(), [&](ext::Ctx& c) {
         set_server_clock(0);
-        int64_t real = c.now(), ev = c.event_now();
+        int64_t real = c.now().v, ev = c.event_now().v;
         time_t a = (time_t)real, b = (time_t)ev;
         struct tm ta, tb;
         localtime_r(&a, &ta);
         localtime_r(&b, &tb);
         if (tb.tm_year + 1900 > 2021 || tb.tm_mon != ta.tm_mon || tb.tm_mday != ta.tm_mday) t.fail("event_now: not today in a service year");
         set_server_clock(local(2019, 10, 1, 4));
-        int64_t now1 = c.now(), ev1 = c.event_now();
+        int64_t now1 = c.now().v, ev1 = c.event_now().v;
         if (ev1 < now1 || ev1 > now1 + 2) t.fail("event_now under --clock isn't the clock");
         if (now1 < local(2019, 10, 1, 4) || now1 > local(2019, 10, 1, 4) + 5) t.fail("set_server_clock");
         set_server_clock(0);

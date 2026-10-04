@@ -45,7 +45,7 @@ bool gacha_enabled(ext::Ctx& ctx, const Row& gacha_row) {
 
 }  // namespace
 
-bool gacha_open(ext::Ctx& ctx, const Row& gacha_row, int64_t t) {  // (a) master_gacha.opened_at / closed_at
+bool gacha_open(ext::Ctx& ctx, const Row& gacha_row, ServerTime t) {  // (a) master_gacha.opened_at / closed_at
     if (gacha_enabled(ctx, gacha_row)) return true;
     return open_at(gacha_row.s("opened_at"), gacha_row.s("closed_at"), t);
 }
@@ -87,7 +87,7 @@ Value gacha_hash_entry(ext::Ctx& ctx, const Row& gacha_row) {
 // Answers: the player state with GachaHashMap, StepUpGacha and BoxGachaList.
 std::vector<u8> get_gacha_in_data(ext::Ctx& ctx, const Request&) {
     Value hash_map = Value::object();
-    int64_t t = clock_now();
+    ServerTime t = clock_now();
     int open = 0;
     ctx.m.q("select * from master_gacha order by id", {}, [&](const Row& gacha_row) {
         if (!gacha_open(ctx, gacha_row, t)) return;

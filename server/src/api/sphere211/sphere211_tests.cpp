@@ -93,7 +93,7 @@ NATIVE_TEST("sphere211/season") {
         // (a) inside a season: that season, dates moved by clock - ev
         for (auto& s : ss) {
             int64_t ev = s.a + 86400;
-            auto p = sphere211::pick_season(c.m, clock, ev);
+            auto p = sphere211::pick_season(c.m, ServerTime(clock), EventTime(ev));
             if (p.id != s.id) t.fail("ev %s: season %u, want %u", fmt(ev).c_str(), p.id, s.id);
             if (p.shift != clock - ev) t.fail("season %u: shift %lld", s.id, (long long)p.shift);
         }
@@ -101,7 +101,7 @@ NATIVE_TEST("sphere211/season") {
         const SeasonRow& last = ss.back();
         int64_t period = last.b - last.a + 1;
         for (int64_t ev : {last.b + 1, last.b + period, last.b + period + 1, last.b + 7 * period + 12345, last.b + (int64_t)1000 * 86400}) {
-            auto p = sphere211::pick_season(c.m, clock, ev);
+            auto p = sphere211::pick_season(c.m, ServerTime(clock), EventTime(ev));
             if (p.id != last.id) t.fail("past the end: season %u", p.id);
             int64_t moved = p.shift - (clock - ev);  // the whole-period part
             if (moved % period) t.fail("shift not whole periods (%lld)", (long long)moved);
@@ -117,7 +117,7 @@ NATIVE_TEST("sphere211/season") {
             tm.tm_isdst = -1;
             int64_t ev = (int64_t)mktime(&tm);
             if (ev >= ss.front().a) continue;
-            auto p = sphere211::pick_season(c.m, clock, ev);
+            auto p = sphere211::pick_season(c.m, ServerTime(clock), EventTime(ev));
             if (p.id != s.id) t.fail("a year before season %u: season %u", s.id, p.id);
             if (p.cycle) t.fail("a year before season %u: cycle %u", s.id, p.cycle);
             int64_t moved = (clock - ev) - p.shift;  // the date a year later: about one year less shift
@@ -125,8 +125,8 @@ NATIVE_TEST("sphere211/season") {
         }
         // (d) the annual gap after the last season is still the last season (cycle 0); a season
         // length past that, the repeats count cycles
-        t.expect_eq(sphere211::pick_season(c.m, clock, last.b + 3600).cycle, 0u, "the day after the last season: cycle 0");
-        u32 cyc = sphere211::pick_season(c.m, clock, last.b + 3 * period + 3600).cycle;
+        t.expect_eq(sphere211::pick_season(c.m, ServerTime(clock), EventTime(last.b + 3600)).cycle, 0u, "the day after the last season: cycle 0");
+        u32 cyc = sphere211::pick_season(c.m, ServerTime(clock), EventTime(last.b + 3 * period + 3600)).cycle;
         t.expect_eq(cyc, 4u, "three season lengths past the end: cycle 4");
 
         // The client's master copy (ext::ClientMaster): the picked season's dates cover the clock.
@@ -137,7 +137,7 @@ NATIVE_TEST("sphere211/season") {
         cm.exec("create table master_sphere211 as select * from src.master_sphere211");
         cm.exec("detach src");
         int64_t ev = last.b + 3 * period + 86400;
-        client_master(db, clock, ev);
+        client_master(db, ServerTime(clock), EventTime(ev));
         std::string o, cl;
         cm.q("select opened_at, closed_at from master_sphere211 where id = ?", {last.id}, [&](const Row& r) {
             o = r.s("opened_at");

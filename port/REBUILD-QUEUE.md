@@ -82,7 +82,7 @@ port/scripts/remaining.py $P/login $P/battle $P/gacha $P/story --native-list $P/
 | 31 | `event` | 7 | rewrite | 147 (0.0%) | 0.0% | 0.0% | 0.0% | 0.1% | 0.1% | 166/761 | 116K | story scenes (EventScenario) |
 | 32 | `lib_jpeg` | 0 | library | 60 (0.0%) | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 53/199 | 25K | IJG libjpeg 9b |
 | 33 | `text` | 5 | rewrite | 30 (0.0%) | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 13/98 | 3K | fonts and text layout |
-| 34 | `bullet` | 0 | track | 27 (0.0%) | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 21/801 | 4K | Bullet Physics 2.7x (the version pin) |
+| 34 | `bullet` | 0 | track | 27 (0.0%) | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 21/801 | 4K | Bullet Physics 2.75, modified (stays on the guest: unused by 3.7.0 content) |
 
 ## Waves (dependency order; hottest first within a wave)
 

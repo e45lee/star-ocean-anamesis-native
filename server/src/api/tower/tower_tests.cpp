@@ -102,7 +102,7 @@ NATIVE_TEST("tower/lists") {
             return;
         }
         // (a) the open areas: opened_at <= calendar <= closed_at
-        int64_t now = c.event_now();
+        int64_t now = c.event_now().v;
         std::set<std::string> open;
         c.m.q("select id, opened_at, closed_at, master_banner_id from master_tower_area", {}, [&](const Row& r) {
             if (!r.i("master_banner_id")) return;

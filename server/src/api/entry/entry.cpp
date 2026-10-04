@@ -55,7 +55,7 @@ std::vector<u8> login(ext::Ctx& ctx, const Request& req) {
 }
 
 // The new player's row and starter roster (create_player, step 2): returns the search id.
-std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args, int64_t now) {
+std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args, ServerTime now) {
     u32 hash = chash32((args.uuid + args.name).c_str());
     char search_id[16];
     snprintf(search_id, sizeof search_id, kSearchIdFormat, hash % kSearchIdModulo);
@@ -77,7 +77,7 @@ std::string insert_new_player(ext::Ctx& ctx, const args::CreatePlayerArgs& args,
 }
 
 // The starter characters, party 1 and the home character (create_player, step 3): returns their uids.
-std::vector<CharacterUid> add_starters(ext::Ctx& ctx, int64_t now) {
+std::vector<CharacterUid> add_starters(ext::Ctx& ctx, ServerTime now) {
     std::vector<CharacterUid> party;
     for (int k = 1; k <= kStarterCharacters; k++) {
         std::string role_label = master::global_str(ctx.m.h, ("Default_Character_" + std::to_string(k)).c_str());
@@ -142,7 +142,7 @@ std::vector<u8> create_player(ext::Ctx& ctx, const Request& req) {
         LOGW("server", "CreatePlayer: a player exists already; answering it");
         return full_player_state(ctx, req);
     }
-    int64_t now = clock_now();
+    ServerTime now = clock_now();
     std::string search_id = insert_new_player(ctx, args, now);
     std::vector<CharacterUid> party = add_starters(ctx, now);
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});

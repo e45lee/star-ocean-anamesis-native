@@ -16,6 +16,7 @@
 // (native/sync/sync_check.h), input, resource.
 #include <atomic>
 #include <initializer_list>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <utility>
@@ -74,5 +75,18 @@ std::string diff_bytes(const u8* native, const u8* guest, size_t from, size_t to
 // race. `out` / `out_bytes`: an out-parameter (the register holding its pointer, its size; reg < 0:
 // none) compared too (the guest writes it after the native: the native's bytes are kept aside).
 void check_getter(Cpu& c, ShadowFn& f, HostFn native, u64 mask, int out_reg = -1, size_t out_bytes = 0);
+
+// A check's per-thread scratch object (an observation, a shadow, an output buffer), made on the
+// heap on the thread's first check: one per (T, Tag) and thread. Never `static thread_local T buf`
+// for anything big: static TLS is carved out of every thread's stack by glibc, and guest threads
+// run the JIT on 256 KiB host stacks (runtime/src/hle/libc_thread.cpp), each guest_call level
+// taking ~1.7 KB. 150 KB of input's thread_local check buffers left the game thread ~90 KB and
+// crashed session:tower (port/src/native/README.md "Live checks"; selftest runtime/guest-thread-host-stack).
+template <typename T, typename Tag = T>
+T& thread_scratch() {
+    thread_local std::unique_ptr<T> p;
+    if (!p) p = std::make_unique<T>();
+    return *p;
+}
 
 }  // namespace soa::live

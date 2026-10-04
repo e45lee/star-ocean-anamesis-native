@@ -90,7 +90,11 @@ body's stores, freed-block snapshots incl. deleting destructors, stack-vector el
 rerun) are listed at the top of `live_check.cpp`. Families with their own recorders and run-both
 checks (the old battle, particles and dynamics families did) use its stubs, `ReplaySession`,
 `Only`, `Budget` and `StoreLog`. `live::t_busy`: only one check at a time per thread, across
-families.
+families. A check's per-thread buffers (observations, shadows) come from `live::thread_scratch<T>()`
+(`shadow_check.h`, on the heap), never a big `static thread_local`: glibc carves static TLS out of
+every thread's stack, and 150 KB of them (input's, 2026-10-04) left the game thread too little of its
+host stack for the tower menu (`runtime/src/hle/thread.h` `hle_guest_thread_host_stack`, selftest
+`runtime/guest-thread-host-stack`).
 
 ## What's native now
 

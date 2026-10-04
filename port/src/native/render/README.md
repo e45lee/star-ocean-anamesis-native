@@ -66,6 +66,14 @@ Bound: `soa --list-native | grep render:`. Live check: `soa --live-check render[
 | `RenderDeviceData::UpdateShaderProgram` (finding a linked program; creating / linking one: the guest original) | `render_program.cpp` | `render/device-shader-program` | `gl_run_both` over state set 1 and the program fields, SetShaderProgramUniform a marker |
 | (hooks) `RenderDeviceData::LastMinuteDrawCommands_Textures` / `SetShaderProgramUniform` | `render_draw.cpp` | - | forward to the guest (the markers of the composite checks) |
 
+`symbols.tsv` status `tested`: live-checked at 0 mismatches over the boot -> battle -> gacha session (19.7M
+checks; and 10.9M on llvmpipe). Still `native` (differential tests only): what natives call as C++ members, so
+no live call reaches its hook (UpdateVertexAttribute and the blending / depth commands under UpdateRenderState,
+the tree under CompressLZwordDic: `render/device-draw` and `render/shader-compression-tree` compare them with
+the guest's chain, at the title and in selftest-live at home and in a battle), and requests the flows never
+made (the stencil setters, the occlusion queries, AddReloadZCull, AddDataTransfer, AddCallBack, ReqExit,
+ReqGpuWait, ReqDeviceInit, the block calls, GetRenderBatchLite, SetTextureSamplingMaxAnisotropic).
+
 Not bound (the next wave): the texture state of a draw (`LastMinuteDrawCommands_Textures`, `UpdateTextureFilters`,
 `GetTextureStateCaches`, `GetBoundTextureID`), the program's creation and uniforms (`CompileShaderProgram`,
 `SetShaderProgramUniform`, `GetThreadOglState1`'s creation), `BindFrameBuffer`, `ResolveDepth`, the shader constants (`SetVertexShaderConstant` / `SetPixelShaderConstant`), the instanced draw paths (the natives

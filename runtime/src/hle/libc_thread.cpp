@@ -237,23 +237,25 @@ void th_mutexattr_init(Cpu& c) {
     *(u64*)c.x(0) = 0;
     ret(c, 0);
 }
+// bionic's mutex types (a pthread_mutexattr_t's low bits): 0 normal, 1 recursive, 2 errorcheck. glibc
+// numbers them the same; winpthreads has 1 errorcheck, 2 recursive.
+int host_mutex_type(u64 bionic_type) {
+    switch (bionic_type & 3) {
+    case 1: return PTHREAD_MUTEX_RECURSIVE;
+    case 2: return PTHREAD_MUTEX_ERRORCHECK;
+    default: return PTHREAD_MUTEX_NORMAL;
+    }
+}
 void th_mutexattr_settype(Cpu& c) {
     *(u64*)c.x(0) = (*(u64*)c.x(0) & ~3ull) | (c.x(1) & 3);
     ret(c, 0);
 }
 void th_mutexattr_destroy(Cpu& c) { ret(c, 0); }
-void th_mutex_init(Cpu& c) {
-    pthread_mutexattr_t a;
-    pthread_mutexattr_init(&a);
-    if (c.x(1)) pthread_mutexattr_settype(&a, (int)(*(u64*)c.x(1) & 3));
-    int r = pthread_mutex_init((pthread_mutex_t*)c.x(0), &a);
-    pthread_mutexattr_destroy(&a);
-    ret(c, (u64)guest_errno(r));
-}
-void th_mutex_destroy(Cpu& c) { ret(c, (u64)guest_errno(pthread_mutex_destroy(fix_mutex(c.x(0))))); }
-void th_mutex_lock(Cpu& c) { ret(c, (u64)guest_errno(pthread_mutex_lock(fix_mutex(c.x(0))))); }
-void th_mutex_trylock(Cpu& c) { ret(c, (u64)guest_errno(pthread_mutex_trylock(fix_mutex(c.x(0))))); }
-void th_mutex_unlock(Cpu& c) { ret(c, (u64)guest_errno(pthread_mutex_unlock(fix_mutex(c.x(0))))); }
+void th_mutex_init(Cpu& c) { ret(c, (u64)hle_mutex_init(c.x(0), c.x(1))); }
+void th_mutex_destroy(Cpu& c) { ret(c, (u64)hle_mutex_destroy(c.x(0))); }
+void th_mutex_lock(Cpu& c) { ret(c, (u64)hle_mutex_lock(c.x(0))); }
+void th_mutex_trylock(Cpu& c) { ret(c, (u64)hle_mutex_trylock(c.x(0))); }
+void th_mutex_unlock(Cpu& c) { ret(c, (u64)hle_mutex_unlock(c.x(0))); }
 
 // ---- condition variables ----
 #ifdef _WIN32
@@ -261,31 +263,12 @@ pthread_cond_t* fix_cond(u64 p) { return fix_static<pthread_cond_t>(p, PTHREAD_C
 #else
 pthread_cond_t* fix_cond(u64 p) { return (pthread_cond_t*)p; }
 #endif
-void th_cond_init(Cpu& c) { ret(c, (u64)guest_errno(pthread_cond_init((pthread_cond_t*)c.x(0), nullptr))); }
-void th_cond_destroy(Cpu& c) { ret(c, (u64)guest_errno(pthread_cond_destroy(fix_cond(c.x(0))))); }
-void th_cond_signal(Cpu& c) { ret(c, (u64)guest_errno(pthread_cond_signal(fix_cond(c.x(0))))); }
-void th_cond_broadcast(Cpu& c) { ret(c, (u64)guest_errno(pthread_cond_broadcast(fix_cond(c.x(0))))); }
-void th_cond_wait(Cpu& c) {
-    auto* cv = fix_cond(c.x(0));
-    pthread_mutex_t* m = fix_mutex(c.x(1));
-    if (!window_thread()) return ret(c, (u64)guest_errno(pthread_cond_wait(cv, m)));
-    // Idle presenting (hle/gfx.h): the window's thread (the game's RenderThread, waiting for its next
-    // frame's work) waits in slices, so that it notices idle presenting turned on while it already
-    // waits, and then repaints the last frame between slices. A slice's timeout is not a wakeup.
-    for (;;) {
-        timespec t;
-        clock_gettime(CLOCK_REALTIME, &t);
-        t.tv_nsec += (idle_present_on() ? kIdlePresentMs : kIdleCheckMs) * 1000000L;
-        if (t.tv_nsec >= 1000000000L) t.tv_sec++, t.tv_nsec -= 1000000000L;
-        int r = pthread_cond_timedwait(cv, m, &t);
-        if (r != ETIMEDOUT) return ret(c, (u64)guest_errno(r));
-        if (idle_present_on()) idle_present();
-    }
-}
-void th_cond_timedwait(Cpu& c) {
-    // (the guest's timespec has a 64-bit tv_nsec; winpthreads reads its low 32 bits: the same value)
-    ret(c, (u64)guest_errno(pthread_cond_timedwait(fix_cond(c.x(0)), fix_mutex(c.x(1)), (const timespec*)c.x(2))));
-}
+void th_cond_init(Cpu& c) { ret(c, (u64)hle_cond_init(c.x(0))); }
+void th_cond_destroy(Cpu& c) { ret(c, (u64)hle_cond_destroy(c.x(0))); }
+void th_cond_signal(Cpu& c) { ret(c, (u64)hle_cond_signal(c.x(0))); }
+void th_cond_broadcast(Cpu& c) { ret(c, (u64)hle_cond_broadcast(c.x(0))); }
+void th_cond_wait(Cpu& c) { ret(c, (u64)hle_cond_wait(c.x(0), c.x(1))); }
+void th_cond_timedwait(Cpu& c) { ret(c, (u64)hle_cond_timedwait(c.x(0), c.x(1), c.x(2))); }
 
 // ---- rwlock ----
 void th_rwlock_init(Cpu& c) { ret(c, (u64)pthread_rwlock_init((pthread_rwlock_t*)c.x(0), nullptr)); }
@@ -330,17 +313,60 @@ void th_sem_destroy(Cpu& c) {
     sem_destroy_guest(c.x(0));
     ret(c, 0);
 }
-void th_sem_wait(Cpu& c) {
-    sem_t* s = get_sem(c.x(0));
-    int r;
-    while ((r = sem_wait(s)) != 0 && errno == EINTR) {}
-    ret(c, (u64)(s64)r);
-}
-void th_sem_trywait(Cpu& c) { ret(c, (u64)(s64)sem_trywait(get_sem(c.x(0)))); }  // (-1, errno EAGAIN: 11 on both)
-void th_sem_post(Cpu& c) { ret(c, (u64)(s64)sem_post(get_sem(c.x(0)))); }
-void th_sem_getvalue(Cpu& c) { ret(c, (u64)(s64)sem_getvalue(get_sem(c.x(0)), (int*)c.x(1))); }
+void th_sem_wait(Cpu& c) { ret(c, (u64)(s64)hle_sem_wait(c.x(0))); }
+void th_sem_trywait(Cpu& c) { ret(c, (u64)(s64)hle_sem_trywait(c.x(0))); }  // (-1, errno EAGAIN: 11 on both)
+void th_sem_post(Cpu& c) { ret(c, (u64)(s64)hle_sem_post(c.x(0))); }
+void th_sem_getvalue(Cpu& c) { ret(c, (u64)(s64)hle_sem_getvalue(c.x(0), (int*)c.x(1))); }
 
 }  // namespace
+
+// ---- the imports as host calls (hle/thread.h) ----
+int hle_mutex_init(u64 m, u64 attr) {
+    pthread_mutexattr_t a;
+    pthread_mutexattr_init(&a);
+    if (attr) pthread_mutexattr_settype(&a, host_mutex_type(*(u64*)attr));
+    int r = pthread_mutex_init((pthread_mutex_t*)m, &a);
+    pthread_mutexattr_destroy(&a);
+    return guest_errno(r);
+}
+int hle_mutex_destroy(u64 m) { return guest_errno(pthread_mutex_destroy(fix_mutex(m))); }
+int hle_mutex_lock(u64 m) { return guest_errno(pthread_mutex_lock(fix_mutex(m))); }
+int hle_mutex_trylock(u64 m) { return guest_errno(pthread_mutex_trylock(fix_mutex(m))); }
+int hle_mutex_unlock(u64 m) { return guest_errno(pthread_mutex_unlock(fix_mutex(m))); }
+int hle_cond_init(u64 cv) { return guest_errno(pthread_cond_init((pthread_cond_t*)cv, nullptr)); }
+int hle_cond_destroy(u64 cv) { return guest_errno(pthread_cond_destroy(fix_cond(cv))); }
+int hle_cond_signal(u64 cv) { return guest_errno(pthread_cond_signal(fix_cond(cv))); }
+int hle_cond_broadcast(u64 cv) { return guest_errno(pthread_cond_broadcast(fix_cond(cv))); }
+int hle_cond_wait(u64 guest_cv, u64 guest_m) {
+    auto* cv = fix_cond(guest_cv);
+    pthread_mutex_t* m = fix_mutex(guest_m);
+    if (!window_thread()) return guest_errno(pthread_cond_wait(cv, m));
+    // Idle presenting (hle/gfx.h): the window's thread (the game's RenderThread, waiting for its next
+    // frame's work) waits in slices, so that it notices idle presenting turned on while it already
+    // waits, and then repaints the last frame between slices. A slice's timeout is not a wakeup.
+    for (;;) {
+        timespec t;
+        clock_gettime(CLOCK_REALTIME, &t);
+        t.tv_nsec += (idle_present_on() ? kIdlePresentMs : kIdleCheckMs) * 1000000L;
+        if (t.tv_nsec >= 1000000000L) t.tv_sec++, t.tv_nsec -= 1000000000L;
+        int r = pthread_cond_timedwait(cv, m, &t);
+        if (r != ETIMEDOUT) return guest_errno(r);
+        if (idle_present_on()) idle_present();
+    }
+}
+int hle_cond_timedwait(u64 cv, u64 m, u64 guest_abstime) {
+    // (the guest's timespec has a 64-bit tv_nsec; winpthreads reads its low 32 bits: the same value)
+    return guest_errno(pthread_cond_timedwait(fix_cond(cv), fix_mutex(m), (const timespec*)guest_abstime));
+}
+int hle_sem_wait(u64 guest_sem) {
+    sem_t* s = get_sem(guest_sem);
+    int r;
+    while ((r = sem_wait(s)) != 0 && errno == EINTR) {}
+    return r;
+}
+int hle_sem_trywait(u64 guest_sem) { return sem_trywait(get_sem(guest_sem)); }
+int hle_sem_post(u64 guest_sem) { return sem_post(get_sem(guest_sem)); }
+int hle_sem_getvalue(u64 guest_sem, int* value) { return sem_getvalue(get_sem(guest_sem), value); }
 
 sem_t* hle_host_sem(u64 guest_sem) { return get_sem(guest_sem); }
 int hle_host_sem_init(u64 guest_sem, unsigned value) { return sem_init_guest(guest_sem, value); }

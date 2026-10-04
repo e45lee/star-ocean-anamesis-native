@@ -14,4 +14,26 @@ sem_t* hle_host_sem(u64 guest_sem);
 int hle_host_sem_init(u64 guest_sem, unsigned value);
 void hle_host_sem_destroy(u64 guest_sem);
 
+// The HLE'd pthread mutex / condition variable / semaphore imports as host calls on guest objects
+// (guest addresses), for natives working on objects guest code shares (port/src/native/sync): the
+// same host objects and rules as the imports (glibc / winpthreads objects in place, bionic's static
+// initializers converted on first use, the window thread's sliced condition wait for idle
+// presenting), and the imports' results (guest errno values; the sem_* ones 0 / -1 with errno set).
+// They block like the imports; a native wraps a blocking call in ProfNativeWait (core/cpu.h).
+int hle_mutex_init(u64 guest_mutex, u64 guest_attr /* 0: default */);
+int hle_mutex_destroy(u64 guest_mutex);
+int hle_mutex_lock(u64 guest_mutex);
+int hle_mutex_trylock(u64 guest_mutex);
+int hle_mutex_unlock(u64 guest_mutex);
+int hle_cond_init(u64 guest_cond);
+int hle_cond_destroy(u64 guest_cond);
+int hle_cond_signal(u64 guest_cond);
+int hle_cond_broadcast(u64 guest_cond);
+int hle_cond_wait(u64 guest_cond, u64 guest_mutex);
+int hle_cond_timedwait(u64 guest_cond, u64 guest_mutex, u64 guest_abstime /* a guest timespec */);
+int hle_sem_wait(u64 guest_sem);  // (EINTR retried)
+int hle_sem_trywait(u64 guest_sem);
+int hle_sem_post(u64 guest_sem);
+int hle_sem_getvalue(u64 guest_sem, int* value);
+
 }  // namespace soa

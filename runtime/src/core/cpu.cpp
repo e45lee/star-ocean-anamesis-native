@@ -769,12 +769,23 @@ static bool pc_relative(u32 w) {
            (w & 0x3b000000) == 0x18000000;    // LDR (literal)
 }
 
+static bool is_adrp(u32 w) { return (w & 0x9f000000) == 0x90000000; }
+
 u64 make_original_trampoline(u64 addr) {
     const u32* p = (const u32*)addr;
-    if (pc_relative(p[0]) || pc_relative(p[1])) return 0;
+    // ADRP is relocated (LDR Xd of the page it computes, from a literal); other PC-relative forms aren't.
+    for (int i = 0; i < 2; i++)
+        if (pc_relative(p[i]) && !is_adrp(p[i])) return 0;
     auto* t = (u32*)map_guest_code(4096);
-    t[0] = p[0];
-    t[1] = p[1];
+    for (int i = 0; i < 2; i++) {
+        t[i] = p[i];
+        if (!is_adrp(p[i])) continue;
+        const u32 w = p[i];
+        const s64 imm = (s64)((u64)((((w >> 5) & 0x7ffff) << 2) | ((w >> 29) & 3)) << 43) >> 31;  // imm21 << 12, sign-extended
+        const u64 page = ((addr + 4 * (u64)i) & ~u64{0xfff}) + (u64)imm;
+        *(u64*)&t[6 + 2 * i] = page;                                            // the literal at byte 24 + 8 i
+        t[i] = 0x58000000 | ((u32)((24 + 8 * i - 4 * i) / 4) << 5) | (w & 31);  // LDR Xd, literal
+    }
     t[2] = 0x58000050;  // LDR X16, #8
     t[3] = 0xd61f0200;  // BR X16
     *(u64*)&t[4] = addr + 8;

@@ -1,0 +1,6 @@
+# port/decomp/memory/scope.txt: the guest functions the `memory` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^Aska::(MemoryManager\w*|MappedMemory\w*|MemoryHandleManager|DeleteManager|_MemoryBlock|MemoryPool\w*|TSharedPointerCode)::
+^Framework::(CApplicationMemory|CAssignedMemoryManager\w*|CMemory\w*|CFixedLengthAllocatorContainer|TFixedLengthAllocator<\w+>|IFixedLengthAllocator|CHandleManager\w*)::
+^Framework::CSTLAllocator<.*>::(allocate|deallocate|construct|destroy|max_size)\(

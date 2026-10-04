@@ -1,0 +1,6 @@
+{
+ "subsystem": "containers",
+ "generated_by": "tools/subsystem.py export-types containers",
+ "header": "port/src/native/containers/containers_layout.h",
+ "structs": []
+}

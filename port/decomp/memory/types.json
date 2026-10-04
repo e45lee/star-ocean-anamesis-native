@@ -1,0 +1,6 @@
+{
+ "subsystem": "memory",
+ "generated_by": "tools/subsystem.py export-types memory",
+ "header": "port/src/native/memory/memory_layout.h",
+ "structs": []
+}

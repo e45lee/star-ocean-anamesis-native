@@ -1,0 +1,6 @@
+{
+ "subsystem": "libcxx",
+ "generated_by": "tools/subsystem.py export-types libcxx",
+ "header": "port/src/native/libcxx/libcxx_layout.h",
+ "structs": []
+}

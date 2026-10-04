@@ -1,0 +1,7 @@
+# port/decomp/data_formats/scope.txt: the guest functions the `data_formats` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?Aska::(ASON|ACSV|MsgPack\w*|Json\w*)::
+^(\S+ )?Framework::(CACSV|CCSV)::
+^(\S+ )?(_AsonSerializer|SerializerImpl::_Serializer_Impl<.*>)::
+^(\S+ )?(msgpack|picojson)::

@@ -126,6 +126,16 @@ inline std::vector<std::string> apk_candidates(const std::vector<std::string>& d
     return v;
 }
 
+// The top-level files of `dirs` whose name ends in `ext` (any case), in lookup order (each dir's
+// sorted). soa-viewer's XAPK lookup uses it with ".xapk" (emulator-viewer/src/main.cpp find_xapk).
+inline std::vector<std::string> files_with_ext(const std::vector<std::string>& dirs, const char* ext) {
+    std::vector<std::string> v;
+    for (auto& d : dirs)
+        for (auto& n : list_dir(d))
+            if (ends_with_ci(n, ext) && is_file(d + "/" + n)) v.push_back(d + "/" + n);
+    return v;
+}
+
 // The first 3.7.0 APK among apk_candidates(dirs). `lib_size(apk)` is the caller's zip reader: the
 // size of the APK's kLibEntry, or -1 when it isn't a zip with one. `notes` (if given) collects the
 // candidates that were rejected, with the reason.

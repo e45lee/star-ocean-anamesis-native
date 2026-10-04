@@ -32,68 +32,32 @@ import subprocess
 import sys
 import time
 
+import msgpack
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SESSION_APIS = {"StartBridge", "UpdateSession"}
 ALLOWED_IDS = {"LOCAL00001", "AAAAAAAAAA"}  # the server's sanitized id; data/saves/client's placeholder
 REQ_RE = re.compile(r"^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d) conn \d+ #(\d+) > (\S+) fid=([0-9a-f]{8}) (\S+) plain=\d+ method=(\S+) args: ?(.*)$")
 
 
-# ---- a minimal MessagePack reader (the replies' data.Time) ------------------------------------
-def mp_read(b, p=0):
-    t = b[p]
-    p += 1
-    if t <= 0x7f:
-        return t, p
-    if t >= 0xe0:
-        return t - 0x100, p
-    if 0x80 <= t <= 0x8f or t in (0xde, 0xdf):
-        n, p = (t & 0x0f, p) if t <= 0x8f else (int.from_bytes(b[p:p + (2 if t == 0xde else 4)], "big"), p + (2 if t == 0xde else 4))
-        m = {}
-        for _ in range(n):
-            k, p = mp_read(b, p)
-            v, p = mp_read(b, p)
-            m[k] = v
-        return m, p
-    if 0x90 <= t <= 0x9f or t in (0xdc, 0xdd):
-        n, p = (t & 0x0f, p) if t <= 0x9f else (int.from_bytes(b[p:p + (2 if t == 0xdc else 4)], "big"), p + (2 if t == 0xdc else 4))
-        a = []
-        for _ in range(n):
-            v, p = mp_read(b, p)
-            a.append(v)
-        return a, p
-    if 0xa0 <= t <= 0xbf or t in (0xd9, 0xda, 0xdb):
-        if t <= 0xbf:
-            n = t & 0x1f
-        else:
-            w = {0xd9: 1, 0xda: 2, 0xdb: 4}[t]
-            n, p = int.from_bytes(b[p:p + w], "big"), p + w
-        return b[p:p + n].decode("utf-8", "replace"), p + n
-    if t in (0xc4, 0xc5, 0xc6):
-        w = {0xc4: 1, 0xc5: 2, 0xc6: 4}[t]
-        n, p = int.from_bytes(b[p:p + w], "big"), p + w
-        return bytes(b[p:p + n]), p + n
-    if t == 0xc0:
-        return None, p
-    if t in (0xc2, 0xc3):
-        return t == 0xc3, p
-    if t in (0xcc, 0xcd, 0xce, 0xcf):
-        w = {0xcc: 1, 0xcd: 2, 0xce: 4, 0xcf: 8}[t]
-        return int.from_bytes(b[p:p + w], "big"), p + w
-    if t in (0xd0, 0xd1, 0xd2, 0xd3):
-        w = {0xd0: 1, 0xd1: 2, 0xd2: 4, 0xd3: 8}[t]
-        return int.from_bytes(b[p:p + w], "big", signed=True), p + w
-    if t in (0xca, 0xcb):
-        import struct
-        return struct.unpack(">f" if t == 0xca else ">d", b[p:p + (4 if t == 0xca else 8)])[0], p + (4 if t == 0xca else 8)
-    raise ValueError("msgpack type %02x" % t)
+def read_reply(data):
+    """The first MessagePack object of a reply (.msgp); a reply that isn't one raises ValueError."""
+    try:
+        return msgpack.unpackb(data, raw=False, strict_map_key=False, unicode_errors="replace")
+    except msgpack.ExtraData as e:  # trailing bytes: the reply is the first object
+        return e.unpacked
+    except msgpack.UnpackException as e:  # truncated
+        raise ValueError(str(e)) from e
 
 
 def reply_time(path):
+    """The reply's data.Time as Unix seconds (local time), or None."""
     try:
-        v, _ = mp_read(open(path, "rb").read())
+        with open(path, "rb") as f:
+            v = read_reply(f.read())
         s = v.get("data", {}).get("Time") if isinstance(v, dict) else None
         return int(time.mktime(time.strptime(s, "%Y-%m-%d %H:%M:%S"))) if isinstance(s, str) else None
-    except (ValueError, IndexError, KeyError, AttributeError, OSError):
+    except (ValueError, TypeError, KeyError, AttributeError, OSError):
         return None
 
 

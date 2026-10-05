@@ -11,7 +11,8 @@
 # Linux prerequisites vcpkg can't provide: README.md, "Setup".
 #
 # --windows (first argument): the Windows cross build instead, into build-win/ (port/PLAN.md 5b;
-# README.md, "Windows"): llvm-mingw's clang ($SOA_LLVM_MINGW, else ~/tools/llvm-mingw), vcpkg's
+# README.md, "Windows"): llvm-mingw's clang ($SOA_LLVM_MINGW, else work/tools/llvm-mingw,
+# downloaded if missing by scripts/llvm-mingw-bootstrap.sh), vcpkg's
 # x64-mingw-static triplet (cmake/vcpkg-triplets/), cmake/toolchains/llvm-mingw-x64.cmake, the
 # vcpkg feature "angle" (EGL / GLES).
 #
@@ -33,9 +34,7 @@ if [ "${1:-}" = "--windows" ]; then
   shift
   windows=1
   bdir=build-win
-  llvm_mingw=${SOA_LLVM_MINGW:-$HOME/tools/llvm-mingw}
-  [ -x "$llvm_mingw/bin/x86_64-w64-mingw32-clang++" ] ||
-    { echo "build.sh: llvm-mingw not found at $llvm_mingw (set SOA_LLVM_MINGW; README.md, \"Windows\")" >&2; exit 1; }
+  llvm_mingw=$(scripts/llvm-mingw-bootstrap.sh)
   # first on PATH: vcpkg's mingw toolchain builds the ports with the x86_64-w64-mingw32-gcc/g++ it finds
   export PATH="$llvm_mingw/bin:$PATH" SOA_LLVM_MINGW="$llvm_mingw"
   cfg_extra="-DVCPKG_TARGET_TRIPLET=x64-mingw-static -DVCPKG_HOST_TRIPLET=x64-linux

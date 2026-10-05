@@ -130,14 +130,15 @@ A cross build from Linux (or WSL) with **llvm-mingw** (clang, libc++, the UCRT) 
 shard on the three Windows targets) (`port/PLAN.md` 5b, "As built").
 
 ```sh
-# once: llvm-mingw (any recent ucrt ubuntu-x86_64 release of github.com/mstorsjo/llvm-mingw)
-curl -LO https://github.com/mstorsjo/llvm-mingw/releases/download/20260922/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
-tar -C ~/tools -xf llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
-ln -sfn ~/tools/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64 ~/tools/llvm-mingw   # or set SOA_LLVM_MINGW
+scripts/llvm-mingw-bootstrap.sh                         # optional: build.sh --windows runs it too
 scripts/build.sh --windows                              # build-win/: everything
 scripts/build.sh --windows --target soa-server          # one part
 ```
 
+- llvm-mingw: `scripts/llvm-mingw-bootstrap.sh` downloads the pinned release of
+  [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) (ucrt, ubuntu x86_64), checks its SHA-256 and
+  unpacks it into `work/tools/` with the link `work/tools/llvm-mingw` (tools live in the checkout's
+  `work/tools`, never in `$HOME`); `$SOA_LLVM_MINGW` instead uses another copy as is.
 - `--windows` configures `build-win/` with vcpkg's toolchain chainloading
   `cmake/toolchains/llvm-mingw-x64.cmake`, the triplet `x64-mingw-static`
   (`cmake/vcpkg-triplets/x64-mingw-static.cmake`: static, release only, the same sqlite3 options as

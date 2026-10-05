@@ -53,7 +53,7 @@ import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PKG_SRC = os.path.join(ROOT, "scripts", "package")
-LLVM_MINGW = os.environ.get("SOA_LLVM_MINGW", os.path.expanduser("~/tools/llvm-mingw"))
+LLVM_MINGW = os.environ.get("SOA_LLVM_MINGW", os.path.join(ROOT, "work", "tools", "llvm-mingw"))
 
 PLATFORMS = {
     "linux-x64": dict(build="build-release", exe="", triplet="x64-linux", windows=False),

@@ -50,6 +50,8 @@ a time by readable C++ ("natives"), each checked against the original. Programs:
   the source folders are picked up by globs.
 - Windows: a cross build with llvm-mingw, `scripts/build.sh --windows` into `build-win/`
   ([README.md "Windows"](README.md#windows)). Natives and server code must build there too.
+- Third-party tools the scripts look for go in `work/tools/` of the main checkout, never in `$HOME`;
+  worktrees reach them through their `work` link. `scripts/llvm-mingw-bootstrap.sh` fetches llvm-mingw.
 - Release ZIPs: [README.md "Packaging"](README.md#packaging) (`scripts/package.sh`).
 - After a merge rebuild all targets, not just the one you test: a stale `soa-server` fails
   sessions for no reason in the code.

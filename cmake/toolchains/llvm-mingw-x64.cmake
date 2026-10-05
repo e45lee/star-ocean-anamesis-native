@@ -1,16 +1,16 @@
 # Cross-compiling for Windows x64 with llvm-mingw (clang, libc++, MinGW-w64 UCRT): port/PLAN.md 5b.
 # Used as vcpkg's chainloaded toolchain by scripts/build.sh --windows (build-win/). llvm-mingw's
-# root: $SOA_LLVM_MINGW, else ~/tools/llvm-mingw (github.com/mstorsjo/llvm-mingw, the ucrt
-# ubuntu-x86_64 release unpacked there).
+# root: $SOA_LLVM_MINGW, else work/tools/llvm-mingw in the checkout (github.com/mstorsjo/llvm-mingw,
+# the ucrt ubuntu-x86_64 release scripts/llvm-mingw-bootstrap.sh unpacks there).
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_PROCESSOR x86_64)
 if(DEFINED ENV{SOA_LLVM_MINGW})
   set(_soa_llvm_mingw "$ENV{SOA_LLVM_MINGW}")
 else()
-  set(_soa_llvm_mingw "$ENV{HOME}/tools/llvm-mingw")
+  get_filename_component(_soa_llvm_mingw "${CMAKE_CURRENT_LIST_DIR}/../../work/tools/llvm-mingw" ABSOLUTE)
 endif()
 if(NOT EXISTS "${_soa_llvm_mingw}/bin/x86_64-w64-mingw32-clang++")
-  message(FATAL_ERROR "llvm-mingw not found at ${_soa_llvm_mingw}: set SOA_LLVM_MINGW (README.md, \"Windows\")")
+  message(FATAL_ERROR "llvm-mingw not found at ${_soa_llvm_mingw}: run scripts/llvm-mingw-bootstrap.sh or set SOA_LLVM_MINGW (README.md, \"Windows\")")
 endif()
 set(CMAKE_C_COMPILER "${_soa_llvm_mingw}/bin/x86_64-w64-mingw32-clang")
 set(CMAKE_CXX_COMPILER "${_soa_llvm_mingw}/bin/x86_64-w64-mingw32-clang++")

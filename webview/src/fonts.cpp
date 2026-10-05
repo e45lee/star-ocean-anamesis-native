@@ -10,11 +10,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <mutex>
+#include <soa/fonts.h>
 #include <string>
 #include <vector>
 
 #include "internal.h"
-#include "soa/fonts.h"
 
 // The implementation lives here, with external linkage: page.cpp uses stb_truetype too.
 #define STB_TRUETYPE_IMPLEMENTATION

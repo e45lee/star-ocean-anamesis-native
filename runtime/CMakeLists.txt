@@ -35,7 +35,8 @@ list(SORT SOA_RUNTIME_SOURCES)
 # runtime/src (or next to the including file), or dynarmic. Nothing from port/, server/ or
 # emulator/. The other includes are common/include's (`#include <soa/env.h>`, the environment rule
 # every program shares; `<soa/zip.h>`, the ZIP reader soa_zip; `<soa/base64.h>`, `<soa/prefs_xml.h>`,
-# `<soa/png.h>`, the formats of soa_codec; `<soa/sock.h>`, the host sockets of soa_compat), dependencies like dynarmic, not
+# `<soa/png.h>`, the formats of soa_codec; `<soa/sock.h>`, the host sockets of soa_compat; `<soa/fonts.h>`,
+# the built-in fonts of soa_fonts), dependencies like dynarmic, not
 # users of the runtime. (Also enforced by the include path, which is runtime/src only, and by
 # soaruntime_tests, which links the whole archive without any port code.)
 file(GLOB_RECURSE _rt_check CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/* ${SOA_RUNTIME_DIR}/tests/*)

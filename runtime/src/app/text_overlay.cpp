@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include <soa/fonts.h>
 
 #include <algorithm>
 #include <chrono>
@@ -22,7 +23,6 @@
 #include "android/platform.h"
 #include "core/log.h"
 #include "frontend/text_entry.h"
-#include "soa/fonts.h"
 
 namespace soa::app::text_overlay {
 

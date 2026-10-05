@@ -17,13 +17,9 @@
 #include <stdlib.h>
 // stdio before `#define rename` below: libstdc++'s <cstdio> #undefs rename (back to the C runtime's,
 // which won't replace a file), so it must have run, and its include guard set, before the define.
-// So must libstdc++'s <filesystem>: its std::filesystem::rename is a library function, which the
-// define would turn into an undefined soa_rename (libc++'s is inline, renamed consistently).
+// The define also renames std::filesystem::rename: call rename(), never std::filesystem::rename.
 #ifdef __cplusplus
 #include <cstdio>
-#ifdef __GLIBCXX__
-#include <filesystem>
-#endif
 #else
 #include <stdio.h>
 #endif

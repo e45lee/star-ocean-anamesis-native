@@ -42,8 +42,10 @@ int install_tests() {
     check(find_download_dir({r, r + "/game"}) == r + "/download-3.7.0", "the program's folder first");
     // the tree extracted straight into game/ (the canonical zip's layout: no top folder)
     fs::remove_all(root / "download-3.7.0");
-    fs::rename(root / "game/my-data", root / "g2");
-    for (auto& e : fs::directory_iterator(root / "g2")) fs::rename(e.path(), root / "game" / e.path().filename());
+    // (rename, not fs::rename: on Windows `rename` is posix_compat.h's, which std::filesystem's can't share a name with)
+    auto mv = [](const fs::path& a, const fs::path& b) { check(rename(a.string().c_str(), b.string().c_str()) == 0, "rename " + a.string()); };
+    mv(root / "game/my-data", root / "g2");
+    for (auto& e : fs::directory_iterator(root / "g2")) mv(e.path(), root / "game" / e.path().filename());
     check(find_download_dir({r, r + "/game"}) == r + "/game", "the tree extracted into game/ itself");
     // APKs: top level only, the canonical name first in each dir; the probe decides
     touch(root / "game/a-other.apk");

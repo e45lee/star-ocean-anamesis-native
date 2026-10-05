@@ -8,6 +8,8 @@
 #include <string.h>
 #include <windows.h>
 
+#include <atomic>
+
 extern "C" char* soa_realpath(const char* path, char* resolved) {
     char full[PATH_MAX];
     if (!strcmp(path, "/proc/self/exe")) {  // Linux's link to the running executable
@@ -89,4 +91,19 @@ extern "C" int soa_setenv(const char* name, const char* value, int overwrite) {
 }
 
 extern "C" int soa_unsetenv(const char* name) { return _putenv_s(name, "") == 0 ? 0 : -1; }
+
+extern "C" char* soa_mkdtemp(char* tmpl) {
+    size_t n = tmpl ? strlen(tmpl) : 0;
+    if (n < 6 || strcmp(tmpl + n - 6, "XXXXXX") != 0) return errno = EINVAL, nullptr;
+    static const char kChars[] = "abcdefghijklmnopqrstuvwxyz0123456789";
+    static std::atomic<unsigned long long> counter{0};
+    for (int attempt = 0; attempt < 1000; attempt++) {
+        unsigned long long v = GetTickCount64() * 0x9e3779b97f4a7c15ull ^ ((unsigned long long)GetCurrentProcessId() << 32) ^
+                               (counter++ * 0xbf58476d1ce4e5b9ull);
+        for (size_t i = n - 6; i < n; i++, v /= 36) tmpl[i] = kChars[v % 36];
+        if (_mkdir(tmpl) == 0) return tmpl;
+        if (errno != EEXIST) return nullptr;
+    }
+    return errno = EEXIST, nullptr;
+}
 #endif

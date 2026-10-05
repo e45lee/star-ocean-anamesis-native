@@ -56,6 +56,9 @@ char* soa_strptime(const char* s, const char* fmt, struct tm* tm);
 // setenv / unsetenv over _putenv_s.
 int soa_setenv(const char* name, const char* value, int overwrite);
 int soa_unsetenv(const char* name);
+// mkdtemp: a new directory from a template ending in XXXXXX (mingw-w64 has it only from version
+// 12; Ubuntu 24.04's is 11).
+char* soa_mkdtemp(char* tmpl);
 #ifdef __cplusplus
 }
 #endif
@@ -67,6 +70,7 @@ int soa_unsetenv(const char* name);
 #define gettid soa_gettid
 #define setenv soa_setenv
 #define unsetenv soa_unsetenv
+#define mkdtemp soa_mkdtemp
 #define lstat stat
 
 #ifdef __cplusplus

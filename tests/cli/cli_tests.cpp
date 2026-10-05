@@ -269,10 +269,10 @@ int main() {
                        "--download-dir", "--download", "--download-prefer", "--fake-server", "--fake-server-schema", "--memstats",
                        "--live-check", "--repo", "--standin-assets", "--restore", "--restore-tower", "--home3d-all", "--clock",
                        "--enable-events", "--galaxy-pass", "--new-player", "--surprise", "--db", "--master", "--gacha-pools", "--seed",
-                       "--game-xml", "--campaign-master-db", "--campaign-seed", "--fail", "--log-packets", "--seed-rng", "--guest-cpus",
+                       "--campaign-master-db", "--campaign-seed", "--fail", "--log-packets", "--seed-rng", "--guest-cpus",
                        "--event-keywords", "--start-coins", "--list-native", "-v", "-vv", "-h", "--help"};
     const V server_old = {"--selftest", "--shuffle", "--replay", "--out", "--list-apis", "--list-hooks", "--repo", "--listen", "--http",
-                          "--bridge-url", "--log-packets", "--data", "--db", "--master", "--apk", "--gacha-pools", "--seed", "--game-xml",
+                          "--bridge-url", "--log-packets", "--data", "--db", "--master", "--apk", "--gacha-pools", "--seed",
                           "--seed-rng", "--new-player", "--clock", "--start-coins", "--galaxy-pass", "--enable-events",
                           "--event-keywords", "--restore-tower", "--home3d-all", "--download-dir", "--download", "--cdn-url",
                           "--standin-assets", "--cdn-scratch", "--cdn-check", "--campaign-master-db", "--campaign-seed", "--fail",
@@ -285,10 +285,8 @@ int main() {
                           "--guest-cpus", "--size", "--landscape", "--render-size", "--font", "--fullscreen", "--headless", "--windowed",
                           "--shot", "--do", "--control", "--gdb", "-v", "-vv", "-h", "--help"};
 
-    // Options removed on purpose since: --font (2026-10-05; the fonts are built in), --game-xml
-    // (2026-10-05; --seed covers it).
+    // Options removed on purpose since: --font (2026-10-05; the fonts are built in).
     const V kRemovedFont = {"--font"};
-    const V kRemovedSoa = {"--font", "--game-xml"}, kRemovedServer = {"--game-xml"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -368,7 +366,6 @@ int main() {
         {{"--master", "data/basmaster-3.7.0.sqlite3"}},
         {{"--gacha-pools", "data/gacha_pools.sqlite3"}},
         {{"--seed", "data/saves/seed/Game.xml"}},
-        {{"--game-xml", "/tmp/Game.xml"}, "--game-xml is gone: --seed names a save (soa falls back to its client's Game.xml by itself)", 2},
         {{"--seed-rng", "1"}},
         {{"--seed-rng", "605"}},
         {{"--seed-rng", "0x10"}},
@@ -525,14 +522,14 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, {}, kRemovedSoa, soa_rows);
+            check_names("soa", names, soa_old, {}, kRemovedFont, soa_rows);
         }
         {
             soa::server::ServerConfig c;
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, {}, kRemovedServer, server_rows);
+            check_names("soa-server", names, server_old, {}, {}, server_rows);
         }
         {
             soa::emu::EmuArgs a;

@@ -48,7 +48,7 @@ recommendations) is [`docs/history/environment-audit-2026-10-03.md`](history/env
 | `SOA_SERVER_MASTER` | `--master FILE` | soa, soa-server |
 | `SOA_GACHA_POOLS` | `--gacha-pools FILE` | soa, soa-server |
 | `SOA_SERVER_SEED` | `--seed FILE` | soa, soa-server |
-| `SOA_SERVER_GAME_XML` | `--seed FILE` (its flag `--game-xml` is gone too, 2026-10-05: soa seeds from its client's own Game.xml by itself) | soa, soa-server |
+| `SOA_SERVER_GAME_XML` | `--seed FILE` (soa seeds from its client's own Game.xml by itself) | soa, soa-server |
 | `SOA_SERVER_SEED_RNG` | `--seed-rng N` | soa, soa-server |
 | `SOA_RESTORE_NEW_PLAYER` | `--new-player` | soa, soa-server |
 | `SOA_CLOCK` | `--clock "YYYY-MM-DD HH:MM:SS"` | soa, soa-server |

@@ -73,10 +73,8 @@ sudo apt install libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev l
 sudo apt install libwayland-dev libxkbcommon-dev libegl-dev libdecor-0-dev
 # EGL / GLES 2 at run time (Mesa): SDL creates the GLES contexts through EGL, on X11 or Wayland
 sudo apt install libegl1 libgles2 libegl-mesa0 libgl1-mesa-dri
-# a font with Japanese glyphs for the text box shown while the game asks for text (a name): any one of
-# fonts-ipaexfont-gothic / fonts-noto-cjk / fonts-droid-fallback, or --font PATH; fontconfig's
-# fc-match finds others. Without one the text shows in the window title only.
-sudo apt install fonts-ipaexfont-gothic fontconfig
+# (no font package: the text box and the web view draw with Noto Sans JP, built into the programs;
+# cmake/fonts.cmake downloads it at configure time)
 ```
 
 **Sound:** vcpkg's SDL2 here has the PulseAudio backend (plus sndio/OSS), not ALSA or PipeWire

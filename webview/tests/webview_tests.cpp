@@ -79,8 +79,7 @@ void test_render() {
     int dark = 0;
     for (size_t i = 0; i < px.size(); i += 4)
         if (px[i] < 128) dark++;
-    // without a font nothing is drawn; that is reported, not failed (a font is a host package)
-    if (dark == 0) printf("note: no text drawn (no font found?)\n");
+    expect(dark > 0, "render: text drawn (the built-in font)");
     // the link: find it by scanning taps down the left edge
     std::string hit;
     for (int y = 0; y < 400 && hit.empty(); y += 4) hit = page.tap(8, y, 0);

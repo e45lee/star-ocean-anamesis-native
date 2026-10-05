@@ -88,9 +88,8 @@ Put the file as in 1. and start again.
 {{IF linux}}
 Linux needs: glibc 2.39 or newer (Ubuntu 24.04, Debian 13, Fedora 40 or later), libEGL and
 libGLESv2 (Mesa: libegl1, libgles2, libegl-mesa0, libgl1-mesa-dri), X11 or Wayland, PulseAudio
-or PipeWire (pipewire-pulse) for sound, and a Japanese font for the name-entry box (e.g.
-fonts-ipaexfont-gothic or fonts-noto-cjk). The story movies need nothing else: the program
-decodes them itself (FFmpeg's libraries, built in).
+or PipeWire (pipewire-pulse) for sound. The fonts (Noto Sans JP) and the story movies' decoders
+(FFmpeg's libraries) are built in.
 {{ELSE}}
 Windows needs: Windows 10 or 11 (x64). Everything else is built in, the story movies' decoder
 too (FFmpeg's libraries).
@@ -338,9 +337,8 @@ An APK of another version is skipped with "another version of the game (its libS
 {{IF linux}}
 Linux needs: glibc 2.39 or newer (Ubuntu 24.04, Debian 13, Fedora 40 or later), libEGL and
 libGLESv2 (Mesa: libegl1, libgles2, libegl-mesa0, libgl1-mesa-dri), X11 or Wayland, PulseAudio
-or PipeWire (pipewire-pulse) for sound, and a Japanese font for the name-entry box (e.g.
-fonts-ipaexfont-gothic or fonts-noto-cjk). The story movies need nothing else: the program
-decodes them itself (FFmpeg's libraries, built in).
+or PipeWire (pipewire-pulse) for sound. The fonts (Noto Sans JP) and the story movies' decoders
+(FFmpeg's libraries) are built in.
 {{ELSE}}
 Windows needs: Windows 10 or 11 (x64). Everything else is built in, the story movies' decoder
 too (FFmpeg's libraries).

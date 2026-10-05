@@ -19,7 +19,7 @@ for name, use, progs in re.findall(r'\{"(SOA_[A-Z0-9_]+)", "([^"]+)", ([^}]+)\}'
     for p in progs.split("|"):
         m |= masks[p.strip()]
     table.append((name, use, m))
-assert len(table) >= 30, "kRemoved not parsed"
+assert len(table) >= 29, "kRemoved not parsed"
 progs = [("soa", "port/soa", 1), ("soa-server", "server/soa-server", 2), ("soa-emu", "emulator/soa-emu", 4),
          ("soa-viewer", "emulator-viewer/soa-viewer", 8), ("soa-webview-render", "webview/soa-webview-render", 16)]
 live = ["SOA_TAG_CHECK", "SOA_TAG_CHECK_EVERY", "SOA_TAG_CHECK_OUT", "SOA_TAG_CHECK_ONLY", "SOA_TAG_CHECK_TRACE", "SOA_TAG_CHECK_DUMP"]

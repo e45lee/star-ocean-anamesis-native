@@ -122,11 +122,14 @@ time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWE
 A cross build from Linux (or WSL) with the distribution's **MinGW-w64 GCC** (GCC, libstdc++,
 winpthreads, msvcrt) into `build-win/`
 (`port/PLAN.md` 5b, "W"): every part, as `.exe` files (`soa.exe`, `soa-server.exe`, `soa-emu.exe`,
-`soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop):
-`soa-server.exe --selftest`, `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests
-`win:battle-gacha` (the port's restore session, in process), `win:seeded` (`soa-emu.exe` against
-`soa-server.exe`: login, battle, gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff
-shard on the three Windows targets) (`port/PLAN.md` 5b, "As built").
+`soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop) with the
+earlier llvm-mingw build (clang, libc++, the UCRT): `soa-server.exe --selftest`,
+`soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests `win:battle-gacha` (the port's
+restore session, in process), `win:seeded` (`soa-emu.exe` against `soa-server.exe`: login, battle,
+gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff shard on the three Windows targets)
+(`port/PLAN.md` 5b, "As built"). The MinGW-w64 GCC build (2026-10-05) so far under Wine only: the
+unit tests, `soaruntime_tests.exe` and `soa-server.exe --selftest` (all but the tests that need
+`work/download-3.7.0`); the checks on Windows itself are still to be repeated with it.
 
 ```sh
 sudo apt install g++-mingw-w64-x86-64-posix               # once: the cross compiler (Ubuntu / Debian)
@@ -147,6 +150,12 @@ scripts/build.sh --windows --target soa-server          # one part
   only Windows' own DLLs.
 - In a git worktree set `VCPKG_ROOT` to the main checkout's `.vcpkg` (as for `build/`), or
   `scripts/vcpkg-bootstrap.sh` clones another vcpkg.
+- GCC on MinGW differs from llvm-mingw in ways `soa_compat` covers (`common/win32/posix_compat.h`,
+  `common/src/posix_compat_win32.cpp`): `rename` must replace (libstdc++'s `<cstdio>` restores the C
+  runtime's, so the header includes it before its define; call `rename()`, never
+  `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated; a replacement
+  `__cxa_thread_atexit` runs them before the TLS blocks are freed); `mkdtemp` (mingw-w64 12+ only);
+  and the C runtime is `msvcrt.dll`, not the UCRT (no `_get_timezone`; `long` is 32 bits).
 - What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
   `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
   POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,

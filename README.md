@@ -132,8 +132,9 @@ shard on the three Windows targets) (`port/PLAN.md` 5b, "As built").
 ```sh
 # once: llvm-mingw (any recent ucrt ubuntu-x86_64 release of github.com/mstorsjo/llvm-mingw)
 curl -LO https://github.com/mstorsjo/llvm-mingw/releases/download/20260922/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
-tar -C ~/tools -xf llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
-ln -sfn ~/tools/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64 ~/tools/llvm-mingw   # or set SOA_LLVM_MINGW
+mkdir -p work/tools   # tools live in the checkout's work/tools, never in $HOME
+tar -C work/tools -xf llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
+ln -sfn llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64 work/tools/llvm-mingw   # or set SOA_LLVM_MINGW
 scripts/build.sh --windows                              # build-win/: everything
 scripts/build.sh --windows --target soa-server          # one part
 ```

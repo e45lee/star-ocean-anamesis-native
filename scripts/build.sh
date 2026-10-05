@@ -11,9 +11,9 @@
 # Linux prerequisites vcpkg can't provide: README.md, "Setup".
 #
 # --windows (first argument): the Windows cross build instead, into build-win/ (port/PLAN.md 5b;
-# README.md, "Windows"): llvm-mingw's clang ($SOA_LLVM_MINGW, else work/tools/llvm-mingw,
-# downloaded if missing by scripts/llvm-mingw-bootstrap.sh), vcpkg's
-# x64-mingw-static triplet (cmake/vcpkg-triplets/), cmake/toolchains/llvm-mingw-x64.cmake, the
+# README.md, "Windows"): the distribution's MinGW-w64 GCC (x86_64-w64-mingw32-g++-posix, apt's
+# g++-mingw-w64-x86-64-posix), vcpkg's x64-mingw-static triplet (cmake/vcpkg-triplets/),
+# cmake/toolchains/mingw-w64-x64.cmake, the
 # vcpkg feature "angle" (EGL / GLES).
 #
 # --release (after --windows, if any): the optimized build the release packages are made from
@@ -34,11 +34,12 @@ if [ "${1:-}" = "--windows" ]; then
   shift
   windows=1
   bdir=build-win
-  llvm_mingw=$(scripts/llvm-mingw-bootstrap.sh)
-  # first on PATH: vcpkg's mingw toolchain builds the ports with the x86_64-w64-mingw32-gcc/g++ it finds
-  export PATH="$llvm_mingw/bin:$PATH" SOA_LLVM_MINGW="$llvm_mingw"
+  for t in gcc-posix g++-posix windres; do
+    command -v x86_64-w64-mingw32-$t > /dev/null 2>&1 ||
+      { echo "build.sh: x86_64-w64-mingw32-$t not found (sudo apt install g++-mingw-w64-x86-64-posix; README.md, \"Windows\")" >&2; exit 1; }
+  done
   cfg_extra="-DVCPKG_TARGET_TRIPLET=x64-mingw-static -DVCPKG_HOST_TRIPLET=x64-linux
-    -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$repo/cmake/toolchains/llvm-mingw-x64.cmake
+    -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$repo/cmake/toolchains/mingw-w64-x64.cmake
     -DVCPKG_MANIFEST_FEATURES=angle"
 fi
 rel_flags= rel_link=
@@ -50,6 +51,16 @@ if [ "${1:-}" = "--release" ]; then
   [ -z "$windows" ] && rel_link="-static-libstdc++ -static-libgcc"
 fi
 
+if [ -n "$windows" ]; then
+  # vcpkg's mingw toolchain builds the ports with the x86_64-w64-mingw32-gcc/g++ it finds on PATH (the
+  # triplet passes PATH through): the posix-thread compilers under those names, first on PATH.
+  shim=$repo/$bdir/mingw-posix
+  mkdir -p "$shim"
+  for t in gcc g++ c++; do
+    ln -sfn "$(command -v x86_64-w64-mingw32-$t-posix)" "$shim/x86_64-w64-mingw32-$t"
+  done
+  export PATH="$shim:$PATH"
+fi
 vcpkg_root=$(scripts/vcpkg-bootstrap.sh)
 jobs=$(nproc 2>/dev/null || echo 4)
 [ "$jobs" -gt 8 ] && jobs=8

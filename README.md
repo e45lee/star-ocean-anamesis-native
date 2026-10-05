@@ -121,7 +121,8 @@ time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWE
 
 ### Windows
 
-A cross build from Linux (or WSL) with **llvm-mingw** (clang, libc++, the UCRT) into `build-win/`
+A cross build from Linux (or WSL) with the distribution's **MinGW-w64 GCC** (GCC, libstdc++,
+winpthreads, msvcrt) into `build-win/`
 (`port/PLAN.md` 5b, "W"): every part, as `.exe` files (`soa.exe`, `soa-server.exe`, `soa-emu.exe`,
 `soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop):
 `soa-server.exe --selftest`, `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests
@@ -130,17 +131,17 @@ A cross build from Linux (or WSL) with **llvm-mingw** (clang, libc++, the UCRT) 
 shard on the three Windows targets) (`port/PLAN.md` 5b, "As built").
 
 ```sh
-scripts/llvm-mingw-bootstrap.sh                         # optional: build.sh --windows runs it too
+sudo apt install g++-mingw-w64-x86-64-posix               # once: the cross compiler (Ubuntu / Debian)
 scripts/build.sh --windows                              # build-win/: everything
 scripts/build.sh --windows --target soa-server          # one part
 ```
 
-- llvm-mingw: `scripts/llvm-mingw-bootstrap.sh` downloads the pinned release of
-  [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) (ucrt, ubuntu x86_64), checks its SHA-256 and
-  unpacks it into `work/tools/` with the link `work/tools/llvm-mingw` (tools live in the checkout's
-  `work/tools`, never in `$HOME`); `$SOA_LLVM_MINGW` instead uses another copy as is.
+- The compiler: `x86_64-w64-mingw32-gcc-posix` / `g++-posix` from the system's package (GCC's posix
+  thread model, which `std::thread` needs; the distribution's default `x86_64-w64-mingw32-g++` is
+  the win32 model). `build.sh` links them under the plain names in `build-win/mingw-posix/` and puts
+  that first on `PATH` for vcpkg's port builds.
 - `--windows` configures `build-win/` with vcpkg's toolchain chainloading
-  `cmake/toolchains/llvm-mingw-x64.cmake`, the triplet `x64-mingw-static`
+  `cmake/toolchains/mingw-w64-x64.cmake`, the triplet `x64-mingw-static`
   (`cmake/vcpkg-triplets/x64-mingw-static.cmake`: static, release only, the same sqlite3 options as
   Linux so the served master and the CDN ids don't depend on the platform) and the vcpkg feature
   `angle` (ANGLE: EGL / GLES on Windows). The first configure builds every port for MinGW (about an

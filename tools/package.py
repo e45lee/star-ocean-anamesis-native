@@ -53,7 +53,6 @@ import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PKG_SRC = os.path.join(ROOT, "scripts", "package")
-LLVM_MINGW = os.environ.get("SOA_LLVM_MINGW", os.path.join(ROOT, "work", "tools", "llvm-mingw"))
 
 PLATFORMS = {
     "linux-x64": dict(build="build-release", exe="", triplet="x64-linux", windows=False),
@@ -117,7 +116,7 @@ def build(plat):
 
 def tool(plat, name):
     if PLATFORMS[plat]["windows"]:
-        return os.path.join(LLVM_MINGW, "bin", "llvm-" + name)
+        return "x86_64-w64-mingw32-" + name  # MinGW-w64 binutils (README.md "Windows")
     return name
 
 

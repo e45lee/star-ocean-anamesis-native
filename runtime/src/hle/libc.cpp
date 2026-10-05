@@ -176,6 +176,16 @@ void th_qsort(Cpu& c) {
 
 void th_rand(Cpu& c) { ret(c, (u64)(u32)guest_rand()); }  // bionic RAND_MAX 0x7fffffff on both hosts
 
+// The searching string functions with one signature on every host: glibc and libc++ declare C++'s
+// const overloads of these, MinGW-w64's headers only C's (const in, non-const out).
+const void* c_memchr(const void* s, int ch, size_t n) { return memchr(s, ch, n); }
+const char* c_strchr(const char* s, int ch) { return strchr(s, ch); }
+const char* c_strrchr(const char* s, int ch) { return strrchr(s, ch); }
+const char* c_strstr(const char* s, const char* t) { return strstr(s, t); }
+#ifndef _WIN32
+const wchar_t* c_wmemchr(const wchar_t* s, wchar_t ch, size_t n) { return wmemchr(s, ch, n); }
+#endif
+
 }  // namespace
 
 void register_libc(Hle& h) {
@@ -191,27 +201,27 @@ void register_libc(Hle& h) {
 #endif
 
     // strings (identical ABI)
-    HLE_WRAP_T(h, "memchr", const void* (*)(const void*, int, size_t), memchr);
+    HLE_WRAP_T(h, "memchr", const void* (*)(const void*, int, size_t), c_memchr);
     HLE_WRAP(h, memcmp);
     HLE_WRAP(h, memcpy);
     HLE_WRAP(h, memmove);
     HLE_WRAP(h, memset);
     HLE_WRAP(h, strcat);
-    HLE_WRAP_T(h, "strchr", const char* (*)(const char*, int), strchr);
+    HLE_WRAP_T(h, "strchr", const char* (*)(const char*, int), c_strchr);
     HLE_WRAP(h, strcmp);
     HLE_WRAP(h, strcpy);
     HLE_WRAP(h, strlen);
     HLE_WRAP(h, strncmp);
     HLE_WRAP(h, strncpy);
-    HLE_WRAP_T(h, "strrchr", const char* (*)(const char*, int), strrchr);
-    HLE_WRAP_T(h, "strstr", const char* (*)(const char*, const char*), strstr);
+    HLE_WRAP_T(h, "strrchr", const char* (*)(const char*, int), c_strrchr);
+    HLE_WRAP_T(h, "strstr", const char* (*)(const char*, const char*), c_strstr);
     HLE_WRAP(h, strcasecmp);
     HLE_WRAP(h, strtok);
     HLE_WRAP(h, strerror);
 #ifndef _WIN32  // the wide-character functions (guest wchar_t is 32-bit) and the long conversions (guest long is 64-bit): libc_win32.cpp
     HLE_WRAP(h, wcscpy);
     HLE_WRAP(h, wcslen);
-    HLE_WRAP_T(h, "wmemchr", const wchar_t* (*)(const wchar_t*, wchar_t, size_t), wmemchr);
+    HLE_WRAP_T(h, "wmemchr", const wchar_t* (*)(const wchar_t*, wchar_t, size_t), c_wmemchr);
     HLE_WRAP(h, wmemcmp);
     HLE_WRAP(h, wmemcpy);
     HLE_WRAP(h, wmemmove);

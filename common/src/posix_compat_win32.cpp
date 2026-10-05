@@ -6,7 +6,11 @@
 #include <errno.h>
 #include <io.h>
 #include <string.h>
+#include <pthread.h>
 #include <windows.h>
+
+#include <atomic>
+#include <vector>
 
 extern "C" char* soa_realpath(const char* path, char* resolved) {
     char full[PATH_MAX];
@@ -89,4 +93,70 @@ extern "C" int soa_setenv(const char* name, const char* value, int overwrite) {
 }
 
 extern "C" int soa_unsetenv(const char* name) { return _putenv_s(name, "") == 0 ? 0 : -1; }
+
+extern "C" char* soa_mkdtemp(char* tmpl) {
+    size_t n = tmpl ? strlen(tmpl) : 0;
+    if (n < 6 || strcmp(tmpl + n - 6, "XXXXXX") != 0) return errno = EINVAL, nullptr;
+    static const char kChars[] = "abcdefghijklmnopqrstuvwxyz0123456789";
+    static std::atomic<unsigned long long> counter{0};
+    for (int attempt = 0; attempt < 1000; attempt++) {
+        unsigned long long v = GetTickCount64() * 0x9e3779b97f4a7c15ull ^ ((unsigned long long)GetCurrentProcessId() << 32) ^
+                               (counter++ * 0xbf58476d1ce4e5b9ull);
+        for (size_t i = n - 6; i < n; i++, v /= 36) tmpl[i] = kChars[v % 36];
+        if (_mkdir(tmpl) == 0) return tmpl;
+        if (errno != EEXIST) return nullptr;
+    }
+    return errno = EEXIST, nullptr;
+}
+
+#if defined(__GNUC__) && !defined(__clang__)
+// thread_local destructors for GCC on MinGW (its TLS is emulated, libgcc's emutls). libstdc++'s
+// __cxa_thread_atexit runs them from a winpthreads key destructor whose key is created after
+// emutls' own, and winpthreads runs key destructors in key order: emutls frees a thread's TLS
+// blocks first, then the destructors run on freed memory (seen as soaruntime_tests crashing in
+// ~ThreadState under Wine). This replacement (it takes the place of libstdc++'s: the linker finds
+// it in soa_compat first) keeps each thread's destructors in a key created at start-up, before any
+// emulated TLS is touched, so they run while the blocks are alive; the main thread's at exit().
+// (clang, llvm-mingw, has native TLS: none of this.)
+namespace {
+struct ThreadDtor {
+    void (*fn)(void*);
+    void* obj;
+};
+using ThreadDtors = std::vector<ThreadDtor>;
+pthread_key_t g_dtor_key;
+bool g_dtor_key_ok = false;
+
+void run_thread_dtors(void* p) {
+    auto* v = (ThreadDtors*)p;
+    while (!v->empty()) {  // in reverse order of construction; a destructor may register more
+        ThreadDtor d = v->back();
+        v->pop_back();
+        d.fn(d.obj);
+    }
+    delete v;
+}
+
+__attribute__((constructor(101))) void init_thread_dtors() {
+    g_dtor_key_ok = pthread_key_create(&g_dtor_key, run_thread_dtors) == 0;
+    atexit([] {  // the main thread's (no key destructor runs for it)
+        if (auto* v = (ThreadDtors*)pthread_getspecific(g_dtor_key)) {
+            pthread_setspecific(g_dtor_key, nullptr);
+            run_thread_dtors(v);
+        }
+    });
+}
+}  // namespace
+
+extern "C" int __cxa_thread_atexit(void (*fn)(void*), void* obj, void* /*dso*/) {
+    if (!g_dtor_key_ok) return -1;
+    auto* v = (ThreadDtors*)pthread_getspecific(g_dtor_key);
+    if (!v) {
+        v = new ThreadDtors;
+        pthread_setspecific(g_dtor_key, v);
+    }
+    v->push_back({fn, obj});
+    return 0;
+}
+#endif
 #endif

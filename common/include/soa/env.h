@@ -46,8 +46,6 @@ inline constexpr Removed kRemoved[] = {
     {"SOA_STANDIN_ASSETS", "--standin-assets", kSoa | kServer},
     {"SOA_GUEST_CPUS", "--guest-cpus", kRuntimePrograms},
     {"SOA_HEADLESS", "--headless / --windowed", kRuntimePrograms},
-    {"SOA_FONT", "--font", kRuntimePrograms},
-    {"SOA_WEBVIEW_FONT", "--font", kSoa | kRender},
     // soa's own
     {"SOA_NATIVES", "--natives", kSoa},
     {"SOA_FAKE_SERVER", "--fake-server", kSoa},

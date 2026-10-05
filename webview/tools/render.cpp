@@ -2,7 +2,7 @@
 // a PNG, the whole page or one view-sized screen of it. docs/webview.md "The render tool".
 //
 //   soa-webview-render PAGE OUT.png [--width W] [--height H] [--zoom Z] [--scroll Y] [--screen]
-//                      [--url URL] [--map PREFIX=DIR]... [--tap X:Y] [--font PATH]
+//                      [--url URL] [--map PREFIX=DIR]... [--tap X:Y]
 //
 //   PAGE        an HTML file ("-": stdin)
 //   --width     the view's width in device pixels (default 1000)
@@ -14,7 +14,6 @@
 //               file:// URLs are read from the disk
 //   --scroll    with --screen: the scroll position (device pixels)
 //   --tap X:Y   also prints the link a tap at view pixel X:Y hits
-//   --font PATH a font file tried first for the Japanese face (as soa --font)
 // Environment: SOA_WEBVIEW_DUMP_CSS=FILE appends each stylesheet as litehtml gets it (docs/webview.md).
 #include <unistd.h>
 
@@ -84,7 +83,6 @@ int main(int argc, char** argv) {
         else if (a == "--scroll") scroll = atoi(val().c_str());
         else if (a == "--screen") screen = true;
         else if (a == "--url") url = val();
-        else if (a == "--font") soa::webview::set_font(val());
         else if (a == "--map") {
             std::string m = val();
             size_t eq = m.find('=');
@@ -98,7 +96,7 @@ int main(int argc, char** argv) {
     }
     if (page.empty() || out.empty()) {
         fprintf(stderr, "usage: soa-webview-render PAGE OUT.png [--width W] [--height H] [--zoom Z] [--scroll Y] [--screen] [--url URL] "
-                        "[--map PREFIX=DIR]... [--tap X:Y] [--font PATH]\n");
+                        "[--map PREFIX=DIR]... [--tap X:Y]\n");
         return 2;
     }
     std::string html;

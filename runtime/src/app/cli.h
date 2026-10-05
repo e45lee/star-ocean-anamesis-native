@@ -42,7 +42,7 @@ inline CLI::Option* add_guest_cpus(CLI::App& app, HostArgs& a) {
         ->default_str("8");
 }
 
-// The window: --size, --landscape, --render-size, --fullscreen, --font, --headless, --windowed.
+// The window: --size, --landscape, --render-size, --fullscreen, --headless, --windowed.
 inline void add_window_options(CLI::App& app, HostArgs& a, const std::string& group = "Window") {
     HostConfig& h = *a.host;
     app.add_option_function<std::string>(
@@ -58,9 +58,6 @@ inline void add_window_options(CLI::App& app, HostArgs& a, const std::string& gr
         ->default_str("desktop")
         ->group(group);
     app.add_flag("--fullscreen", h.fullscreen, "start in (desktop) fullscreen")->group(group);
-    app.add_option("--font", h.font, "the on-screen text box's font, a Japanese one (default: a system Japanese font; 'none': no text box)")
-        ->type_name("PATH")
-        ->group(group);
     cli::add_ordered_flag(app, "--headless", [&a] { a.headless = 1; },
                           "don't show the window; it still renders at the same size, so screenshots, --shot / --do and "
                           "--control work the same")

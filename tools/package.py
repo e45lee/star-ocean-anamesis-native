@@ -53,7 +53,6 @@ import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PKG_SRC = os.path.join(ROOT, "scripts", "package")
-LLVM_MINGW = os.environ.get("SOA_LLVM_MINGW", os.path.join(ROOT, "work", "tools", "llvm-mingw"))
 
 PLATFORMS = {
     "linux-x64": dict(build="build-release", exe="", triplet="x64-linux", windows=False),
@@ -117,7 +116,7 @@ def build(plat):
 
 def tool(plat, name):
     if PLATFORMS[plat]["windows"]:
-        return os.path.join(LLVM_MINGW, "bin", "llvm-" + name)
+        return "x86_64-w64-mingw32-" + name  # MinGW-w64 binutils (README.md "Windows")
     return name
 
 
@@ -200,10 +199,12 @@ def notices(plat, out):
     add("IJG libjpeg 9b (The Independent JPEG Group's software)", os.path.join(deps, "jpeg9-src", "README"),
         lambda t: t[t.index("LEGAL ISSUES\n====="):t.index("REFERENCES\n=====")] if "REFERENCES\n=====" in t else t)
     add("zstd 1.3.4 (Facebook, BSD)", os.path.join(deps, "zstd134-src", "LICENSE"))
+    add("Noto Sans JP (github.com/notofonts/noto-cjk, the built-in font; SIL Open Font License 1.1)",
+        os.path.join(b, "fonts", "LICENSE-NotoSansJP.txt"))  # cmake/fonts.cmake
     with open(out, "w", encoding="utf-8", newline="\r\n" if PLATFORMS[plat]["windows"] else "\n") as f:
         f.write("Third-party software in these programs\n"
                 "======================================\n\n"
-                "The programs link the libraries below (statically). Their licenses follow.\n"
+                "The programs link the libraries below (statically) and carry the font below built in. Their licenses follow.\n"
                 "The game itself (STAR OCEAN: anamnesis, (C) SQUARE ENIX) is NOT included: you supply your own copy.\n\n")
         f.write("\n".join(parts))
 

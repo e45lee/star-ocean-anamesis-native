@@ -73,10 +73,8 @@ sudo apt install libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev l
 sudo apt install libwayland-dev libxkbcommon-dev libegl-dev libdecor-0-dev
 # EGL / GLES 2 at run time (Mesa): SDL creates the GLES contexts through EGL, on X11 or Wayland
 sudo apt install libegl1 libgles2 libegl-mesa0 libgl1-mesa-dri
-# a font with Japanese glyphs for the text box shown while the game asks for text (a name): any one of
-# fonts-ipaexfont-gothic / fonts-noto-cjk / fonts-droid-fallback, or --font PATH; fontconfig's
-# fc-match finds others. Without one the text shows in the window title only.
-sudo apt install fonts-ipaexfont-gothic fontconfig
+# (no font package: the text box and the web view draw with Noto Sans JP, built into the programs;
+# cmake/fonts.cmake downloads it at configure time)
 ```
 
 **Sound:** vcpkg's SDL2 here has the PulseAudio backend (plus sndio/OSS), not ALSA or PipeWire
@@ -121,26 +119,30 @@ time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWE
 
 ### Windows
 
-A cross build from Linux (or WSL) with **llvm-mingw** (clang, libc++, the UCRT) into `build-win/`
+A cross build from Linux (or WSL) with the distribution's **MinGW-w64 GCC** (GCC, libstdc++,
+winpthreads, msvcrt) into `build-win/`
 (`port/PLAN.md` 5b, "W"): every part, as `.exe` files (`soa.exe`, `soa-server.exe`, `soa-emu.exe`,
-`soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop):
-`soa-server.exe --selftest`, `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests
-`win:battle-gacha` (the port's restore session, in process), `win:seeded` (`soa-emu.exe` against
-`soa-server.exe`: login, battle, gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff
-shard on the three Windows targets) (`port/PLAN.md` 5b, "As built").
+`soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop) with the
+earlier llvm-mingw build (clang, libc++, the UCRT): `soa-server.exe --selftest`,
+`soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests `win:battle-gacha` (the port's
+restore session, in process), `win:seeded` (`soa-emu.exe` against `soa-server.exe`: login, battle,
+gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff shard on the three Windows targets)
+(`port/PLAN.md` 5b, "As built"). The MinGW-w64 GCC build (2026-10-05) so far under Wine only: the
+unit tests, `soaruntime_tests.exe` and `soa-server.exe --selftest` (all but the tests that need
+`work/download-3.7.0`); the checks on Windows itself are still to be repeated with it.
 
 ```sh
-scripts/llvm-mingw-bootstrap.sh                         # optional: build.sh --windows runs it too
+sudo apt install g++-mingw-w64-x86-64-posix               # once: the cross compiler (Ubuntu / Debian)
 scripts/build.sh --windows                              # build-win/: everything
 scripts/build.sh --windows --target soa-server          # one part
 ```
 
-- llvm-mingw: `scripts/llvm-mingw-bootstrap.sh` downloads the pinned release of
-  [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) (ucrt, ubuntu x86_64), checks its SHA-256 and
-  unpacks it into `work/tools/` with the link `work/tools/llvm-mingw` (tools live in the checkout's
-  `work/tools`, never in `$HOME`); `$SOA_LLVM_MINGW` instead uses another copy as is.
+- The compiler: `x86_64-w64-mingw32-gcc-posix` / `g++-posix` from the system's package (GCC's posix
+  thread model, which `std::thread` needs; the distribution's default `x86_64-w64-mingw32-g++` is
+  the win32 model). `build.sh` links them under the plain names in `build-win/mingw-posix/` and puts
+  that first on `PATH` for vcpkg's port builds.
 - `--windows` configures `build-win/` with vcpkg's toolchain chainloading
-  `cmake/toolchains/llvm-mingw-x64.cmake`, the triplet `x64-mingw-static`
+  `cmake/toolchains/mingw-w64-x64.cmake`, the triplet `x64-mingw-static`
   (`cmake/vcpkg-triplets/x64-mingw-static.cmake`: static, release only, the same sqlite3 options as
   Linux so the served master and the CDN ids don't depend on the platform) and the vcpkg feature
   `angle` (ANGLE: EGL / GLES on Windows). The first configure builds every port for MinGW (about an
@@ -148,6 +150,12 @@ scripts/build.sh --windows --target soa-server          # one part
   only Windows' own DLLs.
 - In a git worktree set `VCPKG_ROOT` to the main checkout's `.vcpkg` (as for `build/`), or
   `scripts/vcpkg-bootstrap.sh` clones another vcpkg.
+- GCC on MinGW differs from llvm-mingw in ways `soa_compat` covers (`common/win32/posix_compat.h`,
+  `common/src/posix_compat_win32.cpp`): `rename` must replace (libstdc++'s `<cstdio>` restores the C
+  runtime's, so the header includes it before its define; call `rename()`, never
+  `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated; a replacement
+  `__cxa_thread_atexit` runs them before the TLS blocks are freed); `mkdtemp` (mingw-w64 12+ only);
+  and the C runtime is `msvcrt.dll`, not the UCRT (no `_get_timezone`; `long` is 32 bits).
 - What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
   `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
   POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,

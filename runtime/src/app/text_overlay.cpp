@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <sys/stat.h>
+#include <soa/fonts.h>
 
 #include <algorithm>
 #include <chrono>
@@ -60,14 +60,11 @@ struct Glyph {
     int w = 0, h = 0, left = 0, top = 0, advance = 0;
 };
 
-std::mutex g_req_m;
-std::string g_font_request;
-
 struct Font {
     bool tried = false;
     FT_Library lib = nullptr;
-    // The main face, then fallbacks for the code points it lacks (Droid Sans Fallback, for one,
-    // has no Latin letters). Metrics come from the main face.
+    // The main face (the built-in Noto Sans JP), then any fallbacks for the code points it lacks
+    // (none today). Metrics come from the main face.
     std::vector<FT_Face> faces;
     std::vector<int> sizes;  // the pixel size set on each face
     std::map<std::pair<int, char32_t>, Glyph> cache;
@@ -117,9 +114,9 @@ struct Font {
         return cache.emplace(key, std::move(g)).first->second;
     }
 
-    bool add_face(const std::string& path) {
+    bool add_face(const fonts::Data& d) {
         FT_Face f = nullptr;
-        if (FT_New_Face(lib, path.c_str(), 0, &f) != 0) return false;
+        if (FT_New_Memory_Face(lib, d.bytes, (FT_Long)d.size, 0, &f) != 0) return false;
         faces.push_back(f);
         sizes.push_back(0);
         return true;
@@ -127,84 +124,17 @@ struct Font {
 };
 Font g_font;
 
-bool file_exists(const std::string& p) {
-    struct stat st;
-    return !p.empty() && stat(p.c_str(), &st) == 0 && S_ISREG(st.st_mode);
-}
-
-// The first file of `fc-match PATTERN`, or "".
-std::string fc_match(const char* pattern) {
-    std::string cmd = std::string("fc-match -f '%{file}' '") + pattern + "' 2>/dev/null";
-    std::string out;
-    if (FILE* f = popen(cmd.c_str(), "r")) {
-        char buf[1024];
-        size_t n = fread(buf, 1, sizeof buf - 1, f);
-        pclose(f);
-        out.assign(buf, n);
-    }
-    return file_exists(out) ? out : "";
-}
-
-// The font to use: the request (HostConfig::font: --font), known paths, fc-match. "" = none.
-std::string find_font(std::string& how) {
-    std::string req;
-    {
-        std::lock_guard lk(g_req_m);
-        req = g_font_request;
-    }
-    if (req == "none") {
-        how = "turned off";
-        return "";
-    }
-    if (!req.empty()) {
-        how = "requested";
-        if (file_exists(req)) return req;
-        LOGW("text", "font %s not found; searching the system fonts", req.c_str());
-    }
-    static const char* const kKnown[] = {
-        "/usr/share/fonts/opentype/ipaexfont-gothic/ipaexg.ttf",     // fonts-ipaexfont-gothic
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",     // fonts-noto-cjk (face 0: JP)
-        "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",          // Arch, Fedora
-        "/usr/share/fonts/google-noto-cjk/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf",  // fonts-droid-fallback (no Latin)
-    };
-    for (const char* p : kKnown)
-        if (file_exists(p)) {
-            how = "known path";
-            return p;
-        }
-    if (std::string p = fc_match(":lang=ja"); !p.empty()) {
-        how = "fc-match :lang=ja";
-        return p;
-    }
-    return "";
-}
-
 void init_font() {
     if (g_font.tried) return;
     g_font.tried = true;
-    std::string how;
-    std::string path = find_font(how);
-    if (path.empty()) {
-        LOGW("text", "no font (%s), the keyboard shows in the title bar only (README.md, Setup: fonts-ipaexfont)",
-             how.empty() ? "none found; --font PATH picks one" : how.c_str());
-        return;
-    }
-    if (FT_Init_FreeType(&g_font.lib) != 0 || !g_font.add_face(path)) {
-        LOGW("text", "can't load font %s, the keyboard shows in the title bar only", path.c_str());
+    fonts::Data font = fonts::regular();
+    if (FT_Init_FreeType(&g_font.lib) != 0 || !g_font.add_face(font)) {
+        LOGW("text", "can't load the built-in font %s, the keyboard shows in the title bar only", font.name);
         if (g_font.lib) FT_Done_FreeType(g_font.lib);
         g_font.lib = nullptr;
         return;
     }
-    FT_Face main = g_font.faces[0];
-    bool ja = FT_Get_Char_Index(main, 0x3042) != 0, latin = FT_Get_Char_Index(main, 'a') != 0;  // あ, a
-    std::string extra;
-    if (!ja || !latin) {  // a fallback face for what the main one lacks
-        std::string fb = fc_match(ja ? "sans" : "sans:lang=ja");
-        if (!fb.empty() && fb != path && g_font.add_face(fb)) extra = ", fallback " + fb;
-    }
-    LOGI("text", "text box font: %s (%s)%s%s", path.c_str(), how.c_str(), extra.c_str(),
-         ja ? "" : "; it has no Japanese glyphs");
+    LOGI("text", "text box font: %s (built in, %zu bytes)", font.name, font.size);
 }
 
 // ---------------------------------------------------------------------------
@@ -500,11 +430,6 @@ Layout layout(int vx, int vy, int vw, int vh, int dh) {
     L.panel = {vx, top + vh - ph, vw, ph};
     L.field = {vx + pad, L.panel.y + pad + row1 + pad / 2, vw - 2 * pad, field_h};
     return L;
-}
-
-void set_font_request(const std::string& path) {
-    std::lock_guard lk(g_req_m);
-    g_font_request = path;
 }
 
 void draw(int ww, int wh, unsigned target_fbo, int vx, int vy, int vw, int vh) {

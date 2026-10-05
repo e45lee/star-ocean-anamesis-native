@@ -48,7 +48,7 @@ struct Dump {
 };
 void dump(Dump& d, const soa::server::ServerConfig& c) {
     d.f("enabled", c.enabled).f("new_player", c.new_player).f("master", c.master).f("apk", c.apk).f("db", c.db).f("seed", c.seed);
-    d.f("game_xml", c.game_xml).f("gacha_pools", c.gacha_pools).f("has_seed_rng", c.has_seed_rng).f("seed_rng", c.seed_rng);
+    d.f("gacha_pools", c.gacha_pools).f("has_seed_rng", c.has_seed_rng).f("seed_rng", c.seed_rng);
     d.f("start_coins", c.start_coins).f("has_clock", c.has_clock).f("clock", c.clock);  // (clock_offset: now-dependent)
     d.f("galaxy_pass", c.galaxy_pass).f("enable_events", c.enable_events).f("event_keywords", c.event_keywords);
     d.f("restore_tower", c.restore_tower).f("home3d_all", c.home3d_all).f("campaign_master_db", c.campaign_master_db);
@@ -285,8 +285,10 @@ int main() {
                           "--guest-cpus", "--size", "--landscape", "--render-size", "--font", "--fullscreen", "--headless", "--windowed",
                           "--shot", "--do", "--control", "--gdb", "-v", "-vv", "-h", "--help"};
 
-    // Options removed on purpose since: --font (2026-10-05; the fonts are built in).
+    // Options removed on purpose since: --font (2026-10-05; the fonts are built in), --game-xml
+    // (2026-10-05; --seed covers it).
     const V kRemovedFont = {"--font"};
+    const V kRemovedSoa = {"--font", "--game-xml"}, kRemovedServer = {"--game-xml"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -366,7 +368,7 @@ int main() {
         {{"--master", "data/basmaster-3.7.0.sqlite3"}},
         {{"--gacha-pools", "data/gacha_pools.sqlite3"}},
         {{"--seed", "data/saves/seed/Game.xml"}},
-        {{"--game-xml", "/tmp/Game.xml"}},
+        {{"--game-xml", "/tmp/Game.xml"}, "--game-xml is gone: --seed names a save (soa falls back to its client's Game.xml by itself)", 2},
         {{"--seed-rng", "1"}},
         {{"--seed-rng", "605"}},
         {{"--seed-rng", "0x10"}},
@@ -523,14 +525,14 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, {}, kRemovedFont, soa_rows);
+            check_names("soa", names, soa_old, {}, kRemovedSoa, soa_rows);
         }
         {
             soa::server::ServerConfig c;
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, {}, {}, server_rows);
+            check_names("soa-server", names, server_old, {}, kRemovedServer, server_rows);
         }
         {
             soa::emu::EmuArgs a;

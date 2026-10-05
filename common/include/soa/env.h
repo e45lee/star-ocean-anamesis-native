@@ -57,7 +57,7 @@ inline constexpr Removed kRemoved[] = {
     {"SOA_SERVER_MASTER", "--master", kSoa | kServer},
     {"SOA_GACHA_POOLS", "--gacha-pools", kSoa | kServer},
     {"SOA_SERVER_SEED", "--seed", kSoa | kServer},
-    {"SOA_SERVER_GAME_XML", "--game-xml", kSoa | kServer},
+    {"SOA_SERVER_GAME_XML", "--seed", kSoa | kServer},  // (--game-xml, its flag, went too: 2026-10-05)
     {"SOA_SERVER_SEED_RNG", "--seed-rng", kSoa | kServer},
     {"SOA_RESTORE_NEW_PLAYER", "--new-player", kSoa | kServer},
     {"SOA_CLOCK", "--clock", kSoa | kServer},

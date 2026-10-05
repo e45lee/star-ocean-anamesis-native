@@ -25,7 +25,8 @@ struct ServerConfig {
     std::string apk;               // the 3.7.0 APK (soa's --apk, soa-server's --apk): the master's last-resort source
     std::string db;                // --db: the state DB ("" = server.sqlite3 in the working directory)
     std::string seed;              // --seed: the save a new state is seeded from
-    std::string game_xml;          // --game-xml: the client's Game.xml, the last seed fallback
+    std::string client_save;       // soa's in-process server only (no option): its client's own Game.xml,
+                                   // the last seed fallback when it holds a player (state/seed.h)
     std::string gacha_pools;       // --gacha-pools: the reconstructed gacha pools ("" = data/gacha_pools.sqlite3 in the repo)
     bool has_seed_rng = false;     // --seed-rng: a fixed RNG seed, else the time
     uint64_t seed_rng = 0;

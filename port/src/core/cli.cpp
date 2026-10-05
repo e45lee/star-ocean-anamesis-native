@@ -127,7 +127,7 @@ int parse_soa_args(int argc, const char* const* argv, SoaArgs& a, std::vector<st
                    "(platform370's network glue). The options below apply only with inproc: give them to soa-server otherwise")
         ->type_name("inproc|HOST[:PORT]")
         ->group(server);
-    server::add_server_options(app, opt.server, "DATA/server.sqlite3", "DATA/data/shared_prefs/Game.xml");
+    server::add_server_options(app, opt.server, "DATA/server.sqlite3");
     app.add_flag_callback("--restore", [] { cli::bad_value("--restore", "gone: the in-process server is the default (--server inproc)"); })
         ->group("");
 

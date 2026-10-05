@@ -49,7 +49,7 @@ NATIVE_TEST("server/seed-from-380-save") {
 
 // Which save a new state is seeded from (docs/server-rules.md#seed): with no seed save (a packaged
 // build ships none) and no --new-player, a new state has no player, so the client runs its own
-// new-player flow; the client's own Game.xml (--game-xml) counts only when it holds a player (the
+// new-player flow; the client's own Game.xml (soa's client_save) counts only when it holds a player (the
 // client writes a settings-only one at its first start); --seed FILE seeds from FILE; --new-player
 // never seeds. The checkout's data/saves/seed/Game.xml is hidden by pointing the repo roots at a
 // directory without it.
@@ -67,7 +67,7 @@ NATIVE_TEST("server/seed-source-rule") {
                          {"BAS:PlayerName", std::string("\0", 1)}});
     c.repo_roots = {tag + "-no-checkout"};  // non-empty: no fallback to the working directory
     c.seed.clear();
-    c.game_xml.clear();
+    c.client_save.clear();
     c.new_player = false;
     int n = 0;
     // a fresh state DB opened as Server::init opens one; its player count
@@ -86,13 +86,13 @@ NATIVE_TEST("server/seed-source-rule") {
     t.expect_eq(real_seed_save(), std::string(), "no checkout seed save");
     t.expect_eq(seed_source(), std::string(), "no seed: none");
     t.expect_eq(players(""), 0LL, "no seed: a new state has no player (the client's new-player flow)");
-    c.game_xml = settings;
+    c.client_save = settings;
     t.expect_eq(save_holds_player(settings), false, "the client's settings-only Game.xml holds no player");
-    t.expect_eq(seed_source(), std::string(), "a settings-only --game-xml: no seed");
-    t.expect_eq(players(""), 0LL, "a settings-only --game-xml: no player");
-    c.game_xml = test_seed;
-    t.expect_eq(seed_source(), test_seed, "a --game-xml holding a player seeds");
-    c.game_xml = settings;
+    t.expect_eq(seed_source(), std::string(), "a settings-only client save: no seed");
+    t.expect_eq(players(""), 0LL, "a settings-only client save: no player");
+    c.client_save = test_seed;
+    t.expect_eq(seed_source(), test_seed, "a client save holding a player seeds");
+    c.client_save = settings;
     c.seed = test_seed;
     t.expect_eq(seed_source(), test_seed, "--seed FILE");
     t.expect_eq(players(""), 1LL, "--seed FILE: seeded");

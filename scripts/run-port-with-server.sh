@@ -12,7 +12,7 @@
 #   server options, passed to soa-server (they set the server's rules and state, as soa's own):
 #     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N,
 #     --galaxy-pass, --enable-events, --event-keywords L, --restore-tower, --master FILE,
-#     --db FILE, --game-xml FILE, --fail M:CODE[,..], --surprise, --campaign-master-db FILE,
+#     --db FILE, --fail M:CODE[,..], --surprise, --campaign-master-db FILE,
 #     --campaign-seed LABEL
 #   any other options go to soa, e.g. --fullscreen, --size 729x1296, --headless (soa --help)
 #
@@ -36,7 +36,7 @@ while [ $# -gt 0 ]; do
     --port) port=$2; shift 2;;
     --server-log) server_log_to_tty=1; shift;;
     --new-player|--galaxy-pass|--enable-events|--restore-tower|--surprise) srv_args+=("$1"); shift;;
-    --log-packets|--seed|--master|--db|--game-xml|--campaign-master-db)  # paths: from the caller's directory
+    --log-packets|--seed|--master|--db|--campaign-master-db)  # paths: from the caller's directory
       [ $# -ge 2 ] || { echo "run-port-with-server: $1 needs a value" >&2; exit 2; }
       case $2 in /*) v=$2;; *) v=$PWD/$2;; esac
       srv_args+=("$1" "$v"); shift 2;;

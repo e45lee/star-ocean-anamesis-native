@@ -89,6 +89,9 @@ else()
   set(SOA_NEED_RUNTIME OFF)
 endif()
 include(cmake/deps.cmake)
+if(SOA_NEED_RUNTIME OR SOA_BUILD_WEBVIEW)
+  include(cmake/fonts.cmake)  # soa_fonts: Noto Sans JP built into the programs (soa/fonts.h)
+endif()
 
 add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests, soa_compat (sockets; the Windows shims), soa_zip (the ZIP reader), soa_zip_tests, soa_codec (PNG, Base64, SharedPreferences XML), soa_codec_tests
 

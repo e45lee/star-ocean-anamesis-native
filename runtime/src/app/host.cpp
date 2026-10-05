@@ -845,7 +845,6 @@ void app::run(LoadedLib& lib, HostConfig& cfg) {
     // SDL starts with text input on; it is on only while the game's keyboard is open
     // (update_text_input), so an IME never takes the game's keys.
     SDL_StopTextInput();
-    app::text_overlay::set_font_request(cfg.font);
     if (cfg.hidden) {
         // SOA_OFFSCREEN_PRESENT (env_tristate): unset = offscreen unless the video driver is x11.
         g_gfx.offscreen = env::env_tristate("SOA_OFFSCREEN_PRESENT").value_or(strcmp(SDL_GetCurrentVideoDriver(), "x11") != 0);

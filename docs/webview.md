@@ -138,18 +138,10 @@ Dragalia's `webview_page.cpp` is reused nearly verbatim: litehtml's container dr
 
 - **Japanese line breaking.** litehtml 0.10 breaks only at white space and around U+4E00–9FCC ideographs, so a kana or katakana run was one unbreakable word that overflowed its box. `split_text_ja` (a `split_text` override) breaks between any two characters when one is CJK (kana, ideographs, CJK punctuation, full-width forms, Hangul), with the basic kinsoku rules: no break before closing punctuation, small kana or ー, and none after opening brackets.
 - **The wide-viewport mode.** `SOAActivity` sets `useWideViewPort` + `loadWithOverviewMode`. A page whose viewport meta names a width (the APK's pages: `width=640`) is laid out that many CSS pixels wide and scaled to the view. Other pages use the phone's density: (d) 2.625, i.e. 420 dpi on a 1080-wide phone, scaled to the game screen.
-- **Fonts, Japanese first.** The regular face is a host Japanese font:
-  - `--font PATH` (soa's, also the text box's; soa-webview-render takes it too);
-  - IPAex Gothic, Noto Sans CJK, `fonts-japanese-gothic`, IPA Gothic, Droid Sans Fallback;
-  - DejaVu / Liberation as the Latin fallback.
-  - Bold is Noto CJK Bold if installed, else synthetic. Without a font, pages draw no text, with a warning. The README setup should list `fonts-ipaexfont` or `fonts-noto-cjk`, as the keyboard text box does.
+- **Fonts: Noto Sans JP, built in.** Android's WebView draws these pages in Noto Sans CJK JP, so the faces are its Japanese subset (Latin included), regular and bold, compiled into the programs (`cmake/fonts.cmake`, `common/include/soa/fonts.h`; 2026-10-05). Italic is upright, monospace the regular face. No setting and no host font search: every platform, Windows included, draws the same glyphs.
 - **Language** ja-JP. **WebP is left out.**
 
-**Fonts, later:** the keyboard's text box (`runtime/src/app/text_overlay.cpp`, branch `port/text-overlay2`) uses FreeType and its own search for the same fonts (`--font`, IPAex, Noto CJK, Droid, `fc-match :lang=ja`). Two stacks for one job is one too many. Plan:
-
-1. Move the search into a shared `runtime/src/app/fonts.{h,cpp}` (or a tiny library both link) that returns paths.
-2. Then either keep stb_truetype for pages (simple, no hinting) or switch `fonts.cpp` to FreeType once it is in `vcpkg.json` (better small-size quality, `.ttc` faces by index).
-3. One setting for both: done (2026-10-03) as the flag `--font` (the two environment variables are gone, docs/environment.md).
+**Fonts, later:** the keyboard's text box (`runtime/src/app/text_overlay.cpp`) draws the same built-in Noto Sans JP with FreeType, the pages with stb_truetype. Two rasterizers for one font is one too many: switch `fonts.cpp` to FreeType (already in `vcpkg.json`; better small-size quality). The shared font itself is done (2026-10-05: `soa/fonts.h`; it replaced the two host font searches and the `--font` flag).
 
 ### Drawing over the game, shared with the text box
 
@@ -183,7 +175,7 @@ These are platform behaviour, not game code, so most belong in the runtime's REA
 
 - **No JavaScript** (none of the known pages need it: the APK pages have no `<script>`; help uses CSS toggles) and **no forms or POST**. The editable forms are dead services anyway.
 - **CSS:** CSS 2.1 + flexbox (litehtml 0.10). The help site's `:checked` toggles need either a `:checked` → `[checked]` rewrite in the simplifier plus a tap on a `<label>` toggling its input's attribute, or the server opening every section.
-- **Fonts:** host fonts (IPAex / Noto), not Android's Noto Sans CJK JP.
+- **Fonts:** Noto Sans JP, Noto Sans CJK JP's Japanese subset (built in), as on Android; stb_truetype's rasterizing, not Android's.
 - **Opaque:** the view is drawn opaque.
 - **Links:** links the server doesn't host are logged, not opened in a browser (the phone opens one when `useBrowser` is set and the link is off the root URI).
 

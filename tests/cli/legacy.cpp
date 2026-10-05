@@ -87,7 +87,7 @@ int parse_soa(int argc, const char* const* argv, soa::SoaArgs& r) {
             else if (a == "--hires") {}
             else if (a == "--legacy-res") r.legacy_res = true;
             else if (a == "--render-size") host.render_size = next();
-            else if (a == "--font") host.font = next();
+            else if (a == "--font") next();  // (HostConfig::font is gone, 2026-10-05: the value is dropped)
             else if (a == "--fullscreen") host.fullscreen = true;
             else if (a == "--headless") r.headless = 1;
             else if (a == "--windowed") r.headless = 0;
@@ -298,7 +298,7 @@ int parse_emu(int argc, const char* const* argv, soa::emu::EmuArgs& r) {
             else if (a == "--size") sscanf(next().c_str(), "%dx%d", &host.width, &host.height);
             else if (a == "--landscape") host.landscape = true;
             else if (a == "--render-size") host.render_size = next();
-            else if (a == "--font") host.font = next();
+            else if (a == "--font") next();  // (HostConfig::font is gone, 2026-10-05: the value is dropped)
             else if (a == "--fullscreen") host.fullscreen = true;
             else if (a == "--headless") host.hidden = true;
             else if (a == "--windowed") host.hidden = false;
@@ -343,7 +343,7 @@ int parse_viewer(int argc, const char* const* argv, soa::viewer::ViewerArgs& r) 
             else if (a == "--size") sscanf(next().c_str(), "%dx%d", &host.width, &host.height);
             else if (a == "--landscape") host.landscape = true;
             else if (a == "--render-size") host.render_size = next();
-            else if (a == "--font") host.font = next();
+            else if (a == "--font") next();  // (HostConfig::font is gone, 2026-10-05: the value is dropped)
             else if (a == "--fullscreen") host.fullscreen = true;
             else if (a == "--headless") host.hidden = true;
             else if (a == "--windowed") host.hidden = false;

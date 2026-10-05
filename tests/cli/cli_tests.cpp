@@ -1,8 +1,9 @@
 // soa_cli_tests: the four programs' CLI11 command lines (port/src/core/cli.cpp,
 // server/app/cli.cpp, emulator/src/cli.cpp, emulator-viewer/src/cli.cpp) against the hand-written
 // parsers they replaced (legacy.cpp), table-driven:
-//   1. every option name each old parser knew is defined (and nothing else, except the additions
-//      listed in kAdded), and every one of them appears in the table below;
+//   1. every option name each old parser knew is defined (and nothing else), except the additions
+//      and the deliberate removals check_names is given, and every one of them appears in the table
+//      below;
 //   2. each row's command line parses to the same configuration (every field of the structs the
 //      programs act on, dumped as text) and the same outcome (go on / help / error) with both;
 //      rows marked `changed` are the deliberate differences (the new outcome is checked, the reason
@@ -66,7 +67,7 @@ void dump(Dump& d, const soa::platform370::Config& p) {
 void dump(Dump& d, const soa::app::HostConfig& h) {
     d.f("title", h.title).f("width", h.width).f("height", h.height).f("landscape", h.landscape).f("fullscreen", h.fullscreen);
     d.f("hidden", h.hidden).f("render_size", h.render_size).f("size_note", h.size_note).f("shots", h.shots).f("actions", h.actions);
-    d.f("control_path", h.control_path).f("font", h.font);
+    d.f("control_path", h.control_path);
 }
 // the log level the programs set from -v / -vv
 int level(int verbose) { return verbose >= 2 ? 2 : verbose; }
@@ -235,11 +236,12 @@ void check_program(const std::string& prog, const std::vector<Row>& rows, New pa
 
 // ---- 1. the option names -----------------------------------------------------------------------
 void check_names(const std::string& prog, std::vector<std::string> got, std::vector<std::string> old_list,
-                 const std::vector<std::string>& added, const std::vector<Row>& rows) {
+                 const std::vector<std::string>& added, const std::vector<std::string>& removed, const std::vector<Row>& rows) {
     g_checks++;
     std::set<std::string> want(old_list.begin(), old_list.end());
     want.erase("-vv");  // (-v counted: -vv is two)
     want.insert(added.begin(), added.end());
+    for (auto& r : removed) want.erase(r);  // gone on purpose (their rows are marked `changed`)
     std::set<std::string> have(got.begin(), got.end());
     for (auto& w : want)
         if (!have.count(w)) fail(prog + ": " + w + " (the old parser had it) isn't defined");
@@ -253,7 +255,7 @@ void check_names(const std::string& prog, std::vector<std::string> got, std::vec
             for (auto& a : r.args) used = used || a == o || a.rfind(o + "=", 0) == 0;
         if (!used) fail(prog + ": " + o + " is in no table row");
     }
-    printf("ok    %s: %zu option names (%zu added)\n", prog.c_str(), have.size(), added.size());
+    printf("ok    %s: %zu option names (%zu added, %zu removed)\n", prog.c_str(), have.size(), added.size(), removed.size());
 }
 
 }  // namespace
@@ -283,6 +285,9 @@ int main() {
                           "--guest-cpus", "--size", "--landscape", "--render-size", "--font", "--fullscreen", "--headless", "--windowed",
                           "--shot", "--do", "--control", "--gdb", "-v", "-vv", "-h", "--help"};
 
+    // Options removed on purpose since: --font (2026-10-05; the fonts are built in).
+    const V kRemovedFont = {"--font"};
+
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
         {{}},
@@ -306,8 +311,8 @@ int main() {
         {{"--render-size", "window"}},
         {{"--render-size", "1080x1920"}},
         {{"--fullscreen"}},
-        {{"--font", "/f.ttf"}},
-        {{"--font", "none"}},
+        {{"--font", "/f.ttf"}, "--font is gone: the fonts are built in (cmake/fonts.cmake)", 2},
+        {{"--font", "none"}, "--font is gone: the fonts are built in (cmake/fonts.cmake)", 2},
         {{"--headless"}},
         {{"--windowed"}},
         {{"--headless", "--windowed"}},
@@ -518,24 +523,24 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, {}, soa_rows);
+            check_names("soa", names, soa_old, {}, kRemovedFont, soa_rows);
         }
         {
             soa::server::ServerConfig c;
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, {}, server_rows);
+            check_names("soa-server", names, server_old, {}, {}, server_rows);
         }
         {
             soa::emu::EmuArgs a;
             soa::emu::parse_args(1, argv, a, &names);
-            check_names("soa-emu", names, emu_old, {}, emu_rows);
+            check_names("soa-emu", names, emu_old, {}, kRemovedFont, emu_rows);
         }
         {
             soa::viewer::ViewerArgs a;
             soa::viewer::parse_args(1, argv, a, &names);
-            check_names("soa-viewer", names, viewer_old, {"--download"}, viewer_rows);
+            check_names("soa-viewer", names, viewer_old, {"--download"}, kRemovedFont, viewer_rows);
         }
     }
 

@@ -12,11 +12,9 @@
 // The game shows no new frames while its keyboard is open, so the host turns on idle presenting
 // (hle/gfx.h) for the box to update as you type.
 //
-// Text is rendered with FreeType from a system font with Japanese glyphs, found at the first draw:
-// HostConfig::font (--font: a path; "none" turns the box off), else the known paths of IPAex
-// Gothic, Noto Sans CJK and Droid Sans Fallback, else `fc-match :lang=ja` (plus a fallback face from
-// fc-match for the code points it lacks: Droid Sans Fallback has no Latin). Without one the box is
-// not drawn and the window title alone shows the text (one log line says so).
+// Text is rendered with FreeType in Noto Sans JP, built into the program (soa/fonts.h,
+// cmake/fonts.cmake), loaded at the first draw. Should FreeType fail to load it, the box is not
+// drawn and the window title alone shows the text (one log line says so).
 //
 // The panel is composed on the CPU into one premultiplied RGBA image, redrawn only when what it
 // shows changes, uploaded to one texture and drawn as one blended quad on the presenting (game's)
@@ -40,10 +38,6 @@ struct Layout {
 // GfxHooks::set_viewport_rect gets it) in a drawable of height dh. Font-free: the main thread uses
 // it for SDL_SetTextInputRect, the render thread to draw.
 Layout layout(int vx, int vy, int vw, int vh, int dh);
-
-// The font: a path, "none" (no box), or "" (the search above). Set before the
-// first draw (app::run, from HostConfig::font).
-void set_font_request(const std::string& path);
 
 // Draws the box over the frame being presented (the render thread, from GfxHooks::draw_overlay;
 // `target_fbo` stands for the window, ww x wh its drawable size). No-op unless text entry is active.

@@ -85,7 +85,7 @@ def main(o):
     common.drive(s, body)
     log = open(s.client_log, errors="replace").read()
     for ln in log.splitlines():
-        if ln.startswith("ok  ") or ln.startswith("FAIL") or ln.startswith("    FAIL"):
+        if ln.startswith(("ok  ", "FAIL", "skip", "    FAIL", "    skip")):
             print(ln)
     summary = [ln for ln in log.splitlines() if "native tests passed" in ln]
     fails = []

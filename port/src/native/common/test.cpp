@@ -119,7 +119,7 @@ struct TestEntry {
 }  // namespace
 
 int run_native_tests(LoadedLib& lib, const std::string& filter) {
-    int failed = 0, ran = 0;
+    int failed = 0, ran = 0, skipped = 0;  // (skipped: server library tests whose input is absent)
     // The runtime's own tests first (they used to be linked first, so they registered first),
     // then the port's NATIVE_TESTs.
     std::vector<TestEntry> all;
@@ -181,10 +181,11 @@ int run_native_tests(LoadedLib& lib, const std::string& filter) {
             double ms = server::testing::run_one(t, ctx);
             ran++;
             if (ctx.failures()) failed++;
-            fprintf(stderr, "%s  %-50s %8.1f ms\n", ctx.failures() ? "FAIL" : "ok  ", t.name, ms);
+            else if (ctx.skipped()) skipped++;
+            fprintf(stderr, "%s  %-50s %8.1f ms\n", ctx.status(), t.name, ms);
         }
     }
-    fprintf(stderr, "%d/%d native tests passed\n", ran - failed, ran);
+    fprintf(stderr, "%d/%d native tests passed%s\n", ran - failed - skipped, ran, server::testing::skipped_note(skipped).c_str());
     return failed;
 }
 

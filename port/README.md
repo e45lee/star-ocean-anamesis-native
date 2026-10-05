@@ -210,7 +210,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | Option | |
 |---|---|
 | `--server inproc\|HOST[:PORT]` | The game server: in-process (default) or `soa-server` (`--listen`, default port 44300). |
-| `--db FILE`, `--master FILE`, `--gacha-pools FILE`, `--seed FILE`, `--game-xml FILE`, `--seed-rng N`, `--new-player` | The state DB (default `DATA/server.sqlite3`), the 3.7.0 master DB, the reconstructed gacha pools (default `data/gacha_pools.sqlite3`), the save a new state is seeded from (3.7.0 or offline-game `Game.xml`; an existing state keeps its player), the last seed fallback (default `DATA/data/shared_prefs/Game.xml`), a fixed RNG seed, no player (the new-player tutorial) |
+| `--db FILE`, `--master FILE`, `--gacha-pools FILE`, `--seed FILE`, `--seed-rng N`, `--new-player` | The state DB (default `DATA/server.sqlite3`), the 3.7.0 master DB, the reconstructed gacha pools (default `data/gacha_pools.sqlite3`), the save a new state is seeded from (3.7.0 or offline-game `Game.xml`; an existing state keeps its player; without one, after the repository's seed save, the client's own `DATA/data/shared_prefs/Game.xml` when it holds a player), a fixed RNG seed, no player (the new-player tutorial) |
 | `--clock "YYYY-MM-DD HH:MM:SS"` | The server's clock starts there and runs on; without it event terms replay the calendar |
 | `--start-coins N`, `--galaxy-pass` | Free coins of a new local player (default 300000); the Galaxy Pass, renewed when it runs out |
 | `--enable-events`, `--event-keywords "a,b,!c"` | Also open, all year, every event area and gacha banner whose name matches the keywords (default the summer events `水着,夏,サマー,!福袋`), assets permitting |
@@ -255,7 +255,7 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 | `--master FILE` | `master` |
 | `--gacha-pools FILE` | `gacha_pools` |
 | `--seed FILE` | `seed` |
-| `--game-xml FILE` (inproc: `DATA/data/shared_prefs/Game.xml`) | `game_xml` |
+| (no option; inproc: `DATA/data/shared_prefs/Game.xml`) | `client_save` |
 | `--seed-rng N` | `has_seed_rng`, `seed_rng` |
 | `--start-coins N` (default 300000) | `start_coins`: free coins (紋章石) of a new local player; an existing state keeps its balance |
 | `--clock "YYYY-MM-DD HH:MM:SS"` | `has_clock`, `clock`, `clock_offset` |

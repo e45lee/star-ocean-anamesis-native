@@ -332,8 +332,8 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   account (no `--new-player`: the package has no seed save) through the tutorial to home; for the
   emulator `SOA_PACKAGE_DIR=$P emulator/scripts/emulator_session.sh --new-player $P/soa-emu
   $P/soa-server OUT`, which then passes the server no `--new-player` either. A session that needs the
-  seeded player (e.g. `gacha`) gets a player only from a save: the port's client save
-  (`--game-xml`, holding a player) or `--seed`. `--target port-server` (e.g.
+  seeded player (e.g. `gacha`) gets a player only from a save: the port's client save (its own
+  `Game.xml` in the data dir, holding a player) or `--seed`. `--target port-server` (e.g.
   `SOA_PACKAGE_DIR=$P control/run.py newplayer --target port-server $P/soa OUT`) runs the package's
   `run-port-server` launcher with its default data dir under a scratch `HOME` / `LOCALAPPDATA`, and
   fails when its soa-server outlives the client; for `.exe` files unpack on a Windows drive and set `SOA_WIN_STAGE` to your

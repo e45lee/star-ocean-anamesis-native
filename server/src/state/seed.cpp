@@ -38,12 +38,12 @@ std::string seed_source(const std::string& explicit_seed) {
         LOGW("server", "seed %s holds no player (no player_name or person_size): ignored", p.c_str());
     }
     if (std::string p = first_existing({real_seed_save()}); !p.empty()) return p;
-    // (b)+(d) The client's own Game.xml (--game-xml; soa's default <data>/data/shared_prefs/Game.xml)
-    // counts only when it holds a player: on a fresh data dir the client writes it at its first
+    // (b)+(d) The client's own Game.xml (soa's in-process server: <data>/data/shared_prefs/Game.xml;
+    // config().client_save, no option) counts only when it holds a player: on a fresh data dir the client writes it at its first
     // start (its settings: BAS:EffectAlpha, BAS:VoiceLanguage, BAS:PlayerName 0, ...: 9 keys)
     // before its first request opens the server's state, and seeding from that gave a nameless
     // player with no characters (docs/server-rules.md#seed).
-    std::string g = first_existing({config().game_xml});
+    std::string g = first_existing({config().client_save});
     return !g.empty() && save_holds_player(g) ? g : "";
 }
 

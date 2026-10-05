@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
                   download_dir.empty() ? "not found" : "missing", install::missing_hint().c_str());
         if (cl.standin_dir.empty() && !cl.standin_off) cl.standin_dir = find_repo_file("standin-assets");
         if (srv.db.empty()) srv.db = data_dir + "/server.sqlite3";
-        if (srv.game_xml.empty()) srv.game_xml = data_dir + "/data/shared_prefs/Game.xml";
+        srv.client_save = data_dir + "/data/shared_prefs/Game.xml";  // the last seed fallback (state/seed.h)
         LOGI("main", "server inproc: local server on the FakeApiCaller route, fake server dir %s, download dir %s", cl.fake_server_dir.c_str(),
              download_dir.c_str());
     } else {

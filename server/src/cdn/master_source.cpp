@@ -100,7 +100,7 @@ const std::string& resolve() {
         return c.master;
     }
     const std::vector<std::string> dirs = install::install_dirs();
-    std::string download = !c.download_dir.empty() ? c.download_dir : find_repo_file("work/download-3.7.0");
+    std::string download = !c.download_dir.empty() ? c.download_dir : find_repo_file({install::kRepoDownloadDir, install::kRepoDownloadZip});
     if (download.empty() || !install::is_download(download)) {
         if (std::string d = install::find_download(dirs); !d.empty()) download = d;
     }

@@ -3,7 +3,7 @@
 interop. What differs from a Linux client:
 
   - the program runs from the stage (its cwd: the repository's copy there), with the stage's data
-    (data/, work/download-3.7.0, the shared phone work/phone-3.7.0);
+    (data/, the download as work/SOA-3.7.0-canonical-data.zip, the shared phone work/phone-3.7.0);
   - every path it is given is a Windows path (`winpath`): C:\\... for /mnt/c/..., else
     \\\\wsl.localhost\\DISTRO\\... (fine for logs, screenshots and packet logs, not for SQLite, which
     can't lock there: the phone and the server's state dir are kept on the Windows drive, `local_dir`);
@@ -15,6 +15,8 @@ interop. What differs from a Linux client:
   - its stdout / stderr come through the interop pipe into the log as on Linux; ending the interop
     process (TERM / KILL of the group) ends the Windows process.
 """
+import errno
+import filecmp
 import hashlib
 import os
 import random
@@ -51,6 +53,29 @@ def stage_file(rel):
     return p if os.path.exists(p) else None
 
 
+# what replacing a running program on the Windows drive fails with (not a failed copy: ENOMEM, EIO, ...)
+BUSY = (errno.EACCES, errno.EPERM, errno.EBUSY, errno.ETXTBSY)
+
+
+class CopyMismatch(RuntimeError):
+    """A copy onto the Windows drive that isn't the source, also after a retry."""
+
+
+def copy_verified(src, dst):
+    """shutil.copy2(src, dst), then dst compared with src (size and bytes); a mismatch is copied
+    again once, then raises CopyMismatch. (Copies through WSL's drive mount under memory pressure
+    have left a stale or short file behind without an error: scripts/windows-stage.sh verifies its
+    copies the same way.)"""
+    for attempt in (1, 2):
+        shutil.copy2(src, dst)
+        filecmp.clear_cache()  # (its cache is keyed on size and mtime, which a bad copy may share)
+        if os.path.getsize(dst) == os.path.getsize(src) and filecmp.cmp(src, dst, shallow=False):
+            return
+        if attempt == 1:
+            os.remove(dst)
+    raise CopyMismatch("%s: its copy %s differs from it after two copies (the Windows drive; memory?)" % (src, dst))
+
+
 def staged_binary(binary):
     """The stage's copy of a build-win program, refreshed from the build when that one is newer
     (one file: cheap; scripts/windows-stage.sh stages the rest). A path already on a Windows drive
@@ -71,14 +96,16 @@ def staged_binary(binary):
         if not os.path.exists(dst) or int(os.path.getmtime(dst)) < int(os.path.getmtime(b)) or os.path.getsize(dst) != os.path.getsize(b):
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             try:
-                shutil.copy2(b, dst)
-            except OSError:
+                copy_verified(b, dst)
+            except OSError as e:
+                if e.errno not in BUSY:
+                    raise
                 # Windows refuses to replace a program that is running (another run's): this build
                 # goes beside it under its own name (same directory: the repository is found upwards)
                 st = os.stat(b)
                 dst = os.path.splitext(dst)[0] + ".%x-%x.exe" % (int(st.st_mtime), st.st_size)
                 if not os.path.exists(dst):
-                    shutil.copy2(b, dst)
+                    copy_verified(b, dst)
     if not os.path.exists(dst):
         raise FileNotFoundError("%s: not built (scripts/build.sh --windows) nor staged (scripts/windows-stage.sh)" % binary)
     return dst

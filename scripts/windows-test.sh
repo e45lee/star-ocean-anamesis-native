@@ -15,6 +15,9 @@
 #                  test hooks register in the same order (static-initializer order: cmake/init_order.cmake)
 # Needs: build-win/ (scripts/build.sh --windows) and the stage's data, once:
 #   scripts/windows-stage.sh --phone --viewer     (C:\soa-win; SOA_WIN_STAGE=/mnt/X/DIR elsewhere)
+# A run's phones and server state on the Windows drive (STAGE/run/soadrive/..., linked from OUT / TMP:
+# control/soadrive/winhost.py local_dir) are removed when it passes and kept when it fails;
+# scripts/windows-stage.sh --clean removes what is left.
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
@@ -22,10 +25,10 @@ cd "$repo"
 test=$1 out=$2 tmp=$3
 stage=${SOA_WIN_STAGE:-/mnt/c/soa-win}
 case $test in
-  battle-gacha) targets="soa" need="work/download-3.7.0 work/phone-3.7.0/PHONE.txt" ;;
-  seeded) targets="soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
+  battle-gacha) targets="soa" need="work/SOA-3.7.0-canonical-data.zip work/phone-3.7.0/PHONE.txt" ;;
+  seeded) targets="soa-emu soa-server" need="work/SOA-3.7.0-canonical-data.zip work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   viewer-boot) targets="soa-viewer" need="" ;;  # (its game: checked below)
-  shard-login) targets="soa soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
+  shard-login) targets="soa soa-emu soa-server" need="work/SOA-3.7.0-canonical-data.zip work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   native-order) targets="soa" need="" ;;
   runtime-tests) targets="soaruntime_tests" need="" ;;
   *) echo "windows-test: unknown test $test" >&2; exit 2 ;;
@@ -41,7 +44,18 @@ mkdir -p "$out"
 # shellcheck disable=SC2086
 scripts/build.sh --windows --target $targets > "$out/build-win.log" 2>&1 ||
   { tail -20 "$out/build-win.log"; echo "FAIL: the Windows build (see $out/build-win.log)"; exit 1; }
-scripts/windows-stage.sh --quick "$stage" > /dev/null
+scripts/windows-stage.sh --quick "$stage" > "$out/stage.log" 2>&1 ||
+  { tail -20 "$out/stage.log"; echo "FAIL: staging into $stage (see $out/stage.log)"; exit 1; }
+# The run's dirs on the Windows drive: the targets of the links under OUT / TMP into STAGE/run/
+cleanup_run() {
+  local root l t n=0
+  root=$(realpath -m "$stage/run")
+  while IFS= read -r -d '' l; do
+    t=$(readlink -f "$l") || continue
+    case $t in "$root"/*) rm -rf "$t"; rm -f "$l"; n=$((n + 1)) ;; esac
+  done < <(find "$out" "$tmp" -type l -print0 2> /dev/null)
+  [ "$n" = 0 ] || echo "(removed this run's $n dir(s) under $root)"
+}
 case $test in
   native-order)
     [ -x build/port/soa ] || { echo "FAIL: no build/port/soa (scripts/build.sh)"; exit 1; }
@@ -68,12 +82,19 @@ case $test in
       exit 1
     fi
     echo "PASS: soaruntime_tests.exe ($(grep -ac '^ok' "$out/soaruntime_tests.log") checks)" ;;
-  battle-gacha) exec control/run.py battle-gacha build-win/port/soa.exe "$out" "$tmp" ;;
-  seeded) exec control/run.py seeded build-win/emulator/soa-emu.exe build-win/server/soa-server.exe "$out" ;;
-  viewer-boot) exec emulator-viewer/scripts/viewer_boot.sh build-win/emulator-viewer/soa-viewer.exe "$out" ;;
-  shard-login)
-    # its three clients take their own slots (the gate's one is the driver's)
-    unset SOA_SLOT_HELD
-    SOA=$repo/build-win/port/soa.exe SOA_EMU=$repo/build-win/emulator/soa-emu.exe SOA_SERVER=$repo/build-win/server/soa-server.exe \
-      exec tests/diff/run.sh login --out "$out" ;;
+  battle-gacha|seeded|viewer-boot|shard-login)
+    rc=0
+    case $test in
+      battle-gacha) control/run.py battle-gacha build-win/port/soa.exe "$out" "$tmp" || rc=$? ;;
+      seeded) control/run.py seeded build-win/emulator/soa-emu.exe build-win/server/soa-server.exe "$out" || rc=$? ;;
+      viewer-boot) emulator-viewer/scripts/viewer_boot.sh build-win/emulator-viewer/soa-viewer.exe "$out" || rc=$? ;;
+      shard-login)
+        # its three clients take their own slots (the gate's one is the driver's)
+        (unset SOA_SLOT_HELD
+         SOA=$repo/build-win/port/soa.exe SOA_EMU=$repo/build-win/emulator/soa-emu.exe SOA_SERVER=$repo/build-win/server/soa-server.exe \
+           exec tests/diff/run.sh login --out "$out") || rc=$? ;;
+    esac
+    # passed: its dirs on the Windows drive go (kept for a failure: scripts/windows-stage.sh --clean)
+    if [ "$rc" = 0 ]; then cleanup_run; else echo "(kept this run's dirs under $stage/run for the failure)"; fi
+    exit "$rc" ;;
 esac

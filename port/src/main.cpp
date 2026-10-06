@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
     if (srv.enabled) {
         // Defaults from the repo (core/paths.h), whatever the working directory.
         // Required in-process: the route's client has no CDN to download from.
-        if (download_dir.empty()) download_dir = find_repo_file("work/download-3.7.0");
+        if (download_dir.empty()) download_dir = find_repo_file({install::kRepoDownloadDir, install::kRepoDownloadZip});
         if (download_dir.empty()) {
             // a release package: a download tree beside the program or in game/ (soa/install.h)
             std::vector<std::string> notes;
@@ -185,7 +185,7 @@ int main(int argc, char** argv) {
             if (!download_dir.empty()) LOGI("main", "the 3.7.0 download %s (found beside the program)", download_dir.c_str());
         }
         if (download_dir.empty() || !file_exists(download_dir))
-            fatal("--server inproc needs the 3.7.0 download: give --download PATH (a folder or SOA-3.7.0-canonical-data.zip; default <repo>/work/download-3.7.0, %s); %s",
+            fatal("--server inproc needs the 3.7.0 download: give --download PATH (a folder or SOA-3.7.0-canonical-data.zip; default <repo>/work/download-3.7.0, else <repo>/work/SOA-3.7.0-canonical-data.zip, %s); %s",
                   download_dir.empty() ? "not found" : "missing", install::missing_hint().c_str());
         if (cl.standin_dir.empty() && !cl.standin_off) cl.standin_dir = find_repo_file("standin-assets");
         if (srv.db.empty()) srv.db = data_dir + "/server.sqlite3";

@@ -124,8 +124,8 @@ struct Reply {
     u32 error_code = 0;    // the code it was refused with (0 accepted; error_code(fid))
     bool handled = false;  // false: no handler answered, `body` is the host's fallback (+ the campaign's data)
 };
-// A host's answer to a request no handler answers: soa-server's {data: {Time}}, soa's file of its
-// fake-server directory (or {}).
+// A host's answer to a request no handler answers: soa-server's {data: {Time}}, soa's {} (the
+// library logs `no handler: <Method>` either way).
 using Fallback = std::function<std::vector<u8>()>;
 // One request through the server, as both hosts (soa's FakeApiCaller route, soa-server's wire)
 // deliver it: EndMissionTalk ends the story scene and is answered with GetPlayMission's answer;

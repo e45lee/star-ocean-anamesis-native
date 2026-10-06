@@ -843,6 +843,57 @@ NATIVE_TEST("wire/inproc-parity") {
         }
     }
     {
+        // The varargs methods (mangled "...z"): a count, then that many u64 uids in the x registers
+        // after the fixed arguments and on the stack past x7 (AAPCS64; NetworkApiCaller::LockItem
+        // @015c1db8 & co. va_arg them into a CSTLVector<u64>). The wire carries the vector. 9 uids
+        // reach the stack for every method; 1 fits in the registers. Garbage in the count
+        // register's upper half (a u32 count's own bits only).
+        std::vector<u64> many;
+        for (u64 i = 0; i < 9; i++) many.push_back(0x7d000010 + i);
+        struct Varargs {
+            const char* name;
+            const char* fake;
+            u32 fid;
+            bool base;      // a u64 base item uid before the count (ItemCompose, ItemGradeUp)
+            bool count64;   // the count is a u64 (GetPresent)
+        };
+        const Varargs kVarargs[] = {
+            {"LockItem", "_ZN13FakeApiCaller8LockItemEjz", 0x88f29383, false, false},
+            {"UnlockItem", "_ZN13FakeApiCaller10UnlockItemEjz", 0x2f9569e5, false, false},
+            {"SellItem", "_ZN13FakeApiCaller8SellItemEjz", 0x00ee45f7, false, false},
+            {"GetPresent", "_ZN13FakeApiCaller10GetPresentEmz", 0x4072d7e1, false, true},
+            {"ItemCompose", "_ZN13FakeApiCaller11ItemComposeEmjz", 0x02a5cd1d, true, false},
+            {"ItemGradeUp", "_ZN13FakeApiCaller11ItemGradeUpEmjz", 0x8952aa02, true, false},
+        };
+        const u64 base_uid = 0x7d0000ff;
+        for (const Varargs& v : kVarargs) {
+            for (size_t n : {(size_t)1, many.size()}) {
+                std::vector<u64> uids(many.begin(), many.begin() + n);
+                Arg p;
+                p.code = 'P';
+                p.mem.assign((const u8*)uids.data(), (const u8*)(uids.data() + n));
+                std::vector<Arg> args;
+                if (v.base) args.push_back(u('Q', base_uid));
+                args.push_back(p);
+                args.push_back(u('I', n));
+                server::net::Decoded d;
+                if (!wire_decode(t, v.name, args, &d)) continue;
+                u64 x[8] = {0x5150};
+                int reg = 1;
+                if (v.base) x[reg++] = base_uid;
+                x[reg++] = v.count64 ? n : (0xdead000000000000ull | n);
+                size_t k = 0;
+                for (; k < n && reg < 8; k++) x[reg++] = uids[k];
+                std::vector<u64> stack(uids.begin() + k, uids.end());
+                stack.push_back(0xbad0bad0bad0bad0ull);  // past the last one: never read
+                server::Request r = server_port::inproc_request(v.fake, v.fid, x, stack.data());
+                compare(t, v.name, r, d);
+                if (r.vecs.size() != 1 || r.vecs[0] != uids) t.fail("%s: %zu uids: the route's vector is wrong", v.name, n);
+            }
+            fprintf(stderr, "wire: inproc-parity %s (varargs, 1 and %zu uids): equal\n", v.name, many.size());
+        }
+    }
+    {
         // SaleGacha(u32 gacha, s8 const* token): the token is a fixed char[32] on the wire
         const char* token = "0123456789abcdef0123456789abcdef";
         Arg s;

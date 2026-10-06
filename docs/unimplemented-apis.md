@@ -20,8 +20,7 @@ The wire knows **199 methods**; the server has handlers for **187** (35 of them 
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
-| **Empty reply** | 0 | None left (the last, SetStampSlot, is answered now). A request lambda that names `FakeApi/<file>.msgp` with no handler would get an empty map `{}` (logged `no handler`). |
-| **Canned reply** | 0 | None left: `TrainingMissionStart` (it got `mission_start.msgp`) and `CbtCertification` (`update_home.msgp`) are answered now; the files of `port/fakeapi/responses/` are reached by nothing (step 9 retires them). |
+| **Empty reply** | 0 | None left (the last, SetStampSlot, is answered now). A request lambda with no handler would reach the local server, which answers an empty map `{}` in-process and logs `no handler: <Method>` (the canned files of `port/fakeapi/responses/` are gone, step 9). |
 | **No reply** | 2 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
 
@@ -60,23 +59,23 @@ overflow box), equipment and mastery, home and decorations, badges, paid currenc
 In-process, the status-only methods logged nothing at all; they now log `no handler: <Method>`
 (below, "Stub logging").
 
-### Where the fallback replies come from: `port/fakeapi/`
+### What answers a request with no handler: `{}` (no fallback files)
 
-Not from the game. The 3.7.0 offline build's request lambdas each name a reply file
-(`FakeApi/<name>.msgp`), but the APK ships none; the port's in-process route serves them from
-`port/fakeapi/responses/` (`--fake-server DIR`, `port/src/native/api/fakeapi.cpp`) **only when the
-local server has no handler**. That folder holds 10 replies generated early in the port by
-`tools/fakeapi_responses.py` (player_get, mission_start/end, present_get_all/item, update_home and four
-gacha ones, each with a readable `json/` copy). Every one of those methods has a real handler now,
-so the files are reached only by the "canned" method above. `port/fakeapi/fields.txt` and
-`schema.txt` are reverse-engineering references (the reply fields each client info class reads;
-the reply schema by CHash32 key) that server code cites as evidence; they are not served. Part 3
-replaces the fallback with explicit stubs, after which `responses/` can go.
+Not the game: the 3.7.0 offline build's request lambdas each name a reply file
+(`FakeApi/<name>.msgp`), but the APK ships none. The port's in-process route
+(`port/src/native/api/fakeapi.cpp` `ServeProgress`) hands every request to the local server; when
+it has no handler the route answers `{}` and the library logs `no handler: <Method>`. Until step 9
+(2026-10-05) the route fell back to 10 replies generated early in the port (`port/fakeapi/responses/`,
+`--fake-server DIR`, `tools/fakeapi_responses.py`); every one of those methods has a real handler
+now, so they were removed ([`history/fake-server-responses.md`](history/fake-server-responses.md)).
+`port/fakeapi/fields.txt` and `schema.txt` stay: reverse-engineering references (the reply fields
+each client info class reads; the reply schema by CHash32 key) that server code cites as evidence;
+they are not served.
 
 ## 2. The methods
 
-★ = no reply in-process (may hang the screen that calls it). "{}" = an empty map in-process;
-"canned" = the named fallback file from `port/fakeapi/responses/`.
+★ = no reply in-process (may hang the screen that calls it). "{}" = an empty map in-process
+(logged `no handler`).
 
 ### 2.1 Likely to affect normal play
 
@@ -209,7 +208,7 @@ tables, rules section). New state goes through the state module's migrations
    free split, in both hosts.
 8. **Stubs (decided; done 2026-10-04, section 2.5):** social (2.2) and the debug APIs (2.4) answer
    success through explicit stub handlers, each logged when called (see Decisions).
-9. **Retire the canned responses** (the user asked, 2026-10-04; they are no longer needed): once
+9. **Retire the canned responses (done 2026-10-05)** (the user asked, 2026-10-04; they are no longer needed): once
    steps 3–8 give every callable method a handler or stub, nothing reaches the file fallback. Remove
    `port/fakeapi/responses/` (10 files + `json/`), `tools/fakeapi_responses.py`,
    `tools/fakeapi_msgp.py`, the `--fake-server DIR` option and the file lookup in
@@ -220,6 +219,13 @@ tables, rules section). New state goes through the state module's migrations
    notes (`docs/notes.md` "the fake server, live", "Generated responses") to `docs/history/`, keep
    `SOA_FAKE_SERVER` in the removed-variables table pointing at the removal, and update
    `port/README.md`, `server/ARCHITECTURE.md` and `docs/client-changes.md`.
+   **Done:** the folder and both tools are gone; `--fake-server` is rejected (`tests/cli` lists it as
+   a deliberate removal); `ServeProgress`'s fallback answers `{}` (logged `no handler: <Method>` by
+   the library and `fid …: <file>: no handler; answering {}` by the route); the route's switch is
+   `--server inproc` itself (`g_route_on`, set when the CGame::OnInitialize hook is installed),
+   where the directory used to double as it. `SOA_FAKE_SERVER` warns with `--server inproc`. Selftest `fakeapi/serve-no-handler`:
+   a SetStampSlot request through `ServeProgress` reaches its `OnSetStampSlotRes` with `{}` (0x80). The
+   notes are in [`history/fake-server-responses.md`](history/fake-server-responses.md).
 
 ### Proof per group
 

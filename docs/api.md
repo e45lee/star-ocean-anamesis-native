@@ -694,7 +694,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Status**: **online**
 - **Master tables**: `master_mission` (`exp`, `pc_exp`, `fol`), `master_player_level`, `master_character_common_parameter.next_exp`, `master_role_level_max`, `master_mission_clear_present`, `master_battle_evaluation`, `master_favor_battle_effect`, `master_favor_level`, `master_mission_character_bonus`
 - **FakeApiCaller**: `FakeApi/mission_end.msgp`
-- **Notes**: Port route: answered from `mission_end.msgp` (fake server).
+- **Notes**: Port route: answered by the in-process server (`mission_end.msgp` is the request's file name on the FakeApiCaller route).
 
 ### MissionFailed
 - **FunctionID** `479604f6`
@@ -740,7 +740,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Status**: **online**
 - **Master tables**: `master_mission` (+ `_event_mission`, `_tower_mission`, `_training_mission`, `_world_map_mission`), `master_mission_stage`, `master_mission_drop`, `master_common_drop`, `master_campaign(_drop)`, `master_battle_evaluation`, `master_role`, `master_rank`, `master_character_common_parameter`, `master_item`, `master_weapon`, `master_skill*`, `master_awaken`, `master_talent`
 - **FakeApiCaller**: `FakeApi/mission_start.msgp`
-- **Notes**: Port route: `mission:` / `phase:` debug commands with `--fake-server`; see notes "Playing a battle and a gacha through". Seen on the restore route (agent events-core): for an event mission whose helper list is its `master_mission_npc` NPCs (`CParameterUtility::CreateRentalListAuto`), picking one sends helper index 1 and the NPC's `master_npc_base_parameter` id as the NPC helper argument (e.g. `1 74980259 1 0 896388396 0 0`); 選択しない sends 0s.
+- **Notes**: Port route: `mission:` / `phase:` debug commands with the in-process server; see notes "Playing a battle and a gacha through". Seen on the restore route (agent events-core): for an event mission whose helper list is its `master_mission_npc` NPCs (`CParameterUtility::CreateRentalListAuto`), picking one sends helper index 1 and the NPC's `master_npc_base_parameter` id as the NPC helper argument (e.g. `1 74980259 1 0 896388396 0 0`); 選択しない sends 0s.
 
 ### MissionTalk
 - **FunctionID** `816dc8b4`
@@ -1783,7 +1783,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Callers** (fid constant scan): `CGacha::Initialize`
 - **Status**: **online**
 - **Master tables**: `master_gacha` (`opened_at`/`closed_at`, `limit_count`, `day_limit_count`), `master_gacha_image`, `master_gacha_pickup`
-- **Notes**: `CGacha::Initialize`. Port route: served by the fake server (`gacha_in_data.msgp`).
+- **Notes**: `CGacha::Initialize`. Port route: queued by the port on the FakeApiCaller route (`gacha_in_data.msgp`) and answered by the in-process server.
 
 ### GetGachaRate
 - **FunctionID** `d6bcb49d`

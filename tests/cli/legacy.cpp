@@ -99,7 +99,7 @@ int parse_soa(int argc, const char* const* argv, soa::SoaArgs& r) {
             else if (a == "--gdb") r.gdb = next();
             else if (a == "--download-dir" || a == "--download") opt.client.download_dir = next();
             else if (a == "--download-prefer") opt.client.download_prefer = true;
-            else if (a == "--fake-server") opt.client.fake_server_dir = next();
+            else if (a == "--fake-server") next();  // (ClientOptions::fake_server_dir is gone, 2026-10-05: the value is dropped)
             else if (a == "--fake-server-schema") opt.client.fake_server_schema = next();
             else if (a == "--memstats") {
                 opt.client.memstats = 1;

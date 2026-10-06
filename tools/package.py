@@ -26,7 +26,7 @@ links, IJG libjpeg 9, zstd 1.3.4) and ONLY data we made:
   standin-assets/...         our made-up stand-in images (tools/make_standin_banners.py)
 
 No game file goes in: not the APK / XAPK (380-ok: excluded), the download, a master DB (data/basmaster-*.sqlite3 are
-decryptions of the game's own), version.bin, libSOA.so, port/fakeapi/responses, decompiles. The
+decryptions of the game's own), version.bin, libSOA.so, decompiles. The
 programs derive what they need from the user's own game files at run time (soaserver/master_source.h).
 This script holds no decryption logic.
 

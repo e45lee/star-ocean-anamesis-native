@@ -23,3 +23,5 @@ MissionContinue: declined (mission %u)	MissionContinue: declined
 InheritAccessory %llx: inherited item %u (limit break %u) from %llx	InheritAccessory [0-9a-f]+: inherited item
 EquipAuto %llx:%s	EquipAuto [0-9a-f]+:
 SetStampSlot: %zu slots [%s]	SetStampSlot: \d+ slots \[
+%s: +%llu FOL (%zu items%s)	^I/server: SellItem(Array)?: \+\d+ FOL
+%s %llx: +%llu points%s, level %u -> %u	^I/server: ItemCompose [0-9a-f]+: \+\d+ points

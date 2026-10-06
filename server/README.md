@@ -32,9 +32,9 @@ for the code's structure and the state schema.
 | `net/` | the wire layer (`libsoanet`, linked by `soa-server` only): `wire.*` packets, decoder, battle log, reply bodies; `ninja/` the cipher; `game.*` sessions and the bridge; `http.*`; `loop.*` the sockets; `client.*` a wire client (tests, `--wire-tool session`); `tool.*` `--wire-tool`; `gen/wire_decode.inc` (generated) |
 | `tests/net/`, `tests/ninja/` | the wire layer's selftests (compiled into `soa-server`, not `soa`): `client_requests.txt` and `ninja_vectors.txt` are the client's own packets and envelopes; `tests/ninja/tools/` the unicorn harness that runs the client's code to make them, `tests/ninja/ninja_check.*` a stand-alone cipher CLI |
 
-Build: part of the repository's build (`cmake -S . -B build && cmake --build build`, README.md
+Build: part of the repository's build (`scripts/build.sh`, README.md
 "Building"): `build/server/libsoaserver.a`, `build/server/libsoanet.a` and `build/server/soa-server`
-(`cmake --build build --target soa-server` for the server alone; `-DSOA_BUILD_PORT=OFF
+(`scripts/build.sh --target soa-server` for the server alone; `scripts/build.sh -DSOA_BUILD_PORT=OFF
 -DSOA_BUILD_EMULATOR=OFF -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_PLATFORM370=OFF` configures only the server, without dynarmic, the runtime, SDL2 or EGL). It needs
 SQLite, OpenSSL's libcrypto and msgpack-cxx (and zlib for `soa-server`), static from vcpkg
 (`unofficial::sqlite3::sqlite3`, `OpenSSL::Crypto`, `msgpack-cxx` (headers), `ZLIB::ZLIB`; `cmake/deps.cmake`), and `soa_codec`

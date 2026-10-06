@@ -309,7 +309,7 @@ def main(o):
     out = os.path.abspath(o.out)
     for b, what in ((o.emu, "soa-emu"), (o.server, "soa-server")):
         if o.target != "port-inproc" and not os.access(b, os.X_OK):
-            print("FAIL: %s not built (cmake -S . -B build && cmake --build build --target %s)" % (b, what))
+            print("FAIL: %s not built (scripts/build.sh --target %s)" % (b, what))
             return 1
     if not shutil.which("convert"):
         print("FAIL: ImageMagick's convert is needed (screen checks)")

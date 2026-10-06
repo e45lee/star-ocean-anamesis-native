@@ -6,11 +6,13 @@
 Builds the optimized programs (scripts/build.sh --release, --windows --release: build-release/,
 build-win-release/) unless --no-build, then makes, per platform:
 
-  soa-port-<V>-<platform>.zip           soa (the 3.7.0 client with its in-process server: run-port) +
+  soa-port-<V>-<platform>.zip           soa (the 3.7.0 client with its in-process server: run-port;
+                                        run-port-en: the same in English, soa --lang en) +
                                         soa-server (the server as its own program: run-port-server
                                         runs soa --server against it)
   soa-emulator-<V>-<platform>.zip       soa-emu (the unmodified 3.7.0 client) + soa-server (its server;
-                                        it also runs alone) + the run-emulator launcher
+                                        it also runs alone) + the run-emulator launcher (run-emulator-en:
+                                        soa-server --english, soa-emu --lang en)
   soa-<V>-<platform>-debug-symbols.zip  the programs' separate debug info (line tables)
 
 Each zip holds one top folder (soa-port-<V>-<platform>/ ...) with the binaries (stripped), the
@@ -27,6 +29,14 @@ links, IJG libjpeg 9, zstd 1.3.4) and ONLY data we made:
   standin-assets-en/recipes/*.json  the English UI art recipes (text, boxes, styles: no pixels); the
                              server builds the -en images from the user's download at run time
                              (soaserver/english_art.h, docs/english.md section 8)
+  data/english/master-en.tsv, data/english/story-en/TS_*.tsv  the English text tables the server
+                             reads with --english (docs/english.md 7.6): keyed by message_id / line
+                             id with the SHA-1 of the Japanese, no Japanese text. NOT the built -en
+                             files: soa-server builds sqlite/basmaster-en.sqlite3 and
+                             Scenario/TS_*-en.msgp at every start from these tables and the user's
+                             own download, after its date-dependent master hooks (event dates), so
+                             a pre-built -en master would be stale and would be game data (PLAN-english
+                             P2, M-Q5)
 
 No game file goes in: not the APK / XAPK (380-ok: excluded), the download, a master DB (data/basmaster-*.sqlite3 are
 decryptions of the game's own), version.bin, libSOA.so, decompiles. The
@@ -76,9 +86,10 @@ WITH_DATA = {"port", "emulator"}
 
 # The allow-list: a packaged file's path (inside the top folder) must match one of these.
 ALLOW = {
-    "port": ["soa", "soa.exe", "soa-server", "soa-server.exe", "run-port.sh", "run-port.cmd",
+    "port": ["soa", "soa.exe", "soa-server", "soa-server.exe", "run-port.sh", "run-port.cmd", "run-port-en.sh", "run-port-en.cmd",
              "run-port-server.sh", "run-port-server.cmd", "run-port-server.ps1"],
-    "emulator": ["soa-emu", "soa-server", "soa-emu.exe", "soa-server.exe", "run-emulator.sh", "run-emulator.cmd", "run-emulator.ps1"],
+    "emulator": ["soa-emu", "soa-server", "soa-emu.exe", "soa-server.exe", "run-emulator.sh", "run-emulator.cmd", "run-emulator.ps1",
+                 "run-emulator-en.sh", "run-emulator-en.cmd"],
     "viewer": ["soa-viewer", "soa-viewer.exe", "run-viewer.sh", "run-viewer.cmd"],
 }
 ALLOW_COMMON = ["README.txt", "LICENSE.txt", "THIRD-PARTY-NOTICES.txt", "BUILD-INFO.txt", "game/PUT-GAME-FILES-HERE.txt"]
@@ -86,7 +97,13 @@ ALLOW_DATA = [
     "data/gacha_pools.sqlite3",
     "standin-assets/Image/etc2/*.aif",
     "standin-assets-en/recipes/*.json",
+    # the English tables soa-server reads with --english (english::table_path(), story_dir()):
+    # text only, never a built -en master or story file (those fail the scan anyway)
+    "data/english/master-en.tsv",
+    "data/english/story-en/TS_*.tsv",
 ]
+# The data files copied from git into a package with a server (the paths as in the checkout).
+DATA_FILES = ["standin-assets", "standin-assets-en/recipes", "data/english/master-en.tsv", "data/english/story-en/TS_*.tsv"]
 ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
 
 # Game-file patterns (GAME_FILE): any file matching one fails the check unless it is an approved stand-in.
@@ -363,7 +380,7 @@ def write_zip(stage, out):
 
 # Each package's launchers (scripts/package/): on Windows NAME.cmd, plus NAME.ps1 when the .cmd
 # hands over to one; on Linux NAME.sh.
-LAUNCHERS = {"port": ["run-port", "run-port-server"], "emulator": ["run-emulator"], "viewer": ["run-viewer"]}
+LAUNCHERS = {"port": ["run-port", "run-port-en", "run-port-server"], "emulator": ["run-emulator", "run-emulator-en"], "viewer": ["run-viewer"]}
 
 
 def launcher_files(kind, windows):
@@ -397,7 +414,7 @@ def stage_package(plat, kind, version, work, dbg_dir):
     if kind in WITH_DATA:
         os.makedirs(os.path.join(root, "data"))
         clean_pools(os.path.join(ROOT, "data", "gacha_pools.sqlite3"), os.path.join(root, "data", "gacha_pools.sqlite3"))
-        for rel in git("ls-files", "standin-assets", "standin-assets-en/recipes").splitlines():
+        for rel in git("ls-files", "--", *DATA_FILES).splitlines():
             os.makedirs(os.path.join(root, os.path.dirname(rel)), exist_ok=True)
             shutil.copyfile(os.path.join(ROOT, rel), os.path.join(root, rel))
     os.makedirs(os.path.join(root, "game"))

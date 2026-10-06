@@ -1108,6 +1108,18 @@
     "NoLoginStart"
    ]
   },
+  "session:campaign-en": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "MissionEnd",
+    "MissionStart",
+    "MissionTalk",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
   "session:events": {
    "apis": [
     "CheckEventRankingResult",
@@ -1164,6 +1176,23 @@
     "SearchPlayer",
     "SetTitle"
    ]
+  },
+  "session:home-en": {
+   "apis": [
+    "AchievementActiveList",
+    "Blacklist",
+    "FollowList",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "GetSphere211Info",
+    "Login",
+    "NoLoginStart",
+    "PresentList",
+    "SearchPlayer",
+    "SetTitle"
+   ],
+   "source": "declared"
   },
   "session:coins": {
    "apis": [

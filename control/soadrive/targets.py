@@ -52,7 +52,7 @@ PACKAGE_DIR = os.environ.get("SOA_PACKAGE_DIR") or None
 # go through it. The run fails when the launcher leaves its soa-server running after the client.
 LAUNCHER_PORT = 44310
 # the server options the launcher passes on to soa-server (the others go to soa)
-LAUNCHER_SERVER_FLAGS = {"--new-player", "--galaxy-pass", "--enable-events", "--restore-tower"}
+LAUNCHER_SERVER_FLAGS = {"--new-player", "--galaxy-pass", "--enable-events", "--restore-tower", "--english"}
 LAUNCHER_SERVER_VALUES = {"--seed", "--download", "--download-dir", "--master", "--log-packets", "--seed-rng", "--clock",
                           "--start-coins", "--event-keywords"}
 

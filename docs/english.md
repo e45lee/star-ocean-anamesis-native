@@ -698,7 +698,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 - **What is safe to commit** (the user's game-file policy, README.md "Game files"):
   - The master's Japanese is already in git (`data/basmaster-3.7.0.sqlite3`), and so is Global's English. A table of our English keyed by `message_id` adds no game data beyond what's there: committable, like the master DBs.
   - The story's Japanese is **not** in git (only in `work/download-3.7.0`). The story tables therefore hold `message_id`, a hash and our English, and no Japanese; tools read the Japanese from the download when they need it.
-  - Our English is still a translation of the publisher's text: whether it goes into git, and whether release packages carry it (they never carry game files), is the user's call (PLAN-english.md M-Q5). The glossary of names is small and needed in any case.
+  - Our English is still a translation of the publisher's text: whether it goes into git, and whether release packages carry it (they never carry game files), is the user's call (PLAN-english.md M-Q5; decided: both, and the packages carry the tables `master-en.tsv` and `story-en/`, from which the packaged server builds the `-en` files at every start: P2). The glossary of names is small and needed in any case.
   - Engine outputs before review (`raw-*.jsonl`), PO exports and the trial stay in `work/`.
 
 **As built** (2026-10-06, agent `en-data`; PLAN-english.md E1, M1, E3). The tool is `tools/english_text.py`. Its shared library, also used by `tools/english_mt.py`, is `tools/english_core.py`. The test is `tests/test_english_text.py` (T0).

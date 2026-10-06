@@ -13,7 +13,8 @@
 #   server options, passed to soa-server.exe (they set the server's rules and state):
 #     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N,
 #     --galaxy-pass, --enable-events, --event-keywords L, --restore-tower, --download PATH,
-#     --master FILE, --log-packets DIR
+#     --master FILE, --log-packets DIR, --english (the English files: with --lang en
+#     for soa, the English game)
 #   any other options go to soa.exe, e.g. --fullscreen, --size 729x1296, --apk FILE (soa.exe --help)
 $ErrorActionPreference = "Stop"
 $here = $PSScriptRoot
@@ -33,7 +34,7 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         '^(-h|--help)$' { Get-Content $PSCommandPath | Where-Object { $_ -match '^#' } | ForEach-Object { $_ -replace '^# ?', '' }; exit 0 }
         '^--data$' { if (-not $hasValue) { Write-Host "run-port-server: $a needs a value"; exit 2 }; $data = [string]$args[++$i]; continue }
         '^--port$' { if (-not $hasValue) { Write-Host "run-port-server: $a needs a value"; exit 2 }; $port = [int]$args[++$i]; continue }
-        '^(--new-player|--galaxy-pass|--enable-events|--restore-tower)$' { $srvArgs += $a; continue }
+        '^(--new-player|--galaxy-pass|--enable-events|--restore-tower|--english)$' { $srvArgs += $a; continue }
         '^(--seed|--download|--download-dir|--master|--log-packets)$' {
             if (-not $hasValue) { Write-Host "run-port-server: $a needs a value"; exit 2 }
             # paths: from the caller's directory

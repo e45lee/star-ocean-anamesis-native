@@ -39,6 +39,7 @@ These hold on every commit and every merge to main; none has a `known` failure, 
 - `server/src/rules/<x>_rules*`: the API folder of that name; the rest of `server/` and `tools/server_*`: every corpus and every shard;
 - `runtime/`, `platform370/`, `port/src/`, `emulator/src/`, the build: the broad set (every shard, smoke, the gate-scope sessions);
 - `tests/diff/`, `control/`, `phone370.sh`: every shard; a test script itself: that test.
+- a T1 check with an `area` that holds the path: that check (`english-report` for `data/english/` and `tools/english_*`);
 - never the Windows tests (`win:*`, kind `platform`, no impact entry): T2 runs them when `build-win/` exists (their `requires`; else SKIP), or by name (`tools/gate.sh win:seeded`).
 
 Regenerate the map after adding a test or a corpus: `tools/gate.sh T2 --out /tmp/g && tools/tests_for.py --regen --observed /tmp/g` (T0's `impact-map` check fails when an API or a test is missing from it).
@@ -71,6 +72,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T0 | `live-check-guard` | 15 s | 1 | soa's --live-check switches families on: an unknown family fails at start; a short headless run with --live-check kernel:every=1 leaves a counts file with checks > 0 and 0 mismatches (it once parsed and checked nothing for a day) | `tests/live_check_guard.sh build/port/soa {out} {tmp}` |
 | T0 | `impact-map` | 3 s | - | tests/impact.json knows every API soa-server answers and every test of tests/tiers.json | `python3 tools/tests_for.py --check` |
 | T1 | `replay-parent` | 60 s | - | RG4: every corpus replayed by the parent commit's server and this one, compared byte for byte | `tools/server_build_at.sh {base} {tmp}/parent && tools/server_replay_diff.sh {tmp}/parent/soa-server build/server/soa-server` |
+| T1 | `english-report` | 7 s | - | the English coverage report runs over the committed tables and the masters (docs/PLAN-english.md E1/E11: rows per source and prefix, the failing rows kept Japanese, the stale and older-Global rows; lists in {out}/report). Its freshness check (`build --check`) is T0's pytest-soa-save | `.venv/bin/python tools/english_text.py report --out {out}/report` |
 | T1 | `shard:login` | 2.2 min | 3 | title, Login, the data check, the notice board and LOGIN BONUS, home; 3 targets compared | `tests/diff/run.sh login --out {out}` |
 | T1 | `shard:battle` | 4.7 min | 3 | login, the campaign battle 1-05 (mission map, battle, results), home | `tests/diff/run.sh battle --out {out}` |
 | T1 | `shard:gacha` | 4.2 min | 3 | login, a 10-draw from home (SaleGacha), the coins and draws | `tests/diff/run.sh gacha --out {out}` |
@@ -84,8 +86,10 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `session:battle` | 3.8 min | 1 | ミッション, mf01_001's battle, MissionEnd, the results, home; the player's EXP in the state | `port/scripts/battle_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:gacha` | 3.8 min | 1 | the gacha screen, its tabs, a 10-draw (SaleGacha), the presentation; the coins debited | `port/scripts/gacha_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:campaign` | 5.2 min | 1 | Episode 1 -> Mere -> 1-05 through the map, its battle, then the story mission it unlocks | `port/scripts/campaign_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:campaign-en` | 5.2 min | 1 | the campaign session with soa --lang en (docs/PLAN-english.md C4/E11): the in-process server serves the -en master and the English story files; 1-05 and the story mission it unlocks, in English | `port/scripts/campaign_session.sh build/port/soa {out} {tmp} --lang en` |
 | T2 | `session:events` | 5.2 min | 1 | event missions with --clock layouts | `port/scripts/events_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:home` | 6.9 min | 1 | every home button by the phase or request it leads to | `port/scripts/home_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:home-en` | 6.9 min | 1 | the home session with soa --lang en (docs/PLAN-english.md E11): every home button in English (the -en master, the English UI art, the client's strings and word wrap); no reference shots (session:home compares none either) | `port/scripts/home_session.sh build/port/soa {out} {tmp} --lang en` |
 | T2 | `session:coins` | 7.0 min | 1 | paid currency: a player with 50 stones draws once, the sale-stopped dialog (patched) opens the coin shop, the birth month entered (10009 -> the birth dialog), the L set bought (paid + free stones, the record), still there after a re-login, the birth month not asked again | `port/scripts/coins_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:coins-server` | 7.3 min | 1 | the coins session with soa --server (soa-server over the wire) | `port/scripts/coins_session.sh --target port-server build/port/soa {out} {tmp}` |
 | T2 | `session:party` | 4.4 min | 1 | party sets 1 and 2 edited (UpdatePartySet), the home character (UpdateHome), a battle with set 2 | `port/scripts/party_session.sh build/port/soa {out} {tmp}` |

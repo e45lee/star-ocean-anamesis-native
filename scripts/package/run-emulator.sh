@@ -9,6 +9,8 @@
 #   --new-player       start the server without a player (a fresh account: terms, name, tutorial)
 #   --seed FILE        seed a NEW server state from this save (a 3.7.0 or offline Game.xml)
 #   --enable-events    open the events matching --event-keywords all year
+#   --english          the server serves the English files too (soa-server --english; with
+#                      soa-emu's --lang en: the English game, as run-emulator-en.sh does)
 #   --event-keywords L names to match (default: the summer events)
 #   --port N           the game server's port (default 44300); its HTTP/CDN port is N+80
 #   --server-log       show soa-server's log on the terminal instead of HOME/server.log
@@ -26,7 +28,7 @@ while [ $# -gt 0 ]; do
     -h|--help) sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0;;
     --home) home=$2; shift 2;;
     --port) port=$2; shift 2;;
-    --new-player|--enable-events) srv_args+=("$1"); shift;;
+    --new-player|--enable-events|--english) srv_args+=("$1"); shift;;
     --event-keywords|--seed) srv_args+=("$1" "$2"); shift 2;;
     --server-log) server_log_to_tty=1; shift;;
     *) emu_args+=("$1"); shift;;

@@ -24,7 +24,7 @@ def make_stage(tmp_path):
     for f in package.launcher_files("port", False):
         shutil.copyfile(ROOT / "scripts/package" / f, root / f)
     package.clean_pools(ROOT / "data/gacha_pools.sqlite3", root / "data/gacha_pools.sqlite3")
-    for rel in package.git("ls-files", "standin-assets").splitlines():
+    for rel in package.git("ls-files", "--", *package.DATA_FILES).splitlines():
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / rel, root / rel)
     (root / "README.txt").write_text("x")
@@ -36,6 +36,19 @@ def test_clean_stage_passes(tmp_path):
     assert package.check(str(stage), "port", None) == []
 
 
+def test_english_tables_are_packaged(tmp_path):
+    """PLAN-english P2 (M-Q5): the English tables the server reads with --english go in (the server
+    builds the -en master and story files from them at every start), and nothing else of
+    data/english/ (the tool's inputs)."""
+    stage, root = make_stage(tmp_path)
+    assert (root / "data/english/master-en.tsv").is_file()
+    assert len(list((root / "data/english/story-en").glob("TS_*.tsv"))) > 0
+    assert not (root / "data/english/glossary.tsv").exists() and not (root / "data/english/story-en/index.tsv").exists()
+    assert len(list((root / "standin-assets-en/recipes").glob("*.json"))) > 0
+    assert package.check(str(stage), "port", None) == []
+    assert package.check(str(stage), "viewer", None) != []  # the viewer runs no server: not on its list
+
+
 def test_pools_are_cleaned(tmp_path):
     stage, root = make_stage(tmp_path)
     db = sqlite3.connect(root / "data/gacha_pools.sqlite3")
@@ -45,6 +58,13 @@ def test_pools_are_cleaned(tmp_path):
 
 @pytest.mark.parametrize("rel,data,why", [
     ("data/basmaster-3.7.0.sqlite3", None, "master_* tables"),        # a decrypted master
+    # a built English master (PLAN-english P2): never packaged, under any name or place
+    ("data/basmaster-en.sqlite3", None, "master_* tables"),
+    ("data/english/basmaster-en.sqlite3", None, "master_* tables"),
+    ("data/english/master-en.sqlite3", None, "master_* tables"),
+    ("data/english/story-en/TS_9999.tsv", None, "master_* tables"),   # on the allow-list, still scanned
+    ("data/english/story-en/TS_1010-en.msgp", b"ADLD\x02" + b"\0" * 60, "ADLD"),  # a built -en story file
+    ("data/english/glossary.tsv", b"x", "not on the allow-list"),
     ("extra.txt", b"hello", "not on the allow-list"),
     ("data/version.bin", b"\x00", "game file name"),
     ("game/x.aif", b"ADLD\x02" + b"\0" * 60, "ADLD"),
@@ -109,9 +129,13 @@ def test_port_package_ships_the_server_and_its_launcher():
     assert ("server", "soa-server") in package.PROGRAMS["port"]
     for f in ["soa-server", "soa-server.exe"] + package.launcher_files("port", False) + package.launcher_files("port", True):
         assert f in package.ALLOW["port"], f
-    assert package.launcher_files("port", False) == ["run-port.sh", "run-port-server.sh"]
-    assert package.launcher_files("port", True) == ["run-port.cmd", "run-port-server.cmd", "run-port-server.ps1"]
-    assert package.launcher_files("emulator", True) == ["run-emulator.cmd", "run-emulator.ps1"]
+    assert package.launcher_files("port", False) == ["run-port.sh", "run-port-en.sh", "run-port-server.sh"]
+    assert package.launcher_files("port", True) == ["run-port.cmd", "run-port-en.cmd", "run-port-server.cmd", "run-port-server.ps1"]
+    # the English launchers (PLAN-english P1, Q5): run-emulator-en.cmd runs run-emulator.ps1
+    assert package.launcher_files("emulator", False) == ["run-emulator.sh", "run-emulator-en.sh"]
+    assert package.launcher_files("emulator", True) == ["run-emulator.cmd", "run-emulator.ps1", "run-emulator-en.cmd"]
     assert package.launcher_files("viewer", True) == ["run-viewer.cmd"]
-    for f in package.launcher_files("port", False) + package.launcher_files("port", True):
-        assert (ROOT / "scripts/package" / f).is_file(), f
+    for kind in ("port", "emulator"):
+        for f in package.launcher_files(kind, False) + package.launcher_files(kind, True):
+            assert (ROOT / "scripts/package" / f).is_file(), f
+            assert f in package.ALLOW[kind], f

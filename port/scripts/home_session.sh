@@ -5,7 +5,7 @@
 # オススメ!, 情報保存, stamina +; the footer (キャラクター, アイテム, ガチャ GetGachaInData, ショップ, その他).
 # HOME_REF=DIR compares each shot with a reference; OUT/strip.png. Exit 1 if a destination is missed.
 #
-# Usage: port/scripts/home_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
+# Usage: port/scripts/home_session.sh <soa> <out-dir> <scratch-dir> [soa flags...]   (from any directory)
 # Env: HOME_REF, SEED_RNG, SOA_PHONE (scripts/shared-phone.sh), WATCH=1.
 # The session is control/soadrive/sessions/home.py (its doc: the steps, the environment, the outputs):
 # `control/run.py home --help`; `--target T` as the first argument runs it against another program

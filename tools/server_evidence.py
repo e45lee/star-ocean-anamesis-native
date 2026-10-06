@@ -287,8 +287,9 @@ def against(old, new):
     for lab in "abcd":
         if new["labels"][lab] < old["labels"][lab]:
             probs.append("labels (%s): %d -> %d" % (lab, old["labels"][lab], new["labels"][lab]))
-    if set(new["addresses"]) != set(old["addresses"]):
-        gone = sorted(set(old["addresses"]) - set(new["addresses"]))
+    # (addresses added are new evidence, not a loss: only the gone ones count, as for the symbols)
+    gone = sorted(set(old["addresses"]) - set(new["addresses"]))
+    if gone:
         added = sorted(set(new["addresses"]) - set(old["addresses"]))
         probs.append("client addresses changed: gone %s, new %s" % (gone, added))
     gone = sorted(set(old["symbols"]) - set(new["symbols"]))

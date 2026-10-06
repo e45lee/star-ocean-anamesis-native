@@ -8,6 +8,9 @@
 #include "soaserver/ext.h"
 #include "rules/growth_rules.h"
 #include "core/time.h"
+#include "core/errors.h"
+#include "soaserver/msgpack.h"
+#include "testing/scratch.h"
 
 namespace soa::server {
 namespace {
@@ -133,6 +136,103 @@ NATIVE_TEST("growth/apis") {
         c.st.exec("commit");
     });
     if (!ran) return;  // no 3.7.0 master or save
+}
+
+// EquipAuto (docs/server-rules.md#equip-auto): the strongest owned weapon of the role's kind and
+// the strongest accessory that no other character wears (auto_equip_steal false), the empty skill
+// slots filled with the role's open skills; the answer's EquipWeaponResult / EquipAccessoryResult /
+// UpdateCharacterList; an unknown character is refused.
+NATIVE_TEST("growth/equip-auto") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext rc = sv.new_request();
+    Ctx c = sv.make_ctx(rc);
+    // a character whose role's weapon kind has weapons in the master
+    u64 uid = 0;
+    RoleId role;
+    u32 kind = 0;
+    c.st.q("select uid, role_id from roster order by uid", {}, [&](const Row& r) {
+        if (uid) return;
+        const u32 k = (u32)c.m.one("select master_weapon_kind_id from master_role where id = ?", {r.i("role_id")});
+        if (c.m.one("select count(*) from master_item i join master_weapon w on w.id = i.master_weapon_id where i.type = 1 and "
+                    "w.master_weapon_kind_id = ? and i.attack > 0",
+                    {k}) >= 2) {
+            uid = (u64)r.i("uid");
+            role = r.id<RoleId>("role_id");
+            kind = k;
+        }
+    });
+    if (!uid) return t.fail("no character with weapons of its kind");
+    const u64 other_chara = (u64)c.st.one("select uid from roster where uid != ? order by uid limit 1", {uid});
+    auto weapon_of = [&](const char* order) {
+        return (u32)c.m.one(std::string("select i.id from master_item i join master_weapon w on w.id = i.master_weapon_id where i.type = 1 and "
+                                        "w.master_weapon_kind_id = ? and i.attack > 0 order by ifnull(i.attack, 0) + ifnull(i.intelligence, 0) ") +
+                                order + ", i.id limit 1",
+                            {kind});
+    };
+    const u32 weak = weapon_of("asc"), strong = weapon_of("desc");
+    const u32 other_kind = (u32)c.m.one(
+        "select i.id from master_item i join master_weapon w on w.id = i.master_weapon_id where i.type = 1 and w.master_weapon_kind_id != ? "
+        "order by ifnull(i.attack, 0) + ifnull(i.intelligence, 0) desc limit 1",
+        {kind});
+    const u32 acc_weak = (u32)c.m.one(
+        "select id from master_item where type = 3 order by ifnull(attack, 0) + ifnull(intelligence, 0) + ifnull(defence, 0) + ifnull(hit, 0) + ifnull(guard, 0) asc, id limit 1",
+        {});
+    const u32 acc_strong = (u32)c.m.one(
+        "select id from master_item where type = 3 order by ifnull(attack, 0) + ifnull(intelligence, 0) + ifnull(defence, 0) + ifnull(hit, 0) + ifnull(guard, 0) desc, id limit 1",
+        {});
+    if (!weak || !strong || weak == strong || !other_kind) return t.fail("no weapons to compare");
+    c.st.exec("delete from party_member where weapon_uid is not null or accessory_uid is not null");
+    c.st.exec("update roster set weapon_uid = null, accessory_uid = null");
+    c.st.exec("delete from items");
+    auto grant_one = [&](u32 id) {
+        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+        c.grant(1, id, 1, items, stocks, chars);
+        return items.arr.empty() ? (u64)0 : items.arr[0].get_u("id");
+    };
+    const u64 w_weak = grant_one(weak), w_strong = grant_one(strong), w_other_kind = grant_one(other_kind), a_weak = grant_one(acc_weak),
+              a_strong = grant_one(acc_strong);
+    (void)w_other_kind;
+    // the strongest accessory is worn by another character: not taken (auto_equip_steal false)
+    c.st.q("update roster set accessory_uid = ? where uid = ?", {a_strong, other_chara});
+    c.st.q("update roster set equip_skill1 = null, equip_skill2 = null, equip_skill3 = null where uid = ?", {uid});
+    std::vector<u8> out;
+    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {uid}, {}, {}}, &out), 0u, "EquipAuto");
+    t.expect_eq((u64)c.st.one("select weapon_uid from roster where uid = ?", {uid}), w_strong, "the strongest weapon of the role's kind");
+    t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {uid}), a_weak, "an accessory nobody wears");
+    t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {other_chara}), a_strong, "the other character keeps its own");
+    Value d = out.empty() ? Value() : mp_decode(out);
+    const Value* data = d.find("data");
+    const Value* ew = data ? data->find("EquipWeaponResult") : nullptr;
+    const Value* ewc = ew ? ew->find("Character") : nullptr;
+    const Value* entry = ewc ? ewc->find(std::to_string(uid)) : nullptr;
+    t.expect_eq(entry ? entry->get_u("weapon_item_id") : 0, w_strong, "EquipWeaponResult.Character[uid].weapon_item_id");
+    const Value* list = data ? data->find("UpdateCharacterList") : nullptr;
+    t.expect_eq(list && list->arr.size() == 1 ? list->arr[0].get_u("id") : 0, uid, "UpdateCharacterList: the character");
+    // the skills: the role's open skills, in order
+    std::vector<u64> open;
+    const u32 level = (u32)c.st.one("select level from roster where uid = ?", {uid});
+    c.m.q("select * from master_role where id = ?", {role}, [&](const Row& r) {
+        for (int k = 1; k <= 5 && open.size() < 3; k++) {
+            const std::string n = std::to_string(k);
+            if (r.i(("master_skill" + n + "_id").c_str()) && (u32)r.i(("master_skill" + n + "_open_level").c_str()) <= level)
+                open.push_back((u64)r.i(("master_skill" + n + "_id").c_str()));
+        }
+    });
+    std::vector<u64> slots;
+    c.st.q("select equip_skill1, equip_skill2, equip_skill3 from roster where uid = ?", {uid}, [&](const Row& r) {
+        for (int k = 1; k <= 3; k++) {
+            const u64 v = (u64)r.i(("equip_skill" + std::to_string(k)).c_str());
+            if (v) slots.push_back(v);
+        }
+    });
+    t.expect_eq(slots == open, true, "the empty slots took the open skills");
+    // a second call changes nothing (already the best; the skills stay)
+    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {uid}, {}, {}}), 0u, "again");
+    t.expect_eq((u64)c.st.one("select weapon_uid from roster where uid = ?", {uid}), w_strong, "the same weapon");
+    (void)w_weak;
+    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {12345}, {}, {}}), (u32)ErrorCode::kItemUnusable, "an unknown character: refused");
 }
 
 }  // namespace

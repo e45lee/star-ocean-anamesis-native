@@ -56,6 +56,7 @@
   "DeepSpaceMissionStart": "server/src/api/deepspace/deepspace.cpp",
   "DepositItem": "server/src/api/storage/storage.cpp",
   "EquipAccessory": "server/src/api/growth/growth.cpp",
+  "EquipAuto": "server/src/api/growth/growth.cpp",
   "EquipSkill": "server/src/api/growth/growth.cpp",
   "EquipWeapon": "server/src/api/growth/growth.cpp",
   "EvolutionCharacter": "server/src/api/growth/growth.cpp",
@@ -91,6 +92,7 @@
   "GetStorageInfo": "server/src/api/storage/storage.cpp",
   "GetWorldBossInfo": "server/src/api/events/world_boss.cpp",
   "Home3DAnd2DSwitching": "server/src/api/player/home.cpp",
+  "InheritAccessory": "server/src/api/items/items.cpp",
   "ItemCompose": "server/src/api/items/items.cpp",
   "ItemComposeArray": "server/src/api/items/items.cpp",
   "ItemGradeUp": "server/src/api/items/items.cpp",
@@ -104,8 +106,10 @@
   "LockStorageItem": "server/src/api/storage/storage.cpp",
   "Login": "server/src/api/entry/entry.cpp",
   "MaterialCompose": "server/src/api/items/items.cpp",
+  "MissionContinue": "server/src/api/missions/play_state.cpp",
   "MissionEnd": "server/src/api/missions/mission_end.cpp",
   "MissionFailed": "server/src/api/missions/play_state.cpp",
+  "MissionLose": "server/src/api/missions/play_state.cpp",
   "MissionRestart": "server/src/api/missions/play_state.cpp",
   "MissionStart": "server/src/api/missions/mission_start.cpp",
   "MissionTalk": "server/src/api/missions/play_state.cpp",
@@ -145,6 +149,7 @@
   "Sphere211UseRerollItem": "server/src/api/sphere211/sphere211.cpp",
   "StaminaHeal": "server/src/api/items/items.cpp",
   "StaminaHealByFavor": "server/src/api/daily/premium_and_favor_bonus.cpp",
+  "TrainingMissionStart": "server/src/api/missions/mission_start.cpp",
   "UnlockItem": "server/src/api/items/items.cpp",
   "UnlockItemArray": "server/src/api/items/items.cpp",
   "UnlockStorageItem": "server/src/api/storage/storage.cpp",
@@ -155,6 +160,7 @@
   "UpdateFollowMax": "server/src/api/social/social.cpp",
   "UpdateGearStock": "server/src/api/items/gear.cpp",
   "UpdateHome": "server/src/api/player/home.cpp",
+  "UpdateItemStock": "server/src/api/items/items.cpp",
   "UpdateKiyakuVersion": "server/src/api/entry/entry.cpp",
   "UpdateParty": "server/src/api/player/party.cpp",
   "UpdatePartySet": "server/src/api/player/party.cpp",
@@ -474,11 +480,13 @@
     "AttachGear",
     "ClearNewGear",
     "EquipAccessory",
+    "EquipAuto",
     "EquipWeapon",
     "Gacha",
     "GenerateGear",
     "GetGearInfo",
     "GetPlayer",
+    "InheritAccessory",
     "ItemCompose",
     "ItemComposeArray",
     "ItemGradeUp",
@@ -486,6 +494,7 @@
     "LockItem",
     "Login",
     "MaterialCompose",
+    "MissionEnd",
     "RemoveGear",
     "SellGear",
     "SellItem",
@@ -494,6 +503,7 @@
     "StaminaHeal",
     "UnlockItemArray",
     "UpdateGearStock",
+    "UpdateItemStock",
     "UpdateParty",
     "UpdatePartySet",
     "UseHealItem"
@@ -507,12 +517,15 @@
     "GetPlayMission",
     "GetPlayer",
     "Login",
+    "MissionContinue",
     "MissionEnd",
     "MissionFailed",
+    "MissionLose",
     "MissionRestart",
     "MissionStart",
     "MissionTalk",
     "MultiMissionRestart",
+    "TrainingMissionStart",
     "UpdateSupport"
    ],
    "source": "observed (requests.txt)"
@@ -1579,6 +1592,30 @@
     "Sphere211MissionStart",
     "Sphere211StaminaHeal"
    ]
+  },
+  "session:simulator-continue": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "MissionContinue",
+    "MissionFailed",
+    "MissionStart",
+    "NoLoginStart",
+    "TrainingMissionStart"
+   ],
+   "source": "declared"
+  },
+  "session:equipment": {
+   "apis": [
+    "EquipAuto",
+    "GetPlayer",
+    "GetServerTime",
+    "InheritAccessory",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
   },
   "session:episode-movie": {
    "apis": [

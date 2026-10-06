@@ -1,17 +1,20 @@
 // Character growth: BoostCharacter, LimitBreakCharacter(_Legacy), EvolutionCharacter,
-// UpdateAwakenLevel, AddStatusCharacter, EquipWeapon / EquipAccessory, EquipSkill (README.md).
+// UpdateAwakenLevel, AddStatusCharacter, EquipWeapon / EquipAccessory, EquipSkill, EquipAuto
+// (README.md).
 // Port code, not guest behaviour. Rules in docs/server-rules.md#growth-rules (the evidence) and
 // "Growth and economy" (what the server does with it); every rule carries its source label:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
 // The pure rules are rules/growth_rules.{h,cpp}. Refusals answer the player state with a client
 // error code (core/errors.h) and change nothing.
 #include <algorithm>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "api/growth/growth_args.h"
 #include "api/player/roster.h"  // has_growth
+#include "api/settings/config.h"
 #include "core/errors.h"
 #include "core/log.h"
 #include "core/modules.h"
@@ -529,6 +532,149 @@ std::vector<u8> equip_skill(Ctx& ctx, const Request& req) {
     return body(data);
 }
 
+// ---- EquipAuto (自動設定) ---------------------------------------------------------------------
+
+// An owned weapon or accessory as auto-equip ranks it: (d) the sum of its master_item stats at its
+// level, each linear from the stat at level 1 to <stat>_max at the rarity's level_max (the compose
+// table's; as gear.cpp's weapon_attack_int), over attack and intelligence for a weapon and attack,
+// intelligence, defence, hit and guard for an accessory (hp and ap left out: other scales).
+struct Candidate {
+    ItemUid uid;
+    double score = 0;
+};
+std::vector<Candidate> equip_candidates(Ctx& ctx, CharacterUid chara, bool weapon, u32 weapon_kind, bool take_from_others) {
+    std::vector<Candidate> out;
+    const char* column = weapon ? "weapon_uid" : "accessory_uid";
+    ctx.st.q(std::string("select uid, master_item_id, level from items where item_type = ? and uid not in (select ") + column +
+                 " from roster where " + column + " is not null and uid != ? and ?) order by uid",
+             {weapon ? kWeaponItemType : kAccessoryItemType, chara, (int64_t)(take_from_others ? 0 : 1)}, [&](const Row& item_row) {
+                 Candidate c{item_row.id<ItemUid>("uid")};
+                 const u32 level = (u32)std::max<int64_t>(1, item_row.i("level"));
+                 bool fits = true;
+                 ctx.m.q(
+                     "select i.*, w.master_weapon_kind_id as kind from master_item i left join master_weapon w on w.id = i.master_weapon_id "
+                     "where i.id = ?",
+                     {item_row.i("master_item_id")}, [&](const Row& master_row) {
+                             // (a) a weapon of the role's kind (master_role / master_weapon master_weapon_kind_id)
+                         if (weapon && (u32)master_row.i("kind") != weapon_kind) fits = false;
+                         const u32 cap = (u32)ctx.m.one(std::string("select level_max from ") +
+                                                            (weapon ? "master_item_compose" : "master_item_accessory_compose") + " where rarity = ?",
+                                                        {master_row.i("rarity")}, 10);
+                         const double t = cap > 1 ? std::min(1.0, (double)(level - 1) / (double)(cap - 1)) : 0.0;
+                         static const char* const kWeaponStats[] = {"attack", "intelligence"};
+                         static const char* const kAccessoryStats[] = {"attack", "intelligence", "defence", "hit", "guard"};
+                         auto add = [&](const char* stat) {
+                             const double lo = master_row.f(stat), hi = master_row.f((std::string(stat) + "_max").c_str());
+                             c.score += lo + (std::max(hi, lo) - lo) * t;
+                         };
+                         if (weapon)
+                             for (const char* stat : kWeaponStats) add(stat);
+                         else
+                             for (const char* stat : kAccessoryStats) add(stat);
+                     });
+                 if (fits) out.push_back(c);
+             });
+    return out;
+}
+
+// EquipAuto(u64 character_uid) -> EquipAutoRes                                   fid 7827ff6a
+// API: docs/api.md#equipauto   Rules: docs/server-rules.md#equip-auto
+//
+// The equipment screen's 自動設定 for one character: the server picks.
+//   (b) the request is the character's uid only, and CApiNotify::ApplyAutoEquipResult (@014d0444)
+//       copies the answer's EquipWeaponResult / EquipAccessoryResult (the characters' weapon /
+//       accessory, the items), SetAssistResultList (character_id, assist_id, old_assist_id) and
+//       UpdateCharacterList (the skill slots) into the client's roster: the choice is the server's;
+//   (a) the options are master_config auto_equip_steal (false: only items no other character
+//       wears; uimsg_auto_equipment_config_text: with it, other characters' equipment and assists
+//       are taken), auto_equip_skill (true: the skills are set) and auto_equip_assist (true); (d)
+//       their defaults, the player's own settings aren't stored;
+//   (d) the weapon: the owned weapon of the role's kind with the highest attack + intelligence at
+//       its level (equip_candidates), the accessory likewise over its five stats; an item another
+//       character wears moves (as EquipWeapon) only with auto_equip_steal; ties keep the lower uid;
+//   (d) the skills (auto_equip_skill): empty slots take the role's open skills (master_role
+//       master_skill1..5_id with master_skillN_open_level <= the level) not yet equipped, in that
+//       order; equipped skills stay;
+//   (d) the assist isn't changed (SetAssistResultList empty): which character the online server
+//       chose isn't known.
+//   Refused: unknown character (10208).
+// Answers: the player state, EquipWeaponResult, EquipAccessoryResult (as EquipWeapon /
+// EquipAccessory: the character, a previous wearer, the item), SetAssistResultList and
+// UpdateCharacterList (the character's UpdateCharacter).
+std::vector<u8> equip_auto(Ctx& ctx, const Request& req) {
+    const CharacterUid uid = args::EquipAutoArgs::from(req).character_uid;
+    Character chara = load_character(ctx, uid);
+    if (!chara.found) return refuse(ctx, "EquipAuto", "unknown character", ErrorCode::kItemUnusable);
+    // the player's options (api/settings/config.h): (a) master_config auto_equip_steal /
+    // auto_equip_skill, the player's value (UpdateConfig) or else the master's default
+    const bool steal = settings::config_on(ctx, "auto_equip_steal"), skills = settings::config_on(ctx, "auto_equip_skill");
+    u32 weapon_kind = 0;
+    std::vector<u32> open_skills;
+    ctx.m.q("select * from master_role where id = ?", {chara.role_id}, [&](const Row& role_row) {
+        weapon_kind = (u32)role_row.i("master_weapon_kind_id");
+        for (int k = 1; k <= 5; k++) {
+            const std::string n = std::to_string(k);
+            const u32 skill = (u32)role_row.i(("master_skill" + n + "_id").c_str());
+            if (skill && (u32)role_row.i(("master_skill" + n + "_open_level").c_str()) <= chara.level) open_skills.push_back(skill);
+        }
+    });
+    Value data = ctx.base_data();
+    std::string picked_log;
+    for (bool weapon : {true, false}) {
+        std::vector<Candidate> candidates = equip_candidates(ctx, uid, weapon, weapon_kind, steal);
+        Value result = Value::object(), characters = Value::object(), items = Value::object();
+        const char* column = weapon ? "weapon_uid" : "accessory_uid";
+        const char* key = weapon ? "weapon_item_id" : "accessory_item_id";
+        const Candidate* best = nullptr;
+        for (const Candidate& c : candidates)
+            if (!best || c.score > best->score) best = &c;
+        if (best) {
+            std::optional<CharacterUid> previous_owner;
+            ctx.st.q(std::string("select uid from roster where ") + column + " = ? and uid != ?", {best->uid, uid},
+                     [&](const Row& roster_row) { previous_owner = roster_row.id<CharacterUid>("uid"); });
+            if (previous_owner) ctx.st.q(std::string("update roster set ") + column + " = null where uid = ?", {*previous_owner});
+            ctx.st.q(std::string("update roster set ") + column + " = ? where uid = ?", {best->uid, uid});
+            auto add_character_entry = [&](CharacterUid character_uid, u64 item_uid) {
+                Value entry = Value::object();
+                entry["id"] = character_uid.v;
+                entry[key] = item_uid;
+                characters[std::to_string(character_uid.v)] = entry;
+            };
+            add_character_entry(uid, best->uid.v);
+            if (previous_owner) add_character_entry(*previous_owner, 0);
+            Value entry = Value::object();
+            entry["id"] = best->uid.v;
+            items[std::to_string(best->uid.v)] = entry;
+            picked_log += std::string(weapon ? " weapon " : " accessory ") + std::to_string(best->uid.v);
+        }
+        result["Character"] = characters;
+        result["Item"] = items;
+        data[weapon ? "EquipWeaponResult" : "EquipAccessoryResult"] = result;
+    }
+    if (skills) {
+        std::vector<u32> slots(3, 0);
+        ctx.st.q("select equip_skill1, equip_skill2, equip_skill3 from roster where uid = ?", {uid}, [&](const Row& roster_row) {
+            for (int k = 0; k < 3; k++) slots[k] = (u32)roster_row.i(("equip_skill" + std::to_string(k + 1)).c_str());
+        });
+        size_t next = 0;
+        for (u32& slot : slots) {
+            if (slot) continue;
+            while (next < open_skills.size() && std::find(slots.begin(), slots.end(), open_skills[next]) != slots.end()) next++;
+            if (next < open_skills.size()) slot = open_skills[next++];
+        }
+        ctx.st.q("update roster set equip_skill1 = nullif(?, 0), equip_skill2 = nullif(?, 0), equip_skill3 = nullif(?, 0) where uid = ?",
+                 {slots[0], slots[1], slots[2], uid});
+        picked_log += " skills " + std::to_string(slots[0]) + "," + std::to_string(slots[1]) + "," + std::to_string(slots[2]);
+    }
+    data["SetAssistResultList"] = Value::array();
+    Value updated = Value::array();
+    updated.push(update_character_info(ctx, uid, skills));
+    data["UpdateCharacterList"] = updated;
+    // read by port/scripts/equipment_session.sh
+    LOGI("server", "EquipAuto %llx:%s", (unsigned long long)uid.v, picked_log.empty() ? " nothing to equip" : picked_log.c_str());
+    return body(data);
+}
+
 }  // namespace
 
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
@@ -542,6 +688,7 @@ void register_growth() {
     add_api({"AddStatusCharacter"}, add_status_character);
     add_api({"EquipWeapon", "EquipAccessory"}, equip_item);
     add_api({"EquipSkill"}, equip_skill);
+    add_api({"EquipAuto"}, equip_auto);
 }
 
 }  // namespace soa::server

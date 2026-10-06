@@ -4,7 +4,7 @@
 |---|---|
 | `growth.cpp` (module `growth`) | the growth APIs, each with its doc block (signature, fid, rules with their labels, refusal codes, answer) |
 | `growth_args.h` | their request arguments by name (`args::BoostCharacterArgs`, ...) |
-| `growth_tests.cpp` | `growth/apis`: Boost, LimitBreak (by item and by the screen's row id), Evolution, AddStatus on a scratch server, with refusals (`server/economy-apis` is gone: its login bonus and achievement parts are `daily/login-bonus` and `presents/achievement-chain` since R16, its shop and exchange part `shop/item-shop-and-exchange` in `api/shop/shop_tests.cpp` since R18) |
+| `growth_tests.cpp` | `growth/equip-auto` (EquipAuto: the weapon of the role's kind, an accessory nobody wears, the skills); `growth/apis`: Boost, LimitBreak (by item and by the screen's row id), Evolution, AddStatus on a scratch server, with refusals (`server/economy-apis` is gone: its login bonus and achievement parts are `daily/login-bonus` and `presents/achievement-chain` since R16, its shop and exchange part `shop/item-shop-and-exchange` in `api/shop/shop_tests.cpp` since R18) |
 
 | API | Handler | Rules (docs/server-rules.md) |
 |---|---|---|
@@ -15,6 +15,7 @@
 | AddStatusCharacter | `add_status_character` | "5.1 Character EXP and level" (seeds) |
 | EquipWeapon, EquipAccessory | `equip_item` | "Character growth" |
 | EquipSkill | `equip_skill` | "Character growth" |
+| EquipAuto | `equip_auto` | "Auto-equip" |
 
 - **Hooks:** none; the module registers its APIs (`register_growth`, in `core/modules.cpp`'s order). Its state is the core's `roster` (`state/schema.cpp`).
 - **Pure rules:** `rules/growth_rules.{h,cpp}` (`growth_rules::boost_exp`, `stat_seed_gain`; tested by `rules/growth`), `rules::add_exp` (the EXP curve and cap).

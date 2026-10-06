@@ -134,23 +134,23 @@ Put them in the folder "game" beside the program{{IF windows}}s{{END}} (it is al
     soa{{EXE}}
     soa-server{{EXE}}
 {{IF windows}}
-    run-port.cmd
+    run-port.cmd, run-port-en.cmd
     run-port-server.cmd, run-port-server.ps1
 {{ELSE}}
-    run-port.sh
+    run-port.sh, run-port-en.sh
     run-port-server.sh
 {{END}}
 {{ELSE}}
     soa-emu{{EXE}}
     soa-server{{EXE}}
 {{IF windows}}
-    run-emulator.cmd, run-emulator.ps1
+    run-emulator.cmd, run-emulator.ps1, run-emulator-en.cmd
 {{ELSE}}
-    run-emulator.sh
+    run-emulator.sh, run-emulator-en.sh
 {{END}}
 {{END}}
     README.txt  (this file)
-    data/  standin-assets/  (ours: see 5.)
+    data/  standin-assets/  standin-assets-en/  (ours: see 5.)
     game/
       STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk
       SOA-3.7.0-canonical-data.zip          <- or the extracted folder, e.g. game/download-3.7.0/
@@ -194,6 +194,13 @@ There are two ways to run the port. Both play the same game from the same files.
      the port behaves over the real network code. For a server that keeps running between games,
      start soa-server{{EXE}} yourself and then soa{{EXE}} --server 127.0.0.1:PORT (flags below).
      Otherwise use a): one program, nothing to wait for.
+
+  In English: run-port-en{{IF windows}}.cmd{{ELSE}}.sh{{END}} is a) with soa --lang en (the same options). The game is
+  Japanese by default; --lang en switches the client to English and makes the built-in server
+  serve English files, which it builds on each start from the English tables in data{{IF windows}}\{{ELSE}}/{{END}}english{{IF windows}}\{{ELSE}}/{{END}}
+  and your own game files (the first start takes longer). Text without an English translation
+  stays Japanese, the voices stay Japanese. For b) give --lang en to run-port-server and
+  --english to its server (soa-server --english).
 
 soa{{EXE}}
   needs:      the 3.7.0 APK and the 3.7.0 download (1.)
@@ -243,6 +250,10 @@ run-port-server{{IF windows}}.cmd{{ELSE}}.sh{{END}}
   Options: --new-player (start a fresh account), --seed FILE (start from a 3.7.0 or offline
   Game.xml), --enable-events, --port N, --home DIR; others go to soa-emu (e.g. --fullscreen).
   run-emulator{{IF windows}}.cmd{{ELSE}}.sh{{END}} --help lists them.
+  In English: run-emulator-en{{IF windows}}.cmd{{ELSE}}.sh{{END}} (the same options): soa-server --english (it builds and
+  serves the English files, from the English tables in data{{IF windows}}\{{ELSE}}/{{END}}english{{IF windows}}\{{ELSE}}/{{END}} and your own game files;
+  the first start takes longer) and soa-emu --lang en. The same data folder as run-emulator: the
+  same player in both languages. Text without an English translation stays Japanese.
   Data: {{IF windows}}%LOCALAPPDATA%\soa\emulator-370\{{ELSE}}~/.local/share/soa-emulator-370/{{END}}  (unless --home DIR): phone{{IF windows}}\{{ELSE}}/{{END}} (the
   client's data and save), server{{IF windows}}\{{ELSE}}/{{END}} (the server's state, master{{IF windows}}\{{ELSE}}/{{END}}, cdn{{IF windows}}\{{ELSE}}/{{END}}), server.log.
 
@@ -334,6 +345,12 @@ An APK of another version is skipped with "another version of the game (its libS
                               titles come from your master at run time)
   standin-assets/             made-up stand-in images (marked "STAND-IN") for banners the online
                               server had already deleted
+  standin-assets-en/recipes/  how the English buttons and labels are drawn (text, boxes, styles;
+                              no images): the server draws them from your own game files
+  data/english/               the English text: master-en.tsv (the game's texts by id) and
+                              story-en/ (the story lines), the official English of the Global
+                              version where it exists, machine and our own translations
+                              elsewhere. The server builds the English game files from them
   LICENSE.txt                 this software's license (GNU GPL v3)
   THIRD-PARTY-NOTICES.txt     the licenses of the libraries it links
   BUILD-INFO.txt              the version, commit and build settings

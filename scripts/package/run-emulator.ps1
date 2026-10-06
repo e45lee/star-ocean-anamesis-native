@@ -7,6 +7,8 @@
 #                            DIR\server.log + server.log.err (default %LOCALAPPDATA%\soa\emulator-370)
 #   --port N                 the game port (default 44300; HTTP: N + 80)
 #   --new-player, --enable-events, --event-keywords W, --seed FILE   soa-server's options
+#   --english                soa-server --english (the English files; with soa-emu's --lang en:
+#                            the English game, as run-emulator-en.cmd does)
 #   the others go to soa-emu.exe (e.g. --fullscreen)
 $ErrorActionPreference = "Stop"
 $here = $PSScriptRoot
@@ -21,7 +23,7 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         '^(-h|--help)$' { Get-Content $PSCommandPath | Where-Object { $_ -match '^#' } | ForEach-Object { $_ -replace '^# ?', '' }; exit 0 }
         '^(-Home|--home)$' { $home_dir = [string]$args[++$i]; continue }
         '^--port$' { $port = [int]$args[++$i]; continue }
-        '^(--new-player|--enable-events)$' { $srvArgs += $a; continue }
+        '^(--new-player|--enable-events|--english)$' { $srvArgs += $a; continue }
         '^(--event-keywords|--seed)$' { $srvArgs += $a; $srvArgs += [string]$args[++$i]; continue }
         default { $emuArgs += $a }
     }

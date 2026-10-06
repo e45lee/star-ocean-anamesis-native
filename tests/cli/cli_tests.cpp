@@ -302,10 +302,11 @@ int main() {
     const V kRemovedSoa = {"--font", "--fake-server"};
     // Options added since, to both soa and soa-server (soaserver/cli.h): --english, --english-text
     // (2026-10-07, docs/PLAN-english.md).
-    const V kAddedServer = {"--english", "--english-text"};
+    // --stamina-heal-time (2026-10-06, a test switch: tests/diff runs with 0, no stamina regeneration).
+    const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time"};
     // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
     const V kAddedLang = {"--lang", "--voice-lang"};
-    const V kAddedSoa = {"--english", "--english-text", "--lang", "--voice-lang"};
+    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {

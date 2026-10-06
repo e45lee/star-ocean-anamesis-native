@@ -22,6 +22,11 @@ time against the measured one) and OUT/summary.txt; exit 1 when anything FAILs. 
 `known` failure in tests/tiers.json (one that fails without the change) is reported KNOWN, with
 the reason, and doesn't fail the gate. A test whose `requires` paths are missing (e.g. build-win/
 for the Windows tests) is reported SKIP and not run.
+
+The tests/diff verdict is this run's: its summary.txt is deleted before the run, and the exit code
+counts (0 every flow passed, 1 the summary names the failing ones; anything else fails them all).
+Ctrl-C / TERM: the running tests are stopped, no queued test starts (one waiting for a game slot
+stops waiting), and the gate exits 130 without a summary.
 """
 import argparse
 import concurrent.futures
@@ -44,6 +49,10 @@ sys.path.insert(0, os.path.join(REPO, "control"))
 import soaslot  # noqa: E402  (the game slot pool)
 
 PROCS, PLOCK = [], threading.Lock()
+# Set by an interrupt (Ctrl-C, TERM): no test starts after it, and a test queued for a game slot
+# stops waiting (soaslot.acquire's cancel), so an interrupted gate takes no more slots.
+CANCEL = threading.Event()
+DIFF_RUN = "tests/diff/run.sh"  # the tests/diff driver run_diff starts (a test replaces it)
 BASE = ["HEAD~1"]  # {base}: the revision the change is compared with (--git-diff REV, else HEAD~1)
 
 
@@ -61,9 +70,12 @@ def run_cmd(cmd, out, tmp, limit, log, slot=-1):
     with open(log, "w") as f:
         f.write("$ %s\n" % cmd)
         f.flush()
-        p = subprocess.Popen(["timeout", "-k", "10", str(limit), "bash", "-c", cmd], cwd=REPO, stdout=f, stderr=subprocess.STDOUT,
-                             start_new_session=True, env=env, pass_fds=(slot,) if slot >= 0 else ())
-        with PLOCK:
+        with PLOCK:  # (an interrupt between the check and the start sees the process in PROCS)
+            if CANCEL.is_set():
+                f.write("gate: interrupted before it started\n")
+                return 130
+            p = subprocess.Popen(["timeout", "-k", "10", str(limit), "bash", "-c", cmd], cwd=REPO, stdout=f, stderr=subprocess.STDOUT,
+                                 start_new_session=True, env=env, pass_fds=(slot,) if slot >= 0 else ())
             PROCS.append(p)
         rc = p.wait()
     return rc
@@ -80,11 +92,22 @@ def run_test(t, outdir, keep):
         return {"name": t["name"], "tier": t["tier"], "ok": True, "skip": "no " + " ".join(missing), "rc": 0, "secs": 0,
                 "est": t["secs"], "log": log}
     out, tmp = os.path.join(outdir, name), os.path.join(outdir, ".tmp", name)
-    # A game test (one client at a time) queues for its slot here, before its clock starts.
-    slot = soaslot.acquire("gate " + t["name"], quiet=True) if t.get("game", 0) else -1
+    cancelled = {"name": t["name"], "tier": t["tier"], "ok": False, "rc": 130, "secs": 0, "est": t["secs"],
+                 "log": os.path.join(outdir, name + ".log")}
+    if CANCEL.is_set():
+        return cancelled
+    # A game test (one client at a time) queues for its slot here, before its clock starts; an
+    # interrupt ends the wait (None: no slot, the test doesn't start).
+    slot = soaslot.acquire("gate " + t["name"], quiet=True, cancel=CANCEL.is_set) if t.get("game", 0) else -1
+    if slot is None or CANCEL.is_set():
+        soaslot.release(slot)
+        return cancelled
     t0 = time.monotonic()
+    # A tests/diff run of its own (the negative control) queues its runs for their slots inside, so
+    # its time limit would count those waits: it gets run_diff's limit (its runs have their own).
+    limit = 4 * 3600 if t["cmd"].startswith(DIFF_RUN + " ") else max(600, 3 * t["secs"])
     try:
-        rc = run_cmd(t["cmd"], out, tmp, max(600, 3 * t["secs"]), os.path.join(outdir, name + ".log"), slot)
+        rc = run_cmd(t["cmd"], out, tmp, limit, os.path.join(outdir, name + ".log"), slot)
     finally:
         soaslot.release(slot)
     if not keep:
@@ -93,30 +116,49 @@ def run_test(t, outdir, keep):
             "log": os.path.join(outdir, name + ".log")}
 
 
+DIFF_CMD = re.compile(r"tests/diff/run\.sh ((?:\w[\w-]* )*)--out \{out\}$")
+
+
+def is_diff(t):
+    """A test run_diff takes into its one tests/diff run: `tests/diff/run.sh [FLOW...] --out {out}`
+    and nothing else (a run with its own options, e.g. the --inject negative control, runs alone)."""
+    return DIFF_CMD.match(t["cmd"]) is not None
+
+
 def run_diff(tests, outdir, keep):
-    """The tests/diff shards and flows in one run; a result per test from its summary.txt."""
+    """The tests/diff shards and flows in one run; a result per test from the run's summary.txt
+    (deleted first, so only this run's verdict counts) and its exit code: 0 every flow passed,
+    1 a flow failed (the summary says which); anything else (a crash, the time limit, an
+    interrupt) fails every test, whatever a summary says."""
     flows = []
     for t in tests:
-        m = re.match(r"tests/diff/run\.sh ((?:[\w-]+ )*)--out", t["cmd"])
+        m = DIFF_CMD.match(t["cmd"])
         flows.append(m.group(1).split() if m and m.group(1) else ["seeded", "tutorial", "event"])
     allf = [f for fl in flows for f in fl]
     out = os.path.join(outdir, "tests-diff")
+    summary = os.path.join(out, "summary.txt")
+    if os.path.exists(summary):
+        os.remove(summary)  # a reused --out: an earlier run's verdict
     t0 = time.monotonic()
-    cmd = "tests/diff/run.sh %s --out %s" % (" ".join(allf), out) + (" --keep" if keep else "")
+    cmd = "%s %s --out %s" % (DIFF_RUN, " ".join(allf), out) + (" --keep" if keep else "")
     # its runs queue for their slots inside (their time limits start after the wait): the run's
     # own limit only catches a hung driver
     rc = run_cmd(cmd, out, os.path.join(outdir, ".tmp", "tests-diff"), 4 * 3600, os.path.join(outdir, "tests-diff.log"))
     wall = int(time.monotonic() - t0)
-    lines = open(os.path.join(out, "summary.txt")).read().splitlines() if os.path.exists(os.path.join(out, "summary.txt")) else []
+    lines = open(summary).read().splitlines() if os.path.exists(summary) else []
+    verdict = {}
+    for f in allf:
+        ln = next((x for x in lines if re.match(r"(PASS|FAIL) %s\s" % re.escape(f), x)), None)
+        m = re.match(r"\S+ \S+\s+(\d+)s", ln or "")
+        verdict[f] = (bool(ln and ln.startswith("PASS")), int(m.group(1)) if m else wall)
+    if rc not in (0, 1) or (rc == 0 and not all(v[0] for v in verdict.values())) or (
+            rc == 1 and all(v[0] for v in verdict.values())):
+        # the driver didn't finish (or its exit code contradicts its summary): no flow passed
+        verdict = {f: (False, v[1]) for f, v in verdict.items()}
     res = []
     for t, fl in zip(tests, flows):
-        oks, secs = [], []
-        for f in fl:
-            ln = next((x for x in lines if re.match(r"(PASS|FAIL) %s\s" % re.escape(f), x)), None)
-            oks.append(bool(ln and ln.startswith("PASS")))
-            m = re.match(r"\S+ \S+\s+(\d+)s", ln or "")
-            secs.append(int(m.group(1)) if m else wall)
-        res.append({"name": t["name"], "tier": t["tier"], "ok": all(oks) and bool(lines), "rc": rc, "secs": max(secs or [wall]),
+        res.append({"name": t["name"], "tier": t["tier"], "ok": all(verdict[f][0] for f in fl), "rc": rc,
+                    "secs": max([verdict[f][1] for f in fl] or [wall]),
                     "est": t["secs"], "log": os.path.join(out, (fl[0] if len(fl) == 1 else ""), "report.txt")})
     return res
 
@@ -183,6 +225,7 @@ def main():
     print("gate %s: %d tests, out %s" % (" ".join(a.what), len(tests), outdir), flush=True)
 
     def stop(*_):
+        CANCEL.set()  # first: nothing starts after this (run_cmd checks it under PLOCK)
         with PLOCK:
             for p in PROCS:
                 if p.poll() is None:
@@ -205,10 +248,13 @@ def main():
             print("gate: the build failed (%s); nothing else runs" % r["log"])
             return finish(results, outdir, t0)
     rest = [t for t in tests if t["kind"] != "build"]
-    diff = [t for t in rest if t["cmd"].startswith("tests/diff/run.sh")]
+    diff = [t for t in rest if is_diff(t)]
     games = [t for t in rest if t not in diff and t.get("game", 0)]
     checks = [t for t in rest if t not in diff and not t.get("game", 0)]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, a.jobs) + len(games) + 1) as ex:
+    # Not `with ThreadPoolExecutor`: leaving that block on an interrupt (stop()'s SystemExit) waits
+    # for every submitted test, the queued ones included; here the queued ones are cancelled.
+    ex = concurrent.futures.ThreadPoolExecutor(max_workers=max(1, a.jobs) + len(games) + 1)
+    try:
         futs = [ex.submit(run_test, t, outdir, a.keep) for t in checks + games]
         if diff:
             futs.append(ex.submit(run_diff, diff, outdir, a.keep))
@@ -218,6 +264,11 @@ def main():
                 results.append(r)
                 print("%s %-28s %4ds%s" % (("SKIP" if r.get("skip") else "PASS") if r["ok"] else "FAIL", r["name"], r["secs"],
                                            "  (host GPU failure)" if not r["ok"] and host_gpu(r) else ""), flush=True)
+    except BaseException:  # an interrupt (stop()'s SystemExit) or a failure of the gate itself
+        CANCEL.set()
+        raise
+    finally:
+        ex.shutdown(wait=True, cancel_futures=True)
     return finish(results, outdir, t0)
 
 

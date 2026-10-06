@@ -57,6 +57,7 @@ import time
 # clients and builds outside the pool. Raised to 15 (the user, 2026-10-04): the machine holds about
 # 16 clients; SOA_SLOT_MIN_FREE_GB still holds runs back when memory runs low.
 DEFAULT_SLOTS = 15
+RETRY, POLL = 2.0, 0.2  # acquire(): a pass over the slots every RETRY s, the cancel predicate every POLL s
 
 
 # What SOA_SLOT_SOFTWARE_GL=1 puts in the clients' environment (docs/testing-software-gl.md). The
@@ -169,16 +170,20 @@ def stagger():
         os.close(fd)
 
 
-def acquire(name="game", quiet=False, timeout=None):
+def acquire(name="game", quiet=False, timeout=None, cancel=None):
     """Takes a slot, waiting as long as it takes (or `timeout` s: then None). Returns the slot's
     file descriptor (keep it open while the client runs; close it to free the slot), or -1 when the
     pool is off (SOA_SLOTS=0) or this process already runs under a slot (SOA_SLOT_HELD).
+    cancel: a predicate checked while waiting (every POLL s); when it turns true the wait ends
+    with None and no slot (an interrupted gate: tools/gate.py).
     With SOA_SLOT_SOFTWARE_GL on, the clients started after it render on llvmpipe."""
     apply_software_gl()
     if n_slots() == 0 or os.environ.get("SOA_SLOT_HELD"):
         return -1
     t0, said, end = time.monotonic(), False, (time.monotonic() + timeout) if timeout else None
     while True:
+        if cancel is not None and cancel():
+            return None
         if mem_ok():
             got = try_acquire(name)
             if got:
@@ -196,7 +201,9 @@ def acquire(name="game", quiet=False, timeout=None):
             said = True
         if end and time.monotonic() > end:
             return None
-        time.sleep(2)
+        nxt = time.monotonic() + RETRY
+        while time.monotonic() < nxt and not (cancel is not None and cancel()):
+            time.sleep(POLL)
 
 
 def release(fd):

@@ -55,8 +55,8 @@ std::vector<u32> role_next(sqlite3* m, RoleId role);
 std::string text(sqlite3* m, const std::string& message_id);
 
 // ---- missions -------------------------------------------------------------------------------
-// A mission's master row: its table, Common::MissionType (0 story, 1 event, 2 tower, 3 world map)
-// and area.
+// A mission's master row: its table, Common::MissionType (0 story, 1 event, 2 tower, 3 world map,
+// 4 the battle simulator) and area.
 struct MissionRef {
     std::string table;
     u32 type = 0, area = 0;

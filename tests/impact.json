@@ -12,12 +12,14 @@
   "BlacklistRemove": "server/src/api/social/social.cpp",
   "BoostCharacter": "server/src/api/growth/growth.cpp",
   "BoxGacha": "server/src/api/gacha/box.cpp",
+  "BulkWithdrawItemFromOneTimeStorage": "server/src/api/storage/one_time.cpp",
   "CbtCertification": "server/src/api/entry/entry.cpp",
   "CheckEventRankingResult": "server/src/api/events/ranking.cpp",
   "ClearNewCharacter": "server/src/api/items/new_flags.cpp",
   "ClearNewEventRanking": "server/src/api/events/ranking.cpp",
   "ClearNewGear": "server/src/api/items/gear.cpp",
   "ClearNewItem": "server/src/api/items/new_flags.cpp",
+  "ClearNewOneTimeStorageItem": "server/src/api/storage/one_time.cpp",
   "ClearNewStackItem": "server/src/api/items/new_flags.cpp",
   "CreatePlayer": "server/src/api/entry/entry.cpp",
   "DebugBarneyChance": "server/src/api/debug/debug_stubs.cpp",
@@ -52,7 +54,9 @@
   "DeepSpaceMissionEnd": "server/src/api/deepspace/deepspace.cpp",
   "DeepSpaceMissionEndNow": "server/src/api/deepspace/deepspace.cpp",
   "DeepSpaceMissionStart": "server/src/api/deepspace/deepspace.cpp",
+  "DepositItem": "server/src/api/storage/storage.cpp",
   "EquipAccessory": "server/src/api/growth/growth.cpp",
+  "EquipAuto": "server/src/api/growth/growth.cpp",
   "EquipSkill": "server/src/api/growth/growth.cpp",
   "EquipWeapon": "server/src/api/growth/growth.cpp",
   "EvolutionCharacter": "server/src/api/growth/growth.cpp",
@@ -74,6 +78,7 @@
   "GetGachaRate": "server/src/api/gacha/rates.cpp",
   "GetGearInfo": "server/src/api/items/gear.cpp",
   "GetMissionList": "server/src/api/missions/play_state.cpp",
+  "GetOneTimeStorageInfo": "server/src/api/storage/one_time.cpp",
   "GetPlayMission": "server/src/api/missions/play_state.cpp",
   "GetPlayer": "server/src/api/player/player_info.cpp",
   "GetPlayerDetailInfo": "server/src/api/events/ranking.cpp",
@@ -84,8 +89,10 @@
   "GetServerTime": "server/src/api/entry/entry.cpp",
   "GetSphere211Info": "server/src/api/sphere211/sphere211.cpp",
   "GetSphere211RankingInfo": "server/src/api/sphere211/sphere211.cpp",
+  "GetStorageInfo": "server/src/api/storage/storage.cpp",
   "GetWorldBossInfo": "server/src/api/events/world_boss.cpp",
   "Home3DAnd2DSwitching": "server/src/api/player/home.cpp",
+  "InheritAccessory": "server/src/api/items/items.cpp",
   "ItemCompose": "server/src/api/items/items.cpp",
   "ItemComposeArray": "server/src/api/items/items.cpp",
   "ItemGradeUp": "server/src/api/items/items.cpp",
@@ -96,10 +103,13 @@
   "LocationRegist": "server/src/api/social/social.cpp",
   "LockItem": "server/src/api/items/items.cpp",
   "LockItemArray": "server/src/api/items/items.cpp",
+  "LockStorageItem": "server/src/api/storage/storage.cpp",
   "Login": "server/src/api/entry/entry.cpp",
   "MaterialCompose": "server/src/api/items/items.cpp",
+  "MissionContinue": "server/src/api/missions/play_state.cpp",
   "MissionEnd": "server/src/api/missions/mission_end.cpp",
   "MissionFailed": "server/src/api/missions/play_state.cpp",
+  "MissionLose": "server/src/api/missions/play_state.cpp",
   "MissionRestart": "server/src/api/missions/play_state.cpp",
   "MissionStart": "server/src/api/missions/mission_start.cpp",
   "MissionTalk": "server/src/api/missions/play_state.cpp",
@@ -120,6 +130,7 @@
   "SellGear": "server/src/api/items/gear.cpp",
   "SellItem": "server/src/api/items/items.cpp",
   "SellItemArray": "server/src/api/items/items.cpp",
+  "SellItemsFromStorage": "server/src/api/storage/storage.cpp",
   "SellStackItem": "server/src/api/items/items.cpp",
   "SendErrorLog": "server/src/api/entry/entry.cpp",
   "SendGuideInformation": "server/src/api/settings/account.cpp",
@@ -138,8 +149,10 @@
   "Sphere211UseRerollItem": "server/src/api/sphere211/sphere211.cpp",
   "StaminaHeal": "server/src/api/items/items.cpp",
   "StaminaHealByFavor": "server/src/api/daily/premium_and_favor_bonus.cpp",
+  "TrainingMissionStart": "server/src/api/missions/mission_start.cpp",
   "UnlockItem": "server/src/api/items/items.cpp",
   "UnlockItemArray": "server/src/api/items/items.cpp",
+  "UnlockStorageItem": "server/src/api/storage/storage.cpp",
   "UpdateAwakenLevel": "server/src/api/growth/growth.cpp",
   "UpdateBirthYearMonth": "server/src/api/settings/account.cpp",
   "UpdateConfig": "server/src/api/settings/config.cpp",
@@ -147,6 +160,7 @@
   "UpdateFollowMax": "server/src/api/social/social.cpp",
   "UpdateGearStock": "server/src/api/items/gear.cpp",
   "UpdateHome": "server/src/api/player/home.cpp",
+  "UpdateItemStock": "server/src/api/items/items.cpp",
   "UpdateKiyakuVersion": "server/src/api/entry/entry.cpp",
   "UpdateParty": "server/src/api/player/party.cpp",
   "UpdatePartySet": "server/src/api/player/party.cpp",
@@ -155,7 +169,9 @@
   "UpdateTutorial": "server/src/api/entry/entry.cpp",
   "UpdateView": "server/src/api/entry/entry.cpp",
   "UseFavorItem": "server/src/api/favor/favor_api.cpp",
-  "UseHealItem": "server/src/api/items/items.cpp"
+  "UseHealItem": "server/src/api/items/items.cpp",
+  "WithdrawItemFromOneTimeStorage": "server/src/api/storage/one_time.cpp",
+  "WithdrawItemFromStorage": "server/src/api/storage/storage.cpp"
  },
  "hooks": {
   "server/src/api/daily/login_bonus.cpp": [
@@ -224,6 +240,9 @@
   ],
   "server/src/api/settings/config.cpp": [
    "OnPlayerLoad"
+  ],
+  "server/src/api/storage/one_time.cpp": [
+   "OnResponse"
   ]
  },
  "tests": {
@@ -461,11 +480,13 @@
     "AttachGear",
     "ClearNewGear",
     "EquipAccessory",
+    "EquipAuto",
     "EquipWeapon",
     "Gacha",
     "GenerateGear",
     "GetGearInfo",
     "GetPlayer",
+    "InheritAccessory",
     "ItemCompose",
     "ItemComposeArray",
     "ItemGradeUp",
@@ -473,6 +494,7 @@
     "LockItem",
     "Login",
     "MaterialCompose",
+    "MissionEnd",
     "RemoveGear",
     "SellGear",
     "SellItem",
@@ -481,6 +503,7 @@
     "StaminaHeal",
     "UnlockItemArray",
     "UpdateGearStock",
+    "UpdateItemStock",
     "UpdateParty",
     "UpdatePartySet",
     "UseHealItem"
@@ -494,12 +517,15 @@
     "GetPlayMission",
     "GetPlayer",
     "Login",
+    "MissionContinue",
     "MissionEnd",
     "MissionFailed",
+    "MissionLose",
     "MissionRestart",
     "MissionStart",
     "MissionTalk",
     "MultiMissionRestart",
+    "TrainingMissionStart",
     "UpdateSupport"
    ],
    "source": "observed (requests.txt)"
@@ -570,6 +596,24 @@
     "Sphere211SelectedFloor",
     "Sphere211StaminaHeal",
     "Sphere211UseRerollItem"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:storage": {
+   "apis": [
+    "BulkWithdrawItemFromOneTimeStorage",
+    "ClearNewOneTimeStorageItem",
+    "DepositItem",
+    "Gacha",
+    "GetOneTimeStorageInfo",
+    "GetPlayer",
+    "GetStorageInfo",
+    "LockStorageItem",
+    "Login",
+    "SellItemsFromStorage",
+    "UnlockStorageItem",
+    "WithdrawItemFromOneTimeStorage",
+    "WithdrawItemFromStorage"
    ],
    "source": "observed (requests.txt)"
   },
@@ -1105,6 +1149,40 @@
     "RemoveGear"
    ]
   },
+  "session:storage": {
+   "apis": [
+    "BulkWithdrawItemFromOneTimeStorage",
+    "ClearNewOneTimeStorageItem",
+    "DepositItem",
+    "GetOneTimeStorageInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "GetStorageInfo",
+    "Login",
+    "NoLoginStart",
+    "SellItemsFromStorage",
+    "WithdrawItemFromOneTimeStorage",
+    "WithdrawItemFromStorage"
+   ],
+   "source": "declared"
+  },
+  "session:storage-server": {
+   "apis": [
+    "BulkWithdrawItemFromOneTimeStorage",
+    "ClearNewOneTimeStorageItem",
+    "DepositItem",
+    "GetOneTimeStorageInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "GetStorageInfo",
+    "Login",
+    "NoLoginStart",
+    "SellItemsFromStorage",
+    "WithdrawItemFromOneTimeStorage",
+    "WithdrawItemFromStorage"
+   ],
+   "source": "declared"
+  },
   "session:deepspace": {
    "apis": [
     "AchievementActiveList",
@@ -1199,6 +1277,54 @@
     "NoLoginStart",
     "ResetConfig",
     "UpdateConfig"
+   ],
+   "source": "declared"
+  },
+  "session:simulator-continue": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "MissionContinue",
+    "MissionFailed",
+    "MissionStart",
+    "NoLoginStart",
+    "TrainingMissionStart"
+   ],
+   "source": "declared"
+  },
+  "session:simulator-continue-server": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "MissionContinue",
+    "MissionFailed",
+    "MissionStart",
+    "NoLoginStart",
+    "TrainingMissionStart"
+   ],
+   "source": "declared"
+  },
+  "session:equipment": {
+   "apis": [
+    "EquipAuto",
+    "GetPlayer",
+    "GetServerTime",
+    "InheritAccessory",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
+  "session:equipment-server": {
+   "apis": [
+    "EquipAuto",
+    "GetPlayer",
+    "GetServerTime",
+    "InheritAccessory",
+    "Login",
+    "NoLoginStart"
    ],
    "source": "declared"
   },

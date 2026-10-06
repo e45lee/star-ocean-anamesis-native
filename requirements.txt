@@ -16,10 +16,13 @@ pyelftools
 capstone
 # AArch64 emulation: tools/emu.py, tools/info_fields_emu.py, server/tests/ninja/tools/ninja_client.py
 unicorn
-# images: tools/contact_sheet.py (screenshot contact sheets), tools/make_standin_banners.py
+# images: tools/contact_sheet.py (screenshot contact sheets), tools/make_standin_banners.py,
+# tools/gacha_verify.py (contact sheets)
 pillow
-# array XOR / pixels: tools/check_download.py, tools/make_standin_banners.py
+# array XOR / pixels: tools/check_download.py, tools/make_standin_banners.py, tools/gacha_verify.py
 numpy
+# image feature matching (SIFT, FLANN, RANSAC): tools/gacha_verify.py, tests/test_gacha_verify.py
+opencv-python-headless
 # SLZ codec 7 (zstd): tools/missing_assets/presence.py, tools/make_standin_banners.py,
 # port/decomp/bullet/pin/scan_rb.py
 zstandard

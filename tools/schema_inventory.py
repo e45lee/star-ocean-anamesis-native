@@ -365,6 +365,7 @@ RELS = [
     ("roster", "accessory_uid", "items", "uid", None, "SET NULL (S4)", "equipped accessory (0 before S4)"),
     ("roster", "assist_uid", "roster", "uid", None, "SET NULL (S4)", "the character's assist (table assist before S4; roster_ext merged too)"),
     ("items", "master_item_id", "m:master_item", "id", None, "-", ""),
+    ("items", "inherited_master_item_id", "m:master_item", "id", None, "-", "the accessory an inheritance accessory took in (v16; NULL: none)"),
     ("stock", "master_item_id", "m:master_item", "id", None, "-", ""),
     ("gear_items", "item_uid", "items", "uid", None, "CASCADE (S5)", "the weapon the gear is set in (NULL: in the gear box; 0 before S5)"),
     ("gear_items", "master_item_id", "m:master_item", "id", None, "-", "gear kind (api/items/gear.cpp reads master_item for it)"),
@@ -422,6 +423,8 @@ RELS = [
     ("campaign_last", "mission_id", "campaign_clear", "mission_id", None, "CASCADE (S12)",
      "the last story mission played (server_campaign.txt's last line before S12; no row: none)"),
     ("config", "master_config_id", "m:master_config", "id", None, "-", "an option the player changed (UpdateConfig; v14)"),
+    ("one_time_storage", "master_item_id", "m:master_item", "id", None, "-",
+     "the overflow box (一時保管庫): one row per master item (schema version 15)"),
 ]
 
 

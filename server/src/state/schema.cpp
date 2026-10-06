@@ -1876,6 +1876,38 @@ const char* const kSettings[] = {
     "alter table player add column birth_month integer check (birth_month between 1 and 12)",
 };
 
+// ---- step 15: the equipment storage and the overflow box (装備倉庫, 一時保管庫) ------------------
+//
+// items.stored_at: NULL for an item in the inventory (装備所持), else the time it was deposited in
+// the equipment storage (DepositItem; api/storage/storage.cpp). A stored item keeps its row, so
+// its gear, lock and the history's references stay as they are; it is sent in StorageItem instead
+// of Item, with stored_at as CStorageItemInfo.update_at_time.
+// one_time_storage: the overflow box, one row per master item (b: the client matches its entries by
+// master_item_id, CApiNotify::DeleteOneTimeStorage @014d4e44): the count held, the "new" badge, the
+// time it last changed (update_at_time; unique per row, api/storage/one_time.cpp). No foreign key:
+// the master item is a master reference (state::master_refs).
+const char* const kStorage[] = {
+    "alter table items add column stored_at integer",
+    R"(create table one_time_storage (
+  master_item_id integer primary key,
+  num integer not null check (num > 0),
+  is_new integer not null default 1 check (is_new in (0, 1)),
+  updated_at integer not null
+) strict)",
+};
+
+// ---- step 16: an accessory's inherited factor (InheritAccessory) --------------------------------
+//
+// items.inherited_master_item_id: the master item an inheritance accessory took in
+// (InheritItemInfo.inherited_master_item_id; NULL: none yet), items.inherited_limit_break that
+// accessory's limit break (inherited_master_item_limit_break_count; api/items/items.cpp). No item
+// had one before (the server never answered InheritAccessory).
+constexpr int kInheritVersion = 16;
+const char* const kInherit[] = {
+    "alter table items add column inherited_master_item_id integer",  // m: master_item.id
+    "alter table items add column inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1934,6 +1966,11 @@ const std::vector<Step>& steps() {
         {14,
          "the player's options and birth month: config, player.birth_year / birth_month (UpdateConfig, UpdateBirthYearMonth)",
          {std::begin(kSettings), std::end(kSettings)},
+         nullptr},
+        {15, "the equipment storage and the overflow box: items.stored_at, one_time_storage", {std::begin(kStorage), std::end(kStorage)}, nullptr},
+        {kInheritVersion,
+         "an accessory's inherited factor: items.inherited_master_item_id, inherited_limit_break (InheritAccessory)",
+         {std::begin(kInherit), std::end(kInherit)},
          nullptr},
     };
     return s;

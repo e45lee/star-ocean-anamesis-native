@@ -871,9 +871,11 @@ void h_get_mission_list(Cpu& c) {
 // local server answers in-process (agent server-rules; port code, not guest behaviour): the
 // arguments go to server_port::capture and the request is queued with NetworkApiCaller's FunctionID,
 // answered by the CApiNotify handler NetworkApiCaller's response goes to. On another caller
-// the guest's Status. The gear screens (CCustomGear) and the favor-achievement
-// receive (CAdjutantSelect -> AchievementListReceive) and the settings and account screens
-// (docs/client-changes.md) use them.
+// the guest's Status. The gear screens (CCustomGear), the favor-achievement receive
+// (CAdjutantSelect -> AchievementListReceive), the settings and account screens
+// (docs/client-changes.md), the defeat dialog's continue (CPauseMenu -> MissionContinue;
+// MissionLose has no 3.7.0 caller) and the accessory inheritance (CItemStrengtheningPotal ->
+// InheritAccessory) use them.
 struct ServedStatusOnly {
     const char* sym;
     u64 status;  // the guest's Status
@@ -908,6 +910,30 @@ const ServedStatusOnly kServedStatusOnly[] = {
      "FakeApi/send_guide_information.msgp"},
     {"_ZN13FakeApiCaller26GetScenarioLibraryInfoListEj", 0, 0xe08c972e, "_ZN10CApiNotify31OnGetScenarioLibraryInfoListResEPaRj",
      "FakeApi/get_scenario_library_info_list.msgp"},
+    // The equipment storage and the overflow box (server/src/api/storage/; the item menu's
+    // 装備倉庫 and 一時保管庫 screens, CItemStorage).
+    {"_ZN13FakeApiCaller14GetStorageInfoEv", 0, 0x06669069, "_ZN10CApiNotify19OnGetStorageInfoResEPaRj", "FakeApi/storage_info.msgp"},
+    {"_ZN13FakeApiCaller11DepositItemERKN9Framework10CSTLVectorImEE", 0, 0xc4cd3b1a, "_ZN10CApiNotify16OnDepositItemResEPaRj",
+     "FakeApi/deposit_item.msgp"},
+    {"_ZN13FakeApiCaller23WithdrawItemFromStorageERKN9Framework10CSTLVectorImEE", 0, 0xde86bab0,
+     "_ZN10CApiNotify28OnWithdrawItemFromStorageResEPaRj", "FakeApi/withdraw_item_from_storage.msgp"},
+    {"_ZN13FakeApiCaller20SellItemsFromStorageERKN9Framework10CSTLVectorImEE", 0, 0x81416fa8,
+     "_ZN10CApiNotify25OnSellItemsFromStorageResEPaRj", "FakeApi/sell_items_from_storage.msgp"},
+    {"_ZN13FakeApiCaller15LockStorageItemERKN9Framework10CSTLVectorImEE", 0, 0xb398671e, "_ZN10CApiNotify20OnLockStorageItemResEPaRj",
+     "FakeApi/lock_storage_item.msgp"},
+    {"_ZN13FakeApiCaller17UnlockStorageItemERKN9Framework10CSTLVectorImEE", 0, 0xb28403c2, "_ZN10CApiNotify22OnUnlockStorageItemResEPaRj",
+     "FakeApi/unlock_storage_item.msgp"},
+    {"_ZN13FakeApiCaller21GetOneTimeStorageInfoEv", 0, 0x074df139, "_ZN10CApiNotify26OnGetOneTimeStorageInfoResEPaRj",
+     "FakeApi/one_time_storage_info.msgp"},
+    {"_ZN13FakeApiCaller30WithdrawItemFromOneTimeStorageEjj", 0, 0xaa6a1d11, "_ZN10CApiNotify35OnWithdrawItemFromOneTimeStorageResEPaRj",
+     "FakeApi/withdraw_item_from_one_time_storage.msgp"},
+    {"_ZN13FakeApiCaller34BulkWithdrawItemFromOneTimeStorageERKN9Framework10CSTLVectorIjEES4_", 0, 0x59f02ddd,
+     "_ZN10CApiNotify39OnBulkWithdrawItemFromOneTimeStorageResEPaRj", "FakeApi/bulk_withdraw_item_from_one_time_storage.msgp"},
+    {"_ZN13FakeApiCaller26ClearNewOneTimeStorageItemERKN9Framework10CSTLVectorIjEE", 0, 0xd4f178a3,
+     "_ZN10CApiNotify31OnClearNewOneTimeStorageItemResEPaRj", "FakeApi/clear_new_one_time_storage_item.msgp"},
+    {"_ZN13FakeApiCaller15MissionContinueEb", 0, 0x755cba3d, "_ZN10CApiNotify20OnMissionContinueResEPaRj", "FakeApi/mission_continue.msgp"},
+    {"_ZN13FakeApiCaller11MissionLoseEv", 0, 0x863bb1ec, "_ZN10CApiNotify16OnMissionLoseResEPaRj", "FakeApi/mission_lose.msgp"},
+    {"_ZN13FakeApiCaller16InheritAccessoryEmm", 1, 0xd9feb3e8, "_ZN10CApiNotify21OnInheritAccessoryResEPaRj", "FakeApi/inherit_accessory.msgp"},
 };
 bool is_served_status_only(const char* sym) {
     for (const auto& s : kServedStatusOnly)

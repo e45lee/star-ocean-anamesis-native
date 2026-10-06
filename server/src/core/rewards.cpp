@@ -23,19 +23,10 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
     const PlayerId pid = player_id(ctx);
     if (d.type == 1) {
         for (u32 k = 0; k < d.num; k++) {
-            const ItemUid uid = next_item_uid(ctx);
-            u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {d.id});
-            ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, d.id, itype, clock_now()});
-            Value e = Value::object();
-            e["id"] = uid.v;
-            e["player_id"] = pid.v;
-            e["master_item_id"] = d.id;
-            e["item_type"] = itype;
-            e["content_type"] = d.type;
-            e["drop_type"] = d.drop_type;
-            e["boosted_point"] = 0u;
-            e["limit_break_count"] = 0u;
-            items.push(e);
+            // (b) a unit the inventory has no room for goes to the overflow box
+            // (storage::to_one_time_storage, docs/server-rules.md#storage)
+            if (storage::to_one_time_storage(ctx, d.source)) storage::add_one_time(ctx, MasterItemId(d.id), 1);
+            else items.push(new_item(ctx, MasterItemId(d.id), d.type, d.drop_type));
         }
     } else if (d.type == 2) {
         Added a = add_character(ctx, RoleId(d.id));
@@ -71,6 +62,22 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
         e["drop_type"] = d.drop_type;
         stocks.push(e);
     }
+}
+
+Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type) {
+    const ItemUid uid = next_item_uid(ctx);
+    u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {id});
+    ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, id, itype, clock_now()});
+    Value e = Value::object();
+    e["id"] = uid.v;
+    e["player_id"] = player_id(ctx).v;
+    e["master_item_id"] = id.v;
+    e["item_type"] = itype;
+    e["content_type"] = content_type;
+    e["drop_type"] = drop_type;
+    e["boosted_point"] = 0u;
+    e["limit_break_count"] = 0u;
+    return e;
 }
 
 // A new character, or a duplicate: (b) a drawn role is a duplicate when the player owns a

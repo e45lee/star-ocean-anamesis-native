@@ -12,7 +12,7 @@
 namespace soa::server::state {
 
 // The version this build writes and reads; a file with a higher user_version isn't opened.
-constexpr int kSchemaVersion = 14;
+constexpr int kSchemaVersion = 16;
 
 struct Step {
     int version;                    // user_version after the step

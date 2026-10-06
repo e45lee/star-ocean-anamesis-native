@@ -131,6 +131,25 @@ struct MissionTalkArgs {
     }
 };
 
+// MissionContinue(bool): 1 the defeat dialog's はい (b: CPauseMenu's button lambda @01daf13c calls
+// CPauseMenu::ReqeustContinue(true), which sends it); 0 its いいえ, and the decline OpenContinue
+// sends by itself when the player can't continue (b: CPauseMenu::OpenContinue @01dacf90: coins
+// short, or the mission's is_continue 0). Any non-zero continues.
+struct MissionContinueArgs {
+    bool continue_battle = false;
+    static MissionContinueArgs from(const Request& r) { return {int_at(r, 0) != 0}; }
+};
+
+// TrainingMissionStart(u32 mission (+0x54), u32 helper index + 1 (+0x18), u64 own helper uid
+// (+0x20)) (b: CStageManager::CallMissionStart @013ca114 for mission type 4: MissionStart's
+// second, third and fourth arguments, from the same CStageManager fields; docs/api.md).
+struct TrainingMissionStartArgs {
+    u32 mission = 0;
+    u32 helper_index_plus_1 = 0;
+    u64 own_helper_uid = 0;
+    static TrainingMissionStartArgs from(const Request& r) { return {(u32)int_at(r, 0), (u32)int_at(r, 1), int_at(r, 2)}; }
+};
+
 // BoxGacha(u32 gacha_id, u32 count): count at least 1, 1 when missing.
 struct BoxGachaArgs {
     u32 gacha_id = 0, count = 1;
@@ -163,6 +182,48 @@ struct GetPresentArgs {
         GetPresentArgs a;
         if (!r.vecs.empty()) a.present_ids = r.vecs[0];
         else if (!r.ints.empty()) a.present_ids.push_back(r.ints[0]);
+        return a;
+    }
+};
+
+// DepositItem / WithdrawItemFromStorage / SellItemsFromStorage / LockStorageItem /
+// UnlockStorageItem(CSTLVector<u64> const& uids): the items' uids (docs/api.md#deposititem).
+struct StorageItemsArgs {
+    std::vector<ItemUid> uids;
+    static StorageItemsArgs from(const Request& r) {
+        StorageItemsArgs a;
+        if (!r.vecs.empty())
+            for (u64 uid : r.vecs[0]) a.uids.push_back(ItemUid(uid));
+        return a;
+    }
+};
+
+// WithdrawItemFromOneTimeStorage(u32 id, u32 count) and BulkWithdrawItemFromOneTimeStorage
+// (CSTLVector<u32> const& ids, CSTLVector<u32> const& counts): the overflow box's entries by master
+// item id (b: CApiNotify::DeleteOneTimeStorage @014d4e44 matches them by master_item_id) and how
+// many of each; a missing count is 0 (docs/api.md#withdrawitemfromonetimestorage).
+struct OneTimeWithdrawArgs {
+    std::vector<std::pair<MasterItemId, u32>> takes;
+    static OneTimeWithdrawArgs from(const Request& r) {
+        OneTimeWithdrawArgs a;
+        if (r.method == "WithdrawItemFromOneTimeStorage") {
+            a.takes.emplace_back(MasterItemId((u32)int_at(r, 0)), (u32)int_at(r, 1));
+        } else if (!r.vecs.empty()) {
+            for (size_t k = 0; k < r.vecs[0].size(); k++)
+                a.takes.emplace_back(MasterItemId((u32)r.vecs[0][k]), r.vecs.size() > 1 && k < r.vecs[1].size() ? (u32)r.vecs[1][k] : 0u);
+        }
+        return a;
+    }
+};
+
+// ClearNewOneTimeStorageItem(CSTLVector<u32> const& ids): master item ids (b: CItemStorage::Progress
+// @01f43efc sends the entries' master ids; OnClearNewOneTimeStorageItemRes matches master_item_id).
+struct OneTimeClearNewArgs {
+    std::vector<MasterItemId> ids;
+    static OneTimeClearNewArgs from(const Request& r) {
+        OneTimeClearNewArgs a;
+        if (!r.vecs.empty())
+            for (u64 id : r.vecs[0]) a.ids.push_back(MasterItemId((u32)id));
         return a;
     }
 };

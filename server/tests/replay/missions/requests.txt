@@ -126,3 +126,20 @@ req 87 1620921680 MissionEnd 8312a64c 3519778102,0 - - -
 req 88 1620921685 MissionStart b7c62bc2 0,3519778102,1,1101625557014,0,0,2693101203 - - -
 req 89 1620921690 MissionRestart 1f96f310 - - - -
 req 90 1620921695 MissionEnd 8312a64c 3519778102,0 - - -
+# (agent server-u-missions) the defeat dialog: MissionContinue with nothing in progress (1 refused
+# 10403, 0 answered); mf01_001 started, its いいえ (0), はい (1: continue_use_coin 100 coins, the
+# play kept), MissionEnd; another start lost and given up with MissionLose; the battle simulator
+# (TrainingMissionStart simulator_mission01, helper index 1 as the client sends it): no stamina, no
+# play record, so GetPlayMission offers nothing
+req 91 1620921700 MissionContinue 755cba3d 1 - - -
+req 92 1620921705 MissionContinue 755cba3d 0 - - -
+req 93 1620921710 MissionStart b7c62bc2 0,3519778102,0,0,0,0,0 - - -
+req 94 1620921715 MissionContinue 755cba3d 0 - - -
+req 95 1620921720 MissionContinue 755cba3d 1 - - -
+req 96 1620921725 GetPlayMission 7c1b7a1b - - - -
+req 97 1620921730 MissionEnd 8312a64c 3519778102,0 - - -
+req 98 1620921735 MissionStart b7c62bc2 0,3519778102,0,0,0,0,0 - - -
+req 99 1620921740 MissionLose 863bb1ec - - - -
+req 100 1620921745 GetPlayMission 7c1b7a1b - - - -
+req 101 1620921750 TrainingMissionStart 0a16fd90 1642842982,1,0 - - -
+req 102 1620921755 GetPlayMission 7c1b7a1b - - - -

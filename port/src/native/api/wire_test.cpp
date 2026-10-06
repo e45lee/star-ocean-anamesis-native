@@ -810,6 +810,39 @@ NATIVE_TEST("wire/inproc-parity") {
         }
     }
     {
+        // BulkWithdrawItemFromOneTimeStorage(CSTLVector<u32> const& ids, CSTLVector<u32> const&
+        // counts): two u32 vectors, the second mangled as a substitution ("S4_")
+        std::vector<u32> ids = {2201000101u, 2201000202u}, counts = {3, 1};
+        Arg pi, pc;
+        pi.code = pc.code = 'P';
+        pi.mem.assign((const u8*)ids.data(), (const u8*)(ids.data() + ids.size()));
+        pc.mem.assign((const u8*)counts.data(), (const u8*)(counts.data() + counts.size()));
+        u64 vi[3] = {(u64)ids.data(), (u64)(ids.data() + ids.size()), (u64)(ids.data() + ids.size())};
+        u64 vc[3] = {(u64)counts.data(), (u64)(counts.data() + counts.size()), (u64)(counts.data() + counts.size())};
+        server::net::Decoded d;
+        if (wire_decode(t, "BulkWithdrawItemFromOneTimeStorage", {pi, u('I', ids.size()), pc, u('I', counts.size())}, &d)) {
+            u64 x[8] = {0x5150, (u64)vi, (u64)vc};
+            compare(t, "BulkWithdrawItemFromOneTimeStorage",
+                    server_port::inproc_request("_ZN13FakeApiCaller34BulkWithdrawItemFromOneTimeStorageERKN9Framework10CSTLVectorIjEES4_", 0x59f02ddd, x), d);
+        }
+        // ClearNewOneTimeStorageItem(CSTLVector<u32> const& ids)
+        server::net::Decoded d2;
+        if (wire_decode(t, "ClearNewOneTimeStorageItem", {pi, u('I', ids.size())}, &d2)) {
+            u64 x[8] = {0x5150, (u64)vi};
+            compare(t, "ClearNewOneTimeStorageItem",
+                    server_port::inproc_request("_ZN13FakeApiCaller26ClearNewOneTimeStorageItemERKN9Framework10CSTLVectorIjEE", 0xd4f178a3, x), d2);
+        }
+        // DepositItem(CSTLVector<u64> const& uids)
+        Arg p;
+        p.code = 'P';
+        p.mem = item_bytes;
+        server::net::Decoded d3;
+        if (wire_decode(t, "DepositItem", {p, u('I', items.size())}, &d3)) {
+            u64 x[8] = {0x5150, (u64)vec};
+            compare(t, "DepositItem", server_port::inproc_request("_ZN13FakeApiCaller11DepositItemERKN9Framework10CSTLVectorImEE", 0xc4cd3b1a, x), d3);
+        }
+    }
+    {
         // SaleGacha(u32 gacha, s8 const* token): the token is a fixed char[32] on the wire
         const char* token = "0123456789abcdef0123456789abcdef";
         Arg s;
@@ -876,6 +909,39 @@ NATIVE_TEST("wire/inproc-parity") {
         if (wire_decode(t, "UpdateBirthYearMonth", {s}, &d)) {
             u64 x[8] = {0x5150, 0xdead0000000007c6ull, 0xbeef000000000005ull};
             compare(t, "UpdateBirthYearMonth", server_port::inproc_request("_ZN13FakeApiCaller20UpdateBirthYearMonthEth", 0x0088b260, x), d);
+        }
+    }
+    {
+        // MissionContinue(bool) (a status-only method the route serves): the wire adds the device
+        // UUID (char[36]) and DeviceType, which the server's handlers don't read and the FakeApiCaller
+        // method doesn't have (docs/server-rules.md "Wire-only arguments"), so only the method, fid
+        // and ints are compared; the bool is the register's low byte only
+        const char* uuid = "3f2a9c4e-8b1d-4e7a-9c3f-1b2d3e4f5a6b";
+        Arg s;
+        s.code = 'S';
+        s.mem.assign(uuid, uuid + 36);
+        s.mem.resize(36 + 1024, 0);
+        server::net::Decoded d;
+        if (wire_decode(t, "MissionContinue", {s, u('D', 2), u('B', 1)}, &d)) {
+            u64 x[8] = {0x5150, 0xdead000000000001ull};
+            server::Request r = server_port::inproc_request("_ZN13FakeApiCaller15MissionContinueEb", 0x755cba3d, x);
+            if (r.method != d.req.method || r.fid != d.req.fid || r.ints != d.req.ints)
+                t.fail("MissionContinue: inproc %s(%s) fid %x, wire %s(%s) fid %x", r.method.c_str(), ints_text(r.ints).c_str(), r.fid,
+                       d.req.method.c_str(), ints_text(d.req.ints).c_str(), d.req.fid);
+            if (d.req.strs != std::vector<std::string>{uuid}) t.fail("MissionContinue: the wire's strings aren't the device UUID alone");
+        }
+    }
+    {
+        // MissionLose() and InheritAccessory(u64 base, u64 lost) (status-only methods the route serves)
+        server::net::Decoded d;
+        if (wire_decode(t, "MissionLose", {}, &d)) {
+            u64 x[8] = {0x5150};
+            compare(t, "MissionLose", server_port::inproc_request("_ZN13FakeApiCaller11MissionLoseEv", 0x863bb1ec, x), d);
+        }
+        server::net::Decoded d2;
+        if (wire_decode(t, "InheritAccessory", {u('Q', 0x7d000005), u('Q', 0x7d000009)}, &d2)) {
+            u64 x[8] = {0x5150, 0x7d000005, 0x7d000009};
+            compare(t, "InheritAccessory", server_port::inproc_request("_ZN13FakeApiCaller16InheritAccessoryEmm", 0xd9feb3e8, x), d2);
         }
     }
 }

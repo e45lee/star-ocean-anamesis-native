@@ -16,6 +16,7 @@ namespace {
 NATIVE_TEST("rules/missions") {
     t.expect_eq(std::string(mission_table(0)), std::string("master_mission"), "story table");
     t.expect_eq(std::string(mission_table(1)), std::string("master_event_mission"), "event table");
+    t.expect_eq(std::string(mission_table(4)), std::string("master_training_mission"), "the battle simulator's table");
     t.expect_eq(std::string(mission_table(7)), std::string(""), "unknown type");
     // surprise: 10.25 % of the draws
     t.expect_eq(roll_percent(10.25, 102499), true, "just inside");
@@ -36,6 +37,18 @@ NATIVE_TEST("rules/missions") {
     t.expect_eq(campaign_applies(3, 0, 1, 99), false, "other type");
     t.expect_eq(campaign_applies(1, 99, 1, 99), true, "its area");
     t.expect_eq(campaign_applies(1, 98, 1, 99), false, "other area");
+    // continue campaigns (b: CUIUtility::GetDecMissionContinueCoin): model 99 in the first pass
+    // only; the mission's type in the second, the area only for event missions
+    t.expect_eq(continue_campaign_applies(99, 0, true, 0, 5), true, "every type: first pass");
+    t.expect_eq(continue_campaign_applies(99, 0, false, 0, 5), false, "every type: not in the type pass");
+    t.expect_eq(continue_campaign_applies(0, 0, true, 0, 5), false, "a type's row: not in the first pass");
+    t.expect_eq(continue_campaign_applies(0, 7, false, 0, 5), true, "story: the area isn't checked");
+    t.expect_eq(continue_campaign_applies(1, 7, false, 1, 5), false, "event: another area");
+    t.expect_eq(continue_campaign_applies(1, 5, false, 1, 5), true, "event: its area");
+    t.expect_eq(continue_campaign_applies(1, 0, false, 1, 5), true, "event: every area");
+    t.expect_eq(continue_campaign_applies(3, 0, false, 1, 5), false, "another type");
+    t.expect_eq(continue_price(100, 0.5), 50u, "half price");
+    t.expect_eq(continue_price(101, 0.5), 50u, "truncated");
     t.expect_eq(campaign_stamina(15, 0.5), 8u, "half, rounded up");
     t.expect_eq(campaign_stamina(1, 0.5), 1u, "at least 1");
     t.expect_eq(campaign_stamina(0, 0.5), 0u, "free stays free");

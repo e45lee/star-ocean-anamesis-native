@@ -20,7 +20,7 @@ using MissionRef = master::MissionRef;
 // Common::MissionType: the master table of a mission (b: CStageManager::CallMissionStart's first
 // argument, CParameterUtility::FindMissionWithId(id, type); a: master_campaign.
 // master_mission_model_type uses the same numbers).
-enum class MissionType : u32 { kStory = 0, kEvent = 1, kTower = 2, kWorldMap = 3 };
+enum class MissionType : u32 { kStory = 0, kEvent = 1, kTower = 2, kWorldMap = 3, kTraining = 4 };
 
 // The battle's helper as MissionStart records it (play.helper_kind; d: the server's own
 // numbering, nothing on the wire). play.helper_uid is the helper's id of that kind (kOwn: an owned
@@ -119,6 +119,12 @@ std::vector<u8> get_play_mission(ext::Ctx& ctx, const Request& req);
 std::vector<u8> mission_failed(ext::Ctx& ctx, const Request& req);
 std::vector<u8> mission_talk(ext::Ctx& ctx, const Request& req);
 std::vector<u8> mission_restart(ext::Ctx& ctx, const Request& req);
+// MissionContinue(bool) and MissionLose() (play_state.cpp): the defeat dialog's continue, a loss.
+std::vector<u8> mission_continue(ext::Ctx& ctx, const Request& req);
+std::vector<u8> mission_lose(ext::Ctx& ctx, const Request& req);
+// TrainingMissionStart(u32 mission, u32 helper index + 1, u64 own helper uid) (mission_start.cpp):
+// the battle simulator's start.
+std::vector<u8> training_mission_start(ext::Ctx& ctx, const Request& req);
 // The play state's answer for a module (ext::Ctx::core_mission): MissionFailed, MissionTalk, else
 // GetPlayMission's.
 std::vector<u8> play_state(ext::Ctx& ctx, const Request& req);

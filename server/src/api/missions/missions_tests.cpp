@@ -10,6 +10,7 @@
 
 #include "api/missions/missions.h"
 #include "api/social/rental.h"
+#include "core/errors.h"
 #include "soaserver/config.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/native_test.h"
@@ -19,6 +20,13 @@ namespace soa::server {
 namespace {
 
 using ext::Row;
+
+// The text of a one-column query's first row ("" when none).
+std::string text_of(ext::Sql& db, const std::string& sql, std::initializer_list<ext::Arg> args = {}) {
+    std::string v;
+    db.q("select (" + sql + ") as v", args, [&](const Row& r) { v = r.s("v"); });
+    return v;
+}
 
 NATIVE_TEST("missions/surprise-campaign-evaluation") {
     ScratchServer S(t.rand_u64());
@@ -177,6 +185,129 @@ NATIVE_TEST("missions/play-record") {
     t.expect_eq((u32)sv.st.one("select count(*) from play_member where uid is null and npc_uid between 2130706433 and 2130706687", {}), npcs,
                 "the mission NPCs as npc_uid");
     t.expect_eq((u32)sv.st.one("select min(npc_uid) from play_member", {}), 0x7f000001u, "kNpcPartyUid0 + 1 first");
+}
+
+// MissionContinue (docs/server-rules.md#failure-continue-restart): 1 revives for
+// continue_use_coin coins (free first) and keeps the play; 0 changes nothing; a continue campaign
+// halves the price (model 99 for every type; an event mission's own area); a mission with
+// is_continue 0, nothing in progress or the coins short are refused. MissionLose ends the play.
+NATIVE_TEST("missions/continue") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    auto coins = [&] { return (u32)sv.st.one("select free_coin from player", {}); };
+    auto continued = [&](const std::vector<u8>& out) {
+        Value d = out.empty() ? Value() : mp_decode(out);
+        const Value* data = d.find("data");
+        const Value* c = data ? data->find("is_mission_continue") : nullptr;
+        return c && c->type == Value::Bool ? (int)c->b : -1;
+    };
+    const u32 price = (u32)std::stoul("0" + text_of(sv.m, "select value from master_global where key = 'continue_use_coin'"));
+    t.expect_eq(price, 100u, "(a) continue_use_coin");
+    std::vector<u8> out;
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), (u32)ErrorCode::kInvalidOperation, "nothing in progress: refused");
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {0}, {}, {}}, &out), 0u, "a decline without a play: answered");
+    t.expect_eq(continued(out), 0, "declined");
+    // a story mission (is_continue 1)
+    u32 m3 = S.id("master_mission", "mf01_003");
+    t.expect_eq((u32)sv.m.one("select is_continue from master_mission where id = ?", {m3}), 1u, "(a) mf01_003 continues");
+    sv.st.q("update player set stamina = 200, free_coin = 1000, pay_coin = 0", {});
+    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m3, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
+    const std::string play_before = text_of(sv.st, "select mission_id || ',' || party_id || ',' || stamina_cost || ',' || surprise from play");
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {0}, {}, {}}, &out), 0u, "いいえ");
+    t.expect_eq(continued(out), 0, "not continued");
+    t.expect_eq(coins(), 1000u, "a decline costs nothing");
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}, &out), 0u, "はい");
+    t.expect_eq(continued(out), 1, "continued");
+    t.expect_eq(coins(), 900u, "continue_use_coin taken");
+    t.expect_eq(text_of(sv.st, "select mission_id || ',' || party_id || ',' || stamina_cost || ',' || surprise from play"), play_before,
+                "the play stays open, unchanged");
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {5}, {}, {}}), 0u, "any non-zero continues");
+    t.expect_eq(coins(), 800u, "and pays again");
+    sv.st.q("update player set free_coin = 99", {});
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), (u32)ErrorCode::kCoinsShort, "coins short: refused");
+    t.expect_eq(coins(), 99u, "nothing taken");
+    sv.st.q("update player set free_coin = 60, pay_coin = 40", {});
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "free and paid together");
+    t.expect_eq(sv.st.one("select free_coin + pay_coin from player", {}), (int64_t)0, "free first, then paid");
+    // (a)+(b) Campaign2021_spring_Continue (model 99, 2021-03-25 .. 04-15, x0.5): every type
+    S.set_clock("2021-04-01 12:00:00");
+    sv.st.q("update player set free_coin = 1000, pay_coin = 0", {});
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "during the spring campaign");
+    t.expect_eq(coins(), 950u, "half price");
+    // an event mission in event_2020_max_04 during Campaign2020_2021_newyear_Continue_007 (its
+    // area only), and one in another area
+    S.set_clock("2021-01-02 12:00:00");
+    const u32 area = S.id("master_event_area", "event_2020_max_04");
+    const u32 in_area =
+        (u32)sv.m.one("select id from master_event_mission where master_event_area_id = ? and is_continue = 1 order by id limit 1", {area});
+    const u32 other = (u32)sv.m.one(
+        "select id from master_event_mission where is_continue = 1 and master_event_area_id not in (select master_area_id from master_campaign "
+        "where type_id = 9) order by id limit 1",
+        {});
+    if (!in_area || !other) return t.fail("no event missions for the area test");
+    sv.st.q("update play set mission_id = ?, mission_type = 1", {in_area});
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "an event mission in the campaign's area");
+    t.expect_eq(coins(), 900u, "half price");
+    sv.st.q("update play set mission_id = ?, mission_type = 1", {other});
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "another area");
+    // (Campaign2020_2021_newyear_Continue_001 is the story missions' (model 0), not the events')
+    t.expect_eq(coins(), 800u, "full price");
+    // (a) a tower mission: is_continue 0
+    const u32 tower = (u32)sv.m.one("select id from master_tower_mission order by id limit 1", {});
+    sv.st.q("update play set mission_id = ?, mission_type = 2", {tower});
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), (u32)ErrorCode::kInvalidOperation, "is_continue 0: refused");
+    t.expect_eq(coins(), 800u, "nothing taken");
+    // MissionLose (no 3.7.0 caller): ends the play as MissionFailed
+    t.expect_eq(S.call({"MissionLose", 0x863bb1ec, {}, {}, {}}), 0u, "MissionLose");
+    t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 0u, "the play ended");
+}
+
+// TrainingMissionStart (docs/server-rules.md#battle-simulator): the simulator's mission and stage
+// from master_training_mission, the current party, no stamina, no play record or play count (so
+// the next GetPlayMission offers no resume).
+NATIVE_TEST("missions/training-start") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    const u32 sim = S.id("master_training_mission", "simulator_mission01");
+    t.expect_eq(text_of(sv.m, "select value from master_global where key = 'training_mission_id_label'"), std::string("simulator_mission01"),
+                "(a) the training mission");
+    sv.st.q("update player set stamina = 7", {});
+    const u32 party = (u32)sv.st.one("select ifnull(party_id, 1) from player", {});
+    std::vector<u8> out;
+    t.expect_eq(S.call({"TrainingMissionStart", 0x0a16fd90, {sim, 1, 0}, {}, {}}, &out), 0u, "started");
+    Value d = out.empty() ? Value() : mp_decode(out);
+    const Value* data = d.find("data");
+    const Value* mp = data ? data->find("MissionParameter") : nullptr;
+    t.expect_eq(mp ? mp->get_u("master_mission_id") : 0, (u64)sim, "the simulator's mission");
+    const Value* stages = mp ? mp->find("mission_stage") : nullptr;
+    t.expect_eq(stages ? stages->arr.size() : 0, (size_t)sv.m.one("select count(*) from master_mission_stage where master_mission_id = ?", {sim}),
+                "its stages");
+    if (stages && !stages->arr.empty())
+        t.expect_eq(stages->arr[0].find("id_label") ? stages->arr[0].find("id_label")->s : std::string(), std::string("simulator_mission01_Stage01"),
+                    "the simulator's stage");
+    const Value* bp = data ? data->find("BattleParameter") : nullptr;
+    const Value* pc = bp ? bp->find("PlayerCharacter") : nullptr;
+    std::vector<u64> want;
+    sv.st.q("select uid from party_member where party_id = ? and uid is not null order by slot", {party},
+            [&](const ext::Row& r) { want.push_back((u64)r.i("uid")); });
+    std::vector<u64> got;
+    if (pc)
+        for (const Value& m : pc->arr) got.push_back(m.get_u("id"));
+    t.expect_eq(got == want, true, "the current party");
+    t.expect_eq((u32)sv.st.one("select stamina from player", {}), 7u, "(a) no stamina");
+    t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 0u, "no play record");
+    t.expect_eq((u32)sv.st.one("select count(*) from mission where mission_id = ?", {sim}), 0u, "no play count");
+    std::vector<u8> pm;
+    t.expect_eq(S.call({"GetPlayMission", 0x7c1b7a1b, {}, {}, {}}, &pm), 0u, "GetPlayMission");
+    Value p = pm.empty() ? Value() : mp_decode(pm);
+    const Value* pdata = p.find("data");
+    const Value* play = pdata ? pdata->find("PlayMission") : nullptr;
+    t.expect_eq(play ? play->get_u("is_play") : 9, (u64)0, "nothing to resume");
+    // a lost simulator battle: OpenContinue declines by itself (is_continue 0): answered
+    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {0}, {}, {}}), 0u, "the automatic decline");
+    t.expect_eq(S.call({"TrainingMissionStart", 0x0a16fd90, {12345, 1, 0}, {}, {}}) != 0, true, "an unknown mission isn't answered");
 }
 
 // MissionRestart replays the recorded helper (PLAN-schema S7; before, it sent the play's party id

@@ -47,7 +47,9 @@ struct TempDb {
                                    ".bak-v10", ".bak-v10-journal",
                                    ".bak-v11", ".bak-v11-journal",
                                    ".bak-v12", ".bak-v12-journal",
-                                   ".bak-v13", ".bak-v13-journal"})
+                                   ".bak-v13", ".bak-v13-journal",
+                                   ".bak-v14", ".bak-v14-journal",
+                                   ".bak-v15", ".bak-v15-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -165,10 +167,10 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54,
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)55,
                 "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
                 "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12), "
-                "plus config (version 14)");
+                "plus config (version 14), plus one_time_storage (version 15)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
@@ -1545,7 +1547,7 @@ NATIVE_TEST("server/schema-migrate-new-badges") {
 
 // Version 14: the player's options and birth month (config, player.birth_year / birth_month).
 // (1) v0 -> v14: every table's rows as the same file at version 13, the player's other columns
-// kept, no birth month and no options; .bak-v0. (2) v13 -> v14 (a planted v12 file, without the
+// kept, no birth month and no options; .bak-v0. (2) v13 -> v14 (a planted v13 file, without the
 // master): .bak-v13 at 13 without the new table and columns; the checks refuse a month or year
 // outside the client's ranges; config is STRICT.
 NATIVE_TEST("server/schema-migrate-v14") {
@@ -1605,6 +1607,142 @@ NATIVE_TEST("server/schema-migrate-v14") {
         t.expect_eq(bak.one("select count(*) from pragma_table_info('player') where name = 'birth_year'", {}), (int64_t)0,
                     "the backup has no birth_year");
         t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'config'", {}), (int64_t)0, "the backup has no config");
+        bak.close();
+    }
+}
+
+// Version 15: the equipment storage (items.stored_at) and the overflow box (one_time_storage).
+// (1) v0 -> v15: every table's rows as the same file at version 14, the items' plus stored_at NULL
+// (every item stays in the inventory); the box empty; .bak-v0. (2) v14 -> v15 (a planted v14 file,
+// without the master): the items in the inventory, .bak-v14 at 14 without the column or the table;
+// the box's checks (a count above 0, is_new 0 / 1) and its one row per master item.
+NATIVE_TEST("server/schema-migrate-v15") {
+    constexpr int kV = 15;  // this step's version (renumbered with the step at a merge)
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    const std::string bak_prev = ".bak-v" + std::to_string(kV - 1);
+    // ---- (1) v0 -> v15 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file("v15-ref"), old("v15");
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kV - 1, m), true, "the reference: migrated to the version before");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "v0 -> this version");
+        t.expect_eq(state::user_version(db.h), kV, "user_version");
+        t.expect_eq(db.one("select count(*) from items", {}) > 0, true, "the fixture has items");
+        t.expect_eq(db.one("select count(*) from items where stored_at is not null", {}), (int64_t)0, "every item in the inventory");
+        t.expect_eq(db.one("select count(*) from one_time_storage", {}), (int64_t)0, "the overflow box empty");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        ra.erase("items");
+        rb.erase("items");
+        rb.erase("one_time_storage");
+        t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
+        t.expect_eq(rows_over(db, "items", "uid, master_item_id, item_type, level, exp, limit_break, locked, created_at"),
+                    rows_over(ref, "items", "uid, master_item_id, item_type, level, exp, limit_break, locked, created_at"),
+                    "the items' other columns kept");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v14 -> v15, without the master ------------------------------------------------------------
+    {
+        TempDb prev("v15-from-v14");
+        if (!write_fixture(t, prev.path)) return;
+        Sql f;
+        if (!f.open(prev.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV - 1, m), true, "migrated to the version before");
+        f.close();
+        unlink((prev.path + ".bak-v0").c_str());
+        if (!f.open(prev.path, false)) return t.fail("reopen");
+        t.expect_eq(state::user_version(f.h), kV - 1, "a file at the version before");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV), true, "-> this version");
+        t.expect_eq(state::user_version(f.h), kV, "user_version");
+        t.expect_eq(f.one("select count(*) from items where stored_at is not null", {}), (int64_t)0, "the items in the inventory");
+        t.expect_eq(sqlite3_exec(f.h, "insert into one_time_storage (master_item_id, num, is_new, updated_at) values (1, 0, 1, 1)", nullptr, nullptr,
+                                 nullptr) != SQLITE_OK,
+                    true, "a box row holds at least one");
+        t.expect_eq(sqlite3_exec(f.h, "insert into one_time_storage (master_item_id, num, is_new, updated_at) values (1, 1, 2, 1)", nullptr, nullptr,
+                                 nullptr) != SQLITE_OK,
+                    true, "is_new is 0 or 1");
+        t.expect_eq(sqlite3_exec(f.h, "insert into one_time_storage (master_item_id, num, is_new, updated_at) values (1, 2, 1, 1)", nullptr, nullptr,
+                                 nullptr),
+                    SQLITE_OK, "a box row");
+        t.expect_eq(sqlite3_exec(f.h, "insert into one_time_storage (master_item_id, num, is_new, updated_at) values (1, 3, 1, 2)", nullptr, nullptr,
+                                 nullptr) != SQLITE_OK,
+                    true, "one row per master item");
+        t.expect_eq(sqlite3_exec(f.h, "update items set stored_at = 5 where uid = (select min(uid) from items)", nullptr, nullptr, nullptr),
+                    SQLITE_OK, "an item stored");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        f.close();
+        Sql bak;
+        if (!bak.open(prev.path + bak_prev, true)) return t.fail("no %s%s", prev.path.c_str(), bak_prev.c_str());
+        t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is at the version before");
+        t.expect_eq(bak.one("select count(*) from pragma_table_info('items') where name = 'stored_at'", {}), (int64_t)0,
+                    "the backup has no stored_at");
+        t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'one_time_storage'", {}), (int64_t)0, "the backup has no box");
+        bak.close();
+    }
+}
+
+// Version 16: items.inherited_master_item_id / inherited_limit_break (InheritAccessory). (1) v0 ->
+// v16: every table's rows as the same file at version 15, the items' plus no inheritance (NULL, 0);
+// .bak-v0. (2) v15 -> v16 (a planted v15 file, without the master): the items without an
+// inheritance, .bak-v15 at 15 without the columns; the limit break refuses a negative count.
+NATIVE_TEST("server/schema-migrate-v16") {
+    constexpr int kV = 16;  // this step's version (the parent renumbers parallel steps at merge)
+    const std::string at = std::to_string(kV), before = std::to_string(kV - 1);
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v16 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file(("v" + at + "-ref").c_str()), old(("v" + at).c_str());
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kV - 1, m), true, "the reference: migrated to the version before");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "v0 -> this version");
+        t.expect_eq(state::user_version(db.h), kV, "user_version");
+        t.expect_eq(db.one("select count(*) from items", {}) > 0, true, "the fixture has items");
+        t.expect_eq(db.one("select count(*) from items where inherited_master_item_id is null and inherited_limit_break = 0", {}),
+                    db.one("select count(*) from items", {}), "no item has an inheritance");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        ra.erase("items");
+        rb.erase("items");
+        t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
+        t.expect_eq(rows_over(db, "items", "uid, master_item_id, item_type, level, exp, limit_break, locked"),
+                    rows_over(ref, "items", "uid, master_item_id, item_type, level, exp, limit_break, locked"), "the items' other columns kept");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v15 -> v16, without the master ------------------------------------------------------------
+    {
+        TempDb prev(("v" + at + "-from-v" + before).c_str());
+        if (!write_fixture(t, prev.path)) return;
+        Sql f;
+        if (!f.open(prev.path, false)) return t.fail("open the earlier file");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV - 1, m), true, "migrated to the version before");
+        f.close();
+        unlink((prev.path + ".bak-v0").c_str());
+        if (!f.open(prev.path, false)) return t.fail("reopen the earlier file");
+        t.expect_eq(state::user_version(f.h), kV - 1, "a file of the version before");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV), true, "the version before -> this version");
+        t.expect_eq(state::user_version(f.h), kV, "user_version");
+        t.expect_eq(f.one("select count(*) from items where inherited_master_item_id is not null", {}), (int64_t)0, "no inheritance");
+        t.expect_eq(sqlite3_exec(f.h, "update items set inherited_limit_break = -1", nullptr, nullptr, nullptr) != SQLITE_OK, true,
+                    "inherited_limit_break >= 0");
+        t.expect_eq(sqlite3_exec(f.h, "update items set inherited_master_item_id = 1, inherited_limit_break = 2", nullptr, nullptr, nullptr),
+                    SQLITE_OK, "an inheritance");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        f.close();
+        Sql bak;
+        if (!bak.open(prev.path + ".bak-v" + before, true)) return t.fail("no %s.bak-v%s", prev.path.c_str(), before.c_str());
+        t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is the version before");
+        t.expect_eq(bak.one("select count(*) from pragma_table_info('items') where name like 'inherited_%'", {}), (int64_t)0,
+                    "the backup has no inheritance columns");
         bak.close();
     }
 }

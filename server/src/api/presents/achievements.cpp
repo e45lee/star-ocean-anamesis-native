@@ -40,6 +40,7 @@ enum class AchievementType : int {
     kDeepSpaceExploration = 44,   // exploration rate of deep-space area target_id
     kDeepSpaceExpeditions = 45,   // deep-space expeditions
     kFavorPoints = 52,            // favor points with same_role_id target_id
+    kAccessoryInherits = 58,      // アクセサリーにファクターを N回継承させる (InheritAccessory)
     kSphere211Floor = 61,         // Sphere 211: floor reached (api/sphere211/)
     kSphere211Wins = 62,          // Sphere 211: battles won
 };
@@ -118,6 +119,8 @@ int64_t progress(Ctx& ctx, const Row& achievement_row) {
             return ctx.st.one("select level from player", {});
         case AchievementType::kAccessoryBoosts:
             return counter(ctx, "accessory_boost");
+        case AchievementType::kAccessoryInherits:
+            return counter(ctx, "accessory_inherit");  // api/items/items.cpp inherit_accessory
         case AchievementType::kDeepSpaceExploration:
             return deep_space_exploration_rate(ctx, target);
         case AchievementType::kDeepSpaceExpeditions:

@@ -81,13 +81,18 @@ server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint
     p = e + n;
     if (*p == 'E') p++;
     int reg = 1;
+    char last_vec = 0;  // the element type of the last CSTLVector argument ('m' / 'j')
     while (*p && reg < 8) {
         if (!strncmp(p, "PKa", 3)) {
             const char* s = (const char*)x[reg++];
             r.strs.push_back(s ? s : "");
             p += 3;
-        } else if (!strncmp(p, "RKN9Framework10CSTLVectorI", 26)) {
-            char t = p[26];
+        } else if (!strncmp(p, "RKN9Framework10CSTLVectorI", 26) || (*p == 'S' && last_vec && strchr(p, '_'))) {
+            // a vector argument; "S<seq>_" repeats an earlier one's type (the Itanium substitution:
+            // BulkWithdrawItemFromOneTimeStorage's second vector is "S4_", the first's type)
+            const bool repeat = *p == 'S';
+            char t = repeat ? last_vec : p[26];
+            last_vec = t;
             const u64* v = (const u64*)x[reg++];
             std::vector<u64> out;
             if (v) {
@@ -97,7 +102,7 @@ server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint
                     for (const u32* q = (const u32*)v[0]; q < (const u32*)v[1]; q++) out.push_back(*q);
             }
             r.vecs.push_back(out);
-            p += 26 + 3;  // "mEE" / "jEE"
+            p = repeat ? strchr(p, '_') + 1 : p + 26 + 3;  // "mEE" / "jEE"
         } else if (strchr("jmhiabtsyxl", *p)) {
             // only the argument's own bits (AAPCS64 leaves the rest of the register undefined),
             // zero-extended as the wire decoder does

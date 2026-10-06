@@ -22,6 +22,8 @@ const char* mission_table(u32 type) {
             return "master_tower_mission";  // (b) MasterMissionModel::GetFromMissionID type 2
         case 3:
             return "master_world_map_mission";
+        case 4:
+            return "master_training_mission";  // (b) CStageManager::CallMissionStart: type 4 sends TrainingMissionStart
         default:
             return "";
     }
@@ -49,6 +51,14 @@ bool campaign_applies(int campaign_model, u32 campaign_area, u32 mission_type, u
     if (campaign_model != -2 && campaign_model != (int)mission_type) return false;
     return campaign_area == 0 || campaign_area == area;
 }
+
+bool continue_campaign_applies(int campaign_model, u32 campaign_area, bool every_type_pass, u32 mission_type, u32 area) {
+    if (every_type_pass) return campaign_model == kEveryMissionModel;
+    if (campaign_model != (int)mission_type) return false;
+    return mission_type != 1 || campaign_area == 0 || campaign_area == area;
+}
+
+u32 continue_price(u32 price, double magnification) { return (u32)((float)magnification * (float)price); }
 
 u32 campaign_stamina(u32 cost, double magnification) {
     if (cost == 0) return 0;

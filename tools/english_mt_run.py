@@ -440,6 +440,10 @@ def cmd_story(a):
     for stem, lines in sorted(rest.items()):
         for k in range(0, len(lines), STORY_CHUNK):
             items.append((f"{stem}:{lines[k][0]}", (stem, [], lines[k:k + STORY_CHUNK])))
+    # the user's order (2026-10-07): the event story files first, then EP2, then EP3, then the
+    # rest (EP1's and TS_3xxx / TS_5xxx's few gaps); stable within a group (script order)
+    rank = {"events/other": 0, "EP2": 1, "EP3": 2}
+    items.sort(key=lambda kp: rank.get(E.story_group(text[kp[1][2][0][0]][0]), 3))
     print(f"[story] {len(items)} requests, {sum(len(p[2]) for _, p in items)} lines", flush=True)
 
     def req(p):

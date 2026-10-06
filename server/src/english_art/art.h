@@ -119,7 +119,9 @@ void inpaint(Canvas& c, Rect area, Rect clip);
 // Draws a label's text (glow, shadow, outline, fill) into `box`, clipped to `clip`.
 void draw_text(Canvas& c, const Coverage& text, const Style& style, Rect box, Rect clip);
 // Applies one label at the origin (ox, oy) of a sprite of size (sw, sh): the cover, then the text.
-void apply_label(Canvas& c, const Font& font, const Label& label, Rect sprite);
+// `shape` (when given): the unedited picture, whose alpha a "shade" cover keeps (a band never covers
+// the picture's transparent margin, nor leaves a hole where an earlier inpaint thinned the alpha).
+void apply_label(Canvas& c, const Font& font, const Label& label, Rect sprite, const Canvas* shape = nullptr);
 
 // ---- the file -----------------------------------------------------------------------------------
 // The -en file of `recipe` from the source file's decrypted bytes (ADLD removed): its image(s)

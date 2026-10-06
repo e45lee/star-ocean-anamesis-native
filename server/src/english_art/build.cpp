@@ -25,7 +25,7 @@ namespace soa::server::english_art {
 namespace {
 
 // Part of every stamp: bump when the generator's output for the same inputs changes.
-constexpr const char* kGenerator = "english-art 2";
+constexpr const char* kGenerator = "english-art 3";
 constexpr const char* kFontName = "Font/etc2/font.fpk";
 constexpr const char* kOutputsList = "outputs.txt";
 
@@ -110,7 +110,7 @@ bool apply_recipe(const Recipe& recipe, const Bytes& source_plain, const Font& f
             if (!r) return fail(recipe.source + ": labels[" + std::to_string(i) + "]: no sprite " + name);
             where.push_back(*r);
         }
-        for (auto& r : where) apply_label(canvas, font, l, r);
+        for (auto& r : where) apply_label(canvas, font, l, r, &orig);
     }
     // re-encode only the 4x4 blocks whose pixels changed: everything else keeps the game's bytes
     int bpb = aska::block_bytes(img.fmt), bw = (img.w + 3) / 4, bh = (img.h + 3) / 4;

@@ -4,9 +4,9 @@ Every gate test is listed once, in [`tiers.json`](tiers.json) (the single source
 
 | Tier | When | What | Wall time |
 |---|---|---|---|
-| **T0** | every commit | the incremental build, then the fast deterministic checks in parallel: the server and runtime unit tests, every port selftest (one boot), every replay corpus, the docs / format / evidence / no-380 / schema checks, pytest, the coverage and impact maps current | about 1.5 minutes (the port selftest's boot is the long pole: 92 s; without it 43 s) |
+| **T0** | every commit | the incremental build, then the fast deterministic checks in parallel: the server and runtime unit tests, every port selftest (one boot), every replay corpus, the docs / format / evidence / no-380 / schema checks, pytest, the coverage and impact maps current | about 1.5 minutes (the port selftest's boot is the long pole: `soa-selftest` in the table) |
 | **T1** | per change | T0, then what `tools/tests_for.py` selects for the changed paths: the replay against the parent build, the tests/diff shards and port sessions that exercise the touched APIs (the cheapest set covering them), smoke for client changes, the emulator / viewer gates when their scope is touched | 2-6 minutes for one area (the shards run in parallel) |
-| **T2** | per batch, before merging to main | T0, the full tests/diff (all flows, all targets, parallel), the broad port session set, the emulator and viewer sessions, the CDN check; with a `build-win/`, the Windows tests `win:*` (else SKIP) | about 25 minutes (the full tests/diff and the sessions share the 12 slots; the `win:*` tests add about 7) |
+| **T2** | per batch, before merging to main | T0, the full tests/diff (all flows, all targets, parallel), the broad port session set, the emulator and viewer sessions, the CDN check; with a `build-win/`, the Windows tests `win:*` (else SKIP) | about 25 minutes (the full tests/diff and the sessions share the game slots, 15 by default: `control/soaslot.py` `DEFAULT_SLOTS`; the `win:*` tests add about 7) |
 | **T3** | occasional (nightly, before a release) | the slow or rarely affected: Sphere 211's long runs, the episode download, the full new-player download, the demos, smoke vs the emulator, the stand-in fetch, the debug-window sessions | |
 
 ```sh
@@ -81,6 +81,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T1 | `flow:event` | 5.5 min | 3 | the summer event (--enable-events): the board, story mc99_565, battle me99_1054, drops (a full flow, shard-sized) | `tests/diff/run.sh event --out {out}` |
 | T1 | `smoke` | 4.0 min | 1 | the port's screens against the baselines (title, home, character list, detail, other) | `port/scripts/smoke.sh build/port/soa {out} tests/smoke-base` |
 | T2 | `diff-full` | 17.5 min | 9 | the full flows seeded, tutorial, event on emu / port-server / port-inproc, all at once | `tests/diff/run.sh --out {out}` |
+| T2 | `diff-negative` | 2.5 min | - | the negative control of tests/diff: the login shard with one coin count changed in-process must FAIL its comparison (the state's free_coin) while both runs pass their milestones; a comparison that always passed would fail it. 2 clients, each queued for its own slot (game 0: the gate holds none for it). tools/tests_for.py also picks it for a change to the drivers or the tools they run | `tests/diff/run.sh login --target emu,port-inproc --inject 'port-inproc:--start-coins 299000' --expect-fail --out {out}` |
 | T2 | `session:battle` | 3.8 min | 1 | ミッション, mf01_001's battle, MissionEnd, the results, home; the player's EXP in the state | `port/scripts/battle_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:gacha` | 3.8 min | 1 | the gacha screen, its tabs, a 10-draw (SaleGacha), the presentation; the coins debited | `port/scripts/gacha_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:campaign` | 5.2 min | 1 | Episode 1 -> Mere -> 1-05 through the map, its battle, then the story mission it unlocks | `port/scripts/campaign_session.sh build/port/soa {out} {tmp}` |
@@ -149,6 +150,8 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 <!-- /tiers-table -->
 
 ## Measured (2026-10-03)
+
+With the pool at 12 slots then (15 since 2026-10-04: `control/soaslot.py` `DEFAULT_SLOTS`).
 
 | | Before | After |
 |---|---|---|

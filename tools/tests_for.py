@@ -23,8 +23,10 @@ How a path becomes tests (the rules, in order):
     every shard (the broad server set) and the replay against the parent build.
   * runtime/, platform370/, port/src/, emulator/src/, the root build files: the broad set: every
     shard, smoke, and the emulator / viewer gates where the user's gate scope says so.
-  * tests/diff/, control/: every shard (the drivers changed), smoke, one port session and one
-    emulator session (DRIVER_SESSIONS), and the slot pool's tests.
+  * tests/diff/, control/, soa_save/, and the tools/ the drivers run or import (driver_tools():
+    compare_packets.py, schema_inventory.py, compare_tutorial.py, ...): every shard (the drivers
+    changed), smoke, one port session and one emulator session (DRIVER_SESSIONS), the negative
+    control diff-negative (a deliberate difference must still FAIL), and the slot pool's tests.
   * a test script itself (port/scripts/X.sh, emulator/scripts/X.sh, ...), or the session module
     behind a wrapper (control/soadrive/sessions/X.py, its WRAPPER line): that test.
 Everything also runs T0 (tools/gate.sh T0) first.
@@ -62,12 +64,37 @@ RULES_DIR = {"growth": "growth", "deepspace": "deepspace", "gear": "items", "mis
 BROAD_SERVER = ("server/", "tools/server_")
 BROAD_CLIENT = ("runtime/", "platform370/", "port/src/", "emulator/src/", "emulator-viewer/src/", "CMakeLists.txt", "cmake/",
                 "vcpkg.json", "scripts/build.sh")
-DRIVERS = ("tests/diff/", "control/", "scripts/shared-phone.sh", "port/scripts/phone370.sh")
+DRIVERS = ("tests/diff/", "control/", "soa_save/", "scripts/shared-phone.sh", "port/scripts/phone370.sh")
+# the tools/ the drivers run or import (driver_tools(): found in their sources, so a new one counts
+# without a list to keep): a change to the packet comparison or the end-state check is a driver change
+DRIVER_SOURCES = ("control/", "tests/diff/")
+GATE_TOOLS = ("tools/gate.py", "tools/tests_for.py")  # named in the drivers' docs; the gate itself (its pytest is T0)
 # a change to the drivers (control/soadrive, control/run.py) also runs these sessions (the port's
 # session layout and the emulator's), besides every shard and smoke
 DRIVER_SESSIONS = ("session:rebase-inproc", "emu:seeded")
+NEGATIVE = "diff-negative"  # tests/diff with a deliberate difference: must FAIL (tests/tiers.json)
 DOC = re.compile(r"(\.md$|^docs/|^LICENSE$|\.png$|\.jpg$|\.txt$)")
 CODE_TXT = ("tests/tutorial_milestones.txt", "tools/server_log_patterns.txt", "requirements.txt")
+
+
+def driver_tools():
+    """{tools/X.py: the driver source naming it}: the tools the drivers (DRIVER_SOURCES, their
+    pytest aside) run by path (`tools/X.py`) or import (`import X` with tools/ on sys.path)."""
+    tools = {f[:-3] for f in os.listdir(os.path.join(REPO, "tools")) if f.endswith(".py")}
+    out = {}
+    for top in DRIVER_SOURCES:
+        for root, dirs, files in os.walk(os.path.join(REPO, top)):
+            dirs[:] = sorted(d for d in dirs if d not in ("tests", "__pycache__"))
+            for f in sorted(files):
+                if not f.endswith((".py", ".sh")):
+                    continue
+                path = os.path.join(root, f)
+                text = open(path, errors="replace").read()
+                names = set(re.findall(r"\btools/(\w+)\.py\b", text)) | set(re.findall(r"^\s*import (\w+)", text, re.M))
+                for n in sorted(names & tools):
+                    if "tools/%s.py" % n not in GATE_TOOLS:
+                        out.setdefault("tools/%s.py" % n, os.path.relpath(path, REPO))
+    return out
 
 
 def load_tiers():
@@ -160,6 +187,10 @@ def declared(cmd, apis):
 
 def regen(observed_dirs):
     apis = list_apis()
+    if not apis:
+        # a missing or broken soa-server: an impact map without APIs would select nothing
+        sys.exit("tests_for --regen: %s --list-apis gave no APIs (build soa-server, or set SOA_SERVER); "
+                 "tests/impact.json not written" % soa_server())
     old = json.load(open(IMPACT))["tests"] if os.path.exists(IMPACT) else {}
     tests = {}
     for c in sorted(os.listdir(REPLAY)):
@@ -235,6 +266,7 @@ def affected(paths, data, tiers):
         if m:
             scripts.setdefault(m.group(1), []).append(t["name"])
     sessions = session_modules()
+    dtools = driver_tools()
     for p in paths:
         if p in sessions and sessions[p] in scripts:
             direct.update(scripts[sessions[p]])
@@ -295,6 +327,10 @@ def affected(paths, data, tiers):
             drivers = True
             reasons.append("%s: the test drivers -> every shard" % p)
             continue
+        if p in dtools:
+            drivers = True
+            reasons.append("%s: a tool the test drivers run (%s) -> every shard" % (p, dtools[p]))
+            continue
         if p.startswith("tools/") or p.startswith("tests/"):
             reasons.append("%s: tooling (T0 only)" % p)
             continue
@@ -324,8 +360,9 @@ def select(paths, all_tests=False):
         if bc or drv:
             add("smoke", "client / drivers")
         if drv:
-            # the session runner and the shared flows: one port session and one emulator session
-            for n in DRIVER_SESSIONS:
+            # the session runner and the shared flows: one port session and one emulator session;
+            # and the negative control (the comparison still FAILs on a deliberate difference)
+            for n in DRIVER_SESSIONS + (NEGATIVE,):
                 add(n, "drivers")
         if bc:
             for t in tiers:

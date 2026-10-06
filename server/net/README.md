@@ -12,6 +12,7 @@ The 3.7.0 client's own protocol, so the unmodified client (soa-emu) can play aga
 | `cdn_http.{h,cpp}` | the CDN routes over `cdn::Tree` (`mount_cdn`), static files |
 | `loop.{h,cpp}` | the poll loop of the game port; starts the HTTP server, and one lock lets the game connections and the HTTP router take turns |
 | `client.{h,cpp}` | a wire client (the loopback tests, `--wire-tool session`); `http_post` / `http_get` on cpp-httplib's client |
+| `thread_atexit_win32.cpp` | Windows (MinGW GCC) only: a `__cxa_thread_atexit` that runs cpp-httplib's `thread_local` destructors while their emulated TLS is alive (libstdc++'s runs them after; our own code has only trivial `thread_local`s, runtime/README.md "Per-thread state") |
 | `tool.{h,cpp}` | `soa-server --wire-tool` (build reply packets, decode a request, run a client session) |
 | `ninja/` | the Ninja envelope (`ninja_ref.{h,cpp}`) and its ten ciphers (`ninja_*.cpp`, `ninja_ciphers.h`): data-like code, checked by 700 vectors; their `@` constants are cipher tables, not client addresses ([ninja/README.md](ninja/README.md)) |
 

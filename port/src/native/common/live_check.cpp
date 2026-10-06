@@ -235,7 +235,8 @@ const char* ensure_stub(u64 target) {
 }
 
 void drop_stale_code(u64 target) {
-    thread_local std::unordered_map<u64, size_t> t_dropped;  // target -> lowest level dropped
+    struct DroppedTag;  // target -> lowest level dropped (this thread's)
+    auto& t_dropped = thread_object<std::unordered_map<u64, size_t>, DroppedTag>();
     size_t d = guest_depth_this_thread();
     auto [it, fresh] = t_dropped.try_emplace(target, d);
     if (fresh || d < it->second) {
@@ -325,7 +326,8 @@ constexpr HostFn hook_at(int i, std::integer_sequence<int, I...>) {
 // call it (a virtual delete, e.g. CArena::Progress_Release's loop over its objects), so the
 // replay reads it again after the native run freed (and maybe reused) the block.
 bool is_deleting_dtor(u64 target) {
-    thread_local std::unordered_map<u64, bool> cache;
+    struct CacheTag;
+    auto& cache = thread_object<std::unordered_map<u64, bool>, CacheTag>();
     auto it = cache.find(target);
     if (it != cache.end()) return it->second;
     const LoadedLib& lib = *main_lib();
@@ -662,7 +664,8 @@ std::mutex g_pin_m;
 std::condition_variable g_pin_cv;
 thread_local int t_pin_depth = 0;
 int my_tid() {
-    static thread_local const int tid = (int)gettid();
+    static thread_local int tid = 0;
+    if (!tid) tid = (int)gettid();
     return tid;
 }
 }  // namespace

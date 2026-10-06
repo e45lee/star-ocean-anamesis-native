@@ -5,6 +5,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <soa/paths.h>
 
 #include "state/kvs.h"
 #include "state/seed.h"
@@ -29,7 +30,7 @@ NATIVE_TEST("server/seed-from-380-save") {
     if (kv.find("BAS:StandAloneNewPlayer") == kv.end()) t.fail("data/saves/client/Game.xml isn't an offline-build save (no BAS:StandAloneNewPlayer)");
     Server sv;
     sv.live = false;
-    std::string db = "/tmp/soa-server-seed380-" + std::to_string(getpid()) + ".sqlite3";
+    std::string db = soa::temp_dir() + "/soa-server-seed380-" + std::to_string(getpid()) + ".sqlite3";
     for (const char* suffix : {"", "-wal", "-shm"}) unlink((db + suffix).c_str());
     if (!sv.m.open(master, true) || !sv.open_state(db, t.rand_u64(), save)) return t.fail("open");
     t.expect_eq((u32)sv.st.one("select level from player", {}), kv_u32(kv, "player_level"), "player level");
@@ -59,7 +60,7 @@ NATIVE_TEST("server/seed-source-rule") {
     if (master.empty() || test_seed.empty()) return t.fail("needs the 3.7.0 master and server/tests/fixtures/test-seed.xml");
     ServerConfig& c = config();
     const ServerConfig saved = c;
-    const std::string tag = "/tmp/soa-server-seedrule-" + std::to_string(getpid());
+    const std::string tag = soa::temp_dir() + "/soa-server-seedrule-" + std::to_string(getpid());
     const std::string settings = tag + "-client-Game.xml";
     // the client's first-start Game.xml: its settings, no player (BAS:PlayerName 0)
     write_kvs(settings, {{"BAS:EffectAlpha", std::string("\x64\0\0\0", 4)},

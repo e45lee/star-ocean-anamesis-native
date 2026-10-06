@@ -7,6 +7,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <soa/paths.h>
 
 #include "state/kvs.h"
 #include "state/seed.h"
@@ -21,7 +22,7 @@ using ext::Row;
 
 NATIVE_TEST("server/kvs-roundtrip") {
     // write_kvs / read_kvs_ordered: the game's LocalKVS file format (as soa_save/kvs.py)
-    std::string p = "/tmp/soa-server-kvs-test.xml";
+    std::string p = soa::temp_dir() + "/soa-server-kvs-test.xml";
     std::vector<std::pair<std::string, std::string>> kv = {
         {"player_level", std::string("\x57\0\0\0", 4)}, {"player_name", std::string("Fayt\0", 5)}, {"abc", std::string(100, 'z')}};
     if (!write_kvs(p, kv)) return t.fail("write");
@@ -59,7 +60,7 @@ std::string file_bytes(const std::string& path) {
 NATIVE_TEST("server/kvs-rewrite-identical") {
     // read_kvs_ordered then write_kvs gives back the game's own bytes: the committed saves
     // (data/saves: the seed, the client's Game.xml and Aska.xml) and the synthetic test seed.
-    std::string out = "/tmp/soa-server-kvs-rewrite-" + std::to_string(getpid()) + ".xml";
+    std::string out = soa::temp_dir() + "/soa-server-kvs-rewrite-" + std::to_string(getpid()) + ".xml";
     for (const char* rel :
          {"server/tests/fixtures/test-seed.xml", "data/saves/seed/Game.xml", "data/saves/client/Game.xml", "data/saves/client/Aska.xml"}) {
         std::string in = find_repo_file(rel);

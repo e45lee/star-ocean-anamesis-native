@@ -24,6 +24,7 @@
 #include "core/gdbstub.h"
 #include "core/host_mem.h"
 #include "core/log.h"
+#include "core/thread_record.h"
 #include "dynarmic/interface/A64/a64.h"
 #include "dynarmic/interface/A64/config.h"
 #include "dynarmic/interface/exclusive_monitor.h"
@@ -256,7 +257,7 @@ public:
     bool prof_registered = false;
     std::atomic<bool> in_jit{false};  // the innermost level is running JIT code (maintained only with g_gdb_enabled)
 
-    ~ThreadState() { release(); }
+    ~ThreadState();
 
     void prof_register() {
         std::lock_guard lk(g_prof_mutex);
@@ -301,14 +302,35 @@ public:
     }
 };
 
-static thread_local ThreadState t_state;
+// The calling thread's state, on the heap and owned by its ThreadRecord (core/thread_record.h:
+// destroyed at the thread's end, after its thread objects): null until its first guest_call (or
+// guest_thread_init / guest_thread()). Code running inside a guest_call reads it directly.
+static thread_local ThreadState* t_state = nullptr;
 static thread_local Cpu* t_current = nullptr;
 
-GuestThreadInfo& guest_thread() { return t_state.info; }
+ThreadState::~ThreadState() {
+    if (t_state == this) t_state = nullptr;  // (core/thread_record.cpp: end())
+    release();
+}
+
+static ThreadState& make_thread_state() {
+    auto* s = new ThreadState;
+    thread_record_add(ThreadPhase::kCpu, s, [](void* p) { delete (ThreadState*)p; });
+    t_state = s;
+    return *s;
+}
+// The calling thread's state (made on first use).
+static inline ThreadState& thread_state() {
+    if (ThreadState* s = t_state) [[likely]]
+        return *s;
+    return make_thread_state();
+}
+
+GuestThreadInfo& guest_thread() { return thread_state().info; }
 Cpu* current_cpu() { return t_current; }
 
 void guest_thread_init(size_t stack_size) {
-    auto& ts = t_state;
+    auto& ts = thread_state();
     if (ts.info.stack_lo) return;
     // A thread nobody set up for crash reports (a library's thread calling into guest code).
     if (!crash_thread()) {
@@ -331,8 +353,6 @@ void guest_thread_init(size_t stack_size) {
     ts.info.tls[5] = 0x5f3759df1badf00dull;  // stack guard
     for (auto& c : ts.pool) c->set_tpidr((u64)ts.info.tls);
 }
-
-void guest_thread_release() { t_state.release(); }
 
 // ---------------------------------------------------------------------------
 
@@ -490,20 +510,20 @@ void CpuCallbacks::CallSVC(u32 swi) {
     if (__builtin_expect(g_gdb_enabled, 0)) {
         // For the GDB stub: this level is in host code (stopped from gdb's point of view) until the
         // handler returns to the JIT.
-        bool was = t_state.in_jit.exchange(false, std::memory_order_acq_rel);
+        bool was = t_state->in_jit.exchange(false, std::memory_order_acq_rel);
         if (g_prof_enabled) g_thunk_calls[swi].fetch_add(1, std::memory_order_relaxed);
         if (t.hook && gdb_native_breakpoints()) gdb_call_native(*cpu, t.hook, t.fn, true);  // (a breakpoint on a native)
         else t.fn(*cpu);
-        t_state.in_jit.store(was, std::memory_order_release);
-        if (t_state.info.exiting) cpu->halt();
+        t_state->in_jit.store(was, std::memory_order_release);
+        if (t_state->info.exiting) cpu->halt();
         return;
     }
     if (g_prof_enabled) {
         // Count the call and publish "this thread is in host code" for the sampler.
         g_thunk_calls[swi].fetch_add(1, std::memory_order_relaxed);
-        size_t d = t_state.depth;
+        size_t d = t_state->depth;
         if (d > 0 && d <= (size_t)kProfLevels) {
-            ProfLevel& l = t_state.prof.lv[d - 1];
+            ProfLevel& l = t_state->prof.lv[d - 1];
             l.pc = cpu->pc();
             l.lr = cpu->x(30);
             l.fp = cpu->x(29);
@@ -518,14 +538,15 @@ void CpuCallbacks::CallSVC(u32 swi) {
     } else {
         t.fn(*cpu);
     }
-    if (t_state.info.exiting) cpu->halt();
+    if (t_state->info.exiting) cpu->halt();
 }
 
 void prof_native_wait(bool waiting) {
-    if (!g_prof_enabled) return;
-    size_t d = t_state.depth;
+    ThreadState* ts = t_state;
+    if (!g_prof_enabled || !ts) return;
+    size_t d = ts->depth;
     if (d == 0 || d > (size_t)kProfLevels) return;
-    ProfLevel& l = t_state.prof.lv[d - 1];
+    ProfLevel& l = ts->prof.lv[d - 1];
     l.wait.store(waiting, std::memory_order_release);
     l.seq.store(l.seq.load(std::memory_order_relaxed) + 1, std::memory_order_release);
 }
@@ -662,7 +683,7 @@ GuestResult guest_call(u64 fn, const GuestArgs& args) {
 }
 
 GuestResult guest_call_raw(u64 fn, const u64* ints, size_t ni, const V128* vecs, size_t nv, u64 x8) {
-    auto& ts = t_state;
+    auto& ts = thread_state();
     if (!ts.info.stack_lo) guest_thread_init(1 << 20);
     const size_t depth = ts.depth;
     Cpu& c = ts.cpu_at(depth);
@@ -822,10 +843,12 @@ u64 make_original_trampoline(u64 addr) {
 // from inside one of their callbacks) are left alone: invalidating a JIT that is stopped in a
 // callback makes its Run() return early. They keep running the old code.
 void invalidate_guest_code_this_thread(u64 addr, u64 size) {
-    for (size_t i = t_state.depth; i < t_state.pool.size(); i++) t_state.pool[i]->jit()->InvalidateCacheRange(addr, size);
+    ThreadState* ts = t_state;
+    if (!ts) return;
+    for (size_t i = ts->depth; i < ts->pool.size(); i++) ts->pool[i]->jit()->InvalidateCacheRange(addr, size);
 }
 
-size_t guest_depth_this_thread() { return t_state.depth; }
+size_t guest_depth_this_thread() { return t_state ? t_state->depth : 0; }
 
 std::vector<GuestThreadView> guest_threads() {
     std::vector<GuestThreadView> out;
@@ -919,7 +942,8 @@ static void report_overflow(uintptr_t addr, uintptr_t sp) {
         crash_report_overflow(*ct, sp);
         return;
     }
-    const auto& gi = t_state.info;
+    static const GuestThreadInfo kNone;
+    const auto& gi = t_state ? t_state->info : kNone;
     if (gi.stack_lo && addr < gi.stack_lo && addr + 0x1000 >= gi.stack_lo) {
         const CrashThread* ct = crash_thread();
         fprintf(stderr, "\n*** guest stack overflow on thread %s (tid %d, guest stack %llu KiB) ***\n", ct && ct->name[0] ? ct->name : "?",
@@ -1119,7 +1143,8 @@ void dump_guest_state(Cpu& c) {
     }
     // Frame-pointer walk
     u64 fp = c.x(29);
-    const auto& ti = t_state.info;
+    static const GuestThreadInfo kNone;
+    const auto& ti = t_state ? t_state->info : kNone;
     for (int i = 0; i < 32 && fp >= ti.stack_lo && fp + 16 <= ti.stack_hi && (fp & 7) == 0; i++) {
         u64 ret = ((u64*)fp)[1];
         fprintf(stderr, "  #%d %s\n", i, describe_guest_addr(ret).c_str());

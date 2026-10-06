@@ -46,6 +46,7 @@
 #include <string>
 
 #include "core/log.h"
+#include "core/thread_record.h"
 #include "internal.h"
 #include "jni/jvm.h"
 #include "platform370/platform370.h"
@@ -75,11 +76,12 @@ struct Exchange {
     u64 remaining = 0;      // streaming: body bytes still to receive on fd / from reader
     std::string url;        // for the log
 };
-thread_local Exchange t_x;
+// The calling thread's exchange (core/thread_record.h).
+Exchange& tx() { return thread_object<Exchange>(); }
 // Ends the calling thread's exchange (closes a streaming connection).
 void reset_exchange() {
-    if (t_x.fd >= 0) sock::close(t_x.fd);
-    t_x = Exchange{};
+    if (tx().fd >= 0) sock::close(tx().fd);
+    tx() = Exchange{};
 }
 std::string g_user_agent = "Dalvik/2.1.0 (Linux; U; Android 9)";  // until SetHttpUserAgent; assumption (d)
 
@@ -202,7 +204,7 @@ std::string client_head(const std::vector<std::pair<std::string, std::string>>& 
 }
 
 // The exchange with the host's in-process server (set_http_backend): the request the socket path
-// would send, as a call; fills t_x like exchange().
+// would send, as a call; fills tx() like exchange().
 bool exchange_backend(HttpBackend& be, const std::string& url, const Url& u, const std::string& body, bool post) {
     auto t0 = std::chrono::steady_clock::now();
     HttpBackendRequest rq;
@@ -222,26 +224,26 @@ bool exchange_backend(HttpBackend& be, const std::string& url, const Url& u, con
         return false;
     }
     if (rs.body.size() > rs.length) rs.body.resize(rs.length);
-    t_x.status = rs.status;
-    t_x.head = client_head(rs.headers, rs.length);
-    t_x.remaining = rs.length - rs.body.size();
-    if (t_x.remaining) {
+    tx().status = rs.status;
+    tx().head = client_head(rs.headers, rs.length);
+    tx().remaining = rs.length - rs.body.size();
+    if (tx().remaining) {
         if (!rs.reader) {
-            LOGW("http", "%s %s (in-process): %llu bytes promised, no reader", rq.method.c_str(), url.c_str(), (unsigned long long)t_x.remaining);
-            t_x = Exchange{};
+            LOGW("http", "%s %s (in-process): %llu bytes promised, no reader", rq.method.c_str(), url.c_str(), (unsigned long long)tx().remaining);
+            tx() = Exchange{};
             return false;
         }
-        t_x.reader = std::move(rs.reader);
+        tx().reader = std::move(rs.reader);
     }
-    t_x.body = std::move(rs.body);
-    t_x.done = true;
-    t_x.url = url;
-    LOGI("http", "%s %s -> in-process: %d, %llu bytes (head in %.0f ms)", rq.method.c_str(), url.c_str(), t_x.status, (unsigned long long)rs.length,
+    tx().body = std::move(rs.body);
+    tx().done = true;
+    tx().url = url;
+    LOGI("http", "%s %s -> in-process: %d, %llu bytes (head in %.0f ms)", rq.method.c_str(), url.c_str(), tx().status, (unsigned long long)rs.length,
          std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count());
     return true;
 }
 
-// The whole exchange; fills t_x. false (and a log line) on any failure.
+// The whole exchange; fills tx(). false (and a log line) on any failure.
 bool exchange(const std::string& url, int port_arg, const std::string& body, bool post) {
     reset_exchange();
     Url u;
@@ -312,7 +314,7 @@ bool exchange(const std::string& url, int port_arg, const std::string& body, boo
     }
     std::string head = resp.substr(0, he + 2), rbody = resp.substr(he + 4);
     size_t sp = head.find(' ');
-    t_x.status = sp == std::string::npos ? 0 : atoi(head.c_str() + sp + 1);
+    tx().status = sp == std::string::npos ? 0 : atoi(head.c_str() + sp + 1);
     std::string cl = header_value(head, "Content-Length");
     bool chunked = !strcasecmp(header_value(head, "Transfer-Encoding").c_str(), "chunked");
     u64 length = 0;
@@ -321,8 +323,8 @@ bool exchange(const std::string& url, int port_arg, const std::string& body, boo
         // (bundles run to hundreds of MB).
         length = strtoull(cl.c_str(), nullptr, 10);
         if (rbody.size() > length) rbody.resize(length);
-        t_x.remaining = length - rbody.size();
-        if (t_x.remaining) t_x.fd = fd;
+        tx().remaining = length - rbody.size();
+        if (tx().remaining) tx().fd = fd;
         else sock::close(fd);
     } else {
         // Chunked, or delimited by the end of the connection: read it whole.
@@ -338,7 +340,7 @@ bool exchange(const std::string& url, int port_arg, const std::string& body, boo
             std::string dec;
             if (!dechunk(rbody, dec)) {
                 LOGW("http", "%s: malformed chunked body", url.c_str());
-                t_x = Exchange{};
+                tx() = Exchange{};
                 return false;
             }
             rbody.swap(dec);
@@ -360,11 +362,11 @@ bool exchange(const std::string& url, int port_arg, const std::string& body, boo
         out += line + "\r\n";
     }
     out += "Content-Length: " + std::to_string(length) + "\r\n";
-    t_x.head = out;
-    t_x.body = std::move(rbody);
-    t_x.done = true;
-    t_x.url = url;
-    LOGI("http", "%s %s -> %s:%d: %d, %llu bytes (head in %.0f ms)", post ? "POST" : "GET", url.c_str(), host.c_str(), port, t_x.status,
+    tx().head = out;
+    tx().body = std::move(rbody);
+    tx().done = true;
+    tx().url = url;
+    LOGI("http", "%s %s -> %s:%d: %d, %llu bytes (head in %.0f ms)", post ? "POST" : "GET", url.c_str(), host.c_str(), port, tx().status,
          (unsigned long long)length, std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count());
     return true;
 }
@@ -383,51 +385,51 @@ void install_http(Vm& vm) {
         bool post = a[3] & 1;
         return exchange(url, (int)(s32)a[1], body, post) ? 1 : 0;
     });
-    vm.override_method(AA, "GetStatusCode", "()I", [](Object*, const Args&, const Impl&) -> u64 { return (u64)(s64)(t_x.done ? t_x.status : -1); });
+    vm.override_method(AA, "GetStatusCode", "()I", [](Object*, const Args&, const Impl&) -> u64 { return (u64)(s64)(tx().done ? tx().status : -1); });
     vm.override_method(AA, "GetHttpHeader", "()Ljava/lang/String;", [&vm](Object*, const Args&, const Impl&) -> u64 {
-        return t_x.done ? (u64)vm.str(t_x.head) : 0;
+        return tx().done ? (u64)vm.str(tx().head) : 0;
     });
     // ReadHttpResponse(byte[]) -> int: the next part of the body (> 0 bytes), -1 at its end.
     vm.override_method(AA, "ReadHttpResponse", "([B)I", [](Object*, const Args& a, const Impl&) -> u64 {
         auto* arr = (jni::Array*)a[0];
-        if (!t_x.done || !arr || !arr->length) return (u64)(s64)-1;
+        if (!tx().done || !arr || !arr->length) return (u64)(s64)-1;
         if (arr->data.size() < arr->length) arr->data.resize(arr->length);
-        if (t_x.pos < t_x.body.size()) {
-            size_t n = std::min(arr->length, t_x.body.size() - t_x.pos);
-            memcpy(arr->data.data(), t_x.body.data() + t_x.pos, n);
-            t_x.pos += n;
+        if (tx().pos < tx().body.size()) {
+            size_t n = std::min(arr->length, tx().body.size() - tx().pos);
+            memcpy(arr->data.data(), tx().body.data() + tx().pos, n);
+            tx().pos += n;
             return (u64)n;
         }
-        if (t_x.reader && t_x.remaining) {
+        if (tx().reader && tx().remaining) {
             // The in-process server's stream.
-            s64 n = t_x.reader->read(arr->data.data(), (size_t)std::min<u64>(arr->length, t_x.remaining));
+            s64 n = tx().reader->read(arr->data.data(), (size_t)std::min<u64>(arr->length, tx().remaining));
             if (n <= 0) {
                 // A short body: the client's size / SHA-1 checks catch it.
-                LOGW("http", "%s: the body ended %llu bytes early (%s)", t_x.url.c_str(), (unsigned long long)t_x.remaining,
+                LOGW("http", "%s: the body ended %llu bytes early (%s)", tx().url.c_str(), (unsigned long long)tx().remaining,
                      n < 0 ? "read error" : "end of stream");
-                t_x.reader.reset();
+                tx().reader.reset();
                 return (u64)(s64)-1;
             }
-            t_x.remaining -= (u64)n;
-            if (!t_x.remaining) t_x.reader.reset();
+            tx().remaining -= (u64)n;
+            if (!tx().remaining) tx().reader.reset();
             return (u64)n;
         }
-        if (t_x.fd < 0 || !t_x.remaining) return (u64)(s64)-1;
+        if (tx().fd < 0 || !tx().remaining) return (u64)(s64)-1;
         for (;;) {
-            ssize_t n = sock::recv(t_x.fd, arr->data.data(), (size_t)std::min<u64>(arr->length, t_x.remaining));
+            ssize_t n = sock::recv(tx().fd, arr->data.data(), (size_t)std::min<u64>(arr->length, tx().remaining));
             if (n < 0 && sock::interrupted()) continue;
             if (n <= 0) {
                 // A short body: the client's size / SHA-1 checks catch it.
-                LOGW("http", "%s: the body ended %llu bytes early (%s)", t_x.url.c_str(), (unsigned long long)t_x.remaining,
+                LOGW("http", "%s: the body ended %llu bytes early (%s)", tx().url.c_str(), (unsigned long long)tx().remaining,
                      n < 0 ? sock::last_error().c_str() : "connection closed");
-                sock::close(t_x.fd);
-                t_x.fd = -1;
+                sock::close(tx().fd);
+                tx().fd = -1;
                 return (u64)(s64)-1;
             }
-            t_x.remaining -= (u64)n;
-            if (!t_x.remaining) {
-                sock::close(t_x.fd);
-                t_x.fd = -1;
+            tx().remaining -= (u64)n;
+            if (!tx().remaining) {
+                sock::close(tx().fd);
+                tx().fd = -1;
             }
             return (u64)n;
         }

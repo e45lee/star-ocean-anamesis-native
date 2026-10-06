@@ -155,8 +155,10 @@ scripts/build.sh --windows --target soa-server          # one part
 - GCC on MinGW differs from llvm-mingw in ways `soa_compat` covers (`common/win32/posix_compat.h`,
   `common/src/posix_compat_win32.cpp`): `rename` must replace (libstdc++'s `<cstdio>` restores the C
   runtime's, so the header includes it before its define; call `rename()`, never
-  `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated; a replacement
-  `__cxa_thread_atexit` runs them before the TLS blocks are freed); `mkdtemp` (mingw-w64 12+ only);
+  `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated and libstdc++ runs
+  them after the TLS blocks are freed: our code has only trivial `thread_local`s,
+  `runtime/src/core/thread_record.h`; cpp-httplib's get a replacement `__cxa_thread_atexit` in
+  soa-server's `server/net/thread_atexit_win32.cpp`); `mkdtemp` (mingw-w64 12+ only);
   and the C runtime is `msvcrt.dll`, not the UCRT (no `_get_timezone`; `long` is 32 bits).
 - What `msvcrt.dll` does differently from the UCRT, and what covers it (checked 2026-10-06):
   `stderr` is fully buffered into a pipe or file (a log read from WSL arrived in 4 KB pieces, and

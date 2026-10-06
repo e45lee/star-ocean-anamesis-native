@@ -82,11 +82,10 @@ void check_getter(Cpu& c, ShadowFn& f, HostFn native, u64 mask, int out_reg = -1
 // run the JIT on 256 KiB host stacks (runtime/src/hle/libc_thread.cpp), each guest_call level
 // taking ~1.7 KB. 150 KB of input's thread_local check buffers left the game thread ~90 KB and
 // crashed session:tower (port/src/native/README.md "Live checks"; selftest runtime/guest-thread-host-stack).
+// Destroyed at the thread's end (core/thread_record.h: thread_object).
 template <typename T, typename Tag = T>
 T& thread_scratch() {
-    thread_local std::unique_ptr<T> p;
-    if (!p) p = std::make_unique<T>();
-    return *p;
+    return thread_object<T, Tag>();
 }
 
 }  // namespace soa::live

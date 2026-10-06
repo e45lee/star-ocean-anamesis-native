@@ -13,6 +13,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <soa/paths.h>
 
 #include "core/time.h"  // parse_time_strict (S9)
 #include "soaserver/config.h"
@@ -29,7 +30,7 @@ using ext::Sql;
 // A scratch state file under /tmp (and its -wal / -shm / .bak-v<N> files, removed again).
 struct TempDb {
     std::string path;
-    explicit TempDb(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
+    explicit TempDb(const char* name) : path(soa::temp_dir() + "/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
     ~TempDb() { remove_all(); }
     void remove_all() {
         for (const char* suffix : {"",         "-wal",
@@ -59,7 +60,7 @@ struct TempDb {
 // and its .migrated), removed again.
 struct TempDir {
     std::string path;
-    explicit TempDir(const char* name) : path("/tmp/soa-schema-" + std::to_string(getpid()) + "-" + name + ".d") {
+    explicit TempDir(const char* name) : path(soa::temp_dir() + "/soa-schema-" + std::to_string(getpid()) + "-" + name + ".d") {
         remove_all();
         mkdir(path.c_str(), 0755);
     }

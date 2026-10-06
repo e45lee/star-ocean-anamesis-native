@@ -335,7 +335,7 @@ build/server/soa-server --download-dir work/download-3.7.0 --cdn-check \
 
 ## Tests
 
-The library's unit tests (beside their code in `src/`) use scratch servers (a state DB under `/tmp` seeded from the committed
+The library's unit tests (beside their code in `src/`) use scratch servers (a state DB in the temp dir, `soa::temp_dir()`, seeded from the committed
 synthetic `server/tests/fixtures/test-seed.xml`, with `data/basmaster-3.7.0.sqlite3`) and need no game:
 
 ```sh

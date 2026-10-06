@@ -11,6 +11,7 @@
 #include <ctime>
 #include <string>
 #include <vector>
+#include <soa/paths.h>
 
 #include "soaserver/adld.h"
 #include "soaserver/cdn.h"
@@ -44,7 +45,7 @@ bool spit(const std::string& p, const std::vector<uint8_t>& d) {
     return true;
 }
 void remove_tree(const std::string& dir) {
-    if (dir.rfind("/tmp/soa-cdn-test-", 0) != 0) return;  // only our own scratch trees
+    if (dir.rfind(soa::temp_dir() + "/soa-cdn-test-", 0) != 0) return;  // only our own scratch trees
     nftw(dir.c_str(), [](const char* p, const struct stat*, int, struct FTW*) { return ::remove(p); }, 16, FTW_DEPTH | FTW_PHYS);
 }
 // The 3.7.0 download (work/download-3.7.0) is local data, not in git: without it the tests that read
@@ -215,7 +216,7 @@ NATIVE_TEST("cdn/served-master") {
     // by whole years), VACUUMed, ADLD-AES packed.
     std::string master = need(t, "data/basmaster-3.7.0.sqlite3");
     if (master.empty()) return;
-    std::string dir = "/tmp/soa-cdn-test-" + std::to_string(getpid()) + "-master";
+    std::string dir = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-master";
     mkdir(dir.c_str(), 0755);
     std::string sha;
     uint64_t size = 0;
@@ -258,7 +259,7 @@ NATIVE_TEST("cdn/served-master") {
 
 // A small synthetic download: version.bin, two manifests, three members; the served tree.
 NATIVE_TEST("cdn/tree") {
-    std::string root = "/tmp/soa-cdn-test-" + std::to_string(getpid()) + "-tree";
+    std::string root = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-tree";
     remove_tree(root);
     std::string mir = root + "/mirror";
     auto plain_a = t.rand_bytes(1000), plain_b = t.rand_bytes(333), plain_s = t.rand_bytes(2000);

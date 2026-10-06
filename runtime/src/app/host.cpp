@@ -34,6 +34,7 @@
 #include "android/ndk.h"
 #include "android/platform.h"
 #include "core/crash.h"
+#include "core/thread_record.h"
 #include "core/cpu.h"
 #include "core/hle.h"
 #include "core/loader.h"
@@ -141,7 +142,7 @@ void app::start_watchdog() {
     int secs = (int)env::env_int("SOA_WATCHDOG", 0, 86400, 0);
     if (secs <= 0) return;
     std::thread([secs] {
-        crash_thread_begin("watchdog");
+        ThreadScope thread_scope("watchdog");  // crash reports; per-thread state ends with it (core/thread_record.h)
         u64 last = 0;
         int still = 0;
         bool reported = false;
@@ -220,7 +221,7 @@ void audio_callback(void*, Uint8* stream, int len) {
 // On Android the OpenSL mixer always runs, so while the device isn't pulling, this thread pulls
 // at the device's rate (wall clock) and discards the samples.
 void null_sink_loop() {
-    crash_thread_begin("audio-null-sink");
+    ThreadScope thread_scope("audio-null-sink");  // crash reports; per-thread state ends with it (core/thread_record.h)
     constexpr int kPeriod = 1024;
     constexpr s64 kStallNs = 250'000'000;
     std::vector<float> buf(kPeriod * 2);
@@ -687,7 +688,7 @@ void control_push(std::string l) {
 // on Linux can reach a Windows program through (WSL in mirrored networking shares 127.0.0.1;
 // port/PLAN.md 5b, W). PORT 0: any free port (the log line names it).
 void control_tcp_thread(std::string spec) {
-    crash_thread_begin("control");
+    ThreadScope thread_scope("control");  // crash reports; per-thread state ends with it (core/thread_record.h)
     std::string addr = spec.substr(4);
     size_t colon = addr.rfind(':');
     std::string host = colon == std::string::npos ? "127.0.0.1" : addr.substr(0, colon);
@@ -731,7 +732,7 @@ void control_tcp_thread(std::string spec) {
 // Windows: a named pipe instead of the FIFO, \\.\pipe\<the path's file name> (or the path itself
 // when it is already \\.\pipe\...); each writer connects, writes lines and disconnects.
 void control_thread(std::string path) {
-    crash_thread_begin("control");
+    ThreadScope thread_scope("control");  // crash reports; per-thread state ends with it (core/thread_record.h)
     std::string name = path;
     if (name.rfind("\\\\.\\pipe\\", 0) != 0) {
         size_t s = name.find_last_of("/\\");
@@ -760,7 +761,7 @@ void control_thread(std::string path) {
 #else
 // Reads commands (one per line) from a FIFO so a running instance can be driven externally.
 void control_thread(std::string path) {
-    crash_thread_begin("control");
+    ThreadScope thread_scope("control");  // crash reports; per-thread state ends with it (core/thread_record.h)
     unlink(path.c_str());
     if (mkfifo(path.c_str(), 0600) != 0) {
         LOGE("control", "mkfifo %s failed", path.c_str());

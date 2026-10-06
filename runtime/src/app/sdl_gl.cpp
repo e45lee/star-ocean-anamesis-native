@@ -1,5 +1,6 @@
 // The host GL contexts behind the guest's EGL (app/sdl_gl.h).
 #include "app/sdl_gl.h"
+#include "core/thread_record.h"
 
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
@@ -41,11 +42,11 @@ struct ThreadWindow {
         g_pool.push_back(win);
     }
 };
-thread_local ThreadWindow t_window;
 
 // This thread's pbuffer window, or null (the pool is empty: then the context is bound without a
 // surface, which SDL's X11 backend supports and its Wayland backend doesn't).
 SDL_Window* thread_window() {
+    ThreadWindow& t_window = thread_object<ThreadWindow>();  // (given back at the thread's end: core/thread_record.h)
     if (t_window.win) return t_window.win;
     std::lock_guard lk(g_pool_m);
     if (g_pool.empty()) {

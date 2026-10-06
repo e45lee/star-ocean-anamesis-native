@@ -4,6 +4,7 @@
 #include <cstring>
 #include <vector>
 
+#include "core/thread_record.h"
 #include "native/common/native.h"
 #include "native/common/native_method.h"
 #include "native/hash/hash_layout.h"
@@ -54,7 +55,8 @@ void Call(IParameterProperty* p, const AMap* map, PropertyDeserialize fn) {
 bool CParameterElementBase::Deserialize(const AMap* map) {
     if (!map) g::Assert(g::kParameterBaseCpp, 0x1e, g::kApParserIsNull);
     KeyHashes keys(map);
-    thread_local std::vector<Prop> props_buf;
+    struct PropsTag;
+    std::vector<Prop>& props_buf = thread_object<std::vector<Prop>, PropsTag>();  // (core/thread_record.h)
     std::vector<Prop> props;
     props.swap(props_buf);  // (a nested element's Deserialize gets an empty one)
     props.clear();
@@ -71,7 +73,8 @@ bool CParameterElementBase::Deserialize(const AMap* map) {
             }
         } else {
             // (a long list: the first property of each name by a sorted index)
-            thread_local std::vector<std::pair<u32, u32>> index_buf;
+            struct IndexTag;
+            auto& index_buf = thread_object<std::vector<std::pair<u32, u32>>, IndexTag>();
             std::vector<std::pair<u32, u32>> index;
             index.swap(index_buf);
             index.clear();

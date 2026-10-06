@@ -6,8 +6,8 @@
 # as on Linux.
 #
 # Why a copy: from WSL a Windows .exe can run in place (\\wsl.localhost\...), but SQLite can't lock
-# files over that share ("database is locked"), the worktree's work/ symlink isn't followed, and
-# the tests' /tmp is \tmp on the current drive. On a Windows machine, clone the repository instead.
+# files over that share ("database is locked"), and the worktree's work/ symlink isn't followed.
+# On a Windows machine, clone the repository instead.
 #
 # --phone: also the shared pre-downloaded phone (work/phone-3.7.0, 4 GB: scripts/shared-phone.sh), the
 # Windows runs' phone source (control/soadrive/winhost.py links each run's phone from it with hard

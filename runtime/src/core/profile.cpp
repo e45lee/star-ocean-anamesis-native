@@ -28,6 +28,7 @@
 // Stacks come from the leaf PC, LR (for leaf functions) and the frame-pointer chain, and continue
 // across nested guest_call levels (host code calling back into the guest).
 #include "core/crash.h"
+#include "core/thread_record.h"
 #include "core/profile.h"
 
 #include "core/elf64.h"
@@ -655,7 +656,7 @@ void sample_thread(ProfThread& t, void*) {
 }
 
 void sampler_main() {
-    crash_thread_begin("profiler");
+    ThreadScope thread_scope("profiler");  // crash reports; per-thread state ends with it (core/thread_record.h)
     auto period = std::chrono::nanoseconds(1000000000 / g_hz);
     auto next = Clock::now(), last_dump = next;
     for (;;) {

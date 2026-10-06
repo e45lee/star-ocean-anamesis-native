@@ -139,7 +139,7 @@ void* thread_body(void* p) {
     if (gt.exiting) r = gt.exit_value;
     gt.exiting = false;
     run_key_destructors();
-    guest_thread_release();
+    thread_end();  // core/thread_record.h
     {
         std::lock_guard lk(g_tid_mutex);
         g_tids.erase(pthread_self());

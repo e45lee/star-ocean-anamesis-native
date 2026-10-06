@@ -14,16 +14,21 @@
 #include <cstring>
 
 #include "core/cpu.h"
+#include "core/thread_record.h"
 
 namespace soa {
 
 namespace {
 
-// The record and its cleanup at thread exit (small: glibc carves static TLS out of every new
-// thread's stack, AGENTS.md "Pitfalls").
+// The calling thread's record, on the heap and owned by its ThreadRecord (core/thread_record.h:
+// destroyed last at the thread's end, so a fault in another per-thread destructor still reports).
+struct Slot;
+thread_local Slot* t_slot = nullptr;
+
 struct Slot {
     CrashThread t;
     ~Slot() {
+        if (t_slot == this) t_slot = nullptr;  // (core/thread_record.cpp: end())
 #ifndef _WIN32
         if (!t.alt) return;
         long page = sysconf(_SC_PAGESIZE);
@@ -41,7 +46,14 @@ struct Slot {
 #endif
     }
 };
-thread_local Slot t_slot;
+
+CrashThread& this_thread() {
+    if (Slot* s = t_slot) return s->t;
+    auto* s = new Slot;
+    thread_record_add(ThreadPhase::kCrash, s, [](void* p) { delete (Slot*)p; });
+    t_slot = s;
+    return s->t;
+}
 
 void set_name(CrashThread& t, const char* name) {
     if (!name) return;
@@ -91,19 +103,22 @@ void setup(CrashThread& t) {
 }  // namespace
 
 void crash_thread_begin(const char* name, uint64_t guest_entry) {
-    CrashThread& t = t_slot.t;
+    CrashThread& t = this_thread();
     if (!t.active) setup(t);
     set_name(t, name);
     if (guest_entry) t.guest_entry = guest_entry;
 }
 
 void crash_thread_set_name(const char* name) {
-    CrashThread& t = t_slot.t;
+    CrashThread& t = this_thread();
     if (!t.active) setup(t);
     set_name(t, name);
 }
 
-const CrashThread* crash_thread() { return t_slot.t.active ? &t_slot.t : nullptr; }
+const CrashThread* crash_thread() {
+    const Slot* s = t_slot;
+    return s && s->t.active ? &s->t : nullptr;
+}
 
 bool crash_is_stack_overflow(const CrashThread& t, uintptr_t addr, uintptr_t sp) {
     if (!t.lo) return false;

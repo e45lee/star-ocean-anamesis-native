@@ -2,11 +2,12 @@
 // Crash reports that survive a host stack overflow (runtime/README.md "Crash reports").
 //
 // Every thread the runtime creates calls crash_thread_begin() first (guest threads in the HLE'd
-// pthread_create, the main thread in cpu_global_init, the runtime's own std::threads at the top of
-// their functions, and any other thread on its first guest code through guest_thread_init). It
-// records the thread's name and host stack bounds and makes the fault handlers able to run on a
-// thread whose stack is used up:
-//   Linux: an alternate signal stack (kCrashAltStack, freed at thread exit); the handlers are
+// pthread_create, the main thread in cpu_global_init, the runtime's own std::threads through
+// ThreadScope at the top of their functions (core/thread_record.h), and any other thread on its
+// first guest code through guest_thread_init). It records the thread's name and host stack bounds
+// and makes the fault handlers able to run on a thread whose stack is used up:
+//   Linux: an alternate signal stack (kCrashAltStack, freed at the thread's thread_end(), the last
+//          of its per-thread state to go); the handlers are
 //          installed with SA_ONSTACK (dynarmic's SIGSEGV handler is too, and chains to ours).
 //   Windows: SetThreadStackGuarantee(kCrashAltStack), so the vectored handler for
 //          EXCEPTION_STACK_OVERFLOW has stack left to run on.

@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstring>
 #include <thread>
+#include <soa/paths.h>
 
 #include "net/cdn_http.h"
 #include "net/client.h"
@@ -114,7 +115,7 @@ void remove_tree(const std::string& root) {
 }
 
 NATIVE_TEST("net/cdn-loopback") {
-    std::string root = "/tmp/soa-cdn-test-" + std::to_string(getpid()) + "-http";
+    std::string root = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-http";
     std::shared_ptr<cdn::Tree> tree = make_tree(t, root);
     if (!tree) return;
     std::string err;
@@ -172,7 +173,7 @@ NATIVE_TEST("net/cdn-loopback") {
 // small pieces here, with the bytes Tree::lookup gives (net/cdn-loopback reads the same streams
 // through the HTTP server).
 NATIVE_TEST("net/cdn-in-memory") {
-    std::string root = "/tmp/soa-cdn-test-" + std::to_string(getpid()) + "-mem";
+    std::string root = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-mem";
     std::shared_ptr<cdn::Tree> tree = make_tree(t, root);
     if (!tree) return;
     HttpRouter router;

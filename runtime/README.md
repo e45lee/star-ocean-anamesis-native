@@ -126,6 +126,41 @@ A host can replace a guest function, or filter its calls, with host code:
 build/runtime/soaruntime_tests     # prints ok/FAIL per check, PASS/FAIL at the end
 ```
 
+## Per-thread state (`core/thread_record.h`)
+
+**Only trivial `thread_local`s**: pointers, integers, flags, enums and POD buffers, constant-initialized
+(no constructor, no destructor). A `thread_local` with a destructor is destroyed by the C++ runtime at
+thread exit in an order nobody controls, and the MinGW GCC build got it wrong twice (its TLS is emulated,
+libgcc's emutls): destructors ran on TLS blocks emutls had freed, then the main thread's ran after the
+static objects they used (`soaruntime_tests.exe`'s heap corruption at exit). `tools/check_thread_local.py`
+(T0) fails on any `thread_local` in our object files that registers a destructor (`__cxa_thread_atexit`) or
+has a dynamic initializer (a TLS guard variable or init function), and on a program other than soa-server
+that references `__cxa_thread_atexit` at all (soa-server keeps a replacement for cpp-httplib's own,
+`server/net/thread_atexit_win32.cpp`).
+
+A thread's objects live on the heap in its `ThreadRecord`, reached through one trivial `thread_local`
+pointer and made on first use:
+- `thread_object<T, Tag>()`: the calling thread's `T` (value-initialized; one per `(T, Tag)` and thread).
+  The fast path is one TLS load and an index. `live::thread_scratch<T>()` (the live checks' buffers) is
+  this.
+- The guest CPU state (`core/cpu.cpp`'s `ThreadState`: JIT instances, guest stack and TLS block) and the
+  crash-report setup (`core/crash.cpp`) are owned by the record too, with their own `thread_local`
+  pointers for the hot paths (the SVC handler, the fault handlers).
+
+`thread_end()` destroys the record in a fixed order: the thread objects (newest first; one a destructor
+makes is included), then the CPU state, then the crash setup (so a fault in an earlier destructor still
+reports). Who calls it:
+- guest threads: the HLE'd `pthread_create`'s thread body, after the guest's key destructors;
+- the runtime's own threads: `ThreadScope scope("name")` at the top of the thread function (it also calls
+  `crash_thread_begin`);
+- the main thread: `main()` before it returns (`soaruntime_tests`), so before the static destructors. A
+  program that leaves through `exit()` / `_exit()` elsewhere (the host loop, `--selftest`) leaves the main
+  thread's record to the operating system: nothing per-thread runs after the statics;
+- any other thread (a library's, such as SDL's audio thread, or a test's `std::thread`): a pthread key
+  destructor at its exit, given the record itself.
+
+Tests: `cpu/thread-record-order` and `cpu/thread-record-library-thread` (`soaruntime_tests`, `soa --selftest`).
+
 ## Crash reports (`core/crash.h`)
 
 A fatal fault prints a report to stderr and ends the process with a failure: Linux
@@ -139,7 +174,7 @@ Windows: SEH on its code, after the runtime's vectored handlers, which leave fau
 
 **Stack overflows report themselves.** A thread that runs out of host stack used to die silently
 (session:tower's 256 KiB guest thread: the handler ran on the overflowed stack). Now every thread the
-runtime makes calls `crash_thread_begin(name)` first: guest threads in the HLE'd `pthread_create`
+runtime makes calls `crash_thread_begin(name)` first (or `ThreadScope`, above): guest threads in the HLE'd `pthread_create`
 (`guest-TID`, renamed by the guest's `prctl(PR_SET_NAME)`; the report also names the guest function the
 thread started at), the host program's main thread (`cpu_global_init`: `main`), the runtime's own threads
 (`control`, `watchdog`, `audio` (SDL's audio thread, on its first callback), `audio-null-sink`, `movie-video`,

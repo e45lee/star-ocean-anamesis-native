@@ -21,6 +21,7 @@
 #include "soaserver/cdn.h"
 #include "soaserver/chash32.h"
 #include <soa/file_tree.h>
+#include <soa/paths.h>
 
 #include "soaserver/config.h"
 #include "soaserver/master_source.h"
@@ -140,7 +141,7 @@ struct TreeBuilder {
         std::string why;
         if (!(src = t->src_ = FileTree::open(mirror, &why))) return fail("cdn: the download: " + why);
         if (!read_version_bin()) return nullptr;
-        scratch = opts.scratch.empty() ? "/tmp/soa-server-cdn" : opts.scratch;
+        scratch = opts.scratch.empty() ? soa::temp_dir() + "/soa-server-cdn" : opts.scratch;
         files::mkdirs(scratch);
         now = opts.now ? opts.now : files::server_time();
         if (!serve_master()) return nullptr;
@@ -534,7 +535,7 @@ Options options_from_config() {
     o.standins = standin_dir_from_config();
     o.scratch = !c.cdn_scratch.empty() ? c.cdn_scratch
                 : !c.data_root.empty() ? c.data_root + "/cdn"
-                                       : "/tmp/soa-server-cdn-" + std::to_string(getuid());
+                                       : soa::temp_dir() + "/soa-server-cdn-" + std::to_string(getuid());
     return o;
 }
 

@@ -97,25 +97,41 @@ class Proc:
             return False
 
 
+def _live_snapshot():
+    """The live Procs without LIVE_LOCK (a signal handler runs on the main thread, which may hold
+    it): a copy of the set, retried if another thread changes it during the copy."""
+    for _ in range(100):
+        try:
+            return list(LIVE)
+        except RuntimeError:  # "Set changed size during iteration"
+            continue
+    return []
+
+
 def kill_all():
     """KILLs the process group of every Proc not yet stopped. Each runs in its own group (not the
     driver's), so a driver that is killed leaves them running, each with the game slot it
-    inherited, until its own time limit: a driver's TERM handler calls this first."""
-    with LIVE_LOCK:
-        live = list(LIVE)
-    for p in live:
+    inherited, until its own time limit: a driver's TERM handler calls this first. Safe in a signal
+    handler: no lock, no I/O but kill(2)."""
+    for p in _live_snapshot():
         try:
             os.killpg(p.pid, signal.SIGKILL)
         except (ProcessLookupError, PermissionError):
             pass
 
 
-def exit_on_signals(code=143, signals=(signal.SIGTERM, signal.SIGHUP)):
+def exit_on_signals(signals=(signal.SIGTERM, signal.SIGHUP)):
     """On TERM / HUP (a gate's interrupt or time limit, a closed terminal): end every Proc, then exit
-    at once (a driver whose threads are blocked in waits; tests/diff/difftest.py). Main thread only."""
+    at once with 128 + the signal (a driver whose threads are blocked in waits; tests/diff/difftest.py).
+    Main thread only. The handler is async-signal-safe in Python's sense: it runs between two
+    bytecodes of the main thread, which may be inside print() (a reentrant print raises) or hold a
+    lock, so it takes no lock and writes only with os.write to fd 2."""
     def handler(signum, _frame):
         kill_all()
-        print("stopped by signal %d: ended %s" % (signum, "the clients and servers it started"), flush=True)
-        os._exit(code)
+        try:
+            os.write(2, b"stopped by signal %d: ended the clients and servers it started\n" % signum)
+        except OSError:
+            pass
+        os._exit(128 + signum)
     for s in signals:
         signal.signal(s, handler)

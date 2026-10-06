@@ -13,6 +13,9 @@
 namespace soa::server::cdn::files {
 
 constexpr const char* kMasterName = "sqlite/basmaster.sqlite3";  // (b) the master's name in version.bin and the manifests
+// (b) the English master's name: CGameResourceManager::FileExistLanguage tries "<name>-en.<ext>"
+// first when CLanguage::Current is 1 (docs/english.md 6.3)
+constexpr const char* kEnglishMasterName = "sqlite/basmaster-en.sqlite3";
 
 // The whole file (false when it can't be read).
 bool read_file(const std::string& path, std::vector<uint8_t>& out);

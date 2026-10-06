@@ -271,8 +271,14 @@ enum PresentReason : u32 {
     kPresentPremiumLogin = 6,  // reason_param = master_premium_login_bonus id; Present_box_6 "%s %d日目"
     kPresentFavorBonus = 7,  // reason_param = master_role id; Present_favor_1 "%sのフレンドリープレゼント"
 };
-// master_text (lang ja) of a message id; "" when missing.
+// master_text (lang ja) of a message id; "" when missing. The server's rules read this (Japanese
+// always).
 std::string text(Sql& m, const std::string& message_id);
+// The text the player sees for a message id: text(), or under --english its English from the
+// English text table when the table translates exactly this Japanese (english_text.h;
+// docs/server-rules.md#english). For the texts the server composes (present lines, the notice
+// page), never for a rule.
+std::string display_text(Sql& m, const std::string& message_id);
 // "%s" / "%d" in a Present_box template replaced in order.
 std::string format_present(const std::string& tmpl, const std::string& s, int64_t d = -1);
 // A present's line: its stored text (the row's `text`), else one built from reason_type /

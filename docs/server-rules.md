@@ -24,6 +24,7 @@ The rules the local server (`server/`, in-process in `soa` or standalone as `soa
 | [Tower](#tower) | `server/src/api/tower/` |
 | [Settings and account](#settings-account) | `server/src/api/settings/` |
 | [Server-wide: architecture, seed, wire, CDN](#core) | `server/src/core/`, `server/net/`, `server/src/cdn/` |
+| [English mode (`--english`)](#english) | `server/src/master/english_text.*`, `server/src/cdn/` |
 | [Register of (c) and (d) rules the player can see](#register) | generated from the domains' tables (`tools/server_rules_doc.py`) |
 
 <a id="labels"></a>
@@ -2035,6 +2036,18 @@ What `soa-server` serves the 3.7.0 downloader (`CGameResourceDownloader`; the pr
 | **Stand-ins.** `standin-assets/<rel>` files the download lacks are served as new members: one Individual bundle each (`I/5374616e/<CHash32 hex>.bin`) and one Bulk bundle (`B/5374616e/standins.bin`); a real asset of the same name wins. On by default (`--standin-assets off` drops them); they are made-up art (docs/client-changes.md, port/README.md "Stand-in assets") | (d) |
 | **Paths.** `…/Android/<name>` with any prefix (the client's is `/download/<r_ver>/`), and `/master/<rev>/<name>` (the client's "download/" → "master/" swap of master nodes: its flag is never set in 3.7.0) answer the same tree; `<name>` is version.bin, `manifest/etc2/hi/…` (the only format the download has), a bundle, or a file of the download (the client never asks for single files; served for tools) | (b) the URL; (d) the rest |
 
+<a id="english"></a>
+### English mode (`--english`; `server/src/master/english_text.*`, `server/src/cdn/served_master.cpp`, `server/src/cdn/tree.cpp`)
+The plan is docs/PLAN-english.md (option C, steps C2, C1, E6); the findings are docs/english.md. Off by default: without `--english` the server, its CDN and its replies are byte for byte what they were (test `cdn/lang-members`; the replay corpora).
+
+| Rule | Source |
+|---|---|
+| **The English text table.** One generated file, `data/english/master-en.tsv` (`--english-text FILE` overrides; looked up like the other repo files, `find_repo_file`, so a release package's `data/english/` too): a header `message_id\tja_sha1\ten\tsource`, one row per message_id. `en` is served as is (a line break is the two characters `\n`, as in the master). Missing with `--english`: a warning; no `-en` master is served and the server's texts stay Japanese | (d) the file and its form (fixed by the English plan's interfaces) |
+| **The matching rule.** A row's English replaces a Japanese text only when the SHA-1 of that Japanese (the served master's row; for the server's own texts, the server master's) equals the row's `ja_sha1`; otherwise the Japanese stays (a **stale** row, counted in the log line `english master: ...`). A row with an empty `ja_sha1` is a new message id: inserted into the `-en` master when the master has no row of that id. No row is ever deleted (a missing row shows its message id on screen: docs/english.md 3.4) | (d) the rule; (b) why never delete (`StringDB::GetNativeString` returns the key on a miss) |
+| **`-en` members on the CDN, only with `--english`** (PLAN-english Q11). The CDN's stand-in step takes more roots: after `standin-assets`, any further member roots, then the generated root `<cdn scratch>/lang-en`; each file there the download lacks becomes a new member exactly as a stand-in does: a version.bin entry, an Individual bundle `I/5374616e/<CHash32 hex>.bin`, a member of the Bulk bundle `B/5374616e/standins.bin`, new version ids (revision + 1 as always). A name an earlier root has is not added again. A client with `CLanguage::Current` = en loads `<name>-en.<ext>` before `<name>.<ext>`; every client fetches every new member at its data check, Japanese ones too (about 36 MB for the master) | (b) `CGameResourceManager::FileExistLanguage` (ELF 0x17f8634: `name-<Current>.ext`, then `name.ext`) and the data check (docs/english.md 6.3); (d) serving them only with `--english`, the generated root |
+| **The English master** `sqlite/basmaster-en.sqlite3`: a copy of the served master **after** every `ClientMaster` hook (event dates, `service_stop_day`, Sphere 211, shops, tower banners; experiment 3 of docs/english.md 6.5 showed the wrong event badge of a master without them), with the table's English in the `text_value` of the `ja_` rows it matches (id = CHash32("ja_" + message_id) unchanged), new rows for new ids (id CHash32("ja_" + message_id), `lang` ja, `data_type` package, `category_id_label` system, `category_id` CHash32("system") as the master's own rows, `serial_number` the next free one, `text_kana` NULL), VACUUMed, ADLD-AES (encType 2) keyed by its own name. Built at every start from the table (deterministic: two builds are byte-identical, so the CDN's ids stay put); the old file is removed first, so a start without the table serves none. The server's own rules keep reading the Japanese master (`kDefaultEventKeywords` matches Japanese text) | (a) Global's official English where the table's `source` is `official` (docs/basmaster-gl.md); (b) StringDB reads only `ja_` rows by id (docs/english.md 6.2) and a `-en` master needs no client change beyond `CLanguage` (6.6); (d) our rows (memory, template, machine, human) and the inserted rows' columns |
+| **The server's own texts follow `--english`** (E6). The present lines it composes (`format_present` of `Present_box_1` / `_2` / `_3` / `_6`, `Present_favor_1`, and the names in them; the world boss's and Sphere 211 rental's present texts) take each template and name through `ext::display_text`: the English of the table when it matches the server master's Japanese (the rule above), else the Japanese. A line is stored when granted, so lines granted before keep their language. The gacha rate dialog's headings (`gacha_tilte_message_0001` / `0002`–`0004` / `0005`–`0007` / `0008` / `0010`, which the server composes) take the English only when its printf conversions equal the Japanese one's (the server fills them). The notice page's own words are English (`<html lang="en">`, "Notices", "Events now on", "Login bonuses", "Present box"); its event and bonus names come from the table | (a) the templates' message ids; (d) the English wording of the page, using the table for the server's texts, the printf check |
+
 <a id="core-register"></a>
 ### Player-visible (c) and (d) rules (server core)
 
@@ -2043,6 +2056,8 @@ These come from the server core. Revisit them when evidence turns up.
 | Rule | Label |
 |---|---|
 | Seed: 300,000 free coins (`--start-coins`, the user's request), character levels (cap − 10), skill level 1, nothing equipped, no items | (d) |
+| `--english`: a row's English is used only for the exact Japanese it translates (`ja_sha1`); otherwise the Japanese stays, so English and Japanese mix ([English mode](#english)) | (d) |
+| `--english`: the notice page's own English wording; a rate heading keeps its Japanese unless the English has the same printf conversions ([English mode](#english)) | (d) |
 | Party 1 = home character + two highest-rarity characters; MissionStart uses the current party | (d) |
 | Party sets never saved carry set 1's members; the last saved set becomes the current party | (d) |
 | Battle stats: common curve × role % / 100, AP 100, no element defences, default weapon | (d) |
@@ -2209,6 +2224,8 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [settings-account](#settings-register) |  | 期限情報's read marks aren't stored (the server keeps no expiration state) | (d) |  |
 | [settings-account](#settings-register) |  | シナリオライブラリ lists the story of cleared missions | (c) |  |
 | [core](#core-register) |  | Seed: 300,000 free coins (`--start-coins`, the user's request), character levels (cap − 10), skill level 1, nothing equipped, no items | (d) |  |
+| [core](#core-register) |  | `--english`: a row's English is used only for the exact Japanese it translates (`ja_sha1`); otherwise the Japanese stays, so English and Japanese mix ([English mode](#english)) | (d) |  |
+| [core](#core-register) |  | `--english`: the notice page's own English wording; a rate heading keeps its Japanese unless the English has the same printf conversions ([English mode](#english)) | (d) |  |
 | [core](#core-register) |  | Party 1 = home character + two highest-rarity characters; MissionStart uses the current party | (d) |  |
 | [core](#core-register) |  | Party sets never saved carry set 1's members; the last saved set becomes the current party | (d) |  |
 | [core](#core-register) |  | Battle stats: common curve × role % / 100, AP 100, no element defences, default weapon | (d) |  |

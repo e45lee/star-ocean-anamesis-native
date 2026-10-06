@@ -46,7 +46,7 @@ u32 grant_next_page(Ctx& ctx, const Row& bonus_row, u32 day) {
         // (a) Present_box_1 "%s %d日目": the bonus's name and the day; (d) the reason number
         // (ext.h PresentReason; present_texts.cpp)
         add_present(ctx, (u32)content.i("content_type"), (u32)content.i("content_id"), (u32)content.i("num"), kPresentLoginBonus, id,
-                    format_present(text(ctx.m, "Present_box_1"), text(ctx.m, bonus_row.s("name_message_id")), next));
+                    format_present(display_text(ctx.m, "Present_box_1"), display_text(ctx.m, bonus_row.s("name_message_id")), next));
     });
     LOGI("server", "login bonus %s: day %u", bonus_row.s("id_label").c_str(), next);
     return next;

@@ -53,6 +53,7 @@ void dump(Dump& d, const soa::server::ServerConfig& c) {
     d.f("start_coins", c.start_coins).f("has_clock", c.has_clock).f("clock", c.clock);  // (clock_offset: now-dependent)
     d.f("galaxy_pass", c.galaxy_pass).f("enable_events", c.enable_events).f("event_keywords", c.event_keywords);
     d.f("restore_tower", c.restore_tower).f("home3d_all", c.home3d_all).f("campaign_master_db", c.campaign_master_db);
+    d.f("english", c.english).f("english_text", c.english_text);
     d.f("campaign_seed", c.campaign_seed).f("fail", c.fail).f("surprise", c.surprise).f("log_packets", c.log_packets);
     d.f("repo_roots", c.repo_roots).f("data_root", c.data_root).f("cdn_url", c.cdn_url).f("cdn_revision", c.cdn_revision);
     d.f("download_dir", c.download_dir).f("cdn_standins", c.cdn_standins).f("standin_dir", c.standin_dir).f("cdn_scratch", c.cdn_scratch);
@@ -299,6 +300,9 @@ int main() {
     // --fake-server (2026-10-05; the canned responses were retired, docs/unimplemented-apis.md step 9).
     const V kRemovedFont = {"--font"};
     const V kRemovedSoa = {"--font", "--fake-server"};
+    // Options added since, to both soa and soa-server (soaserver/cli.h): --english, --english-text
+    // (2026-10-07, docs/PLAN-english.md).
+    const V kAddedServer = {"--english", "--english-text"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -394,6 +398,8 @@ int main() {
         {{"--event-keywords", "水着,夏,!福袋"}},
         {{"--restore-tower"}},
         {{"--home3d-all"}},
+        {{"--english"}, "--english is new (docs/PLAN-english.md C1, C2, E6: the -en CDN members and the server's English texts)", -1},
+        {{"--english", "--english-text", "/x/master-en.tsv"}, "--english-text is new (the English text table, with --english)", -1},
         {{"--campaign-master-db", "data/basmaster-3.7.0.sqlite3", "--campaign-seed", "mf01_001"}},
         {{"--fail", "MissionStart:9001,GachaDraw:2"}},
         {{"--surprise"}},
@@ -586,14 +592,14 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, {}, kRemovedSoa, soa_rows);
+            check_names("soa", names, soa_old, kAddedServer, kRemovedSoa, soa_rows);
         }
         {
             soa::server::ServerConfig c;
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, {}, {}, server_rows);
+            check_names("soa-server", names, server_old, kAddedServer, {}, server_rows);
         }
         {
             soa::emu::EmuArgs a;

@@ -48,7 +48,8 @@ struct TempDb {
                                    ".bak-v11", ".bak-v11-journal",
                                    ".bak-v12", ".bak-v12-journal",
                                    ".bak-v13", ".bak-v13-journal",
-                                   ".bak-v14", ".bak-v14-journal", ".bak-v15", ".bak-v15-journal"})
+                                   ".bak-v14", ".bak-v14-journal",
+                                   ".bak-v15", ".bak-v15-journal"})
             unlink((path + suffix).c_str());
     }
 };

@@ -30,8 +30,6 @@ WRAPPER = "port/scripts/simulator_continue_session.sh"
 CHARACTER = "180:1245"     # the footer's キャラクター
 SIMULATOR = "364:860"      # the character menu (scrolled to its end): バトルシミュレーター
 RENTAL_NONE = "620:1120"   # the rental list: 選択しない
-PARTY_START = "364:898"    # the party: ミッション開始
-CONFIRM_OK = "515:713"     # ミッションを開始しますか? 決定
 PAUSE = "80:50"            # the battle's pause button
 SIM_END = "364:455"        # the simulator's pause menu: シミュレーター終了
 SIM_END_YES = "525:790"    # シミュレーターを終了し…よろしいですか? はい
@@ -104,8 +102,10 @@ def main(o):
         s.wait_log(mission.phase(11), 120, name="キャラクター -> the character menu")
         c("wait:5000", "drag:364:900:364:300", "wait:2000", "drag:364:900:364:300", "wait:2500", s.shot_cmd("03-character-menu-end"))
         c("tap:" + SIMULATOR, "wait:5000", s.shot_cmd("04-simulator-rental"), "tap:" + RENTAL_NONE, "wait:5000", s.shot_cmd("05-simulator-party"))
-        c("tap:" + PARTY_START, "wait:3000", s.shot_cmd("06-simulator-confirm"))
-        s.tap_until("決定 -> TrainingMissionStart", 60, CONFIRM_OK, lambda: s.in_server(r"TrainingMissionStart: mission [0-9]+, no play record"))
+        mission.open_mission_confirm(s)
+        c(s.shot_cmd("06-simulator-confirm"))
+        mission.start_mission(s, "決定 -> TrainingMissionStart", lambda: s.in_server(r"TrainingMissionStart: mission [0-9]+, no play record"),
+                              opened=True)
         s.check("the simulator fights with party 1", s.in_server(r"MissionStart mission [0-9]+ \(master_training_mission\) party 1 "))
         s.check("no stamina for the simulator", s.in_server(r"\(master_training_mission\) .*stamina ([0-9]+) -> \1\b"))
         s.check("no play record after the simulator's start", play_rows(s.state_db) == 0)

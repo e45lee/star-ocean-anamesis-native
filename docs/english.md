@@ -23,6 +23,11 @@ Ghidra addresses are ELF vaddr + 0x100000, as `tools/decomp_at.sh` takes them. C
   - 14 hard-coded strings in `libSOA.so`, and the screens shown before the first download, which read the APK's built-in master (section 1.5).
   - The server's own texts (section 1.6).
   - Voices.
+- **The client has its own language switch, unused in 3.7.0 (section 6, investigation 2).**
+  - `CLanguage` makes every file load try `name-en.ext` before `name.ext`: master, story, layouts, images, font and voices. `CGame::OnInitialize` sets it to "no language" (0x100).
+  - Setting it to `en` is a **one-site client change**. With per-language files served as new CDN members, it gave an English master (including the pre-download dialog), English story and replaced images, with Japanese as the per-file fallback (experiment 3).
+  - StringDB hard-codes `ja` at two sites. Adding `en_` rows beside `ja_` needs both patched.
+  - **No English voice data exists anywhere we have.**
 
 ## 1. Where the client's text comes from
 
@@ -305,8 +310,8 @@ Consequences:
 - **The pre-download screens** (the APK's built-in master and UI layouts, section 1.5) are client files. Showing them in English needs a client hook that serves an edited built-in master and layouts from the port's asset layer, like `--download-dir`. They are seen once per phone, so they come last.
 - **The client's own language switch.** `CGame::OnInitialize` builds `CLanguage(0x100)` (ELF 0x114256c, `orr w1, wzr, #0x100`). With 1 (`en`) instead, `CGameResourceManager::FileExistLanguage` would look for `name-en.ext` first and fall back to `name.ext`, for direct files and for `Voice_*` packs.
   - English images and layouts could then ship as *new* `-en` members, which the stand-in path already serves. No overlay that replaces the download's files would be needed.
-  - StringDB ignores `CLanguage`, so text still goes through the served master.
-  - This is a one-argument client change, but which loaders use `FileExistLanguage` must be checked first.
+  - StringDB ignores `CLanguage`, so text still goes through the served master. (Section 6.6: the master is itself a file, so a `-en` master works with no StringDB change.)
+  - This is a one-argument client change, but which loaders use `FileExistLanguage` must be checked first. (Checked in section 6.3: all of them, including the master, the story files and the font.)
 - **The font: a server route exists.** An overlay `Font/etc2/font.fpk` with added glyphs (é, —, •, ™) would be data. It needs an fpk writer: ADLD, SLZ/zstd, ISF, an ETC2 page, the glyph table. Folding text to the existing glyphs (3.1) avoids all of that.
 - **Word wrap: client change, or pre-wrapping on the server.**
   - **Server-side pre-wrapping.** Insert `\n` using the font's advances and a width budget per text kind; data only. This needs the budgets: the box widths per screen and message kind, measured from the `.csf` layouts or by screenshots.
@@ -325,7 +330,7 @@ Consequences:
 | Unknown tag in story text crashes `ParseMessage` | likely (disassembly) | strip or convert Global tokens; a test that every served Scenario row parses |
 | Text used as keys | none found | — |
 | Japanese sort order of English names | cosmetic | — |
-| Global `ja` older than JP (821 rows) | the English may describe old values (hit counts, shop names) | leave Japanese, or take it after review (question Q2) |
+| Global `ja` older than JP (821 rows) | the English may describe old values (hit counts, shop names) | leave Japanese, or take it after review (question Q7) |
 | Global wording for things 3.7.0 does differently ("Gems" for 紋章石, "Official Forums") | cosmetic | a small override table |
 | Client re-fetch of an overlay member | likely, unproven | the session proof in E4 |
 | Which builtin UI copy the client uses after the download | unknown | only matters for title-screen labels |
@@ -340,3 +345,168 @@ Consequences:
 - rows wider than the JP row by more than N px.
 
 The game sessions that exercise text are `home`, `tutorial`, `campaign` (story), `gacha`, `events` and `settings`.
+
+## 6. The client's own language switch
+
+Investigation of 2026-10-06 (agent `english2`), at the user's request: **a client change for English, plus a server that serves English assets with Japanese as the fallback for missing assets and voices.** The plan's options B and C ([PLAN-english.md](PLAN-english.md)) are built on this section. Decompiles: `work/decomp/eng2_*.resolved.c` (scratch, local). Addresses are ELF vaddr unless marked "Ghidra" (vaddr + 0x100000). Callers come from a scan of every `BL` in `.text` and of every ADRP+LDR/ADD pair, so a call through a vtable or `std::function` would not show.
+
+### 6.1 What `CLanguage` controls
+
+- **The object.** `CLanguage` is 12 bytes: `Default` (+0), `Current` (+4), `Voice` (+8), plus a singleton (`TSingleton<CLanguage>`).
+  - The codes are `tLanguage` 0 = `ja`, 1 = `en`, 0x100 = `""` (no postfix), 0x101 = `none` (strip a postfix). `CLanguage::LanguageCode` (0x13b4b90) asserts on any other value.
+  - The only constructor call is in `CGame::OnInitialize`: `CLanguage(0x100)` (`orr w1, wzr, #0x100` at 0x114256c). It sets all three fields to 0x100.
+  - Nothing sets `Current` afterwards: `CLanguage::Current(tLanguage)` has 0 callers.
+- **Its users: 6 functions, 10 references to the singleton** (an exact ADRP+LDR scan of its GOT slot; `tools/xref_got.py` also lists `LocalSetControllerU24_Default_TrRtSc<false>`, but none of that function's LDRs reads the slot, so it is a false hit):
+
+  | Function (ELF) | Reads | Does |
+  |---|---|---|
+  | `CLanguage::CLanguage` (0x13b4b18) | — | installs the singleton, sets the three fields |
+  | `CGameResourceManager::FileExistLanguage` (0x17f8634) | Voice, Current, Default | file lookup with postfix (6.3); called by `AddDirectFile` (45 calls in 23 functions), `IsFileExist` (51 calls in 33 functions) and `DownloadDirectFile` (2) |
+  | `CGameResourceManager::RegisteredFileLanguage` (0x17f8c5c) | Voice, Current, Default | the same order for files already registered; called by `RemoveDirectFile`, `IsReadyDirectFile`, `rResourceElementDirectFile`, `crResourceElementDirectFile`, `CheckResourceStatusByFileName` |
+  | `CGameResourceManager::IsFileExistDownloadFolder` (0x17f9590) | Voice, Current, Default | the same order in the download folder (`CFileLoader::gIsFileExist`) |
+  | `CUIUtility::GetVoiceLanguage` (0x1dec438) | Default | `BAS:VoiceLanguage` from the local KVS (`Game.xml`); a value > 1 or a missing key gives `Default()` |
+  | `CUIUtility::SetVoiceLanguage` (0x1dec558) | Default | a value > 1 becomes `Default()`; writes `BAS:VoiceLanguage`; `CLanguage::Voice(v)` |
+
+- **Nothing else uses the language:**
+  - **StringDB** hard-codes `"ja"` (6.2).
+  - **The device locale.** `AConfiguration_getLanguage` / `getCountry` are called only by `android_native_app_glue` (`android_app_pre_exec_cmd`, `ANativeActivity_onCreate`), which the game never reads back.
+  - **`master_language`.** `MasterDB::CLanguage` / `CMasterParameterLanguage` is a compiled-in master table class with 0 callers of `CParameterManager::pMasterParameterLanguage`. No `master_language` table exists in the 3.7.0 master or in Global's.
+  - **Date and number formatting.** The formats are fixed and numeric (`%04d/%02d/%02d %02d:%02d`, `%Y-%m-%d %H:%M:%S`). The words come from `master_text` (`uimsg_thursday` (木), `uimsg_month` 月, `uimsg_day_on_day` 日), and Global has English rows for them ("(Thurs)", "m", "d").
+  - **The web view.** The client's strings have no language parameter or language path in any URL. The notice page is the server's own HTML (1.6).
+- **Voices.** `CUIUtility::EffectiveSetting` (0x1df2048, the last call of `CGame::OnInitialize`) runs `SetVoiceLanguage(GetVoiceLanguage())`.
+  - The committed client save holds `BAS:VoiceLanguage` = 256 (0x100, from that round trip). So `Voice` is 0x100 unless the save says 0 or 1.
+  - The 3.7.0 UI has no voice-language setting: `SetVoiceLanguage` has no caller but `EffectiveSetting`, and the JP master has no `uimsg_menu_voice_language*` rows, which Global's has ("Voice", "Japanese", "English").
+  - The value can still be set in `Game.xml` (`python -m soa_save set --type u32 Game.xml BAS:VoiceLanguage 0`), as the sessions set `BAS:DownloadEpisodeFlag`. That needs no code change.
+
+How measured: `tools/decomp.sh` of `CLanguage::*`, `FileExistLanguage`, `RegisteredFileLanguage`, `IsFileExistDownloadFolder`, `CheckResourceStatusByFileName`, `AddDirectFile`, `DownloadDirectFile`, `IsFileExist`, `Get/SetVoiceLanguage`, `EffectiveSetting`, `CGame::OnInitialize`. The `BL` and GOT scans (numpy over `.text`, as `tools/callers.py` / `tools/xref_got.py`). `python -m soa_save dump data/saves/client/Game.xml`.
+
+### 6.2 StringDB: two hard-coded `"ja"` sites, and the row ids
+
+- **Row ids.** Every row's `id` is `CHash32("<lang>_<message_id>")`. This holds for all 66,945 rows of the JP 3.7.0 master and all 129,808 rows of Global's master (64,904 `ja` + 64,904 `en`).
+  - So Global's master is bilingual in exactly the format the JP client reads, and `en_` rows can be **added** to the JP master with computable ids.
+  - No `CHash32("en_" + id)` of a JP message id collides with a `ja_` id.
+  - Two pairs of JP message ids collide with each other in the `en_` space: `item_coin_281_text_message` / `factor_message_10008` and `item_chip_cp0112_b03a_item_message` / `uimsg_gear_ax_30_25`. An `en_` row for one of a pair would also answer the other, so both must stay Japanese.
+- **Site 1: `StringDB::GetNativeString`** (0x16faaec, Ghidra 0x17faaec).
+  - It formats `"%s_%s"` with the literal `"ja"` (0x270bbba, the same string `CLanguage::LanguageCode` returns for 0), hashes it and calls `pParameterFromHash`.
+  - On a miss it returns the key. Its only caller is `StringDB::Get` (0x16faa2c), which has 63 calls in 50 functions.
+- **Site 2: `StringDB::GetList`** (0x16fac78, Ghidra 0x17fac78).
+  - It builds `SELECT * FROM master_text WHERE id IN (` from `CHash32("ja_%s")` of each message id (literal 0x275ebfa) and runs it through `ParameterByQuery`.
+  - Its callers are `tMessage::SetMessageList` and `tMessageCache::SetMessageList`. Together they preload the text of 122 call sites: 73 of the vector overload, 46 of the `initializer_list` overload (which forwards to it), and 3 of `tMessageCache`.
+  - These are most screens' fixed labels: the home header, the episode select, the item, gacha, mission, deep-space, shop and Other menus.
+  - Experiment 3's run 1 (6.5) shows the weight of this site. With `GetNativeString` patched and `en_` rows served, the home header and the episode select stayed Japanese. `GetNativeString` ran fewer than 1,025 times in either direction over the whole home session.
+  - `tMessage::GetMessage` returns an empty string for an id the preload didn't fetch. It doesn't fall back to `StringDB::Get`.
+  - `tMessage` keys its `std::map` by the row's **message_id** string, so a query that returned both an `en_` and a `ja_` row for an id would keep whichever came last from an unordered map. A per-id fallback has to return **one row per message id**: query the `en_` ids, then the `ja_` ids of the message ids that got no row.
+- **`GetList` reads the master only.** `ParameterByQuery` (Ghidra 0x17fb164) opens `sqlite/basmaster.sqlite3` and appends the rows it returns to the caller's map, so story rows never reach a `tMessage`.
+- **No other reader of `master_text`.** `pParameterFromHash` is called only by `GetNativeString`, and `ParameterByQuery` only by `GetList`. The client has no other `master_text` query string, and the `lang` column is never read.
+- **Story files load into the same StringDB.** `CEventScenario::Run` calls `StringDB::SetAddLoadFileName(GetParameterName(file))`. The Scenario rows (ids `CHash32("ja_" + id)` like the master's) are then found by `pParameterFromHash` through the same `"ja"` key. `StringDB::ReleaseParameter` frees them when its argument `strcmp`s equal to that name.
+- **So `en_` rows need two functions changed** (option B of the plan). `GetNativeString` and `GetList` take the code from `CLanguage::Current()` and fall back to `ja` per message id. A `-en` master with English in its `ja_` rows needs neither (6.6).
+  - Both run on the APK's built-in master before the first download, where no `en_` rows exist, so the fallback gives Japanese there.
+  - With `Current` = 0x100 or 0, both must behave exactly as the original; a selftest can compare them.
+
+### 6.3 Files: `name-en.ext` with the plain name as the fallback, already built in
+
+- **The lookup.** `CGameResourceManager::FileExistLanguage(name, mode, out)` returns a status:
+
+  | Status | Meaning |
+  |---|---|
+  | 0 | not found |
+  | 1 | in the download DB, not on disk |
+  | 2 | in the download list |
+  | 3 | in the download folder |
+  | 4 | built in, or a plain file |
+  | 5 | registered and ready |
+
+  The order it tries, stopping at the first non-zero status:
+  1. **Voice packs.** When the tail contains `Voice_` and the extension is `.spk`: `PostfixLanguageCodeFilepath(name, Voice())`. With `Voice` = 0 the postfix is stripped, so the result is the bare (Japanese) name. With 1 it is `Voice_x-en.spk`. With 0x100 the name is unchanged.
+  2. If `Current()` is 0x100, or the name already contains `-` (`IsPostfixLanguageCode(name, 0x100)` searches the tail for `"-"` + `""`): the plain name only.
+  3. Otherwise `name-<Current>.ext`, then `name.ext`, then `name-<Default>.ext` (with `Default` = 0x100 the plain name again).
+- **Where the resolved name goes.** `AddDirectFile` registers the resolved name (`name-en.ext`), and `RegisteredFileLanguage` finds it again later in the same order.
+  - With status 1–2 `AddDirectFile` calls `CGameResourceDownloader::RequestDownload` for the resolved name: an on-demand fetch of a member the manifests list but the phone doesn't have.
+  - So with `Current` = 1, every direct file, image, layout, parameter, sound and script loaded through `AddDirectFile` / `IsFileExist` gets an English variant **with the Japanese file as the fallback**, and nothing in the loaders needs changing.
+- **A naming constraint.** A name that already contains `-` is never postfixed. None of the 26,046 files of the 3.7.0 download has a `-` in its name, so every file takes part.
+- **Built-in (APK) files.** `CheckResourceStatusByFileName` asks `CGameResourceDownloader::IsBuildInData(name)` and then `CFileLoader::gIsFileExist(name)`. Whether a `-en` file added only to the port's asset overlay is found before the first download depends on these two (6.5).
+- **Which loads take part (experiment 3).** A trace of every `FileExistLanguage` call, one line per distinct name, logged 229 names over the home session:
+
+  | Directory | Names |
+  |---|---:|
+  | `UI` | 80 |
+  | `Image` | 49 |
+  | `Sound` | 38 |
+  | `Parameter` | 21 |
+  | `Motion` | 19 |
+  | `Effect` | 10 |
+  | other (`MapHome`, `Character`, `Shader`, a few `dummy*.png`) | 12 |
+  | `Font` | 1: `Font/etc2/font.fpk` |
+  | `sqlite` | 1: `sqlite/basmaster.sqlite3` |
+
+  The campaign session adds `Scenario/TS_1010.msgp`, `Script/1010_030.msgp`, `TalkScene/*.csf` and the `Voice_TS_*` packs. So the font, the master and the story files all have `-en` variants for free.
+- **The data check fetches every new member.** On the pre-downloaded shared phone, the client fetched the Individual bundle of each of the 106 `-en` members it lacked (`I/5374616e/<hash>.bin`, 106 GETs) and not the Bulk bundle, before the home screen. It does this whatever its language. So a `-en` member costs every client its size, Japanese clients included.
+- **The CDN side exists.** A `-en` file is a new name, which is what stand-ins are:
+  - `TreeBuilder::add_standins` (`server/src/cdn/tree.cpp`) turns each overlay file the download lacks into a version.bin entry, an Individual bundle `I/5374616e/<chash32>.bin` and a member of the Bulk bundle `B/5374616e/standins.bin`, under a new revision.
+  - The unmodified 3.7.0 client fetches them at its data check (`emulator/scripts/standin_fetch_test.sh`).
+  - ADLD XOR is keyed by `CHash32` of the member's path (`Image/etc2/x-en.aif`), so a `-en` file is encrypted under its own name.
+
+### 6.4 Voices: the switch exists, the English voices don't
+
+- **The voice files.** [global-voice-files.md](global-voice-files.md) lists 187 `-en` voice packs Global must have shipped (`Sound/Voice_<x>-en.spk`), derived from the rule in 6.3.
+  - **None is in hand.** `find` over the 3.7.0 download (26,046 files), the APK, `work/SOA_2021-06-10`, `work/extracted` and `work/backup-lfs` finds no file whose name contains `-en.`, and no file with `-` in its name at all.
+  - The Global master (`data/basmaster-gl.sqlite3`) is the only Global file we have. It names voice packs but contains no audio.
+- **With the switch, the Japanese voice is the fallback automatically.** With `Current` = 1 and `Voice` = 0x100, `Voice_x-en.spk` is probed (status 0) and `Voice_x.spk` plays. With `BAS:VoiceLanguage` = 0 the probe is skipped: always Japanese.
+- **What English voices would need.** Global's 1.5.0 data (its CDN is gone) or newly recorded audio. Neither is in scope: PLAN-english.md Q10.
+
+### 6.5 Experiment 3: the switch, `en_` rows beside `ja_`, `-en` images
+
+All runs used the worktree's `build/port/soa` with a scratch native file, `work/english/exp2/lang_scratch.cpp`. It was compiled in for these runs only and is not committed. Under `SOA_LANG_EXP=1` it does three things:
+- It sets `CLanguage::Current` to 1 after the constructor. `Default` and `Voice` stay 0x100.
+- It makes `StringDB::GetNativeString` read `CHash32("en_" + id)` through `pParameterFromHash`, and fall back to the original (`ja_`) on a miss.
+- It logs every `FileExistLanguage` call once per name, with the status and the resolved name.
+
+The sessions ran in the slot pool on the shared phone, with the standard drivers (`control/run.py`). Everything is in `work/english/exp2/`: the wrappers `soa-exp` and `soa-exp3`, the scripts, the masters, the stand-in dirs, and each run's `*-out/` (shots, `log.txt`).
+
+**Run 1: `home`, `en_` rows and `-en` images.**
+- **Setup.**
+  - `--master basmaster-en-added.sqlite3`: the JP master plus 19,145 `en_` rows (id `CHash32("en_" + id)`, `lang` `en`, from `merge_add.py`); 40.0 MB against 37.6 MB.
+  - `--standin-assets standin-en`: the repo's stand-ins, plus 80 `Image/etc2/banner_gacha*-en.aif` / `banner_ticketgacha*-en.aif`, plus 26 `Scenario/TS_*-en.msgp`. Each image is the stand-in `banner_gacha_pickup_role_0054`, re-encrypted under its `-en` name. Each story file holds all its `ja_` rows plus `en_` rows, for the files where Global's English covers at least 90% of the lines.
+- **PASS** ("every home destination reached").
+  - The data dialog asked for 40 MB: the master and the 106 new members.
+  - `home-out/shots/32-gacha.png`: **every banner of the recommended tab is the `-en` copy** (trace: `Image/etc2/banner_gacha_weapon_0002_002.aif -> 3 …_002-en.aif`). "Draws" is English (`GetNativeString`); the tabs are Japanese.
+  - `04-home.png`: the title "Anamnesis Debut" is English, but the header (スタミナ, 紋章石, 調査ランク) stays Japanese. It comes through `GetList`, which the scratch file didn't patch (6.2).
+- **Voices.** Every `Sound/Voice_*.spk` resolved to its bare name, status 3.
+
+**Run 2: `campaign`, the story.** Same wrapper.
+- **PASS** ("episode 1 -> mf01_001 cleared -> mc01_030 played"; the next mission unlocked, so the story scene ended normally).
+- **The trace.** It has `Scenario/TS_1010.msgp -> 3 Scenario/TS_1010-en.msgp`.
+- **The shots.** `campaign-out/shots/82-story.png` and `83-story.png` show the story in English: speaker "Coro" (an `en_` master row), "Thanks to your efforts, I was able t…".
+  - **The English lines run past the right edge of the message window.** Global's line breaks were made for a wider window than 3.7.0's.
+  - The window's buttons (早送り, ログ表示, スキップ, オート) stay Japanese.
+- **Not shown.** Whether `StringDB::ReleaseParameter` released the `-en` file's rows: the session played one scene.
+
+**Run 3: `home`, a whole English master as a `-en` file, no StringDB change in effect.**
+- **Setup.**
+  - The server's own master, unchanged, as the served master.
+  - `--standin-assets standin-en3`: the repo's stand-ins, plus `sqlite/basmaster-en.sqlite3`. That is experiment 1's master, with English in 19,145 `ja_` rows, AES-ADLD (encType 2) under its `-en` name.
+  - The `GetNativeString` hook was still on, but this master has no `en_` rows, so it always fell back to the original.
+- **The master resolved to the `-en` file.** The trace has `sqlite/basmaster.sqlite3 -> 4 sqlite/basmaster-en.sqlite3` in the title phase, before the download. The client then fetched the `-en` member (`I/5374616e/1bc76693.bin`, 37.6 MB) as well as the served master (36.2 MB).
+- **PASS.**
+  - `home3-out/shots/04-home.png`: **the header is English** ("Stamina", "Gems", "Rank", "Next"), through `GetList`, with no StringDB patch doing anything.
+  - `00-download-dialog.png`: the **pre-download** data dialog shows "Space Required: 71 MB", "Download" and "Return to Title Screen", which overflows its button. The labels baked into the layout stay Japanese.
+  - The home's event badge reads 4, not 5. This `-en` master didn't get the server's `ClientMaster` edits (event dates), which the served master gets.
+- **What run 3 did not prove:**
+  - **The port's overlay helped.** Status 4 means a built-in file: the port's `AssetManager::find_download` merges the stand-in dir into `builtin_data/`, so the `-en` master was visible before any download. `soa-emu` gets stand-ins only through the CDN.
+  - **Which copy was used after login.** The trace logs each name once, so whether the client read the downloaded copy or the overlay's is not shown.
+  - **The proof still to make.** `soa-emu` with a `-en` master from soa-server's CDN only, as `emulator/scripts/standin_fetch_test.sh` does for the stand-ins.
+- **Story files in this shape.** A story `-en` file with English in the `ja_` rows, which is what this design needs, was not run. Run 2 used the superset form with the `GetNativeString` hook.
+
+### 6.6 Consequence: the smallest client change is one site
+
+Run 3 shows a second way to deliver text: not `en_` rows that StringDB must learn to read, but **per-language files**. The client already picks `name-en.ext` over `name.ext`. That holds for the master (`sqlite/basmaster-en.sqlite3`), the story (`Scenario/TS_*-en.msgp`), the layouts, the images, the font and the voices. So the only code change is **setting `CLanguage::Current` to 1**, and StringDB keeps reading `ja_` rows, of the English files. The two designs, in [PLAN-english.md](PLAN-english.md):
+
+| | Per-language files (one site) | `en_` rows (three sites) |
+|---|---|---|
+| Client code | `CLanguage::Current` = 1 | the same, plus `StringDB::GetNativeString` and `StringDB::GetList` |
+| Master text | `sqlite/basmaster-en.sqlite3`: a second master, the served one with English in its `ja_` rows. The per-row fallback is made by the server when it builds the file | `en_` rows added to the one served master; the per-row fallback is made by the client |
+| Story | `TS_*-en.msgp` with English in the `ja_` rows | `TS_*-en.msgp` as a superset (`ja_` + `en_`) |
+| `GetList` screens | English with no extra code (run 3) | need the `GetList` patch (run 1) |
+| Cost per client | every client fetches every `-en` member (6.3): **+36 MB for the second master**, plus the story and art files | +2.4 MB of master, plus the same story and art files |
+| Server work | the served-master pipeline gets a second output: its `ClientMaster` edits, then the English | one `ClientMaster` hook that inserts rows |
+| Pre-download screens | the port can carry an English built-in master through its asset overlay (run 3's dialog) | the same, with a built-in `-en` master that holds `en_` rows; without one, Japanese until the first download |

@@ -17,7 +17,7 @@ import os
 import time
 
 from .. import popups as _popups, ui370
-from ..flows import launch
+from ..flows import launch, mission
 from ..milestones import Failed
 from ..targets import Abort
 from . import common, seeded
@@ -71,8 +71,7 @@ def main(o):
             s.ctl("tap:" + ui370.PLANET_MERE, "wait:3000", "tap:" + ui370.PLANET_SORTIE, "wait:7000")
             s.ctl("tap:" + ui370.MAP_105, "wait:4000")
             s.ctl("tap:" + ui370.SINGLE_PLAY, "wait:5000", "tap:" + ui370.RENTAL_NONE, "wait:5000")
-            s.ctl("tap:" + ui370.PARTY_START, "wait:3000")
-            s.tap_until("1-05 -> MissionStart -> MissionStartRes", 60, ui370.CONFIRM_OK, lambda: s.in_packets(r"< MissionStartRes"))
+            mission.start_mission(s, "1-05 -> MissionStart -> MissionStartRes", lambda: s.in_packets(r"< MissionStartRes"))
             s.ctl("wait:15000", s.shot_cmd("08-battle"))
         open(start, "w").close()
         s.ok("tests started at %s" % o.at)

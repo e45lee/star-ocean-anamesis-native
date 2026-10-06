@@ -1,0 +1,235 @@
+{
+ "note": "The battle result's bonus badges (Initial Clear: Global's 初回クリア報酬; the rest ours).",
+ "source": "UI/etc2/result.csf",
+ "styles": {
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "所持キャラ",
+   "text": "Owned Char.",
+   "sprites": [
+    "chara_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    82,
+    22
+   ],
+   "cover": [
+    7,
+    0,
+    74,
+    20
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "撃破",
+   "text": "Defeated",
+   "sprites": [
+    "defeat_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    83,
+    22
+   ],
+   "cover": [
+    28,
+    0,
+    33,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "追加ボーナス",
+   "text": "Extra Bonus",
+   "sprites": [
+    "ds_plus_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    83,
+    22
+   ],
+   "cover": [
+    2,
+    0,
+    85,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "タイムボーナス",
+   "text": "Time Bonus",
+   "sprites": [
+    "ds_time_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    82,
+    22
+   ],
+   "cover": [
+    2,
+    0,
+    84,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "初回クリア",
+   "text": "Initial Clear",
+   "sprites": [
+    "first_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    82,
+    22
+   ],
+   "cover": [
+    7,
+    0,
+    74,
+    20
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "EXボーナス",
+   "text": "EX Bonus",
+   "sprites": [
+    "god_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    83,
+    22
+   ],
+   "cover": [
+    3,
+    0,
+    83,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "友好度ボーナス",
+   "text": "Affection Bonus",
+   "sprites": [
+    "heartb_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    83,
+    22
+   ],
+   "cover": [
+    2,
+    0,
+    85,
+    20
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "ホストボーナス",
+   "text": "Host Bonus",
+   "sprites": [
+    "hostb_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    83,
+    22
+   ],
+   "cover": [
+    3,
+    0,
+    83,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "初心者",
+   "text": "Beginner",
+   "sprites": [
+    "icon_wakaba.png"
+   ],
+   "box": [
+    3,
+    0,
+    81,
+    22
+   ],
+   "cover": [
+    20,
+    0,
+    47,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "キャラクターパス",
+   "text": "Char. Pass",
+   "sprites": [
+    "kakin_badge.png"
+   ],
+   "box": [
+    3,
+    1,
+    83,
+    20
+   ],
+   "cover": [
+    8,
+    3,
+    73,
+    16
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "サプライズ",
+   "text": "Surprise",
+   "sprites": [
+    "surprise_badge.png"
+   ],
+   "box": [
+    4,
+    0,
+    82,
+    22
+   ],
+   "cover": [
+    7,
+    0,
+    76,
+    19
+   ],
+   "style": "badge"
+  }
+ ]
+}

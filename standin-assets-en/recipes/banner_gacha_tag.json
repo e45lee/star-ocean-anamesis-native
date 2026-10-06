@@ -1,0 +1,40 @@
+{
+ "note": "The 'gacha' tag on the gacha banners that share it (Draws: Global's ガチャ).",
+ "sources": [
+  "Image/etc2/banner_gacha_role_0002.aif",
+  "Image/etc2/banner_gacha_weapon_0003_002.aif",
+  "Image/etc2/banner_gacha_weapon_0003_003.aif",
+  "Image/etc2/banner_gacha_weapon_0004.aif",
+  "Image/etc2/banner_sphere_chara.aif",
+  "Image/etc2/banner_ticketgacha_role_0005.aif",
+  "Image/etc2/banner_ticketgacha_role_0006.aif",
+  "Image/etc2/banner_ticketgacha_role_0007.aif"
+ ],
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    60,
+    15
+   ],
+   "cover": [
+    72,
+    15,
+    42,
+    13
+   ],
+   "style": "tag"
+  }
+ ]
+}

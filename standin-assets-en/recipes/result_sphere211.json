@@ -1,0 +1,78 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/result_sphere211.csf",
+ "styles": {
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "初心者",
+   "text": "Beginner",
+   "sprites": [
+    "icon_wakaba.png"
+   ],
+   "box": [
+    3,
+    0,
+    81,
+    22
+   ],
+   "cover": [
+    20,
+    0,
+    47,
+    19
+   ],
+   "style": "badge",
+   "_from": "result"
+  },
+  {
+   "jp": "撃破",
+   "text": "Defeated",
+   "sprites": [
+    "defeat_badge.png"
+   ],
+   "box": [
+    3,
+    0,
+    83,
+    22
+   ],
+   "cover": [
+    28,
+    0,
+    33,
+    19
+   ],
+   "style": "badge",
+   "_from": "result"
+  },
+  {
+   "jp": "サプライズ",
+   "text": "Surprise",
+   "sprites": [
+    "surprise_badge.png"
+   ],
+   "box": [
+    4,
+    0,
+    82,
+    22
+   ],
+   "cover": [
+    7,
+    0,
+    76,
+    19
+   ],
+   "style": "badge",
+   "_from": "result"
+  }
+ ]
+}

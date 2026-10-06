@@ -99,7 +99,8 @@ struct Label {
 };
 
 struct Recipe {
-    std::string source;  // the download's file, e.g. "UI/etc2/common.csf"
+    std::string source;                // the download's file, e.g. "UI/etc2/common.csf" (the first of sources)
+    std::vector<std::string> sources;  // "source", or "sources": the same labels on several files (one -en file each)
     std::vector<Label> labels;
 };
 

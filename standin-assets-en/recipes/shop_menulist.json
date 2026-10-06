@@ -1,0 +1,57 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/shop_menulist.csf",
+ "styles": {
+  "legal": {
+   "size": 16,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#102040",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "特定商取引法に基づく表示",
+   "text": "Commercial Transactions Act",
+   "sprites": [
+    "btn_age_off.png"
+   ],
+   "box": [
+    14,
+    10,
+    199,
+    28
+   ],
+   "cover": [
+    16,
+    12,
+    195,
+    24
+   ],
+   "style": "legal",
+   "_from": "gacha_main"
+  },
+  {
+   "jp": "資金決済法に基づく表示",
+   "text": "Payment Services Act",
+   "sprites": [
+    "btn_fund_off.png"
+   ],
+   "box": [
+    14,
+    10,
+    199,
+    28
+   ],
+   "cover": [
+    16,
+    12,
+    195,
+    24
+   ],
+   "style": "legal",
+   "_from": "gacha_main"
+  }
+ ]
+}

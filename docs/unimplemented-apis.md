@@ -332,7 +332,8 @@ evidence against one replaces it and records why.
 - Items taken out of the box are new level-1 items (the box keeps no item state), content type 1,
   drop type 0.
 - `storage_stock` is no longer the assumed 500 but 100 + 400 with the Galaxy Pass (client and master
-  evidence); without `--galaxy-pass` a player now has 100 storage slots.
+  evidence); without `--galaxy-pass` a player now has 100 storage slots. **The user's decision
+  (2026-10-05): keep it so** (100, +400 with the Galaxy Pass).
 - The その他設定 options that send equipment to the box always (is_one_time_storage for the
   gacha's, is_one_time_storage_except_gacha for the rest) are read by `storage::to_one_time_storage`
   from the settings step's stored options (`settings::config_on`).

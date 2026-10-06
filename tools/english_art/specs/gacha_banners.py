@@ -85,3 +85,7 @@ write("20200716_chara_002", "The July 2020 apology character gacha's banner.", S
 
 write("banner_gacha_pickup_role_0118", "The 2018 lucky-bag character gacha's banner (dense text: one shaded title band).", S, [
     TAG, L("2018年福袋限定キャラガチャ\n…", "2018 Lucky Bag\nLimited Character Draws\n(tickets in the item shop)", [176, 16, 276, 98], "gold_r", [170, 14, 286, 104], size=17)])
+write("20191128_event_004", "The Cave of the Seven Stars box gacha's banner (SO2's English name for 七星の洞窟).", S, [
+    L("ボックスガチャ", "Box Draws", [76, 15, 80, 13], "tag", [74, 15, 76, 12]),
+    L("七星の洞窟", "Cave of the\nSeven Stars", [62, 40, 210, 56], "gold", [60, 38, 210, 60], size=22, align="left"),
+    L("ボックスガチャ", "Box Draws", [300, 86, 152, 26], "gold_r", [304, 86, 150, 28], size=20)])

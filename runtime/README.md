@@ -14,7 +14,7 @@ Whatever differs between hosts is set by the host through the extension points b
 
 | Folder | Contents |
 |---|---|
-| `src/core/` | ELF loader (`loader.h`: the game library), the dynarmic JIT CPU and guest calls (`cpu.h`, `abi.h`), the HLE registry (`hle.h`), the guest filesystem view (`vfs.h`), the emulated device (`device.h`), logging (`log.h`), tracing (`SOA_TRACE`), profiling (`SOA_PROFILE` / `SOA_COVERAGE`), the runtime self-test registry (`selftest.h`) |
+| `src/core/` | ELF loader (`loader.h`: the game library), the dynarmic JIT CPU and guest calls (`cpu.h`, `abi.h`), the HLE registry (`hle.h`), the guest filesystem view (`vfs.h`), the emulated device (`device.h`), logging (`log.h`), crash reports (`crash.h`), tracing (`SOA_TRACE`), profiling (`SOA_PROFILE` / `SOA_COVERAGE`), the runtime self-test registry (`selftest.h`) |
 | `src/hle/` | The Android imports: bionic libc / libm / pthreads over glibc, EGL emulated over the host's GL contexts (`egl.cpp`; `gfx.h`: `GfxHooks`, the host's contexts and window) and GLES to host GL (`gles.cpp`), OpenSL ES (mixed by the host through `audio.h`), `dlopen` |
 | `src/android/` | NDK objects: `AAssetManager` over APKs the host adds (`ndk.h`), `ANativeWindow`, input queue, SharedPreferences, zip; the platform state shared with the host (`platform.h`) |
 | `src/jni/` | The C++ JVM: the Java classes the game calls through JNI (`java_android.cpp`; `java_playcore.cpp`, the Play Core classes that only the viewer's lib, `emulator-viewer/`, uses) |
@@ -125,6 +125,38 @@ A host can replace a guest function, or filter its calls, with host code:
 ```sh
 build/runtime/soaruntime_tests     # prints ok/FAIL per check, PASS/FAIL at the end
 ```
+
+## Crash reports (`core/crash.h`)
+
+A fatal fault prints a report to stderr and ends the process with a failure: Linux
+`*** host signal N (fault addr A, thread T) ***`, the host backtrace (`addr2line -e PROGRAM -f -C OFFSET`
+names the frames), the guest pc and registers with a frame-pointer walk of the guest stack; Windows
+`*** host exception CODE at P = exe+OFF ... ***` and the backtrace as exe offsets (`llvm-symbolizer
+--obj=PROGRAM.exe --adjust-vma=0x140000000 OFFSET`), then the same guest part. Faults in dynarmic's JIT code
+(its fastmem path: tagged addresses, retried through the memory callbacks) are normal and handled first
+by dynarmic's own handler (Linux: a SIGSEGV handler that chains to the runtime's for any other fault;
+Windows: SEH on its code, after the runtime's vectored handlers, which leave faults outside every module alone).
+
+**Stack overflows report themselves.** A thread that runs out of host stack used to die silently
+(session:tower's 256 KiB guest thread: the handler ran on the overflowed stack). Now every thread the
+runtime makes calls `crash_thread_begin(name)` first: guest threads in the HLE'd `pthread_create`
+(`guest-TID`, renamed by the guest's `prctl(PR_SET_NAME)`; the report also names the guest function the
+thread started at), the host program's main thread (`cpu_global_init`: `main`), the runtime's own threads
+(`control`, `watchdog`, `audio` (SDL's audio thread, on its first callback), `audio-null-sink`, `movie-video`,
+`movie-audio`, `profiler`, `gdb-server`), and any other thread on its first guest code (`guest_thread_init`:
+`host-TID`). It records the thread's stack bounds and:
+- Linux: gives the thread a 64 KiB alternate signal stack (`sigaltstack`, unmapped at thread exit; the
+  thread that makes the first JIT keeps dynarmic's 2 MiB one), and names it (`pthread_setname_np`, for gdb
+  and `top -H`). The fault handlers are installed with `SA_ONSTACK` (dynarmic's is too).
+- Windows: `SetThreadStackGuarantee(64 KiB)`; a vectored handler for `EXCEPTION_STACK_OVERFLOW` reports
+  it and ends the process (exit code `0xc00000fd`).
+
+The report then starts with `*** stack overflow on thread NAME (tid T, stack N KiB, used ~M KiB) ***`
+(a fault within 64 KiB below the stack's end, or a stack pointer there). A fault in a guest stack's guard
+page says `*** guest stack overflow on thread NAME ... ***`. Tests (`soaruntime_tests`, `crash_test.cpp`,
+Linux and Windows): a child process (`soaruntime_tests --crash-demo overflow|null`) overflows the host
+stack of a guest thread started through the HLE'd `pthread_create`, or loads from address 0x10 in guest
+code on one; its log must name the overflow and the thread, or carry the usual report, and it must fail.
 
 ## Debugging the guest with gdb (`core/gdbstub.h`)
 

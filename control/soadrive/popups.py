@@ -68,6 +68,56 @@ GACHA_DETAIL_10 = bytes.fromhex(
     "99bbdab87b9aa9718f7897ac85b3bd83a5b37aa2b36e9ebca3a7c67191b15291b32a80ac4a8c9f44859d2b759b307fa7")
 
 
+# A mission's start confirmation (ミッションを開始しますか?): its 閉じる / 決定 row, the 520x60+100+682 crop
+# scaled to 12x2 RGB. Byte-identical in 26 passing screenshots (tests/diff battle and event on soa-emu,
+# soa --server and soa in-process; the tower, the simulator; 2026-10); every other screen 0.13+ (the
+# party screen, the deep space screens, the gacha's confirmation, home, a battle, the results).
+MISSION_CONFIRM_BUTTONS = bytes.fromhex(
+    "1630501c36593f58751933550c2b53172836171b1c2856802164a349749c2a669d1f62a0102e691b336c4a628f1f38710d2a6116222a"
+    "1a22272f73ba2877cf5588c1337bcb2871bf")
+
+# The party screen (パーティ選択) before the start: its ミッション開始 button undimmed, the 560x50+85+875
+# crop scaled to 12x2 RGB. Byte-identical in 29 screenshots (the campaign's, an event's, the tower's and
+# the simulator's party, all three programs); dimmed under the confirmation and other screens 0.11+.
+PARTY_START_BUTTON = bytes.fromhex(
+    "175c9d175c9d175c9d155b9d3165973263924e769e4b78a210589c185c9d175c9d165c9d2a78cd2a78cd2a78cd2878ce3f7dc3477ebe"
+    "588ac4558cca2676cd2b78cd2a78cd2a78cd")
+
+# Deep space: the party screen with its 決定 lit (after the auto member select: the 200x60+530+1090
+# crop, 8x2 RGB) and the expedition's confirmation (以下の内容で探査を開始します: its 戻る / 探査開始 row,
+# the 560x60+85+975 crop, 12x2 RGB); five passing sessions each byte-identical, other screens 0.10+.
+DEEPSPACE_PARTY_DECIDE = bytes.fromhex(
+    "35b0f63db6f93caae8619dc169a1c43eaae834b2f936b0f6006cdf006ce30668d43c6cb2446fb00968d1006ce3006bdf")
+DEEPSPACE_CONFIRM_BUTTONS = bytes.fromhex(
+    "1a2f47051d46405470162b4f07224c1524301a2328215f994f7ca76989a72a6aa81d4f7b1a37630f2e703855891d3b78113167141c20"
+    "1d2e3c317dce518aca6392c73c83d1204568")
+
+# Sphere 211's party (ミッション開始 / 自動編成 / 自動設定 in a row): its ミッション開始 lit (after the auto
+# member select), the 200x50+40+875 crop scaled to 8x2 RGB; dimmed (no party yet) and other screens 0.09+.
+SPHERE211_PARTY_START = bytes.fromhex(
+    "254169354a692a3f5e304463273c5c596a82606f8519355e20417c354c7e334c7f395183364e804d63915d729d24467a")
+
+
+def is_mission_confirm(shot):
+    return _signature_match(shot, "520x60+100+682", "12x2", MISSION_CONFIRM_BUTTONS)
+
+
+def is_party_start(shot):
+    return _signature_match(shot, "560x50+85+875", "12x2", PARTY_START_BUTTON)
+
+
+def is_sphere211_party(shot):
+    return _signature_match(shot, "200x50+40+875", "8x2", SPHERE211_PARTY_START)
+
+
+def is_deepspace_party(shot):
+    return _signature_match(shot, "200x60+530+1090", "8x2", DEEPSPACE_PARTY_DECIDE)
+
+
+def is_deepspace_confirm(shot):
+    return _signature_match(shot, "560x60+85+975", "12x2", DEEPSPACE_CONFIRM_BUTTONS)
+
+
 def is_gacha_confirm(shot):
     return _signature_match(shot, "520x70+100+760", "12x2", GACHA_CONFIRM_BUTTONS)
 

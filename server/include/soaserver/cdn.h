@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+#include "soaserver/english_table.h"
 #include "soaserver/hooks.h"
 #include "soaserver/msgpack.h"
 
@@ -81,7 +82,9 @@ struct Options {
     // master, make_english_master, built from `english_text`) is added after member_roots. Off:
     // nothing of it is read or served.
     bool english = false;
-    std::string english_text;    // the English text table ("" with english: no -en master, warned)
+    std::string english_text;    // our English rows (--english-text, else data/english/master-en.tsv); with english_full the whole table
+    bool english_full = false;   // tests: english_text and english_story are the whole tables (no derivation)
+    std::string english_global;  // Global's master (data/basmaster-gl.sqlite3): the derived layer's source
     std::string english_story;   // the English story tables, <dir>/TS_xxxx.tsv ("" = none):
                                  // make_english_story writes Scenario/TS_xxxx-en.msgp into the generated root
     std::string english_art;     // the English art recipes (standin-assets-en/recipes; "" = none):
@@ -136,6 +139,23 @@ struct EnglishStats {
 // SHA-1 and size as make_served_master. Empty on error (logged).
 std::vector<uint8_t> make_english_master(const std::string& served_plain, const std::string& table, const std::string& plain_out,
                                          std::string* plain_sha1, uint64_t* plain_size, EnglishStats* stats = nullptr);
+// The same with the table in memory (`what` names it in the log).
+std::vector<uint8_t> make_english_master(const std::string& served_plain, const english::Table& table, const std::string& what,
+                                         const std::string& plain_out, std::string* plain_sha1, uint64_t* plain_size, EnglishStats* stats = nullptr);
+
+// The English tables of an --english server (docs/server-rules.md#english-derive): with english_full
+// (tests) the tables as they are; else the derived layer (english_derive.h: Global's master, the JP master, the download's font and story
+// files) with our own rows (english_text, english_story) merged on top. False when there is nothing
+// (logged): the server's texts and the CDN stay Japanese.
+struct EnglishTables {
+    english::Table master;
+    std::map<std::string, english::Table> story;  // by file stem
+    bool derived = false;
+};
+// Builds the tables (above) from `opts` and the download `download`; false and *err when there are none.
+bool english_tables(const Options& opts, const FileTree& download, EnglishTables& out, std::string* err);
+// Writes the tables in tools/english_text.py's form: DIR/master-en.tsv, DIR/story-en/TS_x.tsv.
+bool write_english_tables(const EnglishTables& t, const std::string& dir);
 
 // What make_english_story did with one story file (docs/server-rules.md#english-story).
 struct EnglishStoryStats {
@@ -154,6 +174,9 @@ struct EnglishStoryStats {
 // Japanese row is left without English (the file is served only complete: PLAN-english Q12) or
 // on an error; *stats says why.
 std::vector<uint8_t> make_english_story(const std::string& name, const std::vector<uint8_t>& file, const std::string& table,
+                                        EnglishStoryStats* stats = nullptr);
+// The same with the story table in memory.
+std::vector<uint8_t> make_english_story(const std::string& name, const std::vector<uint8_t>& file, const english::Table& table,
                                         EnglishStoryStats* stats = nullptr);
 // The -en name of a file: "Scenario/TS_1010.msgp" -> "Scenario/TS_1010-en.msgp".
 std::string english_name(const std::string& name);
@@ -180,6 +203,8 @@ public:
     // The bundle that holds `member` in manifest `manifest` ("Individual", "Bulk", "ep1".."ep3").
     std::string bundle_of(const std::string& manifest, const std::string& member) const;
     const Value& version_bin() const { return version_; }
+    // --english: the full English master table the tree's -en master was built from (nullptr without).
+    std::shared_ptr<const english::Table> english_table() const { return english_; }
     // Statistics for the log: bundles, members, stand-ins.
     std::string summary() const;
 
@@ -199,6 +224,7 @@ private:
     std::map<std::string, std::map<std::string, std::string>> member_bundle_;  // manifest -> member -> bundle
     std::map<std::string, std::string> overlay_;         // member name -> file (served master, stand-ins, -en files)
     std::shared_ptr<const FileTree> src_;                // the download (opts_.mirror), a folder or a zip
+    std::shared_ptr<const english::Table> english_;
     size_t standins_ = 0;  // members added from the roots (stand-ins and -en files)
 };
 

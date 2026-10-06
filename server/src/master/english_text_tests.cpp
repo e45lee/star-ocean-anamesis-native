@@ -54,7 +54,8 @@ NATIVE_TEST("server/english-text") {
     t.expect_eq(english::match(tab, "a_new", "", &e) == english::Match::kNewId, true, "new id");
     t.expect_eq(english::match(tab, "none", "x", &e) == english::Match::kNone && !e, true, "none");
 
-    ServerConfig saved = config();
+    const bool saved_english = config().english;
+    const std::string saved_text = config().english_text;
     config().english = false;
     config().english_text = path;
     t.expect_eq(english::display("a_same", "同じ"), std::string("同じ"), "without --english: Japanese");
@@ -65,7 +66,7 @@ NATIVE_TEST("server/english-text") {
     t.expect_eq(english::display("other", "他"), std::string("他"), "--english, no row: Japanese");
     config().english_text = dir + "/soa-english-test-none.tsv";
     t.expect_eq(english::display("a_same", "同じ"), std::string("同じ"), "--english without a table: Japanese");
-    config() = saved;
+    config().english = saved_english, config().english_text = saved_text;
 
     t.expect_eq(english::same_specifiers("★5提供割合 %.5f%%", "5★ Odds %.5f%%"), true, "same conversions");
     t.expect_eq(english::same_specifiers("★5提供割合 %.5f%%", "5★ Odds %.3f%%"), false, "other precision");

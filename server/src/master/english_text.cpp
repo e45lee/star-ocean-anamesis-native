@@ -90,8 +90,24 @@ std::string story_dir() {
     return find_repo_file("data/english/story-en");
 }
 
+namespace {
+std::mutex g_served_mu;
+std::shared_ptr<const Table> g_served;
+}  // namespace
+
+void set_served_table(std::shared_ptr<const Table> t) {
+    std::lock_guard<std::mutex> lock(g_served_mu);
+    g_served = std::move(t);
+}
+
 std::shared_ptr<const Table> table() {
     if (!config().english) return nullptr;
+    {
+        // (d) the table the CDN built (the derived layer with our rows), when one was built; else
+        // (a replay, a test) --english-text's rows alone
+        std::lock_guard<std::mutex> lock(g_served_mu);
+        if (g_served || config().english_text.empty()) return g_served;
+    }
     static std::mutex mu;
     static std::string loaded_path;
     static bool attempted = false;
@@ -102,10 +118,6 @@ std::shared_ptr<const Table> table() {
     attempted = true;
     loaded.reset();
     loaded_path = path;
-    if (path.empty()) {
-        LOGW("english", "--english: no English text table (%s, --english-text): the server's texts stay Japanese", kTableRel);
-        return nullptr;
-    }
     auto t = std::make_shared<Table>();
     std::string err;
     if (!load(path, *t, &err)) {

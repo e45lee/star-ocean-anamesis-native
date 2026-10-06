@@ -584,6 +584,7 @@ NATIVE_TEST("cdn/lang-members") {
     o.member_roots = {root + "/extra"};
     o.english_text = table;
     o.english_story = root + "/story-en";
+    o.english_full = true;  // the tables as they are (no Global master here)
     auto en = cdn::Tree::build(o, &err);
     auto again = cdn::Tree::build(o, &err);
     if (!en || !again) {

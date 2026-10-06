@@ -1,7 +1,7 @@
 # libsoaruntime: the JIT host runtime (runtime/README.md): the ELF loader and the dynarmic CPU,
 # the HLE of the Android imports, the C++ JVM, the NDK surface and the movie frontend.
 #
-# Added by the repository's CMakeLists.txt (cmake -S . -B build: build/runtime/), which defines what
+# Added by the repository's CMakeLists.txt (scripts/build.sh: build/runtime/), which defines what
 # it uses (cmake/deps.cmake):
 #   dynarmic          the `dynarmic` target (FetchContent)
 #   soa::EGL, soa::GLESv2  Mesa's libEGL / libGLESv2 with the Khronos headers from vcpkg

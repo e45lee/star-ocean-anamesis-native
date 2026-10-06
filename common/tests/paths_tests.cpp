@@ -39,7 +39,7 @@ int paths_tests() {
     check(soa::default_data_dir("soa-linux-370", "x") == "/soa-paths-test/.local/share/soa-linux-370", "this host: HOME");
 #endif
     // make_dir_tree: parents created, an existing dir fine
-    std::string base = std::string(getenv("TMPDIR") && *getenv("TMPDIR") ? getenv("TMPDIR") : "/tmp") + "/soa-paths-test-" +
+    std::string base = soa::temp_dir() + "/soa-paths-test-" +
                        std::to_string((long long)time(nullptr));
 #ifdef _WIN32
     if (getenv("TEMP")) base = std::string(getenv("TEMP")) + "\\soa-paths-test-" + std::to_string((long long)time(nullptr));

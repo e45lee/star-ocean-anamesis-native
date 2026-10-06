@@ -2,7 +2,7 @@
 # Boot check of the 3.7.0 emulator (emulator/README.md "Status"): builds nothing.
 #
 # Usage: emulator/scripts/emulator_boot.sh [soa-emu binary] [out dir] [extra soa-emu args...]
-#   defaults: build/emulator/soa-emu (the repository build: cmake -S . -B build), a fresh mktemp dir (kept; the log, screenshots and data are there)
+#   defaults: build/emulator/soa-emu (the repository build: scripts/build.sh), a fresh mktemp dir (kept; the log, screenshots and data are there)
 #
 # Runs soa-emu headless in a scratch data dir with no server and checks that the unmodified 3.7.0
 # client reaches its network path:
@@ -21,7 +21,7 @@ bin=${1:-$repo/build/emulator/soa-emu}
 out=${2:-$(mktemp -d "${TMPDIR:-/tmp}/emulator-boot.XXXXXX")}
 shift $(( $# > 2 ? 2 : $# ))
 soactl="$repo/control/soactl.py"
-[ -x "$bin" ] || { echo "FAIL: $bin not built (cmake -S . -B build && cmake --build build --target soa-emu)"; exit 1; }
+[ -x "$bin" ] || { echo "FAIL: $bin not built (scripts/build.sh --target soa-emu)"; exit 1; }
 mkdir -p "$out/data"
 log=$out/log.txt fifo=$out/fifo
 W=729 H=1296            # the window; tap coordinates are window pixels

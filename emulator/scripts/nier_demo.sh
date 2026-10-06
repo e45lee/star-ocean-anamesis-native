@@ -77,7 +77,7 @@ done
 case "${out:-}" in "") out=$repo/work/test/nier-demonstration;; /*) ;; *) out=$PWD/$out;; esac
 soactl="$repo/control/soactl.py" flowctl="$repo/control/flowctl.py"
 die() { echo "FAIL: $*"; exit 1; }
-[ -x "$emu" ] || die "$emu not built (cmake -S . -B build && cmake --build build --target soa-emu)"
+[ -x "$emu" ] || die "$emu not built (scripts/build.sh --target soa-emu)"
 [ -x "$srv" ] || die "$srv not built (cmake --build build --target soa-server)"
 command -v convert > /dev/null || die "ImageMagick's convert is needed (screen checks)"
 py=$repo/.venv/bin/python

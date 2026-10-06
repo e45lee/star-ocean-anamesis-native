@@ -183,8 +183,12 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
 ## Worktrees and merging
 
 - Parallel work happens in git worktrees: `port/scripts/agent-worktree.sh <name> [base]` (base `main` by
-  default) makes `.claude/worktrees/<name>` on `port/<name>`, symlinks `work`, `.venv`, `.vcpkg`
-  from the main checkout and builds it. Treat those links as read-only shared data; edit only your worktree.
+  default) makes `.claude/worktrees/<name>` on `port/<name>`, symlinks `work` and `.venv` from the
+  main checkout and builds it. vcpkg is the main checkout's `.vcpkg` (scripts/vcpkg-bootstrap.sh
+  finds it through git: no link, no `VCPKG_ROOT`), and the ports come from vcpkg's binary cache:
+  a fresh worktree's `scripts/build.sh` (or `--windows`) takes minutes, not the hour a port rebuild
+  takes; configure only with `scripts/build.sh` (README.md "Windows": the cache keys). Treat those
+  links as read-only shared data; edit only your worktree.
 - Commit small, by path, with T0 passing. `git merge main` inside your own worktree is fine.
 - Merging a branch: check it carries no symlinks (`git ls-tree -r BRANCH | grep ^120000`), resolve
   conflicts before any other commit (`git diff --name-only --diff-filter=U`), confirm the merge

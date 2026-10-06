@@ -1,6 +1,7 @@
 // Unit tests of soa/zip.h (build/common/soa_zip_tests): synthetic archives written here, then read
 // back: stored and deflated entries, an archive nested in another (an app bundle's APK) read in place,
 // byte ranges, CRC checks, ZIP64 offsets past 4 GiB (a sparse file), concurrent readers.
+#include <soa/paths.h>
 #include <soa/zip.h>
 #include <zlib.h>
 
@@ -24,8 +25,7 @@ void check(bool ok, const std::string& what) {
 }
 
 std::string tmp_dir() {
-    const char* t = getenv("TMPDIR");
-    std::string d = std::string(t && *t ? t : "/tmp") + "/soa_zip_tests." + std::to_string(getpid());
+    std::string d = soa::temp_dir() + "/soa_zip_tests." + std::to_string(getpid());
     mkdir(d.c_str(), 0755);
     return d;
 }

@@ -9,8 +9,7 @@ Plans (done, now history): [`docs/history/PLAN-execution.md`](../docs/history/PL
 ## Building
 
 ```sh
-cmake -S . -B build                          # from the repository root (README.md "Building")
-cmake --build build -j8 --target soa-emu     # -> build/emulator/soa-emu
+scripts/build.sh --target soa-emu            # from the repository root (README.md "Building"): build/emulator/soa-emu
 ```
 
 `emulator/CMakeLists.txt` is a subdirectory of the repository's build, added after `runtime/`; the shared settings and the dependencies (vcpkg, dynarmic by `FetchContent`: `cmake/deps.cmake`, README.md "Setup") come from the root `CMakeLists.txt`. `scripts/build.sh` sets up vcpkg the first time. `-DSOA_BUILD_PORT=OFF -DSOA_BUILD_SERVER=OFF` builds only the runtime, `platform370` and the emulator (`SOA_BUILD_EMULATOR` needs `SOA_BUILD_PLATFORM370`). It links `soaplatform370` (`platform370/`), the runtime (`soaruntime`, whole archive) and its desktop host loop (`soaruntime_app`: the SDL window, input, audio, the control FIFO and the activity bring-up, shared with `soa`).

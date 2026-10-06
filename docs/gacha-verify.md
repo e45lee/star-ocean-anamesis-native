@@ -116,6 +116,17 @@ changed), and keep the over-broad pick-ups of findings 3, 4 and 6 as they are.
 8. **発売日記念 (SO2–SO5) extras** are base or official costumes of the cast not matched on crowded
    group art; probable detector misses, no change.
 
+**The event demos' gachas (checked 2026-10-06).** 復刻水着2020(1) (`gacha_pickup_role_1211`–`1220`, the
+summer demo's banner) is *confirmed*: its panel `20200730_chara_PU_003` shows 常夏のベルダ and 常夏のクレア,
+the recorded pick-ups. The NieR rerun (`gacha_pickup_role_0283`, the NieR demo) is *banner not
+available*: its banner and panels are lost and the tool doesn't read the stand-ins; its pick-ups
+(R-PU-IMAGE: the master's panels `pickup_img_chara_0015..0017` name 2B, 9S and A2) are what the stand-in
+panels show. Neither gacha's pick-ups or pools changed in the update above (only the pool set ids were
+renumbered). Drawn through soa-server (a replay of 55 10-draws of 0283 and six rounds of the 1211 step-up
+chain, `--enable-events --seed-rng 1`): every S draw was a pick-up (0283: 11 2B, 9 9S, 16 A2 of 550
+draws; 1211–1220: 17 Verda, 27 Clair of 600), and in the client the demos draw A2 and 9S (NieR) and
+the banner shows the two summer units (screens in `work/test/{nier,summer}-demonstration`).
+
 After the fixes the remaining *extra* rows are findings 3, 4, 8, EP2 CHAPTER:10 (アンリ, see 1) and
 2018年福袋 (the banner shows three of its eleven, plus the later brides kept).
 

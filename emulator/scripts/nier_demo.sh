@@ -43,10 +43,11 @@
 #      the shared phone lacks: their Individual bundles I/5374616e/...);
 #   2. the NieR gacha: ガチャ (GetGachaInData) -> the list with the stand-in banner -> the banner
 #      page (the stand-in pick-up panels of 2B, 9S and A2: the page rotates them);
-#   3. pulls: 10連ガチャ (5,000 coins) -> 決定 (Gacha) until a draw is role_cc0015/16/17 (2B / 9S /
-#      A2): each pull's ten draws are read from the server's state (tools/server_state.py, in draw
-#      order); on the pull that has one, the summon is tapped through to the first NieR card (its
-#      3D reveal and its card) before ALL SKIP; the results of every pull; at most --max-pulls;
+#   3. pulls: 10連ガチャ (5,000 coins) -> the confirmation (checked: flowctl.py gacha-confirm) -> 決定
+#      (Gacha) until a draw is role_cc0015/16/17 (2B / 9S / A2): each pull's ten draws are read
+#      from the server's state (tools/server_state.py, in draw order); on the pull that has one,
+#      the summon is tapped through to the first NieR card (its 3D reveal and its card) before ALL
+#      SKIP; the results of every pull; at most --max-pulls;
 #   4. the character list (キャラクター -> ステータス強化, by rarity: the new ★5s), then home.
 #   Then the server's state before / after: the roster diff (the NieR role), coins -5,000 per pull,
 #   ten draws per pull of gacha_pickup_role_0283; and a contact sheet of all screenshots
@@ -430,6 +431,10 @@ while [ $pull -lt "$max_pulls" ]; do
     pull=$((pull + 1))
     k=$(count_plog "< GachaRes")
     ctl tap:540:945 wait:2500          # 10連ガチャ
+    # The confirmation must be up before 決定 (515:800): that spot is on the rotating pick-up panels,
+    # where a tap opens 2B's / 9S's / A2's character detail (a 10連ガチャ tap lost while the panels turn).
+    python3 "$flowctl" gacha-confirm "$fifo" "$scratch/confirm-probe.png" > "$scratch/confirm.txt" 2>&1 \
+        || { miss "pull $pull: the draw confirmation ($(tail -n 1 "$scratch/confirm.txt"))"; finish; }
     [ $pull = 1 ] && shot draw-confirm
     tap_until "pull $pull: 10連ガチャ -> 決定 -> Gacha -> GachaRes" 60 515:800 more_than "< GachaRes" "$k" || finish
     in_plog "> Gacha .* args: $gacha_id " || miss "pull $pull: the Gacha request is not for $gacha_label ($gacha_id)"

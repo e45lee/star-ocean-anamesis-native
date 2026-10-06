@@ -31,6 +31,11 @@
       the fade is dropped), only then type NAME (text:, which a keyboard opened later would
       clear), screenshot, then 決定 (364:790) until the client sends CreatePlayer. Exit 1 unless
       CreatePlayer carries NAME.
+  flowctl.py gacha-confirm FIFO PROBE_SHOT
+      After a tap on 10連ガチャ: until the draw confirmation shows (screenshots to PROBE_SHOT), tap
+      10連ガチャ again on the banner detail, 閉じる on a pick-up's character detail (the carousel's
+      pages: a tap on 決定's spot there opens one); at most 6 looks (popups.gacha_confirm). Exit 1
+      if the confirmation doesn't show.
 """
 
 import os
@@ -114,6 +119,11 @@ def main():
         login_popups(*sys.argv[2:7])
     elif cmd == "name-entry":
         name_entry(*sys.argv[2:6])
+    elif cmd == "gacha-confirm":
+        fifo_path, probe = sys.argv[2:4]
+        if not popups.gacha_confirm(lambda c: send(fifo_path, *c, timeout=60), probe, note=_err):
+            sys.exit("FAIL: the draw confirmation didn't open")
+        print("ok the draw confirmation is up")
     elif cmd == "shot":
         fifo_path, shot = sys.argv[2:4]
         sys.exit(0 if send(fifo_path, "shot:" + shot) else 1)

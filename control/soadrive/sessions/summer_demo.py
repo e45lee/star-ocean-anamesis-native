@@ -44,7 +44,7 @@ import tempfile
 import time
 
 from .. import popups as _popups, proc, screens, ui370
-from ..flows import event, launch
+from ..flows import event, launch, mission
 from ..flows import gacha as gacha_flow
 from ..milestones import Failed
 from ..proc import REPO
@@ -214,10 +214,10 @@ def body(s, sh, scratch):
     sh.shot("rental")
     s.ctl("tap:" + ui370.RENTAL_NONE, "wait:5000")
     sh.shot("party")
-    s.ctl("tap:" + ui370.PARTY_START, "wait:3000")
+    mission.open_mission_confirm(s)  # ミッション開始, retried until the confirmation is up (a lost tap)
     sh.shot("start-confirm")
-    s.tap_until("ビーチスポーツ？【初級】 (me99_1054) -> MissionStart -> MissionStartRes", 60, ui370.CONFIRM_OK,
-                lambda: s.in_packets(r"< MissionStartRes"), every=5)
+    mission.start_mission(s, "ビーチスポーツ？【初級】 (me99_1054) -> MissionStart -> MissionStartRes",
+                          lambda: s.in_packets(r"< MissionStartRes"), opened=True)
     s.check("MissionStart names me99_1054 (%d)" % battle, s.in_packets(r"> MissionStart .* %d " % battle))
     s.ctl("wait:6000")
     sh.shot("battle-loading")

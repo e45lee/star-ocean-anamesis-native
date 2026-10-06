@@ -7,7 +7,8 @@
 #   soawebview          STATIC. Public include dir webview/include (#include "soawebview/page.h");
 #                       links litehtml (+ gumbo; vcpkg, our overlay port cmake/vcpkg-ports/litehtml)
 #                       and the stb headers privately.
-#   soa-webview-render  renders a local HTML page to a PNG (tools/render.cpp; docs/webview.md).
+#   soa-webview-render  renders a local HTML page to a PNG (tools/render.cpp; its command line on CLI11:
+#                       tools/cli.cpp, through soa_env; docs/webview.md).
 #   soawebview_tests    the library's tests (tests/webview_tests.cpp): `build/webview/soawebview_tests`.
 
 set(SOA_WEBVIEW_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -18,7 +19,7 @@ target_include_directories(soawebview PUBLIC ${SOA_WEBVIEW_DIR}/include PRIVATE 
 target_link_libraries(soawebview PUBLIC soa_env soa_compat litehtml PRIVATE soa::stb soa_fonts)
 target_compile_options(soawebview PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function)
 
-add_executable(soa-webview-render ${SOA_WEBVIEW_DIR}/tools/render.cpp)
+add_executable(soa-webview-render ${SOA_WEBVIEW_DIR}/tools/render.cpp ${SOA_WEBVIEW_DIR}/tools/cli.cpp)
 target_link_libraries(soa-webview-render PRIVATE soawebview soa::stb)
 target_compile_options(soa-webview-render PRIVATE -Wall)
 

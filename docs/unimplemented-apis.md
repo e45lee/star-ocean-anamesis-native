@@ -208,7 +208,7 @@ tables, rules section). New state goes through the state module's migrations
    Assumptions (d): what the seed and an older state hold is not new; a stack item is new only when
    its first stack arrives. Server-runnable screens: the character, item, weapon / accessory and
    stack lists' NEW badges (both hosts; in-process these were already answered, with `{}`).
-7. **Paid currency (decided: allow; done 2026-10-04, the opener is the user's question):** `CoinList`,
+7. **Paid currency (decided: allow; done 2026-10-04; the opener decided 2026-10-05):** `CoinList`,
    `DirectItemShopList` and the `CoinDeposit*` purchase flow complete without payment and credit
    what the product gives ([`server-rules.md#paid-currency`](server-rules.md#paid-currency); module
    `coins`, schema step 14: `coin_deposit`). The store is a platform answer (`platform370`'s in-app
@@ -218,9 +218,11 @@ tables, rules section). New state goes through the state module's migrations
    coin shop opens only when the server refuses a payment the client thought it could make with
    20003 (the item shop's exchange @01b5eea4, the gacha's draw @01ad2bb8), or through master content
    that doesn't exist (a guide popup of `target_content_type` 4, a banner to shop mode 4). The
-   server now refuses those with 20003 (b); session `coins` reaches the shop by cutting the server's
-   coins under the client's. **Open question for the user:** which door players get (a served
-   guide popup or banner row, a platform change routing 販売は停止 to the coin shop, or none).
+   server now refuses those with 20003 (b). **The user's decision (2026-10-05): a client change
+   (platform370's native patch) turns the 販売は停止 dialog (`OpenBuyEndDialog`) into the coin shop**,
+   so a "not enough stones" moment opens it ([`client-changes.md`](client-changes.md) "Emulator
+   mode"; `--no-patch` turns it off). Session `coins`: a player with 50 stones draws once (500) and
+   lands in the coin shop.
    Server-runnable screens: the coin shop (its list, a purchase, the result) and 購入情報's paid /
    free split, in both hosts.
 8. **Stubs (decided; done 2026-10-04, section 2.5):** social (2.2) and the debug APIs (2.4) answer
@@ -250,6 +252,8 @@ tables, rules section). New state goes through the state module's migrations
 ### Decisions (the user, 2026-10-04)
 
 - **Paid currency: allow.** Buying stones works locally and costs nothing.
+- **The coin shop's door (2026-10-05):** the 3.7.0 client's "紋章石の販売は停止しています" dialog opens
+  the coin shop instead (a client change, platform370's native patch).
 - **Social: stub, and defer to multiplayer.** Follow, blacklist and neighbor calls get success
   replies with empty lists; real friends belong to the multiplayer schema plan
   ([`../server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md)).

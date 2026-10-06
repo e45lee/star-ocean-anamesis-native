@@ -1,6 +1,10 @@
-// The one native patch of the 3.7.0 client (platform370::install_patches, Config::patch):
-// master_global.service_stop_day is hidden from the game, so the client runs on the real date
-// (emulator/README.md "The date and service_stop_day"; docs/client-changes.md "Emulator mode").
+// The native patches of the 3.7.0 client (platform370::install_patches, Config::patch):
+//   1. master_global.service_stop_day is hidden from the game, so the client runs on the real date
+//      (emulator/README.md "The date and service_stop_day"; docs/client-changes.md "Emulator mode");
+//   2. the "sale stopped" dialog opens the coin shop instead (the user's decision, 2026-10-05;
+//      docs/client-changes.md "The coin shop instead of 紋章石の販売は停止しています"), below.
+//
+// Patch 1:
 //
 // What the client does with the row (work/libSOA-3.7.0.so; every reader of the key: the string
 // "service_stop_day" @0x27652ac has two references, both through
@@ -75,6 +79,31 @@ void h_find_global_string_with_key(Cpu& c) {
     guest_call_raw(g_orig, ints, 1, nullptr, 0, out);
 }
 
+// ---- patch 2: the coin shop instead of 紋章石の販売は停止しています --------------------------------
+// The 3.7.0 client stopped selling 紋章石: every coins-short check it makes with its own coin count
+// (the gacha: CGachaShortage::OpenShortage @01ae01d8, unconditionally; the item shop @01b5e5cc; the
+// stamina heal; the gear-frame extension) calls CDialogManager::OpenBuyEndDialog(std::function<void()>
+// const& on_close) (@01dca8bc; uimsg_stone_not_buy_end_dialog, 紋章石が足りません。紋章石の販売は
+// 停止しています。). The client's own coin-shop dialog is CDialogManager::OpenCoinShopDialog(u32
+// shortage, std::function<void()> const& on_close, UISeDefine::SystemSeID se) (@01dbc618): a
+// CCoinCheckDialog; with shortage 0 it opens the coin shop at once (CCoinCheckDialog::Setup:
+// CCoinShop::StateStart), the call the item shop makes for a server refusal (@01b5eea4) and the home
+// popup (CHome::PopupProgress) with se 3. The hook answers OpenBuyEndDialog with that call, the same
+// on_close; the purchase itself is the server's (server/src/api/shop/coins.cpp) and the store
+// platform370's (java_370.cpp install_billing).
+constexpr const char* kOpenBuyEndDialog = "_ZN14CDialogManager16OpenBuyEndDialogERKNSt6__ndk18functionIFvvEEE";
+constexpr const char* kOpenCoinShopDialog = "_ZN14CDialogManager18OpenCoinShopDialogEjRKNSt6__ndk18functionIFvvEEEN10UISeDefine10SystemSeIDE";
+constexpr u64 kCoinShopSe = 3;  // UISeDefine::SystemSeID of the client's own OpenCoinShopDialog calls
+u64 g_open_coin_shop = 0;
+
+void h_open_buy_end_dialog(Cpu& c) {
+    u64 self = c.x(0), on_close = c.x(1);
+    LOGI("p370", "patch: OpenBuyEndDialog (from %#llx) -> OpenCoinShopDialog: the coin shop instead of the sale-stopped dialog",
+         (unsigned long long)(c.lr() - g_base));
+    u64 ints[4] = {self, 0, on_close, kCoinShopSe};
+    guest_call_raw(g_open_coin_shop, ints, 4, nullptr, 0, 0);
+}
+
 }  // namespace
 
 PatchStatus install_patches(LoadedLib& lib) {
@@ -90,6 +119,15 @@ PatchStatus install_patches(LoadedLib& lib) {
     hook_guest_function(a, "CParameterUtility::FindGlobalStringWithKey [platform370: hides service_stop_day]", h_find_global_string_with_key);
     LOGI("p370", "patch: CParameterUtility::FindGlobalStringWithKey hooked at %#llx: master_global.service_stop_day is hidden",
          (unsigned long long)(a - lib.base));
+    u64 buy_end = lib.sym(kOpenBuyEndDialog);
+    g_open_coin_shop = lib.sym(kOpenCoinShopDialog);
+    if (buy_end && g_open_coin_shop) {
+        hook_guest_function(buy_end, "CDialogManager::OpenBuyEndDialog [platform370: opens the coin shop]", h_open_buy_end_dialog);
+        LOGI("p370", "patch: CDialogManager::OpenBuyEndDialog hooked at %#llx: a coins-short moment opens the coin shop",
+             (unsigned long long)(buy_end - lib.base));
+    } else {
+        LOGW("p370", "patch: no CDialogManager::OpenBuyEndDialog / OpenCoinShopDialog; the sale-stopped dialog stays");
+    }
     return PatchStatus::Hooked;
 }
 

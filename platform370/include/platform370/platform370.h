@@ -67,8 +67,9 @@ struct Config {
     // "host" (the host's real time) or "YYYY-MM-DD HH:MM:SS" (local time): the phone's clock at
     // install(); it runs on from there. Needs `clock`.
     std::string device_clock = "host";
-    // The native patch (patch_370.cpp, install_patches): master_global.service_stop_day is
-    // hidden, so the client runs on the real date. false = soa-emu's --no-patch.
+    // The native patches (patch_370.cpp, install_patches): master_global.service_stop_day is
+    // hidden, so the client runs on the real date; the sale-stopped dialog (OpenBuyEndDialog) opens
+    // the coin shop instead. false = --no-patch.
     bool patch = true;
     // The network glue: the name/port redirect (getaddrinfo / gethostbyname / connect, with the
     // Bionic<->glibc ai_flags and EAI_* fixes; net_370.cpp) and the host HTTP client behind the

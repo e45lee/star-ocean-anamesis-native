@@ -41,7 +41,7 @@ One package for the port (`soa`, in-process server or `--server`) and the emulat
 | `gacha` | `gacha_session.sh` | port-inproc, port-server, emu |
 | `campaign`, `rental`, `events`, `tower`, `home`, `growth`, `deepspace`, `sphere211`, `sphere211-continue`, `episode-movie` | `<name>_session.sh` | port-inproc (the phase lines, the in-process server's lines) |
 | `badges` | `badges_session.sh` | port-inproc, port-server: a 10-draw, the character list's NEW badges, 戻る -> ClearNewCharacter, cleared, and still cleared after a re-login |
-| `coins` | `coins_session.sh` | port-inproc, port-server: the coin shop opened by the server's 20003 (an item-shop exchange after the server's coins were cut), the L set bought (980 paid + 80 free stones, the purchase record), and still there after a re-login |
+| `coins` | `coins_session.sh` | port-inproc, port-server: a player with 50 stones draws once; the sale-stopped dialog (platform370's patch) opens the coin shop; the L set bought (980 paid + 80 free stones, the purchase record), and still there after a re-login |
 | `tutorial`, `entry` | `tutorial_session.sh`, `newplayer_session.sh` | port-inproc |
 | `seeded`, `newplayer` | `emulator/scripts/emulator_session.sh [--new-player]` | emu, port-server, port-inproc |
 | `summer-demo` | `emulator/scripts/summer_demo.sh` | emu, port-server, port-inproc |

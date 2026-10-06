@@ -1,6 +1,6 @@
 #!/bin/sh
-# Paid currency: the coin shop opened by the server's 20003 (an item-shop exchange the client thought
-# it could pay), the L set bought (paid + free stones, the purchase record), home, and a re-login:
+# Paid currency: a player with 50 stones draws once; the sale-stopped dialog (platform370's patch)
+# opens the coin shop; the L set bought (paid + free stones, the purchase record), home, and a re-login:
 # still there (control/soadrive/sessions/coins.py).
 #
 # Usage: port/scripts/coins_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)

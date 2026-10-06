@@ -282,3 +282,32 @@ def test_the_end_state_is_checked_when_a_run_stops(tmp_path):
         assert any(x.startswith("FAIL") and "state check (G9): 1 foreign key violation" in x for x in r.results) == orphan, r.results
         steps = open(r.layout.steps).read()
         assert ("state check" in steps) and steps.rstrip().endswith("FAIL" if orphan else "PASS")
+
+
+def test_winhost_copy_verified(tmp_path, monkeypatch):
+    """winhost.copy_verified: a copy that isn't the source (same size, other bytes: what a copy onto
+    the Windows drive under memory pressure has left) is copied again once, then fails loudly."""
+    import shutil
+    import pytest
+    from soadrive import winhost
+    src, dst = tmp_path / "a.exe", tmp_path / "b.exe"
+    src.write_bytes(b"MZ" + b"x" * 100)
+    real = shutil.copy2
+    bad = {"n": 0}
+
+    def flaky(a, b):
+        real(a, b)
+        if bad["n"] > 0:
+            bad["n"] -= 1
+            with open(b, "r+b") as f:
+                f.seek(50)
+                f.write(b"y")
+    monkeypatch.setattr(winhost.shutil, "copy2", flaky)
+    winhost.copy_verified(str(src), str(dst))  # a good copy
+    assert dst.read_bytes() == src.read_bytes()
+    bad["n"] = 1  # one bad copy: retried
+    winhost.copy_verified(str(src), str(dst))
+    assert dst.read_bytes() == src.read_bytes() and bad["n"] == 0
+    bad["n"] = 2  # two: an error
+    with pytest.raises(winhost.CopyMismatch):
+        winhost.copy_verified(str(src), str(dst))

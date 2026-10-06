@@ -102,7 +102,8 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
   isolation instead of re-running a test that fails only in the suite.
 - Windows tests (`win:*`): use your own stage, never the shared one:
   `scripts/windows-stage.sh --phone --viewer /mnt/c/soa-win-<name>` once, then
-  `SOA_WIN_STAGE=/mnt/c/soa-win-<name>`; delete it when done.
+  `SOA_WIN_STAGE=/mnt/c/soa-win-<name>`; delete it when done. A stage holds the download as the
+  zip only; `scripts/windows-stage.sh --clean DEST` removes old run output (a failing run's is kept).
 - Gate on the exit code (`tools/gate.sh T0; rc=$?`), never on a grep of its output.
 
 ## Hard rules

@@ -182,16 +182,25 @@ From WSL the `.exe` files run directly (interop), but not in place: SQLite can't
 `\\wsl.localhost\...` ("database is locked"), a worktree's `work/` link isn't followed there, and
 the tests' `/tmp` is `\tmp` on the current drive. `scripts/windows-stage.sh` copies the tracked
 files, the `work/` data the programs read and the `.exe` files to `C:\soa-win` (incremental; the
-first copy of the 3.7.0 download takes about 10 minutes):
+first copy of the 3.7.0 download takes about 10 minutes). The download is staged once, as
+`work/SOA-3.7.0-canonical-data.zip`, which the programs read in place (in a checkout they take
+`work/download-3.7.0`, else that zip; a folder left by an older stage is removed): about 10 GB with
+`--phone --viewer`. The selftests that read the folder, or compare it with the zip (soa-server's
+`cdn/download-zip`), skip there and run on Linux. Every staged `.exe` and the key data files are
+checked against their source afterwards (size and mtime; the `.exe` files and whatever was just
+copied byte for byte): a mismatch is copied again once, then the script fails naming it (copies
+through WSL's drive mount under memory pressure have left an older `.exe` in place without an
+error).
 
 ```sh
 scripts/windows-stage.sh                                # -> /mnt/c/soa-win (C:\soa-win)
+scripts/windows-stage.sh --clean                        # removes old run output (run/, side copies of .exe files)
 cd /mnt/c/soa-win && ./build-win/server/soa-server.exe --selftest
 cd /mnt/c/soa-win && ./build-win/runtime/soaruntime_tests.exe
 cd /mnt/c/soa-win && ./build-win/port/soa.exe --data run/soa-data --selftest
 # the emulator against the server (pick free ports; a window opens unless --headless)
 cd /mnt/c/soa-win && ./build-win/server/soa-server.exe --listen 127.0.0.1:39300 --http 127.0.0.1:39380 \
-    --data run/server --download-dir work/download-3.7.0 &
+    --data run/server --download-dir work/SOA-3.7.0-canonical-data.zip &
 cd /mnt/c/soa-win && ./build-win/emulator/soa-emu.exe --data run/phone --server 127.0.0.1:39300 --http 127.0.0.1:39380
 ```
 
@@ -222,7 +231,9 @@ staged copy from `C:\soa-win` (refreshed from `build-win/` when newer), with Win
 control channel, the phone and the server's state on the Windows drive (linked back into the run's
 dirs) and the shared pre-downloaded phone hard-linked there by `scripts/windows/link-phone.ps1`
 (seconds; `cp -al` through WSL takes about ten minutes). Once: `scripts/windows-stage.sh --phone
---viewer` (the shared phone, 4 GB, and the soa-viewer package). Then:
+--viewer` (the shared phone, 4 GB, and the soa-viewer package). `scripts/windows-test.sh` removes a
+passing run's phones and server state from the stage's `run/` and keeps a failing run's
+(`scripts/windows-stage.sh --clean` removes those, on an idle stage). Then:
 
 ```sh
 scripts/windows-test.sh battle-gacha OUT TMP     # = tools/gate.sh win:battle-gacha (T2; SKIP without build-win/)

@@ -49,6 +49,10 @@ inline constexpr uint64_t kLib370Size = 45988160u;
 // The user's archive of the 3.7.0 download (the tree at its top level, stored), read in place
 // without extracting it (soa/game_files.h find_download, soa/file_tree.h).
 inline constexpr const char* kDataZipName = "SOA-3.7.0-canonical-data.zip";
+// The download in a checkout (find_repo_file; docs/environment.md "How the programs find the game
+// files"): the folder, else the zip (a Windows stage holds only the zip: scripts/windows-stage.sh).
+inline constexpr const char* kRepoDownloadDir = "work/download-3.7.0";
+inline constexpr const char* kRepoDownloadZip = "work/SOA-3.7.0-canonical-data.zip";
 // What README.txt (the packages') calls the folder for the game files.
 inline constexpr const char* kGameSubdir = "game";
 

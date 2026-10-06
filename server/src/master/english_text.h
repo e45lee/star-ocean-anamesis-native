@@ -18,21 +18,16 @@
 #include <memory>
 #include <string>
 
-namespace soa::server::english {
+#include "soaserver/english_table.h"
 
-struct Entry {
-    std::string ja_sha1;  // "" = a new id: inserted, never matched against a Japanese row
-    std::string en;
-    std::string source;
-};
-using Table = std::map<std::string, Entry>;  // by message_id
+namespace soa::server::english {
 
 // Parses the table file into `out`; false (with *err) on an unreadable file, a wrong header or a
 // row without four fields.
 bool load(const std::string& path, Table& out, std::string* err);
 
-// The table file in force: config().english_text, else data/english/master-en.tsv
-// (find_repo_file); "" when none exists.
+// Our own rows: --english-text, else data/english/master-en.tsv (machine / human / reviewed and the
+// client strings, finished by tools/english_text.py); "" when none exists.
 std::string table_path();
 
 // The English story tables' directory (TS_xxxx.tsv files, the same form; docs/server-rules.md#english-story):
@@ -40,8 +35,13 @@ std::string table_path();
 // none exists.
 std::string story_dir();
 
-// The table of config() (loaded once per path), nullptr without --english or without a readable
-// file (warned once).
+// Publishes the full table the CDN built (english_derive.h: the derived layer with our rows), which
+// table() answers without an explicit --english-text.
+void set_served_table(std::shared_ptr<const Table> t);
+
+// The table in force under --english: the one the CDN published (set_served_table), else
+// --english-text's file alone (loaded once per path: a replay, a test); nullptr without --english
+// or without a table (an unreadable file is warned once).
 std::shared_ptr<const Table> table();
 
 // What the table says for a row whose Japanese text_value is `ja` (the matching rule, d).

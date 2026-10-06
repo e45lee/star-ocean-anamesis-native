@@ -106,7 +106,7 @@ Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/un
 
 `enabled`, `new_player`, `master`, `db`, `seed`, `client_save` (soa only), `has_seed_rng` / `seed_rng`,
 `start_coins`, `has_clock` / `clock` / `clock_offset`, `galaxy_pass`, `enable_events`,
-`event_keywords`, `restore_tower`, `home3d_all`, `english` / `english_text` (`--english`, `--english-text`: docs/server-rules.md#english), `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
+`event_keywords`, `restore_tower`, `home3d_all`, `english` / `english_text` (`--english`, `--english-text` (our English rows; docs/server-rules.md#english, #english-derive; `soa-server --english-dump DIR` writes the derived tables), `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
 `repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `server/tests/fixtures` are found;
 then the install dirs, `common/include/soa/install.h`: a release package's `data/` and `standin-assets/`),
 `apk` (the 3.7.0 APK: the master's last-resort source),

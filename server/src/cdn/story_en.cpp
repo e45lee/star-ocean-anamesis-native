@@ -70,14 +70,20 @@ std::string english_name(const std::string& name) {
 
 std::vector<uint8_t> make_english_story(const std::string& name, const std::vector<uint8_t>& file, const std::string& table,
                                         EnglishStoryStats* stats) {
-    EnglishStoryStats st;
-    if (stats) *stats = st;
+    if (stats) *stats = EnglishStoryStats{};
     english::Table t;
     std::string why;
     if (!english::load(table, t, &why)) {
         LOGW("cdn", "english story %s: %s", name.c_str(), why.c_str());
         return {};
     }
+    return make_english_story(name, file, t, stats);
+}
+
+std::vector<uint8_t> make_english_story(const std::string& name, const std::vector<uint8_t>& file, const english::Table& t,
+                                        EnglishStoryStats* stats) {
+    EnglishStoryStats st;
+    if (stats) *stats = st;
     std::vector<uint8_t> plain = adld::decrypt(name, file);
     Value v = mp_decode(plain);
     Value* rows = files::map_find(v, "master_text");

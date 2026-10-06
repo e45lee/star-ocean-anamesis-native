@@ -7,6 +7,8 @@ History:
 - 2026-10-07: the user's decisions below; the plan is now **option C only**, restructured around them. The machine-translation option for the gaps (Q2, Q12, still open) was investigated the same day (agent `english-mt`, [english.md section 7](english.md#7-machine-translation-for-the-gaps)) and is the last part of this plan.
 - 2026-10-07, later: the user's answers to the MT questions (M-Q1 and M-Q3 to M-Q7, below), and a second trial with 12–31B local LLMs on the GPU (agent `english-llm`, [english.md 7.8](english.md#78-local-llms-on-the-gpu-1231b)); the engine (M-Q2) is still open.
 
+- 2026-10-07, later: **the user: the committed tables and the packages carry only our own rows** (machine / human / reviewed, the client strings), not Global's English; official, memory and template rows are derived at build time from `data/basmaster-gl.sqlite3` (by `tools/english_text.py` and the server's `-en` builder), and the packages ship that DB. The derivation's spec for the C++ port: [english.md 7.9](english.md#79-the-derivation-spec). The story window budget is 480 font px (measured).
+
 ## Decisions (the user, 2026-10-07)
 
 **M-Q2 decided (the user, 2026-10-07: "select the best local model and execute the plan"):** the engine is **Gemma 4 31B-it, QAT UD-Q4_K_XL, with the v2 prompt** (llama.cpp CUDA, work/tools/), chrF 44.9 in the blind trial (Claude Opus 44.4), for the UI/system text and the story. It needs the whole GPU (~22.5 GB): run the MT batches when no game sessions use the GPU; Gemma 4 26B-A4B (v2 prompt, 44.3, ~3x faster) is the fallback when VRAM is contended.

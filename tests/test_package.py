@@ -42,7 +42,10 @@ def test_english_tables_are_packaged(tmp_path):
     data/english/ (the tool's inputs)."""
     stage, root = make_stage(tmp_path)
     assert (root / "data/english/master-en.tsv").is_file()
-    assert len(list((root / "data/english/story-en").glob("TS_*.tsv"))) > 0
+    # our story rows (2026-10-07: only machine/human/reviewed rows are committed; there may be none yet)
+    repo = pathlib.Path(__file__).resolve().parent.parent
+    assert len(list((root / "data/english/story-en").glob("TS_*.tsv"))) == \
+        len(list((repo / "data/english/story-en").glob("TS_*.tsv")))
     assert not (root / "data/english/glossary.tsv").exists() and not (root / "data/english/story-en/index.tsv").exists()
     assert len(list((root / "standin-assets-en/recipes").glob("*.json"))) > 0
     assert package.check(str(stage), "port", None) == []

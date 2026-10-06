@@ -24,3 +24,7 @@ req 13 1790870470 MissionStart b7c62bc2 0,4055608004,1,0,0,0,3615639045 - - -
 req 14 1790870475 MissionEnd 8312a64c 4055608004,0 - - -
 req 15 1790870480 GetWorldMapInfoList 15a9bdbd 3615639045 - - -
 req 16 1790870485 GetPlayer 9a056905 - - - -
+# (settings and account) シナリオライブラリ: Episode 1's cleared story missions (chapter_0, the seeded chain
+# and mf01_001's clears) and the world map's (chapter_1: m02_06_mb161_10 has no chapter)
+req 17 1790870490 GetScenarioLibraryInfoList e08c972e 2693101203 - - -
+req 18 1790870495 GetScenarioLibraryInfoList e08c972e 3615639045 - - -

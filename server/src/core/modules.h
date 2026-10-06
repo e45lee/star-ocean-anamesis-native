@@ -42,6 +42,7 @@ void register_subscription();  // api/shop/subscription.cpp
 void register_title();         // api/player/titles.cpp
 void register_worldboss();     // api/events/world_boss.cpp
 void register_debug_stubs();   // api/debug/debug_stubs.cpp: the Debug* APIs, stubs
+void register_settings();      // api/settings/account.cpp: the options (config.cpp), the birth month, the read marks, the scenario library
 }  // namespace soa::server
 namespace soa::server::events {
 void register_event();  // api/events/event_missions.cpp: event missions, campaigns (master_campaign)

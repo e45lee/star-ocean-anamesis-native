@@ -89,6 +89,10 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `session:growth` | 5.7 min | 1 | strengthening, evolution, limit break, weapon custom (gear set, removed, purified) | `port/scripts/growth_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:deepspace` | 5.4 min | 1 | deep-space expeditions: started, returned, collected, a quick return, two ships, achievements | `port/scripts/deepspace_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:tower` | 4.3 min | 1 | the tower's floor list, a floor's battle, the next floor unlocked (--restore-tower) | `port/scripts/tower_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:badges` | 5.5 min | 1 | the NEW badges: a 10-draw's new characters show NEW, 戻る sends ClearNewCharacter, cleared, still cleared after a re-login | `port/scripts/badges_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:badges-server` | 5.5 min | 1 | session:badges against soa-server (soa --server) | `port/scripts/badges_session.sh --target port-server build/port/soa {out} {tmp}` |
+| T2 | `session:settings` | 7.0 min | 1 | その他設定's 一時保管庫設定 on, still on after a restart (screen and state), 初期設定に戻す, the シナリオライブラリ from planted Episode 1 clears | `port/scripts/settings_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:settings-server` | 7.0 min | 1 | session:settings against soa-server (soa --server) | `port/scripts/settings_session.sh --target port-server build/port/soa {out} {tmp}` |
 | T2 | `session:restore` | 4.8 min | 1 | home, a battle, a 10-draw, the server state after each | `port/scripts/restore_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:restore-missions` | 6.2 min | 1 | a surprise-enemy battle, two step-up gacha steps, MissionStart refused at stamina 0 | `port/scripts/restore_missions.sh build/port/soa {out} {tmp}` |
 | T2 | `session:favor` | 5.4 min | 1 | favor set between two boots, taps on the home character (UpdateFavorByTap), a battle's favor | `port/scripts/restore_favor_session.sh build/port/soa {out} {tmp}` |

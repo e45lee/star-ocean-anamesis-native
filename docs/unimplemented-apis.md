@@ -16,13 +16,13 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **147** (35 of them stubs: section 2.5). Of the **52 without a handler**:
+The wire knows **199 methods**; the server has handlers for **155** (35 of them stubs: section 2.5). Of the **44 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
 | **Empty reply** | 10 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
 | **Canned reply** | 1 | The named file exists in `port/fakeapi/responses/`, but it is a fixed reply made for another method by `tools/fakeapi_responses.py`: `TrainingMissionStart` gets `mission_start.msgp` (a normal mission's start). Nothing is stored. (`CbtCertification`, which got `update_home.msgp`, is answered now: `server-rules.md#client-reports`.) |
-| **No reply** | 31 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
+| **No reply** | 23 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
 
 Over the network (`soa-server`, `soa-emu`, `soa --server HOST`), every unhandled method gets an
@@ -44,10 +44,10 @@ player, screens opened by hand through `--control`.
 | アイテム > 装備倉庫にしまう / 取り出す / 売却 (`GetStorageInfo`) | I, S | opens; the storage is empty (倉庫装備所持 0/500) |
 | アイテム > 一時保管庫から取り出す (`GetOneTimeStorageInfo`) | I | opens; empty |
 | `DepositItem`, `WithdrawItemFromStorage`, `SellItemsFromStorage`, `Lock`/`UnlockStorageItem` | decompile | the screen takes the call as done; nothing moves on the server, so the item is back after a reload (the seeded player has no loose weapons to move; the storage session plants some) |
-| 設定 > その他設定 / バトル設定 (`GetConfig`, `UpdateConfig`) | I, S | opens with the master defaults; a toggled option (一時保管庫設定) is **lost at once**: reopened, it is off again (S: `UpdateConfig(4025152546, "true", 4)` answered with `Time` only) |
+| 設定 > その他設定 / バトル設定 (`GetConfig`, `UpdateConfig`) | I, S | opens with the master defaults; a toggled option (一時保管庫設定) is **lost at once**: reopened, it is off again (S: `UpdateConfig(4025152546, "true", 4)` answered with `Time` only). **Fixed (step 3.3):** kept, also over a restart; 初期設定に戻す resets |
 | 初期設定に戻す (`ResetConfig`) | decompile | same pattern |
 | キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters |
-| 惑星選択 > シナリオライブラリ (`GetScenarioLibraryInfoList`) | S | opens; メインストーリー / サブストーリー with no chapters |
+| 惑星選択 > シナリオライブラリ (`GetScenarioLibraryInfoList`) | S | opens; メインストーリー / サブストーリー with no chapters. **Fixed (step 3.3):** the cleared missions' chapters |
 | キャラクター > バトルシミュレーター (`TrainingMissionStart`, canned `mission_start.msgp`) | I | **wrong data**: the battle starts with the canned reply's party and stages (other characters, STAGE 1/2), not the chosen party; シミュレーター終了 returns to the character menu (no `MissionLose`) |
 | 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player) |
 | `MissionContinue`, `MissionLose` (`CPauseMenu::ReqeustContinue` @01dad704 -> `Auto`) | decompile | not reproduced (losing needs a long battle); the continue would go ahead with no stones taken on the server |
@@ -102,13 +102,7 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | | [ChangeRole](api.md#changerole) | ★ | |
 | | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
 | | [FavoriteDecoObject](api.md#favoritedecoobject) / [UnFavoriteDecoObject](api.md#unfavoritedecoobject) | {} | |
-| **Settings and account** | [GetConfig](api.md#getconfig) / [UpdateConfig](api.md#updateconfig) / [ResetConfig](api.md#resetconfig) | ★ | the options the server keeps |
-| | [GetBirthYearMonth](api.md#getbirthyearmonth) / [UpdateBirthYearMonth](api.md#updatebirthyearmonth) | ★ | age check before purchases |
-| | [GetScenarioLibraryInfoList](api.md#getscenariolibraryinfolist) | ★ | the story library (replaying scenes) |
-| | [ReadExpirationInfo](api.md#readexpirationinfo) | ★ | |
-| | [SetStampSlot](api.md#setstampslot) | {} | chat stamp slots |
-| | [UpdateSession](api.md#updatesession) | ★ | |
-| | [SendGuideInformation](api.md#sendguideinformation) | ★ | |
+| **Settings and account** | [SetStampSlot](api.md#setstampslot) | {} | chat stamp slots (the options, the birth month, the read marks and the scenario library: done, step 3.3) |
 
 ### 2.2 Online-only features
 
@@ -124,6 +118,10 @@ Not needed for single-player play. The social calls are stubs now (2.5).
   [EndMissionTalk](api.md#endmissiontalk) have no handler, but are answered with the story
   campaign's data (`server/src/core/lifecycle.cpp`, `server/src/api/campaign/`), and in-process by
   the port's own hooks (`port/src/native/api/fakeapi.cpp`). They work.
+- [UpdateSession](api.md#updatesession) has no library handler: it is the session handshake's last
+  step, which soa-server's wire layer answers itself (`server/net/game.cpp`, before the library
+  sees a request); in-process its only caller (`BridgeNotify::OnReceive`) never runs, since the
+  FakeApiCaller opens no bridge. Nothing to implement (step 3.3).
 
 ### 2.4 Not callable by the 3.7.0 client (10 without a handler)
 
@@ -194,9 +192,11 @@ tables, rules section). New state goes through the state module's migrations
 2. **Missions: `MissionContinue`, `MissionLose`, `TrainingMissionStart`:** continue costs and limits
    from the master, the mission's state kept open across a continue; training missions give no
    rewards (check).
-3. **Settings and account:** `GetConfig`/`UpdateConfig`/`ResetConfig` (store the options),
-   `Get/UpdateBirthYearMonth`, `ReadExpirationInfo`, `UpdateSession`, `SendGuideInformation`,
-   `GetScenarioLibraryInfoList` (from the story progress the server already keeps).
+3. **Settings and account (done, 2026-10-04: `server/src/api/settings/`, schema version 14,
+   docs/server-rules.md#settings-account, session `settings`):** `GetConfig`/`UpdateConfig`/`ResetConfig`
+   (store the options; `ConfigInfoList` also on every player load), `Get/UpdateBirthYearMonth`,
+   `ReadExpirationInfo`, `SendGuideInformation`, `GetScenarioLibraryInfoList` (from the story progress
+   the server already keeps); `UpdateSession` needs none (2.3). Assumptions below.
 4. **Equipment and mastery:** `EquipAuto` (the client's or the server's choice — check which side
    picks), `InheritAccessory`, `UpdateItemStock`, `GetMasteryInfo`/`TrainMastery`/`ResetMastery`.
 5. **Home and decorations:** `ChangeMascot`, `ChangeRole`, the deco methods
@@ -297,6 +297,27 @@ evidence against one replaces it and records why.
 - All 27 `Debug*` methods answer success with an empty reply and change nothing — even the ones
   whose names promise items or currency (`DebugGetCoin`, `DebugGetItem`). The 3.7.0 client can't
   send them; only tests or a modified client could.
+
+**Settings and account (step 3.3; each (d) in docs/server-rules.md#settings-account).**
+- The options: an id `master_config` doesn't have is refused (10403): the client sends only master
+  ids. `GetConfig` doesn't send `Option` (COptionInfo: frame rate, volumes): the client keeps those
+  settings itself, and leaving the key out leaves its copy as it was.
+- The birth month: stored as entered and replaceable by entering it again (the client asks only
+  while GetBirthYearMonth is refused); a string outside the client's own ranges is refused (10403;
+  the client never sends one). Age-based monthly spending limits are **not** enforced (Decisions:
+  a local game has no reason to limit spending).
+- `ReadExpirationInfo` stores nothing and answers no `ExpirationInfoList`: the local server keeps no
+  expiration state (no response sends one), so a read mark has nothing to change on the client.
+- `SendGuideInformation` stores nothing and answers an empty `GuideInformationInfoList`: the local
+  server shows no guide popups (the online ones announced the service's dated campaigns and shop
+  items; the client shows the guides that list names, and no player load sends one).
+- `GetScenarioLibraryInfoList` lists the cleared story missions (the core's `mission` clears and
+  `campaign_clear`) of the episode type asked for: (c) the library replays the story of cleared
+  missions. A `--campaign-seed` chain is listed only once its first clear has saved it (the
+  library reads the state DB).
+- `UpdateSession`: no handler (2.3).
+- In-process, the eight methods are served through `kServedStatusOnly` (docs/client-changes.md);
+  `UpdateBirthYearMonth`'s arguments are sent as NetworkApiCaller sends them ("YYYY-MM").
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

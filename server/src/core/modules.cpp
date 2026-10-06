@@ -57,6 +57,7 @@ const Module kModules[] = {
     {"tower", tower::register_tower},
     {"worldboss", register_worldboss},
     {"debug_stubs", register_debug_stubs},
+    {"settings", register_settings},
 };
 
 }  // namespace

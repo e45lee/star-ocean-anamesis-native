@@ -46,6 +46,8 @@ const std::vector<MasterRef>& master_refs() {
         {"event_rank_received", "group_id", "master_event_ranking_group", "id", false},
         // the story campaign's clears (PLAN-schema S12): Episode 1's missions and the world map's
         {"campaign_clear", "mission_id", "master_mission|master_world_map_mission", "id", false},
+        // the options the player changed (schema version 14; api/settings/config.cpp)
+        {"config", "master_config_id", "master_config", "id", false},
     };
     return refs;
 }

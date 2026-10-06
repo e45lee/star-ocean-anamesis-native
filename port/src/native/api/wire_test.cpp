@@ -822,6 +822,62 @@ NATIVE_TEST("wire/inproc-parity") {
             compare(t, "SaleGacha", server_port::inproc_request("_ZN13FakeApiCaller9SaleGachaEjPKa", 0xb164b4c5, x), d);
         }
     }
+    // The settings and account requests the route serves (fakeapi.cpp kServedStatusOnly).
+    {
+        // UpdateConfig(u32 master_config_id, s8 const* value, u32 type): the value a char[191]
+        const char* value = "true";
+        Arg s;
+        s.code = 'S';
+        s.mem.assign(value, value + strlen(value));
+        s.mem.resize(191 + 1024, 0);
+        server::net::Decoded d;
+        if (wire_decode(t, "UpdateConfig", {u('I', 4025152546u), s, u('I', 4)}, &d)) {
+            u64 x[8] = {0x5150, 4025152546u, (u64)value, 4};
+            compare(t, "UpdateConfig", server_port::inproc_request("_ZN13FakeApiCaller12UpdateConfigEjPKaj", 0xf82ca7ca, x), d);
+        }
+    }
+    {
+        // ReadExpirationInfo(CSTLVector<u32> const& ids)
+        std::vector<u32> ids = {475676447u, 1801260937u};
+        Arg p;
+        p.code = 'p';
+        p.mem.assign((const u8*)ids.data(), (const u8*)(ids.data() + ids.size()));
+        u64 v32[3] = {(u64)ids.data(), (u64)(ids.data() + ids.size()), (u64)(ids.data() + ids.size())};
+        server::net::Decoded d;
+        if (wire_decode(t, "ReadExpirationInfo", {p, u('I', ids.size())}, &d)) {
+            u64 x[8] = {0x5150, (u64)v32};
+            compare(t, "ReadExpirationInfo",
+                    server_port::inproc_request("_ZN13FakeApiCaller18ReadExpirationInfoERKN9Framework10CSTLVectorIjEE", 0xdc269365, x), d);
+        }
+    }
+    {
+        // SendGuideInformation(u32), GetScenarioLibraryInfoList(u32): the u32's own bits
+        server::net::Decoded d;
+        if (wire_decode(t, "SendGuideInformation", {u('I', 732197292u)}, &d)) {
+            u64 x[8] = {0x5150, 0xdead00002ba471acull};
+            compare(t, "SendGuideInformation", server_port::inproc_request("_ZN13FakeApiCaller20SendGuideInformationEj", 0x5cf6a3e9, x), d);
+        }
+        server::net::Decoded d2;
+        if (wire_decode(t, "GetScenarioLibraryInfoList", {u('I', 3615639045u)}, &d2)) {
+            u64 x[8] = {0x5150, 0xbeef0000d7824605ull};
+            compare(t, "GetScenarioLibraryInfoList",
+                    server_port::inproc_request("_ZN13FakeApiCaller26GetScenarioLibraryInfoListEj", 0xe08c972e, x), d2);
+        }
+    }
+    {
+        // UpdateBirthYearMonth(u16 year, u8 month): NetworkApiCaller sends "%u-%02u" in a char[8]
+        // (CNetworkUtility::BirthYearMonthNumber2String); the route sends the same string
+        const char* text = "1990-05";
+        Arg s;
+        s.code = 'S';
+        s.mem.assign(text, text + strlen(text));
+        s.mem.resize(8 + 1024, 0);
+        server::net::Decoded d;
+        if (wire_decode(t, "UpdateBirthYearMonth", {s}, &d)) {
+            u64 x[8] = {0x5150, 0xdead0000000007c6ull, 0xbeef000000000005ull};
+            compare(t, "UpdateBirthYearMonth", server_port::inproc_request("_ZN13FakeApiCaller20UpdateBirthYearMonthEth", 0x0088b260, x), d);
+        }
+    }
 }
 
 }  // namespace

@@ -114,6 +114,18 @@ def build(plat):
     run([os.path.join(ROOT, "scripts", "build.sh"), *args, "--release", "--target", "soa", "soa-server", "soa-emu", "soa-viewer"], cwd=ROOT)
 
 
+def release_configured(plat):
+    """Is the platform's build dir a Release configure? Only then are SOA_RELEASE_PACKAGE's rules in
+    the programs (root CMakeLists.txt): a release build never uses a checkout around it, only --repo
+    DIR and its install dirs (common/include/soa/install.h, "the repo roots")."""
+    cache = os.path.join(ROOT, PLATFORMS[plat]["build"], "CMakeCache.txt")
+    try:
+        with open(cache, encoding="utf-8", errors="replace") as f:
+            return any(line.strip() == "CMAKE_BUILD_TYPE:STRING=Release" for line in f)
+    except OSError:
+        return False
+
+
 def tool(plat, name):
     if PLATFORMS[plat]["windows"]:
         return "x86_64-w64-mingw32-" + name  # MinGW-w64 binutils (README.md "Windows")
@@ -420,6 +432,9 @@ def main():
     for plat in plats:
         if not a.no_build:
             build(plat)
+        if not release_configured(plat):
+            log(f"FAIL {PLATFORMS[plat]['build']}/ is not a release build (scripts/build.sh{' --windows' if PLATFORMS[plat]['windows'] else ''} --release)")
+            return 1
         with tempfile.TemporaryDirectory(prefix="soa-package-") as work:
             dbg_root = os.path.join(work, "debug", f"soa-{version}-{plat}-debug-symbols")
             os.makedirs(dbg_root)

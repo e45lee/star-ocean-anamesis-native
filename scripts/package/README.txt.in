@@ -33,7 +33,8 @@ It may also sit directly beside soa-viewer{{EXE}} instead of in game/.
 
 Where soa-viewer looks, first match wins:
   1. the command-line flags (below);
-  2. a source checkout of the project, when it runs from one (developers);
+  2. a source checkout of the project, only when --repo DIR names one (developers). This build
+     never uses a checkout around it, even when unzipped inside one;
   3. the folder soa-viewer{{EXE}} is stored in (not the current directory);
   4. its game/ subfolder.
 In 3. and 4. only the top level is searched: the first *.xapk there that holds the game.{{# 380-ok}}
@@ -158,7 +159,8 @@ They may also sit directly beside the program instead of in game/.
 
 Where the programs look, first match wins:
   1. the command-line flags (below);
-  2. a source checkout of the project, when the program runs from one (developers);
+  2. a source checkout of the project, only when --repo DIR names one (developers). This build
+     never uses a checkout around it, even when unzipped inside one;
   3. the folder the program is stored in (not the current directory);
   4. its game/ subfolder.
 In 3. and 4. only the top level is searched: the APK is any *.apk there, the data is
@@ -206,7 +208,8 @@ soa{{EXE}}
               soa{{EXE}} --help lists them all.
   first run:  a new account: the game's own tutorial and starter characters. To continue from
               your own 3.7.0 save instead, give it once on the first run: --seed Game.xml (the
-              phone's shared_prefs/Game.xml).
+              phone's shared_prefs/Game.xml), or put it in this folder as
+              data/saves/seed/Game.xml: then every first run (a new --data DIR) starts from it.
   writes to:  {{IF windows}}%LOCALAPPDATA%\soa\port-370\{{ELSE}}~/.local/share/soa-linux-370/{{END}}  (unless --data DIR):
               the phone's data and save, server.sqlite3 (your player), libSOA-3.7.0.so (taken from
               the APK on the first run), master/ (the master DB, 3.), cdn/ (the local CDN's cache)
@@ -235,7 +238,8 @@ run-port-server{{IF windows}}.cmd{{ELSE}}.sh{{END}}
   ./run-emulator.sh [options]
 {{END}}
   First run: a new account (the game's tutorial and starter characters), unless --seed FILE
-  (your own 3.7.0 or offline Game.xml) is given on the first run.
+  (your own 3.7.0 or offline Game.xml) is given on the first run, or that save is in this folder
+  as data/saves/seed/Game.xml (then every first run starts from it).
   Options: --new-player (start a fresh account), --seed FILE (start from a 3.7.0 or offline
   Game.xml), --enable-events, --port N, --home DIR; others go to soa-emu (e.g. --fullscreen).
   run-emulator{{IF windows}}.cmd{{ELSE}}.sh{{END}} --help lists them.

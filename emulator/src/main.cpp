@@ -8,7 +8,7 @@
 #include <soa/env.h>
 #include <soa/game_files.h>
 #include <soa/paths.h>
-#include <limits.h>
+#include <soa/install.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -45,38 +45,23 @@ bool exists(const std::string& p) {
     struct stat st;
     return !p.empty() && stat(p.c_str(), &st) == 0;
 }
-std::string real(const std::string& p) {
-    char buf[PATH_MAX];
-    return realpath(p.c_str(), buf) ? std::string(buf) : std::string();
-}
-std::string parent(const std::string& p) {
-    size_t s = p.find_last_of('/');
-    if (s == std::string::npos) return "";
-    return s == 0 ? "/" : p.substr(0, s);
-}
 
-// The repo root: --repo, else upwards from the executable (build/emulator/soa-emu), else from the
-// working directory: the first directory holding emulator/CMakeLists.txt.
-std::string find_repo(const std::string& given) {
-    if (!given.empty()) return real(given);
-    for (std::string start : {parent(real("/proc/self/exe")), real(".")}) {
-        for (std::string d = start; !d.empty(); d = parent(d)) {
-            if (exists(d + "/emulator/CMakeLists.txt") && exists(d + "/runtime/CMakeLists.txt")) return d;
-            if (d == "/") break;
-        }
+// The source checkouts searched for repo files (apk/, work/libSOA-3.7.0.so): the repo root and, in
+// a git worktree whose work/ links into it, the main checkout (where untracked files such as
+// apk/*.apk live). common soa/install.h repo_roots: --repo; in a development build also upwards
+// from the executable (build/emulator/soa-emu) or the working directory; a release build never
+// searches for a checkout around it. Empty when there is none.
+std::vector<std::string> find_checkouts(const std::string& given) {
+    auto is_repo = [](const std::string& d) { return exists(d + "/emulator/CMakeLists.txt") && exists(d + "/runtime/CMakeLists.txt"); };
+    soa::install::RepoRoots r = soa::install::repo_roots(given, is_repo);
+    if (!r.warning.empty()) LOGW("emu", "%s", r.warning.c_str());
+    std::vector<std::string> v;
+    if (!r.root.empty()) {
+        LOGI("emu", "%s", r.describe().c_str());
+        v.push_back(r.root);
+        if (!r.main_checkout.empty()) v.push_back(r.main_checkout);
     }
-    return "";
-}
-
-// A repo file: in the repo, else (a git worktree, whose work/ links into the main checkout) in
-// the main checkout, where untracked files such as apk/*.apk live. "" when neither has it.
-std::string repo_file(const std::string& repo, const std::string& rel) {
-    if (repo.empty()) return "";
-    if (exists(repo + "/" + rel)) return repo + "/" + rel;
-    std::string w = real(repo + "/work");
-    std::string main = w.empty() ? "" : parent(w);
-    if (!main.empty() && main != repo && exists(main + "/" + rel)) return main + "/" + rel;
-    return "";
+    return v;
 }
 
 }  // namespace
@@ -100,10 +85,12 @@ int main(int argc, char** argv) {
     platform370::Config& p370 = args.p370;
     app::HostConfig& host = args.host;
 
-    std::string repo = find_repo(repo_arg);
-    if (repo.empty()) LOGI("emu", "no source checkout: the game files are looked up beside the program (README.txt)");
+    const std::vector<std::string> repo = find_checkouts(repo_arg);
+    if (repo.empty())
+        LOGI("emu", "%s: the game files are looked up beside the program (README.txt)",
+             soa::install::kReleasePackage ? "release build: no source checkout is searched (only --repo DIR)" : "no source checkout");
     if (apks.empty()) {
-        std::string apk = repo_file(repo, "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk");
+        std::string apk = soa::install::find_in_roots(repo, "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk");
         if (apk.empty()) {
             // a release package (README.md "Packaging"): a 3.7.0 APK beside the program or in game/
             std::vector<std::string> notes;
@@ -120,7 +107,7 @@ int main(int argc, char** argv) {
     if (data_dir.empty()) data_dir = soa::default_data_dir("soa-emulator-370/phone", "emulator-370\\phone");
     soa::make_dir_tree(data_dir);
     if (lib_path.empty()) {
-        lib_path = repo_file(repo, "work/libSOA-3.7.0.so");
+        lib_path = soa::install::find_in_roots(repo, "work/libSOA-3.7.0.so");
         if (lib_path.empty()) {
             // the APK's own lib/arm64-v8a/libSOA.so, extracted once into the data dir (as soa does)
             lib_path = data_dir + "/libSOA-3.7.0.so";

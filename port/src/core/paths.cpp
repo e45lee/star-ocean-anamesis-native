@@ -1,11 +1,7 @@
 // Repository resources (see paths.h).
 #include "core/paths.h"
 
-#include <limits.h>
-#include <algorithm>
-#include <stdlib.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #include <soa/install.h>
 
@@ -21,70 +17,19 @@ bool exists(const std::string& p) {
     return !p.empty() && stat(p.c_str(), &st) == 0;
 }
 
-std::string real(const std::string& p) {
-    char buf[PATH_MAX];
-    return realpath(p.c_str(), buf) ? std::string(buf) : std::string();
-}
-
-std::string parent(const std::string& p) {
-    size_t s = p.find_last_of('/');
-    if (s == std::string::npos) return "";
-    return s == 0 ? "/" : p.substr(0, s);
-}
-
 bool is_repo(const std::string& dir) { return exists(dir + "/port/CMakeLists.txt"); }
 
-// The first directory from `dir` upwards that is a repo root.
-std::string upwards(std::string dir) {
-    while (!dir.empty()) {
-        if (is_repo(dir)) return dir;
-        if (dir == "/") break;
-        dir = parent(dir);
-    }
-    return "";
-}
-
+// The repo roots (common soa/install.h repo_roots: one rule for every program; a release build
+// never searches for a checkout around it).
 struct Roots {
     std::string root;
     std::vector<std::string> all;
     Roots() {
-        const std::string& o = options().repo_dir;  // --repo
-        if (!o.empty()) {
-            root = real(o);
-            if (root.empty()) LOGW("paths", "--repo: %s not found", o.c_str());
-        }
-        const char* how = "--repo";
-        if (root.empty()) {
-            how = "the executable";
-            std::string exe = real("/proc/self/exe");
-            if (!exe.empty()) root = upwards(parent(exe));
-        }
-        if (root.empty()) {
-            how = "the working directory";
-            root = upwards(real("."));
-        }
-        if (root.empty()) {
-            // A packaged soa (README.md "Packaging"): our data files sit at their repo paths in the
-            // install dir (soa/install.h); then, as before, the working directory.
-            for (auto& d : install::install_dirs()) all.push_back(d);
-            if (!all.empty()) all.push_back(".");
-            LOGI("paths", "no source checkout: data files are looked up in %s%s, then the working directory",
-                 all.empty() ? "(nothing)" : all[0].c_str(), all.size() > 2 ? " and its game/" : "");
-            return;
-        }
-        all.push_back(root);
-        // A git worktree (.claude/worktrees/NAME) links work/ into the main checkout: search that too.
-        struct stat st;
-        if (lstat((root + "/work").c_str(), &st) == 0 && S_ISLNK(st.st_mode)) {
-            std::string w = real(root + "/work");
-            std::string main = w.empty() ? "" : parent(w);
-            if (!main.empty() && main != root && is_repo(main)) all.push_back(main);
-        }
-        LOGI("paths", "repo %s (from %s)%s%s", root.c_str(), how, all.size() > 1 ? ", main checkout " : "",
-             all.size() > 1 ? all[1].c_str() : "");
-        // then the install dirs (soa/install.h): a no-op in a build tree (build/port has no data/)
-        for (auto& d : install::install_dirs())
-            if (std::find(all.begin(), all.end(), d) == all.end()) all.push_back(d);
+        install::RepoRoots r = install::repo_roots(options().repo_dir, is_repo);  // --repo
+        if (!r.warning.empty()) LOGW("paths", "%s", r.warning.c_str());
+        LOGI("paths", "%s", r.describe().c_str());
+        root = r.root;
+        all = r.all;
     }
 };
 

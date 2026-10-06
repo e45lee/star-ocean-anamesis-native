@@ -28,13 +28,11 @@ endforeach()
 soa_link_in_init_order(SOA_SOURCES)
 add_executable(soa ${SOA_SOURCES})
 add_dependencies(soa soaruntime_objs)
-if(MINGW)
-  # (reverse link order: the runtime's objects (reversed in runtime/CMakeLists.txt) go AFTER the
-  # port's, so they still initialize first)
-  target_sources(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
-else()
-  target_link_options(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
-endif()
+# (On MinGW the runtime's objects, linked first, therefore initialize after the port's; within each
+# the order is Linux's. Nothing depends on the order between the two: the runtime's static
+# registries (RUNTIME_TEST, which run_native_tests puts first itself; jni::add_class_installer,
+# used at static-init time only by port's webview_local.cpp) are its own.)
+target_link_options(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
 set_property(TARGET soa APPEND PROPERTY LINK_DEPENDS $<TARGET_OBJECTS:soaruntime_objs>)
 target_include_directories(soa PRIVATE src)
 target_compile_definitions(soa PRIVATE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)

@@ -121,7 +121,9 @@ extern "C" char* soa_mkdtemp(char* tmpl) {
 // destroyed first; glibc runs them in exit() before the atexit handlers). Static destructors are
 // atexit handlers too, run in reverse order of registration, so the main thread's are run by a
 // handler registered at each of its registrations (the last one registered runs first; the others
-// then find nothing left): an object constructed before the thread_local outlives it. (One
+// then find nothing left): an object constructed before the thread_local outlives it; one
+// constructed after the main thread's last registration is still destroyed first (glibc destroys
+// all thread storage before any static). (One
 // registered at start-up ran last: ~ThreadState of soaruntime_tests.exe's main thread erased itself
 // from cpu.cpp's destroyed g_thread_states, STATUS_HEAP_CORRUPTION at exit.)
 // (clang, llvm-mingw, has native TLS: none of this.)

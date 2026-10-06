@@ -1,0 +1,80 @@
+# soa-server replay corpus (server/tests/replay/README.md): storage, hand-written for the equipment
+# storage and the overflow box (docs/server-rules.md#storage), the items-party options (--galaxy-pass: 500 storage
+# slots). Weapon draws fill the inventory; the storage APIs with real arguments and their refusals; a draw on
+# the full inventory fills the overflow box; its APIs.
+# tz: America/Toronto
+req 1 1790841480 Login a01c67ef - - - -
+req 2 1790841485 Gacha a0a1940b 2201696395,0 - - -
+req 3 1790841490 Gacha a0a1940b 2201696395,0 - - -
+req 4 1790841495 Gacha a0a1940b 2201696395,0 - - -
+req 5 1790841500 Gacha a0a1940b 2201696395,0 - - -
+req 6 1790841505 Gacha a0a1940b 2201696395,0 - - -
+req 7 1790841510 Gacha a0a1940b 2201696395,0 - - -
+req 8 1790841515 Gacha a0a1940b 2201696395,0 - - -
+req 9 1790841520 Gacha a0a1940b 2201696395,0 - - -
+req 10 1790841525 Gacha a0a1940b 2201696395,0 - - -
+req 11 1790841530 Gacha a0a1940b 2201696395,0 - - -
+req 12 1790841535 Gacha a0a1940b 2201696395,0 - - -
+req 13 1790841540 Gacha a0a1940b 2201696395,0 - - -
+req 14 1790841545 Gacha a0a1940b 2201696395,0 - - -
+req 15 1790841550 Gacha a0a1940b 2201696395,0 - - -
+req 16 1790841555 Gacha a0a1940b 2201696395,0 - - -
+req 17 1790841560 Gacha a0a1940b 2201696395,0 - - -
+req 18 1790841565 Gacha a0a1940b 2201696395,0 - - -
+req 19 1790841570 Gacha a0a1940b 2201696395,0 - - -
+req 20 1790841575 Gacha a0a1940b 2201696395,0 - - -
+req 21 1790841580 Gacha a0a1940b 2201696395,0 - - -
+req 22 1790841585 Gacha a0a1940b 2201696395,0 - - -
+req 23 1790841590 Gacha a0a1940b 2201696395,0 - - -
+req 24 1790841595 Gacha a0a1940b 2201696395,0 - - -
+req 25 1790841600 Gacha a0a1940b 2201696395,0 - - -
+req 26 1790841605 Gacha a0a1940b 2201696395,0 - - -
+req 27 1790841610 Gacha a0a1940b 2201696395,0 - - -
+req 28 1790841615 Gacha a0a1940b 2201696395,0 - - -
+req 29 1790841620 Gacha a0a1940b 2201696395,0 - - -
+req 30 1790841625 Gacha a0a1940b 2201696395,0 - - -
+req 31 1790841630 Gacha a0a1940b 2201696395,0 - - -
+req 32 1790841635 Gacha a0a1940b 2201696395,0 - - -
+req 33 1790841640 Gacha a0a1940b 2201696395,0 - - -
+req 34 1790841645 Gacha a0a1940b 2201696395,0 - - -
+req 35 1790841650 Gacha a0a1940b 2201696395,0 - - -
+req 36 1790841655 Gacha a0a1940b 2201696395,0 - - -
+req 37 1790841660 Gacha a0a1940b 2201696395,0 - - -
+req 38 1790841665 Gacha a0a1940b 2201696395,0 - - -
+req 39 1790841670 Gacha a0a1940b 2201696395,0 - - -
+req 40 1790841675 Gacha a0a1940b 2201696395,0 - - -
+req 41 1790841680 Gacha a0a1940b 2201696395,0 - - -
+req 42 1790841685 Gacha a0a1940b 2201696395,0 - - -
+req 43 1790841690 Gacha a0a1940b 2201696395,0 - - -
+req 44 1790841695 Gacha a0a1940b 2201696395,0 - - -
+req 45 1790841700 Gacha a0a1940b 2201696395,0 - - -
+req 46 1790841705 Gacha a0a1940b 2201696395,0 - - -
+req 47 1790841710 Gacha a0a1940b 2201696395,0 - - -
+req 48 1790841715 Gacha a0a1940b 2201696395,0 - - -
+req 49 1790841720 Gacha a0a1940b 2201696395,0 - - -
+req 50 1790841725 Gacha a0a1940b 2201696395,0 - - -
+req 51 1790841730 Gacha a0a1940b 2201696395,0 - - -
+# the inventory is full (500 = item_stock): this draw's weapons go to the overflow box
+req 52 1790841735 Gacha a0a1940b 2201696395,0 - - -
+req 53 1790841740 GetOneTimeStorageInfo 074df139 - - - -
+req 54 1790841745 ClearNewOneTimeStorageItem d4f178a3 - - 765832197,12345 -
+# refused: no room in the inventory (10202)
+req 55 1790841750 WithdrawItemFromOneTimeStorage aa6a1d11 765832197,1 - - -
+# the equipment storage: three deposited; again (10403), an unknown uid (10403); the list
+req 56 1790841755 DepositItem c4cd3b1a - - 2097152000,2097152001,2097152002 -
+req 57 1790841760 DepositItem c4cd3b1a - - 2097152000 -
+req 58 1790841765 DepositItem c4cd3b1a - - 12345 -
+req 59 1790841770 GetStorageInfo 06669069 - - - -
+# a lock (an inventory item isn't listed), the locked one's sale refused (10204), unlocked and sold; one withdrawn
+req 60 1790841775 LockStorageItem b398671e - - 2097152000,2097152005 -
+req 61 1790841780 SellItemsFromStorage 81416fa8 - - 2097152000 -
+req 62 1790841785 UnlockStorageItem b28403c2 - - 2097152000 -
+req 63 1790841790 SellItemsFromStorage 81416fa8 - - 2097152000 -
+req 64 1790841795 WithdrawItemFromStorage de86bab0 - - 2097152001 -
+# the overflow box: more than held (10206); one; two in bulk with one slot left (10202); one in bulk (the inventory full again)
+req 65 1790841800 WithdrawItemFromOneTimeStorage aa6a1d11 765832197,3 - - -
+req 66 1790841805 WithdrawItemFromOneTimeStorage aa6a1d11 765832197,1 - - -
+req 67 1790841810 BulkWithdrawItemFromOneTimeStorage 59f02ddd - - 765832197,1298277856|1,1 -
+req 68 1790841815 BulkWithdrawItemFromOneTimeStorage 59f02ddd - - 1520606355|1 -
+req 69 1790841820 GetOneTimeStorageInfo 074df139 - - - -
+req 70 1790841825 GetPlayer 9a056905 - - - -

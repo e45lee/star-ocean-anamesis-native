@@ -48,6 +48,8 @@ const std::vector<MasterRef>& master_refs() {
         {"campaign_clear", "mission_id", "master_mission|master_world_map_mission", "id", false},
         // the options the player changed (schema version 14; api/settings/config.cpp)
         {"config", "master_config_id", "master_config", "id", false},
+        // the overflow box (一時保管庫): one row per master item (api/storage/one_time.cpp)
+        {"one_time_storage", "master_item_id", "master_item", "id", false},
     };
     return refs;
 }

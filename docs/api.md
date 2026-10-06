@@ -1386,9 +1386,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `59f02ddd`, encrypted: RequestHeader(16) · u32 n + n×u32 · u32 n + n×u32 = 24 bytes + payload; reply `BulkWithdrawItemFromOneTimeStorageRes` fid `0dceac23`
 - **Request**: `vector<u32>` ids, `vector<u32>` counts
 - **Response** (`data.*`): as above
-- **Handler / effect**: Apply + DeleteOneTimeStorage + AddItem.
+- **Handler / effect**: Apply + DeleteOneTimeStorage + AddItem. Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): unnamed code near `CItemStorage`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/one_time.cpp`), in-process through the port's FakeApiCaller route
 
 ### ClearNewGear
 - **FunctionID** `b0092669`
@@ -1417,9 +1417,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `d4f178a3`, encrypted: RequestHeader(16) · u32 n + n×u32 = 20 bytes + payload; reply `ClearNewOneTimeStorageItemRes` fid `f3a20e11`
 - **Request**: `vector<u32>` ids
 - **Response** (`data.*`): `OneTimeStorageItemClearNewList`
-- **Handler / effect**: Inline (native).
+- **Handler / effect**: Inline (native). Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): `CItemStorage::Progress`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/one_time.cpp`), in-process through the port's FakeApiCaller route
 
 ### ClearNewStackItem
 - **FunctionID** `aabac605`
@@ -1438,9 +1438,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `c4cd3b1a`, encrypted: RequestHeader(16) · u32 n + n×u64 = 20 bytes + payload; reply `DepositItemRes` fid `3c6bb766`
 - **Request**: `vector<u64>` uids
 - **Response** (`data.*`): `UpdateStorageItem`
-- **Handler / effect**: Apply + AddStorage.
+- **Handler / effect**: Apply + AddStorage. Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): unnamed code near `CItemStorage`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/storage.cpp`), in-process through the port's FakeApiCaller route
 
 ### GenerateGear
 - **FunctionID** `af1c5d33`
@@ -1470,9 +1470,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `074df139`, encrypted: RequestHeader(16) = 16 bytes; reply `GetOneTimeStorageInfoRes` fid `d155eeb2`
 - **Request**: none
 - **Response** (`data.*`): `OneTimeStorageItem`
-- **Handler / effect**: Plain apply.
+- **Handler / effect**: Plain apply. Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): `CItemStorage::Setup`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/one_time.cpp`), in-process through the port's FakeApiCaller route
 
 ### GetStorageInfo
 - **FunctionID** `06669069`
@@ -1480,9 +1480,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `06669069`, encrypted: RequestHeader(16) = 16 bytes; reply `GetStorageInfoRes` fid `b28b2d86`
 - **Request**: none
 - **Response** (`data.*`): `StorageItem`
-- **Handler / effect**: Plain apply.
+- **Handler / effect**: Plain apply. Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): `CItemStorage::Setup`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/storage.cpp`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_global.subscription_storage_stock`
 
 ### InheritAccessory
@@ -1540,9 +1540,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `b398671e`, encrypted: RequestHeader(16) · u32 n + n×u64 = 20 bytes + payload; reply `LockStorageItemRes` fid `74d51575`
 - **Request**: `vector<u64>` uids
 - **Response** (`data.*`): `UpdateStorageLockList`
-- **Handler / effect**: Inline (native).
+- **Handler / effect**: Inline (native). Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): unnamed code near `CMasterParameterVoiceSwitchElement`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/storage.cpp`), in-process through the port's FakeApiCaller route
 
 ### MaterialCompose
 - **FunctionID** `f9a4ba8c`
@@ -1596,9 +1596,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `81416fa8`, encrypted: RequestHeader(16) · u32 n + n×u64 = 20 bytes + payload; reply `SellItemsFromStorageRes` fid `a99264f4`
 - **Request**: `vector<u64>` uids
 - **Response** (`data.*`): `UpdateStorageItem`, `SellResult`
-- **Handler / effect**: Apply + DeleteStorage(true).
+- **Handler / effect**: Apply + DeleteStorage(true). Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): `CItemSellConfirmationDialog::ConnectSellItemsAPI`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/storage.cpp`), in-process through the port's FakeApiCaller route
 
 ### SellStackItem
 - **FunctionID** `445ab956`
@@ -1642,9 +1642,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `b28403c2`, encrypted: RequestHeader(16) · u32 n + n×u64 = 20 bytes + payload; reply `UnlockStorageItemRes` fid `e93f1e55`
 - **Request**: `vector<u64>` uids
 - **Response** (`data.*`): `UpdateStorageLockList`
-- **Handler / effect**: Inline (native).
+- **Handler / effect**: Inline (native). Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): unnamed code near `CMasterParameterVoiceSwitchElement`, unnamed code near `void std::__ndk1::vector<std::__ndk1::ba`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/storage.cpp`), in-process through the port's FakeApiCaller route
 
 ### UpdateFollowMax
 - **FunctionID** `7c2b82bf`
@@ -1699,8 +1699,8 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `aa6a1d11`, encrypted: RequestHeader(16) · u32 · u32 = 24 bytes; reply `WithdrawItemFromOneTimeStorageRes` fid `16110d36`
 - **Request**: `u32 id`, `u32 count`
 - **Response** (`data.*`): `UpdateOneTimeStorageItem`, `AddItem`
-- **Handler / effect**: Apply + DeleteOneTimeStorage + AddItem.
-- **Status**: **no caller found** (in 3.7.0 or the offline build)
+- **Handler / effect**: Apply + DeleteOneTimeStorage + AddItem. Server: docs/server-rules.md#storage.
+- **Status**: **no caller found** (in 3.7.0 or the offline build); answered by the local server (`server/src/api/storage/one_time.cpp`), in-process through the port's FakeApiCaller route
 
 ### WithdrawItemFromStorage
 - **FunctionID** `de86bab0`
@@ -1708,9 +1708,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `de86bab0`, encrypted: RequestHeader(16) · u32 n + n×u64 = 20 bytes + payload; reply `WithdrawItemFromStorageRes` fid `7e549638`
 - **Request**: `vector<u64>` uids
 - **Response** (`data.*`): `UpdateStorageItem`
-- **Handler / effect**: Apply + DeleteStorage(false).
+- **Handler / effect**: Apply + DeleteStorage(false). Server: docs/server-rules.md#storage.
 - **Callers** (fid constant scan): unnamed code near `CItemStorage`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/storage/storage.cpp`), in-process through the port's FakeApiCaller route
 
 ## Gacha
 

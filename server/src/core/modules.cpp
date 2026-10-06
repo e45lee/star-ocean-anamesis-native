@@ -58,6 +58,7 @@ const Module kModules[] = {
     {"worldboss", register_worldboss},
     {"debug_stubs", register_debug_stubs},
     {"settings", register_settings},
+    {"storage", register_storage},
 };
 
 }  // namespace

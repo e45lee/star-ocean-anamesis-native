@@ -167,4 +167,46 @@ struct GetPresentArgs {
     }
 };
 
+// DepositItem / WithdrawItemFromStorage / SellItemsFromStorage / LockStorageItem /
+// UnlockStorageItem(CSTLVector<u64> const& uids): the items' uids (docs/api.md#deposititem).
+struct StorageItemsArgs {
+    std::vector<ItemUid> uids;
+    static StorageItemsArgs from(const Request& r) {
+        StorageItemsArgs a;
+        if (!r.vecs.empty())
+            for (u64 uid : r.vecs[0]) a.uids.push_back(ItemUid(uid));
+        return a;
+    }
+};
+
+// WithdrawItemFromOneTimeStorage(u32 id, u32 count) and BulkWithdrawItemFromOneTimeStorage
+// (CSTLVector<u32> const& ids, CSTLVector<u32> const& counts): the overflow box's entries by master
+// item id (b: CApiNotify::DeleteOneTimeStorage @014d4e44 matches them by master_item_id) and how
+// many of each; a missing count is 0 (docs/api.md#withdrawitemfromonetimestorage).
+struct OneTimeWithdrawArgs {
+    std::vector<std::pair<MasterItemId, u32>> takes;
+    static OneTimeWithdrawArgs from(const Request& r) {
+        OneTimeWithdrawArgs a;
+        if (r.method == "WithdrawItemFromOneTimeStorage") {
+            a.takes.emplace_back(MasterItemId((u32)int_at(r, 0)), (u32)int_at(r, 1));
+        } else if (!r.vecs.empty()) {
+            for (size_t k = 0; k < r.vecs[0].size(); k++)
+                a.takes.emplace_back(MasterItemId((u32)r.vecs[0][k]), r.vecs.size() > 1 && k < r.vecs[1].size() ? (u32)r.vecs[1][k] : 0u);
+        }
+        return a;
+    }
+};
+
+// ClearNewOneTimeStorageItem(CSTLVector<u32> const& ids): master item ids (b: CItemStorage::Progress
+// @01f43efc sends the entries' master ids; OnClearNewOneTimeStorageItemRes matches master_item_id).
+struct OneTimeClearNewArgs {
+    std::vector<MasterItemId> ids;
+    static OneTimeClearNewArgs from(const Request& r) {
+        OneTimeClearNewArgs a;
+        if (!r.vecs.empty())
+            for (u64 id : r.vecs[0]) a.ids.push_back(MasterItemId((u32)id));
+        return a;
+    }
+};
+
 }  // namespace soa::server::args

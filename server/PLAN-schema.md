@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns and version 14's `config`, `player.birth_year` / `birth_month` added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns, version 14's `config`, `player.birth_year` / `birth_month` and version 15's `items.stored_at` / `one_time_storage` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1640,6 +1640,11 @@ Lockstep changes:
   - **Step 14** (`state/schema.cpp` `kSettings`; `kSchemaVersion` 14; written as 13 on its branch, renumbered at the merge: the NEW badges landed first): `create table config (master_config_id integer primary key, value text not null, type integer not null) strict` (a master reference into `master_config`, `state::check`'s and `schema_inventory.py`'s); `alter table player add column birth_year integer check (birth_year between 1900 and 2100)`, `birth_month ... check (birth_month between 1 and 12)` (NULL: never entered; the client's own ranges, `CNetworkUtility::BirthYearMonthString2Number`). No rebuild, no data mapping (54 tables).
   - **Code:** `api/settings/config.cpp` (the options; `ConfigInfoList` on the player load), `api/settings/account.cpp` (the birth month).
   - **Tests:** `server/schema-migrate-v14` ((1) v0 → v14: every other table's rows as at 13, no options, no birth month, `.bak-v0`; (2) a v13 file → 14 without the master: `.bak-v13` without the table and columns, the checks, STRICT), `server/schema-fresh-equals-migrated` (54 tables), `settings/config`, `settings/birth-year-month`; the `profile` replay corpus.
+
+**v15: the equipment storage and the overflow box** (task U step 3.1, 2026-10-04, branch `port/server-u-storage`; not a plan step: a feature that needed state). `docs/server-rules.md#storage`.
+  - **Step 15** (`state/schema.cpp` `kStorage`; `kSchemaVersion` 15; 13 on its branch, renumbered at the merge): `alter table items add column stored_at integer` (NULL: the item is in the inventory; else the time it was deposited in the equipment storage; an existing item stays in the inventory) and `create table one_time_storage (master_item_id integer primary key, num integer not null check (num > 0), is_new integer not null default 1 check (is_new in (0, 1)), updated_at integer not null) strict` (the overflow box, one row per master item; `master_item_id` a master reference, in `state::master_refs` and RELS). No rebuild, no data mapping. A stored item keeps its row so `gear_items`, `roster` / `party_member` and `gacha_history` keep their references (deposit refuses an equipped item).
+  - **Code:** `api/storage/storage.cpp`, `one_time.cpp`; `item_info_list` sends the inventory (`stored_at is null`) as `Item`; `owns_item` / the inventory APIs ignore stored items.
+  - **Tests:** `server/schema-migrate-v15` (v0 → 15 and a planted v14 → 13 without the master, `.bak-v12`, the box's checks), `server/schema-fresh-equals-migrated` (54 tables), `storage/*`; the `storage` replay corpus.
 ---
 
 ## 5. Order and gates

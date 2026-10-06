@@ -22,8 +22,10 @@ Value wallet_info(ext::Ctx& ctx);
 // The player's id (player.id: CHash32 of the search id; id 0 without a player).
 PlayerId player_id(ext::Ctx& ctx);
 Value stack_item_info_list(ext::Ctx& ctx);      // StockItem (CStackItemInfo list)
-// Item (CItemInfo list); `where` narrows the items (an SQL where clause).
-Value item_info_list(ext::Ctx& ctx, const std::string& where = "");
+// Item (CItemInfo list): the inventory's items, those not in the equipment storage; `where`
+// chooses others (an SQL where clause; api/storage/storage.cpp's StorageItem: the stored ones, each
+// with CStorageItemInfo's update_at_time).
+Value item_info_list(ext::Ctx& ctx, const std::string& where = "where stored_at is null");
 // {Time, Player, Wallet}: the player state every answer carries (ext::Ctx::base_data).
 Value base_data(ext::Ctx& ctx);
 // Which of soa-server's CDN keys (api/entry/entry.h add_cdn_paths) a full player state carries.

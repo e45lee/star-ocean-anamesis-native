@@ -11,6 +11,7 @@
 #include "api/items/items.h"  // item_equipped
 #include "api/player/party_set.h"  // party_set_info
 #include "api/player/roster.h"  // roster_info
+#include "api/storage/storage.h"  // item_stock, storage_stock
 #include "core/log.h"
 #include "core/server.h"  // has_player
 #include "soaserver/config.h"
@@ -47,8 +48,8 @@ CharacterUid support_uid(ext::Ctx& ctx, const Row& player_row) {
 
 // The stock caps of Player (player_info, step 2).
 void add_stock_caps(ext::Ctx& ctx, Value& player) {
-    player["item_stock"] = ctx.global_u32("item_stock_max", 500);  // (a) master_global item_stock_max
-    player["storage_stock"] = 500u;                                // (d)
+    player["item_stock"] = storage::item_stock(ctx);        // (a) master_global item_stock_max
+    player["storage_stock"] = storage::storage_stock(ctx);  // (b) 100, (a) + subscription_storage_stock with the pass
     player["gear_stock"] = ctx.global_u32("gear_stock_max", 500);  // (a) master_global gear_stock_max
     // (b) CPlayerInfo gear_num (+0x978, CParameterUtility::NowGearItemCount: the ギア所持
     // count of the gear screens) = the free gears (api/items/gear.cpp's table; d: attached gears
@@ -174,6 +175,10 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
         info["is_equip"] = item_equipped(ctx, item_row.id<ItemUid>("uid"));
         info["num"] = 1u;
         info["is_new"] = (u32)item_row.i("is_new");  // the NEW badge (docs/server-rules.md#new-badges)
+        // (b) CStorageItemInfo (an item of the equipment storage) adds update_at_time (u64,
+        // CStorageItemInfo::Initialize @014ff30c; a number: CParameterParser::GetValue<unsigned long>):
+        // (d) the time it was deposited, in seconds (items.stored_at)
+        if (!item_row.null("stored_at")) info["update_at_time"] = (u64)item_row.i("stored_at");
         ext::item_extra(state, master, item_row.id<ItemUid>("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
         list.push(info);
     });

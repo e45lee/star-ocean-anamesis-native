@@ -310,6 +310,8 @@ Suggested approach: look up the name in the GL DB by `name_message_id`, using `e
 
 ### (b) An English mode for the 3.7.0 client
 
+The full investigation (font, line breaks, the other text sources, an experiment with the merged master) and a plan are in [english.md](english.md) and [PLAN-english.md](PLAN-english.md).
+
 **How the client picks text.** It doesn't select by language at all:
 
 - `StringDB::GetNativeString` (3.7.0 vaddr 0x16faaec) builds the key with `Format("%s_%s", "ja", id)` and looks up `CHash32` of it.

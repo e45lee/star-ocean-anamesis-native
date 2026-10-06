@@ -1,0 +1,88 @@
+{
+ "note": "The Galaxy character gacha's panel (its GALAXY logo is the game's).",
+ "source": "Image/etc2/20200220_chara_PU_001.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "gold": {
+   "size": 44,
+   "bold": 3,
+   "fill": "#ffeab0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "white": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "teal_t": {
+   "size": 56,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a4a5a",
+   "outline_width": 4,
+   "glow": "#40ffffa0",
+   "glow_radius": 3,
+   "clear": "none"
+  },
+  "teal": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a4a",
+   "outline_width": 3,
+   "align": "left",
+   "leading": 10,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "キャラガチャ",
+   "text": "Character Draws",
+   "box": [
+    556,
+    426,
+    280,
+    38
+   ],
+   "style": "white",
+   "cover": [
+    556,
+    426,
+    196,
+    36
+   ],
+   "clear": "inpaint",
+   "align": "left",
+   "size": 28
+  },
+  {
+   "jp": "ギャラクシー",
+   "text": "",
+   "box": [
+    386,
+    381,
+    134,
+    23
+   ],
+   "style": "erase",
+   "cover": [
+    386,
+    381,
+    134,
+    23
+   ]
+  }
+ ]
+}

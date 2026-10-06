@@ -317,7 +317,9 @@ struct SubFit {
 
 // The best base and table for the pixels with mask[y*4+x] set, the base quantized to `bits` (4
 // or 5) and drawn from [lo[c], hi[c]].
-SubFit fit_sub(const uint8_t px[16][4], const bool mask[16], int bits, const int lo[3], const int hi[3]) {
+// mode 1: the punch-through variant with transparent pixels (format 48, "opaque" bit clear): a pixel
+// with alpha < 128 takes index 2 (transparent), the others index 0 (the base), 1 (+large) or 3 (-large).
+SubFit fit_sub(const uint8_t px[16][4], const bool mask[16], int bits, const int lo[3], const int hi[3], int mode) {
     SubFit best;
     int maxq = (1 << bits) - 1;
     int q[3];
@@ -331,9 +333,14 @@ SubFit fit_sub(const uint8_t px[16][4], const bool mask[16], int bits, const int
                     int idx[16] = {0};
                     for (int k = 0; k < 16 && e < best.err; k++) {
                         if (!mask[k]) continue;
+                        if (mode == 1 && px[k][3] < 128) {
+                            idx[k] = 2;
+                            continue;
+                        }
                         int be = INT32_MAX, bi = 0;
                         for (int i = 0; i < 4; i++) {
-                            int m = (i & 1 ? kEtcMod[t][1] : kEtcMod[t][0]) * (i & 2 ? -1 : 1);
+                            if (mode == 1 && i == 2) continue;
+                            int m = mode == 1 ? (i == 0 ? 0 : kEtcMod[t][1] * (i & 2 ? -1 : 1)) : (i & 1 ? kEtcMod[t][1] : kEtcMod[t][0]) * (i & 2 ? -1 : 1);
                             int ee = 0;
                             for (int c = 0; c < 3; c++) {
                                 int dd = clamp8(base[c] + m) - px[k][c];
@@ -355,28 +362,36 @@ SubFit fit_sub(const uint8_t px[16][4], const bool mask[16], int bits, const int
     return best;
 }
 
-void etc1_encode(const uint8_t px[16][4], uint8_t out[8]) {
+// punch: the RGB8 punch-through A1 variant (format 48): differential mode only, bit 33 is "opaque"
+// (every alpha >= 128); a block with transparent pixels uses the reduced modifier set (fit_sub mode 1).
+void etc1_encode(const uint8_t px[16][4], uint8_t out[8], bool punch) {
     uint64_t best = 0;
     int64_t best_err = INT64_MAX;
+    bool opaque = true;
+    if (punch)
+        for (int k = 0; k < 16; k++) opaque &= px[k][3] >= 128;
+    int mode = punch && !opaque ? 1 : 0;
     for (int flip = 0; flip < 2; flip++) {
         bool mask[2][16];
-        int sum[2][3] = {{0, 0, 0}, {0, 0, 0}};
+        int sum[2][3] = {{0, 0, 0}, {0, 0, 0}}, cnt[2] = {0, 0};
         for (int y = 0; y < 4; y++)
             for (int x = 0; x < 4; x++) {
                 int s = flip ? y >= 2 : x >= 2;
                 mask[s][y * 4 + x] = true;
                 mask[!s][y * 4 + x] = false;
+                if (mode == 1 && px[y * 4 + x][3] < 128) continue;
+                cnt[s]++;
                 for (int c = 0; c < 3; c++) sum[s][c] += px[y * 4 + x][c];
             }
-        for (int diff = 0; diff < 2; diff++) {
+        for (int diff = punch ? 1 : 0; diff < 2; diff++) {
             int bits = diff ? 5 : 4, n = diff ? 31 : 15;
             int avg_q[2][3], lo[3], hi[3];
             for (int s = 0; s < 2; s++)
-                for (int c = 0; c < 3; c++)  // round(sum / 8 * n / 255)
-                    avg_q[s][c] = std::min(n, (2 * sum[s][c] * n + 8 * 255) / (16 * 255));
+                for (int c = 0; c < 3; c++)  // round(sum / cnt * n / 255)
+                    avg_q[s][c] = cnt[s] ? std::min(n, (2 * sum[s][c] * n + cnt[s] * 255) / (2 * cnt[s] * 255)) : 0;
             SubFit f[2];
             for (int c = 0; c < 3; c++) lo[c] = avg_q[0][c] - 1, hi[c] = avg_q[0][c] + 1;
-            f[0] = fit_sub(px, mask[0], bits, lo, hi);
+            f[0] = fit_sub(px, mask[0], bits, lo, hi, mode);
             for (int c = 0; c < 3; c++) {
                 lo[c] = avg_q[1][c] - 1, hi[c] = avg_q[1][c] + 1;
                 if (diff) lo[c] = std::max(lo[c], f[0].q[c] - 4), hi[c] = std::min(hi[c], f[0].q[c] + 3);
@@ -390,7 +405,7 @@ void etc1_encode(const uint8_t px[16][4], uint8_t out[8]) {
                     lo[c] = hi[c] = std::min(std::max(v, 0), n);
                 }
             }
-            f[1] = fit_sub(px, mask[1], bits, lo, hi);
+            f[1] = fit_sub(px, mask[1], bits, lo, hi, mode);
             if (f[0].err == INT64_MAX || f[1].err == INT64_MAX) continue;
             int64_t err_total = f[0].err + f[1].err;
             if (err_total >= best_err) continue;
@@ -403,7 +418,7 @@ void etc1_encode(const uint8_t px[16][4], uint8_t out[8]) {
                 else
                     v |= (uint64_t)f[0].q[c] << (sh + 4) | (uint64_t)f[1].q[c] << sh;
             }
-            v |= (uint64_t)f[0].table << 37 | (uint64_t)f[1].table << 34 | (uint64_t)diff << 33 | (uint64_t)flip << 32;
+            v |= (uint64_t)f[0].table << 37 | (uint64_t)f[1].table << 34 | (uint64_t)(punch ? opaque : diff) << 33 | (uint64_t)flip << 32;
             for (int y = 0; y < 4; y++)
                 for (int x = 0; x < 4; x++) {
                     int k = y * 4 + x, s = mask[1][k];
@@ -477,11 +492,11 @@ void decode_block(int fmt, const uint8_t* b, uint8_t rgba[16][4]) {
 bool encode_block(int fmt, const uint8_t rgba[16][4], uint8_t* out) {
     if (fmt == kEtc2Rgba8) {
         eac_encode(rgba, out);
-        etc1_encode(rgba, out + 8);
+        etc1_encode(rgba, out + 8, false);
         return true;
     }
-    if (fmt == kEtc2Rgb8) {
-        etc1_encode(rgba, out);
+    if (fmt == kEtc2Rgb8 || fmt == kEtc2Rgb8A1) {
+        etc1_encode(rgba, out, fmt == kEtc2Rgb8A1);
         return true;
     }
     return false;

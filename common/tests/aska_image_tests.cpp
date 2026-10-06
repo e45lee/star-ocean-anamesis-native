@@ -21,7 +21,7 @@ double block_mse(int fmt, const uint8_t px[16][4], uint8_t* enc) {
     uint8_t back[16][4];
     soa::aska::decode_block(fmt, enc, back);
     double e = 0;
-    int ch = fmt == soa::aska::kEtc2Rgba8 ? 4 : 3;
+    int ch = fmt == soa::aska::kEtc2Rgba8 ? 4 : 3;  // (rgb8a1: opaque blocks only)
     for (int i = 0; i < 16; i++)
         for (int c = 0; c < ch; c++) e += (double)(back[i][c] - px[i][c]) * (back[i][c] - px[i][c]);
     return e / (16.0 * ch);
@@ -94,5 +94,22 @@ void aska_image_tests() {
     bool exact = true;
     for (int k = 0; k < 16; k++) exact &= back[k][3] == 77;
     codec_check(exact, "rgba8: a constant alpha is exact");
-    codec_check(!encode_block(kEtc2Rgb8A1, px, enc) && !encode_block(kJpeg, px, enc), "encode_block refuses formats it doesn't write");
+    codec_check(!encode_block(kJpeg, px, enc), "encode_block refuses formats it doesn't write");
+    // punch-through A1: transparent pixels stay transparent, opaque ones close; an opaque block too
+    for (int k = 0; k < 16; k++) {
+        bool on = (k % 4) < 2;
+        px[k][0] = 200, px[k][1] = (uint8_t)(40 + k * 8), px[k][2] = 30, px[k][3] = on ? 255 : 0;
+    }
+    encode_block(kEtc2Rgb8A1, px, enc);
+    decode_block(kEtc2Rgb8A1, enc, back);
+    bool alpha_ok = true;
+    double e = 0;
+    for (int k = 0; k < 16; k++) {
+        alpha_ok &= back[k][3] == px[k][3];
+        if (px[k][3])
+            for (int c = 0; c < 3; c++) e += (double)(back[k][c] - px[k][c]) * (back[k][c] - px[k][c]);
+    }
+    codec_check(alpha_ok && e / 24 < 300, "rgb8a1: transparent pixels kept, opaque ones close (mse " + std::to_string((int)(e / 24)) + ")");
+    for (int k = 0; k < 16; k++) px[k][1] = (uint8_t)(80 + k * 2), px[k][3] = 255;
+    { double m = block_mse(kEtc2Rgb8A1, px, enc); codec_check(m < 150 && (enc[3] & 2), "rgb8a1: an opaque block (mse " + std::to_string((int)m) + ")"); }
 }

@@ -94,8 +94,8 @@ bool apply_recipe(const Recipe& recipe, const Bytes& source_plain, const Font& f
     auto imgs = aska::find_images(d);
     if (imgs.empty()) return fail("no image in " + recipe.source);
     const aska::ImageRef& img = imgs[0];  // the atlas (a scene has one) or the image
-    if (img.fmt != aska::kEtc2Rgba8 && img.fmt != aska::kEtc2Rgb8)
-        return fail(recipe.source + ": pixel format " + std::to_string(img.fmt) + " (only ETC2 RGBA8 / RGB8 are written)");
+    if (!aska::block_bytes(img.fmt))
+        return fail(recipe.source + ": pixel format " + std::to_string(img.fmt) + " (only ETC2 RGBA8 / RGB8 / RGB8A1 are written)");
     if (image_entry && (img.data < image_entry->offset || img.data + img.data_size > (size_t)image_entry->offset + image_entry->size))
         return fail(recipe.source + ": the image isn't inside the .aif member");
     Canvas canvas(img.w, img.h);

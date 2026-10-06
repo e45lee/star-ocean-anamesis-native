@@ -20,6 +20,7 @@
 #include "master/english_text.h"
 #include "soaserver/adld.h"
 #include "soaserver/cdn.h"
+#include "soaserver/english_art.h"
 #include "soaserver/chash32.h"
 #include <soa/file_tree.h>
 #include <soa/install.h>
@@ -193,6 +194,7 @@ struct TreeBuilder {
     // table serves none.
     void serve_english() {
         english_root = scratch + "/lang-en";
+        serve_english_art();
         std::string out = english_root + "/" + files::kEnglishMasterName;
         ::remove(out.c_str());
         if (opts.english_text.empty()) {
@@ -210,6 +212,25 @@ struct TreeBuilder {
         files::mkdirs(english_root + "/sqlite");
         if (!write_file(out, enc.data(), enc.size())) LOGW("cdn", "--english: cannot write %s", out.c_str());
         else LOGI("cdn", "english master: %s (%llu bytes, plaintext SHA-1 %s)", out.c_str(), (unsigned long long)enc.size(), sha.c_str());
+    }
+
+    // 1c. --english: the English UI art (docs/english.md 8; d: our art, PLAN-english Q4), built from
+    // the recipes and the user's own download into the generated root; cached by english_art
+    // outside the root (the root is served whole). A failed recipe leaves its image Japanese.
+    void serve_english_art() {
+        if (opts.english_art.empty()) {
+            LOGW("cdn", "--english: no English art recipes (standin-assets-en/recipes): the UI art stays Japanese");
+            return;
+        }
+        english_art::Options ao{mirror, opts.english_art, english_root, scratch + "/lang-en.art-cache", ""};
+        english_art::Stats st;
+        std::string why;
+        if (!english_art::build(ao, &st, &why)) {
+            LOGW("cdn", "--english: no English art: %s", why.c_str());
+            return;
+        }
+        LOGI("cdn", "english art: %zu recipes, %zu built, %zu cached, %zu failed, %zu removed", st.recipes, st.built, st.cached, st.failed,
+             st.removed);
     }
 
     // 2. the stand-ins and the other roots (d: new members of their own bundles; a real asset of
@@ -576,6 +597,7 @@ Options options_from_config() {
     o.standins = standin_dir_from_config();
     o.english = c.english;  // (d) the -en members only with --english (PLAN-english Q11)
     if (o.english) o.english_text = english::table_path();
+    if (o.english) o.english_art = find_repo_file("standin-assets-en/recipes");  // (d) our English art (PLAN-english Q4)
     o.scratch = !c.cdn_scratch.empty() ? c.cdn_scratch
                 : !c.data_root.empty() ? c.data_root + "/cdn"
                                        : soa::temp_dir() + "/soa-server-cdn-" + std::to_string(getuid());

@@ -82,6 +82,8 @@ struct Options {
     // nothing of it is read or served.
     bool english = false;
     std::string english_text;    // the English text table ("" with english: no -en master, warned)
+    std::string english_art;     // the English art recipes (standin-assets-en/recipes; "" = none):
+                                 // english_art::build writes the -en scenes into the generated root
     std::string format = "etc2/hi";  // the manifest directory served (manifest/<format>/)
     bool overrides = true;       // apply_client_master on the served master
     int64_t now = 0;             // the clock for the overrides and version.bin times (0 = the server clock)

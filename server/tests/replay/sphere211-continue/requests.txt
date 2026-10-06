@@ -1,0 +1,15 @@
+# soa-server replay corpus (server/tests/replay/README.md): sphere211-continue, hand-written: the
+# defeat dialog's answer in Sphere 211 (Sphere211MissionContinue's bool), the sphere211 corpus's
+# options. A battle on the start cell declined (0: the run ends as failed, nothing paid), はい with
+# no battle in progress (refused 10403), a battle continued (1: continue_use_coin paid) and won,
+# GetSphere211Info.
+# tz: America/Toronto
+req 1 1790856005 Login a01c67ef - - - -
+req 2 1790856010 GetSphere211Info 1e03058b - - - -
+req 3 1790856015 Sphere211MissionStart 04ec9513 1,4140489172,2113929216,2113929217,2113929218,0,0 - - -
+req 4 1790856020 Sphere211MissionContinue 5ac657b3 1,4140489172,0 - - -
+req 5 1790856025 Sphere211MissionContinue 5ac657b3 1,4140489172,1 - - -
+req 6 1790856030 Sphere211MissionStart 04ec9513 1,4140489172,2113929216,2113929217,2113929218,0,0 - - -
+req 7 1790856035 Sphere211MissionContinue 5ac657b3 1,4140489172,1 - - -
+req 8 1790856040 Sphere211MissionEnd 03f169b2 1,4140489172 - - -
+req 9 1790856045 GetSphere211Info 1e03058b - - - -

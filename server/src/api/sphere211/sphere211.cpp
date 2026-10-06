@@ -34,6 +34,7 @@
 #include "core/modules.h"
 #include "core/response.h"
 #include "core/wallet.h"
+#include "rules/mission_rules.h"  // campaign_active, continue_campaign_applies, continue_price
 
 namespace soa::server {
 
@@ -46,6 +47,7 @@ using ext::refuse;
 // (their fids: docs/api.md).
 constexpr u32 kFidMissionStart = 0xb7c62bc2, kFidMissionEnd = 0x8312a64c, kFidMissionFailed = 0x479604f6;
 constexpr u32 kMissionTypeEvent = 1;  // (b) MissionStart's mission type of a master_event_mission
+constexpr u32 kMissionTypeSphere211 = 5;  // (b) the client's mission type of a Sphere 211 battle (CParameterUI+0x140)
 constexpr u32 kAutoMembers = 4;       // (b) the party screen's four slots
 
 // (b) Sphere211TreasureDropInfo.type (ResultUtility::GetRewardType(Common::Sphere211DropType),
@@ -299,6 +301,15 @@ std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
 
 // ---- Sphere211MissionFailed / Sphere211MissionContinue ------------------------------------------
 
+// The battle lost or given up (Sphere211MissionFailed, and Sphere211MissionContinue's decline):
+// the core MissionFailed ends the play record, the clear streak resets, no cell is playing.
+void end_failed_battle(Ctx& ctx) {
+    Request core{"MissionFailed", kFidMissionFailed, {kMissionTypeEvent, 0}, {}, {}};
+    ctx.core_mission(core, nullptr);
+    ctx.st.q("update sphere set streak = 0", {});
+    ctx.st.q("update sphere_cell set playing = 0", {});
+}
+
 // Sphere211MissionFailed(u32, u32 cell) -> Sphere211MissionFailedRes          fid 172f3b5f
 // API: docs/api.md#sphere211missionfailed
 // Rules: docs/server-rules.md#sphere211
@@ -309,27 +320,76 @@ std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
 // Answers: the dive state.
 std::vector<u8> sphere211_mission_failed(Ctx& ctx, const Request&) {
     Season season = load_dive(ctx);
-    Request core{"MissionFailed", kFidMissionFailed, {kMissionTypeEvent, 0}, {}, {}};
-    ctx.core_mission(core, nullptr);
-    ctx.st.q("update sphere set streak = 0", {});
-    ctx.st.q("update sphere_cell set playing = 0", {});
+    end_failed_battle(ctx);
     // read by port/scripts/sphere211_session.sh, sphere211_continue_session.sh
     LOGI("server", "Sphere211MissionFailed: streak reset");
     return ext::body(dive_state(ctx, season));
+}
+
+// The continue's price in Sphere 211 (b: CPauseMenu::OpenContinue @01dacf90, the mission type
+// CParameterUI+0x140 being 5): (a) master_global continue_use_coin
+// (CParameterUtility::ContinueUseCoin), times the magnification of a running continue campaign
+// (master_campaign type_id 9): CUIUtility::GetDecMissionContinueCoin (@01ef91c4) is asked for
+// every mission type (model 99) first, then for type 5 (mission_rules::continue_campaign_applies;
+// (a) no 3.7.0 row names type 5); the first match in the master's order counts (d, as
+// MissionContinue's: api/missions/play_state.cpp continue_price). (d) the windows on the event
+// calendar, as MissionContinue's.
+u32 sphere_continue_price(Ctx& ctx) {
+    const u32 base = ctx.global_u32("continue_use_coin", 100);
+    const int64_t now = ctx.event_now().v;
+    for (bool every_type_pass : {true, false}) {
+        double magnification = 0;
+        bool found = false;
+        ctx.m.q("select * from master_campaign where type_id = 9 order by id", {}, [&](const Row& campaign_row) {
+            if (found || !mission_rules::campaign_active(campaign_row.s("opened_day"), campaign_row.s("opened_time"), campaign_row.s("closed_day"),
+                                                         campaign_row.s("closed_time"), (int)campaign_row.i("week_id"), now))
+                return;
+            if (mission_rules::continue_campaign_applies((int)campaign_row.i("master_mission_model_type"), (u32)campaign_row.i("master_area_id"),
+                                                         every_type_pass, kMissionTypeSphere211, 0)) {
+                magnification = campaign_row.f("magnification");
+                found = true;
+            }
+        });
+        if (found) return mission_rules::continue_price(base, magnification);
+    }
+    return base;
 }
 
 // Sphere211MissionContinue(u32 +0x68, u32 +0x6c, bool) -> Sphere211MissionContinueRes   fid 5ac657b3
 // API: docs/api.md#sphere211missioncontinue
 // Rules: docs/server-rules.md#sphere211
 //
-// Continue after a defeat (b: the battle's defeat dialog "紋章石100個を使用することで全員が復活
-// できます" with the wallet before -> after, seen in game; the request carries the cell and 1).
-//   (a) master_global continue_use_coin (100) coins, free coins first (a: core/wallet.h);
-//   20000 (kCoinsShort) when short (d, the coin-short code); the battle goes on.
-// Answers: the dive state and is_mission_continue.
-std::vector<u8> sphere211_mission_continue(Ctx& ctx, const Request&) {
+// The defeat dialog's answer in Sphere 211 (b: the battle's defeat dialog "紋章石100個を使用する
+// ことで全員が復活できます" with the wallet before -> after, seen in game; the request carries the
+// cell and the answer), as MissionContinue for the other missions (api/missions/play_state.cpp):
+//   (b) the bool (Sphere211MissionContinueArgs): 1 はい, 0 いいえ or OpenContinue's own decline
+//       (the coins don't cover the price).
+//   はい: (a)+(b) the price sphere_continue_price (continue_use_coin, times a running continue
+//       campaign's magnification), free coins first (a: core/wallet.h); (b) every Sphere 211
+//       battle can continue (OpenContinue checks the mission's is_continue only for a type other
+//       than 5); (d) refused with 10403 (kInvalidOperation) with no battle in progress (no play
+//       record), 20000 (kCoinsShort) with the coins short (the client declines by itself then);
+//       the battle goes on: the play record, the cell and the streak stay.
+//   いいえ: (d) the run ends as a failure, as Sphere211MissionFailed (end_failed_battle: the play
+//       record ends, the streak resets, the cell stays uncleared and playable, the stamina stays
+//       spent); is_mission_continue false. (b) The client then sends Sphere211MissionFailed with
+//       the battle log as for any lost battle (CStageManager::Progress; seen in the session
+//       sphere211-continue after OpenContinue's own decline), which finds the run ended already.
+// Answers: the dive state and is_mission_continue (whether the party revives).
+std::vector<u8> sphere211_mission_continue(Ctx& ctx, const Request& req) {
+    const bool continue_battle = args::Sphere211MissionContinueArgs::from(req).continue_battle;
     Season season = load_dive(ctx);
-    u32 cost = ctx.global_u32("continue_use_coin", 100);
+    if (!continue_battle) {
+        end_failed_battle(ctx);
+        Value data = dive_state(ctx, season);
+        data["is_mission_continue"] = false;
+        // read by port/scripts/sphere211_continue_session.sh
+        LOGI("server", "Sphere211MissionContinue: declined, the battle ends as failed (streak reset)");
+        return ext::body(data);
+    }
+    if (!ctx.st.one("select count(*) from play where id = 1", {}))
+        return refuse(ctx, "Sphere211MissionContinue", "no battle in progress", ErrorCode::kInvalidOperation);
+    const u32 cost = sphere_continue_price(ctx);
     if (!wallet::spend_coins(ctx.st.h, cost)) return refuse(ctx, "Sphere211MissionContinue", "coins short", ErrorCode::kCoinsShort);
     Value data = dive_state(ctx, season);
     data["is_mission_continue"] = true;

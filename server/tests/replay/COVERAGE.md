@@ -125,7 +125,7 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `GetRecentlyPlayedList` (server/src/api/social/social.cpp): profile
 - `GetScenarioLibraryInfoList` (server/src/api/settings/scenario_library.cpp): campaign
 - `GetServerTime` (server/src/api/entry/entry.cpp): event, seeded, tutorial
-- `GetSphere211Info` (server/src/api/sphere211/sphere211.cpp): sphere211
+- `GetSphere211Info` (server/src/api/sphere211/sphere211.cpp): sphere211, sphere211-continue
 - `GetSphere211RankingInfo` (server/src/api/sphere211/sphere211.cpp): sphere211
 - `GetStorageInfo` (server/src/api/storage/storage.cpp): storage
 - `GetWorldBossInfo` (server/src/api/events/world_boss.cpp): event-extras
@@ -141,7 +141,7 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `LockItem` (server/src/api/items/items.cpp): items-party
 - `LockItemArray` (server/src/api/items/items.cpp): profile
 - `LockStorageItem` (server/src/api/storage/storage.cpp): storage
-- `Login` (server/src/api/entry/entry.cpp): badges, campaign, coins, deepspace, economy, event, event-extras, growth, hammers, items-party, mastery, missions, profile, seeded, sphere211, storage, stubs, tower, tutorial
+- `Login` (server/src/api/entry/entry.cpp): badges, campaign, coins, deepspace, economy, event, event-extras, growth, hammers, items-party, mastery, missions, profile, seeded, sphere211, sphere211-continue, storage, stubs, tower, tutorial
 - `MissionContinue` (server/src/api/missions/play_state.cpp): missions
 - `MissionEnd` (server/src/api/missions/mission_end.cpp): campaign, event, event-extras, items-party, missions, seeded, tower, tutorial
 - `MissionFailed` (server/src/api/missions/play_state.cpp): campaign, missions, tower
@@ -174,10 +174,10 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `Sphere211AutoMemberSelect` (server/src/api/sphere211/sphere211.cpp): sphere211
 - `Sphere211EquipAuto` (server/src/api/sphere211/sphere211.cpp): sphere211
 - `Sphere211FloorClear` (server/src/api/sphere211/sphere211.cpp): sphere211
-- `Sphere211MissionContinue` (server/src/api/sphere211/sphere211.cpp): sphere211
-- `Sphere211MissionEnd` (server/src/api/sphere211/sphere211.cpp): sphere211
+- `Sphere211MissionContinue` (server/src/api/sphere211/sphere211.cpp): sphere211, sphere211-continue
+- `Sphere211MissionEnd` (server/src/api/sphere211/sphere211.cpp): sphere211, sphere211-continue
 - `Sphere211MissionFailed` (server/src/api/sphere211/sphere211.cpp): sphere211
-- `Sphere211MissionStart` (server/src/api/sphere211/sphere211.cpp): sphere211
+- `Sphere211MissionStart` (server/src/api/sphere211/sphere211.cpp): sphere211, sphere211-continue
 - `Sphere211SelectedFloor` (server/src/api/sphere211/sphere211.cpp): sphere211
 - `StaminaHeal` (server/src/api/items/items.cpp): items-party
 - `StaminaHealByFavor` (server/src/api/daily/premium_and_favor_bonus.cpp): profile

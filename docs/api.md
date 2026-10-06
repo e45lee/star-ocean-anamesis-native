@@ -1004,7 +1004,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `5ac657b3`
 - **Method** `Sphere211MissionContinue(unsigned int,unsigned int,bool)`; wire `SendSphere211MissionContinue(RequestHeader, unsigned int, unsigned int, unsigned char)`
 - **Wire**: request fid `5ac657b3`, encrypted: RequestHeader(16) · u32 · u32 · u8 = 25 bytes; reply `Sphere211MissionContinueRes` fid `fe17319f`
-- **Request**: `u32`, `u32` (CStageManager+0x68 / +0x6c, as MissionStart's first two), `bool` (not captured)
+- **Request**: `u32`, `u32` (CStageManager+0x68 / +0x6c, as MissionStart's first two), `bool` (the defeat dialog's answer, as MissionContinue's: 1 はい, 0 いいえ or `CPauseMenu::OpenContinue`'s own decline)
 - **Response** (`data.*`): the dive state (`Sphere211CurrentId`, `Sphere211FloorInfo`, `Sphere211FloorAssetInfoMap`, `Sphere211StaminaInfo`, `Sphere211TreasureInfo`, `Sphere211CharacterInfoMap`, `Sphere211FloorClearInfo`, `Sphere211EndResult`) and the player, `is_mission_continue`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CPauseMenu::ReqeustContinue`

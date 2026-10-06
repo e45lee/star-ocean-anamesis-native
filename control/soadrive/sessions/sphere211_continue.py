@@ -4,8 +4,9 @@ the sphere211 session) -> notice board -> LOGIN BONUS -> the Sphere 211 rental b
 スフィア211 -> the start cell with enemy level 250 (the server's test hook, for this battle only) and
 a rental in the 4th slot -> the party falls -> the defeat dialog's はい (Sphere211MissionContinue,
 100 coins) -> the pause menu's ミッションリタイア -> はい (Sphere211MissionFailed) -> the board -> the
-stamina the battle took healed with a ticket (Sphere211StaminaHeal 8 -> 9) -> the board's 実績 tabs.
-About 5 minutes.
+stamina the battle took healed with a ticket (Sphere211StaminaHeal 8 -> 9) -> the board's 実績 tabs ->
+with no coins, the start cell lost again: the client declines by itself (Sphere211MissionContinue(..., 0):
+the run ends as failed) -> the board. About 7 minutes.
 
 Usage: port/scripts/sphere211_continue_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
 Env: SEED_RNG (default 605), SOA_PHONE (scripts/shared-phone.sh), WATCH=1.
@@ -58,12 +59,36 @@ def main(o):
         c("tap:655:340", "wait:5000", s.shot_cmd("10-achievements-event"), "tap:290:303", "wait:2500", s.shot_cmd("10-achievements-daily"),
           "tap:440:303", "wait:2500", s.shot_cmd("10-achievements-weekly"), "tap:590:303", "wait:2500", s.shot_cmd("10-achievements-other"),
           "tap:213:1053", "wait:2000")
+        # A second lost battle with no coins: CPauseMenu::OpenContinue declines by itself
+        # (Sphere211MissionContinue(..., 0)); the server ends the run as failed. Whether the client
+        # also sends Sphere211MissionFailed afterwards is noted (got["failed_after_decline"]).
+        _sphere.sql(s, "update sphere set debug_enemy_level = 250 where id = 1", "update player set free_coin = 0, pay_coin = 0")
+        c("wait:3000", "tap:364:670", "wait:4000", s.shot_cmd("11-decline-detail"), "tap:364:905", "wait:5000", "tap:628:1120", "wait:4000",
+          "tap:364:898")
+        s.wait_log(r"Sphere211AutoMemberSelect: 4 members proposed", 30, name="declined battle: auto member select")
+        c("wait:4000", s.shot_cmd("11-decline-party"))
+        s.tap_log(r"Sphere211MissionStart: floor .* enemy level 250", 60, 15, 3, "tap:140:898", "wait:3000", "tap:515:713",
+                  name="declined battle: Sphere211MissionStart")
+        _sphere.sql(s, "update sphere set debug_enemy_level = null where id = 1")
+        s.wait_log(r"Sphere211MissionContinue: declined", 400, name="the automatic decline (no coins): the battle ends as failed")
+        c("wait:15000", s.shot_cmd("12-declined"))
+        i = 0
+        while s.cursor.wait(mission.phase(5), 4, alive=s.alive) is None:
+            c("tap:364:1050")
+            i += 1
+            if i >= 15:
+                c(s.shot_cmd("12-stuck"))
+                s.fail("not back on the board after the declined battle")
+        c("wait:4000", s.shot_cmd("12-board"))
 
     if not common.drive(s, body):
         return 1
     log = open(s.client_log, errors="replace").read()
+    tail = log.split("Sphere211MissionContinue: declined", 1)[1] if "Sphere211MissionContinue: declined" in log else ""
+    print("after the decline the client %s Sphere211MissionFailed" % ("sent" if "Sphere211MissionFailed: streak reset" in tail else "didn't send"))
     fails = common.checks(
         ("Sphere211MissionContinue: 100 coins" in log, "no paid continue"),
+        ("Sphere211MissionContinue: declined" in log, "no declined continue"),
         ("Sphere211MissionFailed: streak reset" in log, "no retire"),
         ("Sphere211StaminaHeal: sphere stamina 8 -> 9" in log, "no heal"))
     if re.search(r"refused with error|Sphere211.* refused", log):

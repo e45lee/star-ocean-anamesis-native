@@ -1,5 +1,6 @@
 // The hand-written command-line loops the CLI11 parsers replaced (port/src/main.cpp,
-// server/app/main.cpp, emulator/src/main.cpp, emulator-viewer/src/main.cpp as of 3bfa883), kept
+// server/app/main.cpp, emulator/src/main.cpp, emulator-viewer/src/main.cpp as of 3bfa883;
+// webview/tools/render.cpp as of 61f0c08), kept
 // as the reference cli_tests.cpp compares the new parsers with. Copied as they were; the only
 // edits make them testable: they fill the new parsers' Args structs, `usage(); exit(2)` / `return
 // 2` became `return 2` (0 for -h / --help), and actions taken in the loop (--list-native's list,
@@ -356,6 +357,47 @@ int parse_viewer(int argc, const char* const* argv, soa::viewer::ViewerArgs& r) 
     } catch (Exit e) {
         return e.rc;
     }
+    return -1;
+}
+
+// soa-webview-render (webview/tools/render.cpp as of 61f0c08): its loop and the usage check after
+// it. `exit(2)` / `return fprintf(...), 2` became `return 2` (the messages dropped).
+int parse_render(int argc, const char* const* argv, soa::webview::RenderArgs& r) {
+    std::string& page = r.page;
+    std::string& out = r.out;
+    std::string& url = r.url;
+    int &width = r.width, &height = r.height, &scroll = r.scroll, &tap_x = r.tap_x, &tap_y = r.tap_y;
+    float& zoom = r.zoom;
+    bool& screen = r.screen;
+    auto& maps = r.maps;
+    try {
+        for (int i = 1; i < argc; i++) {
+            std::string a = argv[i];
+            auto val = [&]() -> std::string {
+                if (i + 1 >= argc) throw Exit{2};
+                return argv[++i];
+            };
+            if (a == "--width") width = atoi(val().c_str());
+            else if (a == "--height") height = atoi(val().c_str());
+            else if (a == "--zoom") zoom = (float)atof(val().c_str());
+            else if (a == "--scroll") scroll = atoi(val().c_str());
+            else if (a == "--screen") screen = true;
+            else if (a == "--url") url = val();
+            else if (a == "--map") {
+                std::string m = val();
+                size_t eq = m.find('=');
+                if (eq == std::string::npos) return 2;
+                maps.emplace_back(m.substr(0, eq), m.substr(eq + 1));
+            } else if (a == "--tap") {
+                if (sscanf(val().c_str(), "%d:%d", &tap_x, &tap_y) != 2) return 2;
+            } else if (page.empty()) page = a;
+            else if (out.empty()) out = a;
+            else return 2;
+        }
+    } catch (Exit e) {
+        return e.rc;
+    }
+    if (page.empty() || out.empty()) return 2;
     return -1;
 }
 

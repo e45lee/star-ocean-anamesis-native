@@ -116,7 +116,9 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
 - **Game files.** Only the files listed in [README.md "Game files"](README.md#game-files) are in git,
   as plain git: no LFS, nothing over 100 MB. Everything else (the offline client's archive, the
   Ghidra projects, `work/`) stays local. Release packages never contain game files (the allow-list
-  and scan in `tools/package.py`).
+  and scan in `tools/package.py`), with one exception the user chose: `data/basmaster-gl.sqlite3`
+  (the Global master, for the English translation), allowed by exact path and blob in
+  `tools/package.py`.
 - **Server first.** Restore behaviour by giving the unchanged client the server data it expects.
   Change client code only when no server route exists, and log every such change in
   [docs/client-changes.md](docs/client-changes.md) (symbol, original behaviour, the change, why not

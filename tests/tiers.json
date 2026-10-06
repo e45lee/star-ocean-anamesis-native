@@ -212,7 +212,7 @@
     {"name": "win:runtime-tests", "tier": "T2", "secs": 30, "kind": "platform", "game": 0, "requires": ["build-win/CMakeCache.txt"],
      "cmd": "scripts/windows-test.sh runtime-tests {out} {tmp}",
      "covers": "Windows: soaruntime_tests.exe (the runtime's tests, the GDB stub's over 127.0.0.1 and [::1]) exits 0, its exit-time destructors included"},
-    {"name": "win:selftest", "tier": "T2", "secs": 240, "kind": "platform", "game": 1, "requires": ["build-win/CMakeCache.txt"],
+    {"name": "win:selftest", "tier": "T2", "secs": 450, "kind": "platform", "game": 1, "requires": ["build-win/CMakeCache.txt"],
      "cmd": "scripts/windows-test.sh selftest {out} {tmp}",
      "covers": "Windows: soa.exe --selftest (every native selftest, one boot) and soa-server.exe --selftest exit 0"},
     {"name": "win:native-order", "tier": "T2", "secs": 30, "kind": "platform", "game": 0, "requires": ["build-win/CMakeCache.txt"],

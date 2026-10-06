@@ -1,0 +1,672 @@
+{
+ "note": "The home screen's own atlas: the four main buttons, the side buttons, the round buttons of the partner menu, the talk-mode logo. English: Global's names where Global had the screen (Events, Missions, Deep Space, Achievements, Titles, Notice, Follow, Gifts: uimsg_*); ours for the 3.x ones (Sphere 211, Starter Missions, Studio Mode, Deco).",
+ "source": "UI/etc2/home.csf",
+ "styles": {
+  "big": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "glow": "#00c8ffe0",
+   "glow_radius": 3,
+   "outline": "#0050a0c0",
+   "outline_width": 1,
+   "align": "right"
+  },
+  "big_dim": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#8a98a8",
+   "glow": "#003c64c0",
+   "glow_radius": 3,
+   "outline": "#14283cc0",
+   "outline_width": 1,
+   "align": "right"
+  },
+  "side": {
+   "size": 16,
+   "bold": 1,
+   "fill": "#ffffff",
+   "glow": "#00b4ffc0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
+  },
+  "round": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#e4ffff",
+   "glow": "#00b4ffd0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
+  },
+  "round_dim": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#6c7d7d",
+   "glow": "#00465ac0",
+   "glow_radius": 2,
+   "outline": "#14283cc0",
+   "outline_width": 1
+  },
+  "talk": {
+   "size": 32,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#1050a0",
+   "outline_width": 2,
+   "glow": "#00c8ffc0",
+   "glow_radius": 3
+  },
+  "light": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#3c4a60"
+  }
+ },
+ "labels": [
+  {
+   "jp": "イベント",
+   "text": "Events",
+   "sprites": [
+    "home_event_on.png",
+    "home_event_off.png"
+   ],
+   "box": [
+    44,
+    98,
+    116,
+    32
+   ],
+   "cover": [
+    44,
+    96,
+    120,
+    36
+   ],
+   "style": "big"
+  },
+  {
+   "jp": "イベント",
+   "text": "Events",
+   "sprites": [
+    "home_event_off2.png"
+   ],
+   "box": [
+    44,
+    98,
+    116,
+    32
+   ],
+   "cover": [
+    44,
+    96,
+    120,
+    36
+   ],
+   "style": "big_dim"
+  },
+  {
+   "jp": "ミッション",
+   "text": "Missions",
+   "sprites": [
+    "home_mission_on.png",
+    "home_mission_off.png"
+   ],
+   "box": [
+    44,
+    98,
+    116,
+    32
+   ],
+   "cover": [
+    28,
+    96,
+    136,
+    36
+   ],
+   "style": "big"
+  },
+  {
+   "jp": "スフィア\n211",
+   "text": "Sphere\n211",
+   "sprites": [
+    "home_arena_on.png",
+    "home_arena_off.png"
+   ],
+   "box": [
+    40,
+    74,
+    120,
+    58
+   ],
+   "cover": [
+    40,
+    73,
+    124,
+    61
+   ],
+   "style": "big"
+  },
+  {
+   "jp": "スフィア\n211",
+   "text": "Sphere\n211",
+   "sprites": [
+    "home_arena_off2.png"
+   ],
+   "box": [
+    40,
+    74,
+    120,
+    58
+   ],
+   "cover": [
+    40,
+    73,
+    124,
+    61
+   ],
+   "style": "big_dim"
+  },
+  {
+   "jp": "ディープ\nスペース探査",
+   "text": "Deep\nSpace",
+   "sprites": [
+    "btn_deepspace.png",
+    "btn_deepspace_on.png"
+   ],
+   "box": [
+    40,
+    74,
+    120,
+    58
+   ],
+   "cover": [
+    6,
+    73,
+    158,
+    61
+   ],
+   "style": "big"
+  },
+  {
+   "jp": "ディープ\nスペース探査",
+   "text": "Deep\nSpace",
+   "sprites": [
+    "btn_deepspace_off.png"
+   ],
+   "box": [
+    40,
+    74,
+    120,
+    58
+   ],
+   "cover": [
+    6,
+    73,
+    158,
+    61
+   ],
+   "style": "big_dim"
+  },
+  {
+   "jp": "スターター\nミッション",
+   "text": "Starter\nMissions",
+   "sprites": [
+    "btn_startermission.png",
+    "btn_startermission_on.png"
+   ],
+   "box": [
+    40,
+    74,
+    120,
+    58
+   ],
+   "cover": [
+    40,
+    73,
+    124,
+    61
+   ],
+   "style": "big"
+  },
+  {
+   "jp": "実績",
+   "text": "Achievements",
+   "sprites": [
+    "home_achievement_on.png",
+    "home_achievement_off.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side"
+  },
+  {
+   "jp": "情報保存",
+   "text": "Save Data",
+   "sprites": [
+    "home_datasave_on.png",
+    "home_datasave_off.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side"
+  },
+  {
+   "jp": "フォロー",
+   "text": "Follow",
+   "sprites": [
+    "home_follow_on.png",
+    "home_follow_off.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side"
+  },
+  {
+   "jp": "オススメ!",
+   "text": "Featured",
+   "sprites": [
+    "home_info_on.png",
+    "home_info_off.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side"
+  },
+  {
+   "jp": "お知らせ",
+   "text": "Notice",
+   "sprites": [
+    "home_notice_on.png",
+    "home_notice_off.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side"
+  },
+  {
+   "jp": "プレゼント",
+   "text": "Gifts",
+   "sprites": [
+    "home_present_on.png",
+    "home_present_off.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side"
+  },
+  {
+   "jp": "称号",
+   "text": "Titles",
+   "sprites": [
+    "home_syogo_on.png",
+    "home_syogo_off.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side"
+  },
+  {
+   "jp": "2D/3D変更",
+   "text": "2D/3D",
+   "sprites": [
+    "menubtn_2d3d_on.png",
+    "menubtn_2d3d_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "2D/3D変更",
+   "text": "2D/3D",
+   "sprites": [
+    "menubtn_2d3d_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "キャラデコ",
+   "text": "Deco",
+   "sprites": [
+    "menubtn_charadeco_on.png",
+    "menubtn_charadeco_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "キャラデコ",
+   "text": "Deco",
+   "sprites": [
+    "menubtn_charadeco_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "ホーム",
+   "text": "Home",
+   "sprites": [
+    "menubtn_home_on.png",
+    "menubtn_home_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ホーム",
+   "text": "Home",
+   "sprites": [
+    "menubtn_home_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "おくりもの",
+   "text": "Gift",
+   "sprites": [
+    "menubtn_present_on.png",
+    "menubtn_present_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "おくりもの",
+   "text": "Gift",
+   "sprites": [
+    "menubtn_present_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "お気に入り\n変更",
+   "text": "Change\nFavorite",
+   "sprites": [
+    "menubtn_favo_on.png",
+    "menubtn_favo_off.png"
+   ],
+   "box": [
+    6,
+    66,
+    99,
+    40
+   ],
+   "cover": [
+    5,
+    64,
+    101,
+    42
+   ],
+   "style": "round",
+   "size": 16
+  },
+  {
+   "jp": "お気に入り\n変更",
+   "text": "Change\nFavorite",
+   "sprites": [
+    "menubtn_favo_off2.png"
+   ],
+   "box": [
+    6,
+    66,
+    99,
+    40
+   ],
+   "cover": [
+    5,
+    64,
+    101,
+    42
+   ],
+   "style": "round_dim",
+   "size": 16
+  },
+  {
+   "jp": "スタジオ\nモード",
+   "text": "Studio\nMode",
+   "sprites": [
+    "menubtn_studiomode_on.png",
+    "menubtn_studiomode_off.png"
+   ],
+   "box": [
+    6,
+    66,
+    99,
+    40
+   ],
+   "cover": [
+    5,
+    64,
+    101,
+    42
+   ],
+   "style": "round",
+   "size": 16
+  },
+  {
+   "jp": "スタジオ\nモード",
+   "text": "Studio\nMode",
+   "sprites": [
+    "menubtn_studiomode_off2.png"
+   ],
+   "box": [
+    6,
+    66,
+    99,
+    40
+   ],
+   "cover": [
+    5,
+    64,
+    101,
+    42
+   ],
+   "style": "round_dim",
+   "size": 16
+  },
+  {
+   "jp": "会話モード",
+   "text": "Talk Mode",
+   "sprites": [
+    "btn_interactive_mode2.png"
+   ],
+   "box": [
+    3,
+    4,
+    154,
+    36
+   ],
+   "cover": [
+    2,
+    2,
+    156,
+    40
+   ],
+   "style": "talk"
+  },
+  {
+   "jp": "お気に入りに\n戻す",
+   "text": "Back to\nFavorite",
+   "sprites": [
+    "btn_charareturn.png",
+    "btn_charareturn_on.png"
+   ],
+   "box": [
+    22,
+    4,
+    96,
+    36
+   ],
+   "cover": [
+    20,
+    3,
+    100,
+    38
+   ],
+   "style": "light"
+  }
+ ]
+}

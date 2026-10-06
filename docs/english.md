@@ -774,3 +774,50 @@ Investigation of 2026-10-07 (agent `english-llm`), at the user's request (M-Q3):
 **Verdict.** On this sample a quantized 31B model on the local GPU is as good as the Claude API by every automatic measure: chrF within noise, every token kept, the glossary followed nearly as often. **Gemma 4 31B-it with the v2 prompt is the best local engine**; Gemma 4 26B-A4B is the fast alternative. Where Claude still looks better is what the sample measures least: new proper nouns and story tone, on 20 EP3 lines without a reference. The engine for M3 (UI) can be local; for M4 (story) the user should compare a full scene from each before choosing.
 
 How measured: `work/english/mt-trial/engines/serve.sh` (llama-server), `run_server.py` (the prompts, timing), `score.py`, `bootstrap.py`; outputs `raw-<engine>.jsonl`, `post-<engine>.jsonl`, `timing-<engine>-c<slots>.json`, `scores.json`, server logs `server-*.log`. Models in `work/tools/mt-models/<name>-gguf/`.
+
+## 8. English UI art
+
+Implemented 2026-10-07 (agent `en-art`, PLAN-english.md step E9, decision Q4). The images whose Japanese text is part of the picture (section 1.3) get English copies served as `-en` members; the client with `--lang en` picks them up through `FileExistLanguage` (6.3) and keeps the Japanese image for every file without one.
+
+**What is probed: the scene, not the atlas.** A UI atlas is not a file of its own: it is the `.aif` member of a Cocos scene `UI/etc2/<name>.csf` (an ISF image of `<name>.msgp`, the node tree; `<name>.aif`, one 2048×2048 ETC2 RGBA8 page; `<name>.csv`, the sprite table `name,x,y,w,h`). The client asks `FileExistLanguage` for the scene (`UI/etc2/home.csf -> UI/etc2/home-en.csf`, experiment 3's trace and this step's runs), so an English atlas is a whole `-en` scene: the same node tree and sprite table, the same member names inside (`home.msgp`, not `home-en.msgp`: a repack with the original names loads), only the atlas's pixels changed.
+
+- **The ISF entry's fourth word** is the byte sum of the member's payload padded to 32 bytes with 0xee (every member of the 3.7.0 scenes and the font follows it; `aska::isf_payload_sum`). The generator recomputes it for the changed atlas.
+- The `-en` scene is written with SLZ codec 5 (raw deflate, 64 KiB chunks, as 643 shipped files are) and ADLD XOR keyed by the `-en` name, like the stand-ins.
+
+**Recipes in git, images built at run time.** The images are edits of the game's art, so git and the release packages hold only:
+
+- `standin-assets-en/recipes/*.json`: one file per source; per label the sprites (names from the scene's `.csv`, or none for a plain `Image/` file), the text box and the area to clear (relative to the sprite), the Japanese it replaces, the English, and a style;
+- the generator, C++ in the server library (`server/src/english_art/`, `soaserver/english_art.h`; the codecs in `common/` `soa/aska_image.h`, shared with `tools/aif2png`).
+
+The server's `--english` CDN step calls `english_art::build({download, recipes, out, cache})`: for each recipe it reads the source from the user's download (a folder or the zip), decodes the atlas, clears each label's area, draws the English, re-encodes **only the 4×4 blocks whose pixels changed** (every other byte of the game's file stays as it was), and writes `<out>/<dir>/<stem>-en<ext>`. A stamp per output (the SHA-1 of the generator version, the recipe, the font file and the source file) skips unchanged ones; an output whose recipe is gone is deleted. Same inputs, same bytes: all arithmetic is integer (the ETC1/EAC encoder, the resampling, the fill), zlib's deflate at level 9.
+
+**Drawing.**
+
+- **The game's own font** (`Font/etc2/font.fpk` of the same download, 3.1): the glyph table and the 2048×2048 page's alpha. Text is laid out at the font's 24 px (proportional advances, `?` for a missing glyph, `\n` for a second line), made bolder by widening strokes, scaled to the style's size by area averaging, squeezed horizontally (down to 70% by default) and then shrunk to fit the box. No font file ships and no font dependency is added.
+- **Effects:** an outline (a disc dilation), a glow (the outline spread and blurred), an optional shadow, then the fill; colours `#rrggbb[aa]` per style.
+- **Clearing the Japanese:** `inpaint` (the default) solves the discrete Laplace equation over the area from the pixels around it inside the sprite (premultiplied colour, so transparent surroundings stay transparent); `fill` paints a colour; `none` keeps the picture.
+- **Encoding:** the ETC1 individual and differential modes with both flips, a base colour search of ±1 step around each half's average and every table; EAC alpha by a search over every table and multiplier near the base that centres the table on the block's range. A constant alpha is exact.
+
+**The recipes so far** (English from Global where Global had the screen, `data/basmaster-gl.sqlite3` `uimsg_*`):
+
+| Source | Labels | English |
+|---|---|---|
+| `UI/etc2/common.csf` | the footer, each in its on / off / dimmed state | Home, Characters, Draws, Items, Missions, Shop, Other (`uimsg_*_top_name`; Missions as Global's mission texts) |
+| `UI/etc2/home.csf` | the four main buttons, the starter-mission button, the side buttons, the partner menu's round buttons, the talk-mode logo, "back to favorite" | Events, Missions, Sphere 211, Deep Space, Starter Missions; Achievements, Save Data, Follow, Featured, Notice, Gifts, Titles; 2D/3D, Deco, Home, Gift, Change Favorite, Studio Mode; Talk Mode; Back to Favorite |
+| `UI/etc2/gacha_top.csf` | the four tabs, Back, the two legal-notice buttons | Recommended / Character / Weapon / Event Draws (`uimsg_gacha_title_*`), Back (`sys_return`), Commercial Transactions Act, Payment Services Act (no Global English) |
+
+Not done yet: the home's badges (`icon_*`: 友好度上昇率UP, 大討伐発生！, ランキング開催中！ …), the talk-mode level words (`img_interactive_0*_txt`), the other scenes, and the `Image/` files (banners, tutorial pages: about 1,000 with text, many of them JPEG, which the generator doesn't write yet).
+
+**Writing a recipe.** `build/tools/english_art/english-art --out DIR --png PNGDIR` (run from the checkout: the download `work/download-3.7.0` and `standin-assets-en/recipes` by default) builds every recipe without a server and writes each edited atlas as PNG for review; `build/tools/aif2png/aif2png` renders a source scene's atlas, and its `.csv` gives the sprite rectangles. Unknown keys in a recipe are errors. A recipe's format:
+
+```json
+{"source": "UI/etc2/common.csf",
+ "styles": {"footer": {"size": 18, "bold": 1, "fill": "#e4ffff", "glow": "#00b4ffd0", "glow_radius": 2,
+                       "outline": "#0a4c8cc0", "outline_width": 1}},
+ "labels": [{"jp": "ホーム", "text": "Home", "sprites": ["menubtn_home_on.png", "menubtn_home_off.png"],
+             "box": [4, 77, 103, 23], "cover": [3, 76, 105, 25], "style": "footer"}]}
+```
+
+Style keys: `size`, `bold`, `tracking`, `leading`, `squeeze` (percent), `fill`, `outline`, `outline_width`, `glow`, `glow_radius`, `shadow`, `shadow_dx`, `shadow_dy`, `clear` (`inpaint`, `fill`, `none`), `clear_color`, `align` (`left`, `center`, `right`), `dx`, `dy`. A label takes its named style, then any style key of its own; `note` and keys starting with `_` are comments.
+
+How measured: the scenes' members and sums from the decoded 3.7.0 files; the `home` session with `--lang en` (a scratch `CLanguage` switch until B1 landed) and the generated files in a `--standin-assets` directory: the `-en` scenes were fetched and drawn (`work/english/exec/art/`).

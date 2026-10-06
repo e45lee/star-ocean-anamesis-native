@@ -1,0 +1,313 @@
+{
+ "note": "The footer buttons (and the home's side buttons) of the common atlas. English: Global's names (uimsg_*_top_name: Characters, Draws, Items, Shop, Other; Missions as in Global's mission texts).",
+ "source": "UI/etc2/common.csf",
+ "styles": {
+  "footer": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#e4ffff",
+   "glow": "#00b4ffd0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
+  },
+  "footer_dim": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#6c7d7d",
+   "glow": "#00465ac0",
+   "glow_radius": 2,
+   "outline": "#14283cc0",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "ホーム",
+   "text": "Home",
+   "sprites": [
+    "menubtn_home_on.png",
+    "menubtn_home_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer"
+  },
+  {
+   "jp": "ホーム",
+   "text": "Home",
+   "sprites": [
+    "menubtn_home_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim"
+  },
+  {
+   "jp": "キャラクター",
+   "text": "Characters",
+   "sprites": [
+    "menubtn_party_on.png",
+    "menubtn_party_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer"
+  },
+  {
+   "jp": "キャラクター",
+   "text": "Characters",
+   "sprites": [
+    "menubtn_party_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim"
+  },
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "sprites": [
+    "menubtn_gacya_on.png",
+    "menubtn_gacya_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer"
+  },
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "sprites": [
+    "menubtn_gacya_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim"
+  },
+  {
+   "jp": "アイテム",
+   "text": "Items",
+   "sprites": [
+    "menubtn_item_on.png",
+    "menubtn_item_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer"
+  },
+  {
+   "jp": "アイテム",
+   "text": "Items",
+   "sprites": [
+    "menubtn_item_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim"
+  },
+  {
+   "jp": "ミッション",
+   "text": "Missions",
+   "sprites": [
+    "menubtn_mission_on.png",
+    "menubtn_mission_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer"
+  },
+  {
+   "jp": "ミッション",
+   "text": "Missions",
+   "sprites": [
+    "menubtn_mission_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim"
+  },
+  {
+   "jp": "ショップ",
+   "text": "Shop",
+   "sprites": [
+    "menubtn_shop_on.png",
+    "menubtn_shop_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer"
+  },
+  {
+   "jp": "ショップ",
+   "text": "Shop",
+   "sprites": [
+    "menubtn_shop_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim"
+  },
+  {
+   "jp": "その他",
+   "text": "Other",
+   "sprites": [
+    "menubtn_friend_on.png",
+    "menubtn_friend_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer"
+  },
+  {
+   "jp": "その他",
+   "text": "Other",
+   "sprites": [
+    "menubtn_friend_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim"
+  }
+ ]
+}

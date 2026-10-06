@@ -18,6 +18,7 @@ Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_google
 - `tools/`: helpers used for the reverse engineering: Ghidra headless scripts, ELF/PLT resolver, xref/caller scanners, unicorn emulator harness.
 - `apk/`: the 3.7.0 APK, and the offline build's XAPK for the viewer (`emulator-viewer/`) and the save editor (the 3.7.0 APK is in git; the XAPK, over GitHub's 100 MB limit, is local only: "Game files").
 - `standin-assets/`: made-up **stand-in** images (marked "STAND-IN") for assets the online server had deleted, e.g. lost gacha banners; `tools/make_standin_banners.py` makes them, and the CDN of `soa-server` and of the port's in-process server serves them (`--standin-assets DIR|off`).
+- `standin-assets-en/recipes/`: the English UI art **recipes** (which text box of which game image gets which English, in which style; no pixels). The server builds the `-en` images from the user's own download at run time with `--english`, so no game art is in git or in the packages ([docs/english.md section 8](docs/english.md#8-english-ui-art)); `build/tools/english_art/english-art --png DIR` previews them.
 
 ## Setup
 
@@ -348,7 +349,9 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   of the vcpkg ports linked, dynarmic and its x86-64 externals, IJG libjpeg 9, zstd 1.3.4),
   `BUILD-INFO.txt`, and only data we made: `data/gacha_pools.sqlite3` **with the game's text
   removed** (`gacha.name`, `rule.text`; the server takes the titles from the master,
-  `docs/server-rules.md#gacha-pools`) and `standin-assets/` (our images). **No seed save** (the
+  `docs/server-rules.md#gacha-pools`), `standin-assets/` (our images) and
+  `standin-assets-en/recipes/*.json` (the English UI art recipes: text and boxes, no pixels; the
+  `-en` images are built from the user's download at run time). **No seed save** (the
   user, 2026-10-04: `data/saves/seed/Game.xml` is a real player's): a package's first run starts a
   new account through the game's own tutorial, unless `--seed FILE` names a save, or the user puts
   one at `<package>/data/saves/seed/Game.xml` (`docs/server-rules.md#seed`). Not a checkout's: a

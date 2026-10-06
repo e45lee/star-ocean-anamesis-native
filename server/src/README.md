@@ -20,6 +20,7 @@ The local server's code (libsoaserver): the core, the extension modules, the pur
 | Favor | `api/favor/favor.{h,cpp}` (the rules: levels, points, taps, items, the battle gain), `api/favor/favor_api.cpp` | UpdateFavorByTap, UseFavorItem | "8. Favor" |
 | Home, titles, notice, social | `api/player/home_footer.cpp` (footer flags), `api/player/titles.cpp`, `api/player/notice.cpp`, `api/social/rental.{h,cpp}` (follow lists, rental helpers), `api/social/social.cpp` (the follow menu's lists) | SetTitle, FollowList, UpdateSupport, Blacklist, …; `OnPlayerLoad` | "12. Home", "Rental helpers" |
 | CDN and ADLD | `cdn/` (`tree.cpp`, `bundle.cpp`, `served_master.cpp`, `files.{h,cpp}`), `cdn/adld.cpp` | soa-server's and soa's CDN content | "soa-server: the CDN" |
+| English UI art | `english_art/` (`build.cpp`, `render.cpp`, `font.cpp`, `recipe.cpp`; `soaserver/english_art.h`) | the `-en` images the CDN serves with `--english`, built from the download and `standin-assets-en/recipes` | docs/english.md section 8 |
 | Support | `core/support.cpp` (config, log sink, asset index, CHash32), `core/log.h` (the `LOG*` macros), `core/battle_log.cpp`, `testing/testing.cpp` (the test registry and runner) | | |
 
 ## Where things are, quickly

@@ -24,6 +24,9 @@ links, IJG libjpeg 9, zstd 1.3.4) and ONLY data we made:
                              quoting banner text) are emptied here; the server takes the titles from
                              the user's master at run time (gacha_pools::name_from_master)
   standin-assets/...         our made-up stand-in images (tools/make_standin_banners.py)
+  standin-assets-en/recipes/*.json  the English UI art recipes (text, boxes, styles: no pixels); the
+                             server builds the -en images from the user's download at run time
+                             (soaserver/english_art.h, docs/english.md section 8)
 
 No game file goes in: not the APK / XAPK (380-ok: excluded), the download, a master DB (data/basmaster-*.sqlite3 are
 decryptions of the game's own), version.bin, libSOA.so, decompiles. The
@@ -82,6 +85,7 @@ ALLOW_COMMON = ["README.txt", "LICENSE.txt", "THIRD-PARTY-NOTICES.txt", "BUILD-I
 ALLOW_DATA = [
     "data/gacha_pools.sqlite3",
     "standin-assets/Image/etc2/*.aif",
+    "standin-assets-en/recipes/*.json",
 ]
 ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
 
@@ -393,7 +397,7 @@ def stage_package(plat, kind, version, work, dbg_dir):
     if kind in WITH_DATA:
         os.makedirs(os.path.join(root, "data"))
         clean_pools(os.path.join(ROOT, "data", "gacha_pools.sqlite3"), os.path.join(root, "data", "gacha_pools.sqlite3"))
-        for rel in git("ls-files", "standin-assets").splitlines():
+        for rel in git("ls-files", "standin-assets", "standin-assets-en/recipes").splitlines():
             os.makedirs(os.path.join(root, os.path.dirname(rel)), exist_ok=True)
             shutil.copyfile(os.path.join(ROOT, rel), os.path.join(root, rel))
     os.makedirs(os.path.join(root, "game"))

@@ -275,7 +275,7 @@ def test_client_strings_merged(data):
 
 def test_glossary_machine_names(data, built, font):
     """M2's machine name rows are loaded and checked; a human row overrides an official one."""
-    rows = T.read_tsv(data / "glossary.tsv", T.GLOSSARY_COLS)
+    rows = [r for r in T.read_tsv(data / "glossary.tsv", T.GLOSSARY_COLS) if r["ja"] != "リーシュ"]
     rows.append({"ja": "リーシュ", "en": "Lishe", "kind": "name", "variants": "", "source": "machine", "note": "M2"})
     rows.append({"ja": "紋章石", "en": "Crests", "kind": "ui", "variants": "", "source": "human", "note": ""})
     (data / "glossary.tsv").write_text(T.tsv_text(T.GLOSSARY_COLS, rows), encoding="utf-8")

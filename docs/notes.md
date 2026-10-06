@@ -445,7 +445,7 @@ The gacha screen, its dialogs and the 3D draw sequence. Reached offline with `ph
   - +0x60 item id;
   - +0xc0 role id (0 means an item);
   - +0x120, +0x150 and +0x180 flags.
-- Gift-gacha results: a vector at +0x73b8, 0x158 bytes each: +0xc0 id, +0xf0 kind (2 character, 1 item).
+- Box-gacha results (`BoxGachaItems`, `CBoxGachaResultInfo`; earlier read as gift-gacha results, which are at +0x5008): a vector at +0x73b8, 0x158 bytes each: +0xc0 content id, +0xf0 content type (2 character, 1 item), +0x150 duplication. What the presentation does with these: [gacha-presentation.md](gacha-presentation.md).
 - Also count, step-up, box and sale infos (`CGachaCountInfoList`, `CStepUpGachaInfoList`, `CBoxGachaInfoList`, `CSaleGachaCountInfoList`, day limits).
 
 **Screen flow.**
@@ -458,8 +458,8 @@ The gacha screen, its dialogs and the 3D draw sequence. Reached offline with `ph
 - `CGacha::IsEnableHash(stepup, id, hash&)` sets `hash = "dummy"` first. For a step-up gacha it always returns true. Otherwise it looks the id up in `GachaHashMap` and succeeds when now (+0x358) lies within an entry's `opened_at`..`closed_at`, copying that entry's hash.
 
 **The draw sequence: `CGachaManager`** (0x4f8 bytes, `TSingleton<CGachaManager>`, own `CArena`).
-- **`Initialize`** copies the results (+0x4fb8, or the gift results +0x73b8) into up to 10 entries of 0x68 bytes at +0x08:
-  - +0x08 kind: 1 character, 2 item (gift gachas: 1 character, 0 item);
+- **`Initialize`** copies the results (+0x4fb8, or the box results +0x73b8) into up to 10 entries of 0x68 bytes at +0x08:
+  - +0x08 kind: 1 character, 2 item (box gachas: 1 character, 2 weapon, 0 other item);
   - +0x0c role id, +0x10 item id;
   - +0x1c rarity index;
   - +0x4e the entry's camera animation name.

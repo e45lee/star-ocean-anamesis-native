@@ -19,6 +19,22 @@
    "glow_radius": 2,
    "outline": "#14283cc0",
    "outline_width": 1
+  },
+  "badge_gold": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#5a3a00",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "badge_red": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#7a0010",
+   "outline_width": 1
   }
  },
  "labels": [
@@ -308,6 +324,126 @@
     25
    ],
    "style": "footer_dim"
+  },
+  {
+   "jp": "キャンペーン",
+   "text": "Campaign",
+   "sprites": [
+    "campaign_icon.png"
+   ],
+   "box": [
+    2,
+    1,
+    110,
+    30
+   ],
+   "cover": [
+    0,
+    0,
+    114,
+    32
+   ],
+   "style": "badge_gold"
+  },
+  {
+   "jp": "1日1回無料!",
+   "text": "1 Free a Day!",
+   "sprites": [
+    "free_icon.png"
+   ],
+   "box": [
+    2,
+    1,
+    110,
+    30
+   ],
+   "cover": [
+    0,
+    0,
+    114,
+    32
+   ],
+   "style": "badge_gold"
+  },
+  {
+   "jp": "1日1回",
+   "text": "1 a Day",
+   "sprites": [
+    "oneday_icon.png"
+   ],
+   "box": [
+    2,
+    1,
+    76,
+    30
+   ],
+   "cover": [
+    0,
+    0,
+    80,
+    32
+   ],
+   "style": "badge_gold"
+  },
+  {
+   "jp": "大成功率UP!",
+   "text": "Great Success UP!",
+   "sprites": [
+    "success_icon.png"
+   ],
+   "box": [
+    2,
+    1,
+    110,
+    30
+   ],
+   "cover": [
+    0,
+    0,
+    114,
+    32
+   ],
+   "style": "badge_gold"
+  },
+  {
+   "jp": "探査船帰還!",
+   "text": "Ship Returned!",
+   "sprites": [
+    "ship_icon.png"
+   ],
+   "box": [
+    2,
+    1,
+    110,
+    30
+   ],
+   "cover": [
+    0,
+    0,
+    114,
+    32
+   ],
+   "style": "badge_gold"
+  },
+  {
+   "jp": "レイド発生!",
+   "text": "Raid!",
+   "sprites": [
+    "raid.png"
+   ],
+   "box": [
+    4,
+    2,
+    98,
+    27
+   ],
+   "cover": [
+    8,
+    4,
+    90,
+    23
+   ],
+   "style": "badge_red"
   }
  ]
 }

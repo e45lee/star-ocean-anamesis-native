@@ -62,6 +62,42 @@
    "size": 14,
    "bold": 1,
    "fill": "#3c4a60"
+  },
+  "badge_gold": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#5a3a00",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "badge_pink": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ff4f8f",
+   "outline": "#ffffff",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "bubble": {
+   "size": 19,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#00000080",
+   "outline_width": 1
+  },
+  "talk_level": {
+   "size": 30,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#1060c0",
+   "outline_width": 2,
+   "glow": "#00c8ffc0",
+   "glow_radius": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
   }
  },
  "labels": [
@@ -667,6 +703,226 @@
     38
    ],
    "style": "light"
+  },
+  {
+   "jp": "探査船帰還!",
+   "text": "Ship Returned!",
+   "sprites": [
+    "ship_icon.png"
+   ],
+   "box": [
+    2,
+    1,
+    110,
+    30
+   ],
+   "cover": [
+    0,
+    0,
+    114,
+    32
+   ],
+   "style": "badge_gold"
+  },
+  {
+   "jp": "友好度上昇率UP",
+   "text": "Affection Rate UP",
+   "sprites": [
+    "icon_affection_up.png"
+   ],
+   "box": [
+    2,
+    1,
+    146,
+    28
+   ],
+   "cover": [
+    0,
+    0,
+    150,
+    30
+   ],
+   "style": "badge_pink"
+  },
+  {
+   "jp": "消費スタミナ半減!",
+   "text": "Half Stamina Cost!",
+   "sprites": [
+    "icon_stamina_down.png"
+   ],
+   "box": [
+    2,
+    1,
+    146,
+    28
+   ],
+   "cover": [
+    0,
+    0,
+    150,
+    30
+   ],
+   "style": "badge_pink"
+  },
+  {
+   "jp": "新章追加",
+   "text": "New Chapter",
+   "sprites": [
+    "icon_newstory_start.png"
+   ],
+   "box": [
+    8,
+    3,
+    120,
+    27
+   ],
+   "cover": [
+    12,
+    5,
+    112,
+    23
+   ],
+   "style": "bubble"
+  },
+  {
+   "jp": "大討伐発生!",
+   "text": "Raid Boss!",
+   "sprites": [
+    "icon_occurrence.png"
+   ],
+   "box": [
+    8,
+    3,
+    120,
+    27
+   ],
+   "cover": [
+    12,
+    5,
+    112,
+    23
+   ],
+   "style": "bubble"
+  },
+  {
+   "jp": "ランキング開催中!",
+   "text": "Ranking On!",
+   "sprites": [
+    "icon_ranking.png"
+   ],
+   "box": [
+    8,
+    3,
+    120,
+    27
+   ],
+   "cover": [
+    12,
+    5,
+    112,
+    23
+   ],
+   "style": "bubble"
+  },
+  {
+   "jp": "普通",
+   "text": "Normal",
+   "sprites": [
+    "img_interactive_00_txt.png"
+   ],
+   "box": [
+    2,
+    1,
+    156,
+    68
+   ],
+   "cover": [
+    0,
+    0,
+    160,
+    70
+   ],
+   "style": "talk_level"
+  },
+  {
+   "jp": "興味",
+   "text": "Curious",
+   "sprites": [
+    "img_interactive_01_txt.png"
+   ],
+   "box": [
+    2,
+    1,
+    156,
+    68
+   ],
+   "cover": [
+    0,
+    0,
+    160,
+    70
+   ],
+   "style": "talk_level"
+  },
+  {
+   "jp": "友達",
+   "text": "Friend",
+   "sprites": [
+    "img_interactive_02_txt.png"
+   ],
+   "box": [
+    2,
+    1,
+    156,
+    68
+   ],
+   "cover": [
+    0,
+    0,
+    160,
+    70
+   ],
+   "style": "talk_level"
+  },
+  {
+   "jp": "好き",
+   "text": "Like",
+   "sprites": [
+    "img_interactive_03_txt.png"
+   ],
+   "box": [
+    2,
+    1,
+    156,
+    68
+   ],
+   "cover": [
+    0,
+    0,
+    160,
+    70
+   ],
+   "style": "talk_level"
+  },
+  {
+   "jp": "大好き",
+   "text": "Love",
+   "sprites": [
+    "img_interactive_04_txt.png"
+   ],
+   "box": [
+    2,
+    1,
+    156,
+    68
+   ],
+   "cover": [
+    0,
+    0,
+    160,
+    70
+   ],
+   "style": "talk_level"
   }
  ]
 }

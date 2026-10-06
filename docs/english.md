@@ -802,11 +802,13 @@ The server's `--english` CDN step calls `english_art::build({download, recipes, 
 
 | Source | Labels | English |
 |---|---|---|
-| `UI/etc2/common.csf` | the footer, each in its on / off / dimmed state | Home, Characters, Draws, Items, Missions, Shop, Other (`uimsg_*_top_name`; Missions as Global's mission texts) |
-| `UI/etc2/home.csf` | the four main buttons, the starter-mission button, the side buttons, the partner menu's round buttons, the talk-mode logo, "back to favorite" | Events, Missions, Sphere 211, Deep Space, Starter Missions; Achievements, Save Data, Follow, Featured, Notice, Gifts, Titles; 2D/3D, Deco, Home, Gift, Change Favorite, Studio Mode; Talk Mode; Back to Favorite |
+| `UI/etc2/common.csf` | the footer, each in its on / off / dimmed state; the gold and red badges | Home, Characters, Draws, Items, Missions, Shop, Other (`uimsg_*_top_name`; Missions as Global's mission texts); Campaign, 1 Free a Day!, 1 a Day, Great Success UP!, Ship Returned!, Raid! |
+| `UI/etc2/home.csf` | the four main buttons, the starter-mission button, the side buttons, the partner menu's round buttons, the talk-mode logo and level words, "back to favorite", the badges | Events, Missions, Sphere 211, Deep Space, Starter Missions; Achievements, Save Data, Follow, Featured, Notice, Gifts, Titles; 2D/3D, Deco, Home, Gift, Change Favorite, Studio Mode; Talk Mode; Normal, Curious, Friend, Like, Love; Back to Favorite; Ship Returned!, Affection Rate UP, Half Stamina Cost!, New Chapter, Raid Boss!, Ranking On! |
 | `UI/etc2/gacha_top.csf` | the four tabs, Back, the two legal-notice buttons | Recommended / Character / Weapon / Event Draws (`uimsg_gacha_title_*`), Back (`sys_return`), Commercial Transactions Act, Payment Services Act (no Global English) |
 
-Not done yet: the home's badges (`icon_*`: 友好度上昇率UP, 大討伐発生！, ランキング開催中！ …), the talk-mode level words (`img_interactive_0*_txt`), the other scenes, and the `Image/` files (banners, tutorial pages: about 1,000 with text, many of them JPEG, which the generator doesn't write yet).
+Not done yet: the other scenes, and the `Image/` files (banners, tutorial pages: about 1,000 with text). A plain `Image/` file works the same way (a label without `sprites` is placed on the whole image) when it is ETC2; the 431 JPEG images would need a JPEG encoder.
+
+**Same bytes everywhere.** Two builds give identical files (the selftest), and the Windows build of `english-art` (MinGW) wrote the same bytes as the Linux one for all three scenes.
 
 **Writing a recipe.** `build/tools/english_art/english-art --out DIR --png PNGDIR` (run from the checkout: the download `work/download-3.7.0` and `standin-assets-en/recipes` by default) builds every recipe without a server and writes each edited atlas as PNG for review; `build/tools/aif2png/aif2png` renders a source scene's atlas, and its `.csv` gives the sprite rectangles. Unknown keys in a recipe are errors. A recipe's format:
 

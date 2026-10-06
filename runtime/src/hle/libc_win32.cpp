@@ -31,6 +31,7 @@
 
 #include "core/device.h"
 #include "core/crash.h"
+#include "core/thread_record.h"
 #include "core/hle.h"
 #include "core/host_fd.h"
 #include "core/host_mem.h"
@@ -554,7 +555,7 @@ void th_syscall(Cpu& c) {
     case 172: r = (s64)GetCurrentProcessId(); break;
     case 178: r = gettid(); break;
     case 278: {  // getrandom
-        static thread_local std::random_device rd;  // the OS's generator
+        std::random_device& rd = thread_object<std::random_device>();  // the OS's generator (core/thread_record.h)
         u8* p = (u8*)a1;
         for (size_t i = 0; i < a2; i++) p[i] = (u8)rd();
         r = (s64)a2;

@@ -8,7 +8,9 @@
 // Windows has no HOME as a rule, so the Linux spelling put the saves under the launch directory
 // (<launch dir>\.local\share\...). No migration: README.md "Windows" says how to move such a dir.
 #include <cstdlib>
+#include <filesystem>
 #include <string>
+#include <system_error>
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <direct.h>
@@ -35,6 +37,18 @@ inline std::string default_data_dir(const char* linux_name, const char* windows_
 #else
     return default_data_dir_for(false, getenv("HOME"), nullptr, nullptr, linux_name, windows_name);
 #endif
+}
+
+// The platform's directory for scratch files, '/'-separated, without a trailing '/'
+// (std::filesystem::temp_directory_path: $TMPDIR, else /tmp, on Linux; GetTempPath on Windows:
+// %TMP%, %TEMP%, ...). Not "/tmp/...": on Windows that is \tmp on the current drive, which needn't
+// exist. "." when there is none.
+inline std::string temp_dir() {
+    std::error_code ec;
+    std::filesystem::path p = std::filesystem::temp_directory_path(ec);
+    std::string s = ec ? std::string(".") : p.generic_string();
+    while (s.size() > 1 && s.back() == '/') s.pop_back();
+    return s;
 }
 
 // mkdir -p (either separator on Windows; not the runtime's vfs make_dirs, whose programs link this too). False when the directory isn't there afterwards.

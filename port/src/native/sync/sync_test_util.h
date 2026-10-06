@@ -41,7 +41,7 @@ inline void run_guest_threads(int n, const std::function<void(int)>& fn) {
         ts.emplace_back([&fn, i] {
             guest_thread_init(256 << 10);
             fn(i);
-            guest_thread_release();
+            thread_end();  // core/thread_record.h
         });
     for (auto& t : ts) t.join();
 }

@@ -13,6 +13,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <soa/paths.h>
 
 #include "android/ndk.h"
 #include "core/cpu.h"
@@ -108,8 +109,8 @@ NATIVE_TEST("server/event-asset-lookup") {
 NATIVE_TEST("server/standin-assets") {
     AssetManager& am = asset_manager();
     if (am.file_count() == 0) return;  // no APKs loaded
-    char tmpl[] = "/tmp/soa-standin-XXXXXX";
-    if (!mkdtemp(tmpl)) return;
+    std::string tmpl = soa::temp_dir() + "/soa-standin-XXXXXX";
+    if (!mkdtemp(tmpl.data())) return;
     std::string dir = tmpl, saved = am.standin_dir();
     auto put = [&](const std::string& rel) {
         std::string path = dir + "/" + rel;

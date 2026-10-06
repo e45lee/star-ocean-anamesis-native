@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <soa/file_tree.h>
+#include <soa/paths.h>
 
 #include "cdn/files.h"
 #include "master/gacha_pools.h"
@@ -57,7 +58,7 @@ NATIVE_TEST("cdn/master-source") {
     std::string download = find_repo_file("work/download-3.7.0");
     std::string apk = find_repo_file("apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk");
     if (download.empty()) return t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
-    std::string dir = "/tmp/soa-cdn-test-master-" + std::to_string(getpid());
+    std::string dir = soa::temp_dir() + "/soa-cdn-test-master-" + std::to_string(getpid());
     std::string err;
     bool reused = true;
     std::string p = master_source::derive_from_download(download, dir, &err, &reused);
@@ -96,7 +97,7 @@ NATIVE_TEST("cdn/master-source-resolve") {
     if (download.empty()) return t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
     ServerConfig& c = config();
     ServerConfig saved = c;
-    std::string root = "/tmp/soa-cdn-test-resolve-" + std::to_string(getpid());
+    std::string root = soa::temp_dir() + "/soa-cdn-test-resolve-" + std::to_string(getpid());
     c.master.clear();
     c.repo_roots = {root + "/no-repo"};  // no data/basmaster-3.7.0.sqlite3 there
     c.data_root = root;
@@ -195,7 +196,7 @@ NATIVE_TEST("cdn/download-zip") {
         }
         checked++;
     }
-    std::string dir = "/tmp/soa-cdn-test-zipmaster-" + std::to_string(getpid());
+    std::string dir = soa::temp_dir() + "/soa-cdn-test-zipmaster-" + std::to_string(getpid());
     std::string p = master_source::derive_from_download(zip, dir, &err);
     if (p.empty()) t.fail("derive_from_download(zip): %s", err.c_str());
     else t.expect_eq(sha1_of(p), std::string(kMasterSha1), "the master derived from the zip");

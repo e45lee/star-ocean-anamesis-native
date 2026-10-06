@@ -107,10 +107,7 @@ struct Shadow {
         guest_call(guest::sym("_ZNK4Aska5Event5ResetEv"), {(u64)&w->m_event});
     }
 };
-Shadow& shadow() {
-    static thread_local Shadow s;
-    return s;
-}
+Shadow& shadow() { return thread_object<Shadow>(); }  // (core/thread_record.h)
 
 std::string hexdiff(const u8* a, const u8* b, size_t n, size_t base) {
     for (size_t i = 0; i < n; i++)

@@ -102,10 +102,7 @@ struct Shadow {
         rt->m_queueLock.m_waiters = sync::FastCriticalSection::kWaiterBias;
     }
 };
-Shadow& shadow() {
-    thread_local Shadow s;
-    return s;
-}
+Shadow& shadow() { return thread_object<Shadow>(); }  // (core/thread_record.h)
 
 std::string compare(const RenderThreadObservation& o, const RenderThread* sh, const RenderableObject* real_obj, const RenderableObject* sh_obj) {
     const auto& p = o.post;

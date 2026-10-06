@@ -12,6 +12,8 @@
 #include <type_traits>
 #include <vector>
 
+#include "core/thread_record.h"  // thread_end, thread_object: per-thread state
+
 namespace Dynarmic::A64 { class Jit; }
 
 namespace soa {
@@ -313,8 +315,8 @@ struct GuestThreadInfo {
 };
 GuestThreadInfo& guest_thread();
 // Allocates the guest stack for this host thread (otherwise a default one is created lazily).
+// The thread's guest state (stack, JIT instances) goes at its thread_end() (core/thread_record.h).
 void guest_thread_init(size_t stack_size);
-void guest_thread_release();
 
 void cpu_global_init();
 

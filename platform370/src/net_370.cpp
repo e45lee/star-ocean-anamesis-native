@@ -37,6 +37,7 @@
 
 #include "core/hle.h"
 #include "core/log.h"
+#include "core/thread_record.h"
 #include "internal.h"
 #include "platform370/platform370.h"
 
@@ -157,9 +158,10 @@ void th_getaddrinfo(Cpu& c) {
     std::string target = node ? mapped_address(node) : "";
     if (!target.empty()) {
         LOGI("net", "getaddrinfo(%s, %s) -> %s (mapped)", node, serv ? serv : "", target.c_str());
-        thread_local std::string t_node;
-        t_node = target;
-        c.set_x(0, (u64)t_node.c_str());
+        struct NodeTag;
+        std::string& node_buf = thread_object<std::string, NodeTag>();  // (core/thread_record.h)
+        node_buf = target;
+        c.set_x(0, (u64)node_buf.c_str());
     }
     // The runtime's thunk copies the hints' fields as they are: hand it glibc's flag bits.
     thread_local BionicAddrinfo t_hints;
@@ -200,9 +202,10 @@ void th_gethostbyname(Cpu& c) {
     std::string target = name ? mapped_address(name) : "";
     if (!target.empty()) {
         LOGI("net", "gethostbyname(%s) -> %s (mapped)", name, target.c_str());
-        thread_local std::string t_name;
-        t_name = target;
-        c.set_x(0, (u64)t_name.c_str());
+        struct NameTag;
+        std::string& name_buf = thread_object<std::string, NameTag>();  // (core/thread_record.h)
+        name_buf = target;
+        c.set_x(0, (u64)name_buf.c_str());
     }
     g_gethostbyname(c);
     // struct hostent has the same 64-bit layout in Bionic and glibc.

@@ -233,7 +233,7 @@ struct Arena {
 };
 
 Arena& arena_for(const Shape& sh) {
-    static thread_local Arena a;
+    Arena& a = thread_object<Arena>();  // (core/thread_record.h)
     if (!a.mem || !a.shape.same(sh)) a.build(sh);
     return a;
 }

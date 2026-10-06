@@ -265,7 +265,7 @@ NATIVE_TEST("core/guest-call-threads") {
                 if (guest_invoke<u64>((u64)g_inc, (u64)i) != (u64)i + 1) bad++;
                 if (guest_call((u64)g_loop, {n, 0, (u64)g_recurse_fn, 2}) != n * (n + 1) / 2 + n) bad++;
             }
-            guest_thread_release();
+            thread_end();  // core/thread_record.h
         });
     }
     for (auto& x : th) x.join();

@@ -203,10 +203,15 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
   (`--software-gl`, [docs/testing-software-gl.md](docs/testing-software-gl.md)).
 - Keep each client under about 6 GB RSS; `--guest-cpus` (default 8) bounds the guest's worker
   threads and so the JIT contexts.
-- No large `static thread_local` buffers in natives or live checks: glibc takes static TLS out of
-  every new thread's stack, and guest threads have 256 KiB host stacks (use
-  `live::thread_scratch<T>()`). An overflow logs `*** stack overflow on thread NAME ...`
-  ([runtime/README.md "Crash reports"](runtime/README.md)); new runtime threads call `crash_thread_begin`.
+- `thread_local` only for trivial, constant-initialized values (pointers, integers, flags, enums, POD
+  buffers): per-thread objects with a constructor or destructor go through `thread_object<T, Tag>()`
+  (`live::thread_scratch<T>()` in live checks), owned by the thread's record and destroyed at its
+  `thread_end()` ([runtime/README.md "Per-thread state"](runtime/README.md); T0
+  `tools/check_thread_local.py` reads the built objects). No large `static thread_local` buffers
+  either: glibc takes static TLS out of every new thread's stack, and guest threads have 256 KiB host
+  stacks. An overflow logs `*** stack overflow on thread NAME ...`
+  ([runtime/README.md "Crash reports"](runtime/README.md)); new runtime threads start with
+  `ThreadScope scope("name")` (crash reports, and their per-thread state ends with them).
 - Host-built guest code uses `map_guest_code()` / `unmap_guest_code()`, never plain `mmap`: the
   JIT caches translations by address.
 - `port/CMakeLists.txt` sorts native sources by basename (registration order); keep basenames

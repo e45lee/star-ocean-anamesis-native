@@ -7,6 +7,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <soa/paths.h>
 
 #include "api/gacha/gacha.h"
 #include "api/missions/missions.h"
@@ -32,7 +33,7 @@ NATIVE_TEST("server/session-invariants") {
     if (!mm) return t.fail("master");
     Server sv;
     sv.live = false;
-    std::string db = "/tmp/soa-server-test-" + std::to_string(getpid()) + ".sqlite3";
+    std::string db = soa::temp_dir() + "/soa-server-test-" + std::to_string(getpid()) + ".sqlite3";
     unlink(db.c_str());
     if (!sv.m.open(master, true) || !sv.open_state(db, t.rand_u64(), save)) return t.fail("open");
     sv.pools.open();  // the reconstructed pools when present (else the rarity fallback)

@@ -8,6 +8,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <soa/paths.h>
 
 #include "net/game.h"
 #include "net/client.h"
@@ -93,7 +94,7 @@ NATIVE_TEST("net/http-server") {
 }
 
 NATIVE_TEST("net/http-router-static") {
-    std::string dir = "/tmp/soa-server-net-test-" + std::to_string(getpid());
+    std::string dir = soa::temp_dir() + "/soa-server-net-test-" + std::to_string(getpid());
     mkdir(dir.c_str(), 0755);
     mkdir((dir + "/sub").c_str(), 0755);
     FILE* f = fopen((dir + "/sub/file.bin").c_str(), "wb");

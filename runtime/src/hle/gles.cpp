@@ -26,6 +26,7 @@
 #include "android/ndk.h"
 #include "core/hle.h"
 #include "core/log.h"
+#include "core/thread_record.h"
 #include "hle/egl_state.h"
 #include "hle/etc2.h"
 #include "hle/gfx.h"
@@ -61,7 +62,8 @@ namespace {
 const GLubyte* host_glGetString(GLenum name) {
     const GLubyte* s = s_glGetString(name);
     if (name == GL_EXTENSIONS && s) {
-        static thread_local std::string ext;
+        struct ExtTag;
+        std::string& ext = thread_object<std::string, ExtTag>();  // (core/thread_record.h)
         ext.clear();
         std::string all = (const char*)s;
         size_t p = 0;
@@ -126,7 +128,8 @@ const u8* decode_srgb_etc2(GLenum fmt, GLsizei w, GLsizei h, GLint border, GLsiz
     GLint pbo = 0;
     s_glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &pbo);
     if (pbo) return nullptr;
-    static thread_local std::vector<u8> buf;
+    struct Etc2Tag;
+    std::vector<u8>& buf = thread_object<std::vector<u8>, Etc2Tag>();  // (core/thread_record.h)
     buf.resize((size_t)w * h * 4);
     etc2::decode(f, (const u8*)data, w, h, buf.data());
     return buf.data();

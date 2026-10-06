@@ -95,11 +95,16 @@ int main(int argc, char** argv) {
         cpu_global_init();
         bool fault = false, native = false;
         for (int i = 3; i < argc; i++) fault |= !strcmp(argv[i], "--fault"), native |= !strcmp(argv[i], "--native");
-        return run_gdb_demo(argv[2], fault, native);
+        int rc = run_gdb_demo(argv[2], fault, native);
+        thread_end();
+        return rc;
     }
     // A scratch data dir: jni/references-low-byte writes (and deletes) a SharedPreferences file.
-    char dir[] = "/tmp/soaruntime_tests.XXXXXX";
-    if (!mkdtemp(dir)) fatal("mkdtemp failed");
+    // (the platform's temp dir: on Windows "/tmp" is \tmp on the current drive, which needn't exist)
+    std::string dir = std::filesystem::temp_directory_path().generic_string();
+    while (dir.size() > 1 && dir.back() == '/') dir.pop_back();
+    dir += "/soaruntime_tests.XXXXXX";
+    if (!mkdtemp(dir.data())) fatal("mkdtemp failed");
     vfs_init({dir});
     cpu_global_init();
     hle_init();
@@ -155,8 +160,11 @@ int main(int argc, char** argv) {
     run_gdbstub_tests(check);              // the GDB stub end to end (gdbstub_test.cpp; last: it turns the debugger hooks on)
     std::error_code ec;
     std::filesystem::remove_all(dir, ec);
-    if (ec) fprintf(stderr, "couldn't remove %s\n", dir);
+    if (ec) fprintf(stderr, "couldn't remove %s\n", dir.c_str());
 
     fprintf(stderr, "%s: %d failure(s)\n", g_failures ? "FAIL" : "PASS", g_failures);
+    // The main thread's per-thread state goes here, before the static objects' destructors
+    // (core/thread_record.h); the exit status covers what runs after.
+    thread_end();
     return g_failures ? 1 : 0;
 }

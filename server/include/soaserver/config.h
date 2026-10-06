@@ -73,7 +73,7 @@ struct ServerConfig {
     std::string download_dir;  // the 3.7.0 download tree served (--download-dir)
     bool cdn_standins = true;  // serve the stand-in assets too (--standin-assets DIR|off)
     std::string standin_dir;  // "" = the repo's standin-assets
-    std::string cdn_scratch;  // where the served master and the bundle-hash cache go ("" = data_root, else /tmp)
+    std::string cdn_scratch;  // where the served master and the bundle-hash cache go ("" = data_root, else the temp dir)
 };
 
 // The configuration in force (mutable: the embedder fills it, tests change it).

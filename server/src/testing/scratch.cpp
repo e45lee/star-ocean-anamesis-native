@@ -6,6 +6,7 @@
 
 #include <ctime>
 #include <functional>
+#include <soa/paths.h>
 
 #include "core/log.h"
 #include "core/time.h"  // parse_time
@@ -53,7 +54,7 @@ ScratchServer::ScratchServer(u64 seed, Options opt) : own_test_options_(opt.own_
     }
     static int n = 0;
     sv.live = false;
-    db = "/tmp/soa-server-scratch-" + std::to_string(getpid()) + "-" + std::to_string(n++) + ".sqlite3";
+    db = soa::temp_dir() + "/soa-server-scratch-" + std::to_string(getpid()) + "-" + std::to_string(n++) + ".sqlite3";
     for (const char* suffix : {"", "-wal", "-shm"}) unlink((db + suffix).c_str());
     ok = sv.m.open(master, true) && sv.open_state(db, seed, save);
     if (opt.pools) sv.pools.open();

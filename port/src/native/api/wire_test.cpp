@@ -935,6 +935,20 @@ NATIVE_TEST("wire/inproc-parity") {
         }
     }
     {
+        // SetStampSlot(CSTLVector<u32> const& stamps): the palette, 0 for an empty slot (a request
+        // lambda the local server answers in-process)
+        std::vector<u32> stamps = {3377522981u, 0, 1348057247u, 0};
+        Arg p;
+        p.code = 'p';
+        p.mem.assign((const u8*)stamps.data(), (const u8*)(stamps.data() + stamps.size()));
+        u64 v32[3] = {(u64)stamps.data(), (u64)(stamps.data() + stamps.size()), (u64)(stamps.data() + stamps.size())};
+        server::net::Decoded d;
+        if (wire_decode(t, "SetStampSlot", {p, u('I', stamps.size())}, &d)) {
+            u64 x[8] = {0x5150, (u64)v32};
+            compare(t, "SetStampSlot", server_port::inproc_request("_ZN13FakeApiCaller12SetStampSlotERKN9Framework10CSTLVectorIjEE", 0x58123949, x), d);
+        }
+    }
+    {
         // SendGuideInformation(u32), GetScenarioLibraryInfoList(u32): the u32's own bits
         server::net::Decoded d;
         if (wire_decode(t, "SendGuideInformation", {u('I', 732197292u)}, &d)) {

@@ -390,7 +390,7 @@ std::vector<u8> material_compose(Ctx& ctx, const Request& req) {
     Value added_items = Value::array(), stocks = Value::array(), chars = Value::array();
     ctx.grant(result_type ? result_type : kContentStackItem, result_id, result_num * times, added_items, stocks, chars);
     Value data = ctx.base_data();
-    if (!added_items.arr.empty()) data["AddItem"] = added_items;
+    ext::add_items(data, added_items);
     data["StockItem"] = ctx.stock();
     LOGI("server", "MaterialCompose %u x%u: item %u x%u, FOL -%u", id, times, result_id, result_num * times, cost * times);
     return body(data);

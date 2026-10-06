@@ -123,7 +123,7 @@ std::vector<u8> get_present(ext::Ctx& ctx, const Request& req) {
     result["result"] = gained;
     Value data = base_data(ctx);
     data["PresentGetResult"] = result;
-    if (!added.items.arr.empty()) data["AddItem"] = added.items;
+    ext::add_items(data, added.items);
     if (!added.stocks.arr.empty()) data["StockItem"] = stack_item_info_list(ctx);
     Value add_character = Value::object();
     for (auto& character : added.characters.arr) add_character[std::to_string(character.get_u("id"))] = character;

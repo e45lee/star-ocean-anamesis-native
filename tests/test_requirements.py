@@ -20,6 +20,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACKAGE_OF = {
     "Crypto": "pycryptodome",
     "PIL": "pillow",
+    "cv2": "opencv-python-headless",
     "elftools": "pyelftools",
     "keystone": "keystone-engine",
     "yaml": "pyyaml",

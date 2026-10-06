@@ -114,7 +114,12 @@ RULES = [
     ("R-PU-BANNERART", "b", "Pick-ups read off the banner images where the master data names none: the 衣装コンテスト "
      "2018 step-ups show ★5ヒーローベルダ / ★5ナースフィオーレ (20200917_chara_PU_001), the 2019 ones ★5花魁ミュリア / "
      "★5ハンターセリーヌ (20200903_chara_002); 復刻神級1 神翼のマリア / 賢神のマスティマ, 2 神龍のアシュトン / 神星のレナ / "
-     "神翼のフェイト, 3 神弓のレイミ / 神導のソフィア (20210603_chara_PU_006, _007, 20210610_chara_PU_005)."),
+     "神翼のフェイト, 3 神弓のレイミ / 神導のソフィア (20210603_chara_PU_006, _007, 20210610_chara_PU_005); the 2020 "
+     "maid step-ups メイド1 = メイドのクレア / メイドのネル, メイド2 = 執事のレオン / メイドのソフィア (20201008_chara_PU_003, _004; "
+     "also their 復刻 reruns). Added to what the other rules found (tools/gacha_verify.py, docs/gacha-verify.md): "
+     "ホワイトデー限定復刻1/2 (five units each, 'この5キャラをピックアップ!'), イヴリーシュ誕生日記念 (six Evelysse "
+     "costumes), ステップアップシグムント1-3 (シグムント), EP2 CHAPTER:10 (six EP2 characters with マスティマ; its rates "
+     "S 6 / A 0 (a)), 2018年福袋 (the 4 常夏 and 3 Halloween-2017 units next to the brides: '11キャラ')."),
     ("R-PU-NEW", "d", "A pick-up banner (not a rerun) still without evidence picks up the ★5 roles (weapons) released on its "
      "opening day (master_role.opened_at's date = the gacha's)."),
     ("R-PU-RELEASE", "d", "A pick-up unit released after the banner opened but before it closed counts as released "
@@ -151,6 +156,33 @@ BANNER_ART = [
     ("神級(1)", ("神翼のマリア", "賢神のマスティマ"), "20210603_chara_PU_006"),
     ("神級(2)", ("神龍のアシュトン", "神星のレナ", "神翼のフェイト"), "20210603_chara_PU_007"),
     ("神級(3)", ("神弓のレイミ", "神導のソフィア"), "20210610_chara_PU_005"),
+    # the 2020-10-08 maid step-ups (and their 2021-03-18 reruns): '…メイド1' / '…メイド2' carry no year, so
+    # R-PU-THEME must not read the digit (docs/gacha-verify.md finding 2); the banners say 復刻メイド and show
+    ("メイド1", ("メイドのクレア", "メイドのネル"), "20201008_chara_PU_003"),
+    ("メイド2", ("執事のレオン", "メイドのソフィア"), "20201008_chara_PU_004"),
+]
+# R-PU-BANNERART (added units): banners whose featured units no rule recorded (docs/gacha-verify.md finding 1).
+# (title regex, art keys = master_person id_label of the costume, image, what the banner says). The units are
+# added to the gacha's pick-ups (so to its S pool), next to whatever the other rules found.
+BANNER_ART_ADD = [
+    (r"^ホワイトデー限定復刻ピックアップキャラガチャ1$",
+     ("cp0301_b02a", "cp0401_b03a", "cp0501_b02a", "cp0101_b02a", "cp0207_b02a"), "20200312_chara_PU_003",
+     "この5キャラをピックアップ! (花婿フェイト, 水着エッジ, 冬空フィデル, 渚のラティクス, 桜雲のディアス)"),
+    (r"^ホワイトデー限定復刻ピックアップキャラガチャ2$",
+     ("cp0304_b02a", "cp0503_b02a", "cp0204_b03a", "cp0306_b03a", "cp0208_b02a"), "20200312_chara_PU_004",
+     "この5キャラをピックアップ! (花婿クリフ, 吸血鬼ヴィクトル, 雪空アシュトン, 狼アルベル, 執事のレオン)"),
+    (r"^イヴリーシュ誕生日記念ガチャ$",
+     ("cp0002_b03a", "cp0002_b05a", "cp0002_b06a", "cp0002_b07a", "cp0002_b08a", "cp0002_b09a"),
+     "20201224_chara_PU_002", "ピックアップは6人のイヴリーシュのみ!"),
+    (r"^ステップアップシグムントガチャ\d", ("cc0009_b01a",), "banner_gacha_pickup_role_0085",
+     "★5シグムント出現確率UP!!"),
+    (r"^EP2 CHAPTER:10 公開記念キャラガチャ$",
+     ("cp0013_b01a", "cp0014_b01a", "cp0015_b01a", "cp0016_b01a", "cp0017_b01a", "cp0019_b01a"),
+     "20190501_chara_PU_002", "★5キャラクターはピックアップされているEP2キャラクター6人のみ (S 6 %, A 0 %: a)"),
+    (r"^2018年福袋限定チケットガチャ",
+     ("cp0502_b03a", "cp0302_b02a", "cp0402_b02a", "cp0408_b02a", "cp0312_b02a", "cp0503_b02a", "cp0102_b02a"),
+     "pickup_img_chara_1712_017", "花嫁、常夏、ハロウィン向けの11キャラ: the 4 brides R-PU-NAME finds plus the "
+     "4 常夏 and 3 Halloween-2017 units (c: costume names)"),
 ]
 # R-PU-PERMANENT: the server tables of the permanent banners and tickets (常設 = permanent).
 PERMANENT_TABLES = {"master_gacha_item_jousetu", "master_gacha_item_sphere211", "master_gacha_item_galaxy"}
@@ -268,6 +300,11 @@ class Builder:
         # the plain characters' names (persons *_b01a): a seasonal window never picks them up
         self.plain_names = {norm_name(self.m.text.get(p["name_message_id"])) for p in self.m.persons.values()
                             if p["id_label"].endswith("_b01a")}
+        # costume (master_person id_label) -> base ★5 roles (R-PU-BANNERART added units)
+        self.base_by_art = collections.defaultdict(list)
+        for b in sorted(self.base.values(), key=lambda b: b["id"]):
+            if b["rarity"] == 5:
+                self.base_by_art[self.person_label(b)].append(b["id"])
         # person name -> base ★5 roles
         self.person_roles = collections.defaultdict(list)
         for b in self.base.values():
@@ -448,7 +485,8 @@ class Builder:
         """R-PU-THEME: '復刻花嫁2020/10連10ステップ目PU1体確定' -> the 花嫁/花婿 aces released in 2020."""
         name = self.title(g)
         for key, persons, _img in BANNER_ART:
-            if key in name:
+            if re.search(re.escape(key) + r"(?!\d)", name):  # 'メイド2' is not 'メイド2018'
+
                 return [(2, rid, "R-PU-BANNERART") for pn in persons for rid in self.person_roles.get(norm_name(pn), [])]
         aces = [b for b in sorted(self.base.values(), key=lambda b: (b["opened"], b["id"]))
                 if b["cls"] == "ace" and set(b["limited"]) <= {"limited"} and b["opened"] <= g["closed_at"]]
@@ -545,6 +583,15 @@ class Builder:
                 if got:
                     break
             res[g["id"]] = got
+        # R-PU-BANNERART (added units): featured units the banners show and no rule found
+        for g in m.gachas:
+            if g["gacha_type"] != 0 or g["id"] in permanent:
+                continue
+            name = self.title(g)
+            for pat, arts, _img, _says in BANNER_ART_ADD:
+                if re.search(pat, name):
+                    res[g["id"]] = res[g["id"]] + [(2, rid, "R-PU-BANNERART") for a in arts
+                                                   for rid in self.base_by_art.get(a, [])]
         # dedupe, stable
         for gid, p in res.items():
             seen, out = set(), []

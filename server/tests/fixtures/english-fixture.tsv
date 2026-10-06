@@ -1,0 +1,10 @@
+message_id	ja_sha1	en	source
+Login_bonus_taitle_message_0000	ef477d6ea642c52b7ce5b874285eb91733f860b5	Login Bonus	official
+Present_box_1	d91c9af582fc224a824b370b49ea71fc45f8139e	%s, day %d	human
+gacha_tilte_message_0001	3853941d5379d45dcc795bcc3383484a4de71a0f	Odds by Rarity	official
+gacha_tilte_message_0002	c14891c817a483b67dd4057dfc381fcec80bda2b	5★: %.5f%%	human
+gacha_tilte_message_0005	8fb4fb626fa2a2860ef5d080bb7b7dc70b2e648e	5★ Odds %.5f%%	human
+gacha_tilte_message_0006	f4aba3a4f1edc258790e3d0dfde81e33dd8706af	4★ Odds %.3f%%	human
+gacha_tilte_message_0010	5cc8233d7e9726f877698ab4b12321d6cdfd3792	General Odds	machine
+port_en_fixture_new		A string the Japanese master lacks	human
+uimsg_battlecamera_behavior	4de179ecf542c478157d1d738072337c7c4d0860	Battle Camera Effects	official

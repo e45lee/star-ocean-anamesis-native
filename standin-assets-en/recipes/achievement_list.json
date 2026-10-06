@@ -1,0 +1,123 @@
+{
+ "note": "The achievements' tabs and the round Gifts button (Gifts: Global's プレゼント).",
+ "source": "UI/etc2/achievement_list.csf",
+ "styles": {
+  "tab": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "round": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3c78",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "イベント",
+   "text": "Event",
+   "sprites": [
+    "tab_btn1_off.png"
+   ],
+   "box": [
+    18,
+    6,
+    116,
+    28
+   ],
+   "cover": [
+    24,
+    6,
+    104,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "日替わり",
+   "text": "Daily",
+   "sprites": [
+    "tab_btn2_off.png"
+   ],
+   "box": [
+    18,
+    6,
+    116,
+    28
+   ],
+   "cover": [
+    24,
+    6,
+    104,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "週替わり",
+   "text": "Weekly",
+   "sprites": [
+    "tab_btn3_off.png"
+   ],
+   "box": [
+    18,
+    6,
+    116,
+    28
+   ],
+   "cover": [
+    24,
+    6,
+    104,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "その他",
+   "text": "Other",
+   "sprites": [
+    "tab_btn4_off.png"
+   ],
+   "box": [
+    18,
+    6,
+    116,
+    28
+   ],
+   "cover": [
+    24,
+    6,
+    104,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "プレゼント",
+   "text": "Gifts",
+   "sprites": [
+    "btn_present_off.png",
+    "btn_present_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round"
+  }
+ ]
+}

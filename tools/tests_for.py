@@ -29,6 +29,7 @@ How a path becomes tests (the rules, in order):
     control diff-negative (a deliberate difference must still FAIL), and the slot pool's tests.
   * a test script itself (port/scripts/X.sh, emulator/scripts/X.sh, ...), or the session module
     behind a wrapper (control/soadrive/sessions/X.py, its WRAPPER line): that test.
+  * a T1 check (kind `check`) whose `area` holds the path (e.g. english-report for data/english/).
 Everything also runs T0 (tools/gate.sh T0) first.
 
 tests/impact.json (generated, committed): {"apis": {API: file}, "hooks": {file: [kinds]},
@@ -395,6 +396,11 @@ def select(paths, all_tests=False):
                 reasons.append("note: %s is in no shard or session (only corpora%s)" % (a, "" if any(a in data["tests"][c]["apis"] for c in corpora) else ": add one"))
     for n in sorted(direct):
         add(n, "its script changed")
+    # a T1 check with an `area` (e.g. english-report: data/english/, tools/english_*): when a path is in it
+    for t in tiers:
+        if t["tier"] == "T1" and t["kind"] == "check" and t.get("area") and any(
+                any(p.startswith(a) or p == a for a in t["area"]) for p in paths):
+            add(t["name"], "its area")
     return [by_name[n] for n in chosen if n in by_name], why, corpora, apis, reasons
 
 

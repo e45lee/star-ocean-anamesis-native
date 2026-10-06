@@ -52,6 +52,14 @@ struct ServerConfig {
     bool home3d_all = false;       // --home3d-all: the 3D home for every character (api/player/home.cpp; debug)
     std::string campaign_master_db;  // --campaign-master-db: the campaign module's master DB
     std::string campaign_seed;       // --campaign-seed <mission label>
+    // --english: English mode (docs/server-rules.md#english). The CDN carries the `-en` members
+    // (sqlite/basmaster-en.sqlite3: the served master with English text) and the server's own
+    // texts (notice page, gacha rate headings, present lines) are English where the table has
+    // them. soa sets it from its --lang en; soa-server from the flag.
+    bool english = false;
+    // --english-text: the English text table ("" = data/english/master-en.tsv, found like the
+    // other repo files, find_repo_file; docs/english.md "the English master text").
+    std::string english_text;
 
     // ---- test hooks -----------------------------------------------------------------------------
     std::string fail;              // --fail "Method:code[,Method:code]"

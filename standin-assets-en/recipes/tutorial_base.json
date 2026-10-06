@@ -1,0 +1,363 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/tutorial_base.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "sortie": {
+   "size": 46,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a2a5a",
+   "outline_width": 3,
+   "glow": "#40c8ffc0",
+   "glow_radius": 3
+  },
+  "footer_dim": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#6c7d7d",
+   "glow": "#00465ac0",
+   "glow_radius": 2,
+   "outline": "#14283cc0",
+   "outline_width": 1
+  },
+  "footer": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#e4ffff",
+   "glow": "#00b4ffd0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
+  },
+  "big": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "glow": "#00c8ffe0",
+   "glow_radius": 3,
+   "outline": "#0050a0c0",
+   "outline_width": 1,
+   "align": "right"
+  },
+  "round": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3c78",
+   "outline_width": 2
+  },
+  "round_dim": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "side": {
+   "size": 16,
+   "bold": 1,
+   "fill": "#ffffff",
+   "glow": "#00b4ffc0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "シナリオライブラリ",
+   "text": "Scenario Library",
+   "sprites": [
+    "btn_scenariolib_on.png"
+   ],
+   "box": [
+    12,
+    4,
+    168,
+    28
+   ],
+   "cover": [
+    10,
+    6,
+    172,
+    24
+   ],
+   "style": "pill",
+   "size": 16,
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "惑星遷移",
+   "text": "Select Planet",
+   "sprites": [
+    "btn_planet_select_off.png",
+    "btn_planet_select_on.png"
+   ],
+   "box": [
+    14,
+    20,
+    174,
+    32
+   ],
+   "cover": [
+    50,
+    22,
+    102,
+    28
+   ],
+   "style": "pill",
+   "size": 19,
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "惑星遷移",
+   "text": "Select Planet",
+   "sprites": [
+    "btn_planet_select_off2.png"
+   ],
+   "box": [
+    14,
+    20,
+    174,
+    32
+   ],
+   "cover": [
+    50,
+    22,
+    102,
+    28
+   ],
+   "style": "pill_dim",
+   "size": 19,
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "この惑星のマルチプレイに参加",
+   "text": "Join This Planet's Multiplayer",
+   "sprites": [
+    "btn_planet_multiplay_off.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    34,
+    18,
+    374,
+    32
+   ],
+   "style": "pill",
+   "size": 20,
+   "_from": "mission_select"
+  },
+  {
+   "jp": "出撃",
+   "text": "Sortie",
+   "sprites": [
+    "off.png",
+    "on.png"
+   ],
+   "box": [
+    36,
+    86,
+    184,
+    66
+   ],
+   "cover": [
+    50,
+    88,
+    156,
+    62
+   ],
+   "style": "sortie",
+   "_from": "mission_top"
+  },
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "sprites": [
+    "menubtn_gacya_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim",
+   "_from": "common"
+  },
+  {
+   "jp": "キャラクター",
+   "text": "Characters",
+   "sprites": [
+    "menubtn_party_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim",
+   "_from": "common"
+  },
+  {
+   "jp": "ホーム",
+   "text": "Home",
+   "sprites": [
+    "menubtn_home_off.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer",
+   "_from": "common"
+  },
+  {
+   "jp": "ホーム",
+   "text": "Home",
+   "sprites": [
+    "menubtn_home_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "footer_dim",
+   "_from": "common"
+  },
+  {
+   "jp": "スフィア\n211",
+   "text": "Sphere\n211",
+   "sprites": [
+    "home_arena_off.png"
+   ],
+   "box": [
+    40,
+    74,
+    120,
+    58
+   ],
+   "cover": [
+    40,
+    73,
+    124,
+    61
+   ],
+   "style": "big",
+   "_from": "home"
+  },
+  {
+   "jp": "Ep選択",
+   "text": "Episodes",
+   "sprites": [
+    "btn_episode_off.png",
+    "btn_episode_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round",
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "Ep選択",
+   "text": "Episodes",
+   "sprites": [
+    "btn_episode_off2.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round_dim",
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "プレゼント",
+   "text": "Gifts",
+   "sprites": [
+    "home_present_off.png",
+    "home_present_on.png"
+   ],
+   "box": [
+    8,
+    77,
+    84,
+    20
+   ],
+   "cover": [
+    6,
+    76,
+    88,
+    22
+   ],
+   "style": "side",
+   "_from": "home"
+  }
+ ]
+}

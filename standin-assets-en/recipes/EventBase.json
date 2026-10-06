@@ -1,0 +1,227 @@
+{
+ "note": "The story / talk scene's message window buttons. English: Global's (Auto, Skip; glossary.tsv) and ours (Fast Fwd, Log, Close Log).",
+ "source": "TalkScene/etc2/EventBase.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "オート",
+   "text": "Auto",
+   "sprites": [
+    "btn_auto_off.png",
+    "btn_auto_on.png"
+   ],
+   "box": [
+    12,
+    8,
+    164,
+    31
+   ],
+   "cover": [
+    59,
+    10,
+    70,
+    27
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "オート",
+   "text": "Auto",
+   "sprites": [
+    "btn_auto_off2.png"
+   ],
+   "box": [
+    12,
+    8,
+    164,
+    31
+   ],
+   "cover": [
+    59,
+    10,
+    70,
+    27
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "ログ表示",
+   "text": "Log",
+   "sprites": [
+    "btn_log_off.png",
+    "btn_log_on.png"
+   ],
+   "box": [
+    15,
+    7,
+    161,
+    33
+   ],
+   "cover": [
+    48,
+    9,
+    95,
+    29
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "ログ表示",
+   "text": "Log",
+   "sprites": [
+    "btn_log_off2.png"
+   ],
+   "box": [
+    15,
+    7,
+    161,
+    33
+   ],
+   "cover": [
+    48,
+    9,
+    95,
+    29
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "スキップ",
+   "text": "Skip",
+   "sprites": [
+    "btn_skip_off.png",
+    "btn_skip_on.png"
+   ],
+   "box": [
+    13,
+    7,
+    163,
+    33
+   ],
+   "cover": [
+    46,
+    9,
+    97,
+    29
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "スキップ",
+   "text": "Skip",
+   "sprites": [
+    "btn_skip_off2.png"
+   ],
+   "box": [
+    13,
+    7,
+    163,
+    33
+   ],
+   "cover": [
+    46,
+    9,
+    97,
+    29
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "早送り",
+   "text": "Fast Fwd",
+   "sprites": [
+    "btn_speedup_off.png",
+    "btn_speedup_on.png"
+   ],
+   "box": [
+    11,
+    8,
+    164,
+    32
+   ],
+   "cover": [
+    58,
+    10,
+    70,
+    28
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "早送り",
+   "text": "Fast Fwd",
+   "sprites": [
+    "btn_speedup_off2.png"
+   ],
+   "box": [
+    11,
+    8,
+    164,
+    32
+   ],
+   "cover": [
+    58,
+    10,
+    70,
+    28
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "ログモード終了",
+   "text": "Close Log",
+   "sprites": [
+    "btn_logend_off.png",
+    "btn_logend_on.png"
+   ],
+   "box": [
+    15,
+    7,
+    180,
+    33
+   ],
+   "cover": [
+    24,
+    9,
+    162,
+    29
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "ログモード終了",
+   "text": "Close Log",
+   "sprites": [
+    "btn_logend_off2.png"
+   ],
+   "box": [
+    15,
+    7,
+    180,
+    33
+   ],
+   "cover": [
+    24,
+    9,
+    162,
+    29
+   ],
+   "style": "pill_dim"
+  }
+ ]
+}

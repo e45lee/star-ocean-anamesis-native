@@ -111,7 +111,7 @@ void rental_bonus(Ctx& ctx, Value& data) {
     for (auto& [day, season_id, count] : due) {
         ctx.m.q("select * from master_sphere211_rental_bonus where master_sphere211_id = ? and rental_count <= ? order by rental_count desc limit 1",
                 {season_id, count}, [&](const Row& bonus_row) {
-                    std::string line = ext::text(ctx.m, bonus_row.s("present_message_id"));
+                    std::string line = ext::display_text(ctx.m, bonus_row.s("present_message_id"));
                     ext::add_present(ctx, (u32)bonus_row.i("content_type"), (u32)bonus_row.i("content_id"), (u32)bonus_row.i("num"),
                                      ext::kPresentAchievement, (u32)bonus_row.i("id"), line);
                     last_id = (u32)bonus_row.i("id");

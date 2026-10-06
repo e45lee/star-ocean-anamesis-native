@@ -1,0 +1,231 @@
+{
+ "note": "Deep Space's buttons: Remove (Global's 外す in the titles dialog), Confirm (Global's 決定), the round buttons, the ship count plate.",
+ "source": "UI/etc2/ds_common.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "round": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3c78",
+   "outline_width": 2
+  },
+  "plate": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "back": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "外す",
+   "text": "Remove",
+   "sprites": [
+    "btn_delete.png",
+    "btn_delete_on.png"
+   ],
+   "box": [
+    30,
+    14,
+    158,
+    40
+   ],
+   "cover": [
+    86,
+    16,
+    68,
+    36
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "外す",
+   "text": "Remove",
+   "sprites": [
+    "btn_delete_off.png"
+   ],
+   "box": [
+    30,
+    14,
+    158,
+    40
+   ],
+   "cover": [
+    86,
+    16,
+    68,
+    36
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "決定",
+   "text": "Confirm",
+   "sprites": [
+    "btn_ok.png",
+    "btn_ok_on.png"
+   ],
+   "box": [
+    30,
+    14,
+    158,
+    40
+   ],
+   "cover": [
+    86,
+    16,
+    68,
+    36
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "決定",
+   "text": "Confirm",
+   "sprites": [
+    "btn_ok_off.png"
+   ],
+   "box": [
+    30,
+    14,
+    158,
+    40
+   ],
+   "cover": [
+    86,
+    16,
+    68,
+    36
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "探査艦確認",
+   "text": "Check\nShips",
+   "sprites": [
+    "btn_check_off.png",
+    "btn_check_on.png"
+   ],
+   "box": [
+    6,
+    22,
+    88,
+    54
+   ],
+   "cover": [
+    10,
+    22,
+    80,
+    58
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "表示切替",
+   "text": "Switch\nView",
+   "sprites": [
+    "btn_restart_off.png",
+    "btn_restart_on.png"
+   ],
+   "box": [
+    6,
+    22,
+    88,
+    54
+   ],
+   "cover": [
+    10,
+    22,
+    80,
+    58
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "艦数",
+   "text": "Ships",
+   "sprites": [
+    "plate_ships.png"
+   ],
+   "box": [
+    6,
+    8,
+    92,
+    36
+   ],
+   "cover": [
+    18,
+    9,
+    67,
+    34
+   ],
+   "style": "plate"
+  },
+  {
+   "jp": "戻る",
+   "text": "Back",
+   "sprites": [
+    "btn_back_off.png",
+    "btn_back_on.png"
+   ],
+   "box": [
+    56,
+    12,
+    100,
+    40
+   ],
+   "cover": [
+    60,
+    8,
+    86,
+    50
+   ],
+   "style": "back",
+   "_from": "gacha_main"
+  },
+  {
+   "jp": "実績",
+   "text": "Records",
+   "sprites": [
+    "btn_performance_off.png",
+    "btn_performance_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round",
+   "_from": "mission_menu_common"
+  }
+ ]
+}

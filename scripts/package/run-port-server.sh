@@ -13,7 +13,8 @@
 #   server options, passed to soa-server (they set the server's rules and state):
 #     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N,
 #     --galaxy-pass, --enable-events, --event-keywords L, --restore-tower, --download PATH,
-#     --master FILE, --log-packets DIR
+#     --master FILE, --log-packets DIR, --english (the English files: with --lang en
+#     for soa, the English game)
 #   any other options go to soa, e.g. --fullscreen, --size 729x1296, --apk FILE (./soa --help)
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -27,11 +28,11 @@ abs() { case $1 in /*) printf '%s' "$1";; *) printf '%s' "$PWD/$1";; esac; }
 need() { [ $# -ge 2 ] || { echo "run-port-server: $1 needs a value" >&2; exit 2; }; }
 while [ $# -gt 0 ]; do
   case "$1" in
-    -h|--help) sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0;;
+    -h|--help) sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'; exit 0;;
     --data) need "$@"; data=$2; shift 2;;
     --port) need "$@"; port=$2; shift 2;;
     --server-log) server_log_to_tty=1; shift;;
-    --new-player|--galaxy-pass|--enable-events|--restore-tower) srv_args+=("$1"); shift;;
+    --new-player|--galaxy-pass|--enable-events|--restore-tower|--english) srv_args+=("$1"); shift;;
     --seed|--download|--download-dir|--master|--log-packets)  # paths: from the caller's directory
       need "$@"; srv_args+=("$1" "$(abs "$2")"); shift 2;;
     --seed-rng|--clock|--start-coins|--event-keywords) need "$@"; srv_args+=("$1" "$2"); shift 2;;

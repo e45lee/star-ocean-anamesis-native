@@ -35,6 +35,12 @@ def test_a_session_script_selects_itself():
     assert "session:growth" in names("port/scripts/growth_session.sh")
 
 
+def test_a_check_with_an_area_selects_itself():
+    assert names("data/english/master-en.tsv") == ["english-report"]
+    assert "english-report" in names("tools/english_text.py")
+    assert "english-report" not in names("tools/gate.py")
+
+
 def test_a_session_module_selects_its_wrappers_test():
     sel = names("control/soadrive/sessions/battle.py")
     assert "session:battle" in sel and "shard:login" not in sel

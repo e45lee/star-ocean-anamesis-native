@@ -1,0 +1,55 @@
+{
+ "note": "The attacker EXP-material event's banner (Global: EXP materials, Attacker).",
+ "source": "Image/etc2/banner_roleexAtk_001.aif",
+ "styles": {
+  "main": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#5a0800",
+   "outline_width": 3,
+   "glow": "#ff6020a0",
+   "glow_radius": 2,
+   "align": "right"
+  },
+  "sub": {
+   "size": 18,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#8a1000",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "経験値素材ミッション",
+   "text": "EXP Material Mission",
+   "box": [
+    166,
+    64,
+    286,
+    40
+   ],
+   "cover": [
+    166,
+    44,
+    290,
+    66
+   ],
+   "style": "main"
+  },
+  {
+   "jp": "アタッカー",
+   "text": "Attacker",
+   "box": [
+    300,
+    46,
+    152,
+    22
+   ],
+   "style": "sub"
+  }
+ ]
+}

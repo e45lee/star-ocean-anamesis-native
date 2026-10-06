@@ -136,6 +136,10 @@ int main(int argc, char** argv) {
         // (p370.netcfg's server_host / server_port: core/cli.cpp, as soa-emu --server)
     } else {
         srv.enabled = true;  // the local server on the FakeApiCaller route
+        // --lang en also turns the in-process server's English mode on (one knob; --english is
+        // ServerConfig::english, server/include/soaserver/cli.h; docs/server-rules.md#english).
+        // A remote server (--server) keeps its own setting.
+        if (p370.lang == "en") srv.english = true;
     }
     // In-process the client sends no GameRPC (the FakeApiCaller route) and its HTTP goes only to the
     // in-process CDN (net/http are turned on below, with the CDN); with soa-server it talks
@@ -251,6 +255,9 @@ int main(int argc, char** argv) {
         case platform370::PatchStatus::Disabled: LOGI("main", "--no-patch: the client's service-end check is live"); break;
         case platform370::PatchStatus::NotFound: LOGW("main", "platform370's service_stop_day patch found no 3.7.0 FindGlobalStringWithKey"); break;
     }
+    // --lang / --voice-lang (platform370 lang_370.cpp, text_370.cpp): with --lang en the CLanguage,
+    // CCocosLabel::SetText and DrawSelf hooks; none is a native, so the natives below don't replace them.
+    platform370::install_language(*lib);
     // The FakeApiCaller route's hooks only in-process; with --server HOST the client's own
     // NetworkApiCaller runs untouched. (The main image is the 3.7.0 client; no
     // second image is mapped.)

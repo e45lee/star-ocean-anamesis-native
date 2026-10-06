@@ -14,7 +14,8 @@ with ImageMagick (RMSE on a small copy) and reported. A contact sheet goes to OU
 Exit status 1 if a destination isn't reached ("PASS: every home destination reached" /
 "FAIL: N destinations missed").
 
-Usage: port/scripts/home_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
+Usage: port/scripts/home_session.sh <soa> <out-dir> <scratch-dir> [soa flags...]   (from any directory;
+e.g. `--lang en` for the English home, PLAN-english E11: session:home-en)
 Env: HOME_REF, SEED_RNG, SOA_PHONE (scripts/shared-phone.sh), WATCH=1.
 Targets: port-inproc (the phase lines)."""
 import glob
@@ -33,7 +34,7 @@ P = mission.phase
 
 
 def options(ap):
-    common.port_options(ap, extra=False)
+    common.port_options(ap)
 
 
 def main(o):

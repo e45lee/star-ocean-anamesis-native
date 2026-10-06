@@ -53,6 +53,7 @@ void dump(Dump& d, const soa::server::ServerConfig& c) {
     d.f("start_coins", c.start_coins).f("has_clock", c.has_clock).f("clock", c.clock);  // (clock_offset: now-dependent)
     d.f("galaxy_pass", c.galaxy_pass).f("enable_events", c.enable_events).f("event_keywords", c.event_keywords);
     d.f("restore_tower", c.restore_tower).f("home3d_all", c.home3d_all).f("campaign_master_db", c.campaign_master_db);
+    d.f("english", c.english).f("english_text", c.english_text);
     d.f("campaign_seed", c.campaign_seed).f("fail", c.fail).f("surprise", c.surprise).f("log_packets", c.log_packets);
     d.f("repo_roots", c.repo_roots).f("data_root", c.data_root).f("cdn_url", c.cdn_url).f("cdn_revision", c.cdn_revision);
     d.f("download_dir", c.download_dir).f("cdn_standins", c.cdn_standins).f("standin_dir", c.standin_dir).f("cdn_scratch", c.cdn_scratch);
@@ -299,9 +300,13 @@ int main() {
     // --fake-server (2026-10-05; the canned responses were retired, docs/unimplemented-apis.md step 9).
     const V kRemovedFont = {"--font"};
     const V kRemovedSoa = {"--font", "--fake-server"};
-    // Options added since: --stamina-heal-time (2026-10-06, both programs' server options; a test
-    // switch: tests/diff runs with 0, no stamina regeneration).
-    const V kAddedServer = {"--stamina-heal-time"};
+    // Options added since, to both soa and soa-server (soaserver/cli.h): --english, --english-text
+    // (2026-10-07, docs/PLAN-english.md).
+    // --stamina-heal-time (2026-10-06, a test switch: tests/diff runs with 0, no stamina regeneration).
+    const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time"};
+    // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
+    const V kAddedLang = {"--lang", "--voice-lang"};
+    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -354,6 +359,7 @@ int main() {
         {{"--download", "a", "--download-dir", "b"}},
         {{"--download-prefer"}},
     };
+    const char* kNewLang = "--lang ja|en and --voice-lang ja|keep are new (docs/PLAN-english.md B1, B7)";
     const std::vector<Row> phone = {
         {{"--device-clock", "2021-05-25 12:00:00"}},
         {{"--device-clock", "host"}},
@@ -368,6 +374,11 @@ int main() {
         {{"--lobby", "nolobby"}},
         {{"--map-host", "Example.COM=1.2.3.4", "--map-host", "other.host"}},
         {{"--map-host", "a.b=", "--map-host", "a.b=5.6.7.8"}},
+        // the language (2026-10-07, docs/PLAN-english.md B1 / B7): new options, which the old parser didn't have
+        {{"--lang", "en"}, kNewLang, -1},
+        {{"--lang", "ja", "--voice-lang", "keep"}, kNewLang, -1},
+        {{"--lang", "fr"}},  // (an error in both: an unknown value, an unknown option)
+        {{"--voice-lang", "en"}},
     };
     auto concat = [](std::initializer_list<const std::vector<Row>*> parts) {
         std::vector<Row> out;
@@ -397,6 +408,8 @@ int main() {
         {{"--event-keywords", "水着,夏,!福袋"}},
         {{"--restore-tower"}},
         {{"--home3d-all"}},
+        {{"--english"}, "--english is new (docs/PLAN-english.md C1, C2, E6: the -en CDN members and the server's English texts)", -1},
+        {{"--english", "--english-text", "/x/master-en.tsv"}, "--english-text is new (the English text table, with --english)", -1},
         {{"--campaign-master-db", "data/basmaster-3.7.0.sqlite3", "--campaign-seed", "mf01_001"}},
         {{"--fail", "MissionStart:9001,GachaDraw:2"}},
         {{"--surprise"}},
@@ -589,7 +602,7 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, kAddedServer, kRemovedSoa, soa_rows);
+            check_names("soa", names, soa_old, kAddedSoa, kRemovedSoa, soa_rows);
         }
         {
             soa::server::ServerConfig c;
@@ -601,7 +614,7 @@ int main() {
         {
             soa::emu::EmuArgs a;
             soa::emu::parse_args(1, argv, a, &names);
-            check_names("soa-emu", names, emu_old, {}, kRemovedFont, emu_rows);
+            check_names("soa-emu", names, emu_old, kAddedLang, kRemovedFont, emu_rows);
         }
         {
             soa::viewer::ViewerArgs a;

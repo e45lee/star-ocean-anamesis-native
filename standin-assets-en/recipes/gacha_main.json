@@ -1,0 +1,85 @@
+{
+ "note": "The gacha page's Back and legal-notice buttons (as gacha_top.json).",
+ "source": "UI/etc2/gacha_main.csf",
+ "styles": {
+  "back": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "legal": {
+   "size": 16,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#102040",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "戻る",
+   "text": "Back",
+   "sprites": [
+    "btn_back_off.png",
+    "btn_back_on.png"
+   ],
+   "box": [
+    56,
+    12,
+    100,
+    40
+   ],
+   "cover": [
+    60,
+    8,
+    86,
+    50
+   ],
+   "style": "back"
+  },
+  {
+   "jp": "特定商取引法に基づく表示",
+   "text": "Commercial Transactions Act",
+   "sprites": [
+    "btn_age_off.png",
+    "btn_age_on.png"
+   ],
+   "box": [
+    14,
+    10,
+    199,
+    28
+   ],
+   "cover": [
+    16,
+    12,
+    195,
+    24
+   ],
+   "style": "legal"
+  },
+  {
+   "jp": "資金決済法に基づく表示",
+   "text": "Payment Services Act",
+   "sprites": [
+    "btn_fund_off.png",
+    "btn_fund_on.png"
+   ],
+   "box": [
+    14,
+    10,
+    199,
+    28
+   ],
+   "cover": [
+    16,
+    12,
+    195,
+    24
+   ],
+   "style": "legal"
+  }
+ ]
+}

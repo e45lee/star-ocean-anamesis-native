@@ -1,0 +1,140 @@
+{
+ "note": "The loan (rental) character list: the no-loan button (the party screen's master text says No Loans).",
+ "source": "UI/etc2/mission_rental.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  },
+  "pill_small": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "選択しない",
+   "text": "No Loan",
+   "sprites": [
+    "btn_noselect_off.png",
+    "btn_noselect_on.png"
+   ],
+   "box": [
+    34,
+    14,
+    171,
+    39
+   ],
+   "cover": [
+    46,
+    16,
+    147,
+    35
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "選択しない",
+   "text": "No Loan",
+   "sprites": [
+    "btn_noselect_off2.png"
+   ],
+   "box": [
+    34,
+    14,
+    171,
+    39
+   ],
+   "cover": [
+    46,
+    16,
+    147,
+    35
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "調査ランク",
+   "text": "Rank",
+   "sprites": [
+    "rank_plate.png"
+   ],
+   "box": [
+    8,
+    0,
+    101,
+    23
+   ],
+   "cover": [
+    22,
+    2,
+    73,
+    19
+   ],
+   "style": "badge",
+   "_from": "common_resource"
+  },
+  {
+   "jp": "フォロー",
+   "text": "Follow",
+   "sprites": [
+    "btn_follow_off.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small",
+   "_from": "common_resource"
+  },
+  {
+   "jp": "相互",
+   "text": "Mutual",
+   "sprites": [
+    "btn_follow_mutual.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small",
+   "_from": "common_resource"
+  }
+ ]
+}

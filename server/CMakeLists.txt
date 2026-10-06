@@ -33,6 +33,8 @@ target_compile_options(soaserver PRIVATE -Wall -Wno-unused-parameter -Wno-unused
 target_link_libraries(soaserver PUBLIC soa_env soa_gamefiles soa_codec unofficial::sqlite3::sqlite3 OpenSSL::Crypto pthread soa_compat)
 # msgpack-cxx (headers): core/msgpack.cpp only; soaserver/msgpack.h stays free of it
 target_link_libraries(soaserver PRIVATE msgpack-cxx)
+# nlohmann-json (headers): the English art recipes (src/english_art/recipe.cpp) only
+target_link_libraries(soaserver PRIVATE nlohmann_json::nlohmann_json)
 
 # soanet: soa-server's wire layer (net/: packets, the Ninja cipher, the request decoder, the game
 # session and bridge, the HTTP router; the HTTP server and client on cpp-httplib, the poll loop). Not part of libsoaserver: soa never needs it.

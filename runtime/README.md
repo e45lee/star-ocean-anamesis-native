@@ -333,7 +333,7 @@ used). The programs' own lists: `port/README.md` "Environment" (soa), `emulator/
 
 | Variable | Effect (source) |
 |---|---|
-| `SOA_TRACE="sym[=float][:off[,off..]];..."` | log calls, arguments and results of guest functions (mangled names or `0x<ELF vaddr>`), optionally overriding a float result (`core/trace.cpp`); not installed under soa `--selftest` |
+| `SOA_TRACE="sym[=float][:off=K[,off=K..]];..."` | log calls, arguments and results of guest functions (mangled names or `0x<ELF vaddr>`), with values read after the call at `off` from x0 (K `f` float, `i` int, `x` hex, `s` C string), optionally overriding a float result (`core/trace.cpp`); not installed under soa `--selftest` |
 | `SOA_COVERAGE=DIR` | every guest function executed, `DIR/coverage.tsv` (`core/profile.cpp`; port/README.md "Profiling") |
 | `SOA_PROFILE=DIR` | sampled guest stacks, `DIR/stacks.folded`; wins over `SOA_COVERAGE`'s dir when both are set and differ |
 | `SOA_PROFILE_HZ=N` | the sample rate, 10..10000 (default 1000) |

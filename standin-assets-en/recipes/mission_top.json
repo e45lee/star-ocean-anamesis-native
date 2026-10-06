@@ -1,0 +1,150 @@
+{
+ "note": "The planet select: the sortie button (its English subtitle -Start- stays), the episode download button, the all-planet multiplayer button.",
+ "source": "UI/etc2/mission_top.csf",
+ "styles": {
+  "sortie": {
+   "size": 46,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a2a5a",
+   "outline_width": 3,
+   "glow": "#40c8ffc0",
+   "glow_radius": 3
+  },
+  "sub": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a50a0",
+   "outline_width": 2
+  },
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "出撃",
+   "text": "Sortie",
+   "sprites": [
+    "off.png",
+    "on.png"
+   ],
+   "box": [
+    36,
+    86,
+    184,
+    66
+   ],
+   "cover": [
+    50,
+    88,
+    156,
+    62
+   ],
+   "style": "sortie"
+  },
+  {
+   "jp": "-ダウンロード-",
+   "text": "-Download-",
+   "sprites": [
+    "ep1dl_off.png",
+    "ep1dl_on.png"
+   ],
+   "box": [
+    40,
+    158,
+    176,
+    28
+   ],
+   "cover": [
+    44,
+    160,
+    170,
+    24
+   ],
+   "style": "sub"
+  },
+  {
+   "jp": "全惑星のマルチプレイに参加",
+   "text": "Join All-Planet Multiplayer",
+   "sprites": [
+    "btn_allplanet_multiplay_off.png",
+    "btn_allplanet_multiplay_on.png"
+   ],
+   "box": [
+    50,
+    17,
+    336,
+    36
+   ],
+   "cover": [
+    66,
+    19,
+    308,
+    32
+   ],
+   "style": "pill",
+   "size": 20
+  },
+  {
+   "jp": "全惑星のマルチプレイに参加",
+   "text": "Join All-Planet Multiplayer",
+   "sprites": [
+    "btn_allplanet_multiplay_off2.png"
+   ],
+   "box": [
+    50,
+    17,
+    336,
+    36
+   ],
+   "cover": [
+    66,
+    19,
+    308,
+    32
+   ],
+   "style": "pill_dim",
+   "size": 20
+  },
+  {
+   "jp": "ベータ版",
+   "text": "Beta",
+   "sprites": [
+    "icon_betatest.png"
+   ],
+   "box": [
+    5,
+    0,
+    78,
+    24
+   ],
+   "cover": [
+    6,
+    0,
+    76,
+    22
+   ],
+   "style": "badge"
+  }
+ ]
+}

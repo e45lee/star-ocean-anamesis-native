@@ -80,6 +80,43 @@ NATIVE_TEST("items/apis") {
     if (!ran) return;  // no 3.7.0 master or save
 }
 
+// ItemCompose's FOL is use_fol_one of each material's rarity, summed (the strengthening screen's
+// 必要FOL, CItemStrengtheningPotal::InitializePotal), not of the base's: a rarity-5 base fed a
+// rarity-4 and a rarity-1 weapon costs 6000 + 500; an accessory base reads the accessory table.
+NATIVE_TEST("items/compose-fol") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        add_fol(c, 10000000);
+        auto grant_one = [&](u32 type, u32 rarity) -> u64 {
+            // not a strengthening material (a hammer that doesn't fit would be refused)
+            u32 id = (u32)c.m.one(
+                "select i.id from master_item i left join master_weapon w on w.id = i.master_weapon_id left join master_weapon_kind k "
+                "on k.id = w.master_weapon_kind_id where i.type = ? and i.rarity = ? and instr(ifnull(k.id_label, ''), 'W99St') = 0 "
+                "order by i.id limit 1",
+                {type, rarity});
+            Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+            c.grant(1, id, 1, items, stocks, chars);  // content type 1: an item
+            return items.arr.empty() ? 0 : items.arr[0].get_u("id");
+        };
+        auto use_fol = [&](const char* table, u32 rarity) {
+            return (u32)c.m.one(std::string("select use_fol_one from ") + table + " where rarity = ?", {rarity});
+        };
+        u64 base = grant_one(1, 5), m4 = grant_one(1, 4), m1 = grant_one(1, 1);
+        if (!base || !m4 || !m1) return t.fail("weapons not granted");
+        u32 f0 = fol(c);
+        call(c, "ItemCompose", {base}, {{m4, m1}});
+        t.expect_eq(f0 - fol(c), use_fol("master_item_compose", 4) + use_fol("master_item_compose", 1), "weapon: the materials' rarities");
+        t.expect_eq(use_fol("master_item_compose", 4) + use_fol("master_item_compose", 1), 6500u, "6000 + 500 (the 3.7.0 master)");
+        u64 abase = grant_one(3, 5), a4 = grant_one(3, 4);
+        if (!abase || !a4) return t.fail("accessories not granted");
+        u32 f1 = fol(c);
+        call(c, "ItemCompose", {abase}, {{a4}});
+        t.expect_eq(f1 - fol(c), use_fol("master_item_accessory_compose", 4), "accessory: the material's rarity");
+        c.st.exec("rollback");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
+}
+
 // Achievement type 6 (武器を N回上限解放する) counts limit-break raises, one per copy fed
 // (CItemStrengtheningPotal::GetAddLimitReleaseWeaponNum), not composes; type 5 counts composes.
 NATIVE_TEST("items/limit-break-achievement") {

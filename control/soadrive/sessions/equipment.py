@@ -5,7 +5,8 @@ boot (as the growth session): two inheritance accessories (master_item.max_inher
 ordinary ★4 one and two one-handed swords (W01Sw, a weak and a strong one). Boot 1: title -> Login
 -> home -> アイテム -> 武器・アクセサリー強化 -> アクセ -> the first inheritance accessory as the base ->
 素材選択: the ordinary one (the other inheritance accessory is greyed out) -> 決定 -> 強化開始 -> the
-three confirmations (InheritAccessory: the compose's points and FOL, the factor inherited) -> the
+three confirmations (InheritAccessory: the compose's points and FOL (the ★4 material's use_fol_one,
+6000, the preview's 必要FOL, not the ★5 base's), the factor inherited) -> the
 result -> キャラクター -> 装備・技・アシスト変更 -> ドーン (the fifth of the first row) -> 自動設定 -> 決定
 (EquipAuto: the strong sword, the inheritance accessory, the skills). Boot 2 (the same phone):
 Login -> home; the inheritance, the material gone and the equipment kept in the server state, and the
@@ -64,7 +65,11 @@ def plant(db):
         st.execute("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,0)", (UID0 + k, item, kind))
     st.commit()
     st.close()
-    return {"base": UID0, "inherit2": UID0 + 1, "plain": UID0 + 2, "plain_item": plain, "weak": UID0 + 3, "strong": UID0 + 4}
+    # the compose's FOL: use_fol_one at the material's rarity (★4: 6000, the screen's 必要FOL), not
+    # the base's (★5: 10000; docs/server-rules.md, ItemCompose)
+    fol = m.execute("select c.use_fol_one from master_item i join master_item_accessory_compose c on c.rarity = i.rarity where i.id = ?",
+                    (plain,)).fetchone()[0]
+    return {"base": UID0, "inherit2": UID0 + 1, "plain": UID0 + 2, "plain_item": plain, "weak": UID0 + 3, "strong": UID0 + 4, "fol": fol}
 
 
 def state(db):
@@ -132,7 +137,9 @@ def main(o):
     fails = common.checks(
         (st2.get("inherited") == got.get("plain_item"), "the base didn't keep the ordinary accessory's item as its inheritance"),
         ((st2.get("exp") or 0) > 0, "the base gained no compose points"),
-        (got.get("fol0") is not None and got.get("fol1") is not None and got["fol1"] < got["fol0"], "the inheritance paid no FOL"),
+        (got.get("fol0") is not None and got.get("fol1") is not None and got["fol0"] - got["fol1"] == got.get("fol"),
+         "the inheritance paid %s FOL, not the material's use_fol_one %s (the preview's 必要FOL)" %
+         (got["fol0"] - got["fol1"] if got.get("fol0") is not None and got.get("fol1") is not None else None, got.get("fol"))),
         (st2.get("plain_left") == 0, "the material wasn't used up"),
         (st2.get("inherit2_left") == 1, "the other inheritance accessory went"),
         (eq[1] == got.get("strong"), "自動設定 didn't equip the strong sword (weapon %s)" % eq[1]),

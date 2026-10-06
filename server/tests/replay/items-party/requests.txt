@@ -63,3 +63,6 @@ req 52 1790841735 GetPlayer 9a056905 - - - -
 req 53 1790841740 EquipAuto 7827ff6a 2113929216 - - -
 req 54 1790841745 UpdateItemStock cf39cc5c - - - -
 req 55 1790841750 GetPlayer 9a056905 - - - -
+# (agent server-leads) ItemCompose's FOL is use_fol_one at each material's rarity (the
+# strengthening screen's 必要FOL): a rarity-5 base fed two rarity-4 weapons pays 2 x 6000.
+req 56 1790841755 ItemCompose 02a5cd1d 2097152001 - 2097152019,2097152022 -

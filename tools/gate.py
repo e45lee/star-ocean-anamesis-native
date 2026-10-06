@@ -103,8 +103,11 @@ def run_test(t, outdir, keep):
         soaslot.release(slot)
         return cancelled
     t0 = time.monotonic()
+    # A tests/diff run of its own (the negative control) queues its runs for their slots inside, so
+    # its time limit would count those waits: it gets run_diff's limit (its runs have their own).
+    limit = 4 * 3600 if t["cmd"].startswith(DIFF_RUN + " ") else max(600, 3 * t["secs"])
     try:
-        rc = run_cmd(t["cmd"], out, tmp, max(600, 3 * t["secs"]), os.path.join(outdir, name + ".log"), slot)
+        rc = run_cmd(t["cmd"], out, tmp, limit, os.path.join(outdir, name + ".log"), slot)
     finally:
         soaslot.release(slot)
     if not keep:

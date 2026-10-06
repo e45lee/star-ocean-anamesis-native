@@ -127,3 +127,20 @@ def test_an_interrupt_starts_no_queued_test_and_frees_the_slots(tmp_path, monkey
     assert got is not None
     soaslot.release(got[0])
     assert all(p.poll() is not None for p in gate.PROCS)
+
+
+def test_a_lone_tests_diff_run_gets_the_long_limit(tmp_path, monkeypatch):
+    """The negative control queues its clients for slots inside: its limit mustn't count the wait
+    (it was killed at 600 s after waiting 556 s for a slot)."""
+    limits = {}
+
+    def run_cmd(cmd, out, tmp, limit, log, slot=-1):
+        limits[cmd] = limit
+        return 0
+    monkeypatch.setattr(gate, "run_cmd", run_cmd)
+    neg = dict(SHARD, name="diff-negative", game=0, secs=150,
+               cmd="tests/diff/run.sh login --inject 'port-inproc:--start-coins 299000' --expect-fail --out {out}")
+    other = dict(neg, name="check", cmd="true")
+    gate.run_test(neg, str(tmp_path), False)
+    gate.run_test(other, str(tmp_path), False)
+    assert limits[neg["cmd"]] >= 3600 and limits["true"] == 600

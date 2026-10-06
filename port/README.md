@@ -201,7 +201,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | `--headless` / `--windowed` | `--headless`: don't show the window. It is the runtime's hidden host window (`app::HostConfig::hidden`, as in `soa-emu --headless`): it still renders at the same `--size` / `--render-size`, so screenshots, `--do` and `--control` work and the frames are the same. `--selftest` is headless unless `--windowed`. |
 | `--shot S:PATH`, `--do S:CMD`, `--control FIFO` | Scripted screenshots and input (see `soa --help`). Drive a `--control` instance with `control/soactl.py FIFO tap:X:Y wait:MS wheel:X:Y:DY shot:PATH ...`; the port's own commands are in "Control commands". |
 | `--selftest [F]`, `--smoke`, `--list-native` | The self-tests (tests matching F), a quick library check, the native list |
-| `--fake-server DIR`, `--fake-server-schema FILE` | The FakeApiCaller route's canned responses (default `port/fakeapi/responses`; `--server inproc` only) and a dump of the response key schema at `CGame::OnInitialize` (`docs/api.md`) |
+| `--fake-server-schema FILE` | A dump of the response key schema at `CGame::OnInitialize` (`docs/api.md`; `--server inproc` only). The route's canned responses and their `--fake-server DIR` were retired on 2026-10-05 (`docs/history/fake-server-responses.md`): a request the local server has no handler for is answered `{}` and logged `no handler` |
 | `--memstats [S]` | Memory snapshots in the log at every phase change, and every S seconds (see "Memory diagnostics") |
 | `--live-check FAMILY[,..][:KEY[=VALUE]..]` | Check a native family against the guest during the run (`src/native/README.md` "Live checks"; families: `lib_sqlite`) |
 
@@ -241,7 +241,7 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 |---|---|
 | `--download-dir DIR`, `--download-prefer` | `download_dir`, `download_prefer` |
 | `--standin-assets DIR\|off` (inproc: `standin-assets`; `0` / `off` = none) | `standin_dir`, `standin_off` |
-| `--fake-server DIR` (inproc: `port/fakeapi/responses`), `--fake-server-schema FILE` | `fake_server_dir`, `fake_server_schema` (the FakeApiCaller route) |
+| `--fake-server-schema FILE` | `fake_server_schema` (the FakeApiCaller route; on with `--server inproc`) |
 | `--guest-cpus N\|host` (default 8) | `guest_cpus` (0 = host) |
 | `--memstats [S]` | `memstats` (1 = at every phase change, S > 1 also every S seconds) |
 

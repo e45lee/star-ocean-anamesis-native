@@ -309,7 +309,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   (`docs/server-rules.md#seed`).
 - **What never goes in:** any game file: the APKs, the download, the master DBs
   (`data/basmaster-*.sqlite3` are decryptions of the game's own), `version.bin`, `libSOA.so`,
-  `port/fakeapi/responses`, decompiles. Before a zip is written every file must be on the allow-list
+  decompiles. Before a zip is written every file must be on the allow-list
   and pass a game-file scan (the ADLD magic, the game's asset extensions, an ARM64 ELF, a zip, a
   SQLite file with `master_*` tables or gacha titles, the names `basmaster` / `version*.bin` /
   `libSOA`); the stand-ins pass only as files tracked in git under `standin-assets/` that the download

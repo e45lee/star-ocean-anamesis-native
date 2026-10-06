@@ -108,7 +108,7 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Guest behaviour:** all three return status 0 and send nothing, so a saved party set, a new assist character or a finished UI tutorial ("already seen" flag, from `CTutorialManager::ST_Net_Tutoflag`) would be dropped, and the tutorial shows again after a restart. `NetworkApiCaller` overrides them: it sends `PartySetInfo::Serialize()`, the two character ids, or the flag kind and word.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp`):** with the in-process server, when the caller is the FakeApiCaller, the request is queued like the other FakeApiCaller requests. The local server gets the `Serialize()` text, the two ids, or the kind and flag word. The responses go to `CApiNotify::OnUpdatePartySetRes` / `OnSetAssistRes` / `OnUpdateViewRes`. Otherwise all three keep the guest behaviour.
 - **Why not server-side:** this *is* the route to the server. `FakeApiCaller` never implemented these requests, so without the change the client never sends them.
-- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route).
 
 ### `IApiCaller::GetMissionList` on the FakeApiCaller route (agent `p5b-tests-diff`)
 - **Symbol:** `IApiCaller::GetMissionList()`: a base-class stub that `FakeApiCaller` inherits.
@@ -135,7 +135,7 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Guest behaviour:** returns status 0 and queues nothing, so the deep space screen (`CDeepSpace::Progress`, state 0 → `CErrorHandlerWrap::Auto` on fid `a7a82ef5`) never receives its area, ship and bonus lists: every area shows as "？？？？？" and no mission can be chosen. `NetworkApiCaller` sends the request.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp`):** with the in-process server, on the FakeApiCaller, the request is queued like the base-class methods above, answered by `CApiNotify::OnDeepSpaceActiveListRes` (the handler `NetworkApiCaller`'s response goes to) with the local server's body (`server/src/api/deepspace/deepspace.cpp`). The other four deep-space requests (`DeepSpaceAutoMemberSelect`, `DeepSpaceMissionStart`, `DeepSpaceMissionEnd`, `DeepSpaceMissionEndNow`) are ordinary FakeApiCaller requests and need no change. The deep space client code (`CDeepSpace*`, `CPhase_DeepSpace`, the dialogs and the three guest response handlers) is unchanged.
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the request.
-- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route).
 
 ### `FakeApiCaller::ClearNewCharacter` / `ClearNewItem` / `ClearNewStackItem` on the FakeApiCaller route
 - **Symbol:** `FakeApiCaller::ClearNewCharacter(CSTLVector<u64> const&)`, `ClearNewItem(CSTLVector<u64> const&)`, `ClearNewStackItem(CSTLVector<u32> const&)` (request methods of the fake caller).
@@ -183,7 +183,7 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Guest behaviour:** each returns a Status and sends nothing, so the Sphere 211 board (`CPhase_Mission` with mission type 5, `CSphere*`) never gets its floor, cells, stamina or results. `NetworkApiCaller` sends them.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp` `kSphere`):** with the in-process server, on the FakeApiCaller, each request's arguments go to the local server (`server_port::capture`, port/src/native/api/server_adapters.cpp) and the request is queued with NetworkApiCaller's FunctionID, answered by the `CApiNotify::On*Res` handler NetworkApiCaller's response goes to, with the body of `server/src/api/sphere211/sphere211.cpp`. Otherwise (`--server HOST`, or another caller) the guest behaviour. The Sphere 211 client code (`CSphere*`, `MissionUtility::*Sphere211*`, `CStageManager`'s type-5 path, the handlers) is unchanged.
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented these requests.
-- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route).
 - **Tooling, not a change:** the control command `uiset:OFF:VAL` (`port/src/native/common/port_debug.cpp`, port/README.md) writes a `CParameterUI` field for scripted sessions (`uiset:0x140:5 phase:5` opens the Sphere 211 menu without the home button). It runs only when a `--control` FIFO sends it.
 
 ### Event ranking and world-boss requests on the FakeApiCaller route (agent `events-extras`)
@@ -191,7 +191,7 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Guest behaviour:** each returns Status 0 and sends nothing, so the event menu's ranking results, the ranking screen (`CEventRanking`), the ranking detail dialog and the world-boss event board (`CEventMissionBoard`) never get their data. `NetworkApiCaller` sends them.
 - **Change (port-specific, `port/src/native/api/fakeapi.cpp` `kEventApi`):** with the in-process server, on the FakeApiCaller, each request's arguments go to the local server (`server_port::capture`, port/src/native/api/server_adapters.cpp) and the request is queued with NetworkApiCaller's FunctionID, answered by the `CApiNotify::On*Res` handler NetworkApiCaller's response goes to (all plain apply; the two ranking results also `AddItem` / `UpdateStackItem`), with the bodies of `server/src/api/events/ranking.cpp` and `api/events/world_boss.cpp`. Otherwise (`--server HOST`, or another caller) the guest behaviour. The client code of those screens and the handlers are unchanged.
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented these requests.
-- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route, `--fake-server`).
+- **Switch:** the in-process server (`--server inproc`, the default; it turns on the FakeApiCaller route).
 
 ### `IApiCaller::EndMissionTalk` on the FakeApiCaller route (agent `r3-dump-natives`, `port/rebase-370`)
 - **Symbol:** the base-class stub `IApiCaller::EndMissionTalk(u32 type, u32 mission, u8, u32)`, which `FakeApiCaller` inherits.

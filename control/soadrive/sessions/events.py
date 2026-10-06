@@ -41,8 +41,9 @@ def battle(s, tag, helper):
     """From a mission's detail: single play -> helper (x:y, or 選択しない) -> party 1 -> start ->
     the battle -> the result pages -> the menu (phase 5)."""
     s.ctl("tap:364:905", "wait:5000", s.shot_cmd(tag + "-helper"), "tap:" + helper, "wait:5000", s.shot_cmd(tag + "-party"))
-    s.ctl("tap:364:900", "wait:3000", "tap:515:712")
-    s.wait_log(r"MissionStart mission [0-9]* \(master_event_mission\)", 60, name=tag + " MissionStart", fatal=False)
+    started = r"MissionStart mission [0-9]* \(master_event_mission\)"
+    if mission.start_mission(s, tag + " ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started), fatal=False):
+        s.wait_log(started, 60, name=tag + " MissionStart", fatal=False)
     s.wait_log(r"MissionEnd mission [0-9]*: player exp", 300, name=tag + " won", fatal=False)
     s.ctl("wait:4000", s.shot_cmd(tag + "-result"))
     mission.results_until(s, P5, 0, 15, 4000, fmt=None, name=tag + " result -> menu", fatal=False)

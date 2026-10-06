@@ -3,9 +3,8 @@
 # (emulator/), the 3.8.0 viewer (emulator-viewer/) and the host tools (tools/aif2png, tools/movie_check).
 #
 #   scripts/build.sh                    # bootstraps vcpkg (.vcpkg/) if needed, configures, builds
-# or by hand, with vcpkg at $VCPKG_ROOT or .vcpkg/ (scripts/vcpkg-bootstrap.sh):
-#   cmake -S . -B build                 # RelWithDebInfo unless -DCMAKE_BUILD_TYPE=...
-#   cmake --build build -j8
+#   cmake --build build -j8             # afterwards, a build dir build.sh configured (no reconfigure)
+# Configure only through scripts/build.sh (it sets SOA_BUILD_SH, checked below; its header says why).
 #
 # Dependencies (cmake/deps.cmake; README.md, "Setup"): vcpkg in manifest mode (vcpkg.json), the
 # first configure builds them into build/vcpkg_installed/; dynarmic and IJG libjpeg 9 by CMake
@@ -27,6 +26,17 @@
 #
 # The subdirectories' CMakeLists.txt are not roots: they use the settings defined here.
 cmake_minimum_required(VERSION 3.28)  # FetchContent_Declare(... EXCLUDE_FROM_ALL)
+
+# Configured only by scripts/build.sh, also when a bare `cmake --build` reconfigures: the first
+# configure installs the vcpkg ports, and build.sh's environment makes their binary-cache keys
+# (scripts/build.sh header: the Windows build's fixed PATH, its posix-thread MinGW compilers first).
+# Another environment rebuilds every port (about an hour for Windows) or, for Windows, builds them
+# with the distribution's default win32-thread compilers.
+if(NOT DEFINED ENV{SOA_BUILD_SH})
+  message(FATAL_ERROR "configure this build through scripts/build.sh (scripts/build.sh [--windows] "
+                      "[--release] [cmake --build options...]; README.md \"Building\"), not cmake directly: "
+                      "it sets the environment the vcpkg ports' binary-cache keys depend on.")
+endif()
 
 # vcpkg's toolchain (before project()): $VCPKG_ROOT, else the repository's .vcpkg/ (an untracked
 # clone made by scripts/vcpkg-bootstrap.sh). An explicit -DCMAKE_TOOLCHAIN_FILE wins.

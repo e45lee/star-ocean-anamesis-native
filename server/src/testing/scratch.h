@@ -1,5 +1,5 @@
 #pragma once
-// The library's scratch servers for tests (library code): a Server on a fresh state DB under /tmp,
+// The library's scratch servers for tests (library code): a Server on a fresh state DB under the platform temp dir (soa::temp_dir()),
 // seeded from the committed synthetic server/tests/fixtures/test-seed.xml, with the 3.7.0 master
 // (data/basmaster-3.7.0.sqlite3). One implementation behind the three ways tests get one:
 // ScratchServer (the library's own tests), ext::with_scratch_server (a module's tests, through

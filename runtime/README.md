@@ -26,7 +26,7 @@ Includes are written from `src/`: `#include "core/cpu.h"`. The include path of a
 
 ## Building and linking
 
-`runtime/CMakeLists.txt` is a subdirectory of the repository's build (`cmake -S . -B build`, the root `README.md`, "Building"), added before `server/`, `port/` and `emulator/`, into `build/runtime/`. The root `CMakeLists.txt` provides what it uses (`cmake/deps.cmake`): the `dynarmic` target (CMake `FetchContent`, pinned), `soa::EGL` / `soa::GLESv2` (Mesa's libraries, the Khronos headers from vcpkg), `ZLIB::ZLIB`, and for `soaruntime_app` `soa::SDL2` (vcpkg). The runtime links dynarmic, EGL, GLESv2, zlib, pthread and dl.
+`runtime/CMakeLists.txt` is a subdirectory of the repository's build (`scripts/build.sh`, the root `README.md`, "Building"), added before `server/`, `port/` and `emulator/`, into `build/runtime/`. The root `CMakeLists.txt` provides what it uses (`cmake/deps.cmake`): the `dynarmic` target (CMake `FetchContent`, pinned), `soa::EGL` / `soa::GLESv2` (Mesa's libraries, the Khronos headers from vcpkg), `ZLIB::ZLIB`, and for `soaruntime_app` `soa::SDL2` (vcpkg). The runtime links dynarmic, EGL, GLESv2, zlib, pthread and dl.
 
 | Target | Use |
 |---|---|

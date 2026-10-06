@@ -17,7 +17,7 @@ mkdir -p "$out"
 out=$(cd "$out" && pwd)
 src="$out/src"
 toolchain=$(sed -n 's/^CMAKE_TOOLCHAIN_FILE:FILEPATH=//p' "$repo/build/CMakeCache.txt" 2>/dev/null || true)
-[ -n "$toolchain" ] || toolchain="$repo/.vcpkg/scripts/buildsystems/vcpkg.cmake"
+[ -n "$toolchain" ] || toolchain="$("$repo/scripts/vcpkg-bootstrap.sh")/scripts/buildsystems/vcpkg.cmake"
 rm -rf "${src:?}.new"
 mkdir -p "$src.new"
 paths=(CMakeLists.txt cmake vcpkg.json server)
@@ -33,9 +33,11 @@ mkdir -p "$src"
 rsync -a --checksum --delete "$src.new/" "$src/"
 rm -rf "${src:?}.new"
 # webview/ isn't extracted (soa-server doesn't link it), so SOA_BUILD_WEBVIEW is off too.
-cmake -S "$src" -B "$out/build" -DCMAKE_TOOLCHAIN_FILE="$toolchain" -DVCPKG_INSTALLED_DIR="$repo/build/vcpkg_installed" \
+# SOA_BUILD_SH: the root CMakeLists.txt configures only from scripts/build.sh (its environment makes the
+# vcpkg ports' cache keys); this build installs no ports (VCPKG_MANIFEST_INSTALL=OFF, build/'s instead).
+SOA_BUILD_SH=1 cmake -S "$src" -B "$out/build" -DCMAKE_TOOLCHAIN_FILE="$toolchain" -DVCPKG_INSTALLED_DIR="$repo/build/vcpkg_installed" \
   -DVCPKG_MANIFEST_INSTALL=OFF -DSOA_BUILD_PORT=OFF -DSOA_BUILD_EMULATOR=OFF -DSOA_BUILD_PLATFORM370=OFF \
   -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_TOOLS=OFF -DSOA_BUILD_WEBVIEW=OFF > "$out/configure.log" 2>&1 || { tail -20 "$out/configure.log"; exit 1; }
-cmake --build "$out/build" -j8 --target soa-server > "$out/build.log" 2>&1 || { tail -30 "$out/build.log"; exit 1; }
+SOA_BUILD_SH=1 cmake --build "$out/build" -j8 --target soa-server > "$out/build.log" 2>&1 || { tail -30 "$out/build.log"; exit 1; }
 cp "$out/build/server/soa-server" "$out/soa-server"
 if [ "$rev" = . ]; then echo "$out/soa-server (the working tree)"; else echo "$out/soa-server ($(git -C "$repo" rev-parse --short "$rev"))"; fi

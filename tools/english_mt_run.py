@@ -22,7 +22,10 @@ Usage:
   tools/english_mt_run.py ui    [--model 31b|26b]   # M3: the master's gap texts
   tools/english_mt_run.py story [--model 31b|26b]   # M4: the story's untranslated lines, by scene
   tools/english_mt_run.py status                     # rows done per checkpoint
-Options: --slots N (4), --port P (18431), --limit N (stop after N new items), --out DIR.
+Options: --slots N (4), --port P (18431), --limit N (stop after N new items), --out DIR,
+         --redo KEYS (translate these checkpoint keys again, e.g. rows import-mt rejected after a
+         glossary correction).
+The glossary is the committed data/english/glossary.tsv as tools/english_text.py reads it.
 Python standard library only (plus tools/english_mt.py).
 """
 import argparse
@@ -120,18 +123,14 @@ def kata_terms(text, glossary):
 
 
 def load_glossary(names_tsv=None):
-    """Global's glossary (english_mt.build_glossary over the whole master) plus the name pass's
-    proper nouns (kind 'name', source machine) when names_tsv exists."""
-    src = sources()
-    g = E.build_glossary(src)
-    if names_tsv and os.path.exists(names_tsv):
-        for line in open(names_tsv, encoding="utf-8").read().splitlines()[1:]:
-            ja, en, proper, count = line.split("\t")[:4]
-            # a name seen in one text only gains nothing from the glossary (and an interjection
-            # misread as a name would only constrain that row)
-            if proper == "1" and int(count) >= 2 and ja not in g:
-                g[ja] = {"en": en, "kind": "name", "variants": [], "ids": []}
-    return src, g
+    """The committed glossary (data/english/glossary.tsv through tools/english_text.py: Global's
+    terms, the human corrections and removals, the M2 machine names), as english_text's checks
+    read it, so the engine is told exactly the terms the import checks. `names_tsv` is unused
+    since the M2 names were committed (kept for the call sites)."""
+    import english_text as T
+    ctx = T.Ctx()
+    g = T.glossary_dict(T.glossary_rows(ctx))
+    return sources(), g
 
 
 # ---------------------------------------------------------------- engine
@@ -210,6 +209,15 @@ class Engine:
 def run_batch(a, items, ckpt, make_request, make_row):
     """items: [(key, payload)], key unique; skips keys already in ckpt. make_request(payload) ->
     (system, user, max_tokens); make_row(key, payload, text, finish) -> dict appended to ckpt."""
+    if a.redo:  # re-translate these keys: drop their rows from the checkpoint (backup kept)
+        redo = set(pathlib.Path(a.redo).read_text().split())
+        if ckpt.exists() and redo:
+            lines = open(ckpt, encoding="utf-8").read().splitlines(True)
+            keep = [ln for ln in lines if json.loads(ln)["key"] not in redo]
+            bak = ckpt.with_suffix(f".jsonl.bak-{datetime.datetime.now():%Y%m%d%H%M%S}")
+            bak.write_text("".join(lines), encoding="utf-8")
+            ckpt.write_text("".join(keep), encoding="utf-8")
+            print(f"[batch] --redo: {len(lines) - len(keep)} rows dropped (backup {bak.name})", flush=True)
     done = set()
     if ckpt.exists():
         for line in open(ckpt, encoding="utf-8"):
@@ -475,6 +483,7 @@ def main():
     ap.add_argument("--slots", type=int, default=4)
     ap.add_argument("--port", type=int, default=18431)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--redo", help="a file of checkpoint keys (ja_sha1 / story chunk keys) to translate again")
     ap.add_argument("--min-free", type=int, default=23000, help="MiB free before loading the model")
     ap.add_argument("--low-free", type=int, default=300, help="MiB free under which the engine yields")
     ap.add_argument("--out", type=pathlib.Path, default=REPO / "work/english/mt")

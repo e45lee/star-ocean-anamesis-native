@@ -166,7 +166,10 @@ void counter_hook(Cpu& c, CheckedFn& f, bool mark) {
         wrap_method<M>()(c);
         return check_result(f, live::Outcome::Skipped, "index out of range");
     }
-    alignas(16) static thread_local u8 sh[2][sizeof(PerformanceCounter)];
+    struct Shadows {
+        alignas(16) u8 b[2][sizeof(PerformanceCounter)];
+    };
+    auto& sh = live::thread_scratch<Shadows>().b;  // (heap, not static TLS)
     std::memcpy(sh[0], pc, sizeof(PerformanceCounter));
     guest_call(f.orig, {(u64)sh[0], (u64)(u32)i, x2});
     std::memcpy(sh[1], pc, sizeof(PerformanceCounter));

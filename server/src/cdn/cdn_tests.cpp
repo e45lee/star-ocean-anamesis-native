@@ -459,6 +459,238 @@ NATIVE_TEST("cdn/tree") {
     remove_tree(root);
 }
 
+// More member roots and the --english root (C2, docs/server-rules.md#english): a small synthetic
+// download; the -en master becomes a member as a stand-in does (version.bin entry, its own
+// Individual bundle, the Bulk bundle, the revision); --english with nothing generated, and
+// without --english, give the tree of today byte for byte; two builds give the same ids.
+NATIVE_TEST("cdn/lang-members") {
+    std::string root = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-lang";
+    remove_tree(root);
+    std::string mir = root + "/mirror";
+    auto plain_a = t.rand_bytes(700), plain_s = t.rand_bytes(300), plain_x = t.rand_bytes(400);
+    auto file_a = adld::encrypt("BG/a.aaf", plain_a, adld::kXor);
+    spit(mir + "/BG/a.aaf", file_a);
+    spit(root + "/standins/Image/s.aif", adld::encrypt("Image/s.aif", plain_s, adld::kXor));
+    spit(root + "/extra/Image/s.aif", adld::encrypt("Image/s.aif", plain_x, adld::kXor));  // the earlier root wins
+    spit(root + "/extra/Image/x-en.aif", adld::encrypt("Image/x-en.aif", plain_x, adld::kXor));
+    std::string master = root + "/master.sqlite3";
+    {
+        sqlite3* db = nullptr;
+        sqlite3_open(master.c_str(), &db);
+        std::string sql =
+            "create table master_global (key text, value text); create table master_text (id INTEGER primary key, serial_number INTEGER, "
+            "lang TEXT, message_id TEXT, text_value TEXT, text_kana TEXT, data_type TEXT, category_id INTEGER, category_id_label TEXT);"
+            "insert into master_text values (" +
+            std::to_string(chash32("ja_m_one")) + ", 1, 'ja', 'm_one', 'いち', null, 'package', " + std::to_string(chash32("system")) +
+            ", 'system'), (" + std::to_string(chash32("ja_m_two")) + ", 2, 'ja', 'm_two', 'に', null, 'package', " +
+            std::to_string(chash32("system")) + ", 'system');";
+        sqlite3_exec(db, sql.c_str(), nullptr, nullptr, nullptr);
+        sqlite3_close(db);
+    }
+    std::string table = root + "/master-en.tsv";
+    {
+        std::string one = "いち";
+        std::string tsv = "message_id\tja_sha1\ten\tsource\nm_one\t" + cdn::sha1_hex((const uint8_t*)one.data(), one.size()) +
+                          "\tOne\tofficial\nport_en_x\t\tNew\thuman\n";
+        spit(table, std::vector<uint8_t>(tsv.begin(), tsv.end()));
+    }
+    Value vb = Value::object();
+    vb["appliversion"] = Value(1u);
+    vb["version"] = Value("0123456789abcdef0123456789abcdef");
+    vb["revision"] = Value("7");
+    vb["assets"] = Value::object();
+    Value e = Value::object();
+    e["md5"] = Value("old");
+    e["size"] = Value((unsigned long long)file_a.size());
+    e["encType"] = Value(1u);
+    vb["assets"]["BG/a.aaf"] = e;
+    spit(mir + "/version.bin", mp_encode(vb));
+    for (const char* man : {"Individual", "Bulk"}) {
+        Value mv = Value::object(), bundle = Value::object(), member = Value::object();
+        member["size"] = Value((unsigned long long)plain_a.size());
+        member["md5"] = Value(cdn::sha1_hex(plain_a.data(), plain_a.size()));
+        member["p"] = Value("I/00000001/00000001");
+        member["e"] = Value(1u);
+        bundle["BG/a.aaf"] = member;
+        bundle["md5"] = Value("old");
+        bundle["size"] = Value(0u);
+        mv["version"] = vb["version"];
+        mv["assets"] = Value::object();
+        mv["assets"][std::string(man) == "Bulk" ? "B/00000001/00000001.bin" : "I/00000001/00000001.bin"] = bundle;
+        spit(mir + "/manifest/etc2/hi/version_latest_" + std::string(man) + ".bin", mp_encode(mv));
+    }
+    cdn::Options o;
+    o.mirror = mir;
+    o.master = master;
+    o.scratch = root + "/scratch";
+    o.standins = root + "/standins";
+    o.overrides = false;
+    o.now = 1700000000;
+    o.threads = 2;
+    o.hash_cache = false;
+    // every file the tree serves by name (version.bin, the manifests) and every bundle's SHA-1
+    auto served = [&](const std::shared_ptr<cdn::Tree>& tree) {
+        std::string all;
+        cdn::Response r;
+        for (std::string name : {"version.bin", "manifest/etc2/hi/version_latest_Individual.bin", "manifest/etc2/hi/version_latest_Bulk.bin",
+                                 "manifest/etc2/hi/version_latest_Individual.version", "manifest/etc2/hi/version.version"}) {
+            std::vector<uint8_t> b;
+            if (tree && tree->lookup("/download/" + tree->revision() + "/Android/" + name, r)) r.read(b);
+            all += name + ":" + cdn::sha1_hex(b.data(), b.size()) + "\n";
+        }
+        return all;
+    };
+    std::string err;
+    auto plain_tree = cdn::Tree::build(o, &err);
+    o.english = true;  // --english, but no table: nothing generated
+    auto empty_en = cdn::Tree::build(o, &err);
+    if (!plain_tree || !empty_en) {
+        t.fail("build: %s", err.c_str());
+        remove_tree(root);
+        return;
+    }
+    t.expect_eq(served(empty_en), served(plain_tree), "--english with nothing generated: the tree of today");
+    t.expect_eq(empty_en->version_bin().find("assets")->find("sqlite/basmaster-en.sqlite3") == nullptr, true, "no -en master without a table");
+
+    o.member_roots = {root + "/extra"};
+    o.english_text = table;
+    auto en = cdn::Tree::build(o, &err);
+    auto again = cdn::Tree::build(o, &err);
+    if (!en || !again) {
+        t.fail("build --english: %s", err.c_str());
+        remove_tree(root);
+        return;
+    }
+    t.expect_eq(en->revision(), std::string("8"), "revision + 1");
+    t.expect_eq(served(again), served(en), "two builds: the same files");
+    t.expect_eq(again->version_id(), en->version_id(), "two builds: the same version id");
+    if (en->version_id() == plain_tree->version_id()) t.fail("the version id didn't change with the -en members");
+    const std::string base = "/download/8/Android/";
+    const char* kEn = "sqlite/basmaster-en.sqlite3";
+    const Value* assets = en->version_bin().find("assets");
+    const Value* me = assets ? assets->find(kEn) : nullptr;
+    std::string ib = en->bundle_of("Individual", kEn);
+    char want_ib[64];
+    snprintf(want_ib, sizeof want_ib, "I/5374616e/%08x.bin", chash32(kEn));
+    t.expect_eq(ib, std::string(want_ib), "its Individual bundle");
+    t.expect_eq(en->bundle_of("Bulk", kEn), std::string("B/5374616e/standins.bin"), "in the Bulk bundle");
+    t.expect_eq(en->bundle_of("Bulk", "Image/x-en.aif"), std::string("B/5374616e/standins.bin"), "another root's member");
+    cdn::Response r;
+    std::vector<uint8_t> enc;
+    if (!en->lookup(base + kEn, r) || !r.read(enc)) t.fail("the -en master isn't served");
+    auto plain = adld::decrypt(kEn, enc);
+    if (!me || me->get_u("encType") != adld::kAes || me->get_u("size") != enc.size() ||
+        me->find("md5")->s != cdn::sha1_hex(plain.data(), plain.size()) || me->get_u("parentHash") != chash32(ib.c_str()))
+        t.fail("version.bin -en entry");
+    // its bundle: the payload as the client writes it back (ADLD header + payload) is the file
+    std::vector<uint8_t> bundle;
+    if (!en->lookup(base + ib, r) || !r.read(bundle) || rd32(&bundle[8]) != 1) t.fail("the -en bundle");
+    else {
+        std::vector<uint8_t> written(16, 0);
+        std::memcpy(written.data(), "ADLD", 4);
+        uint32_t two = adld::kAes;
+        std::memcpy(written.data() + 4, &two, 4);
+        written.insert(written.end(), bundle.begin() + rd32(&bundle[20]), bundle.begin() + rd32(&bundle[20]) + rd32(&bundle[24]));
+        t.expect_eq(written, enc, "the -en member as written");
+    }
+    // the stand-in root wins over the later root; the -en master has the English
+    std::vector<uint8_t> s_file;
+    if (en->lookup(base + "Image/s.aif", r) && r.read(s_file)) t.expect_eq(adld::decrypt("Image/s.aif", s_file), plain_s, "the stand-ins' file");
+    spit(root + "/check.sqlite3", plain);
+    sqlite3* db = nullptr;
+    std::string one_text, new_text;
+    if (sqlite3_open_v2((root + "/check.sqlite3").c_str(), &db, SQLITE_OPEN_READONLY, nullptr) == SQLITE_OK) {
+        sqlite3_stmt* st = nullptr;
+        sqlite3_prepare_v2(db, "select text_value from master_text where id = ?", -1, &st, nullptr);
+        for (auto [mid, out] : {std::pair<const char*, std::string*>{"ja_m_one", &one_text}, {"ja_port_en_x", &new_text}}) {
+            sqlite3_reset(st);
+            sqlite3_bind_int64(st, 1, chash32(mid));
+            if (sqlite3_step(st) == SQLITE_ROW) *out = (const char*)sqlite3_column_text(st, 0);
+        }
+        sqlite3_finalize(st);
+        sqlite3_close(db);
+    }
+    t.expect_eq(one_text, std::string("One"), "English in the ja_ row");
+    t.expect_eq(new_text, std::string("New"), "the new id's row");
+    // the table gone: the next build serves no -en master (its old file is removed)
+    o.english_text = "";
+    auto gone = cdn::Tree::build(o, &err);
+    if (!gone || gone->version_bin().find("assets")->find(kEn)) t.fail("a stale -en master is served");
+    remove_tree(root);
+}
+
+// The -en master of the real 3.7.0 master (C1, docs/server-rules.md#english) with the fixture
+// table: the served master (after every ClientMaster hook) with English in text_value of the rows
+// the table translates, a new row for the new id, the stale row Japanese; nothing else differs;
+// two builds byte-identical.
+NATIVE_TEST("cdn/served-master-en") {
+    std::string master = need(t, "data/basmaster-3.7.0.sqlite3");
+    std::string table = need(t, "server/tests/fixtures/english-fixture.tsv");
+    if (master.empty() || table.empty()) return;
+    std::string dir = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-master-en";
+    mkdir(dir.c_str(), 0755);
+    std::string sha, sha_en, sha_en2;
+    uint64_t size = 0, size_en = 0, size_en2 = 0;
+    auto served = cdn::make_served_master(master, dir + "/served.sqlite3", true, local_time(2026, 7, 20), &sha, &size);
+    cdn::EnglishStats stats, stats2;
+    auto en = cdn::make_english_master(dir + "/served.sqlite3", table, dir + "/en.sqlite3", &sha_en, &size_en, &stats);
+    auto en2 = cdn::make_english_master(dir + "/served.sqlite3", table, dir + "/en2.sqlite3", &sha_en2, &size_en2, &stats2);
+    if (served.empty() || en.empty()) {
+        t.fail("make_served_master / make_english_master failed");
+        remove_tree(dir);
+        return;
+    }
+    t.expect_eq(en2, en, "two builds byte-identical");
+    t.expect_eq(adld::flags_of(en.data(), en.size()), adld::kAes, "encType 2");
+    auto plain = adld::decrypt("sqlite/basmaster-en.sqlite3", en);
+    t.expect_eq((uint64_t)plain.size(), size_en, "plaintext size");
+    t.expect_eq(cdn::sha1_hex(plain.data(), plain.size()), sha_en, "plaintext SHA-1");
+    t.expect_eq(adld::encrypt("sqlite/basmaster-en.sqlite3", plain, adld::kAes), en, "keyed by the -en name");
+    t.expect_eq(stats.replaced, (size_t)7, "rows English");
+    t.expect_eq(stats.inserted, (size_t)1, "rows inserted");
+    t.expect_eq(stats.stale, (size_t)1, "stale rows");
+    t.expect_eq(stats.skipped, (size_t)0, "rows skipped");
+    spit(dir + "/check.sqlite3", plain);
+    sqlite3* db = nullptr;
+    if (sqlite3_open_v2((dir + "/check.sqlite3").c_str(), &db, SQLITE_OPEN_READWRITE, nullptr) == SQLITE_OK) {
+        auto one = [&](const std::string& sql) -> int64_t {
+            sqlite3_stmt* st = nullptr;
+            int64_t v = -1;
+            if (sqlite3_prepare_v2(db, sql.c_str(), -1, &st, nullptr) == SQLITE_OK && sqlite3_step(st) == SQLITE_ROW) v = sqlite3_column_int64(st, 0);
+            else t.fail("query failed: %s: %s", sql.c_str(), sqlite3_errmsg(db));
+            sqlite3_finalize(st);
+            return v;
+        };
+        sqlite3_exec(db, ("attach database '" + dir + "/served.sqlite3' as s").c_str(), nullptr, nullptr, nullptr);
+        t.expect_eq(one("select count(*) from master_text"), one("select count(*) from s.master_text") + 1, "one row more");
+        t.expect_eq(one("select count(*) from master_text e join s.master_text o using (id) where e.serial_number is not o.serial_number or "
+                        "e.lang is not o.lang or e.message_id is not o.message_id or e.text_kana is not o.text_kana or e.data_type is not "
+                        "o.data_type or e.category_id is not o.category_id or e.category_id_label is not o.category_id_label"),
+                    (int64_t)0, "every column but text_value as served");
+        t.expect_eq(one("select count(*) from s.master_text o where o.id not in (select id from master_text)"), (int64_t)0, "no row deleted");
+        t.expect_eq(one("select count(*) from master_text e join s.master_text o using (id) where e.text_value is not o.text_value and "
+                        "e.message_id not in ('Login_bonus_taitle_message_0000', 'Present_box_1', 'gacha_tilte_message_0001', "
+                        "'gacha_tilte_message_0002', 'gacha_tilte_message_0005', 'gacha_tilte_message_0006', 'uimsg_battlecamera_behavior')"),
+                    (int64_t)0, "only the table's rows changed");
+        t.expect_eq(one("select count(*) from master_text where message_id = 'uimsg_battlecamera_behavior' and text_value = 'Battle Camera "
+                        "Effects'"),
+                    (int64_t)1, "an English row");
+        t.expect_eq(one("select count(*) from master_text e join s.master_text o using (id) where e.message_id = 'gacha_tilte_message_0010' "
+                        "and e.text_value = o.text_value"),
+                    (int64_t)1, "the stale row Japanese");
+        t.expect_eq(one("select count(*) from master_text where id = " + std::to_string(chash32("ja_port_en_fixture_new")) +
+                        " and message_id = 'port_en_fixture_new' and lang = 'ja' and data_type = 'package' and category_id_label = "
+                        "'system' and text_value = 'A string the Japanese master lacks'"),
+                    (int64_t)1, "the new id's row");
+        // the other tables as served (the ClientMaster hooks' edits kept: service_stop_day gone)
+        t.expect_eq(one("select count(*) from master_global where key = 'service_stop_day'"), (int64_t)0, "after the ClientMaster hooks");
+        int64_t tables = one("select count(*) from s.sqlite_master where type = 'table'");
+        t.expect_eq(one("select count(*) from sqlite_master where type = 'table'"), tables, "the same tables");
+        sqlite3_close(db);
+    } else t.fail("cannot open the -en master");
+    remove_tree(dir);
+}
+
 NATIVE_TEST("cdn/login-paths") {
     // Login carries AssetPath / MasterPath / r_ver / a_ver / LatestEpisodeVersion only when a CDN is
     // configured (soa-server, soa's in-process CDN).

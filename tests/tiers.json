@@ -249,6 +249,8 @@
      "cmd": "emulator/scripts/nier_demo.sh {out}", "covers": "the NieR collaboration demo on the emulator"},
     {"name": "emu:standin-fetch", "tier": "T3", "secs": 600, "kind": "session", "game": 1,
      "cmd": "emulator/scripts/standin_fetch_test.sh build/emulator/soa-emu build/server/soa-server {out}", "covers": "the stand-in assets fetched through the CDN"},
+    {"name": "emu:lang-fetch", "tier": "T3", "secs": 300, "kind": "session", "game": 1,
+     "cmd": "emulator/scripts/lang_fetch_test.sh build/emulator/soa-emu build/server/soa-server {out}", "covers": "soa-server --english: the -en master fetched through the CDN by soa-emu (with --lang en when it has it)"},
     {"name": "rebase-server-diff", "tier": "T3", "secs": 600, "kind": "session", "game": 1,
      "cmd": "port/scripts/rebase_server_diff.sh shared {out}", "covers": "the in-process server against soa-server"}
   ]

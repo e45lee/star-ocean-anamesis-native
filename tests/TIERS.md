@@ -145,6 +145,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T3 | `emu:boot` | 2.0 min | 1 | the emulator's no-server boot | `emulator/scripts/emulator_boot.sh build/emulator/soa-emu {out}` |
 | T3 | `emu:nier` | 10.0 min | 1 | the NieR collaboration demo on the emulator | `emulator/scripts/nier_demo.sh {out}` |
 | T3 | `emu:standin-fetch` | 10.0 min | 1 | the stand-in assets fetched through the CDN | `emulator/scripts/standin_fetch_test.sh build/emulator/soa-emu build/server/soa-server {out}` |
+| T3 | `emu:lang-fetch` | 5.0 min | 1 | soa-server --english: the -en master fetched through the CDN by soa-emu (with --lang en when it has it) | `emulator/scripts/lang_fetch_test.sh build/emulator/soa-emu build/server/soa-server {out}` |
 | T3 | `rebase-server-diff` | 10.0 min | 1 | the in-process server against soa-server | `port/scripts/rebase_server_diff.sh shared {out}` |
 <!-- /tiers-table -->
 

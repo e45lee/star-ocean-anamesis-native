@@ -7,11 +7,18 @@
 // therefore sent the finished line. The server builds it from the master_text templates
 // Present_box_1..10 / 99, Present_favor_1 (a), picked per reason as in ext.h (d).
 #include "soaserver/ext.h"
+#include "master/english_text.h"
 #include "master/master.h"
 
 namespace soa::server::ext {
 
 std::string text(Sql& master_db, const std::string& message_id) { return master::text(master_db.h, message_id); }
+
+// (d) under --english the composed lines take the English of their templates and names, each
+// falling back to its Japanese (docs/server-rules.md#english)
+std::string display_text(Sql& master_db, const std::string& message_id) {
+    return english::display(message_id, master::text(master_db.h, message_id));
+}
 
 std::string format_present(const std::string& tmpl, const std::string& s, int64_t d) {
     std::string out;
@@ -35,7 +42,7 @@ std::string name_of(Sql& master_db, const char* table, u32 id) {
     std::string name_message_id;
     master_db.q(std::string("select name_message_id from ") + table + " where id = ?", {id},
                 [&](const Row& row) { name_message_id = row.s("name_message_id"); });
-    return name_message_id.empty() ? "" : text(master_db, name_message_id);
+    return name_message_id.empty() ? "" : display_text(master_db, name_message_id);
 }
 // (a) a character's name: its master_person's name_message_id (the role's own name is its class,
 // e.g. アタッカー)
@@ -43,7 +50,7 @@ std::string person_name(Sql& master_db, u32 role_id) {
     std::string name_message_id;
     master_db.q("select p.name_message_id from master_role r join master_person p on p.id = r.master_person_id where r.id = ?", {role_id},
                 [&](const Row& person_row) { name_message_id = person_row.s("name_message_id"); });
-    return name_message_id.empty() ? "" : text(master_db, name_message_id);
+    return name_message_id.empty() ? "" : display_text(master_db, name_message_id);
 }
 // A mission's name: the first of the mission tables that has the id.
 std::string mission_name(Sql& master_db, u32 mission_id) {
@@ -62,15 +69,15 @@ std::string present_text(Sql& master_db, const std::string& stored, u32 reason_t
         case kPresentLoginBonus:  // (d) without the stored day: the bonus name alone
             return name_of(master_db, "master_login_bonus", reason_param);
         case kPresentMissionClear:  // (a) Present_box_2 "%sより" with the mission's name (d: the template)
-            return format_present(text(master_db, "Present_box_2"), mission_name(master_db, reason_param));
+            return format_present(display_text(master_db, "Present_box_2"), mission_name(master_db, reason_param));
         case kPresentAchievement:  // (a) Present_box_3 "%s" with the achievement's name
-            return format_present(text(master_db, "Present_box_3"), name_of(master_db, "master_achievement", reason_param));
+            return format_present(display_text(master_db, "Present_box_3"), name_of(master_db, "master_achievement", reason_param));
         case kPresentPremiumLogin:
             return name_of(master_db, "master_premium_login_bonus", reason_param);
         case kPresentFavorBonus:
-            return format_present(text(master_db, "Present_favor_1"), person_name(master_db, reason_param));
+            return format_present(display_text(master_db, "Present_favor_1"), person_name(master_db, reason_param));
         default:  // (a) Present_box_99 運営からのプレゼント (d: for anything else)
-            return text(master_db, "Present_box_99");
+            return display_text(master_db, "Present_box_99");
     }
 }
 

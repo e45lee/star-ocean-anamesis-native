@@ -78,6 +78,12 @@ inline void add_server_options(CLI::App& app, ServerConfig& c, const std::string
                  "debug: the client's master copy offers the 3D home for every character, also the ones 3.7.0 shows in 2D "
                  "only (master_person.home3d_disable; docs/home3d.md)")
         ->group(group);
+    app.add_flag("--english", c.english,
+                 "English mode: the CDN also serves the -en files (sqlite/basmaster-en.sqlite3, the served master with the "
+                 "English of --english-text), and the server's own texts (notice page, gacha rates, present lines) are English "
+                 "where the table has them (docs/server-rules.md#english)")
+        ->group(group);
+    file("--english-text", c.english_text, "with --english: the English text table (default data/english/master-en.tsv; docs/english.md)");
     file("--campaign-master-db", c.campaign_master_db, "the campaign module's master DB (test hook)");
     app.add_option("--campaign-seed", c.campaign_seed, "seed the campaign progress up to a mission (test hook)")->type_name("LABEL")->group(group);
     app.add_option("--fail", c.fail, "force error replies (test hook)")->type_name("M:CODE[,..]")->group(group);

@@ -58,6 +58,8 @@ What it does not cover: the wire layer's own work (the bridge, the Ninja cipher,
 
 | `coins` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 7, paid currency), the `economy` options: Login (CoinList on the player load), CoinList, a purchase of the テラ set (CoinDepositCreate, CoinDepositAndroidUpdate: paid and free stones), the same update again (not credited twice), CoinDepositIOSUpdate of an unknown deposit (10208), CoinDepositCreate of a product not sold (10208), the S set through CoinDepositAmazonUpdate, DirectItemShopList (empty), GetPlayer | 11 |
 
+| `english` | hand-written (`req` lines; docs/PLAN-english.md E6, 2026-10-07), the `economy` options plus `--english --english-text server/tests/fixtures/english-fixture.tsv` (a fixture table, not the real one, so the corpus doesn't change with every translation update): Login (the login bonuses' present lines: Present_box_1 and the bonus name in English where the fixture has them, a Japanese name in an English template where not), PresentList, GetGachaRate (the rate headings: English, a stale row and one with other printf conversions left Japanese), GetPlayer | 4 |
+
 The sweep is the coverage floor: with no arguments, some handlers decline (`not-handled`: 14 of 106 today) or refuse; the flows exercise the real arguments.
 
 **Fidelity.** Replayed on the build they were recorded with, the flows' replies equal the recorded ones byte for byte, except Login's `r_ver` (the CDN's revision: no CDN is built in a replay, so it is empty).

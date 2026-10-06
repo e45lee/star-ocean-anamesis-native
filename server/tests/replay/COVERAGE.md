@@ -112,13 +112,13 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `GetDecoInfo` (server/src/api/player/deco.cpp): mastery
 - `GetEventRankingInfo` (server/src/api/events/ranking.cpp): event-extras
 - `GetGachaInData` (server/src/api/gacha/gacha.cpp): economy, seeded
-- `GetGachaRate` (server/src/api/gacha/rates.cpp): economy
+- `GetGachaRate` (server/src/api/gacha/rates.cpp): economy, english
 - `GetGearInfo` (server/src/api/items/gear.cpp): items-party
 - `GetMasteryInfo` (server/src/api/growth/mastery.cpp): mastery
 - `GetMissionList` (server/src/api/missions/play_state.cpp): campaign, missions, seeded, tutorial
 - `GetOneTimeStorageInfo` (server/src/api/storage/one_time.cpp): storage
 - `GetPlayMission` (server/src/api/missions/play_state.cpp): missions, tower
-- `GetPlayer` (server/src/api/player/player_info.cpp): badges, campaign, coins, compose-points, deepspace, economy, event-extras, growth, hammers, items-party, mastery, missions, profile, sphere211, storage, stubs, tower
+- `GetPlayer` (server/src/api/player/player_info.cpp): badges, campaign, coins, compose-points, deepspace, economy, english, event-extras, growth, hammers, items-party, mastery, missions, profile, sphere211, storage, stubs, tower
 - `GetPlayerDetailInfo` (server/src/api/events/ranking.cpp): event-extras
 - `GetPresent` (server/src/api/presents/presents.cpp): profile
 - `GetPresentArray` (server/src/api/presents/presents.cpp): profile
@@ -141,7 +141,7 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `LockItem` (server/src/api/items/items.cpp): items-party
 - `LockItemArray` (server/src/api/items/items.cpp): profile
 - `LockStorageItem` (server/src/api/storage/storage.cpp): storage
-- `Login` (server/src/api/entry/entry.cpp): badges, campaign, coins, compose-points, deepspace, economy, event, event-extras, growth, hammers, items-party, mastery, missions, profile, seeded, sphere211, sphere211-continue, storage, stubs, tower, tutorial
+- `Login` (server/src/api/entry/entry.cpp): badges, campaign, coins, compose-points, deepspace, economy, english, event, event-extras, growth, hammers, items-party, mastery, missions, profile, seeded, sphere211, sphere211-continue, storage, stubs, tower, tutorial
 - `MissionContinue` (server/src/api/missions/play_state.cpp): missions
 - `MissionEnd` (server/src/api/missions/mission_end.cpp): campaign, event, event-extras, items-party, missions, seeded, tower, tutorial
 - `MissionFailed` (server/src/api/missions/play_state.cpp): campaign, missions, tower
@@ -153,7 +153,7 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `NeighborList` (server/src/api/social/social.cpp): stubs
 - `NeighborRegist` (server/src/api/social/social.cpp): stubs
 - `NoLoginStart` (server/src/api/player/player_info.cpp): event, seeded, tutorial
-- `PresentList` (server/src/api/presents/presents.cpp): profile
+- `PresentList` (server/src/api/presents/presents.cpp): english, profile
 - `ReadExpirationInfo` (server/src/api/settings/account.cpp): profile
 - `ReceiveEventRankingResult` (server/src/api/events/ranking.cpp): event-extras
 - `ResetBoxGacha` (server/src/api/gacha/box.cpp): economy

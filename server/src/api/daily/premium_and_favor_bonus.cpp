@@ -62,7 +62,7 @@ u32 grant_premium_page(Ctx& ctx, u32 pass_id, u32 day, const std::string& name_m
             [&](const Row& content) {
                 // (a) Present_box_6 "%s %d日目" (d: the template for this bonus)
                 add_present(ctx, (u32)content.i("content_type"), (u32)content.i("content_id"), (u32)content.i("num"), kPresentPremiumLogin, pass_id,
-                            format_present(text(ctx.m, "Present_box_6"), text(ctx.m, name_message_id), next));
+                            format_present(display_text(ctx.m, "Present_box_6"), display_text(ctx.m, name_message_id), next));
             });
     ctx.st.q("update premium_pass set day_index = ?, last_at = ? where id = ?", {next, now, pass_id});
     LOGI("server", "premium login bonus %u: day %u", pass_id, next);
@@ -181,7 +181,7 @@ std::string favor_lot_line(Ctx& ctx, u32 role_id) {
     std::string name_message_id;
     ctx.m.q("select p.name_message_id from master_role r join master_person p on p.id = r.master_person_id where r.id = ?", {role_id},
             [&](const Row& person_row) { name_message_id = person_row.s("name_message_id"); });
-    return format_present(text(ctx.m, "Present_favor_1"), text(ctx.m, name_message_id));
+    return format_present(display_text(ctx.m, "Present_favor_1"), display_text(ctx.m, name_message_id));
 }
 
 // The favor login bonus, once per login day: draws the tier's lots into the present box and adds

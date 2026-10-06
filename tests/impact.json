@@ -424,6 +424,16 @@
    ],
    "source": "observed (requests.txt)"
   },
+  "replay:compose-points": {
+   "apis": [
+    "Gacha",
+    "GetPlayer",
+    "ItemCompose",
+    "ItemComposeArray",
+    "Login"
+   ],
+   "source": "observed (requests.txt)"
+  },
   "replay:deepspace": {
    "apis": [
     "DeepSpaceActiveList",
@@ -454,6 +464,15 @@
     "ResetBoxGacha",
     "SaleGacha",
     "SaleGachaOnce"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:english": {
+   "apis": [
+    "GetGachaRate",
+    "GetPlayer",
+    "Login",
+    "PresentList"
    ],
    "source": "observed (requests.txt)"
   },
@@ -656,6 +675,16 @@
     "Sphere211SelectedFloor",
     "Sphere211StaminaHeal",
     "Sphere211UseRerollItem"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:sphere211-continue": {
+   "apis": [
+    "GetSphere211Info",
+    "Login",
+    "Sphere211MissionContinue",
+    "Sphere211MissionEnd",
+    "Sphere211MissionStart"
    ],
    "source": "observed (requests.txt)"
   },
@@ -1512,6 +1541,7 @@
     "GetPlayer",
     "GetServerTime",
     "InheritAccessory",
+    "ItemCompose",
     "Login",
     "NoLoginStart"
    ],
@@ -1523,6 +1553,7 @@
     "GetPlayer",
     "GetServerTime",
     "InheritAccessory",
+    "ItemCompose",
     "Login",
     "NoLoginStart"
    ],
@@ -1957,6 +1988,15 @@
    "source": "declared"
   },
   "emu:standin-fetch": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
+  "emu:lang-fetch": {
    "apis": [
     "GetPlayer",
     "GetServerTime",

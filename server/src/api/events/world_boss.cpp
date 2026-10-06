@@ -183,7 +183,7 @@ void contribute(Ctx& ctx, const Boss& boss, State& state, const u64 add[3]) {
         if (!info.found) break;
         if (ctx.st.one("select count(*) from wboss_clear where boss_id = ? and wave = ?", {boss.id, state.wave})) break;  // the last wave, done
         ctx.st.q("insert into wboss_clear (boss_id, wave, cleared_at, notified) values (?,?,?,0)", {boss.id, state.wave, ctx.now()});
-        if (info.type) add_present(ctx, info.type, info.id, std::max<u32>(1, info.num), kPresentMissionClear, 0, text(ctx.m, info.message));
+        if (info.type) add_present(ctx, info.type, info.id, std::max<u32>(1, info.num), kPresentMissionClear, 0, display_text(ctx.m, info.message));
         state.hunt_until = ctx.now() + (int64_t)boss.bighunt_minutes * 60;
         state.hunt_new = true;
         state.last_clear = ctx.now() - state.started;

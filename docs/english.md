@@ -499,7 +499,7 @@ The sessions ran in the slot pool on the shared phone, with the standard drivers
 - **What run 3 did not prove:**
   - **The port's overlay helped.** Status 4 means a built-in file: the port's `AssetManager::find_download` merges the stand-in dir into `builtin_data/`, so the `-en` master was visible before any download. `soa-emu` gets stand-ins only through the CDN.
   - **Which copy was used after login.** The trace logs each name once, so whether the client read the downloaded copy or the overlay's is not shown.
-  - **The proof still to make.** `soa-emu` with a `-en` master from soa-server's CDN only, as `emulator/scripts/standin_fetch_test.sh` does for the stand-ins.
+  - **The proof still to make.** `soa-emu` with a `-en` master from soa-server's CDN only, as `emulator/scripts/standin_fetch_test.sh` does for the stand-ins. **Made 2026-10-07 (agent `en-server`):** soa-emu `--lang en` against `soa-server --english` fetched `I/5374616e/1bc76693.bin` (the `-en` master, built by the server from `data/english/master-en.tsv` after every `ClientMaster` hook) from the CDN only, stored it byte for byte, and its home header was English with the event badge at 5 (`emulator/scripts/lang_fetch_test.sh`; docs/server-rules.md#english).
 - **Story files in this shape.** A story `-en` file with English in the `ja_` rows, which is what this design needs, was not run. Run 2 used the superset form with the `GetNativeString` hook.
 
 ### 6.6 Consequence: the smallest client change is one site

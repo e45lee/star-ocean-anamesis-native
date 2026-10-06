@@ -1,5 +1,7 @@
 #pragma once
 // printf/scanf formatting for guest varargs (register-passed or AArch64 va_list).
+#include <time.h>
+
 #include <string>
 #include <vector>
 
@@ -98,5 +100,13 @@ std::string host_scanf_format(const char* fmt, bool win = WIN_HOST);
 // returning 0.
 s32 guest_rand();
 s32 glibc_random(bool reset = false);
+
+// strftime's format for a C89-only C runtime (msvcrt.dll, the Windows build's: it has no %F, %T,
+// %D, %R, %e, %u, %V, %G, %g, %C, %h, %n, %t, %k, %l, %P, %s, %r, numeric %z, the E / O modifiers
+// or glibc's -, _, 0 flags, and returns 0 for a format with any of them; bionic has them all). The
+// conversions it lacks are replaced by their text for t (gmtoff: seconds east of UTC, as bionic's
+// tm_gmtoff); the rest are kept, and literal '%' in that text is doubled. Used by the guest's
+// strftime on Windows (libc_win32.cpp); tested against glibc's strftime (hle/libc-strftime-c89).
+std::string strftime_c89_format(const char* fmt, const struct tm& t, long gmtoff);
 
 }  // namespace soa

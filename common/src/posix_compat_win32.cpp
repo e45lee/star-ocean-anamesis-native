@@ -9,7 +9,10 @@
 #include <pthread.h>
 #include <windows.h>
 
+#include <stddef.h>
+
 #include <atomic>
+#include <string>
 #include <vector>
 
 extern "C" char* soa_realpath(const char* path, char* resolved) {
@@ -29,11 +32,58 @@ extern "C" char* soa_realpath(const char* path, char* resolved) {
     return resolved;
 }
 
+// POSIX rename: the target replaced when it exists, also when it is open (shared for delete) or
+// read-only (Linux needs only a writable directory), with POSIX semantics: the old file stays
+// readable through its open handles. FILE_RENAME_FLAG_REPLACE_IF_EXISTS | POSIX_SEMANTICS |
+// IGNORE_READONLY_ATTRIBUTE (Windows 10 1809+, NTFS); where the file system has no such flags,
+// MoveFileEx (which refuses an open or read-only target). The guest's rename is this one too
+// (runtime/src/hle/host_file.h: the game's downloader renames NAME.tmp over NAME).
 extern "C" int soa_rename(const char* from, const char* to) {
-    if (MoveFileExA(from, to, MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED)) return 0;
-    DWORD e = GetLastError();
-    errno = e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND ? ENOENT : e == ERROR_ACCESS_DENIED ? EACCES : EIO;
-    return -1;
+    auto fail = [](DWORD e) {
+        errno = e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND || e == ERROR_INVALID_NAME ? ENOENT
+                : e == ERROR_ACCESS_DENIED || e == ERROR_SHARING_VIOLATION || e == ERROR_LOCK_VIOLATION ? EACCES
+                : e == ERROR_DIR_NOT_EMPTY ? ENOTEMPTY
+                : e == ERROR_NOT_SAME_DEVICE ? EXDEV
+                : e == ERROR_FILE_EXISTS || e == ERROR_ALREADY_EXISTS ? EEXIST
+                : EIO;
+        return -1;
+    };
+    // (the values of winbase.h / ntifs.h, here because MinGW gates them on _WIN32_WINNT and lacks
+    // the read-only one)
+    constexpr DWORD kReplace = 0x1, kPosix = 0x2, kIgnoreReadOnly = 0x40;
+    constexpr int kFileRenameInfoEx = 22;  // FILE_INFO_BY_HANDLE_CLASS
+    auto wide = [](const char* s) {        // (ANSI, as the CRT's own path calls)
+        int n = MultiByteToWideChar(CP_ACP, 0, s, -1, nullptr, 0);
+        std::wstring w(n > 0 ? n - 1 : 0, L'\0');
+        if (n > 1) MultiByteToWideChar(CP_ACP, 0, s, -1, w.data(), n);
+        return w;
+    };
+    // the target as a full path (the call takes a relative one against the source's directory)
+    std::wstring t = wide(to);
+    DWORD n = GetFullPathNameW(t.c_str(), 0, nullptr, nullptr);
+    if (n == 0) return fail(GetLastError());
+    std::wstring full(n, L'\0');
+    full.resize(GetFullPathNameW(t.c_str(), n, full.data(), nullptr));
+    HANDLE h = CreateFileA(from, DELETE | SYNCHRONIZE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
+                           OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return fail(GetLastError());
+    // FILE_RENAME_INFO: Flags (a union with ReplaceIfExists), RootDirectory, FileNameLength, FileName
+    std::vector<unsigned char> buf(offsetof(FILE_RENAME_INFO, FileName) + (full.size() + 1) * sizeof(WCHAR));
+    auto* ri = reinterpret_cast<FILE_RENAME_INFO*>(buf.data());
+    *reinterpret_cast<DWORD*>(ri) = kReplace | kPosix | kIgnoreReadOnly;
+    ri->RootDirectory = nullptr;
+    ri->FileNameLength = (DWORD)(full.size() * sizeof(WCHAR));
+    memcpy(ri->FileName, full.c_str(), (full.size() + 1) * sizeof(WCHAR));
+    bool ok = SetFileInformationByHandle(h, (FILE_INFO_BY_HANDLE_CLASS)kFileRenameInfoEx, buf.data(), (DWORD)buf.size());
+    DWORD e = ok ? 0 : GetLastError();
+    CloseHandle(h);
+    if (ok) return 0;
+    // no POSIX rename on this file system, or another volume
+    if (e == ERROR_INVALID_PARAMETER || e == ERROR_NOT_SUPPORTED || e == ERROR_INVALID_FUNCTION || e == ERROR_NOT_SAME_DEVICE) {
+        if (MoveFileExW(wide(from).c_str(), full.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED)) return 0;
+        e = GetLastError();
+    }
+    return fail(e);
 }
 
 extern "C" ssize_t soa_pread(int fd, void* buf, size_t n, long long offset) {
@@ -108,6 +158,17 @@ extern "C" char* soa_mkdtemp(char* tmpl) {
     }
     return errno = EEXIST, nullptr;
 }
+
+// stderr unbuffered, as C and Linux have it. msvcrt.dll (the C runtime of the distribution's
+// MinGW-w64 GCC) buffers stderr fully (4 KB) when it is a pipe or a file, not a console: a program
+// run from WSL, a script or a test harness then showed its log only in 4 KB pieces and at exit. The
+// session drivers wait on log lines (the runtime's "I/perf" line every 10 s), so a quiet stretch,
+// such as the client's data check after a download, read as a hung client ("no frame-rate line
+// for 120s"; UCRT, llvm-mingw's runtime, doesn't buffer stderr). Every program that links
+// soa_compat gets this before main().
+namespace {
+__attribute__((constructor(101))) void unbuffer_stderr() { setvbuf(stderr, nullptr, _IONBF, 0); }
+}  // namespace
 
 #if defined(__GNUC__) && !defined(__clang__)
 // thread_local destructors for GCC on MinGW (its TLS is emulated, libgcc's emutls). libstdc++'s

@@ -2,104 +2,119 @@
 
 A plan built on the findings in [english.md](english.md), for the user to review. Nothing here is implemented yet. Each step lists its effort (S = a day or less, M = a few days, L = a week or more), what it depends on, how it is proved and where it sits on the server-first rule ([AGENTS.md "Hard rules"](../AGENTS.md#hard-rules)).
 
-Revision of 2026-10-06 (agent `english2`), at the user's request: **an option with a client change for English, plus a server that serves English assets with Japanese as the fallback for missing assets and voices.** The findings behind it are [english.md section 6](english.md#6-the-clients-own-language-switch). The plan now has two options and recommends a combination.
+Revision of 2026-10-06 (agent `english2`), at the user's request: **an option with a client change for English, plus a server that serves English assets with Japanese as the fallback for missing assets and voices.** The findings behind it are [english.md section 6](english.md#6-the-clients-own-language-switch), with experiment 3 (english.md 6.5; shots in `work/english/exp2/`). The plan now has three options and recommends C.
 
-## The two options
+## The options
 
-**Option A, server only (the first draft).** The served master's `ja_` rows get English text in place, and edited copies of story files replace the download's through a CDN overlay. The client is unchanged.
+**A. Server only (the first draft).**
+- The served master's `ja_` rows get English text in place.
+- Edited story files replace the download's through a new CDN overlay.
+- The client is unchanged, so every client of that server sees English.
 
-**Option B, a client language switch with a bilingual server.** The client is told its language (`--lang en`). It reads `en_` rows and `name-en.ext` files first and falls back to `ja_` rows and `name.ext` files, per message id and per file. The server adds English beside the Japanese and never replaces it.
+**B. Client switch + `en_` rows.**
+- The client is told its language and reads `en_` rows, falling back to `ja_` per message id.
+- That takes three client sites: `CLanguage`, `StringDB::GetNativeString` and `StringDB::GetList`.
+- The server adds `en_` rows to the one served master, and `-en` files for story and art.
 
-The client already has most of B (english.md 6.1–6.3):
-- **Files.** `CLanguage` and `CGameResourceManager::FileExistLanguage` already look up `name-<code>.ext` before `name.ext`, for every direct file and for `Voice_*.spk`. The 3.7.0 client never uses this, because `CGame::OnInitialize` builds `CLanguage(0x100)`, the "no postfix" code.
-- **Master rows.** Every `master_text` row's id is `CHash32("<lang>_<message_id>")`, as in Global's bilingual master. So `en_` rows can sit beside the `ja_` rows.
-- **What is missing.** StringDB hard-codes `"ja"` at two sites, `GetNativeString` and `GetList`, and nothing sets the language.
+**C. Client switch + per-language files (recommended).**
+- The client is told its language: **one site**, `CLanguage::Current` = `en`.
+- The client's own loader already tries `name-en.ext` before `name.ext` for every file: the master, story, layouts, images, font and voices (english.md 6.3).
+- The server serves English as **new `-en` members** beside the Japanese files:
+  - `sqlite/basmaster-en.sqlite3`: the served master with English in its `ja_` rows;
+  - `Scenario/TS_*-en.msgp`;
+  - `-en` images and layouts.
+- StringDB is untouched: it keeps reading `ja_` rows, of the English files.
+- A Japanese file is the fallback **per file**, made by the client. A Japanese row is the fallback **per row**, made by the server when it builds the `-en` master.
 
-What each option covers:
+What experiment 3 showed with the one-site switch (english.md 6.5):
+- **`-en` images** replaced the gacha banners.
+- **A `-en` story file** played in English, through a session that passed.
+- **A whole `-en` master** turned the home header English. Those labels come through `GetList`, and the same labels stayed Japanese with B's `en_` rows and only `GetNativeString` patched.
+- **The pre-download data dialog** read English, through the port's asset overlay.
 
-| | A: server only | B: client switch + bilingual server |
-|---|---|---|
-| UI and system text (`master_text`) | yes: `ja_` replaced in the served master | yes: `en_` rows added; per-id fallback to `ja_` |
-| List screens built through `tMessage` (`StringDB::GetList`, 123 call sites) | yes | yes, once `GetList` is patched (otherwise those lists stay Japanese) |
-| Story (`Scenario/TS_*.msgp`) | yes: overlay replaces the download's file (new CDN step, E4) | yes: new `TS_*-en.msgp` members through the existing stand-in path. The load path and its release by name are still to be proven (B6) |
-| Images, `UI/*.csf` baked labels | overlay replaces the download's file (every client sees them) | new `-en` members; `ja` clients never open them |
-| Voices | n/a: no English voice files exist | the switch exists (`Voice_*-en.spk` with the Japanese voice as the fallback), but **no English voice data exists** (english.md 6.4) |
-| Font with accents | overlay `font.fpk` | `Font/etc2/font-en.fpk`, if the font load goes through `FileExistLanguage` (B8) |
-| The 14 hard-coded strings | client change either way (E10a) | the same |
-| Word wrap | pre-wrap (E7) or client change | the same |
-| Pre-download screens (the APK's built-in master and UI) | not reachable | not by the server either. A port-only asset overlay could carry an English built-in master (B9) |
-| Server texts (notice, gacha headings, present lines) | `--lang` | `--lang` (the server can't see the client's switch, except in-process) |
-| `soa-emu` / a real phone | works, as data | `soa-emu`: with the same platform370 patch. A real phone or Waydroid without the patch sees Japanese |
+Coverage:
+
+| | A: server only | B: switch + `en_` rows | C: switch + per-language files |
+|---|---|---|---|
+| UI and system text | yes | yes | yes |
+| List screens through `tMessage` (`StringDB::GetList`, 122 call sites) | yes | only with the `GetList` patch | yes (run 3) |
+| Story | overlay replaces `TS_*.msgp` (new CDN step) | `TS_*-en.msgp` as a superset (`ja_` + `en_` rows) | `TS_*-en.msgp` with English in the `ja_` rows |
+| Images, baked `UI/*.csf` labels | overlay replaces the download's file | `-en` members | `-en` members |
+| Font with accents | overlay `font.fpk` | `Font/etc2/font-en.fpk` | `Font/etc2/font-en.fpk` (the font load goes through the lookup) |
+| Voices | n/a | `Voice_*-en.spk`, Japanese fallback; **no English voice data exists** | the same |
+| Pre-download screens | no | with a port overlay of a built-in `-en` master that holds `en_` rows | with a port overlay of the built-in `-en` master (run 3's dialog) |
+| The 14 hard-coded strings, word wrap | client change (E10) | the same | the same |
+| Server texts (notice, gacha headings, present lines) | `--lang` | `--lang` | `--lang` |
+| `soa-emu` | yes, as data | with a platform370 patch | with a platform370 patch |
+| A real phone or Waydroid | yes | no: Japanese | no: Japanese |
 
 Comparison:
 
-| | A | B |
-|---|---|---|
-| **Client change** | none (until E10) | a platform370 patch at 3 sites. It is in `docs/client-changes.md` behind `--lang`, and is active in `soa` and `soa-emu` |
-| **Effort to first English UI** | S+S (E1, E2) | S+S+M (E1, B1–B3) |
-| **Effort to English story** | +M (E4 overlay, E5) | +S (B5, B6: stand-in path exists) |
-| **Risk** | low for text. Medium for the overlay (re-fetch of a replaced member unproven) | patching StringDB at 2 sites. `GetList`'s per-message-id merge needs care (6.2); a bad merge shows the wrong language, never a key |
-| **Mixed text** | per row | per row, the same |
-| **Reversible by the player** | no: a server restart, a new master (the 35 MB download dialog) and story re-fetches | yes: restart the client without `--lang en`. The data is unchanged; nothing is downloaded again |
-| **Several players, different languages, one server** | no: one master per server | yes for master text, story and assets. Server texts follow the server's `--lang` |
-| **Sessions and gates** | keep `--lang ja`; English is a separate server mode | unchanged: the JP client ignores `en_` rows and `-en` members. A `--lang en` session is its own T2 entry |
-| **Server rules that read Japanese text** | must read the unedited master (served copy only) | same; `ja_` rows are never touched |
+| | A | B | C |
+|---|---|---|---|
+| **Client change** | none | 3 sites | **1 site** |
+| **Risk** | the overlay re-fetch of replaced members is unproven | `GetList`'s per-message-id merge needs care (english.md 6.2) | the `-en` master path is proven only in the port so far (english.md 6.5, run 3) |
+| **Extra download per client** (every client fetches every new member, english.md 6.3) | none extra | about 2.4 MB of master, plus the story and art files | **about 36 MB** for the second master, plus the story and art files; Japanese clients pay it too |
+| **Server work** | a `ClientMaster` hook that replaces text, plus a new overlay CDN step | a hook that inserts rows, plus `-en` members (the stand-in step generalised) | the served-master pipeline gets a second output (its `ClientMaster` edits, then the English), plus `-en` members |
+| **Reversible by the player** | no: a server restart and a master re-download | yes: restart without `--lang en`; nothing is downloaded again | yes, the same |
+| **One server, mixed languages** | no | yes | yes |
+| **Sessions and gates** | keep a Japanese server | unchanged (the Japanese client never opens `-en` files or `en_` rows) | unchanged |
+| **Effort to first English UI** | S + S | S + M + S | **S + M** |
 
-**Shared by both:**
+**Shared by all three:**
 - E1, the English text table: Global by id, text memory, overrides, glyph folding and checks.
 - E3, the token rewrites.
 - E6, the server texts.
-- E7, the layout pass and pre-wrap.
+- E7, the layout pass.
 - E8, the gap text.
-- E9, the images, made by us.
+- E9, the images.
 - E10, the client extras.
 - E11, the tests.
 
-Only the delivery differs: A writes `text_value` of `ja_` rows and replaces files, B adds `en_` rows and `-en` files.
+C and A produce the same English master data: A serves it as the master, C as `basmaster-en.sqlite3`. C and B share the `-en` member step (B4) and the client's `CLanguage` switch (B1).
 
 ## Recommendation
 
-**Option B, with A kept as a fallback mode.**
-- **B is non-destructive.** The Japanese data stays complete and untouched. A player switches back with a flag, and one server serves both languages. The sessions and gates keep running Japanese against the same CDN.
-- **The fallback is the game's own design.** Per row and per file, the client keeps Japanese wherever English is missing.
-- **The client change is small and well-bounded.** It covers the language code, the two StringDB sites, and nothing in the file loaders.
-- **Story delivery is simpler than A's.** It reuses the stand-in route, which is already proven with the unmodified client (`emulator/scripts/standin_fetch_test.sh`). A needs a new overlay that replaces download members.
+**C, with B's two StringDB sites as a follow-on only if the second master's 36 MB per client is unacceptable (Q9).**
+- **C is the smallest client change.** One field is set; everything else is the client's own lookup.
+- **C is non-destructive.** The Japanese files stay complete and untouched. A player switches back with a flag, one server serves both languages, and the sessions and gates keep running Japanese against the same CDN.
+- **C has the fewest unknowns in StringDB.** `GetList`'s screens became English without touching it.
+- **A stays as a mode** for clients that can't be patched (a real phone). Its master data is C's `-en` master served under the plain name.
 
-A stays possible for a client that can't be patched (a real phone or Waydroid). Its served-master hook is the same code as B2 with "replace" instead of "add", so it costs an S on top.
-
-## Steps (Option B)
+## Steps (option C)
 
 | Step | What | Effort | Depends on | Proof |
 |---|---|---|---|---|
-| **E1** | **English text table and coverage report**, unchanged from the first draft:<br>1. Global by id with the five filters;<br>2. text memory;<br>3. `data/english/overrides.tsv`.<br>Glyph folding and the checks (unknown tags, missing glyphs, printf specifiers). New check: the two `CHash32("en_" + id)` collisions (`item_coin_281_text_message` / `factor_message_10008`, `item_chip_cp0112_b03a_item_message` / `uimsg_gear_ax_30_25`, english.md 6.2) get no `en_` row, so both stay Japanese. | S | — | counts as english.md (19,145 by id, about 6,800 by memory); 0 bad rows; pytest |
-| **B1** | **Client: the language code.** A third platform370 patch (`platform370/src/patch_370.cpp`, `Config::lang`), in `soa` and `soa-emu`, with `--lang ja\|en` (default `ja`). After `CLanguage::CLanguage` (ELF 0x13b4b18, built by `CGame::OnInitialize` at 0x114256c with 0x100) it sets `Current` (+4) to 1. `Default` (+0) stays 0x100, so the third lookup step is the bare name. `Voice` (+8) stays the save's `BAS:VoiceLanguage`. Logged in `docs/client-changes.md` ("Emulator mode" and a new entry). | S | — | the scratch experiment's hook (english.md 6.5); a NATIVE_TEST-style check that `CLanguage::Current()` is 1; the `FileExistLanguage` trace shows `-en` probes |
-| **B2** | **Client: StringDB reads the current language with a per-id fallback.** Two sites, both patched in platform370:<br>1. `StringDB::GetNativeString` (ELF 0x16faaec): look up `CHash32("<code>_" + id)` through `pParameterFromHash`; on a miss, run the original (`ja_`).<br>2. `StringDB::GetList` (ELF 0x16fac78): query the `<code>_` ids first. Pass only the message ids that got no row to the original, so the output map holds one row per message id. `tMessage::SetMessageList` keys its map by message id and would otherwise keep whichever row came last.<br>No other reader of `master_text` exists (english.md 6.2). | M | B1 | experiment: an `en_` row shown, a missing one falls back to Japanese, not to its key; the `GetList` screens (item lists, gacha list, mission lists, the Other menu) in English; a differential test of `GetList` with `ja` (byte-identical map to the original) |
-| **B3** | **Server: `en_` rows in the served master.** A `ClientMaster` hook, run **last** in the module order (after the tower and `--enable-events` rows), inserts E1's English as new rows: `id` = `CHash32("en_" + message_id)`, `lang` = `en`, the other columns copied from the `ja_` row. It never edits a `ja_` row. Always on, or under `--english`: the cost is about 2.4 MB of master (19,145 rows; english.md 6.5) and one master re-download. A JP client never reads the rows. Labels (a) Global, (d) filters and memory; `docs/server-rules.md` `#english`; `docs/client-changes.md` "Data overrides". | S | E1 | `cdn/served-master-en` selftest: `ja_` rows byte-identical to the unedited served master, `en_` ids unique and not colliding; `control/run.py home` passes with and without `--lang en` |
-| **E3** | Global tokens and composed fragments: as the first draft (`<NUM n>`/`<STR n>` → the JP row's specifiers, `<INSERT>` fixed, the `uimsg_remain_*` family reviewed). | S | E1 | E1's report: 0 token rows |
-| **B4** | **Server: `-en` members on the CDN.** Generalise the stand-in step (`TreeBuilder::add_standins`, `server/src/cdn/tree.cpp`) to a list of overlay roots. The new root (generated at start into the scratch dir) holds only names that don't exist in the download: `X-en.ext` beside the download's `X.ext`. They become new members exactly as stand-ins do: version.bin entries, one Individual bundle each, a Bulk bundle, and a new revision. **Open:** whether the `-en` members go into the Bulk bundle, which every client fetches at its data check (JP clients download unused bytes), or only into Individual bundles. `FileExistLanguage`'s status 1 ("in the download DB, not on disk") triggers an on-demand `RequestDownload` (english.md 6.3); to be proven. | M | — | a `cdn/lang-members` selftest (entries and bundles); `emulator/scripts/standin_fetch_test.sh` pattern with a `-en` member; experiment run 2 (english.md 6.5) |
-| **B5** | **English story files.** For each `Scenario/TS_*.msgp` with English, generate `Scenario/TS_*-en.msgp` (ADLD XOR keyed by the `-en` name). It is a **superset**: all `ja_` rows plus `en_` rows (id `CHash32("en_" + message_id)`), because the `-en` file is loaded *instead of* the plain one. B2's per-id fallback keeps untranslated lines Japanese. Covers EP1 (3,379 of 3,389 lines), `TS_3xxx` (782 of 882), `TS_5xxx` (891 of 941). | M | E1, E3, B2, B4 | B6's proof, then the tutorial and campaign sessions with `--lang en` show English story |
-| **B6** | **Proof: the story load path.** `CEventScenario::Run` hands the file's parameter name to `StringDB::SetAddLoadFileName`, and `StringDB::ReleaseParameter` releases by `strcmp` with that name. Prove these on a client with `--lang en`:<br>- that the TS file is loaded through `AddDirectFile` (so `-en` is found);<br>- that the `-en` name doesn't break the release by name (a leak or a stale cache is the risk).<br>If it fails, fall back to `en_` rows inside the plain `TS_*.msgp`, which needs A's overlay (E4). | S | B1, B4 | a campaign session with one `TS_1000-en.msgp`; the `FileExistLanguage` trace; memory stable over two chapters |
-| **E6** | **Server texts** (notice page, gacha rate headings, present lines) follow the server's `--lang`. In-process the port passes its own `--lang` to the server. | S | E1 | replay corpus lines |
-| **E7** | **Layout pass**: re-break the 459 rows, pre-wrap with font metrics, short overrides for overflowing labels; unchanged. | M | B3, B5 | EN contact sheets |
-| **B7** | **Voices.** No code: the client's rule exists. `BAS:VoiceLanguage` in `Game.xml` decides: 0 = always the Japanese (bare) pack, 1 = `-en` first, 256 (what the committed save holds) = follow the text language. A port option `--voice-lang ja\|auto` would write it, as the sessions write `BAS:DownloadEpisodeFlag`. **No English voice data exists anywhere we have** (english.md 6.4), so the default is `ja`, and B7 is only the switch until a source turns up. | S | B1 | a `Voice_*` probe in the trace with each setting |
-| **B8** | **Font.** If the trace shows `Font/etc2/font.fpk` going through `FileExistLanguage`, an English `font-en.fpk` with accented letters and dashes could ship as a `-en` member. It needs an fpk writer (ADLD, SLZ, ISF, an ETC2 page, the glyph table). Otherwise keep folding (E1). | M | B4 | a render of é — in a label |
-| **B9** | **Pre-download screens** (title, terms, download dialog; the APK's built-in master and `builtin_data/UI`). Port-only: the asset layer (`AssetManager`, `runtime/src/android/ndk.cpp`) could serve an English built-in master (the APK's plus `en_` rows) or `builtin_data/UI/*-en.csf`. The stand-in overlay already merges into `builtin_data/`. Whether `-en` built-in files are found depends on `CGameResourceDownloader::IsBuildInData` (english.md 6.3). Seen once per phone, so it comes last. | M | B1, B2 | a fresh phone (`SOA_PHONE=none`) with `--lang en`: title and download dialog in English |
-| **E8** | **Gap text** (Q2, Q3): import path for a translation table; unchanged. | S + L | E1 | coverage report |
-| **E9** | **Images and baked layouts** (Q4): our own English art and edited `UI/*.csf`, now as `-en` members (B4) instead of replacements. | L | B4 | home and gacha shots |
-| **E10** | **Client extras, only if wanted** (Q6): (a) the 14 hard-coded strings as new `master_text` ids, so they get `en_` rows too; (b) automatic word wrap. Both behind `--lang`. | M each | B1 | NATIVE_TEST, EN shots |
-| **E11** | **Tests.** Gates keep running Japanese. Add `home --lang en`, then `tutorial` / `campaign --lang en`, as a T2 entry with their own references; E1's report in T1; a selftest that the B2 patch with `ja` is identical to the original (`GetNativeString`, `GetList`). | S | B2, B3 | `tools/gate.sh T2` |
+| **E1** | **English text table and coverage report**:<br>1. Global by id with the five filters;<br>2. text memory;<br>3. `data/english/overrides.tsv`.<br>Glyph folding and the checks (unknown tags, missing glyphs, printf specifiers). Output: per JP `message_id` the English and its source. | S | — | counts as english.md (19,145 by id, about 6,800 by memory); 0 bad rows; pytest |
+| **B1** | **Client: the language code.** A third platform370 patch (`platform370/src/patch_370.cpp`, `Config::lang`), active in `soa` and `soa-emu`, with `--lang ja\|en` (default `ja`).<br>After `CLanguage::CLanguage` (ELF 0x13b4b18; `CGame::OnInitialize` builds it with 0x100 at 0x114256c) it sets `Current` (+4) to 1. `Default` (+0) stays 0x100; `Voice` (+8) stays the save's `BAS:VoiceLanguage`.<br>Logged in `docs/client-changes.md` ("Emulator mode" and a new entry). | S | — | a check that `CLanguage::Current()` is 1 with `--lang en` and 0x100 without; a `FileExistLanguage` probe in a selftest |
+| **C1** | **Server: the English master as a `-en` member.** `make_served_master` (`server/src/cdn/served_master.cpp`) writes a second output.<br>1. Copy the served master **after** every `ClientMaster` hook (the event dates, Sphere 211, the tower rows, `--enable-events`), so both masters carry the same edits.<br>2. Write E1's English into its `ja_` rows' `text_value`.<br>3. Encrypt it AES-ADLD (encType 2) under `sqlite/basmaster-en.sqlite3`.<br>The server's own rules keep reading its Japanese master. Labels (a) Global, (d) filters and memory; `docs/server-rules.md` `#english`; `docs/client-changes.md` "Data overrides". | M | E1, C2 | `cdn/served-master-en` selftest: the `-en` master's rows equal the served master's except `text_value` of the filled rows; ids unchanged |
+| **C2** | **Server: `-en` members on the CDN.** Generalise the stand-in step (`TreeBuilder::add_standins`, `server/src/cdn/tree.cpp`) to more roots. The generated root (the scratch dir) holds the `-en` master, story files and art: names the download doesn't have. They become new members as stand-ins do: version.bin entries, one Individual bundle each, a Bulk bundle, a new revision. Served only with the server's `--english` switch (Q11), so a Japanese-only server costs its clients nothing. | M | — | a `cdn/lang-members` selftest; **`soa-emu` with a `-en` master from soa-server's CDN only** (the pattern of `emulator/scripts/standin_fetch_test.sh`), showing the English header. Run 3 proved this only through the port's overlay |
+| **E3** | Global tokens and composed fragments: `<NUM n>`/`<STR n>` → the JP row's specifiers, `<INSERT>` fixed, the `uimsg_remain_*` family reviewed. | S | E1 | E1's report: 0 token rows |
+| **E6** | **Server texts** (notice page, gacha rate headings, present lines) follow `--lang`. In-process the port passes its own `--lang` to the server. | S | E1 | replay corpus lines |
+| **C3** | **English story files.** For each `Scenario/TS_*.msgp` with enough English (Q12), generate `Scenario/TS_*-en.msgp`: the same rows, with English in `text_value` (real newlines; `<EMDASH>` → ―). ADLD XOR is keyed by the `-en` name. Served through C2. Covers EP1 (3,379 of 3,389 lines), `TS_3xxx` (782 of 882), `TS_5xxx` (891 of 941). | M | E1, E3, C2 | the campaign and tutorial sessions with `--lang en` show English story; every served row parses (`<player>`, `<font…>` only) |
+| **C4** | **Proof: the story release path.** `StringDB::ReleaseParameter` frees the story rows by `strcmp` with the name `CEventScenario::Run` gave `SetAddLoadFileName`. Run 2 played one scene with a `-en` file and passed. Play several chapters in a row and watch memory and the next scene's text: a stale or leaked row set is the risk. | S | B1, C3 | a session over two or more story scenes |
+| **E7** | **Layout pass.**<br>- Re-break the 459 master rows that lost their Japanese line breaks.<br>- **Story lines:** Global's breaks don't fit the 3.7.0 message window (run 2's `82-story.png`), so re-break every story line to the window's width with the font's advances.<br>- Pre-wrap new text.<br>- Short overrides for overflowing labels and buttons (`uimsg_chara_top_info`; "Return to Title Screen" in the data dialog, run 3). | M | C1, C3 | EN contact sheets with no clipped text on the listed screens |
+| **B7** | **Voices.** No code: `BAS:VoiceLanguage` in `Game.xml` decides. 0 = always the Japanese (bare) pack, 1 = `-en` first, 256 (what the committed save holds) = follow `Current`. A port option `--voice-lang ja\|auto` would write it, as the sessions write `BAS:DownloadEpisodeFlag`. **No English voice data exists anywhere we have** (english.md 6.4), so the default is `ja`. | S | B1 | a `Voice_*` probe with each setting |
+| **B8** | **Font.** `Font/etc2/font.fpk` goes through the lookup (english.md 6.3), so a `font-en.fpk` with accented letters and dashes would load under `--lang en`. It needs an fpk writer (ADLD, SLZ, ISF, an ETC2 page, the glyph table). Otherwise keep folding (E1). | M | C2 | a render of é — in a label |
+| **B9** | **Pre-download screens.** Port-only: the asset overlay (`AssetManager`, `runtime/src/android/ndk.cpp`) carries a built-in `sqlite/basmaster-en.sqlite3`, and `builtin_data/UI/*-en.csf` for the baked labels. Run 3 showed the master part working. `soa-emu` wouldn't get this. | S | C1 | a fresh phone (`SOA_PHONE=none`) with `--lang en`: title and data dialog in English |
+| **E8** | **Gap text** (Q2, Q3): import path for a translation table. | S + L | E1 | coverage report |
+| **E9** | **Images and baked layouts** (Q4): our own English art and edited `UI/*.csf`, as `-en` members. | L | C2 | home and gacha shots |
+| **E10** | **Client extras, only if wanted** (Q6): (a) the 14 hard-coded strings as new `master_text` ids, so they get English rows too; (b) automatic word wrap. Both behind `--lang`. | M each | B1 | NATIVE_TEST, EN shots |
+| **E11** | **Tests.** Gates keep running Japanese. Add `home --lang en`, then `campaign` / `tutorial --lang en`, as a T2 entry with their own references; E1's report in T1. | S | C1 | `tools/gate.sh T2` |
 
 Order:
-1. E1 → B1 → B2 → B3 → E3 → E6: the UI in English, about 26,000 rows, switchable per client.
-2. B4 → B6 → B5: the story.
-3. E7, B7–B9, E8–E10 follow the user's answers.
+1. E1 → B1 → C2 → C1 → E3 → E6: the UI in English, switchable per client.
+2. C3 → C4: the story.
+3. E7, then B7–B9 and E8–E10 after the user's answers.
 
-**Option A as a mode** (if wanted, Q9): `--lang-mode replace` writes E1's English into the `ja_` rows of the served master (B3's hook in replace mode) and serves `TS_*.msgp` through an overlay (E4 of the first draft: `add_overlay()` in `tree.cpp`, md5/size in every manifest and version.bin, a new revision). It works for an unpatched client and a real phone. Effort S (master) + M (overlay).
+**B's follow-on, if wanted (Q9):** patch `StringDB::GetNativeString` (ELF 0x16faaec) and `StringDB::GetList` (ELF 0x16fac78) to read `<code>_` rows with a per-message-id fallback to `ja_` (english.md 6.2). The server then adds `en_` rows to the one master instead of serving a second one, saving about 34 MB per client. Effort M. The scratch hook of `GetNativeString` in `work/english/exp2/lang_scratch.cpp` is a start; `GetList` must return one row per message id.
+
+**A as a mode, if wanted (Q9):** `--lang-mode replace` serves C1's English master under the plain name, plus A's overlay for the story files. Effort S (master) + M (overlay).
 
 ## Questions for the user
 
 Kept from the first draft:
-- **Q1. Which content first?** The UI (E1, B1–B3, E6), or the story (B4–B6)? Proposed: UI first.
+- **Q1. Which content first?** The UI (E1, B1, C1, C2, E6), or the story (C3, C4)? Proposed: UI first.
 - **Q2. The gaps:** leave them Japanese (mixed text), or fill them? If filled, by machine translation, marked as such in the coverage report and overridable?
 - **Q3. Fan translations:** any to import (`soa_save/names_en.json`, fan story translations)?
 - **Q4. Images:** our own English art for the text in images (home buttons, footer, banners, tutorial pages), or keep them Japanese?
@@ -108,9 +123,9 @@ Kept from the first draft:
 - **Q8. Wording:** keep Global's terms ("Gems", "FOL", "Augment", "Transmute")?
 
 New or changed:
-- **Q5 (changed). The defaults:** client `--lang` defaults to `ja` (sessions, gates, current players unchanged). Should release packages default to `en`, or ship a launcher choice?
-- **Q9. Option B, A, or both?** Is the client change (a platform370 patch at 3 sites, active in `soa` and `soa-emu` only with `--lang en`) acceptable? Should the server-only replace mode also be kept, for unpatched clients and a real phone?
-- **Q10. Voice language default:** no English voice files exist. Default `--voice-lang ja` (always the Japanese voices, proposed), or `auto` (English voices if any ever appear)? If an English dub source exists (a Global 1.5.0 download), should we look for it?
-- **Q11. Always serve English?** Should the served master always carry the `en_` rows and the CDN the `-en` members (one server for both languages; JP clients download unused bytes, about 2.4 MB of master plus the story files)? Or only when the server runs with `--english`?
-- **Q12. Mixed story lines:** EP2 has English for 453 of 8,428 lines. With per-id fallback a chapter would switch between English and Japanese line by line. Serve English for a story file only when it is (nearly) complete, e.g. at least 95% of its lines, and keep the other files Japanese?
-- **Q13. Pre-download screens in English (B9)?** They are seen once per phone, and need a port-only built-in data overlay. Worth it?
+- **Q5 (changed). The defaults:** client `--lang` defaults to `ja` (sessions, gates, current players unchanged). Should release packages default to `en`, or offer a launcher choice?
+- **Q9. Which option?** C (one client site; a second 36 MB master that every client of an English-enabled server downloads), B (three client sites; 2.4 MB), or C now and B later? And should A's server-only mode be kept for unpatched clients (a real phone)?
+- **Q10. Voice language default:** no English voice files exist. Default `--voice-lang ja` (always the Japanese voices; proposed), or `auto` (English voices if any ever appear)? If an English dub source exists (a Global 1.5.0 download), should we look for it?
+- **Q11. Always serve English?** Should the CDN always carry the `-en` members, or only when the server runs with `--english`? Proposed: only with `--english`, so a Japanese-only server costs its clients nothing.
+- **Q12. Mixed story lines:** EP2 has English for 453 of 8,428 lines. Serve a story file's `-en` version only when it is nearly complete (for example at least 90% of its lines, as the experiment did), and keep the rest Japanese?
+- **Q13. Pre-download screens in English (B9)?** They are seen once per phone, and need a port-only built-in data overlay (no effect in `soa-emu`). Worth it?

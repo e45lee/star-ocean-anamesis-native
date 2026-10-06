@@ -54,7 +54,10 @@ void end(ThreadRecord* r) {
 }
 
 // A thread that never called thread_end() (a library's thread): its record at the thread's exit.
-void key_destructor(void* p) { end((ThreadRecord*)p); }
+// (winpthreads also calls it for a value set back to null, as thread_end() leaves it: POSIX doesn't.)
+void key_destructor(void* p) {
+    if (p) end((ThreadRecord*)p);
+}
 
 pthread_key_t make_key() {
     pthread_key_t k;

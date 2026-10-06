@@ -968,6 +968,7 @@ static LONG WINAPI unhandled_exception(EXCEPTION_POINTERS* ep) {
         fprintf(stderr, "guest pc (last sync) = %s\n", describe_guest_addr(c->pc()).c_str());
         dump_guest_state(*c);
     }
+    fflush(stderr);  // (the CRT buffers a redirected stderr; the process ends right after)
     return EXCEPTION_CONTINUE_SEARCH;
 }
 // --gdb (core/gdbstub.h): an attached debugger sees a fatal fault in guest context first. A vectored
@@ -1044,6 +1045,7 @@ static LONG WINAPI log_fault(EXCEPTION_POINTERS* ep) {
     if (Cpu* c = t_current)
         fprintf(stderr, "fault: guest pc %s, x0=%#llx x1=%#llx x2=%#llx, lr %s\n", describe_guest_addr(c->pc()).c_str(), (unsigned long long)c->x(0),
                 (unsigned long long)c->x(1), (unsigned long long)c->x(2), describe_guest_addr(c->x(30)).c_str());
+    fflush(stderr);
     return EXCEPTION_CONTINUE_SEARCH;
 }
 #else

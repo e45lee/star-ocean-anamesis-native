@@ -180,8 +180,29 @@ static void to_wire_shape(server::Request& r) {
     }
 }
 
+// The FakeApiCaller methods whose NetworkApiCaller twin sends another API's request: the
+// in-process request takes the wire's method name, so both hosts give the server, its logs and
+// the packet logs one name (port code). (b) NetworkApiCaller::<X>Array sends Send<X> (fid as
+// FakeApiCaller's; docs/api.md "Method ...; wire ..."): the CSTLVector form of the varargs <X>,
+// the same request.
+const struct {
+    const char* fake;
+    const char* wire;
+} kWireMethods[] = {
+    {"ItemComposeArray", "ItemCompose"}, {"ItemGradeUpArray", "ItemGradeUp"}, {"GetPresentArray", "GetPresent"},
+    {"LockItemArray", "LockItem"},       {"UnlockItemArray", "UnlockItem"},   {"SellItemArray", "SellItem"},
+};
+static void to_wire_method(server::Request& r) {
+    for (const auto& m : kWireMethods)
+        if (r.method == m.fake) {
+            r.method = m.wire;
+            return;
+        }
+}
+
 server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t* x, const uint64_t* stack) {
     server::Request r = capture_from_guest(mangled, fid, x, stack);
+    to_wire_method(r);
     if (r.method == "SetCharacterDeco") {
         // FakeApiCaller::SetCharacterDeco() takes no arguments: the payload is the client's
         // CCharacterDecoSendInfo, serialized as NetworkApiCaller's lambda does (the wire's blob,

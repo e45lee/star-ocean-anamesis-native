@@ -23,7 +23,7 @@ master data, (b) client code, (c) outside knowledge, (d) assumption. Earlier not
    as the weapon held by the summoner. Then a 2D overlay per unit shows the art, rarity word, stars and
    name, plus "limit break" (`overLimit`) or "limit-break material" (`OverLimMat`) for duplicates. The
    only server-controlled switch is `is_mutation` (a fake-out: a unit first shown below its tier, then
-   transformed); the banner picks the stage map through `master_gacha.resource_replace_group_id` (a).
+   transformed); the banner picks the stage map through `master_gacha.resource_replace_group_id` (a + b).
    There is no effect/production master table and no random variant except the summoner's line for
    tiers 0–1 and the fake-out's starting tier.
 3. **Server: nothing extra is needed for the normal presentation** (b). Rarity, new/duplicate, limit
@@ -77,8 +77,7 @@ Every consumer copies this vector index by index:
 So **the reply order is the display order**: the first `GachaItems` entry is the first disc, the
 first reveal and the first slot of the result grid. For a 10-draw, the position of the ★5 is visible
 three times (disc colour, reveal order, grid slot), so the order the server picks is what the player
-sees. The live order is unknown (c: players remember the guaranteed ★4+ of a 10-draw at the end; the
-local server's (d) choice).
+sees. The live server's order is unknown (no source); the local server's is its (d) choice.
 
 <a id="animation"></a>
 ## 2. The animation
@@ -159,7 +158,7 @@ d: its meaning, e.g. a mutation chance).
 Not visible: `is_bonus` (+0x2c) only sets manager+0x484 (when the unit is ★5+); entries +0x29 / +0x2a
 (the role is in `LimitBreakCharacter` / `LimitBreakItem`) and +0x2d (a weapon already owned) are set
 by `CheckGachaResult`; `IsResultInDeity` (a rank-5 role in the result) sets `CGacha+0xbf0`. No reader
-of these was found (a search for `ldrb` at those offsets finds only unrelated code), so they change
+of these was found (a search for byte loads `ldrb [x, #off]` at those offsets finds only unrelated code; 32-bit loads at +0x484 / +0xbf0 exist in other code, e.g. copies of master elements, and were not checked one by one), so they change
 nothing on screen as far as the code shows. (b, negative search)
 
 <a id="assets"></a>
@@ -173,7 +172,7 @@ All in `work/download-3.7.0` (checked 2026-10-07), so the presentation is comple
 | summoner | `Character/cp0002_b01b.{acf,apk}`, `Motion/Gacha.apk` | yes |
 | cameras | `Camera/gacha_camera_01..04.aaf`, `gacha_camera_03_W08Be/_W11Sc/_W13Th.aaf` | all 7 |
 | stage maps | `BG/bg99_01`, `BG/bm0033_b01a`, `BG/bm0014_b01i` (`.aaf`/`.acf`) | all |
-| 2D images | `Image/etc2/BG2_R3/R4/R6`, `BG3_R3/R4/R6`, `rare`, `super_blue/_orange`, `galaxyrare_blue/_orange/_red/_rainbow2`, `word_10_01_rainbow` | all |
+| 2D images | `Image/etc2/BG2_R3/R4/R6`, `BG3_R3/R4/R6` (`BG2_R5`, `BG3_R5`, `BG3_R7` also exist; no code path picks them), `rare`, `super_blue/_orange`, `galaxyrare_blue/_orange/_red/_rainbow2`, `word_10_01_rainbow` | all |
 | UI layouts | `UI/etc2/gacha_main`, `gacha_top`, `gacha_top_anime`, `Gacha_Insert`, `gacha_result`, `gacha_result2`, ... `.csf` | present (which layout is the overlay: `Gacha_Insert` by name, d) |
 | summoner lines | cues `cp0002_540{4,5,6}_GachaMagic_0{1,2,3}0`, played by name through `CSoundManager::PlaySe`; `LoadResource` adds `Voice_UI_004` (`Sound/Voice_UI_004.spk`, present) | the bank is present; that the cues are in it is (d) |
 | character gacha voices | `Sound/<master_person.gacha_voice_package>.spk`: 231 distinct packages | 222 present; missing `Voice_GR_cp0012`, `_cp0202_09`, `_cm505`, `_cm405f`, `_cm427_`, `_cn0008`, `_cp0303_07`, `_cc0040`, `_cn0010`; 5 of them belong to drawable roles (in `data/gacha_pools.sqlite3`: `_cm405f`, `_cn0008`, `_cn0010`, `_cp0202_09`, `_cp0303_07`) |
@@ -218,7 +217,7 @@ No server bug that changes the presentation was found. Suggestions (no code chan
 
 The `gacha` session (in-process server, `SEED_RNG` default, real clock) with its 10-draw replaced by a
 burst of screenshots: `work/gacha-anim/burst_run.py` (local, not committed: `.venv/bin/python
-work/gacha-anim/burst_run.py build/port/soa OUT SCRATCH`). Two runs drew the same units
+work/gacha-anim/burst_run.py build/port/soa OUT SCRATCH`). Two runs drew the same units (names from `master_person.name_message_id` → `master_text`, a)
 (`gacha_role_0001`, the standard banner, no stage replacement, so `bg99_01`). Shots in
 `work/gacha-anim/run1/shots/` (the summon in detail) and `work/gacha-anim/run2/shots/` (every unit),
 contact sheets `work/gacha-anim/sheet-summon.png`, `sheet-run2-units.png`, `sheet-run2-result.png`,

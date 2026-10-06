@@ -280,6 +280,9 @@ class Font:
     in work/english/font/glyphs.pkl: tuples (id, x, y, w, h, xoff, yoff, xadvance, page, chnl)."""
 
     def __init__(self, path):
+        if not os.path.exists(path):
+            sys.exit(f"{path} missing: the glyph advances dumped from Font/etc2/font.fpk "
+                     "(docs/english.md 3.1; work/english/font/ of the main checkout)")
         with open(path, "rb") as f:
             self.adv = {g[0] & 0xFFFF: g[7] for g in pickle.load(f)}
 
@@ -331,6 +334,10 @@ def check(ja, en, font, glossary=None, budget=None):
     se, te = protected(en)
     if sj != se:
         p["specifiers"] = [sj, se]
+    elif sj and re.sub(SPEC.pattern + "|%%", "", en).count("%"):
+        p["specifiers"] = [sj, se, "bare %"]  # printf would read "% o" as a conversion
+    if re.search(r"%\d+\$", en):
+        p["positional"] = True  # the port's printf has no positional arguments (docs/english.md 3.3)
     if tj != te:
         p["tags"] = [tj, te]
     if has_kana(en):
@@ -484,6 +491,8 @@ def post_one(r, en, font, glossary, mem=None):
     """Restore, fold and re-break one engine output; returns (final english, problems)."""
     en = (en or "").strip()
     en = font.fold(unicodedata.normalize("NFC", en))
+    if SPEC.search(r["ja"]):  # a printf row: a literal percent must be %% (NFKC made ％ a bare %)
+        en = re.sub(r"%%|(" + SPEC.pattern + r")|%", lambda m: m.group() if m.group() == "%%" or m.group(1) else "%%", en)
     if r.get("multiline") and r["budget"]:
         en = font.rebreak(en, max(r["budget"], 200))
     else:

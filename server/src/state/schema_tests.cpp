@@ -45,7 +45,9 @@ struct TempDb {
                                    ".bak-v8",  ".bak-v8-journal",
                                    ".bak-v9",  ".bak-v9-journal",
                                    ".bak-v10", ".bak-v10-journal",
-                                   ".bak-v11", ".bak-v11-journal"})
+                                   ".bak-v11", ".bak-v11-journal",
+                                   ".bak-v12", ".bak-v12-journal",
+                                   ".bak-v13", ".bak-v13-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -163,9 +165,10 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)53,
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54,
                 "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
-                "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12)");
+                "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12), "
+                "plus config (version 14)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
@@ -1536,6 +1539,72 @@ NATIVE_TEST("server/schema-migrate-new-badges") {
         if (!bak.open(before.path + ".bak-v" + prev, true)) return t.fail("no %s.bak-v%s", before.path.c_str(), prev.c_str());
         t.expect_eq(state::user_version(bak.h), kNewFlagsV - 1, "the backup is the version before");
         t.expect_eq(bak.one("select count(*) from pragma_table_info('items') where name = 'is_new'", {}), (int64_t)0, "the backup has no is_new");
+        bak.close();
+    }
+}
+
+// Version 14: the player's options and birth month (config, player.birth_year / birth_month).
+// (1) v0 -> v14: every table's rows as the same file at version 13, the player's other columns
+// kept, no birth month and no options; .bak-v0. (2) v13 -> v14 (a planted v12 file, without the
+// master): .bak-v13 at 13 without the new table and columns; the checks refuse a month or year
+// outside the client's ranges; config is STRICT.
+NATIVE_TEST("server/schema-migrate-v14") {
+    constexpr int kV = 14;  // this step's version (renumbered with it)
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    const std::string bak_prev = ".bak-v" + std::to_string(kV - 1);
+    // ---- (1) v0 -> v14 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file("v14-ref"), old("v14");
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kV - 1, m), true, "the reference: migrated to the version before");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "v0 -> this version");
+        t.expect_eq(state::user_version(db.h), kV, "user_version");
+        t.expect_eq(db.one("select count(*) from player", {}) > 0, true, "the fixture has a player");
+        t.expect_eq(db.one("select count(*) from player where birth_year is not null or birth_month is not null", {}), (int64_t)0,
+                    "no birth month entered");
+        t.expect_eq(db.one("select count(*) from config", {}), (int64_t)0, "no options changed");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        ra.erase("player");
+        rb.erase("player");
+        rb.erase("config");
+        t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
+        t.expect_eq(rows_over(db, "player", "id, name, level, home_uid, is_3d_home"),
+                    rows_over(ref, "player", "id, name, level, home_uid, is_3d_home"), "the player's other columns kept");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v13 -> v14, without the master ------------------------------------------------------------
+    {
+        TempDb prev("v14-from-v13");
+        if (!write_fixture(t, prev.path)) return;
+        Sql f;
+        if (!f.open(prev.path, false)) return t.fail("open the planted file");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV - 1, m), true, "migrated to the version before");
+        f.close();
+        unlink((prev.path + ".bak-v0").c_str());
+        if (!f.open(prev.path, false)) return t.fail("reopen the planted file");
+        t.expect_eq(state::user_version(f.h), kV - 1, "a file at the version before");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV), true, "-> this version");
+        t.expect_eq(state::user_version(f.h), kV, "user_version");
+        auto refused = [&](const char* sql) { return sqlite3_exec(f.h, sql, nullptr, nullptr, nullptr) != SQLITE_OK; };
+        t.expect_eq(refused("update player set birth_year = 1899, birth_month = 5"), true, "a year before 1900 refused");
+        t.expect_eq(refused("update player set birth_year = 1990, birth_month = 13"), true, "a month after 12 refused");
+        t.expect_eq(refused("update player set birth_year = 1990, birth_month = 5"), false, "1990-05 stored");
+        t.expect_eq(refused("insert into config (master_config_id, value, type) values ('x', 'true', 4)"), true, "config is STRICT");
+        t.expect_eq(refused("insert into config (master_config_id, value, type) values (4025152546, 'true', 4)"), false, "an option stored");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        f.close();
+        Sql bak;
+        if (!bak.open(prev.path + bak_prev, true)) return t.fail("no %s%s", prev.path.c_str(), bak_prev.c_str());
+        t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is at the version before");
+        t.expect_eq(bak.one("select count(*) from pragma_table_info('player') where name = 'birth_year'", {}), (int64_t)0,
+                    "the backup has no birth_year");
+        t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'config'", {}), (int64_t)0, "the backup has no config");
         bak.close();
     }
 }

@@ -1,0 +1,117 @@
+"""Session `settings`: the options the server keeps and the story library (docs/server-rules.md#settings,
+#scenario-library; docs/unimplemented-apis.md step 3.3).
+
+Boot 1: title -> home -> その他 -> 設定 -> その他設定 (GetConfig) -> 一時保管庫設定 on (UpdateConfig
+4025152546 "true") -> 閉じる -> その他設定 again (still on: 11-reopened) -> 閉じる. Between the boots the
+test setup marks Episode 1's first two story chapters as cleared (campaign_clear: every master_mission
+of library_EP1_main_story_00 / _01, read from the master). Boot 2 (the same phone and state: a
+restart): その他設定 (still on after the restart: 21-after-restart) -> 初期設定に戻す -> 決定
+(ResetConfig) -> その他設定 (off: 23-after-reset); then ミッション -> Episode 1 -> the planet select ->
+シナリオライブラリ (GetScenarioLibraryInfoList: the planted missions, 30-library).
+
+The checks read the server's log lines (UpdateConfig / ResetConfig / GetScenarioLibraryInfoList) and
+its state DB (the table `config`), so they hold for both targets. Ends with PASS (exit 0) or FAIL (exit 1).
+
+Usage: port/scripts/settings_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
+Env: SOA_PHONE, SEED_RNG, WATCH=1.
+Targets: port-inproc (default), port-server (the server's lines are read from its log)."""
+import os
+import sqlite3
+
+from ..flows import mission
+from ..proc import repo_file
+from . import common
+
+TARGETS = ("port-inproc", "port-server")
+WRAPPER = "port/scripts/settings_session.sh"
+
+STORAGE = 4025152546  # master_config is_one_time_storage (CHash32 of the label)
+OTHER, SETTINGS, OTHER_SETTINGS = "667:1250", "364:345", "364:913"  # footer その他, 設定, その他設定
+BOX1, CLOSE = "563:350", "364:1042"  # 一時保管庫設定's box, the dialog's 閉じる
+RESET, RESET_OK, RESET_CLOSE = "620:1120", "515:713", "364:713"  # 初期設定に戻す, 決定, 閉じる
+LIBRARY = "373:1037"  # the planet select's シナリオライブラリ
+HOME = "60:1250"  # the footer's ホーム
+
+
+def options(ap):
+    common.port_options(ap, extra=False)
+
+
+def stored(s):
+    """The option's row in the server's state: its value, or None."""
+    c = sqlite3.connect(s.state_db)
+    row = c.execute("select value from config where master_config_id = ?", (STORAGE,)).fetchone()
+    c.close()
+    return row[0] if row else None
+
+
+def plant_library(db):
+    """Test setup: Episode 1's first two chapters cleared (campaign_clear); their mission count."""
+    m = sqlite3.connect("file:%s?mode=ro" % repo_file("data/basmaster-3.7.0.sqlite3"), uri=True)
+    ids = [r[0] for r in m.execute("select m.id from master_mission m join master_scenario_library s on s.id = m.master_scenario_library_id "
+                                   "where s.id_label in ('library_EP1_main_story_00', 'library_EP1_main_story_01')")]
+    s = sqlite3.connect(db)
+    s.execute("pragma foreign_keys = on")  # PLAN-schema S1: every connection that writes the state
+    s.executemany("insert into campaign_clear (mission_id) values (?) on conflict do nothing", [(i,) for i in ids])
+    s.commit()
+    s.close()
+    return len(ids)
+
+
+def open_other_settings(s, shot):
+    s.ctl("tap:" + OTHER, "wait:5000", "tap:" + SETTINGS, "wait:4000")
+    s.ctl("tap:" + OTHER_SETTINGS, "wait:4000", s.shot_cmd(shot))
+
+
+def main(o):
+    s1 = common.port_run(o, common.port_config(o, limit=2400))
+    seen = {}
+
+    def boot1(s):
+        common.port_login(s, notice=None, bonus=None)
+        n = s.n_packets(r"GetConfig")
+        open_other_settings(s, "10-other-settings")
+        s.wait_for("GetConfig (その他設定)", 30, s.more_than(r"GetConfig", n))
+        s.ctl("tap:" + BOX1, "wait:3000")
+        s.wait_for("UpdateConfig %d \"true\" (一時保管庫設定 on)" % STORAGE, 30,
+                   lambda: s.in_server(r"UpdateConfig %d: \"true\"" % STORAGE))
+        s.ctl("tap:" + CLOSE, "wait:3000", "tap:" + OTHER_SETTINGS, "wait:4000", s.shot_cmd("11-reopened"), "tap:" + CLOSE, "wait:2000")
+        seen["boot1"] = stored(s)
+
+    if not common.drive(s1, boot1):
+        return 1
+    planted = plant_library(s1.state_db)
+    s = common.port_run_again(o, common.port_config(o, limit=2400), "log-2.txt")
+
+    def boot2(s):
+        common.port_login(s, notice=None, bonus=None)
+        seen["restart"] = stored(s)
+        open_other_settings(s, "21-after-restart")
+        s.ctl("tap:" + CLOSE, "wait:3000", "tap:" + RESET, "wait:3000", s.shot_cmd("22-reset-dialog"), "tap:" + RESET_OK, "wait:4000")
+        s.wait_for("ResetConfig (初期設定に戻す)", 30, lambda: s.in_server(r"ResetConfig: every option back"))
+        s.ctl("tap:" + RESET_CLOSE, "wait:2000", "tap:" + OTHER_SETTINGS, "wait:4000", s.shot_cmd("23-after-reset"), "tap:" + CLOSE,
+              "wait:2000")
+        seen["reset"] = stored(s)
+        # ミッション -> the episode list -> Episode 1 (the third banner) -> the planet select -> シナリオライブラリ
+        s.ctl("tap:" + HOME, "wait:8000")
+        common.episode_list(s, "270:1085")
+        s.ctl("wait:5000", "drag:364:850:364:400", "wait:2000")
+        s.tap_log(mission.phase(5), 120, 20, 3, "tap:364:805", name="Episode 1 -> the planet select")
+        s.ctl("wait:8000", s.shot_cmd("29-planets"), "tap:" + LIBRARY)
+        s.wait_for("GetScenarioLibraryInfoList (シナリオライブラリ)", 40, lambda: s.in_server(r"GetScenarioLibraryInfoList [0-9]+: "))
+        s.ctl("wait:6000", s.shot_cmd("30-library"))
+        line = s.last_line(r"GetScenarioLibraryInfoList [0-9]+: ", s.server_log) or ""
+        seen["listed"] = common.state_value(line, r"GetScenarioLibraryInfoList [0-9]+: ([0-9]+) cleared")
+
+    if not common.drive(s, boot2):
+        return 1
+    print("config %d: %s after the toggle, %s after the restart, %s after the reset; %d library missions planted" %
+          (STORAGE, seen.get("boot1"), seen.get("restart"), seen.get("reset"), planted))
+    fails = common.checks(
+        (seen.get("boot1") == "true", "UpdateConfig wasn't stored"),
+        (seen.get("restart") == "true", "the option didn't survive the restart"),
+        (seen.get("reset") is None, "ResetConfig left the option's row"),
+        (planted > 0, "no Episode 1 library missions in the master"),
+        ((seen.get("listed") or 0) >= planted, "the library listed %s missions, not the %d planted" % (seen.get("listed"), planted)),
+    ) + common.common_log_checks(s)
+    return common.verdict(s, fails, "一時保管庫設定 stored, kept over a restart and reset; シナリオライブラリ lists %s cleared missions" % seen.get("listed"))

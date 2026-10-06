@@ -330,9 +330,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `59a48d41`, encrypted: RequestHeader(16) = 16 bytes; reply `GetBirthYearMonthRes` fid `5df89dfc`
 - **Request**: none
 - **Response** (`data.*`): `Birth` {`year`, `month`}
-- **Handler / effect**: Plain apply. Age check before coin purchases (Japanese minors' spending limit).
+- **Handler / effect**: Plain apply. Age check before coin purchases (Japanese minors' spending limit). Never entered: error 10009, on which the result lambda (@019587d8) opens the birth dialog (docs/server-rules.md#account).
 - **Callers** (fid constant scan): `BirthDialogUtility::RequestGetAge`, `CCoinShop::ToShop`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 
 ### GetServerTime
 - **FunctionID** `98b03930`
@@ -396,11 +396,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `0088b260`
 - **Method** `UpdateBirthYearMonth(unsigned short,unsigned char)`; wire `SendUpdateBirthYearMonth(RequestHeader, signed char const*)`
 - **Wire**: request fid `0088b260`, encrypted: RequestHeader(16) · char[8] = 24 bytes; reply `UpdateBirthYearMonthRes` fid `6c448c17`
-- **Request**: `u16 year`, `u8 month` (sent as a "YYYYMM" string, `CNetworkUtility::BirthYearMonthNumber2String`).
+- **Request**: `u16 year`, `u8 month` (sent as the string `"%u-%02u"`, e.g. "1990-05", `CNetworkUtility::BirthYearMonthNumber2String` @015f7c60; nothing is sent for a year outside 1900..2100 or a month outside 1..12).
 - **Response** (`data.*`): `Birth`
-- **Handler / effect**: Plain apply. Server stores the birth month.
+- **Handler / effect**: Plain apply. Server stores the birth month (`player.birth_year` / `birth_month`; docs/server-rules.md#account).
 - **Callers** (fid constant scan): `CBirthDialog::ChangeShowNumberList`, unnamed code near `ItemShopUtility`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 
 ### UpdateKiyakuVersion
 - **FunctionID** `e5af488c`
@@ -420,7 +420,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `ea04f3fd`, **sent in the clear**: RequestHeader(16) · char[32] = 48 bytes; reply `ResultUpdateSession` fid `b32b1c58`
 - **Request**: `s8 const* session` (bridge session string).
 - **Response** (`data.*`): status only
-- **Handler / effect**: Refreshes the session key; fid exempt from the error dialog in `EndRequest`.
+- **Handler / effect**: Refreshes the session key; fid exempt from the error dialog in `EndRequest`. soa-server's wire layer answers it (`server/net/game.cpp`), not the library; in-process it is never sent (its caller `BridgeNotify::OnReceive` needs the bridge).
 - **Callers** (fid constant scan): `BridgeNotify::OnReceive`
 - **Status**: **online**
 
@@ -454,9 +454,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `8fcedcac`, encrypted: RequestHeader(16) = 16 bytes; reply `GetConfigRes` fid `e294b539`
 - **Request**: none
 - **Response** (`data.*`): `ConfigInfoList` [`ConfigInfo` {`master_config_id`, `value`, `type`}], `Option`
-- **Handler / effect**: Plain apply.
+- **Handler / effect**: Plain apply. Every `master_config` row with the player's value where changed (`config`), else the master's default; `Option` isn't sent (docs/server-rules.md#settings).
 - **Callers** (fid constant scan): `CSystemSettingMenu::StartOtherSetting`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_config` (defaults: auto_equip_skill, auto_equip_assist ...)
 
 ### GetDecoInfo
@@ -513,9 +513,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `dc269365`, encrypted: RequestHeader(16) · u32 n + n×u32 = 20 bytes + payload; reply `ReadExpirationInfoRes` fid `f4775f82`
 - **Request**: `vector<u32>` expiration-information ids read
 - **Response** (`data.*`): `ExpirationInfoList` / `ExpirationInfo`
-- **Handler / effect**: Plain apply.
+- **Handler / effect**: Plain apply. The local server stores nothing (it keeps no expiration state; docs/server-rules.md#account).
 - **Callers** (fid constant scan): `CTermInfoUI::Progress`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_expiration_information`
 
 ### ResetConfig
@@ -524,9 +524,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `685d66f3`, encrypted: RequestHeader(16) = 16 bytes; reply `ResetConfigRes` fid `9428f81d`
 - **Request**: none
 - **Response** (`data.*`): `ConfigInfoList`
-- **Handler / effect**: Plain apply. Resets to `master_config` defaults.
+- **Handler / effect**: Plain apply. Resets to `master_config` defaults (the server deletes the player's `config` rows; docs/server-rules.md#settings).
 - **Callers** (fid constant scan): `CSystemSettingMenu::ProgressResetApi`
-- **Status**: **online** (its only callers are in code the offline build removed)
+- **Status**: **online** (its only callers are in code the offline build removed); answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_config`
 - **Notes**: Only 3.7.0's `CSystemSettingMenu::ProgressResetApi` calls it (the offline build removed the settings-reset API).
 
@@ -536,9 +536,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `5cf6a3e9`, encrypted: RequestHeader(16) · u32 = 20 bytes; reply `SendGuideInformationRes` fid `1eefb8e1`
 - **Request**: `u32 master_guide_information_id` (read)
 - **Response** (`data.*`): `GuideInformationInfoList`
-- **Handler / effect**: Plain apply. Marks a guide popup as read.
+- **Handler / effect**: Plain apply. Marks a guide popup as read. `GuideInformationInfoList` is the list of guides the popup shows; the local server shows none and answers it empty (docs/server-rules.md#account).
 - **Callers** (fid constant scan): `CGuideInformation::Progress`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_guide_information`
 
 ### SetCharacterDeco
@@ -594,9 +594,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `f82ca7ca`, encrypted: RequestHeader(16) · u32 · char[191] · u32 = 215 bytes; reply `UpdateConfigRes` fid `591b749a`
 - **Request**: `u32 master_config_id`, `s8 const* value`, `u32 type`
 - **Response** (`data.*`): `ConfigInfo`
-- **Handler / effect**: Inline: stores the value string (still guest code).
+- **Handler / effect**: Inline: stores the value string (still guest code). The server stores it (`config`) and answers it as `ConfigInfo`, which `OnUpdateConfigRes` (@014d89a0) puts into the list (docs/server-rules.md#settings).
 - **Callers** (fid constant scan): `CSystemSettingMenu::AutoEquipSettingSend`, `CSystemSettingMenu::tNotifyData::tNotifyData`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_config`
 
 ### UpdateHome
@@ -830,10 +830,10 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Method** `GetScenarioLibraryInfoList(unsigned int)`; wire `SendGetScenarioLibraryInfoList(RequestHeader, unsigned int)`
 - **Wire**: request fid `e08c972e`, encrypted: RequestHeader(16) · u32 = 20 bytes; reply `GetScenarioLibraryInfoListRes` fid `8d789d21`
 - **Request**: `u32 episode type id`
-- **Response** (`data.*`): `WorldMapScenarioLibraryInfoList`
-- **Handler / effect**: Plain apply.
+- **Response** (`data.*`): `WorldMapScenarioLibraryInfoList` (u32 mission ids: `master_mission` for Episode 1, else `master_world_map_mission`; the client groups them into chapters by `master_scenario_library_id`)
+- **Handler / effect**: Plain apply. The player's cleared missions of the episode type that belong to a chapter (docs/server-rules.md#scenario-library).
 - **Callers** (fid constant scan): `CScenarioLibrary::RequestListReceiveApi`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/settings/`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_scenario_library`, `master_mission.master_scenario_library_id`
 
 ### GetWorldBossInfo

@@ -650,8 +650,9 @@ void h_request(Cpu& c) {
     if (server::enabled()) {
         u64 x[8];
         for (int k = 0; k < 8; k++) x[k] = c.x(k);
-        // the request as the wire carries it (MissionEnd & co.: with the client's battle log)
-        server_port::remember(server_port::inproc_request(kRequests[I].sym, kRequests[I].fid, x));
+        // the request as the wire carries it (MissionEnd & co.: with the client's battle log; the
+        // varargs methods' uids past x7 from the stack)
+        server_port::remember(server_port::inproc_request(kRequests[I].sym, kRequests[I].fid, x, (const u64*)c.sp()));
     }
     Request_(c.x(8), c.x(0), kRequests[I]);
 }

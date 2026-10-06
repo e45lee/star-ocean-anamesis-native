@@ -182,13 +182,14 @@ struct GachaArgs {
     static GachaArgs from(const Request& r) { return {(u32)int_at(r, 0), int_at(r, 1)}; }
 };
 
-// GetPresentArray(CSTLVector<u64> const& ids) / GetPresent(u64 id).
+// GetPresentArray(CSTLVector<u64> const& ids) / GetPresent(u64 count, ...): both carry the ids as
+// one vector (the wire's SetGetPresent(header, u64 const*, u32); the in-process route takes the
+// variadic ids the same way, server_port::capture_from_guest).
 struct GetPresentArgs {
     std::vector<u64> present_ids;
     static GetPresentArgs from(const Request& r) {
         GetPresentArgs a;
         if (!r.vecs.empty()) a.present_ids = r.vecs[0];
-        else if (!r.ints.empty()) a.present_ids.push_back(r.ints[0]);
         return a;
     }
 };

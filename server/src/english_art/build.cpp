@@ -5,6 +5,9 @@
 // cleared and English drawn in the game's font; a source without a recipe stays Japanese (the
 // client's per-file fallback, docs/english.md 6.3).
 #include <algorithm>
+#include <atomic>
+#include <mutex>
+#include <thread>
 #include <cstdio>
 #include <cstring>
 #include <set>
@@ -158,6 +161,13 @@ bool build(const Options& opts, Stats* stats, std::string* err) {
     for (auto& n : names)
         if (n.size() > 5 && n.compare(n.size() - 5, 5, ".json") == 0) recipes.push_back(n);
     std::set<std::string> outputs;
+    struct Job {
+        std::string name;
+        Recipe recipe;
+        Bytes src;
+        std::string en_rel, key, stamp_path, out_path;
+    };
+    std::vector<Job> jobs;
     for (auto& name : recipes) {
         st.recipes++;
         std::string text;
@@ -190,29 +200,46 @@ bool build(const Options& opts, Stats* stats, std::string* err) {
             st.cached++;
             continue;
         }
-        Bytes out;
-        Canvas png;
-        if (!apply_recipe(recipe, adld::decrypt(recipe.source, src), font, en_rel, out, opts.png.empty() ? nullptr : &png, &why)) {
-            LOGW("english", "art recipe %s: %s", name.c_str(), why.c_str());
-            outputs.erase(en_rel);
-            st.failed++;
-            continue;
-        }
-        mkdirs_for(out_path);
-        mkdirs_for(stamp_path);
-        if (!cdn::files::write_file(out_path, out.data(), out.size()) || !write_text(stamp_path, key)) {
-            LOGW("english", "art: cannot write %s", out_path.c_str());
-            st.failed++;
-            continue;
-        }
-        if (!opts.png.empty()) {
-            std::string p = opts.png + "/" + en_rel + ".png";
-            mkdirs_for(p);
-            if (!soa::png_write(p, png.w, png.h, 4, png.px.data())) LOGW("english", "art: cannot write %s", p.c_str());
-        }
-        st.built++;
-        LOGI("english", "art: %s (%zu labels, %zu bytes)", en_rel.c_str(), recipe.labels.size(), out.size());
+        jobs.push_back({name, std::move(recipe), std::move(src), en_rel, key, stamp_path, out_path});
     }
+    // the edits, in parallel (each output is independent: the same bytes in any order)
+    std::mutex mu;
+    std::atomic<size_t> next{0};
+    auto work = [&] {
+        for (size_t i; (i = next++) < jobs.size();) {
+            Job& j = jobs[i];
+            Bytes out;
+            Canvas png;
+            std::string jwhy;
+            bool ok = apply_recipe(j.recipe, adld::decrypt(j.recipe.source, j.src), font, j.en_rel, out, opts.png.empty() ? nullptr : &png, &jwhy);
+            std::lock_guard<std::mutex> lock(mu);
+            if (!ok) {
+                LOGW("english", "art recipe %s: %s", j.name.c_str(), jwhy.c_str());
+                outputs.erase(j.en_rel);
+                st.failed++;
+                continue;
+            }
+            mkdirs_for(j.out_path);
+            mkdirs_for(j.stamp_path);
+            if (!cdn::files::write_file(j.out_path, out.data(), out.size()) || !write_text(j.stamp_path, j.key)) {
+                LOGW("english", "art: cannot write %s", j.out_path.c_str());
+                st.failed++;
+                continue;
+            }
+            if (!opts.png.empty()) {
+                std::string p = opts.png + "/" + j.en_rel + ".png";
+                mkdirs_for(p);
+                if (!soa::png_write(p, png.w, png.h, 4, png.px.data())) LOGW("english", "art: cannot write %s", p.c_str());
+            }
+            st.built++;
+            LOGI("english", "art: %s (%zu labels, %zu bytes)", j.en_rel.c_str(), j.recipe.labels.size(), out.size());
+        }
+    };
+    size_t n = std::min<size_t>(jobs.size(), std::max(1u, std::min(8u, std::thread::hardware_concurrency())));
+    std::vector<std::thread> pool;
+    for (size_t k = 1; k < n; k++) pool.emplace_back(work);
+    work();
+    for (auto& t : pool) t.join();
     // the -en files of recipes that are gone (listed by the previous build) are removed
     std::string list;
     if (read_text(cache + "/" + kOutputsList, list)) {

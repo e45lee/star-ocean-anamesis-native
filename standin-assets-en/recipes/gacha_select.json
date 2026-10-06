@@ -1,0 +1,314 @@
+{
+ "note": "The gacha detail page: the draw-count captions on the draw buttons (Global's 10-chain Draw), Box Details, Pass History, the frames' notes.",
+ "source": "UI/etc2/gacha_select.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "caption": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0c2a5c",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "frame_note": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#a0103c",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "1回ガチャ",
+   "text": "Single Draw",
+   "sprites": [
+    "gacha_text_1.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "2連ガチャ",
+   "text": "2-chain Draw",
+   "sprites": [
+    "gacha_text_2.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "3連ガチャ",
+   "text": "3-chain Draw",
+   "sprites": [
+    "gacha_text_3.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "4連ガチャ",
+   "text": "4-chain Draw",
+   "sprites": [
+    "gacha_text_4.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "5連ガチャ",
+   "text": "5-chain Draw",
+   "sprites": [
+    "gacha_text_5.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "6連ガチャ",
+   "text": "6-chain Draw",
+   "sprites": [
+    "gacha_text_6.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "7連ガチャ",
+   "text": "7-chain Draw",
+   "sprites": [
+    "gacha_text_7.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "8連ガチャ",
+   "text": "8-chain Draw",
+   "sprites": [
+    "gacha_text_8.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "9連ガチャ",
+   "text": "9-chain Draw",
+   "sprites": [
+    "gacha_text_9.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "10連ガチャ",
+   "text": "10-chain Draw",
+   "sprites": [
+    "gacha_text_10.png"
+   ],
+   "box": [
+    2,
+    1,
+    176,
+    42
+   ],
+   "cover": [
+    0,
+    0,
+    180,
+    44
+   ],
+   "style": "caption"
+  },
+  {
+   "jp": "ボックス詳細",
+   "text": "Box Details",
+   "sprites": [
+    "btn_box.png",
+    "btn_box_on.png"
+   ],
+   "box": [
+    31,
+    15,
+    174,
+    37
+   ],
+   "cover": [
+    30,
+    17,
+    176,
+    33
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "パス購入履歴",
+   "text": "Pass History",
+   "sprites": [
+    "btn_pass_off.png",
+    "btn_pass_on.png"
+   ],
+   "box": [
+    36,
+    14,
+    169,
+    39
+   ],
+   "cover": [
+    32,
+    16,
+    177,
+    35
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "1日1回無料",
+   "text": "1 Free a Day",
+   "sprites": [
+    "frame_free.png"
+   ],
+   "box": [
+    222,
+    3,
+    150,
+    26
+   ],
+   "cover": [
+    228,
+    3,
+    132,
+    19
+   ],
+   "style": "frame_note"
+  },
+  {
+   "jp": "おまけつき",
+   "text": "Bonus!",
+   "sprites": [
+    "frame_omake.png"
+   ],
+   "box": [
+    222,
+    3,
+    150,
+    26
+   ],
+   "cover": [
+    228,
+    3,
+    132,
+    19
+   ],
+   "style": "frame_note",
+   "outline": "#8a6000"
+  }
+ ]
+}

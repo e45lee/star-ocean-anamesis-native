@@ -1,0 +1,66 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/presentbox.csf",
+ "styles": {
+  "back": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "戻る",
+   "text": "Back",
+   "sprites": [
+    "btn_back_off.png",
+    "btn_back_on.png"
+   ],
+   "box": [
+    56,
+    12,
+    100,
+    40
+   ],
+   "cover": [
+    60,
+    8,
+    86,
+    50
+   ],
+   "style": "back",
+   "_from": "gacha_main"
+  },
+  {
+   "jp": "更新",
+   "text": "Update",
+   "sprites": [
+    "badge_update.png"
+   ],
+   "box": [
+    8,
+    3,
+    122,
+    27
+   ],
+   "cover": [
+    48,
+    5,
+    42,
+    23
+   ],
+   "style": "badge",
+   "size": 17,
+   "_from": "common_resource"
+  }
+ ]
+}

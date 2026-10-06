@@ -1,0 +1,36 @@
+{
+ "note": "The party select's OK button (決定: Global's Confirm).",
+ "source": "UI/etc2/party_select_single2.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "決定",
+   "text": "Confirm",
+   "sprites": [
+    "btn_ok.png",
+    "btn_ok_on.png"
+   ],
+   "box": [
+    36,
+    15,
+    169,
+    38
+   ],
+   "cover": [
+    89,
+    17,
+    63,
+    34
+   ],
+   "style": "pill"
+  }
+ ]
+}

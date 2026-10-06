@@ -1,0 +1,315 @@
+{
+ "note": "Shared badges and small buttons: Block, Follow (Global's), Cap Inc. (Global's 上限解放), Rank (Global's 調査ランク), Shop, Update (Global's).",
+ "source": "UI/etc2/common_resource.csf",
+ "styles": {
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  },
+  "pill_small": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  },
+  "tap": {
+   "size": 17,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a1e3c",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "ショップへ",
+   "text": "To Shop",
+   "sprites": [
+    "badge_shop.png"
+   ],
+   "box": [
+    9,
+    2,
+    121,
+    27
+   ],
+   "cover": [
+    19,
+    4,
+    101,
+    23
+   ],
+   "style": "badge",
+   "size": 17
+  },
+  {
+   "jp": "更新",
+   "text": "Update",
+   "sprites": [
+    "badge_update.png"
+   ],
+   "box": [
+    8,
+    3,
+    122,
+    27
+   ],
+   "cover": [
+    48,
+    5,
+    42,
+    23
+   ],
+   "style": "badge",
+   "size": 17
+  },
+  {
+   "jp": "ブロック",
+   "text": "Block",
+   "sprites": [
+    "btn_block_off.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small"
+  },
+  {
+   "jp": "相互",
+   "text": "Mutual",
+   "sprites": [
+    "btn_follow_mutual.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small"
+  },
+  {
+   "jp": "フォロー",
+   "text": "Follow",
+   "sprites": [
+    "btn_follow_off.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small"
+  },
+  {
+   "jp": "フォロワー",
+   "text": "Follower",
+   "sprites": [
+    "btn_follow_off2.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small"
+  },
+  {
+   "jp": "シナリオ専用",
+   "text": "Story Only",
+   "sprites": [
+    "btn_rental_main.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small"
+  },
+  {
+   "jp": "達成!",
+   "text": "Done!",
+   "sprites": [
+    "icon_clear1.png"
+   ],
+   "box": [
+    7,
+    0,
+    111,
+    22
+   ],
+   "cover": [
+    24,
+    1,
+    77,
+    18
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "上限解放",
+   "text": "Cap Inc.",
+   "sprites": [
+    "icon_upper_limit.png"
+   ],
+   "box": [
+    2,
+    0,
+    69,
+    20
+   ],
+   "cover": [
+    6,
+    0,
+    61,
+    19
+   ],
+   "style": "badge",
+   "size": 13
+  },
+  {
+   "jp": "調査ランク",
+   "text": "Rank",
+   "sprites": [
+    "rank_plate.png"
+   ],
+   "box": [
+    8,
+    0,
+    101,
+    23
+   ],
+   "cover": [
+    22,
+    2,
+    73,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "ブロック",
+   "text": "Block",
+   "sprites": [
+    "tap_block_on.png"
+   ],
+   "box": [
+    6,
+    18,
+    96,
+    28
+   ],
+   "cover": [
+    8,
+    20,
+    92,
+    24
+   ],
+   "style": "tap"
+  },
+  {
+   "jp": "フォロー",
+   "text": "Follow",
+   "sprites": [
+    "tap_follow_off.png",
+    "tap_follow_on.png"
+   ],
+   "box": [
+    6,
+    18,
+    96,
+    28
+   ],
+   "cover": [
+    8,
+    20,
+    92,
+    24
+   ],
+   "style": "tap"
+  },
+  {
+   "jp": "報酬確認",
+   "text": "Rewards",
+   "sprites": [
+    "tap_present_off.png",
+    "tap_present_on.png"
+   ],
+   "box": [
+    6,
+    18,
+    96,
+    28
+   ],
+   "cover": [
+    8,
+    20,
+    92,
+    24
+   ],
+   "style": "tap"
+  },
+  {
+   "jp": "報酬確認",
+   "text": "Rewards",
+   "sprites": [
+    "tap_present_off2.png"
+   ],
+   "box": [
+    6,
+    18,
+    96,
+    28
+   ],
+   "cover": [
+    8,
+    20,
+    92,
+    24
+   ],
+   "style": "tap",
+   "fill": "#8a96a0"
+  }
+ ]
+}

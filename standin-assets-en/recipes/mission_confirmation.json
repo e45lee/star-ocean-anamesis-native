@@ -1,0 +1,82 @@
+{
+ "note": "The mission confirmation's badges. Initial Clear: Global's 初回クリア報酬 (Initial Clear Reward).",
+ "source": "UI/etc2/mission_confirmation.csf",
+ "styles": {
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  },
+  "badge_small": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "ボーナス発生",
+   "text": "Bonus!",
+   "sprites": [
+    "badge_charabonus.png"
+   ],
+   "box": [
+    5,
+    0,
+    83,
+    19
+   ],
+   "cover": [
+    5,
+    1,
+    83,
+    15
+   ],
+   "style": "badge_small"
+  },
+  {
+   "jp": "初回クリア",
+   "text": "Initial Clear",
+   "sprites": [
+    "first_badge.png"
+   ],
+   "box": [
+    5,
+    0,
+    78,
+    21
+   ],
+   "cover": [
+    7,
+    0,
+    74,
+    19
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "ベータ版",
+   "text": "Beta",
+   "sprites": [
+    "icon_betatest.png"
+   ],
+   "box": [
+    5,
+    0,
+    78,
+    24
+   ],
+   "cover": [
+    6,
+    0,
+    76,
+    22
+   ],
+   "style": "badge"
+  }
+ ]
+}

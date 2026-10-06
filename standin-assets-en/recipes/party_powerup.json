@@ -1,0 +1,37 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/party_powerup.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "決定",
+   "text": "Confirm",
+   "sprites": [
+    "btn_ok.png",
+    "btn_ok_on.png"
+   ],
+   "box": [
+    36,
+    15,
+    169,
+    38
+   ],
+   "cover": [
+    89,
+    17,
+    63,
+    34
+   ],
+   "style": "pill",
+   "_from": "party_select_single2"
+  }
+ ]
+}

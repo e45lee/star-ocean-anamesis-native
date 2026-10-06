@@ -1,0 +1,67 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/mission_world_map.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "惑星遷移",
+   "text": "Select Planet",
+   "sprites": [
+    "btn_planet_select_off.png",
+    "btn_planet_select_on.png"
+   ],
+   "box": [
+    14,
+    20,
+    174,
+    32
+   ],
+   "cover": [
+    50,
+    22,
+    102,
+    28
+   ],
+   "style": "pill",
+   "size": 19,
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "惑星遷移",
+   "text": "Select Planet",
+   "sprites": [
+    "btn_planet_select_off2.png"
+   ],
+   "box": [
+    14,
+    20,
+    174,
+    32
+   ],
+   "cover": [
+    50,
+    22,
+    102,
+    28
+   ],
+   "style": "pill_dim",
+   "size": 19,
+   "_from": "mission_menu_common"
+  }
+ ]
+}

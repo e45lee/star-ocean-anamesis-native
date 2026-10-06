@@ -1,0 +1,234 @@
+{
+ "note": "The mission (stage) list: Multiplayer (Global's マルチプレイ開始), the part select button, badges.",
+ "source": "UI/etc2/mission_select.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  },
+  "red_art": {
+   "size": 30,
+   "bold": 3,
+   "fill": "#fff4e0",
+   "outline": "#a00010",
+   "outline_width": 3,
+   "glow": "#ff3020c0",
+   "glow_radius": 3,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "bubble": {
+   "size": 16,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#00000080",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "マルチプレイ",
+   "text": "Multiplayer",
+   "sprites": [
+    "btn_mroom_off.png",
+    "btn_mroom_on.png"
+   ],
+   "box": [
+    34,
+    14,
+    171,
+    38
+   ],
+   "cover": [
+    33,
+    16,
+    173,
+    34
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "マルチプレイ",
+   "text": "Multiplayer",
+   "sprites": [
+    "btn_mroom_off2.png"
+   ],
+   "box": [
+    34,
+    14,
+    171,
+    38
+   ],
+   "cover": [
+    33,
+    16,
+    173,
+    34
+   ],
+   "style": "pill_dim"
+  },
+  {
+   "jp": "部選択へ",
+   "text": "Select Part",
+   "sprites": [
+    "btn_part_select_off.png",
+    "btn_part_select_on.png"
+   ],
+   "box": [
+    12,
+    18,
+    176,
+    34
+   ],
+   "cover": [
+    40,
+    20,
+    120,
+    30
+   ],
+   "style": "pill",
+   "size": 20
+  },
+  {
+   "jp": "部選択へ",
+   "text": "Select Part",
+   "sprites": [
+    "btn_part_select_off2.png"
+   ],
+   "box": [
+    12,
+    18,
+    176,
+    34
+   ],
+   "cover": [
+    40,
+    20,
+    120,
+    30
+   ],
+   "style": "pill_dim",
+   "size": 20
+  },
+  {
+   "jp": "この惑星のマルチプレイに参加",
+   "text": "Join This Planet's Multiplayer",
+   "sprites": [
+    "btn_planet_multiplay_off.png",
+    "btn_planet_multiplay_on.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    34,
+    18,
+    374,
+    32
+   ],
+   "style": "pill",
+   "size": 20
+  },
+  {
+   "jp": "この惑星のマルチプレイに参加",
+   "text": "Join This Planet's Multiplayer",
+   "sprites": [
+    "btn_planet_multiplay_off2.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    34,
+    18,
+    374,
+    32
+   ],
+   "style": "pill_dim",
+   "size": 20
+  },
+  {
+   "jp": "ベータ版",
+   "text": "Beta",
+   "sprites": [
+    "icon_betatest.png"
+   ],
+   "box": [
+    5,
+    0,
+    78,
+    24
+   ],
+   "cover": [
+    6,
+    0,
+    76,
+    22
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "ランキング開催中!",
+   "text": "Ranking On!",
+   "sprites": [
+    "icon_ranking.png"
+   ],
+   "box": [
+    8,
+    13,
+    118,
+    28
+   ],
+   "cover": [
+    4,
+    15,
+    126,
+    24
+   ],
+   "style": "bubble"
+  },
+  {
+   "jp": "大討伐発生!",
+   "text": "Raid Boss!",
+   "sprites": [
+    "icon_occurrence.png"
+   ],
+   "box": [
+    2,
+    1,
+    306,
+    88
+   ],
+   "cover": [
+    0,
+    0,
+    310,
+    90
+   ],
+   "style": "red_art"
+  }
+ ]
+}

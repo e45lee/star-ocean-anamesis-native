@@ -1,0 +1,37 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/sphere211_missionboard.csf",
+ "styles": {
+  "round": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3c78",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "実績",
+   "text": "Records",
+   "sprites": [
+    "btn_performance_off.png",
+    "btn_performance_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round",
+   "_from": "mission_menu_common"
+  }
+ ]
+}

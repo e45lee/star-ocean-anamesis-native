@@ -19,6 +19,7 @@
 #include <mutex>
 #include <unordered_map>
 
+#include "core/crash.h"
 #include "core/hle.h"
 #include "core/log.h"
 #include "hle/gfx.h"
@@ -126,6 +127,11 @@ void* thread_body(void* p) {
     {
         std::lock_guard lk(g_tid_mutex);
         g_tids[pthread_self()] = gettid();
+    }
+    {
+        char name[32];  // (renamed when the guest names it: prctl(PR_SET_NAME))
+        snprintf(name, sizeof name, "guest-%d", (int)gettid());
+        crash_thread_begin(name, si.fn);  // core/crash.h: overflows and faults report themselves
     }
     guest_thread_init(si.stack_size);
     u64 r = guest_call(si.fn, {si.arg});

@@ -6,6 +6,7 @@
 #else
 #include <execinfo.h>
 #include <signal.h>
+#include <ucontext.h>
 #endif
 #include <malloc.h>
 #include <pthread.h>
@@ -19,6 +20,7 @@
 #include <set>
 #include <unordered_map>
 
+#include "core/crash.h"
 #include "core/gdbstub.h"
 #include "core/host_mem.h"
 #include "core/log.h"
@@ -308,6 +310,12 @@ Cpu* current_cpu() { return t_current; }
 void guest_thread_init(size_t stack_size) {
     auto& ts = t_state;
     if (ts.info.stack_lo) return;
+    // A thread nobody set up for crash reports (a library's thread calling into guest code).
+    if (!crash_thread()) {
+        char name[32];
+        snprintf(name, sizeof name, "host-%d", (int)gettid());
+        crash_thread_begin(name);
+    }
     stack_size = (stack_size + 0xfff) & ~0xfffull;
     if (stack_size < 0x40000) stack_size = 0x40000;
     void* p = hostmem::map_rw(stack_size + 0x1000 + kStackHeadroom, true);
@@ -904,6 +912,21 @@ std::vector<HookedFunction> hooked_functions() {
 
 // ---------------------------------------------------------------------------
 
+// The first lines of a fault's report when it is a stack overflow (core/crash.h): the host stack
+// of a thread set up by crash_thread_begin, or the guest stack's guard page (guest_thread_init).
+static void report_overflow(uintptr_t addr, uintptr_t sp) {
+    if (const CrashThread* ct = crash_thread(); ct && crash_is_stack_overflow(*ct, addr, sp)) {
+        crash_report_overflow(*ct, sp);
+        return;
+    }
+    const auto& gi = t_state.info;
+    if (gi.stack_lo && addr < gi.stack_lo && addr + 0x1000 >= gi.stack_lo) {
+        const CrashThread* ct = crash_thread();
+        fprintf(stderr, "\n*** guest stack overflow on thread %s (tid %d, guest stack %llu KiB) ***\n", ct && ct->name[0] ? ct->name : "?",
+                (int)gettid(), (unsigned long long)((gi.stack_hi - gi.stack_lo) >> 10));
+    }
+}
+
 #ifdef _WIN32
 // The GDB protocol's signal for a Windows exception code.
 static int gdb_signal_of(DWORD code) {
@@ -931,6 +954,7 @@ static LONG WINAPI unhandled_exception(EXCEPTION_POINTERS* ep) {
     Cpu* c = t_current;
     const EXCEPTION_RECORD* r = ep->ExceptionRecord;
     const u64 exe = (u64)GetModuleHandleA(nullptr);
+    report_overflow(r->NumberParameters >= 2 ? (uintptr_t)r->ExceptionInformation[1] : 0, (uintptr_t)ep->ContextRecord->Rsp);
     fprintf(stderr, "\n*** host exception %#lx at %p = exe+%#llx (fault addr %#llx, thread %d) ***\n", (unsigned long)r->ExceptionCode,
             r->ExceptionAddress, (unsigned long long)((u64)r->ExceptionAddress - exe),
             r->NumberParameters >= 2 ? (unsigned long long)r->ExceptionInformation[1] : 0ull, (int)gettid());
@@ -972,6 +996,34 @@ static LONG WINAPI gdb_fault_handler(EXCEPTION_POINTERS* ep) {
     gdb_fault(c, gdb_signal_of(r->ExceptionCode));
     return EXCEPTION_CONTINUE_SEARCH;
 }
+// A host stack overflow (EXCEPTION_STACK_OVERFLOW): reported and ended here. The guard page is
+// used up, so the thread runs on the stack SetThreadStackGuarantee kept (crash_thread_begin), and
+// the unhandled-exception filter above isn't reliably reached. Registered after gdb_fault_handler,
+// so an attached debugger sees it first.
+static LONG WINAPI stack_overflow_handler(EXCEPTION_POINTERS* ep) {
+    const EXCEPTION_RECORD* r = ep->ExceptionRecord;
+    if (r->ExceptionCode != EXCEPTION_STACK_OVERFLOW) return EXCEPTION_CONTINUE_SEARCH;
+    const uintptr_t sp = (uintptr_t)ep->ContextRecord->Rsp;
+    if (const CrashThread* ct = crash_thread())
+        crash_report_overflow(*ct, sp);
+    else
+        fprintf(stderr, "\n*** stack overflow on thread ? (tid %d, a thread the runtime didn't set up) ***\n", (int)gettid());
+    const u64 exe = (u64)GetModuleHandleA(nullptr);
+    fprintf(stderr, "host exception %#lx at %p = exe+%#llx\n", (unsigned long)r->ExceptionCode, r->ExceptionAddress,
+            (unsigned long long)((u64)r->ExceptionAddress - exe));
+    void* bt[48];
+    USHORT n = CaptureStackBackTrace(0, 48, bt, nullptr);
+    fprintf(stderr, "host backtrace (exe offsets):");
+    for (USHORT i = 0; i < n; i++) fprintf(stderr, " %#llx", (unsigned long long)((u64)bt[i] - exe));
+    fprintf(stderr, "\n");
+    if (Cpu* c = t_current) {
+        fprintf(stderr, "guest pc (last sync) = %s\n", describe_guest_addr(c->pc()).c_str());
+        dump_guest_state(*c);
+    }
+    fflush(stderr);
+    TerminateProcess(GetCurrentProcess(), (UINT)EXCEPTION_STACK_OVERFLOW);
+    return EXCEPTION_CONTINUE_SEARCH;
+}
 static LONG WINAPI log_fault(EXCEPTION_POINTERS* ep) {
     static std::atomic<int> n{0};
     const EXCEPTION_RECORD* r = ep->ExceptionRecord;
@@ -995,8 +1047,12 @@ static LONG WINAPI log_fault(EXCEPTION_POINTERS* ep) {
     return EXCEPTION_CONTINUE_SEARCH;
 }
 #else
-static void segv_handler(int sig, siginfo_t* si, void*) {
+// Runs on the thread's alternate signal stack (crash_thread_begin; SA_ONSTACK), so it also
+// reports a host stack overflow. For SIGSEGV dynarmic's handler runs first (its fastmem faults in
+// JIT code) and calls this one for every other fault.
+static void segv_handler(int sig, siginfo_t* si, void* uctx) {
     Cpu* c = t_current;
+    report_overflow((uintptr_t)si->si_addr, (uintptr_t)((ucontext_t*)uctx)->uc_mcontext.gregs[REG_RSP]);
     fprintf(stderr, "\n*** host signal %d (fault addr %p, thread %ld) ***\n", sig, si->si_addr, (long)gettid());
     {
         // host backtrace (module(+offset): `addr2line -e soa -f -C <offset>` names the frames)
@@ -1017,6 +1073,7 @@ static void segv_handler(int sig, siginfo_t* si, void*) {
 #endif
 
 void cpu_global_init() {
+    crash_thread_begin("main");  // (the host program's main thread)
     g_thunks = new ThunkEntry[kMaxThunks];
     soa_gdb_thunks = g_thunks;
     void* p = hostmem::map_rw(kMaxThunks * 8);
@@ -1035,10 +1092,15 @@ void cpu_global_init() {
     // without reaching the filter above.
     if (env::env_bool("SOA_FAULT_LOG", false)) AddVectoredExceptionHandler(1, log_fault);
     AddVectoredExceptionHandler(0, gdb_fault_handler);  // (nothing unless --gdb)
+    AddVectoredExceptionHandler(0, stack_overflow_handler);
 #else
+    {
+        void* bt[1];
+        backtrace(bt, 1);  // the first call loads libgcc_s: not in the handler, on a small stack
+    }
     struct sigaction sa {};
     sa.sa_sigaction = segv_handler;
-    sa.sa_flags = SA_SIGINFO;
+    sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
     sigaction(SIGSEGV, &sa, nullptr);
     sigaction(SIGBUS, &sa, nullptr);
     sigaction(SIGILL, &sa, nullptr);

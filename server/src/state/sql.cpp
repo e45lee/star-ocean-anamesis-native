@@ -5,6 +5,14 @@
 
 namespace soa::server::sql {
 
+namespace {
+// The statement errors of this thread (statement_errors). A plain integer: a request's statements
+// all run on the thread that answers it (core/server.cpp handle_request).
+thread_local uint64_t t_statement_errors = 0;
+}  // namespace
+
+uint64_t statement_errors() { return t_statement_errors; }
+
 int64_t Row::i(const char* k) const {
     auto it = v.find(k);
     return it == v.end() || !it->second ? 0 : sqlite3_value_int64(it->second);
@@ -42,6 +50,7 @@ void Sql::close() {
 bool Sql::exec(const std::string& sql) {
     char* err = nullptr;
     if (sqlite3_exec(h, sql.c_str(), nullptr, nullptr, &err) == SQLITE_OK) return true;
+    t_statement_errors++;
     LOGE("server", "sql error: %s in %s", err ? err : "?", sql.c_str());
     sqlite3_free(err);
     return false;
@@ -49,6 +58,7 @@ bool Sql::exec(const std::string& sql) {
 int Sql::q(const std::string& sql, std::initializer_list<Arg> args, const std::function<void(const Row&)>& fn) {
     sqlite3_stmt* st = nullptr;
     if (sqlite3_prepare_v2(h, sql.c_str(), -1, &st, nullptr) != SQLITE_OK) {
+        t_statement_errors++;
         LOGE("server", "sql prepare: %s in %s", sqlite3_errmsg(h), sql.c_str());
         return 0;
     }
@@ -69,7 +79,10 @@ int Sql::q(const std::string& sql, std::initializer_list<Arg> args, const std::f
             fn(r);
         }
     }
-    if (rc != SQLITE_DONE) LOGE("server", "sql step: %s in %s", sqlite3_errmsg(h), sql.c_str());
+    if (rc != SQLITE_DONE) {
+        t_statement_errors++;
+        LOGE("server", "sql step: %s in %s", sqlite3_errmsg(h), sql.c_str());
+    }
     sqlite3_finalize(st);
     return n;
 }

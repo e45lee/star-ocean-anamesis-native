@@ -42,9 +42,7 @@ inline void add_server_options(CLI::App& app, ServerConfig& c, const std::string
     app.add_option_function<std::string>(
            "--clock",
            [&c](const std::string& v) {
-               int64_t t = cli::parse_clock(v);
-               if (!t) cli::bad_value("--clock", "expected \"YYYY-MM-DD HH:MM:SS\", got \"" + v + "\"");
-               c.has_clock = true, c.clock = t, c.clock_offset = t - (int64_t)time(nullptr);
+               if (!set_clock(c, v)) cli::bad_value("--clock", "expected \"YYYY-MM-DD HH:MM:SS\", got \"" + v + "\"");
            },
            "the server's clock starts at that time and runs on; without it, event terms replay the calendar "
            "(server::event_now)")

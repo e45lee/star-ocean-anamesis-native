@@ -94,21 +94,6 @@ inline int parse_guest_cpus(const std::string& c) {
     return (int)v;
 }
 
-// "YYYY-MM-DD[ HH:MM:SS]" (local time), or a plain integer (Unix seconds). 0 when unparsable.
-// (--clock: soa and soa-server; the server library's parse_clock.)
-inline int64_t parse_clock(const std::string& s) {
-    struct tm tm = {};
-    if (sscanf(s.c_str(), "%d-%d-%d %d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec) >= 3) {
-        tm.tm_year -= 1900;
-        tm.tm_mon -= 1;
-        tm.tm_isdst = -1;
-        return (int64_t)mktime(&tm);
-    }
-    char* end = nullptr;
-    long long v = strtoll(s.c_str(), &end, 10);
-    return end && end != s.c_str() && *end == 0 && v > 0 ? (int64_t)v : 0;
-}
-
 // ---- options more than one program has (the asset sources, the checkout, logging) -----------
 
 // --repo DIR (soa, soa-server, soa-emu, soa-viewer).

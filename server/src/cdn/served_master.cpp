@@ -6,6 +6,7 @@
 
 #include "cdn/files.h"
 #include "core/log.h"
+#include "core/server.h"  // event_clock_at
 #include "master/english_text.h"
 #include "soaserver/adld.h"
 #include "soaserver/cdn.h"
@@ -31,8 +32,8 @@ std::vector<uint8_t> make_served_master(const std::string& master, const std::st
         // (d) the overrides the in-process client master gets (apply_client_master), with the
         // clock of the server's start: the server clock, and the event calendar replayed on this
         // master (event_now: the clock itself under --clock).
-        ServerTime t(now ? now : files::server_time());
-        EventTime ev = config().has_clock ? clock_as_calendar(t) : event_time(db, t);
+        ServerTime t = now ? ServerTime(now) : clock_now();
+        EventTime ev = event_clock_at(db, t);
         apply_client_master(db, t, ev, master);
     }
     char* err = nullptr;

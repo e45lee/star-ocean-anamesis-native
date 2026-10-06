@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <soa/clock_arg.h>
+
 namespace soa::server {
 
 std::string format_time(int64_t t) {
@@ -31,13 +33,7 @@ int64_t parse_time_strict(const std::string& s) {
     tm.tm_isdst = -1;
     return (int64_t)mktime(&tm);
 }
-int64_t parse_time_or_epoch(const std::string& s) {
-    struct tm tm = {};
-    if (sscanf(s.c_str(), "%d-%d-%d %d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec) >= 3) return parse_time(s);
-    char* end = nullptr;
-    long long v = strtoll(s.c_str(), &end, 10);
-    return end && end != s.c_str() && *end == 0 && v > 0 ? (int64_t)v : 0;
-}
+int64_t parse_time_or_epoch(const std::string& s) { return soa::parse_clock_arg(s); }
 int64_t parse_day_and_time(const std::string& day, const std::string& time) {
     struct tm tm = {};
     if (sscanf(day.c_str(), "%d-%d-%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) return -1;

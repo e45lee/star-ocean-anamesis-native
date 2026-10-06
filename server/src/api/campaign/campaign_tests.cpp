@@ -6,7 +6,10 @@
 #include <vector>
 
 #include "api/campaign/campaign.h"
+#include "core/errors.h"
+#include "soaserver/config.h"
 #include "soaserver/native_test.h"
+#include "testing/scratch.h"
 
 namespace soa::server::campaign {
 namespace {
@@ -37,7 +40,6 @@ NATIVE_TEST("campaign/unlock-chain") {
         if (a.label == "planet01_area01") area01 = id;
     u32 mf1 = id_of(m, "mf01_001"), mc30 = id_of(m, "mc01_030"), ms2 = id_of(m, "ms01_002"), mc25 = id_of(m, "mc01_025");
     State s;
-    s.loaded = true;
     // Seeded up to mf01_001: its chain is cleared, mf01_001 listed, mc01_030 not yet.
     for (u32 u = m.missions.at(mf1).unlock; u; u = m.missions.at(u).unlock) s.cleared.insert(u);
     t.expect_eq(s.cleared.count(mc25), (size_t)1, "chain before mf01_001 cleared");
@@ -54,7 +56,6 @@ NATIVE_TEST("campaign/unlock-chain") {
     t.expect_eq(has(ms2), true, "ms01_002 listed after mc01_030");
     // A new player sees only the first prologue mission.
     State fresh;
-    fresh.loaded = true;
     size_t listed = 0;
     for (auto& [id, x] : m.missions) listed += x.area && available(m, fresh, x);
     t.expect_eq(listed, (size_t)1, "a new player has one mission (mc00_010)");
@@ -105,6 +106,92 @@ NATIVE_TEST("campaign/splice") {
     t.expect_eq(splice_bytes(wide, add), false, "non-canonical body refused");
     std::vector<char> cut = {(char)0x81, (char)0xa4, 'd', 'a', 't', 'a', (char)0x82, (char)0xa1, 'a', 1};
     t.expect_eq(splice_bytes(cut, add), false, "truncated body refused");
+}
+
+// ---- the progress and the request's transaction (docs/code-review-2026-10-06.md S2) -----------
+
+namespace {
+
+constexpr u32 kFidMissionStart = 0xb7c62bc2, kFidMissionEnd = 0x8312a64c, kFidMissionTalk = 0x816dc8b4;
+Request start_req(u32 mission) { return Request{"MissionStart", kFidMissionStart, {0, mission, 0, 0, 0, 0, 0}, {}, {}}; }
+Request end_req(u32 mission) { return Request{"MissionEnd", kFidMissionEnd, {mission, 0}, {}, {}}; }
+
+// A scratch server as the live one (server::answer, ext::with_live_server), with the server
+// switched on, for the length of a test; restores both.
+struct AsLiveServer {
+    Server* previous;
+    bool was_enabled;
+    std::string was_fail;
+    explicit AsLiveServer(ScratchServer& s) : previous(set_live_server_for_test(&s.sv)), was_enabled(config().enabled), was_fail(config().fail) {
+        config().enabled = true;
+    }
+    ~AsLiveServer() {
+        set_live_server_for_test(previous);
+        config().enabled = was_enabled;
+        config().fail = was_fail;
+    }
+};
+
+// Whether mission `id` is listed as cleared in an ActiveMissionList (msgpack).
+bool listed_clear(const std::vector<uint8_t>& aml, u32 id) {
+    Value v = mp_decode(aml);
+    const Value* missions = v.find("Mission");
+    if (!missions) return false;
+    for (auto& [area, list] : missions->map)
+        for (auto& e : list.arr)
+            if (e.get_u("id") == id) return e.find("is_clear") && e.find("is_clear")->b;
+    return false;
+}
+
+}  // namespace
+
+// An accepted MissionEnd / MissionTalk records the campaign's clear in the request's own
+// transaction (through the server's handle(), as both hosts' requests go).
+NATIVE_TEST("campaign/clear-in-the-request") {
+    ScratchServer s(t.rand_u64());
+    if (!s.ok) return;
+    u32 battle = s.id("master_mission", "mf01_001"), talk = s.id("master_mission", "mc01_030");
+    t.expect_eq(s.call(start_req(battle)), 0u, "MissionStart");
+    t.expect_eq(s.call(end_req(battle)), 0u, "MissionEnd");
+    t.expect_eq(s.sv.st.one("select count(*) from campaign_clear where mission_id = ?", {battle}), (int64_t)1, "the battle's clear recorded");
+    t.expect_eq(s.sv.st.one("select mission_id from campaign_last where id = 1", {}), (int64_t)battle, "as the last play");
+    t.expect_eq(s.call(Request{"MissionTalk", kFidMissionTalk, {0, talk, 0, 0}, {}, {}}), 0u, "MissionTalk");
+    t.expect_eq(s.sv.st.one("select count(*) from campaign_clear where mission_id = ?", {talk}), (int64_t)1, "the scene's clear recorded");
+}
+
+// A refused MissionEnd (here --fail MissionEnd:10208) records no clear: the campaign's write is
+// rolled back with the rest of the request. Through server::answer, the hosts' lifecycle.
+NATIVE_TEST("campaign/refused-mission-end-records-no-clear") {
+    ScratchServer s(t.rand_u64());
+    if (!s.ok) return;
+    AsLiveServer live(s);
+    // mc00_010: the one mission a new player has listed
+    u32 battle = s.id("master_mission", "mc00_010");
+    t.expect_eq(answer(start_req(battle), {}).error_code, 0u, "MissionStart");
+    config().fail = "MissionEnd:10208";
+    Reply r = answer(end_req(battle), {});
+    t.expect_eq(r.error_code, (u32)ErrorCode::kItemUnusable, "MissionEnd refused");
+    t.expect_eq(s.sv.st.one("select count(*) from campaign_clear where mission_id = ?", {battle}), (int64_t)0, "no clear recorded");
+    t.expect_eq(listed_clear(active_mission_list_msgpack(), battle), false, "nor listed as cleared");
+}
+
+// The progress is the state DB's: a second server (another state) doesn't see the first one's
+// clears (the campaign kept a copy loaded once per process).
+NATIVE_TEST("campaign/progress-follows-the-state-db") {
+    u32 battle = 0;
+    {
+        ScratchServer a(t.rand_u64());
+        if (!a.ok) return;
+        AsLiveServer live(a);
+        battle = a.id("master_mission", "mc00_010");  // listed for a new player
+        answer(start_req(battle), {});
+        t.expect_eq(answer(end_req(battle), {}).error_code, 0u, "MissionEnd on the first state");
+        t.expect_eq(listed_clear(active_mission_list_msgpack(), battle), true, "listed as cleared there");
+    }
+    ScratchServer b(t.rand_u64());
+    if (!b.ok) return;
+    AsLiveServer live(b);
+    t.expect_eq(listed_clear(active_mission_list_msgpack(), battle), false, "not cleared on a fresh state");
 }
 
 }  // namespace soa::server::campaign

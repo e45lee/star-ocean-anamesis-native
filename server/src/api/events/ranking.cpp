@@ -16,7 +16,9 @@
 // The group dates are moved by the calendar's whole years (events::client_years), as the event
 // module moves them in the client's copy, and compared with the clock.
 #include <algorithm>
+#include <charconv>
 #include <string>
+#include <system_error>
 #include <vector>
 
 #include "api/events/event_extras.h"  // kMissionTypeEvent
@@ -137,7 +139,10 @@ Value event_ranking_info(Ctx& ctx, const Row& score_row) {
     for (size_t begin = 0; begin < stored.size();) {
         size_t end = stored.find(',', begin);
         if (end == std::string::npos) end = stored.size();
-        if (end > begin) roles.push_back((u32)std::stoul(stored.substr(begin, end - begin)));
+        u32 role = 0;
+        auto parsed = std::from_chars(stored.data() + begin, stored.data() + end, role);
+        if (end > begin && parsed.ec == std::errc() && parsed.ptr == stored.data() + end) roles.push_back(role);
+        else if (end > begin) LOGW("server", "event ranking: stored role \"%s\" isn't a number: skipped", stored.substr(begin, end - begin).c_str());
         begin = end + 1;
     }
     // (b) a slot is the player's own when party_player_idN is the player and _validN is set (the own

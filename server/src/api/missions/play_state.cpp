@@ -212,7 +212,7 @@ std::vector<u8> mission_talk(ext::Ctx& ctx, const Request& req) {
         ctx.st.q(
             "update mission set cleared = 1, play_count = play_count + 1, clear_count = clear_count + 1, "
             "first_clear_at = ifnull(first_clear_at, ?) where mission_id = ?",
-            {clock_now(), talk.mission});
+            {ctx.now(), talk.mission});
     }
     return play_mission_answer(ctx, req);
 }

@@ -21,7 +21,11 @@
 #   5. the log lines scripts read (tools/server_log_patterns.txt) are in the LOG* format strings;
 #   6. no "agent <name>" history notes in server/ code (describe the rule and its evidence instead);
 #   7. no tracked file names a server/ path that doesn't exist (the plans and docs/history/ aside);
-#   8. a README.md in server/src and every folder below it.
+#   8. a README.md in server/src and every folder below it;
+#   9. the handlers' clock: no clock_now(), time(nullptr) or event_now() read directly in the
+#      handlers' code (server/src/api/, core/rewards.cpp, core/stub.cpp; their tests aside): they
+#      use their ext::Ctx's now() / event_now(), the clock a test sets (ctx.test). A line may opt
+#      out with a `clock-ok:` comment saying why.
 # Exit 1 on any finding; --report prints them and exits 0 except for 4 and 5 (lost evidence or log
 # lines always fail). --enforce (the default since R19) is still accepted. See server/README.md
 # "Comment conventions".
@@ -107,6 +111,17 @@ while read -r d; do
   if [ ! -f "$d/README.md" ]; then note "no README.md in $d"; nr=1; fi
 done < <(find server/src -type d)
 [ $nr = 0 ] && note "every server/src folder has a README.md" || findings=$((findings + 1))
+
+echo "== 9. the handlers' clock (ext::Ctx::now)"
+direct=$(git ls-files -- 'server/src/api/*.cpp' 'server/src/api/*.h' server/src/core/rewards.cpp server/src/core/stub.cpp | grep -v '_tests\.cpp$' |
+  xargs grep -nE '(^|[^A-Za-z0-9_.>])(clock_now\(\)|time\((nullptr|NULL|0)\)|event_now\(\))' 2>/dev/null | grep -v 'clock-ok:' || true)
+if [ -n "$direct" ]; then
+  note "a direct clock read in a handler (use ctx.now() / ctx.event_now()): $(echo "$direct" | wc -l)"
+  echo "$direct" | head -20 | sed 's/^/    /'
+  findings=$((findings + 1))
+else
+  note "the handlers read the clock through their ext::Ctx"
+fi
 
 echo "== check_server_docs: $findings finding(s)$([ $fail = 1 ] && echo ', evidence or log lines lost')"
 [ $fail = 1 ] && exit 1

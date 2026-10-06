@@ -258,6 +258,28 @@ NATIVE_TEST("cdn/served-master") {
     remove_tree(dir);
 }
 
+// The CDN's dates are the server clock's (docs/code-review-2026-10-06.md S3): with the clock seam
+// at 2040-07-20 (set_clock_source, the replay's and the tests' seam), a served master built without
+// a time of its own is the one built at that time. (Its own clock read the wall clock plus
+// --clock's offset, past the seam.)
+NATIVE_TEST("cdn/served-master-server-clock") {
+    std::string master = need(t, "data/basmaster-3.7.0.sqlite3");
+    if (master.empty()) return;
+    std::string dir = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-clock";
+    mkdir(dir.c_str(), 0755);
+    static int64_t at = 0;
+    at = local_time(2040, 7, 20);
+    std::string want, got;
+    uint64_t size = 0;
+    cdn::make_served_master(master, dir + "/at.sqlite3", true, at, &want, &size);
+    set_clock_source([] { return at; });
+    cdn::make_served_master(master, dir + "/now.sqlite3", true, 0, &got, &size);
+    set_clock_source(nullptr);
+    t.expect_eq(want.empty(), false, "built");
+    t.expect_eq(got, want, "the server clock's time");
+    remove_tree(dir);
+}
+
 // A small synthetic download: version.bin, two manifests, three members; the served tree.
 NATIVE_TEST("cdn/tree") {
     std::string root = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-tree";

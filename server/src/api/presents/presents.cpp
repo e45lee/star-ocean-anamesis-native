@@ -72,7 +72,7 @@ bool receive_present(ext::Ctx& ctx, u64 present_id, Received& added) {
     });
     if (!open) return false;
     grant(ctx, content, added.items, added.stocks, added.characters);
-    ctx.st.q("update presents set received_at = ? where id = ?", {clock_now(), present_id});
+    ctx.st.q("update presents set received_at = ? where id = ?", {ctx.now(), present_id});
     return true;
 }
 

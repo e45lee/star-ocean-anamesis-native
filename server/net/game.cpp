@@ -10,6 +10,7 @@
 #include <optional>
 
 #include "ninja/ninja_ref.h"
+#include "packet_log.h"
 #include "soaserver/log.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/server.h"
@@ -82,17 +83,6 @@ std::vector<uint8_t> login_result_body(const std::vector<uint8_t>& body) {
     if (const Value* v = pl->find("name")) legacy["Name"] = *v;
     root["Player"] = legacy;
     return mp_encode(root);
-}
-
-// The top-level keys of a response's data map (packet log).
-std::string data_keys(const std::vector<uint8_t>& msgpack) {
-    Value v = mp_decode(msgpack);
-    const Value* d = v.type == Value::Map ? v.find("data") : nullptr;
-    std::string s;
-    if (d && d->type == Value::Map)
-        for (auto& e : d->map) s += (s.empty() ? "" : ",") + e.first;
-    const Value* st = v.type == Value::Map ? v.find("status") : nullptr;
-    return "data{" + s + "} status=" + (st ? std::to_string(st->type == Value::Int ? st->i : (int64_t)st->u) : "-");
 }
 
 }  // namespace
@@ -188,7 +178,7 @@ std::string GameServer::random_hex(size_t n) {
 void GameServer::log(const std::string& line) {
     NLOG(Debug, "%s", line.c_str());
     if (!log_) return;
-    fprintf(log_, "%s %s\n", format_time(time(nullptr)).c_str(), line.c_str());
+    fprintf(log_, "%s %s\n", log_stamp(time(nullptr)).c_str(), line.c_str());
     fflush(log_);
 }
 
@@ -269,10 +259,7 @@ void GameServer::send(Conn& c, uint32_t fid, uint32_t counter, bool encrypt, con
     std::vector<uint8_t> pkt = encode_packet(p);
     out->insert(out->end(), pkt.begin(), pkt.end());
     const char* nm = fid_name(fid);
-    char fids[16];
-    snprintf(fids, sizeof fids, "%08x", fid);
-    log(std::string("  < ") + (nm ? nm : "?") + " fid=" + fids + " " + alg + " plain=" + std::to_string(plain.size()) +
-        " packet=" + std::to_string(pkt.size()) + (what && *what ? " " : "") + (what ? what : ""));
+    log(reply_line(nm ? nm : "?", fid, alg, plain.size(), pkt.size(), what ? what : ""));
 }
 
 void GameServer::refuse(uint64_t id, Conn& c, uint32_t fid, uint32_t counter, int64_t status, const std::string& why, std::vector<uint8_t>* out) {
@@ -287,9 +274,7 @@ void GameServer::refuse(uint64_t id, Conn& c, uint32_t fid, uint32_t counter, in
 void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vector<uint8_t>* out) {
     uint64_t seq = ++seq_;
     const WireApi* api = api_by_fid(p.fid);
-    char fids[16];
-    snprintf(fids, sizeof fids, "%08x", p.fid);
-    std::string head = "conn " + std::to_string(id) + " #" + std::to_string(seq) + " > " + (api ? api->name : "?") + " fid=" + fids;
+    std::string head = request_head(id, seq, api ? api->name : "?", p.fid);
     if (!api) {
         log(head + " unknown FunctionID");
         return refuse(id, c, p.fid, p.counter, kStatusCommError, "unknown FunctionID", out);
@@ -345,7 +330,7 @@ void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vecto
         log_file(std::to_string(seq) + "-" + api->name + ".bin", plain);
         return refuse(id, c, p.fid, p.counter, kStatusCommError, "can't decode: " + err, out);
     }
-    log(head + " " + alg + " plain=" + std::to_string(plain.size()) + " method=" + d.req.method + " args: " + d.args);
+    log(request_line(head, alg, plain.size(), d.req.method, d.args));
     log_file(std::to_string(seq) + "-" + api->name + ".bin", plain);
     if (!d.battle_log.empty()) log_file(std::to_string(seq) + "-" + api->name + "-battle_log.msgp", d.battle_log);
 

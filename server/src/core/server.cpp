@@ -9,8 +9,10 @@
 #include <sys/stat.h>
 
 #include <cstdlib>
+#include <atomic>
 #include <ctime>
 #include <mutex>
+#include <thread>
 
 #include "api/player/player_info.h"  // base_data: the refusal's answer
 #include "core/errors.h"  // the refused commit
@@ -45,7 +47,7 @@ using ext::body;  // core/response.cpp
 
 // ---- the server (core/server.h) -------------------------------------------------------------
 bool Server::init() {
-    if (config().has_clock) set_clock_offset(config().clock_offset);  // --clock
+    use_configured_clock();  // --clock
     // --master, the repo's data/basmaster-3.7.0.sqlite3, else derived from the game files (soaserver/master_source.h)
     std::string master = first_existing({master_source::resolve()});
     if (master.empty() || !m.open(master, true)) {
@@ -146,11 +148,15 @@ bool Server::handle(u32 fid, std::vector<u8>& out) {
 
 bool Server::handle_request(u32 fid, RequestContext& rc, std::vector<u8>& out) {
     ext::Ctx ctx = make_ctx(rc);
-    st.exec("begin");
+    // Every statement of the request counts: one that fails (a CHECK or foreign key, a STRICT
+    // type, a misspelt column, SQLITE_BUSY; logged by Sql) fails the request (below).
+    const u64 errors_before = sql::statement_errors();
+    const bool begun = st.exec("begin");
     auto it = pending.find(fid);
     const char* method = it != pending.end() ? it->second.method.c_str() : "?";
     u32 forced = it != pending.end() ? forced_error(it->second.method) : 0;
-    bool ok = forced ? false : dispatch(ctx, fid, out);
+    // Without the transaction the handler would write outside one (autocommit): not run.
+    bool ok = forced || !begun ? false : dispatch(ctx, fid, out);
     if (forced) rc.refusal = forced;
     if (!rc.refusal) {
         // Extension modules' additions to every answered response (ext::OnResponse), in the
@@ -161,19 +167,24 @@ bool Server::handle_request(u32 fid, RequestContext& rc, std::vector<u8>& out) {
                 if (ext::on_response(ctx, it->second, *d)) out = mp_encode(v);
             }
         }
-        if (!ok) {
+        const bool failed = !begun || sql::statement_errors() != errors_before;
+        if (!ok && !failed) {
             st.exec("rollback");
             errors[fid] = 0;
             return false;
         }
-        if (st.exec("commit")) {
+        if (!failed && st.exec("commit")) {
             errors[fid] = 0;
             return true;
         }
-        // (d) A commit the state DB refuses (a deferred foreign key violated by the request,
-        // PLAN-schema 5 "Risks"; logged by Sql::exec): nothing of the request is kept, and it is
-        // refused as the generic 10208.
-        LOGE("server", "fid %08x (%s): the state DB refused the commit", fid, method);
+        // (d) A request the state DB failed: a statement of it failed (or its transaction didn't
+        // begin), or the DB refused the commit (a deferred foreign key violated by the request,
+        // PLAN-schema 5 "Risks"); each logged by Sql::exec / Sql::q. Nothing of the request is kept, and it is
+        // refused as the generic 10208 (docs/server-rules.md#refusals: a code >= 10000 without an
+        // ErrKind row is the client's one-button dialog; the "サーバ内部エラー" codes 2001.. are
+        // below 10000, and what the client's ErrKind does with them isn't checked).
+        if (failed) LOGE("server", "fid %08x (%s): a statement of the request failed: rolled back", fid, method);
+        else LOGE("server", "fid %08x (%s): the state DB refused the commit", fid, method);
         rc.refusal = (u32)ErrorCode::kItemUnusable;
     }
     st.exec("rollback");
@@ -183,6 +194,22 @@ bool Server::handle_request(u32 fid, RequestContext& rc, std::vector<u8>& out) {
     out = body(base_data(ctx));
     st.exec("commit");
     return true;
+}
+
+bool Server::transact(const std::function<void(ext::Ctx&)>& fn) {
+    const u64 errors_before = sql::statement_errors();
+    if (!st.exec("begin")) {
+        LOGE("server", "a server transaction didn't begin: not run");
+        return false;
+    }
+    RequestContext rc = new_request();
+    ext::Ctx c = make_ctx(rc);
+    fn(c);
+    // As a request: a failed statement (or a refusal set through the Ctx) keeps nothing.
+    if (!rc.refusal && sql::statement_errors() == errors_before && st.exec("commit")) return true;
+    st.exec("rollback");
+    LOGE("server", "a server transaction failed: rolled back");
+    return false;
 }
 
 bool Server::dispatch(ext::Ctx& ctx, u32 fid, std::vector<u8>& out) {
@@ -199,27 +226,53 @@ bool Server::dispatch(ext::Ctx& ctx, u32 fid, std::vector<u8>& out) {
 
 namespace {
 
-Server* g_server = nullptr;  // the live server (soa's in-process route, soa-server)
+// The live server (soa's in-process route, soa-server): made once, by the first thread that asks
+// (std::call_once; both hosts ask from more than one thread), and kept for the process.
+std::atomic<Server*> g_server{nullptr};
+std::atomic<Server*> g_test_server{nullptr};  // set_live_server_for_test
 
 Server* server() {
-    if (!g_server) {
-        g_server = new Server();
-        g_server->ok = g_server->init();
-    }
-    return g_server->ok ? g_server : nullptr;
+    if (Server* t = g_test_server.load()) return t;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        Server* s = new Server();
+        s->ok = s->init();
+        g_server.store(s);
+    });
+    Server* s = g_server.load();
+    return s && s->ok ? s : nullptr;
 }
 
+// The live server if it has been opened (no lazy init), nullptr otherwise.
+Server* live_server() {
+    if (Server* t = g_test_server.load()) return t;
+    Server* s = g_server.load();
+    return s && s->ok ? s : nullptr;
+}
+
+// The server's lock, held by this thread: the thread recorded while it holds it, so that a
+// handler calling back into the live server (ext::with_live_server) is an error, not a deadlock
+// (the lock isn't recursive).
+struct Held {
+    Server& s;
+    std::lock_guard<std::mutex> l;
+    explicit Held(Server& server) : s(server), l(server.mu) { s.holder.store(std::this_thread::get_id()); }
+    ~Held() { s.holder.store(std::thread::id()); }
+};
+
 }  // namespace
+
+Server* set_live_server_for_test(Server* s) { return g_test_server.exchange(s); }
 
 bool enabled() { return config().enabled; }  // soa: --server inproc, the default
 
 EventTime event_now() {
-    Server* s = g_server && g_server->ok ? g_server : nullptr;
+    Server* s = live_server();
     return s ? event_clock_of(s->m.h) : clock_as_calendar(clock_now());
 }
 std::string ext::server_master_path() {
     if (g_master_override) return *g_master_override;
-    Server* s = g_server && g_server->ok ? g_server : nullptr;
+    Server* s = live_server();
     const char* f = s && s->m.h ? sqlite3_db_filename(s->m.h, "main") : nullptr;
     return f ? f : "";
 }
@@ -227,13 +280,13 @@ bool ext::with_live_server(const std::function<void(ext::Ctx&)>& fn) {
     if (!enabled()) return false;
     Server* s = server();
     if (!s) return false;
-    std::lock_guard<std::mutex> l(s->mu);
-    s->st.exec("begin");
-    RequestContext rc = s->new_request();
-    ext::Ctx c = s->make_ctx(rc);
-    fn(c);
-    s->st.exec("commit");
-    return true;
+    if (s->holder.load() == std::this_thread::get_id()) {
+        // (a handler, or a hook inside a request: it has the request's own ext::Ctx)
+        LOGE("server", "ext::with_live_server called inside a request (the server's lock is held): not run");
+        return false;
+    }
+    Held held(*s);
+    return s->transact(fn);
 }
 
 // A request arrived (soa: port/src/native/api/server_adapters.cpp captures FakeApiCaller's
@@ -285,17 +338,18 @@ bool logged_in() {
     return s->logged_in;
 }
 u32 error_code(u32 fid) {
-    if (!enabled() || !g_server || !g_server->ok) return 0;
-    std::lock_guard<std::mutex> l(g_server->mu);
-    auto it = g_server->errors.find(fid);
-    return it == g_server->errors.end() ? 0 : it->second;
+    Server* s = live_server();
+    if (!enabled() || !s) return 0;
+    std::lock_guard<std::mutex> l(s->mu);
+    auto it = s->errors.find(fid);
+    return it == s->errors.end() ? 0 : it->second;
 }
 
 bool handle(u32 fid, std::vector<u8>& out) {
     if (!enabled()) return false;
     Server* s = server();
     if (!s) return false;
-    std::lock_guard<std::mutex> l(s->mu);
+    Held held(*s);
     return s->handle(fid, out);
 }
 bool handle(u32 fid, const std::string&, std::vector<u8>& out) { return handle(fid, out); }

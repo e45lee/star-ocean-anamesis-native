@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "api/campaign/campaign.h"
-#include "soaserver/server.h"  // clock_now
+#include "soaserver/server.h"  // format_time
 
 namespace soa::server::campaign {
 namespace {
@@ -21,10 +21,8 @@ using MissionsBy = std::map<u32, std::vector<const Mission*>>;
 // (a) master_* opened_at / closed_at ("YYYY-MM-DD hh:mm:ss", JST in the data; compared as text
 // against the current local time, which is exact to the day). Empty = no limit. A variant of
 // core/time.h's open_at with its own semantics (a string compare), kept apart on purpose.
-bool in_window(const std::string& opened, const std::string& closed) {
-    char now[32];
-    time_t t = (time_t)clock_now().v;  // the server clock (--clock)
-    strftime(now, sizeof now, "%Y-%m-%d %H:%M:%S", localtime(&t));
+bool in_window(const State& s, const std::string& opened, const std::string& closed) {
+    const std::string now = format_time(s.now.v);  // the server clock (--clock; the request's)
     if (!opened.empty() && opened > now) return false;
     if (!closed.empty() && closed < now) return false;
     return true;
@@ -66,8 +64,8 @@ bool world_map_available(const Master& m, const State& s, const Mission& mission
     if (cell == m.cells.end()) return false;
     auto map = m.world_maps.find(cell->second.map);
     if (map == m.world_maps.end()) return false;
-    if (!in_window(map->second.opened, map->second.closed) || !in_window(cell->second.opened, cell->second.closed) ||
-        !in_window(mission.opened, mission.closed))
+    if (!in_window(s, map->second.opened, map->second.closed) || !in_window(s, cell->second.opened, cell->second.closed) ||
+        !in_window(s, mission.opened, mission.closed))
         return false;
     if (!group_open(m, s, map->second.episode, mission.group)) return false;
     if (mission.unlock && !s.cleared.count(mission.unlock)) return false;
@@ -96,7 +94,7 @@ bool available(const Master& m, const State& s, const Mission& mission) {
     if (area == m.areas.end()) return false;
     const std::string& area_label = area->second.label;
     if (area_label.rfind("planet", 0) != 0 || area_label.rfind("planet98", 0) == 0 || area_label.rfind("planet99", 0) == 0) return false;
-    if (!in_window(area->second.opened, area->second.closed) || !in_window(mission.opened, mission.closed)) return false;
+    if (!in_window(s, area->second.opened, area->second.closed) || !in_window(s, mission.opened, mission.closed)) return false;
     if (mission.unlock && !s.cleared.count(mission.unlock)) return false;
     if (mission.visible && !s.cleared.count(mission.visible)) return false;
     return true;

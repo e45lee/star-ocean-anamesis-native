@@ -23,7 +23,7 @@ struct Exit {
 };
 // soa's set_clock (port/src/core/options.cpp, and the server library's: the same rule).
 bool old_set_clock(soa::server::ServerConfig& o, const std::string& s) {
-    int64_t t = soa::cli::parse_clock(s);
+    int64_t t = soa::server::parse_clock(s);
     if (!t) return false;
     o.has_clock = true;
     o.clock = t;

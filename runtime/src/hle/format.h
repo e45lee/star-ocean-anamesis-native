@@ -1,5 +1,7 @@
 #pragma once
 // printf/scanf formatting for guest varargs (register-passed or AArch64 va_list).
+#include <time.h>
+
 #include <string>
 #include <vector>
 
@@ -88,8 +90,11 @@ std::wstring guest_wformat(const wchar_t* fmt, VaSource& va);
 // Collects the pointer arguments of a scanf format (at most 32).
 std::vector<u64> scanf_args(const char* fmt, VaSource& va);
 // The guest's scanf format for the host's scanf: the guest's `long` is 64-bit (LP64); on Windows
-// (LLP64) an `l` integer conversion (%ld %li %lo %lu %lx %lX %ln) becomes `ll`. Unchanged elsewhere
-// (`win`: force the translation, for the tests on Linux).
+// (LLP64) an `l` integer conversion (%ld %li %lo %lu %lx %lX %ln) becomes `ll`, and so do `z`, `j`
+// and `t` (64-bit on both, spelled `ll` for every CRT). Unchanged elsewhere (`win`: force the
+// translation, for the tests on Linux). Not translated: `%ls` / `%lc` / `%l[` (the guest's wchar_t
+// is 32-bit, Windows' 16-bit; libSOA's format strings have none) and `%Lf` / `%Lg` (the guest's
+// long double is binary128, the host's x87 80-bit: on both hosts; libSOA has them as libc++'s).
 std::string host_scanf_format(const char* fmt, bool win = WIN_HOST);
 // The guest's rand(): bionic's RAND_MAX is 0x7fffffff. Linux: the host's (glibc: the same
 // TYPE_3 additive generator, seed 1). Windows, whose rand() is 15-bit: that generator here (the
@@ -98,5 +103,13 @@ std::string host_scanf_format(const char* fmt, bool win = WIN_HOST);
 // returning 0.
 s32 guest_rand();
 s32 glibc_random(bool reset = false);
+
+// strftime's format for a C89-only C runtime (msvcrt.dll, the Windows build's: it has no %F, %T,
+// %D, %R, %e, %u, %V, %G, %g, %C, %h, %n, %t, %k, %l, %P, %s, %r, numeric %z, the E / O modifiers
+// or glibc's -, _, 0 flags, and returns 0 for a format with any of them; bionic has them all). The
+// conversions it lacks are replaced by their text for t (gmtoff: seconds east of UTC, as bionic's
+// tm_gmtoff); the rest are kept, and literal '%' in that text is doubled. Used by the guest's
+// strftime on Windows (libc_win32.cpp); tested against glibc's strftime (hle/libc-strftime-c89).
+std::string strftime_c89_format(const char* fmt, const struct tm& t, long gmtoff);
 
 }  // namespace soa

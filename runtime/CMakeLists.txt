@@ -30,6 +30,7 @@ set(SOA_RUNTIME_DIR ${CMAKE_CURRENT_LIST_DIR})
 file(GLOB_RECURSE SOA_RUNTIME_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/*.cpp)
 list(FILTER SOA_RUNTIME_SOURCES EXCLUDE REGEX "/src/app/")  # soaruntime_app below
 list(SORT SOA_RUNTIME_SOURCES)
+soa_link_in_init_order(SOA_RUNTIME_SOURCES)  # (MinGW: reversed, so they initialize in this order: cmake/init_order.cmake)
 
 # The runtime must not depend on its users: every quoted #include in runtime/ must name a file in
 # runtime/src (or next to the including file), or dynarmic. Nothing from port/, server/ or

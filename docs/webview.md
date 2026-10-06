@@ -207,7 +207,9 @@ Not tried in game:
 
 ### The render tool
 
-`build/webview/soa-webview-render PAGE OUT.png [--width W] [--height H] [--screen] [--scroll Y] [--url URL] [--map PREFIX=DIR] [--tap X:Y]`
+`build/webview/soa-webview-render PAGE OUT.png [--width W] [--height H] [--zoom Z] [--screen] [--scroll Y] [--url URL] [--map PREFIX=DIR]... [--tap X:Y]`
+
+`--help` lists the options (CLI11, as the other programs: common/include/soa/cli.h). Options may come before, between or after PAGE and OUT, `--width=810` works too; an unknown option, a `--width` / `--height` that isn't a whole number from 1, a `--zoom` that isn't a number or a `--tap` that isn't two whole numbers is an error (exit 2).
 
 It renders a local HTML file the way the web view would, at a view size in device pixels. For example, the terms at the notice board's size:
 

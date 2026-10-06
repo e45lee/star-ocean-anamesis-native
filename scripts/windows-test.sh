@@ -10,12 +10,15 @@
 #   viewer-boot    the viewer's boot (emulator-viewer/scripts/viewer_boot.sh): soa-viewer.exe
 #   shard-login    the tests/diff shard `login` on the three Windows targets (soa-emu.exe +
 #                  soa-server.exe, soa.exe --server + soa-server.exe, soa.exe in process); OUT/login/report.txt
+#   runtime-tests  soaruntime_tests.exe (the runtime's tests, the GDB stub's incl.), exit status 0
+#   native-order   soa.exe --list-native byte-identical to build/port/soa's: the natives, selftests and
+#                  test hooks register in the same order (static-initializer order: cmake/init_order.cmake)
 # Needs: build-win/ (scripts/build.sh --windows) and the stage's data, once:
 #   scripts/windows-stage.sh --phone --viewer     (C:\soa-win; SOA_WIN_STAGE=/mnt/X/DIR elsewhere)
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
-[ $# -eq 3 ] || { sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+[ $# -eq 3 ] || { sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 test=$1 out=$2 tmp=$3
 stage=${SOA_WIN_STAGE:-/mnt/c/soa-win}
 case $test in
@@ -23,6 +26,8 @@ case $test in
   seeded) targets="soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   viewer-boot) targets="soa-viewer" need="" ;;  # (its game: checked below)
   shard-login) targets="soa soa-emu soa-server" need="work/download-3.7.0 work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
+  native-order) targets="soa" need="" ;;
+  runtime-tests) targets="soaruntime_tests" need="" ;;
   *) echo "windows-test: unknown test $test" >&2; exit 2 ;;
 esac
 [ -f build-win/CMakeCache.txt ] || { echo "FAIL: no build-win/ (scripts/build.sh --windows)"; exit 1; }
@@ -38,6 +43,31 @@ scripts/build.sh --windows --target $targets > "$out/build-win.log" 2>&1 ||
   { tail -20 "$out/build-win.log"; echo "FAIL: the Windows build (see $out/build-win.log)"; exit 1; }
 scripts/windows-stage.sh --quick "$stage" > /dev/null
 case $test in
+  native-order)
+    [ -x build/port/soa ] || { echo "FAIL: no build/port/soa (scripts/build.sh)"; exit 1; }
+    build/port/soa --list-native > "$out/linux.txt" 2> /dev/null
+    (cd "$stage" && ./build-win/port/soa.exe --list-native 2> /dev/null) | tr -d '\r' > "$out/windows.txt"
+    [ -s "$out/linux.txt" ] || { echo "FAIL: build/port/soa --list-native printed nothing"; exit 1; }
+    if ! cmp -s "$out/linux.txt" "$out/windows.txt"; then
+      diff "$out/linux.txt" "$out/windows.txt" | head -20
+      echo "FAIL: soa.exe --list-native differs from Linux's ($out/{linux,windows}.txt): registration order (cmake/init_order.cmake)"
+      exit 1
+    fi
+    echo "PASS: soa.exe --list-native == Linux's ($(wc -l < "$out/linux.txt") natives, same order)" ;;
+  runtime-tests)
+    # (run in the stage; its /tmp is \tmp on the stage's drive, which it needs: mkdtemp there. The
+    # exit status covers the exit-time destructors.)
+    drive=$(printf '%s\n' "$stage" | cut -d/ -f1-3)
+    [ -d "$drive/tmp" ] || mkdir "$drive/tmp"
+    rc=0
+    (cd "$stage" && timeout -k 10 600 ./build-win/runtime/soaruntime_tests.exe) > "$out/soaruntime_tests.log" 2>&1 || rc=$?
+    grep -a "^FAIL" "$out/soaruntime_tests.log" | head -20
+    if [ "$rc" != 0 ]; then
+      tail -5 "$out/soaruntime_tests.log"
+      echo "FAIL: soaruntime_tests.exe exited $rc ($out/soaruntime_tests.log)"
+      exit 1
+    fi
+    echo "PASS: soaruntime_tests.exe ($(grep -ac '^ok' "$out/soaruntime_tests.log") checks)" ;;
   battle-gacha) exec control/run.py battle-gacha build-win/port/soa.exe "$out" "$tmp" ;;
   seeded) exec control/run.py seeded build-win/emulator/soa-emu.exe build-win/server/soa-server.exe "$out" ;;
   viewer-boot) exec emulator-viewer/scripts/viewer_boot.sh build-win/emulator-viewer/soa-viewer.exe "$out" ;;

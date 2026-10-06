@@ -5,7 +5,8 @@
 
 file(GLOB_RECURSE SOA_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 # Link order = static-initializer order = the order natives and selftests register in, and some
-# selftests depend on it (the zz_*_test.cpp files must register last). src/native/ is split into
+# selftests depend on it (the zz_*_test.cpp files must register last). (On MinGW initializers run
+# in reverse link order: the lists are linked reversed there, cmake/init_order.cmake.) src/native/ is split into
 # subsystem folders (src/native/README.md); sort its files by basename as if the folder were flat,
 # so the order doesn't depend on the folder layout.
 set(_soa_keyed "")
@@ -24,8 +25,13 @@ endforeach()
 # static-initializer order. CMake puts $<TARGET_OBJECTS> after a target's own objects, so they go
 # in through the link options, which come before the objects on the link line, and LINK_DEPENDS
 # relinks soa when they change.
+soa_link_in_init_order(SOA_SOURCES)
 add_executable(soa ${SOA_SOURCES})
 add_dependencies(soa soaruntime_objs)
+# (On MinGW the runtime's objects, linked first, therefore initialize after the port's; within each
+# the order is Linux's. Nothing depends on the order between the two: the runtime's static
+# registries (RUNTIME_TEST, which run_native_tests puts first itself; jni::add_class_installer,
+# used at static-init time only by port's webview_local.cpp) are its own.)
 target_link_options(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
 set_property(TARGET soa APPEND PROPERTY LINK_DEPENDS $<TARGET_OBJECTS:soaruntime_objs>)
 target_include_directories(soa PRIVATE src)

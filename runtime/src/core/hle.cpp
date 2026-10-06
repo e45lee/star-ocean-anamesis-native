@@ -22,6 +22,7 @@ void log_write(LogLevel lvl, const char* tag, const char* fmt, ...) {
     va_end(ap);
     std::lock_guard lk(g_log_mutex);
     fprintf(stderr, "%s/%s: %s\n", names[(int)lvl], tag, buf);
+    fflush(stderr);  // (stderr is unbuffered on every host; this keeps a log line whole if a host buffers it)
 }
 
 void fatal(const char* fmt, ...) {

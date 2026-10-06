@@ -25,6 +25,7 @@ endforeach()
 file(GLOB_RECURSE SOASERVER_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB _soaserver_tests CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp)
 list(APPEND SOASERVER_SOURCES ${_soaserver_tests})
+soa_link_in_init_order(SOASERVER_SOURCES)  # (MinGW: reversed, so the tests register in this order: cmake/init_order.cmake)
 
 add_library(soaserver STATIC ${SOASERVER_SOURCES})
 target_include_directories(soaserver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)

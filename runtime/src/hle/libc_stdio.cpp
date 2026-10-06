@@ -23,6 +23,7 @@
 #include "core/log.h"
 #include "core/vfs.h"
 #include "hle/format.h"
+#include "hle/host_file.h"
 
 namespace soa {
 namespace {
@@ -46,7 +47,7 @@ FILE* gfile(u64 p) {
 
 void th_fopen(Cpu& c) {
     std::string hp = host_path(arg_str(c, 0));
-    FILE* f = fopen(hp.c_str(), arg_str(c, 1));
+    FILE* f = hostfile::fopen(hp.c_str(), arg_str(c, 1));
 #ifdef _WIN32
     // Linux opens a directory for reading (reads then fail with EISDIR); the client tests its
     // download directory that way before the data check (fopen(".../files/", "rb")). Windows' CRT
@@ -289,14 +290,16 @@ void th_fstat(Cpu& c) {
 PATH1(access, access(p0.c_str(), (int)c.x(1)))
 PATH1(mkdir, mkdir(p0.c_str(), (mode_t)c.x(1)))
 PATH1(rmdir, rmdir(p0.c_str()))
-PATH1(unlink, unlink(p0.c_str()))
-PATH1(remove, remove(p0.c_str()))
+PATH1(unlink, hostfile::unlink(p0.c_str()))
+PATH1(remove, hostfile::remove(p0.c_str()))
 #ifndef _WIN32
 PATH1(utimes, utimes(p0.c_str(), (const struct timeval*)c.x(1)))
 #endif
 void th_rename(Cpu& c) {
     std::string a = host_path(arg_str(c, 0)), b = host_path(arg_str(c, 1));
-    ret(c, (u64)(s64)rename(a.c_str(), b.c_str()));
+    int r = rename(a.c_str(), b.c_str());  // (soa_rename on Windows: POSIX semantics, hle/host_file.h)
+    LOGT("io", "rename(%s, %s) = %d", arg_str(c, 0), arg_str(c, 1), r);
+    ret(c, (u64)(s64)r);
 }
 #ifndef _WIN32
 void th_readlink(Cpu& c) {

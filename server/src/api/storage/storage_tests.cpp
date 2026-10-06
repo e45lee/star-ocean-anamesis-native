@@ -7,6 +7,7 @@
 #include "core/errors.h"
 #include "core/request_context.h"
 #include "api/storage/storage.h"
+#include "soaserver/chash32.h"
 #include "soaserver/ext.h"
 #include "soaserver/native_test.h"
 
@@ -248,6 +249,35 @@ NATIVE_TEST("storage/one-time") {
         c.st.exec("commit");
     });
     if (!ran) return;
+}
+
+// The player's options (その他設定, api/settings/config.h) send equipment to the overflow box with
+// room in the inventory: is_one_time_storage the gacha's, is_one_time_storage_except_gacha the rest.
+NATIVE_TEST("storage/one-time-options") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        auto set = [&](const char* label, const char* v) {
+            const Handler* h = find("UpdateConfig");
+            Request r;
+            r.method = "UpdateConfig";
+            r.ints = {(u64)chash32(label), 4};
+            r.strs = {v};
+            if (h) (*h)(c, r);
+        };
+        using storage::EquipSource;
+        t.expect_eq(storage::to_one_time_storage(c, EquipSource::kGacha), false, "the defaults: the inventory");
+        set("is_one_time_storage", "true");
+        t.expect_eq(storage::to_one_time_storage(c, EquipSource::kGacha), true, "一時保管庫設定 on: the gacha's to the box");
+        t.expect_eq(storage::to_one_time_storage(c, EquipSource::kOther), false, "the rest still to the inventory");
+        set("is_one_time_storage_except_gacha", "true");
+        t.expect_eq(storage::to_one_time_storage(c, EquipSource::kOther), true, "the other option on: the rest to the box");
+        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+        c.grant(1, a_weapon(c), 1, items, stocks, chars);
+        t.expect_eq(items.arr.size(), (size_t)0, "a granted weapon went to the box");
+        t.expect_eq(c.st.one("select ifnull(sum(num), 0) from one_time_storage", {}), (int64_t)1, "in the box");
+        c.st.exec("rollback");
+    });
+    if (!ran) t.fail("no scratch server");
 }
 
 }  // namespace

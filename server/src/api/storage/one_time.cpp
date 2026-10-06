@@ -22,6 +22,7 @@
 #include <map>
 
 #include "api/player/player_info.h"  // player_id
+#include "api/settings/config.h"
 #include "api/storage/storage.h"
 #include "core/errors.h"
 #include "core/log.h"
@@ -37,11 +38,11 @@ namespace soa::server {
 namespace storage {
 
 bool to_one_time_storage(ext::Ctx& ctx, EquipSource source) {
-    // The player's options (その他設定 > 一時保管庫設定, GetConfig / UpdateConfig) plug in here:
-    // (b) with master_config is_one_time_storage on (CUIUtility::IsOneTimeStorageEnable) every gacha
-    // draw's equipment goes to the box, with is_one_time_storage_except_gacha on
-    // (IsOneTimeStorageExceptGachaEnable) every other source's. Not stored yet: only the full case.
-    (void)source;
+    // The player's options (その他設定, api/settings/config.h): (b) with master_config
+    // is_one_time_storage on (CUIUtility::IsOneTimeStorageEnable, 一時保管庫設定) every gacha draw's
+    // equipment goes to the box, with is_one_time_storage_except_gacha on
+    // (IsOneTimeStorageExceptGachaEnable) every other source's (the screen's texts).
+    if (settings::config_on(ctx, source == EquipSource::kGacha ? settings::kOneTimeStorage : settings::kOneTimeStorageExceptGacha)) return true;
     // (b) the inventory is full: the equipment count + 1 > item_stock (CItemNumWarning::IsWarningDraw)
     return inventory_count(ctx) >= item_stock(ctx);
 }

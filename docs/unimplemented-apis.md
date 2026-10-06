@@ -333,9 +333,9 @@ evidence against one replaces it and records why.
   drop type 0.
 - `storage_stock` is no longer the assumed 500 but 100 + 400 with the Galaxy Pass (client and master
   evidence); without `--galaxy-pass` a player now has 100 storage slots.
-- The その他設定 options that send equipment to the box always (is_one_time_storage,
-  is_one_time_storage_except_gacha) belong to the settings step: `storage::to_one_time_storage`
-  answers only the full case until they are stored.
+- The その他設定 options that send equipment to the box always (is_one_time_storage for the
+  gacha's, is_one_time_storage_except_gacha for the rest) are read by `storage::to_one_time_storage`
+  from the settings step's stored options (`settings::config_on`).
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

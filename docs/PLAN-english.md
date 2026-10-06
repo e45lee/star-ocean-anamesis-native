@@ -9,6 +9,8 @@ History:
 
 ## Decisions (the user, 2026-10-07)
 
+**M-Q2 decided (the user, 2026-10-07: "select the best local model and execute the plan"):** the engine is **Gemma 4 31B-it, QAT UD-Q4_K_XL, with the v2 prompt** (llama.cpp CUDA, work/tools/), chrF 44.9 in the blind trial (Claude Opus 44.4), for the UI/system text and the story. It needs the whole GPU (~22.5 GB): run the MT batches when no game sessions use the GPU; Gemma 4 26B-A4B (v2 prompt, 44.3, ~3x faster) is the fallback when VRAM is contended.
+
 | Q | Decision |
 |---|---|
 | Q9 | **Option C only**: the client's `CLanguage` switch (`--lang en`) plus a server that serves `-en` files, including a full English master. No B (no StringDB patch); A is not kept as a mode. |

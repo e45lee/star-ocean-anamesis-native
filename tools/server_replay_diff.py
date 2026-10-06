@@ -13,6 +13,8 @@ zone, from the repository root) by both, and compared:
      lines scripts read), byte-identical; tier 2, any other difference is printed, and must be
      declared in the commit message (server/PLAN-readability.md 4.1).
 Exit 0: identical; 2: only tier-2 log differences; 1: anything else differs (or a replay failed).
+A corpus whose options the parent build rejects ("... not expected": a new flag) while the
+new build replays it is reported NEW and not compared.
 """
 import argparse
 import difflib
@@ -140,6 +142,10 @@ def main():
         os.makedirs(os.path.join(work, name), exist_ok=True)
         procs = [start(bn, c, o) for bn, o in zip(bins, outs)]
         res = [p.communicate() for p in procs]
+        if procs[0].returncode and not procs[1].returncode and re.search(r"arguments? (was|were) not expected", res[0][0] or ""):
+            # a corpus for a flag the parent build doesn't have (a new feature): nothing to compare
+            print("NEW   %s: the parent build lacks an option of its options file; replayed by the new build only" % name)
+            continue
         if any(p.returncode for p in procs):
             for p, (o, _), bn in zip(procs, res, bins):
                 if p.returncode:

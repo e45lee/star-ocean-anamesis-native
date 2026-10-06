@@ -28,9 +28,10 @@ int parse_args(int argc, const char* const* argv, ViewerArgs& a, std::vector<std
         ->type_name("FILE")
         ->group(files);
     cli::add_download(app, a.download_dir,
-                      "serve builtin_data/ assets missing from the APKs from DIR, an online asset tree such as "
-                      "work/download-3.7.0 (as soa / soa-emu --download); off by default")
-        ->type_name("DIR")
+                      "serve builtin_data/ assets missing from the APKs from PATH, the online game's 3.7.0 download: the zip "
+                      "work/SOA-3.7.0-canonical-data.zip, read in place, or an extracted folder (as soa / soa-emu --download); "
+                      "off by default")
+        ->type_name("PATH")
         ->group(files);
     cli::add_download_prefer(app, a.download_prefer)->group(files);
     app::add_lib(app, a.lib_path, "the client library (default: extracted from config.arm64_v8a.apk into the data dir)")->group(files);

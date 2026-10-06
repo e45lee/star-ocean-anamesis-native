@@ -17,12 +17,12 @@ def make_zip(path, names):
 
 def test_top_folder():
     assert u.top_folder(["version.bin", "manifest/a", "B/c"]) == ""
-    assert u.top_folder(["download-3.7.0/version.bin", "download-3.7.0/B/c"]) == "download-3.7.0/"
+    assert u.top_folder(["SOA-data/version.bin", "SOA-data/B/c"]) == "SOA-data/"
     assert u.top_folder(["a/x", "b/y"]) == ""  # two top folders: taken as the tree itself
 
 
 def test_extract_flat_and_nested(tmp_path):
-    for layout, prefix in (("flat", ""), ("nested", "download-3.7.0/")):
+    for layout, prefix in (("flat", ""), ("nested", "SOA-data/")):
         z = tmp_path / f"{layout}.zip"
         make_zip(z, [prefix + "version.bin", prefix + "B/one.aif", prefix + "B/one.aif:Zone.Identifier"])
         dest = tmp_path / layout

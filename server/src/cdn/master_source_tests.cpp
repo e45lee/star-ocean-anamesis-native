@@ -1,6 +1,7 @@
 // Tests of the master's derivation from the game files (soaserver/master_source.h) and of the gacha
 // titles a packaged pools file takes from the master (master/gacha_pools.h name_from_master).
-// Server code, no guest counterpart. They read the 3.7.0 download (work/download-3.7.0), the 3.7.0
+// Server code, no guest counterpart. They read the 3.7.0 download (work/SOA-3.7.0-canonical-data.zip,
+// in place), the 3.7.0
 // APK (apk/) and data/ from the repo; a missing input fails the test, like cdn/'s.
 #include <sqlite3.h>
 #include <unistd.h>
@@ -12,6 +13,7 @@
 #include <vector>
 
 #include <soa/file_tree.h>
+#include <soa/install.h>
 #include <soa/paths.h>
 
 #include "cdn/files.h"
@@ -30,6 +32,15 @@ constexpr const char* kMasterSha1 = "ca6131f2984f8c14a75c715f92d36f9f66d1d8f1";
 std::string sha1_of(const std::string& path) {
     std::vector<uint8_t> d;
     if (!cdn::files::read_file(path, d)) return "";
+    cdn::files::Sha1 h;
+    h.add(d.data(), d.size());
+    return h.hex();
+}
+// The SHA-1 of the file `rel` of the download tree at `tree` (a folder or the zip).
+std::string sha1_in(const std::string& tree, const std::string& rel) {
+    auto t = FileTree::open(tree);
+    std::vector<uint8_t> d;
+    if (!t || !t->read(rel, d)) return "";
     cdn::files::Sha1 h;
     h.add(d.data(), d.size());
     return h.hex();
@@ -55,9 +66,9 @@ bool has_table(const std::string& db, const char* table) {
 // The download's master decrypts to the committed file, byte for byte; a second derivation reuses
 // the cached file; the APK's built-in master decrypts to an (older) SQLite master.
 NATIVE_TEST("cdn/master-source") {
-    std::string download = find_repo_file("work/download-3.7.0");
+    std::string download = find_repo_file(install::kRepoDownloadZip);
     std::string apk = find_repo_file("apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk");
-    if (download.empty()) return t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
+    if (download.empty()) return t.skip("%s not found (the 3.7.0 download: local data)", install::kRepoDownloadZip);
     std::string dir = soa::temp_dir() + "/soa-cdn-test-master-" + std::to_string(getpid());
     std::string err;
     bool reused = true;
@@ -93,8 +104,8 @@ NATIVE_TEST("cdn/master-source") {
 // The resolution rule with only an install-style download: --master unset and no repo master ->
 // derived into the data dir's master/ (config().data_root), then cached in config().master.
 NATIVE_TEST("cdn/master-source-resolve") {
-    std::string download = find_repo_file("work/download-3.7.0");
-    if (download.empty()) return t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
+    std::string download = find_repo_file(install::kRepoDownloadZip);
+    if (download.empty()) return t.skip("%s not found (the 3.7.0 download: local data)", install::kRepoDownloadZip);
     ServerConfig& c = config();
     ServerConfig saved = c;
     std::string root = soa::temp_dir() + "/soa-cdn-test-resolve-" + std::to_string(getpid());
@@ -104,8 +115,7 @@ NATIVE_TEST("cdn/master-source-resolve") {
     c.download_dir = download;
     master_source::reset();
     std::string p = master_source::resolve();
-    t.expect_eq(p,
-                root + "/master/basmaster-3.7.0-download-" + std::string(sha1_of(download + "/sqlite/basmaster.sqlite3")).substr(0, 12) + ".sqlite3",
+    t.expect_eq(p, root + "/master/basmaster-3.7.0-download-" + sha1_in(download, "sqlite/basmaster.sqlite3").substr(0, 12) + ".sqlite3",
                 "the derived master in DATA/master");
     t.expect_eq(c.master, p, "config().master set");
     t.expect_eq(sha1_of(p), std::string(kMasterSha1), "byte-identical to the committed master");
@@ -161,39 +171,41 @@ NATIVE_TEST("gacha/pools-name-from-master") {
     if (bad) t.fail("%d of %d titles differ", bad, n);
 }
 
-// The download as SOA-3.7.0-canonical-data.zip (stored, read in place) is the same tree as the
-// extracted folder: the same files, sampled files' bytes equal through locate() (a range of the zip)
-// and read(); the master derived from the zip is byte-identical too. (The whole CDN served from
-// either is compared by soa-server --cdn-check: README.md "Packaging".)
+// The download as SOA-3.7.0-canonical-data.zip (stored, read in place): a download tree whose
+// sampled entries are byte ranges of the zip (locate()) holding what read() gives; the master derived
+// from the zip is byte-identical to the committed one. (That a folder and a zip of the same files are
+// the same tree is common/tests/gamefiles_tests.cpp's; the whole CDN served from either is compared
+// by tools/server_cdn_check.sh with DOWNLOAD_B=a folder: README.md "Packaging".)
 NATIVE_TEST("cdn/download-zip") {
-    std::string folder = find_repo_file("work/download-3.7.0"), zip = find_repo_file("work/SOA-3.7.0-canonical-data.zip");
-    if (folder.empty() || zip.empty())
-        return t.skip("work/download-3.7.0 or work/SOA-3.7.0-canonical-data.zip not found (the 3.7.0 download: local data)");
+    std::string zip = find_repo_file(install::kRepoDownloadZip);
+    if (zip.empty()) return t.skip("%s not found (the 3.7.0 download: local data)", install::kRepoDownloadZip);
     std::string err;
-    auto a = FileTree::open(folder, &err), b = FileTree::open(zip, &err);
-    if (!a || !b) return t.fail("FileTree::open: %s", err.c_str());
+    auto b = FileTree::open(zip, &err);
+    if (!b) return t.fail("FileTree::open: %s", err.c_str());
     t.expect_eq(b->is_zip(), true, "the zip opens as a zip");
     t.expect_eq(is_download_tree(*b), true, "the zip is a download tree");
-    std::vector<std::string> fa = a->files(), fb = b->files();
-    if (fa != fb) t.fail("the file lists differ (%zu in the folder, %zu in the zip)", fa.size(), fb.size());
+    std::vector<std::string> fb = b->files();
+    if (fb.size() < 26000) t.fail("only %zu files in the zip", fb.size());
     if (fb.empty()) return;
     int checked = 0;
     for (int i = 0; i < 200; i++) {
         const std::string& rel = fb[t.rand_u64() % fb.size()];
-        FileTree::Loc la, lb;
-        std::vector<uint8_t> da, db;
-        if (!a->locate(rel, &la) || !b->locate(rel, &lb) || la.size != lb.size) {
-            t.fail("%s: not in both, or sizes differ", rel.c_str());
+        FileTree::Loc lb;
+        std::vector<uint8_t> db;
+        if (!b->locate(rel, &lb) || !b->read(rel, db) || db.size() != lb.size) {
+            t.fail("%s: locate() / read() disagree", rel.c_str());
             continue;
         }
-        if (!a->read(rel, da) || !b->read(rel, db) || da != db) t.fail("%s: read() differs", rel.c_str());
-        if (lb.in_place) {
-            std::vector<uint8_t> r(lb.size);
-            FILE* f = fopen(lb.file.c_str(), "rb");
-            bool ok = f && fseeko(f, (off_t)lb.offset, SEEK_SET) == 0 && fread(r.data(), 1, r.size(), f) == r.size();
-            if (f) fclose(f);
-            if (!ok || r != da) t.fail("%s: the zip's range at %llu differs", rel.c_str(), (unsigned long long)lb.offset);
-        }
+        if (!lb.in_place) t.fail("%s: not stored (the canonical zip stores every entry)", rel.c_str());
+        std::vector<uint8_t> r(lb.size);
+        FILE* f = fopen(lb.file.c_str(), "rb");
+#ifdef _WIN32
+        bool ok = f && _fseeki64(f, (long long)lb.offset, SEEK_SET) == 0 && fread(r.data(), 1, r.size(), f) == r.size();
+#else
+        bool ok = f && fseeko(f, (off_t)lb.offset, SEEK_SET) == 0 && fread(r.data(), 1, r.size(), f) == r.size();
+#endif
+        if (f) fclose(f);
+        if (!ok || r != db) t.fail("%s: the zip's range at %llu differs from read()", rel.c_str(), (unsigned long long)lb.offset);
         checked++;
     }
     std::string dir = soa::temp_dir() + "/soa-cdn-test-zipmaster-" + std::to_string(getpid());
@@ -202,7 +214,7 @@ NATIVE_TEST("cdn/download-zip") {
     else t.expect_eq(sha1_of(p), std::string(kMasterSha1), "the master derived from the zip");
     remove(p.c_str());
     rmdir(dir.c_str());
-    fprintf(stderr, "    %zu files in both; %d sampled\n", fb.size(), checked);
+    fprintf(stderr, "    %zu files in the zip; %d sampled\n", fb.size(), checked);
 }
 
 }  // namespace soa::server

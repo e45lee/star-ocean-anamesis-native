@@ -35,13 +35,13 @@ int install_tests() {
     fs::create_directories(root / "game/my-data/manifest");
     check(is_download_dir(r + "/game/my-data"), "version.bin + manifest/ + sqlite/basmaster.sqlite3: a download tree");
     check(find_download_dir({r, r + "/game"}) == r + "/game/my-data", "found in a subfolder of game/, any name");
-    // download-3.7.0 beside the program wins (the program's folder is searched first)
-    touch(root / "download-3.7.0/version.bin");
-    touch(root / "download-3.7.0/sqlite/basmaster.sqlite3");
-    fs::create_directories(root / "download-3.7.0/manifest");
-    check(find_download_dir({r, r + "/game"}) == r + "/download-3.7.0", "the program's folder first");
+    // a tree beside the program wins (the program's folder is searched first)
+    touch(root / "beside/version.bin");
+    touch(root / "beside/sqlite/basmaster.sqlite3");
+    fs::create_directories(root / "beside/manifest");
+    check(find_download_dir({r, r + "/game"}) == r + "/beside", "the program's folder first");
     // the tree extracted straight into game/ (the canonical zip's layout: no top folder)
-    fs::remove_all(root / "download-3.7.0");
+    fs::remove_all(root / "beside");
     // (rename, not fs::rename: on Windows `rename` is posix_compat.h's, which std::filesystem's can't share a name with)
     auto mv = [](const fs::path& a, const fs::path& b) { check(rename(a.string().c_str(), b.string().c_str()) == 0, "rename " + a.string()); };
     mv(root / "game/my-data", root / "g2");

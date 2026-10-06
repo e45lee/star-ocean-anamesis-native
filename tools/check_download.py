@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Validate a downloaded 3.7.0 asset folder against its own manifests and version.bin.
+"""Validate a 3.7.0 download (its zip or a folder) against its own manifests and version.bin.
 
-  .venv/bin/python tools/check_download.py DIR [--manifest {all,Bulk,Individual,ep1,ep2,ep3}]
+  .venv/bin/python tools/check_download.py [DIR] [--manifest {all,Bulk,Individual,ep1,ep2,ep3}]
         [--version-bin FILE] [--jobs N] [--quick] [--json OUT] [--max-list N]
 
-DIR is either the unpacked CDN download (work/download-3.7.0) or a client's storage directory
-(a phone's data/files/download, e.g. work/phone-3.7.0/data/files/download): both have the same
+DIR is the download: by default the checkout's work/SOA-3.7.0-canonical-data.zip, read in place
+(soa_save/download_tree.py: its stored entries are byte ranges of the zip; nothing is extracted),
+or any folder or zip holding the tree: an extracted download, or a client's storage directory (a
+phone's data/files/download, e.g. work/phone-3.7.0/data/files/download). All have the same
 layout (docs/online-server.md "Asset delivery", server/README.md "The CDN"):
   version.bin                                   MessagePack {revision, version, appliversion,
                                                 assets: name -> {md5, size, time, parentHash, flags,
@@ -48,7 +50,6 @@ in --jobs processes (default: the CPU count). --json OUT writes every finding as
 """
 import argparse
 import concurrent.futures as cf
-import glob
 import hashlib
 import json
 import os
@@ -63,6 +64,7 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from soa_save.adld import IV, _digits16, chash32  # noqa: E402
+from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 CANONICAL = os.path.join(ROOT, "data", "version-3.7.0.bin")
 MANIFESTS = ["Bulk", "Individual", "ep1", "ep2", "ep3"]
@@ -73,9 +75,23 @@ PROBLEM_KINDS = ["missing", "size", "hash", "enc", "conflict", "duplicate", "bun
 WARNING_KINDS = ["unbundled", "unindexed"]
 
 
-def load_msgpack(path):
+def load_msgpack(path, tree=None):
+    """A MessagePack file: a member of `tree` when given, else a file path."""
+    if tree is not None:
+        return msgpack.unpackb(tree.read(path), raw=False, strict_map_key=False)
     with open(path, "rb") as f:
         return msgpack.unpackb(f.read(), raw=False, strict_map_key=False)
+
+
+_TREES = {}
+
+
+def _tree(path):
+    """The DownloadTree at `path`, opened once per process (the reader processes open their own)."""
+    key = (os.getpid(), path)  # (a forked reader opens its own)
+    if key not in _TREES:
+        _TREES[key] = DownloadTree.open(path)
+    return _TREES[key]
 
 
 # ---- one stored file -------------------------------------------------------------------------------
@@ -90,12 +106,13 @@ def _aes(name):
 
 
 def examine(root, name, enc, quick):
-    """The stored file `name` read as a member with ADLD flags `enc`: {size, flags, plain_size, sha1}
-    (flags = the ADLD header's, None without one; plain_size / sha1 None when unknown)."""
-    path = os.path.join(root, name)
+    """The stored file `name` of the tree at `root` read as a member with ADLD flags `enc`:
+    {size, flags, plain_size, sha1} (flags = the ADLD header's, None without one; plain_size / sha1
+    None when unknown)."""
     try:
-        size = os.path.getsize(path)
-        with open(path, "rb") as f:
+        tree = _tree(root)
+        size = tree.size(name)
+        with tree.open_file(name) as f:
             head = f.read(ADLD_HEADER)
             flags = struct.unpack_from("<I", head, 4)[0] if len(head) == ADLD_HEADER and head[:4] == b"ADLD" else None
             out = {"size": size, "flags": flags, "plain_size": None, "sha1": None}
@@ -157,24 +174,23 @@ class Report:
         self.warnings.append({"kind": kind, "manifest": manifest, "name": name, "detail": detail})
 
 
-def find_manifests(root, which):
-    """{label: (bin path, .version path)}; the label is the manifest name (with its format dir when
-    DIR holds more than one)."""
-    found = sorted(glob.glob(os.path.join(root, "manifest", "*", "*", "version_latest_*.bin")))
-    dirs = sorted({os.path.dirname(p) for p in found})
+def find_manifests(tree, which):
+    """{label: (bin path, .version path)} (tree-relative); the label is the manifest name (with its
+    format dir when DIR holds more than one)."""
+    found = [p for p in tree.files("manifest") if p.count("/") == 3 and p.rsplit("/", 1)[1].startswith("version_latest_") and p.endswith(".bin")]
+    dirs = sorted({p.rsplit("/", 1)[0] for p in found})
     out = {}
     for p in found:
-        name = os.path.basename(p)[len("version_latest_") : -len(".bin")]
+        name = p.rsplit("/", 1)[1][len("version_latest_") : -len(".bin")]
         if which != "all" and name != which:
             continue
-        label = name if len(dirs) == 1 else os.path.relpath(os.path.dirname(p), os.path.join(root, "manifest")) + "/" + name
+        label = name if len(dirs) == 1 else p.rsplit("/", 1)[0][len("manifest/"):] + "/" + name
         out[label] = (p, p[:-4] + ".version")
     return out, dirs
 
 
-def parse_version_file(path):
-    with open(path, "rb") as f:
-        text = f.read().decode("ascii", "replace")
+def parse_version_file(tree, path):
+    text = tree.read(path).decode("ascii", "replace")
     fields = {}
     for line in text.split("\r\n"):
         if ":" in line:
@@ -186,22 +202,24 @@ def parse_version_file(path):
 def check(root, which="all", jobs=None, quick=False, version_bin=None, progress=None):
     t0 = time.time()
     rep = Report()
-    root = os.path.abspath(root)
-    own_vb = os.path.join(root, "version.bin")
-    vb_path = version_bin or (own_vb if os.path.exists(own_vb) else CANONICAL)
-    vb = load_msgpack(vb_path)
+    tree = _tree(os.path.abspath(root))
+    root = tree.path
+    has_vb = tree.exists("version.bin")
+    own_vb = os.path.join(root, "version.bin")  # (its name in the report)
+    vb_path = version_bin or (own_vb if has_vb else CANONICAL)
+    vb = load_msgpack("version.bin", tree) if vb_path == own_vb else load_msgpack(vb_path)
     assets = vb.get("assets", {})
     vb_id = vb.get("version")
     info = {"dir": root, "mode": "quick" if quick else "full", "manifest": which, "version_bin": vb_path,
             "revision": vb.get("revision"), "version": vb_id, "assets": len(assets)}
 
     # DIR's own version.bin against the canonical one.
-    if os.path.exists(own_vb) and os.path.exists(CANONICAL):
+    if has_vb and os.path.exists(CANONICAL):
         canon = load_msgpack(CANONICAL)
-        own = load_msgpack(own_vb) if vb_path != own_vb else vb
+        own = load_msgpack("version.bin", tree) if vb_path != own_vb else vb
         if own.get("revision") == canon.get("revision"):
-            with open(own_vb, "rb") as a, open(CANONICAL, "rb") as b:
-                if a.read() != b.read():
+            with open(CANONICAL, "rb") as b:
+                if tree.read("version.bin") != b.read():
                     rep.problem("version-bin", "version.bin", f"claims the canonical revision {canon.get('revision')} but differs from data/version-3.7.0.bin")
                 else:
                     rep.notes.append(f"version.bin is the canonical 3.7.0 index (revision {canon.get('revision')})")
@@ -219,10 +237,10 @@ def check(root, which="all", jobs=None, quick=False, version_bin=None, progress=
             rep.notes.append(f"version.bin is revision {own.get('revision')}, not the canonical {canon.get('revision')}: a rebuilt index "
                              f"(a phone's own record, or a soa-server CDN's); added: {kind(added, oa)}; dropped: {kind(dropped, ca)}; "
                              "fields changed: " + (", ".join(f"{f} {len(n)}" + (f" ({', '.join(n)})" if len(n) <= 3 else "") for f, n in sorted(fields.items())) or "none"))
-    elif not os.path.exists(own_vb):
+    elif not has_vb:
         rep.notes.append(f"DIR has no version.bin; using {vb_path}")
 
-    manifests, fmt_dirs = find_manifests(root, which)
+    manifests, fmt_dirs = find_manifests(tree, which)
     if not manifests:
         rep.problem("version-file", "manifest/", f"no manifest version_latest_{'*' if which == 'all' else which}.bin")
     all_manifests = which == "all"
@@ -234,7 +252,7 @@ def check(root, which="all", jobs=None, quick=False, version_bin=None, progress=
     bundle_md5 = defaultdict(dict)  # bundle -> {label: md5}
     summary = {}
     for label, (bin_path, ver_path) in manifests.items():
-        m = load_msgpack(bin_path)
+        m = load_msgpack(bin_path, tree)
         loaded[label] = m
         total = 0
         nmembers = 0
@@ -254,24 +272,23 @@ def check(root, which="all", jobs=None, quick=False, version_bin=None, progress=
                     rep.problem("bundle", name, f"p = {mem.get('p')!r} in bundle {bundle}", label)
         summary[label] = {"bundles": len(m.get("assets", {})), "members": nmembers, "bytes": total, "version": m.get("version")}
         # .version
-        if not os.path.exists(ver_path):
-            rep.problem("version-file", os.path.relpath(ver_path, root), "missing", label)
+        if not tree.exists(ver_path):
+            rep.problem("version-file", ver_path, "missing", label)
         else:
-            vf = parse_version_file(ver_path)
+            vf = parse_version_file(tree, ver_path)
             if vf.get("version") != m.get("version"):
-                rep.problem("version-file", os.path.relpath(ver_path, root), f"version {vf.get('version')} != the manifest's {m.get('version')}", label)
+                rep.problem("version-file", ver_path, f"version {vf.get('version')} != the manifest's {m.get('version')}", label)
             if vf.get("totalSize") != str(total):
-                rep.problem("version-file", os.path.relpath(ver_path, root), f"totalSize {vf.get('totalSize')} != the members' sizes {total}", label)
+                rep.problem("version-file", ver_path, f"totalSize {vf.get('totalSize')} != the members' sizes {total}", label)
             summary[label]["totalSize"] = vf.get("totalSize")
         if label.split("/")[-1] in SHARED_ID and m.get("version") != vb_id:
-            rep.problem("version-file", os.path.relpath(bin_path, root), f"version {m.get('version')} != version.bin's {vb_id}", label)
+            rep.problem("version-file", bin_path, f"version {m.get('version')} != version.bin's {vb_id}", label)
     for d in fmt_dirs:
-        vv = os.path.join(d, "version.version")
-        if os.path.exists(vv) and all_manifests:
-            with open(vv, "rb") as f:
-                content = f.read().decode("ascii", "replace").strip()
+        vv = d + "/version.version"
+        if tree.exists(vv) and all_manifests:
+            content = tree.read(vv).decode("ascii", "replace").strip()
             if content != vb_id:
-                rep.problem("version-file", os.path.relpath(vv, root), f"{content!r} != version.bin's id {vb_id}")
+                rep.problem("version-file", vv, f"{content!r} != version.bin's id {vb_id}")
 
     # Duplicates (a member in more than one bundle of one manifest) and cross-manifest conflicts.
     for name, by_label in member_bundles.items():
@@ -297,14 +314,14 @@ def check(root, which="all", jobs=None, quick=False, version_bin=None, progress=
     results = {}
     present = []
     for n in files:
-        if os.path.isfile(os.path.join(root, n)):
+        if tree.exists(n):
             present.append(n)
         else:
             results[n] = None
     jobs = jobs or os.cpu_count() or 1
     t1 = time.time()
     # Batches of about the same byte count (a few futures per process), largest files first.
-    present.sort(key=lambda n: -os.path.getsize(os.path.join(root, n)))
+    present.sort(key=lambda n: -tree.size(n))
     batches = [present[i :: jobs * 4] for i in range(min(len(present), jobs * 4))]
     done = 0
     with cf.ProcessPoolExecutor(max_workers=jobs) as pool:
@@ -403,23 +420,17 @@ def check(root, which="all", jobs=None, quick=False, version_bin=None, progress=
     # Extras: files nothing lists.
     listed = set(member_info) | set(vb_files)
     if not all_manifests:  # the other manifests' members aren't extras either
-        for bin_path, _ in find_manifests(root, "all")[0].values():
+        for bin_path, _ in find_manifests(tree, "all")[0].values():
             if bin_path not in {b for b, _ in manifests.values()}:
-                for bb in load_msgpack(bin_path).get("assets", {}).values():
+                for bb in load_msgpack(bin_path, tree).get("assets", {}).values():
                     listed.update(n for n, mem in bb.items() if isinstance(mem, dict))
     nfiles = 0
-    for dirpath, dirnames, filenames in os.walk(root):
-        rel = os.path.relpath(dirpath, root)
-        if rel == "manifest" or rel.startswith("manifest" + os.sep):
-            dirnames[:] = []
+    for name in tree.files():
+        if name == "version.bin" or name.startswith("manifest/"):
             continue
-        for fn in filenames:
-            name = fn if rel == "." else os.path.join(rel, fn).replace(os.sep, "/")
-            if name == "version.bin":
-                continue
-            nfiles += 1
-            if name not in listed:
-                rep.problem("extra", name, f"{os.path.getsize(os.path.join(root, name))} bytes; no manifest or version.bin entry lists it")
+        nfiles += 1
+        if name not in listed:
+            rep.problem("extra", name, f"{tree.size(name)} bytes; no manifest or version.bin entry lists it")
     info["files_on_disk"] = nfiles
     info["seconds"] = round(time.time() - t0, 2)
 
@@ -444,7 +455,7 @@ def print_report(res, max_list, out=sys.stdout):
     if i["manifest"] == "all":
         p(f"version.bin: {vb['assets']} assets, {vb['bundles']} bundle entries; parentHash names a bundle of: "
           + ", ".join(f"{k} {v}" for k, v in sorted(vb["parent_hash"].items())))
-    p(f"files on disk: {i['files_on_disk']} (without manifest/ and version.bin); read in {i['read_seconds']} s, total {i['seconds']} s")
+    p(f"files in the tree: {i['files_on_disk']} (without manifest/ and version.bin); read in {i['read_seconds']} s, total {i['seconds']} s")
     for title, items, kinds in (("problems", res["problems"], PROBLEM_KINDS), ("warnings", res["warnings"], WARNING_KINDS)):
         by = defaultdict(list)
         for it in items:
@@ -462,7 +473,7 @@ def print_report(res, max_list, out=sys.stdout):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0], formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
-    ap.add_argument("dir")
+    ap.add_argument("dir", nargs="?", default=DEFAULT, help="the download: a zip or a folder (default: work/SOA-3.7.0-canonical-data.zip)")
     ap.add_argument("--manifest", default="all", choices=["all"] + MANIFESTS)
     ap.add_argument("--version-bin", help="the index to check against (default: DIR/version.bin, else data/version-3.7.0.bin)")
     ap.add_argument("--jobs", type=int, default=None, help="reader processes (default: the CPU count)")
@@ -470,8 +481,8 @@ def main(argv=None):
     ap.add_argument("--json", metavar="OUT", help="write the full result as JSON")
     ap.add_argument("--max-list", type=int, default=20, help="findings listed per kind (default 20)")
     a = ap.parse_args(argv)
-    if not os.path.isdir(a.dir):
-        ap.error(f"{a.dir}: not a directory")
+    if DownloadTree.open_or_none(a.dir) is None:
+        ap.error(f"{a.dir}: neither a folder nor a zip")
     res = check(a.dir, a.manifest, a.jobs, a.quick, a.version_bin, progress=lambda s: print(s, file=sys.stderr))
     if a.json:
         with open(a.json, "w") as f:

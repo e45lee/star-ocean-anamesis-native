@@ -55,7 +55,7 @@ NATIVE_TEST("lib_crypto/aes") {
 NATIVE_TEST("lib_crypto/master-db") {
     // the game's use: CEncryptAES128 (the ADLD AES layer) over the 3.7.0 download's master DB
     const char* name = "sqlite/basmaster.sqlite3";
-    std::vector<u8> f = test_assets::read_file(test_assets::download_dir().empty() ? "" : test_assets::download_dir() + "/" + name);
+    std::vector<u8> f = test_assets::download_file(name);
     if (f.size() < 16 + 65536) return (void)fprintf(stderr, "    (no download: skipped)\n");
     std::string key = server::adld::aes_key(name);
     auto* obj = (CEncryptAES128*)calloc(1, sizeof(CEncryptAES128) + 16);

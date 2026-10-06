@@ -6,11 +6,10 @@
 # from the .exe, as on Linux.
 #
 # The 3.7.0 download is staged once, as the zip (4 GB), which soa.exe, soa-server.exe (its CDN, the
-# master DB) and the movie player read in place: in a checkout the programs take
-# work/download-3.7.0, else work/SOA-3.7.0-canonical-data.zip (docs/environment.md "How the programs
-# find the game files"). A work/download-3.7.0 folder left in DEST by an older stage is removed. So
-# the selftests that compare the folder with the zip (soa-server --selftest cdn/download-zip) and
-# the ones that read the folder skip on the stage: they run on Linux.
+# master DB) and the movie player read in place, as on Linux: the download is
+# work/SOA-3.7.0-canonical-data.zip (docs/environment.md "How the programs find the game files"),
+# so the selftests that read it run on the stage too. An extracted folder left in DEST by an older
+# stage (work/download-3.7.0) is removed.
 #
 # Every copy is verified (a copy through WSL's drive mount under memory pressure has left an older
 # .exe in place without an error): each staged .exe and the key data files (the zip, libSOA.so, the

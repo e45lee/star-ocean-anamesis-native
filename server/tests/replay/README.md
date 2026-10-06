@@ -76,7 +76,7 @@ The sweep is the coverage floor: with no arguments, some handlers decline (`not-
 ```sh
 tests/diff/run.sh seeded --target emu --keep --out /tmp/d      # or any soa-server --log-packets DIR
 tools/server_replay_record.py /tmp/d/seeded/emu/packets server/tests/replay/seeded \
-    --options '--master data/basmaster-3.7.0.sqlite3 --seed data/saves/seed/Game.xml --seed-rng 1 --clock "2026-10-01 12:00:05" --campaign-seed mf01_001 --download-dir work/download-3.7.0 --cdn-url http://production-game.so-ana.com' \
+    --options '--master data/basmaster-3.7.0.sqlite3 --seed data/saves/seed/Game.xml --seed-rng 1 --clock "2026-10-01 12:00:05" --campaign-seed mf01_001 --download-dir work/SOA-3.7.0-canonical-data.zip --cdn-url http://production-game.so-ana.com' \
     --note "where it came from"
 tools/server_replay_record.py --sweep server/tests/replay/api-sweep --options '...'
 ```

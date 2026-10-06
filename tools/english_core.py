@@ -7,6 +7,7 @@ Only the standard library plus zstandard (SLZ codec 7) and, for the story files,
 soa_save. No engine is called here.
 """
 import collections
+import fnmatch
 import hashlib
 import io
 import os
@@ -26,7 +27,9 @@ if str(REPO) not in sys.path:
 
 MASTER_DB = REPO / "data/basmaster-3.7.0.sqlite3"
 GLOBAL_DB = REPO / "data/basmaster-gl.sqlite3"
-SCENARIO_DIR = REPO / "work/download-3.7.0/Scenario"
+# The story's Japanese: the 3.7.0 download's Scenario/ files. The download is its zip (read in place,
+# soa_save/download_tree.py) or a folder; a folder holding the TS_*.msgp files themselves works too.
+SCENARIO = REPO / "work/SOA-3.7.0-canonical-data.zip"
 APK = REPO / "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"
 FONT_MEMBER = "assets/builtin_data/Font/etc2/font.fpk"
 FONT_NAME = "Font/etc2/font.fpk"
@@ -77,7 +80,7 @@ class Sources:
     """The JP 3.7.0 master, Global's master and (lazily) the 3.7.0 story files.
     `a` is an argparse namespace with .master, .gl, .scenario (english_mt's options); or keywords."""
 
-    def __init__(self, a=None, master=MASTER_DB, gl=GLOBAL_DB, scenario=SCENARIO_DIR):
+    def __init__(self, a=None, master=MASTER_DB, gl=GLOBAL_DB, scenario=SCENARIO):
         if a is not None:
             master, gl, scenario = a.master, a.gl, getattr(a, "scenario", scenario)
         self.jp = sqlite3.connect(f"file:{master}?mode=ro", uri=True)
@@ -85,8 +88,27 @@ class Sources:
         self.jp_rows = dict(self.jp.execute("select message_id, text_value from master_text"))
         self.gl_en = dict(self.gl.execute("select message_id, text_value from master_text where lang='en'"))
         self.gl_ja = dict(self.gl.execute("select message_id, text_value from master_text where lang='ja'"))
-        self.scenario_dir = pathlib.Path(scenario)
+        self.scenario = pathlib.Path(scenario)
+        self._scenario_tree = None
         self._story = None
+
+    def scenario_tree(self):
+        """(DownloadTree, folder) holding the TS_*.msgp Scenario files, or None without them: the
+        download's Scenario/, or `scenario` itself when it holds them."""
+        if self._scenario_tree is None:
+            from soa_save.download_tree import DownloadTree
+            found = False
+            t = DownloadTree.open_or_none(self.scenario)
+            if t is not None:
+                for d in ("Scenario", ""):
+                    if any(fnmatch.fnmatchcase(n, "TS_*.msgp") for n in t.list(d)):
+                        found = (t, d)
+                        break
+            self._scenario_tree = found
+        return self._scenario_tree or None
+
+    def has_story(self):
+        return self.scenario_tree() is not None
 
     def gl_english(self, mid):
         """Global's `en` for mid if it is real, usable English, else None (filters 1, 2, 4, 5)."""
@@ -125,9 +147,13 @@ class Sources:
         if self._story is None:
             from soa_save import script
             out = []
-            for p in sorted(self.scenario_dir.glob("TS_*.msgp")):
-                for row in script.load(p.read_bytes(), "Scenario/" + p.name).get("master_text", []):
-                    out.append((p.stem, row["message_id"], row["text_value"] or ""))
+            found = self.scenario_tree()
+            tree, d = found if found else (None, "")
+            for n in tree.list(d) if tree else []:
+                if not fnmatch.fnmatchcase(n, "TS_*.msgp"):
+                    continue
+                for row in script.load(tree.read(f"{d}/{n}" if d else n), "Scenario/" + n).get("master_text", []):
+                    out.append((n[: -len(".msgp")], row["message_id"], row["text_value"] or ""))
             self._story = out
         return self._story
 

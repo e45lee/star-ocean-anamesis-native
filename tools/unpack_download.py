@@ -6,10 +6,14 @@ manifest/, sqlite/, EP1-3/, B/, BG/, ...) into DEST, then checks DEST with tools
 against its own manifests and version.bin.
 
 The archive may hold the tree at its top level (e.g. SOA-3.7.0-canonical-data.zip) or inside one
-top folder (e.g. download-3.7.0/...); the folder is stripped either way, so DEST is the tree.
+top folder (e.g. SOA-data/...); the folder is stripped either way, so DEST is the tree.
 Windows "Zone.Identifier" alternate-stream files (`name:Zone.Identifier`, left by copying a
 download through Windows) are skipped. With --sha256 FILE (a `sha256sum` line, e.g.
 SOA-3.7.0-canonical-data.zip.sha256) the archive is checked before anything is extracted.
+
+This is for users who want the tree as a folder: nothing in the repository needs it. The programs
+and tools read the zip itself in place (soa/file_tree.h, soa_save/download_tree.py), and take an
+extracted folder too wherever they take the download.
 
 Usage:
   tools/unpack_download.py ARCHIVE.zip DEST [--sha256 FILE] [--force] [--quick] [--jobs N] [--json OUT]

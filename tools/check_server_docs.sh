@@ -16,8 +16,8 @@
 #      labels, client addresses / symbols / offsets, master tables, agent count, log lines, links
 #      (and their number), and the rules doc's evidence (docs/server-rules.md with its history).
 #      A commit that deletes code with its labels says so in its message: a line starting
-#      "Evidence removed:" in a commit of REV..HEAD (listing what went and why) lets the loss pass,
-#      reported;
+#      "Evidence removed:" (listing what went and why) lets that commit's loss pass, reported; each
+#      commit of REV..HEAD that loses evidence needs its own (server_evidence.py --waivers);
 #   5. the log lines scripts read (tools/server_log_patterns.txt) are in the LOG* format strings;
 #   6. no "agent <name>" history notes in server/ code (describe the rule and its evidence instead);
 #   7. no tracked file names a server/ path that doesn't exist (the plans and docs/history/ aside);
@@ -46,16 +46,18 @@ python3 tools/server_doc_coverage.py --server "$server" | sed 's/^/  /'
 [ "${PIPESTATUS[0]}" = 0 ] || findings=$((findings + 1))
 
 echo "== 2. docs links, 5. log lines, 6. agent mentions (tools/server_evidence.py)"
-ev=$(python3 tools/server_evidence.py)
-echo "$ev" | grep -E "^(doc links|log lines|agent mentions)" | sed 's/^/  /'
-echo "$ev" | grep -E "^server-rules links quoted" | sed 's/^/  /'
-echo "$ev" | grep -qE "^doc links .*, 0 broken" || findings=$((findings + 1))
-echo "$ev" | grep -qE "^server-rules links quoted 0 " || findings=$((findings + 1))
+# the verdict is server_evidence.py --check's exit code (0, 10 findings, 11 a log line gone; anything
+# else: the tool failed, which fails the check), never a grep of its printed lines
+ev=$(python3 tools/server_evidence.py --check); evrc=$?
+echo "$ev" | grep -E "^(doc links|log lines|agent mentions|server-rules links quoted|CHECK: )" | sed 's/^/  /'
+case $evrc in
+  0) ;;
+  10) findings=$((findings + 1)) ;;
+  *) [ $evrc = 11 ] || note "tools/server_evidence.py --check failed (exit $evrc)"
+     findings=$((findings + 1)); fail=1 ;;
+esac
 python3 tools/server_rules_doc.py --check | sed 's/^/  /'
 [ "${PIPESTATUS[0]}" = 0 ] || findings=$((findings + 1))
-echo "$ev" | grep -qE "^log lines ([0-9]+)/\1 present" || { findings=$((findings + 1)); fail=1; }
-agents=$(echo "$ev" | sed -n 's/^agent mentions //p')
-[ "${agents:-0}" = 0 ] || findings=$((findings + 1))
 
 echo "== 3. server/API-INDEX.md"
 if [ -x "$server" ]; then
@@ -70,16 +72,9 @@ python3 tools/gen_error_codes.py --check | sed 's/^/  /'
 
 echo "== 4. evidence"
 if [ -n "$rev" ]; then
-  python3 tools/server_evidence.py --against "$rev" | sed 's/^/  /'
-  if [ "${PIPESTATUS[0]}" != 0 ]; then
-    waived=$(git log --format=%B "$rev..HEAD" 2>/dev/null | grep -E "^Evidence removed:" || true)
-    if [ -n "$waived" ]; then
-      note "lost against $rev, as the commit message says:"
-      echo "$waived" | sed 's/^/    /'
-    else
-      findings=$((findings + 1)); fail=1
-    fi
-  fi
+  # --waivers: a loss passes only when each commit that made one says "Evidence removed:" itself
+  python3 tools/server_evidence.py --against "$rev" --waivers | sed 's/^/  /'
+  [ "${PIPESTATUS[0]}" = 0 ] || { findings=$((findings + 1)); fail=1; }
 else
   note "(no --evidence REV given)"
 fi

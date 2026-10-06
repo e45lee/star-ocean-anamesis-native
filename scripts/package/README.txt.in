@@ -154,7 +154,7 @@ Put them in the folder "game" beside the program{{IF windows}}s{{END}} (it is al
     data/  standin-assets/  standin-assets-en/  (ours: see 5.)
     game/
       STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk
-      SOA-3.7.0-canonical-data.zip          <- or the extracted folder, e.g. game/download-3.7.0/
+      SOA-3.7.0-canonical-data.zip          <- or the extracted folder, e.g. game/SOA-3.7.0-canonical-data/
 
 They may also sit directly beside the program instead of in game/.
 

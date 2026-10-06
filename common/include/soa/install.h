@@ -10,11 +10,11 @@
 //     size; kApk370Name first). Never recursive: the download tree is full of *.apk asset bundles
 //     (Character/cp0202_b07a.apk). The zip itself is read by the caller's zip library (the
 //     runtime's ZipArchive in soa and soa-emu): this header only lists and checks candidates;
-//   - the 3.7.0 download: a folder holding version.bin, manifest/ and sqlite/basmaster.sqlite3
-//     (is_download_dir), whatever it is called: the install dir itself, or one of its immediate
-//     subfolders (download-3.7.0, SOA_*, the user's SOA-3.7.0-canonical-data.zip extracted into
-//     game/, ...); else that zip itself, unextracted (soa/game_files.h find_download: the
-//     zip-aware half, target soa_gamefiles).
+//   - the 3.7.0 download: SOA-3.7.0-canonical-data.zip, its canonical form, read in place
+//     (soa/game_files.h find_download: the zip-aware half, target soa_gamefiles); a folder holding
+//     version.bin, manifest/ and sqlite/basmaster.sqlite3 (is_download_dir) works too, whatever it
+//     is called: the install dir itself, or one of its immediate subfolders (the zip extracted into
+//     game/, ...), and is taken first.
 // The programs' own generated data (data/gacha_pools.sqlite3, data/saves/seed/Game.xml,
 // standin-assets/) sits in the install dir at its repository path: the install dirs are the last
 // "repo roots" the repo-file lookups search (repo_roots below: port core/paths.cpp, soa-server's
@@ -53,8 +53,7 @@ inline constexpr uint64_t kLib370Size = 45988160u;
 // without extracting it (soa/game_files.h find_download, soa/file_tree.h).
 inline constexpr const char* kDataZipName = "SOA-3.7.0-canonical-data.zip";
 // The download in a checkout (find_repo_file; docs/environment.md "How the programs find the game
-// files"): the folder, else the zip (a Windows stage holds only the zip: scripts/windows-stage.sh).
-inline constexpr const char* kRepoDownloadDir = "work/download-3.7.0";
+// files"): the zip, read in place (an extracted folder is given with --download PATH).
 inline constexpr const char* kRepoDownloadZip = "work/SOA-3.7.0-canonical-data.zip";
 // What README.txt (the packages') calls the folder for the game files.
 inline constexpr const char* kGameSubdir = "game";
@@ -301,12 +300,10 @@ inline bool is_download_dir(const std::string& dir) {
     return is_file(dir + "/version.bin") && is_dir(dir + "/manifest") && is_file(dir + "/sqlite/basmaster.sqlite3");
 }
 
-// The first download tree among `dirs` themselves and their immediate subfolders
-// (download-3.7.0 first, then the others by name).
+// The first download tree among `dirs` themselves and their immediate subfolders (by name).
 inline std::string find_download_dir(const std::vector<std::string>& dirs) {
     for (auto& d : dirs) {
         if (is_download_dir(d)) return d;
-        if (is_download_dir(d + "/download-3.7.0")) return d + "/download-3.7.0";
         for (auto& n : list_dir(d)) {
             std::string p = d + "/" + n;
             if (is_dir(p) && is_download_dir(p)) return p;

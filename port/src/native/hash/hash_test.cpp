@@ -14,6 +14,7 @@
 #include "core/loader.h"
 #include "core/paths.h"
 #include "native/common/test.h"
+#include "native/common/test_assets.h"
 #include "native/hash/hash_layout.h"
 
 namespace soa::native::hash {
@@ -25,31 +26,23 @@ const u32* crc32_table();
 namespace {
 
 // Real inputs: relative paths of the 3.7.0 download (the names the game hashes are paths and ids
-// like these), sorted, the first n; and the bytes of a few of its files. The download is the folder
-// work/download-3.7.0 or, on a Windows stage (scripts/windows-stage.sh), the zip
-// work/SOA-3.7.0-canonical-data.zip; either through soa::FileTree (same tree, same sorted names).
-const soa::FileTree* download_tree() {
-    static const std::shared_ptr<const soa::FileTree> tree = [] {
-        std::string p = find_repo_file({soa::install::kRepoDownloadDir, soa::install::kRepoDownloadZip});
-        return p.empty() ? nullptr : soa::FileTree::open(p);
-    }();
-    return tree.get();
-}
+// like these), sorted, the first n; and the bytes of a few of its files. The download is the zip
+// work/SOA-3.7.0-canonical-data.zip, read in place (native/common/test_assets.h).
 std::vector<std::string> real_names(size_t n) {
     static const std::vector<std::string> all = [] {  // (a folder's files() walks the disk: once)
-        const soa::FileTree* tree = download_tree();
+        const soa::FileTree* tree = soa::test_assets::download_tree();
         return tree ? tree->files() : std::vector<std::string>{};
     }();
     std::vector<std::string> out(all.begin(), all.begin() + (std::ptrdiff_t)std::min(n, all.size()));
     if (out.empty()) {
         if (auto* t = current_test_context())
-            t->fail("no files in the 3.7.0 download (%s or %s)", soa::install::kRepoDownloadDir, soa::install::kRepoDownloadZip);
+            t->fail("no files in the 3.7.0 download (%s)", soa::install::kRepoDownloadZip);
     }
     return out;
 }
 std::vector<std::vector<u8>> real_files(size_t n, size_t max_bytes) {
     std::vector<std::vector<u8>> out;
-    const soa::FileTree* tree = download_tree();
+    const soa::FileTree* tree = soa::test_assets::download_tree();
     for (auto& name : real_names(200)) {
         if (out.size() >= n) break;
         std::vector<u8> b;

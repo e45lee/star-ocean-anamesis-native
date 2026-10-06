@@ -30,8 +30,8 @@ int parse_args(int argc, const char* const* argv, EmuArgs& a, std::vector<std::s
                   "its cached libSOA.so and save don't belong here)")
         ->group(files);
     cli::add_download(app, a.download_dir,
-                      "temporary stand-in for the CDN: serve assets missing from the APK from the 3.7.0 download (a folder, e.g. "
-                      "work/download-3.7.0, or SOA-3.7.0-canonical-data.zip); off by default (soa-server's CDN serves them)")
+                      "temporary stand-in for the CDN: serve assets missing from the APK from the 3.7.0 download (the zip "
+                      "work/SOA-3.7.0-canonical-data.zip, read in place, or an extracted folder); off by default (soa-server's CDN serves them)")
         ->group(files);
     cli::add_download_prefer(app, a.download_prefer)->group(files);
     cli::add_repo(app, a.repo)->group(files);

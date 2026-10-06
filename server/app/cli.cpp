@@ -41,7 +41,7 @@ int parse_args(int argc, const char* const* argv, ServerArgs& a, std::vector<std
         ->type_name("FILE")
         ->group(files);
     cli::add_download(app, a.download_dir,
-                      "the 3.7.0 download: a folder (work/download-3.7.0) or SOA-3.7.0-canonical-data.zip, read in place; content "
+                      "the 3.7.0 download: SOA-3.7.0-canonical-data.zip (work/), read in place, or an extracted folder; content "
                       "is gated on it (as soa --download) and the CDN serves it (server/README.md \"CDN\"); default: none, except "
                       "a packaged soa-server's: a download folder or zip beside the program or in its game/ folder (README.txt)")
         ->group(files);

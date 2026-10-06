@@ -1,8 +1,8 @@
 """The server's derived English (server/src/master/english_derive.cpp, docs/server-rules.md#english-derive)
 against tools/english_text.py: the full master and story tables `soa-server --english-dump` builds
 from Global's master, the JP master, the font and the story files plus our own rows must equal, byte
-for byte, the tables the Python build makes. Needs build/server/soa-server and work/download-3.7.0
-(local data); skipped without them."""
+for byte, the tables the Python build makes. Needs build/server/soa-server and the 3.7.0
+download (work/SOA-3.7.0-canonical-data.zip, read in place; local data); skipped without them."""
 import pathlib
 import re
 import subprocess
@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import english_text as T  # noqa: E402
 
 SERVER = ROOT / "build/server/soa-server"
-DOWNLOAD = ROOT / "work/download-3.7.0"
+DOWNLOAD = ROOT / "work/SOA-3.7.0-canonical-data.zip"
 
 
 def test_story_budget_is_the_tools():
@@ -24,7 +24,7 @@ def test_story_budget_is_the_tools():
     assert int(re.search(r"kStoryBudget = (\d+);", h).group(1)) == T.STORY_BUDGET
 
 
-@pytest.mark.skipif(not SERVER.exists() or not (DOWNLOAD / "Scenario").is_dir(), reason="needs build/server/soa-server and work/download-3.7.0")
+@pytest.mark.skipif(not SERVER.exists() or not DOWNLOAD.exists(), reason="needs build/server/soa-server and the 3.7.0 download")
 def test_server_derivation_equals_the_tools(tmp_path):
     # the reference: `tools/english_text.py derive` (master-en-full.tsv, story-en-full/), from the
     # committed data/english (our rows only)

@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "core/paths.h"
 #include "native/common/test.h"
+#include "native/common/test_assets.h"
 #include "native/lib_vorbis/lib_vorbis_api.h"
 
 namespace soa::native::lib_vorbis {
@@ -289,18 +289,9 @@ Trace decode(I& api, const std::vector<u8>& d, int max_pages, int loop_at) {
     return tr;
 }
 
+// A BGM of the 3.7.0 download (`rel` relative to it, read in place: native/common/test_assets.h).
 std::vector<u8> ogg_of(const std::string& rel) {
-    std::string p = find_repo_file(rel);
-    std::vector<u8> d;
-    if (p.empty()) return d;
-    FILE* f = fopen(p.c_str(), "rb");
-    if (!f) return d;
-    fseek(f, 0, SEEK_END);
-    long n = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    d.resize((size_t)n);
-    if (fread(d.data(), 1, d.size(), f) != d.size()) d.clear();
-    fclose(f);
+    std::vector<u8> d = test_assets::download_file(rel);
     // the BGM container (" CAA") holds plain Ogg pages: from the first one on
     for (size_t i = 0; i + 4 <= d.size(); i++)
         if (!memcmp(d.data() + i, "OggS", 4)) return std::vector<u8>(d.begin() + (long)i, d.end());
@@ -344,7 +335,7 @@ void fix_crcs(std::vector<u8>& d) {
 }
 
 NATIVE_TEST("lib_vorbis/decode-bgm") {
-    for (const char* f : {"work/download-3.7.0/Sound/BAS_SYSTEM_BGM_07.aac", "work/download-3.7.0/Sound/BAS_BATTLE_BGM_01.aac"}) {
+    for (const char* f : {"Sound/BAS_SYSTEM_BGM_07.aac", "Sound/BAS_BATTLE_BGM_01.aac"}) {
         std::vector<u8> d = ogg_of(f);
         if (d.empty()) {
             fprintf(stderr, "    (%s missing: skipped)\n", f);
@@ -358,7 +349,7 @@ NATIVE_TEST("lib_vorbis/decode-bgm") {
 
 NATIVE_TEST("lib_vorbis/decode-damaged") {
     // the decoder on damaged audio packets (valid pages: the CRCs rewritten), and on a cut stream
-    std::vector<u8> d = ogg_of("work/download-3.7.0/Sound/BAS_SYSTEM_BGM_07.aac");
+    std::vector<u8> d = ogg_of("Sound/BAS_SYSTEM_BGM_07.aac");
     if (d.empty()) return (void)fprintf(stderr, "    (BAS_SYSTEM_BGM_07.aac missing: skipped)\n");
     if (d.size() > 200000) d.resize(200000);
     std::vector<u8> bad = d;
@@ -379,7 +370,7 @@ u64 guest_sym(const char* s) { return g_t->sym(s); }
 NATIVE_TEST("lib_vorbis/live-check") {
     // --live-check lib_vorbis on the natives (the guest library in lockstep on shadows): no mismatch,
     // and the shadows' own calls reach the guest
-    std::vector<u8> d = ogg_of("work/download-3.7.0/Sound/BAS_SYSTEM_BGM_07.aac");
+    std::vector<u8> d = ogg_of("Sound/BAS_SYSTEM_BGM_07.aac");
     if (d.empty()) return (void)fprintf(stderr, "    (BAS_SYSTEM_BGM_07.aac missing: skipped)\n");
     g_t = &t;
     use_originals(guest_sym);

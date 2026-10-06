@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Copy the English art recipes' labels to every other scene whose atlas has the same sprite.
 
-  .venv/bin/python tools/english_art/share_labels.py [--download DIR] [--recipes DIR]
+  .venv/bin/python tools/english_art/share_labels.py [--download PATH] [--recipes DIR]
+
+--download is the 3.7.0 download: its zip (default work/SOA-3.7.0-canonical-data.zip; the scenes
+are copied out to a temporary folder) or an extracted folder.
 
 The UI scenes (UI/etc2/*.csf, TalkScene/etc2/*.csf) each carry their own copy of shared sprites
 (the Back button, the badges, the footer...). A label written once in one scene's recipe
@@ -49,10 +52,19 @@ def scene_tables(download):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--download", default=os.path.join(ROOT, "work", "download-3.7.0"))
+    ap.add_argument("--download", default=os.path.join(ROOT, "work", "SOA-3.7.0-canonical-data.zip"))
     ap.add_argument("--recipes", default=os.path.join(ROOT, "standin-assets-en", "recipes"))
     a = ap.parse_args()
     aif2png = os.path.join(ROOT, "build", "tools", "aif2png", "aif2png")
+    if not os.path.isdir(a.download):  # the zip: copy the scenes out (aif2png and read_aif read files)
+        sys.path.insert(0, ROOT)
+        from soa_save.download_tree import DownloadTree
+        tree, out = DownloadTree.open(a.download), tempfile.mkdtemp(prefix="share-labels-dl-")
+        for rel in tree.glob("UI/etc2/*.csf") + tree.glob("TalkScene/etc2/*.csf"):
+            os.makedirs(os.path.join(out, os.path.dirname(rel)), exist_ok=True)
+            with tree.open_file(rel) as f, open(os.path.join(out, rel), "wb") as g:
+                g.write(f.read())
+        a.download = out
     tables = scene_tables(a.download)
     tmp = tempfile.mkdtemp(prefix="share-labels-")
     pngs = {rel: os.path.join(tmp, rel.replace("/", "_") + ".png") for rel in tables}

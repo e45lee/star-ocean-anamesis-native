@@ -12,8 +12,8 @@
 // payloads, below), checks its SHA-1 against the manifest's "md5", and unpacks each member into
 // its storage with a fresh ADLD header (encType = the member's "e").
 //
-// The tree is built at startup from the 3.7.0 download (work/download-3.7.0, which holds the
-// unpacked members, not the bundles):
+// The tree is built at startup from the 3.7.0 download (work/SOA-3.7.0-canonical-data.zip, read in
+// place, or a folder; it holds the unpacked members, not the bundles):
 //   - the master DB: the decrypted 3.7.0 master (ServerConfig::master) copied, given the server's
 //     client-master overrides (apply_client_master: event date shifts, texts, tower banners, shop
 //     windows, Sphere 211), VACUUMed and ADLD-AES packed as "sqlite/basmaster.sqlite3";
@@ -71,7 +71,7 @@ struct Response {
 };
 
 struct Options {
-    std::string mirror;          // the 3.7.0 download: a folder (work/download-3.7.0) or its zip (soa/file_tree.h)
+    std::string mirror;          // the 3.7.0 download: work/SOA-3.7.0-canonical-data.zip or a folder (soa/file_tree.h)
     std::string master;          // the decrypted 3.7.0 master DB (data/basmaster-3.7.0.sqlite3)
     std::string scratch;         // the served master and the bundle-hash cache are written here
     std::string standins;        // stand-in overlay ("" = none): <rel> files added as members

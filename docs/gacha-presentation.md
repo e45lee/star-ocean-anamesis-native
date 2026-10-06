@@ -164,7 +164,7 @@ nothing on screen as far as the code shows. (b, negative search)
 <a id="assets"></a>
 ### Assets
 
-All in `work/download-3.7.0` (checked 2026-10-07), so the presentation is complete:
+All in the 3.7.0 download (checked 2026-10-07), so the presentation is complete:
 
 | Asset | Files | Present |
 |---|---|---|

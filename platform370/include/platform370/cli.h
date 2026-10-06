@@ -1,6 +1,6 @@
 #pragma once
-// The 3.7.0 phone's options (soa and soa-emu): the device clock, the native patch and the network
-// redirect, into platform370::Config. Header-only on CLI11 (common/include/soa/cli.h).
+// The 3.7.0 phone's options (soa and soa-emu): the device clock, the native patch, the language and the
+// network redirect, into platform370::Config. Header-only on CLI11 (common/include/soa/cli.h).
 #include <cctype>
 #include <cstdlib>
 #include <string>
@@ -40,7 +40,7 @@ inline void set_server(NetConfig& n, const std::string& v) {
     if (port) n.server_port = port;
 }
 
-// --device-clock, --no-patch.
+// --device-clock, --no-patch, --lang, --voice-lang.
 inline void add_device_options(CLI::App& app, Config& cfg, const std::string& group) {
     app.add_option("--device-clock", cfg.device_clock,
                    "the phone's clock (local time) at start; it runs on from there (default host: the host's real time; the "
@@ -51,6 +51,22 @@ inline void add_device_options(CLI::App& app, Config& cfg, const std::string& gr
                           "run the client without its native patches (platform370/src/patch_370.cpp): its service-end check is "
                           "live, so on a date after 2021/06/24 14:30 the title shows the service-end notice, and a coins-short "
                           "moment shows the sale-stopped dialog instead of the coin shop")
+        ->group(group);
+    app.add_option("--lang", cfg.lang,
+                   "the client's language: ja (default) runs the client as shipped; en sets its own language switch "
+                   "(CLanguage::Current = en), so every file it loads is tried as name-en.ext first (an English master, "
+                   "story and art from a server run with --english, the Japanese file as the fallback), shows its "
+                   "hard-coded Japanese strings in English (new port_en_* master text, Japanese without it) and breaks "
+                   "long lines at spaces (docs/client-changes.md \"English mode\"; independent of --no-patch)")
+        ->check(CLI::IsMember({"ja", "en"}))
+        ->type_name("ja|en")
+        ->group(group);
+    app.add_option("--voice-lang", cfg.voice_lang,
+                   "the voices: ja (default) writes BAS:VoiceLanguage = 0 into the phone's Game.xml before the client "
+                   "starts (always the Japanese voice packs, no -en probe; no English voices exist); keep leaves the "
+                   "save's value")
+        ->check(CLI::IsMember({"ja", "keep"}))
+        ->type_name("ja|keep")
         ->group(group);
 }
 

@@ -303,6 +303,9 @@ int main() {
     // Options added since, to both soa and soa-server (soaserver/cli.h): --english, --english-text
     // (2026-10-07, docs/PLAN-english.md).
     const V kAddedServer = {"--english", "--english-text"};
+    // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
+    const V kAddedLang = {"--lang", "--voice-lang"};
+    const V kAddedSoa = {"--english", "--english-text", "--lang", "--voice-lang"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -355,6 +358,7 @@ int main() {
         {{"--download", "a", "--download-dir", "b"}},
         {{"--download-prefer"}},
     };
+    const char* kNewLang = "--lang ja|en and --voice-lang ja|keep are new (docs/PLAN-english.md B1, B7)";
     const std::vector<Row> phone = {
         {{"--device-clock", "2021-05-25 12:00:00"}},
         {{"--device-clock", "host"}},
@@ -369,6 +373,11 @@ int main() {
         {{"--lobby", "nolobby"}},
         {{"--map-host", "Example.COM=1.2.3.4", "--map-host", "other.host"}},
         {{"--map-host", "a.b=", "--map-host", "a.b=5.6.7.8"}},
+        // the language (2026-10-07, docs/PLAN-english.md B1 / B7): new options, which the old parser didn't have
+        {{"--lang", "en"}, kNewLang, -1},
+        {{"--lang", "ja", "--voice-lang", "keep"}, kNewLang, -1},
+        {{"--lang", "fr"}},  // (an error in both: an unknown value, an unknown option)
+        {{"--voice-lang", "en"}},
     };
     auto concat = [](std::initializer_list<const std::vector<Row>*> parts) {
         std::vector<Row> out;
@@ -592,7 +601,7 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, kAddedServer, kRemovedSoa, soa_rows);
+            check_names("soa", names, soa_old, kAddedSoa, kRemovedSoa, soa_rows);
         }
         {
             soa::server::ServerConfig c;
@@ -604,7 +613,7 @@ int main() {
         {
             soa::emu::EmuArgs a;
             soa::emu::parse_args(1, argv, a, &names);
-            check_names("soa-emu", names, emu_old, {}, kRemovedFont, emu_rows);
+            check_names("soa-emu", names, emu_old, kAddedLang, kRemovedFont, emu_rows);
         }
         {
             soa::viewer::ViewerArgs a;

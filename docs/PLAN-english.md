@@ -33,6 +33,8 @@ History:
 | Q10 | **Japanese voices** in English mode (`--voice-lang ja`); revisit if an English dub source appears. |
 | Q11 | The CDN carries the `-en` files **only when the server runs with `--english`**. |
 | Q13 | **Skip the pre-download screens** for now. |
+| Q14 (2026-10-07) | **Event and gacha banners and the event story first.** Art batches (E9) go to the **currently open event and gacha banners first** (the banners the server's clock shows), then older ones; the story MT (M4) runs **the event story files first, then EP2, then EP3** (`tools/english_mt_run.py story` orders its requests so). |
+| M-Q2 fallback (2026-10-06, english-exec) | The UI batch (M3) ran its first 10,858 of 27,847 texts on Gemma 4 31B; when other programs held 2–4 GB of the GPU for 25 minutes, the rest went to the decided fallback, Gemma 4 26B-A4B (v2 prompt, 6 slots). Each `machine` row's `engine` names its model. |
 
 ## How option C works
 

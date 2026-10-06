@@ -21,6 +21,7 @@ uimsg_gacha_item_shortage	7e3defee5e557fa5417f665863bf1d155feae11d	:\nnot enough
 uimsg_gacha_ticket_shortage	7e3defee5e557fa5417f665863bf1d155feae11d	:\nnot enough.	human
 uimsg_loginbonus	0ed39e0aeb6e468af71e0b1eaac11c37af83df77	 Day Login Bonus	human
 uimsg_loss_coin	7b60acec210d06583d4f11cbb2b8d014a73b8b0b	: not enough.	human
+uimsg_miss_rate	ed57118dde956aed6642fba52bf1ceaf99913950	Clear: %d%%	human
 uimsg_remain_base	0d930149329d816da6e243aec22919ea6df79d5d		human
 uimsg_rentalbonus_num	b97b8326d583eddfd261fa8cd2c375d9c6b74ccb	%u players	human
 uimsg_rentalbonus_num_main	c624ea6154f6c83c9543e5afed0ec8043598c6de	 borrowed your character.	human

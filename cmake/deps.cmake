@@ -3,7 +3,7 @@
 # From vcpkg (vcpkg.json, manifest mode: configured through the vcpkg toolchain, which the root
 # CMakeLists.txt picks up from $VCPKG_ROOT or .vcpkg/): imported targets
 #   ZLIB::ZLIB  MINIZIP::minizip-ng  unofficial::sqlite3::sqlite3  zstd::libzstd  Ogg::ogg  Vorbis::vorbis
-#   OpenSSL::Crypto  pugixml::pugixml  msgpack-cxx  httplib::httplib  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
+#   OpenSSL::Crypto  pugixml::pugixml  msgpack-cxx  httplib::httplib  nlohmann_json::nlohmann_json  soa::SDL2  Boost::boost (dynarmic)  Freetype::Freetype (the runtime's text box,
 #   runtime/src/app/text_overlay.cpp)  soa::ffmpeg (FFmpeg's libraries: the movie player)  litehtml  soa::stb (headers; soa_codec's PNG writer, the web view)  and the
 #   EGL/GLES/KHR headers.
 # From the system (README.md, "Setup": what vcpkg can't replace on Linux), only when the runtime is
@@ -31,6 +31,7 @@ add_library(soa::stb INTERFACE IMPORTED)
 target_include_directories(soa::stb INTERFACE ${SOA_STB_INCLUDE_DIR})
 find_package(msgpack-cxx CONFIG REQUIRED)  # target msgpack-cxx (headers; the server's MessagePack codec)
 find_package(httplib CONFIG REQUIRED)  # target httplib::httplib (headers; soa-server's HTTP server and client)
+find_package(nlohmann_json CONFIG REQUIRED)  # target nlohmann_json::nlohmann_json (headers; the server's English art recipes, server/src/english_art)
 find_package(CLI11 CONFIG REQUIRED)  # target CLI11::CLI11 (vcpkg builds it precompiled): the programs' command lines (soa_env, common/include/soa/cli.h)
 # The web view's page renderer (webview/, docs/webview.md): litehtml lays out HTML/CSS (gumbo
 # parses it; the overlay port cmake/vcpkg-ports/litehtml).

@@ -1,0 +1,263 @@
+{
+ "note": "The gacha top: the four tabs, Back and the two legal-notice buttons. English: Global's (uimsg_gacha_title_*: Recommended / Character / Weapon / Event Draws; sys_return: Back); the legal notices had no Global English: the laws' usual English names, short.",
+ "source": "UI/etc2/gacha_top.csf",
+ "styles": {
+  "tab": {
+   "size": 17,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 2
+  },
+  "tab_dim": {
+   "size": 17,
+   "bold": 1,
+   "fill": "#5c6880",
+   "outline": "#0a1020c0",
+   "outline_width": 1
+  },
+  "back": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "legal": {
+   "size": 16,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#102040",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "おすすめガチャ",
+   "text": "Recommended\nDraws",
+   "sprites": [
+    "plate_btn1.png",
+    "plate_btn1_on.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "おすすめガチャ",
+   "text": "Recommended\nDraws",
+   "sprites": [
+    "plate_btn1_off.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab_dim"
+  },
+  {
+   "jp": "キャラガチャ",
+   "text": "Character\nDraws",
+   "sprites": [
+    "plate_btn2.png",
+    "plate_btn2_on.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "キャラガチャ",
+   "text": "Character\nDraws",
+   "sprites": [
+    "plate_btn2_off.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab_dim"
+  },
+  {
+   "jp": "武器ガチャ",
+   "text": "Weapon\nDraws",
+   "sprites": [
+    "plate_btn3.png",
+    "plate_btn3_on.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "武器ガチャ",
+   "text": "Weapon\nDraws",
+   "sprites": [
+    "plate_btn3_off.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab_dim"
+  },
+  {
+   "jp": "イベントガチャ",
+   "text": "Event\nDraws",
+   "sprites": [
+    "plate_btn4.png",
+    "plate_btn4_on.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab"
+  },
+  {
+   "jp": "イベントガチャ",
+   "text": "Event\nDraws",
+   "sprites": [
+    "plate_btn4_off.png"
+   ],
+   "box": [
+    10,
+    22,
+    152,
+    42
+   ],
+   "cover": [
+    12,
+    30,
+    148,
+    28
+   ],
+   "style": "tab_dim"
+  },
+  {
+   "jp": "戻る",
+   "text": "Back",
+   "sprites": [
+    "btn_back_off.png",
+    "btn_back_on.png"
+   ],
+   "box": [
+    56,
+    12,
+    100,
+    40
+   ],
+   "cover": [
+    60,
+    8,
+    86,
+    50
+   ],
+   "style": "back"
+  },
+  {
+   "jp": "特定商取引法に基づく表示",
+   "text": "Commercial Transactions Act",
+   "sprites": [
+    "btn_age_off.png",
+    "btn_age_on.png"
+   ],
+   "box": [
+    14,
+    10,
+    199,
+    28
+   ],
+   "cover": [
+    16,
+    12,
+    195,
+    24
+   ],
+   "style": "legal"
+  },
+  {
+   "jp": "資金決済法に基づく表示",
+   "text": "Payment Services Act",
+   "sprites": [
+    "btn_fund_off.png",
+    "btn_fund_on.png"
+   ],
+   "box": [
+    14,
+    10,
+    199,
+    28
+   ],
+   "cover": [
+    16,
+    12,
+    195,
+    24
+   ],
+   "style": "legal"
+  }
+ ]
+}

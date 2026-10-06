@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns, version 14's `config`, `player.birth_year` / `birth_month` version 15's `items.stored_at` / `one_time_storage` and version 16's `items.inherited_*` added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns, version 14's `config`, `player.birth_year` / `birth_month` version 15's `items.stored_at` / `one_time_storage` and version 16's `items.inherited_*`, version 18's `coin_deposit` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1206,6 +1206,9 @@ create table premium_pass (id integer primary key, granted_at integer not null,
                            day_index integer not null default 0, last_at integer) strict;  -- m: master_premium_login_bonus
 create table subscription (plan_id integer primary key, opened_at integer, closed_at integer,
                            updated_at integer) strict;                                     -- m: master_subscription_plan
+create table coin_deposit (trans_id integer primary key, product_id integer not null, platform integer not null,
+                           created_at integer not null, completed_at integer, paid integer not null default 0,
+                           free integer not null default 0) strict;  -- **new** (v18): the coin shop's purchases
 create table follow_rental (rental_day integer primary key, count integer not null default 0,
                             paid integer not null default 0 check (paid in (0,1))) strict;
 
@@ -1659,6 +1662,11 @@ Lockstep changes:
   - **Code:** `api/growth/mastery.cpp`; `api/player/roster.cpp` / `person_status.cpp` send the inheritance, `api/growth/growth.cpp` UpdateAwakenLevel the disciple's new talent.
   - **Tests:** `server/schema-migrate-v17` ((1) v0 → v17: every other table's rows as at 12, an empty `mastery`, `.bak-v0`; (2) a v12 file → 13 without the master: the checks, the master as an owned character, the cascade, `mascot_id` NULL, `.bak-v12` without the table or the column), `server/schema-fresh-equals-migrated` and `server/schema-integrity` (56 tables), `growth/mastery-*`; the `mastery` replay corpus.
 ---
+
+**v18: the coin shop's purchases** (docs/unimplemented-apis.md part 3 step 7, 2026-10-04; not a plan step). Paid currency: the user decided buying 紋章石 works locally and costs nothing.
+  - **Step 18** (`state/schema.cpp` `kCoinDeposit`; `kSchemaVersion` 18; 14 on its branch, renumbered at the merge): `coin_deposit (trans_id integer primary key, product_id integer not null, platform integer not null, created_at integer not null, completed_at integer, paid integer not null default 0, free integer not null default 0) strict`: one row per purchase started (`CoinDepositCreate`); `completed_at` NULL while pending, the stones credited once completed (`CoinDeposit*Update`). `product_id` is the product's number (its `master_text` `coin_name_NNN` labels), not a master row, so no master reference. A new table: nothing to migrate.
+  - **Code:** `api/shop/coins.cpp`.
+  - **Tests:** `server/schema-migrate-coin-deposit` ((1) v0 → 14: the table created empty, every other table's rows as at 13; (2) a 13 file → 14 without the master: a pending row gets trans id 1, STRICT refuses a text product, `.bak-v13` without the table), `shop/coins`; the `coins` replay corpus.
 
 ## 5. Order and gates
 

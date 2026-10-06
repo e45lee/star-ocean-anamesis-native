@@ -25,7 +25,7 @@ NATIVE_TEST("server/schema-integrity") {
     S.set_clock("2021-05-25 12:00:00");
     t.expect_eq(state::user_version(sv.st.h), state::kSchemaVersion, "the state is at this build's version");
     t.expect_eq(sv.st.one("pragma foreign_keys", {}), (int64_t)1, "foreign keys on");
-    t.expect_eq(sv.st.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)58,
+    t.expect_eq(sv.st.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)59,
                 "every table exists before the first request");
     int seeded_fk_rows = 0;
     sv.st.q("pragma foreign_key_check", {}, [&](const Row&) { seeded_fk_rows++; });

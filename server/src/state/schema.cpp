@@ -1950,6 +1950,24 @@ const char* const kMastery[] = {
 ) strict)",
 };
 
+// ---- step 18: the coin shop's purchases (CoinDepositCreate, CoinDeposit*Update) -------------------
+//
+// coin_deposit: one row per purchase started (api/shop/coins.cpp): the trans id the client echoes
+// (CoinDeposit.deposit_trans_id), the product (CCoinInfo.id: its master_text labels' number, not a
+// master row), the platform the client sent, when it started and when it completed (NULL: pending),
+// and the stones it credited (paid / free). Nothing existed before, so nothing is migrated.
+const char* const kCoinDeposit[] = {
+    R"(create table if not exists coin_deposit (
+  trans_id integer primary key,
+  product_id integer not null,
+  platform integer not null,
+  created_at integer not null,
+  completed_at integer,
+  paid integer not null default 0,
+  free integer not null default 0
+) strict)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -2017,6 +2035,10 @@ const std::vector<Step>& steps() {
         {17,
          "mastery: the 師弟 pairs (GetMasteryInfo, TrainMastery, ResetMastery); player.mascot_id (ChangeMascot)",
          {std::begin(kMastery), std::end(kMastery)},
+         nullptr},
+        {18,
+         "the coin shop's purchases: coin_deposit (CoinDepositCreate, CoinDepositAndroidUpdate)",
+         {std::begin(kCoinDeposit), std::end(kCoinDeposit)},
          nullptr},
     };
     return s;

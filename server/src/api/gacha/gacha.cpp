@@ -196,9 +196,11 @@ bool pay_draw(ext::Ctx& ctx, const Request& req, const Row& gacha_row, GachaDraw
     draw.use_free = pay.free, draw.use_pay = pay.paid;
     if (!wallet::covers(have, draw.price, gacha_row.i("is_pay_coin") != 0) ||
         (draw.ticket && ctx.st.one("select ifnull(sum(count),0) from stock where master_item_id = ?", {draw.ticket}) < draw.tickets)) {
-        // (a) master_text error_message_text_20000 紋章石が不足しています ((d) of 20000 / 20003);
-        // a ticket short: (d) 10206 アイテムの所持数エラー
-        refusal = ext::refusef(ctx, req.method.c_str(), draw.use_pay > paid_coins ? ErrorCode::kCoinsShort : ErrorCode::kItemCountError,
+        // (a) master_text error_message_text_20003 紋章石が不足しています; (b) 20003, not 20000: the
+        // draw's answer lambda (@01ad2bb8) takes 20003 to its coin-shop state (CGacha state 30:
+        // CCoinShop::StateStart, docs/server-rules.md#paid-currency); a ticket short: (d) 10206
+        // アイテムの所持数エラー
+        refusal = ext::refusef(ctx, req.method.c_str(), draw.use_pay > paid_coins ? ErrorCode::kCoinsShortShop : ErrorCode::kItemCountError,
                                "gacha %u: not enough currency (price %u, free %u, paid %u)", draw.id, draw.price, free_coins, paid_coins);
         return false;
     }
@@ -418,7 +420,8 @@ Value gacha_data(ext::Ctx& ctx, const Request& req, const Row& gacha_row, GachaD
 //   (a) the count, price and currency from master_gacha (count_and_price); free coins first,
 //       is_pay_coin = paid coins only (core/wallet.h).
 //   (d) a step-up step that isn't the chain's current one is refused with kInvalidOperation (10403).
-//   (a) coins short: kCoinsShort (20000); (d) tickets short: kItemCountError (10206).
+//   (a)+(b) coins short: kCoinsShortShop (20003, the code the draw's answer lambda @01ad2bb8 opens
+//       the coin shop on); (d) tickets short: kItemCountError (10206).
 //   (a)+(d) each unit: a rank by the rates, then a unit from the reconstructed pools (4.5) or by
 //       rarity (draw_role); duplicates raise the limit break or give its item, chips (4.3).
 // Answers: the player state with GachaItems, AddCharacter, and when they changed AddItem,

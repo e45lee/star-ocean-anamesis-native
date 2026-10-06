@@ -134,9 +134,11 @@ Refusal buy_item_shop_row(Ctx& ctx, const Row& shop_row, ServerTime t) {
     u32 limit = (u32)shop_row.i("limit_count"), bought = shop_bought(ctx, shop_row, t);
     // (b) ItemShopUtility::IsEnable; (d) limit 0 = unlimited
     if (limit && bought >= limit) return {"sold out", ErrorCode::kLimitReached};
-    // (a) price; (b) in coins (紋章石: the screen's 必要紋章石); (a) free coins first (core/wallet.h)
+    // (a) price; (b) in coins (紋章石: the screen's 必要紋章石); (a) free coins first (core/wallet.h);
+    // (b) short: 20003, which the exchange's answer lambda (@01b5eea4) answers with the coin shop
+    // (CDialogManager::OpenCoinShopDialog for the coins missing; docs/server-rules.md#paid-currency)
     u32 price = (u32)shop_row.i("price");
-    if (!wallet::spend_coins(ctx.st.h, price)) return {"not enough coins", ErrorCode::kCoinsShort};
+    if (!wallet::spend_coins(ctx.st.h, price)) return {"not enough coins", ErrorCode::kCoinsShortShop};
     ctx.st.q(
         "insert into shop_counts (id, num, period, total) values (?, ?, ?, 1) "
         "on conflict(id) do update set num = excluded.num, period = excluded.period, "

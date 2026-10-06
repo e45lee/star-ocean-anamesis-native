@@ -1,0 +1,17 @@
+# soa-server replay corpus (server/tests/replay/README.md): coins, hand-written (docs/unimplemented-apis.md
+# part 3 step 7, paid currency), the `economy` options: Login (CoinList on the player load), CoinList,
+# a purchase of the テラ set (CoinDepositCreate, CoinDepositAndroidUpdate: 10,000 paid + 6,550 free), the
+# same update again (not credited twice), an unknown deposit (IOS update, 10208), a product not sold
+# (10208), the S set through the Amazon update, DirectItemShopList (empty), GetPlayer.
+# tz: America/Toronto
+req 1 1603641600 Login a01c67ef - - - -
+req 2 1603641605 CoinList d859bb89 - - - -
+req 3 1603641610 CoinDepositCreate 3850fb96 1,7 757365725f6964 - -
+req 4 1603641615 CoinDepositAndroidUpdate 089ac659 1 65794a76636d526c636b6c6b496a6f6954453944515577754d534973496e4279623252315933524a5a434936496e4e765953357362324e686243356a62326c75587a41774e794a39,6c6f63616c2d73746f7265 - -
+req 5 1603641620 CoinDepositAndroidUpdate 089ac659 1 65794a76636d526c636b6c6b496a6f6954453944515577754d534973496e4279623252315933524a5a434936496e4e765953357362324e686243356a62326c75587a41774e794a39,6c6f63616c2d73746f7265 - -
+req 6 1603641625 CoinDepositIOSUpdate c5193b15 99 _,_ - -
+req 7 1603641630 CoinDepositCreate 3850fb96 1,8 757365725f6964 - -
+req 8 1603641635 CoinDepositCreate 3850fb96 1,1 757365725f6964 - -
+req 9 1603641640 CoinDepositAmazonUpdate 0bc7f736 2 _,6c6f63616c2d73746f7265 - -
+req 10 1603641645 DirectItemShopList c367268b - - - -
+req 11 1603641650 GetPlayer 9a056905 - - - -

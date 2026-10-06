@@ -46,6 +46,7 @@ void register_settings();      // api/settings/account.cpp: the options (config.
 void register_storage();       // api/storage/storage.cpp: the equipment storage (and the overflow box's below)
 void register_one_time_storage();  // api/storage/one_time.cpp: the overflow box (一時保管庫); called by register_storage
 void register_mastery();       // api/growth/mastery.cpp: GetMasteryInfo, TrainMastery, ResetMastery
+void register_coins();         // api/shop/coins.cpp: paid currency (CoinList, CoinDeposit*, DirectItemShopList)
 void register_deco();          // api/player/deco.cpp: the character decorations (キャラデコ)
 }  // namespace soa::server
 namespace soa::server::events {

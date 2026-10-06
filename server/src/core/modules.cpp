@@ -61,6 +61,7 @@ const Module kModules[] = {
     {"storage", register_storage},
     {"mastery", register_mastery},
     {"deco", register_deco},
+    {"coins", register_coins},
 };
 
 }  // namespace

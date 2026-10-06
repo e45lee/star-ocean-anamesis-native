@@ -18,7 +18,7 @@ One folder per API group of `docs/api.md`, so the catalogue, the code and the ru
 | `player/` | the player state and its load (core), parties, assist and home character (core), home footer, titles, the notice page |
 | `presents/` | PresentList, GetPresent(Array) (core), present texts |
 | `settings/` | the options (GetConfig, UpdateConfig, ResetConfig; ConfigInfoList on the player load), the birth month, the read marks, the scenario library |
-| `shop/` | item shop, exchange, subscriptions (passes) |
+| `shop/` | item shop, exchange, subscriptions (passes), paid currency (the coin shop) |
 | `social/` | follow lists and rental helpers; the follow menu's lists (Blacklist, GetRecentlyPlayedList, SearchPlayer); the social calls' stubs (Follow*, Blacklist*, UpdateFollowMax, Neighbor*, LocationRegist) |
 | `sphere211/` | Sphere 211 |
 | `storage/` | the equipment storage (装備倉庫) and the overflow box (一時保管庫); `to_one_time_storage`, which the grants and the gacha ask |

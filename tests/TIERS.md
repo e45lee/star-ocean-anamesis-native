@@ -84,6 +84,8 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `session:campaign` | 5.2 min | 1 | Episode 1 -> Mere -> 1-05 through the map, its battle, then the story mission it unlocks | `port/scripts/campaign_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:events` | 5.2 min | 1 | event missions with --clock layouts | `port/scripts/events_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:home` | 6.9 min | 1 | every home button by the phase or request it leads to | `port/scripts/home_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:coins` | 7.0 min | 1 | paid currency: a player with 50 stones draws once, the sale-stopped dialog (patched) opens the coin shop, the L set bought (paid + free stones, the record), still there after a re-login | `port/scripts/coins_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:coins-server` | 7.3 min | 1 | the coins session with soa --server (soa-server over the wire) | `port/scripts/coins_session.sh --target port-server build/port/soa {out} {tmp}` |
 | T2 | `session:party` | 4.4 min | 1 | party sets 1 and 2 edited (UpdatePartySet), the home character (UpdateHome), a battle with set 2 | `port/scripts/party_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:rental` | 5.4 min | 1 | a rental helper fought as member 4; a second boot a day later: the rental bonus | `port/scripts/rental_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:growth` | 5.7 min | 1 | strengthening, evolution, limit break, weapon custom (gear set, removed, purified) | `port/scripts/growth_session.sh build/port/soa {out} {tmp}` |

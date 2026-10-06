@@ -1842,7 +1842,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Request**: as Android
 - **Response** (`data.*`): as Android
 - **Handler / effect**: Plain apply.
-- **Status**: **no caller found** (in 3.7.0 or the offline build)
+- **Status**: **no caller found** (in 3.7.0 or the offline build); answered by the local server as the Android one (`server/src/api/shop/coins.cpp`)
 - **Notes**: The method body returns Status 0 without sending, in both builds (Amazon store support was dropped before 3.7.0).
 
 ### CoinDepositAndroidUpdate
@@ -1853,7 +1853,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `Wallet`, `PurchasedItemInfo`, `AddItem`, `UpdateStockItem`
 - **Handler / effect**: Apply + AddItem + AddCharacter + limit-break sync + UpdateStackItem.
 - **Callers** (fid constant scan): `CPaymentManager::Progress_Purchase`, `CPaymentManager::Progress_Reverify`, `CPaymentManager::VerifyReceipt_`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/shop/coins.cpp`: the product's stones credited, paid and free, no receipt validation (docs/server-rules.md#paid-currency))
 
 ### CoinDepositCreate
 - **FunctionID** `3850fb96`
@@ -1863,7 +1863,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `CoinDeposit` {deposit_trans_id}
 - **Handler / effect**: Plain apply. Starts a real-money purchase.
 - **Callers** (fid constant scan): `CDirectItemShop::CreateTabList`, `CPaymentManager::Progress_Purchase`, unnamed code near `CCoinShop`, unnamed code near `ItemShopUtility`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/shop/coins.cpp`: a pending purchase, `CoinDeposit.deposit_trans_id` (docs/server-rules.md#paid-currency)). The third argument is the literal `"user_id"` (`CPaymentManager::Progress_Purchase`).
 
 ### CoinDepositIOSUpdate
 - **FunctionID** `c5193b15`
@@ -1872,17 +1872,17 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Request**: as Android
 - **Response** (`data.*`): as Android
 - **Handler / effect**: As Android.
-- **Status**: **no caller found** (in 3.7.0 or the offline build)
+- **Status**: **no caller found** (in 3.7.0 or the offline build); answered by the local server as the Android one (`server/src/api/shop/coins.cpp`)
 
 ### CoinList
 - **FunctionID** `d859bb89`
 - **Method** `CoinList(void)`
 - **Wire**: request fid `d859bb89`, encrypted: RequestHeader(16) = 16 bytes; reply `CoinListRes` fid `8dcb5344`
 - **Request**: none
-- **Response** (`data.*`): `CoinList` [CCoinInfo: product_id, free_coin, ..., limit_count, bought_at]
+- **Response** (`data.*`): `CoinList` {id: CCoinInfo: id, product_id, coin, free_coin, yen, order_id, icon_id, name, name_label, title_label, description_label, opened_at, closed_at, limit_count, limit_num, interval_day, bonus_type, bonus_id, bonus_id_label, is_once, sale_type, starter_limit_day, is_view_closed_at, bought_at}
 - **Handler / effect**: Plain apply.
-- **Status**: **no caller found** (in 3.7.0 or the offline build)
-- **Notes**: No caller found (the coin shop was stopped: `pay_back_stop`).
+- **Status**: **no caller found** (in 3.7.0 or the offline build); answered by the local server (`server/src/api/shop/coins.cpp`: the products; the same `CoinList` rides on every full player load, which `CPaymentManager::Init_` needs at login (docs/server-rules.md#paid-currency))
+- **Notes**: No caller found: the client gets the list with the player load. The 3.7.0 client stopped selling 紋章石 (docs/server-rules.md#paid-currency "How a player reaches the coin shop").
 
 ### DirectItemShopList
 - **FunctionID** `c367268b`
@@ -1892,7 +1892,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `DirectItemShopInfoList`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CShop::ProgressDirectItemShop`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/shop/coins.cpp`: an empty `DirectItemShopInfoList`, nothing to sell (docs/server-rules.md#paid-currency))
 - **Master tables**: `master_direct_item_shop`
 
 ### ExItemShop

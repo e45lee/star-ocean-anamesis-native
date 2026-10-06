@@ -82,10 +82,28 @@ server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint
     if (*p == 'E') p++;
     int reg = 1;
     char last_vec = 0;  // the element type of the last CSTLVector argument ('m' / 'j')
+    // The Itanium substitution candidates after S_ (FakeApiCaller) a string argument adds: "Ka" /
+    // "Kc" (S0_, ...) and "PKa" / "PKc"; a later S<n>_ naming a P one is another string argument
+    // (CoinDepositAndroidUpdate(u32, char const*, char const*) is "EjPKcS1_").
+    std::vector<bool> subst_is_str;
+    auto take_str = [&] {
+        const char* s = (const char*)x[reg++];
+        r.strs.push_back(s ? s : "");
+    };
+    // whether p is an S<n>_ substitution naming a string argument's type
+    auto string_subst = [&](const char* q) {
+        if (q[0] != 'S' || !(q[1] >= '0' && q[1] <= '9') || q[2] != '_') return false;
+        size_t k = (size_t)(q[1] - '0') + 1;
+        return k <= subst_is_str.size() && subst_is_str[k - 1];
+    };
     while (*p && reg < 8) {
-        if (!strncmp(p, "PKa", 3)) {
-            const char* s = (const char*)x[reg++];
-            r.strs.push_back(s ? s : "");
+        if (!strncmp(p, "PKa", 3) || !strncmp(p, "PKc", 3)) {
+            take_str();
+            subst_is_str.push_back(false);  // Ka / Kc
+            subst_is_str.push_back(true);   // PKa / PKc
+            p += 3;
+        } else if (string_subst(p)) {
+            take_str();
             p += 3;
         } else if (!strncmp(p, "RKN9Framework10CSTLVectorI", 26) || (*p == 'S' && last_vec && strchr(p, '_'))) {
             // a vector argument; "S<seq>_" repeats an earlier one's type (the Itanium substitution:

@@ -93,6 +93,13 @@ struct Home3DAnd2DSwitchingArgs {
     static Home3DAnd2DSwitchingArgs from(const Request& r) { return {int_at(r, 0, 1) != 0}; }
 };
 
+// ChangeMascot(u32 master_person_id): the chosen mascot (b: CAdjutantSelect's mascot list, the
+// request lambda @01913cc8).
+struct ChangeMascotArgs {
+    u32 master_person_id = 0;
+    static ChangeMascotArgs from(const Request& r) { return {(u32)int_at(r, 0)}; }
+};
+
 // MissionStart(u32 type, u32 mission, u32 helper index + 1, u64 own helper uid, u32 NPC helper id,
 // u64 rental uid, u32) (b: CStageManager::CallMissionStart; docs/api.md).
 struct MissionStartArgs {

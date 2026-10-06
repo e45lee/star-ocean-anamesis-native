@@ -1,0 +1,49 @@
+# soa-server replay corpus (server/tests/replay/README.md): mastery, hand-written (task U step 3.4):
+# the growth corpus's item-shop sets, two rarity-6 attackers of the seed boosted to LV70 (the 師匠
+# role_cp0011_b02a_6121 with mastery_type_attacker_01, the 弟子 role_cp0303_b04a_6131), then
+# GetMasteryInfo, TrainMastery (pairing refused and accepted; the first training refused, then
+# accepted with item_set_00003 bought twice; a pass-medal training refused),
+# ResetMastery both ways round, and GetPlayer; then ChangeRole (the seed's cp0010_b01a_6165 to
+# role_cp0010_b01a_6161, again, another person's character) and ChangeMascot (a type-3
+# master_home_message person, an unknown id), GetPlayer; the decorations with none owned: GetDecoInfo,
+# Favorite / UnFavoriteDecoObject (skipped), SetCharacterDeco refused (a decoration not owned, no payload).
+# tz: America/Toronto
+req 1 1790856005 Login a01c67ef - - - -
+req 2 1790856010 ExItemShop 33d09fb7 1875469583 - - -
+req 3 1790856015 ExItemShop 33d09fb7 1220949191 - - -
+req 4 1790856020 ExItemShop 33d09fb7 2051182432 - - -
+req 5 1790856025 ExItemShop 33d09fb7 2935424380 - - -
+req 6 1790856030 GetMasteryInfo 45bea005 - - - -
+req 7 1790856035 TrainMastery bb0e7ef9 2113929230,2113929270,1,1012696816,0,0 - - -
+req 8 1790856040 BoostCharacter e5a04db6 2113929270,1279181686,25 - - -
+req 9 1790856045 BoostCharacter e5a04db6 2113929230,1279181686,25 - - -
+req 10 1790856050 BoostCharacter e5a04db6 2113929270,3633820516,3 - - -
+req 11 1790856055 BoostCharacter e5a04db6 2113929230,3633820516,3 - - -
+req 12 1790856060 TrainMastery bb0e7ef9 2113929270,2113929230,1,1012696816,0,0 - - -
+req 13 1790856065 TrainMastery bb0e7ef9 2113929253,2113929270,1,1012696816,0,0 - - -
+req 14 1790856070 TrainMastery bb0e7ef9 2113929230,2113929270,4,1012696816,0,0 - - -
+req 15 1790856075 TrainMastery bb0e7ef9 2113929230,2113929270,1,1012696816,0,0 - - -
+req 16 1790856080 TrainMastery bb0e7ef9 2113929230,2113929270,1,1012696816,2,1 - - -
+req 17 1790856085 ExItemShop 33d09fb7 2973997587 - - -
+req 18 1790856090 ExItemShop 33d09fb7 2973997587 - - -
+req 19 1790856095 TrainMastery bb0e7ef9 2113929230,2113929270,1,1012696816,1,2 - - -
+req 20 1790856100 TrainMastery bb0e7ef9 2113929230,2113929270,1,1012696816,2,5 - - -
+req 21 1790856105 GetMasteryInfo 45bea005 - - - -
+req 22 1790856110 ResetMastery 614fa7ea 2113929270,2113929230 - - -
+req 23 1790856115 ResetMastery 614fa7ea 2113929270,2113929230 - - -
+req 24 1790856120 TrainMastery bb0e7ef9 2113929230,2113929270,2,1012696816,0,0 - - -
+req 25 1790856125 ResetMastery 614fa7ea 2113929230,2113929270 - - -
+req 26 1790856130 TrainMastery bb0e7ef9 2113929230,2113929270,3,1012696816,0,0 - - -
+req 27 1790856135 GetMasteryInfo 45bea005 - - - -
+req 28 1790856140 GetPlayer 9a056905 - - - -
+req 29 1790856145 ChangeRole 720e2bac 2113929272,2696629700 - - -
+req 30 1790856150 ChangeRole 720e2bac 2113929272,2696629700 - - -
+req 31 1790856155 ChangeRole 720e2bac 2113929230,2696629700 - - -
+req 32 1790856160 ChangeMascot d1bcebee 1858102629 - - -
+req 33 1790856165 ChangeMascot d1bcebee 12345 - - -
+req 34 1790856170 GetPlayer 9a056905 - - - -
+req 35 1790856175 GetDecoInfo 33015ed5 - - - -
+req 36 1790856180 FavoriteDecoObject 2b486f97 - - 3308518813 -
+req 37 1790856185 UnFavoriteDecoObject 6c67993d - - 3308518813 -
+req 38 1790856190 SetCharacterDeco 0747f39c - 84ac6368617261637465725f6964ce7e00000ea7686169725f696400a7706f73655f696400b34368617261637465724465636f4f626a6563749183a5696e64657800b56d61737465725f6465636f5f6f626a6563745f6964cec533fd9dab6174746163685f7479706501 - -
+req 39 1790856195 SetCharacterDeco 0747f39c - - - -

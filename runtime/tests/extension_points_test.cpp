@@ -150,6 +150,7 @@ int main(int argc, char** argv) {
     run_runtime_tests("frontend/movie-");  // the movie player on FFmpeg's libraries, with a built-in clip (frontend/movie_tests.cpp)
     run_runtime_tests("gdb/");             // the GDB protocol's encodings (core/gdb_protocol_tests.cpp)
     run_runtime_tests("hle/libc-");        // the guest libc helpers that differ by host (hle/format_tests.cpp)
+    run_runtime_tests("hle/host-file-");   // Linux file semantics on either host (hle/host_file_tests.cpp)
     run_crash_tests(check);                // crash reports of a guest thread, in a child process (crash_test.cpp)
     run_gdbstub_tests(check);              // the GDB stub end to end (gdbstub_test.cpp; last: it turns the debugger hooks on)
     std::error_code ec;

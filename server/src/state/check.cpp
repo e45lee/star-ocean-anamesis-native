@@ -51,6 +51,13 @@ const std::vector<MasterRef>& master_refs() {
         {"config", "master_config_id", "master_config", "id", false},
         // the overflow box (一時保管庫): one row per master item (api/storage/one_time.cpp)
         {"one_time_storage", "master_item_id", "master_item", "id", false},
+        // the 師弟 pairs' mastery type (schema version 17)
+        {"mastery", "type_id", "master_mastery_step", "type_id", false},
+        // the home's mascot (schema version 17; NULL: never chosen)
+        {"player", "mascot_id", "master_person", "id", false},
+        // the decorations (schema version 17): an object or a hair colour; a character's hair (0: none)
+        {"deco_owned", "master_deco_id", "master_deco_object|master_deco_hair", "id", false},
+        {"character_deco", "hair_id", "master_deco_hair", "id", true},
     };
     return refs;
 }

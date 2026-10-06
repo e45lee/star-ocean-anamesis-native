@@ -14,6 +14,8 @@
   "BoxGacha": "server/src/api/gacha/box.cpp",
   "BulkWithdrawItemFromOneTimeStorage": "server/src/api/storage/one_time.cpp",
   "CbtCertification": "server/src/api/entry/entry.cpp",
+  "ChangeMascot": "server/src/api/player/home.cpp",
+  "ChangeRole": "server/src/api/growth/growth.cpp",
   "CheckEventRankingResult": "server/src/api/events/ranking.cpp",
   "ClearNewCharacter": "server/src/api/items/new_flags.cpp",
   "ClearNewEventRanking": "server/src/api/events/ranking.cpp",
@@ -63,6 +65,7 @@
   "ExItemShop": "server/src/api/shop/shop.cpp",
   "ExshopExchange": "server/src/api/shop/shop.cpp",
   "ExshopExchangeList": "server/src/api/shop/shop.cpp",
+  "FavoriteDecoObject": "server/src/api/player/deco.cpp",
   "FollowAdd": "server/src/api/social/social.cpp",
   "FollowList": "server/src/api/social/rental.cpp",
   "FollowRemove": "server/src/api/social/social.cpp",
@@ -73,10 +76,12 @@
   "GetBirthYearMonth": "server/src/api/settings/account.cpp",
   "GetBoxGacha": "server/src/api/gacha/box.cpp",
   "GetConfig": "server/src/api/settings/config.cpp",
+  "GetDecoInfo": "server/src/api/player/deco.cpp",
   "GetEventRankingInfo": "server/src/api/events/ranking.cpp",
   "GetGachaInData": "server/src/api/gacha/gacha.cpp",
   "GetGachaRate": "server/src/api/gacha/rates.cpp",
   "GetGearInfo": "server/src/api/items/gear.cpp",
+  "GetMasteryInfo": "server/src/api/growth/mastery.cpp",
   "GetMissionList": "server/src/api/missions/play_state.cpp",
   "GetOneTimeStorageInfo": "server/src/api/storage/one_time.cpp",
   "GetPlayMission": "server/src/api/missions/play_state.cpp",
@@ -123,6 +128,7 @@
   "RemoveGear": "server/src/api/items/gear.cpp",
   "ResetBoxGacha": "server/src/api/gacha/box.cpp",
   "ResetConfig": "server/src/api/settings/config.cpp",
+  "ResetMastery": "server/src/api/growth/mastery.cpp",
   "ReturnSphere211": "server/src/api/sphere211/sphere211.cpp",
   "SaleGacha": "server/src/api/gacha/gacha.cpp",
   "SaleGachaOnce": "server/src/api/gacha/gacha.cpp",
@@ -135,6 +141,7 @@
   "SendErrorLog": "server/src/api/entry/entry.cpp",
   "SendGuideInformation": "server/src/api/settings/account.cpp",
   "SetAssist": "server/src/api/player/assist.cpp",
+  "SetCharacterDeco": "server/src/api/player/deco.cpp",
   "SetTitle": "server/src/api/player/titles.cpp",
   "SimpleLogin": "server/src/api/entry/entry.cpp",
   "Sphere211AutoMemberSelect": "server/src/api/sphere211/sphere211.cpp",
@@ -149,7 +156,9 @@
   "Sphere211UseRerollItem": "server/src/api/sphere211/sphere211.cpp",
   "StaminaHeal": "server/src/api/items/items.cpp",
   "StaminaHealByFavor": "server/src/api/daily/premium_and_favor_bonus.cpp",
+  "TrainMastery": "server/src/api/growth/mastery.cpp",
   "TrainingMissionStart": "server/src/api/missions/mission_start.cpp",
+  "UnFavoriteDecoObject": "server/src/api/player/deco.cpp",
   "UnlockItem": "server/src/api/items/items.cpp",
   "UnlockItemArray": "server/src/api/items/items.cpp",
   "UnlockStorageItem": "server/src/api/storage/storage.cpp",
@@ -242,6 +251,10 @@
    "OnPlayerLoad"
   ],
   "server/src/api/storage/one_time.cpp": [
+   "OnResponse"
+  ],
+  "server/src/api/player/deco.cpp": [
+   "Grant",
    "OnResponse"
   ]
  },
@@ -507,6 +520,24 @@
     "UpdateParty",
     "UpdatePartySet",
     "UseHealItem"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:mastery": {
+   "apis": [
+    "BoostCharacter",
+    "ChangeMascot",
+    "ChangeRole",
+    "ExItemShop",
+    "FavoriteDecoObject",
+    "GetDecoInfo",
+    "GetMasteryInfo",
+    "GetPlayer",
+    "Login",
+    "ResetMastery",
+    "SetCharacterDeco",
+    "TrainMastery",
+    "UnFavoriteDecoObject"
    ],
    "source": "observed (requests.txt)"
   },
@@ -1180,6 +1211,38 @@
     "SellItemsFromStorage",
     "WithdrawItemFromOneTimeStorage",
     "WithdrawItemFromStorage"
+   ],
+   "source": "declared"
+  },
+  "session:mastery": {
+   "apis": [
+    "ChangeRole",
+    "FavoriteDecoObject",
+    "GetDecoInfo",
+    "GetMasteryInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "ResetMastery",
+    "SetCharacterDeco",
+    "TrainMastery"
+   ],
+   "source": "declared"
+  },
+  "session:mastery-server": {
+   "apis": [
+    "ChangeRole",
+    "FavoriteDecoObject",
+    "GetDecoInfo",
+    "GetMasteryInfo",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "ResetMastery",
+    "SetCharacterDeco",
+    "TrainMastery"
    ],
    "source": "declared"
   },

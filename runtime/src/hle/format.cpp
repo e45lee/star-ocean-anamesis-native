@@ -360,4 +360,115 @@ s32 guest_rand() {
 #endif
 }
 
+namespace {
+// ISO 8601 week-based year and week number (%G, %V)
+int iso_weeks_in_year(long y) {
+    auto p = [](long v) { return ((v + v / 4 - v / 100 + v / 400) % 7 + 7) % 7; };
+    return 52 + (p(y) == 4 || p(y - 1) == 3);
+}
+void iso_week(const struct tm& t, int* year, int* week) {
+    int y = t.tm_year + 1900;
+    int w = (t.tm_yday - (t.tm_wday + 6) % 7 + 10) / 7;
+    if (w < 1) {
+        y--;
+        w = iso_weeks_in_year(y);
+    } else if (w > iso_weeks_in_year(y)) {
+        y++;
+        w = 1;
+    }
+    *year = y, *week = w;
+}
+}  // namespace
+
+std::string strftime_c89_format(const char* fmt, const struct tm& t, long gmtoff) {
+    std::string out;
+    auto lit = [&](const std::string& s) {
+        for (char ch : s) {
+            if (ch == '%') out += '%';
+            out += ch;
+        }
+    };
+    for (const char* p = fmt; *p; p++) {
+        if (*p != '%') {
+            out += *p;
+            continue;
+        }
+        const char* start = p++;
+        char flag = 0;  // glibc / bionic: '-' no padding, '_' spaces, '0' zeros
+        while (*p == '-' || *p == '_' || *p == '0' || *p == '^' || *p == '#') flag = *p++;
+        while (*p == 'E' || *p == 'O') p++;  // (alternative forms: the C locale has none)
+        if (!*p) {  // a trailing '%': as it was
+            out.append(start);
+            break;
+        }
+        char conv = *p;
+        // a number with the default padding char and width, or the flag's
+        auto num = [&](long v, int width, char pad) {
+            if (flag == '-') width = 0;
+            else if (flag == '_') pad = ' ';
+            else if (flag == '0') pad = '0';
+            std::string d = std::to_string(v < 0 ? -v : v);
+            std::string r = v < 0 ? "-" : "";
+            for (int i = (int)d.size(); i < width; i++) r += pad;
+            lit(r + d);
+        };
+        int hour12 = t.tm_hour % 12 == 0 ? 12 : t.tm_hour % 12;
+        int iy, iw;
+        switch (conv) {
+        // C89 conversions msvcrt has: kept (with a flag, numeric ones are written out here)
+        case 'd': flag ? num(t.tm_mday, 2, '0') : (void)(out += "%d"); break;
+        case 'H': flag ? num(t.tm_hour, 2, '0') : (void)(out += "%H"); break;
+        case 'I': flag ? num(hour12, 2, '0') : (void)(out += "%I"); break;
+        case 'j': flag ? num(t.tm_yday + 1, 3, '0') : (void)(out += "%j"); break;
+        case 'm': flag ? num(t.tm_mon + 1, 2, '0') : (void)(out += "%m"); break;
+        case 'M': flag ? num(t.tm_min, 2, '0') : (void)(out += "%M"); break;
+        case 'S': flag ? num(t.tm_sec, 2, '0') : (void)(out += "%S"); break;
+        case 'y': flag ? num((t.tm_year + 1900) % 100, 2, '0') : (void)(out += "%y"); break;
+        case 'Y': flag ? num(t.tm_year + 1900, 1, '0') : (void)(out += "%Y"); break;
+        case 'a': case 'A': case 'b': case 'B': case 'c': case 'p': case 'U': case 'w': case 'W':
+        case 'x': case 'X': case 'Z': case '%':
+            out += '%';
+            out += conv;
+            break;
+        // the rest: written out
+        case 'F': out += "%Y-%m-%d"; break;
+        case 'T': out += "%H:%M:%S"; break;
+        case 'D': out += "%m/%d/%y"; break;
+        case 'R': out += "%H:%M"; break;
+        case 'r': out += "%I:%M:%S %p"; break;
+        case 'h': out += "%b"; break;
+        case 'n': out += '\n'; break;
+        case 't': out += '\t'; break;
+        case 'e': num(t.tm_mday, 2, ' '); break;
+        case 'k': num(t.tm_hour, 2, ' '); break;
+        case 'l': num(hour12, 2, ' '); break;
+        case 'C': num((t.tm_year + 1900) / 100, 2, '0'); break;
+        case 'u': num(t.tm_wday == 0 ? 7 : t.tm_wday, 1, '0'); break;
+        case 'P': lit(t.tm_hour < 12 ? "am" : "pm"); break;
+        case 'G': iso_week(t, &iy, &iw); num(iy, 1, '0'); break;
+        case 'g': iso_week(t, &iy, &iw); num(iy % 100, 2, '0'); break;
+        case 'V': iso_week(t, &iy, &iw); num(iw, 2, '0'); break;
+        case 'z': {
+            long a = gmtoff < 0 ? -gmtoff : gmtoff;
+            char b[16];
+            snprintf(b, sizeof b, "%c%02ld%02ld", gmtoff < 0 ? '-' : '+', a / 3600, a / 60 % 60);
+            lit(b);
+            break;
+        }
+        case 's': {
+            // the tm as local time with the given offset: days from the civil date, then the offset
+            long long y = t.tm_year + 1900LL, m = t.tm_mon + 1;
+            y -= m <= 2;
+            long long era = (y >= 0 ? y : y - 399) / 400, yoe = y - era * 400;
+            long long doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + t.tm_mday - 1, doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+            long long days = era * 146097 + doe - 719468;
+            lit(std::to_string(days * 86400 + t.tm_hour * 3600LL + t.tm_min * 60LL + t.tm_sec - gmtoff));
+            break;
+        }
+        default: out.append(start, p + 1); break;  // unknown: as it was (the host decides)
+        }
+    }
+    return out;
+}
+
 }  // namespace soa

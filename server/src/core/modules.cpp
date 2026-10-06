@@ -59,6 +59,8 @@ const Module kModules[] = {
     {"debug_stubs", register_debug_stubs},
     {"settings", register_settings},
     {"storage", register_storage},
+    {"mastery", register_mastery},
+    {"deco", register_deco},
 };
 
 }  // namespace

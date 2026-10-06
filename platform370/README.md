@@ -17,6 +17,7 @@ It was moved out of `emulator/src/` (P0 of that plan). `git log --follow` keeps 
 | `src/java_370.cpp` | The 25 `jb.Aska.AskaActivity` methods only 3.7.0 calls (Play Games, achievements, location, notifications), answered like a phone without those services (`emulator/README.md` "The Java methods"), and the 6 in-app billing methods (the coin shop's store), answered by a local store that completes every purchase for nothing (`docs/client-changes.md` "In-app billing") | `Vm::def` | `java` |
 | `src/hle_370.cpp` | The import 3.7.0 has and the runtime lacks (`fmod`); the device clock: `time`, `gettimeofday`, `clock_gettime`, `syscall(clock_gettime)` on the realtime clocks, at an offset from the host's (0 by default) | `Hle::override_fn` | `imports`; `clock`, `device_clock` |
 | `src/patch_370.cpp` | The native patches: `CParameterUtility::FindGlobalStringWithKey` answers `service_stop_day` with `""`, so the client runs on the real date (`emulator/README.md` "The date and `service_stop_day`"); `CDialogManager::OpenBuyEndDialog` opens the coin shop instead of the sale-stopped dialog (the user's decision; `docs/client-changes.md` "Emulator mode") | `make_original_trampoline`, `hook_guest_function` (`core/cpu.h`) | `patch` |
+| `src/lang_370.cpp` | The language (`docs/client-changes.md` "English mode"; `docs/PLAN-english.md` B1, B7): with `lang` "en", `CLanguage::CLanguage` is hooked and sets `Current` to en (every file tried as `name-en.ext` first); with `voice_lang` "ja" (default), `BAS:VoiceLanguage` = 0 is written into the phone's `Game.xml` before the client starts. With `lang` "ja" nothing is hooked | `make_original_trampoline`, `hook_guest_function`; the runtime's `SharedPrefs` | `lang`, `voice_lang` |
 | `src/net_370.cpp` | The network redirect: `getaddrinfo` / `gethostbyname` / `connect`. `production-game.so-ana.com` and mapped names resolve to the server host, and port 443 / 4001 go to the server / lobby port. On the way, Bionic's `ai_flags` and `EAI_*` codes are translated to and from glibc's (`emulator/README.md` "Networking") | `Hle::override_fn`, delegating to the runtime's thunks | `net`, `netcfg` |
 | `src/http_370.cpp` | The host HTTP/1.1 client behind the `AskaActivity` HTTP methods (`HttpRequest`, `GetHttpHeader`, `ReadHttpResponse`, ...). URLs to a mapped host go to the installed `HttpBackend` in memory, else to `netcfg.http_*` as plain HTTP | `Vm::override_method` | `http` (reads `netcfg` and `set_http_backend`) |
 | `src/internal.h` | The pieces' install functions, for `platform370.cpp` | | |
@@ -33,18 +34,22 @@ cfg.netcfg.http_port = 44380;           // soa-server's --http (http_host "" = s
 cfg.netcfg.hosts["cdn.example"] = "";   // more names to map ("" = server_host); keys lower case
 cfg.device_clock = "host";              // or "YYYY-MM-DD HH:MM:SS" (local time)
 cfg.patch = true;                       // false = soa-emu --no-patch
+cfg.lang = "ja";                        // or "en" (--lang); cfg.voice_lang = "ja" or "keep" (--voice-lang)
 platform370::install(cfg);              // before hle_init() and jni::Vm::get().init()
 ...
 PatchStatus s = platform370::install_patches(*lib);  // after load_library, before run_initializers
+platform370::install_language(*lib);                 // after install_patches (and vfs_init), before run_initializers
 ```
 
 - **`Config`:**
   - `app_version`: what `GetApplicationVersion` answers. Default `"3.7.0"`; `""` leaves `device_config()` alone.
   - Pieces: `java`, `imports`, `clock`, `patch`, `net`, `http`, all on by default.
+  - `lang`: `"ja"` (default, the client as shipped) or `"en"`; `voice_lang`: `"ja"` (default, `BAS:VoiceLanguage` = 0) or `"keep"`. `install()` calls `fatal()` on other values.
   - `device_clock`: `"host"` (default) or a start date. A date needs `clock`; `install()` calls `fatal()` on a malformed one.
   - `netcfg`: server, HTTP and lobby host and port, and `hosts` (the `--map-host` names).
 - **`install(cfg)`:** call once, before the runtime's `hle_init()` and `Vm::init()`. Their registrars run at the end of those calls. It also sets `device_config().app_version` and the clock offset, which is measured from `install()`.
 - **`install_patches(lib)`:** returns `Hooked`, `Disabled` (`patch` off) or `NotFound` (the library's `FindGlobalStringWithKey` isn't 3.7.0's, e.g. the offline build's, or another hook is already on it; nothing is patched and a warning is logged).
+- **`install_language(lib)`:** the language settings: with `lang` "en" the `CLanguage` hook, with `voice_lang` "ja" the `Game.xml` write. Call after `vfs_init` (it writes the phone's `shared_prefs/Game.xml`) and `install_patches`, before any guest code runs; its hooks are no natives, so a host's natives don't replace them. `language()` and `language_hooks()` report what it did (the port's `platform370/lang` selftest).
 - **`hides_global_key(key)`:** the patch's rule (true for `service_stop_day` while `patch` is on), for a host that replaces `FindGlobalStringWithKey` itself.
 - **`net_config()` / `mapped_address(name)`:** the network settings in force, and where a name resolves to (`""` if not mapped).
 - **`set_http_backend(backend)` / `http_backend()`:** the HTTP backend (below); `nullptr` (the default) = sockets.
@@ -104,6 +109,7 @@ platform370::install(cfg);              // before hle_init / Vm::init
 hle_init(); jni::Vm::get().init();
 lib = load_library(...);
 platform370::install_patches(*lib);     // first guest-function hook on the library
+platform370::install_language(*lib);    // --lang / --voice-lang
 install_native_functions(*lib);         // the host's natives, incl. the FakeApiCaller hooks
 run_initializers(*lib);
 ```

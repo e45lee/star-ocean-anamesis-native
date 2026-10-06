@@ -516,6 +516,17 @@ Run 3 shows a second way to deliver text: not `en_` rows that StringDB must lear
 | Server work | the served-master pipeline gets a second output: its `ClientMaster` edits, then the English | one `ClientMaster` hook that inserts rows |
 | Pre-download screens | the port can carry an English built-in master through its asset overlay (run 3's dialog) | the same, with a built-in `-en` master that holds `en_` rows; without one, Japanese until the first download |
 
+### 6.7 Implemented: `--lang` and `--voice-lang` (B1, B7)
+
+Agent `en-client`, 2026-10-07 ([PLAN-english.md](PLAN-english.md) B1, B7; [client-changes.md "English mode"](client-changes.md)).
+
+- **`--lang ja|en`** (`soa` and `soa-emu`; `platform370::Config::lang`, `platform370/src/lang_370.cpp`). With `en`, `CLanguage::CLanguage` is hooked and sets Current to 1 after the original; with `ja` nothing is hooked. The selftest `platform370/lang` checks the singleton (Default 0x100, Current 1 or 0x100, Voice 0) and that `PostfixLanguageCodeFilepath("Font/etc2/font.fpk", Current)` is `font-en.fpk`.
+- **`--voice-lang ja|keep`** (default `ja`): `BAS:VoiceLanguage` = 0 written into the phone's `Game.xml` before the client starts, through the runtime's SharedPreferences and the game's KVS encoding (moved from the server to `common/include/soa/kvs.h`).
+- **The `home` session with `--lang en`** (the unchanged Japanese server; `SOA_TRACE` on `CLanguage::PostfixLanguageCodeFilepath` with `:0=s`, a string dump added to `core/trace.cpp`) passed ("every home destination reached"). Its log (`work/english/exec/client/b1-home/log.txt`, local):
+  - 16,196 postfix calls, 12,867 of them giving an `-en` name: `Font/etc2/font-en.fpk`, `sqlite/basmaster-en.sqlite3`, `UI/etc2/home-en.csf`, `Character/…-en.acf`, `Sound/…-en.aac` and so on. None exists, so every load fell back to the Japanese file.
+  - The voice packs: `FileExistLanguage` and `IsFileExistDownloadFolder` (the disk and download lookups) resolved every `Sound/Voice_*.spk` to its bare name through Voice 0, with no `-en` name. `RegisteredFileLanguage` (the in-memory table of files already registered) still tries Voice, then Current (`Voice_UI_001-en.spk`), then the plain name while a pack isn't registered yet: a lookup in memory, not a file probe or a download.
+  - The client read `BAS:VoiceLanguage` 256 from the session's save; the log shows `256 -> 0`.
+
 ## 7. Machine translation for the gaps
 
 Investigation of 2026-10-07 (agent `english-mt`), at the user's request: **how would a machine-translation (MT) option for the text Global never translated work, and how would it be documented and edited later?** Nothing in the server or client changed. The data-side prototype is `tools/english_mt.py` (coverage, glossary, translation memory, protected tokens, glyph folding, line widths, checks); it only reads data and writes to `work/`. The trial's engine adapters, raw outputs and scores are in `work/english/mt-trial/` (local, not committed: derived game text). The plan's steps are in [PLAN-english.md "Machine translation"](PLAN-english.md#machine-translation-for-the-gaps-m-steps).

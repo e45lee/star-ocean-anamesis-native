@@ -1,4 +1,4 @@
-// soa_codec_tests: the unit tests of soa_codec (common/include/soa/: base64.h, prefs_xml.h). Each
+// soa_codec_tests: the unit tests of soa_codec (common/include/soa/: base64.h, prefs_xml.h, kvs.h). Each
 // file's checks print "ok" / "FAIL" lines; the exit status is the number of failures.
 #include <cstdio>
 #include <string>
@@ -13,10 +13,12 @@ void codec_check(bool ok, const std::string& what) {
 
 void base64_tests();
 void prefs_xml_tests();
+void kvs_tests();
 
 int main() {
     base64_tests();
     prefs_xml_tests();
+    kvs_tests();
     fprintf(stderr, "%s (%d failures)\n", g_codec_failures ? "FAIL" : "all passed", g_codec_failures);
     return g_codec_failures;
 }

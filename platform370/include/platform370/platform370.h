@@ -71,6 +71,16 @@ struct Config {
     // hidden, so the client runs on the real date; the sale-stopped dialog (OpenBuyEndDialog) opens
     // the coin shop instead. false = --no-patch.
     bool patch = true;
+    // The client's language (lang_370.cpp, install_language; docs/client-changes.md "English mode"):
+    // "ja" (default) leaves the client as shipped (CLanguage is 0x100, "no language", in all three
+    // fields, and nothing is hooked); "en" sets CLanguage::Current to 1 (en) after CGame::OnInitialize
+    // builds it, so every file load tries name-en.ext before name.ext (docs/english.md 6.3).
+    // Independent of `patch`. --lang.
+    std::string lang = "ja";
+    // The voice language (install_language): "ja" (default) writes BAS:VoiceLanguage = 0 into the
+    // phone's Game.xml before the client starts, so the Voice_*.spk packs resolve to the Japanese
+    // (bare) names with no -en probe; "keep" leaves the save's value. --voice-lang.
+    std::string voice_lang = "ja";
     // The network glue: the name/port redirect (getaddrinfo / gethostbyname / connect, with the
     // Bionic<->glibc ai_flags and EAI_* fixes; net_370.cpp) and the host HTTP client behind the
     // AskaActivity HTTP methods (http_370.cpp). Off for a host whose client never reaches the
@@ -95,6 +105,17 @@ enum class PatchStatus {
 // Applies the native patch when Config::patch is set. Call after load_library, before any guest
 // code runs (run_initializers) and before a host's own guest-function hooks.
 PatchStatus install_patches(LoadedLib& lib);
+
+// The language settings (Config::lang, Config::voice_lang): with lang "en" hooks
+// CLanguage::CLanguage (Current = en); with voice_lang "ja"
+// writes BAS:VoiceLanguage = 0 into DATA/data/shared_prefs/Game.xml. Call after vfs_init and
+// install_patches, before any guest code runs (run_initializers) and before a host's natives.
+// With lang "ja" and voice_lang "keep" it does nothing.
+void install_language(LoadedLib& lib);
+// Config::lang as install() got it ("ja" before install()).
+const std::string& language();
+// The guest functions install_language hooked (empty with --lang ja), for the selftests.
+const std::vector<std::string>& language_hooks();
 
 // The patch's rule, for a host that replaces CParameterUtility::FindGlobalStringWithKey itself
 // (the port's native): true for the master_global keys the patch answers with "" (today only

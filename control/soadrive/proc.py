@@ -4,11 +4,14 @@ import os
 import signal
 import socket
 import subprocess
+import threading
 import time
 
 # control/soadrive/proc.py -> the repository root
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MAX_RSS_KB = 6 * 1024 * 1024
+# every Proc started and not yet stopped: stop_all() ends them (a driver that is itself stopped)
+LIVE, LIVE_LOCK = set(), threading.Lock()
 
 
 def repo_file(rel):
@@ -46,6 +49,8 @@ class Proc:
                                   env=e, cwd=cwd, start_new_session=True,
                                   pass_fds=(slot_fd,) if slot_fd >= 0 else ())
         self.pid = self.p.pid
+        with LIVE_LOCK:
+            LIVE.add(self)
 
     def running(self):
         return self.p.poll() is None
@@ -81,6 +86,8 @@ class Proc:
                     pass
                 self.p.wait()
         self.f.close()
+        with LIVE_LOCK:
+            LIVE.discard(self)
 
     def wait(self, timeout):
         try:
@@ -88,3 +95,43 @@ class Proc:
             return True
         except subprocess.TimeoutExpired:
             return False
+
+
+def _live_snapshot():
+    """The live Procs without LIVE_LOCK (a signal handler runs on the main thread, which may hold
+    it): a copy of the set, retried if another thread changes it during the copy."""
+    for _ in range(100):
+        try:
+            return list(LIVE)
+        except RuntimeError:  # "Set changed size during iteration"
+            continue
+    return []
+
+
+def kill_all():
+    """KILLs the process group of every Proc not yet stopped. Each runs in its own group (not the
+    driver's), so a driver that is killed leaves them running, each with the game slot it
+    inherited, until its own time limit: a driver's TERM handler calls this first. Safe in a signal
+    handler: no lock, no I/O but kill(2)."""
+    for p in _live_snapshot():
+        try:
+            os.killpg(p.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+
+
+def exit_on_signals(signals=(signal.SIGTERM, signal.SIGHUP)):
+    """On TERM / HUP (a gate's interrupt or time limit, a closed terminal): end every Proc, then exit
+    at once with 128 + the signal (a driver whose threads are blocked in waits; tests/diff/difftest.py).
+    Main thread only. The handler is async-signal-safe in Python's sense: it runs between two
+    bytecodes of the main thread, which may be inside print() (a reentrant print raises) or hold a
+    lock, so it takes no lock and writes only with os.write to fd 2."""
+    def handler(signum, _frame):
+        kill_all()
+        try:
+            os.write(2, b"stopped by signal %d: ended the clients and servers it started\n" % signum)
+        except OSError:
+            pass
+        os._exit(128 + signum)
+    for s in signals:
+        signal.signal(s, handler)

@@ -48,12 +48,22 @@ def screen_table(ref, run, limits):
     return ok, rows
 
 
-def report(flow, runs, ref_target, path):
-    """runs: {target: Run}. Returns True when every compared item passes."""
+def report(flow, runs, ref_target, path, expected=None):
+    """runs: {target: Run}; expected: the targets that should have run (default: those in runs).
+    Returns True when every compared item passes; a target without a run, or a comparison without
+    the reference run, FAILs (it compared nothing)."""
     lines, ok = [], True
     lines.append("# tests/diff flow %s" % flow.NAME)
     lines.append("")
     lines.append("## Runs (milestones)")
+    for t in expected or ():
+        if t not in runs:
+            lines.append("- %s: FAIL: no run (its driver failed before it started; see the tests/diff log)%s" % (
+                t, ": nothing was compared with this reference" if t == ref_target else ""))
+            ok = False
+    if not runs:
+        lines.append("- FAIL: no runs")
+        ok = False
     for t, r in runs.items():
         lines.append("- %s: %s in %ds (%s)" % (t, "FAIL" if r.failed else "PASS", r.elapsed_total, r.dir))
         for x in r.results:

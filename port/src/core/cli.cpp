@@ -40,9 +40,9 @@ int parse_soa_args(int argc, const char* const* argv, SoaArgs& a, std::vector<st
                   "~/.local/share/soa-linux-370; Windows %LOCALAPPDATA%\\soa\\port-370)")
         ->group(files);
     cli::add_download(app, cl.download_dir,
-                      "the 3.7.0 download (the online game's downloaded tree): a folder, or the zip SOA-3.7.0-canonical-data.zip "
-                      "read in place; the client's asset fallback for builtin_data/ files the APK lacks. Required with --server "
-                      "inproc, whose CDN serves it too (default <repo>/work/download-3.7.0 or <repo>/work/SOA-3.7.0-canonical-data.zip, "
+                      "the 3.7.0 download (the online game's downloaded tree): the zip SOA-3.7.0-canonical-data.zip, read in "
+                      "place, or an extracted folder; the client's asset fallback for builtin_data/ files the APK lacks. Required with --server "
+                      "inproc, whose CDN serves it too (default <repo>/work/SOA-3.7.0-canonical-data.zip, "
                       "else a download folder or zip beside "
                       "the program or in its game/ folder); off by default with --server HOST, whose client downloads from "
                       "soa-server's CDN")

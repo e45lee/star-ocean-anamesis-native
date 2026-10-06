@@ -302,10 +302,11 @@ int main() {
     const V kRemovedSoa = {"--font", "--fake-server"};
     // Options added since, to both soa and soa-server (soaserver/cli.h): --english, --english-text
     // (2026-10-07, docs/PLAN-english.md).
-    const V kAddedServer = {"--english", "--english-text"};
+    // --stamina-heal-time (2026-10-06, a test switch: tests/diff runs with 0, no stamina regeneration).
+    const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time"};
     // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
     const V kAddedLang = {"--lang", "--voice-lang"};
-    const V kAddedSoa = {"--english", "--english-text", "--lang", "--voice-lang"};
+    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -353,7 +354,7 @@ int main() {
     };
     // download and the phone's network (soa, soa-emu)
     const std::vector<Row> download = {
-        {{"--download-dir", "work/download-3.7.0"}},
+        {{"--download-dir", "work/SOA-3.7.0-canonical-data.zip"}},
         {{"--download", "SOA-3.7.0-canonical-data.zip"}},
         {{"--download", "a", "--download-dir", "b"}},
         {{"--download-prefer"}},
@@ -418,7 +419,7 @@ int main() {
         {{"--standin-assets", "0"}},
         // a replay corpus' options (server/tests/replay/seeded/options) as one command line
         {{"--master", "data/basmaster-3.7.0.sqlite3", "--seed", "data/saves/seed/Game.xml", "--seed-rng", "1", "--clock",
-          "2026-10-01 12:00:05", "--campaign-seed", "mf01_001", "--download-dir", "work/download-3.7.0"}},
+          "2026-10-01 12:00:05", "--campaign-seed", "mf01_001", "--download-dir", "work/SOA-3.7.0-canonical-data.zip"}},
     };
 
     // ---- soa ----
@@ -462,7 +463,7 @@ int main() {
         {{"--seed-rng", "x"}},
         {{"--seed-rng", ""}},
         {{"--headless", "--data", "/tmp/d", "--size", "810x1440", "--control", "/tmp/f", "--seed-rng", "1", "--clock",
-          "2026-10-01 12:00:05", "--log-packets", "/tmp/p", "--download-dir", "work/download-3.7.0", "--list-native"}},
+          "2026-10-01 12:00:05", "--log-packets", "/tmp/p", "--download-dir", "work/SOA-3.7.0-canonical-data.zip", "--list-native"}},
         {{"--list-native"}},
         {{"--server", ""}},  // (an error: the old one after the loop, with fatal())
         {{"--http", "a:b:80"}, "--http / --lobby HOST:PORT are soa-emu's rule in both programs now (platform370/cli.h): a "
@@ -533,9 +534,9 @@ int main() {
         {{"--apk-dir", "work/extracted/xapk"}},  // 380-ok: soa-viewer's options
         {{"--xapk", "a.xapk", "--apk-dir", "d"}},  // (main refuses both); 380-ok: soa-viewer's options
         {{"--apk", "a.apk", "--apk", "b.apk"}},
-        {{"--download-dir", "work/download-3.7.0"}},
-        {{"--download-dir", "work/download-3.7.0", "--download-prefer"}},
-        {{"--download", "work/download-3.7.0"}, "soa-viewer takes --download PATH too, as the other programs (the shared "
+        {{"--download-dir", "work/SOA-3.7.0-canonical-data.zip"}},
+        {{"--download-dir", "work/SOA-3.7.0-canonical-data.zip", "--download-prefer"}},
+        {{"--download", "work/SOA-3.7.0-canonical-data.zip"}, "soa-viewer takes --download PATH too, as the other programs (the shared "
                                                  "option; the old loop had only --download-dir)", -1},
         {{"-vv", "-v"}, "-v counts: -vv -v is trace (the old loop's last -v / -vv won: debug)", -1},
     };

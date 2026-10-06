@@ -27,6 +27,27 @@ def listening(addr):
         return False
 
 
+def has_reader(addr, wait=0.0):
+    """Someone reads the channel (within `wait` s): a FIFO with a reader (opening it for writing
+    without blocking fails with ENXIO when there is none; listening() only sees that the FIFO
+    exists; the client reopens it after each batch, hence the wait), or a TCP port that accepts a
+    connection."""
+    end = time.monotonic() + wait
+    while True:
+        if addr.startswith("tcp:"):
+            if listening(addr):
+                return True
+        else:
+            try:
+                os.close(os.open(addr, os.O_WRONLY | os.O_NONBLOCK))
+                return True
+            except OSError:
+                pass
+        if time.monotonic() >= end:
+            return False
+        time.sleep(0.1)
+
+
 def deliver(fifo, cmds, timeout=120, on_shot=None, alive=None):
     """Sends cmds (tap:X:Y, wait:MS, shot:PATH, text:S, quit, ...) in one write, then waits until
     every shot in the batch is written (on_shot(path) for each, in the order they come). Returns

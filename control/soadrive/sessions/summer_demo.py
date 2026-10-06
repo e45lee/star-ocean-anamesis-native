@@ -20,7 +20,7 @@ Env:
   KEEP_SCRATCH=1    keep the scratch dir (the phone, the server state, the packet bodies)
 
 What it does: soa-server with a fresh state seeded from data/saves/seed/Game.xml (LOCAL00001), the
-CDN from work/download-3.7.0, --enable-events, --seed-rng 1, --log-packets; soa-emu pointed at it:
+CDN from work/SOA-3.7.0-canonical-data.zip, --enable-events, --seed-rng 1, --log-packets; soa-emu pointed at it:
   1. launch: boot, title (NoLoginStart), TAP TO START (StartBridge, Login), the data, the notice
      board and LOGIN BONUS, home;
   2. summer event: イベント (CheckEventRankingResult) -> the 水着イベント2020 board (星の海と夢の渚,

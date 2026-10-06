@@ -115,6 +115,10 @@ def main():
     if not objs:
         print(f"FAIL: no object files in {bdir}/")
         return 1
+    if nprog == 0:
+        # the programs' check (a library's thread_local with a destructor) would have checked nothing
+        print(f"FAIL: none of the programs ({', '.join(PROGRAMS)}) in {bdir}/ (scripts/build.sh)")
+        return 1
     print(f"PASS: no non-trivial thread_local ({len(objs)} objects, {nprog} programs; cpp-httplib's allowed)")
     return 0
 

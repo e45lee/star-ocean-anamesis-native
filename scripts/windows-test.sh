@@ -83,8 +83,8 @@ case $test in
     fi
     echo "PASS: soaruntime_tests.exe ($(grep -ac '^ok' "$out/soaruntime_tests.log") checks)" ;;
   selftest)
-    # soa.exe's native selftests (the guest library booted once; folder-only tests skip on a stage)
-    # and soa-server.exe's: a Windows-only native or server failure fails here (2026-10-06: two such
+    # soa.exe's native selftests (the guest library booted once; those that read the 3.7.0 download
+    # read the staged zip, as on Linux) and soa-server.exe's: a Windows-only native or server failure fails here (2026-10-06: two such
     # failures sat on main because no gate ran them on Windows).
     rc=0
     (cd "$stage" && timeout -k 10 1800 ./build-win/port/soa.exe --selftest) > "$out/soa-selftest.log" 2>&1 || rc=$?

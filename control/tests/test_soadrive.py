@@ -221,8 +221,85 @@ def test_a_host_gpu_failure_is_named_and_ends_the_wait(tmp_path):
         r.tap_log(r"never", 300, 20, 5, "tap:1:1", name="a tap that is never answered")
     assert time.monotonic() - t0 < 10
     assert "host GPU" in r.results[-1] and "rerun" in r.results[-1]
-    r.stop()
+    t0 = time.monotonic()
+    r.stop()  # a dead client gets no quit and no 15 s wait for it (25 s before)
+    assert time.monotonic() - t0 < 5
     assert not r.client.running()
+
+
+def test_stop_doesnt_wait_for_a_client_nobody_can_reach(tmp_path):
+    r = _fake_run(tmp_path, "sleep 100")  # running, no death, but no reader on its FIFO
+    t0 = time.monotonic()
+    r.stop()
+    assert time.monotonic() - t0 < 5
+    assert not r.client.running()
+
+
+def test_stop_quits_a_client_that_listens(tmp_path):
+    """The positive control: a client reading its FIFO gets `quit` and exits by itself (reopening
+    the FIFO after an empty open, as the game does: has_reader's probe is one)."""
+    r = _fake_run(tmp_path, "")
+    r.client.stop()
+    r.client = proc.Proc("fake-client", ["sh", "-c", 'mkfifo "$0"; l=; while [ -z "$l" ]; do read l < "$0"; done; echo "got $l"', r.fifo],
+                         r.client_log, limit=120)
+    deadline = time.monotonic() + 10
+    while not fifo.has_reader(r.fifo) and time.monotonic() < deadline:
+        time.sleep(0.05)
+    r.stop()
+    assert "got quit" in open(r.client_log).read()
+    assert r.client.p.returncode == 0  # it exited on its own, not by TERM
+
+
+def _stop_a_driver(tmp_path, busy):
+    """A driver (proc.exit_on_signals) with a client in its own process group gets TERM while its
+    main thread runs `busy`: it exits 143 and the client is gone."""
+    script = ("import sys, threading, time; sys.path.insert(0, %r)\n"
+              "from soadrive import proc\n"
+              "proc.exit_on_signals()\n"
+              "p = proc.Proc('fake-client', ['sleep', '100'], %r, limit=120)\n"
+              "print(p.pid, flush=True)\n"
+              "%s\n") % (CONTROL, str(tmp_path / "client.log"), busy)
+    d = subprocess.Popen([sys.executable, "-c", script], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    pid = int(d.stdout.readline())
+    # drain the driver's output so a busy printer never blocks on a full pipe
+    threading.Thread(target=d.stdout.read, daemon=True).start()
+    time.sleep(0.3)
+    os.kill(d.pid, 15)
+    try:
+        rc = d.wait(10)
+    except subprocess.TimeoutExpired:
+        d.kill()
+        raise
+    err = d.stderr.read()
+    assert rc == 143, (rc, err[-2000:])
+    assert "stopped by signal 15" in err
+    deadline = time.monotonic() + 5
+    while time.monotonic() < deadline:
+        try:
+            os.killpg(pid, 0)
+        except ProcessLookupError:
+            return
+        time.sleep(0.1)
+    os.killpg(pid, 9)
+    raise AssertionError("the client outlived its driver")
+
+
+def test_a_stopped_driver_ends_its_clients(tmp_path):
+    """proc.exit_on_signals (tests/diff/difftest.py): the clients run in their own process groups,
+    each holding its game slot; a TERM to the driver ends them too."""
+    _stop_a_driver(tmp_path, "time.sleep(100)")
+
+
+def test_a_driver_stopped_while_printing_still_exits(tmp_path):
+    """The regression: the TERM arrives while the main thread is inside print() (a driver logging
+    its steps); a handler that printed raised "reentrant call" and the driver exited 1 instead."""
+    _stop_a_driver(tmp_path, "while True: print('step ' * 50, flush=True)")
+
+
+def test_a_driver_stopped_while_starting_clients_still_exits(tmp_path):
+    """... or while the main thread holds proc.LIVE_LOCK (starting and stopping clients in a loop):
+    the handler takes no lock, so it can't deadlock."""
+    _stop_a_driver(tmp_path, "while True:\n    q = proc.Proc('c', ['true'], %r, limit=10); q.stop()" % str(tmp_path / "c.log"))
 
 
 def test_the_gate_labels_host_gpu_failures(tmp_path):

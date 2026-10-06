@@ -29,7 +29,7 @@ control/soactl.py /tmp/emu.fifo tap:364:713 wait:3000 shot:/tmp/emu.png
 | `--lib PATH` | The client library. Default: `<repo>/work/libSOA-3.7.0.so`. |
 | `--apk FILE` | The APK whose assets the client reads. Default: `<repo>/apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk`. It isn't extracted: the runtime's asset manager indexes any zip. Repeatable; a later APK wins. |
 | `--data DIR` | The emulated phone's storage: saves, SharedPreferences, downloads. Default: `~/.local/share/soa-emulator-370/phone` (Windows: `%LOCALAPPDATA%\soa\emulator-370\phone`; `common/include/soa/paths.h`), beside the port's `~/.local/share/soa-linux-370` (`scripts/run-emulator-370.sh` keeps the server beside it in `server/`). Never point it at a port data dir: it holds that port's cached `libSOA.so` and save. |
-| `--download-dir DIR` | A temporary stand-in for the CDN: assets missing from the APK are served from DIR (e.g. `work/download-3.7.0`). Off by default. The boot to the network path doesn't need it. |
+| `--download PATH` (= `--download-dir`) | A temporary stand-in for the CDN: assets missing from the APK are served from the 3.7.0 download at PATH (`work/SOA-3.7.0-canonical-data.zip`, read in place, or an extracted folder). Off by default. The boot to the network path doesn't need it. |
 | `--download-prefer` | With `--download-dir`: DIR wins over the APK (as `soa` and `soa-viewer`). |
 | `--server HOST[:PORT]` | The game server, soa-server's `--listen`. Default `127.0.0.1:44300`. The client's `production-game.so-ana.com` resolves to HOST, and its port 443 becomes PORT. See "Networking". |
 | `--http HOST:PORT` | soa-server's `--http`. Default `<server host>:44380`. `http://` and `https://` URLs to a mapped host are fetched there, as plain HTTP. |
@@ -317,7 +317,7 @@ emulator/scripts/emulator_session.sh [--new-player] [soa-emu] [soa-server] [out-
 
 The end-to-end session ("What an end-to-end run does"). It:
 1. builds nothing; picks two free ports;
-2. starts `soa-server` with its own scratch state, `--log-packets`, the CDN from `work/download-3.7.0`, `--seed-rng 1`, and `--campaign-seed mf01_001` (so the campaign's 1-05, restore_session.sh's battle, is open on the mission map) or `--new-player`; its default bridge / CDN URLs are on `production-game.so-ana.com`; then `soa-emu --headless` pointed at it;
+2. starts `soa-server` with its own scratch state, `--log-packets`, the CDN from `work/SOA-3.7.0-canonical-data.zip`, `--seed-rng 1`, and `--campaign-seed mf01_001` (so the campaign's 1-05, restore_session.sh's battle, is open on the mission map) or `--new-player`; its default bridge / CDN URLs are on `production-game.so-ana.com`; then `soa-emu --headless` pointed at it;
 3. drives the client with `control/soactl.py` (taps and screenshots: soa-emu has no `phase:` / `call:` commands, so the taps are the port's restore / campaign / newplayer sessions', at the same 729x1296 window), resending a tap until its effect shows in a log;
 4. prints PASS or FAIL per milestone, from soa-server's packet log, soa-emu's log, the screenshots and the server's state DB (`tools/server_state.py`, dumped to `state-*.txt`):
    - seeded: NoLoginStart, StartBridge, the bridge POST, UpdateSession, Login and its GetPlayerRes, the manifests, the bundle download, the master bundle, home, the login popups, GetMissionList, MissionStart, MissionEnd, the battle log as the server decoded it (`mission_time` = the server's, enemies, evaluations), mf01_001 cleared, the results back to the map, GetGachaInData, SaleGacha, coins debited, ten draws recorded;

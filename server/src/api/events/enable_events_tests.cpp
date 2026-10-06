@@ -8,6 +8,8 @@
 #include <set>
 #include <vector>
 
+#include <soa/install.h>
+
 #include "soaserver/cdn.h"
 #include "soaserver/config.h"
 #include "soaserver/hooks.h"
@@ -295,8 +297,9 @@ NATIVE_TEST("events/enable-standin-banners") {
             set_asset_index(index);
         }
     } keep_cdn;
-    std::string download = find_repo_file("work/download-3.7.0"), standins = find_repo_file("standin-assets");
-    if (download.empty() || standins.empty()) return t.skip("work/download-3.7.0 or standin-assets not found (the 3.7.0 download: local data)");
+    std::string download = find_repo_file(soa::install::kRepoDownloadZip), standins = find_repo_file("standin-assets");
+    if (download.empty() || standins.empty())
+        return t.skip("%s or standin-assets not found (the 3.7.0 download: local data)", soa::install::kRepoDownloadZip);
     events::set_asset_check({});
     keep_cdn.index = set_asset_index(nullptr);  // put back by ~KeepCdn (soa: its AssetManager)
     opt.download_dir = download;

@@ -54,7 +54,7 @@ LAUNCHER_PORT = 44310
 # the server options the launcher passes on to soa-server (the others go to soa)
 LAUNCHER_SERVER_FLAGS = {"--new-player", "--galaxy-pass", "--enable-events", "--restore-tower", "--english"}
 LAUNCHER_SERVER_VALUES = {"--seed", "--download", "--download-dir", "--master", "--log-packets", "--seed-rng", "--clock",
-                          "--start-coins", "--event-keywords"}
+                          "--start-coins", "--event-keywords", "--stamina-heal-time"}
 
 
 def package_launcher(win):
@@ -343,9 +343,9 @@ class Run:
             # is replaced by the build-win sibling of the client)
             server_binary = winhost.staged_binary(cfg.server_binary if winhost.is_windows(cfg.server_binary) else
                                                   os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(built))), "server", "soa-server.exe"))
-            # (the stage holds the download as the zip only, read in place: scripts/windows-stage.sh)
+            # (the download is the zip, read in place: scripts/windows-stage.sh)
             master = winhost.stage_file("data/basmaster-3.7.0.sqlite3")
-            download = winhost.stage_file("work/download-3.7.0") or winhost.stage_file("work/SOA-3.7.0-canonical-data.zip")
+            download = winhost.stage_file("work/SOA-3.7.0-canonical-data.zip")
             if (not master or not download) and not PACKAGE_DIR:
                 raise Abort("data/basmaster-3.7.0.sqlite3 or work/SOA-3.7.0-canonical-data.zip not staged in %s "
                             "(scripts/windows-stage.sh)" % winhost.STAGE)
@@ -361,7 +361,7 @@ class Run:
             self.fifo = "tcp:127.0.0.1:0"
         else:
             master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
-            download = proc.repo_file("work/download-3.7.0") or proc.repo_file("work/SOA-3.7.0-canonical-data.zip")
+            download = proc.repo_file("work/SOA-3.7.0-canonical-data.zip")  # the download, read in place
             server_binary = cfg.server_binary or b["server"]
             wp, cwd = (lambda p: p), REPO
         if PACKAGE_DIR:
@@ -371,7 +371,7 @@ class Run:
             cwd = PACKAGE_DIR
             self.note("release package %s: no --master / --download-dir / --seed; the programs look beside themselves" % PACKAGE_DIR)
         elif (cfg.explicit_data or server_side) and (not master or not download):
-            raise Abort("data/basmaster-3.7.0.sqlite3 or the download (work/download-3.7.0, work/SOA-3.7.0-canonical-data.zip) not found")
+            raise Abort("data/basmaster-3.7.0.sqlite3 or the download (work/SOA-3.7.0-canonical-data.zip) not found")
         self.launcher = package_launcher(self.win) if self.target == "port-server" else None
         launcher_env = {}
         if self.launcher:
@@ -524,8 +524,11 @@ class Run:
             time.sleep(0.5)
 
     def stop(self):
-        if self.client and self.client.running():
-            fifo.send(self.fifo, ["quit"], timeout=10)
+        # A clean quit only for a client that can still hear it: not when it is known dead (a crash,
+        # a host GPU failure, stuck) or nobody reads its control channel (it never opened it, or
+        # stopped reading); those go straight to Proc.stop (TERM, then KILL), not 10 + 15 s later.
+        if (self.client and self.client.running() and not getattr(self, "death", None) and fifo.has_reader(self.fifo, wait=1.0)
+                and fifo.send(self.fifo, ["quit"], timeout=10)):
             self.client.wait(15)
         if getattr(self, "launcher", None) and self.client:
             self.launcher_check()

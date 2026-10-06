@@ -6,11 +6,10 @@
 # from the .exe, as on Linux.
 #
 # The 3.7.0 download is staged once, as the zip (4 GB), which soa.exe, soa-server.exe (its CDN, the
-# master DB) and the movie player read in place: in a checkout the programs take
-# work/download-3.7.0, else work/SOA-3.7.0-canonical-data.zip (docs/environment.md "How the programs
-# find the game files"). A work/download-3.7.0 folder left in DEST by an older stage is removed. So
-# the selftests that compare the folder with the zip (soa-server --selftest cdn/download-zip) and
-# the ones that read the folder skip on the stage: they run on Linux.
+# master DB) and the movie player read in place, as on Linux: the download is
+# work/SOA-3.7.0-canonical-data.zip (docs/environment.md "How the programs find the game files"),
+# so the selftests that read it run on the stage too. An extracted folder left in DEST by an older
+# stage (work/download-3.7.0) is removed.
 #
 # Every copy is verified (a copy through WSL's drive mount under memory pressure has left an older
 # .exe in place without an error): each staged .exe and the key data files (the zip, libSOA.so, the
@@ -69,10 +68,22 @@ copied=$(mktemp)
 trap 'rm -f "$copied" "$copied.new"' EXIT
 # rsync with the copied files' DEST paths logged under PREFIX (--modify-window: the drive's mtimes
 # are whole seconds; without it every run would copy everything again)
+# A failed rsync is retried (up to 3 tries, 20 s apart): writes to the Windows drive through WSL's
+# drvfs fail now and then with "Cannot allocate memory" under load, and a retry gets through. A
+# --files-from=- list is kept in a file first, since a retry can't re-read stdin.
 stage_copy() {
   local prefix=$1; shift
-  rsync --modify-window=1 --out-format="$prefix%n" "$@" > "$copied.new" ||
-    { echo "FAIL: windows-stage.sh: rsync failed ($*)" >&2; exit 1; }
+  local args=() a list="" try
+  for a in "$@"; do
+    if [ "$a" = "--files-from=-" ]; then list=$(mktemp); cat > "$list"; args+=("--files-from=$list"); else args+=("$a"); fi
+  done
+  for try in 1 2 3; do
+    rsync --modify-window=1 --out-format="$prefix%n" "${args[@]}" > "$copied.new" && break
+    [ "$try" = 3 ] && { [ -n "$list" ] && rm -f "$list"; echo "FAIL: windows-stage.sh: rsync failed 3 times ($*)" >&2; exit 1; }
+    echo "windows-stage.sh: rsync failed (try $try of 3; drvfs ENOMEM under load?): retrying in 20 s" >&2
+    sleep 20
+  done
+  [ -n "$list" ] && rm -f "$list"
   grep -v '/$' "$copied.new" >> "$copied" || true
 }
 # the tracked files (not the work/ link itself), then the work/ data the programs read

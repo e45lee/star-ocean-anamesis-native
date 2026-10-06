@@ -2,7 +2,7 @@
 """The proof that the movie player on FFmpeg's libraries (runtime/src/frontend/movie_decoder.cpp)
 decodes the game's movies as the ffmpeg program it replaced did.
 
-For every movie (default: the 12 in work/download-3.7.0/Movie) it compares the player's decoder
+For every movie (default: the 12 Movie/*.mp4 of the 3.7.0 download, --zip, read in place) it compares the player's decoder
 (build/tools/movie_check/movie_check) with the ffmpeg program (any ffmpeg on PATH, e.g. Ubuntu's):
 
   pictures  every decoded picture's yuv420p planes: the same count and the same bytes (SHA-256) as
@@ -20,8 +20,13 @@ For every movie (default: the 12 in work/download-3.7.0/Movie) it compares the p
             the largest and mean difference per channel (swscale's integer tables vs the shader's
             float maths; not expected to be identical);
   sources   the same pictures and sound read the other ways the player reads them: the download
-            zip's stored entry in place (--zip, default work/SOA-3.7.0-canonical-data.zip) and the
-            APK's stored entry in place (--apk, for the movie the APK has).
+            zip's stored entry in place (--zip, default work/SOA-3.7.0-canonical-data.zip; for a
+            MOVIE.mp4 given as a file) and the APK's stored entry in place (--apk, for the movie the
+            APK has).
+
+A movie of the zip is read in place everywhere: the player as tree:ZIP:Movie/NAME, the ffmpeg
+program through its subfile protocol (the stored entry's byte range), the edit list from the
+entry's bytes (soa_save/download_tree.py).
 
 Exit 0 when the picture counts and the decoded pictures match and the sources agree. Small sound
 and colour differences are reported, not failed (accepted, runtime/README.md "Movies"): sound fails
@@ -32,7 +37,6 @@ Usage: tools/movie_compare.py [--movie-check BIN] [--ffmpeg BIN] [--jobs N] [MOV
 """
 import argparse
 import concurrent.futures as cf
-import glob
 import hashlib
 import os
 import struct
@@ -42,6 +46,8 @@ import sys
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 
 def stream(cmd, consume, chunk=1 << 20):
@@ -95,11 +101,10 @@ def mp4_boxes(d, off, end):
         off += size
 
 
-def edit_list_samples(path):
+def edit_list_samples(d):
     """The sound's length as the MP4 edit list presents it: its one segment's duration (movie
     timescale) from media_time, clipped at the end of the media (mdhd), in samples at the media's
-    rate; None when the file has no such edit list."""
-    d = open(path, "rb").read()
+    rate; None when the file (its bytes `d`) has no such edit list."""
     for t, s, e in mp4_boxes(d, 0, len(d)):
         if t != b"moov":
             continue
@@ -128,16 +133,25 @@ def edit_list_samples(path):
 
 
 def compare(movie, a):
-    name = os.path.basename(movie)
+    """`movie`: a file path, or (DownloadTree, rel) for a stored entry of the zip, read in place."""
+    if isinstance(movie, tuple):
+        tree, rel = movie
+        name = os.path.basename(rel)
+        _, off, size = tree.locate(rel)
+        src, ff_in, data = f"tree:{tree.path}:{rel}", f"subfile,,start,{off},end,{off + size},,:{tree.path}", tree.read(rel)
+    else:
+        tree, name = None, os.path.basename(movie)
+        src, ff_in = "file:" + movie, movie
+        with open(movie, "rb") as fh:
+            data = fh.read()
     r = {"movie": name, "ok": True, "notes": []}
-    src = "file:" + movie
     meta = info(a.movie_check, src)
     w, h = int(meta["width"]), int(meta["height"])
     fsize = w * h + 2 * ((w + 1) // 2) * ((h + 1) // 2)
     r["size"] = f"{w}x{h}"
     r["fps"] = float(meta["fps"])
     r["library"] = meta["ffmpeg"]
-    ff = [a.ffmpeg, "-v", "error", "-nostdin", "-i", movie]
+    ff = [a.ffmpeg, "-v", "error", "-nostdin", "-i", ff_in]
 
     # pictures
     new = sha_count([a.movie_check, src, "--yuv"])
@@ -165,7 +179,7 @@ def compare(movie, a):
     # encoder's padding after the last real sample; FFmpeg 6.1 kept it. Allowed when the player's
     # count is the edit list's exactly and only the ffmpeg program has more.
     extra = ar[n:] if ar.size > an.size else an[n:]
-    r["edit_list_samples"] = edit_list_samples(movie)
+    r["edit_list_samples"] = edit_list_samples(data)
     r["audio_tail"] = {"side": "ffmpeg" if ar.size > an.size else "player", "samples": extra.size // 2,
                        "max_lsb16": float(np.abs(extra).max()) * 32768 if extra.size else 0.0}
     if r["audio_differing"] and r["audio_max_lsb16"] > a.audio_lsb:
@@ -205,7 +219,7 @@ def compare(movie, a):
     # the other sources: the same bytes decoded from a zip in place
     r["sources"] = {}
     others = []
-    if a.zip and os.path.exists(a.zip):
+    if tree is None and a.zip and os.path.exists(a.zip):
         others.append(("data zip, in place", f"tree:{a.zip}:Movie/{name}"))
     if a.apk and os.path.exists(a.apk):
         listing = subprocess.run(["unzip", "-l", a.apk, f"assets/builtin_data/Movie/{name}"], capture_output=True, text=True).stdout
@@ -227,7 +241,7 @@ def main():
     ap.add_argument("movies", nargs="*")
     ap.add_argument("--movie-check", default=os.path.join(ROOT, "build/tools/movie_check/movie_check"))
     ap.add_argument("--ffmpeg", default="ffmpeg")
-    ap.add_argument("--zip", default=os.path.join(ROOT, "work/SOA-3.7.0-canonical-data.zip"))
+    ap.add_argument("--zip", default=DEFAULT, help="the 3.7.0 download: its zip (or a folder); the default movies are its Movie/*.mp4")
     ap.add_argument("--apk", default=os.path.join(ROOT, "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"))
     ap.add_argument("--rgba-frames", type=int, default=60)
     ap.add_argument("--rgba-max", type=int, default=16,
@@ -238,7 +252,13 @@ def main():
                     help="most samples only one side may have at the end before it fails (default 2048, two AAC frames)")
     ap.add_argument("--jobs", type=int, default=4)
     a = ap.parse_args()
-    movies = a.movies or sorted(glob.glob(os.path.join(ROOT, "work/download-3.7.0/Movie/*.mp4")))
+    movies = a.movies
+    if not movies:
+        tree = DownloadTree.open_or_none(a.zip)
+        if tree is not None and tree.is_zip:
+            movies = [(tree, "Movie/" + n) for n in tree.list("Movie") if n.endswith(".mp4")]
+        elif tree is not None:
+            movies = [os.path.join(tree.path, "Movie", n) for n in tree.list("Movie") if n.endswith(".mp4")]
     if not movies:
         sys.exit("movie_compare: no movies (pass MOVIE.mp4 paths)")
     print(f"movie_compare: {len(movies)} movies; ffmpeg program: "

@@ -17,7 +17,7 @@ Files (data/english/, committed):
                       GENERATED: the served story lines of each file with any English (official
                       by id + E3, table rows; strict story checks; re-broken to the 407 px message
                       window) and per file: lines, need, english, complete (the server serves
-                      TS_x-en.msgp only when complete, Q12). Needs work/download-3.7.0/Scenario;
+                      TS_x-en.msgp only when complete, Q12). Needs the download's Scenario/ (work/SOA-3.7.0-canonical-data.zip);
                       without it `build` and `build --check` skip the story part.
 All TSVs: UTF-8, a header line, no quoting, a line break inside a text is the two characters \\n.
 
@@ -127,7 +127,7 @@ _SOURCES = {}  # read-only sources, shared by the commands of one process (the t
 
 
 class Ctx:
-    def __init__(self, data=DATA, master=C.MASTER_DB, gl=C.GLOBAL_DB, scenario=C.SCENARIO_DIR, font=None,
+    def __init__(self, data=DATA, master=C.MASTER_DB, gl=C.GLOBAL_DB, scenario=C.SCENARIO, font=None,
                  work=WORK):
         self.data = pathlib.Path(data)
         self.master, self.gl, self.scenario, self.font = master, gl, scenario, font
@@ -492,7 +492,7 @@ def summary(b):
 #                                     server serves TS_x-en.msgp only when complete (Q12)
 # A story line's ja_sha1 is the SHA-1 of the Scenario row's text_value exactly as the file holds it
 # (UTF-8, REAL newlines), unlike the master's two-character \n. The Japanese comes from the 3.7.0
-# download (work/download-3.7.0/Scenario) at build time; without it the story part is skipped.
+# download (Scenario/ in work/SOA-3.7.0-canonical-data.zip) at build time; without it the story part is skipped.
 
 STORY_BUDGET = 407   # px per line of the message window: the p99 widest JP story line (english.md 7.5)
 # (d) <player> expands to the player's name: counted as 120 px (about 8 Latin letters) when breaking
@@ -557,7 +557,7 @@ class StoryDerived:
 
     @staticmethod
     def of(ctx):
-        if not ctx.src.scenario_dir.is_dir():
+        if not ctx.src.has_story():
             return None
         cache = ctx.src.__dict__.setdefault("_english_story", {})
         key = str(ctx.font)
@@ -650,7 +650,7 @@ def write_story(ctx, s):
 
 def story_summary(s):
     if s is None:
-        return "story: skipped (no Scenario files: work/download-3.7.0/Scenario)"
+        return "story: skipped (no Scenario files: work/SOA-3.7.0-canonical-data.zip)"
     tot = collections.Counter()
     for c in s.files.values():
         tot.update(c)
@@ -1213,7 +1213,7 @@ def import_mt_story(ctx, a, b, rows, n):
     text_value with real newlines), mt (one line of English, or null when the model skipped it)."""
     s = build_story(ctx, b.glossary)
     if s is None:
-        sys.exit("import-mt: story rows need the Scenario files (work/download-3.7.0/Scenario)")
+        sys.exit("import-mt: story rows need the Scenario files (work/SOA-3.7.0-canonical-data.zip)")
     d = s.derived
     tables = ctx.story_tables()
     rej_path = ctx.work / "mt-rejected-story.tsv"
@@ -1272,7 +1272,9 @@ def main(argv=None):
     ap.add_argument("--data", default=str(DATA))
     ap.add_argument("--master", default=str(C.MASTER_DB))
     ap.add_argument("--gl", default=str(C.GLOBAL_DB))
-    ap.add_argument("--scenario", default=str(C.SCENARIO_DIR))
+    ap.add_argument("--scenario", default=str(C.SCENARIO),
+                    help="the Scenario files: the 3.7.0 download (default its zip work/SOA-3.7.0-canonical-data.zip, read in place; "
+                         "or a folder) or a folder of TS_*.msgp")
     ap.add_argument("--font", default=None, help="font.fpk, an .apk, or a glyphs .pkl (default: the committed APK)")
     ap.add_argument("--work", default=str(WORK))
     ap.add_argument("--no-build", action="store_true", help="edits: don't rebuild master-en.tsv afterwards")

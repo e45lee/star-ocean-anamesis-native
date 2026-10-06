@@ -14,38 +14,52 @@ def env(tmp_path, n):
     return dict(os.environ, SOA_SLOT_DIR=str(tmp_path), SOA_SLOTS=str(n), SOA_SLOT_MIN_FREE_GB="0", SOA_SLOT_STAGGER="0")
 
 
+def until(pred, secs=10):
+    """Polls pred until it holds (True) or secs pass (False): no fixed sleeps, which a loaded
+    machine outruns."""
+    end = time.monotonic() + secs
+    while time.monotonic() < end:
+        if pred():
+            return True
+        time.sleep(0.05)
+    return False
+
+
+def runs_sleep(pid):
+    """The process has exec'd its command (`run` keeps the PID): it holds its slot by then."""
+    try:
+        return open("/proc/%d/comm" % pid).read().strip() == "sleep"
+    except OSError:
+        return False
+
+
 def test_queue_and_release(tmp_path):
     e = env(tmp_path, 2)
     holders = [subprocess.Popen([sys.executable, os.path.join(CONTROL, "soaslot.py"), "run", "--", "sleep", "3"], env=e)
                for _ in range(2)]
-    time.sleep(1)
-    t0 = time.monotonic()
+    assert until(lambda: all(runs_sleep(h.pid) for h in holders))
     r = subprocess.run([sys.executable, os.path.join(CONTROL, "soaslot.py"), "run", "--name", "third", "--", "true"], env=e,
                        capture_output=True, text=True)
-    waited = time.monotonic() - t0
+    still = [h.poll() for h in holders]
     for h in holders:
         h.wait()
     assert r.returncode == 0
     assert "waiting for a slot" in r.stderr
-    assert waited >= 1.0  # queued until a holder exited
+    assert still.count(None) <= 1  # queued until a holder exited
 
 
-def test_exec_keeps_pid_and_slot(tmp_path):
+def test_exec_keeps_pid_and_slot(tmp_path, monkeypatch):
     e = env(tmp_path, 1)
     p = subprocess.Popen([sys.executable, os.path.join(CONTROL, "soaslot.py"), "run", "--", "sleep", "2"], env=e)
-    time.sleep(0.8)
     # the same PID now runs sleep (exec), and it holds the slot
-    assert open("/proc/%d/comm" % p.pid).read().strip() == "sleep"
-    os.environ.update(SOA_SLOT_DIR=str(tmp_path), SOA_SLOTS="1", SOA_SLOT_MIN_FREE_GB="0", SOA_SLOT_STAGGER="0")
-    try:
-        assert soaslot.try_acquire("probe") is None
-        p.wait()
-        got = soaslot.try_acquire("probe")
-        assert got is not None
-        soaslot.release(got[0])
-    finally:
-        for k in ("SOA_SLOT_DIR", "SOA_SLOTS", "SOA_SLOT_MIN_FREE_GB", "SOA_SLOT_STAGGER"):
-            os.environ.pop(k, None)
+    assert until(lambda: runs_sleep(p.pid))
+    for k in ("SOA_SLOT_DIR", "SOA_SLOTS", "SOA_SLOT_MIN_FREE_GB", "SOA_SLOT_STAGGER"):
+        monkeypatch.setenv(k, e[k])
+    assert soaslot.try_acquire("probe") is None
+    p.wait()
+    got = soaslot.try_acquire("probe")
+    assert got is not None
+    soaslot.release(got[0])
 
 
 def test_shell_take_and_nested(tmp_path):

@@ -332,7 +332,7 @@ connection: soa-server's HTTP server (`net/http_server.h`, cpp-httplib) calls it
   streamed in small pieces, against `Tree::lookup`; `net/cdn-loopback` the same over the socket.
 
 ```sh
-build/server/soa-server --download-dir work/download-3.7.0 --cdn-check \
+build/server/soa-server --download-dir work/SOA-3.7.0-canonical-data.zip --cdn-check \
     /download/1472/Android/version.bin /download/1472/Android/I/86c7aec3/3a05a888.bin
 ```
 
@@ -376,7 +376,7 @@ master and an XOR asset; version.bin decode -> encode identity; the bundle layou
 3.7.0 Individual and Bulk bundle size; the served master (overrides applied: `service_stop_day` gone,
 event terms moved by whole years, 66,945 texts); a synthetic download built into a tree end to end
 (bundle SHA-1s, members as the client writes them, version.bin entries, stand-ins, paths, the hash
-cache); Login's `AssetPath` / `MasterPath` / `r_ver`. The 3.7.0 ones read `work/download-3.7.0` and
+cache); Login's `AssetPath` / `MasterPath` / `r_ver`. The 3.7.0 ones read `work/SOA-3.7.0-canonical-data.zip` (in place) and
 `data/basmaster-3.7.0.sqlite3` from the repo.
 
 `soa --selftest` runs them too, after the port's own tests, with the same seeds and output (they ran

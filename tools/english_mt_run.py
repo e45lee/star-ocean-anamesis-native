@@ -20,6 +20,7 @@ the batch waits until --min-free MiB are free again, then restarts it (other pro
 Usage:
   tools/english_mt_run.py names [--model 31b|26b]   # M2: katakana terms of the gap -> name list
   tools/english_mt_run.py ui    [--model 31b|26b]   # M3: the master's gap texts
+  tools/english_mt_run.py story [--model 31b|26b]   # M4: the story's untranslated lines, by scene
   tools/english_mt_run.py status                     # rows done per checkpoint
 Options: --slots N (4), --port P (18431), --limit N (stop after N new items), --out DIR.
 Python standard library only (plus tools/english_mt.py).
@@ -348,6 +349,119 @@ def cmd_ui(a):
     run_batch(a, items, a.out / "ui.jsonl", req, row)
 
 
+STORY_VERSION = "story-v1"
+STORY_EXTRA = """
+You now translate story dialogue: a numbered block of consecutive lines of one scene, each with its speaker.
+- Translate each numbered line into natural English dialogue in the speaker's voice, keeping the scene's tone; keep the speaker names and every name in the glossary exactly as given.
+- Keep <player> (the player's name) and every <fontcolor=...>, <fontsize=...>, </font> tag exactly.
+- Lines marked (context) are earlier lines for reference only: do not translate them.
+- Output exactly one line per numbered line to translate, as "[N] English", in order, nothing else. Write each line's English on one line (no line breaks inside it)."""
+STORY_CHUNK = 12
+STORY_CONTEXT = 4
+
+
+def scenes(src):
+    """[(scene id, [(message_id, speaker code or None)])] in script order, from Script/*.msgp."""
+    from soa_save import script
+    out = []
+    sdir = REPO / "work/download-3.7.0/Script"
+    for p in sorted(sdir.glob("*.msgp")):
+        o = script.load(p.read_bytes(), "Script/" + p.name)
+        lines = []
+        for _sid, cmds in o.get("Script", {}).items():
+            for c in cmds:
+                name = script.command_name(c["command_type"])
+                if name in script.SPEECH:
+                    mid = c.get("command_param0")
+                    who = c.get("command_param6") or c.get("command_param1")
+                    if isinstance(mid, str):
+                        lines.append((mid, who if isinstance(who, str) else None))
+                elif name in script.MENUS:
+                    for k in range(0, 8, 2):
+                        mid = c.get(f"command_param{k}")
+                        if isinstance(mid, str) and mid:
+                            lines.append((mid, "(choice)"))
+        if lines:
+            out.append((p.stem, lines))
+    return out
+
+
+def cmd_story(a):
+    """M4: the story's untranslated lines, a chunk of a scene per request with the speakers named
+    and the lines before it as context; each line is checkpointed by message_id."""
+    src, g = load_glossary(a.out / "names.tsv")
+    if not (a.out / "names.tsv").exists():
+        sys.exit("run `names` first (M2)")
+    terms = sorted(g, key=len, reverse=True)
+    text = {mid: (stem, ja) for stem, mid, ja in src.story()}
+    jp_names = src.jp_rows
+
+    def speaker(code):
+        if not code:
+            return "Narration"
+        if code == "<player>":
+            return "<player>"
+        if code == "(choice)":
+            return "(menu choice)"
+        for c in (code, code[:-1] + "a"):
+            en = src.gl_english(c)
+            if en:
+                return en
+            ja = jp_names.get(c)
+            if ja:
+                return g[ja]["en"] if ja in g else ja
+        return code
+
+    items, seen = [], set()
+    for scene, lines in scenes(src):
+        lines = [(m, w) for m, w in lines if m in text]
+        todo = [i for i, (m, _) in enumerate(lines)
+                if m not in seen and E.has_kana(text[m][1]) and not src.story_official(m, text[m][1])]
+        for m, _ in lines:
+            seen.add(m)
+        for k in range(0, len(todo), STORY_CHUNK):
+            idx = todo[k:k + STORY_CHUNK]
+            first = idx[0]
+            ctx = list(range(max(0, first - STORY_CONTEXT), first))
+            items.append((f"{scene}:{lines[first][0]}", (scene, [lines[i] for i in ctx], [lines[i] for i in idx])))
+    # lines no script references (unused or menu text): in message_id order per file, no speaker
+    rest = collections.defaultdict(list)
+    for m, (stem, ja) in sorted(text.items()):
+        if m not in seen and E.has_kana(ja) and not src.story_official(m, ja):
+            rest[stem].append((m, None))
+    for stem, lines in sorted(rest.items()):
+        for k in range(0, len(lines), STORY_CHUNK):
+            items.append((f"{stem}:{lines[k][0]}", (stem, [], lines[k:k + STORY_CHUNK])))
+    print(f"[story] {len(items)} requests, {sum(len(p[2]) for _, p in items)} lines", flush=True)
+
+    def req(p):
+        scene, ctx, todo = p
+        block, hits = [], []
+        for m, w in ctx:
+            block.append(f"(context) {speaker(w)}: {text[m][1].replace(chr(10), '')}")
+        for n, (m, w) in enumerate(todo, 1):
+            ja = text[m][1].replace("\n", "")  # Japanese breaks carry no space
+            hits += E.glossary_hits(ja, g, terms)
+            block.append(f"[{n}] {speaker(w)}: {ja}")
+        gl = "".join(f"\n{t} = {g[t]['en']}" for t in dict.fromkeys(hits))
+        user = f"Scene {scene}\nGlossary:{gl or ' (none)'}\nLines:\n" + "\n".join(block)
+        return SYSTEM + STORY_EXTRA, user, 120 * len(todo) + 200
+
+    def row(k, p, txt, finish):
+        scene, _ctx, todo = p
+        got = {int(m.group(1)): m.group(2).strip() for m in re.finditer(r"^\[(\d+)\]\s*(.*)$", txt, re.M)}
+        lines = []
+        for n, (m, w) in enumerate(todo, 1):
+            en = got.get(n)
+            if en and ":" in en and en.split(":", 1)[0].strip() == speaker(w):
+                en = en.split(":", 1)[1].strip()  # the model repeated the speaker
+            lines.append({"message_id": m, "file": text[m][0], "ja_sha1": E.sha1(text[m][1]),
+                          "ja": text[m][1], "speaker": speaker(w), "mt": en})
+        return {"key": k, "scene": scene, "kind": "story", "lines": lines, "raw": txt, "finish": finish,
+                "prompt": f"{PROMPT_VERSION}+{STORY_VERSION}"}
+    run_batch(a, items, a.out / "story.jsonl", req, row)
+
+
 def cmd_status(a):
     for p in sorted(a.out.glob("*.jsonl")):
         n = sum(1 for _ in open(p, encoding="utf-8"))
@@ -356,7 +470,7 @@ def cmd_status(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["names", "ui", "status"])
+    ap.add_argument("cmd", choices=["names", "ui", "story", "status"])
     ap.add_argument("--model", choices=sorted(MODELS), default="31b")
     ap.add_argument("--slots", type=int, default=4)
     ap.add_argument("--port", type=int, default=18431)
@@ -366,7 +480,7 @@ def main():
     ap.add_argument("--out", type=pathlib.Path, default=REPO / "work/english/mt")
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
-    {"names": cmd_names, "ui": cmd_ui, "status": cmd_status}[a.cmd](a)
+    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "status": cmd_status}[a.cmd](a)
 
 
 if __name__ == "__main__":

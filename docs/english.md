@@ -28,6 +28,10 @@ Ghidra addresses are ELF vaddr + 0x100000, as `tools/decomp_at.sh` takes them. C
   - Setting it to `en` is a **one-site client change**. With per-language files served as new CDN members, it gave an English master (including the pre-download dialog), English story and replaced images, with Japanese as the per-file fallback (experiment 3).
   - StringDB hard-codes `ja` at two sites. Adding `en_` rows beside `ja_` needs both patched.
   - **No English voice data exists anywhere we have.**
+- **Machine translation for the gaps (section 7).**
+  - After Global's English, exact memory and a new **template memory** (Global's stat lines with new numbers, 92% exact on held-out pairs), 37,593 master rows (705k distinct JA characters) and 17,182 story lines (530k) remain. **EP2 has no official English at all.**
+  - In a blind 310-row trial, an LLM with the glossary in the prompt (Claude Sonnet 5.5 / Opus 5.5) scored chrF 44 against Global's English, kept every specifier and tag and followed the glossary; the offline models (two NMT models, a 1.5B local LLM) scored 28–35 and broke terms and tokens.
+  - The proposed source of truth is a committed table keyed by `message_id` with a hash of the Japanese and per-row provenance (`machine`, `human`, `reviewed`); human edits always win, and the server builds the `-en` files from it without calling an engine.
 
 ## 1. Where the client's text comes from
 
@@ -510,3 +514,180 @@ Run 3 shows a second way to deliver text: not `en_` rows that StringDB must lear
 | Cost per client | every client fetches every `-en` member (6.3): **+36 MB for the second master**, plus the story and art files | +2.4 MB of master, plus the same story and art files |
 | Server work | the served-master pipeline gets a second output: its `ClientMaster` edits, then the English | one `ClientMaster` hook that inserts rows |
 | Pre-download screens | the port can carry an English built-in master through its asset overlay (run 3's dialog) | the same, with a built-in `-en` master that holds `en_` rows; without one, Japanese until the first download |
+
+## 7. Machine translation for the gaps
+
+Investigation of 2026-10-07 (agent `english-mt`), at the user's request: **how would a machine-translation (MT) option for the text Global never translated work, and how would it be documented and edited later?** Nothing in the server or client changed. The data-side prototype is `tools/english_mt.py` (coverage, glossary, translation memory, protected tokens, glyph folding, line widths, checks); it only reads data and writes to `work/`. The trial's engine adapters, raw outputs and scores are in `work/english/mt-trial/` (local, not committed: derived game text). The plan's steps are in [PLAN-english.md "Machine translation"](PLAN-english.md#machine-translation-for-the-gaps-m-steps).
+
+### 7.1 What is left after the official English
+
+`tools/english_mt.py coverage` sorts every JP row by where its English can come from, in this order:
+
+| Source | Master rows | JA characters | |
+|---|---:|---:|---|
+| Official, by id (the five filters of 1.4) | 19,145 | 327,086 | Global |
+| Language-neutral (no kana or kanji) | 1,530 | 7,342 | nothing to do |
+| **Exact memory**: another official pair has the identical Japanese | 6,265 | 92,257 | Global's words, reused |
+| **Template memory**: an official pair differing only in its numbers | 2,412 | 43,179 | Global's words, new numbers (7.2) |
+| **Gap** | **37,593** | **884,701** | MT, a human, or Japanese |
+| … as distinct texts | 27,847 | 704,830 | what an engine actually translates |
+
+- The gap's biggest prefixes: `message` 5,071, `uimsg` 3,739, `item` 3,660, `seed` 3,495, `cp` (profiles) 3,385, `factor` 2,831, `name` 2,576, `Asset` 2,542, `talentName` 2,014, `AttackName` 1,575, `gachaPickup` 1,451, `Guide` 1,308.
+- 803 gap rows have Global English for an **older** Japanese text (the user's Q7: they follow the gap rule). The coverage report should show Global's old English beside them as an editor's reference.
+- The exact memory is 6,265 rows here against 6,845 in 1.4: this count also drops Global pairs with Global-only tokens or a specifier mismatch.
+
+Story (`Scenario/TS_*.msgp`, lines with kana or kanji):
+
+| Group | Official | Gap lines | Gap JA characters |
+|---|---:|---:|---:|
+| EP1 | 2,979 | 127 | 4,395 |
+| EP2 | 0 | 7,906 | 238,231 |
+| EP3 | 0 | 5,037 | 157,793 |
+| `TS_3xxx` / `TS_5xxx` | 708 / 794 | 116 / 64 | 2,985 / 1,786 |
+| `TS_9996`, `TS_C*`, `TS_D*`, `TS_E*` (events) | 0 | 3,932 | 125,008 |
+| **Total** | 4,481 | **17,182** | **530,198** |
+
+- **EP2 has no official English at all.** The "453 of 8,428" of 1.4 and basmaster-gl.md are lines whose Global `en` equals the `ja` (`……`, `！？`): language-neutral, not translated. Of EP2's other lines, 7,570 have Japanese in Global's `en` and 405 aren't in Global's master.
+- 117 of EP1's 127 gap lines are official English with `<EMDASH>`: E3's rewrite (`<EMDASH>` → `―`) turns them official. EP1 is then complete but for 10 lines. (2,979 official + 117 + 283 language-neutral = the 3,379 of 1.4.)
+- **Volume for an engine:** about **705k JA characters of master text plus 530k of story, 1.24M in all.** English came out at 2.06 characters per JA character in the trial, so about 2.5M characters of English.
+
+### 7.2 Before any MT: memory and glossary
+
+These are deterministic, free, and use Global's own words, so they run first and MT only gets what is left.
+
+- **Template memory.** Each official pair is normalised with NFKC (full-width digits and symbols to ASCII: `ＨＰ＋１０％` → `HP+10%`) and its numbers replaced by slots. A JP row whose normalised text equals a template, with different numbers, gets the template's English with its own numbers.
+  - Only templates whose English contains each Japanese number exactly once are kept; templates with month names or ordinals are dropped (`９月` = "September", `21th`), and `1 times` becomes `1 time`.
+  - **Accuracy, held out:** templates built from half of Global's official pairs, applied to the other half where only a template matched: 1,459 of 1,661 identical to Global's own English, 72 more equal up to spaces and line breaks (92%). The rest are Global's own inconsistencies (`1000` vs `1,000`, "Spirit Shock" vs "Spirit Strike" for the same 衝霊破) and a few wrong matches (`あと2回で新武器確定`).
+  - It fills 2,412 gap rows, mostly `seed` (1,599) and `factor` (442).
+- **Glossary.** `tools/english_mt.py glossary` mines Global's official English of every name field: 3,246 terms (character 348, speaker 150, skill 910, talent 487, item 767, mission 337, short UI terms 247). 302 terms have more than one official English: the most used one wins, then the shortest; the others are accepted variants. Examples: 紋章石 = Gems, スタミナ = Stamina, フェイト = Fayt, コロ = Coro.
+  - A katakana term inside a longer katakana word doesn't count (レイ = "Laser Beams" in マルチプレイ, フレイ = "Freya" in フレイムロンド: found by the trial's Opus translator).
+  - Generic 2-character UI words (入手 = "Obtained", 必要, はい) made bad terms and were dropped: only katakana terms and terms of 3 or more characters without hiragana are kept from `uimsg_*` labels.
+  - **New names are the open gap.** EP3's characters never reached Global. In the trial, リーシュ came out as "Leesh", "Lishe", "Reese" and "Reish" from four engines. The new proper nouns (katakana runs in story and names that aren't in the glossary) need one decision each, made once, before the story is translated: a human, or an LLM proposal a human approves, added to the glossary as `human`.
+
+### 7.3 Engines
+
+Measured on this machine where marked; prices as published in October 2026 (check before buying).
+
+| Engine | Kind | Size / where | License of the model / terms | Trial (7.4) | Notes |
+|---|---|---|---|---|---|
+| Opus-MT `Helsinki-NLP/opus-mt-ja-en` | Marian NMT, offline | 293 MB (CTranslate2 int8 ~75 MB) | Apache-2.0 | measured | hallucinates on short UI strings ("Oh, my God." for オーブ; "== sync, corrected by elderman ==" for a line with a tag): subtitle training data |
+| FuguMT `staka/fugumt-ja-en` | Marian NMT, offline | 119 MB | CC-BY-SA-4.0 | measured | **broken under transformers 5** (garbage output); correct through CTranslate2 |
+| Sugoi v4 (JParaCrawl) | fairseq NMT, offline | 1.1 GB | NTT terms: research only, no commercial use, also for derived data | not run | popular for visual novels; its terms don't fit shipping its output |
+| NLLB-200 distilled 600M / 1.3B | multilingual NMT | 2.5 / 5.5 GB | CC-BY-NC-4.0 | not run | non-commercial; general multilingual models trail dedicated JA→EN pairs |
+| M2M100 418M | multilingual NMT | 1.9 GB | MIT | not run | the same; weakest of the multilingual set |
+| Qwen2.5-1.5B-Instruct (GGUF Q4_K_M) | small local LLM | 1.1 GB | Apache-2.0 | measured | the largest Apache-licensed Qwen2.5 under the ~2 GB limit; Qwen2.5-3B is under a research license |
+| Larger local LLM (e.g. 12–14B at Q4, ~8–9 GB) | local LLM | fits the RTX PRO 4000's 24 GB | per model | not run | over the ~2 GB download limit: the user's decision (question M-Q3) |
+| DeepL API Pro | online NMT | — | output is yours; Pro deletes texts after translation and doesn't train on them | not run | about $25 (€20) per million characters plus a monthly base fee; glossaries supported; 500k characters/month free tier |
+| Google Cloud Translation | online NMT | — | — | not run | $20 per million characters (NMT), first 500k/month free; LLM mode about $10 + $10 per million characters in and out |
+| Claude API (Sonnet 5.5, Opus 5.5) | online LLM | — | output is yours; API inputs aren't used for training by default (commercial terms) | measured (in-session, see 7.4) | follows a glossary and rules in the prompt; context of a whole scene; Batch API halves the price |
+
+**Cost for the whole gap** (1.24M JA characters, 7.1):
+
+| Engine | Estimate | Basis |
+|---|---:|---|
+| Local NMT / local LLM | electricity | CPU or GPU hours (below) |
+| Google NMT | about $15–25 | $20 per million source characters |
+| DeepL API Pro | about $30–35 | $25 per million plus the base fee |
+| Claude Sonnet 5.5, Batch API | about $10–20 | input about 3–4M tokens (the Japanese at roughly 1–1.3 tokens per character, plus per-row kind and glossary lines and scene context) at $1 per million; output about 1–1.5M tokens (2.5M English characters, JSON wrapping, thinking) at $5 per million |
+| Claude Opus 5.5, Batch API | about $20–40 | the same tokens at $2 / $10 per million |
+| A second LLM pass (review against the checks, 7.5) | about the same again | |
+
+The token counts are estimates from character counts: no API key was used, so `count_tokens` was not run. They are within a small factor either way; the order of magnitude (tens of dollars) is the point.
+
+**Speed.** The trial ran while other agents' gates and clients loaded the machine (load average about 50 on 32 threads), so these are lower bounds: Opus-MT and FuguMT through CTranslate2 int8 on 16 CPU threads did 21–27 JA characters per second (about 13–16 hours for 1.24M characters at that rate; CTranslate2 on the GPU needs the CUDA 12 cuBLAS libraries, not installed). Qwen2.5-1.5B through llama-cpp-python on 16 CPU threads (no CUDA toolkit for a GPU build) took 1,619 s for the 310 rows, about 4.6 JA characters per second: days for the whole gap on this loaded CPU. An online engine finishes the whole gap in about an hour (Batch API: within 24 hours).
+
+**Privacy.** The text sent out is the publisher's game text: no personal data, no player ids. Sending it to an API is a copyright question, not a privacy one, and the same one as committing translations of it (7.6).
+
+### 7.4 The trial
+
+- **Sample** (`tools/english_mt.py sample`, seed 20261007): 310 rows.
+  - 200 master rows with official English, stratified: UI/system 30, `message` 25, `seed`/`factor` 25, items 20, `name` 20, skills/talents 20, profiles 20, rows with printf specifiers 20, rows with `\n` 20.
+  - 40 master gap rows from 3.x features (`Guide`, Sphere 211, universe, `Asset`, `gachaPickup`, `uimsg`): no reference; shown for behaviour.
+  - 50 EP1 story lines with official English (10 of them with `<player>` or `<font…>`), and 20 EP3 gap lines (no reference).
+- **Leak control.** The glossary and memory given to the engines were built **without** the sampled ids, so no row is scored against its own official English. The Claude translations were made by two fresh subagents (Opus 5.5 and Sonnet 5.5) that read only the prompt file (`claude-input.txt`: the rules, each row's kind, its glossary hits and the Japanese; no reference). This is the same model as the API but not an API run. A model may have seen Global's English on the web (wikis quote it); that would inflate its scores and can't be ruled out.
+- **Pipeline**, the same for every engine: NFKC on the Japanese; `\n` joined (story) or turned into a space (master); for the NMT engines, specifiers and tags masked as `X0X` placeholders and restored; then `post`: NFC, glyph folding (7.5), story and multi-line rows re-broken at the font's advances, checks.
+- **Scores** against Global's English (sacrebleu chrF, chrF++, BLEU over the 250 rows with a reference; `\n` and spaces collapsed):
+
+| Engine | chrF all | chrF master (200) | chrF story (50) | chrF++ | BLEU | tokens kept (36 rows) | glossary used (85 rows) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Opus-MT (CT2 int8) | 27.6 | 27.7 | 27.3 | 25.5 | 9.3 | 27 | 21 |
+| FuguMT (CT2 int8) | 32.3 | 33.1 | 30.1 | 29.6 | 12.2 | 28 | 31 |
+| Qwen2.5-1.5B (Q4, local, glossary in the prompt) | 35.3 | 38.5 | 26.6 | 32.5 | 10.6 | 20 | 74 |
+| Claude Sonnet 5.5 | 43.8 | 47.3 | 34.5 | 41.3 | 21.3 | **36** | 83 |
+| Claude Opus 5.5 | **44.4** | **47.4** | **36.5** | **41.8** | 21.1 | **36** | **84** |
+
+  Per stratum (chrF, Opus-MT / FuguMT / Qwen / Sonnet / Opus): `seed`/`factor` 34 / 45 / 43 / 67 / 60; skills/talents 20 / 22 / 45 / 46 / 44; `name` 14 / 25 / 38 / 49 / 52; UI 35 / 32 / 41 / 43 / 45; EP1 story 27 / 30 / 27 / 35 / 37.
+- **How to read the numbers.** chrF against one reference punishes valid wording ("Obtain 82 FOL" vs Global's "Get 82 FOL"; "Arctic Impact Revised" vs "Revised Arctic Impact"), and short UI strings make it noisy. The gap between the families is large and consistent across every stratum; the gap between Sonnet and Opus isn't significant on 250 rows.
+- **What the rows look like** (Japanese, Global, then Opus-MT / FuguMT / Sonnet / Opus):
+
+  | Japanese | Global | Opus-MT | FuguMT | Claude Sonnet | Claude Opus |
+  |---|---|---|---|---|---|
+  | 紋章石が不足しています。 | Not enough gems. | There's a shortage of coatstones. | There is a shortage of heraldic stones. | Not enough Gems. | Not enough Gems. |
+  | ＨＰ１００％時に与ダメージ＋５５％ | Damage dealt +55% at 100% HP | Damage at 100% HP + 55% | 55% damage at 100% HP | Damage dealt +55% at 100% HP | Damage Dealt +55% at 100% HP |
+  | ＨＰ１５％以下の被ダメで怯まず（全体）\n狙われやすくなる効果＋３（自分） | No flinching when taking damage of 15% HP or less (party), and Taunt +3 (self) | (HP 15% less than or equal to whole) | 15% or less of HP's power is going to make it easier to be targeted | No flinching from damage taken at 15% HP or less (All); Target-attracting effect +3 (Self) | No flinching from damage taken at 15% HP or less (All); Aggro +3 (Self) |
+  | フリージングインパクト・改 | Revised Arctic Impact | "Frequency Influence" | Fringing Impact Change | Arctic Impact Revised | Arctic Impact+ |
+  | `<player>`、お願いじゃ、協力してくれ！ (EP1) | `<player>`, please will you come with me? | `<player>`, please help me! | `<player>`, please, help me! | `<player>`, I beg you, help us! | `<player>`, I beg you, please help us! |
+  | 任官して間もないわたしにとって、今際の際の約束というものはとても衝撃でした。 (EP3, no Global) | — | For me, as soon as I was in charge, the promise I made at this time was a great shock. | For me, who had just been appointed to this post, the promise I made at this time was very shocking. | For me, newly commissioned, a promise made at someone's last breath was a great shock. | For me, freshly commissioned, a promise made on someone's deathbed came as a real shock. |
+
+- **Failure modes seen:**
+  - NMT: game terms translated literally (紋章石 "coatstones"/"heraldic stones" instead of Gems), formulaic stat lines garbled, dropped clauses and dropped placeholders (`%d`, `%s`, `<player>` lost in 8–9 of 36 rows), and Opus-MT's subtitle hallucinations. Neither NMT model can be told a glossary.
+  - Small local LLM (Qwen2.5-1.5B): follows the glossary (74 of 85) but loses tokens in 16 of 36 rows (`<player>` dropped: "You, please, help me!"), leaves kana in 11 rows, misspells ("Normaly") and paraphrases stat lines ("When HP is 100%, it deals 55% more damage.").
+  - Claude: kept every specifier and tag, used the glossary in 83–84 of 85 rows (the misses: a variant form, "Great Sword" for a "Great Swords" term), but **invents a form where Global has a convention** ("Arctic Impact+" for `・改`; "(All)" where Global writes "(party)"), and labels UI rows in the glossary's form even when a sentence reads better ("Purchase Gems completed successfully"). Both are fixable with more glossary entries and a few style examples in the prompt (Global's conventions: `（全体）` = "(party)", `（自分）` = "(self)", `・改` = "Revised").
+  - Opus wrote `%d%%` for `%d％`: right, since the row goes through printf; the other engines folded `％` to a bare `%`, which printf would misread (7.5).
+  - **Width.** 74–81 of the 310 rows per engine were single-line rows more than 1.5× as wide as the Japanese; on the 250 rows with a reference that is 65–70 per engine, against 60 for Global's own English. That is the English, not the engine: labels need the shrink of 3.2, a shorter override, or the client's word wrap (Q6).
+- **Verdict.** The two offline NMT models are not usable as-is for this game: they fail the game's terminology, its formulaic stat lines and its tokens, which is most of the gap. An LLM with the glossary in the prompt is clearly better on every stratum and keeps every token; its output needs the same checks and a light human pass, mainly for names, Global's conventions and the story's tone. A 1.5B local LLM sits between the two: better than NMT on terms, worse on tokens and story, and slow on this CPU.
+
+How measured: `tools/english_mt.py coverage|glossary|sample|post`; the engine adapters `work/english/mt-trial/engines/run_ct2.py`, `run_llama.py`, `prompt.py` and the scorer `score.py` (sacrebleu 2.6.0) in `work/tools/mt-venv` (Python 3.12: torch 2.14.1+cpu, transformers 5.18.0, ctranslate2 4.8.2, sentencepiece, llama-cpp-python, sacrebleu); models under `work/tools/mt-models/`. Outputs: `raw-<engine>.jsonl` (engine output), `post-<engine>.jsonl` (after `post`, with each row's problems), `scores.json`, `side-by-side.tsv`.
+
+### 7.5 Rules every translated row must pass
+
+These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT and human rows alike. A row that fails is served in Japanese and listed in the report, never served broken.
+
+| Rule | Check | Why |
+|---|---|---|
+| printf specifiers | the same specifiers in the same order (`%d`, `%s`, `%u`, `%02d`, `%.5f`; no space flag, so `50% c…` is prose); a literal percent after a specifier must be `%%` | the client fills them with printf: a missing or extra one reads the wrong argument (1.1) |
+| Positional specifiers | none (`%1$s`, `%2$d`) | the port's printf doesn't support them (3.3); reword instead of reordering arguments |
+| Markup | the same tags: `<font color=…>…</font>` in labels, `<player>`, `<fontcolor=…>`, `<fontsize=…>`, `</font>` in story; no Global token (`<NUM>`, `<STR>`, `<INSERT>`, `<EMDASH>`) | an unknown story tag likely crashes `ParseMessage` (3.3) |
+| Glyphs | every character in the font (3.1); folding first: accents stripped, `—` → `―`, `–` → `-`, curly quotes → ASCII, `•` and `·` → `・`, `™` `®` dropped | a missing glyph draws as `?` |
+| Glossary | every glossary term in the Japanese appears as its English (or an accepted variant; case, line breaks and a plural `s` ignored) | Q8: Global's terminology everywhere |
+| No Japanese left | no kana or kanji | a half-translated row is worse than a Japanese one |
+| Width | story and multi-line rows re-broken at spaces to the budget with the font's advances; single-line rows reported when wider than 1.5× the Japanese | the client never wraps (3.2) |
+
+- **Line budgets.** The trial used the Japanese row's own widest line for multi-line master rows, and for the story the p99 widest JP story line, 407 px (max 483). JP story lines have 1–4 lines (5+ in 266 of 21,663). Global's official story English (EP1, `TS_3xxx`, `TS_5xxx`) re-broken at 407 px needs 5 or more lines in 675 of 4,893 lines (at 483 px: 281). So about one story line in ten needs a shorter wording or a smaller font: `<fontsize=…>` is a story tag the client already reads (3.3), an untested data-only option; the per-screen box widths still have to be measured (E7).
+- **Style per kind** (the prompt's rules, from Global's practice): UI labels and buttons terse, title case; descriptions one plain sentence; stat lines in Global's formula ("Damage dealt +55% at 100% HP", "(party)", "(self)", "(N seconds)"); dialogue natural, in the speaker's voice; names transliterated as the glossary has them.
+
+### 7.6 Storage, provenance and editing
+
+**The source of truth is a translation table in the repo, not engine output and not a database.**
+
+- **Layout** (proposed, `data/english/`):
+  - `glossary.tsv`: `ja, en, kind, variants, source (official|human), note`. Generated from Global, then edited by hand; a `human` row wins over a generated one and survives regeneration.
+  - `master.tsv`: one row per JP `message_id` that isn't official by id: `message_id, ja_sha1, en, source, engine, date, editor, note`.
+  - `story/TS_xxxx.tsv`: the same per story file, **without the Japanese text** (it is not in git; 7.6 below).
+  - Sorted by `message_id`, UTF-8, `\n` as the two characters, so diffs are one line per row and a build is byte-reproducible.
+- **Provenance** (`source`):
+  - `official`: Global, by id. Not stored: derived at build time from `data/basmaster-gl.sqlite3` (already in git).
+  - `memory` / `template`: derived at build time (7.2); not stored.
+  - `machine`: an engine wrote it. `engine` names the engine and model version and its prompt version (e.g. `claude-sonnet-5-5/prompt-v1`), `date` the run.
+  - `human`: a person wrote or edited it (`editor` = who).
+  - `reviewed`: a person checked a `machine` row and kept it unchanged.
+- **Changed source text.** `ja_sha1` is the SHA-1 of the Japanese the row translates. A different hash at build time marks the row **stale**: reported, and served only if the user says so. 3.7.0 is the last version, so this mainly catches a wrong master or a mis-keyed row.
+- **Precedence at build:** `human` and `reviewed` > `official` > `memory`/`template` > `machine` > Japanese. A human row may override Global (the "Time Left  Left" composition of section 2); the report lists every such override.
+- **Re-running MT never touches** `human` or `reviewed` rows. It writes only rows that are missing, or `machine` rows whose hash, engine or prompt version changed, when asked to. So a human edit is permanent until a human changes it.
+- **Editing.**
+  - A small CLI (`tools/english_text.py`, to write): `show ID` (JA, Global's reference, current EN, width, problems), `set ID TEXT --by NAME`, `review ID…`, `stale`, `report` (coverage per source and prefix, failing rows, width outliers, the 803 rows with stale Global English and their old English).
+  - **PO round trip** for Poedit, Lokalize or Weblate: `export-po` writes one `.po` per category to `work/english/po/` with `msgctxt` = message_id, `msgid` = the Japanese (from the master or the download at export time), `msgstr` = the English, `#,fuzzy` for `machine` rows, and the provenance and Global's reference as comments; `import-po` turns a changed `msgstr` into a `human` row and a cleared `fuzzy` flag into `reviewed`. The `.po` files are a working copy in `work/`, never the source of truth: their `msgid` is the game's Japanese.
+  - **Spreadsheet round trip**: the same as CSV (JA, Global, EN, width in px, problems), imported by `message_id`.
+- **How the server consumes it.** The `-en` master builder (C1) and story builder (C3) read only the committed tables, the two master DBs and the download, apply the precedence and the checks, fold glyphs and break lines with the font's advances, and write the files. **No engine is called at server start** (an API isn't reproducible, and a server must not need the network). Same inputs, same bytes, so the CDN's version ids stay stable.
+- **What is safe to commit** (the user's game-file policy, README.md "Game files"):
+  - The master's Japanese is already in git (`data/basmaster-3.7.0.sqlite3`), and so is Global's English. A table of our English keyed by `message_id` adds no game data beyond what's there: committable, like the master DBs.
+  - The story's Japanese is **not** in git (only in `work/download-3.7.0`). The story tables therefore hold `message_id`, a hash and our English, and no Japanese; tools read the Japanese from the download when they need it.
+  - Our English is still a translation of the publisher's text: whether it goes into git, and whether release packages carry it (they never carry game files), is the user's call (PLAN-english.md M-Q5). The glossary of names is small and needed in any case.
+  - Engine outputs before review (`raw-*.jsonl`), PO exports and the trial stay in `work/`.
+
+### 7.7 Recommendation
+
+- **First the free, deterministic steps:** E3's token rewrites (117 EP1 lines become official), template memory (2,412 rows), and the glossary with a decision for every new name.
+- **Engine: an LLM API, Claude Sonnet 5.5 through the Batch API**, with the glossary hits and Global's conventions in the prompt, the story sent a scene at a time (a speaker per line), and every row through the checks of 7.5. Opus 5.5 for the story if the user wants the last bit of tone (on this sample the two are equal on UI and Opus slightly ahead on story; the difference isn't significant). Expected cost for the whole gap: tens of dollars, one or two passes.
+- **Fallback, offline:** FuguMT through CTranslate2 (CC-BY-SA model, no glossary, about chrF 32 against the LLM's 44). It is good enough only as a clearly-marked rough fill, and loses tokens in about one row in four that has them (those rows stay Japanese by the checks). A larger local LLM on the GPU (12–14B at Q4, about 8–9 GB, over the size limit) is the better offline candidate but untested here (M-Q3).
+- **Review:** every `machine` row is marked as such in the report and stays editable; names and story get a human pass before they ship as default, UI rows can ship as `machine` with the report listing them.

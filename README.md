@@ -168,6 +168,9 @@ scripts/build.sh --windows --target soa-server          # one part
   mode itself). Not affected: C++ sources get mingw-w64's own printf / scanf family
   (`__USE_MINGW_ANSI_STDIO`: `%zu`, `%lld`, `%a`, `%Lf` and C99 `snprintf` truncation), and its C99
   math (`tgamma`, `cbrt`, `nextafter`, ...) and `strtod` (hex, `inf`, `nan`).
+- Static initializers run in reverse link order on MinGW (ELF: in link order); the natives,
+  selftests and test hooks register from them, so `soa_link_in_init_order` (`cmake/init_order.cmake`)
+  links the source lists reversed there. `win:native-order` checks `soa.exe --list-native` against Linux's.
 - What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
   `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
   POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,

@@ -90,8 +90,11 @@ std::wstring guest_wformat(const wchar_t* fmt, VaSource& va);
 // Collects the pointer arguments of a scanf format (at most 32).
 std::vector<u64> scanf_args(const char* fmt, VaSource& va);
 // The guest's scanf format for the host's scanf: the guest's `long` is 64-bit (LP64); on Windows
-// (LLP64) an `l` integer conversion (%ld %li %lo %lu %lx %lX %ln) becomes `ll`. Unchanged elsewhere
-// (`win`: force the translation, for the tests on Linux).
+// (LLP64) an `l` integer conversion (%ld %li %lo %lu %lx %lX %ln) becomes `ll`, and so do `z`, `j`
+// and `t` (64-bit on both, spelled `ll` for every CRT). Unchanged elsewhere (`win`: force the
+// translation, for the tests on Linux). Not translated: `%ls` / `%lc` / `%l[` (the guest's wchar_t
+// is 32-bit, Windows' 16-bit; libSOA's format strings have none) and `%Lf` / `%Lg` (the guest's
+// long double is binary128, the host's x87 80-bit: on both hosts; libSOA has them as libc++'s).
 std::string host_scanf_format(const char* fmt, bool win = WIN_HOST);
 // The guest's rand(): bionic's RAND_MAX is 0x7fffffff. Linux: the host's (glibc: the same
 // TYPE_3 additive generator, seed 1). Windows, whose rand() is 15-bit: that generator here (the

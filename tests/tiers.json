@@ -25,7 +25,7 @@
     {"name": "env-rule", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "build/common/soa_env_tests && tests/env_removed.sh",
      "covers": "the environment rule (soa/env.h: the on/off words, numbers checked) and every removed SOA_* setting's one warning line naming its flag, in each program (docs/environment.md)"},
-    {"name": "cli", "tier": "T0", "secs": 1, "kind": "check", "game": 0, "cmd": "build/tests/cli/soa_cli_tests", "covers": "the four programs' command lines on CLI11 (common/include/soa/cli.h and the shared option groups) against the hand-written parsers they replaced (tests/cli/legacy.cpp): every old option defined, every option in a table row, each row parsing to the same configuration and outcome (the deliberate differences listed)"},
+    {"name": "cli", "tier": "T0", "secs": 1, "kind": "check", "game": 0, "cmd": "build/tests/cli/soa_cli_tests", "covers": "the five programs' command lines on CLI11 (soa, soa-server, soa-emu, soa-viewer, soa-webview-render; common/include/soa/cli.h and the shared option groups) against the hand-written parsers they replaced (tests/cli/legacy.cpp): every old option defined, every option in a table row, each row parsing to the same configuration and outcome (the deliberate differences listed)"},
     {"name": "codec", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "build/common/soa_codec_tests",
      "covers": "soa_codec's unit tests (common/include/soa: Base64 with Android's and Aska's spellings, the SharedPreferences XML)"},

@@ -2,18 +2,9 @@
 // a PNG, the whole page or one view-sized screen of it. docs/webview.md "The render tool".
 //
 //   soa-webview-render PAGE OUT.png [--width W] [--height H] [--zoom Z] [--scroll Y] [--screen]
-//                      [--url URL] [--map PREFIX=DIR]... [--tap X:Y]
+//                      [--url URL] [--map PREFIX=DIR]... [--tap X:Y]   (-h / --help: the options)
 //
-//   PAGE        an HTML file ("-": stdin)
-//   --width     the view's width in device pixels (default 1000)
-//   --height    the view's height (default 1400); the PNG is the whole page's height unless --screen
-//   --zoom      device pixels per CSS pixel (default 2.625: a 1080-wide 420 dpi phone); a page whose
-//               viewport meta names a width overrides it (Android's wide-viewport mode)
-//   --url       the page's URL (default: file://<PAGE's absolute path>), the base of its links
-//   --map       serves URLs starting with PREFIX from DIR (e.g. http://soa-local.invalid/=webroot/);
-//               file:// URLs are read from the disk
-//   --scroll    with --screen: the scroll position (device pixels)
-//   --tap X:Y   also prints the link a tap at view pixel X:Y hits
+// The options and their defaults: cli.cpp (CLI11; --help lists them).
 // Environment: SOA_WEBVIEW_DUMP_CSS=FILE appends each stylesheet as litehtml gets it (docs/webview.md).
 #include <unistd.h>
 
@@ -29,6 +20,7 @@
 
 #include <soa/env.h>
 
+#include "cli.h"
 #include "soawebview/page.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -63,42 +55,13 @@ std::string url_path(std::string u) {  // the path part, %XX decoded, without ?q
 
 int main(int argc, char** argv) {
     soa::env::warn_removed_env("soa-webview-render", soa::env::kRender);
-    std::string page, out, url;
-    int width = 1000, height = 1400, scroll = 0, tap_x = -1, tap_y = -1;
-    float zoom = 2.625f;
-    bool screen = false;
-    std::vector<std::pair<std::string, std::string>> maps;
-    for (int i = 1; i < argc; i++) {
-        std::string a = argv[i];
-        auto val = [&]() -> std::string {
-            if (i + 1 >= argc) {
-                fprintf(stderr, "%s: needs a value\n", a.c_str());
-                exit(2);
-            }
-            return argv[++i];
-        };
-        if (a == "--width") width = atoi(val().c_str());
-        else if (a == "--height") height = atoi(val().c_str());
-        else if (a == "--zoom") zoom = (float)atof(val().c_str());
-        else if (a == "--scroll") scroll = atoi(val().c_str());
-        else if (a == "--screen") screen = true;
-        else if (a == "--url") url = val();
-        else if (a == "--map") {
-            std::string m = val();
-            size_t eq = m.find('=');
-            if (eq == std::string::npos) return fprintf(stderr, "--map PREFIX=DIR\n"), 2;
-            maps.emplace_back(m.substr(0, eq), m.substr(eq + 1));
-        } else if (a == "--tap") {
-            if (sscanf(val().c_str(), "%d:%d", &tap_x, &tap_y) != 2) return fprintf(stderr, "--tap X:Y\n"), 2;
-        } else if (page.empty()) page = a;
-        else if (out.empty()) out = a;
-        else return fprintf(stderr, "unexpected argument %s\n", a.c_str()), 2;
-    }
-    if (page.empty() || out.empty()) {
-        fprintf(stderr, "usage: soa-webview-render PAGE OUT.png [--width W] [--height H] [--zoom Z] [--scroll Y] [--screen] [--url URL] "
-                        "[--map PREFIX=DIR]... [--tap X:Y]\n");
-        return 2;
-    }
+    soa::webview::RenderArgs args;
+    if (int rc = soa::webview::parse_render_args(argc, argv, args); rc >= 0) return rc;
+    const std::string& page = args.page;
+    std::string url = args.url;
+    const int width = args.width, height = args.height, scroll = args.scroll, tap_x = args.tap_x, tap_y = args.tap_y;
+    const bool screen = args.screen;
+    const auto& maps = args.maps;
     std::string html;
     if (!read_file(page, html)) return fprintf(stderr, "%s: can't read\n", page.c_str()), 1;
     if (url.empty() && page != "-") {
@@ -120,11 +83,11 @@ int main(int argc, char** argv) {
         else r.status = 404, r.error = path + ": not found";
         return r;
     });
-    wp.load(html, url, width, height, zoom);
+    wp.load(html, url, width, height, args.zoom);
     int h = screen ? height : std::max(1, std::min(wp.content_height(), 30000));
     std::vector<uint8_t> px((size_t)width * h * 4);
     wp.draw(px.data(), width, h, screen ? scroll : 0, true);
     printf("%s: %dx%d device px, zoom %.3f, content %d px tall, \"%s\"\n", page.c_str(), width, h, wp.zoom(), wp.content_height(), wp.title().c_str());
     if (tap_x >= 0) printf("tap %d:%d -> \"%s\"\n", tap_x, tap_y, wp.tap(tap_x, tap_y, screen ? scroll : 0).c_str());
-    return stbi_write_png(out.c_str(), width, h, 4, px.data(), width * 4) ? 0 : 1;
+    return stbi_write_png(args.out.c_str(), width, h, 4, px.data(), width * 4) ? 0 : 1;
 }

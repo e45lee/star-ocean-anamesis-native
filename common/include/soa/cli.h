@@ -8,8 +8,9 @@
 //   - here                                --repo, --download / --download-dir, --download-prefer,
 //                                         --standin-assets, -v (soa, soa-server, soa-emu, soa-viewer)
 // Each program's own options and its parse function are in its cli.cpp (port/src/core/cli.cpp,
-// server/app/cli.cpp, emulator/src/cli.cpp, emulator-viewer/src/cli.cpp); tests/cli checks every
-// option of every program against the hand-written parsers they replaced.
+// server/app/cli.cpp, emulator/src/cli.cpp, emulator-viewer/src/cli.cpp, webview/tools/cli.cpp for
+// soa-webview-render); tests/cli checks every option of every program against the hand-written
+// parsers they replaced.
 //
 // The rules the old parsers had, kept for every program (make_app, parse):
 //   - a value-taking option given twice: the last one wins (repeatable ones collect every value);

@@ -51,6 +51,15 @@ def main(o):
     c, w = s.ctl, s.wait_log
     st = {}
 
+    def start(rx, name, shot=None):
+        """The party (its crew auto-selected) -> 決定 -> the expedition's confirmation -> 探査開始, each
+        tap checked on a screenshot and retried (flows/mission.py start_mission), until rx is logged."""
+        mission.open_mission_confirm(s, mission.DEEPSPACE)
+        if shot:
+            c(s.shot_cmd(shot))
+        mission.start_mission(s, "決定 -> 探査開始 (%s)" % name, mission.log_more(s.client_log, rx), d=mission.DEEPSPACE, opened=True)
+        w(rx, 30, name=name)
+
     def body(s):
         # The login popups closed: left open, the LOGIN BONUS popup stays up over deep space (the
         # phase:6 control command bypasses it) and its 閉じる swallows the result page's OK tap.
@@ -64,8 +73,7 @@ def main(o):
         c("tap:350:790")
         w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect")
         c("wait:4000", s.shot_cmd("07-auto"))
-        c("tap:630:1120", "wait:3000", s.shot_cmd("08-confirm"), "tap:515:1003")  # 決定 -> 探査開始
-        w(r"DeepSpaceMissionStart area", 30, name="DeepSpaceMissionStart")
+        start(r"DeepSpaceMissionStart area", "DeepSpaceMissionStart", "08-confirm")
         c("wait:6000", s.shot_cmd("09-started"))
         st[1] = ds_state(s, "1-started")
         # Fast-forward the server clock past the expedition (30 minutes), leave to home and come back.
@@ -87,8 +95,8 @@ def main(o):
         # A second expedition, returned at once (今すぐ帰還: DeepSpaceMissionEndNow for coins), collected.
         c("tap:360:790", "wait:5000", "tap:350:790")
         w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect (2)")
-        c("wait:4000", "tap:630:1120", "wait:3000", "tap:515:1003")
-        w(r"DeepSpaceMissionStart area", 30, name="DeepSpaceMissionStart (2)")
+        c("wait:4000")
+        start(r"DeepSpaceMissionStart area", "DeepSpaceMissionStart (2)")
         c("wait:6000", s.shot_cmd("15-started-2"), "tap:655:797", "wait:4000", s.shot_cmd("16-quick-return"))
         c("tap:515:890")
         w(r"DeepSpaceMissionEndNow ship", 30, name="DeepSpaceMissionEndNow")
@@ -104,12 +112,12 @@ def main(o):
         # Two expeditions at once: the 0.5H mission (ship 1), then the 1H mission (ship 2, a pass ship).
         c("tap:360:790", "wait:5000", "tap:350:790")
         w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect (3)")
-        c("wait:4000", "tap:630:1120", "wait:3000", "tap:515:1003")
-        w(r"DeepSpaceMissionStart area .*: ship 1/", 30, name="DeepSpaceMissionStart: ship 1")
+        c("wait:4000")
+        start(r"DeepSpaceMissionStart area .*: ship 1/", "DeepSpaceMissionStart: ship 1")
         c("wait:6000", "tap:320:868", "wait:5000", s.shot_cmd("21-party-2"), "tap:350:790")
         w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect (4)")
-        c("wait:4000", "tap:630:1120", "wait:3000", "tap:515:1003")
-        w(r"DeepSpaceMissionStart area .*: ship 2/", 30, name="DeepSpaceMissionStart: ship 2")
+        c("wait:4000")
+        start(r"DeepSpaceMissionStart area .*: ship 2/", "DeepSpaceMissionStart: ship 2")
         c("wait:6000", s.shot_cmd("22-two-ships"))
         st[4] = ds_state(s, "4-pass")
         # 実績: the deep space achievements (the screen opens on a tab with an achieved row: その他).

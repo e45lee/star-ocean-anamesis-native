@@ -74,7 +74,7 @@ def login_to_board(s):
     return state(s, "1-floor1")
 
 
-def battle(s, tag, rent=False, retry_start=True):
+def battle(s, tag, rent=False):
     """The cell's detail is open: single play -> the rental list (the first lender with rent, else
     選択しない) -> auto party -> start -> the battle -> the result pages until the board (phase 5)."""
     s.ctl("wait:4000", s.shot_cmd(tag + "-detail"), "tap:364:905", "wait:5000", s.shot_cmd(tag + "-rental"))
@@ -82,12 +82,10 @@ def battle(s, tag, rent=False, retry_start=True):
     s.ctl("wait:4000", "tap:364:898")
     s.wait_log(r"Sphere211AutoMemberSelect: 4 members proposed", 30, name=tag + ": auto member select")
     s.ctl("wait:4000", s.shot_cmd(tag + "-party"))
-    # ミッション開始 -> 決定, resent until the server logs the start (a tap can be dropped under load)
-    if retry_start:
-        s.tap_log(r"Sphere211MissionStart: floor", 60, 15, 3, "tap:140:898", "wait:3000", "tap:515:713", name=tag + ": Sphere211MissionStart")
-    else:
-        s.ctl("tap:140:898", "wait:3000", "tap:515:713")
-        s.wait_log(r"Sphere211MissionStart: floor", 60, name=tag + ": Sphere211MissionStart")
+    # ミッション開始 -> 決定, each tap checked on a screenshot and retried (flows/mission.py start_mission)
+    started = r"Sphere211MissionStart: floor"
+    mission.start_mission(s, tag + ": ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started), d=mission.SPHERE211)
+    s.wait_log(started, 60, name=tag + ": Sphere211MissionStart")
     s.ctl("wait:15000", s.shot_cmd(tag + "-battle"))
     line = s.wait_log(r"Sphere211MissionEnd: |Sphere211MissionFailed", 500, name=tag + ": the battle ended", fatal=False)
     if line is None:
@@ -96,12 +94,7 @@ def battle(s, tag, rent=False, retry_start=True):
     if "Sphere211MissionFailed" in line:
         s.fail(tag + ": the battle was lost")
     s.ctl("wait:10000", s.shot_cmd(tag + "-result"))
-    i = 0
-    while s.cursor.wait(mission.phase(5), 4, alive=s.alive) is None:
-        s.ctl("tap:364:1050")
-        i += 1
-        if i >= 12:
-            s.fail(tag + ": the result pages didn't end")
+    mission.results_until(s, mission.phase(5), 0, 12, 0, fmt=None, name=tag + ": the result pages", ok="364:1050")
     s.ctl("wait:6000")
 
 

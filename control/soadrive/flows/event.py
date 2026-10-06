@@ -7,7 +7,7 @@ import sqlite3
 
 from .. import proc, screens, ui370
 from ..targets import Abort
-from . import launch
+from . import launch, mission
 
 NAME = "event"
 EST = 330
@@ -103,9 +103,9 @@ def run(s):
     s.shot("08-mission-detail")
     s.ctl("tap:" + ui370.SINGLE_PLAY, "wait:5000", "tap:" + ui370.RENTAL_NONE, "wait:5000")
     s.shot("09-party")
-    s.ctl("tap:" + ui370.PARTY_START, "wait:3000")
+    mission.open_mission_confirm(s)
     s.shot("10-start-confirm")
-    s.tap_until("me99_1054 -> MissionStart -> MissionStartRes", 60, ui370.CONFIRM_OK, lambda: s.in_packets(r"< MissionStartRes"))
+    mission.start_mission(s, "me99_1054 -> MissionStart -> MissionStartRes", lambda: s.in_packets(r"< MissionStartRes"), opened=True)
     s.check("MissionStart names me99_1054 (%d)" % battle, s.in_packets(r"> MissionStart .* %d " % battle))
     s.ctl("wait:15000")
     s.shot("11-battle", settle=False)

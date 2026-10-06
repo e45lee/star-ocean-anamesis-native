@@ -36,8 +36,10 @@ def main(o):
           s.shot_cmd("06-rental-party"))
         c("tap:364:898")
         s.wait_log(r"Sphere211AutoMemberSelect: 4 members proposed", 30, name="lost battle: auto member select")
-        c("wait:4000", s.shot_cmd("06-party"), "tap:140:898", "wait:3000", "tap:515:713")
-        s.wait_log(r"Sphere211MissionStart: floor .* enemy level 250", 60, name="lost battle: Sphere211MissionStart")
+        c("wait:4000", s.shot_cmd("06-party"))
+        started = r"Sphere211MissionStart: floor .* enemy level 250"
+        mission.start_mission(s, "lost battle: ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started), d=mission.SPHERE211)
+        s.wait_log(started, 60, name="lost battle: Sphere211MissionStart")
         if not s.in_client(r"MissionStart: rental helper .* as member 4"):
             s.fail("the rental didn't join as member 4")
         _sphere.sql(s, "update sphere set debug_enemy_level = null where id = 1")

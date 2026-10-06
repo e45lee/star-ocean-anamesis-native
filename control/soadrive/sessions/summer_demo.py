@@ -45,6 +45,7 @@ import time
 
 from .. import popups as _popups, proc, screens, ui370
 from ..flows import event, launch
+from ..flows import gacha as gacha_flow
 from ..milestones import Failed
 from ..proc import REPO
 from ..targets import Config, Layout, Run
@@ -256,6 +257,7 @@ def body(s, sh, scratch):
     s.ctl("tap:" + ui370.GACHA_FIRST_BANNER, "wait:5000")  # the first banner of おすすめガチャ: 復刻水着2020①
     sh.shot("summer-banner")
     s.ctl("tap:" + ui370.GACHA_10, "wait:2500")  # 10連ガチャ (2,500 coins)
+    gacha_flow.open_confirm(s)  # a lost tap or a pick-up page's character detail: retried / closed
     sh.shot("draw-confirm")
     s.tap_until("10-draw: 決定 -> Gacha -> GachaRes", 60, ui370.GACHA_DECIDE, lambda: s.in_packets(r"< GachaRes"), every=5)
     gline = next((ln for ln in open(s.server_log, errors="replace").read().splitlines()

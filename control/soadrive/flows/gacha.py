@@ -41,6 +41,27 @@ def close_result(s, tries=6):
     return False
 
 
+def open_confirm(s, tries=6):
+    """After a tap on 10連ガチャ: make sure the draw confirmation is up before 決定 is tapped. The banner
+    detail's carousel turns pages (the banner, then one page per pick-up); a tap can be lost while it
+    turns, and 決定's spot is on the carousel, where a tap opens the shown pick-up's character detail
+    (emu:seeded, 2026-10-05: カーリン's page, SaleGacha never sent). So: look; on the detail tap 10連ガチャ
+    again; on anything else (a character detail) tap its 閉じる; until the confirmation shows."""
+    probe = s.scratch("gacha-confirm-probe.png")
+    for i in range(tries):
+        s.send(["shot:" + probe])
+        if os.path.exists(probe) and _popups.is_gacha_confirm(probe):
+            return True
+        if os.path.exists(probe) and _popups.is_gacha_detail(probe):
+            s.note("no draw confirmation yet: 10連ガチャ again (%d)" % (i + 1))
+            s.ctl("tap:" + ui370.GACHA_10, "wait:2500")
+        else:
+            s.note("neither the banner detail nor the confirmation (a character detail?): 閉じる (%d)" % (i + 1))
+            s.ctl("tap:" + ui370.CHARACTER_DETAIL_CLOSE, "wait:2500")
+    s.miss("the draw confirmation didn't open")
+    return False
+
+
 def ten_draw(s, st_before, opened=False):
     """A 10-draw of the first recommended banner; checks the coins debited (against st_before, the
     state text before) and the ten draws recorded. opened: the gacha screen is open already."""
@@ -49,6 +70,7 @@ def ten_draw(s, st_before, opened=False):
     s.ctl("tap:" + ui370.GACHA_TAB_RECOMMENDED, "wait:3000", "tap:" + ui370.GACHA_FIRST_BANNER, "wait:4000")
     s.shot("13-gacha-detail")
     s.ctl("tap:" + ui370.GACHA_10, "wait:2500")
+    open_confirm(s)
     s.shot("14-gacha-confirm")
     s.tap_until("10-draw: 決定 -> SaleGacha -> SaleGachaRes", 60, ui370.GACHA_DECIDE, lambda: s.in_packets(r"< SaleGachaRes"))
     s.ctl("wait:6000")

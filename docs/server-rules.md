@@ -209,6 +209,24 @@ What the client reads (b): `TitleList` is a plain array of master_title ids (`CT
 - **The page** (`server::web_page`, built when the popup opens): the server clock (and the event calendar when it differs), the event areas open now (`events::open_areas`, the list the event menu shows; names from `master_event_area.name_message_id` **(a)**; at most 12 listed), the running login bonuses with the day reached **(a)**, and the number of presents waiting. Plain text, rows wrapped at 48 columns **(d)**; what it lists is the server's choice **(d)**.
 - The desktop has no web view: the port shows the page's text in the popup's page area (client change, `docs/client-changes.md` "Notice board page"). Other web pages (help, terms, gacha rates, ...) aren't hosted and stay blank.
 
+<a id="home-mascot"></a>
+### Home mascot (`ChangeMascot(u32 master_person_id)`; `server/src/api/player/home.cpp`)
+- **What the client does (b):** `CHome` builds the mascot list from `master_home_message` rows of type 3 (`mascot_*`) inside their dates and story-progress range; お気に入り変更 (`CAdjutantSelect`) shows `Button_mascot_change` when two or more are open, `CMascotSelectDialog` names them from `master_person`, and the request lambda (@01913cc8) sends the chosen one's `master_person` id. The client keeps its own copy too (the KVS `HomeMascotID`, `CUIUtility::SetMascot`).
+- **The rule:** the id must be a `master_person` id **(a)** (10208 otherwise); the server doesn't re-check the story progress **(d)** (the list is the client's). Stored in `player.mascot_id` (schema version 17) and sent as `Player.mascot_id` from then on; a player who never chose has no key, as before **(d)**.
+- **Route:** in-process a status-only method of the fake caller (Status 1, nothing queued); the port now queues it for the local server (`docs/client-changes.md` "Mascot and role").
+- Code: `server/src/api/player/home.cpp` (`change_mascot`), `player_info.cpp`. Tests: `player/change-mascot`, `server/schema-migrate-v17`, the `mastery` replay corpus. Not played on screen: the seeded player's story progress opens one mascot, so the button is hidden.
+
+<a id="deco"></a>
+### Character decorations (キャラデコ; `server/src/api/player/deco.cpp`)
+会話モード > キャラデコ (`CHomeDecoMenu`): the owned decorations (objects, hair colours) set on a character, saved per character. Decompiles: `work/decomp/server-u-mastery-{n,r,t}.resolved.c` (3.7.0).
+- **The gate (b):** キャラデコ opens the menu only when `CParameterUtility::tItemData::HasDecoItem` (@01851b88: a u32 of the player state, CParameterManager+0xaf30) isn't 0, else "デコを所持していません"; then it asks GetDecoInfo (the lambda @01afe53c). The key is `NumDecoObject` (confirmed in game: with it sent the menu opens). The server sends it with every response once the player owns a decoration **(d)** (a response hook; left out at 0, the client's default and what it always got).
+- **Owned decorations:** content type 17 (`master_deco_object`) and 18 (`master_deco_hair`) grants **(a)** (item sets, achievements, login bonuses: the core's grant path) join `deco_owned`, one of each **(d)** (FavoriteDecoObject names them by master id, so the client keeps one each; a second grant adds nothing). `GetDecoInfo` answers `DecoObject` [CDecoObjectInfo {id, player_id, master_deco_id, is_favorite}] **(b)** and `NumDecoObject`; the id is `0x7b000000` + the row's **(d)**. `tItemData::GetDecoItemList` makes the menu's items from the list (content types 17-19) **(b)**.
+- **Favourites:** `FavoriteDecoObject` / `UnFavoriteDecoObject` (vector of master ids) set the flag and answer `FavoriteDecoObjectResult`, a map of the changed CDecoObjectInfo by master id **(b)** (`OnFavoriteDecoObjectRes` merges it); ids not owned are skipped **(d)**.
+- **A character's setting:** `SetCharacterDeco`'s argument is the MessagePack of `CCharacterDecoSendInfo` {character_id, hair_id, pose_id, CharacterDecoObject: [CCharacterDecoObjectInfo]} **(b)** (the lambda @015ef218; the wire's blob, in-process the port serializes the same object: `docs/client-changes.md` "SetCharacterDeco"). The list's 決定 sends it. The character must be owned, the hair 0 or an owned hair colour, every object an owned decoration (10208 otherwise) **(b)** (the menu lists the owned ones); the objects are stored as sent with `player_character_id` set **(d)**, `pose_id` as sent **(d)**; it replaces the character's previous setting; no cost limit is checked **(d)**. Answers `CharacterDeco` (copied into the character by `OnSetCharacterDecoRes`) and `DecoObject`.
+- **Every load:** `CPersonInfo` carries `hair_id`, `pose_id` and `CharacterDecoObject` for a character with a setting **(b)** (CPersonInfo +0x7d0 / +0x800 / its `CharacterDecoObject` list; names from `CPersonInfo::Initialize`).
+- **State (schema version 17):** `deco_owned` (master_deco_id unique, `is_favorite`), `character_deco` (the character's uid, hair, pose, the objects' MessagePack as hex text; cascades with the character).
+- Code: `server/src/api/player/deco.cpp`. Tests: `player/deco`, `server/schema-migrate-v17`; the `mastery` replay corpus (none owned: GetDecoInfo, the favourites skipped, SetCharacterDeco refused); the session `mastery` (planted decorations: キャラデコ, a favourite, a decoration set, both kept after a re-login).
+
 <a id="player-register"></a>
 ### Player-visible (c) and (d) rules (player)
 
@@ -221,6 +239,10 @@ From the register before R20 (with the area and how to check):
 | Stamina | coin refill / heal items add to the current stamina (overflow allowed) | (d) | amounts are (b) |
 | Stamina | halved costs round up, minimum 1 | (d) | no evidence |
 | Wallet | free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (c) | (a) | |
+| Home | ChangeMascot takes any master_person id (the story-progress list is the client's); Player.mascot_id sent only once chosen | (d) | the client keeps HomeMascotID itself |
+| Deco | NumDecoObject sent with every response once a decoration is owned | (d) | the client's gate reads it (HasDecoItem) |
+| Deco | one of each decoration (a second grant adds nothing); FavoriteDecoObject skips ids not owned | (d) | the favourites name decorations by master id |
+| Deco | SetCharacterDeco stores the objects and the pose as sent; no cost limit checked | (d) | the menu shows the cost gauge itself |
 | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
@@ -1086,7 +1108,7 @@ Code: `server/src/api/growth/` (BoostCharacter … EquipSkill) and `server/src/r
 <a id="awakening"></a>
 #### 5.4 Awakening, skills, mastery, universe
 - **Awakening:** `master_item_awaken` (awaken_id, awaken_level → items, `use_fol`) and `master_awaken` (per `role_category_id` and level: rush skill, talents, skills) (a).
-- **Mastery:** `master_mastery_step` (type, step → required item, count, FOL) (a).
+- **Mastery:** `master_mastery_step` (type, step → required item, count, FOL) (a). What the server does with it: [Mastery](#mastery).
 - **Universe board:** `master_universe_board` (cells: open level, status bonus, talent, `chip_num`), `master_universe_talent`; reset costs `reset_universe_board_item` × 1 (a).
 
 <a id="growth-and-economy"></a>
@@ -1126,6 +1148,28 @@ The growth, item, shop and daily-system APIs, as the local server applies them. 
 | **AttachGear** needs the weapon's limit break ≥ the gear's `master_gear.limit_break_conditions` (the list shows it as セット条件; the screen refuses with 武器の上限解放が必要です) and at least as many weapon slots as the gear has bonuses (`tItemData::GearSlotCount`: a gear's non-zero `add_param_type` count, a weapon's `max_gear_slot_num` capped at 3). | (a)+(b) |
 | `Player.gear_num` (CPlayerInfo +0x978, `NowGearItemCount`, the ギア所持 count) = the free gears. | (b); attached not counted (d) |
 
+<a id="mastery"></a>
+### Mastery (マスタリー, 師弟; `server/src/api/growth/mastery.cpp`)
+キャラクター > マスタリー: three 道場, each training one 師匠 / 弟子 pair through five trainings (each a choice of three cards); after the fifth (皆伝) the 弟子 inherits a talent of its 師匠 and the pair moves to the 皆伝 list. Decompiles: `work/decomp/server-u-mastery-*.resolved.c` (3.7.0).
+- **What the client keeps (b):** `CPlayerCharacterMasteryInfo` (`Initialize` @014f772c): `character_id` (the 弟子, the map's key), `player_id`, `parent_character_id` (the 師匠), `dojo_no` (an inline name `port/fakeapi/fields.txt` misses), `master_mastery_step_type_id`, `master_mastery_step_1..5_option_no`, `created_at`, `updated_at`. `CMasteryTop::UpdateList` (@01b95450) shows the rows of the player's `player_id`: fewer than five cleared trainings in 道場 `dojo_no` (1-3), the others in the 皆伝 list with their `updated_at`. `CUpdateCharacterMasteryInfo` adds `mastery_talent_id` and `parent_master_role_id`; `OnTrainMasteryRes` (@014e8ba0) merges each element of `UpdateCharacterMasteryInfoArray` into the map and copies those two into the 弟子's `CPersonInfo`; `OnResetMasteryRes` (@014e9958) erases each element's `character_id` and zeroes them.
+- **Who (b):** `tCharaData::InitializeMastery` (@01822340): a role with a mastery type is a 師匠 (trainer), the others can be 弟子; a 弟子 counts its cleared trainings (non-zero option_no), and a non-zero parent role in its `CPersonInfo` counts as all five, so the two `CPersonInfo` keys are 0 until 皆伝. `uimsg_mastery_Warning_01`: both at **LV70** and the **same ロール** (`master_role.category_type` 1-5, which the five mastery types match one to one (a)). The pair's type is the 師匠 role's `master_mastery_step_type_id` (a).
+- **The requests (b):** `TrainMastery(弟子, 師匠, u8, u32 type, u8 step, u8 option)`: the selection screen's lambda (@01ba2880) pairs with step 0, option 0 and the dojo index + 1; the training dialog's (`StartTraining`, @01b939e8) sends the 弟子's cleared trainings + 1 and (`マスタリーパスメダルを使う` ? 4 : 1) + the card's index. `ResetMastery(u64, u64)` comes 師匠 first from the selection screen (@01ba4910) and in the 皆伝 dialog's order (@01b94244); the server finds the pair either way.
+- **Pairing:** both owned and distinct, the 師匠's role has the request's type and the 弟子's none, the same category, both LV70 (11002 otherwise), dojo 1-3 (10208 otherwise). **(b)** A character already in a pair (either side, training or 皆伝) leaves it first (`uimsg_mastary_dialog4` "現在の師弟関係を解消して、新たな師弟関係を結びますか"). **(b)** Another pair still training in that dojo refuses (10208). **(d)** (the screen pairs only in an empty dojo)
+- **A training:** only the pair's next one (10208). Cards 1-3 cost `master_mastery_step` (type, step, option_no) `required_master_item_id` × `required_num` and `required_fol` **(a)**; the pass medal (option 4-6) costs `master_global.mastery_training_pass_item_id` × `mastery_training_pass_required_num` and no FOL **(a)+(b)** (`CMasteryTrainingConfirmationDialog::Setup` enables that button on the medal count alone), and stores the chosen card **(d)**. Items short 10206, FOL short 10710.
+- **皆伝 (the fifth):** `master_global.mastery_reward_master_item_id` × `mastery_reward_num` to the stock (`MasteryRewardInfo` {master_item_id, num}) **(a)+(b)** (`CMasteryTrainingAllClearDialog`'s gift line, `uimsg_mastary_dialog11`). The 弟子 inherits `parent_master_role_id` = the 師匠's current role and `mastery_talent_id` = the talent in the 師匠 role's `master_role.mastery_talent_slot` **(a)**; when the 師匠's awakening row (`master_awaken` of its category at its awaken level, the row `tTalentDataSet::Create` gets) sets that slot, its talent replaces the role's **(a)+(d)** (e.g. role_cp0022_b01a_6191's slot 5 changes at awakening 5). Both are computed from the stored pair, so they follow the 師匠's later growth **(d)**; `CPersonInfo` sends them for a graduated 弟子 only, `CPersonStatusInfo` always (0 otherwise).
+- **Awakening a 師匠:** `UpdateAwakenLevel`'s `AwakenResult.update_child_id` / `update_child_mastery_talent_id` are the graduated 弟子 and its talent now (b: `OnUpdateAwakenLevelRes` @014e2d90 sets that character's `CPersonInfo` `mastery_talent_id`); 0 / 0 without one **(d)** (sent whenever there is one).
+- **Parting (`ResetMastery`):** the pair's row goes, with the trainings and the inherited talent **(b)** (`uimsg_mastary_dialog2`); nothing paid comes back **(d)**. Answers the parted pair (its `character_id` is what the client erases). No such pair: 10208.
+- **State:** table `mastery` (schema version 17): the 弟子 `uid` (key), `master_uid` (unique: one pair each), `dojo_no` 1-3, `type_id` (a `master_mastery_step.type_id`), `step1..5` (the card cleared, 0 not yet), the times; both characters cascade.
+- Code: `server/src/api/growth/mastery.cpp`. Tests: `growth/mastery-pairing`, `growth/mastery-training`, `growth/mastery-awakening`, `server/schema-migrate-v17`; the `mastery` replay corpus; the session `mastery` (`port/scripts/mastery_session.sh`).
+
+<a id="role-change"></a>
+### Role change (`ChangeRole(u64 character, u32 master_role_id)`; `server/src/api/growth/growth.cpp`)
+- **What the client does (b):** 装備・技・アシスト変更 shows ロール選択 for a character of a person with `master_role_change` rows (`uimsg_evolution_role_change_description`: "このキャラクターは進化した為 ... ロールを変更できるようになります"); `CRoleSelect` lists the five role types and its request lambda (@01c72678) sends the character and the chosen role; `OnChangeRoleRes` copies `UpdateCharacter` into the character.
+- **The rule:** the new role has a `master_role_change` row whose `person_id` is the character's role's `master_person_id` and whose `rarity` is the character's, inside the row's `opened_at` / `closed_at` when set **(a)**; another role, or its own, is refused (10208). The set skills are reset **(b)** (`uimsg_evolution_role_change_done`: "セットしたスキルが初期化されます"): `roster.equip_skill1..3` and **(d)** the character's skills in every party set (`PartySet` answered when one changed). Level, EXP, skill levels, limit break, awakening and equipment stay **(d)**.
+- **Mastery:** a graduated 弟子 whose new role type isn't its 師匠's keeps the pair, but its talent stops counting (`uimsg_evolution_role_change_confirm`: "伝授されているタレントが無効になります ... ロールを戻すと再度タレントが有効になります") **(b)**: `CPersonStatusInfo.mastery_talent_id` is 0 then ([Mastery](#mastery)).
+- **Route:** in-process a status-only method (Status 0); the port queues it for the local server (`docs/client-changes.md` "Mascot and role").
+- Code: `change_role`. Tests: `growth/change-role`, the `mastery` replay corpus; the session `mastery` (cp0010_b01a_6165 ヒーラー -> アタッカー, kept after a re-login).
+
 <a id="growth-register"></a>
 ### Player-visible (c) and (d) rules (growth and economy)
 
@@ -1152,6 +1196,11 @@ From the growth and economy modules (items, shops, login bonus and achievements 
 | Login-bonus day at 04:00 local time; `is_received_now` only in the granting response; present `reason_type` 1 / achievement 3 | (d) |
 | `Player.tutorial_status` 9 for the seeded account | (d) |
 | Achievement status values; untracked types report 0; received rows leave the list | (d) |
+| Mastery: a dojo with a pair still training refuses another pair | (d) |
+| Mastery: the pass medal stores the card it was used on | (d) |
+| Mastery: an awakening's talent in the mastery slot replaces the role's; the inheritance follows the master's later growth | (d) |
+| Mastery: parting returns nothing paid | (d) |
+| ChangeRole resets the character's skills in the party sets too; level, skills' levels, equipment kept | (d) |
 
 From the register before R20 (with the area and how to check):
 
@@ -1212,7 +1261,7 @@ Tests: `items/new-badges`, `server/schema-migrate-new-badges`; the `badges` repl
 - **Seen on screen (b, the strengthening screen in the port):** the material list greys out the other inheritance accessories; with an ordinary material chosen the screen previews a compose (強化ポイント 5050/10000, 必要FOL 6000) and the factor to be taken in (新たに解放されるファクター); the confirmation says 強化合成時に素材のアクセサリーのファクターが継承され … 一度合成するとファクターを変更できません; the result shows the inherited factor under the base's own.
 - **The rule:** the base must be an owned accessory that can inherit and hasn't (b: `CheckInheriteType`, the dialog's 一度合成すると…: one inheritance per accessory), the lost one another owned accessory that isn't an inheritance one (b: greyed out). The rest is ItemCompose's with that one material (b: the preview and the dialog; the same code, `compose`): its boosted points, FOL, big success and limit break, counted as `accessory_boost` too; locked or equipped materials refused (d, as for compose). The material is used up, and `items.inherited_master_item_id` / `inherited_limit_break` (schema version 16) keep what the base took in. Every load's `Item` carries `InheritItemInfo` {inherited_master_item_id, inherited_master_item_limit_break_count} for such an item (b: `InheritItemInfo::pParseName`, its fields), and only for it. Counted for achievement type 58 (`accessory_inherit`; a: "アクセサリーにファクターを N回継承させる"). Refusals: 10208 for a base that can't inherit or a lost item that isn't another ordinary owned accessory, else the compose's (10204 locked or equipped, 11001 FOL) (d: the codes).
 - **Before:** in-process the FakeApiCaller's method only returned a status: the screen showed the result and the lost accessory came back on the next load; over the wire `{Time}` only.
-- Code: `server/src/api/items/items.cpp` (`inherit_accessory`), `api/player/player_info.cpp` (`item_info_list`). Tests: `items/inherit-accessory`, `server/schema-migrate-v13`, the `items-party` replay corpus (an inheritance accessory and an ordinary one from the fixed drops of me99_875 / me99_341); session `port/scripts/equipment_session.sh`.
+- Code: `server/src/api/items/items.cpp` (`inherit_accessory`), `api/player/player_info.cpp` (`item_info_list`). Tests: `items/inherit-accessory`, `server/schema-migrate-v16`, the `items-party` replay corpus (an inheritance accessory and an ordinary one from the fixed drops of me99_875 / me99_341); session `port/scripts/equipment_session.sh`.
 
 <a id="gear"></a>
 ### Gear (ギア, 武器カスタム; `api/items/gear.cpp`)
@@ -1979,6 +2028,10 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [player](#player-register) | Stamina | coin refill / heal items add to the current stamina (overflow allowed) | (d) | amounts are (b) |
 | [player](#player-register) | Stamina | halved costs round up, minimum 1 | (d) | no evidence |
 | [player](#player-register) | Wallet | free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (c) | (a) |  |
+| [player](#player-register) | Home | ChangeMascot takes any master_person id (the story-progress list is the client's); Player.mascot_id sent only once chosen | (d) | the client keeps HomeMascotID itself |
+| [player](#player-register) | Deco | NumDecoObject sent with every response once a decoration is owned | (d) | the client's gate reads it (HasDecoItem) |
+| [player](#player-register) | Deco | one of each decoration (a second grant adds nothing); FavoriteDecoObject skips ids not owned | (d) | the favourites name decorations by master id |
+| [player](#player-register) | Deco | SetCharacterDeco stores the objects and the pose as sent; no cost limit checked | (d) | the menu shows the cost gauge itself |
 | [player](#player-register) | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | [player](#player-register) | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | [player](#player-register) | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
@@ -2045,6 +2098,11 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [growth](#growth-register) |  | Login-bonus day at 04:00 local time; `is_received_now` only in the granting response; present `reason_type` 1 / achievement 3 | (d) |  |
 | [growth](#growth-register) |  | `Player.tutorial_status` 9 for the seeded account | (d) |  |
 | [growth](#growth-register) |  | Achievement status values; untracked types report 0; received rows leave the list | (d) |  |
+| [growth](#growth-register) |  | Mastery: a dojo with a pair still training refuses another pair | (d) |  |
+| [growth](#growth-register) |  | Mastery: the pass medal stores the card it was used on | (d) |  |
+| [growth](#growth-register) |  | Mastery: an awakening's talent in the mastery slot replaces the role's; the inheritance follows the master's later growth | (d) |  |
+| [growth](#growth-register) |  | Mastery: parting returns nothing paid | (d) |  |
+| [growth](#growth-register) |  | ChangeRole resets the character's skills in the party sets too; level, skills' levels, equipment kept | (d) |  |
 | [growth](#growth-register) | Growth | big-success chance 11.5 %, ×1.5 | (d) | key names only |
 | [growth](#growth-register) | Growth | seed FOL per seed used | (d) | amounts are (a)/(b) |
 | [growth](#growth-register) | Growth | limit break leaves the level cap | (d) |  |

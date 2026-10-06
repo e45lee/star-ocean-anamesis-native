@@ -425,6 +425,13 @@ RELS = [
     ("config", "master_config_id", "m:master_config", "id", None, "-", "an option the player changed (UpdateConfig; v14)"),
     ("one_time_storage", "master_item_id", "m:master_item", "id", None, "-",
      "the overflow box (一時保管庫): one row per master item (schema version 15)"),
+    ("mastery", "uid", "roster", "uid", None, "CASCADE (v17)", "a 師弟 pair's disciple (CPlayerCharacterMasteryInfo.character_id)"),
+    ("mastery", "master_uid", "roster", "uid", None, "CASCADE (v17)", "a 師弟 pair's master (parent_character_id; one pair each)"),
+    ("mastery", "type_id", "m:master_mastery_step", "type_id", None, "-", "the pair's mastery type"),
+    ("player", "mascot_id", "m:master_person", "id", None, "-", "the home's mascot (ChangeMascot, v17; NULL: never chosen)"),
+    ("deco_owned", "master_deco_id", "m:master_deco_object|master_deco_hair", "id", None, "-", "an owned decoration (v17)"),
+    ("character_deco", "uid", "roster", "uid", None, "CASCADE (v17)", "a character's decorations (SetCharacterDeco)"),
+    ("character_deco", "hair_id", "m:master_deco_hair", "id", 0, "-", "the character's hair colour (0: none)"),
 ]
 
 

@@ -8,7 +8,9 @@
 #include <string>
 #include <vector>
 
+#include "api/player/deco.h"
 #include "api/player/home.h"
+#include "api/player/roster.h"
 #include "api/player/player_info.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
@@ -138,6 +140,123 @@ NATIVE_TEST("player/home3d-switching") {
     r.ints = {5};
     t.expect_eq(sent(home3d_and_2d_switching(ctx, r)), 1, "any non-zero: 3D");
     t.expect_eq(loaded(), 1, "3D on the next load");
+}
+
+// ChangeMascot (docs/server-rules.md#home-mascot): no mascot key until one is chosen; a
+// master_person id is stored and answered as Player.mascot_id, every later load sends it; another
+// id is refused and changes nothing.
+NATIVE_TEST("player/change-mascot") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext request = sv.new_request();
+    ext::Ctx ctx = sv.make_ctx(request);
+    u32 code = 0;
+    ctx.test.on_refuse = [&](u32 e) { code = e; };
+    t.expect_eq(player_info(ctx).find("mascot_id") == nullptr, true, "no mascot key before a choice");
+    const u32 person = (u32)sv.m.one("select master_person_id from master_home_message where type = 3 order by id limit 1", {});
+    Request r;
+    r.method = "ChangeMascot";
+    r.ints = {person};
+    Value v = mp_decode(change_mascot(ctx, r));
+    const Value* d = v.find("data");
+    const Value* p = d ? d->find("Player") : nullptr;
+    const Value* m = p ? p->find("mascot_id") : nullptr;
+    t.expect_eq(m ? m->u : 0, (u64)person, "answered as Player.mascot_id");
+    const Value* again = player_info(ctx).find("mascot_id");
+    t.expect_eq(again ? again->u : 0, (u64)person, "sent on the next load");
+    r.ints = {12345};
+    change_mascot(ctx, r);
+    t.expect_eq(code, 10208u, "not a master_person id: refused");
+    t.expect_eq(sv.st.one("select mascot_id from player", {}), (int64_t)person, "unchanged");
+}
+
+// The decorations (docs/server-rules.md#deco): content types 17 / 18 join the owned list once
+// each; GetDecoInfo lists them; NumDecoObject comes with responses once one is owned;
+// Favorite / UnFavorite answer the changed ones by master id; SetCharacterDeco stores a setting of
+// owned decorations (refusing others) and CPersonInfo sends it back.
+NATIVE_TEST("player/deco") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext request = sv.new_request();
+    ext::Ctx ctx = sv.make_ctx(request);
+    u32 code = 0;
+    ctx.test.on_refuse = [&](u32 e) { code = e; };
+    auto data_of = [](const std::vector<u8>& b) {
+        Value v = mp_decode(b);
+        const Value* d = v.find("data");
+        return d ? *d : Value();
+    };
+    Request none;
+    none.method = "GetPlayer";
+    Value d0 = Value::object();
+    ext::on_response(ctx, none, d0);
+    t.expect_eq(d0.find("NumDecoObject") == nullptr, true, "nothing owned: no NumDecoObject");
+    const u32 obj = (u32)sv.m.one("select id from master_deco_object order by id limit 1", {});
+    const u32 obj2 = (u32)sv.m.one("select id from master_deco_object order by id limit 1 offset 1", {});
+    const u32 hair = (u32)sv.m.one("select id from master_deco_hair order by id limit 1", {});
+    Value items, stocks, chars;
+    ctx.grant(17, obj, 1, items, stocks, chars);
+    ctx.grant(17, obj, 1, items, stocks, chars);
+    ctx.grant(18, hair, 1, items, stocks, chars);
+    t.expect_eq(sv.st.one("select count(*) from deco_owned", {}), (int64_t)2, "two granted, the second grant of one ignored");
+    Value d1 = Value::object();
+    ext::on_response(ctx, none, d1);
+    const Value* n = d1.find("NumDecoObject");
+    t.expect_eq(n ? n->u : 0, (u64)2, "NumDecoObject with the responses");
+    Request get;
+    get.method = "GetDecoInfo";
+    Value info = data_of(get_deco_info(ctx, get));
+    const Value* list = info.find("DecoObject");
+    t.expect_eq(list ? list->arr.size() : 0, (size_t)2, "GetDecoInfo lists both");
+    // favourites, by master id; an unowned id skipped
+    Request fav;
+    fav.method = "FavoriteDecoObject";
+    fav.vecs = {{obj, obj2}};
+    Value fd = data_of(favorite_deco_object(ctx, fav));
+    Value r = fd.find("FavoriteDecoObjectResult") ? *fd.find("FavoriteDecoObjectResult") : Value();
+    t.expect_eq(r.map.size(), (size_t)1, "one changed (the other not owned)");
+    t.expect_eq(sv.st.one("select is_favorite from deco_owned where master_deco_id = ?", {obj}), (int64_t)1, "a favourite");
+    fav.method = "UnFavoriteDecoObject";
+    favorite_deco_object(ctx, fav);
+    t.expect_eq(sv.st.one("select is_favorite from deco_owned where master_deco_id = ?", {obj}), (int64_t)0, "not any more");
+    // SetCharacterDeco: the client's payload
+    const u64 uid = (u64)sv.st.one("select min(uid) from roster", {});
+    auto payload = [&](u32 h, u32 deco) {
+        Value p = Value::object(), o = Value::object(), objects = Value::array();
+        p["character_id"] = uid;
+        p["hair_id"] = h;
+        p["pose_id"] = 3u;
+        o["index"] = 0u;
+        o["master_deco_object_id"] = deco;
+        o["attach_type"] = 1u;
+        o["pos_x"] = 0.5;
+        objects.push(o);
+        p["CharacterDecoObject"] = objects;
+        std::vector<u8> b = mp_encode(p);
+        Request q;
+        q.method = "SetCharacterDeco";
+        q.strs = {std::string(b.begin(), b.end())};
+        return q;
+    };
+    code = 0;
+    set_character_deco(ctx, payload(hair, obj2));
+    t.expect_eq(code, 10208u, "a decoration not owned: refused");
+    code = 0;
+    Value set = data_of(set_character_deco(ctx, payload(hair, obj)));
+    t.expect_eq(code, 0u, "stored");
+    const Value* cd = set.find("CharacterDeco");
+    t.expect_eq(cd && cd->find("hair_id") && cd->find("hair_id")->u == hair, true, "answered as CharacterDeco");
+    bool sent = false;
+    sv.st.q("select * from roster where uid = ?", {uid}, [&](const Row& row) {
+        Value pi = person_info(ctx, row, player_id(ctx));
+        const Value* objs = pi.find("CharacterDecoObject");
+        const Value* o = objs && objs->arr.size() == 1 ? &objs->arr[0] : nullptr;
+        sent = pi.find("pose_id") && pi.find("pose_id")->u == 3 && o && o->find("master_deco_object_id")->u == obj && o->find("pos_x") &&
+               o->find("player_character_id")->u == uid;
+    });
+    t.expect_eq(sent, true, "CPersonInfo carries the setting");
 }
 
 }  // namespace soa::server

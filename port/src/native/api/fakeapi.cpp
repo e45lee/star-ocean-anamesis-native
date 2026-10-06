@@ -875,7 +875,7 @@ void h_get_mission_list(Cpu& c) {
 // (CAdjutantSelect -> AchievementListReceive), the settings and account screens
 // (docs/client-changes.md), the defeat dialog's continue (CPauseMenu -> MissionContinue;
 // MissionLose has no 3.7.0 caller) and the accessory inheritance (CItemStrengtheningPotal ->
-// InheritAccessory) use them.
+// InheritAccessory), the mascot and the role change use them.
 struct ServedStatusOnly {
     const char* sym;
     u64 status;  // the guest's Status
@@ -934,6 +934,9 @@ const ServedStatusOnly kServedStatusOnly[] = {
     {"_ZN13FakeApiCaller15MissionContinueEb", 0, 0x755cba3d, "_ZN10CApiNotify20OnMissionContinueResEPaRj", "FakeApi/mission_continue.msgp"},
     {"_ZN13FakeApiCaller11MissionLoseEv", 0, 0x863bb1ec, "_ZN10CApiNotify16OnMissionLoseResEPaRj", "FakeApi/mission_lose.msgp"},
     {"_ZN13FakeApiCaller16InheritAccessoryEmm", 1, 0xd9feb3e8, "_ZN10CApiNotify21OnInheritAccessoryResEPaRj", "FakeApi/inherit_accessory.msgp"},
+    // the home's mascot (CAdjutantSelect -> CMascotSelectDialog) and a character's role (CRoleSelect)
+    {"_ZN13FakeApiCaller12ChangeMascotEj", 1, 0xd1bcebee, "_ZN10CApiNotify17OnChangeMascotResEPaRj", "FakeApi/change_mascot.msgp"},
+    {"_ZN13FakeApiCaller10ChangeRoleEmj", 0, 0x720e2bac, "_ZN10CApiNotify15OnChangeRoleResEPaRj", "FakeApi/change_role.msgp"},
 };
 bool is_served_status_only(const char* sym) {
     for (const auto& s : kServedStatusOnly)

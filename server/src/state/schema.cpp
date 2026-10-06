@@ -1908,6 +1908,48 @@ const char* const kInherit[] = {
     "alter table items add column inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)",
 };
 
+// ---- step 17: mastery (師弟), the home mascot, decorations -------------------------------------------------
+//
+// mastery: one 師弟 pair per disciple (CPlayerCharacterMasteryInfo; api/growth/mastery.cpp):
+// uid the 弟子 (character_id), master_uid the 師匠 (parent_character_id; one pair each), the
+// 道場 1-3, the pair's master_mastery_step type, the option (1-3) cleared at each of the five
+// trainings (0: not yet), the times. A character that goes takes its pair with it (cascade).
+const char* const kMastery[] = {
+    R"(create table mastery (
+  uid integer primary key references roster(uid) on delete cascade,
+  master_uid integer not null unique references roster(uid) on delete cascade,
+  dojo_no integer not null check (dojo_no between 1 and 3),
+  type_id integer not null,
+  step1 integer not null default 0 check (step1 between 0 and 3),
+  step2 integer not null default 0 check (step2 between 0 and 3),
+  step3 integer not null default 0 check (step3 between 0 and 3),
+  step4 integer not null default 0 check (step4 between 0 and 3),
+  step5 integer not null default 0 check (step5 between 0 and 3),
+  created_at integer not null,
+  updated_at integer not null,
+  check (master_uid <> uid)
+) strict)",
+    // player.mascot_id: the home's mascot (ChangeMascot; Player.mascot_id), a master_person id;
+    // NULL: never chosen
+    "alter table player add column mascot_id integer",
+    // deco_owned: the owned decorations (CDecoObjectInfo; api/player/deco.cpp): a master_deco_object
+    // or master_deco_hair id each, one of each, the favourite flag
+    R"(create table deco_owned (
+  id integer primary key,
+  master_deco_id integer not null unique,
+  is_favorite integer not null default 0 check (is_favorite in (0,1)),
+  created_at integer not null
+) strict)",
+    // character_deco: a character's decorations (SetCharacterDeco; CPersonInfo hair_id, pose_id,
+    // CharacterDecoObject): the hair colour (0 none), the pose, the objects' MessagePack as hex text
+    R"(create table character_deco (
+  uid integer primary key references roster(uid) on delete cascade,
+  hair_id integer not null default 0,
+  pose_id integer not null default 0,
+  objects text not null
+) strict)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1971,6 +2013,10 @@ const std::vector<Step>& steps() {
         {kInheritVersion,
          "an accessory's inherited factor: items.inherited_master_item_id, inherited_limit_break (InheritAccessory)",
          {std::begin(kInherit), std::end(kInherit)},
+         nullptr},
+        {17,
+         "mastery: the 師弟 pairs (GetMasteryInfo, TrainMastery, ResetMastery); player.mascot_id (ChangeMascot)",
+         {std::begin(kMastery), std::end(kMastery)},
          nullptr},
     };
     return s;

@@ -17,11 +17,23 @@ NATIVE_TEST("rules/growth") {
     t.expect_eq(gr::boost_exp(1, 1001, true, 1.5, true, 1.5), 2251u, "truncated twice (1501 -> 2251)");
     t.expect_eq(gr::stat_seed_gain(10, 5, 4, 25), 25u, "seed capped");
     t.expect_eq(gr::stat_seed_gain(10, 1, 4, 25), 14u, "seed");
-    t.expect_eq(gr::compose_points(0, 2000), 2000u, "fresh rarity-3 material");
-    t.expect_eq(gr::compose_points(300, 100), 400u, "boosted material");
-    t.expect_eq(gr::item_level(0, 2000, 10), 1u, "level 1");
-    t.expect_eq(gr::item_level(3999, 2000, 10), 2u, "level 2");
-    t.expect_eq(gr::item_level(1000000, 2000, 10), 10u, "capped");
+    // (b) GetAddBoostedPoint: (the material's level + 100) x boosted_point / 100, truncated
+    t.expect_eq(gr::compose_points(1, 5000), 5050u, "a fresh rarity-4 material: the preview's 5050");
+    t.expect_eq(gr::compose_points(1, 2000), 2020u, "a fresh rarity-3 material");
+    t.expect_eq(gr::compose_points(1, 10000), 10100u, "a fresh rarity-5 material");
+    t.expect_eq(gr::compose_points(10, 5000), 5500u, "a level-10 rarity-4 material");
+    t.expect_eq(gr::compose_points(20, 10000), 12000u, "a level-20 rarity-5 material (limit break 5)");
+    t.expect_eq(gr::compose_points(1, 250), 252u, "rarity 2: 252.5 truncated");
+    t.expect_eq(gr::compose_points(3, 100), 103u, "rarity 1, level 3");
+    // (b) _CalcLevel: per level next_level_boosted_point, the rest carried, 0 at the cap
+    auto lv = [](gr::ItemLevel l) { return l.level * 100000 + l.points; };
+    t.expect_eq(lv(gr::item_level_up(1, 0, 5050, 10000, 10)), 1u * 100000 + 5050, "within the level");
+    t.expect_eq(lv(gr::item_level_up(1, 5050, 5050, 10000, 10)), 2u * 100000 + 100, "a level up, 100 carried");
+    t.expect_eq(lv(gr::item_level_up(1, 0, 10000, 10000, 10)), 2u * 100000 + 0, "exactly one level");
+    t.expect_eq(lv(gr::item_level_up(1, 0, 25250, 5000, 10)), 6u * 100000 + 250, "five levels at once");
+    t.expect_eq(lv(gr::item_level_up(9, 4000, 7000, 5000, 10)), 10u * 100000 + 0, "the cap: points 0, the rest lost");
+    t.expect_eq(lv(gr::item_level_up(10, 0, 5050, 5000, 10)), 10u * 100000 + 0, "at the cap nothing is added");
+    t.expect_eq(lv(gr::item_level_up(10, 0, 5050, 5000, 12)), 11u * 100000 + 50, "a raised cap (limit break 1) levels on");
     t.expect_eq(gr::sell_price(270, 1.2), 324u, "sale rate");
     t.expect_eq(gr::sell_price(25, 1.1), 28u, "rounded (27.5 -> 28)");
     t.expect_eq(gr::heal_points(1, 100, 134), 134u, "item_heal_100 = the max");

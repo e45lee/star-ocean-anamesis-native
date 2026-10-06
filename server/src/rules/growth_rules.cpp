@@ -32,14 +32,24 @@ u32 stat_seed_gain(u32 current, u32 per_seed, u32 count, u32 add_max) {
 
 // ---- items and stamina (api/items/)
 
-u32 compose_points(u32 material_points, u32 rarity_boosted_point) {
-    // (b) CItemStrengtheningPotal::GetAddBoostedPoint (as far as read)
-    return (u32)(((u64)material_points + 100) * rarity_boosted_point / 100);
+u32 compose_points(u32 material_level, u32 rarity_boosted_point) {
+    // (b) CItemStrengtheningPotal::GetAddBoostedPoint @01b891c8: per material
+    // (CItemInfo +0x120 + 100) x tItemComposeParam[2] / 100, 32-bit, the division unsigned; +0x120
+    // is the material's `level` (CItemInfo::Initialize @014f8e50 names it, default 1), not its
+    // boosted_point (+0x150), which the preview never reads
+    return (u32)(material_level + 100) * rarity_boosted_point / 100;
 }
-u32 item_level(u32 points, u32 next, u32 cap) {
-    // (a) next_level_boosted_point per level; (d) the same amount for every level (cumulative)
-    if (!next) return 1;
-    return (u32)std::min<u64>(cap ? cap : 1, 1 + (u64)points / next);
+ItemLevel item_level_up(u32 level, u32 points, u32 add, u32 next, u32 level_max) {
+    // (b) ItemModel::_CalcLevel @017c5484, unrolled: at the level cap the points are 0 and the gain
+    // goes; else the gain joins the level's points and every next_level_boosted_point of them is a
+    // level. (The client compares level == cap; >= here only guards a level above the cap, which
+    // no writer stores.)
+    for (;;) {
+        if (level >= level_max) return {level, 0};
+        u32 total = points + add;
+        if (total < next) return {level, total};
+        level++, points = 0, add = total - next;
+    }
 }
 u32 sell_price(u32 sale_fol, double sale_rate) {
     // (b) CParameterUtility::tItemData::SellingPrice

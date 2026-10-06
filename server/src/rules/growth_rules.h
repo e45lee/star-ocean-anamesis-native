@@ -17,12 +17,17 @@ u32 boost_exp(u32 count, u32 base_boosted_point, bool same_category, double cate
 // A seed-raised stat: current + per_seed x count, capped at add_max.
 u32 stat_seed_gain(u32 current, u32 per_seed, u32 count, u32 add_max);
 
-// Boosted points a compose material adds: (material boosted points + 100) x the material rarity's
-// master_item_compose.boosted_point / 100.
-u32 compose_points(u32 material_points, u32 rarity_boosted_point);
-// A weapon / accessory level from its boosted points: 1 + points / next_level_boosted_point, up
-// to `cap`.
-u32 item_level(u32 points, u32 next_level_boosted_point, u32 cap);
+// Boosted points a compose material adds: (the material's level + 100) x the material rarity's
+// boosted_point (in the base's compose table) / 100. The material's own boosted points don't count.
+u32 compose_points(u32 material_level, u32 rarity_boosted_point);
+// A weapon / accessory's level and its boosted points within that level (CItemInfo's `level`,
+// `boosted_point`).
+struct ItemLevel {
+    u32 level = 1, points = 0;
+};
+// `add` boosted points fed to an item at `level` with `points` within it: each
+// `next_level_boosted_point` is a level; at `level_max` the points are 0 and the rest is lost.
+ItemLevel item_level_up(u32 level, u32 points, u32 add, u32 next_level_boosted_point, u32 level_max);
 // Selling price of a weapon / accessory: round(sale_fol x sale_rate[level]).
 u32 sell_price(u32 sale_fol, double sale_rate);
 // Stamina points one heal item restores: heal_type 1 = heal_point % of the maximum, 2 / 3 =

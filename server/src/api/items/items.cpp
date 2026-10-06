@@ -3,6 +3,7 @@
 // UseHealItem, StaminaHeal, UpdateItemStock (SellGear: gear.cpp). Rules in docs/server-rules.md#player-rank-stamina,
 // docs/server-rules.md#weapons-and-accessories, docs/server-rules.md#growth-and-economy, docs/server-rules.md#items-and-stamina; labels:
 //   (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption.
+#include <algorithm>
 #include <cmath>
 
 #include "api/items/items.h"
@@ -43,7 +44,9 @@ struct Item {
     bool ok = false;
     ItemUid uid;
     MasterItemId id;
-    u32 type = 0, points = 0, lb = 0, rarity = 0, sale_fol = 0;  // points: boosted points (`exp`); lb: limit break
+    // level: CItemInfo's `level`; points: its `boosted_point`, the points within that level
+    // (items.exp, schema version 21); lb: limit break
+    u32 type = 0, level = 1, points = 0, lb = 0, rarity = 0, sale_fol = 0;
     bool locked = false, equipped = false;
 };
 // The item `uid` of the inventory (not ok when it is in the equipment storage, owns_item), or with
@@ -55,6 +58,7 @@ Item find_item(Ctx& ctx, ItemUid uid, bool stored = false) {
         item.uid = uid;
         item.id = item_row.id<MasterItemId>("master_item_id");
         item.type = (u32)item_row.i("item_type");
+        item.level = (u32)std::max<int64_t>(1, item_row.i("level"));  // as Item sends it (player_info.cpp)
         item.points = (u32)item_row.i("exp");
         item.lb = (u32)item_row.i("limit_break");
         item.locked = item_row.i("locked") != 0;
@@ -78,17 +82,13 @@ u32 item_cap(Ctx& ctx, const Item& item) {
     }
     return (u32)ctx.m.one(std::string("select level_max from ") + compose_table(item.type) + " where rarity = ?", {item.rarity}, 10);
 }
-u32 item_level_of(Ctx& ctx, const Item& item) {
-    u32 next = (u32)ctx.m.one(std::string("select next_level_boosted_point from ") + compose_table(item.type) + " where rarity = ?", {item.rarity});
-    return growth_rules::item_level(item.points, next, item_cap(ctx, item));
-}
 // What selling an item pays: (b) weapons round(sale_fol x master_item_sale_rate[level].sale_rate),
 // others sale_fol (CParameterUtility::tItemData::SellingPrice).
 u32 sale_fol(Ctx& ctx, const Item& item) {
     double rate = 1.0;
     if (item.type == item_type::kWeapon) {
-        u32 level = item_level_of(ctx, item);
-        ctx.m.q("select sale_rate from master_item_sale_rate where id = ?", {level}, [&](const Row& rate_row) { rate = rate_row.f("sale_rate"); });
+        ctx.m.q("select sale_rate from master_item_sale_rate where id = ?", {item.level},
+                [&](const Row& rate_row) { rate = rate_row.f("sale_rate"); });
     }
     return growth_rules::sell_price(item.sale_fol, rate);
 }
@@ -185,7 +185,9 @@ std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const st
 // API: docs/api.md#itemcomposearray   Rules: docs/server-rules.md#items-and-stamina, docs/server-rules.md#weapons-and-accessories
 //
 // Feeds weapons / accessories to a base item: boosted points, levels and limit breaks.
-//   (b) each material adds growth_rules::compose_points (CItemStrengtheningPotal::GetAddBoostedPoint).
+//   (b) each material adds growth_rules::compose_points: (its level + 100) x boosted_point of its
+//   rarity / 100 (CItemStrengtheningPotal::GetAddBoostedPoint), the strengthening screen's preview;
+//   the level and the points within it follow ItemModel::_CalcLevel (growth_rules::item_level_up).
 //   (a) a copy of the base's own item raises its limit break (master_item_limit_break_level_max);
 //   (b) so does a limit-break item that fits the base (limit_break_item: master_weapon_limit_break /
 //   master_accessory_limit_break); one raise per copy or item, up to the cap, counted as
@@ -193,8 +195,7 @@ std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const st
 //   `weapon_boost` / `accessory_boost` (types 5 / 38).
 //   (a) use_fol_one per material, (b) at the material's rarity (the screen's 必要FOL); (d) the
 //   type-2 FOL campaigns the screen applies aren't; weapon_compose_up_rate / weapon_compose_bonus_rate.
-//   (d) locked or equipped materials and the base itself can't be fed; points stop at the cap
-//   level's threshold.
+//   (d) locked or equipped materials and the base itself can't be fed.
 //   (d) Refusals: kItemUnusable (10208) without a base weapon / accessory or materials, or for a
 //   limit-break item that doesn't fit the base (b: the client never offers one), kLockedItem
 //   (10204) for a material, kFolShortGrowth (11001) for the FOL.
@@ -237,8 +238,12 @@ std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const st
             raises = hammer == LimitBreakItem::kFits;
         }
         if (raises && lb < lb_max) lb++;
+        // (a) boosted_point of the material's rarity in the base's table; (b) GetAddBoostedPoint
+        // @01b891c8: (the material's level + 100) x that / 100 (growth_rules::compose_points), the
+        // strengthening screen's 強化ポイント (InitializePotal @01b856ac: the base's boosted_point
+        // + this sum over GetNextPoint @01b89100)
         u32 boosted_point = (u32)ctx.m.one(std::string("select boosted_point from ") + table + " where rarity = ?", {material.rarity});
-        gain += growth_rules::compose_points(material.points, boosted_point);
+        gain += growth_rules::compose_points(material.level, boosted_point);
         // (a) use_fol_one per material, (b) of the material's rarity: the strengthening screen's
         // 必要FOL (CItemStrengtheningPotal::InitializePotal @01b856ac, the loop ending at 01b86cdc)
         // sums,
@@ -255,11 +260,13 @@ std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const st
     Item& after = composed.after;
     after = base;
     after.lb = lb;
-    u32 cap = item_cap(ctx, after);
-    // (d) points stop at the cap level's threshold
-    u64 points = std::min<u64>((u64)base.points + gain, next ? (u64)(cap - 1) * next : 0);
-    after.points = (u32)points;
-    composed.level_before = item_level_of(ctx, base), composed.level_after = item_level_of(ctx, after);
+    // (b) the level and the points within it: ItemModel::_CalcLevel @017c5484 (the preview's call
+    // in InitializePotal, with the limit break this compose reaches): next_level_boosted_point of
+    // the base's rarity (accessories: the accessory table) per level, the points 0 at the level
+    // cap (item_cap: the limit break's level_max, ItemModel::GetMaxLevel @017c53ec)
+    const growth_rules::ItemLevel grown = growth_rules::item_level_up(base.level, base.points, (u32)gain, next, item_cap(ctx, after));
+    after.level = grown.level, after.points = grown.points;
+    composed.level_before = base.level, composed.level_after = after.level;
     ctx.st.q("update items set exp = ?, limit_break = ?, level = ? where uid = ?", {after.points, lb, composed.level_after, base_uid});
     for (ItemUid material_uid : materials) {
         ctx.st.q("delete from items where uid = ?", {material_uid});  // its gear goes with it (ON DELETE CASCADE)

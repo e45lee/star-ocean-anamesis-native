@@ -218,7 +218,7 @@ fi
 sleep 8
 ctl "shot:$out/home.png"
 # the notice board closed (its 閉じる), then the home itself
-ctl "tap:364:1180"
+ctl "tap:364:1133"
 sleep 6
 ctl "shot:$out/home2.png"
 

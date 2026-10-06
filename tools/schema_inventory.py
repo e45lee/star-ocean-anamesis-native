@@ -432,6 +432,9 @@ RELS = [
     ("deco_owned", "master_deco_id", "m:master_deco_object|master_deco_hair", "id", None, "-", "an owned decoration (v17)"),
     ("character_deco", "uid", "roster", "uid", None, "CASCADE (v17)", "a character's decorations (SetCharacterDeco)"),
     ("character_deco", "hair_id", "m:master_deco_hair", "id", 0, "-", "the character's hair colour (0: none)"),
+    ("stamps", "id", "m:master_stamp", "id", None, "-", "a chat stamp the player owns (StampList; schema version 19)"),
+    ("stamp_slots", "stamp_id", "m:master_stamp", "id", None, "-",
+     "the stamp in a スタンプ編成 slot (StampSlot; NULL: empty; schema version 19)"),
 ]
 
 

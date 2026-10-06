@@ -39,6 +39,11 @@ void add_free_coins(sqlite3* st, u32 n) {
     db.q("update player set free_coin = free_coin + ?", {n});
 }
 
+void add_paid_coins(sqlite3* st, u32 n) {
+    Sql db{st};
+    db.q("update player set pay_coin = pay_coin + ?", {n});
+}
+
 u32 fol(sqlite3* st) {
     Sql db{st};
     return (u32)db.one("select fol from player", {});

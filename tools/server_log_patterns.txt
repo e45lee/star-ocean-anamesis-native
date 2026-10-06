@@ -22,3 +22,4 @@ MissionContinue: mission %u continued for %u coins	MissionContinue: mission \d+ 
 MissionContinue: declined (mission %u)	MissionContinue: declined
 InheritAccessory %llx: inherited item %u (limit break %u) from %llx	InheritAccessory [0-9a-f]+: inherited item
 EquipAuto %llx:%s	EquipAuto [0-9a-f]+:
+SetStampSlot: %zu slots [%s]	SetStampSlot: \d+ slots \[

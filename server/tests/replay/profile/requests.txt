@@ -62,3 +62,9 @@ req 49 1790928120 SendGuideInformation 5cf6a3e9 732197292 - - -
 # (docs/unimplemented-apis.md part 3) SendErrorLog and CbtCertification
 req 50 1790928125 SendErrorLog 0465aa57 - 7075726368617365206661696c656420287465737429 - -
 req 51 1790928130 CbtCertification 5f583f50 - 43425430303030 - -
+# (agent server-u-stamps, schema v19) the chat stamps' palette: SetStampSlot with two default stamps
+# and empty slots, the next load answers it; an unowned stamp is refused (10208), unchanged
+req 52 1790928135 SetStampSlot 58123949 - - 660506633,0,0,3377522981,0,0,0,0,0,0,0,0,0,0,0,1348057247 -
+req 53 1790928140 GetPlayer 9a056905 - - - -
+req 54 1790928145 SetStampSlot 58123949 - - 1342033 -
+req 55 1790928150 GetPlayer 9a056905 - - - -

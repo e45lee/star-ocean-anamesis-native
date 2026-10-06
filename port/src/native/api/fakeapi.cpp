@@ -875,7 +875,7 @@ void h_get_mission_list(Cpu& c) {
 // (CAdjutantSelect -> AchievementListReceive), the settings and account screens
 // (docs/client-changes.md), the defeat dialog's continue (CPauseMenu -> MissionContinue;
 // MissionLose has no 3.7.0 caller) and the accessory inheritance (CItemStrengtheningPotal ->
-// InheritAccessory), the mascot and the role change use them.
+// InheritAccessory), the mascot and the role change, and the coin shop's purchase (CPaymentManager) use them.
 struct ServedStatusOnly {
     const char* sym;
     u64 status;  // the guest's Status
@@ -937,6 +937,19 @@ const ServedStatusOnly kServedStatusOnly[] = {
     // the home's mascot (CAdjutantSelect -> CMascotSelectDialog) and a character's role (CRoleSelect)
     {"_ZN13FakeApiCaller12ChangeMascotEj", 1, 0xd1bcebee, "_ZN10CApiNotify17OnChangeMascotResEPaRj", "FakeApi/change_mascot.msgp"},
     {"_ZN13FakeApiCaller10ChangeRoleEmj", 0, 0x720e2bac, "_ZN10CApiNotify15OnChangeRoleResEPaRj", "FakeApi/change_role.msgp"},
+    // Paid currency (server/src/api/shop/coins.cpp): the coin shop's purchase (CPaymentManager::
+    // Progress_Purchase / VerifyReceipt_) and the premium shop's list.
+    {"_ZN13FakeApiCaller8CoinListEv", 0, 0xd859bb89, "_ZN10CApiNotify13OnCoinListResEPaRj", "FakeApi/coin_list.msgp"},
+    {"_ZN13FakeApiCaller17CoinDepositCreateEhiPKc", 0, 0x3850fb96, "_ZN10CApiNotify22OnCoinDepositCreateResEPaRj",
+     "FakeApi/coin_deposit_create.msgp"},
+    {"_ZN13FakeApiCaller24CoinDepositAndroidUpdateEjPKcS1_", 1, 0x089ac659, "_ZN10CApiNotify29OnCoinDepositAndroidUpdateResEPaRj",
+     "FakeApi/coin_deposit_android_update.msgp"},
+    {"_ZN13FakeApiCaller20CoinDepositIOSUpdateEjPKcS1_", 1, 0xc5193b15, "_ZN10CApiNotify25OnCoinDepositIOSUpdateResEPaRj",
+     "FakeApi/coin_deposit_ios_update.msgp"},
+    {"_ZN13FakeApiCaller23CoinDepositAmazonUpdateEjPKcS1_", 1, 0x0bc7f736, "_ZN10CApiNotify28OnCoinDepositAmazonUpdateResEPaRj",
+     "FakeApi/coin_deposit_amazon_update.msgp"},
+    {"_ZN13FakeApiCaller18DirectItemShopListEv", 1, 0xc367268b, "_ZN10CApiNotify23OnDirectItemShopListResEPaRj",
+     "FakeApi/direct_item_shop_list.msgp"},
 };
 bool is_served_status_only(const char* sym) {
     for (const auto& s : kServedStatusOnly)

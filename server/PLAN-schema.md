@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns, version 14's `config`, `player.birth_year` / `birth_month` version 15's `items.stored_at` / `one_time_storage` and version 16's `items.inherited_*` added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns, version 14's `config`, `player.birth_year` / `birth_month` version 15's `items.stored_at` / `one_time_storage` and version 16's `items.inherited_*`, version 18's `coin_deposit`, version 19's `stamps` / `stamp_slots` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1206,12 +1206,18 @@ create table premium_pass (id integer primary key, granted_at integer not null,
                            day_index integer not null default 0, last_at integer) strict;  -- m: master_premium_login_bonus
 create table subscription (plan_id integer primary key, opened_at integer, closed_at integer,
                            updated_at integer) strict;                                     -- m: master_subscription_plan
+create table coin_deposit (trans_id integer primary key, product_id integer not null, platform integer not null,
+                           created_at integer not null, completed_at integer, paid integer not null default 0,
+                           free integer not null default 0) strict;  -- **new** (v18): the coin shop's purchases
 create table follow_rental (rental_day integer primary key, count integer not null default 0,
                             paid integer not null default 0 check (paid in (0,1))) strict;
 
 -- ---- achievements, titles, counters, shops ---------------------------------------------------
 create table achievements (id integer primary key, progress integer, received_at integer) strict;  -- m: master_achievement
 create table titles (id integer primary key, got_at integer) strict;   -- m: master_title; 0 -> NULL
+create table stamps (id integer primary key, got_at integer) strict;   -- **new** (v19), m: master_stamp; NULL: a default stamp
+create table stamp_slots (slot integer primary key check (slot >= 0),  -- **new** (v19): the スタンプ編成 palette (SetStampSlot)
+                          stamp_id integer) strict;                     -- m: master_stamp; NULL: an empty slot
 create table counters (key text primary key, value integer not null) strict;   -- achievement action counts only
 create table shop_counts (id integer primary key, num integer not null, period integer,
                           total integer not null default 0) strict;           -- m: master_item_shop
@@ -1658,7 +1664,17 @@ Lockstep changes:
   - **Step 17** (`state/schema.cpp` `kMastery`): `create table mastery (uid integer primary key references roster(uid) on delete cascade, master_uid integer not null unique references roster(uid) on delete cascade, dojo_no integer not null check (dojo_no between 1 and 3), type_id integer not null, step1..step5 integer not null default 0 check (stepN between 0 and 3), created_at integer not null, updated_at integer not null, check (master_uid <> uid)) strict`: one 師弟 pair per disciple (`uid`), one per master (unique), the trainings' cards (0: not yet). `type_id` is a master reference (`m:master_mastery_step.type_id`, `state::master_refs`, RELS). And `alter table player add column mascot_id integer` (ChangeMascot: a `master_person` id, `m:master_person.id`; NULL never chosen). And the decorations: `deco_owned (id integer primary key, master_deco_id integer not null unique, is_favorite integer not null default 0 check (0/1), created_at)` (`m:master_deco_object|master_deco_hair`) and `character_deco (uid primary key references roster on delete cascade, hair_id default 0 (m:master_deco_hair, 0 none), pose_id default 0, objects text)`. New tables and a nullable column, no data mapping.
   - **Code:** `api/growth/mastery.cpp`; `api/player/roster.cpp` / `person_status.cpp` send the inheritance, `api/growth/growth.cpp` UpdateAwakenLevel the disciple's new talent.
   - **Tests:** `server/schema-migrate-v17` ((1) v0 → v17: every other table's rows as at 12, an empty `mastery`, `.bak-v0`; (2) a v12 file → 13 without the master: the checks, the master as an owned character, the cascade, `mascot_id` NULL, `.bak-v12` without the table or the column), `server/schema-fresh-equals-migrated` and `server/schema-integrity` (56 tables), `growth/mastery-*`; the `mastery` replay corpus.
+
+**v19: the chat stamps** (agent `server-u-stamps`, 2026-10-05, branch `port/server-u-stamps`; task U of `port/PLAN.md`, `docs/unimplemented-apis.md` part 3; not a plan step: a handler that needed state; the parent renumbers parallel groups' steps at merge). The server sent no `StampList` / `StampSlot` and had no `SetStampSlot` handler, so キャラクター > スタンプ編成 had no stamps and a palette was never kept (`docs/server-rules.md#stamps`).
+  - **Step 19** (`state/schema.cpp` `kStamps`, `kStampsVersion`; `kSchemaVersion` 19; 17 on its branch, renumbered at the merge): `create table stamps (id integer primary key, got_at integer) strict` (the owned master_stamp ids; got_at NULL for a default stamp) and `create table stamp_slots (slot integer primary key check (slot >= 0), stamp_id integer) strict` (the palette, slot page × 4 + position; NULL an empty slot; no row: never set). Both ids are master references (`state::master_refs`, RELS). No data mapping: nobody owned a stamp.
+  - **Code:** `api/player/stamps.cpp` (the default stamps on load, SetStampSlot, grants of content type 12).
+  - **Tests:** `server/schema-migrate-v19` ((1) v0 → v19: every other table's rows as the same file at 18, both tables empty, `.bak-v0`; (2) a v18 file → 19 without the master: the slot check, STRICT, `.bak-v18` without the tables; the version is one constant in the test), `server/schema-fresh-equals-migrated` and `server/schema-integrity` (57 tables), `player/stamps-*`; the `profile` replay corpus gained SetStampSlot.
 ---
+
+**v18: the coin shop's purchases** (docs/unimplemented-apis.md part 3 step 7, 2026-10-04; not a plan step). Paid currency: the user decided buying 紋章石 works locally and costs nothing.
+  - **Step 18** (`state/schema.cpp` `kCoinDeposit`; `kSchemaVersion` 18; 14 on its branch, renumbered at the merge): `coin_deposit (trans_id integer primary key, product_id integer not null, platform integer not null, created_at integer not null, completed_at integer, paid integer not null default 0, free integer not null default 0) strict`: one row per purchase started (`CoinDepositCreate`); `completed_at` NULL while pending, the stones credited once completed (`CoinDeposit*Update`). `product_id` is the product's number (its `master_text` `coin_name_NNN` labels), not a master row, so no master reference. A new table: nothing to migrate.
+  - **Code:** `api/shop/coins.cpp`.
+  - **Tests:** `server/schema-migrate-coin-deposit` ((1) v0 → 14: the table created empty, every other table's rows as at 13; (2) a 13 file → 14 without the master: a pending row gets trans id 1, STRICT refuses a text product, `.bak-v13` without the table), `shop/coins`; the `coins` replay corpus.
 
 ## 5. Order and gates
 

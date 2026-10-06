@@ -31,6 +31,9 @@ struct RequestContext {
     // The titles this request granted (api/player/titles.cpp: a Grant adds them, its OnResponse hook
     // reports them as AddTitleList).
     std::vector<TitleId> titles_added;
+    // The chat stamps this request granted (api/player/stamps.cpp: a Grant adds them, its OnResponse
+    // hook reports them as AddStampList).
+    std::vector<StampId> stamps_added;
     // The equipment this request sent to the overflow box (一時保管庫), one master item id per unit
     // (api/storage/one_time.cpp: add_one_time adds them, its OnResponse hook reports them as
     // AddOneTimeStorageInfo).

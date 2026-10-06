@@ -23,6 +23,11 @@
   "ClearNewItem": "server/src/api/items/new_flags.cpp",
   "ClearNewOneTimeStorageItem": "server/src/api/storage/one_time.cpp",
   "ClearNewStackItem": "server/src/api/items/new_flags.cpp",
+  "CoinDepositAmazonUpdate": "server/src/api/shop/coins.cpp",
+  "CoinDepositAndroidUpdate": "server/src/api/shop/coins.cpp",
+  "CoinDepositCreate": "server/src/api/shop/coins.cpp",
+  "CoinDepositIOSUpdate": "server/src/api/shop/coins.cpp",
+  "CoinList": "server/src/api/shop/coins.cpp",
   "CreatePlayer": "server/src/api/entry/entry.cpp",
   "DebugBarneyChance": "server/src/api/debug/debug_stubs.cpp",
   "DebugCharacterBoost": "server/src/api/debug/debug_stubs.cpp",
@@ -57,6 +62,7 @@
   "DeepSpaceMissionEndNow": "server/src/api/deepspace/deepspace.cpp",
   "DeepSpaceMissionStart": "server/src/api/deepspace/deepspace.cpp",
   "DepositItem": "server/src/api/storage/storage.cpp",
+  "DirectItemShopList": "server/src/api/shop/coins.cpp",
   "EquipAccessory": "server/src/api/growth/growth.cpp",
   "EquipAuto": "server/src/api/growth/growth.cpp",
   "EquipSkill": "server/src/api/growth/growth.cpp",
@@ -142,6 +148,7 @@
   "SendGuideInformation": "server/src/api/settings/account.cpp",
   "SetAssist": "server/src/api/player/assist.cpp",
   "SetCharacterDeco": "server/src/api/player/deco.cpp",
+  "SetStampSlot": "server/src/api/player/stamps.cpp",
   "SetTitle": "server/src/api/player/titles.cpp",
   "SimpleLogin": "server/src/api/entry/entry.cpp",
   "Sphere211AutoMemberSelect": "server/src/api/sphere211/sphere211.cpp",
@@ -255,6 +262,14 @@
   ],
   "server/src/api/player/deco.cpp": [
    "Grant",
+   "OnResponse"
+  ],
+  "server/src/api/shop/coins.cpp": [
+   "OnPlayerLoad"
+  ],
+  "server/src/api/player/stamps.cpp": [
+   "Grant",
+   "OnPlayerLoad",
    "OnResponse"
   ]
  },
@@ -393,6 +408,19 @@
     "MissionFailed",
     "MissionStart",
     "MissionTalk"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:coins": {
+   "apis": [
+    "CoinDepositAmazonUpdate",
+    "CoinDepositAndroidUpdate",
+    "CoinDepositCreate",
+    "CoinDepositIOSUpdate",
+    "CoinList",
+    "DirectItemShopList",
+    "GetPlayer",
+    "Login"
    ],
    "source": "observed (requests.txt)"
   },
@@ -582,6 +610,7 @@
     "SearchPlayer",
     "SendErrorLog",
     "SendGuideInformation",
+    "SetStampSlot",
     "SetTitle",
     "SimpleLogin",
     "StaminaHealByFavor",
@@ -1107,6 +1136,32 @@
     "SetTitle"
    ]
   },
+  "session:coins": {
+   "apis": [
+    "CoinDepositAndroidUpdate",
+    "CoinDepositCreate",
+    "ExItemShop",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
+  "session:coins-server": {
+   "apis": [
+    "CoinDepositAndroidUpdate",
+    "CoinDepositCreate",
+    "ExItemShop",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
   "session:party": {
    "apis": [
     "GetPlayer",
@@ -1243,6 +1298,54 @@
     "ResetMastery",
     "SetCharacterDeco",
     "TrainMastery"
+   ],
+   "source": "declared"
+  },
+  "session:stamps": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SetStampSlot"
+   ],
+   "source": "declared"
+  },
+  "session:stamps-server": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SetStampSlot"
+   ],
+   "source": "declared"
+  },
+  "session:add-item": {
+   "apis": [
+    "Gacha",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "SimpleLogin"
+   ],
+   "source": "declared"
+  },
+  "session:add-item-server": {
+   "apis": [
+    "Gacha",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "SimpleLogin"
    ],
    "source": "declared"
   },

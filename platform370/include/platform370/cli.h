@@ -48,8 +48,9 @@ inline void add_device_options(CLI::App& app, Config& cfg, const std::string& gr
         ->type_name("\"YYYY-MM-DD HH:MM:SS\"|host")
         ->group(group);
     app.add_flag_callback("--no-patch", [&cfg] { cfg.patch = false; },
-                          "run the client without its native patch (platform370/src/patch_370.cpp): its service-end check is "
-                          "live, so on a date after 2021/06/24 14:30 the title shows the service-end notice")
+                          "run the client without its native patches (platform370/src/patch_370.cpp): its service-end check is "
+                          "live, so on a date after 2021/06/24 14:30 the title shows the service-end notice, and a coins-short "
+                          "moment shows the sale-stopped dialog instead of the coin shop")
         ->group(group);
 }
 

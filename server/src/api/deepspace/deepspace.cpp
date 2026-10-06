@@ -513,7 +513,7 @@ std::vector<u8> deep_space_mission_end(Ctx& ctx, const Request& req) {
     data["DeepSpaceAreaList"] = area_list(ctx, t);
     data["add_characters_exp"] = done.characters_exp;
     data["CContentInfoMap"] = done.content_map;
-    if (!done.added_items.arr.empty()) data["AddItem"] = done.added_items;
+    ext::add_items(data, done.added_items);
     data["StockItem"] = ctx.stock();
     LOGI("server",
          "%s ship %u (area %u mission %u): player exp +%u (level %u -> %u), fol +%u, characters +%u exp x%zu, area exp +%u, "

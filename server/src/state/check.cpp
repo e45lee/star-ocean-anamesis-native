@@ -58,6 +58,9 @@ const std::vector<MasterRef>& master_refs() {
         // the decorations (schema version 17): an object or a hair colour; a character's hair (0: none)
         {"deco_owned", "master_deco_id", "master_deco_object|master_deco_hair", "id", false},
         {"character_deco", "hair_id", "master_deco_hair", "id", true},
+        // the chat stamps the player owns and its palette (schema version 19; api/player/stamps.cpp)
+        {"stamps", "id", "master_stamp", "id", false},
+        {"stamp_slots", "stamp_id", "master_stamp", "id", false},
     };
     return refs;
 }

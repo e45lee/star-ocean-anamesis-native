@@ -39,6 +39,7 @@ NAMES = {
     17001: ("kExchangeExpired", "(a) the text"),
     19001: ("kNoPlayer", "(b) the Login result lambda: \"no account yet\" starts the new-player flow"),
     20000: ("kCoinsShort", "(a) the text; (d) of 20000 / 20003"),
+    20003: ("kCoinsShortShop", "(b) opens the coin shop (@01b5eea4, @01ad2bb8)"),
 }
 
 

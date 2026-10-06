@@ -16,13 +16,13 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **180** (35 of them stubs: section 2.5). Of the **19 without a handler**:
+The wire knows **199 methods**; the server has handlers for **187** (35 of them stubs: section 2.5). Of the **12 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
-| **Empty reply** | 1 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
+| **Empty reply** | 0 | None left (the last, SetStampSlot, is answered now). A request lambda that names `FakeApi/<file>.msgp` with no handler would get an empty map `{}` (logged `no handler`). |
 | **Canned reply** | 0 | None left: `TrainingMissionStart` (it got `mission_start.msgp`) and `CbtCertification` (`update_home.msgp`) are answered now; the files of `port/fakeapi/responses/` are reached by nothing (step 9 retires them). |
-| **No reply** | 8 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
+| **No reply** | 2 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
 
 Over the network (`soa-server`, `soa-emu`, `soa --server HOST`), every unhandled method gets an
@@ -82,15 +82,14 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 
 | Feature | Method | In-process | Notes |
 |---|---|---|---|
-| **Settings and account** | [SetStampSlot](api.md#setstampslot) | {} | chat stamp slots (the options, the birth month, the read marks and the scenario library: done, step 3.3) |
 
 ### 2.2 Online-only features
 
-Not needed for single-player play. The social calls are stubs now (2.5).
-
-| Feature | Methods | In-process |
-|---|---|---|
-| **Paid currency and shop** | [CoinList](api.md#coinlist), [CoinDepositCreate](api.md#coindepositcreate), [CoinDepositAndroidUpdate](api.md#coindepositandroidupdate), [CoinDepositIOSUpdate](api.md#coindepositiosupdate), [CoinDepositAmazonUpdate](api.md#coindepositamazonupdate), [DirectItemShopList](api.md#directitemshoplist) | ★ |
+Not needed for single-player play. The social calls are stubs now (2.5); paid currency is answered
+(step 7, [`server-rules.md#paid-currency`](server-rules.md#paid-currency)): [CoinList](api.md#coinlist),
+[CoinDepositCreate](api.md#coindepositcreate), [CoinDepositAndroidUpdate](api.md#coindepositandroidupdate),
+[CoinDepositIOSUpdate](api.md#coindepositiosupdate), [CoinDepositAmazonUpdate](api.md#coindepositamazonupdate),
+[DirectItemShopList](api.md#directitemshoplist).
 
 ### 2.3 Answered another way
 
@@ -176,7 +175,9 @@ tables, rules section). New state goes through the state module's migrations
    docs/server-rules.md#settings-account, session `settings`):** `GetConfig`/`UpdateConfig`/`ResetConfig`
    (store the options; `ConfigInfoList` also on every player load), `Get/UpdateBirthYearMonth`,
    `ReadExpirationInfo`, `SendGuideInformation`, `GetScenarioLibraryInfoList` (from the story progress
-   the server already keeps); `UpdateSession` needs none (2.3). Assumptions below.
+   the server already keeps); `UpdateSession` needs none (2.3). Assumptions below. `SetStampSlot`
+   (the chat stamps' palette) is done too (agent server-u-stamps, schema version 19: `stamps`,
+   `stamp_slots`; `server/src/api/player/stamps.cpp`, [`server-rules.md#stamps`](server-rules.md#stamps)).
 4. **Equipment and mastery:** `EquipAuto` (the client's or the server's choice — check which side
    picks), `InheritAccessory`, `UpdateItemStock`, `GetMasteryInfo`/`TrainMastery`/`ResetMastery`.
    The equipment part is **done** (agent server-u-missions: the server picks; the assumptions below).
@@ -189,8 +190,23 @@ tables, rules section). New state goes through the state module's migrations
    Assumptions (d): what the seed and an older state hold is not new; a stack item is new only when
    its first stack arrives. Server-runnable screens: the character, item, weapon / accessory and
    stack lists' NEW badges (both hosts; in-process these were already answered, with `{}`).
-7. **Paid currency (decided: allow):** `CoinList`, `DirectItemShopList` and the `CoinDeposit*`
-   purchase flow complete without payment and credit what the product gives (see Decisions).
+7. **Paid currency (decided: allow; done 2026-10-04; the opener decided 2026-10-05):** `CoinList`,
+   `DirectItemShopList` and the `CoinDeposit*` purchase flow complete without payment and credit
+   what the product gives ([`server-rules.md#paid-currency`](server-rules.md#paid-currency); module
+   `coins`, schema step 18: `coin_deposit`). The store is a platform answer (`platform370`'s in-app
+   billing, [`client-changes.md`](client-changes.md) "In-app billing"). **The opener:** the 3.7.0
+   client stopped selling 紋章石: no shop-menu entry, no header ＋, and every coins-short check made
+   with the client's own count shows 紋章石の販売は停止しています (the gacha's unconditionally). The
+   coin shop opens only when the server refuses a payment the client thought it could make with
+   20003 (the item shop's exchange @01b5eea4, the gacha's draw @01ad2bb8), or through master content
+   that doesn't exist (a guide popup of `target_content_type` 4, a banner to shop mode 4). The
+   server now refuses those with 20003 (b). **The user's decision (2026-10-05): a client change
+   (platform370's native patch) turns the 販売は停止 dialog (`OpenBuyEndDialog`) into the coin shop**,
+   so a "not enough stones" moment opens it ([`client-changes.md`](client-changes.md) "Emulator
+   mode"; `--no-patch` turns it off). Session `coins`: a player with 50 stones draws once (500) and
+   lands in the coin shop.
+   Server-runnable screens: the coin shop (its list, a purchase, the result) and 購入情報's paid /
+   free split, in both hosts.
 8. **Stubs (decided; done 2026-10-04, section 2.5):** social (2.2) and the debug APIs (2.4) answer
    success through explicit stub handlers, each logged when called (see Decisions).
 9. **Retire the canned responses** (the user asked, 2026-10-04; they are no longer needed): once
@@ -218,6 +234,8 @@ tables, rules section). New state goes through the state module's migrations
 ### Decisions (the user, 2026-10-04)
 
 - **Paid currency: allow.** Buying stones works locally and costs nothing.
+- **The coin shop's door (2026-10-05):** the 3.7.0 client's "紋章石の販売は停止しています" dialog opens
+  the coin shop instead (a client change, platform370's native patch).
 - **Social: stub, and defer to multiplayer.** Follow, blacklist and neighbor calls get success
   replies with empty lists; real friends belong to the multiplayer schema plan
   ([`../server/PLAN-multiplayer-schema.md`](../server/PLAN-multiplayer-schema.md)).
@@ -246,21 +264,38 @@ evidence against one replaces it and records why.
   `no handler: <Method> (status only, not served in-process: ...)` (`port/src/native/api/fakeapi.cpp`;
   nothing reaches the server for those).
 
-**Paid currency (assumptions, all (c) until checked against the client in step 2).**
-- `CoinList` lists the products from the master's coin/product table, as the store would; prices are
-  shown but never charged.
-- `CoinDepositCreate` creates a pending purchase (an id the client echoes back) and the platform
-  update call (`CoinDepositAndroidUpdate`, which the port's Android client sends; the iOS and Amazon
-  ones are answered the same way) **completes it immediately**: the product's stones are credited
-  as **paid stones**, kept separate from free stones the way the player's currencies already are,
-  and a purchase record is stored (product, amount, time) so the history is real.
-- No receipt validation: the platform receipt the client sends is ignored.
-- `GetBirthYearMonth` / `UpdateBirthYearMonth` store what the player enters; age-based monthly
-  spending limits are **not** enforced (assumption: a local game has no reason to limit spending).
-- First-purchase bonuses or limited-purchase counts in the product data are honoured if the master
-  defines them (each product's limit counted from the purchase records).
-- `DirectItemShopList` (items bought directly with paid currency) lists the master's products;
-  buying goes through the existing shop purchase handling where it applies.
+**Paid currency (checked against the client in step 7, 2026-10-04; [`server-rules.md#paid-currency`](server-rules.md#paid-currency)).**
+- ~~`CoinList` lists the products from the master's coin/product table~~ **Replaced:** the master
+  has no product table. The products are `master_text`'s `coin_name_NNN` / `coin_title_NNN` /
+  `coin_description_NNN` labels (a); the stones come from the 2019-10-01 description
+  "※<paid>個＋おまけ<bonus>個" (a); sold are the regular sets 001..007 (d: the limited and bonus
+  sets' 2019-10-01 labels don't describe their names). The price shown (`yen`) is the paid count
+  (d: the paid counts are the store's price points); the store ids `soa.local.coin_NNN` are made up
+  (d: the real ones aren't recorded); the icons 1..3 by size (d). **New:** `CoinList` has no 3.7.0
+  caller, so the list rides on every full player load (b: `CPaymentManager::Init_` needs it at the
+  end of the login and otherwise fails the coin shop).
+- **Confirmed (b):** `CoinDepositCreate` creates a pending purchase whose id the client echoes
+  (`CoinDeposit.deposit_trans_id`, CParameterManager+0x6e78, passed to the store and back in
+  `CoinDepositAndroidUpdate`); its third argument is the literal `"user_id"`. The update completes
+  it at once: paid stones to the paid coins, the bonus (おまけ) to the free coins (a:
+  `uimsg_buy_history_explan`), a purchase record (`coin_deposit`: product, platform, times, the
+  stones). (d) A completed purchase isn't credited twice (the store retries a purchase whose answer
+  it lost); an unknown purchase or a product not sold: 10208. The iOS and Amazon updates do the same.
+- **Confirmed (d):** no receipt validation: the receipt and signature are logged, not checked.
+- `GetBirthYearMonth` / `UpdateBirthYearMonth`: the settings group's (`#settings`). **Checked
+  (2026-10-06):** the coin shop's 10009 opens the client's birth dialog with no generic error first,
+  in both hosts; 登録する stores the month and the shop opens; asked once. The coin shop
+  sends `GetBirthYearMonth` first (b: `CCoinShop::ToShop` @01977a9c). (d) No age-based spending limit.
+- **Confirmed, nothing to honour (d):** limited-purchase counts and first-purchase bonuses: no product
+  sold has one (`limit_count`, `interval_day`, `is_once`, `bonus_type` all 0; b: `IsSoldOutCoinSale`
+  counts `bought_at` only for those).
+- ~~`DirectItemShopList` lists the master's products~~ **Replaced (d):** an empty list. The premium
+  shop buys a row through a store product (b: `CDirectItemShop` → `CPaymentManager::Purchase(int)`),
+  and `master_direct_item_shop` names the sets but no product or price; the 3.7.0 shop menu has no
+  premium entry.
+- **New (b):** the coins-short refusal of the item shop's exchange and of a gacha draw is 20003, not
+  20000: their answer lambdas open the coin shop on 20003 (@01b5eea4, @01ad2bb8); the 3.7.0 client
+  has no other way into it.
 
 **Social stubs.**
 - `FollowAdd` / `FollowRemove` / `BlacklistAdd` / `BlacklistRemove` / `UpdateFollowMax`: success,
@@ -365,6 +400,28 @@ Both were status-only; two `kServedStatusOnly` rows route them in-process (docs/
   "SetCharacterDeco"): the client's own serializer makes the bytes NetworkApiCaller sends.
 - Not played on screen: the mascot change (the seeded player's progress opens one mascot, so the
   button is hidden); unit test and replay corpus only.
+
+**Chat stamps (`SetStampSlot`; agent server-u-stamps).** The rules and their evidence are
+[`server-rules.md#stamps`](server-rules.md#stamps); what had to be assumed, and why:
+- The 12 type-1 stamps are owned by every player: no master row awards one, while 271 of the 278
+  type-2 stamps are achievement, login bonus or exchange rewards (and `stamp_kind` is 12). Without
+  them a new player would have no stamp to arrange.
+- A player who never arranged the palette gets the type-1 stamps in `order_id` order from the first
+  slot, the rest empty: 3.7.0's first palette isn't known, and an empty one would leave the
+  multiplayer chat's stamps blank.
+- `SetStampSlot` of a stamp the player doesn't own, or of more entries than the palette has
+  (`stamp_page_max` × 4), is refused with 10208 and changes nothing; fewer entries leave the rest of
+  the palette empty. The client sends only owned stamps and the full palette, so neither refusal
+  is reachable from the screen.
+- A granted stamp the player owns already changes nothing; the 7 type-2 stamps no master row
+  awards are never granted.
+
+**AddItem (agent server-u-stamps).** Not an assumption: `CAddItemList` is an
+`IInfoBaseMap<u64, CItemInfo>` whose `DeserializeArray` (@0163d574) returns 0, so every `AddItem`
+the server sent as an array was ignored and the new weapons and accessories appeared only with the
+next full player load. Every answer now sends a map keyed by the uid (`ext::add_items`;
+[`server-rules.md#conventions`](server-rules.md#conventions)). The keys are strings, like the
+server's other maps (the client also reads an integer key).
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

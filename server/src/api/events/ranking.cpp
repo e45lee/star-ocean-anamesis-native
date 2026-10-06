@@ -291,7 +291,7 @@ std::vector<u8> receive_event_ranking_result(Ctx& ctx, const Request&) {
     }
     Value data = ctx.base_data();
     data["CheckEventRankingResultInfo"] = info;
-    if (!items.arr.empty()) data["AddItem"] = items;
+    ext::add_items(data, items);
     if (!characters.arr.empty()) {
         Value add_character = Value::object();
         for (auto& character : characters.arr) add_character[std::to_string(character.get_u("id"))] = character;

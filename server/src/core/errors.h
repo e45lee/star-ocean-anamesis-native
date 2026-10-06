@@ -25,6 +25,7 @@ enum class ErrorCode : u32 {
     kExchangeExpired = 17001,  // アイテムの交換期限が切れています。 (a) the text
     kNoPlayer = 19001,  // 不正なデータ処理です。 (b) the Login result lambda: "no account yet" starts the new-player flow
     kCoinsShort = 20000,  // 紋章石が不足しています。 (a) the text; (d) of 20000 / 20003
+    kCoinsShortShop = 20003,  // 紋章石が不足しています。 (b) opens the coin shop (@01b5eea4, @01ad2bb8)
 };
 
 namespace ext {
@@ -137,7 +138,6 @@ inline std::vector<u8> refuse(Ctx& c, const char* method, const char* why, Error
 //   19998  不正なデータ処理です。
 //   20001  不正なデータ処理です。
 //   20002  サーバ内部エラーが発生しました。
-//   20003  紋章石が不足しています。
 //   21000  この艦は出発済みです。
 //   22000  この探査ポイントは\n出発可能回数の上限に達しています。
 //   23000  帰還済みの探査ポイントです。

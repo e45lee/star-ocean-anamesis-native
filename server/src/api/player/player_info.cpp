@@ -22,13 +22,14 @@ using ext::body;
 using ext::Row;
 
 // (a) stamina regenerates one point per master_global stamina_heal_time seconds, up to
-// master_player_level.stamina.
+// master_player_level.stamina. (--stamina-heal-time SECS replaces the period for tests, 0 stops
+// regeneration: ServerConfig::stamina_heal_time.)
 void tick_stamina(ext::Ctx& ctx) {
+    u32 period = config().stamina_heal_time >= 0 ? (u32)config().stamina_heal_time : ctx.global_u32("stamina_heal_time", 180);
     ctx.st.q("select level, stamina, stamina_at from player", {}, [&](const Row& player_row) {
         u32 max = ctx.stamina_max((u32)player_row.i("level"));
         ServerTime now = clock_now(), at = player_row.time("stamina_at");
-        auto [stamina, carry] =
-            rules::regen_stamina((u32)player_row.i("stamina"), max, (u64)std::max<int64_t>(0, now - at), ctx.global_u32("stamina_heal_time", 180));
+        auto [stamina, carry] = rules::regen_stamina((u32)player_row.i("stamina"), max, (u64)std::max<int64_t>(0, now - at), period);
         ctx.st.q("update player set stamina = ?, stamina_at = ?", {stamina, stamina >= max ? now : now - (int64_t)carry});
     });
 }

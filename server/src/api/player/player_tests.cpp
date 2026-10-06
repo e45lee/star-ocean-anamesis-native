@@ -12,6 +12,7 @@
 #include "api/player/home.h"
 #include "api/player/roster.h"
 #include "api/player/player_info.h"
+#include "soaserver/config.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
 
@@ -81,6 +82,31 @@ NATIVE_TEST("player/view-status-bits") {
     (*update_view)(ctx, Request{"UpdateView", 0, {1, 0}, {}, {}});
     t.expect_eq(word(player_info(ctx), "view_status2"), 0ull, "UpdateView(1): view_status2");
     t.expect_eq(word(player_info(ctx), "view_status"), top_bit, "view_status unchanged");
+}
+
+// --stamina-heal-time (ServerConfig::stamina_heal_time, a test switch): 0 stops regeneration, so a
+// run's stamina doesn't depend on how long it took (tests/diff); the default (-1) regenerates by the
+// master's stamina_heal_time (180 s), the positive control.
+NATIVE_TEST("player/stamina-heal-time") {
+    ServerConfig& opt = config();
+    ServerConfig saved = opt;
+    t.expect_eq(ServerConfig().stamina_heal_time, (int64_t)-1, "default: the master's period");
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    RequestContext request = sv.new_request();  // for the handlers called directly
+    ext::Ctx ctx = sv.make_ctx(request);
+    u32 max = ctx.stamina_max((u32)sv.st.one("select level from player", {}));
+    auto after_600s = [&](int64_t period) {  // 10 below the maximum, 600 s ago: then a tick
+        opt.stamina_heal_time = period;
+        sv.st.q("update player set stamina = ?, stamina_at = ?", {max - 10, clock_now() - 600});
+        tick_stamina(ctx);
+        return (u32)sv.st.one("select stamina from player", {});
+    };
+    t.expect_eq(after_600s(-1), max - 10 + 3, "the master's 180 s: 3 points in 600 s");
+    t.expect_eq(after_600s(0), max - 10, "0: no regeneration");
+    t.expect_eq(after_600s(100), max - 10 + 6, "100 s: 6 points");
+    opt = saved;
 }
 
 }  // namespace

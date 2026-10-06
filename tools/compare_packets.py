@@ -15,8 +15,9 @@ cipher and the packet sizes (the client picks a cipher per request), device UUID
 makes a new one), session keys and bridge tokens. With --client-logs the clients' HTTP GETs
 (I/http: GET <url>, platform370's log line) are compared too, as a multiset (the downloader's
 threads may reorder them).
-Exits 0 and prints "PASS packets equal" when everything compared is equal; otherwise prints the
-differences (unified diff of the normalized sequences) and exits 1.
+Exits 0 and prints "PASS packets equal" when everything compared is equal and each log has at
+least --min-requests requests (default 1); otherwise prints the differences (unified diff of the
+normalized sequences) and exits 1. tests/test_compare_packets.py has its cases.
 
     --mask-battle-log    MissionEnd & co.'s battle_log[N]: the length masked (it grows with the
                          battle's length, which the party's AI and the frame timing decide; the
@@ -164,6 +165,8 @@ def main():
     ap.add_argument("--mask-battle-log", action="store_true", help="mask the battle log's length")
     ap.add_argument("--collapse-title-repeat", action="store_true", help="a repeated NoLoginStart counts once")
     ap.add_argument("--float-time-sync", action="store_true", help="GetServerTime compared by count, not position")
+    ap.add_argument("--min-requests", type=int, default=1, metavar="N",
+                    help="FAIL when either log has fewer than N requests (default 1: two empty logs compare nothing)")
     o = ap.parse_args()
     la, lb = o.labels
     pa, pb = packets(o.a), packets(o.b)
@@ -187,6 +190,13 @@ def main():
         for x in pb:
             print("%s  %s" % (lb, x))
     nreq = sum(1 for x in pa if x.startswith("> "))
+    for lab, path, seq in ((la, o.a, pa), (lb, o.b, pb)):
+        n = sum(1 for x in seq if x.startswith("> "))
+        if n < o.min_requests:
+            # two empty (or truncated, or unparsable) logs are "equal": that compares nothing
+            ok = False
+            print("FAIL  %s: %d requests in %s (at least %d expected: a run that sent nothing, or a log this "
+                  "tool can't read)" % (lab, n, path, o.min_requests))
     if pa != pb:
         ok = False
         print("FAIL  packet sequences differ (%s: %d entries, %s: %d)" % (la, len(pa), lb, len(pb)))

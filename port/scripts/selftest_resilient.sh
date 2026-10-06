@@ -8,6 +8,7 @@
 # Usage: port/scripts/selftest_resilient.sh OUT [FILTER]   (from any directory)
 # Env: SOA (default build/port/soa), PER_RUN_TIMEOUT (seconds per boot, default 1800), MAX_RUNS (100).
 # Writes OUT/log-N.txt per boot and OUT/results.txt: "ok|FAIL|CRASH|TIMEOUT <test>" per test.
+# Exit 0 only when every test passed (or was skipped) and the last boot exited 0.
 set -u
 out=${1:?usage: selftest_resilient.sh OUT [FILTER]}; filter=${2:-}
 repo=$(cd "$(dirname "$0")/../.." && pwd)
@@ -31,6 +32,11 @@ while [ $n -lt "${MAX_RUNS:-100}" ]; do
         # A skip (a test whose input, e.g. work/SOA-3.7.0-canonical-data.zip, is absent) is not a failure.
         if grep -qvE '^(ok|skip) ' "$out/results.txt"; then
             echo "FAIL: $(grep -vcE '^(ok|skip) ' "$out/results.txt") test(s) did not pass:"; grep -vE '^(ok|skip) ' "$out/results.txt"
+            exit 1
+        fi
+        # ... and the last boot exited cleanly: a crash or hang after its summary (in the shutdown) fails
+        if [ $rc != 0 ]; then
+            echo "FAIL: boot $n printed its summary, then exited with rc=$rc ($out/log-$n.txt)"
             exit 1
         fi
         exit 0

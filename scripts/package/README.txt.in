@@ -215,8 +215,8 @@ soa{{EXE}}
               soa{{EXE}} --help lists them all.
   resolution: the game renders at the size of its screen (sharp at any window size; up to
               the desktop's size, --render-size WxH sets it). --legacy-res renders as the phone
-              game did (a 720x1280 layout drawn at 540x960 and scaled up): use it on a slow
-              graphics card. --render-scale S: the phone's layout drawn at S x 720x1280.
+              game did (the screen at 720x1280, the 3D scenes at 540x960, scaled up): use it on a
+              slow graphics card. --render-scale S: the 3D scenes at S x 720x1280.
   first run:  a new account: the game's own tutorial and starter characters. To continue from
               your own 3.7.0 save instead, give it once on the first run: --seed Game.xml (the
               phone's shared_prefs/Game.xml), or put it in this folder as

@@ -2,11 +2,11 @@
 // (ui_utility.h; docs/client-changes.md "High-resolution rendering"; docs/notes.md "Rendering").
 //
 // As shipped both are constants (`return true`, `return 0.75f`, 8 bytes each: ELF 0x1de87b0 and
-// 0x1de87f8), so the game draws its 3D and UI into a 540x960 back buffer on any 9:16 screen and the
-// frontend scales that up. The port's default (hi-res) answers IsResolutionLegacy() false: the
-// back buffer is the game screen itself (--render-size; 728x1296 for a 729x1296 window). With
-// --render-scale S it keeps the legacy 720x1280 layout and answers S for the scale (a back buffer
-// of S x 720x1280, independent of the window); --legacy-res installs neither (the game as shipped).
+// 0x1de87f8), so on any 9:16 screen the game draws its UI at 720x1280 and its 3D scene into a
+// 540x960 back buffer, and the frontend scales the result up. The port's default (hi-res) answers IsResolutionLegacy() false: the
+// UI and the 3D are drawn at the game screen's size (--render-size; 728x1296 for a 729x1296 window).
+// With --render-scale S it keeps the legacy 720x1280 screen (the UI) and answers S for the scale (the
+// 3D at S x 720x1280, independent of the window); --legacy-res installs neither (the game as shipped).
 // A behaviour change, not a bit-exact port: installed by predicate (NATIVE_FUNCTION_IF), so the
 // selftest (no natives) and --natives none see the shipped values.
 #include "native/ui/ui_utility.h"

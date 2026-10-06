@@ -484,7 +484,7 @@ The sessions ran in the slot pool on the shared phone, with the standard drivers
 - **The shots.** `campaign-out/shots/82-story.png` and `83-story.png` show the story in English: speaker "Coro" (an `en_` master row), "Thanks to your efforts, I was able t…".
   - **The English lines run past the right edge of the message window.** Global's line breaks were made for a wider window than 3.7.0's.
   - The window's buttons (早送り, ログ表示, スキップ, オート) stay Japanese.
-- **Not shown.** Whether `StringDB::ReleaseParameter` released the `-en` file's rows: the session played one scene.
+- **Not shown.** Whether `StringDB::ReleaseParameter` released the `-en` file's rows: the session played one scene. **Shown 2026-10-07 (agent `en-server`, C4):** with the server-built `Scenario/TS_1010-en.msgp` (English in its `ja_` rows, no StringDB change) `soa --lang en` played two scenes of that file in a row (mc01_030, then mc01_020), both in English, and the client's RSS stayed at about 1.59 GB; the data check had fetched all 24 `-en` story files, also those of the EP1 pack (docs/server-rules.md#english-story). The English lines run past the message window (no re-break yet, E7).
 
 **Run 3: `home`, a whole English master as a `-en` file, no StringDB change in effect.**
 - **Setup.**
@@ -499,7 +499,7 @@ The sessions ran in the slot pool on the shared phone, with the standard drivers
 - **What run 3 did not prove:**
   - **The port's overlay helped.** Status 4 means a built-in file: the port's `AssetManager::find_download` merges the stand-in dir into `builtin_data/`, so the `-en` master was visible before any download. `soa-emu` gets stand-ins only through the CDN.
   - **Which copy was used after login.** The trace logs each name once, so whether the client read the downloaded copy or the overlay's is not shown.
-  - **The proof still to make.** `soa-emu` with a `-en` master from soa-server's CDN only, as `emulator/scripts/standin_fetch_test.sh` does for the stand-ins.
+  - **The proof still to make.** `soa-emu` with a `-en` master from soa-server's CDN only, as `emulator/scripts/standin_fetch_test.sh` does for the stand-ins. **Made 2026-10-07 (agent `en-server`):** soa-emu `--lang en` against `soa-server --english` fetched `I/5374616e/1bc76693.bin` (the `-en` master, built by the server from `data/english/master-en.tsv` after every `ClientMaster` hook) from the CDN only, stored it byte for byte, and its home header was English with the event badge at 5 (`emulator/scripts/lang_fetch_test.sh`; docs/server-rules.md#english).
 - **Story files in this shape.** A story `-en` file with English in the `ja_` rows, which is what this design needs, was not run. Run 2 used the superset form with the `GetNativeString` hook.
 
 ### 6.6 Consequence: the smallest client change is one site
@@ -515,6 +515,21 @@ Run 3 shows a second way to deliver text: not `en_` rows that StringDB must lear
 | Cost per client | every client fetches every `-en` member (6.3): **+36 MB for the second master**, plus the story and art files | +2.4 MB of master, plus the same story and art files |
 | Server work | the served-master pipeline gets a second output: its `ClientMaster` edits, then the English | one `ClientMaster` hook that inserts rows |
 | Pre-download screens | the port can carry an English built-in master through its asset overlay (run 3's dialog) | the same, with a built-in `-en` master that holds `en_` rows; without one, Japanese until the first download |
+
+### 6.7 Implemented: `--lang` and `--voice-lang` (B1, B7, E10)
+
+Agent `en-client`, 2026-10-07 ([PLAN-english.md](PLAN-english.md) B1, B7, E10; [client-changes.md "English mode"](client-changes.md)).
+
+- **`--lang ja|en`** (`soa` and `soa-emu`; `platform370::Config::lang`, `platform370/src/lang_370.cpp`). With `en`, `CLanguage::CLanguage` is hooked and sets Current to 1 after the original; with `ja` nothing is hooked. The selftest `platform370/lang` checks the singleton (Default 0x100, Current 1 or 0x100, Voice 0) and that `PostfixLanguageCodeFilepath("Font/etc2/font.fpk", Current)` is `font-en.fpk`.
+- **`--voice-lang ja|keep`** (default `ja`): `BAS:VoiceLanguage` = 0 written into the phone's `Game.xml` before the client starts, through the runtime's SharedPreferences and the game's KVS encoding (moved from the server to `common/include/soa/kvs.h`).
+- **The `home` session with `--lang en`** (the unchanged Japanese server; `SOA_TRACE` on `CLanguage::PostfixLanguageCodeFilepath` with `:0=s`, a string dump added to `core/trace.cpp`) passed ("every home destination reached"). Its log (`work/english/exec/client/b1-home/log.txt`, local):
+  - 16,196 postfix calls, 12,867 of them giving an `-en` name: `Font/etc2/font-en.fpk`, `sqlite/basmaster-en.sqlite3`, `UI/etc2/home-en.csf`, `Character/…-en.acf`, `Sound/…-en.aac` and so on. None exists, so every load fell back to the Japanese file.
+  - The voice packs: `FileExistLanguage` and `IsFileExistDownloadFolder` (the disk and download lookups) resolved every `Sound/Voice_*.spk` to its bare name through Voice 0, with no `-en` name. `RegisteredFileLanguage` (the in-memory table of files already registered) still tries Voice, then Current (`Voice_UI_001-en.spk`), then the plain name while a pack isn't registered yet: a lookup in memory, not a file probe or a download.
+  - The client read `BAS:VoiceLanguage` 256 from the session's save; the log shows `256 -> 0`.
+- **E10 (a), the hard-coded strings** (`platform370/src/text_370.cpp`): the 14 literals all reach the screen through `CCocosLabel::SetText(std::string const&)` (`CUIUtility::SetText` / `SetButtonText` / `SetLabelText` → it; `CSortDialogWrapper` and the LV%d習得 sites call it directly; `CDialogCommon::SetMessage` only stores the text for the dialog's label). One hook there replaces them with `port_en_*` master text (10 ids, `data/english/client-strings.tsv`), Japanese when the master has no row. The フィルター / 並び替え titles are only the fallback for a sort-dialog group without a title (`StartDialogFromProperty` @0x1d4ef70); the character list's dialog didn't show them. プレイヤー用ダミーネーム (`CPlayerInfo::Initialize`) is a default property value, never a label's text.
+- **E10 (b), word wrap**: the box is known only for `IsCustomSize` labels (+0x280, width +0x94). Every other label (both experiment cases: the dialog message `dialog1.csf` `Text`, 533 wide from its placeholder, and `partymenu_common.csf` `Text_2`, 183 wide) takes its text's size, and its layout size is its placeholder's, so the room is taken from the screen: world position, scale and anchor (`GetWorldMatrix` + `CMatrix::PutPRS`) against the 720-wide design area. The header line is first drawn at its layout x (657) and then slides to its place after the title (326), so a label is wrapped again whenever its room changes.
+- **Shots** (`work/english/exec/client/`, local; a throwaway master with experiment 2's long `uimsg_full_stamina` and the `port_en_*` rows, through `--master`): `e10-home/shots/29-stamina.png` (the 170-character line in four centred lines), `30-character.png` (`uimsg_chara_top_info` in two lines beside "Characters"), `21-follow.png`, `31-item.png`, `34-other.png`; `e10-tour/` (the character list's sort dialog), `e10-live/` (the selftests at home on soa against soa-server with the rows). The `home` session passed.
+- **The story window** (`Behavior_TalkText(2)::UpdateFont` reveals the text with `SubStrUTF8` into a label; `CEventScenarioMessageWindow::Append` places colour segments by the measured width of the text before them): its labels are wrapped only when a line would leave the screen, not at the window's frame, so story lines are to be broken by the data (E7).
 
 ## 7. Machine translation for the gaps
 
@@ -661,7 +676,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 
 **The source of truth is a translation table in the repo, not engine output and not a database.**
 
-- **Layout** (proposed, `data/english/`):
+- **Layout** (`data/english/`; built 2026-10-06, see "As built" below):
   - `glossary.tsv`: `ja, en, kind, variants, source (official|human), note`. Generated from Global, then edited by hand; a `human` row wins over a generated one and survives regeneration.
   - `master.tsv`: one row per JP `message_id` that isn't official by id: `message_id, ja_sha1, en, source, engine, date, editor, note`.
   - `story/TS_xxxx.tsv`: the same per story file, **without the Japanese text** (it is not in git; 7.6 below).
@@ -676,15 +691,137 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 - **Precedence at build:** `human` and `reviewed` > `official` > `memory`/`template` > `machine` > Japanese. A human row may override Global (the "Time Left  Left" composition of section 2); the report lists every such override.
 - **Re-running MT never touches** `human` or `reviewed` rows. It writes only rows that are missing, or `machine` rows whose hash, engine or prompt version changed, when asked to. So a human edit is permanent until a human changes it.
 - **Editing.**
-  - A small CLI (`tools/english_text.py`, to write): `show ID` (JA, Global's reference, current EN, width, problems), `set ID TEXT --by NAME`, `review ID…`, `stale`, `report` (coverage per source and prefix, failing rows, width outliers, the 803 rows with stale Global English and their old English).
+  - A small CLI (`tools/english_text.py`, built: see "As built" below): `show ID` (JA, Global's reference, current EN, width, problems), `set ID TEXT --by NAME`, `review ID…`, `stale`, `report` (coverage per source and prefix, failing rows, width outliers, the 803 rows with stale Global English and their old English).
   - **PO round trip** for Poedit, Lokalize or Weblate: `export-po` writes one `.po` per category to `work/english/po/` with `msgctxt` = message_id, `msgid` = the Japanese (from the master or the download at export time), `msgstr` = the English, `#,fuzzy` for `machine` rows, and the provenance and Global's reference as comments; `import-po` turns a changed `msgstr` into a `human` row and a cleared `fuzzy` flag into `reviewed`. The `.po` files are a working copy in `work/`, never the source of truth: their `msgid` is the game's Japanese.
   - **Spreadsheet round trip**: the same as CSV (JA, Global, EN, width in px, problems), imported by `message_id`.
 - **How the server consumes it.** The `-en` master builder (C1) and story builder (C3) read only the committed tables, the two master DBs and the download, apply the precedence and the checks, fold glyphs and break lines with the font's advances, and write the files. **No engine is called at server start** (an API isn't reproducible, and a server must not need the network). Same inputs, same bytes, so the CDN's version ids stay stable.
 - **What is safe to commit** (the user's game-file policy, README.md "Game files"):
   - The master's Japanese is already in git (`data/basmaster-3.7.0.sqlite3`), and so is Global's English. A table of our English keyed by `message_id` adds no game data beyond what's there: committable, like the master DBs.
   - The story's Japanese is **not** in git (only in `work/download-3.7.0`). The story tables therefore hold `message_id`, a hash and our English, and no Japanese; tools read the Japanese from the download when they need it.
-  - Our English is still a translation of the publisher's text: whether it goes into git, and whether release packages carry it (they never carry game files), is the user's call (PLAN-english.md M-Q5). The glossary of names is small and needed in any case.
+  - Our English is still a translation of the publisher's text: whether it goes into git, and whether release packages carry it (they never carry game files), is the user's call (PLAN-english.md M-Q5; decided: both, and the packages carry the tables `master-en.tsv` and `story-en/`, from which the packaged server builds the `-en` files at every start: P2). The glossary of names is small and needed in any case.
   - Engine outputs before review (`raw-*.jsonl`), PO exports and the trial stay in `work/`.
+
+**As built** (2026-10-06, agent `en-data`; PLAN-english.md E1, M1, E3). The tool is `tools/english_text.py`. Its shared library, also used by `tools/english_mt.py`, is `tools/english_core.py`. The test is `tests/test_english_text.py` (T0).
+
+- **Files** in `data/english/`:
+  - `master.tsv`: only `machine`, `human` and `reviewed` rows (columns as above).
+  - `glossary.tsv`: Global's terms (`official`) are regenerated by every `build`; `human` and `machine` rows (M2's names: kind `name`) are kept. Per term a `human` row wins over `official`, which wins over `machine`; an empty `en` removes the term.
+  - `client-strings.tsv`: `message_id, en, note`; the client's `port_en_*` strings, merged as `human` rows with an empty `ja_sha1`.
+  - `master-en.tsv`: **generated** by `build`: `message_id, ja_sha1, en, source`, every row that ends up English, sorted. The server serves exactly this file. `build --check` (and the T0 pytest) fails when it, or the glossary's official rows, is stale.
+- **The font** is read from the committed APK (`assets/builtin_data/Font/etc2/font.fpk`, the same file as the download's): ADLD, then SLZ (all chunks), then the ISF member `fontData.bin`, whose 7,133 records give the advances. `work/english/font/glyphs.pkl` is no longer needed.
+- **Candidates per JP row**, in order: `human`/`reviewed` > `official` (Global by id; or a Global token row rewritten by E3) > `memory`/`template` > `machine`. The first candidate that passes the checks is served. A failing candidate is listed and the next one is tried. A table row with a different `ja_sha1` is stale and is not served.
+- **What every candidate gets:** NFC (human rows), glyph folding, and the `%%` rule in printf rows (this makes `uimsg_deep_space_new_area_term`'s Global "%d% or above" safe).
+- **Global's own line breaks are kept.** Re-breaking official multi-line rows to the JP row's widest line would make 1,873 of 2,299 rows taller than the Japanese. Only rows whose Japanese has `\n` and whose English has none are re-broken (official 460, memory 131, template 5). `machine` rows are re-broken at import.
+- **Check strength per source.** These choices keep Global's 19,145 rows whole:
+  - **Glossary:** a hard check for `machine`, `human` and `reviewed` rows. For official, memory and template rows it is only a warning (627 rows): the glossary is mined from Global, so Global's rows define it.
+  - **Tags:** strict (the same tags) for `machine` rows. For official, memory, template and human label rows the English may use a subset of the Japanese row's tag kinds, with balanced `<font>`/`</font>`. This covers 16 Global tutorial rows that colour fewer or more words. Story lines will use the strict check (unknown story tags crash).
+- **E3** (`english_core.rewrite_tokens`, shared by the master and the story):
+  - `<EMDASH>` becomes `―`.
+  - `<INSERT n>one/many</INSERT>` becomes the plural form.
+  - `<NUM n>`/`<STR n>` becomes the JP row's n-th printf specifier, spelled as JP spells it (`%02d`, `%u`). This needs each JP argument used exactly once, in JP's order.
+  - Result: 37 master rows become official. The other 22 rows have no specifier in JP: the client composes the name around the fragment (`uimsg_block_*`, `follow_*`, `loginbonus`…). They stay gaps and are listed in `token-gaps.tsv`.
+  - In the story: EP1 2,979 official + 117 by E3, 10 gap lines left; `TS_3xxx` +16; `TS_5xxx` +11.
+  - No served row has a Global token.
+- **Counts of the first build:**
+  - Candidates: official by id 19,145, E3 37, exact memory 6,265, template 2,412, language-neutral 1,527, gap 37,559.
+  - Served: 27,859 rows (official 19,182, memory 6,265, template 2,412), 0 failing.
+  - Reported: 7,916 single-line rows over 1.5× the Japanese width, 803 Q7 rows, 302 glossary conflicts.
+- **Commands:**
+  - `build [--check]`.
+  - `report [--out DIR]`: the summary to stdout; `prefixes`, `failing`, `width`, `q7`, `token-gaps`, `e3`, `glossary-conflicts`, `glossary-warnings`, `overrides`, `stale` `.tsv` files and `summary.json` in `work/english/report/`.
+  - `show ID…`, `set ID TEXT --by NAME` (refused when it fails a check, unless `--force`), `review ID… --by NAME`, `stale [--fail]`.
+  - `export-po`/`import-po` (polib; `work/english/po/<prefix>.po`).
+  - `export-csv`/`import-csv`.
+  - `import-mt CHECKPOINT.jsonl [--replace]`: rows of the MT runner, writing `machine` rows with `engine` = `model/quant/prompt/llama.cpp-build/tTemperature`.
+    - It writes only rows in the gap. It never touches `human`/`reviewed` rows, and replaces a `machine` row only with `--replace` when the hash, engine or prompt changed.
+    - Rows failing the checks go to `work/english/mt-rejected.tsv` and are counted by `report`.
+  - Edits rebuild `master-en.tsv` unless `--no-build` is given.
+
+**The story tables** (2026-10-06, agent `en-data`; PLAN C3 data side, E7 data side, M4 import).
+
+- **Files:**
+  - `data/english/story/TS_xxxx.tsv`: the `machine`/`human`/`reviewed` rows of one Scenario file, with the columns of `master.tsv` and no Japanese.
+  - `data/english/story-en/TS_xxxx.tsv`: **generated**, `message_id, ja_sha1, en, source`, for every file with any English.
+  - `data/english/story-en/index.tsv`: **generated**, `file, lines, need, english, complete`.
+    - `need` counts the lines with kana or kanji; language-neutral lines (`……`) need no row.
+    - The server serves `TS_x-en.msgp` only when `complete` is `yes` (Q12).
+- **The hash.** A story line's `ja_sha1` is the SHA-1 of the Scenario row's `text_value` exactly as the file holds it: UTF-8, with **real newlines**. This is unlike the master's two-character `\n`. `en` uses the two-character `\n`.
+- **Where the Japanese comes from.** It is read from `work/download-3.7.0/Scenario` at build time. Without it, `build` and `build --check` skip the story part and say so, and the story pytests skip.
+- **Candidates:** `human`/`reviewed` > official (Global by id, plus E3) > `machine`.
+- **Checks:**
+  - No Global token, every glyph in the font (after folding), no kana left.
+  - Every tag must be one `ParseMessage` reads (`<player>`, `<font color=…>`, `<fontcolor=…>`, `<fontsize=…>`, `</font>`).
+  - Tags must equal the Japanese line's exactly for `machine` rows.
+  - Official and human lines may colour other words, or name `<player>` where the Japanese says 艦長, as long as `<font>` stays balanced. Without this, 16 EP1/`TS_5xxx` lines that no MT run translates would block their files.
+- **Line breaking (E7, data side).** Every served line is re-broken at spaces to a message window of 407 px: the p99 widest JP story line, 7.5. `<player>` is counted as 120 px (an assumption: about 8 Latin letters).
+  - 690 served official lines need 5 or more lines; `report` lists them in `story-long.tsv`.
+  - Shorter wordings or `<fontsize=…>` are still open (E7).
+- **First build:**
+  - 4,625 of the 21,663 story lines that need English have it (official 5,037 rows including 412 language-neutral lines Global spelled out), 0 failing.
+  - 24 of 64 files are complete: EP1 10 of 11 (10 lines missing), `TS_3xxx` 9 of 10, `TS_5xxx` 5 of 7.
+- **`import-mt`** reads the story checkpoint (`"kind": "story"`, a `lines` list) with the master's rules. Failing lines go to `work/english/mt-rejected-story.tsv`.
+- **`report`** adds the story per group: lines official, machine, human, reviewed, missing and failing, and the complete files. Its lists are `story-files.tsv`, `story-long.tsv`, `story-failing.tsv` and `story-stale.tsv`.
+- **The editing tools take story ids too:** `show`, `set`, `review`, `stale`, `export-po` (`TS_xxxx.po`, msgid = the download's Japanese at export time), CSV and the imports.
+
+**Composed fragments** (2026-10-07, agent `en-data`; E3's second half). Some texts are fragments the client joins, so their English has to read right **in place**. These are now `human` rows with editor `english-exec`, listed in `report`'s `human.tsv` (and `overrides.tsv` where they replace Global's text).
+
+- **Name fragments: a suffix after the name.**
+  - The block, follow, unfollow and unblock texts, the shortage texts and the disconnect texts are appended to a name: `GetSystemMessage(id)`, then the name is inserted at position 0 (`CFollowSelect::Progress`, `CFriendMenu`, `CGachaShortage::UpdateData`).
+  - Their English is a suffix with its leading space: `uimsg_block_decide` = " has been blocked.", `uimsg_gacha_item_shortage` = ":\nnot enough.".
+  - `uimsg_rentalbonus_num` "%u players" + `_main` " borrowed your character." are composed the same way (`CRentalBonus::Setup`).
+  - `uimsg_loginbonus` is " Day Login Bonus", after the day number.
+  - `uimsg_boxgacha_*_num` are "Resets Left", a label beside the number.
+- **Remaining time and end dates: `CUIUtility::GetBannerEndTime`** (Ghidra 0x1ecb8b4). The only caller of `CTimeUtility::RemainTypedText` composes:
+  - `uimsg_remain_base` + `%d` + a unit (`uimsg_year`, `uimsg_month`, `uimsg_day_on_day`, `uimsg_hour`, `uimsg_min`, `uimsg_sec`, from a table at Ghidra 0x2b9fde8).
+  - Under a day, `uimsg_time_to_the_end` comes first. A day or more gives `uimsg_time_limit_head` + the weekday + `uimsg_time_limit_tail`.
+  - `uimsg_time_limit` ("Time Left") labels the value on the achievement and event screens.
+  - Global's "Left:" therefore read "Time Left  Left:2d" (section 2), and "Until: " ran into the weekday. The new rows are:
+    - `uimsg_remain_base` = "" (empty), giving "Time Left 2d" and "Ends in 5h";
+    - `uimsg_time_to_the_end` = "Ends in ";
+    - `uimsg_time_limit_tail` = " until %d:%02d", giving "2021/7/25(Thurs) until 14:00".
+- **Not done:** `uimsg_chiket_error` (チケットが) and `uimsg_gacha_need_head` (紋章石が) are heads whose continuation wasn't found; they stay Japanese until it is.
+
+**Glossary rules** (2026-10-07):
+
+- **Matching:**
+  - accents are ignored (the output is folded);
+  - a label's trailing colon or full stop is ignored ("Role:" matches "Roles");
+  - -y/-ies plurals count, besides -s.
+- **Weak Global terms** (`tools/english_text.py glossary-weak [--apply]`):
+  - **Rule:** an official term of kind `ui`, `skill`, `talent` or `speaker` is demoted when Global's own official English misses it in at least half of at least 3 rows (master by id and story).
+  - Applied, this removed 35 terms with `human` rows whose `en` is empty, for example:
+
+    | Term | Global's glossary English | Missed in |
+    |---|---|---:|
+    | モンスター | Enemies | 43 of 44 |
+    | 願い | Wish | 41 of 47 |
+    | 全員 | Everyone | 33 of 35 |
+    | 上限解放 | Cap Inc. | 39 of 52 |
+    | 紋章石購入 | Purchase Gems | 22 of 23 |
+    | 片手剣 | OHS | 11 of 12 |
+    | 強化素材 | Mats. | 10 of 15 |
+    | 乱射 | Rapid Fire | 6 of 7 |
+
+  - These are labels' abbreviations and ordinary words, not names.
+  - Nine more ordinary words with too few Global rows for the rule (期間：, 分裂, 殴り, 突進, 融合, 産卵, 咆哮, 嘲笑, 怒り) were removed by hand.
+  - Names of people, items, missions and areas are kept (Q8).
+- **M2's machine names that Global's text contradicts:** `glossary-weak` also lists them. Many of these names occur in Global's running text, not in its name fields, so the name pass didn't know Global's spelling. They now have `human` rows with Global's spelling, for example:
+
+  | Term | M2's machine spelling | Global's spelling | Global rows |
+  |---|---|---|---:|
+  | リーシュ | Leash | Eve | 130 of 131 |
+  | ランビュランス | Lamburance | Levarance / Purge | 113 |
+  | ローク | Roque | Roak | |
+  | クロノス | Chronos | Kronos | |
+  | シーハーツ | Sea Hearts | Aquaria | |
+  | アーリグリフ | Ariglyph | Airyglyph | |
+  | エリクール | Elikoor | Elicoor | |
+  | フェイクリード | Fakelead | Faykreed | |
+  | バーニィ | Bernie | Bunny | |
+
+  36 names in all. リム and オバ (parts of words) and ステップアップキャラガチャ (a label) are removed.
+- **Effect on the UI batch.** A dry run of `import-mt` on the UI batch (about 8,150 rows so far, into a scratch dir) went from 87 glossary rejections, mostly the weak terms, to 93 that are almost all the corrected names. Those MT rows used M2's spellings, so they should be re-translated with the corrected glossary.
+- **Width (informational, E10 wraps labels):** `report` lists the single-line rows wider than the 720 px design width at the font's size (`wider-than-screen.tsv`: 1,267 rows).
 
 ### 7.7 Recommendation
 
@@ -774,3 +911,52 @@ Investigation of 2026-10-07 (agent `english-llm`), at the user's request (M-Q3):
 **Verdict.** On this sample a quantized 31B model on the local GPU is as good as the Claude API by every automatic measure: chrF within noise, every token kept, the glossary followed nearly as often. **Gemma 4 31B-it with the v2 prompt is the best local engine**; Gemma 4 26B-A4B is the fast alternative. Where Claude still looks better is what the sample measures least: new proper nouns and story tone, on 20 EP3 lines without a reference. The engine for M3 (UI) can be local; for M4 (story) the user should compare a full scene from each before choosing.
 
 How measured: `work/english/mt-trial/engines/serve.sh` (llama-server), `run_server.py` (the prompts, timing), `score.py`, `bootstrap.py`; outputs `raw-<engine>.jsonl`, `post-<engine>.jsonl`, `timing-<engine>-c<slots>.json`, `scores.json`, server logs `server-*.log`. Models in `work/tools/mt-models/<name>-gguf/`.
+
+## 8. English UI art
+
+Implemented 2026-10-07 (agent `en-art`, PLAN-english.md step E9, decision Q4). The images whose Japanese text is part of the picture (section 1.3) get English copies served as `-en` members; the client with `--lang en` picks them up through `FileExistLanguage` (6.3) and keeps the Japanese image for every file without one.
+
+**What is probed: the scene, not the atlas.** A UI atlas is not a file of its own: it is the `.aif` member of a Cocos scene `UI/etc2/<name>.csf` (an ISF image of `<name>.msgp`, the node tree; `<name>.aif`, one 2048×2048 ETC2 RGBA8 page; `<name>.csv`, the sprite table `name,x,y,w,h`). The client asks `FileExistLanguage` for the scene (`UI/etc2/home.csf -> UI/etc2/home-en.csf`, experiment 3's trace and this step's runs), so an English atlas is a whole `-en` scene: the same node tree and sprite table, the same member names inside (`home.msgp`, not `home-en.msgp`: a repack with the original names loads), only the atlas's pixels changed.
+
+- **The ISF entry's fourth word** is the byte sum of the member's payload padded to 32 bytes with 0xee (every member of the 3.7.0 scenes and the font follows it; `aska::isf_payload_sum`). The generator recomputes it for the changed atlas.
+- The `-en` scene is written with SLZ codec 5 (raw deflate, 64 KiB chunks, as 643 shipped files are) and ADLD XOR keyed by the `-en` name, like the stand-ins.
+
+**Recipes in git, images built at run time.** The images are edits of the game's art, so git and the release packages hold only:
+
+- `standin-assets-en/recipes/*.json`: one file per source; per label the sprites (names from the scene's `.csv`, or none for a plain `Image/` file), the text box and the area to clear (relative to the sprite), the Japanese it replaces, the English, and a style;
+- the generator, C++ in the server library (`server/src/english_art/`, `soaserver/english_art.h`; the codecs in `common/` `soa/aska_image.h`, shared with `tools/aif2png`).
+
+The server's `--english` CDN step calls `english_art::build({download, recipes, out, cache})`: for each recipe it reads the source from the user's download (a folder or the zip), decodes the atlas, clears each label's area, draws the English, re-encodes **only the 4×4 blocks whose pixels changed** (every other byte of the game's file stays as it was), and writes `<out>/<dir>/<stem>-en<ext>`. A stamp per output (the SHA-1 of the generator version, the recipe, the font file and the source file) skips unchanged ones; an output whose recipe is gone is deleted. Same inputs, same bytes: all arithmetic is integer (the ETC1/EAC encoder, the resampling, the fill), zlib's deflate at level 9.
+
+**Drawing.**
+
+- **The game's own font** (`Font/etc2/font.fpk` of the same download, 3.1): the glyph table and the 2048×2048 page's alpha. Text is laid out at the font's 24 px (proportional advances, `?` for a missing glyph, `\n` for a second line), made bolder by widening strokes, scaled to the style's size by area averaging, squeezed horizontally (down to 70% by default) and then shrunk to fit the box. No font file ships and no font dependency is added.
+- **Effects:** an outline (a disc dilation), a glow (the outline spread and blurred), an optional shadow, then the fill; colours `#rrggbb[aa]` per style.
+- **Clearing the Japanese:** `inpaint` (the default) solves the discrete Laplace equation over the area from the pixels around it inside the sprite (premultiplied colour, so transparent surroundings stay transparent); `fill` paints a colour; `none` keeps the picture.
+- **Encoding:** the ETC1 individual and differential modes with both flips, a base colour search of ±1 step around each half's average and every table; EAC alpha by a search over every table and multiplier near the base that centres the table on the block's range. A constant alpha is exact.
+
+**The recipes so far** (English from Global where Global had the screen, `data/basmaster-gl.sqlite3` `uimsg_*`):
+
+| Source | Labels | English |
+|---|---|---|
+| `UI/etc2/common.csf` | the footer, each in its on / off / dimmed state; the gold and red badges | Home, Characters, Draws, Items, Missions, Shop, Other (`uimsg_*_top_name`; Missions as Global's mission texts); Campaign, 1 Free a Day!, 1 a Day, Great Success UP!, Ship Returned!, Raid! |
+| `UI/etc2/home.csf` | the four main buttons, the starter-mission button, the side buttons, the partner menu's round buttons, the talk-mode logo and level words, "back to favorite", the badges | Events, Missions, Sphere 211, Deep Space, Starter Missions; Achievements, Save Data, Follow, Featured, Notice, Gifts, Titles; 2D/3D, Deco, Home, Gift, Change Favorite, Studio Mode; Talk Mode; Normal, Curious, Friend, Like, Love; Back to Favorite; Ship Returned!, Affection Rate UP, Half Stamina Cost!, New Chapter, Raid Boss!, Ranking On! |
+| `UI/etc2/gacha_top.csf` | the four tabs, Back, the two legal-notice buttons | Recommended / Character / Weapon / Event Draws (`uimsg_gacha_title_*`), Back (`sys_return`), Commercial Transactions Act, Payment Services Act (no Global English) |
+
+Not done yet: the other scenes, and the `Image/` files (banners, tutorial pages: about 1,000 with text). A plain `Image/` file works the same way (a label without `sprites` is placed on the whole image) when it is ETC2; the 431 JPEG images would need a JPEG encoder.
+
+**Same bytes everywhere.** Two builds give identical files (the selftest), and the Windows build of `english-art` (MinGW) wrote the same bytes as the Linux one for all three scenes.
+
+**Writing a recipe.** `build/tools/english_art/english-art --out DIR --png PNGDIR` (run from the checkout: the download `work/download-3.7.0` and `standin-assets-en/recipes` by default) builds every recipe without a server and writes each edited atlas as PNG for review; `build/tools/aif2png/aif2png` renders a source scene's atlas, and its `.csv` gives the sprite rectangles. Unknown keys in a recipe are errors. A recipe's format:
+
+```json
+{"source": "UI/etc2/common.csf",
+ "styles": {"footer": {"size": 18, "bold": 1, "fill": "#e4ffff", "glow": "#00b4ffd0", "glow_radius": 2,
+                       "outline": "#0a4c8cc0", "outline_width": 1}},
+ "labels": [{"jp": "ホーム", "text": "Home", "sprites": ["menubtn_home_on.png", "menubtn_home_off.png"],
+             "box": [4, 77, 103, 23], "cover": [3, 76, 105, 25], "style": "footer"}]}
+```
+
+Style keys: `size`, `bold`, `tracking`, `leading`, `squeeze` (percent), `fill`, `outline`, `outline_width`, `glow`, `glow_radius`, `shadow`, `shadow_dx`, `shadow_dy`, `clear` (`inpaint`, `fill`, `none`), `clear_color`, `align` (`left`, `center`, `right`), `dx`, `dy`. A label takes its named style, then any style key of its own; `note` and keys starting with `_` are comments.
+
+How measured: the scenes' members and sums from the decoded 3.7.0 files; the `home` session with `--lang en` (a scratch `CLanguage` switch until B1 landed) and the generated files in a `--standin-assets` directory: the `-en` scenes were fetched and drawn (`work/english/exec/art/`).

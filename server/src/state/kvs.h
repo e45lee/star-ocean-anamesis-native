@@ -1,7 +1,8 @@
 #pragma once
 // The Game.xml codec: the game's Aska::LocalKVS SharedPreferences files (port code, not guest
 // behaviour; the format is the client's, soa_save/kvs.py documents it). The server reads the seed
-// save with it (state/seed.cpp); the tests write one back.
+// save with it (state/seed.cpp); the tests write one back. The file codec itself is soa_codec's
+// (common/include/soa/kvs.h); these forward to it.
 #include <map>
 #include <string>
 #include <utility>

@@ -106,7 +106,7 @@ Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/un
 
 `enabled`, `new_player`, `master`, `db`, `seed`, `client_save` (soa only), `has_seed_rng` / `seed_rng`,
 `start_coins`, `has_clock` / `clock` / `clock_offset`, `galaxy_pass`, `enable_events`,
-`event_keywords`, `restore_tower`, `home3d_all`, `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
+`event_keywords`, `restore_tower`, `home3d_all`, `english` / `english_text` (`--english`, `--english-text`: docs/server-rules.md#english), `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
 `repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `server/tests/fixtures` are found;
 then the install dirs, `common/include/soa/install.h`: a release package's `data/` and `standin-assets/`),
 `apk` (the 3.7.0 APK: the master's last-resort source),
@@ -119,7 +119,7 @@ then the install dirs, `common/include/soa/install.h`: a release package's `data
   server options, defined once for both in `include/soaserver/cli.h` (`add_server_options`)
   (`--db`, `--master`, `--gacha-pools`, `--seed`, `--seed-rng`, `--new-player`,
   `--clock`, `--start-coins`, `--galaxy-pass`, `--enable-events`, `--event-keywords`,
-  `--restore-tower`, `--home3d-all`, `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise`,
+  `--restore-tower`, `--home3d-all`, `--english`, `--english-text`, `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise`,
   `--log-packets`; and from `common/include/soa/cli.h` `--download` / `--download-dir`, `--standin-assets`,
   `--repo`) plus its own `--data` (the state DB's directory). An invalid `--seed-rng` or `--start-coins`
   is an error in both (soa-server read a prefix of it before).
@@ -295,7 +295,10 @@ needs them to mount its download storage (`port/README.md` "Rebase (in progress)
    in-process client master gets), VACUUMed, ADLD-AES packed (`adld.h`) as
    `<scratch>/basmaster-served.adld`.
 2. **Stand-ins**: the files of `standin-assets` the download lacks become new members, one
-   Individual bundle each and one Bulk bundle.
+   Individual bundle each and one Bulk bundle; `Options::member_roots` the same after them. With
+   `--english` also the generated root `<scratch>/lang-en`: the English master
+   `sqlite/basmaster-en.sqlite3` (`make_english_master`: the served master of step 1 with the
+   English text table's English; docs/server-rules.md#english).
 3. **Bundles**: the client only downloads bundles (`\0ISF` images of member payloads, checked by
    SHA-1). The download holds their members unpacked, so every bundle of the manifests
    (`manifest/etc2/hi/version_latest_{Bulk,Individual,ep1,ep2,ep3}.bin`) is rebuilt from them, on

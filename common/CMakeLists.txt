@@ -75,16 +75,23 @@ target_link_libraries(soa_gamefiles_tests PRIVATE soa_gamefiles soa_compat ZLIB:
 #                         Aska's spellings: the runtime's SharedPreferences, the server's Game.xml
 #   include/soa/prefs_xml.h  Android SharedPreferences XML, the string entries (pugixml reads; the
 #                         writer is Android's bytes by hand): the runtime's prefs, the server's Game.xml
+#   include/soa/aska_image.h  the game's packed images: SLZ (zlib / zstd), ISF, AIF, ETC2 blocks
+#                         decoded and encoded: tools/aif2png, the server's English art
+#                         (soaserver/english_art.h)
+#   include/soa/kvs.h     the game's Game.xml (Aska::LocalKVS: ChaCha20 (OpenSSL) under Base64): the
+#                         server's seed save, platform370's --voice-lang
 #   soa_codec_tests  its unit tests (build/common/soa_codec_tests; T0 `codec`); the committed saves
 #                    are read from this checkout (SOA_REPO_DIR)
 add_library(soa_codec STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/png.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/base64.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/prefs_xml.cpp)
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/prefs_xml.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/aska_image.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/kvs.cpp)
 target_include_directories(soa_codec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(soa_codec PRIVATE -Wall)
-target_link_libraries(soa_codec PRIVATE soa::stb ZLIB::ZLIB OpenSSL::Crypto pugixml::pugixml soa_compat)
+target_link_libraries(soa_codec PRIVATE soa::stb ZLIB::ZLIB zstd::libzstd OpenSSL::Crypto pugixml::pugixml soa_compat)
 
 add_executable(soa_codec_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/codec_main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/base64_tests.cpp
-               ${CMAKE_CURRENT_SOURCE_DIR}/tests/prefs_xml_tests.cpp)
+               ${CMAKE_CURRENT_SOURCE_DIR}/tests/prefs_xml_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/aska_image_tests.cpp
+               ${CMAKE_CURRENT_SOURCE_DIR}/tests/kvs_tests.cpp)
 target_compile_options(soa_codec_tests PRIVATE -Wall)
 target_compile_definitions(soa_codec_tests PRIVATE SOA_REPO_DIR="${CMAKE_SOURCE_DIR}")
 target_link_libraries(soa_codec_tests PRIVATE soa_codec soa_compat)

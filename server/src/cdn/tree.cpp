@@ -17,8 +17,10 @@
 
 #include "cdn/files.h"
 #include "core/log.h"
+#include "master/english_text.h"
 #include "soaserver/adld.h"
 #include "soaserver/cdn.h"
+#include "soaserver/english_art.h"
 #include "soaserver/chash32.h"
 #include <soa/file_tree.h>
 #include <soa/install.h>
@@ -124,6 +126,7 @@ struct TreeBuilder {
     std::string master_sha1, master_path;                               // the served master: plaintext SHA-1, ADLD file
     uint64_t master_plain_size = 0;
     std::vector<Standin> standins;
+    std::string english_root;  // --english: <scratch>/lang-en (serve_english)
     std::vector<Manifest> manifests;
     size_t missing = 0;
 
@@ -146,6 +149,7 @@ struct TreeBuilder {
         files::mkdirs(scratch);
         now = opts.now ? opts.now : files::server_time();
         if (!serve_master()) return nullptr;
+        if (opts.english) serve_english();
         add_standins();
         if (!read_manifests()) return nullptr;
         for (auto& manifest : manifests) collect_bundles(manifest);
@@ -183,25 +187,123 @@ struct TreeBuilder {
         return true;
     }
 
-    // 2. the stand-ins (d: new members of their own bundles; a real asset of the same name wins).
+    // 1b. --english: the generated root <scratch>/lang-en with the English master
+    // (docs/server-rules.md#english; d: a new member "sqlite/basmaster-en.sqlite3" beside the
+    // served master, which a client with CLanguage::Current = en loads instead, b:
+    // FileExistLanguage, docs/english.md 6.3). Its old file is removed first, so a build without the
+    // table serves none.
+    void serve_english() {
+        english_root = scratch + "/lang-en";
+        serve_english_art();
+        serve_english_story();
+        std::string out = english_root + "/" + files::kEnglishMasterName;
+        ::remove(out.c_str());
+        if (opts.english_text.empty()) {
+            LOGW("cdn", "--english: no English text table (data/english/master-en.tsv, --english-text): no %s served", files::kEnglishMasterName);
+            return;
+        }
+        std::string sha;
+        uint64_t size = 0;
+        std::vector<uint8_t> enc =
+            make_english_master(scratch + "/basmaster-served.sqlite3", opts.english_text, scratch + "/basmaster-served-en.sqlite3", &sha, &size);
+        if (enc.empty()) {
+            LOGW("cdn", "--english: no %s served", files::kEnglishMasterName);
+            return;
+        }
+        files::mkdirs(english_root + "/sqlite");
+        if (!write_file(out, enc.data(), enc.size())) LOGW("cdn", "--english: cannot write %s", out.c_str());
+        else LOGI("cdn", "english master: %s (%llu bytes, plaintext SHA-1 %s)", out.c_str(), (unsigned long long)enc.size(), sha.c_str());
+    }
+
+    // 1c. --english: the English UI art (docs/english.md 8; d: our art, PLAN-english Q4), built from
+    // the recipes and the user's own download into the generated root; cached by english_art
+    // outside the root (the root is served whole). A failed recipe leaves its image Japanese.
+    // 1d. --english: the English story files (docs/server-rules.md#english-story): for each
+    // Scenario/TS_xxxx.msgp of the download with a story table <english_story>/TS_xxxx.tsv,
+    // Scenario/TS_xxxx-en.msgp in the generated root when every Japanese line has English (d:
+    // PLAN-english Q12); the old -en story files are removed first.
+    void serve_english_story() {
+        std::vector<std::string> old;
+        files::walk(english_root, "", old);
+        for (auto& rel : old)
+            if (rel.rfind("Scenario/", 0) == 0 && rel.size() > 8 && rel.compare(rel.size() - 8, 8, "-en.msgp") == 0)
+                ::remove((english_root + "/" + rel).c_str());
+        if (opts.english_story.empty()) {
+            LOGW("cdn", "--english: no English story tables (data/english/story-en): the story stays Japanese");
+            return;
+        }
+        size_t served = 0, incomplete = 0, tables = 0;
+        for (auto& entry : assets->map) {
+            const std::string& name = entry.first;
+            if (name.rfind("Scenario/TS_", 0) != 0 || name.size() < 6 || name.compare(name.size() - 5, 5, ".msgp") != 0 ||
+                name.find('-') != std::string::npos)
+                continue;
+            std::string stem = name.substr(9, name.size() - 9 - 5);
+            std::string table = opts.english_story + "/" + stem + ".tsv";
+            if (!stat_file(table, nullptr)) continue;
+            tables++;
+            std::vector<uint8_t> file;
+            if (!src->read(name, file)) continue;
+            EnglishStoryStats st;
+            std::vector<uint8_t> enc = make_english_story(name, file, table, &st);
+            if (enc.empty()) {
+                incomplete++;
+                LOGI("cdn", "english story %s: %zu of %zu Japanese lines without English: not served", name.c_str(), st.missing, st.japanese);
+                continue;
+            }
+            std::string out = english_root + "/" + english_name(name);
+            files::mkdirs(english_root + "/Scenario");
+            if (write_file(out, enc.data(), enc.size())) served++;
+        }
+        LOGI("cdn", "english story: %zu tables, %zu files served, %zu incomplete (Japanese)", tables, served, incomplete);
+    }
+
+    void serve_english_art() {
+        if (opts.english_art.empty()) {
+            LOGW("cdn", "--english: no English art recipes (standin-assets-en/recipes): the UI art stays Japanese");
+            return;
+        }
+        english_art::Options ao{mirror, opts.english_art, english_root, scratch + "/lang-en.art-cache", ""};
+        english_art::Stats st;
+        std::string why;
+        if (!english_art::build(ao, &st, &why)) {
+            LOGW("cdn", "--english: no English art: %s", why.c_str());
+            return;
+        }
+        LOGI("cdn", "english art: %zu recipes, %zu built, %zu cached, %zu failed, %zu removed", st.recipes, st.built, st.cached, st.failed,
+             st.removed);
+    }
+
+    // 2. the stand-ins and the other roots (d: new members of their own bundles; a real asset of
+    // the same name wins, then the first root that has the name).
     void add_standins() {
         std::set<std::string> known;
         for (auto& entry : assets->map) known.insert(entry.first);
-        if (opts.standins.empty()) return;
-        std::vector<std::string> names;
-        files::walk(opts.standins, "", names);
-        for (auto& rel : names) {
-            if (known.count(rel)) {
-                LOGI("cdn", "stand-in %s: the download has it; not added", rel.c_str());
-                continue;
+        std::vector<std::string> roots;
+        if (!opts.standins.empty()) roots.push_back(opts.standins);
+        for (auto& root : opts.member_roots)
+            if (!root.empty()) roots.push_back(root);
+        if (!english_root.empty()) roots.push_back(english_root);
+        for (auto& root : roots) {
+            std::vector<std::string> names;
+            files::walk(root, "", names);
+            for (auto& rel : names) {
+                if (known.count(rel)) {
+                    LOGI("cdn", "stand-in %s: the download has it; not added", rel.c_str());
+                    continue;
+                }
+                if (t->overlay_.count(rel)) {
+                    LOGI("cdn", "%s/%s: an earlier root has it; not added", root.c_str(), rel.c_str());
+                    continue;
+                }
+                std::vector<uint8_t> data;
+                if (!read_file(root + "/" + rel, data)) continue;
+                uint32_t enc = adld::flags_of(data.data(), data.size());
+                if (enc != 0 && enc != adld::kXor && enc != adld::kAes) continue;
+                std::vector<uint8_t> plain = adld::decrypt(rel, data);
+                standins.push_back({rel, root + "/" + rel, sha1_hex(plain.data(), plain.size()), enc, data.size(), plain.size()});
+                t->overlay_[rel] = root + "/" + rel;
             }
-            std::vector<uint8_t> data;
-            if (!read_file(opts.standins + "/" + rel, data)) continue;
-            uint32_t enc = adld::flags_of(data.data(), data.size());
-            if (enc != 0 && enc != adld::kXor && enc != adld::kAes) continue;
-            std::vector<uint8_t> plain = adld::decrypt(rel, data);
-            standins.push_back({rel, opts.standins + "/" + rel, sha1_hex(plain.data(), plain.size()), enc, data.size(), plain.size()});
-            t->overlay_[rel] = opts.standins + "/" + rel;
         }
         t->standins_ = standins.size();
     }
@@ -534,6 +636,10 @@ Options options_from_config() {
     o.mirror = c.download_dir.empty() ? find_repo_file({soa::install::kRepoDownloadDir, soa::install::kRepoDownloadZip}) : c.download_dir;
     o.master = master_source::resolve();  // --master, the repo's, else derived (soaserver/master_source.h)
     o.standins = standin_dir_from_config();
+    o.english = c.english;  // (d) the -en members only with --english (PLAN-english Q11)
+    if (o.english) o.english_text = english::table_path();
+    if (o.english) o.english_story = english::story_dir();
+    if (o.english) o.english_art = find_repo_file("standin-assets-en/recipes");  // (d) our English art (PLAN-english Q4)
     o.scratch = !c.cdn_scratch.empty() ? c.cdn_scratch
                 : !c.data_root.empty() ? c.data_root + "/cdn"
                                        : soa::temp_dir() + "/soa-server-cdn-" + std::to_string(getuid());

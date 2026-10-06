@@ -12,6 +12,7 @@
 #include <map>
 
 #include "core/log.h"
+#include "master/english_text.h"
 #include "master/master.h"  // text
 #include "soaserver/config.h"
 
@@ -227,6 +228,17 @@ bool Pools::draw(uint32_t id, bool bonus, const std::string& now, uint64_t r_ran
     return true;
 }
 
+namespace {
+// A rate heading: the Japanese text of master_text `message_id` (a: the gacha_tilte_message_*
+// rows, which the headings equal), or under --english its English from the English text table
+// when that translates this Japanese and keeps its printf conversions (d;
+// docs/server-rules.md#english).
+std::string heading(const char* message_id, const std::string& ja) {
+    std::string en = english::display(message_id, ja);
+    return english::same_specifiers(en, ja) ? en : ja;
+}
+}  // namespace
+
 std::vector<RateLine> Pools::rate_lines(uint32_t id, const std::string& now) const {
     std::vector<RateLine> out;
     Gacha g;
@@ -269,7 +281,7 @@ std::vector<RateLine> Pools::rate_lines(uint32_t id, const std::string& now) con
                 }
             }
             if (total <= 0) continue;
-            line(3, gr.head_msg, fmt((std::string(gr.star) + "提供割合 %.5f%%").c_str(), total));
+            line(3, gr.head_msg, fmt(heading(gr.head_msg, std::string(gr.star) + "提供割合 %.5f%%").c_str(), total));
             line(6, "", "");
             for (auto& key : order_units) line(key.first == 2 ? 4 : unit_type == 4 ? 5 : unit_type, "", "", key.second, fmt("%.5f%%", pct[key]));
             line(7, "", "");
@@ -282,14 +294,14 @@ std::vector<RateLine> Pools::rate_lines(uint32_t id, const std::string& now) con
     uint64_t w[kRanks], sum = 0;
     rank_weights(id, false, now, w);
     for (auto x : w) sum += x;
-    line(3, "gacha_tilte_message_0001", "レアリティー別提供割合");
+    line(3, "gacha_tilte_message_0001", heading("gacha_tilte_message_0001", "レアリティー別提供割合"));
     for (auto& gr : groups) {
         double total = 0;
         for (int k : gr.ranks) total += sum ? 100.0 * (double)w[k] / (double)sum : 0.0;
-        if (total > 0) line(2, gr.total_msg, fmt((std::string(gr.star) + ":%.5f%%").c_str(), total));
+        if (total > 0) line(2, gr.total_msg, fmt(heading(gr.total_msg, std::string(gr.star) + ":%.5f%%").c_str(), total));
     }
     line(1, "", "");
-    line(3, "gacha_tilte_message_0010", "一般提供割合");
+    line(3, "gacha_tilte_message_0010", heading("gacha_tilte_message_0010", "一般提供割合"));
     section(false);
     if (g.is_bulk_bonus) {
         uint64_t b[kRanks], bs = 0;
@@ -297,7 +309,7 @@ std::vector<RateLine> Pools::rate_lines(uint32_t id, const std::string& now) con
         for (auto x : b) bs += x;
         if (bs) {
             line(1, "", "");
-            line(3, "gacha_tilte_message_0008", "10連ガチャ特典枠");
+            line(3, "gacha_tilte_message_0008", heading("gacha_tilte_message_0008", "10連ガチャ特典枠"));
             section(true);
         }
     }

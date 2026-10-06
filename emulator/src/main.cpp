@@ -150,6 +150,7 @@ int main(int argc, char** argv) {
     // platform370's native patch: before any guest code runs.
     if (platform370::install_patches(*lib) == platform370::PatchStatus::Disabled)
         LOGI("emu", "--no-patch: the client runs unmodified; its service-end check is live");
+    platform370::install_language(*lib);  // --lang / --voice-lang
     install_traces(*lib);  // SOA_TRACE
     profile_init(*lib);    // SOA_COVERAGE / SOA_PROFILE
     app::start_watchdog(); // SOA_WATCHDOG

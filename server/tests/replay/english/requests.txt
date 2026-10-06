@@ -1,0 +1,9 @@
+# soa-server replay corpus (server/tests/replay/README.md): english, hand-written (docs/PLAN-english.md E6):
+# the server's own texts under --english with the fixture table server/tests/fixtures/english-fixture.tsv:
+# the login bonus's present line (Present_box_1 and the bonus name, English), PresentList, the gacha rate
+# dialog's headings (gacha_tilte_message_*: English where the fixture has them, Japanese where not), GetPlayer.
+# tz: America/Toronto
+req 1 1603641600 Login a01c67ef - - - -
+req 2 1603641605 PresentList fa782a45 - - - -
+req 3 1603641645 GetGachaRate d6bcb49d 3589601563 78 - -
+req 4 1603641650 GetPlayer 9a056905 - - - -

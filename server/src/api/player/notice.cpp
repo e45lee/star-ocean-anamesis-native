@@ -25,6 +25,7 @@
 #include "core/time.h"
 #include "soaserver/native_test.h"
 #include "soaserver/events.h"
+#include "soaserver/config.h"
 #include "soaserver/ext.h"
 #include "core/modules.h"
 
@@ -40,6 +41,11 @@ constexpr const char* kNoticeUrl = "http://soa-local.invalid/notice";
 constexpr int kPageColumns = 48;
 // (d) At most this many open event areas are listed by name; the rest are counted.
 constexpr int kMaxListedAreas = 12;
+
+// (d) The page's own words in the server's language: English under --english
+// (docs/server-rules.md#english), else Japanese. The leading marks (【】, ■, ・) stay in both: they
+// are the page's markup (Page::html).
+const char* tr(const char* ja, const char* en) { return config().english ? en : ja; }
 
 // OnPlayerLoad: WebView                                   on Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart
 // Rules: docs/server-rules.md#notice-board
@@ -119,15 +125,16 @@ std::string html_escape(const std::string& s) {
 // own local pages (the 3.8.0 APK's assets/*.html: a 640-px viewport, white text on dark grey, a (380-ok)
 // dark heading bar), with inline CSS only (no resources to fetch).
 std::string Page::html() const {
-    std::string h =
-        "<!DOCTYPE html>\n<html lang=\"ja\"><head><meta charset=\"utf-8\"><title>お知らせ</title>\n"
-        "<meta name=\"viewport\" content=\"width=640, user-scalable=no\">\n<style>\n"
-        "body{margin:0;padding:24px 28px;background:#2a2c33;color:#f2f2f2;font-size:26px;line-height:1.5}\n"
-        "h1{margin:0 0 16px;padding:8px 0;background:#3c3c3c;border-top:2px solid #6aa7d8;border-bottom:2px solid #6aa7d8;"
-        "color:#fff;font-size:30px;text-align:center;font-weight:bold}\n"
-        "h2{margin:22px 0 6px;padding:4px 12px;border-left:8px solid #6aa7d8;background:#383b45;font-size:27px}\n"
-        "ul{margin:0;padding:0 0 0 1.2em}li{margin:2px 0}p{margin:4px 0}.clock{color:#c8d4e0}\n"
-        "</style></head><body>\n";
+    std::string h = std::string("<!DOCTYPE html>\n<html lang=\"") + tr("ja", "en") + "\"><head><meta charset=\"utf-8\"><title>" +
+                    tr("お知らせ", "Notices") +
+                    "</title>\n"
+                    "<meta name=\"viewport\" content=\"width=640, user-scalable=no\">\n<style>\n"
+                    "body{margin:0;padding:24px 28px;background:#2a2c33;color:#f2f2f2;font-size:26px;line-height:1.5}\n"
+                    "h1{margin:0 0 16px;padding:8px 0;background:#3c3c3c;border-top:2px solid #6aa7d8;border-bottom:2px solid #6aa7d8;"
+                    "color:#fff;font-size:30px;text-align:center;font-weight:bold}\n"
+                    "h2{margin:22px 0 6px;padding:4px 12px;border-left:8px solid #6aa7d8;background:#383b45;font-size:27px}\n"
+                    "ul{margin:0;padding:0 0 0 1.2em}li{margin:2px 0}p{margin:4px 0}.clock{color:#c8d4e0}\n"
+                    "</style></head><body>\n";
     bool in_list = false;
     auto close_list = [&] {
         if (in_list) h += "</ul>\n";
@@ -155,7 +162,7 @@ std::string Page::html() const {
             h += "<li>" + html_escape(l.substr(3)) + "</li>\n";
         } else {
             close_list();
-            bool clock = starts(l, "日時") || starts(l, "イベントカレンダー");
+            bool clock = starts(l, tr("日時", "Date")) || starts(l, tr("イベントカレンダー", "Event calendar"));
             h += std::string(clock ? "<p class=\"clock\">" : "<p>") + html_escape(l) + "</p>\n";
         }
     }
@@ -166,34 +173,36 @@ std::string Page::html() const {
 // (a) The open event areas, named by master_event_area.name_message_id (notice_page, step 2).
 void add_event_areas(ext::Ctx& ctx, ServerTime now, EventTime event_now, Page& page) {
     auto areas = events::open_areas(ctx, now, event_now);
-    page.line("■ 開催中のイベント (" + std::to_string(areas.size()) + ")");
+    page.line(tr("■ 開催中のイベント (", "■ Events now on (") + std::to_string(areas.size()) + ")");
     int shown = 0;
     for (const auto& area : areas) {
         if (shown == kMaxListedAreas) {
-            page.line("  ほか " + std::to_string(areas.size() - shown) + " 件");
+            page.line(config().english ? "  and " + std::to_string(areas.size() - shown) + " more"
+                                       : "  ほか " + std::to_string(areas.size() - shown) + " 件");
             break;
         }
         std::string name;
         ctx.m.q("select name_message_id from master_event_area where id = ?", {area.id},
-                [&](const Row& area_row) { name = ext::text(ctx.m, area_row.s("name_message_id")); });
+                [&](const Row& area_row) { name = ext::display_text(ctx.m, area_row.s("name_message_id")); });
         page.line("・" + (name.empty() ? area.label : name));
         shown++;
     }
-    if (areas.empty()) page.line("・なし");
+    if (areas.empty()) page.line(tr("・なし", "・None"));
 }
 
 // (a) The login bonuses running at the server clock with the day reached (api/daily/login_bonus.cpp's
 // table) (notice_page, step 3).
 void add_login_bonuses(ext::Ctx& ctx, ServerTime now, Page& page) {
-    page.line("■ ログインボーナス");
+    page.line(tr("■ ログインボーナス", "■ Login bonuses"));
     int bonuses = 0;
     ctx.m.q("select id, name_message_id, opened_at, closed_at from master_login_bonus order by order_id", {}, [&](const Row& bonus_row) {
         if (!open_at(bonus_row.s("opened_at"), bonus_row.s("closed_at"), now)) return;
         int64_t day = ctx.st.one("select ifnull(max(day_index), 0) from login_bonus where id = ?", {bonus_row.i("id")});
-        page.line("・" + ext::text(ctx.m, bonus_row.s("name_message_id")) + (day ? " " + std::to_string(day) + "日目" : ""));
+        std::string day_text = !day ? "" : config().english ? " (day " + std::to_string(day) + ")" : " " + std::to_string(day) + "日目";
+        page.line("・" + ext::display_text(ctx.m, bonus_row.s("name_message_id")) + day_text);
         bonuses++;
     });
-    if (!bonuses) page.line("・なし");
+    if (!bonuses) page.line(tr("・なし", "・None"));
 }
 
 // The notice page: (d) what it lists is the server's choice.
@@ -202,11 +211,11 @@ Page notice_lines(ext::Ctx& ctx) {
     ServerTime now = ctx.now();
     EventTime event_now = ctx.event_now();
     // 1. the clocks
-    page.line("【お知らせ】");
-    page.line("このゲームはローカルサーバーで動作しています。");
-    page.line("日時: " + format_local(now.v, "%Y/%m/%d %H:%M"));
+    page.line(tr("【お知らせ】", "【Notices】"));
+    page.line(tr("このゲームはローカルサーバーで動作しています。", "This game is running on a local server."));
+    page.line(tr("日時: ", "Date: ") + format_local(now.v, "%Y/%m/%d %H:%M"));
     if (format_local(event_now.v, "%Y/%m/%d") != format_local(now.v, "%Y/%m/%d"))
-        page.line("イベントカレンダー: " + format_local(event_now.v, "%Y/%m/%d"));
+        page.line(tr("イベントカレンダー: ", "Event calendar: ") + format_local(event_now.v, "%Y/%m/%d"));
     page.line("");
     // 2. the open event areas
     add_event_areas(ctx, now, event_now, page);
@@ -216,7 +225,8 @@ Page notice_lines(ext::Ctx& ctx) {
     page.line("");
     // 4. the present box
     int64_t presents = ctx.st.one("select count(*) from presents where received_at is null", {});
-    page.line("■ プレゼントBOX: " + std::to_string(presents) + " 件");
+    page.line(config().english ? "■ Present box: " + std::to_string(presents) + (presents == 1 ? " item" : " items")
+                               : "■ プレゼントBOX: " + std::to_string(presents) + " 件");
     return page;
 }
 
@@ -302,6 +312,31 @@ NATIVE_TEST("player/notice") {
         ctx.st.exec("rollback");
     });
     if (!ran) t.fail("needs the 3.7.0 master (data/basmaster-3.7.0.sqlite3) and the seed save (data/saves/seed/Game.xml)");
+}
+
+// --english: the page's own words in English, <html lang="en">, the login bonus names from the
+// English text table (here the fixture's "Login Bonus"); without it, the Japanese page.
+NATIVE_TEST("player/notice-english") {
+    std::string fixture = find_repo_file("server/tests/fixtures/english-fixture.tsv");
+    if (fixture.empty()) return t.fail("server/tests/fixtures/english-fixture.tsv not found");
+    ServerConfig saved = config();
+    config().english = true;
+    config().english_text = fixture;
+    std::string h, p;
+    bool ran = ext::with_scratch_server(t.rand_u64(), [&](ext::Ctx& ctx) {
+        h = notice_lines(ctx).html();
+        p = notice_page(ctx);
+    });
+    config() = saved;
+    if (!ran) return t.fail("needs the 3.7.0 master (data/basmaster-3.7.0.sqlite3) and the seed save (data/saves/seed/Game.xml)");
+    t.expect_eq(h.find("<html lang=\"en\">") != std::string::npos, true, "html lang en");
+    t.expect_eq(h.find("<title>Notices</title>") != std::string::npos && h.find("<h1>Notices</h1>") != std::string::npos, true, "title");
+    t.expect_eq(h.find("<h2>Events now on (") != std::string::npos, true, "events heading");
+    t.expect_eq(h.find("<h2>Login bonuses</h2>") != std::string::npos, true, "login bonus heading");
+    t.expect_eq(h.find("<h2>Present box: ") != std::string::npos, true, "present box heading");
+    t.expect_eq(h.find("<p class=\"clock\">Date: ") != std::string::npos, true, "the clock line");
+    t.expect_eq(p.find("This game is running on a local server.") != std::string::npos, true, "the text form");
+    t.expect_eq(p.find("お知らせ") == std::string::npos && p.find("ログインボーナス\n") == std::string::npos, true, "no Japanese headings");
 }
 
 }  // namespace

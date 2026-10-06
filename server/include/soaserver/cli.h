@@ -62,6 +62,18 @@ inline void add_server_options(CLI::App& app, ServerConfig& c, const std::string
         ->type_name("N")
         ->default_str("300000")
         ->group(group);
+    app.add_option_function<std::string>(
+           "--stamina-heal-time",
+           [&c](const std::string& v) {
+               uint64_t n = 0;
+               if (!cli::parse_u64(v, 10, &n) || v[0] == '-' || n > 0xffffffffULL)
+                   cli::bad_value("--stamina-heal-time", "expected a number of seconds, got \"" + v + "\"");
+               c.stamina_heal_time = (int64_t)n;
+           },
+           "(tests) the player's stamina regenerates one point per SECS instead of the master's "
+           "stamina_heal_time (180); 0: no regeneration")
+        ->type_name("SECS")
+        ->group(group);
     app.add_flag("--galaxy-pass", c.galaxy_pass, "the local player has the Galaxy Pass, renewed when it runs out (+2 deep space ships)")
         ->group(group);
     app.add_flag("--enable-events", c.enable_events,

@@ -299,6 +299,9 @@ int main() {
     // --fake-server (2026-10-05; the canned responses were retired, docs/unimplemented-apis.md step 9).
     const V kRemovedFont = {"--font"};
     const V kRemovedSoa = {"--font", "--fake-server"};
+    // Options added since: --stamina-heal-time (2026-10-06, both programs' server options; a test
+    // switch: tests/diff runs with 0, no stamina regeneration).
+    const V kAddedServer = {"--stamina-heal-time"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -586,14 +589,14 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, {}, kRemovedSoa, soa_rows);
+            check_names("soa", names, soa_old, kAddedServer, kRemovedSoa, soa_rows);
         }
         {
             soa::server::ServerConfig c;
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, {}, {}, server_rows);
+            check_names("soa-server", names, server_old, kAddedServer, {}, server_rows);
         }
         {
             soa::emu::EmuArgs a;

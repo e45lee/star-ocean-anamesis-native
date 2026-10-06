@@ -31,11 +31,18 @@ FULL = (seeded, tutorial, event)
 SHARDS = (shard_login, shard_battle, shard_gacha) + shard_tutorial.STAGES
 FLOWS = {f.NAME: f for f in FULL + SHARDS}
 REF = "emu"
+# Every run's server: no stamina regeneration (a test switch of soa-server / soa). The compared
+# stamina would otherwise depend on the battle's length: leaving full stamina at MissionStart
+# anchors regeneration there, and the next player load (MissionEnd's, the board's) gains a point
+# when 180 s have passed, on one target and not another (tests/diff/README.md "Stamina"). Every
+# stamina change a flow makes (costs, level-up refills) is still compared exactly.
+SERVER_ARGS = ["--stamina-heal-time", "0"]
 
 
 def run_target(flow, target, rdir, opts, inject, out, prepared=None):
     try:
         cfg = flow.config(targets.Config)
+        cfg.server_args += SERVER_ARGS
         if inject:
             cfg.server_args += inject
         if prepared:

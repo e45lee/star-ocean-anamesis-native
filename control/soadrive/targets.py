@@ -54,7 +54,7 @@ LAUNCHER_PORT = 44310
 # the server options the launcher passes on to soa-server (the others go to soa)
 LAUNCHER_SERVER_FLAGS = {"--new-player", "--galaxy-pass", "--enable-events", "--restore-tower"}
 LAUNCHER_SERVER_VALUES = {"--seed", "--download", "--download-dir", "--master", "--log-packets", "--seed-rng", "--clock",
-                          "--start-coins", "--event-keywords"}
+                          "--start-coins", "--event-keywords", "--stamina-heal-time"}
 
 
 def package_launcher(win):

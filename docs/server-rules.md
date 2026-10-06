@@ -105,7 +105,7 @@ Code: `server/src/api/player/` (the player state and its load, parties, assist, 
 <a id="player-stamina-state"></a>
 ### Stamina in the player state
 - **Maximum:** `master_player_level.stamina` for the player's level. **(a)** The table has 257 rows for levels 1..999; the levels without a row are interpolated linearly between the nearest rows, rounded half away from zero. **(b)** `MasterPlayerLevelModel::GetByCalculatedLevel`. `next_exp` is interpolated the same way. The maximum rank is `master_global.Player_Rank_max` (900). **(a)** `CUIUtility::GetMaxLevel` clamps it to 999 and uses 255 without the key. **(b)**
-- **Regeneration:** one point per `master_global.stamina_heal_time` seconds (180). A stamina above the maximum (after a level-up) doesn't regenerate, but isn't cut either. **(a)** for the period; **(c)** for the rule shape.
+- **Regeneration:** one point per `master_global.stamina_heal_time` seconds (180). A stamina above the maximum (after a level-up) doesn't regenerate, but isn't cut either. **(a)** for the period; **(c)** for the rule shape. (`--stamina-heal-time SECS` replaces the period for tests, 0 stops regeneration: tests/diff runs with 0 so the compared stamina doesn't depend on a run's timing; not a rule.)
 - **Mission cost:** `master_mission.use_stamina`, taken at `MissionStart`. **(a)** A start with too little stamina still goes ahead, and stamina stops at 0: never negative. **(d)** The client checks stamina before it asks.
 - **Level-up:** the new maximum is **added** to the current stamina; overflow is kept. **(c)** The client's rank-up dialog says スタミナが加算されます ("stamina is added"); see 1 above.
 

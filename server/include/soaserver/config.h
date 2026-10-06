@@ -32,6 +32,11 @@ struct ServerConfig {
     uint64_t seed_rng = 0;
     // Free coins a new local player starts with (--start-coins; docs/server-rules.md#seed).
     uint32_t start_coins = 300000;
+    // A test switch, not a rule (--stamina-heal-time SECS): the player's stamina regenerates one
+    // point per SECS instead of master_global.stamina_heal_time; 0 = no regeneration. -1 (the
+    // default): the master's. tests/diff runs every target with 0, so the compared stamina doesn't
+    // depend on how long a run's battle took (tests/diff/README.md "Stamina").
+    int64_t stamina_heal_time = -1;
 
     // ---- clock (--clock "YYYY-MM-DD HH:MM:SS"): the server clock starts there and runs on.
     // clock_offset = requested time - the real time when the option was read.

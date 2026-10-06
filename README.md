@@ -127,9 +127,11 @@ earlier llvm-mingw build (clang, libc++, the UCRT): `soa-server.exe --selftest`,
 `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests `win:battle-gacha` (the port's
 restore session, in process), `win:seeded` (`soa-emu.exe` against `soa-server.exe`: login, battle,
 gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff shard on the three Windows targets)
-(`port/PLAN.md` 5b, "As built"). The MinGW-w64 GCC build (2026-10-05) so far under Wine only: the
-unit tests, `soaruntime_tests.exe` and `soa-server.exe --selftest` (all but the tests that need
-`work/download-3.7.0`); the checks on Windows itself are still to be repeated with it.
+(`port/PLAN.md` 5b, "As built"). The MinGW-w64 GCC build (2026-10-05), checked on Windows on
+2026-10-06: `soa-server.exe --selftest` 143/143, `win:battle-gacha` (twice), `win:seeded`,
+`win:viewer-boot`; `soaruntime_tests.exe` passes every test it reaches, but the process ends early
+(exit 116) in the GDB stub's IPv6 test; `soa.exe --selftest` 377/378, `render/device-shader-program`
+fails on Windows only, as it did before these fixes.
 
 ```sh
 sudo apt install g++-mingw-w64-x86-64-posix               # once: the cross compiler (Ubuntu / Debian)

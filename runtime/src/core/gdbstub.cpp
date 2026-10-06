@@ -33,6 +33,7 @@
 #include <thread>
 
 #include "core/gdb_protocol.h"
+#include "core/crash.h"
 #include "core/loader.h"
 #include "core/log.h"
 #include "dynarmic/interface/A64/a64.h"
@@ -661,6 +662,7 @@ private:
 };
 
 void server_main() {
+    crash_thread_begin("gdb-server");
     while (!g_shutdown) {
         int fd = sock::accept(g_listen_fd);  // (gdb_shutdown closes the listener: accept fails)
         if (fd < 0) {

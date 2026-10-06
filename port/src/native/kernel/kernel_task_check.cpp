@@ -32,19 +32,23 @@ void TaskObservation::capture_post(const TaskManager* m) {
 
 namespace {
 
-// The shadow manager: its own recursive mutex and events, made once per thread.
+// The shadow manager: its own recursive mutex and events, made once per thread (on the heap:
+// live::thread_scratch, not static TLS).
 TaskManager* shadow_manager() {
-    alignas(16) static thread_local u8 buf[sizeof(TaskManager)];
-    static thread_local bool made = false;
-    auto* m = reinterpret_cast<TaskManager*>(buf);
-    if (!made) {
-        std::memset(buf, 0, sizeof buf);
+    struct Shadow {
+        alignas(16) u8 buf[sizeof(TaskManager)];
+        bool made = false;
+    };
+    Shadow& sh = live::thread_scratch<Shadow>();
+    auto* m = reinterpret_cast<TaskManager*>(sh.buf);
+    if (!sh.made) {
+        std::memset(sh.buf, 0, sizeof sh.buf);
         m->m_barrierCs.CtorBase();
         for (Event& e : m->m_barrierEvents) {
             e.Ctor();
             e.Create(true, false);
         }
-        made = true;
+        sh.made = true;
     }
     return m;
 }

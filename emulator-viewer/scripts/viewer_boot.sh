@@ -2,7 +2,7 @@
 # Boot check of the 3.8.0 viewer (emulator-viewer/README.md "Checks"): builds nothing.
 #
 # Usage: emulator-viewer/scripts/viewer_boot.sh [soa-viewer binary] [out dir] [extra soa-viewer args...]
-#   defaults: build/emulator-viewer/soa-viewer (the repository build: cmake -S . -B build); a fresh
+#   defaults: build/emulator-viewer/soa-viewer (the repository build: scripts/build.sh); a fresh
 #   mktemp dir (kept: the log and screenshots; the phone's data is deleted unless KEEP_DATA=1)
 #
 # Runs soa-viewer headless on a fresh phone (no save) and checks that the unmodified offline client

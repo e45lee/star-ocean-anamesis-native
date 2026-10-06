@@ -29,7 +29,7 @@ elapsed() { echo $(( $(date +%s) - t0 )); }
 win=0
 start_viewer() {
     local bin=$1; shift
-    [ -x "$bin" ] || { echo "FAIL: $bin not built (cmake -S . -B build && cmake --build build --target soa-viewer)"; exit 1; }
+    [ -x "$bin" ] || { echo "FAIL: $bin not built (scripts/build.sh --target soa-viewer)"; exit 1; }
     phone=${VIEWER_DATA:-$out/phone}
     mkdir -p "$phone" "$out/shots"
     log=$out/viewer.log fifo=$out/fifo

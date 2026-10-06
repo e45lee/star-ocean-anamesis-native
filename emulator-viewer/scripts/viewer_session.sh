@@ -3,7 +3,7 @@
 # "Checks"). Builds nothing.
 #
 # Usage: emulator-viewer/scripts/viewer_session.sh [soa-viewer binary] [out dir] [extra soa-viewer args...]
-#   defaults: build/emulator-viewer/soa-viewer (the repository build: cmake -S . -B build); a fresh
+#   defaults: build/emulator-viewer/soa-viewer (the repository build: scripts/build.sh); a fresh
 #   mktemp dir (kept: the log and screenshots; the phone's data is deleted unless KEEP_DATA=1)
 # Env: VIEWER_RECORD=1 records the missing reference screenshots (delete ref/NAME.png to re-record
 #   it; check new ones by eye),

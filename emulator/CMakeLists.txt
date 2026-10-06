@@ -1,7 +1,7 @@
 # soa-emu: the 3.7.0 online client (work/libSOA-3.7.0.so + the 3.7.0 APK), unmodified, under the
 # JIT host runtime (../runtime) with the 3.7.0 platform layer (../platform370). No natives: it never
 # links port/src/native. emulator/README.md.
-# Added by the repository's CMakeLists.txt after ../runtime and ../platform370 (cmake -S . -B build:
+# Added by the repository's CMakeLists.txt after ../runtime and ../platform370 (scripts/build.sh:
 # build/emulator/soa-emu).
 
 # src/ is main.cpp only: the command line -> platform370::Config, the data dir, the APK and library,

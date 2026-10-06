@@ -152,7 +152,17 @@ working directory: `data/basmaster-3.7.0.sqlite3`, `data/gacha_pools.sqlite3`, `
 `work/download-3.7.0`, else `work/SOA-3.7.0-canonical-data.zip` (the Windows stage holds only the zip:
 scripts/windows-stage.sh), `standin-assets/`); then the **install dirs**, the executable's own folder and
 its `game/` subfolder (`common/include/soa/install.h`, `game_files.h`; a release package, README.md
-"Packaging"):
+"Packaging").
+
+**A release build never uses a checkout around it** (the user, 2026-10-07): built with
+`scripts/build.sh --release` (`SOA_RELEASE_PACKAGE`, which the packages are made from), soa,
+soa-server, soa-emu and soa-viewer search only `--repo DIR` (when given) and the install dirs: no
+upward search from the executable or the working directory, and not the working directory itself.
+A package unzipped inside a checkout so behaves as anywhere else (e.g. its first run starts a fresh
+account instead of seeding from the checkout's `data/saves/seed/Game.xml`). A development build
+(`scripts/build.sh`) keeps the order above. One rule for all four programs:
+`soa::install::repo_roots` in `install.h` (tests: `common/tests/install_tests.cpp`); each logs the
+roots it took (`repo DIR (from ...)`, or `release build: no source checkout is searched ...`).
 
 | What | Flag | In the install dirs |
 |---|---|---|

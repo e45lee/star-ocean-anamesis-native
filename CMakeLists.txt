@@ -104,6 +104,13 @@ if(SOA_NEED_RUNTIME OR SOA_BUILD_WEBVIEW)
   include(cmake/fonts.cmake)  # soa_fonts: Noto Sans JP built into the programs (soa/fonts.h)
 endif()
 
+# A release build (scripts/build.sh --release, the only Release configure; the packages are made
+# from it): SOA_RELEASE_PACKAGE, so the programs never look for a source checkout around them,
+# only --repo DIR and the install dirs (common/include/soa/install.h, "the repo roots"). Not NDEBUG.
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  add_compile_definitions(SOA_RELEASE_PACKAGE=1)
+endif()
+
 add_subdirectory(common)    # soa_env (header-only: the environment rule, soa/env.h), soa_env_tests, soa_compat (sockets; the Windows shims), soa_zip (the ZIP reader), soa_zip_tests, soa_codec (PNG, Base64, SharedPreferences XML), soa_codec_tests
 
 # ---- the parts, in dependency order

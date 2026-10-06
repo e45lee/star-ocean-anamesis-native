@@ -37,6 +37,9 @@
 # symbols), no aif2png; on Linux libstdc++
 # and libgcc linked statically (the binaries need only glibc, libEGL and libGLESv2). No
 # -march / -ffast-math: the natives are bit-exact only with the default x86-64 code (no FMA).
+# A Release configure also defines SOA_RELEASE_PACKAGE (root CMakeLists.txt): the programs then never
+# search for a source checkout around them, only --repo DIR and their install dirs
+# (common/include/soa/install.h, "the repo roots"; README.md "Packaging").
 #
 # -DNAME=VALUE (after those, any number): configure options (e.g. -DSOA_BUILD_PORT=OFF); given to the
 # first configure, or to a reconfigure of an existing build dir (with this script's environment);

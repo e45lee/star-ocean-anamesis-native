@@ -16,8 +16,11 @@
 //     game/, ...); else that zip itself, unextracted (soa/game_files.h find_download: the
 //     zip-aware half, target soa_gamefiles).
 // The programs' own generated data (data/gacha_pools.sqlite3, data/saves/seed/Game.xml,
-// standin-assets/) sits in the install dir at its repository path: the install dir is the last
-// "repo root" the repo-file lookups search (port core/paths.cpp, soa-server's repo_roots()).
+// standin-assets/) sits in the install dir at its repository path: the install dirs are the last
+// "repo roots" the repo-file lookups search (repo_roots below: port core/paths.cpp, soa-server's
+// repo_roots(), soa-emu, soa-viewer). In a release build (scripts/build.sh --release: the
+// packages) they are the only ones unless --repo DIR names a checkout: a release build never uses a
+// checkout around it.
 #include <algorithm>
 #include <cctype>
 #include <cstdint>
@@ -98,6 +101,144 @@ inline std::vector<std::string> install_dirs() {
     v.push_back(d);
     if (is_dir(d + "/" + kGameSubdir)) v.push_back(d + "/" + kGameSubdir);
     return v;
+}
+
+// ---- the repo roots ---------------------------------------------------------------------------
+// Where the programs look for repo files (find_repo_file and the like: data/, apk/, work/,
+// standin-assets/, server/tests/fixtures, ...), one rule for soa (port/src/core/paths.cpp),
+// soa-server (server/app/main.cpp repo_roots()), soa-emu (emulator/src/main.cpp) and soa-viewer
+// (emulator-viewer/src/main.cpp; its XAPK lookup):
+//
+//   development build (scripts/build.sh): `--repo DIR`; else the first checkout upwards from the
+//     executable; else upwards from the working directory. With a checkout, also the main checkout
+//     of a git worktree whose work/ is a symlink into it. Then the install dirs; without a checkout,
+//     the working directory last.
+//   release build (scripts/build.sh --release, which the packages are made from; README.md
+//     "Packaging"): `--repo DIR` (and its main checkout) when given, then the install dirs.
+//     Nothing else: no upward search from the executable or the working directory (the user,
+//     2026-10-07): a package unzipped inside a checkout must behave as anywhere else, e.g. start a
+//     fresh account instead of seeding from the checkout's data/saves/seed/Game.xml. (An unknown
+//     executable path leaves the list empty; find_repo_file then looks relative to the working
+//     directory, as for any program without roots.)
+//
+// kReleasePackage is SOA_RELEASE_PACKAGE, which the root CMakeLists.txt defines for a Release
+// configure (only scripts/build.sh --release makes one); not NDEBUG.
+#ifdef SOA_RELEASE_PACKAGE
+inline constexpr bool kReleasePackage = true;
+#else
+inline constexpr bool kReleasePackage = false;
+#endif
+
+// `p` absolute with symlinks resolved, '/'-separated; "" when it doesn't exist.
+inline std::string canonical_path(const std::string& p) {
+    if (p.empty()) return "";
+    std::error_code ec;
+    std::filesystem::path c = std::filesystem::canonical(std::filesystem::path(p), ec);
+    if (ec) return "";
+    std::string s = c.generic_string();
+    std::replace(s.begin(), s.end(), '\\', '/');
+    return s;
+}
+
+// The folder holding `p` ('/'-separated), "" at the top.
+inline std::string parent_dir(const std::string& p) {
+    size_t s = p.find_last_of('/');
+    if (s == std::string::npos) return "";
+    return s == 0 ? "/" : p.substr(0, s);
+}
+
+// Is `dir` a checkout? Each program passes its own marker (the CMakeLists.txt of its parts).
+using CheckoutTest = std::function<bool(const std::string& dir)>;
+
+// The first directory from `dir` upwards that is a checkout, "" when none.
+inline std::string checkout_upwards(std::string dir, const CheckoutTest& is_checkout) {
+    while (!dir.empty()) {
+        if (is_checkout(dir)) return dir;
+        std::string up = parent_dir(dir);
+        if (up == dir) break;
+        dir = up;
+    }
+    return "";
+}
+
+// The main checkout of a git worktree (.claude/worktrees/NAME) whose work/ is a symlink into it
+// (it holds the untracked files: apk/, data/basmaster-3.7.0.sqlite3, ...); "" otherwise.
+inline std::string main_checkout_of(const std::string& root, const CheckoutTest& is_checkout) {
+    std::error_code ec;
+    if (root.empty() || !std::filesystem::is_symlink(std::filesystem::path(root + "/work"), ec)) return "";
+    std::string w = canonical_path(root + "/work");
+    std::string m = w.empty() ? "" : parent_dir(w);
+    return !m.empty() && m != root && is_checkout(m) ? m : "";
+}
+
+struct RepoRoots {
+    std::string root;               // the checkout (absolute), "" when none
+    std::string how;                // how it was found: "--repo", "the executable", "the working directory"
+    std::string main_checkout;      // a worktree's main checkout (main_checkout_of), "" when none
+    std::vector<std::string> all;   // the roots to search, in order
+    std::string warning;            // "--repo DIR: not found" when the given dir doesn't exist
+    bool release = false;           // found by the release rule
+
+    // One line for the programs' logs.
+    std::string describe() const {
+        if (!root.empty())
+            return "repo " + root + " (from " + how + ")" + (main_checkout.empty() ? "" : ", main checkout " + main_checkout);
+        std::string dirs = all.empty() || all[0] == "." ? std::string("(nothing)") : all[0];
+        if (all.size() > 1 && all[1] != ".") dirs += " and its " + std::string(kGameSubdir) + "/";
+        if (release) return "release build: no source checkout is searched (only --repo DIR); data files are looked up in " + dirs;
+        return "no source checkout: data files are looked up in " + dirs + ", then the working directory";
+    }
+};
+
+// The rule itself, for given inputs (tests: common/tests/install_tests.cpp). `given` is --repo
+// ("" when not given), `exe_dir` the executable's folder, `cwd` the working directory, `installs`
+// install_dirs().
+inline RepoRoots repo_roots_for(bool release, const std::string& given, const std::string& exe_dir, const std::string& cwd,
+                                const std::vector<std::string>& installs, const CheckoutTest& is_checkout) {
+    RepoRoots r;
+    r.release = release;
+    if (!given.empty()) {
+        r.root = canonical_path(given);
+        r.how = "--repo";
+        if (r.root.empty()) r.warning = "--repo " + given + ": not found";
+    }
+    if (r.root.empty() && !release) {
+        r.root = checkout_upwards(canonical_path(exe_dir), is_checkout);
+        r.how = "the executable";
+    }
+    if (r.root.empty() && !release) {
+        r.root = checkout_upwards(canonical_path(cwd), is_checkout);
+        r.how = "the working directory";
+    }
+    if (r.root.empty()) r.how.clear();
+    if (!r.root.empty()) {
+        r.all.push_back(r.root);
+        r.main_checkout = main_checkout_of(r.root, is_checkout);
+        if (!r.main_checkout.empty()) r.all.push_back(r.main_checkout);
+    }
+    // then the install dirs: a packaged program's data files (data/gacha_pools.sqlite3,
+    // data/saves/seed/Game.xml, standin-assets/) sit at their repo paths there; in a checkout's
+    // build dir (build/port/, ...) there are none
+    for (auto& d : installs)
+        if (std::find(r.all.begin(), r.all.end(), d) == r.all.end()) r.all.push_back(d);
+    // a development build without a checkout: the working directory last (as before)
+    if (r.root.empty() && !release && !r.all.empty()) r.all.push_back(".");
+    return r;
+}
+
+// This process's repo roots (kReleasePackage's rule).
+inline RepoRoots repo_roots(const std::string& given, const CheckoutTest& is_checkout) {
+    std::error_code ec;
+    std::filesystem::path cwd = std::filesystem::current_path(ec);
+    return repo_roots_for(kReleasePackage, given, exe_dir(), ec ? std::string() : cwd.generic_string(), install_dirs(), is_checkout);
+}
+
+// The first `rel` under one of `roots` (in order), "" when none has it.
+inline std::string find_in_roots(const std::vector<std::string>& roots, const std::string& rel) {
+    std::error_code ec;
+    for (auto& r : roots)
+        if (std::filesystem::exists(std::filesystem::path(r + "/" + rel), ec)) return r + "/" + rel;
+    return "";
 }
 
 // The entries of `dir` (names only, sorted).

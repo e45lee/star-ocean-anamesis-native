@@ -85,6 +85,7 @@ def test_readme_renders(kind, windows):
         assert ".xapk" in text and "3.7.0_APKPure.apk" not in text  # 380-ok: soa-viewer's game file
     else:
         assert "SOA-3.7.0-canonical-data.zip" in text and "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" in text
+    assert "never uses a checkout around it" in text  # the user, 2026-10-07: release builds skip the checkout search
     for prog in {"port": ["soa", "soa-server"], "emulator": ["soa-emu", "soa-server"], "viewer": ["soa-viewer"]}[kind]:
         assert f"\n{prog}{v['EXE']}\n" in text  # a section per program
     if kind == "port":

@@ -324,6 +324,10 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 - **Optimized:** `scripts/build.sh [--windows] --release` builds `build-release/` (`build-win-release/`):
   `CMAKE_BUILD_TYPE=Release` (`-O3`, `NDEBUG`) plus `-g1`, soa / soa-server / soa-emu only; no
   `-march` and no `-ffast-math` (the natives are bit-exact only with x86-64's default code). No LTO.
+  It also defines `SOA_RELEASE_PACKAGE`: **a release build never uses a checkout around it** (the
+  user, 2026-10-07): its programs search only `--repo DIR` and their own folder (and `game/`), never
+  upwards from the executable or the working directory, so a package unzipped inside a checkout
+  behaves as anywhere else (`docs/environment.md` "How the programs find the game files").
   On Linux libstdc++ and libgcc are linked statically: the binaries need glibc 2.39 (the build
   host's, Ubuntu 24.04), `libEGL.so.1` and `libGLESv2.so.2`; SDL loads X11 / Wayland / PulseAudio
   at run time. The Windows `.exe` files are static (Windows' DLLs only). Nothing else is needed for
@@ -344,8 +348,9 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   removed** (`gacha.name`, `rule.text`; the server takes the titles from the master,
   `docs/server-rules.md#gacha-pools`) and `standin-assets/` (our images). **No seed save** (the
   user, 2026-10-04: `data/saves/seed/Game.xml` is a real player's): a package's first run starts a
-  new account through the game's own tutorial, unless `--seed FILE` names a save
-  (`docs/server-rules.md#seed`).
+  new account through the game's own tutorial, unless `--seed FILE` names a save, or the user puts
+  one at `<package>/data/saves/seed/Game.xml` (`docs/server-rules.md#seed`). Not a checkout's: a
+  release build never looks there (above).
 - **What never goes in:** any game file: the APKs, the download, the master DBs
   (`data/basmaster-*.sqlite3` are decryptions of the game's own), `version.bin`, `libSOA.so`,
   decompiles. Before a zip is written every file must be on the allow-list
@@ -355,7 +360,8 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
   doesn't have. A violation fails the run and writes no zip (`tests/test_package.py` checks the check).
 - **The game files at run time:** the programs look for them where they are stored
   (`common/include/soa/install.h`, `game_files.h`): flags first (`--apk`, `--download` (=
-  `--download-dir`), `--master`), then the source checkout (developers), then **the program's own
+  `--download-dir`), `--master`), then the source checkout (development builds; a release build only
+  with `--repo DIR`), then **the program's own
   folder and its `game/` subfolder**: the 3.7.0 APK is any top-level `*.apk` whose libSOA.so is
   3.7.0's; the download is a folder holding `version.bin`, `manifest/` and `sqlite/basmaster.sqlite3`
   (any name), or `SOA-3.7.0-canonical-data.zip` (or another zip holding that tree) **read in place

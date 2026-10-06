@@ -2,7 +2,6 @@
 // client over the game's own wire protocol (server/net/: TCP framing, the Ninja cipher, the request
 // decoder, the bridge, the HTTP server) and runs the library's and the wire layer's unit tests
 // (--selftest) with no game loaded.
-#include <limits.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -18,6 +17,7 @@
 #include <soa/env.h>
 #include <soa/sock.h>
 #include <soa/game_files.h>
+#include <soa/install.h>
 
 #include "net/cdn_http.h"
 #include "net/game.h"
@@ -38,52 +38,18 @@ namespace {
 
 using soa::server::ServerConfig;
 
-bool exists(const std::string& p) {
+bool is_repo(const std::string& d) {
     struct stat st;
-    return !p.empty() && stat(p.c_str(), &st) == 0;
+    return stat((d + "/server/CMakeLists.txt").c_str(), &st) == 0 || stat((d + "/port/CMakeLists.txt").c_str(), &st) == 0;
 }
-std::string real(const std::string& p) {
-    char buf[PATH_MAX];
-    return realpath(p.c_str(), buf) ? std::string(buf) : std::string();
-}
-std::string parent(const std::string& p) {
-    size_t s = p.find_last_of('/');
-    if (s == std::string::npos) return "";
-    return s == 0 ? "/" : p.substr(0, s);
-}
-bool is_repo(const std::string& d) { return exists(d + "/server/CMakeLists.txt") || exists(d + "/port/CMakeLists.txt"); }
-std::string upwards(std::string d) {
-    while (!d.empty()) {
-        if (is_repo(d)) return d;
-        if (d == "/") break;
-        d = parent(d);
-    }
-    return "";
-}
-// The repo roots, as soa finds them (port core/paths.h): --repo, else upwards from the
-// executable, else from the working directory; plus the main checkout of a git worktree whose
-// work/ links into it; then the install dirs.
-std::vector<std::string> repo_roots(const std::string& given) {
-    std::string root = given.empty() ? "" : real(given);
-    if (root.empty()) root = upwards(parent(real("/proc/self/exe")));
-    if (root.empty()) root = upwards(real("."));
-    std::vector<std::string> all;
-    if (!root.empty()) {
-        all.push_back(root);
-        struct stat st;
-        if (lstat((root + "/work").c_str(), &st) == 0 && S_ISLNK(st.st_mode)) {
-            std::string w = real(root + "/work");
-            std::string main = w.empty() ? "" : parent(w);
-            if (!main.empty() && main != root && is_repo(main)) all.push_back(main);
-        }
-    }
-    // then the install dirs (soa/install.h): a packaged soa-server's data files (data/gacha_pools.sqlite3,
-    // data/saves/seed/Game.xml, standin-assets/) sit at their repo paths beside it; without a
-    // checkout, the working directory last (as before, when no root meant "relative to it")
-    for (auto& d : soa::install::install_dirs())
-        if (std::find(all.begin(), all.end(), d) == all.end()) all.push_back(d);
-    if (root.empty() && !all.empty()) all.push_back(".");
-    return all;
+// The repo roots, as soa finds them (common soa/install.h repo_roots: --repo; in a development
+// build also a checkout upwards from the executable or the working directory, and a worktree's
+// main checkout; then the install dirs). A packaged soa-server's data files (data/gacha_pools.sqlite3,
+// data/saves/seed/Game.xml, standin-assets/) sit at their repo paths beside it.
+soa::install::RepoRoots repo_roots(const std::string& given) {
+    soa::install::RepoRoots r = soa::install::repo_roots(given, is_repo);
+    if (!r.warning.empty()) fprintf(stderr, "soa-server: %s\n", r.warning.c_str());
+    return r;
 }
 
 // The client's own server name (docs/online-server.md section 2), as URLs without a port.
@@ -115,12 +81,14 @@ int main(int argc, char** argv) {
     const uint64_t shuffle = args.shuffle;
     const std::vector<std::string>& cdn_paths = args.cdn_paths;
     soa::server::set_log_sink(nullptr, log_enabled);
-    c.repo_roots = repo_roots(repo);
+    const soa::install::RepoRoots roots = repo_roots(repo);
+    c.repo_roots = roots.all;
     if (!data.empty()) {
         c.data_root = data;
         if (c.db.empty()) c.db = data + "/server.sqlite3";
     }
     const bool serving = !selftest && !list_apis && !list_hooks && replay_dir.empty();
+    if (serving) fprintf(stderr, "soa-server: %s\n", roots.describe().c_str());
     if (serving && download_dir.empty()) {
         // A packaged soa-server (README.md "Packaging"): the download beside the program or in its
         // game/ folder (soa/install.h). A checkout's build dir has none, so there nothing changes.

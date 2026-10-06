@@ -2,9 +2,12 @@
 // platform370's pieces, as platform370.cpp (install) registers them. Not part of the public API
 // (include/platform370/platform370.h).
 #include <cstdint>
+#include <string>
+#include <vector>
 
 namespace soa {
 class Hle;
+struct LoadedLib;
 }
 namespace soa::jni {
 class Vm;
@@ -28,5 +31,11 @@ void install_java(jni::Vm& vm);
 // patch_370.cpp: the master_global key the patch hides, and whether Config::patch is on.
 constexpr const char kHiddenGlobalKey[] = "service_stop_day";
 bool patch_enabled();
+
+// lang_370.cpp: the language settings install() was given.
+void set_language(const std::string& lang, const std::string& voice_lang);
+// text_370.cpp: --lang en's hooks on CCocosLabel::SetText (the hard-coded strings) and DrawSelf
+// (word wrap); their symbols are appended to `hooks`.
+void install_text(LoadedLib& lib, std::vector<std::string>& hooks);
 
 }  // namespace soa::platform370::detail

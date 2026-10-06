@@ -17342,6 +17342,16 @@ nowloading_battle_tips_053	8217eac44d4506c243a97496897ffe96512ed35f	The Maze of 
 nowloading_battle_tips_054	34fbe047e2cbd44774b41e4bc7a5d45761309646	Stun enemies faster by attacking them\nwith affinities they are weak against.	official
 nowloading_battle_tips_055	450c26a674cfc8ac6a1b585288d11299f31057ae	If two people follow each other, they'll be\n"Mutual Followers" and get perks.	official
 nowloading_battle_tips_056	a679dee5023ee6ce256ecec4260bbc932b9457f9	Mutual Followers can make exclusive\nlobbies with each other. These lobbies\ndon't require an ID.	official
+port_en_close		Close	human
+port_en_download_storage_short		Not enough free storage.\n%d MB of free space is needed.	human
+port_en_equip_swap_confirm		Equipment will be swapped.\nProceed?	human
+port_en_mascot_select		Select a new home mascot.	human
+port_en_show_3d_model		3D Model	human
+port_en_skill_learn_lv		Learned at Lv. %d	human
+port_en_sort_filter		Filter	human
+port_en_sort_order		Sort	human
+port_en_storage_short		Not enough free storage.\nFree up some space and restart the game.	human
+port_en_unknown_item		???	human
 pshop_ploginbonus_001	83c187dd08a62870296e870cd173e3369de96a22	Premium Login Bonus	memory
 pshop_ploginbonus_001_title	83c187dd08a62870296e870cd173e3369de96a22	Premium Login Bonus	memory
 pushmsg_deep_space	06e89183f8532656d5363e0238e709ad994635ab	Scout shuttle has returned from a Deep Space Exploration!	official

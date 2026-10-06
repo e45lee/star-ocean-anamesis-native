@@ -36,6 +36,8 @@ control/soactl.py /tmp/emu.fifo tap:364:713 wait:3000 shot:/tmp/emu.png
 | `--lobby HOST:PORT` | Where the client's lobby connections (port 4001) go. Default: not redirected. |
 | `--map-host NAME[=ADDR]` | Also resolve NAME to ADDR (default: the server host). Repeatable. |
 | `--device-clock "YYYY-MM-DD HH:MM:SS"` / `host` | The phone's clock (local time) at start; it runs on from there. Default `host`: the host's real time. A test option; see "The date and `service_stop_day`". |
+| `--lang ja\|en` | The client's language (`platform370/src/lang_370.cpp`, `docs/client-changes.md` "English mode"): `ja` (default) runs it as shipped; `en` sets `CLanguage::Current` to en (every file tried as `name-en.ext` first, with the Japanese file as the fallback; the `-en` files come from a soa-server run with `--english`); its hard-coded Japanese strings show new `port_en_*` master text (`data/english/client-strings.tsv`) and long lines break at spaces |
+| `--voice-lang ja\|keep` | `ja` (default) writes `BAS:VoiceLanguage` = 0 into the phone's `Game.xml` before the client starts: the Japanese voice packs, no `-en` probe. `keep` leaves the save's value. |
 | `--no-patch` | Run the client without its native patch (`platform370/src/patch_370.cpp`): the service-end check is live, so on the real date the title shows the service-end notice and "TAP TO START" asks to update the app. For comparison runs. |
 | (window title) | `[EMULATED] STAR OCEAN -anamnesis- 3.7.0 online client (soa-emu)`, so it can't be mistaken for the port's `soa` window. |
 | `--repo DIR` | The source checkout, for the defaults. Default: found upwards from the executable. In a git worktree, files the worktree lacks (the APK) are also looked up in the main checkout that `work/` links to. |
@@ -52,7 +54,7 @@ Only `emulator/src/main.cpp`. The platform layer it runs the client on moved to 
 
 | File | What | Extension point |
 |---|---|---|
-| `emulator/src/main.cpp` | Command line → `platform370::Config` (every piece on; `--server` / `--http` / `--lobby` / `--map-host` → `netcfg`, `--device-clock`, `--no-patch`); the single 3.7.0 APK and the library; its own data dir; the runtime bring-up: `platform370::install` before `hle_init`, `platform370::install_patches` after `load_library` | `device_config()`, `asset_manager().add_apk`, `app::run` |
+| `emulator/src/main.cpp` | Command line → `platform370::Config` (every piece on; `--server` / `--http` / `--lobby` / `--map-host` → `netcfg`, `--device-clock`, `--no-patch`, `--lang`, `--voice-lang`); the single 3.7.0 APK and the library; its own data dir; the runtime bring-up: `platform370::install` before `hle_init`, `platform370::install_patches` and `install_language` after `load_library` | `device_config()`, `asset_manager().add_apk`, `app::run` |
 | `platform370/src/java_370.cpp` (was `emulator/src/`) | The `AskaActivity` methods only 3.7.0 calls, answered like a phone without those services (below) | `jni::add_class_installer`, `Vm::def` |
 | `platform370/src/hle_370.cpp` (was `emulator/src/`) | The import 3.7.0 needs that the runtime lacks (`fmod`), and the optional device clock (`--device-clock`) | `hle_add_registrar`, `Hle::override_fn` |
 | `platform370/src/patch_370.cpp` (was `emulator/src/`) | The native patches: `CParameterUtility::FindGlobalStringWithKey` answers `service_stop_day` with `""` (below); `CDialogManager::OpenBuyEndDialog` opens the coin shop (`docs/client-changes.md` "Emulator mode") | `hook_guest_function`, `make_original_trampoline` (`core/cpu.h`), after `load_library` |

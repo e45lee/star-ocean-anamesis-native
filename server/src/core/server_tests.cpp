@@ -49,7 +49,8 @@ NATIVE_TEST("server/session-invariants") {
     t.expect_eq((u32)sv.st.one("select count(*) from roster", {}), (u32)seed_roles.size(), "seeded roster");
     t.expect_eq(sv.st.one("select count(*) from player where name = ? and search_id = 'LOCAL00001'", {kv_str(kv, "player_name")}), (int64_t)1,
                 "seeded name, local id");
-    t.expect_eq((u32)sv.st.one("select count(*) from party_member where party_id = 1", {}), 4u, "party 1");
+    t.expect_eq((u32)sv.st.one("select count(*) from party_member where party_id = 1", {}), 3u,
+                "party 1: three members (the fourth slot is the helper's)");
     u32 mission = (u32)mm->one("select id from master_mission where id_label = 'mf01_001'", {});
     u32 cost = (u32)mm->one("select use_stamina from master_mission where id = ?", {mission});
     u32 pexp = (u32)mm->one("select exp from master_mission where id = ?", {mission});

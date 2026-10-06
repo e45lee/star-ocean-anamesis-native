@@ -841,6 +841,37 @@ NATIVE_TEST("wire/inproc-parity") {
             u64 x[8] = {0x5150, (u64)vec};
             compare(t, "DepositItem", server_port::inproc_request("_ZN13FakeApiCaller11DepositItemERKN9Framework10CSTLVectorImEE", 0xc4cd3b1a, x), d3);
         }
+        // The CSTLVector forms of the varargs methods (FakeApiCaller::<X>Array): NetworkApiCaller
+        // sends Send<X>, so the route's request is named as the wire's (<X>), not <X>Array
+        struct ArrayForm {
+            const char* wire;
+            const char* fake;
+            u32 fid;
+            bool base;  // a u64 base item uid before the vector
+        };
+        const ArrayForm kArrayForms[] = {
+            {"SellItem", "_ZN13FakeApiCaller13SellItemArrayERKN9Framework10CSTLVectorImEE", 0x00ee45f7, false},
+            {"LockItem", "_ZN13FakeApiCaller13LockItemArrayERKN9Framework10CSTLVectorImEE", 0x88f29383, false},
+            {"UnlockItem", "_ZN13FakeApiCaller15UnlockItemArrayERKN9Framework10CSTLVectorImEE", 0x2f9569e5, false},
+            {"GetPresent", "_ZN13FakeApiCaller15GetPresentArrayERKN9Framework10CSTLVectorImEE", 0x4072d7e1, false},
+            {"ItemCompose", "_ZN13FakeApiCaller16ItemComposeArrayEmRKN9Framework10CSTLVectorImEE", 0x02a5cd1d, true},
+            {"ItemGradeUp", "_ZN13FakeApiCaller16ItemGradeUpArrayEmRKN9Framework10CSTLVectorImEE", 0x8952aa02, true},
+        };
+        for (const ArrayForm& a : kArrayForms) {
+            const u64 base_uid = 0x7d0000ff;
+            std::vector<Arg> args;
+            if (a.base) args.push_back(u('Q', base_uid));
+            args.push_back(p);
+            args.push_back(u('I', items.size()));
+            server::net::Decoded d4;
+            if (!wire_decode(t, a.wire, args, &d4)) continue;
+            u64 x[8] = {0x5150};
+            int reg = 1;
+            if (a.base) x[reg++] = base_uid;
+            x[reg] = (u64)vec;
+            server::Request r = server_port::inproc_request(a.fake, a.fid, x);
+            compare(t, a.wire, r, d4);
+        }
     }
     {
         // The varargs methods (mangled "...z"): a count, then that many u64 uids in the x registers

@@ -8,6 +8,10 @@
 //   <date> <time>   < <Reply> fid=<reply fid> inproc plain=<body size> data{<keys>} status=<s>
 //   <date> <time>   < ProtocolError fid=05aed673 inproc plain=0 status=<code> (the server's error code)
 //
+// <Api> and <fid> are the wire API the request is (server::net::api_by_method of its method, else
+// the one of its queued fid): a few FakeApiCaller methods queue under another API's FunctionID
+// (EquipAccessory under EquipWeapon's, ...), and are logged, with their reply, as the wire logs
+// them; the method is the wire's (server_adapters.cpp kWireMethods: SellItemArray is SellItem).
 // The arguments are the captured server::Request laid out in the wire's order (the request
 // layouts of server/net/gen/wire_decode.inc), printed as soa-server's decoder prints them; what the
 // FakeApiCaller route can't know (the DeviceType of a "dev" field) prints as "dev=?", and a request

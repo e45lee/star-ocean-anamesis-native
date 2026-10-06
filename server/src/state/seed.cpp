@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <set>
 
-#include "api/player/party_set.h"  // add_party_sets
+#include "api/player/party_set.h"  // add_party_sets, kPartyMembers
 #include "api/player/titles.h"     // new_player_titles
 #include "core/ids.h"
 #include "core/log.h"
@@ -113,15 +113,16 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     if (!home_uid && !roles.empty()) home_uid = CharacterUid(kRosterUid0);
     if (home_uid) ctx.st.q("update player set home_uid = ?", {*home_uid});  // (none: NULL)
     add_party_sets(ctx);  // (a) the sets 1..party_set_max: player.party_id's parents
-    // (d) party 1 = the home character + the three highest-rarity other roster members
-    // (first in roster order among equals); parties 2..10 empty
+    // (d) party 1 = the home character + the two highest-rarity other roster members
+    // (first in roster order among equals); (b) three members, the fourth slot is the helper's
+    // (kPartyMembers, api/player/party_set.h); parties 2..10 empty
     // (no home character: slot 0 is empty, NULL)
     std::vector<std::optional<CharacterUid>> party = {home_uid};
     std::vector<std::pair<int, size_t>> by_rarity;
     for (size_t i = 0; i < roles.size(); i++) by_rarity.emplace_back(-(int)ctx.m.one("select rarity from master_role where id = ?", {roles[i]}), i);
     std::stable_sort(by_rarity.begin(), by_rarity.end(), [](auto& a, auto& b) { return a.first < b.first; });
     for (auto& [r, i] : by_rarity)
-        if (party.size() < 4 && kRosterUid0 + i != or_zero(home_uid)) party.push_back(CharacterUid(kRosterUid0 + i));
+        if (party.size() < kPartyMembers && kRosterUid0 + i != or_zero(home_uid)) party.push_back(CharacterUid(kRosterUid0 + i));
     for (size_t s = 0; s < party.size(); s++)  // the slot's equipment, skills and assist: none (the character's own)
         ctx.st.q(
             "insert into party_member (party_id, slot, uid, weapon_uid, accessory_uid, skill_id1, skill_id2, skill_id3, assist_uid)"

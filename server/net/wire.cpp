@@ -117,6 +117,7 @@ struct Table {
     std::vector<WireApi> apis;
     std::map<uint32_t, size_t> by_fid;
     std::map<std::string, size_t> by_name;
+    std::map<std::string, size_t> by_method;
     std::map<uint32_t, const char*> names;
 };
 const Table& table() {
@@ -141,6 +142,7 @@ const Table& table() {
             a.reply_kind = r.reply_kind;
             t.by_fid[a.fid] = t.apis.size();
             t.by_name[a.name] = t.apis.size();
+            t.by_method[a.method] = t.apis.size();
             t.names[a.fid] = r.name;
             t.apis.push_back(std::move(a));
         }
@@ -159,6 +161,10 @@ const WireApi* api_by_fid(uint32_t fid) {
 const WireApi* api_by_name(const std::string& name) {
     auto it = table().by_name.find(name);
     return it == table().by_name.end() ? nullptr : &table().apis[it->second];
+}
+const WireApi* api_by_method(const std::string& method) {
+    auto it = table().by_method.find(method);
+    return it == table().by_method.end() ? nullptr : &table().apis[it->second];
 }
 const char* fid_name(uint32_t fid) {
     auto it = table().names.find(fid);

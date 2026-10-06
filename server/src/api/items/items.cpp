@@ -191,9 +191,10 @@ std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const st
 //   master_accessory_limit_break); one raise per copy or item, up to the cap, counted as
 //   `weapon_limit_break` / `accessory_limit_break` (achievement type 6); every compose counts
 //   `weapon_boost` / `accessory_boost` (types 5 / 38).
-//   use_fol_one per material; weapon_compose_up_rate / weapon_compose_bonus_rate.
-//   (d) locked or equipped materials and the base itself can't be fed; FOL at the base's rarity;
-//   points stop at the cap level's threshold.
+//   (a) use_fol_one per material, (b) at the material's rarity (the screen's 必要FOL); (d) the
+//   type-2 FOL campaigns the screen applies aren't; weapon_compose_up_rate / weapon_compose_bonus_rate.
+//   (d) locked or equipped materials and the base itself can't be fed; points stop at the cap
+//   level's threshold.
 //   (d) Refusals: kItemUnusable (10208) without a base weapon / accessory or materials, or for a
 //   limit-break item that doesn't fit the base (b: the client never offers one), kLockedItem
 //   (10204) for a material, kFolShortGrowth (11001) for the FOL.
@@ -214,7 +215,6 @@ std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const st
         return refuse(ctx, method, "no base item or no materials", ErrorCode::kItemUnusable);
     const char* table = compose_table(base.type);
     u32 next = (u32)ctx.m.one(std::string("select next_level_boosted_point from ") + table + " where rarity = ?", {base.rarity});
-    u32 fol_one = (u32)ctx.m.one(std::string("select use_fol_one from ") + table + " where rarity = ?", {base.rarity});
     u32 lb_max = (u32)ctx.m.one("select max(limit_break) from master_item_limit_break_level_max where type = ?", {base.type}, 5);
     u64 gain = 0;
     u32 lb = base.lb;
@@ -239,9 +239,15 @@ std::vector<u8> compose(Ctx& ctx, const char* method, ItemUid base_uid, const st
         if (raises && lb < lb_max) lb++;
         u32 boosted_point = (u32)ctx.m.one(std::string("select boosted_point from ") + table + " where rarity = ?", {material.rarity});
         gain += growth_rules::compose_points(material.points, boosted_point);
+        // (a) use_fol_one per material, (b) of the material's rarity: the strengthening screen's
+        // 必要FOL (CItemStrengtheningPotal::InitializePotal @01b856ac, the loop ending at 01b86cdc)
+        // sums,
+        // for each material, the tItemComposeParam's use_fol_one (master +0x198) whose rarity
+        // (+0xa8) is the material's master rarity (+0x118), the match GetAddBoostedPoint
+        // (@01b891c8) makes for the points; the table is the base's (CreateItemComposeList
+        // @01b83aa0: weapons master_item_compose, accessories _accessory_compose)
+        composed.cost += (u64)ctx.m.one(std::string("select use_fol_one from ") + table + " where rarity = ?", {material.rarity});
     }
-    // (a) use_fol_one per material; (d) at the base item's rarity
-    composed.cost = (u64)fol_one * materials.size();
     if (fol(ctx) < composed.cost) return refuse(ctx, method, "not enough FOL", ErrorCode::kFolShortGrowth);
     // (a) weapon_compose_up_rate (percent, (d) the meaning) / weapon_compose_bonus_rate
     composed.big = (double)((*ctx.rng)() % 10000) < global_f(ctx, "weapon_compose_up_rate", 11.5) * 100.0;

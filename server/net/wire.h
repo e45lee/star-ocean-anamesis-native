@@ -83,6 +83,10 @@ struct WireApi {
 const std::vector<WireApi>& apis();
 const WireApi* api_by_fid(uint32_t fid);
 const WireApi* api_by_name(const std::string& name);
+// The API whose server method (WireApi::method, the IApiCaller method NetworkApiCaller sends it
+// for) is `method`, nullptr when none: the methods are unique in the table. soa's packet log
+// names an in-process request by it (port/src/native/api/packet_log.h).
+const WireApi* api_by_method(const std::string& method);
 // The name of any request or reply FunctionID (packet log), nullptr when unknown.
 const char* fid_name(uint32_t fid);
 constexpr uint32_t kFidProtocolError = 0x05aed673;

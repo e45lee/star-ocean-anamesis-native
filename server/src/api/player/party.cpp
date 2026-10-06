@@ -8,7 +8,7 @@
 #include <iterator>
 
 #include "api/items/items.h"          // owns_item
-#include "api/player/party_set.h"    // party_set_info, ensure_party_set
+#include "api/player/party_set.h"    // party_set_info, ensure_party_set, kPartyMembers
 #include "api/player/player_info.h"  // base_data
 #include "api/player/roster.h"       // owns_character
 #include "core/log.h"
@@ -129,7 +129,9 @@ bool parse_party_set_text(const std::string& text, PartySetText& out) {
 //   (d) a member must be an owned character, else the slot is stored empty; the weapon and
 //   accessory must be owned items and the assist an owned character, else they are stored as
 //   none (PLAN-schema S6: they were stored as sent; the skills still are); a record whose
-//   party_index is outside 0..3 (the screen's four slots, b) is skipped, as a short one.
+//   party_index is outside 0..2 is skipped, as a short one: (b) a set has three members, the
+//   fourth slot of the client's party is the helper's (kPartyMembers, api/player/party_set.h).
+//   (Until schema version 20 index 3 was stored too, and MissionStart fielded it.)
 //   (b) the set replaces the stored one (the handler replaces the map entry).
 //   (d) the saved set becomes the player's current party.
 // Answers: the player state, PartySetResult (the saved set) and PartySet (every set).
@@ -152,7 +154,7 @@ std::vector<u8> update_party_set(ext::Ctx& ctx, const Request& req) {
         {party_id, set.icon_id, set.is_lock ? 1 : 0});
     ctx.st.q("delete from party_member where party_id = ?", {party_id});
     for (auto member : set.members) {
-        if (member.slot > 3) continue;  // (d) not one of the four slots
+        if (member.slot >= kPartyMembers) continue;  // (b) not one of the set's three slots
         if (member.character_uid && !owns_character(ctx, *member.character_uid)) member.character_uid.reset();  // (d) only owned
         if (member.weapon_uid && !owns_item(ctx, *member.weapon_uid)) member.weapon_uid.reset();                // (d) characters
         if (member.accessory_uid && !owns_item(ctx, *member.accessory_uid)) member.accessory_uid.reset();       // and items

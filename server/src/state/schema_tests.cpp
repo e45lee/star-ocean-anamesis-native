@@ -1949,6 +1949,43 @@ NATIVE_TEST("server/schema-migrate-v19") {
     }
 }
 
+// Step 20: a party set's slot-3 members go (the client's fourth slot is the helper's); the other
+// slots and every other table stay; a file of version 19 with a seeded party of four migrates to
+// three.
+NATIVE_TEST("server/schema-migrate-v20") {
+    constexpr int kV = 20;  // this step's version (the parent renumbers parallel steps at merge)
+    const std::string at = std::to_string(kV), before = std::to_string(kV - 1);
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    TempDb ref_file(("v" + at + "-ref").c_str()), old(("v" + at).c_str());
+    if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+    Sql ref, db;
+    if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+    t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kV - 1, m), true, "the reference: migrated to the version before");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, kV - 1, m), true, "migrated to the version before");
+    // a party of four in set 1 and a slot-3 record in set 2, as the seed and UpdatePartySet wrote them
+    const char* plant =
+        "insert into party_member (party_id, slot, uid) select 1, 3, uid from roster order by uid limit 1 "
+        "on conflict(party_id, slot) do update set uid = excluded.uid; "
+        "insert into party_member (party_id, slot, uid) values (2, 3, null) on conflict(party_id, slot) do nothing";
+    t.expect_eq(sqlite3_exec(db.h, plant, nullptr, nullptr, nullptr), SQLITE_OK, "slot-3 rows planted");
+    t.expect_eq(db.one("select count(*) from party_member where slot = 3", {}), (int64_t)2, "two slot-3 rows");
+    db.close();
+    if (!db.open(old.path, false)) return t.fail("reopen");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "the version before -> this version");
+    t.expect_eq(state::user_version(db.h), kV, "user_version");
+    t.expect_eq(db.one("select count(*) from party_member where slot >= 3", {}), (int64_t)0, "no slot-3 member left");
+    std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+    t.expect_eq(ra == rb, true, "every table's rows as at the version before, less the planted slot-3 rows");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    db.close();
+    Sql bak;
+    if (!bak.open(old.path + ".bak-v" + before, true)) return t.fail("no %s.bak-v%s", old.path.c_str(), before.c_str());
+    t.expect_eq(bak.one("select count(*) from party_member where slot = 3", {}), (int64_t)2, "the backup keeps them");
+    bak.close();
+    ref.close();
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;

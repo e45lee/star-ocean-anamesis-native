@@ -22,6 +22,19 @@ FILE* g_log = nullptr;
 std::string g_dir;
 uint64_t g_seq = 0;
 std::map<uint32_t, uint32_t> g_alias;  // internal request fid -> the fid it answers
+// queued fid -> the wire API its request was logged as (the reply's name)
+std::map<uint32_t, const server::net::WireApi*> g_api;
+
+// The wire API a captured request is: the one whose method it is, else the one of its fid. Some
+// FakeApiCaller methods queue under another API's FunctionID (EquipAccessory under EquipWeapon's,
+// Blacklist* under Follow*'s, AchievementReceiveList under AchievementActiveList's, SendErrorLog
+// under UpdateKiyakuVersion's, LimitBreakCharacter_Legacy under LimitBreakCharacter's,
+// SimpleLogin under Login's: port/src/native/api/gen/fakeapi_tables.inc); by the method, the log
+// names them, their fid and their reply as soa-server's wire log does.
+const server::net::WireApi* wire_api(const server::Request& r) {
+    if (const server::net::WireApi* api = server::net::api_by_method(r.method)) return api;
+    return server::net::api_by_fid(r.fid);
+}
 
 // soa-server's packet log stamps (server/net/game.cpp fmt_local): the host's local time.
 std::string stamp() {
@@ -104,7 +117,7 @@ void open(const std::string& dir) {
 bool enabled() { return g_log != nullptr; }
 
 std::string format_args(const server::Request& r, size_t battle_log_size) {
-    const server::net::WireApi* api = server::net::api_by_fid(r.fid);
+    const server::net::WireApi* api = wire_api(r);
     if (!api) return raw_args(r);
     // The wire's order of strings: CreatePlayer's wire has (uuid, name), the method (name, uuid)
     // (server/net/wire.cpp's shim, reversed).
@@ -154,10 +167,12 @@ std::string format_args(const server::Request& r, size_t battle_log_size) {
 void request(const server::Request& r, const std::vector<uint8_t>& battle_log) {
     std::lock_guard<std::mutex> l(g_mu);
     if (!g_log || g_alias.count(r.fid)) return;
-    const server::net::WireApi* api = server::net::api_by_fid(r.fid);
+    const server::net::WireApi* api = wire_api(r);
     std::string name = api ? api->name : r.method;
+    if (api) g_api[r.fid] = api;
+    else g_api.erase(r.fid);
     uint64_t seq = ++g_seq;
-    line("conn 0 #" + std::to_string(seq) + " > " + name + " fid=" + fid_hex(r.fid) + " inproc plain=0 method=" + r.method +
+    line("conn 0 #" + std::to_string(seq) + " > " + name + " fid=" + fid_hex(api ? api->fid : r.fid) + " inproc plain=0 method=" + r.method +
          " args: " + format_args(r, battle_log.size()));
     if (!battle_log.empty()) write_file(std::to_string(seq) + "-" + name + "-battle_log.msgp", battle_log.data(), battle_log.size());
 }
@@ -170,7 +185,9 @@ void reply(uint32_t fid, const std::vector<char>& body) {
         fid = a->second;
         g_alias.erase(a);
     }
-    const server::net::WireApi* api = server::net::api_by_fid(fid);
+    auto logged = g_api.find(fid);
+    const server::net::WireApi* api = logged != g_api.end() ? logged->second : server::net::api_by_fid(fid);
+    if (logged != g_api.end()) g_api.erase(logged);
     std::string name = api ? api->reply : "?";
     uint32_t rfid = api ? api->reply_fid : 0;
     write_file(std::to_string(g_seq) + "-" + name + ".msgp", body.data(), body.size());
@@ -181,6 +198,7 @@ void refused(uint32_t fid, uint32_t code) {
     std::lock_guard<std::mutex> l(g_mu);
     if (!g_log) return;
     g_alias.erase(fid);
+    g_api.erase(fid);
     line("  < ProtocolError fid=" + fid_hex(server::net::kFidProtocolError) + " inproc plain=0 status=" + std::to_string(code) +
          " (the server's error code)");
 }

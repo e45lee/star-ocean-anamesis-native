@@ -442,6 +442,19 @@ NATIVE_TEST("sphere211/dive") {
         t.expect_eq(cells(d)[next].cleared, false, "retired cell not cleared");
         t.expect_eq(cells(d)[next].can_play, true, "retired cell still playable");
         t.expect_eq((u32)c.st.one("select stamina from sphere", {}), st1 - floor_use, "stamina stays spent");
+        // the defeat dialog's いいえ (the bool 0): the run ends as a failure, nothing paid
+        call(c, "Sphere211MissionStart", {next, 0, party[0], party[1], party[2], 0, 0});
+        c.st.q("update sphere set streak = 3", {});
+        coins = (u32)c.st.one("select free_coin from player", {});
+        d = call(c, "Sphere211MissionContinue", {next, 0, 0});
+        t.expect_eq(d.find("is_mission_continue") && !d.find("is_mission_continue")->b, true, "declined: no continue");
+        t.expect_eq((u32)c.st.one("select free_coin from player", {}), coins, "declined: no coins");
+        t.expect_eq((u32)num(d, "Sphere211FloorInfo", "mission_clear_streak"), 0u, "declined: the streak resets");
+        t.expect_eq((u32)c.st.one("select count(*) from play", {}), 0u, "declined: the play record ends");
+        t.expect_eq(cells(d)[next].can_play, true, "declined: the cell still playable");
+        // はい with no battle in progress: refused, nothing paid
+        call(c, "Sphere211MissionContinue", {next, 0, 1});
+        t.expect_eq((u32)c.st.one("select free_coin from player", {}), coins, "no battle: no coins");
         // the goal: floor clear, present + boxes, the next-floor lot
         u32 group = (u32)c.st.one("select asset_group from sphere", {});
         u32 goal = (u32)c.m.one("select id from master_sphere211_floor_asset where floor_group_id = ? and is_goal = 1", {group});

@@ -43,4 +43,14 @@ struct Sphere211FloorClearArgs {
     static Sphere211FloorClearArgs from(const Request& r) { return {(u32)int_at(r, 0)}; }
 };
 
+// Sphere211MissionContinue(u32 +0x68, u32 +0x6c, bool): the bool is the defeat dialog's answer,
+// as MissionContinue's (core/request_args.h MissionContinueArgs): 1 はい, 0 いいえ or the decline
+// CPauseMenu::OpenContinue (@01dacf90) sends by itself when the coins don't cover the price (b:
+// CPauseMenu::ReqeustContinue @01dad704 sends Sphere211MissionContinue for mission type 5,
+// CParameterUI+0x140, with the same bool it sends MissionContinue for the others).
+struct Sphere211MissionContinueArgs {
+    bool continue_battle = false;
+    static Sphere211MissionContinueArgs from(const Request& r) { return {int_at(r, 2) != 0}; }
+};
+
 }  // namespace soa::server::args

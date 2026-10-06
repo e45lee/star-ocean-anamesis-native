@@ -484,7 +484,7 @@ The sessions ran in the slot pool on the shared phone, with the standard drivers
 - **The shots.** `campaign-out/shots/82-story.png` and `83-story.png` show the story in English: speaker "Coro" (an `en_` master row), "Thanks to your efforts, I was able t…".
   - **The English lines run past the right edge of the message window.** Global's line breaks were made for a wider window than 3.7.0's.
   - The window's buttons (早送り, ログ表示, スキップ, オート) stay Japanese.
-- **Not shown.** Whether `StringDB::ReleaseParameter` released the `-en` file's rows: the session played one scene.
+- **Not shown.** Whether `StringDB::ReleaseParameter` released the `-en` file's rows: the session played one scene. **Shown 2026-10-07 (agent `en-server`, C4):** with the server-built `Scenario/TS_1010-en.msgp` (English in its `ja_` rows, no StringDB change) `soa --lang en` played two scenes of that file in a row (mc01_030, then mc01_020), both in English, and the client's RSS stayed at about 1.59 GB; the data check had fetched all 24 `-en` story files, also those of the EP1 pack (docs/server-rules.md#english-story). The English lines run past the message window (no re-break yet, E7).
 
 **Run 3: `home`, a whole English master as a `-en` file, no StringDB change in effect.**
 - **Setup.**

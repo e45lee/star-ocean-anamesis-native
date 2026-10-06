@@ -12,7 +12,8 @@ The player is a returning one: --campaign-seed mf01_001 counts every mission on 
 before 1-05 as cleared, and the one-time menu tutorials as seen. Every step waits for its screen or
 log line, then screenshots (<out>/shots).
 
-Usage: port/scripts/campaign_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
+Usage: port/scripts/campaign_session.sh <soa> <out-dir> <scratch-dir> [soa flags...]   (from any directory;
+e.g. `--lang en` for the English story, PLAN-english C4)
 Env: CAMPAIGN_SEED (soa --campaign-seed; default mf01_001); CAMPAIGN_MASTER_DB (soa
 --campaign-master-db; default the server's); HOME_MISSION_X (default 270); SOA_PHONE; WATCH=1.
 Targets: port-inproc (the phase lines and the in-process server's campaign lines)."""
@@ -28,7 +29,7 @@ WRAPPER = "port/scripts/campaign_session.sh"
 
 
 def options(ap):
-    common.port_options(ap, extra=False)
+    common.port_options(ap)
 
 
 def main(o):

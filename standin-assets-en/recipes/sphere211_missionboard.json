@@ -1,0 +1,213 @@
+{
+ "note": "Sphere 211's board: Return, the round buttons, the floor tags.",
+ "source": "UI/etc2/sphere211_missionboard.csf",
+ "styles": {
+  "pill": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "round": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3c78",
+   "outline_width": 2
+  },
+  "round_dim": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "tag_cyan": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#e0ffff",
+   "outline": "#0a3c78",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "tag_gold": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffe9a0",
+   "outline": "#5a3a00",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  }
+ },
+ "labels": [
+  {
+   "jp": "帰還",
+   "text": "Return",
+   "sprites": [
+    "btn_return_off.png",
+    "btn_return_on.png"
+   ],
+   "box": [
+    8,
+    14,
+    104,
+    39
+   ],
+   "cover": [
+    28,
+    16,
+    64,
+    35
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "フロア\n情報",
+   "text": "Floor\nInfo",
+   "sprites": [
+    "btn_floordata_off.png",
+    "btn_floordata_on.png"
+   ],
+   "box": [
+    6,
+    22,
+    88,
+    54
+   ],
+   "cover": [
+    10,
+    22,
+    80,
+    58
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ラン\nキング",
+   "text": "Ranking",
+   "sprites": [
+    "btn_rank_off.png",
+    "btn_rank_on.png"
+   ],
+   "box": [
+    6,
+    22,
+    88,
+    54
+   ],
+   "cover": [
+    10,
+    22,
+    80,
+    58
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ラン\nキング",
+   "text": "Ranking",
+   "sprites": [
+    "btn_rank_off2.png"
+   ],
+   "box": [
+    6,
+    22,
+    88,
+    54
+   ],
+   "cover": [
+    10,
+    22,
+    80,
+    58
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "ボーナスフロア",
+   "text": "Bonus Floor",
+   "sprites": [
+    "icon_floor_b.png"
+   ],
+   "box": [
+    2,
+    1,
+    109,
+    22
+   ],
+   "cover": [
+    0,
+    0,
+    113,
+    24
+   ],
+   "style": "tag_cyan"
+  },
+  {
+   "jp": "チャレンジフロア",
+   "text": "Challenge Floor",
+   "sprites": [
+    "icon_floor_d.png"
+   ],
+   "box": [
+    2,
+    1,
+    109,
+    22
+   ],
+   "cover": [
+    0,
+    0,
+    113,
+    24
+   ],
+   "style": "tag_gold"
+  },
+  {
+   "jp": "目標地点",
+   "text": "Goal",
+   "sprites": [
+    "icon_goal.png"
+   ],
+   "box": [
+    2,
+    1,
+    96,
+    26
+   ],
+   "cover": [
+    0,
+    0,
+    100,
+    28
+   ],
+   "style": "tag_gold",
+   "size": 20
+  },
+  {
+   "jp": "実績",
+   "text": "Records",
+   "sprites": [
+    "btn_performance_off.png",
+    "btn_performance_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round",
+   "_from": "mission_menu_common"
+  }
+ ]
+}

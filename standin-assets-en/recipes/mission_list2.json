@@ -1,0 +1,180 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/mission_list2.csf",
+ "styles": {
+  "badge_pink": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ff4f8f",
+   "outline": "#ffffff",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "round": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3c78",
+   "outline_width": 2
+  },
+  "round_dim": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  }
+ },
+ "labels": [
+  {
+   "jp": "友好度上昇率UP",
+   "text": "Affection Rate UP",
+   "sprites": [
+    "icon_affection_up.png"
+   ],
+   "box": [
+    2,
+    1,
+    146,
+    28
+   ],
+   "cover": [
+    0,
+    0,
+    150,
+    30
+   ],
+   "style": "badge_pink",
+   "_from": "home"
+  },
+  {
+   "jp": "消費スタミナ半減!",
+   "text": "Half Stamina Cost!",
+   "sprites": [
+    "icon_stamina_down.png"
+   ],
+   "box": [
+    2,
+    1,
+    146,
+    28
+   ],
+   "cover": [
+    0,
+    0,
+    150,
+    30
+   ],
+   "style": "badge_pink",
+   "_from": "home"
+  },
+  {
+   "jp": "イベント\nメニュー",
+   "text": "Event\nMenu",
+   "sprites": [
+    "btn_eventmenu_off.png"
+   ],
+   "box": [
+    6,
+    30,
+    88,
+    41
+   ],
+   "cover": [
+    10,
+    32,
+    80,
+    37
+   ],
+   "style": "round",
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "イベント\nメニュー",
+   "text": "Event\nMenu",
+   "sprites": [
+    "btn_eventmenu_off2.png"
+   ],
+   "box": [
+    6,
+    30,
+    88,
+    41
+   ],
+   "cover": [
+    10,
+    32,
+    80,
+    37
+   ],
+   "style": "round_dim",
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "ランキング",
+   "text": "Ranking",
+   "sprites": [
+    "btn_rank_off.png",
+    "btn_rank_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round",
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "ランキング",
+   "text": "Ranking",
+   "sprites": [
+    "btn_rank_off2.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round_dim",
+   "_from": "mission_menu_common"
+  },
+  {
+   "jp": "実績",
+   "text": "Records",
+   "sprites": [
+    "btn_performance_off.png",
+    "btn_performance_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round",
+   "_from": "mission_menu_common"
+  }
+ ]
+}

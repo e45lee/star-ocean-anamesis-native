@@ -1,0 +1,114 @@
+{
+ "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "source": "UI/etc2/follow_list.csf",
+ "styles": {
+  "tap": {
+   "size": 17,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a1e3c",
+   "outline_width": 2
+  },
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  },
+  "pill_small": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "報酬確認",
+   "text": "Rewards",
+   "sprites": [
+    "tap_present_off.png",
+    "tap_present_on.png"
+   ],
+   "box": [
+    6,
+    18,
+    96,
+    28
+   ],
+   "cover": [
+    8,
+    20,
+    92,
+    24
+   ],
+   "style": "tap",
+   "_from": "common_resource"
+  },
+  {
+   "jp": "調査ランク",
+   "text": "Rank",
+   "sprites": [
+    "rank_plate.png"
+   ],
+   "box": [
+    8,
+    0,
+    101,
+    23
+   ],
+   "cover": [
+    22,
+    2,
+    73,
+    19
+   ],
+   "style": "badge",
+   "_from": "common_resource"
+  },
+  {
+   "jp": "フォロー",
+   "text": "Follow",
+   "sprites": [
+    "btn_follow_off.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small",
+   "_from": "common_resource"
+  },
+  {
+   "jp": "相互",
+   "text": "Mutual",
+   "sprites": [
+    "btn_follow_mutual.png"
+   ],
+   "box": [
+    8,
+    3,
+    108,
+    22
+   ],
+   "cover": [
+    8,
+    4,
+    108,
+    20
+   ],
+   "style": "pill_small",
+   "_from": "common_resource"
+  }
+ ]
+}

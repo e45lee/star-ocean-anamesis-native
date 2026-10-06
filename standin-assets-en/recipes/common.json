@@ -35,6 +35,24 @@
    "fill": "#ffffff",
    "outline": "#7a0010",
    "outline_width": 1
+  },
+  "round_dim": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#6c7d7d",
+   "glow": "#00465ac0",
+   "glow_radius": 2,
+   "outline": "#14283cc0",
+   "outline_width": 1
+  },
+  "round": {
+   "size": 18,
+   "bold": 1,
+   "fill": "#e4ffff",
+   "glow": "#00b4ffd0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
   }
  },
  "labels": [
@@ -444,6 +462,91 @@
     23
    ],
    "style": "badge_red"
+  },
+  {
+   "jp": "2D/3D変更",
+   "text": "2D/3D",
+   "sprites": [
+    "menubtn_2d3d_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round_dim",
+   "_from": "home"
+  },
+  {
+   "jp": "おくりもの",
+   "text": "Gift",
+   "sprites": [
+    "menubtn_present_on.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round",
+   "_from": "home"
+  },
+  {
+   "jp": "おくりもの",
+   "text": "Gift",
+   "sprites": [
+    "menubtn_present_off2.png"
+   ],
+   "box": [
+    4,
+    77,
+    103,
+    23
+   ],
+   "cover": [
+    3,
+    76,
+    105,
+    25
+   ],
+   "style": "round_dim",
+   "_from": "home"
+  },
+  {
+   "jp": "お気に入り\n変更",
+   "text": "Change\nFavorite",
+   "sprites": [
+    "menubtn_favo_off2.png"
+   ],
+   "box": [
+    6,
+    66,
+    99,
+    40
+   ],
+   "cover": [
+    5,
+    64,
+    101,
+    42
+   ],
+   "style": "round_dim",
+   "size": 16,
+   "_from": "home"
   }
  ]
 }

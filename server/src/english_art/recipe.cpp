@@ -1,4 +1,5 @@
-// The English art recipes (art.h, parse_recipe): JSON files, one per source image
+// The English art recipes (art.h, parse_recipe): JSON files, one per source image (or per group of
+// images with the same labels: "sources")
 // (standin-assets-en/recipes/*.json; the format is docs/english.md "English UI art").
 //
 //   {"source": "UI/etc2/common.csf",
@@ -106,8 +107,11 @@ bool parse_recipe(const std::string& text, Recipe& out, std::string* err) {
         }
         for (auto& [k, v] : j.items()) {
             if (comment_key(k) || k == "styles") continue;
-            if (k == "source") out.source = as_string(v, "source");
-            else if (k == "labels") {
+            if (k == "source") out.sources.push_back(as_string(v, "source"));
+            else if (k == "sources") {
+                if (!v.is_array() || v.empty()) throw Fail{"sources: a non-empty array expected"};
+                for (auto& sv : v) out.sources.push_back(as_string(sv, "sources"));
+            } else if (k == "labels") {
                 if (!v.is_array()) throw Fail{"labels: an array expected"};
                 for (size_t i = 0; i < v.size(); i++) {
                     const json& lv = v[i];
@@ -146,8 +150,10 @@ bool parse_recipe(const std::string& text, Recipe& out, std::string* err) {
                 throw Fail{"unknown key " + k};
             }
         }
-        if (out.source.empty()) throw Fail{"no source"};
-        if (out.source.find("..") != std::string::npos || out.source[0] == '/') throw Fail{"source: a relative path in the download"};
+        if (out.sources.empty()) throw Fail{"no source"};
+        for (auto& src : out.sources)
+            if (src.empty() || src.find("..") != std::string::npos || src[0] == '/') throw Fail{"source: a relative path in the download"};
+        out.source = out.sources[0];
         return true;
     } catch (const Fail& f) {
         if (err) *err = f.why;

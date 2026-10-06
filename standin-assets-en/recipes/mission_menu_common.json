@@ -1,0 +1,568 @@
+{
+ "note": "The mission / episode menus' buttons and badges. English: Global's (Planet Selection for 艦に戻る, Back, Scenario Library, Select Planet, Cap Inc.) and ours.",
+ "source": "UI/etc2/mission_menu_common.csf",
+ "styles": {
+  "pill": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#102844",
+   "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "round": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3c78",
+   "outline_width": 2
+  },
+  "round_dim": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
+  },
+  "badge": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#00000070",
+   "outline_width": 1
+  },
+  "pink": {
+   "size": 20,
+   "bold": 2,
+   "fill": "#ff4f8f",
+   "outline": "#ffffff",
+   "outline_width": 2,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  },
+  "red_art": {
+   "size": 30,
+   "bold": 3,
+   "fill": "#fff4e0",
+   "outline": "#a00010",
+   "outline_width": 3,
+   "glow": "#ff3020c0",
+   "glow_radius": 3,
+   "clear": "fill",
+   "clear_color": "#00000000"
+  }
+ },
+ "labels": [
+  {
+   "jp": "艦に戻る",
+   "text": "Planet Selection",
+   "sprites": [
+    "btn_back2_off.png",
+    "btn_back2_on.png"
+   ],
+   "box": [
+    13,
+    15,
+    179,
+    37
+   ],
+   "cover": [
+    44,
+    17,
+    117,
+    33
+   ],
+   "style": "pill",
+   "size": 20
+  },
+  {
+   "jp": "戻る",
+   "text": "Back",
+   "sprites": [
+    "btn_back_off.png",
+    "btn_back_on.png"
+   ],
+   "box": [
+    13,
+    15,
+    178,
+    37
+   ],
+   "cover": [
+    72,
+    17,
+    60,
+    33
+   ],
+   "style": "pill"
+  },
+  {
+   "jp": "惑星遷移",
+   "text": "Select Planet",
+   "sprites": [
+    "btn_planet_select_off.png",
+    "btn_planet_select_on.png"
+   ],
+   "box": [
+    14,
+    20,
+    174,
+    32
+   ],
+   "cover": [
+    50,
+    22,
+    102,
+    28
+   ],
+   "style": "pill",
+   "size": 19
+  },
+  {
+   "jp": "惑星遷移",
+   "text": "Select Planet",
+   "sprites": [
+    "btn_planet_select_off2.png"
+   ],
+   "box": [
+    14,
+    20,
+    174,
+    32
+   ],
+   "cover": [
+    50,
+    22,
+    102,
+    28
+   ],
+   "style": "pill_dim",
+   "size": 19
+  },
+  {
+   "jp": "シナリオライブラリ",
+   "text": "Scenario Library",
+   "sprites": [
+    "btn_scenariolib_off.png",
+    "btn_scenariolib_on.png"
+   ],
+   "box": [
+    12,
+    4,
+    168,
+    28
+   ],
+   "cover": [
+    10,
+    6,
+    172,
+    24
+   ],
+   "style": "pill",
+   "size": 16
+  },
+  {
+   "jp": "シナリオライブラリ",
+   "text": "Scenario Library",
+   "sprites": [
+    "btn_scenariolib_off2.png"
+   ],
+   "box": [
+    12,
+    4,
+    168,
+    28
+   ],
+   "cover": [
+    10,
+    6,
+    172,
+    24
+   ],
+   "style": "pill_dim",
+   "size": 16
+  },
+  {
+   "jp": "Ep選択",
+   "text": "Episodes",
+   "sprites": [
+    "btn_episode_off.png",
+    "btn_episode_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "Ep選択",
+   "text": "Episodes",
+   "sprites": [
+    "btn_episode_off2.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "イベント\nメニュー",
+   "text": "Event\nMenu",
+   "sprites": [
+    "btn_eventmenu_off.png",
+    "btn_eventmenu_on.png"
+   ],
+   "box": [
+    6,
+    30,
+    88,
+    41
+   ],
+   "cover": [
+    10,
+    32,
+    80,
+    37
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "イベント\nメニュー",
+   "text": "Event\nMenu",
+   "sprites": [
+    "btn_eventmenu_off2.png"
+   ],
+   "box": [
+    6,
+    30,
+    88,
+    41
+   ],
+   "cover": [
+    10,
+    32,
+    80,
+    37
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "ランキング",
+   "text": "Ranking",
+   "sprites": [
+    "btn_rank_off.png",
+    "btn_rank_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ランキング",
+   "text": "Ranking",
+   "sprites": [
+    "btn_rank_off2.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "合成",
+   "text": "Fusion",
+   "sprites": [
+    "btn_synthesis_off.png",
+    "btn_synthesis_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "実績",
+   "text": "Records",
+   "sprites": [
+    "btn_performance_off.png",
+    "btn_performance_on.png"
+   ],
+   "box": [
+    6,
+    38,
+    88,
+    30
+   ],
+   "cover": [
+    6,
+    40,
+    88,
+    26
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ベータ版",
+   "text": "Beta",
+   "sprites": [
+    "icon_betatest.png"
+   ],
+   "box": [
+    5,
+    0,
+    78,
+    24
+   ],
+   "cover": [
+    6,
+    0,
+    76,
+    22
+   ],
+   "style": "badge"
+  },
+  {
+   "jp": "友好度上昇率UP",
+   "text": "Affection Rate UP",
+   "sprites": [
+    "icon_affection_up.png"
+   ],
+   "box": [
+    2,
+    1,
+    146,
+    28
+   ],
+   "cover": [
+    0,
+    0,
+    150,
+    30
+   ],
+   "style": "pink"
+  },
+  {
+   "jp": "消費スタミナ半減!",
+   "text": "Half Stamina Cost!",
+   "sprites": [
+    "icon_stamina_down.png"
+   ],
+   "box": [
+    2,
+    1,
+    146,
+    28
+   ],
+   "cover": [
+    0,
+    0,
+    150,
+    30
+   ],
+   "style": "pink"
+  },
+  {
+   "jp": "大討伐発生!",
+   "text": "Raid Boss!",
+   "sprites": [
+    "icon_occurrence.png"
+   ],
+   "box": [
+    2,
+    1,
+    306,
+    88
+   ],
+   "cover": [
+    0,
+    0,
+    310,
+    90
+   ],
+   "style": "red_art"
+  },
+  {
+   "jp": "全イベントのマルチプレイに参加",
+   "text": "Join All-Event Multiplayer",
+   "sprites": [
+    "btn_event_multiplay_off.png",
+    "btn_event_multiplay_on.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    44,
+    18,
+    352,
+    32
+   ],
+   "style": "pill",
+   "size": 20
+  },
+  {
+   "jp": "全イベントのマルチプレイに参加",
+   "text": "Join All-Event Multiplayer",
+   "sprites": [
+    "btn_event_multiplay_off2.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    44,
+    18,
+    352,
+    32
+   ],
+   "style": "pill_dim",
+   "size": 20
+  },
+  {
+   "jp": "このイベントのマルチプレイに参加",
+   "text": "Join This Event's Multiplayer",
+   "sprites": [
+    "btn_event_multiplay2_off.png",
+    "btn_event_multiplay2_on.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    34,
+    18,
+    374,
+    32
+   ],
+   "style": "pill",
+   "size": 20
+  },
+  {
+   "jp": "このイベントのマルチプレイに参加",
+   "text": "Join This Event's Multiplayer",
+   "sprites": [
+    "btn_event_multiplay2_off2.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    34,
+    18,
+    374,
+    32
+   ],
+   "style": "pill_dim",
+   "size": 20
+  },
+  {
+   "jp": "この惑星のマルチプレイに参加",
+   "text": "Join This Planet's Multiplayer",
+   "sprites": [
+    "btn_planet_multiplay_off.png",
+    "btn_planet_multiplay_on.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    34,
+    18,
+    374,
+    32
+   ],
+   "style": "pill",
+   "size": 20,
+   "_from": "mission_select"
+  },
+  {
+   "jp": "この惑星のマルチプレイに参加",
+   "text": "Join This Planet's Multiplayer",
+   "sprites": [
+    "btn_planet_multiplay_off2.png"
+   ],
+   "box": [
+    30,
+    16,
+    376,
+    36
+   ],
+   "cover": [
+    34,
+    18,
+    374,
+    32
+   ],
+   "style": "pill_dim",
+   "size": 20,
+   "_from": "mission_select"
+  }
+ ]
+}

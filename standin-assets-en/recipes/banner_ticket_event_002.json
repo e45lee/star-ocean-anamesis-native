@@ -1,0 +1,55 @@
+{
+ "note": "The mission-ticket event banner.",
+ "source": "Image/etc2/banner_ticket_event_002.aif",
+ "styles": {
+  "main": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a2a6a",
+   "outline_width": 2,
+   "glow": "#40a0ffa0",
+   "glow_radius": 2,
+   "align": "right"
+  },
+  "sub": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a2a6a",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "イベントミッションを開放",
+   "text": "Unlock Event Missions",
+   "box": [
+    184,
+    64,
+    270,
+    30
+   ],
+   "cover": [
+    184,
+    44,
+    272,
+    50
+   ],
+   "style": "main"
+  },
+  {
+   "jp": "ミッションチケットで",
+   "text": "with Mission Tickets",
+   "box": [
+    270,
+    45,
+    184,
+    18
+   ],
+   "style": "sub"
+  }
+ ]
+}

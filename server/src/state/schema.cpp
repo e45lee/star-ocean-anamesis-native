@@ -1988,6 +1988,21 @@ const char* const kStamps[] = {
 ) strict)",
 };
 
+// ---- step 20: a party set of three (UpdatePartySet, MissionStart) -------------------------------
+//
+// A party set has three members (b: CParameterUtility::tPartyData::Initialize(PartySetInfo
+// const*, bool) @01832a9c reads PartySetCharacter[0..2] and resets the fourth tCharaData, the
+// helper's slot; api/player/party_set.h kPartyMembers). The seed wrote the home character and
+// three others into party 1, and UpdatePartySet kept a record with party_index 3 (the party
+// screen sends back the members it got), so MissionStart fielded a fourth character the party
+// screen never showed. Those slot-3 rows go; party_member.slot keeps its 0..3 check (a table
+// rebuild for a check no writer can reach: UpdatePartySet skips index 3, the seed and
+// CreatePlayer write three).
+constexpr int kPartyOfThreeVersion = 20;
+const char* const kPartyOfThree[] = {
+    "delete from party_member where slot >= 3",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -2061,6 +2076,10 @@ const std::vector<Step>& steps() {
          {std::begin(kCoinDeposit), std::end(kCoinDeposit)},
          nullptr},
         {kStampsVersion, "the chat stamps: stamps, stamp_slots (SetStampSlot, StampList)", {std::begin(kStamps), std::end(kStamps)}, nullptr},
+        {kPartyOfThreeVersion,
+         "a party set's three members: party_member rows of slot 3 dropped (the client's fourth slot is the helper's)",
+         {std::begin(kPartyOfThree), std::end(kPartyOfThree)},
+         nullptr},
     };
     return s;
 }

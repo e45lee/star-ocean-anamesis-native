@@ -97,7 +97,7 @@ void ensure_party_set(ext::Ctx& ctx, u32 party_id) {
 // The owned uids of party `party_id`, in slot order (its empty slots left out).
 std::vector<CharacterUid> party_member_uids(ext::Ctx& ctx, u32 party_id) {
     std::vector<CharacterUid> uids;
-    ctx.st.q("select uid from party_member where party_id = ? and uid is not null order by slot", {party_id},
+    ctx.st.q("select uid from party_member where party_id = ? and slot < ? and uid is not null order by slot", {party_id, kPartyMembers},
              [&](const Row& member_row) { uids.push_back(member_row.id<CharacterUid>("uid")); });
     return uids;
 }

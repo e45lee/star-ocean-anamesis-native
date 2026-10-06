@@ -120,9 +120,10 @@ Code: `server/src/api/player/` (the player state and its load, parties, assist, 
 
 <a id="party-sets"></a>
 ### Party sets (`UpdatePartySet(PartySetInfo const&)`)
-The 3.7.0 party screen saves a party set with `UpdatePartySet` when the player leaves the member select. On the FakeApiCaller route the request arrives as `PartySetInfo::Serialize()` text, the same string `NetworkApiCaller` sent: `party_id,icon_id,is_lock/` and one `id,party_index,character_id,weapon_item_id,accessory_item_id,skill_id1,skill_id2,skill_id3,assist_character_id/` per member (usually four, `party_index` 0..3). **(b)**
+The 3.7.0 party screen saves a party set with `UpdatePartySet` when the player leaves the member select. On the FakeApiCaller route the request arrives as `PartySetInfo::Serialize()` text, the same string `NetworkApiCaller` sent: `party_id,icon_id,is_lock/` and one `id,party_index,character_id,weapon_item_id,accessory_item_id,skill_id1,skill_id2,skill_id3,assist_character_id/` per member (`party_index` 0..2: three members; the screen sends back the members it got, so a fourth record came only from the server's own fourth row, see below). **(b)**
+- **Three members; the fourth slot is the helper's:** `CParameterUtility::tPartyData::Initialize(PartySetInfo const*, bool)` (@01832a9c) builds the party's four `tCharaData` from `PartySetCharacter[0..2]` (by position) and resets the fourth (`tPartyData` + 0x8798 = 8 + 3 × 0x2d30), the slot the mission menu fills with the chosen helper (a rental, an own character or an event NPC: "Rental helpers", "NPC helpers"); the party screen shows three members. A set's member past the third is never read by the client. **(b)** So a set holds slots 0..2 (`kPartyMembers`, `server/src/api/player/party_set.h`), `MissionStart` fields only those (plus the helper), and schema version 20 dropped the slot-3 rows earlier states had: the seed wrote the home character and three others, and `UpdatePartySet` kept the record of index 3 the screen sent back, so a fourth character the party screen never showed fought in every battle (and an own helper made it five).
 - **Party ids** 1..`master_global.party_set_max` (10). **(a)** A request outside that range, or text without a `party_id,icon_id,is_lock` record, changes nothing and returns no body: the host answers with its fallback, without an error code. **(d)**
-- **Members:** each record replaces the set's slot `party_index`; a record without all nine fields, or whose `party_index` is outside 0..3 (the screen's four slots), is skipped. A `character_id` that isn't owned is stored as empty. **(d)** The member's weapon, accessory, three skills and assist are stored with the set (table `party_member`, one row per slot), and `icon_id` / `is_lock` with the set (table `party_set`). **(b)** from the serializer. A weapon or accessory that isn't an owned item, or an assist that isn't an owned character, is stored as none; the skills aren't checked. **(d)** (Until schema version 6 they were stored as sent, and a slot index outside 0..3 was kept.)
+- **Members:** each record replaces the set's slot `party_index`; a record without all nine fields, or whose `party_index` is outside 0..2 (the set's three slots, b, above), is skipped (until schema version 20, outside 0..3). A `character_id` that isn't owned is stored as empty. **(d)** The member's weapon, accessory, three skills and assist are stored with the set (table `party_member`, one row per slot), and `icon_id` / `is_lock` with the set (table `party_set`). **(b)** from the serializer. A weapon or accessory that isn't an owned item, or an assist that isn't an owned character, is stored as none; the skills aren't checked. **(d)** (Until schema version 6 they were stored as sent, and a slot index outside 0..3 was kept.)
 - **The set's equipment is the member's, not the character's:** `PartySet` sends each slot's `weapon_item_id` / `accessory_item_id` as the set stored them, 0 when it has none, even when the character wears something (`EquipWeapon`). **(b)** the two are separate in the client (`PartySetCharacterInfo` vs `CPersonInfo`); **(d)** that a slot the party screen never saved (the seed's, CreatePlayer's, UpdateParty's) has none. (Until schema version 6 such a slot sent the character's own equipment.) A weapon or accessory a set names counts as equipped: `Item.is_equip` is true and it can't be sold, composed, graded up or used for a gear, as for one a character wears. **(d)**
 - **Current party:** the saved set becomes `Player.party_id`, which the party screen opens on (`CParameterUtility::GetPatyIndex`, CParameterManager+0x768) and `MissionStart` takes its members from. **(d)**
 - **Response:** `PartySetResult` (the saved set) and `PartySet` (all sets), plus `Player` and `Wallet`. `CApiNotify::OnUpdatePartySetRes` stores `PartySetResult` into the client's party-set map under its id. **(b)**
@@ -1968,7 +1969,7 @@ The seed is the first save that exists of `--seed FILE` (`--seed` counts on a st
 | skills, limit break, awakening, favor, equipment | skill level 1, limit break 0, awakening 0, favor 0, nothing equipped | (d) |
 | items, stack items, gear | none | (d) |
 | home character | `player_home_pc_roleid` | seed save |
-| party 1 | the home character, then the three highest-rarity other characters (roster order among equals); parties 2..10 empty | (d) |
+| party 1 | the home character, then the two highest-rarity other characters (roster order among equals): three members, the client's fourth slot being the helper's (b: "Party sets"; until schema version 20, three others); parties 2..10 empty | (d) |
 | party sets | a `party_set` row per set 1..`master_global.party_set_max` (10): icon 0, unlocked (what `PartySet` sends for a set without one); the current party is set 1 | (a) the count; (d) the defaults |
 | planets | not stored (the seed wrote the save's `BAS:PlanetOpen_*` flags into a `planets` table nothing read, dropped in schema version 2): the open planets are the campaign's `ActiveMissionList` | (d) |
 
@@ -2030,7 +2031,7 @@ These come from the server core. Revisit them when evidence turns up.
 | Rule | Label |
 |---|---|
 | Seed: 300,000 free coins (`--start-coins`, the user's request), character levels (cap − 10), skill level 1, nothing equipped, no items | (d) |
-| Party 1 = home character + three highest-rarity characters; MissionStart uses the current party | (d) |
+| Party 1 = home character + two highest-rarity characters; MissionStart uses the current party | (d) |
 | Party sets never saved carry set 1's members; the last saved set becomes the current party | (d) |
 | Battle stats: common curve × role % / 100, AP 100, no element defences, default weapon | (d) |
 | Drop lots: `lot_drop_count` weighted picks with replacement, fixed drops always | (d) |
@@ -2196,7 +2197,7 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [settings-account](#settings-register) |  | 期限情報's read marks aren't stored (the server keeps no expiration state) | (d) |  |
 | [settings-account](#settings-register) |  | シナリオライブラリ lists the story of cleared missions | (c) |  |
 | [core](#core-register) |  | Seed: 300,000 free coins (`--start-coins`, the user's request), character levels (cap − 10), skill level 1, nothing equipped, no items | (d) |  |
-| [core](#core-register) |  | Party 1 = home character + three highest-rarity characters; MissionStart uses the current party | (d) |  |
+| [core](#core-register) |  | Party 1 = home character + two highest-rarity characters; MissionStart uses the current party | (d) |  |
 | [core](#core-register) |  | Party sets never saved carry set 1's members; the last saved set becomes the current party | (d) |  |
 | [core](#core-register) |  | Battle stats: common curve × role % / 100, AP 100, no element defences, default weapon | (d) |  |
 | [core](#core-register) |  | Drop lots: `lot_drop_count` weighted picks with replacement, fixed drops always | (d) |  |

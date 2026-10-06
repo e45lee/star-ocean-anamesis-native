@@ -56,7 +56,7 @@ NATIVE_TEST("player/party-set-text") {
 }
 
 // The party sets in the state (PLAN-schema S6: one party_member table, NULL = none), on a scratch
-// server: UpdatePartySet stores owned equipment and assists only and skips a slot outside 0..3;
+// server: UpdatePartySet stores owned equipment and assists only and skips a slot outside 0..2;
 // a set's weapon counts as equipped (it isn't sold); UpdateParty refuses an id outside
 // 1..party_set_max and clears a slot's equipment, skills and assist when its character changes;
 // PartySet sends the set's equipment only (a slot without one: 0, not the character's own).
@@ -84,7 +84,7 @@ NATIVE_TEST("player/party-members") {
         c.st.q("select uid from roster order by uid limit 3", {}, [&](const Row& r) { owned.push_back((u64)r.i("uid")); });
         if (owned.size() < 3) return t.fail("%zu characters", owned.size());
         auto text = std::to_string(2) + ",4,1/0,0," + std::to_string(owned[0]) + "," + std::to_string(w0) + ",999,11,0,13,999/" + "0,1," +
-                    std::to_string(owned[1]) + ",0,0,0,0,0," + std::to_string(owned[2]) + "/0,5," + std::to_string(owned[2]) + ",0,0,0,0,0,0/";
+                    std::to_string(owned[1]) + ",0,0,0,0,0," + std::to_string(owned[2]) + "/0,3," + std::to_string(owned[2]) + ",0,0,0,0,0,0/";
         Value saved = call("UpdatePartySet", {}, {text});
         if (saved.type != Value::Map) return t.fail("UpdatePartySet answered nothing");
         auto member = [&](u32 slot, const char* column) {
@@ -96,7 +96,7 @@ NATIVE_TEST("player/party-members") {
         t.expect_eq(member(0, "skill_id1"), (int64_t)11, "skill 1");
         t.expect_eq(member(0, "skill_id2"), (int64_t)-1, "skill 0: none");
         t.expect_eq(member(1, "assist_uid"), (int64_t)owned[2], "an owned assist stored");
-        t.expect_eq(c.st.one("select count(*) from party_member where party_id = 2", {}), (int64_t)2, "slot 5 skipped");
+        t.expect_eq(c.st.one("select count(*) from party_member where party_id = 2", {}), (int64_t)2, "slot 3 (the helper's) skipped");
         // the set's weapon is equipped: not sold; the other one is
         call("SellItemArray", {}, {}, {{w0}});
         call("SellItemArray", {}, {}, {{w1}});

@@ -103,6 +103,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `viewer:boot` | 40 s | 1 | soa-viewer boots (viewer gate scope) | `emulator-viewer/scripts/viewer_boot.sh build/emulator-viewer/soa-viewer {out}` |
 | T2 | `viewer:session` | 4.6 min | 1 | soa-viewer's session (viewer gate scope) | `emulator-viewer/scripts/viewer_session.sh build/emulator-viewer/soa-viewer {out}` |
 | T2 | `win:battle-gacha` | 5.2 min | 1 | Windows (soa.exe from WSL through interop, staged in C:\soa-win): the restore session: home, a battle, a 10-draw, the server state after each | `scripts/windows-test.sh battle-gacha {out} {tmp}` |
+| T2 | `win:native-order` | 30 s | - | Windows: soa.exe --list-native byte-identical to Linux's (static-initializer order: natives, selftests and test hooks register in the same order; cmake/init_order.cmake) | `scripts/windows-test.sh native-order {out} {tmp}` |
 | T2 | `win:seeded` | 5.8 min | 1 | Windows: soa-emu.exe against soa-server.exe: login, battle, gacha (the emulator's seeded session) | `scripts/windows-test.sh seeded {out} {tmp}` |
 | T2 | `win:viewer-boot` | 45 s | 1 | Windows: soa-viewer.exe boots to the title and the terms prompt (the viewer's boot) | `scripts/windows-test.sh viewer-boot {out} {tmp}` |
 | T2 | `win:shard-login` | 5.0 min | 3 | Windows: the tests/diff shard login on the three Windows targets (soa-emu.exe, soa.exe --server, soa.exe in process), compared as on Linux | `scripts/windows-test.sh shard-login {out} {tmp}` |

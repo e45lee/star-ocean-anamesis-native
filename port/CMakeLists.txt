@@ -5,7 +5,8 @@
 
 file(GLOB_RECURSE SOA_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 # Link order = static-initializer order = the order natives and selftests register in, and some
-# selftests depend on it (the zz_*_test.cpp files must register last). src/native/ is split into
+# selftests depend on it (the zz_*_test.cpp files must register last). (On MinGW initializers run
+# in reverse link order: the lists are linked reversed there, cmake/init_order.cmake.) src/native/ is split into
 # subsystem folders (src/native/README.md); sort its files by basename as if the folder were flat,
 # so the order doesn't depend on the folder layout.
 set(_soa_keyed "")
@@ -24,9 +25,16 @@ endforeach()
 # static-initializer order. CMake puts $<TARGET_OBJECTS> after a target's own objects, so they go
 # in through the link options, which come before the objects on the link line, and LINK_DEPENDS
 # relinks soa when they change.
+soa_link_in_init_order(SOA_SOURCES)
 add_executable(soa ${SOA_SOURCES})
 add_dependencies(soa soaruntime_objs)
-target_link_options(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
+if(MINGW)
+  # (reverse link order: the runtime's objects (reversed in runtime/CMakeLists.txt) go AFTER the
+  # port's, so they still initialize first)
+  target_sources(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
+else()
+  target_link_options(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
+endif()
 set_property(TARGET soa APPEND PROPERTY LINK_DEPENDS $<TARGET_OBJECTS:soaruntime_objs>)
 target_include_directories(soa PRIVATE src)
 target_compile_definitions(soa PRIVATE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)

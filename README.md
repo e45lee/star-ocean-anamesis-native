@@ -156,6 +156,9 @@ scripts/build.sh --windows --target soa-server          # one part
   `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated; a replacement
   `__cxa_thread_atexit` runs them before the TLS blocks are freed); `mkdtemp` (mingw-w64 12+ only);
   and the C runtime is `msvcrt.dll`, not the UCRT (no `_get_timezone`; `long` is 32 bits).
+- Static initializers run in reverse link order on MinGW (ELF: in link order); the natives,
+  selftests and test hooks register from them, so `soa_link_in_init_order` (`cmake/init_order.cmake`)
+  links the source lists reversed there. `win:native-order` checks `soa.exe --list-native` against Linux's.
 - What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
   `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
   POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,

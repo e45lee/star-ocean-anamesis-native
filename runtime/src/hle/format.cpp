@@ -302,7 +302,9 @@ std::string host_scanf_format(const char* fmt, bool win) {
         }
         if (*p == '*') out.push_back(*p++);
         while (*p >= '0' && *p <= '9') out.push_back(*p++);
-        if (*p == 'l' && p[1] != 'l' && p[1] && std::strchr("dioxXun", p[1])) {
+        // (the 64-bit integer lengths spelled as `ll`, which every Windows CRT's scanf reads: z, j, t
+        // are 64-bit on both ABIs, but older CRTs don't know them)
+        if ((*p == 'l' || *p == 'z' || *p == 'j' || *p == 't') && p[1] != 'l' && p[1] && std::strchr("dioxXun", p[1])) {
             out += "ll";
             p++;
         }

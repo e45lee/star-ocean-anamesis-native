@@ -1141,11 +1141,13 @@
     "CoinDepositAndroidUpdate",
     "CoinDepositCreate",
     "ExItemShop",
+    "GetBirthYearMonth",
     "GetGachaInData",
     "GetPlayer",
     "GetServerTime",
     "Login",
-    "NoLoginStart"
+    "NoLoginStart",
+    "UpdateBirthYearMonth"
    ],
    "source": "declared"
   },
@@ -1154,11 +1156,13 @@
     "CoinDepositAndroidUpdate",
     "CoinDepositCreate",
     "ExItemShop",
+    "GetBirthYearMonth",
     "GetGachaInData",
     "GetPlayer",
     "GetServerTime",
     "Login",
-    "NoLoginStart"
+    "NoLoginStart",
+    "UpdateBirthYearMonth"
    ],
    "source": "declared"
   },

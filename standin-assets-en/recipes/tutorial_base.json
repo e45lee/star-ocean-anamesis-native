@@ -79,28 +79,6 @@
  },
  "labels": [
   {
-   "jp": "シナリオライブラリ",
-   "text": "Scenario Library",
-   "sprites": [
-    "btn_scenariolib_on.png"
-   ],
-   "box": [
-    12,
-    4,
-    168,
-    28
-   ],
-   "cover": [
-    10,
-    6,
-    172,
-    24
-   ],
-   "style": "pill",
-   "size": 16,
-   "_from": "mission_menu_common"
-  },
-  {
    "jp": "惑星遷移",
    "text": "Select Planet",
    "sprites": [
@@ -166,6 +144,28 @@
    "style": "pill",
    "size": 20,
    "_from": "mission_select"
+  },
+  {
+   "jp": "シナリオライブラリ",
+   "text": "Scenario Library",
+   "sprites": [
+    "btn_scenariolib_on.png"
+   ],
+   "box": [
+    34,
+    5,
+    150,
+    26
+   ],
+   "cover": [
+    10,
+    6,
+    172,
+    24
+   ],
+   "style": "pill",
+   "size": 15,
+   "_from": "mission_menu_common"
   },
   {
    "jp": "出撃",

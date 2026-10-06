@@ -27528,7 +27528,7 @@ uimsg_miss_no_rental	81995850d52978346095a8160a15d62adb822f0f	No Loans	official
 uimsg_miss_not_item	3fa6c67b5da6e5d3aea3355b7c81e8e5cf9163d8	You do not have enough\n%ss.\n\nIf you are participating in Multiplayer \nas a guest, you do not need to be \nin possession of any of the required items.	official
 uimsg_miss_patry_bp	d60a862858458ad31859cfb4414ee3982588dee3	Party Combat Strength	official
 uimsg_miss_planet9_clear	a2c6e0b8ccaf04925ff59f797b2db3d79f018c7c	To be continued\nin future\nupdates.	official
-uimsg_miss_rate	ed57118dde956aed6642fba52bf1ceaf99913950	Clear rate: %d%%	official
+uimsg_miss_rate	ed57118dde956aed6642fba52bf1ceaf99913950	Clear: %d%%	human
 uimsg_miss_remain_cnt	6cb38c82f3fd4b1e2cc58e1aa37c79957fe9838a	%d left	official
 uimsg_miss_role_select	2f7deabab534e621ef31f947573d69de30b8888a	Select the role you would like to recruit for.	official
 uimsg_miss_single_play	8ea5b4a238774d8a1a715b955bfc4ecf9f7ff378	Single Player	official

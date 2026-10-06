@@ -739,7 +739,7 @@ Investigation of 2026-10-07 (agent `english-llm`), at the user's request (M-Q3):
   Per stratum (chrF; `seed`/`factor`, skills/talents, `name`, UI, EP1 story): Opus 60 / 44 / 52 / 45 / 37; Sonnet 67 / 46 / 49 / 43 / 35; Gemma 4 31B 51 / 46 / 51 / 44 / 37 (v2: 55 / 48 / 52 / 44 / 37); 26B-A4B 48 / 46 / 46 / 46 / 36; Qwen3.8-27B 66 / 46 / 49 / 45 / 34; Gemma 4 12B 52 / 49 / 47 / 45 / 36.
 
 - **Significance.** A paired bootstrap of chrF (1,000 resamples of the 250 rows) puts every 12–31B model but shisa within noise of Claude Opus: Gemma 4 31B −0.2 (95% interval −1.4 to +1.0), v2 +0.5 (−0.8 to +1.6), 26B-A4B −0.6 (−2.0 to +0.6), Qwen3.8-27B −0.5 (−2.2 to +1.1), Gemma 4 12B −1.0 (−2.6 to +0.3), Sonnet −0.6 (−1.7 to +0.4). shisa is −6.8 (−9.7 to −4.3), FuguMT −12.2. chrF against one reference can't rank these models; the checks and the rows below do.
-- **Run-to-run variation.** With parallel slots the output isn't fully deterministic (batched arithmetic): two Qwen3.8 runs differed in 37 of 310 rows, and the scores moved by 0–0.4 chrF. A run for the table should use one slot, or accept this and rely on the table's provenance, not on re-running.
+- **Run-to-run variation.** With parallel slots the output isn't fully deterministic (batched arithmetic): two identical 8-slot Qwen3.8 runs differed in 33 of 310 rows (a 4-slot run in 37), and the scores moved by up to 0.4 chrF. A run for the table should use one slot, or accept this and rely on the table's provenance, not on re-running.
 
 **What the rows look like** (Japanese and Global; then Claude Opus / Gemma 4 31B / 31B v2 / 26B-A4B / Qwen3.8-27B):
 

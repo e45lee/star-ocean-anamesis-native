@@ -822,6 +822,38 @@ NATIVE_TEST("wire/inproc-parity") {
             compare(t, "SaleGacha", server_port::inproc_request("_ZN13FakeApiCaller9SaleGachaEjPKa", 0xb164b4c5, x), d);
         }
     }
+    {
+        // CoinDepositCreate(u8 platform, s32 product, char const* user): the string is a
+        // length-prefixed blob on the wire (CPaymentManager sends "user_id")
+        const char* user = "user_id";
+        Arg s;
+        s.code = 'S';
+        s.mem.assign(user, user + strlen(user) + 1);
+        s.text_len = strlen(user);
+        server::net::Decoded d;
+        if (wire_decode(t, "CoinDepositCreate", {u('b', 1), u('i', 3), s, u('I', strlen(user))}, &d)) {
+            u64 x[8] = {0x5150, 1, 3, (u64)user};
+            compare(t, "CoinDepositCreate", server_port::inproc_request("_ZN13FakeApiCaller17CoinDepositCreateEhiPKc", 0x3850fb96, x), d);
+        }
+    }
+    {
+        // CoinDepositAndroidUpdate(u32 trans, char const* receipt, char const* signature): the
+        // mangled name's second string is a substitution (S1_)
+        const char* receipt = "eyJwcm9kdWN0SWQiOiJzb2EubG9jYWwuY29pbl8wMDEifQ==";
+        const char* sig = "local-signature";
+        Arg a, b;
+        a.code = b.code = 'S';
+        a.mem.assign(receipt, receipt + strlen(receipt) + 1);
+        a.text_len = strlen(receipt);
+        b.mem.assign(sig, sig + strlen(sig) + 1);
+        b.text_len = strlen(sig);
+        server::net::Decoded d;
+        if (wire_decode(t, "CoinDepositAndroidUpdate", {u('I', 7), a, u('I', strlen(receipt)), b, u('I', strlen(sig))}, &d)) {
+            u64 x[8] = {0x5150, 7, (u64)receipt, (u64)sig};
+            compare(t, "CoinDepositAndroidUpdate",
+                    server_port::inproc_request("_ZN13FakeApiCaller24CoinDepositAndroidUpdateEjPKcS1_", 0x089ac659, x), d);
+        }
+    }
 }
 
 }  // namespace

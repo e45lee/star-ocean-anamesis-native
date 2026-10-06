@@ -19,6 +19,11 @@
   "ClearNewGear": "server/src/api/items/gear.cpp",
   "ClearNewItem": "server/src/api/items/new_flags.cpp",
   "ClearNewStackItem": "server/src/api/items/new_flags.cpp",
+  "CoinDepositAmazonUpdate": "server/src/api/shop/coins.cpp",
+  "CoinDepositAndroidUpdate": "server/src/api/shop/coins.cpp",
+  "CoinDepositCreate": "server/src/api/shop/coins.cpp",
+  "CoinDepositIOSUpdate": "server/src/api/shop/coins.cpp",
+  "CoinList": "server/src/api/shop/coins.cpp",
   "CreatePlayer": "server/src/api/entry/entry.cpp",
   "DebugBarneyChance": "server/src/api/debug/debug_stubs.cpp",
   "DebugCharacterBoost": "server/src/api/debug/debug_stubs.cpp",
@@ -52,6 +57,7 @@
   "DeepSpaceMissionEnd": "server/src/api/deepspace/deepspace.cpp",
   "DeepSpaceMissionEndNow": "server/src/api/deepspace/deepspace.cpp",
   "DeepSpaceMissionStart": "server/src/api/deepspace/deepspace.cpp",
+  "DirectItemShopList": "server/src/api/shop/coins.cpp",
   "EquipAccessory": "server/src/api/growth/growth.cpp",
   "EquipSkill": "server/src/api/growth/growth.cpp",
   "EquipWeapon": "server/src/api/growth/growth.cpp",
@@ -213,6 +219,9 @@
    "MissionResultExtra",
    "MissionStartExtra",
    "OnPlayerLoad"
+  ],
+  "server/src/api/shop/coins.cpp": [
+   "OnPlayerLoad"
   ]
  },
  "tests": {
@@ -349,6 +358,19 @@
     "MissionFailed",
     "MissionStart",
     "MissionTalk"
+   ],
+   "source": "observed (requests.txt)"
+  },
+  "replay:coins": {
+   "apis": [
+    "CoinDepositAmazonUpdate",
+    "CoinDepositAndroidUpdate",
+    "CoinDepositCreate",
+    "CoinDepositIOSUpdate",
+    "CoinList",
+    "DirectItemShopList",
+    "GetPlayer",
+    "Login"
    ],
    "source": "observed (requests.txt)"
   },
@@ -1012,6 +1034,34 @@
     "SearchPlayer",
     "SetTitle"
    ]
+  },
+  "session:coins": {
+   "apis": [
+    "CoinDepositAndroidUpdate",
+    "CoinDepositCreate",
+    "ExItemShop",
+    "GetBirthYearMonth",
+    "GetPlayer",
+    "GetServerTime",
+    "ItemShopList",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
+  "session:coins-server": {
+   "apis": [
+    "CoinDepositAndroidUpdate",
+    "CoinDepositCreate",
+    "ExItemShop",
+    "GetBirthYearMonth",
+    "GetPlayer",
+    "GetServerTime",
+    "ItemShopList",
+    "Login",
+    "NoLoginStart"
+   ],
+   "source": "declared"
   },
   "session:party": {
    "apis": [

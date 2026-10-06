@@ -871,8 +871,8 @@ void h_get_mission_list(Cpu& c) {
 // local server answers in-process (agent server-rules; port code, not guest behaviour): the
 // arguments go to server_port::capture and the request is queued with NetworkApiCaller's FunctionID,
 // answered by the CApiNotify handler NetworkApiCaller's response goes to. On another caller
-// the guest's Status. The gear screens (CCustomGear) and the favor-achievement
-// receive (CAdjutantSelect -> AchievementListReceive) use them.
+// the guest's Status. The gear screens (CCustomGear), the favor-achievement receive
+// (CAdjutantSelect -> AchievementListReceive) and the coin shop's purchase (CPaymentManager) use them.
 struct ServedStatusOnly {
     const char* sym;
     u64 status;  // the guest's Status
@@ -892,6 +892,19 @@ const ServedStatusOnly kServedStatusOnly[] = {
     {"_ZN13FakeApiCaller15UpdateGearStockEv", 0, 0xd10e6806, "_ZN10CApiNotify20OnUpdateGearStockResEPaRj", "FakeApi/update_gear_stock.msgp"},
     {"_ZN13FakeApiCaller22AchievementListReceiveERKN9Framework10CSTLVectorImEE", 1, 0xbbc99ccf,
      "_ZN10CApiNotify27OnAchievementListReceiveResEPaRj", "FakeApi/achievement_list_receive.msgp"},
+    // Paid currency (server/src/api/shop/coins.cpp): the coin shop's purchase (CPaymentManager::
+    // Progress_Purchase / VerifyReceipt_) and the premium shop's list.
+    {"_ZN13FakeApiCaller8CoinListEv", 0, 0xd859bb89, "_ZN10CApiNotify13OnCoinListResEPaRj", "FakeApi/coin_list.msgp"},
+    {"_ZN13FakeApiCaller17CoinDepositCreateEhiPKc", 0, 0x3850fb96, "_ZN10CApiNotify22OnCoinDepositCreateResEPaRj",
+     "FakeApi/coin_deposit_create.msgp"},
+    {"_ZN13FakeApiCaller24CoinDepositAndroidUpdateEjPKcS1_", 1, 0x089ac659, "_ZN10CApiNotify29OnCoinDepositAndroidUpdateResEPaRj",
+     "FakeApi/coin_deposit_android_update.msgp"},
+    {"_ZN13FakeApiCaller20CoinDepositIOSUpdateEjPKcS1_", 1, 0xc5193b15, "_ZN10CApiNotify25OnCoinDepositIOSUpdateResEPaRj",
+     "FakeApi/coin_deposit_ios_update.msgp"},
+    {"_ZN13FakeApiCaller23CoinDepositAmazonUpdateEjPKcS1_", 1, 0x0bc7f736, "_ZN10CApiNotify28OnCoinDepositAmazonUpdateResEPaRj",
+     "FakeApi/coin_deposit_amazon_update.msgp"},
+    {"_ZN13FakeApiCaller18DirectItemShopListEv", 1, 0xc367268b, "_ZN10CApiNotify23OnDirectItemShopListResEPaRj",
+     "FakeApi/direct_item_shop_list.msgp"},
 };
 bool is_served_status_only(const char* sym) {
     for (const auto& s : kServedStatusOnly)

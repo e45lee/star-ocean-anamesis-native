@@ -100,9 +100,9 @@ NATIVE_TEST("gacha/stepup-box") {
         it = r.find("data") ? r.find("data")->find("GachaItems") : nullptr;
         t.expect_eq(it ? (u32)it->arr.size() : 0u, (u32)sv.m.one("select bulk_count from master_gacha where id = ?", {perm}), "bulk units");
     }
-    // coins short: 20000 紋章石が不足しています
+    // coins short: 20003 紋章石が不足しています (the code the draw's answer opens the coin shop on)
     sv.st.q("update player set free_coin = 0, pay_coin = 0", {});
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s3}, {"x"}, {}}), 20000u, "coins short");
+    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s3}, {"x"}, {}}), 20003u, "coins short");
     t.expect_eq((u32)sv.st.one("select next_id from stepup where head = ?", {s1}), s3, "still at step 3");
     // box gacha: box_event_gacha_yumenonagisa_003 (50 slots, item_coin_294 x 5 per draw, resettable)
     u32 box = S.id("master_gacha", "box_event_gacha_yumenonagisa_003");

@@ -50,6 +50,8 @@ What it does not cover: the wire layer's own work (the bridge, the Ninja cipher,
 
 | `badges` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 6), the `economy` options: Login, a 10-draw of a character gacha (two new characters, new stack items), GetPlayer (`is_new` in Character / StockItem), ClearNewCharacter (a new, a seeded and an unknown uid), ClearNewItem (an unknown uid), ClearNewStackItem (a new and an unknown id), GetPlayer (cleared) | 7 |
 
+| `coins` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 7, paid currency), the `economy` options: Login (CoinList on the player load), CoinList, a purchase of the テラ set (CoinDepositCreate, CoinDepositAndroidUpdate: paid and free stones), the same update again (not credited twice), CoinDepositIOSUpdate of an unknown deposit (10208), CoinDepositCreate of a product not sold (10208), the S set through CoinDepositAmazonUpdate, DirectItemShopList (empty), GetPlayer | 11 |
+
 The sweep is the coverage floor: with no arguments, some handlers decline (`not-handled`: 14 of 106 today) or refuse; the flows exercise the real arguments.
 
 **Fidelity.** Replayed on the build they were recorded with, the flows' replies equal the recorded ones byte for byte, except Login's `r_ver` (the CDN's revision: no CDN is built in a replay, so it is empty).

@@ -89,6 +89,8 @@ The exact values a real phone without Play Games or location returned aren't rec
 
 The HTTP methods (`HttpRequest`, `GetStatusCode`, `GetHttpHeader`, `ReadHttpResponse`, `AbortHttpRequest`, `SetHttpUserAgent`, `CloseHttpRequest`, `SetHttpProxy`) are `http_370.cpp`'s: see "Networking".
 
+The in-app billing methods (`CanPurchaseDevice`, `RequestProduct`, `PurchaseProduct`, `GetPurchaseProductResult`, `ConsumeProduct`, `ReverifyProduct`; the coin shop's store) are a local store that completes every purchase for nothing, in `java_370.cpp`'s `install_billing`: `docs/client-changes.md` "In-app billing" (the contract from the APK's `InAppBilling`).
+
 ### The imports (`hle_370.cpp`)
 The undefined dynamic symbols (`readelf --dyn-syms -W`, `UND`) of 3.7.0 and the offline build differ by one: 3.7.0 imports `fmod`. It is bound to the host's `fmod`, which is exact IEEE, like bionic's. Every other 3.7.0 import is one the offline build has too, and the runtime binds all of them: the loader reports no unresolved import.
 

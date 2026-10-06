@@ -17,7 +17,7 @@ namespace {
 // server/PLAN-readability.md (static initializers in link order). (The Schema kind went with
 // PLAN-schema S1: every table is state/schema.cpp's.)
 const char* const kExpected[] = {
-    "OnPlayerLoad: login_bonus, achievements, daily, event, follow, gear, home, notice, shop, sphere211, subscription, title, tower, worldboss",
+    "OnPlayerLoad: login_bonus, achievements, daily, event, follow, gear, home, notice, shop, sphere211, subscription, title, tower, worldboss, coins",
     "OnResponse: event, title",
     "MissionStartExtra: favor_drop, worldboss",
     "MissionResultExtra: event_ranking, tower, worldboss",

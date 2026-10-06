@@ -1986,6 +1986,56 @@ NATIVE_TEST("server/schema-migrate-v20") {
     ref.close();
 }
 
+// Step 21: items.exp, the boosted points since level 1, becomes the points within the level (the
+// client's boosted_point): a rarity-4 weapon with 12,000 points is level 3 with 2,000; one at the
+// cap keeps 0; a limit-broken accessory levels past 10; an unboosted item stays as it was.
+NATIVE_TEST("server/schema-migrate-v21") {
+    constexpr int kV = 21;  // this step's version (the parent renumbers parallel steps at merge)
+    const std::string before = std::to_string(kV - 1);
+    ext::Sql* master = test_master();
+    if (!master) return;  // the conversion reads the master's compose tables
+    TempDb old(("v" + std::to_string(kV)).c_str());
+    if (!write_fixture(t, old.path)) return;
+    Sql db;
+    if (!db.open(old.path, false)) return t.fail("open");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, kV - 1, master->h), true, "migrated to the version before");
+    auto item_of = [&](int type, int rarity) {
+        return master->one("select id from master_item where type = ? and rarity = ? order by id limit 1", {type, rarity});
+    };
+    const int64_t w4 = item_of(1, 4), a5 = item_of(3, 5);
+    if (!w4 || !a5) return t.fail("no rarity-4 weapon or rarity-5 accessory in the master");
+    // as the old compose wrote them: level = min(cap, 1 + exp / next), exp capped at (cap - 1) x next
+    const std::string plant =
+        "insert into items (uid, master_item_id, item_type, level, exp, limit_break, locked, created_at) values "
+        "(900001, " +
+        std::to_string(w4) +
+        ", 1, 3, 12000, 0, 0, 0), "
+        "(900002, " +
+        std::to_string(w4) +
+        ", 1, 10, 45000, 0, 0, 0), "
+        "(900003, " +
+        std::to_string(a5) +
+        ", 3, 11, 105000, 1, 0, 0), "
+        "(900004, " +
+        std::to_string(w4) + ", 1, 1, 0, 2, 0, 0)";
+    t.expect_eq(sqlite3_exec(db.h, plant.c_str(), nullptr, nullptr, nullptr), SQLITE_OK, "items planted");
+    db.close();
+    if (!db.open(old.path, false)) return t.fail("reopen");
+    t.expect_eq(state::open_and_migrate(db.h, old.path, kV, master->h), true, "the version before -> this version");
+    t.expect_eq(state::user_version(db.h), kV, "user_version");
+    auto lp = [&](int uid) { return db.one("select level * 1000000 + exp from items where uid = ?", {uid}); };
+    t.expect_eq(lp(900001), (int64_t)3 * 1000000 + 2000, "12000 points, next 5000: level 3 with 2000");
+    t.expect_eq(lp(900002), (int64_t)10 * 1000000, "at the cap: level 10 with 0");
+    t.expect_eq(lp(900003), (int64_t)11 * 1000000 + 5000, "limit break 1 (cap 12): 105000 at 10000 a level, level 11 with 5000");
+    t.expect_eq(lp(900004), (int64_t)1 * 1000000, "no points: unchanged");
+    t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+    db.close();
+    Sql bak;
+    if (!bak.open(old.path + ".bak-v" + before, true)) return t.fail("no %s.bak-v%s", old.path.c_str(), before.c_str());
+    t.expect_eq(bak.one("select exp from items where uid = 900001", {}), (int64_t)12000, "the backup keeps the old points");
+    bak.close();
+}
+
 NATIVE_TEST("server/schema-fk-actions") {
     TempDb file("fk");
     if (!write_fixture(t, file.path)) return;

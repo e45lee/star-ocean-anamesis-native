@@ -9,6 +9,7 @@
 // never changed an existing table, so a state from before a column was added would miss it.
 #include "state/schema.h"
 
+#include <algorithm>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
@@ -2003,6 +2004,52 @@ const char* const kPartyOfThree[] = {
     "delete from party_member where slot >= 3",
 };
 
+// ---- step 21: an item's boosted points within its level ------------------------------------------
+//
+// items.exp was the boosted points since level 1 (the level 1 + exp / next_level_boosted_point, the
+// points capped at the level cap's threshold) and went out as CItemInfo's `boosted_point`; the client
+// reads `boosted_point` as the points within `level` (b: ItemModel::_CalcLevel @017c5484 carries
+// the points past next_level_boosted_point into the next level and keeps 0 at the cap; the
+// strengthening screen shows boosted_point + the gain over next_level_boosted_point). From this
+// version items.exp is that: each row with points becomes level = min(cap, 1 + exp / next) and
+// exp - (level - 1) x next, 0 at the cap (api/items/items.cpp item_cap: the limit break's
+// level_max, else the rarity's). No SQL: the tables are the master's (no master: the rows stay).
+constexpr int kItemPointsVersion = 21;
+bool item_points_within_level(sqlite3* db, sqlite3* master) {
+    if (!master) return true;
+    struct Row {
+        int64_t uid, id, type, exp, lb;
+    };
+    std::vector<Row> rows;
+    sqlite3_stmt* s = nullptr;
+    if (sqlite3_prepare_v2(db, "select uid, master_item_id, item_type, exp, limit_break from items where exp > 0", -1, &s, nullptr) != SQLITE_OK) {
+        sqlite3_finalize(s);
+        return false;
+    }
+    while (sqlite3_step(s) == SQLITE_ROW)
+        rows.push_back({sqlite3_column_int64(s, 0), sqlite3_column_int64(s, 1), sqlite3_column_int64(s, 2), sqlite3_column_int64(s, 3),
+                        sqlite3_column_int64(s, 4)});
+    sqlite3_finalize(s);
+    for (const Row& r : rows) {
+        const std::string table = r.type == 3 ? "master_item_accessory_compose" : "master_item_compose";  // item_type 3: accessories
+        int64_t rarity = count_of(master, "select rarity from master_item where id = ?", r.id);
+        int64_t next = count_of(master, ("select next_level_boosted_point from " + table + " where rarity = ?").c_str(), rarity);
+        int64_t cap = 0;
+        if (r.lb)
+            cap = count_of(
+                master,
+                ("select level_max from master_item_limit_break_level_max where type = " + std::to_string(r.type) + " and limit_break = ?").c_str(),
+                r.lb);
+        if (!cap) cap = count_of(master, ("select ifnull(level_max, 10) from " + table + " where rarity = ?").c_str(), rarity);
+        if (!cap) cap = 10;
+        int64_t level = next > 0 ? std::min<int64_t>(cap, 1 + r.exp / next) : 1;
+        int64_t points = level >= cap || next <= 0 ? 0 : r.exp - (level - 1) * next;
+        if (!run(db, "update items set level = ?, exp = ? where uid = ?", {Bound::integer(level), Bound::integer(points), Bound::integer(r.uid)}))
+            return false;
+    }
+    return true;
+}
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -2080,6 +2127,10 @@ const std::vector<Step>& steps() {
          "a party set's three members: party_member rows of slot 3 dropped (the client's fourth slot is the helper's)",
          {std::begin(kPartyOfThree), std::end(kPartyOfThree)},
          nullptr},
+        {kItemPointsVersion,
+         "an item's boosted points within its level: items.exp from the points since level 1 to the client's boosted_point",
+         {},
+         item_points_within_level},
     };
     return s;
 }

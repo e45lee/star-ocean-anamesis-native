@@ -102,7 +102,7 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `FollowAdd` (server/src/api/social/social.cpp): stubs
 - `FollowList` (server/src/api/social/rental.cpp): missions
 - `FollowRemove` (server/src/api/social/social.cpp): stubs
-- `Gacha` (server/src/api/gacha/gacha.cpp): badges, economy, items-party, storage
+- `Gacha` (server/src/api/gacha/gacha.cpp): badges, compose-points, economy, items-party, storage
 - `GachaOnce` (server/src/api/gacha/gacha.cpp): economy
 - `GachaTicket` (server/src/api/gacha/gacha.cpp): economy, hammers
 - `GenerateGear` (server/src/api/items/gear.cpp): items-party
@@ -118,7 +118,7 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `GetMissionList` (server/src/api/missions/play_state.cpp): campaign, missions, seeded, tutorial
 - `GetOneTimeStorageInfo` (server/src/api/storage/one_time.cpp): storage
 - `GetPlayMission` (server/src/api/missions/play_state.cpp): missions, tower
-- `GetPlayer` (server/src/api/player/player_info.cpp): badges, campaign, coins, deepspace, economy, event-extras, growth, hammers, items-party, mastery, missions, profile, sphere211, storage, stubs, tower
+- `GetPlayer` (server/src/api/player/player_info.cpp): badges, campaign, coins, compose-points, deepspace, economy, event-extras, growth, hammers, items-party, mastery, missions, profile, sphere211, storage, stubs, tower
 - `GetPlayerDetailInfo` (server/src/api/events/ranking.cpp): event-extras
 - `GetPresent` (server/src/api/presents/presents.cpp): profile
 - `GetPresentArray` (server/src/api/presents/presents.cpp): profile
@@ -131,8 +131,8 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `GetWorldBossInfo` (server/src/api/events/world_boss.cpp): event-extras
 - `Home3DAnd2DSwitching` (server/src/api/player/home.cpp): profile
 - `InheritAccessory` (server/src/api/items/items.cpp): items-party
-- `ItemCompose` (server/src/api/items/items.cpp): hammers, items-party
-- `ItemComposeArray` (server/src/api/items/items.cpp): hammers, items-party
+- `ItemCompose` (server/src/api/items/items.cpp): compose-points, hammers, items-party
+- `ItemComposeArray` (server/src/api/items/items.cpp): compose-points, hammers, items-party
 - `ItemGradeUp` (server/src/api/items/items.cpp): items-party
 - `ItemShopList` (server/src/api/shop/shop.cpp): economy
 - `LimitBreakCharacter` (server/src/api/growth/growth.cpp): growth
@@ -141,7 +141,7 @@ Answered by the library: 187. Covered: 170. Only refused or not handled: 15. Onl
 - `LockItem` (server/src/api/items/items.cpp): items-party
 - `LockItemArray` (server/src/api/items/items.cpp): profile
 - `LockStorageItem` (server/src/api/storage/storage.cpp): storage
-- `Login` (server/src/api/entry/entry.cpp): badges, campaign, coins, deepspace, economy, event, event-extras, growth, hammers, items-party, mastery, missions, profile, seeded, sphere211, sphere211-continue, storage, stubs, tower, tutorial
+- `Login` (server/src/api/entry/entry.cpp): badges, campaign, coins, compose-points, deepspace, economy, event, event-extras, growth, hammers, items-party, mastery, missions, profile, seeded, sphere211, sphere211-continue, storage, stubs, tower, tutorial
 - `MissionContinue` (server/src/api/missions/play_state.cpp): missions
 - `MissionEnd` (server/src/api/missions/mission_end.cpp): campaign, event, event-extras, items-party, missions, seeded, tower, tutorial
 - `MissionFailed` (server/src/api/missions/play_state.cpp): campaign, missions, tower

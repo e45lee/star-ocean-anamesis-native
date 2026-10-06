@@ -2,6 +2,9 @@
 // save with the 3.7.0 master. Run in --selftest; not differential (the server has no guest
 // counterpart). Moved from the growth tests (growth/apis); their pure rules are tested in
 // rules/growth_rules_tests.cpp.
+#include <cmath>
+#include <random>
+
 #include "soaserver/native_test.h"
 #include "soaserver/ext.h"
 #include "soaserver/msgpack.h"
@@ -42,10 +45,12 @@ NATIVE_TEST("items/apis") {
         if (w.size() != 3) return t.fail("granted %zu weapons", w.size());
         u32 f3 = fol(c);
         call(c, "ItemComposeArray", {w[0]}, {{w[1]}});
-        // (a) a copy of the same weapon: limit break +1; points from the rule
+        // (a) a copy of the same weapon: limit break +1; (b) points from the rule: (1 + 100) x 2000
+        // / 100 = 2020 (3030 on a big success) against next_level_boosted_point 2000: level 2
         t.expect_eq((u32)c.st.one("select limit_break from items where uid = ?", {w[0]}), 1u, "compose limit break");
         u32 pts = (u32)c.st.one("select exp from items where uid = ?", {w[0]});
-        if (pts != 2000 && pts != 3000) t.fail("compose points %u", pts);
+        if (pts != 20 && pts != 1030) t.fail("compose points within level 2: %u", pts);
+        t.expect_eq((u32)c.st.one("select level from items where uid = ?", {w[0]}), 2u, "compose level");
         t.expect_eq((u32)c.st.one("select count(*) from items where uid = ?", {w[1]}), 0u, "material consumed");
         t.expect_eq(fol(c), f3 - 3000, "compose FOL (rarity 3 use_fol_one)");
         call(c, "LockItemArray", {}, {{w[2]}});
@@ -112,6 +117,106 @@ NATIVE_TEST("items/compose-fol") {
         u32 f1 = fol(c);
         call(c, "ItemCompose", {abase}, {{a4}});
         t.expect_eq(f1 - fol(c), use_fol("master_item_accessory_compose", 4), "accessory: the material's rarity");
+        c.st.exec("rollback");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
+}
+
+// ItemCompose grants the strengthening screen's preview (docs/server-rules.md#items-and-stamina):
+// each material adds (its level + 100) x boosted_point of its rarity / 100
+// (CItemStrengtheningPotal::GetAddBoostedPoint), whatever boosted points it carries itself; the base
+// levels per ItemModel::_CalcLevel (the points within the level, 0 at the cap). The test's rng is
+// stepped past a big success before each compose (the preview never shows one), and one compose is
+// a big success on purpose.
+NATIVE_TEST("items/compose-points") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        add_fol(c, 100000000);
+        const double up = global_f(c, "weapon_compose_up_rate", 11.5) * 100.0;
+        // the next compose's big-success draw (items.cpp compose: the one rng draw)
+        auto next_big = [&] {
+            std::mt19937_64 peek = *c.rng;
+            return (double)(peek() % 10000) < up;
+        };
+        auto no_big = [&] {
+            while (next_big()) (*c.rng)();
+        };
+        auto grant_one = [&](u32 type, u32 rarity, u32 skip = 0) -> u64 {
+            // not a strengthening material (a hammer that doesn't fit would be refused)
+            u32 id = (u32)c.m.one(
+                "select i.id from master_item i left join master_weapon w on w.id = i.master_weapon_id left join master_weapon_kind k "
+                "on k.id = w.master_weapon_kind_id where i.type = ? and i.rarity = ? and instr(ifnull(k.id_label, ''), 'W99St') = 0 "
+                "order by i.id limit 1 offset ?",
+                {type, rarity, skip});
+            Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+            c.grant(1, id, 1, items, stocks, chars);  // content type 1: an item
+            return items.arr.empty() ? 0 : items.arr[0].get_u("id");
+        };
+        auto bp = [&](const char* table, u32 rarity) {
+            return (u32)c.m.one(std::string("select boosted_point from ") + table + " where rarity = ?", {rarity});
+        };
+        auto level_points = [&](u64 uid) { return (u32)c.st.one("select level * 1000000 + exp from items where uid = ?", {uid}); };
+        // the ComposeResult of a compose of `materials` into `base`
+        auto compose = [&](u64 base, std::vector<u64> materials) {
+            std::vector<u8> out = call(c, "ItemCompose", {base}, {materials});
+            Value d = out.empty() ? Value() : mp_decode(out);
+            const Value* data = d.find("data");
+            const Value* cr = data ? data->find("ComposeResult") : nullptr;
+            return cr ? *cr : Value();
+        };
+        t.expect_eq(bp("master_item_compose", 4), 5000u, "the 3.7.0 master: rarity 4 boosted_point 5000");
+
+        // a fresh rarity-4 material into a rarity-5 weapon: the preview's 5050 / 10000
+        u64 base = grant_one(1, 5), m4 = grant_one(1, 4), m3 = grant_one(1, 3), m5 = grant_one(1, 5, 1);
+        if (!base || !m4 || !m3 || !m5) return t.fail("weapons not granted");
+        no_big();
+        Value cr = compose(base, {m4});
+        t.expect_eq((u32)cr.get_u("after_boosted_point"), 5050u, "★4 level 1: (1 + 100) x 5000 / 100 = 5050");
+        t.expect_eq((u32)cr.get_u("after_level"), 1u, "still level 1 (next 10000)");
+        t.expect_eq(level_points(base), 1u * 1000000 + 5050, "stored");
+        // ★3 and ★5 together: 2020 + 10100, past 10000: level 2 with 5050 + 12120 - 10000
+        no_big();
+        cr = compose(base, {m3, m5});
+        t.expect_eq((u32)cr.get_u("before_boosted_point"), 5050u, "before: the points within level 1");
+        t.expect_eq((u32)cr.get_u("after_level"), 2u, "several materials: a level up");
+        t.expect_eq((u32)cr.get_u("after_boosted_point"), 5050u + 2020 + 10100 - 10000, "the rest carried into level 2");
+        t.expect_eq(level_points(base), 2u * 1000000 + 7170, "stored");
+
+        // a levelled material that carries boosted points: its level counts, its points don't
+        u64 base2 = grant_one(1, 5, 2), lv = grant_one(1, 4, 1);
+        if (!base2 || !lv) return t.fail("weapons not granted");
+        c.st.q("update items set level = 7, exp = 4321 where uid = ?", {lv});
+        no_big();
+        cr = compose(base2, {lv});
+        t.expect_eq((u32)cr.get_u("after_boosted_point"), 5350u, "★4 level 7: (7 + 100) x 5000 / 100 = 5350; its 4321 points ignored");
+
+        // an accessory base reads the accessory table (the same boosted_point in 3.7.0)
+        u64 abase = grant_one(3, 5), a4 = grant_one(3, 4);
+        if (!abase || !a4) return t.fail("accessories not granted");
+        no_big();
+        cr = compose(abase, {a4});
+        t.expect_eq((u32)cr.get_u("after_boosted_point"), bp("master_item_accessory_compose", 4) * 101 / 100, "accessory: ★4 level 1");
+
+        // the cap: a level-9 weapon (cap 10) gains a level and keeps 0, the rest is lost
+        u64 base3 = grant_one(1, 4, 2), big = grant_one(1, 5, 3), more = grant_one(1, 1);
+        if (!base3 || !big || !more) return t.fail("weapons not granted");
+        c.st.q("update items set level = 9, exp = 4000 where uid = ?", {base3});
+        no_big();
+        cr = compose(base3, {big});
+        t.expect_eq((u32)cr.get_u("after_level"), 10u, "the cap reached");
+        t.expect_eq((u32)cr.get_u("after_boosted_point"), 0u, "0 points at the cap");
+        no_big();
+        cr = compose(base3, {more});
+        t.expect_eq(level_points(base3), 10u * 1000000, "at the cap nothing is added");
+
+        // a big success: x weapon_compose_bonus_rate, truncated (the preview doesn't show it)
+        u64 base4 = grant_one(1, 5, 4), m4b = grant_one(1, 4, 2);
+        if (!base4 || !m4b) return t.fail("weapons not granted");
+        while (!next_big()) (*c.rng)();
+        cr = compose(base4, {m4b});
+        const Value* is_big = cr.find("is_big_success");
+        t.expect_eq(is_big && is_big->b, true, "a big success");
+        t.expect_eq((u32)cr.get_u("after_boosted_point"), (u32)std::floor(5050 * global_f(c, "weapon_compose_bonus_rate", 1.5)), "5050 x 1.5 = 7575");
         c.st.exec("rollback");
     });
     if (!ran) return;  // no 3.7.0 master or save

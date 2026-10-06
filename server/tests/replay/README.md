@@ -50,6 +50,8 @@ What it does not cover: the wire layer's own work (the bridge, the Ninja cipher,
 
 | `sphere211-continue` | hand-written (`req` lines; Sphere211MissionContinue's bool), the `sphere211` options: a start-cell battle declined (0: ended as failed, nothing paid), はい with no battle in progress (10403), a battle continued (1: 100 coins) and won, GetSphere211Info | 9 |
 
+| `compose-points` | hand-written (`req` lines; agent compose-points, 2026-10-06), the `items-party` options: four 10-draws of `gacha_weapon_0009`, then ItemCompose / ItemComposeArray as the strengthening screen previews them (docs/server-rules.md#compose-points): one material, several with a level up, to the cap and at it, a levelled material carrying points, a big success; GetPlayer | 13 |
+
 | `stubs` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 8), the `profile` options: Login, every stub once (the social calls with arguments: a player id, a location as f32 bits; the 27 `Debug*` without), GetPlayer: each answers `{Time}`, logs `stub: ...`, and the state is unchanged | 37 |
 
 | `badges` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 6), the `economy` options: Login, a 10-draw of a character gacha (two new characters, new stack items), GetPlayer (`is_new` in Character / StockItem), ClearNewCharacter (a new, a seeded and an unknown uid), ClearNewItem (an unknown uid), ClearNewStackItem (a new and an unknown id), GetPlayer (cleared) | 7 |

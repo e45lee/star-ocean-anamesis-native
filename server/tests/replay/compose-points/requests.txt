@@ -1,0 +1,23 @@
+# soa-server replay corpus (server/tests/replay/README.md): compose-points, hand-written (agent
+# compose-points, 2026-10-06): ItemCompose's points as the strengthening screen previews them
+# (docs/server-rules.md#compose-points), the items-party options. Four 10-draws of
+# gacha_weapon_0009 (2097152000..39: 5 ★5, 14 ★4, 21 ★3), then: a ★4 into a ★5 (5050, level 1);
+# a ★3 and a ★5 at once (2020 + 10100: level 2, the rest carried); a ★4 base fed three ★5 and three
+# ★4 to its cap (level 10, 0 points); a ★4 into it at the cap (nothing added); a ★4 into a ★4
+# (level 2 with points), then that levelled material, carrying its points, into another ★4 (its
+# level counts: 5100); the level-10 ★4 into the ★5 (5500, a big success with --seed-rng 1:
+# 8250); GetPlayer (Item's level and boosted_point within the level).
+# tz: America/Toronto
+req 1 1790841480 Login a01c67ef - - - -
+req 2 1790841485 Gacha a0a1940b 2201696395,0 - - -
+req 3 1790841490 Gacha a0a1940b 2201696395,0 - - -
+req 4 1790841495 Gacha a0a1940b 2201696395,0 - - -
+req 5 1790841500 Gacha a0a1940b 2201696395,0 - - -
+req 6 1790841505 ItemCompose 02a5cd1d 2097152000 - 2097152009 -
+req 7 1790841510 ItemComposeArray f0000030 2097152000 - 2097152002,2097152001 -
+req 8 1790841515 ItemComposeArray f0000030 2097152016 - 2097152004,2097152006,2097152027,2097152017,2097152019,2097152022 -
+req 9 1790841520 ItemCompose 02a5cd1d 2097152016 - 2097152023 -
+req 10 1790841525 ItemCompose 02a5cd1d 2097152030 - 2097152031 -
+req 11 1790841530 ItemCompose 02a5cd1d 2097152037 - 2097152030 -
+req 12 1790841535 ItemCompose 02a5cd1d 2097152000 - 2097152016 -
+req 13 1790841540 GetPlayer 9a056905 - - - -

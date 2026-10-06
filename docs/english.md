@@ -775,6 +775,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
   - `uimsg_remain_base` + `%d` + a unit (`uimsg_year`, `uimsg_month`, `uimsg_day_on_day`, `uimsg_hour`, `uimsg_min`, `uimsg_sec`, from a table at Ghidra 0x2b9fde8).
   - Under a day, `uimsg_time_to_the_end` comes first. A day or more gives `uimsg_time_limit_head` + the weekday + `uimsg_time_limit_tail`.
   - `uimsg_time_limit` ("Time Left") labels the value on the achievement and event screens.
+  - **Every remaining-time text goes through `RemainTypedText`** (Ghidra 0x1ecbe88): `RemainTypedTextAuto`, `RemainTimeText` and `RemainTimeDateFromNowText` pick the unit (days up to 99, hours, minutes, seconds) and call it. The achievements list's label comes from `CParameterUtility::tAchievement::Time` → `RemainTimeDateFromNowText` (or `uimsg_achievement_non`), so the empty `uimsg_remain_base` fixes it too. The proof is a `--lang en` home session on 2026-10-07 with the derived full table (`--english-text`, `work/english/exec/en-data/home-en/shots/`): `26-achievements.png` "Time Left  1d", `10-event.png` "Ends in 6h", `25-present.png` "Expires In: 29d" (Global's label, no doubled "Left:"). The shot with "Time Left  Left:1d" was taken with a master from before the fix.
   - Global's "Left:" therefore read "Time Left  Left:2d" (section 2), and "Until: " ran into the weekday. The new rows are:
     - `uimsg_remain_base` = "" (empty), giving "Time Left 2d" and "Ends in 5h";
     - `uimsg_time_to_the_end` = "Ends in ";

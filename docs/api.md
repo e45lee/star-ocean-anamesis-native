@@ -675,13 +675,13 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `755cba3d`
 - **Method** `MissionContinue(bool)`; wire `SendMissionContinue(RequestHeader, signed char const*, Aska::Yayoi::GameRPC::DeviceType, unsigned char)`
 - **Wire**: request fid `755cba3d`, encrypted: RequestHeader(16) · char[36] · u32 DeviceType · u8 = 57 bytes; reply `MissionContinueRes` fid `40db9f93`
-- **Request**: `bool`; the wire call is (device UUID from `BAS::GetUUID`, `BAS::GetDeviceType()`, the bool)
+- **Request**: `bool`: 1 the defeat dialog's はい, 0 its いいえ or the decline `CPauseMenu::OpenContinue` sends by itself (coins short, `is_continue` 0); the wire call is (device UUID from `BAS::GetUUID`, `BAS::GetDeviceType()`, the bool)
 - **Response** (`data.*`): `Wallet`, `is_mission_continue`
-- **Handler / effect**: Plain apply. Pays `master_global.continue_use_coin` (100) coins to revive the party.
+- **Handler / effect**: Plain apply. Pays `master_global.continue_use_coin` (100) coins (× a running continue campaign's magnification) to revive the party; the play stays open (docs/server-rules.md#failure-continue-restart).
 - **Callers** (fid constant scan): `CPauseMenu::ReqeustContinue`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/missions/play_state.cpp`), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_global.continue_use_coin`
-- **Notes**: `CPauseMenu::ReqeustContinue`.
+- **Notes**: `CPauseMenu::ReqeustContinue` (@01dad704); Sphere 211 sends `Sphere211MissionContinue` instead.
 
 ### MissionEnd
 - **FunctionID** `8312a64c`
@@ -714,7 +714,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `863bb1ec`, encrypted: RequestHeader(16) = 16 bytes; reply `MissionLoseRes` fid `ed1e34f6`
 - **Request**: none
 - **Response** (`data.*`): status
-- **Handler / effect**: Plain apply.
+- **Handler / effect**: Plain apply. The local server ends the play as `MissionFailed` (`play_state.cpp`; docs/server-rules.md#failure-continue-restart).
 - **Status**: **no caller found** (in 3.7.0 or the offline build)
 - **Notes**: No caller found in either build.
 
@@ -769,11 +769,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `0a16fd90`
 - **Method** `TrainingMissionStart(unsigned int,unsigned int,unsigned long)`; wire `SendTrainingMissionStart(RequestHeader, unsigned int, unsigned int, unsigned long)`
 - **Wire**: request fid `0a16fd90`, encrypted: RequestHeader(16) · u32 · u32 · u64 = 32 bytes; reply `TrainingMissionStartRes` fid `60739c9d`
-- **Request**: `u32 mission id` (+0x54), `u32` (+0x18), `u64` (+0x20) (mission type 4).
+- **Request**: `u32 mission id` (+0x54), `u32` helper index + 1 (+0x18), `u64` own helper uid (+0x20): MissionStart's second to fourth arguments from the same `CStageManager` fields (mission type 4; seen `1642842982 1 0`).
 - **Response** (`data.*`): as MissionStart
-- **Handler / effect**: Plain apply (no `OnMissionStart` chain).
+- **Handler / effect**: Plain apply (no `OnMissionStart` chain). The local server answers MissionStart's body for the `master_training_mission` row and the current party, with no stamina, no play record and no rewards (`mission_start.cpp`; docs/server-rules.md#battle-simulator). Nothing ends a simulator battle on the server (`CStageManager::Progress` sends neither MissionEnd nor MissionFailed for type 4).
 - **Callers** (fid constant scan): `CStageManager::CallMissionStart`, `CStageManager::Progress`, unnamed code near `std::__ndk1::vector<std::__ndk1::pair<un`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server
 - **Master tables**: `master_training_mission`, `master_global.training_mission_id_label`
 - **FakeApiCaller**: `FakeApi/mission_start.msgp`
 
@@ -1155,9 +1155,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `7827ff6a`, encrypted: RequestHeader(16) · u64 = 24 bytes; reply `EquipAutoRes` fid `4a6a4344`
 - **Request**: `u64 character uid`
 - **Response** (`data.*`): `EquipWeaponResult`, `EquipAccessoryResult`, `SetAssistResultList`, `UpdateCharacterList`
-- **Handler / effect**: Apply + ApplyAutoEquipResult.
-- **Callers** (fid constant scan): unnamed code near `std::__ndk1::function<void (unsigned int`
-- **Status**: **online**
+- **Handler / effect**: Apply + ApplyAutoEquipResult: the server picks (the client copies the results into its roster). The local server equips the strongest fitting weapon and accessory and fills the empty skill slots (`server/src/api/growth/growth.cpp`; docs/server-rules.md#equip-auto).
+- **Callers** (fid constant scan): unnamed code near `std::__ndk1::function<void (unsigned int` (a lambda among `CPartyEquip`'s, @01d94a88: the equipment screen's 自動設定)
+- **Status**: **online**; answered by the local server
 - **Master tables**: `master_config` (auto_equip_*)
 - **FakeApiCaller**: `FakeApi/equip_auto.msgp`
 
@@ -1491,9 +1491,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `d9feb3e8`, encrypted: RequestHeader(16) · u64 · u64 = 32 bytes; reply `InheritAccessoryRes` fid `2df9900d`
 - **Request**: `u64 base accessory uid`, `u64 lost accessory uid`
 - **Response** (`data.*`): `InheritResultInfo`, `ComposeResult`
-- **Handler / effect**: Inline (guest).
+- **Handler / effect**: Inline (guest): `OnInheritAccessoryRes` sets the base's `InheritItemInfo` from `InheritResultInfo` {base_player_item_id, lost_master_item_id, lost_player_item_id, lost_item_limit_break_count} and drops the lost item. The local server stores the inheritance (`items.inherited_*`, schema 13) and sends `Item[].InheritItemInfo` {inherited_master_item_id, inherited_master_item_limit_break_count} (`server/src/api/items/items.cpp`; docs/server-rules.md#accessory-inheritance).
 - **Callers** (fid constant scan): `CItemStrengtheningPotal::SetStrengtheningExec`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server, in-process through the port's FakeApiCaller route
 - **Master tables**: `master_item.max_inheritance_num`
 
 ### ItemComposeArray
@@ -1675,9 +1675,9 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Wire**: request fid `cf39cc5c`, encrypted: RequestHeader(16) = 16 bytes; reply `UpdateItemStockRes` fid `440cf28b`
 - **Request**: none
 - **Response** (`data.*`): `Player.item_stock`, `Wallet`
-- **Handler / effect**: Plain apply. Buys +`item_stock_up_num` (5) slots for `item_stock_use_coin` (100).
+- **Handler / effect**: Plain apply. Buys +`item_stock_up_num` (5) slots for `item_stock_use_coin` (100). The local server refuses it (11006): `Player.item_stock` is `item_stock_max` already, where the client hides the button (`CItemFrame::Progress`; docs/server-rules.md#stocks-and-wallet).
 - **Callers** (fid constant scan): `CItemFrame::Progress`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (a refusal)
 - **Master tables**: `master_global.item_stock_*`
 - **FakeApiCaller**: `FakeApi/update_item_stock.msgp`
 

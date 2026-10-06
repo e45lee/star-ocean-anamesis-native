@@ -1896,6 +1896,18 @@ const char* const kStorage[] = {
 ) strict)",
 };
 
+// ---- step 16: an accessory's inherited factor (InheritAccessory) --------------------------------
+//
+// items.inherited_master_item_id: the master item an inheritance accessory took in
+// (InheritItemInfo.inherited_master_item_id; NULL: none yet), items.inherited_limit_break that
+// accessory's limit break (inherited_master_item_limit_break_count; api/items/items.cpp). No item
+// had one before (the server never answered InheritAccessory).
+constexpr int kInheritVersion = 16;
+const char* const kInherit[] = {
+    "alter table items add column inherited_master_item_id integer",  // m: master_item.id
+    "alter table items add column inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1956,6 +1968,10 @@ const std::vector<Step>& steps() {
          {std::begin(kSettings), std::end(kSettings)},
          nullptr},
         {15, "the equipment storage and the overflow box: items.stored_at, one_time_storage", {std::begin(kStorage), std::end(kStorage)}, nullptr},
+        {kInheritVersion,
+         "an accessory's inherited factor: items.inherited_master_item_id, inherited_limit_break (InheritAccessory)",
+         {std::begin(kInherit), std::end(kInherit)},
+         nullptr},
     };
     return s;
 }

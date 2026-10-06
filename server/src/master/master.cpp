@@ -89,11 +89,16 @@ MissionRef find_mission(sqlite3* m, u32 type, u32 mission) {
         db.q(std::string("select * from ") + t + " where id = ?", {mission}, [&](const Row& r) {
             ref.found = true;
             ref.table = t;
-            ref.type = ref.table == "master_mission" ? 0 : ref.table == "master_event_mission" ? 1 : ref.table == "master_tower_mission" ? 2 : 3;
+            ref.type = ref.table == "master_mission"            ? 0
+                       : ref.table == "master_event_mission"    ? 1
+                       : ref.table == "master_tower_mission"    ? 2
+                       : ref.table == "master_training_mission" ? 4
+                                                                : 3;
             // (a) the area column of each table (campaigns name master_area / master_event_area ids)
             ref.area = (u32)(ref.type == 0   ? r.i("master_area_id")
                              : ref.type == 1 ? r.i("master_event_area_id")
                              : ref.type == 2 ? r.i("master_tower_area_id")
+                             : ref.type == 4 ? r.i("master_training_area_id")
                                              : r.i("master_world_map_cell_id"));
         });
     }

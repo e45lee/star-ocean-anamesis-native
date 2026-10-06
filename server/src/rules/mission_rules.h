@@ -15,8 +15,10 @@ using u64 = uint64_t;
 // Common::MissionType -> the master table of its missions ("" if the server doesn't know it).
 // (b) CParameterUtility::FindMissionWithId(id, type) / (a) the model types of master_campaign:
 // 0 story (master_mission), 1 event (master_event_mission), 2 tower (master_tower_mission; (b)
-// MasterMissionModel::GetFromMissionID), 3 world map (master_world_map_mission). Type 5 (Sphere 211)
-// searches every table (b) and so has no table of its own.
+// MasterMissionModel::GetFromMissionID), 3 world map (master_world_map_mission), 4 the battle
+// simulator (master_training_mission; (b) CStageManager::CallMissionStart sends
+// TrainingMissionStart for it). Type 5 (Sphere 211) searches every table (b) and so has no table
+// of its own.
 const char* mission_table(u32 type);
 
 // True when `rate_percent` (e.g. 10.25) succeeds for the uniform draw `r` in [0, 1'000'000).
@@ -33,6 +35,20 @@ bool campaign_active(const std::string& opened_day, const std::string& opened_ti
 // of type `mission_type` in area `area`: (a) model -2 = every mission type, else it must equal
 // the mission type; area 0 / none = every area of that type, else it must be the mission's area.
 bool campaign_applies(int campaign_model, u32 campaign_area, u32 mission_type, u32 area);
+
+// The model type of a continue campaign for every mission type (a: Campaign2021_spring_Continue;
+// b: CPauseMenu::OpenContinue asks CUIUtility::GetDecMissionContinueCoin(99, 0) first).
+constexpr int kEveryMissionModel = 99;
+
+// Whether a continue campaign (type_id 9) applies, as CUIUtility::GetDecMissionContinueCoin
+// (@01ef91c4) decides (b): CPauseMenu::OpenContinue asks it twice, first for every type
+// (`every_type_pass`: model 99, any area), then for the mission's type: the model must equal it,
+// and only an event mission (type 1) checks the area (0 = every area).
+bool continue_campaign_applies(int campaign_model, u32 campaign_area, bool every_type_pass, u32 mission_type, u32 area);
+
+// The continue's price under a continue campaign: (b) CPauseMenu::OpenContinue's
+// (u32)(magnification x price) in float, truncated.
+u32 continue_price(u32 price, double magnification);
 
 // A stamina cost under a stamina campaign (type 1, magnification 0.5): (d) rounded up, at least 1
 // (a zero cost stays 0).

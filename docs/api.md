@@ -557,13 +557,13 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `58123949`
 - **Method** `SetStampSlot(Framework::CSTLVector<unsigned int> const&)`; wire `SendSetStampSlot(RequestHeader, unsigned int const*, unsigned int)`
 - **Wire**: request fid `58123949`, encrypted: RequestHeader(16) · u32 n + n×u32 = 20 bytes + payload; reply `SetStampSlotRes` fid `7c49b449`
-- **Request**: `vector<u32>` stamp ids for the chat stamp palette
-- **Response** (`data.*`): `StampSlot`
-- **Handler / effect**: Plain apply.
+- **Request**: `vector<u32>` the chat stamp palette, slot by slot (page × 4 + position; 0 an empty slot; the screen sends its whole palette, `master_global.stamp_page_max` × 4 entries)
+- **Response** (`data.*`): `StampSlot` (`CStampSlotInfo`, a plain u32 array), `StampList` (`CStampList`, the owned master_stamp ids)
+- **Handler / effect**: Plain apply (`OnSetStampSlotRes` deserializes the answer into the client's lists). The local server stores the palette (`stamp_slots`; docs/server-rules.md#stamps); `StampList` and `StampSlot` are also on every full player load.
 - **Callers** (fid constant scan): `CStampSelect::StampUpdate`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/stamps.cpp`), in-process through the FakeApiCaller's request lambda (already queued with this FunctionID and `OnSetStampSlotRes`)
 - **Master tables**: `master_stamp`, `master_global.stamp_kind/stamp_page_max`
-- **FakeApiCaller**: `FakeApi/compose.msgp`
+- **FakeApiCaller**: `FakeApi/compose.msgp` (the lambda's file name only: the in-process server answers it)
 
 ### SetTitle
 - **FunctionID** `4332363c`

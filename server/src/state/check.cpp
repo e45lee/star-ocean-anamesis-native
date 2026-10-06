@@ -51,6 +51,9 @@ const std::vector<MasterRef>& master_refs() {
         {"config", "master_config_id", "master_config", "id", false},
         // the overflow box (一時保管庫): one row per master item (api/storage/one_time.cpp)
         {"one_time_storage", "master_item_id", "master_item", "id", false},
+        // the chat stamps the player owns and its palette (schema version 17; api/player/stamps.cpp)
+        {"stamps", "id", "master_stamp", "id", false},
+        {"stamp_slots", "stamp_id", "master_stamp", "id", false},
     };
     return refs;
 }

@@ -425,6 +425,9 @@ RELS = [
     ("config", "master_config_id", "m:master_config", "id", None, "-", "an option the player changed (UpdateConfig; v14)"),
     ("one_time_storage", "master_item_id", "m:master_item", "id", None, "-",
      "the overflow box (一時保管庫): one row per master item (schema version 15)"),
+    ("stamps", "id", "m:master_stamp", "id", None, "-", "a chat stamp the player owns (StampList; schema version 17)"),
+    ("stamp_slots", "stamp_id", "m:master_stamp", "id", None, "-",
+     "the stamp in a スタンプ編成 slot (StampSlot; NULL: empty; schema version 17)"),
 ]
 
 

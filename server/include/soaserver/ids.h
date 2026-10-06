@@ -54,6 +54,8 @@ using MissionId = Id<struct MissionIdTag, uint32_t>;
 using GachaId = Id<struct GachaIdTag, uint32_t>;
 // master_title.id, u32.
 using TitleId = Id<struct TitleIdTag, uint32_t>;
+// master_stamp.id (a chat stamp), u32.
+using StampId = Id<struct StampIdTag, uint32_t>;
 // master_area.id, u32.
 using AreaId = Id<struct AreaIdTag, uint32_t>;
 // A master skill id (roster.equip_skill1..3), u32.

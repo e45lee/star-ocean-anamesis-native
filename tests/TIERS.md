@@ -89,6 +89,8 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `session:growth` | 5.7 min | 1 | strengthening, evolution, limit break, weapon custom (gear set, removed, purified) | `port/scripts/growth_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:storage` | 7.0 min | 1 | the equipment storage (deposit, withdraw, sell) and the overflow box (a present's weapon on a full inventory, listed, badge cleared, taken out), across a re-login | `port/scripts/storage_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:storage-server` | 7.0 min | 1 | session:storage against soa-server (soa --server) | `port/scripts/storage_session.sh --target port-server build/port/soa {out} {tmp}` |
+| T2 | `session:stamps` | 6.0 min | 1 | キャラクター > スタンプ編成: the default stamps and palette shown, a slot changed (SetStampSlot), kept after a re-login | `port/scripts/stamps_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:stamps-server` | 6.0 min | 1 | session:stamps against soa-server (soa --server) | `port/scripts/stamps_session.sh --target port-server build/port/soa {out} {tmp}` |
 | T2 | `session:deepspace` | 5.4 min | 1 | deep-space expeditions: started, returned, collected, a quick return, two ships, achievements | `port/scripts/deepspace_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:tower` | 4.3 min | 1 | the tower's floor list, a floor's battle, the next floor unlocked (--restore-tower) | `port/scripts/tower_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:badges` | 5.5 min | 1 | the NEW badges: a 10-draw's new characters show NEW, 戻る sends ClearNewCharacter, cleared, still cleared after a re-login | `port/scripts/badges_session.sh build/port/soa {out} {tmp}` |

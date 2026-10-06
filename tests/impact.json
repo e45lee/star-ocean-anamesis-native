@@ -135,6 +135,7 @@
   "SendErrorLog": "server/src/api/entry/entry.cpp",
   "SendGuideInformation": "server/src/api/settings/account.cpp",
   "SetAssist": "server/src/api/player/assist.cpp",
+  "SetStampSlot": "server/src/api/player/stamps.cpp",
   "SetTitle": "server/src/api/player/titles.cpp",
   "SimpleLogin": "server/src/api/entry/entry.cpp",
   "Sphere211AutoMemberSelect": "server/src/api/sphere211/sphere211.cpp",
@@ -242,6 +243,11 @@
    "OnPlayerLoad"
   ],
   "server/src/api/storage/one_time.cpp": [
+   "OnResponse"
+  ],
+  "server/src/api/player/stamps.cpp": [
+   "Grant",
+   "OnPlayerLoad",
    "OnResponse"
   ]
  },
@@ -551,6 +557,7 @@
     "SearchPlayer",
     "SendErrorLog",
     "SendGuideInformation",
+    "SetStampSlot",
     "SetTitle",
     "SimpleLogin",
     "StaminaHealByFavor",
@@ -1180,6 +1187,26 @@
     "SellItemsFromStorage",
     "WithdrawItemFromOneTimeStorage",
     "WithdrawItemFromStorage"
+   ],
+   "source": "declared"
+  },
+  "session:stamps": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SetStampSlot"
+   ],
+   "source": "declared"
+  },
+  "session:stamps-server": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SetStampSlot"
    ],
    "source": "declared"
   },

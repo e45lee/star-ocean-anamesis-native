@@ -59,6 +59,7 @@ const Module kModules[] = {
     {"debug_stubs", register_debug_stubs},
     {"settings", register_settings},
     {"storage", register_storage},
+    {"stamp", register_stamp},
 };
 
 }  // namespace

@@ -1021,7 +1021,7 @@ The response classes (port/fakeapi/fields.txt, the 3.7.0 client's `Initialize` l
 - **Every write names its columns**, and parents are written with UPSERT, never REPLACE (F9).
 - **One player per DB** (as today: `player` has one row; no `player_id` columns). Multi-player is out of scope (section 6).
 
-### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns, version 14's `config`, `player.birth_year` / `birth_month` version 15's `items.stored_at` / `one_time_storage` and version 16's `items.inherited_*` added)
+### 3.2 Tables by entity (version N, the end of S10; S12's campaign tables, version 12's `player.is_3d_home`, version 13's `is_new` columns, version 14's `config`, `player.birth_year` / `birth_month` version 15's `items.stored_at` / `one_time_storage` version 16's `items.inherited_*` and version 17's `stamps` / `stamp_slots` added)
 
 The SQL is the target's DDL. `-- m:` marks a master reference (not declared, checked by `state::check`). Changes against today: **new**, *moved from*, ~~dropped~~.
 
@@ -1212,6 +1212,9 @@ create table follow_rental (rental_day integer primary key, count integer not nu
 -- ---- achievements, titles, counters, shops ---------------------------------------------------
 create table achievements (id integer primary key, progress integer, received_at integer) strict;  -- m: master_achievement
 create table titles (id integer primary key, got_at integer) strict;   -- m: master_title; 0 -> NULL
+create table stamps (id integer primary key, got_at integer) strict;   -- **new** (v17), m: master_stamp; NULL: a default stamp
+create table stamp_slots (slot integer primary key check (slot >= 0),  -- **new** (v17): the スタンプ編成 palette (SetStampSlot)
+                          stamp_id integer) strict;                     -- m: master_stamp; NULL: an empty slot
 create table counters (key text primary key, value integer not null) strict;   -- achievement action counts only
 create table shop_counts (id integer primary key, num integer not null, period integer,
                           total integer not null default 0) strict;           -- m: master_item_shop
@@ -1653,6 +1656,11 @@ Lockstep changes:
   - **Step 16** (`state/schema.cpp` `kInherit`, `kInheritVersion`; `kSchemaVersion` 16; 13 on its branch, renumbered at the merge): `alter table items add column inherited_master_item_id integer` (NULL: none; a master reference, `tools/schema_inventory.py` RELS) and `alter table items add column inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)`. No rebuild (added columns on a STRICT table), no data mapping: no item had one.
   - **Code:** `api/items/items.cpp` `inherit_accessory` writes them; `api/player/player_info.cpp` `item_info_list` sends `InheritItemInfo` for an item that has one.
   - **Tests:** `server/schema-migrate-v16` ((1) v0 → v16: every other table's rows as the same file at 15, the items' other columns kept, none inherited, `.bak-v0`; (2) a v15 file → 16 without the master: none inherited, the check refuses -1, `.bak-v15` without the columns; the version is one constant in the test), `server/schema-fresh-equals-migrated` (unchanged), `items/inherit-accessory`; the `items-party` replay corpus gained the inheritance.
+
+**v17: the chat stamps** (agent `server-u-stamps`, 2026-10-05, branch `port/server-u-stamps`; task U of `port/PLAN.md`, `docs/unimplemented-apis.md` part 3; not a plan step: a handler that needed state; the parent renumbers parallel groups' steps at merge). The server sent no `StampList` / `StampSlot` and had no `SetStampSlot` handler, so キャラクター > スタンプ編成 had no stamps and a palette was never kept (`docs/server-rules.md#stamps`).
+  - **Step 17** (`state/schema.cpp` `kStamps`, `kStampsVersion`; `kSchemaVersion` 17): `create table stamps (id integer primary key, got_at integer) strict` (the owned master_stamp ids; got_at NULL for a default stamp) and `create table stamp_slots (slot integer primary key check (slot >= 0), stamp_id integer) strict` (the palette, slot page × 4 + position; NULL an empty slot; no row: never set). Both ids are master references (`state::master_refs`, RELS). No data mapping: nobody owned a stamp.
+  - **Code:** `api/player/stamps.cpp` (the default stamps on load, SetStampSlot, grants of content type 12).
+  - **Tests:** `server/schema-migrate-v17` ((1) v0 → v17: every other table's rows as the same file at 16, both tables empty, `.bak-v0`; (2) a v16 file → 17 without the master: the slot check, STRICT, `.bak-v16` without the tables; the version is one constant in the test), `server/schema-fresh-equals-migrated` and `server/schema-integrity` (57 tables), `player/stamps-*`; the `profile` replay corpus gained SetStampSlot.
 ---
 
 ## 5. Order and gates

@@ -1908,6 +1908,26 @@ const char* const kInherit[] = {
     "alter table items add column inherited_limit_break integer not null default 0 check (inherited_limit_break >= 0)",
 };
 
+// ---- step 17: the chat stamps (SetStampSlot) ----------------------------------------------------
+//
+// stamps: the master_stamp ids the player owns (StampList; api/player/stamps.cpp). got_at NULL: a
+// default stamp (master_stamp.type 1), owned from the start; else the time a grant (content type 12)
+// added it. stamp_slots: the スタンプ編成 palette (StampSlot), one row per slot from 0 (page * 4 +
+// position); stamp_id NULL: an empty slot. No row at all: the player never set it (the default
+// palette). No foreign key: the stamp is a master reference (state::master_refs). Nobody owned a
+// stamp before (the server sent no StampList).
+constexpr int kStampsVersion = 17;
+const char* const kStamps[] = {
+    R"(create table stamps (
+  id integer primary key,
+  got_at integer
+) strict)",
+    R"(create table stamp_slots (
+  slot integer primary key check (slot >= 0),
+  stamp_id integer
+) strict)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -1972,6 +1992,7 @@ const std::vector<Step>& steps() {
          "an accessory's inherited factor: items.inherited_master_item_id, inherited_limit_break (InheritAccessory)",
          {std::begin(kInherit), std::end(kInherit)},
          nullptr},
+        {kStampsVersion, "the chat stamps: stamps, stamp_slots (SetStampSlot, StampList)", {std::begin(kStamps), std::end(kStamps)}, nullptr},
     };
     return s;
 }

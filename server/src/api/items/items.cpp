@@ -469,7 +469,9 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
 // Answers: the player state and Item.
 std::vector<u8> lock_item(Ctx& ctx, const Request& req) {
     bool on = req.method.rfind("Lock", 0) == 0;
-    for (ItemUid uid : item_uid_list(req)) ctx.st.q("update items set locked = ? where uid = ?", {on ? 1 : 0, uid});
+    const std::vector<ItemUid> uids = item_uid_list(req);
+    for (ItemUid uid : uids) ctx.st.q("update items set locked = ? where uid = ?", {on ? 1 : 0, uid});
+    LOGI("server", "%s: %zu items %s", req.method.c_str(), uids.size(), on ? "locked" : "unlocked");
     Value data = ctx.base_data();
     data["Item"] = ctx.items();
     return body(data);

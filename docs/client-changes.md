@@ -214,6 +214,13 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Why not server-side:** this *is* the route to the server; the fake caller has no network layer to build the blob.
 - **Switch:** `--server inproc`.
 
+### The varargs requests' uids on the FakeApiCaller route (agent `server-u-varargs`)
+- **Symbols:** `FakeApiCaller::LockItem(u32, ...)`, `UnlockItem(u32, ...)`, `SellItem(u32, ...)`, `GetPresent(u64, ...)`, `ItemCompose(u64, u32, ...)`, `ItemGradeUp(u64, u32, ...)` (mangled `...z`; the route's `h_request` hooks).
+- **3.7.0 behaviour:** the count is the last fixed argument; that many u64 uids follow, AAPCS64 variadics: the x registers after the fixed ones, then the stack. `NetworkApiCaller::LockItem` (@015c1db8), `ItemCompose` (@015bc644), `GetPresent` (@015c2810) & co. `va_arg` them into a `CSTLVector<u64>` and call the vector method; the wire carries the vector (`SetLockItem(header, u64 const*, u32)`).
+- **Change (port-specific, `port/src/native/api/server_adapters.cpp` `capture_from_guest`):** in-process, the route's request takes the variadic uids (x registers, then the guest stack at the hook's entry sp) as one vector, the wire's shape, and drops the count. Before (until 2026-10-06) the walk stopped at `z`: the server got only the count (`LockItem ints=[1] vecs=[]`) and locked, sold or composed nothing while the client showed the change. Test `wire/inproc-parity` (1 uid and 9: the stack). Over the wire nothing changes.
+- **Why not server-side:** this *is* the route to the server.
+- **Switch:** `--server inproc`.
+
 ### `FakeApiCaller` session queries (port transport, not game code)
 - `FakeApiCaller::LoggedIn` / `IsSuccess` / `IsFailure` / `ErrorCode` are guest constants: 1, 1, 0, 0. With the in-process server they report the local server's session and each request's error (`server::logged_in`, `server::error_code`).
   - An error answer isn't applied to the client state, as with `NetworkApiCaller`.

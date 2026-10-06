@@ -1262,6 +1262,36 @@
    ],
    "source": "declared"
   },
+  "session:items": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "ItemCompose",
+    "ItemComposeArray",
+    "LockItem",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "UnlockItem"
+   ],
+   "source": "declared"
+  },
+  "session:items-server": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "ItemCompose",
+    "ItemComposeArray",
+    "LockItem",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "UnlockItem"
+   ],
+   "source": "declared"
+  },
   "session:mastery": {
    "apis": [
     "ChangeRole",

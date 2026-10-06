@@ -39,7 +39,8 @@
 # -march / -ffast-math: the natives are bit-exact only with the default x86-64 code (no FMA).
 #
 # -DNAME=VALUE (after those, any number): configure options (e.g. -DSOA_BUILD_PORT=OFF); given to the
-# first configure, or to a reconfigure of an existing build dir (with this script's environment).
+# first configure, or to a reconfigure of an existing build dir (with this script's environment);
+# no spaces in a value.
 #
 # Usage: scripts/build.sh [--windows] [--release] [-DNAME=VALUE...] [cmake --build options...]
 #   e.g. scripts/build.sh --target soa
@@ -48,7 +49,7 @@ repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
 # The main checkout, also from a worktree (git's common dir's parent); else this checkout.
 main=$repo
-if [ "$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null)" = "$repo" ]; then
+if [ "$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null)" = "$(cd "$repo" && pwd -P)" ]; then
   main=$(cd "$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir)/.." && pwd)
 fi
 bdir=build

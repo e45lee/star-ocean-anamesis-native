@@ -7,8 +7,7 @@ It is the 3.8.0 counterpart of `emulator/` (`soa-emu`, the 3.7.0 online client) 
 ## Building
 
 ```sh
-cmake -S . -B build                              # from the repository root (README.md "Building")
-cmake --build build -j8 --target soa-viewer      # -> build/emulator-viewer/soa-viewer
+scripts/build.sh --target soa-viewer             # from the repository root (README.md "Building"): build/emulator-viewer/soa-viewer
 ```
 
 `emulator-viewer/CMakeLists.txt` is a subdirectory of the repository's build, added after `runtime/` when `SOA_BUILD_VIEWER` is on (the default); the shared settings and the dependencies (`cmake/deps.cmake`: vcpkg, dynarmic) come from the root `CMakeLists.txt`. `-DSOA_BUILD_PORT=OFF -DSOA_BUILD_SERVER=OFF -DSOA_BUILD_EMULATOR=OFF` builds only the runtime and the viewer. It links the runtime (`soaruntime`, whole archive, so its own extension registers) and the desktop host loop (`soaruntime_app`), like `soa-emu`.

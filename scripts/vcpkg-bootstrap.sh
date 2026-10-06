@@ -20,7 +20,7 @@ if [ -n "${VCPKG_ROOT:-}" ]; then
   [ -f "$root/scripts/buildsystems/vcpkg.cmake" ] || { echo "vcpkg-bootstrap: VCPKG_ROOT=$root is not a vcpkg checkout" >&2; exit 1; }
 else
   main=$repo
-  if [ "$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null)" = "$repo" ]; then
+  if [ "$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null)" = "$(cd "$repo" && pwd -P)" ]; then
     main=$(cd "$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir)/.." && pwd)
   fi
   root=$main/.vcpkg

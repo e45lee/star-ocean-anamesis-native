@@ -117,7 +117,9 @@ toolchains: delete it and configure again. vcpkg builds its ports with `VCPKG_MA
 time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWER=OFF`,
 `-DSOA_BUILD_SERVER=OFF` or `-DSOA_BUILD_PLATFORM370=OFF` (the port needs the server library, so
 `SOA_BUILD_SERVER=OFF` needs `SOA_BUILD_PORT=OFF` too; the emulator needs platform370, so
-`SOA_BUILD_PLATFORM370=OFF` needs `SOA_BUILD_EMULATOR=OFF`).
+`SOA_BUILD_PLATFORM370=OFF` needs `SOA_BUILD_EMULATOR=OFF`). Pass them to `scripts/build.sh`
+before any build options (`scripts/build.sh -DSOA_BUILD_PORT=OFF --target soa-server`): the first
+configure gets them, or an existing build dir is reconfigured with them.
 
 ### Windows
 

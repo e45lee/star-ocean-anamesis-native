@@ -140,10 +140,10 @@ std::vector<u8> withdraw_from_one_time_storage(Ctx& ctx, const Request& req) {
     if (have + total > cap)
         return refusef(ctx, req.method.c_str(), ErrorCode::kEquipSlotsShort, "the inventory holds %u of %u; %llu more don't fit", have, cap,
                        (unsigned long long)total);
-    // (b) AddItem is a map {uid: CItemInfo} (CAddItemList, an IInfoBaseMap<u64, CItemInfo>: its
-    // DeserializeArray @0163d574 returns 0, an array isn't read); CApiNotify::AddItem (@014c207c)
-    // adds each to the item list
-    Value updated = Value::object(), added = Value::object();
+    // (b) AddItem is a map {uid: CItemInfo} (ext::add_items: CAddItemList, an IInfoBaseMap<u64,
+    // CItemInfo>, whose DeserializeArray @0163d574 returns 0, an array isn't read);
+    // CApiNotify::AddItem (@014c207c) adds each to the item list
+    Value updated = Value::object(), added = Value::array();
     for (MasterItemId id : order) {
         u32 take = (u32)want[id.v];
         bool is_new = false;
@@ -159,13 +159,12 @@ std::vector<u8> withdraw_from_one_time_storage(Ctx& ctx, const Request& req) {
         updated[std::to_string(id.v)] = one_time_entry(ctx, id, left, is_new, updated_at);
         // (d) the new items' content type is a unique item's (1) and their drop type 0, as a present's
         for (u32 k = 0; k < take; k++) {
-            Value item = new_item(ctx, id, 1, 0);
-            added[std::to_string(item.get_u("id"))] = item;
+            added.push(new_item(ctx, id, 1, 0));
         }
     }
     Value data = ctx.base_data();
     data["UpdateOneTimeStorageItem"] = updated;
-    data["AddItem"] = added;
+    ext::add_items(data, added);
     LOGI("server", "%s: %llu items from the overflow box", req.method.c_str(), (unsigned long long)total);
     return body(data);
 }

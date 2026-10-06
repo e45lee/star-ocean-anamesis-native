@@ -51,7 +51,8 @@ struct TempDb {
                                    ".bak-v14", ".bak-v14-journal",
                                    ".bak-v15", ".bak-v15-journal",
                                    ".bak-v16", ".bak-v16-journal",
-                                   ".bak-v17", ".bak-v17-journal"})
+                                   ".bak-v17", ".bak-v17-journal",
+                                   ".bak-v18", ".bak-v18-journal"})
             unlink((path + suffix).c_str());
     }
 };
@@ -170,10 +171,10 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
     t.expect_eq(
-        a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)59,
+        a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)61,
         "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
         "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12), "
-        "plus config (version 14), plus one_time_storage (version 15), plus mastery, deco_owned and character_deco (version 17), plus coin_deposit (version 18)");
+        "plus config (version 14), plus one_time_storage (version 15), plus mastery, deco_owned and character_deco (version 17), plus coin_deposit (version 18), plus stamps and stamp_slots (version 19)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
@@ -1883,6 +1884,66 @@ NATIVE_TEST("server/schema-migrate-coin-deposit") {
         if (!bak.open(before.path + ".bak-v" + prev, true)) return t.fail("no %s.bak-v%s", before.path.c_str(), prev.c_str());
         t.expect_eq(state::user_version(bak.h), kCoinDepositV - 1, "the backup is the version before");
         t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'coin_deposit'", {}), (int64_t)0, "the backup has no coin_deposit");
+        bak.close();
+    }
+}
+
+// Version 19: the chat stamps (stamps, stamp_slots; SetStampSlot). (1) v0 -> v19: every table's rows
+// as the same file at version 16, the two new tables empty (nobody owned a stamp: the server sent
+// no StampList); .bak-v0. (2) v18 -> v19 (a planted v18 file, without the master): the tables
+// exist and are STRICT, a slot is >= 0, .bak-v18 has neither table.
+NATIVE_TEST("server/schema-migrate-v19") {
+    constexpr int kV = 19;  // this step's version (the parent renumbers parallel steps at merge)
+    const std::string at = std::to_string(kV), before = std::to_string(kV - 1);
+    ext::Sql* master = test_master();
+    sqlite3* m = master ? master->h : nullptr;
+    // ---- (1) v0 -> v19 ---------------------------------------------------------------------------------
+    {
+        TempDb ref_file(("v" + at + "-ref").c_str()), old(("v" + at).c_str());
+        if (!write_fixture(t, ref_file.path) || !write_fixture(t, old.path)) return;
+        Sql ref, db;
+        if (!ref.open(ref_file.path, false) || !db.open(old.path, false)) return t.fail("open");
+        t.expect_eq(state::open_and_migrate(ref.h, ref_file.path, kV - 1, m), true, "the reference: migrated to the version before");
+        t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "v0 -> this version");
+        t.expect_eq(state::user_version(db.h), kV, "user_version");
+        t.expect_eq(db.one("select count(*) from stamps", {}), (int64_t)0, "no stamp owned");
+        t.expect_eq(db.one("select count(*) from stamp_slots", {}), (int64_t)0, "no palette set");
+        std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
+        rb.erase("stamps");
+        rb.erase("stamp_slots");
+        t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
+        t.expect_eq(access((old.path + ".bak-v0").c_str(), F_OK), 0, ".bak-v0");
+        t.expect_eq(fk_violations(db), 0, "foreign_key_check");
+        ref.close();
+        db.close();
+    }
+    // ---- (2) v18 -> v19, without the master ------------------------------------------------------------
+    {
+        TempDb prev(("v" + at + "-from-v" + before).c_str());
+        if (!write_fixture(t, prev.path)) return;
+        Sql f;
+        if (!f.open(prev.path, false)) return t.fail("open the earlier file");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV - 1, m), true, "migrated to the version before");
+        f.close();
+        unlink((prev.path + ".bak-v0").c_str());
+        if (!f.open(prev.path, false)) return t.fail("reopen the earlier file");
+        t.expect_eq(state::user_version(f.h), kV - 1, "a file of the version before");
+        t.expect_eq(state::open_and_migrate(f.h, prev.path, kV), true, "the version before -> this version");
+        t.expect_eq(state::user_version(f.h), kV, "user_version");
+        t.expect_eq(sqlite3_exec(f.h, "insert into stamp_slots (slot, stamp_id) values (-1, 1)", nullptr, nullptr, nullptr) != SQLITE_OK, true,
+                    "a slot is >= 0");
+        t.expect_eq(sqlite3_exec(f.h, "insert into stamps (id, got_at) values (2, 'x')", nullptr, nullptr, nullptr) != SQLITE_OK, true,
+                    "stamps is STRICT");
+        t.expect_eq(sqlite3_exec(f.h, "insert into stamp_slots (slot, stamp_id) values (0, null); insert into stamps (id, got_at) values (1, null)",
+                                 nullptr, nullptr, nullptr),
+                    SQLITE_OK, "an empty slot, a default stamp");
+        t.expect_eq(fk_violations(f), 0, "foreign_key_check");
+        f.close();
+        Sql bak;
+        if (!bak.open(prev.path + ".bak-v" + before, true)) return t.fail("no %s.bak-v%s", prev.path.c_str(), before.c_str());
+        t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is the version before");
+        t.expect_eq(bak.one("select count(*) from sqlite_master where name in ('stamps', 'stamp_slots')", {}), (int64_t)0,
+                    "the backup has no stamp tables");
         bak.close();
     }
 }

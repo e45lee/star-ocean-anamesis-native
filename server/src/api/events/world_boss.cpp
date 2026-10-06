@@ -343,11 +343,7 @@ void time_bonus(Ctx& ctx, const MissionInfo& mission, Value& data) {
     });
     if (list.arr.empty()) return;
     data["WorldBossMissionTimeBonusDropItemInfoList"] = list;
-    if (!items.arr.empty()) {
-        Value& add_item = data["AddItem"];
-        if (add_item.type != Value::Arr) add_item = Value::array();
-        for (auto& item : items.arr) add_item.push(item);
-    }
+    ext::add_items(data, items);
     data["StockItem"] = ctx.stock();
     LOGI("server", "MissionEnd mission %u: %zu time bonuses (%u ms)", mission.mission, list.arr.size(), mission.mission_time);
 }

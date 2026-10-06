@@ -16,11 +16,11 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **186** (35 of them stubs: section 2.5). Of the **13 without a handler**:
+The wire knows **199 methods**; the server has handlers for **187** (35 of them stubs: section 2.5). Of the **12 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
-| **Empty reply** | 1 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
+| **Empty reply** | 0 | None left (the last, SetStampSlot, is answered now). A request lambda that names `FakeApi/<file>.msgp` with no handler would get an empty map `{}` (logged `no handler`). |
 | **Canned reply** | 0 | None left: `TrainingMissionStart` (it got `mission_start.msgp`) and `CbtCertification` (`update_home.msgp`) are answered now; the files of `port/fakeapi/responses/` are reached by nothing (step 9 retires them). |
 | **No reply** | 2 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
@@ -82,7 +82,6 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 
 | Feature | Method | In-process | Notes |
 |---|---|---|---|
-| **Settings and account** | [SetStampSlot](api.md#setstampslot) | {} | chat stamp slots (the options, the birth month, the read marks and the scenario library: done, step 3.3) |
 
 ### 2.2 Online-only features
 
@@ -176,7 +175,9 @@ tables, rules section). New state goes through the state module's migrations
    docs/server-rules.md#settings-account, session `settings`):** `GetConfig`/`UpdateConfig`/`ResetConfig`
    (store the options; `ConfigInfoList` also on every player load), `Get/UpdateBirthYearMonth`,
    `ReadExpirationInfo`, `SendGuideInformation`, `GetScenarioLibraryInfoList` (from the story progress
-   the server already keeps); `UpdateSession` needs none (2.3). Assumptions below.
+   the server already keeps); `UpdateSession` needs none (2.3). Assumptions below. `SetStampSlot`
+   (the chat stamps' palette) is done too (agent server-u-stamps, schema version 19: `stamps`,
+   `stamp_slots`; `server/src/api/player/stamps.cpp`, [`server-rules.md#stamps`](server-rules.md#stamps)).
 4. **Equipment and mastery:** `EquipAuto` (the client's or the server's choice — check which side
    picks), `InheritAccessory`, `UpdateItemStock`, `GetMasteryInfo`/`TrainMastery`/`ResetMastery`.
    The equipment part is **done** (agent server-u-missions: the server picks; the assumptions below).
@@ -397,6 +398,28 @@ Both were status-only; two `kServedStatusOnly` rows route them in-process (docs/
   "SetCharacterDeco"): the client's own serializer makes the bytes NetworkApiCaller sends.
 - Not played on screen: the mascot change (the seeded player's progress opens one mascot, so the
   button is hidden); unit test and replay corpus only.
+
+**Chat stamps (`SetStampSlot`; agent server-u-stamps).** The rules and their evidence are
+[`server-rules.md#stamps`](server-rules.md#stamps); what had to be assumed, and why:
+- The 12 type-1 stamps are owned by every player: no master row awards one, while 271 of the 278
+  type-2 stamps are achievement, login bonus or exchange rewards (and `stamp_kind` is 12). Without
+  them a new player would have no stamp to arrange.
+- A player who never arranged the palette gets the type-1 stamps in `order_id` order from the first
+  slot, the rest empty: 3.7.0's first palette isn't known, and an empty one would leave the
+  multiplayer chat's stamps blank.
+- `SetStampSlot` of a stamp the player doesn't own, or of more entries than the palette has
+  (`stamp_page_max` × 4), is refused with 10208 and changes nothing; fewer entries leave the rest of
+  the palette empty. The client sends only owned stamps and the full palette, so neither refusal
+  is reachable from the screen.
+- A granted stamp the player owns already changes nothing; the 7 type-2 stamps no master row
+  awards are never granted.
+
+**AddItem (agent server-u-stamps).** Not an assumption: `CAddItemList` is an
+`IInfoBaseMap<u64, CItemInfo>` whose `DeserializeArray` (@0163d574) returns 0, so every `AddItem`
+the server sent as an array was ignored and the new weapons and accessories appeared only with the
+next full player load. Every answer now sends a map keyed by the uid (`ext::add_items`;
+[`server-rules.md#conventions`](server-rules.md#conventions)). The keys are strings, like the
+server's other maps (the client also reads an integer key).
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

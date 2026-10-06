@@ -148,6 +148,7 @@
   "SendGuideInformation": "server/src/api/settings/account.cpp",
   "SetAssist": "server/src/api/player/assist.cpp",
   "SetCharacterDeco": "server/src/api/player/deco.cpp",
+  "SetStampSlot": "server/src/api/player/stamps.cpp",
   "SetTitle": "server/src/api/player/titles.cpp",
   "SimpleLogin": "server/src/api/entry/entry.cpp",
   "Sphere211AutoMemberSelect": "server/src/api/sphere211/sphere211.cpp",
@@ -265,6 +266,11 @@
   ],
   "server/src/api/shop/coins.cpp": [
    "OnPlayerLoad"
+  ],
+  "server/src/api/player/stamps.cpp": [
+   "Grant",
+   "OnPlayerLoad",
+   "OnResponse"
   ]
  },
  "tests": {
@@ -604,6 +610,7 @@
     "SearchPlayer",
     "SendErrorLog",
     "SendGuideInformation",
+    "SetStampSlot",
     "SetTitle",
     "SimpleLogin",
     "StaminaHealByFavor",
@@ -1291,6 +1298,54 @@
     "ResetMastery",
     "SetCharacterDeco",
     "TrainMastery"
+   ],
+   "source": "declared"
+  },
+  "session:stamps": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SetStampSlot"
+   ],
+   "source": "declared"
+  },
+  "session:stamps-server": {
+   "apis": [
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SetStampSlot"
+   ],
+   "source": "declared"
+  },
+  "session:add-item": {
+   "apis": [
+    "Gacha",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "SimpleLogin"
+   ],
+   "source": "declared"
+  },
+  "session:add-item-server": {
+   "apis": [
+    "Gacha",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "SimpleLogin"
    ],
    "source": "declared"
   },

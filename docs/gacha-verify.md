@@ -12,8 +12,8 @@ tools/gacha_verify.py --master data/basmaster-3.7.0.sqlite3 --download work/down
 It needs `opencv-python-headless` (in `requirements.txt`: `pip install -r requirements.txt` into
 `.venv`) and `tools/aif2png`. Everything under `--out` (decoded images, features, contact sheets,
 `results.json`) is derived game data and stays out of git. The part between the GENERATED markers
-below is rewritten by the tool; the text around it is by hand (2026-10-05). **Nothing in the pools
-was changed**: the proposals at the end are for the integrator to decide.
+below is rewritten by the tool; the text around it is by hand (2026-10-05). Findings 1 and 2 below were
+applied to the pools; the generated tables show the state after that.
 
 ## Method
 
@@ -55,86 +55,85 @@ Measured before trusting the rest (table below): on the 82 panels the master nam
 (`master_gacha_image.content_id`) every character is found and nothing else (82/82, +0); on the 173
 weapon banners nothing is detected even at 6 inliers. The list banners are the weak case: recall
 150/178 = 84 % at the threshold, with **no** wrong detection at any threshold, which is why an
-*extra* is never judged from a list banner alone. On the main panels of R-PU-IMAGE gachas 64/66
-recorded characters are found; the 2 misses and 6 "others" there are real data findings (EP2
-banners, below), not detector errors. Every mismatch group below was checked by eye on its contact
+*extra* is never judged from a list banner alone. On the main panels of R-PU-IMAGE gachas 63/65
+recorded characters are found (64/66 with 6 "others" before the fixes, when EP2 CHAPTER:10 still
+counted here); the 2 misses and 2 "others" are the EP2公開記念 panels (finding 6), a data finding
+rather than a detector error. Every mismatch group below was checked by eye on its contact
 sheet (the メモリアル reruns 0565 / 0590 / 0900 through the identical images of 0253 / 0255; of the
 2017 step-ups one step per banner): every accepted detection is the character it names. Characters drawn very small in crowded group art (the 発売日記念
 banners) can be missed, so their *extra* rows are flagged as probable only.
 
-## Findings and proposed rule fixes
+## Findings and what was done
 
-Labels as in [server-rules.md](server-rules.md#labels); all **proposals, not applied**.
+Labels as in [server-rules.md](server-rules.md#labels). The first run (before the fixes) found 21
+*missing*, 62 *extra* and 22 *both*. The user decided (2026-10-05): apply findings 1, 2 and 5 (all
+R-PU-BANNERART in `tools/build_gacha_pools.py`, `data/gacha_pools.sqlite3` regenerated, 48 gachas
+changed), and keep the over-broad pick-ups of findings 3, 4 and 6 as they are.
 
-1. **Pick-ups lost because the title names nobody** (*missing from pickup*, nothing recorded; the
-   units are in no pool of these gachas, so they can't be drawn at all):
+1. **Applied: featured units no rule recorded** (*missing from pickup*; the units were in no pool of
+   these gachas, so they couldn't be drawn there at all). Now added to the pick-ups, and so to the S
+   pool (R-PU-BANNERART "added units", `BANNER_ART_ADD`, (b)):
    - ホワイトデー限定復刻ピックアップキャラガチャ1 (2020-03-12): "この5キャラをピックアップ!" — 花婿フェイト,
      水着エッジ, Winter Fidel, 渚のラティクス, Blossom Dias. ガチャ2: 花婿クリフ, Vampire Victor, 雪空アシュトン,
      狼アルベル, 執事のレオン (male-only: "ガチャからは男性キャラのみ").
    - イヴリーシュ誕生日記念ガチャ (2020-12-24): "ピックアップは6人のイヴリーシュのみ!" — Bride Eve, 魔女,
      歌星, 迎春, 渚, 泉郷イヴリーシュ.
-   - ステップアップシグムントガチャ1–3 (2017-11-20): "★5シグムント出現確率UP!!"; Sigmund (`cc0009_b01a`,
-     collaboration) is in no pool; R-PU-NAME reads only bracketed names and "X確定".
+   - ステップアップシグムントガチャ1–3 (2017-11-20): "★5シグムント出現確率UP!!" — Sigmund (`cc0009_b01a`,
+     collaboration); R-PU-NAME reads only bracketed names and "X確定".
    - EP2 CHAPTER:10 公開記念キャラガチャ (2019-05-01): "★5キャラクターはピックアップされているEP2キャラクター6人のみ";
-     the master names only マスティマ; ウェルチ, ユーイン, カーリン, ヴァルカ are seen and a sixth figure isn't
-     matched. The master rates agree (a): S 6 %, A 0 %, so this gacha's ★5s are its S pool, which holds
-     マスティマ alone; the other EP2 aces are in none of its pools.
-   - **Proposal (b):** add these to `BANNER_ART` (R-PU-BANNERART) by title key, as was done for
-     衣装コンテスト / 神級. A generic alternative: a title-word rule for "誕生日" (all ★5 costumes of the
-     person) and "ホワイトデー" — but the banner art is the evidence, so the table is the honest form.
-2. **R-PU-THEME reads a part number as a year** (bug, not a judgement call): `theme_pickups` turns
-   any single digit after a theme word into 2016+N, which server-rules documents for ハロウィンN only.
-   "…PU1体確定メイド1" (2020-10-08, and 復刻メイド1 2021-03-18, 20 gachas) became 2017 → no maid →
-   R-PU-NEW → メイドレイミ / 執事エイルマット, while the banner ("復刻メイド") shows **★5メイドのクレア,
-   ★5メイドのネル**; "メイド2" became 2018 → all four 2018 maids, while the banner shows **執事のレオン,
-   メイドのソフィア** only. *Suggested fix* (separate, uncommitted): add `BANNER_ART` entries
-   `メイド1` → (メイドのクレア, メイドのネル), `メイド2` → (執事のレオン, メイドのソフィア); `theme_pickups` checks
-   that table before the digit reading, so the entries alone fix these gachas. Restricting the 2016+N
-   reading to ハロウィン is hygiene so no later title trips on it, and must not be applied alone: without
-   the entries メイド2 would lose its year and fall to R-PU-NEW like メイド1. *Expected effect:* 40 gachas (2 × 10 steps × 2 runs) get the two units on their
-   banner; メイドレイミ / 執事エイルマット leave these S pools. No other title is affected: the only role
-   titles with a theme word and a single digit are メイド1/2/3, and メイド3 is R-PU-IMAGE.
-3. **Numbered halves of a seasonal rerun get the whole theme** (judgement): 復刻水着2018(1) shows
-   渚のミリー + 渚のマリア, (2) 渚のラティクス + 渚のイヴリーシュ + 渚のレナ; both record all five.
-   **Proposal (b):** `BANNER_ART` per half (20 gachas).
-4. **メモリアル banners show a subset of the cast's limited units** (judgement): SO1/SO2/SO3/SO5
+     the master named only マスティマ. Added ウェルチ, ユーイン, カーリン, ヴァルカ (detected) and アンリ (the sixth
+     figure, which the detector doesn't match; identified by eye against `cp0017_ic01a`). The master
+     rates agree (a): S 6 %, A 0 %, so the ★5s of this gacha are its S pool.
+   - 2018年福袋限定チケットガチャ(花嫁/水着/ハロウィンのみ): "花嫁、常夏、ハロウィン向けの11キャラ". R-PU-NAME
+     matched only names containing 花嫁. Added the four 常夏 units (Miki, Sophia, Reimi, Myuria) and the
+     three Halloween-2017 units (Devil Clair, Vampire Victor, Were-Millie); with the four brides released
+     by then that makes the eleven (c: costume names). The brides released after the banner opened,
+     which R-PU-NAME also finds, are kept (not narrowed).
+   - Effect on the pools: their S pools are the pick-ups. Under R-SA-PICKUP, A is now every other
+     general ★5. Before, it was the party roles only (R-SA-NOPICKUP), for ホワイトデー1/2 and シグムント1–3.
+2. **Applied: R-PU-THEME read a part number as a year** (bug): `theme_pickups` turns a single digit
+   after a theme word into 2016+N (documented for ハロウィンN only). "…PU1体確定メイド1" (2020-10-08, and
+   復刻メイド1 2021-03-18, 20 gachas) became 2017 → no maid → R-PU-NEW → メイドレイミ / 執事エイルマット,
+   while the banner ("復刻メイド") shows **★5メイドのクレア, ★5メイドのネル**; "メイド2" became 2018 → all four
+   2018 maids, while the banner shows **執事のレオン, メイドのソフィア** only. Fix: `BANNER_ART` entries
+   `メイド1` and `メイド2`, matched only when no digit follows (so `メイド2018` keeps its R-PU-THEME reading).
+   `theme_pickups` checks the table before the digit reading, which stays as it is. 40 gachas changed;
+   no other title has a theme word with a single digit (メイド3 is R-PU-IMAGE).
+3. **Reviewed, kept: numbered halves of a seasonal rerun get the whole theme**: 復刻水着2018(1) shows
+   渚のミリー + 渚のマリア, (2) 渚のラティクス + 渚のイヴリーシュ + 渚のレナ; both record all five (20 gachas).
+4. **Reviewed, kept: メモリアル banners show a subset of the cast's limited units**: SO1/SO2/SO3/SO5
    メモリアル (2019-12 … 2021-05, 9 gachas) record every limited ace of the game (10–30 units), the
-   banners show five or six (e.g. SO3: Blossom/Bride/Seaside Maria, Summer/メイドのソフィア). "ピックアップは
-   期間限定キャラのみ" says the pick-ups are limited units, not that all of them are. **Proposal (b+d):**
-   the units on the banner (read off the art) as S; keep R-PU-SERIES as the fallback where no banner
-   survives.
-5. **2018年福袋限定チケットガチャ(花嫁/水着/ハロウィンのみ)**: "花嫁、常夏、ハロウィン向けの11キャラ";
-   R-PU-NAME matched only names containing 花嫁 (12 brides, some released after the banner showed),
-   none for 水着 / ハロウィン (Devil Clair, Summer Reimi are on the banner, in no pool). **Proposal
-   (b+c):** read the three words through R-PU-THEME (costume words 花嫁/花婿, 渚/真夏/常夏, the
-   Halloween window) with units released by the gacha's opening; expect 11.
-6. **Banners whose panels carry no content id** (R-PU-IMAGE uses only the rows with one):
-   EP2公開記念ピックアップキャラガチャ (2018-07-19) records Bride Eve only (row 6), but panels 2 and 3 show
-   plain Evelysse and Verda (panels 1, 4, 5 and 6 are lost; 6 is the one the master names). **Proposal (b):** add the seen units; the
-   lost panels stay unknown.
-7. **Probably showcases, no change proposed (d):** the 2017 ステップアップキャラガチャ / 氷属性ピックアップ
-   step-ups (list banners only; "★5確率2倍/3倍" over a showcase; but 氷属性 says "★5氷属性キャラ1体確定"
-   over Ashton, Mavelle, Official Reimi — a candidate for a BANNER_ART entry if that reading is accepted),
-   300万DL記念, キャスターピックアップ確定 (Myuria; a class pick-up R-PU-ROLEPICK doesn't match because the
-   title lacks "ロールピックアップ"), 新生活応援無料ガチャ (nine units already in its S pool).
+   banners show four to six (e.g. SO3: Blossom/Bride/Seaside Maria, Summer/メイドのソフィア).
+5. (2018年福袋: applied, under 1.)
+6. **Reviewed, kept: banners whose panels carry no content id** (R-PU-IMAGE uses only the rows with
+   one): EP2公開記念ピックアップキャラガチャ (2018-07-19) records Bride Eve only (row 6), but panels 2 and 3
+   show plain Evelysse and Verda (panels 1, 4, 5 and 6 are lost; 6 is the one the master names).
+7. **Probably showcases, no change (d):** the 2017 ステップアップキャラガチャ / 氷属性ピックアップ step-ups
+   (list banners only; "★5確率2倍/3倍" over a showcase; 氷属性 says "★5氷属性キャラ1体確定" over Ashton,
+   Mavelle, Official Reimi — a BANNER_ART candidate if that reading is accepted), 300万DL記念,
+   キャスターピックアップ確定 (Myuria; a class pick-up that R-PU-ROLEPICK doesn't match, the title lacks
+   "ロールピックアップ"), 新生活応援無料ガチャ (nine units already in its S pool).
 8. **発売日記念 (SO2–SO5) extras** are base or official costumes of the cast not matched on crowded
-   group art; probable detector misses, no change proposed.
+   group art; probable detector misses, no change.
+
+After the fixes the remaining *extra* rows are findings 3, 4, 8, EP2 CHAPTER:10 (アンリ, see 1) and
+2018年福袋 (the banner shows three of its eleven, plus the later brides kept).
 
 ## Results
 
 Confirmed gachas by pick-up source: R-PU-IMAGE 350, R-PU-THEME 240, R-PU-SIBLING 180,
-R-PU-BANNERART 70, R-PU-RERUN 30, R-PU-NAME 16, R-PU-GROUP 3, R-PU-NEW 1 (634 of the 890 with the
+R-PU-BANNERART 116, R-PU-RERUN 30, R-PU-NAME 16, R-PU-GROUP 3, R-PU-NEW 1 (677 of the 936 with the
 main panel present). The R-PU-IMAGE ones are partly circular (the named panel is the rule's own
-source); R-PU-THEME, -SIBLING, -RERUN and -NAME confirmations are independent evidence for those
-(c)/(d) rules.
+source). The R-PU-THEME, -SIBLING, -RERUN and -NAME confirmations are independent evidence for those
+(c)/(d) rules. The R-PU-BANNERART ones are by construction.
 
 <!-- BEGIN GENERATED (tools/gacha_verify.py) -->
 | status | gachas | role | box | weapon | banner groups |
 |---|---:|---:|---:|---:|---:|
-| confirmed | 890 | 890 | 0 | 0 | 146 |
-| missing from pickup | 21 | 21 | 0 | 0 | 19 |
-| extra in pickup | 56 | 56 | 0 | 0 | 15 |
-| mismatch (both) | 21 | 21 | 0 | 0 | 2 |
+| confirmed | 936 | 936 | 0 | 0 | 154 |
+| missing from pickup | 14 | 14 | 0 | 0 | 12 |
+| extra in pickup | 38 | 38 | 0 | 0 | 16 |
+| mismatch (both) | 0 | 0 | 0 | 0 | 0 |
 | inconclusive | 52 | 52 | 0 | 0 | 23 |
 | banner not available | 607 | 342 | 265 | 0 | 143 |
 | permanent showcase | 7 | 7 | 0 | 0 | 7 |
@@ -148,11 +147,11 @@ source); R-PU-THEME, -SIBLING, -RERUN and -NAME confirmations are independent ev
 |---|---:|---|---|---|---|---|---|
 | named panel | 82 | 82/82 +0 | 82/82 +0 | **82/82 +0** | 82/82 +0 | 82/82 +0 | 82/82 +0 |
 | list banner | 78 | 156/178 +0 | **150/178 +0** | 140/178 +0 | 127/178 +0 | 111/178 +0 | 90/178 +0 |
-| main panel | 35 | 64/66 +7 | 64/66 +7 | **64/66 +6** | 64/66 +6 | 64/66 +5 | 63/66 +4 |
+| main panel | 34 | 63/65 +2 | 63/65 +2 | **63/65 +2** | 63/65 +2 | 63/65 +2 | 62/65 +2 |
 
 Cells are recall `tp/(tp+fn)` and `+other`. Negative control: 173 weapon banners, 0 raw detections (>= 6 inliers), 0 accepted.
 - main panel, missed: `pickup_img_chara_1704_002`: Bride Eve `cp0002_b03a`; `pickup_img_chara_1709_003`: Bride Eve `cp0002_b03a`
-- main panel, other: `20190501_chara_PU_002`: ユーイン `cp0013_b01a`, ウェルチ `cp0014_b01a`, カーリン `cp0015_b01a`, ヴァルカ `cp0016_b01a`; `pickup_img_chara_1704_002`: Evelysse `cp0002_b01a`; `pickup_img_chara_1709_003`: Verda `cp0005_b01a`
+- main panel, other: `pickup_img_chara_1704_002`: Evelysse `cp0002_b01a`; `pickup_img_chara_1709_003`: Verda `cp0005_b01a`
 - list banner, missed: `20200101_chara_002`: ヨシュア `cp0109_b01a`, エリス `cp0113_b01a`; `20200430_chara_002`: エリス `cp0113_b01a`, ボーマン `cp0206_b01a`, Chisato (蒼星のチサト) `cp0212_b02a`; `20200430_chara_003`: 蒼星のクロード `cp0201_b03a`, 蒼星のレナ `cp0202_b06a`, ノエル `cp0211_b01a`, スフレ `cp0308_b01a`, バッカス `cp0405_b01a`; `20200625_chara_002`: ヒーローベルダ `cp0005_b03a`; `20200625_chara_003`: Winter Evelysse `cp0002_b04a`, 渚のイヴリーシュ `cp0002_b05a`, Sweet Verda `cp0005_b02a`, 渚のラティクス `cp0101_b02a`, Cat Rena `cp0202_b03a`, 雪花レナ `cp0202_b05a`, Holiday Precis `cp0205_b02a`, Blossom Dias `cp0207_b02a`, Blossom Maria `cp0303_b03a`, Maid Nel `cp0305_b03a`, Maid Clair `cp0312_b03a`, 聖夜クレア `cp0312_b05a`, Winter Fidel `cp0501_b02a`, かぼちゃリリア `cp0507_b02a`, Dream Welch `cp0508_b03a`; `20200806_chara_001`: 水着カーリン `cp0015_b03a`, 水着ネル `cp0305_b05a`
 
 ### Mismatches
@@ -165,35 +164,27 @@ One row per banner (gachas with the same images and outcome: the steps of a step
 | missing from pickup | 2017-07-01 | gacha_pickup_role_0051 +2 | キャスターピックアップ確定ガチャ（毎日１回） | none | `pickup_img_chara_002` | Myuria `cp0408_b01a` (S) | - | `gacha_pickup_role_0051.png` |
 | missing from pickup | 2017-11-09 | gacha_pickup_role_step_0002 | ステップアップキャラガチャ２(10連★5確率1枠10%) | none | `banner_gacha_pickup_role_0082` | Ilia `cp0105_b01a` (A), Lymle `cp0404_b01a` (A), Fayt `cp0301_b01a` (S), Ashton `cp0204_b01a` (S) | - | `gacha_pickup_role_step_0002.png` |
 | missing from pickup | 2017-11-09 | gacha_pickup_role_step_0003 | ステップアップキャラガチャ３(10連★5確率1枠15%） | none | `banner_gacha_pickup_role_0083` | Ilia `cp0105_b01a` (A), Lymle `cp0404_b01a` (A), Fayt `cp0301_b01a` (S), Ashton `cp0204_b01a` (S) | - | `gacha_pickup_role_step_0003.png` |
-| missing from pickup | 2017-11-20 | gacha_pickup_role_step_0004 | ステップアップシグムントガチャ１(10連2500紋章石） | none | `banner_gacha_pickup_role_0085` | シグムント `cc0009_b01a` (-) | - | `gacha_pickup_role_step_0004.png` |
-| missing from pickup | 2017-11-20 | gacha_pickup_role_step_0005 | ステップアップシグムントガチャ２(10連のみ1枠2%） | none | `banner_gacha_pickup_role_0086` | シグムント `cc0009_b01a` (-) | - | `gacha_pickup_role_step_0005.png` |
-| missing from pickup | 2017-11-20 | gacha_pickup_role_step_0006 | ステップアップシグムントガチャ３(10連のみ1枠3%） | none | `banner_gacha_pickup_role_0087` | シグムント `cc0009_b01a` (-) | - | `gacha_pickup_role_step_0006.png` |
 | missing from pickup | 2017-12-04 | gacha_pickup_role_step_0007 | ステップアップキャラガチャ１(半額10連2500紋章石） | none | `banner_gacha_pickup_role_0092` | Verda `cp0005_b01a` (S), Official Edge `cp0401_b02a` (S), Faize `cp0403_b01a` (A) | - | `gacha_pickup_role_step_0007.png` |
 | missing from pickup | 2017-12-04 | gacha_pickup_role_step_0008 | ステップアップキャラガチャ２(10連★5確率1枠10%) | none | `banner_gacha_pickup_role_0093` | Verda `cp0005_b01a` (S), Official Edge `cp0401_b02a` (S), Faize `cp0403_b01a` (A) | - | `gacha_pickup_role_step_0008.png` |
 | missing from pickup | 2017-12-04 | gacha_pickup_role_step_0009 | ステップアップキャラガチャ３(10連★5確率1枠15%） | none | `banner_gacha_pickup_role_0094` | Verda `cp0005_b01a` (S), Official Edge `cp0401_b02a` (S), Faize `cp0403_b01a` (A) | - | `gacha_pickup_role_step_0009.png` |
 | missing from pickup | 2017-12-18 | gacha_pickup_role_step_0010 | 氷属性ピックアップキャラガチャ１ | none | `banner_gacha_pickup_role_0111` | Ashton `cp0204_b01a` (S), Mavelle `cp0110_b01a` (S), Official Reimi `cp0402_b03a` (S) | - | `gacha_pickup_role_step_0010.png` |
 | missing from pickup | 2017-12-18 | gacha_pickup_role_step_0011 | 氷属性ピックアップキャラガチャ２ | none | `banner_gacha_pickup_role_0112` | Ashton `cp0204_b01a` (S), Mavelle `cp0110_b01a` (S), Official Reimi `cp0402_b03a` (S) | - | `gacha_pickup_role_step_0011.png` |
 | missing from pickup | 2017-12-18 | gacha_pickup_role_step_0012 | 氷属性ピックアップキャラガチャ３ | none | `banner_gacha_pickup_role_0113` | Mavelle `cp0110_b01a` (S), Official Reimi `cp0402_b03a` (S), Ashton `cp0204_b01a` (S) | - | `gacha_pickup_role_step_0012.png` |
-| mismatch (both) | 2018-01-01 | gacha_pickup_role_0109 | 2018年福袋限定チケットガチャ(花嫁/水着/ハロウィンのみ) | R-PU-NAME | `banner_gacha_pickup_role_0118`, `pickup_img_chara_1712_017` | Devil Clair `cp0312_b02a` (-), Summer Reimi `cp0402_b02a` (-) | Bride Eve `cp0002_b03a`, 刻星のティカ (花嫁ティカ) `cp0011_b04a`, カーリン (花嫁カーリン) `cp0015_b06a`, 花嫁プリシス `cp0205_b03a`, Bride Maria `cp0303_b02a`, Bride Nel `cp0305_b02a`, 花嫁ミラージュ `cp0310_b03a`, 花嫁クレア `cp0312_b04a`, 花嫁レイミ `cp0402_b04a` | `gacha_pickup_role_0109.png` |
+| extra in pickup | 2018-01-01 | gacha_pickup_role_0109 | 2018年福袋限定チケットガチャ(花嫁/水着/ハロウィンのみ) | R-PU-BANNERART,R-PU-NAME | `banner_gacha_pickup_role_0118`, `pickup_img_chara_1712_017` | - | Bride Eve `cp0002_b03a`, 刻星のティカ (花嫁ティカ) `cp0011_b04a`, カーリン (花嫁カーリン) `cp0015_b06a`, Were-Millie `cp0102_b02a`, 花嫁プリシス `cp0205_b03a`, Summer Sophia `cp0302_b02a`, Bride Maria `cp0303_b02a`, Bride Nel `cp0305_b02a`, 花嫁ミラージュ `cp0310_b03a`, 花嫁クレア `cp0312_b04a`, 花嫁レイミ `cp0402_b04a`, Summer Myuria `cp0408_b02a`, Summer Miki `cp0502_b03a`, Vampire Victor `cp0503_b02a` | `gacha_pickup_role_0109.png` |
 | missing from pickup | 2018-07-19 | gacha_pickup_role_0145 | EP2公開記念ピックアップキャラガチャ | R-PU-IMAGE | `pickup_img_chara_1704_002`, `pickup_img_chara_1709_003` | Verda `cp0005_b01a` (A), Evelysse `cp0002_b01a` (A) | Bride Eve `cp0002_b03a` (images incomplete: not judged) | `gacha_pickup_role_0145.png` |
-| missing from pickup | 2019-05-01 | gacha_pickup_role_0202 | EP2 CHAPTER：10 公開記念キャラガチャ | R-PU-IMAGE | `20190501_chara_PU_002`, `20190501_chara_PU_001` | ウェルチ `cp0014_b01a` (-), ユーイン `cp0013_b01a` (-), カーリン `cp0015_b01a` (-), ヴァルカ `cp0016_b01a` (-) | - | `gacha_pickup_role_0202.png` |
+| extra in pickup | 2019-05-01 | gacha_pickup_role_0202 | EP2 CHAPTER：10 公開記念キャラガチャ | R-PU-BANNERART,R-PU-IMAGE | `20190501_chara_PU_002`, `20190501_chara_PU_001` | - | アンリ `cp0017_b01a` | `gacha_pickup_role_0202.png` |
 | extra in pickup | 2019-12-19 | gacha_pickup_role_0253 | SO3メモリアルピックアップキャラガチャ | R-PU-SERIES | `20191219_chara_002`, `20191219_chara_PU_001` | - | 花婿フェイト `cp0301_b02a`, ＳＲＦフェイト `cp0301_b03a`, ＳＲＦソフィア `cp0302_b05a`, 歌星ソフィア `cp0302_b06a`, 兎耳のマリア `cp0303_b05a`, Maria (銀雪マリア) `cp0303_b06a`, 花婿クリフ `cp0304_b02a`, Bride Nel `cp0305_b02a`, Maid Nel `cp0305_b03a`, 堕天使ネル `cp0305_b04a`, 水着ネル `cp0305_b05a`, 狼アルベル `cp0306_b03a`, 兎耳のミラージュ `cp0310_b02a`, 花嫁ミラージュ `cp0310_b03a`, Devil Clair `cp0312_b02a`, Maid Clair `cp0312_b03a`, 花嫁クレア `cp0312_b04a`, 聖夜クレア `cp0312_b05a` | `gacha_pickup_role_0253.png` |
 | extra in pickup | 2020-02-19 | gacha_pickup_role_0279 +1 | SO4発売日記念ガチャ | R-PU-SERIES | `20200213_chara_003`, `20200213_chara_PU_003` | - | Official Edge `cp0401_b02a`, Official Reimi `cp0402_b03a`, Faize `cp0403_b01a`, Official Lymle `cp0404_b01b`, Youth Meracle `cp0406_b02a` | `gacha_pickup_role_0279.png` |
 | extra in pickup | 2020-02-27 | gacha_pickup_role_0281 +1 | SO3発売日記念ガチャ | R-PU-SERIES | `20200227_chara_003`, `20200227_chara_PU_003` | - | Youth Sophia `cp0302_b03a`, Cliff `cp0304_b01a`, Dark Albel `cp0306_b02a`, Clair `cp0312_b01a` | `gacha_pickup_role_0281.png` |
 | extra in pickup | 2020-03-05 | gacha_pickup_role_0255 | SO2メモリアルピックアップキャラガチャ | R-PU-SERIES | `20191226_chara_003`, `20191226_chara_PU_001` | - | 雪花レナ `cp0202_b05a`, Rena (鏡宮のレナ) `cp0202_b07a`, Rena (泉郷レナ) `cp0202_b08a`, Celine (ハンターセリーヌ) `cp0203_b02a`, 雪空アシュトン `cp0204_b03a`, Holiday Precis `cp0205_b02a`, Precis (魔改のプリシス) `cp0205_b05a`, Blossom Dias `cp0207_b02a`, 執事のレオン `cp0208_b02a` | `gacha_pickup_role_0255.png` |
-| missing from pickup | 2020-03-12 | gacha_pickup_role_0295 | ホワイトデー限定復刻ピックアップキャラガチャ1 | none | `20200312_chara_003`, `20200312_chara_PU_003` | 花婿フェイト `cp0301_b02a` (-), 水着エッジ `cp0401_b03a` (-), Winter Fidel `cp0501_b02a` (-), 渚のラティクス `cp0101_b02a` (-), Blossom Dias `cp0207_b02a` (-) | - | `gacha_pickup_role_0295.png` |
-| missing from pickup | 2020-03-12 | gacha_pickup_role_0296 | ホワイトデー限定復刻ピックアップキャラガチャ2 | none | `20200312_chara_004`, `20200312_chara_PU_004` | 花婿クリフ `cp0304_b02a` (-), Vampire Victor `cp0503_b02a` (-), 雪空アシュトン `cp0204_b03a` (-), 狼アルベル `cp0306_b03a` (-), 執事のレオン `cp0208_b02a` (-) | - | `gacha_pickup_role_0296.png` |
 | missing from pickup | 2020-03-12 | gacha_pickup_role_0303 | 新生活応援無料ガチャ | none | `20200312_chara_006`, `20200312_chara_PU_005` | ウェルチ `cp0014_b01a` (S), 灼炎のアシュトン `cp0204_b02a` (S), ペリシー `cp0112_b01a` (S), Crimson Phia `cp0108_b02a` (S), ユーイン `cp0013_b01a` (S), Youth Meracle `cp0406_b02a` (S), Dark Albel `cp0306_b02a` (S), Lucifer `cm413_b01a` (S), Cyuss `cp0106_b01a` (S) | - | `gacha_pickup_role_0303.png` |
 | extra in pickup | 2020-03-31 | gacha_pickup_role_0302 +1 | SO5発売日記念ガチャ | R-PU-SERIES | `20200326_chara_005`, `20200326_chara_PU_005` | - | Official Anne `cp0506_b02a`, Daril `cp0509_b01a` | `gacha_pickup_role_0302.png` |
 | extra in pickup | 2020-05-07 | gacha_pickup_role_0335 +1 | SO5メモリアルピックアップキャラガチャ | R-PU-SERIES | `20200507_chara_001`, `20200507_chara_PU_001` | - | Winter Fidel `cp0501_b02a`, Miki (甘恋のミキ) `cp0502_b05a`, Vampire Victor `cp0503_b02a`, かぼちゃリリア `cp0507_b02a`, Dream Welch `cp0508_b03a` | `gacha_pickup_role_0335.png` |
 | extra in pickup | 2020-06-01 | gacha_pickup_role_0351 | SO1メモリアルピックアップキャラガチャ | R-PU-SERIES | `20200528_chara_002`, `20200528_chara_PU_003` | - | 渚のラティクス `cp0101_b02a`, エリス (天翼のエリス) `cp0113_b02a` | `gacha_pickup_role_0351.png` |
 | extra in pickup | 2020-07-30 | gacha_pickup_role_0425 | SO2発売日記念ガチャ | R-PU-SERIES | `20200730_chara_005`, `20200730_chara_PU_004` | - | 蒼星のクロード `cp0201_b03a`, 蒼星のレナ `cp0202_b06a`, Celine `cp0203_b01a`, Ashton `cp0204_b01a`, 灼炎のアシュトン `cp0204_b02a`, Dias `cp0207_b01a`, Leon (蒼星のレオン) `cp0208_b03a`, Opera `cp0209_b01a`, 紅輝のオペラ `cp0209_b02a`, Chisato `cp0212_b01a`, Chisato (蒼星のチサト) `cp0212_b02a` | `gacha_pickup_role_0425.png` |
 | extra in pickup | 2020-09-03 | gacha_pickup_role_0470 | SO3メモリアルピックアップキャラガチャ | R-PU-SERIES | `20200903_chara_001`, `20200903_chara_PU_001` | - | Fayt (神翼のフェイト) `cp0301_b04a`, Summer Sophia `cp0302_b02a`, メイドのソフィア `cp0302_b04a`, ＳＲＦソフィア `cp0302_b05a`, 歌星ソフィア `cp0302_b06a`, Bride Maria `cp0303_b02a`, Blossom Maria `cp0303_b03a`, Seaside Maria `cp0303_b04a`, 兎耳のマリア `cp0303_b05a`, Maria (銀雪マリア) `cp0303_b06a`, Maria (神翼のマリア) `cp0303_b07a`, 花婿クリフ `cp0304_b02a`, Bride Nel `cp0305_b02a`, Maid Nel `cp0305_b03a`, 堕天使ネル `cp0305_b04a`, 水着ネル `cp0305_b05a`, Nel (華王妃ネル) `cp0305_b06a`, Nel (斬鬼のネル) `cp0305_b07a`, 狼アルベル `cp0306_b03a`, Albel (鬼炎のアルベル) `cp0306_b04a`, 花嫁ミラージュ `cp0310_b03a`, Devil Clair `cp0312_b02a`, Maid Clair `cp0312_b03a`, 花嫁クレア `cp0312_b04a`, 聖夜クレア `cp0312_b05a`, Clair (華王妃クレア) `cp0312_b06a`, Clair (常夏のクレア) `cp0312_b07a` | `gacha_pickup_role_0470.png` |
-| mismatch (both) | 2020-10-08 | gacha_pickup_role_0510 +19 | 10連10ステップ目PU1体確定メイド1 ステップ1 | R-PU-NEW | `20201008_chara_002`, `20201008_chara_PU_003` | Maid Nel `cp0305_b03a` (-), Maid Clair `cp0312_b03a` (-) | Reimi (メイドレイミ) `cp0402_b07a`, エイルマット (執事エイルマット) `cp0409_b02a` | `gacha_pickup_role_0510.png` |
-| extra in pickup | 2020-10-08 | gacha_pickup_role_0520 +19 | 10連10ステップ目PU1体確定メイド2 ステップ1 | R-PU-THEME | `20201008_chara_003`, `20201008_chara_PU_004` | - | Maid Nel `cp0305_b03a`, Maid Clair `cp0312_b03a` | `gacha_pickup_role_0520.png` |
 | extra in pickup | 2020-11-05 | gacha_pickup_role_0565 | SO3メモリアルピックアップキャラガチャ | R-PU-SERIES | `20191219_chara_002`, `20191219_chara_PU_001` | - | 花婿フェイト `cp0301_b02a`, ＳＲＦフェイト `cp0301_b03a`, Fayt (神翼のフェイト) `cp0301_b04a`, ＳＲＦソフィア `cp0302_b05a`, 歌星ソフィア `cp0302_b06a`, 兎耳のマリア `cp0303_b05a`, Maria (銀雪マリア) `cp0303_b06a`, Maria (神翼のマリア) `cp0303_b07a`, Maria (吸血鬼マリア) `cp0303_b08a`, 花婿クリフ `cp0304_b02a`, Bride Nel `cp0305_b02a`, Maid Nel `cp0305_b03a`, 堕天使ネル `cp0305_b04a`, 水着ネル `cp0305_b05a`, Nel (華王妃ネル) `cp0305_b06a`, Nel (斬鬼のネル) `cp0305_b07a`, 狼アルベル `cp0306_b03a`, Albel (鬼炎のアルベル) `cp0306_b04a`, スフレ (奇術師スフレ) `cp0308_b02a`, 兎耳のミラージュ `cp0310_b02a`, 花嫁ミラージュ `cp0310_b03a`, Devil Clair `cp0312_b02a`, Maid Clair `cp0312_b03a`, 花嫁クレア `cp0312_b04a`, 聖夜クレア `cp0312_b05a`, Clair (華王妃クレア) `cp0312_b06a`, Clair (常夏のクレア) `cp0312_b07a` | `gacha_pickup_role_0565.png` |
 | extra in pickup | 2020-11-19 | gacha_pickup_role_0590 | SO2メモリアルピックアップキャラガチャ | R-PU-SERIES | `20191226_chara_003`, `20191226_chara_PU_001` | - | 雪花レナ `cp0202_b05a`, Rena (鏡宮のレナ) `cp0202_b07a`, Rena (泉郷レナ) `cp0202_b08a`, Rena (神星のレナ) `cp0202_b09a`, Celine (ハンターセリーヌ) `cp0203_b02a`, 雪空アシュトン `cp0204_b03a`, Ashton (神龍のアシュトン) `cp0204_b04a`, Holiday Precis `cp0205_b02a`, Precis (魔改のプリシス) `cp0205_b05a`, Blossom Dias `cp0207_b02a`, 執事のレオン `cp0208_b02a` | `gacha_pickup_role_0590.png` |
-| missing from pickup | 2020-12-24 | gacha_pickup_role_0648 | イヴリーシュ誕生日記念ガチャ | none | `20201224_chara_002`, `20201224_chara_PU_002` | Bride Eve `cp0002_b03a` (-), Evelysse (魔女イヴリーシュ) `cp0002_b08a` (-), 歌星イヴリーシュ `cp0002_b07a` (-), 迎春イヴリーシュ `cp0002_b06a` (-), 渚のイヴリーシュ `cp0002_b05a` (-), Evelysse (泉郷イヴリーシュ) `cp0002_b09a` (-) | - | `gacha_pickup_role_0648.png` |
 | extra in pickup | 2021-05-06 | gacha_pickup_role_0900 | SO2メモリアルピックアップキャラガチャ | R-PU-SERIES | `20191226_chara_003`, `20191226_chara_PU_001` | - | 雪花レナ `cp0202_b05a`, Rena (鏡宮のレナ) `cp0202_b07a`, Rena (泉郷レナ) `cp0202_b08a`, Rena (神星のレナ) `cp0202_b09a`, Rena (歌星レナ) `cp0202_b10a`, Celine (ハンターセリーヌ) `cp0203_b02a`, 雪空アシュトン `cp0204_b03a`, Ashton (神龍のアシュトン) `cp0204_b04a`, Holiday Precis `cp0205_b02a`, Precis (魔改のプリシス) `cp0205_b05a`, Precis (甘砲のプリシス) `cp0205_b06a`, Blossom Dias `cp0207_b02a`, 執事のレオン `cp0208_b02a` | `gacha_pickup_role_0900.png` |
 | extra in pickup | 2021-05-06 | gacha_pickup_role_0951 +9 | 復刻水着2018(1)/10連10ステップ目PU1体確定　ステップ1 | R-PU-THEME | `20210506_chara_003`, `20210506_chara_PU_003` | - | 渚のイヴリーシュ `cp0002_b05a`, 渚のラティクス `cp0101_b02a`, 渚のレナ `cp0202_b04a` | `gacha_pickup_role_0951.png` |
 | extra in pickup | 2021-05-06 | gacha_pickup_role_0961 +9 | 復刻水着2018(2)/10連10ステップ目PU1体確定　ステップ1 | R-PU-THEME | `20210506_chara_004`, `20210506_chara_PU_004` | - | Seaside Millie `cp0102_b03a`, Seaside Maria `cp0303_b04a` | `gacha_pickup_role_0961.png` |
@@ -263,6 +254,9 @@ No character detected, or recorded pick-ups not seen where only the list banner 
 | 2017-04-23 | gacha_pickup_role_0019 | ピックアップガチャ(フィデル/ミキ/ヴィクトル) | R-PU-NAME | Fidel `cp0501_b01a`, Miki `cp0502_b01a`, Victor `cp0503_b01a` |
 | 2017-09-28 | gacha_pickup_role_0066 | ラスウェル確定ガチャ | R-PU-NAME | Lasswell `cc0006_b01a` |
 | 2017-11-20 | gacha_pickup_role_0086 | ピックアップガチャ(シグムント） | R-PU-NAME | シグムント `cc0009_b01a` |
+| 2017-11-20 | gacha_pickup_role_step_0004 | ステップアップシグムントガチャ１(10連2500紋章石） | R-PU-BANNERART | シグムント `cc0009_b01a` |
+| 2017-11-20 | gacha_pickup_role_step_0005 | ステップアップシグムントガチャ２(10連のみ1枠2%） | R-PU-BANNERART | シグムント `cc0009_b01a` |
+| 2017-11-20 | gacha_pickup_role_step_0006 | ステップアップシグムントガチャ３(10連のみ1枠3%） | R-PU-BANNERART | シグムント `cc0009_b01a` |
 | 2017-12-07 | gacha_pickup_role_0090 | ラティクス確定ガチャ | R-PU-NAME | Roddick `cp0101_b01a` |
 | 2017-12-07 | gacha_pickup_role_0091 | マーヴェル確定ガチャ | R-PU-NAME | Mavelle `cp0110_b01a` |
 | 2017-12-07 | gacha_pickup_role_0092 | アシュトン確定ガチャ | R-PU-NAME | Ashton `cp0204_b01a` |
@@ -298,6 +292,8 @@ No character detected, or recorded pick-ups not seen where only the list banner 
 | 2020-02-27 | gacha_pickup_role_0282 | ピックアップキャラガチャ（泉郷レナ/泉郷イヴリーシュ） | R-PU-IMAGE | Evelysse (泉郷イヴリーシュ) `cp0002_b09a`, Rena (泉郷レナ) `cp0202_b08a` |
 | 2020-03-12 | gacha_pickup_role_0284 | ピックアップキャラガチャ（神翼のフェイト） | R-PU-IMAGE | Fayt (神翼のフェイト) `cp0301_b04a` |
 | 2020-03-12 | gacha_pickup_role_0285 +9 | １０連１０ステップ目ＰＵ１体確定 ステップ1（神翼のフェイト） | R-PU-IMAGE | Fayt (神翼のフェイト) `cp0301_b04a` |
+| 2020-03-12 | gacha_pickup_role_0295 | ホワイトデー限定復刻ピックアップキャラガチャ1 | R-PU-BANNERART | 渚のラティクス `cp0101_b02a`, Blossom Dias `cp0207_b02a`, 花婿フェイト `cp0301_b02a`, 水着エッジ `cp0401_b03a`, Winter Fidel `cp0501_b02a` |
+| 2020-03-12 | gacha_pickup_role_0296 | ホワイトデー限定復刻ピックアップキャラガチャ2 | R-PU-BANNERART | 雪空アシュトン `cp0204_b03a`, 執事のレオン `cp0208_b02a`, 花婿クリフ `cp0304_b02a`, 狼アルベル `cp0306_b03a`, Vampire Victor `cp0503_b02a` |
 | 2020-04-16 | gacha_pickup_role_0309 +29 | 10連10ステップ目PU1体確定アイドル2018 ステップ1 | R-PU-IMAGE | 歌星ベルダ `cp0005_b04a`, 歌星レイミ `cp0402_b05a`, 歌星ミキ `cp0502_b04a` |
 | 2020-04-16 | gacha_pickup_role_0319 +29 | 10連10ステップ目PU1体確定アイドル2019 ステップ1 | R-PU-IMAGE | 歌星イヴリーシュ `cp0002_b07a`, 歌星ソフィア `cp0302_b06a` |
 | 2020-04-30 | gacha_pickup_role_0332 | ピックアップキャラガチャ（狐将のカーリン/砲甲のリカルド） | R-PU-IMAGE | カーリン (狐将のカーリン) `cp0015_b05a`, リカルド (砲甲のリカルド) `cp0018_b03a` |
@@ -328,6 +324,8 @@ No character detected, or recorded pick-ups not seen where only the list banner 
 | 2020-09-19 | gacha_pickup_role_0504 | 週末限定ピックアップキャラガチャ | R-PU-IMAGE | Nel (華王妃ネル) `cp0305_b06a`, Clair (華王妃クレア) `cp0312_b06a` |
 | 2020-10-03 | gacha_pickup_role_0508 | 週末限定ピックアップキャラガチャ | R-PU-IMAGE | エリス (天翼のエリス) `cp0113_b02a`, Miki (甘恋のミキ) `cp0502_b05a` |
 | 2020-10-08 | gacha_pickup_role_0509 | ピックアップキャラガチャ（メイドレイミ/執事エイルマット） | R-PU-IMAGE | Reimi (メイドレイミ) `cp0402_b07a`, エイルマット (執事エイルマット) `cp0409_b02a` |
+| 2020-10-08 | gacha_pickup_role_0510 +19 | 10連10ステップ目PU1体確定メイド1 ステップ1 | R-PU-BANNERART | Maid Nel `cp0305_b03a`, Maid Clair `cp0312_b03a` |
+| 2020-10-08 | gacha_pickup_role_0520 +19 | 10連10ステップ目PU1体確定メイド2 ステップ1 | R-PU-BANNERART | 執事のレオン `cp0208_b02a`, メイドのソフィア `cp0302_b04a` |
 | 2020-10-12 | gacha_pickup_role_0530 | 復刻テイルズ オブ ザ レイズコラボ PUガチャ\n(クレス/ミント) | R-PU-IMAGE | クレス `cc0030_b01a`, ミント `cc0031_b01a` |
 | 2020-10-15 | gacha_pickup_role_0531 +19 | 10連10ステップ目PU1体確定メイド3 ステップ1 | R-PU-SIBLING | ヴァルカ (メイドヴァルカ) `cp0016_b02a`, Fiore (メイドフィオーレ) `cp0504_b05a` |
 | 2020-10-15 | gacha_pickup_role_0541 +19 | 復刻ハロウィン1/10連10ステップ目PU1体確定 ステップ1 | R-PU-THEME | Were-Millie `cp0102_b02a`, Devil Clair `cp0312_b02a`, Vampire Victor `cp0503_b02a` |
@@ -346,6 +344,7 @@ No character detected, or recorded pick-ups not seen where only the list banner 
 | 2020-12-10 | gacha_pickup_role_0627 +9 | 復刻xmas2019/10連10ステップ目PU1体確定　ステップ1 | R-PU-IMAGE | ペリシー (雪猫ペリシー) `cp0112_b03a`, Maria (銀雪マリア) `cp0303_b06a` |
 | 2020-12-17 | gacha_pickup_role_0637 | ピックアップキャラガチャ(雪狐カーリン/聖夜ネル) | R-PU-IMAGE | カーリン (雪狐カーリン) `cp0015_b07a`, Nel (聖夜ネル) `cp0305_b08a` |
 | 2020-12-17 | gacha_pickup_role_0638 +19 | 復刻xmas2018/10連10ステップ目PU1体確定　ステップ1 | R-PU-THEME | 雪花レナ `cp0202_b05a`, 雪空アシュトン `cp0204_b03a`, 聖夜クレア `cp0312_b05a` |
+| 2020-12-24 | gacha_pickup_role_0648 | イヴリーシュ誕生日記念ガチャ | R-PU-BANNERART | Bride Eve `cp0002_b03a`, 渚のイヴリーシュ `cp0002_b05a`, 迎春イヴリーシュ `cp0002_b06a`, 歌星イヴリーシュ `cp0002_b07a`, Evelysse (魔女イヴリーシュ) `cp0002_b08a`, Evelysse (泉郷イヴリーシュ) `cp0002_b09a` |
 | 2020-12-24 | gacha_pickup_role_0649 +19 | 復刻xmas2017/10連10ステップ目PU1体確定　ステップ1 | R-PU-THEME | Winter Evelysse `cp0002_b04a`, Holiday Precis `cp0205_b02a`, Winter Fidel `cp0501_b02a` |
 | 2020-12-26 | gacha_pickup_role_0659 | 週末限定ピックアップキャラガチャ | R-PU-IMAGE | マスティマ (賢神のマスティマ) `cp0019_b02a`, Maria (神翼のマリア) `cp0303_b07a` |
 | 2021-01-01 | gacha_pickup_role_0660 | ピックアップキャラガチャ(初春ティカ/初夢ラヴァーニア) | R-PU-IMAGE | 刻星のティカ (初春ティカ) `cp0011_b05a`, 初夢ラヴァーニア `cp0022_b03a` |

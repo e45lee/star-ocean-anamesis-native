@@ -254,8 +254,8 @@ int main(int argc, char** argv) {
         case platform370::PatchStatus::Disabled: LOGI("main", "--no-patch: the client's service-end check is live"); break;
         case platform370::PatchStatus::NotFound: LOGW("main", "platform370's service_stop_day patch found no 3.7.0 FindGlobalStringWithKey"); break;
     }
-    // --lang / --voice-lang (platform370 lang_370.cpp): with --lang en the CLanguage hook; it is no
-    // native, so the natives below don't replace it.
+    // --lang / --voice-lang (platform370 lang_370.cpp, text_370.cpp): with --lang en the CLanguage,
+    // CCocosLabel::SetText and DrawSelf hooks; none is a native, so the natives below don't replace them.
     platform370::install_language(*lib);
     // The FakeApiCaller route's hooks only in-process; with --server HOST the client's own
     // NetworkApiCaller runs untouched. (The main image is the 3.7.0 client; no

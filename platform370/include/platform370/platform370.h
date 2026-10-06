@@ -20,6 +20,7 @@
 // Used by soa-emu (emulator/src/main.cpp); the port (soa) links it in P1 (docs/history/PLAN-rebase-370.md).
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -74,8 +75,9 @@ struct Config {
     // The client's language (lang_370.cpp, install_language; docs/client-changes.md "English mode"):
     // "ja" (default) leaves the client as shipped (CLanguage is 0x100, "no language", in all three
     // fields, and nothing is hooked); "en" sets CLanguage::Current to 1 (en) after CGame::OnInitialize
-    // builds it, so every file load tries name-en.ext before name.ext (docs/english.md 6.3).
-    // Independent of `patch`. --lang.
+    // builds it, so every file load tries name-en.ext before name.ext (docs/english.md 6.3); the
+    // hard-coded Japanese strings show port_en_* master text and long lines break at spaces
+    // (text_370.cpp). Independent of `patch`. --lang.
     std::string lang = "ja";
     // The voice language (install_language): "ja" (default) writes BAS:VoiceLanguage = 0 into the
     // phone's Game.xml before the client starts, so the Voice_*.spk packs resolve to the Japanese
@@ -107,7 +109,8 @@ enum class PatchStatus {
 PatchStatus install_patches(LoadedLib& lib);
 
 // The language settings (Config::lang, Config::voice_lang): with lang "en" hooks
-// CLanguage::CLanguage (Current = en); with voice_lang "ja"
+// CLanguage::CLanguage (Current = en) and CCocosLabel::SetText / DrawSelf (the hard-coded strings,
+// word wrap; text_370.cpp); with voice_lang "ja"
 // writes BAS:VoiceLanguage = 0 into DATA/data/shared_prefs/Game.xml. Call after vfs_init and
 // install_patches, before any guest code runs (run_initializers) and before a host's natives.
 // With lang "ja" and voice_lang "keep" it does nothing.
@@ -116,6 +119,32 @@ void install_language(LoadedLib& lib);
 const std::string& language();
 // The guest functions install_language hooked (empty with --lang ja), for the selftests.
 const std::vector<std::string>& language_hooks();
+
+// --lang en's text (text_370.cpp), exposed for the selftests.
+namespace text {
+// The client's hard-coded Japanese strings (docs/english.md 1.5): the new master_text id that
+// carries the English, the literal as the client passes it (real line breaks; "%d" in the two
+// formats), the functions it comes from. data/english/client-strings.tsv has the same ids.
+struct HardCoded {
+    const char* id;
+    const char* ja;
+    const char* where;
+};
+const std::vector<HardCoded>& hard_coded();
+// A master_text lookup: true and the text when the row exists.
+using Lookup = std::function<bool(const char* id, std::string* text)>;
+// When `s` is one of the literals (a format with its number), its English through `lookup` (a
+// format's English must have exactly one %d); false otherwise, or when there is no English.
+bool english_for(std::string_view s, const Lookup& lookup, std::string* out);
+// The client's own StringDB::Get(id) (--lang en only; false before --lang en's install or when the
+// master has no such row).
+bool master_text(const char* id, std::string* out);
+// The width of one line.
+using Measure = std::function<float(std::string_view line)>;
+// `text` with each line wider than `budget` broken at spaces (greedily); lines with Japanese (kana,
+// kanji, full-width forms) or without a space stay, and so does a word wider than the budget.
+std::string wrap(std::string_view text, float budget, const Measure& measure);
+}  // namespace text
 
 // The patch's rule, for a host that replaces CParameterUtility::FindGlobalStringWithKey itself
 // (the port's native): true for the master_global keys the patch answers with "" (today only

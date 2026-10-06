@@ -55,8 +55,9 @@ inline void add_device_options(CLI::App& app, Config& cfg, const std::string& gr
     app.add_option("--lang", cfg.lang,
                    "the client's language: ja (default) runs the client as shipped; en sets its own language switch "
                    "(CLanguage::Current = en), so every file it loads is tried as name-en.ext first (an English master, "
-                   "story and art from a server run with --english, the Japanese file as the fallback; docs/client-changes.md "
-                   "\"English mode\"; independent of --no-patch)")
+                   "story and art from a server run with --english, the Japanese file as the fallback), shows its "
+                   "hard-coded Japanese strings in English (new port_en_* master text, Japanese without it) and breaks "
+                   "long lines at spaces (docs/client-changes.md \"English mode\"; independent of --no-patch)")
         ->check(CLI::IsMember({"ja", "en"}))
         ->type_name("ja|en")
         ->group(group);

@@ -1,0 +1,11 @@
+message_id	en	note
+port_en_close	Close	閉じる: CGameDataDownloadError::Initialize, the download error dialog's button (Global sys_close)
+port_en_download_storage_short	Not enough free storage.\n%d MB of free space is needed.	空き容量が不足しています。\n%dMBの空きが必要です。: CGameDataDownloadError::Progress, the download error dialog; one %d (MB), kept
+port_en_equip_swap_confirm	Equipment will be swapped.\nProceed?	装備の入れ替えを行います\nよろしいですか？: the weapon / accessory list's return-to-home confirmation (lambdas of CPartyCompositionWeaponList / AccessoryList)
+port_en_mascot_select	Select a new home mascot.	変更するホームマスコットを選択してください。: CMascotSelectDialog::Open
+port_en_show_3d_model	3D Model	3Dモデル表示: CDetailDialog_Other::Start and the other CDetailDialog sites, a button (Global uimsg_ch_dialog_modelView)
+port_en_skill_learn_lv	Learned at Lv. %d	LV%d習得: CDetailDialog_Character::SetBattleSkillParam2, CPartyCompositionEvolution::InitializeItemList and a lambda; one %d (the level), kept
+port_en_sort_filter	Filter	フィルター: CSortDialogWrapper::StartDialogFromProperty, the sort dialog's title
+port_en_sort_order	Sort	並び替え: CSortDialogWrapper::StartDialogFromProperty, the sort dialog's title
+port_en_storage_short	Not enough free storage.\nFree up some space and restart the game.	空き容量が不足しています。\n容量を確保して再起動してください。: CErrorHandlerWrap::StrageShort, the storage-full dialog
+port_en_unknown_item	???	？？？: CItemAlchemyPotal::InitializePotal, an unknown item's name

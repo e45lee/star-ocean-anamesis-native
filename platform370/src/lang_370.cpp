@@ -114,6 +114,7 @@ void install_language(LoadedLib& lib) {
     if (g_voice_lang == "ja") write_voice_language();
     if (g_lang != "en") return;
     hook_clanguage(lib);
+    detail::install_text(lib, g_hooks);
 }
 
 }  // namespace soa::platform370

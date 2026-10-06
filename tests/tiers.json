@@ -184,7 +184,7 @@
     {"name": "selftest-lang-en", "tier": "T2", "secs": 40, "kind": "session", "apis": false, "game": 1,
      "area": ["platform370/", "port/src/native/ui/lang_test.cpp", "port/src/main.cpp", "emulator/src/main.cpp"],
      "cmd": "port/scripts/selftest_resilient.sh {out} 'platform370/lang --lang en'",
-     "covers": "platform370's --lang en on the booted client (docs/PLAN-english.md B1/B7): CLanguage Current = en, Default 0x100, Voice 0; the language hooks present; font-en.fpk tried. The plain soa-selftest checks the --lang ja side (nothing hooked)"},
+     "covers": "platform370's --lang en on the booted client (docs/PLAN-english.md B1/B7/E10): CLanguage Current = en, Default 0x100, Voice 0; the three language hooks present; font-en.fpk tried; the hooked CCocosLabel::SetText keeps the Japanese without port_en_* rows. The plain soa-selftest checks the --lang ja side (nothing hooked)"},
     {"name": "selftest-live:home", "tier": "T2", "secs": 240, "apis": false, "kind": "session", "game": 1,
      "area": ["port/src/native/render/", "port/src/native/scene/", "port/src/native/anim/", "control/soadrive/sessions/selftest_live.py"],
      "cmd": "port/scripts/selftest_live.sh build/port/soa {out} {tmp} layout- --at home",

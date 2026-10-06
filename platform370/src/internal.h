@@ -3,9 +3,11 @@
 // (include/platform370/platform370.h).
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace soa {
 class Hle;
+struct LoadedLib;
 }
 namespace soa::jni {
 class Vm;
@@ -32,5 +34,8 @@ bool patch_enabled();
 
 // lang_370.cpp: the language settings install() was given.
 void set_language(const std::string& lang, const std::string& voice_lang);
+// text_370.cpp: --lang en's hooks on CCocosLabel::SetText (the hard-coded strings) and DrawSelf
+// (word wrap); their symbols are appended to `hooks`.
+void install_text(LoadedLib& lib, std::vector<std::string>& hooks);
 
 }  // namespace soa::platform370::detail

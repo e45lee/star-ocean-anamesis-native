@@ -43,6 +43,9 @@ void install(const Config& cfg) {
     g_installed = true;
     g_patch = cfg.patch;
     g_net = cfg.netcfg;
+    if (cfg.lang != "ja" && cfg.lang != "en") fatal("platform370: lang \"%s\": expected ja or en", cfg.lang.c_str());
+    if (cfg.voice_lang != "ja" && cfg.voice_lang != "keep") fatal("platform370: voice_lang \"%s\": expected ja or keep", cfg.voice_lang.c_str());
+    detail::set_language(cfg.lang, cfg.voice_lang);
 
     if (!cfg.app_version.empty()) device_config().app_version = cfg.app_version;
 
@@ -70,9 +73,10 @@ void install(const Config& cfg) {
             if (http) detail::install_http(vm);
             if (java) detail::install_java(vm);
         });
-    LOGI("p370", "3.7.0 platform: app_version %s; java %s, imports %s, clock %s, net %s, http %s, patch %s",
+    LOGI("p370", "3.7.0 platform: app_version %s; java %s, imports %s, clock %s, net %s, http %s, patch %s, lang %s, voice-lang %s",
          cfg.app_version.empty() ? "(unchanged)" : cfg.app_version.c_str(), java ? "on" : "off", imports ? "on" : "off",
-         clock ? "on" : "off", net ? "on" : "off", http ? "on" : "off", cfg.patch ? "on" : "off");
+         clock ? "on" : "off", net ? "on" : "off", http ? "on" : "off", cfg.patch ? "on" : "off", cfg.lang.c_str(),
+         cfg.voice_lang.c_str());
 }
 
 }  // namespace soa::platform370

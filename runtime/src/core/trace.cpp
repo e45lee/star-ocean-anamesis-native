@@ -1,6 +1,8 @@
 // Function tracing for reverse engineering: SOA_TRACE="sym[:dump,...];sym2..." logs a guest
 // function's arguments and result on every call, then runs the original code.
-//   dump = <offset>=<f|i|x>, read from the *first argument* (this) after the call, e.g.
+//   dump = <offset>=<f|i|x|s>, read from the *first argument* (this) after the call (s: the C string
+//   there, e.g. the path CLanguage::PostfixLanguageCodeFilepath(TStaticString<256>&, ...) wrote:
+//   SOA_TRACE="_ZN9CLanguage27PostfixLanguageCodeFilepathERN9Framework13TStaticStringILm256EEENS_9tLanguageEb:0=s"), e.g.
 //   SOA_TRACE="_ZN21CHomeModelViewManager12SetCameraPosEPNS_13HomeCharacterEb:0x3270=f,0x3274=f"
 //   A symbol can also be "0x<ELF vaddr>" (functions without a symbol, e.g. lambdas).
 #include <soa/env.h>
@@ -52,6 +54,7 @@ void trace_thunk(Cpu& c) {
         u64 p = self + d.off;
         if (d.kind == 'f') snprintf(b, sizeof b, " [+%#" PRIx64 "]=%g", d.off, *(float*)p);
         else if (d.kind == 'i') snprintf(b, sizeof b, " [+%#" PRIx64 "]=%d", d.off, *(s32*)p);
+        else if (d.kind == 's') snprintf(b, sizeof b, " [+%#" PRIx64 "]=\"%.48s\"", d.off, (const char*)p);
         else snprintf(b, sizeof b, " [+%#" PRIx64 "]=%#" PRIx64, d.off, *(u64*)p);
         dumps += b;
     }

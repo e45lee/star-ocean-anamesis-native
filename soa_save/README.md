@@ -1,6 +1,6 @@
 # soa_save: save editor and event-script decoder
 
-Python library and CLI for the saves of *STAR OCEAN: anamnesis* and for its event scripts. It works on the **offline game** (3.8.0), the build still installed on phones since the service ended: its saves, the master DB in its XAPK (`apk/`, local only: over GitHub's 100 MB limit) and the scripts in its install-time asset pack. The desktop port (`port/`) runs the 3.7.0 client and doesn't need any of it. Setup: `README.md` "Setup".
+Python library and CLI for the saves of *STAR OCEAN: anamnesis* and for its event scripts. It works on the **offline game** (3.8.0), the build still installed on phones since the service ended: its saves, the master DB in its XAPK (`apk/`, local only: over GitHub's 100 MB limit) and the scripts in its install-time asset pack. The desktop port (`port/`) runs the 3.7.0 client and doesn't need it to play, but its test drivers do: `control/soadrive` writes the client saves of seeded runs with `python -m soa_save set` (a change here is a driver change for `tools/tests_for.py`). Setup: `README.md` "Setup".
 
 ## Editing a save
 

@@ -150,8 +150,8 @@ variable in the caller's shell then shows up as its warning line in the program'
 
 Flags first; then the source checkout (`--repo`, else found upwards from the executable, then the
 working directory: `data/basmaster-3.7.0.sqlite3`, `data/gacha_pools.sqlite3`, `apk/`,
-`work/download-3.7.0`, else `work/SOA-3.7.0-canonical-data.zip` (the Windows stage holds only the zip:
-scripts/windows-stage.sh), `standin-assets/`); then the **install dirs**, the executable's own folder and
+`work/SOA-3.7.0-canonical-data.zip`, read in place (the only checkout default; `--download PATH`
+takes a zip or an extracted folder), `standin-assets/`); then the **install dirs**, the executable's own folder and
 its `game/` subfolder (`common/include/soa/install.h`, `game_files.h`; a release package, README.md
 "Packaging").
 

@@ -18,7 +18,7 @@
 #
 # The first start downloads the game data (about 3 GB) from the local server into the phone's data.
 # Ctrl-C (or the game window closing) stops both programs.
-# Needs: scripts/build.sh, apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk, work/download-3.7.0 and
+# Needs: scripts/build.sh, apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk, work/SOA-3.7.0-canonical-data.zip and
 # data/basmaster-3.7.0.sqlite3 (README.md, "Game files").
 set -euo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
@@ -55,7 +55,7 @@ done
 for f in "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" data/basmaster-3.7.0.sqlite3; do
   [ -s "$repo/$f" ] || { echo "run-port-with-server: $f is missing; see README.md" >&2; exit 1; }
 done
-[ -d "$repo/work/download-3.7.0" ] || { echo "run-port-with-server: work/download-3.7.0 is missing; see README.md" >&2; exit 1; }
+[ -f "$repo/work/SOA-3.7.0-canonical-data.zip" ] || { echo "run-port-with-server: work/SOA-3.7.0-canonical-data.zip (the 3.7.0 download) is missing; see README.md" >&2; exit 1; }
 
 mkdir -p "$home/phone" "$home/server"
 home=$(cd "$home" && pwd)
@@ -81,10 +81,10 @@ cd "$repo"  # soa and soa-server find the master DB and the seeds from the check
 echo "== starting soa-server (game 127.0.0.1:$port, http 127.0.0.1:$http_port; data $home/server)"
 if [ $server_log_to_tty = 1 ]; then
   "$srv" --listen 127.0.0.1:$port --http 127.0.0.1:$http_port --data "$home/server" \
-      --download-dir "$repo/work/download-3.7.0" ${srv_args[@]+"${srv_args[@]}"} > >(tee "$slog") 2>&1 &
+      --download-dir "$repo/work/SOA-3.7.0-canonical-data.zip" ${srv_args[@]+"${srv_args[@]}"} > >(tee "$slog") 2>&1 &
 else
   "$srv" --listen 127.0.0.1:$port --http 127.0.0.1:$http_port --data "$home/server" \
-      --download-dir "$repo/work/download-3.7.0" ${srv_args[@]+"${srv_args[@]}"} > "$slog" 2>&1 &
+      --download-dir "$repo/work/SOA-3.7.0-canonical-data.zip" ${srv_args[@]+"${srv_args[@]}"} > "$slog" 2>&1 &
 fi
 spid=$!
 

@@ -639,7 +639,7 @@ std::shared_ptr<const AssetIndex> asset_index_from_config() {
 Options options_from_config() {
     const ServerConfig& c = config();
     Options o;
-    o.mirror = c.download_dir.empty() ? find_repo_file({soa::install::kRepoDownloadDir, soa::install::kRepoDownloadZip}) : c.download_dir;
+    o.mirror = c.download_dir.empty() ? find_repo_file(soa::install::kRepoDownloadZip) : c.download_dir;
     o.master = master_source::resolve();  // --master, the repo's, else derived (soaserver/master_source.h)
     o.standins = standin_dir_from_config();
     o.english = c.english;  // (d) the -en members only with --english (PLAN-english Q11)

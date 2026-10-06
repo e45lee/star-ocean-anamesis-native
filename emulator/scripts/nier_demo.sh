@@ -32,7 +32,7 @@
 #
 # What it does (emulator/README.md "NieR demonstration"):
 #   soa-server: a fresh state seeded from data/saves/seed/Game.xml (player LOCAL00001, 300,000
-#   coins), the CDN from work/download-3.7.0 plus the stand-ins of standin-assets/ (the list banner
+#   coins), the CDN from work/SOA-3.7.0-canonical-data.zip plus the stand-ins of standin-assets/ (the list banner
 #   20200227_chara_002 and the pick-up panels pickup_img_chara_0015..0017, made by
 #   tools/make_standin_banners.py), --enable-events --event-keywords NieR (opens exactly one gacha:
 #   gacha_pickup_role_0283 復刻NieR:Automataピックアップキャラガチャ; its banner gate sees the
@@ -92,11 +92,11 @@ repo_file() {
     [ -n "$main" ] && { [ -s "$main/$1" ] || [ -d "$main/$1" ]; } && echo "$main/$1"
 }
 master=$(repo_file data/basmaster-3.7.0.sqlite3)
-download=$(repo_file work/download-3.7.0)
+download=$(repo_file work/SOA-3.7.0-canonical-data.zip)
 seed=$repo/data/saves/seed/Game.xml
 standins=$repo/standin-assets
 [ -n "$master" ] || die "data/basmaster-3.7.0.sqlite3 not found"
-[ -n "$download" ] || die "work/download-3.7.0 not found"
+[ -n "$download" ] || die "work/SOA-3.7.0-canonical-data.zip not found"
 [ -s "$seed" ] || die "$seed not found"
 for f in 20200227_chara_002 pickup_img_chara_0015 pickup_img_chara_0016 pickup_img_chara_0017; do
     [ -s "$standins/Image/etc2/$f.aif" ] || die "stand-in $standins/Image/etc2/$f.aif missing (tools/make_standin_banners.py)"

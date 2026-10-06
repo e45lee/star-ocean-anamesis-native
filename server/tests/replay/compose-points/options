@@ -10,6 +10,6 @@ data/saves/seed/Game.xml
 --restore-tower
 --galaxy-pass
 --download-dir
-work/download-3.7.0
+work/SOA-3.7.0-canonical-data.zip
 --cdn-url
 http://production-game.so-ana.com

@@ -12,7 +12,7 @@
 #               (make_player2.sh); default: a new state seeded with LOCAL00001
 # Env: SOA_EMU, SOA_SERVER (default build/emulator/soa-emu, build/server/soa-server; the server must
 #      have open-multiplay.patch applied, README "Running it"), MASTER, DOWNLOAD (default
-#      data/basmaster-3.7.0.sqlite3, work/download-3.7.0), SOA_PHONE as emulator_session.sh.
+#      data/basmaster-3.7.0.sqlite3, work/SOA-3.7.0-canonical-data.zip), SOA_PHONE as emulator_session.sh.
 # Every process it starts is killed when it exits (by PID).
 set -u
 out=${1:?OUT}; lobby_port=${2:?LOBBY_PORT}; state_db=${3:-}
@@ -21,7 +21,7 @@ repo=$(cd "$here/../../.." && pwd)
 emu=${SOA_EMU:-$repo/build/emulator/soa-emu}
 srv=${SOA_SERVER:-$repo/build/server/soa-server}
 master=${MASTER:-$repo/data/basmaster-3.7.0.sqlite3}
-download=${DOWNLOAD:-$repo/work/download-3.7.0}
+download=${DOWNLOAD:-$repo/work/SOA-3.7.0-canonical-data.zip}
 soactl=$repo/control/soactl.py flowctl=$repo/control/flowctl.py
 mkdir -p "$out/server" "$out/packets"
 [ -n "$state_db" ] && cp "$state_db" "$out/server/server.sqlite3"

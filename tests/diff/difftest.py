@@ -2,11 +2,12 @@
 """tests/diff: the port against the emulator, flow by flow (tests/diff/README.md).
 
     tests/diff/run.sh [FLOW...] [--target emu,port-server,port-inproc] [--out DIR] [--keep]
-                      [--sequential] [--inject TARGET:SERVER-ARGS]
+                      [--sequential] [--inject TARGET:SERVER-ARGS] [--expect-fail]
 
 Each flow runs once per target, the targets in parallel (each its own fresh server state, phone,
 ports and run dir), then each port target is compared with the emulator (the reference). Prints
-a summary; exits 1 when any flow FAILs.
+a summary; exits 1 when any flow FAILs (a target without a run, or without the reference run,
+FAILs). --expect-fail (the negative control, tests/tiers.json `diff-negative`) inverts that.
 """
 import argparse
 import os
@@ -20,7 +21,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "control"))
 import compare  # noqa: E402  (tests/diff/compare.py: the report)
-from soadrive import targets  # noqa: E402  (control/soadrive: the driver library)
+from soadrive import proc, targets  # noqa: E402  (control/soadrive: the driver library)
 from soadrive.targets import soaslot  # noqa: E402
 from soadrive.flows import event, seeded, shard_battle, shard_gacha, shard_login, shard_tutorial, tutorial  # noqa: E402
 
@@ -30,15 +31,27 @@ FULL = (seeded, tutorial, event)
 SHARDS = (shard_login, shard_battle, shard_gacha) + shard_tutorial.STAGES
 FLOWS = {f.NAME: f for f in FULL + SHARDS}
 REF = "emu"
+# Every run's server: no stamina regeneration (a test switch of soa-server / soa). The compared
+# stamina would otherwise depend on the battle's length: leaving full stamina at MissionStart
+# anchors regeneration there, and the next player load (MissionEnd's, the board's) gains a point
+# when 180 s have passed, on one target and not another (tests/diff/README.md "Stamina"). Every
+# stamina change a flow makes (costs, level-up refills) is still compared exactly.
+SERVER_ARGS = ["--stamina-heal-time", "0"]
 
 
 def run_target(flow, target, rdir, opts, inject, out, prepared=None):
-    cfg = flow.config(targets.Config)
-    if inject:
-        cfg.server_args += inject
-    if prepared:
-        cfg.prepared = prepared
-    r = targets.Run(target, rdir, cfg, keep=opts.keep)
+    try:
+        cfg = flow.config(targets.Config)
+        cfg.server_args += SERVER_ARGS
+        if inject:
+            cfg.server_args += inject
+        if prepared:
+            cfg.prepared = prepared
+        r = targets.Run(target, rdir, cfg, keep=opts.keep)
+    except Exception:
+        # no run: run_flow reports the target missing (a FAIL), never a comparison without it
+        traceback.print_exc()
+        return
     out[target] = r
     t0 = time.monotonic()
     try:
@@ -88,10 +101,13 @@ def run_flow(name, tgts, o, inject, out, results, start_gate):
     for th in threads:
         th.join()
     runs = {t: runs[t] for t in tgts if t in runs}
-    ok = compare.report(flow, runs, REF, os.path.join(fdir, "report.txt"))
+    ok = compare.report(flow, runs, REF, os.path.join(fdir, "report.txt"), expected=tgts)
     line = "%s %-14s %4ds  %s" % ("PASS" if ok else "FAIL", name, int(time.monotonic() - t0),
                                   "  ".join("%s %ds" % (t, r.elapsed_total) for t, r in runs.items()))
-    results[name] = (ok, line, open(os.path.join(fdir, "report.txt")).read())
+    # runs_ok: every target ran and passed its own milestones (what --expect-fail requires: the
+    # FAIL must come from the comparison, not from a run that broke)
+    runs_ok = len(runs) == len(tgts) and not any(r.failed for r in runs.values())
+    results[name] = (ok, line, open(os.path.join(fdir, "report.txt")).read(), runs_ok)
     print(results[name][2] + "\n" + line, flush=True)
 
 
@@ -107,7 +123,14 @@ def main():
     ap.add_argument("--inject", action="append", default=[], metavar="TARGET:ARGS",
                     help="extra server arguments for one target only, e.g. 'port-inproc:--start-coins 1000' "
                          "(the deliberate-difference check: the run must FAIL)")
+    ap.add_argument("--expect-fail", action="store_true",
+                    help="the negative control (with --inject): exit 0 only when every flow FAILs its comparison "
+                         "while every run passes its own milestones; exit 1 otherwise (a comparison that "
+                         "doesn't see the injected difference, or a run that broke)")
     o = ap.parse_args()
+    # TERM / HUP (tools/gate.py interrupted, or its time limit): the runs' clients and servers are in
+    # their own process groups, holding their game slots; end them with the driver
+    proc.exit_on_signals()
     flows = o.flows or [f.NAME for f in FULL]
     if flows == ["shards"]:
         flows = [f.NAME for f in SHARDS]
@@ -152,7 +175,26 @@ def main():
     print("---")
     print("\n".join(summary))
     print("%s (reports: %s/<flow>/report.txt)" % ("PASS" if all_ok else "FAIL", out))
+    if o.expect_fail:
+        return expect_fail(flows, results)
     return 0 if all_ok else 1
+
+
+def expect_fail(flows, results):
+    """--expect-fail's verdict: 0 when every flow's comparison found the injected difference."""
+    bad = []
+    for f in flows:
+        if f not in results:
+            bad.append("%s: no result" % f)
+        elif not results[f][3]:
+            bad.append("%s: a run failed its own milestones or is missing (not the comparison's FAIL)" % f)
+        elif results[f][0]:
+            bad.append("%s: the comparison PASSed despite the injected difference" % f)
+    if bad:
+        print("negative control: FAIL: " + "; ".join(bad))
+        return 1
+    print("negative control: PASS (every comparison FAILed on the injected difference, every run passed)")
+    return 0
 
 
 if __name__ == "__main__":

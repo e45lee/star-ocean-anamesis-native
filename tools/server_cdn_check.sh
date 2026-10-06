@@ -10,11 +10,12 @@
 #   tools/server_cdn_check.sh BIN_A BIN_B [OUT_DIR]
 # The paths: version.bin, the manifests (.bin, .version) of manifest/etc2/hi, version.version, the
 # served master (both URL forms), every bundle the download's manifests name, the stand-in bundles
-# and files, and one missing name. Needs work/download-3.7.0 and data/basmaster-3.7.0.sqlite3.
-# Exit 0 identical, 1 different (the differences are printed).
-# DOWNLOAD_A / DOWNLOAD_B (default work/download-3.7.0): the download each side serves, a folder or
-# the zip (SOA-3.7.0-canonical-data.zip, read in place): BIN_A = BIN_B with DOWNLOAD_B=the zip proves
-# the CDN serves the same bytes from either (README.md "Packaging"); the paths are masked in the output.
+# and files, and one missing name. Needs work/SOA-3.7.0-canonical-data.zip (the download, read in
+# place) and data/basmaster-3.7.0.sqlite3. Exit 0 identical, 1 different (the differences are printed).
+# DOWNLOAD_A / DOWNLOAD_B (default work/SOA-3.7.0-canonical-data.zip): the download each side serves,
+# the zip or an extracted folder: BIN_A = BIN_B with DOWNLOAD_B=a folder proves the CDN serves the
+# same bytes from either (README.md "Packaging"); the paths are masked in the output. The path list
+# is read from DOWNLOAD_A's manifests.
 set -uo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
@@ -22,8 +23,12 @@ cd "$repo"
 a=$1 b=$2 out=${3:-$(mktemp -d /tmp/server-cdn-check.XXXXXX)}
 mkdir -p "$out"
 paths="$out/paths.txt"
-"$repo/.venv/bin/python" - > "$paths" <<'PY'
-import os, msgpack
+dl_a=${DOWNLOAD_A:-work/SOA-3.7.0-canonical-data.zip} dl_b=${DOWNLOAD_B:-work/SOA-3.7.0-canonical-data.zip}
+DOWNLOAD="$dl_a" "$repo/.venv/bin/python" - > "$paths" <<'PY'
+import os, sys, msgpack
+sys.path.insert(0, ".")
+from soa_save.download_tree import DownloadTree
+tree = DownloadTree.open(os.environ["DOWNLOAD"])
 def chash32(s):
     t = []
     for i in range(256):
@@ -37,7 +42,7 @@ fixed = ["version.bin", "manifest/etc2/hi/version.version", "sqlite/basmaster.sq
 names = set()
 for m in ["Bulk", "Individual", "ep1", "ep2", "ep3"]:
     fixed += ["manifest/etc2/hi/version_latest_%s.bin" % m, "manifest/etc2/hi/version_latest_%s.version" % m]
-    v = msgpack.unpackb(open("work/download-3.7.0/manifest/etc2/hi/version_latest_%s.bin" % m, "rb").read(), raw=False, strict_map_key=False)
+    v = msgpack.unpackb(tree.read("manifest/etc2/hi/version_latest_%s.bin" % m), raw=False, strict_map_key=False)
     names.update(v["assets"].keys())
 names.add("B/5374616e/standins.bin")
 for root, dirs, files in os.walk("standin-assets"):
@@ -67,8 +72,8 @@ run() {
 fail=0
 for mode in on off; do
   extra=(); [ "$mode" = off ] && extra=(--standin-assets off)
-  run "$a" "a-$mode" "${DOWNLOAD_A:-work/download-3.7.0}" "${extra[@]}"
-  run "$b" "b-$mode" "${DOWNLOAD_B:-work/download-3.7.0}" "${extra[@]}"
+  run "$a" "a-$mode" "$dl_a" "${extra[@]}"
+  run "$b" "b-$mode" "$dl_b" "${extra[@]}"
   for pass in cold warm; do
     for kind in txt log; do
       if ! diff -q "$out/a-$mode.$pass.$kind" "$out/b-$mode.$pass.$kind" > /dev/null; then

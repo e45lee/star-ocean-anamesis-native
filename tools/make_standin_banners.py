@@ -54,6 +54,7 @@ except ImportError:  # only needed for zstd-compressed templates
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from soa_save.adld import chash32 as _chash32  # noqa: E402
+from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 AIF2PNG = os.path.join(ROOT, "tools", "aif2png", "aif2png")
 DEFAULT_GACHAS = ["gacha_pickup_role_0054", "gacha_pickup_role_0056", "gacha_pickup_role_0283"]
 FONTS = ["/usr/share/fonts/opentype/ipaexfont-gothic/ipaexg.ttf", "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf",
@@ -73,8 +74,8 @@ def adld_xor(body, name):
 
 
 def read_aif(path, name):
-    """The decrypted, decompressed AIF container of an .aif file."""
-    d = open(path, "rb").read()
+    """The decrypted, decompressed AIF container of an .aif file (a path, or its bytes)."""
+    d = path if isinstance(path, bytes) else open(path, "rb").read()
     if d[:4] == b"ADLD":
         flags = struct.unpack_from("<I", d, 4)[0]
         if flags & 2:
@@ -498,11 +499,12 @@ def decode_png(src, asset, tmp):
 
 
 class Sources:
-    """Where real Image/etc2 assets are: the download, then the APK asset pack."""
+    """Where real Image/etc2 assets are: the download (its zip, read in place, or a folder), then the
+    APK asset pack."""
 
     def __init__(self, download, apks):
-        self.dir = os.path.join(download, "Image", "etc2")
-        self.names = {f[:-4] for f in os.listdir(self.dir) if f.endswith(".aif")} if os.path.isdir(self.dir) else set()
+        self.tree = DownloadTree.open_or_none(download)
+        self.names = {f[:-4] for f in self.tree.list("Image/etc2") if f.endswith(".aif")} if self.tree else set()
         self.apk_names = set()
         import zipfile
         for apk in apks:
@@ -517,7 +519,11 @@ class Sources:
         return name in self.names or name in self.apk_names
 
     def path(self, name):
-        return os.path.join(self.dir, name + ".aif") if name in self.names else None
+        """The download's image as tools/aif2png reads it (a file or a zip byte range), None when absent."""
+        return self.tree.host_spec(f"Image/etc2/{name}.aif") if name in self.names else None
+
+    def read(self, name):
+        return self.tree.read(f"Image/etc2/{name}.aif")
 
 
 def load_gacha(db, label):
@@ -577,7 +583,7 @@ def template(src, prefix, tmp):
         if not n.startswith(prefix):
             continue
         try:
-            d = read_aif(src.path(n), f"Image/etc2/{n}.aif")
+            d = read_aif(src.read(n), f"Image/etc2/{n}.aif")
             fmt, w, h, data, guids = image_layout(d)
         except (ValueError, RuntimeError, struct.error, TypeError):
             continue
@@ -608,7 +614,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("gachas", nargs="*", default=DEFAULT_GACHAS, help="master_gacha id_labels")
     ap.add_argument("--db")
-    ap.add_argument("--download", default=os.path.join(ROOT, "work", "download-3.7.0"))
+    ap.add_argument("--download", default=DEFAULT,
+                    help="the 3.7.0 download: its zip (default work/SOA-3.7.0-canonical-data.zip, read in place) or a folder")
     ap.add_argument("--apk", default=os.path.join(ROOT, "apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"), help="the APK whose Image/ assets count as real (the 3.7.0 APK)")
     ap.add_argument("--out", default=os.path.join(ROOT, "standin-assets"))
     ap.add_argument("--png", help="also write the source pictures as PNG here")

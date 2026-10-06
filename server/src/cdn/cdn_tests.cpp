@@ -1,7 +1,7 @@
 // Unit tests of the CDN content (soaserver/cdn.h) and the ADLD packing (soaserver/adld.h)
 // (--selftest "cdn/"; server code, no guest counterpart). The 3.7.0 checks read the download
-// (work/download-3.7.0) and the decrypted master (data/basmaster-3.7.0.sqlite3) from the repo.
-#include <dirent.h>
+// (work/SOA-3.7.0-canonical-data.zip, in place) and the decrypted master (data/basmaster-3.7.0.sqlite3)
+// from the repo.
 #include <ftw.h>
 #include <sqlite3.h>
 #include <sys/stat.h>
@@ -12,6 +12,9 @@
 #include <ctime>
 #include <string>
 #include <vector>
+#include <memory>
+#include <soa/file_tree.h>
+#include <soa/install.h>
 #include <soa/paths.h>
 
 #include "soaserver/adld.h"
@@ -49,11 +52,24 @@ void remove_tree(const std::string& dir) {
     if (dir.rfind(soa::temp_dir() + "/soa-cdn-test-", 0) != 0) return;  // only our own scratch trees
     nftw(dir.c_str(), [](const char* p, const struct stat*, int, struct FTW*) { return ::remove(p); }, 16, FTW_DEPTH | FTW_PHYS);
 }
-// The 3.7.0 download (work/download-3.7.0) is local data, not in git: without it the tests that read
-// it are skipped. (A file missing from a download that is there still fails: need().)
+// The 3.7.0 download (work/SOA-3.7.0-canonical-data.zip, read in place: soa/file_tree.h) is local
+// data, not in git: without it the tests that read it are skipped. (A file missing from a download
+// that is there still fails: read_download().)
+const soa::FileTree* download() {
+    static const std::shared_ptr<const soa::FileTree> tree = [] {
+        std::string p = find_repo_file(soa::install::kRepoDownloadZip);
+        return p.empty() ? nullptr : soa::FileTree::open(p);
+    }();
+    return tree.get();
+}
 bool have_download(testing::Context& t) {
-    if (!find_repo_file("work/download-3.7.0").empty()) return true;
-    t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
+    if (download()) return true;
+    t.skip("%s not found (the 3.7.0 download: local data)", soa::install::kRepoDownloadZip);
+    return false;
+}
+bool read_download(testing::Context& t, const std::string& rel, std::vector<uint8_t>& out) {
+    if (download() && download()->read(rel, out)) return true;
+    t.fail("%s: not in the 3.7.0 download", rel.c_str());
     return false;
 }
 
@@ -103,12 +119,11 @@ NATIVE_TEST("cdn/adld-reencrypt-3.7.0") {
         const char* rel;
         const char* name;
         const char* sha1;
-    } cases[] = {{"work/download-3.7.0/sqlite/basmaster.sqlite3", "sqlite/basmaster.sqlite3", "ca6131f2984f8c14a75c715f92d36f9f66d1d8f1"},
-                 {"work/download-3.7.0/Character/cp0202_b07a.apk", "Character/cp0202_b07a.apk", "36d45f424cac5b1013757fe9836199994ea0cc61"}};
+    } cases[] = {{"sqlite/basmaster.sqlite3", "sqlite/basmaster.sqlite3", "ca6131f2984f8c14a75c715f92d36f9f66d1d8f1"},
+                 {"Character/cp0202_b07a.apk", "Character/cp0202_b07a.apk", "36d45f424cac5b1013757fe9836199994ea0cc61"}};
     for (auto& c : cases) {
-        std::string p = need(t, c.rel);
         std::vector<uint8_t> file;
-        if (p.empty() || !slurp(p, file)) continue;
+        if (!read_download(t, c.rel, file)) continue;
         auto plain = adld::decrypt(c.name, file);
         t.expect_eq(cdn::sha1_hex(plain.data(), plain.size()), std::string(c.sha1), c.name);
         auto again = adld::encrypt(c.name, plain, adld::flags_of(file.data(), file.size()));
@@ -116,15 +131,14 @@ NATIVE_TEST("cdn/adld-reencrypt-3.7.0") {
     }
     std::string dec = find_repo_file("data/basmaster-3.7.0.sqlite3");
     std::vector<uint8_t> ref, file;
-    if (!dec.empty() && slurp(dec, ref) && slurp(find_repo_file("work/download-3.7.0/sqlite/basmaster.sqlite3"), file))
+    if (!dec.empty() && slurp(dec, ref) && read_download(t, "sqlite/basmaster.sqlite3", file))
         if (adld::decrypt("sqlite/basmaster.sqlite3", file) != ref) t.fail("the decrypted master differs from data/basmaster-3.7.0.sqlite3");
 }
 
 NATIVE_TEST("cdn/version-bin-roundtrip") {
     if (!have_download(t)) return;
-    std::string p = need(t, "work/download-3.7.0/version.bin");
     std::vector<uint8_t> raw;
-    if (p.empty() || !slurp(p, raw)) return;
+    if (!read_download(t, "version.bin", raw)) return;
     Value v = mp_decode(raw);
     t.expect_eq(mp_encode(v), raw, "decode -> encode of version.bin");
     const Value* a = v.find("assets");
@@ -133,8 +147,7 @@ NATIVE_TEST("cdn/version-bin-roundtrip") {
     t.expect_eq(r ? r->s : std::string(), std::string("1471"), "revision");
     // the manifests: they re-encode (not byte for byte: the 3.7.0 files use str16 for short
     // strings) to the same value
-    std::string m = need(t, "work/download-3.7.0/manifest/etc2/hi/version_latest_ep1.bin");
-    if (!m.empty() && slurp(m, raw)) {
+    if (read_download(t, "manifest/etc2/hi/version_latest_ep1.bin", raw)) {
         Value mv = mp_decode(raw);
         auto again = mp_encode(mv);
         t.expect_eq(mp_encode(mp_decode(again)), again, "manifest re-encode is stable");
@@ -147,14 +160,9 @@ NATIVE_TEST("cdn/bundle-layout") {
     // Our bundle layout gives the 3.7.0 bundles' sizes (rounded up to 32) for every bundle of the
     // Individual and Bulk manifests, from the members on disk.
     if (!have_download(t)) return;
-    std::string dir = need(t, "work/download-3.7.0");
-    if (dir.empty()) return;
     for (const char* man : {"Individual", "Bulk"}) {
         std::vector<uint8_t> raw;
-        if (!slurp(dir + "/manifest/etc2/hi/version_latest_" + man + ".bin", raw)) {
-            t.fail("%s manifest missing", man);
-            continue;
-        }
+        if (!read_download(t, std::string("manifest/etc2/hi/version_latest_") + man + ".bin", raw)) continue;
         Value v = mp_decode(raw);
         size_t n = 0, bad = 0;
         for (auto& [bundle, b] : v.find("assets")->map) {
@@ -164,13 +172,13 @@ NATIVE_TEST("cdn/bundle-layout") {
                 cdn::Member mm;
                 mm.name = name;
                 mm.enc = (uint32_t)m.get_u("e");
-                struct stat st;
-                if (stat((dir + "/" + name).c_str(), &st) != 0) {
+                soa::FileTree::Loc loc;
+                if (!download()->locate(name, &loc)) {
                     t.fail("%s: member %s missing", bundle.c_str(), name.c_str());
                     continue;
                 }
                 mm.skip = mm.enc ? 16 : 0;
-                mm.len = (uint64_t)st.st_size - mm.skip;
+                mm.len = loc.size - mm.skip;
                 ms.push_back(mm);
             }
             uint64_t want = (b.get_u("size") + 31) / 32 * 32;
@@ -714,19 +722,13 @@ NATIVE_TEST("cdn/story-en") {
     std::string stale = "9000_1\t" + sha_of("old") + "\tLine\tofficial\n9000_2\t" + sha_of("<player>さん！") + "\t<player>!\thuman\n";
     t.expect_eq(cdn::make_english_story(name, file, table(stale), &st).empty() && st.missing == 1, true, "a stale row");
     // the 3.7.0 story files: decode -> encode is the identity
-    std::string scen = find_repo_file("work/download-3.7.0/Scenario");
-    if (!scen.empty()) {
+    if (download()) {
         int n = 0;
-        struct dirent* de = nullptr;
-        DIR* d = opendir(scen.c_str());
-        std::vector<std::string> names;
-        while (d && (de = readdir(d)))
-            if (strncmp(de->d_name, "TS_", 3) == 0) names.push_back(de->d_name);
-        if (d) closedir(d);
-        for (auto& base : names) {
+        for (auto& base : download()->list("Scenario")) {
+            if (base.rfind("TS_", 0) != 0) continue;
             std::string rel = "Scenario/" + base;
             std::vector<uint8_t> f;
-            if (!slurp(scen + "/" + base, f)) continue;
+            if (!read_download(t, rel, f)) continue;
             auto p = adld::decrypt(rel, f);
             if (mp_encode(mp_decode(p)) != p) t.fail("%s: decode -> encode differs", rel.c_str());
             n++;

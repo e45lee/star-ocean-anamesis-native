@@ -4,9 +4,11 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-#include <filesystem>
+#include <memory>
 
 #include "core/paths.h"
+#include "soa/file_tree.h"
+#include "soa/install.h"
 #include "soaserver/adld.h"
 
 namespace soa::test_assets {
@@ -27,27 +29,32 @@ std::vector<uint8_t> read_file(const std::string& path) {
     return d;
 }
 
-const std::string& download_dir() {
-    static const std::string d = find_repo_file("work/download-3.7.0");
+const FileTree* download_tree() {
+    static const std::shared_ptr<const FileTree> tree = [] {
+        std::string p = find_repo_file(install::kRepoDownloadZip);
+        return p.empty() ? nullptr : FileTree::open(p);
+    }();
+    return tree.get();
+}
+
+std::vector<uint8_t> download_file(const std::string& rel) {
+    std::vector<uint8_t> d;
+    if (const FileTree* t = download_tree(); !t || !t->read(rel, d)) d.clear();
     return d;
 }
 
 std::vector<std::string> download_files(const std::string& dir, const std::string& suffix, size_t n) {
     std::vector<std::string> out;
-    if (download_dir().empty()) return out;
-    std::error_code ec;
-    for (auto& e : std::filesystem::directory_iterator(download_dir() + "/" + dir, ec)) {
-        std::string name = e.path().filename().string();
-        if (e.is_regular_file() && name.size() >= suffix.size() && name.compare(name.size() - suffix.size(), suffix.size(), suffix) == 0)
-            out.push_back(dir + "/" + name);
-    }
-    std::sort(out.begin(), out.end());
+    const FileTree* t = download_tree();
+    if (!t) return out;
+    for (auto& name : t->list(dir))  // (sorted)
+        if (name.size() >= suffix.size() && name.compare(name.size() - suffix.size(), suffix.size(), suffix) == 0) out.push_back(dir + "/" + name);
     if (out.size() > n) out.resize(n);
     return out;
 }
 
 std::vector<uint8_t> download_payload(const std::string& rel) {
-    std::vector<uint8_t> f = read_file(download_dir() + "/" + rel);
+    std::vector<uint8_t> f = download_file(rel);
     if (f.empty()) return f;
     if (!server::adld::is_adld(f.data(), f.size())) return f;
     return server::adld::decrypt(rel, f);

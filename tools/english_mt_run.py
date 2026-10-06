@@ -94,7 +94,7 @@ def user_prompt(kind, mid, ja, glossary, terms):
 def sources():
     a = argparse.Namespace(master=str(REPO / "data/basmaster-3.7.0.sqlite3"),
                            gl=str(REPO / "data/basmaster-gl.sqlite3"),
-                           scenario=str(REPO / "work/download-3.7.0/Scenario"))
+                           scenario=str(REPO / "work/SOA-3.7.0-canonical-data.zip"))
     return E.Sources(a)
 
 
@@ -369,12 +369,16 @@ STORY_CONTEXT = 4
 
 
 def scenes(src):
-    """[(scene id, [(message_id, speaker code or None)])] in script order, from Script/*.msgp."""
+    """[(scene id, [(message_id, speaker code or None)])] in script order, from the download's
+    Script/*.msgp (src.scenario: the download, its zip read in place or a folder)."""
     from soa_save import script
+    from soa_save.download_tree import DownloadTree
     out = []
-    sdir = REPO / "work/download-3.7.0/Script"
-    for p in sorted(sdir.glob("*.msgp")):
-        o = script.load(p.read_bytes(), "Script/" + p.name)
+    tree = DownloadTree.open_or_none(src.scenario)
+    for n in tree.list("Script") if tree else []:
+        if not n.endswith(".msgp"):
+            continue
+        o = script.load(tree.read("Script/" + n), "Script/" + n)
         lines = []
         for _sid, cmds in o.get("Script", {}).items():
             for c in cmds:
@@ -390,7 +394,7 @@ def scenes(src):
                         if isinstance(mid, str) and mid:
                             lines.append((mid, "(choice)"))
         if lines:
-            out.append((p.stem, lines))
+            out.append((n[: -len(".msgp")], lines))
     return out
 
 

@@ -4,8 +4,13 @@ import os, struct, sys, zlib, zstandard, concurrent.futures as cf
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
 sys.path.insert(0, REPO)
 from soa_save import adld
-ROOTS = [REPO + "/work/download-3.7.0",
-         REPO + "/work/extracted/com.square_enix.android_googleplay.StarOceanj/assets/builtin_data"]
+from soa_save.download_tree import DEFAULT, DownloadTree
+# the 3.7.0 download (its zip, read in place) and the APK's extracted builtin_data
+ROOTS = [DEFAULT, REPO + "/work/extracted/com.square_enix.android_googleplay.StarOceanj/assets/builtin_data"]
+_TREES = {}
+def tree(root):
+    if (os.getpid(), root) not in _TREES: _TREES[(os.getpid(), root)] = DownloadTree.open(root)
+    return _TREES[(os.getpid(), root)]
 def unslz(d):
     """SLZ, as tools/aif2png/aif2png.cpp slz(): chunks of codec 0 (stored), 5 (raw deflate), 7 (zstd)."""
     if len(d) < 0x20 or not d.startswith(b"SLZ"): return d
@@ -24,10 +29,10 @@ def unslz(d):
         p += n
     return bytes(out)
 def scan(job):
-    root, p = job
-    rel = os.path.relpath(p, root)
+    root, rel = job
+    p = rel
     try:
-        raw = open(p, "rb").read()
+        raw = tree(root).read(rel)
         d = adld.decode(raw, rel) if raw.startswith(b"ADLD") else raw
         d = unslz(d)
     except Exception as e:
@@ -37,9 +42,9 @@ def scan(job):
 if __name__ != "__main__": raise ImportError("run as a script")
 jobs = []
 for r in ROOTS:
-    for dp, dn, fn in os.walk(r):
-        for f in fn:
-            if f.endswith((".asf", ".acf", ".aaf", ".apk", ".csf", ".fpk", ".tpk", ".bin")): jobs.append((r, os.path.join(dp, f)))
+    if not os.path.exists(r): continue
+    for f in tree(r).files():
+        if f.endswith((".asf", ".acf", ".aaf", ".apk", ".csf", ".fpk", ".tpk", ".bin")): jobs.append((r, f))
 print(len(jobs), "files", file=sys.stderr)
 hits = errs = 0
 with cf.ProcessPoolExecutor(12) as ex:

@@ -9,6 +9,6 @@ data/saves/seed/Game.xml
 --campaign-seed
 mf01_001
 --download-dir
-work/download-3.7.0
+work/SOA-3.7.0-canonical-data.zip
 --cdn-url
 http://production-game.so-ana.com

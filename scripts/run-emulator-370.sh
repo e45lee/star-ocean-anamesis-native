@@ -18,7 +18,7 @@
 #
 # The first start downloads the game data (about 3 GB) from the local server into the phone's data.
 # Needs: scripts/build.sh, apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk, work/libSOA-3.7.0.so,
-# work/download-3.7.0 and data/basmaster-3.7.0.sqlite3 (README.md, "Game files").
+# work/SOA-3.7.0-canonical-data.zip and data/basmaster-3.7.0.sqlite3 (README.md, "Game files").
 set -euo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
 emu=$repo/build/emulator/soa-emu
@@ -47,17 +47,17 @@ done
 for f in work/libSOA-3.7.0.so "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" data/basmaster-3.7.0.sqlite3; do
   [ -s "$repo/$f" ] || { echo "run-emulator-370: $f is missing; see README.md" >&2; exit 1; }
 done
-[ -d "$repo/work/download-3.7.0" ] || { echo "run-emulator-370: work/download-3.7.0 is missing; see README.md" >&2; exit 1; }
+[ -f "$repo/work/SOA-3.7.0-canonical-data.zip" ] || { echo "run-emulator-370: work/SOA-3.7.0-canonical-data.zip (the 3.7.0 download) is missing; see README.md" >&2; exit 1; }
 
 mkdir -p "$home/phone" "$home/server"
 slog=$home/server.log
 echo "== starting soa-server (game 127.0.0.1:$port, http 127.0.0.1:$http_port; data $home/server)"
 if [ $server_log_to_tty = 1 ]; then
   "$srv" --listen 127.0.0.1:$port --http 127.0.0.1:$http_port --data "$home/server" \
-      --download-dir "$repo/work/download-3.7.0" "${srv_args[@]}" > >(tee "$slog") 2>&1 &
+      --download-dir "$repo/work/SOA-3.7.0-canonical-data.zip" "${srv_args[@]}" > >(tee "$slog") 2>&1 &
 else
   "$srv" --listen 127.0.0.1:$port --http 127.0.0.1:$http_port --data "$home/server" \
-      --download-dir "$repo/work/download-3.7.0" "${srv_args[@]}" > "$slog" 2>&1 &
+      --download-dir "$repo/work/SOA-3.7.0-canonical-data.zip" "${srv_args[@]}" > "$slog" 2>&1 &
 fi
 spid=$!
 epid=

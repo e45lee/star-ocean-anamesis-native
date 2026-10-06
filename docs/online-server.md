@@ -4,7 +4,7 @@ STAR OCEAN: anamnesis (JP) talked to Square Enix / tri-Ace servers until the ser
 - `work/libSOA-3.7.0.so`: the last online build;
 - the offline build's `libSOA.so` (the viewer's, `emulator-viewer/`);
 - the 3.7.0 APK's Java side (`classes.dex`, `AndroidManifest.xml`);
-- the 3.7.0 download set (`work/download-3.7.0`);
+- the 3.7.0 download set (`work/SOA-3.7.0-canonical-data.zip`);
 - the master DB (`data/basmaster-3.7.0.sqlite3`).
 
 Written 2026-09-29 by agent `api-server-doc`.
@@ -418,7 +418,7 @@ Addresses in this subsection are Ghidra addresses (ELF vaddr + 0x100000) in the 
 - **Packer.** The 3.7.0 APK ships a Java code protector: `lib/arm64-v8a/lib__57d5__.so` plus an encrypted `assets/57d5/data1.dat`. The app's own activities (`SOAActivity` etc.) aren't in the plain `classes.dex`. **[confirmed; the packer is unidentified]**
 
 ## 6. Asset and master-data delivery
-**[confirmed]** from `work/download-3.7.0` and `CGameResourceDownloader`, unless marked.
+**[confirmed]** from the 3.7.0 download and `CGameResourceDownloader`, unless marked.
 - **`version.bin`** (MessagePack) = {`appliversion`: 3223089, `version`: 32-hex id, `revision`: `"1471"`, `assets`: 26,268 entries}.
   - Each entry: {`md5` (actually 40 hex = SHA-1), `size`, `time`, `parentHash`, `flags`, `encType`, `ep_data`, `meta`}.
   - `encType` 1 = ADLD XOR asset (notes "Asset encryption (ADLD)"); 2 = the AES master DB `sqlite/basmaster.sqlite3`.
@@ -447,7 +447,7 @@ Addresses in this subsection are Ghidra addresses (ELF vaddr + 0x100000) in the 
   - `CGameResourceDownloader::SetServerAssetRevision` @018ddfe4 records the server's revision and flags a change (+0x155).
   - The game then returns to the data-download phase (`CPhase_DataDownload`; "更新されたデータがあります" 1013 / 10000001). **[inferred for the trigger]** **[confirmed, run]** for the login: a Login carrying `AssetPath` and `r_ver` 1472 (the APK's data is 1471) makes the client read `manifest/etc2/hi/version_latest_*` and offer the 3,138 MB download; on a phone that has it, only the `.version` files are read. A new player's `CreatePlayer` needs no CDN keys: the Login that follows carries them.
 - **The master DB** is downloaded like any asset, but encrypted (`encType` 2). `CStaticTransaction::Progress` decrypts it into memory (notes "Master DB load").
-- **What soa-server serves** (`server/src/cdn/`: `tree.cpp`, `bundle.cpp`, `served_master.cpp`; server/README.md "CDN"; rules and labels in server-rules.md#cdn). The 3.7.0 download (work/download-3.7.0) holds every member of every bundle, unpacked: 24,625 members in 23,990 Individual and 1,027 Bulk bundles, plus 1,408 in the episode manifests.
+- **What soa-server serves** (`server/src/cdn/`: `tree.cpp`, `bundle.cpp`, `served_master.cpp`; server/README.md "CDN"; rules and labels in server-rules.md#cdn). The 3.7.0 download (`work/SOA-3.7.0-canonical-data.zip`) holds every member of every bundle, unpacked: 24,625 members in 23,990 Individual and 1,027 Bulk bundles, plus 1,408 in the episode manifests.
   - soa-server rebuilds each bundle on request and lists our bundles' SHA-1 and size in the manifests it serves.
   - The master is the 3.7.0 one plus the client-master overrides, re-packed (`encrypt(decrypt(x))` reproduces the 3.7.0 file byte for byte).
   - `version.bin` gets revision 1472 and new version ids.
@@ -509,7 +509,7 @@ There are two ways to run our server (`server/`, rules in [server-rules.md](serv
 | ProtocolError → `ErrorCode(fid)` → dialog | `server::error_code(fid)` is reported through the port's `FakeApiCaller::IsSuccess` / `IsFailure` / `ErrorCode` hooks; the same `error_message_text_<code>` dialogs appear | docs/client-changes.md "error codes"; server-rules "Refusals and error codes" |
 | Server clock / `data.Time` | Every response carries `data.Time` from the server clock (`--clock`, event calendar replay) | server-rules "Conventions" |
 | Server-side rules (drops, gacha, growth, EXP…) | Re-implemented from master data and client evidence, each labelled (a)–(d) | server-rules.md |
-| CDN / downloader | soa: no download; `--download-dir work/download-3.7.0` serves the 3.7.0 files through the asset lookup, and the offline master DB gets the client-master overrides in memory with the in-process server. soa-server: an HTTP CDN of rebuilt bundles, manifests, `version.bin` and the re-packed 3.7.0 master with the same overrides (section 6) | port/README.md; server/README.md "CDN" |
+| CDN / downloader | soa: no download; `--download-dir work/SOA-3.7.0-canonical-data.zip` serves the 3.7.0 files through the asset lookup, and the offline master DB gets the client-master overrides in memory with the in-process server. soa-server: an HTTP CDN of rebuilt bundles, manifests, `version.bin` and the re-packed 3.7.0 master with the same overrides (section 6) | port/README.md; server/README.md "CDN" |
 | Maintenance / version checks | Not emulated: no maintenance keys; the asset revision in the header doesn't exist on this route | — |
 | Multiplayer lobby / relay | Not emulated. `FooterMissionInfo.is_open_multiplay` = 0; rental helpers are NPC stand-ins | server-rules "Social" |
 | Payments, push, SmartBeat, Play Games, WebViews | Not emulated. No payments (d); the port has no WebView | server-rules, docs/history/REMAINING.md |

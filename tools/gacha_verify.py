@@ -21,7 +21,7 @@ Calibration: master_gacha_image rows with content_type 2 name the role their pan
 precision / recall on those panels are measured first and printed (and written to the report).
 
 Usage:
-  tools/gacha_verify.py [--master data/basmaster-3.7.0.sqlite3] [--download work/download-3.7.0]
+  tools/gacha_verify.py [--master data/basmaster-3.7.0.sqlite3] [--download work/SOA-3.7.0-canonical-data.zip]
                         [--pools data/gacha_pools.sqlite3] [--gl data/basmaster-gl.sqlite3]
                         [--apk apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk]
                         [--out work/gacha-verify] [--report docs/gacha-verify.md] [-j N]
@@ -46,6 +46,8 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
+sys.path.insert(0, ROOT)
+from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 ART_KEY = re.compile(r"(c[a-z]\d+)_b(\d+)([a-z])")
 REF_KINDS = ("fl", "cs")  # full illustration (alpha-masked), card art
@@ -268,9 +270,10 @@ class Master:
 # ---------------------------------------------------------------- decode + features (cached)
 
 def decode(jobs, workers):
-    """jobs: [(aif path, png path)] -> decoded (skips existing PNGs)."""
+    """jobs: [(image name, aif source (a path or a byte range: DownloadTree.host_spec), png path)] ->
+    decoded (skips existing PNGs)."""
     import extract_banners
-    todo = [(s, "Image/etc2/" + os.path.basename(s), o) for s, o in jobs if not os.path.exists(o)]
+    todo = [(s, f"Image/etc2/{n}.aif", o) for n, s, o in jobs if not os.path.exists(o)]
     for _, _, o in todo:
         os.makedirs(os.path.dirname(o), exist_ok=True)
     if todo:
@@ -654,7 +657,8 @@ def write_report(m, cal, results, path, out):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--master", default=os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3"))
-    ap.add_argument("--download", default=os.path.join(ROOT, "work", "download-3.7.0"))
+    ap.add_argument("--download", default=DEFAULT,
+                    help="the 3.7.0 download: its zip (default work/SOA-3.7.0-canonical-data.zip, read in place) or a folder")
     ap.add_argument("--apk", default=os.path.join(ROOT, "apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"),
                     help="the 3.7.0 APK: its images fill names the download lacks")
     ap.add_argument("--pools", default=os.path.join(ROOT, "data", "gacha_pools.sqlite3"))
@@ -671,8 +675,8 @@ def main():
         subprocess.run([os.path.join(ROOT, "tools", "aif2png", "build.sh")], check=True)
 
     m = Master(a.master, a.pools, a.gl)
-    img_dir = os.path.join(a.download, "Image", "etc2")
-    on_disk = {f[:-4]: os.path.join(img_dir, f) for f in os.listdir(img_dir) if f.endswith(".aif")}
+    tree = DownloadTree.open(a.download)
+    on_disk = {f[:-4]: tree.host_spec("Image/etc2/" + f) for f in tree.list("Image/etc2") if f.endswith(".aif")}
     if os.path.exists(a.apk):  # the APK's own images, for names the download lacks (ticket gachas)
         import zipfile
         apk_dir = os.path.join(a.out, "apk")
@@ -694,7 +698,7 @@ def main():
     banners = sorted({n for g in m.gachas for _, n, _ in g["refs"] if n in on_disk})
     refs = sorted({rn for k in m.art_keys() for rn in ref_names(k).values() if rn in on_disk})
     icons = sorted({ref_names(k)["fl"].replace("_fl", "_ic") for k in m.art_keys()} & set(on_disk))
-    decode([(on_disk[n], os.path.join(png, n + ".png")) for n in banners + refs + icons], a.jobs)
+    decode([(n, on_disk[n], os.path.join(png, n + ".png")) for n in banners + refs + icons], a.jobs)
     print(f"{len(banners)} banner images, {len(refs)} illustrations ({len(m.art_keys())} art keys)")
 
     # 2. features

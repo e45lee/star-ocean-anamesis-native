@@ -20,13 +20,19 @@ The manifest counts, in the comments of every server/ C++ file (string literals 
                R20): the labels, client addresses / symbols / offsets, master tables and `code` spans
                of the text, and every table row that carries a (c) or (d) label.
 
+--check (with no --against) exits 10 on findings of the tree itself (a broken docs link, a quoted
+docs/server-rules.md link, an "agent" note) and 11 when a log line of tools/server_log_patterns.txt
+is gone; tools/check_server_docs.sh decides on these exit codes, not on the printed lines.
+
 --against REV is RG10's evidence check: it exits 1 when, compared with REV, a label count fell, an
 address appeared or went (outside net/ninja), a symbol / offset / table went missing, the agent
 count grew, a log-line pattern went missing, a link stopped resolving, fewer docs/server-rules.md
 links were used, or the rules doc (with its history) lost a label, a client address / symbol /
 offset, a master table, a `code` span or a (c) / (d) row. Moved files and sections are fine:
 the sets are compared over the whole tree. A commit that deletes code may lose labels; its message
-then lists them (the check still reports them).
+then lists them (the check still reports them); with --waivers such a loss passes when each
+commit of REV..HEAD that loses evidence carries its own "Evidence removed:" line (one commit's
+line no longer waives another's loss, nor uncommitted changes).
 """
 import argparse
 import collections
@@ -38,6 +44,7 @@ import sys
 import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EXIT_FINDINGS, EXIT_LOG_LINES = 10, 11  # --check's exit codes (anything else: the tool itself failed)
 EXTS = (".cpp", ".h", ".inc", ".cc", ".hpp")
 
 LABEL_RE = re.compile(r"\(([abcd])\)|\(([abcd]):|[;,] ([abcd]):")
@@ -268,17 +275,83 @@ def summary(m):
     ]
 
 
-def at_rev(rev):
+EVIDENCE_PATHS = ("server", "docs/server-rules.md", "docs/api.md", "docs/history/server-rules-history.md",
+                  "tools/server_log_patterns.txt")
+
+
+def at_rev(rev, git=REPO):
     d = tempfile.mkdtemp(prefix="server-evidence.")
-    paths = ["server", "docs/server-rules.md", "docs/api.md"]
-    for opt in ("docs/history/server-rules-history.md",):
-        if subprocess.run(["git", "cat-file", "-e", "%s:%s" % (rev, opt)], cwd=REPO, capture_output=True).returncode == 0:
-            paths.append(opt)
-    if subprocess.run(["git", "cat-file", "-e", "%s:tools/server_log_patterns.txt" % rev], cwd=REPO, capture_output=True).returncode == 0:
-        paths.append("tools/server_log_patterns.txt")
-    a = subprocess.run(["git", "archive", rev] + paths, cwd=REPO, capture_output=True, check=True)
+    paths = [p for p in EVIDENCE_PATHS
+             if subprocess.run(["git", "cat-file", "-e", "%s:%s" % (rev, p)], cwd=git, capture_output=True).returncode == 0]
+    a = subprocess.run(["git", "archive", rev] + paths, cwd=git, capture_output=True, check=True)
     subprocess.run(["tar", "-x", "-C", d], input=a.stdout, check=True)
     return d
+
+
+def manifest_at(rev, git=REPO):
+    d = at_rev(rev, git)
+    try:
+        return manifest(d)
+    finally:
+        subprocess.run(["rm", "-rf", d])
+
+
+def git_out(git, *args):
+    return subprocess.run(["git"] + list(args), cwd=git, capture_output=True, text=True, check=True).stdout
+
+
+WAIVER = re.compile(r"^Evidence removed:", re.M)
+
+
+def unwaived(rev, current, git=REPO):
+    """For a loss against REV: each commit of REV..HEAD (merges aside: their parents' commits are in
+    the range) that loses evidence against its parent must say so itself (an "Evidence removed:"
+    line in its message); so must uncommitted changes, which have no message. Returns the
+    problems no commit's own message covers ([] = every loss waived by the commit that made it),
+    and the waivers that counted, as lines."""
+    commits = git_out(git, "rev-list", "--no-merges", "--reverse", "%s..HEAD" % rev, "--", *EVIDENCE_PATHS).split()
+    bad, waived, cache = [], [], {}
+
+    def man(r):
+        if r not in cache:
+            cache[r] = manifest_at(r, git)
+        return cache[r]
+    for c in commits:
+        parents = git_out(git, "rev-list", "--parents", "-n", "1", c).split()[1:]
+        if not parents:
+            continue  # a root commit loses nothing
+        probs = against(man(parents[0]), man(c))
+        if not probs:
+            continue
+        msg = git_out(git, "log", "-1", "--format=%B", c)
+        subject = "%s %s" % (c[:10], msg.splitlines()[0] if msg else "")
+        if WAIVER.search(msg):
+            waived.append(subject + ": " + "; ".join(probs))
+            waived += ["    " + ln for ln in msg.splitlines() if WAIVER.match(ln)]
+        else:
+            bad += ["%s (its message has no \"Evidence removed:\" line): %s" % (subject, p) for p in probs]
+    probs = against(man(git_out(git, "rev-parse", "HEAD").strip()), current)
+    bad += ["uncommitted changes (commit them with an \"Evidence removed:\" line): %s" % p for p in probs]
+    if not bad and not waived:
+        bad.append("lost across the range though no single commit loses it (a merge's resolution?)")
+    return bad, waived
+
+
+def check(m):
+    """--check: the problems of this tree on its own (not against a revision), as (findings, hard):
+    findings are broken docs links, quoted docs/server-rules.md links and "agent" history notes;
+    hard is a log line scripts wait on that is gone from the sources."""
+    findings = []
+    broken = [k for k, v in m["links"].items() if not v["ok"]]
+    if broken:
+        findings.append("doc links broken: %s" % "; ".join(broken))
+    quoted = sum(len(v["uses"]) for k, v in m["links"].items() if k.startswith('docs/server-rules.md "'))
+    if quoted:
+        findings.append("server-rules links quoted: %d (use anchors: docs/server-rules.md#anchor)" % quoted)
+    if m["agents"]:
+        findings.append("agent mentions: %d (%s)" % (m["agents"], ", ".join(f for f, fm in m["files"].items() if fm["agents"])))
+    hard = ["log line gone: %s" % k for k, v in m["log_lines"].items() if not v]
+    return findings, hard
 
 
 def against(old, new):
@@ -333,14 +406,26 @@ def main():
     ap.add_argument("--against", metavar="REV", help="compare with git revision REV")
     ap.add_argument("--json", action="store_true", help="print the whole manifest as JSON")
     ap.add_argument("--files", action="store_true", help="print the per-file counts")
+    ap.add_argument("--check", action="store_true",
+                    help="exit %d on broken / quoted docs links or agent mentions, %d on a missing log line "
+                         "(tools/check_server_docs.sh)" % (EXIT_FINDINGS, EXIT_LOG_LINES))
+    ap.add_argument("--waivers", action="store_true",
+                    help="with --against: a loss passes when every commit of REV..HEAD that makes one says "
+                         "\"Evidence removed:\" in its own message (tools/check_server_docs.sh)")
     a = ap.parse_args()
-    m = manifest(os.path.abspath(a.root))
+    root = os.path.abspath(a.root)
+    m = manifest(root)
     if a.json:
         print(json.dumps(m, indent=1, sort_keys=True, default=lambda x: sorted(x) if isinstance(x, set) else dict(x)))
         return 0
     if not a.against:
         for ln in summary(m):
             print(ln)
+        if a.check:
+            findings, hard = check(m)
+            for p in findings + hard:
+                print("CHECK: " + p)
+            return EXIT_LOG_LINES if hard else EXIT_FINDINGS if findings else 0
         if a.files:
             for f, fm in m["files"].items():
                 lab = fm["labels"]
@@ -348,11 +433,7 @@ def main():
                     f, lab.get("a", 0), lab.get("b", 0), lab.get("c", 0), lab.get("d", 0), fm["addresses"], fm["symbols"], fm["offsets"],
                     fm["agents"], fm["links"]))
         return 0
-    d = at_rev(a.against)
-    try:
-        old = manifest(d)
-    finally:
-        subprocess.run(["rm", "-rf", d])
+    old = manifest_at(a.against, root)
     probs = against(old, m)
     print("evidence vs %s:" % a.against)
     for o, n in zip(summary(old), summary(m)):
@@ -361,6 +442,19 @@ def main():
         print("LOST:")
         for p in probs:
             print("  " + p)
+        if a.waivers:
+            bad, waived = unwaived(a.against, m, root)
+            if waived:
+                print("waived by the commits that lost it:")
+                for ln in waived:
+                    print("  " + ln)
+            if bad:
+                print("NOT WAIVED:")
+                for p in bad:
+                    print("  " + p)
+                return 1
+            print("every loss is waived by its own commit's \"Evidence removed:\" line")
+            return 0
         return 1
     print("nothing lost")
     return 0

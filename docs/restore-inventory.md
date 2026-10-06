@@ -3,10 +3,10 @@
 **Generated snapshot — do not edit by hand, and do not hard-code anything from it.** The game and the local server decide at runtime what is usable; this file only reports what the current asset sources hold. Regenerate after downloading more assets:
 
 ```
-.venv/bin/python tools/event_coverage.py --db data/basmaster-3.7.0.sqlite3 --src work/download-3.7.0 --src apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk --notes docs/event-notes.tsv --md docs/restore-inventory.md --quiet
+.venv/bin/python tools/event_coverage.py --db data/basmaster-3.7.0.sqlite3 --src work/SOA-3.7.0-canonical-data.zip --src apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk --notes docs/event-notes.tsv --md docs/restore-inventory.md --quiet
 ```
 
-Sources scanned (logical files): `work/download-3.7.0` (26046), `apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk` (618)
+Sources scanned (logical files): `work/SOA-3.7.0-canonical-data.zip` (26046), `apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk` (618)
 
 Classes: **FULL** = maps, enemy models, talk scripts, background and banner all present; **PLAYABLE** = every battle map and enemy model present, but some talk scripts / background / banner missing (battles work, story scenes or art don't); **BROKEN** = a battle map or enemy model is missing; **NO-MISSIONS** = the area has no missions. Not checked: TalkScene .csf, movies, voices, motions, item icons.
 

@@ -3,7 +3,8 @@
 // "Image assets and gacha banners" for the formats.
 //
 // Usage:
-//   aif2png <in.aif> <asset-name> <out.png>      one file
+//   aif2png <in.aif> <asset-name> <out.png>      one file (<in.aif> may be FILE@OFFSET+SIZE: a byte
+//                                                range of FILE, e.g. a stored zip entry in place)
 //   aif2png -                                    batch: stdin lines "in<TAB>asset-name<TAB>out.png"
 // <asset-name> is the path used for the ADLD key, e.g. "Image/etc2/banner_sale_001.aif".
 // For each input one tab-separated line is printed: "ok <in> <out>:<w>x<h>:<kind>..." (one field
@@ -12,6 +13,7 @@
 //
 // Build: tools/aif2png/build.sh, or the repository build's `aif2png` target (soa_codec: SLZ / AIF /
 // ETC2, soa/aska_image.h; IJG libjpeg 9 by FetchContent: cmake/deps.cmake).
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -155,14 +157,42 @@ static bool decode_image(const Bytes& d, const soa::aska::ImageRef& r, Img& img,
     return true;
 }
 
-static std::string convert(const std::string& in, const std::string& name, const std::string& out) {
+// `in` is a file, or "FILE@OFFSET+SIZE": SIZE bytes at OFFSET of FILE (a stored entry of a zip such
+// as the 3.7.0 download's SOA-3.7.0-canonical-data.zip, read in place: soa_save/download_tree.py
+// DownloadTree.locate). A path that exists as given is always a file.
+static bool read_input(const std::string& in, Bytes& d) {
+    std::string path = in;
+    long long off = 0, size = -1;
+    size_t at = in.rfind('@'), plus = in.rfind('+');
     FILE* f = fopen(in.c_str(), "rb");
-    if (!f) return "err\t" + in + "\tcannot open";
-    Bytes d;
+    if (!f && at != std::string::npos && plus != std::string::npos && plus > at + 1 && plus + 1 < in.size() &&
+        in.find_first_not_of("0123456789", at + 1) == plus && in.find_first_not_of("0123456789", plus + 1) == std::string::npos) {
+        path = in.substr(0, at);
+        off = std::stoll(in.substr(at + 1, plus - at - 1));
+        size = std::stoll(in.substr(plus + 1));
+        f = fopen(path.c_str(), "rb");
+#ifdef _WIN32
+        if (f && _fseeki64(f, off, SEEK_SET) != 0) {
+#else
+        if (f && fseeko(f, (off_t)off, SEEK_SET) != 0) {
+#endif
+            fclose(f);
+            return false;
+        }
+    }
+    if (!f) return false;
     u8 buf[65536];
     size_t n;
-    while ((n = fread(buf, 1, sizeof buf, f)) > 0) d.insert(d.end(), buf, buf + n);
+    while ((size < 0 || (long long)d.size() < size) &&
+           (n = fread(buf, 1, size < 0 ? sizeof buf : (size_t)std::min<long long>((long long)sizeof buf, size - (long long)d.size()), f)) > 0)
+        d.insert(d.end(), buf, buf + n);
     fclose(f);
+    return size < 0 || (long long)d.size() == size;
+}
+
+static std::string convert(const std::string& in, const std::string& name, const std::string& out) {
+    Bytes d;
+    if (!read_input(in, d)) return "err\t" + in + "\tcannot open";
     std::string err;
     if (!adld(d, name, err) || !slz(d, err)) return "err\t" + in + "\t" + err;
     // An .aif is one ' FIA' container; a Cocos scene (.csf, tag "\0ISF") embeds its texture

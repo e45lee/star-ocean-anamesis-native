@@ -3,8 +3,8 @@
 
 Usage: event_coverage.py --db MASTER.sqlite3 --src PATH [--src PATH ...] [--json OUT] [--md OUT] [--quiet]
 
-A source is a download tree (work/download-3.7.0), an extracted APK dir, or an .apk/zip
-(top-level .apk members of a split-APK bundle are opened too). Paths are normalised to the game's logical
+A source is the 3.7.0 download (its zip work/SOA-3.7.0-canonical-data.zip, read in place, or an
+extracted folder), an extracted APK dir, or an .apk/zip (top-level .apk members of a split-APK bundle are opened too). Paths are normalised to the game's logical
 names: anything up to 'builtin_data/' or 'assetpack/' is stripped, and the quality subdirs
 'etc2/hi/' and 'etc2/' are folded away, so 'BG/etc2/hi/bm0001_b01a.asf' -> 'BG/bm0001_b01a.asf'.
 Zero-size files count as absent (the download's I/, B/ placeholders).
@@ -12,9 +12,12 @@ Zero-size files count as absent (the download's I/, B/ placeholders).
 Nothing about which events or images exist is hard-coded; everything is recomputed from the
 DB and the sources, so rerun it whenever more assets are downloaded:
   .venv/bin/python tools/event_coverage.py --db data/basmaster-3.7.0.sqlite3 \\
-    --src work/download-3.7.0 --src apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk --md docs/restore-inventory.md
+    --src work/SOA-3.7.0-canonical-data.zip --src apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk --md docs/restore-inventory.md
 """
 import argparse, collections, io, json, os, re, sqlite3, sys, zipfile
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from soa_save.download_tree import DownloadTree  # noqa: E402
 
 
 def norm(p):
@@ -40,11 +43,10 @@ def scan_zip(zf, label, out):
 def scan(src):
     out = {}
     if os.path.isdir(src):
-        for dp, _, fs in os.walk(src):
-            for f in fs:
-                fp = os.path.join(dp, f)
-                if os.path.getsize(fp) > 0:
-                    out.setdefault(norm(os.path.relpath(fp, src)), src)
+        t = DownloadTree.open(src)
+        for name in t.files():
+            if t.size(name) > 0:
+                out.setdefault(norm(name), src)
     else:
         scan_zip(zipfile.ZipFile(src), src, out)
     return out

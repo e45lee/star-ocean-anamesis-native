@@ -32,6 +32,7 @@ GACHA_TAB_RECOMMENDED = "100:175"
 GACHA_FIRST_BANNER = "360:320"
 GACHA_10 = "540:945"         # 10連ガチャ
 GACHA_DECIDE = "515:800"     # the draw confirmation: 決定
+CHARACTER_DETAIL_CLOSE = "364:1155"  # a character's detail page (a tap on a pick-up page of the gacha carousel): 閉じる
 SUMMON_START = "364:1190"    # 召喚開始
 SUMMON_REVEAL = "364:650"
 SUMMON_ALL_SKIP = "577:1199"

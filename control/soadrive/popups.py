@@ -38,13 +38,13 @@ FAVOR_BONUS_CLOSE = bytes.fromhex(
     "5d1d3b5d1636591131561432571936591d3b5c1c3a5b1c395a1c3a5a")
 
 
-def _signature_match(shot, crop, size, ref):
+def _signature_match(shot, crop, size, ref, limit=0.06):
     r = subprocess.run(["convert", shot, "-resize", "729x1296!", "-crop", crop, "+repage", "-resize", size + "!",
                         "-depth", "8", "rgb:-"], capture_output=True)
     f = r.stdout
     if len(f) != len(ref):
         return False
-    return sum(abs(a - b) for a, b in zip(f, ref)) / len(f) / 255 < 0.06
+    return sum(abs(a - b) for a, b in zip(f, ref)) / len(f) / 255 < limit
 
 
 # The gacha result screen's title band (ガチャリザルト, the 600x60+65+250 crop scaled to 12x2 RGB): the
@@ -52,6 +52,28 @@ def _signature_match(shot, crop, size, ref):
 GACHA_RESULT_TITLE = bytes.fromhex(
     "1a4d801f70c41f6fc11a6dc3417ab54e7dae537fad3876b81b6dc31f6fc11f70c51a4e82152836153044153044163044152f43142f43142f43"
     "153044163044153044153145152837")
+
+
+# The 10-draw confirmation (10回ガチャで召喚しますか?): its 閉じる / 決定 row, the 520x70+100+760 crop scaled
+# to 12x2 RGB, from six passing sessions (emu, port, Windows; 2026-10): they differ from the mean by
+# 0.001; the gacha screen, its banner detail and a character detail by 0.15+.
+GACHA_CONFIRM_BUTTONS = bytes.fromhex(
+    "18304a1d3655344d671b3351112e50172733161a1b244b6c215b8d3c6487275b8820598b1130691b346e4a63901f39720d2b6217232b"
+    "1920252f72b82879cf5689c2337dcb2772bf")
+
+# A gacha banner's detail with its 1回ガチャ / 10連ガチャ buttons undimmed: the 10連ガチャ button, the
+# 330x70+380+910 crop scaled to 8x2 RGB (ten detail screenshots within 0.055 of it, whichever carousel
+# page shows; the confirmation (dimmed) and a character detail 0.24+).
+GACHA_DETAIL_10 = bytes.fromhex(
+    "99bbdab87b9aa9718f7897ac85b3bd83a5b37aa2b36e9ebca3a7c67191b15291b32a80ac4a8c9f44859d2b759b307fa7")
+
+
+def is_gacha_confirm(shot):
+    return _signature_match(shot, "520x70+100+760", "12x2", GACHA_CONFIRM_BUTTONS)
+
+
+def is_gacha_detail(shot):
+    return _signature_match(shot, "330x70+380+910", "8x2", GACHA_DETAIL_10, limit=0.1)
 
 
 def is_gacha_result(shot):

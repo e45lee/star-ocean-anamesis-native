@@ -1,5 +1,6 @@
-// soa_cli_tests: the four programs' CLI11 command lines (port/src/core/cli.cpp,
-// server/app/cli.cpp, emulator/src/cli.cpp, emulator-viewer/src/cli.cpp) against the hand-written
+// soa_cli_tests: the five programs' CLI11 command lines (port/src/core/cli.cpp,
+// server/app/cli.cpp, emulator/src/cli.cpp, emulator-viewer/src/cli.cpp, webview/tools/cli.cpp)
+// against the hand-written
 // parsers they replaced (legacy.cpp), table-driven:
 //   1. every option name each old parser knew is defined (and nothing else), except the additions
 //      and the deliberate removals check_names is given, and every one of them appears in the table
@@ -115,6 +116,13 @@ std::string dump(const soa::viewer::ViewerArgs& a) {
     d.f("download", a.download_dir).f("extra_apks", a.extra_apks).f("download_prefer", a.download_prefer);
     d.f("guest_cpus", a.guest_cpus).f("gdb", a.gdb).f("log", level(a.verbose));
     dump(d, a.host);
+    return d.o.str();
+}
+std::string dump(const soa::webview::RenderArgs& a) {
+    Dump d;
+    d.f("page", a.page).f("out", a.out).f("url", a.url).f("width", a.width).f("height", a.height).f("zoom", a.zoom);
+    d.f("scroll", a.scroll).f("screen", a.screen).f("tap_x", a.tap_x).f("tap_y", a.tap_y);
+    for (auto& [prefix, dir] : a.maps) d.o << "map <" << prefix << ">=<" << dir << ">\n";
     return d.o.str();
 }
 
@@ -284,6 +292,8 @@ int main() {
     const V viewer_old = {"--apk-dir", "--xapk", "--apk", "--download-dir", "--download-prefer", "--lib", "--data", "--repo",  // 380-ok: soa-viewer's options
                           "--guest-cpus", "--size", "--landscape", "--render-size", "--font", "--fullscreen", "--headless", "--windowed",
                           "--shot", "--do", "--control", "--gdb", "-v", "-vv", "-h", "--help"};
+    // (soa-webview-render's loop, 61f0c08: no -h / --help; any other word was PAGE or OUT)
+    const V render_old = {"--width", "--height", "--zoom", "--scroll", "--screen", "--url", "--map", "--tap"};
 
     // Options removed on purpose since: --font (2026-10-05; the fonts are built in); soa's
     // --fake-server (2026-10-05; the canned responses were retired, docs/unimplemented-apis.md step 9).
@@ -516,6 +526,57 @@ int main() {
     };
     std::vector<Row> viewer_rows = concat({&client_common, &viewer_only});
 
+    // ---- soa-webview-render ----
+    const char* kStrictNumber = "a value that isn't a whole number (W / H: at least 1) is an error, as the other programs' "
+                                "numbers (the old loop took atoi's prefix, 0 when none: a 0-wide view)";
+    const std::vector<Row> render_rows = {
+        {{"p.html", "o.png"}},
+        {{"-", "o.png"}},  // (stdin)
+        {{"p.html", "o.png", "--width", "810", "--height", "1092", "--screen", "--scroll", "3000"}},
+        {{"--width", "810", "p.html", "--screen", "o.png", "--height", "1092"}},  // options anywhere
+        {{"p.html", "o.png", "--width", "1", "--width", "2"}},                   // the last wins
+        {{"p.html", "o.png", "--height", "7", "--height", "8"}},
+        {{"p.html", "o.png", "--zoom", "1"}},
+        {{"p.html", "o.png", "--zoom", "2.625"}},
+        {{"p.html", "o.png", "--zoom", "0"}},  // (the page takes 1)
+        {{"p.html", "o.png", "--zoom", "-3.5"}},
+        {{"p.html", "o.png", "--scroll", "-5"}},
+        {{"p.html", "o.png", "--screen", "--screen"}},
+        {{"p.html", "o.png", "--url", "http://soa-local.invalid/notice/index.html"}},
+        {{"p.html", "o.png", "--url", "a", "--url", "b"}},
+        {{"p.html", "o.png", "--url", "--screen"}},  // (a value that looks like an option: taken as the value, as before)
+        {{"p.html", "o.png", "--map", "http://soa-local.invalid/=webroot/"}},
+        {{"p.html", "o.png", "--map", "http://a/=x", "--map", "http://b/=y=z", "--map", "=d", "--map", "p="}},
+        {{"p.html", "o.png", "--map", "nodir"}},
+        {{"p.html", "o.png", "--tap", "360:460"}},
+        {{"p.html", "o.png", "--tap", "-1:5"}},
+        {{"p.html", "o.png", "--tap", "1:2", "--tap", "3:4"}},
+        {{"p.html", "o.png", "--tap", "1"}},
+        {{"p.html", "o.png", "--tap", "a:b"}},
+        {{}},
+        {{"p.html"}},
+        {{"p.html", "o.png", "extra"}},
+        {{"p.html", "o.png", "--width"}},
+        {{"p.html", "o.png", "--map"}},
+        {{"p.html", "o.png", "--tap"}},
+        {{"--screen"}},
+        {{"--help"}, "--help prints the options and exits 0 (the old loop took it as PAGE: usage, 2)", 0},
+        {{"-h"}, "as --help", 0},
+        {{"p.html", "o.png", "--help"}, "as --help (the old loop took it as a third word: 2)", 0},
+        {{"--bogus", "o.png"}, "an unknown option is an error, as in the other programs (the old loop took it as PAGE)", 2},
+        {{"p.html", "--bogus"}, "as --bogus o.png (the old loop took it as OUT)", 2},
+        {{"p.html", "o.png", "--width", "4x"}, kStrictNumber, 2},
+        {{"p.html", "o.png", "--width", "x"}, kStrictNumber, 2},
+        {{"p.html", "o.png", "--width", "0"}, kStrictNumber, 2},
+        {{"p.html", "o.png", "--height", "-1"}, kStrictNumber, 2},
+        {{"p.html", "o.png", "--scroll", ""}},  // (0 both: atoi's, and CLI11's empty value)
+        {{"p.html", "o.png", "--width", ""}, kStrictNumber, 2},
+        {{"p.html", "o.png", "--zoom", "abc"}, "a --zoom that isn't a number is an error (the old loop took atof's 0: the page's 1)", 2},
+        {{"p.html", "o.png", "--tap", "1:2x"}, "--tap X:Y is two whole numbers (the old sscanf took a prefix)", 2},
+        {{"p.html", "o.png", "--width=810"}, "--OPTION=VALUE is accepted, as in the other programs (the old loop took it as a "
+                                             "third word: 2)", -1},
+    };
+
     // ---- 1. names ----
     {
         std::vector<std::string> names;
@@ -544,6 +605,12 @@ int main() {
             soa::viewer::parse_args(1, argv, a, &names);
             check_names("soa-viewer", names, viewer_old, {"--download"}, kRemovedFont, viewer_rows);
         }
+        {
+            soa::webview::RenderArgs a;
+            Quiet q;  // (PAGE and OUT are required: an error without them)
+            soa::webview::parse_render_args(1, argv, a, &names);
+            check_names("soa-webview-render", names, render_old, {"-h", "--help"}, {}, render_rows);
+        }
     }
 
     // ---- 2. the rows ----
@@ -551,6 +618,8 @@ int main() {
     check_program<soa::server::app::ServerArgs>("soa-server", server_rows, soa::server::app::parse_args, legacy::parse_server, ServerPrep{});
     check_program<soa::emu::EmuArgs>("soa-emu", emu_rows, soa::emu::parse_args, legacy::parse_emu, NoPrep{});
     check_program<soa::viewer::ViewerArgs>("soa-viewer", viewer_rows, soa::viewer::parse_args, legacy::parse_viewer, NoPrep{});
+    check_program<soa::webview::RenderArgs>("soa-webview-render", render_rows, soa::webview::parse_render_args, legacy::parse_render,
+                                            NoPrep{});
 
     printf("cli: %s (%d checks, %d failed)\n", g_failed ? "FAIL" : "PASS", g_checks, g_failed);
     return g_failed ? 1 : 0;

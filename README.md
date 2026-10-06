@@ -127,9 +127,11 @@ earlier llvm-mingw build (clang, libc++, the UCRT): `soa-server.exe --selftest`,
 `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests `win:battle-gacha` (the port's
 restore session, in process), `win:seeded` (`soa-emu.exe` against `soa-server.exe`: login, battle,
 gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff shard on the three Windows targets)
-(`port/PLAN.md` 5b, "As built"). The MinGW-w64 GCC build (2026-10-05) so far under Wine only: the
-unit tests, `soaruntime_tests.exe` and `soa-server.exe --selftest` (all but the tests that need
-`work/download-3.7.0`); the checks on Windows itself are still to be repeated with it.
+(`port/PLAN.md` 5b, "As built"). The MinGW-w64 GCC build (2026-10-05), checked on Windows on
+2026-10-06: `soa-server.exe --selftest` 143/143, `win:battle-gacha` (twice), `win:seeded`,
+`win:viewer-boot`; `soaruntime_tests.exe` passes every test it reaches, but the process ends early
+(exit 116) in the GDB stub's IPv6 test; `soa.exe --selftest` 377/378, `render/device-shader-program`
+fails on Windows only, as it did before these fixes.
 
 ```sh
 sudo apt install g++-mingw-w64-x86-64-posix               # once: the cross compiler (Ubuntu / Debian)
@@ -156,6 +158,19 @@ scripts/build.sh --windows --target soa-server          # one part
   `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated; a replacement
   `__cxa_thread_atexit` runs them before the TLS blocks are freed); `mkdtemp` (mingw-w64 12+ only);
   and the C runtime is `msvcrt.dll`, not the UCRT (no `_get_timezone`; `long` is 32 bits).
+- What `msvcrt.dll` does differently from the UCRT, and what covers it (checked 2026-10-06):
+  `stderr` is fully buffered into a pipe or file (a log read from WSL arrived in 4 KB pieces, and
+  the session drivers took a quiet client for a hung one; `soa_compat` sets it unbuffered before
+  `main()`); `strftime` is C89 only (no `%F %T %D %R %e %u %V %G %z`..., a format with one returns 0;
+  the guest's goes through `strftime_c89_format`, `runtime/src/hle/format.h`); `rename` and `remove`
+  refuse an open or read-only file (`soa_rename` and the guest's file calls use POSIX semantics,
+  `runtime/src/hle/host_file.h`); `fopen` rejects bionic's `e` / `x` (the guest's `fopen` parses its
+  mode itself). Not affected: C++ sources get mingw-w64's own printf / scanf family
+  (`__USE_MINGW_ANSI_STDIO`: `%zu`, `%lld`, `%a`, `%Lf` and C99 `snprintf` truncation), and its C99
+  math (`tgamma`, `cbrt`, `nextafter`, ...) and `strtod` (hex, `inf`, `nan`).
+- Static initializers run in reverse link order on MinGW (ELF: in link order); the natives,
+  selftests and test hooks register from them, so `soa_link_in_init_order` (`cmake/init_order.cmake`)
+  links the source lists reversed there. `win:native-order` checks `soa.exe --list-native` against Linux's.
 - What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
   `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
   POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,

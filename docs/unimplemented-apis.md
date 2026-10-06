@@ -288,7 +288,9 @@ evidence against one replaces it and records why.
   stones). (d) A completed purchase isn't credited twice (the store retries a purchase whose answer
   it lost); an unknown purchase or a product not sold: 10208. The iOS and Amazon updates do the same.
 - **Confirmed (d):** no receipt validation: the receipt and signature are logged, not checked.
-- `GetBirthYearMonth` / `UpdateBirthYearMonth`: the settings group's (`#settings`); the coin shop
+- `GetBirthYearMonth` / `UpdateBirthYearMonth`: the settings group's (`#settings`). **Checked
+  (2026-10-06):** the coin shop's 10009 opens the client's birth dialog with no generic error first,
+  in both hosts; 登録する stores the month and the shop opens; asked once. The coin shop
   sends `GetBirthYearMonth` first (b: `CCoinShop::ToShop` @01977a9c). (d) No age-based spending limit.
 - **Confirmed, nothing to honour (d):** limited-purchase counts and first-purchase bonuses: no product
   sold has one (`limit_count`, `interval_day`, `is_once`, `bonus_type` all 0; b: `IsSoldOutCoinSale`

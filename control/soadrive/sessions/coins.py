@@ -1,11 +1,13 @@
 """Session `coins`: paid currency (docs/unimplemented-apis.md part 3 step 7; docs/server-rules.md
 #paid-currency): title -> Login -> home; the player's stones planted at 50 free / 0 paid -> ガチャ (the
 wallet refreshed) -> a banner -> 1回ガチャ (500): the client's own check finds the stones short and its
-sale-stopped dialog, patched (platform370, the user's decision of 2026-10-05), opens the coin shop
-(shot) -> the L set: CoinDepositCreate, the local store's purchase, CoinDepositAndroidUpdate (the
+sale-stopped dialog, patched (platform370, the user's decision of 2026-10-05), opens the coin shop;
+its age check (GetBirthYearMonth refused with 10009) shows the birth dialog (shot) -> 登録する, 登録する
+(UpdateBirthYearMonth 2000-01) -> the coin shop (shot) -> the L set: CoinDepositCreate, the local store's purchase, CoinDepositAndroidUpdate (the
 server's line `deposit N completed`) -> the state: 980 paid + 80 free stones, a completed coin_deposit
 row (shots) -> home with the header's stones (shot); then a second boot on the same phone and state:
-Login, home (shot), and the state still holds the purchase. Shots go to OUT/shots, the logs to
+Login, home (shot), the state still holds the purchase, and a second coins-short draw opens the coin
+shop with GetBirthYearMonth answered (no birth dialog; the month kept). Shots go to OUT/shots, the logs to
 OUT/log.txt and OUT/log-relogin.txt. Ends with PASS (exit 0) or FAIL (exit 1).
 
 Usage: port/scripts/coins_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
@@ -40,6 +42,24 @@ def wallet(s):
         db.close()
 
 
+def n_server(s, rx):
+    """How many lines of the server log match rx (the --server log runs across both boots)."""
+    import re
+    try:
+        return sum(1 for ln in open(s.server_log, errors="replace") if re.search(rx, ln))
+    except OSError:
+        return 0
+
+
+def birth(s):
+    """The stored birth month (player.birth_year, birth_month), read-only."""
+    db = sqlite3.connect("file:%s?mode=ro" % s.state_db, uri=True)
+    try:
+        return tuple(db.execute("select birth_year, birth_month from player").fetchone())
+    finally:
+        db.close()
+
+
 def plant_coins(s):
     """The server's coins down to START free, 0 paid (the client learns it from the next wallet)."""
     db = sqlite3.connect(s.state_db)
@@ -52,10 +72,12 @@ def plant_coins(s):
 
 
 def log_checks(s):
-    """common_log_checks without the one refusal the session provokes (ExItemShop, 20003)."""
+    """common_log_checks without the refusals the session provokes: the first GetBirthYearMonth
+    (10009, the age check asking for the birth month) and ExItemShop's 20003."""
     out = []
     refused = [ln for ln in open(s.client_log, errors="replace").read().splitlines()
-               if "refused with error" in ln and not ("33d09fb7" in ln and "20003" in ln)]
+               if "refused with error" in ln and not ("33d09fb7" in ln and "20003" in ln)
+               and not ("59a48d41" in ln and "10009" in ln)]
     if refused:
         print("\n".join(refused))
         out.append("a request was refused")
@@ -80,6 +102,14 @@ def main(o):
         s.ctl("tap:190:950")
         s.wait_for("1回ガチャ, coins short -> the coin shop (OpenBuyEndDialog patched)", 60,
                    lambda: s.in_client(r"patch: OpenBuyEndDialog .* -> OpenCoinShopDialog"))
+        # the coin shop asks for the birth month first (GetBirthYearMonth refused with 10009: the
+        # client's birth dialog, b: CCoinShop::ToShop's result lambda @0197c2f8) -> 登録する with its
+        # default (2000-01) -> the confirmation's 登録する -> UpdateBirthYearMonth -> the coin shop
+        s.wait_for("the coin shop's age check: GetBirthYearMonth refused with 10009", 60,
+                   lambda: s.in_server(r"GetBirthYearMonth refused: no birth month entered \(error 10009\)"))
+        s.ctl("wait:4000", s.shot_cmd("11-birth-dialog"))
+        s.ctl("tap:364:648", "wait:3000", s.shot_cmd("11-birth-confirm"))  # 登録する -> 2000年1月生まれ, よろしいですか？
+        s.tap_until("登録する (confirmed) -> UpdateBirthYearMonth", 60, "515:790", lambda: s.in_server(r"UpdateBirthYearMonth: 2000-01"), every=15)
         s.ctl("wait:6000", s.shot_cmd("12-coin-shop"))
         # the L set (the fifth row from the top: the list runs テラ .. S)
         s.ctl("tap:364:870")
@@ -107,6 +137,18 @@ def main(o):
         s2.ctl("wait:3000", s2.shot_cmd("32-home-stones-relogin"))
         got["relogin"] = wallet(s2)
         s2.check("the purchase still there after a re-login (%s)" % (got["relogin"],), got["relogin"] == (START + FREE, PAID, 1))
+        # the birth month kept: a coins-short draw goes straight to the coin shop (GetBirthYearMonth
+        # answered, no birth dialog)
+        plant_coins(s2)
+        asked, refused = n_server(s2, r"request GetBirthYearMonth"), n_server(s2, r"GetBirthYearMonth refused")
+        gacha = n_server(s2, r"request GetGachaInData")
+        s2.tap_until("ガチャ -> GetGachaInData", 60, "425:1250", lambda: n_server(s2, r"request GetGachaInData") > gacha, every=20)
+        s2.ctl("wait:8000", "tap:360:320", "wait:5000", "tap:190:950")
+        s2.wait_for("1回ガチャ, coins short -> the coin shop", 60, lambda: s2.in_client(r"patch: OpenBuyEndDialog .* -> OpenCoinShopDialog"))
+        s2.ctl("wait:6000", s2.shot_cmd("33-coin-shop-relogin"))
+        s2.check("the birth month kept: GetBirthYearMonth answered, not refused, after the re-login",
+                 n_server(s2, r"request GetBirthYearMonth") > asked and n_server(s2, r"GetBirthYearMonth refused") == refused
+                 and birth(s2) == (2000, 1))
 
     if not common.drive(s2, body2):
         return 1

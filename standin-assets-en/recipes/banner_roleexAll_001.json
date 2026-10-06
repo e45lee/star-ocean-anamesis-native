@@ -1,6 +1,6 @@
 {
- "note": "The attacker EXP-material event's banner (Global: Augment Mission, EXP materials, the role names).",
- "source": "Image/etc2/banner_roleexAtk_001.aif",
+ "note": "The all roles EXP-material event's banner (Global: Augment Mission, EXP materials, the role names).",
+ "source": "Image/etc2/banner_roleexAll_001.aif",
  "styles": {
   "main": {
    "size": 30,
@@ -47,8 +47,8 @@
    ]
   },
   {
-   "jp": "アタッカー",
-   "text": "Attacker",
+   "jp": "全種",
+   "text": "All Roles",
    "box": [
     250,
     45,
@@ -56,6 +56,24 @@
     22
    ],
    "style": "sub"
+  },
+  {
+   "jp": "全日解放",
+   "text": "Open All Day",
+   "box": [
+    66,
+    26,
+    90,
+    22
+   ],
+   "style": "tag",
+   "cover": [
+    64,
+    26,
+    90,
+    22
+   ],
+   "clear": "inpaint"
   }
  ]
 }

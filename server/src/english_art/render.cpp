@@ -304,6 +304,13 @@ void apply_label(Canvas& c, const Font& font, const Label& label, Rect sprite) {
                 p[0] = label.style.cover_color.r, p[1] = label.style.cover_color.g, p[2] = label.style.cover_color.b,
                 p[3] = label.style.cover_color.a;
             }
+    } else if (label.style.cover == "shade") {  // cover_color laid over the picture, its edges faded over 4 px
+        Rect r = intersect(intersect(cov, sprite), {0, 0, c.w, c.h});
+        for (int y = r.y; y < r.y + r.h; y++)
+            for (int x = r.x; x < r.x + r.w; x++) {
+                int edge = std::min(std::min(x - cov.x, cov.x + cov.w - 1 - x), std::min(y - cov.y, cov.y + cov.h - 1 - y));
+                over(c.at(x, y), label.style.cover_color, std::min(255, (edge + 1) * 255 / 5));
+            }
     }
     if (label.text.empty()) return;
     Coverage text = render_text(font, label.text, label.style, box.w);

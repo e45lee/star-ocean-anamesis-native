@@ -82,7 +82,8 @@ struct Style {
     Rgba shadow;                   // the outlined text again, shadow_dx / shadow_dy px away
     int shadow_dx = 0, shadow_dy = 0;
     std::string cover = "inpaint";  // what replaces the Japanese: "inpaint" (smooth fill from the box's
-                                    // surroundings), "fill" (cover_color) or "none"
+                                    // surroundings), "fill" (cover_color), "shade" (cover_color laid
+                                    // over the picture, faded edges) or "none"
     Rgba cover_color;
     std::string align = "center";  // horizontal: left, center, right (vertical: centred on the ink)
     int dx = 0, dy = 0;            // a nudge of the text, in pixels

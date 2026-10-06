@@ -1,6 +1,6 @@
 {
- "note": "The attacker EXP-material event's banner (Global: Augment Mission, EXP materials, the role names).",
- "source": "Image/etc2/banner_roleexAtk_001.aif",
+ "note": "The sharpshooter EXP-material event's banner (Global: Augment Mission, EXP materials, the role names).",
+ "source": "Image/etc2/banner_roleexShu_001.aif",
  "styles": {
   "main": {
    "size": 30,
@@ -47,8 +47,8 @@
    ]
   },
   {
-   "jp": "アタッカー",
-   "text": "Attacker",
+   "jp": "シューター",
+   "text": "Sharpshooter",
    "box": [
     250,
     45,

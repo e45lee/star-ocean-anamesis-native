@@ -1,6 +1,6 @@
 {
- "note": "The attacker EXP-material event's banner (Global: Augment Mission, EXP materials, the role names).",
- "source": "Image/etc2/banner_roleexAtk_001.aif",
+ "note": "The defender augment-material event's banner (Global: Augment Mission, EXP materials, the role names).",
+ "source": "Image/etc2/banner_roleevoDef_001.aif",
  "styles": {
   "main": {
    "size": 30,
@@ -30,25 +30,25 @@
  },
  "labels": [
   {
-   "jp": "経験値素材ミッション",
-   "text": "EXP Material Mission",
+   "jp": "進化素材ミッション",
+   "text": "Augment Mission",
    "box": [
-    166,
+    190,
     66,
-    286,
+    262,
     38
    ],
    "style": "main",
    "cover": [
-    162,
+    196,
     42,
-    296,
-    68
+    262,
+    70
    ]
   },
   {
-   "jp": "アタッカー",
-   "text": "Attacker",
+   "jp": "ディフェンダー",
+   "text": "Defender",
    "box": [
     250,
     45,

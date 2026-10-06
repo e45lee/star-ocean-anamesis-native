@@ -60,7 +60,9 @@ a time by readable C++ ("natives"), each checked against the original. Programs:
 ## Running and driving the game
 
 - Launchers and options: [README.md "Running"](README.md#running), [port/README.md](port/README.md)
-  "Run options", `--help` of each program. `soa` finds the checkout from its executable (`--repo`).
+  "Run options", `--help` of each program. `soa` finds the checkout from its executable
+  (`--repo`); a release build (`--release`) never does, only `--repo`
+  ([docs/environment.md](docs/environment.md)).
 - Drive a running client with `--control FIFO` (or `tcp:HOST:PORT`) and `control/soactl.py`;
   named sessions with `control/run.py SESSION ...` (`--list`), waits with `control/flowctl.py`
   ([control/README.md](control/README.md)). Take a screenshot after each step and check it before

@@ -53,38 +53,28 @@ bool exists(const std::string& p) {
     struct stat st;
     return !p.empty() && stat(p.c_str(), &st) == 0;
 }
-std::string real(const std::string& p) {
-    char buf[PATH_MAX];
-    return realpath(p.c_str(), buf) ? std::string(buf) : std::string();
-}
 std::string parent(const std::string& p) {
     size_t s = p.find_last_of('/');
     if (s == std::string::npos) return "";
     return s == 0 ? "/" : p.substr(0, s);
 }
 
-// The repo root: --repo, else upwards from the executable (build/emulator-viewer/soa-viewer), else
-// from the working directory: the first directory holding emulator-viewer/CMakeLists.txt.
-std::string find_repo(const std::string& given) {
-    if (!given.empty()) return real(given);
-    for (std::string start : {parent(real("/proc/self/exe")), real(".")}) {
-        for (std::string d = start; !d.empty(); d = parent(d)) {
-            if (exists(d + "/emulator-viewer/CMakeLists.txt") && exists(d + "/runtime/CMakeLists.txt")) return d;
-            if (d == "/") break;
-        }
+// The source checkouts searched for repo files (apk/, work/extracted/xapk): the repo root and, in a
+// git worktree whose work/ links into it, the main checkout (which holds the untracked XAPK).
+// common soa/install.h repo_roots: --repo; in a development build also upwards from the executable
+// (build/emulator-viewer/soa-viewer) or the working directory; a release build never searches for
+// a checkout around it. Empty when there is none.
+std::vector<std::string> find_checkouts(const std::string& given) {
+    auto is_repo = [](const std::string& d) { return exists(d + "/emulator-viewer/CMakeLists.txt") && exists(d + "/runtime/CMakeLists.txt"); };
+    soa::install::RepoRoots r = soa::install::repo_roots(given, is_repo);
+    if (!r.warning.empty()) LOGW("viewer", "%s", r.warning.c_str());
+    std::vector<std::string> v;
+    if (!r.root.empty()) {
+        LOGI("viewer", "%s", r.describe().c_str());
+        v.push_back(r.root);
+        if (!r.main_checkout.empty()) v.push_back(r.main_checkout);
     }
-    return "";
-}
-
-// A repo file: in the repo, else (a git worktree, whose work/ links into the main checkout) in
-// the main checkout. "" when neither has it.
-std::string repo_file(const std::string& repo, const std::string& rel) {
-    if (repo.empty()) return "";
-    if (exists(repo + "/" + rel)) return repo + "/" + rel;
-    std::string w = real(repo + "/work");
-    std::string main = w.empty() ? "" : parent(w);
-    if (!main.empty() && main != repo && exists(main + "/" + rel)) return main + "/" + rel;
-    return "";
+    return v;
 }
 
 // The game package: the 3.8.0 XAPK read in place (--xapk FILE, or one found: find_xapk), or the
@@ -189,16 +179,11 @@ bool is_game_xapk(const std::string& path) {
 
 // The XAPK when no --xapk / --apk-dir names the game: the first *.xapk holding the app in the
 // install dirs (the executable's folder and its game/ subfolder: common/include/soa/install.h, the
-// lookup all four programs share), then the repository's apk/ (in a git worktree also the main
-// checkout's, which holds the untracked XAPK).
-std::string find_xapk(const std::string& repo) {
+// lookup all four programs share), then the checkouts' apk/ (find_checkouts: none in a release build
+// without --repo).
+std::string find_xapk(const std::vector<std::string>& repo) {
     std::vector<std::string> dirs = soa::install::install_dirs();
-    if (!repo.empty()) {
-        dirs.push_back(repo + "/apk");
-        std::string w = real(repo + "/work");
-        std::string main = w.empty() ? "" : parent(w);
-        if (!main.empty() && main != repo) dirs.push_back(main + "/apk");
-    }
+    for (auto& r : repo) dirs.push_back(r + "/apk");
     for (auto& f : soa::install::files_with_ext(dirs, ".xapk"))
         if (is_game_xapk(f)) return f;
     return "";
@@ -226,8 +211,10 @@ int main(int argc, char** argv) {
     const int guest_cpus = args.guest_cpus;
     app::HostConfig& host = args.host;
 
-    std::string repo = find_repo(repo_arg);
-    if (repo.empty()) LOGI("viewer", "no source checkout: the XAPK is looked up beside the program (README.txt)");
+    const std::vector<std::string> repo = find_checkouts(repo_arg);
+    if (repo.empty())
+        LOGI("viewer", "%s: the XAPK is looked up beside the program (README.txt)",
+             soa::install::kReleasePackage ? "release build: no source checkout is searched (only --repo DIR)" : "no source checkout");
     if (!apk_dir.empty() && !xapk_path.empty()) {
         fprintf(stderr, "soa-viewer: give --xapk FILE or --apk-dir DIR, not both\n");
         return 2;
@@ -239,7 +226,7 @@ int main(int argc, char** argv) {
     if (apk_dir.empty() && xapk_path.empty()) {
         xapk_path = find_xapk(repo);
         if (xapk_path.empty()) {
-            std::string base = repo_file(repo, std::string("work/extracted/xapk/") + kBaseApk);
+            std::string base = soa::install::find_in_roots(repo, std::string("work/extracted/xapk/") + kBaseApk);
             if (base.empty())
                 fatal("the 3.8.0 XAPK wasn't found: give --xapk FILE (or put the *.xapk in %s/%s, beside soa-viewer, or in the "
                       "repository's apk/: see README.txt), or --apk-dir DIR (tools/extract.sh)",

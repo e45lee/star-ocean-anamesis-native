@@ -12,6 +12,7 @@ using namespace soa::env;
 
 int paths_tests();
 int install_tests();
+int repo_roots_tests();
 
 namespace {
 int g_failures = 0;
@@ -65,6 +66,7 @@ int main() {
     }
     g_failures += paths_tests();  // the default data dirs (soa/paths.h; paths_tests.cpp)
     g_failures += install_tests();  // the install-dir lookup (soa/install.h; install_tests.cpp)
+    g_failures += repo_roots_tests();  // the repo roots, release vs development (soa/install.h; install_tests.cpp)
     fprintf(stderr, "%s\n", g_failures ? "FAILED" : "all passed");
     return g_failures ? 1 : 0;
 }

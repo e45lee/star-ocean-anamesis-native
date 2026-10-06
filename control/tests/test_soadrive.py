@@ -242,6 +242,31 @@ def test_gacha_result_probe(tmp_path):
     assert not popups.is_gacha_result(plain)
 
 
+def test_gacha_confirm_retries(tmp_path, monkeypatch):
+    """popups.gacha_confirm (flows/gacha.open_confirm, flowctl.py gacha-confirm): 10連ガチャ again on the
+    banner detail, 閉じる on anything else (a pick-up's character detail), True once the confirmation
+    shows; False after its tries."""
+    from soadrive import popups, ui370
+    probe = str(tmp_path / "probe.png")
+    screens = iter(["detail", "other", "confirm"])
+    cur = {}
+    sent = []
+
+    def send(cmds):
+        sent.append(cmds)
+        if cmds[0].startswith("shot:"):
+            cur["s"] = next(screens)
+            open(probe, "w").close()
+
+    monkeypatch.setattr(popups, "is_gacha_confirm", lambda p: cur.get("s") == "confirm")
+    monkeypatch.setattr(popups, "is_gacha_detail", lambda p: cur.get("s") == "detail")
+    assert popups.gacha_confirm(send, probe, note=lambda s: None)
+    taps = [c[0] for c in sent if c[0].startswith("tap:")]
+    assert taps == ["tap:" + ui370.GACHA_10, "tap:" + ui370.CHARACTER_DETAIL_CLOSE]
+    screens = iter(["detail"] * 3)
+    assert not popups.gacha_confirm(send, probe, note=lambda s: None, tries=3)
+
+
 def _state_db(path, orphan):
     """A state DB at this build's schema version with one declared foreign key (and an orphan row)."""
     import sqlite3

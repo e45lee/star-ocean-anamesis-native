@@ -42,22 +42,10 @@ def close_result(s, tries=6):
 
 
 def open_confirm(s, tries=6):
-    """After a tap on 10連ガチャ: make sure the draw confirmation is up before 決定 is tapped. The banner
-    detail's carousel turns pages (the banner, then one page per pick-up); a tap can be lost while it
-    turns, and 決定's spot is on the carousel, where a tap opens the shown pick-up's character detail
-    (emu:seeded, 2026-10-05: カーリン's page, SaleGacha never sent). So: look; on the detail tap 10連ガチャ
-    again; on anything else (a character detail) tap its 閉じる; until the confirmation shows."""
-    probe = s.scratch("gacha-confirm-probe.png")
-    for i in range(tries):
-        s.send(["shot:" + probe])
-        if os.path.exists(probe) and _popups.is_gacha_confirm(probe):
-            return True
-        if os.path.exists(probe) and _popups.is_gacha_detail(probe):
-            s.note("no draw confirmation yet: 10連ガチャ again (%d)" % (i + 1))
-            s.ctl("tap:" + ui370.GACHA_10, "wait:2500")
-        else:
-            s.note("neither the banner detail nor the confirmation (a character detail?): 閉じる (%d)" % (i + 1))
-            s.ctl("tap:" + ui370.CHARACTER_DETAIL_CLOSE, "wait:2500")
+    """After a tap on 10連ガチャ: make sure the draw confirmation is up before 決定 is tapped
+    (popups.gacha_confirm: 10連ガチャ again on the banner detail, 閉じる on a pick-up's character detail)."""
+    if _popups.gacha_confirm(s.send, s.scratch("gacha-confirm-probe.png"), s.note, tries):
+        return True
     s.miss("the draw confirmation didn't open")
     return False
 

@@ -76,6 +76,26 @@ def is_gacha_detail(shot):
     return _signature_match(shot, "330x70+380+910", "8x2", GACHA_DETAIL_10, limit=0.1)
 
 
+def gacha_confirm(send, probe, note=_note, tries=6):
+    """After a tap on 10連ガチャ: make sure the draw confirmation is up before 決定 is tapped. The banner
+    detail's carousel turns pages (the banner, then one page per pick-up); a tap can be lost while it
+    turns, and 決定's spot is on the carousel, where a tap opens the shown pick-up's character detail
+    (emu:seeded, 2026-10-05: カーリン's page, the draw never sent). So: look (a screenshot to probe); on
+    the detail tap 10連ガチャ again; on anything else (a character detail) tap its 閉じる; until the
+    confirmation shows. send(cmds) sends soactl commands. True when the confirmation is up."""
+    for i in range(tries):
+        send(["shot:" + probe])
+        if os.path.exists(probe) and is_gacha_confirm(probe):
+            return True
+        if os.path.exists(probe) and is_gacha_detail(probe):
+            note("no draw confirmation yet: 10連ガチャ again (%d)" % (i + 1))
+            send(["tap:" + ui370.GACHA_10, "wait:2500"])
+        else:
+            note("neither the banner detail nor the confirmation (a character detail?): 閉じる (%d)" % (i + 1))
+            send(["tap:" + ui370.CHARACTER_DETAIL_CLOSE, "wait:2500"])
+    return False
+
+
 def is_gacha_result(shot):
     return _signature_match(shot, "600x60+65+250", "12x2", GACHA_RESULT_TITLE)
 

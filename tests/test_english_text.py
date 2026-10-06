@@ -65,9 +65,9 @@ def test_counts_reproduce_english_md(built):
     assert built.candidates["template"] == 2412
     assert built.candidates["official_e3"] == len(built.e3) > 0
     assert built.served["official"] == 19145 + len(built.e3) - sum(
-        1 for f in built.failures if f["source"] == "official")
+        1 for f in built.failures if f["source"] == "official") - len(built.overrides)
     assert len(built.q7) == 803
-    assert sum(1 for t in built.glossary.values() if t["variants"]) == 302
+    assert sum(1 for r in built.glossary_rows if r["source"] == "official" and r["variants"]) == 302
 
 
 def test_served_rows_are_clean(built, font):
@@ -467,3 +467,34 @@ def test_story_po_export(data, scenario, tmp_path):
     srun(data, scen, "import-po", str(out / "TS_1999.po"), "--by", "poedit")
     t = {r["message_id"]: r for r in T.read_tsv(data / "story/TS_1999.tsv", T.TABLE_COLS)}
     assert t["9999_t_01"]["source"] == "human" and t["9999_t_01"]["en"] == "Edited in Poedit"
+
+
+# ---------------------------------------------------------------- compositions and the glossary rules
+
+def test_glossary_forms():
+    g = {"レモングミ": {"en": "Lemon Gummy", "variants": []}, "ロール": {"en": "Role:", "variants": []},
+         "エアリアル・アラモード": {"en": "Aerial à la Mode", "variants": []}}
+    assert C.glossary_misses("レモングミを15個", "Obtain 15 Lemon Gummies", g) == []
+    assert C.glossary_misses("全ロール", "All Roles", g) == []
+    assert C.glossary_misses("エアリアル・アラモード", "Aerial a la Mode", g) == []
+    assert C.glossary_misses("レモングミ", "Lime candy", g) == [["レモングミ", "Lemon Gummy"]]
+
+
+def test_composed_fragments_served(built):
+    """E3's second half: the fragments the client composes (english.md 7.6) are human rows, served
+    as written: a leading space where the client prepends a name, an empty uimsg_remain_base."""
+    out = {r["message_id"]: r for r in T.read_tsv(T.DATA / "master-en.tsv", T.OUT_COLS)}
+    assert out["uimsg_remain_base"]["en"] == "" and out["uimsg_remain_base"]["source"] == "human"
+    assert out["uimsg_block_decide"]["en"] == " has been blocked."
+    assert out["uimsg_time_to_the_end"]["en"] == "Ends in "
+    assert out["uimsg_time_limit_tail"]["en"] == " until %d:%02d"
+    assert not [m for m, *_ in built.token_gaps if m not in out
+                and m not in ("uimsg_chiket_error", "uimsg_gacha_need_head")]
+
+
+def test_glossary_demotions(built):
+    """Weak Global terms are removed by human rows; machine names Global contradicts get its spelling."""
+    g = built.glossary
+    assert "モンスター" not in g and "願い" not in g and "期間：" not in g
+    assert g["ローク"]["en"] == "Roak" and g["ローク"]["source"] == "human"
+    assert g["紋章石"]["en"] == "Gems"  # Global's names and terms stay

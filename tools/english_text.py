@@ -40,6 +40,10 @@ Usage:
   tools/english_text.py import-po FILE... --by NAME
   tools/english_text.py export-csv [--out FILE]  (work/english/english.csv)
   tools/english_text.py import-csv FILE --by NAME
+  tools/english_text.py glossary-weak [--apply]  official ui/skill/talent/speaker terms Global's own
+                                                 text doesn't follow (>= half of >= 3 rows): --apply
+                                                 removes them with human rows; also lists machine names
+                                                 Global's text contradicts
   tools/english_text.py import-mt CHECKPOINT.jsonl [--replace]
                                                  machine rows from the MT runner's checkpoint (master
                                                  rows, or story rows: "kind": "story"); rows failing
@@ -207,6 +211,66 @@ def glossary_rows(ctx):
     return rows
 
 
+WEAK_KINDS = ("ui", "skill", "talent", "speaker")  # not proper nouns of people, items, missions, areas
+WEAK_MIN_ROWS, WEAK_MISS = 3, 0.5
+
+
+def glossary_adherence(ctx, glossary):
+    """{term: (rows, misses)}: how often Global's own official English (master rows by id and story
+    lines) uses each glossary term's English where the Japanese has the term."""
+    b = build(ctx)
+    src = ctx.src
+    n = collections.defaultdict(lambda: [0, 0])
+
+    def acc(ja, en):
+        miss = {t for t, _ in C.glossary_misses(ja, en, glossary)}
+        for t in C.glossary_hits(ja, glossary):
+            n[t][0] += 1
+            n[t][1] += t in miss
+    for mid, (h, e, source) in b.out.items():
+        if source == "official" and mid in src.jp_rows:
+            acc(C.unesc(src.jp_rows[mid]), C.unesc(e))
+    s = build_story(ctx, b.glossary)
+    if s is not None:
+        for mid, (h, e, source) in s.out.items():
+            if source == "official":
+                acc(s.derived.lines[mid][1], C.unesc(e))
+    return {t: tuple(v) for t, v in n.items()}
+
+
+def cmd_glossary_weak(ctx, a):
+    """The rule for demoting a Global glossary term (Q8 keeps Global's terms, but a term Global's own
+    text doesn't follow only makes good MT rows fail): an official term of a kind in WEAK_KINDS whose
+    English Global's official rows miss in at least half of at least 3 rows. Lists them (and the
+    machine names Global's text contradicts); --apply adds a human row with an empty en for each
+    weak term (a human row of the same term is left alone)."""
+    rows = glossary_rows(ctx)
+    official = glossary_dict([r for r in rows if r["source"] == "official"])
+    machine = glossary_dict([r for r in rows if r["source"] == "machine"])
+    adh = glossary_adherence(ctx, {**machine, **official})
+    weak = [(t, official[t], adh[t]) for t in sorted(official)
+            if official[t]["kind"] in WEAK_KINDS and t in adh and adh[t][0] >= WEAK_MIN_ROWS
+            and adh[t][1] >= WEAK_MISS * adh[t][0]]
+    contra = [(t, machine[t], adh[t]) for t in sorted(machine)
+              if t not in official and t in adh and adh[t][0] >= WEAK_MIN_ROWS and adh[t][1] >= WEAK_MISS * adh[t][0]]
+    humans = {r["ja"] for r in rows if r["source"] == "human"}
+    print("weak official terms (Global's own rows miss them):")
+    for t, g, (r, m) in weak:
+        print(f"  {t}\t{g['en']}\t{g['kind']}\tmissed in {m} of {r}" + ("\t(has a human row)" if t in humans else ""))
+    print("machine names Global's official text contradicts (give them Global's spelling as human rows):")
+    for t, g, (r, m) in contra:
+        print(f"  {t}\t{g['en']}\tmissed in {m} of {r}" + ("\t(has a human row)" if t in humans else ""))
+    if a.apply:
+        for t, g, (r, m) in weak:
+            if t not in humans:
+                rows.append({"ja": t, "en": "", "kind": g["kind"], "variants": "", "source": "human",
+                             "note": f"demoted (glossary-weak): Global's official English misses '{g['en']}' in {m} of {r} rows"})
+        rows.sort(key=lambda r: (r["ja"], GLOSSARY_RANK[r["source"]], r["en"]))
+        write_if_changed(ctx.path("glossary.tsv"), tsv_text(GLOSSARY_COLS, rows))
+        rebuild(ctx, a)
+    return 0
+
+
 def glossary_dict(rows):
     """{ja: {"en", "variants", "kind", "source"}}: per term the human row, else the official, else the
     machine one (M2's new names). A row with an empty en removes the term."""
@@ -332,7 +396,8 @@ def build(ctx):
     b.failures = []       # {message_id, source, en, problems}
     b.token_gaps = d.token_gaps  # (mid, ja, gl_en, reason)
     b.stale = []          # (mid, source, table sha1, current sha1)
-    b.width = []          # (mid, source, ja px, en px)
+    b.width = []          # (mid, source, ja px, en px): single-line rows over 1.5x the Japanese
+    b.width_all = []      # the same for every single-line row
     b.overrides = []      # (mid, source, official en, served en)
     b.rebroken = collections.Counter()
     b.e3, b.q7 = d.e3, d.q7
@@ -366,8 +431,10 @@ def build(ctx):
             off = d.official.get(mid)
             if source in HUMAN and off is not None and C.esc(C.unesc(off)) != e:
                 b.overrides.append((mid, source, off, e))
-            if w and w[1] > 1.5 * max(w[0], 100):
-                b.width.append((mid, source, w[0], w[1]))
+            if w:
+                b.width_all.append((mid, source, w[0], w[1]))
+                if w[1] > 1.5 * max(w[0], 100):
+                    b.width.append((mid, source, w[0], w[1]))
             break
     # new message_ids: master.tsv human rows without a JP row, then the client's strings
     extra = {}
@@ -724,6 +791,14 @@ def report(ctx, b, out_dir):
     w("stale.tsv", ["message_id", "source", "table_ja_sha1", "current_ja_sha1"], b.stale)
     w("e3.tsv", ["message_id", "ja", "global_en", "served"],
       [[m, src.jp_rows[m], src.gl_en[m], b.out.get(m, ("", "(failed a check)"))[1]] for m in b.e3])
+    wide = [(m, s_, wj, we) for m, s_, wj, we in b.width_all if we > SCREEN_PX]
+    w("wider-than-screen.tsv", ["message_id", "source", "ja_px", "en_px", "en"],
+      [[m, s_, wj, we, b.out[m][1]] for m, s_, wj, we in wide])
+    s["single_line_wider_than_screen"] = len(wide)
+    hum = [(m, t) for m, t in sorted(b.table.items()) if t["source"] in HUMAN]
+    w("human.tsv", ["message_id", "source", "editor", "ja", "served", "official", "note"],
+      [[m, t["source"], t["editor"], src.jp_rows.get(m, ""), b.out[m][1] if m in b.out else "(failing)",
+        Derived.of(ctx).official.get(m, ""), t["note"]] for m, t in hum])
     if sb is not None:
         cols = ["lines", "need", "english"] + list(STORY_SOURCES) + ["missing", "failing"]
         w("story-files.tsv", ["file", "group"] + cols + ["complete"],
@@ -738,6 +813,9 @@ def report(ctx, b, out_dir):
     return s
 
 
+# the client's design width (english.md 6.7): a single line wider than this at the font's 24 px wraps
+# (labels, E10) or runs off the screen even in a full-width label; informational
+SCREEN_PX = 720
 C_SOURCES = ("official", "memory", "template", "machine", "human", "reviewed")
 
 
@@ -1228,6 +1306,8 @@ def main(argv=None):
     p = sub.add_parser("import-csv")
     p.add_argument("file")
     p.add_argument("--by", required=True)
+    p = sub.add_parser("glossary-weak")
+    p.add_argument("--apply", action="store_true", help="add the human rows that remove the weak terms")
     p = sub.add_parser("import-mt")
     p.add_argument("checkpoint")
     p.add_argument("--replace", action="store_true",
@@ -1236,7 +1316,8 @@ def main(argv=None):
     ctx = Ctx(a.data, a.master, a.gl, a.scenario, a.font, a.work)
     cmds = {"build": cmd_build, "report": cmd_report, "show": cmd_show, "set": cmd_set, "review": cmd_review,
             "stale": cmd_stale, "export-po": cmd_export_po, "import-po": cmd_import_po,
-            "export-csv": cmd_export_csv, "import-csv": cmd_import_csv, "import-mt": cmd_import_mt}
+            "export-csv": cmd_export_csv, "import-csv": cmd_import_csv, "import-mt": cmd_import_mt,
+            "glossary-weak": cmd_glossary_weak}
     return cmds[a.cmd](ctx, a)
 
 

@@ -53,7 +53,7 @@
     {"name": "pytest-control", "tier": "T0", "secs": 50, "kind": "check", "game": 0,
      "cmd": ".venv/bin/python -m pytest -q control/tests",
      "covers": "the slot pool, the driver library control/soadrive (log cursor, FIFO, resend rules) and tools/tests_for.py's path rules (no game)"},
-    {"name": "pytest-soa-save", "tier": "T0", "secs": 30, "kind": "check", "game": 0,
+    {"name": "pytest-soa-save", "tier": "T0", "secs": 45, "kind": "check", "game": 0,
      "cmd": ".venv/bin/python -m pytest -q tests",
      "covers": "soa_save's unit tests and the tools' tests, including the English table (tests/test_english_text.py: data/english/master-en.tsv and glossary.tsv fresh, i.e. `tools/english_text.py build --check`; the checks, E3, the MT import, the story tables) (no game)"},
     {"name": "soa-selftest", "tier": "T0", "secs": 70, "kind": "selftest", "apis": false, "game": 1,

@@ -536,14 +536,39 @@ def check(ja, en, font, glossary=None, budget=None, tags="strict"):
     return p
 
 
+def _gloss_norm(s):
+    """Lower case, one space for any whitespace (a \\n too), accents dropped (the output is folded to
+    the font: "à la Mode" is written "a la Mode")."""
+    s = unicodedata.normalize("NFKD", unesc(s))
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return re.sub(r"\s+", " ", s).lower().strip()
+
+
+def _gloss_forms(term):
+    """The forms of a glossary English that count as using it: as written, without label punctuation
+    ("Role:" -> "role"), and singular/plural (-s, -y/-ies: "Gummy" ~ "Gummies")."""
+    t = _gloss_norm(term)
+    forms = {t}
+    bare = t.strip(" :：.!?・")
+    if bare:
+        forms.add(bare)
+    for f in list(forms):
+        if f.endswith("ies"):
+            forms.add(f[:-3] + "y")
+        elif f.endswith("y"):
+            forms.add(f[:-1] + "ies")
+        if f.endswith("s"):
+            forms.add(f[:-1])
+    return {f for f in forms if f}
+
+
 def glossary_misses(ja, en, glossary):
     """[[term, english]] of the glossary terms in `ja` whose English (or an accepted variant) isn't in
-    `en`; case, line breaks and a plural/singular -s don't count."""
-    flat = re.sub(r"\s+", " ", en).lower()
+    `en`; case, line breaks, accents, a label's trailing colon and a plural/singular don't count."""
+    flat = _gloss_norm(en)
 
     def used(term):
-        term = re.sub(r"\s+", " ", term).lower()
-        return term in flat or term.rstrip("s") in flat
+        return any(f in flat for f in _gloss_forms(term))
     return [[t, glossary[t]["en"]] for t in glossary_hits(ja, glossary)
             if not used(glossary[t]["en"]) and not any(used(v) for v in glossary[t]["variants"])]
 

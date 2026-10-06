@@ -27139,6 +27139,9 @@ uimsg_bgm_explan	24e1cc55bf6cc86b18e646643cd26d069d5d7ff9	BGM Volume Settings	of
 uimsg_birth_month	0e73579d9a292c1ad50c7097777f4479d774e9e6	Month of Birth	official
 uimsg_birth_year	4b04ba8c3473508e4ac4eb660a33f1e1628d52b8	Year of Birth	official
 uimsg_birthday	95727af075d28d902eed57d9a6437c5dff9ca93d	Born %d/%d\n	official
+uimsg_block_add_confirm	a833f9b685a0f87b2d12e72ba285b3c94a470b9f	 will be blocked.\nAre you sure?	human
+uimsg_block_decide	8301fd5ed400f920581e486372b75835d6b6eb26	 has been blocked.	human
+uimsg_block_failed	ea1fd65d8175a67aef0ab6e2b31cbbf6cda55705	: blocking failed.	human
 uimsg_block_none	29456a5d0aa1a71b329b5e34a8520b4ce5104155	You can block other players upon clearing a mission.\nBy doing so you will no longer see them during\nMultiplayer events. They can be unblocked at any time.	official
 uimsg_block_num_title	65f1a4621d9f95871e01f5d8f35792f0b7836e2e	Block	official
 uimsg_block_release	a27969e65419d69bc74a3a7bad66190da7d4472b	Unblock	official
@@ -27156,10 +27159,12 @@ uimsg_boxgacha_complete	114809c161997552390af51f6d0c62d06c05ff44	You have comple
 uimsg_boxgacha_complete2	cdf92cac8e0cff247fd0f1a453b8dd36fdea1787	You have completed this box!\nYou will be returned to the Draws screen.\nYou will be returned to the Draws screen, where you can select the next box.	official
 uimsg_boxgacha_complete_clear	5518c47dc3868957812363725467de02eb356a39	You have completed this box!\nYou cannot complete any\nmore draws for this box.\nThis box will be reset.	official
 uimsg_boxgacha_complete_clear2	acca1b71bba9369c9ed22937882d6df528483d16	You have completed this box!\nYou cannot complete any more \ndraws for this box.\nYou will be returned to the Draws screen.	official
+uimsg_boxgacha_complete_num	93c01d3e815226d7fa0d70a98b5344da6e1f6cd3	Resets Left	human
 uimsg_boxgacha_next_confirm	cee8c052c57768196d1e11e8ed7761607c1e0085	Upon proceeding to the next box, all the contents of your current box will be discarded and permanently lost.\nPlease check to ensure you will not miss out on any items.\n\nProceed to next box?	official
 uimsg_boxgacha_nextlabel	a56bba56ee3c5c6b4a293f17de4fb41bbb288da2	Proceed to Next Box	official
 uimsg_boxgacha_remaining_num	d6876de041c5e119a1d3d1135b2638005192860c	Boxes Left:	official
 uimsg_boxgacha_reset	97b0a1c0a9299d48da9957443dfd728cc77acc98	Reset	official
+uimsg_boxgacha_reset_num	93c01d3e815226d7fa0d70a98b5344da6e1f6cd3	Resets Left	human
 uimsg_boxgacha_resetlabel	b9252cc712fb8de96ebf00a93a508a7f2b5466c0	Reset Box	official
 uimsg_boxgacha_result	23a9b7a9c40ce0cfeae42955950e974255ab349c	You obtained the above items from the box.	official
 uimsg_button_back	315491ab51b7b66419123af2cb14acc9bee3ef09	Delete	official
@@ -27343,8 +27348,11 @@ uimsg_filter_saber	c4cb97a7bb1402bedcf178626512b8136b0f97be	B & S	official
 uimsg_filter_sword	62b1ab005fc31d7addb55b935d718a96f5077379	OHS	official
 uimsg_filter_two_hands_sword	e5255eac53052aafb4a9cdaac29c439b7f5105aa	Great Swords	official
 uimsg_follow_add	5c5eed2377d1141b7b36802523535af7ebdb22e0	Follow	official
+uimsg_follow_add_confirm	e7e0197cce8c6ed353998665a0e0e45408939d0a	 will be followed.\nAre you sure?	human
 uimsg_follow_all	189ac27be6c14a135fe8532b59cb0829cc45293c	Follow All	official
 uimsg_follow_confimation	2c315f1854c10d2abdfb0801c4f8d6c35979815d	Increase follow slots for 100\ngems?	official
+uimsg_follow_decide	ad0083a1ee2622f7d4fd3c07c4e7820b7af3143c	 is now followed.	human
+uimsg_follow_failed	9575c7f3f79e14365b603edb953d42cdc92e5c2d	: following failed.	human
 uimsg_follow_frame_extension	e029c87de3e1f6c449df02b19c86ffa1ec8c7473	Expand Follow Slots	memory
 uimsg_follow_neighbor	4cdcda51f44b2939742fa57e521c8771bfd52dca	Search Vicinity	official
 uimsg_follow_neighbor_btn0	31809ee5677b9e1439e87e282f7646bc4e4c2666	Search	official
@@ -27383,6 +27391,7 @@ uimsg_gacha_free_limit	38629a0535d89965fe4cfacce6b6de4ffae21e2f	Limited Free Dra
 uimsg_gacha_free_period	d5fcd13c101cb4f43c512e7804d5f8356d94db7a	Free Tries Left: %u	official
 uimsg_gacha_getratio_error	61e6d1b6195ff3d65b0b3b244919a0bf23d95e2e	Unable to display odds	official
 uimsg_gacha_hash_error	9941591163043c6ee5020a788e4fcc3e448d316e	Unable to perform draw. This category of draws has been changed.\n\nYou will be returned to the Title screen.	official
+uimsg_gacha_item_shortage	7e3defee5e557fa5417f665863bf1d155feae11d	:\nnot enough.	human
 uimsg_gacha_itemmax_error	6e99f740dd1381b0570753c0f25e80ef101b34d8	Inventory is full. \nYou cannot receive any more items.	official
 uimsg_gacha_itemmax_error2	d47c586e25b913d51fbdbc2f344c6062eff48534	Inventory is full. You\ncannot receive this item.	official
 uimsg_gacha_itemmax_error3	a500020a1473706502acc6691bbcb12d698332b0	Please enhance items, sell items, \nor expand inventory slots.	official
@@ -27401,6 +27410,7 @@ uimsg_gacha_stone_shortage	be9ee28f9bc20bf62f66a59db312d8b6db440e3f	You do not h
 uimsg_gacha_tab_caution	74dafde9d2ee32e6ad3b553250b05abee35dd34c	Notice	official
 uimsg_gacha_tab_ration	a48d3ab272afa1f307d9c5bf8b7135eb6cd1fce1	Odds	official
 uimsg_gacha_ten	e9810087eba610b1630be7c6c2248e96b0618455	Perform a 10-chain summoning?	official
+uimsg_gacha_ticket_shortage	7e3defee5e557fa5417f665863bf1d155feae11d	:\nnot enough.	human
 uimsg_gacha_title_0	0af18ff41c6a283998bef033b47fdb3c1acb5faf	Draws	official
 uimsg_gacha_top_info	d5ba2d1b44889ef842acce6f760a1fa9bcd21af9	Use gems to summon characters and weapons.	official
 uimsg_gacha_top_name	0af18ff41c6a283998bef033b47fdb3c1acb5faf	Draws	official
@@ -27482,6 +27492,8 @@ uimsg_limit_count_once	cb39f58c57e9938ede0349e19e0f3a19874b04fe	%d days with \n%
 uimsg_limitbreak_max2	0cd6684916f2b474cb58a4a2cabfcb52c45af08c	This character has reached the limit break limit. \nUnable to perform limit break.	official
 uimsg_limitover	e4e2f6103faa0bfb893f86d0380d608fec2e551b	Limit Break	official
 uimsg_limitover_item	3a5487771e62b3a0a5a4105a5a60e5aaf4955678	Limit Break\nMaterials	official
+uimsg_loginbonus	0ed39e0aeb6e468af71e0b1eaac11c37af83df77	 Day Login Bonus	human
+uimsg_loss_coin	7b60acec210d06583d4f11cbb2b8d014a73b8b0b	: not enough.	human
 uimsg_loss_stamina	323bec676c41e030f722e5ecea140afed9452d78	You do not have enough SP.	official
 uimsg_main_drop	294bb3ffb016dab0ad9fc0f40220b50416b04fe9	Primary Rewards:	official
 uimsg_main_talent	1d112641d7025f251af8e906832bec49c5a44309	Main Talent	official
@@ -27694,15 +27706,16 @@ uimsg_public_community	e800c3d26357a035d9beeed4b2d25a112b3cbb63	Official Forums	
 uimsg_raid_coin	11dca8cf5d54f92436c5b6fb18c146d0186e6b5b	Raid Coins	official
 uimsg_recovery_select	85ff5115e924abe2e60bdf50a8a9c04649076ed0	Select Recovery Rate	official
 uimsg_relogin	3f52c02ab645f0a8abffdd5fdcf2296420eb252f	Session has expired.\nYou will be returned to\nthe Bridge.	official
-uimsg_remain_base	0d930149329d816da6e243aec22919ea6df79d5d	Left:	official
+uimsg_remain_base	0d930149329d816da6e243aec22919ea6df79d5d		human
 uimsg_remain_days	280fd605adf18253859d27114b0c0b4c204b2855	Days left: %d	official
 uimsg_remain_hours	8aa52b36e02fb1fa2a466ea50065b7c2f11f0034	Hours left: %d	official
 uimsg_remain_minutes	5ed71e4f29b57951210b0dac40496997c1cbc7e1	Minutes left: %d	official
 uimsg_remain_months	e61049e0f18a7dc40b1efc1503491e79be209be3	Months left: %d	official
 uimsg_remain_years	1e9914e41996c28b7e8aea4669d767e53d413cc6	Years left: %d	official
 uimsg_rentalbonus_explan	1fc9cbba89d64c05ac86fc194c3779a17909db8e	You can accept your\nrewards from the gift box.	official
-uimsg_rentalbonus_num	b97b8326d583eddfd261fa8cd2c375d9c6b74ccb	People: %u	official
-uimsg_rentalbonus_num_max	c856cc4da246c14f3be594f8507bfad0eae2a353	People: %u	official
+uimsg_rentalbonus_num	b97b8326d583eddfd261fa8cd2c375d9c6b74ccb	%u players	human
+uimsg_rentalbonus_num_main	c624ea6154f6c83c9543e5afed0ec8043598c6de	 borrowed your character.	human
+uimsg_rentalbonus_num_max	c856cc4da246c14f3be594f8507bfad0eae2a353	%u+ players	human
 uimsg_rentalbonus_title	8586a70595e60713af7ff989ee230d398132b22b	Loan bonus obtained!	official
 uimsg_resolution_height	e9d57f21b0073da70ad563dc5bec27310d8639d1	High	official
 uimsg_resolution_normal	65dee73a5d32b7466a6fdad1e2ead7ac83e8ded3	Normal	official
@@ -27710,6 +27723,7 @@ uimsg_resolution_setting	07ef8a2857cb7445955dbf977936fd6ac2e0a6d1	Quality	offici
 uimsg_resolution_setting_explan	9a94654a7b9e35b46a5fd21536a0df891aa690de	Set how detailed the graphics will be. Upon restarting this app, a \ngame data download confirmation box will appear. Please ensure\nyou have a stable internet connection before commencing download.	official
 uimsg_result_bonus_up	7ef7073bcb03a903d0b9fa010cb067c78568db6b	%d %% increase!	official
 uimsg_result_num	fdc98d0811073e219379679e363e3071341bd8b5	　×%d	official
+uimsg_result_pointmax	1c49b9ba72bf805707b0230efa865503b4b8e83d	's reputation gauge\nis full. You have\nobtained a reward.	human
 uimsg_result_rankup0	50d5434c03307d21564096e9551eca55f7955a96	Your rank has gone up!	official
 uimsg_result_rankup1	b5a572be7bf223e0d48a578c6834ade026887beb	Your stamina limit has increased.	official
 uimsg_result_rankup2	e8eaeb3c9f9bc06f6540cdffe577daf22e553d40	Stamina has been added.	official
@@ -27727,7 +27741,9 @@ uimsg_search_player_info	09f4c105b092de6c3958a45f4a0ea155133a6190	Find players n
 uimsg_search_player_name	4cdcda51f44b2939742fa57e521c8771bfd52dca	Search Vicinity	official
 uimsg_sec	eb6aaba1a1caacebb6186e0ee69665ba977c6670	s	official
 uimsg_select_confirm	868435f1f8acb31cf9af04f3706c31f8c991914d	Your storage space is insufficient.\nTap Yes to change the graphics resolution\nof this download.\n\nTap No to continue and commence download\nwith default resolution settings.\n\nPlease confirm you have sufficient storage space\non your device before re-downloading.	official
+uimsg_self_guest_disconnect_host	f69a6c9e4c2b6a0979b7eea5b1bc0a305c1d134d	: connection lost.\nThe mission will end.	human
 uimsg_self_guest_disconnect_server	010c59f171e61d5cb1041c7ccafea1a68fa06b03	Failed to connect to server.\nPlease check your network settings.	official
+uimsg_self_host_disconnect_guest	4fd2e40f22b41fd053ec43bf1e4e988611a377d9	: connection lost.\nSwitching to AUTO.	human
 uimsg_self_host_disconnect_server	cb6ce515211001fe37f09fad4366fde956726039	Server connection failure. \nThis will become a single player mission and\nyour guests will all switch to AUTO.	official
 uimsg_setting_reset_complete	26bdb97ec50dfad01df555ede7bc99cb7455c7ae	Default settings have been restored.	official
 uimsg_shop_Expiration	57f3159bde4279165f1055a0d23707aad1baaa28	The Exchange Period for this item has expired.	official
@@ -27815,7 +27831,8 @@ uimsg_thursday	be0b5bbf477ee2eb2aece8f03e07bf11a3a5dbff	(Thurs)	official
 uimsg_ticket	3549da88529bd444922f0769a75351715b607a35	Tickets	official
 uimsg_time_limit	ec39d8ad7c7e26e44b828af291faaff47a86b010	Time Left	official
 uimsg_time_limit_head	9e8cb233aa8f8941d70da51300d7f955a5a23845	%d/%d/%d	official
-uimsg_time_limit_tail	84f94267b280da4607bab101ececa4d108dcf750	Until: %d:%02d	official
+uimsg_time_limit_tail	84f94267b280da4607bab101ececa4d108dcf750	 until %d:%02d	human
+uimsg_time_to_the_end	d794fe23b1a287a5d38b53f4bbb9b7e047e69395	Ends in 	human
 uimsg_title_back	21bf8116d77086e3a8a8c70d5c08d30a949377df	You are about to quit STAR OCEAN: ANAMNESIS.\nContinue?	official
 uimsg_title_copyright	b60388beab6259096e1f82325c8bfc676c2d9c6e	c 2016-2018 SQUARE ENIX CO., LTD. All Rights Reserved.\nDeveloped by tri-Ace Inc.	official
 uimsg_title_databackup	3597849fcdf89d785730dba396e01dccd2e67f06	Backup Data	official
@@ -27844,6 +27861,10 @@ uimsg_trade_volume	5fa7a79e706e5736156ad3ce7ae1a143a21e9623	%d will be exchanged
 uimsg_training_pause_title	8f99b5f7c588405f7a69dc3fd693a5d90e1757dd	Menu	memory
 uimsg_tuesday	0acf4fcb7b324f033ccb8e138e14d504934647d4	(Tues)	official
 uimsg_tutorial_next	e572295bb22472172f5448c293094f23b61385f6	Next	official
+uimsg_unblock_confirm	dd050da9e88cddfee3a015858ac332254f03bfe3	 will be unblocked.\nAre you sure?	human
+uimsg_unblock_result	055256980a5b290994d8053eae8c010d1a6dd22e	 has been unblocked.	human
+uimsg_unfollow_confirm	97dc6bef27eaaaf4d15d8c1608b267079a3486fc	 will be unfollowed.\nAre you sure?	human
+uimsg_unfollowed_confirm	13cf56730d8b1e6ed77fc83d2eebd149ad014ee2	 has been unfollowed.	human
 uimsg_universe_after_acquired_status	6d86f0f9bc6e59d7295585c5075f3844b0436f35	New Stats	memory
 uimsg_universe_boardreset_ok	0f8e5b4de960b3b2fc38c97579a61457acc4b7a9	Confirm	memory
 uimsg_unopened_cbttower	4eadbc0021cc49afb9ff696af658ce3ff78c7890	Coming soon. Please wait\nuntil we begin official\nservice.	official

@@ -35,7 +35,9 @@
 #include "core/host_mem.h"
 #include "core/log.h"
 #include "core/vfs.h"
+#include "hle/format.h"
 #include "hle/guest_errno.h"
+#include "hle/host_file.h"
 
 namespace soa {
 
@@ -451,8 +453,11 @@ void th_mktime(Cpu& c) {
     ret(c, (u64)r);
 }
 void th_strftime(Cpu& c) {
-    tm t = from_bionic_tm((const BionicTm*)c.x(3));
-    ret(c, strftime((char*)c.x(0), c.x(1), arg_str(c, 2), &t));
+    const BionicTm* b = (const BionicTm*)c.x(3);
+    tm t = from_bionic_tm(b);
+    // msvcrt's strftime is C89's: bionic's other conversions written out first (hle/format.h)
+    std::string f = strftime_c89_format(arg_str(c, 2), t, (long)b->tm_gmtoff);
+    ret(c, strftime((char*)c.x(0), c.x(1), f.c_str(), &t));
 }
 void th_time(Cpu& c) {
     s64 t = _time64(nullptr);
@@ -585,7 +590,8 @@ int oflags_to_host(int f) {
 void th_open(Cpu& c) {
     std::string hp = host_path(arg_str(c, 0));
     int mode = (int)c.x(2);
-    int crt = _open(hp.c_str(), oflags_to_host((int)c.x(1)), (mode & 0200 ? _S_IWRITE : 0) | _S_IREAD);
+    // (shares delete access, so the guest can unlink or rename over an open file: hle/host_file.h)
+    int crt = hostfile::open(hp.c_str(), oflags_to_host((int)c.x(1)), (mode & 0200 ? _S_IWRITE : 0) | _S_IREAD);
     if (crt < 0) set_errno_guest();
     int fd = hostfd::adopt_file(crt);
     LOGD("io", "open(%s -> %s, %#x) = %d", arg_str(c, 0), hp.c_str(), (int)c.x(1), fd);

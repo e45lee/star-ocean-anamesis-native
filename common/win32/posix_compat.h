@@ -53,7 +53,7 @@ extern "C" {
 // path doesn't exist, like POSIX. `resolved` (if not NULL) holds PATH_MAX bytes. "/proc/self/exe"
 // is the running executable, as on Linux.
 char* soa_realpath(const char* path, char* resolved);
-// rename with POSIX semantics: replaces an existing target (MoveFileEx).
+// rename with POSIX semantics: replaces an existing target, also an open or read-only one.
 int soa_rename(const char* from, const char* to);
 // gettid: the Win32 thread id.
 int soa_gettid(void);

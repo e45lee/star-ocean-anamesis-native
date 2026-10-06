@@ -156,6 +156,16 @@ scripts/build.sh --windows --target soa-server          # one part
   `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated; a replacement
   `__cxa_thread_atexit` runs them before the TLS blocks are freed); `mkdtemp` (mingw-w64 12+ only);
   and the C runtime is `msvcrt.dll`, not the UCRT (no `_get_timezone`; `long` is 32 bits).
+- What `msvcrt.dll` does differently from the UCRT, and what covers it (checked 2026-10-06):
+  `stderr` is fully buffered into a pipe or file (a log read from WSL arrived in 4 KB pieces, and
+  the session drivers took a quiet client for a hung one; `soa_compat` sets it unbuffered before
+  `main()`); `strftime` is C89 only (no `%F %T %D %R %e %u %V %G %z`..., a format with one returns 0;
+  the guest's goes through `strftime_c89_format`, `runtime/src/hle/format.h`); `rename` and `remove`
+  refuse an open or read-only file (`soa_rename` and the guest's file calls use POSIX semantics,
+  `runtime/src/hle/host_file.h`); `fopen` rejects bionic's `e` / `x` (the guest's `fopen` parses its
+  mode itself). Not affected: C++ sources get mingw-w64's own printf / scanf family
+  (`__USE_MINGW_ANSI_STDIO`: `%zu`, `%lld`, `%a`, `%Lf` and C99 `snprintf` truncation), and its C99
+  math (`tgamma`, `cbrt`, `nextafter`, ...) and `strtod` (hex, `inf`, `nan`).
 - What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
   `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
   POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,

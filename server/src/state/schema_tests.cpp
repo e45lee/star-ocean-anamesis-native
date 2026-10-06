@@ -27,7 +27,7 @@ namespace {
 using ext::Row;
 using ext::Sql;
 
-// A scratch state file under /tmp (and its -wal / -shm / .bak-v<N> files, removed again).
+// A scratch state file under the platform temp dir (soa::temp_dir()) (and its -wal / -shm / .bak-v<N> files, removed again).
 struct TempDb {
     std::string path;
     explicit TempDb(const char* name) : path(soa::temp_dir() + "/soa-schema-" + std::to_string(getpid()) + "-" + name + ".sqlite3") { remove_all(); }
@@ -58,7 +58,7 @@ struct TempDb {
     }
 };
 
-// A scratch data dir under /tmp for a step's side files (S12: the campaign's server_campaign.txt
+// A scratch data dir under the platform temp dir (soa::temp_dir()) for a step's side files (S12: the campaign's server_campaign.txt
 // and its .migrated), removed again.
 struct TempDir {
     std::string path;

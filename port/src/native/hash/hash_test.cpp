@@ -2,11 +2,14 @@
 // functions run as ARM64 code (natives aren't installed in --selftest), the natives on the same
 // inputs; random inputs plus real ones (the 3.7.0 download's paths and file bytes).
 #include <algorithm>
+#include <cstddef>
 #include <cstring>
-#include <filesystem>
-#include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
+
+#include <soa/file_tree.h>
+#include <soa/install.h>
 
 #include "core/loader.h"
 #include "core/paths.h"
@@ -22,31 +25,36 @@ const u32* crc32_table();
 namespace {
 
 // Real inputs: relative paths of the 3.7.0 download (the names the game hashes are paths and ids
-// like these), sorted, at most n; and the bytes of a few of its files.
+// like these), sorted, the first n; and the bytes of a few of its files. The download is the folder
+// work/download-3.7.0 or, on a Windows stage (scripts/windows-stage.sh), the zip
+// work/SOA-3.7.0-canonical-data.zip; either through soa::FileTree (same tree, same sorted names).
+const soa::FileTree* download_tree() {
+    static const std::shared_ptr<const soa::FileTree> tree = [] {
+        std::string p = find_repo_file({soa::install::kRepoDownloadDir, soa::install::kRepoDownloadZip});
+        return p.empty() ? nullptr : soa::FileTree::open(p);
+    }();
+    return tree.get();
+}
 std::vector<std::string> real_names(size_t n) {
-    std::vector<std::string> out;
-    std::string root = find_repo_file("work/download-3.7.0");
-    std::error_code ec;
-    for (auto it = std::filesystem::recursive_directory_iterator(root, ec); !ec && it != std::filesystem::recursive_directory_iterator(); it.increment(ec)) {
-        if (it->is_regular_file(ec)) out.push_back(std::filesystem::relative(it->path(), root, ec).generic_string());
-        if (out.size() >= 4 * n) break;
-    }
-    std::sort(out.begin(), out.end());
-    if (out.size() > n) out.resize(n);
+    static const std::vector<std::string> all = [] {  // (a folder's files() walks the disk: once)
+        const soa::FileTree* tree = download_tree();
+        return tree ? tree->files() : std::vector<std::string>{};
+    }();
+    std::vector<std::string> out(all.begin(), all.begin() + (std::ptrdiff_t)std::min(n, all.size()));
     if (out.empty()) {
-        if (auto* t = current_test_context()) t->fail("no files under %s", root.c_str());
+        if (auto* t = current_test_context())
+            t->fail("no files in the 3.7.0 download (%s or %s)", soa::install::kRepoDownloadDir, soa::install::kRepoDownloadZip);
     }
     return out;
 }
 std::vector<std::vector<u8>> real_files(size_t n, size_t max_bytes) {
     std::vector<std::vector<u8>> out;
-    std::string root = find_repo_file("work/download-3.7.0");
+    const soa::FileTree* tree = download_tree();
     for (auto& name : real_names(200)) {
         if (out.size() >= n) break;
-        std::ifstream f(root + "/" + name, std::ios::binary);
-        std::vector<u8> b(max_bytes);
-        f.read((char*)b.data(), (std::streamsize)b.size());
-        b.resize((size_t)f.gcount());
+        std::vector<u8> b;
+        if (!tree->read(name, b)) continue;
+        if (b.size() > max_bytes) b.resize(max_bytes);
         if (!b.empty()) out.push_back(std::move(b));
     }
     return out;

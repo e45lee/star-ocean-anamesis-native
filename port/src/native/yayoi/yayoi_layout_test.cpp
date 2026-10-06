@@ -259,14 +259,19 @@ NATIVE_TEST("yayoi/layout-live-network") {
     u8* base = dl->m_storage;
     t.expect_eq((u64)dl->m_freeElements.m_items, (u64)(base + q * sizeof(DownloadElement)), "element ring after the elements");
     // The element block is raw memory (Init only puts its addresses in the free ring; an element is
-    // built when queued): each free slot points into it at a 0x338 stride.
-    for (u32 i = 0; i < dl->m_freeElements.m_capacity; i++) {
-        DownloadElement* e = dl->m_freeElements.m_items[i];
-        if (!e) continue;
-        u64 off = (u64)e - (u64)base;
+    // built when queued): each free slot points into it at a 0x338 stride. Only the ring's live
+    // slots, m_read + 1 up to m_write: Init starts at write 1 / read 0 and never writes slot 0 (the
+    // slot the reader holds back), and the block is operator new[] memory, not cleared (the host
+    // malloc's leftovers: zero on Linux by chance, a stale value on Windows).
+    const auto& fe = dl->m_freeElements;
+    t.expect_eq(fe.m_write < fe.m_capacity && fe.m_read < fe.m_capacity, true, "element ring indices in range");
+    u32 live = 0;
+    for (u32 i = (fe.m_read + 1) % fe.m_capacity; i != fe.m_write && live < fe.m_capacity; i = (i + 1) % fe.m_capacity, live++) {
+        u64 off = (u64)fe.m_items[i] - (u64)base;
         t.expect_eq(off < q * sizeof(DownloadElement) && off % sizeof(DownloadElement) == 0, true,
                     "free element slot -> the element block, stride 0x338");
     }
+    t.expect_eq(live <= (u32)dl->m_queueSize, true, "free elements <= the queue size");
     auto* ctx = reinterpret_cast<DownloadContext*>(base + q * (sizeof(DownloadElement) + 8 + 4));
     for (u64 i = 0; i < n; i++) {
         t.expect_eq((u64)ctx[i].vtable, vtable_of(t, "_ZTVN4Aska5Yayoi10Downloader15DownloadContextE"), "context vtable (stride 0x690)");

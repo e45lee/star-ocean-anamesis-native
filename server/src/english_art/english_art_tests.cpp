@@ -67,7 +67,11 @@ NATIVE_TEST("english-art/recipe-parse") {
     } else {
         t.fail("labels: %zu", r.labels.size());
     }
+    if (!parse_recipe(R"({"sources": ["Image/etc2/a.aif", "Image/etc2/b.aif"], "labels": [{"box": [0, 0, 4, 4], "text": "x"}]})", r, &err))
+        t.fail("sources: %s", err.c_str());
+    t.expect_eq(r.sources.size() == 2 && r.source == "Image/etc2/a.aif" && r.labels[0].sprites.empty(), true, "sources");
     const char* bad[] = {
+        R"({"sources": [], "labels": []})",                                                     // no source
         R"({"source": "a.csf", "labels": [{"box": [0, 0, 1, 1], "colour": "#fff"}]})",          // unknown key
         R"({"source": "a.csf", "labels": [{"box": [0, 0, 1, 1], "fill": "white"}]})",           // bad colour
         R"({"source": "a.csf", "labels": [{"text": "x"}]})",                                    // no box

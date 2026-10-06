@@ -25,7 +25,7 @@ namespace soa::server::english_art {
 namespace {
 
 // Part of every stamp: bump when the generator's output for the same inputs changes.
-constexpr const char* kGenerator = "english-art 1";
+constexpr const char* kGenerator = "english-art 2";
 constexpr const char* kFontName = "Font/etc2/font.fpk";
 constexpr const char* kOutputsList = "outputs.txt";
 
@@ -177,30 +177,35 @@ bool build(const Options& opts, Stats* stats, std::string* err) {
             st.failed++;
             continue;
         }
-        std::string en_rel = en_name(recipe.source);
-        if (outputs.count(en_rel)) {
-            LOGW("english", "art recipe %s: %s has another recipe; skipped", name.c_str(), recipe.source.c_str());
-            st.failed++;
-            continue;
+        for (auto& source : recipe.sources) {  // one output per source
+            Recipe one = recipe;
+            one.source = source;
+            std::string en_rel = en_name(source);
+            if (outputs.count(en_rel)) {
+                LOGW("english", "art recipe %s: %s has another recipe; skipped", name.c_str(), source.c_str());
+                st.failed++;
+                continue;
+            }
+            Bytes src;
+            if (!tree->read(source, src)) {
+                LOGW("english", "art recipe %s: %s not in the download; its image stays Japanese", name.c_str(), source.c_str());
+                st.failed++;
+                continue;
+            }
+            outputs.insert(en_rel);
+            cdn::files::Sha1 h;
+            h.add(kGenerator, strlen(kGenerator) + 1);
+            h.add(text.data(), text.size());
+            h.add(source.data(), source.size() + 1);
+            h.add(font_sha.data(), font_sha.size());
+            h.add(src.data(), src.size());
+            std::string key = h.hex(), stamp_path = cache + "/" + en_rel + ".stamp", out_path = opts.out + "/" + en_rel, old;
+            if (opts.png.empty() && read_text(stamp_path, old) && old == key && cdn::files::stat_file(out_path, nullptr)) {
+                st.cached++;
+                continue;
+            }
+            jobs.push_back({name, std::move(one), std::move(src), en_rel, key, stamp_path, out_path});
         }
-        Bytes src;
-        if (!tree->read(recipe.source, src)) {
-            LOGW("english", "art recipe %s: %s not in the download; its image stays Japanese", name.c_str(), recipe.source.c_str());
-            st.failed++;
-            continue;
-        }
-        outputs.insert(en_rel);
-        cdn::files::Sha1 h;
-        h.add(kGenerator, strlen(kGenerator) + 1);
-        h.add(text.data(), text.size());
-        h.add(font_sha.data(), font_sha.size());
-        h.add(src.data(), src.size());
-        std::string key = h.hex(), stamp_path = cache + "/" + en_rel + ".stamp", out_path = opts.out + "/" + en_rel, old;
-        if (opts.png.empty() && read_text(stamp_path, old) && old == key && cdn::files::stat_file(out_path, nullptr)) {
-            st.cached++;
-            continue;
-        }
-        jobs.push_back({name, std::move(recipe), std::move(src), en_rel, key, stamp_path, out_path});
     }
     // the edits, in parallel (each output is independent: the same bytes in any order)
     std::mutex mu;

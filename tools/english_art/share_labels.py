@@ -70,6 +70,8 @@ def main():
     own = {}
     for p in sorted(glob.glob(os.path.join(a.recipes, "*.json"))):
         r = json.load(open(p, encoding="utf-8"))
+        if "source" not in r or not r["source"].endswith(".csf"):  # Image/ recipes ("sources"): no sprites
+            continue
         r["labels"] = [l for l in r["labels"] if "_from" not in l]
         own[r["source"]] = (p, r)
     catalog = {}

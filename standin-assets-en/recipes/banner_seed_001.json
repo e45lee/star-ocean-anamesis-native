@@ -1,0 +1,53 @@
+{
+ "note": "The seed (status material) event's banner (Seed Mission: glossary.tsv).",
+ "source": "Image/etc2/banner_seed_001.aif",
+ "styles": {
+  "main": {
+   "size": 32,
+   "bold": 3,
+   "fill": "#e4ffd8",
+   "outline": "#0a3a10",
+   "outline_width": 3,
+   "align": "right"
+  },
+  "sub": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a2a10",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "シードミッション",
+   "text": "Seed Mission",
+   "box": [
+    200,
+    66,
+    252,
+    40
+   ],
+   "cover": [
+    200,
+    46,
+    258,
+    68
+   ],
+   "style": "main"
+  },
+  {
+   "jp": "ステータス強化素材ミッション",
+   "text": "Status Material Mission",
+   "box": [
+    214,
+    47,
+    238,
+    19
+   ],
+   "style": "sub"
+  }
+ ]
+}

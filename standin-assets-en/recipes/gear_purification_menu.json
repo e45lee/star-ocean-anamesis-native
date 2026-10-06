@@ -8,6 +8,13 @@
    "fill": "#ffffff",
    "outline": "#102844",
    "outline_width": 2
+  },
+  "pill_dim": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#7a8696",
+   "outline": "#101820",
+   "outline_width": 2
   }
  },
  "labels": [
@@ -15,22 +22,44 @@
    "jp": "決定",
    "text": "Confirm",
    "sprites": [
+    "btn_ok.png",
     "btn_ok_on.png"
    ],
    "box": [
-    36,
-    15,
-    169,
-    38
+    30,
+    14,
+    158,
+    40
    ],
    "cover": [
-    89,
-    17,
-    63,
-    34
+    86,
+    16,
+    68,
+    36
    ],
    "style": "pill",
-   "_from": "party_select_single2"
+   "_from": "ds_common"
+  },
+  {
+   "jp": "決定",
+   "text": "Confirm",
+   "sprites": [
+    "btn_ok_off.png"
+   ],
+   "box": [
+    30,
+    14,
+    158,
+    40
+   ],
+   "cover": [
+    86,
+    16,
+    68,
+    36
+   ],
+   "style": "pill_dim",
+   "_from": "ds_common"
   }
  ]
 }

@@ -22,23 +22,22 @@
    "jp": "決定",
    "text": "Confirm",
    "sprites": [
-    "btn_ok.png",
     "btn_ok_on.png"
    ],
    "box": [
-    36,
-    15,
-    169,
-    38
+    30,
+    14,
+    158,
+    40
    ],
    "cover": [
-    89,
-    17,
-    63,
-    34
+    86,
+    16,
+    68,
+    36
    ],
    "style": "pill",
-   "_from": "party_select_single2"
+   "_from": "ds_common"
   },
   {
    "jp": "戻る",

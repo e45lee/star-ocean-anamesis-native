@@ -48,7 +48,7 @@ inline constexpr Removed kRemoved[] = {
     {"SOA_HEADLESS", "--headless / --windowed", kRuntimePrograms},
     // soa's own
     {"SOA_NATIVES", "--natives", kSoa},
-    {"SOA_FAKE_SERVER", "--fake-server", kSoa},
+    {"SOA_FAKE_SERVER", "--server inproc (the default; --fake-server and its canned responses were removed, docs/unimplemented-apis.md step 9)", kSoa},
     {"SOA_FAKE_SERVER_SCHEMA", "--fake-server-schema", kSoa},
     {"SOA_MEMSTATS", "--memstats", kSoa},
     {"SOA_RESTORE", "--server inproc (the default)", kSoa},

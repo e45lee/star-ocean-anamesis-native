@@ -17,12 +17,12 @@ namespace {
 // server/PLAN-readability.md (static initializers in link order). (The Schema kind went with
 // PLAN-schema S1: every table is state/schema.cpp's.)
 const char* const kExpected[] = {
-    "OnPlayerLoad: login_bonus, achievements, daily, event, follow, gear, home, notice, shop, sphere211, subscription, title, tower, worldboss, settings",
-    "OnResponse: event, title, storage, deco",
+    "OnPlayerLoad: login_bonus, achievements, daily, event, follow, gear, home, notice, shop, sphere211, subscription, title, tower, worldboss, settings, coins, stamp",
+    "OnResponse: event, title, storage, deco, stamp",
     "MissionStartExtra: favor_drop, worldboss",
     "MissionResultExtra: event_ranking, tower, worldboss",
     "Grant: daily (content type 11), gear (content type 15), gear (content type 98), subscription (content type 20), title (content type 13), "
-    "deco (content type 17), deco (content type 18)",
+    "deco (content type 17), deco (content type 18), stamp (content type 12)",
     "ItemExtra: gear",
     "ClientMaster: event, home, shop, sphere211, sphere211, tower",
     "AreaExtra: worldboss",

@@ -24,7 +24,7 @@ Written 2026-09-29 by agent `apicat`. **Generated in part:** the FunctionIDs, me
 - **Response envelope:** a msgpack map `{"data": {<InfoName>: ...}, "status": <uint>}`, plus top-level parameter sets (`Player`, `master_*` ...) when present. `DeserializeToInfo` first **clears every per-response result container**, so a response only needs the keys that changed; the owned lists (`Character`, `Item`, `StockItem`, ...) are **replaced** when sent, so send them whole or not at all.
 - **`data.Time`** (a `YYYY-MM-DD HH:MM:SS` string) in any response sets the client's server-time offset when it differs from the local clock by 60 s or more (`CServerTime::UpdateServerTimeOffset`, run by every `DeserializeToInfo`). The offline build ignored the offset while `master_global.service_stop_day` existed (docs/server-rules.md, conventions).
 - **Shapes:** list infos take msgpack arrays of element maps; map infos (`AddCharacter`, `MissionResultCharacter`, `LimitBreakCharacter`, `...Map`) take a map keyed by the id, **as a string** (our server) or as a uint; an array is ignored ([ason.md](ason.md#id-keyed-maps)).
-- **Common post-apply steps:** `AddItem` (new items `AddItem` → owned items), `AddCharacter` (new characters `AddCharacter` → roster, no duplicate check), the limit-break sync (`LimitBreakCharacter` → owned characters' count and level cap), `UpdateStackItem` (`UpdateStockItem` / `HostPlayer.UpdateStockItem` deltas → owned stack items; count 0 erases), `AddPresentBox` (`AddPresent`).
+- **Common post-apply steps:** `AddItem` (new items `AddItem` → owned items; a map {uid: CItemInfo}: `CAddItemList` is an `IInfoBaseMap<u64, CItemInfo>` whose `DeserializeArray` @0163d574 returns 0, so an array is ignored; docs/server-rules.md#conventions), `AddCharacter` (new characters `AddCharacter` → roster, no duplicate check), the limit-break sync (`LimitBreakCharacter` → owned characters' count and level cap), `UpdateStackItem` (`UpdateStockItem` / `HostPlayer.UpdateStockItem` deltas → owned stack items; count 0 erases), `AddPresentBox` (`AddPresent`).
 - **Player fields** (`data.Player`, CPlayerInfo): id, name, level, exp, stamina, stamina_max, stamina_update (timestamp of the last stamina change), stamina_max_time, fol, party_id, tutorial_status, view_status(2), item_stock, gear_stock, storage_stock, follow_max, title, mascot_id, home_pc_id, support_pc_id, world_map_progress(_ep3), is_rookie, is_3d_home, inquiry_rank/point, vip_point, kiyaku_version, created_at, last_login_at, time_saving_use_count, tower_try_count, sphere211_revive_count, favor_bonus_received_at, stamina_update_by_favor. The wallet is `data.Wallet` (free_coin, pay_coin, total_coin, android_coin).
 
 ## Wire format
@@ -557,13 +557,13 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `58123949`
 - **Method** `SetStampSlot(Framework::CSTLVector<unsigned int> const&)`; wire `SendSetStampSlot(RequestHeader, unsigned int const*, unsigned int)`
 - **Wire**: request fid `58123949`, encrypted: RequestHeader(16) · u32 n + n×u32 = 20 bytes + payload; reply `SetStampSlotRes` fid `7c49b449`
-- **Request**: `vector<u32>` stamp ids for the chat stamp palette
-- **Response** (`data.*`): `StampSlot`
-- **Handler / effect**: Plain apply.
+- **Request**: `vector<u32>` the chat stamp palette, slot by slot (page × 4 + position; 0 an empty slot; the screen sends its whole palette, `master_global.stamp_page_max` × 4 entries)
+- **Response** (`data.*`): `StampSlot` (`CStampSlotInfo`, a plain u32 array), `StampList` (`CStampList`, the owned master_stamp ids)
+- **Handler / effect**: Plain apply (`OnSetStampSlotRes` deserializes the answer into the client's lists). The local server stores the palette (`stamp_slots`; docs/server-rules.md#stamps); `StampList` and `StampSlot` are also on every full player load.
 - **Callers** (fid constant scan): `CStampSelect::StampUpdate`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/stamps.cpp`), in-process through the FakeApiCaller's request lambda (already queued with this FunctionID and `OnSetStampSlotRes`)
 - **Master tables**: `master_stamp`, `master_global.stamp_kind/stamp_page_max`
-- **FakeApiCaller**: `FakeApi/compose.msgp`
+- **FakeApiCaller**: `FakeApi/compose.msgp` (the lambda's file name only: the in-process server answers it)
 
 ### SetTitle
 - **FunctionID** `4332363c`
@@ -694,7 +694,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Status**: **online**
 - **Master tables**: `master_mission` (`exp`, `pc_exp`, `fol`), `master_player_level`, `master_character_common_parameter.next_exp`, `master_role_level_max`, `master_mission_clear_present`, `master_battle_evaluation`, `master_favor_battle_effect`, `master_favor_level`, `master_mission_character_bonus`
 - **FakeApiCaller**: `FakeApi/mission_end.msgp`
-- **Notes**: Port route: answered from `mission_end.msgp` (fake server).
+- **Notes**: Port route: answered by the in-process server (`mission_end.msgp` is the request's file name on the FakeApiCaller route).
 
 ### MissionFailed
 - **FunctionID** `479604f6`
@@ -740,7 +740,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Status**: **online**
 - **Master tables**: `master_mission` (+ `_event_mission`, `_tower_mission`, `_training_mission`, `_world_map_mission`), `master_mission_stage`, `master_mission_drop`, `master_common_drop`, `master_campaign(_drop)`, `master_battle_evaluation`, `master_role`, `master_rank`, `master_character_common_parameter`, `master_item`, `master_weapon`, `master_skill*`, `master_awaken`, `master_talent`
 - **FakeApiCaller**: `FakeApi/mission_start.msgp`
-- **Notes**: Port route: `mission:` / `phase:` debug commands with `--fake-server`; see notes "Playing a battle and a gacha through". Seen on the restore route (agent events-core): for an event mission whose helper list is its `master_mission_npc` NPCs (`CParameterUtility::CreateRentalListAuto`), picking one sends helper index 1 and the NPC's `master_npc_base_parameter` id as the NPC helper argument (e.g. `1 74980259 1 0 896388396 0 0`); 選択しない sends 0s.
+- **Notes**: Port route: `mission:` / `phase:` debug commands with the in-process server; see notes "Playing a battle and a gacha through". Seen on the restore route (agent events-core): for an event mission whose helper list is its `master_mission_npc` NPCs (`CParameterUtility::CreateRentalListAuto`), picking one sends helper index 1 and the NPC's `master_npc_base_parameter` id as the NPC helper argument (e.g. `1 74980259 1 0 896388396 0 0`); 選択しない sends 0s.
 
 ### MissionTalk
 - **FunctionID** `816dc8b4`
@@ -1783,7 +1783,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Callers** (fid constant scan): `CGacha::Initialize`
 - **Status**: **online**
 - **Master tables**: `master_gacha` (`opened_at`/`closed_at`, `limit_count`, `day_limit_count`), `master_gacha_image`, `master_gacha_pickup`
-- **Notes**: `CGacha::Initialize`. Port route: served by the fake server (`gacha_in_data.msgp`).
+- **Notes**: `CGacha::Initialize`. Port route: queued by the port on the FakeApiCaller route (`gacha_in_data.msgp`) and answered by the in-process server.
 
 ### GetGachaRate
 - **FunctionID** `d6bcb49d`
@@ -1842,7 +1842,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Request**: as Android
 - **Response** (`data.*`): as Android
 - **Handler / effect**: Plain apply.
-- **Status**: **no caller found** (in 3.7.0 or the offline build)
+- **Status**: **no caller found** (in 3.7.0 or the offline build); answered by the local server as the Android one (`server/src/api/shop/coins.cpp`)
 - **Notes**: The method body returns Status 0 without sending, in both builds (Amazon store support was dropped before 3.7.0).
 
 ### CoinDepositAndroidUpdate
@@ -1853,7 +1853,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `Wallet`, `PurchasedItemInfo`, `AddItem`, `UpdateStockItem`
 - **Handler / effect**: Apply + AddItem + AddCharacter + limit-break sync + UpdateStackItem.
 - **Callers** (fid constant scan): `CPaymentManager::Progress_Purchase`, `CPaymentManager::Progress_Reverify`, `CPaymentManager::VerifyReceipt_`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/shop/coins.cpp`: the product's stones credited, paid and free, no receipt validation (docs/server-rules.md#paid-currency))
 
 ### CoinDepositCreate
 - **FunctionID** `3850fb96`
@@ -1863,7 +1863,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `CoinDeposit` {deposit_trans_id}
 - **Handler / effect**: Plain apply. Starts a real-money purchase.
 - **Callers** (fid constant scan): `CDirectItemShop::CreateTabList`, `CPaymentManager::Progress_Purchase`, unnamed code near `CCoinShop`, unnamed code near `ItemShopUtility`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/shop/coins.cpp`: a pending purchase, `CoinDeposit.deposit_trans_id` (docs/server-rules.md#paid-currency)). The third argument is the literal `"user_id"` (`CPaymentManager::Progress_Purchase`).
 
 ### CoinDepositIOSUpdate
 - **FunctionID** `c5193b15`
@@ -1872,17 +1872,17 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Request**: as Android
 - **Response** (`data.*`): as Android
 - **Handler / effect**: As Android.
-- **Status**: **no caller found** (in 3.7.0 or the offline build)
+- **Status**: **no caller found** (in 3.7.0 or the offline build); answered by the local server as the Android one (`server/src/api/shop/coins.cpp`)
 
 ### CoinList
 - **FunctionID** `d859bb89`
 - **Method** `CoinList(void)`
 - **Wire**: request fid `d859bb89`, encrypted: RequestHeader(16) = 16 bytes; reply `CoinListRes` fid `8dcb5344`
 - **Request**: none
-- **Response** (`data.*`): `CoinList` [CCoinInfo: product_id, free_coin, ..., limit_count, bought_at]
+- **Response** (`data.*`): `CoinList` {id: CCoinInfo: id, product_id, coin, free_coin, yen, order_id, icon_id, name, name_label, title_label, description_label, opened_at, closed_at, limit_count, limit_num, interval_day, bonus_type, bonus_id, bonus_id_label, is_once, sale_type, starter_limit_day, is_view_closed_at, bought_at}
 - **Handler / effect**: Plain apply.
-- **Status**: **no caller found** (in 3.7.0 or the offline build)
-- **Notes**: No caller found (the coin shop was stopped: `pay_back_stop`).
+- **Status**: **no caller found** (in 3.7.0 or the offline build); answered by the local server (`server/src/api/shop/coins.cpp`: the products; the same `CoinList` rides on every full player load, which `CPaymentManager::Init_` needs at login (docs/server-rules.md#paid-currency))
+- **Notes**: No caller found: the client gets the list with the player load. The 3.7.0 client stopped selling 紋章石 (docs/server-rules.md#paid-currency "How a player reaches the coin shop").
 
 ### DirectItemShopList
 - **FunctionID** `c367268b`
@@ -1892,7 +1892,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `DirectItemShopInfoList`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CShop::ProgressDirectItemShop`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/shop/coins.cpp`: an empty `DirectItemShopInfoList`, nothing to sell (docs/server-rules.md#paid-currency))
 - **Master tables**: `master_direct_item_shop`
 
 ### ExItemShop

@@ -390,7 +390,7 @@ std::vector<u8> material_compose(Ctx& ctx, const Request& req) {
     Value added_items = Value::array(), stocks = Value::array(), chars = Value::array();
     ctx.grant(result_type ? result_type : kContentStackItem, result_id, result_num * times, added_items, stocks, chars);
     Value data = ctx.base_data();
-    if (!added_items.arr.empty()) data["AddItem"] = added_items;
+    ext::add_items(data, added_items);
     data["StockItem"] = ctx.stock();
     LOGI("server", "MaterialCompose %u x%u: item %u x%u, FOL -%u", id, times, result_id, result_num * times, cost * times);
     return body(data);
@@ -469,7 +469,9 @@ std::vector<u8> sell_item(Ctx& ctx, const Request& req) {
 // Answers: the player state and Item.
 std::vector<u8> lock_item(Ctx& ctx, const Request& req) {
     bool on = req.method.rfind("Lock", 0) == 0;
-    for (ItemUid uid : item_uid_list(req)) ctx.st.q("update items set locked = ? where uid = ?", {on ? 1 : 0, uid});
+    const std::vector<ItemUid> uids = item_uid_list(req);
+    for (ItemUid uid : uids) ctx.st.q("update items set locked = ? where uid = ?", {on ? 1 : 0, uid});
+    LOGI("server", "%s: %zu items %s", req.method.c_str(), uids.size(), on ? "locked" : "unlocked");
     Value data = ctx.base_data();
     data["Item"] = ctx.items();
     return body(data);

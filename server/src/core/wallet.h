@@ -34,6 +34,8 @@ void take(sqlite3* st, const CoinSplit& s);
 bool spend_coins(sqlite3* st, u32 price, bool paid_only = false);
 // Adds free coins (a granted content type 4).
 void add_free_coins(sqlite3* st, u32 n);
+// Adds paid coins (a coin-shop purchase: api/shop/coins.cpp, docs/server-rules.md#paid-currency).
+void add_paid_coins(sqlite3* st, u32 n);
 
 // ---- FOL --------------------------------------------------------------------------------------
 u32 fol(sqlite3* st);

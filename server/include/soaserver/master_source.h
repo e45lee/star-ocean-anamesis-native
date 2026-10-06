@@ -9,7 +9,7 @@
 //   2. data/basmaster-3.7.0.sqlite3 in the repo roots (a source checkout; find_repo_file);
 //   3. derived from the 3.7.0 download's sqlite/basmaster.sqlite3 (ADLD v2, the full 3.7.0 master
 //      the client fetches after login): config().download_dir, else the repo's
-//      work/download-3.7.0, else the download in the install dirs (soa/game_files.h
+//      work/download-3.7.0 (else its work/SOA-3.7.0-canonical-data.zip), else the download in the install dirs (soa/game_files.h
 //      find_download); the download a folder or the zip, read in place (soa/file_tree.h);
 //   4. derived from the 3.7.0 APK's assets/builtin_data/sqlite/basmaster.sqlite3 (the app's
 //      built-in, OLDER master: logged as a warning; content added after the APK was built is

@@ -145,9 +145,9 @@ void add_drop(Ctx& c, Value& d, u32 type, u32 id, u32 num, u32 drop_type) {
     };
     for (Value e : items.arr) {
         e["drop_type"] = drop_type;
-        Value& add = d["AddItem"];
-        if (add.type != Value::Arr) add = Value::array();
-        add.push(e);
+        Value one = Value::array();
+        one.push(e);
+        add_items(d, one);
         e["id"] = e.get_u("master_item_id");
         list("item").push(e);
     }
@@ -226,6 +226,13 @@ const Handler* find(const std::string& method) {
 void player_load(Ctx& c, const Request& r, Value& data) {
     modules::register_all();
     for (auto& f : loads()) f(c, r, data);
+}
+
+void add_items(Value& data, const Value& items) {
+    if (items.type != Value::Arr || items.arr.empty()) return;
+    Value& add = data["AddItem"];
+    if (add.type != Value::Map) add = Value::object();
+    for (const Value& item : items.arr) add[std::to_string(item.get_u("id"))] = item;
 }
 
 double global_f(Ctx& c, const char* key, double dflt) { return master::global_f(c.m.h, key, dflt); }

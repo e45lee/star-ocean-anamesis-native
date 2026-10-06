@@ -277,7 +277,7 @@ Value mission_end_data(ext::Ctx& ctx, MissionEnd& end) {
     data["Achievement"] = ext::achievement_state(ctx);
     data["DropList"] = drop_list_info(end);
     if (end.first_clear) data["ClearPresentList"] = clear_present_list_info(end);
-    if (!end.added_items.arr.empty()) data["AddItem"] = end.added_items;
+    ext::add_items(data, end.added_items);
     if (!end.added_stocks.arr.empty()) data["StockItem"] = stack_item_info_list(ctx);
     if (!end.added_characters.arr.empty()) {
         Value add_character = Value::object();

@@ -1950,6 +1950,44 @@ const char* const kMastery[] = {
 ) strict)",
 };
 
+// ---- step 18: the coin shop's purchases (CoinDepositCreate, CoinDeposit*Update) -------------------
+//
+// coin_deposit: one row per purchase started (api/shop/coins.cpp): the trans id the client echoes
+// (CoinDeposit.deposit_trans_id), the product (CCoinInfo.id: its master_text labels' number, not a
+// master row), the platform the client sent, when it started and when it completed (NULL: pending),
+// and the stones it credited (paid / free). Nothing existed before, so nothing is migrated.
+const char* const kCoinDeposit[] = {
+    R"(create table if not exists coin_deposit (
+  trans_id integer primary key,
+  product_id integer not null,
+  platform integer not null,
+  created_at integer not null,
+  completed_at integer,
+  paid integer not null default 0,
+  free integer not null default 0
+) strict)",
+};
+
+// ---- step 19: the chat stamps (SetStampSlot) ----------------------------------------------------
+//
+// stamps: the master_stamp ids the player owns (StampList; api/player/stamps.cpp). got_at NULL: a
+// default stamp (master_stamp.type 1), owned from the start; else the time a grant (content type 12)
+// added it. stamp_slots: the スタンプ編成 palette (StampSlot), one row per slot from 0 (page * 4 +
+// position); stamp_id NULL: an empty slot. No row at all: the player never set it (the default
+// palette). No foreign key: the stamp is a master reference (state::master_refs). Nobody owned a
+// stamp before (the server sent no StampList).
+constexpr int kStampsVersion = 19;
+const char* const kStamps[] = {
+    R"(create table stamps (
+  id integer primary key,
+  got_at integer
+) strict)",
+    R"(create table stamp_slots (
+  slot integer primary key check (slot >= 0),
+  stamp_id integer
+) strict)",
+};
+
 }  // namespace
 
 const std::vector<const char*>& baseline_sql() {
@@ -2018,6 +2056,11 @@ const std::vector<Step>& steps() {
          "mastery: the 師弟 pairs (GetMasteryInfo, TrainMastery, ResetMastery); player.mascot_id (ChangeMascot)",
          {std::begin(kMastery), std::end(kMastery)},
          nullptr},
+        {18,
+         "the coin shop's purchases: coin_deposit (CoinDepositCreate, CoinDepositAndroidUpdate)",
+         {std::begin(kCoinDeposit), std::end(kCoinDeposit)},
+         nullptr},
+        {kStampsVersion, "the chat stamps: stamps, stamp_slots (SetStampSlot, StampList)", {std::begin(kStamps), std::end(kStamps)}, nullptr},
     };
     return s;
 }

@@ -23,14 +23,16 @@ void config_from_options(const std::string& data_dir);
 // The arguments of a FakeApiCaller request method, read from the guest registers x0..x7 (x0 =
 // this) by walking the method's mangled parameter list (`mangled`: its symbol): j/m/h/i/a/b
 // integers (only the argument's bits, zero-extended), PKa strings,
-// RKN9Framework10CSTLVectorI{m,j}EE vectors; f/d (floats, in s/d registers) and z (varargs) end
-// the walk.
-server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint64_t* x);
+// RKN9Framework10CSTLVectorI{m,j}EE vectors; z (varargs: LockItem(u32 count, ...), ItemCompose(u64,
+// u32 count, ...), GetPresent(u64 count, ...)): the last integer is the count of u64 uids that
+// follow, in x registers then at `stack` (the guest sp at the method's entry; nullptr: registers
+// only), taken as one vector, the wire's shape; f/d (floats, in s/d registers) end the walk.
+server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint64_t* x, const uint64_t* stack = nullptr);
 // The request as the 3.7.0 wire carries it: capture_from_guest plus, for MissionEnd,
 // MissionFailed, Sphere211MissionEnd and Sphere211MissionFailed, the battle log the client's own
 // serializer makes (client_battle_log.h) as Request::battle_log (none, logged, when the client
 // wouldn't send it: over 0x1000 bytes).
-server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t* x);
+server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t* x, const uint64_t* stack = nullptr);
 // The requests the client made, kept until FakeApiCaller's Progress answers them through
 // server::answer (fakeapi.cpp ServeProgress), one per FunctionID (the queue's key): remember()
 // keeps `r` (the last one of its fid wins, as in the queue), take() hands it over (a request of
@@ -38,7 +40,7 @@ server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t
 void remember(server::Request r);
 server::Request take(uint32_t fid);
 // inproc_request + remember, when the server is on (what the FakeApiCaller hooks call).
-void capture(const char* mangled, uint32_t fid, const uint64_t* x);
+void capture(const char* mangled, uint32_t fid, const uint64_t* x, const uint64_t* stack = nullptr);
 
 // --server inproc: the library's CDN (soaserver/cdn.h) on soa-server's HTTP router, installed as
 // platform370's HTTP backend: no socket, no thread (server_cdn.cpp); sets config().cdn_url so Login

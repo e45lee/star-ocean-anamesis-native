@@ -175,12 +175,8 @@ int main(int argc, char** argv) {
     // FakeApiCaller route, plus the 3.7.0 download tree; explicit settings win.
     if (srv.enabled) {
         // Defaults from the repo (core/paths.h), whatever the working directory.
-        if (cl.fake_server_dir.empty()) {
-            std::string d = find_repo_file("port/fakeapi/responses");
-            cl.fake_server_dir = d.empty() ? "." : d;
-        }
         // Required in-process: the route's client has no CDN to download from.
-        if (download_dir.empty()) download_dir = find_repo_file("work/download-3.7.0");
+        if (download_dir.empty()) download_dir = find_repo_file({install::kRepoDownloadDir, install::kRepoDownloadZip});
         if (download_dir.empty()) {
             // a release package: a download tree beside the program or in game/ (soa/install.h)
             std::vector<std::string> notes;
@@ -189,13 +185,12 @@ int main(int argc, char** argv) {
             if (!download_dir.empty()) LOGI("main", "the 3.7.0 download %s (found beside the program)", download_dir.c_str());
         }
         if (download_dir.empty() || !file_exists(download_dir))
-            fatal("--server inproc needs the 3.7.0 download: give --download PATH (a folder or SOA-3.7.0-canonical-data.zip; default <repo>/work/download-3.7.0, %s); %s",
+            fatal("--server inproc needs the 3.7.0 download: give --download PATH (a folder or SOA-3.7.0-canonical-data.zip; default <repo>/work/download-3.7.0, else <repo>/work/SOA-3.7.0-canonical-data.zip, %s); %s",
                   download_dir.empty() ? "not found" : "missing", install::missing_hint().c_str());
         if (cl.standin_dir.empty() && !cl.standin_off) cl.standin_dir = find_repo_file("standin-assets");
         if (srv.db.empty()) srv.db = data_dir + "/server.sqlite3";
         srv.client_save = data_dir + "/data/shared_prefs/Game.xml";  // the last seed fallback (state/seed.h)
-        LOGI("main", "server inproc: local server on the FakeApiCaller route, fake server dir %s, download dir %s", cl.fake_server_dir.c_str(),
-             download_dir.c_str());
+        LOGI("main", "server inproc: local server on the FakeApiCaller route, download dir %s", download_dir.c_str());
     } else {
         LOGI("main", "server %s:%d (soa-server over TCP + HTTP; the client's own NetworkApiCaller), no FakeApiCaller route",
              p370.netcfg.server_host.c_str(), p370.netcfg.server_port);

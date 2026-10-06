@@ -71,7 +71,11 @@ void config_from_options(const std::string& data_dir) {
     packet_log::open(o.log_packets);
 }
 
-server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint64_t* x) {
+// More variadic arguments than any of the client's calls passes (a material list, a sale) is a bad
+// count: nothing is read.
+static constexpr size_t kMaxVarargs = 1000;
+
+server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint64_t* x, const uint64_t* stack) {
     server::Request r;
     r.fid = fid;
     const char* p = mangled + strlen("_ZN13FakeApiCaller");
@@ -82,10 +86,28 @@ server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint
     if (*p == 'E') p++;
     int reg = 1;
     char last_vec = 0;  // the element type of the last CSTLVector argument ('m' / 'j')
+    // The Itanium substitution candidates after S_ (FakeApiCaller) a string argument adds: "Ka" /
+    // "Kc" (S0_, ...) and "PKa" / "PKc"; a later S<n>_ naming a P one is another string argument
+    // (CoinDepositAndroidUpdate(u32, char const*, char const*) is "EjPKcS1_").
+    std::vector<bool> subst_is_str;
+    auto take_str = [&] {
+        const char* s = (const char*)x[reg++];
+        r.strs.push_back(s ? s : "");
+    };
+    // whether p is an S<n>_ substitution naming a string argument's type
+    auto string_subst = [&](const char* q) {
+        if (q[0] != 'S' || !(q[1] >= '0' && q[1] <= '9') || q[2] != '_') return false;
+        size_t k = (size_t)(q[1] - '0') + 1;
+        return k <= subst_is_str.size() && subst_is_str[k - 1];
+    };
     while (*p && reg < 8) {
-        if (!strncmp(p, "PKa", 3)) {
-            const char* s = (const char*)x[reg++];
-            r.strs.push_back(s ? s : "");
+        if (!strncmp(p, "PKa", 3) || !strncmp(p, "PKc", 3)) {
+            take_str();
+            subst_is_str.push_back(false);  // Ka / Kc
+            subst_is_str.push_back(true);   // PKa / PKc
+            p += 3;
+        } else if (string_subst(p)) {
+            take_str();
             p += 3;
         } else if (!strncmp(p, "RKN9Framework10CSTLVectorI", 26) || (*p == 'S' && last_vec && strchr(p, '_'))) {
             // a vector argument; "S<seq>_" repeats an earlier one's type (the Itanium substitution:
@@ -112,8 +134,30 @@ server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint
             else if (strchr("ts", *p)) v = (u16)v;
             r.ints.push_back(v);
             p++;
+        } else if (*p == 'z' && !r.ints.empty()) {
+            // varargs: (u32 count, ...) / (u64 count, ...) each a u64 uid (b: NetworkApiCaller::
+            // LockItem @015c1db8, ItemCompose @015bc644, GetPresent @015c2810 va_arg a u64 `count`
+            // times into a CSTLVector<u64> and call the vector method; AAPCS64: the variadic ones
+            // in the x registers after the fixed ones, then on the stack at the entry sp). The
+            // count is the last fixed argument; the request carries the vector, as the wire does
+            // (SetLockItem(..., u64 const*, u32)).
+            const u64 count = r.ints.back();
+            r.ints.pop_back();
+            std::vector<u64> out;
+            if (count > kMaxVarargs) {
+                LOGW("server", "%s: %llu variadic uids (at most %zu): none taken", r.method.c_str(), (unsigned long long)count, kMaxVarargs);
+            } else {
+                size_t on_stack = 0;
+                for (u64 i = 0; i < count; i++) {
+                    if (reg < 8) out.push_back(x[reg++]);
+                    else if (stack) out.push_back(stack[on_stack++]);
+                    else break;  // (the test callers pass registers only)
+                }
+            }
+            r.vecs.push_back(out);
+            break;
         } else {
-            break;  // v (none), f, z
+            break;  // v (none), f
         }
     }
     return r;
@@ -136,8 +180,8 @@ static void to_wire_shape(server::Request& r) {
     }
 }
 
-server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t* x) {
-    server::Request r = capture_from_guest(mangled, fid, x);
+server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t* x, const uint64_t* stack) {
+    server::Request r = capture_from_guest(mangled, fid, x, stack);
     if (r.method == "SetCharacterDeco") {
         // FakeApiCaller::SetCharacterDeco() takes no arguments: the payload is the client's
         // CCharacterDecoSendInfo, serialized as NetworkApiCaller's lambda does (the wire's blob,
@@ -193,9 +237,9 @@ server::Request take(uint32_t fid) {
     return r;
 }
 
-void capture(const char* mangled, uint32_t fid, const uint64_t* x) {
+void capture(const char* mangled, uint32_t fid, const uint64_t* x, const uint64_t* stack) {
     if (!server::enabled()) return;
-    remember(inproc_request(mangled, fid, x));
+    remember(inproc_request(mangled, fid, x, stack));
 }
 
 }  // namespace soa::server_port

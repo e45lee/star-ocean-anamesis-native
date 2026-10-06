@@ -11,7 +11,8 @@
 #   the others go to soa-emu.exe (e.g. --fullscreen, --headless)
 # The first start downloads about 3 GB of game data from the local server.
 # Needs: build-win\ (scripts/build.sh --windows), work\libSOA-3.7.0.so, the 3.7.0 APK in apk\,
-# data\basmaster-3.7.0.sqlite3 and work\download-3.7.0 (README.md "Game files").
+# data\basmaster-3.7.0.sqlite3 and the 3.7.0 download for the server, work\download-3.7.0 or else
+# work\SOA-3.7.0-canonical-data.zip (read in place; the staged copy has the zip: README.md "Game files").
 $ErrorActionPreference = "Stop"
 $repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 $emu = Join-Path $repo "build-win\emulator\soa-emu.exe"
@@ -34,15 +35,19 @@ $httpPort = $port + 80
 foreach ($f in @($emu, $srv)) {
     if (-not (Test-Path $f)) { Write-Error "run-emulator-370: $f isn't built; run scripts/build.sh --windows" }
 }
-foreach ($f in @("work\libSOA-3.7.0.so", "apk\STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk", "data\basmaster-3.7.0.sqlite3", "work\download-3.7.0")) {
+foreach ($f in @("work\libSOA-3.7.0.so", "apk\STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk", "data\basmaster-3.7.0.sqlite3")) {
     if (-not (Test-Path (Join-Path $repo $f))) { Write-Error "run-emulator-370: $f is missing; see README.md" }
 }
+# the download: the folder, else the zip
+$download = Join-Path $repo "work\download-3.7.0"
+if (-not (Test-Path $download)) { $download = Join-Path $repo "work\SOA-3.7.0-canonical-data.zip" }
+if (-not (Test-Path $download)) { Write-Error "run-emulator-370: the 3.7.0 download, work\download-3.7.0 or work\SOA-3.7.0-canonical-data.zip, is missing; see README.md" }
 $phone = Join-Path $home_dir "phone"; $state = Join-Path $home_dir "server"; $slog = Join-Path $home_dir "server.log"
 New-Item -ItemType Directory -Force -Path $phone, $state | Out-Null
 Write-Host "== starting soa-server (game 127.0.0.1:$port, http 127.0.0.1:$httpPort; data $state)"
 $sp = Start-Process -FilePath $srv -WorkingDirectory $repo -NoNewWindow -PassThru -RedirectStandardOutput $slog `
     -RedirectStandardError "$slog.err" -ArgumentList (@("--listen", "127.0.0.1:$port", "--http", "127.0.0.1:$httpPort",
-    "--data", "`"$state`"", "--download-dir", "`"$(Join-Path $repo 'work\download-3.7.0')`"") + $srvArgs)
+    "--data", "`"$state`"", "--download-dir", "`"$download`"") + $srvArgs)
 try {
     $up = $false
     for ($t = 0; $t -lt 240; $t++) {

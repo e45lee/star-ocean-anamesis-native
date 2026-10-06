@@ -223,6 +223,14 @@ bool with_scratch_server(u64 seed, const std::function<void(Ctx&)>& fn);
 // The response envelope {"data": ..., "status": 0}.
 std::vector<u8> body(Value data, u32 status = 0);
 
+// AddItem: the weapons / accessories a response added (CItemInfo entries, `items` an array as
+// grant() lists them), merged into data["AddItem"] as a map keyed by each item's uid as a string.
+// (b) CAddItemList is an IInfoBaseMap<u64, CItemInfo>: its DeserializeArray (@0163d574) returns 0,
+// so an array is ignored, and DeserializeChild (@0163d57c) reads each entry under its key
+// (InfoBaseNumberMap::ConvertParserValueToKey @0163d740: a string or an integer); the keys are
+// strings like the server's other maps (AddCharacter). Nothing is added for an empty `items`.
+void add_items(Value& data, const Value& items);
+
 // master_global value as a double (e.g. "11.5"), (a).
 double global_f(Ctx& c, const char* key, double dflt);
 

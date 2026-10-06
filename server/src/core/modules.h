@@ -41,6 +41,7 @@ void register_subscription();  // api/shop/subscription.cpp
 void register_title();         // api/player/titles.cpp
 void register_worldboss();     // api/events/world_boss.cpp
 void register_mastery();       // api/growth/mastery.cpp: GetMasteryInfo, TrainMastery, ResetMastery
+void register_deco();          // api/player/deco.cpp: the character decorations (キャラデコ)
 }  // namespace soa::server
 namespace soa::server::events {
 void register_event();  // api/events/event_missions.cpp: event missions, campaigns (master_campaign)

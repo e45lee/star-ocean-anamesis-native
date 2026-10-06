@@ -5,7 +5,8 @@
 # accepted with item_set_00003 bought twice; a pass-medal training refused),
 # ResetMastery both ways round, and GetPlayer; then ChangeRole (the seed's cp0010_b01a_6165 to
 # role_cp0010_b01a_6161, again, another person's character) and ChangeMascot (a type-3
-# master_home_message person, an unknown id), GetPlayer.
+# master_home_message person, an unknown id), GetPlayer; the decorations with none owned: GetDecoInfo,
+# Favorite / UnFavoriteDecoObject (skipped), SetCharacterDeco refused (a decoration not owned, no payload).
 # tz: America/Toronto
 req 1 1790856005 Login a01c67ef - - - -
 req 2 1790856010 ExItemShop 33d09fb7 1875469583 - - -
@@ -41,3 +42,8 @@ req 31 1790856155 ChangeRole 720e2bac 2113929230,2696629700 - - -
 req 32 1790856160 ChangeMascot d1bcebee 1858102629 - - -
 req 33 1790856165 ChangeMascot d1bcebee 12345 - - -
 req 34 1790856170 GetPlayer 9a056905 - - - -
+req 35 1790856175 GetDecoInfo 33015ed5 - - - -
+req 36 1790856180 FavoriteDecoObject 2b486f97 - - 3308518813 -
+req 37 1790856185 UnFavoriteDecoObject 6c67993d - - 3308518813 -
+req 38 1790856190 SetCharacterDeco 0747f39c - 84ac6368617261637465725f6964ce7e00000ea7686169725f696400a7706f73655f696400b34368617261637465724465636f4f626a6563749183a5696e64657800b56d61737465725f6465636f5f6f626a6563745f6964cec533fd9dab6174746163685f7479706501 - -
+req 39 1790856195 SetCharacterDeco 0747f39c - - - -

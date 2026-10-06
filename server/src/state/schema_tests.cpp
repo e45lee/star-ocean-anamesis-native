@@ -164,10 +164,10 @@ NATIVE_TEST("server/schema-fresh-equals-migrated") {
         for (auto& s : sb)
             if (!ia.count(s)) t.fail("only migrated: %s", s.c_str());
     }
-    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)54,
+    t.expect_eq(a.one("select count(*) from sqlite_master where type = 'table' and name != 'sqlite_sequence'", {}), (int64_t)56,
                 "the 58 baseline tables less the 4 S2 drops, less sphere_meta, plus ds_state (S3), less roster_ext and assist (S4), less party (S6), "
                 "less play_ext, plus play_member and ds_ship_member (S7), less present_texts (S8), plus campaign_clear and campaign_last (S12), "
-                "plus mastery (v13)");
+                "plus mastery, deco_owned and character_deco (v13)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name like 'roster_%'", {}), (int64_t)3,
                 "roster's three unique indexes (S4)");
     t.expect_eq(a.one("select count(*) from sqlite_master where type = 'index' and name = 'gear_items_slot'", {}), (int64_t)1,
@@ -1482,8 +1482,8 @@ NATIVE_TEST("server/schema-migrate-v12") {
     }
 }
 
-// Version 13: the mastery table (GetMasteryInfo / TrainMastery / ResetMastery) and
-// player.mascot_id (ChangeMascot). The version is
+// Version 13: the mastery table (GetMasteryInfo / TrainMastery / ResetMastery),
+// player.mascot_id (ChangeMascot), deco_owned and character_deco (キャラデコ). The version is
 // written once here (kV) so a renumbering at merge changes one line. (1) v0 -> v13: every table's
 // rows as the same file at version 12, an empty mastery table; .bak-v0. (2) a planted v12 file ->
 // 13 without the master: the table, its checks and cascades, .bak-v12 without it.
@@ -1502,8 +1502,10 @@ NATIVE_TEST("server/schema-migrate-v13") {
         t.expect_eq(state::open_and_migrate(db.h, old.path, kV, m), true, "v0 -> v13");
         t.expect_eq(state::user_version(db.h), kV, "user_version");
         std::map<std::string, std::vector<std::string>> ra = rows_of(ref), rb = rows_of(db);
-        t.expect_eq(rb.count("mastery") == 1 && rb["mastery"].empty(), true, "an empty mastery table");
-        rb.erase("mastery");
+        for (const char* table : {"mastery", "deco_owned", "character_deco"}) {
+            t.expect_eq(rb.count(table) == 1 && rb[table].empty(), true, (std::string("an empty ") + table + " table").c_str());
+            rb.erase(table);
+        }
         ra.erase("player");
         rb.erase("player");
         t.expect_eq(ra == rb, true, "every other table's rows as at the version before");
@@ -1546,13 +1548,19 @@ NATIVE_TEST("server/schema-migrate-v13") {
         t.expect_eq(fk_violations(f), 0, "foreign_key_check");
         t.expect_eq(f.one("select count(*) from player where mascot_id is null", {}), f.one("select count(*) from player", {}),
                     "player.mascot_id: NULL (never chosen)");
+        t.expect_eq(ok("insert into deco_owned (master_deco_id, is_favorite, created_at) values (7, 2, 0)"), false, "is_favorite 0 / 1");
+        t.expect_eq(ok("insert into deco_owned (master_deco_id, created_at) values (7, 0)"), true, "an owned decoration");
+        t.expect_eq(ok("insert into deco_owned (master_deco_id, created_at) values (7, 0)"), false, "one of each");
+        t.expect_eq(ok("insert into character_deco (uid, hair_id, objects) values (" + B + ", 0, '90')"), true, "a character's decorations");
         t.expect_eq(ok("delete from roster where uid = " + B), true, "the master goes");
         t.expect_eq(f.one("select count(*) from mastery", {}), (int64_t)0, "its pair with it (cascade)");
+        t.expect_eq(f.one("select count(*) from character_deco", {}), (int64_t)0, "and its decorations");
         f.close();
         Sql bak;
         if (!bak.open(prev.path + bak_prev, true)) return t.fail("no %s%s", prev.path.c_str(), bak_prev.c_str());
         t.expect_eq(state::user_version(bak.h), kV - 1, "the backup is at the version before");
-        t.expect_eq(bak.one("select count(*) from sqlite_master where name = 'mastery'", {}), (int64_t)0, "the backup has no mastery table");
+        t.expect_eq(bak.one("select count(*) from sqlite_master where name in ('mastery', 'deco_owned', 'character_deco')", {}), (int64_t)0,
+                    "the backup has none of the new tables");
         t.expect_eq(bak.one("select count(*) from pragma_table_info('player') where name = 'mascot_id'", {}), (int64_t)0,
                     "the backup has no mascot_id");
         bak.close();

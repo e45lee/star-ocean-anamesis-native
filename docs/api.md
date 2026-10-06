@@ -445,7 +445,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `FavoriteDecoObjectResult`
 - **Handler / effect**: Inline (native): sets is_favorite.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::vector<CUIUtility::CheckedB`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **FakeApiCaller**: `FakeApi/favorite_deco_object.msgp`
 
 ### GetConfig
@@ -464,10 +464,10 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Method** `GetDecoInfo(void)`
 - **Wire**: request fid `33015ed5`, encrypted: RequestHeader(16) = 16 bytes; reply `GetDecoInfoRes` fid `8f9d68f7`
 - **Request**: none
-- **Response** (`data.*`): `DecoObject` [CDecoObjectInfo {player_id, master_deco_id, is_favorite}], `NumDecoObject`
+- **Response** (`data.*`): `DecoObject` [CDecoObjectInfo {id, player_id, master_deco_id, is_favorite}], `NumDecoObject`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::__hash_table<std::__ndk1::_`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **Master tables**: `master_deco_object`
 - **FakeApiCaller**: `FakeApi/get_deco_info.msgp`
 
@@ -549,7 +549,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `CharacterDeco`, `DecoObject`
 - **Handler / effect**: Inline (native): replaces the character's deco objects.
 - **Callers** (fid constant scan): `CHomeDecoMenu::DecideDecoStatus`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **Master tables**: `master_deco_object`, `master_deco_hair`, `master_deco_offset_type`
 - **FakeApiCaller**: `FakeApi/set_character_deco.msgp`
 
@@ -585,7 +585,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `FavoriteDecoObjectResult`
 - **Handler / effect**: Inline (native): clears is_favorite.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::vector<CUIUtility::CheckedB`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **FakeApiCaller**: `FakeApi/unfavorite_deco_object.msgp`
 
 ### UpdateConfig

@@ -4,6 +4,7 @@
 #include "api/player/roster.h"
 
 #include "api/growth/mastery.h"
+#include "api/player/deco.h"
 
 #include "api/player/player_info.h"  // player_id
 
@@ -60,6 +61,9 @@ Value person_info(ext::Ctx& ctx, const Row& roster_row, PlayerId owner_player_id
         info["parent_master_role_id"] = inh.parent_master_role_id;
         info["mastery_talent_id"] = inh.mastery_talent_id;
     }
+    // (b) CPersonInfo hair_id / pose_id / CharacterDecoObject: the character's decorations
+    // (SetCharacterDeco, api/player/deco.cpp), for a character that has a setting
+    add_character_deco(ctx, uid, info);
     return info;
 }
 

@@ -144,6 +144,13 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Why not server-side:** this *is* the route to the server; the fake caller never implemented the requests.
 - **Switch:** the in-process server (`--server inproc`, the default).
 
+### SetCharacterDeco's payload on the FakeApiCaller route (task U step 3.5)
+- **Symbol:** `FakeApiCaller::SetCharacterDeco()`: no arguments; NetworkApiCaller's request lambda (@015ef218) serializes the client's `CCharacterDecoSendInfo` (CParameterManager+0x8790) with `AsonSerializer` and sends it as the request's blob.
+- **Guest behaviour:** the in-process route captured no argument, so the server had no setting to store (the decoration was lost on the next load).
+- **Change (port-specific, `port/src/native/api/server_adapters.cpp` `inproc_request`, `client_battle_log.cpp` `client_character_deco`):** for SetCharacterDeco the port makes the same bytes with the client's own functions (guest calls: ASON(), `AsonSerializer::Serialize<CCharacterDecoSendInfo>`, `CalcSerializedSize`, `Serialize`) and passes them as the request's string argument, where soa-server's wire decoder puts the blob. The battle log of MissionEnd & co. is made the same way.
+- **Why not server-side:** the server can't read the client's memory; this is the request the client would send.
+- **Switch:** the in-process server (`--server inproc`, the default).
+
 ### The Sphere 211 requests on the FakeApiCaller route (agent `sphere211`)
 - **Symbols:** the base-class stubs `IApiCaller::GetSphere211Info()`, `GetSphere211RankingInfo(bool)`, `Sphere211AutoMemberSelect(u32, u32, u32)`, `Sphere211EquipAuto(u32, u32, vector<u64>)`, `Sphere211MissionContinue(u32, u32, bool)`, `Sphere211MissionEnd(u32, u32)`, `Sphere211MissionFailed(u32, u32)`, `Sphere211MissionStart(u32, u32, u64, u64, u64, u64, u32)`, which `FakeApiCaller` inherits, and `FakeApiCaller`'s own status-only overrides `ReturnSphere211()`, `Sphere211StaminaHeal()`, `Sphere211UseRerollItem()`, `Sphere211FloorClear(u32)`, `Sphere211SelectedFloor(u32)`: the 13 Sphere211 APIs.
 - **Guest behaviour:** each returns a Status and sends nothing, so the Sphere 211 board (`CPhase_Mission` with mission type 5, `CSphere*`) never gets its floor, cells, stamina or results. `NetworkApiCaller` sends them.

@@ -24,4 +24,14 @@ bool serialize_battle_log(u64 info, std::vector<u8>* out, s64* size);
 // The same on the live client's log (CParameterManager+0x52d8); false without a CParameterManager.
 bool client_battle_log(std::vector<u8>* out, s64* size);
 
+// (b) CParameterManager+0x8790: the CCharacterDecoSendInfo SetCharacterDeco's request lambda
+// (3.7.0 @015ef218) serializes: AsonSerializer::Serialize<CCharacterDecoSendInfo>(ason, pm + 0x8790,
+// 0, 0x4000, 1), CalcSerializedSize, Serialize into a buffer of that size (no size limit).
+constexpr u64 kParamCharacterDecoSend = 0x8790;
+
+// The SetCharacterDeco payload of the live client, made as that lambda makes it (the bytes
+// NetworkApiCaller sends as the request's blob); false without a CParameterManager or when the
+// serializer fails (the lambda sends nothing then).
+bool client_character_deco(std::vector<u8>* out);
+
 }  // namespace soa::server_port

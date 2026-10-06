@@ -50,6 +50,9 @@ const std::vector<MasterRef>& master_refs() {
         {"mastery", "type_id", "master_mastery_step", "type_id", false},
         // the home's mascot (schema version 13; NULL: never chosen)
         {"player", "mascot_id", "master_person", "id", false},
+        // the decorations (schema version 13): an object or a hair colour; a character's hair (0: none)
+        {"deco_owned", "master_deco_id", "master_deco_object|master_deco_hair", "id", false},
+        {"character_deco", "hair_id", "master_deco_hair", "id", true},
     };
     return refs;
 }

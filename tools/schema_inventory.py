@@ -425,6 +425,9 @@ RELS = [
     ("mastery", "master_uid", "roster", "uid", None, "CASCADE (v13)", "a 師弟 pair's master (parent_character_id; one pair each)"),
     ("mastery", "type_id", "m:master_mastery_step", "type_id", None, "-", "the pair's mastery type"),
     ("player", "mascot_id", "m:master_person", "id", None, "-", "the home's mascot (ChangeMascot, v13; NULL: never chosen)"),
+    ("deco_owned", "master_deco_id", "m:master_deco_object|master_deco_hair", "id", None, "-", "an owned decoration (v13)"),
+    ("character_deco", "uid", "roster", "uid", None, "CASCADE (v13)", "a character's decorations (SetCharacterDeco)"),
+    ("character_deco", "hair_id", "m:master_deco_hair", "id", 0, "-", "the character's hair colour (0: none)"),
 ]
 
 

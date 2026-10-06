@@ -115,6 +115,16 @@ server::Request capture_from_guest(const char* mangled, uint32_t fid, const uint
 
 server::Request inproc_request(const char* mangled, uint32_t fid, const uint64_t* x) {
     server::Request r = capture_from_guest(mangled, fid, x);
+    if (r.method == "SetCharacterDeco") {
+        // FakeApiCaller::SetCharacterDeco() takes no arguments: the payload is the client's
+        // CCharacterDecoSendInfo, serialized as NetworkApiCaller's lambda does (the wire's blob,
+        // the request's string argument there too; docs/client-changes.md "SetCharacterDeco")
+        std::vector<u8> blob;
+        if (client_character_deco(&blob)) r.strs.push_back(std::string(blob.begin(), blob.end()));
+        else LOGW("server", "SetCharacterDeco: the client's CharacterDeco can't be serialized: no payload");
+        packet_log::request(r, {});
+        return r;
+    }
     if (!server::carries_battle_log(r.method)) {
         packet_log::request(r, {});
         return r;

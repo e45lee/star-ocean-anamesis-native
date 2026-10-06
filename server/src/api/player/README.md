@@ -11,6 +11,7 @@ What the client keeps about the player (CPlayerInfo, CWalletInfo, the roster, th
 | `party.{h,cpp}` | `party_member`, `party_set` (state/schema.cpp) | UpdateParty, UpdatePartySet (PartySetInfo as its serialized text: `parse_party_set_text` → `PartySetText`; tests `party_tests.cpp`: `player/party-set-text`, `player/party-members`) |
 | `assist.cpp` | `roster.assist_uid` (core) | SetAssist (the pairs that `person_info` reports) |
 | `home.{h,cpp}` | `home_character` (core) | UpdateHome (`update_home`: the home character, `Player.home_pc_id`), Home3DAnd2DSwitching, ChangeMascot (`change_mascot`: the home mascot, `Player.mascot_id`) |
+| `deco.{h,cpp}` | `deco` | キャラデコ: GetDecoInfo, SetCharacterDeco, FavoriteDecoObject / UnFavoriteDecoObject, the grants of content types 17 / 18, `NumDecoObject` (a response hook), CPersonInfo's decoration keys (`add_character_deco`) |
 | `home_footer.cpp` | `home` | `FooterMissionInfo` (`OnPlayerLoad`: the home footer's feature flags); the follow menu's lists are `../social/social.cpp`'s |
 | `titles.cpp`, `titles.h` | `title` | SetTitle (`set_title`, its args struct `args::SetTitleArgs` beside it); a new player's titles (`new_player_titles`: the seed, CreatePlayer); title grants (`Grant` 13), `TitleList` + `Player.title` (`OnPlayerLoad`), the titles a request added (`OnResponse`) |
 | `notice.cpp` | `notice` | the notice board: `WebView` (`OnPlayerLoad`) and the page itself (`server::web_page`, `soaserver/server.h`) |

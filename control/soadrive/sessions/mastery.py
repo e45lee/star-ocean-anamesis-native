@@ -6,8 +6,10 @@ and a few pass medals (item_Mastery_01). Then, at home: 装備・技・アシス
 (cp0010_b01a_6165) -> ロール選択 -> アタッカー (ChangeRole);
   道場1 -> 師匠 and 弟子 picked -> 決定 (TrainMastery pairing), the five trainings (the first four with
   the material cards, the fifth with the pass medal) -> 皆伝 (the reward dialog), 皆伝師弟 listed;
-then a second boot on the same phone: the マスタリー screen again (GetMasteryInfo: the pair kept,
-in the 皆伝 list), 師弟解消 (ResetMastery). Milestones are the server's log lines (both targets):
+then 会話モード > キャラデコ (GetDecoInfo), a favourite (FavoriteDecoObject) and a decoration set
+(SetCharacterDeco, sent by the list's 決定); then a second boot on the same phone: the
+マスタリー screen again (GetMasteryInfo: the pair kept, in the 皆伝 list), 師弟解消 (ResetMastery),
+キャラデコ again (the setting and the favourite kept). Milestones are the server's log lines (both targets):
 "TrainMastery: paired ...", "TrainMastery: disciple ... training N/5", "GetMasteryInfo: N pair(s)",
 "ResetMastery: parted ...". Screenshots in OUT/shots and OUT/again/; "PASS: ..." / "FAIL: ..." per
 check and exit 1 on a failure.
@@ -81,6 +83,10 @@ def plant(db, soa_server):
         medal = m.execute("select id from master_item where id_label = (select value from master_global "
                           "where key = 'mastery_training_pass_item_id')").fetchone()[0]
         add(medal, 3)
+        # キャラデコ: three decorations (two objects, one hair colour), as grants would add them
+        for i, (deco,) in enumerate(m.execute("select id from (select id, order_id from master_deco_object order by order_id limit 2) "
+                                              "union all select id from (select id from master_deco_hair order by order_id limit 1)")):
+            dst.execute("insert into deco_owned (id, master_deco_id, created_at) values (?, ?, 0)", (i + 1, deco))
         dst.commit()
         dst.close()
         return master, disciple
@@ -94,7 +100,7 @@ def server_count(s, rx):
 
 # The screens' taps at 729x1296 (seen on 3.7.0, 2026-10-04).
 CHARACTER = "180:1245"     # footer キャラクター
-MASTERY = "364:765"        # the character menu, scrolled: マスタリー
+MASTERY = "364:638"        # the character menu scrolled to its end: マスタリー
 DOJO1 = "180:450"          # 道場1's card
 FIRST_CELL = "95:650"      # the selection list's first character (the LV70 ones lead it)
 DECIDE = "620:1120"        # 決定
@@ -112,6 +118,14 @@ EQUIPMENT = "364:435"      # the character menu: 装備・技・アシスト変�
 ROLE_CHANGER = "495:330"   # its list's fourth: the seed's cp0010_b01a_6165 (★6 ヒーラー, master_role_change)
 ROLE_SELECT = "380:353"    # ロール選択
 ATTACKER = "364:410"       # the role dialog's アタッカー
+HOME = "60:1245"           # footer ホーム
+INTERACTIVE = "90:740"     # home: 会話モード
+DECO = "545:1245"          # 会話モード's footer: キャラデコ
+DECO_SELECT = "180:1245"   # the deco menu's footer: デコ選択
+DECO_SLOT = "320:685"      # キャラデコ設定: the first デコ選択 slot
+DECO_FIRST = "320:588"     # the slot's list: the first decoration
+DECO_STAR = "640:588"      # its favourite star
+DECO_ADJUST = "300:1245"   # the footer's デコ調整 (the decoration's position)
 
 
 def step(s, name, rx, cmds, secs=40):
@@ -131,7 +145,8 @@ def step(s, name, rx, cmds, secs=40):
 
 
 def open_mastery(s, n_pairs, shot):
-    s.ctl("tap:" + CHARACTER, "wait:6000", "drag:364:900:364:400", "wait:2500")
+    # scrolled to the end (three drags: one drag's length varies with its speed)
+    s.ctl("tap:" + CHARACTER, "wait:6000", *(["drag:364:1000:364:300", "wait:1500"] * 3), "wait:1500")
     step(s, "マスタリー -> GetMasteryInfo (%d pair(s))" % n_pairs, r"GetMasteryInfo: %d pair" % n_pairs, ["tap:" + MASTERY, "wait:3000"])
     s.ctl("wait:3000", s.shot_cmd(shot))
 
@@ -170,6 +185,16 @@ def main(o):
             return
         c("wait:6000", s.shot_cmd("11-full-mastership"), "tap:" + ALL_CLEAR_CLOSE, "wait:5000", "tap:" + GRADUATED_TAB, "wait:3000",
           s.shot_cmd("12-graduated"))
+        # ---- キャラデコ: ホーム -> 会話モード -> キャラデコ (GetDecoInfo: the planted three) -> デコ選択 -> a slot
+        # -> ☆ (FavoriteDecoObject) -> the first decoration -> 決定 (SetCharacterDeco) -> デコ調整
+        c("tap:" + HOME, "wait:7000", "tap:" + INTERACTIVE, "wait:5000")
+        step(s, "キャラデコ -> GetDecoInfo (3)", r"GetDecoInfo: 3 decoration", ["tap:" + DECO, "wait:4000"])
+        c("wait:3000", s.shot_cmd("13-deco"), "tap:" + DECO_SELECT, "wait:4000", "tap:" + DECO_SLOT, "wait:4000", s.shot_cmd("14-deco-list"))
+        step(s, "☆ -> FavoriteDecoObject", r"FavoriteDecoObject: 1 decoration", ["tap:" + DECO_STAR, "wait:2000"])
+        c("tap:" + DECO_FIRST, "wait:3000")
+        step(s, "the first decoration -> 決定 -> SetCharacterDeco (one object)", r"SetCharacterDeco [0-9a-f]+: hair [0-9]+, pose [0-9]+, 1 object",
+             ["tap:" + DECIDE, "wait:3000"])
+        c("wait:2000", s.shot_cmd("15-deco-set"), "tap:" + DECO_ADJUST, "wait:4000", s.shot_cmd("16-deco-adjust"))
 
     ok = common.drive(s, body)
     fails = []
@@ -189,7 +214,12 @@ def main(o):
             s2.ctl("tap:" + GRADUATED_TAB, "wait:3000", s2.shot_cmd("02-graduated"), "tap:" + GRADUATED_PAIR, "wait:3000",
                    s2.shot_cmd("03-full-mastership"), "tap:" + PART, "wait:3000", s2.shot_cmd("04-part-confirm"))
             step(s2, "師弟解消 -> ResetMastery", r"ResetMastery: parted master", ["tap:" + DIALOG_YES, "wait:3000"])
-            s2.ctl("wait:3000", s2.shot_cmd("05-parted"))
+            s2.ctl("wait:3000", s2.shot_cmd("05-parted"), "tap:" + CLOSE, "wait:3000")
+            # the decorations kept: キャラデコ again (GetDecoInfo; the character wears its decoration,
+            # from its CPersonInfo)
+            s2.ctl("tap:" + HOME, "wait:7000", "tap:" + INTERACTIVE, "wait:5000")
+            step(s2, "キャラデコ again -> GetDecoInfo (3)", r"GetDecoInfo: 3 decoration", ["tap:" + DECO, "wait:4000"])
+            s2.ctl("wait:3000", s2.shot_cmd("06-deco-kept"))
 
         ok = common.drive(s2, again) and ok
         st = sqlite3.connect("file:%s?mode=ro" % s2.state_db, uri=True)
@@ -197,10 +227,13 @@ def main(o):
         m = sqlite3.connect("file:%s?mode=ro" % repo_file("data/basmaster-3.7.0.sqlite3"), uri=True)
         attackers = {r for (r,) in m.execute("select master_role_id from master_role_change c join master_role r on r.id = c.master_role_id "
                                              "where r.category_type = 1")}
+        s2.check("the decoration setting and the favourite kept",
+                 st.execute("select count(*) from character_deco").fetchone()[0] == 1 and
+                 st.execute("select count(*) from deco_owned where is_favorite = 1").fetchone()[0] == 1)
         s2.check("the role change kept (an attacker role of master_role_change)",
                  any(r in attackers for (r,) in st.execute("select role_id from roster")))
         st.close()
         if s2.failed:
             fails.append("the second boot")
-    return common.verdict(s, fails, "mastery: a role changed, paired, five trainings (one with the pass medal), 皆伝, kept after a re-login, "
-                          "parted")
+    return common.verdict(s, fails, "mastery: a role changed, paired, five trainings (one with the pass medal), 皆伝, a decoration set and "
+                          "a favourite, kept after a re-login, parted")

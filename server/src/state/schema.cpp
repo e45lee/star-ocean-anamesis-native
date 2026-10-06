@@ -1845,7 +1845,7 @@ const char* const kHome3D[] = {
     "alter table player add column is_3d_home integer not null default 1 check (is_3d_home in (0,1))",
 };
 
-// ---- step 13: mastery (師弟), the home mascot -------------------------------------------------
+// ---- step 13: mastery (師弟), the home mascot, decorations -------------------------------------------------
 //
 // mastery: one 師弟 pair per disciple (CPlayerCharacterMasteryInfo; api/growth/mastery.cpp):
 // uid the 弟子 (character_id), master_uid the 師匠 (parent_character_id; one pair each), the
@@ -1869,6 +1869,22 @@ const char* const kMastery[] = {
     // player.mascot_id: the home's mascot (ChangeMascot; Player.mascot_id), a master_person id;
     // NULL: never chosen
     "alter table player add column mascot_id integer",
+    // deco_owned: the owned decorations (CDecoObjectInfo; api/player/deco.cpp): a master_deco_object
+    // or master_deco_hair id each, one of each, the favourite flag
+    R"(create table deco_owned (
+  id integer primary key,
+  master_deco_id integer not null unique,
+  is_favorite integer not null default 0 check (is_favorite in (0,1)),
+  created_at integer not null
+) strict)",
+    // character_deco: a character's decorations (SetCharacterDeco; CPersonInfo hair_id, pose_id,
+    // CharacterDecoObject): the hair colour (0 none), the pose, the objects' MessagePack as hex text
+    R"(create table character_deco (
+  uid integer primary key references roster(uid) on delete cascade,
+  hair_id integer not null default 0,
+  pose_id integer not null default 0,
+  objects text not null
+) strict)",
 };
 
 }  // namespace

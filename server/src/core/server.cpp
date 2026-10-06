@@ -243,7 +243,13 @@ void submit(const Request& in) {
     u32 fid = r.fid;
     std::string args;
     for (u64 v : r.ints) args += " " + std::to_string(v);
-    for (auto& s : r.strs) args += " \"" + s + "\"";
+    for (auto& s : r.strs) {
+        // a binary argument (SetCharacterDeco's MessagePack) as its size, as the wire's packet log
+        // shows a blob
+        bool text = true;
+        for (unsigned char ch : s) text = text && (ch >= 0x20 || ch == '\t');
+        args += text ? " \"" + s + "\"" : " blob[" + std::to_string(s.size()) + "]";
+    }
     LOGI("server", "request %s (fid %08x):%s", r.method.c_str(), fid, args.c_str());
     if (Server* s = server()) {
         std::lock_guard<std::mutex> l(s->mu);

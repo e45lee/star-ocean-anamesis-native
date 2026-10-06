@@ -49,7 +49,7 @@ player, screens opened by hand through `--control`.
 | キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters. **Done (step 3.4):** the pairs, trainings, 皆伝 and parting are the server's (`server/src/api/growth/mastery.cpp`, below) |
 | 惑星選択 > シナリオライブラリ (`GetScenarioLibraryInfoList`) | S | opens; メインストーリー / サブストーリー with no chapters |
 | キャラクター > バトルシミュレーター (`TrainingMissionStart`, canned `mission_start.msgp`) | I | **wrong data**: the battle starts with the canned reply's party and stages (other characters, STAGE 1/2), not the chosen party; シミュレーター終了 returns to the character menu (no `MissionLose`) |
-| 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player) |
+| 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player). **Done (step 3.5):** the gate is `NumDecoObject`; the owned decorations, favourites and each character's setting are the server's (`server/src/api/player/deco.cpp`) |
 | `MissionContinue`, `MissionLose` (`CPauseMenu::ReqeustContinue` @01dad704 -> `Auto`) | decompile | not reproduced (losing needs a long battle); the continue would go ahead with no stones taken on the server |
 | Paid currency (`CoinList`, `CoinDeposit*`, `Get`/`UpdateBirthYearMonth`) | I, S | no entry point found on the shop or gacha screens with 300000 stones (step 7 finds the opener) |
 | `InheritAccessory`, `EquipAuto`, `UpdateItemStock`, the `ClearNew*`, `ReadExpirationInfo`, `SendGuideInformation`, `SetStampSlot` | callers (`CItemStrengtheningPotal`, `CTermInfoUI`, `CGuideInformation`, `CStampSelect`) | the same `Auto` pattern: no hang, the change isn't stored (`ChangeMascot` and `ChangeRole`, from `CAdjutantSelect` / `CRoleSelect`, were the same: done in step 3.5) |
@@ -96,8 +96,6 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 | **Equipment** | [EquipAuto](api.md#equipauto) | {} | auto-equip |
 | | [InheritAccessory](api.md#inheritaccessory) | ★ | |
 | | [UpdateItemStock](api.md#updateitemstock) | {} | |
-| **Home and decorations** | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
-| | [FavoriteDecoObject](api.md#favoritedecoobject) / [UnFavoriteDecoObject](api.md#unfavoritedecoobject) | {} | |
 | **"New" badges** | [ClearNewCharacter](api.md#clearnewcharacter) / [ClearNewItem](api.md#clearnewitem) / [ClearNewStackItem](api.md#clearnewstackitem) | {} | badges never clear |
 | **Settings and account** | [GetConfig](api.md#getconfig) / [UpdateConfig](api.md#updateconfig) / [ResetConfig](api.md#resetconfig) | ★ | the options the server keeps |
 | | [GetBirthYearMonth](api.md#getbirthyearmonth) / [UpdateBirthYearMonth](api.md#updatebirthyearmonth) | ★ | age check before purchases |
@@ -293,6 +291,14 @@ Both were status-only; two `kServedStatusOnly` rows route them in-process (docs/
 - ChangeRole resets the character's set skills in the party sets too (the client says the set
   skills are reset; the sets hold their own copies), and keeps level, skill levels, limit break,
   awakening and equipment (the dialog mentions only the skills).
+- Decorations (`server/src/api/player/deco.cpp`, docs/server-rules.md#deco): `NumDecoObject` is the
+  gate the client checks (confirmed in game) and comes with every response once one is owned; one of
+  each decoration (the favourites name them by master id); a character's objects and pose are
+  stored as the client sent them, with no cost limit (the menu shows the gauge); ids not owned are
+  skipped by the favourites. The present box's receive result doesn't list a decoration it gave
+  (the grant hook can't add to it); the menu still shows it, since the client asks GetDecoInfo.
+  SetCharacterDeco's payload needed a port change in-process (docs/client-changes.md
+  "SetCharacterDeco"): the client's own serializer makes the bytes NetworkApiCaller sends.
 - Not played on screen: the mascot change (the seeded player's progress opens one mascot, so the
   button is hidden); unit test and replay corpus only.
 

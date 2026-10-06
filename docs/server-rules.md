@@ -215,6 +215,17 @@ What the client reads (b): `TitleList` is a plain array of master_title ids (`CT
 - **Route:** in-process a status-only method of the fake caller (Status 1, nothing queued); the port now queues it for the local server (`docs/client-changes.md` "Mascot and role").
 - Code: `server/src/api/player/home.cpp` (`change_mascot`), `player_info.cpp`. Tests: `player/change-mascot`, `server/schema-migrate-v13`, the `mastery` replay corpus. Not played on screen: the seeded player's story progress opens one mascot, so the button is hidden.
 
+<a id="deco"></a>
+### Character decorations (キャラデコ; `server/src/api/player/deco.cpp`)
+会話モード > キャラデコ (`CHomeDecoMenu`): the owned decorations (objects, hair colours) set on a character, saved per character. Decompiles: `work/decomp/server-u-mastery-{n,r,t}.resolved.c` (3.7.0).
+- **The gate (b):** キャラデコ opens the menu only when `CParameterUtility::tItemData::HasDecoItem` (@01851b88: a u32 of the player state, CParameterManager+0xaf30) isn't 0, else "デコを所持していません"; then it asks GetDecoInfo (the lambda @01afe53c). The key is `NumDecoObject` (confirmed in game: with it sent the menu opens). The server sends it with every response once the player owns a decoration **(d)** (a response hook; left out at 0, the client's default and what it always got).
+- **Owned decorations:** content type 17 (`master_deco_object`) and 18 (`master_deco_hair`) grants **(a)** (item sets, achievements, login bonuses: the core's grant path) join `deco_owned`, one of each **(d)** (FavoriteDecoObject names them by master id, so the client keeps one each; a second grant adds nothing). `GetDecoInfo` answers `DecoObject` [CDecoObjectInfo {id, player_id, master_deco_id, is_favorite}] **(b)** and `NumDecoObject`; the id is `0x7b000000` + the row's **(d)**. `tItemData::GetDecoItemList` makes the menu's items from the list (content types 17-19) **(b)**.
+- **Favourites:** `FavoriteDecoObject` / `UnFavoriteDecoObject` (vector of master ids) set the flag and answer `FavoriteDecoObjectResult`, a map of the changed CDecoObjectInfo by master id **(b)** (`OnFavoriteDecoObjectRes` merges it); ids not owned are skipped **(d)**.
+- **A character's setting:** `SetCharacterDeco`'s argument is the MessagePack of `CCharacterDecoSendInfo` {character_id, hair_id, pose_id, CharacterDecoObject: [CCharacterDecoObjectInfo]} **(b)** (the lambda @015ef218; the wire's blob, in-process the port serializes the same object: `docs/client-changes.md` "SetCharacterDeco"). The list's 決定 sends it. The character must be owned, the hair 0 or an owned hair colour, every object an owned decoration (10208 otherwise) **(b)** (the menu lists the owned ones); the objects are stored as sent with `player_character_id` set **(d)**, `pose_id` as sent **(d)**; it replaces the character's previous setting; no cost limit is checked **(d)**. Answers `CharacterDeco` (copied into the character by `OnSetCharacterDecoRes`) and `DecoObject`.
+- **Every load:** `CPersonInfo` carries `hair_id`, `pose_id` and `CharacterDecoObject` for a character with a setting **(b)** (CPersonInfo +0x7d0 / +0x800 / its `CharacterDecoObject` list; names from `CPersonInfo::Initialize`).
+- **State (schema version 13):** `deco_owned` (master_deco_id unique, `is_favorite`), `character_deco` (the character's uid, hair, pose, the objects' MessagePack as hex text; cascades with the character).
+- Code: `server/src/api/player/deco.cpp`. Tests: `player/deco`, `server/schema-migrate-v13`; the `mastery` replay corpus (none owned: GetDecoInfo, the favourites skipped, SetCharacterDeco refused); the session `mastery` (planted decorations: キャラデコ, a favourite, a decoration set, both kept after a re-login).
+
 <a id="player-register"></a>
 ### Player-visible (c) and (d) rules (player)
 
@@ -228,6 +239,9 @@ From the register before R20 (with the area and how to check):
 | Stamina | halved costs round up, minimum 1 | (d) | no evidence |
 | Wallet | free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (c) | (a) | |
 | Home | ChangeMascot takes any master_person id (the story-progress list is the client's); Player.mascot_id sent only once chosen | (d) | the client keeps HomeMascotID itself |
+| Deco | NumDecoObject sent with every response once a decoration is owned | (d) | the client's gate reads it (HasDecoItem) |
+| Deco | one of each decoration (a second grant adds nothing); FavoriteDecoObject skips ids not owned | (d) | the favourites name decorations by master id |
+| Deco | SetCharacterDeco stores the objects and the pose as sent; no cost limit checked | (d) | the menu shows the cost gauge itself |
 | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |
@@ -1868,6 +1882,9 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [player](#player-register) | Stamina | halved costs round up, minimum 1 | (d) | no evidence |
 | [player](#player-register) | Wallet | free coins spent before paid: (a) since R16 (master_text `uimsg_buy_history_explan`, "Stocks and wallet"); was (c) | (a) |  |
 | [player](#player-register) | Home | ChangeMascot takes any master_person id (the story-progress list is the client's); Player.mascot_id sent only once chosen | (d) | the client keeps HomeMascotID itself |
+| [player](#player-register) | Deco | NumDecoObject sent with every response once a decoration is owned | (d) | the client's gate reads it (HasDecoItem) |
+| [player](#player-register) | Deco | one of each decoration (a second grant adds nothing); FavoriteDecoObject skips ids not owned | (d) | the favourites name decorations by master id |
+| [player](#player-register) | Deco | SetCharacterDeco stores the objects and the pose as sent; no cost limit checked | (d) | the menu shows the cost gauge itself |
 | [player](#player-register) | Wallet | new player starts with 300,000 free coins (`--start-coins`), 500 item slots | (d) | the user's request (was 0); the seeded player gets the same coins and 1,000 slots: both (d) |
 | [player](#player-register) | Home | Sphere 211, events and evolution open, multiplayer closed (`FooterMissionInfo`) | (d) | 12; the flags' meaning is (b) |
 | [player](#player-register) | Home | follow menu: empty lists, player search finds nobody (error 10002) | (d) | 12 |

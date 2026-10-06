@@ -51,7 +51,7 @@ bool splice_data(Value& root, const std::vector<std::pair<std::string, Value>>& 
 
 // The body as a Value: false when it isn't one msgpack value that encodes back to the same bytes
 // (malformed, or not in the encoder's canonical form: the splice then leaves it alone, as it can't
-// re-encode the rest unchanged). The server's bodies and the fake server's files are canonical.
+// re-encode the rest unchanged). The server's bodies are canonical.
 bool decode_body(const std::vector<char>& body, Value& out) {
     const uint8_t *p = (const uint8_t*)body.data(), *e = p + body.size();
     out = mp_decode(p, e);

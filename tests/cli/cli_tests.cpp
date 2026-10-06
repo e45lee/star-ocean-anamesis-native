@@ -78,7 +78,7 @@ std::string dump(const soa::SoaArgs& a) {
     d.f("repo_dir", o.repo_dir);
     auto& c = o.client;
     d.f("download_dir", c.download_dir).f("download_prefer", c.download_prefer).f("standin_dir", c.standin_dir).f("standin_off", c.standin_off);
-    d.f("fake_server_dir", c.fake_server_dir).f("fake_server_schema", c.fake_server_schema).f("guest_cpus", c.guest_cpus).f("memstats", c.memstats);
+    d.f("fake_server_schema", c.fake_server_schema).f("guest_cpus", c.guest_cpus).f("memstats", c.memstats);
     dump(d, o.server);
     d.f("data_dir", a.data_dir).f("apk", a.apk_path).f("lib", a.lib_path).f("smoke", a.smoke).f("selftest", a.selftest);
     d.f("list_native", a.list_native).f("test_filter", a.test_filter);
@@ -285,8 +285,10 @@ int main() {
                           "--guest-cpus", "--size", "--landscape", "--render-size", "--font", "--fullscreen", "--headless", "--windowed",
                           "--shot", "--do", "--control", "--gdb", "-v", "-vv", "-h", "--help"};
 
-    // Options removed on purpose since: --font (2026-10-05; the fonts are built in).
+    // Options removed on purpose since: --font (2026-10-05; the fonts are built in); soa's
+    // --fake-server (2026-10-05; the canned responses were retired, docs/unimplemented-apis.md step 9).
     const V kRemovedFont = {"--font"};
+    const V kRemovedSoa = {"--font", "--fake-server"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -416,7 +418,8 @@ int main() {
         {{"--selftest", "wire/", "--windowed"}},
         {{"--hires"}},
         {{"--legacy-res"}},
-        {{"--fake-server", "port/fakeapi/responses", "--fake-server-schema", "/tmp/schema.txt"}},
+        {{"--fake-server-schema", "/tmp/schema.txt"}},
+        {{"--fake-server", "port/fakeapi/responses"}, "--fake-server is gone: the canned responses were retired (docs/unimplemented-apis.md step 9)", 2},
         {{"--memstats"}},
         {{"--memstats", "30"}},
         {{"--memstats", "--headless"}},
@@ -522,7 +525,7 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, {}, kRemovedFont, soa_rows);
+            check_names("soa", names, soa_old, {}, kRemovedSoa, soa_rows);
         }
         {
             soa::server::ServerConfig c;

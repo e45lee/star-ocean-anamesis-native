@@ -55,8 +55,8 @@ Reply answer(const Request& r, const Fallback& fallback) {
     submit(r);
     campaign::on_request(r);
     if (!handle(r.fid, reply.body)) {
-        // no handler: the host's answer, with the campaign's data (as soa adds it to the file it
-        // falls back to). Logged in both hosts (docs/unimplemented-apis.md "Stub logging");
+        // no handler: the host's answer ({} in soa, {data: {Time}} in soa-server), with the
+        // campaign's data. Logged in both hosts (docs/unimplemented-apis.md "Stub logging");
         // GetWorldMapInfoList is the campaign's (its data is the answer), not a missing handler.
         if (!r.method.empty() && r.method != "GetWorldMapInfoList")
             LOGW("server",

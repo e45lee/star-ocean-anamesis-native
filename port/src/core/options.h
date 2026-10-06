@@ -30,9 +30,7 @@ struct ClientOptions {
     std::string standin_dir;
     bool standin_off = false;         // --standin-assets off
 
-    // The FakeApiCaller route (native/api/fakeapi.cpp): canned responses dir; --server inproc
-    // defaults it to port/fakeapi/responses.
-    std::string fake_server_dir;      // --fake-server DIR
+    // The FakeApiCaller route (native/api/fakeapi.cpp; on with --server inproc): a diagnostic dump.
     std::string fake_server_schema;   // --fake-server-schema FILE: dump the response schema there
 
     // ---- the emulated device ------------------------------------------------------------------

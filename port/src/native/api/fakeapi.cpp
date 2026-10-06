@@ -1,10 +1,11 @@
 // FakeApiCaller: the game's built-in offline "server" (an IApiCaller that answers requests
-// in-process from canned FakeApi/*.msgp files), as readable native C++.
+// in-process from FakeApi/*.msgp files the game never shipped), as readable native C++.
 //
 // The shipped game never constructs a FakeApiCaller (CGame::OnInitialize always makes a
-// NetworkApiCaller) and the canned files aren't shipped, so none of this runs in normal play.
-// The port keeps it bit-compatible so a port option (or a debug route) can bring it up. The
-// protocol is in docs/notes.md, "Offline server (FakeApiCaller)".
+// NetworkApiCaller) and its files aren't shipped, so none of this runs in normal play. The port
+// keeps it bit-compatible and brings it up as the in-process server's route (--server inproc, the
+// default): the local server answers each request instead of a file. The protocol is in
+// docs/notes.md, "Offline server (FakeApiCaller)".
 //
 // Layout (guest object, kept as is):
 //   +0x00 IApiCaller vtable   +0x08 Framework::CFiberUnit (Progress runs once per frame)
@@ -201,8 +202,9 @@ void AddLocalFile(u64 self, u32 fid, const char* name, u64 fn) {
 }
 
 // FakeApiCaller::Progress(): queue each new request's file, and hand each loaded one to its lambda.
-// Port option --fake-server DIR (not guest behaviour): see ServeProgress below.
-std::string g_serve_dir;
+// The in-process server's route (--server inproc; not guest behaviour): see ServeProgress below.
+// Set by serve_enabled when CGame::OnInitialize's hook is installed.
+bool g_route_on = false;
 void ServeProgress(u64 self);
 // Port option (serve mode only): requests the guest fake never queues but the port serves
 // (fid -> CApiNotify handler called directly, instead of a guest lambda). See h_served_extra.
@@ -212,7 +214,7 @@ void (*g_serve_tick)(u64 self) = nullptr;
 bool request_by_name(u64 self, const char* method);
 
 void Progress(u64 self) {
-    if (!g_serve_dir.empty()) return ServeProgress(self);
+    if (g_route_on) return ServeProgress(self);
     u64 end = self + kMapEnd;
     for (u64 n = at<u64>(self, kMap); n != end; n = tree_next(n)) {
         u32 state = at<u32>(n, kState);
@@ -254,7 +256,7 @@ void Release(u64 self) {
     at<u64>(self, kMapSize) = 0;
 }
 
-// The request methods: queue the canned file with this API's lambda; Status 1.
+// The request methods: queue the request's file name with this API's lambda; Status 1.
 void Request_(u64 status, u64 self, const Request& r) {
     alignas(16) u64 fn[6] = {lib_base() + r.lambda_vt, self, 0, 0, 0, 0};
     at<u64>((u64)fn, kFunctionF) = (u64)fn;
@@ -388,16 +390,17 @@ void Destruct(u64 self, bool deleting) {
     if (deleting) guest_call(g("_ZdlPv"), {self});
 }
 
-// ---- port option: the fake server, live (--fake-server DIR) ---------------------------
+// ---- the in-process server's route (--server inproc) -----------------------------------
 // Our invention, not guest behaviour. The shipped game never constructs FakeApiCaller and
-// never shipped its FakeApi/*.msgp files. With --fake-server DIR:
+// never shipped its FakeApi/*.msgp files. With --server inproc (the default):
 //  - after CGame::OnInitialize, a FakeApiCaller is constructed (its own constructor: fiber,
 //    CApiNotify, CErrorHandlerWrap::SetFakeAppCaller) and put in TSingleton<CApiCaller> in
 //    place of the NetworkApiCaller, which stays alive but unused;
-//  - Progress answers each request from DIR/<name>.msgp (the file name without "FakeApi/")
-//    instead of the resource manager, one frame after the request, like the guest's two
-//    steps. A missing file is answered with an empty map (0x80) and logged; the guest would
-//    crash on it.
+//  - Progress answers each request with the local server's reply instead of the resource
+//    manager's file, one frame after the request, like the guest's two steps. A request no
+//    handler answers gets an empty map (0x80) and is logged (`no handler: <Method>`, by the
+//    library); the guest would crash on a missing file. (The port's earlier fallback, a
+//    folder of generated files, is gone: docs/history/fake-server-responses.md.)
 // The handlers are called exactly as the guest lambdas call them.
 void ServeProgress(u64 self) {
     if (g_serve_tick) g_serve_tick(self);
@@ -411,29 +414,18 @@ void ServeProgress(u64 self) {
         if (state != 1) continue;
         std::string name = ((guest::String*)(n + kName))->str();
         std::string file = name.rfind("FakeApi/", 0) == 0 ? name.substr(8) : name;
-        std::string path = g_serve_dir + "/" + file;
         std::vector<char> body;
         // The in-process server (--server inproc): the local server (top-level server/) answers the
         // request the client made (server_port::take: kept when it was made) through its one
-        // request lifecycle, server::answer, as soa-server's wire does; what no handler answers comes
-        // from DIR, or {} (the guest would crash on a missing file). The story campaign's data is
-        // added either way (server::answer).
+        // request lifecycle, server::answer, as soa-server's wire does; what no handler answers is
+        // {} (the library logs `no handler: <Method>`; the guest would crash on a missing file).
+        // The story campaign's data is added either way (server::answer).
         u32 fid = at<u32>(n, kKey);
         server::Request req = server_port::take(fid);
         if (req.method.empty() && server::enabled()) LOGW("fakeapi", "fid %08x: %s: no request was kept for it", fid, file.c_str());
         server::Reply reply = server::answer(req, [&] {
-            std::vector<u8> b;
-            if (FILE* f = fopen(path.c_str(), "rb")) {
-                char buf[65536];
-                size_t k;
-                while ((k = fread(buf, 1, sizeof buf, f)) > 0) b.insert(b.end(), buf, buf + k);
-                fclose(f);
-                LOGI("fakeapi", "fid %08x: %s (%zu bytes)", fid, path.c_str(), b.size());
-            } else {
-                b.push_back(0x80);
-                LOGW("fakeapi", "fid %08x: %s missing; answering {}", fid, path.c_str());
-            }
-            return b;
+            LOGW("fakeapi", "fid %08x: %s: no handler; answering {}", fid, file.c_str());
+            return std::vector<u8>{0x80};
         });
         if (reply.handled) {
             if (u32 code = reply.error_code) {
@@ -568,10 +560,11 @@ void dump_schema(const char* path) {
 u64 g_fake_caller = 0;
 u64 g_orig_game_init = 0;
 
+// The route's switch: --server inproc (options().server.enabled; the default). With --server HOST
+// the client keeps its NetworkApiCaller.
 bool serve_enabled() {
-    const std::string& d = options().client.fake_server_dir;  // --fake-server (--server inproc defaults it)
-    if (d.empty()) return false;
-    g_serve_dir = d;
+    if (!options().server.enabled) return false;
+    g_route_on = true;
     return true;
 }
 
@@ -588,12 +581,11 @@ void h_game_init(Cpu& c) {
     at<u64>(slot, 0) = self;
     g_fake_caller = self;
     if (!options().client.fake_server_schema.empty()) dump_schema(options().client.fake_server_schema.c_str());
-    LOGI("fakeapi", "fake server %s: FakeApiCaller at %#" PRIx64 " replaces the API caller %#" PRIx64, g_serve_dir.c_str(),
-         (u64)self, (u64)old);
+    LOGI("fakeapi", "in-process server: FakeApiCaller at %#" PRIx64 " replaces the API caller %#" PRIx64, (u64)self, (u64)old);
 }
 // Port code for the restore run's local server: queues the request of the FakeApiCaller method
 // `method` (e.g. "GetPlayMission") as if the game had called it, so the server can deliver data
-// the offline client never asks for. False without the fake server or for an unknown method.
+// the offline client never asks for. False without the FakeApiCaller route or for an unknown method.
 bool queue_request(const char* method) {
     if (!g_fake_caller) return false;
     for (const Request& r : kRequests) {
@@ -609,7 +601,7 @@ bool queue_request(const char* method) {
     return false;
 }
 
-NATIVE_ROUTE_FUNCTION_ORIG_IF("_ZN5CGame12OnInitializeEv", h_game_init, "port option --fake-server: FakeApiCaller as the API caller",
+NATIVE_ROUTE_FUNCTION_ORIG_IF("_ZN5CGame12OnInitializeEv", h_game_init, "--server inproc: FakeApiCaller as the API caller",
                               serve_enabled, &g_orig_game_init);
 
 namespace {
@@ -726,13 +718,13 @@ constexpr std::array<HostFn, sizeof...(I)> status_hooks(std::integer_sequence<in
 constexpr auto kStatusHooks = status_hooks(std::make_integer_sequence<int, (int)(sizeof(kStatusOnly) / sizeof(kStatusOnly[0]))>{});
 
 // FakeApiCaller::GetGachaInData(): the guest only returns Status 0 (nothing queued, so the gacha
-// screen gets no GachaHashMap and lists no gachas). Port option --fake-server (not guest
-// behaviour): queue it like the other requests, from DIR/gacha_in_data.msgp, answered by
+// screen gets no GachaHashMap and lists no gachas). In-process server (--server inproc; not guest
+// behaviour): queue it like the other requests, answered by the local server and handed to
 // CApiNotify::OnGetGachaInDataRes (the handler NetworkApiCaller's response goes to).
 constexpr char kGetGachaInData[] = "_ZN13FakeApiCaller14GetGachaInDataEv";
 constexpr u32 kFidGetGachaInData = 0x8e4a88d7;
 void h_get_gacha_in_data(Cpu& c) {
-    if (g_serve_dir.empty()) {
+    if (!g_route_on) {
         at<u64>(c.x(8), 0) = 0;
         return;
     }
@@ -761,7 +753,7 @@ void h_get_gacha_in_data(Cpu& c) {
 constexpr char kGetWorldMapInfoList[] = "_ZN13FakeApiCaller19GetWorldMapInfoListEj";
 constexpr u32 kFidGetWorldMapInfoList = 0x15a9bdbd;
 void h_get_world_map_info_list(Cpu& c) {
-    if (g_serve_dir.empty() || !server::campaign::enabled()) {
+    if (!g_route_on || !server::campaign::enabled()) {
         at<u64>(c.x(8), 0) = 0;
         return;
     }
@@ -791,7 +783,7 @@ void h_const(Cpu& c) { c.set_x(0, V); }
 // behaviour.
 bool on_fake_caller(u64 self) {
     static const u64 fake_vt = main_lib()->sym("_ZTV13FakeApiCaller") + 0x10;
-    return server::enabled() && !g_serve_dir.empty() && at<u64>(self, 0) == fake_vt;
+    return server::enabled() && g_route_on && at<u64>(self, 0) == fake_vt;
 }
 void queue_base_method(Cpu& c, u32 fid, const char* handler, const char* file) {
     u64 self = c.x(0);
@@ -1160,7 +1152,7 @@ bool register_all() {
             !is_event_api(sym))
             reg({sym, kStatusHooks[i], "FakeApiCaller status"});
     }
-    reg({kGetGachaInData, h_get_gacha_in_data, "FakeApiCaller status (served with --fake-server)"});
+    reg({kGetGachaInData, h_get_gacha_in_data, "FakeApiCaller status (served by the local server in-process)"});
     for (size_t i = 0; i < kServedHooks.size(); i++)
         reg({kServedStatusOnly[i].sym, kServedHooks[i], "FakeApiCaller status (served by the local server in-process)"});
     reg({kUpdatePartySet, h_update_party_set, "IApiCaller::UpdatePartySet (served by the local server in-process)"});
@@ -1195,10 +1187,10 @@ NATIVE_ROUTE_FUNCTION("_ZN13FakeApiCaller8ProgressEv", [](Cpu& c) { Progress(c.x
 NATIVE_ROUTE_FUNCTION("_ZThn8_N13FakeApiCaller8ProgressEv", [](Cpu& c) { Progress(c.x(0) - 8); }, "FakeApiCaller");
 NATIVE_ROUTE_FUNCTION("_ZNK13FakeApiCaller12IsRequestingEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDE",
                 [](Cpu& c) {
-                    // Port option --fake-server (not guest behaviour): a request the fake never
-                    // queues (the status-only methods, e.g. GetGachaInData) is finished rather
-                    // than in flight forever, so the screens waiting on it move on.
-                    if (!g_serve_dir.empty() && !find(c.x(0), (u32)c.x(1))) return c.set_x(0, 0);
+                    // In-process server (--server inproc; not guest behaviour): a request the fake
+                    // never queues (the status-only methods) is finished rather than in flight
+                    // forever, so the screens waiting on it move on.
+                    if (g_route_on && !find(c.x(0), (u32)c.x(1))) return c.set_x(0, 0);
                     c.set_x(0, IsRequesting(c.x(0), (u32)c.x(1)));
                 }, "FakeApiCaller");
 NATIVE_ROUTE_FUNCTION("_ZN13FakeApiCaller7ReleaseEv", [](Cpu& c) { Release(c.x(0)); }, "FakeApiCaller");
@@ -1526,6 +1518,53 @@ NATIVE_TEST("fakeapi/progress") {
             break;
         }
     }
+}
+
+// The in-process route's answer to a request no handler answers (docs/unimplemented-apis.md step
+// 9: no canned files): ServeProgress hands the guest lambda an empty map, {} (one byte 0x80), and
+// the entry finishes (state 2). SetStampSlot is the request (the last one without a handler when
+// this was written); the server is switched off for the test, so server::answer takes the host's
+// fallback for any method, as it does for one without a handler (and logs `no handler`).
+NATIVE_TEST("fakeapi/serve-no-handler") {
+    const Request* r = nullptr;
+    for (const Request& q : kRequests)
+        if (strstr(q.sym, "12SetStampSlot")) r = &q;
+    if (!r || !r->handler) return t.fail("SetStampSlot not in the request table");
+    if (!stub(r->handler, r->handler, 3)) return t.fail("can't stub %s", r->handler);
+    const char* kDeser = "_ZN17CParameterManager11DeserializeEPKN4Aska4ASON6AValue4AMapE";
+    if (!stub(kDeser, kDeser, 1)) return t.fail("can't stub %s", kDeser);
+    server::ServerConfig& cfg = server::config();
+    const bool was_enabled = cfg.enabled, was_on = g_route_on;
+    cfg.enabled = false;
+    g_route_on = true;
+    Obj B;
+    u64 st = 0;
+    Request_((u64)&st, B.p(), *r);
+    server_port::remember(server::Request{"SetStampSlot", r->fid, {}, {}, {}});
+    std::vector<u8> body;
+    u32 size = 0xffffffff;
+    int calls = 0;
+    {
+        StubSession s;
+        s.only = {r->handler, kDeser};
+        s.behave[r->handler] = [&](Cpu& c) {
+            calls++;
+            size = at<u32>(c.x(2), 0);
+            body.assign((const u8*)c.x(1), (const u8*)c.x(1) + size);
+        };
+        s.behave[kDeser] = [&](Cpu&) {};
+        ServeProgress(B.p());  // state 0 -> 1 (the guest's first step)
+        t.expect_eq(calls, 0, "not answered on the first frame");
+        ServeProgress(B.p());  // answered
+    }
+    t.expect_eq(calls, 1, "the handler ran once");
+    t.expect_eq(size, (u32)1, "the body is one byte");
+    t.expect_eq(body.empty() ? -1 : (int)body[0], 0x80, "the body is {}");
+    u64 n = at<u64>(B.p(), kMap);
+    t.expect_eq(n != B.p() + kMapEnd ? (int)at<u32>(n, kState) : -1, 2, "the entry finished (state 2)");
+    Release(B.p());
+    cfg.enabled = was_enabled;
+    g_route_on = was_on;
 }
 
 NATIVE_TEST("fakeapi/lifetime") {

@@ -65,7 +65,7 @@ namespace {
 // The rate dialog of a banner (b: CGacha::CallRateWebView sends it; docs/api.md Callers).
 //   (b) GachaRateInfoList: CGachaRateInfo pages with their CGachaRateContentInfo lines.
 //   (d) the lines are the reconstructed pools' (master/gacha_pools.h), the same the draws use.
-//   (d) without the pools there is no rate data: the player state only (a fake-server file would
+//   (d) without the pools there is no rate data: the player state only (a canned reply would
 //       add characters the server doesn't know).
 // Answers: the player state with GachaRateInfoList (with the pools), else the player state only.
 std::vector<u8> get_gacha_rate(ext::Ctx& ctx, const Request& req) {

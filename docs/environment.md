@@ -39,7 +39,7 @@ recommendations) is [`docs/history/environment-audit-2026-10-03.md`](history/env
 | `SOA_GUEST_CPUS` | `--guest-cpus N\|host` | soa, soa-emu, soa-viewer |
 | `SOA_HEADLESS` | `--headless` / `--windowed` (`--windowed` new in soa-emu and soa-viewer) | soa, soa-emu, soa-viewer |
 | `SOA_NATIVES` | `--natives route\|none` | soa |
-| `SOA_FAKE_SERVER` | `--fake-server DIR` (new) | soa |
+| `SOA_FAKE_SERVER` | none: `--fake-server DIR` was removed on 2026-10-05 with the canned responses (`docs/unimplemented-apis.md` step 9); the warning names `--server inproc` (the default), which turns the route on | soa |
 | `SOA_FAKE_SERVER_SCHEMA` | `--fake-server-schema FILE` (new) | soa |
 | `SOA_MEMSTATS` | `--memstats [S]` (new) | soa |
 | `SOA_RESTORE` | (gone before: `--server inproc` is the default) | soa |
@@ -100,7 +100,7 @@ warned about and the default used.
 
 | Variable | Went | Why |
 |---|---|---|
-| `SOA_FAKE_SERVER`, `SOA_FAKE_SERVER_SCHEMA` | flags | they choose what the FakeApiCaller route serves and where a dump goes: run settings, not switches of a diagnostic (the task's list) |
+| `SOA_FAKE_SERVER`, `SOA_FAKE_SERVER_SCHEMA` | flags (`--fake-server` itself removed 2026-10-05) | they chose what the FakeApiCaller route serves and where a dump goes: run settings, not switches of a diagnostic (the task's list) |
 | `SOA_MEMSTATS` | flag `--memstats [S]` | a run setting with a value, used from session scripts and by hand; the control command `memstats` stays for on-demand snapshots |
 | `SOA_LOG_PACKETS` | removed (flag existed) | it had `--log-packets`, which tests/diff passes |
 | `SOA_NATIVES` | removed (flag existed) | `--natives` / `--no-native` |

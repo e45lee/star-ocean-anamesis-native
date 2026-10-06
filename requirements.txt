@@ -1,7 +1,7 @@
 # Every third-party module a tracked *.py imports is listed here (tests/test_requirements.py checks).
 # soa_save (ADLD AES, the KVS ChaCha20), tools/check_download.py, docs/multiplayer/prototype/mp_proto.py
 pycryptodome
-# soa_save/script.py, tools/fakeapi_msgp.py, tools/server_replay_record.py, tools/check_download.py,
+# soa_save/script.py, tools/server_replay_record.py, tools/check_download.py,
 # tools/compare_tutorial.py, server/tests/ninja/tools/gen_ninja_vectors.py, docs/multiplayer/prototype,
 # the tests
 msgpack

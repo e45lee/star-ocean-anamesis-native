@@ -56,6 +56,7 @@ How measured: a scan of every TEXT column of every table for `[぀-ヿ一-鿿]`;
 ### 1.2 Story and script files
 
 - **Scenario.** Each file is `{"master_text": [{message_id, lang: "ja", text_value, category_id_label: "TS_x", data_type: "package", id}]}`, using real newlines and ADLD XOR (encType 1). There are 64 files and 23,169 rows, 21,663 of them Japanese (about 659k characters).
+  - There is no SLZ layer: the file is ADLD XOR over plain msgpack (`soa_save.script.load` = `adld.decode` then `msgpack.unpackb`; `soa_save.script.encrypt` writes it back). The `UI/*.csf` layouts and the font do have an SLZ (zstd) layer.
   - `CEventScenario::ParseMessage` (0x142fcc8) reads them through StringDB by message_id.
   - Where the files live: 40 in the Bulk/Individual manifests; `TS_1040`–`TS_1100` in episode pack EP1, `TS_2010`–`TS_2110` in EP2 and `TS_6010`–`TS_6060` in EP3.
 - **Script.** `Script/*.msgp` holds StringDB keys only: 22,560 speech commands and 94 menus. Speakers are model codes, named from `master_text`. Literal Japanese is limited to the 9991/9997/9998/9999 debug and sample scripts, `6035_220` ("これは削除イベント") and three `p6='ギディオン'` name plates in `9996_015`. The scripts therefore need no translation, except those three name plates.
@@ -249,7 +250,7 @@ The scripts and masters are in `/home/fish/.claude/jobs/ac4802d9/tmp/english-exp
 
 - **Global-only tokens, which 3.7.0 has no code for:**
   - `<EMDASH>` occurs 223 times. Replace it with ― U+2015, which the font has.
-  - `<NUM n>` (55 times) and `<STR n>` (31 times) need rewriting as the JP row's printf specifiers in JP's argument order. For example, Global's `Present_box_1` "Day <NUM 2> <STR 1>" becomes "Day %2$d…". **3.7.0's printf has no positional arguments that we know of, so a reordered row needs rewording instead.**
+  - `<NUM n>` (55 times) and `<STR n>` (31 times) need rewriting as the JP row's printf specifiers in JP's argument order. For example, Global's `Present_box_1` "Day <NUM 2> <STR 1>" becomes "Day %2$d…". **A reordered row needs rewording:** the port's printf (`runtime/src/hle/format.cpp`) logs "positional printf argument not supported" for `%2$d`, and a real phone's bionic printf was not checked either.
   - `<INSERT n>singular/plural</INSERT>` (13 times) needs one fixed form.
 - **Plain text, not markup:** Global's `[G]`, `[R]`, `[Blue]`, `[Crimson]`, `[Hard]` (chip and coral colour names, difficulty).
 

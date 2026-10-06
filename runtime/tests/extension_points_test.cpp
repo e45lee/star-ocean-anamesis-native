@@ -87,6 +87,8 @@ u64 env_fn(jni::Vm& vm, const char* name) {
 }  // namespace
 
 int main(int argc, char** argv) {
+    // (unbuffered: the MinGW C runtime buffers a redirected stderr, so a crash lost the last lines)
+    setvbuf(stderr, nullptr, _IONBF, 0);
     if (argc >= 3 && !strcmp(argv[1], "--gdb-demo")) {  // gdbstub_test.cpp: the guest loop for a debugger
         cpu_global_init();
         bool fault = false, native = false;

@@ -117,6 +117,13 @@ extern "C" char* soa_mkdtemp(char* tmpl) {
 // ~ThreadState under Wine). This replacement (it takes the place of libstdc++'s: the linker finds
 // it in soa_compat first) keeps each thread's destructors in a key created at start-up, before any
 // emulated TLS is touched, so they run while the blocks are alive; the main thread's at exit().
+// The main thread's must run before the static objects' destructors (C++: thread storage is
+// destroyed first; glibc runs them in exit() before the atexit handlers). Static destructors are
+// atexit handlers too, run in reverse order of registration, so the main thread's are run by a
+// handler registered at each of its registrations (the last one registered runs first; the others
+// then find nothing left): an object constructed before the thread_local outlives it. (One
+// registered at start-up ran last: ~ThreadState of soaruntime_tests.exe's main thread erased itself
+// from cpu.cpp's destroyed g_thread_states, STATUS_HEAP_CORRUPTION at exit.)
 // (clang, llvm-mingw, has native TLS: none of this.)
 namespace {
 struct ThreadDtor {
@@ -126,6 +133,7 @@ struct ThreadDtor {
 using ThreadDtors = std::vector<ThreadDtor>;
 pthread_key_t g_dtor_key;
 bool g_dtor_key_ok = false;
+DWORD g_main_tid = 0;  // the thread the constructors run on
 
 void run_thread_dtors(void* p) {
     auto* v = (ThreadDtors*)p;
@@ -137,14 +145,16 @@ void run_thread_dtors(void* p) {
     delete v;
 }
 
+void run_main_thread_dtors() {  // (no key destructor runs for the main thread)
+    if (auto* v = (ThreadDtors*)pthread_getspecific(g_dtor_key)) {
+        pthread_setspecific(g_dtor_key, nullptr);
+        run_thread_dtors(v);
+    }
+}
+
 __attribute__((constructor(101))) void init_thread_dtors() {
     g_dtor_key_ok = pthread_key_create(&g_dtor_key, run_thread_dtors) == 0;
-    atexit([] {  // the main thread's (no key destructor runs for it)
-        if (auto* v = (ThreadDtors*)pthread_getspecific(g_dtor_key)) {
-            pthread_setspecific(g_dtor_key, nullptr);
-            run_thread_dtors(v);
-        }
-    });
+    g_main_tid = GetCurrentThreadId();
 }
 }  // namespace
 
@@ -156,6 +166,7 @@ extern "C" int __cxa_thread_atexit(void (*fn)(void*), void* obj, void* /*dso*/) 
         pthread_setspecific(g_dtor_key, v);
     }
     v->push_back({fn, obj});
+    if (GetCurrentThreadId() == g_main_tid) atexit(run_main_thread_dtors);  // (before the statics constructed so far)
     return 0;
 }
 #endif

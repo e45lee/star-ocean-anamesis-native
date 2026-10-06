@@ -349,6 +349,13 @@ evidence against one replaces it and records why.
 - A granted stamp the player owns already changes nothing; the 7 type-2 stamps no master row
   awards are never granted.
 
+**AddItem (agent server-u-stamps).** Not an assumption: `CAddItemList` is an
+`IInfoBaseMap<u64, CItemInfo>` whose `DeserializeArray` (@0163d574) returns 0, so every `AddItem`
+the server sent as an array was ignored and the new weapons and accessories appeared only with the
+next full player load. Every answer now sends a map keyed by the uid (`ext::add_items`;
+[`server-rules.md#conventions`](server-rules.md#conventions)). The keys are strings, like the
+server's other maps (the client also reads an integer key).
+
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the
 step records it here and in `server-rules.md` as (c).

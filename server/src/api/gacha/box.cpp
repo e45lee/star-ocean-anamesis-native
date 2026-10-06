@@ -275,7 +275,7 @@ std::vector<u8> box_gacha(ext::Ctx& ctx, const Request& req) {
     Value slots_info = box_gacha_info(ctx, id);  // this box's slots, and the next box's once it moved on
     data["UpdateBoxGachaList"] = box_gacha_list_info(ctx, id, &slots_info);
     data["UpdateBoxGacha"] = slots_info;
-    if (!draws.items.arr.empty()) data["AddItem"] = draws.items;
+    ext::add_items(data, draws.items);
     data["StockItem"] = stack_item_info_list(ctx);
     if (!draws.characters.arr.empty()) {
         Value add_character = Value::object();

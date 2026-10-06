@@ -1210,6 +1210,34 @@
    ],
    "source": "declared"
   },
+  "session:add-item": {
+   "apis": [
+    "Gacha",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "SimpleLogin"
+   ],
+   "source": "declared"
+  },
+  "session:add-item-server": {
+   "apis": [
+    "Gacha",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "NoLoginStart",
+    "SellItem",
+    "SellItemArray",
+    "SimpleLogin"
+   ],
+   "source": "declared"
+  },
   "session:deepspace": {
    "apis": [
     "AchievementActiveList",

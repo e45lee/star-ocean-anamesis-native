@@ -174,7 +174,7 @@ std::vector<u8> ex_item_shop(Ctx& ctx, const Request& req) {
         Value data = ctx.base_data();
         data["ItemShopInfo"] = item_shop_info(ctx, shop_row, t);
         data["ItemShopInfoList"] = item_shop_list(ctx);
-        if (!items.arr.empty()) data["AddItem"] = items;
+        ext::add_items(data, items);
         data["StockItem"] = ctx.stock();
         LOGI("server", "ExItemShop %u (%s): %u coins, %zu items, %zu stack grants", args.shop_row_id, shop_row.s("id_label").c_str(),
              (u32)shop_row.i("price"), items.arr.size(), stocks.arr.size());
@@ -249,7 +249,7 @@ Value exchange_data(Ctx& ctx, const Row& contents_row, u32 count, u32 free_coins
     result["AddFreeCoin"] = free_coins;
     data["ExchangeResult"] = result;
     data["ExchangeShopExCount"] = exchange_counts(ctx);
-    if (!items.arr.empty()) data["AddItem"] = items;
+    ext::add_items(data, items);
     if (!characters.arr.empty()) {
         Value add_character = Value::object();
         for (auto& character : characters.arr) add_character[std::to_string(character.get_u("id"))] = character;

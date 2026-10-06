@@ -395,7 +395,7 @@ Value gacha_data(ext::Ctx& ctx, const Request& req, const Row& gacha_row, GachaD
     if (!draw.chain.empty()) advance_stepup(ctx, req, draw, data);
     data["GachaItems"] = draw.items;
     data["AddCharacter"] = draw.added_characters;
-    if (!draw.new_items.arr.empty()) data["AddItem"] = draw.new_items;
+    ext::add_items(data, draw.new_items);
     if (!draw.limit_breaks.map.empty()) data["LimitBreakCharacter"] = draw.limit_breaks;
     if (!draw.limit_break_items.arr.empty()) data["LimitBreakItem"] = draw.limit_break_items;
     if (!draw.chips.map.empty()) data["CharacterChipInfoList"] = draw.chips;

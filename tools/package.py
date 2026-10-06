@@ -19,7 +19,7 @@ Each zip holds one top folder (soa-port-<V>-<platform>/ ...) with the binaries (
 launchers, README.txt (from scripts/package/README.txt.in: per program, which game files it needs and
 where to put them), LICENSE.txt (ours, GPLv3), THIRD-PARTY-NOTICES.txt (the licenses of the libraries
 we link: the vcpkg ports' copyright files (FFmpeg's: the LGPL 2.1), dynarmic and the externals it
-links, IJG libjpeg 9, zstd 1.3.4) and ONLY data we made:
+links, IJG libjpeg 9, zstd 1.3.4), the data we made, and ONE game file (below):
 
   data/gacha_pools.sqlite3   the reconstructed gacha pools (tools/build_gacha_pools.py) WITHOUT the
                              game's text: gacha.name (master_text titles) and rule.text (our notes,
@@ -31,22 +31,29 @@ links, IJG libjpeg 9, zstd 1.3.4) and ONLY data we made:
                              (soaserver/english_art.h, docs/english.md section 8)
   data/english/master-en.tsv, data/english/story-en/TS_*.tsv  the English text tables the server
                              reads with --english (docs/english.md 7.6): keyed by message_id / line
-                             id with the SHA-1 of the Japanese, no Japanese text. NOT the built -en
+                             id with the SHA-1 of the Japanese, no Japanese text; our own rows
+                             (machine, human, reviewed: the user, 2026-10-07). NOT the built -en
                              files: soa-server builds sqlite/basmaster-en.sqlite3 and
                              Scenario/TS_*-en.msgp at every start from these tables and the user's
                              own download, after its date-dependent master hooks (event dates), so
                              a pre-built -en master would be stale and would be game data (PLAN-english
                              P2, M-Q5)
 
-No game file goes in: not the APK / XAPK (380-ok: excluded), the download, a master DB (data/basmaster-*.sqlite3 are
-decryptions of the game's own), version.bin, libSOA.so, decompiles. The
+  data/basmaster-gl.sqlite3  Global's master DB, as committed (the user, 2026-10-07: the one game file
+                             the packages carry): soa-server derives the official English from it at
+                             its first run. An exact exception (GAME_FILE_EXCEPTIONS): this path and
+                             git's blob at HEAD only.
+
+No other game file goes in: not the APK / XAPK (380-ok: excluded), the download, the other master DBs
+(data/basmaster-3.7.0 and the offline build's are decryptions of the game's own), version.bin, libSOA.so, decompiles. The
 programs derive what they need from the user's own game files at run time (soaserver/master_source.h).
 This script holds no decryption logic.
 
 Enforced twice before a zip is written (check()): every file must match the package's ALLOW list,
 and no file may look like a game file (GAME_FILE checks: the ADLD magic, the game's asset
 extensions, an ELF for arm64, a SQLite file with master_* tables or a gacha.name / rule.text left,
-the names basmaster / version.bin / libSOA) unless it is one of our stand-ins, which must be tracked
+the names basmaster / version.bin / libSOA) unless it is Global's master DB at its path with git's
+own bytes (GAME_FILE_EXCEPTIONS) or one of our stand-ins, which must be tracked
 in git under standin-assets/ and differ from any same-named file of a download tree given with
 --download-ref. A violation fails the run (exit 1) and no zip is left behind.
 """
@@ -101,9 +108,17 @@ ALLOW_DATA = [
     # text only, never a built -en master or story file (those fail the scan anyway)
     "data/english/master-en.tsv",
     "data/english/story-en/TS_*.tsv",
+    # Global's master DB (the user, 2026-10-07; GAME_FILE_EXCEPTIONS below)
+    "data/basmaster-gl.sqlite3",
 ]
+# The one game file packages carry (the user, 2026-10-07; docs/PLAN-english.md M-Q5, P2): Global's
+# master DB, from which soa-server derives the official English at its first run (our own rows ship
+# as data/english/*.tsv). The exception is exact: only this path, and only when the file is git's
+# blob of it at HEAD byte for byte (git hash-object); any other master DB, a renamed copy, or
+# another file at this path fails the scan as before.
+GAME_FILE_EXCEPTIONS = ["data/basmaster-gl.sqlite3"]
 # The data files copied from git into a package with a server (the paths as in the checkout).
-DATA_FILES = ["standin-assets", "standin-assets-en/recipes", "data/english/master-en.tsv", "data/english/story-en/TS_*.tsv"]
+DATA_FILES = [*GAME_FILE_EXCEPTIONS, "standin-assets", "standin-assets-en/recipes", "data/english/master-en.tsv", "data/english/story-en/TS_*.tsv"]
 ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
 
 # Game-file patterns (GAME_FILE): any file matching one fails the check unless it is an approved stand-in.
@@ -293,6 +308,21 @@ def tracked_standins():
     return out
 
 
+def git_blob(rel):
+    """git's blob id of `rel` at HEAD ("" when HEAD has none)."""
+    r = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD:" + rel], capture_output=True, text=True)
+    return r.stdout.strip() if r.returncode == 0 else ""
+
+
+def is_game_file_exception(path, rel):
+    """`rel` is one of GAME_FILE_EXCEPTIONS and the file is HEAD's blob of that path, byte for byte."""
+    if rel not in GAME_FILE_EXCEPTIONS:
+        return False
+    want = git_blob(rel)
+    got = subprocess.run(["git", "hash-object", "--no-filters", path], capture_output=True, text=True).stdout.strip()
+    return bool(want) and got == want
+
+
 def game_file_reasons(path, rel):
     """Why `path` looks like a game file ([] when it doesn't)."""
     why = []
@@ -353,6 +383,10 @@ def check(stage, kind, download_ref):
                     if os.path.exists(orig):
                         problems.append(f"{rel}: the download has a file of this name: a stand-in must be ours")
                 continue
+            if why and is_game_file_exception(p, rel):
+                continue  # Global's master DB, git's own blob (GAME_FILE_EXCEPTIONS)
+            if why and rel in GAME_FILE_EXCEPTIONS:
+                problems.append(f"{rel}: not git's blob of {rel} at HEAD (the exception covers only that file)")
             for w in why:
                 problems.append(f"{rel}: {w}")
     return problems

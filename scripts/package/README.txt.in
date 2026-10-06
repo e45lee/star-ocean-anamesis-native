@@ -108,8 +108,9 @@ any client that connects to it). run-emulator{{IF windows}}.cmd{{ELSE}}.sh{{END}
 the server when you close the client.
 {{END}}
 
-This package holds no game files. You supply your own copy of the game (below); the programs read
-it where it is and never change it.
+This package holds no game files but one: the Global (English) version's master database
+(data/basmaster-gl.sqlite3), the source of the official English text (5.). You supply your own copy
+of the game (below); the programs read it where it is and never change it.
 
 
 1. Game files
@@ -347,10 +348,11 @@ An APK of another version is skipped with "another version of the game (its libS
                               server had already deleted
   standin-assets-en/recipes/  how the English buttons and labels are drawn (text, boxes, styles;
                               no images): the server draws them from your own game files
-  data/english/               the English text: master-en.tsv (the game's texts by id) and
-                              story-en/ (the story lines), the official English of the Global
-                              version where it exists, machine and our own translations
-                              elsewhere. The server builds the English game files from them
+  data/english/               our English translations: master-en.tsv (the game's texts by id)
+                              and story-en/ (the story lines), machine and our own translations
+  data/basmaster-gl.sqlite3   the master database of the Global (English) version of the game:
+                              the server takes the official English from it on the first start.
+                              With the two above it builds the English game files
   LICENSE.txt                 this software's license (GNU GPL v3)
   THIRD-PARTY-NOTICES.txt     the licenses of the libraries it links
   BUILD-INFO.txt              the version, commit and build settings

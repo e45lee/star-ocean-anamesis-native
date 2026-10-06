@@ -302,7 +302,7 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 | `work/download-3.7.0/` (the full 3.7.0 download; or `work/SOA-3.7.0-canonical-data.zip`, the same tree zipped, read in place with `--download`) and `data/basmaster-3.7.0.sqlite3` (its master DB, decrypted; without it the programs decrypt the download's into their data dir at startup: `docs/server-rules.md#master-source`) | the port's in-process server (its CDN and master data); the 3.7.0 emulator's server and CDN |
 | `work/extracted/xapk/` (the offline XAPK, unpacked by `tools/extract.sh`) | optional for the viewer (`emulator-viewer/`, `soa-viewer --apk-dir`; it reads the XAPK in place when it finds one); `decomp.sh --v380` |
 | `apk/STAR+OCEAN+-anamnesis-_3.8.0_APKPure.xapk` (the APKPure download) | the viewer (`soa-viewer` reads it in place: `--xapk FILE`, or found in `apk/` or beside the executable), the save editor, `decomp.sh --v380` | <!-- 380-ok: the viewer's game file -->
-| `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`) | <!-- 380-ok: the viewer's game file -->
+| `data/basmaster-3.8.0.sqlite3`, `data/basmaster-gl.sqlite3` (decrypted master DBs: the offline build's, the Global service's last) | the save editor; comparisons (`docs/basmaster-gl.md`); `basmaster-gl` is also the source of the official English (the English mode) and the one game file the release packages carry ("Packaging") | <!-- 380-ok: the viewer's game file -->
 | `data/version-3.7.0.bin` (in git; a copy of `work/download-3.7.0/version.bin`: the original CDN's index of the 3.7.0 download, revision 1471, 26,268 assets, MessagePack; the server's CDN serves a rebuilt revision 1472) | the reference for checking a download (`tools/check_download.py`) and for the CDN's rebuild |
 | `data/gacha_pools.sqlite3` (the reconstructed gacha pools, made by `tools/build_gacha_pools.py`) | the local server's gacha draws (`docs/server-rules.md` 4.3) |
 | `data/english/` (in git: our English rows only, keyed by message_id: `master.tsv`, `story/`, `glossary.tsv`, `client-strings.tsv`, and the generated `master-en.tsv` and `story-en/`; Global's official English is derived at build time from `data/basmaster-gl.sqlite3`, never committed; no story Japanese: docs/english.md 7.6, 7.9) | the English mode's `-en` master and story files, which the server builds at every start with `--english` (PLAN-english.md); release packages ship `master-en.tsv` and `story-en/TS_*.tsv`, never a built `-en` file ("Packaging") |
@@ -363,15 +363,18 @@ in Japanese; the `-en` launchers are the English game (docs/PLAN-english.md Q5, 
   pre-built `-en` master would carry stale event dates (it is a copy of the served master after the
   date-dependent `ClientMaster` hooks, `server/src/cdn/served_master.cpp`) and would be a game
   master DB; so no packaging exception exists and the game-file scan is unchanged: it rejects a
-  `-en` master under any name (`tests/test_package.py`). The tables carry Global's official English
-  where it exists (Square Enix's text, like the master's), next to memory, machine and our own
-  rows: shipping them is the user's M-Q5 decision. **No seed save** (the
+  `-en` master under any name (`tests/test_package.py`). The tables hold only our own rows
+  (machine, human, reviewed). **Global's master DB, `data/basmaster-gl.sqlite3`, ships too** (the
+  user, 2026-10-07): the server derives the official English of the Global version from it at its
+  first run. It is the one game file in the packages, and the exception is exact: that path, with
+  the bytes git has for it at HEAD; any other master DB, a renamed or changed copy, fails the scan.
+  **No seed save** (the
   user, 2026-10-04: `data/saves/seed/Game.xml` is a real player's): a package's first run starts a
   new account through the game's own tutorial, unless `--seed FILE` names a save, or the user puts
   one at `<package>/data/saves/seed/Game.xml` (`docs/server-rules.md#seed`). Not a checkout's: a
   release build never looks there (above).
-- **What never goes in:** any game file: the APKs, the download, the master DBs
-  (`data/basmaster-*.sqlite3` are decryptions of the game's own), `version.bin`, `libSOA.so`,
+- **What never goes in:** any other game file: the APKs, the download, the other master DBs
+  (`data/basmaster-3.7.0.sqlite3` and the offline build's are decryptions of the game's own), `version.bin`, `libSOA.so`,
   decompiles. Before a zip is written every file must be on the allow-list
   and pass a game-file scan (the ADLD magic, the game's asset extensions, an ARM64 ELF, a zip, a
   SQLite file with `master_*` tables or gacha titles, the names `basmaster` / `version*.bin` /

@@ -37,7 +37,7 @@ libVorbis is 1.3.5; decoding is bit-identical (the tests compare every float sam
 `vorbis_synthesis_pcmout`), so no pinned build: the guest's code has no fused multiply-adds (none in the
 library's range) and the host build no `-ffast-math`.
 
-**Differential tests:** two BGM streams from `work/download-3.7.0/Sound/` (skipped when absent) decoded
+**Differential tests:** two BGM streams from the download's `Sound/` (`work/SOA-3.7.0-canonical-data.zip`, read in place; skipped when absent) decoded
 through the guest (`t.call`) and through the natives the way `Aska::AskaOGG` drives them (0x2000-byte feeds,
 the headers, synthesis / blockin / pcmout / read, and `Decode_LoopStart`'s seek: stream / synthesis / sync
 reset, packetpeek + packet_blocksize + trackonly up to a sample); damaged streams (flipped bytes with CRC

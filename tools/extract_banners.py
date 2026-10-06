@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Extract the gacha banner and pickup images of the 3.7.0 data set to PNG, with an index.
 
-Sources:
-  * work/download-3.7.0/Image/etc2/*.aif  (ADLD-XOR + SLZ + AIF: ETC2 / JPEG), the only place the
-    banner art lives (the APK's assetpack/Image has none);
-  * work/download-3.7.0/UI/etc2/gacha*.csf  the gacha screens' Cocos scenes (their texture atlas);
+Sources (in the 3.7.0 download, --download: work/SOA-3.7.0-canonical-data.zip, read in place, or a folder):
+  * Image/etc2/*.aif  (ADLD-XOR + SLZ + AIF: ETC2 / JPEG), the only place the banner art lives (the
+    APK's assetpack/Image has none);
+  * UI/etc2/gacha*.csf  the gacha screens' Cocos scenes (their texture atlas);
   * the 3.7.0 APK (apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk, --apk) as a fallback for names
     that the download lacks.
 Master data: data/basmaster-3.7.0.sqlite3 (read-only).
@@ -27,7 +27,8 @@ Output (work/gacha-banners/ by default; untracked):
                                     thumbnails (missing images are listed by name)
   gachas.json                       the same data, machine-readable
 
-The decoding is done by tools/aif2png (C++; built on demand with tools/aif2png/build.sh).
+The decoding is done by tools/aif2png (C++; built on demand with tools/aif2png/build.sh), which reads
+the download's stored zip entries in place (ZIP@OFFSET+SIZE: DownloadTree.host_spec).
 """
 import argparse
 import concurrent.futures as cf
@@ -42,6 +43,9 @@ import tempfile
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
+
 TOOL = os.path.join(ROOT, "tools", "aif2png", "aif2png")
 
 GACHA_ART = re.compile(r"(banner_gacha|ticketgacha|pickup_img|_PU_|gacha|banner_sphere|banner_rental_point)", re.I)
@@ -189,7 +193,8 @@ q.oninput=f;only.onchange=f;
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--download", default=os.path.join(ROOT, "work", "download-3.7.0"))
+    ap.add_argument("--download", default=DEFAULT,
+                    help="the 3.7.0 download: its zip (default work/SOA-3.7.0-canonical-data.zip, read in place) or a folder")
     ap.add_argument("--apk", default=os.path.join(ROOT, "apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"))
     ap.add_argument("--db", default=None)
     ap.add_argument("--out", default=os.path.join(ROOT, "work", "gacha-banners"))
@@ -202,8 +207,8 @@ def main():
     db = find_db(a.db)
     gachas = load_gachas(db)
 
-    img_dir = os.path.join(a.download, "Image", "etc2")
-    on_disk = {f[:-4]: os.path.join(img_dir, f) for f in os.listdir(img_dir) if f.endswith(".aif")}
+    tree = DownloadTree.open(a.download)
+    on_disk = {f[:-4]: tree.host_spec("Image/etc2/" + f) for f in tree.list("Image/etc2") if f.endswith(".aif")}
     apk_names = {}
     if os.path.exists(a.apk):
         with zipfile.ZipFile(a.apk) as z:
@@ -229,10 +234,9 @@ def main():
             with zipfile.ZipFile(a.apk) as z, open(src, "wb") as fh:
                 fh.write(z.read(apk_names[n]))
         jobs.append((src, f"Image/etc2/{n}.aif", os.path.join(a.out, "images", n + ".png")))
-    ui_dir = os.path.join(a.download, "UI", "etc2")
-    ui_names = sorted(f for f in os.listdir(ui_dir) if re.match(r"gacha", f, re.I) and f.endswith(".csf"))
+    ui_names = [f for f in tree.list("UI/etc2") if re.match(r"gacha", f, re.I) and f.endswith(".csf")]
     for f in ui_names:
-        jobs.append((os.path.join(ui_dir, f), f"UI/etc2/{f}", os.path.join(a.out, "ui", f[:-4] + ".png")))
+        jobs.append((tree.host_spec(f"UI/etc2/{f}"), f"UI/etc2/{f}", os.path.join(a.out, "ui", f[:-4] + ".png")))
     res = run_batches(jobs, a.jobs)
     if a.all_images:  # a separate run: results are keyed by source file
         os.makedirs(os.path.join(a.out, "all"), exist_ok=True)

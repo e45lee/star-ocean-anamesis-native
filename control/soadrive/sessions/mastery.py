@@ -57,7 +57,7 @@ def plant(db, soa_server):
         with open(os.path.join(corpus, "requests.txt"), "w") as f:
             f.write("# tz: UTC\nreq 1 1790856005 Login a01c67ef - - - -\n")
         args = ["--master", repo_file("data/basmaster-3.7.0.sqlite3"), "--seed", repo_file("data/saves/seed/Game.xml"),
-                "--seed-rng", os.environ.get("SEED_RNG") or "1", "--download-dir", repo_file("work/download-3.7.0")]
+                "--seed-rng", os.environ.get("SEED_RNG") or "1", "--download-dir", repo_file("work/SOA-3.7.0-canonical-data.zip")]
         subprocess.run([soa_server] + args + ["--replay", corpus, "--out", os.path.join(work, "out")], cwd=REPO, check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         src = sqlite3.connect(os.path.join(work, "out", "data", "server.sqlite3"))

@@ -16,7 +16,7 @@ Usage:
   tools/english_mt.py post      --sample DIR/sample.jsonl --mt RAW.jsonl --out OUT.jsonl
                                                        # restore tokens, fold glyphs, re-break, check
 Common options: --master data/basmaster-3.7.0.sqlite3 --gl data/basmaster-gl.sqlite3
-                --scenario work/download-3.7.0/Scenario --glyphs FILE (default: the font of the
+                --scenario work/SOA-3.7.0-canonical-data.zip --glyphs FILE (default: the font of the
                 committed APK, apk/...3.7.0...apk Font/etc2/font.fpk)
 
 The shared code (sources, memory, glossary, font, checks) is tools/english_core.py; the committed
@@ -217,7 +217,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--master", default=str(REPO / "data/basmaster-3.7.0.sqlite3"))
     ap.add_argument("--gl", default=str(REPO / "data/basmaster-gl.sqlite3"))
-    ap.add_argument("--scenario", default=str(REPO / "work/download-3.7.0/Scenario"))
+    ap.add_argument("--scenario", default=str(REPO / "work/SOA-3.7.0-canonical-data.zip"),
+                    help="the Scenario files: the 3.7.0 download (its zip, read in place, or a folder) or a folder of TS_*.msgp")
     ap.add_argument("--glyphs", default=None,
                     help="font advances: default the committed APK's Font/etc2/font.fpk; or a font.fpk, .apk or the old glyphs.pkl")
     sub = ap.add_subparsers(dest="cmd", required=True)

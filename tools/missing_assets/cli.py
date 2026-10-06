@@ -20,7 +20,7 @@ from .render import Document, missing_paths_text, render_document
 
 USAGE = """\
   .venv/bin/python tools/missing_assets.py [--db data/basmaster-3.7.0.sqlite3]
-        [--download work/download-3.7.0] [--apk apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk]
+        [--download work/SOA-3.7.0-canonical-data.zip] [--apk apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk]
         [--standins standin-assets]
         [--gl data/basmaster-gl.sqlite3] [--names docs/missing-assets-names.tsv]
         [--md docs/missing-assets-3.7.0.md] [--txt docs/missing-assets-3.7.0.txt] [--json OUT] [--residue OUT]
@@ -36,7 +36,8 @@ def parse_args(argv=None) -> argparse.Namespace:
         description="List the files that events and gacha banners of the 3.7.0 master reference but no source has.",
         usage=USAGE)
     ap.add_argument("--db", default=rel("data", "basmaster-3.7.0.sqlite3"))
-    ap.add_argument("--download", default=rel("work", "download-3.7.0"))
+    ap.add_argument("--download", default=rel("work", "SOA-3.7.0-canonical-data.zip"),
+                    help="the 3.7.0 download: its zip (read in place) or an extracted folder")
     ap.add_argument("--apk", default=rel("apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"))
     ap.add_argument("--standins", default=rel("standin-assets"))
     ap.add_argument("--gl", default=rel("data", "basmaster-gl.sqlite3"))

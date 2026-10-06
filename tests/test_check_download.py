@@ -114,3 +114,40 @@ def test_claims_the_canonical_revision(download):
     (download / "version.bin").write_bytes(msgpack.packb(vb))
     res = check_download.check(str(download), jobs=2, quick=True)
     assert kinds(res) == ["version-bin"]  # revision 1471 but not the canonical bytes
+
+
+def zip_of(folder: pathlib.Path, out: pathlib.Path, top: str = "") -> pathlib.Path:
+    """`folder`'s files as a stored zip (as the canonical SOA-3.7.0-canonical-data.zip), under `top`."""
+    import zipfile
+
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_STORED) as z:
+        for p in sorted(folder.rglob("*")):
+            if p.is_file():
+                z.write(p, top + p.relative_to(folder).as_posix())
+    return out
+
+
+def comparable(res):
+    """A result without what names the tree or times the run."""
+    res = dict(res, info={k: v for k, v in res["info"].items() if k not in ("dir", "version_bin", "seconds", "read_seconds")})
+    return res
+
+
+@pytest.mark.parametrize("damage", [False, True])
+@pytest.mark.parametrize("top", ["", "tree/"])
+def test_zip_and_folder_agree(download, tmp_path, damage, top):
+    # the download as a folder and the same files as a zip (flat, or under one top folder): the same report
+    if damage:
+        (download / PLAIN_NAME).unlink()
+        (download / "Sound/stray.bin").write_bytes(b"x")
+        path = download / XOR_NAME
+        data = bytearray(path.read_bytes())
+        data[20] ^= 0xFF
+        path.write_bytes(bytes(data))
+    z = zip_of(download, tmp_path / "download.zip", top)
+    for quick in (False, True):
+        a = check_download.check(str(download), jobs=2, quick=quick)
+        b = check_download.check(str(z), jobs=2, quick=quick)
+        assert comparable(a) == comparable(b)
+        assert a["ok"] == (not damage)
+    assert check_download.main([str(z), "--jobs", "2"]) == (1 if damage else 0)

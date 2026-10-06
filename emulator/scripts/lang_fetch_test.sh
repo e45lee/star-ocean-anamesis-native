@@ -19,7 +19,7 @@
 #   KEEP_DATA=1    keep the phone copy (OUT/emu)
 #
 # It starts soa-server --english (free ports, its own scratch state, the CDN from
-# work/download-3.7.0) and soa-emu headless pointed at it, and checks:
+# work/SOA-3.7.0-canonical-data.zip) and soa-emu headless pointed at it, and checks:
 #   1. served: version.bin over HTTP lists sqlite/basmaster-en.sqlite3 (encType 2) with its
 #      Individual bundle I/5374616e/<chash32>.bin;
 #   2. client: NoLoginStart -> TAP TO START -> Login -> the data check -> ダウンロード / 完了 -> home;
@@ -47,12 +47,12 @@ repo_file() {   # a repo file here, else in the main checkout work/ links to (a 
     [ -n "$main" ] && [ -e "$main/$1" ] && echo "$main/$1"
 }
 master=$(repo_file data/basmaster-3.7.0.sqlite3)
-download=$(repo_file work/download-3.7.0)
+download=$(repo_file work/SOA-3.7.0-canonical-data.zip)
 table=${EN_TABLE:-$(repo_file data/english/master-en.tsv)}
 [ -n "$table" ] || table=$(repo_file work/english/en-server/master-en.tsv)
 phone_src=${EMU_DATA:-$(repo_file work/phone-3.7.0)}
 [ -n "$master" ] || { echo "FAIL: data/basmaster-3.7.0.sqlite3 not found"; exit 1; }
-[ -n "$download" ] || { echo "FAIL: work/download-3.7.0 not found"; exit 1; }
+[ -n "$download" ] || { echo "FAIL: work/SOA-3.7.0-canonical-data.zip not found"; exit 1; }
 [ -n "$table" ] && [ -s "$table" ] || { echo "FAIL: no English text table (EN_TABLE)"; exit 1; }
 [ -n "$phone_src" ] && [ -d "$phone_src/data/files/download" ] || { echo "FAIL: no phone (EMU_DATA)"; exit 1; }
 if [ -z "${EMU_LANG+x}" ]; then

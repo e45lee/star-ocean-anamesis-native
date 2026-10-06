@@ -28,7 +28,7 @@ while [ $n -lt "${MAX_RUNS:-100}" ]; do
         rm -rf "${out:?}/data"
         # Pass only when every test passed: a crashed test (CRASH / TIMEOUT, carried past) or a FAIL fails
         # the run (until 2026-10-04 this exited 0 whenever the last boot finished, hiding a "260/261").
-        # A skip (a test whose input, e.g. work/download-3.7.0, is absent) is not a failure.
+        # A skip (a test whose input, e.g. work/SOA-3.7.0-canonical-data.zip, is absent) is not a failure.
         if grep -qvE '^(ok|skip) ' "$out/results.txt"; then
             echo "FAIL: $(grep -vcE '^(ok|skip) ' "$out/results.txt") test(s) did not pass:"; grep -vE '^(ok|skip) ' "$out/results.txt"
             exit 1

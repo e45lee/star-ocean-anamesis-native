@@ -5,7 +5,7 @@ Checks the reconstructed pick-ups of `data/gacha_pools.sqlite3` (`gacha_pickup`,
 3.7.0 banner images actually show. Reproduce with
 
 ```sh
-tools/gacha_verify.py --master data/basmaster-3.7.0.sqlite3 --download work/download-3.7.0 \
+tools/gacha_verify.py --master data/basmaster-3.7.0.sqlite3 --download work/SOA-3.7.0-canonical-data.zip \
     --out work/gacha-verify --report docs/gacha-verify.md      # ~1 min on 24 cores
 ```
 
@@ -19,7 +19,7 @@ applied to the pools; the generated tables show the state after that.
 
 - **Images.** Per gacha: the list banner (`master_gacha.banner_id` → `master_banner.image`,
   512×128), `image1..4` and the pick-up panels (`master_gacha_image`, 1024×512), decoded from
-  `work/download-3.7.0/Image/etc2/*.aif` with `tools/aif2png` (via `tools/extract_banners.py`), with
+  the download's `Image/etc2/*.aif` (read in place from the zip) with `tools/aif2png` (via `tools/extract_banners.py`), with
   the APK's images as a fallback for names the download lacks (none of them is a gacha's banner or
   panel). 537 distinct images are present; 1,271 referenced names are not in the 3.7.0 data
   ([missing-assets-3.7.0.md](missing-assets-3.7.0.md); the stand-ins in `standin-assets/` are ours

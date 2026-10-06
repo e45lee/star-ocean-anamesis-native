@@ -77,13 +77,13 @@ int main() {
     // a flat zip, and one with a top folder
     write_file(root / "flat.zip", make_zip(kTree));
     std::vector<Member> nested;
-    for (auto& m : kTree) nested.push_back({"download-3.7.0/" + m.name, m.data, m.deflate});
+    for (auto& m : kTree) nested.push_back({"SOA-data/" + m.name, m.data, m.deflate});
     write_file(root / "nested.zip", make_zip(nested));
     auto flat = soa::FileTree::open((root / "flat.zip").generic_string());
     check(flat && flat->is_zip() && flat->prefix().empty(), "a flat zip");
     if (flat) check_tree(*flat, "flat zip");
     auto top = soa::FileTree::open((root / "nested.zip").generic_string());
-    check(top && top->prefix() == "download-3.7.0/", "a zip with one top folder: read from inside it");
+    check(top && top->prefix() == "SOA-data/", "a zip with one top folder: read from inside it");
     if (top) check_tree(*top, "nested zip");
     write_file(root / "junk.bin", text("not a zip"));
     check(!soa::FileTree::open((root / "junk.bin").generic_string()) && !soa::FileTree::open((root / "none").generic_string()),

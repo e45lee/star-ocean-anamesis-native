@@ -1,17 +1,17 @@
-"""Which asset files exist: the sources (a directory tree or a zip such as the APK), the presence
+"""Which asset files exist: the sources (a folder, or a zip such as the download's or the APK), the presence
 index over them, and the AIF image header reader (ADLD / SLZ unwrapping) used for sibling sizes."""
 from __future__ import annotations
 
 import os
 import re
 import struct
-import zipfile
 import zlib
 from dataclasses import dataclass
 from typing import Optional
 
 from . import ROOT  # noqa: F401  (puts the repo root on sys.path for soa_save)
 from soa_save.adld import chash32
+from soa_save.download_tree import DownloadTree
 
 try:
     import zstandard
@@ -56,48 +56,30 @@ def logical_name(stored: str) -> str:
 
 
 class Source:
-    """An asset source: a directory tree or a zip; `files` maps logical name -> stored path.
-    Zero-size files don't count; the first stored file of a logical name wins."""
+    """An asset source: a directory tree or a zip (the download's SOA-3.7.0-canonical-data.zip, the
+    APK), read in place through soa_save.download_tree; `files` maps logical name -> stored path
+    (relative to the tree). Zero-size files don't count; the first stored file of a logical name (in
+    sorted order) wins."""
 
     def __init__(self, label: str, path: Optional[str]):
         self.label, self.path = label, path
         self.files: dict[str, str] = {}
-        self.zip: Optional[zipfile.ZipFile] = None
+        self.tree: Optional[DownloadTree] = None
         if not path or not os.path.exists(path):
             return
-        if os.path.isdir(path):
-            self._index_tree(path)
-        else:
-            self._index_zip(path)
-
-    def _index_tree(self, path: str) -> None:
-        for dirpath, _, names in os.walk(path):
-            for name in names:
-                full = os.path.join(dirpath, name)
-                if os.path.getsize(full) > 0:
-                    self.files.setdefault(logical_name(os.path.relpath(full, path)), full)
-
-    def _index_zip(self, path: str) -> None:
-        self.zip = zipfile.ZipFile(path)
-        for info in self.zip.infolist():
-            if info.file_size > 0 and not info.is_dir():
-                self.files.setdefault(logical_name(info.filename), info.filename)
+        self.tree = DownloadTree.open(path)
+        for name in self.tree.files():
+            if self.tree.size(name) > 0:
+                self.files.setdefault(logical_name(name), name)
 
     def read(self, logical: str, limit: Optional[int] = None) -> bytes:
         """The file's bytes (the first `limit` bytes when given)."""
-        p = self.files[logical]
-        if self.zip:
-            with self.zip.open(p) as f:
-                return f.read(limit) if limit else f.read()
-        with open(p, "rb") as f:
+        with self.tree.open_file(self.files[logical]) as f:
             return f.read(limit) if limit else f.read()
 
     def stored_name(self, logical: str) -> str:
         """The name the file's ADLD key is made from (relative to builtin_data / assetpack)."""
-        p = self.files[logical]
-        if self.zip:
-            return STORAGE_ROOT_RE.sub("", p)
-        return os.path.relpath(p, self.path)
+        return STORAGE_ROOT_RE.sub("", self.files[logical])
 
 
 class Presence:

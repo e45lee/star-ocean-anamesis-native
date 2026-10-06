@@ -351,11 +351,11 @@ def test_association_rules():
 
 
 # ---------------------------------------------------------------- the real documents
-REAL_INPUTS = [ROOT / "work/download-3.7.0", ROOT / "data/basmaster-3.7.0.sqlite3",
+REAL_INPUTS = [ROOT / "work/SOA-3.7.0-canonical-data.zip", ROOT / "data/basmaster-3.7.0.sqlite3",
                ROOT / "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"]
 
 
-@pytest.mark.skipif(not all(p.exists() for p in REAL_INPUTS), reason="needs the 3.7.0 download (work/)")
+@pytest.mark.skipif(not all(p.exists() for p in REAL_INPUTS), reason="needs the 3.7.0 download (work/SOA-3.7.0-canonical-data.zip)")
 def test_documents_current(tmp_path):
     """The committed documents are what the generator writes now."""
     md, txt = tmp_path / "out.md", tmp_path / "out.txt"

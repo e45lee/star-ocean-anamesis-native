@@ -4,7 +4,7 @@ The experiment files (screenshots, the English-merged masters, font and string d
 
 Investigation of 2026-10-06 (agent `english`), at the user's request: **how can translated English text get into the 3.7.0 client?** Nothing was changed in code or data; the plan built on these findings is [PLAN-english.md](PLAN-english.md). The official English is the Global master, described in [basmaster-gl.md](basmaster-gl.md); the Global voice files are in [global-voice-files.md](global-voice-files.md).
 
-Ghidra addresses are ELF vaddr + 0x100000, as `tools/decomp_at.sh` takes them. Counts come from read-only queries over `data/basmaster-3.7.0.sqlite3`, `data/basmaster-gl.sqlite3`, `work/download-3.7.0`, the 3.7.0 APK and `work/libSOA-3.7.0.so`. Each section ends with "How measured". Scratch files (scripts, renders, screenshots) are outside the repo in `/home/fish/.claude/jobs/ac4802d9/tmp/english-*` and are not committed.
+Ghidra addresses are ELF vaddr + 0x100000, as `tools/decomp_at.sh` takes them. Counts come from read-only queries over `data/basmaster-3.7.0.sqlite3`, `data/basmaster-gl.sqlite3`, the 3.7.0 download (`work/SOA-3.7.0-canonical-data.zip`), the 3.7.0 APK and `work/libSOA-3.7.0.so`. Each section ends with "How measured". Scratch files (scripts, renders, screenshots) are outside the repo in `/home/fish/.claude/jobs/ac4802d9/tmp/english-*` and are not committed.
 
 ## Summary
 
@@ -697,7 +697,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 - **How the server consumes it.** The `-en` master builder (C1) and story builder (C3) read only the committed tables, the two master DBs and the download, apply the precedence and the checks, fold glyphs and break lines with the font's advances, and write the files. **No engine is called at server start** (an API isn't reproducible, and a server must not need the network). Same inputs, same bytes, so the CDN's version ids stay stable.
 - **What is safe to commit** (the user's game-file policy, README.md "Game files"):
   - The master's Japanese is already in git (`data/basmaster-3.7.0.sqlite3`), and so is Global's English. A table of our English keyed by `message_id` adds no game data beyond what's there: committable, like the master DBs.
-  - The story's Japanese is **not** in git (only in `work/download-3.7.0`). The story tables therefore hold `message_id`, a hash and our English, and no Japanese; tools read the Japanese from the download when they need it.
+  - The story's Japanese is **not** in git (only in the 3.7.0 download, `work/SOA-3.7.0-canonical-data.zip`). The story tables therefore hold `message_id`, a hash and our English, and no Japanese; tools read the Japanese from the download when they need it.
   - Our English is still a translation of the publisher's text: whether it goes into git, and whether release packages carry it (they never carry game files), is the user's call (PLAN-english.md M-Q5; decided: both, and the packages carry the tables `master-en.tsv` and `story-en/`, from which the packaged server builds the `-en` files at every start: P2). The glossary of names is small and needed in any case.
   - Engine outputs before review (`raw-*.jsonl`), PO exports and the trial stay in `work/`.
 
@@ -746,7 +746,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
     - `need` counts the lines with kana or kanji; language-neutral lines (`……`) need no row.
     - The server serves `TS_x-en.msgp` only when `complete` is `yes` (Q12).
 - **The hash.** A story line's `ja_sha1` is the SHA-1 of the Scenario row's `text_value` exactly as the file holds it: UTF-8, with **real newlines**. This is unlike the master's two-character `\n`. `en` uses the two-character `\n`.
-- **Where the Japanese comes from.** It is read from `work/download-3.7.0/Scenario` at build time. Without it, `build` and `build --check` skip the story part and say so, and the story pytests skip.
+- **Where the Japanese comes from.** It is read from the download's `Scenario/` at build time (`work/SOA-3.7.0-canonical-data.zip`, read in place; `--scenario PATH` names another zip or folder, or a folder of `TS_*.msgp`). Without it, `build` and `build --check` skip the story part and say so, and the story pytests skip.
 - **Candidates:** `human`/`reviewed` > official (Global by id, plus E3) > `machine`.
 - **Checks:**
   - No Global token, every glyph in the font (after folding), no kana left.
@@ -947,7 +947,7 @@ Not done yet: the other scenes, and the `Image/` files (banners, tutorial pages:
 
 **Same bytes everywhere.** Two builds give identical files (the selftest), and the Windows build of `english-art` (MinGW) wrote the same bytes as the Linux one for all three scenes.
 
-**Writing a recipe.** `build/tools/english_art/english-art --out DIR --png PNGDIR` (run from the checkout: the download `work/download-3.7.0` and `standin-assets-en/recipes` by default) builds every recipe without a server and writes each edited atlas as PNG for review; `build/tools/aif2png/aif2png` renders a source scene's atlas, and its `.csv` gives the sprite rectangles. Unknown keys in a recipe are errors. A recipe's format:
+**Writing a recipe.** `build/tools/english_art/english-art --out DIR --png PNGDIR` (run from the checkout: the download `work/SOA-3.7.0-canonical-data.zip` and `standin-assets-en/recipes` by default) builds every recipe without a server and writes each edited atlas as PNG for review; `build/tools/aif2png/aif2png` renders a source scene's atlas, and its `.csv` gives the sprite rectangles. Unknown keys in a recipe are errors. A recipe's format:
 
 ```json
 {"source": "UI/etc2/common.csf",

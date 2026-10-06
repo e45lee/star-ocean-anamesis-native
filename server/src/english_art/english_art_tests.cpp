@@ -10,6 +10,7 @@
 
 #include <soa/aska_image.h>
 #include <soa/file_tree.h>
+#include <soa/install.h>
 #include <soa/paths.h>
 
 #include "cdn/files.h"
@@ -151,9 +152,9 @@ NATIVE_TEST("english-art/draw") {
 }
 
 NATIVE_TEST("english-art/common-csf") {
-    std::string dl = find_repo_file("work/download-3.7.0"), recipes = find_repo_file("standin-assets-en/recipes");
+    std::string dl = find_repo_file(soa::install::kRepoDownloadZip), recipes = find_repo_file("standin-assets-en/recipes");
     if (dl.empty() || recipes.empty()) {
-        t.skip("work/download-3.7.0 or standin-assets-en/recipes not found (the download is local data)");
+        t.skip("%s or standin-assets-en/recipes not found (the download is local data)", soa::install::kRepoDownloadZip);
         return;
     }
     auto tree = FileTree::open(dl);

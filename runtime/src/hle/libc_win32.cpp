@@ -409,8 +409,7 @@ void to_bionic_tm(const tm& t, BionicTm* b, bool utc) {
         b->tm_gmtoff = 0;
         b->tm_zone = (u64) "UTC";
     } else {
-        long tz = 0;
-        _get_timezone(&tz);  // seconds west of UTC
+        long tz = _timezone;  // seconds west of UTC (_get_timezone is the UCRT's only, not msvcrt.dll's)
         b->tm_gmtoff = -(s64)tz + (t.tm_isdst > 0 ? 3600 : 0);
         b->tm_zone = (u64)_tzname[t.tm_isdst > 0 ? 1 : 0];
     }

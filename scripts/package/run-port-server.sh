@@ -68,15 +68,16 @@ trap cleanup EXIT
 on_signal() { trap '' INT TERM HUP; cleanup; exit 130; }
 trap on_signal INT TERM HUP
 
-# --game-xml: a new server state takes the player of the phone's save, as soa's in-process server
-# does with the same data dir (soa --help: --game-xml)
+# --seed: a new server state takes the player of the phone's save, as soa's in-process server does
+# with the same data dir (a save without a player, the client's first settings-only one, is skipped
+# with a warning); a --seed among the user's options comes later and wins
 : > "$slog"
 if [ $server_log_to_tty = 1 ]; then
   "$srv" --listen 127.0.0.1:$port --http 127.0.0.1:$http_port --data "$data/server" \
-      --game-xml "$data/data/shared_prefs/Game.xml" ${srv_args[@]+"${srv_args[@]}"} > >(tee -a "$slog") 2>&1 &
+      --seed "$data/data/shared_prefs/Game.xml" ${srv_args[@]+"${srv_args[@]}"} > >(tee -a "$slog") 2>&1 &
 else
   "$srv" --listen 127.0.0.1:$port --http 127.0.0.1:$http_port --data "$data/server" \
-      --game-xml "$data/data/shared_prefs/Game.xml" ${srv_args[@]+"${srv_args[@]}"} >> "$slog" 2>&1 &
+      --seed "$data/data/shared_prefs/Game.xml" ${srv_args[@]+"${srv_args[@]}"} >> "$slog" 2>&1 &
 fi
 spid=$!
 echo "== soa-server (pid $spid): game 127.0.0.1:$port, http 127.0.0.1:$http_port; state $data/server, log $slog"

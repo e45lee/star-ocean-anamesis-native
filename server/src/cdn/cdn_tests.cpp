@@ -47,6 +47,14 @@ void remove_tree(const std::string& dir) {
     if (dir.rfind("/tmp/soa-cdn-test-", 0) != 0) return;  // only our own scratch trees
     nftw(dir.c_str(), [](const char* p, const struct stat*, int, struct FTW*) { return ::remove(p); }, 16, FTW_DEPTH | FTW_PHYS);
 }
+// The 3.7.0 download (work/download-3.7.0) is local data, not in git: without it the tests that read
+// it are skipped. (A file missing from a download that is there still fails: need().)
+bool have_download(testing::Context& t) {
+    if (!find_repo_file("work/download-3.7.0").empty()) return true;
+    t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
+    return false;
+}
+
 std::string need(testing::Context& t, const char* rel) {
     std::string p = find_repo_file(rel);
     if (p.empty()) t.fail("%s not found (the 3.7.0 download / decrypted master)", rel);
@@ -88,6 +96,7 @@ NATIVE_TEST("cdn/adld-roundtrip") {
 NATIVE_TEST("cdn/adld-reencrypt-3.7.0") {
     // The 3.7.0 master (AES + DCNE) and an XOR asset: encrypt(decrypt(file)) is the file itself,
     // and the plaintext's SHA-1 is version.bin's "md5".
+    if (!have_download(t)) return;
     struct Case {
         const char* rel;
         const char* name;
@@ -110,6 +119,7 @@ NATIVE_TEST("cdn/adld-reencrypt-3.7.0") {
 }
 
 NATIVE_TEST("cdn/version-bin-roundtrip") {
+    if (!have_download(t)) return;
     std::string p = need(t, "work/download-3.7.0/version.bin");
     std::vector<uint8_t> raw;
     if (p.empty() || !slurp(p, raw)) return;
@@ -134,6 +144,7 @@ NATIVE_TEST("cdn/version-bin-roundtrip") {
 NATIVE_TEST("cdn/bundle-layout") {
     // Our bundle layout gives the 3.7.0 bundles' sizes (rounded up to 32) for every bundle of the
     // Individual and Bulk manifests, from the members on disk.
+    if (!have_download(t)) return;
     std::string dir = need(t, "work/download-3.7.0");
     if (dir.empty()) return;
     for (const char* man : {"Individual", "Bulk"}) {

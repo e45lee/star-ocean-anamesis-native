@@ -56,7 +56,7 @@ bool has_table(const std::string& db, const char* table) {
 NATIVE_TEST("cdn/master-source") {
     std::string download = find_repo_file("work/download-3.7.0");
     std::string apk = find_repo_file("apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk");
-    if (download.empty()) return t.fail("work/download-3.7.0 not found");
+    if (download.empty()) return t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
     std::string dir = "/tmp/soa-cdn-test-master-" + std::to_string(getpid());
     std::string err;
     bool reused = true;
@@ -93,7 +93,7 @@ NATIVE_TEST("cdn/master-source") {
 // derived into the data dir's master/ (config().data_root), then cached in config().master.
 NATIVE_TEST("cdn/master-source-resolve") {
     std::string download = find_repo_file("work/download-3.7.0");
-    if (download.empty()) return t.fail("work/download-3.7.0 not found");
+    if (download.empty()) return t.skip("work/download-3.7.0 not found (the 3.7.0 download: local data)");
     ServerConfig& c = config();
     ServerConfig saved = c;
     std::string root = "/tmp/soa-cdn-test-resolve-" + std::to_string(getpid());
@@ -166,7 +166,8 @@ NATIVE_TEST("gacha/pools-name-from-master") {
 // either is compared by soa-server --cdn-check: README.md "Packaging".)
 NATIVE_TEST("cdn/download-zip") {
     std::string folder = find_repo_file("work/download-3.7.0"), zip = find_repo_file("work/SOA-3.7.0-canonical-data.zip");
-    if (folder.empty() || zip.empty()) return t.fail("work/download-3.7.0 or work/SOA-3.7.0-canonical-data.zip not found");
+    if (folder.empty() || zip.empty())
+        return t.skip("work/download-3.7.0 or work/SOA-3.7.0-canonical-data.zip not found (the 3.7.0 download: local data)");
     std::string err;
     auto a = FileTree::open(folder, &err), b = FileTree::open(zip, &err);
     if (!a || !b) return t.fail("FileTree::open: %s", err.c_str());

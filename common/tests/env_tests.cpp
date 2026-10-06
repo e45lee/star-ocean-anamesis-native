@@ -54,9 +54,10 @@ int main() {
           "soa: removed ones warned (also when empty), diagnostics not");
     check(warnings(kServer, {"SOA_CLOCK=1", "SOA_HEADLESS=1", "SOA_ARENA_CHECK=1"}) == std::vector<std::string>{"SOA_CLOCK is gone: use --clock"},
           "soa-server: only the flags it has");
-    check(warnings(kEmu, {"SOA_CLOCK=1", "SOA_FONT=f"}) == std::vector<std::string>{"SOA_FONT is gone: use --font"}, "soa-emu");
-    check(warnings(kRender, {"SOA_WEBVIEW_FONT=f", "SOA_WEBVIEW_DUMP_CSS=f"}) == std::vector<std::string>{"SOA_WEBVIEW_FONT is gone: use --font"},
-          "soa-webview-render");
+    check(warnings(kEmu, {"SOA_CLOCK=1", "SOA_GUEST_CPUS=2"}) == std::vector<std::string>{"SOA_GUEST_CPUS is gone: use --guest-cpus"},
+          "soa-emu");
+    // SOA_FONT / SOA_WEBVIEW_FONT were dropped from kRemoved with --font (2026-10-05: the fonts are built in)
+    check(warnings(kRender, {"SOA_WEBVIEW_FONT=f", "SOA_WEBVIEW_DUMP_CSS=f"}).empty(), "soa-webview-render: no removed variable left");
     check(warnings(kSoa, {"SOA_CLOCKS=1", "SOA_CLOCK_X=1", "XSOA_CLOCK=1", "SOA_CHECK=1"}).empty(), "names match exactly");
     for (const Removed& r : kRemoved) {
         check(r.programs != 0 && r.use[0] == '-', std::string(r.name) + ": a flag in some program");

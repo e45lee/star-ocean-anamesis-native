@@ -50,11 +50,12 @@ New-Item -ItemType Directory -Force -Path (Join-Path $data "server") | Out-Null
 $data = (Resolve-Path $data).Path
 $state = Join-Path $data "server"; $slog = Join-Path $data "server.log"; $sout = Join-Path $data "server.out.log"
 Remove-Item -Force -ErrorAction SilentlyContinue $slog, $sout
-# --game-xml: a new server state takes the player of the phone's save, as soa.exe's in-process
-# server does with the same data dir (soa.exe --help: --game-xml)
+# --seed: a new server state takes the player of the phone's save, as soa.exe's in-process server
+# does with the same data dir (a save without a player is skipped with a warning); a --seed among
+# the user's options comes later and wins
 $sp = Start-Process -FilePath $srv -WorkingDirectory $here -NoNewWindow -PassThru -RedirectStandardOutput $sout `
     -RedirectStandardError $slog -ArgumentList (@("--listen", "127.0.0.1:$port", "--http", "127.0.0.1:$httpPort",
-    "--data", (Q $state), "--game-xml", (Q (Join-Path $data "data\shared_prefs\Game.xml"))) + $srvArgs)
+    "--data", (Q $state), "--seed", (Q (Join-Path $data "data\shared_prefs\Game.xml"))) + $srvArgs)
 $null = $sp.Handle  # (keeps the exit code readable)
 Write-Host "== soa-server (pid $($sp.Id)): game 127.0.0.1:$port, http 127.0.0.1:$httpPort; state $state, log $slog"
 $ep = $null

@@ -3,7 +3,8 @@
 # soa_env: header-only (include/soa/env.h), the programs' environment rule and the table of the
 # SOA_* variables that are flags now (docs/environment.md); include/soa/paths.h, the programs'
 # default data dirs (Linux ~/.local/share/..., Windows %LOCALAPPDATA%\soa\...); include/soa/install.h,
-# the install-dir lookup (a release package's game files beside the program). Every library links it: the runtime,
+# the install-dir lookup (a release package's game files beside the program); include/soa/fonts.h, the
+# built-in fonts (their bytes: the library soa_fonts, cmake/fonts.cmake). Every library links it: the runtime,
 # the server, the web view (none depends on another for it).
 #   soa_env_tests  its unit tests (build/common/soa_env_tests); tests/env_removed.sh checks the
 #                  programs' warnings.

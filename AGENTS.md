@@ -48,8 +48,11 @@ a time by readable C++ ("natives"), each checked against the original. Programs:
   builds everything into `build/` (`build/port/soa`, `build/server/soa-server`,
   `build/emulator/soa-emu`, `build/emulator-viewer/soa-viewer`, ...). One CMake root; new files under
   the source folders are picked up by globs.
-- Windows: a cross build with llvm-mingw, `scripts/build.sh --windows` into `build-win/`
+- Windows: a cross build with the distribution's MinGW-w64 GCC (`g++-mingw-w64-x86-64-posix`),
+  `scripts/build.sh --windows` into `build-win/`
   ([README.md "Windows"](README.md#windows)). Natives and server code must build there too.
+- Third-party tools the scripts look for go in `work/tools/` of the main checkout, never in `$HOME`;
+  worktrees reach them through their `work` link.
 - Release ZIPs: [README.md "Packaging"](README.md#packaging) (`scripts/package.sh`).
 - After a merge rebuild all targets, not just the one you test: a stale `soa-server` fails
   sessions for no reason in the code.

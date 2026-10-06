@@ -2,7 +2,7 @@
 // The local server's options, one flag per ServerConfig field (soaserver/config.h): soa (with
 // --server inproc) and soa-server take the same ones, defined here once. Header-only on CLI11
 // (common/include/soa/cli.h). The programs add their own around them: the files' defaults
-// (--db, --game-xml) and soa-server's network and CDN flags.
+// (--db) and soa-server's network and CDN flags.
 #include <cstdint>
 #include <ctime>
 #include <string>
@@ -18,10 +18,9 @@ namespace soa::server {
 // --server HOST warning).
 inline const char* const kServerOptionsGroup = "Server (the local server's rules and state)";
 
-// Adds the server options, filling `c`. `db_default` / `game_xml_default` describe the program's
-// defaults for --db and --game-xml in the help ("": none).
-inline void add_server_options(CLI::App& app, ServerConfig& c, const std::string& db_default, const std::string& game_xml_default,
-                               const std::string& group = kServerOptionsGroup) {
+// Adds the server options, filling `c`. `db_default` describes the program's default for --db in
+// the help.
+inline void add_server_options(CLI::App& app, ServerConfig& c, const std::string& db_default, const std::string& group = kServerOptionsGroup) {
     auto file = [&](const char* name, std::string& to, const std::string& desc) { app.add_option(name, to, desc)->type_name("FILE")->group(group); };
     file("--db", c.db, "the state DB (default " + db_default + ")");
     file("--master", c.master,
@@ -29,7 +28,6 @@ inline void add_server_options(CLI::App& app, ServerConfig& c, const std::string
          "sqlite/basmaster.sqlite3 into DATA/master/; server/README.md \"The master DB\")");
     file("--gacha-pools", c.gacha_pools, "the reconstructed gacha pools (default data/gacha_pools.sqlite3)");
     file("--seed", c.seed, "the save a new state is seeded from, e.g. a 3.7.0 or offline Game.xml; an existing state DB keeps its player");
-    file("--game-xml", c.game_xml, "the last seed fallback" + (game_xml_default.empty() ? std::string() : " (default " + game_xml_default + ")"));
     app.add_option_function<std::string>(
            "--seed-rng",
            [&c](const std::string& v) {

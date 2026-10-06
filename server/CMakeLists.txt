@@ -41,7 +41,7 @@ add_library(soanet STATIC ${_soanet_src})
 target_include_directories(soanet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_PROPERTY:soaserver,INTERFACE_INCLUDE_DIRECTORIES>)
 target_compile_options(soanet PRIVATE -Wall -Wno-unused-parameter -fno-strict-aliasing)
 target_link_libraries(soanet PUBLIC ZLIB::ZLIB OpenSSL::Crypto soa_compat PRIVATE httplib::httplib)
-# cpp-httplib needs the Windows 10 API (CreateFile2, GetAddrInfoEx); llvm-mingw's default is older
+# cpp-httplib needs the Windows 10 API (CreateFile2, GetAddrInfoEx); MinGW-w64's default is older
 if(WIN32)
   target_compile_definitions(soanet PRIVATE _WIN32_WINNT=0x0A00)
 endif()

@@ -21,15 +21,16 @@ while [ $n -lt "${MAX_RUNS:-100}" ]; do
     SOA_SELFTEST_SKIP="$skip" nice timeout -k 10 "${PER_RUN_TIMEOUT:-1800}" "$soa" --repo "$repo" --data "$out/data" \
         --selftest $filter > "$out/log-$n.txt" 2>&1
     rc=$?
-    grep -E '^(ok  |FAIL)  ' "$out/log-$n.txt" | awk '{print $1, $2}' >> "$out/results.txt"
+    grep -E '^(ok  |FAIL|skip)  ' "$out/log-$n.txt" | awk '{print $1, $2}' >> "$out/results.txt"
     if grep -q 'native tests passed' "$out/log-$n.txt"; then
         echo "done after $n boots: $(grep 'native tests passed' "$out/log-$n.txt")"
         awk '{print $1}' "$out/results.txt" | sort | uniq -c
         rm -rf "${out:?}/data"
         # Pass only when every test passed: a crashed test (CRASH / TIMEOUT, carried past) or a FAIL fails
         # the run (until 2026-10-04 this exited 0 whenever the last boot finished, hiding a "260/261").
-        if grep -qvE '^ok ' "$out/results.txt"; then
-            echo "FAIL: $(grep -vcE '^ok ' "$out/results.txt") test(s) did not pass:"; grep -vE '^ok ' "$out/results.txt"
+        # A skip (a test whose input, e.g. work/download-3.7.0, is absent) is not a failure.
+        if grep -qvE '^(ok|skip) ' "$out/results.txt"; then
+            echo "FAIL: $(grep -vcE '^(ok|skip) ' "$out/results.txt") test(s) did not pass:"; grep -vE '^(ok|skip) ' "$out/results.txt"
             exit 1
         fi
         exit 0
@@ -38,7 +39,7 @@ while [ $n -lt "${MAX_RUNS:-100}" ]; do
     [ -n "$last" ] || { echo "boot $n: died before any test (rc=$rc; $out/log-$n.txt)"; exit 1; }
     if [ $rc = 124 ] || [ $rc = 137 ]; then echo "TIMEOUT $last" >> "$out/results.txt"; else echo "CRASH $last" >> "$out/results.txt"; fi
     echo "boot $n: rc=$rc in $last"
-    done_names=$(grep -E '^(ok  |FAIL)  ' "$out/log-$n.txt" | awk '{print $2}' | paste -sd, -)
+    done_names=$(grep -E '^(ok  |FAIL|skip)  ' "$out/log-$n.txt" | awk '{print $2}' | paste -sd, -)
     skip="${skip:+$skip,}$last${done_names:+,$done_names}"
 done
 echo "gave up after $n boots"; exit 1

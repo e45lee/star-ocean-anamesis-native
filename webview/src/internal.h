@@ -18,17 +18,15 @@ void log(int level, const char* fmt, ...) __attribute__((format(printf, 2, 3)));
 #define WV_LOGI(...) ::soa::webview::log(1, __VA_ARGS__)
 #define WV_LOGW(...) ::soa::webview::log(2, __VA_ARGS__)
 
-// ---- fonts.cpp: host TrueType/OpenType files (stb_truetype), loaded once, shared by every page.
+// ---- fonts.cpp: the built-in fonts (soa/fonts.h) through stb_truetype, loaded once, shared by every page.
 struct FontFace;
 enum FaceStyle { kRegular, kBold, kItalic, kBoldItalic, kMono, kStyles };
 struct FontLib {
     FontFace* faces[kStyles] = {};
-    std::vector<FontFace*> fallbacks;  // tried for glyphs the face lacks
     bool ok = false;
 };
 FontLib& fonts();
 const stbtt_fontinfo* face_info(const FontFace* f);
-const std::string& face_path(const FontFace* f);
 
 struct Font {
     FontFace* face;

@@ -50,7 +50,7 @@ int parse_args(int argc, const char* const* argv, ServerArgs& a, std::vector<std
                             "stand-in assets the CDN adds and content is gated on (default standin-assets; off / 0 = none)")
         ->group(files);
 
-    server::add_server_options(app, c, "DATA/server.sqlite3, without --data ./server.sqlite3", "");
+    server::add_server_options(app, c, "DATA/server.sqlite3, without --data ./server.sqlite3");
 
     app.add_option("--selftest", a.filter,
                    "run the server library's and the wire layer's unit tests (no game needed); FILTER is a substring, \"a|b\" "

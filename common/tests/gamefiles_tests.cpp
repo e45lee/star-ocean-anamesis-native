@@ -102,7 +102,11 @@ int main() {
     fs::copy_file(root / "nested.zip", fs::path(g) / "my-download.zip");
     notes.clear();
     check(find_download({g}, &notes) == g + "/my-download.zip" && notes.size() == 1, "find_download: any zip holding the tree; others noted");
+#ifdef _WIN32  // a copy: MinGW's libstdc++ makes no symlinks, and Windows' need a privilege anyway
+    fs::copy(root / "dir", fs::path(g) / "extracted", fs::copy_options::recursive);
+#else  // a linked folder, as a user's link to their download
     fs::create_directory_symlink(root / "dir", fs::path(g) / "extracted");
+#endif
     check(find_download({g}) == g + "/extracted", "find_download: a folder tree before a zip");
     Bytes lib(kLib370Size, 0);  // a 3.7.0-sized libSOA.so (stored)
     write_file(fs::path(g) / "renamed.apk", make_zip({{"AndroidManifest.xml", text("m"), true}, {kLibEntry, lib, false}}));
@@ -115,6 +119,7 @@ int main() {
     check(extract_entry(g + "/renamed.apk", kLibEntry, out) && stat(out.c_str(), &st) == 0 && (uint64_t)st.st_size == kLib370Size,
           "extract_entry: the library extracted");
     check(!extract_entry(g + "/renamed.apk", "nope", out + "2"), "extract_entry: a missing entry fails");
+    dir.reset(), flat.reset(), top.reset();  // close the archives first: Windows deletes no open file
     fs::remove_all(root);
     fprintf(stderr, g_failures ? "%d FAILED\n" : "all passed\n", g_failures);
     return g_failures ? 1 : 0;

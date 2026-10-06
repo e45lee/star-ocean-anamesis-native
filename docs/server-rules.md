@@ -572,7 +572,8 @@ From the server-missions work:
 
 | Rule | Label |
 |---|---|
-| Refusal codes 10206 (items short), 10403 (step order, empty box); coins short 20003 (b, [paid-currency](#paid-currency); it was 20000) | (d) (the texts are (a)) |
+| Refusal codes 10206 (items short), 20000 (coins short), 10403 (step order, empty box) | (d) (the texts are (a)) |
+| Coins short is 20003 since paid currency (b: the gacha's draw answer opens the coin shop on it, [paid-currency](#paid-currency)) | (b) |
 | A locked mission isn't refused | (d) |
 | Surprise rate falls back to `master_global.surprise_rate` | (d) |
 | Stamina campaign rounding up, minimum 1 | (d) |
@@ -1898,7 +1899,8 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [entry](#entry-register) |  | New player: 300,000 free coins (`--start-coins`), level-1 starters, the name unchecked | (d) |  |
 | [entry](#entry-register) |  | Seeded player: every UI tutorial seen | (d) |  |
 | [entry](#entry-register) | Entry | `NoLoginStart` / `GetPlayer` without a player answer `data.Time` only; `UpdateView` stores any kind but 0 as `view_status2` | (d) | "Entry flow", "UI tutorial flags" |
-| [missions](#missions-register) |  | Refusal codes 10206 (items short), 10403 (step order, empty box); coins short 20003 (b, [paid-currency](#paid-currency); it was 20000) | (d) (the texts are (a)) |  |
+| [missions](#missions-register) |  | Refusal codes 10206 (items short), 20000 (coins short), 10403 (step order, empty box) | (d) (the texts are (a)) |  |
+| [missions](#missions-register) |  | Coins short is 20003 since paid currency (b: the gacha's draw answer opens the coin shop on it, [paid-currency](#paid-currency)) | (b) |  |
 | [missions](#missions-register) |  | A locked mission isn't refused | (d) |  |
 | [missions](#missions-register) |  | Surprise rate falls back to `master_global.surprise_rate` | (d) |  |
 | [missions](#missions-register) |  | Stamina campaign rounding up, minimum 1 | (d) |  |

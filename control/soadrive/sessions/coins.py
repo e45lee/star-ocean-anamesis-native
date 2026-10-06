@@ -84,7 +84,9 @@ def main(o):
         s.ctl("tap:364:870")
         s.wait_for("the L set -> CoinDepositCreate, the store, CoinDepositAndroidUpdate", 90,
                    lambda: s.in_server(r"CoinDepositAndroidUpdate: deposit [0-9]+ completed"))
-        s.ctl("wait:4000", s.shot_cmd("13-purchased"))
+        # the store's purchase consumed (FinishPurchaseProduct), then the result dialog
+        s.wait_for("the purchase consumed (ConsumeProduct)", 60, lambda: s.in_client(r"I/java: ConsumeProduct\("))
+        s.ctl("wait:5000", s.shot_cmd("13-purchased"))
         got["after"] = wallet(s)
         s.check("980 paid + 80 free stones credited, the purchase recorded (%s)" % (got["after"],),
                 got["after"] == (10 + FREE, PAID, 1))

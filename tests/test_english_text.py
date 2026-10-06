@@ -156,11 +156,26 @@ def test_e3_rewrites():
 def test_e3_story_ep1(built):
     """english.md 7.1: E3 turns 117 EP1 story lines official (needs the download's Scenario files)."""
     ctx = T.Ctx()
-    if not ctx.src.scenario_dir.is_dir():
+    s = T.build_story(ctx, built.glossary)
+    if s is None:
         pytest.skip("no work/download-3.7.0/Scenario")
-    story, _ = T.story_coverage(ctx)
-    assert story["EP1/official_e3"] == 117
-    assert story["EP1/official"] == 2979
+    d = s.derived
+    ep1 = [m for m, ln in d.lines.items() if C.story_group(ln[0]) == "EP1" and C.has_kana(ln[1])]
+    assert sum(1 for m in ep1 if d.lines[m][3] == "official_e3") == 117
+    assert sum(1 for m in ep1 if d.lines[m][3] == "official") == 2979
+    assert sum(1 for m in ep1 if m not in s.out) == 10
+
+
+def test_story_en_is_fresh(built):
+    """data/english/story-en/ is what `build` writes (only checkable with the Scenario files)."""
+    ctx = T.Ctx()
+    s = T.build_story(ctx, built.glossary)
+    if s is None:
+        pytest.skip("no work/download-3.7.0/Scenario")
+    outs = T.story_outputs(ctx, s)
+    for p, text in outs.items():
+        assert p.read_text(encoding="utf-8") == text, p
+    assert set((T.DATA / "story-en").glob("TS_*.tsv")) == {p for p in outs if p.name != "index.tsv"}
 
 
 # ---------------------------------------------------------------- the table: MT import, edits, stale
@@ -329,3 +344,126 @@ def test_po_round_trip(data, built, tmp_path):
     t = table(data)
     assert t[a]["source"] == "human" and t[a]["en"] == "Edited in Poedit"
     assert t[b]["source"] == "reviewed" and t[b]["en"] == "Machine words"
+
+
+# ---------------------------------------------------------------- the story (phase 2)
+
+def emdash_story_id(src):
+    for m in sorted(src.gl_ja):
+        if m[:4].isdigit() and m[4] == "_" and "<EMDASH>" in (src.gl_en.get(m) or "") \
+                and src.gl_token_english(m) and not C.SPEC.search(src.gl_ja[m]) \
+                and C.rewrite_tokens(src.gl_en[m], src.gl_ja[m])[0]:
+            return m
+
+
+@pytest.fixture
+def scenario(tmp_path):
+    """A one-file Scenario dir: Global story lines (official, E3, one where Global names <player>),
+    two gap lines and a language-neutral one."""
+    import msgpack
+    from soa_save import script
+    src = T.Ctx().src
+    e3 = emdash_story_id(src)
+    rows = [(m, C.unesc(src.gl_ja[m])) for m in ("1010_065_49", "1010_030_17", e3)]
+    rows += [("9999_t_01", "テストの行です。"), ("9999_t_02", "<player>、待って！"), ("9999_t_03", "……")]
+    d = tmp_path / "Scenario"
+    d.mkdir()
+    plain = msgpack.packb({"master_text": [
+        {"message_id": m, "lang": "ja", "text_value": ja, "category_id_label": "TS_1999", "data_type": "package",
+         "id": i} for i, (m, ja) in enumerate(rows)]})
+    (d / "TS_1999.msgp").write_bytes(script.encrypt(plain, "Scenario/TS_1999.msgp"))
+    return d, e3
+
+
+def srun(data, scen, *args):
+    return T.main(["--data", str(data), "--work", str(data.parent / "work"), "--scenario", str(scen), *args])
+
+
+def story_ck(lines, prompt="v2+s1"):
+    return json.dumps({"key": "k", "scene": "1999_010", "kind": "story", "lines": lines, "raw": "", "finish": "stop",
+                       "prompt": prompt, "model": "gemma-4-31b-it", "quant": "UD-Q4_K_XL", "llama_build": "b11443",
+                       "temperature": 0, "slots": 4, "date": "2026-10-08"}, ensure_ascii=False)
+
+
+def sline(mid, ja, mt):
+    return {"message_id": mid, "file": "TS_1999", "ja_sha1": C.sha1(ja), "ja": ja, "speaker": "Coro", "mt": mt}
+
+
+def index(data):
+    return {r["file"]: r for r in T.read_tsv(data / "story-en/index.tsv", ["file", "lines", "need", "english", "complete"])}
+
+
+def test_story_build(data, scenario, font):
+    scen, e3 = scenario
+    ctx = T.Ctx(data=data, scenario=scen)
+    s = T.build_story(ctx, {})
+    assert {m: v[2] for m, v in s.out.items()} == {"1010_065_49": "official", "1010_030_17": "official",
+                                                  e3: "official"}
+    assert "\u2015" in s.out[e3][1]
+    for m, (h, en, _) in s.out.items():
+        assert font.widest(C.unesc(en), T.PLAYER_PX) <= T.STORY_BUDGET or " " not in en
+    c = s.files["TS_1999"]
+    assert (c["lines"], c["need"], c["english"]) == (6, 5, 3)
+    # the line's hash is of the text with real newlines
+    assert s.out["1010_065_49"][0] == C.sha1(C.unesc(T.Ctx().src.gl_ja["1010_065_49"]))
+
+
+def test_story_import_mt_and_completeness(data, scenario, tmp_path):
+    scen, _ = scenario
+    ck = tmp_path / "story.jsonl"
+    ck.write_text(story_ck([sline("9999_t_01", "テストの行です。", "This is a test line."),
+                            sline("9999_t_02", "<player>、待って！", "Wait!"),        # drops <player>
+                            sline("1010_065_49", C.unesc(T.Ctx().src.gl_ja["1010_065_49"]), "Covered"),
+                            sline("9999_t_03", "……", None)]) + "\n")
+    assert srun(data, scen, "import-mt", str(ck)) == 0
+    t = {r["message_id"]: r for r in T.read_tsv(data / "story/TS_1999.tsv", T.TABLE_COLS)}
+    assert list(t) == ["9999_t_01"] and t["9999_t_01"]["source"] == "machine"
+    assert t["9999_t_01"]["engine"] == "gemma-4-31b-it/UD-Q4_K_XL/v2+s1/llama.cpp-b11443/t0"
+    rej = {r["message_id"]: json.loads(r["problems"])
+           for r in T.read_tsv(data.parent / "work/mt-rejected-story.tsv", T.REJECT_COLS)}
+    assert "tags" in rej["9999_t_02"]
+    assert index(data)["TS_1999"]["complete"] == "no"
+    served = {r["message_id"]: r for r in T.read_tsv(data / "story-en/TS_1999.tsv", T.OUT_COLS)}
+    assert served["9999_t_01"]["source"] == "machine"
+    # a person fills the last line: the file is complete
+    assert srun(data, scen, "set", "9999_t_02", "<player>, wait!", "--by", "tester") == 0
+    assert index(data)["TS_1999"]["complete"] == "yes"
+    # a re-import with --replace replaces the machine line and keeps the human one
+    ck.write_text(story_ck([sline("9999_t_01", "テストの行です。", "A test line."),
+                            sline("9999_t_02", "<player>、待って！", "<player>, hold on!")], prompt="v3") + "\n")
+    srun(data, scen, "import-mt", "--replace", str(ck))
+    t = {r["message_id"]: r for r in T.read_tsv(data / "story/TS_1999.tsv", T.TABLE_COLS)}
+    assert t["9999_t_01"]["en"] == "A test line." and t["9999_t_02"]["en"] == "<player>, wait!"
+    assert t["9999_t_02"]["source"] == "human"
+
+
+def test_story_stale_and_check_without_scenario(data, scenario, tmp_path, capsys):
+    scen, _ = scenario
+    (data / "story").mkdir()
+    (data / "story/TS_1999.tsv").write_text(T.tsv_text(T.TABLE_COLS, [
+        {"message_id": "9999_t_01", "ja_sha1": "0" * 40, "en": "Old", "source": "human", "engine": "",
+         "date": "2026-10-08", "editor": "tester", "note": ""}]), encoding="utf-8")
+    s = T.build_story(T.Ctx(data=data, scenario=scen), {})
+    assert [x[0] for x in s.stale] == ["9999_t_01"] and "9999_t_01" not in s.out
+    assert srun(data, scen, "stale", "--fail") == 1
+    # without the Scenario files the story part is skipped, and --check still judges the master part
+    srun(data, scen, "build")
+    before = (data / "story-en/index.tsv").read_text()
+    assert srun(data, tmp_path / "no-such-dir", "build", "--check") == 0
+    assert "story: skipped" in capsys.readouterr().out
+    assert (data / "story-en/index.tsv").read_text() == before
+
+
+def test_story_po_export(data, scenario, tmp_path):
+    polib = pytest.importorskip("polib")
+    scen, _ = scenario
+    out = tmp_path / "po"
+    srun(data, scen, "export-po", "--out", str(out))
+    po = polib.pofile(str(out / "TS_1999.po"))
+    e = {x.msgctxt: x for x in po}
+    assert e["9999_t_01"].msgid == "テストの行です。" and e["9999_t_01"].msgstr == ""
+    e["9999_t_01"].msgstr = "Edited in Poedit"
+    po.save()
+    srun(data, scen, "import-po", str(out / "TS_1999.po"), "--by", "poedit")
+    t = {r["message_id"]: r for r in T.read_tsv(data / "story/TS_1999.tsv", T.TABLE_COLS)}
+    assert t["9999_t_01"]["source"] == "human" and t["9999_t_01"]["en"] == "Edited in Poedit"

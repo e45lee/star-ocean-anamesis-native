@@ -722,6 +722,32 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
     - Rows failing the checks go to `work/english/mt-rejected.tsv` and are counted by `report`.
   - Edits rebuild `master-en.tsv` unless `--no-build` is given.
 
+**The story tables** (2026-10-06, agent `en-data`; PLAN C3 data side, E7 data side, M4 import).
+
+- **Files:**
+  - `data/english/story/TS_xxxx.tsv`: the `machine`/`human`/`reviewed` rows of one Scenario file, with the columns of `master.tsv` and no Japanese.
+  - `data/english/story-en/TS_xxxx.tsv`: **generated**, `message_id, ja_sha1, en, source`, for every file with any English.
+  - `data/english/story-en/index.tsv`: **generated**, `file, lines, need, english, complete`.
+    - `need` counts the lines with kana or kanji; language-neutral lines (`……`) need no row.
+    - The server serves `TS_x-en.msgp` only when `complete` is `yes` (Q12).
+- **The hash.** A story line's `ja_sha1` is the SHA-1 of the Scenario row's `text_value` exactly as the file holds it: UTF-8, with **real newlines**. This is unlike the master's two-character `\n`. `en` uses the two-character `\n`.
+- **Where the Japanese comes from.** It is read from `work/download-3.7.0/Scenario` at build time. Without it, `build` and `build --check` skip the story part and say so, and the story pytests skip.
+- **Candidates:** `human`/`reviewed` > official (Global by id, plus E3) > `machine`.
+- **Checks:**
+  - No Global token, every glyph in the font (after folding), no kana left.
+  - Every tag must be one `ParseMessage` reads (`<player>`, `<font color=…>`, `<fontcolor=…>`, `<fontsize=…>`, `</font>`).
+  - Tags must equal the Japanese line's exactly for `machine` rows.
+  - Official and human lines may colour other words, or name `<player>` where the Japanese says 艦長, as long as `<font>` stays balanced. Without this, 16 EP1/`TS_5xxx` lines that no MT run translates would block their files.
+- **Line breaking (E7, data side).** Every served line is re-broken at spaces to a message window of 407 px: the p99 widest JP story line, 7.5. `<player>` is counted as 120 px (an assumption: about 8 Latin letters).
+  - 690 served official lines need 5 or more lines; `report` lists them in `story-long.tsv`.
+  - Shorter wordings or `<fontsize=…>` are still open (E7).
+- **First build:**
+  - 4,625 of the 21,663 story lines that need English have it (official 5,037 rows including 412 language-neutral lines Global spelled out), 0 failing.
+  - 24 of 64 files are complete: EP1 10 of 11 (10 lines missing), `TS_3xxx` 9 of 10, `TS_5xxx` 5 of 7.
+- **`import-mt`** reads the story checkpoint (`"kind": "story"`, a `lines` list) with the master's rules. Failing lines go to `work/english/mt-rejected-story.tsv`.
+- **`report`** adds the story per group: lines official, machine, human, reviewed, missing and failing, and the complete files. Its lists are `story-files.tsv`, `story-long.tsv`, `story-failing.tsv` and `story-stale.tsv`.
+- **The editing tools take story ids too:** `show`, `set`, `review`, `stale`, `export-po` (`TS_xxxx.po`, msgid = the download's Japanese at export time), CSV and the imports.
+
 ### 7.7 Recommendation
 
 Revised after the local-LLM trial (7.8) and the user's decisions of 2026-10-07 (PLAN-english.md).

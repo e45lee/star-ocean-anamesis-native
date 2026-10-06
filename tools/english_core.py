@@ -456,14 +456,17 @@ class Font:
     def missing(self, s):
         return sorted({c for c in s if c not in "\n\t" and ord(c) not in self.adv})
 
-    def width(self, line):
+    def width(self, line, tag_px=None):
+        """Pixels of one line at the font's 24 px size; tags draw nothing unless `tag_px` gives them a
+        width (the story's <player> expands to the player's name)."""
+        extra = sum(tag_px.get(t.replace("\x01", " "), 0) for t in TAG.findall(line)) if tag_px else 0
         line = TAG.sub("", line)
-        return sum(self.adv.get(ord(c), self.adv[0x3F]) for c in line)
+        return extra + sum(self.adv.get(ord(c), self.adv[0x3F]) for c in line)
 
-    def widest(self, text):
-        return max((self.width(x) for x in text.split("\n")), default=0)
+    def widest(self, text, tag_px=None):
+        return max((self.width(x, tag_px) for x in text.split("\n")), default=0)
 
-    def rebreak(self, text, budget):
+    def rebreak(self, text, budget, tag_px=None):
         """Greedy word wrap at spaces to `budget` px per line (existing breaks are dropped)."""
         # a tag is one word: "<font color=red>" must not break at its space
         text = TAG.sub(lambda m: m.group().replace(" ", "\x01"), re.sub(r"\s*\n\s*", " ", text))
@@ -471,7 +474,7 @@ class Font:
         lines, cur = [], ""
         for w in words:
             cand = w if not cur else cur + " " + w
-            if cur and self.width(cand) > budget:
+            if cur and self.width(cand, tag_px) > budget:
                 lines.append(cur)
                 cur = w
             else:
@@ -488,7 +491,9 @@ def protected(text):
     return SPEC.findall(text), sorted(TAG.findall(text))
 
 
-STORY_TAG = re.compile(r"<player>|<fontcolor=[^<>]*>|<fontsize=[^<>]*>|</font>")
+# the tags ParseMessage reads in story lines (docs/english.md 1.2, 3.3); the 3.7.0 story files use
+# <font color=blue|yellow|green|red>...</font> and <player>
+STORY_TAG = re.compile(r"<player>|<font ?color=[^<>]*>|<fontsize=[^<>]*>|</font>")
 
 
 def _tags_subset(tj, te):

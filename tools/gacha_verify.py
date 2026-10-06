@@ -23,6 +23,7 @@ precision / recall on those panels are measured first and printed (and written t
 Usage:
   tools/gacha_verify.py [--master data/basmaster-3.7.0.sqlite3] [--download work/download-3.7.0]
                         [--pools data/gacha_pools.sqlite3] [--gl data/basmaster-gl.sqlite3]
+                        [--apk apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk]
                         [--out work/gacha-verify] [--report docs/gacha-verify.md] [-j N]
 Output (under --out; derived game images, never committed):
   png/            decoded banners and illustrations (tools/aif2png)
@@ -654,6 +655,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--master", default=os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3"))
     ap.add_argument("--download", default=os.path.join(ROOT, "work", "download-3.7.0"))
+    ap.add_argument("--apk", default=os.path.join(ROOT, "apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"),
+                    help="the 3.7.0 APK: its images fill names the download lacks")
     ap.add_argument("--pools", default=os.path.join(ROOT, "data", "gacha_pools.sqlite3"))
     ap.add_argument("--gl", default=os.path.join(ROOT, "data", "basmaster-gl.sqlite3"),
                     help="the global client's master DB, for English names")
@@ -670,6 +673,19 @@ def main():
     m = Master(a.master, a.pools, a.gl)
     img_dir = os.path.join(a.download, "Image", "etc2")
     on_disk = {f[:-4]: os.path.join(img_dir, f) for f in os.listdir(img_dir) if f.endswith(".aif")}
+    if os.path.exists(a.apk):  # the APK's own images, for names the download lacks (ticket gachas)
+        import zipfile
+        apk_dir = os.path.join(a.out, "apk")
+        os.makedirs(apk_dir, exist_ok=True)
+        with zipfile.ZipFile(a.apk) as z:
+            for zn in z.namelist():
+                mm = re.fullmatch(r"assets/(?:assetpack|builtin_data)/Image/etc2/(.+)\.aif", zn)
+                if mm and mm.group(1) not in on_disk:
+                    dst = os.path.join(apk_dir, mm.group(1) + ".aif")
+                    if not os.path.exists(dst):
+                        with open(dst, "wb") as fh:
+                            fh.write(z.read(zn))
+                    on_disk[mm.group(1)] = dst
     png = os.path.join(a.out, "png")
     feat = os.path.join(a.out, "feat")
     os.makedirs(feat, exist_ok=True)

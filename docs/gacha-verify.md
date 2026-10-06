@@ -19,8 +19,9 @@ was changed**: the proposals at the end are for the integrator to decide.
 
 - **Images.** Per gacha: the list banner (`master_gacha.banner_id` → `master_banner.image`,
   512×128), `image1..4` and the pick-up panels (`master_gacha_image`, 1024×512), decoded from
-  `work/download-3.7.0/Image/etc2/*.aif` with `tools/aif2png` (via `tools/extract_banners.py`). 537
-  distinct images are present; 1,271 referenced names are not in the 3.7.0 data
+  `work/download-3.7.0/Image/etc2/*.aif` with `tools/aif2png` (via `tools/extract_banners.py`), with
+  the APK's images as a fallback for names the download lacks (none of them is a gacha's banner or
+  panel). 537 distinct images are present; 1,271 referenced names are not in the 3.7.0 data
   ([missing-assets-3.7.0.md](missing-assets-3.7.0.md); the stand-ins in `standin-assets/` are ours
   and are not used).
 - **References.** Every `master_role` costume, keyed by its art key `<person>_b<NN><x>`
@@ -56,8 +57,9 @@ weapon banners nothing is detected even at 6 inliers. The list banners are the w
 150/178 = 84 % at the threshold, with **no** wrong detection at any threshold, which is why an
 *extra* is never judged from a list banner alone. On the main panels of R-PU-IMAGE gachas 64/66
 recorded characters are found; the 2 misses and 6 "others" there are real data findings (EP2
-banners, below), not detector errors. Every mismatch below was checked by eye on its contact sheet:
-all detections were correct. Characters drawn very small in crowded group art (the 発売日記念
+banners, below), not detector errors. Every mismatch group below was checked by eye on its contact
+sheet (the メモリアル reruns 0565 / 0590 / 0900 through the identical images of 0253 / 0255; of the
+2017 step-ups one step per banner): every accepted detection is the character it names. Characters drawn very small in crowded group art (the 発売日記念
 banners) can be missed, so their *extra* rows are flagged as probable only.
 
 ## Findings and proposed rule fixes
@@ -71,11 +73,12 @@ Labels as in [server-rules.md](server-rules.md#labels); all **proposals, not app
      狼アルベル, 執事のレオン (male-only: "ガチャからは男性キャラのみ").
    - イヴリーシュ誕生日記念ガチャ (2020-12-24): "ピックアップは6人のイヴリーシュのみ!" — Bride Eve, 魔女,
      歌星, 迎春, 渚, 泉郷イヴリーシュ.
-   - ステップアップシグムントガチャ1–3 (2017-11-20): Sigmund (`cc0009_b01a`, collaboration) is in no
-     pool; R-PU-NAME reads only bracketed names and "X確定".
+   - ステップアップシグムントガチャ1–3 (2017-11-20): "★5シグムント出現確率UP!!"; Sigmund (`cc0009_b01a`,
+     collaboration) is in no pool; R-PU-NAME reads only bracketed names and "X確定".
    - EP2 CHAPTER:10 公開記念キャラガチャ (2019-05-01): "★5キャラクターはピックアップされているEP2キャラクター6人のみ";
-     the master names only マスティマ; ウェルチ, ユーイン, カーリン, ヴァルカ are seen (in no pool) and a sixth
-     figure isn't matched.
+     the master names only マスティマ; ウェルチ, ユーイン, カーリン, ヴァルカ are seen and a sixth figure isn't
+     matched. The master rates agree (a): S 6 %, A 0 %, so this gacha's ★5s are its S pool, which holds
+     マスティマ alone; the other EP2 aces are in none of its pools.
    - **Proposal (b):** add these to `BANNER_ART` (R-PU-BANNERART) by title key, as was done for
      衣装コンテスト / 神級. A generic alternative: a title-word rule for "誕生日" (all ★5 costumes of the
      person) and "ホワイトデー" — but the banner art is the evidence, so the table is the honest form.
@@ -84,9 +87,11 @@ Labels as in [server-rules.md](server-rules.md#labels); all **proposals, not app
    "…PU1体確定メイド1" (2020-10-08, and 復刻メイド1 2021-03-18, 20 gachas) became 2017 → no maid →
    R-PU-NEW → メイドレイミ / 執事エイルマット, while the banner ("復刻メイド") shows **★5メイドのクレア,
    ★5メイドのネル**; "メイド2" became 2018 → all four 2018 maids, while the banner shows **執事のレオン,
-   メイドのソフィア** only. *Suggested fix* (separate, uncommitted): apply the 2016+N reading only to
-   ハロウィン, and add `BANNER_ART` entries `メイド1` → (メイドのクレア, メイドのネル), `メイド2` → (執事のレオン,
-   メイドのソフィア). *Expected effect:* 40 gachas (2 × 10 steps × 2 runs) get the two units on their
+   メイドのソフィア** only. *Suggested fix* (separate, uncommitted): add `BANNER_ART` entries
+   `メイド1` → (メイドのクレア, メイドのネル), `メイド2` → (執事のレオン, メイドのソフィア); `theme_pickups` checks
+   that table before the digit reading, so the entries alone fix these gachas. Restricting the 2016+N
+   reading to ハロウィン is hygiene so no later title trips on it, and must not be applied alone: without
+   the entries メイド2 would lose its year and fall to R-PU-NEW like メイド1. *Expected effect:* 40 gachas (2 × 10 steps × 2 runs) get the two units on their
    banner; メイドレイミ / 執事エイルマット leave these S pools. No other title is affected: the only role
    titles with a theme word and a single digit are メイド1/2/3, and メイド3 is R-PU-IMAGE.
 3. **Numbered halves of a seasonal rerun get the whole theme** (judgement): 復刻水着2018(1) shows
@@ -105,11 +110,11 @@ Labels as in [server-rules.md](server-rules.md#labels); all **proposals, not app
    Halloween window) with units released by the gacha's opening; expect 11.
 6. **Banners whose panels carry no content id** (R-PU-IMAGE uses only the rows with one):
    EP2公開記念ピックアップキャラガチャ (2018-07-19) records Bride Eve only (row 6), but panels 2 and 3 show
-   plain Evelysse and Verda (panels 1, 4, 5 are lost). **Proposal (b):** add the seen units; the
+   plain Evelysse and Verda (panels 1, 4, 5 and 6 are lost; 6 is the one the master names). **Proposal (b):** add the seen units; the
    lost panels stay unknown.
 7. **Probably showcases, no change proposed (d):** the 2017 ステップアップキャラガチャ / 氷属性ピックアップ
-   step-ups (list banners only; the 氷属性 title suggests ice-element pick-ups: Ashton, Mavelle,
-   Official Reimi seen — a candidate for a BANNER_ART entry if the reading is accepted),
+   step-ups (list banners only; "★5確率2倍/3倍" over a showcase; but 氷属性 says "★5氷属性キャラ1体確定"
+   over Ashton, Mavelle, Official Reimi — a candidate for a BANNER_ART entry if that reading is accepted),
    300万DL記念, キャスターピックアップ確定 (Myuria; a class pick-up R-PU-ROLEPICK doesn't match because the
    title lacks "ロールピックアップ"), 新生活応援無料ガチャ (nine units already in its S pool).
 8. **発売日記念 (SO2–SO5) extras** are base or official costumes of the cast not matched on crowded

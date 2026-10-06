@@ -195,6 +195,7 @@ struct TreeBuilder {
     void serve_english() {
         english_root = scratch + "/lang-en";
         serve_english_art();
+        serve_english_story();
         std::string out = english_root + "/" + files::kEnglishMasterName;
         ::remove(out.c_str());
         if (opts.english_text.empty()) {
@@ -217,6 +218,46 @@ struct TreeBuilder {
     // 1c. --english: the English UI art (docs/english.md 8; d: our art, PLAN-english Q4), built from
     // the recipes and the user's own download into the generated root; cached by english_art
     // outside the root (the root is served whole). A failed recipe leaves its image Japanese.
+    // 1d. --english: the English story files (docs/server-rules.md#english-story): for each
+    // Scenario/TS_xxxx.msgp of the download with a story table <english_story>/TS_xxxx.tsv,
+    // Scenario/TS_xxxx-en.msgp in the generated root when every Japanese line has English (d:
+    // PLAN-english Q12); the old -en story files are removed first.
+    void serve_english_story() {
+        std::vector<std::string> old;
+        files::walk(english_root, "", old);
+        for (auto& rel : old)
+            if (rel.rfind("Scenario/", 0) == 0 && rel.size() > 8 && rel.compare(rel.size() - 8, 8, "-en.msgp") == 0)
+                ::remove((english_root + "/" + rel).c_str());
+        if (opts.english_story.empty()) {
+            LOGW("cdn", "--english: no English story tables (data/english/story-en): the story stays Japanese");
+            return;
+        }
+        size_t served = 0, incomplete = 0, tables = 0;
+        for (auto& entry : assets->map) {
+            const std::string& name = entry.first;
+            if (name.rfind("Scenario/TS_", 0) != 0 || name.size() < 6 || name.compare(name.size() - 5, 5, ".msgp") != 0 ||
+                name.find('-') != std::string::npos)
+                continue;
+            std::string stem = name.substr(9, name.size() - 9 - 5);
+            std::string table = opts.english_story + "/" + stem + ".tsv";
+            if (!stat_file(table, nullptr)) continue;
+            tables++;
+            std::vector<uint8_t> file;
+            if (!src->read(name, file)) continue;
+            EnglishStoryStats st;
+            std::vector<uint8_t> enc = make_english_story(name, file, table, &st);
+            if (enc.empty()) {
+                incomplete++;
+                LOGI("cdn", "english story %s: %zu of %zu Japanese lines without English: not served", name.c_str(), st.missing, st.japanese);
+                continue;
+            }
+            std::string out = english_root + "/" + english_name(name);
+            files::mkdirs(english_root + "/Scenario");
+            if (write_file(out, enc.data(), enc.size())) served++;
+        }
+        LOGI("cdn", "english story: %zu tables, %zu files served, %zu incomplete (Japanese)", tables, served, incomplete);
+    }
+
     void serve_english_art() {
         if (opts.english_art.empty()) {
             LOGW("cdn", "--english: no English art recipes (standin-assets-en/recipes): the UI art stays Japanese");
@@ -597,6 +638,7 @@ Options options_from_config() {
     o.standins = standin_dir_from_config();
     o.english = c.english;  // (d) the -en members only with --english (PLAN-english Q11)
     if (o.english) o.english_text = english::table_path();
+    if (o.english) o.english_story = english::story_dir();
     if (o.english) o.english_art = find_repo_file("standin-assets-en/recipes");  // (d) our English art (PLAN-english Q4)
     o.scratch = !c.cdn_scratch.empty() ? c.cdn_scratch
                 : !c.data_root.empty() ? c.data_root + "/cdn"

@@ -1,6 +1,7 @@
 // Unit tests of the CDN content (soaserver/cdn.h) and the ADLD packing (soaserver/adld.h)
 // (--selftest "cdn/"; server code, no guest counterpart). The 3.7.0 checks read the download
 // (work/download-3.7.0) and the decrypted master (data/basmaster-3.7.0.sqlite3) from the repo.
+#include <dirent.h>
 #include <ftw.h>
 #include <sqlite3.h>
 #include <sys/stat.h>
@@ -459,6 +460,26 @@ NATIVE_TEST("cdn/tree") {
     remove_tree(root);
 }
 
+// A story file as the 3.7.0 ones (docs/english.md 1.2): {"master_text": [{message_id, lang,
+// text_value, category_id_label, data_type, id}]}, the given (message_id, text) rows.
+std::vector<uint8_t> story_plain(const std::vector<std::pair<std::string, std::string>>& rows) {
+    Value v = Value::object();
+    Value arr = Value::array();
+    for (auto& [mid, text] : rows) {
+        Value r = Value::object();
+        r["message_id"] = Value(mid);
+        r["lang"] = Value("ja");
+        r["text_value"] = Value(text);
+        r["category_id_label"] = Value("TS_9000");
+        r["data_type"] = Value("package");
+        r["id"] = Value((unsigned long long)chash32(("ja_" + mid).c_str()));
+        arr.push(r);
+    }
+    v["master_text"] = arr;
+    return mp_encode(v);
+}
+std::string sha_of(const std::string& s) { return cdn::sha1_hex((const uint8_t*)s.data(), s.size()); }
+
 // More member roots and the --english root (C2, docs/server-rules.md#english): a small synthetic
 // download; the -en master becomes a member as a stand-in does (version.bin entry, its own
 // Individual bundle, the Bulk bundle, the revision); --english with nothing generated, and
@@ -504,6 +525,14 @@ NATIVE_TEST("cdn/lang-members") {
     e["size"] = Value((unsigned long long)file_a.size());
     e["encType"] = Value(1u);
     vb["assets"]["BG/a.aaf"] = e;
+    // a story file and its complete English story table (C3)
+    auto story = adld::encrypt("Scenario/TS_9000.msgp", story_plain({{"9000_1", "こんにちは\n<player>さん"}, {"9000_2", "..."}}), adld::kXor);
+    spit(mir + "/Scenario/TS_9000.msgp", story);
+    vb["assets"]["Scenario/TS_9000.msgp"] = e;
+    {
+        std::string tsv = "message_id\tja_sha1\ten\tsource\n9000_1\t" + sha_of("こんにちは\n<player>さん") + "\tHello,\\n<player>\tofficial\n";
+        spit(root + "/story-en/TS_9000.tsv", std::vector<uint8_t>(tsv.begin(), tsv.end()));
+    }
     spit(mir + "/version.bin", mp_encode(vb));
     for (const char* man : {"Individual", "Bulk"}) {
         Value mv = Value::object(), bundle = Value::object(), member = Value::object();
@@ -554,6 +583,7 @@ NATIVE_TEST("cdn/lang-members") {
 
     o.member_roots = {root + "/extra"};
     o.english_text = table;
+    o.english_story = root + "/story-en";
     auto en = cdn::Tree::build(o, &err);
     auto again = cdn::Tree::build(o, &err);
     if (!en || !again) {
@@ -612,11 +642,97 @@ NATIVE_TEST("cdn/lang-members") {
     }
     t.expect_eq(one_text, std::string("One"), "English in the ja_ row");
     t.expect_eq(new_text, std::string("New"), "the new id's row");
-    // the table gone: the next build serves no -en master (its old file is removed)
+    // the English story file: a member like the master, encType 1, the English with a real newline
+    const char* kStory = "Scenario/TS_9000-en.msgp";
+    const Value* se = assets ? assets->find(kStory) : nullptr;
+    t.expect_eq(se && se->get_u("encType") == adld::kXor, true, "version.bin -en story entry");
+    t.expect_eq(en->bundle_of("Bulk", kStory), std::string("B/5374616e/standins.bin"), "the -en story in the Bulk bundle");
+    std::vector<uint8_t> story_en;
+    if (en->lookup(base + kStory, r) && r.read(story_en)) {
+        Value sv = mp_decode(adld::decrypt(kStory, story_en));
+        const Value* rows = sv.find("master_text");
+        t.expect_eq(
+            rows && rows->arr.size() == 2 && rows->arr[0].find("text_value")->s == "Hello,\n<player>" && rows->arr[1].find("text_value")->s == "...",
+            true, "the -en story's rows");
+    } else t.fail("the -en story isn't served");
+    // the tables gone: the next build serves no -en master or story (their old files are removed)
     o.english_text = "";
+    o.english_story = "";
     auto gone = cdn::Tree::build(o, &err);
     if (!gone || gone->version_bin().find("assets")->find(kEn)) t.fail("a stale -en master is served");
+    if (!gone || gone->version_bin().find("assets")->find(kStory)) t.fail("a stale -en story is served");
     remove_tree(root);
+}
+
+// The English story file (C3, docs/server-rules.md#english-story): rows equal but text_value,
+// "\\n" -> newline, packed XOR under the -en name, deterministic; a Japanese line without English,
+// an unknown tag or a stale row keep the file from being served; the 3.7.0 story files decode and
+// encode byte for byte (so the -en files keep their form).
+NATIVE_TEST("cdn/story-en") {
+    std::string dir = soa::temp_dir() + "/soa-cdn-test-" + std::to_string(getpid()) + "-story";
+    remove_tree(dir);
+    const std::string name = "Scenario/TS_9000.msgp";
+    auto file = adld::encrypt(name, story_plain({{"9000_1", "一行目\n二行目"}, {"9000_2", "<player>さん！"}, {"9000_3", "???"}}), adld::kXor);
+    auto table = [&](const std::string& rows) {
+        std::string tsv = "message_id\tja_sha1\ten\tsource\n" + rows;
+        spit(dir + "/t.tsv", std::vector<uint8_t>(tsv.begin(), tsv.end()));
+        return dir + "/t.tsv";
+    };
+    // the first row's sha1 over the "\\n" form (the master's encoding), the second over the file's
+    std::string full =
+        "9000_1\t" + sha_of("一行目\\n二行目") + "\tLine one\\nline two\tofficial\n9000_2\t" + sha_of("<player>さん！") + "\t<player>!\thuman\n";
+    cdn::EnglishStoryStats st;
+    auto en = cdn::make_english_story(name, file, table(full), &st);
+    auto en2 = cdn::make_english_story(name, file, table(full), nullptr);
+    t.expect_eq(en.empty(), false, "complete: served");
+    t.expect_eq(en2, en, "two builds byte-identical");
+    t.expect_eq(st.rows == 3 && st.japanese == 2 && st.english == 2 && st.missing == 0, true, "stats");
+    t.expect_eq(cdn::english_name(name), std::string("Scenario/TS_9000-en.msgp"), "the -en name");
+    t.expect_eq(adld::flags_of(en.data(), en.size()), adld::kXor, "encType 1");
+    Value a = mp_decode(adld::decrypt(name, file)), b = mp_decode(adld::decrypt("Scenario/TS_9000-en.msgp", en));
+    const Value *ra = a.find("master_text"), *rb = b.find("master_text");
+    if (!ra || !rb || ra->arr.size() != rb->arr.size()) t.fail("rows");
+    else
+        for (size_t i = 0; i < ra->arr.size(); i++) {
+            Value x = ra->arr[i], y = rb->arr[i];
+            x["text_value"] = Value("");
+            y["text_value"] = Value("");
+            if (mp_encode(x) != mp_encode(y)) t.fail("row %zu differs beyond text_value", i);
+        }
+    if (rb && rb->arr.size() == 3) {
+        t.expect_eq(rb->arr[0].find("text_value")->s, std::string("Line one\nline two"), "a real newline");
+        t.expect_eq(rb->arr[2].find("text_value")->s, std::string("???"), "a line without Japanese kept");
+    }
+    // incomplete, an unknown tag, a stale row: not served
+    t.expect_eq(
+        cdn::make_english_story(name, file, table("9000_1\t" + sha_of("一行目\n二行目") + "\tLine\tofficial\n"), &st).empty() && st.missing == 1,
+        true, "a Japanese line without English");
+    std::string bad_tag =
+        "9000_1\t" + sha_of("一行目\n二行目") + "\tA <EMDASH> B\tofficial\n9000_2\t" + sha_of("<player>さん！") + "\t<player>!\thuman\n";
+    t.expect_eq(cdn::make_english_story(name, file, table(bad_tag), &st).empty() && st.missing == 1, true, "an unknown tag");
+    std::string stale = "9000_1\t" + sha_of("old") + "\tLine\tofficial\n9000_2\t" + sha_of("<player>さん！") + "\t<player>!\thuman\n";
+    t.expect_eq(cdn::make_english_story(name, file, table(stale), &st).empty() && st.missing == 1, true, "a stale row");
+    // the 3.7.0 story files: decode -> encode is the identity
+    std::string scen = find_repo_file("work/download-3.7.0/Scenario");
+    if (!scen.empty()) {
+        int n = 0;
+        struct dirent* de = nullptr;
+        DIR* d = opendir(scen.c_str());
+        std::vector<std::string> names;
+        while (d && (de = readdir(d)))
+            if (strncmp(de->d_name, "TS_", 3) == 0) names.push_back(de->d_name);
+        if (d) closedir(d);
+        for (auto& base : names) {
+            std::string rel = "Scenario/" + base;
+            std::vector<uint8_t> f;
+            if (!slurp(scen + "/" + base, f)) continue;
+            auto p = adld::decrypt(rel, f);
+            if (mp_encode(mp_decode(p)) != p) t.fail("%s: decode -> encode differs", rel.c_str());
+            n++;
+        }
+        if (n < 60) t.fail("only %d story files read", n);
+    }
+    remove_tree(dir);
 }
 
 // The -en master of the real 3.7.0 master (C1, docs/server-rules.md#english) with the fixture

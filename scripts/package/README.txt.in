@@ -199,8 +199,8 @@ There are two ways to run the port. Both play the same game from the same files.
   Japanese by default; --lang en switches the client to English and makes the built-in server
   serve English files, which it builds on each start from the English tables in data{{IF windows}}\{{ELSE}}/{{END}}english{{IF windows}}\{{ELSE}}/{{END}}
   and your own game files (the first start takes longer). Text without an English translation
-  stays Japanese, the voices stay Japanese. For b) give --lang en to run-port-server and
-  --english to its server (soa-server --english).
+  stays Japanese, the voices stay Japanese. For b): run-port-server{{IF windows}}.cmd{{ELSE}}.sh{{END}} --english --lang en
+  (--english goes to its soa-server, --lang en to soa).
 
 soa{{EXE}}
   needs:      the 3.7.0 APK and the 3.7.0 download (1.)

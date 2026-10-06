@@ -5,8 +5,9 @@ boot (as the growth session): two inheritance accessories (master_item.max_inher
 ordinary ★4 one and two one-handed swords (W01Sw, a weak and a strong one). Boot 1: title -> Login
 -> home -> アイテム -> 武器・アクセサリー強化 -> アクセ -> the first inheritance accessory as the base ->
 素材選択: the ordinary one (the other inheritance accessory is greyed out) -> 決定 -> 強化開始 -> the
-three confirmations (InheritAccessory: the compose's points and FOL (the ★4 material's use_fol_one,
-6000, the preview's 必要FOL, not the ★5 base's), the factor inherited) -> the
+three confirmations (InheritAccessory: the compose's points and FOL (the preview's 強化ポイント 5050:
+the ★4 material's (level 1 + 100) x 5000 / 100, x weapon_compose_bonus_rate on a big success; the
+★4 material's use_fol_one, 6000, the preview's 必要FOL, not the ★5 base's), the factor inherited) -> the
 result -> キャラクター -> 装備・技・アシスト変更 -> ドーン (the fifth of the first row) -> 自動設定 -> 決定
 (EquipAuto: the strong sword, the inheritance accessory, the skills). Boot 2 (the same phone):
 Login -> home; the inheritance, the material gone and the equipment kept in the server state, and the
@@ -69,7 +70,13 @@ def plant(db):
     # the base's (★5: 10000; docs/server-rules.md, ItemCompose)
     fol = m.execute("select c.use_fol_one from master_item i join master_item_accessory_compose c on c.rarity = i.rarity where i.id = ?",
                     (plain,)).fetchone()[0]
-    return {"base": UID0, "inherit2": UID0 + 1, "plain": UID0 + 2, "plain_item": plain, "weak": UID0 + 3, "strong": UID0 + 4, "fol": fol}
+    # the compose's points: (the material's level 1 + 100) x boosted_point of its rarity / 100 (the
+    # preview's 強化ポイント, 5050 for the ★4; docs/server-rules.md#compose-points)
+    bp = m.execute("select c.boosted_point from master_item i join master_item_accessory_compose c on c.rarity = i.rarity where i.id = ?",
+                   (plain,)).fetchone()[0]
+    big = m.execute("select value from master_global where key = 'weapon_compose_bonus_rate'").fetchone()
+    return {"base": UID0, "inherit2": UID0 + 1, "plain": UID0 + 2, "plain_item": plain, "weak": UID0 + 3, "strong": UID0 + 4, "fol": fol,
+            "points": (1 + 100) * bp // 100, "big_rate": float(big[0]) if big else 1.5}
 
 
 def state(db):
@@ -78,6 +85,7 @@ def state(db):
     r = {
         "inherited": q("select inherited_master_item_id from items where uid = ?", UID0)[0],
         "exp": q("select exp from items where uid = ?", UID0)[0],
+        "level": q("select level from items where uid = ?", UID0)[0],
         "plain_left": q("select count(*) from items where uid = ?", UID0 + 2)[0],
         "inherit2_left": q("select count(*) from items where uid = ?", UID0 + 1)[0],
     }
@@ -107,6 +115,7 @@ def main(o):
         # the 強化成功 animation (a tap skips it), the result (the inherited factor), 閉じる
         c("wait:5000", s.shot_cmd("11-inherited"), "tap:364:700", "wait:4000", s.shot_cmd("11-result"), "tap:" + RESULT_CLOSE, "wait:3000",
           s.shot_cmd("11-closed"))
+        got["big"] = s.in_server(r"InheritAccessory [0-9a-f]+: \+[0-9]+ points \(big success\)")
         st1 = s.state("2-inherited")
         got["fol1"] = common.state_value(st1, r" fol ([0-9]+)")
         # ---- 自動設定
@@ -136,7 +145,9 @@ def main(o):
     eq = st2.get("equip") or (None, None, None, None)
     fails = common.checks(
         (st2.get("inherited") == got.get("plain_item"), "the base didn't keep the ordinary accessory's item as its inheritance"),
-        ((st2.get("exp") or 0) > 0, "the base gained no compose points"),
+        ((st2.get("level"), st2.get("exp")) == (1, int(got["points"] * got["big_rate"]) if got.get("big") else got.get("points")),
+         "the base has level %s with %s points, not the preview's %s (level 1%s)" %
+         (st2.get("level"), st2.get("exp"), got.get("points"), ", a big success x%s" % got.get("big_rate") if got.get("big") else "")),
         (got.get("fol0") is not None and got.get("fol1") is not None and got["fol0"] - got["fol1"] == got.get("fol"),
          "the inheritance paid %s FOL, not the material's use_fol_one %s (the preview's 必要FOL)" %
          (got["fol0"] - got["fol1"] if got.get("fol0") is not None and got.get("fol1") is not None else None, got.get("fol"))),

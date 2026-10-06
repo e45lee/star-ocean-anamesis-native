@@ -38,8 +38,6 @@ recommendations) is [`docs/history/environment-audit-2026-10-03.md`](history/env
 | `SOA_STANDIN_ASSETS` | `--standin-assets DIR\|off` | soa, soa-server |
 | `SOA_GUEST_CPUS` | `--guest-cpus N\|host` | soa, soa-emu, soa-viewer |
 | `SOA_HEADLESS` | `--headless` / `--windowed` (`--windowed` new in soa-emu and soa-viewer) | soa, soa-emu, soa-viewer |
-| `SOA_FONT` | `--font PATH` | soa, soa-emu, soa-viewer |
-| `SOA_WEBVIEW_FONT` | `--font PATH` (one flag for the text box and the web view's pages; new in soa-webview-render) | soa, soa-webview-render |
 | `SOA_NATIVES` | `--natives route\|none` | soa |
 | `SOA_FAKE_SERVER` | `--fake-server DIR` (new) | soa |
 | `SOA_FAKE_SERVER_SCHEMA` | `--fake-server-schema FILE` (new) | soa |
@@ -50,7 +48,7 @@ recommendations) is [`docs/history/environment-audit-2026-10-03.md`](history/env
 | `SOA_SERVER_MASTER` | `--master FILE` | soa, soa-server |
 | `SOA_GACHA_POOLS` | `--gacha-pools FILE` | soa, soa-server |
 | `SOA_SERVER_SEED` | `--seed FILE` | soa, soa-server |
-| `SOA_SERVER_GAME_XML` | `--game-xml FILE` | soa, soa-server |
+| `SOA_SERVER_GAME_XML` | `--seed FILE` (soa seeds from its client's own Game.xml by itself) | soa, soa-server |
 | `SOA_SERVER_SEED_RNG` | `--seed-rng N` | soa, soa-server |
 | `SOA_RESTORE_NEW_PLAYER` | `--new-player` | soa, soa-server |
 | `SOA_CLOCK` | `--clock "YYYY-MM-DD HH:MM:SS"` | soa, soa-server |
@@ -121,7 +119,7 @@ warned about and the default used.
 | `LOCALAPPDATA` (else `USERPROFILE`) | soa, soa-emu, soa-viewer `main` (Windows) | the default data dir (`%LOCALAPPDATA%\soa\port-370`, `emulator-370\phone`, `viewer-380`; `USERPROFILE\AppData\Local` when unset; `soa/paths.h`); `--data` overrides |
 | `TZ`, `HOME`, `TMPDIR` | runtime `hle/libc.cpp` | the only host variables the guest's `getenv` sees (all others are null). `TZ` is also the local time `--clock` / `--device-clock` are read in |
 | `SDL_VIDEODRIVER`, `SDL_AUDIODRIVER`, any `SDL_*` hint | SDL2 | SDL picks the driver (`SDL_AUDIODRIVER=dummy` / `disk`: the scripts and tests/diff set `dummy`). The runtime sets `SDL_HINT_VIDEO_X11_FORCE_EGL` (`app/sdl_gl.cpp`) and `SDL_HINT_IME_SUPPORT_EXTENDED_TEXT` (`app/host.cpp`) at normal priority, so the environment overrides them. Left that way (SDL's documented behaviour); `SDL_VIDEO_X11_FORCE_EGL=0` would give X11 GLX contexts, which the EGL emulation doesn't expect |
-| everything else | child processes | `fc-match` (the text box's font search) inherits the environment (`PATH`, fontconfig's `FONTCONFIG_*`); the guest's own `popen` is refused. (Movies are decoded in-process with FFmpeg's libraries: no `ffmpeg` program since 2026-10-04) |
+| everything else | child processes | none: the guest's own `popen` is refused. (Movies are decoded in-process with FFmpeg's libraries: no `ffmpeg` program since 2026-10-04; the fonts are built in, no `fc-match` since 2026-10-05) |
 
 soa-server reads `SOA_NOTICE_HTML_DUMP` only (in `--selftest`): no `HOME`, SDL or children.
 

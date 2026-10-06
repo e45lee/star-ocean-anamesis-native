@@ -198,7 +198,6 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | `--size WxH`, `--landscape` | Initial window size. Default: portrait 9:16 at 90% of the desktop height (the game is a portrait phone game). `--landscape`: 16:9 instead. |
 | `--render-size S` | The window surface: `desktop` (default: the window's aspect ratio, scaled up to fill the desktop), `window` (the initial window size) or `WxH`. The game itself renders at its own resolution (720 wide, a 0.75 back buffer: the `--hires` natives went with revision 2; `--hires` / `--legacy-res` are accepted and do nothing). |
 | `--fullscreen` | Start in desktop fullscreen |
-| `--font PATH` | The font of the keyboard's text box and of the web view's pages, a Japanese one (default: IPAex Gothic, Noto Sans CJK, Droid Sans Fallback or `fc-match :lang=ja` for the box, `docs/webview.md` "Fonts" for the pages; `none`: no box, the window title only, and the pages search as by default); `runtime/README.md`, "Text entry". One flag for both (they were two environment variables): both want the same Japanese font, as `docs/webview.md` planned. |
 | `--headless` / `--windowed` | `--headless`: don't show the window. It is the runtime's hidden host window (`app::HostConfig::hidden`, as in `soa-emu --headless`): it still renders at the same `--size` / `--render-size`, so screenshots, `--do` and `--control` work and the frames are the same. `--selftest` is headless unless `--windowed`. |
 | `--shot S:PATH`, `--do S:CMD`, `--control FIFO` | Scripted screenshots and input (see `soa --help`). Drive a `--control` instance with `control/soactl.py FIFO tap:X:Y wait:MS wheel:X:Y:DY shot:PATH ...`; the port's own commands are in "Control commands". |
 | `--selftest [F]`, `--smoke`, `--list-native` | The self-tests (tests matching F), a quick library check, the native list |
@@ -211,7 +210,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | Option | |
 |---|---|
 | `--server inproc\|HOST[:PORT]` | The game server: in-process (default) or `soa-server` (`--listen`, default port 44300). |
-| `--db FILE`, `--master FILE`, `--gacha-pools FILE`, `--seed FILE`, `--game-xml FILE`, `--seed-rng N`, `--new-player` | The state DB (default `DATA/server.sqlite3`), the 3.7.0 master DB, the reconstructed gacha pools (default `data/gacha_pools.sqlite3`), the save a new state is seeded from (3.7.0 or offline-game `Game.xml`; an existing state keeps its player), the last seed fallback (default `DATA/data/shared_prefs/Game.xml`), a fixed RNG seed, no player (the new-player tutorial) |
+| `--db FILE`, `--master FILE`, `--gacha-pools FILE`, `--seed FILE`, `--seed-rng N`, `--new-player` | The state DB (default `DATA/server.sqlite3`), the 3.7.0 master DB, the reconstructed gacha pools (default `data/gacha_pools.sqlite3`), the save a new state is seeded from (3.7.0 or offline-game `Game.xml`; an existing state keeps its player; without one, after the repository's seed save, the client's own `DATA/data/shared_prefs/Game.xml` when it holds a player), a fixed RNG seed, no player (the new-player tutorial) |
 | `--clock "YYYY-MM-DD HH:MM:SS"` | The server's clock starts there and runs on; without it event terms replay the calendar |
 | `--start-coins N`, `--galaxy-pass` | Free coins of a new local player (default 300000); the Galaxy Pass, renewed when it runs out |
 | `--enable-events`, `--event-keywords "a,b,!c"` | Also open, all year, every event area and gacha banner whose name matches the keywords (default the summer events `水着,夏,サマー,!福袋`), assets permitting |
@@ -256,7 +255,7 @@ Every option that changes what a run does lives in one typed struct, `RunOptions
 | `--master FILE` | `master` |
 | `--gacha-pools FILE` | `gacha_pools` |
 | `--seed FILE` | `seed` |
-| `--game-xml FILE` (inproc: `DATA/data/shared_prefs/Game.xml`) | `game_xml` |
+| (no option; inproc: `DATA/data/shared_prefs/Game.xml`) | `client_save` |
 | `--seed-rng N` | `has_seed_rng`, `seed_rng` |
 | `--start-coins N` (default 300000) | `start_coins`: free coins (紋章石) of a new local player; an existing state keeps its balance |
 | `--clock "YYYY-MM-DD HH:MM:SS"` | `has_clock`, `clock`, `clock_offset` |

@@ -42,7 +42,6 @@ control/soactl.py /tmp/emu.fifo tap:364:713 wait:3000 shot:/tmp/emu.png
 | `--repo DIR` | The source checkout, for the defaults. Default: found upwards from the executable. In a git worktree, files the worktree lacks (the APK) are also looked up in the main checkout that `work/` links to. |
 | `--guest-cpus N` / `host` | CPUs the game sees. Default 8. |
 | `--headless` / `--windowed` | Don't show the window. It still renders: screenshots and the control FIFO work. `--windowed` (the default) undoes an earlier `--headless`, as in `soa`. |
-| `--font PATH` | The keyboard text box's font (`none`: no box), as in `soa`. |
 | `--size WxH`, `--landscape`, `--render-size S`, `--fullscreen` | Window and game-screen size, as in `soa`. |
 | `--shot S:PATH`, `--do S:ACTION`, `--control FIFO` | Scripted input and screenshots, as in `soa`. The commands are `tap`, `drag`, `wheel`, `back`, `text`, `shot`, `resize`, `fullscreen`, `quit`; `control/soactl.py` drives the FIFO. `soa`'s `phase:` / `call:` / `uiset:` debug commands need natives and don't exist here. |
 | `-v` / `-vv` | Verbose / trace logging. |

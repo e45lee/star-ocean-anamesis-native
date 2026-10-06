@@ -349,6 +349,7 @@ out.sort(key=lambda t: (ORDER.index(t[0]), t[1]))
 print("| # | Function | Size (bytes) | Δ | Group | Summary | Port handling |")
 print("|---|---|---|---|---|---|---|")
 for i, (g, n, sz, s, h, d) in enumerate(out, 1):
-    print(f"| {i} | `{short(n).replace('|', '\\|')}` | {sz} | {d} | {g} | {s} | {h} |")
+    name = short(n).replace("|", "\\|")  # (outside the f-string: a backslash in one needs Python 3.12)
+    print(f"| {i} | `{name}` | {sz} | {d} | {g} | {s} | {h} |")
 for g in ORDER:
     print(g, grp_count[g], file=sys.stderr)

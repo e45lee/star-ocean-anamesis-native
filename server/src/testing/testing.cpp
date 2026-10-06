@@ -38,6 +38,18 @@ void Context::fail(const char* fmt, ...) {
     failures_++;
 }
 
+void Context::skip(const char* fmt, ...) {
+    char buf[1024];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buf, sizeof buf, fmt, ap);
+    va_end(ap);
+    fprintf(stderr, "    skip [%s]: %s\n", name_, buf);
+    skipped_ = true;
+}
+
+std::string skipped_note(int skipped) { return skipped ? " (" + std::to_string(skipped) + " skipped)" : ""; }
+
 uint64_t seed_for(const char* name) {
     uint64_t seed = 0x5eed0000;
     for (const char* c = name; *c; c++) seed = seed * 131 + (uint8_t)*c;
@@ -67,7 +79,7 @@ double run_one(const Test& t, Context& ctx) {
 }
 
 std::pair<int, int> run_tests(const std::string& filter, int repeat, bool summary, uint64_t shuffle_seed) {
-    int failed = 0, ran = 0;
+    int failed = 0, ran = 0, skipped = 0;
     std::vector<const Test*> order;
     for (const Test& t : tests()) order.push_back(&t);
     if (shuffle_seed) {
@@ -83,10 +95,11 @@ std::pair<int, int> run_tests(const std::string& filter, int repeat, bool summar
             double ms = run_one(t, ctx);
             ran++;
             if (ctx.failures()) failed++;
-            fprintf(stderr, "%s  %-50s %8.1f ms\n", ctx.failures() ? "FAIL" : "ok  ", t.name, ms);
+            else if (ctx.skipped()) skipped++;
+            fprintf(stderr, "%s  %-50s %8.1f ms\n", ctx.status(), t.name, ms);
         }
     }
-    if (summary) fprintf(stderr, "%d/%d server tests passed\n", ran - failed, ran);
+    if (summary) fprintf(stderr, "%d/%d server tests passed%s\n", ran - failed - skipped, ran, skipped_note(skipped).c_str());
     return {ran, failed};
 }
 

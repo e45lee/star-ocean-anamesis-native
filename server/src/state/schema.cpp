@@ -1808,8 +1808,8 @@ bool import_campaign(sqlite3* db, const std::string& data_dir) {
     std::set<uint32_t> cleared;
     uint32_t last = 0;
     char word[32];
-    unsigned long value;
-    while (fscanf(f, "%31s %lu", word, &value) == 2) {
+    unsigned long long value;  // 64 bits on every host, then cut to 32 (Windows' long is 32 bits)
+    while (fscanf(f, "%31s %llu", word, &value) == 2) {
         if (!strcmp(word, "clear")) cleared.insert((uint32_t)value);
         else if (!strcmp(word, "last")) last = (uint32_t)value;
     }

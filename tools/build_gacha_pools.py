@@ -96,9 +96,13 @@ RULES = [
      "1体確定' shows the base cast, the SO2メモリアル image says 'ピックアップは期間限定キャラのみ'). The cast is master_person id_label cp01xx..cp05xx = SO1..SO5 (a: labels; c: the casts, e.g. cp05 = Fidel, "
      "Miki of SO5, cp04 = Edge, Reimi of SO4; cp00 are anamnesis originals)."),
     ("R-PU-SIBLING", "a+d", "A gacha without own evidence takes the pick-ups of the gachas sharing its banner_id "
-     "(the steps of a step-up and the single/10-draw variants of one banner) (a: shared banner; d: same pick-ups)."),
+     "(the steps of a step-up and the single/10-draw variants of one banner) (a: shared banner; d: same pick-ups); "
+     "applied to their own evidence first and again after R-PU-THEME and R-PU-NEW (a rerun under the original's "
+     "banner_id, e.g. 復刻メイド1)."),
     ("R-PU-RERUN", "d", "A rerun (復刻) banner without own evidence takes the pick-ups of the earlier banners whose "
-     "title contains its event key (e.g. 復刻花嫁2020 -> banners titled with 花嫁2020)."),
+     "title contains its event key (e.g. 復刻花嫁2020 -> banners titled with 花嫁2020), or both halves of a two-word "
+     "key (復刻桜花桜雲 -> 'ピックアップキャラガチャ(桜花のマリア/桜雲のディアス)'). Applied after R-PU-NEW and a second "
+     "R-PU-SIBLING pass, so it sees every earlier banner's pick-ups."),
     ("R-PU-ROLEPICK", "a+d", "'ロールピックアップ' banners naming a class (アタッカー, ディフェンダー, シューター, "
      "キャスター, ヒーラー) pick up every general-pool ace of that master_role.category_type."),
     ("R-PU-THEME", "c+d", "A seasonal rerun without other evidence ('復刻花嫁2020', '復刻正月2021', '復刻ハロウィン1', "
@@ -403,7 +407,9 @@ class Builder:
             found = []
             for c in cands:
                 c = norm_name(re.sub(r"確定$|のみ$", "", norm_name(c)))
-                if len(c) < 2 or re.search(r"\d|連|回|期間|ガチャ|限定|毎日|人", c):
+                # not a name ('10連', '期間限定', '毎日'): skipped, unless it is one exactly ('連邦エッジ',
+                # '2B', 'エレン巨人' hold those characters too)
+                if len(c) < 2 or (c not in self.person_roles and re.search(r"\d|連|回|期間|ガチャ|限定|毎日|人", c)):
                     continue
                 rids = self.person_roles.get(c)
                 if not rids:  # 'SO4HD発表記念エッジ' -> エッジ: the longest person name the token ends with
@@ -493,23 +499,6 @@ class Builder:
         for g in m.gachas:
             if g["gacha_type"] == 0 and not res[g["id"]] and g["id"] not in permanent:
                 res[g["id"]] = self.theme_pickups(g)
-        # reruns
-        for g in m.gachas:
-            if g["gacha_type"] not in (0, 1) or res[g["id"]] or g["id"] in permanent:
-                continue
-            name = self.title(g)
-            if "復刻" not in name:
-                continue
-            key = re.sub(r"復刻|/?10連.*$|ピックアップ.*$|キャラガチャ.*$|ガチャ.*$|\(.*$|\d+$|\s+", "", name)
-            key = key.strip()
-            if len(key) < 3:
-                continue
-            got = []
-            for h in m.gachas:
-                if h["gacha_type"] == g["gacha_type"] and h["opened_at"] < g["opened_at"] and \
-                        "復刻" not in self.title(h) and key in self.title(h):
-                    got += [(ct, cid, "R-PU-RERUN") for ct, cid, _ in res[h["id"]] if _ != "R-PU-RERUN"]
-            res[g["id"]] = got
         # new releases on the opening day
         for g in m.gachas:
             if g["gacha_type"] not in (0, 1) or res[g["id"]] or g["id"] in permanent:
@@ -526,6 +515,36 @@ class Builder:
             else:
                 res[g["id"]] = [(1, w["id"], "R-PU-NEW") for w in sorted(self.wpn.values(), key=lambda w: w["id"])
                                 if w["rarity"] == 5 and w["how"] == "featured" and w["released"][:10] == day]
+        # siblings again: a step or variant of a banner whose pick-ups came from a rule above (R-PU-NEW,
+        # R-PU-THEME) shares them too (R-PU-SIBLING), e.g. a rerun under the original's banner_id
+        for g in m.gachas:
+            if g["gacha_type"] not in (0, 1) or res[g["id"]] or g["id"] in permanent or not g["banner_id"]:
+                continue
+            res[g["id"]] = [(ct, cid, "R-PU-SIBLING") for s in by_banner[(g["gacha_type"], g["banner_id"])]
+                            for ct, cid, src in res.get(s, []) if src != "R-PU-SIBLING"]
+        # reruns
+        for g in m.gachas:
+            if g["gacha_type"] not in (0, 1) or res[g["id"]] or g["id"] in permanent:
+                continue
+            name = self.title(g)
+            if "復刻" not in name:
+                continue
+            key = re.sub(r"復刻|/?10連.*$|ピックアップ.*$|キャラガチャ.*$|ガチャ.*$|\(.*$|\d+$|\s+", "", name)
+            key = key.strip()
+            if len(key) < 3:
+                continue
+            # the key as a whole, else a two-word key's halves both in the title ('復刻桜花桜雲' ->
+            # '(桜花のマリア/桜雲のディアス)')
+            keys = [[key]] + [[key[:i], key[i:]] for i in range(2, len(key) - 1)]
+            got = []
+            for words in keys:
+                for h in m.gachas:
+                    if h["gacha_type"] == g["gacha_type"] and h["opened_at"] < g["opened_at"] and \
+                            "復刻" not in self.title(h) and all(w in self.title(h) for w in words):
+                        got += [(ct, cid, "R-PU-RERUN") for ct, cid, _ in res[h["id"]] if _ != "R-PU-RERUN"]
+                if got:
+                    break
+            res[g["id"]] = got
         # dedupe, stable
         for gid, p in res.items():
             seen, out = set(), []

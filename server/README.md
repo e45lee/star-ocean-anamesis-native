@@ -104,7 +104,7 @@ Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/un
 
 ### Configuration (`ServerConfig`)
 
-`enabled`, `new_player`, `master`, `db`, `seed`, `game_xml`, `has_seed_rng` / `seed_rng`,
+`enabled`, `new_player`, `master`, `db`, `seed`, `client_save` (soa only), `has_seed_rng` / `seed_rng`,
 `start_coins`, `has_clock` / `clock` / `clock_offset`, `galaxy_pass`, `enable_events`,
 `event_keywords`, `restore_tower`, `home3d_all`, `campaign_master_db`, `campaign_seed`, `fail`, `surprise`,
 `repo_roots` (where `data/basmaster-3.7.0.sqlite3`, the seed saves and `server/tests/fixtures` are found;
@@ -117,7 +117,7 @@ then the install dirs, `common/include/soa/install.h`: a release package's `data
   the options are final.
 - **soa-server** fills it from its command line (`app/cli.cpp`, CLI11), with the same flags as soa's
   server options, defined once for both in `include/soaserver/cli.h` (`add_server_options`)
-  (`--db`, `--master`, `--gacha-pools`, `--seed`, `--game-xml`, `--seed-rng`, `--new-player`,
+  (`--db`, `--master`, `--gacha-pools`, `--seed`, `--seed-rng`, `--new-player`,
   `--clock`, `--start-coins`, `--galaxy-pass`, `--enable-events`, `--event-keywords`,
   `--restore-tower`, `--home3d-all`, `--campaign-master-db`, `--campaign-seed`, `--fail`, `--surprise`,
   `--log-packets`; and from `common/include/soa/cli.h` `--download` / `--download-dir`, `--standin-assets`,

@@ -19,8 +19,9 @@ std::string real_seed_save();
 bool save_holds_player(const std::string& path);
 
 // The save seed() would read: the first that exists of `explicit_seed`, --seed and real_seed_save(),
-// else --game-xml when it holds a player (save_holds_player: the client writes its own Game.xml,
-// settings only, at its first start); "" when none does.
+// else config().client_save (soa's in-process server: its client's own Game.xml; no option) when it
+// holds a player (save_holds_player: the client writes its own Game.xml, settings only, at its first
+// start); "" when none does.
 std::string seed_source(const std::string& explicit_seed = "");
 
 // Seeds the player, roster, party 1 and meta keys from seed_source(explicit_seed).

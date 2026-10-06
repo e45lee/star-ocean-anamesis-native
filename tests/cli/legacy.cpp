@@ -87,7 +87,7 @@ int parse_soa(int argc, const char* const* argv, soa::SoaArgs& r) {
             else if (a == "--hires") {}
             else if (a == "--legacy-res") r.legacy_res = true;
             else if (a == "--render-size") host.render_size = next();
-            else if (a == "--font") host.font = next();
+            else if (a == "--font") next();  // (HostConfig::font is gone, 2026-10-05: the value is dropped)
             else if (a == "--fullscreen") host.fullscreen = true;
             else if (a == "--headless") r.headless = 1;
             else if (a == "--windowed") r.headless = 0;
@@ -133,7 +133,6 @@ int parse_soa(int argc, const char* const* argv, soa::SoaArgs& r) {
             else if (a == "--master") srv.master = next(), r.server_flags.push_back(a);
             else if (a == "--gacha-pools") srv.gacha_pools = next(), r.server_flags.push_back(a);
             else if (a == "--seed") srv.seed = next(), r.server_flags.push_back(a);
-            else if (a == "--game-xml") srv.game_xml = next(), r.server_flags.push_back(a);
             else if (a == "--campaign-master-db") srv.campaign_master_db = next(), r.server_flags.push_back(a);
             else if (a == "--campaign-seed") srv.campaign_seed = next(), r.server_flags.push_back(a);
             else if (a == "--fail") srv.fail = next(), r.server_flags.push_back(a);
@@ -214,7 +213,6 @@ int parse_server(int argc, const char* const* argv, soa::server::app::ServerArgs
             else if (a == "--apk") c.apk = next();
             else if (a == "--gacha-pools") c.gacha_pools = next();
             else if (a == "--seed") c.seed = next();
-            else if (a == "--game-xml") c.game_xml = next();
             else if (a == "--seed-rng") c.has_seed_rng = true, c.seed_rng = strtoull(next().c_str(), nullptr, 0);
             else if (a == "--new-player") c.new_player = true;
             else if (a == "--clock") {
@@ -298,7 +296,7 @@ int parse_emu(int argc, const char* const* argv, soa::emu::EmuArgs& r) {
             else if (a == "--size") sscanf(next().c_str(), "%dx%d", &host.width, &host.height);
             else if (a == "--landscape") host.landscape = true;
             else if (a == "--render-size") host.render_size = next();
-            else if (a == "--font") host.font = next();
+            else if (a == "--font") next();  // (HostConfig::font is gone, 2026-10-05: the value is dropped)
             else if (a == "--fullscreen") host.fullscreen = true;
             else if (a == "--headless") host.hidden = true;
             else if (a == "--windowed") host.hidden = false;
@@ -343,7 +341,7 @@ int parse_viewer(int argc, const char* const* argv, soa::viewer::ViewerArgs& r) 
             else if (a == "--size") sscanf(next().c_str(), "%dx%d", &host.width, &host.height);
             else if (a == "--landscape") host.landscape = true;
             else if (a == "--render-size") host.render_size = next();
-            else if (a == "--font") host.font = next();
+            else if (a == "--font") next();  // (HostConfig::font is gone, 2026-10-05: the value is dropped)
             else if (a == "--fullscreen") host.fullscreen = true;
             else if (a == "--headless") host.hidden = true;
             else if (a == "--windowed") host.hidden = false;

@@ -115,12 +115,9 @@ int main(int argc, char** argv) {
     platform370::Config& p370 = args.p370;
     const std::string& test_filter = args.test_filter;
     app::HostConfig& host = args.host;
-    const std::string& font = host.font;  // --font
     int headless = args.headless;  // -1: not given (headless only for --selftest)
     const std::string& gdb_addr = args.gdb;  // --gdb HOST:PORT (core/gdbstub.h)
     const std::vector<std::string>& server_flags = args.server_flags;  // server options given on the command line (for the --server HOST warning)
-    // --font: the keyboard's text box (host.font below) and the web view's pages (one Japanese font).
-    if (!font.empty()) webview::set_font(font);
     // --server inproc|HOST[:PORT].
     const bool inproc = server_mode == "inproc";
     if (!inproc) {
@@ -189,7 +186,7 @@ int main(int argc, char** argv) {
                   download_dir.empty() ? "not found" : "missing", install::missing_hint().c_str());
         if (cl.standin_dir.empty() && !cl.standin_off) cl.standin_dir = find_repo_file("standin-assets");
         if (srv.db.empty()) srv.db = data_dir + "/server.sqlite3";
-        if (srv.game_xml.empty()) srv.game_xml = data_dir + "/data/shared_prefs/Game.xml";
+        srv.client_save = data_dir + "/data/shared_prefs/Game.xml";  // the last seed fallback (state/seed.h)
         LOGI("main", "server inproc: local server on the FakeApiCaller route, fake server dir %s, download dir %s", cl.fake_server_dir.c_str(),
              download_dir.c_str());
     } else {

@@ -46,8 +46,6 @@ inline constexpr Removed kRemoved[] = {
     {"SOA_STANDIN_ASSETS", "--standin-assets", kSoa | kServer},
     {"SOA_GUEST_CPUS", "--guest-cpus", kRuntimePrograms},
     {"SOA_HEADLESS", "--headless / --windowed", kRuntimePrograms},
-    {"SOA_FONT", "--font", kRuntimePrograms},
-    {"SOA_WEBVIEW_FONT", "--font", kSoa | kRender},
     // soa's own
     {"SOA_NATIVES", "--natives", kSoa},
     {"SOA_FAKE_SERVER", "--fake-server", kSoa},
@@ -59,7 +57,7 @@ inline constexpr Removed kRemoved[] = {
     {"SOA_SERVER_MASTER", "--master", kSoa | kServer},
     {"SOA_GACHA_POOLS", "--gacha-pools", kSoa | kServer},
     {"SOA_SERVER_SEED", "--seed", kSoa | kServer},
-    {"SOA_SERVER_GAME_XML", "--game-xml", kSoa | kServer},
+    {"SOA_SERVER_GAME_XML", "--seed", kSoa | kServer},
     {"SOA_SERVER_SEED_RNG", "--seed-rng", kSoa | kServer},
     {"SOA_RESTORE_NEW_PLAYER", "--new-player", kSoa | kServer},
     {"SOA_CLOCK", "--clock", kSoa | kServer},

@@ -1,8 +1,9 @@
 // soa_cli_tests: the four programs' CLI11 command lines (port/src/core/cli.cpp,
 // server/app/cli.cpp, emulator/src/cli.cpp, emulator-viewer/src/cli.cpp) against the hand-written
 // parsers they replaced (legacy.cpp), table-driven:
-//   1. every option name each old parser knew is defined (and nothing else, except the additions
-//      listed in kAdded), and every one of them appears in the table below;
+//   1. every option name each old parser knew is defined (and nothing else), except the additions
+//      and the deliberate removals check_names is given, and every one of them appears in the table
+//      below;
 //   2. each row's command line parses to the same configuration (every field of the structs the
 //      programs act on, dumped as text) and the same outcome (go on / help / error) with both;
 //      rows marked `changed` are the deliberate differences (the new outcome is checked, the reason
@@ -47,7 +48,7 @@ struct Dump {
 };
 void dump(Dump& d, const soa::server::ServerConfig& c) {
     d.f("enabled", c.enabled).f("new_player", c.new_player).f("master", c.master).f("apk", c.apk).f("db", c.db).f("seed", c.seed);
-    d.f("game_xml", c.game_xml).f("gacha_pools", c.gacha_pools).f("has_seed_rng", c.has_seed_rng).f("seed_rng", c.seed_rng);
+    d.f("gacha_pools", c.gacha_pools).f("has_seed_rng", c.has_seed_rng).f("seed_rng", c.seed_rng);
     d.f("start_coins", c.start_coins).f("has_clock", c.has_clock).f("clock", c.clock);  // (clock_offset: now-dependent)
     d.f("galaxy_pass", c.galaxy_pass).f("enable_events", c.enable_events).f("event_keywords", c.event_keywords);
     d.f("restore_tower", c.restore_tower).f("home3d_all", c.home3d_all).f("campaign_master_db", c.campaign_master_db);
@@ -66,7 +67,7 @@ void dump(Dump& d, const soa::platform370::Config& p) {
 void dump(Dump& d, const soa::app::HostConfig& h) {
     d.f("title", h.title).f("width", h.width).f("height", h.height).f("landscape", h.landscape).f("fullscreen", h.fullscreen);
     d.f("hidden", h.hidden).f("render_size", h.render_size).f("size_note", h.size_note).f("shots", h.shots).f("actions", h.actions);
-    d.f("control_path", h.control_path).f("font", h.font);
+    d.f("control_path", h.control_path);
 }
 // the log level the programs set from -v / -vv
 int level(int verbose) { return verbose >= 2 ? 2 : verbose; }
@@ -235,11 +236,12 @@ void check_program(const std::string& prog, const std::vector<Row>& rows, New pa
 
 // ---- 1. the option names -----------------------------------------------------------------------
 void check_names(const std::string& prog, std::vector<std::string> got, std::vector<std::string> old_list,
-                 const std::vector<std::string>& added, const std::vector<Row>& rows) {
+                 const std::vector<std::string>& added, const std::vector<std::string>& removed, const std::vector<Row>& rows) {
     g_checks++;
     std::set<std::string> want(old_list.begin(), old_list.end());
     want.erase("-vv");  // (-v counted: -vv is two)
     want.insert(added.begin(), added.end());
+    for (auto& r : removed) want.erase(r);  // gone on purpose (their rows are marked `changed`)
     std::set<std::string> have(got.begin(), got.end());
     for (auto& w : want)
         if (!have.count(w)) fail(prog + ": " + w + " (the old parser had it) isn't defined");
@@ -253,7 +255,7 @@ void check_names(const std::string& prog, std::vector<std::string> got, std::vec
             for (auto& a : r.args) used = used || a == o || a.rfind(o + "=", 0) == 0;
         if (!used) fail(prog + ": " + o + " is in no table row");
     }
-    printf("ok    %s: %zu option names (%zu added)\n", prog.c_str(), have.size(), added.size());
+    printf("ok    %s: %zu option names (%zu added, %zu removed)\n", prog.c_str(), have.size(), added.size(), removed.size());
 }
 
 }  // namespace
@@ -267,10 +269,10 @@ int main() {
                        "--download-dir", "--download", "--download-prefer", "--fake-server", "--fake-server-schema", "--memstats",
                        "--live-check", "--repo", "--standin-assets", "--restore", "--restore-tower", "--home3d-all", "--clock",
                        "--enable-events", "--galaxy-pass", "--new-player", "--surprise", "--db", "--master", "--gacha-pools", "--seed",
-                       "--game-xml", "--campaign-master-db", "--campaign-seed", "--fail", "--log-packets", "--seed-rng", "--guest-cpus",
+                       "--campaign-master-db", "--campaign-seed", "--fail", "--log-packets", "--seed-rng", "--guest-cpus",
                        "--event-keywords", "--start-coins", "--list-native", "-v", "-vv", "-h", "--help"};
     const V server_old = {"--selftest", "--shuffle", "--replay", "--out", "--list-apis", "--list-hooks", "--repo", "--listen", "--http",
-                          "--bridge-url", "--log-packets", "--data", "--db", "--master", "--apk", "--gacha-pools", "--seed", "--game-xml",
+                          "--bridge-url", "--log-packets", "--data", "--db", "--master", "--apk", "--gacha-pools", "--seed",
                           "--seed-rng", "--new-player", "--clock", "--start-coins", "--galaxy-pass", "--enable-events",
                           "--event-keywords", "--restore-tower", "--home3d-all", "--download-dir", "--download", "--cdn-url",
                           "--standin-assets", "--cdn-scratch", "--cdn-check", "--campaign-master-db", "--campaign-seed", "--fail",
@@ -282,6 +284,9 @@ int main() {
     const V viewer_old = {"--apk-dir", "--xapk", "--apk", "--download-dir", "--download-prefer", "--lib", "--data", "--repo",  // 380-ok: soa-viewer's options
                           "--guest-cpus", "--size", "--landscape", "--render-size", "--font", "--fullscreen", "--headless", "--windowed",
                           "--shot", "--do", "--control", "--gdb", "-v", "-vv", "-h", "--help"};
+
+    // Options removed on purpose since: --font (2026-10-05; the fonts are built in).
+    const V kRemovedFont = {"--font"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -306,8 +311,8 @@ int main() {
         {{"--render-size", "window"}},
         {{"--render-size", "1080x1920"}},
         {{"--fullscreen"}},
-        {{"--font", "/f.ttf"}},
-        {{"--font", "none"}},
+        {{"--font", "/f.ttf"}, "--font is gone: the fonts are built in (cmake/fonts.cmake)", 2},
+        {{"--font", "none"}, "--font is gone: the fonts are built in (cmake/fonts.cmake)", 2},
         {{"--headless"}},
         {{"--windowed"}},
         {{"--headless", "--windowed"}},
@@ -361,7 +366,6 @@ int main() {
         {{"--master", "data/basmaster-3.7.0.sqlite3"}},
         {{"--gacha-pools", "data/gacha_pools.sqlite3"}},
         {{"--seed", "data/saves/seed/Game.xml"}},
-        {{"--game-xml", "/tmp/Game.xml"}},
         {{"--seed-rng", "1"}},
         {{"--seed-rng", "605"}},
         {{"--seed-rng", "0x10"}},
@@ -518,24 +522,24 @@ int main() {
             soa::SoaArgs a;
             a.opt = &o;
             soa::parse_soa_args(1, argv, a, &names);
-            check_names("soa", names, soa_old, {}, soa_rows);
+            check_names("soa", names, soa_old, {}, kRemovedFont, soa_rows);
         }
         {
             soa::server::ServerConfig c;
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, {}, server_rows);
+            check_names("soa-server", names, server_old, {}, {}, server_rows);
         }
         {
             soa::emu::EmuArgs a;
             soa::emu::parse_args(1, argv, a, &names);
-            check_names("soa-emu", names, emu_old, {}, emu_rows);
+            check_names("soa-emu", names, emu_old, {}, kRemovedFont, emu_rows);
         }
         {
             soa::viewer::ViewerArgs a;
             soa::viewer::parse_args(1, argv, a, &names);
-            check_names("soa-viewer", names, viewer_old, {"--download"}, viewer_rows);
+            check_names("soa-viewer", names, viewer_old, {"--download"}, kRemovedFont, viewer_rows);
         }
     }
 

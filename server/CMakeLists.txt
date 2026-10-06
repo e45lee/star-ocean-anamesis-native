@@ -1,5 +1,5 @@
 # libsoaserver: the local game server (server/README.md), and soa-server, its standalone binary.
-# Added by the repository's CMakeLists.txt (cmake -S . -B build: build/server/soa-server); it needs
+# Added by the repository's CMakeLists.txt (scripts/build.sh: build/server/soa-server); it needs
 # only SQLite and OpenSSL's libcrypto (and zlib for soanet), from vcpkg (cmake/deps.cmake).
 
 # The library must stand alone: no includes from the port or the runtime (checked at configure time).

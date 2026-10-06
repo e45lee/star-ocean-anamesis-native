@@ -1,7 +1,7 @@
 # soa-viewer: the offline 3.8.0 client (the XAPK's libSOA.so + its APKs), unmodified, under the JIT
 # host runtime (../runtime). No natives, no restore code, no server: it never links port/src.
 # emulator-viewer/README.md. Added by the repository's CMakeLists.txt after ../runtime
-# (cmake -S . -B build: build/emulator-viewer/soa-viewer).
+# (scripts/build.sh: build/emulator-viewer/soa-viewer).
 
 # The viewer's extensions register themselves (hle_add_registrar) from static initializers, so
 # the runtime archive is linked whole.

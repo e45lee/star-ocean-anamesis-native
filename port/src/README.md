@@ -1,6 +1,6 @@
 # port/src: where things live
 
-The `soa` binary is built from every `*.cpp` under this folder (`port/CMakeLists.txt`, `GLOB_RECURSE`; part of the repository's build, `cmake -S . -B build`: `build/port/soa`) plus the JIT host runtime library, `runtime/` at the repo root (`libsoaruntime`; `runtime/README.md`), whose objects are linked first, and the local server library, `server/` at the repo root (`libsoaserver`; `server/README.md`), linked last. Includes are always written from here or from `runtime/src`: `#include "native/battle/battle_calc.h"`, `#include "core/cpu.h"`.
+The `soa` binary is built from every `*.cpp` under this folder (`port/CMakeLists.txt`, `GLOB_RECURSE`; part of the repository's build, `scripts/build.sh`: `build/port/soa`) plus the JIT host runtime library, `runtime/` at the repo root (`libsoaruntime`; `runtime/README.md`), whose objects are linked first, and the local server library, `server/` at the repo root (`libsoaserver`; `server/README.md`), linked last. Includes are always written from here or from `runtime/src`: `#include "native/battle/battle_calc.h"`, `#include "core/cpu.h"`.
 
 The runtime (`runtime/src/`) holds what any host of the Android `libSOA.so` needs:
 

@@ -52,11 +52,14 @@ header; `SQLITE_SECURE_DELETE` zeroes freed space), its SHA-1 feeds the CDN's ve
 pre-downloaded phone (`SOA_PHONE`) skips the data check only while those ids match. Changing the
 SQLite version or options therefore makes every saved phone download the data again.
 
-**vcpkg itself:** `$VCPKG_ROOT` if set, else `.vcpkg/` in the repository (untracked):
+**vcpkg itself:** `$VCPKG_ROOT` if set, else `.vcpkg/` in the main checkout (untracked; a git
+worktree uses the main checkout's, found through git, with no link or `VCPKG_ROOT`):
 `scripts/vcpkg-bootstrap.sh` clones `github.com/microsoft/vcpkg` there at the `builtin-baseline`
-commit and runs its bootstrap (`scripts/build.sh` does this). The root `CMakeLists.txt` finds the
-toolchain file from the same places, so a plain `cmake -S . -B build` works once vcpkg is there.
-Worktrees made by `port/scripts/agent-worktree.sh` share the main checkout's `.vcpkg` by symlink.
+commit and runs its bootstrap (`scripts/build.sh` does this). Every checkout and worktree then
+restores the ports from vcpkg's binary cache; only a changed port, triplet or `vcpkg.json` builds
+again. Configure only with `scripts/build.sh`: the root `CMakeLists.txt` refuses a bare `cmake -S`
+(or a reconfigure from a bare `cmake --build`), since the environment build.sh sets is part of the
+Windows ports' cache keys ("Windows" below).
 
 **Linux prerequisites** vcpkg can't replace (Ubuntu 24.04 names; CMake 3.28 or newer, which 24.04 ships):
 
@@ -100,10 +103,9 @@ The C++ parts share one CMake build, rooted at `CMakeLists.txt`:
 
 ```sh
 scripts/build.sh                    # vcpkg (bootstrapped into .vcpkg/ if missing), configure, build everything
-# or by hand, once vcpkg is there (scripts/vcpkg-bootstrap.sh, or $VCPKG_ROOT):
-cmake -S . -B build                 # RelWithDebInfo unless -DCMAKE_BUILD_TYPE=...; the first one builds the vcpkg ports
-cmake --build build -j8             # everything
-cmake --build build -j8 --target soa        # one part: soa, soa-server, soa-emu, soa-viewer, soaruntime_tests or aif2png
+scripts/build.sh --target soa       # one part: soa, soa-server, soa-emu, soa-viewer, soaruntime_tests or aif2png
+# once build.sh has configured build/, plain cmake builds it too (a reconfigure needs build.sh):
+cmake --build build -j8 --target soa
 ```
 
 The root `CMakeLists.txt` picks vcpkg's toolchain file (`$VCPKG_ROOT`, else `.vcpkg/`; an explicit
@@ -116,7 +118,9 @@ toolchains: delete it and configure again. vcpkg builds its ports with `VCPKG_MA
 time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWER=OFF`,
 `-DSOA_BUILD_SERVER=OFF` or `-DSOA_BUILD_PLATFORM370=OFF` (the port needs the server library, so
 `SOA_BUILD_SERVER=OFF` needs `SOA_BUILD_PORT=OFF` too; the emulator needs platform370, so
-`SOA_BUILD_PLATFORM370=OFF` needs `SOA_BUILD_EMULATOR=OFF`).
+`SOA_BUILD_PLATFORM370=OFF` needs `SOA_BUILD_EMULATOR=OFF`). Pass them to `scripts/build.sh`
+before any build options (`scripts/build.sh -DSOA_BUILD_PORT=OFF --target soa-server`): the first
+configure gets them, or an existing build dir is reconfigured with them.
 
 ### Windows
 
@@ -142,17 +146,24 @@ scripts/build.sh --windows --target soa-server          # one part
 
 - The compiler: `x86_64-w64-mingw32-gcc-posix` / `g++-posix` from the system's package (GCC's posix
   thread model, which `std::thread` needs; the distribution's default `x86_64-w64-mingw32-g++` is
-  the win32 model). `build.sh` links them under the plain names in `build-win/mingw-posix/` and puts
-  that first on `PATH` for vcpkg's port builds.
+  the win32 model). `build.sh` links them under the plain names in the main checkout's
+  `.mingw-posix/` and puts that first on `PATH` for vcpkg's port builds.
+- The binary cache: the triplet passes `PATH` through to the port builds, so vcpkg hashes `PATH`'s
+  exact text into every Windows port's cache key (`ENV:PATH` in `vcpkg_abi_info.txt`). `build.sh
+  --windows` therefore runs with one fixed `PATH` (`<main checkout>/.mingw-posix` and the system
+  directories `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`, where the tools must
+  be), identical for the main checkout, every worktree, `build-win/` and `build-win-release/`, so
+  they all restore the ports from `~/.cache/vcpkg/archives` (minutes) instead of rebuilding them
+  (an hour). Before 2026-10-06 the shim lived in each build dir and the shell's whole `PATH` went
+  in, so each new worktree or build dir rebuilt everything. Never configure or reconfigure
+  `build-win/` without `build.sh` (the root `CMakeLists.txt` refuses).
 - `--windows` configures `build-win/` with vcpkg's toolchain chainloading
   `cmake/toolchains/mingw-w64-x64.cmake`, the triplet `x64-mingw-static`
   (`cmake/vcpkg-triplets/x64-mingw-static.cmake`: static, release only, the same sqlite3 options as
   Linux so the served master and the CDN ids don't depend on the platform) and the vcpkg feature
-  `angle` (ANGLE: EGL / GLES on Windows). The first configure builds every port for MinGW (about an
-  hour, then cached; a change to the triplet file rebuilds them all). The `.exe` files are static:
+  `angle` (ANGLE: EGL / GLES on Windows). The first configure on a machine builds every port for
+  MinGW (about an hour, then cached; a change to the triplet file rebuilds them all). The `.exe` files are static:
   only Windows' own DLLs.
-- In a git worktree set `VCPKG_ROOT` to the main checkout's `.vcpkg` (as for `build/`), or
-  `scripts/vcpkg-bootstrap.sh` clones another vcpkg.
 - GCC on MinGW differs from llvm-mingw in ways `soa_compat` covers (`common/win32/posix_compat.h`,
   `common/src/posix_compat_win32.cpp`): `rename` must replace (libstdc++'s `<cstdio>` restores the C
   runtime's, so the header includes it before its define; call `rename()`, never

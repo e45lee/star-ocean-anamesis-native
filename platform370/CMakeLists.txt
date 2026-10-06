@@ -3,7 +3,7 @@
 # glue (host/port redirect, the AskaActivity HTTP client). soa-emu links it; soa will (P1,
 # docs/history/PLAN-rebase-370.md).
 #
-# Added by the repository's CMakeLists.txt (cmake -S . -B build: build/platform370/) after
+# Added by the repository's CMakeLists.txt (scripts/build.sh: build/platform370/) after
 # runtime/, when SOA_BUILD_PLATFORM370 is on (soa-emu needs it).
 #
 # Target:

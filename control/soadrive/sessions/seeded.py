@@ -78,7 +78,7 @@ def emu_run(o, server_args, env=None, shots=None):
     import tempfile
     for b, what in ((o.client, "soa-emu"), (o.server, "soa-server")):
         if o.target != "port-inproc" and not os.access(b, os.X_OK):
-            print("FAIL: %s not built (cmake -S . -B build && cmake --build build --target %s)" % (b, what))
+            print("FAIL: %s not built (scripts/build.sh --target %s)" % (b, what))
             raise Abort(what)
     o.out = os.path.abspath(o.out or tempfile.mkdtemp(prefix="emulator-session.", dir=os.environ.get("TMPDIR", "/tmp")))
     os.makedirs(o.out, exist_ok=True)

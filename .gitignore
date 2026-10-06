@@ -16,8 +16,10 @@ __pycache__/
 /build-win-release/
 /dist/
 /build.log
-# vcpkg (scripts/vcpkg-bootstrap.sh) and a stray `vcpkg install`'s output
+# vcpkg (scripts/vcpkg-bootstrap.sh) and a stray `vcpkg install`'s output; the Windows build's
+# compiler shim (scripts/build.sh --windows)
 /.vcpkg
+/.mingw-posix/
 /vcpkg_installed/
 # Agent worktrees (git worktree add .claude/worktrees/<name>)
 /.claude/worktrees/

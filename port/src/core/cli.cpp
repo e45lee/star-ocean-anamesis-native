@@ -67,8 +67,19 @@ int parse_soa_args(int argc, const char* const* argv, SoaArgs& a, std::vector<st
     platform370::add_network_options(app, a.p370, device + " (with --server HOST)");
 
     app::add_window_options(app, h, "Client: window");
-    app.add_flag("--hires")->description("no effect (the game renders at its own resolution)")->group("Client: window");
-    app.add_flag("--legacy-res", a.legacy_res, "no effect (the game renders at its own resolution)")->group("Client: window");
+    // The render resolution (native/ui/ui_utility.cpp): hi-res by default.
+    app.add_flag("--hires")->description("no effect: high-resolution rendering is the default (kept for old scripts)")->group("Client: window");
+    auto* legacy = app.add_flag("--legacy-res", cl.legacy_res,
+                                "the game's own resolution: a 720x1280 layout drawn into a 0.75 back buffer (540x960 on a 9:16 "
+                                "screen) and scaled up; the default renders at the game screen's size (--render-size)")
+                       ->group("Client: window");
+    app.add_option("--render-scale", cl.render_scale,
+                   "the game's 720x1280 layout with a back buffer of S times it (e.g. 1 = 720x1280, 1.5 = 1080x1920), "
+                   "whatever the window; --legacy-res is 0.75")
+        ->type_name("S")
+        ->check(CLI::Range(0.25f, 3.0f))
+        ->excludes(legacy)
+        ->group("Client: window");
 
     app::add_driving_options(app, h, drive);
     app.add_option("--selftest", a.test_filter, "the self-tests (tests matching F) on the booted game, no natives installed; headless")

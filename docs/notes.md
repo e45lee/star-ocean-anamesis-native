@@ -495,8 +495,10 @@ The gacha screen, its dialogs and the 3D draw sequence. Reached offline with `ph
   - `tTimeDelegate::Progress` counts down by `FrameworkDT`. **Quirk:** a NaN timer never fires. After the subtraction the guest skips on `b.hi`, which is also taken when the comparison is unordered, so a plain C `0.0f < left` test would not match it.
 
 ### Rendering
-- The render size comes from `CGame::OnColdStart`. `CUIUtility::IsResolutionLegacy()` is hard-coded `true` and `CUIUtility::GetDefaultBackBufferScale()` returns 0.75, so on a 1280×720 display the game renders at 720×405 via `ANativeWindow_setBuffersGeometry` (`Aska::RenderDeviceGL::CreateSurface`).
-- The non-legacy path (full size) works; it's the port's `--hires` option.
+- The render size comes from `CGame::OnColdStart` (3.7.0 @012414b0), the only caller of `CUIUtility::IsResolutionLegacy()` (hard-coded `true`) and `CUIUtility::GetDefaultBackBufferScale()` (0.75). From the window's size it fills `tFrameworkArguments`' Aska description:
+  - legacy (as shipped): the UI screen (+0x68 / +0x6a) is the window scaled to a long side of 1280 (`1280.0f / (long / short)` wide: 720x1280 on a 9:16 window, `ANativeWindow_setBuffersGeometry` via `Aska::RenderDeviceGL::CreateSurface` then gives that size), the back buffer (+0x78 / +0x7a) that times the scale (540x960), and `CCocosDirector::ms_DisplayScale` = 720 / the window's width;
+  - not legacy: the UI screen and the back buffer are the window's size, `ms_DisplayScale` 1, and `GetDefaultBackBufferScale` isn't called.
+- **The port renders hi-res by default** (the user, 2026-10-07; `port/src/native/ui/ui_utility.cpp`, `docs/client-changes.md` "High-resolution rendering"): `IsResolutionLegacy` answers false, so the game renders at the game screen's size (`--render-size`: 728x1296 for a 729x1296 window, 1.82x the legacy pixels; `desktop`, the default, scales the window up to the desktop). `--legacy-res` keeps the shipped path; `--render-scale S` keeps the 720x1280 layout with a back buffer of S. Layouts, touch, the web view and movies work the same in both (the UI is laid out in screen pixels either way); `soa-emu` and `soa-viewer` render as shipped.
 - The game creates one GLES 2 probe context, then a GLES 3 context plus two shared loader contexts.
 
 ### Orientation and the home camera

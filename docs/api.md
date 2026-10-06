@@ -430,11 +430,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `d1bcebee`
 - **Method** `ChangeMascot(unsigned int)`; wire `SendChangeMascot(RequestHeader, unsigned int)`
 - **Wire**: request fid `d1bcebee`, encrypted: RequestHeader(16) · u32 = 20 bytes; reply `ChangeMascotRes` fid `a37ae622`
-- **Request**: `u32 mascot master_role / person id`
+- **Request**: `u32 master_person id` (a `master_home_message` type-3 mascot's person)
 - **Response** (`data.*`): `Player.mascot_id`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): unnamed code near `CAdjutantSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/home.cpp`; docs/server-rules.md#home-mascot), in-process through the port's FakeApiCaller route
 - **Notes**: Caller changed with `CAdjutantSelect` (3.7.0 and offline-build layouts differ).
 
 ### FavoriteDecoObject
@@ -445,7 +445,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `FavoriteDecoObjectResult`
 - **Handler / effect**: Inline (native): sets is_favorite.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::vector<CUIUtility::CheckedB`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **FakeApiCaller**: `FakeApi/favorite_deco_object.msgp`
 
 ### GetConfig
@@ -464,10 +464,10 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Method** `GetDecoInfo(void)`
 - **Wire**: request fid `33015ed5`, encrypted: RequestHeader(16) = 16 bytes; reply `GetDecoInfoRes` fid `8f9d68f7`
 - **Request**: none
-- **Response** (`data.*`): `DecoObject` [CDecoObjectInfo {player_id, master_deco_id, is_favorite}], `NumDecoObject`
+- **Response** (`data.*`): `DecoObject` [CDecoObjectInfo {id, player_id, master_deco_id, is_favorite}], `NumDecoObject`
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::__hash_table<std::__ndk1::_`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **Master tables**: `master_deco_object`
 - **FakeApiCaller**: `FakeApi/get_deco_info.msgp`
 
@@ -549,7 +549,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `CharacterDeco`, `DecoObject`
 - **Handler / effect**: Inline (native): replaces the character's deco objects.
 - **Callers** (fid constant scan): `CHomeDecoMenu::DecideDecoStatus`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **Master tables**: `master_deco_object`, `master_deco_hair`, `master_deco_offset_type`
 - **FakeApiCaller**: `FakeApi/set_character_deco.msgp`
 
@@ -585,7 +585,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `FavoriteDecoObjectResult`
 - **Handler / effect**: Inline (native): clears is_favorite.
 - **Callers** (fid constant scan): unnamed code near `std::__ndk1::vector<CUIUtility::CheckedB`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/player/deco.cpp`; docs/server-rules.md#deco)
 - **FakeApiCaller**: `FakeApi/unfavorite_deco_object.msgp`
 
 ### UpdateConfig
@@ -1123,7 +1123,7 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Response** (`data.*`): `UpdateCharacter`
 - **Handler / effect**: Inline (native): role fields and skill slots.
 - **Callers** (fid constant scan): unnamed code near `CRoleSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/growth.cpp`; docs/server-rules.md#role-change), in-process through the port's FakeApiCaller route
 - **Master tables**: `master_role_change`
 
 ### ClearNewCharacter
@@ -1223,10 +1223,10 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **Method** `GetMasteryInfo(void)`
 - **Wire**: request fid `45bea005`, encrypted: RequestHeader(16) = 16 bytes; reply `GetMasteryInfoRes` fid `7475e348`
 - **Request**: none
-- **Response** (`data.*`): `PlayerCharacterMasteryInfoMap`
+- **Response** (`data.*`): `PlayerCharacterMasteryInfoMap` {disciple uid: CPlayerCharacterMasteryInfo {character_id, player_id, parent_character_id, dojo_no, master_mastery_step_type_id, master_mastery_step_1..5_option_no, created_at, updated_at}}
 - **Handler / effect**: Plain apply.
 - **Callers** (fid constant scan): `CMasteryTop::Initialize`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/mastery.cpp`; docs/server-rules.md#mastery)
 - **Master tables**: `master_mastery_step`
 - **FakeApiCaller**: `FakeApi/get_mastery_info.msgp`
 
@@ -1269,11 +1269,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `614fa7ea`
 - **Method** `ResetMastery(unsigned long,unsigned long)`; wire `SendResetMastery(RequestHeader, unsigned long, unsigned long)`
 - **Wire**: request fid `614fa7ea`, encrypted: RequestHeader(16) · u64 · u64 = 32 bytes; reply `ResetMasteryRes` fid `4b76b6d7`
-- **Request**: `u64`, `u64`
+- **Request**: `u64`, `u64`: the pair's two characters, master first from the selection screen, in the 皆伝 dialog's DojoInfo order from CMasteryTrainingAllClearDialog
 - **Response** (`data.*`): `UpdateCharacterMasteryInfoArray`
 - **Handler / effect**: Inline (guest).
 - **Callers** (fid constant scan): unnamed code near `CMasteryTrainingAllClearDialog`, unnamed code near `CMasteryTrainingSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/mastery.cpp`; docs/server-rules.md#mastery)
 - **FakeApiCaller**: `FakeApi/reset_mastery.msgp`
 
 ### SetAssist
@@ -1302,11 +1302,11 @@ The dormant `FakeApiCaller` (notes: "Offline server (FakeApiCaller)") registers 
 - **FunctionID** `bb0e7ef9`
 - **Method** `TrainMastery(unsigned long,unsigned long,unsigned char,unsigned int,unsigned char,unsigned char)`; wire `SendTrainMastery(RequestHeader, unsigned long, unsigned long, unsigned char, unsigned int, unsigned char, unsigned char)`
 - **Wire**: request fid `bb0e7ef9`, encrypted: RequestHeader(16) · u64 · u64 · u8 · u32 · u8 · u8 = 39 bytes; reply `TrainMasteryRes` fid `61d246ee`
-- **Request**: `u64`, `u64`, `u8`, `u32`, `u8`, `u8`
+- **Request**: `u64 disciple uid`, `u64 master uid`, `u8 dojo_no` (1-3), `u32 master_mastery_step type_id`, `u8 step` (0: form the pair; 1-5: the training), `u8 option` (1-3 the card; 4-6 the card with the pass medal)
 - **Response** (`data.*`): `UpdateCharacterMasteryInfoArray`, `MasteryRewardInfo`, `UpdateStockItem`
 - **Handler / effect**: Inline (guest).
 - **Callers** (fid constant scan): `CMasteryTrainingConfirmationDialog::StartTraining`, unnamed code near `CMasteryTrainingSelect`
-- **Status**: **online**
+- **Status**: **online**; answered by the local server (`server/src/api/growth/mastery.cpp`; docs/server-rules.md#mastery)
 - **Master tables**: `master_mastery_step`, `master_global.mastery_*`
 - **FakeApiCaller**: `FakeApi/train_mastery.msgp`
 

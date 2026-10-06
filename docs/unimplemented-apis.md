@@ -16,13 +16,13 @@ the server applies to the implemented ones are in [`server-rules.md`](server-rul
 
 ## 1. Summary
 
-The wire knows **199 methods**; the server has handlers for **171** (35 of them stubs: section 2.5). Of the **28 without a handler**:
+The wire knows **199 methods**; the server has handlers for **180** (35 of them stubs: section 2.5). Of the **19 without a handler**:
 
 | Kind | Count | What happens in-process (`soa`, the default) |
 |---|---|---|
-| **Empty reply** | 8 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
+| **Empty reply** | 1 | The client's request names a reply file (`FakeApi/<file>.msgp`); the in-process route looks it up in its fallback folder `port/fakeapi/responses/`, which doesn't have it, and answers an empty map `{}` (logged as "missing; answering {}"). Nothing is stored. |
 | **Canned reply** | 0 | None left: `TrainingMissionStart` (it got `mission_start.msgp`) and `CbtCertification` (`update_home.msgp`) are answered now; the files of `port/fakeapi/responses/` are reached by nothing (step 9 retires them). |
-| **No reply** | 10 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
+| **No reply** | 8 | The offline build only stores a status and never sends a reply. Nothing reaches the server and nothing is stored; the screen carries on as if the call had succeeded, with no data (step 1 below: none of the screens checked hangs). |
 | **Not callable** | 10 | Not in the 3.7.0 client's API table (removed features). Only a modified client or a test can send them. |
 
 Over the network (`soa-server`, `soa-emu`, `soa --server HOST`), every unhandled method gets an
@@ -46,13 +46,13 @@ player, screens opened by hand through `--control`.
 | `DepositItem`, `WithdrawItemFromStorage`, `SellItemsFromStorage`, `Lock`/`UnlockStorageItem` | decompile | the screen takes the call as done; nothing moves on the server, so the item is back after a reload (the seeded player has no loose weapons to move; the storage session plants some) |
 | 設定 > その他設定 / バトル設定 (`GetConfig`, `UpdateConfig`) | I, S | opens with the master defaults; a toggled option (一時保管庫設定) is **lost at once**: reopened, it is off again (S: `UpdateConfig(4025152546, "true", 4)` answered with `Time` only). **Fixed (step 3.3):** kept, also over a restart; 初期設定に戻す resets |
 | 初期設定に戻す (`ResetConfig`) | decompile | same pattern |
-| キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters |
+| キャラクター > マスタリー (`GetMasteryInfo`, `{}` in-process) | I | opens; all three 道場 EMPTY; the master selection lists characters. **Done (step 3.4):** the pairs, trainings, 皆伝 and parting are the server's (`server/src/api/growth/mastery.cpp`, below) |
 | 惑星選択 > シナリオライブラリ (`GetScenarioLibraryInfoList`) | S | opens; メインストーリー / サブストーリー with no chapters. **Fixed (step 3.3):** the cleared missions' chapters |
 | キャラクター > バトルシミュレーター (`TrainingMissionStart`, canned `mission_start.msgp`) | I | **Fixed (step 3.2).** Was **wrong data**: the battle starts with the canned reply's party and stages (other characters, STAGE 1/2), not the chosen party; シミュレーター終了 returns to the character menu (no `MissionLose`) |
-| 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player) |
+| 会話モード > キャラデコ (`GetDecoInfo`) | I | "デコを所持していません" (no request: the client's deco list is empty for the seeded player). **Done (step 3.5):** the gate is `NumDecoObject`; the owned decorations, favourites and each character's setting are the server's (`server/src/api/player/deco.cpp`) |
 | `MissionContinue`, `MissionLose` (`CPauseMenu::ReqeustContinue` @01dad704 -> `Auto`) | decompile | not reproduced (losing needs a long battle); the continue would go ahead with no stones taken on the server. **Done** (step 3.2): the continue's coins and campaigns; `MissionLose` has no 3.7.0 caller ([server-rules 2.6](server-rules.md#failure-continue-restart)) |
 | Paid currency (`CoinList`, `CoinDeposit*`, `Get`/`UpdateBirthYearMonth`) | I, S | no entry point found on the shop or gacha screens with 300000 stones (step 7 finds the opener) |
-| `ChangeMascot`, `ChangeRole`, `InheritAccessory`, `EquipAuto`, `UpdateItemStock`, the `ClearNew*`, `ReadExpirationInfo`, `SendGuideInformation`, `SetStampSlot` | callers (`CAdjutantSelect`, `CRoleSelect`, `CItemStrengtheningPotal`, `CTermInfoUI`, `CGuideInformation`, `CStampSelect`) | the same `Auto` pattern: no hang, the change isn't stored |
+| `InheritAccessory`, `EquipAuto`, `UpdateItemStock`, the `ClearNew*`, `ReadExpirationInfo`, `SendGuideInformation`, `SetStampSlot` | callers (`CItemStrengtheningPotal`, `CTermInfoUI`, `CGuideInformation`, `CStampSelect`) | the same `Auto` pattern: no hang, the change isn't stored (`ChangeMascot` and `ChangeRole`, from `CAdjutantSelect` / `CRoleSelect`, were the same: done in step 3.5) |
 
 Priority (play impact): storage and the overflow box (empty screens, lost moves), missions (the
 simulator's wrong battle, continues), settings (lost at once; one of them routes items to the
@@ -82,12 +82,6 @@ replaces the fallback with explicit stubs, after which `responses/` can go.
 
 | Feature | Method | In-process | Notes |
 |---|---|---|---|
-| **Mastery** | [GetMasteryInfo](api.md#getmasteryinfo) | {} | |
-| | [TrainMastery](api.md#trainmastery) / [ResetMastery](api.md#resetmastery) | {} | |
-| **Home and decorations** | [ChangeMascot](api.md#changemascot) | ★ | |
-| | [ChangeRole](api.md#changerole) | ★ | |
-| | [GetDecoInfo](api.md#getdecoinfo) / [SetCharacterDeco](api.md#setcharacterdeco) | {} | character decorations |
-| | [FavoriteDecoObject](api.md#favoritedecoobject) / [UnFavoriteDecoObject](api.md#unfavoritedecoobject) | {} | |
 | **Settings and account** | [SetStampSlot](api.md#setstampslot) | {} | chat stamp slots (the options, the birth month, the read marks and the scenario library: done, step 3.3) |
 
 ### 2.2 Online-only features
@@ -332,6 +326,45 @@ evidence against one replaces it and records why.
 - The その他設定 options that send equipment to the box always (is_one_time_storage for the
   gacha's, is_one_time_storage_except_gacha for the rest) are read by `storage::to_one_time_storage`
   from the settings step's stored options (`settings::config_on`).
+
+**Mastery (step 3.4, done: `server/src/api/growth/mastery.cpp`, docs/server-rules.md#mastery).** No
+port change: the three are "empty" methods, answered in-process by the registered handlers. Read
+from the client: the request shapes (pairing is `TrainMastery` with step 0), the reply keys
+(`dojo_no` is missing from `port/fakeapi/fields.txt`), LV70 and the same role, the pass medal's
+cost, the 皆伝 gift, the inheritance in `CPersonInfo` and `UpdateAwakenLevel`'s child update. The
+assumptions, each (d) in the code and in server-rules.md:
+- A dojo with a pair still training refuses another pair (the selection screen pairs only in an
+  empty dojo, so the client never asks).
+- A training done with the pass medal stores the card it was used on (the client shows only the
+  count of cleared trainings).
+- The talent a 弟子 inherits is the 師匠's in its role's `mastery_talent_slot`, from its awakening's
+  `master_awaken` row when that row sets the slot (the master data changes it at awakening 5 for
+  some roles; the client's own fallback reads the 師匠's talent list the same way); it and the
+  parent role follow the 師匠's later growth (computed from the stored pair, not snapshotted), and
+  `UpdateAwakenLevel` reports the 弟子's talent whenever the awakened character has one.
+- Parting returns nothing paid (the dialog offers nothing back).
+
+**Mascot and role (step 3.5, done: `server/src/api/player/home.cpp` `change_mascot`,
+`server/src/api/growth/growth.cpp` `change_role`; docs/server-rules.md#home-mascot, #role-change).**
+Both were status-only; two `kServedStatusOnly` rows route them in-process (docs/client-changes.md
+"Mascot and role"). Assumptions, (d) in the code and in server-rules.md:
+- ChangeMascot takes any `master_person` id: the mascot list (type-3 `master_home_message` rows
+  the story progress opens) is the client's, and the client keeps its own copy (KVS
+  `HomeMascotID`); `Player.mascot_id` is sent only once a mascot was chosen (no key before, as the
+  server always did).
+- ChangeRole resets the character's set skills in the party sets too (the client says the set
+  skills are reset; the sets hold their own copies), and keeps level, skill levels, limit break,
+  awakening and equipment (the dialog mentions only the skills).
+- Decorations (`server/src/api/player/deco.cpp`, docs/server-rules.md#deco): `NumDecoObject` is the
+  gate the client checks (confirmed in game) and comes with every response once one is owned; one of
+  each decoration (the favourites name them by master id); a character's objects and pose are
+  stored as the client sent them, with no cost limit (the menu shows the gauge); ids not owned are
+  skipped by the favourites. The present box's receive result doesn't list a decoration it gave
+  (the grant hook can't add to it); the menu still shows it, since the client asks GetDecoInfo.
+  SetCharacterDeco's payload needed a port change in-process (docs/client-changes.md
+  "SetCharacterDeco"): the client's own serializer makes the bytes NetworkApiCaller sends.
+- Not played on screen: the mascot change (the seeded player's progress opens one mascot, so the
+  button is hidden); unit test and replay corpus only.
 
 **The remaining groups (steps 1–6).** Their rules come from the decompile and the master (step 2),
 not from guesses; where something can only be assumed (e.g. a value the client never shows), the

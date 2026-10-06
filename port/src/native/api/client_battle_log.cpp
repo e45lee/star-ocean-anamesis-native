@@ -55,4 +55,33 @@ bool client_battle_log(std::vector<u8>* out, s64* size) {
     return serialize_battle_log(pm + kParamBattleLogInfo, out, size);
 }
 
+bool client_character_deco(std::vector<u8>* out) {
+    out->clear();
+    u64 slot = guest::sym("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE");
+    u64 pm = slot ? *(u64*)slot : 0;
+    u64 ctor = guest::sym("_ZN4Aska4ASONC1Ev");
+    u64 ser = guest::sym("_ZN14AsonSerializer9SerializeI22CCharacterDecoSendInfoEEvRT_jmb");
+    u64 calc = guest::sym("_ZNK4Aska4ASON18CalcSerializedSizeEv");
+    u64 write = guest::sym("_ZNK4Aska4ASON9SerializeEPvm");
+    u64 dtor = guest::sym("_ZN4Aska4ASOND1Ev");
+    if (!pm || !ctor || !ser || !calc || !write || !dtor) return false;
+    std::vector<u8> ason(kAsonSize, 0);
+    u64 a = (u64)ason.data();
+    guest_call(ctor, {a});
+    guest_call(ser, {a, pm + kParamCharacterDecoSend, 0, 0x4000, 1});
+    u64 size = guest_call(calc, {a});
+    bool ok = false;
+    // (b) the lambda: `if (size2 <= size && (n = ason.Serialize(buf, size2)) >= 0)` send n bytes
+    if (size < 0x100000) {
+        std::vector<u8> buf(size ? size : 1);
+        s64 n = (s64)guest_call(write, {a, (u64)buf.data(), size});
+        if (n >= 0 && (u64)n <= size) {
+            out->assign(buf.begin(), buf.begin() + (size_t)n);
+            ok = true;
+        }
+    }
+    guest_call(dtor, {a});
+    return ok;
+}
+
 }  // namespace soa::server_port

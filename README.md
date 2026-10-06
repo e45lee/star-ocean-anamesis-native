@@ -187,8 +187,8 @@ first copy of the 3.7.0 download takes about 10 minutes). The download is staged
 `work/download-3.7.0`, else that zip; a folder left by an older stage is removed): about 10 GB with
 `--phone --viewer`. The selftests that read the folder, or compare it with the zip (soa-server's
 `cdn/download-zip`), skip there and run on Linux. Every staged `.exe` and the key data files are
-checked against their source afterwards (size and mtime; the `.exe` files and whatever was just
-copied byte for byte): a mismatch is copied again once, then the script fails naming it (copies
+checked against their source afterwards (size and mtime; byte for byte whatever was just copied
+and, except with `--quick`, every `.exe`): a mismatch is copied again once, then the script fails naming it (copies
 through WSL's drive mount under memory pressure have left an older `.exe` in place without an
 error).
 

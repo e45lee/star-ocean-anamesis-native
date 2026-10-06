@@ -15,8 +15,8 @@
 # Every copy is verified (a copy through WSL's drive mount under memory pressure has left an older
 # .exe in place without an error): each staged .exe and the key data files (the zip, libSOA.so, the
 # master DBs, the gacha pools, the 3.7.0 APK, the viewer's package) against their source, by size
-# and whole-second mtime, and byte for byte (cmp) the .exe files and whatever this run copied. A
-# mismatch is copied once more; if it still differs, the script fails naming the files (exit 1).
+# and whole-second mtime, and byte for byte (cmp) whatever this run copied and, unless --quick, every
+# .exe file. A mismatch is copied once more; if it still differs, the script fails naming the files (exit 1).
 #
 # --phone: also the shared pre-downloaded phone (work/phone-3.7.0, 4 GB: scripts/shared-phone.sh), the
 # Windows runs' phone source (control/soadrive/winhost.py links each run's phone from it with hard
@@ -136,7 +136,9 @@ verify() {
   if rm -f "$dst" && cp -L --preserve=timestamps "$src" "$dst" && same "$src" "$dst" 1; then return 0; fi
   bad+=("$dst (from $src)")
 }
-for e in "${exes[@]}"; do verify "build-win/$e" "build-win/$e" 1; done
+# (byte for byte: all of them on a full stage; on --quick only what it copied: reading the 2 GB of
+# .exe files back through the drive mount takes over a minute)
+for e in "${exes[@]}"; do verify "build-win/$e" "build-win/$e" $((1 - quick)); done
 for f in data/basmaster-3.7.0.sqlite3 data/gacha_pools.sqlite3 "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk" \
          work/libSOA-3.7.0.so work/SOA-3.7.0-canonical-data.zip; do
   case $f in work/*) [ "$quick" = 0 ] || [ -e "$dest/$f" ] || continue ;; esac

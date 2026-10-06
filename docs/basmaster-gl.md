@@ -5,7 +5,7 @@ The user added `data/basmaster-gl.sqlite3` in commit 91010c7. It is the decrypte
 - `data/basmaster-3.7.0.sqlite3`: the last JP online build, used by the port and soa-server.
 - `data/basmaster-3.8.0.sqlite3`: the JP offline build. <!-- 380-ok: comparison data -->
 
-In this note, "GL" is the Global DB and "JP" is JP 3.7.0, unless a row says otherwise. Every number below comes from read-only `sqlite3` or Python queries against the three committed DBs, plus `work/download-3.7.0/Scenario` and the 3.7.0 client `work/libSOA-3.7.0.so`. Each section ends with a short "How measured" note.
+In this note, "GL" is the Global DB and "JP" is JP 3.7.0, unless a row says otherwise. Every number below comes from read-only `sqlite3` or Python queries against the three committed DBs, plus the 3.7.0 download's `Scenario/` files (`work/SOA-3.7.0-canonical-data.zip`) and the 3.7.0 client `work/libSOA-3.7.0.so`. Each section ends with a short "How measured" note.
 
 **Summary**
 
@@ -262,7 +262,7 @@ Characters:
 - **90 of JP's 157 characters** have an English name for at least one variant.
 - 327 of the 706 JP roles have an English character name.
 
-Story: the JP 3.7.0 Scenario files hold 23,169 lines (`soa_save.script.load_texts('work/download-3.7.0/Scenario')`).
+Story: the JP 3.7.0 Scenario files hold 23,169 lines (the 64 `Scenario/TS_*.msgp` of the download, read with `soa_save.download_tree.DownloadTree` and `soa_save.script.texts_from`).
 
 | JP scenario group | Lines | English in GL |
 |---|---:|---:|

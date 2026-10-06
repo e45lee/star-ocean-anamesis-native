@@ -19,7 +19,7 @@
 #                  standin-assets/ (the repo's), off = --standin-assets off (the negative control)
 #   KEEP_DATA=1    keep the phone copies (OUT/<mode>/emu)
 #
-# Each run starts soa-server (free ports, its own scratch state, the CDN from work/download-3.7.0)
+# Each run starts soa-server (free ports, its own scratch state, the CDN from work/SOA-3.7.0-canonical-data.zip)
 # and soa-emu headless pointed at it, and checks:
 #   1. served: version.bin and the two manifests, fetched over HTTP from the running server
 #      (curl) and decoded: on = every file of standin-assets/ is a version.bin entry, a member of
@@ -85,9 +85,9 @@ repo_file() {   # a repo file here, else in the main checkout work/ links to (a 
     [ -n "$main" ] && [ -s "$main/$1" ] && echo "$main/$1"
 }
 master=$(repo_file data/basmaster-3.7.0.sqlite3)
-download=$(repo_file work/download-3.7.0)
+download=$(repo_file work/SOA-3.7.0-canonical-data.zip)
 [ -n "$master" ] || { echo "FAIL: data/basmaster-3.7.0.sqlite3 not found"; exit 1; }
-[ -n "$download" ] || { echo "FAIL: work/download-3.7.0 not found"; exit 1; }
+[ -n "$download" ] || { echo "FAIL: work/SOA-3.7.0-canonical-data.zip not found"; exit 1; }
 (cd "$standins" && find . -type f | sed 's|^\./||' | sort) > "$out/standins.txt"
 
 phone=$out/emu

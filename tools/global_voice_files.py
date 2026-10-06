@@ -2,7 +2,7 @@
 """List the voice files the Global (English) master names, and which characters they belong to.
 
   .venv/bin/python tools/global_voice_files.py [--gl data/basmaster-gl.sqlite3]
-        [--jp data/basmaster-3.7.0.sqlite3] [--download work/download-3.7.0]
+        [--jp data/basmaster-3.7.0.sqlite3] [--download work/SOA-3.7.0-canonical-data.zip]
         [--apk apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk]
         [--txt docs/global-voice-files.txt] [--md docs/global-voice-files.md]
 
@@ -39,6 +39,7 @@ import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
+from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 JA = re.compile(r"[぀-ヿ㐀-鿿ｦ-ﾟ]")
 CODE = re.compile(r"(?<![A-Za-z0-9])(c[cmnp]\d{3,4})")
@@ -122,15 +123,13 @@ def md_escape(s: str) -> str:
 
 
 # ---------------------------------------------------------------- sources
-def source_files(download: str | None, apk: str | None) -> dict:
+def source_files(download: DownloadTree | None, apk: str | None) -> dict:
     """logical path -> source label, the download first, then the APK (non-empty files only)."""
     out = {}
-    if download and os.path.isdir(download):
-        for dp, _, fs in os.walk(download):
-            for f in fs:
-                fp = os.path.join(dp, f)
-                if os.path.getsize(fp) > 0:
-                    out.setdefault(norm(os.path.relpath(fp, download)), "download")
+    if download is not None:
+        for name in download.files():
+            if download.size(name) > 0:
+                out.setdefault(norm(name), "download")
     if apk and os.path.isfile(apk):
         with zipfile.ZipFile(apk) as z:
             for i in z.infolist():
@@ -312,9 +311,10 @@ class StoryPack:
     in_hand: str = ""
 
 
-def story_packs(gl: Global, scripts_dir: str | None, have: dict) -> list:
-    """Voice_TS packs that the JP scripts of Global-text chapters play (assumption (d))."""
-    if not scripts_dir or not os.path.isdir(scripts_dir):
+def story_packs(gl: Global, scripts: DownloadTree | None, scripts_dir: str, have: dict) -> list:
+    """Voice_TS packs that the JP scripts (the folder `scripts_dir` of `scripts`) of Global-text
+    chapters play (assumption (d))."""
+    if scripts is None or (scripts_dir and not scripts.is_dir(scripts_dir)):
         return []
     from soa_save import script as S
     lines, eng = collections.Counter(), collections.Counter()
@@ -327,11 +327,10 @@ def story_packs(gl: Global, scripts_dir: str | None, have: dict) -> list:
         if r["text_value"] and not has_ja(r["text_value"]):
             eng[m.group(1)] += 1
     packs: dict[str, StoryPack] = {}
-    for fn in sorted(os.listdir(scripts_dir)):
+    for fn in scripts.list(scripts_dir):
         if not fn.endswith(".msgp"):
             continue
-        with open(os.path.join(scripts_dir, fn), "rb") as fh:
-            obj = S.load(fh.read(), f"Script/{fn}")
+        obj = S.load(scripts.read(f"{scripts_dir}/{fn}" if scripts_dir else fn), f"Script/{fn}")
         for sid, cmds in sorted(obj.get("Script", {}).items()):
             for cmd in cmds:
                 if S.command_name(cmd.get("command_type", -1)) != "VoicePlay":
@@ -604,7 +603,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--gl", default=os.path.join(ROOT, "data/basmaster-gl.sqlite3"))
     ap.add_argument("--jp", default=os.path.join(ROOT, "data/basmaster-3.7.0.sqlite3"))
-    ap.add_argument("--download", default=os.path.join(ROOT, "work/download-3.7.0"))
+    ap.add_argument("--download", default=DEFAULT,
+                    help="the 3.7.0 download: its zip (default work/SOA-3.7.0-canonical-data.zip, read in place) or a folder")
     ap.add_argument("--apk", default=os.path.join(ROOT, "apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk"))
     ap.add_argument("--scripts", default=None, help="Script/ directory (default: <download>/Script)")
     ap.add_argument("--txt", default=os.path.join(ROOT, "docs/global-voice-files.txt"))
@@ -612,10 +612,14 @@ def main(argv=None):
     a = ap.parse_args(argv)
     gl = Global(sqlite3.connect(f"file:{a.gl}?mode=ro", uri=True))
     jp = sqlite3.connect(f"file:{a.jp}?mode=ro", uri=True) if a.jp and os.path.exists(a.jp) else None
-    have = source_files(a.download, a.apk)
+    download = DownloadTree.open_or_none(a.download) if a.download else None
+    have = source_files(download, a.apk)
     files = collect(gl)
     mark(files, jp_named(jp), have)
-    story = story_packs(gl, a.scripts or os.path.join(a.download or "", "Script"), have)
+    if a.scripts:
+        story = story_packs(gl, DownloadTree.open_or_none(a.scripts), "", have)
+    else:
+        story = story_packs(gl, download, "Script", have)
     write_txt(files, a.txt)
     write_md(gl, files, story, a.md, jp_playable(jp))
     master = [f for f in files.values() if not f.derived_from]

@@ -295,8 +295,7 @@ int main(int argc, char** argv) {
         if (!am.add_apk(f)) fatal("--apk: cannot open %s", f.c_str());
     // The same option as soa / soa-emu (runtime AssetManager::set_download_dir).
     if (!download_dir.empty()) {
-        if (!exists(download_dir)) fatal("--download-dir %s: no such directory", download_dir.c_str());
-        am.set_download_dir(download_dir, download_prefer);
+        if (!am.set_download_dir(download_dir, download_prefer)) fatal("--download %s: neither a folder nor a zip", download_dir.c_str());
         LOGI("viewer", "download dir %s: serves assets %s the APKs", download_dir.c_str(), download_prefer ? "before" : "missing from");
     }
 

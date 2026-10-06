@@ -65,6 +65,9 @@ import tempfile
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
+
 PKG_SRC = os.path.join(ROOT, "scripts", "package")
 
 PLATFORMS = {
@@ -324,7 +327,10 @@ def game_file_reasons(path, rel):
 
 
 def check(stage, kind, download_ref):
-    """The allow-list and the game-file scan over the staged folder; returns the list of problems."""
+    """The allow-list and the game-file scan over the staged folder; returns the list of problems.
+    `download_ref`: a 3.7.0 download (a DownloadTree, or its path: the zip or a folder), or None."""
+    if isinstance(download_ref, str):
+        download_ref = DownloadTree.open_or_none(download_ref)
     allow = ALLOW_DEBUG if kind == "debug" else ALLOW[kind] + ALLOW_COMMON + (ALLOW_DATA if kind in WITH_DATA else [])
     standins = tracked_standins()
     problems = []
@@ -348,9 +354,8 @@ def check(stage, kind, download_ref):
                 if standins.get(rel) != h:
                     problems.append(f"{rel}: not a tracked stand-in (or changed)")
                     continue
-                if download_ref:
-                    orig = os.path.join(download_ref, rel[len("standin-assets/"):])
-                    if os.path.exists(orig):
+                if download_ref is not None:
+                    if download_ref.exists(rel[len("standin-assets/"):]):
                         problems.append(f"{rel}: the download has a file of this name: a stand-in must be ours")
                 continue
             for w in why:
@@ -440,14 +445,14 @@ def main():
     ap.add_argument("--no-build", action="store_true", help="package the existing build-release/ / build-win-release/")
     ap.add_argument("--version", default=None, help="default: YYYY.MM.DD-<commit>")
     ap.add_argument("--download-ref", default=None,
-                    help="a 3.7.0 download tree: stand-ins are checked not to be files of it (default work/download-3.7.0 when present)")
+                    help="the 3.7.0 download, a zip or a folder: stand-ins are checked not to be files of it "
+                         "(default work/SOA-3.7.0-canonical-data.zip when present)")
     a = ap.parse_args()
     plats = [p for p, on in (("linux-x64", a.linux), ("windows-x64", a.windows)) if on] or ["linux-x64", "windows-x64"]
     version = a.version or (git("log", "-1", "--format=%cd", "--date=format:%Y.%m.%d") + "-" + git("rev-parse", "--short=8", "HEAD"))
     if git("status", "--porcelain", "--untracked-files=no"):
         log("note: the checkout has uncommitted changes; BUILD-INFO.txt names HEAD")
-    ref = a.download_ref or os.path.join(ROOT, "work", "download-3.7.0")
-    ref = ref if os.path.isdir(ref) else None
+    ref = DownloadTree.open_or_none(a.download_ref or DEFAULT)
     os.makedirs(a.out, exist_ok=True)
     made, failed = [], False
     for plat in plats:

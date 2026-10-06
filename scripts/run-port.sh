@@ -15,7 +15,7 @@
 #                   HOST give them to soa-server)
 #
 # Needs: scripts/build.sh, the 3.7.0 APK in apk/, and for the in-process server the 3.7.0 download
-# in work/download-3.7.0 and data/basmaster-3.7.0.sqlite3 (README.md, "Game files").
+# in work/SOA-3.7.0-canonical-data.zip and data/basmaster-3.7.0.sqlite3 (README.md, "Game files").
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 soa=$repo/build/port/soa
@@ -32,7 +32,7 @@ for a in "$@"; do  # --server inproc is still in-process
   [ "$a" = inproc ] && inproc=1
 done
 if [ $inproc = 1 ]; then
-  [ -d "$repo/work/download-3.7.0" ] || { echo "run-port: work/download-3.7.0 (the 3.7.0 download) is missing; see README.md" >&2; exit 1; }
+  [ -f "$repo/work/SOA-3.7.0-canonical-data.zip" ] || { echo "run-port: work/SOA-3.7.0-canonical-data.zip (the 3.7.0 download) is missing; see README.md" >&2; exit 1; }
   [ -s "$repo/data/basmaster-3.7.0.sqlite3" ] || { echo "run-port: data/basmaster-3.7.0.sqlite3 is missing; see README.md" >&2; exit 1; }
 fi
 exec "$soa" "$@"

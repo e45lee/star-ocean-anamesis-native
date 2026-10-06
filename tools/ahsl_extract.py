@@ -2,8 +2,9 @@
 """Decrypt and unpack the AHSL shader disk cache (Shader/AHSLDiskCacheAdd) into GLSL files.
 
 Usage: .venv/bin/python tools/ahsl_extract.py [AHSLDiskCacheAdd] -o OUTDIR [--grep REGEX]
-  default input: work/download-3.7.0/Shader/AHSLDiskCacheAdd (the APK's assets/builtin_data copy is
-  the same contents without the ADLD wrapper; both work). Writes OUTDIR/NNNN_{vs,ps}_<key-crc>.glsl
+  default input: Shader/AHSLDiskCacheAdd of the 3.7.0 download (work/SOA-3.7.0-canonical-data.zip,
+  read in place; --download names another zip or folder); a file path works too (the APK's
+  assets/builtin_data copy is the same contents without the ADLD wrapper; both work). Writes OUTDIR/NNNN_{vs,ps}_<key-crc>.glsl
   (one per cache entry, with the constant list as a header comment), OUTDIR/index.tsv and
   OUTDIR/programs.tsv (the linked VS/PS pairs). --grep only writes entries whose source matches REGEX.
 
@@ -35,6 +36,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from soa_save.adld import decode  # noqa: E402
+from soa_save.download_tree import DEFAULT, DownloadTree, open_member_or_file  # noqa: E402
 
 KPHS = 0x5348504B
 NAME = "Shader/AHSLDiskCacheAdd"
@@ -148,11 +150,12 @@ def const_list(blob: bytes) -> list:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("input", nargs="?", default="work/download-3.7.0/Shader/AHSLDiskCacheAdd")
+    ap.add_argument("input", nargs="?", default=NAME, help="a file, or a member of --download (default Shader/AHSLDiskCacheAdd)")
+    ap.add_argument("--download", default=DEFAULT, help="the 3.7.0 download: its zip (default work/SOA-3.7.0-canonical-data.zip) or a folder")
     ap.add_argument("-o", "--out", required=True)
     ap.add_argument("--grep")
     a = ap.parse_args()
-    d = decode(open(a.input, "rb").read(), NAME)
+    d = decode(open_member_or_file(a.input, DownloadTree.open(a.download) if not os.path.isfile(a.input) else None), NAME)
     if struct.unpack_from("<I", d, 0)[0] != KPHS:
         sys.exit("not a KPHS shader cache")
     os.makedirs(a.out, exist_ok=True)

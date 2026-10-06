@@ -158,7 +158,7 @@ def test_e3_story_ep1(built):
     ctx = T.Ctx()
     s = T.build_story(ctx, built.glossary)
     if s is None:
-        pytest.skip("no work/download-3.7.0/Scenario")
+        pytest.skip("no Scenario files (work/SOA-3.7.0-canonical-data.zip)")
     d = s.derived
     ep1 = [m for m, ln in d.lines.items() if C.story_group(ln[0]) == "EP1" and C.has_kana(ln[1])]
     assert sum(1 for m in ep1 if d.lines[m][3] == "official_e3") == 117
@@ -171,7 +171,7 @@ def test_story_en_is_fresh(built):
     ctx = T.Ctx()
     s = T.build_story(ctx, built.glossary)
     if s is None:
-        pytest.skip("no work/download-3.7.0/Scenario")
+        pytest.skip("no Scenario files (work/SOA-3.7.0-canonical-data.zip)")
     outs = T.story_outputs(ctx, s)
     for p, text in outs.items():
         assert p.read_text(encoding="utf-8") == text, p

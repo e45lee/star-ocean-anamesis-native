@@ -1,13 +1,13 @@
 #pragma once
 // A read-only tree of files that is either a folder or a ZIP archive (target soa_gamefiles,
-// common/CMakeLists.txt): how the programs read the 3.7.0 download, extracted
-// (work/download-3.7.0, game/<folder>) or as the user's SOA-3.7.0-canonical-data.zip without
-// extracting it. Readers: the server's CDN and its asset index (server/src/cdn), the master's
+// common/CMakeLists.txt): how the programs read the 3.7.0 download, the user's
+// SOA-3.7.0-canonical-data.zip (work/ in a checkout, game/ in a package) without extracting it, or
+// an extracted folder. Readers: the server's CDN and its asset index (server/src/cdn), the master's
 // derivation (soaserver/master_source.h), the runtime's download fallback for assets and movies
 // (runtime/src/android/ndk.h AssetManager::set_download_dir).
 //
 // Paths are relative, '/'-separated ("sqlite/basmaster.sqlite3"). A zip whose only top-level entry
-// is one folder holding the tree (e.g. download-3.7.0/...) is read from inside that folder.
+// is one folder holding the tree (e.g. SOA-data/...) is read from inside that folder.
 // locate() gives where a file's bytes are: a range of a host file (the folder's file itself, or a
 // stored zip entry in place: no copy, pread / mmap / the movie player's reader), or not in place (a deflated
 // entry: read() inflates it). Const methods are thread-safe (soa::ZipArchive's rule).

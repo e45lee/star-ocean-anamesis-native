@@ -343,9 +343,9 @@ class Run:
             # is replaced by the build-win sibling of the client)
             server_binary = winhost.staged_binary(cfg.server_binary if winhost.is_windows(cfg.server_binary) else
                                                   os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(built))), "server", "soa-server.exe"))
-            # (the stage holds the download as the zip only, read in place: scripts/windows-stage.sh)
+            # (the download is the zip, read in place: scripts/windows-stage.sh)
             master = winhost.stage_file("data/basmaster-3.7.0.sqlite3")
-            download = winhost.stage_file("work/download-3.7.0") or winhost.stage_file("work/SOA-3.7.0-canonical-data.zip")
+            download = winhost.stage_file("work/SOA-3.7.0-canonical-data.zip")
             if (not master or not download) and not PACKAGE_DIR:
                 raise Abort("data/basmaster-3.7.0.sqlite3 or work/SOA-3.7.0-canonical-data.zip not staged in %s "
                             "(scripts/windows-stage.sh)" % winhost.STAGE)
@@ -361,7 +361,7 @@ class Run:
             self.fifo = "tcp:127.0.0.1:0"
         else:
             master = proc.repo_file("data/basmaster-3.7.0.sqlite3")
-            download = proc.repo_file("work/download-3.7.0") or proc.repo_file("work/SOA-3.7.0-canonical-data.zip")
+            download = proc.repo_file("work/SOA-3.7.0-canonical-data.zip")  # the download, read in place
             server_binary = cfg.server_binary or b["server"]
             wp, cwd = (lambda p: p), REPO
         if PACKAGE_DIR:
@@ -371,7 +371,7 @@ class Run:
             cwd = PACKAGE_DIR
             self.note("release package %s: no --master / --download-dir / --seed; the programs look beside themselves" % PACKAGE_DIR)
         elif (cfg.explicit_data or server_side) and (not master or not download):
-            raise Abort("data/basmaster-3.7.0.sqlite3 or the download (work/download-3.7.0, work/SOA-3.7.0-canonical-data.zip) not found")
+            raise Abort("data/basmaster-3.7.0.sqlite3 or the download (work/SOA-3.7.0-canonical-data.zip) not found")
         self.launcher = package_launcher(self.win) if self.target == "port-server" else None
         launcher_env = {}
         if self.launcher:

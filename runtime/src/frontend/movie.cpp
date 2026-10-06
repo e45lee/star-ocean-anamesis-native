@@ -14,6 +14,7 @@
 
 #include "android/ndk.h"
 #include "android/platform.h"
+#include "core/crash.h"
 #include "core/log.h"
 #include "core/vfs.h"
 #include "frontend/movie_decoder.h"
@@ -71,6 +72,7 @@ std::atomic<bool> g_mixer_stalled{false};  // test hook: movie_mix_audio takes n
 // Frame k is shown at start + k / fps (the stream's r_frame_rate), as when the frames came from
 // the ffmpeg program's constant-rate output.
 void video_loop(Movie* m) {
+    crash_thread_begin("movie-video");
     MovieFrame buf;
     std::string err;
     for (u64 k = 0; !m->stop; k++) {
@@ -88,6 +90,7 @@ void video_loop(Movie* m) {
 }
 
 void audio_loop(Movie* m) {
+    crash_thread_begin("movie-audio");
     std::vector<float> buf;
     std::string err;
     while (!m->stop) {

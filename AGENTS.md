@@ -203,7 +203,9 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
 - Keep each client under about 6 GB RSS; `--guest-cpus` (default 8) bounds the guest's worker
   threads and so the JIT contexts.
 - No large `static thread_local` buffers in natives or live checks: glibc takes static TLS out of
-  every new thread's stack, and guest threads have 256 KiB host stacks.
+  every new thread's stack, and guest threads have 256 KiB host stacks (use
+  `live::thread_scratch<T>()`). An overflow logs `*** stack overflow on thread NAME ...`
+  ([runtime/README.md "Crash reports"](runtime/README.md)); new runtime threads call `crash_thread_begin`.
 - Host-built guest code uses `map_guest_code()` / `unmap_guest_code()`, never plain `mmap`: the
   JIT caches translations by address.
 - `port/CMakeLists.txt` sorts native sources by basename (registration order); keep basenames

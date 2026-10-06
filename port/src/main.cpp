@@ -103,6 +103,13 @@ int main(int argc, char** argv) {
             return 2;
         }
     }
+    if (!args.live_checks.empty()) {  // switch the named families on (lost in the move to CLI11)
+        std::string err;
+        if (!live::apply_live_check(&err)) {
+            fprintf(stderr, "--live-check: %s\n", err.c_str());
+            return 2;
+        }
+    }
     // A data dir of its own (soa/paths.h): ~/.local/share/soa-linux-370 (the old offline-build port's
     // ~/.local/share/soa-linux holds a cached libSOA.so of that build and its save), on Windows
     // %LOCALAPPDATA%\soa\port-370.

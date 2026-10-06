@@ -303,6 +303,8 @@ int main() {
     // Options added since, to both soa and soa-server (soaserver/cli.h): --english, --english-text
     // (2026-10-07, docs/PLAN-english.md).
     const V kAddedServer = {"--english", "--english-text"};
+    // soa-server's own: --english-dump (2026-10-07, docs/server-rules.md#english-derive).
+    const V kAddedSoaServer = {"--english", "--english-text", "--english-dump"};
     // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
     const V kAddedLang = {"--lang", "--voice-lang"};
     const V kAddedSoa = {"--english", "--english-text", "--lang", "--voice-lang"};
@@ -475,6 +477,7 @@ int main() {
 
     // ---- soa-server ----
     const std::vector<Row> server_only = {
+        {{"--english-dump", "/tmp/en"}, "--english-dump is new (docs/server-rules.md#english-derive: the English tables --english serves)", -1},
         {{}},
         {{"--help"}},
         {{"-h"}},
@@ -608,7 +611,7 @@ int main() {
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, kAddedServer, {}, server_rows);
+            check_names("soa-server", names, server_old, kAddedSoaServer, {}, server_rows);
         }
         {
             soa::emu::EmuArgs a;

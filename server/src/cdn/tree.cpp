@@ -195,17 +195,24 @@ struct TreeBuilder {
     void serve_english() {
         english_root = scratch + "/lang-en";
         serve_english_art();
-        serve_english_story();
+        // the English tables: the derived layer with our rows, or --english-text's (english_tables)
+        EnglishTables tables;
+        std::string why;
+        bool have = english_tables(opts, *src, tables, &why);
+        if (!have) LOGW("cdn", "--english: %s: the text stays Japanese", why.c_str());
+        else t->english_ = std::make_shared<english::Table>(tables.master);
+        serve_english_story(have ? &tables : nullptr);
         std::string out = english_root + "/" + files::kEnglishMasterName;
         ::remove(out.c_str());
-        if (opts.english_text.empty()) {
+        if (!have || tables.master.empty()) {
             LOGW("cdn", "--english: no English text table (data/english/master-en.tsv, --english-text): no %s served", files::kEnglishMasterName);
             return;
         }
         std::string sha;
         uint64_t size = 0;
-        std::vector<uint8_t> enc =
-            make_english_master(scratch + "/basmaster-served.sqlite3", opts.english_text, scratch + "/basmaster-served-en.sqlite3", &sha, &size);
+        std::vector<uint8_t> enc = make_english_master(scratch + "/basmaster-served.sqlite3", tables.master,
+                                                       tables.derived ? std::string("the derived English") : opts.english_text,
+                                                       scratch + "/basmaster-served-en.sqlite3", &sha, &size);
         if (enc.empty()) {
             LOGW("cdn", "--english: no %s served", files::kEnglishMasterName);
             return;
@@ -219,33 +226,32 @@ struct TreeBuilder {
     // the recipes and the user's own download into the generated root; cached by english_art
     // outside the root (the root is served whole). A failed recipe leaves its image Japanese.
     // 1d. --english: the English story files (docs/server-rules.md#english-story): for each
-    // Scenario/TS_xxxx.msgp of the download with a story table <english_story>/TS_xxxx.tsv,
-    // Scenario/TS_xxxx-en.msgp in the generated root when every Japanese line has English (d:
-    // PLAN-english Q12); the old -en story files are removed first.
-    void serve_english_story() {
+    // Scenario/TS_xxxx.msgp of the download with a story table, Scenario/TS_xxxx-en.msgp in the
+    // generated root when every Japanese line has English (d: PLAN-english Q12); the old -en story
+    // files are removed first.
+    void serve_english_story(const EnglishTables* tables) {
         std::vector<std::string> old;
         files::walk(english_root, "", old);
         for (auto& rel : old)
             if (rel.rfind("Scenario/", 0) == 0 && rel.size() > 8 && rel.compare(rel.size() - 8, 8, "-en.msgp") == 0)
                 ::remove((english_root + "/" + rel).c_str());
-        if (opts.english_story.empty()) {
-            LOGW("cdn", "--english: no English story tables (data/english/story-en): the story stays Japanese");
+        if (!tables || tables->story.empty()) {
+            LOGW("cdn", "--english: no English story tables: the story stays Japanese");
             return;
         }
-        size_t served = 0, incomplete = 0, tables = 0;
+        size_t served = 0, incomplete = 0, n = 0;
         for (auto& entry : assets->map) {
             const std::string& name = entry.first;
             if (name.rfind("Scenario/TS_", 0) != 0 || name.size() < 6 || name.compare(name.size() - 5, 5, ".msgp") != 0 ||
                 name.find('-') != std::string::npos)
                 continue;
-            std::string stem = name.substr(9, name.size() - 9 - 5);
-            std::string table = opts.english_story + "/" + stem + ".tsv";
-            if (!stat_file(table, nullptr)) continue;
-            tables++;
+            auto table = tables->story.find(name.substr(9, name.size() - 9 - 5));
+            if (table == tables->story.end()) continue;
+            n++;
             std::vector<uint8_t> file;
             if (!src->read(name, file)) continue;
             EnglishStoryStats st;
-            std::vector<uint8_t> enc = make_english_story(name, file, table, &st);
+            std::vector<uint8_t> enc = make_english_story(name, file, table->second, &st);
             if (enc.empty()) {
                 incomplete++;
                 LOGI("cdn", "english story %s: %zu of %zu Japanese lines without English: not served", name.c_str(), st.missing, st.japanese);
@@ -255,7 +261,7 @@ struct TreeBuilder {
             files::mkdirs(english_root + "/Scenario");
             if (write_file(out, enc.data(), enc.size())) served++;
         }
-        LOGI("cdn", "english story: %zu tables, %zu files served, %zu incomplete (Japanese)", tables, served, incomplete);
+        LOGI("cdn", "english story: %zu tables, %zu files served, %zu incomplete (Japanese)", n, served, incomplete);
     }
 
     void serve_english_art() {
@@ -637,8 +643,11 @@ Options options_from_config() {
     o.master = master_source::resolve();  // --master, the repo's, else derived (soaserver/master_source.h)
     o.standins = standin_dir_from_config();
     o.english = c.english;  // (d) the -en members only with --english (PLAN-english Q11)
-    if (o.english) o.english_text = english::table_path();
-    if (o.english) o.english_story = english::story_dir();
+    if (o.english) {
+        o.english_text = english::table_path();    // our rows: --english-text, else data/english/master-en.tsv
+        o.english_story = english::story_dir();    // story-en/ beside it
+        o.english_global = find_repo_file("data/basmaster-gl.sqlite3");
+    }
     if (o.english) o.english_art = find_repo_file("standin-assets-en/recipes");  // (d) our English art (PLAN-english Q4)
     o.scratch = !c.cdn_scratch.empty() ? c.cdn_scratch
                 : !c.data_root.empty() ? c.data_root + "/cdn"
@@ -654,6 +663,7 @@ std::shared_ptr<Tree> build_from_config() {
     }
     auto t = Tree::build(o);
     if (t) config().cdn_revision = t->revision();
+    if (t && t->english_table()) english::set_served_table(t->english_table());  // the server's own texts (E6)
     return t;
 }
 

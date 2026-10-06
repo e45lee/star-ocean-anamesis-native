@@ -73,6 +73,12 @@ std::vector<uint8_t> make_english_master(const std::string& served_plain, const 
         LOGW("cdn", "english master: %s", why.c_str());
         return {};
     }
+    return make_english_master(served_plain, t, table, plain_out, plain_sha1, plain_size, stats);
+}
+
+std::vector<uint8_t> make_english_master(const std::string& served_plain, const english::Table& t, const std::string& what,
+                                         const std::string& plain_out, std::string* plain_sha1, uint64_t* plain_size, EnglishStats* stats) {
+    const std::string& table = what;
     if (!files::copy_file(served_plain, plain_out)) {
         LOGE("cdn", "english master: cannot copy %s to %s", served_plain.c_str(), plain_out.c_str());
         return {};

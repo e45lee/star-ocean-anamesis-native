@@ -31,6 +31,7 @@ Ghidra addresses are ELF vaddr + 0x100000, as `tools/decomp_at.sh` takes them. C
 - **Machine translation for the gaps (section 7).**
   - After Global's English, exact memory and a new **template memory** (Global's stat lines with new numbers, 92% exact on held-out pairs), 37,593 master rows (705k distinct JA characters) and 17,182 story lines (530k) remain. **EP2 has no official English at all.**
   - In a blind 310-row trial, an LLM with the glossary in the prompt (Claude Sonnet 5.5 / Opus 5.5) scored chrF 44 against Global's English, kept every specifier and tag and followed the glossary; the offline models (two NMT models, a 1.5B local LLM) scored 28–35 and broke terms and tokens.
+  - A second trial (7.8) ran 12–31B local LLMs on this machine's GPU with the same prompt: **Gemma 4 31B (Apache-2.0, 17 GB at 4 bits) scored chrF 44.3, kept every token and followed the glossary in 81 of 85 rows: within noise of Claude Opus (44.4).** It needs about 9–11 hours for the whole gap with the GPU to itself (26 hours when other programs hold 7 GB of it); the faster Gemma 4 26B-A4B does it in 3–6 hours at chrF 43.8–44.3.
   - The proposed source of truth is a committed table keyed by `message_id` with a hash of the Japanese and per-row provenance (`machine`, `human`, `reviewed`); human edits always win, and the server builds the `-en` files from it without calling an engine.
 
 ## 1. Where the client's text comes from
@@ -576,7 +577,7 @@ Measured on this machine where marked; prices as published in October 2026 (chec
 | NLLB-200 distilled 600M / 1.3B | multilingual NMT | 2.5 / 5.5 GB | CC-BY-NC-4.0 | not run | non-commercial; general multilingual models trail dedicated JA→EN pairs |
 | M2M100 418M | multilingual NMT | 1.9 GB | MIT | not run | the same; weakest of the multilingual set |
 | Qwen2.5-1.5B-Instruct (GGUF Q4_K_M) | small local LLM | 1.1 GB | Apache-2.0 | measured | the largest Apache-licensed Qwen2.5 under the ~2 GB limit; Qwen2.5-3B is under a research license |
-| Larger local LLM (e.g. 12–14B at Q4, ~8–9 GB) | local LLM | fits the RTX PRO 4000's 24 GB | per model | not run | over the ~2 GB download limit: the user's decision (question M-Q3) |
+| Gemma 4 31B-it, 26B-A4B, 12B; Qwen3.8-27B; shisa-v2-mistral-small-24b (GGUF ~Q4) | local LLM, GPU | 7–17 GB each, llama.cpp CUDA | Apache-2.0 (all five) | measured (7.8) | the user lifted the size limit for this test (M-Q3); Gemma 4 31B ties Claude on the trial |
 | DeepL API Pro | online NMT | — | output is yours; Pro deletes texts after translation and doesn't train on them | not run | about $25 (€20) per million characters plus a monthly base fee; glossaries supported; 500k characters/month free tier |
 | Google Cloud Translation | online NMT | — | — | not run | $20 per million characters (NMT), first 500k/month free; LLM mode about $10 + $10 per million characters in and out |
 | Claude API (Sonnet 5.5, Opus 5.5) | online LLM | — | output is yours; API inputs aren't used for training by default (commercial terms) | measured (in-session, see 7.4) | follows a glossary and rules in the prompt; context of a whole scene; Batch API halves the price |
@@ -594,7 +595,7 @@ Measured on this machine where marked; prices as published in October 2026 (chec
 
 The token counts are estimates from character counts: no API key was used, so `count_tokens` was not run. They are within a small factor either way; the order of magnitude (tens of dollars) is the point.
 
-**Speed.** The trial ran while other agents' gates and clients loaded the machine (load average about 50 on 32 threads), so these are lower bounds: Opus-MT and FuguMT through CTranslate2 int8 on 16 CPU threads did 21–27 JA characters per second (about 13–16 hours for 1.24M characters at that rate; CTranslate2 on the GPU needs the CUDA 12 cuBLAS libraries, not installed). Qwen2.5-1.5B through llama-cpp-python on 16 CPU threads (no CUDA toolkit for a GPU build) took 1,619 s for the 310 rows, about 4.6 JA characters per second: days for the whole gap on this loaded CPU. An online engine finishes the whole gap in about an hour (Batch API: within 24 hours).
+**Speed.** The trial ran while other agents' gates and clients loaded the machine (load average about 50 on 32 threads), so these are lower bounds: Opus-MT and FuguMT through CTranslate2 int8 on 16 CPU threads did 21–27 JA characters per second (about 13–16 hours for 1.24M characters at that rate; CTranslate2 on the GPU needs the CUDA 12 cuBLAS libraries, not installed). Qwen2.5-1.5B through llama-cpp-python on 16 CPU threads (no CUDA toolkit for a GPU build) took 1,619 s for the 310 rows, about 4.6 JA characters per second: days for the whole gap on this loaded CPU. An online engine finishes the whole gap in about an hour (Batch API: within 24 hours). The 12–31B local LLMs on the GPU (7.8) do 13–108 JA characters per second: **3–26 hours** for the whole gap, depending on the model and on how much of the GPU other programs hold.
 
 **Privacy.** The text sent out is the publisher's game text: no personal data, no player ids. Sending it to an API is a copyright question, not a privacy one, and the same one as committing translations of it (7.6).
 
@@ -687,7 +688,89 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 
 ### 7.7 Recommendation
 
-- **First the free, deterministic steps:** E3's token rewrites (117 EP1 lines become official), template memory (2,412 rows), and the glossary with a decision for every new name.
-- **Engine: an LLM API, Claude Sonnet 5.5 through the Batch API**, with the glossary hits and Global's conventions in the prompt, the story sent a scene at a time (a speaker per line), and every row through the checks of 7.5. Opus 5.5 for the story if the user wants the last bit of tone (on this sample the two are equal on UI and Opus slightly ahead on story; the difference isn't significant). Expected cost for the whole gap: tens of dollars, one or two passes.
-- **Fallback, offline:** FuguMT through CTranslate2 (CC-BY-SA model, no glossary, about chrF 32 against the LLM's 44). It is good enough only as a clearly-marked rough fill, and loses tokens in about one row in four that has them (those rows stay Japanese by the checks). A larger local LLM on the GPU (12–14B at Q4, about 8–9 GB, over the size limit) is the better offline candidate but untested here (M-Q3).
-- **Review:** every `machine` row is marked as such in the report and stays editable; names and story get a human pass before they ship as default, UI rows can ship as `machine` with the report listing them.
+Revised after the local-LLM trial (7.8) and the user's decisions of 2026-10-07 (PLAN-english.md).
+
+- **First the free, deterministic steps:** E3's token rewrites (117 EP1 lines become official), template memory (2,412 rows), and the glossary.
+- **Engine: a local LLM on this machine's GPU is now a real option, not just a fallback.** Gemma 4 31B-it (Apache-2.0, GGUF QAT Q4_K_XL, 17 GB) through llama.cpp scored the same as Claude Opus 5.5 on the blind trial (chrF 44.3 against 44.4; with the conventions prompt 44.9) and kept every token. It costs nothing but GPU time, sends no text out, and every run can be repeated from the committed glossary and prompt. For speed, Gemma 4 26B-A4B (16 GB, a mixture of experts) is about three times faster at chrF 43.8–44.3, with one dropped name in 20 EP3 lines.
+- **Claude through the Batch API stays the stronger choice for names and story tone** (it is the only engine that wrote マスティマ as "Mastema"; 7.8), at tens of dollars and with the text sent to Anthropic. A good split: the UI and system text (M3) locally, and a decision on the story engine (M4) after a look at a full scene from each.
+- **Whichever engine:** the conventions prompt (7.8's "v2": Global's `（全体）` = "(party)", `・改` = "Revised", the `%%` rule) and a richer glossary, every row through the checks of 7.5, the story a scene at a time with the speakers named.
+- **New names** (M-Q7): the engine's first spelling becomes the glossary entry and is reused everywhere after. The local models spelled EP3's names inconsistently between models (リーシュ: "Leesh", "Leash", "Rish", "Lishe"), so the name pass should run once, before the story, as a list of the new proper nouns with their context, through the strongest engine available.
+- **Fallback without a GPU:** FuguMT through CTranslate2 (CC-BY-SA model, no glossary, chrF 32), as a clearly-marked rough fill only.
+- **Review** (M-Q4): `machine` rows may ship unreviewed; the provenance and the coverage report mark them, and every row stays editable.
+
+### 7.8 Local LLMs on the GPU (12–31B)
+
+Investigation of 2026-10-07 (agent `english-llm`), at the user's request (M-Q3): **does a larger local LLM on this machine's GPU come near the API's quality?** The user lifted the download limit for this test; models only under `work/tools/mt-models/`.
+
+**Setup.**
+
+- **Machine:** NVIDIA RTX PRO 4000 Blackwell (24 GB; 145 W), 32 threads, 45 GB RAM, WSL2. During the runs the load average was about 1 (the earlier trial ran at about 50); the GPU was mostly free, with 0.4–6 GB held by another program at times. `nvidia-smi` was checked before each model load.
+- **Runtime:** llama.cpp b11443, the official prebuilt Ubuntu CUDA 12.8 build with its cudart/cuBLAS libraries (`work/tools/llama.cpp-cuda/`, 1.1 GB; no CUDA toolkit needed; the WSL driver's `libcuda` from `/usr/lib/wsl/lib`). `llama-server` with every layer on the GPU (`-ngl 99`), flash attention, 3,072 tokens of context per slot, thinking off (`-rea off`, `enable_thinking: false`), prompt cache off, 4 or 8 parallel slots. One row per request, temperature 0.
+- **Prompt:** exactly the Claude runs' prompt (the system rules and each row's kind, glossary hits and Japanese from `claude-input.txt`): no reference, no sampled id in the glossary (7.4). A second prompt, **v2**, adds Global's conventions (`（全体）` = "(party)", `（自分）` = "(self)", a name ending in `・改` = "Revised" before the name, `紋章石` = Gems), the `%%` rule and "no Japanese may remain"; it ran on the two best Gemma models only, and **Claude was not re-run with it**. v2's conventions were seen in the trial's references, and three scored `factor` rows use "(party)", so v2's gain is partly that.
+- **Scoring:** the same `score.py` and `tools/english_mt.py post` as 7.4 (re-scoring the earlier engines reproduced their numbers exactly).
+- **Candidates** (all Apache-2.0 by their model cards; GGUF conversions by unsloth and mradermacher under the same licence):
+
+| Model | Kind | Quantization | File |
+|---|---|---|---:|
+| Gemma 4 31B-it (Google, 2026-03) | dense, 31.3B (the edge of "up to 31B") | unsloth QAT UD-Q4_K_XL | 17.3 GB |
+| Gemma 4 26B-A4B-it | mixture of experts, 25.8B, about 4B active | unsloth UD-Q4_K_M | 17.0 GB |
+| Gemma 4 12B-it | dense, 12.0B | unsloth Q4_K_M | 7.1 GB |
+| Qwen3.8-27B (Alibaba, 2026-08) | dense, 27.8B | unsloth UD-Q4_K_M | 16.5 GB |
+| shisa-v2-mistral-small-24b (Shisa.AI) | Mistral Small 3.1 24B tuned for Japanese and English | mradermacher i1-Q4_K_M | 14.3 GB |
+
+  Not run: Qwen3.5-35B-A3B (35B, over the limit), PLaMo 2 Translate (10B, a dedicated JA↔EN model, but under the PLaMo community licence with revenue limits and registration), Mistral Small 3.2 (the shisa model covers its base), the Qwen3 30B-A3B of 2025 (superseded by Qwen3.8).
+
+**Scores** (the 250 rows with Global's English; tokens kept of 36 rows with specifiers or tags; glossary followed of 85 rows with hits; rows with kana left of 310; throughput for the 310 rows, 7,233 JA characters, the GPU to itself):
+
+| Engine | chrF all | master | story | chrF++ | BLEU | tokens | glossary | kana | JA chars/s | hours for 1.24M |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Claude Opus 5.5 (7.4) | 44.4 | 47.4 | 36.5 | 41.8 | 21.1 | **36** | **84** | 0 | API | about 1 |
+| Claude Sonnet 5.5 (7.4) | 43.8 | 47.3 | 34.5 | 41.3 | **21.3** | **36** | 83 | 0 | API | about 1 |
+| **Gemma 4 31B, v2 prompt** | **44.9** | **47.9** | **36.8** | **42.3** | 20.0 | **36** | 81 | 0 | 31.0 (4 slots) | 11.1 |
+| **Gemma 4 31B** | 44.3 | 47.1 | 36.6 | 41.6 | 19.4 | **36** | 81 | 0 | 38.7 (4 slots) | 8.9 |
+| Gemma 4 26B-A4B, v2 prompt | 44.3 | 47.2 | 36.5 | 41.7 | 20.3 | **36** | 80 | 1 | 92.3 (8 slots) | 3.7 |
+| Gemma 4 26B-A4B | 43.8 | 46.6 | 36.4 | 41.3 | 19.5 | **36** | 81 | 2 | **108.5** (8 slots) | **3.2** |
+| Qwen3.8-27B | 44.0 | 47.8 | 33.6 | 41.5 | 20.3 | 34 | 79 | 1 | 45.4 (8 slots) | 7.6 |
+| Gemma 4 12B | 43.4 | 46.0 | 36.3 | 40.8 | 19.4 | 35 | 82 | 0 | 80.8 (8 slots) | 4.2 |
+| shisa-v2-mistral-small-24b | 37.6 | 39.0 | 33.2 | 35.0 | 11.0 | 32 | 81 | 16 | 105.4 (8 slots) | 3.3 |
+| Qwen2.5-1.5B, CPU (7.4) | 35.3 | 38.5 | 26.6 | 32.5 | 10.6 | 20 | 74 | 11 | 4.6 | 75 |
+| FuguMT, CPU (7.4) | 32.3 | 33.1 | 30.1 | 29.6 | 12.2 | 28 | 31 | 1 | 21–27 | 13–16 |
+
+  Per stratum (chrF; `seed`/`factor`, skills/talents, `name`, UI, EP1 story): Opus 60 / 44 / 52 / 45 / 37; Sonnet 67 / 46 / 49 / 43 / 35; Gemma 4 31B 51 / 46 / 51 / 44 / 37 (v2: 55 / 48 / 52 / 44 / 37); 26B-A4B 48 / 46 / 46 / 46 / 36; Qwen3.8-27B 66 / 46 / 49 / 45 / 34; Gemma 4 12B 52 / 49 / 47 / 45 / 36.
+
+- **Significance.** A paired bootstrap of chrF (1,000 resamples of the 250 rows) puts every 12–31B model but shisa within noise of Claude Opus: Gemma 4 31B −0.2 (95% interval −1.4 to +1.0), v2 +0.5 (−0.8 to +1.6), 26B-A4B −0.6 (−2.0 to +0.6), Qwen3.8-27B −0.5 (−2.2 to +1.1), Gemma 4 12B −1.0 (−2.6 to +0.3), Sonnet −0.6 (−1.7 to +0.4). shisa is −6.8 (−9.7 to −4.3), FuguMT −12.2. chrF against one reference can't rank these models; the checks and the rows below do.
+- **Run-to-run variation.** With parallel slots the output isn't fully deterministic (batched arithmetic): two Qwen3.8 runs differed in 37 of 310 rows, and the scores moved by 0–0.4 chrF. A run for the table should use one slot, or accept this and rely on the table's provenance, not on re-running.
+
+**What the rows look like** (Japanese and Global; then Claude Opus / Gemma 4 31B / 31B v2 / 26B-A4B / Qwen3.8-27B):
+
+| Japanese | Global | Claude Opus | Gemma 4 31B | Gemma 4 31B v2 | Gemma 4 26B-A4B | Qwen3.8-27B |
+|---|---|---|---|---|---|---|
+| ＨＰ１００％時に与ダメージ＋５５％ | Damage dealt +55% at 100% HP | Damage Dealt +55% at 100% HP | Damage +55% when HP is 100% | Damage +55% when HP is 100% | Damage +55% when HP is at 100% | Damage dealt +55% at 100% HP |
+| ＤＥＦ＋１０％（全体） | DEF +10% (party) | DEF +10% (All) | DEF +10% (All) | DEF +10% (party) | DEF +10% (All) | DEF +10% (All) |
+| フリージングインパクト・改 | Revised Arctic Impact | Arctic Impact+ | Arctic Impact+ | Revised Arctic Impact | Arctic Impact 改 | Arctic Impact II |
+| 消費ＡＰ－５０％（２０秒間） | AP cost -50% (20 seconds) | AP Cost -50% (20 sec) | AP Cost -50% (for 20 sec) | AP Cost -50% (for 20 sec) | AP Consumption -50% (20 sec) | AP Consumption -50% (20 seconds) |
+| `<player>`、お願いじゃ、協力してくれ！ (EP1) | `<player>`, please will you come with me? | `<player>`, I beg you, please help us! | `<player>`, I'm begging you, please help me! | the same | `<player>`, I'm asking you, please help me! | `<player>`, I'm asking a favor. Please help me! |
+| ……のうマスティマ。先ほどウルザ・システムの稼働にはエネルギーが必要と言っておったが、 (EP3) | — | ...Say, Mastema. Earlier you said the Ursa System needs energy to run, | ...Now then, Mastima. You mentioned earlier that the Urza System requires energy to operate, | the same | ...Now, Mastima. You were saying just a moment ago that energy is needed to activate the Urza System, | ...No Mastima. You said earlier that the Ulza System requires energy to operate, |
+| 任官して間もないわたしにとって、今際の際の約束というものはとても衝撃でした。 (EP3) | — | For me, freshly commissioned, a promise made on someone's deathbed came as a real shock. | For someone like me, who was only recently commissioned, a promise made at the moment of death was quite a shock. | the same | For someone like me, who has only just been commissioned, the idea of making a promise on one's deathbed... it was quite a shock. | For someone who had just taken office, the promise made on the brink of death was a tremendous shock. |
+| リーシュっ！ (EP3) | — | Lishe! | Leesh! | Leash! | Leash! | Rish! |
+
+**Failure modes seen:**
+
+- **Gemma 4 31B:** the cleanest of the local models: no token lost, no Japanese left, and its four glossary misses are the glossary's own weak entries (全員 = "Everyone", 願い = "Wish", 強化素材 = "Mats.", 期間： = "Expires In:"), of which Claude Opus missed only 願い. Without v2 it writes stat lines in its own order ("Damage +55% when HP is 100%", lower `seed`/`factor` chrF than Claude and Qwen) and "(All)" for `（全体）`, as Claude did; with v2 it follows the conventions it was told. Names in EP3 are plausible but not always the intended ones (マスティマ "Mastima" for Mastema).
+- **Gemma 4 26B-A4B:** one invented specifier (`FOLを入手しました。` → "Obtained %d FOL."), `・改` left in Japanese once, and one wrong name: ヴァルとトオル ("Val and Toru") became "you and Terry" in an EP3 line. Otherwise close to the 31B.
+- **Qwen3.8-27B:** the best on Global's stat-line formula without being told, but dropped `<font color=…>…</font>` from two EP1 lines (2 of 36 token rows), left kana once, and its story lines are flatter (EP1 chrF 34).
+- **Gemma 4 12B:** close behind the large models on UI, but invented a third `%d` in `%d年%d月生まれ` ("Born on %d/%d/%d"), the kind of error the checks catch.
+- **shisa-v2-mistral-small-24b:** the Japanese-tuned model is the weakest of the set here: it appends translator's notes to 19 of 310 rows ("(Note: The original Japanese text is very concise…)") despite the rule, leaves Japanese in 16 rows and loses tokens in 4. Not a candidate.
+- **All local models** share Claude's weaknesses of 7.4 (inventing a form where Global has a convention unless told) and widen labels the same way (65–78 of the 250 scored rows over 1.5× the Japanese width, Global 60).
+
+**Throughput and the GPU.**
+
+- One row per request, as measured above. The MoE Gemma 4 26B-A4B is the fastest large model (108 JA characters per second: **3.2 hours** for the 1.24M characters of the gap). The dense 27–31B models do 39–45 characters per second (**8–10 hours**): they are bound by the memory bandwidth of a 145 W card. More slots don't help once the GPU memory is full: Qwen3.8 with 16 slots and Gemma 4 31B with 8 ran 2–3 times slower than with 8 and 4 (apparently WSL spills to shared system memory instead of failing).
+- **The 31B needs the whole card.** With 4 slots it uses about 22.5 GB. Leaving 7 GB for other programs (`--fit-target 7000`: llama.cpp keeps some layers on the CPU) cut it to 13.2 characters per second (**26 hours**); the 26B-A4B under the same limit did 60 per second (**5.7 hours**: its experts move to the CPU cheaply). So the 31B is a job for a night with the GPU free; the 26B-A4B also runs beside other work.
+- A real run would send a story scene or a batch of related UI rows per request, which saves repeating the system prompt and gives context; the times above are an upper bound for one-row requests.
+
+**Disk used** (`work/tools/`, local only): Gemma 4 31B 17 GB, Gemma 4 26B-A4B 16 GB, Qwen3.8-27B 16 GB, shisa-v2 14 GB, Gemma 4 12B 6.7 GB, llama.cpp 1.1 GB: **about 71 GB**, on top of the first trial's 1.7 GB. The models are kept for the user's choice; any but the chosen one can be deleted.
+
+**Verdict.** On this sample a quantized 31B model on the local GPU is as good as the Claude API by every automatic measure: chrF within noise, every token kept, the glossary followed nearly as often. **Gemma 4 31B-it with the v2 prompt is the best local engine**; Gemma 4 26B-A4B is the fast alternative. Where Claude still looks better is what the sample measures least: new proper nouns and story tone, on 20 EP3 lines without a reference. The engine for M3 (UI) can be local; for M4 (story) the user should compare a full scene from each before choosing.
+
+How measured: `work/english/mt-trial/engines/serve.sh` (llama-server), `run_server.py` (the prompts, timing), `score.py`, `bootstrap.py`; outputs `raw-<engine>.jsonl`, `post-<engine>.jsonl`, `timing-<engine>-c<slots>.json`, `scores.json`, server logs `server-*.log`. Models in `work/tools/mt-models/<name>-gguf/`.

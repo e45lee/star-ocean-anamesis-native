@@ -5,6 +5,7 @@ A plan built on the findings in [english.md](english.md). Nothing here is implem
 History:
 - 2026-10-06 (agents `english`, `english2`): three options, A (server only), B (client switch + `en_` rows) and C (client switch + per-language files), with C recommended. Their comparison is in [english.md 6.6](english.md#66-consequence-the-smallest-client-change-is-one-site).
 - 2026-10-07: the user's decisions below; the plan is now **option C only**, restructured around them. The machine-translation option for the gaps (Q2, Q12, still open) was investigated the same day (agent `english-mt`, [english.md section 7](english.md#7-machine-translation-for-the-gaps)) and is the last part of this plan.
+- 2026-10-07, later: the user's answers to the MT questions (M-Q1 and M-Q3 to M-Q7, below), and a second trial with 12–31B local LLMs on the GPU (agent `english-llm`, [english.md 7.8](english.md#78-local-llms-on-the-gpu-1231b)); the engine (M-Q2) is still open.
 
 ## Decisions (the user, 2026-10-07)
 
@@ -12,7 +13,13 @@ History:
 |---|---|
 | Q9 | **Option C only**: the client's `CLanguage` switch (`--lang en`) plus a server that serves `-en` files, including a full English master. No B (no StringDB patch); A is not kept as a mode. |
 | Q1 | **UI first** (the `-en` master), the story after. |
-| Q2, Q12 | The gaps, and story files with mixed lines: **pending the MT investigation**; the options are in [Machine translation for the gaps](#machine-translation-for-the-gaps-m-steps). |
+| Q2 = M-Q1 | **(c)**: machine-translate the UI and system text now; the story after its names are set. |
+| Q12 = M-Q6 | A story file's `-en` version is served **only when every line has English**, machine lines included. |
+| M-Q2 | The engine: **open**, to be decided after the local 12–31B test ([english.md 7.8](english.md#78-local-llms-on-the-gpu-1231b)); the options are under [Machine translation for the gaps](#machine-translation-for-the-gaps-m-steps). |
+| M-Q3 | **Test larger local models first** (done: english.md 7.8). |
+| M-Q4 | `machine` rows **may ship unreviewed**, marked `machine` in the provenance and the coverage report. |
+| M-Q5 | The glossary and the translation tables are **committed** under `data/english/`. **Release packages ship the already-built `-en` files.** An `-en` master is a full master DB built from the game's master, so this needs an explicit packaging exception (step P2): `tools/package.py`'s game-file scan rejects SQLite files with `master_*` tables and its allow-list has no `-en` entries. Not changed yet. |
+| M-Q7 | **The engine's choice for new names is accepted**: the first spelling is fixed into the glossary automatically and reused everywhere after. |
 | Q3 | **No fan translations**: Global's official English plus whatever Q2 decides. |
 | Q4 | **Our own English UI art**, as a second, English-only stand-in overlay (e.g. `standin-assets-en/`) served as `-en` members; the Japanese image is the client's fallback. The images are edits of the game's art, so git holds only a **per-image recipe** (source file, text box, English text, font and style) and the generator; the server or package builds the `-en` images locally at first run from the user's own download, like the master derivation. No game art in git or packages. Global's own assets, if the user obtains them later, could replace generated images. |
 | Q5 | Client `--lang` defaults to **`ja`**. Release packages default to Japanese and add **English launchers** (`run-port-en`, `run-emulator-en`: server `--english`, client `--lang en`). |
@@ -51,10 +58,11 @@ History:
 | **E10** | **Client changes, now (Q6):** (a) natives for the 10 functions that show the 14 hard-coded strings, reading new `master_text` ids the `-en` master carries; (b) **word wrap** in `CCocosLabel::DrawSelf` / `ComposeString_` when a line exceeds the label's box. Both only with `--lang en`; logged in `docs/client-changes.md`. | M + M | B1 | NATIVE_TEST of each; with `--lang ja` identical to the guest; EN shots of the dialogs and of `uimsg_chara_top_info` |
 | **E9** | **English UI art (Q4).** Recipes (`standin-assets-en/recipes/*.json`: source image, text box, English text, font, colours) and a generator (an extension of `tools/make_standin_banners.py`) that builds the `-en` images from the user's own download at first run into the server's generated root (C2). First the home buttons, the footer and the gacha top. No game art in git or packages. | L | C2 | home and gacha shots with `--lang en`; a package scan with no game images |
 | **P1** | **English launchers (Q5):** `run-port-en.sh/.cmd`, `run-emulator-en.sh/.cmd` (server `--english`, client `--lang en`), in `scripts/package.sh`'s ZIPs. | S | B1, C1 | the package lists them; a smoke run of each |
+| **P2** | **Packaging exception for the built `-en` files (M-Q5).** Release packages ship the `-en` master and story files the server builds (C1, C3), but an `-en` master is a full master DB derived from the game's master. Design an explicit, narrow exception in `tools/package.py`: allow-list entries for exactly the `-en` outputs, and a scan rule that accepts a `master_*` SQLite file only under those names (and, e.g., only when it matches a build manifest); every other game-file rule stays. Record it in README.md "Game files" and "Packaging". | S | C1, C3 | the package scan passes with the `-en` files and still rejects a plain master or a renamed one |
 | **B7** | **Voices (Q10):** `--voice-lang ja` (default) writes `BAS:VoiceLanguage` = 0 to `Game.xml`, as the sessions write `BAS:DownloadEpisodeFlag`: always the Japanese packs, no `-en` probe. | S | B1 | a `Voice_*` probe |
 | **E11** | **Tests.** Gates keep running Japanese. Add `home --lang en` as a T2 entry with its own references; E1's report in T1. | S | C1 | `tools/gate.sh T2` |
 
-Order: E1 → B1 → C2 → C1 → E3 → E6 → E10 → P1 → B7 → E11, with E9 in parallel once C2 exists.
+Order: E1 → B1 → C2 → C1 → E3 → E6 → E10 → P1 → P2 → B7 → E11, with E9 in parallel once C2 exists.
 
 ### Phase 2: the story
 
@@ -77,37 +85,40 @@ The findings are in [english.md section 7](english.md#7-machine-translation-for-
 
 - After Global's English (19,145 rows by id), exact memory (6,265) and template memory (2,412), **37,593 master rows** (27,847 distinct texts, 705k JA characters) and **17,182 story lines** (530k characters: EP2 7,906, EP3 5,037, events 3,932) have no English. **EP2 has no official English at all.**
 - A blind trial on 310 rows (250 scored against Global's English) gave chrF **44** for Claude (Opus 5.5 44.4, Sonnet 5.5 43.8) against **32** (FuguMT) and **28** (Opus-MT) for the offline NMT models. The LLMs kept every printf specifier and tag (36 of 36 rows) and used the glossary in 83–84 of 85 rows; the NMT models lost tokens in 8–9 of 36 rows, can't take a glossary, and translate the game's terms literally ("heraldic stones" for Gems). A 1.1 GB local LLM (Qwen2.5-1.5B) scored 35 and lost tokens in 16 of 36 rows.
-- **Recommended engine:** Claude Sonnet 5.5 through the Batch API, with the glossary and Global's conventions in the prompt and the story a scene at a time; about **$10–20** for the whole gap, one pass (Opus 5.5 about $20–40). **Offline fallback:** FuguMT through CTranslate2, as a marked rough fill only.
+- A second trial (english.md 7.8) ran 12–31B local LLMs, quantized to about 4 bits, through llama.cpp on this machine's GPU with the same prompt: **Gemma 4 31B-it** (Apache-2.0, 17 GB) scored chrF **44.3** (44.9 with a prompt carrying Global's conventions), kept every token (36 of 36) and followed the glossary in 81 of 85 rows: within noise of Claude Opus. Gemma 4 26B-A4B 43.8–44.3, Qwen3.8-27B 44.0, Gemma 4 12B 43.4; the Japanese-tuned shisa-v2-mistral-small-24b only 37.6. Claude still looked better on new names and story tone (20 EP3 lines, no reference).
+- **Engine (M-Q2, open):** a local model is now a real option. Gemma 4 31B needs about **9–11 hours** of the whole GPU for the gap (26 hours if other programs keep 7 GB of it); Gemma 4 26B-A4B about **3–6 hours**. Claude through the Batch API costs about **$10–20** (Sonnet) or **$20–40** (Opus) and finishes within a day. **Offline fallback without a GPU:** FuguMT through CTranslate2, as a marked rough fill only.
 - **The source of truth** is a committed translation table (`data/english/`), keyed by `message_id` with the source text's hash and per-row provenance (`machine` with engine, model and prompt version; `human` with the editor; `reviewed`). Human rows always win and an MT re-run never touches them. The server builds the `-en` files from the table deterministically and never calls an engine.
 
-Options for **Q2 (the gaps)**:
+**Q2 (the gaps) is decided: (c)**, machine translation for the UI and system text now, the story after its names are set (M-Q1). The options it was chosen from were (a) leave the gaps Japanese, (b) MT for all, (c) and (d) human translation only. **Q12:** a story file's `-en` version is served only when every line has English, machine lines included (M-Q6); a file whose MT lines failed the checks waits until they are fixed.
 
-| | What the player sees | Cost | Risk |
+Options for **M-Q2, the engine** (the measurements are english.md 7.4 and 7.8):
+
+| | Quality on the trial | Time and cost for the whole gap | Notes |
 |---|---|---|---|
-| (a) Leave them Japanese | mixed English and Japanese, as experiment 1 (about 42% of master rows English after the memories) | none | the 3.x features (Sphere 211, universe board, gear, favor, guide) stay Japanese |
-| (b) MT for all, marked `machine` | English everywhere except rows that fail the checks | $10–40 once, plus review time | wrong names or tone in places; every row editable later |
-| (c) MT for the UI and system text now; the story later, after its names are decided and reviewed | English menus; the story as (b) or (d) | the UI part about half | the same, smaller |
-| (d) Human translation only | English where someone translated | volunteer time | 37,593 rows and 17,182 lines: years |
+| (a) **Gemma 4 31B-it, local** (GGUF QAT Q4_K_XL, llama.cpp CUDA) | chrF 44.3 (v2 prompt 44.9); tokens 36/36; glossary 81/85 | 9–11 h with the GPU to itself (26 h beside 7 GB of other use); electricity | nothing leaves the machine; Apache-2.0; downloaded (17 GB in `work/tools/mt-models/`) |
+| (b) Gemma 4 26B-A4B, local | chrF 43.8 (v2 44.3); tokens 36/36; glossary 80–81/85 | 3–4 h (6 h beside other use) | fastest good model; one wrong name and one invented `%d` in the sample |
+| (c) Claude Sonnet 5.5 / Opus 5.5, Batch API | chrF 43.8 / 44.4; tokens 36/36; glossary 83–84/85 | within a day; about $10–20 / $20–40 | best on new names and story tone; the game text goes to Anthropic; needs an API key |
+| (d) Mixed: (a) or (b) for the UI and system text (M3), the story engine (M4) chosen after comparing one full scene from (a) and (c) | as above | the UI part locally; the story about half the API cost | proposed |
+| (e) DeepL / Google | not measured | $15–35 | no glossary in context, weaker on the game's formulas |
+| (f) Offline NMT (FuguMT) | chrF 32; loses tokens in 1 of 4 token rows | 13–16 h on the CPU | rough fill only |
 
-Proposed: **(c)**, then the story when the names (M2) and a review pass exist.
-
-Options for **Q12 (story files with some lines missing)**, given MT: serve a file's `-en` version when **every** line has English (official, human or `machine`), so the player never meets a Japanese line inside an English scene; a file whose MT lines failed the checks waits until a human fills them. Without MT, the EP1 / `TS_3xxx` / `TS_5xxx` files are complete after E3 and EP2/EP3 stay Japanese.
+Proposed: **(d)**, with the v2 prompt (Global's conventions, the `%%` rule) and a richer glossary whichever engine runs. New names (M-Q7) take the engine's first spelling, so the name pass (M2) should use the strongest engine available.
 
 | Step | What | Effort | Depends on | Proof |
 |---|---|---|---|---|
 | **M1** | **The table and its tools.** `data/english/` (`glossary.tsv`, `master.tsv`, `story/TS_*.tsv` without the Japanese), the build precedence (human/reviewed > official > memory/template > machine > Japanese), stale-hash detection, and `tools/english_text.py`: `show`, `set --by`, `review`, `stale`, `report`, `export-po`/`import-po` (Poedit, Lokalize, Weblate) and CSV. `tools/english_mt.py`'s checks become a module both use. The font advances come from `Font/etc2/font.fpk` directly (record layout in english.md 3.1), not from the scratch dump in `work/english/font/glyphs.pkl` the prototype reads. | M | E1 | pytest: a human row survives an MT re-run; a changed hash is reported; two builds byte-identical |
-| **M2** | **Names first.** The glossary from Global (3,246 terms), its 302 conflicts resolved once, and a list of new proper nouns (katakana runs and names in the gap, e.g. EP3's characters) with a proposed English each; the user or a reviewer approves them into `glossary.tsv` as `human`. | S + review | M1 | every name of the story's speakers has a glossary row |
-| **M3** | **UI and system MT** (Q2 (c)): the 27,847 distinct gap texts through the engine (M-Q2), the checks, rows that fail stay Japanese; written as `machine` rows. | S (+ API time) | M1, M2 | the report: rows per source; 0 failing rows served; an EN `home` session and contact sheets |
+| **M2** | **Names first.** The glossary from Global (3,246 terms), its 302 conflicts resolved once, and a list of new proper nouns (katakana runs and names in the gap, e.g. EP3's characters), each sent once with its context to the engine (M-Q7: its first spelling is accepted) and fixed into `glossary.tsv` as `machine`, reused by every later row; a human may change one later. | S | M1 | every name of the story's speakers has a glossary row; no name has two spellings in the table |
+| **M3** | **UI and system MT** (Q2 (c)): the 27,847 distinct gap texts through the engine (M-Q2), the checks, rows that fail stay Japanese; written as `machine` rows. | S (+ engine time: 3–11 h locally, english.md 7.8) | M1, M2 | the report: rows per source; 0 failing rows served; an EN `home` session and contact sheets |
 | **M4** | **Story MT**, a scene (one `Script`/`TS` group) per request with the speakers named, EP2, EP3, then the events; written as `machine` rows; C3 then serves the complete files (Q12). | M | M2, M3, C3 | a campaign session over an EP2 chapter in English |
-| **M5** | **Review pass**: a second LLM pass that flags rows breaking Global's conventions or the glossary, then a human pass over the flagged rows, names and story (PO or CSV round trip). | ongoing | M3/M4 | the report's `reviewed` share |
+| **M5** | **Review pass**, optional (M-Q4: `machine` rows ship unreviewed): a second LLM pass that flags rows breaking Global's conventions or the glossary, then a human pass over the flagged rows, names and story (PO or CSV round trip). | ongoing | M3/M4 | the report's `reviewed` share |
 | **M6** | **Hooks into the build**: C1 and C3 read only the table; E11's report adds the per-source counts. | S | M1, C1, C3 | `cdn/served-master-en` still byte-identical across runs |
 
-Questions the MT option raises:
+Questions the MT option raised, and the user's answers (2026-10-07):
 
-- **M-Q1 (Q2).** Fill the gaps by MT: (a), (b), (c) or (d) above? Proposed (c).
-- **M-Q2. Engine.** The Claude API (an API key and about $10–40, the game's Japanese text sent to Anthropic), DeepL or Google (similar cost, no glossary-in-context, weaker on the game's formulas), or offline only (FuguMT, clearly worse)?
-- **M-Q3. A larger local model.** Download a 12–14B local LLM (about 8–9 GB, over the ~2 GB limit) to test whether the GPU gives an offline engine near the API's quality?
-- **M-Q4. Review.** May `machine` rows ship unreviewed (marked in the report), or must the story and names be reviewed first? Who reviews?
-- **M-Q5. What is committed.** The glossary and the translation tables in git (they hold our English and, for the story, no Japanese: english.md 7.6)? And in release packages, which never carry game files, or built by the user from the table at first run?
-- **M-Q6 (Q12).** Serve a story file's `-en` version only when every line has English, MT included (proposed), or only when reviewed?
-- **M-Q7. New names.** Approve each new name by hand (proposed), or accept the engine's proposals?
+- **M-Q1 (Q2).** Fill the gaps by MT? **Decided: (c)**, the UI and system text now, the story after its names are set.
+- **M-Q2. Engine.** **Open**: the options (a)–(f) above, now with the local measurements. Proposed (d).
+- **M-Q3. A larger local model.** **Decided: test first; done** (english.md 7.8; 71 GB of models in `work/tools/mt-models/`, kept for the choice).
+- **M-Q4. Review.** **Decided:** `machine` rows may ship unreviewed, marked in the provenance and the coverage report.
+- **M-Q5. What is committed.** **Decided:** the glossary and the translation tables go into `data/english/`; release packages ship the already-built `-en` files, which needs the packaging exception P2.
+- **M-Q6 (Q12).** **Decided:** a story file's `-en` version is served only when every line has English, machine lines included.
+- **M-Q7. New names.** **Decided:** accept the engine's choice; the first spelling is fixed into the glossary automatically and reused everywhere after.

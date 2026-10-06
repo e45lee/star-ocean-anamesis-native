@@ -763,6 +763,66 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 - **`report`** adds the story per group: lines official, machine, human, reviewed, missing and failing, and the complete files. Its lists are `story-files.tsv`, `story-long.tsv`, `story-failing.tsv` and `story-stale.tsv`.
 - **The editing tools take story ids too:** `show`, `set`, `review`, `stale`, `export-po` (`TS_xxxx.po`, msgid = the download's Japanese at export time), CSV and the imports.
 
+**Composed fragments** (2026-10-07, agent `en-data`; E3's second half). Some texts are fragments the client joins, so their English has to read right **in place**. These are now `human` rows with editor `english-exec`, listed in `report`'s `human.tsv` (and `overrides.tsv` where they replace Global's text).
+
+- **Name fragments: a suffix after the name.**
+  - The block, follow, unfollow and unblock texts, the shortage texts and the disconnect texts are appended to a name: `GetSystemMessage(id)`, then the name is inserted at position 0 (`CFollowSelect::Progress`, `CFriendMenu`, `CGachaShortage::UpdateData`).
+  - Their English is a suffix with its leading space: `uimsg_block_decide` = " has been blocked.", `uimsg_gacha_item_shortage` = ":\nnot enough.".
+  - `uimsg_rentalbonus_num` "%u players" + `_main` " borrowed your character." are composed the same way (`CRentalBonus::Setup`).
+  - `uimsg_loginbonus` is " Day Login Bonus", after the day number.
+  - `uimsg_boxgacha_*_num` are "Resets Left", a label beside the number.
+- **Remaining time and end dates: `CUIUtility::GetBannerEndTime`** (Ghidra 0x1ecb8b4). The only caller of `CTimeUtility::RemainTypedText` composes:
+  - `uimsg_remain_base` + `%d` + a unit (`uimsg_year`, `uimsg_month`, `uimsg_day_on_day`, `uimsg_hour`, `uimsg_min`, `uimsg_sec`, from a table at Ghidra 0x2b9fde8).
+  - Under a day, `uimsg_time_to_the_end` comes first. A day or more gives `uimsg_time_limit_head` + the weekday + `uimsg_time_limit_tail`.
+  - `uimsg_time_limit` ("Time Left") labels the value on the achievement and event screens.
+  - Global's "Left:" therefore read "Time Left  Left:2d" (section 2), and "Until: " ran into the weekday. The new rows are:
+    - `uimsg_remain_base` = "" (empty), giving "Time Left 2d" and "Ends in 5h";
+    - `uimsg_time_to_the_end` = "Ends in ";
+    - `uimsg_time_limit_tail` = " until %d:%02d", giving "2021/7/25(Thurs) until 14:00".
+- **Not done:** `uimsg_chiket_error` (チケットが) and `uimsg_gacha_need_head` (紋章石が) are heads whose continuation wasn't found; they stay Japanese until it is.
+
+**Glossary rules** (2026-10-07):
+
+- **Matching:**
+  - accents are ignored (the output is folded);
+  - a label's trailing colon or full stop is ignored ("Role:" matches "Roles");
+  - -y/-ies plurals count, besides -s.
+- **Weak Global terms** (`tools/english_text.py glossary-weak [--apply]`):
+  - **Rule:** an official term of kind `ui`, `skill`, `talent` or `speaker` is demoted when Global's own official English misses it in at least half of at least 3 rows (master by id and story).
+  - Applied, this removed 35 terms with `human` rows whose `en` is empty, for example:
+
+    | Term | Global's glossary English | Missed in |
+    |---|---|---:|
+    | モンスター | Enemies | 43 of 44 |
+    | 願い | Wish | 41 of 47 |
+    | 全員 | Everyone | 33 of 35 |
+    | 上限解放 | Cap Inc. | 39 of 52 |
+    | 紋章石購入 | Purchase Gems | 22 of 23 |
+    | 片手剣 | OHS | 11 of 12 |
+    | 強化素材 | Mats. | 10 of 15 |
+    | 乱射 | Rapid Fire | 6 of 7 |
+
+  - These are labels' abbreviations and ordinary words, not names.
+  - Nine more ordinary words with too few Global rows for the rule (期間：, 分裂, 殴り, 突進, 融合, 産卵, 咆哮, 嘲笑, 怒り) were removed by hand.
+  - Names of people, items, missions and areas are kept (Q8).
+- **M2's machine names that Global's text contradicts:** `glossary-weak` also lists them. Many of these names occur in Global's running text, not in its name fields, so the name pass didn't know Global's spelling. They now have `human` rows with Global's spelling, for example:
+
+  | Term | M2's machine spelling | Global's spelling | Global rows |
+  |---|---|---|---:|
+  | リーシュ | Leash | Eve | 130 of 131 |
+  | ランビュランス | Lamburance | Levarance / Purge | 113 |
+  | ローク | Roque | Roak | |
+  | クロノス | Chronos | Kronos | |
+  | シーハーツ | Sea Hearts | Aquaria | |
+  | アーリグリフ | Ariglyph | Airyglyph | |
+  | エリクール | Elikoor | Elicoor | |
+  | フェイクリード | Fakelead | Faykreed | |
+  | バーニィ | Bernie | Bunny | |
+
+  36 names in all. リム and オバ (parts of words) and ステップアップキャラガチャ (a label) are removed.
+- **Effect on the UI batch.** A dry run of `import-mt` on the UI batch (about 8,150 rows so far, into a scratch dir) went from 87 glossary rejections, mostly the weak terms, to 93 that are almost all the corrected names. Those MT rows used M2's spellings, so they should be re-translated with the corrected glossary.
+- **Width (informational, E10 wraps labels):** `report` lists the single-line rows wider than the 720 px design width at the font's size (`wider-than-screen.tsv`: 1,267 rows).
+
 ### 7.7 Recommendation
 
 Revised after the local-LLM trial (7.8) and the user's decisions of 2026-10-07 (PLAN-english.md).

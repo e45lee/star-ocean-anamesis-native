@@ -82,6 +82,8 @@ struct Options {
     // nothing of it is read or served.
     bool english = false;
     std::string english_text;    // the English text table ("" with english: no -en master, warned)
+    std::string english_story;   // the English story tables, <dir>/TS_xxxx.tsv ("" = none):
+                                 // make_english_story writes Scenario/TS_xxxx-en.msgp into the generated root
     std::string english_art;     // the English art recipes (standin-assets-en/recipes; "" = none):
                                  // english_art::build writes the -en scenes into the generated root
     std::string format = "etc2/hi";  // the manifest directory served (manifest/<format>/)
@@ -134,6 +136,27 @@ struct EnglishStats {
 // SHA-1 and size as make_served_master. Empty on error (logged).
 std::vector<uint8_t> make_english_master(const std::string& served_plain, const std::string& table, const std::string& plain_out,
                                          std::string* plain_sha1, uint64_t* plain_size, EnglishStats* stats = nullptr);
+
+// What make_english_story did with one story file (docs/server-rules.md#english-story).
+struct EnglishStoryStats {
+    size_t rows = 0;      // the file's rows
+    size_t japanese = 0;  // rows with Japanese text (kana or kanji): each needs English
+    size_t english = 0;   // rows given English
+    size_t missing = 0;   // Japanese rows without (matching, parseable) English
+};
+// The English story file (--english): the 3.7.0 story file `name` ("Scenario/TS_1010.msgp"; its
+// ADLD file `file`, as the download holds it) with the English of the story table `table`
+// (english_text.h's form; `en` with "\n" for a line break, which becomes a real newline as the
+// story files hold it) in the text_value of the rows it translates: same rows, ids, message ids,
+// lang and order; packed ADLD XOR (encType 1) keyed by the -en name ("Scenario/TS_1010-en.msgp").
+// A row matches when the SHA-1 of its Japanese, with real newlines or with "\n", is the row's
+// ja_sha1; its English is taken only when its tags are ones the story parser knows. Empty when a
+// Japanese row is left without English (the file is served only complete: PLAN-english Q12) or
+// on an error; *stats says why.
+std::vector<uint8_t> make_english_story(const std::string& name, const std::vector<uint8_t>& file, const std::string& table,
+                                        EnglishStoryStats* stats = nullptr);
+// The -en name of a file: "Scenario/TS_1010.msgp" -> "Scenario/TS_1010-en.msgp".
+std::string english_name(const std::string& name);
 
 // ---- the tree ---------------------------------------------------------------------------------
 

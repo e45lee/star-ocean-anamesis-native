@@ -244,6 +244,7 @@ Each module registers from its `register_<module>()` function, and `server/src/c
 | #drops | `server/src/api/missions/drops.cpp` |
 | #enabling-events | `server/include/soaserver/cdn.h`, `server/include/soaserver/config.h`, `server/src/api/events/enable_events.cpp`, `server/src/api/events/enable_events.h`, `server/src/api/events/enable_events_tests.cpp`, `server/src/api/events/event_missions.cpp` |
 | #english | `server/include/soaserver/cdn.h`, `server/include/soaserver/cli.h`, `server/include/soaserver/config.h`, `server/include/soaserver/ext.h`, `server/src/api/player/notice.cpp`, `server/src/api/presents/present_texts.cpp`, `server/src/cdn/cdn_tests.cpp`, `server/src/cdn/served_master.cpp`, `server/src/cdn/tree.cpp`, `server/src/master/english_text.cpp`, `server/src/master/english_text.h`, `server/src/master/gacha_pools.cpp` |
+| #english-story | `server/include/soaserver/cdn.h`, `server/src/cdn/cdn_tests.cpp`, `server/src/cdn/story_en.cpp`, `server/src/cdn/tree.cpp`, `server/src/master/english_text.h` |
 | #entry | `server/src/api/entry/entry.cpp`, `server/src/api/entry/entry.h`, `server/src/api/player/player_info.cpp` |
 | #equip-auto | `server/src/api/growth/growth.cpp`, `server/src/api/growth/growth_tests.cpp` |
 | #event-exchange-shops | `server/src/api/shop/shop.cpp` |

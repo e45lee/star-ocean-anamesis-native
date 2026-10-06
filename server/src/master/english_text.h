@@ -35,6 +35,11 @@ bool load(const std::string& path, Table& out, std::string* err);
 // (find_repo_file); "" when none exists.
 std::string table_path();
 
+// The English story tables' directory (TS_xxxx.tsv files, the same form; docs/server-rules.md#english-story):
+// story-en beside an explicit --english-text, else data/english/story-en (find_repo_file); "" when
+// none exists.
+std::string story_dir();
+
 // The table of config() (loaded once per path), nullptr without --english or without a readable
 // file (warned once).
 std::shared_ptr<const Table> table();

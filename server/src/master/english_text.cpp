@@ -2,6 +2,8 @@
 // not guest behaviour.
 #include "master/english_text.h"
 
+#include <sys/stat.h>
+
 #include <fstream>
 #include <mutex>
 
@@ -75,6 +77,17 @@ std::string table_path() {
     const ServerConfig& c = config();
     if (!c.english_text.empty()) return c.english_text;
     return find_repo_file(kTableRel);
+}
+
+std::string story_dir() {
+    const ServerConfig& c = config();
+    if (!c.english_text.empty()) {
+        size_t slash = c.english_text.find_last_of("/\\");
+        std::string dir = (slash == std::string::npos ? std::string(".") : c.english_text.substr(0, slash)) + "/story-en";
+        struct stat s;
+        return stat(dir.c_str(), &s) == 0 && S_ISDIR(s.st_mode) ? dir : "";
+    }
+    return find_repo_file("data/english/story-en");
 }
 
 std::shared_ptr<const Table> table() {

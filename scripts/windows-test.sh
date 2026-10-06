@@ -11,6 +11,7 @@
 #   shard-login    the tests/diff shard `login` on the three Windows targets (soa-emu.exe +
 #                  soa-server.exe, soa.exe --server + soa-server.exe, soa.exe in process); OUT/login/report.txt
 #   runtime-tests  soaruntime_tests.exe (the runtime's tests, the GDB stub's incl.), exit status 0
+#   selftest       soa.exe --selftest and soa-server.exe --selftest (the native and server selftests on Windows), exit 0
 #   native-order   soa.exe --list-native byte-identical to build/port/soa's: the natives, selftests and
 #                  test hooks register in the same order (static-initializer order: cmake/init_order.cmake)
 # Needs: build-win/ (scripts/build.sh --windows) and the stage's data, once:
@@ -31,6 +32,7 @@ case $test in
   shard-login) targets="soa soa-emu soa-server" need="work/SOA-3.7.0-canonical-data.zip work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   native-order) targets="soa" need="" ;;
   runtime-tests) targets="soaruntime_tests" need="" ;;
+  selftest) targets="soa soa-server" need="work/SOA-3.7.0-canonical-data.zip" ;;
   *) echo "windows-test: unknown test $test" >&2; exit 2 ;;
 esac
 [ -f build-win/CMakeCache.txt ] || { echo "FAIL: no build-win/ (scripts/build.sh --windows)"; exit 1; }
@@ -80,6 +82,19 @@ case $test in
       exit 1
     fi
     echo "PASS: soaruntime_tests.exe ($(grep -ac '^ok' "$out/soaruntime_tests.log") checks)" ;;
+  selftest)
+    # soa.exe's native selftests (the guest library booted once; folder-only tests skip on a stage)
+    # and soa-server.exe's: a Windows-only native or server failure fails here (2026-10-06: two such
+    # failures sat on main because no gate ran them on Windows).
+    rc=0
+    (cd "$stage" && timeout -k 10 1800 ./build-win/port/soa.exe --selftest) > "$out/soa-selftest.log" 2>&1 || rc=$?
+    grep -a "^FAIL\|FAIL \[" "$out/soa-selftest.log" | head -20
+    [ "$rc" = 0 ] || { tail -3 "$out/soa-selftest.log"; echo "FAIL: soa.exe --selftest exited $rc ($out/soa-selftest.log)"; exit 1; }
+    rc=0
+    (cd "$stage" && timeout -k 10 900 ./build-win/server/soa-server.exe --selftest) > "$out/server-selftest.log" 2>&1 || rc=$?
+    grep -a "^FAIL" "$out/server-selftest.log" | head -20
+    [ "$rc" = 0 ] || { tail -3 "$out/server-selftest.log"; echo "FAIL: soa-server.exe --selftest exited $rc ($out/server-selftest.log)"; exit 1; }
+    echo "PASS: soa.exe --selftest ($(grep -a 'native tests passed' "$out/soa-selftest.log" | tail -1 | tr -d '\r')); soa-server.exe --selftest ($(grep -a 'server tests passed' "$out/server-selftest.log" | tail -1 | tr -d '\r'))" ;;
   battle-gacha|seeded|viewer-boot|shard-login)
     rc=0
     case $test in

@@ -81,6 +81,7 @@ std::string dump(const soa::SoaArgs& a) {
     auto& c = o.client;
     d.f("download_dir", c.download_dir).f("download_prefer", c.download_prefer).f("standin_dir", c.standin_dir).f("standin_off", c.standin_off);
     d.f("fake_server_schema", c.fake_server_schema).f("guest_cpus", c.guest_cpus).f("memstats", c.memstats);
+    d.f("legacy_res", c.legacy_res).f("render_scale", c.render_scale);
     dump(d, o.server);
     d.f("data_dir", a.data_dir).f("apk", a.apk_path).f("lib", a.lib_path).f("smoke", a.smoke).f("selftest", a.selftest);
     d.f("list_native", a.list_native).f("test_filter", a.test_filter);
@@ -91,7 +92,7 @@ std::string dump(const soa::SoaArgs& a) {
     d.f("headless", a.headless).f("gdb", a.gdb).f("log", level(a.verbose)).f("live_checks", a.live_checks);
     std::set<std::string> flags(a.server_flags.begin(), a.server_flags.end());  // (named once each, for a warning)
     d.f("server_flags", std::vector<std::string>(flags.begin(), flags.end()));
-    d.f("apk_dir_given", a.apk_dir_given).f("legacy_res", a.legacy_res);
+    d.f("apk_dir_given", a.apk_dir_given);
     return d.o.str();
 }
 std::string dump(const soa::server::app::ServerArgs& a) {
@@ -306,7 +307,8 @@ int main() {
     const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time"};
     // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
     const V kAddedLang = {"--lang", "--voice-lang"};
-    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang"};
+    // Added to soa: --render-scale (2026-10-07; port/src/core/cli.cpp, the resolution natives).
+    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang", "--render-scale"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -444,6 +446,11 @@ int main() {
         {{"--selftest", "wire/", "--windowed"}},
         {{"--hires"}},
         {{"--legacy-res"}},
+        {{"--render-scale", "1"}, "--render-scale is new (2026-10-07)", -1},
+        {{"--render-scale", "1.5", "--hires"}, "--render-scale is new (2026-10-07)", -1},
+        {{"--render-scale", "0.1"}},                  // (an error: 0.25..3; the old loop's unknown option)
+        {{"--render-scale", "x"}},                    // (an error: a number)
+        {{"--render-scale", "1", "--legacy-res"}},    // (an error: it excludes --legacy-res)
         {{"--fake-server-schema", "/tmp/schema.txt"}},
         {{"--fake-server", "port/fakeapi/responses"}, "--fake-server is gone: the canned responses were retired (docs/unimplemented-apis.md step 9)", 2},
         {{"--memstats"}},

@@ -1612,6 +1612,19 @@
     "SaleGacha"
    ]
   },
+  "session:restore-legacy-res": {
+   "apis": [
+    "Gacha",
+    "GetGachaInData",
+    "GetPlayer",
+    "GetServerTime",
+    "Login",
+    "MissionEnd",
+    "MissionStart",
+    "NoLoginStart"
+   ],
+   "source": "declared"
+  },
   "session:restore-missions": {
    "apis": [
     "Gacha",

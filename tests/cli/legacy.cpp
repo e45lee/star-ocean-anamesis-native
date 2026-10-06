@@ -4,7 +4,7 @@
 // as the reference cli_tests.cpp compares the new parsers with. Copied as they were; the only
 // edits make them testable: they fill the new parsers' Args structs, `usage(); exit(2)` / `return
 // 2` became `return 2` (0 for -h / --help), and actions taken in the loop (--list-native's list,
-// --apk-dir's and --legacy-res' warnings, the --natives / --live-check checks of port code) are
+// --apk-dir's warning (and --legacy-res', which soa no longer prints), the --natives / --live-check checks of port code) are
 // recorded instead. Test code: nothing here is built into a program.
 #include "legacy.h"
 
@@ -86,7 +86,7 @@ int parse_soa(int argc, const char* const* argv, soa::SoaArgs& r) {
             }
             else if (a == "--no-native") r.natives = "none";
             else if (a == "--hires") {}
-            else if (a == "--legacy-res") r.legacy_res = true;
+            else if (a == "--legacy-res") opt.client.legacy_res = true;
             else if (a == "--render-size") host.render_size = next();
             else if (a == "--font") next();  // (HostConfig::font is gone, 2026-10-05: the value is dropped)
             else if (a == "--fullscreen") host.fullscreen = true;

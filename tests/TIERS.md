@@ -117,6 +117,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T2 | `session:equipment` | 5.5 min | 1 | an accessory's factor inheritance on the strengthening screen (InheritAccessory), the equipment screen's 自動設定 (EquipAuto), a re-login | `port/scripts/equipment_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:equipment-server` | 5.5 min | 1 | session:equipment against soa-server (soa --server) | `port/scripts/equipment_session.sh --target port-server build/port/soa {out} {tmp}` |
 | T2 | `session:restore` | 4.8 min | 1 | home, a battle, a 10-draw, the server state after each | `port/scripts/restore_session.sh build/port/soa {out} {tmp}` |
+| T2 | `session:restore-legacy-res` | 4.8 min | 1 | session:restore with soa --legacy-res: the game's own 0.75 resolution (the shipped CGame::OnColdStart path; every other port test runs the hi-res default) | `port/scripts/restore_session.sh build/port/soa {out} {tmp} --legacy-res` |
 | T2 | `session:restore-missions` | 6.2 min | 1 | a surprise-enemy battle, two step-up gacha steps, MissionStart refused at stamina 0 | `port/scripts/restore_missions.sh build/port/soa {out} {tmp}` |
 | T2 | `session:favor` | 5.4 min | 1 | favor set between two boots, taps on the home character (UpdateFavorByTap), a battle's favor | `port/scripts/restore_favor_session.sh build/port/soa {out} {tmp}` |
 | T2 | `session:newplayer` | 15.2 min | 1 | a new player: terms, name, CreatePlayer, the tutorial (and the seeded player's login) | `port/scripts/newplayer_session.sh build/port/soa {out} {tmp}` |

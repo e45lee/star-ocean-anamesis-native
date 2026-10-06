@@ -25,7 +25,7 @@ P3 + H (battle log from the client's own serializer, `InGameHooks` dropped), P4 
 ## Open issues
 Checked on 3.7.0 by agent open-issues (2026-10-02); resolved ones are listed with their commit at the end.
 - **`events_session.sh` across midnight:** one run that crossed midnight opened the multiplayer dialog instead of the daily event's mission (no `MissionStart`); the re-run passed. The session likely needs a fixed `--clock` like smoke.
-- **`--hires` / `--legacy-res` do nothing** until the render natives return.
+- **`--live-check render` crashes in a battle** (found 2026-10-07 by agent hires; the same with main's binary at the legacy resolution, so not the resolution): in `restore_session.sh` a host SIGSEGV (fault address 0x20) in the native `RenderDeviceData::UpdateVertexAttribute` (`render_draw.cpp`: `m_program` null) under `HostUpdateRenderState`, from `DrawIndexedPrimitive`, about 3.4M checks in (0 mismatches up to there). Without the check, or with `only=` leaving out `DrawIndexedPrimitive` / `UpdateRenderState`, the flow passes (17.4M checks, 0 mismatches at hi-res). For the render family's owner.
 - **Performance** (measured 2026-10-02, the `restore_session.sh` flow: boot, home, battle `mf01_001`, gacha 10-draw, home; `SOA_PROFILE` at 1000 Hz; `I/perf` fps every 10 s):
 
   | | wall | busy CPU samples | guest JIT / native / HLE | fps mean / min | in-battle fps | battle clock (`mission_time`) |

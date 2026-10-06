@@ -425,8 +425,12 @@ class Run:
             srv += ["--seed", wp(os.path.join(winhost.STAGE if self.win else REPO, "data/saves/seed/Game.xml"))]
         elif cfg.seed:
             srv += ["--seed", wp(cfg.seed)]
+        # --render-size window: the game screen is the window (W x H) on every host. The default
+        # (desktop) scales it up to fill the desktop, and since the port renders at the game screen's
+        # size (hi-res, port/README.md), the pixels drawn would depend on the host's monitor.
         client = ([] if self.launcher else ["--data", wp(self.phone)]) + [
-            "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H), "--control", self.fifo]
+            "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H), "--render-size", "window",
+            "--control", self.fifo]
         if cfg.gdb:
             if not gdb.available():
                 raise Abort("a GDB stub was asked for, but control/gdbclient.py (the runtime's --gdb) isn't in this checkout")

@@ -89,7 +89,6 @@ int main(int argc, char** argv) {
         return 0;
     }
     if (args.apk_dir_given) LOGW("main", "--apk-dir is ignored: the rebased port runs the 3.7.0 APK (--apk FILE)");
-    if (args.legacy_res) LOGW("main", "--legacy-res has no effect: the game renders at its own resolution (no --hires natives since the rebase's revision 2)");
     // --natives: route (every registered native) or none.
     NativeSet natives = NativeSet::Route;
     if (!parse_native_set(args.natives, natives)) {
@@ -300,7 +299,20 @@ int main(int argc, char** argv) {
     if (headless < 0) headless = selftest;
     host.hidden = headless != 0;
     if (host.hidden) LOGI("main", "headless: the window isn't shown");
-    host.size_note = " (the game's own resolution: 720 wide, a 0.75 back buffer, upscaled)";
+    // The render resolution (native/ui/ui_utility.cpp): its natives aren't installed with --natives none
+    // or in --selftest.
+    {
+        const ClientOptions& cl = opt.client;
+        char note[160];
+        if (cl.legacy_res || natives == NativeSet::None || selftest)
+            snprintf(note, sizeof note, " (the game's own resolution: 720 wide, a 0.75 back buffer, upscaled%s)",
+                     cl.legacy_res ? "" : selftest ? "; --selftest: no natives" : "; --natives none");
+        else if (cl.render_scale > 0)
+            snprintf(note, sizeof note, " (--render-scale %g: 720 wide, a %gx back buffer)", cl.render_scale, cl.render_scale);
+        else
+            snprintf(note, sizeof note, " (hi-res: the game renders at this size; --legacy-res for its own)");
+        host.size_note = note;
+    }
     host.command = [](const std::string& cmd) { return native::port_debug::command(cmd); };  // phase:N, call:SYM[:ARGS], debugwin:W:H
     host.tick = [&] {
         if (selftest) {

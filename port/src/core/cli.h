@@ -28,7 +28,6 @@ struct SoaArgs {
     std::vector<std::string> live_checks;   // --live-check SPEC, each (main parses them)
     std::vector<std::string> server_flags;  // the server options given (--server HOST warns about them)
     bool apk_dir_given = false;       // --apk-dir (ignored, with a warning)
-    bool legacy_res = false;          // --legacy-res (no effect, with a warning)
 };
 
 // -1: go on; else the exit status (0 after --help, 2 after an error, which it printed). `names`:

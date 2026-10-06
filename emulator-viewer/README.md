@@ -39,7 +39,7 @@ control/soactl.py /tmp/viewer.fifo tap:364:1000 wait:3000 shot:/tmp/viewer.png
 | `--repo DIR` | The source checkout, for the defaults (`apk/`, `work/extracted/xapk`). Default: found upwards from the executable; in a git worktree, files it lacks are looked up in the main checkout `work/` links to. |
 | `--guest-cpus N` / `host` | CPUs the game sees. Default 8. |
 | `--headless` / `--windowed` | Don't show the window. It still renders: screenshots and the control FIFO work. `--windowed` (the default) undoes an earlier `--headless`, as in `soa`. |
-| `--size WxH`, `--landscape`, `--render-size S`, `--fullscreen` | Window and screen size, as in `soa`. The game picks its own back-buffer size (an 810x1440 screen gives `default framebuffer emulated at 720x1280` in the log), scaled to the window; the port's sharper rendering is a native option. |
+| `--size WxH`, `--landscape`, `--render-size S`, `--fullscreen` | Window and screen size, as in `soa`. The game picks its own back-buffer size (an 810x1440 screen gives `default framebuffer emulated at 720x1280` in the log), scaled to the window; the port's sharper rendering (its default) is a native, which the viewer doesn't have. |
 | `--shot S:PATH`, `--do S:ACTION`, `--control FIFO` | Scripted input and screenshots, as in `soa`: `tap`, `drag`, `wheel`, `back`, `text`, `shot`, `resize`, `fullscreen`, `quit` (`control/soactl.py`). `soa`'s `phase:` / `call:` debug commands need natives and don't exist here. |
 | `-v` / `-vv` | Verbose / trace logging. |
 

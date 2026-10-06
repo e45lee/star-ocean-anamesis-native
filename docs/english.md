@@ -1,5 +1,7 @@
 # English text in the 3.7.0 client: where the text comes from, what English exists, how to deliver it
 
+The experiment files (screenshots, the English-merged masters, font and string dumps) are in `work/english/` of the main checkout: local only, not committed (derived game data).
+
 Investigation of 2026-10-06 (agent `english`), at the user's request: **how can translated English text get into the 3.7.0 client?** Nothing was changed in code or data; the plan built on these findings is [PLAN-english.md](PLAN-english.md). The official English is the Global master, described in [basmaster-gl.md](basmaster-gl.md); the Global voice files are in [global-voice-files.md](global-voice-files.md).
 
 Ghidra addresses are ELF vaddr + 0x100000, as `tools/decomp_at.sh` takes them. Counts come from read-only queries over `data/basmaster-3.7.0.sqlite3`, `data/basmaster-gl.sqlite3`, `work/download-3.7.0`, the 3.7.0 APK and `work/libSOA-3.7.0.so`. Each section ends with "How measured". Scratch files (scripts, renders, screenshots) are outside the repo in `/home/fish/.claude/jobs/ac4802d9/tmp/english-*` and are not committed.
@@ -88,7 +90,7 @@ How measured: decoding ADLD, then SLZ, then ISF, then msgpack for each file (`so
   The `UI/` atlases hold 5,548 sprites. `home.csf` and `gacha_top.csf` are full of Japanese buttons (イベント, ミッション, スフィア211, the footer's ホーム…その他, キャラガチャ). `battlemenu.csf` is almost all Latin already. `Movie/` and `title_logo` hold logos only. `Effect/` couldn't be decoded with `aif2png`; its names suggest no text.
 - **Global's images are not in hand.** Global swapped art under the **same file names** on its own CDN: 89 of its 901 `master_banner.image` names exist in the JP download. It didn't use `CLanguage::PostfixLanguageCodeFilepath`, the `name-<code>.ext` mechanism, which is inactive in 3.7.0. No Global image, script or APK is in the repo or `work/`. The only Global file is the master DB.
 
-How measured: the decoded node trees (`TextObjectData` `LabelText` / `ButtonText`); file-name categories, with samples rendered by `build/tools/aif2png` (sheets in `/home/fish/.claude/jobs/ac4802d9/tmp/english-assets/sheet_*.png`).
+How measured: the decoded node trees (`TextObjectData` `LabelText` / `ButtonText`); file-name categories, with samples rendered by `build/tools/aif2png` (sheets in `work/english/assets/sheet_*.png`).
 
 ### 1.4 What English exists
 
@@ -119,7 +121,7 @@ See [basmaster-gl.md section 4](basmaster-gl.md#4-text) for the full analysis. T
 - **Global English is already broken into lines.** Global's translators broke lines with `\n` at about 41 characters (p90), so most rows fit a Japanese-sized box. Their line breaks differ from the Japanese ones: 3,962 merged rows have a `\n`, against 2,402 of their Japanese originals. But 459 merged rows lost the line breaks their Japanese had, and those overflow; see section 3.2.
 - **Fan translations** are out of scope here. They are an option if the user supplies them (PLAN-english.md, question Q3).
 
-How measured: `/home/fish/.claude/jobs/ac4802d9/tmp/english-exp/merge.py`, which builds the experiment's master (filters below), plus the bucket query in the same directory's notes. The text memory maps each Global `ja` to its safe English and looks up every JP row the id merge didn't fill.
+How measured: `work/english/exp/merge.py`, which builds the experiment's master (filters below), plus the bucket query in the same directory's notes. The text memory maps each Global `ja` to its safe English and looks up every JP row the id merge didn't fill.
 
 ### 1.5 Hard-coded strings
 
@@ -176,7 +178,7 @@ Both experiments used the unchanged 3.7.0 client (the main checkout's `build/por
 4. No Global-only token.
 5. The same printf specifiers in the same order.
 
-Shots are in `/home/fish/.claude/jobs/ac4802d9/tmp/english-exp/home-out/shots/`:
+Shots are in `work/english/exp/home-out/shots/`:
 
 | Shot | What it shows |
 |---|---|
@@ -190,9 +192,9 @@ Shots are in `/home/fish/.claude/jobs/ac4802d9/tmp/english-exp/home-out/shots/`:
 
 The English rows draw cleanly. The proportional Latin glyphs sit on the same baseline as the Japanese, with no `?` and no crash, through every home destination.
 
-**Experiment 2: a long line.** Experiment 1's master, plus `uimsg_full_stamina` set to a 170-character English sentence without `\n`. In `/home/fish/.claude/jobs/ac4802d9/tmp/english-exp/wrap-out/shots/29-stamina.png` the sentence is **one line, centred, cut off at both window edges**. That confirms the decompile: no automatic wrap, and no shrink in this dialog.
+**Experiment 2: a long line.** Experiment 1's master, plus `uimsg_full_stamina` set to a 170-character English sentence without `\n`. In `work/english/exp/wrap-out/shots/29-stamina.png` the sentence is **one line, centred, cut off at both window edges**. That confirms the decompile: no automatic wrap, and no shrink in this dialog.
 
-The scripts and masters are in `/home/fish/.claude/jobs/ac4802d9/tmp/english-exp/`: `merge.py`, `basmaster-en.sqlite3`, `basmaster-wrap.sqlite3`, and the `soa-en` / `soa-wrap` wrappers.
+The scripts and masters are in `work/english/exp/`: `merge.py`, `basmaster-en.sqlite3`, `basmaster-wrap.sqlite3`, and the `soa-en` / `soa-wrap` wrappers.
 
 ## 3. Rendering English: font, line breaks, markup
 
@@ -221,7 +223,7 @@ The scripts and masters are in `/home/fish/.claude/jobs/ac4802d9/tmp/english-exp
   - Every Japanese glyph advances 24.
   - The curly quotes ’ “ ” are half-width cells with the glyph at the left, so "you’re" shows a small gap. ASCII `'` and `"` look better.
 - **No other text source.** No system font is used: the only JNI text is the soft-keyboard EditText, and `runtime/src/app/text_overlay.cpp` draws only the port's own keyboard box.
-- **Proof:** `/home/fish/.claude/jobs/ac4802d9/tmp/english-font/sample_gl_story.png` renders a Global English story line in the game font, with é ï – — drawn as `?`. The atlas and ASCII renders are in the same directory.
+- **Proof:** `work/english/font/sample_gl_story.png` renders a Global English story line in the game font, with é ï – — drawn as `?`. The atlas and ASCII renders are in the same directory.
 
 ### 3.2 Line breaks, box widths, shrink
 

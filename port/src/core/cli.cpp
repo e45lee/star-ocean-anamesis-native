@@ -82,10 +82,6 @@ int parse_soa_args(int argc, const char* const* argv, SoaArgs& a, std::vector<st
         ->type_name("DIR")
         ->group(drive);
 
-    app.add_option("--fake-server", cl.fake_server_dir,
-                   "the FakeApiCaller route's canned responses (default <repo>/port/fakeapi/responses; --server inproc only)")
-        ->type_name("DIR")
-        ->group(diag);
     app.add_option("--fake-server-schema", cl.fake_server_schema, "write the response key schema there at CGame::OnInitialize")
         ->type_name("FILE")
         ->group(diag);

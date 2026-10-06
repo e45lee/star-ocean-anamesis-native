@@ -29,7 +29,7 @@ constexpr uint32_t kFidUpdateSession = 0xea04f3fd;
 struct LiveBackend : Backend {
     // The library's request lifecycle (server::answer: EndMissionTalk, the story campaign, the
     // transaction). (d) no handler: an empty success with data.Time (GameServer logs it), plus the
-    // campaign's data, as soa adds it to the canned file it falls back to.
+    // campaign's data, as soa adds it to the {} it answers then.
     uint32_t call(const Request& r, std::vector<uint8_t>* out) override {
         Reply reply = answer(r, [] {
             Value data = Value::object();

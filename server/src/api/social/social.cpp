@@ -20,7 +20,7 @@ namespace {
 //
 // The follow menu's blocked and recently-played lists.
 //   (d) Both are empty: there are no other players. Answering with the player state (instead of
-//       the FakeApiCaller's empty canned body) keeps data.Time / Player current.
+//       an empty {}) keeps data.Time / Player current.
 // Answers: the player state {Time, Player, Wallet}.
 std::vector<u8> empty_social_list(ext::Ctx& ctx, const Request&) { return ext::with_player_state(ctx); }
 

@@ -21,6 +21,8 @@ Usage:
   tools/english_mt_run.py names [--model 31b|26b]   # M2: katakana terms of the gap -> name list
   tools/english_mt_run.py ui    [--model 31b|26b]   # M3: the master's gap texts
   tools/english_mt_run.py story [--model 31b|26b]   # M4: the story's untranslated lines, by scene
+  tools/english_mt_run.py shorten                    # E7: machine story lines over four window lines,
+                                                     # rewritten shorter (story-short.jsonl)
   tools/english_mt_run.py status                     # rows done per checkpoint
 Options: --slots N (4), --port P (18431), --limit N (stop after N new items), --out DIR,
          --redo KEYS (translate these checkpoint keys again, e.g. rows import-mt rejected after a
@@ -478,6 +480,49 @@ def cmd_story(a):
     run_batch(a, items, a.out / "story.jsonl", req, row)
 
 
+SHORT_VERSION = "short-v1"
+SHORT_SYSTEM = """You edit the English localization of the Japanese mobile RPG STAR OCEAN: anamnesis.
+A line of story dialogue is too long for the game's small message window. Rewrite it shorter, in at most {limit} characters (tags not counted), keeping its meaning, the speaker's voice and tone, every name exactly, and every tag (<player>, <fontcolor=...>, <fontsize=...>, </font>) exactly.
+Output only the shortened line, on one line, nothing else."""
+STORY_LINES_MAX = 4      # the message window shows four lines (english.md 7.5)
+SHORT_LIMIT = 150        # characters asked for: about four lines of the window
+
+
+def cmd_shorten(a):
+    """E7/M4: machine story lines that need more than four lines of the message window (re-broken
+    at the window's width with the font's advances, as tools/english_text.py does) are sent once
+    more, with the Japanese for reference, to be rewritten shorter. Writes story-short.jsonl in
+    story.jsonl's form (one line per item); tools/english_text.py import-mt --replace takes it."""
+    import english_text as T
+    ctx = T.Ctx()
+    font = ctx.fnt
+    items = []
+    for line in open(a.out / "story.jsonl", encoding="utf-8"):
+        r = json.loads(line)
+        for x in r["lines"]:
+            if not x["mt"]:
+                continue
+            e = font.rebreak(font.fold(x["mt"]).strip(), T.STORY_BUDGET, T.PLAYER_PX)
+            if e.count("\n") + 1 > STORY_LINES_MAX:
+                items.append((x["message_id"] + ":" + E.sha1(x["mt"]), (r["scene"], x)))
+    items.sort()
+    print(f"[shorten] {len(items)} story lines over {STORY_LINES_MAX} lines", flush=True)
+
+    def req(p):
+        _scene, x = p
+        user = (f"Speaker: {x['speaker']}\nJapanese (reference): {x['ja'].replace(chr(10), '')}\n"
+                f"English ({len(x['mt'])} characters): {x['mt']}")
+        return SHORT_SYSTEM.format(limit=SHORT_LIMIT), user, 200
+
+    def row(k, p, txt, finish):
+        scene, x = p
+        txt = txt.strip().strip('"')
+        return {"key": k, "scene": scene, "kind": "story", "raw": txt, "finish": finish,
+                "lines": [dict(x, mt=txt or None, long=x["mt"])],
+                "prompt": f"{PROMPT_VERSION}+story-v1+{SHORT_VERSION}"}
+    run_batch(a, items, a.out / "story-short.jsonl", req, row)
+
+
 def cmd_status(a):
     for p in sorted(a.out.glob("*.jsonl")):
         n = sum(1 for _ in open(p, encoding="utf-8"))
@@ -486,7 +531,7 @@ def cmd_status(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["names", "ui", "story", "status"])
+    ap.add_argument("cmd", choices=["names", "ui", "story", "shorten", "status"])
     ap.add_argument("--model", choices=sorted(MODELS), default="31b")
     ap.add_argument("--slots", type=int, default=4)
     ap.add_argument("--port", type=int, default=18431)
@@ -497,7 +542,7 @@ def main():
     ap.add_argument("--out", type=pathlib.Path, default=REPO / "work/english/mt")
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
-    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "status": cmd_status}[a.cmd](a)
+    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "status": cmd_status}[a.cmd](a)
 
 
 if __name__ == "__main__":

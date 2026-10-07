@@ -72,6 +72,11 @@ int parse_args(int argc, const char* const* argv, ServerArgs& a, std::vector<std
     app.add_option("--out", a.replay_out, "with --replay: the output dir")->type_name("OUT")->group(tools);
     app.add_flag("--list-apis", a.list_apis, "every method and what answers it (core, a module file, - none)")->group(tools);
     app.add_flag("--list-hooks", a.list_hooks, "every module hook in its run order (kind, module, file:line, detail)")->group(tools);
+    app.add_option("--english-dump", a.english_dump,
+                   "write the English tables --english serves (the derived layer with our rows: DIR/master-en.tsv, "
+                   "DIR/story-en/TS_*.tsv, in tools/english_text.py's form), exit")
+        ->type_name("DIR")
+        ->group(tools);
     app.add_option("--cdn-check", a.cdn_paths, "build the CDN content, print it and the answers for PATHs (URL paths), exit")
         ->type_name("[PATH..]")
         ->expected(0, -1)

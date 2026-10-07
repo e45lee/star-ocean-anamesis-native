@@ -389,8 +389,11 @@ def sline(mid, ja, mt):
     return {"message_id": mid, "file": "TS_1999", "ja_sha1": C.sha1(ja), "ja": ja, "speaker": "Coro", "mt": mt}
 
 
-def index(data):
-    return {r["file"]: r for r in T.read_tsv(data / "story-en/index.tsv", ["file", "lines", "need", "english", "complete"])}
+def index(data, scen):
+    """story-en-full/index.tsv of `derive` (completeness needs the derived lines too)."""
+    out = data.parent / "derived"
+    srun(data, scen, "derive", "--out", str(out))
+    return {r["file"]: r for r in T.read_tsv(out / "story-en-full/index.tsv", ["file", "lines", "need", "english", "complete"])}
 
 
 def test_story_build(data, scenario, font):
@@ -422,12 +425,12 @@ def test_story_import_mt_and_completeness(data, scenario, tmp_path):
     rej = {r["message_id"]: json.loads(r["problems"])
            for r in T.read_tsv(data.parent / "work/mt-rejected-story.tsv", T.REJECT_COLS)}
     assert "tags" in rej["9999_t_02"]
-    assert index(data)["TS_1999"]["complete"] == "no"
+    assert index(data, scen)["TS_1999"]["complete"] == "no"
     served = {r["message_id"]: r for r in T.read_tsv(data / "story-en/TS_1999.tsv", T.OUT_COLS)}
     assert served["9999_t_01"]["source"] == "machine"
     # a person fills the last line: the file is complete
     assert srun(data, scen, "set", "9999_t_02", "<player>, wait!", "--by", "tester") == 0
-    assert index(data)["TS_1999"]["complete"] == "yes"
+    assert index(data, scen)["TS_1999"]["complete"] == "yes"
     # a re-import with --replace replaces the machine line and keeps the human one
     ck.write_text(story_ck([sline("9999_t_01", "テストの行です。", "A test line."),
                             sline("9999_t_02", "<player>、待って！", "<player>, hold on!")], prompt="v3") + "\n")
@@ -447,11 +450,15 @@ def test_story_stale_and_check_without_scenario(data, scenario, tmp_path, capsys
     assert [x[0] for x in s.stale] == ["9999_t_01"] and "9999_t_01" not in s.out
     assert srun(data, scen, "stale", "--fail") == 1
     # without the Scenario files the story part is skipped, and --check still judges the master part
+    (data / "story/TS_1999.tsv").write_text(T.tsv_text(T.TABLE_COLS, [
+        {"message_id": "9999_t_01", "ja_sha1": C.sha1("テストの行です。"), "en": "A line.", "source": "human",
+         "engine": "", "date": "2026-10-08", "editor": "tester", "note": ""}]), encoding="utf-8")
     srun(data, scen, "build")
-    before = (data / "story-en/index.tsv").read_text()
+    before = (data / "story-en/TS_1999.tsv").read_text()
     assert srun(data, tmp_path / "no-such-dir", "build", "--check") == 0
     assert "story: skipped" in capsys.readouterr().out
-    assert (data / "story-en/index.tsv").read_text() == before
+    srun(data, tmp_path / "no-such-dir", "build")
+    assert (data / "story-en/TS_1999.tsv").read_text() == before
 
 
 def test_story_po_export(data, scenario, tmp_path):
@@ -498,3 +505,30 @@ def test_glossary_demotions(built):
     assert "モンスター" not in g and "願い" not in g and "期間：" not in g
     assert g["ローク"]["en"] == "Roak" and g["ローク"]["source"] == "human"
     assert g["紋章石"]["en"] == "Gems"  # Global's names and terms stay
+
+
+# ---------------------------------------------------------------- committed = our rows only (2026-10-07)
+
+def test_committed_tables_hold_only_our_rows(built):
+    """The user's decision: data/english carries machine / human / reviewed rows (+ client strings),
+    never Global's English; official / memory / template are derived at build time."""
+    for r in T.read_tsv(T.DATA / "master-en.tsv", T.OUT_COLS):
+        assert r["source"] in ("machine", "human", "reviewed"), r
+    for p in (T.DATA / "story-en").glob("*.tsv"):
+        assert p.name != "index.tsv"
+        for r in T.read_tsv(p, T.OUT_COLS):
+            assert r["source"] in ("machine", "human", "reviewed"), r
+    assert all(r["source"] != "official" for r in T.read_tsv(T.DATA / "glossary.tsv", T.GLOSSARY_COLS))
+    # the derived glossary still holds Global's terms
+    assert sum(1 for r in built.glossary_rows if r["source"] == "official") == 3246
+
+
+def test_derive_full(built, tmp_path):
+    """`derive` writes the resolved tables (all sources): our rows win as the precedence says."""
+    T.derive(T.Ctx(), tmp_path)
+    full = {r["message_id"]: r for r in T.read_tsv(tmp_path / "master-en-full.tsv", T.OUT_COLS)}
+    assert len(full) == len(built.out)
+    assert {r["source"] for r in full.values()} >= {"official", "memory", "template", "human"}
+    for r in T.read_tsv(T.DATA / "master-en.tsv", T.OUT_COLS):
+        if r["source"] != "machine":
+            assert full[r["message_id"]] == r

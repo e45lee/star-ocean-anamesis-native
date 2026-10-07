@@ -32,6 +32,7 @@ target_include_directories(soa::stb INTERFACE ${SOA_STB_INCLUDE_DIR})
 find_package(msgpack-cxx CONFIG REQUIRED)  # target msgpack-cxx (headers; the server's MessagePack codec)
 find_package(httplib CONFIG REQUIRED)  # target httplib::httplib (headers; soa-server's HTTP server and client)
 find_package(nlohmann_json CONFIG REQUIRED)  # target nlohmann_json::nlohmann_json (headers; the server's English art recipes, server/src/english_art)
+find_package(utf8proc CONFIG REQUIRED)  # target utf8proc::utf8proc (the server's English derivation: NFKC, categories)
 find_package(CLI11 CONFIG REQUIRED)  # target CLI11::CLI11 (vcpkg builds it precompiled): the programs' command lines (soa_env, common/include/soa/cli.h)
 # The web view's page renderer (webview/, docs/webview.md): litehtml lays out HTML/CSS (gumbo
 # parses it; the overlay port cmake/vcpkg-ports/litehtml).

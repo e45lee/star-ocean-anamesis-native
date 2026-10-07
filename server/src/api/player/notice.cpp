@@ -319,7 +319,8 @@ NATIVE_TEST("player/notice") {
 NATIVE_TEST("player/notice-english") {
     std::string fixture = find_repo_file("server/tests/fixtures/english-fixture.tsv");
     if (fixture.empty()) return t.fail("server/tests/fixtures/english-fixture.tsv not found");
-    ServerConfig saved = config();
+    const bool saved_english = config().english;
+    const std::string saved_text = config().english_text;
     config().english = true;
     config().english_text = fixture;
     std::string h, p;
@@ -327,7 +328,7 @@ NATIVE_TEST("player/notice-english") {
         h = notice_lines(ctx).html();
         p = notice_page(ctx);
     });
-    config() = saved;
+    config().english = saved_english, config().english_text = saved_text;  // only these: the scratch server sets others
     if (!ran) return t.fail("needs the 3.7.0 master (data/basmaster-3.7.0.sqlite3) and the seed save (data/saves/seed/Game.xml)");
     t.expect_eq(h.find("<html lang=\"en\">") != std::string::npos, true, "html lang en");
     t.expect_eq(h.find("<title>Notices</title>") != std::string::npos && h.find("<h1>Notices</h1>") != std::string::npos, true, "title");

@@ -27,6 +27,7 @@
 #include "cli.h"
 #include "replay.h"
 #include "soaserver/cdn.h"
+#include <soa/file_tree.h>
 #include "soaserver/config.h"
 #include "soaserver/master_source.h"
 #include "soaserver/ext.h"
@@ -126,6 +127,19 @@ int main(int argc, char** argv) {
         fprintf(stderr, "soa-server: repo %s\n", c.repo_roots.empty() ? "(not found)" : c.repo_roots[0].c_str());
         auto [ran, failed] = soa::server::testing::run_tests(filter, 1, true, shuffle);
         return failed ? 1 : 0;
+    }
+    if (!args.english_dump.empty()) {
+        // The English tables of --english without the network (docs/server-rules.md#english-derive)
+        c.english = true;
+        auto o = soa::server::cdn::options_from_config();
+        std::string err;
+        auto tree = soa::FileTree::open(o.mirror, &err);
+        soa::server::cdn::EnglishTables t;
+        if (!tree || !soa::server::cdn::english_tables(o, *tree, t, &err)) {
+            fprintf(stderr, "soa-server: --english-dump: %s\n", err.c_str());
+            return 1;
+        }
+        return soa::server::cdn::write_english_tables(t, args.english_dump) ? 0 : 1;
     }
     if (cdn_check) {
         // The CDN content without the network (server/README.md "CDN"): what the HTTP server serves.

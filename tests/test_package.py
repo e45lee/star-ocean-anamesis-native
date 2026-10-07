@@ -42,11 +42,46 @@ def test_english_tables_are_packaged(tmp_path):
     data/english/ (the tool's inputs)."""
     stage, root = make_stage(tmp_path)
     assert (root / "data/english/master-en.tsv").is_file()
-    assert len(list((root / "data/english/story-en").glob("TS_*.tsv"))) > 0
+    # our story rows (2026-10-07: only machine/human/reviewed rows are committed; there may be none yet)
+    repo = pathlib.Path(__file__).resolve().parent.parent
+    assert len(list((root / "data/english/story-en").glob("TS_*.tsv"))) == \
+        len(list((repo / "data/english/story-en").glob("TS_*.tsv")))
     assert not (root / "data/english/glossary.tsv").exists() and not (root / "data/english/story-en/index.tsv").exists()
     assert len(list((root / "standin-assets-en/recipes").glob("*.json"))) > 0
     assert package.check(str(stage), "port", None) == []
     assert package.check(str(stage), "viewer", None) != []  # the viewer runs no server: not on its list
+
+
+def test_global_master_is_the_one_exception(tmp_path):
+    """The user, 2026-10-07 (PLAN-english M-Q5, P2): packages carry data/basmaster-gl.sqlite3, git's
+    own blob of it, and the scan accepts nothing else that looks like a master DB."""
+    stage, root = make_stage(tmp_path)
+    assert (root / "data/basmaster-gl.sqlite3").read_bytes() == (ROOT / "data/basmaster-gl.sqlite3").read_bytes()
+    assert package.check(str(stage), "port", None) == []
+
+
+@pytest.mark.parametrize("case", ["other-master-at-path", "changed", "renamed", "copy-elsewhere", "jp-master"])
+def test_global_master_exception_is_exact(tmp_path, case):
+    stage, root = make_stage(tmp_path)
+    gl = root / "data/basmaster-gl.sqlite3"
+    if case == "other-master-at-path":  # another master DB under the allowed name
+        gl.unlink()
+        db = sqlite3.connect(gl)
+        db.execute("create table master_text(message_id text, text_value text)")
+        db.commit()
+        db.close()
+    elif case == "changed":  # Global's, one byte changed
+        b = bytearray(gl.read_bytes())
+        b[-1] ^= 1
+        gl.write_bytes(bytes(b))
+    elif case == "renamed":
+        gl.rename(root / "data/basmaster-gl2.sqlite3")
+    elif case == "copy-elsewhere":
+        shutil.copyfile(gl, root / "data/english/basmaster-gl.sqlite3")
+    else:  # the JP master under Global's name
+        shutil.copyfile(ROOT / "data/basmaster-3.7.0.sqlite3", gl)
+    problems = package.check(str(stage), "port", None)
+    assert any("master_* tables" in x or "game file name" in x for x in problems), problems
 
 
 def test_pools_are_cleaned(tmp_path):

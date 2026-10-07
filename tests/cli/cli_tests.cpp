@@ -305,6 +305,8 @@ int main() {
     // (2026-10-07, docs/PLAN-english.md).
     // --stamina-heal-time (2026-10-06, a test switch: tests/diff runs with 0, no stamina regeneration).
     const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time"};
+    // soa-server's own: --english-dump (2026-10-07, docs/server-rules.md#english-derive).
+    const V kAddedSoaServer = {"--english", "--english-text", "--stamina-heal-time", "--english-dump"};
     // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
     const V kAddedLang = {"--lang", "--voice-lang"};
     // Added to soa: --render-scale (2026-10-07; port/src/core/cli.cpp, the resolution natives).
@@ -483,6 +485,7 @@ int main() {
 
     // ---- soa-server ----
     const std::vector<Row> server_only = {
+        {{"--english-dump", "/tmp/en"}, "--english-dump is new (docs/server-rules.md#english-derive: the English tables --english serves)", -1},
         {{}},
         {{"--help"}},
         {{"-h"}},
@@ -616,7 +619,7 @@ int main() {
             soa::server::app::ServerArgs a;
             a.config = &c;
             soa::server::app::parse_args(1, argv, a, &names);
-            check_names("soa-server", names, server_old, kAddedServer, {}, server_rows);
+            check_names("soa-server", names, server_old, kAddedSoaServer, {}, server_rows);
         }
         {
             soa::emu::EmuArgs a;

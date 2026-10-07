@@ -15,6 +15,7 @@ struct ServerArgs {
     std::string listen = "127.0.0.1:44300", http = "127.0.0.1:44380", bridge_url;
     bool selftest = false, cdn_check = false, keep_open_after_error = false, list_apis = false, list_hooks = false;
     std::string replay_dir, replay_out;
+    std::string english_dump;  // --english-dump DIR
     uint64_t shuffle = 0;
     std::vector<std::string> cdn_paths;
     int verbose = 0;  // -v

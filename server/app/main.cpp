@@ -4,7 +4,6 @@
 // (--selftest) with no game loaded.
 #include <signal.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -39,16 +38,12 @@ namespace {
 
 using soa::server::ServerConfig;
 
-bool is_repo(const std::string& d) {
-    struct stat st;
-    return stat((d + "/server/CMakeLists.txt").c_str(), &st) == 0 || stat((d + "/port/CMakeLists.txt").c_str(), &st) == 0;
-}
 // The repo roots, as soa finds them (common soa/install.h repo_roots: --repo; in a development
 // build also a checkout upwards from the executable or the working directory, and a worktree's
 // main checkout; then the install dirs). A packaged soa-server's data files (data/gacha_pools.sqlite3,
 // data/saves/seed/Game.xml, standin-assets/) sit at their repo paths beside it.
 soa::install::RepoRoots repo_roots(const std::string& given) {
-    soa::install::RepoRoots r = soa::install::repo_roots(given, is_repo);
+    soa::install::RepoRoots r = soa::install::repo_roots(given);  // (install::is_checkout)
     if (!r.warning.empty()) fprintf(stderr, "soa-server: %s\n", r.warning.c_str());
     return r;
 }

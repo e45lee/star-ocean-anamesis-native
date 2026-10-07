@@ -109,7 +109,8 @@ fi
 viewer_pkg=
 if [ "$viewer" = 1 ]; then
   pkg=$(ls apk/*.xapk 2>/dev/null | head -n1 || true)  # 380-ok: soa-viewer.exe's game
-  main=$(dirname "$(readlink -f work)")
+  . "$repo/scripts/lib/checkout.sh"
+  main=$(main_checkout "$repo")
   [ -n "$pkg" ] || pkg=$(ls "$main"/apk/*.xapk 2>/dev/null | head -n1 || true)  # 380-ok: (a worktree: the main checkout's)
   if [ -n "$pkg" ]; then
     mkdir -p "$dest/apk"

@@ -24,8 +24,8 @@ case $base in /*) ;; *) base=$PWD/$base ;; esac
 cd "$repo"
 emu=$repo/build/emulator/soa-emu srv=$repo/build/server/soa-server
 clock=${SMOKE_CLOCK:-2026-09-30 12:00:00}
-master=$repo/data/basmaster-3.7.0.sqlite3
-[ -s "$master" ] || master=$(dirname "$(readlink -f "$repo/work")")/data/basmaster-3.7.0.sqlite3
+. "$repo/scripts/lib/checkout.sh"
+master=$(repo_file "$repo" data/basmaster-3.7.0.sqlite3) || master=$repo/data/basmaster-3.7.0.sqlite3
 rm -rf "${out:?}"; mkdir -p "$out/server"
 elog=$out/emu.log slog=$out/server.log fifo=$out/fifo
 read -r game_port http_port < <(python3 -c '

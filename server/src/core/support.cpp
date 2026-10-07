@@ -10,6 +10,7 @@
 #include <mutex>
 
 #include <soa/file_tree.h>
+#include <soa/install.h>
 
 #include "soaserver/config.h"
 #include "soaserver/hooks.h"
@@ -25,27 +26,7 @@ ServerConfig& config() {
     return c;
 }
 
-namespace {
-bool exists(const std::string& p) {
-    struct stat st;
-    return !p.empty() && stat(p.c_str(), &st) == 0;
-}
-}  // namespace
-
-std::string find_repo_file(std::initializer_list<const char*> rels) {
-    const auto& all = config().repo_roots;
-    for (const char* rel : rels) {
-        if (all.empty()) {
-            if (exists(rel)) return rel;
-            continue;
-        }
-        for (auto& r : all) {
-            std::string p = r + "/" + rel;
-            if (exists(p)) return p;
-        }
-    }
-    return "";
-}
+std::string find_repo_file(std::initializer_list<const char*> rels) { return install::find_file(config().repo_roots, rels); }
 
 std::string find_repo_file(const std::string& rel) { return find_repo_file({rel.c_str()}); }
 

@@ -78,14 +78,9 @@ if [ -z "$mode" ]; then
 fi
 
 # One run.
-repo_file() {   # a repo file here, else in the main checkout work/ links to (a worktree)
-    if [ -s "$repo/$1" ]; then echo "$repo/$1"; return; fi
-    local main
-    main=$(dirname "$(readlink -f "$repo/work")")
-    [ -n "$main" ] && [ -s "$main/$1" ] && echo "$main/$1"
-}
-master=$(repo_file data/basmaster-3.7.0.sqlite3)
-download=$(repo_file work/SOA-3.7.0-canonical-data.zip)
+. "$repo/scripts/lib/checkout.sh"  # repo_file DIR REL: here, else in the main checkout (a worktree)
+master=$(repo_file "$repo" data/basmaster-3.7.0.sqlite3)
+download=$(repo_file "$repo" work/SOA-3.7.0-canonical-data.zip)
 [ -n "$master" ] || { echo "FAIL: data/basmaster-3.7.0.sqlite3 not found"; exit 1; }
 [ -n "$download" ] || { echo "FAIL: work/SOA-3.7.0-canonical-data.zip not found"; exit 1; }
 (cd "$standins" && find . -type f | sed 's|^\./||' | sort) > "$out/standins.txt"

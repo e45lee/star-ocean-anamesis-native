@@ -48,6 +48,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from soa_save import adld, slz  # noqa: E402
+from soa_save.paths import master_db  # noqa: E402
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 AIF2PNG = os.path.join(ROOT, "tools", "aif2png", "aif2png")
 DEFAULT_GACHAS = ["gacha_pickup_role_0054", "gacha_pickup_role_0056", "gacha_pickup_role_0283"]
@@ -416,18 +417,11 @@ def make_pickup(w, h, g, c, theme=THEMES["beach"]):
 
 # ---------------------------------------------------------------- data
 def find_db(path):
-    cands = [path] if path else []
-    cands.append(os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3"))
-    try:
-        common = subprocess.run(["git", "-C", ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir"],
-                                capture_output=True, text=True, check=True).stdout.strip()
-        cands.append(os.path.join(os.path.dirname(common), "data", "basmaster-3.7.0.sqlite3"))
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        pass
-    for c in cands:
-        if c and os.path.isfile(c) and os.path.getsize(c) > 0:
-            return c
-    sys.exit("basmaster-3.7.0.sqlite3 not found (use --db)")
+    """--db, else data/basmaster-3.7.0.sqlite3 here or in the main checkout (soa_save.paths.master_db)."""
+    db = master_db(path)
+    if db is None:
+        sys.exit("basmaster-3.7.0.sqlite3 not found (use --db)")
+    return str(db)
 
 
 def decode_png(src, asset, tmp):

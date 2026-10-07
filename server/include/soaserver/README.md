@@ -15,8 +15,7 @@ What the port (`port/src/native/api/*`, `common/test.cpp`, `ui/webview_local.cpp
 | `hooks.h` | what the server asks its host: the asset index |
 | `log.h` | the log sink |
 | `events.h`, `api_campaign.h` | the event and story-campaign entry points the hosts call |
-| `cdn.h`, `adld.h` | the CDN content and ADLD packing |
-| `chash32.h` | the game's `Framework::CHash32` |
+| `cdn.h` | the CDN content (ADLD packing: common/include/soa/adld.h) |
 | `npc_status.h` | mission NPC status from the master data |
 | `testing.h`, `native_test.h`, `scratch.h` | the test registry and runner, the `NATIVE_TEST` spelling, a scratch server for tests outside the library |
 

@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "api/settings/config.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/ext.h"
 #include "soaserver/native_test.h"
 #include "testing/module_test.h"

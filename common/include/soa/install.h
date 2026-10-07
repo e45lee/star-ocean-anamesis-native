@@ -27,6 +27,7 @@
 #include <cstring>
 #include <filesystem>
 #include <functional>
+#include <initializer_list>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -146,8 +147,15 @@ inline std::string parent_dir(const std::string& p) {
     return s == 0 ? "/" : p.substr(0, s);
 }
 
-// Is `dir` a checkout? Each program passes its own marker (the CMakeLists.txt of its parts).
+// Is `dir` a checkout? (The rule's tests pass their own.)
 using CheckoutTest = std::function<bool(const std::string& dir)>;
+
+// Is `dir` a source checkout of this repository? One marker for every program: the root
+// CMakeLists.txt and common/'s, the parts every program is built from. (Shell: scripts/lib/checkout.sh;
+// Python: soa_save.paths.main_checkout.)
+inline bool is_checkout(const std::string& dir) {
+    return is_file(dir + "/CMakeLists.txt") && is_file(dir + "/common/CMakeLists.txt");
+}
 
 // The first directory from `dir` upwards that is a checkout, "" when none.
 inline std::string checkout_upwards(std::string dir, const CheckoutTest& is_checkout) {
@@ -226,10 +234,10 @@ inline RepoRoots repo_roots_for(bool release, const std::string& given, const st
 }
 
 // This process's repo roots (kReleasePackage's rule).
-inline RepoRoots repo_roots(const std::string& given, const CheckoutTest& is_checkout) {
+inline RepoRoots repo_roots(const std::string& given, const CheckoutTest& checkout = is_checkout) {
     std::error_code ec;
     std::filesystem::path cwd = std::filesystem::current_path(ec);
-    return repo_roots_for(kReleasePackage, given, exe_dir(), ec ? std::string() : cwd.generic_string(), install_dirs(), is_checkout);
+    return repo_roots_for(kReleasePackage, given, exe_dir(), ec ? std::string() : cwd.generic_string(), install_dirs(), checkout);
 }
 
 // The first `rel` under one of `roots` (in order), "" when none has it.
@@ -237,6 +245,21 @@ inline std::string find_in_roots(const std::vector<std::string>& roots, const st
     std::error_code ec;
     for (auto& r : roots)
         if (std::filesystem::exists(std::filesystem::path(r + "/" + rel), ec)) return r + "/" + rel;
+    return "";
+}
+
+// The programs' repo-file lookup (their find_repo_file): the first of `rels` (in order) under one
+// of `roots` (in order: all roots for a rel before the next rel); with no roots at all, `rel`
+// itself, relative to the working directory. "" when none exists.
+inline std::string find_file(const std::vector<std::string>& roots, std::initializer_list<const char*> rels) {
+    std::error_code ec;
+    for (const char* rel : rels) {
+        if (roots.empty()) {
+            if (std::filesystem::exists(std::filesystem::path(rel), ec)) return rel;
+            continue;
+        }
+        if (std::string p = find_in_roots(roots, rel); !p.empty()) return p;
+    }
     return "";
 }
 

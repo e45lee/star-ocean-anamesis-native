@@ -52,8 +52,7 @@ bool exists(const std::string& p) {
 // from the executable (build/emulator/soa-emu) or the working directory; a release build never
 // searches for a checkout around it. Empty when there is none.
 std::vector<std::string> find_checkouts(const std::string& given) {
-    auto is_repo = [](const std::string& d) { return exists(d + "/emulator/CMakeLists.txt") && exists(d + "/runtime/CMakeLists.txt"); };
-    soa::install::RepoRoots r = soa::install::repo_roots(given, is_repo);
+    soa::install::RepoRoots r = soa::install::repo_roots(given);  // (install::is_checkout)
     if (!r.warning.empty()) LOGW("emu", "%s", r.warning.c_str());
     std::vector<std::string> v;
     if (!r.root.empty()) {

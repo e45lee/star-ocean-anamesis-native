@@ -50,11 +50,9 @@
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
-# The main checkout, also from a worktree (git's common dir's parent); else this checkout.
-main=$repo
-if [ "$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null)" = "$(cd "$repo" && pwd -P)" ]; then
-  main=$(cd "$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir)/.." && pwd)
-fi
+# The main checkout, also from a worktree; else this checkout (scripts/lib/checkout.sh).
+. "$repo/scripts/lib/checkout.sh"
+main=$(main_checkout "$repo")
 bdir=build
 cfg_extra=
 windows=

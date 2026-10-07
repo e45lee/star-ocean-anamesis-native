@@ -1,6 +1,6 @@
-// ADLD packing (soaserver/adld.h). The decrypt primitives moved here from the port
-// (port/src/native/engine/asset_decrypt.cpp, which forwards to them); the encrypt half is ours.
-#include "soaserver/adld.h"
+// ADLD packing (soa/adld.h; moved to common/ from soa-server's cdn/adld.cpp). The decrypt half is
+// the game's own; the encrypt half is ours.
+#include "soa/adld.h"
 
 // The low-level AES API on purpose: the game links OpenSSL's AES_cbc_encrypt, whose partial-block
 // behaviour the port reproduces (deprecated since OpenSSL 3.0, still provided).
@@ -11,9 +11,9 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 
-namespace soa::server::adld {
+namespace soa::adld {
 
 const char* const kDefaultIV = "09375711857134629684891855841614";
 
@@ -158,4 +158,4 @@ std::vector<uint8_t> encrypt(const std::string& name, const uint8_t* plain, size
     return out;
 }
 
-}  // namespace soa::server::adld
+}  // namespace soa::adld

@@ -63,7 +63,7 @@ $ep = $null
 try {
     $up = $false
     for ($t = 0; $t -lt 480; $t++) {
-        if ((Test-Path $slog) -and (Select-String -Path $slog -Pattern '^soa-server: game' -Quiet)) { $up = $true; break }
+        if ((Test-Path $slog) -and (Select-String -Path $slog -Pattern '^soa-server: ready' -Quiet)) { $up = $true; break }
         if ($sp.HasExited) { break }
         Start-Sleep -Milliseconds 500
     }
@@ -72,7 +72,7 @@ try {
         if (Test-Path $slog) { Get-Content $slog -Tail 5 }
         exit 1
     }
-    Start-Sleep -Milliseconds 200  # (its CDN line follows the game line)
+    # (the CDN line comes before the ready line: scripts/lib/with-server.sh)
     if (-not (Select-String -Path $slog -Pattern '^soa-server: CDN' -Quiet)) {
         Write-Host "run-port-server: soa-server found no 3.7.0 download (see README.txt); log: $slog"; exit 1
     }

@@ -19,12 +19,13 @@ unicorn
 # images: tools/contact_sheet.py (screenshot contact sheets), tools/make_standin_banners.py,
 # tools/gacha_verify.py (contact sheets)
 pillow
-# array XOR / pixels: tools/check_download.py, tools/make_standin_banners.py, tools/gacha_verify.py
+# pixels: tools/make_standin_banners.py (the ETC2 encoder), tools/gacha_verify.py
 numpy
 # image feature matching (SIFT, FLANN, RANSAC): tools/gacha_verify.py, tests/test_gacha_verify.py
 opencv-python-headless
-# SLZ codec 7 (zstd): tools/missing_assets/presence.py, tools/make_standin_banners.py,
-# tools/english_core.py (the font of the English tools), port/decomp/bullet/pin/scan_rb.py
+# SLZ codec 7 (zstd): soa_save/slz.py (for tools/missing_assets/presence.py,
+# tools/make_standin_banners.py, tools/english_core.py (the font of the English tools),
+# port/decomp/bullet/pin/scan_rb.py)
 zstandard
 # PO files (Poedit, Lokalize, Weblate): tools/english_text.py export-po / import-po, tests/test_english_text.py
 polib

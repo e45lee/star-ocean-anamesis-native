@@ -85,14 +85,9 @@ py=$repo/.venv/bin/python
 "$py" -c 'import PIL' 2>/dev/null || die "Pillow is needed for the contact sheet (.venv/bin/pip install -r requirements.txt)"
 
 # Repo files: here, else in the main checkout work/ links to (a git worktree lacks untracked files).
-repo_file() {
-    if [ -s "$repo/$1" ] || [ -d "$repo/$1" ]; then echo "$repo/$1"; return; fi
-    local main
-    main=$(dirname "$(readlink -f "$repo/work")")
-    [ -n "$main" ] && { [ -s "$main/$1" ] || [ -d "$main/$1" ]; } && echo "$main/$1"
-}
-master=$(repo_file data/basmaster-3.7.0.sqlite3)
-download=$(repo_file work/SOA-3.7.0-canonical-data.zip)
+. "$repo/scripts/lib/checkout.sh"  # repo_file DIR REL: here, else in the main checkout (a worktree)
+master=$(repo_file "$repo" data/basmaster-3.7.0.sqlite3)
+download=$(repo_file "$repo" work/SOA-3.7.0-canonical-data.zip)
 seed=$repo/data/saves/seed/Game.xml
 standins=$repo/standin-assets
 [ -n "$master" ] || die "data/basmaster-3.7.0.sqlite3 not found"

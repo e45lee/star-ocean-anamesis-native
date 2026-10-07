@@ -18,7 +18,7 @@
 #include "cdn/files.h"
 #include "core/log.h"
 #include "english_art/art.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/english_art.h"
 
 namespace soa::server::english_art {

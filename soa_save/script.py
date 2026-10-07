@@ -36,13 +36,13 @@ import argparse
 import io
 import json
 import pathlib
-import struct
 import sys
 import zipfile
 
 import msgpack
 
-from .adld import chash32, decode
+from .adld import XOR, decode
+from .adld import encode as adld_encode
 from .master import CACHE, NAMES_EN, Master
 from .paths import REPO
 from .paths import xapk
@@ -95,8 +95,7 @@ def asset_name(path):
 
 def encrypt(plain: bytes, name: str) -> bytes:
     """Inverse of adld.decode for flags=1 (the flavour every Script/Scenario file uses)."""
-    k = b"%x" % chash32(name.encode())
-    return b"ADLD" + struct.pack("<I", 1) + bytes(8) + bytes(b ^ k[i % len(k)] for i, b in enumerate(plain))
+    return adld_encode(plain, name, XOR)
 
 
 def load(data: bytes, name: str):

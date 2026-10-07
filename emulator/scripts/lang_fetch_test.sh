@@ -40,17 +40,12 @@ soactl="$repo/control/soactl.py"
 member=sqlite/basmaster-en.sqlite3
 [ -x "$emu" ] || { echo "FAIL: $emu not built"; exit 1; }
 [ -x "$srv" ] || { echo "FAIL: $srv not built"; exit 1; }
-repo_file() {   # a repo file here, else in the main checkout work/ links to (a worktree)
-    if [ -e "$repo/$1" ]; then echo "$repo/$1"; return; fi
-    local main
-    main=$(dirname "$(readlink -f "$repo/work")")
-    [ -n "$main" ] && [ -e "$main/$1" ] && echo "$main/$1"
-}
-master=$(repo_file data/basmaster-3.7.0.sqlite3)
-download=$(repo_file work/SOA-3.7.0-canonical-data.zip)
-table=${EN_TABLE:-$(repo_file data/english/master-en.tsv)}
-[ -n "$table" ] || table=$(repo_file work/english/en-server/master-en.tsv)
-phone_src=${EMU_DATA:-$(repo_file work/phone-3.7.0)}
+. "$repo/scripts/lib/checkout.sh"  # repo_file DIR REL: here, else in the main checkout (a worktree)
+master=$(repo_file "$repo" data/basmaster-3.7.0.sqlite3)
+download=$(repo_file "$repo" work/SOA-3.7.0-canonical-data.zip)
+table=${EN_TABLE:-$(repo_file "$repo" data/english/master-en.tsv)}
+[ -n "$table" ] || table=$(repo_file "$repo" work/english/en-server/master-en.tsv)
+phone_src=${EMU_DATA:-$(repo_file "$repo" work/phone-3.7.0)}
 [ -n "$master" ] || { echo "FAIL: data/basmaster-3.7.0.sqlite3 not found"; exit 1; }
 [ -n "$download" ] || { echo "FAIL: work/SOA-3.7.0-canonical-data.zip not found"; exit 1; }
 [ -n "$table" ] && [ -s "$table" ] || { echo "FAIL: no English text table (EN_TABLE)"; exit 1; }

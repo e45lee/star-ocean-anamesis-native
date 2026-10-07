@@ -20,7 +20,7 @@
 #include "net/game.h"
 #include "net/http.h"
 #include "net/loop.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/cdn.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/native_test.h"
@@ -29,6 +29,7 @@ namespace {
 
 using namespace soa::server;
 using namespace soa::server::net;
+namespace adld = soa::adld;
 
 struct NoBackend : Backend {
     uint32_t call(const Request&, std::vector<uint8_t>*) override { return 0xffffffffu; }

@@ -15,7 +15,7 @@
 
 #include "cdn/files.h"
 #include "english_art/art.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/config.h"
 #include "soaserver/english_art.h"
 #include "soaserver/native_test.h"

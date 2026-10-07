@@ -19,10 +19,10 @@
 #include "core/log.h"
 #include "core/server.h"  // use_configured_clock
 #include "master/english_text.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/cdn.h"
 #include "soaserver/english_art.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include <soa/file_tree.h>
 #include <soa/install.h>
 #include <soa/paths.h>

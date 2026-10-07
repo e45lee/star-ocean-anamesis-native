@@ -1,6 +1,6 @@
 // Where the 3.7.0 master DB comes from: the startup rule and the derivation from the user's game
 // files (soaserver/master_source.h). Port code, not guest behaviour: (c) the decryption is the
-// client's own (soaserver/adld.h), the rule ours (docs/server-rules.md#core).
+// client's own (soa/adld.h), the rule ours (docs/server-rules.md#core).
 #include "soaserver/master_source.h"
 
 #include <soa/file_tree.h>
@@ -13,7 +13,7 @@
 
 #include "cdn/files.h"
 #include "core/log.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/config.h"
 
 namespace soa::server::master_source {

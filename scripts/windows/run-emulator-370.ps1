@@ -49,13 +49,17 @@ $sp = Start-Process -FilePath $srv -WorkingDirectory $repo -NoNewWindow -PassThr
     "--data", "`"$state`"", "--download-dir", "`"$download`"") + $srvArgs)
 try {
     $up = $false
-    for ($t = 0; $t -lt 240; $t++) {
+    for ($t = 0; $t -lt 480; $t++) {
         # (its stdout and stderr: Start-Process keeps them in two files)
-        if ((Test-Path "$slog.err") -and (Select-String -Path $slog, "$slog.err" -Pattern '^soa-server: game' -Quiet)) { $up = $true; break }
+        if ((Test-Path "$slog.err") -and (Select-String -Path $slog, "$slog.err" -Pattern '^soa-server: ready' -Quiet)) { $up = $true; break }
         if ($sp.HasExited) { break }
         Start-Sleep -Milliseconds 500
     }
     if (-not $up) { Write-Host "run-emulator-370: soa-server didn't start; log: $slog.err"; exit 1 }
+    # (the CDN line comes before the ready line: scripts/lib/with-server.sh)
+    if (-not (Select-String -Path "$slog.err" -Pattern '^soa-server: CDN' -Quiet)) {
+        Write-Host "run-emulator-370: soa-server found no 3.7.0 download; log: $slog.err"; exit 1
+    }
     Write-Host "== starting soa-emu (phone data $phone)"
     $ep = Start-Process -FilePath $emu -WorkingDirectory $repo -NoNewWindow -PassThru -ArgumentList (@("--data", "`"$phone`"",
         "--server", "127.0.0.1:$port", "--http", "127.0.0.1:$httpPort") + $emuArgs)

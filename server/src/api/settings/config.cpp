@@ -30,7 +30,7 @@
 #include "core/errors.h"
 #include "core/log.h"
 #include "core/modules.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 
 namespace soa::server {
 

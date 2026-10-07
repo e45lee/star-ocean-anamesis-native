@@ -97,9 +97,9 @@ WITH_DATA = {"port", "emulator"}
 # The allow-list: a packaged file's path (inside the top folder) must match one of these.
 ALLOW = {
     "port": ["soa", "soa.exe", "soa-server", "soa-server.exe", "run-port.sh", "run-port.cmd", "run-port-en.sh", "run-port-en.cmd",
-             "run-port-server.sh", "run-port-server.cmd", "run-port-server.ps1"],
+             "run-port-server.sh", "run-port-server.cmd", "run-port-server.ps1", "lib/with-server.sh"],
     "emulator": ["soa-emu", "soa-server", "soa-emu.exe", "soa-server.exe", "run-emulator.sh", "run-emulator.cmd", "run-emulator.ps1",
-                 "run-emulator-en.sh", "run-emulator-en.cmd"],
+                 "run-emulator-en.sh", "run-emulator-en.cmd", "lib/with-server.sh"],
     "viewer": ["soa-viewer", "soa-viewer.exe", "run-viewer.sh", "run-viewer.cmd"],
 }
 ALLOW_COMMON = ["README.txt", "LICENSE.txt", "THIRD-PARTY-NOTICES.txt", "BUILD-INFO.txt", "game/PUT-GAME-FILES-HERE.txt"]
@@ -432,6 +432,15 @@ def launcher_files(kind, windows):
     return out
 
 
+# What the launchers source, {path in the package: source}: the server-plus-client launchers'
+# shared half (run-port-server.sh, run-emulator.sh: . "$here/lib/with-server.sh").
+LAUNCHER_LIBS = {"lib/with-server.sh": os.path.join(ROOT, "scripts", "lib", "with-server.sh")}
+
+
+def launcher_libs(kind, windows):
+    return {} if windows or kind not in ("port", "emulator") else dict(LAUNCHER_LIBS)
+
+
 def stage_package(plat, kind, version, work, dbg_dir):
     P = PLATFORMS[plat]
     top = f"soa-{kind}-{version}-{plat}"
@@ -450,6 +459,9 @@ def stage_package(plat, kind, version, work, dbg_dir):
         shutil.copy2(os.path.join(PKG_SRC, f), os.path.join(root, f))
         if f.endswith(".sh"):
             os.chmod(os.path.join(root, f), 0o755)
+    for rel, src in launcher_libs(kind, P["windows"]).items():
+        os.makedirs(os.path.join(root, os.path.dirname(rel)), exist_ok=True)
+        shutil.copyfile(src, os.path.join(root, rel))
     if kind in WITH_DATA:
         os.makedirs(os.path.join(root, "data"))
         clean_pools(os.path.join(ROOT, "data", "gacha_pools.sqlite3"), os.path.join(root, "data", "gacha_pools.sqlite3"))

@@ -38,11 +38,12 @@ $sp = Start-Process -FilePath $srv -WorkingDirectory $here -NoNewWindow -PassThr
 try {
     $up = $false
     for ($t = 0; $t -lt 480; $t++) {
-        if ((Test-Path "$slog.err") -and (Select-String -Path $slog, "$slog.err" -Pattern '^soa-server: game' -Quiet)) { $up = $true; break }
+        if ((Test-Path "$slog.err") -and (Select-String -Path $slog, "$slog.err" -Pattern '^soa-server: ready' -Quiet)) { $up = $true; break }
         if ($sp.HasExited) { break }
         Start-Sleep -Milliseconds 500
     }
     if (-not $up) { Write-Host "run-emulator: soa-server didn't start (see README.txt); log: $slog.err"; exit 1 }
+    # (the CDN line comes before the ready line: scripts/lib/with-server.sh)
     if (-not (Select-String -Path "$slog.err" -Pattern '^soa-server: CDN' -Quiet)) {
         Write-Host "run-emulator: soa-server found no 3.7.0 download (see README.txt); log: $slog.err"; exit 1
     }

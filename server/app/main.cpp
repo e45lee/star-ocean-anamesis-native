@@ -195,6 +195,8 @@ int main(int argc, char** argv) {
             log_packets.c_str());
     if (cdn)
         fprintf(stderr, "soa-server: CDN %s/download/%s/Android/<name> (%s)\n", c.cdn_url.c_str(), cdn->revision().c_str(), cdn->summary().c_str());
+    // The launchers wait for this line (scripts/lib/with-server.sh): every line above is out.
+    fprintf(stderr, "soa-server: ready\n");
     loop.run(g_stop);
     fprintf(stderr, "soa-server: stopped\n");
     return 0;

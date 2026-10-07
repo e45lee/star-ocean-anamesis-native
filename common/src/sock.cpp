@@ -180,4 +180,49 @@ int poll(PollFd* fds, size_t n, int timeout_ms) {
 
 #endif
 
+int connect_tcp(const std::string& host, int port, int connect_timeout_ms, std::string* err) {
+    std::string why;
+    addrinfo hints{}, *res = nullptr;
+    hints.ai_socktype = SOCK_STREAM;
+    startup();  // (Winsock, before the name lookup)
+    if (int r = getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res); r != 0 || !res) {
+        if (err) *err = std::string("resolve: ") + (r ? gai_strerror(r) : "no address");
+        return -1;
+    }
+    int fd = -1;
+    for (addrinfo* a = res; a; a = a->ai_next) {
+        fd = tcp_socket(true, a->ai_family);
+        if (fd < 0) {
+            why = last_error();
+            continue;
+        }
+        if (::connect(fd, a->ai_addr, (int)a->ai_addrlen) == 0) break;
+        if (connect_in_progress()) {
+            PollFd p{fd, POLLOUT, 0};
+            int e = 0;
+            socklen_t el = sizeof e;
+            if (poll(&p, 1, connect_timeout_ms) == 1 && getsockopt(fd, SOL_SOCKET, SO_ERROR, (char*)&e, &el) == 0 && e == 0) break;
+            why = e ? "connect: error " + std::to_string(e) : "connect timeout";
+        } else {
+            why = last_error();
+        }
+        close(fd);
+        fd = -1;
+    }
+    freeaddrinfo(res);
+    if (fd >= 0) set_nonblocking(fd, false);
+    else if (err) *err = why;
+    return fd;
+}
+
+bool send_all(int fd, const void* data, size_t n) {
+    const char* p = (const char*)data;
+    while (n) {
+        ssize_t k = send(fd, p, n);
+        if (k <= 0) return false;
+        p += k, n -= (size_t)k;
+    }
+    return true;
+}
+
 }  // namespace soa::sock

@@ -1,6 +1,6 @@
 // Host TCP sockets, portable: BSD sockets on Linux, Winsock on Windows (port/PLAN.md 5b, W).
 // Used by soa-server's wire layer (server/net: loop.cpp, client.cpp) and the 3.7.0 platform's HTTP
-// client (platform370/src/http_370.cpp). Sockets are ints on both (a Winsock SOCKET handle fits).
+// client (platform370/src/http_370.cpp): both connect with connect_tcp and write with send_all. Sockets are ints on both (a Winsock SOCKET handle fits).
 // Not the guest's sockets: those are the runtime's HLE (runtime/src/hle/net_win32.cpp on Windows).
 #pragma once
 
@@ -64,5 +64,15 @@ std::string join_host_port(const std::string& host, int port);
 
 // poll(): POLLIN / POLLOUT / POLLERR / POLLHUP / POLLNVAL as <poll.h> (WSAPoll on Windows).
 int poll(PollFd* fds, size_t n, int timeout_ms);
+
+// A blocking TCP connection to `host`:`port` (a name, an IPv4 or an IPv6 address): every address the
+// name resolves to, in order, each tried with a non-blocking connect of at most `connect_timeout_ms`;
+// the first that connects, close-on-exec and blocking again. -1 when none does, with *err (if given)
+// the last reason: "resolve: ...", "connect timeout", "connect: error N" or last_error().
+int connect_tcp(const std::string& host, int port, int connect_timeout_ms, std::string* err = nullptr);
+// send() until all `n` bytes are out (a short send continues); false on an error or a closed
+// connection.
+bool send_all(int fd, const void* data, size_t n);
+inline bool send_all(int fd, const std::string& s) { return send_all(fd, s.data(), s.size()); }
 
 }  // namespace soa::sock

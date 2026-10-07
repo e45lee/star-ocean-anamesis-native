@@ -231,23 +231,55 @@ def test_stop_doesnt_wait_for_a_client_nobody_can_reach(tmp_path):
     r = _fake_run(tmp_path, "sleep 100")  # running, no death, but no reader on its FIFO
     t0 = time.monotonic()
     r.stop()
-    assert time.monotonic() - t0 < 5
+    assert time.monotonic() - t0 < r.QUIT_SEND_SECS + 3  # the quit's wait for a reader, not 10 + 15 s
     assert not r.client.running()
 
 
+def _wait_for_fifo(path, secs=30):
+    """The fake client made its FIFO (its reader then sits in open(), which a writer's
+    non-blocking open counts: deliver gets through). No probe: an open-and-close is an EOF."""
+    deadline = time.monotonic() + secs
+    while not os.path.exists(path) and time.monotonic() < deadline:
+        time.sleep(0.05)
+
+
 def test_stop_quits_a_client_that_listens(tmp_path):
-    """The positive control: a client reading its FIFO gets `quit` and exits by itself (reopening
-    the FIFO after an empty open, as the game does: has_reader's probe is one)."""
+    """The positive control: a client reading its FIFO gets `quit` and exits by itself. Like the
+    game it reads until EOF, then reopens (an empty batch counts for nothing)."""
     r = _fake_run(tmp_path, "")
     r.client.stop()
     r.client = proc.Proc("fake-client", ["sh", "-c", 'mkfifo "$0"; l=; while [ -z "$l" ]; do read l < "$0"; done; echo "got $l"', r.fifo],
                          r.client_log, limit=120)
-    deadline = time.monotonic() + 10
-    while not fifo.has_reader(r.fifo) and time.monotonic() < deadline:
-        time.sleep(0.05)
+    _wait_for_fifo(r.fifo)
     r.stop()
     assert "got quit" in open(r.client_log).read()
     assert r.client.p.returncode == 0  # it exited on its own, not by TERM
+
+
+def test_stop_reaches_a_client_that_is_still_starting(tmp_path):
+    """stop() right after the start, before the client opened its FIFO: the quit waits for the
+    reader (deliver retries ENXIO) instead of a probe deciding nobody listens."""
+    r = _fake_run(tmp_path, "")
+    r.client.stop()
+    r.client = proc.Proc("fake-client", ["sh", "-c", 'sleep 1; mkfifo "$0"; l=; while [ -z "$l" ]; do read l < "$0"; done; '
+                                         'echo "got $l"', r.fifo], r.client_log, limit=120)
+    r.stop()
+    assert "got quit" in open(r.client_log).read()
+
+
+def test_quit_after_an_eof_isnt_lost(tmp_path):
+    """The flake (2026-10-07, a T0 at load 13): a batch written right after another writer's close
+    (an EOF to the reader, which then closes and reopens) could be dropped. 20 empty batches back to
+    back, then stop(): the quit still arrives."""
+    r = _fake_run(tmp_path, "")
+    r.client.stop()
+    r.client = proc.Proc("fake-client", ["sh", "-c", 'mkfifo "$0"; l=; while [ -z "$l" ]; do read l < "$0"; done; echo "got $l"', r.fifo],
+                         r.client_log, limit=120)
+    _wait_for_fifo(r.fifo)
+    for _ in range(20):  # empty batches, as a driver's other channel users might send
+        fifo.deliver(r.fifo, [], timeout=5)
+    r.stop()
+    assert "got quit" in open(r.client_log).read()
 
 
 def _stop_a_driver(tmp_path, busy):

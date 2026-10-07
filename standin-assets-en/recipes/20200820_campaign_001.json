@@ -1,0 +1,125 @@
+{
+ "note": "Sphere 211's new season banner.",
+ "source": "Image/etc2/20200820_campaign_001.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    100,
+    26,
+    316,
+    88
+   ],
+   "cover": [
+    100,
+    26,
+    316,
+    88
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "スフィア211 新シーズン開始",
+   "text": "Sphere 211\nNew Season Begins",
+   "box": [
+    104,
+    28,
+    308,
+    84
+   ],
+   "style": "blue",
+   "cover": [
+    100,
+    26,
+    316,
+    88
+   ],
+   "size": 28
+  }
+ ]
+}

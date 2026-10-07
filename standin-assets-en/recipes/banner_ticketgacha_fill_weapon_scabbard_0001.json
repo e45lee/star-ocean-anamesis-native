@@ -1,0 +1,128 @@
+{
+ "note": "A make-up weapon ticket gacha's banner.",
+ "source": "Image/etc2/banner_ticketgacha_fill_weapon_scabbard_0001.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "補填★4～5剣&鞘ガチャチケット",
+   "text": "Make-up ★4-5 B & S Draw Ticket",
+   "box": [
+    150,
+    16,
+    236,
+    15
+   ],
+   "style": "blue_s",
+   "cover": [
+    148,
+    16,
+    240,
+    15
+   ],
+   "clear": "inpaint",
+   "size": 13
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    196,
+    64,
+    260,
+    48
+   ],
+   "cover": [
+    196,
+    64,
+    260,
+    48
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "★4～5剣&鞘確定!!",
+   "text": "★4-5 B & S\nguaranteed!!",
+   "box": [
+    196,
+    66,
+    258,
+    44
+   ],
+   "style": "gold_r",
+   "cover": [
+    196,
+    64,
+    260,
+    48
+   ],
+   "size": 19
+  }
+ ]
+}

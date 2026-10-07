@@ -1,0 +1,136 @@
+{
+ "note": "The ★5 weapon ticket gacha's panel.",
+ "source": "Image/etc2/pickup_img_ticket_weapon_1610_006.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "band_b": {
+   "clear": "shade",
+   "clear_color": "#08142cc0"
+  },
+  "wname": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 4,
+   "glow": "#ffc040a0",
+   "glow_radius": 3,
+   "align": "right",
+   "clear": "none"
+  },
+  "wname_b": {
+   "size": 34,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "none"
+  },
+  "type": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#3a0000",
+   "outline_width": 2,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "head": {
+   "size": 36,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "title": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#fff0c0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "line": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "wlist": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 2,
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "big": {
+   "size": 52,
+   "bold": 3,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "★5限定武器チケット",
+   "text": "★5 Limited Weapon Ticket",
+   "box": [
+    310,
+    20,
+    400,
+    40
+   ],
+   "style": "cap",
+   "cover": [
+    316,
+    22,
+    394,
+    36
+   ],
+   "size": 28,
+   "clear": "inpaint"
+  },
+  {
+   "jp": "★5武器確定!チケットはアイテム交換所などで入手可能!",
+   "text": "★5 weapon guaranteed! Tickets from the Item Exchange and more!",
+   "box": [
+    176,
+    406,
+    700,
+    40
+   ],
+   "style": "line",
+   "cover": [
+    176,
+    406,
+    700,
+    40
+   ],
+   "size": 26,
+   "clear": "inpaint"
+  }
+ ]
+}

@@ -291,7 +291,7 @@ void draw_text(Canvas& c, const Coverage& text, const Style& st, Rect box, Rect 
     paint(fill, st.fill, 0, 0);
 }
 
-void apply_label(Canvas& c, const Font& font, const Label& label, Rect sprite) {
+void apply_label(Canvas& c, const Font& font, const Label& label, Rect sprite, const Canvas* shape) {
     Rect box{sprite.x + label.box.x, sprite.y + label.box.y, label.box.w, label.box.h};
     Rect cov = label.has_cover ? Rect{sprite.x + label.cover.x, sprite.y + label.cover.y, label.cover.w, label.cover.h} : box;
     if (label.style.cover == "inpaint") {
@@ -303,6 +303,16 @@ void apply_label(Canvas& c, const Font& font, const Label& label, Rect sprite) {
                 uint8_t* p = c.at(x, y);
                 p[0] = label.style.cover_color.r, p[1] = label.style.cover_color.g, p[2] = label.style.cover_color.b,
                 p[3] = label.style.cover_color.a;
+            }
+    } else if (label.style.cover == "shade") {  // cover_color laid over the picture (its alpha kept), its edges faded over 4 px
+        Rect r = intersect(intersect(cov, sprite), {0, 0, c.w, c.h});
+        for (int y = r.y; y < r.y + r.h; y++)
+            for (int x = r.x; x < r.x + r.w; x++) {
+                int edge = std::min(std::min(x - cov.x, cov.x + cov.w - 1 - x), std::min(y - cov.y, cov.y + cov.h - 1 - y));
+                uint8_t* p = c.at(x, y);
+                uint8_t a = shape ? shape->at(x, y)[3] : p[3];  // the picture's shape is kept
+                over(p, label.style.cover_color, std::min(255, (edge + 1) * 255 / 5));
+                p[3] = a;
             }
     }
     if (label.text.empty()) return;

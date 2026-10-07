@@ -16,18 +16,22 @@ S = {
  "big": {"size": 52, "bold": 3, "fill": "#ffe9a0", "outline": "#3a0800", "outline_width": 4, "clear": "none"},
 }
 TYPES = {"片手剣": "OHS", "杖": "Staff", "銃": "Gun", "ナックル": "Knuckles", "ダガー": "Dagger", "双剣": "Dual", "書": "Tome", "ライフル": "Rifle",
-         "弓": "Bow", "鎌": "Scythe", "大剣": "Great Sword"}
+         "弓": "Bow", "鎌": "Scythe", "大剣": "Great Sword", "剣＆鞘": "B & S"}
 # factor panels: weapon name, type
 FACTOR = {"pickup_img_weapon_002": ("ルインズフェイト", "Blade of Ruin", "片手剣"), "pickup_img_weapon_003": ("エーテルフローズン", "Aether-in-Stasis", "杖"),
           "pickup_img_weapon_004": ("シャドウビュレット", "Umbral Blast", "銃"), "pickup_img_weapon_005": ("エレメンタルエッジ", "Elemental Edge", "ダガー"),
-          "pickup_img_weapon_006": ("ブラッディダスター", "Bloody Knuckles", "ナックル")}
+          "pickup_img_weapon_006": ("ブラッディダスター", "Bloody Knuckles", "ナックル"),
+          "pickup_img_weapon_007": ("肢閃刀・村雨", "Murasame", "剣＆鞘"), "pickup_img_weapon_008": ("アーティファクトボウ", "Artifact Bow", "弓")}
+# panel: (name band, type box, type cover); the default is the layout of 002-006
+GEO = {"pickup_img_weapon_007": ([460, 362, 420, 116], [700, 312, 170, 40], [696, 310, 130, 40]),
+       "pickup_img_weapon_008": ([340, 352, 560, 116], [790, 300, 120, 40], [786, 300, 100, 40])}
 for n, (jp, en, t) in FACTOR.items():
-    band = [430, 352, 450, 116]
+    band, tbox, tcov = GEO.get(n, ([430, 352, 450, 116], [716, 306, 160, 44], [714, 310, 136, 40]))
     write(n, f"A factor weapon pick-up panel ({en}).", S, [
         L("ファクター", "Factor", [176, 32, 220, 56], "head", [172, 30, 196, 60]),
-        L(t, TYPES[t], [716, 306, 160, 44], "type", [714, 310, 136, 40]),
+        L(t, TYPES[t], tbox, "type", tcov),
         L("", "", band, "erase", band), L("", "", band, "band", band),
-        L(jp, en, [440, 362, 430, 96], "wname")])
+        L(jp, en, [band[0] + 10, band[1] + 10, band[2] - 20, band[3] - 20], "wname")])
 # pick-up weapon panels: the name plate top left, the type bottom right
 PU = {"20190905_weapon_PU_004": ("罪禍の宝剣", "Blade of Sin", "片手剣"), "20190919_weapon_PU_003": ("キタブアルアジフ", "Kitab al-Azif", "書"),
       "20191114_weapon_PU_004": ("クロスバイヨネット", "Cross Bayonet", "ライフル"), "20191219_weapon_PU_001": ("サイレントスノーローズ", "Silent Snow Rose", "銃"),

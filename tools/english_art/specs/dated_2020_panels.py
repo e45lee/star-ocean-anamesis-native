@@ -150,3 +150,69 @@ chara("20200528_chara_PU_001", "Nel the Demon Slayer", "D", (580, 250, 320, 124)
 weapon("20200514_weapon_PU_003", "Struggle Knuckle", "Arms", W1, T1)
 weapon("20200514_weapon_PU_002", "Oxis Cocoon", "Orb", W1, T1)
 weapon("20200514_weapon_PU_001", "Deity Alternation", "Rifle", W1, T1)
+
+# ---- 2020-05-14 .. 2020-03-26
+def memorial(name, so):
+    write(name, f"The {so} Memorial pick-up panel.", S,
+          banded([280, 0, 460, 92], "band_g") + [L("", f"{so} Memorial\nPick-up Character Draws", [284, 4, 452, 84], "gold", size=34)]
+          + banded([220, 356, 600, 112], "band_g") + [L("", "10-chain: 1 bonus item!\nPick-ups: limited characters only!", [224, 360, 592, 104], "gold", size=30)])
+def release(name, so, logo_band=True):
+    write(name, f"The SO{so} release-day pick-up panel.", S,
+          banded([210, 14, 600, 44], "band_g") + [L("", f"Star Ocean {so} Release Day Draws", [214, 16, 592, 40], "gold", size=30)]
+          + banded([176, 380, 690, 90], "band_g") + [L("", f"A chance to collect the series' characters!!\nStar Ocean {so}: 10-chain: 1 ★5 character guaranteed!", [180, 384, 682, 82], "gold", size=26)]
+          + banded([650, 340, 190, 40], "band_g") + [L("", "3 per player", [654, 342, 182, 36], "gold", size=24)])
+write("20200514_chara_PU_003", "The Divine Wing Maria / Wise God Mastima step-up panel.", S,
+      banded([150, 16, 330, 190], "band_g") + [L("", "Step 10: Divine Wing Maria\nor Wise God Mastima\nguaranteed!\n★5: Aces only!", [158, 20, 314, 182], "gold", size=26)]
+      + banded([150, 290, 430, 140], "band_g") + [L("", "10-chain Step 10:\n1 pick-up guaranteed", [158, 294, 414, 132], "gold", size=34)])
+chara("20200514_chara_PU_002", "Wise God Mastima", "H", (420, 272, 470, 116))
+chara("20200514_chara_PU_001", "Divine Wing Maria", "C", (520, 260, 380, 124), tag="SO3")
+weapon("20200507_weapon_PU_003", "Lightning Blossom", "Staff", W1, T1)
+weapon("20200507_weapon_PU_002", "Tremendous Generator", "Launcher", W1, T1)
+weapon("20200507_weapon_PU_001", "Ferocious Fang", "Dual", W1, T1)
+memorial("20200507_chara_PU_001", "SO5")
+chara("20200430_chara_PU_002", "Ricardo of the Cannon Armor", "S", (440, 270, 450, 124))
+chara("20200430_chara_PU_001", "Karlyn the Fox General", "A", (520, 268, 380, 124))
+stepup("20200416_chara_PU_003", STEP + "Rerun Idol\n2019", (150, 16, 340, 440))
+stepup("20200416_chara_PU_002", STEP + "Rerun Idol\n2018", (150, 16, 340, 440))
+release("20200326_chara_PU_005", 5)
+
+# ---- 2020-03-12 .. 2020-02-27
+weapon("20200312_weapon_PU_003", "Eternal Straight", "Launcher", W1, T1)
+weapon("20200312_weapon_PU_002", "Flare Plasma Gun", "Gun", W1, T1)
+weapon("20200312_weapon_PU_001", "Heraldry Altar", "Great Sword", W1, T1)
+write("20200312_chara_PU_005", "The new-life support free gacha's panel.", S,
+      banded([300, 10, 420, 110], "band_g") + [L("", "New Life Support\nFree 10-chain Character Draws", [304, 14, 412, 102], "gold", size=30)]
+      + banded([200, 390, 640, 60], "band_g") + [L("", "Up to 5 free 10-chains in the period!", [204, 394, 632, 52], "gold", size=30)])
+for n, vol in (("20200312_chara_PU_004", 2), ("20200312_chara_PU_003", 1)):
+    write(n, f"The White Day pick-up panel ({vol}).", S,
+          banded([280, 4, 480, 56], "band_g") + [L("", "These 5 characters are picked up!", [284, 8, 472, 48], "gold", size=30)]
+          + banded([150, 316, 730, 120], "band_g") + [L("", f"10-chain: 1 bonus item!\nWhite Day {vol} Pick-up Character Draws", [154, 320, 722, 112], "gold", size=34)])
+write("20200312_chara_PU_002", "Divine Wing Fayt's step-up panel.", S,
+      banded([150, 16, 360, 140], "band_g") + [L("", "Step 10: Divine Wing\nFayt guaranteed!\n★5: Aces only!", [158, 20, 344, 132], "gold", size=26)]
+      + banded([150, 290, 720, 140], "band_g") + [L("", "Divine Wing Fayt\n10-chain Step 10: 1 pick-up guaranteed", [158, 294, 704, 132], "gold", size=34)])
+chara("20200312_chara_PU_001", "Divine Wing Fayt", "A", (500, 260, 390, 124), tag="SO3")
+weapon("20200305_weapon_PU_002", "Coloraba Blade", "Dagger", W1, T1)
+weapon("20200305_weapon_PU_001", "Elite Bunny Snipe", "Rifle", W1, T1)
+box("20200227_event_PU_001", "Hot Springs and the Mischievous Snow Monsters")
+release("20200227_chara_PU_003", 3)
+
+# ---- 2020-02-27 .. 2020-01-01
+chara("20200227_chara_PU_002", "Hot Spring Evelysse", "A", (400, 262, 500, 124))
+chara("20200227_chara_PU_001", "Hot Spring Rena", "S", (530, 262, 370, 124), tag="SO2")
+release("20200213_chara_PU_003", 4)
+chara("20200213_chara_PU_002", "Miki of Sweet Love", "S", (380, 316, 500, 124), tag="SO5")
+chara("20200213_chara_PU_001", "Erys of the Heavenly Wings", "A", (330, 316, 560, 124), tag="SO1")
+weapon("20200123_weapon_PU_003", "Heavy Iron Arms: Iron Wrist", "Arms", W1, T1)
+weapon("20200123_weapon_PU_002", "Ice Scale Blade: Azure Dragon", "Great Sword", W1, T1)
+weapon("20200123_weapon_PU_001", "Salute Cannon: Celebration", "Rifle", W1, T1)
+write("20200123_chara_PU_003", "The Lunar New Year step-up panel.", S,
+      banded([150, 16, 430, 170], "band_g") + [L("", "Step 10: Queen Clair or\nQueen Nel guaranteed!\n★5: Aces only!", [158, 20, 414, 162], "gold", size=26)]
+      + banded([150, 316, 470, 150], "band_g") + [L("", "Lunar New Year Draws\n10-chain Step 10:\n1 pick-up guaranteed", [158, 320, 454, 142], "gold", size=30)])
+chara("20200123_chara_PU_002", "Queen Clair", "A", (460, 262, 430, 124), tag="SO3")
+chara("20200123_chara_PU_001", "Queen Nel", "S", (460, 262, 430, 124), tag="SO3")
+box("20200106_event_PU_001", "Spirit of Renewal")
+weapon("20200101_weapon_PU_003", "Monthly Anamne Girls", "Orb", W1, T1)
+weapon("20200101_weapon_PU_002", "Divine Tail Axe: White Fox", "Axe", W1, T1)
+weapon("20200101_weapon_PU_001", "Auspicious Bow: Phoenix Tail", "Bow", W1, T1)
+chara("20200101_chara_PU_002", "Karlyn of the Dawn Fox", "A", (420, 262, 480, 124))
+chara("20200101_chara_PU_001", "Reimi of the Phoenix Bow", "H", (420, 262, 480, 124), tag="SO4")

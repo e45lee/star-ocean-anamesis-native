@@ -61,7 +61,7 @@ Bound: `soa --list-native | grep render:`. Live check: `soa --live-check render[
 | `RenderThread::ReqCustomCommandBlock` / `ReqDownloadResourceBlock` | `render_thread.cpp` | `render/thread-block-call` (a host thread serving the call) | - (a replay would run the call twice) |
 | `RenderDeviceGL::BindVertexFormat(int, int, void*)` | `render_device.cpp` | `render/device-bind-vertex-format` (300 of the render thread's calls: the guest's and the native's GL calls recorded, the state set compared) | `gl_run_both` (both runs recorded on a saved state set) |
 | `RenderState::Apply`; `RenderDeviceGL::EnableAlphaBlend` / `EnableZTest` / `EnableZWrite` / `EnableStencil` / `SetZTestFunction` / `SetCullMode` / `SetDepthBias` / `SetAlphaBlendFunction` / `SetStencilOp` / `SetStencilOpCCW` / `SetTextureSampling{Filter, MipmapFilter, WrapMode, MaxAnisotropic}`; `RenderDeviceData::SetCullMode` / `SetAlphaBlendFunction` | `render_state.cpp` | `render/state-apply` (1,000 Apply calls: the guest's setter chain against the natives') | `gl_run_both` |
-| `RenderDeviceData::DrawIndexedPrimitive` / `UpdateRenderState` / `UpdateVertexAttribute` / `LastMinuteDrawCommands_Blending` / `LastMinuteDrawCommands_Depth` | `render_draw.cpp` | `render/device-draw` (the guest's chain against the natives' on the render thread's draws) | `gl_run_both`, the two guest callees recorded as markers (`t_mark_callees`); a draw with an upload pending: skipped |
+| `RenderDeviceData::DrawIndexedPrimitive` / `UpdateRenderState` / `UpdateVertexAttribute` / `LastMinuteDrawCommands_Blending` / `LastMinuteDrawCommands_Depth` | `render_draw.cpp` | `render/device-draw` (the guest's chain against the natives' on the render thread's draws) | `gl_run_both`, the two guest callees recorded as markers (`t_mark_callees`), the program established for real first (`establish_program`); a draw with an upload pending: skipped |
 | `RenderDeviceGL::BindTexture` / `ActiveTexture` / `SetTexture` / `RemoveTexture` | `render_texture.cpp` | `render/device-textures` (1,000 SetTexture with the binds under it, 200 RemoveTexture) | `gl_run_both`; SetTexture with an upload pending: skipped |
 | `RenderDeviceData::UpdateShaderProgram` (finding a linked program; creating / linking one: the guest original) | `render_program.cpp` | `render/device-shader-program` | `gl_run_both` over state set 1 and the program fields, SetShaderProgramUniform a marker |
 | (hooks) `RenderDeviceData::LastMinuteDrawCommands_Textures` / `SetShaderProgramUniform` | `render_draw.cpp` | - | forward to the guest (the markers of the composite checks) |
@@ -186,7 +186,13 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   GL, so a callee that uploads and then marks something clean (a buffer's handler Update, UpdateShaderProgram's
   uniforms, the texture commands) would leave the game believing GL has state it never got. The draw checks
   therefore record those callees as markers instead of running them (`t_mark_callees`, hooks that forward to
-  the guest otherwise) and skip draws / SetTexture calls with an upload pending.
+  the guest otherwise) and skip draws / SetTexture calls with an upload pending. UpdateShaderProgram, the first
+  step of a draw and of UpdateRenderState, runs for real before such a check (`establish_program`): as a marker
+  it would leave the device's `m_program` as it was, which CompileShaderProgramCache sets to null after
+  compiling the pending programs (a battle's loading), and UpdateVertexAttribute (guest and native alike)
+  reads the program unchecked. The real run afterwards finds it current (no GL call). Until 2026-10-06 the
+  checks lacked this and `--live-check render` crashed in a battle whenever the first draw after the compile
+  was checked (`render/device-draw` now starts every 4th draw from a null program).
 - **GpuResource::m_handle** (+0x48) is a buffer's GL name but a texture's slot in the device's 0x400 texture
   slots (SetTexture: `slot > 0x3ff` returns).
 - **Unknowns.** RENDERINFO's +0x02, +0x04, +0x18 (the struct: render_layout.h, recovered by n-scene from

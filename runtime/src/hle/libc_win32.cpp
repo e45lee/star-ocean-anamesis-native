@@ -5,7 +5,7 @@
 //     implemented here over char32_t; the multibyte encoding is UTF-8, as in bionic);
 //   - no glibc locale_t (bionic's locales are "C" / "C.UTF-8" anyway: one C locale here);
 //   - struct tm / timeval / timespec / stat have other layouts or field widths;
-//   - errno values above ERANGE differ (hle/guest_errno.h), open() flags differ;
+//   - errno values above ERANGE differ (core/linux_errno.h), open() flags differ;
 //   - no mmap, futex, sysconf, getrlimit: VirtualAlloc, WaitOnAddress, GetSystemInfo, constants;
 //   - guest descriptors: CRT descriptors for files, core/host_fd.h for pipes.
 // The other files' Linux-only registrations are under #ifndef _WIN32; register_libc_win32 runs
@@ -26,8 +26,10 @@
 #include <atomic>
 #include <cmath>
 #include <cstring>
+#include <mutex>
 #include <random>
 #include <string>
+#include <unordered_map>
 
 #include "core/device.h"
 #include "core/crash.h"
@@ -35,50 +37,19 @@
 #include "core/hle.h"
 #include "core/host_fd.h"
 #include "core/host_mem.h"
+#include "core/linux_errno.h"
 #include "core/log.h"
 #include "core/vfs.h"
 #include "hle/format.h"
-#include "hle/guest_errno.h"
 #include "hle/host_file.h"
 
 namespace soa {
 
 void to_bionic_stat(const struct stat& s, u64 dst);  // libc_stdio.cpp
 void register_net_win32(Hle& h);                     // net_win32.cpp
-
-int guest_errno(int host) {
-    switch (host) {
-    case EDEADLK: return 35;
-    case ENAMETOOLONG: return 36;
-    case ENOLCK: return 37;
-    case ENOSYS: return 38;
-    case ENOTEMPTY: return 39;
-    case EILSEQ: return 84;
-    case ETIMEDOUT: return 110;
-    case EWOULDBLOCK: return 11;
-    case EINPROGRESS: return 115;
-    case EALREADY: return 114;
-    case ENOTSOCK: return 88;
-    case EADDRINUSE: return 98;
-    case EADDRNOTAVAIL: return 99;
-    case ENETUNREACH: return 101;
-    case ECONNABORTED: return 103;
-    case ECONNRESET: return 104;
-    case ENOBUFS: return 105;
-    case EISCONN: return 106;
-    case ENOTCONN: return 107;
-    case ECONNREFUSED: return 111;
-    case EHOSTUNREACH: return 113;
-    case EOVERFLOW: return 75;
-    case ECANCELED: return 125;
-    case EOPNOTSUPP: return 95;
-    default: return host;  // 1..34 are the same numbers
-    }
-}
+s64 guest_prctl(u64 option, u64 arg2);               // libc_misc.cpp
 
 namespace {
-
-void set_errno_guest() { errno = guest_errno(errno); }
 
 // ---- memory ----
 // mmap: anonymous private mappings only (what the game asks for); Linux PROT / MAP values.
@@ -133,9 +104,7 @@ void th_setlocale(Cpu& c) {
 // ---- 64-bit long ----
 void th_atol(Cpu& c) { ret(c, (u64)strtoll(arg_str(c, 0), nullptr, 10)); }
 void th_strtol(Cpu& c) {
-    long long v = strtoll(arg_str(c, 0), (char**)c.x(1), (int)c.x(2));
-    if (errno == ERANGE) errno = guest_errno(ERANGE);
-    ret(c, (u64)v);
+    ret(c, (u64)strtoll(arg_str(c, 0), (char**)c.x(1), (int)c.x(2)));
 }
 void th_strtoul(Cpu& c) { ret(c, (u64)strtoull(arg_str(c, 0), (char**)c.x(1), (int)c.x(2))); }
 void th_strtoll_l(Cpu& c) { ret(c, (u64)strtoll(arg_str(c, 0), (char**)c.x(1), (int)c.x(2))); }
@@ -521,29 +490,59 @@ void th_getrlimit(Cpu& c) {
     r[0] = r[1] = (int)c.x(0) == 7 ? 1024 : ~0ull;  // RLIMIT_NOFILE, else RLIM_INFINITY
     ret(c, 0);
 }
-// futex (FUTEX_WAIT / FUTEX_WAKE, private or not) over WaitOnAddress / WakeByAddress*.
+// futex (FUTEX_WAIT / FUTEX_WAKE and their _BITSET forms, private or not) over WaitOnAddress /
+// WakeByAddress*. The bitset is ignored: a wake may wake any waiter, as FUTEX_BITSET_MATCH_ANY.
+// Waiters are counted per address so that FUTEX_WAKE returns how many it woke (at most val), as on
+// Linux: the waiters at the time of the call (a waiter woken but not yet returned still counts).
+std::mutex g_futex_mu;
+std::unordered_map<u64, s64> g_futex_waiters;
+
 s64 futex(u64 addr, int op, u32 val, u64 timeout) {
-    switch (op & 0x7f) {
-    case 0:    // FUTEX_WAIT
-    case 9: {  // FUTEX_WAIT_BITSET (absolute timeout: treated as relative to now, rarely used)
+    const int cmd = op & 0x7f;  // (without FUTEX_PRIVATE_FLAG 128 and FUTEX_CLOCK_REALTIME 256)
+    switch (cmd) {
+    case 0:    // FUTEX_WAIT: a relative timeout
+    case 9: {  // FUTEX_WAIT_BITSET: an absolute one, on the guest's CLOCK_MONOTONIC (CLOCK_REALTIME with FUTEX_CLOCK_REALTIME)
         DWORD ms = INFINITE;
         if (timeout) {
             const s64* ts = (const s64*)timeout;
-            ms = (DWORD)std::min<s64>(ts[0] * 1000 + ts[1] / 1000000, 0x7ffffffe);
+            s64 ns = ts[0] * 1000000000 + ts[1];
+            if (cmd == 9) {
+                s64 now[2];
+                clock_gettime_guest(op & 256 ? 0 : 1, now);
+                ns -= now[0] * 1000000000 + now[1];
+            }
+            // rounded up: Linux never returns before the timeout
+            ms = (DWORD)std::clamp<s64>((ns + 999999) / 1000000, 0, 0x7ffffffe);
         }
-        if (*(volatile u32*)addr != val) return errno = EAGAIN, -1;
-        if (!WaitOnAddress((volatile void*)addr, &val, 4, ms)) return errno = ETIMEDOUT, errno = guest_errno(errno), -1;
+        {
+            std::lock_guard lk(g_futex_mu);
+            g_futex_waiters[addr]++;
+        }
+        BOOL woke = *(volatile u32*)addr == val ? WaitOnAddress((volatile void*)addr, &val, 4, ms) : -1;
+        DWORD err = woke ? 0 : GetLastError();
+        {
+            std::lock_guard lk(g_futex_mu);
+            if (!--g_futex_waiters[addr]) g_futex_waiters.erase(addr);
+        }
+        if (woke == -1) return errno = EAGAIN, -1;
+        if (!woke) return errno = err == ERROR_TIMEOUT ? ETIMEDOUT : EINVAL, -1;
         return 0;
     }
     case 1:     // FUTEX_WAKE
     case 10: {  // FUTEX_WAKE_BITSET
+        s64 woken = 0;
+        {
+            std::lock_guard lk(g_futex_mu);
+            auto it = g_futex_waiters.find(addr);
+            if (it != g_futex_waiters.end()) woken = std::min<s64>(it->second, (s32)val > 0 ? (s32)val : 0x7fffffff);
+        }
         if ((s32)val == 1) WakeByAddressSingle((void*)addr);
         else WakeByAddressAll((void*)addr);
-        return 1;
+        return woken;
     }
     default:
         LOGW("libc", "futex op %d unsupported", op);
-        return errno = guest_errno(ENOSYS), -1;
+        return errno = ENOSYS, -1;
     }
 }
 void th_syscall(Cpu& c) {
@@ -569,17 +568,10 @@ void th_syscall(Cpu& c) {
         if (a2) *(u32*)a2 = 0;
         r = 0;
         break;
-    case 167:  // prctl: PR_SET_NAME names the thread in crash reports (core/crash.h); the rest ignored
-        if (a1 == 15 && a2) {
-            char name[16] = {};
-            strncpy(name, (const char*)a2, sizeof name - 1);
-            crash_thread_set_name(name);
-        }
-        r = 0;
-        break;
+    case 167: r = guest_prctl(a1, a2); break;
     default:
         LOGW("libc", "syscall(%lld) unsupported", (long long)nr);
-        errno = guest_errno(ENOSYS);
+        errno = ENOSYS;
         r = -1;
         break;
     }
@@ -601,7 +593,6 @@ void th_open(Cpu& c) {
     int mode = (int)c.x(2);
     // (shares delete access, so the guest can unlink or rename over an open file: hle/host_file.h)
     int crt = hostfile::open(hp.c_str(), oflags_to_host((int)c.x(1)), (mode & 0200 ? _S_IWRITE : 0) | _S_IREAD);
-    if (crt < 0) set_errno_guest();
     int fd = hostfd::adopt_file(crt);
     LOGD("io", "open(%s -> %s, %#x) = %d", arg_str(c, 0), hp.c_str(), (int)c.x(1), fd);
     ret(c, (u64)(s64)fd);
@@ -632,7 +623,6 @@ void th_fstat(Cpu& c) {
     if (hostfd::emulated(fd) || hostfd::socket_of(fd) != ~(uintptr_t)0) {
         s.st_mode = hostfd::emulated(fd) ? _S_IFIFO | 0600 : 0140600;  // a pipe / a socket (S_IFSOCK)
     } else if (fstat(hostfd::crt_of(fd), &s) != 0) {
-        set_errno_guest();
         return ret(c, (u64)-1);
     }
     to_bionic_stat(s, c.x(1));

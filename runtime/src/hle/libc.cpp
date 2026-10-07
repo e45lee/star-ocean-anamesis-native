@@ -15,6 +15,7 @@
 #include <mutex>
 
 #include "core/hle.h"
+#include "core/linux_errno.h"
 #include "core/log.h"
 #include "hle/format.h"
 
@@ -122,7 +123,7 @@ void th_ctype_get_mb_cur_max(Cpu& c) { ret(c, MB_CUR_MAX); }
 void th_localeconv(Cpu& c) { ret_ptr(c, localeconv()); }
 
 // ---- errno / process ----
-void th_errno(Cpu& c) { ret_ptr(c, &errno); }
+void th_errno(Cpu& c) { ret_ptr(c, guest_errno_location()); }  // (core/linux_errno.h)
 
 void th_stack_chk_fail(Cpu& c) {
     LOGE("libc", "stack corruption detected");

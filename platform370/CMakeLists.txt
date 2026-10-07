@@ -4,7 +4,7 @@
 # docs/history/PLAN-rebase-370.md).
 #
 # Added by the repository's CMakeLists.txt (scripts/build.sh: build/platform370/) after
-# runtime/, when SOA_BUILD_PLATFORM370 is on (soa-emu needs it).
+# runtime/, when soa or soa-emu is built (both link it; the root CMakeLists.txt derives SOA_BUILD_PLATFORM370).
 #
 # Target:
 #   soaplatform370  STATIC. Public include dir platform370/include (#include

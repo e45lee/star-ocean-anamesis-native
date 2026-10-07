@@ -92,7 +92,7 @@ They come after anything the host registered from static initializers, so platfo
 
 ## Building
 
-`platform370/CMakeLists.txt` is a subdirectory of the repository's build, added after `runtime/` when `SOA_BUILD_PLATFORM370` is on (the default). `SOA_BUILD_EMULATOR` needs it.
+`platform370/CMakeLists.txt` is a subdirectory of the repository's build, added after `runtime/` when the port or the emulator is built (`SOA_BUILD_PORT`, `SOA_BUILD_EMULATOR`: both link it).
 
 - **Target:** `soaplatform370`, a static library. Its public include dir is `platform370/include`, and it links `soaruntime_iface`.
 - **Linking:** nothing in it registers itself from a static initializer; `install()` does the registering. So it links as a plain library, not whole-archive.

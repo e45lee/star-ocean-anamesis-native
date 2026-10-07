@@ -10,7 +10,7 @@
 # picked when build/ is configured; delete build/ to switch an existing tree.
 # Linux prerequisites vcpkg can't provide: README.md, "Setup".
 #
-# --windows (first argument): the Windows cross build instead, into build-win/ (port/PLAN.md 5b;
+# --windows: the Windows cross build instead, into build-win/ (port/PLAN.md 5b;
 # README.md, "Windows"): the distribution's MinGW-w64 GCC (x86_64-w64-mingw32-g++-posix, apt's
 # g++-mingw-w64-x86-64-posix), vcpkg's x64-mingw-static triplet (cmake/vcpkg-triplets/),
 # cmake/toolchains/mingw-w64-x64.cmake, the
@@ -31,7 +31,7 @@
 # reconfigure started by a bare `cmake --build`) without SOA_BUILD_SH in the environment, which
 # this script sets, so the ports are never built with another PATH or compiler.
 #
-# --release (after --windows, if any): the optimized build the release packages are made from
+# --release: the optimized build the release packages are made from
 # (scripts/package.sh; README.md "Packaging"), into build-release/ (build-win-release/):
 # CMAKE_BUILD_TYPE=Release (-O3, NDEBUG) plus -g1 (line tables: the packages' separate debug
 # symbols), no aif2png; on Linux libstdc++
@@ -41,24 +41,27 @@
 # search for a source checkout around them, only --repo DIR and their install dirs
 # (common/include/soa/install.h, "the repo roots"; README.md "Packaging").
 #
+# --windows and --release come first, in either order.
+#
 # -DNAME=VALUE (after those, any number): configure options (e.g. -DSOA_BUILD_PORT=OFF); given to the
 # first configure, or to a reconfigure of an existing build dir (with this script's environment);
 # no spaces in a value.
 #
 # Usage: scripts/build.sh [--windows] [--release] [-DNAME=VALUE...] [cmake --build options...]
-#   e.g. scripts/build.sh --target soa
+#   e.g. scripts/build.sh --target soa; scripts/build.sh --release --windows
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
 # The main checkout, also from a worktree; else this checkout (scripts/lib/checkout.sh).
 . "$repo/scripts/lib/checkout.sh"
 main=$(main_checkout "$repo")
+windows= release=
+while [ $# -gt 0 ]; do
+  case $1 in --windows) windows=1; shift ;; --release) release=1; shift ;; *) break ;; esac
+done
 bdir=build
 cfg_extra=
-windows=
-if [ "${1:-}" = "--windows" ]; then
-  shift
-  windows=1
+if [ -n "$windows" ]; then
   bdir=build-win
   for t in gcc-posix g++-posix windres; do
     command -v x86_64-w64-mingw32-$t > /dev/null 2>&1 ||
@@ -69,8 +72,7 @@ if [ "${1:-}" = "--windows" ]; then
     -DVCPKG_MANIFEST_FEATURES=angle"
 fi
 rel_flags= rel_link=
-if [ "${1:-}" = "--release" ]; then
-  shift
+if [ -n "$release" ]; then
   bdir=$bdir-release
   cfg_extra="$cfg_extra -DCMAKE_BUILD_TYPE=Release -DSOA_BUILD_TOOLS=OFF"
   rel_flags="-O3 -DNDEBUG -g1"
@@ -112,8 +114,7 @@ if [ ! -f "$bdir/CMakeCache.txt" ]; then
     launcher="-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
   echo "== configuring $bdir/ (vcpkg: $vcpkg_root${gen:+, Ninja}${launcher:+, ccache})"
   # shellcheck disable=SC2086
-  VCPKG_MAX_CONCURRENCY=${VCPKG_MAX_CONCURRENCY:-$jobs} \
-    cmake -S . -B "$bdir" $gen $launcher -DCMAKE_TOOLCHAIN_FILE="$vcpkg_root/scripts/buildsystems/vcpkg.cmake" $cfg_extra \
+  cmake -S . -B "$bdir" $gen $launcher -DCMAKE_TOOLCHAIN_FILE="$vcpkg_root/scripts/buildsystems/vcpkg.cmake" $cfg_extra \
       ${rel_flags:+"-DCMAKE_C_FLAGS_RELEASE=$rel_flags" "-DCMAKE_CXX_FLAGS_RELEASE=$rel_flags"} \
       ${rel_link:+"-DCMAKE_EXE_LINKER_FLAGS=$rel_link"} $cfg_user
 elif [ -n "$cfg_user" ]; then
@@ -123,9 +124,12 @@ elif [ -n "$cfg_user" ]; then
 fi
 echo "== building (cmake --build $bdir -j$jobs $*)"
 cmake --build "$bdir" -j"$jobs" "$@"
-if [ -z "$windows" ]; then
-  echo "== done: $bdir/port/soa, $bdir/server/soa-server, $bdir/emulator/soa-emu, $bdir/emulator-viewer/soa-viewer"
-else
-  echo "== done: $bdir/port/soa.exe, $bdir/server/soa-server.exe, $bdir/emulator/soa-emu.exe, $bdir/emulator-viewer/soa-viewer.exe"
-  echo "   (from WSL: scripts/windows-stage.sh, then run them in /mnt/c/soa-win; README.md \"Windows\")"
-fi
+# the programs this configuration builds (the SOA_BUILD_* options) and that exist now
+ext=; [ -n "$windows" ] && ext=.exe
+done_list=
+for p in PORT:port/soa SERVER:server/soa-server EMULATOR:emulator/soa-emu VIEWER:emulator-viewer/soa-viewer; do
+  grep -q "^SOA_BUILD_${p%%:*}:BOOL=OFF" "$bdir/CMakeCache.txt" && continue
+  [ -f "$bdir/${p#*:}$ext" ] && done_list="$done_list${done_list:+, }$bdir/${p#*:}$ext"
+done
+echo "== done${done_list:+: $done_list}"
+[ -z "$windows" ] || echo "   (from WSL: scripts/windows-stage.sh, then run them in /mnt/c/soa-win; README.md \"Windows\")"

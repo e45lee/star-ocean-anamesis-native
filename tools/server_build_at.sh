@@ -33,6 +33,7 @@ mkdir -p "$src"
 rsync -a --checksum --delete "$src.new/" "$src/"
 rm -rf "${src:?}.new"
 # webview/ isn't extracted (soa-server doesn't link it), so SOA_BUILD_WEBVIEW is off too.
+# (-DSOA_BUILD_PLATFORM370=OFF: for older revisions, where it was an option; derived since CR6.)
 # SOA_BUILD_SH: the root CMakeLists.txt configures only from scripts/build.sh (its environment makes the
 # vcpkg ports' cache keys); this build installs no ports (VCPKG_MANIFEST_INSTALL=OFF, build/'s instead).
 SOA_BUILD_SH=1 cmake -S "$src" -B "$out/build" -DCMAKE_TOOLCHAIN_FILE="$toolchain" -DVCPKG_INSTALLED_DIR="$repo/build/vcpkg_installed" \

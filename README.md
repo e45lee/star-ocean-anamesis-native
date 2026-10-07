@@ -118,9 +118,10 @@ A build dir configured before vcpkg (with `deps/` and `third_party/`, now retire
 toolchains: delete it and configure again. vcpkg builds its ports with `VCPKG_MAX_CONCURRENCY` jobs
 (8 unless set). Parts can be left out at configure
 time with `-DSOA_BUILD_PORT=OFF`, `-DSOA_BUILD_EMULATOR=OFF`, `-DSOA_BUILD_VIEWER=OFF`,
-`-DSOA_BUILD_SERVER=OFF` or `-DSOA_BUILD_PLATFORM370=OFF` (the port needs the server library, so
-`SOA_BUILD_SERVER=OFF` needs `SOA_BUILD_PORT=OFF` too; the emulator needs platform370, so
-`SOA_BUILD_PLATFORM370=OFF` needs `SOA_BUILD_EMULATOR=OFF`). Pass them to `scripts/build.sh`
+`-DSOA_BUILD_SERVER=OFF`, `-DSOA_BUILD_TOOLS=OFF` or `-DSOA_BUILD_WEBVIEW=OFF` (the port needs the
+server library and the web view, so `SOA_BUILD_SERVER=OFF` or `SOA_BUILD_WEBVIEW=OFF` needs
+`SOA_BUILD_PORT=OFF` too; `platform370/` is built when the port or the emulator is, and the runtime,
+dynarmic, SDL2 and EGL when one of them or the viewer is). Pass them to `scripts/build.sh`
 before any build options (`scripts/build.sh -DSOA_BUILD_PORT=OFF --target soa-server`): the first
 configure gets them, or an existing build dir is reconfigured with them.
 

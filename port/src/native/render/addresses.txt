@@ -1,0 +1,20 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/render_addresses.h).
+kVaddrGlobalObjectManager             sym _ZN4Aska6Global16m_pObjectManagerE
+kVaddrGlobalObjectManagerJobDispatcher sym _ZN4Aska6Global29m_pObjectManagerJobDispatcherE
+kVaddrGlobalCameraManager             sym _ZN4Aska6Global16m_pCameraManagerE
+kVaddrGlobalLightManager              sym _ZN4Aska6Global15m_pLightManagerE
+kVaddrGlobalModifierManager           sym _ZN4Aska6Global18m_pModifierManagerE
+kVaddrGlobalTextureManager            sym _ZN4Aska6Global17m_pTextureManagerE
+kVaddrGlobalRenderStateManager        sym _ZN4Aska6Global21m_pRenderStateManagerE
+kVaddrGlobalRenderStatePool           sym _ZN4Aska6Global18m_pRenderStatePoolE
+kVaddrGlobalShaderLinkManager         sym _ZN4Aska6Global20m_pShaderLinkManagerE
+kVaddrGlobalShaderConstantBufferPool  sym _ZN4Aska6Global27m_pShaderConstantBufferPoolE
+kVaddrGlobalFrameBuffer               sym _ZN4Aska6Global14m_pFrameBufferE
+kVaddrRenderDev                       sym _ZN4Aska12g_pRenderDevE                 # RenderDeviceGL*
+kVaddrRenderThreadGPUSync             sym _ZN4Aska12RenderThread10m_pGPUSyncE
+kVaddrDefaultSphere                   sym _ZN4Aska16RenderableObject16m_vDefaultSphereE  # Vector
+kPrimModeTable      at 0x28ce77c u32[7] ref _ZN4Aska16RenderDeviceData20DrawIndexedPrimitiveEPNS_14RenderDeviceGLENS_8PrimType4TypeERNS_11IndexBufferEmi  # PrimType::Type -> GL mode
+kOffsetEpsilon      at 0x26fac84 f32 ref _ZN4Aska16RenderDeviceData28LastMinuteDrawCommands_DepthEPNS_18ASKA_OGL_STATESET0E  # the polygon-offset threshold
+kCompareFuncTable   at 0x28ce73c u32[8] ref _ZN4Aska14RenderDeviceGL16SetZTestFunctionENS_5ZTest4FuncE  # ZTest / StencilTest::Func -> GL compare function
+kStencilOpTable     at 0x28ce75c u32[8] ref _ZN4Aska14RenderDeviceGL12SetStencilOpENS_11StencilTest4FuncENS_9StencilOp9OperationES4_S4_i  # StencilOp::Operation -> GL stencil op
+kBlendTable         at 0x28cee60 u32[8] ref _ZN4Aska16RenderDeviceData21SetAlphaBlendFunctionENS_10AlphaBlend9OperationENS_22SeparateAlphaBlendMode1EE  # AlphaBlend::Operation -> {src, dst, alphaDst, equation}

@@ -1,0 +1,4 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/hash_addresses.h).
+kCHash32Table   at 0x2863e48 u32[256] ref _ZN9Framework7CHash32C2EPKc  # zlib's CRC-32 table (test hash/tables)
+kCrc16Table     at 0x2872808 u16[256] ref _ZN4Aska4Hash3CRCEPKhmPt     # CRC-16, polynomial 0x8408
+kCrc32Table     at 0x2872a08 u32[256] ref _ZN4Aska4Hash3CRCEPKhmPj

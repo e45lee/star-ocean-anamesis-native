@@ -1,0 +1,4 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/sync_addresses.h).
+kMutexCpp            str "...\\Framework\\Mutex.cpp"
+kAlreadyInitialized  str "Already initialized."
+kUnlockNotCalled     str "Unlock doesn't called, yet."

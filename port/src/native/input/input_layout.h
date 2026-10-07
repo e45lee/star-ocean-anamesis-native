@@ -24,6 +24,7 @@
 #include <cstdint>
 
 #include "../sync/sync_layout.h"
+#include "gen/input_addresses.h"  // kVaddr*: the guest statics (tools/gen_addresses.py)
 
 namespace soa::native::input {
 
@@ -36,18 +37,9 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use ------
-// From `nm -DS work/libSOA-3.7.0.so` (sizes in the comments) and the decompiles in port/decomp/input/.
-inline constexpr u64 kVaddrPeripheralManager = 0x2ccc9e0;     // Aska::Global::m_pPeripheralManager (PeripheralManager*)
-inline constexpr u64 kVaddrTouchCriGlobal = 0x2c00a60;        // Aska::TouchPanel::m_criGlobal (FastCriticalSection, 0x90)
-inline constexpr u64 kVaddrSystemTouchQueue = 0x2c00af0;      // Aska::TouchPanel::m_queueSystemTouchData (0x528)
-inline constexpr u64 kVaddrMouseInstance = 0x2ccc6b0;         // Aska::Mouse::StaticPrivate::pMouse
-inline constexpr u64 kVaddrKeyboardInstance = 0x2ccbf10;      // Aska::Keyboard::Static::pKeyboard
-inline constexpr u64 kVaddrCPadInstance = 0x2c00268;          // Framework::TSingleton<CPad>::m_pInstance
-inline constexpr u64 kVaddrCPadReaderInstance = 0x2c004f0;    // Framework::TSingleton<CPadReader>::m_pInstance
-inline constexpr u64 kVaddrCTouchPanelInstance = 0x2bebb10;   // Framework::TSingleton<CTouchPanel>::m_pInstance
-inline constexpr u64 kVaddrCMouseInstance = 0x2c00250;        // Framework::TSingleton<CMouse>::m_pInstance
-inline constexpr u64 kVaddrCKeyboardInstance = 0x2bffcd0;     // Framework::TSingleton<CKeyboard>::m_pInstance
+// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use: the
+// generated gen/input_addresses.h (tools/gen_addresses.py, from addresses.txt: each found in the lib),
+// included above.
 
 // Aska::FastCriticalSection (0x90), Aska::Thread (0x10) and Framework::CMutex (0xb0) are the `sync`
 // subsystem's classes (sync_layout.h), embedded here. The input code inlines the critical section's

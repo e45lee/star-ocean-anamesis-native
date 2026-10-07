@@ -39,6 +39,8 @@
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
 #include "native/api/fakeapi.h"
+#include "native/api/gen/api_addresses.h"
+#include "native/common/gen/common_addresses.h"
 #include "soaserver/api_campaign.h"
 #include "soaserver/chash32.h"
 #include "soaserver/events.h"
@@ -112,7 +114,7 @@ u64 singleton(const char* instance_sym) {
     u64 slot = g(instance_sym);
     u64 p = at<u64>(slot, 0);
     if (!p) {
-        guest_call(g("_ZN9Framework9gDoAssertEPKciS1_z"), {lib_base() + 0x26dae91, 0x23, lib_base() + 0x26daf21});  // TSingleton.h, "m_pInstance is null." (3.7.0)
+        guest_call(g("_ZN9Framework9gDoAssertEPKciS1_z"), {lib_base() + kTSingletonClientH, 0x23, lib_base() + kStrInstanceNull});
         p = at<u64>(slot, 0);
     }
     return p;
@@ -339,14 +341,14 @@ void LoginLambda(u64 status, u64 functor, u64 data_ref, u64 size_ref, u64* x0) {
     call8(make_map, {a, a + 0x60, 4});
     // root map entries: {key AValue, value AValue} (0x40 each); AMap = {entries, count} at +0x68.
     u64 root = at<u32>(a, 0x70) ? at<u64>(a, 0x68) : 0;
-    call8(set_string, {root, lib_base() + 0x27a4177 /* "Player" */, a});
+    call8(set_string, {root, (u64) "Player", a});
     u64 player = at<u32>(a, 0x70) ? at<u64>(a, 0x68) + 0x20 : 0;
     call8(make_map, {a, player, 2});
-    call8(set_string, {at<u32>(player, 0x10) ? at<u64>(player, 8) : 0, lib_base() + 0x272e7f6 /* "Id" */, a});
+    call8(set_string, {at<u32>(player, 0x10) ? at<u64>(player, 8) : 0, (u64) "Id", a});
     u64 e = at<u64>(player, 8);
     at<u32>(e, 0x20) = 2;  // uint
     at<u64>(e, 0x28) = id;
-    call8(set_string, {at<u32>(player, 0x10) >= 2 ? at<u64>(player, 8) + 0x40 : 0, lib_base() + 0x28d84d4 /* "Name" */, a});
+    call8(set_string, {at<u32>(player, 0x10) >= 2 ? at<u64>(player, 8) + 0x40 : 0, (u64) "Name", a});
     call8(set_string, {at<u32>(player, 0x10) >= 2 ? at<u64>(player, 8) + 0x60 : 0, (u64)name, a});
     u64 pm = at<u64>(g("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE"), 0);
     guest_call(g("_ZN17CParameterManager11DeserializeEPKN4Aska4ASON6AValue4AMapE"), {pm, a + 0x68});
@@ -516,8 +518,9 @@ void dump_schema(const char* path) {
     FILE* f = fopen(path, "w");
     if (!f) return;
     std::map<u32, std::string> dict;
-    const char* ro = (const char*)(lib_base() + 0x26d41e0);  // .rodata (3.7.0)
-    const size_t ro_size = 0x27ede4;
+    u64 ro_addr = 0, ro_size = 0;
+    if (!main_lib()->section(".rodata", ro_addr, ro_size)) return;
+    const char* ro = (const char*)ro_addr;  // (a guest address)
     for (size_t i = 0; i < ro_size;) {
         size_t j = i;
         while (j < ro_size && ro[j] >= 0x20 && ro[j] < 0x7f) j++;

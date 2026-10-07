@@ -20,17 +20,15 @@
 #include "native/common/native_method.h"
 #include "native/resource/resource_check.h"
 #include "native/resource/resource_layout.h"
+#include "native/common/gen/common_addresses.h"
+#include "native/resource/gen/resource_addresses.h"
 
 namespace soa::native::resource {
 
 namespace {
 
-// ResourceManager.cpp's / FileLoader.cpp's assert strings (guest .rodata, ELF vaddrs).
-constexpr u64 kResourceManagerCpp = 0x28659c3;  // "...\Framework\ResourceManager.cpp"
-constexpr u64 kNotInitialized = 0x2864a2c;      // "m_IsInitialized is null."
-constexpr u64 kElementNull = 0x2865a94;         // "m_pResourceElement is null."
-constexpr u64 kFileLoaderCpp = 0x286396a;       // "...\Framework\FileLoader.cpp"
-constexpr u64 kUninitializedObject = 0x2861b3b; // "Uninitialized object."
+// ResourceManager.cpp's / FileLoader.cpp's assert strings: resource/addresses.txt, common's
+// kStrUninitializedObject.
 
 void rm_assert(int line, u64 message) { guest_assert(kResourceManagerCpp, line, message); }
 
@@ -54,7 +52,7 @@ bool CResourceElement::IsDone() const { return m_phase == kPhaseDone; }
 s32 CFileLoader::FileNumber() const { return m_fileNumber; }
 
 const char* CFileLoader::pFileName() const {
-    if (m_fileNumber == -1) guest_assert(kFileLoaderCpp, 0x22e, kUninitializedObject);
+    if (m_fileNumber == -1) guest_assert(kFileLoaderCpp, 0x22e, kStrUninitializedObject);
     if (m_isDirectOpened) return m_directRelativeName.data();
     static const u64 gp_file_name = guest::sym("_ZN9Framework6FileID10gpFileNameEj");
     return reinterpret_cast<const char*>(guest_call(gp_file_name, {(u64)(u32)m_fileNumber}));

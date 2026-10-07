@@ -1,0 +1,2 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/containers_addresses.h).
+kStrObjectContainerClientH      str "...Library/Framework/Source\\Framework/TObjectContainer.h"  # the Client project's path

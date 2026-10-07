@@ -8,24 +8,14 @@
 
 #include "core/cpu.h"
 #include "core/loader.h"
+#include "native/common/gen/common_addresses.h"
+#include "native/params/gen/params_addresses.h"
 #include "native/params/params_layout.h"
 
 namespace soa::native::params::g {
 
-// vaddrs of the constants (Ghidra address - 0x100000).
-constexpr u64 kParameterParserCpp = 0x275e860;  // "C:\BAS_Submission\...\Parameter\ParameterParser.cpp"
-constexpr u64 kParameterParserH = 0x275e8e7;    // "...\Source\Game/Parameter/ParameterParser.h"
-constexpr u64 kParameterBaseCpp = 0x275e3b2;    // "...\Parameter\ParameterBase.cpp"
-constexpr u64 kApObjectIsNull = 0x275e8ae;      // "apObject is null."
-constexpr u64 kApParserIsNull = 0x26dc58a;      // "apParser is null."
-constexpr u64 kApValueIsNull = 0x275e8d6;       // "apValue is null."
-constexpr u64 kNotFound = 0x275e8c0;            // "not found " (the by-key getters' dropped message)
-constexpr u64 kNotMatch = 0x275e8cb;            // "not match "
-constexpr u64 kEmptyString = 0x28d2011;         // "" (GetValueString's value when not found)
-constexpr u64 kStlAllocatorH = 0x26db0be;       // "...\Framework/STL_Allocator.h"
-constexpr u64 kNumElementsIsZero = 0x26db115;   // "aNumElements is zero."
-constexpr u64 kAllocatedIsNull = 0x26db12b;     // "pAllocatedMemory is null."
-constexpr u64 kStlStringH = 0x26db145;          // "...\Framework/STL_String.h"
+// The constants (their vaddrs): params/addresses.txt -> gen/params_addresses.h (in this namespace), and
+// common's kStrStlAllocatorH / kStrStlStringH / kStrNumElementsIsZero / kStrAllocatedMemoryIsNull.
 
 inline u64 at(u64 vaddr) { return main_lib()->base + vaddr; }
 u64 sym(const char* mangled);  // cached per call site by the callers (fatal when missing)

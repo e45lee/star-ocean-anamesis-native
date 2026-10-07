@@ -13,6 +13,8 @@
 #include "native/common/live_call.h"
 #include "native/containers/containers_family.h"
 #include "native/containers/containers_object_container.h"
+#include "native/common/gen/common_addresses.h"
+#include "native/containers/gen/containers_addresses.h"
 
 namespace soa::native::memory {
 
@@ -25,28 +27,24 @@ struct Names {
     const char* num_elements;  // NumElements' mangled name
     u64 assert_file;           // vaddr of the assert's source path
 };
-constexpr u64 kFileLibrary = 0x2865e66;  // "C:\BAS_Submission\Client\Library\Framework\Project\..\Source\Framework/TObjectContainer.h"
-constexpr u64 kFileClient = 0x26ee245;   // "C:\BAS_Submission\Client\Project\../Library/Framework/Source\Framework/TObjectContainer.h"
-constexpr u64 kMsgNull = 0x26ee29f;      // "m_pElements is null."
-constexpr u64 kMsgRange = 0x26db1f8;     // "The argument has gotten numeric out of range.(%d/%d)"
 
 template <typename T>
 struct Inst;
 template <>
 struct Inst<SoundElement> {
-    static constexpr Names n{"_ZNK9Framework16TObjectContainerINS_6CSound8CElementEE11NumElementsEv", kFileLibrary};
+    static constexpr Names n{"_ZNK9Framework16TObjectContainerINS_6CSound8CElementEE11NumElementsEv", kStrObjectContainerH};
 };
 template <>
 struct Inst<CollisionShapeGroup> {
-    static constexpr Names n{"_ZNK9Framework16TObjectContainerIN9Collision19CollisionShapeGroupEE11NumElementsEv", kFileClient};
+    static constexpr Names n{"_ZNK9Framework16TObjectContainerIN9Collision19CollisionShapeGroupEE11NumElementsEv", containers::kStrObjectContainerClientH};
 };
 template <>
 struct Inst<IFixedLengthAllocatorRef*> {
-    static constexpr Names n{"_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE11NumElementsEv", kFileLibrary};
+    static constexpr Names n{"_ZNK9Framework16TObjectContainerIPNS_21IFixedLengthAllocatorEE11NumElementsEv", kStrObjectContainerH};
 };
 template <>
 struct Inst<BehaviorQueueRef*> {
-    static constexpr Names n{"_ZNK9Framework16TObjectContainerIP13BehaviorQueueE11NumElementsEv", kFileClient};
+    static constexpr Names n{"_ZNK9Framework16TObjectContainerIP13BehaviorQueueE11NumElementsEv", containers::kStrObjectContainerClientH};
 };
 
 u64 guest(u64 vaddr) { return main_lib()->base + vaddr; }
@@ -73,21 +71,21 @@ u64 virtual_count(const TObjectContainer<T>* self) {
 
 template <typename T>
 u64 TObjectContainer<T>::NumElements() const {
-    if (!m_elements) do_assert(Inst<T>::n.assert_file, 0x3e, kMsgNull);
+    if (!m_elements) do_assert(Inst<T>::n.assert_file, 0x3e, kStrElementsNull);
     return m_count;
 }
 
 template <typename T>
 T* TObjectContainer<T>::rElement(u64 i) {
-    if (!m_elements) do_assert(Inst<T>::n.assert_file, 0x44, kMsgNull);
-    if (virtual_count(this) <= i) do_assert(Inst<T>::n.assert_file, 0x45, kMsgRange, i, virtual_count(this));
+    if (!m_elements) do_assert(Inst<T>::n.assert_file, 0x44, kStrElementsNull);
+    if (virtual_count(this) <= i) do_assert(Inst<T>::n.assert_file, 0x45, kStrOutOfRange, i, virtual_count(this));
     return m_elements + i;
 }
 
 template <typename T>
 const T* TObjectContainer<T>::crElement(u64 i) const {
-    if (!m_elements) do_assert(Inst<T>::n.assert_file, 0x4b, kMsgNull);
-    if (virtual_count(this) <= i) do_assert(Inst<T>::n.assert_file, 0x4c, kMsgRange, i, virtual_count(this));
+    if (!m_elements) do_assert(Inst<T>::n.assert_file, 0x4b, kStrElementsNull);
+    if (virtual_count(this) <= i) do_assert(Inst<T>::n.assert_file, 0x4c, kStrOutOfRange, i, virtual_count(this));
     return m_elements + i;
 }
 

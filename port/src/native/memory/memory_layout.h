@@ -19,6 +19,7 @@
 
 #include "../containers/containers_layout.h"  // MappedMemoryManager's hash tables (containers' classes)
 #include "../sync/sync_layout.h"              // FastCriticalSection, CMutex, CriticalSection (sync's classes)
+#include "gen/memory_addresses.h"  // kVaddr*: the guest statics (tools/gen_addresses.py)
 
 namespace soa::native::memory {
 
@@ -32,16 +33,9 @@ using s32 = std::int32_t;
 using s64 = std::int64_t;
 
 
-// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use ------
-// From the decompiles in port/decomp/memory/ and `nm -DS` (the object sizes check the classes' sizeof).
-inline constexpr u64 kVaddrGlobalMemoryManager = 0x2ccc698;       // Aska::Global::m_pMemoryManager (MemoryManager*)
-inline constexpr u64 kVaddrRootMemoryManager = 0x2ccc6a0;         // the mmap'd root heap's MemoryManager* (a local
-                                                                  // static of Global::InitializeMemoryManager; no symbol)
-inline constexpr u64 kVaddrSystemDeleteManager = 0x2cc1d00;       // Aska::Global::m_systemDeleteManager (0x138 bytes)
-inline constexpr u64 kVaddrSharedPointerCodePool = 0x2ccd4a0;     // TSharedPointerCode's counter pool (no symbol)
-inline constexpr u64 kVaddrStlMemoryManager = 0x2c00528;          // CAssignedMemoryManagerForSTLAllocator::m_pMemoryManager
-inline constexpr u64 kVaddrStlFixedLengthContainer = 0x2c00530;   // ...::m_pFixedLengthAllocatorContainer
-inline constexpr u64 kVaddrApplicationMemoryInstance = 0x2c00260; // TSingleton<CApplicationMemory>::m_pInstance
+// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use: the
+// generated gen/memory_addresses.h (tools/gen_addresses.py, from addresses.txt: each found in the lib),
+// included above.
 
 // The locks are sync's classes (port/src/native/sync/sync_layout.h): Aska::FastCriticalSection (0x90,
 // embedded: lock word +0x38, waiter count +0x3c, Semaphore +0x78), Framework::CMutex (0xb0, the pools'
@@ -760,7 +754,6 @@ static_assert(offsetof(MappedMemoryManager, m_identifiers) == 0x2a8);
 static_assert(offsetof(MappedMemoryManager, m_auids) == 0x348);
 static_assert(offsetof(MappedMemoryManager, m_addresses) == 0x3d8);
 static_assert(sizeof(MappedMemoryManager) == 0x468);
-inline constexpr u64 kVaddrMappedMemoryManager = 0x2ccc5e0;  // Aska::Global::m_pMappedMemoryManager
 
 }  // namespace soa::native::memory
 

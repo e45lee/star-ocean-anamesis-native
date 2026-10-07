@@ -1,0 +1,4 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/yayoi_addresses.h).
+kVaddrNetworkManager        sym _ZN4Aska6Global17m_pNetworkManagerE         # NetworkManager*
+kVaddrNetworkAllocator      sym _ZN4Aska6Global19m_pNetworkAllocatorE
+kVaddrDownloadContentPath   sym _ZN4Aska6Global24m_pszDownloadContentPathE  # char*

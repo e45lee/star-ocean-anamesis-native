@@ -6,7 +6,7 @@
 // in the order of modules.cpp's list, once, before the registry is first read. The order matters:
 // each hook kind runs in registration order, and OnPlayerLoad / OnResponse hooks add keys to one
 // response map, whose insertion order is on the wire. So the order is this explicit list, not the
-// file names (static-initializer order, before step R4 of server/PLAN-readability.md), and a source
+// file names (static-initializer order, before step R4 of docs/history/PLAN-readability.md), and a source
 // file can be renamed or moved without changing a reply byte. The test server/module-order pins it.
 
 namespace soa::server {

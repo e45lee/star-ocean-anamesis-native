@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The local server's doc-comment coverage (server/PLAN-readability.md 2.5 and R19), for
+"""The local server's doc-comment coverage (docs/history/PLAN-readability.md 2.5 and R19), for
 tools/check_server_docs.sh:
 
     tools/server_doc_coverage.py [--server BIN]     exit 1 when something lacks its doc comment

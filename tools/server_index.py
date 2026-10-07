@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates server/API-INDEX.md, the local server's "where is X" index (server/PLAN-readability.md 2.6).
+"""Generates server/API-INDEX.md, the local server's "where is X" index (docs/history/PLAN-readability.md 2.6).
 
     tools/server_index.py [--server BIN] [--out server/API-INDEX.md]
     tools/server_index.py --check            exit 1 when server/API-INDEX.md isn't what it would generate
@@ -67,7 +67,7 @@ def body_of(lines, start):
 
 
 def core_handlers():
-    """Server::dispatch's if-chain is gone (server/PLAN-readability.md R8): every handler, the core's
+    """Server::dispatch's if-chain is gone (docs/history/PLAN-readability.md R8): every handler, the core's
     too, is an ext::add_core_api / add_api registration (module_handlers). Kept for callers: empty."""
     return {}, []
 
@@ -267,7 +267,7 @@ def generate(server):
     o.append("Each module registers from its `register_<module>()` function, and `server/src/core/modules.cpp` calls those in "
              "one explicit list, so each kind runs in that list's order (`soa-server --list-hooks`; the test "
              "`server/module-order` pins it). `OnPlayerLoad` and `OnResponse` add keys to one response map, and maps keep "
-             "insertion order on the wire, so this order is visible in the reply bytes (server/PLAN-readability.md 1.3). "
+             "insertion order on the wire, so this order is visible in the reply bytes (docs/history/PLAN-readability.md 1.3). "
              "The links are the registration lines.")
     o.append("")
     for kind, regs in hk.items():

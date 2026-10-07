@@ -32,7 +32,8 @@ target_link_libraries(soaserver PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(soaserver PRIVATE utf8proc::utf8proc)
 
 # soanet: soa-server's wire layer (net/: packets, the Ninja cipher, the request decoder, the game
-# session and bridge, the HTTP router; the HTTP server and client on cpp-httplib, the poll loop). Not part of libsoaserver: soa never needs it.
+# session and bridge, the HTTP router; the HTTP server and client on cpp-httplib, the poll loop). Not part of
+# libsoaserver. soa links it too: the HTTP router for its in-process CDN and the packet log's formats (net/README.md).
 file(GLOB_RECURSE _soanet_src CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp)
 add_library(soanet STATIC ${_soanet_src})
 # (soaserver's headers only: the executable links the library whole, after soanet)

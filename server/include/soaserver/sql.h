@@ -3,7 +3,7 @@
 // master DB, statements with bound arguments, rows read by column name. Every handler sees it as
 // ext::Sql / ext::Row / ext::Arg (soaserver/ext.h); the server object owns the two handles it
 // opens with Sql::open (src/core/server.h), the handlers borrow them through their ext::Ctx.
-// Defined in src/state/sql.cpp (server/PLAN-readability.md 1.5: the core's former Db and the
+// Defined in src/state/sql.cpp (docs/history/PLAN-readability.md 1.5: the core's former Db and the
 // modules' ext::Sql were two copies; PLAN-schema S1 merged them).
 #include <sqlite3.h>
 
@@ -112,7 +112,7 @@ uint64_t statement_errors();
 
 // one() as the core's former Db::one read it: `dflt` when there is no row, but a NULL value reads
 // as 0 (Sql::one reads it as `dflt`). Kept, by name, at the five core sites whose default isn't 0
-// (server/PLAN-readability.md 1.5), each decided and commented at the site: MissionStart's
+// (docs/history/PLAN-readability.md 1.5), each decided and commented at the site: MissionStart's
 // party_id, the character bonus's and the rewards' two role categories, the step-up chain's step.
 int64_t one_null_as_zero(Sql& db, const std::string& sql, std::initializer_list<Arg> args, int64_t dflt);
 

@@ -1,6 +1,6 @@
 #pragma once
 // The state DB (server.sqlite3): opening it at this build's schema version, and the meta table's
-// helpers (server/PLAN-schema.md 3.1, 4.1). Port code, not guest behaviour. The schema's steps are
+// helpers (docs/history/PLAN-schema.md 3.1, 4.1). Port code, not guest behaviour. The schema's steps are
 // state/schema.h; the check of its references into the master is state/check.h.
 #include <sqlite3.h>
 

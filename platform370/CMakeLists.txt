@@ -1,6 +1,6 @@
 # libsoaplatform370: the 3.7.0 platform layer (platform370/README.md): the 3.7.0-only Java
 # answers, the fmod import, the device clock, the service_stop_day native patch, and the network
-# glue (host/port redirect, the AskaActivity HTTP client). soa-emu links it; soa will (P1,
+# glue (host/port redirect, the AskaActivity HTTP client). soa-emu and soa link it (soa since P1,
 # docs/history/PLAN-rebase-370.md).
 #
 # Added by the repository's CMakeLists.txt (scripts/build.sh: build/platform370/) after

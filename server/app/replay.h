@@ -1,6 +1,6 @@
 #pragma once
 // soa-server --replay: runs a recorded request sequence through the server library, as soa-server's
-// game connection would (server/tests/replay/README.md; server/PLAN-readability.md section 4.1).
+// game connection would (server/tests/replay/README.md; docs/history/PLAN-readability.md section 4.1).
 // The proof that a refactor changes nothing: tools/server_replay_diff.sh replays every corpus with
 // two builds and compares what they wrote.
 #include <string>

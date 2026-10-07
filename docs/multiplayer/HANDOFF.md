@@ -115,7 +115,7 @@ Written 2026-10-03 by agent `multiplayer-study`, branch `port/multiplayer-study`
 
 ## Recommended implementation order (server/)
 
-Follow `server/PLAN-readability.md`'s target layout and `server/PLAN-schema.md` for state.
+Follow the layout `docs/history/PLAN-readability.md` built (`server/src/README.md`) and the state conventions of `docs/history/PLAN-schema.md` (`server/src/state/README.md`).
 
 1. **Wire** (new files in `server/net/`: a `multiplay/` folder, or `multiplay_wire.{h,cpp}`):
    - header reuse without SHA-1;

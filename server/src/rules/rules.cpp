@@ -1,6 +1,6 @@
 // The pure rules of soaserver/server.h `rules::` (port code, not guest behaviour): weighted picks,
 // EXP and levels, level interpolation, stamina. Unit-tested in src/core/server.cpp's tests (the
-// rules' own tests move beside them with step R8.10 of server/PLAN-readability.md).
+// rules' own tests move beside them with step R8.10 of docs/history/PLAN-readability.md).
 #include <algorithm>
 #include <cmath>
 

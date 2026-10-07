@@ -145,9 +145,9 @@ soa's own:
 | `SOA_NOTICE_HTML_DUMP=FILE` | the self-test `player/notice` writes the notice page's HTML there (also `soa-server --selftest player/notice`; `docs/webview.md`) |
 | `SOA_WEBVIEW_DUMP_CSS=FILE` | the web view appends each stylesheet as litehtml gets it (also soa-webview-render) |
 
-Not built now, emitted by the a2c generators for a regenerated family: `SOA_ASKA_MATH_OFF` /
-`SOA_ASKA_MATH_SKIP` (tools/gen_aska_math_a2c.py; groups and symbols left to the guest, for
-bisecting). Host variables: `HOME` (the default `--data`), `TZ` (the local time `--clock` and
+In no build: `SOA_ASKA_MATH_OFF` / `SOA_ASKA_MATH_SKIP` (groups and symbols left to the guest, for
+bisecting) exist only in what tools/gen_aska_math_a2c.py would emit; the a2c generators are kept as
+tools, and nothing in the tree uses their output (`src/native/README.md`). Host variables: `HOME` (the default `--data`), `TZ` (the local time `--clock` and
 `--device-clock` are read in; with `HOME` and `TMPDIR` the only host variables the guest's `getenv`
 sees), and SDL's own: `SDL_VIDEODRIVER`, `SDL_AUDIODRIVER` (`dummy` / `disk`), and any `SDL_*` hint.
 The runtime sets two hints at normal priority (`SDL_HINT_VIDEO_X11_FORCE_EGL`,

@@ -1,5 +1,5 @@
 #!/bin/bash
-# The CDN's byte-identical proof (server/PLAN-readability.md R18; the replay of RG4 builds no CDN):
+# The CDN's byte-identical proof (docs/history/PLAN-readability.md R18; the replay of RG4 builds no CDN):
 # runs `soa-server --cdn-check` with two builds over every path the CDN serves (2,000 paths per run,
 # so the runs split the same way whatever the arguments) and compares what
 # they answer (status, size, SHA-1, content type per path) and their logs (times and the scratch

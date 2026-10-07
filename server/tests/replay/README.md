@@ -1,6 +1,6 @@
 # Replay corpora: the proof that a server refactor changes nothing
 
-Each folder here is a recorded (or generated) request sequence. `tools/server_replay_diff.sh` replays every one with two `soa-server` builds (a parent and a child commit) and compares what they emit. This is gate **RG4** of `server/PLAN-readability.md` (section 4.1): every step of that plan must pass it byte-identical.
+Each folder here is a recorded (or generated) request sequence. `tools/server_replay_diff.sh` replays every one with two `soa-server` builds (a parent and a child commit) and compares what they emit. This is gate **RG4** of `docs/history/PLAN-readability.md` (section 4.1): every step of that plan must pass it byte-identical.
 
 ```sh
 tools/server_build_at.sh HEAD~1 build/rg4-parent           # the parent's soa-server (server-only build, ~45 s)

@@ -1,6 +1,6 @@
 # server/src/api: the modules, by domain
 
-One folder per API group of `docs/api.md`, so the catalogue, the code and the rules share one vocabulary (`../../PLAN-readability.md` section 2.1). Each module file registers its handlers and hooks from its `register_<module>()` function, called in `../core/modules.cpp`'s order; `../../API-INDEX.md` maps every API to its handler and lists the hooks in run order. The core's own APIs are here too (step R8 moved them out of `../core/server.cpp`), registered first with `ext::add_core_api`: the entry flow in `entry/`, the player load, parties and home character in `player/`, the missions in `missions/`, the gacha in `gacha/`, the present box in `presents/`, the favor APIs in `favor/favor_api.cpp`.
+One folder per API group of `docs/api.md`, so the catalogue, the code and the rules share one vocabulary (`docs/history/PLAN-readability.md` section 2.1). Each module file registers its handlers and hooks from its `register_<module>()` function, called in `../core/modules.cpp`'s order; `../../API-INDEX.md` maps every API to its handler and lists the hooks in run order. The core's own APIs are here too (step R8 moved them out of `../core/server.cpp`), registered first with `ext::add_core_api`: the entry flow in `entry/`, the player load, parties and home character in `player/`, the missions in `missions/`, the gacha in `gacha/`, the present box in `presents/`, the favor APIs in `favor/favor_api.cpp`.
 
 | Folder | What |
 |---|---|

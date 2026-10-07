@@ -1,5 +1,5 @@
 """soadrive: the driver library shared by the port (soa), the 3.7.0 emulator (soa-emu + soa-server)
-and their tests (control/PLAN-consolidate.md; control/README.md "soadrive").
+and their tests (docs/history/PLAN-consolidate.md; control/README.md "soadrive").
 
   fifo        the control FIFO (send commands, wait for screenshots)
   proc        processes (timeout -k, PID, process group, RSS cap), free ports, repo_file

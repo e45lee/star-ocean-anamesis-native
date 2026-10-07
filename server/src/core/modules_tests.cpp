@@ -14,7 +14,7 @@ namespace {
 
 // Per kind: the registering modules in run order, with the detail (Grant: content type) where
 // there is one. Today's order is the one the file names gave before step R4 of
-// server/PLAN-readability.md (static initializers in link order). (The Schema kind went with
+// docs/history/PLAN-readability.md (static initializers in link order). (The Schema kind went with
 // PLAN-schema S1: every table is state/schema.cpp's.)
 const char* const kExpected[] = {
     "OnPlayerLoad: login_bonus, achievements, daily, event, follow, gear, home, notice, shop, sphere211, subscription, title, tower, worldboss, settings, coins, stamp",

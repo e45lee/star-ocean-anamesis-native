@@ -258,7 +258,7 @@ runtime/, emulator/ and viewer READMEs but not in `port/README.md`, soa's main d
   counts as history is the user's call. `docs/history/` mentions many more (`SOA_ORACLE_370`,
   `SOA_OBJBASE_*`, `SOA_*_A2C`, `SOA_GUEST_REPORT`, `SOA_INFOBASE_GEN`, `SOA_PARAM_LAYOUT_DUMP`,
   `SOA_RESTORE370_ON`); those are historical by design.
-- `SOA_ENGLISH` (docs/basmaster-gl.md:330) and `SOA_API` (server/PLAN-readability.md) are proposals, not
+- `SOA_ENGLISH` (docs/basmaster-gl.md:330) and `SOA_API` (docs/history/PLAN-readability.md) are proposals, not
   variables.
 - `docs/server-rules.md:570` gives the master DB as "`SOA_SERVER_MASTER`, else …" without `--master`
   (soa-server has only the flag).

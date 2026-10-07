@@ -1,6 +1,6 @@
 # Plan: the state schema for multiplayer
 
-Status: **plan for review only, not queued (future work); if queued, starts only after S12 (the user, 2026-10-03)**. That is, only after all of [PLAN-schema.md](PLAN-schema.md)'s S0–S12, plus R12, R17 and S11 + R19, have landed. Written 2026-10-03 by agent `mp-schema` (branch `port/mp-schema`, off main 8cb4ed2); no code changes. port/PLAN.md lists it under "Future work (not queued; needs the user's review)".
+Status: **plan for review only, not queued (future work); if queued, starts only after S12 (the user, 2026-10-03)**. That is, only after all of [docs/history/PLAN-schema.md](../docs/history/PLAN-schema.md)'s S0–S12, plus R12, R17 and S11 + R19, have landed. Written 2026-10-03 by agent `mp-schema` (branch `port/mp-schema`, off main 8cb4ed2); no code changes. port/PLAN.md lists it under "Future work (not queued; needs the user's review)".
 
 - **Starting point:** PLAN-schema's final schema (its 3.2, version N, plus S12's campaign tables), not today's. Nothing in S3–S12 changes for multiplayer. Where an S step's design makes an M step costlier, the M step says so as a **known cost** (section 4).
 - **The code side** (identity, the request lifecycle per player, concurrency, social, co-op, operations, tests) is a separate plan: [PLAN-multiplayer-code.md](PLAN-multiplayer-code.md) (steps MC1…, built on these M steps; also for review, not queued).

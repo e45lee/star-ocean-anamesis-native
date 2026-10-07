@@ -1,6 +1,6 @@
 # server/src/core: the server object, the request lifecycle, the module registry
 
-The library's core: the server object, the request lifecycle, the module registry and the shared helpers; no game rule of a single domain lives here (the core's APIs are in `../api/<domain>/` since step R8 of `../../PLAN-readability.md`). Public API: `../../include/soaserver/server.h` (requests, clocks), `ext.h` (the module API), `log.h`, `config.h`, `battle_log.h`.
+The library's core: the server object, the request lifecycle, the module registry and the shared helpers; no game rule of a single domain lives here (the core's APIs are in `../api/<domain>/` since step R8 of `docs/history/PLAN-readability.md`). Public API: `../../include/soaserver/server.h` (requests, clocks), `ext.h` (the module API), `log.h`, `config.h`, `battle_log.h`.
 
 | File | What |
 |---|---|

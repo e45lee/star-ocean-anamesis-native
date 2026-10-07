@@ -185,7 +185,7 @@ def main():
         sys.exit("make_state_fixture: tables still empty: %s" % ", ".join(empty))
 
     # ---- the dump ---------------------------------------------------------------------------------
-    out = ["-- The v0 state fixture (server/PLAN-schema.md 4.2): written by tools/make_state_fixture.py, do not edit.",
+    out = ["-- The v0 state fixture (docs/history/PLAN-schema.md 4.2): written by tools/make_state_fixture.py, do not edit.",
            "-- user_version 0 (the default); every table's CREATE text as a pre-S1 server stored it.", "begin;"]
     tables = [r for r in db.execute("select name, sql from sqlite_master where type = 'table' and name != 'sqlite_sequence' order by name")]
     for name, sql in tables:

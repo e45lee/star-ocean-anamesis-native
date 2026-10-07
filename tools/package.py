@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release packages of the desktop port and the 3.7.0 emulator (README.md "Packaging").
+"""Release packages of the desktop port, the 3.7.0 emulator and the offline viewer (README.md "Packaging").
 
   scripts/package.sh [--linux] [--windows] [--out DIR] [--no-build] [--version V]
 
@@ -13,6 +13,8 @@ build-win-release/) unless --no-build, then makes, per platform:
   soa-emulator-<V>-<platform>.zip       soa-emu (the unmodified 3.7.0 client) + soa-server (its server;
                                         it also runs alone) + the run-emulator launcher (run-emulator-en:
                                         soa-server --english, soa-emu --lang en)
+  soa-viewer-<V>-<platform>.zip         soa-viewer (the unmodified offline client, no server) + the
+                                        run-viewer launcher; the user's own game file (README.txt)
   soa-<V>-<platform>-debug-symbols.zip  the programs' separate debug info (line tables)
 
 Each zip holds one top folder (soa-port-<V>-<platform>/ ...) with the binaries (stripped), the

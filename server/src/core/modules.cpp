@@ -1,6 +1,6 @@
 // The one registration order of the server's modules (modules.h). Port code, not guest behaviour.
 //
-// The list is the order the modules registered in before step R4 of server/PLAN-readability.md
+// The list is the order the modules registered in before step R4 of docs/history/PLAN-readability.md
 // (static initializers in link order: the sources sorted by file name), so the replies are byte for
 // byte what they were. A new module goes where its hooks should run relative to the others: a
 // player-load hook added at the end adds its keys after every other module's.

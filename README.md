@@ -33,8 +33,11 @@ tools/extract.sh          # unpack the XAPK into work/extracted: decomp.sh --v38
 The C++ dependencies come from **vcpkg** in manifest mode (`vcpkg.json`, pinned by its
 `builtin-baseline`): Boost (headers, for dynarmic), zlib, SQLite, zstd, libogg, libvorbis, SDL2 (X11 and
 Wayland video), OpenSSL, FreeType, litehtml, stb (PNG writing, the web view), pugixml (SharedPreferences
-XML: `common/`'s `soa_codec`), minizip-ng (zlib only: the ZIP reader `soa_zip`, `common/include/soa/zip.h`)
-and the Khronos EGL/GLES headers. All are built from source by vcpkg, as static
+XML: `common/`'s `soa_codec`), minizip-ng (zlib only: the ZIP reader `soa_zip`, `common/include/soa/zip.h`),
+msgpack-cxx (the server's MessagePack), cpp-httplib (soa-server's HTTP server and client), CLI11 (the
+programs' command lines, `common/include/soa/cli.h`), nlohmann-json and utf8proc (the server's English text
+and art), FFmpeg's libavcodec / libavformat / libswresample (the movie player; an LGPL build, "Packaging"
+below) and the Khronos EGL/GLES headers (`vcpkg.json`'s `$comment` says who uses each). All are built from source by vcpkg, as static
 libraries (`cmake/vcpkg-triplets/x64-linux.cmake`: release only), on the first configure, into
 `build/vcpkg_installed/`; vcpkg's binary cache (`~/.cache/vcpkg/archives`) makes later configures,
 other build dirs and worktrees fast. Three libraries come from CMake
@@ -113,7 +116,9 @@ cmake --build build -j8 --target soa
 The root `CMakeLists.txt` picks vcpkg's toolchain file (`$VCPKG_ROOT`, else `.vcpkg/`; an explicit
 `-DCMAKE_TOOLCHAIN_FILE` wins), holds the shared settings (C++20, the build type), includes
 `cmake/deps.cmake` (the dependencies' imported targets; "Build dependencies" above), then adds
-`runtime/`, `platform370/`, `server/`, `port/`, `emulator/`, `emulator-viewer/` and `tools/aif2png`.
+`common/`, `runtime/`, `platform370/`, `server/`, `webview/`, `port/`, `emulator/`, `emulator-viewer/`,
+`tests/cli` (when the port, the emulator and the viewer are all built) and the host tools `tools/aif2png`,
+`tools/english_art` and `tools/movie_check`.
 A build dir configured before vcpkg (with `deps/` and `third_party/`, now retired) can't switch
 toolchains: delete it and configure again. vcpkg builds its ports with `VCPKG_MAX_CONCURRENCY` jobs
 (8 unless set). Parts can be left out at configure
@@ -188,7 +193,9 @@ scripts/build.sh --windows --target soa-server          # one part
   selftests and test hooks register from them, so `soa_link_in_init_order` (`cmake/init_order.cmake`)
   links the source lists reversed there. `win:native-order` checks `soa.exe --list-native` against Linux's.
 - What our code needs from Windows that MinGW lacks is in `common/` (`soa_compat`):
-  `common/win32/posix_compat.h` is force-included into the server's and the runtime's sources (the
+  `common/win32/posix_compat.h` is force-included into every source of each target that links `soa_compat`
+  (the server, the runtime, the web view, the programs and tools, and the `common/` libraries
+  and tests that link it; the
   POSIX spellings: `mkdir` with a mode, `realpath`, `rename` that replaces, `pread`, `strptime`,
   ...), `soa/sock.h` the host sockets. The runtime's guest-facing differences (bionic is LP64 with
   a 32-bit `wchar_t`, Linux constants and struct layouts) are in `runtime/src/hle/libc_win32.cpp`
@@ -331,13 +338,14 @@ The scripts check for these and say which is missing. **In git** (plain git, no 
 |---|---|
 | `soa-port-<V>-<platform>.zip` | `soa` (the port, its server in-process), `soa-server` (the same server as its own program), `run-port.sh` / `run-port.cmd` (soa alone: the usual way), `run-port-en.sh` / `run-port-en.cmd` (the same in English: `soa --lang en`), `run-port-server.sh` / `run-port-server.cmd` + `.ps1` (start soa-server, then `soa --server` against it, and stop the server when soa exits; `--english` goes to the server) |
 | `soa-emulator-<V>-<platform>.zip` | `soa-emu` (the unmodified 3.7.0 client), `soa-server` (its server; runs alone too), `run-emulator.sh` / `run-emulator.cmd` + `.ps1` (start the server, then the client), `run-emulator-en.sh` / `run-emulator-en.cmd` (the same in English: `soa-server --english`, `soa-emu --lang en`; the `.cmd` runs `run-emulator.ps1`) |
+| `soa-viewer-<V>-<platform>.zip` | `soa-viewer` (the unmodified offline client, no server; `emulator-viewer/README.md`), `run-viewer.sh` / `run-viewer.cmd`; the user supplies its own game file (its README.txt says which) |
 | `soa-<V>-<platform>-debug-symbols.zip` | the programs' debug info (line tables), stripped from the binaries |
 
 `<V>` is the commit date and hash; `<platform>` `linux-x64` or `windows-x64`. The packages start
 in Japanese; the `-en` launchers are the English game (docs/PLAN-english.md Q5, P1).
 
 - **Optimized:** `scripts/build.sh [--windows] --release` builds `build-release/` (`build-win-release/`):
-  `CMAKE_BUILD_TYPE=Release` (`-O3`, `NDEBUG`) plus `-g1`, soa / soa-server / soa-emu only; no
+  `CMAKE_BUILD_TYPE=Release` (`-O3`, `NDEBUG`) plus `-g1`, soa / soa-server / soa-emu / soa-viewer only; no
   `-march` and no `-ffast-math` (the natives are bit-exact only with x86-64's default code). No LTO.
   It also defines `SOA_RELEASE_PACKAGE`: **a release build never uses a checkout around it** (the
   user, 2026-10-07): its programs search only `--repo DIR` and their own folder (and `game/`), never
@@ -355,7 +363,7 @@ in Japanese; the `-en` launchers are the English game (docs/PLAN-english.md Q5, 
   AAC are covered by patent pools (Via LA) in some countries, so packages that ship these decoders
   carry them; before, the user's own ffmpeg program did the decoding.
 - **What goes in** (an allow-list in `tools/package.py`): the binaries, the launchers, `README.txt`
-  (from `scripts/package/README.txt.in`, one template for the four packages: per program, which game
+  (from `scripts/package/README.txt.in`, one template for every package: per program, which game
   files it needs, where to put them, the lookup order, the flags, the data dirs, the first run, the
   messages when something is missing), `LICENSE.txt`, `THIRD-PARTY-NOTICES.txt` (the copyright files
   of the vcpkg ports linked, dynarmic and its x86-64 externals, IJG libjpeg 9, zstd 1.3.4),

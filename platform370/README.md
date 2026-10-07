@@ -1,6 +1,6 @@
 # platform370/: the 3.7.0 platform layer (libsoaplatform370)
 
-What the 3.7.0 online client (`work/libSOA-3.7.0.so`) needs from the platform under it that the JIT host runtime (`runtime/`, built for the offline build's import and Java lists) doesn't give. The game code stays as shipped, except for one native patch (the service-end check). Everything here plugs into the runtime through its extension points (`runtime/README.md`), so the runtime is unchanged.
+What the 3.7.0 online client (`work/libSOA-3.7.0.so`) needs from the platform under it that the JIT host runtime (`runtime/`, built for the offline build's import and Java lists) doesn't give. The game code stays as shipped, except for two native patches (the service-end check, and the sale-stopped dialog opening the coin shop: `src/patch_370.cpp`). Everything here plugs into the runtime through its extension points (`runtime/README.md`), so the runtime is unchanged.
 
 **Users:**
 - **`soa-emu`** (`emulator/`) links it today, with every piece on.
@@ -119,8 +119,8 @@ run_initializers(*lib);
 - **In-process server** (`--server inproc`: the `FakeApiCaller` route, answered by the server library in the same process): no GameRPC leaves the process, but the 3.7.0 client still needs a CDN for its game data: Login must carry `AssetPath` / `MasterPath` / `r_ver`, or the client never mounts its download storage (P1 finding: the home was the missing-texture checkerboard). So `soa` installs the server library's CDN as the **HTTP backend** (`port/src/native/api/server_cdn.cpp`: `soa-server`'s `HttpRouter` with the CDN mounted, called in memory; no socket, no listening port, no thread) and turns `net` and `http` **on**: the client resolves `production-game.so-ana.com` (`getaddrinfo`) before each HTTP request, so the name mapping is needed, and the mapping is also what sends a URL to the backend. `netcfg.server_port` and `http_port` are 0: a stray GameRPC `connect` to port 443 isn't redirected (`127.0.0.1:443`, refused like a network error), so it can't reach a `soa-server` listening on the default 44300. Everything else stays on.
 - **Out-of-process server** (`--server HOST:PORT`: 3.7.0's own `NetworkApiCaller` against `soa-server`, with no `FakeApiCaller` hooks): everything on, with `netcfg` pointing at `soa-server`'s `--listen` / `--http`, as in `soa-emu`.
 
-**Conflicts to settle in P1:**
-- **`CParameterUtility::FindGlobalStringWithKey` is one of the port's natives** (`soa --list-native`). Both the native and the patch hook the function's entry, so only one of them can have it:
+**Conflicts settled in P1:**
+- **`CParameterUtility::FindGlobalStringWithKey` was one of the port's natives before the rebase's revision 2** (none replaces it today: `soa --list-native`). A native and the patch would both hook the function's entry, so only one of them can have it:
   - natives after the patch: the native overwrites the patch's hook, and `service_stop_day` is visible again;
   - the patch after the natives: it finds the native's stub instead of 3.7.0's prologue, returns `NotFound` and patches nothing.
   

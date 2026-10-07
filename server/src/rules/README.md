@@ -1,6 +1,6 @@
 # server/src/rules: pure game rules
 
-Functions over values, no DB and no request, unit-tested on their own. The domain steps of `../../PLAN-readability.md` (R13, R18) gather the rest here as `rules::<domain>` (`rules::deepspace` since R18; `gear_rules` is here since R13).
+Functions over values, no DB and no request, unit-tested on their own. The domain steps of `docs/history/PLAN-readability.md` (R13, R18) gather the rest here as `rules::<domain>` (`rules::deepspace` since R18; `gear_rules` is here since R13).
 
 | File | What |
 |---|---|

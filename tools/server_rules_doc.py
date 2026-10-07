@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""docs/server-rules.md's structure and its generated register (server/PLAN-readability.md R20).
+"""docs/server-rules.md's structure and its generated register (docs/history/PLAN-readability.md R20).
 
     tools/server_rules_doc.py --check     the register is fresh and every section has a stable anchor
     tools/server_rules_doc.py --write     regenerate the register in place

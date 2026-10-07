@@ -1,4 +1,4 @@
-// Unit tests of the state schema's migrations (state/schema.h, state/state.h; server/PLAN-schema.md
+// Unit tests of the state schema's migrations (state/schema.h, state/state.h; docs/history/PLAN-schema.md
 // 4.2). Run in --selftest; not differential (the server has no guest counterpart). They load the
 // committed v0 fixture server/tests/fixtures/state-v0.sql (tools/make_state_fixture.py). Test names
 // are their seeds (testing.h).

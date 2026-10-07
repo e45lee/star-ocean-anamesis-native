@@ -1,5 +1,5 @@
 #!/bin/bash
-# RG10 of server/PLAN-readability.md: the local server's documentation checks (section 5), enforcing
+# RG10 of docs/history/PLAN-readability.md: the local server's documentation checks (section 5), enforcing
 # since R19 (a T0 gate: tests/tiers.json `server-docs`).
 #   tools/check_server_docs.sh [--evidence REV] [--report] [--server BIN]
 # Checks:

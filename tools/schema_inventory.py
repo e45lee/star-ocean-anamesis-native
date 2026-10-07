@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Inventory of the local server's state schema (DATA/server.sqlite3), generated from the code.
 
-    tools/schema_inventory.py [--state LABEL=DB ...] [--update server/PLAN-schema.md]
+    tools/schema_inventory.py [--state LABEL=DB ...] [--update docs/history/PLAN-schema.md]
 
-What it does (server/PLAN-schema.md, section 1, is its output):
+What it does (docs/history/PLAN-schema.md, section 1, is its output):
   1. Collects every C++ string literal in server/{src,net,include} (adjacent literals joined, raw
      strings included, comments skipped), splits them into SQL statements and parses each
      `create table if not exists` (table, columns, types, defaults, keys, the file:line that
@@ -29,7 +29,7 @@ Output: markdown on stdout, or with --update FILE the text between the markers
 
     tools/schema_inventory.py --lint
 
-The SQL hygiene gate of server/PLAN-schema.md S0 (F9): every INSERT into a state table names its
+The SQL hygiene gate of docs/history/PLAN-schema.md S0 (F9): every INSERT into a state table names its
 columns, and no future FK parent (LINT_UPSERT_ONLY) is written with INSERT OR REPLACE (a delete
 plus an insert: with foreign keys on, it would run the children's ON DELETE actions); use
 `insert ... on conflict(pk) do update set` instead. Checks server/ (the joined literals) and the
@@ -37,7 +37,7 @@ consumers' SQL (port/scripts, emulator/scripts, tools, tests: line by line). Exi
 
     tools/schema_inventory.py --check [--strict] STATE_DB [MASTER_DB]
 
-Gate G9 of server/PLAN-schema.md (from S4): a state DB's `pragma foreign_key_check` is empty
+Gate G9 of docs/history/PLAN-schema.md (from S4): a state DB's `pragma foreign_key_check` is empty
 (every declared foreign key holds), and its references into the master resolve (the `m:` rows of
 RELS, reported; a master can change under a saved state, so they don't fail it). Exit 1 on a
 foreign key violation. --strict (S11: the end state of every session and tests/diff run, which

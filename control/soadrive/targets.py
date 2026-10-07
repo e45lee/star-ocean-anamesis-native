@@ -890,7 +890,7 @@ class Run:
             f.write(r.stdout + r.stderr)
         return r.stdout
 
-    # G9 of server/PLAN-schema.md, permanent since S11: every run's end state (sessions, tests/diff,
+    # G9 of docs/history/PLAN-schema.md, permanent since S11: every run's end state (sessions, tests/diff,
     # the Windows runs) has its declared foreign keys holding, its master references resolved
     # against the master the server ran with, and this build's schema version. Run by stop(); a
     # violation is a failed step (so the session's or the flow's verdict is FAIL) and is recorded

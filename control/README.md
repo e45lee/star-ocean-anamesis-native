@@ -14,7 +14,7 @@
 
 ## soadrive: the driver library
 
-One package for the port (`soa`, in-process server or `--server`) and the emulator (`soa-emu` + `soa-server`), the plan's layout (`PLAN-consolidate.md`):
+One package for the port (`soa`, in-process server or `--server`) and the emulator (`soa-emu` + `soa-server`), the plan's layout (`docs/history/PLAN-consolidate.md`):
 
 | Module | What |
 |---|---|
@@ -48,7 +48,7 @@ One package for the port (`soa`, in-process server or `--server`) and the emulat
 | `home-character` | (`control/run.py home-character SOA OUT TMP [--home ROLE]... [--home3d-all]`; T3) | port-inproc: a boot per `--home` role from a seed variant (`tools/make_test_seed.py --home`), the home's idle, long idle, talk and interactive-mode shots, the files the client loaded for the character (`docs/home3d.md`) |
 | `gdb-probe` | (`control/run.py gdb-probe [--ipv6] SOA OUT TMP`; T3; `soa.exe` for a Windows run) | port-inproc, port-server, emu: the guest debugger at home (attach, a breakpoint, registers and memory, a step; on the port also `monitor natives` and a natived function: stopped before the native runs, stepped through it; detach); `--ipv6`: the programs over `::1` |
 
-A session refuses a target it doesn't list, with the reason (`TARGETS_WHY`): most port sessions use the port's own commands and log lines (`phase:`, `mission:`, `clock:`, `port_debug: phase N`), which soa-emu lacks. The scripts keep their names, arguments, environment knobs, output files and exit codes. Not converted (one program's own tools, PLAN-consolidate.md "Stays"): `smoke.sh`, the selftests, the debug-window sessions, `profile_extra.sh`, `smoke_vs_emu.sh`, `rebase_server_diff.sh` (it runs `emulator_session.sh`), `emulator_boot.sh`, `nier_demo.sh`, `standin_fetch_test.sh`, the viewer's scripts.
+A session refuses a target it doesn't list, with the reason (`TARGETS_WHY`): most port sessions use the port's own commands and log lines (`phase:`, `mission:`, `clock:`, `port_debug: phase N`), which soa-emu lacks. The scripts keep their names, arguments, environment knobs, output files and exit codes. Not converted (one program's own tools, docs/history/PLAN-consolidate.md "Stays"): `smoke.sh`, the selftests, the debug-window sessions, `profile_extra.sh`, `smoke_vs_emu.sh`, `rebase_server_diff.sh` (it runs `emulator_session.sh`), `emulator_boot.sh`, `nier_demo.sh`, `standin_fetch_test.sh`, the viewer's scripts.
 
 **Tests without a game:** `control/tests/` (pytest; T0's `pytest-control`): the cursor and its LOG.pos contract with flowctl.py, the resend rules, the FIFO, ui370's points, every session module's interface, the slot pool, tools/tests_for.py's rules (a session module maps to its script's tests).
 

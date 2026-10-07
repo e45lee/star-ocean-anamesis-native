@@ -95,7 +95,7 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     for (size_t i = 0; i < roles.size(); i++) {
         const CharacterUid uid(kRosterUid0 + i);
         u32 cap = ctx.role_level_cap(roles[i]);
-        // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
+        // an upsert, not a REPLACE (docs/history/PLAN-schema.md S0): a row of this uid takes these values and
         // every other column's default (excluded.<col>), as the REPLACE gave it
         ctx.st.q(
             "insert into roster (uid, role_id, level, exp, created_at, is_new) values (?,?,?,?,?,0)"

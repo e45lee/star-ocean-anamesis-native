@@ -1,5 +1,5 @@
 #pragma once
-// Typed ids (server/PLAN-readability.md 2.3, step R12; port code, not guest behaviour). An id names
+// Typed ids (docs/history/PLAN-readability.md 2.3, step R12; port code, not guest behaviour). An id names
 // one kind of thing: an owned object (`*Uid`: a character, an item) or a master row (`*Id`). Each
 // kind is its own type, so passing a RoleId where a CharacterUid is expected doesn't compile; the
 // only way between a kind and its number is explicit (`CharacterUid(n)`, `.v`).

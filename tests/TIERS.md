@@ -21,7 +21,7 @@ tools/gate.sh T1 --git-diff main --software-gl   # the clients on llvmpipe, not 
 
 `tools/gate.sh` runs the build first and alone, then everything else at once: the checks on 4 workers, the game tests in parallel (each queues for a game slot: control/README.md "The slot pool"), and the selected tests/diff shards and flows in one tests/diff run. Each test writes `OUT/<test>/` and `OUT/<test>.log`; the summary table (PASS / FAIL, the time against the measured one) goes to the terminal and `OUT/summary.txt`; exit 1 when anything fails.
 
-## The permanent gates (server/PLAN-schema.md S11, PLAN-readability.md R19)
+## The permanent gates (docs/history/PLAN-schema.md S11, docs/history/PLAN-readability.md R19)
 
 These hold on every commit and every merge to main; none has a `known` failure, so any finding fails the gate:
 
@@ -64,7 +64,7 @@ Times are wall times measured on the development machine (32 cores, 45 GB) on 20
 | T0 | `replay-coverage` | 4 s | - | server/tests/replay/COVERAGE.md is current (the APIs without a corpus) | `python3 tools/replay_coverage.py --check` |
 | T0 | `server-docs` | 1 s | - | enforcing (R19): every handler's 2.5 block with a label, every hook's and include/soaserver function's doc comment, docs links (docs/server-rules.md links are #anchors and resolve, R20), docs/server-rules.md's anchors and its generated register fresh (tools/server_rules_doc.py --check), API-INDEX.md fresh, no agent mentions in server/ code, the evidence manifest (with the rules doc and its history) not shrunk against {base} (HEAD~1, or the --git-diff rev) | `tools/check_server_docs.sh --evidence {base}` |
 | T0 | `server-format` | 6 s | - | server/ C++ formatted (clang-format 18; enforced: any unformatted file fails) | `tools/format_server.sh --check` |
-| T0 | `schema-inventory` | 1 s | - | the state schema inventory parses (server/PLAN-schema.md), its master references (RELS m: rows) are the server's state::master_refs() (S11), and the SQL lint (S0: INSERTs name their columns, no INSERT OR REPLACE on an FK parent) | `python3 tools/schema_inventory.py > /dev/null && python3 tools/schema_inventory.py --lint` |
+| T0 | `schema-inventory` | 1 s | - | the state schema inventory parses (docs/history/PLAN-schema.md), its master references (RELS m: rows) are the server's state::master_refs() (S11), and the SQL lint (S0: INSERTs name their columns, no INSERT OR REPLACE on an FK parent) | `python3 tools/schema_inventory.py > /dev/null && python3 tools/schema_inventory.py --lint` |
 | T0 | `no-380` | 1 s | - | no reference to the offline build outside the allowed places (tools/check_no_380.sh) | `tools/check_no_380.sh` |
 | T0 | `env-access` | 2 s | - | no getenv / setenv / putenv (or the Windows spellings) in our C/C++ outside soa/env.h and the few files that implement the environment (tools/check_env_access.py ALLOWED): switches are read through env::env_str / env_on / env_int, run state lives in RunOptions (docs/environment.md) | `python3 tools/check_env_access.py` |
 | T0 | `generated` | 15 s | - | every generated source built into the programs is fresh against the 3.7.0 lib (each generator's --check: the natives' address tables port/src/native/*/gen/*_addresses.h, api/gen/fakeapi_tables.inc, params/gen/params_instantiations.inc, api/gen/wire_table.inc, server/net/gen/wire_decode.inc) | `.venv/bin/python tools/check_generated.py` |

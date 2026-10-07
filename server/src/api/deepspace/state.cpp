@@ -47,7 +47,7 @@ namespace {
 // (d) an area whose image (master_deep_space_area.resource, Image/etc2/<resource>.aif, the name
 // the client builds from it) is missing isn't offered. Outside the game (unit tests) there's no
 // asset lookup and every area counts as present.
-// Not the one asset gate (core/assets.h; server/PLAN-readability.md R6g, decided in R18): this asks
+// Not the one asset gate (core/assets.h; docs/history/PLAN-readability.md R6g, decided in R18): this asks
 // the AssetIndex (soaserver/hooks.h) for the one exact name and only on a live server, where the
 // gate's assets::available() also accepts the texture-quality and assetpack/ variants, follows the
 // tests' override (the events and Sphere 211 tests' predicates on BG/ names) and counts every asset

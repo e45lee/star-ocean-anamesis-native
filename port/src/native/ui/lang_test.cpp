@@ -14,6 +14,8 @@
 //
 // platform370/lang-strings and platform370/lang-wrap: the E10 rules as functions (the hard-coded
 // strings' table against data/english/client-strings.tsv; the wrap), independent of --lang.
+#include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <fstream>
@@ -171,6 +173,39 @@ NATIVE_TEST("platform370/lang-wrap") {
     for (const Case& c : cases) {
         std::string out = platform370::text::wrap(c.in, c.budget, m);
         if (out != c.want) t.fail("wrap(\"%s\", %g) = \"%s\", want \"%s\"", c.in, c.budget, out.c_str(), c.want);
+    }
+}
+
+// The home speech box's fit (E12, text_370.cpp fit_box) with a fixed-advance measure: 10 per byte,
+// lines 30 apart and 24 high (h = 30 n - 6).
+NATIVE_TEST("platform370/lang-fit-box") {
+    auto m = [](std::string_view s) {
+        float w = 0, n = 1, cur = 0;
+        for (char ch : s) {
+            if (ch == '\n') n++, cur = 0;
+            else w = std::max(w, cur += 10);
+        }
+        return platform370::text::Extent{w, 30 * n - 6};
+    };
+    struct Case {
+        const char* in;
+        const char* want;
+        float scale;
+    } cases[] = {
+        {"aaa bbb", "aaa bbb", 1},                                // fits as it is
+        {"aaa\nbbb", "aaa bbb", 1},                               // the line break collapsed
+        {"aaaa bbbb cccc", "aaaa bbbb\ncccc", 1},                  // two lines at full size
+        {"aaa  \n  bbb", "aaa bbb", 1},                           // the white space around a break goes
+        {"aaaa bbbb cccc dddd eeee", "aaaa bbbb cccc\ndddd eeee", 100.f / 140},  // 3 lines at full size: 2 wider ones, shrunk
+        {"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 100.f / 510},  // one word: shrunk to the width
+        {"", "", 1},
+    };
+    for (const Case& c : cases) {
+        platform370::text::BoxFit f = platform370::text::fit_box(c.in, 100, 54, m);
+        if (f.text != c.want || std::fabs(f.scale - c.scale) > 1e-4f)
+            t.fail("fit_box(\"%s\") = \"%s\" at %g, want \"%s\" at %g", c.in, f.text.c_str(), f.scale, c.want, c.scale);
+        platform370::text::Extent e = m(f.text);
+        if (e.w * f.scale > 100.01f || e.h * f.scale > 54.01f) t.fail("fit_box(\"%s\") leaves the box", c.in);
     }
 }
 

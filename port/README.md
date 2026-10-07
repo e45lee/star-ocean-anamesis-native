@@ -143,6 +143,7 @@ soa's own:
 | `SOA_STUB_TRACE=1` | print each call a recording stub answers (`native/common/guest_stub.cpp`) |
 | `SOA_WIRE_DUMP=FILE` | the wire self-tests append their dumps to FILE (`tools/api_wire.py`) |
 | `SOA_NOTICE_HTML_DUMP=FILE` | the self-test `player/notice` writes the notice page's HTML there (also `soa-server --selftest player/notice`; `docs/webview.md`) |
+| `SOA_TEST_TALK_IDS=id,..` | with `--lang en` (platform370, also soa-emu): each new line on the home's speech box shows the master text of the next of these message ids instead (in turn), for shots of chosen lines (`docs/client-changes.md` "The home's speech box") |
 | `SOA_WEBVIEW_DUMP_CSS=FILE` | the web view appends each stylesheet as litehtml gets it (also soa-webview-render) |
 
 In no build: `SOA_ASKA_MATH_OFF` / `SOA_ASKA_MATH_SKIP` (groups and symbols left to the guest, for

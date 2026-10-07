@@ -17,12 +17,16 @@ list(SORT SOA_WEBVIEW_SOURCES)
 add_library(soawebview STATIC ${SOA_WEBVIEW_SOURCES})
 target_include_directories(soawebview PUBLIC ${SOA_WEBVIEW_DIR}/include PRIVATE ${SOA_WEBVIEW_DIR}/src)
 target_link_libraries(soawebview PUBLIC soa_env soa_compat litehtml PRIVATE soa::stb soa_fonts)
-target_compile_options(soawebview PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function)
+target_link_libraries(soawebview PRIVATE soa_warnings)
 
 add_executable(soa-webview-render ${SOA_WEBVIEW_DIR}/tools/render.cpp ${SOA_WEBVIEW_DIR}/tools/cli.cpp)
 target_link_libraries(soa-webview-render PRIVATE soawebview soa::stb)
-target_compile_options(soa-webview-render PRIVATE -Wall)
+target_link_libraries(soa-webview-render PRIVATE soa_warnings)
 
 add_executable(soawebview_tests ${SOA_WEBVIEW_DIR}/tests/webview_tests.cpp)
 target_link_libraries(soawebview_tests PRIVATE soawebview)
-target_compile_options(soawebview_tests PRIVATE -Wall)
+target_link_libraries(soawebview_tests PRIVATE soa_warnings)
+
+# The web view includes only webview/ and common/include (cmake/flags.cmake)
+soa_check_includes(webview/ DIRS ${SOA_WEBVIEW_DIR}/include ${SOA_WEBVIEW_DIR}/src ${SOA_WEBVIEW_DIR}/tests ${SOA_WEBVIEW_DIR}/tools
+                   ALLOW ${SOA_WEBVIEW_DIR}/include ${SOA_WEBVIEW_DIR}/src ${SOA_REPO_DIR}/common/include)

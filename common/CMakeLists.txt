@@ -17,7 +17,7 @@ target_link_libraries(soa_env INTERFACE CLI11::CLI11)
 
 add_executable(soa_env_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/env_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/paths_tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/tests/install_tests.cpp)
-target_link_libraries(soa_env_tests PRIVATE soa_env soa_compat)  # (soa_compat: setenv on Windows)
+target_link_libraries(soa_env_tests PRIVATE soa_env soa_compat soa_warnings)  # (soa_compat: setenv on Windows)
 
 find_package(Threads REQUIRED)
 
@@ -32,7 +32,7 @@ find_package(Threads REQUIRED)
 add_library(soa_compat STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/sock.cpp
             $<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/src/posix_compat_win32.cpp>)
 target_include_directories(soa_compat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_compile_options(soa_compat PRIVATE -Wall -Wno-unused-parameter)
+target_link_libraries(soa_compat PRIVATE soa_warnings)
 if(WIN32)
   target_compile_options(soa_compat PUBLIC "SHELL:-include ${CMAKE_CURRENT_SOURCE_DIR}/win32/posix_compat.h")
   # <windows.h> without min/max macros and the rarely used APIs; 64-bit off_t (fseeko / ftello);
@@ -45,7 +45,7 @@ endif()
 #   soa_sock_tests  sock.h's connect_tcp / send_all over loopback (build/common/soa_sock_tests; T0 `sock`)
 add_executable(soa_sock_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/sock_tests.cpp)
 target_link_libraries(soa_sock_tests PRIVATE soa_compat Threads::Threads)
-target_compile_options(soa_sock_tests PRIVATE -Wall)
+target_link_libraries(soa_sock_tests PRIVATE soa_warnings)
 
 # soa_zip: read-only ZIP archives on minizip-ng (vcpkg.json): include/soa/zip.h, src/zip.cpp. APKs,
 # APKs inside another zip read in place (an archive inside an archive), ZIP64 data zips; stored entries are
@@ -57,7 +57,7 @@ target_compile_options(soa_sock_tests PRIVATE -Wall)
 add_library(soa_zip STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/zip.cpp)
 target_include_directories(soa_zip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(soa_zip PRIVATE MINIZIP::minizip-ng PUBLIC ZLIB::ZLIB)
-target_compile_options(soa_zip PRIVATE -Wall -Wno-unused-parameter)
+target_link_libraries(soa_zip PRIVATE soa_warnings)
 
 # soa_gamefiles: the game files where a program finds them (README.md "Packaging"): include/soa/file_tree.h
 # (the 3.7.0 download, a folder or the user's zip read in place), include/soa/game_files.h (the
@@ -66,13 +66,13 @@ target_compile_options(soa_zip PRIVATE -Wall -Wno-unused-parameter)
 add_library(soa_gamefiles STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/file_tree.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/game_files.cpp)
 target_link_libraries(soa_gamefiles PUBLIC soa_zip soa_env)
 target_link_libraries(soa_gamefiles PRIVATE soa_compat)  # (64-bit stat on Windows)
-target_compile_options(soa_gamefiles PRIVATE -Wall -Wno-unused-parameter)
+target_link_libraries(soa_gamefiles PRIVATE soa_warnings)
 
 add_executable(soa_zip_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/zip_tests.cpp)
-target_link_libraries(soa_zip_tests PRIVATE soa_zip soa_compat ZLIB::ZLIB Threads::Threads)  # (soa_compat: mkdir on Windows)
+target_link_libraries(soa_zip_tests PRIVATE soa_zip soa_compat ZLIB::ZLIB Threads::Threads soa_warnings)  # (soa_compat: mkdir on Windows)
 
 add_executable(soa_gamefiles_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/gamefiles_tests.cpp)
-target_link_libraries(soa_gamefiles_tests PRIVATE soa_gamefiles soa_compat ZLIB::ZLIB)
+target_link_libraries(soa_gamefiles_tests PRIVATE soa_gamefiles soa_compat ZLIB::ZLIB soa_warnings)
 
 # soa_codec: file formats more than one part reads or writes, on well-known libraries (vcpkg):
 #   include/soa/png.h     PNG files (stb_image_write, zlib's deflate): the runtime's screenshots
@@ -96,12 +96,17 @@ add_library(soa_codec STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/png.cpp ${CMAKE_CUR
             ${CMAKE_CURRENT_SOURCE_DIR}/src/prefs_xml.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/aska_image.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/src/kvs.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/chash32.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/adld.cpp)
 target_include_directories(soa_codec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_compile_options(soa_codec PRIVATE -Wall)
+target_link_libraries(soa_codec PRIVATE soa_warnings)
 target_link_libraries(soa_codec PRIVATE soa::stb ZLIB::ZLIB zstd::libzstd OpenSSL::Crypto pugixml::pugixml soa_compat)
 
 add_executable(soa_codec_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/codec_main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/base64_tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/tests/prefs_xml_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/aska_image_tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/tests/kvs_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/adld_tests.cpp)
-target_compile_options(soa_codec_tests PRIVATE -Wall)
+target_link_libraries(soa_codec_tests PRIVATE soa_warnings)
 target_compile_definitions(soa_codec_tests PRIVATE SOA_REPO_DIR="${CMAKE_SOURCE_DIR}")
 target_link_libraries(soa_codec_tests PRIVATE soa_codec soa_compat)
+
+# common/ includes nothing of the repository but itself (cmake/flags.cmake)
+soa_check_includes(common/ DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src
+                   ${CMAKE_CURRENT_SOURCE_DIR}/win32 ${CMAKE_CURRENT_SOURCE_DIR}/tests
+                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/win32)

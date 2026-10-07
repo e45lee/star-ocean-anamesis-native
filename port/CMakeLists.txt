@@ -35,8 +35,8 @@ add_dependencies(soa soaruntime_objs)
 target_link_options(soa PRIVATE $<TARGET_OBJECTS:soaruntime_objs>)
 set_property(TARGET soa APPEND PROPERTY LINK_DEPENDS $<TARGET_OBJECTS:soaruntime_objs>)
 target_include_directories(soa PRIVATE src)
-target_compile_definitions(soa PRIVATE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)
-target_compile_options(soa PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing -mcx16)
+# (_GNU_SOURCE and the GL / EGL prototypes: from soaruntime_iface)
+target_link_libraries(soa PRIVATE soa_guest_code)
 # No contraction of a * b + c into a fused multiply-add anywhere in the port: the natives must round
 # like the guest, which fuses only where its code has an explicit FMADD (std::fma in a native,
 # native/common/arm_float.h). GCC's default x86-64 target has no FMA, so this changes nothing there;
@@ -49,6 +49,8 @@ target_link_libraries(soa PRIVATE
   soaplatform370
   soaruntime_app
   soaruntime_iface
+  # (dynarmic, EGL / GLES and zlib come through soaruntime_iface too; named here again they keep their
+  # place on the link line, and so soa's code layout: dropping them reorders the archives' members)
   dynarmic
   soa::SDL2
   soa::EGL
@@ -61,8 +63,7 @@ target_link_libraries(soa PRIVATE
   Vorbis::vorbis
   Ogg::ogg
   soa::jpeg9
-  soa::zstd134  # the game's zstd version (cmake/deps.cmake), not vcpkg's
-  pthread $<$<NOT:$<PLATFORM_ID:Windows>>:dl>)
+  soa::zstd134)  # the game's zstd version (cmake/deps.cmake), not vcpkg's
 # The server library, whole (its tests register from static initializers; its modules register in
 # server/src/core/modules.cpp's order), after the port's own objects: the same test order as when it was
 # port/src/server.
@@ -82,3 +83,9 @@ list(SORT _soa_subsystem_cmake)
 foreach(_f ${_soa_subsystem_cmake})
   include(${_f})
 endforeach()
+
+# The port includes every library of the repository but the emulators' code (cmake/flags.cmake)
+soa_check_includes(port/ DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
+                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/src ${SOA_REPO_DIR}/runtime/src ${SOA_REPO_DIR}/platform370/include
+                         ${SOA_REPO_DIR}/server/include ${SOA_REPO_DIR}/server ${SOA_REPO_DIR}/webview/include
+                         ${SOA_REPO_DIR}/common/include)

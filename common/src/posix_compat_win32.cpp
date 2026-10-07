@@ -1,6 +1,6 @@
 // common/win32/posix_compat.h's functions, and soa/install.h's exe_path_win32 (Windows only).
 #ifdef _WIN32
-#include "../win32/posix_compat.h"
+// (win32/posix_compat.h is force-included: common/CMakeLists.txt)
 
 #include <ctype.h>
 #include <errno.h>

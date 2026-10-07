@@ -97,6 +97,7 @@ else()
   set(SOA_NEED_RUNTIME OFF)
 endif()
 include(cmake/deps.cmake)
+include(cmake/flags.cmake)  # soa_warnings, soa_guest_code: our compile flags; soa_check_includes: the layering checks
 include(cmake/init_order.cmake)  # soa_link_in_init_order: static-initializer order on MinGW
 if(SOA_NEED_RUNTIME OR SOA_BUILD_WEBVIEW)
   include(cmake/fonts.cmake)  # soa_fonts: Noto Sans JP built into the programs (soa/fonts.h)

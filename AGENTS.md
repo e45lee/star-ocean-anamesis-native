@@ -151,7 +151,9 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
   `work/` or `apk/` unless asked; no bare `git stash` (use a WIP commit); don't push: branches
   merge into `main` after T0.
 - **Layering:** `server/` must not include `port/` or `runtime/`; `runtime/` must not include
-  `port/`, `server/` or `emulator/` (configure-time checks).
+  `port/`, `server/` or `emulator/`; `common/` includes only itself; emulator code stays in
+  `emulator/` (configure-time checks: `soa_check_includes`, `cmake/flags.cmake`, which also holds
+  the shared compile flags).
 
 ## Reverse-engineering workflow
 

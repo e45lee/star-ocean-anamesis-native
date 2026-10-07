@@ -8,5 +8,8 @@
 file(GLOB SOA_VIEWER_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(soa-viewer ${SOA_VIEWER_SOURCES})
 target_include_directories(soa-viewer PRIVATE src)
-target_compile_options(soa-viewer PRIVATE -Wall -Wno-unused-parameter -fno-strict-aliasing -mcx16)
+target_link_libraries(soa-viewer PRIVATE soa_guest_code)
+# the viewer: the runtime and common/include only (cmake/flags.cmake)
+soa_check_includes(emulator-viewer/ DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
+                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/src ${SOA_REPO_DIR}/runtime/src ${SOA_REPO_DIR}/common/include)
 target_link_libraries(soa-viewer PRIVATE soaruntime_app $<LINK_LIBRARY:WHOLE_ARCHIVE,soaruntime>)

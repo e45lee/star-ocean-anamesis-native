@@ -5,7 +5,7 @@
 //
 // Floating point: the 3.7.0 lib has no fused multiply-add instruction at all (fmadd / fmla: 0 in
 // its disassembly), so every product is rounded before it is added: plain * and + here, compiled
-// with -ffp-contract=off (subsystem.cmake). The natives compute in armf::F (native/common/
+// with -ffp-contract=off (port/CMakeLists.txt). The natives compute in armf::F (native/common/
 // arm_float.h): float with AArch64's NaN rules (the default NaN 0x7fc00000, operand order), so
 // they stay bit-exact when a NaN appears. Branches follow the guest's condition codes, not
 // Ghidra's C (which reads them as ordered compares): after FCMP a, b an unordered compare takes

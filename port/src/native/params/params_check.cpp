@@ -19,7 +19,7 @@ void copy_string(String& dst, const String& src) {
     std::memcpy(&dst, &src, sizeof(String));
     if (!src.is_long()) return;
     u64 alloc = src.r.l.cap & ~u64(1);
-    char* p = (char*)g::StlAllocate(alloc, g::kStlStringH, 0x1c);
+    char* p = (char*)g::StlAllocate(alloc, native::kStrStlStringH, 0x1c);
     std::memcpy(p, src.r.l.data, alloc);
     dst.r.l.data = p;
 }

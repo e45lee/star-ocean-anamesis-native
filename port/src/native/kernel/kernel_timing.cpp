@@ -96,8 +96,8 @@ float VSync::GetDt(s32 clock) const {
 // an interposition ending clears it down the first-child chain only. NaN comparisons follow the
 // guest's condition codes (b.le / b.hi): a NaN suspension or interpose time counts as not set.
 void CTimeElement::Add(float dt_in) {
-    static const float kWrapAbove = *reinterpret_cast<const float*>(main_lib()->base + 0x26e6ae0);  // (.rodata)
-    static const float kWrapBy = *reinterpret_cast<const float*>(main_lib()->base + 0x2851634);
+    static const float kWrapAbove = *reinterpret_cast<const float*>(main_lib()->base + kTimeWrapAbove);  // (.rodata)
+    static const float kWrapBy = *reinterpret_cast<const float*>(main_lib()->base + kTimeWrapBy);
     using armf::F;
     CTimeElement* e = this;
     F dt(dt_in);

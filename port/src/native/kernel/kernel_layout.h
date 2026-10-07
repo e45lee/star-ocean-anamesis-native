@@ -26,6 +26,7 @@
 #include "../containers/containers_layout.h"
 #include "../memory/memory_layout.h"
 #include "../sync/sync_layout.h"
+#include "gen/kernel_addresses.h"  // kVaddr*: the guest statics (tools/gen_addresses.py)
 
 namespace soa::native::kernel {
 
@@ -38,22 +39,9 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics -------------------------------
-// Aska::Global is a class of statics only (`nm -DCS`; the Instantiate* functions in
-// port/decomp/kernel/global.c fill them). The ones kernel's classes hang off:
-inline constexpr u64 kVaddrGlobalApp = 0x2c01028;                 // Aska::Global::m_pApp (Aska::App*)
-inline constexpr u64 kVaddrGlobalMessageDispatcher = 0x2d74f48;   // Aska::Global::m_pMessageDispatcher (MessageDispatcher*)
-inline constexpr u64 kVaddrGlobalSystemTaskManager = 0x2d74f40;   // Aska::Global::m_pSystemTaskManager (TaskManager*)
-inline constexpr u64 kVaddrGlobalPerformanceCounter = 0x2ccc9d8;  // Aska::Global::m_pPerformanceCounter (PerformanceCounter*)
-inline constexpr u64 kVaddrGlobalVSync = 0x2ccda90;               // Aska::Global::m_pVSync (VSync*)
-inline constexpr u64 kVaddrGlobalFrameCounter = 0x2d74f18;        // Aska::Global::m_uiFrameCounter (u32)
-inline constexpr u64 kVaddrGlobalSystemDeltaTime = 0x2d74f10;     // Aska::Global::m_fSystemDeltaTime (float)
-inline constexpr u64 kVaddrVSyncCounter = 0x2ccd950;              // Aska::VSync::m_nVSyncCounter (u32; GetVSyncCounter)
-inline constexpr u64 kVaddrVSyncEvent = 0x2ccd958;                // Aska::VSync::m_event (Event, 0x68)
-inline constexpr u64 kVaddrVSyncEvSync = 0x2ccd9c0;               // Aska::VSync::m_evSync (Event)
-inline constexpr u64 kVaddrVSyncEvRTSync = 0x2ccda28;             // Aska::VSync::m_evRTSync (Event)
-inline constexpr u64 kVaddrMainTaskInstance = 0x2beb310;          // TSingleton<CApplication::CMainTask>::m_pInstance
-inline constexpr u64 kVaddrFrameworkArguments = 0x2c00050;        // Framework::CApplication::m_FrameworkArguments (0xa0)
+// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use: the
+// generated gen/kernel_addresses.h (tools/gen_addresses.py, from addresses.txt: each found in the lib),
+// included above.
 
 
 // ---- The `sync` subsystem's classes (native/sync/sync_layout.h) ----------------------------------------

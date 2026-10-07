@@ -14,7 +14,7 @@ namespace {
 thread_local bool t_in_check = false;
 }  // namespace
 
-ShadowFamily::ShadowFamily(const char* tag_, int every_) : Family(tag_, every_, false) {}
+ShadowFamily::ShadowFamily(const char* tag_, int every_) : Family(tag_, every_) {}
 
 void ShadowFamily::add_fn(ShadowFn* f) {
     std::lock_guard lk(m_);

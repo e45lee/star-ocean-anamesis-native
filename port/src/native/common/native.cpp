@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/log.h"
+#include "native/common/test.h"
 
 namespace soa {
 
@@ -19,10 +20,38 @@ static std::vector<NativeFunction>& registry() {
     return r;
 }
 
-bool register_native_function(const NativeFunction& f) {
+bool register_native_function(const NativeFunction& f, const char* file) {
     registry().push_back(f);
+    if (!registry().back().file) registry().back().file = file;
     return true;
 }
+
+std::string native_subsystem(const NativeFunction& f) {
+    if (!f.file) return "";
+    std::string p = f.file;
+    std::replace(p.begin(), p.end(), '\\', '/');
+    size_t at = p.rfind("/native/");
+    if (at == std::string::npos) return "";
+    at += 8;
+    size_t end = p.find('/', at);
+    return end == std::string::npos ? "" : p.substr(at, end - at);
+}
+
+bool check_native_subsystems(const std::vector<std::string>& names, std::string* err) {
+    std::set<std::string> have;
+    for (auto& f : registry()) have.insert(native_subsystem(f));
+    have.erase("");
+    for (auto& n : names) {
+        if (have.count(n)) continue;
+        std::string l;
+        for (auto& h : have) l += (l.empty() ? "" : ", ") + h;
+        *err = "no natives in a subsystem \"" + n + "\" (subsystems with natives: " + l + ")";
+        return false;
+    }
+    return true;
+}
+
+const std::vector<NativeFunction>& registered_natives() { return registry(); }
 
 void list_native_functions(FILE* out) {
     for (auto& f : registry()) fprintf(out, "%s\t%s%s\n", f.symbol, f.note ? f.note : "", f.enabled ? " [conditional]" : "");
@@ -45,33 +74,41 @@ static u64 function_size(const LoadedLib& lib, u64 addr) {
     return size;
 }
 
-const char* native_set_name(NativeSet s) { return s == NativeSet::Route ? "route" : "none"; }
+const char* native_set_name(NativeSet s) { return s == NativeSet::All ? "all" : s == NativeSet::Route ? "route" : "none"; }
 
 bool parse_native_set(const std::string& s, NativeSet& out) {
-    if (s == "route" || s == "all") out = NativeSet::Route;
+    if (s == "all") out = NativeSet::All;
+    else if (s == "route") out = NativeSet::Route;
     else if (s == "none") out = NativeSet::None;
     else return false;
     return true;
 }
 
-static bool in_set(const NativeFunction& f, NativeSet set, bool with_route) {
+static bool in_group(const NativeFunction& f, const char* g) { return f.group && strcmp(f.group, g) == 0; }
+
+static bool in_set(const NativeFunction& f, NativeSet set, bool with_route, const std::vector<std::string>& skip) {
     if (set == NativeSet::None) return false;
-    bool route = f.group && strcmp(f.group, kGroupRoute) == 0;
-    return with_route || !route;
+    if (!with_route && in_group(f, kGroupRoute)) return false;
+    if (set == NativeSet::Route && !in_group(f, kGroupRoute) && !in_group(f, kGroupPort)) return false;
+    if (!skip.empty() && std::find(skip.begin(), skip.end(), native_subsystem(f)) != skip.end()) return false;
+    return true;
 }
 
-void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route) {
-    int n = 0;
+void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route, const std::vector<std::string>& skip) {
+    int n = 0, skipped = 0;
     std::set<u64> done;
     std::map<u64, u64> trampolines;
     std::set<u64> targets;  // every address that gets a replacement
     for (auto& f : registry()) {
-        if (!in_set(f, set, with_route)) continue;
+        if (!in_set(f, set, with_route, skip)) continue;
         if (f.enabled && !f.enabled()) continue;
         if (u64 a = f.symbol[0] == '@' ? lib.base + strtoull(f.symbol + 1, nullptr, 0) : lib.sym(f.symbol)) targets.insert(a);
     }
     for (auto& f : registry()) {
-        if (!in_set(f, set, with_route)) continue;
+        if (!in_set(f, set, with_route, skip)) {
+            skipped += !skip.empty() && in_set(f, set, with_route, {});
+            continue;
+        }
         if (f.enabled && !f.enabled()) continue;
         // "@0x..." names a library-relative address (for functions without exported symbols).
         u64 addr = f.symbol[0] == '@' ? lib.base + strtoull(f.symbol + 1, nullptr, 0) : lib.sym(f.symbol);
@@ -113,8 +150,41 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route) {
         hook_guest_function(addr, f.symbol, f.fn, f.host ? host_name(f.host) : f.note);
         n++;
     }
-    LOGI("native", "%d guest functions replaced by native code (--natives %s%s)", n, native_set_name(set),
-         with_route ? "" : ", without the FakeApiCaller route");
+    std::string skipped_note;
+    for (auto& s : skip) skipped_note += (skipped_note.empty() ? ", --natives-skip " : ",") + s;
+    if (!skip.empty()) skipped_note += " (" + std::to_string(skipped) + " left to the guest)";
+    LOGI("native", "%d guest functions replaced by native code (--natives %s%s%s)", n, native_set_name(set),
+         with_route ? "" : ", without the FakeApiCaller route", skipped_note.c_str());
 }
 
 }  // namespace soa
+
+// --natives-skip and --natives route rely on these: every registration names its subsystem (the
+// folder of the file that registered it), and native/common/ registers only the port's own hooks.
+NATIVE_TEST("native/registry-groups") {
+    using namespace soa;
+    std::map<std::string, int> per;
+    for (auto& f : registered_natives()) {
+        std::string s = native_subsystem(f);
+        per[s]++;
+        if (s.empty()) t.fail("%s: registered from %s, outside port/src/native/<subsystem>/", f.symbol, f.file ? f.file : "?");
+        bool own = f.group && (strcmp(f.group, kGroupRoute) == 0 || strcmp(f.group, kGroupPort) == 0);
+        if (s == "common" && !own) t.fail("%s: a native in native/common/ that isn't one of the port's own hooks", f.symbol);
+        // the sets: all = everything, route = the route's and the port's own, none = nothing; --server HOST
+        // drops the route's; a skipped subsystem is out of every set
+        bool route = f.group && strcmp(f.group, kGroupRoute) == 0;
+        if (!in_set(f, NativeSet::All, true, {}) || in_set(f, NativeSet::None, true, {})) t.fail("%s: all / none", f.symbol);
+        if (in_set(f, NativeSet::Route, true, {}) != own) t.fail("%s: route", f.symbol);
+        if (in_set(f, NativeSet::All, false, {}) == route) t.fail("%s: --server HOST", f.symbol);
+        if (!s.empty() && in_set(f, NativeSet::All, true, {s})) t.fail("%s: --natives-skip %s", f.symbol, s.c_str());
+    }
+    t.expect_eq(per.size() > 10, true, "natives in many subsystems");
+    std::string err;
+    t.expect_eq(check_native_subsystems({"render", "math"}, &err), true, "render, math have natives");
+    t.expect_eq(check_native_subsystems({"no_such_subsystem"}, &err), false, "an unknown subsystem");
+    NativeSet s;
+    t.expect_eq(parse_native_set("all", s) && s == NativeSet::All, true, "all");
+    t.expect_eq(parse_native_set("route", s) && s == NativeSet::Route, true, "route");
+    t.expect_eq(parse_native_set("none", s) && s == NativeSet::None, true, "none");
+    t.expect_eq(parse_native_set("everything", s), false, "a bad word");
+}

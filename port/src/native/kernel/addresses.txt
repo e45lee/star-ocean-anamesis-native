@@ -1,0 +1,16 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/kernel_addresses.h).
+kVaddrGlobalApp                 sym _ZN4Aska6Global6m_pAppE                      # Aska::App*
+kVaddrGlobalMessageDispatcher   sym _ZN4Aska6Global20m_pMessageDispatcherE
+kVaddrGlobalSystemTaskManager   sym _ZN4Aska6Global20m_pSystemTaskManagerE
+kVaddrGlobalPerformanceCounter  sym _ZN4Aska6Global21m_pPerformanceCounterE
+kVaddrGlobalVSync               sym _ZN4Aska6Global8m_pVSyncE
+kVaddrGlobalFrameCounter        sym _ZN4Aska6Global16m_uiFrameCounterE            # u32
+kVaddrGlobalSystemDeltaTime     sym _ZN4Aska6Global18m_fSystemDeltaTimeE          # float
+kVaddrVSyncCounter              sym _ZN4Aska5VSync15m_nVSyncCounterE              # u32 (GetVSyncCounter)
+kVaddrVSyncEvent                sym _ZN4Aska5VSync7m_eventE                       # Event
+kVaddrVSyncEvSync               sym _ZN4Aska5VSync8m_evSyncE
+kVaddrVSyncEvRTSync             sym _ZN4Aska5VSync10m_evRTSyncE
+kVaddrMainTaskInstance          sym _ZN9Framework10TSingletonINS_12CApplication9CMainTaskEE11m_pInstanceE
+kVaddrFrameworkArguments        sym _ZN9Framework12CApplication20m_FrameworkArgumentsE
+kTimeWrapAbove                  at 0x26e6ae0 f32 ref _ZN9Framework12CTimeElement3AddEf  # CTimeElement::Add wraps a time above it
+kTimeWrapBy                     at 0x2851634 f32 ref _ZN9Framework12CTimeElement3AddEf  # ... by this much

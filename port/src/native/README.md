@@ -2,7 +2,7 @@
 
 Code in this directory replaces functions of `libSOA.so` with C++. It's how the port moves from ARM64 code running under the JIT to native code, one verified piece at a time.
 
-**State (the rebase's revision 2, 2026-10-01; `docs/history/PLAN-rebase-370.md`):** the natives written for the offline build (about 18,000: models, containers, battle, render, particles, dynamics, arena, objbase, engine and math, params, UI / screens / cocos, event, gacha, audio, input, the bundled-library replacements, restore370) were deleted on `port/rebase-370` and are being rebuilt for the 3.7.0 client, as readable C++ from the Ghidra decompile (`tools/decomp.sh`), hottest families first, each with differential selftests and a live check against the 3.7.0 guest. No new a2c transcriptions. git history (`linux-port` before the merge) keeps the old families for reference. What remains is listed in "What's native now" below; `soa --list-native` prints it (301 rows).
+**State:** the natives written for the offline build (about 18,000) were deleted in the rebase's revision 2 (2026-10-01; `docs/history/PLAN-rebase-370.md`; git history keeps them) and are being rebuilt for the 3.7.0 client per subsystem (`port/src/native/<subsystem>/`, "Per-subsystem workflow" below), as readable C++ from the Ghidra decompile (`tools/decomp.sh`), hottest families first, each with differential selftests and a live check against the 3.7.0 guest. No new a2c transcriptions. `soa --list-native` prints every registered native; each subsystem's README lists its own, and "What's native now" below the port's own hooks.
 
 ## How a replacement works
 
@@ -25,7 +25,24 @@ The host function receives the guest CPU state:
 - **Short functions**: the patch is 8 bytes, so a 4-byte function (a lone `RET` or a tail `B`) would also overwrite the next function's first instruction. The installer leaves such a function as guest code when it's a `RET` or a branch to another replaced function, and warns otherwise.
 - **Deferring to the original**: `NATIVE_FUNCTION_ORIG(sym, fn, note, &orig)` stores a trampoline to the original code in `orig`. A replacement can then handle the common case natively and pass the rest (e.g. a cache miss that runs a loader) to the guest. `orig` stays 0 when the replacement isn't installed, as in `--selftest`.
 
-Use `NATIVE_FUNCTION_IF(sym, fn, note, predicate)` for replacements that change behaviour on purpose, such as the tower opt-in, so they're only installed when enabled. `NATIVE_ROUTE_FUNCTION` marks the in-process route's own hooks (`kGroupRoute`), which `--server HOST` leaves out. `soa --natives none` (`--no-native`) installs nothing.
+Use `NATIVE_FUNCTION_IF(sym, fn, note, predicate)` for a replacement installed only when its predicate says so. Two groups are not bit-exact replacements but hooks of the port's: `NATIVE_ROUTE_FUNCTION*` marks the in-process route's (`kGroupRoute`: the FakeApiCaller), which `--server HOST` leaves out, and `NATIVE_PORT_FUNCTION_ORIG` / `_IF` / `_ORIG_IF` the port's own behaviour changes (`kGroupPort`: the control commands' `CPhase::Progress` wrapper, the tower opt-in, the resolution, the local web pages; each in `docs/client-changes.md`). A subsystem's natives use neither.
+
+**Which natives run (`soa --natives`):**
+
+| | Installs | For |
+|---|---|---|
+| `--natives all` (default) | every registered native | normal runs |
+| `--natives route` | only `kGroupRoute` and `kGroupPort`: the game's own code all under the JIT, the in-process server, the control commands and the port's options still working | the A/B of a native regression: a bug that goes away with `route` is in a subsystem's natives |
+| `--natives-skip SUBSYS[,SUBSYS..]` | with either set: these subsystems' natives (the folder under `native/` of the file that registered them) left to the guest | narrowing it down to a subsystem (then `--live-check SUBSYS` for the function) |
+| `--natives none` (`--no-native`) | nothing, not even the route | pure JIT, as `soa-emu` |
+
+The registration records its source file (`register_native_function`'s caller, or `Family::add`'s), so a native belongs to the subsystem whose folder registers it; test `native/registry-groups` checks every native has one and that `common/` registers only the port's own hooks.
+
+**Guest addresses (generated tables):** a native never types a 3.7.0 vaddr. A guest global, a string the guest passes on (an assert's file and message) or a `.rodata` table it needs is an entry of its subsystem's `addresses.txt` (by its dynsym symbol; by its text, exact or a whole string's tail, with `ref FUNC` when it occurs more than once; or, with neither, its vaddr tied to the function whose code references it), and `tools/gen_addresses.py` writes `<s>/gen/<s>_addresses.h` (`inline constexpr std::uint64_t kName` in the subsystem's namespace, what each is, the lib's version and sha256). Add `main_lib()->base`. A name or address used by two subsystems goes in `common/addresses.txt` (namespace `soa::native`); the generator refuses duplicates. Prefer a symbol lookup (`guest::sym`) where code already looks up by name. `tools/gen_addresses.py --refs 0xVADDR` names the functions that reference an address. T0 `generated` (`tools/check_generated.py`) reruns every generator of a built table in `--check` mode (these, `api/gen/fakeapi_tables.inc`, `params/gen/params_instantiations.inc`, `api/gen/wire_table.inc`, `server/net/gen/wire_decode.inc`): commit the regenerated file with the change that needs it.
+
+**The library check:** the tables are the 3.7.0 lib's, so `soa` compares the loaded `libSOA.so`'s sha256 with the one they were generated from (`kLibSha256`, `common/gen/common_addresses.h`; `common/lib_check.*`, test `native/lib-check`) and refuses to start with natives on any other build (`--natives none` runs it; `--selftest` warns). A new build of the lib is a regeneration (AGENTS.md).
+
+**Floating point:** the whole port is compiled with `-ffp-contract=off` (`port/CMakeLists.txt`): a multiply-add is never fused unless the native writes `std::fma`, so the natives round as the guest does on any host compiler (GCC's x86-64 default has no FMA; a `-march` with one, clang's default `-ffp-contract=on` and AArch64 hosts would fuse). Use `native/common/arm_float.h` for the AArch64 NaN rules (e.g. `math/README.md`).
 
 ## Verifying replacements
 
@@ -61,21 +78,27 @@ thunks and native code alike, as text instead of executing it; recorded calls re
 ### Live checks: native vs guest in a normal run (`live_check.h`)
 
 Families check their natives against the guest originals during a real session (e.g.
-`port/scripts/restore_session.sh ... --live-check FAMILY`, i.e. soa's `--live-check`) with the
-shared harness in `live_check.{h,cpp}`; the register file it records calls on is `a2c_regs.h`.
-Registered families: `sync`, `input`, `resource`, `restore` (shadow checks, `common/shadow_check.h`; `restore`: `CCocosNode::SearchByName` with `--restore-tower`, a getter check through `session:tower`), `lib_sqlite` (a shadow run: the game's databases also opened in the guest's
-SQLite and every call repeated there; `lib_sqlite/README.md`), and the lockstep families of the other
-host libraries, `lib_vorbis`, `lib_zstd`, `lib_zlib`, `lib_jpeg`, `lib_crypto` (`common/lockstep.h`: the
-same shadow run, shared; each subsystem's README), and `render` (a run-both family; its GL-issuing natives
-are checked by `gl_run_both`, `render/render_check.h`: the guest original and the native each run with the
-thread's GL calls recorded by `glh::Recorder` on a saved copy of the memory they write, and the call lists and
-the memory are compared). The offline build's families were
-deleted with its natives; a rebuilt family should use the harness.
-A record / replay family (hand-written code whose outgoing calls go through `Family::gcall` /
-`gcall_n` / `gcall_sret` / `memop` / `live::ACall`) is a static `live::Family("tag", every,
-sret_marked)` plus `Family::add(sym, host_fn | body, obj_bytes, ret, enabled, label)` per function;
-override `add_regions()` to snapshot more than the object at x0 and `unreplayable()` for functions
-whose replay can't work. Every family is switched on and tuned from the command line by its tag:
+`port/scripts/restore_session.sh SOA OUT TMP --live-check FAMILY:out=FILE`, the battle-gacha flow; i.e.
+soa's `--live-check`) with the shared harness in `live_check.{h,cpp}`.
+Registered families (`soa --live-check bogus` lists them): record / replay `hash`, `math`, `containers`,
+`libcxx`, `data_formats` (leaf families, `common/live_leaf.h`); shadow checks `sync`, `input`, `kernel`,
+`resource`, `scene`, `restore` (`common/shadow_check.h`; `restore`: `CCocosNode::SearchByName` with
+`--restore-tower`, a getter check through `session:tower`); `memory`, `lib_sqlite`, `yayoi_sqlite` (checks
+of their own: a shadow manager; the game's databases also opened in the guest's SQLite and every call
+repeated there, `lib_sqlite/README.md`); the lockstep families of the other host libraries, `lib_vorbis`,
+`lib_zstd`, `lib_zlib`, `lib_jpeg`, `lib_crypto` (`common/lockstep.h`: the same shadow run, shared; each
+subsystem's README); and the run-both families `render` and `params` (`common/live_run_both.h`; render's
+GL-issuing natives are checked by `gl_run_both`, `render/render_check.h`: the guest original and the native
+each run with the thread's GL calls recorded by `glh::Recorder` on a saved copy of the memory they write,
+and the call lists and the memory are compared). A new family uses one of these kinds.
+A record / replay family is a `live::LeafFamily("tag", every)` (`live_leaf.h`: `LEAF_METHOD` /
+`LEAF_FUNCTION` / `LEAF_HOSTFN` per native, with the memory each touches besides `this`), or a
+`live::Family` with `Family::add(sym, host_fn, obj_bytes, ret, enabled, label)`; a native's outgoing
+calls go through `live::out_call(family(), fn, {args})` (`live_call.h`) or `live::ACall` (floats), so a
+check records them and stubs them on the replay (outside a check they are plain guest calls).
+Override `add_regions()` to snapshot more than the object at x0 and `unreplayable()` for functions
+whose replay can't work. `live::check` is the class `Check` in `live_check.cpp` (snapshot, record,
+stub_callees, replay, compare, race_of). Every family is switched on and tuned from the command line by its tag:
 
     --live-check FAMILY[,FAMILY..][:KEY[=VALUE]..]     (repeatable)
 
@@ -85,12 +108,11 @@ whose symbols contain one of these: the others run unchecked, so the chosen ones
 as nested callees of other natives), `trace` and `dump`; e.g. `--live-check arena:every=4:only=Alloc|Free`.
 (These were the `SOA_<FAMILY>_CHECK*` variables; soa warns when one is still set.) The replay rules
 (stubs shared by every family and dropped from each JIT level once, lone-B / PLT callees followed,
-sret pattern fill, the replay at the native run's SP with its stack leftovers, the undo log of the
-body's stores, freed-block snapshots incl. deleting destructors, stack-vector elements, never-empty stub sessions, runaway stop, 64 MB cap, race
-rerun) are listed at the top of `live_check.cpp`. Families with their own recorders and run-both
-checks (the old battle, particles and dynamics families did) use its stubs, `ReplaySession`,
-`Only`, `Budget` and `StoreLog`. `live::t_busy`: only one check at a time per thread, across
-families. A check's per-thread state (observations, shadows, caches, maps) comes from
+the replay at the native run's SP with its stack leftovers, freed-block snapshots incl. deleting
+destructors, stack-vector elements, never-empty stub sessions, runaway stop, 64 MB cap, race
+rerun) are listed at the top of `live_check.cpp`. Families with checks of their own (shadow, lockstep,
+run-both) use its switches and some its stubs, `ReplaySession` and `Only`. `live::t_busy`: only one
+check at a time per thread, across families. A check's per-thread state (observations, shadows, caches, maps) comes from
 `live::thread_scratch<T>()` (`shadow_check.h`; the runtime's `thread_object<T, Tag>()`: on the heap,
 owned by the thread's record and destroyed at its end, `runtime/README.md` "Per-thread state"), never a
 `thread_local` object: only trivial ones (pointers, integers, flags) are allowed (T0
@@ -110,7 +132,7 @@ selftest `runtime/guest-thread-host-stack`).
 | `ui/ui_utility.cpp` | Port, the render resolution (default on): `CUIUtility::IsResolutionLegacy` false (hi-res: the game renders at the game screen's size), or with `--render-scale S` true and `GetDefaultBackBufferScale` S (the 3D's back buffer); nothing with `--legacy-res` (`docs/client-changes.md` "High-resolution rendering"). Test `ui/resolution` (the guest constants, the modes). |
 | `ui/webview_local.cpp` | Port, `--server inproc`: `CWebView::OpenView` + `SOAActivity.ShowWebView`: pages the local server hosts (the notice board) shown as text in the popup (`docs/client-changes.md` "Notice board page"). |
 
-The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/native_method.h` (`NATIVE_METHOD`: a recovered class's member as the native), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/shadow_check.*` (live checks of natives over shared, stateful objects: the guest original on a shadow, or a getter rerun; families sync, input, resource), `common/guest_assert.*` (`Framework::gDoAssert` with the guest's strings), `common/arm_float.h`, `common/memstats.*` (`--memstats`), `common/core_bench_test.cpp` (guest-call costs).
+The infrastructure: `common/native.*` (the registry, `--natives all|route|none`, `--natives-skip`, `--list-native`), `common/lib_check.*` (the library's sha256 against the tables'), `common/addresses.txt` + `gen/common_addresses.h` (the shared guest addresses), `common/native_method.h` (`NATIVE_METHOD`: a recovered class's member as the native), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` (live checks: the switches, the record / replay `Check`, `live::Regs` / `ACall` / `out_call` for a native's outgoing calls), `common/live_leaf.h` (leaf families), `common/shadow_check.*` (live checks of natives over shared, stateful objects: the guest original on a shadow, or a getter rerun; families sync, input, resource), `common/guest_assert.*` (`Framework::gDoAssert` with the guest's strings), `common/arm_float.h`, `common/memstats.*` (`--memstats`), `common/core_bench_test.cpp` (guest-call costs).
 
 ## Per-subsystem workflow (the native rebuild, port/PLAN.md task 6)
 
@@ -125,6 +147,7 @@ Each subsystem of the rebuild owns two folders and nothing else, so many agents 
 | `port/src/native/<s>/README.md` | scope, the types table, the natives table (its own: no shared list to edit), dependencies, RE notes |
 | `port/src/native/<s>/<s>_layout.h` | the recovered guest classes, methods attached, `static_assert`ed (types first) |
 | `port/src/native/<s>/subsystem.cmake` | the subsystem's own build settings (a host library, a definition); `port/CMakeLists.txt` includes every one |
+| `port/src/native/<s>/addresses.txt` | the guest addresses its natives use; `gen/<s>_addresses.h` is generated from it (`tools/gen_addresses.py`; "Guest addresses" above) |
 | `port/src/native/<s>/<s>_*.cpp` | natives and their differential tests (globbed; link order by basename, D8) |
 | `port/decomp/<s>/<topic>.c` | stamped Ghidra decompiles the rewrite used (data, not built) |
 | `port/decomp/<s>/symbols.tsv` | one row per guest function: vaddr, ghidra, size, symbol, demangled, topic, status (`decompiled` / `typed` / `native` / `tested` / `skip`), note |
@@ -175,7 +198,7 @@ table above; scaffolded subsystems list their natives in their own README instea
 - **Decompile first**: the client is 3.7.0, so `tools/decomp.sh <name> '<regex>'` (and `decomp_at.sh`; `--into <subsystem>/<topic>` for the committed, stamped copy: "Per-subsystem workflow" above) decompiles every function matching a demangled-name regex from the 3.7.0 lib, the default, into `work/decomp/<name>.resolved.c` (its Ghidra project pool, `work/ghidra-quick-v370*`; `--v370` is accepted, `--v380` selects the viewer's offline lib). Write readable C++ from it; no new a2c transcriptions (the user, 2026-10-01). `tools/verdiff_decomp.sh` / `verdiff.py` (3.7.0 vs the offline build) are history tools.
 - **Keep guest layouts**: data structures shared with guest code must keep the guest's in-memory layout. That includes libc++ (`std::__ndk1`) containers and the `Framework::CSTLAllocator` allocators, until every function touching them is native.
 - **Port whole families**: port every entry point of a library or class that owns internal state at once. Mixing guest and host implementations over the same state doesn't work; for example, all of zlib moved together.
-- **Transcribing**: `tools/a2c.py` and the `tools/gen_*_a2c.py` generators (goto-structured C++ over a register file, instruction by instruction) are kept as tools only; nothing in the tree uses their output now, and new natives are readable code. Floating point: match the guest's fused multiply-adds (`std::fma`) where it fuses, plain mul + add where it doesn't (`arm_float.h` has the ARM NaN rules).
+- **Transcribing**: `tools/a2c.py` and the `tools/gen_*_a2c.py` generators (goto-structured C++ over a register file, instruction by instruction) are kept as tools only; nothing in the tree uses their output, the live check has no a2c path any more, and new natives are readable code. Floating point: match the guest's fused multiply-adds (`std::fma`) where it fuses, plain mul + add where it doesn't (never fused by the compiler: "Floating point" above; `arm_float.h` has the ARM NaN rules).
 - **Hook size**: the patch is 8 bytes (`SVC; RET`); `install_native_functions` skips functions smaller than that (4-byte tail-call trampolines) instead of clobbering the next function.
 - **Trampolines to the original** (`NativeFunction::original`): the first two instructions copied, then a branch to entry + 8. When they are PC-relative (ADR / ADRP, B / BL, B.cond, CBZ / CBNZ, TBZ / TBNZ) `make_relocated_trampoline` (`common/trampoline.h`, test `native/relocated-trampoline`) relocates them; only an LDR (literal) there still leaves the native uninstalled (a warning).
 - **Host-built guest code** (trampolines, test snippets, fake code pages): allocate it with `map_guest_code()` and free it with `unmap_guest_code()` (`core/cpu.h`), never plain `mmap` / `munmap`. The JIT caches translations by address only, so a page that is unmapped and mapped again keeps running the old code in every JIT that ran it. That was once an intermittent full-`--selftest` SIGSEGV (a page-aligned guest `pc`, `lr = <return-to-host>`): tests unmapped their snippet pages, and a later test's trampoline landed on the same address and ran a stale snippet.

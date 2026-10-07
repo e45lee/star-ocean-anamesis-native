@@ -85,7 +85,7 @@ std::string dump(const soa::SoaArgs& a) {
     dump(d, o.server);
     d.f("data_dir", a.data_dir).f("apk", a.apk_path).f("lib", a.lib_path).f("smoke", a.smoke).f("selftest", a.selftest);
     d.f("list_native", a.list_native).f("test_filter", a.test_filter);
-    d.f("natives", a.natives == "all" ? std::string("route") : a.natives);  // (parse_native_set: all = route)
+    d.f("natives", a.natives).f("natives_skip", a.natives_skip);
     d.f("server_mode", a.server_mode.empty() ? std::string("inproc") : a.server_mode);
     dump(d, a.p370);
     dump(d, a.host);
@@ -309,8 +309,10 @@ int main() {
     const V kAddedSoaServer = {"--english", "--english-text", "--stamina-heal-time", "--english-dump"};
     // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
     const V kAddedLang = {"--lang", "--voice-lang"};
-    // Added to soa: --render-scale (2026-10-07; port/src/core/cli.cpp, the resolution natives).
-    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang", "--render-scale"};
+    // Added to soa: --render-scale (2026-10-07; port/src/core/cli.cpp, the resolution natives); --natives-skip
+    // (2026-10-07, code review P1: the natives A/B).
+    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang", "--render-scale",
+                         "--natives-skip"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {
@@ -435,12 +437,16 @@ int main() {
         {{"--server", "127.0.0.1"}},
         {{"--server", "127.0.0.1:44300", "--http", "127.0.0.1:44380", "--map-host", "cdn.example"}},
         {{"--server", "host:0"}},
-        {{"--natives", "route"}},
+        {{"--natives", "route"}, "--natives route is now the route's and the port's own hooks only (2026-10-07, code review P1); "
+                                 "the old route (every native) is all", -1},
         {{"--natives", "all"}},
         {{"--natives", "none"}},
         {{"--no-native"}},
-        {{"--no-native", "--natives", "route"}},
+        {{"--no-native", "--natives", "route"}, "--natives route is now the route's and the port's own hooks only", -1},
+        {{"--no-native", "--natives", "all"}},
         {{"--natives", "route", "--no-native"}},
+        {{"--natives-skip", "render"}, "--natives-skip is new (2026-10-07)", -1},
+        {{"--natives-skip", "render,math", "--natives-skip", "sync"}, "--natives-skip is new (2026-10-07)", -1},
         {{"--smoke"}},
         {{"--selftest"}},
         {{"--selftest", "server/"}},

@@ -13,7 +13,7 @@ RunBothFamily::Fn::Fn(RunBothFamily& fam, const char* s) : sym(s) {
     fam.fns_.push_back(this);
 }
 
-RunBothFamily::RunBothFamily(const char* tag, int every) : fam_(tag, every, false) {}
+RunBothFamily::RunBothFamily(const char* tag, int every) : fam_(tag, every) {}
 
 bool RunBothFamily::due_slow(Fn& f) {
     if (t_busy || !f.orig || !fam_.only.match(f.sym)) return false;

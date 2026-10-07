@@ -31,7 +31,7 @@ float rand_float(TestContext& t) {
 NATIVE_TEST("kernel/time-element-add") {
     constexpr int kNodes = 7;
     alignas(16) static CTimeElement g[kNodes], n[kNodes];
-    const float wrap = *reinterpret_cast<const float*>(main_lib()->base + 0x26e6ae0);
+    const float wrap = *reinterpret_cast<const float*>(main_lib()->base + kTimeWrapAbove);
     for (int round = 0; round < 300; round++) {
         for (int i = 0; i < kNodes; i++) t.call("_ZN9Framework12CTimeElementC2Ev", {(u64)&g[i]});
         for (int i = 1; i < kNodes; i++) t.call("_ZN9Framework12CTimeElement8AddChildEPS0_", {(u64)&g[t.rand_int(0, i - 1)], (u64)&g[i]});

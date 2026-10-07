@@ -11,6 +11,7 @@
 #include "native/libcxx/libcxx_family.h"
 #include "native/libcxx/libcxx_layout.h"
 #include "native/libcxx/libcxx_string.h"
+#include "native/common/gen/common_addresses.h"
 
 namespace soa::native::libcxx {
 
@@ -20,19 +21,15 @@ using Str = basic_string<char>;
 constexpr u64 kShortCap = 22;  // characters a short string holds
 
 u64 guest(u64 vaddr) { return main_lib()->base + vaddr; }
-constexpr u64 kAllocatorFile = 0x26db0be;  // "...Framework/STL_Allocator.h"
-constexpr u64 kStringFile = 0x26db145;     // "...Framework/STL_String.h"
-constexpr u64 kMsgZero = 0x26db115;        // "aNumElements is zero."
-constexpr u64 kMsgNull = 0x26db12b;        // "pAllocatedMemory is null."
 
 void do_assert(u32 line, u64 msg) {
     static const u64 fn = main_lib()->sym("_ZN9Framework9gDoAssertEPKciS1_z");
-    live::out_call(family(), fn, {guest(kAllocatorFile), line, guest(msg)});
+    live::out_call(family(), fn, {guest(kStrStlAllocatorH), line, guest(msg)});
 }
 char* allocate(u64 bytes) {
     static const u64 fn = main_lib()->sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj");
-    auto* p = (char*)live::out_call(family(), fn, {bytes, guest(kStringFile), 0x1c});
-    if (!p) do_assert(0xbe, kMsgNull);
+    auto* p = (char*)live::out_call(family(), fn, {bytes, guest(kStrStlStringH), 0x1c});
+    if (!p) do_assert(0xbe, kStrAllocatedMemoryIsNull);
     return p;
 }
 void deallocate(char* p) {
@@ -50,7 +47,7 @@ u64 grown_allocation(u64 old_cap, u64 delta) {
     if (c <= old_cap + delta) c = old_cap + delta;
     if (c < 0x17) return 0x17;
     c = (c + 0x10) & ~u64(0xf);
-    if (c == 0) do_assert(0xbb, kMsgZero);
+    if (c == 0) do_assert(0xbb, kStrNumElementsIsZero);
     return c;
 }
 
@@ -146,7 +143,7 @@ void Str::reserve(u64 n) {
         from = r.l.data;
         to = (char*)&r.s.data[0];
     } else {
-        if (want + 1 == 0) do_assert(0xbb, kMsgZero);
+        if (want + 1 == 0) do_assert(0xbb, kStrNumElementsIsZero);
         to = allocate(want + 1);
         if (!to && want <= cap) return;  // (the guest's assert path: nothing changes)
         now_long = true;
@@ -181,7 +178,7 @@ void string_copy_construct(Str* self, const Str& src) {
         to = (char*)&self->r.s.data[0];
     } else {
         u64 alloc = (n + 0x10) & ~u64(0xf);
-        if (alloc == 0) do_assert(0xbb, kMsgZero);
+        if (alloc == 0) do_assert(0xbb, kStrNumElementsIsZero);
         to = allocate(alloc);
         self->r.l.cap = alloc | 1;
         self->r.l.size = n;

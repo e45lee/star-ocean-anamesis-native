@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include <soa/env.h>
+
 #include "native/common/guest_std.h"
 #include "native/common/test.h"
 #include "native/yayoi/yayoi_guest.h"
@@ -63,7 +65,7 @@ struct Side {
     }
     void add(std::string s) {
         // (SOA_YAYOI_TEST_TRACE=1: every line to stderr as it is made)
-        static const bool trace = getenv("SOA_YAYOI_TEST_TRACE") != nullptr;
+        static const bool trace = env::env_on("SOA_YAYOI_TEST_TRACE");
         if (trace) fprintf(stderr, "[%s] %.300s\n", name, s.c_str());
         log.push_back(std::move(s));
     }

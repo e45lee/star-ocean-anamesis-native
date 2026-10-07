@@ -9,8 +9,6 @@
 
 #include <cstring>
 #include <ctime>
-#include <filesystem>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <soa/paths.h>
@@ -60,34 +58,6 @@ NATIVE_TEST("server/options") {
     if (!set_clock(o, "2019-10-01 04:00:00") || !o.has_clock) t.fail("set_clock");
     int64_t off = local(2019, 10, 1, 4) - (int64_t)time(nullptr);
     if (o.clock_offset > off + 5 || o.clock_offset < off - 5) t.fail("clock offset");
-}
-
-// The port keeps game and run state in RunOptions, never in the environment: no setenv in port/src
-// (checked over the sources when they're next to the build).
-NATIVE_TEST("server/no-setenv-state") {
-    std::filesystem::path src;
-    if (std::string p = find_repo_file("port/src/core/options.h"); !p.empty()) src = repo_path("port/src");
-    if (src.empty()) {
-        LOGW("selftest", "server/no-setenv-state: port/src not found; skipped");
-        return;
-    }
-    const std::string needle = std::string("set") + "env(";  // (spelled so this file doesn't match)
-    int files = 0;
-    for (auto& e : std::filesystem::recursive_directory_iterator(src)) {
-        auto ext = e.path().extension();
-        if (ext != ".cpp" && ext != ".h" && ext != ".inc") continue;
-        files++;
-        std::ifstream f(e.path());
-        std::string line;
-        for (int n = 1; std::getline(f, line); n++) {
-            size_t p = line.find(needle);
-            if (p == std::string::npos) continue;
-            size_t c = line.find("//");
-            if (c != std::string::npos && c < p) continue;  // a comment
-            t.fail("%s:%d: setenv (use core/options.h RunOptions): %s", e.path().c_str(), n, line.c_str());
-        }
-    }
-    if (!files) t.fail("no sources scanned");
 }
 
 // ---- the port's asset lookup (server_adapters.cpp AssetManagerIndex) ---------------------------

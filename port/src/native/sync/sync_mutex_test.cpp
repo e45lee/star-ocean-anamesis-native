@@ -10,6 +10,8 @@
 #include "core/loader.h"
 #include "hle/thread.h"
 #include "native/common/test.h"
+#include "native/common/gen/common_addresses.h"
+#include "native/sync/gen/sync_addresses.h"
 #include "native/sync/sync_layout.h"
 #include "native/sync/sync_test_util.h"
 
@@ -163,11 +165,11 @@ NATIVE_TEST("sync/cmutex-contention") {
 // Mutex.cpp's assert strings and the operator delete the natives call: the guest addresses they use.
 NATIVE_TEST("sync/guest-addresses") {
     u64 base = main_lib()->base;
-    const char* file = (const char*)(base + 0x2864c10);
+    const char* file = (const char*)(base + kMutexCpp);
     t.expect_eq(strncmp(file, "C:\\BAS_Submission", 17) == 0 && strstr(file, "Mutex.cpp") != nullptr, true, "Mutex.cpp path");
-    t.expect_eq(strcmp((const char*)(base + 0x2861b3b), "Uninitialized object."), 0, "Uninitialized object.");
-    t.expect_eq(strcmp((const char*)(base + 0x2861b26), "Already initialized."), 0, "Already initialized.");
-    t.expect_eq(strcmp((const char*)(base + 0x2864c61), "Unlock doesn't called, yet."), 0, "Unlock doesn't called, yet.");
+    t.expect_eq(strcmp((const char*)(base + kStrUninitializedObject), "Uninitialized object."), 0, "Uninitialized object.");
+    t.expect_eq(strcmp((const char*)(base + kAlreadyInitialized), "Already initialized."), 0, "Already initialized.");
+    t.expect_eq(strcmp((const char*)(base + kUnlockNotCalled), "Unlock doesn't called, yet."), 0, "Unlock doesn't called, yet.");
 }
 
 }  // namespace

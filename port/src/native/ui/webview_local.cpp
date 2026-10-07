@@ -94,7 +94,7 @@ void h_open_view(Cpu& c) {
     if (g_have_page) show_page(view, g_page);
     g_have_page = false;
 }
-NATIVE_FUNCTION_ORIG_IF("_ZN8CWebView8OpenViewENS_8ViewTypeENSt6__ndk18functionIFvvEEEb", h_open_view,
+NATIVE_PORT_FUNCTION_ORIG_IF("_ZN8CWebView8OpenViewENS_8ViewTypeENSt6__ndk18functionIFvvEEEb", h_open_view,
                         "CWebView::OpenView (in-process server: local pages as text)", &on, &g_orig_open);
 
 }  // namespace

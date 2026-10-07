@@ -46,9 +46,9 @@ RenderDeviceGL* render_dev() {
 u64 gsym(const char* s) { return guest::sym(s); }
 
 // PrimType::Type -> GL mode (the guest's table)
-u32 prim_mode(u32 prim) { return reinterpret_cast<const u32*>(main_lib()->base + 0x28ce77c)[prim]; }
+u32 prim_mode(u32 prim) { return reinterpret_cast<const u32*>(main_lib()->base + kPrimModeTable)[prim]; }
 // LastMinuteDrawCommands_Depth's polygon-offset threshold (a float constant of the guest)
-float offset_epsilon() { return *reinterpret_cast<const float*>(main_lib()->base + 0x26fac84); }
+float offset_epsilon() { return *reinterpret_cast<const float*>(main_lib()->base + kOffsetEpsilon); }
 
 // A cap bit pair of OglStateSet0::m_capFlags: wanted bit `want`, GL's bit `set`; glEnable / glDisable
 // `cap` when they differ, then GL's bit = the wanted one.

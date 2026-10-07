@@ -14,6 +14,8 @@
 #include <type_traits>
 #include <vector>
 
+#include <soa/env.h>
+
 #include "core/cpu.h"
 #include "native/common/test.h"
 #include "native/hash/hash_layout.h"
@@ -207,8 +209,8 @@ NATIVE_TEST("params/guest-constants") {
     t.expect_eq(s(g::kNotFound), std::string("not found "), "not found");
     t.expect_eq(s(g::kNotMatch), std::string("not match "), "not match");
     t.expect_eq(s(g::kEmptyString), std::string(""), "empty");
-    t.expect_eq(s(g::kNumElementsIsZero), std::string("aNumElements is zero."), "aNumElements");
-    t.expect_eq(s(g::kAllocatedIsNull), std::string("pAllocatedMemory is null."), "pAllocatedMemory");
+    t.expect_eq(s(native::kStrNumElementsIsZero), std::string("aNumElements is zero."), "aNumElements");
+    t.expect_eq(s(native::kStrAllocatedMemoryIsNull), std::string("pAllocatedMemory is null."), "pAllocatedMemory");
     auto ends = [&](u64 va, const char* tail) {
         std::string x = s(va);
         return x.size() >= strlen(tail) && x.compare(x.size() - strlen(tail), strlen(tail), tail) == 0;
@@ -216,8 +218,8 @@ NATIVE_TEST("params/guest-constants") {
     t.expect_eq(ends(g::kParameterParserCpp, "Parameter\\ParameterParser.cpp"), true, "ParameterParser.cpp");
     t.expect_eq(ends(g::kParameterParserH, "Game/Parameter/ParameterParser.h"), true, "ParameterParser.h");
     t.expect_eq(ends(g::kParameterBaseCpp, "Parameter\\ParameterBase.cpp"), true, "ParameterBase.cpp");
-    t.expect_eq(ends(g::kStlAllocatorH, "Framework/STL_Allocator.h"), true, "STL_Allocator.h");
-    t.expect_eq(ends(g::kStlStringH, "Framework/STL_String.h"), true, "STL_String.h");
+    t.expect_eq(ends(native::kStrStlAllocatorH, "Framework/STL_Allocator.h"), true, "STL_Allocator.h");
+    t.expect_eq(ends(native::kStrStlStringH, "Framework/STL_String.h"), true, "STL_String.h");
 }
 
 // GetParserValue (also hash 0, an absent hash, the key-hash cache) and every getter by hash.
@@ -352,7 +354,7 @@ void MakeString(String& dst, const std::string& s, u64 cap) {
     }
     if (cap < s.size()) cap = s.size();
     u64 alloc = (cap + 16) & ~u64(15);
-    char* p = (char*)g::StlAllocate(alloc, g::kStlStringH, 0x1c);
+    char* p = (char*)g::StlAllocate(alloc, native::kStrStlStringH, 0x1c);
     std::memset(p, 0x77, alloc);
     std::memcpy(p, s.data(), s.size());
     p[s.size()] = 0;
@@ -643,7 +645,7 @@ NATIVE_TEST("params/corpus") {
     };
     const char* dir = "port/src/native/params/testdata";
     scan(dir);
-    if (const char* more = getenv("SOA_PARAMS_CORPUS")) scan(more);  // (the whole recordings: README.md "Tests")
+    if (const char* more = env::env_str("SOA_PARAMS_CORPUS")) scan(more);  // (the whole recordings: README.md "Tests")
     if (files.empty()) {
         t.fail("no corpus in %s (run soa from the repository root)", dir);
         return;

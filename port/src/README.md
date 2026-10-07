@@ -23,7 +23,7 @@ This folder is the port:
 | `native/` | Guest functions replaced by native C++: everything below |
 
 ## `native/`
-**Since the rebase's revision 2 (2026-10-01) the native families are gone** (`docs/history/PLAN-rebase-370.md`; git history keeps them) and are being rebuilt for 3.7.0, as readable C++ from the Ghidra decompile, each in a subsystem folder with its differential tests. What is here now: the in-process route, the test and check infrastructure, and the port's own hooks (`native/README.md` "What's native now"). A generated file goes in a **`gen/`** subfolder and names its generator in its first lines (`tools/gen_*.py`); **never edit `gen/` by hand**.
+**Since the rebase's revision 2 (2026-10-01) the native families are gone** (`docs/history/PLAN-rebase-370.md`; git history keeps them) and are being rebuilt for 3.7.0, as readable C++ from the Ghidra decompile, each in a subsystem folder with its differential tests. What is here: the in-process route, the test and check infrastructure, the port's own hooks (`native/README.md` "What's native now") and the rebuilt subsystems (one folder each, with its README). A generated file goes in a **`gen/`** subfolder and names its generator in its first lines (`tools/gen_*.py`); **never edit `gen/` by hand**.
 
 File-name conventions inside a folder:
 - `<family>.cpp` / `.h`: natives.
@@ -31,9 +31,10 @@ File-name conventions inside a folder:
 
 | Folder | Contents |
 |---|---|
-| `common/` | Native framework: registration (`native.h`: `NATIVE_FUNCTION`, `--natives route\|none`), the selftest harness (`test.h`), guest-call helpers (`guest_std`, `guest_stub`), the live-check library (`live_check`) and its register file (`a2c_regs`), `arm_float.h`, memstats, guest-call benchmarks, and the port's debug control commands (`port_debug.cpp`: the `CPhase::Progress` wrapper) |
+| `common/` | Native framework: registration (`native.h`: `NATIVE_FUNCTION`, `--natives all\|route\|none`, `--natives-skip`), the library check (`lib_check`), the shared guest addresses (`addresses.txt`, `gen/common_addresses.h`), the selftest harness (`test.h`), guest-call helpers (`guest_std`, `guest_stub`), the live-check library (`live_check`, `live_leaf`, `live_call`, `shadow_check`, `lockstep`, `live_run_both`), `arm_float.h`, memstats, guest-call benchmarks, and the port's debug control commands (`port_debug.cpp`: the `CPhase::Progress` wrapper) |
 | `api/` | The in-process route: the `FakeApiCaller` hooks (`fakeapi.cpp`, `gen/fakeapi_tables.inc`), the adapters to the server library (`server_adapters.*`), the in-process CDN (`server_cdn.cpp`), the wire-format test (`wire_test.cpp`, `gen/wire_table.inc`), the server tests that need the game |
 | `restore/` | The tower opt-in (`restore_tower.cpp`, `--restore-tower`; `docs/client-changes.md` "Tower") |
-| `ui/` | The notice board's local page (`webview_local.cpp`; `docs/client-changes.md` "Notice board page") |
+| `ui/` | The notice board's local page (`webview_local.cpp`; `docs/client-changes.md` "Notice board page") and the render resolution (`ui_utility.cpp`) |
+| `<subsystem>/` | A rebuilt subsystem's natives, layouts, tests and `addresses.txt` (`native/README.md` "Per-subsystem workflow") |
 
 `native/README.md` has how to write a native and its tests.

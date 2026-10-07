@@ -784,16 +784,12 @@ def report(m, b, res, out_db):
 
 def default_master():
     """data/basmaster-3.7.0.sqlite3 (untracked), here or in the main checkout of a git worktree."""
-    cands = [os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3")]
-    try:
-        import subprocess
-        common = subprocess.run(["git", "-C", ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir"],
-                                capture_output=True, text=True).stdout.strip()
-        if common:
-            cands.append(os.path.join(os.path.dirname(common), "data", "basmaster-3.7.0.sqlite3"))
-    except OSError:
-        pass
-    return next((c for c in cands if os.path.exists(c)), cands[0])
+    if ROOT not in sys.path:
+        sys.path.insert(0, ROOT)
+    from soa_save.paths import master_db
+
+    db = master_db()
+    return str(db) if db else os.path.join(ROOT, "data", "basmaster-3.7.0.sqlite3")
 
 
 def main():

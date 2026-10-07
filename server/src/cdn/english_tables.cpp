@@ -9,7 +9,7 @@
 #include "core/log.h"
 #include "master/english_derive.h"
 #include "master/english_text.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/cdn.h"
 
 namespace soa::server::cdn {

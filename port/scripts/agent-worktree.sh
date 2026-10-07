@@ -8,8 +8,9 @@
 # from vcpkg's binary cache (scripts/build.sh header: the same keys from every checkout).
 # The links are ignored by git and refused by the pre-commit hook: never commit them.
 set -eu
-# The main checkout, also when this script runs from another worktree (its common git dir's parent).
-REPO=$(cd "$(git -C "$(dirname "$0")" rev-parse --path-format=absolute --git-common-dir)/.." && pwd)
+# The main checkout, also when this script runs from another worktree (scripts/lib/checkout.sh).
+. "$(dirname "$0")/../../scripts/lib/checkout.sh"
+REPO=$(main_checkout "$(dirname "$0")/../..")
 name=${1:?usage: port/scripts/agent-worktree.sh <name> [base-ref]}; base=${2:-main}
 WT=$REPO/.claude/worktrees/$name
 if [ ! -d "$WT" ]; then

@@ -10,7 +10,7 @@
 #include "core/ids.h"
 #include "core/log.h"
 #include "core/server.h"  // first_existing
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/config.h"
 #include "state/kvs.h"
 

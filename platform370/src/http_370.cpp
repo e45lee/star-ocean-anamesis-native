@@ -112,48 +112,12 @@ bool parse_url(const std::string& u, Url& out) {
     return !out.host.empty();
 }
 
+// A connection for one exchange (soa/sock.h connect_tcp: every address, kConnectTimeoutMs each),
+// with kReadTimeoutMs on its reads and writes.
 int connect_to(const std::string& host, int port, std::string& err) {
-    addrinfo hints{}, *res = nullptr;
-    hints.ai_socktype = SOCK_STREAM;
-    sock::startup();
-    int r = getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res);
-    if (r) {
-        err = std::string("resolve: ") + gai_strerror(r);
-        return -1;
-    }
-    int fd = -1;
-    for (addrinfo* a = res; a; a = a->ai_next) {
-        fd = sock::tcp_socket(true, a->ai_family);
-        if (fd < 0) continue;
-        if (connect(fd, a->ai_addr, (int)a->ai_addrlen) == 0) break;
-        if (sock::connect_in_progress()) {
-            sock::PollFd p{fd, POLLOUT, 0};
-            int e = 0;
-            socklen_t el = sizeof e;
-            if (sock::poll(&p, 1, kConnectTimeoutMs) == 1 && getsockopt(fd, SOL_SOCKET, SO_ERROR, (char*)&e, &el) == 0 && e == 0) break;
-            err = e ? "connect: error " + std::to_string(e) : "connect timeout";
-        } else {
-            err = sock::last_error();
-        }
-        sock::close(fd);
-        fd = -1;
-    }
-    freeaddrinfo(res);
-    if (fd >= 0) {
-        sock::set_nonblocking(fd, false);
-        sock::set_timeouts(fd, kReadTimeoutMs / 1000);
-    }
+    int fd = sock::connect_tcp(host, port, kConnectTimeoutMs, &err);
+    if (fd >= 0) sock::set_timeouts(fd, kReadTimeoutMs / 1000);
     return fd;
-}
-
-bool send_all(int fd, const std::string& s) {
-    size_t off = 0;
-    while (off < s.size()) {
-        ssize_t n = sock::send(fd, s.data() + off, s.size() - off);
-        if (n <= 0) return false;
-        off += (size_t)n;
-    }
-    return true;
 }
 
 std::string header_value(const std::string& head, const char* name) {
@@ -290,7 +254,7 @@ bool exchange(const std::string& url, int port_arg, const std::string& body, boo
     req += "\r\n";
     if (post) req += body;
     std::string resp;
-    bool ok = send_all(fd, req);
+    bool ok = sock::send_all(fd, req);
     size_t he = std::string::npos;
     if (ok) {
         // The head first.

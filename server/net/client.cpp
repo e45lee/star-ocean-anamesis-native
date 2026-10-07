@@ -16,40 +16,18 @@ namespace soa::server::net {
 
 namespace {
 
+// soa/sock.h connect_tcp (every address of `host`, IPv4 or IPv6), then 10 s reads and writes and
+// TCP_NODELAY.
 int connect_to(const std::string& host, uint16_t port, std::string* err) {
-    addrinfo hints = {}, *res = nullptr;
-    hints.ai_family = host.find(':') != std::string::npos ? AF_INET6 : AF_INET;  // (an IPv6 address: ::1)
-    hints.ai_socktype = SOCK_STREAM;
-    sock::startup();  // (Winsock, before the name lookup)
-    const std::string port_s = std::to_string(port);
-    if (int r = getaddrinfo(host.c_str(), port_s.c_str(), &hints, &res); r != 0 || !res) {
-        *err = host + ": " + gai_strerror(r);
+    std::string why;
+    int fd = sock::connect_tcp(host, port, 10000, &why);
+    if (fd < 0) {
+        *err = "connect " + sock::join_host_port(host, port) + ": " + why;
         return -1;
     }
-    sockaddr_storage a = {};
-    socklen_t alen = (socklen_t)res->ai_addrlen;
-    memcpy(&a, res->ai_addr, res->ai_addrlen);
-    freeaddrinfo(res);
-    int fd = sock::tcp_socket(false, a.ss_family);
-    if (fd < 0) return *err = "socket: " + sock::last_error(), -1;
     sock::set_timeouts(fd, 10);
     sock::set_nodelay(fd);
-    if (::connect(fd, (sockaddr*)&a, alen) != 0) {
-        *err = "connect " + sock::join_host_port(host, port) + ": " + sock::last_error();
-        sock::close(fd);
-        return -1;
-    }
     return fd;
-}
-
-bool send_all(int fd, const void* p, size_t n) {
-    const char* c = (const char*)p;
-    while (n) {
-        ssize_t k = sock::send(fd, c, n);
-        if (k <= 0) return false;
-        c += k, n -= (size_t)k;
-    }
-    return true;
 }
 
 uint32_t le32(const uint8_t* p) { return (uint32_t)p[0] | (uint32_t)p[1] << 8 | (uint32_t)p[2] << 16 | (uint32_t)p[3] << 24; }
@@ -118,7 +96,7 @@ bool WireClient::read_reply(WireReply* out, std::string* err) {
 }
 
 bool WireClient::raw(const std::vector<uint8_t>& bytes, WireReply* out, std::string* err) {
-    if (!send_all(fd_, bytes.data(), bytes.size())) return *err = "send failed", false;
+    if (!sock::send_all(fd_, bytes.data(), bytes.size())) return *err = "send failed", false;
     return read_reply(out, err);
 }
 

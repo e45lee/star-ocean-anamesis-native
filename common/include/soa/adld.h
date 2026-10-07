@@ -1,5 +1,5 @@
 #pragma once
-// ADLD: the game's packed-file format (library code). Every packed game file (scripts, texts,
+// ADLD: the game's packed-file format (part of soa_codec). Every packed game file (scripts, texts,
 // parameters, the master database, the downloaded assets) is "ADLD", u32 flags, 8 zero bytes, then
 // the payload (docs/notes.md "Asset encryption (ADLD)"):
 //   flags & 1: the payload XORed with the lowercase hex of CHash32(name), repeating;
@@ -9,15 +9,16 @@
 // `name` is the asset's logical path, e.g. "sqlite/basmaster.sqlite3" or "Script/1000_010.msgp".
 //
 // The decrypt half is the game's own (CGame::OnInitialize's CFileLoader callback and
-// Encrypt::CEncryptAES128 / DecryptAES128); the port's natives for them use these functions
-// (port/src/native/engine/asset_decrypt.cpp). The encrypt half is ours: soa-server's CDN packs the
-// master DB it serves with it (cdn.h); encrypt(decrypt(x)) reproduces the 3.7.0 files byte for byte.
+// Encrypt::CEncryptAES128 / DecryptAES128). The encrypt half is ours: soa-server's CDN packs the
+// master DB and the English files it serves with it (soaserver/cdn.h); encrypt(decrypt(x))
+// reproduces the 3.7.0 files byte for byte. Users: soa-server, tools/aif2png, the port's test data
+// (port/src/native/common/test_assets.h). Python: soa_save.adld (decode / encode).
 #include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace soa::server::adld {
+namespace soa::adld {
 
 constexpr uint32_t kXor = 1;  // ADLD flags / the manifests' encType
 constexpr uint32_t kAes = 2;
@@ -66,4 +67,4 @@ inline std::vector<uint8_t> encrypt(const std::string& name, const std::vector<u
     return encrypt(name, plain.data(), plain.size(), flags);
 }
 
-}  // namespace soa::server::adld
+}  // namespace soa::adld

@@ -53,7 +53,7 @@ NATIVE_TEST("hash/chash32") {
     alignas(16) u8 obj[32] = {};
     t.call("_ZN9Framework7CHash32C1EPKc", {(u64)obj, (u64)"role_cp0303_b04a_6131"});  // original ARM64 code
     u32 guest = (u32)t.call("_ZNK9Framework7CHash323GetEv", {(u64)obj});
-    t.expect_eq(guest, server::chash32("role_cp0303_b04a_6131"), "CHash32");
+    t.expect_eq(guest, chash32("role_cp0303_b04a_6131"), "CHash32");
 }
 ```
 

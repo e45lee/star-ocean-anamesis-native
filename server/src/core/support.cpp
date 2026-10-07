@@ -1,5 +1,5 @@
 // The server library's platform-neutral support (library code): configuration, log sink, the
-// asset index (soaserver/hooks.h), CHash32.
+// asset index (soaserver/hooks.h).
 #include <sys/stat.h>
 
 #include <cstdarg>
@@ -10,8 +10,8 @@
 #include <mutex>
 
 #include <soa/file_tree.h>
+#include <soa/install.h>
 
-#include "soaserver/chash32.h"
 #include "soaserver/config.h"
 #include "soaserver/hooks.h"
 #include "soaserver/log.h"
@@ -26,27 +26,7 @@ ServerConfig& config() {
     return c;
 }
 
-namespace {
-bool exists(const std::string& p) {
-    struct stat st;
-    return !p.empty() && stat(p.c_str(), &st) == 0;
-}
-}  // namespace
-
-std::string find_repo_file(std::initializer_list<const char*> rels) {
-    const auto& all = config().repo_roots;
-    for (const char* rel : rels) {
-        if (all.empty()) {
-            if (exists(rel)) return rel;
-            continue;
-        }
-        for (auto& r : all) {
-            std::string p = r + "/" + rel;
-            if (exists(p)) return p;
-        }
-    }
-    return "";
-}
+std::string find_repo_file(std::initializer_list<const char*> rels) { return install::find_file(config().repo_roots, rels); }
 
 std::string find_repo_file(const std::string& rel) { return find_repo_file({rel.c_str()}); }
 
@@ -131,32 +111,5 @@ std::shared_ptr<const AssetIndex> dir_asset_index(std::vector<std::string> dirs)
             if (auto t = FileTree::open(x)) d->dirs.push_back(std::move(t));
     return d;
 }
-
-// ---- CHash32 ---------------------------------------------------------------------------------
-namespace {
-const uint32_t* crc_table() {
-    static uint32_t t[256];
-    static bool init = [] {
-        for (uint32_t i = 0; i < 256; i++) {
-            uint32_t c = i;
-            for (int k = 0; k < 8; k++) c = (c & 1) ? (c >> 1) ^ 0xEDB88320u : c >> 1;
-            t[i] = c;
-        }
-        return true;
-    }();
-    (void)init;
-    return t;
-}
-}  // namespace
-
-uint32_t chash32(const void* data, size_t len) {
-    const uint32_t* t = crc_table();
-    const auto* p = (const unsigned char*)data;
-    uint32_t c = (uint32_t)len;
-    if (len == 0) return 0;
-    for (size_t i = 0; i < len; i++) c = t[(c ^ p[i]) & 0xff] ^ (c >> 8);
-    return c;
-}
-uint32_t chash32(const char* s) { return s ? chash32(s, strlen(s)) : 0; }
 
 }  // namespace soa::server

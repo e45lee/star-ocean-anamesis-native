@@ -19,6 +19,8 @@ add_executable(soa_env_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/env_tests.cpp ${C
                ${CMAKE_CURRENT_SOURCE_DIR}/tests/install_tests.cpp)
 target_link_libraries(soa_env_tests PRIVATE soa_env soa_compat)  # (soa_compat: setenv on Windows)
 
+find_package(Threads REQUIRED)
+
 # soa_compat: what more than one part needs to build for both Linux and Windows (port/PLAN.md 5b,
 # W); linked by the server's and the runtime's targets.
 #   include/soa/sock.h  host TCP sockets (BSD / Winsock): soa-server's wire layer (server/net) and
@@ -39,6 +41,11 @@ if(WIN32)
   find_file(SOA_MINGW_BINMODE binmode.o PATHS ${SOA_MINGW_SYSROOT}/lib REQUIRED NO_DEFAULT_PATH)
   target_link_libraries(soa_compat PUBLIC ${SOA_MINGW_BINMODE} ws2_32)
 endif()
+
+#   soa_sock_tests  sock.h's connect_tcp / send_all over loopback (build/common/soa_sock_tests; T0 `sock`)
+add_executable(soa_sock_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/sock_tests.cpp)
+target_link_libraries(soa_sock_tests PRIVATE soa_compat Threads::Threads)
+target_compile_options(soa_sock_tests PRIVATE -Wall)
 
 # soa_zip: read-only ZIP archives on minizip-ng (vcpkg.json): include/soa/zip.h, src/zip.cpp. APKs,
 # APKs inside another zip read in place (an archive inside an archive), ZIP64 data zips; stored entries are
@@ -61,7 +68,6 @@ target_link_libraries(soa_gamefiles PUBLIC soa_zip soa_env)
 target_link_libraries(soa_gamefiles PRIVATE soa_compat)  # (64-bit stat on Windows)
 target_compile_options(soa_gamefiles PRIVATE -Wall -Wno-unused-parameter)
 
-find_package(Threads REQUIRED)
 add_executable(soa_zip_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/zip_tests.cpp)
 target_link_libraries(soa_zip_tests PRIVATE soa_zip soa_compat ZLIB::ZLIB Threads::Threads)  # (soa_compat: mkdir on Windows)
 
@@ -80,18 +86,22 @@ target_link_libraries(soa_gamefiles_tests PRIVATE soa_gamefiles soa_compat ZLIB:
 #                         (soaserver/english_art.h)
 #   include/soa/kvs.h     the game's Game.xml (Aska::LocalKVS: ChaCha20 (OpenSSL) under Base64): the
 #                         server's seed save, platform370's --voice-lang
+#   include/soa/chash32.h Framework::CHash32, the game's string hash: the ADLD keys, the server's
+#                         player ids and BGM hashes, the port's debug commands
+#   include/soa/adld.h    ADLD, the game's packed files (XOR / AES-128 (OpenSSL) keyed by CHash32 of
+#                         the name): the server's CDN and master, tools/aif2png, the port's test data
 #   soa_codec_tests  its unit tests (build/common/soa_codec_tests; T0 `codec`); the committed saves
 #                    are read from this checkout (SOA_REPO_DIR)
 add_library(soa_codec STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/png.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/base64.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/src/prefs_xml.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/aska_image.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/kvs.cpp)
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/kvs.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/chash32.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/adld.cpp)
 target_include_directories(soa_codec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(soa_codec PRIVATE -Wall)
 target_link_libraries(soa_codec PRIVATE soa::stb ZLIB::ZLIB zstd::libzstd OpenSSL::Crypto pugixml::pugixml soa_compat)
 
 add_executable(soa_codec_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/codec_main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/base64_tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/tests/prefs_xml_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/aska_image_tests.cpp
-               ${CMAKE_CURRENT_SOURCE_DIR}/tests/kvs_tests.cpp)
+               ${CMAKE_CURRENT_SOURCE_DIR}/tests/kvs_tests.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/adld_tests.cpp)
 target_compile_options(soa_codec_tests PRIVATE -Wall)
 target_compile_definitions(soa_codec_tests PRIVATE SOA_REPO_DIR="${CMAKE_SOURCE_DIR}")
 target_link_libraries(soa_codec_tests PRIVATE soa_codec soa_compat)

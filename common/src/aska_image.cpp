@@ -25,52 +25,67 @@ void fail(std::string* err, const std::string& why) {
 // ---------------------------------------------------------------- SLZ
 bool is_slz(const Bytes& d) { return d.size() >= 0x20 && !memcmp(d.data(), "SLZ", 3); }
 
+bool slz_chunks(const Bytes& d, std::vector<SlzChunk>& chunks, std::string* err) {
+    chunks.clear();
+    if (!is_slz(d)) return fail(err, "not SLZ"), false;
+    int codec = d[3];
+    int32_t dsz = (int32_t)rd32(&d[0xc]);
+    uint32_t chunk = d[0x19] ? d[0x19] * 1024u : (uint32_t)dsz;
+    if (rd32(&d[0x1c])) return fail(err, "chained SLZ not supported"), false;
+    if (dsz < 0) return fail(err, "SLZ: bad size"), false;
+    size_t p = rd32(&d[0x14]);
+    for (uint32_t done = 0; done < (uint32_t)dsz;) {
+        SlzChunk c;
+        c.size = std::min<uint32_t>(chunk, (uint32_t)dsz - done);
+        if (codec == 0) {  // stored: no size fields
+            c.raw = true;
+            c.stored = c.size;
+        } else {
+            if (p + 2 > d.size()) return fail(err, "SLZ truncated"), false;
+            c.stored = rd16(&d[p]);
+            p += 2;
+            c.raw = c.stored == 0;  // a zero size means the chunk is stored raw
+            if (c.raw) c.stored = c.size;
+        }
+        if (p + c.stored > d.size()) return fail(err, "SLZ truncated"), false;
+        c.offset = p;
+        chunks.push_back(c);
+        p += c.stored;
+        done += (uint32_t)c.size;
+    }
+    return true;
+}
+
 bool slz_decode(const Bytes& d, Bytes& out, std::string* err) {
     if (!is_slz(d)) {
         out = d;
         return true;
     }
+    std::vector<SlzChunk> chunks;
+    if (!slz_chunks(d, chunks, err)) return false;
     int codec = d[3];
-    int32_t dsz = (int32_t)rd32(&d[0xc]);
-    uint32_t off = rd32(&d[0x14]);
-    uint32_t chunk = d[0x19] ? d[0x19] * 1024u : (uint32_t)dsz;
-    if (rd32(&d[0x1c])) return fail(err, "chained SLZ not supported"), false;
-    if (dsz < 0) return fail(err, "SLZ: bad size"), false;
     out.clear();
-    out.reserve((size_t)dsz);
-    size_t p = off;
-    while ((int32_t)out.size() < dsz) {
-        uint32_t want = std::min<uint32_t>(chunk, (uint32_t)dsz - (uint32_t)out.size());
-        if (codec == 0) {
-            if (p + want > d.size()) return fail(err, "SLZ truncated"), false;
-            out.insert(out.end(), d.begin() + p, d.begin() + p + want);
-            p += want;
-            continue;
-        }
-        if (p + 2 > d.size()) return fail(err, "SLZ truncated"), false;
-        uint32_t n = rd16(&d[p]);
-        p += 2;
-        bool raw = n == 0;  // a zero size means the chunk is stored raw
-        if (raw) n = want;
-        if (p + n > d.size()) return fail(err, "SLZ truncated"), false;
+    out.reserve((size_t)rd32(&d[0xc]));
+    for (const SlzChunk& c : chunks) {
+        const uint8_t* src = &d[c.offset];
         size_t base = out.size();
-        out.resize(base + want);
-        if (raw) {
-            memcpy(&out[base], &d[p], want);
+        out.resize(base + c.size);
+        if (c.raw) {
+            memcpy(&out[base], src, c.size);
         } else if (codec == 7) {
             // The stored size counts one pad byte after the zstd frame (the game passes the output
             // size as the input size, so zstd stops at the frame end): trim to the frame.
-            size_t fs = ZSTD_findFrameCompressedSize(&d[p], n);
-            size_t r = ZSTD_decompress(&out[base], want, &d[p], ZSTD_isError(fs) ? n : fs);
+            size_t fs = ZSTD_findFrameCompressedSize(src, c.stored);
+            size_t r = ZSTD_decompress(&out[base], c.size, src, ZSTD_isError(fs) ? c.stored : fs);
             if (ZSTD_isError(r)) return fail(err, std::string("zstd: ") + ZSTD_getErrorName(r)), false;
             out.resize(base + r);
         } else if (codec == 5) {
             z_stream zs{};
             inflateInit2(&zs, -15);
-            zs.next_in = const_cast<uint8_t*>(&d[p]);
-            zs.avail_in = n;
+            zs.next_in = const_cast<uint8_t*>(src);
+            zs.avail_in = (uInt)c.stored;
             zs.next_out = &out[base];
-            zs.avail_out = want;
+            zs.avail_out = (uInt)c.size;
             int r = inflate(&zs, Z_FINISH);
             inflateEnd(&zs);
             if (r != Z_STREAM_END && r != Z_OK) return fail(err, "inflate failed"), false;
@@ -78,7 +93,6 @@ bool slz_decode(const Bytes& d, Bytes& out, std::string* err) {
         } else {
             return fail(err, "SLZ codec " + std::to_string(codec) + " not supported"), false;
         }
-        p += n;
     }
     return true;
 }

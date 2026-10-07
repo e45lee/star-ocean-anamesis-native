@@ -12,6 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT))
 import check_download  # noqa: E402
+from soa_save import adld  # noqa: E402
 from soa_save.adld import chash32, decode  # noqa: E402
 
 VERSION_ID = "0123456789abcdef0123456789abcdef"
@@ -20,8 +21,7 @@ XOR_TEXT, PLAIN_TEXT = b"hello, anamnesis! " * 7, b" CAA plain payload"
 
 
 def adld_xor(name, plain):
-    key = b"%x" % chash32(name.encode())
-    return b"ADLD" + struct.pack("<I", 1) + bytes(8) + bytes(b ^ key[i % len(key)] for i, b in enumerate(plain))
+    return adld.encode(plain, name, adld.XOR)
 
 
 def make_download(d: pathlib.Path):

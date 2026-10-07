@@ -181,7 +181,7 @@ build/port/soa --server 127.0.0.1   # against a running soa-server (scripts/run-
 | Option | |
 |---|---|
 | `-h`, `--help` | The options |
-| `--repo DIR` | The source checkout that repo files are read from. By default it is found from the executable: `/proc/self/exe` is `build/port/soa`, so the root is two levels up. The first directory upwards holding `port/CMakeLists.txt` wins; failing that, the working directory is searched the same way. |
+| `--repo DIR` | The source checkout that repo files are read from. By default it is found from the executable: `/proc/self/exe` is `build/port/soa`, so the root is two levels up. The first directory upwards that is a checkout (the root `CMakeLists.txt` and `common/CMakeLists.txt`: `soa::install::is_checkout`, the same for every program) wins; failing that, the working directory is searched the same way. |
 | `-v`, `-vv` | Debug / trace logging |
 
 **Client options**

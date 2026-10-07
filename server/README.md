@@ -97,8 +97,6 @@ Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/un
 | `ext.h` | Extension modules: the registration functions (`add_api`, `add_player_load`, `add_response_hook`, `add_grant`, `add_item_extra`, `add_mission_start_extra`, `add_mission_result_extra`, `add_client_master`), `hook_order`; `Ctx`; shared state helpers |
 | `events.h`, `api_campaign.h` | The event and campaign modules' entry points the port calls (`events::end_mission_talk`, `campaign::on_request` / `on_response` / `end_mission_talk`) |
 | `msgpack.h` | `Value`, `mp_encode` / `mp_decode` (the response bodies; msgpack-cxx, `src/core/msgpack.cpp`) |
-| `chash32.h` | `chash32`: the game's `Framework::CHash32` (the port's CHash32 natives use it too) |
-| `adld.h` | ADLD packing: `decrypt` / `encrypt` (XOR, AES + DCNE), `Encrypt::CEncryptAES128`'s functions (the port's natives and the ADLD callback use them) |
 | `cdn.h` | The CDN content: `cdn::Tree::build(Options)` / `build_from_config()`, `Tree::lookup(url_path, Response&)`, the bundle (`bundle_bytes`, `bundle_sha1`) and served-master (`make_served_master`) pieces |
 | `testing.h`, `native_test.h`, `scratch.h` | The unit-test registry (`NATIVE_TEST`, the port's spelling), its runner, and a scratch server for tests outside the library |
 

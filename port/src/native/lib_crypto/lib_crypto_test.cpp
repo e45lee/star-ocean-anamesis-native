@@ -11,7 +11,7 @@
 #include "native/common/test.h"
 #include "native/common/test_assets.h"
 #include "native/lib_crypto/lib_crypto_api.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 
 namespace soa::native::lib_crypto {
 namespace {
@@ -57,7 +57,7 @@ NATIVE_TEST("lib_crypto/master-db") {
     const char* name = "sqlite/basmaster.sqlite3";
     std::vector<u8> f = test_assets::download_file(name);
     if (f.size() < 16 + 65536) return (void)fprintf(stderr, "    (no download: skipped)\n");
-    std::string key = server::adld::aes_key(name);
+    std::string key = adld::aes_key(name);
     auto* obj = (CEncryptAES128*)calloc(1, sizeof(CEncryptAES128) + 16);
     char* ks = strdup(key.c_str());
     t.expect_eq((s32)(u32)t.call("_ZN7Encrypt14CEncryptAES12810InitializeEPKhS2_", {A(obj), A(ks), 0}), 0, "CEncryptAES128::Initialize");

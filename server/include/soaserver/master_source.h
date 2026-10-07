@@ -2,7 +2,7 @@
 // Where the server's 3.7.0 master DB comes from (library code; server/README.md "The master DB",
 // docs/server-rules.md#core). The decrypted master is the game's own data, so it isn't shipped in
 // the release packages (README.md "Packaging"): the server derives it from the user's game files at
-// startup instead, with the client's own ADLD decryption (soaserver/adld.h).
+// startup instead, with the client's own ADLD decryption (soa/adld.h, common/).
 //
 // The rule (resolve()), first that exists:
 //   1. --master FILE (config().master);

@@ -42,7 +42,7 @@
 #include "native/api/gen/api_addresses.h"
 #include "native/common/gen/common_addresses.h"
 #include "soaserver/api_campaign.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/events.h"
 #include "soaserver/server.h"
 #include "native/api/server_adapters.h"
@@ -525,7 +525,7 @@ void dump_schema(const char* path) {
         size_t j = i;
         while (j < ro_size && ro[j] >= 0x20 && ro[j] < 0x7f) j++;
         if (j < ro_size && ro[j] == 0 && j - i >= 1 && j - i < 64)
-            for (size_t k = i; k < j; k++) dict.emplace(server::chash32(ro + k, j - k), std::string(ro + k, j - k));
+            for (size_t k = i; k < j; k++) dict.emplace(chash32(ro + k, j - k), std::string(ro + k, j - k));
         i = j + 1;
     }
     u64 pm = at<u64>(g("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE"), 0);

@@ -6,13 +6,10 @@
 #
 # PATH                                            [OPTION]       # why
 
-# --- the checkout markers: each program takes the first directory upwards from its .exe that has its
-# marker for the checkout (soa/install.h repo_roots), and finds data/, apk/, work/ ... there
-port/CMakeLists.txt                                              # soa.exe (port/src/core/paths.cpp is_repo)
-server/CMakeLists.txt                                            # soa-server.exe (server/app/main.cpp is_repo)
-emulator/CMakeLists.txt                                          # soa-emu.exe, with runtime/'s (emulator/src/main.cpp)
-emulator-viewer/CMakeLists.txt                                   # soa-viewer.exe, with runtime/'s (emulator-viewer/src/main.cpp)
-runtime/CMakeLists.txt                                           # soa-emu.exe and soa-viewer.exe's second marker
+# --- the checkout marker: each program takes the first directory upwards from its .exe that has it
+# (soa/install.h is_checkout, one for all four programs), and finds data/, apk/, work/ ... there
+CMakeLists.txt                                                   # soa.exe, soa-server.exe, soa-emu.exe, soa-viewer.exe
+common/CMakeLists.txt                                            # (the marker's second half)
 
 # --- the programs (build-win/, scripts/build.sh --windows): what scripts/windows-test.sh runs
 build-win/port/soa.exe                                           # win:selftest, win:battle-gacha, win:shard-login, win:native-order
@@ -20,6 +17,7 @@ build-win/server/soa-server.exe                                  # win:selftest,
 build-win/emulator/soa-emu.exe                                   # win:seeded, win:shard-login
 build-win/emulator-viewer/soa-viewer.exe                         # win:viewer-boot
 build-win/runtime/soaruntime_tests.exe                           # win:runtime-tests
+build-win/common/soa_sock_tests.exe                              # win:runtime-tests (common/sock.h over Winsock)
 
 # --- data/
 data/basmaster-3.7.0.sqlite3                                     # the 3.7.0 master: soa.exe, soa-server.exe --master (control/soadrive/targets.py)

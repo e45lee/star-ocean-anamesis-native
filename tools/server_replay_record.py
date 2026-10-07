@@ -75,11 +75,9 @@ def personal_ids():
             r = subprocess.run([py, os.path.abspath(__file__), "--personal-ids"], capture_output=True, text=True)
             return set(r.stdout.split()) if r.returncode == 0 else ids
         return ids
-    roots = {REPO}
-    work = os.path.join(REPO, "work")
-    if os.path.islink(work):  # a worktree: its work/ links into the main checkout
-        roots.add(os.path.dirname(os.path.realpath(work)))
-    for root in roots:
+    from soa_save.paths import main_checkout  # (a worktree: also its main checkout)
+
+    for root in dict.fromkeys((REPO, str(main_checkout(REPO)))):
         for rel in ("samples/Game.xml", "samples/Game_all_characters.xml", "work/Game-3.7.0.xml"):
             p = os.path.join(root, rel)
             if not os.path.exists(p):

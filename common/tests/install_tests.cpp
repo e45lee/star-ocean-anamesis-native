@@ -158,6 +158,19 @@ int repo_roots_tests() {
     } else {
         fprintf(stderr, "skip  the worktree cases (no symlink: %s)\n", ec.message().c_str());
     }
+    // the programs' marker and their repo-file lookup
+    touch(base / "full/CMakeLists.txt");
+    touch(base / "full/common/CMakeLists.txt");
+    touch(base / "full/data/x.txt");
+    touch(base / "other/data/y.txt");
+    check(is_checkout(t + "/full") && !is_checkout(t + "/checkout") && !is_checkout(t + "/other"),
+          "is_checkout: the root CMakeLists.txt and common/'s");
+    check(find_file({t + "/full", t + "/other"}, {"data/y.txt", "data/x.txt"}) == t + "/other/data/y.txt",
+          "find_file: every root for the first rel before the next rel");
+    check(find_file({t + "/full", t + "/other"}, {"data/x.txt"}) == t + "/full/data/x.txt", "find_file: the first root first");
+    check(find_file({t + "/full"}, {"nothing", "data/zz"}).empty(), "find_file: none");
+    check(find_file({}, {"nothing-here-at-all"}).empty(), "find_file: no roots, relative to the working directory");
+    check(!find_file({}, {base.string().c_str()}).empty(), "find_file: no roots, the path itself");
     // this process: the rule kReleasePackage picks
     r = repo_roots("", is_co);
     check(r.release == kReleasePackage, std::string("repo_roots: this build's rule (") + (kReleasePackage ? "release" : "development") + ")");

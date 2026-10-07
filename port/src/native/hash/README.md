@@ -60,7 +60,7 @@ Types: `libcxx::String` (the libcxx subsystem's string layout). Functions: none 
 
 - **CHash32** is a table CRC-32 (zlib's table, reflected 0xEDB88320; the guest's copy at vaddr
   0x2863e48) seeded with the string's length (its low 32 bits) and without the final xor; an empty or
-  null string hashes to 0. The same function is `soa::server::chash32` (server/src/core/support.cpp).
+  null string hashes to 0. The same function is `soa::chash32` (common/include/soa/chash32.h).
   `CHash32(unsigned int)` and `CHash32(int)` hash the number printed with `"%u"` (so -1 hashes
   "4294967295"). The constructors' C1 / C2 symbols are one function at one address.
 - **Quirk:** `operator<(unsigned int const&)` returns `value < hash` and `operator>(unsigned int const&)`

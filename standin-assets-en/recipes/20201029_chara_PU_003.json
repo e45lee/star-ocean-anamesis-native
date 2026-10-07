@@ -1,0 +1,136 @@
+{
+ "note": "A step-up gacha's panel.",
+ "source": "Image/etc2/20201029_chara_PU_003.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#1a0a28c0"
+  },
+  "band_g": {
+   "clear": "shade",
+   "clear_color": "#200400c8"
+  },
+  "name": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#3a0a50",
+   "outline_width": 4,
+   "glow": "#ff80ffa0",
+   "glow_radius": 3,
+   "clear": "none"
+  },
+  "role": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#5a0010",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "tag": {
+   "size": 36,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#2a0a40",
+   "outline_width": 3,
+   "glow": "#c080ffa0",
+   "glow_radius": 2,
+   "align": "left",
+   "clear": "none"
+  },
+  "wname": {
+   "size": 34,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "none"
+  },
+  "wtype": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#3a0000",
+   "outline_width": 2,
+   "align": "left",
+   "clear": "none"
+  },
+  "gold": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#3a0800",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "head": {
+   "size": 34,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a1a5a",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "small": {
+   "size": 18,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1a5a",
+   "outline_width": 2,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    150,
+    16,
+    260,
+    390
+   ],
+   "style": "erase",
+   "cover": [
+    150,
+    16,
+    260,
+    390
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    150,
+    16,
+    260,
+    390
+   ],
+   "style": "band_g",
+   "cover": [
+    150,
+    16,
+    260,
+    390
+   ]
+  },
+  {
+   "jp": "",
+   "text": "Step 1:\nhalf price!\nStep 10:\n1 pick-up\nguaranteed!\n★5: Aces only!\n\nRerun Halloween\n2018",
+   "box": [
+    158,
+    20,
+    244,
+    382
+   ],
+   "style": "gold",
+   "size": 24
+  }
+ ]
+}

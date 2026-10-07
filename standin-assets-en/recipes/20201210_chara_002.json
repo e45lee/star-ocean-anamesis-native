@@ -1,0 +1,195 @@
+{
+ "note": "A step-up gacha's banner (Rerun 2019 Christmas).",
+ "source": "Image/etc2/20201210_chara_002.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "お負け付き",
+   "text": "Bonus",
+   "box": [
+    58,
+    31,
+    50,
+    11
+   ],
+   "style": "omake",
+   "cover": [
+    57,
+    31,
+    48,
+    11
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    60,
+    34,
+    160,
+    80
+   ],
+   "cover": [
+    60,
+    34,
+    160,
+    80
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
+   "text": "Rerun 2019 Christmas\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "box": [
+    66,
+    40,
+    150,
+    72
+   ],
+   "style": "gold",
+   "cover": [
+    60,
+    34,
+    160,
+    80
+   ],
+   "size": 18
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    220,
+    96,
+    236,
+    20
+   ],
+   "cover": [
+    220,
+    96,
+    236,
+    20
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "ステップ10はPUいずれか1体確定!",
+   "text": "Step 10: 1 pick-up guaranteed!",
+   "box": [
+    270,
+    98,
+    186,
+    18
+   ],
+   "style": "bar_r",
+   "cover": [
+    220,
+    96,
+    236,
+    20
+   ],
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  }
+ ]
+}

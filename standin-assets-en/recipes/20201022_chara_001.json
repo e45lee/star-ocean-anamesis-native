@@ -1,0 +1,142 @@
+{
+ "note": "The Halloween 2020 pick-up gacha's banner (Vampire Maria / Magician Peppita).",
+ "source": "Image/etc2/20201022_chara_001.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    172,
+    12,
+    176,
+    106
+   ],
+   "cover": [
+    172,
+    12,
+    176,
+    106
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "ピックアップキャラガチャ ハロウィン2020 出現確率UP!! 10連目はピックアップ確率3倍!",
+   "text": "Pick-up Character Draws\nHalloween 2020\nRate UP!!\n10th 10-chain: pick-up x3!",
+   "box": [
+    176,
+    14,
+    168,
+    102
+   ],
+   "style": "gold_r",
+   "cover": [
+    172,
+    12,
+    176,
+    106
+   ],
+   "size": 16
+  }
+ ]
+}

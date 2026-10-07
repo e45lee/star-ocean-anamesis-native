@@ -24,11 +24,11 @@ w("20201224_chara_003", "The weekend-limited character pick-up gacha's banner.",
       [272, 38, 184, 78], "gold_r", [266, 6, 192, 112], size=18)])
 w("20201224_chara_004", "Ricardo's awakening banner (Ricardo: glossary).", [
     L("リカルド覚醒", "Ricardo\nAwakened", [66, 26, 230, 82], "blue", [62, 28, 230, 80], size=30, align="left")])
-w("20201224_event_001", "The Forgotten Sanctuary Udram event's banner (hour 6, new difficulties).", [
+w("20201224_event_001", "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).", [
     tag("イベント"),
-    L("忘却の聖地 ウドラム", "Forgotten Sanctuary\nUdram", [60, 32, 220, 58], "blue", [58, 32, 190, 64], size=22, align="left"),
+    L("忘却の聖地 ウドラム", "Wadrum, Holy Land\nof Oblivion", [60, 32, 220, 58], "blue", [58, 32, 190, 64], size=22, align="left"),
     L("第6刻", "Hour 6", [350, 60, 100, 30], "blue", [356, 60, 90, 30], size=22, align="right"),
-    L("滅級・絶級追加", "Doom & Abyss added", [86, 96, 170, 18], "blue_s", [96, 96, 116, 18], clear="inpaint", size=13)])
+    L("滅級・絶級追加", "Misery 2 & 3 added", [86, 96, 170, 18], "blue_s", [96, 96, 116, 18], clear="inpaint", size=13)])
 w("20201224_event_002", "The Feast of Champions event's banner.", [
     tag("イベント"),
     L("覇者の祭宴", "Feast of\nChampions", [326, 28, 130, 86], "gold_r", [320, 28, 136, 86], size=24)])

@@ -2,7 +2,7 @@ import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); 
 def erase_first(labels):
     out = []
     for l in labels:
-        if l.get("style") in ("gold", "gold_r", "blue") and l.get("clear") is None and "cover" in l:
+        if "cover" in l and ((l.get("style") in ("gold", "gold_r", "blue") and l.get("clear") is None) or l.get("clear") == "shade"):
             out.append({"jp": "", "text": "", "box": l["cover"], "cover": l["cover"], "style": "erase"})
         out.append(l)
     return out

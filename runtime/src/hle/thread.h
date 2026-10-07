@@ -20,7 +20,8 @@ void hle_host_sem_destroy(u64 guest_sem);
 // (guest addresses), for natives working on objects guest code shares (port/src/native/sync): the
 // same host objects and rules as the imports (glibc / winpthreads objects in place, bionic's static
 // initializers converted on first use, the window thread's sliced condition wait for idle
-// presenting), and the imports' results (guest errno values; the sem_* ones 0 / -1 with errno set).
+// presenting), and the imports' results (Linux errno values; the sem_* ones 0 / -1 with the
+// host's errno set, which the thunk dispatch makes the guest's: core/linux_errno.h).
 // They block like the imports; a native wraps a blocking call in ProfNativeWait (core/cpu.h).
 int hle_mutex_init(u64 guest_mutex, u64 guest_attr /* 0: default */);
 int hle_mutex_destroy(u64 guest_mutex);

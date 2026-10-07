@@ -125,27 +125,30 @@ Method* Vm::def(const std::string& cls, const std::string& name, const std::stri
     Class* c = find_class(cls);
     std::lock_guard lk(m_);
     auto*& m = c->methods[name + sig];
-    if (!m) m = new Method();
-    m->cls = c;
-    m->name = name;
-    m->sig = sig;
-    m->is_static = is_static;
+    if (!m) {
+        // (an existing Method -- find_method's placeholder, or one defined before -- has these
+        // already, from the same key; other threads may be reading them)
+        auto* n = new Method();
+        n->cls = c;
+        n->name = name;
+        n->sig = sig;
+        n->is_static = is_static;
+        n->params = parse_params(sig, n->ret);
+        m = n;
+    }
     m->impl = std::move(impl);
-    m->params = parse_params(sig, m->ret);
     return m;
 }
 
 Method* Vm::override_method(const std::string& cls, const std::string& name, const std::string& sig, Override fn, bool is_static) {
     Class* c = find_class(cls);
     Impl original;
-    {
-        std::lock_guard lk(m_);
-        for (Class* k = c; k; k = k->super) {
-            auto it = k->methods.find(name + sig);
-            if (it != k->methods.end()) {
-                original = it->second->impl;
-                break;
-            }
+    std::lock_guard lk(m_);  // (recursive: def takes it too; no other override in between)
+    for (Class* k = c; k; k = k->super) {
+        auto it = k->methods.find(name + sig);
+        if (it != k->methods.end()) {
+            original = it->second->impl.get();
+            break;
         }
     }
     return def(cls, name, sig, [fn = std::move(fn), original](Object* self, const Args& a) -> u64 { return fn(self, a, original); }, is_static);
@@ -178,6 +181,17 @@ Method* Vm::find_method(Class* c, const std::string& name, const std::string& si
     m->is_static = is_static;
     m->params = parse_params(sig, m->ret);
     if (c) c->methods[name + sig] = m;
+    return m;
+}
+
+Method* Vm::resolve_virtual(Method* m, Class* actual) {
+    if (!m || !actual || m->cls == actual) return m;
+    std::string key = m->name + m->sig;
+    std::lock_guard lk(m_);
+    for (Class* k = actual; k && k != m->cls; k = k->super) {
+        auto it = k->methods.find(key);
+        if (it != k->methods.end() && it->second->impl) return it->second;
+    }
     return m;
 }
 
@@ -310,14 +324,21 @@ Args read_args_a(Method* m, u64 jv) {
     return a;
 }
 
+// True the first time it is called for `m` (a warning logged once per method, from any thread).
+bool warn_once(Method* m) {
+    static std::mutex mu;
+    static std::set<Method*> warned;
+    std::lock_guard lk(mu);
+    return warned.insert(m).second;
+}
+
 u64 invoke(Method* m, Object* self, const Args& args) {
     if (!m) {
         LOGE("jni", "call with null methodID");
         return 0;
     }
     if (!m->impl) {
-        static std::set<Method*> warned;
-        if (warned.insert(m).second)
+        if (warn_once(m))
             LOGW("jni", "call to unimplemented %s.%s%s", m->cls ? m->cls->name.c_str() : "?", m->name.c_str(), m->sig.c_str());
         return 0;
     }
@@ -371,16 +392,7 @@ void call_thunk(Cpu& c) {
         args = read_args_a(m, c.x(mid_reg + 1));
     }
     // Virtual dispatch: resolve the method on the object's actual class.
-    if (Kind == 0 && self && self->cls && m->cls != self->cls) {
-        std::string key = m->name + m->sig;
-        for (Class* k = self->cls; k && k != m->cls; k = k->super) {
-            auto it = k->methods.find(key);
-            if (it != k->methods.end() && it->second->impl) {
-                m = it->second;
-                break;
-            }
-        }
-    }
+    if (Kind == 0 && self && self->cls && m->cls != self->cls) m = vm().resolve_virtual(m, self->cls);
     u64 r = invoke(m, self, args);
     if (Kind == 3) r = (u64)created;
     if constexpr (T == 'L') {
@@ -388,10 +400,7 @@ void call_thunk(Cpu& c) {
         // something else (e.g. a host override returning a pointer it didn't get from the Vm)
         // would bring back the 1-in-16 failure of the guest's low-byte tests. Warn once per method.
         if (r && !(r & 0xff)) {
-            static std::set<Method*> warned;
-            static std::mutex mu;
-            std::lock_guard lk(mu);
-            if (warned.insert(m).second)
+            if (warn_once(m))
                 LOGW("jni", "%s.%s%s returned a reference with a zero low byte (%#" PRIx64 "): not a Vm object?", m->cls ? m->cls->name.c_str() : "?",
                      m->name.c_str(), m->sig.c_str(), r);
         }

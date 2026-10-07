@@ -44,10 +44,10 @@
 // english.md 7.11).
 //
 // E13, the story message window: the font of a message over the window's four lines is scaled down
-// so the whole message fits (h_window_change below; english.md 7.12). The data breaks story lines;
+// so the whole message fits (h_window_change below; english.md 7.13). The data breaks story lines;
 // this code only scales them, and the E10 wrap leaves the window's labels alone.
 //
-// Who breaks what (english.md 7.12): master rows are broken by the data where the Japanese row has
+// Who breaks what (english.md 7.13): master rows are broken by the data where the Japanese row has
 // breaks (english_text.py finish), every other label by E10 at run time; the home's two talk labels
 // by E12 at run time (their breaks are the box's, Global's are dropped); story lines by the data only
 // (story_finish, the same breaker and the font's advances), the client only scales them (E13).

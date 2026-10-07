@@ -528,7 +528,7 @@ STORY_LONG = 5       # lines: a served line needing this many or more is reporte
 # apart, 30 high: CEventScenarioMessageWindow::Show, CalcStringRect; (b) client evidence). A line
 # over STORY_LINES lines gets the font scale k_n = (40 * 4 - 10) / (40 n - 10) from the client
 # (platform370 text_370.cpp h_window_change), so it is broken at STORY_BUDGET / k_n, for the fewest
-# n that holds it (english.md 7.12).
+# n that holds it (english.md 7.13).
 STORY_LINES = 4
 
 

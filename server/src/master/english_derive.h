@@ -32,7 +32,7 @@ bool load_advances(const std::vector<uint8_t>& fpk_plain, Advances& out, std::st
 // value; tests/test_english_derive.py checks).
 constexpr int kStoryBudget = 480;
 // E13: the message window's lines (english_text.py STORY_LINES): a story line over them is broken at
-// story_budget(n) for the fewest n lines that hold it, the client scaling its font (english.md 7.12).
+// story_budget(n) for the fewest n lines that hold it, the client scaling its font (english.md 7.13).
 constexpr int kStoryLines = 4;
 
 // One story file's lines, in file order: (message_id, text_value with real newlines).

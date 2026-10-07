@@ -62,4 +62,15 @@ bool gdb_native_breakpoints();
 // false for a direct host call (no JIT to return to: the thread waits here).
 void gdb_call_native(Cpu& c, u64 hook, HostFn fn, bool in_jit);
 
+// ---- for tests (soaruntime_tests --gdb-demo; runtime/tests/gdbstub_test.cpp) ----
+// Called by a guest thread on its way to park (its JIT returned with kGdbHalt, or a step ran a native
+// and it goes back to its JIT), just before (null: nothing).
+// --slow-park sleeps there, widening the moment between the JIT's return and the park.
+extern void (*g_gdb_before_park)();
+// Stops the guest the next time a thread reaches `addr` (a temporary breakpoint, removed again) and
+// waits until that thread has parked there, as if a debugger had stopped it: the next debugger to
+// attach finds it stopped at `addr`. False when no thread got there within `timeout_ms`. Guest code
+// only: on a native's entry (a hooked function) it times out (those breakpoints stop only an attached debugger).
+bool gdb_stop_at(u64 addr, int timeout_ms);
+
 }  // namespace soa

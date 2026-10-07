@@ -273,9 +273,10 @@ control/gdbclient.py [::1]:1234 --monitor "natives Find_"
   (`tests/gdbstub_test.cpp`: stop, registers, memory, breakpoint, step, write, detach; the loop's leaf as a
   native: a breakpoint before it, a register write it sees, a step through it, `monitor natives`; the stub on
   `[::1]`) and the protocol's encodings (`gdb/protocol-*`), on Linux and as `soaruntime_tests.exe`;
-  `soaruntime_tests --gdb-demo HOST:PORT [--fault] [--native]` runs that loop for a debugger, which
-  `control/tests/test_gdbclient.py` attaches `control/gdbclient.py` and gdb-multiarch to over 127.0.0.1 and
-  `::1`, and a host gdb with `control/gdbinit-soa`'s `soa-native-break` (T0's `pytest-control`;
+  `soaruntime_tests --gdb-demo HOST:PORT [--fault] [--native] [--at-leaf] [--slow-park]` runs that loop for
+  a debugger, which `control/tests/test_gdbclient.py` attaches `control/gdbclient.py` and gdb-multiarch to
+  over 127.0.0.1 and `::1` (`--at-leaf`: already stopped where the breakpoint goes; `--slow-park`: a stopped
+  thread takes 200 ms to park, which the stub must wait for before it steps it), and a host gdb with `control/gdbinit-soa`'s `soa-native-break` (T0's `pytest-control`;
   `SOA_GDB_DEMO=PATH` runs it against another build, e.g. the staged `soaruntime_tests.exe`). In a game:
   `control/run.py gdb-probe` (soadrive; also with a `soa.exe`, and `--target port-server --ipv6`).
 

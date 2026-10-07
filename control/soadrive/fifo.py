@@ -2,8 +2,11 @@
 newline-separated commands; screenshots are waited for. An address "tcp:HOST:PORT" is the TCP
 control channel instead (`--control tcp:...`: the Windows programs from WSL, soadrive/winhost.py):
 one connection per batch."""
+import array
+import fcntl
 import os
 import socket
+import termios
 import time
 
 # address -> a function giving the client's spelling of a local path (the shot:PATH commands): set
@@ -27,27 +30,26 @@ def listening(addr):
         return False
 
 
-def has_reader(addr, wait=0.0):
-    """Someone reads the channel (within `wait` s): a FIFO with a reader (opening it for writing
-    without blocking fails with ENXIO when there is none; listening() only sees that the FIFO
-    exists; the client reopens it after each batch, hence the wait), or a TCP port that accepts a
-    connection."""
-    end = time.monotonic() + wait
+def consumed(fd, deadline, alive=None):
+    """Waits until the FIFO's pipe holds no unread bytes (FIONREAD on the write end; Linux): True,
+    or False at the deadline / when alive() turns False."""
+    n = array.array("i", [0])
     while True:
-        if addr.startswith("tcp:"):
-            if listening(addr):
-                return True
-        else:
-            try:
-                os.close(os.open(addr, os.O_WRONLY | os.O_NONBLOCK))
-                return True
-            except OSError:
-                pass
-        if time.monotonic() >= end:
+        fcntl.ioctl(fd, termios.FIONREAD, n, True)
+        if n[0] == 0:
+            return True
+        if time.monotonic() > deadline or (alive is not None and not alive()):
             return False
-        time.sleep(0.1)
+        time.sleep(0.01)
 
 
+# Never probe a FIFO by opening it for writing and closing it: the client reads until EOF, then
+# closes and reopens (runtime/src/app/host.cpp control_thread: fgets until EOF, fclose, fopen), and
+# the probe's close is such an EOF, as is every batch's own; a batch written right after one can
+# land in the reader that is already closing, and when the last reader and writer have closed the
+# kernel drops what is left in the pipe (a `quit` lost that way: Run.stop, 2026-10-07). deliver()
+# waits for a reader (ENXIO) instead of probing, and keeps its end open until the batch is read
+# (consumed()), so back-to-back batches arrive.
 def deliver(fifo, cmds, timeout=120, on_shot=None, alive=None):
     """Sends cmds (tap:X:Y, wait:MS, shot:PATH, text:S, quit, ...) in one write, then waits until
     every shot in the batch is written (on_shot(path) for each, in the order they come). Returns
@@ -83,6 +85,12 @@ def deliver(fifo, cmds, timeout=120, on_shot=None, alive=None):
         try:
             os.set_blocking(fd, True)
             os.write(fd, data)  # one write (under PIPE_BUF: atomic)
+            # Keep the write end open until the client has read the batch: a reader that had
+            # already seen EOF (another writer's close) closes without reading it, and with no
+            # writer left either the kernel would drop it; with ours open it waits in the pipe for
+            # the client's next open (see the comment above deliver)
+            if not consumed(fd, deadline, alive):
+                return False, list(shots)
             break
         except BrokenPipeError:
             # the reader closed its end between our open and write (it reopens the FIFO after

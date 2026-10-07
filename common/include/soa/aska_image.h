@@ -10,8 +10,9 @@
 //   AIF   the texture container (' FIA' ... ' FMA'): the images ('Xgmi' headers) and where their
 //         pixels are;
 //   ETC2  the pixel formats 47 (RGB8), 48 (RGB8 punch-through A1), 49 (RGBA8: EAC alpha + ETC2
-//         colour), decoded per 4x4 block; 49 and 47 encoded per block (ETC1 individual /
-//         differential modes, both flips, every table; EAC alpha by search), integer arithmetic
+//         colour), decoded per 4x4 block; all three encoded per block (ETC1 individual /
+//         differential modes, both flips, every table; 48 differential only, with its transparent
+//         index; EAC alpha by search), integer arithmetic
 //         only, so the bytes are the same on every platform.
 // ADLD (the XOR / AES layer over these files) is the server's adld.h and aif2png's own.
 #include <cstddef>
@@ -52,7 +53,8 @@ enum Format : int { kJpeg = 39, kEtc2Rgb8 = 47, kEtc2Rgb8A1 = 48, kEtc2Rgba8 = 4
 int block_bytes(int fmt);
 // One block into rgba[y * 4 + x][4].
 void decode_block(int fmt, const uint8_t* block, uint8_t rgba[16][4]);
-// One block from rgba[y * 4 + x][4]: 16 bytes for kEtc2Rgba8, 8 for kEtc2Rgb8 (alpha ignored).
+// One block from rgba[y * 4 + x][4]: 16 bytes for kEtc2Rgba8, 8 for kEtc2Rgb8 (alpha ignored) and
+// kEtc2Rgb8A1 (alpha < 128: transparent).
 // False for another format.
 bool encode_block(int fmt, const uint8_t rgba[16][4], uint8_t* out);
 

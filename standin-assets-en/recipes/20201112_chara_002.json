@@ -1,0 +1,178 @@
+{
+ "note": "Divine Dragon Ashton's step-up gacha banner.",
+ "source": "Image/etc2/20201112_chara_002.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    56,
+    26,
+    232,
+    92
+   ],
+   "cover": [
+    56,
+    26,
+    232,
+    92
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "★5神龍のアシュトン ステップ10は神龍のアシュトン1体確定!",
+   "text": "★5 Divine Dragon Ashton\nStep 10: Divine Dragon\nAshton guaranteed!",
+   "box": [
+    60,
+    28,
+    224,
+    88
+   ],
+   "style": "gold",
+   "cover": [
+    56,
+    26,
+    232,
+    92
+   ],
+   "size": 18,
+   "align": "left"
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    324,
+    56,
+    132,
+    62
+   ],
+   "cover": [
+    324,
+    56,
+    132,
+    62
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "10連10ステップ目 PU1体確定ガチャ",
+   "text": "10-chain Step 10:\n1 pick-up guaranteed",
+   "box": [
+    328,
+    58,
+    124,
+    58
+   ],
+   "style": "gold_r",
+   "cover": [
+    324,
+    56,
+    132,
+    62
+   ],
+   "size": 13
+  }
+ ]
+}

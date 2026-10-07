@@ -12,6 +12,8 @@
 #     the verdiff / rebase / restore370 history tools), the Ghidra projects, apk/, the offline
 #     master DB, and soa_save/ + its tests/test_script.py (the save editor: it edits the offline game's saves and reads its
 #     names from the offline master DB in the XAPK; moving it to 3.7.0 would change its output);
+#     data/english/ (the English of the game's own texts, e.g. the 3.7.0 service-end dialog that
+#     tells the player to update to 3.8.0);
 #   - lines naming the viewer (soa-viewer, emulator-viewer, run-viewer-380): its rows in README.md,
 #     CMakeLists.txt and the plans;
 #   - links into docs/history/ (docs/history/... and history/... paths are cut before matching);
@@ -46,6 +48,7 @@ ALLOW="
 :!tools/extract.sh
 :!soa_save
 :!tests/test_script.py
+:!data/english
 :!runtime/src/jni/java_playcore.cpp
 :!runtime/src/jni/jvm.cpp
 :!runtime/src/jni/jvm.h

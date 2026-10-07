@@ -101,6 +101,38 @@ def test_client_break_step_continue_detach(host):
             p.kill()
 
 
+# --at-leaf: the guest is already stopped at the leaf when the client attaches (as the demo's loop
+# often is under load). --slow-park: a thread whose JIT stopped takes 200 ms to park; the stub must
+# wait for it (it once reported such a thread "in host code" and answered a step with a stop in place).
+AT_LEAF_OPTS = [pytest.param(o, id=" ".join(o)) for o in (["--at-leaf"], ["--slow-park"], ["--at-leaf", "--slow-park"])]
+
+
+@needs_demo
+@pytest.mark.parametrize("opts", AT_LEAF_OPTS)
+def test_client_resumes_from_a_breakpoint_address(opts):
+    p, d = start_demo("127.0.0.1", *opts)
+    try:
+        g = gdbclient.GdbClient("127.0.0.1", d["port"])
+        if "--at-leaf" in opts:
+            assert g.reg("pc") == d["leaf"]
+        g.set_break(d["leaf"])
+        n = g.read_u64(d["data"])
+        st = g.cont(timeout=10)  # steps over the breakpoint at the pc (if there), then on to it
+        assert st["swbreak"] and g.reg("pc") == d["leaf"] and g.read_u64(d["data"]) in (n, n + 1)
+        n = g.read_u64(d["data"])
+        st = g.cont(timeout=10)  # not the same stop again: one more iteration
+        assert st["swbreak"] and g.reg("pc") == d["leaf"] and g.read_u64(d["data"]) == n + 1 and g.reg("x0") == n + 1
+        g.del_break(d["leaf"])
+        g.step()
+        assert g.reg("pc") == d["leaf"] + 4 and g.reg("x0") == n + 1 + 0x10
+        g.write(d["data"] + 8, (1).to_bytes(8, "little"))
+        g.detach()
+        finish(p)
+    finally:
+        if p.poll() is None:
+            p.kill()
+
+
 @needs_demo
 @pytest.mark.parametrize("host", HOSTS)
 def test_breakpoint_on_a_native(host):
@@ -130,6 +162,29 @@ def test_breakpoint_on_a_native(host):
 
 
 @needs_demo
+def test_step_from_a_native_then_step_again():
+    """A step from a native's entry runs it and stops at the hook's RET; with --slow-park the thread is
+    still on its way back to its JIT, where it parks: the next step waits for that, then runs the RET."""
+    p, d = start_demo("127.0.0.1", "--native", "--slow-park")
+    try:
+        g = gdbclient.GdbClient("127.0.0.1", d["port"])
+        g.set_break(d["leaf"])
+        st = g.cont(timeout=10)
+        assert st["swbreak"] and g.reg("pc", st["tid"]) == d["leaf"]
+        g.del_break(d["leaf"])
+        g.step(st["tid"])
+        assert g.reg("pc", st["tid"]) == d["leaf"] + 4
+        g.step(st["tid"])
+        assert g.reg("pc", st["tid"]) == d["code"] + 0x18  # the RET: back after the loop's bl
+        g.write(d["data"] + 8, (1).to_bytes(8, "little"))
+        g.detach()
+        finish(p)
+    finally:
+        if p.poll() is None:
+            p.kill()
+
+
+@needs_demo
 def test_fault_is_reported_before_the_crash():
     p, d = start_demo("127.0.0.1", "--fault")
     try:
@@ -149,8 +204,11 @@ def test_fault_is_reported_before_the_crash():
 @needs_demo
 @pytest.mark.skipif(not shutil.which("gdb-multiarch"), reason="gdb-multiarch not installed")
 @pytest.mark.parametrize("host", HOSTS)
-def test_gdb_multiarch_attaches(host):
-    p, d = start_demo(host)
+@pytest.mark.parametrize("opts", [pytest.param([], id="running")] + AT_LEAF_OPTS)
+def test_gdb_multiarch_attaches(host, opts):
+    """gdb steps over a breakpoint at the pc itself (z0, step, Z0) when it resumes: continue ends at
+    the leaf one iteration later at the latest, stepi one instruction on."""
+    p, d = start_demo(host, *opts)
     try:
         target = "[%s]:%d" % (host, d["port"]) if ":" in host else "%s:%d" % (host, d["port"])
         cmds = ["set pagination off", "target remote " + target, "info registers x19", f"break *{d['leaf']:#x}",
@@ -158,7 +216,8 @@ def test_gdb_multiarch_attaches(host):
         r = subprocess.run(["gdb-multiarch", "-batch", "-nx", "-x", GDBINIT] + [x for c in cmds for x in ("-ex", c)], capture_output=True,
                            text=True, timeout=60)
         assert f"{d['data']:#x}" in r.stdout, r.stdout + r.stderr
-        assert "Breakpoint 1," in r.stdout and f"= {d['leaf'] + 4:#x}" in r.stdout, r.stdout + r.stderr
+        assert "Breakpoint 1," in r.stdout and f"$1 = {d['leaf']:#x}" in r.stdout and f"$2 = {d['leaf'] + 4:#x}" in r.stdout, \
+            r.stdout + r.stderr
         finish(p)
     finally:
         if p.poll() is None:

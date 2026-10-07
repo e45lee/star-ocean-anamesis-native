@@ -599,11 +599,22 @@ def glossary_misses(ja, en, glossary):
             if not used(glossary[t]["en"]) and not any(used(v) for v in glossary[t]["variants"])]
 
 
+def runaway(ja, en):
+    """An engine output that ran away: far longer than the Japanese could need (more than 80
+    characters and 8 times the Japanese), or a unit of 2-8 characters repeated 12+ times in a
+    row. Machine rows only (english.md 7.5); a stretched scream of a few dozen letters passes."""
+    flat = re.sub(r"\s+", " ", en)
+    return (len(flat) > max(80, 8 * len(ja))) or bool(re.search(r"(.{2,8}?)\1{11,}", flat))
+
+
 def post_one(r, en, font, glossary, mem=None):
     """Post-process one engine output for row r ({"ja" (master encoding), "budget", "multiline"}):
     NFC, glyph folding, %% in printf rows, re-break multi-line rows; returns (english, problems)."""
     en = (en or "").strip()
     en = font.fold(unicodedata.normalize("NFC", en))
+    # an engine keeps the Japanese list dot between stat names ("ATK・INT・DEF"); Global writes a
+    # slash ("ATK/INT/DEF/HIT/GRD +30%"), and the kana check would refuse the dot (U+30FB, U+FF65)
+    en = re.sub(r"(?<=[A-Za-z0-9%])\s*[\u30fb\uff65]\s*(?=[A-Za-z0-9])", "/", en)
     en = fix_percent(en, r["ja"])  # a printf row: a literal percent must be %% (NFKC made ％ a bare %)
     if r.get("multiline") and r["budget"]:
         en = font.rebreak(en, max(r["budget"], 200))
@@ -611,6 +622,8 @@ def post_one(r, en, font, glossary, mem=None):
         en = re.sub(r"\s*\n\s*", " ", en)
     ja = unesc(r["ja"])
     probs = check(ja, en, font, glossary)
+    if runaway(ja, en):
+        probs["runaway"] = len(en)
     if not r.get("multiline") and r["budget"] and font.widest(en) > 1.5 * max(r["budget"], 100):
         probs["width"] = [font.widest(en), r["budget"]]
     return en, probs

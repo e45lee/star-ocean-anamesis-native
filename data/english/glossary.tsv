@@ -1,4 +1,6 @@
 ja	en	kind	variants	source	note
+【滅】	[Misery 2]	ui		human	the short form of 【滅級】 (Global: Misery 2)
+【絶】	[Misery 3]	ui		human	the short form of 【絶級】 (Global: Misery 3)
 アイガジェット	Eye Gadget	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 アイシクルブラスト	Icicle Blast	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 アイシクル・ブロー	Icicle Blow	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -1329,6 +1331,7 @@ ja	en	kind	variants	source	note
 期間：		ui		human	demoted by hand: an ordinary word inside descriptions, too few Global rows for glossary-weak
 死霊術師		talent		human	demoted (glossary-weak): Global's official English misses 'Necromancy' in 2 of 3 rows
 殴り		skill		human	demoted by hand: an ordinary word inside descriptions, too few Global rows for glossary-weak
+滅級	Misery 2	ui		human	Global: 【滅級】 = [Misery 2] (event difficulty)
 火柱		skill		human	demoted (glossary-weak): Global's official English misses 'Flame Pillar' in 5 of 6 rows
 片手剣		ui		human	demoted (glossary-weak): Global's official English misses 'OHS' in 11 of 12 rows
 状態異常全回復		ui		human	demoted (glossary-weak): Global's official English misses 'Cure All Ailments' in 2 of 3 rows
@@ -1337,6 +1340,7 @@ ja	en	kind	variants	source	note
 称号リスト		ui		human	demoted (glossary-weak): Global's official English misses 'View Titles' in 2 of 3 rows
 突進		skill		human	demoted by hand: an ordinary word inside descriptions, too few Global rows for glossary-weak
 紋章石購入		ui		human	demoted (glossary-weak): Global's official English misses 'Purchase Gems' in 22 of 23 rows
+絶級	Misery 3	ui		human	Global: 【絶級】 = [Misery 3] (event difficulty)
 融合		skill		human	demoted by hand: an ordinary word inside descriptions, too few Global rows for glossary-weak
 豊穣の女神		talent		human	demoted (glossary-weak): Global's official English misses 'Goddess of Good Crops' in 2 of 3 rows
 通信機		speaker		human	demoted (glossary-weak): Global's official English misses 'Communicator' in 3 of 4 rows

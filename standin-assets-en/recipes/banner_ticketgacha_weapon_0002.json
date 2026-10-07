@@ -1,0 +1,145 @@
+{
+ "note": "A weapon ticket gacha's banner.",
+ "source": "Image/etc2/banner_ticketgacha_weapon_0002.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    60,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    42,
+    13
+   ]
+  },
+  {
+   "jp": "★4武器ガチャチケット",
+   "text": "★4 Weapon Draw Ticket",
+   "box": [
+    176,
+    15,
+    166,
+    15
+   ],
+   "style": "blue_s",
+   "cover": [
+    174,
+    15,
+    170,
+    15
+   ],
+   "clear": "inpaint",
+   "size": 13
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    268,
+    74,
+    188,
+    40
+   ],
+   "cover": [
+    268,
+    74,
+    188,
+    40
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "★4武器確定!!",
+   "text": "★4 weapon\nguaranteed!!",
+   "box": [
+    270,
+    74,
+    186,
+    40
+   ],
+   "style": "gold_r",
+   "cover": [
+    268,
+    74,
+    188,
+    40
+   ],
+   "size": 19
+  }
+ ]
+}

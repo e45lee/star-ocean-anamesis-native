@@ -527,12 +527,17 @@ class Run:
                     self.gone() if not self.alive() else "not within 120s", self.client_log))
             time.sleep(0.5)
 
+    QUIT_SEND_SECS = 5  # stop(): how long `quit` waits for a reader of the control channel
+
     def stop(self):
         # A clean quit only for a client that can still hear it: not when it is known dead (a crash,
-        # a host GPU failure, stuck) or nobody reads its control channel (it never opened it, or
-        # stopped reading); those go straight to Proc.stop (TERM, then KILL), not 10 + 15 s later.
-        if (self.client and self.client.running() and not getattr(self, "death", None) and fifo.has_reader(self.fifo, wait=1.0)
-                and fifo.send(self.fifo, ["quit"], timeout=10)):
+        # a host GPU failure, stuck); and when nobody opens its control channel for reading within
+        # QUIT_SEND_SECS (it never opened it, or stopped reading), the quit isn't sent: both go
+        # straight to Proc.stop (TERM, then KILL), not 10 + 15 s later. (No separate "is anyone
+        # reading" probe: opening and closing the FIFO is an EOF to the client, and a quit written
+        # right after it can be dropped; fifo.deliver's comment.)
+        if (self.client and self.client.running() and not getattr(self, "death", None)
+                and fifo.send(self.fifo, ["quit"], timeout=self.QUIT_SEND_SECS, alive=self.client.running)):
             self.client.wait(15)
         if getattr(self, "launcher", None) and self.client:
             self.launcher_check()

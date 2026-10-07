@@ -13,18 +13,25 @@ arithmetic is not bit-reproducible (docs/english.md 7.8): the checkpoint, not a 
 record. Nothing here is called by the server or the gates; `tools/english_text.py import-mt`
 turns a checkpoint into `machine` rows of data/english/.
 
-The GPU is shared with game clients: before loading, at least --min-free MiB must be free; while
-running, if free VRAM drops under --low-free MiB on two checks in a row the server is stopped and
-the batch waits until --min-free MiB are free again, then restarts it (other programs win).
+The GPU is shared with game clients, which starve beside the model (gates time out): the batch
+starts only when at least --min-free MiB are free AND no game client holds a slot of the pool
+(control/soaslot.py status); while running, a client in the pool (or free VRAM under --low-free
+MiB on two checks in a row) stops the server, and the batch waits for both conditions again, then
+restarts it (other programs win; --share-gpu ignores the pool).
 
 Usage:
   tools/english_mt_run.py names [--model 31b|26b]   # M2: katakana terms of the gap -> name list
   tools/english_mt_run.py ui    [--model 31b|26b]   # M3: the master's gap texts
   tools/english_mt_run.py story [--model 31b|26b]   # M4: the story's untranslated lines, by scene
+  tools/english_mt_run.py story-fix                  # the story lines still without English, one
+                                                     # per request with context (story-fix.jsonl)
+  tools/english_mt_run.py shorten                    # E7: machine story lines over four window lines,
+                                                     # rewritten shorter (story-short.jsonl)
   tools/english_mt_run.py status                     # rows done per checkpoint
 Options: --slots N (4), --port P (18431), --limit N (stop after N new items), --out DIR,
          --redo KEYS (translate these checkpoint keys again, e.g. rows import-mt rejected after a
-         glossary correction).
+         glossary correction), --redo-model NAME (translate again every row NAME wrote: the
+         user's 2026-10-07 decision to redo the 26B-A4B fallback's rows with the 31B).
 The glossary is the committed data/english/glossary.tsv as tools/english_text.py reads it.
 Python standard library only (plus tools/english_mt.py).
 """
@@ -144,6 +151,20 @@ def gpu_free_mib():
         return -1
 
 
+def game_clients():
+    """Game clients holding a slot of the pool (control/soaslot.py status: "slot N: held ..."): every
+    gate, session and hand-started client takes one. 0 when the pool can't be read."""
+    try:
+        out = subprocess.run([sys.executable, str(REPO / "control/soaslot.py"), "status"],
+                             capture_output=True, text=True, timeout=60).stdout
+        return len(re.findall(r"^\s*slot \d+: held", out, re.M))
+    except Exception:
+        return 0
+
+
+YIELD_TO_CLIENTS = True  # --share-gpu turns it off
+
+
 class Engine:
     def __init__(self, model, port, slots, logdir):
         self.name, self.quant, self.gguf = MODELS[model]
@@ -154,9 +175,10 @@ class Engine:
     def start(self, min_free):
         while True:
             free = gpu_free_mib()
-            if free >= min_free:
+            clients = game_clients() if YIELD_TO_CLIENTS else 0
+            if free >= min_free and not clients:
                 break
-            print(f"[gpu] {free} MiB free < {min_free}: waiting", flush=True)
+            print(f"[gpu] {free} MiB free (need {min_free}), {clients} game clients in the slot pool: waiting", flush=True)
             time.sleep(60)
         env = dict(os.environ, LD_LIBRARY_PATH=f"{LLAMA_DIR}:/usr/lib/wsl/lib")
         log = open(self.logdir / f"llama-server-{self.port}.log", "ab")
@@ -209,8 +231,10 @@ class Engine:
 def run_batch(a, items, ckpt, make_request, make_row):
     """items: [(key, payload)], key unique; skips keys already in ckpt. make_request(payload) ->
     (system, user, max_tokens); make_row(key, payload, text, finish) -> dict appended to ckpt."""
-    if a.redo:  # re-translate these keys: drop their rows from the checkpoint (backup kept)
-        redo = set(pathlib.Path(a.redo).read_text().split())
+    if a.redo or a.redo_model:  # re-translate: drop those rows from the checkpoint (backup kept)
+        redo = set(pathlib.Path(a.redo).read_text().split()) if a.redo else set()
+        if a.redo_model and ckpt.exists():  # every row an engine model wrote (e.g. the fallback's)
+            redo |= {r["key"] for r in map(json.loads, open(ckpt, encoding="utf-8")) if r.get("model") == a.redo_model}
         if ckpt.exists() and redo:
             lines = open(ckpt, encoding="utf-8").read().splitlines(True)
             keep = [ln for ln in lines if json.loads(ln)["key"] not in redo]
@@ -236,10 +260,12 @@ def run_batch(a, items, ckpt, make_request, make_row):
     def guard():  # other programs win the GPU
         while not stop.wait(30):
             free = gpu_free_mib()
+            clients = game_clients() if YIELD_TO_CLIENTS else 0
             low[0] = low[0] + 1 if 0 <= free < a.low_free else 0
-            if low[0] >= 2:
+            if low[0] >= 2 or clients:  # game clients starve beside the model: yield at once
                 with eng.lock:
-                    print(f"[gpu] {free} MiB free: stopping the engine until {a.min_free} MiB are free", flush=True)
+                    print(f"[gpu] {free} MiB free, {clients} game clients: stopping the engine until they are gone "
+                          f"and {a.min_free} MiB are free", flush=True)
                     eng.stop()
                     time.sleep(120)
                     eng.start(a.min_free)
@@ -478,6 +504,116 @@ def cmd_story(a):
     run_batch(a, items, a.out / "story.jsonl", req, row)
 
 
+SHORT_VERSION = "short-v1"
+SHORT_SYSTEM = """You edit the English localization of the Japanese mobile RPG STAR OCEAN: anamnesis.
+A line of story dialogue is too long for the game's small message window. Rewrite it shorter, in at most {limit} characters (tags not counted), keeping its meaning, the speaker's voice and tone, every name exactly, and every tag (<player>, <fontcolor=...>, <fontsize=...>, </font>) exactly.
+Output only the shortened line, on one line, nothing else."""
+STORY_LINES_MAX = 4      # the message window shows four lines (english.md 7.5)
+SHORT_LIMIT = 150        # characters asked for: about four lines of the window
+
+
+def cmd_shorten(a):
+    """E7/M4: machine story lines that need more than four lines of the message window (re-broken
+    at the window's width with the font's advances, as tools/english_text.py does) are sent once
+    more, with the Japanese for reference, to be rewritten shorter. Writes story-short.jsonl in
+    story.jsonl's form (one line per item); tools/english_text.py import-mt --replace takes it."""
+    import english_text as T
+    ctx = T.Ctx()
+    font = ctx.fnt
+    items = []
+    for line in open(a.out / "story.jsonl", encoding="utf-8"):
+        r = json.loads(line)
+        for x in r["lines"]:
+            if not x["mt"]:
+                continue
+            e = font.rebreak(font.fold(x["mt"]).strip(), T.STORY_BUDGET, T.PLAYER_PX)
+            if e.count("\n") + 1 > STORY_LINES_MAX:
+                items.append((x["message_id"] + ":" + E.sha1(x["mt"]), (r["scene"], x)))
+    items.sort()
+    print(f"[shorten] {len(items)} story lines over {STORY_LINES_MAX} lines", flush=True)
+
+    def req(p):
+        _scene, x = p
+        user = (f"Speaker: {x['speaker']}\nJapanese (reference): {x['ja'].replace(chr(10), '')}\n"
+                f"English ({len(x['mt'])} characters): {x['mt']}")
+        return SHORT_SYSTEM.format(limit=SHORT_LIMIT), user, 200
+
+    def row(k, p, txt, finish):
+        scene, x = p
+        txt = txt.strip().strip('"')
+        return {"key": k, "scene": scene, "kind": "story", "raw": txt, "finish": finish,
+                "lines": [dict(x, mt=txt or None, long=x["mt"])],
+                "prompt": f"{PROMPT_VERSION}+story-v1+{SHORT_VERSION}"}
+    run_batch(a, items, a.out / "story-short.jsonl", req, row)
+
+
+def cmd_story_fix(a):
+    """Q12 needs every line of a file: the story lines still without English after `story` and its
+    redo (rejected by the checks or skipped by the model) are sent one at a time, with the scene's
+    four lines before as context (their English when the table has it) and the speaker; the answers
+    go to story-fix.jsonl in story.jsonl's form (import-mt takes it)."""
+    src, g = load_glossary()
+    terms = sorted(g, key=len, reverse=True)
+    text = {mid: (stem, ja) for stem, mid, ja in src.story()}
+    have = {}
+    for p in sorted((REPO / "data/english/story-en").glob("TS_*.tsv")):
+        for line in p.read_text(encoding="utf-8").splitlines()[1:]:
+            c = line.split("\t")
+            have[c[0]] = c[2].replace("\\n", " ")
+    items = []
+    for scene, lines in scenes(src):
+        lines = [(m, w) for m, w in lines if m in text]
+        for i, (m, w) in enumerate(lines):
+            stem, ja = text[m]
+            if m in have or not E.has_kana(ja) or src.story_official(m, ja):
+                continue
+            items.append((f"fix:{m}", (scene, lines[max(0, i - STORY_CONTEXT):i], (m, w))))
+    seen = {k for k, _ in items}
+    for m, (stem, ja) in sorted(text.items()):  # lines no script references
+        if f"fix:{m}" not in seen and m not in have and E.has_kana(ja) and not src.story_official(m, ja):
+            items.append((f"fix:{m}", (stem, [], (m, None))))
+    print(f"[story-fix] {len(items)} lines", flush=True)
+
+    def speaker(code):
+        if not code:
+            return "Narration"
+        if code in ("<player>", "(choice)"):
+            return code
+        for c in (code, code[:-1] + "a"):
+            en = src.gl_english(c)
+            if en:
+                return en
+            ja = src.jp_rows.get(c)
+            if ja:
+                return g[ja]["en"] if ja in g else ja
+        return code
+
+    def req(p):
+        scene, ctx, (m, w) = p
+        block = []
+        for cm, cw in ctx:
+            en = have.get(cm)
+            block.append(f"(context) {speaker(cw)}: {text[cm][1].replace(chr(10), '')}" + (f"  [English: {en}]" if en else ""))
+        ja = text[m][1].replace("\n", "")
+        hits = E.glossary_hits(ja, g, terms)
+        block.append(f"[1] {speaker(w)}: {ja}")
+        gl = "".join(f"\n{t} = {g[t]['en']}" for t in hits)
+        user = f"Scene {scene}\nGlossary:{gl or ' (none)'}\nLines:\n" + "\n".join(block)
+        return SYSTEM + STORY_EXTRA, user, 400
+
+    def row(k, p, txt, finish):
+        scene, _ctx, (m, w) = p
+        got = re.search(r"^\[1\]\s*(.*)$", txt, re.M)
+        en = (got.group(1) if got else txt).strip()
+        if en and ":" in en and en.split(":", 1)[0].strip() == speaker(w):
+            en = en.split(":", 1)[1].strip()
+        return {"key": k, "scene": scene, "kind": "story", "raw": txt, "finish": finish,
+                "lines": [{"message_id": m, "file": text[m][0], "ja_sha1": E.sha1(text[m][1]), "ja": text[m][1],
+                           "speaker": speaker(w), "mt": en or None}],
+                "prompt": f"{PROMPT_VERSION}+{STORY_VERSION}+fix"}
+    run_batch(a, items, a.out / "story-fix.jsonl", req, row)
+
+
 def cmd_status(a):
     for p in sorted(a.out.glob("*.jsonl")):
         n = sum(1 for _ in open(p, encoding="utf-8"))
@@ -486,18 +622,23 @@ def cmd_status(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["names", "ui", "story", "status"])
+    ap.add_argument("cmd", choices=["names", "ui", "story", "story-fix", "shorten", "status"])
     ap.add_argument("--model", choices=sorted(MODELS), default="31b")
     ap.add_argument("--slots", type=int, default=4)
     ap.add_argument("--port", type=int, default=18431)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--redo", help="a file of checkpoint keys (ja_sha1 / story chunk keys) to translate again")
+    ap.add_argument("--share-gpu", action="store_true",
+                    help="keep running beside game clients (default: the batch waits while any client holds a slot of the pool)")
+    ap.add_argument("--redo-model", help="translate again every checkpoint row this model wrote (e.g. gemma-4-26B-A4B-it)")
     ap.add_argument("--min-free", type=int, default=23000, help="MiB free before loading the model")
     ap.add_argument("--low-free", type=int, default=300, help="MiB free under which the engine yields")
     ap.add_argument("--out", type=pathlib.Path, default=REPO / "work/english/mt")
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
-    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "status": cmd_status}[a.cmd](a)
+    global YIELD_TO_CLIENTS
+    YIELD_TO_CLIENTS = not a.share_gpu
+    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "story-fix": cmd_story_fix, "status": cmd_status}[a.cmd](a)
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@
 //   ... (a host with natives: install_native_functions(*lib) here; README "Hosts with natives")
 //   run_initializers(*lib);
 //
-// Used by soa-emu (emulator/src/main.cpp); the port (soa) links it in P1 (docs/history/PLAN-rebase-370.md).
+// Used by soa-emu (emulator/src/main.cpp) and the port (soa, port/src/main.cpp; since P1, docs/history/PLAN-rebase-370.md).
 #include <cstddef>
 #include <cstdint>
 #include <functional>

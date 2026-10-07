@@ -175,8 +175,7 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
   `tools/subsystem.py export-types <s>` (T0 fails on a stale `types.json`). Only the maintainer
   writes the committed Ghidra project (`tools/ghidra_apply_types.sh`).
 - **Readable C++ from the decompile**; no new a2c transcriptions. When a library version changes,
-  regenerate (generators, address tables, existing a2c fallbacks) before debugging failures one by
-  one.
+  regenerate (generators, address tables) before debugging failures one by one.
 - **Verify every native**: a differential `NATIVE_TEST` against the guest (in `--selftest` no
   natives are installed, so `t.call` reaches the original) and a live check at 0 mismatches
   (`--live-check FAMILY`). Reproduce guest quirks; note game bugs instead of fixing them.

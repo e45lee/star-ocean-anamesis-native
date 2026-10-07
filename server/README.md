@@ -29,13 +29,14 @@ that gave the code its structure and the state its schema (their reasoning, step
 | `src/` | The server ([src/README.md](src/README.md) by domain): `core/` (`server.cpp`: the server object, the core APIs, the dispatcher; `request_context.h` a request's own state; `ext.cpp` the module registry; `modules.cpp` the module order; `clock.cpp` the event calendar; `support.cpp` config, log, asset index, CHash32; the shared helpers of R6: `time` (local times, reset day, windows), `errors.h` (named refusal codes, generated), `response` (envelope, player-state answer, refusal), `wallet` (coins, FOL, stack items), `request_args.h` (the core handlers' arguments), `assets` (the one asset gate)), `api/<domain>/` the extension modules (registered through `ext.h`; one folder per API group), `rules/` (`rules::`, `mission_rules`, `growth_rules`), `state/` (the Game.xml codec, seeding), `master/` (`master`: the shared master lookups; `gacha_pools`, `npc_status`), `cdn/`, `testing/` (the test registry) |
 | `tests/` | The cross-cutting tests: `tests/net/`, `tests/ninja/` (below) and `tests/replay/` the replay corpora (RG4). The library's unit tests live beside their code in `src/` (`*_tests.cpp`, or at the end of a source file) |
 | `app/` | `soa-server`'s command line; `replay.cpp` (`--replay`, `--list-apis`, `--list-hooks`) |
-| `net/` | the wire layer (`libsoanet`, linked by `soa-server` only): `wire.*` packets, decoder, battle log, reply bodies; `ninja/` the cipher; `game.*` sessions and the bridge; `http.*`; `loop.*` the sockets; `client.*` a wire client (tests, `--wire-tool session`); `tool.*` `--wire-tool`; `gen/wire_decode.inc` (generated) |
+| `net/` | the wire layer (`libsoanet`; `soa-server` links it, and so does `soa`, for the CDN's HTTP router in process (`port/src/native/api/server_cdn.cpp`) and the API table and packet log's line formats (`net/wire.h`, `net/packet_log.h`)): `wire.*` packets, decoder, battle log, reply bodies; `ninja/` the cipher; `game.*` sessions and the bridge; `http.*`; `loop.*` the sockets; `client.*` a wire client (tests, `--wire-tool session`); `tool.*` `--wire-tool`; `gen/wire_decode.inc` (generated) |
 | `tests/net/`, `tests/ninja/` | the wire layer's selftests (compiled into `soa-server`, not `soa`): `client_requests.txt` and `ninja_vectors.txt` are the client's own packets and envelopes; `tests/ninja/tools/` the unicorn harness that runs the client's code to make them, `tests/ninja/ninja_check.*` a stand-alone cipher CLI |
 
 Build: part of the repository's build (`scripts/build.sh`, README.md
 "Building"): `build/server/libsoaserver.a`, `build/server/libsoanet.a` and `build/server/soa-server`
 (`scripts/build.sh --target soa-server` for the server alone; `scripts/build.sh -DSOA_BUILD_PORT=OFF
--DSOA_BUILD_EMULATOR=OFF -DSOA_BUILD_VIEWER=OFF` configures only the server, without dynarmic, the runtime, SDL2 or EGL). It needs
+-DSOA_BUILD_EMULATOR=OFF -DSOA_BUILD_VIEWER=OFF -DSOA_BUILD_WEBVIEW=OFF -DSOA_BUILD_TOOLS=OFF` configures only `common/` and the
+server, without dynarmic, the runtime, SDL2, EGL, the web view or the host tools; the web view and the tools are on by default). It needs
 SQLite, OpenSSL's libcrypto and msgpack-cxx (and zlib for `soa-server`), static from vcpkg
 (`unofficial::sqlite3::sqlite3`, `OpenSSL::Crypto`, `msgpack-cxx` (headers), `ZLIB::ZLIB`; `cmake/deps.cmake`), and `soa_codec`
 (`common/`: Base64 and the Game.xml SharedPreferences XML, on OpenSSL and pugixml). Link it whole (`$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>`):
@@ -85,7 +86,7 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
 
 ## API
 
-Not every method has a handler yet: [`../docs/unimplemented-apis.md`](../docs/unimplemented-apis.md) lists the 93 that don't, what the client gets for each today, and the plan (`tools/unhandled_apis.py` regenerates the list).
+Not every method has a handler yet: [API-INDEX.md](API-INDEX.md) (generated) counts and names the ones that don't; [`../docs/unimplemented-apis.md`](../docs/unimplemented-apis.md) says what the client gets for each today, and the plan (`tools/unhandled_apis.py` prints the list).
 
 | Header | What |
 |---|---|
@@ -340,7 +341,7 @@ The library's unit tests (beside their code in `src/`) use scratch servers (a st
 synthetic `server/tests/fixtures/test-seed.xml`, with `data/basmaster-3.7.0.sqlite3`) and need no game:
 
 ```sh
-build/server/soa-server --selftest            # all (91 today: 70 server/, 7 cdn/, 14 net/)
+build/server/soa-server --selftest            # all (server/, cdn/, net/, ...; it prints how many ran)
 build/server/soa-server --selftest "server/sphere211"
 build/server/soa-server --selftest "net/"     # the wire layer only
 build/server/soa-server --selftest --shuffle 7   # all, in an order shuffled with seed 7 (order dependencies)

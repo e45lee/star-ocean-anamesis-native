@@ -118,6 +118,20 @@ U esc(const U& s) {
     }
     return o;
 }
+// english_core.ws_key: the text without its white space (WS_CHARS: tab, newline, space, U+00A0,
+// U+3000; a master-encoded "\n" is a newline first), the key of the rules id-ws and memory-ws
+U ws_key_u(const U& s) {
+    U o;
+    for (char32_t c : unesc(s))
+        if (c != '\t' && c != '\n' && c != ' ' && c != 0xa0 && c != 0x3000) o += c;
+    return o;
+}
+// english_core.same_ja != None: Global's ja is 3.7.0's exactly, or but for white space (some text left)
+bool same_ja(const std::string& gl_ja, const std::string& ja) {
+    if (gl_ja == ja) return true;
+    U k = ws_key_u(u32(ja));
+    return !k.empty() && ws_key_u(u32(gl_ja)) == k;
+}
 // str.strip()
 U strip(const U& s) {
     size_t a = 0, b = s.size();
@@ -604,6 +618,7 @@ bool gl_token_english(const Src& s, const std::string& mid, U* out) {
 // Memory (exact and template)
 struct Memory {
     std::map<std::string, std::string> exact;     // ja -> en (UTF-8)
+    std::map<std::string, std::string> exact_ws;  // ws_key(ja) -> en (memory-ws)
     std::map<std::string, std::string> templ;     // key -> template
 };
 void numkey(const U& ja, U* key, std::vector<U>* ns) {
@@ -631,7 +646,7 @@ bool template_unsafe(const U& t) {
     return false;
 }
 Memory make_memory(const Src& s) {
-    std::map<std::string, std::map<std::string, int>> exact, tmpl;
+    std::map<std::string, std::map<std::string, int>> exact, exact_ws, tmpl;
     for (auto& mid : s.gl_ja_order) {
         const std::string& ja8 = s.gl_ja.at(mid);
         if (ja8.empty()) continue;
@@ -639,7 +654,8 @@ Memory make_memory(const Src& s) {
         if (!gl_english(s, mid, &en)) continue;
         std::string en8 = u8(en);
         exact[ja8][en8]++;
-        U ja = u32(ja8), key;
+        U ja = u32(ja8), key, wk = ws_key_u(ja);
+        if (!wk.empty()) exact_ws[u8(wk)][en8]++;
         std::vector<U> ns;
         numkey(ja, &key, &ns);
         if (ns.empty()) continue;
@@ -687,6 +703,7 @@ Memory make_memory(const Src& s) {
     };
     Memory m;
     for (auto& [k, c] : exact) m.exact[k] = pick(c);
+    for (auto& [k, c] : exact_ws) m.exact_ws[k] = pick(c);
     for (auto& [k, c] : tmpl) m.templ[k] = pick(c);
     return m;
 }
@@ -695,6 +712,12 @@ bool lookup(const Memory& m, const std::string& ja8, U* en, bool* exact) {
     auto e = m.exact.find(ja8);
     if (e != m.exact.end()) {
         *en = u32(e->second);
+        *exact = true;
+        return true;
+    }
+    auto w = m.exact_ws.find(u8(ws_key_u(u32(ja8))));  // memory-ws: the same text but for white space
+    if (w != m.exact_ws.end()) {
+        *en = u32(w->second);
         *exact = true;
         return true;
     }
@@ -741,6 +764,12 @@ bool lookup(const Memory& m, const std::string& ja8, U* en, bool* exact) {
     *exact = false;
     return true;
 }
+
+}  // namespace
+
+std::string ws_key(const std::string& s) { return u8(ws_key_u(u32(s))); }
+
+namespace {
 
 // english_text.finish for a derived candidate: (served English in the master encoding, passes)
 bool finish(const Advances& f, const U& en, const std::string& ja8, std::string* out) {
@@ -841,7 +870,8 @@ bool derive(const DeriveInput& in, Derived& d, std::string* err) {
         const char* source = nullptr;
         U off;
         auto gj = s.gl_ja.find(mid);
-        bool gl_same = gj != s.gl_ja.end() && !s.gl_ja_null.at(mid) && gj->second == ja8;
+        // (a) id, or (d) id-ws: Global's ja is this text but for white space (english.md 7.9)
+        bool gl_same = gj != s.gl_ja.end() && !s.gl_ja_null.at(mid) && same_ja(gj->second, ja8);
         // (a) Global's English by id (the five filters)
         if (gl_english(s, mid, &off) && gl_same) {
             cand = off, source = "official";

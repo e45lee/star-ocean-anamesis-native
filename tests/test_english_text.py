@@ -1,6 +1,7 @@
 """tools/english_text.py and tools/english_core.py: the English table's build, checks, E3 token
 rewrites, the MT import and the edit round trips (docs/english.md 7.5, 7.6; PLAN-english.md E1/M1/E3).
 Runs on the committed master DBs and the font of the committed APK; nothing from work/."""
+import collections
 import json
 import pathlib
 import shutil
@@ -59,14 +60,19 @@ def test_two_builds_byte_identical(built):
 
 
 def test_counts_reproduce_english_md(built):
-    """english.md 7.1: 19,145 official by id, 6,265 exact memory, 2,412 template; plus E3's rows."""
-    assert built.candidates["official"] == 19145
+    """english.md 7.1: 19,145 official by id, 6,265 exact memory, 2,412 template; plus E3's rows;
+    7.9: 57 more by id and 5 more E3 rows whose Japanese differs from Global's only in white space
+    (id-ws), 83 by memory-ws (2 of them were template rows)."""
+    ws = collections.Counter((r, built.klass[m]) for m, r in built.matched.items())
+    assert ws == {("id-ws", "official"): 57, ("id-ws", "official_e3"): 5, ("memory-ws", "exact_ws"): 83}
+    assert built.candidates["official"] == 19145 + 57
     assert built.candidates["exact"] == 6265
-    assert built.candidates["template"] == 2412
+    assert built.candidates["exact_ws"] == 83
+    assert built.candidates["template"] == 2412 - 2
     assert built.candidates["official_e3"] == len(built.e3) > 0
-    assert built.served["official"] == 19145 + len(built.e3) - sum(
+    assert built.served["official"] == 19145 + 57 + len(built.e3) - sum(
         1 for f in built.failures if f["source"] == "official") - len(built.overrides)
-    assert len(built.q7) == 803
+    assert len(built.q7) == 803 - 56
     assert sum(1 for r in built.glossary_rows if r["source"] == "official" and r["variants"]) == 302
 
 
@@ -151,6 +157,58 @@ def test_e3_rewrites():
     assert en is None and "composition" in why
     # a story line (real newlines, tags kept)
     assert r("<player>, wait<EMDASH>\nplease!", "<player>、待って――\nお願い！") == ("<player>, wait―\nplease!", None)
+
+
+def test_ws_key_and_same_ja():
+    """english.md 7.9: the white-space-insensitive rules (id-ws, memory-ws) ignore only tab, newline
+    (also the master's two-character \\n), space, U+00A0 and U+3000; nothing else."""
+    assert C.ws_key("購入に失敗しました。\\n\\n再起動\u3000して ください。\t\u00a0") == "購入に失敗しました。再起動してください。"
+    assert C.same_ja("ａ\\nｂ", "ａ\\nｂ") == "id"
+    assert C.same_ja("ａ\\n\\nｂ", "ａ\\nｂ") == "id-ws"
+    assert C.same_ja("ピックアップ武器ガチャ", "ピックアップ武器ガチャ\u3000") == "id-ws"
+    assert C.same_ja(None, "ａ") is None and C.same_ja("", "\u3000") is None  # no text to match
+    assert C.same_ja("ラッシュゲージ上限－２０％", "ラッシュゲージ上限＋２０％") is None  # punctuation is text
+    assert C.same_ja("アリーシャ", "アリーシャ？") is None
+    assert C.same_ja("ＡＢＣ", "ABC") is None  # no NFKC
+
+
+def test_ws_rules_scratch_masters(tmp_path):
+    """id-ws and memory-ws on two scratch masters: the same rows as the server's C++ test
+    (server/src/master/english_derive_tests.cpp, server/english-derive-rules)."""
+    import sqlite3
+    jp, gl = tmp_path / "jp.sqlite3", tmp_path / "gl.sqlite3"
+    with sqlite3.connect(jp) as db:
+        db.execute("create table master_text (message_id text, text_value text)")
+        db.executemany("insert into master_text values (?, ?)", [
+            ("t_id_ws", "購入に失敗しました。\\n再起動してください。"), ("t_mem_ws", "ピックアップ武器ガチャ\u3000"),
+            ("t_older", "体力が上がる"), ("t_blank", "\u3000")])
+    with sqlite3.connect(gl) as db:
+        db.execute("create table master_text (lang text, message_id text, text_value text)")
+        db.executemany("insert into master_text values (?, ?, ?)", [
+            ("ja", "t_id_ws", "購入に失敗しました。\\n\\n再起動してください。"), ("en", "t_id_ws", "Purchase failed.\\nPlease restart."),
+            ("ja", "g_mem", "ピックアップ武器ガチャ"), ("en", "g_mem", "Weapons Campaign Draw"),
+            ("ja", "t_older", "攻撃が上がる"), ("en", "t_older", "ATK up"),
+            ("ja", "t_blank", ""), ("en", "t_blank", "Blank")])
+    src = C.Sources(master=jp, gl=gl)
+    mem = C.Memory(src)
+    assert src.official("t_id_ws", src.jp_rows["t_id_ws"]) == "Purchase failed.\\nPlease restart."
+    assert mem.lookup(src.jp_rows["t_mem_ws"]) == ("Weapons Campaign Draw", "exact_ws")
+    assert mem.lookup("ピックアップ武器ガチャ") == ("Weapons Campaign Draw", "exact")
+    assert src.official("t_older", src.jp_rows["t_older"]) is None and mem.lookup("体力が上がる") == (None, None)
+    assert src.official("t_blank", src.jp_rows["t_blank"]) is None
+
+
+def test_ws_rules_real_rows(built):
+    """Rows the white-space rules give Global's English (report: matched.tsv), and rows they must not
+    touch: an older Global text (1 vs 10 times) and a sign that differs (+ vs -) stay machine."""
+    assert built.matched["uimsg_peyment_need_restart"] == "id-ws"  # Global doubled the line break
+    assert built.out["uimsg_peyment_need_restart"][1:] == ("Purchase failed.\\nPlease quit and restart the application.", "official")
+    assert built.matched["uimsg_item_Warning_0"] == "id-ws"
+    assert built.out["uimsg_item_Warning_0"][2] == "official"
+    assert built.matched["gachaPickup_Weapon_title_message_0166"] == "memory-ws"  # a trailing U+3000
+    assert built.out["gachaPickup_Weapon_title_message_0166"][1:] == ("Weapons Campaign Draw", "memory")
+    for mid in ("message_Event_ac_lymle_12", "seed_message_180830802"):
+        assert mid not in built.matched and built.out[mid][2] == "machine", mid
 
 
 def test_e3_story_ep1(built):

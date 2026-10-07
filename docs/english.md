@@ -1120,9 +1120,12 @@ How `tools/english_text.py` derives the English it does not commit (official, me
 
 **1. Global's usable English** `gl_english(mid)`: `en = GL_EN[mid]`, `ja = GL_JA[mid]`; none when `en` is missing or empty, `has_kana(en)`, `en == ja`, `GL_TOKEN` matches `en`, or `SPEC_STRICT.findall(en) != SPEC_STRICT.findall(ja or "")` (ordered lists of the matched strings).
 
-**2. Official by id** (master): `gl_english(mid)` when `GL_JA[mid] == ja` exactly (both master encoding).
+**2. Official by id** (master): `gl_english(mid)` when `same_ja(GL_JA[mid], ja)` (both master encoding):
+- `"id"`: `GL_JA[mid] == ja` exactly;
+- `"id-ws"`: else, when `ws_key(ja)` is non-empty and `ws_key(GL_JA[mid]) == ws_key(ja)`. `ws_key(t)` = `unesc(t)` with every U+0009, U+000A, U+0020, U+00A0 and U+3000 removed (an explicit set, not `\s`). Global's `ja` often doubles a line break (`…\n\n…`) or lacks a trailing U+3000, so the same text missed its English (2026-10-07, agent `en-textclean-gl`: 57 rows, all `uimsg_*` dialogs but one, and 5 E3 rows). The served source stays `official`; `report` lists the rows with their rule in `matched.tsv`.
+- A NULL `GL_JA[mid]` never matches.
 
-**3. E3** (only when 2 gives nothing): `gl_token_english(mid)`: `en` present, `!has_kana(en)`, `en != GL_JA[mid]`, `GL_MARKUP` matches `en`, and `GL_TOKEN` does **not** match `GL_MARKUP.sub("", en.replace("</INSERT>", ""))` (only the matched prefixes are removed, e.g. `<NUM` of `<NUM 1>`); and `GL_JA[mid] == ja`. Then `rewrite_tokens(en, ja)`:
+**3. E3** (only when 2 gives nothing): `gl_token_english(mid)`: `en` present, `!has_kana(en)`, `en != GL_JA[mid]`, `GL_MARKUP` matches `en`, and `GL_TOKEN` does **not** match `GL_MARKUP.sub("", en.replace("</INSERT>", ""))` (only the matched prefixes are removed, e.g. `<NUM` of `<NUM 1>`); and `same_ja(GL_JA[mid], ja)` (2). Then `rewrite_tokens(en, ja)`:
 1. every `<EMDASH>` → U+2015;
 2. `INSERT` → its group 2 (the plural form);
 3. `toks` = the integers of `NUMSTR` in order, `specs = SPEC_STRICT.findall(ja)`. If `toks` is non-empty: no `specs` → no candidate (reason "composition"); `sorted(toks) != [1..len(specs)]` → none; `toks` not ascending → none (reorder); else every `NUMSTR` match → `specs[n-1]`;
@@ -1133,10 +1136,10 @@ How `tools/english_text.py` derives the English it does not commit (official, me
 A row with a reason is listed (`token-gaps.tsv`); it may still get memory (4).
 
 **4. Memory** (only when 2 and 3 give nothing and `has_kana(ja)`; a row without kana is "neutral" and gets nothing more). Built once over every Global pair (`mid` of `GL_JA` with a non-empty `GL_JA[mid]` and `en = gl_english(mid)` not none):
-- **Exact:** `exact[GL_JA[mid]][en] += 1`.
+- **Exact:** `exact[GL_JA[mid]][en] += 1`; and, when `k = ws_key(GL_JA[mid])` is non-empty, `exact_ws[k][en] += 1`.
 - **Template:** `n = NFKC(GL_JA[mid])`, `nums = NUM.findall(n)`, `key = NUM.sub("\x00", n)`. Skip when `nums` is empty or has a repeated value, or when `sorted(NUM.findall(en)) != sorted(nums)` (string sort; `en` is not normalised). `t = NUM.sub(m → "{i}" where nums[i] == m, en)`; skip when `NUM` still matches `t` with every `\{\d+\}` removed, or `TEMPLATE_UNSAFE` matches `t`. Then `template[key][t] += 1`.
 - **Choice:** per key, the English with the highest count, ties to the smallest string.
-- **Lookup:** `exact[ja]` if present (kind `memory`). Else `key, nums` of `NFKC(ja)` as above; if `nums` is non-empty and `template[key]` exists: replace each `{i}` with `nums[i]` (the NFKC digits), then `re.sub(r"\b1 (time|hit|day|turn|battle|mission)s\b", r"1 \1", flags=IGNORECASE)` (kind `template`).
+- **Lookup:** `exact[ja]` if present (kind `memory`). Else `exact_ws[ws_key(ja)]` if present (rule memory-ws, kind `memory`: the same text but for white space, 83 rows, e.g. `ピックアップ武器ガチャ　` with a trailing U+3000; listed in `matched.tsv`). Else `key, nums` of `NFKC(ja)` as above; if `nums` is non-empty and `template[key]` exists: replace each `{i}` with `nums[i]` (the NFKC digits), then `re.sub(r"\b1 (time|hit|day|turn|battle|mission)s\b", r"1 \1", flags=IGNORECASE)` (kind `template`).
 
 **5. Finishing a master candidate** (`finish`; derived sources official, memory, template):
 1. `e = unesc(en)`; (our human rows: NFC first);
@@ -1176,7 +1179,7 @@ Width is never a check for the master (reported only).
 Rows of `ours` with an empty `ja_sha1` (new message_ids, the client strings) are served as they are. Output: one row per served message_id, sorted by message_id (code points), `message_id \t ja_sha1 \t en \t source` with the header `message_id\tja_sha1\ten\tsource`, `\n` line ends, a final `\n`; `en` in master encoding; no tab, CR or real newline in a field.
 
 **8. The story.** Per line (`mid`, `ja` with real newlines, `ja_sha1` = SHA-1 of that text):
-- **Official**: `gl_english(mid)` when `unesc(GL_JA[mid]) == ja`. Else **E3**: `gl_token_english(mid)` when `unesc(GL_JA[mid]) == ja`, through `rewrite_tokens(en, esc(ja))`. No memory or template for the story.
+- **Official**: `gl_english(mid)` when `unesc(GL_JA[mid]) == ja` (exactly: id-ws would add no story line). Else **E3**: `gl_token_english(mid)` when `unesc(GL_JA[mid]) == ja`, through `rewrite_tokens(en, esc(ja))`. No memory or template for the story.
 - **Finishing** (`story_finish`): `e = unesc(en)` (NFC for our human, reviewed and machine rows), fold, `str.strip()` (every code point with `isspace()` at both ends), `rebreak(e, 480, {"<player>": 120})` (no `fix_percent`); checks of 6 against `ja` with tag mode **strict** and no glossary for derived lines; then every `TAG` of `e` must fully match `STORY_TAG` (else `story_tag`, hard). For a source other than `machine`, a `tags` problem is dropped when there is no `story_tag` problem and the count of tags starting with `<font` equals the count of `</font>`. The result is `esc(e)`.
 - **Merge**: as 7 with the committed `story-en/TS_xxxx.tsv` (our human/reviewed > official/E3 > our machine).
 - **Output**: per Scenario file with at least one served line, `story-en-full/<file>.tsv` in the format of 7, rows sorted by message_id.

@@ -330,11 +330,15 @@ class Derived:
         self.rows = {}        # mid -> (ja, sha1, klass, [(source, en, probs, rebroken, (ja px, en px) or None)])
         self.e3, self.token_gaps, self.q7 = [], [], []
         self.official = {}    # mid -> Global's English as stored (for the human override list)
+        # mid -> rule ("id-ws" | "memory-ws") of the white-space-insensitive matches (english.md
+        # 7.9 id-ws, memory-ws): served as official / memory, listed by `report` (matched.tsv)
+        self.matched = {}
         for mid in sorted(src.jp_rows):
             ja = src.jp_rows[mid] or ""
             jn = C.unesc(ja)
             cands = []
             off = src.official(mid, ja)
+            rule = C.same_ja(src.gl_ja.get(mid), ja)
             klass = None
             if off is not None:
                 klass = "official"
@@ -347,6 +351,8 @@ class Derived:
                     cands.append(("official", e3))
                 elif why:
                     self.token_gaps.append((mid, ja, src.gl_en[mid], why))
+            if klass is not None and rule == "id-ws":
+                self.matched[mid] = "id-ws"
             if klass is None:
                 if not C.has_kana(ja):
                     klass = "neutral"
@@ -354,12 +360,14 @@ class Derived:
                     m, kind = mem.lookup(ja)
                     if m is not None:
                         klass = kind
-                        cands.append(("memory" if kind == "exact" else "template", m))
+                        cands.append(("template" if kind == "template" else "memory", m))
+                        if kind == "exact_ws":
+                            self.matched[mid] = "memory-ws"
                     else:
                         klass = "gap"
             if cands and cands[0][0] == "official":
                 self.official[mid] = cands[0][1]
-            if C.has_kana(ja) and src.gl_english(mid) and src.gl_ja.get(mid) != ja:
+            if C.has_kana(ja) and src.gl_english(mid) and not rule:
                 self.q7.append(mid)  # Global's English translates an older Japanese text (Q7)
             done = []
             for source, en in cands:
@@ -395,7 +403,7 @@ def build(ctx):
     b.glossary_rows, b.glossary = g_rows, glossary
     b.table = table
     b.out = {}            # mid -> (ja_sha1, en, source)
-    b.klass = {}          # mid -> official | official_e3 | exact | template | neutral | gap
+    b.klass = {}          # mid -> official | official_e3 | exact | exact_ws | template | neutral | gap
     b.candidates = collections.Counter()
     b.served = collections.Counter()
     b.failures = []       # {message_id, source, en, problems}
@@ -405,7 +413,7 @@ def build(ctx):
     b.width_all = []      # the same for every single-line row
     b.overrides = []      # (mid, source, official en, served en)
     b.rebroken = collections.Counter()
-    b.e3, b.q7 = d.e3, d.q7
+    b.e3, b.q7, b.matched = d.e3, d.q7, d.matched
     b.ours = {}           # mid -> (ja_sha1, en, source): our rows (table + client strings) that pass
     for mid, (ja, h, klass, derived) in d.rows.items():
         cands = []
@@ -794,7 +802,8 @@ def report(ctx, b, out_dir):
     s = {
         "jp_master_rows": len(src.jp_rows),
         "candidates": {"official_by_id": b.candidates["official"], "official_e3": b.candidates["official_e3"],
-                       "exact_memory": b.candidates["exact"], "template_memory": b.candidates["template"],
+                       "exact_memory": b.candidates["exact"], "exact_memory_ws": b.candidates["exact_ws"],
+                       "template_memory": b.candidates["template"],
                        "neutral": b.candidates["neutral"], "gap": b.candidates["gap"],
                        "client_strings": b.candidates["client"]},
         "served": dict(sorted(b.served.items())),
@@ -808,6 +817,7 @@ def report(ctx, b, out_dir):
         "rebroken_lost_line_breaks": dict(b.rebroken),
         "width_outliers_single_line_over_1.5x": dict(collections.Counter(w[1] for w in b.width)),
         "q7_rows_older_global_english": len(b.q7),
+        "matched_ws": dict(collections.Counter(b.matched.values())),
         "glossary_terms": len(b.glossary),
         "glossary_by_source": dict(collections.Counter(t["source"] for t in b.glossary.values())),
         "glossary_conflicts": len(conflicts),
@@ -834,6 +844,9 @@ def report(ctx, b, out_dir):
       [[m, s_, wj, we, f"{we / max(wj, 1):.2f}", src.jp_rows[m], b.out[m][1]] for m, s_, wj, we in b.width])
     w("q7.tsv", ["message_id", "served_source", "ja", "global_old_ja", "global_en"],
       [[m, b.out.get(m, ("", "", "japanese"))[2], src.jp_rows[m], src.gl_ja.get(m), src.gl_en.get(m)] for m in b.q7])
+    w("matched.tsv", ["message_id", "rule", "served_source", "ja", "global_ja", "served"],
+      [[m, r, b.out.get(m, ("", "", "japanese"))[2], src.jp_rows[m], src.gl_ja.get(m) if r == "id-ws" else "",
+        b.out.get(m, ("", "(failed a check)"))[1]] for m, r in sorted(b.matched.items())])
     w("token-gaps.tsv", ["message_id", "reason", "ja", "global_en"],
       [[m, why, ja, gen] for m, ja, gen, why in b.token_gaps] + [[m, why, ja, gen] for m, ja, gen, why in story_gaps])
     w("glossary-conflicts.tsv", ["ja", "en", "variants"], [[ja, en, " | ".join(v)] for ja, en, v in conflicts])

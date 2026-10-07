@@ -612,7 +612,7 @@ This touches the server hooks, which task H decided on. Check with the user befo
   - `tools/make_standin_banners.py:74-110` (plus an encoder)
   - `port/decomp/bullet/pin/scan_rb.py`
 - **ADLD XOR:**
-  - C++, canonical: `server/src/cdn/adld.cpp` (`soaserver/adld.h`).
+  - C++, canonical: soa-server's `cdn/adld.cpp` (`soaserver/adld.h`; since CR4 `common/src/adld.cpp`).
   - C++ copy: `aif2png.cpp:55-67`, with its own CHash32 and CRC table at :38-52.
   - Python, canonical: `soa_save/adld.py`. It decodes a byte at a time, which is why the copies exist.
   - Python copies: `presence.py:127`, `make_standin_banners.py:69`, and a numpy one in `check_download.py`.

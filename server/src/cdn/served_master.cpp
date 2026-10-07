@@ -8,9 +8,9 @@
 #include "core/log.h"
 #include "core/server.h"  // event_clock_at
 #include "master/english_text.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/cdn.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/config.h"
 #include "soaserver/server.h"
 

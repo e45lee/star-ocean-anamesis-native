@@ -1,4 +1,4 @@
-// Unit tests of the CDN content (soaserver/cdn.h) and the ADLD packing (soaserver/adld.h)
+// Unit tests of the CDN content (soaserver/cdn.h) and the ADLD packing (soa/adld.h, common/)
 // (--selftest "cdn/"; server code, no guest counterpart). The 3.7.0 checks read the download
 // (work/SOA-3.7.0-canonical-data.zip, in place) and the decrypted master (data/basmaster-3.7.0.sqlite3)
 // from the repo.
@@ -17,9 +17,9 @@
 #include <soa/install.h>
 #include <soa/paths.h>
 
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/cdn.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/config.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/native_test.h"

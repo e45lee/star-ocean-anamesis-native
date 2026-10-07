@@ -18,7 +18,7 @@
 #include "core/response.h"
 #include "core/server.h"  // has_player
 #include "master/master.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/config.h"
 
 namespace soa::server {

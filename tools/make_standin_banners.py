@@ -41,19 +41,13 @@ import struct
 import subprocess
 import sys
 import tempfile
-import zlib
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-try:
-    import zstandard
-except ImportError:  # only needed for zstd-compressed templates
-    zstandard = None
-
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
-from soa_save.adld import chash32 as _chash32  # noqa: E402
+from soa_save import adld, slz  # noqa: E402
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 AIF2PNG = os.path.join(ROOT, "tools", "aif2png", "aif2png")
 DEFAULT_GACHAS = ["gacha_pickup_role_0054", "gacha_pickup_role_0056", "gacha_pickup_role_0283"]
@@ -61,70 +55,16 @@ FONTS = ["/usr/share/fonts/opentype/ipaexfont-gothic/ipaexg.ttf", "/usr/share/fo
          "/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf"]
 
 
-# ---------------------------------------------------------------- ADLD / SLZ (as tools/aif2png)
-def chash32(s):
-    """Framework::CHash32 of a string (soa_save.adld.chash32)."""
-    return _chash32(s.encode())
-
-
-def adld_xor(body, name):
-    key = ("%x" % chash32(name)).encode()
-    k = np.frombuffer((key * (len(body) // len(key) + 1))[:len(body)], np.uint8)
-    return (np.frombuffer(body, np.uint8) ^ k).tobytes()
-
-
+# ---------------------------------------------------------------- ADLD / SLZ (soa_save; as tools/aif2png)
 def read_aif(path, name):
     """The decrypted, decompressed AIF container of an .aif file (a path, or its bytes)."""
     d = path if isinstance(path, bytes) else open(path, "rb").read()
-    if d[:4] == b"ADLD":
-        flags = struct.unpack_from("<I", d, 4)[0]
-        if flags & 2:
-            raise ValueError("ADLD AES variant")
-        d = adld_xor(d[16:], name) if flags & 1 else d[16:]
-    if d[:3] != b"SLZ":
-        return d
-    codec, dsz, off, chunk = d[3], struct.unpack_from("<i", d, 0xc)[0], struct.unpack_from("<I", d, 0x14)[0], d[0x19] * 1024 or None
-    chunk = chunk or dsz
-    out, p = bytearray(), off
-    while len(out) < dsz:
-        want = min(chunk, dsz - len(out))
-        if codec == 0:
-            out += d[p:p + want]
-            p += want
-            continue
-        n = struct.unpack_from("<H", d, p)[0]
-        p += 2
-        if n == 0:
-            out += d[p:p + want]
-            p += want
-            continue
-        if codec == 5:
-            out += zlib.decompressobj(-15).decompress(d[p:p + n])
-        elif codec == 7:
-            if zstandard is None:
-                raise RuntimeError("zstandard module needed for this template")
-            out += zstandard.ZstdDecompressor().decompressobj().decompress(d[p:p + n])
-        else:
-            raise ValueError(f"SLZ codec {codec}")
-        p += n
-    return bytes(out)
+    return slz.decode(adld.decode(d, name))
 
 
 def write_aif(container, name):
     """SLZ codec 5 (64 KiB raw-deflate chunks; a chunk that doesn't shrink is stored, size 0) + ADLD XOR."""
-    chunks = []
-    for i in range(0, len(container), 65536):
-        raw = container[i:i + 65536]
-        co = zlib.compressobj(9, zlib.DEFLATED, -15)
-        z = co.compress(raw) + co.flush()
-        chunks.append(struct.pack("<H", len(z)) + z if len(z) < min(len(raw), 65536) else struct.pack("<H", 0) + raw)
-    payload = b"".join(chunks)
-    # header as the shipped files: 'SLZ', codec, 0, 1 block, 0x25, compressed size (chunks incl. their
-    # u16 sizes), decompressed size, 0, payload offset 0x20, flags 1, 64 KiB chunks, 0x10, no chain
-    hdr = struct.pack("<3sBBBHiiIIBBHI", b"SLZ", 5, 0, 1, 0x25, len(payload), len(container), 0, 0x20, 1, 64, 0x10, 0)
-    slz = hdr + payload
-    slz += b"\0" * (-len(slz) % 4)
-    return b"ADLD" + struct.pack("<I", 1) + b"\0" * 8 + adld_xor(slz, name)
+    return adld.encode(slz.encode(container), name, adld.XOR)
 
 
 def find16(d, tag, start, end):
@@ -585,7 +525,7 @@ def template(src, prefix, tmp):
         try:
             d = read_aif(src.read(n), f"Image/etc2/{n}.aif")
             fmt, w, h, data, guids = image_layout(d)
-        except (ValueError, RuntimeError, struct.error, TypeError):
+        except (ValueError, ImportError, struct.error, TypeError):
             continue
         if fmt == 49 and data and data[1] == ((w + 3) // 4) * ((h + 3) // 4) * 16:
             return n, d, w, h, data, guids

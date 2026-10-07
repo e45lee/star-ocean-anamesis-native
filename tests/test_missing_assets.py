@@ -21,7 +21,7 @@ from missing_assets.model import ContentGroup, ContentItem, ContentKind, GachaRo
 from missing_assets.names import Names  # noqa: E402
 from missing_assets.presence import Presence, Source, image_info, logical_name  # noqa: E402
 from missing_assets.render import Anchors, merge_bg, missing_paths_text, render_document  # noqa: E402
-from soa_save.adld import chash32  # noqa: E402
+from soa_save import adld  # noqa: E402
 
 
 # ---------------------------------------------------------------- fixtures
@@ -35,8 +35,7 @@ def aif(width, height, fmt=49):
 
 
 def adld_xor(stored_name, plain):
-    key = b"%x" % chash32(stored_name.encode())
-    return b"ADLD" + struct.pack("<I", 1) + bytes(8) + bytes(b ^ key[i % len(key)] for i, b in enumerate(plain))
+    return adld.encode(plain, stored_name, adld.XOR)
 
 
 def slz_stored(plain):

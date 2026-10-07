@@ -59,11 +59,10 @@ import time
 from collections import defaultdict
 
 import msgpack
-import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
-from soa_save.adld import IV, _digits16, chash32  # noqa: E402
+from soa_save.adld import aes_cipher, chash32, xor  # noqa: E402
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 CANONICAL = os.path.join(ROOT, "data", "version-3.7.0.bin")
@@ -95,16 +94,6 @@ def _tree(path):
 
 
 # ---- one stored file -------------------------------------------------------------------------------
-def _xor_key(name):
-    return np.frombuffer(b"%x" % chash32(name.encode()), np.uint8)
-
-
-def _aes(name):
-    from Crypto.Cipher import AES
-
-    return AES.new(_digits16("%032u" % chash32(name.encode())), AES.MODE_CBC, IV)
-
-
 def examine(root, name, enc, quick):
     """The stored file `name` of the tree at `root` read as a member with ADLD flags `enc`:
     {size, flags, plain_size, sha1} (flags = the ADLD header's, None without one; plain_size / sha1
@@ -131,18 +120,15 @@ def examine(root, name, enc, quick):
             if flags is not None and flags & 1:
                 out["plain_size"] = body_len
                 if not quick:
-                    key = _xor_key(name)
-                    step = len(key) * (CHUNK // len(key))  # every chunk starts at key offset 0
-                    keyrep = np.resize(key, min(step, body_len))  # sized to the file: most are small
-                    h = hashlib.sha1()
-                    for block in iter(lambda: f.read(step), b""):
-                        a = np.frombuffer(block, np.uint8)
-                        h.update((a ^ keyrep[: len(a)]).tobytes())
+                    h, at = hashlib.sha1(), 0
+                    for block in iter(lambda: f.read(CHUNK), b""):
+                        h.update(xor(block, name, at))  # (the key continues across blocks)
+                        at += len(block)
                     out["sha1"] = h.hexdigest()
             elif flags is not None and flags & 2:
                 body = f.read() if not quick else f.read(16)
                 body = body[: len(body) // 16 * 16]
-                plain = _aes(name).decrypt(body)
+                plain = aes_cipher(name).decrypt(body)
                 if plain[:4] == b"DCNE" and struct.unpack_from("<I", plain, 4)[0] == 1:
                     end = struct.unpack_from("<I", plain, 8)[0]
                     out["plain_size"] = end - 16

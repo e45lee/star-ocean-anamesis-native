@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "master/english_derive.h"
-#include "soaserver/adld.h"
+#include "soa/adld.h"
 #include "soaserver/config.h"
 #include "soaserver/native_test.h"
 

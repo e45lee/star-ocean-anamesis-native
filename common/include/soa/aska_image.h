@@ -14,7 +14,7 @@
 //         differential modes, both flips, every table; 48 differential only, with its transparent
 //         index; EAC alpha by search), integer arithmetic
 //         only, so the bytes are the same on every platform.
-// ADLD (the XOR / AES layer over these files) is the server's adld.h and aif2png's own.
+// ADLD (the XOR / AES layer over these files) is soa/adld.h.
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -25,7 +25,21 @@ namespace soa::aska {
 using Bytes = std::vector<uint8_t>;
 
 // ---- SLZ ----------------------------------------------------------------------------------------
+// Header (little-endian): "SLZ", u8 codec (0 stored, 5 raw deflate, 7 zstd), ..., i32 size at 0xc,
+// u32 payload offset at 0x14, u8 chunk KiB at 0x19 (0: one chunk), u32 chain at 0x1c (0: none).
+// Each chunk of a codec 5 / 7 file is a u16 size and that many bytes; size 0 means the chunk is
+// stored raw. Python: soa_save.slz.
 bool is_slz(const Bytes& d);
+// One chunk of an SLZ file.
+struct SlzChunk {
+    size_t offset = 0;  // its bytes in the file (after its u16 size)
+    size_t stored = 0;  // how many
+    size_t size = 0;    // what it decompresses to
+    bool raw = false;   // stored uncompressed (codec 0, or a size field of 0)
+};
+// The chunks of an SLZ file, in order, from its header and size fields. False (and *err) when it
+// isn't SLZ, is chained, or runs past the end: `chunks` then holds those before the failure.
+bool slz_chunks(const Bytes& d, std::vector<SlzChunk>& chunks, std::string* err = nullptr);
 // The decompressed bytes of an SLZ file (single header, no chain); a file that isn't SLZ is copied.
 bool slz_decode(const Bytes& in, Bytes& out, std::string* err = nullptr);
 // SLZ codec 5 as the shipped files have it: header {"SLZ", 5, 0, 1, 0x25, compressed size,

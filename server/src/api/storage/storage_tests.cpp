@@ -7,7 +7,7 @@
 #include "core/errors.h"
 #include "core/request_context.h"
 #include "api/storage/storage.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/ext.h"
 #include "soaserver/native_test.h"
 

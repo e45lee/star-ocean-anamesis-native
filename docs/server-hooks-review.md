@@ -23,7 +23,7 @@ Evidence: the unmodified 3.7.0 client over TCP (`soa-emu` + `soa-server`) reache
 | `server::web_page` (`native/ui/webview_local.cpp`) | the local notice-board page | port-only UI; keep or drop as wanted |
 | `server::clock_now` / `set_server_clock` (`native/common/port_debug.cpp`) | debug commands | debug only |
 
-Not hooks: `mp_encode` / `Value` (InfoBase tests), `server::adld` (shared codec), `server::testing` (test runner).
+Not hooks: `mp_encode` / `Value` (InfoBase tests), `soa::adld` (shared codec, common/), `server::testing` (test runner).
 
 ## Decision (the user, 2026-10-01): the FakeApiCaller overrides produce what the wire carries
 **Direction:** the port's FakeApiCaller stand-ins / native overrides (or a native in-process shim used in their place) **generate the same information the 3.7.0 `NetworkApiCaller` sends over the wire**. The server then gets everything from the request itself, the way `soa-server` does, and **the custom guest-reading hooks are dropped**.

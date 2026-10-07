@@ -3,8 +3,8 @@ the sources (JP 3.7.0 master, Global master, story files), translation memory, g
 advances read from Font/etc2/font.fpk, glyph folding, line re-breaking, Global token rewrites (E3)
 and the checks every English row must pass (docs/english.md 7.5, 7.6).
 
-Only the standard library plus zstandard (SLZ codec 7) and, for the story files, msgpack via
-soa_save. No engine is called here.
+Only the standard library plus soa_save (ADLD, SLZ; zstandard for SLZ codec 7, msgpack for the
+story files). No engine is called here.
 """
 import collections
 import fnmatch
@@ -19,7 +19,6 @@ import struct
 import sys
 import unicodedata
 import zipfile
-import zlib
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 if str(REPO) not in sys.path:
@@ -381,36 +380,6 @@ def glossary_hits(ja, glossary, terms_sorted=None):
 
 # ---------------------------------------------------------------- the font (docs/english.md 3.1)
 
-def slz_decode(d):
-    """An SLZ stream (codec 0 stored, 5 raw deflate, 7 zstd; chunked), decompressed whole."""
-    if d[:3] != b"SLZ":
-        return d
-    codec, dsz = d[3], struct.unpack_from("<i", d, 0xc)[0]
-    off, chunk = struct.unpack_from("<I", d, 0x14)[0], d[0x19] * 1024 or dsz
-    out, p = bytearray(), off
-    while len(out) < dsz:
-        want = min(chunk, dsz - len(out))
-        if codec == 0:
-            out += d[p:p + want]
-            p += want
-            continue
-        n = struct.unpack_from("<H", d, p)[0]
-        p += 2
-        if n == 0:  # a chunk that didn't shrink is stored
-            out += d[p:p + want]
-            p += want
-            continue
-        if codec == 5:
-            out += zlib.decompressobj(-15).decompress(d[p:p + n])
-        elif codec == 7:
-            import zstandard
-            out += zstandard.ZstdDecompressor().decompressobj().decompress(d[p:p + n])
-        else:
-            raise ValueError(f"SLZ codec {codec}")
-        p += n
-    return bytes(out)
-
-
 def isf_members(d):
     """{name: bytes} of an ISF container: b"\\0ISF", u32 version, u32 count, u32 0, then per member
     16 bytes (u32 name offset, u32 data offset, u32 size, u32 hash), names NUL-terminated."""
@@ -429,11 +398,11 @@ def read_font_glyphs(fpk=None):
     """The glyph records of fontData.bin: [(id, x, y, w, h, xoff, yoff, xadvance, page, chnl)].
     `fpk` is the font.fpk bytes (ADLD XOR keyed by CHash32 of its path, then SLZ, then ISF); by
     default the copy in the committed 3.7.0 APK, which equals the download's (docs/english.md 3.1)."""
-    from soa_save import adld
+    from soa_save import adld, slz
     if fpk is None:
         with zipfile.ZipFile(APK) as z:
             fpk = z.read(FONT_MEMBER)
-    data = isf_members(slz_decode(adld.decode(fpk, FONT_NAME)))["fontData.bin"]
+    data = isf_members(slz.decode(adld.decode(fpk, FONT_NAME)))["fontData.bin"]
     hdr = struct.unpack_from("<3I", data, 0)
     if hdr[:2] != (24, 24) or len(data) != 12 + 40 * hdr[2]:
         raise ValueError(f"unexpected fontData.bin header {hdr}")

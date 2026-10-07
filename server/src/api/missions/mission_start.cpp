@@ -17,7 +17,7 @@
 #include "core/response.h"
 #include "core/time.h"  // day_start
 #include "rules/mission_rules.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/config.h"
 #include "soaserver/npc_status.h"
 

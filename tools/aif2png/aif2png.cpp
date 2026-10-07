@@ -11,8 +11,8 @@
 // per image) or "err <in> <reason>".  A file holding more than one image writes <out>,
 // <out-stem>_1.png, ...  Also accepts Cocos scenes (UI/etc2/*.csf) and writes their atlas.
 //
-// Build: tools/aif2png/build.sh, or the repository build's `aif2png` target (soa_codec: SLZ / AIF /
-// ETC2, soa/aska_image.h; IJG libjpeg 9 by FetchContent: cmake/deps.cmake).
+// Build: tools/aif2png/build.sh, or the repository build's `aif2png` target (soa_codec: ADLD,
+// soa/adld.h; SLZ / AIF / ETC2, soa/aska_image.h; IJG libjpeg 9 by FetchContent: cmake/deps.cmake).
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <soa/adld.h>
 #include <soa/aska_image.h>
 #include <soa/png.h>
 extern "C" {
@@ -28,43 +29,7 @@ extern "C" {
 }
 
 using u8 = uint8_t;
-using u16 = uint16_t;
-using u32 = uint32_t;
 using Bytes = std::vector<u8>;
-
-static u32 rd32(const u8* p) { return p[0] | p[1] << 8 | p[2] << 16 | (u32)p[3] << 24; }
-
-// ---------------------------------------------------------------- ADLD / CHash32
-static u32 chash32(const std::string& s) {
-    static u32 T[256];
-    static bool init = false;
-    if (!init) {
-        for (u32 i = 0; i < 256; i++) {
-            u32 c = i;
-            for (int k = 0; k < 8; k++) c = (c & 1) ? (c >> 1) ^ 0xEDB88320u : c >> 1;
-            T[i] = c;
-        }
-        init = true;
-    }
-    u32 c = (u32)s.size();
-    for (unsigned char b : s) c = T[(c ^ b) & 0xff] ^ (c >> 8);
-    return c;
-}
-
-// Only the XOR variant (flags & 1) is used by Image/ assets (version.bin encType 1).
-static bool adld(Bytes& d, const std::string& name, std::string& err) {
-    if (d.size() < 16 || memcmp(d.data(), "ADLD", 4)) return true;  // not wrapped
-    u32 flags = rd32(&d[4]);
-    Bytes body(d.begin() + 16, d.end());
-    if (flags & 2) { err = "ADLD AES variant not supported here (use soa_save/adld.py)"; return false; }
-    if (flags & 1) {
-        char key[16];
-        int n = snprintf(key, sizeof key, "%x", chash32(name));
-        for (size_t i = 0; i < body.size(); i++) body[i] ^= (u8)key[i % n];
-    }
-    d.swap(body);
-    return true;
-}
 
 // ---------------------------------------------------------------- SLZ
 static bool slz(Bytes& d, std::string& err) {
@@ -194,7 +159,9 @@ static std::string convert(const std::string& in, const std::string& name, const
     Bytes d;
     if (!read_input(in, d)) return "err\t" + in + "\tcannot open";
     std::string err;
-    if (!adld(d, name, err) || !slz(d, err)) return "err\t" + in + "\t" + err;
+    // ADLD (soa/adld.h): XOR (flags & 1, what Image/ assets use: version.bin encType 1) or AES
+    if (soa::adld::is_adld(d.data(), d.size())) d = soa::adld::decrypt(name, d);
+    if (!slz(d, err)) return "err\t" + in + "\t" + err;
     // An .aif is one ' FIA' container; a Cocos scene (.csf, tag "\0ISF") embeds its texture
     // atlas as a ' FIA' container.
     std::vector<soa::aska::ImageRef> imgs = soa::aska::find_images(d);

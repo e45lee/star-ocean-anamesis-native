@@ -1,12 +1,14 @@
 """soa_save.adld's CHash32 (zlib.crc32 underneath) and key packing against the bit-by-bit
-definitions they replaced, and soa_save.kvs's Base64 layouts and XML reading."""
+definitions they replaced, ADLD and SLZ (soa_save.slz) round trips, and soa_save.kvs's Base64
+layouts and XML reading."""
 import base64
 import random
 import struct
+import zlib
 
 import pytest
 
-from soa_save import adld, kvs
+from soa_save import adld, kvs, slz
 
 
 def chash32_reference(s: bytes) -> int:
@@ -44,7 +46,7 @@ def test_key_packing():
     rng = random.Random(2)
     for _ in range(500):
         d = "%032u" % rng.randrange(2 ** 32)
-        assert adld._digits16(d) == digits16_reference(d)
+        assert adld.digits16(d) == digits16_reference(d)
     assert adld.IV == digits16_reference("09375711857134629684891855841614")
 
 
@@ -61,6 +63,47 @@ def test_decode_xor_and_aes():
     aes = b"ADLD" + struct.pack("<I", 2) + bytes(8) + AES.new(key, AES.MODE_CBC, adld.IV).encrypt(dcne)
     assert adld.decode(aes, name) == plain
     assert adld.decode(b"not ADLD", name) == b"not ADLD"
+    # encode is the inverse, byte for byte the files above (soa::adld::encrypt's layout)
+    assert adld.encode(plain, name) == xored and adld.encode(plain, name, adld.AES) == aes
+    assert adld.encode(plain, name, 0) == b"ADLD" + bytes(12) + plain
+
+
+def test_xor_in_pieces():
+    name = "Image/etc2/u_chip_cp0001.aif"
+    plain = bytes(range(256)) * 41
+    whole = adld.xor(plain, name)
+    assert adld.xor(whole, name) == plain and adld.xor(b"", name) == b""
+    for cut in (1, 7, 8, 1000, len(plain) - 1):  # (a payload XORed in pieces: the key continues)
+        assert adld.xor(plain[:cut], name) + adld.xor(plain[cut:], name, cut) == whole
+
+
+def slz_reference(raw_chunks, codec, size, chunk_kib):
+    """An SLZ file of the given chunk bodies (each already u16-size-prefixed unless codec 0)."""
+    payload = b"".join(raw_chunks)
+    return struct.pack("<3sBBBHiiIIBBHI", b"SLZ", codec, 0, 1, 0x25, len(payload), size, 0, 0x20, 1, chunk_kib, 0x10, 0) + payload
+
+
+def test_slz_round_trips_and_rules():
+    rng = random.Random(3)
+    for n in (0, 1, 100, 65536, 65537, 200000):
+        plain = bytes(rng.randrange(256) for _ in range(n)) if n > 100000 else bytes(i // 7 & 0xff for i in range(n))
+        enc = slz.encode(plain)
+        assert enc[:4] == b"SLZ\x05" and len(enc) % 4 == 0 and slz.decode(enc) == plain, n
+    assert slz.decode(b"not SLZ") == b"not SLZ"
+    # codec 0 (stored, no size fields), and a size-0 (stored) chunk in a codec-5 file
+    assert slz.decode(slz_reference([b"abcdef"], 0, 6, 0)) == b"abcdef"
+    co = zlib.compressobj(9, zlib.DEFLATED, -15)
+    z = co.compress(b"x" * 1024) + co.flush()
+    f = slz_reference([struct.pack("<H", len(z)) + z, struct.pack("<H", 0) + b"y" * 1024], 5, 2048, 1)
+    assert slz.decode(f) == b"x" * 1024 + b"y" * 1024
+    # a file's first bytes: partial gives what they hold; whole decoding refuses
+    assert slz.decode(f[:-10], partial=True) == b"x" * 1024 + b"y" * 1014
+    with pytest.raises(ValueError):
+        slz.decode(f[:-10])
+    chained = bytearray(f)
+    chained[0x1c] = 1
+    with pytest.raises(ValueError):
+        slz.decode(bytes(chained))
 
 
 def test_java_b64_layout():

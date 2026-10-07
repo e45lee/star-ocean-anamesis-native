@@ -33,7 +33,7 @@
 #include "native/common/guest_std.h"
 #include "native/common/memstats.h"
 #include "native/common/native.h"
-#include "soaserver/chash32.h"
+#include "soa/chash32.h"
 #include "soaserver/server.h"
 
 namespace soa::native::port_debug {
@@ -84,7 +84,7 @@ void run(const std::string& cmd, u64 phase_mgr) {
         static u64 pm = guest::sym("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE");
         static u64 ui_fn = guest::sym("_ZNK17CParameterManager12pParameterUIEv");
         u64 ui = guest_call(ui_fn, {*(u64*)pm});
-        u32 id = server::chash32(cmd.c_str() + 8);
+        u32 id = chash32(cmd.c_str() + 8);
         LOGI("port_debug", "selected mission %s (%#x), was %#x", cmd.c_str() + 8, id, ui ? *(u32*)(ui + 0x1a0) : 0);
         if (ui) *(u32*)(ui + 0x1a0) = id;
         return;

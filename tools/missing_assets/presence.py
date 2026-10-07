@@ -5,18 +5,12 @@ from __future__ import annotations
 import os
 import re
 import struct
-import zlib
 from dataclasses import dataclass
 from typing import Optional
 
 from . import ROOT  # noqa: F401  (puts the repo root on sys.path for soa_save)
-from soa_save.adld import chash32
+from soa_save import adld, slz
 from soa_save.download_tree import DownloadTree
-
-try:
-    import zstandard
-except ImportError:  # sizes of zstd images are then unknown
-    zstandard = None
 
 #: Everything up to one of these folders is dropped from a stored path (APK / storage layouts).
 STORAGE_ROOTS = ("builtin_data/", "assetpack/")
@@ -26,18 +20,9 @@ QUALITY_FOLDER_RE = re.compile(r"/etc2(/hi)?/")
 #: The source label of the repo's made-up files; they are no evidence for sibling sizes.
 STANDIN_LABEL = "stand-in"
 
-# AIF / ADLD / SLZ layout (docs/notes.md "Asset encryption", "SLZ")
+# AIF layout (docs/notes.md "Image assets and gacha banners"; ADLD and SLZ: soa_save.adld, soa_save.slz)
 HEADER_READ_LIMIT = 0x40000      # the image header is within the first 256 KiB
-ADLD_MAGIC = b"ADLD"
 ADLD_FLAGS_OFFSET = 4
-ADLD_HEADER_SIZE = 16
-ADLD_FLAG_XOR = 1                # body XORed with the hex CHash32 of the stored name
-SLZ_MAGIC = b"SLZ"
-SLZ_CODEC_OFFSET = 3
-SLZ_SIZE_OFFSET = 0xc            # int32 decompressed size
-SLZ_DATA_OFFSET = 0x14           # u32 offset of the first chunk
-SLZ_CHUNK_KIB_OFFSET = 0x19      # chunk size in KiB (0 = one chunk)
-SLZ_CODEC_STORED, SLZ_CODEC_DEFLATE, SLZ_CODEC_ZSTD = 0, 5, 7
 XGMI_MAGIC = b"Xgmi"             # the image header: format byte at +0x20, u16 w, h at +0x28
 XGMI_FORMAT_OFFSET = 0x20
 XGMI_SIZE_OFFSET = 0x28
@@ -107,35 +92,17 @@ class ImageInfo:
 
 
 def _unwrap_adld(data: bytes, stored_name: str) -> bytes:
-    """The body of an ADLD container, XOR-decrypted when its flag says so."""
+    """The body of an ADLD container, XOR-decrypted when its flag says so (Image/ files are never AES)."""
     flags = struct.unpack_from("<I", data, ADLD_FLAGS_OFFSET)[0]
-    body = data[ADLD_HEADER_SIZE:]
-    if flags & ADLD_FLAG_XOR:
-        key = b"%x" % chash32(stored_name.encode())
-        stream = (key * (len(body) // len(key) + 1))[:len(body)]
-        body = bytes(a ^ b for a, b in zip(body, stream))
-    return body
+    body = data[adld.HEADER_SIZE:]
+    return adld.xor(body, stored_name) if flags & adld.XOR else body
 
 
 def _unwrap_slz(data: bytes) -> Optional[bytes]:
-    """The first chunk of an SLZ stream, decompressed; None when the codec is unknown or broken."""
-    codec = data[SLZ_CODEC_OFFSET]
-    size = struct.unpack_from("<i", data, SLZ_SIZE_OFFSET)[0]
-    off = struct.unpack_from("<I", data, SLZ_DATA_OFFSET)[0]
-    chunk_kib = data[SLZ_CHUNK_KIB_OFFSET]
-    want = min(chunk_kib * 1024 if chunk_kib else size, size)
+    """The start of an SLZ stream (`data` is a file's first bytes), decompressed; None when the codec
+    is unknown or the data broken (or a zstd file without the zstandard module)."""
     try:
-        if codec == SLZ_CODEC_STORED:
-            return data[off:off + want]
-        n = struct.unpack_from("<H", data, off)[0]
-        p = off + 2
-        if n == 0:  # a stored chunk
-            return data[p:p + want]
-        if codec == SLZ_CODEC_ZSTD and zstandard:
-            return zstandard.ZstdDecompressor().decompressobj().decompress(data[p:p + n])
-        if codec == SLZ_CODEC_DEFLATE:
-            return zlib.decompressobj(-15).decompress(data[p:p + n])
-        return None
+        return slz.decode(data, partial=True)
     except Exception:  # noqa: BLE001 - a broken file just has no known size
         return None
 
@@ -156,9 +123,9 @@ def image_info(src: Source, logical: str) -> Optional[ImageInfo]:
         data = src.read(logical, HEADER_READ_LIMIT)
     except (KeyError, OSError):
         return None
-    if data[:4] == ADLD_MAGIC:
+    if data[:4] == adld.MAGIC:
         data = _unwrap_adld(data, src.stored_name(logical))
-    if data[:3] == SLZ_MAGIC:
+    if data[:3] == slz.MAGIC:
         data = _unwrap_slz(data)
         if data is None:
             return None

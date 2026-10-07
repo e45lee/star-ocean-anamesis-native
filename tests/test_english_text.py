@@ -163,7 +163,8 @@ def test_e3_story_ep1(built):
     ep1 = [m for m, ln in d.lines.items() if C.story_group(ln[0]) == "EP1" and C.has_kana(ln[1])]
     assert sum(1 for m in ep1 if d.lines[m][3] == "official_e3") == 117
     assert sum(1 for m in ep1 if d.lines[m][3] == "official") == 2979
-    assert sum(1 for m in ep1 if m not in s.out) == 10
+    # 10 EP1 lines have no official English (the table's machine rows may fill them)
+    assert sum(1 for m in ep1 if d.lines[m][3] not in ("official", "official_e3")) == 10
 
 
 def test_story_en_is_fresh(built):

@@ -1031,6 +1031,385 @@ How measured: `tools/english_text.py derive` and `report` (the box check above) 
   retired (the user: shrink the font in the client instead), so no `short-v1` row remains; story lines
   needing 5+ window lines: 2,103, for the client font shrink.
 
+### 7.12 The `--lang en` screen sweep
+
+Agent `en-textclean-sweep`, 2026-10-07: every screen the named sessions reach, plus a hand-driven run, taken with `--lang en --english` and again with `--lang ja`, compared shot by shot. The English shots are from the build of `port/en-textclean` at 1cb83d7 (the 31B import, E13's story shrink, E10 on the shared breaker) plus this branch's two fixes; the first pass (before the import) is in `runs-old/`.
+
+**How it was run.** 27 sessions (`control/run.py --list`: home, home-character, events, missions, sphere211, sphere211-continue, deepspace, gacha, battle-gacha, items, add-item, equipment, party, growth, mastery, favor, stamps, badges, storage, coins, rental, settings, campaign, battle, tower, simulator-continue) through the slot pool, each with a wrapper as its `soa` binary that appends `--lang en --english` (or `--lang ja`): most sessions take no pass-through flags, and the wrapper changes nothing else. Mastery derives `soa-server` from the binary's folder, so its wrapper sits in a `port/` folder beside a `server/soa-server` link. A hand-driven client (log in, then `soactl.py` taps with a shot after each step) covered the character guide (details, stats, talents, battle skills, the ability list), the gacha's notice and odds dialogs, the item exchange and the party edit, in both languages. Every run passed its own verdict except `stamps --lang ja` (its palette check; the shots are complete).
+
+**Shots** (`work/english/textclean/`, local): `<session>/en-NN-name.png` and `<session>/ja-NN-name.png` (the sessions' own shot names), `manual/` for the hand-driven run; `runs/<session>-<lang>/` keeps each run's log (`lang: wrapped` / `lang: fitted` lines), packets and verdict; `runs-old/` the English runs before the import.
+
+**How a Japanese leftover was classified.** The layout labels of the 853 UI and TalkScene scenes were dumped (the `.msgp` node trees: scene, node path, `IsCustomSize`, `FontSize`, `LabelText`); a Japanese text found there is a layout label. Otherwise `master_text` gives its row (and `master-en.tsv` / Global whether it has English), and the rest are pictures (the scene's `.csv` sprite table).
+
+**What was found** (376 problem rows over 27 sessions and the hand-driven run; a row can have several causes: data 213, client wrap or fit 202, picture 165, layout label 117, server 50). The full lists are local in `work/english/textclean/`: `data-rows.tsv` (181: 169 message ids and 12 row families, with suggested English), `labels.tsv` (59 client cases in 14 classes, with node paths), `jp-left.tsv` (112 Japanese leftovers), `screens.tsv` (the table below), `story-missing.tsv` (25 story lines).
+
+- **Japanese in the layouts (the biggest gap).** 920 labels with Japanese text (440 distinct, placeholders left out) are fixed in 173 scenes' node trees, and nothing translates them: the result screens (`result.csf` 調査ランク / 獲得調査ポイント / 獲得FOL / 報酬アイテム / 獲得EXP on every mission result), the mission card and detail (消費スタミナ, 初回クリア報酬…), the party select (パーティ戦闘力, 戻る / キャラクター設定), enhancement, evolution and limit-break dialogs, the stamina heal, the birth-date dialogs, the story's skip popup (`EventBase.csf` スキップしますか？ / いいえ / はい). 533 of the 920 have the same Japanese as a master row, and 519 of those have English. A server route exists: the `-en` scene that `english_art` already writes for the art could carry the node tree with these `LabelText`s replaced (msgpack-cxx is a dependency), from the master's English where the Japanese matches and from new rows otherwise (option (c) of [7.11](#711-the-home-speech-box-home-talk-lines) for one label). Not done here.
+- **Pictures without a recipe:** 46 sprites (the item list's lock buttons and tabs `tab.csf`, Deep Space's 探査率 / 進行中 / 今すぐ帰還 badges, the character detail's round buttons, イベントメニュー, 全件取得, 強化開始, the Sphere 211 result titles…) and the title screen's buttons.
+- **Data rows (machine):** narrow breaks at the Japanese width (`uimsg_full_stamina` 5 lines of 13 characters; 528 `uimsg` dialogs are broken narrower than the Japanese), lists merged into prose (`uimsg_item_confirmation_sell_1` and siblings: 10 lines over the buttons), a table's cells re-broken as prose (`uimsg_able_use_money`), one reversed meaning (`uimsg_drop_bonus_on_this_condition` "+10 drops every 1 hits"), long labels (691 weapon and item descriptions of 5+ lines), terms rendered several ways (転移 as Warp / Transfer / Teleport, OHS / One-Handed). Official rows with problems: the typo "Blue EXP Misisons" (`name_event_exp_blue`), "Not enough SP." (`error_message_text_10004`), "Delete" for 修正する (`uimsg_button_back`).
+- **Client wrap and fit** (for the E10 / E13 owner): the header description (FS18, no custom size) is wrapped at the room it has when first drawn (63 px at x 645) and hangs a second line below the header on almost every menu; long header titles are drawn over the description; menu buttons' text runs over their left icon; fixed-size labels shrink a two-line wrap to about 40 % ("Change Equipment, Skills, and Assists"); labels wider than their icon or card ("Limit Break", "To Exceed Connect"); labels running into their value ("Continuous Clear Count", "Max Transfer Floor"); list rows wrapped at the screen edge instead of the row frame (the item exchange); a tag-mode ticker (character guide) running off both edges; and the story window: `1010_030_02` (5 lines) is drawn at full size over Skip / Auto although E13's hooks are installed, and no shrink was logged.
+- **Story:** 25 lines of 13 Scenario files have no English, so those files are served Japanese as a whole (`TS_2010`, `TS_2040`, `TS_2050`, `TS_2060`, `TS_2070`, `TS_2090`, `TS_2100`, `TS_6020`, `TS_6040`, `TS_6050`, `TS_D076`, `TS_D093`, `TS_E036`).
+- **Before the English master:** the first download dialog and the title screen are Japanese (they show before the `-en` master is fetched); not a gap in the table.
+
+**Fixed in this branch:**
+
+- The gacha rate dialog's title was Japanese (キャラガチャ): `GetGachaRate` sent the pools' Japanese name. Under `--english` it is now the English of `master_gacha.name_message_id` ("Character Draw"; `gacha_pools::display_title`, selftest `server/gacha-title-english`, [server-rules](server-rules.md#english)).
+- English art: the おまけつき cover on the 10-chain button reached only the top half of the Japanese (`gacha_select.json`); the standard gacha panel's footnote ※進化や覚醒なども含む… stayed Japanese (`pickup_img_chara_1610_002`, `tools/english_art/specs/pickup_misc.py`).
+
+**The `items` session with `--lang en`** passed both times (once before the import, once after). The failure english-exec saw (`work/english/exec/art/before-items/`) was a lost tap: after two login-bonus popups, the session's Home and Items footer taps reached a home that did not react (no phase line), and its next tap at 615:1120 opened Deep Space, so `LockItem` never came. That run had software GL at about 12 fps and a two-bonus day; nothing in it is English-specific, and it did not happen again.
+
+**Not reached:** the character profile (CV, birthday: `uimsg_ch_profile_*`; the guide's detail has no way to it, the list's long press can't be sent by `soactl`); the normal battle's pause menu, the lose / continue / retire dialogs, Sphere 211's failed and result pages, the gacha's "Chip Obtained" page (the sessions pass these screens without a shot); the gacha's Notice tab is empty in both languages. Two shots are black frames from a transition (`party/14-battle`, `sphere211/50-boss-battle`).
+
+How measured: the sessions and the hand-driven run above, one slot each (up to 6 at once), all through the pool; the shots compared in pairs (en | ja) by eye; the layout labels from the decoded `.msgp` node trees of the download's scenes; the rows from `master-en.tsv` at 1cb83d7, `data/basmaster-gl.sqlite3` and `tools/english_text.py derive`.
+
+**The table** (`work/english/textclean/<session>/`; the download dialog, title, notice and login-bonus shots repeat in every session and are listed once, under home):
+
+| Screen | en shot | ja shot | Status | Problem | Cause | Fix or proposed fix |
+|---|---|---|---|---|---|---|
+| add-item/03-weapon-gachas | `en-03-weapon-gachas.png` | `ja-03-weapon-gachas.png` | problem | banner caption "Great Swords / OHS / Arms / Axes" condensed, "OHS" opaque; header desc 2 lines | sprite+data+client-wrap | -en banner wording; gacha_Weapon_title_message_0005; header-desc fix |
+| add-item/04-confirm | `en-04-confirm.png` | `ja-04-confirm.png` | problem | "Do you want to perform 1 Draws?" plural | data | uimsg_gacha_confirm "Draw ×%d?" |
+| add-item/06-item-list | `en-06-item-list.png` | `ja-06-item-list.png` | problem | header desc 2 lines, "you." on header edge; ロックモード button Japanese | client-wrap+data+sprite | header-desc fix / "View your items."; -en lock art |
+| add-item/07-sell | `en-07-sell.png` | `ja-07-sell.png` | problem | header desc 2 lines; "Sell For:" coin icon on the colon (minor) | client-wrap+data | "Sell unneeded items for FOL." |
+| add-item/09-sell-warning | `en-09-sell-warning.png` | `ja-09-sell-warning.png` | problem | WORST: 5-item list merged into prose, 10 lines over "Proceed?"/buttons; title 2 lines; 選択中 overlay JP | data+client-wrap+sprite | uimsg_item_confirmation_sell_1 one item per line; shorter title; -en overlay |
+| add-item/10-sold | `en-10-sold.png` | `ja-10-sold.png` | problem | "4000 FOL has / been / obtained." 3 lines | data+client-wrap | uimsg_Sellitem_Result_2 " FOL obtained." |
+| add-item (other shots) | | | ok | 02-home, 05-result, 08-sell-confirm | | |
+| badges/30-title | `en-30-title.png` | `ja-30-title.png` | problem | ムービー再生 label + round title buttons Japanese | server+sprite | English master before the title; -en title button art |
+| badges/12-gacha | `en-12-gacha.png` | `ja-12-gacha.png` | problem | header desc "Use gems to summon..." 2 lines | client-wrap+data | header-desc class fix; "Summon characters and weapons." |
+| badges/13-gacha-detail | `en-13-gacha-detail.png` | `ja-13-gacha-detail.png` | problem | "×2500" touches "10-chain Draw" art; stale -en.aif left JP footnote (fixed in newer art); desc 2 lines | sprite+client-wrap | narrower -en art; re-run with the 5-label art; header-desc fix |
+| badges/14-gacha-confirm | `en-14-gacha-confirm.png` | `ja-14-gacha-confirm.png` | problem | header desc 2 lines (dialog ok) | client-wrap | header-desc fix |
+| badges/16-gacha-result | `en-16-gacha-result.png` | `ja-16-gacha-result.png` | problem | "Limit Break" wider than the 96 px face icon | layout-label+client-wrap | shrink FaceThumbIcon Text_1 to icon width / "Lim. Break" |
+| badges/17-gacha-closed | `en-17-gacha-closed.png` | `ja-17-gacha-closed.png` | problem | as 13 | sprite+client-wrap | as 13 |
+| badges/20-list-new | `en-20-list-new.png` | `ja-20-list-new.png` | problem | title "Select Characters" into desc, desc 2 lines; レンタル / EP2専用 badges JP; "Des." | client-wrap+data+sprite | header class fix / "Pick your party."; -en badges; "Desc." |
+| badges/21-list-cleared | `en-21-list-cleared.png` | `ja-21-list-cleared.png` | problem | as 20 | client-wrap+data+sprite | as 20 |
+| badges/32-list-relogin | `en-32-list-relogin.png` | `ja-32-list-relogin.png` | problem | as 21 (byte-identical) | client-wrap+data+sprite | as 20 |
+| badges (other shots) | | | ok | 02-home, 15-summon, 18-home-end, 31-home | | |
+| battle/03-episodes | `en-03-episodes.png` | `ja-03-episodes.png` | problem | episode caption wider than banner, clipped both ends; bottom note 3 lines in a 2-line plate, 3rd cut | data+client-wrap | uimsg_episode_data_not_downloaded / _one_ shorter; shrink to banner |
+| battle/05-battle-loading | `en-05-battle-loading.png` | `ja-05-battle-loading.png` | problem | tip art Japanese; tip 3 lines with "attack." alone | sprite+data | -en tip art; nowloading_battle_tips_023 2 lines |
+| battle/92-result | `en-92-result.png` | `ja-92-result.png` | problem | 獲得EXP Japanese on Mission Result | layout-label | translate result.csf reward_exp label: "EXP Gained" |
+| battle (other shots) | | | ok | 02-home, 04-home, 10-13 battle, 90, 91, 93 result, 99-home | | |
+| battle-gacha/03-battle-loading | `en-03-battle-loading.png` | `ja-03-battle-loading.png` | problem | tip art caption アタッカー Japanese | sprite | -en tip art |
+| battle-gacha/82-result | `en-82-result.png` | `ja-82-result.png` | problem | result labels 調査ランク / 獲得調査ポイント / 獲得FOL / 報酬アイテム Japanese | layout-label | translate result.csf labels: Rank / Exploration Points / FOL Gained / Rewards |
+| battle-gacha/83-result | `en-83-result.png` | `ja-83-result.png` | problem | 獲得EXP Japanese on Mission Result | layout-label | translate result.csf reward_exp label: "EXP Gained" |
+| battle-gacha/12-gacha | `en-12-gacha.png` | `ja-12-gacha.png` | problem | header desc "Use gems to summon..." 2 lines | client-wrap+data | header-desc class fix; "Summon characters and weapons." |
+| battle-gacha/13-gacha-detail | `en-13-gacha-detail.png` | `ja-13-gacha-detail.png` | problem | "×2500" touches "10-chain Draw" art (pickup footnote now English: FIXED) | sprite | narrower -en art |
+| battle-gacha/16-gacha-result | `en-16-gacha-result.png` | `ja-16-gacha-result.png` | problem | WORST: result text re-wrapped to 7 lines over the face icon and Next; "Limit Break" wider than icon | data+client-wrap+layout-label | shorter uimsg_gacha_chara/_limitover; no re-wrap of \n text; shrink icon label |
+| battle-gacha/17-gacha-closed | `en-17-gacha-closed.png` | `ja-17-gacha-closed.png` | problem | as 13 (×2500 tight; header desc 2 lines) | sprite+client-wrap | as 13 |
+| battle-gacha (other shots) | | | ok | 02-home, 10-13 battle, 80, 81, 84-result, 14-gacha-confirm, 15-summon, 18-home-end, 99-home | | |
+| campaign/03-episodes | `en-03-episodes.png` | `ja-03-episodes.png` | problem | Ep1 caption 3 lines touching the logo; Ep2 caption clipped at both banner edges | data+client-wrap | uimsg_episode_one_not_downloaded 2 lines; shorter _data_not_downloaded |
+| campaign/04-planets | `en-04-planets.png` | `ja-04-planets.png` | problem | header desc "Please select the planet..." 2 lines on header edge | client-wrap+data | header-desc fix; "Select a planet to explore." |
+| campaign/05-planet-mere | `en-05-planet-mere.png` | `ja-05-planet-mere.png` | problem | header desc "Please select the planet..." 2 lines on header edge | client-wrap+data | header-desc fix; "Select a planet to explore." |
+| campaign/06-mission-map | `en-06-mission-map.png` | `ja-06-mission-map.png` | problem | header desc 2nd line half below the header bar | client-wrap+data | header-desc fix; "Select a mission." |
+| campaign/07-mission-detail | `en-07-mission-detail.png` | `ja-07-mission-detail.png` | problem | mission card + 初回クリア報酬 / 主な報酬 Japanese; header desc 2 lines | layout-label+client-wrap | translate mission_confirmation labels; header-desc fix |
+| campaign/08-rental | `en-08-rental.png` | `ja-08-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| campaign/09-party | `en-09-party.png` | `ja-09-party.png` | problem | パーティ戦闘力, 戻る / キャラクター設定, card labels Japanese | layout-label | "Party Power" / "Back" / "Characters"; card labels |
+| campaign/10-confirm | `en-10-confirm.png` | `ja-10-confirm.png` | problem | same JP labels as 09 behind the dialog | layout-label | as 09 |
+| campaign/61-result | `en-61-result.png` | `ja-61-result.png` | problem | result labels 調査ランク / 獲得調査ポイント / 獲得FOL / 報酬アイテム Japanese | layout-label | translate result.csf labels: Rank / Exploration Points / FOL Gained / Rewards |
+| campaign/62-result | `en-62-result.png` | `ja-62-result.png` | problem | 獲得EXP Japanese on Mission Result | layout-label | translate result.csf reward_exp label: "EXP Gained" |
+| campaign/63-result | `en-63-result.png` | `ja-63-result.png` | problem | header desc 2 lines (as 06) | client-wrap+data | as 06 |
+| campaign/80-map-after-clear | `en-80-map-after-clear.png` | `ja-80-map-after-clear.png` | problem | header desc 2 lines (as 06) | client-wrap+data | as 06 |
+| campaign/81-story-detail | `en-81-story-detail.png` | `ja-81-story-detail.png` | problem | header desc 2 lines (as 06) | client-wrap+data | as 06 |
+| campaign/96-after-story | `en-96-after-story.png` | `ja-96-after-story.png` | problem | header desc 2 lines (as 06) | client-wrap+data | as 06 |
+| campaign/97-map | `en-97-map.png` | `ja-97-map.png` | problem | header desc 2 lines (as 06) | client-wrap+data | as 06 |
+| campaign/84-story | `en-84-story.png` | `ja-84-story.png` | problem | story 1010_030_02 5 lines at full size, 5th on Skip/Auto; E13 never logged a shrink | client-wrap+data | debug E13 (per-entry log); optional shorter story line |
+| campaign/86-skip | `en-86-skip.png` | `ja-86-skip.png` | problem | skip popup スキップしますか？ / いいえ / はい Japanese | layout-label | translate EventBase SkipPopup: "Skip?" / "No" / "Yes" |
+| campaign (other shots) | | | ok | 02-home, 11-battle, 12-battle (enemy name fixed), 13-battle, 60-result, 82-story, 83-story, 85-story | | |
+| coins/30-title | `en-30-title.png` | `ja-30-title.png` | problem | ムービー再生 label + round title buttons Japanese | server+sprite | English master before the title; -en title button art |
+| coins/10-gacha-banner | `en-10-gacha-banner.png` | `ja-10-gacha-banner.png` | problem | "×2500" touches "10-chain Draw"; header desc 2 lines (footnote English: FIXED) | sprite+client-wrap | narrower -en art; header-desc fix |
+| coins/11-birth-confirm | `en-11-birth-confirm.png` | `ja-11-birth-confirm.png` | problem | WORST: question 4 lines overlapping "Born"; table cells shifted; "Delete" for 修正する; ※ note JP | data+layout-label | uimsg_birth_verify 1 line; uimsg_able_use_money 9 cells; "Edit"; shop_dialog1 Text_red |
+| coins/11-birth-dialog | `en-11-birth-dialog.png` | `ja-11-birth-dialog.png` | problem | 8 dense lines; table cells shifted; 年 / 月 / 登録する / ※ note Japanese | data+layout-label | uimsg_please_birth_add_need3; uimsg_able_use_money; translate shop_dialog2 labels |
+| coins/12-coin-shop | `en-12-coin-shop.png` | `ja-12-coin-shop.png` | problem | 閉じる button Japanese | layout-label | shop_menulist Button_close2/Text "Close" |
+| coins/14-result-closed | `en-14-result-closed.png` | `ja-14-result-closed.png` | problem | as 12 (閉じる) | layout-label | as 12 |
+| coins/33-coin-shop-relogin | `en-33-coin-shop-relogin.png` | `ja-33-coin-shop-relogin.png` | problem | as 12 (閉じる) | layout-label | as 12 |
+| coins (other shots) | | | ok | 02-home, 13-purchased, 15-shop-closed, 16-home-stones, 31-home, 32-home-stones-relogin | | |
+| deepspace/04-deepspace | `en-04-deepspace.png` | `ja-04-deepspace.png` | problem | header desc 2 lines, "explore." over 探査率/進行中; badges Japanese | client-wrap+data+sprite | header-desc fix; "Select a sector to explore."; -en badges |
+| deepspace/05-missions | `en-05-missions.png` | `ja-05-missions.png` | problem | header desc 2nd line on edge; 探査率 badge JP; "Des." | client-wrap+data+sprite | as 04; "Desc." |
+| deepspace/06-party | `en-06-party.png` | `ja-06-party.png` | problem | desc 2 lines; bonus help orphan; bonus names 2 lines/clipped under × tab; tiny "Enhancement Condition" | client-wrap+data | shorter name_ds_bonus_* / help; room to the tab; "Requires" |
+| deepspace/07-auto | `en-07-auto.png` | `ja-07-auto.png` | problem | 優先編成選択中 badge JP; bonus list as 06 | sprite+client-wrap+data | -en "Priority" art; as 06 |
+| deepspace/08-confirm | `en-08-confirm.png` | `ja-08-confirm.png` | problem | "Start Exploration" past the right button edge; bonus names 2 lines | data+client-wrap | "Explore" / shrink to button; shorter names |
+| deepspace/09-started | `en-09-started.png` | `ja-09-started.png` | problem | 進行中▶▶ badge, 今すぐ帰還 button JP; header 2nd line | sprite+client-wrap | -en art; header-desc fix |
+| deepspace/10-returned | `en-10-returned.png` | `ja-10-returned.png` | problem | header "explore." over 探査率/進行中; badges JP | client-wrap+sprite | as 04 |
+| deepspace/11-area | `en-11-area.png` | `ja-11-area.png` | problem | 帰還済 badge JP | sprite | -en "Returned" art |
+| deepspace/12-result-items | `en-12-result-items.png` | `ja-12-result-items.png` | problem | "Raise Exploration Rate" reads as an action | data | "Exploration Rate Up:" |
+| deepspace/14-after | `en-14-after.png` | `ja-14-after.png` | problem | as 05 | client-wrap+data+sprite | as 05 |
+| deepspace/18-returned-2 | `en-18-returned-2.png` | `ja-18-returned-2.png` | problem | as 05/11 | client-wrap+data+sprite | as 05/11 |
+| deepspace/20-after-2 | `en-20-after-2.png` | `ja-20-after-2.png` | problem | as 05 | client-wrap+data+sprite | as 05 |
+| deepspace/15-started-2 | `en-15-started-2.png` | `ja-15-started-2.png` | problem | as 09 (進行中 / 今すぐ帰還 JP) | sprite+client-wrap | as 09 |
+| deepspace/22-two-ships | `en-22-two-ships.png` | `ja-22-two-ships.png` | problem | as 09 (進行中 / 今すぐ帰還 JP) | sprite+client-wrap | as 09 |
+| deepspace/16-quick-return | `en-16-quick-return.png` | `ja-16-quick-return.png` | problem | "Hyper-Distance Warp Device" runs through "×0"; prompt 3 lines with orphan | data+client-wrap | "Warp Device" / shrink Text_itemname1; 2-line prompt |
+| deepspace/19-result-2 | `en-19-result-2.png` | `ja-19-result-2.png` | problem | レアボーナス badge JP; "Raise Exploration Rate" | sprite+data | -en art; as 12 |
+| deepspace/21-party-2 | `en-21-party-2.png` | `ja-21-party-2.png` | problem | "Exploration Skill" clipped "Explorati"; bonus names clipped; as 06 | client-wrap+data | no wrap txt_2 / "Skill"; shorter names |
+| deepspace/23-achievements | `en-23-achievements.png` | `ja-23-achievements.png` | problem | "Time LefNon-expiring" overlap; 達成！ badge JP; "200 gems" lowercase; reward shrunk | data+sprite+client-wrap | "No limit"; -en art; "Gems" |
+| deepspace/24-achievements-other | `en-24-achievements-other.png` | `ja-24-achievements-other.png` | problem | as 23 | data+sprite+client-wrap | as 23 |
+| deepspace/25-achievements-received | `en-25-achievements-received.png` | `ja-25-achievements-received.png` | problem | dialog 5 forced lines, "counted." over the first achievement | data | uimsg_achievement_all_get_dialog 2 lines |
+| deepspace (other shots) | | | ok | 03-home, 13-result-characters, 17-quick-returned, 19b-result-2-characters | | |
+| equipment/20-title | `en-20-title.png` | `ja-20-title.png` | problem | ムービー再生 label + round title buttons Japanese | server+sprite | English master before the title; -en title button art |
+| equipment/03-item-menu | `en-03-item-menu.png` | `ja-03-item-menu.png` | problem | "Weapon Customization" shrunk in fixed-size label (minor) | client-wrap+data | "Weapon Custom" |
+| equipment/04-accessories | `en-04-accessories.png` | `ja-04-accessories.png` | problem | tabs 武器 / アクセ, 装備所持 JP; header desc 2 lines | sprite+client-wrap | -en art; header-desc fix |
+| equipment/05-base | `en-05-base.png` | `ja-05-base.png` | problem | panel labels JP; 素材選択 / 強化開始 art JP; "Enhance Weapon" on an accessory; desc 2 lines | layout-label+sprite+data+client-wrap | translate synthesis_powerup labels; -en art; "Enhance" |
+| equipment/06-materials | `en-06-materials.png` | `ja-06-materials.png` | problem | 到達LV / 到達上限解放 / 強化ポイント JP; ベース選択中 overlay JP | layout-label+sprite | translate; -en art |
+| equipment/07-preview | `en-07-preview.png` | `ja-07-preview.png` | problem | same JP panel labels as 05 | layout-label+sprite | as 05 |
+| equipment/08-confirm-inherit | `en-08-confirm-inherit.png` | `ja-08-confirm-inherit.png` | problem | 8 dense lines, no break before the question (JP 5) | data | uimsg_item_WarningInherit_Normal with paragraph break |
+| equipment/09-confirm-lost | `en-09-confirm-lost.png` | `ja-09-confirm-lost.png` | problem | broken at JP width, 4 lines ~20 chars | data | uimsg_item_WarningConfirmation re-break |
+| equipment/10-confirm-rare | `en-10-confirm-rare.png` | `ja-10-confirm-rare.png` | problem | WORST: 5-item list merged into prose, 10 lines over buttons; title 2 lines | data+client-wrap | uimsg_item_confirmation_sell_1 one item per line |
+| equipment/11-inherited | `en-11-inherited.png` | `ja-11-inherited.png` | problem | 強化成功 banner JP | sprite | -en art |
+| equipment/11-result | `en-11-result.png` | `ja-11-result.png` | problem | ロック button JP | sprite | -en art |
+| equipment/11-closed | `en-11-closed.png` | `ja-11-closed.png` | problem | as 05 | layout-label+sprite | as 05 |
+| equipment/12-characters | `en-12-characters.png` | `ja-12-characters.png` | problem | title into desc, desc 2 lines; レンタル / EP2専用 badges JP | client-wrap+sprite | header class fix; -en badges |
+| equipment/13-equipment | `en-13-equipment.png` | `ja-13-equipment.png` | problem | WORST: title "Change Equipment, Skills, and Assists" over the desc; 装備なし / 限界突破 / 設定なし / 自動設定 JP | data+client-wrap+layout-label+sprite | title "Equip / Skills / Assists"; translate labels; -en art |
+| equipment/14-auto-confirm | `en-14-auto-confirm.png` | `ja-14-auto-confirm.png` | problem | "Assistance" vs "Assists" (term) | data | uimsg_party_equip_have_best_equip_v2_2 |
+| equipment/15-auto-equipped | `en-15-auto-equipped.png` | `ja-15-auto-equipped.png` | problem | as 13 | data+client-wrap+layout-label+sprite | as 13 |
+| equipment/22-equipment-after-relogin | `en-22-equipment-after-relogin.png` | `ja-22-equipment-after-relogin.png` | problem | as 13 | data+client-wrap+layout-label+sprite | as 13 |
+| equipment (other shots) | | | ok | 02-home, 21-home | | |
+| events/10-events | `en-10-events.png` | `ja-10-events.png` | problem | イベントメニュー button and event banners Japanese | sprite | -en btn_eventmenu (copy mission_list2); banners known |
+| events/13-daily | `en-13-daily.png` | `ja-13-daily.png` | problem | mission card labels 消費スタミナ / モンスターレベル / ステージ数 Japanese | layout-label | "Stamina Cost" / "Monster Lv" / "Stages" |
+| events/14-daily-detail | `en-14-daily-detail.png` | `ja-14-daily-detail.png` | problem | 初回クリア報酬 / 主な報酬 / 主な出現モンスター + card labels JP | layout-label | translate mission_confirmation subtitles |
+| events/20-daily-party | `en-20-daily-party.png` | `ja-20-daily-party.png` | problem | パーティ戦闘力, 戻る / キャラクター設定 JP; "No Loans" vs "No Loan" | layout-label+data | translate; "No Loan" |
+| events/20-daily-helper | `en-20-daily-helper.png` | `ja-20-daily-helper.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| events/20-daily-after | `en-20-daily-after.png` | `ja-20-daily-after.png` | problem | mission card labels 消費スタミナ / モンスターレベル / ステージ数 Japanese | layout-label | "Stamina Cost" / "Monster Lv" / "Stages" |
+| events/30-event-tab | `en-30-event-tab.png` | `ja-30-event-tab.png` | problem | as 10 (イベントメニュー art, banners) | sprite | as 10 |
+| events/31-first-event | `en-31-first-event.png` | `ja-31-first-event.png` | problem | card stat labels JP (as 13) | layout-label | as 13 |
+| events (other shots) | | | ok | 04-home, 11-materials, 12-materials-end, 20-daily-result | | |
+| favor/10-battle | `en-10-battle.png` | `ja-10-battle.png` | problem | tip art Japanese (Talent-detail card) | sprite | -en tip art |
+| favor/82-result | `en-82-result.png` | `ja-82-result.png` | problem | 獲得EXP Japanese on Mission Result | layout-label | translate result.csf reward_exp label: "EXP Gained" |
+| favor (other shots) | | | ok | 01-title (known), 02-home-level1, 03, 04-levelup, 05-level2, 11-13 battle, 80, 81, 83, 99-home | | |
+| gacha/03-gacha | `en-03-gacha.png` | `ja-03-gacha.png` | problem | header desc "Use gems to summon..." 2 lines | client-wrap+data | header-desc class fix; "Summon characters and weapons." |
+| gacha/04-tab-chara | `en-04-tab-chara.png` | `ja-04-tab-chara.png` | problem | header desc 2 lines (as 03) | client-wrap+data | as 03 |
+| gacha/05-tab-weapon | `en-05-tab-weapon.png` | `ja-05-tab-weapon.png` | problem | header desc 2 lines (as 03) | client-wrap+data | as 03 |
+| gacha/06-tab-event | `en-06-tab-event.png` | `ja-06-tab-event.png` | problem | "Box Draws" tag at/past its plate end (minor) | client-wrap+data | shrink to plate / "Box" |
+| gacha/13-gacha-detail | `en-13-gacha-detail.png` | `ja-13-gacha-detail.png` | problem | "×2500" touches "10-chain Draw" art; JP footnote (stale art, fixed later); desc 2 lines | sprite+client-wrap | narrower -en art; 5-label -en.aif |
+| gacha/14-gacha-confirm | `en-14-gacha-confirm.png` | `ja-14-gacha-confirm.png` | problem | header desc 2 lines (dialog ok) | client-wrap | as 03 |
+| gacha/16-gacha-result | `en-16-gacha-result.png` | `ja-16-gacha-result.png` | problem | "Limit Break" wider than 96 px face icon; desc 2 lines | layout-label+client-wrap | shrink to icon / "Lim. Break" |
+| gacha/17-gacha-closed | `en-17-gacha-closed.png` | `ja-17-gacha-closed.png` | problem | as 13 | sprite+client-wrap | as 13 |
+| gacha (other shots) | | | ok | 02-home, 15-summon, 18-home-end | | |
+| growth/03-character-menu | `en-03-character-menu.png` | `ja-03-character-menu.png` | problem | desc 2 lines; "Change Equipment, Skills, and Assists" ~10px; 大成功率UP! JP | client-wrap+data+sprite | header-desc fix; "Equip / Skills / Assists"; -en badge |
+| growth/04-strengthen-select | `en-04-strengthen-select.png` | `ja-04-strengthen-select.png` | problem | title into desc, desc 2 lines; レンタル / EP2専用 JP | client-wrap+sprite | header class fix; -en badges |
+| growth/05-strengthen | `en-05-strengthen.png` | `ja-05-strengthen.png` | problem | desc 2 lines; 所持 row label JP | client-wrap+layout-label | header-desc fix; "Owned" |
+| growth/06-strengthen-count | `en-06-strengthen-count.png` | `ja-06-strengthen-count.png` | problem | dialog texts + 戻る JP; 獲得EXP / 所持FOL / 必要FOL plates JP | layout-label+sprite | translate pm_powerup_dialog1 labels; -en art |
+| growth/07-strengthen-confirm | `en-07-strengthen-confirm.png` | `ja-07-strengthen-confirm.png` | problem | confirm text + 戻る JP; plates JP | layout-label+sprite | translate; -en art |
+| growth/08-strengthen-anim | `en-08-strengthen-anim.png` | `ja-08-strengthen-anim.png` | problem | 強化成功 banner JP | sprite | -en art |
+| growth/09-strengthen-result | `en-09-strengthen-result.png` | `ja-09-strengthen-result.png` | problem | 限界突破 row label, 閉じる JP | layout-label | "Limit Break" / "Close" |
+| growth/10-evolve-offer | `en-10-evolve-offer.png` | `ja-10-evolve-offer.png` | problem | 6 narrow lines, near the buttons (JP 4) | data | uimsg_next_evolution re-break |
+| growth/11-evolve | `en-11-evolve.png` | `ja-11-evolve.png` | problem | panel labels JP; 詳細 / 進化する art JP; "Augment" vs "Evolve"; talent name with period | layout-label+sprite+data | translate party_evolution labels; -en art; one term |
+| growth/12-evolve-confirm | `en-12-evolve-confirm.png` | `ja-12-evolve-confirm.png` | problem | confirm text, captions, 戻る / 実行 JP; FOL plates JP | layout-label+sprite | translate pm_evolution labels; -en art |
+| growth/13-evolve-result | `en-13-evolve-result.png` | `ja-13-evolve-result.png` | problem | as 09 | layout-label | as 09 |
+| growth/14-evolve-skill | `en-14-evolve-skill.png` | `ja-14-evolve-skill.png` | problem | "Skills:" alone on line 2 (wrap 680); 閉じる JP | client-wrap+data+layout-label | "New Battle Skills learned:"; "Close" |
+| growth/15-evolve-level1 | `en-15-evolve-level1.png` | `ja-15-evolve-level1.png` | problem | "Strengthen" vs "Enhance Status" (term) | data | "Enhance" |
+| growth/16-character-menu | `en-16-character-menu.png` | `ja-16-character-menu.png` | problem | as 03 | client-wrap+data+sprite | as 03 |
+| growth/17-limitbreak-select | `en-17-limitbreak-select.png` | `ja-17-limitbreak-select.png` | problem | as 04 | client-wrap+sprite | as 04 |
+| growth/18-limitbreak | `en-18-limitbreak.png` | `ja-18-limitbreak.png` | problem | desc 3 lines below the bar; select text + 必要素材/必要数/所持 JP; panel art JP | client-wrap+data+layout-label+sprite | shorter uimsg_chara_unlimit_info; translate party_overlimit labels; -en art |
+| growth/19-limitbreak-confirm | `en-19-limitbreak-confirm.png` | `ja-19-limitbreak-confirm.png` | problem | confirm text, 戻る / 実行 JP; plates JP | layout-label+sprite | translate pm_overlimit labels; -en art |
+| growth/20-limitbreak-result | `en-20-limitbreak-result.png` | `ja-20-limitbreak-result.png` | problem | 限界突破 / 閉じる JP; desc 3 lines (as 18) | layout-label+client-wrap | as 09, 18 |
+| growth/21-limitbreak-result2 | `en-21-limitbreak-result2.png` | `ja-21-limitbreak-result2.png` | problem | 限界突破 / 閉じる JP; desc 3 lines (as 18) | layout-label+client-wrap | as 09, 18 |
+| growth/23-custom | `en-23-custom.png` | `ja-23-custom.png` | problem | WORST: title "Weapon Customization" over the desc; tab / mode art JP | data+client-wrap+sprite | title "Weapon Custom"; desc shorter; -en art |
+| growth/24-custom-gears | `en-24-custom-gears.png` | `ja-24-custom-gears.png` | problem | title over desc; "Set Condition" into ★5/"ATK"; coin icon over "Required"; OHS/One-Handed mix; ギア解除 JP | data+client-wrap+sprite | uimsg_setting_condition "Req."; "FOL Cost"; one gear naming; -en art |
+| growth/25-custom-selected | `en-25-custom-selected.png` | `ja-25-custom-selected.png` | problem | 選択中 overlay, セット開始 JP; title/desc as 24 | sprite+data+client-wrap | -en art; as 24 |
+| growth/26-custom-detail | `en-26-custom-detail.png` | `ja-26-custom-detail.png` | problem | WORST: weapon desc 6 lines of 1-3 words over ファクター; factor ~9px; 説明/ファクター/ロック JP | data+client-wrap+layout-label+sprite | item_W01Sw_58 2 lines (family); factor shorter; translate captions |
+| growth/27-custom-confirm | `en-27-custom-confirm.png` | `ja-27-custom-confirm.png` | problem | 6 lines fill the dialog, no blank line | data | uimsg_gear_set_dialog1 with paragraph break |
+| growth/28-custom-done | `en-28-custom-done.png` | `ja-28-custom-done.png` | problem | セット 完了 banner JP | sprite | -en art |
+| growth/30-remove-confirm | `en-30-remove-confirm.png` | `ja-30-remove-confirm.png` | problem | 4 narrow lines (minor) | data | uimsg_gear_slot_remove 2 lines |
+| growth/31-remove-detail | `en-31-remove-detail.png` | `ja-31-remove-detail.png` | problem | as 26 (+ "Confirm Removal" shrunk, readable) | data+client-wrap+layout-label+sprite | as 26 |
+| growth/33-remove-closed | `en-33-remove-closed.png` | `ja-33-remove-closed.png` | problem | as 24 | data+client-wrap+sprite | as 24 |
+| growth/34-custom-top | `en-34-custom-top.png` | `ja-34-custom-top.png` | problem | as 23 | data+client-wrap+sprite | as 23 |
+| growth/35-purify | `en-35-purify.png` | `ja-35-purify.png` | problem | "Expected Gear Value" under "Factor Extraction Rate"; "Materials" into icon; hint 2 lines; art JP | data+client-wrap+sprite | shorter labels; "Optional: pick 1 extra Item type."; -en art |
+| growth/36-purify-material | `en-36-purify-material.png` | `ja-36-purify-material.png` | problem | as 35 | data+client-wrap+sprite | as 35 |
+| growth/37-purify-result | `en-37-purify-result.png` | `ja-37-purify-result.png` | problem | gear help 4 lines touching ファクター, "OHS"; "Set Condition--"; 説明/ファクター/閉じる JP | data+layout-label | uimsg_gear_sword_10_help 2 lines; "Req."; translate captions |
+| growth (other shots) | | | ok | 01-title (known), 02-home, 22-item-menu (minor shrink), 29-custom-customised, 32-remove-done | | |
+| home/00-download-dialog | `en-00-download-dialog.png` | `ja-00-download-dialog.png` | problem | download dialog all Japanese (pre-master) | server | serve the English master before the first download, or accept |
+| home/01-title | `en-01-title.png` | `ja-01-title.png` | problem | ムービー再生 label + round title buttons Japanese | server+sprite | English master before the title; -en title button art |
+| home/02-notice | `en-02-notice.png` | `ja-02-notice.png` | problem | "Hide Today's Updates" 2 lines over footer; "Blue EXP Misisons" typo | layout-label+client-wrap+data | no wrap/shrink NoticeBoard box/Text; override "Blue EXP Missions" |
+| home/03-login-bonus | `en-03-login-bonus.png` | `ja-03-login-bonus.png` | problem | -ログインボーナス- subtitle Japanese | sprite | -en login bonus art |
+| home/10-event | `en-10-event.png` | `ja-10-event.png` | problem | イベントメニュー button and banners JP | sprite | -en btn_eventmenu; banners known |
+| home/11-mission | `en-11-mission.png` | `ja-11-mission.png` | problem | bottom panel 3 lines in 2-line panel; episode header clipped both ends | data+client-wrap | uimsg_episode_one_/_data_not_downloaded shorter |
+| home/12-sphere211 | `en-12-sphere211.png` | `ja-12-sphere211.png` | problem | WRONG: "+10 drops every 1 hits"; Clear Count under "0"; Deployed Count tiny; S-Stamina over 9/9 | data+client-wrap | "%u-hit combo: drops +%u"; "Clear Streak"; "Deployed"; "S.Stam." |
+| home/13-deepspace | `en-13-deepspace.png` | `ja-13-deepspace.png` | problem | header desc "explore." over the 探査率/進行中 tags; tags JP | client-wrap+data+sprite | header-desc fix; "Select a sector to explore."; -en art |
+| home/21-follow | `en-21-follow.png` | `ja-21-follow.png` | problem | button labels start over the left icons; コピー art JP; header desc 2 lines | client-wrap+sprite | left-align after icon; -en art |
+| home/23-recent | `en-23-recent.png` | `ja-23-recent.png` | problem | title and 2-line desc overlap; 変更を確定 art JP | data+client-wrap+sprite | "Recent Players" / "Players you recently played with."; -en art |
+| home/24a-titles-other | `en-24a-titles-other.png` | `ja-24a-titles-other.png` | problem | title desc 2 lines touching "Attained" (minor) | data+client-wrap | "You prefer manual over auto battles" |
+| home/24d-notice | `en-24d-notice.png` | `ja-24d-notice.png` | problem | as 02-notice | layout-label+client-wrap+data | as 02 |
+| home/25-present | `en-25-present.png` | `ja-25-present.png` | problem | プレゼント所持 / 全件取得 JP (art) | sprite | -en presentbox art ("Gifts Held" / "Claim All") |
+| home/28-datasave | `en-28-datasave.png` | `ja-28-datasave.png` | problem | 7 dense lines, no paragraph break | data | uimsg_user_data_saving_end_dialog 2 paragraphs |
+| home/29-stamina | `en-29-stamina.png` | `ja-29-stamina.png` | problem | 5 lines of ~13 chars (JP width) | data | uimsg_full_stamina 2 lines |
+| home/30-character | `en-30-character.png` | `ja-30-character.png` | problem | "Change Equipment, Skills, and Assists" shrunk to ~40%; 大成功率UP! JP; desc 2 lines | data+client-wrap+sprite | "Equip / Skills / Assists"; -en badge |
+| home/31-item | `en-31-item.png` | `ja-31-item.png` | problem | "Weapon Customization" shrunk (readable, minor) | data+client-wrap | "Weapon Custom" |
+| home/33-shop | `en-33-shop.png` | `ja-33-shop.png` | problem | "Expand Follow Slots", "Increase Inventory Slots", "Expand Gear Slots" over their icons | client-wrap+data | left-align after icon; shorter "... Slots+" |
+| home (other shots) | | | ok | 04, 20-menu, 22-follow-search, 24-titles, 24b, 24c, 26-achievements, 27-recommended, 32-gacha, 34-36-other, 40 | | |
+| home-character/*/00-03 (download, title, notice, login bonus) | — | — | problem | as home/00-03 (Hide Today's Updates wrap logged in every role) | server+sprite+layout-label+client-wrap | as home/00-03 |
+| home-character (other shots) | | | ok | */04-home, 10-idle, 11-14 talk lines (64-100% fit, readable), 20-22 Talk Mode, 23-24 2D/3D (4 roles) | | |
+| items/03-locked | `en-03-locked.png` | `ja-03-locked.png` | problem | header desc 2 lines; lock/tab art and 装備所持 JP | client-wrap+sprite | header-desc fix; -en art |
+| items/04-sell-warning | `en-04-sell-warning.png` | `ja-04-sell-warning.png` | problem | WORST: red list 10 lines merged prose over "Proceed?"/buttons; title 2 lines | data+client-wrap | uimsg_item_confirmation_sell_1 one item per line; shorter title |
+| items/05-sold | `en-05-sold.png` | `ja-05-sold.png` | problem | "1200 FOL has / been / obtained." 3 lines | data+client-wrap | " FOL obtained." |
+| items/06-compose | `en-06-compose.png` | `ja-06-compose.png` | problem | synthesis_powerup labels and art JP; desc 2 lines | layout-label+sprite+client-wrap | translate labels; -en art |
+| items/07-composed | `en-07-composed.png` | `ja-07-composed.png` | problem | ロック解除 badge art JP (details text 4 lines ok) | sprite | -en art |
+| items/r04-unlocked | `en-r04-unlocked.png` | `ja-r04-unlocked.png` | problem | as 03 (lock art, 装備所持) | sprite | as 03 |
+| items (other shots) | | | ok | 01-title (known), 02-home, r03-list | | |
+| manual/m04-guide-detail | `en-m04-guide-detail.png` | `ja-m04-guide-detail.png` | problem | ticker runs off both screen edges; detail round buttons JP | client-wrap+data+sprite | shrink tag-mode label to width; shorter ticker row; -en art |
+| manual/m05-status | `en-m05-status.png` | — | problem | "Limit Break" / "Awakenings" run into their icons | client-wrap | shrink to the room before the icon |
+| manual/m07-skill | `en-m07-skill.png` | — | problem | 威力 / 最大ヒット数 / アシストスキル JP; long skill descs 2 small lines | layout-label | "Power" / "Max Hit" / "Assist Skill" |
+| manual/m11-banner | `en-m11-banner.png` | — | problem | "×2500" into "10-chain Draw" (minor) | sprite | narrower -en art |
+| manual/m13-guide | `en-m13-guide.png` | — | problem | ticker runs off both edges (as m04) | client-wrap | as m04 |
+| manual/m14-exchange | `en-m14-exchange.png` | `ja-m14-exchange.png` | problem | row texts wrap at screen edge, clip at row frame; names shrunk; Scenery/Scenic | client-wrap+data | wrap at row frame; one "Scenic Photo" name |
+| manual/m15-exchange-item | `en-m15-exchange-item.png` | `ja-m15-exchange-item.png` | problem | 在庫 JP; "Items Required" over icon; item name under it; "Held:" from x=0 | layout-label+client-wrap | "Stock"; shrink to room; anchor fix |
+| manual/m16-equiplist | `en-m16-equiplist.png` | — | problem | "To Exceed Connect" wider than card; ▼シンボル選択/ロック/メンバー変更, パーティ戦闘力 JP | data+client-wrap+sprite+layout-label | "Exceed Connect"; -en art; "Party Power" |
+| manual/m17-card | `en-m17-card.png` | — | problem | title "Select Characters" into the desc | client-wrap | header class fix |
+| manual (other shots) | | | ok | m06-talent, m12 (rate title FIXED: "Character Draw"; Notice body empty in JA too), m13-odds | | |
+| mastery/03-mastery | `en-03-mastery.png` | `ja-03-mastery.png` | problem | tabs 道場 / 皆伝師弟 JP; desc 2 lines (tight) | sprite+client-wrap+data | -en art; "Pick a dojo or view mastered pairs." |
+| mastery/03a-equipment | `en-03a-equipment.png` | `ja-03a-equipment.png` | problem | title over desc (as equipment/13); 装備なし / 限界突破 / 設定なし / 自動設定 JP | data+client-wrap+layout-label+sprite | as equipment/13 |
+| mastery/03c-role-changed | `en-03c-role-changed.png` | `ja-03c-role-changed.png` | problem | orphan "reset." (JP 2 lines) | data | uimsg_evolution_role_change_done* 2 lines |
+| mastery/03d-attacker | `en-03d-attacker.png` | `ja-03d-attacker.png` | problem | as 03a | data+client-wrap+layout-label+sprite | as 03a |
+| mastery/04-select-master | `en-04-select-master.png` | `ja-04-select-master.png` | problem | desc 3 lines, 3rd over the plates | client-wrap+data | "Choose a master and a disciple." |
+| mastery/05-select-disciple | `en-05-select-disciple.png` | `ja-05-select-disciple.png` | problem | "Midsummer Tika" under portrait; talent desc 4 tiny lines; レンタル tag JP | client-wrap+data+sprite | shrink name; shorter factor; -en art |
+| mastery/06-pair-confirm | `en-06-pair-confirm.png` | `ja-06-pair-confirm.png` | problem | WORST: 7 short lines, last over Close/Confirm | data | uimsg_mastary_dialog0 4 lines |
+| mastery/08-training | `en-08-training.png` | `ja-08-training.png` | problem | 師弟解消 art JP; desc "perform." alone; talent desc tiny | sprite+client-wrap+data | -en art; "Select a training." |
+| mastery/10-medal-confirm | `en-10-medal-confirm.png` | `ja-10-medal-confirm.png` | problem | "Use 1 Mastery Pass Medals?" plural | data | "Use Mastery Pass Medal x%lu?" |
+| mastery/11-full-mastership | `en-11-full-mastership.png` | `ja-11-full-mastership.png` | problem | WORST: gift line 6 lines over the Close button; talent desc tiny | data | uimsg_mastary_dialog11 2 lines |
+| mastery/12-graduated | `en-12-graduated.png` | `ja-12-graduated.png` | problem | tabs 道場 / 皆伝師弟 JP | sprite | -en art |
+| mastery/13-deco | `en-13-deco.png` | `ja-13-deco.png` | problem | deco buttons JP | sprite | -en home_decomode art |
+| mastery/16-deco-adjust | `en-16-deco-adjust.png` | `ja-16-deco-adjust.png` | problem | deco adjust buttons JP | sprite | -en home_decomode art |
+| mastery (other shots) | | | ok | 02-home, 03b-role-select, 07-paired, 09-training-1..4, 14-deco-list (minor), 15-deco-set | | |
+| missions/03-battle-loading | `en-03-battle-loading.png` | `ja-03-battle-loading.png` | problem | tip art JP; English tip 4 lines, 4th on the panel border | sprite+data | -en tip art; nowloading_battle_tips_057 2 lines |
+| missions/a02-result | `en-a02-result.png` | `ja-a02-result.png` | problem | result labels 調査ランク / 獲得調査ポイント / 獲得FOL / 報酬アイテム Japanese | layout-label | translate result.csf labels: Rank / Exploration Points / FOL Gained / Rewards |
+| missions/a03-result | `en-a03-result.png` | `ja-a03-result.png` | problem | 獲得EXP Japanese on Mission Result | layout-label | translate result.csf reward_exp label: "EXP Gained" |
+| missions/c0-stepup-banner | `en-c0-stepup-banner.png` | `ja-c0-stepup-banner.png` | problem | header desc 2 lines; ribbon unreadable; "Bonus!" over おまけつき; ×2500 touches art; banner JP | client-wrap+data+sprite | header-desc fix; "PU guaranteed in N pulls!"; -en art |
+| missions/c1-result | `en-c1-result.png` | `ja-c1-result.png` | problem | 7-line result text over Next; "Limit Break" spills; ガチャ tag JP | data+client-wrap+layout-label+sprite | as battle-gacha/16; shrink icon label |
+| missions/c1-banner-after | `en-c1-banner-after.png` | `ja-c1-banner-after.png` | problem | as c0 (9 more pulls) | client-wrap+data+sprite | as c0 |
+| missions/c2-result | `en-c2-result.png` | `ja-c2-result.png` | problem | as c1-result | data+client-wrap+layout-label | as c1-result |
+| missions/c2-banner-after | `en-c2-banner-after.png` | `ja-c2-banner-after.png` | problem | as c0 (8 more pulls) | client-wrap+data+sprite | as c0 |
+| missions/d0-error-dialog | `en-d0-error-dialog.png` | `ja-d0-error-dialog.png` | problem | "Not enough SP." (stat is Stamina); tip art JP | data+sprite | error_message_text_10004 "Not enough Stamina." |
+| missions (other shots) | | | ok | 02-home, 10-20 battle (enemy names 1 line), a0, a04, a1, b0-home, c1-summon, c2-summon, c9-home-after-stepup | | |
+| party/03-character-menu | `en-03-character-menu.png` | `ja-03-character-menu.png` | problem | "Change Equipment, Skills, and Assists" ~40%; 大成功率UP! JP; desc 2 lines | data+client-wrap+sprite | "Equip / Skills / Assists"; -en badge |
+| party/04-party-top | `en-04-party-top.png` | `ja-04-party-top.png` | problem | "To Exceed Connect" over cards; names over element icon; buttons + パーティ戦闘力 JP; desc 2 lines | data+client-wrap+sprite+layout-label | "Exceed Connect"; name room; -en art; "Party Power" |
+| party/05-member-select | `en-05-member-select.png` | `ja-05-member-select.png` | problem | title into desc, desc 2 lines; パーティ戦闘力 + badges JP | client-wrap+layout-label+sprite | header class fix; "Party Power"; -en badges |
+| party/06-member-changed | `en-06-member-changed.png` | `ja-06-member-changed.png` | problem | as 05 | client-wrap+layout-label+sprite | as 05 |
+| party/09-party-2-changed | `en-09-party-2-changed.png` | `ja-09-party-2-changed.png` | problem | as 05 | client-wrap+layout-label+sprite | as 05 |
+| party/07-party-saved | `en-07-party-saved.png` | `ja-07-party-saved.png` | problem | as 04 | data+client-wrap+sprite+layout-label | as 04 |
+| party/08-party-2 | `en-08-party-2.png` | `ja-08-party-2.png` | problem | as 04 | data+client-wrap+sprite+layout-label | as 04 |
+| party/10-party-2-saved | `en-10-party-2-saved.png` | `ja-10-party-2-saved.png` | problem | as 04 | data+client-wrap+sprite+layout-label | as 04 |
+| party/11-character-menu | `en-11-character-menu.png` | `ja-11-character-menu.png` | problem | as 03 | data+client-wrap+sprite | as 03 |
+| party/12a-favorite-select | `en-12a-favorite-select.png` | `ja-12a-favorite-select.png` | problem | 選択中 overlay + レンタル / EP2専用 badges JP | layout-label+sprite | "Selected"; -en badges |
+| party/14-battle | `en-14-battle.png` | `ja-14-battle.png` | problem | en shot black (transition): not reviewable | - | re-take the shot |
+| party (other shots) | | | ok | 02-home, 12-home, 12b-favorite-changed, 12c-home-new-favorite, 13-battle | | |
+| rental/70-title | `en-70-title.png` | `ja-70-title.png` | problem | ムービー再生 label + round title buttons Japanese | server+sprite | English master before the title; -en title button art |
+| rental/03-detail | `en-03-detail.png` | `ja-03-detail.png` | problem | header desc 2nd line below the bar; card + reward labels JP | client-wrap+data+layout-label | header-desc fix; translate mission_confirmation labels |
+| rental/04-rental | `en-04-rental.png` | `ja-04-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| rental/05-party | `en-05-party.png` | `ja-05-party.png` | problem | パーティ戦闘力, 戻る / キャラクター設定, card labels Japanese | layout-label | "Party Power" / "Back" / "Characters"; card labels |
+| rental/61-result | `en-61-result.png` | `ja-61-result.png` | problem | result labels 調査ランク / 獲得調査ポイント / 獲得FOL / 報酬アイテム Japanese | layout-label | translate result.csf labels: Rank / Exploration Points / FOL Gained / Rewards |
+| rental/62-result-exp | `en-62-result-exp.png` | `ja-62-result-exp.png` | problem | 獲得EXP Japanese on Mission Result | layout-label | translate result.csf reward_exp label: "EXP Gained" |
+| rental/71-rental-bonus | `en-71-rental-bonus.png` | `ja-71-rental-bonus.png` | problem | "1 players borrowed your character." runs into the portrait; plural | data | "Borrowed by %u" + " player(s)." |
+| rental (other shots) | | | ok | 02-home, 06-confirm (JP labels behind as 05), 07-08 battle, 60-result, 72-home | | |
+| settings/10-other-settings | `en-10-other-settings.png` | `ja-10-other-settings.png` | problem | storage setting labels/descs forced to 3-4 lines, touch the next row frames | data | shorter 2-line uimsg_*equipstorage* rows |
+| settings/11-reopened | `en-11-reopened.png` | `ja-11-reopened.png` | problem | as 10 | data | as 10 |
+| settings/21-after-restart | `en-21-after-restart.png` | `ja-21-after-restart.png` | problem | as 10 | data | as 10 |
+| settings/23-after-reset | `en-23-after-reset.png` | `ja-23-after-reset.png` | problem | as 10 | data | as 10 |
+| settings/22-reset-dialog | `en-22-reset-dialog.png` | `ja-22-reset-dialog.png` | problem | prompt 3 short lines (machine replaced GL); 初期設定に戻す art JP | data+sprite | GL wording; -en config_top art |
+| settings/29-planets | `en-29-planets.png` | `ja-29-planets.png` | problem | header desc 2 lines on the header edge | client-wrap+data | "Select a planet to explore." |
+| settings/30-library | `en-30-library.png` | `ja-30-library.png` | problem | メインストーリー / サブストーリー tab art JP | sprite | -en scenario_library art |
+| settings (other shots) | | | ok | 02-home | | |
+| simulator-continue/20-title | `en-20-title.png` | `ja-20-title.png` | problem | ムービー再生 label + round title buttons Japanese | server+sprite | English master before the title; -en title button art |
+| simulator-continue/04-simulator-rental | `en-04-simulator-rental.png` | `ja-04-simulator-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| simulator-continue/05-simulator-party | `en-05-simulator-party.png` | `ja-05-simulator-party.png` | problem | モンスターレベル / ステージ数, パーティ戦闘力, 戻る / キャラクター設定 JP; "No Loans" | layout-label+data | translate labels; "No Loan" |
+| simulator-continue/09-simulator-end | `en-09-simulator-end.png` | `ja-09-simulator-end.png` | problem | 3 short ragged lines (minor) | data | uimsg_training_retire2 2 lines |
+| simulator-continue/10-character-menu-again | `en-10-character-menu-again.png` | `ja-10-character-menu-again.png` | problem | "Change Equipment, Skills, and Assists" ~10px; 大成功率UP! JP | data+client-wrap+sprite | "Equip / Skills / Assists"; -en badge |
+| simulator-continue (other shots) | | | ok | 02-home, 03-character-menu-end, 06, 07, 08-pause, 11-continued, 12-retired, 21-home | | |
+| sphere211/04-home | `en-04-home.png` | `ja-04-home.png` | problem | GAP: rental bonus popup Japanese except the item name | data | add uimsg_sphere211_getting_rental_bonus English |
+| sphere211/04b-rental-bonus | `en-04b-rental-bonus.png` | `ja-04b-rental-bonus.png` | problem | GAP: rental bonus popup Japanese except the item name | data | add uimsg_sphere211_getting_rental_bonus English |
+| sphere211/05-board | `en-05-board.png` | `ja-05-board.png` | problem | WRONG drop bonus; Clear Count / Deployed Count / S Stamina label-value overlaps | data+client-wrap | as sphere211-continue/05-board |
+| sphere211/35-board | `en-35-board.png` | `ja-35-board.png` | problem | WRONG drop bonus; Clear Count / Deployed Count / S Stamina label-value overlaps | data+client-wrap | as sphere211-continue/05-board |
+| sphere211/45-board-after | `en-45-board-after.png` | `ja-45-board-after.png` | problem | WRONG drop bonus; Clear Count / Deployed Count / S Stamina label-value overlaps | data+client-wrap | as sphere211-continue/05-board |
+| sphere211/49-board | `en-49-board.png` | `ja-49-board.png` | problem | WRONG drop bonus; Clear Count / Deployed Count / S Stamina label-value overlaps | data+client-wrap | as sphere211-continue/05-board |
+| sphere211/60-goal | `en-60-goal.png` | `ja-60-goal.png` | problem | WRONG drop bonus; Clear Count / Deployed Count / S Stamina label-value overlaps | data+client-wrap | as sphere211-continue/05-board |
+| sphere211/66-floor2 | `en-66-floor2.png` | `ja-66-floor2.png` | problem | WRONG drop bonus; Clear Count / Deployed Count / S Stamina label-value overlaps | data+client-wrap | as sphere211-continue/05-board |
+| sphere211/70-board-after | `en-70-board-after.png` | `ja-70-board-after.png` | problem | WRONG drop bonus; Clear Count / Deployed Count / S Stamina label-value overlaps | data+client-wrap | as sphere211-continue/05-board |
+| sphere211/10-cell1-detail | `en-10-cell1-detail.png` | `ja-10-cell1-detail.png` | problem | mission detail labels + シングルプレイ開始 / 戻る JP; "Stamina Consumed" tiny | layout-label+data+client-wrap | translate mission_confirmation labels |
+| sphere211/10-cell1-rental | `en-10-cell1-rental.png` | `ja-10-cell1-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| sphere211/10-cell1-party | `en-10-cell1-party.png` | `ja-10-cell1-party.png` | problem | "Number of Depl70/73 Characters戦闘力"; 3 buttons overflow; パーティ戦闘力 JP | data+client-wrap+layout-label | as sphere211-continue/06-rental-party |
+| sphere211/20-cell2-detail | `en-20-cell2-detail.png` | `ja-20-cell2-detail.png` | problem | mission detail labels + シングルプレイ開始 / 戻る JP; "Stamina Consumed" tiny | layout-label+data+client-wrap | translate mission_confirmation labels |
+| sphere211/20-cell2-rental | `en-20-cell2-rental.png` | `ja-20-cell2-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| sphere211/20-cell2-party | `en-20-cell2-party.png` | `ja-20-cell2-party.png` | problem | "Number of Depl70/73 Characters戦闘力"; 3 buttons overflow; パーティ戦闘力 JP | data+client-wrap+layout-label | as sphere211-continue/06-rental-party |
+| sphere211/30-cell3-detail | `en-30-cell3-detail.png` | `ja-30-cell3-detail.png` | problem | mission detail labels + シングルプレイ開始 / 戻る JP; "Stamina Consumed" tiny | layout-label+data+client-wrap | translate mission_confirmation labels |
+| sphere211/30-cell3-rental | `en-30-cell3-rental.png` | `ja-30-cell3-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| sphere211/30-cell3-party | `en-30-cell3-party.png` | `ja-30-cell3-party.png` | problem | "Number of Depl70/73 Characters戦闘力"; 3 buttons overflow; パーティ戦闘力 JP | data+client-wrap+layout-label | as sphere211-continue/06-rental-party |
+| sphere211/40-cell6-detail | `en-40-cell6-detail.png` | `ja-40-cell6-detail.png` | problem | mission detail labels + シングルプレイ開始 / 戻る JP; "Stamina Consumed" tiny | layout-label+data+client-wrap | translate mission_confirmation labels |
+| sphere211/40-cell6-rental | `en-40-cell6-rental.png` | `ja-40-cell6-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| sphere211/40-cell6-party | `en-40-cell6-party.png` | `ja-40-cell6-party.png` | problem | "Number of Depl70/73 Characters戦闘力"; 3 buttons overflow; パーティ戦闘力 JP | data+client-wrap+layout-label | as sphere211-continue/06-rental-party |
+| sphere211/50-boss-detail | `en-50-boss-detail.png` | `ja-50-boss-detail.png` | problem | mission detail labels + シングルプレイ開始 / 戻る JP; "Stamina Consumed" tiny | layout-label+data+client-wrap | translate mission_confirmation labels |
+| sphere211/50-boss-rental | `en-50-boss-rental.png` | `ja-50-boss-rental.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| sphere211/50-boss-party | `en-50-boss-party.png` | `ja-50-boss-party.png` | problem | "Number of Depl70/73 Characters戦闘力"; 3 buttons overflow; パーティ戦闘力 JP | data+client-wrap+layout-label | as sphere211-continue/06-rental-party |
+| sphere211/15-heal-items | `en-15-heal-items.png` | `ja-15-heal-items.png` | problem | title + 所持 JP; "Sphere Stamina" vs "S Stamina" (minor) | layout-label+data | "Select an item to use." / "Owned" |
+| sphere211/15-heal | `en-15-heal.png` | `ja-15-heal.png` | problem | "recover" alone; 現在のスタミナ / 回復後のスタミナ / 決定 JP | data+client-wrap+layout-label | as sphere211-continue/09-heal |
+| sphere211/15-healed | `en-15-healed.png` | `ja-15-healed.png` | problem | done dialog all JP | layout-label | translate shop_stamina2 labels |
+| sphere211/40-cell6-result | `en-40-cell6-result.png` | `ja-40-cell6-result.png` | problem | 調査ランク / 獲得調査ポイント / 獲得FOL JP; 初回クリア badge JP | layout-label+sprite | translate result_sphere211 labels; -en first_badge |
+| sphere211/45-return-dialog | `en-45-return-dialog.png` | `ja-45-return-dialog.png` | problem | rate list merged into prose, panel full; "Reset" | data | uimsg_sphere211_return_dialog one rate per line |
+| sphere211/70-return-dialog | `en-70-return-dialog.png` | `ja-70-return-dialog.png` | problem | rate list merged into prose, panel full; "Reset" | data | uimsg_sphere211_return_dialog one rate per line |
+| sphere211/45-returned | `en-45-returned.png` | `ja-45-returned.png` | problem | sentence split after "All", stray capitals (minor) | data | uimsg_sphere211_return_finished |
+| sphere211/70-returned | `en-70-returned.png` | `ja-70-returned.png` | problem | sentence split after "All", stray capitals (minor) | data | uimsg_sphere211_return_finished |
+| sphere211/45-treasure-data | `en-45-treasure-data.png` | `ja-45-treasure-data.png` | problem | section header art スフィア211 / 解析するトレジャーデータ / 解析結果 JP | sprite | -en result_tbox title_logo art |
+| sphere211/70-treasure-data | `en-70-treasure-data.png` | `ja-70-treasure-data.png` | problem | section header art スフィア211 / 解析するトレジャーデータ / 解析結果 JP | sprite | -en result_tbox title_logo art |
+| sphere211/45-treasure-items | `en-45-treasure-items.png` | `ja-45-treasure-items.png` | problem | section header art トレジャーデータ / 獲得アイテム JP | sprite | -en result_tbox title_logo art |
+| sphere211/70-treasure-items | `en-70-treasure-items.png` | `ja-70-treasure-items.png` | problem | section header art トレジャーデータ / 獲得アイテム JP | sprite | -en result_tbox title_logo art |
+| sphere211/50-boss-battle | `en-50-boss-battle.png` | `ja-50-boss-battle.png` | problem | en shot black (transition): not reviewable | - | re-take the shot |
+| sphere211/62-next-floor | `en-62-next-floor.png` | `ja-62-next-floor.png` | problem | question + warning as 5-line prose | data | uimsg_sphere211_next_floor_confirm with blank line |
+| sphere211/63-floor-result | `en-63-floor-result.png` | `ja-63-floor-result.png` | problem | section header art フロアリザルト / 獲得トレジャーデータ / クリア報酬 JP | sprite | -en sphere211_result_floor art |
+| sphere211/64-floor-select | `en-64-floor-select.png` | `ja-64-floor-select.png` | problem | "Max Transfer+Floor"; "To Selected Floor" over button; 4-line annotation, 3 words for 転移; header art JP | data+client-wrap+sprite | "Max Floor"; "Go to Floor"; one term "Warp LV"; -en art |
+| sphere211/64b-reroll-confirm | `en-64b-reroll-confirm.png` | `ja-64b-reroll-confirm.png` | problem | ragged 3 lines (minor) | data | "Use %s\nto reroll the floors?" |
+| sphere211/64c-rerolled | `en-64c-rerolled.png` | `ja-64c-rerolled.png` | problem | as 64-floor-select | data+client-wrap+sprite | as 64 |
+| sphere211/65-confirm | `en-65-confirm.png` | `ja-65-confirm.png` | problem | "sure?" alone (minor) | data | uimsg_sphere211_select_next_floor_confirm 3 lines |
+| sphere211 (other shots) | | | ok | 04c-home, 10/20/30/40-cell battle, 10/20/30-cell result, 50-boss-result | | |
+| sphere211-continue/04-home | `en-04-home.png` | `ja-04-home.png` | problem | GAP: rental bonus popup Japanese except the item name | data | add uimsg_sphere211_getting_rental_bonus English |
+| sphere211-continue/04b-rental-bonus | `en-04b-rental-bonus.png` | `ja-04b-rental-bonus.png` | problem | GAP: rental bonus popup Japanese except the item name | data | add uimsg_sphere211_getting_rental_bonus English |
+| sphere211-continue/05-board | `en-05-board.png` | `ja-05-board.png` | problem | WRONG: "+10 drops every 1 hits"; label/value overlaps; "Records" art vs "Achievements" | data+client-wrap+sprite | "%u-hit combo: drops +%u"; short labels; -en art |
+| sphere211-continue/06-rental-list | `en-06-rental-list.png` | `ja-06-rental-list.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| sphere211-continue/06-rental-party | `en-06-rental-party.png` | `ja-06-rental-party.png` | problem | "Number of Depl73/73 Characters戦闘力"; 3 buttons overflow; tiny "Stamina Consumed"; JP labels | data+client-wrap+layout-label | "Deployable"; shorter/shrink buttons; translate labels |
+| sphere211-continue/06-party | `en-06-party.png` | `ja-06-party.png` | problem | as 06-rental-party | data+client-wrap+layout-label | as 06-rental-party |
+| sphere211-continue/06-lose-detail | `en-06-lose-detail.png` | `ja-06-lose-detail.png` | problem | 主な報酬 / 主な出現モンスター / シングルプレイ開始 / 戻る JP | layout-label | translate mission_confirmation labels |
+| sphere211-continue/08-board | `en-08-board.png` | `ja-08-board.png` | problem | as 05-board | data+client-wrap+sprite | as 05 |
+| sphere211-continue/09-heal-items | `en-09-heal-items.png` | `ja-09-heal-items.png` | problem | title 使用するアイテムを... and 所持 JP | layout-label | "Select an item to use." / "Owned" |
+| sphere211-continue/09-heal | `en-09-heal.png` | `ja-09-heal.png` | problem | "recover" alone on line 2; 現在のスタミナ / 回復後のスタミナ / 決定 JP | data+client-wrap+layout-label | "Use %s\nto recover %d Stamina."; translate shop_stamina |
+| sphere211-continue/09-healed | `en-09-healed.png` | `ja-09-healed.png` | problem | done dialog all JP | layout-label | translate shop_stamina2 labels |
+| sphere211-continue/10-achievements-other | `en-10-achievements-other.png` | `ja-10-achievements-other.png` | problem | "Time LefNon-expiring"; summon row 3 lines in 2-line slot | data+client-wrap | "No limit"; message_ac_ind_05 shorter |
+| sphere211-continue/11-decline-detail | `en-11-decline-detail.png` | `ja-11-decline-detail.png` | problem | as 06-lose-detail | layout-label | as 06-lose-detail |
+| sphere211-continue/11-decline-party | `en-11-decline-party.png` | `ja-11-decline-party.png` | problem | as 06-rental-party | data+client-wrap+layout-label | as 06-rental-party |
+| sphere211-continue/12-declined | `en-12-declined.png` | `ja-12-declined.png` | problem | as 05-board | data+client-wrap+sprite | as 05-board |
+| sphere211-continue/12-board | `en-12-board.png` | `ja-12-board.png` | problem | as 05-board | data+client-wrap+sprite | as 05-board |
+| sphere211-continue (other shots) | | | ok | 04c-home, 07-continued, 10-achievements-daily/-weekly/-event | | |
+| stamps/03-stamps-menu | `en-03-stamps-menu.png` | `ja-03-stamps-menu.png` | problem | header desc 2 lines on the header edge | client-wrap+data | header-desc fix |
+| stamps/07-back | `en-07-back.png` | `ja-07-back.png` | problem | header desc 2 lines on the header edge | client-wrap+data | header-desc fix |
+| stamps/r03-stamps-menu | `en-r03-stamps-menu.png` | `ja-r03-stamps-menu.png` | problem | header desc 2 lines on the header edge | client-wrap+data | header-desc fix |
+| stamps/r06-back | `en-r06-back.png` | — | problem | header desc 2 lines on the header edge | client-wrap+data | header-desc fix |
+| stamps/03-stamps | `en-03-stamps.png` | `ja-03-stamps.png` | problem | stamp pictures carry Japanese lettering (low priority) | sprite | accept or -en stamp art |
+| stamps (other shots) | | | ok | 02-home, 04-help-on-page1, 05-page4, 06-rush-on-page4, r03-stamps, r04-page4-kept, r05-rush-on-page3 | | |
+| storage/03-item-menu | `en-03-item-menu.png` | `ja-03-item-menu.png` | problem | storage buttons shrunk to ~10 px in fixed-size labels | data+client-wrap | shorter uimsg_itemmenu_*equipstorage* |
+| storage/04-deposit | `en-04-deposit.png` | `ja-04-deposit.png` | problem | "Inventory Storage" runs into its count; desc 2 lines; tab/button art JP | data+client-wrap+sprite | "Stored"; "Select items to store."; -en art |
+| storage/05-deposit-confirm | `en-05-deposit-confirm.png` | `ja-05-deposit-confirm.png` | problem | 3 lines (fits); footer overlap as 04 | data+client-wrap | as 04 |
+| storage/06-deposited | `en-06-deposited.png` | `ja-06-deposited.png` | problem | "storage." alone on line 2 (wrap 680) | data+client-wrap | "Equipment moved to storage." |
+| storage/07-withdraw | `en-07-withdraw.png` | `ja-07-withdraw.png` | problem | WORST: title "Remove from Storage" over desc; footer overlap; art JP | data+client-wrap+sprite | "Withdraw"; "Select items to take out." |
+| storage/08-withdrawn | `en-08-withdrawn.png` | `ja-08-withdrawn.png` | problem | "storage." alone; title/desc overlap | data+client-wrap | "Equipment taken out of storage."; as 07 |
+| storage/09-sell-confirm | `en-09-sell-confirm.png` | `ja-09-sell-confirm.png` | problem | desc 2 lines; title touches desc; "Sell For:" icon (minor) | data+client-wrap | "Sell unneeded items for FOL." |
+| storage/10-sell-warning | `en-10-sell-warning.png` | `ja-10-sell-warning.png` | problem | WORST: red list 10 lines merged prose over buttons; title 2 lines; 選択中 JP | data+client-wrap+sprite | one item per line; shorter title; -en overlay |
+| storage/11-sold | `en-11-sold.png` | `ja-11-sold.png` | problem | "1200 FOL has / been / obtained." 3 lines | data+client-wrap | " FOL obtained." |
+| storage/12-presents | `en-12-presents.png` | `ja-12-presents.png` | problem | プレゼント所持 / 全件取得 JP | sprite | -en presentbox art |
+| storage/13-received | `en-13-received.png` | `ja-13-received.png` | problem | 以下のプレゼントを取得しました / 閉じる JP | layout-label | translate presentbox_dialog3 labels |
+| storage/14-item-menu | `en-14-item-menu.png` | `ja-14-item-menu.png` | problem | as 03 | data+client-wrap | as 03 |
+| storage/16-back | `en-16-back.png` | `ja-16-back.png` | problem | as 03 | data+client-wrap | as 03 |
+| storage/r03-item-menu | `en-r03-item-menu.png` | `ja-r03-item-menu.png` | problem | as 03 | data+client-wrap | as 03 |
+| storage/15-one-time | `en-15-one-time.png` | `ja-15-one-time.png` | problem | title "Retrieve from Storage" over desc; does not say Temporary | data+client-wrap | "Temp. Storage"; "Select items to take out." |
+| storage/r04-storage | `en-r04-storage.png` | `ja-r04-storage.png` | problem | as 07 + footer overlap + art | data+client-wrap+sprite | as 07, 04 |
+| storage/r05-one-time | `en-r05-one-time.png` | `ja-r05-one-time.png` | problem | as 15 | data+client-wrap | as 15 |
+| storage/r06-count | `en-r06-count.png` | `ja-r06-count.png` | problem | 選択中 overlay JP; title/desc as 15 | sprite+data+client-wrap | -en art; as 15 |
+| storage/r07-confirm | `en-r07-confirm.png` | `ja-r07-confirm.png` | problem | uneven 3 lines (minor); title/desc as 15 | data+client-wrap | uimsg_item_dialog_gacha_equipstorage_out |
+| storage/r08-taken | `en-r08-taken.png` | `ja-r08-taken.png` | problem | title/desc overlap as 15 (text fits) | data+client-wrap | as 15 |
+| storage/r09-empty | `en-r09-empty.png` | `ja-r09-empty.png` | problem | title/desc overlap as 15 (text fits) | data+client-wrap | as 15 |
+| storage (other shots) | | | ok | 01-title (known), 02-home | | |
+| tower/05-extra-dungeon | `en-05-extra-dungeon.png` | `ja-05-extra-dungeon.png` | problem | desc "Please select an episode. (Temp)" 2 lines; banner art JP | data+client-wrap+sprite | "Select an episode."; -en banners |
+| tower/06-floors | `en-06-floors.png` | `ja-06-floors.png` | problem | title into desc; desc 2 lines; floor banners + イベントメニュー JP | data+client-wrap+sprite | "Pick a floor (solo only)."; header class fix; -en art |
+| tower/07-area | `en-07-area.png` | `ja-07-area.png` | problem | title over desc; コンティニュー不可 / モンスターレベル / ステージ数 JP | client-wrap+layout-label | header class fix; translate card labels |
+| tower/08-detail | `en-08-detail.png` | `ja-08-detail.png` | problem | 初回クリア報酬 / 主な報酬 / 主な出現モンスター + card labels JP | layout-label | translate mission_confirmation labels |
+| tower/09-helper | `en-09-helper.png` | `ja-09-helper.png` | problem | title "Character on Loan" into desc; desc wraps ("loan." alone); 最終ログイン Japanese | client-wrap+layout-label+data | header-desc class fix; "Pick a loan character."; "Last Login" |
+| tower/10-party | `en-10-party.png` | `ja-10-party.png` | problem | パーティ戦闘力, 戻る / キャラクター設定, card labels JP | layout-label | "Party Power" / "Back" / "Characters" |
+| tower/14-area-after | `en-14-area-after.png` | `ja-14-area-after.png` | problem | as 07 | client-wrap+layout-label | as 07 |
+| tower/15-floors-again | `en-15-floors-again.png` | `ja-15-floors-again.png` | problem | as 06 | data+client-wrap+sprite | as 06 |
+| tower/16-back | `en-16-back.png` | `ja-16-back.png` | problem | as 05 | data+client-wrap+sprite | as 05 |
+| tower (other shots) | | | ok | 04-home, 11-confirm, 12-battle, 13-result | | |
+
+
 ## 8. English UI art
 
 Implemented 2026-10-07 (agent `en-art`, PLAN-english.md step E9, decision Q4). The images whose Japanese text is part of the picture (section 1.3) get English copies served as `-en` members; the client with `--lang en` picks them up through `FileExistLanguage` (6.3) and keeps the Japanese image for every file without one.

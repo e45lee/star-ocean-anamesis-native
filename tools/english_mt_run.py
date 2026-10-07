@@ -152,14 +152,25 @@ def gpu_free_mib():
 
 
 def game_clients():
-    """Game clients holding a slot of the pool (control/soaslot.py status: "slot N: held ..."): every
-    gate, session and hand-started client takes one. 0 when the pool can't be read."""
+    """Game clients on the GPU holding a slot of the pool (control/soaslot.py status: "slot N: held
+    ... by pid P"): every gate, session and hand-started client takes one. A holder whose
+    environment selects llvmpipe (SOA_SLOT_SOFTWARE_GL=1 or GALLIUM_DRIVER=llvmpipe:
+    docs/testing-software-gl.md) doesn't count. 0 when the pool can't be read."""
     try:
         out = subprocess.run([sys.executable, str(REPO / "control/soaslot.py"), "status"],
                              capture_output=True, text=True, timeout=60).stdout
-        return len(re.findall(r"^\s*slot \d+: held", out, re.M))
     except Exception:
         return 0
+    n = 0
+    for pid in re.findall(r"^\s*slot \d+: held .*?by pid (\d+)", out, re.M):
+        try:
+            env = open(f"/proc/{pid}/environ", "rb").read().split(b"\0")
+        except OSError:
+            env = []
+        if b"SOA_SLOT_SOFTWARE_GL=1" in env or b"GALLIUM_DRIVER=llvmpipe" in env:
+            continue
+        n += 1
+    return n
 
 
 YIELD_TO_CLIENTS = True  # --share-gpu turns it off

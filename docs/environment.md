@@ -138,7 +138,7 @@ them without a warning:
 | `SOA`, `SOA_EMU`, `SOA_SERVER` | tests/diff, `selftest_resilient.sh` | the binaries |
 | `SOA_SLOTS`, `SOA_SLOT_DIR`, `SOA_SLOT_STAGGER`, `SOA_SLOT_MIN_FREE_GB`, `SOA_SLOT_HELD` | `control/soaslot.py` / `.sh` | the machine-wide game slot pool (`control/README.md`) |
 | `SOA_SLOT_SOFTWARE_GL` | `control/soaslot.py` / `.sh` (`tools/gate.sh --software-gl` sets it) | opt-in, default off: the clients the pool starts render on Mesa's llvmpipe (`GALLIUM_DRIVER=llvmpipe LIBGL_ALWAYS_SOFTWARE=1`, and `LP_NUM_THREADS=4` unless set, in their environment) instead of the host GPU ([`testing-software-gl.md`](testing-software-gl.md)) |
-| `SOA_LIB`, `SOA_V370`, `SOA_V380`, `SOA_GHIDRA_MCP_PROJECT` | `tools/common.sh`, the decompile scripts, `scripts/ghidra-mcp.sh` | the library and Ghidra project |
+| `SOA_LIB`, `SOA_V370`, `SOA_V380`, `SOA_GHIDRA_MCP_PROJECT` | `tools/common.sh`, the decompile scripts, `scripts/ghidra-mcp.sh` | the library and Ghidra project | <!-- 380-ok: the decompile tools' switch for the viewer's lib -->
 | `SOA_TEST_DROP_TAP` | `control/soadrive/flows/mission.py` (`start_mission`) | test switch: `mission-start`, `mission-decide`, `deepspace-start`, `deepspace-decide` (comma-separated) drop the first such tap of a run, the forced lost tap that shows the retry ([control/README.md](../control/README.md)) |
 | `EMU_DATA`, `SERVER_ARGS`, `KEEP_DATA`, `SMOKE_CLOCK`, `SMOKE_KEEP_DATA`, `PER_RUN_TIMEOUT`, `FLOW_*`, `RENTAL_*` | the emulator scripts, smoke, flowctl, rental | per-script knobs (their headers) |
 

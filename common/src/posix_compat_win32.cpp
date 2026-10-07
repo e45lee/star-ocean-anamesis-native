@@ -1,12 +1,14 @@
-// common/win32/posix_compat.h's functions (Windows only).
+// common/win32/posix_compat.h's functions, and soa/install.h's exe_path_win32 (Windows only).
 #ifdef _WIN32
-#include "../win32/posix_compat.h"
+// (win32/posix_compat.h is force-included: common/CMakeLists.txt)
 
 #include <ctype.h>
 #include <errno.h>
 #include <io.h>
 #include <string.h>
 #include <windows.h>
+
+#include "soa/install.h"
 
 #include <stddef.h>
 
@@ -163,9 +165,16 @@ extern "C" char* soa_mkdtemp(char* tmpl) {
 // run from WSL, a script or a test harness then showed its log only in 4 KB pieces and at exit. The
 // session drivers wait on log lines (the runtime's "I/perf" line every 10 s), so a quiet stretch,
 // such as the client's data check after a download, read as a hung client ("no frame-rate line
-// for 120s"; UCRT, llvm-mingw's runtime, doesn't buffer stderr). Every program that links
+// for 120s"). Every program that links
 // soa_compat gets this before main().
 namespace {
 __attribute__((constructor(101))) void unbuffer_stderr() { setvbuf(stderr, nullptr, _IONBF, 0); }
 }  // namespace
+// soa/install.h: the running executable's path, "" when unknown.
+std::string soa::install::exe_path_win32() {
+    std::vector<wchar_t> buf(32768);
+    DWORD n = GetModuleFileNameW(nullptr, buf.data(), (DWORD)buf.size());
+    if (n == 0 || n >= buf.size()) return "";
+    return std::filesystem::path(std::wstring(buf.data(), n)).string();
+}
 #endif

@@ -13,7 +13,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 Type recovery a wave ahead of the code (port/REBUILD-QUEUE.md: yayoi is wave 4). Layouts are proven by
 [`yayoi_layout_test.cpp`](yayoi_layout_test.cpp) (`soa --selftest yayoi/`, 3 tests, all pass). Scope:
 what executes in the profiled flows (132 of 2,744 functions); the driver first, then the network objects
-the offline client keeps running.
+the client keeps running.
 
 | Class (guest) | Guest size | Found from | Proven by (yayoi/layout-...) | Status |
 |---|---|---|---|---|

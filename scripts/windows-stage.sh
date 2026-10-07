@@ -129,11 +129,7 @@ done < <(awk -F'\t' '$1 == "file" { print $2 }' "$plan" | sort -u)
 while IFS=$'\t' read -r kind root rel; do
   [ "$kind" = mirror ] || continue
   mkdir -p "$dest/$(dirname "$rel")"
-  for try in 1 2 3; do
-    rsync -aL --delete --modify-window=1 "$root/$rel" "$dest/$(dirname "$rel")/" && break
-    [ "$try" = 3 ] && { echo "FAIL: windows-stage.sh: rsync failed 3 times ($rel)" >&2; exit 1; }
-    echo "windows-stage.sh: rsync failed (try $try of 3): retrying in 20 s" >&2; sleep 20
-  done
+  stage_copy "$(dirname "$rel")/" -aL --delete "$root/$rel" "$dest/$(dirname "$rel")/"
   if [ "$rel" = work/phone-3.7.0 ]; then
     (cd "$dest/work/phone-3.7.0" && rm -f files.txt && find data -type f -printf '%s %T@ %p\n' | LC_ALL=C sort -k3 > files.txt)
   fi

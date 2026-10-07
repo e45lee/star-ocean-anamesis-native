@@ -83,34 +83,27 @@ if(SOA_NEED_RUNTIME)  # the JIT host runtime and what links it (not for a server
   set(DYNARMIC_TESTS OFF CACHE BOOL "" FORCE)
   set(DYNARMIC_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(dynarmic)
-  if(WIN32 AND TARGET fmt)
-    # dynarmic's bundled fmt 10.1 and llvm-mingw's clang (23): its compile-time format-string
-    # checks are rejected ("call to consteval function ... is not a constant expression"); run
-    # them at run time instead.
-    target_compile_definitions(fmt PUBLIC FMT_CONSTEVAL=)
-    # its <fmt/ostream.h> wants libc++'s internal <__std_stream> on Windows: cmake/dynarmic-win
-    target_include_directories(fmt BEFORE PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/dynarmic-win>)
-    # dynarmic's ir_emitter.h uses std::vector without <vector> (libstdc++ includes it on the way);
-    # mcl's lift_sequence for this clang (cmake/dynarmic-win/mcl_lift_sequence.h)
-    target_compile_options(dynarmic PRIVATE -include vector "SHELL:-include ${CMAKE_CURRENT_LIST_DIR}/dynarmic-win/mcl_lift_sequence.h")
-  endif()
 endif()
 
 # ---- IJG libjpeg 9b, the game's version ("9b 17-Jan-2016"): port/src/native/lib_jpeg decodes
-# bit-exactly with it (9e, used before, is what Ubuntu's libjpeg9 package ships)
-FetchContent_Declare(jpeg9
-  URL https://www.ijg.org/files/jpegsrc.v9b.tar.gz
-  URL_HASH SHA256=566241ad815df935390b341a5d3d15a73a4000e5aab40c58505324c2855cbbb8
-  SOURCE_SUBDIR no-cmake)  # the tarball has no CMakeLists.txt: only unpack it; cmake/libjpeg9/ builds it
-FetchContent_MakeAvailable(jpeg9)
-set(JPEG9_SOURCE_DIR ${jpeg9_SOURCE_DIR})
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libjpeg9 ${jpeg9_BINARY_DIR} EXCLUDE_FROM_ALL)
+# bit-exactly with it (9e, used before, is what Ubuntu's libjpeg9 package ships); soa and aif2png only
+if(SOA_BUILD_PORT OR SOA_BUILD_TOOLS)
+  FetchContent_Declare(jpeg9
+    URL https://www.ijg.org/files/jpegsrc.v9b.tar.gz
+    URL_HASH SHA256=566241ad815df935390b341a5d3d15a73a4000e5aab40c58505324c2855cbbb8
+    SOURCE_SUBDIR no-cmake)  # the tarball has no CMakeLists.txt: only unpack it; cmake/libjpeg9/ builds it
+  FetchContent_MakeAvailable(jpeg9)
+  set(JPEG9_SOURCE_DIR ${jpeg9_SOURCE_DIR})
+  add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libjpeg9 ${jpeg9_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
-# ---- zstd 1.3.4, the game's (port/src/native/lib_zstd: byte-exact with the guest, errors included)
-FetchContent_Declare(zstd134
-  URL https://github.com/facebook/zstd/archive/refs/tags/v1.3.4.tar.gz
-  URL_HASH SHA256=92e41b6e8dd26bbd46248e8aa1d86f1551bc221a796277ae9362954f26d605a9
-  SOURCE_SUBDIR no-cmake)  # only unpack it; cmake/zstd134/ builds the library
-FetchContent_MakeAvailable(zstd134)
-set(ZSTD134_SOURCE_DIR ${zstd134_SOURCE_DIR})
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/zstd134 ${zstd134_BINARY_DIR} EXCLUDE_FROM_ALL)
+# ---- zstd 1.3.4, the game's (port/src/native/lib_zstd: byte-exact with the guest, errors included); soa only
+if(SOA_BUILD_PORT)
+  FetchContent_Declare(zstd134
+    URL https://github.com/facebook/zstd/archive/refs/tags/v1.3.4.tar.gz
+    URL_HASH SHA256=92e41b6e8dd26bbd46248e8aa1d86f1551bc221a796277ae9362954f26d605a9
+    SOURCE_SUBDIR no-cmake)  # only unpack it; cmake/zstd134/ builds the library
+  FetchContent_MakeAvailable(zstd134)
+  set(ZSTD134_SOURCE_DIR ${zstd134_SOURCE_DIR})
+  add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/zstd134 ${zstd134_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()

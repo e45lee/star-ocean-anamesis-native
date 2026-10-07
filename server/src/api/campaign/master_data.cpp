@@ -35,15 +35,14 @@ void query(sqlite3* db, const char* sql, F&& f) {
 // (d) a file below this size isn't a master DB (an un-fetched git-lfs pointer, say).
 constexpr long kMinMasterBytes = 1000000;
 
-// The master DB the server reads: --campaign-master-db, else the decrypted 3.7.0 DB, else the offline
-// build's (the campaign tables are identical in both; a last resort when the 3.7.0 DB is missing).
+// The master DB the server reads: --campaign-master-db, else the server's master, else the repository's
+// decrypted 3.7.0 DB.
 sqlite3* open_master() {
     std::vector<std::string> paths;
     if (!config().campaign_master_db.empty()) paths.push_back(config().campaign_master_db);
     // the server's master (--master, the repo's, else derived: soaserver/master_source.h)
     if (std::string m = master_source::resolve(); !m.empty()) paths.push_back(m);
-    for (const char* p : {"data/basmaster-3.7.0.sqlite3", "data/basmaster-3.8.0.sqlite3"})  // 380-ok: fallback
-        if (std::string f = find_repo_file(p); !f.empty()) paths.push_back(f);
+    if (std::string f = find_repo_file("data/basmaster-3.7.0.sqlite3"); !f.empty()) paths.push_back(f);
     for (auto& path : paths) {
         FILE* f = fopen(path.c_str(), "rb");
         if (!f) continue;

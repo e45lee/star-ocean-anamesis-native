@@ -1,5 +1,5 @@
 #!/bin/sh
-# Usage: tools/ghidra_apply_types.sh [--v380] [SUBSYSTEM...]   (default: every scaffolded subsystem)
+# Usage: tools/ghidra_apply_types.sh [--v380] [SUBSYSTEM...]   (default: every scaffolded subsystem)   (380-ok)
 # Applies port/decomp/<subsystem>/types.json (the structs of <subsystem>_layout.h, from
 # tools/subsystem.py export-types) and symbols.tsv to the Ghidra project the decompile tools use
 # (tools/common.sh: work/ghidra-quick-v370, kept in ghidra/quick-v370), so later decompiles show
@@ -10,7 +10,7 @@
 # types to the base project, saves a copy to ghidra/, and drops the pool's other copies (the next
 # decompile recreates them from the base).
 set -eu
-case "${1:-}" in --v370) shift;; --v380) SOA_V380=1; shift;; esac
+case "${1:-}" in --v370) shift;; --v380) SOA_V380=1; shift;; esac  # 380-ok: the viewer's lib
 . "$(dirname "$0")/common.sh"
 ghidra_project_ready
 if [ $# -eq 0 ]; then

@@ -8,5 +8,5 @@ add_executable(soa_cli_tests ${CMAKE_CURRENT_SOURCE_DIR}/cli_tests.cpp ${CMAKE_C
 # (port/src first: its core/ is soa's; runtime/src for app/host.h and app/cli.h)
 target_include_directories(soa_cli_tests PRIVATE ${SOA_REPO_DIR} ${SOA_REPO_DIR}/port/src ${SOA_REPO_DIR}/runtime/src
                            ${SOA_REPO_DIR}/platform370/include ${SOA_REPO_DIR}/server/include)
-target_compile_options(soa_cli_tests PRIVATE -Wall -Wno-unused-parameter)
+target_link_libraries(soa_cli_tests PRIVATE soa_warnings)
 target_link_libraries(soa_cli_tests PRIVATE soa_env soa_compat)

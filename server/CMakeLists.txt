@@ -2,21 +2,12 @@
 # Added by the repository's CMakeLists.txt (scripts/build.sh: build/server/soa-server); it needs
 # only SQLite and OpenSSL's libcrypto (and zlib for soanet), from vcpkg (cmake/deps.cmake).
 
-# The library must stand alone: no includes from the port or the runtime (checked at configure time).
-# The library's own folders (src/core/, src/api/, ... included as "core/...") share names with the
-# port's (core/), so a match is an error only when no such file exists under server/src.
-file(GLOB_RECURSE _soaserver_all CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
-     ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/app/*.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/net/*.h ${CMAKE_CURRENT_SOURCE_DIR}/net/*.inc)
-foreach(_f ${_soaserver_all})
-  file(STRINGS ${_f} _bad REGEX "^[ \t]*#[ \t]*include[ \t]*[\"<](core|hle|jni|android|frontend|native|restore|runtime|port|src)/")
-  foreach(_line ${_bad})
-    string(REGEX REPLACE "^[^\"<]*[\"<]([^\">]*)[\">].*$" "\\1" _inc "${_line}")
-    if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/${_inc})
-      message(FATAL_ERROR "server/ must not include port or runtime code: ${_f}: ${_line}")
-    endif()
-  endforeach()
-endforeach()
+# The server stands alone: it includes only server/ and common/include, nothing of the port, the
+# runtime, platform370 or the web view (checked at configure time: cmake/flags.cmake).
+soa_check_includes(server/ DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
+                   ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_CURRENT_SOURCE_DIR}/app ${CMAKE_CURRENT_SOURCE_DIR}/net
+                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}
+                         ${SOA_REPO_DIR}/common/include)
 
 # The library: every source under src/ (recursive) and the cross-cutting tests of tests/ (not
 # tests/net or tests/ninja: those are soa-server's). The modules register in src/core/modules.cpp's
@@ -29,7 +20,9 @@ soa_link_in_init_order(SOASERVER_SOURCES)  # (MinGW: reversed, so the tests regi
 
 add_library(soaserver STATIC ${SOASERVER_SOURCES})
 target_include_directories(soaserver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_compile_options(soaserver PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing)
+# -fno-strict-aliasing, as it always had; no -mcx16 (cmake/flags.cmake)
+target_compile_options(soaserver PRIVATE -fno-strict-aliasing)
+target_link_libraries(soaserver PRIVATE soa_warnings)
 target_link_libraries(soaserver PUBLIC soa_env soa_gamefiles soa_codec unofficial::sqlite3::sqlite3 OpenSSL::Crypto pthread soa_compat)
 # msgpack-cxx (headers): core/msgpack.cpp only; soaserver/msgpack.h stays free of it
 target_link_libraries(soaserver PRIVATE msgpack-cxx)
@@ -44,21 +37,17 @@ file(GLOB_RECURSE _soanet_src CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/net/
 add_library(soanet STATIC ${_soanet_src})
 # (soaserver's headers only: the executable links the library whole, after soanet)
 target_include_directories(soanet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_PROPERTY:soaserver,INTERFACE_INCLUDE_DIRECTORIES>)
-target_compile_options(soanet PRIVATE -Wall -Wno-unused-parameter -fno-strict-aliasing)
+target_compile_options(soanet PRIVATE -fno-strict-aliasing)
+target_link_libraries(soanet PRIVATE soa_warnings)
 target_link_libraries(soanet PUBLIC ZLIB::ZLIB OpenSSL::Crypto soa_compat PRIVATE httplib::httplib)
-# cpp-httplib needs the Windows 10 API (CreateFile2, GetAddrInfoEx); MinGW-w64's default is older
-if(WIN32)
-  target_compile_definitions(soanet PRIVATE _WIN32_WINNT=0x0A00)
-endif()
+target_link_libraries(soanet PRIVATE soa_httplib_win)  # (cmake/flags.cmake)
 
 # soa-server: the standalone server. app/ is the command line; tests/net and tests/ninja are the
 # wire layer's selftests (tests/ninja/ninja_check.cpp is a separate command-line tool, not built here).
 file(GLOB _soaserver_app CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/app/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tests/net/*.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/tests/ninja/*_test.cpp)
 add_executable(soa-server ${_soaserver_app})
-target_compile_options(soa-server PRIVATE -Wall -Wno-unused-parameter)
+target_link_libraries(soa-server PRIVATE soa_warnings)
 # Every object of the library (the tests register from static initializers).
 target_link_libraries(soa-server PRIVATE soanet "$<LINK_LIBRARY:WHOLE_ARCHIVE,soaserver>" httplib::httplib)  # (httplib: tests/net's client)
-if(WIN32)
-  target_compile_definitions(soa-server PRIVATE _WIN32_WINNT=0x0A00)  # (cpp-httplib, as soanet)
-endif()
+target_link_libraries(soa-server PRIVATE soa_httplib_win)  # (cpp-httplib, as soanet)

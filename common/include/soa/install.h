@@ -32,17 +32,13 @@
 #include <system_error>
 #include <vector>
 
-#ifdef _WIN32
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#endif
-
 namespace soa::install {
+
+#ifdef _WIN32
+// The running executable's path (GetModuleFileNameW, '\\' separators): common/src/posix_compat_win32.cpp
+// in soa_compat, so that this header needs no <windows.h> (posix_compat.h's rule).
+std::string exe_path_win32();
+#endif
 
 // The 3.7.0 APK as downloaded from APKPure (README.md "Game files"), the name tried first.
 inline constexpr const char* kApk370Name = "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk";
@@ -71,10 +67,7 @@ inline bool is_file(const std::string& p) {
 // The running executable's path ('/' separators on both platforms), "" when unknown.
 inline std::string exe_path() {
 #ifdef _WIN32
-    wchar_t buf[32768];
-    DWORD n = GetModuleFileNameW(nullptr, buf, (DWORD)(sizeof buf / sizeof buf[0]));
-    if (n == 0 || n >= sizeof buf / sizeof buf[0]) return "";
-    std::string s = std::filesystem::path(std::wstring(buf, n)).string();
+    std::string s = exe_path_win32();
 #else
     std::error_code ec;
     std::string s = std::filesystem::read_symlink("/proc/self/exe", ec).string();
@@ -107,7 +100,7 @@ inline std::vector<std::string> install_dirs() {
 // Where the programs look for repo files (find_repo_file and the like: data/, apk/, work/,
 // standin-assets/, server/tests/fixtures, ...), one rule for soa (port/src/core/paths.cpp),
 // soa-server (server/app/main.cpp repo_roots()), soa-emu (emulator/src/main.cpp) and soa-viewer
-// (emulator-viewer/src/main.cpp; its XAPK lookup):
+// (emulator-viewer/src/main.cpp; its XAPK lookup): (380-ok: the viewer's game)
 //
 //   development build (scripts/build.sh): `--repo DIR`; else the first checkout upwards from the
 //     executable; else upwards from the working directory. With a checkout, also the main checkout
@@ -294,7 +287,7 @@ inline std::vector<std::string> apk_candidates(const std::vector<std::string>& d
 }
 
 // The top-level files of `dirs` whose name ends in `ext` (any case), in lookup order (each dir's
-// sorted). soa-viewer's XAPK lookup uses it with ".xapk" (emulator-viewer/src/main.cpp find_xapk).
+// sorted). soa-viewer's XAPK lookup uses it with ".xapk" (emulator-viewer/src/main.cpp find_xapk). (380-ok)
 inline std::vector<std::string> files_with_ext(const std::vector<std::string>& dirs, const char* ext) {
     std::vector<std::string> v;
     for (auto& d : dirs)

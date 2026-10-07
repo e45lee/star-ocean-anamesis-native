@@ -6,7 +6,7 @@ A subsystem owns two folders and nothing else, so parallel branches each adding 
 shared file:
   port/src/native/<s>/README.md          scope, types, natives, dependencies, RE notes
   port/src/native/<s>/<s>_layout.h       the recovered guest structs (types first), static_asserted
-  port/src/native/<s>/subsystem.cmake    its own build settings (port/CMakeLists.txt includes every one)
+  (port/src/native/<s>/subsystem.cmake, added by hand only when the subsystem has build settings of its own)
   port/decomp/<s>/symbols.tsv            the guest functions it decompiled / typed / made native
   port/decomp/<s>/scope.txt              the demangled-name regexes it owns (the profile's ranking)
   port/decomp/<s>/types.json             <s>_layout.h's structs for Ghidra (export-types)
@@ -84,7 +84,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 - Scope: the demangled-name patterns in [`port/decomp/{s}/scope.txt`](../../../decomp/{s}/scope.txt).
 - Decompiles and the function list: [`port/decomp/{s}/`](../../../decomp/{s}/) (`symbols.tsv`; `tools/decomp.sh --into {s}/<topic>`).
 - Types: [`{s}_layout.h`]({s}_layout.h); for Ghidra, `tools/subsystem.py export-types {s}` -> `port/decomp/{s}/types.json`.
-- Build settings of its own (a host library, a definition): [`subsystem.cmake`](subsystem.cmake).
+- Build settings of its own (a host library, a definition): none; a `subsystem.cmake` here would hold them (port/CMakeLists.txt includes it).
 
 ## Types (classes with their methods attached)
 
@@ -167,17 +167,6 @@ using s64 = std::int64_t;
 """
 
 
-def cmake_text(s):
-    return f"""# port/src/native/{s}/subsystem.cmake: build settings of the `{s}` subsystem only. port/CMakeLists.txt
-# includes every port/src/native/*/subsystem.cmake (sorted) after defining the soa target, so a
-# subsystem never edits the shared CMakeLists.txt.
-# Sources need no listing: port/CMakeLists.txt globs src/**/*.cpp and links them in basename order
-# (static-initializer order, D8); name this subsystem's files {s}_*.cpp so they sort together.
-# Add here what is this subsystem's own, e.g. a host library at a clean boundary:
-#   target_link_libraries(soa PRIVATE ZLIB::ZLIB)
-"""
-
-
 def scope_text(s, scopes):
     body = "\n".join(scopes) + ("\n" if scopes else "")
     return f"""# port/decomp/{s}/scope.txt: the guest functions the `{s}` subsystem owns, as Python regexes on the
@@ -200,7 +189,6 @@ def cmd_new(a):
     files = {
         p["readme"]: readme_text(s, a.title),
         p["layout"]: layout_text(s, a.title),
-        p["cmake"]: cmake_text(s),
         p["symbols"]: "\t".join(SYMBOLS_COLUMNS) + "\n",
         p["scope"]: scope_text(s, a.scope),
         p["types"]: json.dumps(types_doc(s, []), indent=1) + "\n",
@@ -738,7 +726,7 @@ def cmd_check(a):
     for s in subs:
         p = paths(a.root, s)
         probs = []
-        for k in ("readme", "layout", "cmake", "symbols", "scope", "types"):
+        for k in ("readme", "layout", "symbols", "scope", "types"):
             if not os.path.exists(p[k]):
                 probs.append(f"missing {os.path.relpath(p[k], a.root)}")
         if os.path.exists(p["symbols"]):

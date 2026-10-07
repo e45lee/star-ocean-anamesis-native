@@ -146,7 +146,7 @@ Each subsystem of the rebuild owns two folders and nothing else, so many agents 
 |---|---|
 | `port/src/native/<s>/README.md` | scope, the types table, the natives table (its own: no shared list to edit), dependencies, RE notes |
 | `port/src/native/<s>/<s>_layout.h` | the recovered guest classes, methods attached, `static_assert`ed (types first) |
-| `port/src/native/<s>/subsystem.cmake` | the subsystem's own build settings (a host library, a definition); `port/CMakeLists.txt` includes every one |
+| `port/src/native/<s>/subsystem.cmake` | only when the subsystem has build settings of its own (a host library, a definition; today lib_sqlite, yayoi); `port/CMakeLists.txt` includes every one |
 | `port/src/native/<s>/addresses.txt` | the guest addresses its natives use; `gen/<s>_addresses.h` is generated from it (`tools/gen_addresses.py`; "Guest addresses" above) |
 | `port/src/native/<s>/<s>_*.cpp` | natives and their differential tests (globbed; link order by basename, D8) |
 | `port/decomp/<s>/<topic>.c` | stamped Ghidra decompiles the rewrite used (data, not built) |
@@ -195,7 +195,7 @@ table above; scaffolded subsystems list their natives in their own README instea
 
 ## Porting guidelines
 
-- **Decompile first**: the client is 3.7.0, so `tools/decomp.sh <name> '<regex>'` (and `decomp_at.sh`; `--into <subsystem>/<topic>` for the committed, stamped copy: "Per-subsystem workflow" above) decompiles every function matching a demangled-name regex from the 3.7.0 lib, the default, into `work/decomp/<name>.resolved.c` (its Ghidra project pool, `work/ghidra-quick-v370*`; `--v370` is accepted, `--v380` selects the viewer's offline lib). Write readable C++ from it; no new a2c transcriptions (the user, 2026-10-01). `tools/verdiff_decomp.sh` / `verdiff.py` (3.7.0 vs the offline build) are history tools.
+- **Decompile first**: the client is 3.7.0, so `tools/decomp.sh <name> '<regex>'` (and `decomp_at.sh`; `--into <subsystem>/<topic>` for the committed, stamped copy: "Per-subsystem workflow" above) decompiles every function matching a demangled-name regex from the 3.7.0 lib, the default, into `work/decomp/<name>.resolved.c` (its Ghidra project pool, `work/ghidra-quick-v370*`; `--v370` is accepted, `--v380` selects the viewer's offline lib). Write readable C++ from it; no new a2c transcriptions (the user, 2026-10-01). `tools/verdiff_decomp.sh` / `verdiff.py` (3.7.0 vs the offline build) are history tools. <!-- 380-ok: decomp.sh's switch for the viewer's lib -->
 - **Keep guest layouts**: data structures shared with guest code must keep the guest's in-memory layout. That includes libc++ (`std::__ndk1`) containers and the `Framework::CSTLAllocator` allocators, until every function touching them is native.
 - **Port whole families**: port every entry point of a library or class that owns internal state at once. Mixing guest and host implementations over the same state doesn't work; for example, all of zlib moved together.
 - **Transcribing**: `tools/a2c.py` and the `tools/gen_*_a2c.py` generators (goto-structured C++ over a register file, instruction by instruction) are kept as tools only; nothing in the tree uses their output, the live check has no a2c path any more, and new natives are readable code. Floating point: match the guest's fused multiply-adds (`std::fma`) where it fuses, plain mul + add where it doesn't (never fused by the compiler: "Floating point" above; `arm_float.h` has the ARM NaN rules).

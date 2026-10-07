@@ -7,7 +7,11 @@
 #                            DIR\server.log + server.log.err (default %LOCALAPPDATA%\soa\emulator-370:
 #                            DIR\phone is soa-emu.exe's own default)
 #   --port N                 the game port (default 44300; HTTP: N + 80)
-#   --new-player, --enable-events, --event-keywords W, --seed FILE   soa-server's options
+#   soa-server's options, as scripts/run-emulator-370.sh takes them (scripts/lib/with-server.ps1):
+#     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N,
+#     --galaxy-pass, --enable-events, --event-keywords W, --restore-tower, --surprise,
+#     --stamina-heal-time S, --fail SPEC, --download PATH, --download-dir DIR, --master FILE,
+#     --db FILE, --log-packets DIR, --campaign-master-db FILE, --campaign-seed N, --english
 #   the others go to soa-emu.exe (e.g. --fullscreen, --headless)
 # The first start downloads about 3 GB of game data from the local server.
 # Needs: build-win\ (scripts/build.sh --windows), work\libSOA-3.7.0.so, the 3.7.0 APK in apk\,
@@ -15,20 +19,23 @@
 # work\SOA-3.7.0-canonical-data.zip (read in place; README.md "Game files").
 $ErrorActionPreference = "Stop"
 $repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+. (Join-Path $repo "scripts\lib\with-server.ps1")
+WsInit "run-emulator-370"
 $emu = Join-Path $repo "build-win\emulator\soa-emu.exe"
 $srv = Join-Path $repo "build-win\server\soa-server.exe"
 $home_dir = Join-Path $env:LOCALAPPDATA "soa\emulator-370"
 $port = 44300
-$srvArgs = @(); $emuArgs = @()
+$emuArgs = @()
 for ($i = 0; $i -lt $args.Count; $i++) {
     $a = [string]$args[$i]
     switch -regex ($a) {
         '^(-h|--help)$' { Get-Content $PSCommandPath | Where-Object { $_ -match '^#' } | ForEach-Object { $_ -replace '^# ?', '' }; exit 0 }
-        '^(-Home|--home)$' { $home_dir = [string]$args[++$i]; continue }
-        '^--port$' { $port = [int]$args[++$i]; continue }
-        '^(--new-player|--enable-events)$' { $srvArgs += $a; continue }
-        '^(--event-keywords|--seed)$' { $srvArgs += $a; $srvArgs += [string]$args[++$i]; continue }
-        default { $emuArgs += $a }
+        '^(-Home|--home)$' { WsNeed $args $i; $home_dir = [string]$args[++$i]; continue }
+        '^--port$' { WsNeed $args $i; $port = WsCheckPort ([string]$args[++$i]); continue }
+        default {
+            $n = WsServerOption $args $i
+            if ($n -gt 0) { $i += $n - 1 } else { $emuArgs += (WsQ $a) }
+        }
     }
 }
 $httpPort = $port + 80
@@ -38,33 +45,18 @@ foreach ($f in @($emu, $srv)) {
 foreach ($f in @("work\libSOA-3.7.0.so", "apk\STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk", "data\basmaster-3.7.0.sqlite3")) {
     if (-not (Test-Path (Join-Path $repo $f))) { Write-Error "run-emulator-370: $f is missing; see README.md" }
 }
-# the download: the zip, read in place
+# the download: the zip, read in place (a --download / --download-dir among the options comes later and wins)
 $download = Join-Path $repo "work\SOA-3.7.0-canonical-data.zip"
 if (-not (Test-Path $download)) { Write-Error "run-emulator-370: the 3.7.0 download, work\SOA-3.7.0-canonical-data.zip, is missing; see README.md" }
 $phone = Join-Path $home_dir "phone"; $state = Join-Path $home_dir "server"; $slog = Join-Path $home_dir "server.log"
 New-Item -ItemType Directory -Force -Path $phone, $state | Out-Null
 Write-Host "== starting soa-server (game 127.0.0.1:$port, http 127.0.0.1:$httpPort; data $state)"
-$sp = Start-Process -FilePath $srv -WorkingDirectory $repo -NoNewWindow -PassThru -RedirectStandardOutput $slog `
-    -RedirectStandardError "$slog.err" -ArgumentList (@("--listen", "127.0.0.1:$port", "--http", "127.0.0.1:$httpPort",
-    "--data", "`"$state`"", "--download-dir", "`"$download`"") + $srvArgs)
+WsStartServer $srv $repo $slog "$slog.err" (@("--listen", "127.0.0.1:$port", "--http", "127.0.0.1:$httpPort",
+    "--data", (WsQ $state), "--download-dir", (WsQ $download)) + $WsSrvArgs)
 try {
-    $up = $false
-    for ($t = 0; $t -lt 480; $t++) {
-        # (its stdout and stderr: Start-Process keeps them in two files)
-        if ((Test-Path "$slog.err") -and (Select-String -Path $slog, "$slog.err" -Pattern '^soa-server: ready' -Quiet)) { $up = $true; break }
-        if ($sp.HasExited) { break }
-        Start-Sleep -Milliseconds 500
-    }
-    if (-not $up) { Write-Host "run-emulator-370: soa-server didn't start; log: $slog.err"; exit 1 }
-    # (the CDN line comes before the ready line: scripts/lib/with-server.sh)
-    if (-not (Select-String -Path "$slog.err" -Pattern '^soa-server: CDN' -Quiet)) {
-        Write-Host "run-emulator-370: soa-server found no 3.7.0 download; log: $slog.err"; exit 1
-    }
+    WsWaitReady
     Write-Host "== starting soa-emu (phone data $phone)"
-    $ep = Start-Process -FilePath $emu -WorkingDirectory $repo -NoNewWindow -PassThru -ArgumentList (@("--data", "`"$phone`"",
-        "--server", "127.0.0.1:$port", "--http", "127.0.0.1:$httpPort") + $emuArgs)
-    $ep.WaitForExit()
-    exit $ep.ExitCode
+    exit (WsRunClient $emu $repo (@("--data", (WsQ $phone), "--server", "127.0.0.1:$port", "--http", "127.0.0.1:$httpPort") + $emuArgs))
 } finally {
-    if (-not $sp.HasExited) { Stop-Process -Id $sp.Id -Force }
+    WsStop
 }

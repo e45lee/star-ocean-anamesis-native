@@ -6,7 +6,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 - Scope: the demangled-name patterns in [`port/decomp/scene/scope.txt`](../../../decomp/scene/scope.txt).
 - Decompiles and the function list: [`port/decomp/scene/`](../../../decomp/scene/) (`symbols.tsv`; `tools/decomp.sh --into scene/<topic>`).
 - Types: [`scene_layout.h`](scene_layout.h); for Ghidra, `tools/subsystem.py export-types scene` -> `port/decomp/scene/types.json`.
-- Build settings of its own (a host library, a definition): [`subsystem.cmake`](subsystem.cmake).
+- Build settings of its own (a host library, a definition): none; a `subsystem.cmake` here would hold them (port/CMakeLists.txt includes it).
 
 ## Types (classes with their methods attached)
 

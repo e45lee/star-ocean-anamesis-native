@@ -156,8 +156,8 @@ timeout -k 10 3600 "$srv" --listen 127.0.0.1:$game_port --http 127.0.0.1:$http_p
     --master "$master" --seed "$seed" --download-dir "$download" --standin-assets "$standins" \
     --log-packets "$scratch/packets" --seed-rng "$seed_rng" --enable-events --event-keywords NieR "${clock_srv[@]}" > "$slog" 2>&1 &
 spid=$!
-for _ in $(seq 1 240); do grep -q "^soa-server: game" "$slog" 2>/dev/null && break; kill -0 $spid 2>/dev/null || break; sleep 0.5; done
-grep -q "^soa-server: game" "$slog" || die "soa-server didn't start (log: $out/server.log)"
+for _ in $(seq 1 240); do grep -q "^soa-server: ready" "$slog" 2>/dev/null && break; kill -0 $spid 2>/dev/null || break; sleep 0.5; done
+grep -q "^soa-server: ready" "$slog" || die "soa-server didn't start (log: $out/server.log)"
 grep -q 'enable-events ("NieR"): .* 1 gachas' "$slog" || die "soa-server didn't open exactly one NieR gacha ($(grep -m1 'enable-events' "$slog"))"
 headless=(--headless); [ $watch = 1 ] && headless=()
 timeout -k 10 3600 "$emu" --data "$phone" "${headless[@]}" --size 729x1296 --control "$fifo" "${clock_emu[@]}" \

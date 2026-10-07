@@ -53,8 +53,8 @@ trap cleanup EXIT
 timeout -k 10 1800 "$srv" --listen 127.0.0.1:$game_port --http 127.0.0.1:$http_port --data "$out/server" --master "$master" \
     --download-dir "$repo/work/SOA-3.7.0-canonical-data.zip" --seed-rng 1 --clock "$clock" > "$slog" 2>&1 &
 spid=$!
-for _ in $(seq 1 120); do grep -q "^soa-server: game" "$slog" 2>/dev/null && break; kill -0 $spid 2>/dev/null || break; sleep 0.5; done
-grep -q "^soa-server: game" "$slog" || { echo "FAIL: soa-server didn't start (log: $slog)"; exit 1; }
+for _ in $(seq 1 120); do grep -q "^soa-server: ready" "$slog" 2>/dev/null && break; kill -0 $spid 2>/dev/null || break; sleep 0.5; done
+grep -q "^soa-server: ready" "$slog" || { echo "FAIL: soa-server didn't start (log: $slog)"; exit 1; }
 timeout -k 10 1800 "$emu" --data "$out/emu" --headless --size 729x1296 --control "$fifo" \
     --server 127.0.0.1:$game_port --http 127.0.0.1:$http_port > "$elog" 2>&1 &
 epid=$!

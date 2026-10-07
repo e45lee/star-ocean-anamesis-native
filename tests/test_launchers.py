@@ -138,3 +138,40 @@ def test_every_launcher_sources_the_shared_half():
     # the ready line is printed by soa-server after the game and CDN lines
     main = (ROOT / "server/app/main.cpp").read_text()
     assert main.index('"soa-server: game ') < main.index('"soa-server: CDN ') < main.index('"soa-server: ready\\n"')
+
+
+def _option_groups_sh(text):
+    body = text[text.index("ws_server_option() {"):]
+    body = body[:body.index("\n}\n")]
+    return [sorted(m.split(" | ")) for m in re.findall(r"^\s+(--[^)]*)\)", body, re.M)]
+
+
+def _option_groups_ps1(text):
+    body = text[text.index("function WsServerOption"):]
+    body = body[:body.index("\n}\n")]
+    return [sorted(m.split("|")) for m in re.findall(r"'\^\((--[^)]*)\)\$'", body)]
+
+
+def test_powershell_launchers_share_the_module():
+    """The PowerShell launchers dot-source scripts/lib/with-server.ps1, whose server options are
+    with-server.sh's (the same three groups: flags, paths, values); the Windows packages ship it."""
+    sh = _option_groups_sh((ROOT / "scripts/lib/with-server.sh").read_text())
+    ps = _option_groups_ps1((ROOT / "scripts/lib/with-server.ps1").read_text())
+    assert len(sh) == 3 and ps == sh, (sh, ps)
+    for rel in ("scripts/windows/run-emulator-370.ps1", "scripts/package/run-emulator.ps1", "scripts/package/run-port-server.ps1"):
+        text = (ROOT / rel).read_text()
+        assert re.search(r'^\. \(Join-Path \$(here|repo) "(scripts\\)?lib\\with-server\.ps1"\)$', text, re.M), rel
+        assert "soa-server: ready" not in text and "Select-String" not in text, rel + ": waits through the module"
+    for kind in ("port", "emulator"):
+        assert "lib/with-server.ps1" in package.launcher_libs(kind, True) and "lib/with-server.ps1" in package.ALLOW[kind]
+    assert "scripts/lib/with-server.ps1" in (ROOT / "scripts/windows-stage.list").read_text()
+
+
+def test_scripts_wait_on_the_ready_line():
+    """Scripts and drivers that start soa-server wait for its ready line, not the game line (the CDN
+    line comes between them; on Windows soa-server's stderr is buffered)."""
+    out = subprocess.run(["git", "grep", "-n", "soa-server: game", "--", "control", "emulator", "port/scripts", "scripts", "tools"],
+                         cwd=ROOT, capture_output=True, text=True)
+    assert out.returncode in (0, 1), out.stderr
+    hits = [h for h in out.stdout.splitlines() if not h.startswith(("scripts/lib/with-server.", "tools/server_log_patterns.txt"))]
+    assert not hits, hits

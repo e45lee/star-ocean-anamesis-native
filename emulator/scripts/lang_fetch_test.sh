@@ -113,8 +113,9 @@ SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_tak
 timeout -k 10 2400 "$srv" --listen 127.0.0.1:$game_port --http 127.0.0.1:$http_port --data "$out/server" --master "$master" \
     --download-dir "$download" --english --english-text "$table" --log-packets "$out/packets" > "$slog" 2>&1 &
 spid=$!
-for _ in $(seq 1 240); do grep -q "^soa-server: game" "$slog" 2>/dev/null && break; kill -0 $spid 2>/dev/null || break; sleep 0.5; done
-grep -q "^soa-server: game" "$slog" || { miss "soa-server didn't start (log: $slog)"; finish; }
+# (its "ready" line comes after the game and CDN lines: scripts/lib/with-server.sh)
+for _ in $(seq 1 240); do grep -q "^soa-server: ready" "$slog" 2>/dev/null && break; kill -0 $spid 2>/dev/null || break; sleep 0.5; done
+grep -q "^soa-server: ready" "$slog" || { miss "soa-server didn't start (log: $slog)"; finish; }
 rev=$(sed -n 's|^soa-server: CDN .*/download/\([0-9]*\)/Android/.*|\1|p' "$slog" | head -1)
 [ -n "$rev" ] || { miss "soa-server: no CDN line (log: $slog)"; finish; }
 grep "english master" "$slog" | sed 's/^/  /'

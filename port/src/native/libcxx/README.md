@@ -6,7 +6,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 - Scope: the demangled-name patterns in [`port/decomp/libcxx/scope.txt`](../../../decomp/libcxx/scope.txt).
 - Decompiles and the function list: [`port/decomp/libcxx/`](../../../decomp/libcxx/) (`symbols.tsv`; `tools/decomp.sh --into libcxx/<topic>`).
 - Types: [`libcxx_layout.h`](libcxx_layout.h); for Ghidra, `tools/subsystem.py export-types libcxx` -> `port/decomp/libcxx/types.json`.
-- Build settings of its own (a host library, a definition): [`subsystem.cmake`](subsystem.cmake).
+- Build settings of its own (a host library, a definition): none; a `subsystem.cmake` here would hold them (port/CMakeLists.txt includes it).
 
 This is the type part of the libc++ library track (port/PLAN.md task 6, "Per library": libc++ is not
 hostable; the game inlines its templates and embeds `std::__ndk1` objects in its own classes, so later

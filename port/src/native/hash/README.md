@@ -12,7 +12,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
   line claims them.
 - Decompiles and the function list: [`port/decomp/hash/`](../../../decomp/hash/) (`symbols.tsv`; `tools/decomp.sh --into hash/<topic>`).
 - Types: [`hash_layout.h`](hash_layout.h); for Ghidra, `tools/subsystem.py export-types hash` -> `port/decomp/hash/types.json`.
-- Build settings of its own: none ([`subsystem.cmake`](subsystem.cmake)).
+- Build settings of its own: none (a `subsystem.cmake` here would hold them).
 
 ## Types (classes with their methods attached)
 

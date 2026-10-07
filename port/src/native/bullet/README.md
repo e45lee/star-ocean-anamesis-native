@@ -6,7 +6,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 - Scope: the demangled-name patterns in [`port/decomp/bullet/scope.txt`](../../../decomp/bullet/scope.txt).
 - Decompiles and the function list: [`port/decomp/bullet/`](../../../decomp/bullet/) (`symbols.tsv`; `tools/decomp.sh --into bullet/<topic>`).
 - Types: [`bullet_layout.h`](bullet_layout.h); for Ghidra, `tools/subsystem.py export-types bullet` -> `port/decomp/bullet/types.json`.
-- Build settings of its own (a host library, a definition): [`subsystem.cmake`](subsystem.cmake).
+- Build settings of its own (a host library, a definition): none; a `subsystem.cmake` here would hold them (port/CMakeLists.txt includes it).
 
 **Decision (task 6, "Bullet version pin"): leave Bullet on the guest.** No natives, no host library,
 no boundary. The game's Bullet is a *locally modified* Bullet **2.75** (not 2.76–2.79, and not any

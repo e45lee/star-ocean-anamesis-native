@@ -4,7 +4,7 @@
 # Usage: scripts/run-port.sh [soa options...]
 #   default    the local server built into soa (--server inproc); state in the data dir's
 #              server.sqlite3, data in ~/.local/share/soa-linux-370
-#   --server HOST[:PORT]  play against a running soa-server instead (scripts/run-emulator-370.sh
+#   --server HOST[:PORT] (or --server=HOST[:PORT])  play against a running soa-server instead (scripts/run-emulator-370.sh
 #              starts one); add --http HOST:PORT if its HTTP port isn't 44380
 # soa's options come in two groups (build/port/soa --help):
 #   client options  the client and its emulated phone: --data DIR, --fullscreen, --size WxH,
@@ -24,12 +24,14 @@ case "${1:-}" in -h|--help) sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'; exit 0;;
 [ "${1:-}" = "--offline" ] && { echo "run-port: --offline is gone: the port runs the 3.7.0 client (docs/history/PLAN-rebase-370.md)" >&2; exit 2; }
 
 [ -x "$soa" ] || { echo "run-port: $soa isn't built; run scripts/build.sh first" >&2; exit 1; }
-inproc=1
+# the server soa uses: the last --server HOST / --server=HOST (inproc: in-process, the default)
+inproc=1 prev=
 for a in "$@"; do
-  case $a in --server) inproc=0;; esac
-done
-for a in "$@"; do  # --server inproc is still in-process
-  [ "$a" = inproc ] && inproc=1
+  case $prev:$a in
+    --server:*) [ "$a" = inproc ] && inproc=1 || inproc=0 ;;
+    *:--server=*) [ "${a#--server=}" = inproc ] && inproc=1 || inproc=0 ;;
+  esac
+  prev=$a
 done
 if [ $inproc = 1 ]; then
   [ -f "$repo/work/SOA-3.7.0-canonical-data.zip" ] || { echo "run-port: work/SOA-3.7.0-canonical-data.zip (the 3.7.0 download) is missing; see README.md" >&2; exit 1; }

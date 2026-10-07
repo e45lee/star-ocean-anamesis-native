@@ -2,7 +2,7 @@
 
 `soa-viewer` runs STAR OCEAN: anamnesis **3.8.0**, the stand-alone build Square Enix shipped when the service ended, exactly as shipped: the `libSOA.so` of the 3.8.0 XAPK under the JIT host runtime (`runtime/`), pure JIT, with the XAPK's own assets. No native replacements, no restore code, no server, nothing from `port/`. The game code is not patched at all; only the platform layer under it is emulated, and the runtime already has all of it but one network answer (below).
 
-It is the 3.8.0 counterpart of `emulator/` (`soa-emu`, the 3.7.0 online client) and a reference for the port (`port/`, `soa`), which runs the same library with native code and, with the in-process server, the restored online game. Use it to see what the offline build itself does on a screen, or to compare the port against it.
+It is the 3.8.0 counterpart of `emulator/` (`soa-emu`, the 3.7.0 online client) and a reference for the port (`port/`, `soa`), which runs the 3.7.0 online client's library (another build than this one) with native code and, with the in-process server, the restored online game. Use it to see what the offline build itself does on a screen, or to compare the port against it.
 
 ## Building
 

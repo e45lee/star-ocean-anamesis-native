@@ -40,20 +40,8 @@ soa_link_in_init_order(SOA_RUNTIME_SOURCES)  # (MinGW: reversed, so they initial
 # the built-in fonts of soa_fonts), dependencies like dynarmic, not
 # users of the runtime. (Also enforced by the include path, which is runtime/src only, and by
 # soaruntime_tests, which links the whole archive without any port code.)
-file(GLOB_RECURSE _rt_check CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/* ${SOA_RUNTIME_DIR}/tests/*)
-foreach(_f ${_rt_check})
-  get_filename_component(_dir ${_f} DIRECTORY)
-  file(STRINGS ${_f} _incs REGEX "^[ \t]*#[ \t]*include[ \t]*\"")
-  foreach(_l ${_incs})
-    string(REGEX REPLACE "^[ \t]*#[ \t]*include[ \t]*\"([^\"]*)\".*$" "\\1" _inc "${_l}")
-    if(_inc MATCHES "^dynarmic/")
-      continue()
-    endif()
-    if(_inc MATCHES "\\.\\." OR NOT (EXISTS ${SOA_RUNTIME_DIR}/src/${_inc} OR EXISTS ${_dir}/${_inc}))
-      message(FATAL_ERROR "runtime/ must not include \"${_inc}\" (${_f}): the runtime includes only runtime/src")
-    endif()
-  endforeach()
-endforeach()
+soa_check_includes(runtime/ DIRS ${SOA_RUNTIME_DIR}/src ${SOA_RUNTIME_DIR}/tests
+                   ALLOW ${SOA_RUNTIME_DIR}/src ${SOA_REPO_DIR}/common/include EXTRA "^dynarmic/")
 
 add_library(soaruntime_iface INTERFACE)
 target_include_directories(soaruntime_iface INTERFACE ${SOA_RUNTIME_DIR}/src)
@@ -74,7 +62,7 @@ target_link_libraries(soaruntime_iface INTERFACE
 
 add_library(soaruntime_objs OBJECT ${SOA_RUNTIME_SOURCES})
 target_link_libraries(soaruntime_objs PUBLIC soaruntime_iface)
-target_compile_options(soaruntime_objs PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing -mcx16)
+target_link_libraries(soaruntime_objs PRIVATE soa_guest_code)
 
 add_library(soaruntime STATIC $<TARGET_OBJECTS:soaruntime_objs>)
 target_link_libraries(soaruntime PUBLIC soaruntime_iface)
@@ -82,7 +70,7 @@ target_link_libraries(soaruntime PUBLIC soaruntime_iface)
 file(GLOB SOA_RUNTIME_TEST_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/tests/*.cpp)
 add_executable(soaruntime_tests ${SOA_RUNTIME_TEST_SOURCES})
 target_link_libraries(soaruntime_tests PRIVATE $<LINK_LIBRARY:WHOLE_ARCHIVE,soaruntime>)
-target_compile_options(soaruntime_tests PRIVATE -Wall -Wno-unused-parameter -fno-strict-aliasing -mcx16)
+target_link_libraries(soaruntime_tests PRIVATE soa_guest_code)
 
 # The desktop host loop (src/app/host.h), on SDL2 (X11 or Wayland: SDL picks).
 file(GLOB SOA_RUNTIME_APP_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/app/*.cpp)
@@ -90,4 +78,4 @@ add_library(soaruntime_app STATIC ${SOA_RUNTIME_APP_SOURCES})
 target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2 PRIVATE Freetype::Freetype soa_codec soa_fonts)
 # Windows: the program exports ANGLE's EGL entry points, so SDL loads EGL from it (src/app/sdl_gl.cpp)
 target_link_options(soaruntime_app INTERFACE $<$<PLATFORM_ID:Windows>:${SOA_RUNTIME_DIR}/src/app/egl_exports_win32.def>)
-target_compile_options(soaruntime_app PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing -mcx16)
+target_link_libraries(soaruntime_app PRIVATE soa_guest_code)

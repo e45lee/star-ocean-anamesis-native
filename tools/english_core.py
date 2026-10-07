@@ -73,6 +73,31 @@ def esc(s):
     return s.replace("\n", "\\n")
 
 
+# The white space a Japanese text may gain or lose between Global's master and 3.7.0's without being
+# another text (docs/english.md 7.9 "ws_key"): Global's `ja` often doubles a line break
+# ("...\\n\\n...") or drops a trailing ideographic space. An explicit set, not re's Unicode \s, so the
+# server's C++ derivation can match it exactly.
+WS_CHARS = "\t\n \u00a0\u3000"
+_WS = re.compile("[" + WS_CHARS + "]")
+
+
+def ws_key(s):
+    """A text without its white space (WS_CHARS; a master-encoded \\n counts as a line break): the
+    key of the white-space-insensitive matches (rules id-ws and memory-ws, english.md 7.9)."""
+    return _WS.sub("", unesc(s or ""))
+
+
+def same_ja(gl_ja, ja):
+    """The match rule of an id's Japanese: Global's `ja` equals 3.7.0's exactly ("id"), or only white
+    space differs and some text is left ("id-ws"); else None. Both in the same encoding."""
+    if gl_ja is None:
+        return None
+    if gl_ja == ja:
+        return "id"
+    k = ws_key(ja)
+    return "id-ws" if k and ws_key(gl_ja) == k else None
+
+
 # ---------------------------------------------------------------- sources
 
 class Sources:
@@ -130,14 +155,14 @@ class Sources:
 
     def official(self, mid, ja):
         en = self.gl_english(mid)
-        return en if en is not None and self.gl_ja.get(mid) == ja else None
+        return en if en is not None and same_ja(self.gl_ja.get(mid), ja) else None
 
     def official_e3(self, mid, ja):
         """(english, None) from a Global token row rewritten by E3, (None, reason) when the row has
         tokens that can't be rewritten, (None, None) when there is no such row. `ja` in the master's
         encoding."""
         en = self.gl_token_english(mid)
-        if en is None or self.gl_ja.get(mid) != ja:
+        if en is None or not same_ja(self.gl_ja.get(mid), ja):
             return None, None
         return rewrite_tokens(en, ja)
 
@@ -235,6 +260,7 @@ class Memory:
 
     def __init__(self, src, exclude=frozenset()):
         exact = collections.defaultdict(collections.Counter)
+        exact_ws = collections.defaultdict(collections.Counter)
         tmpl = collections.defaultdict(collections.Counter)
         for mid, ja in src.gl_ja.items():
             if mid in exclude or not ja:
@@ -243,6 +269,9 @@ class Memory:
             if en is None:
                 continue
             exact[ja][en] += 1
+            k = ws_key(ja)
+            if k:
+                exact_ws[k][en] += 1
             key, nums = numkey(ja)
             if not nums or len(set(nums)) != len(nums):
                 continue  # no numbers, or ambiguous (a repeated number)
@@ -256,12 +285,17 @@ class Memory:
             tmpl[key][t] += 1
         # most used, then the smallest string: a deterministic choice among equal counts
         self.exact = {k: min(c, key=lambda e: (-c[e], e)) for k, c in exact.items()}
+        self.exact_ws = {k: min(c, key=lambda e: (-c[e], e)) for k, c in exact_ws.items()}
         self.template = {k: min(c, key=lambda e: (-c[e], e)) for k, c in tmpl.items()}
 
     def lookup(self, ja):
-        """(english, kind) or (None, None)."""
+        """(english, kind) or (None, None); kind exact, exact_ws (the same text but for white space,
+        english.md 7.9 memory-ws) or template."""
         if ja in self.exact:
             return self.exact[ja], "exact"
+        k = ws_key(ja)
+        if k in self.exact_ws:
+            return self.exact_ws[k], "exact_ws"
         key, nums = numkey(ja)
         t = self.template.get(key) if nums else None
         if t is not None:

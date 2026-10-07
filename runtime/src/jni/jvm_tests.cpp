@@ -7,14 +7,27 @@
 // heap addresses that failed 1 time in 16 (emulator/README.md "The lost first request"). Each kind
 // is made 256 times through the guest's dispatch (guest_call on the JNIEnv table's thunks): a
 // 16-aligned allocator would give a zero low byte with probability 1 - (15/16)^256 > 0.99999.
+//
+// jni/method-tables-threads: the game resolves and calls Java methods from several threads while
+// others define methods (RegisterNatives, Vm::override_method after start). Callers go through
+// CallIntMethodA's virtual dispatch (an object of a subclass, the superclass's method ID) while one
+// thread keeps replacing the method's implementation and another keeps adding methods to the
+// subclass (the map the dispatch searches). Before code review CR3 (R1) the dispatch searched the
+// map unlocked and an implementation was replaced while other threads ran it (a std::function
+// assigned while called): wrong results or a crash.
 #include <unistd.h>
 
+#include <atomic>
+#include <chrono>
 #include <cinttypes>
 #include <cstring>
 #include <string>
+#include <thread>
+#include <vector>
 
 #include "core/cpu.h"
 #include "core/selftest.h"
+#include "core/thread_record.h"
 #include "core/vfs.h"
 #include "jni/jni_names.h"
 #include "jni/jvm.h"
@@ -135,6 +148,78 @@ RUNTIME_TEST("jni/references-low-byte") {
     // The activity (activity->clazz) and the classes made at init are tagged too.
     if (have_activity && !((u64)vm.activity & 0xff)) t.fail("the activity object has a zero low byte");
     if (!((u64)vm.find_class("java/lang/String") & 0xff)) t.fail("java/lang/String has a zero low byte");
+}
+
+RUNTIME_TEST("jni/method-tables-threads") {
+    Vm& vm = Vm::get();
+    const u64 env = vm.env_ptr();
+    const u64 find_class = env_fn(vm, "FindClass"), get_mid = env_fn(vm, "GetMethodID"), call_int = env_fn(vm, "CallIntMethodA");
+    if (!find_class || !get_mid || !call_int) {
+        t.fail("no JNIEnv FindClass / GetMethodID / CallIntMethodA");
+        return;
+    }
+    const char* kBase = "soa/test/RaceBase";
+    const char* kSub = "soa/test/RaceSub";
+    // An implementation's state, cleared by its destructor. A call reads it twice, 20 us apart
+    // (a busy wait, the same on every host): when the implementation is replaced and destroyed
+    // while it runs, the second read sees 0 and the call returns 0.
+    constexpr u64 kPayload = 64;
+    struct State {
+        u64 v;
+        char pad[48];  // (past std::function's local storage: the functor is on the heap)
+        explicit State(u64 v) : v(v) {}
+        State(const State&) = default;
+        ~State() { *(volatile u64*)&v = 0; }
+    };
+    auto impl = [](u64 gen) {
+        return [st = State(kPayload + gen)](Object*, const Args&) -> u64 {
+            u64 a = *(volatile const u64*)&st.v;
+            auto until = std::chrono::steady_clock::now() + std::chrono::microseconds(20);
+            while (std::chrono::steady_clock::now() < until) {}
+            return a == *(volatile const u64*)&st.v ? a : 0;
+        };
+    };
+    vm.def(kBase, "val", "()I", impl(0));
+    vm.define_class(kSub, kBase);
+    Object* obj = vm.instance(kSub);
+    const u64 base = guest_call(find_class, {env, (u64)kBase});
+    const u64 mid = guest_call(get_mid, {env, base, (u64) "val", (u64) "()I"});
+    if (!mid) {
+        t.fail("GetMethodID(RaceBase.val) is null");
+        return;
+    }
+
+    constexpr int kCallers = 4, kCalls = 5000;
+    std::atomic<bool> stop{false};
+    std::atomic<int> bad{0};
+    std::atomic<u64> first_bad{0};
+    std::vector<std::thread> threads;
+    for (int i = 0; i < kCallers; i++)
+        threads.emplace_back([&] {
+            ThreadScope scope("jni-race");
+            guest_thread_init(256 << 10);
+            u64 none[1] = {0};
+            for (int n = 0; n < kCalls; n++) {
+                u64 r = (u32)guest_call(call_int, {env, (u64)obj, mid, (u64)none});
+                if (r < kPayload) {
+                    if (!bad++) first_bad = r;
+                }
+            }
+        });
+    std::thread redefine([&] {
+        for (u64 n = 1; !stop; n++) vm.def(kBase, "val", "()I", impl(n));
+    });
+    std::thread add([&] {
+        for (int n = 0; n < 5000 && !stop; n++)  // new keys: inserts into the map the dispatch searches
+            vm.def(kSub, "m" + std::to_string(n), "()V", [](Object*, const Args&) -> u64 { return 0; });
+    });
+    for (auto& th : threads) th.join();
+    stop = true;
+    redefine.join();
+    add.join();
+    if (bad)
+        t.fail("%d of %d calls returned %#" PRIx64 " (first): an implementation was destroyed while it ran", bad.load(), kCallers * kCalls,
+               first_bad.load());
 }
 
 }  // namespace

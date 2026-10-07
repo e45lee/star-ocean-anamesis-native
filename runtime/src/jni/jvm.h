@@ -1,7 +1,9 @@
 #pragma once
 // A tiny fake Java VM: just enough object model for the game's JNI calls.
+#include <atomic>
 #include <functional>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -75,11 +77,36 @@ using Impl = std::function<u64(Object* self, const Args& args)>;
 // none), to delegate to.
 using Override = std::function<u64(Object* self, const Args& args, const Impl& original)>;
 
+// A Method's implementation. Vm::def / Vm::override_method (RegisterNatives too) replace it while
+// other threads may be calling it: a call holds the implementation it loaded until it returns, so
+// the one replaced isn't destroyed under it (code review 2026-10-06 R1).
+class MethodImpl {
+public:
+    MethodImpl& operator=(Impl f) {
+        p_.store(f ? std::make_shared<const Impl>(std::move(f)) : nullptr);
+        return *this;
+    }
+    explicit operator bool() const { return p_.load() != nullptr; }
+    u64 operator()(Object* self, const Args& args) const {
+        std::shared_ptr<const Impl> p = p_.load();
+        return p ? (*p)(self, args) : 0;
+    }
+    Impl get() const {  // a copy of the current implementation (empty when none)
+        std::shared_ptr<const Impl> p = p_.load();
+        return p ? *p : Impl();
+    }
+
+private:
+    std::atomic<std::shared_ptr<const Impl>> p_;
+};
+
+// A Method's fields other than `impl` are set when it is made (find_method's placeholder or the
+// first def) and never change: callers read them unlocked.
 struct Method : TaggedAlloc {  // jmethodID
     Class* cls;
     std::string name, sig;
     bool is_static;
-    Impl impl;
+    MethodImpl impl;
     std::vector<char> params;  // one char per parameter ('L' for refs)
     char ret;
 };
@@ -94,8 +121,8 @@ struct Field : TaggedAlloc {  // jfieldID
 struct Class : Object {
     std::string name;  // slash form: java/lang/String
     Class* super = nullptr;
-    std::map<std::string, Method*> methods;  // key: name + sig
-    std::map<std::string, Field*> fields;    // key: name
+    std::map<std::string, Method*> methods;  // key: name + sig; under Vm's lock (threads add methods)
+    std::map<std::string, Field*> fields;    // key: name; under Vm's lock
 };
 
 class Vm {
@@ -106,6 +133,9 @@ public:
     Class* define_class(const std::string& name, const std::string& super = "java/lang/Object");
     Method* def(const std::string& cls, const std::string& name, const std::string& sig, Impl impl, bool is_static = false);
     Method* find_method(Class* c, const std::string& name, const std::string& sig, bool is_static);
+    // Virtual dispatch: the method `m` resolves to on an object of class `actual` (an override in
+    // `actual` or a class between it and m->cls that has an implementation), else `m`.
+    Method* resolve_virtual(Method* m, Class* actual);
     // Extension point: replaces the implementation of cls.name+sig (defining the method, and the
     // class, when they don't exist). `fn` receives the implementation it replaces: the one `cls`
     // or its nearest superclass had, or an empty Impl. Method IDs the game already holds stay

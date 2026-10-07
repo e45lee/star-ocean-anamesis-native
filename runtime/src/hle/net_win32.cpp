@@ -4,7 +4,7 @@
 //   - constants: AF_INET6 (10 / 23), SOL_SOCKET (1 / 0xffff) and its options, the socket type's
 //     SOCK_NONBLOCK / SOCK_CLOEXEC bits, MSG_NOSIGNAL / MSG_DONTWAIT, FIONBIO / FIONREAD;
 //   - SO_RCVTIMEO / SO_SNDTIMEO take a timeval in the guest, milliseconds in Winsock;
-//   - errors come from WSAGetLastError, as Linux errno numbers (a non-blocking connect reports
+//   - errors come from WSAGetLastError, as errno values (core/linux_errno.h; a non-blocking connect reports
 //     EINPROGRESS, Winsock WSAEWOULDBLOCK);
 //   - struct hostent has 32-bit h_addrtype / h_length in bionic, 16-bit in Winsock;
 //   - fd_set is a 1024-bit mask in bionic (select over WSAPoll).
@@ -20,6 +20,7 @@
 
 #include "core/hle.h"
 #include "core/host_fd.h"
+#include "core/linux_errno.h"
 #include "core/log.h"
 
 namespace soa {
@@ -38,43 +39,10 @@ bool started() {
     return ok;
 }
 
-int linux_errno(int wsa) {
-    switch (wsa) {
-    case WSAEWOULDBLOCK: return 11;  // EAGAIN
-    case WSAEINPROGRESS: return 115;
-    case WSAEALREADY: return 114;
-    case WSAENOTSOCK: return 88;
-    case WSAEDESTADDRREQ: return 89;
-    case WSAEMSGSIZE: return 90;
-    case WSAEPROTOTYPE: return 91;
-    case WSAENOPROTOOPT: return 92;
-    case WSAEPROTONOSUPPORT: return 93;
-    case WSAEOPNOTSUPP: return 95;
-    case WSAEAFNOSUPPORT: return 97;
-    case WSAEADDRINUSE: return 98;
-    case WSAEADDRNOTAVAIL: return 99;
-    case WSAENETDOWN: return 100;
-    case WSAENETUNREACH: return 101;
-    case WSAECONNABORTED: return 103;
-    case WSAECONNRESET: return 104;
-    case WSAENOBUFS: return 105;
-    case WSAEISCONN: return 106;
-    case WSAENOTCONN: return 107;
-    case WSAETIMEDOUT: return 110;
-    case WSAECONNREFUSED: return 111;
-    case WSAEHOSTUNREACH: return 113;
-    case WSAEINTR: return 4;
-    case WSAEBADF: return 9;
-    case WSAEACCES: return 13;
-    case WSAEFAULT: return 14;
-    case WSAEINVAL: return 22;
-    case WSAEMFILE: return 24;
-    default: return 5;  // EIO
-    }
-}
-// The guest's errno after a failed Winsock call; returns -1 for the thunk.
+// errno after a failed Winsock call (as the CRT's constant: core/linux_errno.h); returns -1 for
+// the thunk.
 s64 fail() {
-    errno = linux_errno(WSAGetLastError());
+    errno = host_errno_of_wsa(WSAGetLastError());
     return -1;
 }
 
@@ -126,7 +94,7 @@ void th_connect(Cpu& c) {
     if (s == INVALID_SOCKET) return ret(c, (u64)fail());
     if (connect(s, (sockaddr*)&a, len) == 0) return ret(c, 0);
     s64 r = fail();
-    if (errno == 11) errno = 115;  // a non-blocking connect in progress: EINPROGRESS, as on Linux
+    if (errno == EAGAIN) errno = EINPROGRESS;  // a non-blocking connect in progress: EINPROGRESS, as on Linux
     ret(c, (u64)r);
 }
 void th_listen(Cpu& c) {
@@ -232,13 +200,13 @@ void th_getsockopt(Cpu& c) {
     if (s == INVALID_SOCKET) return ret(c, (u64)fail());
     int level = (int)c.x(1), name = (int)c.x(2);
     if (!sockopt_to_host(level, name)) {
-        errno = 92;  // ENOPROTOOPT
+        errno = ENOPROTOOPT;
         return ret(c, (u64)-1);
     }
     char buf[64] = {};
     int len = sizeof buf;
     if (getsockopt(s, level, name, buf, &len) != 0) return ret(c, (u64)fail());
-    if (level == SOL_SOCKET && name == SO_ERROR) *(int*)buf = *(int*)buf ? linux_errno(*(int*)buf) : 0;
+    if (level == SOL_SOCKET && name == SO_ERROR) *(int*)buf = *(int*)buf ? linux_errno(host_errno_of_wsa(*(int*)buf)) : 0;
     int cap = c.x(4) ? *(int*)c.x(4) : 0;
     memcpy((void*)c.x(3), buf, std::min(cap, len));
     if (c.x(4)) *(u32*)c.x(4) = (u32)len;
@@ -331,7 +299,7 @@ void th_ioctl(Cpu& c) {
     u32 req = (u32)c.x(1);
     SOCKET s = sock(c);
     if (s == INVALID_SOCKET) {
-        errno = 25;  // ENOTTY
+        errno = ENOTTY;
         return ret(c, (u64)-1);
     }
     if (req == 0x5421) return ret(c, (u64)(set_nonblocking(s, *(int*)c.x(2) != 0) ? 0 : fail()));
@@ -341,7 +309,7 @@ void th_ioctl(Cpu& c) {
         *(int*)c.x(2) = (int)n;
         return ret(c, 0);
     }
-    errno = 25;
+    errno = ENOTTY;
     ret(c, (u64)-1);
 }
 

@@ -1,0 +1,51 @@
+# The line breaker's test vectors (common/include/soa/line_break.h): run by the C++ unit tests
+# (build/common/soa_text_tests, common/tests/line_break_tests.cpp: soa::text::break_lines) and by
+# tests/test_line_break.py (tools/english_core.py Font.rebreak, for the rows of its mode:
+# keep_breaks 0, skip_japanese 0, tags_are_words 1; trim as str.strip() first).
+# Fields: \n in text and expected is a line break. budget in measure units. player 1: <player> is 16.
+# The measure (one line): the TAG matches (<...>, 1-40 code points without < > \n) count 0 (<player>
+# 16 with player 1); then per code point: i l ' . , ! space | 1; m w M W 3; U+3000..U+FFFF 4; else 2.
+text	budget	keep_breaks	skip_japanese	tags_are_words	trim	player	expected
+aaa bbb ccc	14	0	0	1	0	0	aaa bbb\nccc
+aaa bbb ccc	30	0	0	1	0	0	aaa bbb ccc
+aaa bbb ccc	6	0	0	1	0	0	aaa\nbbb\nccc
+aaa bbb ccc	2	0	0	1	0	0	aaa\nbbb\nccc
+aaaaaaaaaa bb	10	0	0	1	0	0	aaaaaaaaaa\nbb
+aaaaaaaaaaaa	10	0	0	1	0	0	aaaaaaaaaaaa
+aa bb\ncc dd ee ff	10	0	0	1	0	0	aa bb\ncc dd\nee ff
+aa bb\ncc dd ee ff	10	1	0	1	0	0	aa bb\ncc dd\nee ff
+aa bb\n\ncc dd	4	1	0	1	0	0	aa\nbb\n\ncc\ndd
+aa bb\n\ncc dd	4	0	0	1	0	0	aa\nbb\ncc\ndd
+aa  \n  bb	100	0	0	1	0	0	aa bb
+aa 　\n bb	100	0	0	1	0	0	aa bb
+  leading spaces and words	12	0	0	1	0	0	leading\nspaces\nand\nwords
+  leading spaces and words	12	0	0	1	1	0	leading\nspaces\nand\nwords
+trailing space here 	8	0	0	1	0	0	trailing\nspace\nhere
+trailing space here \n	8	0	0	1	1	0	trailing\nspace\nhere
+double  space  words	8	0	0	1	0	0	double\nspace\nwords
+double  space  words	9	0	0	1	0	0	double\nspace\nwords
+mmm www iii lll	9	0	0	1	0	0	mmm\nwww\niii lll
+Look at <font color=red>this red</font> thing now	14	0	0	1	0	0	Look at\n<font color=red>this red</font>\nthing\nnow
+Look at <font color=red>this red</font> thing now	14	1	0	0	0	0	Look at\n<font color=red>this red</font>\nthing\nnow
+Hello <player>, how are you today	20	0	0	1	0	1	Hello\n<player>,\nhow are\nyou today
+Hello <player>, how are you today	20	0	0	1	0	0	Hello <player>, how\nare you\ntoday
+<player> <player> <player>	17	0	0	1	0	1	<player>\n<player>\n<player>
+a <tag-that-is-way-too-long-to-count-as-a-tag-x> b	20	0	0	1	0	0	a\n<tag-that-is-way-too-long-to-count-as-a-tag-x>\nb
+x <> y < z > w	6	0	0	1	0	0	x\n<>\ny < z >\nw
+スタミナ は 既に 全回復 しています	10	1	1	1	0	0	スタミナ は 既に 全回復 しています
+スタミナ は 既に 全回復 しています	10	1	0	1	0	0	スタミナ\nは\n既に\n全回復\nしています
+HP 100 回復 and more words here	10	1	1	1	0	0	HP 100 回復 and more words here
+English line here\n日本語 の 行 です	10	1	1	1	0	0	English\nline\nhere\n日本語 の 行 です
+	10	0	0	1	0	0	
+	10	1	0	1	0	0	
+a b\n\nc d	2	1	0	1	0	0	a\nb\n\nc\nd
+ a fits	100	1	0	1	0	0	 a fits
+ a fits	100	0	0	1	0	0	a fits
+one-very-long-word next	6	0	0	1	0	0	one-very-long-word\nnext
+Café naïve résumé words	12	0	0	1	0	0	Café\nnaïve\nrésumé\nwords
+ab 	100	0	0	1	0	0	ab 
+aa  bb	100	0	0	1	0	0	aa  bb
+aa  bb	4	0	0	1	0	0	aa\nbb
+see <font color=this is a very long attribute value xx> ok	12	0	0	1	0	0	see\n<font\ncolor=this\nis a\nvery\nlong\nattribute\nvalue\nxx> ok
+<font color=red>x</font> y	2	1	0	0	0	0	<font color=red>x</font>\ny
+<font color=red>x</font> y	2	1	0	1	0	0	<font color=red>x</font>\ny

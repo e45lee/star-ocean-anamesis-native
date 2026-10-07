@@ -1027,6 +1027,15 @@ How measured: `tools/english_text.py derive` and `report` (the box check above) 
 - **Shots** (`work/english/homefit/`, local; `control/run.py home-character` with Evelysse, `--movie 72`, `SOA_TEST_TALK_IDS` picking the lines): `en-hmmsg_01.png` (Global's 4 lines → 3 at 15.3 px), `en-hmmsg_13.png` (5 → 3), `en-hmmsg_11.png` (4 → 3), `en-hmmsg_15.png` (the 500 px wrap case: 2 lines at 24 px), `en-longest.png` (`cp0003_to_cp0108b01a_hmmsg_01_Ap`: 3 lines at 12.1 px), `en-talkmode-smallest.png` (Talk Mode, `cm405_b02g_hmmsg_21`: 3 lines at 12.7 px), and `ja-home.png` / `ja-talkmode.png` (`--lang ja`: as before). `en/` and `ja/` hold the runs.
 - **Open:** shorter wordings (option (a)) would give larger text, but only for machine rows: the user keeps the official ones. A 3-line box (the frame's 64 units) would raise the median to about 18 px. It is one constant, if the user prefers it.
 
+- **After the 31B redo (2026-10-07).** The chain (`work/english/mt/run-31b.sh`, 2 slots, waiting for an
+  idle GPU) re-translated every UI text and the whole story with Gemma 4 31B (~9 story requests/min).
+  Imported (`--replace`; story-fix without): master **65,389 of 66,945 rows English** (official 19,177,
+  memory 6,265, template 2,412, human 36, machine 37,499: 37,452 on the 31B, 47 left on the 26B where
+  the 31B's answer failed a check); story **21,638 of 21,663 lines English, 51 of 64 files complete and
+  served** (official 5,037, machine 17,013: 16,889 on the 31B, 124 on the 26B). The E7 shortening is
+  retired (the user: shrink the font in the client instead), so no `short-v1` row remains; story lines
+  needing 5+ window lines: 2,103, for the client font shrink.
+
 ## 8. English UI art
 
 Implemented 2026-10-07 (agent `en-art`, PLAN-english.md step E9, decision Q4). The images whose Japanese text is part of the picture (section 1.3) get English copies served as `-en` members; the client with `--lang en` picks them up through `FileExistLanguage` (6.3) and keeps the Japanese image for every file without one.

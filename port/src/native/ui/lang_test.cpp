@@ -12,8 +12,9 @@
 // Passes in the plain --selftest run (--lang ja) and in `--selftest platform370/lang --lang en`
 // (tests/tiers.json "selftest-lang-en").
 //
-// platform370/lang-strings and platform370/lang-wrap: the E10 rules as functions (the hard-coded
-// strings' table against data/english/client-strings.tsv; the wrap), independent of --lang.
+// platform370/lang-strings, lang-wrap, lang-label-state, lang-cache, lang-story-scale: the E10, E12
+// and E13 rules as functions (the hard-coded strings' table against data/english/client-strings.tsv;
+// the wrap; the per-label state; the caches; the story scale), independent of --lang.
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -58,8 +59,9 @@ NATIVE_TEST("platform370/lang") {
     for (const HookedFunction& h : hooked_functions())
         if (h.name && std::strstr(h.name, "[platform370 --lang")) hooked = true;
     if (en != hooked) t.fail("platform370's language hooks %s with --lang %s", hooked ? "installed" : "missing", platform370::language().c_str());
-    // --lang en: CLanguage::CLanguage, CCocosLabel::SetText (hard-coded strings), CCocosLabel::DrawSelf (wrap)
-    if (platform370::language_hooks().size() != (en ? 3u : 0u)) t.fail("language_hooks() has %zu entries", platform370::language_hooks().size());
+    // --lang en: CLanguage::CLanguage, CCocosLabel::SetText (hard-coded strings), DrawSelf (wrap), its D1 / D0
+    // (the per-label state), CEventScenario::ParseMessage and CEventScenarioMessageWindow::Change (the story fit)
+    if (platform370::language_hooks().size() != (en ? 7u : 0u)) t.fail("language_hooks() has %zu entries", platform370::language_hooks().size());
 
     std::string font = postfixed(t, "Font/etc2/font.fpk", f[1]);
     std::string want_font = en ? "Font/etc2/font-en.fpk" : "Font/etc2/font.fpk";
@@ -151,12 +153,16 @@ NATIVE_TEST("platform370/lang-strings") {
     if (platform370::text::english_for("LV3習得", bad, &o3)) t.fail("english_for took an English with %%s");
 }
 
-// The wrap rule (platform370 text_370.cpp) with a fixed-advance measure: 10 per byte.
+// The label wrap's options (platform370 text_370.cpp maybe_wrap: soa::text::break_lines with the
+// existing breaks kept and Japanese lines left alone) with a fixed-advance measure: 10 per byte. The
+// breaker's own rules are common/tests/line_break_vectors.tsv (soa_text_tests).
 NATIVE_TEST("platform370/lang-wrap") {
-    auto m = [](std::string_view s) { return 10.f * (float)s.size(); };
+    auto m = [](std::string_view s) { return 10.0 * (double)s.size(); };
+    soa::text::BreakOptions o;
+    o.keep_breaks = true, o.skip_japanese = true, o.tags_are_words = false;
     struct Case {
         const char* in;
-        float budget;
+        double budget;
         const char* want;
     } cases[] = {
         {"aaa bbb ccc", 75, "aaa bbb\nccc"},
@@ -171,41 +177,77 @@ NATIVE_TEST("platform370/lang-wrap") {
         {"a b\n\nc d", 20, "a\nb\n\nc\nd"},
     };
     for (const Case& c : cases) {
-        std::string out = platform370::text::wrap(c.in, c.budget, m);
-        if (out != c.want) t.fail("wrap(\"%s\", %g) = \"%s\", want \"%s\"", c.in, c.budget, out.c_str(), c.want);
+        std::string out = soa::text::break_lines(c.in, c.budget, m, o);
+        if (out != c.want) t.fail("break_lines(\"%s\", %g) = \"%s\", want \"%s\"", c.in, c.budget, out.c_str(), c.want);
     }
 }
 
-// The home speech box's fit (E12, text_370.cpp fit_box) with a fixed-advance measure: 10 per byte,
-// lines 30 apart and 24 high (h = 30 n - 6).
-NATIVE_TEST("platform370/lang-fit-box") {
+// What the hooks remember per label (text::LabelStates; Part 1 of the text cleanup): a label's
+// state dies with it. A freed label whose address a new label reuses must not hand the new one the
+// old text's original (a re-wrap from the wrong text) or "restore" the old label's box. forget() is
+// what the hooked CCocosLabel destructors (D0 / D1) call.
+NATIVE_TEST("platform370/lang-label-state") {
+    platform370::text::LabelStates st;
+    const uint64_t a = 0x1000;
+    std::string orig;
+    st.set(a, "short\nline", "short line");
+    if (!st.original_of(a, "short\nline", &orig) || orig != "short line") t.fail("original_of after set");
+    if (st.original_of(a, "another text", &orig)) t.fail("original_of for a text the hook didn't set");
+    st.keep_box(a, {0, 1, 0, 0});
+    st.keep_box(a, {1, 1, 480, 55});  // the first box kept is the label's own
+    st.forget(a);                      // ~CCocosLabel
+    if (st.original_of(a, "short\nline", &orig)) t.fail("a reused address inherited the old label's text");
+    platform370::text::LabelStates::Box b{};
+    if (st.take_box(a, &b)) t.fail("a reused address got the old label's box back");
+    if (st.size() != 0) t.fail("forget left %zu entries", st.size());
+    st.keep_box(a, {0, 1, 12, 34});
+    st.keep_box(a, {1, 1, 480, 55});
+    if (!st.take_box(a, &b) || b.custom != 0 || b.w != 12 || b.h != 34) t.fail("take_box gave a box other than the label's own");
+    if (st.take_box(a, &b)) t.fail("take_box twice");
+    st.mark_story(a);
+    if (!st.is_story(a) || st.is_story(a + 8)) t.fail("is_story");
+    st.forget(a);
+    if (st.is_story(a) || st.size() != 0) t.fail("forget kept the story mark");
+}
+
+// The text code's caches (text::LruCache) are bounded: the least recently used entry goes.
+NATIVE_TEST("platform370/lang-cache") {
+    platform370::text::LruCache<std::string> c(3);
+    for (int i = 0; i < 3; i++) c.put("k" + std::to_string(i), "v" + std::to_string(i));
+    std::string v;
+    if (!c.get("k0", &v) || v != "v0") t.fail("get k0");  // k0 now the most recent
+    c.put("k3", "v3");                                     // k1 goes
+    if (c.size() != 3) t.fail("size %zu, want 3", c.size());
+    if (c.get("k1", &v)) t.fail("k1 still cached");
+    if (!c.get("k0", &v) || !c.get("k2", &v) || !c.get("k3", &v) || v != "v3") t.fail("the recent entries went");
+    c.put("k3", "w3");
+    if (!c.get("k3", &v) || v != "w3" || c.size() != 3) t.fail("put of an existing key");
+}
+
+// E13's scale (text::story_scale) on a fixed measure: 10 per byte, lines 40 apart and 30 high
+// (h = 40 n - 10, Show's FontSize 30 + spacing 10), a 600 x 150 box (four lines).
+NATIVE_TEST("platform370/lang-story-scale") {
     auto m = [](std::string_view s) {
-        float w = 0, n = 1, cur = 0;
+        double w = 0, n = 1, cur = 0;
         for (char ch : s) {
             if (ch == '\n') n++, cur = 0;
             else w = std::max(w, cur += 10);
         }
-        return platform370::text::Extent{w, 30 * n - 6};
+        return soa::text::Extent{w, 40 * n - 10};
     };
     struct Case {
         const char* in;
-        const char* want;
-        float scale;
+        double scale;
     } cases[] = {
-        {"aaa bbb", "aaa bbb", 1},                                // fits as it is
-        {"aaa\nbbb", "aaa bbb", 1},                               // the line break collapsed
-        {"aaaa bbbb cccc", "aaaa bbbb\ncccc", 1},                  // two lines at full size
-        {"aaa  \n  bbb", "aaa bbb", 1},                           // the white space around a break goes
-        {"aaaa bbbb cccc dddd eeee", "aaaa bbbb cccc\ndddd eeee", 100.f / 140},  // 3 lines at full size: 2 wider ones, shrunk
-        {"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 100.f / 510},  // one word: shrunk to the width
-        {"", "", 1},
+        {"one line", 1},
+        {"a\nb\nc\nd", 1},               // four lines: fits
+        {"a\nb\nc\nd\ne", 150.0 / 190},  // five lines: 190 high
+        {"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 600.0 / 700},  // too wide
+        {"", 1},
     };
     for (const Case& c : cases) {
-        platform370::text::BoxFit f = platform370::text::fit_box(c.in, 100, 54, m);
-        if (f.text != c.want || std::fabs(f.scale - c.scale) > 1e-4f)
-            t.fail("fit_box(\"%s\") = \"%s\" at %g, want \"%s\" at %g", c.in, f.text.c_str(), f.scale, c.want, c.scale);
-        platform370::text::Extent e = m(f.text);
-        if (e.w * f.scale > 100.01f || e.h * f.scale > 54.01f) t.fail("fit_box(\"%s\") leaves the box", c.in);
+        double k = platform370::text::story_scale(c.in, m, 600, 150);
+        if (std::fabs(k - c.scale) > 1e-9) t.fail("story_scale(\"%s\") = %g, want %g", c.in, k, c.scale);
     }
 }
 

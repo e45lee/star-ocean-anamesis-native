@@ -594,7 +594,7 @@ u64 g_exe_base = 0;
 // Not on Windows yet (port/PLAN.md 5b): SOA_PROFILE_HOST samples host PCs with SIGPROF.
 void host_sample(ProfThread&, int) {}
 void init_host_sampling() {
-    if (const char* e = getenv("SOA_PROFILE_HOST"); e && *e && strcmp(e, "0")) LOGW("profile", "SOA_PROFILE_HOST: not available on Windows");
+    if (env::env_on("SOA_PROFILE_HOST")) LOGW("profile", "SOA_PROFILE_HOST: not available on Windows");
 }
 #else
 void on_sigprof(int, siginfo_t*, void* uc) {

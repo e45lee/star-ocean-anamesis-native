@@ -13,7 +13,7 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
   of the proposal's `math` line).
 - Decompiles and the function list: [`port/decomp/math/`](../../../decomp/math/) (`symbols.tsv`; `tools/decomp.sh --into math/<topic>`).
 - Types: [`math_layout.h`](math_layout.h); for Ghidra, `tools/subsystem.py export-types math` -> `port/decomp/math/types.json`.
-- Build settings: [`subsystem.cmake`](subsystem.cmake) compiles `math_*.cpp` with `-ffp-contract=off`.
+- Build settings: none of its own; the whole port is compiled with `-ffp-contract=off` (`port/CMakeLists.txt`).
 
 ## Types (classes with their methods attached)
 
@@ -84,7 +84,7 @@ port's guest exactly (not necessarily a phone's bionic).
 - **No fused multiply-add anywhere:** the 3.7.0 lib has 0 `fmadd` / `fmsub` / `fnmadd` / `fnmsub` /
   `fmla` / `fmls` instructions (110,503 `fmul`): it was built without contraction. Every product is
   rounded before the add, so the natives use plain `*` and `+` in the guest's order, and
-  `subsystem.cmake` turns contraction off (`-ffp-contract=off`) for hosts that would fuse.
+  `port/CMakeLists.txt` turns contraction off for the whole port (`-ffp-contract=off`) for hosts that would fuse.
 - **Operation order** follows the disassembly, not Ghidra's C: e.g. sums are `((a + b) + c) + d` or
   `d + ((a + b) + c)` per function (the NEON pairwise `faddp` / `ext` forms included), and products keep
   their operand order (it decides which NaN propagates).

@@ -1,0 +1,14 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/input_addresses.h).
+kVaddrPeripheralManager     sym _ZN4Aska6Global20m_pPeripheralManagerE       # PeripheralManager*
+kVaddrTouchCriGlobal        sym _ZN4Aska10TouchPanel11m_criGlobalE           # FastCriticalSection
+kVaddrSystemTouchQueue      sym _ZN4Aska10TouchPanel22m_queueSystemTouchDataE
+kVaddrMouseInstance         sym _ZN4Aska5Mouse13StaticPrivate6pMouseE
+kVaddrKeyboardInstance      sym _ZN4Aska8Keyboard6Static9pKeyboardE
+kVaddrCPadInstance          sym _ZN9Framework10TSingletonINS_4CPadEE11m_pInstanceE
+kVaddrCPadReaderInstance    sym _ZN9Framework10TSingletonINS_10CPadReaderEE11m_pInstanceE
+kVaddrCTouchPanelInstance   sym _ZN9Framework10TSingletonINS_11CTouchPanelEE11m_pInstanceE
+kVaddrCMouseInstance        sym _ZN9Framework10TSingletonINS_6CMouseEE11m_pInstanceE
+kVaddrCKeyboardInstance     sym _ZN9Framework10TSingletonINS_9CKeyboardEE11m_pInstanceE
+kPadCpp                     str "...\\Framework\\Pad.cpp"
+kUnitsNull                  str "m_pUnits is null."
+kTSingletonH                str "...\\Source\\Framework/TSingleton.h"           # the Library's path

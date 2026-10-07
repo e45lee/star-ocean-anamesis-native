@@ -16,20 +16,12 @@
 #include "native/memory/memory_check.h"
 #include "native/memory/memory_heap.h"
 #include "native/memory/memory_pools.h"
+#include "native/common/gen/common_addresses.h"
 
 namespace soa::native::memory {
 
 namespace {
-// Guest string addresses (vaddr) the asserts pass, and their lines.
-constexpr u64 kStrFixedLengthH = 0x26db199;   // ".../Framework/TFixedLengthAllocator.h"
-constexpr u64 kStrOutOfRange = 0x26db1f8;     // "The argument has gotten numeric out of range.(%d/%d)"
-constexpr u64 kStrNotFree = 0x26db22d;        // "Not free."
-constexpr u64 kStrIllegalAddress = 0x26db237; // "Illegal address.(%08x)\n"
-constexpr u64 kStrDoubleFree = 0x26db24f;     // "Double free."
-constexpr u64 kStrObjectContainerH = 0x2865e66;  // ".../Framework/TObjectContainer.h"
-constexpr u64 kStrElementsNull = 0x26ee29f;      // "m_pElements is null."
-constexpr u64 kStrFixedLengthCpp = 0x28663d3;    // "...\\Framework\\TFixedLengthAllocator.cpp"
-constexpr u64 kStrAllocatorsNull = 0x2866463;    // "m_Allocators.IsInitialized() is null."
+// The asserts' strings: native/common/addresses.txt and memory/addresses.txt (generated tables).
 
 u64 Str(u64 vaddr) { return main_lib()->base + vaddr; }
 

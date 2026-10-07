@@ -53,18 +53,6 @@ void install_test_hooks(LoadedLib& lib) {
     // for finding a hook that breaks the boot of a new guest build (the 3.7.0 rebase).
     const char* skip_env = env::env_str("SOA_TEST_HOOKS_SKIP");
     std::string skip = skip_env ? std::string(",") + skip_env + "," : "";
-    // The 3.7.0 rebase (P1, natives off): hooks that run a native (a2c transcription with the old lib's
-    // constants) in the game's own frame from boot on crash the 3.7.0 guest before any test runs
-    // (found by bisecting the boot). Left out until P2 regenerates their family; their tests fail.
-    static const char* const kRebaseSkippedHooks[] = {
-        // cocos/gui-reader-in-frame (cocos_guireader.cpp): CreateTree, Play and GetHandle load / run
-        // the transcription into the game's scenes.
-        "_ZN9Framework5Cocos15CCocosGuiReader10CreateTreeERKNS_20CResourceElement_CsfERNS0_10CCocosNodeERNS0_19CCocosObjectFactoryE",
-        "_ZN9Framework5Cocos23CCocosTimelineAnimation4PlayERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEEjjbNS2_8functionIFvvEEE",
-        "_ZNK9Framework5Cocos23CCocosTimelineAnimation9GetHandleERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE",
-    };
-    if (!env::env_on("SOA_TEST_HOOKS_ALL"))  // SOA_TEST_HOOKS_ALL=1: install them anyway (P2)
-        for (const char* h : kRebaseSkippedHooks) skip += std::string(",") + h + ",";
     for (auto& h : test_hooks()) {
         if (!skip.empty() && (skip == ",all," || skip.find(std::string(",") + h.symbol + ",") != std::string::npos)) {
             fprintf(stderr, "test hook: %s skipped (SOA_TEST_HOOKS_SKIP)\n", h.symbol);

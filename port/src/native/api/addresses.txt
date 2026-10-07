@@ -1,0 +1,3 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/api_addresses.h).
+namespace soa::native::fakeapi
+kTSingletonClientH   str "...Library/Framework/Source\\Framework/TSingleton.h"  # the Client project's path

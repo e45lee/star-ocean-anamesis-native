@@ -37,6 +37,11 @@ set_property(TARGET soa APPEND PROPERTY LINK_DEPENDS $<TARGET_OBJECTS:soaruntime
 target_include_directories(soa PRIVATE src)
 target_compile_definitions(soa PRIVATE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)
 target_compile_options(soa PRIVATE -Wall -Wno-unused-parameter -Wno-unused-function -fno-strict-aliasing -mcx16)
+# No contraction of a * b + c into a fused multiply-add anywhere in the port: the natives must round
+# like the guest, which fuses only where its code has an explicit FMADD (std::fma in a native,
+# native/common/arm_float.h). GCC's default x86-64 target has no FMA, so this changes nothing there;
+# it keeps a -march with FMA, clang (default -ffp-contract=on) or an AArch64 host bit-exact.
+target_compile_options(soa PRIVATE -ffp-contract=off)
 # The 3.7.0 platform layer (../platform370: the Java answers, fmod, the device clock, the
 # service_stop_day patch, the network glue); main.cpp calls platform370::install /
 # install_patches. A plain library: nothing in it self-registers.
@@ -52,7 +57,7 @@ target_link_libraries(soa PRIVATE
   unofficial::sqlite3::sqlite3
   OpenSSL::Crypto
   # Static, for the host-library natives (the game's zlib, libjpeg 9b, SQLite, libVorbis + libogg,
-  # zstd: port/PLAN.md, N); nothing uses them yet, so nothing of them is linked in.
+  # zstd: native/lib_*/; each subsystem.cmake may add its own).
   Vorbis::vorbis
   Ogg::ogg
   soa::jpeg9

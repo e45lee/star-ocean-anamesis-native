@@ -22,6 +22,8 @@
 #include "native/common/native_method.h"
 #include "native/sync/sync_check.h"
 #include "native/sync/sync_layout.h"
+#include "native/common/gen/common_addresses.h"
+#include "native/sync/gen/sync_addresses.h"
 
 namespace soa::native::sync {
 
@@ -43,11 +45,8 @@ inline void cpu_relax() {
 #endif
 }
 
-// Framework::gDoAssert(file, line, message) with Mutex.cpp's own strings (guest .rodata).
-constexpr u64 kMutexCpp = 0x2864c10;          // "C:\BAS_Submission\...\Framework\Mutex.cpp"
-constexpr u64 kUninitialized = 0x2861b3b;     // "Uninitialized object."
-constexpr u64 kAlreadyInitialized = 0x2861b26;  // "Already initialized."
-constexpr u64 kUnlockNotCalled = 0x2864c61;   // "Unlock doesn't called, yet."
+// Framework::gDoAssert(file, line, message) with Mutex.cpp's own strings (sync/addresses.txt, common's
+// kStrUninitializedObject).
 void mutex_assert(int line, u64 message) {
     static const u64 fn = guest::sym("_ZN9Framework9gDoAssertEPKciS1_z");
     u64 base = main_lib()->base;
@@ -130,7 +129,7 @@ void CMutex::Release() {
     if (m_initialized) {
         fence();
         if (m_lockCount != 0) mutex_assert(0x3a, kUnlockNotCalled);
-        if (!m_initialized) mutex_assert(0x44, kUninitialized);
+        if (!m_initialized) mutex_assert(0x44, kStrUninitializedObject);
         m_substance.Dtor();
     }
     m_initialized = 0;
@@ -160,26 +159,26 @@ void CMutex::Initialize() {
 bool CMutex::IsInitialized() const { return m_initialized; }
 
 s32 CMutex::LockCounter() const {
-    if (!m_initialized) mutex_assert(0xa6, kUninitialized);
+    if (!m_initialized) mutex_assert(0xa6, kStrUninitializedObject);
     fence();
     return m_lockCount;
 }
 
 FastCriticalSection* CMutex::rSubstance() {
-    if (!m_initialized) mutex_assert(0x44, kUninitialized);
+    if (!m_initialized) mutex_assert(0x44, kStrUninitializedObject);
     return &m_substance;
 }
 
 const FastCriticalSection* CMutex::crSubstance() const {
-    if (!m_initialized) mutex_assert(0x4a, kUninitialized);
+    if (!m_initialized) mutex_assert(0x4a, kStrUninitializedObject);
     return &m_substance;
 }
 
 void CMutex::Lock() {
-    if (!m_initialized) mutex_assert(0x61, kUninitialized);
+    if (!m_initialized) mutex_assert(0x61, kStrUninitializedObject);
     u64 self = Thread::GetCurrentID();
     if (__atomic_load_n(&m_owner, __ATOMIC_RELAXED) != self) {  // (a plain read: only the owner itself can make it equal)
-        if (!m_initialized) mutex_assert(0x44, kUninitialized);
+        if (!m_initialized) mutex_assert(0x44, kStrUninitializedObject);
         m_substance.Enter();
         if (t_obs) {
             t_obs->save_pre(this);
@@ -195,7 +194,7 @@ void CMutex::Lock() {
 }
 
 void CMutex::Unlock() {
-    if (!m_initialized) mutex_assert(0x7d, kUninitialized);
+    if (!m_initialized) mutex_assert(0x7d, kStrUninitializedObject);
     if (t_obs) t_obs->save_pre(this);
     if (m_lockCount != 1) {
         atomic_add(m_lockCount, -1);
@@ -205,7 +204,7 @@ void CMutex::Unlock() {
     m_locked = 0;
     m_owner = 0;
     atomic_add(m_lockCount, -1);
-    if (!m_initialized) mutex_assert(0x44, kUninitialized);
+    if (!m_initialized) mutex_assert(0x44, kStrUninitializedObject);
     if (t_obs) t_obs->save_post(this);
     m_substance.Leave();
 }

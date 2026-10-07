@@ -22,6 +22,7 @@
 #include "../math/math_layout.h"
 #include "../memory/memory_layout.h"
 #include "../sync/sync_layout.h"
+#include "gen/render_addresses.h"  // kVaddr*: the guest statics (tools/gen_addresses.py)
 
 namespace soa::native::render {
 
@@ -41,21 +42,9 @@ using MathVector = math::Vector;          // Aska::Vector, 0x10
 using MathQuaternion = math::Quaternion;  // Aska::Quaternion, 0x10
 using MathMatrix = math::Matrix;          // Aska::Matrix, 0x40
 
-// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use ------
-inline constexpr u64 kVaddrGlobalObjectManager = 0x2cd0690;        // Aska::Global::m_pObjectManager
-inline constexpr u64 kVaddrGlobalObjectManagerJobDispatcher = 0x2cd06d8;  // ...::m_pObjectManagerJobDispatcher
-inline constexpr u64 kVaddrGlobalCameraManager = 0x2cce118;        // Aska::Global::m_pCameraManager
-inline constexpr u64 kVaddrGlobalLightManager = 0x2cd04c0;         // Aska::Global::m_pLightManager
-inline constexpr u64 kVaddrGlobalModifierManager = 0x2cd0608;      // Aska::Global::m_pModifierManager
-inline constexpr u64 kVaddrGlobalTextureManager = 0x2d10ea8;       // Aska::Global::m_pTextureManager
-inline constexpr u64 kVaddrGlobalRenderStateManager = 0x2cd08d8;   // Aska::Global::m_pRenderStateManager
-inline constexpr u64 kVaddrGlobalRenderStatePool = 0x2d10d30;      // Aska::Global::m_pRenderStatePool
-inline constexpr u64 kVaddrGlobalShaderLinkManager = 0x2d10d48;    // Aska::Global::m_pShaderLinkManager
-inline constexpr u64 kVaddrGlobalShaderConstantBufferPool = 0x2d10d40;  // ...::m_pShaderConstantBufferPool
-inline constexpr u64 kVaddrGlobalFrameBuffer = 0x2cd06f0;          // Aska::Global::m_pFrameBuffer
-inline constexpr u64 kVaddrRenderDev = 0x2c01018;                  // Aska::g_pRenderDev (RenderDeviceGL*)
-inline constexpr u64 kVaddrRenderThreadGPUSync = 0x2d10d38;        // Aska::RenderThread::m_pGPUSync
-inline constexpr u64 kVaddrDefaultSphere = 0x2be6ea0;              // Aska::RenderableObject::m_vDefaultSphere (Vector)
+// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use: the
+// generated gen/render_addresses.h (tools/gen_addresses.py, from addresses.txt: each found in the lib),
+// included above.
 
 // ---- The object hierarchy: IAnimatable -> AnimatableLinkElement -> Task -> HierarchicalObject -> RenderableObject
 // Every scene object (AofObject, JointObject, Camera via AimingObject, the post-process objects, particles)

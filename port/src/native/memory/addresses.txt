@@ -1,0 +1,15 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/memory_addresses.h).
+kVaddrGlobalMemoryManager       sym _ZN4Aska6Global16m_pMemoryManagerE                     # MemoryManager*
+kVaddrRootMemoryManager         at 0x2ccc6a0 ref _ZN4Aska6Global25GetAvailableMemoryManagerEv  # the mmap'd root heap's MemoryManager* (a local static)
+kVaddrSystemDeleteManager       sym _ZN4Aska6Global21m_systemDeleteManagerE
+kVaddrSharedPointerCodePool     at 0x2ccd4a0 ref _ZN4Aska18TSharedPointerCode13CreateCounterEi  # TSharedPointerCode's counter pool
+kVaddrStlMemoryManager          sym _ZN9Framework37CAssignedMemoryManagerForSTLAllocator16m_pMemoryManagerE
+kVaddrStlFixedLengthContainer   sym _ZN9Framework37CAssignedMemoryManagerForSTLAllocator32m_pFixedLengthAllocatorContainerE
+kVaddrApplicationMemoryInstance sym _ZN9Framework10TSingletonINS_18CApplicationMemoryEE11m_pInstanceE
+kVaddrMappedMemoryManager       sym _ZN4Aska6Global22m_pMappedMemoryManagerE
+kStrFixedLengthH                str "...Library/Framework/Source\\Framework/TFixedLengthAllocator.h"
+kStrNotFree                     str "Not free."
+kStrIllegalAddress              str "Illegal address.(%08x)\n"
+kStrDoubleFree                  str "Double free."
+kStrFixedLengthCpp              str "...\\Framework\\TFixedLengthAllocator.cpp"
+kStrAllocatorsNull              str "m_Allocators.IsInitialized() is null."

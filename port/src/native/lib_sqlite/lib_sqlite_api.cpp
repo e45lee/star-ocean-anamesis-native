@@ -52,7 +52,7 @@ u64 g_orig[kCount];
 
 // ---- the live check: the shadow run in the guest's SQLite ----
 
-live::Family g_fam("lib_sqlite", 1, false);
+live::Family g_fam("lib_sqlite", 1);
 
 // > 0 while this thread runs guest SQLite code for the shadow: the hooks run the originals.
 thread_local int t_guest = 0;

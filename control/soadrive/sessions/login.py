@@ -1,6 +1,6 @@
 """Session `login`: the in-process gate of the 3.7.0 rebase (docs/history/PLAN-rebase-370.md P1):
 soa on the 3.7.0 client with its defaults, --server inproc (the local server library on the
-FakeApiCaller route, plus its CDN in-process) and --natives route, from the title to home:
+FakeApiCaller route, plus its CDN in-process) and --natives all, from the title to home:
 NoLoginStart, TAP TO START, Login, the downloader (its check, or the whole download on an empty
 phone), home (the notice board), the login popups (notice, LOGIN BONUS). Prints "PASS: ..." at the
 end, or "FAIL: ..." with exit status 1.
@@ -28,7 +28,7 @@ from ..proc import REPO
 from . import common
 
 TARGETS = ("port-inproc",)
-TARGETS_WHY = "it checks the in-process route's own log lines (the FakeApiCaller, --natives route)"
+TARGETS_WHY = "it checks the in-process route's own log lines (the FakeApiCaller, --natives all)"
 WRAPPER = "port/scripts/rebase_inproc_session.sh"
 
 
@@ -69,7 +69,7 @@ def main(o):
     home = open(os.path.join(o.out, "state-home.txt")).read() if os.path.exists(os.path.join(o.out, "state-home.txt")) else ""
     fails = common.checks(
         (has(r"p370: patch: CParameterUtility::FindGlobalStringWithKey hooked"), "platform370's patch wasn't installed"),
-        (has(r"replaced by native code \(--natives route\)"), "not --natives route"),
+        (has(r"replaced by native code \(--natives all\)"), "not --natives all"),
         (has(r"fakeapi: fid a01c67ef: player_get.msgp from the local server"), "Login wasn't answered by the local server"),
         (has(r"version_latest_Individual"), "the client didn't check its data against the in-process CDN"),
         (popups and "notice yes, login bonus x" in popups[-1] and "login bonus x0" not in popups[-1],

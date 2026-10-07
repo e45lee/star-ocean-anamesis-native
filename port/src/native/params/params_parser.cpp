@@ -264,8 +264,8 @@ void MakeStdString(libcxx::pair<String, bool>* out, ParserResult<const char*> r)
         p = s.r.s.data;
     } else {
         u64 alloc = (n + 16) & ~u64(15);
-        p = (char*)g::StlAllocate(alloc, g::kStlStringH, 0x1c);
-        if (!p) g::Assert(g::kStlAllocatorH, 0xbe, g::kAllocatedIsNull);
+        p = (char*)g::StlAllocate(alloc, native::kStrStlStringH, 0x1c);
+        if (!p) g::Assert(native::kStrStlAllocatorH, 0xbe, native::kStrAllocatedMemoryIsNull);
         s.r.l.size = n;
         s.r.l.data = p;
         s.r.l.cap = alloc | 1;

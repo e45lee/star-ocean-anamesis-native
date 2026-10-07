@@ -26,6 +26,7 @@
 #include "../containers/containers_layout.h"
 #include "../memory/memory_layout.h"
 #include "../sync/sync_layout.h"
+#include "gen/yayoi_addresses.h"  // kVaddr*: the guest statics (tools/gen_addresses.py)
 
 namespace soa::native::yayoi {
 
@@ -38,10 +39,9 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use ------
-inline constexpr u64 kVaddrNetworkManager = 0x2d74ee0;        // Aska::Global::m_pNetworkManager (NetworkManager*)
-inline constexpr u64 kVaddrNetworkAllocator = 0x2d74ed8;      // Aska::Global::m_pNetworkAllocator
-inline constexpr u64 kVaddrDownloadContentPath = 0x2d74f08;   // Aska::Global::m_pszDownloadContentPath (char*)
+// ---- Guest addresses (ELF vaddr; add main_lib()->base) of the statics the classes below use: the
+// generated gen/yayoi_addresses.h (tools/gen_addresses.py, from addresses.txt: each found in the lib),
+// included above.
 
 // The `sync` subsystem's classes (native/sync/sync_layout.h) are embedded where the guest embeds them:
 // FastCriticalSection (0x90), Thread (0x10), Event (0x68), Semaphore (0x18).

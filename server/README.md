@@ -382,5 +382,5 @@ last when the server was `port/src/server`). The server tests that need the game
 (`server/client-status`, `server/tutorial-npc-status`, `server/npc-status-master` (the library's
 master-data NPC model, `soaserver/npc_status.h`, against the client's own for all 822
 `master_mission_npc` rows), `server/event-npc-helper-status`,
-`server/event-asset-lookup`, `server/standin-assets`, `server/options`, `server/no-setenv-state`)
+`server/event-asset-lookup`, `server/standin-assets`, `server/options`)
 are the port's: `port/src/native/api/zz_server_guest_test.cpp`.

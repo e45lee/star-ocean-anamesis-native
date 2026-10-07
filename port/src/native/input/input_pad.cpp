@@ -16,16 +16,13 @@
 #include "native/common/native_method.h"
 #include "native/input/input_check.h"
 #include "native/input/input_layout.h"
+#include "native/common/gen/common_addresses.h"
 
 namespace soa::native::input {
 
 namespace {
 
-// Pad.cpp's / TSingleton.h's assert strings (guest .rodata, ELF vaddrs).
-constexpr u64 kPadCpp = 0x2864cc8;            // "...\Framework\Pad.cpp"
-constexpr u64 kUnitsNull = 0x2864d32;         // "m_pUnits is null."
-constexpr u64 kTSingletonH = 0x28612b1;       // "...\Framework/TSingleton.h"
-constexpr u64 kInstanceNull = 0x26daf21;      // "m_pInstance is null."
+// Pad.cpp's / TSingleton.h's assert strings: input/addresses.txt, common's kStrInstanceNull.
 
 template <typename T>
 T* static_at(u64 vaddr) {
@@ -130,14 +127,14 @@ void CPad::Merge() {
     m.m_lxf = m.m_lyf = m.m_rxf = m.m_ryf = 0.0f;
     CKeyboard* kb = CKeyboard::Instance();
     if (!kb) {
-        guest_assert(kTSingletonH, 0x23, kInstanceNull);
+        guest_assert(kTSingletonH, 0x23, kStrInstanceNull);
         kb = CKeyboard::Instance();
     }
     (void)kb->Now(0x85);
     CPad* pad = CPad::Instance();
     for (u32 i = 0;; i++) {
         if (!pad) {
-            guest_assert(kTSingletonH, 0x23, kInstanceNull);
+            guest_assert(kTSingletonH, 0x23, kStrInstanceNull);
             pad = CPad::Instance();
         }
         if (pad->m_numUnits <= i) break;

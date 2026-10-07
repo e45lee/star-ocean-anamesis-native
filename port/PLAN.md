@@ -6,7 +6,7 @@ Written 2026-10-01, after the 3.7.0 rebase merged into `linux-port` (e5cdcbc; co
 - **The port (`soa`) runs the 3.7.0 client:** the library and the single APK from the 3.7.0 APK, plus the 3.7.0 download. Two server modes:
   - `--server inproc` (default): the FakeApiCaller route into the server library, with the CDN served in memory (no sockets);
   - `--server HOST[:PORT]`: the client's own network code against `soa-server`.
-- **Natives start fresh:** the old ~18,000 were dumped. 301 remain: the in-process route, the phase observer, the tower, the notice-board webview. The pre-rebase port (the offline build) with all its natives is commit 19a08b5 of the pre-squash history (the tag `pre-rebase-370` that named it no longer exists: "Working rules").
+- **Natives start fresh:** the old ~18,000 were dumped and are being rebuilt per subsystem (`soa --list-native` lists what is native; `port/src/native/README.md`). The pre-rebase port (the offline build) with all its natives is commit 19a08b5 of the pre-squash history (the tag `pre-rebase-370` that named it no longer exists: "Working rules").
 - **Programs:** `soa` (port), `soa-server`, `soa-emu` (3.7.0 emulator), `soa-viewer` (3.8.0 viewer). Libraries: `runtime/`, `server/`, `platform370/`. One CMake build at the root.
 - **Green when the rebase merged (2026-10-01, on `linux-port`; today's gates: [`tests/TIERS.md`](../tests/TIERS.md)):**
   - `soa --selftest` and `soa-server --selftest` all passing;

@@ -1,0 +1,11 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/params_addresses.h).
+namespace soa::native::params::g
+kParameterParserCpp  str "C:\\BAS_Submission\\Client\\Project\\..\\Source\\Game\\Parameter\\ParameterParser.cpp"  # (the tail of a longer string)
+kParameterParserH    str "...Parameter/ParameterParser.h"
+kParameterBaseCpp    str "...\\Parameter\\ParameterBase.cpp"
+kApObjectIsNull      str "apObject is null."
+kApParserIsNull      str "apParser is null."
+kApValueIsNull       str "apValue is null."
+kNotFound            str "not found "    # the by-key getters' dropped message
+kNotMatch            str "not match "
+kEmptyString         str "" ref _ZN16CParameterParser14GetValueStringEPKN4Aska4ASON6AValue4AMapEPKc  # GetValueString's value when not found

@@ -15,6 +15,7 @@
 #include "core/paths.h"
 #include "native/common/test.h"
 #include "native/common/test_assets.h"
+#include "native/hash/gen/hash_addresses.h"
 #include "native/hash/hash_layout.h"
 
 namespace soa::native::hash {
@@ -80,9 +81,9 @@ const u8* guest_at(u64 vaddr) { return (const u8*)(main_lib()->base + vaddr); }
 
 NATIVE_TEST("hash/tables") {
     // the CRC tables the natives compute are the guest's (and settle CRC-16's polynomial: 0x8408)
-    t.expect_eq(std::memcmp(guest_at(0x2863e48), chash32_table(), 1024), 0, "CHash32 table");
-    t.expect_eq(std::memcmp(guest_at(0x2872808), crc16_table(), 512), 0, "CRC-16 table");
-    t.expect_eq(std::memcmp(guest_at(0x2872a08), crc32_table(), 1024), 0, "CRC-32 table");
+    t.expect_eq(std::memcmp(guest_at(kCHash32Table), chash32_table(), 1024), 0, "CHash32 table");
+    t.expect_eq(std::memcmp(guest_at(kCrc16Table), crc16_table(), 512), 0, "CRC-16 table");
+    t.expect_eq(std::memcmp(guest_at(kCrc32Table), crc32_table(), 1024), 0, "CRC-32 table");
 }
 
 NATIVE_TEST("hash/chash32") {

@@ -1,5 +1,5 @@
 #!/bin/sh
-# The in-process gate of the 3.7.0 rebase: soa with its defaults (--server inproc, --natives route)
+# The in-process gate of the 3.7.0 rebase: soa with its defaults (--server inproc, --natives all)
 # from the title to home: NoLoginStart, TAP TO START, Login, the data check (or, with SOA_PHONE=none,
 # the whole 3 GB download from the in-process CDN: scripts/make-phone-370.sh takes the phone from
 # <scratch-dir>/data afterwards), home, the login popups (notice, LOGIN BONUS). Prints "PASS: ..." at

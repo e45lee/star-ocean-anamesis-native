@@ -181,8 +181,12 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
 - **Guest ABI**: AAPCS64; an `int` result defines only w0, a `bool` only the low byte; structs over
   16 bytes, `std::string` and `shared_ptr` returns go through x8. Memory guest code will free comes
   from the guest's allocators (`guest_std.h`). Replace whole families that share state at once.
-  Float natives: `-ffp-contract=off` and the AArch64 NaN rules of `native/common/arm_float.h`
-  (e.g. [math](port/src/native/math/README.md)).
+  Float natives: `-ffp-contract=off` (the whole port) and the AArch64 NaN rules of
+  `native/common/arm_float.h` (e.g. [math](port/src/native/math/README.md)).
+- **Guest addresses** come from the subsystem's `addresses.txt` (by symbol, string or a referencing
+  function; `tools/gen_addresses.py` writes `gen/<s>_addresses.h`, T0 `generated` checks it), never a
+  typed vaddr. A native regression: `soa --natives route` (only the port's own hooks) and
+  `--natives-skip SUBSYS` narrow it down (port/src/native/README.md "Which natives run").
 - Check `soa --list-native` before porting a symbol, and look in `port/src/native/common/` for an
   existing helper (`git merge main` first) before adding one.
 

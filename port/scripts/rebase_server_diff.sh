@@ -1,6 +1,6 @@
 #!/bin/bash
 # The out-of-process gate of the 3.7.0 rebase (docs/history/PLAN-rebase-370.md P1): the port's 3.7.0 client
-# (soa --server HOST:PORT, natives route: no FakeApiCaller route, its own NetworkApiCaller) and the
+# (soa --server HOST:PORT, natives all: no FakeApiCaller route, its own NetworkApiCaller) and the
 # unmodified client (soa-emu) play the same scripted flow against fresh soa-servers with the same
 # seed, and the requests they send must be equal.
 #

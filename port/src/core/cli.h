@@ -18,7 +18,8 @@ struct SoaArgs {
     std::string apk_path, lib_path;
     bool smoke = false, selftest = false, list_native = false;
     std::string test_filter;          // --selftest F
-    std::string natives = "route";    // --natives route|none (--no-native = none); main checks the word
+    std::string natives = "all";      // --natives all|route|none (--no-native = none); main checks the word
+    std::vector<std::string> natives_skip;  // --natives-skip SUBSYS[,SUBSYS..] (main checks the names)
     std::string server_mode;          // --server inproc|HOST[:PORT] ("" = not given: inproc)
     platform370::Config p370;         // the 3.7.0 platform layer (net/http only with --server HOST)
     app::HostConfig host;

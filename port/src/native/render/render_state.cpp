@@ -30,13 +30,13 @@ const T* lib_data(u64 vaddr) {
     return reinterpret_cast<const T*>(main_lib()->base + vaddr);
 }
 // ZTest::Func / StencilTest::Func -> GL compare function (8), StencilOp::Operation -> GL stencil op (8)
-const u32* compare_funcs() { return lib_data<u32>(0x28ce73c); }
-const u32* stencil_ops() { return lib_data<u32>(0x28ce75c); }
+const u32* compare_funcs() { return lib_data<u32>(kCompareFuncTable); }
+const u32* stencil_ops() { return lib_data<u32>(kStencilOpTable); }
 // AlphaBlend::Operation -> {src, dst, the alpha dst of SeparateAlphaBlendMode 1, equation}
 struct BlendEntry {
     u32 src, dst, alphaDst, equation;
 };
-const BlendEntry* blend_table() { return lib_data<BlendEntry>(0x28cee60); }
+const BlendEntry* blend_table() { return lib_data<BlendEntry>(kBlendTable); }
 const s32* cull_modes() {
     static const s32* t = reinterpret_cast<const s32*>(guest::sym("_ZZN4Aska16RenderDeviceData11SetCullModeENS_4Cull4ModeEE8iNewMode"));
     return t;

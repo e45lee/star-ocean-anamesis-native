@@ -1,0 +1,11 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/common_addresses.h).
+# Used by more than one subsystem (namespace soa::native): the Framework's assert files and messages.
+kStrOutOfRange             str "The argument has gotten numeric out of range.(%d/%d)"
+kStrObjectContainerH       str "...\\Source\\Framework/TObjectContainer.h"          # the Library's path
+kStrElementsNull           str "m_pElements is null."
+kStrInstanceNull           str "m_pInstance is null."                             # TSingleton<T>::GetInstance
+kStrUninitializedObject    str "Uninitialized object."
+kStrStlAllocatorH          str "...Library/Framework/Source\\Framework/STL_Allocator.h"
+kStrStlStringH             str "...Library/Framework/Source\\Framework/STL_String.h"
+kStrNumElementsIsZero      str "aNumElements is zero."
+kStrAllocatedMemoryIsNull  str "pAllocatedMemory is null."

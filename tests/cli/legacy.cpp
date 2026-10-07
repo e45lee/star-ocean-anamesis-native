@@ -74,7 +74,7 @@ int parse_soa(int argc, const char* const* argv, soa::SoaArgs& r) {
             else if (a == "--natives") {
                 std::string v = next();
                 if (v != "route" && v != "all" && v != "none") return 2;  // (parse_native_set)
-                r.natives = v;
+                r.natives = v == "route" ? "all" : v;  // (its route was every native: today's all)
             }
             else if (a == "--lib") r.lib_path = next();
             else if (a == "--data") r.data_dir = next();

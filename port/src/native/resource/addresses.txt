@@ -1,0 +1,5 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/resource_addresses.h).
+kResourceManagerCpp  str "...\\Framework\\ResourceManager.cpp"
+kNotInitialized      str "m_IsInitialized is null."
+kElementNull         str "m_pResourceElement is null."
+kFileLoaderCpp       str "...\\Framework\\FileLoader.cpp"

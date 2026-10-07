@@ -9,6 +9,8 @@
 #include <mutex>
 #include <vector>
 
+#include <soa/env.h>
+
 namespace soa::native::render::testutil {
 
 u64 vcall(const void* obj, int slot, std::initializer_list<u64> rest) {
@@ -92,7 +94,8 @@ void probe_hook(Probe& p, Cpu& c) {
     c.set_v(3, r.v3);
 }
 
-bool live_screen() { return std::getenv("SOA_SELFTEST_START_FILE") != nullptr; }
+// (main.cpp reads it the same way: set and non-empty)
+bool live_screen() { return env::env_str("SOA_SELFTEST_START_FILE") != nullptr; }
 
 bool probe_call(TestContext& t, Probe& p, const std::function<bool(Cpu&)>& body, int timeout_ms, const char* what,
                 bool required) {

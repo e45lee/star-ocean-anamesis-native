@@ -94,9 +94,12 @@ NATIVE_TEST("render/state-apply") {
 // DrawIndexedPrimitive with all it runs before the draw (UpdateRenderState, UpdateVertexAttribute, the
 // blending and depth commands): the guest's chain against the natives' on 1,000 of the render thread's
 // draws, UpdateShaderProgram and the texture commands recorded as markers (t_mark_callees); draws with
-// a buffer upload pending or instance data are left out (the natives run the guest's then).
+// a buffer upload pending or instance data are left out (the natives run the guest's then). The program is
+// established for real first (establish_program, as the live check does); every 4th draw starts from a null
+// m_program, the state CompileShaderProgramCache leaves (the battle's loading): the marked runs crashed in
+// UpdateVertexAttribute on it before establish_program.
 NATIVE_TEST("render/device-draw") {
-    int calls = 0, bad = 0, skipped = 0;
+    int calls = 0, bad = 0, skipped = 0, nulled = 0;
     for (int n = 0; n < 1000 && bad < 3; n++) {
         bool ok = probe_call(t, g_probeDraw, [&](Cpu& c) {
             auto* d = reinterpret_cast<RenderDeviceData*>(c.x(0));
@@ -108,6 +111,18 @@ NATIVE_TEST("render/device-draw") {
                 return false;
             }
             const u64 x[6] = {c.x(0), c.x(1), c.x(2), c.x(3), c.x(4), c.x(5)};
+            if (d->m_drawEnabled) {
+                if (n % 4 == 0) {
+                    d->m_program = nullptr;
+                    nulled++;
+                }
+                establish_program(d);
+                if (!d->m_program) {
+                    t.fail("no program after establish_program");
+                    bad++;
+                    return true;
+                }
+            }
             t_mark_callees = true;
             std::string why = gl_run_both({{ss, sizeof *ss}}, [&] { guest_call(g_probeDraw.orig, {x[0], x[1], x[2], x[3], x[4], x[5]}); },
                                           [&] { d->DrawIndexedPrimitive((RenderDeviceGL*)x[1], (u32)x[2], *ib, x[4], (s32)x[5]); });
@@ -121,8 +136,9 @@ NATIVE_TEST("render/device-draw") {
         }, 20000, "RenderDeviceData::DrawIndexedPrimitive");
         if (!ok) break;
     }
-    fprintf(stderr, "    %d draws compared, %d skipped\n", calls, skipped);
+    fprintf(stderr, "    %d draws compared (%d from a null program), %d skipped\n", calls, nulled, skipped);
     t.expect_eq(calls > 0, true, "draws taken");
+    t.expect_eq(nulled > 0, true, "draws from a null program");
 }
 
 // SetTexture (with ActiveTexture and BindTexture under it) and RemoveTexture on the render thread's calls;

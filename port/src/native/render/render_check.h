@@ -44,6 +44,10 @@ extern thread_local bool t_mark_callees;
 // In a marked run (t_mark_callees, recording): records "@name(args)" and returns true (the caller then
 // skips the call); else false.
 bool mark_callee(const char* name, std::initializer_list<u64> args);
+// Before a composite check of a call whose first step is UpdateShaderProgram (a draw, UpdateRenderState):
+// runs it for real, so the device's m_program (null after CompileShaderProgramCache) is the one the
+// recorded runs use (render_draw.cpp).
+void establish_program(RenderDeviceData* d);
 
 // What a RenderThread request native saw and did (render_thread.cpp records it while t_rtobs is set;
 // render_thread_check.cpp replays the original from `pre` and compares with `post`).

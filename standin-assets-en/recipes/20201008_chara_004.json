@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "The rerun Tales of the Rays collaboration pick-up gacha's banner (Cress / Mint: glossary).",
+ "source": "Image/etc2/20201008_chara_004.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -74,12 +74,21 @@
    "fill": "#ffffff",
    "clear": "inpaint",
    "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
   }
  },
  "labels": [
   {
-   "jp": "イベント",
-   "text": "Event",
+   "jp": "ガチャ",
+   "text": "Draws",
    "box": [
     73,
     14,
@@ -95,95 +104,93 @@
    ]
   },
   {
-   "jp": "",
-   "text": "",
+   "jp": "テイルズ オブ ザ レイズ キャラクターピックアップ",
+   "text": "Tales of the Rays Character Pick-up",
    "box": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "忘却の聖地 ウドラム",
-   "text": "Wadrum, Holy Land\nof Oblivion",
-   "box": [
-    60,
-    32,
-    220,
-    58
-   ],
-   "style": "blue",
-   "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "size": 22,
-   "align": "left"
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "第6刻",
-   "text": "Hour 6",
-   "box": [
-    350,
-    60,
-    100,
-    30
-   ],
-   "style": "blue",
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "size": 22,
-   "align": "right"
-  },
-  {
-   "jp": "滅級・絶級追加",
-   "text": "Misery 2 & 3 added",
-   "box": [
-    86,
-    96,
-    170,
-    18
+    166,
+    14,
+    290,
+    14
    ],
    "style": "blue_s",
    "cover": [
-    96,
-    96,
-    116,
-    18
+    164,
+    14,
+    292,
+    15
    ],
    "clear": "inpaint",
+   "size": 12
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    58,
+    30,
+    46,
+    46
+   ],
+   "cover": [
+    58,
+    30,
+    46,
+    46
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "復刻",
+   "text": "Rerun",
+   "box": [
+    62,
+    32,
+    38,
+    42
+   ],
+   "style": "blue",
+   "cover": [
+    58,
+    30,
+    46,
+    46
+   ],
    "size": 13
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    286,
+    30,
+    170,
+    88
+   ],
+   "cover": [
+    286,
+    30,
+    170,
+    88
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "上方修正! 出現確率Up!! 10連目はピックアップ確率3倍!",
+   "text": "Rates raised!\nRate UP!!\n10th 10-chain: pick-up rate x3!",
+   "box": [
+    290,
+    32,
+    162,
+    84
+   ],
+   "style": "gold_r",
+   "cover": [
+    286,
+    30,
+    170,
+    88
+   ],
+   "size": 18
   }
  ]
 }

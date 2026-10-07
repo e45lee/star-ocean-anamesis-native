@@ -1,0 +1,155 @@
+"""The 2020 dated banners (512x128) before 2020-12-24, newest first (the user, 2026-10-07): title bands
+(inpaint + shade + English) over the dense lettering, in a few layout families; small art captions
+(character names under portraits) stay. Terms: glossary.tsv, Global's master (e.g. 滅級 / 絶級 =
+Misery 2 / 3), the MT names table for new names; epithets composed (聖夜 Christmas, 雪狐 Snow Fox...)."""
+import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from common import *  # noqa: E402,F403
+from gacha_banners import S as GS, erase_first  # noqa: E402
+S = dict(GS)
+S["omake"] = {"size": 11, "bold": 1, "fill": "#ffffff", "clear": "inpaint", "align": "left"}
+S["cap"] = {"size": 11, "bold": 1, "fill": "#ffffff", "outline": "#000000", "outline_width": 1, "clear": "inpaint", "align": "left"}
+TAGS = {"ガチャ": "Draws", "イベント": "Event", "キャンペーン": "Campaign", "ボックスガチャ": "Box Draws"}
+def tag(jp):
+    return L(jp, TAGS[jp], [73, 14, 80, 15], "tag", [72, 15, {"キャンペーン": 66, "ボックスガチャ": 76}.get(jp, 52), 13])
+def w(name, note, labels):
+    write(name, note, S, erase_first(labels))
+def band(jp, en, rect, style="gold_r", size=18, **kw):
+    return L(jp, en, [rect[0] + 4, rect[1] + 2, rect[2] - 8, rect[3] - 4], style, list(rect), size=size, **kw)
+def xmas_rerun(name, year, title=None, x1=220, bonus=True):
+    title = title or f"Rerun {year} Christmas"
+    w(name, f"A step-up gacha's banner ({title}).", [
+        tag("ガチャ")] + ([L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11])] if bonus else []) + [
+        L("…10連10ステップ目 PUいずれか1体確定ガチャ", f"{title}\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+          [66, 40, x1 - 70, 72], "gold", [60, 34, x1 - 60, 80], size=18),
+        L("ステップ10はPUいずれか1体確定!", "Step 10: 1 pick-up guaranteed!", [270, 98, 186, 18], "bar_r", [270, 96, 186, 20], clear="shade", clear_color="#200400c0")])
+def weapon_pu(name):
+    w(name, "A pick-up weapon gacha's banner (3 slots, with a bonus).", [
+        tag("ガチャ"),
+        L("ピックアップ武器ガチャ", "Pick-up Weapon Draws", [170, 15, 170, 14], "blue_s", [176, 15, 156, 14], clear="inpaint", size=13),
+        L("3スロット", "3 Slots", [368, 15, 40, 13], "tag", [368, 15, 40, 13], clear="inpaint", size=10),
+        L("10連で★5新武器1本確定!!", "10-chain: 1 new\n★5 weapon guaranteed!!", [250, 52, 206, 64], "gold_r", [248, 44, 208, 72], size=20),
+        L("おまけ付き", "Bonus", [410, 27, 46, 11], "omake", [410, 27, 46, 11])])
+def rateup(name, x0, who, kind="Character", exceed=False, extra=None, y0=30):
+    """A pick-up gacha's banner with its right block: ★5 X arrives!! / Rate UP!! / 10th draw: x3."""
+    labels = [tag("ガチャ"), band("★5 … 登場!! 出現確率UP!! 10連目はピックアップ確率3倍!", f"★5 {who}!!\nRate UP!!\n10th 10-chain: pick-up rate x3!", [x0, y0, 456 - x0, 118 - y0], size=18)]
+    labels.append(L("ピックアップ…キャラガチャ", f"Pick-up {'Exceed ' if exceed else ''}{kind} Draws", [58, 101, 140, 13], "cap", [57, 86, 110, 30]))
+    if extra: labels += extra
+    w(name, f"A pick-up gacha's banner ({who}).", labels)
+def awaken(name, who, x1=290):
+    w(name, f"{who}'s awakening banner.", [band(f"{who}覚醒", f"{who}\nAwakened", [60, 32, x1 - 60, 80], "blue", size=26, align="left")])
+
+# ---- 2020-12-17 / 12-10
+w("20201217_event_001", "The Wadrum, Holy Land of Oblivion event's banner (hour 6).", [
+    tag("イベント"),
+    L("忘却の聖地 ウドラム", "Wadrum, Holy Land\nof Oblivion", [60, 32, 220, 58], "blue", [58, 32, 190, 64], size=22, align="left"),
+    L("第6刻", "Hour 6", [350, 60, 100, 30], "blue", [356, 60, 90, 30], size=22, align="right")])
+awaken("20201217_chara_003", "Official Reimi")
+xmas_rerun("20201217_chara_002", 2018)
+rateup("20201217_chara_001", 300, "Snow Fox Karlyn &\nChristmas Nell")
+weapon_pu("20201210_weapon_001")
+w("20201210_event_001", "The Cave of the Seven Stars divine event's banner (神級: Divine, a 3.x difficulty Global never had).", [
+    tag("イベント"),
+    L("神級", "Divine", [60, 36, 50, 36], "blue_s", [60, 38, 48, 36], clear="inpaint", size=14),
+    band("七星の洞窟", "Cave of the Seven Stars", [236, 34, 220, 50], size=24),
+    band("神級イベント", "Divine Event", [296, 88, 150, 26], size=16)])
+xmas_rerun("20201210_chara_002", 2019)
+rateup("20201210_chara_001", 244, "Black Evelysse", exceed=True)
+
+def event_title(name, jp, en, rect, sub=None, top=None, rerun=None, tagjp="イベント", style="blue"):
+    """An event / box gacha banner: the title band, an optional subtitle band (difficulties added),
+    an optional small top caption, an optional 'rerun' badge."""
+    labels = [tag(tagjp), band(jp, en, rect, style, size=24)]
+    if sub: labels.append(band(sub[0], sub[1], sub[2], style, size=14))
+    if top: labels.append(L(top[0], top[1], top[2], "blue_s", top[2], clear="inpaint", size=12))
+    if rerun: labels.append(band("復刻", "Rerun", rerun, style, size=14))
+    w(name, f"An event banner ({en.replace(chr(10), ' ')}).", labels)
+MIS = ("滅級・絶級追加", "Misery 2 & 3 added")
+FADE = "Where Fading\nMemories Dwell"
+WAD = "Wadrum, Holy Land\nof Oblivion"
+def wadrum(name, hour, rerun=False, sub=True):
+    labels = [tag("イベント"), L("忘却の聖地 ワドラム", WAD, [60, 32, 220, 58], "blue", [58, 32, 190, 64], size=22, align="left"),
+              L(f"第{hour}刻", f"Hour {hour}", [350, 60, 100, 30], "blue", [356, 60, 90, 30], size=22, align="right")]
+    if sub: labels.append(L(MIS[0], MIS[1], [86, 96, 170, 18], "blue_s", [96, 96, 116, 18], clear="inpaint", size=13))
+    if rerun: labels.append(band("復刻", "Rerun", [372, 30, 76, 26], "blue", size=14))
+    w(name, f"The Wadrum, Holy Land of Oblivion event's banner (hour {hour}{', rerun' if rerun else ''}; Misery 2 / 3: Global's 滅級 / 絶級).", labels)
+
+# ---- 2020-12-03 .. 2020-10-29
+event_title("20201203_event_002", "色褪せぬ記憶の在処", FADE, [60, 30, 280, 60], tagjp="ボックスガチャ",
+            sub=("ボックスガチャ", "Box Draws", [300, 88, 156, 30]))
+event_title("20201203_event_001", "色褪せぬ記憶の在処", FADE, [70, 28, 380, 64], sub=(MIS[0], MIS[1], [120, 94, 216, 24]))
+event_title("20201126_event_001", "色褪せぬ記憶の在処", FADE, [70, 28, 320, 64], rerun=[396, 46, 50, 36])
+rateup("20201126_chara_001", 300, "Songstar Rena &\nSongstar Fayt")
+wadrum("20201119_event_001", 5)
+xmas_rerun("20201119_chara_001", 2019, "Rerun 2019 Anniversary\n(3rd)", x1=236)
+w("20201112_weapon_002", "The rerun pick-up divine weapon gacha's banner.", [
+    tag("ガチャ"), L("3スロット", "3 Slots", [374, 26, 76, 14], "tag", [372, 25, 80, 15], clear="inpaint", size=11),
+    band("復刻 ピックアップ武器ガチャ 10連で★5PU武器1本確定!", "Rerun Pick-up Weapon Draws\n10-chain: 1 ★5 pick-up\nweapon guaranteed!", [248, 52, 208, 66], size=17)])
+weapon_pu("20201112_weapon_001")
+wadrum("20201112_event_001", 5, rerun=True, sub=False)
+rateup("20201112_chara_003", 300, "Maria of the Divine Wings &\nWise God Mastima", y0=14)
+w("20201112_chara_002", "Divine Dragon Ashton's step-up gacha banner.", [
+    tag("ガチャ"),
+    band("★5神龍のアシュトン ステップ10は神龍のアシュトン1体確定!", "★5 Divine Dragon Ashton\nStep 10: Divine Dragon\nAshton guaranteed!", [56, 26, 232, 92], "gold", size=18, align="left"),
+    band("10連10ステップ目 PU1体確定ガチャ", "10-chain Step 10:\n1 pick-up guaranteed", [324, 56, 132, 62], size=13)])
+rateup("20201112_chara_001", 240, "Divine Dragon Ashton")
+awaken("20201105_chara_003", "Peppita")
+w("20201105_chara_002", "The weekend-limited character pick-up gacha's banner.", [
+    tag("ガチャ"), band("週末限定 キャラクターピックアップ ピックアップは期間限定キャラのみ!", "Weekend Limited\nCharacter Pick-up\nLimited characters only!", [266, 6, 192, 112], size=18)])
+xmas_rerun("20201105_chara_001", 0, "Rerun Fairy Tale World", x1=210)
+event_title("20201029_event_001", "逆襲のファントム", "Phantom Counterattack", [76, 34, 370, 60], sub=(MIS[0], MIS[1], [150, 94, 210, 24]),
+            top=("EP3イベント", "EP3 Event", [200, 14, 150, 22]), style="gold")
+
+# ---- 2020-10-29 .. 2020-10-08
+xmas_rerun("20201029_chara_003", 0, "Rerun Halloween 2018", x1=226)
+w("20201029_chara_002", "The Invoker role pick-up gacha's banner (Invoker: Global's キャスター).", [
+    tag("ガチャ"), band("キャスターロール pick up ピックアップキャラガチャ", "Invoker Role\nPick-up Character Draws", [56, 26, 214, 88], "gold", size=20, align="left"),
+    L("ピックアップは期間限定キャラのみ!", "Pick-ups: limited characters only!", [270, 102, 186, 16], "bar_r", [268, 100, 188, 18], clear="shade", clear_color="#200400c0")])
+weapon_pu("20201022_weapon_001")
+event_title("20201022_event_002", "逆襲のファントム", "Phantom Counterattack", [64, 40, 280, 50], tagjp="ボックスガチャ", sub=("ボックスガチャ", "Box Draws", [300, 86, 156, 30]), style="gold")
+event_title("20201022_event_001", "逆襲のファントム", "Phantom Counterattack", [64, 38, 340, 56], top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]),
+            rerun=[394, 14, 62, 42], style="gold")
+awaken("20201022_chara_002", "Adray")
+w("20201022_chara_001", "The Halloween 2020 pick-up gacha's banner (Vampire Maria / Magician Peppita).", [
+    tag("ガチャ"), band("ピックアップキャラガチャ ハロウィン2020 出現確率UP!! 10連目はピックアップ確率3倍!", "Pick-up Character Draws\nHalloween 2020\nRate UP!!\n10th 10-chain: pick-up x3!",
+                        [172, 12, 176, 106], size=16)])
+w("20201022_campaign_001", "The item shop's Halloween weapon sets campaign banner.", [
+    tag("キャンペーン"), band("アイテムショップで ハロウィン武器強化セット 期間限定追加", "Limited-time Halloween\nWeapon Enhancement Sets\nin the Item Shop", [246, 4, 210, 116], size=17)])
+weapon_pu("20201015_weapon_001")
+wadrum("20201015_event_001", 4)
+xmas_rerun("20201015_chara_003", 0, "Rerun Halloween 2017", x1=226)
+xmas_rerun("20201015_chara_001", 0, "Rerun Maid", x1=226, bonus=False)
+wadrum("20201008_event_001", 4, rerun=True, sub=False)
+w("20201008_chara_004", "The rerun Tales of the Rays collaboration pick-up gacha's banner (Cress / Mint: glossary).", [
+    tag("ガチャ"), L("テイルズ オブ ザ レイズ キャラクターピックアップ", "Tales of the Rays Character Pick-up", [166, 14, 290, 14], "blue_s", [164, 14, 292, 15], clear="inpaint", size=12),
+    band("復刻", "Rerun", [58, 30, 46, 46], "blue", size=13),
+    band("上方修正! 出現確率Up!! 10連目はピックアップ確率3倍!", "Rates raised!\nRate UP!!\n10th 10-chain: pick-up rate x3!", [286, 30, 170, 88], size=18)])
+xmas_rerun("20201008_chara_003", 0, "Rerun Maid", x1=226, bonus=False)
+xmas_rerun("20201008_chara_002", 0, "Rerun Maid", x1=226, bonus=False)
+
+# ---- 2020-10-08 .. 2020-08-27
+rateup("20201008_chara_001", 270, "Maid Reimi &\nButler Arumat", y0=24)
+wadrum("20200917_event_001", 3)
+w("20200917_campaign_001", "The owned-character bonus / treasured weapon ticket exchange's banner.", [
+    band("所持キャラボーナス券 秘蔵武器引換券 交換所オープン!", "Owned Character Bonus Tickets &\nTreasured Weapon Exchange Tickets:\nthe Exchange is open!", [58, 26, 300, 92], "blue", size=18, align="left")])
+weapon_pu("20200910_weapon_001")
+w("20200910_event_002", "The Cave of the Seven Stars divine event's banner (神級: Divine).", [
+    tag("イベント"), L("神級", "Divine", [60, 36, 50, 36], "blue_s", [58, 32, 52, 44], clear="inpaint", size=14),
+    band("七星の洞窟", "Cave of the Seven Stars", [210, 30, 246, 50], size=24), band("神級イベント", "Divine Event", [296, 84, 156, 30], size=16)])
+wadrum("20200910_event_001", 3, rerun=True, sub=False)
+awaken("20200910_chara_004", "Karlyn")
+rateup("20200910_chara_003", 260, "Divine Wing Fayt", y0=24, extra=[band("復刻", "Rerun", [58, 70, 46, 44], "blue", size=13)])
+w("20200910_chara_002", "Rena of Divine Stars' step-up gacha banner.", [
+    tag("ガチャ"),
+    band("★5神星のレナ ステップ10は神星のレナ1体確定!", "★5 Rena of Divine Stars\nStep 10: Rena of Divine\nStars guaranteed!", [56, 26, 220, 92], "gold", size=18, align="left"),
+    band("10連10ステップ目 PU1体確定ガチャ", "10-chain Step 10:\n1 pick-up guaranteed", [312, 40, 144, 78], size=13)])
+rateup("20200910_chara_001", 260, "Rena of Divine Stars", y0=24, extra=[band("復刻", "Rerun", [58, 58, 46, 44], "blue", size=13)])
+event_title("20200903_event_001", "ファントム・コマンダー討伐", "Defeat the\nPhantom Commander", [70, 36, 380, 56], sub=(MIS[0], MIS[1], [150, 94, 210, 24]),
+            top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]), style="gold")
+xmas_rerun("20200903_chara_002", 0, "Rerun Costume\nContest 2019", x1=236)
+w("20200903_chara_001", "The SO3 Memorial pick-up gacha's banner.", [
+    tag("ガチャ"), L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11]),
+    band("SO3メモリアル ピックアップキャラガチャ ピックアップは期間限定キャラのみ!", "SO3 Memorial\nPick-up Character Draws\nLimited characters only!", [262, 20, 194, 98], size=18)])
+weapon_pu("20200827_weapon_001")
+event_title("20200827_event_002", "ファントム・コマンダー討伐", "Defeat the\nPhantom Commander", [60, 30, 250, 64], tagjp="ボックスガチャ",
+            sub=("ボックスガチャ", "Box Draws", [300, 86, 156, 30]))
+event_title("20200827_event_001", "ファントム・コマンダー討伐", "Defeat the\nPhantom Commander", [80, 36, 310, 70],
+            top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]), rerun=[394, 14, 62, 42])

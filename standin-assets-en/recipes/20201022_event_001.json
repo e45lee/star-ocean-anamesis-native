@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "An event banner (Phantom Counterattack).",
+ "source": "Image/etc2/20201022_event_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -74,6 +74,15 @@
    "fill": "#ffffff",
    "clear": "inpaint",
    "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
   }
  },
  "labels": [
@@ -98,92 +107,90 @@
    "jp": "",
    "text": "",
    "box": [
-    58,
-    32,
-    190,
-    64
+    64,
+    38,
+    340,
+    56
    ],
    "cover": [
-    58,
-    32,
-    190,
-    64
+    64,
+    38,
+    340,
+    56
    ],
    "style": "erase"
   },
   {
-   "jp": "忘却の聖地 ウドラム",
-   "text": "Wadrum, Holy Land\nof Oblivion",
+   "jp": "逆襲のファントム",
+   "text": "Phantom Counterattack",
    "box": [
-    60,
-    32,
-    220,
-    58
+    68,
+    40,
+    332,
+    52
    ],
-   "style": "blue",
+   "style": "gold",
    "cover": [
-    58,
-    32,
-    190,
-    64
+    64,
+    38,
+    340,
+    56
    ],
-   "size": 22,
-   "align": "left"
+   "size": 24
+  },
+  {
+   "jp": "EP3イベント",
+   "text": "EP3 Event",
+   "box": [
+    168,
+    14,
+    176,
+    24
+   ],
+   "style": "blue_s",
+   "cover": [
+    168,
+    14,
+    176,
+    24
+   ],
+   "clear": "inpaint",
+   "size": 12
   },
   {
    "jp": "",
    "text": "",
    "box": [
-    356,
-    60,
-    90,
-    30
+    394,
+    14,
+    62,
+    42
    ],
    "cover": [
-    356,
-    60,
-    90,
-    30
+    394,
+    14,
+    62,
+    42
    ],
    "style": "erase"
   },
   {
-   "jp": "第6刻",
-   "text": "Hour 6",
+   "jp": "復刻",
+   "text": "Rerun",
    "box": [
-    350,
-    60,
-    100,
-    30
+    398,
+    16,
+    54,
+    38
    ],
-   "style": "blue",
+   "style": "gold",
    "cover": [
-    356,
-    60,
-    90,
-    30
+    394,
+    14,
+    62,
+    42
    ],
-   "size": 22,
-   "align": "right"
-  },
-  {
-   "jp": "滅級・絶級追加",
-   "text": "Misery 2 & 3 added",
-   "box": [
-    86,
-    96,
-    170,
-    18
-   ],
-   "style": "blue_s",
-   "cover": [
-    96,
-    96,
-    116,
-    18
-   ],
-   "clear": "inpaint",
-   "size": 13
+   "size": 14
   }
  ]
 }

@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "A pick-up weapon gacha's banner (3 slots, with a bonus).",
+ "source": "Image/etc2/20201015_weapon_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -74,12 +74,21 @@
    "fill": "#ffffff",
    "clear": "inpaint",
    "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
   }
  },
  "labels": [
   {
-   "jp": "イベント",
-   "text": "Event",
+   "jp": "ガチャ",
+   "text": "Draws",
    "box": [
     73,
     14,
@@ -95,95 +104,94 @@
    ]
   },
   {
-   "jp": "",
-   "text": "",
+   "jp": "ピックアップ武器ガチャ",
+   "text": "Pick-up Weapon Draws",
    "box": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "忘却の聖地 ウドラム",
-   "text": "Wadrum, Holy Land\nof Oblivion",
-   "box": [
-    60,
-    32,
-    220,
-    58
-   ],
-   "style": "blue",
-   "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "size": 22,
-   "align": "left"
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "第6刻",
-   "text": "Hour 6",
-   "box": [
-    350,
-    60,
-    100,
-    30
-   ],
-   "style": "blue",
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "size": 22,
-   "align": "right"
-  },
-  {
-   "jp": "滅級・絶級追加",
-   "text": "Misery 2 & 3 added",
-   "box": [
-    86,
-    96,
     170,
-    18
+    15,
+    170,
+    14
    ],
    "style": "blue_s",
    "cover": [
-    96,
-    96,
-    116,
-    18
+    176,
+    15,
+    156,
+    14
    ],
    "clear": "inpaint",
    "size": 13
+  },
+  {
+   "jp": "3スロット",
+   "text": "3 Slots",
+   "box": [
+    368,
+    15,
+    40,
+    13
+   ],
+   "style": "tag",
+   "cover": [
+    368,
+    15,
+    40,
+    13
+   ],
+   "clear": "inpaint",
+   "size": 10
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "cover": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "10連で★5新武器1本確定!!",
+   "text": "10-chain: 1 new\n★5 weapon guaranteed!!",
+   "box": [
+    250,
+    52,
+    206,
+    64
+   ],
+   "style": "gold_r",
+   "cover": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "size": 20
+  },
+  {
+   "jp": "おまけ付き",
+   "text": "Bonus",
+   "box": [
+    410,
+    27,
+    46,
+    11
+   ],
+   "style": "omake",
+   "cover": [
+    410,
+    27,
+    46,
+    11
+   ]
   }
  ]
 }

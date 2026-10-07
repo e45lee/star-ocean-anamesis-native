@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6).",
+ "source": "Image/etc2/20201217_event_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -72,6 +72,15 @@
    "size": 11,
    "bold": 1,
    "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
    "clear": "inpaint",
    "align": "left"
   }
@@ -165,25 +174,6 @@
    ],
    "size": 22,
    "align": "right"
-  },
-  {
-   "jp": "滅級・絶級追加",
-   "text": "Misery 2 & 3 added",
-   "box": [
-    86,
-    96,
-    170,
-    18
-   ],
-   "style": "blue_s",
-   "cover": [
-    96,
-    96,
-    116,
-    18
-   ],
-   "clear": "inpaint",
-   "size": 13
   }
  ]
 }

@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "A step-up gacha's banner (Rerun Halloween 2017).",
+ "source": "Image/etc2/20201015_chara_003.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -74,12 +74,21 @@
    "fill": "#ffffff",
    "clear": "inpaint",
    "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
   }
  },
  "labels": [
   {
-   "jp": "イベント",
-   "text": "Event",
+   "jp": "ガチャ",
+   "text": "Draws",
    "box": [
     73,
     14,
@@ -95,95 +104,75 @@
    ]
   },
   {
-   "jp": "",
-   "text": "",
+   "jp": "お負け付き",
+   "text": "Bonus",
    "box": [
     58,
-    32,
-    190,
-    64
+    31,
+    50,
+    11
    ],
+   "style": "omake",
    "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "忘却の聖地 ウドラム",
-   "text": "Wadrum, Holy Land\nof Oblivion",
-   "box": [
-    60,
-    32,
-    220,
-    58
-   ],
-   "style": "blue",
-   "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "size": 22,
-   "align": "left"
+    57,
+    31,
+    48,
+    11
+   ]
   },
   {
    "jp": "",
    "text": "",
    "box": [
-    356,
     60,
-    90,
-    30
+    34,
+    166,
+    80
    ],
    "cover": [
-    356,
     60,
-    90,
-    30
+    34,
+    166,
+    80
    ],
    "style": "erase"
   },
   {
-   "jp": "第6刻",
-   "text": "Hour 6",
+   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
+   "text": "Rerun Halloween 2017\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
    "box": [
-    350,
-    60,
-    100,
-    30
+    66,
+    40,
+    156,
+    72
    ],
-   "style": "blue",
+   "style": "gold",
    "cover": [
-    356,
     60,
-    90,
-    30
+    34,
+    166,
+    80
    ],
-   "size": 22,
-   "align": "right"
+   "size": 18
   },
   {
-   "jp": "滅級・絶級追加",
-   "text": "Misery 2 & 3 added",
+   "jp": "ステップ10はPUいずれか1体確定!",
+   "text": "Step 10: 1 pick-up guaranteed!",
    "box": [
-    86,
-    96,
-    170,
+    270,
+    98,
+    186,
     18
    ],
-   "style": "blue_s",
+   "style": "bar_r",
    "cover": [
+    270,
     96,
-    96,
-    116,
-    18
+    186,
+    20
    ],
-   "clear": "inpaint",
-   "size": 13
+   "clear": "shade",
+   "clear_color": "#200400c0"
   }
  ]
 }

@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "The item shop's Halloween weapon sets campaign banner.",
+ "source": "Image/etc2/20201022_campaign_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -74,12 +74,21 @@
    "fill": "#ffffff",
    "clear": "inpaint",
    "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
   }
  },
  "labels": [
   {
-   "jp": "イベント",
-   "text": "Event",
+   "jp": "キャンペーン",
+   "text": "Campaign",
    "box": [
     73,
     14,
@@ -90,7 +99,7 @@
    "cover": [
     72,
     15,
-    52,
+    66,
     13
    ]
   },
@@ -98,92 +107,36 @@
    "jp": "",
    "text": "",
    "box": [
-    58,
-    32,
-    190,
-    64
+    246,
+    4,
+    210,
+    116
    ],
    "cover": [
-    58,
-    32,
-    190,
-    64
+    246,
+    4,
+    210,
+    116
    ],
    "style": "erase"
   },
   {
-   "jp": "忘却の聖地 ウドラム",
-   "text": "Wadrum, Holy Land\nof Oblivion",
+   "jp": "アイテムショップで ハロウィン武器強化セット 期間限定追加",
+   "text": "Limited-time Halloween\nWeapon Enhancement Sets\nin the Item Shop",
    "box": [
-    60,
-    32,
-    220,
-    58
+    250,
+    6,
+    202,
+    112
    ],
-   "style": "blue",
+   "style": "gold_r",
    "cover": [
-    58,
-    32,
-    190,
-    64
+    246,
+    4,
+    210,
+    116
    ],
-   "size": 22,
-   "align": "left"
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "第6刻",
-   "text": "Hour 6",
-   "box": [
-    350,
-    60,
-    100,
-    30
-   ],
-   "style": "blue",
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "size": 22,
-   "align": "right"
-  },
-  {
-   "jp": "滅級・絶級追加",
-   "text": "Misery 2 & 3 added",
-   "box": [
-    86,
-    96,
-    170,
-    18
-   ],
-   "style": "blue_s",
-   "cover": [
-    96,
-    96,
-    116,
-    18
-   ],
-   "clear": "inpaint",
-   "size": 13
+   "size": 17
   }
  ]
 }

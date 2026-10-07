@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 3; Misery 2 / 3: Global's 滅級 / 絶級).",
+ "source": "Image/etc2/20200917_event_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -74,6 +74,15 @@
    "fill": "#ffffff",
    "clear": "inpaint",
    "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
   }
  },
  "labels": [
@@ -112,7 +121,7 @@
    "style": "erase"
   },
   {
-   "jp": "忘却の聖地 ウドラム",
+   "jp": "忘却の聖地 ワドラム",
    "text": "Wadrum, Holy Land\nof Oblivion",
    "box": [
     60,
@@ -148,8 +157,8 @@
    "style": "erase"
   },
   {
-   "jp": "第6刻",
-   "text": "Hour 6",
+   "jp": "第3刻",
+   "text": "Hour 3",
    "box": [
     350,
     60,

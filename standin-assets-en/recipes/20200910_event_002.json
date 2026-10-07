@@ -1,6 +1,6 @@
 {
- "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 6; Misery 2 / 3: Global's 滅級 / 絶級).",
- "source": "Image/etc2/20201224_event_001.aif",
+ "note": "The Cave of the Seven Stars divine event's banner (神級: Divine).",
+ "source": "Image/etc2/20200910_event_002.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -74,6 +74,15 @@
    "fill": "#ffffff",
    "clear": "inpaint",
    "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
   }
  },
  "labels": [
@@ -95,95 +104,93 @@
    ]
   },
   {
-   "jp": "",
-   "text": "",
-   "box": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "忘却の聖地 ウドラム",
-   "text": "Wadrum, Holy Land\nof Oblivion",
+   "jp": "神級",
+   "text": "Divine",
    "box": [
     60,
-    32,
-    220,
-    58
-   ],
-   "style": "blue",
-   "cover": [
-    58,
-    32,
-    190,
-    64
-   ],
-   "size": 22,
-   "align": "left"
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "第6刻",
-   "text": "Hour 6",
-   "box": [
-    350,
-    60,
-    100,
-    30
-   ],
-   "style": "blue",
-   "cover": [
-    356,
-    60,
-    90,
-    30
-   ],
-   "size": 22,
-   "align": "right"
-  },
-  {
-   "jp": "滅級・絶級追加",
-   "text": "Misery 2 & 3 added",
-   "box": [
-    86,
-    96,
-    170,
-    18
+    36,
+    50,
+    36
    ],
    "style": "blue_s",
    "cover": [
-    96,
-    96,
-    116,
-    18
+    58,
+    32,
+    52,
+    44
    ],
    "clear": "inpaint",
-   "size": 13
+   "size": 14
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    210,
+    30,
+    246,
+    50
+   ],
+   "cover": [
+    210,
+    30,
+    246,
+    50
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "七星の洞窟",
+   "text": "Cave of the Seven Stars",
+   "box": [
+    214,
+    32,
+    238,
+    46
+   ],
+   "style": "gold_r",
+   "cover": [
+    210,
+    30,
+    246,
+    50
+   ],
+   "size": 24
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    296,
+    84,
+    156,
+    30
+   ],
+   "cover": [
+    296,
+    84,
+    156,
+    30
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "神級イベント",
+   "text": "Divine Event",
+   "box": [
+    300,
+    86,
+    148,
+    26
+   ],
+   "style": "gold_r",
+   "cover": [
+    296,
+    84,
+    156,
+    30
+   ],
+   "size": 16
   }
  ]
 }

@@ -142,7 +142,7 @@ std::vector<u8> create_player(ext::Ctx& ctx, const Request& req) {
         LOGW("server", "CreatePlayer: a player exists already; answering it");
         return full_player_state(ctx, req);
     }
-    ServerTime now = clock_now();
+    ServerTime now = ctx.now();
     std::string search_id = insert_new_player(ctx, args, now);
     std::vector<CharacterUid> party = add_starters(ctx, now);
     ctx.st.q("insert or replace into meta (key, value) values ('next_char_uid', ?)", {std::to_string(kNewCharUid0)});
@@ -280,7 +280,7 @@ void add_aver(ext::Ctx& ctx, Value& data) {
 // GetMissionList answer the same (docs/server-rules.md#session-and-login).
 std::vector<u8> time_only(ext::Ctx& ctx) {
     Value data = Value::object();
-    data["Time"] = format_time(clock_now());
+    data["Time"] = format_time(ctx.now());
     return body(data);
 }
 

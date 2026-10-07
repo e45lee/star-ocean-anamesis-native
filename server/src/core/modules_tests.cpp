@@ -18,7 +18,7 @@ namespace {
 // PLAN-schema S1: every table is state/schema.cpp's.)
 const char* const kExpected[] = {
     "OnPlayerLoad: login_bonus, achievements, daily, event, follow, gear, home, notice, shop, sphere211, subscription, title, tower, worldboss, settings, coins, stamp",
-    "OnResponse: event, title, storage, deco, stamp",
+    "OnResponse: event, title, storage, deco, stamp, campaign",
     "MissionStartExtra: favor_drop, worldboss",
     "MissionResultExtra: event_ranking, tower, worldboss",
     "Grant: daily (content type 11), gear (content type 15), gear (content type 98), subscription (content type 20), title (content type 13), "

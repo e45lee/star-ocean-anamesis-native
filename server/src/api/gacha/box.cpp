@@ -146,7 +146,7 @@ std::vector<u32> listed_series_heads(ext::Ctx& ctx, u32 only, ServerTime t) {
 Value box_gacha_list_info(ext::Ctx& ctx, u32 only, Value* slots) {
     Value info = Value::object();
     const PlayerId player = player_id(ctx);
-    ServerTime t = clock_now();
+    ServerTime t = ctx.now();
     for (u32 head : listed_series_heads(ctx, only, t)) {
         auto series = box_series(ctx, head);
         if (series.empty()) continue;

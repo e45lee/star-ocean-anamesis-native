@@ -5,11 +5,14 @@
 // state DB's schema and its meta helpers are the state module's (state/state.h, included here).
 #include <sqlite3.h>
 
+#include <atomic>
+#include <functional>
 #include <initializer_list>
 #include <map>
 #include <mutex>
 #include <random>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "core/request_context.h"
@@ -30,6 +33,11 @@ void set_clock_offset(int64_t offset);
 // is set (--clock, tests), else today mapped onto the latest service year with an event term that
 // day, (d).
 EventTime event_clock_of(sqlite3* m);
+// The same at server time t (the CDN's served master, at its build time).
+EventTime event_clock_at(sqlite3* m, ServerTime t);
+// The server clock as config() says (--clock: its offset), for the first reader of the clock
+// (Server::init; the CDN's build, which runs before the live server opens).
+void use_configured_clock();
 
 // ---- the server object --------------------------------------------------------------------
 // The long-lived server: the two DB handles, the gacha pools, the RNG, the requests waiting for
@@ -37,6 +45,9 @@ EventTime event_clock_of(sqlite3* m);
 // every handler gets the same ext::Ctx (make_ctx).
 struct Server {
     std::mutex mu;
+    // The thread holding mu while it runs a request or a with_live_server function (core/server.cpp
+    // Held), none otherwise: with_live_server refuses to run on it (mu isn't recursive).
+    std::atomic<std::thread::id> holder{};
     ext::Sql st, m;  // state, master (Sql::open; ScratchServer closes its own)
     gacha_pools::Pools pools;  // reconstructed gacha pools (data/gacha_pools.sqlite3)
     bool ok = false;
@@ -72,9 +83,16 @@ struct Server {
     // error_message_text_<code>) and returns any body; handle_request then rolls the request back
     // and answers the player state only, and error_code(fid) reports the code to the FakeApiCaller hooks.
     bool handle_request(u32 fid, RequestContext& rc, std::vector<u8>& out);
+    // Runs fn in one transaction of its own on the state DB, outside any request (ext::with_live_server).
+    bool transact(const std::function<void(ext::Ctx&)>& fn);
     // The registered handler of the request's method (ext::find; src/core/modules.cpp registers the
     // core's APIs first, then the modules'). False: no handler, or an empty body (not handled).
     bool dispatch(ext::Ctx& ctx, u32 fid, std::vector<u8>& out);
 };
+
+// Tests: makes `s` the live server (server::answer, ext::with_live_server, ...) in place of the
+// one config() describes, nullptr ends that; returns the previous one. The test sets
+// config().enabled itself and restores both.
+Server* set_live_server_for_test(Server* s);
 
 }  // namespace soa::server

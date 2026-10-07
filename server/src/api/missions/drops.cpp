@@ -76,7 +76,7 @@ std::vector<Campaign> drop_campaigns(ext::Ctx& ctx, const std::string& table, u3
 Drop character_bonus(ext::Ctx& ctx, u32 mission, u32 area, const std::vector<u32>& party_roles, Rolled& rolled) {
     std::vector<std::pair<u32, u32>> matches;  // bonus_count, extra_bonus_num
     Drop extra{0, 0, 0, 0};
-    std::string now = format_time(clock_now());
+    std::string now = format_time(ctx.now());
     for (u32 role : party_roles) {
         // (master_role has no NULL role_category_id in 3.7.0, so the NULL-as-0 read and the default agree)
         int64_t category = one_null_as_zero(ctx.m, "select role_category_id from master_role where id = ?", {role}, -1);

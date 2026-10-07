@@ -88,7 +88,7 @@ Value gacha_hash_entry(ext::Ctx& ctx, const Row& gacha_row) {
 // Answers: the player state with GachaHashMap, StepUpGacha and BoxGachaList.
 std::vector<u8> get_gacha_in_data(ext::Ctx& ctx, const Request&) {
     Value hash_map = Value::object();
-    ServerTime t = clock_now();
+    ServerTime t = ctx.now();
     int open = 0;
     ctx.m.q("select * from master_gacha order by id", {}, [&](const Row& gacha_row) {
         if (!gacha_open(ctx, gacha_row, t)) return;
@@ -116,7 +116,7 @@ u32 draw_role(ext::Ctx& ctx, const Row& gacha_row, int rank) {
     std::vector<u32> pool;
     // (d) roles already released at the server's clock (a banner's own opened_at is too early
     // for the permanent banners: gacha_role_0001 opened 2016-01-01)
-    std::string opened = format_time(clock_now());
+    std::string opened = format_time(ctx.now());
     if (rank == 0 && !gacha_row.null("gacha_pickup_group_id"))
         ctx.m.q("select master_role_id from master_gacha_pickup where pickup_group_id = ?", {gacha_row.i("gacha_pickup_group_id")},
                 [&](const Row& pickup_row) { pool.push_back((u32)pickup_row.i("master_role_id")); });
@@ -220,7 +220,7 @@ void record_history(ext::Ctx& ctx, const GachaDraw& draw, const Drawn& drawn, in
     ctx.st.q(
         "insert into gacha_history (gacha_id, at, role_id, character_uid, item_uid, rank, duplicate, cost_free, cost_pay) "
         "values (?,?,?,?,?,?,?,?,?)",
-        {draw.id, clock_now(), drawn.role, drawn.character, drawn.item, std::string(1, kRankLetters[rank]), duplicate ? 1 : 0,
+        {draw.id, ctx.now(), drawn.role, drawn.character, drawn.item, std::string(1, kRankLetters[rank]), duplicate ? 1 : 0,
          k == 0 ? draw.use_free : 0u, k == 0 ? draw.use_pay : 0u});
 }
 
@@ -236,7 +236,7 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
         drawn = item_uid;
         u32 item_type = (u32)ctx.m.one("select type from master_item where id = ?", {unit.content_id});
         ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)",
-                 {item_uid, unit.content_id, item_type, clock_now()});
+                 {item_uid, unit.content_id, item_type, ctx.now()});
         Value item = Value::object();  // CItemInfo
         item["id"] = item_uid.v;
         item["player_id"] = player_id(ctx).v;
@@ -358,7 +358,7 @@ void draw_units(ext::Ctx& ctx, const Row& gacha_row, GachaDraw& draw) {
         gacha_pools::Unit unit;
         int pool_rank = rank;
         u32 role = 0;
-        if (ctx.pools->is_open() && ctx.pools->draw(draw.id, bonus, format_time(clock_now()), (*ctx.rng)(), (*ctx.rng)(), pool_rank, unit)) {
+        if (ctx.pools->is_open() && ctx.pools->draw(draw.id, bonus, format_time(ctx.now()), (*ctx.rng)(), (*ctx.rng)(), pool_rank, unit)) {
             rank = pool_rank;
             if (unit.content_type == kContentTypeItem) {  // a weapon: a new unique item (AddItem)
                 draw_weapon(ctx, draw, unit, rank, k);

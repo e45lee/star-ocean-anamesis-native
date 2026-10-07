@@ -2,6 +2,8 @@
 // Our code; the formats are the client's (docs/online-server.md §3, docs/api.md "Wire format").
 #include "wire.h"
 
+#include "packet_log.h"  // printable
+
 #include <openssl/sha.h>
 #include <time.h>
 
@@ -175,12 +177,6 @@ const char* fid_name(uint32_t fid) {
 namespace {
 
 size_t str_width(const std::string& tok) { return (size_t)strtoul(tok.c_str() + 4, nullptr, 10); }  // "str[N]"
-
-std::string printable(const std::string& s) {
-    for (unsigned char c : s)
-        if (c < 0x20 || c >= 0x7f) return "0x" + hex((const uint8_t*)s.data(), s.size());
-    return "\"" + s + "\"";
-}
 
 }  // namespace
 

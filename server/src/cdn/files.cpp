@@ -79,11 +79,6 @@ std::string Sha1::hex() {
     return s;
 }
 
-int64_t server_time() {
-    const ServerConfig& c = config();
-    return (int64_t)time(nullptr) + (c.has_clock ? c.clock_offset : 0);
-}
-
 Value* map_find(Value& map, const std::string& key) {
     for (auto& entry : map.map)
         if (entry.first == key) return &entry.second;

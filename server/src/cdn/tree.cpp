@@ -17,6 +17,7 @@
 
 #include "cdn/files.h"
 #include "core/log.h"
+#include "core/server.h"  // use_configured_clock
 #include "master/english_text.h"
 #include "soaserver/adld.h"
 #include "soaserver/cdn.h"
@@ -147,7 +148,7 @@ struct TreeBuilder {
         if (!read_version_bin()) return nullptr;
         scratch = opts.scratch.empty() ? soa::temp_dir() + "/soa-server-cdn" : opts.scratch;
         files::mkdirs(scratch);
-        now = opts.now ? opts.now : files::server_time();
+        now = opts.now ? opts.now : clock_now().v;  // the server clock (--clock; set_clock_source)
         if (!serve_master()) return nullptr;
         if (opts.english) serve_english();
         add_standins();
@@ -656,6 +657,7 @@ Options options_from_config() {
 }
 
 std::shared_ptr<Tree> build_from_config() {
+    use_configured_clock();  // the CDN is built before the live server opens
     Options o = options_from_config();
     if (o.mirror.empty() || o.master.empty()) {
         LOGE("cdn", "no download tree (--download-dir) or master DB (--master)");

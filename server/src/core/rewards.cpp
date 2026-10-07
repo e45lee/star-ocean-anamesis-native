@@ -67,7 +67,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
 Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type) {
     const ItemUid uid = next_item_uid(ctx);
     u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {id});
-    ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, id, itype, clock_now()});
+    ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, id, itype, ctx.now()});
     Value e = Value::object();
     e["id"] = uid.v;
     e["player_id"] = player_id(ctx).v;
@@ -110,7 +110,7 @@ Added add_character(ext::Ctx& ctx, RoleId role) {
     }
     if (have < 0) {
         a.uid = next_character_uid(ctx);
-        ctx.st.q("insert into roster (uid, role_id, level, exp, created_at) values (?,?,1,0,?)", {a.uid, role, clock_now()});
+        ctx.st.q("insert into roster (uid, role_id, level, exp, created_at) values (?,?,1,0,?)", {a.uid, role, ctx.now()});
         return a;
     }
     a.dup = true;

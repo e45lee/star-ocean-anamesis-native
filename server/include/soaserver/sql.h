@@ -74,7 +74,9 @@ struct Arg {
 };
 
 // A handle (borrowed: copying it doesn't copy the connection; the server object closes it).
-// Errors are logged ("sql error" / "sql prepare" / "sql step"), not returned.
+// Errors are logged ("sql error" / "sql prepare" / "sql step") and counted (statement_errors), not
+// returned: a request whose statement failed is rolled back and refused as a whole
+// (core/server.cpp handle_request), so a handler needn't check each statement.
 struct Sql {
     sqlite3* h = nullptr;
     // Opens the DB at `path` (read-only: `ro`, else read-write, created when missing); false
@@ -102,6 +104,11 @@ struct Sql {
         return v;
     }
 };
+
+// The number of statements that have failed on this thread (exec, prepare or step, through any
+// Sql handle; never reset). The server compares it before and after a request's statements: a
+// change means the request failed (core/server.cpp handle_request, Server::transact).
+uint64_t statement_errors();
 
 // one() as the core's former Db::one read it: `dflt` when there is no row, but a NULL value reads
 // as 0 (Sql::one reads it as `dflt`). Kept, by name, at the five core sites whose default isn't 0

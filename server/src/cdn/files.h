@@ -43,8 +43,6 @@ struct Sha1 {
     std::string hex();
 };
 
-// The server clock of the CDN's dates (--clock aware): version.bin's times, the overrides.
-int64_t server_time();
 // The entry `key` of a msgpack map, nullptr when absent (the first, as the files hold one).
 Value* map_find(Value& map, const std::string& key);
 

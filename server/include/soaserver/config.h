@@ -7,9 +7,12 @@
 // (SOA_NOTICE_HTML_DUMP, docs/environment.md). Tests change fields of config() directly and
 // restore them.
 #include <cstdint>
+#include <ctime>
 #include <initializer_list>
 #include <string>
 #include <vector>
+
+#include <soa/clock_arg.h>
 
 namespace soa::server {
 
@@ -99,8 +102,18 @@ std::string find_repo_file(std::initializer_list<const char*> rels);
 std::string find_repo_file(const std::string& rel);
 
 // "YYYY-MM-DD[ HH:MM:SS]" (local time), or a plain integer (Unix seconds). 0 when unparsable.
-int64_t parse_clock(const std::string& s);
-// Sets c.clock / clock_offset from a --clock value; false when unparsable.
-bool set_clock(ServerConfig& c, const std::string& s);
+// (soa/clock_arg.h: the one parser of a --clock value.)
+inline int64_t parse_clock(const std::string& s) { return soa::parse_clock_arg(s); }
+// Sets c.clock / clock_offset from a --clock value (the --clock option of soaserver/cli.h); false
+// when unparsable. The live server's clock takes the offset when it first reads it
+// (use_configured_clock: Server::init, the CDN's build).
+inline bool set_clock(ServerConfig& c, const std::string& s) {
+    int64_t t = parse_clock(s);
+    if (!t) return false;
+    c.has_clock = true;
+    c.clock = t;
+    c.clock_offset = t - (int64_t)time(nullptr);
+    return true;
+}
 
 }  // namespace soa::server

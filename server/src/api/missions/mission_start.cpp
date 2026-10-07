@@ -185,7 +185,7 @@ Value stage_list(ext::Ctx& ctx, u32 mission) {
 void pay(ext::Ctx& ctx, MissionStart& start) {
     start.stamina_paid = start.restarting ? 0 : start.stamina_cost;
     ctx.st.q("update player set stamina = ?, stamina_at = case when stamina >= ? then ? else stamina_at end",
-             {start.stamina_before - start.stamina_paid, ctx.stamina_max((u32)ctx.st.one("select level from player", {})), clock_now()});
+             {start.stamina_before - start.stamina_paid, ctx.stamina_max((u32)ctx.st.one("select level from player", {})), ctx.now()});
     if (start.restarting) return;
     if (start.ticket_item_id) ext::add_stock(ctx, start.ticket_item_id, -(int64_t)start.ticket_num);  // checked in step 3: never below 0
     if (start.vanish_item_id) ext::add_stock(ctx, start.vanish_item_id, -(int64_t)start.vanish_num);
@@ -265,7 +265,7 @@ void event_npc_status(ext::Ctx& ctx, MissionStart& start) {
     ctx.st.q(
         "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level, add_hp, "
         "add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap, created_at) values (?,?,?,0,0,0,1,1,1,0,0,0,0,0,0,0,?)",
-        {kNpcPartyUid0 + 1, start.npcs[0].role_id, start.npcs[0].level, clock_now()});
+        {kNpcPartyUid0 + 1, start.npcs[0].role_id, start.npcs[0].level, ctx.now()});
     start.event_npc_status = person_status_info(ctx, kNpcPartyUid0 + 1);
     ctx.st.exec("drop table temp.roster");
     // (b) as the tutorial's NPCs: in the game the stats, the weapon
@@ -287,7 +287,7 @@ void npc_party(ext::Ctx& ctx, MissionStart& start) {
         ctx.st.q(
             "insert into temp.roster (uid, role_id, level, exp, limit_break, awaken, skill1_level, skill2_level, skill3_level, add_hp, "
             "add_attack, add_intelligence, add_defence, add_hit, add_guard, add_ap, created_at) values (?,?,?,0,0,0,1,1,1,0,0,0,0,0,0,0,?)",
-            {kNpcPartyUid0 + k + 1, start.npcs[k].role_id, start.npcs[k].level, clock_now()});
+            {kNpcPartyUid0 + k + 1, start.npcs[k].role_id, start.npcs[k].level, ctx.now()});
     start.party_uids.clear();
     for (size_t k = 0; k < start.npcs.size(); k++) start.party_uids.push_back(kNpcPartyUid0 + k + 1);
 }
@@ -341,7 +341,7 @@ bool rental_helper(ext::Ctx& ctx, MissionStart& start) {
     // rental again, MissionRestart) isn't counted again
     if (!start.restarting)
         ctx.st.q("insert into follow_rental (rental_day, count) values (?, 1) on conflict(rental_day) do update set count = count + 1",
-                 {day_start(clock_now(), (int)ctx.global_u32("login_bonus_reset_hour", 4))});
+                 {day_start(ctx.now(), (int)ctx.global_u32("login_bonus_reset_hour", 4))});
     LOGI("server", "MissionStart: rental helper %llu (a clone of roster uid %llu) as member 4",
          (unsigned long long)rental_id,  // read by rental_session.sh
          (unsigned long long)rental_source->v);
@@ -400,14 +400,14 @@ void record_play(ext::Ctx& ctx, MissionStart& start) {
         // (d) a restart keeps the record's mission type, surprise roll and helper; the members are
         // the restart's
         ctx.st.q("update play set mission_id = ?, party_id = ?, started_at = ?, stamina_cost = ? where id = 1",
-                 {mission, start.party_id, clock_now(), start.stamina_cost});
+                 {mission, start.party_id, ctx.now(), start.stamina_cost});
         ctx.st.q("delete from play_member", {});
     } else {
         ctx.st.q("delete from play", {});  // the last play's members go with it (ON DELETE CASCADE)
         ctx.st.q(
             "insert into play (id, mission_id, mission_type, party_id, started_at, stamina_cost, surprise, helper_kind, helper_uid, npc_id) "
             "values (1,?,?,?,?,?,?,?,?,?)",
-            {mission, start.mission_ref.type, start.party_id, clock_now(), start.stamina_cost, start.surprise ? 1 : 0, (u32)start.helper_kind,
+            {mission, start.mission_ref.type, start.party_id, ctx.now(), start.stamina_cost, start.surprise ? 1 : 0, (u32)start.helper_kind,
              start.helper_uid ? ext::Arg(start.helper_uid) : ext::Arg(nullptr),
              start.args.npc_helper_id ? ext::Arg(start.args.npc_helper_id) : ext::Arg(nullptr)});
     }

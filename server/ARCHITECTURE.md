@@ -10,7 +10,7 @@ How a request becomes a reply, what owns which part, and where state and master 
 | The core | `src/core/server.cpp`: `struct Server` | the two DB handles, the gacha pools, the RNG, the pending requests and their error codes, the transaction and refusal path, `Server::dispatch` (the registry's handler of the method). `src/core/context.cpp` defines `ext::Ctx`'s services, `src/core/clock.cpp` the server clock and the event calendar. Its shared helpers beside it in `src/core/` (`time`, `errors.h`, `response`, `wallet`, `rewards`, `request_args.h`, `request_context.h`, `assets`, `ids.h`), `src/state/` (the state module: the schema and its migrations, the meta helpers, the master-reference check, the one SQLite wrapper, the Game.xml codec, seeding) and `src/master/master` |
 | The core's APIs | `src/api/entry/`, `src/api/player/`, `src/api/missions/`, `src/api/gacha/`, `src/api/presents/`, `src/api/favor/favor_api.cpp` | 40 methods: the entry flow (10, with SendErrorLog and CbtCertification); the player load, the parties and the home character (7, with the player state builders); the missions (8); the gacha (10); the present box (3); the favor APIs (2). Registered first, with `ext::add_core_api` |
 | The modules | `src/api/<domain>/` | 125 more methods (35 of them stubs, `ext::add_stub`), and hooks into the core's responses, registered through `include/soaserver/ext.h` in `src/core/modules.cpp`'s order |
-| The story campaign | `src/api/campaign/` (`campaign.cpp` the hooks and the splice; `master_data.cpp`, `progress.cpp`, `lists.cpp`), `soaserver/api_campaign.h` | the campaign's own progress (a text file, below); called around each request by `server::answer` (`src/core/lifecycle.cpp`), not by the dispatcher |
+| The story campaign | `src/api/campaign/` (`campaign.cpp` the hooks and the splice; `master_data.cpp`, `progress.cpp`, `lists.cpp`), `soaserver/api_campaign.h` | the campaign's own progress (the state DB, below): written by its `OnResponse` hook inside the request's transaction (registered last, `campaign`), its keys spliced into every answer around the request by `server::answer` (`src/core/lifecycle.cpp`) |
 | Host 1: soa (in-process) | `port/src/native/api/` (not in `server/`) | the FakeApiCaller hooks: the guest's arguments -> `Request`, the reply -> the client's `On<Api>Res` |
 | Host 2: soa-server (out of process) | `net/`, `app/main.cpp` | the wire protocol: TCP packets, the Ninja cipher, the bridge handshake, the request decoder, the HTTP server and CDN routes |
 
@@ -22,7 +22,7 @@ flowchart LR
     A["soa: FakeApiCaller hook<br/>port/src/native/api/fakeapi.cpp<br/>server_adapters.cpp (keeps the request)"] --> L
     B["soa-server: net/game.cpp<br/>Ninja + net::decode_request<br/>LiveBackend::call"] --> L
   end
-  L["answer(Request, fallback)<br/>src/core/lifecycle.cpp<br/>EndMissionTalk; campaign::on_request"] --> S["submit(Request)<br/>pending[fid]"]
+  L["answer(Request, fallback)<br/>src/core/lifecycle.cpp<br/>submit; EndMissionTalk; campaign::on_request"] --> S["submit(Request)<br/>pending[fid]"]
   S --> H["handle(fid): Server::handle<br/>begin; RequestContext; forced_error (--fail)"]
   H --> D{"Server::dispatch<br/>ext::find(method)"}
   D --> CORE["core handler<br/>api_*(ext::Ctx&, Request)"]
@@ -31,9 +31,9 @@ flowchart LR
   CORE --> MA[("master DB<br/>basmaster-3.7.0")]
   MOD --> ST
   MOD --> MA
-  H --> E{"refused?"}
+  H --> E{"refused, or a statement failed?"}
   E -- yes --> RB["rollback; errors[fid] = code;<br/>answer {Time, Player, Wallet}"]
-  E -- no --> OR["ext::on_response hooks; commit"]
+  E -- no --> OR["ext::on_response hooks (the campaign's clear); commit"]
   OR --> CR["answer: campaign::on_response<br/>(accepted or unhandled)"]
 ```
 
@@ -49,26 +49,29 @@ The same in text, with the functions to look up:
              \                                         /
               v                                       v
    answer()   (src/core/lifecycle.cpp)            (one global Server, one mutex)
+              -> submit(): pending[fid] = Request, the "request <Method>" log line
               -> EndMissionTalk: end_mission_talk(mission) (events, else the campaign), then GetPlayMission's answer
-              -> submit(): pending[fid] = Request; campaign::on_request(r)
+              -> campaign::on_request(r) (its log lines, the session's world-map episode)
               -> handle(fid): Server::handle: a RequestContext for the request (its battle log); ext::Ctx = Server::make_ctx
                    -> Server::handle_request: "begin"; forced_error (--fail)
                    -> Server::dispatch: ext::find(method) (40 core methods, 125 module methods)
                         core handler and module handler alike: (ext::Ctx&, const Request&) -> body
-                   -> RequestContext::refusal != 0: "rollback", errors[fid] = code, body = {Time, Player, Wallet}
-                   -> else ext::on_response hooks (decode, add keys, re-encode), "commit"
+                   -> RequestContext::refusal != 0, or a statement failed (sql::statement_errors): "rollback",
+                      errors[fid] = code (10208 for a failure), body = {Time, Player, Wallet}
+                   -> else ext::on_response hooks (decode, add keys, re-encode; the campaign records a clear), "commit"
               -> not handled: the host's fallback body; accepted or not handled: campaign::on_response
               -> Reply {body, error_code, handled}
 ```
 
-- **One request lifecycle for both hosts** (`server::answer`, step R9 of the plan): the story campaign's `on_request` / `on_response` and `EndMissionTalk` are the library's. The hosts only capture the request and deliver the reply. soa's FakeApiCaller has no EndMissionTalk entry to answer: its hook calls `server::end_mission_talk` and queues a GetPlayMission request instead (`fakeapi.cpp h_end_mission_talk`).
+- **One request lifecycle for both hosts** (`server::answer`, step R9 of the plan): the story campaign's `on_request` / `on_response` and `EndMissionTalk` are the library's. The hosts only capture the request and deliver the reply. soa's FakeApiCaller route queues EndMissionTalk like the other served base-class methods (`fakeapi.cpp h_end_mission_talk`), and `server::answer` answers it for both hosts; the reply goes to `CApiNotify::OnEndMissionTalkRes`. Both hosts' packet logs are written by one formatter, `net/packet_log.h`.
 - `handle(fid, out)` lost the `file` parameter (the FakeApiCaller's canned file name, read by nothing); the old signature is a wrapper for one merge wave.
 - The replay harness (`soa-server --replay`, `server/app/replay.cpp`) drives exactly the soa-server path (`net::live_backend()`), so it is the reference for "what the server answers" (`server/tests/replay/README.md`).
 
 ## Transactions, refusals and errors
 
 - **Opening the state.** `Server::open_state` (both hosts, the scratch servers) brings the file to this build's schema (`state::open_and_migrate`: each migration step in its own transaction, `foreign_key_check` before its commit), switches foreign keys on, seeds a state without a player in one transaction, and logs the references into the master that don't resolve (`state::report_master_refs`, report-only).
-- **One transaction per request.** `Server::handle_request` opens it before dispatching and commits it after the response hooks; a response and the state it reports are written together. A commit the DB refuses (a deferred foreign key a request violated) is rolled back and answered as a refusal (10208).
+- **One transaction per request.** `Server::handle_request` opens it before dispatching and commits it after the response hooks; a response and the state it reports are written together. A request the state DB fails is rolled back and answered as a refusal (10208, docs/server-rules.md#refusals): a statement of it failed (`Sql` logs and counts every failed exec / prepare / step: `sql::statement_errors()`), its `begin` failed (then it doesn't run), or the DB refused the commit (a deferred foreign key a request violated). A handler needn't check its statements.
+- **Outside a request.** `ext::with_live_server(fn)` runs fn in a transaction of its own (`Server::transact`): a failed `begin`, statement or `commit` rolls it back and returns false. Called from inside a request (the server's lock held by the same thread) it logs an error and doesn't run (the lock isn't recursive). Its callers: the campaign around a request (its reads; EndMissionTalk's clear), the events' EndMissionTalk, the notice page, soa-server's device table.
 - **A refusal** (`ext::refuse(ctx, method, why, code)` or its printf-style `ext::refusef` in any handler, core or module, or `--fail Method:code`) rolls the transaction back, records `errors[fid] = code`, logs `fid … (Method): refused with error N` (scripts read this line) and answers only the player state `{Time, Player, Wallet}`. `error_code(fid)` reports the code: soa's FakeApiCaller hooks answer the client's `IsSuccess` / `ErrorCode` with it; soa-server sends a ProtocolError with the code as its status. The client then shows `master_text error_message_text_<code>`. The codes in use are named in `src/core/errors.h` (`ErrorCode`, generated from the client's texts by `tools/gen_error_codes.py`; `ext.h` "refuse" lists them too).
 - **Not handled** (no handler, or a handler that returns an empty body): `handle` returns false. soa then answers `{}` (its canned-file fallback, `--fake-server`, was retired on 2026-10-05: `docs/history/fake-server-responses.md`); soa-server answers `{data: {Time}}`. Both add the campaign's data, and the library logs `no handler: <Method>`.
 - Handlers don't throw.
@@ -85,7 +88,7 @@ Every handler, the core's and the modules', is `std::vector<u8> handler(ext::Ctx
 
 Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp`):
 
-- **`clock_now()`, the server clock**: the real time, or `--clock "YYYY-MM-DD HH:MM:SS"` running on from there. Stamina, login days, wallets, rentals and every `*_at` the server stores use it.
+- **`clock_now()`, the server clock**: the real time, or `--clock "YYYY-MM-DD HH:MM:SS"` running on from there (its offset taken by `use_configured_clock` when the live server opens or the CDN is built, whichever is first). Stamina, login days, wallets, rentals, every `*_at` the server stores and the CDN's dates use it. Handlers read it as `ctx.now()` (the clock a test sets; `tools/check_server_docs.sh` check 9 finds a direct read).
 - **`event_now()`, the event calendar**: for dated content (event terms, deep-space missions, the Sphere 211 season). With `--clock` it is the clock; without, today's month-day and time mapped onto the most recent year in which some `master_event_term` covers that day (`src/core/clock.cpp`; docs/server-rules.md#conventions), so the service's calendar replays year after year.
 - **Formats**: every time the server sends or reads is local `YYYY-MM-DD HH:MM:SS`; `src/core/time.h` has the one formatter (`format_time`), the parsers, the reset day (`day_start`, at master_global `login_bonus_reset_hour`) and the opened_at..closed_at window (`open_at`).
 - **Test seam**: `set_clock_source(fn)` replaces the wall-clock read under `clock_now()` (`time(nullptr)` by default); the replay sets it to each recorded request's time. `set_server_clock(t)` is the tests' `--clock`.
@@ -116,7 +119,7 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 | Data | Where | Who writes it |
 |---|---|---|
 | The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (54) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
-| The story campaign's progress | the state DB's `campaign_clear` / `campaign_last` (since schema version 11, PLAN-schema S12; before, `<data_root>/server_campaign.txt`, which step 11 imports and renames `.migrated`) | `src/api/campaign/progress.cpp` only, through `ext::with_live_server` (around a request, not in a handler) |
+| The story campaign's progress | the state DB's `campaign_clear` / `campaign_last` (since schema version 11, PLAN-schema S12; before, `<data_root>/server_campaign.txt`, which step 11 imports and renames `.migrated`) | `src/api/campaign/progress.cpp` only: in the request's transaction (its `OnResponse` hook, an accepted MissionEnd / MissionTalk) or, for EndMissionTalk, through `ext::with_live_server`; read from the DB for every answer |
 | The master data | `data/basmaster-3.7.0.sqlite3` (read-only; `--master`) | nobody: the server reads it |
 | The client's master copy | the CDN's `basmaster-served.sqlite3` (`<scratch>`), the 3.7.0 master with `apply_client_master` | `cdn::Tree::build` (`src/cdn/tree.cpp`), `make_served_master` (`src/cdn/served_master.cpp`) |
 | Gacha pools | `data/gacha_pools.sqlite3` (reconstructed; read-only) | `tools/build_gacha_pools.py` |

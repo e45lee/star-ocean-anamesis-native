@@ -46,7 +46,7 @@ Value gacha_rate_info(const gacha_pools::RateInfo& page) {
 std::vector<u8> gacha_rate_from_pools(ext::Ctx& ctx, const Request& req) {
     u32 id = args::GachaIdArgs::from(req).gacha_id;
     Value list = Value::array();
-    for (auto& page : ctx.pools->rate_info(id, format_time(clock_now()))) {
+    for (auto& page : ctx.pools->rate_info(id, format_time(ctx.now()))) {
         // (a) a pools file without the titles (the release packages'): the master's
         if (page.title.empty()) page.title = gacha_pools::name_from_master(ctx.m.h, page.id);
         list.push(gacha_rate_info(page));

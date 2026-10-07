@@ -64,7 +64,10 @@ NATIVE_TEST("server/schema-integrity") {
     t.expect_eq(sv.m.one("select count(*) from master_mission where id = ?", {bad_mission}) +
                     sv.m.one("select count(*) from master_world_map_mission where id = ?", {bad_mission}),
                 (int64_t)0, "13 is no campaign mission id");
-    sv.st.q("insert into campaign_clear (mission_id) values (?), (?), (?)", {(int64_t)mission, world_map_mission, bad_mission});
+    // (the MissionEnd above recorded `mission`'s clear already: the campaign's hook, in its transaction)
+    t.expect_eq(sv.st.one("select count(*) from campaign_clear where mission_id = ?", {mission}), (int64_t)1, "the MissionEnd's campaign clear");
+    sv.st.q("insert into campaign_clear (mission_id) values (?), (?), (?) on conflict do nothing",
+            {(int64_t)mission, world_map_mission, bad_mission});
     dangling = state::check(sv.st.h, sv.m.h);
     t.expect_eq(dangling.size(), (size_t)3, "three references dangle");
     if (dangling.size() == 3) {

@@ -44,7 +44,7 @@ void add_achievements(ext::Ctx& ctx, Value& data) { data["Achievement"] = ext::a
 std::vector<u8> update_favor_by_tap(ext::Ctx& ctx, const Request& req) {
     const auto args = UpdateFavorByTapArgs::from(req);
     Value data = base_data(ctx);
-    favor::tap(ctx.st.h, ctx.m.h, clock_now(), args.has_same_role_id ? args.same_role_id : home_same_role(ctx), data);
+    favor::tap(ctx.st.h, ctx.m.h, ctx.now(), args.has_same_role_id ? args.same_role_id : home_same_role(ctx), data);
     add_achievements(ctx, data);
     return ext::body(data);
 }
@@ -61,7 +61,7 @@ std::vector<u8> update_favor_by_tap(ext::Ctx& ctx, const Request& req) {
 std::vector<u8> use_favor_item(ext::Ctx& ctx, const Request& req) {
     const auto args = UseFavorItemArgs::from(req);
     Value data = base_data(ctx);
-    favor::use_item(ctx.st.h, ctx.m.h, clock_now(), args.master_item_id, args.count, args.same_role_id, data);
+    favor::use_item(ctx.st.h, ctx.m.h, ctx.now(), args.master_item_id, args.count, args.same_role_id, data);
     add_achievements(ctx, data);
     data["StockItem"] = stack_item_info_list(ctx);
     return ext::body(data);

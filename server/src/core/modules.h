@@ -59,6 +59,9 @@ void register_favor_drop();  // api/events/favor_drop.cpp
 namespace soa::server::tower {
 void register_tower();  // api/tower/tower.cpp
 }
+namespace soa::server::campaign {
+void register_campaign();  // api/campaign/campaign.cpp: the story campaign's progress (an OnResponse hook)
+}
 namespace soa::server::ext {
 // The module register_all is running (recorded with each hook, ext::hook_order); nullptr after.
 void set_registering_module(const char* name);

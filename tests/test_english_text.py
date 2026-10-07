@@ -533,3 +533,18 @@ def test_derive_full(built, tmp_path):
     for r in T.read_tsv(T.DATA / "master-en.tsv", T.OUT_COLS):
         if r["source"] != "machine":
             assert full[r["message_id"]] == r
+
+
+def test_box_rows(font):
+    # the home's speech box: two lines of 480 px (english.md 7.11); \n is the master's escaped break
+    out = {"x_hmmsg_01": ("", "Short line.\\nAnother.", "official"),
+           "x_hmmsg_02": ("", "One\\ntwo\\nthree", "machine"),
+           "x_hmmsg_03": ("", "W" * 30, "machine"),
+           "x_other": ("", "a\\nb\\nc", "machine")}
+    rows = {r[1]: r for r in T.box_rows(font, out, {"x_hmmsg_01": "あ\\nい"})}
+    assert set(rows) == {"x_hmmsg_01", "x_hmmsg_02", "x_hmmsg_03"}
+    assert rows["x_hmmsg_01"][3:6] == [2, 24, 2] and rows["x_hmmsg_01"][9] == "fits"
+    assert rows["x_hmmsg_02"][9] == "tall" and rows["x_hmmsg_02"][7] == 1  # re-broken: one line
+    assert rows["x_hmmsg_03"][9] == "wide" and rows["x_hmmsg_03"][7] == 1  # one word: no break
+    s = T.box_summary(list(rows.values()))["home-talk"]
+    assert s["rows"] == 3 and s["fit_after_rebreak"] == 2  # the 810 px word does not fit

@@ -29,7 +29,7 @@ target_link_libraries(soaserver PRIVATE msgpack-cxx)
 # nlohmann-json (headers): the English art recipes (src/english_art/recipe.cpp) only
 target_link_libraries(soaserver PRIVATE nlohmann_json::nlohmann_json)
 # utf8proc: Unicode normalization and categories for the English derivation (src/master/english_derive.cpp)
-target_link_libraries(soaserver PRIVATE utf8proc::utf8proc)
+target_link_libraries(soaserver PRIVATE utf8proc::utf8proc soa_text)
 
 # soanet: soa-server's wire layer (net/: packets, the Ninja cipher, the request decoder, the game
 # session and bridge, the HTTP router; the HTTP server and client on cpp-httplib, the poll loop). Not part of

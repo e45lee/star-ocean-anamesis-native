@@ -14,6 +14,7 @@
 #include "english_art/art.h"
 #include "soaserver/cdn.h"
 #include "soaserver/msgpack.h"
+#include <soa/line_break.h>
 
 namespace soa::server::english {
 
@@ -452,44 +453,29 @@ int widest(const Advances& f, const U& text) {
     for (auto& l : split(text, '\n')) w = std::max(w, width(f, l, false));
     return w;
 }
-U rebreak_u(const Advances& f, const U& text0, int budget, bool player_px) {
-    // re.sub(r"\s*\n\s*", " ", text): every whitespace run that holds a newline -> one space
-    U text;
-    for (size_t i = 0; i < text0.size();) {
-        if (is_space(text0[i])) {
-            size_t j = i;
-            bool nl = false;
-            while (j < text0.size() && is_space(text0[j])) nl |= text0[j++] == '\n';
-            if (nl) text += U" ";
-            else text += text0.substr(i, j - i);
-            i = j;
-        } else text += text0[i++];
-    }
-    // a tag is one word
-    U t2;
-    for (size_t i = 0; i < text.size();) {
-        size_t n = tag_at(text, i);
-        if (n) {
-            t2 += replace_all(text.substr(i, n), U" ", U"\x01");
-            i += n;
-        } else t2 += text[i++];
-    }
-    std::vector<U> lines;
-    U cur;
-    for (auto& w : split(t2, ' ')) {
-        U cand = cur.empty() ? w : cur + U" " + w;
-        if (!cur.empty() && width(f, cand, player_px) > budget) {
-            lines.push_back(cur);
-            cur = w;
-        } else cur = cand;
-    }
-    if (!cur.empty()) lines.push_back(cur);
-    U out;
-    for (size_t k = 0; k < lines.size(); k++) {
-        if (k) out += U"\n";
-        out += lines[k];
-    }
-    return replace_all(out, U"\x01", U" ");
+// english_core.Font.rebreak: the shared breaker (soa/line_break.h) in its derivation mode (breaks
+// collapsed, tags are words), measured with width() above.
+U rebreak_u(const Advances& f, const U& text, int budget, bool player_px) {
+    soa::text::BreakOptions o;  // keep_breaks false, skip_japanese false, tags_are_words true, trim false
+    // width() on UTF-8 without a copy: the tags (tag_at, the same TAG) count 0, <player> 120
+    auto measure = [&](std::string_view line) {
+        int w = 0;
+        for (size_t i = 0; i < line.size();) {
+            size_t t = soa::text::tag_at(line, i);
+            if (t) {
+                if (player_px && line.substr(i, t) == "<player>") w += 120;
+                i += t;
+                continue;
+            }
+            utf8proc_int32_t cp;
+            utf8proc_ssize_t k = utf8proc_iterate((const uint8_t*)line.data() + i, (utf8proc_ssize_t)(line.size() - i), &cp);
+            if (k <= 0) cp = 0xfffd, k = 1;
+            w += adv_of(f, (char32_t)cp);
+            i += (size_t)k;
+        }
+        return (double)w;
+    };
+    return u32(soa::text::break_lines(u8(text), budget, measure, o));
 }
 
 // ---- check (english_core.check, without the glossary and the budget) -------------------------------

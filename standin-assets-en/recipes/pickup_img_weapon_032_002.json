@@ -1,0 +1,236 @@
+{
+ "note": "A limited weapon gacha's panel: the header, the weapon names and the guarantee line (the small print stays).",
+ "source": "Image/etc2/pickup_img_weapon_032_002.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "band_b": {
+   "clear": "shade",
+   "clear_color": "#08142cc0"
+  },
+  "wname": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 4,
+   "glow": "#ffc040a0",
+   "glow_radius": 3,
+   "align": "right",
+   "clear": "none"
+  },
+  "wname_b": {
+   "size": 34,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "none"
+  },
+  "type": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#3a0000",
+   "outline_width": 2,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "head": {
+   "size": 36,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "title": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#fff0c0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "line": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "wlist": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 2,
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "big": {
+   "size": 52,
+   "bold": 3,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    200,
+    26,
+    624,
+    74
+   ],
+   "style": "erase",
+   "cover": [
+    200,
+    26,
+    624,
+    74
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    200,
+    26,
+    624,
+    74
+   ],
+   "style": "band",
+   "cover": [
+    200,
+    26,
+    624,
+    74
+   ]
+  },
+  {
+   "jp": "近距離武器限定ガチャ",
+   "text": "Melee Weapon Limited Draws",
+   "box": [
+    210,
+    30,
+    604,
+    66
+   ],
+   "style": "title",
+   "size": 44
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    180,
+    322,
+    680,
+    52
+   ],
+   "style": "erase",
+   "cover": [
+    180,
+    322,
+    680,
+    52
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    180,
+    322,
+    680,
+    52
+   ],
+   "style": "band",
+   "cover": [
+    180,
+    322,
+    680,
+    52
+   ]
+  },
+  {
+   "jp": "",
+   "text": "Great Sword  OHS  Arms  Axe",
+   "box": [
+    190,
+    326,
+    660,
+    44
+   ],
+   "style": "cap",
+   "size": 28
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    200,
+    388,
+    624,
+    44
+   ],
+   "style": "erase",
+   "cover": [
+    200,
+    388,
+    624,
+    44
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    200,
+    388,
+    624,
+    44
+   ],
+   "style": "band",
+   "cover": [
+    200,
+    388,
+    624,
+    44
+   ]
+  },
+  {
+   "jp": "10連で★4以上の…武器が1本確定!",
+   "text": "10-chain: 1 ★4+ melee weapon guaranteed!",
+   "box": [
+    210,
+    390,
+    604,
+    40
+   ],
+   "style": "line",
+   "size": 28
+  }
+ ]
+}

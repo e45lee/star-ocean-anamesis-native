@@ -1,0 +1,196 @@
+{
+ "note": "The rerun Tales of the Rays collaboration pick-up gacha's banner (Cress / Mint: glossary).",
+ "source": "Image/etc2/20201008_chara_004.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "テイルズ オブ ザ レイズ キャラクターピックアップ",
+   "text": "Tales of the Rays Character Pick-up",
+   "box": [
+    166,
+    14,
+    290,
+    14
+   ],
+   "style": "blue_s",
+   "cover": [
+    164,
+    14,
+    292,
+    15
+   ],
+   "clear": "inpaint",
+   "size": 12
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    58,
+    30,
+    46,
+    46
+   ],
+   "cover": [
+    58,
+    30,
+    46,
+    46
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "復刻",
+   "text": "Rerun",
+   "box": [
+    62,
+    32,
+    38,
+    42
+   ],
+   "style": "blue",
+   "cover": [
+    58,
+    30,
+    46,
+    46
+   ],
+   "size": 13
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    286,
+    30,
+    170,
+    88
+   ],
+   "cover": [
+    286,
+    30,
+    170,
+    88
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "上方修正! 出現確率Up!! 10連目はピックアップ確率3倍!",
+   "text": "Rates raised!\nRate UP!!\n10th 10-chain: pick-up rate x3!",
+   "box": [
+    290,
+    32,
+    162,
+    84
+   ],
+   "style": "gold_r",
+   "cover": [
+    286,
+    30,
+    170,
+    88
+   ],
+   "size": 18
+  }
+ ]
+}

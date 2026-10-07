@@ -1,0 +1,120 @@
+{
+ "note": "A character pick-up panel (Fidel).",
+ "source": "Image/etc2/pickup_img_chara_1712_007_02.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "tag": {
+   "size": 40,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#2a0a40",
+   "outline_width": 3,
+   "glow": "#c080ffa0",
+   "glow_radius": 2,
+   "align": "left",
+   "clear": "shade",
+   "clear_color": "#1a0a28c0"
+  },
+  "name": {
+   "size": 58,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#3a0a50",
+   "outline_width": 4,
+   "glow": "#ff80ffa0",
+   "glow_radius": 3,
+   "align": "right",
+   "clear": "none"
+  },
+  "role": {
+   "size": 28,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#5a0010",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#1a0a28b0"
+  }
+ },
+ "labels": [
+  {
+   "jp": "SO5より参戦!!",
+   "text": "From SO5!!",
+   "box": [
+    150,
+    18,
+    340,
+    56
+   ],
+   "style": "tag",
+   "cover": [
+    140,
+    14,
+    384,
+    70
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    560,
+    92,
+    340,
+    132
+   ],
+   "style": "erase",
+   "cover": [
+    560,
+    92,
+    340,
+    132
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    560,
+    92,
+    340,
+    132
+   ],
+   "style": "band",
+   "cover": [
+    560,
+    92,
+    340,
+    132
+   ]
+  },
+  {
+   "jp": "フィデル",
+   "text": "Fidel",
+   "box": [
+    570,
+    98,
+    320,
+    66
+   ],
+   "style": "name"
+  },
+  {
+   "jp": "アタッカー",
+   "text": "Attacker",
+   "box": [
+    580,
+    168,
+    310,
+    34
+   ],
+   "style": "role"
+  }
+ ]
+}

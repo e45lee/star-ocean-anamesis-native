@@ -1,5 +1,5 @@
 {
- "note": "The attacker augment-material event's banner (Global: Augment Mission, Attacker).",
+ "note": "The attacker augment-material event's banner (Global: Augment Mission, EXP materials, the role names).",
  "source": "Image/etc2/banner_roleevoAtk_001.aif",
  "styles": {
   "main": {
@@ -16,10 +16,16 @@
    "size": 18,
    "bold": 2,
    "fill": "#ffffff",
-   "outline": "#8a1000",
+   "outline": "#5a1000",
    "outline_width": 2,
    "align": "right",
    "clear": "none"
+  },
+  "tag": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
   }
  },
  "labels": [
@@ -27,26 +33,26 @@
    "jp": "進化素材ミッション",
    "text": "Augment Mission",
    "box": [
-    200,
-    64,
-    252,
-    40
+    190,
+    66,
+    262,
+    38
    ],
+   "style": "main",
    "cover": [
-    200,
+    196,
     42,
-    256,
+    262,
     70
-   ],
-   "style": "main"
+   ]
   },
   {
    "jp": "アタッカー",
    "text": "Attacker",
    "box": [
-    300,
-    44,
-    152,
+    250,
+    45,
+    202,
     22
    ],
    "style": "sub"

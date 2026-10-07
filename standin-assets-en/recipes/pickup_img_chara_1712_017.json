@@ -1,0 +1,155 @@
+{
+ "note": "The 2018 lucky-bag character gacha's panel.",
+ "source": "Image/etc2/pickup_img_chara_1712_017.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "gold": {
+   "size": 44,
+   "bold": 3,
+   "fill": "#ffeab0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "white": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "teal_t": {
+   "size": 56,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a4a5a",
+   "outline_width": 4,
+   "glow": "#40ffffa0",
+   "glow_radius": 3,
+   "clear": "none"
+  },
+  "teal": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a4a",
+   "outline_width": 3,
+   "align": "left",
+   "leading": 10,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    220,
+    16,
+    590,
+    96
+   ],
+   "style": "erase",
+   "cover": [
+    220,
+    16,
+    590,
+    96
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    220,
+    16,
+    590,
+    96
+   ],
+   "style": "band",
+   "cover": [
+    220,
+    16,
+    590,
+    96
+   ]
+  },
+  {
+   "jp": "2018年福袋限定キャラガチャ",
+   "text": "2018 Lucky Bag Limited Character Draws",
+   "box": [
+    230,
+    20,
+    570,
+    48
+   ],
+   "style": "gold",
+   "size": 34
+  },
+  {
+   "jp": "★5エースをゲットするビッグチャンス!!",
+   "text": "A big chance to get a ★5 Ace!!",
+   "box": [
+    260,
+    68,
+    510,
+    40
+   ],
+   "style": "white",
+   "size": 24
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    170,
+    404,
+    720,
+    52
+   ],
+   "style": "erase",
+   "cover": [
+    170,
+    404,
+    720,
+    52
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    170,
+    404,
+    720,
+    52
+   ],
+   "style": "band",
+   "cover": [
+    170,
+    404,
+    720,
+    52
+   ]
+  },
+  {
+   "jp": "花嫁、常夏、ハロウィン、いずれかのキャラが必ず出現!",
+   "text": "A Bride, Summer or Halloween character, guaranteed!",
+   "box": [
+    180,
+    408,
+    700,
+    44
+   ],
+   "style": "gold",
+   "size": 30
+  }
+ ]
+}

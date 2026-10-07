@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The SO1 Memorial pick-up gacha's banner.",
+ "source": "Image/etc2/20200528_chara_002.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -124,72 +124,36 @@
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    262,
+    20,
+    194,
+    98
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    262,
+    20,
+    194,
+    98
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "SO1メモリアル ピックアップキャラガチャ ピックアップは期間限定キャラのみ!",
+   "text": "SO1 Memorial\nPick-up Character Draws\nLimited characters only!",
    "box": [
-    66,
-    40,
-    140,
-    72
+    266,
+    22,
+    186,
+    94
    ],
-   "style": "gold",
+   "style": "gold_r",
    "cover": [
-    60,
-    34,
-    150,
-    80
+    262,
+    20,
+    194,
+    98
    ],
    "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
   }
  ]
 }

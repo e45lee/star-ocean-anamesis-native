@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The weekend-limited character pick-up gacha's banner.",
+ "source": "Image/etc2/20200813_chara_003.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -104,92 +104,39 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    266,
+    6,
+    192,
+    112
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    266,
+    6,
+    192,
+    112
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
-   "box": [
-    66,
-    40,
-    140,
-    72
-   ],
-   "style": "gold",
-   "cover": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
+   "jp": "週末限定 キャラクターピックアップ ピックアップは期間限定キャラのみ!",
+   "text": "Weekend Limited\nCharacter Pick-up\nLimited characters only!",
    "box": [
     270,
-    98,
-    186,
-    18
+    8,
+    184,
+    108
    ],
-   "style": "bar_r",
+   "style": "gold_r",
    "cover": [
-    210,
-    96,
-    246,
-    20
+    266,
+    6,
+    192,
+    112
    ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "size": 18
   }
  ]
 }

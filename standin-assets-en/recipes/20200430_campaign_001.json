@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The EP3 start campaign banner (the logo is the game's).",
+ "source": "Image/etc2/20200430_campaign_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -87,8 +87,8 @@
  },
  "labels": [
   {
-   "jp": "ガチャ",
-   "text": "Draws",
+   "jp": "キャンペーン",
+   "text": "Campaign",
    "box": [
     73,
     14,
@@ -99,97 +99,28 @@
    "cover": [
     72,
     15,
-    52,
+    66,
     13
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
-   "jp": "",
-   "text": "",
+   "jp": "EP3 The Leash Codeスタート記念キャンペーン",
+   "text": "EP3 -The Leash Code- Start Campaign",
    "box": [
     60,
-    34,
-    150,
-    80
-   ],
-   "cover": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
-   "box": [
-    66,
-    40,
-    140,
-    72
-   ],
-   "style": "gold",
-   "cover": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
     98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
+    396,
     20
    ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "style": "blue_s",
+   "cover": [
+    58,
+    98,
+    398,
+    20
+   ],
+   "clear": "inpaint",
+   "size": 15
   }
  ]
 }

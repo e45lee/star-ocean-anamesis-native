@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The Wadrum, Holy Land of Oblivion event's banner (hour 1; Misery 2 / 3: Global's 滅級 / 絶級).",
+ "source": "Image/etc2/20200521_event_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -87,8 +87,8 @@
  },
  "labels": [
   {
-   "jp": "ガチャ",
-   "text": "Draws",
+   "jp": "イベント",
+   "text": "Event",
    "box": [
     73,
     14,
@@ -104,92 +104,95 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
+   "jp": "",
+   "text": "",
    "box": [
     58,
-    31,
-    50,
-    11
+    32,
+    190,
+    64
    ],
-   "style": "omake",
    "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
+    58,
+    32,
+    190,
+    64
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "忘却の聖地 ワドラム",
+   "text": "Wadrum, Holy Land\nof Oblivion",
+   "box": [
+    60,
+    32,
+    220,
+    58
+   ],
+   "style": "blue",
+   "cover": [
+    58,
+    32,
+    190,
+    64
+   ],
+   "size": 22,
+   "align": "left"
   },
   {
    "jp": "",
    "text": "",
    "box": [
+    356,
     60,
-    34,
-    150,
-    80
+    90,
+    30
    ],
    "cover": [
+    356,
     60,
-    34,
-    150,
-    80
+    90,
+    30
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "第1刻",
+   "text": "Hour 1",
    "box": [
-    66,
-    40,
-    140,
-    72
-   ],
-   "style": "gold",
-   "cover": [
+    350,
     60,
-    34,
-    150,
-    80
+    100,
+    30
    ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
+   "style": "blue",
    "cover": [
-    210,
-    96,
-    246,
-    20
+    356,
+    60,
+    90,
+    30
    ],
-   "style": "erase"
+   "size": 22,
+   "align": "right"
   },
   {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
+   "jp": "滅級・絶級追加",
+   "text": "Misery 2 & 3 added",
    "box": [
-    270,
-    98,
-    186,
+    86,
+    96,
+    170,
     18
    ],
-   "style": "bar_r",
+   "style": "blue_s",
    "cover": [
-    210,
     96,
-    246,
-    20
+    96,
+    116,
+    18
    ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "clear": "inpaint",
+   "size": 13
   }
  ]
 }

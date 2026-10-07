@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The Divine Wing Maria / Wise God Mastima step-up gacha's banner.",
+ "source": "Image/etc2/20200514_chara_002.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -104,92 +104,40 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    200,
+    92
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    200,
+    92
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "10連10ステップ目 PUいずれか1体確定ガチャ ステップ10はPUいずれか1体確定!",
+   "text": "10-chain Step 10:\n1 Pick-up guaranteed\nStep 10: 1 pick-up\nguaranteed!",
    "box": [
-    66,
-    40,
-    140,
-    72
+    60,
+    28,
+    192,
+    88
    ],
    "style": "gold",
    "cover": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    200,
+    92
    ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "size": 17,
+   "align": "left"
   }
  ]
 }

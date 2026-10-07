@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "An event banner (Star Ocean and the Dreamy Shore).",
+ "source": "Image/etc2/20200730_event_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -87,8 +87,8 @@
  },
  "labels": [
   {
-   "jp": "ガチャ",
-   "text": "Draws",
+   "jp": "イベント",
+   "text": "Event",
    "box": [
     73,
     14,
@@ -104,92 +104,74 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
+   "jp": "",
+   "text": "",
    "box": [
-    58,
-    31,
-    50,
-    11
+    56,
+    26,
+    220,
+    92
    ],
-   "style": "omake",
    "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
+    56,
+    26,
+    220,
+    92
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "星の海と夢の渚",
+   "text": "Star Ocean and\nthe Dreamy Shore",
+   "box": [
+    60,
+    28,
+    212,
+    88
+   ],
+   "style": "blue",
+   "cover": [
+    56,
+    26,
+    220,
+    92
+   ],
+   "size": 24
   },
   {
    "jp": "",
    "text": "",
    "box": [
+    282,
+    86,
     60,
-    34,
-    150,
-    80
+    28
    ],
    "cover": [
+    282,
+    86,
     60,
-    34,
-    150,
-    80
+    28
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "復刻",
+   "text": "Rerun",
    "box": [
-    66,
-    40,
-    140,
-    72
+    286,
+    88,
+    52,
+    24
    ],
-   "style": "gold",
+   "style": "blue",
    "cover": [
+    282,
+    86,
     60,
-    34,
-    150,
-    80
+    28
    ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "size": 14
   }
  ]
 }

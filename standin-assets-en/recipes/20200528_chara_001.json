@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The kimono demons pick-up gacha's banner (Nel the Demon Slayer / Albel of Demon Flame).",
+ "source": "Image/etc2/20200528_chara_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -87,6 +87,41 @@
  },
  "labels": [
   {
+   "jp": "",
+   "text": "",
+   "box": [
+    56,
+    14,
+    400,
+    104
+   ],
+   "cover": [
+    56,
+    14,
+    400,
+    104
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "ピックアップキャラガチャ 滅びの星に鬼が舞う 出現確率UP!! 10連目はピックアップ確率3倍",
+   "text": "Pick-up Character Draws\nDemons Dance Upon the Dying Star\nRate UP!! 10th 10-chain: pick-up x3!",
+   "box": [
+    60,
+    16,
+    392,
+    100
+   ],
+   "style": "gold",
+   "cover": [
+    56,
+    14,
+    400,
+    104
+   ],
+   "size": 17
+  },
+  {
    "jp": "ガチャ",
    "text": "Draws",
    "box": [
@@ -102,94 +137,6 @@
     52,
     13
    ]
-  },
-  {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "cover": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
-   "box": [
-    66,
-    40,
-    140,
-    72
-   ],
-   "style": "gold",
-   "cover": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
   }
  ]
 }

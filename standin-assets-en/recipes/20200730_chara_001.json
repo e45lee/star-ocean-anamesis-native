@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "A pick-up gacha's banner (Eternal Summer Verda &\nSummer Clair).",
+ "source": "Image/etc2/20200730_chara_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -104,92 +104,56 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    270,
+    20,
+    186,
+    98
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    270,
+    20,
+    186,
+    98
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "★5 … 登場!! 出現確率UP!! 10連目はピックアップ確率3倍!",
+   "text": "★5 Eternal Summer Verda &\nSummer Clair!!\nRate UP!!\n10th 10-chain: pick-up rate x3!",
    "box": [
-    66,
-    40,
-    140,
-    72
+    274,
+    22,
+    178,
+    94
    ],
-   "style": "gold",
+   "style": "gold_r",
    "cover": [
-    60,
-    34,
-    150,
-    80
+    270,
+    20,
+    186,
+    98
    ],
    "size": 18
   },
   {
-   "jp": "",
-   "text": "",
+   "jp": "ピックアップ…キャラガチャ",
+   "text": "Pick-up Character Draws",
    "box": [
-    210,
-    96,
-    246,
-    20
+    58,
+    101,
+    140,
+    13
    ],
+   "style": "cap",
    "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+    57,
+    86,
+    110,
+    30
+   ]
   }
  ]
 }

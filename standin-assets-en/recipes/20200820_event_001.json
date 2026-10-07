@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "An event banner (Star Ocean and the Dreamy Shore Missions added).",
+ "source": "Image/etc2/20200820_event_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -87,8 +87,8 @@
  },
  "labels": [
   {
-   "jp": "ガチャ",
-   "text": "Draws",
+   "jp": "イベント",
+   "text": "Event",
    "box": [
     73,
     14,
@@ -104,92 +104,58 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    230,
+    92
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    230,
+    92
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "星の海と夢の渚 ミッション追加",
+   "text": "Star Ocean and\nthe Dreamy Shore\nMissions added",
    "box": [
-    66,
-    40,
-    140,
-    72
-   ],
-   "style": "gold",
-   "cover": [
     60,
-    34,
-    150,
-    80
+    28,
+    222,
+    88
    ],
-   "size": 18
+   "style": "blue",
+   "cover": [
+    56,
+    26,
+    230,
+    92
+   ],
+   "size": 24
   },
   {
-   "jp": "",
-   "text": "",
+   "jp": "滅級・絶級追加",
+   "text": "Misery 2 & 3 added",
    "box": [
-    210,
-    96,
-    246,
+    330,
+    14,
+    126,
     20
    ],
+   "style": "blue_s",
    "cover": [
-    210,
-    96,
-    246,
+    330,
+    14,
+    126,
     20
    ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "clear": "inpaint",
+   "size": 12
   }
  ]
 }

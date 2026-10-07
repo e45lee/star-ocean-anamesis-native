@@ -140,6 +140,23 @@
    "align": "left"
   },
   {
+   "jp": "",
+   "text": "",
+   "box": [
+    268,
+    100,
+    188,
+    18
+   ],
+   "cover": [
+    268,
+    100,
+    188,
+    18
+   ],
+   "style": "erase"
+  },
+  {
    "jp": "ピックアップは期間限定キャラのみ!",
    "text": "Pick-ups: limited characters only!",
    "box": [

@@ -20,7 +20,7 @@ def xmas_rerun(name, year, title=None, x1=220, bonus=True):
         tag("ガチャ")] + ([L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11])] if bonus else []) + [
         L("…10連10ステップ目 PUいずれか1体確定ガチャ", f"{title}\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
           [66, 40, x1 - 70, 72], "gold", [60, 34, x1 - 60, 80], size=18),
-        L("ステップ10はPUいずれか1体確定!", "Step 10: 1 pick-up guaranteed!", [270, 98, 186, 18], "bar_r", [270, 96, 186, 20], clear="shade", clear_color="#200400c0")])
+        L("ステップ10はPUいずれか1体確定!", "Step 10: 1 pick-up guaranteed!", [270, 98, 186, 18], "bar_r", [min(270, x1), 96, 456 - min(270, x1), 20], clear="shade", clear_color="#200400c0")])
 def weapon_pu(name):
     w(name, "A pick-up weapon gacha's banner (3 slots, with a bonus).", [
         tag("ガチャ"),
@@ -153,3 +153,109 @@ event_title("20200827_event_002", "ファントム・コマンダー討伐", "De
             sub=("ボックスガチャ", "Box Draws", [300, 86, 156, 30]))
 event_title("20200827_event_001", "ファントム・コマンダー討伐", "Defeat the\nPhantom Commander", [80, 36, 310, 70],
             top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]), rerun=[394, 14, 62, 42])
+
+# ---- 2020-08-27 .. 2020-08-06
+STAR = "Star Ocean and\nthe Dreamy Shore"
+awaken("20200827_chara_003", "Official Edge", x1=300)
+xmas_rerun("20200827_chara_002", 0, "Rerun Swimsuit\n2020 (3)", x1=236)
+rateup("20200827_chara_001", 270, "Lavarnia of the Shore &\nErys of the Shore", y0=20, kind="Swimsuit 2020 Character")
+weapon_pu("20200820_weapon_001")
+event_title("20200820_event_001", "星の海と夢の渚 ミッション追加", STAR + "\nMissions added", [56, 26, 230, 92], style="blue",
+            top=("滅級・絶級追加", "Misery 2 & 3 added", [330, 14, 126, 20]))
+w("20200820_campaign_001", "Sphere 211's new season banner.", [band("スフィア211 新シーズン開始", "Sphere 211\nNew Season Begins", [100, 26, 316, 88], "blue", size=28)])
+event_title("20200813_event_001", "星の海と夢の渚 ミッション追加", STAR + "\nMissions added", [56, 26, 230, 92], style="blue")
+w("20200813_chara_003", "The weekend-limited character pick-up gacha's banner.", [
+    tag("ガチャ"), band("週末限定 キャラクターピックアップ ピックアップは期間限定キャラのみ!", "Weekend Limited\nCharacter Pick-up\nLimited characters only!", [266, 6, 192, 112], size=18)])
+xmas_rerun("20200813_chara_002", 0, "Rerun Swimsuit\n2020 (2)", x1=236)
+rateup("20200813_chara_001", 270, "Midsummer Welch &\nMidsummer Euwin", y0=20, kind="Swimsuit 2020 Character")
+weapon_pu("20200806_weapon_001")
+event_title("20200806_event_002", "星の海と夢の渚", STAR, [60, 26, 200, 92], tagjp="ボックスガチャ", sub=("ボックスガチャ", "Box Draws", [300, 86, 156, 30]))
+w("20200806_event_001", "The Star Ocean and the Dreamy Shore event's banner (Misery 2 & 3 added).", [
+    tag("イベント"), band("滅級絶級追加!", "Misery 2 & 3\nadded!", [56, 26, 150, 92], "blue", size=22, align="left"),
+    band("星の海と夢の渚", STAR, [270, 26, 186, 92], "blue", size=20)])
+awaken("20200806_chara_003", "Noel")
+xmas_rerun("20200806_chara_002", 0, "Rerun Bunny Ears\nCharacters", x1=300)
+xmas_rerun("20200806_chara_001", 0, "Rerun Swimsuit\n2019", x1=236)
+
+# ---- 2020-07-30 .. 2020-06-25
+event_title("20200730_event_001", "星の海と夢の渚", STAR, [56, 26, 220, 92], rerun=[282, 86, 60, 28])
+w("20200730_chara_005", "The SO2 release-day anniversary gacha's banner.", [
+    tag("ガチャ"), band("スターオーシャン2 発売日記念ピックアップ ★5キャラが10連で1体確定!!", "Star Ocean 2\nRelease Day Pick-up\n10-chain: 1 ★5\ncharacter guaranteed!!", [56, 26, 190, 92], "blue", size=16, align="left"),
+    L("1人3回限定", "3 per player", [394, 14, 62, 14], "omake", [392, 14, 64, 16], size=10)])
+w("20200730_chara_004", "The Sharpshooter role pick-up gacha's banner (Sharpshooter: Global's シューター).", [
+    tag("ガチャ"), band("シューターロール pick up ピックアップキャラガチャ", "Sharpshooter Role\nPick-up Character Draws", [56, 26, 214, 88], "gold", size=20, align="left"),
+    L("ピックアップは期間限定キャラのみ!", "Pick-ups: limited characters only!", [270, 102, 186, 16], "bar_r", [244, 100, 212, 18], clear="shade", clear_color="#200400c0")])
+xmas_rerun("20200730_chara_002", 0, "Rerun Swimsuit\n2020 (1)", x1=236)
+rateup("20200730_chara_001", 270, "Eternal Summer Verda &\nSummer Clair", y0=20)
+w("20200730_campaign_004", "The 2nd Galactic Federation survey's banner.", [
+    band("第2回 銀河連邦アンケート 回答のご協力をお願いします!!", "The 2nd Galactic Federation Survey\nPlease help us with your answers!!", [56, 18, 400, 100], "blue", size=24)])
+w("20200730_campaign_003", "The owned-character bonus ticket exchange's banner.", [
+    band("所持キャラボーナス券 交換所オープン!", "Owned Character Bonus Tickets:\nthe Exchange is open!", [58, 26, 290, 88], "blue", size=22, align="left")])
+w("20200730_campaign_002", "The item shop's summer vacation enhancement sets campaign banner.", [
+    tag("キャンペーン"), band("アイテムショップで なつやすみ武器強化セット なつやすみキャラ強化セット 期間限定追加", "Limited-time Summer Vacation\nWeapon & Character\nEnhancement Sets in the Item Shop", [236, 4, 220, 116], size=16)])
+w("20200730_campaign_001", "The summer vacation campaign's banner.", [
+    tag("キャンペーン"), band("なつやすみ Summer vacation! キャンペーン", "Summer Vacation\nCampaign", [56, 22, 256, 96], "blue", size=28)])
+w("20200722_chara_004", "The weekend-limited character pick-up gacha's banner.", [
+    tag("ガチャ"), band("週末限定 キャラクターピックアップ ピックアップは期間限定キャラのみ!", "Weekend Limited\nCharacter Pick-up\nLimited characters only!", [266, 6, 192, 112], size=18)])
+event_title("20200701_event_001", "マルチプル・ギア討伐", "Defeat the\nMultiple Gear", [76, 34, 370, 60], sub=(MIS[0], MIS[1], [150, 94, 210, 24]),
+            top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]), style="gold")
+weapon_pu("20200625_weapon_001")
+event_title("20200625_event_001", "マルチプル・ギア討伐", "Defeat the\nMultiple Gear", [76, 34, 310, 82], top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]), rerun=[394, 14, 62, 42])
+awaken("20200625_chara_004", "Official Anne", x1=300)
+w("20200625_chara_003", "The x3! star pick-up character gacha's banner.", [
+    band("3倍! スターピックアップキャラガチャ", "x3! Star Pick-up\nCharacter Draws", [70, 16, 380, 92], size=28), tag("ガチャ"),
+    L("※10連特典枠はございません", "* No 10-chain bonus slot", [330, 106, 126, 11], "omake", [326, 106, 130, 12], size=9)])
+w("20200625_chara_002", "The SOA Memorial pick-up gacha's banner.", [
+    tag("ガチャ"), L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11]),
+    band("SOAメモリアル ピックアップキャラガチャ ピックアップは期間限定キャラのみ!", "SOA Memorial\nPick-up Character Draws\nLimited characters only!", [262, 20, 194, 98], size=18)])
+
+# ---- 2020-06-25 .. 2020-05-21
+ONI = "Demons Dance Upon\nthe Dying Star"
+rateup("20200625_chara_001", 280, "Heath &\nLavarnia", y0=20, extra=[L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11])])
+w("20200625_campaign_002", "The item shop's Sphere 211 sets campaign banner.", [
+    tag("キャンペーン"), band("アイテムショップで スフィア211応援セット 期間限定追加", "Limited-time Sphere 211\nSupport Sets\nin the Item Shop", [244, 4, 212, 116], size=17)])
+w("20200625_campaign_001", "Sphere 211's release campaign banner.", [
+    tag("キャンペーン"), band("スフィア211 リリースキャンペーン", "Sphere 211\nRelease Campaign", [226, 26, 230, 92], "blue", size=26)])
+wadrum("20200618_event_001", 2)
+wadrum("20200611_event_001", 2, rerun=True, sub=False)
+awaken("20200611_chara_003", "Dark Albel", x1=300)
+xmas_rerun("20200611_chara_002", 0, "Rerun Bride\n2018", x1=236)
+rateup("20200611_chara_001", 270, "Bride Karlyn &\nBride Tika", y0=20)
+weapon_pu("20200604_weapon_001")
+event_title("20200604_event_002", "滅びの星に鬼が舞う", ONI, [60, 26, 220, 92], tagjp="ボックスガチャ", sub=("ボックスガチャ", "Box Draws", [300, 86, 156, 30]), style="gold")
+event_title("20200604_event_001", "滅びの星に鬼が舞う", ONI + "\nMisery 2 & 3 added", [58, 26, 210, 92], style="gold")
+event_title("20200528_event_001", "滅びの星に鬼が舞う", ONI, [58, 26, 210, 92], rerun=[262, 64, 74, 40], style="gold")
+awaken("20200528_chara_003", "Crimson Phia", x1=300)
+w("20200528_chara_002", "The SO1 Memorial pick-up gacha's banner.", [
+    tag("ガチャ"), L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11]),
+    band("SO1メモリアル ピックアップキャラガチャ ピックアップは期間限定キャラのみ!", "SO1 Memorial\nPick-up Character Draws\nLimited characters only!", [262, 20, 194, 98], size=18)])
+w("20200528_chara_001", "The kimono demons pick-up gacha's banner (Nel the Demon Slayer / Albel of Demon Flame).", [
+    band("ピックアップキャラガチャ 滅びの星に鬼が舞う 出現確率UP!! 10連目はピックアップ確率3倍", "Pick-up Character Draws\n" + ONI.replace("\n", " ") + "\nRate UP!! 10th 10-chain: pick-up x3!", [56, 14, 400, 104], "gold", size=17), tag("ガチャ")])
+wadrum("20200521_event_001", 1)
+
+# ---- 2020-05-14 .. 2020-04-16
+CYN = "Defeat Phantomize\nCynard"
+weapon_pu("20200514_weapon_001")
+wadrum("20200514_event_001", 1, rerun=True, sub=False)
+awaken("20200514_chara_003", "Crimson Opera", x1=300)
+w("20200514_chara_002", "The Divine Wing Maria / Wise God Mastima step-up gacha's banner.", [
+    tag("ガチャ"), band("10連10ステップ目 PUいずれか1体確定ガチャ ステップ10はPUいずれか1体確定!", "10-chain Step 10:\n1 Pick-up guaranteed\nStep 10: 1 pick-up\nguaranteed!", [56, 26, 200, 92], "gold", size=17, align="left")])
+rateup("20200514_chara_001", 270, "Divine Wing Maria &\nWise God Mastima", y0=20)
+weapon_pu("20200507_weapon_001")
+event_title("20200507_event_001", "ファントマイズ・サイナード討伐", CYN, [76, 34, 370, 60], sub=(MIS[0], MIS[1], [150, 94, 210, 24]),
+            top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]), style="gold")
+w("20200507_chara_001", "The SO5 Memorial pick-up gacha's banner.", [
+    tag("ガチャ"), L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11]),
+    band("SO5メモリアル ピックアップキャラガチャ ピックアップは期間限定キャラのみ!", "SO5 Memorial\nPick-up Character Draws\nLimited characters only!", [262, 20, 194, 98], size=18)])
+event_title("20200430_event_001", "ファントマイズ・サイナード討伐", CYN, [76, 34, 310, 82], top=("EP3イベント", "EP3 Event", [168, 14, 176, 24]), rerun=[394, 14, 62, 42])
+awaken("20200430_chara_004", "Bacchus", x1=300)
+for n, vol in (("20200430_chara_003", 2), ("20200430_chara_002", 1)):
+    w(n, f"The Golden Week pick-up gacha's banner (vol. {vol}).", [
+        tag("ガチャ"), band(f"ゴールデンウィーク{vol} GW ピックアップキャラガチャ", f"Golden Week {vol}\nPick-up\nCharacter Draws", [250, 26, 206, 76], size=20),
+        L("★5はPU8体のみ!! 10連目はピックアップ確率3倍!", "★5: the 8 pick-ups only!! 10th 10-chain: pick-up rate x3!", [210, 104, 246, 14], "bar_r", [146, 102, 310, 16], clear="shade", clear_color="#200400c0", size=12)])
+rateup("20200430_chara_001", 270, "Karlyn the Fox General &\nRicardo of the Cannon Armor", y0=20)
+w("20200430_campaign_002", "The item shop's EP3 start sets campaign banner.", [
+    tag("キャンペーン"), band("アイテムショップで EP3スタート記念セット 期間限定追加", "Limited-time EP3 Start\nCelebration Sets\nin the Item Shop", [244, 4, 212, 116], size=17)])
+w("20200430_campaign_001", "The EP3 start campaign banner (the logo is the game's).", [
+    tag("キャンペーン"), L("EP3 The Leash Codeスタート記念キャンペーン", "EP3 -The Leash Code- Start Campaign", [60, 98, 396, 20], "blue_s", [58, 98, 398, 20], clear="inpaint", size=15)])
+xmas_rerun("20200416_chara_003", 0, "Rerun Idol\n2019", x1=236)

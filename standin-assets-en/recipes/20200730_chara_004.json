@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The Sharpshooter role pick-up gacha's banner (Sharpshooter: Global's シューター).",
+ "source": "Image/etc2/20200730_chara_004.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -104,89 +104,73 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    214,
+    88
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    214,
+    88
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "シューターロール pick up ピックアップキャラガチャ",
+   "text": "Sharpshooter Role\nPick-up Character Draws",
    "box": [
-    66,
-    40,
-    140,
-    72
+    60,
+    28,
+    206,
+    84
    ],
    "style": "gold",
    "cover": [
-    60,
-    34,
-    150,
-    80
+    56,
+    26,
+    214,
+    88
    ],
-   "size": 18
+   "size": 20,
+   "align": "left"
   },
   {
    "jp": "",
    "text": "",
    "box": [
-    210,
-    96,
-    246,
-    20
+    244,
+    100,
+    212,
+    18
    ],
    "cover": [
-    210,
-    96,
-    246,
-    20
+    244,
+    100,
+    212,
+    18
    ],
    "style": "erase"
   },
   {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
+   "jp": "ピックアップは期間限定キャラのみ!",
+   "text": "Pick-ups: limited characters only!",
    "box": [
     270,
-    98,
+    102,
     186,
-    18
+    16
    ],
    "style": "bar_r",
    "cover": [
-    210,
-    96,
-    246,
-    20
+    244,
+    100,
+    212,
+    18
    ],
    "clear": "shade",
    "clear_color": "#200400c0"

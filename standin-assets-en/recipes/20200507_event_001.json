@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "An event banner (Defeat Phantomize Cynard).",
+ "source": "Image/etc2/20200507_event_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -87,8 +87,8 @@
  },
  "labels": [
   {
-   "jp": "ガチャ",
-   "text": "Draws",
+   "jp": "イベント",
+   "text": "Event",
    "box": [
     73,
     14,
@@ -104,92 +104,93 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
+    76,
     34,
-    150,
-    80
+    370,
+    60
    ],
    "cover": [
-    60,
+    76,
     34,
-    150,
-    80
+    370,
+    60
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "ファントマイズ・サイナード討伐",
+   "text": "Defeat Phantomize\nCynard",
    "box": [
-    66,
-    40,
-    140,
-    72
+    80,
+    36,
+    362,
+    56
    ],
    "style": "gold",
    "cover": [
-    60,
+    76,
     34,
-    150,
-    80
+    370,
+    60
    ],
-   "size": 18
+   "size": 24
   },
   {
    "jp": "",
    "text": "",
    "box": [
+    150,
+    94,
     210,
-    96,
-    246,
-    20
+    24
    ],
    "cover": [
+    150,
+    94,
     210,
-    96,
-    246,
-    20
+    24
    ],
    "style": "erase"
   },
   {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
+   "jp": "滅級・絶級追加",
+   "text": "Misery 2 & 3 added",
    "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
+    154,
     96,
-    246,
+    202,
     20
    ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "style": "gold",
+   "cover": [
+    150,
+    94,
+    210,
+    24
+   ],
+   "size": 14
+  },
+  {
+   "jp": "EP3イベント",
+   "text": "EP3 Event",
+   "box": [
+    168,
+    14,
+    176,
+    24
+   ],
+   "style": "blue_s",
+   "cover": [
+    168,
+    14,
+    176,
+    24
+   ],
+   "clear": "inpaint",
+   "size": 12
   }
  ]
 }

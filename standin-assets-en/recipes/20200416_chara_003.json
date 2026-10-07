@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "A step-up gacha's banner (Rerun Idol\n2019).",
+ "source": "Image/etc2/20200416_chara_003.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -126,31 +126,31 @@
    "box": [
     60,
     34,
-    150,
+    176,
     80
    ],
    "cover": [
     60,
     34,
-    150,
+    176,
     80
    ],
    "style": "erase"
   },
   {
    "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "text": "Rerun Idol\n2019\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
    "box": [
     66,
     40,
-    140,
+    166,
     72
    ],
    "style": "gold",
    "cover": [
     60,
     34,
-    150,
+    176,
     80
    ],
    "size": 18
@@ -159,15 +159,15 @@
    "jp": "",
    "text": "",
    "box": [
-    210,
+    236,
     96,
-    246,
+    220,
     20
    ],
    "cover": [
-    210,
+    236,
     96,
-    246,
+    220,
     20
    ],
    "style": "erase"
@@ -183,9 +183,9 @@
    ],
    "style": "bar_r",
    "cover": [
-    210,
+    236,
     96,
-    246,
+    220,
     20
    ],
    "clear": "shade",

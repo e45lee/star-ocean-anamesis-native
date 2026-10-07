@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "A pick-up weapon gacha's banner (3 slots, with a bonus).",
+ "source": "Image/etc2/20200507_weapon_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -104,92 +104,94 @@
    ]
   },
   {
-   "jp": "お負け付き",
+   "jp": "ピックアップ武器ガチャ",
+   "text": "Pick-up Weapon Draws",
+   "box": [
+    170,
+    15,
+    170,
+    14
+   ],
+   "style": "blue_s",
+   "cover": [
+    176,
+    15,
+    156,
+    14
+   ],
+   "clear": "inpaint",
+   "size": 13
+  },
+  {
+   "jp": "3スロット",
+   "text": "3 Slots",
+   "box": [
+    368,
+    15,
+    40,
+    13
+   ],
+   "style": "tag",
+   "cover": [
+    368,
+    15,
+    40,
+    13
+   ],
+   "clear": "inpaint",
+   "size": 10
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "cover": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "10連で★5新武器1本確定!!",
+   "text": "10-chain: 1 new\n★5 weapon guaranteed!!",
+   "box": [
+    250,
+    52,
+    206,
+    64
+   ],
+   "style": "gold_r",
+   "cover": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "size": 20
+  },
+  {
+   "jp": "おまけ付き",
    "text": "Bonus",
    "box": [
-    58,
-    31,
-    50,
+    410,
+    27,
+    46,
     11
    ],
    "style": "omake",
    "cover": [
-    57,
-    31,
-    48,
+    410,
+    27,
+    46,
     11
    ]
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "cover": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
-   "box": [
-    66,
-    40,
-    140,
-    72
-   ],
-   "style": "gold",
-   "cover": [
-    60,
-    34,
-    150,
-    80
-   ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
   }
  ]
 }

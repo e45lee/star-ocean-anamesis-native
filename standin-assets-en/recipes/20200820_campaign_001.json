@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "Sphere 211's new season banner.",
+ "source": "Image/etc2/20200820_campaign_001.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -87,109 +87,39 @@
  },
  "labels": [
   {
-   "jp": "ガチャ",
-   "text": "Draws",
-   "box": [
-    73,
-    14,
-    80,
-    15
-   ],
-   "style": "tag",
-   "cover": [
-    72,
-    15,
-    52,
-    13
-   ]
-  },
-  {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    100,
+    26,
+    316,
+    88
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    100,
+    26,
+    316,
+    88
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "スフィア211 新シーズン開始",
+   "text": "Sphere 211\nNew Season Begins",
    "box": [
-    66,
-    40,
-    140,
-    72
+    104,
+    28,
+    308,
+    84
    ],
-   "style": "gold",
+   "style": "blue",
    "cover": [
-    60,
-    34,
-    150,
-    80
+    100,
+    26,
+    316,
+    88
    ],
-   "size": 18
-  },
-  {
-   "jp": "",
-   "text": "",
-   "box": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "style": "erase"
-  },
-  {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
-   "box": [
-    270,
-    98,
-    186,
-    18
-   ],
-   "style": "bar_r",
-   "cover": [
-    210,
-    96,
-    246,
-    20
-   ],
-   "clear": "shade",
-   "clear_color": "#200400c0"
+   "size": 28
   }
  ]
 }

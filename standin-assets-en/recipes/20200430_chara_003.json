@@ -1,6 +1,6 @@
 {
- "note": "A step-up gacha's banner (Rerun Fairy Tale World).",
- "source": "Image/etc2/20201105_chara_001.aif",
+ "note": "The Golden Week pick-up gacha's banner (vol. 2).",
+ "source": "Image/etc2/20200430_chara_003.aif",
  "styles": {
   "tag": {
    "size": 12,
@@ -104,92 +104,76 @@
    ]
   },
   {
-   "jp": "お負け付き",
-   "text": "Bonus",
-   "box": [
-    58,
-    31,
-    50,
-    11
-   ],
-   "style": "omake",
-   "cover": [
-    57,
-    31,
-    48,
-    11
-   ]
-  },
-  {
    "jp": "",
    "text": "",
    "box": [
-    60,
-    34,
-    150,
-    80
+    250,
+    26,
+    206,
+    76
    ],
    "cover": [
-    60,
-    34,
-    150,
-    80
+    250,
+    26,
+    206,
+    76
    ],
    "style": "erase"
   },
   {
-   "jp": "…10連10ステップ目 PUいずれか1体確定ガチャ",
-   "text": "Rerun Fairy Tale World\nStep 10: 1 Pick-up\nguaranteed (10-chain)",
+   "jp": "ゴールデンウィーク2 GW ピックアップキャラガチャ",
+   "text": "Golden Week 2\nPick-up\nCharacter Draws",
    "box": [
-    66,
-    40,
-    140,
+    254,
+    28,
+    198,
     72
    ],
-   "style": "gold",
+   "style": "gold_r",
    "cover": [
-    60,
-    34,
-    150,
-    80
+    250,
+    26,
+    206,
+    76
    ],
-   "size": 18
+   "size": 20
   },
   {
    "jp": "",
    "text": "",
    "box": [
-    210,
-    96,
-    246,
-    20
+    146,
+    102,
+    310,
+    16
    ],
    "cover": [
-    210,
-    96,
-    246,
-    20
+    146,
+    102,
+    310,
+    16
    ],
    "style": "erase"
   },
   {
-   "jp": "ステップ10はPUいずれか1体確定!",
-   "text": "Step 10: 1 pick-up guaranteed!",
+   "jp": "★5はPU8体のみ!! 10連目はピックアップ確率3倍!",
+   "text": "★5: the 8 pick-ups only!! 10th 10-chain: pick-up rate x3!",
    "box": [
-    270,
-    98,
-    186,
-    18
+    210,
+    104,
+    246,
+    14
    ],
    "style": "bar_r",
    "cover": [
-    210,
-    96,
-    246,
-    20
+    146,
+    102,
+    310,
+    16
    ],
    "clear": "shade",
-   "clear_color": "#200400c0"
+   "clear_color": "#200400c0",
+   "size": 12
   }
  ]
 }

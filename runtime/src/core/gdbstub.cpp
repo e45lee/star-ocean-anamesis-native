@@ -56,6 +56,7 @@ struct ThreadCtl {
     Cpu* cpu = nullptr;  // the level that parked
     bool parked = false;  // waiting in gdb_park or gdb_call_native: registers readable and writable
     bool faulted = false;  // waiting in gdb_fault (a signal handler): registers readable, can't run
+    bool to_park = false;  // stopped after a native's step, on its way back to its JIT, where it parks
     Act act = Act::None;
 };
 struct Stop {
@@ -341,7 +342,7 @@ private:
                 for (auto& v : guest_threads()) {
                     auto it = g_ctl.find(v.tid);
                     bool parked = it != g_ctl.end() && (it->second.parked || it->second.faulted);
-                    if (v.in_jit && !parked) busy = true;
+                    if ((v.in_jit || (it != g_ctl.end() && it->second.to_park)) && !parked) busy = true;
                 }
                 if (!busy) return;
                 g_cv_srv.wait_for(lk, std::chrono::milliseconds(5));
@@ -697,6 +698,24 @@ bool wait_parked_locked(std::unique_lock<std::mutex>& lk, ThreadCtl& t) {
 
 }  // namespace
 
+void (*g_gdb_before_park)() = nullptr;
+
+bool gdb_stop_at(u64 addr, int timeout_ms) {
+    std::unique_lock lk(g_m);
+    const bool temp = !g_bps.count(addr);
+    if (!insert_bp_locked(addr)) return false;
+    auto until = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout_ms);
+    auto parked_at = [&] {
+        if (!g_pending) return false;
+        auto it = g_ctl.find(g_pending->tid);
+        return it != g_ctl.end() && it->second.parked && it->second.cpu && it->second.cpu->pc() == addr;
+    };
+    bool ok = g_cv_srv.wait_until(lk, until, parked_at);
+    if (temp) remove_bp_locked(addr);
+    if (ok) g_pending->swbreak = false;  // (reported as a plain stop: the breakpoint is gone)
+    return ok;
+}
+
 bool gdb_stopped() { return g_stopped.load(std::memory_order_acquire); }
 
 void gdb_park(Cpu& c) {
@@ -716,10 +735,12 @@ void gdb_park(Cpu& c) {
         }
         if (t.act == Act::Cont || !g_stopped) break;
         t.parked = true;
+        t.to_park = false;
         g_cv_srv.notify_all();
         g_cv_thr.wait(lk);
     }
     t.parked = false;
+    t.to_park = false;
     t.act = Act::None;
     c.jit()->ClearHalt((HR)kGdbHalt);
 }
@@ -756,7 +777,12 @@ void gdb_call_native(Cpu& c, u64 hook, HostFn fn, bool in_jit) {
     if (!g_attached) return;
     const int tid = my_tid();
     stop_world_locked({tid, kGdbSigTrap, false});  // (halts this JIT too: it parks in gdb_park on return)
-    if (in_jit) return;
+    if (in_jit) {
+        g_ctl[tid].to_park = true;  // (the stub waits for that park: not "in host code")
+        lk.unlock();
+        if (g_gdb_before_park) g_gdb_before_park();
+        return;
+    }
     // A direct host call has no JIT to return to: wait here (a further step can't run guest code:
     // reported stopped where it is).
     ThreadCtl& t = g_ctl[tid];

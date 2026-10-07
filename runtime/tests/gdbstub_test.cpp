@@ -8,11 +8,14 @@
 // stops before the native runs, with the guest's argument in x0; a step runs the native; and the
 // stub over IPv6 ([::1], skipped when the host has no IPv6 loopback).
 //
-// `soaruntime_tests --gdb-demo HOST:PORT [--fault] [--native]` runs the same guest loop with the stub
-// listening until a debugger sets the loop's stop flag (control/tests/test_gdbclient.py drives it
-// with control/gdbclient.py; gdb-multiarch can attach too). With --fault the guest then loads from
-// address 0x10: the fault (SIGSEGV) is reported to the attached debugger before the process dies.
-// With --native the leaf is a native (`monitor natives` lists it as gdb_demo_leaf).
+// `soaruntime_tests --gdb-demo HOST:PORT [--fault] [--native] [--at-leaf] [--slow-park]` runs the same
+// guest loop with the stub listening until a debugger sets the loop's stop flag
+// (control/tests/test_gdbclient.py drives it with control/gdbclient.py; gdb-multiarch can attach too).
+// With --fault the guest then loads from address 0x10: the fault (SIGSEGV) is reported to the
+// attached debugger before the process dies. With --native the leaf is a native (`monitor natives`
+// lists it as gdb_demo_leaf). With --at-leaf the guest is already stopped at the leaf's first
+// instruction when the debugger attaches (where a breakpoint will go). With --slow-park a thread
+// whose JIT stopped sleeps 200 ms before it parks (a loaded host's scheduling, made certain).
 #include "gdbstub_test.h"
 
 #include <soa/sock.h>  // (Winsock first on Windows)
@@ -319,7 +322,8 @@ void run_gdbstub_tests(void (*check)(bool, const char*)) {
     check_ipv6(check);
 }
 
-int run_gdb_demo(const char* addr, bool fault, bool native) {
+int run_gdb_demo(const char* addr, const GdbDemoOptions& o) {
+    const bool fault = o.fault, native = o.native;
     std::string err;
     if (!gdb_listen(addr, &err)) {
         fprintf(stderr, "%s\n", err.c_str());
@@ -339,6 +343,11 @@ int run_gdb_demo(const char* addr, bool fault, bool native) {
     Guest g;
     g.start(fault, native);
     while (g.data[0] < 1000) std::this_thread::sleep_for(std::chrono::milliseconds(1));  // the loop is running
+    if (o.slow_park) g_gdb_before_park = [] { std::this_thread::sleep_for(std::chrono::milliseconds(200)); };
+    if (o.at_leaf && !gdb_stop_at((u64)g.code + kLeaf, 10000)) {
+        fprintf(stderr, "gdb-demo: the loop didn't reach the leaf\n");
+        return 2;
+    }
     // For the client: where the loop's code and data are (control/tests/test_gdbclient.py); with
     // --native the native's call counter (host memory, readable through the stub too).
     printf("gdb-demo port %d code 0x%" PRIx64 " data 0x%" PRIx64 " leaf 0x%" PRIx64 " calls 0x%" PRIx64 "\n", gdb_port(), (u64)g.code,

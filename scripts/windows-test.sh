@@ -1,7 +1,8 @@
 #!/bin/bash
 # A gate test against the Windows build (tests/tiers.json win:*; README.md "Windows"; port/PLAN.md
-# 5b): the incremental Windows build of the programs it runs, the tracked files restaged
-# (scripts/windows-stage.sh --quick; the .exe files are refreshed by control/soadrive/winhost.py),
+# 5b): the incremental Windows build of the programs it runs, the stage refreshed
+# (scripts/windows-stage.sh --quick: its whitelist scripts/windows-stage.list; the .exe files are
+# refreshed by control/soadrive/winhost.py),
 # then the same session or script as on Linux with the .exe files, run from WSL through interop.
 #
 # Usage: scripts/windows-test.sh TEST OUT TMP
@@ -22,7 +23,7 @@
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
-[ $# -eq 3 ] || { sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+[ $# -eq 3 ] || { sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 test=$1 out=$2 tmp=$3
 stage=${SOA_WIN_STAGE:-/mnt/c/soa-win}
 case $test in

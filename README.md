@@ -196,9 +196,17 @@ scripts/build.sh --windows --target soa-server          # one part
 
 From WSL the `.exe` files run directly (interop), but not in place: SQLite can't lock files on
 `\\wsl.localhost\...` ("database is locked"), a worktree's `work/` link isn't followed there, and
-the tests' `/tmp` is `\tmp` on the current drive. `scripts/windows-stage.sh` copies the tracked
-files, the `work/` data the programs read and the `.exe` files to `C:\soa-win` (incremental; the
-first copy of the 3.7.0 download takes about 10 minutes). The download is staged once, as
+the tests' `/tmp` is `\tmp` on the current drive. `scripts/windows-stage.sh` copies to `C:\soa-win`
+only what the Windows programs read there, from a whitelist, `scripts/windows-stage.list` (each
+entry with who reads it): the checkout markers the programs find the stage by (`*/CMakeLists.txt`),
+the five `.exe` files `scripts/windows-test.sh` runs, `data/`'s DBs, saves and English rows, the
+3.7.0 APK, `standin-assets*/`, the selftests' fixtures, the launchers, and `work/` files by exact
+name; never `.claude/` (worktrees), `build/`, `.git`, sources or docs, or other `work/` files
+(incremental; the first copy of the 3.7.0 download takes about 10 minutes). A stage removes
+whatever in `C:\soa-win` isn't on the list (an older stage's copy of the whole checkout, a file no
+longer tracked, a stray `work/` file; it keeps `run/` and the `.exe` side copies) and fails if
+anything outside it is left; `--dry-run` prints what it would copy and remove. A new file a
+program or selftest reads on Windows goes on the list. The download is staged once, as
 `work/SOA-3.7.0-canonical-data.zip`, which the programs read in place, as in every checkout (an
 extracted folder left by an older stage is removed): about 10 GB with `--phone --viewer`. The
 selftests that read the download run there too. Every staged `.exe` and the key data files are
@@ -209,6 +217,7 @@ error).
 
 ```sh
 scripts/windows-stage.sh                                # -> /mnt/c/soa-win (C:\soa-win)
+scripts/windows-stage.sh --dry-run                      # what it would copy (SOURCE -> PATH) and remove
 scripts/windows-stage.sh --clean                        # removes old run output (run/, side copies of .exe files)
 cd /mnt/c/soa-win && ./build-win/server/soa-server.exe --selftest
 cd /mnt/c/soa-win && ./build-win/runtime/soaruntime_tests.exe

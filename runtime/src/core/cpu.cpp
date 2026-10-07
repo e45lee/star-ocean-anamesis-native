@@ -612,16 +612,19 @@ inline u32 direct_thunk(u64 fn) {
 
 // run_jit with the GDB stub on (--gdb; core/gdbstub.h): parks this thread while the debugger has
 // the guest stopped (at entry, or when the JIT returns with kGdbHalt) and keeps ts.in_jit current.
+// in_jit stays set from the JIT's return to the park: the stub counts a thread that is neither
+// parked nor in_jit as stopped in host code (it can't step one), so clearing it first let the stub
+// take a thread on its way to park for one in host code and answer a step with a stop in place.
 void run_jit_debug(Cpu& c, ThreadState& ts) {
     using HR = Dynarmic::HaltReason;
     const bool was = ts.in_jit.load(std::memory_order_relaxed);
     if (gdb_stopped()) gdb_park(c);
+    ts.in_jit.store(true, std::memory_order_release);
     for (;;) {
-        ts.in_jit.store(true, std::memory_order_release);
         HR hr = c.jit()->Run();
-        ts.in_jit.store(false, std::memory_order_release);
         if (ts.info.exiting || Has(hr, HR::UserDefined1)) break;
         if (Has(hr, (HR)kGdbHalt)) {
+            if (g_gdb_before_park) g_gdb_before_park();
             gdb_park(c);
             continue;
         }
@@ -659,19 +662,21 @@ void run_jit(Cpu& c, u64 fn, ThreadState& ts, int d) {
     pt.depth.store(d, std::memory_order_release);
     if (c.halt_reason() & (u32)kSampleHalt) c.jit()->ClearHalt(kSampleHalt);
     using HR = Dynarmic::HaltReason;
+    const bool was_in_jit = ts.in_jit.load(std::memory_order_relaxed);
     if (g_gdb_enabled && gdb_stopped()) gdb_park(c);
+    if (g_gdb_enabled) ts.in_jit.store(true, std::memory_order_release);  // (until the park: run_jit_debug)
     for (;;) {
-        if (g_gdb_enabled) ts.in_jit.store(true, std::memory_order_release);
         HR hr = c.jit()->Run();
-        if (g_gdb_enabled) ts.in_jit.store(false, std::memory_order_release);
         if (ts.info.exiting || Has(hr, HR::UserDefined1)) break;
         if (Has(hr, (HR)kGdbHalt)) {
+            if (g_gdb_before_park) g_gdb_before_park();
             gdb_park(c);
             continue;
         }
         if (!Has(hr, kSampleHalt) && !Has(hr, HR::CacheInvalidation)) break;
-        if (Has(hr, kSampleHalt) && g_prof_sample) g_prof_sample(c, pt);
+        if (Has(hr, kSampleHalt) && g_prof_sample) g_prof_sample(c, pt);  // (in_jit stays set: sampling is quick)
     }
+    if (g_gdb_enabled) ts.in_jit.store(was_in_jit, std::memory_order_release);
     if (d <= kProfLevels) pt.cpu[d - 1].store(nullptr, std::memory_order_release);
     pt.depth.store(d - 1, std::memory_order_release);
 }

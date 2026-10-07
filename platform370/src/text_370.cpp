@@ -417,7 +417,7 @@ struct OwnBox {
     float w, h;
 };
 std::unordered_map<u64, OwnBox> g_own;
-std::unordered_map<std::string, std::string> g_fitted;  // talk text -> its fitted text
+std::unordered_map<std::string, std::string> g_fitted;  // talk text + box height -> its fitted text
 
 void set_box(u64 label, const OwnBox& b) {
     u8* l = (u8*)label;
@@ -486,7 +486,7 @@ void fit_talk(u64 label) {
     std::string out;
     {
         std::lock_guard<std::mutex> lk(g_mu);
-        auto it = g_fitted.find(src);
+        auto it = g_fitted.find(src + '\x01' + std::to_string(box_h));
         if (it != g_fitted.end()) out = it->second;
     }
     if (out.empty()) {
@@ -494,7 +494,7 @@ void fit_talk(u64 label) {
         out = f.text;
         std::lock_guard<std::mutex> lk(g_mu);
         if (g_fitted.size() > 4096) g_fitted.clear();
-        g_fitted[src] = out;
+        g_fitted[src + '\x01' + std::to_string(box_h)] = out;
         if (g_logged.insert("\x02" + src).second) {
             std::string shown = out;  // the lines as laid out, " | " between them
             for (size_t p = 0; (p = shown.find('\n', p)) != std::string::npos; p += 3) shown.replace(p, 1, " | ");

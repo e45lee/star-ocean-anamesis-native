@@ -1,0 +1,55 @@
+# The Windows stage's whitelist: everything scripts/windows-stage.sh copies into a stage (C:\soa-win),
+# and so everything a stage may hold besides run/ (README.md "Windows"). Syntax and sources:
+# scripts/windows_stage.py. Found by reading the programs' repo-file lookups and their selftests'
+# inputs, and checked by the win:* gate tests passing from a stage made only from this list
+# (2026-10-06). An entry's comment says who reads it.
+#
+# PATH                                            [OPTION]       # why
+
+# --- the checkout markers: each program takes the first directory upwards from its .exe that has its
+# marker for the checkout (soa/install.h repo_roots), and finds data/, apk/, work/ ... there
+port/CMakeLists.txt                                              # soa.exe (port/src/core/paths.cpp is_repo)
+server/CMakeLists.txt                                            # soa-server.exe (server/app/main.cpp is_repo)
+emulator/CMakeLists.txt                                          # soa-emu.exe, with runtime/'s (emulator/src/main.cpp)
+emulator-viewer/CMakeLists.txt                                   # soa-viewer.exe, with runtime/'s (emulator-viewer/src/main.cpp)
+runtime/CMakeLists.txt                                           # soa-emu.exe and soa-viewer.exe's second marker
+
+# --- the programs (build-win/, scripts/build.sh --windows): what scripts/windows-test.sh runs
+build-win/port/soa.exe                                           # win:selftest, win:battle-gacha, win:shard-login, win:native-order
+build-win/server/soa-server.exe                                  # win:selftest, win:seeded, win:shard-login
+build-win/emulator/soa-emu.exe                                   # win:seeded, win:shard-login
+build-win/emulator-viewer/soa-viewer.exe                         # win:viewer-boot
+build-win/runtime/soaruntime_tests.exe                           # win:runtime-tests
+
+# --- data/
+data/basmaster-3.7.0.sqlite3                                     # the 3.7.0 master: soa.exe, soa-server.exe --master (control/soadrive/targets.py)
+data/gacha_pools.sqlite3                                         # the gacha pools: soa.exe, soa-server.exe
+data/basmaster-3.8.0.sqlite3                                     # soa-server.exe --selftest (seeding from a later save's master)
+data/basmaster-gl.sqlite3                                        # the Global master: --english (soa.exe, soa-server.exe derive the English tables)
+data/english/master-en.tsv                                       # our English rows: --english (soa.exe, soa-server.exe; server/src/master/english_text.cpp)
+data/english/client-strings.tsv                                  # the port's English client strings: soa.exe --selftest (ui/lang_test.cpp)
+data/saves/seed/Game.xml                                         # the sanitized seed: --seed (the sessions, control/soadrive/targets.py), the selftests
+data/saves/client/Game.xml                                       # the sanitized client save: soa-server.exe --selftest
+data/saves/client/Aska.xml                                       # (its KVS half)
+apk/STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk                     # the 3.7.0 APK: soa.exe, soa-emu.exe, soa-server.exe --selftest
+standin-assets/                                                  # our stand-in art the CDN serves for lost assets (soa.exe, soa-server.exe)
+standin-assets-en/recipes/                                       # our English art recipes: --english; soa-server.exe --selftest (english-art)
+
+# --- the selftests' inputs (soa.exe / soa-server.exe --selftest, run in the stage)
+server/tests/fixtures/                                           # test-seed.xml, state-v0.sql (schema migration), english-fixture.tsv
+server/tests/net/client_requests.txt                             # server wire tests: the client's own serialized requests
+server/tests/ninja/ninja_vectors.txt                             # server ninja tests: the encryption vectors
+port/src/native/params/testdata/                                 # soa.exe --selftest params corpus, read relative to the working directory
+
+# --- the launchers, run from the stage in cmd.exe / PowerShell (README.md "Playing on Windows")
+scripts/windows/run-port.cmd                                     # soa.exe
+scripts/windows/run-emulator-370.cmd                             # soa-emu.exe + soa-server.exe
+scripts/windows/run-emulator-370.ps1                             # (its PowerShell half)
+scripts/windows/run-viewer-380.cmd                               # soa-viewer.exe
+
+# --- work/, by exact name (in a worktree through its work/ link: the main checkout's)
+work/libSOA-3.7.0.so                                             # the 3.7.0 client library: soa-emu.exe
+work/SOA-3.7.0-canonical-data.zip                                # the 3.7.0 download, read in place: soa.exe, soa-server.exe (CDN), the selftests
+work/phone-3.7.0/                                 --phone        # the shared pre-downloaded phone the Windows runs link theirs from (4 GB)
+apk/*.xapk                                        --viewer       # soa-viewer.exe's game (0.9 GB), read in place; a worktree: the main checkout's
+work/extracted/xapk/                              --viewer-else  # without an XAPK: its unpacked copy (tools/extract.sh)

@@ -93,9 +93,14 @@ int main(int argc, char** argv) {
     if (argc >= 3 && !strcmp(argv[1], "--crash-demo")) return run_crash_demo(argv[2]);  // crash_test.cpp: the crashing child
     if (argc >= 3 && !strcmp(argv[1], "--gdb-demo")) {  // gdbstub_test.cpp: the guest loop for a debugger
         cpu_global_init();
-        bool fault = false, native = false;
-        for (int i = 3; i < argc; i++) fault |= !strcmp(argv[i], "--fault"), native |= !strcmp(argv[i], "--native");
-        int rc = run_gdb_demo(argv[2], fault, native);
+        GdbDemoOptions o;
+        for (int i = 3; i < argc; i++) {
+            o.fault |= !strcmp(argv[i], "--fault");
+            o.native |= !strcmp(argv[i], "--native");
+            o.at_leaf |= !strcmp(argv[i], "--at-leaf");
+            o.slow_park |= !strcmp(argv[i], "--slow-park");
+        }
+        int rc = run_gdb_demo(argv[2], o);
         thread_end();
         return rc;
     }

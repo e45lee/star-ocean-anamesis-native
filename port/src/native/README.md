@@ -146,7 +146,7 @@ Each subsystem of the rebuild owns two folders and nothing else, so many agents 
 |---|---|
 | `port/src/native/<s>/README.md` | scope, the types table, the natives table (its own: no shared list to edit), dependencies, RE notes |
 | `port/src/native/<s>/<s>_layout.h` | the recovered guest classes, methods attached, `static_assert`ed (types first) |
-| `port/src/native/<s>/subsystem.cmake` | the subsystem's own build settings (a host library, a definition); `port/CMakeLists.txt` includes every one |
+| `port/src/native/<s>/subsystem.cmake` | only when the subsystem has build settings of its own (a host library, a definition; today lib_sqlite, yayoi); `port/CMakeLists.txt` includes every one |
 | `port/src/native/<s>/addresses.txt` | the guest addresses its natives use; `gen/<s>_addresses.h` is generated from it (`tools/gen_addresses.py`; "Guest addresses" above) |
 | `port/src/native/<s>/<s>_*.cpp` | natives and their differential tests (globbed; link order by basename, D8) |
 | `port/decomp/<s>/<topic>.c` | stamped Ghidra decompiles the rewrite used (data, not built) |

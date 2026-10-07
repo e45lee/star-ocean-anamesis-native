@@ -76,7 +76,7 @@ What keeps this safe across many parallel agents:
 - **Layering.** A subsystem includes only the layout headers of subsystems below it
   (port/REBUILD-QUEUE.md levels). Upward calls go through vtables only.
 - **Build.** `tools/subsystem.py check` compiles every layout header on its own (with `-I port/src`),
-  and each subsystem's `subsystem.cmake` links in the pinned order (D8), so cross-subsystem calls
+  and port/CMakeLists.txt links the sources in the pinned order (D8), so cross-subsystem calls
   resolve.
 - **Hooks.** Guest code calling a native function still lands on it through its hook; natives
   calling each other skip that hop.

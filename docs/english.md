@@ -944,6 +944,71 @@ field names model, quantization, prompt version, llama.cpp build and temperature
 - **The 26B-A4B rows are redone on the 31B** (the user, 2026-10-07; PLAN-english.md "M-Q2 redo"):
   `ui` / `story` / `shorten --redo-model gemma-4-26B-A4B-it`, then `import-mt --replace`.
 
+### 7.11 The home speech box (home talk lines)
+
+Investigation of 2026-10-07 (agent `en-homeline`), after the user's report that the English lines on the home screen are too big and overflow. Nothing in the client or in `data/english/` was changed. The one tool change is a box check in `tools/english_text.py report` (`BOXES`, `boxes.tsv`).
+
+**Summary.** The home's speech box holds **two lines of 480 font px**: exactly two lines of 20 full-width characters, which is how every Japanese line is written. Of the 2,738 English home lines served, **159 fit** and 2,398 need 3 to 7 lines. The extra lines don't widen or shrink anything: they run down out of the frame, over the main buttons on the home and over the footer in Talk Mode. A re-break at 480 px would rescue only 519 rows. The rest are about 1.3× (median) to 1.7× (p90) too long for two lines. **Recommendation:** a shortening pass to two lines (data, like E7), with a shrink-to-fit layout edit in the served `home-en.csf` as the safety net (server data, no client change).
+
+**Where the text comes from.**
+
+- `CHome::PlayTalk` @01aef4e8 (`Home.cpp`) writes the line into one of two labels of `UI/etc2/home.csf`: `talk_menu_gp/talk_frame/talk_text` on the home, and `talk_menu_talkmode/talk_frame/talk_text` in Talk Mode (会話モード). It writes the speaker into `talk_name` beside it.
+- The line is a `master_text` row, read through `CUIUtility::GetSystemMessage`. Its message id comes from one of two places:
+  - a `master_home_message` row: types 0 and 1, 610 rows, gated by `opened_at` / `closed_at` and the scenario range, collected by `CUIUtility::CollectMasterHomeMessage`; this covers the partner's greeting and Coro's lines;
+  - a Home3D row's `text_id`, through `CHomeModelViewManager::GetTextId`: the tap reactions, Talk Mode and gift reactions (`SendPresentReaction`; [home3d.md](home3d.md) "How motions and lines are picked").
+- Every one of those ids is a `*_hmmsg_*` message id: **2,743 `master_text` rows**, 604 id prefixes (characters and their event variants).
+- **The Japanese:** 2,655 rows have 2 lines and 88 have 1. The widest line is 490 px (p99 473); 10 rows are over 480, by at most 10 px.
+- **The English served now** (`derive`, 2,738 rows; 5 have no English):
+
+  | Source | Rows | Fit as served | Fit after a re-break at 480 px | 3 lines after the re-break | 4+ lines after the re-break |
+  |---|---|---|---|---|---|
+  | machine (1,348 written by 26B-A4B, 849 by 31B) | 2,197 | 98 | 400 | 1,011 | 786 |
+  | official (Global) | 535 | 55 | 113 | 238 | 184 |
+  | memory | 6 | 6 | 6 | 0 | 0 |
+
+- **Lines as served:** 85 rows have 1 line, 255 have 2, 911 have 3, 1,149 have 4, 309 have 5, and 29 have 6 or 7.
+- **Line widths:** the widest line is p50 411 px and p90 548 px. Flattened to a single line, the text is p50 1,251 px, p90 1,655 px and at most 2,567 px; two lines hold 960 px.
+- **Why the English is tall.**
+  - Global broke its home lines into 3–4 lines of about 28 characters. Its 1.x client's box is not in hand. `finish` keeps Global's own breaks (3.2).
+  - A machine row is re-broken at the Japanese row's widest line (`post_one`, about 470 px). That is the right width, but nothing limits the number of lines.
+  - English needs about 1.3× the room of the Japanese line. At 15.0 px per character, two lines hold about 64 characters. The longest text that still re-breaks into two lines is 70 characters; the served median is 83 and p90 110.
+
+**How the client draws it** (`home.csf`, the node tree read from the download; the same in both menus):
+
+- `talk_text` is a `TextObjectData` label with FontSize 24, anchor (0, 1) (top left) and a placeholder of `１２３４５６７８９０…` in 2 lines, so its size is 480×48. It has **no `IsCustomSize`**, so `CCocosLabel::DrawSelf` gives it its text's size: no shrink, no clip, no ellipsis (3.2). It sits at x 34, y 69 (51 px from the top) in `talk_frame`, a 540×120 `ImageViewObjectData` whose image does not grow.
+- On screen (729 px wide, scale 1.01) the lines are about 31 px apart. Two lines fill the frame. The third starts at its bottom edge, and the fourth and fifth cover the home's main buttons (Events, Missions…). In Talk Mode the third line lands on the footer (Home, Change Favorite…).
+- The client never wraps (3.2). The E10 word wrap (`text_370.cpp`, `--lang en`) sees a label without a custom size and breaks only a line wider than the room left on the screen: 500 px at this label's world x of 202. Here that makes things worse. Global's `cp0002_b01a_hmmsg_15` ("Aaah! Why did you touch me!? You know \nthat startles me!", first line 629 px) became 3 lines, with "You know" on a line of its own. Only 1 of the run's lines was affected; most served lines are already narrower than 500 px.
+- `talk_name` (FontSize 18, 164×18) showed "Evelysse" fine; long English names were not checked.
+- Story markup (`<fontsize=…>`) is read only by the story's `ParseMessage`. This label isn't in tag mode, so no data route to a smaller font exists inside the text.
+
+**Shots** (`work/english/homeline/`, local; `control/run.py home-character` with Evelysse `role_cp0002_b01a_6025`, the in-process server; `--soa-arg=--lang --soa-arg=en --soa-arg=--english --movie 72 --movie-fps 1` for taps every 9 s, and once in Japanese):
+
+- `ja-hmmsg_01-2-lines.png` and `en-hmmsg_01-4-lines.png`: the same line, Japanese in 2 lines, Global's English in 4;
+- `en-hmmsg_13-5-lines.png` (machine, 5 lines over the buttons), `en-hmmsg_11-4-lines.png`, `en-hmmsg_15-wrapped-3-lines.png` (the E10 wrap above), `en-hmmsg_02-2-lines-fits.png`;
+- `en-talkmode.png` / `ja-talkmode.png`: Talk Mode;
+- `en-movie-sheet.png`: every second frame of the movie, cropped to the box;
+- `en/` and `ja/` hold the runs; `boxes.tsv` is the per-row list.
+
+**Measuring.** `tools/english_text.py report` now writes `boxes.tsv` and a `boxes` summary per entry of `BOXES` (`home-talk`: ids containing `_hmmsg`, 2 lines × 480 px). Each row gets its lines and widest px as served and after a re-break at the box width, and a status of fits, wide or tall. The build does not apply the budget yet.
+
+**Options.**
+
+| | What | Cost | Trade-off |
+|---|---|---|---|
+| **(a) data: shorten to the box** | Re-break home lines at 480 px instead of keeping Global's breaks or the Japanese width (an `hmmsg` budget in `finish` / `post_one`), then a `shorten`-style MT pass for master rows: one request per line over 2 lines, asking for at most about 60 characters, checked by a re-break at 480 px to 2 lines, retried or reported. About 2,200 short requests on the 31B (E7's pass did 2,067). | S for the tools; one GPU batch, run **after the 31B redo**, which rewrites 1,348 of these rows anyway | The meaning is cut by about a quarter (median) to two fifths (p90): chatty lines lose clauses. **The 422 official rows that don't fit** need a precedence change: a shortened row for a context with a hard box must win over `official`. Today only `human` / `reviewed` do (7.6), so that is a new rule in both `tools/english_text.py` and the server's C++ derivation (7.9). Otherwise they stay at 3–4 lines, or get reviewed by hand. |
+| **(b) client: fit in the bubble** | In the existing `CCocosLabel::DrawSelf` hook, for this label, scale the text so its lines fit the frame's room (480×69), or wrap at 480 instead of the screen's 500. | S, a client change logged in client-changes.md "English mode" | Every line shows, but 4–5 lines shrink to about 50–60%: small text. Server-first prefers a data route, and (c) is one. |
+| **(c) server data: edit the served layout** | The server already writes `UI/etc2/home-en.csf` for the English art (section 8: the same node tree, a new atlas). Its `home.msgp` could change too: `talk_text` with `IsCustomSize` and a box of 480×66, so `DrawSelf`'s own shrink (+0x282, `min(boxW/w, boxH/h)`) fits anything taller; or a smaller FontSize (20: 576 px per line) with the label moved up. A recipe key per node in `standin-assets-en/recipes/home.json`; the server re-encodes the msgpack with msgpack-cxx. | S–M in `server/src/english_art/`; **not tried** (that the client honours an edited `IsCustomSize` on this label is (b) client evidence from `Read_TextObjectData`, untested here) | No client change. Without (a) it has the same small-text trade-off as (b). With (a) it only catches the few rows left over. |
+
+**Recommendation: (a), with (c) as the safety net.**
+
+- Two lines is the box the Japanese was written for, and only shorter text reads well in it.
+- The shortening pass belongs after the running 31B redo, since that redo rewrites 1,348 of these rows.
+- The 422 official rows need the user's decision. Either a box-context rule lets shortened rows win over Global's text, or they are reviewed by hand (the export / import tools exist, 7.6).
+- (c) then shrinks whatever is still over budget, instead of letting it spill over the buttons. It also covers server text and future edits.
+- (b) is not needed once (c) exists, since (c) is server data. Either way, the E10 wrap must not break a line of this label at 500 px when the frame's text width is 480 px: with (c) the label gets a custom size and the hook wraps at its box.
+
+How measured: `tools/english_text.py derive` and `report` (the box check above) over the committed tables and `data/basmaster-3.7.0.sqlite3` / `data/basmaster-gl.sqlite3`. The layout comes from the download's `UI/etc2/home.csf` (ADLD + SLZ + ISF, `home.msgp` decoded with msgpack). The code is Ghidra (MCP) on `CHome::PlayTalk`, `CHome::SendPresentReaction` and the callers of `CUIUtility::CollectMasterHomeMessage`. The screen comes from the two runs above. Each run held one slot for about 5 minutes; no client was left running.
+
 ## 8. English UI art
 
 Implemented 2026-10-07 (agent `en-art`, PLAN-english.md step E9, decision Q4). The images whose Japanese text is part of the picture (section 1.3) get English copies served as `-en` members; the client with `--lang en` picks them up through `FileExistLanguage` (6.3) and keeps the Japanese image for every file without one.

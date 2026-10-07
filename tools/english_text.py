@@ -34,7 +34,8 @@ Usage:
                                                  rows; --check: exit 1 when the committed files are stale)
   tools/english_text.py derive --out DIR         the full resolved tables (all sources)
   tools/english_text.py report [--out DIR]       coverage per source and prefix, failing rows, width
-                                                 outliers, Q7 rows, token gaps, glossary conflicts
+                                                 outliers, Q7 rows, token gaps, glossary conflicts,
+                                                 rows over a fixed text box (BOXES: boxes.tsv)
                                                  (summary to stdout, lists to work/english/report/)
   tools/english_text.py show ID
   tools/english_text.py set ID TEXT --by NAME [--note N] [--force]
@@ -846,6 +847,9 @@ def report(ctx, b, out_dir):
     w("wider-than-screen.tsv", ["message_id", "source", "ja_px", "en_px", "en"],
       [[m, s_, wj, we, b.out[m][1]] for m, s_, wj, we in wide])
     s["single_line_wider_than_screen"] = len(wide)
+    boxes = box_rows(font, b.out, src.jp_rows)
+    w("boxes.tsv", ["context", "message_id", "source", "ja_lines", "ja_px", "lines", "px", "lines_rebroken", "px_rebroken", "status", "en"], boxes)
+    s["boxes"] = box_summary(boxes)
     hum = [(m, t) for m, t in sorted(b.table.items()) if t["source"] in HUMAN]
     w("human.tsv", ["message_id", "source", "editor", "ja", "served", "official", "note"],
       [[m, t["source"], t["editor"], src.jp_rows.get(m, ""), b.out[m][1] if m in b.out else "(failing)",
@@ -861,6 +865,46 @@ def report(ctx, b, out_dir):
             json.dumps(f["problems"], ensure_ascii=False), f["en"]] for f in sb.failures])
         w("story-stale.tsv", ["message_id", "source", "table_ja_sha1", "current_ja_sha1"], sb.stale)
     (out_dir / "summary.json").write_text(json.dumps(s, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return s
+
+
+# Fixed text boxes per context (english.md 7.11): a label that takes its text's size (no IsCustomSize,
+# so no shrink and no clip) inside a frame of fixed size. A served row needing more lines than the box
+# has, or a wider line, overflows the frame. Informational (`report`: boxes.tsv); the build does not
+# apply it yet.
+#   home-talk  the home's speech box (UI/etc2/home.csf talk_menu_gp|talk_menu_talkmode/talk_frame/
+#              talk_text: FontSize 24, placeholder 480x48 = two lines of 20 full-width characters,
+#              anchored top-left 51 px into a 540x120 frame); CHome::PlayTalk @01aef4e8 sets it from
+#              master_home_message rows and the Home3D rows' text_id, all *_hmmsg_* message ids
+BOXES = {"home-talk": ("_hmmsg", 480, 2)}
+
+
+def box_rows(font, out, jp_rows):
+    """Per context of BOXES, the served rows: [context, message_id, source, ja_lines, ja_px, lines,
+    px, lines_rebroken, px_rebroken (re-broken at the box width), status (fits | wide | tall), en]."""
+    rows = []
+    for ctx_name, (needle, px, nlines) in BOXES.items():
+        for mid, (_h, e, source) in sorted(out.items()):
+            if needle not in mid:
+                continue
+            en, ja = C.unesc(e), C.unesc(jp_rows.get(mid, ""))
+            n, w = en.count("\n") + 1, font.widest(en)
+            rb = font.rebreak(en, px)
+            status = "fits" if n <= nlines and w <= px else "wide" if n <= nlines else "tall"
+            rows.append([ctx_name, mid, source, ja.count("\n") + 1, font.widest(ja), n, w, rb.count("\n") + 1,
+                         font.widest(rb), status, e])
+    return rows
+
+
+def box_summary(rows):
+    s = {}
+    for ctx_name, (_needle, px, nlines) in BOXES.items():
+        r = [x for x in rows if x[0] == ctx_name]
+        c = collections.Counter((x[2], x[9]) for x in r)
+        s[ctx_name] = {"budget": f"{nlines} lines x {px} px", "rows": len(r),
+                       "status": {f"{a}/{b}": v for (a, b), v in sorted(c.items())},
+                       "fit_after_rebreak": sum(1 for x in r if x[7] <= nlines and x[8] <= px),
+                       "lines_after_rebreak": dict(sorted(collections.Counter(x[7] for x in r).items()))}
     return s
 
 

@@ -9,20 +9,19 @@
 #include "soaserver/adld.h"
 #include "soaserver/config.h"
 #include "soaserver/native_test.h"
+#include <soa/file_tree.h>
+#include <soa/install.h>
 
 namespace soa::server {
 namespace {
 
 NATIVE_TEST("server/english-derive-rules") {
-    std::string fpk_path = find_repo_file("work/download-3.7.0/Font/etc2/font.fpk");
-    if (fpk_path.empty()) return t.skip("work/download-3.7.0/Font/etc2/font.fpk not found (the 3.7.0 download: local data)");
+    // the font from the 3.7.0 download, its zip read in place (or a folder given as the download)
+    std::string download = find_repo_file(soa::install::kRepoDownloadZip);
+    if (download.empty()) return t.skip("%s not found (the 3.7.0 download: local data)", soa::install::kRepoDownloadZip);
+    auto tree = FileTree::open(download);
     std::vector<uint8_t> fpk;
-    if (FILE* f = fopen(fpk_path.c_str(), "rb")) {
-        uint8_t b[65536];
-        size_t n;
-        while ((n = fread(b, 1, sizeof b, f)) > 0) fpk.insert(fpk.end(), b, b + n);
-        fclose(f);
-    }
+    if (!tree || !tree->read("Font/etc2/font.fpk", fpk)) return t.fail("%s: no Font/etc2/font.fpk", download.c_str());
     english::Advances font;
     std::string err;
     if (!english::load_advances(adld::decrypt("Font/etc2/font.fpk", fpk), font, &err)) return t.fail("font: %s", err.c_str());

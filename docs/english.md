@@ -913,6 +913,37 @@ Investigation of 2026-10-07 (agent `english-llm`), at the user's request (M-Q3):
 
 How measured: `work/english/mt-trial/engines/serve.sh` (llama-server), `run_server.py` (the prompts, timing), `score.py`, `bootstrap.py`; outputs `raw-<engine>.jsonl`, `post-<engine>.jsonl`, `timing-<engine>-c<slots>.json`, `scores.json`, server logs `server-*.log`. Models in `work/tools/mt-models/<name>-gguf/`.
 
+### 7.10 The MT run as executed (2026-10-06, agent `english-exec`)
+
+`tools/english_mt_run.py` (llama.cpp b11443 `llama-server` from `work/tools/`, one request per item,
+temperature 0, row-level checkpoints in `work/english/mt/*.jsonl`, resumable) ran the plan's M2–M4;
+`tools/english_text.py import-mt` turned the checkpoints into `machine` rows. Every row's `engine`
+field names model, quantization, prompt version, llama.cpp build and temperature.
+
+| Pass | Items | Engine | Result |
+|---|---:|---|---|
+| M2 names (`names`, names-v1) | 4,489 katakana terms of the gap and the story | Gemma 4 31B, 4 slots, ~62/min | 1,259 proper nouns (seen in 2+ texts) into `glossary.tsv` as `machine`; `glossary-weak` later replaced 36 with Global's in-text spelling |
+| M3 UI (`ui`, v2) | 27,847 distinct texts (37,593 rows) | 31B for 10,858 (~50/min); the 26B-A4B fallback for 16,989 (~125/min, 6 slots) after other programs held 2–4 GB of the GPU for 25 min | 37,456 rows imported; 82 rejected (they stay Japanese); 1,711 texts were translated again after the glossary corrections |
+| M4 story (`story`, v2+story-v1) | 1,696 requests (up to 12 lines, speakers named, 4 lines of context; events, EP2, EP3, then the rest) | 26B-A4B, ~30/min | 16,872 lines; 110 chunks with a rejected or skipped line translated again |
+| E7 shortening (`shorten`, short-v1) | 2,067 machine lines over four window lines (480 px) | 26B-A4B | 1,951 shorter lines imported (`--replace`); lines of 5+ window lines 2,313 → 1,166 |
+
+- **Checks that mattered.** The glossary (corrected names, Global's Misery 2 / 3 for 滅級 / 絶級),
+  tags (an invented `</p>`), specifiers, Japanese left (difficulty marks such as 【滅】), and a
+  **runaway** check added for machine rows: the 26B-A4B sometimes repeats a sound thousands of times
+  ("CAPTAIIII…", "Ka-ka-ka-…"); a machine row more than 80 characters and 8 times the Japanese, or
+  with a 2–8 character unit repeated 12+ times, is refused. A list dot between stat names becomes
+  Global's slash at import ("ATK/INT/DEF/HIT/GRD").
+- **Coverage after the run** (`tools/english_text.py report`): the master 65,346 of 66,945 rows
+  English (official 19,177, memory 6,265, template 2,412, human 36, machine 37,456; the rest is
+  language-neutral or rejected); the story 21,497 of 21,663 lines, 37 of 64 files complete and served
+  (Q12; the other 27 miss 1–21 lines each, `story-fix` translates them one at a time).
+- **GPU sharing.** A 31B batch holds about 22.5 GB; game clients beside it render slowly and gates
+  time out. The runner therefore starts only with ≥ 23 GB free and **no game client in the slot
+  pool** (`control/soaslot.py status`), and stops the server whenever a client appears or free
+  VRAM drops, then waits (the user, 2026-10-07: pause on contention, no model switch for the redo).
+- **The 26B-A4B rows are redone on the 31B** (the user, 2026-10-07; PLAN-english.md "M-Q2 redo"):
+  `ui` / `story` / `shorten --redo-model gemma-4-26B-A4B-it`, then `import-mt --replace`.
+
 ## 8. English UI art
 
 Implemented 2026-10-07 (agent `en-art`, PLAN-english.md step E9, decision Q4). The images whose Japanese text is part of the picture (section 1.3) get English copies served as `-en` members; the client with `--lang en` picks them up through `FileExistLanguage` (6.3) and keeps the Japanese image for every file without one.

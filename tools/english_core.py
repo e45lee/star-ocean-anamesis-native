@@ -604,6 +604,9 @@ def post_one(r, en, font, glossary, mem=None):
     NFC, glyph folding, %% in printf rows, re-break multi-line rows; returns (english, problems)."""
     en = (en or "").strip()
     en = font.fold(unicodedata.normalize("NFC", en))
+    # an engine keeps the Japanese list dot between stat names ("ATK・INT・DEF"); Global writes a
+    # slash ("ATK/INT/DEF/HIT/GRD +30%"), and the kana check would refuse the dot (U+30FB, U+FF65)
+    en = re.sub(r"(?<=[A-Za-z0-9%])\s*[\u30fb\uff65]\s*(?=[A-Za-z0-9])", "/", en)
     en = fix_percent(en, r["ja"])  # a printf row: a literal percent must be %% (NFKC made ％ a bare %)
     if r.get("multiline") and r["budget"]:
         en = font.rebreak(en, max(r["budget"], 200))

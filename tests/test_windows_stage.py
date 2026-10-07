@@ -17,8 +17,8 @@ data/                        # the data
 data/*.sqlite3               # the DBs
 work/lib.so                  # the library
 work/phone/      --phone     # the phone
-apk/*.xapk       --viewer    # the viewer's game
-work/xapk/       --viewer-else  # its unpacked one
+apk/*.pkg        --viewer    # the viewer's game
+work/unpacked/       --viewer-else  # its unpacked one
 build-win/port/soa.exe       # the program
 """
 
@@ -65,12 +65,12 @@ def test_plan_options(fake):
     r, entries = fake
     assert ("mirror", r, "work/phone") in ws.plan(r, entries, options=["--phone"])
     v = rels(ws.plan(r, entries, options=["--viewer"]))
-    assert "work/xapk" not in v and not any(p.startswith("apk/") for p in v)  # neither: warned, nothing staged
-    write(os.path.join(r, "work/xapk/f"))
-    assert ("mirror", r, "work/xapk") in ws.plan(r, entries, options=["--viewer"])
-    write(os.path.join(r, "apk/game.xapk"))
+    assert "work/unpacked" not in v and not any(p.startswith("apk/") for p in v)  # neither: warned, nothing staged
+    write(os.path.join(r, "work/unpacked/f"))
+    assert ("mirror", r, "work/unpacked") in ws.plan(r, entries, options=["--viewer"])
+    write(os.path.join(r, "apk/game.pkg"))
     v = ws.plan(r, entries, options=["--viewer"])
-    assert ("file", r, "apk/game.xapk") in v and ("mirror", r, "work/xapk") not in v
+    assert ("file", r, "apk/game.pkg") in v and ("mirror", r, "work/unpacked") not in v
     q = rels(ws.plan(r, entries, quick=True))
     assert "work/lib.so" not in q and "build-win/port/soa.exe" in q
 
@@ -90,7 +90,7 @@ def test_extras_and_prune(fake, tmp_path):
     r, entries = fake
     dest = str(tmp_path / "stage")
     keep = ["port/CMakeLists.txt", "data/a.sqlite3", "work/lib.so", "work/phone/data/f", "work/phone/files.txt",
-            "build-win/port/soa.exe", "build-win/port/soa.5f00-1a2b.exe", "run/soadrive/x/server.sqlite3", "apk/g.xapk"]
+            "build-win/port/soa.exe", "build-win/port/soa.5f00-1a2b.exe", "run/soadrive/x/server.sqlite3", "apk/g.pkg"]
     drop = [".claude/worktrees/other/port/CMakeLists.txt", "work/extra.zip", "docs/x.md", "README.md", "port/src/a.cpp",
             "data/untracked.sqlite3", "data/a.sqlite3:Zone.Identifier", "build-win/tools/other.exe",
             "build-win/tools/other.5f00-1a2b.exe", "build/port/soa"]

@@ -15,11 +15,11 @@ The list's syntax (one entry per line, `#` starts the comment that says why):
                   a stage also drops a file that is no longer tracked there), the whole directory
                   otherwise (mirrored)
   DIR/*.EXT       the files the pattern matches (fnmatch on the last component; of files the checkout
-                  doesn't track, only the first, by name: one XAPK)
+                  doesn't track, only the first, by name: one XAPK; 380-ok)
   ... --phone / --viewer   staged only with that option (a stage without it keeps what is there)
   ... --viewer-else        with --viewer, when the --viewer entries before it found nothing
 Sources: a path git tracks comes from the checkout; any other from the checkout, else from the main
-checkout of a worktree (whose work/ link points into it: work/, the XAPK in apk/). Never staged
+checkout of a worktree (whose work/ link points into it: work/, the XAPK in apk/; 380-ok). Never staged
 whatever the list doesn't name (.claude/, worktrees, build/, .git, other work/ files...).
 Always kept in a stage: run/ (the Windows runs' output: scripts/windows-stage.sh --clean) and the
 side copies of a listed .exe (NAME.MTIME-SIZE.exe beside NAME.exe: control/soadrive/winhost.py

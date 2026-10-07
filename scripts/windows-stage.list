@@ -24,7 +24,7 @@ build-win/runtime/soaruntime_tests.exe                           # win:runtime-t
 # --- data/
 data/basmaster-3.7.0.sqlite3                                     # the 3.7.0 master: soa.exe, soa-server.exe --master (control/soadrive/targets.py)
 data/gacha_pools.sqlite3                                         # the gacha pools: soa.exe, soa-server.exe
-data/basmaster-3.8.0.sqlite3                                     # soa-server.exe --selftest (seeding from a later save's master)
+data/basmaster-3.8.0.sqlite3                                     # soa-server.exe --selftest (seeding from a later save's master; 380-ok)
 data/basmaster-gl.sqlite3                                        # the Global master: --english (soa.exe, soa-server.exe derive the English tables)
 data/english/master-en.tsv                                       # our English rows: --english (soa.exe, soa-server.exe; server/src/master/english_text.cpp)
 data/english/client-strings.tsv                                  # the port's English client strings: soa.exe --selftest (ui/lang_test.cpp)
@@ -52,4 +52,4 @@ work/libSOA-3.7.0.so                                             # the 3.7.0 cli
 work/SOA-3.7.0-canonical-data.zip                                # the 3.7.0 download, read in place: soa.exe, soa-server.exe (CDN), the selftests
 work/phone-3.7.0/                                 --phone        # the shared pre-downloaded phone the Windows runs link theirs from (4 GB)
 apk/*.xapk                                        --viewer       # soa-viewer.exe's game (0.9 GB), read in place; a worktree: the main checkout's
-work/extracted/xapk/                              --viewer-else  # without an XAPK: its unpacked copy (tools/extract.sh)
+work/extracted/xapk/                              --viewer-else  # without an XAPK: its unpacked copy (tools/extract.sh; 380-ok)

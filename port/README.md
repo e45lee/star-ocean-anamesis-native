@@ -138,7 +138,8 @@ soa's own:
 | `SOA_SELFTEST_SKIP=a,b` | tests left out by exact name (`port/scripts/selftest_resilient.sh` sets it after a crash) |
 | `SOA_SELFTEST_REPEAT=N` | run each matching test N times (1..10000), the port's and the server library's |
 | `SOA_TEST_HOOKS_SKIP=sym,..\|all` | test hooks (`NATIVE_TEST_HOOK`) not installed, to find one that breaks the boot |
-| `SOA_TEST_HOOKS_ALL=1` | also install the hooks the 3.7.0 rebase leaves out (`native/common/test.cpp`) |
+| `SOA_PARAMS_CORPUS=DIR` | the params self-tests also replay the recorded corpus in DIR (`native/params/README.md` "Tests") |
+| `SOA_YAYOI_TEST_TRACE=1` | the yayoi SQLite self-tests print each log line as they make it |
 | `SOA_STUB_TRACE=1` | print each call a recording stub answers (`native/common/guest_stub.cpp`) |
 | `SOA_WIRE_DUMP=FILE` | the wire self-tests append their dumps to FILE (`tools/api_wire.py`) |
 | `SOA_NOTICE_HTML_DUMP=FILE` | the self-test `player/notice` writes the notice page's HTML there (also `soa-server --selftest player/notice`; `docs/webview.md`) |
@@ -237,7 +238,7 @@ When the game asks for text (e.g. a name), type it: a text box at the bottom of 
 
 ## Run options
 
-Every option that changes what a run does lives in one typed struct, `RunOptions` (`port/src/core/options.h`): `repo_dir`, `ClientOptions client` and `ServerOptions server`. `main` fills it once, before the game starts, from the command line (`core/cli.cpp`): settings are flags only (the `SOA_*` variables that were settings print one warning line naming their flag and are ignored; `docs/environment.md`), and the port never `setenv()`s game or run state (selftest `server/no-setenv-state`). Code reads them through `options()`. The window, the data dir, `--natives` and the control / test flags stay in `main`.
+Every option that changes what a run does lives in one typed struct, `RunOptions` (`port/src/core/options.h`): `repo_dir`, `ClientOptions client` and `ServerOptions server`. `main` fills it once, before the game starts, from the command line (`core/cli.cpp`): settings are flags only (the `SOA_*` variables that were settings print one warning line naming their flag and are ignored; `docs/environment.md`), and the port never `setenv()`s game or run state (T0 `env-access`, `tools/check_env_access.py`: no environment access outside `soa/env.h`). Code reads them through `options()`. The window, the data dir, `--natives` and the control / test flags stay in `main`.
 
 **`ClientOptions`**
 

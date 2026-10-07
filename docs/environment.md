@@ -77,8 +77,8 @@ Diagnostics and test switches, by library (the programs that link it read them):
 [`runtime/README.md`](../runtime/README.md) "Environment", linked from the three programs' READMEs.
 
 **soa's own** (`port/src`): `SOA_SELFTEST_DELAY` (0..3600 s), `SOA_SELFTEST_START_FILE`,
-`SOA_SELFTEST_SKIP`, `SOA_SELFTEST_REPEAT` (1..10000), `SOA_TEST_HOOKS_SKIP`, `SOA_TEST_HOOKS_ALL`,
-`SOA_STUB_TRACE`, `SOA_WIRE_DUMP`. Documented in [`port/README.md`](../port/README.md) "Environment".
+`SOA_SELFTEST_SKIP`, `SOA_SELFTEST_REPEAT` (1..10000), `SOA_TEST_HOOKS_SKIP`,
+`SOA_STUB_TRACE`, `SOA_WIRE_DUMP`, `SOA_PARAMS_CORPUS`, `SOA_YAYOI_TEST_TRACE`. Documented in [`port/README.md`](../port/README.md) "Environment".
 
 **The server library** (soa, soa-server): `SOA_NOTICE_HTML_DUMP` (the self-test `player/notice`
 writes the page there). **The web view** (soa, soa-webview-render): `SOA_WEBVIEW_DUMP_CSS`.
@@ -88,8 +88,9 @@ writes the page there). **The web view** (soa, soa-webview-render): `SOA_WEBVIEW
 removed families in comments (`SOA_*_A2C`, `SOA_*_OFF`, `SOA_OBJBASE_ALL`, which lived in hand-written
 files that are gone); a family rebuilt with them should read them through `soa/env.h` too.
 
-Behaviour changes from the one rule: `SOA_TRACE_RT`, `SOA_STUB_TRACE` and `SOA_TEST_HOOKS_ALL` were on
-whenever set, so `=0` turned them on; now it turns them off. `SOA_GL_HOST_SRGB_ETC2`,
+Behaviour changes from the one rule: `SOA_TRACE_RT` and `SOA_STUB_TRACE` were on
+whenever set, so `=0` turned them on; now it turns them off. (`SOA_TEST_HOOKS_ALL` is gone: the
+rebase-skipped test hooks it installed were deleted with their tests.) `SOA_GL_HOST_SRGB_ETC2`,
 `SOA_GL_RELEASE_SHADER_COMPILER`, `SOA_GL_MAP_INVALIDATE`, `SOA_DIRECT_CALLS` and
 `SOA_OFFSCREEN_PRESENT` looked at the first character; now `off` / `no` / `false` work too. Defaults
 are unchanged (`SOA_GL_MAP_INVALIDATE`, `SOA_DIRECT_CALLS` default on; `SOA_OFFSCREEN_PRESENT` unset

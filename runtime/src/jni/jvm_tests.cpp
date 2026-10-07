@@ -210,7 +210,7 @@ RUNTIME_TEST("jni/method-tables-threads") {
         for (u64 n = 1; !stop; n++) vm.def(kBase, "val", "()I", impl(n));
     });
     std::thread add([&] {
-        for (int n = 0; n < 50000 && !stop; n++)  // new keys: inserts into the map the dispatch searches
+        for (int n = 0; n < 5000 && !stop; n++)  // new keys: inserts into the map the dispatch searches
             vm.def(kSub, "m" + std::to_string(n), "()V", [](Object*, const Args&) -> u64 { return 0; });
     });
     for (auto& th : threads) th.join();

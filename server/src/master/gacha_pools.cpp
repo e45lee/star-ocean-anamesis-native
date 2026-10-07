@@ -42,7 +42,9 @@ std::string zen2han(const std::string& s) {
     return out;
 }
 
-std::string name_from_master(sqlite3* master, uint32_t gacha_id) {
+namespace {
+// master_gacha.name_message_id of a gacha ("" when the master has no such gacha) (a).
+std::string name_message_id(sqlite3* master, uint32_t gacha_id) {
     if (!master) return "";
     sqlite3_stmt* st = nullptr;
     std::string mid;
@@ -51,7 +53,24 @@ std::string name_from_master(sqlite3* master, uint32_t gacha_id) {
         if (sqlite3_step(st) == SQLITE_ROW && sqlite3_column_text(st, 0)) mid = (const char*)sqlite3_column_text(st, 0);
     }
     sqlite3_finalize(st);
+    return mid;
+}
+}  // namespace
+
+std::string name_from_master(sqlite3* master, uint32_t gacha_id) {
+    std::string mid = name_message_id(master, gacha_id);
     return mid.empty() ? "" : zen2han(master::text(master, mid));
+}
+
+std::string display_title(sqlite3* master, uint32_t gacha_id, const std::string& title) {
+    std::string mid = name_message_id(master, gacha_id);
+    if (mid.empty()) return title;
+    // (d) the English of the name's master_text row when the table translates the master's
+    // Japanese of it (english::display: the served table, docs/server-rules.md#english); else
+    // the title as the pools hold it (their name is that Japanese made half-width)
+    std::string ja = master::text(master, mid);
+    std::string en = english::display(mid, ja);
+    return en != ja ? en : title;
 }
 
 namespace {
@@ -340,6 +359,7 @@ std::vector<RateInfo> Pools::rate_info(uint32_t id, const std::string& now) cons
 }  // namespace soa::server::gacha_pools
 
 // ---- tests (--selftest; not differential: the server has no guest counterpart) -------------
+#include "soaserver/cdn.h"  // sha1_hex
 #include "soaserver/native_test.h"
 
 namespace soa::server::gacha_pools {
@@ -416,6 +436,35 @@ NATIVE_TEST("server/gacha-pools") {
         }
         sqlite3_close(db);
     }
+}
+
+// The rate dialog's title (display_title): Japanese without --english, the served table's English
+// of master_gacha.name_message_id with it, the pools' title when the table has no row for it.
+NATIVE_TEST("server/gacha-title-english") {
+    sqlite3* m = nullptr;
+    if (sqlite3_open(":memory:", &m) != SQLITE_OK) return t.fail("sqlite");
+    sqlite3_exec(m,
+                 "create table master_gacha (id integer, name_message_id text);"
+                 "create table master_text (message_id text, lang text, text_value text);"
+                 "insert into master_gacha values (7, 'g_title_7'), (8, 'g_title_8');"
+                 "insert into master_text values ('g_title_7', 'ja', 'キャラガチャ'), ('g_title_8', 'ja', 'ＳＯ２ガチャ');",
+                 nullptr, nullptr, nullptr);
+    auto tab = std::make_shared<english::Table>();
+    const std::string ja = "キャラガチャ";
+    (*tab)["g_title_7"] = {cdn::sha1_hex((const uint8_t*)ja.data(), ja.size()), "Character Draw", "official"};
+    const bool saved_english = config().english;
+    const std::string saved_text = config().english_text;
+    config().english = true, config().english_text.clear();
+    std::shared_ptr<const english::Table> saved_served = english::table();
+    english::set_served_table(tab);
+    t.expect_eq(display_title(m, 7, "キャラガチャ"), std::string("Character Draw"), "--english: the English title");
+    t.expect_eq(display_title(m, 8, "SO2ガチャ"), std::string("SO2ガチャ"), "--english, no row: the pools' title");
+    t.expect_eq(display_title(m, 9, "x"), std::string("x"), "no such gacha: the title");
+    config().english = false;
+    t.expect_eq(display_title(m, 7, "キャラガチャ"), std::string("キャラガチャ"), "without --english: Japanese");
+    english::set_served_table(saved_served);
+    config().english = saved_english, config().english_text = saved_text;
+    sqlite3_close(m);
 }
 
 }  // namespace

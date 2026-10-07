@@ -69,6 +69,10 @@ struct RateInfo {
 // the pools without that game text (README.md "Packaging"), so the server takes it from the
 // master when gacha.name is empty. "" when the master has no such gacha.
 std::string name_from_master(sqlite3* master, uint32_t gacha_id);
+// The title the rate dialog shows: under --english the English of master_gacha.name_message_id
+// (the served English table, english::display) when it translates the master's Japanese, else
+// `title` (docs/server-rules.md#english).
+std::string display_title(sqlite3* master, uint32_t gacha_id, const std::string& title);
 // tools/build_gacha_pools.py's zen2han: U+FF01..U+FF5E -> ASCII, U+3000 -> ' ' (UTF-8).
 std::string zen2han(const std::string& s);
 

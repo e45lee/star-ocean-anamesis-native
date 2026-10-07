@@ -984,6 +984,7 @@ Collected from all areas. Each fix is small.
   - `server/PLAN-readability.md:3` says "in progress" but its summary says "All done".
   - `server/PLAN-schema.md:5` says "plan only" at schema v21.
   - AGENTS.md says finished plans go to `docs/history/`.
+  - (CR7, 2026-10-07: both moved to `docs/history/`, with `control/PLAN-consolidate.md`.)
 - **README.md build sections:**
   - the vcpkg list omits ffmpeg, msgpack, cpp-httplib and cli11;
   - the subdirectory list omits common/, webview/, tests/cli and tools/movie_check;

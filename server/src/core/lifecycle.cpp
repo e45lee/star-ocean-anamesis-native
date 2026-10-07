@@ -1,7 +1,7 @@
 // The request lifecycle (soaserver/server.h answer): one for both hosts. Port code, not guest
 // behaviour. soa's FakeApiCaller route (port/src/native/api/fakeapi.cpp) and soa-server's wire
 // (net/game.cpp) deliver every request through answer(); before step R9 of
-// server/PLAN-readability.md each host wired the story campaign and EndMissionTalk itself.
+// docs/history/PLAN-readability.md each host wired the story campaign and EndMissionTalk itself.
 #include <vector>
 
 #include "core/log.h"

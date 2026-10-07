@@ -1,6 +1,6 @@
 # docs/server-rules.md: history
 
-What `docs/server-rules.md` said about its own making, moved here when it was re-headed by domain (server/PLAN-readability.md R20, 2026-10-04). The rules themselves are all in `docs/server-rules.md`; the evidence check (`tools/server_evidence.py`, T0's `server-docs`) counts this file with it, so nothing moved here is lost. Links to the current sections use their anchors.
+What `docs/server-rules.md` said about its own making, moved here when it was re-headed by domain (docs/history/PLAN-readability.md R20, 2026-10-04). The rules themselves are all in `docs/server-rules.md`; the evidence check (`tools/server_evidence.py`, T0's `server-docs`) counts this file with it, so nothing moved here is lost. Links to the current sections use their anchors.
 
 ## Origin
 

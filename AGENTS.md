@@ -134,7 +134,7 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
   downloaded later).
 - **State schema changes are migration steps** in `server/src/state/schema.cpp` (`user_version`
   +1, fresh == migrated, a migrate test; [server/src/state/README.md](server/src/state/README.md),
-  [server/PLAN-schema.md](server/PLAN-schema.md)).
+  its conventions from the finished [docs/history/PLAN-schema.md](docs/history/PLAN-schema.md)).
 - **Dependencies:** prefer a well-known library from vcpkg over hand-rolled parsers and codecs.
   Record every dependency: C/C++ in `vcpkg.json` (or a pinned `FetchContent` in `cmake/deps.cmake`
   when the game needs an exact version), Python in `requirements.txt` with a comment naming its

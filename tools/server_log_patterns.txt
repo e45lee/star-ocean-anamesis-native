@@ -1,4 +1,4 @@
-# The server's log lines that scripts read (server/PLAN-readability.md 1.12): a refactor keeps them
+# The server's log lines that scripts read (docs/history/PLAN-readability.md 1.12): a refactor keeps them
 # byte-identical. One per line: <fragment of the LOG* format string in server/>  TAB  <regex on a log line>.
 # tools/server_evidence.py checks every fragment is still in the source; tools/server_replay_diff.py
 # compares the matching log lines of two builds exactly (tier 1), the other lines as declared differences.

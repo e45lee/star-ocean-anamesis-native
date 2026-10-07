@@ -1,6 +1,6 @@
 # server/src/state: the player state
 
-The state DB (`server.sqlite3`): its schema and how a file is brought to it, what fills a new one, the checks on it, and the one SQLite wrapper every handler uses. This is the state module of `../../PLAN-schema.md` (3.1; step S1 made it). Every table of the state is created here when the DB opens: no module creates its own, none is made lazily, and no handler asks whether a table exists.
+The state DB (`server.sqlite3`): its schema and how a file is brought to it, what fills a new one, the checks on it, and the one SQLite wrapper every handler uses. This is the state module of `docs/history/PLAN-schema.md` (3.1; step S1 made it). Every table of the state is created here when the DB opens: no module creates its own, none is made lazily, and no handler asks whether a table exists.
 
 | File | What |
 |---|---|

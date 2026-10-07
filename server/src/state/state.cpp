@@ -1,5 +1,5 @@
 // Opening the state DB at this build's schema version, and the meta table's helpers (state/state.h;
-// server/PLAN-schema.md 4.1). Port code, not guest behaviour.
+// docs/history/PLAN-schema.md 4.1). Port code, not guest behaviour.
 #include "state/state.h"
 
 #include <charconv>

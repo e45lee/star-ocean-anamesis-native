@@ -3,7 +3,7 @@
 // its arguments positionally (ints, strs, vecs in the method's order: soaserver/server.h); each
 // struct here reads one method's, with the defaults the handlers used when an argument is missing
 // (none of them logs). The method signatures are docs/api.md's **Method** lines (the client's
-// FakeApiCaller methods). The modules get theirs in their domain steps (server/PLAN-readability.md
+// FakeApiCaller methods). The modules get theirs in their domain steps (docs/history/PLAN-readability.md
 // R10-R18).
 #include <algorithm>
 #include <optional>

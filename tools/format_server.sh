@@ -1,5 +1,5 @@
 #!/bin/bash
-# Formats the local server's C++ sources with server/.clang-format (server/PLAN-readability.md R2/R3).
+# Formats the local server's C++ sources with server/.clang-format (docs/history/PLAN-readability.md R2/R3).
 #   tools/format_server.sh            format every server/ C++ file in place
 #   tools/format_server.sh --check    list the files that aren't formatted; exit 1 if any
 #   tools/format_server.sh [--check] FILE...   only these files

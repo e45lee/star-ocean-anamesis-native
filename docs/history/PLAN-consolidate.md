@@ -1,3 +1,5 @@
+> **History.** This plan is done (port/PLAN.md task 5, 2026-10-03; "As built" at the end); moved here from `control/` on 2026-10-07 (code review CR7). The driver layer as it is now: [control/README.md](../../control/README.md) "soadrive".
+
 # Plan: one driver layer for the port and the emulator
 
 Status: **done but the emulator's phase trace** (agent `consolidate`; step 7 by agent `rebuild-tooling`, 2026-10-03; written by agent

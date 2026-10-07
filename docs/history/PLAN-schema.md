@@ -1,8 +1,10 @@
+> **History.** This plan is done: S0–S12 landed 2026-10-03/04 (each step's "As built" note in 4.3); moved here from `server/` on 2026-10-07 (code review CR7). Schema versions after it (12 onwards) are steps of `server/src/state/schema.cpp`, described in [server/src/state/README.md](../../server/src/state/README.md); the conventions of 3.1 and the rebuild procedure of 4.1 still apply to new steps.
+
 # Plan: rationalize the local server's state schema
 
-**Multiplayer is future work, outside this plan (the user, 2026-10-03):** the schema changes multiplayer would need are sketched in [`PLAN-multiplayer-schema.md`](PLAN-multiplayer-schema.md) (steps M1…), a plan for review only, not queued. If it is queued, it starts only after S12 (and R12, R17, S11+R19) have landed, from this plan's final schema. Nothing here changes for it: S3–S12 proceed as written; where one makes an M step costlier, the M step says so.
+**Multiplayer is future work, outside this plan (the user, 2026-10-03):** the schema changes multiplayer would need are sketched in [`PLAN-multiplayer-schema.md`](../../server/PLAN-multiplayer-schema.md) (steps M1…), a plan for review only, not queued. If it is queued, it starts only after S12 (and R12, R17, S11+R19) have landed, from this plan's final schema. Nothing here changes for it: S3–S12 proceed as written; where one makes an M step costlier, the M step says so.
 
-Status: plan only (2026-10-02, agent `schema-plan`, branch `port/schema-plan` off `linux-port` ec4354c). No server code is changed by this plan; the first commit that implements it is step S1 below.
+Status: done (S0–S12, 2026-10-04); written as a plan only (2026-10-02, agent `schema-plan`, branch `port/schema-plan` off `linux-port` ec4354c). No server code is changed by this plan; the first commit that implements it is step S1 below.
 
 **Scope.** The local server's persistent state, `DATA/server.sqlite3` (soa's in-process route; `soa-server --db`), created and used by the server library in `server/` (and `server/net/game.cpp` for soa-server's `wire_device`). The master DB (`data/basmaster-3.7.0.sqlite3`) and the gacha pools DB (`data/gacha_pools.sqlite3`) are read-only inputs and out of scope, except as the targets of references.
 

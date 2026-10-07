@@ -1,6 +1,8 @@
+> **History.** This plan is done (all steps, R0–R20 with PLAN-schema's S0–S12, 2026-10-04: "The steps" below); moved here from `server/` on 2026-10-07 (code review CR7). Paths and line numbers are those of their time. The server as it is now: [server/ARCHITECTURE.md](../../server/ARCHITECTURE.md), [server/README.md](../../server/README.md), [server/API-INDEX.md](../../server/API-INDEX.md).
+
 # Plan: make the local server readable and documented
 
-Status: in progress. Written 2026-10-02 (agent `server-readability-plan`, off `linux-port` 2488055); R0–R5, R6a–h, R7, R8, R9, R10, R11, R13, R14, R15, R16 and R18a (deep space, Sphere 211, cdn/) done (each step's "Done" note in 4.3 says what was built and how it was proven). The assessment (section 1) describes the code as it was at 2488055.
+Status: done (2026-10-04). Written 2026-10-02 (agent `server-readability-plan`, off `linux-port` 2488055); R0–R5, R6a–h, R7, R8, R9, R10, R11, R13, R14, R15, R16 and R18a (deep space, Sphere 211, cdn/) done (each step's "Done" note in 4.3 says what was built and how it was proven). The assessment (section 1) describes the code as it was at 2488055.
 
 **Scope.** The server library and its programs in `server/` (`src/`, `include/soaserver/`, `net/`, `app/`, `tests/`), plus the places outside `server/` that name its files or call it: `port/src/native/api/{fakeapi,server_adapters,server_cdn,zz_server_guest_test}.cpp`, `port/src/native/restore/restore_campaign.cpp`, `tools/schema_inventory.py`, `docs/server-rules.md`, `docs/api.md`. The goal: a human who has never seen the code can find where a rule is implemented, read a handler top to bottom, and change it without breaking the other host. **No game behaviour changes**: every step is proven byte-identical on the wire and in the state (section 4.1).
 

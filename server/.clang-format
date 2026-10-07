@@ -1,4 +1,4 @@
-# The local server's C++ style (server/PLAN-readability.md section 5): today's style, measured.
+# The local server's C++ style (docs/history/PLAN-readability.md section 5): today's style, measured.
 # Apply with tools/format_server.sh (clang-format 18, the version it was measured with).
 BasedOnStyle: Google
 IndentWidth: 4

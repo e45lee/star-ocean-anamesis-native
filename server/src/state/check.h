@@ -1,5 +1,5 @@
 #pragma once
-// The state's references into the master DB, checked (server/PLAN-schema.md S0; port code, not
+// The state's references into the master DB, checked (docs/history/PLAN-schema.md S0; port code, not
 // guest behaviour). SQLite can't enforce them: the master is another file, read-only, replaced per
 // version. So the check is report-only: a dangling id is reported, never fixed or refused (a
 // master can change under a saved state). The server runs it when the state is opened

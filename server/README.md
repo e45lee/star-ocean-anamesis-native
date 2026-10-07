@@ -18,8 +18,8 @@ The library includes nothing from `port/` or `runtime/` (CMake checks this at co
 **Start here:** [ARCHITECTURE.md](ARCHITECTURE.md) (how a request becomes a reply, the module registry
 and its order, clocks, where state lives), [API-INDEX.md](API-INDEX.md) (generated: every API, its
 handler, hooks, rules sections and tests), the folder READMEs (`src/`, `include/soaserver/`, `net/`,
-`tests/`), and "Comment conventions" below. `PLAN-readability.md` and `PLAN-schema.md` are the plans
-for the code's structure and the state schema.
+`tests/`), and "Comment conventions" below. `docs/history/PLAN-readability.md` and `docs/history/PLAN-schema.md` are the finished plans
+that gave the code its structure and the state its schema (their reasoning, step by step).
 
 ## Layout
 
@@ -44,7 +44,7 @@ functions, in the one order of `src/core/modules.cpp` (ARCHITECTURE.md "The modu
 
 ## Comment conventions
 
-How the server's code is commented (server/PLAN-readability.md sections 2.2, 2.5 and 3 are the full
+How the server's code is commented (docs/history/PLAN-readability.md sections 2.2, 2.5 and 3 are the full
 policy; `tools/server_evidence.py` checks that no evidence is lost).
 
 - **Every rule carries its source label** next to the code: **(a)** master data (name the table and
@@ -69,7 +69,7 @@ policy; `tools/server_evidence.py` checks that no evidence is lost).
   `// read by <script>` when you touch it.
 - **Handlers** get a doc block: the method signature and reply, the `API:` / `Rules:` links, a
   sentence of purpose, each rule with its label, and what the answer carries (the template:
-  PLAN-readability.md 2.5). Response builders say which client class they fill (`CPlayerInfo` ...).
+  docs/history/PLAN-readability.md 2.5). Response builders say which client class they fill (`CPlayerInfo` ...).
 - **Formatting** is `server/.clang-format` (today's style, measured): `tools/format_server.sh`
   formats, `--check` lists what isn't formatted. It needs clang-format 18 (the system one; set
   `CLANG_FORMAT` for another binary). The Ninja cipher tables and the generated decoder table are

@@ -390,7 +390,7 @@ def _state_db(path, orphan):
 
 
 def test_the_end_state_is_checked_when_a_run_stops(tmp_path):
-    """G9 (server/PLAN-schema.md S11): Run.stop checks the server's end state; an orphan row is a
+    """G9 (docs/history/PLAN-schema.md S11): Run.stop checks the server's end state; an orphan row is a
     failed step and is recorded for control/run.py, a clean state a passed one."""
     from soadrive import targets
 

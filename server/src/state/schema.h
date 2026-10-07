@@ -1,5 +1,5 @@
 #pragma once
-// The state DB's schema as ordered migration steps (server/PLAN-schema.md 3.1, 4.1; port code, not
+// The state DB's schema as ordered migration steps (docs/history/PLAN-schema.md 3.1, 4.1; port code, not
 // guest behaviour). The version is the file's `pragma user_version`; step N takes a file from N-1
 // to N, in one transaction (state.cpp open_and_migrate). A fresh DB runs every step from 0, so a
 // new state and an upgraded one are the same by construction. Every table of the state is created

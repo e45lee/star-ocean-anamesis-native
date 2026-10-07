@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RG4 of server/PLAN-readability.md: replays every corpus with two soa-server builds and compares.
+"""RG4 of docs/history/PLAN-readability.md: replays every corpus with two soa-server builds and compares.
 
     tools/server_replay_diff.sh [--out DIR] [--keep] BIN_A BIN_B [CORPUS_DIR...]
 
@@ -11,7 +11,7 @@ zone, from the repository root) by both, and compared:
      (state.sql: every table's rows, sorted; the campaign's progress too since PLAN-schema S12): byte-identical;
   2. the server log (paths masked): tier 1, the lines matching tools/server_log_patterns.txt (the
      lines scripts read), byte-identical; tier 2, any other difference is printed, and must be
-     declared in the commit message (server/PLAN-readability.md 4.1).
+     declared in the commit message (docs/history/PLAN-readability.md 4.1).
 Exit 0: identical; 2: only tier-2 log differences; 1: anything else differs (or a replay failed).
 A corpus whose options the parent build rejects ("... not expected": a new flag) while the
 new build replays it is reported NEW and not compared.

@@ -1,4 +1,4 @@
-// The state DB's schema: the migration steps (state/schema.h; server/PLAN-schema.md 3.1, 4.1). Port
+// The state DB's schema: the migration steps (state/schema.h; docs/history/PLAN-schema.md 3.1, 4.1). Port
 // code, not guest behaviour. Nothing else lives here: the steps' SQL and their data mappings.
 //
 // Step 1 is the baseline: the 58 `create table if not exists` statements the server ran before

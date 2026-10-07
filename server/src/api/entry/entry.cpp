@@ -84,7 +84,7 @@ std::vector<CharacterUid> add_starters(ext::Ctx& ctx, ServerTime now) {
         u32 role_id = (u32)ctx.m.one("select id from master_role where id_label = ?", {role_label});
         if (!role_id) continue;
         const CharacterUid uid(kRosterUid0 + (k - 1));
-        // an upsert, not a REPLACE (server/PLAN-schema.md S0): a row of this uid takes these values and
+        // an upsert, not a REPLACE (docs/history/PLAN-schema.md S0): a row of this uid takes these values and
         // every other column's default (excluded.<col>), as the REPLACE gave it
         ctx.st.q(
             "insert into roster (uid, role_id, level, exp, created_at, is_new) values (?,?,?,?,?,0)"

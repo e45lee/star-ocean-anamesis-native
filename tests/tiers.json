@@ -46,7 +46,7 @@
      "covers": "server/ C++ formatted (clang-format 18; enforced: any unformatted file fails)"},
     {"name": "schema-inventory", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "python3 tools/schema_inventory.py > /dev/null && python3 tools/schema_inventory.py --lint",
-     "covers": "the state schema inventory parses (server/PLAN-schema.md), its master references (RELS m: rows) are the server's state::master_refs() (S11), and the SQL lint (S0: INSERTs name their columns, no INSERT OR REPLACE on an FK parent)"},
+     "covers": "the state schema inventory parses (docs/history/PLAN-schema.md), its master references (RELS m: rows) are the server's state::master_refs() (S11), and the SQL lint (S0: INSERTs name their columns, no INSERT OR REPLACE on an FK parent)"},
     {"name": "no-380", "tier": "T0", "secs": 1, "kind": "check", "game": 0,
      "cmd": "tools/check_no_380.sh",
      "covers": "no reference to the offline build outside the allowed places (tools/check_no_380.sh)"},

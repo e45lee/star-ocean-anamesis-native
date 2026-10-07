@@ -13,7 +13,7 @@ namespace {
 
 using ext::Row;
 
-// server/PLAN-schema.md 4.2 / S0 / S1: the server's state is at this build's schema version with
+// docs/history/PLAN-schema.md 4.2 / S0 / S1: the server's state is at this build's schema version with
 // every table and foreign keys on; the seeded state violates no foreign key (S4: the party sets
 // 1..party_set_max, the home character); after a scratch server's representative calls, no foreign
 // key is violated and every reference into the master resolves; a planted dangling id is reported,

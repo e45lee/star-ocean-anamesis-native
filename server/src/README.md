@@ -2,7 +2,7 @@
 
 The local server's code (libsoaserver): the core, the extension modules, the pure rules, the CDN and the test support. The public API is `../include/soaserver/` (its README); the request flow and the module registry are in [../ARCHITECTURE.md](../ARCHITECTURE.md); every API's handler, hooks and tests are in [../API-INDEX.md](../API-INDEX.md) (generated). Every game rule carries its source label next to the code: (a) master data, (b) client-side evidence, (c) outside knowledge, (d) assumption ([../README.md](../README.md) "Comment conventions").
 
-`server/PLAN-readability.md` section 2.1 is the target layout. Step R5 moved whole files into it: `core/` (the server object, the registry and its module order, the clocks, the log, support), `testing/` (the test registry and runner), `cdn/`, `master/` (read-only master data: gacha pools, NPC status), `rules/` (pure rules), `state/` (the player state: the Game.xml codec and seeding today, the schema with PLAN-schema S1) and `api/<domain>/` (the modules, one folder per API group of docs/api.md, each with a README; `api/README.md` lists them). Multi-topic files keep their content until their split step (R6-R8, R18; R16 split the achievements out of the login bonus), and step R8 moved the core handlers to their `api/` domains. Tests live beside their code. By domain:
+`docs/history/PLAN-readability.md` section 2.1 was the target layout, and the plan is done: this is it. Step R5 moved whole files into it: `core/` (the server object, the registry and its module order, the clocks, the log, support), `testing/` (the test registry and runner), `cdn/`, `master/` (read-only master data: gacha pools, NPC status), `rules/` (pure rules), `state/` (the player state: the Game.xml codec and seeding today, the schema with PLAN-schema S1) and `api/<domain>/` (the modules, one folder per API group of docs/api.md, each with a README; `api/README.md` lists them). The split steps (R6-R8, R18; R16 split the achievements out of the login bonus) then divided the multi-topic files, and step R8 moved the core handlers to their `api/` domains. Tests live beside their code. By domain:
 
 | Domain | Files | APIs and hooks (API-INDEX.md has the full list) | Rules (docs/server-rules.md) |
 |---|---|---|---|
@@ -27,9 +27,9 @@ The local server's code (libsoaserver): the core, the extension modules, the pur
 
 - **An API's handler**: `../API-INDEX.md` section 1 (`soa-server --list-apis` prints what answers each method).
 - **A hook's run order**: `../API-INDEX.md` section 2 (`soa-server --list-hooks`); the order is `core/modules.cpp`'s module list, pinned by the test `server/module-order` (`../src/core/modules_tests.cpp`).
-- **The state tables**: all of them in `state/schema.cpp` (the migration steps; `state/README.md` says how a file is opened and upgraded); `../PLAN-schema.md` section 1 is the inventory.
+- **The state tables**: all of them in `state/schema.cpp` (the migration steps; `state/README.md` says how a file is opened and upgraded); `docs/history/PLAN-schema.md` section 1 is the inventory.
 - **The tests**: beside their code (`*_tests.cpp`, or at the end of a few files), and in `../tests/` (its README). Run them with `build/server/soa-server --selftest [FILTER]`.
-- **The sessions that exercise a domain**: `../PLAN-readability.md` section 4.3's table (e.g. `port/scripts/growth_session.sh` for growth and items).
+- **The sessions that exercise a domain**: `docs/history/PLAN-readability.md` section 4.3's table (e.g. `port/scripts/growth_session.sh` for growth and items).
 
 ## Adding to it
 

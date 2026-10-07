@@ -1,4 +1,4 @@
--- The v0 state fixture (server/PLAN-schema.md 4.2): written by tools/make_state_fixture.py, do not edit.
+-- The v0 state fixture (docs/history/PLAN-schema.md 4.2): written by tools/make_state_fixture.py, do not edit.
 -- user_version 0 (the default); every table's CREATE text as a pre-S1 server stored it.
 begin;
 CREATE TABLE achievements (id integer primary key, progress integer, received_at integer);

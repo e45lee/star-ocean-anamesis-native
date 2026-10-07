@@ -1,6 +1,6 @@
 # api/items: items and gear
 
-Owned weapons and accessories (the state's `items`), stack items (`stock`, through `core/wallet`), stamina refills, and the gear of the weapon custom screens. Port code, not guest behaviour: every rule carries its source label (a)-(d) in the code, and the handlers carry the doc block of `../../../PLAN-readability.md` 2.5.
+Owned weapons and accessories (the state's `items`), stack items (`stock`, through `core/wallet`), stamina refills, and the gear of the weapon custom screens. Port code, not guest behaviour: every rule carries its source label (a)-(d) in the code, and the handlers carry the doc block of `docs/history/PLAN-readability.md` 2.5.
 
 | File | Module | What |
 |---|---|---|

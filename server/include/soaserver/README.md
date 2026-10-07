@@ -1,6 +1,6 @@
 # server/include/soaserver: the server library's public headers
 
-What the port (`port/src/native/api/*`, `common/test.cpp`, `ui/webview_local.cpp`), soa-server (`../app`, `../net`) and the tests include. These paths are an interface: `server/PLAN-readability.md` keeps them while the sources behind them move. The table in [../../README.md](../../README.md) "API" says what each declares; the request flow is in [../../ARCHITECTURE.md](../../ARCHITECTURE.md).
+What the port (`port/src/native/api/*`, `common/test.cpp`, `ui/webview_local.cpp`), soa-server (`../app`, `../net`) and the tests include. These paths are an interface: `docs/history/PLAN-readability.md` keeps them while the sources behind them move. The table in [../../README.md](../../README.md) "API" says what each declares; the request flow is in [../../ARCHITECTURE.md](../../ARCHITECTURE.md).
 
 | Header | For |
 |---|---|

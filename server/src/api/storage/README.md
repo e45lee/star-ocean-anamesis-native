@@ -3,7 +3,7 @@
 The item menu's 装備倉庫 (equipment storage: deposit, withdraw, sell, lock) and 一時保管庫 (the
 overflow box: equipment the full inventory had no room for). Port code, not guest behaviour: every
 rule carries its source label (a)-(d) in the code, and the handlers carry the doc block of
-`../../../PLAN-readability.md` 2.5.
+`docs/history/PLAN-readability.md` 2.5.
 
 | File | Module | What |
 |---|---|---|

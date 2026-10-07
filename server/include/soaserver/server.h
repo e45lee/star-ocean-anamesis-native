@@ -107,7 +107,7 @@ void apply_client_master(sqlite3* db, ServerTime now, EventTime event_now, const
 // transaction. False if no handler answers it. Both hosts reach it through answer().
 bool handle(u32 fid, std::vector<u8>& out);
 // The former signature (its `file`, the FakeApiCaller's canned file name, is read by nothing);
-// kept for one merge wave (server/PLAN-readability.md R9).
+// kept for one merge wave (docs/history/PLAN-readability.md R9).
 bool handle(u32 fid, const std::string& file, std::vector<u8>& out);
 
 // The error code the server refused the last request of `fid` with (0 = accepted), as the

@@ -1,6 +1,6 @@
 # Local server: architecture
 
-How a request becomes a reply, what owns which part, and where state and master data live. This describes the code **as it is today** (the layout of `server/README.md`); `server/PLAN-readability.md` section 2 is the target, and each of its steps updates this file. To find a given API or rule, use [API-INDEX.md](API-INDEX.md) (generated). The rules themselves, with their source labels, are in [docs/server-rules.md](../docs/server-rules.md).
+How a request becomes a reply, what owns which part, and where state and master data live. This describes the code **as it is today** (the layout of `server/README.md`); `docs/history/PLAN-readability.md` (done) built it; a change to the layout updates this file. To find a given API or rule, use [API-INDEX.md](API-INDEX.md) (generated). The rules themselves, with their source labels, are in [docs/server-rules.md](../docs/server-rules.md).
 
 ## The pieces
 
@@ -118,7 +118,7 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 
 | Data | Where | Who writes it |
 |---|---|---|
-| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (54) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `server/PLAN-schema.md` section 1 is their inventory |
+| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (54) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `docs/history/PLAN-schema.md` section 1 is their inventory |
 | The story campaign's progress | the state DB's `campaign_clear` / `campaign_last` (since schema version 11, PLAN-schema S12; before, `<data_root>/server_campaign.txt`, which step 11 imports and renames `.migrated`) | `src/api/campaign/progress.cpp` only: in the request's transaction (its `OnResponse` hook, an accepted MissionEnd / MissionTalk) or, for EndMissionTalk, through `ext::with_live_server`; read from the DB for every answer |
 | The master data | `data/basmaster-3.7.0.sqlite3` (read-only; `--master`) | nobody: the server reads it |
 | The client's master copy | the CDN's `basmaster-served.sqlite3` (`<scratch>`), the 3.7.0 master with `apply_client_master` | `cdn::Tree::build` (`src/cdn/tree.cpp`), `make_served_master` (`src/cdn/served_master.cpp`) |

@@ -3,7 +3,7 @@
 // format / parse variant, the start of a reset day and the opened_at..closed_at window. Every time
 // the server sends or reads is local time "YYYY-MM-DD HH:MM:SS" (the client parses data.Time and
 // the master's *_at the same way). Where earlier copies differed, the variants are separate
-// functions whose names say how (server/PLAN-readability.md 2.3); behaviour is unchanged.
+// functions whose names say how (docs/history/PLAN-readability.md 2.3); behaviour is unchanged.
 // format_time itself is public (soaserver/server.h).
 #include <cstdint>
 #include <string>

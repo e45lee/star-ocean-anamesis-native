@@ -84,7 +84,7 @@ def main(argv):
     o.slot = soaslot.acquire("%s %s" % (getattr(mod, "WRAPPER", name), target))
     try:
         rc = mod.main(o)
-        # G9 (server/PLAN-schema.md S11): each boot's end state was checked when it stopped
+        # G9 (docs/history/PLAN-schema.md S11): each boot's end state was checked when it stopped
         # (targets.Run.state_check); a violation fails the session whatever its own verdict said
         bad = [summary for _run, ok, summary in targets.Run.STATE_CHECKS if not ok]
         if bad and not rc:

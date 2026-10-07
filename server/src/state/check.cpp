@@ -1,4 +1,4 @@
-// The state's references into the master DB (state/check.h; server/PLAN-schema.md S0). Port code.
+// The state's references into the master DB (state/check.h; docs/history/PLAN-schema.md S0). Port code.
 #include "state/check.h"
 
 #include <set>

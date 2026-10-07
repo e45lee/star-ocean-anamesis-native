@@ -1,6 +1,6 @@
 #!/bin/sh
-# Usage: tools/decomp.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <regex>...
-# Decompiles from the 3.7.0 client the port runs (work/libSOA-3.7.0.so). --v380 (or SOA_V380=1):
+# Usage: tools/decomp.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <regex>...   (380-ok)
+# Decompiles from the 3.7.0 client the port runs (work/libSOA-3.7.0.so). --v380 (or SOA_V380=1): (380-ok)
 # from the viewer's offline lib instead (tools/common.sh). --v370 is accepted (the default).
 # Decompile functions whose (demangled) name matches from an unanalyzed Ghidra project, then
 # resolve PLT/string references.
@@ -15,7 +15,7 @@ into=
 while :; do
   case "${1:-}" in
     --v370) shift;;
-    --v380) SOA_V380=1; shift;;
+    --v380) SOA_V380=1; shift;;  # 380-ok: the viewer's lib
     --into) into=${2:?--into needs SUBSYSTEM[/TOPIC]}; shift 2;;
     --into=*) into=${1#--into=}; shift;;
     *) break;;
@@ -23,7 +23,7 @@ while :; do
 done
 . "$(dirname "$0")/common.sh"
 if [ -n "$into" ]; then out=into-$(printf %s "$into" | tr / -)-$$; else out=$1; shift; fi
-[ $# -gt 0 ] || { echo "usage: tools/decomp.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <regex>..." >&2; exit 2; }
+[ $# -gt 0 ] || { echo "usage: tools/decomp.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <regex>..." >&2; exit 2; }  # 380-ok
 P=$GHIDRA_QUICK
 mkdir -p "$WORK/ghidra" "$WORK/decomp"
 ghidra_project_ready

@@ -50,5 +50,5 @@ scripts/windows/run-viewer-380.cmd                               # soa-viewer.ex
 work/libSOA-3.7.0.so                                             # the 3.7.0 client library: soa-emu.exe
 work/SOA-3.7.0-canonical-data.zip                                # the 3.7.0 download, read in place: soa.exe, soa-server.exe (CDN), the selftests
 work/phone-3.7.0/                                 --phone        # the shared pre-downloaded phone the Windows runs link theirs from (4 GB)
-apk/*.xapk                                        --viewer       # soa-viewer.exe's game (0.9 GB), read in place; a worktree: the main checkout's
+apk/*.xapk                                        --viewer       # soa-viewer.exe's game (0.9 GB), read in place; a worktree: the main checkout's (380-ok)
 work/extracted/xapk/                              --viewer-else  # without an XAPK: its unpacked copy (tools/extract.sh; 380-ok)

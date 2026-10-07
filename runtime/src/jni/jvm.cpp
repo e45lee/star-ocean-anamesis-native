@@ -748,7 +748,7 @@ void Vm::init() {
     for (auto& [n, k] : classes_) k->cls = find_class("java/lang/Class");
     define_class("java/lang/String");
     install_android_classes(*this);
-    install_playcore_classes(*this);
+    install_playcore_classes(*this);  // 380-ok: the viewer's Play Core classes (stay in the runtime: the user, 2026-10-07)
     for (auto& fn : class_installers()) fn(*this);  // the host's (add_class_installer)
 }
 

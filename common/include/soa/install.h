@@ -107,7 +107,7 @@ inline std::vector<std::string> install_dirs() {
 // Where the programs look for repo files (find_repo_file and the like: data/, apk/, work/,
 // standin-assets/, server/tests/fixtures, ...), one rule for soa (port/src/core/paths.cpp),
 // soa-server (server/app/main.cpp repo_roots()), soa-emu (emulator/src/main.cpp) and soa-viewer
-// (emulator-viewer/src/main.cpp; its XAPK lookup):
+// (emulator-viewer/src/main.cpp; its XAPK lookup): (380-ok: the viewer's game)
 //
 //   development build (scripts/build.sh): `--repo DIR`; else the first checkout upwards from the
 //     executable; else upwards from the working directory. With a checkout, also the main checkout
@@ -294,7 +294,7 @@ inline std::vector<std::string> apk_candidates(const std::vector<std::string>& d
 }
 
 // The top-level files of `dirs` whose name ends in `ext` (any case), in lookup order (each dir's
-// sorted). soa-viewer's XAPK lookup uses it with ".xapk" (emulator-viewer/src/main.cpp find_xapk).
+// sorted). soa-viewer's XAPK lookup uses it with ".xapk" (emulator-viewer/src/main.cpp find_xapk). (380-ok)
 inline std::vector<std::string> files_with_ext(const std::vector<std::string>& dirs, const char* ext) {
     std::vector<std::string> v;
     for (auto& d : dirs)

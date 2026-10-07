@@ -13,7 +13,7 @@ from elftools.elf.elffile import ELFFile
 from elftools.elf.relocation import RelocationSection
 
 # Default: the 3.7.0 client the port runs. tools/common.sh exports SOA_LIB (the viewer's lib with
-# decomp.sh --v380).
+# decomp.sh --v380). (380-ok)
 LIB_370 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "work", "libSOA-3.7.0.so")
 LIB = os.environ.get("SOA_LIB") or LIB_370
 GHIDRA_BASE = 0x100000

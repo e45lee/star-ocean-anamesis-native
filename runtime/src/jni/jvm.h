@@ -173,7 +173,7 @@ std::vector<char> parse_params(const std::string& sig, char& ret);
 
 // Defined in java_*.cpp
 void install_android_classes(Vm& vm);
-void install_playcore_classes(Vm& vm);
+void install_playcore_classes(Vm& vm);  // 380-ok: java_playcore.cpp (the viewer's)
 
 // Extension point: `fn` runs at the end of Vm::init(), after the built-in classes (java_*.cpp),
 // in registration order. Host programs use it to add classes and methods (Vm::define_class /

@@ -746,7 +746,7 @@ configure without it succeeds. Update the comments.
 - **Whole-file exemptions where a marker would do:** `runtime/src/jni/jvm.cpp` (1 hit in 746 lines),
   `jvm.h` (1) and `tests/test_script.py` (3). New references in these files pass silently.
 - **The line filter** passes any line that merely names the viewer.
-- **The regex misses** `v380` / `SOA_V380` (`tools/common.sh:9-14`, `decomp.sh`, `decomp_at.sh`,
+- **The regex misses** `v380` / `SOA_V380` (`tools/common.sh:9-14`, `decomp.sh`, `decomp_at.sh`, <!-- 380-ok: names the pattern under review -->
   `ghidra_apply_types.sh`).
 - **The `PENDING` mechanism** has been empty since 2026-10-01.
 - **`git grep … || true`** turns a git error into a pass.

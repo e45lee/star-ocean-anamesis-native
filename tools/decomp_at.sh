@@ -1,6 +1,6 @@
 #!/bin/sh
-# Usage: tools/decomp_at.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <ghidra-hex-addr>...
-# The lib: the 3.7.0 client by default; --v380 / --v370 as in decomp.sh (tools/common.sh).
+# Usage: tools/decomp_at.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <ghidra-hex-addr>...   (380-ok)
+# The lib: the 3.7.0 client by default; --v380 / --v370 as in decomp.sh (tools/common.sh). (380-ok)
 # Like decomp.sh but by address (Ghidra address = ELF vaddr + 0x100000); --into as in decomp.sh
 # (stamped into port/decomp/<subsystem>/<topic>.c + symbols.tsv; without it scratch output in
 # work/decomp/<out>.resolved.c).
@@ -10,7 +10,7 @@ into=
 while :; do
   case "${1:-}" in
     --v370) shift;;
-    --v380) SOA_V380=1; shift;;
+    --v380) SOA_V380=1; shift;;  # 380-ok: the viewer's lib
     --into) into=${2:?--into needs SUBSYSTEM[/TOPIC]}; shift 2;;
     --into=*) into=${1#--into=}; shift;;
     *) break;;
@@ -18,7 +18,7 @@ while :; do
 done
 . "$(dirname "$0")/common.sh"
 if [ -n "$into" ]; then out=into-$(printf %s "$into" | tr / -)-$$; else out=$1; shift; fi
-[ $# -gt 0 ] || { echo "usage: tools/decomp_at.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <ghidra-hex-addr>..." >&2; exit 2; }
+[ $# -gt 0 ] || { echo "usage: tools/decomp_at.sh [--v380] [--into SUBSYSTEM[/TOPIC]] [<out-basename>] <ghidra-hex-addr>..." >&2; exit 2; }  # 380-ok
 mkdir -p "$WORK/ghidra" "$WORK/decomp"
 ghidra_project_ready
 run() { "$GHIDRA_HOME/support/analyzeHeadless" "$SLOT" quick -process "$GHIDRA_PROG" -noanalysis -readOnly \

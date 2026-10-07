@@ -1,5 +1,5 @@
 #!/bin/sh
-# Builds everything (the port, soa-server, the 3.7.0 emulator, the 3.8.0 viewer soa-viewer, the runtime tests,
+# Builds everything (the port, soa-server, the 3.7.0 emulator, the offline viewer soa-viewer, the runtime tests,
 # aif2png) into build/:
 #   1. vcpkg: $VCPKG_ROOT, else .vcpkg/, cloned and bootstrapped if missing (scripts/vcpkg-bootstrap.sh);
 #   2. configure build/ with vcpkg's toolchain (the first configure builds the vcpkg.json ports into

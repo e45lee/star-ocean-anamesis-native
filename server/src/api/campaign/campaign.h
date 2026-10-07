@@ -71,7 +71,7 @@ struct Master {
     std::vector<ProgressRow> progress;
 };
 // The master data, loaded on first use from the server's master DB (open_master: --campaign-master-db,
-// else the 3.7.0 DB, else the offline build's).
+// else the server's master, else the repository's 3.7.0 DB).
 const Master& master();
 
 // ---- the player's progress (progress.cpp) -----------------------------------------------------

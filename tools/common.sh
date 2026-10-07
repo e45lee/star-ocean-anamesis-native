@@ -6,12 +6,12 @@ PYTHON=${PYTHON:-$REPO/.venv/bin/python}
 PKG=com.square_enix.android_googleplay.StarOceanj
 
 # Which libSOA build the Ghidra tools work on. Default: the 3.7.0 client the port runs
-# (work/libSOA-3.7.0.so, project pool work/ghidra-quick-v370*). `--v380` as the first argument of
-# decomp.sh / decomp_at.sh (or SOA_V380=1) selects the offline build the viewer runs, for the
+# (work/libSOA-3.7.0.so, project pool work/ghidra-quick-v370*). `--v380` as the first argument of (380-ok)
+# decomp.sh / decomp_at.sh (or SOA_V380=1) selects the offline build the viewer runs, for the (380-ok)
 # viewer and the history (its project pool work/ghidra-quick*; 380-ok). `--v370` / SOA_V370=1 is
 # still accepted and is the default. SOA_LIB is exported so elfinfo.py / resolve_decomp.py
 # resolve names against the same file.
-if [ "${SOA_V380:-0}" = 1 ]; then
+if [ "${SOA_V380:-0}" = 1 ]; then  # 380-ok: the viewer's lib
   GHIDRA_QUICK=$WORK/ghidra-quick
   GHIDRA_TRACKED=$REPO/ghidra/quick
   SOA_LIB=$WORK/extracted/config.arm64_v8a/lib/arm64-v8a/libSOA.so  # the viewer's lib (380-ok)

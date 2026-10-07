@@ -1,4 +1,4 @@
-"""Event script decoding (soa_save.script). The pack tests need the XAPK in apk/ (README "Game files")."""
+"""Event script decoding (soa_save.script). The pack tests need the XAPK in apk/ (README "Game files")."""  # 380-ok: soa_save reads the offline XAPK
 import pytest
 
 from soa_save import paths
@@ -27,9 +27,9 @@ def test_command_table():
 @pytest.fixture(scope="module")
 def pack():
     try:
-        paths.xapk()
+        paths.xapk()  # 380-ok
     except FileNotFoundError:
-        pytest.skip("no XAPK")
+        pytest.skip("no XAPK")  # 380-ok
     return list(pack_files())
 
 

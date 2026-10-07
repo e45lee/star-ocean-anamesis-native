@@ -11,7 +11,8 @@
 // fetched).
 //
 // Live check (soa --live-check render): gl_run_both over the thread's state set; DrawIndexedPrimitive's
-// and UpdateRenderState's checks are of the whole call (their guest callees run in both runs, recorded).
+// and UpdateRenderState's checks are of the whole call (their guest callees recorded as markers, the
+// program established for real first: establish_program).
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -130,6 +131,15 @@ bool mark_callee(const char* name, std::initializer_list<u64> args) {
     glh::t_rec->calls.push_back(m + ")");
     return true;
 }
+
+// The program a composite check's recorded runs need: their first step, UpdateShaderProgram, is a marker
+// there, so it runs for real before them (the native, or the guest original when the program isn't linked
+// yet). Without it both runs see the device's m_program as it was, which CompileShaderProgramCache leaves
+// null after compiling the pending programs (the battle's loading): UpdateVertexAttribute then reads a null
+// program (the guest's chain relies on UpdateShaderProgram having set it). The real run afterwards finds the
+// program current (no GL call: the thread's state set 1 has it in use), so the GL calls are the unchecked
+// flow's.
+void establish_program(RenderDeviceData* d) { guest_call(gsym(g_updateShaderProgram.sym), {(u64)d}); }
 
 // The arrays the current program uses (its attribute locations, the first m_attribCount of the vertex
 // shader) are wanted, the rest up to the device's attribute count (at most 32) not; GL is synced with a
@@ -273,14 +283,18 @@ namespace {
 
 // The natives: the guest original when the thread has no state set yet (or the draw is instanced);
 // gl_run_both over the state set when checked.
+// composite: the guest callees are markers in the recorded runs; program_first: UpdateShaderProgram is the
+// call's first step (establish_program before the check).
 template <typename Native>
-void run(Cpu& c, Fn& f, RenderDeviceData* d, bool fallback, Native native, bool composite = false, bool checkable = true) {
+void run(Cpu& c, Fn& f, RenderDeviceData* d, bool fallback, Native native, bool composite = false, bool checkable = true,
+         bool program_first = false) {
     OglStateSet0* ss = d->m_stateCache->StateSet0();
     if (!ss || fallback) {
         c.set_x(0, guest_call(f.orig, {c.x(0), c.x(1), c.x(2), c.x(3), c.x(4), c.x(5)}));
         return;
     }
     if (__builtin_expect(fam().due(f), 0)) {
+        if (checkable && program_first) establish_program(d);  // (before the Scope: its own check may run)
         live::RunBothFamily::Scope scope;
         if (!checkable) {
             fam().result(f, live::RunBothFamily::Outcome::Skipped, "a buffer upload pending");
@@ -300,11 +314,11 @@ void HostDraw(Cpu& c) {
     auto& ib = *(IndexBuffer*)c.x(3);
     run(c, fDraw, d, d->UsesInstancing(), [&] {
         d->DrawIndexedPrimitive((RenderDeviceGL*)c.x(1), (u32)c.x(2), ib, c.x(4), (s32)c.x(5));
-    }, true, !upload_pending(ib));
+    }, true, !upload_pending(ib), d->m_drawEnabled != 0);
 }
 void HostUpdateRenderState(Cpu& c) {
     auto* d = reinterpret_cast<RenderDeviceData*>(c.x(0));
-    run(c, fUpdateRenderState, d, d->UsesInstancing(), [&] { c.set_x(0, d->UpdateRenderState((RenderDeviceGL*)c.x(1))); }, true);
+    run(c, fUpdateRenderState, d, d->UsesInstancing(), [&] { c.set_x(0, d->UpdateRenderState((RenderDeviceGL*)c.x(1))); }, true, true, true);
 }
 void HostUpdateVertexAttribute(Cpu& c) {
     auto* d = reinterpret_cast<RenderDeviceData*>(c.x(0));

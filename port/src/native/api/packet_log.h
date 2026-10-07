@@ -2,7 +2,8 @@
 // The in-process route's packet log (port code, not guest behaviour): soa --log-packets DIR /
 // --log-packets DIR writes DIR/packets.log in the form soa-server --log-packets writes it
 // (server/net/game.cpp), so that tools/compare_packets.py compares a run of the in-process port
-// with a run against soa-server (tests/diff/). Off unless the option is given.
+// with a run against soa-server (tests/diff/). Off unless the option is given. The line formats
+// are soa-server's own (server/net/packet_log.h, one formatter for both).
 //
 //   <date> <time> conn 0 #<n> > <Api> fid=<fid> inproc plain=0 method=<Method> args: <args>
 //   <date> <time>   < <Reply> fid=<reply fid> inproc plain=<body size> data{<keys>} status=<s>
@@ -32,18 +33,13 @@ namespace soa::server_port::packet_log {
 void open(const std::string& dir);
 bool enabled();
 
-// A request the client made (inproc_request): logged unless it is the internal request
-// answer_as() named. battle_log: the client's serialized battle log (MissionEnd & co.), or empty.
+// A request the client made (inproc_request). battle_log: the client's serialized battle log
+// (MissionEnd & co.), or empty.
 void request(const server::Request& r, const std::vector<uint8_t>& battle_log);
 // The answer of the queued request `fid` delivered (FakeApiCaller's ServeProgress): its body, or
 // the server's error code.
 void reply(uint32_t fid, const std::vector<char>& body);
 void refused(uint32_t fid, uint32_t code);
-
-// The route answers the request `as_fid` (EndMissionTalk) by queueing the internal request `fid`
-// (GetPlayMission), as soa-server answers it with that body: the internal request isn't logged and
-// its reply is logged under as_fid's reply name.
-void answer_as(uint32_t fid, uint32_t as_fid);
 
 // The wire-form argument text of r (exposed for the selftest).
 std::string format_args(const server::Request& r, size_t battle_log_size);

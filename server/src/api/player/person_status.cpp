@@ -103,7 +103,7 @@ void favor_and_awakening(ext::Ctx& ctx, const Row& roster_row, RoleId role, Valu
     // (a) master_favor_level.ap_bonus of the character's favor level (b: GetFavorApBonus);
     // (d) added to the base AP 100
     u32 favor_level =
-        favor::level_of(ctx.st.h, ctx.m.h, clock_now(), ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role}));
+        favor::level_of(ctx.st.h, ctx.m.h, ctx.now(), ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role}));
     status["ap"] = status["ap"].f + (double)ctx.m.one("select ifnull(ap_bonus, 0) from master_favor_level where id = ?", {favor_level});
     // (a) awakening: the master_awaken row of the role's category at its awaken_level replaces
     // the rush skill and gauge (docs/server-rules.md#battle-status); its talents (factors) aren't added (d)

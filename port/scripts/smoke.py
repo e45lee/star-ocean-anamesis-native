@@ -94,10 +94,11 @@ def main():
         os.remove(fifo)  # soa creates it
 
     log = open(logpath, "w")
-    # --headless unless WATCH=1 (no window, same rendering); the server's RNG fixed (SEED_RNG, default 1)
+    # --headless unless WATCH=1 (no window, same rendering); the server's RNG fixed (SEED_RNG, default 1); the
+    # game screen the window's size on any desktop (--render-size window: the hi-res pixels don't depend on it)
     headless = "--windowed" if os.environ.get("WATCH") == "1" else "--headless"
     proc = subprocess.Popen([soa, headless, "--seed-rng", os.environ.get("SEED_RNG", "1"), "--data", data, "--size", "729x1296",
-                             "--clock", CLOCK, "--control", fifo] + extra,
+                             "--render-size", "window", "--clock", CLOCK, "--control", fifo] + extra,
                             cwd=REPO, stdout=log, stderr=subprocess.STDOUT, pass_fds=(slot,) if slot >= 0 else ())
 
     for _ in range(1200):

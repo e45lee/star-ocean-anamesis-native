@@ -110,7 +110,7 @@ void player_exp(ext::Ctx& ctx, MissionEnd& end) {
              {end.level_after, exp_after, end.fol, ctx.global_u32("item_fol_max_num", 4200000000u)});
     if (end.level_after > end.level_before) {  // (c) a rank-up adds the new maximum to the current stamina (スタミナが加算されます)
         tick_stamina(ctx);
-        ctx.st.q("update player set stamina = stamina + ?, stamina_at = ?", {ctx.stamina_max(end.level_after), clock_now()});
+        ctx.st.q("update player set stamina = stamina + ?, stamina_at = ?", {ctx.stamina_max(end.level_after), ctx.now()});
     }
 }
 
@@ -137,7 +137,7 @@ void characters_exp_and_favor(ext::Ctx& ctx, MissionEnd& end) {
             // Favor per same_role_id: server/src/api/favor/favor.cpp (master_favor_battle_effect).
             const SameRoleId same_role_id = ctx.m.one_id<SameRoleId>("select same_role_id from master_role where id = ?", {role});
             if (!end.result_favor.find(std::to_string(same_role_id.v))) {
-                Value favor = favor::mission_gain(ctx.st.h, ctx.m.h, clock_now(), same_role_id, end.play_stamina_cost, end.favor_rate);
+                Value favor = favor::mission_gain(ctx.st.h, ctx.m.h, ctx.now(), same_role_id, end.play_stamina_cost, end.favor_rate);
                 if (favor.type == Value::Map) end.result_favor[std::to_string(same_role_id.v)] = favor;
             }
         });
@@ -168,7 +168,7 @@ void unlocks(ext::Ctx& ctx, MissionEnd& end) {
     ctx.m.q("select id, id_label from " + end.mission_ref.table + " where unlock_mission_id = ? order by id", {end.mission},
             [&](const Row& unlocked_row) {
                 ctx.st.q("insert or ignore into unlocks (mission_id, mission_type, by_mission, at) values (?,?,?,?)",
-                         {unlocked_row.i("id"), end.mission_ref.type, end.mission, clock_now()});
+                         {unlocked_row.i("id"), end.mission_ref.type, end.mission, ctx.now()});
                 end.unlocked.push_back(unlocked_row.s("id_label"));
             });
 }
@@ -187,7 +187,7 @@ void clear_presents(ext::Ctx& ctx, MissionEnd& end) {
     ctx.m.q("select * from master_mission_clear_present where master_mission_id = ? order by order_id", {end.mission}, [&](const Row& present_row) {
         ctx.st.q("insert into presents (content_type, content_id, num, reason_type, reason_param, created_at) values (?,?,?,?,?,?)",
                  {present_row.i("content_type"), ext::present_content_id((u32)present_row.i("content_type"), (u32)present_row.i("content_id")),
-                  present_row.i("num"), (int)ext::kPresentMissionClear /* (d) the reason */, end.mission, clock_now()});
+                  present_row.i("num"), (int)ext::kPresentMissionClear /* (d) the reason */, end.mission, ctx.now()});
         u32 content_type = (u32)present_row.i("content_type"), content_id = (u32)present_row.i("content_id"), num = (u32)present_row.i("num");
         Value entry = Value::object();
         entry["id"] = content_id;
@@ -208,7 +208,7 @@ void clear_presents(ext::Ctx& ctx, MissionEnd& end) {
 void record_clear(ext::Ctx& ctx, MissionEnd& end) {
     ctx.st.q("insert into mission (mission_id) values (?) on conflict(mission_id) do nothing", {end.mission});
     ctx.st.q("update mission set cleared = 1, clear_count = clear_count + 1, first_clear_at = ifnull(first_clear_at, ?) where mission_id = ?",
-             {clock_now(), end.mission});
+             {ctx.now(), end.mission});
     ctx.st.q("delete from play", {});  // and its members (ON DELETE CASCADE)
 }
 

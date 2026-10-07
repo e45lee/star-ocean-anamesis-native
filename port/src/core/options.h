@@ -42,6 +42,12 @@ struct ClientOptions {
     // Default 8, an octa-core phone (PLAN-next D7).
     int guest_cpus = 8;
 
+    // ---- the render resolution (native/ui/ui_utility.cpp; docs/client-changes.md "High-resolution
+    // rendering") ------------------------------------------------------------------------------------
+    // Default (both off): hi-res, the back buffer is the game screen (--render-size).
+    bool legacy_res = false;          // --legacy-res: the game's own 720x1280 layout and 0.75 back buffer
+    float render_scale = 0;           // --render-scale S (> 0): the 720x1280 layout, a back buffer of S
+
     // ---- diagnostics ---------------------------------------------------------------------------
     // --memstats: a memory snapshot (native/common/memstats.cpp) at every phase change; --memstats S
     // (S > 1) also every S seconds. 0 = off.

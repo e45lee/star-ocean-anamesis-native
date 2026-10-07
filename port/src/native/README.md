@@ -7,7 +7,7 @@ Code in this directory replaces functions of `libSOA.so` with C++. It's how the 
 ## How a replacement works
 
 ```cpp
-// void CUIUtility::IsResolutionLegacy()
+// void CUIUtility::IsResolutionLegacy()  (an illustration; the real one: ui/ui_utility.cpp)
 void IsResolutionLegacy(Cpu& c) { c.set_x(0, 0); }
 NATIVE_FUNCTION("_ZN10CUIUtility18IsResolutionLegacyEv", IsResolutionLegacy, "note");
 ```
@@ -107,6 +107,7 @@ selftest `runtime/guest-thread-host-stack`).
 | `api/server_adapters.*`, `api/server_cdn.cpp` | Not natives: the server library's hooks into the port (log sink, the asset index), the route's requests as the wire carries them (`inproc_request`; MissionEnd & co. with the battle log the client's own serializer makes, `client_battle_log.*`), `config_from_options` (core/options.h `ServerOptions` -> `server::ServerConfig`), and the in-process CDN (soa-server's HTTP router as platform370's HTTP backend). Tests `server/*` (`zz_server_guest_test.cpp`, `server_cdn_test.cpp`), `wire/*` (`wire_test.cpp`, the request serializers' layouts, `wire/inproc-parity` the route's requests vs soa-server's decode of the client's packets; table `gen/wire_table.inc` by `tools/api_wire.py --gen-inc`). |
 | `common/port_debug.cpp` | Port: a `CPhase::Progress` wrapper that runs the `--control` commands `phase:` / `call:` / `mission:` / `uiset:` / `clock:` / `debugwin:` / `memstats` on the game thread and logs `port_debug: phase N` (what the session scripts wait on). |
 | `restore/restore_tower.cpp` | Port, `--restore-tower` only: `CParameterUtility::IsOpenTowerMission` = 1, stand-in `play_plate/0..3` nodes for `CTowerMissionMenu::Setup` (`CCocosNode::SearchByName` native, `ui/cocos_node.*`, test `ui/cocos-search-by-name`, live check `restore`; a wrapper of the guest `SearchByTreeName`), the common-resource scene for `CTowerMissionMenu::Initialize` (`docs/client-changes.md` "Tower"). Flow: `port/scripts/tower_session.sh SOA OUT TMP --live-check restore`. |
+| `ui/ui_utility.cpp` | Port, the render resolution (default on): `CUIUtility::IsResolutionLegacy` false (hi-res: the game renders at the game screen's size), or with `--render-scale S` true and `GetDefaultBackBufferScale` S (the 3D's back buffer); nothing with `--legacy-res` (`docs/client-changes.md` "High-resolution rendering"). Test `ui/resolution` (the guest constants, the modes). |
 | `ui/webview_local.cpp` | Port, `--server inproc`: `CWebView::OpenView` + `SOAActivity.ShowWebView`: pages the local server hosts (the notice board) shown as text in the popup (`docs/client-changes.md` "Notice board page"). |
 
 The infrastructure: `common/native.*` (the registry, `--natives route|none`, `--list-native`), `common/native_method.h` (`NATIVE_METHOD`: a recovered class's member as the native), `common/test.*` (the selftest harness: `NATIVE_TEST`, `NATIVE_TEST_HOOK`), `common/guest_std.*` (guest libc++ strings / lists and the guest's allocators), `common/guest_stub.*` (recording stubs), `common/live_check.*` + `common/a2c_regs.*` (live checks), `common/shadow_check.*` (live checks of natives over shared, stateful objects: the guest original on a shadow, or a getter rerun; families sync, input, resource), `common/guest_assert.*` (`Framework::gDoAssert` with the guest's strings), `common/arm_float.h`, `common/memstats.*` (`--memstats`), `common/core_bench_test.cpp` (guest-call costs).

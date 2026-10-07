@@ -6,6 +6,7 @@
 #include <ctime>
 #include <string>
 
+#include "api/missions/missions.h"  // play_state, start_mission
 #include "core/log.h"
 #include "soaserver/config.h"
 #include "soaserver/native_test.h"
@@ -80,6 +81,24 @@ NATIVE_TEST("server/event-now") {
         if (ev1 < now1 || ev1 > now1 + 2) t.fail("event_now under --clock isn't the clock");
         if (now1 < local(2019, 10, 1, 4) || now1 > local(2019, 10, 1, 4) + 5) t.fail("set_server_clock");
         set_server_clock(0);
+    });
+}
+
+// A test clock (ctx.test.now) reaches the handlers: what they store and answer is at that time,
+// not the server clock's (docs/code-review-2026-10-06.md S6: they read clock_now() directly).
+NATIVE_TEST("server/handlers-use-the-test-clock") {
+    const int64_t at = local(2031, 3, 4, 5);
+    ext::with_scratch_server(t.rand_u64(), [&](ext::Ctx& c) {
+        c.test.now = [at] { return at; };
+        u32 talk = (u32)c.m.one("select id from master_mission where id_label = 'mc01_030'", {});
+        u32 battle = (u32)c.m.one("select id from master_mission where id_label = 'mf01_001'", {});
+        c.st.exec("begin");
+        play_state(c, Request{"MissionTalk", 0x816dc8b4, {0, talk, 0, 0}, {}, {}});
+        start_mission(c, Request{"MissionStart", 0xb7c62bc2, {0, battle, 0, 0, 0, 0, 0}, {}, {}}, nullptr, false);
+        c.st.exec("commit");
+        t.expect_eq(c.st.one("select first_clear_at from mission where mission_id = ?", {talk}), at, "MissionTalk's first clear");
+        t.expect_eq(c.st.one("select started_at from play where id = 1", {}), at, "MissionStart's play");
+        t.expect_eq(c.st.one("select stamina_at from player", {}), at, "MissionStart's stamina");
     });
 }
 

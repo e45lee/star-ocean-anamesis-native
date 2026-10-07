@@ -2,7 +2,9 @@
 // (api/sphere211/README.md; declared in dive.h). Port code, not guest behaviour; every rule carries
 // its source label, (a) master data, (b) client-side evidence, (c) outside knowledge,
 // (d) assumption. Rules in docs/server-rules.md#sphere211.
+#include <charconv>
 #include <string>
+#include <system_error>
 #include <tuple>
 #include <vector>
 
@@ -40,7 +42,11 @@ void put_rental(Ctx& ctx, u32 floor, Value& data) {
     Value info_map = Value::object(), follow_ids = Value::array(), floors = Value::array();
     ServerTime t = ctx.now();
     for (auto& [key, entry] : lenders.map) {
-        u32 lender = (u32)std::stoul(key);
+        u32 lender = 0;
+        if (auto [end, ec] = std::from_chars(key.data(), key.data() + key.size(), lender); ec != std::errc() || end != key.data() + key.size()) {
+            LOGW("server", "Sphere211 rental: lender \"%s\" isn't a player id: skipped", key.c_str());
+            continue;
+        }
         bool used = false;
         ServerTime updated_at = t;
         ctx.st.q("select used, updated_at from sphere_rental where follow_player_id = ?", {lender}, [&](const Row& rental_row) {

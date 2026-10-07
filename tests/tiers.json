@@ -173,6 +173,8 @@
      "cmd": "port/scripts/equipment_session.sh --target port-server build/port/soa {out} {tmp}", "covers": "session:equipment against soa-server (soa --server)"},
     {"name": "session:restore", "tier": "T2", "secs": 285, "kind": "session", "game": 1,
      "cmd": "port/scripts/restore_session.sh build/port/soa {out} {tmp}", "covers": "home, a battle, a 10-draw, the server state after each"},
+    {"name": "session:restore-legacy-res", "tier": "T2", "secs": 285, "kind": "session", "game": 1,
+     "cmd": "port/scripts/restore_session.sh build/port/soa {out} {tmp} --legacy-res", "covers": "session:restore with soa --legacy-res: the game's own 0.75 resolution (the shipped CGame::OnColdStart path; every other port test runs the hi-res default)"},
     {"name": "session:restore-missions", "tier": "T2", "secs": 375, "kind": "session", "game": 1,
      "cmd": "port/scripts/restore_missions.sh build/port/soa {out} {tmp}", "covers": "a surprise-enemy battle, two step-up gacha steps, MissionStart refused at stamina 0"},
     {"name": "session:favor", "tier": "T2", "secs": 325, "kind": "session", "game": 1,

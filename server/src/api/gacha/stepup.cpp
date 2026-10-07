@@ -88,7 +88,7 @@ ChainState chain_state(ext::Ctx& ctx, u32 head) {
 Value stepup_gacha_info(ext::Ctx& ctx, u32 only_head) {
     Value info = Value::object();
     const PlayerId player = player_id(ctx);
-    ServerTime t = clock_now();
+    ServerTime t = ctx.now();
     std::vector<u32> heads;
     if (only_head) heads.push_back(only_head);
     else  // (a) step 1 of every chain

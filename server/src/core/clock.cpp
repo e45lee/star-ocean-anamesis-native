@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/server.h"  // set_clock_offset, event_clock_of
+#include "soaserver/config.h"
 #include "soaserver/server.h"
 
 namespace soa::server {
@@ -28,7 +29,11 @@ ServerTime clock_now() { return ServerTime((g_clock_source ? g_clock_source() : 
 void set_server_clock(int64_t t) { g_clock_offset = t ? t - (int64_t)time(nullptr) : 0; }
 void set_clock_offset(int64_t offset) { g_clock_offset = offset; }
 void set_clock_source(ClockSource source) { g_clock_source = source; }
-EventTime event_clock_of(sqlite3* m) { return g_clock_offset ? clock_as_calendar(clock_now()) : event_time(m, clock_now()); }
+EventTime event_clock_at(sqlite3* m, ServerTime t) { return g_clock_offset ? clock_as_calendar(t) : event_time(m, t); }
+EventTime event_clock_of(sqlite3* m) { return event_clock_at(m, clock_now()); }
+void use_configured_clock() {
+    if (config().has_clock) set_clock_offset(config().clock_offset);  // --clock
+}
 
 namespace {
 

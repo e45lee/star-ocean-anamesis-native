@@ -2,9 +2,12 @@
 // server/PLAN-schema.md 4.1). Port code, not guest behaviour.
 #include "state/state.h"
 
+#include <charconv>
 #include <string>
+#include <system_error>
 #include <vector>
 
+#include "core/errors.h"  // next_uid's refusal
 #include "core/log.h"
 
 namespace soa::server::state {
@@ -132,7 +135,16 @@ namespace soa::server {
 using ext::Row;
 
 u64 next_uid(ext::Ctx& ctx, const char* key) {
-    u64 v = (u64)std::stoull(meta(ctx, key, "0"));
+    const std::string text = meta(ctx, key, "0");
+    u64 v = 0;
+    auto [end, ec] = std::from_chars(text.data(), text.data() + text.size(), v);
+    if (ec != std::errc() || end != text.data() + text.size()) {
+        // A counter that isn't a number (a hand-edited or damaged state): the request fails as a
+        // whole (rolled back, refused with the generic 10208) rather than handing out a uid.
+        LOGE("server", "meta %s is \"%s\", not a number: the request is refused", key, text.c_str());
+        ctx.set_error((u32)ErrorCode::kItemUnusable);
+        return 0;
+    }
     ctx.st.q("insert or replace into meta (key, value) values (?, ?)", {key, std::to_string(v + 1)});
     return v;
 }

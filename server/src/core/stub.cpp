@@ -31,12 +31,12 @@ std::string short_args(const Request& r) {
 void add_stub(std::initializer_list<const char*> methods, StubData data, const char* file, int line) {
     add_api(
         methods,
-        [data](Ctx&, const Request& r) {
+        [data](Ctx& ctx, const Request& r) {
             const std::string args = short_args(r);
             LOGW("server", "stub: %s (fid %08x) called; answered success, nothing stored (docs/unimplemented-apis.md)%s%s", r.method.c_str(), r.fid,
                  args.empty() ? "" : ";", args.c_str());
             Value d = Value::object();
-            d["Time"] = format_time(clock_now());
+            d["Time"] = format_time(ctx.now());
             if (data) data(d);
             return body(d);
         },

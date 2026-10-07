@@ -26,10 +26,12 @@ void campaign_reply(const Request& r, std::vector<u8>& body) {
 
 // EndMissionTalk(type, mission id, flag, u32): the end of a story mission's scene (agent
 // e6-end2end). (b) 3.7.0's EventScenario::CEventScenario::Exit sends it (CErrorHandlerWrap::Auto,
-// fid 1d00a78c) and CApiNotify::OnEndMissionTalkRes applies the answer (a plain apply). No API
-// answers it: the scene's effect (end_mission_talk), then the GetPlayMission answer with the
-// campaign's data. False when GetPlayMission isn't answered (EndMissionTalk then goes the
-// ordinary way). Rules and labels: the campaign's and the events' (docs/server-rules.md).
+// fid 1d00a78c) and CApiNotify::OnEndMissionTalkRes applies the answer (a plain apply, the same
+// body as OnGetPlayMissionRes: @014c0d68, @014cd380). No API answers it: the scene's effect
+// (end_mission_talk), then the GetPlayMission answer with the campaign's data. Both hosts send it
+// here like any other request (soa's FakeApiCaller route queues it since CR2). False when
+// GetPlayMission isn't answered (EndMissionTalk then goes the ordinary way). Rules and labels: the
+// campaign's and the events' (docs/server-rules.md).
 bool answer_end_mission_talk(const Request& r, Reply& reply) {
     u32 mission = r.ints.size() > 1 ? (u32)r.ints[1] : 0;
     if (mission) end_mission_talk(mission);
@@ -37,8 +39,9 @@ bool answer_end_mission_talk(const Request& r, Reply& reply) {
     submit(gp);
     reply.body.clear();
     if (!handle(gp.fid, reply.body)) return false;
-    campaign_reply(gp, reply.body);
     reply.handled = true;
+    reply.error_code = error_code(gp.fid);
+    if (!reply.error_code) campaign_reply(gp, reply.body);
     return true;
 }
 
@@ -50,9 +53,9 @@ void end_mission_talk(u32 mission) {
 
 Reply answer(const Request& r, const Fallback& fallback) {
     Reply reply;
+    submit(r);  // the pending request, and its log line (scripts read "request <Method>")
     if (r.method == "EndMissionTalk" && answer_end_mission_talk(r, reply)) return reply;
     reply = Reply();
-    submit(r);
     campaign::on_request(r);
     if (!handle(r.fid, reply.body)) {
         // no handler: the host's answer ({} in soa, {data: {Time}} in soa-server), with the

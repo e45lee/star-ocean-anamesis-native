@@ -12,7 +12,9 @@
 #include <vector>
 
 #include "soaserver/api_campaign.h"
+#include "soaserver/ext.h"
 #include "soaserver/msgpack.h"
+#include "soaserver/server.h"  // clock_now
 
 namespace soa::server::campaign {
 
@@ -73,23 +75,33 @@ struct Master {
 const Master& master();
 
 // ---- the player's progress (progress.cpp) -----------------------------------------------------
+// The progress of one state, as the lists read it.
 struct State {
-    bool loaded = false;
     std::set<u32> cleared;
     u32 last_play = 0;
-    u32 playing = 0;     // the mission of the last MissionStart
-    bool seeded = false;      // --campaign-seed: a returning player
-    u32 wm_episode = 0;  // the episode of the last GetWorldMapInfoList (0: all)
+    bool seeded = false;  // --campaign-seed: a returning player
+    u32 wm_episode = 0;   // the episode of the last GetWorldMapInfoList (0: all)
+    // The clock the windows are read at: the request's (load_state: ext::Ctx::now).
+    ServerTime now = clock_now();  // clock-ok: a State made by hand (the tests)
 };
-// The progress, loaded from the state DB (campaign_clear, campaign_last; PLAN-schema S12) on first
-// use (and seeded); callers hold the campaign's lock (lock()). The campaign reads and writes the
-// DB through ext::with_live_server, so the lock order is the campaign's, then the server's: it
-// runs around a request (core/lifecycle.cpp), never inside a handler.
-State& state();
+// The progress in ctx's state DB (campaign_clear, campaign_last; PLAN-schema S12) with the
+// --campaign-seed chain; read each time (nothing of it is kept in memory). wm_episode is the
+// caller's (the session's, below).
+State load_state(ext::Ctx& ctx);
+// Records a clear (first clear or again) as the last play in ctx's transaction: the request's
+// (campaign.cpp's OnResponse hook: an accepted MissionEnd / MissionTalk) or the live server's own
+// (EndMissionTalk, around a request). Logs `why` and what the clear unlocks.
+void clear_mission(ext::Ctx& ctx, u32 id, const char* why);
+
+// The client session's volatile bits (not progress, never stored): the mission of the last
+// accepted MissionStart (MissionEnd's mission when its request names none) and the episode of the
+// last GetWorldMapInfoList. Guarded by lock(), a leaf lock: never held while taking the server's.
+struct Session {
+    u32 playing = 0;
+    u32 wm_episode = 0;
+};
+Session& session();
 std::mutex& lock();
-// Records a clear (first clear or again) as the last play and saves the progress (the state DB, in
-// its own transaction); logs `why` and what the clear unlocks.
-void clear_mission(State& state, u32 id, const char* why);
 
 // ---- the lists (lists.cpp) --------------------------------------------------------------------
 // Whether a mission is listed for this progress (Episode 1 or the world map).

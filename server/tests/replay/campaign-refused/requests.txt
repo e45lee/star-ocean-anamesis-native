@@ -1,0 +1,16 @@
+# soa-server replay corpus (server/tests/replay/README.md): campaign-refused, hand-written (CR2,
+# docs/code-review-2026-10-06.md S2): the `campaign` options plus --fail MissionEnd:10208,MissionTalk:10208.
+# A refused MissionEnd or MissionTalk records no campaign clear (until CR2 the campaign recorded it
+# in its own transaction before the request was handled); EndMissionTalk, which isn't refused,
+# still clears its story scene.
+# tz: America/Toronto
+req 1 1790870410 Login a01c67ef - - - -
+# mf01_001 (the seed's mission): started, its MissionEnd refused: not cleared
+req 2 1790870420 MissionStart b7c62bc2 0,3519778102,1,0,0,0,2693101203 - - -
+req 3 1790870425 MissionEnd 8312a64c 3519778102,0 - - -
+# mc01_030 (a story scene): its MissionTalk refused: not cleared
+req 4 1790870440 MissionTalk 816dc8b4 0,3755590084,0,0 - - -
+req 5 1790870445 GetMissionList 57308f4d 0 - - -
+# EndMissionTalk of mc01_030: the scene's end clears it (not a refusable request)
+req 6 1790870450 EndMissionTalk 1d00a78c 0,3755590084,0,0 - - -
+req 7 1790870455 GetPlayer 9a056905 - - - -

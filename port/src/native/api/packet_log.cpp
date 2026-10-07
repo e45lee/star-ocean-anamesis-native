@@ -10,6 +10,7 @@
 #include <mutex>
 
 #include "core/log.h"
+#include "net/packet_log.h"  // the line formats soa-server's log has
 #include "net/wire.h"
 #include "soaserver/msgpack.h"
 
@@ -21,7 +22,6 @@ std::mutex g_mu;
 FILE* g_log = nullptr;
 std::string g_dir;
 uint64_t g_seq = 0;
-std::map<uint32_t, uint32_t> g_alias;  // internal request fid -> the fid it answers
 // queued fid -> the wire API its request was logged as (the reply's name)
 std::map<uint32_t, const server::net::WireApi*> g_api;
 
@@ -36,19 +36,9 @@ const server::net::WireApi* wire_api(const server::Request& r) {
     return server::net::api_by_fid(r.fid);
 }
 
-// soa-server's packet log stamps (server/net/game.cpp fmt_local): the host's local time.
-std::string stamp() {
-    time_t t = time(nullptr);
-    struct tm tm;
-    localtime_r(&t, &tm);
-    char b[32];
-    strftime(b, sizeof b, "%Y-%m-%d %H:%M:%S", &tm);
-    return b;
-}
-
 void line(const std::string& s) {
     if (!g_log) return;
-    fprintf(g_log, "%s %s\n", stamp().c_str(), s.c_str());
+    fprintf(g_log, "%s %s\n", server::net::log_stamp(time(nullptr)).c_str(), s.c_str());
     fflush(g_log);
 }
 
@@ -59,29 +49,11 @@ void write_file(const std::string& name, const void* p, size_t n) {
     }
 }
 
-std::string fid_hex(uint32_t fid) {
-    char b[16];
-    snprintf(b, sizeof b, "%08x", fid);
-    return b;
-}
-
-// server/net/wire.cpp printable(): a string, or its bytes in hex when it isn't plain ASCII.
-std::string printable(const std::string& s) {
-    for (unsigned char c : s)
-        if (c < 0x20 || c >= 0x7f) {
-            std::string h = "0x";
-            char b[4];
-            for (unsigned char d : s) snprintf(b, sizeof b, "%02x", d), h += b;
-            return h;
-        }
-    return "\"" + s + "\"";
-}
-
 std::string raw_args(const server::Request& r) {
     std::string a = "ints=[";
     for (size_t i = 0; i < r.ints.size(); i++) a += (i ? "," : "") + std::to_string(r.ints[i]);
     a += "] strs=[";
-    for (size_t i = 0; i < r.strs.size(); i++) a += (i ? "," : "") + printable(r.strs[i]);
+    for (size_t i = 0; i < r.strs.size(); i++) a += (i ? "," : "") + server::net::printable(r.strs[i]);
     a += "] vecs=[";
     for (size_t i = 0; i < r.vecs.size(); i++) {
         a += i ? ",[" : "[";
@@ -89,17 +61,6 @@ std::string raw_args(const server::Request& r) {
         a += "]";
     }
     return a + "]";
-}
-
-// soa-server's data_keys (server/net/game.cpp): the top-level keys of the data map, the status.
-std::string data_keys(const std::vector<char>& body) {
-    server::Value v = server::mp_decode(std::vector<uint8_t>(body.begin(), body.end()));
-    const server::Value* d = v.type == server::Value::Map ? v.find("data") : nullptr;
-    std::string s;
-    if (d && d->type == server::Value::Map)
-        for (auto& e : d->map) s += (s.empty() ? "" : ",") + e.first;
-    const server::Value* st = v.type == server::Value::Map ? v.find("status") : nullptr;
-    return "data{" + s + "} status=" + (st ? std::to_string(st->type == server::Value::Int ? st->i : (int64_t)st->u) : "-");
 }
 
 }  // namespace
@@ -141,14 +102,14 @@ std::string format_args(const server::Request& r, size_t battle_log_size) {
             args += "dev=?";  // the FakeApiCaller methods don't take the DeviceType
         } else if (t.rfind("str[", 0) == 0) {
             if (ns >= strs.size()) return raw_args(r);
-            args += printable(strs[ns++]);
+            args += server::net::printable(strs[ns++]);
         } else if (t == "blob") {
             if (server::carries_battle_log(api->method)) {
                 args += "battle_log[" + std::to_string(battle_log_size) + "]";
             } else {
                 if (ns >= strs.size()) return raw_args(r);
                 const std::string& s = strs[ns++];
-                args += s.size() > 64 ? "blob[" + std::to_string(s.size()) + "]" : printable(s);
+                args += s.size() > 64 ? "blob[" + std::to_string(s.size()) + "]" : server::net::printable(s);
             }
         } else if (t == "vec64" || t == "vec32") {
             if (nv >= r.vecs.size()) return raw_args(r);
@@ -166,46 +127,37 @@ std::string format_args(const server::Request& r, size_t battle_log_size) {
 
 void request(const server::Request& r, const std::vector<uint8_t>& battle_log) {
     std::lock_guard<std::mutex> l(g_mu);
-    if (!g_log || g_alias.count(r.fid)) return;
+    if (!g_log) return;
     const server::net::WireApi* api = wire_api(r);
     std::string name = api ? api->name : r.method;
     if (api) g_api[r.fid] = api;
     else g_api.erase(r.fid);
     uint64_t seq = ++g_seq;
-    line("conn 0 #" + std::to_string(seq) + " > " + name + " fid=" + fid_hex(api ? api->fid : r.fid) + " inproc plain=0 method=" + r.method +
-         " args: " + format_args(r, battle_log.size()));
+    line(server::net::request_line(server::net::request_head(0, seq, name, api ? api->fid : r.fid), "inproc", 0, r.method,
+                                   format_args(r, battle_log.size())));
     if (!battle_log.empty()) write_file(std::to_string(seq) + "-" + name + "-battle_log.msgp", battle_log.data(), battle_log.size());
 }
 
 void reply(uint32_t fid, const std::vector<char>& body) {
     std::lock_guard<std::mutex> l(g_mu);
     if (!g_log) return;
-    auto a = g_alias.find(fid);
-    if (a != g_alias.end()) {
-        fid = a->second;
-        g_alias.erase(a);
-    }
     auto logged = g_api.find(fid);
     const server::net::WireApi* api = logged != g_api.end() ? logged->second : server::net::api_by_fid(fid);
     if (logged != g_api.end()) g_api.erase(logged);
     std::string name = api ? api->reply : "?";
     uint32_t rfid = api ? api->reply_fid : 0;
     write_file(std::to_string(g_seq) + "-" + name + ".msgp", body.data(), body.size());
-    line("  < " + name + " fid=" + fid_hex(rfid) + " inproc plain=" + std::to_string(body.size()) + " " + data_keys(body));
+    line(server::net::reply_line(name, rfid, "inproc", body.size(), std::nullopt,
+                                 server::net::data_keys(std::vector<uint8_t>(body.begin(), body.end()))));
 }
 
 void refused(uint32_t fid, uint32_t code) {
     std::lock_guard<std::mutex> l(g_mu);
     if (!g_log) return;
-    g_alias.erase(fid);
     g_api.erase(fid);
-    line("  < ProtocolError fid=" + fid_hex(server::net::kFidProtocolError) + " inproc plain=0 status=" + std::to_string(code) +
-         " (the server's error code)");
+    line(server::net::reply_line("ProtocolError", server::net::kFidProtocolError, "inproc", 0, std::nullopt,
+                                 "status=" + std::to_string(code) + " (the server's error code)"));
 }
 
-void answer_as(uint32_t fid, uint32_t as_fid) {
-    std::lock_guard<std::mutex> l(g_mu);
-    if (g_log) g_alias[fid] = as_fid;
-}
 
 }  // namespace soa::server_port::packet_log

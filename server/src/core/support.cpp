@@ -50,17 +50,6 @@ std::string find_repo_file(std::initializer_list<const char*> rels) {
 
 std::string find_repo_file(const std::string& rel) { return find_repo_file({rel.c_str()}); }
 
-int64_t parse_clock(const std::string& s) { return parse_time_or_epoch(s); }
-
-bool set_clock(ServerConfig& c, const std::string& s) {
-    int64_t t = parse_clock(s);
-    if (!t) return false;
-    c.has_clock = true;
-    c.clock = t;
-    c.clock_offset = t - (int64_t)time(nullptr);
-    return true;
-}
-
 // ---- log -------------------------------------------------------------------------------------
 namespace {
 std::mutex g_log_mu;

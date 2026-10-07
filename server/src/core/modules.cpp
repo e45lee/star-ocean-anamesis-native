@@ -63,6 +63,10 @@ const Module kModules[] = {
     {"deco", register_deco},
     {"coins", register_coins},
     {"stamp", register_stamp},
+    // Last: its OnResponse hook adds no keys (it records an accepted MissionEnd / MissionTalk's
+    // clear in the request's transaction); the campaign's keys are spliced around the request
+    // (server::answer).
+    {"campaign", campaign::register_campaign},
 };
 
 }  // namespace

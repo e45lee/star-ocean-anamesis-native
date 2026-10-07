@@ -68,10 +68,22 @@ copied=$(mktemp)
 trap 'rm -f "$copied" "$copied.new"' EXIT
 # rsync with the copied files' DEST paths logged under PREFIX (--modify-window: the drive's mtimes
 # are whole seconds; without it every run would copy everything again)
+# A failed rsync is retried (up to 3 tries, 20 s apart): writes to the Windows drive through WSL's
+# drvfs fail now and then with "Cannot allocate memory" under load, and a retry gets through. A
+# --files-from=- list is kept in a file first, since a retry can't re-read stdin.
 stage_copy() {
   local prefix=$1; shift
-  rsync --modify-window=1 --out-format="$prefix%n" "$@" > "$copied.new" ||
-    { echo "FAIL: windows-stage.sh: rsync failed ($*)" >&2; exit 1; }
+  local args=() a list="" try
+  for a in "$@"; do
+    if [ "$a" = "--files-from=-" ]; then list=$(mktemp); cat > "$list"; args+=("--files-from=$list"); else args+=("$a"); fi
+  done
+  for try in 1 2 3; do
+    rsync --modify-window=1 --out-format="$prefix%n" "${args[@]}" > "$copied.new" && break
+    [ "$try" = 3 ] && { [ -n "$list" ] && rm -f "$list"; echo "FAIL: windows-stage.sh: rsync failed 3 times ($*)" >&2; exit 1; }
+    echo "windows-stage.sh: rsync failed (try $try of 3; drvfs ENOMEM under load?): retrying in 20 s" >&2
+    sleep 20
+  done
+  [ -n "$list" ] && rm -f "$list"
   grep -v '/$' "$copied.new" >> "$copied" || true
 }
 # the tracked files (not the work/ link itself), then the work/ data the programs read

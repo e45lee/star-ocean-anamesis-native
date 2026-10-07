@@ -28,7 +28,7 @@ void tick_stamina(ext::Ctx& ctx) {
     u32 period = config().stamina_heal_time >= 0 ? (u32)config().stamina_heal_time : ctx.global_u32("stamina_heal_time", 180);
     ctx.st.q("select level, stamina, stamina_at from player", {}, [&](const Row& player_row) {
         u32 max = ctx.stamina_max((u32)player_row.i("level"));
-        ServerTime now = clock_now(), at = player_row.time("stamina_at");
+        ServerTime now = ctx.now(), at = player_row.time("stamina_at");
         auto [stamina, carry] = rules::regen_stamina((u32)player_row.i("stamina"), max, (u64)std::max<int64_t>(0, now - at), period);
         ctx.st.q("update player set stamina = ?, stamina_at = ?", {stamina, stamina >= max ? now : now - (int64_t)carry});
     });
@@ -107,7 +107,7 @@ Value player_info(ext::Ctx& ctx) {
         add_stock_caps(ctx, player);
         // 3. the times; (d) updated_at is the answer's time
         player["created_at"] = format_time(player_row.time("created_at"));
-        player["updated_at"] = format_time(clock_now());
+        player["updated_at"] = format_time(ctx.now());
         player["last_login_at"] = format_time(player_row.time("last_login_at"));
         // The 2D / 3D home (b): CHome::Setup takes CParameterManager+0xd38 (this flag) as the home's
         // mode; Home3DAnd2DSwitching stores the player's choice (api/player/home.cpp). (d) 3D for a
@@ -207,21 +207,21 @@ Value base_data(ext::Ctx& ctx) {
     // client's NowTime follows the server's; the client's stamina (StaminaUtility::NowStamina
     // = stamina + (NowTime - str2time_t(stamina_update)) / heal time, up to the max) and the
     // banner windows are computed against it.
-    data["Time"] = format_time(clock_now());
+    data["Time"] = format_time(ctx.now());
     data["Player"] = player_info(ctx);
     data["Wallet"] = wallet_info(ctx);
     return data;
 }
 
 std::vector<u8> full_player_state(ext::Ctx& ctx, const Request& req, CdnKeys cdn) {
-    ctx.st.q("update player set last_login_at = ?", {clock_now()});
+    ctx.st.q("update player set last_login_at = ?", {ctx.now()});
     Value data = base_data(ctx);
     if (cdn != CdnKeys::kNone) add_cdn_paths(ctx, data, cdn == CdnKeys::kAppVersionOnly);
     data["Character"] = roster_info(ctx);
     data["PartySet"] = party_set_info(ctx);
     data["StockItem"] = stack_item_info_list(ctx);
     data["Item"] = item_info_list(ctx);
-    favor::add_player_state(ctx.st.h, ctx.m.h, clock_now(), home_same_role(ctx), data);
+    favor::add_player_state(ctx.st.h, ctx.m.h, ctx.now(), home_same_role(ctx), data);
     ext::player_load(ctx, req, data);  // the modules' keys (OnPlayerLoad: login bonus, achievements, shop counters, ...)
     // (b) data.PresentBoxCount on every player load: the home / other-menu present badge. The
     // login-bonus module sends it only when it grants a page.

@@ -62,7 +62,7 @@ void seed(ext::Ctx& ctx, const std::string& explicit_seed) {
     u32 fol = kv_u32(kv, "player_fol", 0);                       // seed (save)
     u32 pid = chash32(search.c_str());                           // (d) numeric player id = CHash32(search id)
     u32 smax = ctx.stamina_max(level);
-    ServerTime t = clock_now();
+    ServerTime t = ctx.now();
     ctx.st.q(
         "insert into player (id, search_id, name, level, exp, fol, stamina, stamina_at, free_coin, pay_coin, home_uid, party_id, "
         "created_at, last_login_at, tutorial_status, view_status, view_status2) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"

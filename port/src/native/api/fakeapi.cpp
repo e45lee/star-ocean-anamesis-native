@@ -1094,24 +1094,26 @@ constexpr auto kEventApiHooks = event_api_hooks(std::make_integer_sequence<int, 
 // the end of a story mission's scene. 3.7.0's EventScenario::CEventScenario::Exit sends it
 // (CErrorHandlerWrap::Auto, fid 1d00a78c); FakeApiCaller doesn't override it, so the base stub
 // sends nothing and a story mission never clears. On the FakeApiCaller route (port code, not
-// guest behaviour) the request goes to the local server as soa-server's wire does
-// (server::answer): the scene's effect, server::end_mission_talk (events, else the story
-// campaign), then the GetPlayMission answer (a plain apply, like CApiNotify::OnEndMissionTalkRes),
-// here as a queued GetPlayMission request (FakeApiCaller has no EndMissionTalk entry to answer). Before the rebase's revision 2 restore_campaign.cpp did the same
-// from a CEventScenario::Exit hook (the offline build had dropped the request). Otherwise the guest behaviour.
+// guest behaviour) it is queued like the other served base-class methods (kSphere): the local
+// server answers it through its one request lifecycle, server::answer, as soa-server's wire does
+// (the scene's effect, then GetPlayMission's answer: server/src/core/lifecycle.cpp), and the
+// answer goes to CApiNotify::OnEndMissionTalkRes, the handler NetworkApiCaller's response goes to
+// ((b) @014c0d68: DeserializeToInfo, ErrorHandler::Success, the same body as
+// OnGetPlayMissionRes @014cd380). Before CR2 (2026-10-07) the hook re-implemented server::answer's
+// EndMissionTalk itself (end_mission_talk, then a queued GetPlayMission); before the rebase's
+// revision 2 restore_campaign.cpp did the same from a CEventScenario::Exit hook (the offline build
+// had dropped the request). Otherwise the guest behaviour.
 constexpr char kEndMissionTalk[] = "_ZN10IApiCaller14EndMissionTalkEjjhj";
+constexpr u32 kFidEndMissionTalk = 0x1d00a78c;
 void h_end_mission_talk(Cpu& c) {
-    at<u64>(c.x(8), 0) = 0;  // the base stub's Status (nothing in flight)
-    if (!on_fake_caller(c.x(0))) return;
+    if (!on_fake_caller(c.x(0))) {
+        at<u64>(c.x(8), 0) = 0;  // the base stub's Status (nothing in flight)
+        return;
+    }
     u64 x[8];
     for (int k = 0; k < 8; k++) x[k] = c.x(k);
-    // The request line (port/scripts/episode_movie_session.sh reads it) and the pending request.
-    server::submit(server_port::inproc_request("_ZN13FakeApiCaller14EndMissionTalkEjjhj", 0x1d00a78c, x));
-    u32 mission = (u32)c.x(2);
-    if (mission) server::end_mission_talk(mission);
-    // --log-packets: soa-server answers EndMissionTalk itself with this GetPlayMission body
-    server_port::packet_log::answer_as(0x7c1b7a1b /* GetPlayMission */, 0x1d00a78c /* EndMissionTalk */);
-    queue_request("GetPlayMission");
+    server_port::capture("_ZN13FakeApiCaller14EndMissionTalkEjjhj", kFidEndMissionTalk, x);
+    queue_base_method(c, kFidEndMissionTalk, "_ZN10CApiNotify19OnEndMissionTalkResEPaRj", "FakeApi/end_mission_talk.msgp");
 }
 
 // IsSuccess / IsFailure / ErrorCode: the guest's constants 1 / 0 / 0, unless the local server

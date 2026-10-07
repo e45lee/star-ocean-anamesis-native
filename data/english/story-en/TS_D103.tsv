@@ -1,10 +1,10 @@
 message_id	ja_sha1	en	source
-D103_010_01	7466d73d0e24ff4cb07f6e3c63570cb5288bbcac	So this is the rumored ruin! I\nheard everyone's memories get\nplayed back right in front of\nus! I can't wait―I hope it starts\nsoon!	machine
+D103_010_01	7466d73d0e24ff4cb07f6e3c63570cb5288bbcac	So this is the rumored ruin! I heard\neveryone's memories get played back\nright in front of us! I can't wait―I hope\nit starts soon!	machine
 D103_010_02	7656ff9530b28e4e8b2e89160ce625409f7c0295	H-Hey, Precis! Don't go off on\nyour own. We have no idea\nwhat's in there!	machine
 D103_010_03	1506c9747501cd1360652f25f398556bb6abe3a1	You're such a scaredy-cat! I'll\nbe totally fine. Anyway, Captain\nPapa Claude! I'm gonna go\ncheck that way!	machine
 D103_010_04	026a16052d805786bd860b1f10dab6da703a650e	P-Papa Claude... Now that she's\nsaid it out loud, it's kind of...	machine
 D103_010_05	713df5e30a4c19054426f30d74b476bda36bfa99	Ah! Now is not the time to be\nthinking about that! Wait up,\nPrecis!	machine
-D103_010_07	ed8947cfc60c1906e04d6469e6fa65fc6097ce3b	It is quite a rare experience to\nsee the great Admiral Kenny,\nwhose name is etched in\nFederation history, being\npushed around by a young girl\nlike that.	machine
+D103_010_07	ed8947cfc60c1906e04d6469e6fa65fc6097ce3b	It is quite a rare experience to see the\ngreat Admiral Kenny, whose name is\netched in Federation history, being\npushed around by a young girl like that.	machine
 D103_010_09	26f181712bc31418391606a70750c91785998a38	Yes, it would be dangerous for\nthe two of them alone. We\nshould follow―	machine
 D103_010_10	87e9e5fb25cca2ac83a40eafa18a08a4f3ae3319	Hm!	machine
 D103_010_11	06877603c15611af93c0e38a71b83f4fc4895533	Please, give me your opinion on\nsomething.	machine
@@ -38,7 +38,7 @@ D103_010_40	7109bc782f5da9270f830a00710d627e6da1afc4	The basic theory that resea
 D103_010_41	d51f86d429a52e945b84179ef95946ecffe19412	So the Captain agrees with\nyou, Fidel. Even for a single\ngift, research is essential.	machine
 D103_010_42	0462ba61f92900eca300c58ebb5dd0ff043e06aa	As I thought, we must clearly\ndefine our target audience and\nbuild products and services\nthat meet their needs.	machine
 D103_010_43	32203ddc8370cdde45e2cd4b85975329a4f89a92	Differentiating from similar\nproducts is also a key element\nof branding. In that case...	machine
-D103_010_44	1f4677622c77d8bdd371c6a4c512e2eefffcf86f	I must get home immediately to\nobserve cats so I can recreate\ntheir loveliness in a plushie! No,\nactually, I just want to pet\nthem... Cats, cats...	machine
+D103_010_44	1f4677622c77d8bdd371c6a4c512e2eefffcf86f	I must get home immediately to\nobserve cats so I can recreate their\nloveliness in a plushie! No, actually, I\njust want to pet them... Cats, cats...	machine
 D103_010_45	d7eb4d36afaf1ae68c2c0cfe9496d03050dcac33	Uh... is Anne trying to start\nsome kind of cat-specialized\nplushie company?	machine
 D103_010_46	cb23c4683fa3f79bddea6d8515e1695d7924dc24	Of course. I'm so happy with\nmine that I sleep with it every\nnight.	machine
 D103_010_47	e93b863d63e8234bd4afdeebac81cbca5abd8264	Every night...	machine
@@ -58,7 +58,7 @@ D103_010_62	26924489653cf9a3a84dbedf75254d629797697d	(Ah... could it be that one
 D103_010_63	c11b0b9a76bd33bc2a7f650e7c133f8a50d1d727	Precis, what do you think?	machine
 D103_010_64	c24d111922573188decd6e68c1e83eb7a5ee8030	Hmm, if you're that worried,\nwhy not just ask her directly\nwhat she wants?	machine
 D103_010_65	b03032797dc0b5a988c0e07bd495fe4902d8cfa1	...Actually, I've already tried\nthat...	machine
-D103_010_66	f8a9ebb70dba8864c400a3b16465e282c61c41bd	(Sigh... it's been 10 days since\nI started this investigation to\nfind out what Relia wants.\nMaybe I really should just ask\nher...)	machine
+D103_010_66	f8a9ebb70dba8864c400a3b16465e282c61c41bd	(Sigh... it's been 10 days since I started\nthis investigation to find out what Relia\nwants. Maybe I really should just ask\nher...)	machine
 D103_010_67	b0bd71283726a3d409156e0468b3b5c30afce99c	(No, that won't do. The surprise\nis part of the gift. I have to\nfind out what Relia wants\nwithout her knowing!)	machine
 D103_010_68	19f4963b05ea341fbaf67bb2512cb5c58f8a4936	So this is the memory from\nthat time.	machine
 D103_010_69	94af03080a5734f85700edd4eb1ad271d7358c4f	I can't believe those memories\nare being played back so\nconveniently...	machine
@@ -74,11 +74,11 @@ D103_010_78	2ce2323fa02d6b540f9103d78709659a8f3a3a23	I never imagined Relia woul
 D103_010_79	9888b3d677c0ccb11c0dd96b36ed5483a6ed5c43	Well, I'd expect as much. I\nnever imagined Relia would be\nthe type to ask for land...	machine
 D103_010_80	31d879bd27a412aced737484cd8b36452928ff3a	Captain! How on earth am I\nsupposed to represent "land"\nwith a stuffed animal!?	machine
 D103_010_81	e06641f7003ef8933688f27d3e4eafd59d076cce	Ah... so it's already been\ndecided that the present has\nto be a plushie.	machine
-D103_010_82	30b99138431a651d8f79b8bf2de9f7a725311409	It's still a work in progress!\nJust a patch of dirt would be\ntoo lonely, so I should add\nsome plants, right!? What do\nyou think, Captain!?	machine
+D103_010_82	30b99138431a651d8f79b8bf2de9f7a725311409	It's still a work in progress! Just a\npatch of dirt would be too lonely, so I\nshould add some plants, right!? What\ndo you think, Captain!?	machine
 D103_010_84	52f112a8879ac771bf626f5cfd84de306dd5100c	(...Hey, Papa Claude. No matter\nhow you look at it, Emmerson\nis the one who told Relia to\nask for land, right?)	machine
 D103_010_85	c97063fc7e3fe8e4a9c3ee76d599a3b87d9ce9bc	(Most likely. My apologies for\nthe trouble my descendant is\ncausing...)	machine
 D103_020_01	321b1565502f5918dc521269c2c4b7296d9f30df	I agree with Anne; I think\nchoosing the right gift can be\nincredibly difficult.	machine
-D103_020_02	9f7db8f2ff42a114526e09b232745a256618f203	Even if you ask the person\ndirectly what they want, they\nmight hold back, making it\nimpossible to find out what\nthey truly desire.	machine
+D103_020_02	9f7db8f2ff42a114526e09b232745a256618f203	Even if you ask the person directly\nwhat they want, they might hold back,\nmaking it impossible to find out what\nthey truly desire.	machine
 D103_020_03	b72c8eaf56c734fe56441c3c75d7818f39648f29	And of course, there's the\ndesire to surprise them by\nbuying something without them\nnoticing.	machine
 D103_020_04	5893eed27be5e62abf3a070e4d5558116e479acb	Does that mean you've\nstruggled with picking out a\ngift yourself, Ronyx?	machine
 D103_020_05	889f65276c2e0bf7d6f96f727ef71531d23d9e1a	Who was it for~? ...Actually, I\ndon't even need to ask.	machine
@@ -102,26 +102,26 @@ D103_020_25	4f045262bebef7c106115c519efe662d245ce55c	Jewelry Store Clerk: Welcom
 D103_020_26	eba2d6000903c4e4c2c2157ed5a7e1310fe930aa	(So she's become close enough\nwith some man to receive a\ngift while we were separated...)	machine
 D103_020_27	3d4c4522aa545cafadf8bf3da8276d68c03d9330	(I believe they were a pale\ncolor. Hmph, he has no taste.\nSomething more vibrant would\nsuit her much better...)	machine
 D103_020_28	2d8c409611779b9bc4193cf814426bd9a6d32acc	Jewelry Store Clerk: Does this\none catch your eye? You have\nexcellent taste, sir. This piece\njust arrived today...	machine
-D103_020_29	43cbe34034e772b9243c650484b117bdaf3f616e	(That vivid red is beautiful. It\nwould look wonderful against\nher golden hair. But the\ndetailing on this one is also\nexquisite...)	machine
-D103_020_30	3451c59f4e964462510a63a82b422494ca1313bb	Jewelry Store Clerk: Are you\ninterested in that one as well?\nYou seem to be giving this a\nlot of thought. Is it a gift for\nsomeone special?	machine
+D103_020_29	43cbe34034e772b9243c650484b117bdaf3f616e	(That vivid red is beautiful. It would look\nwonderful against her golden hair. But\nthe detailing on this one is also\nexquisite...)	machine
+D103_020_30	3451c59f4e964462510a63a82b422494ca1313bb	Jewelry Store Clerk: Are you interested\nin that one as well? You seem to be\ngiving this a lot of thought. Is it a gift\nfor someone special?	machine
 D103_020_31	f8fbb571c3fedb214848a8493c858bef9a78943e	No, well...	machine
 D103_020_32	ac130f26b227db38d14a7a35f1618b207f3efacc	Jewelry Store Clerk: Oh, how\nbashful! I'll do my absolute best\nto help you find the perfect\npiece for your loved one.	machine
 D103_020_33	761495005fc56163fa3080601317e4a64357dba2	(I suppose entering a shop like\nthis alone always leads people\nto assume you're buying a gift\nfor a lover...)	machine
 D103_020_34	f4a86ea4ac75f7593c8c62f4622c4160767394d3	(Wait... if she received it while\nwe were separated, does that\nmean it was from that man,\nRoak, from the past?)	machine
-D103_020_35	38844ac6c4f3d3d6ab6fa1106bf4ac9113fb9dce	(Ilia, you're supposed to return\nto your own time once the\nmission is over. Regardless of\nthe circumstances, isn't that\nsimply improper!?)	machine
+D103_020_35	38844ac6c4f3d3d6ab6fa1106bf4ac9113fb9dce	(Ilia, you're supposed to return to your\nown time once the mission is over.\nRegardless of the circumstances, isn't\nthat simply improper!?)	machine
 D103_020_37	a2ae210ac2f997b4f6f0b40ab7ff796ae2fa94ee	Jewelry Store Clerk: Sir...?	machine
 D103_020_38	d8170a4f3fd9585d35aca0cc6ac36d0935bb7ab3	...No, my apologies. I'll have to\ncome back another time.	machine
 D103_020_39	1d8de459edf0dffa298746d295525ef006d0c2e7	(I suppose the most improper\none of all is me, for being so\nindecisive...)	machine
 D103_020_40	b079e36c05b865aeab1428a1d0414b3733b09f40	Huh? You ended up not buying\nanything. Didn't you find\nanything you liked?	machine
 D103_020_41	6d8b2e51597cec398d01dffac9a46c2362c8b106	Ah, no, well...	machine
 D103_020_42	d17f3a2df3ed1256d0235635c2c37c791807fbdb	I'm telling you, those red\nearrings from before would\nhave looked great on Claude's\nMom!	machine
-D103_020_43	9e21a4a75f7ec518b27ceac5f86b7d87e2850977	But it's true that once you're\nactually looking at the items,\nit's hard to decide. You start\nwondering if they'll actually like\nthe gift.	machine
-D103_020_44	fada440c3a21c0dc10b6e652238c96eebbd44c3e	Y-yes, exactly... I've reached a\npoint where I'm no longer sure\nwhat kind of jewelry or what\ncolors of gemstones she\nprefers.	machine
+D103_020_43	9e21a4a75f7ec518b27ceac5f86b7d87e2850977	But it's true that once you're actually\nlooking at the items, it's hard to decide.\nYou start wondering if they'll actually\nlike the gift.	machine
+D103_020_44	fada440c3a21c0dc10b6e652238c96eebbd44c3e	Y-yes, exactly... I've reached a point\nwhere I'm no longer sure what kind of\njewelry or what colors of gemstones\nshe prefers.	machine
 D103_020_45	c9e6b21781adb0905cbe1ddce0ea77ca92a5b8e9	If you keep thinking like that,\nyou'll never actually give her a\npresent!	machine
 D103_020_46	d2db5f046cc3344c41ccd1972da28badd4900b8f	In the end, did you give Ilia\nthose earrings, Ronyx?	machine
 D103_020_47	a2b5ec1b64a4ef96565e5e3bf16e3658d96b22ab	Yes, I did. They were a\nbeautiful piece with delicate\ndetailing. I believe that was the\nfirst gift I ever gave her.	machine
 D103_020_48	913d57009bff3a80ac326a427e86d9f07534a80e	Ooh, look at you! I wonder if\nshe still has them? I'll have to\nask Claude's Mom about it\nlater.	machine
-D103_020_49	02242eb83bdf79d14af328adf8f82389ee84c680	Unfortunately, even back then,\nI couldn't choose something\nmyself; I simply bought the\npiece she had been eyeing at\nthe jewelry store.	machine
+D103_020_49	02242eb83bdf79d14af328adf8f82389ee84c680	Unfortunately, even back then, I\ncouldn't choose something myself; I\nsimply bought the piece she had been\neyeing at the jewelry store.	machine
 D103_020_50	b6e754726f2649a14a5d9e322cef5578ae6e8660	Choosing a gift really is a\ndifficult task.	machine
 D103_020_51	fd07159cfac33cce53fed0fe6fde678c88646910	Still, that's totally fine! Claude's\nMom was happy, right?	machine
 D103_020_52	b1e5f6f9166984bab47e80764bbaaba8fdd7129a	Well, I believe she was.	machine
@@ -130,13 +130,13 @@ D103_020_54	54922f79685211c5565e364a3b2a37a9432b5117	I believe Ilia was happy\nb
 D103_020_55	87a683367d340bc993e060f062133627d0c3c94b	Thank you. I hope that is how\nshe feels.	machine
 D103_030_01	6a7a738376e8837499706055a2583838d934fcef	Everyone seems so conflicted.\nI'd just trust my gut and buy\nsomething!	machine
 D103_030_02	04ecf96d85c34e922c253debe0bae9e17c11a183	Trust your gut...?	machine
-D103_030_03	91181d28b0ee8e97774a72c15c663d9f386cb9f0	Yeah. Like, close your eyes,\nthink of the person you're\ngiving it to, open them, and buy\nthe first thing that gives you a\nspark!	machine
+D103_030_03	91181d28b0ee8e97774a72c15c663d9f386cb9f0	Yeah. Like, close your eyes, think of the\nperson you're giving it to, open them,\nand buy the first thing that gives you a\nspark!	machine
 D103_030_04	7330fba60621cde2d3d7bd7f3f705630310b9d68	A spark... That sounds difficult.	machine
 D103_030_05	ef6ad6ab2c94f4624ebf4af049fc6a66e32a2669	The important thing is just\nthinking about the person\nyou're giving it to.	machine
 D103_030_06	b99aed9967683b60b6a384e2494f2216eb1f41af	Oh, Claude!	machine
 D103_030_07	26195a85631c475442c24f7c935f9c9e88245839	What's up? Did you come to\nbuy jam too, Claude?	machine
 D103_030_08	f29018cea3f3de6aed0a13a70c1d3a4a00c86c73	You too, Precis?	machine
-D103_030_09	b40caa9b7c6f5e7cb0f70aaab7d7af25e84a4cb9	Oh, this is one of my memories.\nWow, it's exactly how it was\nback then! This was when I was\nlooking for a souvenir for my\ndad in Salva.	machine
+D103_030_09	b40caa9b7c6f5e7cb0f70aaab7d7af25e84a4cb9	Oh, this is one of my memories. Wow,\nit's exactly how it was back then! This\nwas when I was looking for a souvenir\nfor my dad in Salva.	machine
 D103_030_10	063184b45d1782eb905b104b2979f6bcb329bf94	Well, jam does have a long\nshelf life.	machine
 D103_030_11	87ea480924909b79c854a915592ed3e4cafaa3cc	Exactly!	machine
 D103_030_12	47e8a9b9ef2e3900b6a5c374b7fa31953b76c957	Pop quiz! Which jam did I pick\nas a souvenir for my dad?	machine
@@ -179,7 +179,7 @@ D103_030_51	9800550940459bff897fd8c57254faa2d74da8ac	Because it's funny!	machine
 D103_030_52	ae8252d158f3481dcdcc4f7ca886f1fb18038356	I mean, it's sold in a store, so\nI'm sure it's edible.	machine
 D103_030_53	94edfe2b26344399aaf21d13e1cd2891b28d4dbd	He might accidentally eat it,\nfreak out, and get a little mad,\nbut in the end, it'll just be a\nfunny story.	machine
 D103_030_54	25cbc691d3a2f1601ce39902b745587f6c79e002	I bought all sorts of other\nsouvenirs too. Like a dull\nsoldering iron and some dried\nslime.	machine
-D103_030_55	38fa9346cd99f984329af078f7210ba4b23eadfb	Now, every time I bring a gift,\nit's a tradition for my old man\nto have a good laugh and ask,\n"What on earth is this? Why\nwould anyone think to sell\nthis?"	machine
+D103_030_55	38fa9346cd99f984329af078f7210ba4b23eadfb	Now, every time I bring a gift, it's a\ntradition for my old man to have a good\nlaugh and ask, "What on earth is this?\nWhy would anyone think to sell this?"	machine
 D103_030_56	5e74590649455e7375ed09f75b01e6c2bce6b97f	If it brings a smile to both the\ngiver and the receiver, then it\nis a wonderful gift.	machine
 D103_030_57	2eff65076071a12784d4e62f21f513faef074699	I suppose this is also a way of\ncarefully choosing a gift with\nthe recipient in mind.	machine
 D103_030_58	d9916a06a31700c64717d95624617631fcd38976	Hm? Is there something else...?	machine
@@ -199,6 +199,6 @@ D103_030_71	6e232d1aac1f45f6df6de82faa36b49cc1cd325f	Graft: Yes, it was...	machi
 D103_030_72	f5cce464172ed047aac52e65a7f31a553afcf2ed	Graft: Salva's famous chili\npepper jam?!	machine
 D103_030_73	d8e2fe9c9ed4866ddca0a99e417f4235f9f6fca7	Yikes.	machine
 D103_030_74	03c63dc61f84fcbad0e35fc1442148cac54a2406	I don't care what it is...\nw-water...	machine
-D103_030_75	114baf5d7ae9236878455b184b6b9d5360d4f255	I remember getting into a huge\nfight with my dad back then.\nThat's what happens when you\ntry to serve something you're\nnot used to just to impress\nClaude!	machine
+D103_030_75	114baf5d7ae9236878455b184b6b9d5360d4f255	I remember getting into a huge fight\nwith my dad back then. That's what\nhappens when you try to serve\nsomething you're not used to just to\nimpress Claude!	machine
 D103_030_76	cbfbf828888ed2a4df3642d850e09cc1577e0350	Oh, Claude... I wonder if he was\nalright...	machine
 D103_030_77	bf1ef57bc2ee8acb137a6026132a4d7eb8b13fce	This story has come to an end.\nMore stories will be released in\nthe future. Please look forward\nto them.	machine

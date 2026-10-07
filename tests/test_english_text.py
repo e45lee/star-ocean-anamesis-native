@@ -405,11 +405,26 @@ def test_story_build(data, scenario, font):
                                                   e3: "official"}
     assert "\u2015" in s.out[e3][1]
     for m, (h, en, _) in s.out.items():
-        assert font.widest(C.unesc(en), T.PLAYER_PX) <= T.STORY_BUDGET or " " not in en
+        # broken for the message window (E7, E13: story_break, which re-breaking doesn't change)
+        assert C.unesc(en) == T.story_break(font, C.unesc(en))
     c = s.files["TS_1999"]
     assert (c["lines"], c["need"], c["english"]) == (6, 5, 3)
     # the line's hash is of the text with real newlines
     assert s.out["1010_065_49"][0] == C.sha1(C.unesc(T.Ctx().src.gl_ja["1010_065_49"]))
+
+
+
+def test_story_break_fewest_lines(font):
+    """E13: a line that fits the window's 4 lines at 480 px keeps that break; a longer one is broken at
+    story_budget(n) for the fewest n lines that hold it (128 n - 32 px)."""
+    assert [T.story_budget(n) for n in (1, 4, 5, 6, 8)] == [480, 480, 608, 736, 992]
+    short = "This fits in one line."
+    assert T.story_break(font, short) == font.rebreak(short, 480, T.PLAYER_PX)
+    long = " ".join(["Some long words that keep going on and on"] * 8)
+    r = T.story_break(font, long)
+    n = r.count("\n") + 1
+    assert n > T.STORY_LINES and font.widest(r, T.PLAYER_PX) <= T.story_budget(n)
+    assert font.rebreak(long, T.story_budget(n - 1), T.PLAYER_PX).count("\n") + 1 > n - 1
 
 
 def test_story_import_mt_and_completeness(data, scenario, tmp_path):

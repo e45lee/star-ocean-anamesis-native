@@ -516,6 +516,29 @@ STORY_BUDGET = 480   # px per line of the message window (font px; measured on a
 PLAYER_PX = {"<player>": 120}
 STORY_SOURCES = ("official", "machine", "human", "reviewed")
 STORY_LONG = 5       # lines: a served line needing this many or more is reported (E7)
+# E13: the window holds STORY_LINES lines; n lines are 40 n - 10 high at its FontSize 30 (lines 40
+# apart, 30 high: CEventScenarioMessageWindow::Show, CalcStringRect; (b) client evidence). A line
+# over STORY_LINES lines gets the font scale k_n = (40 * 4 - 10) / (40 n - 10) from the client
+# (platform370 text_370.cpp h_window_change), so it is broken at STORY_BUDGET / k_n, for the fewest
+# n that holds it (english.md 7.12).
+STORY_LINES = 4
+
+
+def story_budget(n):
+    """The break width for n window lines: STORY_BUDGET up to STORY_LINES lines, else STORY_BUDGET /
+    k_n = STORY_BUDGET * (40 n - 10) // (40 * STORY_LINES - 10) (an integer: 128 n - 32)."""
+    return STORY_BUDGET if n <= STORY_LINES else STORY_BUDGET * (40 * n - 10) // (40 * STORY_LINES - 10)
+
+
+def story_break(font, e):
+    """`e` broken for the message window (E7, E13): for the fewest n (1, 2, ...) whose break at
+    story_budget(n) takes at most n lines (the greedy break never gains lines at a wider width, so
+    that is the largest font the client can give it)."""
+    for n in range(1, 25):
+        r = font.rebreak(e, story_budget(n), PLAYER_PX)
+        if r.count("\n") + 1 <= n:
+            return r
+    return r
 
 
 def story_finish(ctx, glossary, source, en, ja):
@@ -527,7 +550,7 @@ def story_finish(ctx, glossary, source, en, ja):
     if source in HUMAN or source == "machine":
         e = unicodedata.normalize("NFC", e)
     e = font.fold(e).strip()
-    e = font.rebreak(e, STORY_BUDGET, PLAYER_PX)
+    e = story_break(font, e)
     probs = C.check(ja, e, font, glossary if source not in DERIVED else None, tags="strict")
     tags = C.TAG.findall(e)
     bad = [t for t in tags if not C.STORY_TAG.fullmatch(t)]

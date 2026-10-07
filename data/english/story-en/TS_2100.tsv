@@ -29,7 +29,7 @@ message_id	ja_sha1	en	source
 2101_020_08	4040a3d550fa890bb8376d5b9e3c4523bae86a7a	<font color=blue>Mastima</font>: The battles ahead in\nDaftine will be far more\ndangerous than you can\npossibly imagine.	machine
 2101_020_09	831791a26fdcc88614c2daa8096f5964c29f1221	<font color=blue>Verda</font>: And what of it?	machine
 2101_020_10	493df8b13d7d05ff45ebc773c891c86fcc438d86	<font color=blue>Mastima</font>: The three of you are\nnot natives of this star system.	machine
-2101_020_11	c2c352d908ee691f8a8299ad028d63c2677ab3fd	<font color=blue>Mastima</font>: I am asking if you\nhave the resolve to throw\nyourselves into a life-or-death\nstruggle for the future of a\nsystem that is not your own.	machine
+2101_020_11	c2c352d908ee691f8a8299ad028d63c2677ab3fd	<font color=blue>Mastima</font>: I am asking if you have the\nresolve to throw yourselves into a\nlife-or-death struggle for the future of\na system that is not your own.	machine
 2101_020_13	ca4f7c0beb959d03d410fd567c2c7451e2fb3d76	<font color=blue>Verda</font>: Exactly, exactly. That's\nwhy you modified our ship in\nthe first place, isn't it? Isn't it\na bit late to be asking now?	machine
 2101_020_14	156be35edde8ad7eb427e639d3afdb188557e280	<font color=blue>Mastima</font>: When you first\narrived in this sector, you\nfailed to realize that an Ex Giva\nexisted on this moon.	machine
 2101_020_15	1bbf3e017116da1e74f80d05a9c5a1db18788070	However, on the other hand,\nwhile Givel knew that the Ex\nGiva was here,	machine
@@ -39,8 +39,8 @@ message_id	ja_sha1	en	source
 2101_020_19	842b83e3b4d4d435bd6e7a5cc2174736e9248771	<font color=blue>Mastima</font> I don't know if Ex\nanticipated this, but...	machine
 2101_020_20	efa74bb5f13b448b1d5d117ac8093859cdb860dc	The enemy you are about to\nface is all the more dangerous\nif they possess the common\nsense of an advanced planet.	machine
 2101_020_21	933e9126c9329660efd5f10411b8a45126bd852e	Especially those who try to\napply "common sense" to this\nuniverse.	machine
-2101_020_23	96c5aa0ec95235590b656bd6e3cad8c323adcc37	<font color=blue>Mastima</font> Whether they are\nusers of Summoning Crest Arts\nor servants of Daftes―you\nhave no idea what kind of\nirreversible catastrophe such\ntrivial assumptions can lead to.	machine
-2101_020_24	c4a863aae73dd24c33412acba6bf73fa1ee7f214	What you are about to\nencounter is the very definition\nof the "unknown," something\nthat cannot even be compared\nto me.	machine
+2101_020_23	96c5aa0ec95235590b656bd6e3cad8c323adcc37	<font color=blue>Mastima</font> Whether they are users of\nSummoning Crest Arts or servants of\nDaftes―you have no idea what kind of\nirreversible catastrophe such trivial\nassumptions can lead to.	machine
+2101_020_24	c4a863aae73dd24c33412acba6bf73fa1ee7f214	What you are about to encounter is the\nvery definition of the "unknown,"\nsomething that cannot even be\ncompared to me.	machine
 2101_020_25	f5955a0ed8b12313516b63ca532938150486a5a4	Being protected by the\ntechnology of an advanced\nplanet provides no guarantee\nof safety.	machine
 2101_020_26	57668b2839c7d6a1085d7abc3147d11323bb0eca	<font color=blue>Verda</font> And what about you?	machine
 2101_020_27	6a885da2aa6ff55b83fbc0346fcd8481945a6e95	<font color=blue>Mastima</font> Me?	machine
@@ -58,7 +58,7 @@ message_id	ja_sha1	en	source
 2101_020_39	13b6c804e0884213ee58e06dab2cdda80347ea69	But I don't want you\nmisunderstanding one thing.\nThe Captain, Valka, and of\ncourse myself,	machine
 2101_020_41	fbce01312d92d052c7a2215ab3173cec17eb0758	Are you referring to the\nconclusion of that business\nwith the Burning Death?	machine
 2101_020_42	a6fcd388f4ed49af8164d1838479d95f1387f1b2	If you already know, then this\nwill be brief.	machine
-2101_020_43	4df0260ba2e90cc5ca524bcfa794134a78562759	The Captain, Eve, and Coro all\nrisked their lives to face the\ncalamity of Levarance, even\nthough there was nothing to be\ngained from it.	machine
+2101_020_43	4df0260ba2e90cc5ca524bcfa794134a78562759	The Captain, Eve, and Coro all risked\ntheir lives to face the calamity of\nLevarance, even though there was\nnothing to be gained from it.	machine
 2101_020_44	a2c9462117a4b5190fa7dbe8c0fbe5ed0b269d48	Their resolve is beyond\nquestion. And mine is as well.	machine
 2101_020_45	3679d06bb92aff21a471fb4502b298dbbcd8dc8d	As for me, it's even simpler\nthan that, Mastima.	machine
 2101_020_46	d0f82f3e9cedb485604b095104d0eead18363cb7	I am but thirteen years of age.\nI am still a child!	machine
@@ -76,7 +76,7 @@ message_id	ja_sha1	en	source
 2101_020_58	c4583d9c32368dc7c3e5bf303710af79f1f594d6	For Tika, for Euwin and the\nothers, and of course for\nMastima, we shall fight!	machine
 2101_020_59	ec7837bc0e84303ebdedc3864755a092b683000b	Verda has made his point, but\nmay I double-check with the\nrest of you?	machine
 2101_020_61	8e0ff44235d73b438fb29cd4b184eef4a7087806	I see. ...And you?	machine
-2101_020_63	d5be403d33d506ffa2f9f5212b0f2acbdaa4dffe	But I have learned from my\nfather, the greatest of all\nwarriors, that the core of that\nmission is to protect the\npeaceful lives of every living\nsoul.	machine
+2101_020_63	d5be403d33d506ffa2f9f5212b0f2acbdaa4dffe	But I have learned from my father, the\ngreatest of all warriors, that the core\nof that mission is to protect the\npeaceful lives of every living soul.	machine
 2101_020_64	2095f43fd916a0f4afb2180b67789a81f65c7916	Fighting Givel here and now is\nsomething I must do for my\nown sake as well.	machine
 2101_020_65	9fe1952f76ffe8d6f4e205fb21ae10347b10e560	Fighting Givel here and now is\nsomething I must do for my\nown sake as well.	machine
 2101_020_66	a33af6c1a77c69a9569790a6166fdb61ddb26cf4	Anyone who cannot stand by a\nfriend in their time of need has\nno right to call themselves a\nHardier Warrior of Morphus...!	machine
@@ -92,7 +92,7 @@ message_id	ja_sha1	en	source
 2101_020_77	fe4642c1fd2b9ecd9ccf5e505d638e6ef5138aa2	Who knows? Maybe it's just a\nmatter of density.	machine
 2101_020_78	1c0616143f9b4297b27a1c175e333c16418619ad	...I don't get it.	machine
 2101_030_01	f35aaca3e258e5e9821056dd3dbadcbf7159e36a	We don't have a single moment\nto lose!	machine
-2101_030_02	d7e98a766d6e850f4e19f2782f6a4766756d3123	If we don't defeat that Givel\nquickly, the consequences\ncould extend beyond Daftine\nand Daftes to the entire\nuniverse!	machine
+2101_030_02	d7e98a766d6e850f4e19f2782f6a4766756d3123	If we don't defeat that Givel quickly, the\nconsequences could extend beyond\nDaftine and Daftes to the entire\nuniverse!	machine
 2101_030_03	09b7930ecd6562cfeee7d2ff0ae861eebb09fd6f	Now! There's no time! Is\neveryone gathered!? I'm going\nto explain the plan!	machine
 2101_030_04	3752f649e022f6f2439dcd9e17e518a2eae17f4c	Deploy the screen! Hurry,\nhurry!	machine
 2101_030_05	75ebd36a970c34491652f9c399b5fb815f13210a	Y-yes ma'am...!	machine
@@ -109,7 +109,7 @@ message_id	ja_sha1	en	source
 2101_030_13	abfc7b197861c28229a8efddfa1e6a9d01a399db	Why don't you just go stand in\na corner or something?	machine
 2101_030_15	8d196e1db930bd326fa35f423b2bb33971f6f55f	What are you all doing just\nstanding around here?	machine
 2101_030_17	314a9a28081af475d65926cbd527c00fb9ec6ae4	I had a feeling, but she really is\nan elusive person.	machine
-2101_030_18	f19d8880c164ecbe70529f42a124a1f0d2ae03be	That's just Mastima's true\nnature. She's a prime example\nthat lifespan and mental\nmaturity aren't exactly\nproportional.	machine
+2101_030_18	f19d8880c164ecbe70529f42a124a1f0d2ae03be	That's just Mastima's true nature. She's\na prime example that lifespan and\nmental maturity aren't exactly\nproportional.	machine
 2101_030_19	61b7da2a29ed941c354630964a4f3a7b9ce8cc38	Mastima! You can't do that!\nThis ship belongs to the\nCaptain, so you have to listen\nto them!	machine
 2101_030_20	1d89f7b33f3d2e7e3f5df4312556b8285c83c495	Aww, Tika... I don't want to\nlisten to some brat like this.	machine
 2101_030_21	b51f6ef41b8769cae7d1826cf3ec1279147ed86c	You're 3.7 billion years old!\nStop acting like a child!	machine
@@ -131,15 +131,15 @@ message_id	ja_sha1	en	source
 2101_030_39	7189b80c5a4e1699f6ce8c565105ad6e16842327	Asyl will surface in response to\nthe new crest I'm activating,\nand then Coro's main cannon\nwill...	machine
 2101_030_40	0946ce6848e123ed9bf7afe5399177f2228b8835	Boom! That's it!	machine
 2101_030_42	a48d7d73238ba4de8a3ffd616139e2ff45d0f6dd	Don't worry.	machine
-2101_030_43	182faff1d6a90abdf8b8f1d7b78f521512ec70e3	According to Coro, the\narmament of the GFSS-3214F\nis now more powerful than the\nGalactic Federation's latest\ncutting-edge combat ships.	machine
+2101_030_43	182faff1d6a90abdf8b8f1d7b78f521512ec70e3	According to Coro, the armament of\nthe GFSS-3214F is now more powerful\nthan the Galactic Federation's latest\ncutting-edge combat ships.	machine
 2101_030_44	70f525546d3aa9ff6db63081b19e6e8df0591be1	Asyl will be blown to\nsmithereens in a single hit!	machine
 2101_030_45	af725334c2326c648af3feb27affc9ba50aebbcf	You make it sound so easy, but\nis it really that simple?	machine
 2101_030_46	ffd90dd53f0a9398d18fa16cf5ed22e22327f6d1	I told you I've been researching\nthe phenomena in this sector\nsince before the Holy War\nbegan. Trust me on this.	machine
 2101_030_47	fd33798bf473033b1df9ada4d2cf1b4dfe5f868f	For a long time now, I've been\nat a stage where I could\ndestroy Asyl whenever I\nwanted.	machine
 2101_030_48	a02536505dc9c556f54143fbc220b0710e875cde	The reason I chose not to was\npartly because I felt it was\nhelping people.	machine
 2101_030_49	a4ac2a427f0fccac10f952b21e324f369727df34	Huh?!	machine
-2101_030_50	533d886cf2767f1bc2fd4573516fa2c875697809	Among those who emerge from\nthe Ladder of Moonlight, there\nare occasionally individuals who\nhave absolutely no connection\nto the Ladder and come from\nfar-off sectors of space.	machine
-2101_030_51	d1b3e8406f6ffa16b563d19701202e2722b594b2	They are swept up by\nspace-time rifts that have\nnothing to do with the Ladder\nor Asyl, and eventually wash up\nhere.	machine
+2101_030_50	533d886cf2767f1bc2fd4573516fa2c875697809	Among those who emerge from the Ladder of\nMoonlight, there are occasionally individuals who\nhave absolutely no connection to the Ladder\nand come from far-off sectors of space.	machine
+2101_030_51	d1b3e8406f6ffa16b563d19701202e2722b594b2	They are swept up by space-time rifts\nthat have nothing to do with the\nLadder or Asyl, and eventually wash up\nhere.	machine
 2101_030_52	c130c44b34d716dfbd816d510e9fe573d000e199	Once I realized that these\npeople were being protected, I\nfelt even less inclined to stop\nit.	machine
 2101_030_53	d272a2c3544fe0eb5738d355f61f8dc8710498b6	In a manner of speaking, I was\ndoing a good deed.	machine
 2101_030_54	a0afba625dbb9ebb574bd1f0e58238c4d6f60b83	Well, I guess it all depends on\nhow you put it...?	machine
@@ -147,22 +147,22 @@ message_id	ja_sha1	en	source
 2101_030_56	670dcc6036ec173a354aef27285a18c1b20873bc	I absolutely cannot tolerate\nothers manipulating something I\ncreated without my permission.	machine
 2101_030_57	b6e1fe25b12f4e125be403b76432047d5723c7a1	That way of thinking is part of\nwhy the Ladder came into\nexistence in the first place.	machine
 2101_030_58	bd757edf32e07d5f5e236fab878ba5374a05152f	Hm? Wait, Master Mastima.	machine
-2101_030_59	6b06dcd8508fd0cc9707645c97da3db4c461bb02	If we destroy the Moonshadow\nLadder and Asyl, then\nnaturally, the Moonshadow\nLadder won't exist in the\nfuture, right?	machine
+2101_030_59	6b06dcd8508fd0cc9707645c97da3db4c461bb02	If we destroy the Moonshadow Ladder\nand Asyl, then naturally, the\nMoonshadow Ladder won't exist in the\nfuture, right?	machine
 2101_030_60	e97844c934eebbea2928d1ee79320b8ec8b33cb2	That is correct.	machine
 2101_030_61	d6cbeb4ceac100667e422a99ded56005813a8dc9	That's strange. If that's the\ncase, it doesn't explain why\nLady Tika and General Ricardo\nare here.	machine
 2101_030_62	56850892886c14c4038afc574eb40da037c82d1c	...Mastima just said it. People\nwho have nothing to do with\nthe Ladder get washed up\nhere too.	machine
 2101_030_63	1e2f229d878cee30db34dc7f097d3f3e7de33853	I was unaware of this since I\nwas the one who protected\nTika, but...	machine
-2101_030_64	37758064400a352c2323cf74e798db26c52fddbc	The Daftine Space Force\nescort ship commanded by\nRicardo had a vague idea of\nwho attacked the transport\nship.	machine
+2101_030_64	37758064400a352c2323cf74e798db26c52fddbc	The Daftine Space Force escort ship\ncommanded by Ricardo had a vague\nidea of who attacked the transport\nship.	machine
 2101_030_65	c6af559de70d0e08be53c21d7e08a7e6185376e0	What?!	machine
-2101_030_66	c1fd00366b19c02e5c9d1d0bfa6a19fee2d5aace	Back in my day, the Daftine\nmilitary had intel that several\nadvanced planets in our\nalliance were being invaded by\na mysterious force.	machine
-2101_030_67	a278338d56d3e7b8219e40c82661fc4f44ffcf2a	At the time, we'd observed an\nempire ruled by a unified will\nlifeform in the far reaches of\nspace, so I figured it was\nsomething like that...	machine
+2101_030_66	c1fd00366b19c02e5c9d1d0bfa6a19fee2d5aace	Back in my day, the Daftine military had\nintel that several advanced planets in\nour alliance were being invaded by a\nmysterious force.	machine
+2101_030_67	a278338d56d3e7b8219e40c82661fc4f44ffcf2a	At the time, we'd observed an empire\nruled by a unified will lifeform in the far\nreaches of space, so I figured it was\nsomething like that...	machine
 2101_030_68	82bd4b25e39d0aafc4aa33416619a863bb47a673	But as it turns out, it wasn't.\nAnd I'm the only one who\nknows.	machine
 2101_030_69	2584be4f8093e2d82f14dd23d53e070c36a731e7	Only you, Ricardo?	machine
 2101_030_70	6e01606939ba2b5fce309eb7ea34479dab090930	<font color=blue>Ricardo</font> Back then, I was the\nfire control officer on the\nescort ship.	machine
 2101_030_71	b2e6fd36232dae3ce5b5aecc5d766c9326cfb97e	That's why I saw it.	machine
 2101_030_72	a039265897edce1a1a74bcdf3f67043ba88af039	A Class 3 energy wave was\nfired from a distance so\nextreme I didn't think it could\npossibly hit.	machine
 2101_030_73	0aaafb2438d09f0d2e3da4068b42a6b05662d1b4	You'd be even more shocked if\nyou saw where it came from.	machine
-2101_030_74	4c94e80a4fba69f3f8a47c6c71f7cb19edfe26c9	It wasn't a starship or a fixed\nbattery at a space station.\nThose movements... no matter\nhow you look at it, they were\nthose of an organic lifeform.	machine
+2101_030_74	4c94e80a4fba69f3f8a47c6c71f7cb19edfe26c9	It wasn't a starship or a fixed battery\nat a space station. Those movements...\nno matter how you look at it, they were\nthose of an organic lifeform.	machine
 2101_030_75	42553e47fa1dfb0fbf25bb2cdaa138b518038cba	<font color=blue>Valka</font> ...That's impossible...!	machine
 2101_030_76	5d1ae3d1418e287b6fc2eba1acb7d7d7bfa8a177	<font color=blue>Ricardo</font> It was a shot fired\nfrom a distance that defies all\nlogic.	machine
 2101_030_77	9d8b88c40a44da4f47f306596786cebeb77220c2	Actually, I don't even know if it\nwas a "shot" at all.	machine
@@ -180,7 +180,7 @@ message_id	ja_sha1	en	source
 2101_030_89	887edd58babf494bb95791383ad93e5ca743c07b	I'll just try not to overthink it.	machine
 2101_030_90	2268eea840cf51649206f99eb75190bbe4969813	In any case, destroying the\nLadder and Asyl now offers\nmore benefits than leaving\nthem be.	machine
 2101_030_91	30b6f9c817e6dc3f0e00fcb3898051a527227cdd	However, in the end, we must\nstop that fool Givel.	machine
-2101_030_92	d5860915c703f77549175f664d469922eda4cb59	Once Asyl is destroyed, we will\nlikely head straight for the\nBaschen Imperial Castle. From\nthere, it will be a\nclose-quarters battle.	machine
+2101_030_92	d5860915c703f77549175f664d469922eda4cb59	Once Asyl is destroyed, we will likely\nhead straight for the Baschen Imperial\nCastle. From there, it will be a\nclose-quarters battle.	machine
 2101_030_93	43d00317df4135eb3f8aafb94f0dd853d175c21c	We can't let them turn the kind\nof power that can destroy Asyl\ntoward the Imperial Castle or\nthe Imperial Capital...	machine
 2101_030_94	2e38ff33063fe5a04d42c742867f80341636aac1	We can't afford to lose this\ntime.	machine
 2101_030_95	7385efe900e7c4d5665c4c85d60fc8bbea7b4425	Mastima, will you come along\nfor that fight?	machine
@@ -214,7 +214,7 @@ message_id	ja_sha1	en	source
 2102_100_26	9056d8e35f69c9218284df263590d8813ee4cc07	The only thing you and Tika's\nfamily have in common is that\nthe siblings have a huge age\ngap!	machine
 2102_100_27	96a77cd200fdfb0dfa9e47cf4807d49e8dd7316b	Is there even anything to worry\nabout!?	machine
 2102_100_28	30ac3b7c45dc180987651ea62cd077c76e654296	Huh...?	machine
-2102_100_29	3601ac0397f707e78699ff0c09c642730390cea0	...Tika and Ricardo have always\nbeen close despite the age\ngap, and they've supported\neach other even through these\nharsh times, right!?	machine
+2102_100_29	3601ac0397f707e78699ff0c09c642730390cea0	...Tika and Ricardo have always been\nclose despite the age gap, and they've\nsupported each other even through\nthese harsh times, right!?	machine
 2102_100_30	3db16519d2452bfaa72de23845981ccac9eb3bde	Did your father or brother ever\ntry to support you or\nunderstand you?	machine
 2102_100_32	3b2052bc437ee1e9716b8cbba7e1d70396572b2d	I know. You've been trying your\nbest to find some common\nground with them, Eu.	machine
 2102_100_33	fe00da0e006c568c0ffbbe461562d9c9dfc54968	But they have no intention of\ndoing the same.	machine
@@ -241,7 +241,7 @@ message_id	ja_sha1	en	source
 2102_110_02	612f6299e08c91e95b557569f3a35ed4c9d2d99e	Hmm?	machine
 2102_110_03	135e0b0bb6b29e7a7ff0bd91af8b3431bb3a9143	Do you know anything about\nthe power of the Beast Witch?	machine
 2102_110_04	512984736ee169f0381c2c93b9f43e6a947ad154	Yes, I've heard about it from\nTika and Ricardo, and I'm\naware of it through Coro and\nRekoro's records...	machine
-2102_110_05	dccefb6c1e1d20051f54104c592c9063857a457a	Unfortunately, it seems the\nBeast Witch's symbol arts were\ndeveloped independently by\nGivel based on the symbols I\ndiscovered.	machine
+2102_110_05	dccefb6c1e1d20051f54104c592c9063857a457a	Unfortunately, it seems the Beast\nWitch's symbol arts were developed\nindependently by Givel based on the\nsymbols I discovered.	machine
 2102_110_06	452a91a26d451dddd7816829766909fc73ab2234	I haven't finished analyzing\nthem yet.	machine
 2102_110_07	938a94808fe6d98e57f0b4d4b817752365edc2d4	Which means I cannot remove\nthose symbols from you.	machine
 2102_110_09	43e88d3cd4ed08f68e069881e3f8ad7538a763dd	That is what you wanted to\nknow, isn't it?	machine
@@ -257,10 +257,10 @@ message_id	ja_sha1	en	source
 2102_110_19	edd57c76596646c77589b18219d427c10ac6601b	Whether you win or lose\nagainst Givel, your life\ncontinues as long as you don't\ndie.	machine
 2102_110_20	190cd909942f59ff9141f0f5d103bc6c5bb0e06b	This isn't some final battle for\nyour entire existence.	machine
 2102_110_21	4dfa24797e283deff9ff159681e33157ac1e4426	Even I still have moments\nwhere I worry about the nature\nand morality of my own power.	machine
-2102_110_22	5d8f813165b559cdc323599b320df234fc1cd4a8	People tend to think of doubt\nand worry as shackles in a\ncrisis, but it's also true that\nthey can give birth to a new\nkind of strength.	machine
+2102_110_22	5d8f813165b559cdc323599b320df234fc1cd4a8	People tend to think of doubt and\nworry as shackles in a crisis, but it's\nalso true that they can give birth to a\nnew kind of strength.	machine
 2102_110_23	0716d3d39ccbe310503f2f5e9777400e474c3cbc	If you like, I can even help you\nresearch it once the battle is\nover.	machine
 2102_110_24	6c9793b6e1c99cef8795f0ca60eed3b6f65c0531	...May I take you up on that?	machine
-2102_110_25	c7b5a900be5fc410e5d58fe3a6f10d6be34bc9c5	I don't care for the fact that\nit's a crest art created by\nGivel, but my curiosity\nregarding new crests far\noutweighs that.	machine
+2102_110_25	c7b5a900be5fc410e5d58fe3a6f10d6be34bc9c5	I don't care for the fact that it's a\ncrest art created by Givel, but my\ncuriosity regarding new crests far\noutweighs that.	machine
 2102_110_26	373f55643258a01040519ef957d122c1c040c29b	...Actually.	machine
 2102_110_27	5590ff8011105dbc9611adfe36ab2f63edc164d3	Eh?	machine
 2102_110_28	441c7234f4af50fd0b0dc387d72187f7fdfa0e55	I wouldn't mind starting my\nresearch right now, you know?	machine
@@ -286,8 +286,8 @@ message_id	ja_sha1	en	source
 2102_120_15	73dab499a087cc018b3111658e1e3bffadf15140	Since you and I ended up like\nthis, it wouldn't be strange if\nthey were still alive.	machine
 2102_120_16	0c9339c25a7c51b51078308f8bd73605cef80dd8	I've been thinking about what\nto do once the battle in this\nera's Daftine is over.	machine
 2102_120_17	922367cb2b1c294810577afb0005f335d4501a74	It's quite different from how I\nimagined things, but well, I'm\nmanaging to get along with\nyou.	machine
-2102_120_18	a9b03d04137f7c4e6559a4b173c2b02c6a1ef8ca	I thought about waiting at\nMastima's place and hoping\nthey'd show up, but Mastima is\nthe only one who can afford to\nwait like that.	machine
-2102_120_19	93ae41a11b232576210c389d0a9e9fad46ca209f	Besides, if they crossed\nthrough time for the same\nreason we did, there's a\nchance they were sent\nsomewhere else entirely.	machine
+2102_120_18	a9b03d04137f7c4e6559a4b173c2b02c6a1ef8ca	I thought about waiting at Mastima's\nplace and hoping they'd show up, but\nMastima is the only one who can afford\nto wait like that.	machine
+2102_120_19	93ae41a11b232576210c389d0a9e9fad46ca209f	Besides, if they crossed through time\nfor the same reason we did, there's a\nchance they were sent somewhere else\nentirely.	machine
 2102_120_20	384c1755f7b476639c85bc9e4df0bade118a294e	I suppose it's like trying to find\none specific grain of sand in a\ndesert...	machine
 2102_120_21	ddbd7bcd2f5a4a9dc477e6fc40e8db65be8f317f	...Yeah, you're right.	machine
 2102_120_22	6c18ef2454d5dbe648f75c31f7b59aad8b92c8fe	Come to think of it, Dad and\nMom were still fighting with\nGrandpa and Grandma when\nthey left.	machine
@@ -329,12 +329,12 @@ message_id	ja_sha1	en	source
 2102_130_34	148cdb606ed09321f83da34ceed50d4cc10fe684	From the perspective of\nsomeone who knows nothing of\nEx, EnII, or any other Hardier\nWarrior of Morphus...	machine
 2102_130_35	22b9f20e5e8238f6309a87c6b8373b638d5e5a2e	You are a wonderful person.	machine
 2102_130_36	23f9fcd6d110d60711919c61c3662d4182bfbd41	Huh...?	machine
-2102_130_37	71c84477b3837aaee907e7aa1e0b3e7361376183	You know that battle is a\nterrifying thing and you never\nseek it out, yet you possess\nthe strength and resolve to\nthrow yourself into the fray for\nthe sake of your friends.	machine
+2102_130_37	71c84477b3837aaee907e7aa1e0b3e7361376183	You know that battle is a terrifying\nthing and you never seek it out, yet\nyou possess the strength and resolve\nto throw yourself into the fray for the\nsake of your friends.	machine
 2102_130_38	cf82cb41ae071cec779626f6ab1ead199a4eedb0	If that isn't wonderful, I don't\nknow what is.	machine
 2102_130_39	3e80333817591fb36b3afde174023aeda2d92946	I-I don't! I don't think... that\nbattle is terrifying...!	machine
 2102_130_40	ca4db7b86b2275113c507bee700031a0b9923d48	...I don't... think that...	machine
 2102_130_42	b846e753770264491777f4fde32e875bef4d638c	...I just thought... that I wasn't\nallowed to feel that way...	machine
-2102_130_43	bba293efdddf8a5e70c3aa28e845430d5e906c46	There is no such thing as a\nbattle that isn't terrifying. I\nhaven't lived as long as\nMastima, but even I know that\nmuch.	machine
+2102_130_43	bba293efdddf8a5e70c3aa28e845430d5e906c46	There is no such thing as a battle that\nisn't terrifying. I haven't lived as long as\nMastima, but even I know that much.	machine
 2102_130_44	822d186e438b54b9a5551ff482246d9c6e52a32a	It is simple to hold your own\nagainst Mastima.	machine
 2102_130_45	7b1199926871890632edc01b3dc049b9c979ec45	Just face the battle head-on,\nthe same way you have while\nspending time with the\ncaptains.	machine
 2102_130_46	90b73c1fc47e6bd9dc5f5573dd236a8e72435493	If you do that, you will\neventually figure out how to\ndeal with Mastima, as someone\nwho shares the same universe.	machine
@@ -368,7 +368,7 @@ message_id	ja_sha1	en	source
 2102_140_17	d036532a45c75d94805ed876f1863f38e83f3a3e	This is getting deleted!	machine
 2102_140_18	365a82ea05653795933555a1a78eeb251ed7d5d5	Awawawawa!?	machine
 2102_140_20	9f5fb8827fc307effa1f5f3277c51e090858c3ce	I-I'm sorry...!	machine
-2102_140_21	3e3b3a96ba15ff21468e6d9a64b4c8388ca48620	Individually, these aren't\nharmful to us, but it's a\nproblem when functions the\ncaptain doesn't know about are\nrunning on their own.	machine
+2102_140_21	3e3b3a96ba15ff21468e6d9a64b4c8388ca48620	Individually, these aren't harmful to us,\nbut it's a problem when functions the\ncaptain doesn't know about are running\non their own.	machine
 2102_140_22	dfc4fb68d2585c7c10588daa46e28d40645bca70	At this rate, Mastima might\njust treat the ship as her own\npersonal property one of these\ndays!	machine
 2102_140_23	d308d085662ee8f08fbb9808025465895c7c5597	Verda, could you check me as\nwell...?	machine
 2102_140_24	ef7a4e458271ab247f3cd5d63f3e89d312cc740b	Seeing how much was done to\nCoro, I've become a little\nanxious.	machine
@@ -377,7 +377,7 @@ message_id	ja_sha1	en	source
 2102_140_27	d7b761d8de0a8139b64983281ad6ce2f0384108e	I-is something wrong!?	machine
 2102_140_28	e7ddb4a4c584b0d1504354a8b6815522007b90cf	There's a backdoor installed.\nIt's set up to send the human\nvital data Rekoro observed to\nsome unknown location.	machine
 2102_140_29	99a466c990481844e8fb4496d88e95d45c7ea2aa	What!?	machine
-2102_140_30	df0681340adf1feac86cdfb0d9a97d0b2cd8e4da	There are a lot of entries\nspecifically regarding Tika.\nThey likely intended to keep\nmonitoring Tika even after she\nleft the satellite Mastima.	machine
+2102_140_30	df0681340adf1feac86cdfb0d9a97d0b2cd8e4da	There are a lot of entries specifically\nregarding Tika. They likely intended to\nkeep monitoring Tika even after she\nleft the satellite Mastima.	machine
 2102_140_31	e5c1b8cbda1443a6424408d33fe9a0dca01e0347	But when did this happen!?	machine
 2102_140_32	fa3fbb57080e4808026089295a09bb3b38ee2d2b	I was threatened by Ricardo,\nbut...	machine
 2102_140_33	9e8ed63b1ff3915d9251b028ce3d0f4694959907	I made sure Tika's personal\ninformation was strictly\nclassified so it couldn't be\nviewed carelessly!	machine
@@ -425,7 +425,7 @@ message_id	ja_sha1	en	source
 2103_210_04	5ea419801a190145f6859ec0677e4fa4cbf19f35	Captain... everyone...	machine
 2103_210_05	679a09abc8388943466b5efbc3a86bc282d90c75	Give them a warm welcome.	machine
 2103_210_06	cf1204c09d49d33aa5a34503a4ce38577c398f4b	W-what is that...!	machine
-2103_210_07	0228e510dd9fb4f4da87859d77ff57342678aca1	Heh heh heh. These are the\nsame Crest Creatures I sent\ninto Ex Giva. I don't expect\nthem to bring the enemy down\non their own, but they should\nserve as a decent threat.	machine
+2103_210_07	0228e510dd9fb4f4da87859d77ff57342678aca1	Heh heh heh. These are the same\nCrest Creatures I sent into Ex Giva. I\ndon't expect them to bring the enemy\ndown on their own, but they should\nserve as a decent threat.	machine
 2103_210_08	b6fb4cc5750234c58f7c0bc1e46db873ac1d69ac	You keep saying things just to\nmake me mad, but you actually\nwant me to cooperate with\nyou, don't you!	machine
 2103_210_09	5515e8052fdfdf3264334fb63c92ddd07e84d08a	Of course.	machine
 2103_210_10	34114ea77f154d18e96ff330509648d9f66b3945	I told you, didn't I? Regardless\nof your will, that power will\nbecome mine.	machine
@@ -461,12 +461,12 @@ message_id	ja_sha1	en	source
 2103_220_31	ebcc518c6afcf21f140d63ecd00331686b1482ef	Huh!?	machine
 2103_220_32	dcf857345509fde751d5e4cec371e4944131daba	Internal sensors detecting an\nanomaly! An unregistered\nlifeform has appeared on the\nstarboard aft!	machine
 2103_220_33	97f7d499bd2f8d5e2685f05aee59083d1f3fdc12	They're playing with us...! I bet\nthat thing has appeared inside\nthe ship!	machine
-2103_220_34	633fcafdb48198f5640d888191af2cbff9757e39	Tika's hypothesis is correct! I\nhave confirmed the\nappearance of a Crest\nCreature of the same type as\nthe ones that attacked Cosmo\nCity in the starboard\nresidential sector!	machine
+2103_220_34	633fcafdb48198f5640d888191af2cbff9757e39	Tika's hypothesis is correct! I have\nconfirmed the appearance of a Crest\nCreature of the same type as the ones\nthat attacked Cosmo City in the\nstarboard residential sector!	machine
 2103_220_35	1dcf88a6d055cfcb030d405ed7c18559325abbd3	Rekoro! I'm going to go check it\nout! Keep the medical system\non standby, just in case!	machine
 2103_220_36	9e278498949a0b0ce436faf3bfc8398b44321cbe	Understood!	machine
-2103_220_37	72a8fe5ca6fc7aa4d49b3ccea5bfd421d80f38eb	Captain! I request that you\nallocate more resources to the\nship's inertial cancelers!\nClose-quarters combat is\nimpossible with this much\nshaking!	machine
-2103_220_39	b8cb36ee9fb9905b8d212b391808d6ffcfab95fe	Roger that. Hey, Coro! Divert\nresources to the inertial\ncancelers! Henri and I will take\non a bit more of the fire\ncontrol load!	machine
-2103_220_40	d624b86b39c910317e19589fe13d321d33acee1e	Based on the remaining Crest\nreactions in the surrounding\nspace, we don't have much\ntime to spend on\nclose-quarters combat.	machine
+2103_220_37	72a8fe5ca6fc7aa4d49b3ccea5bfd421d80f38eb	Captain! I request that you allocate\nmore resources to the ship's inertial\ncancelers! Close-quarters combat is\nimpossible with this much shaking!	machine
+2103_220_39	b8cb36ee9fb9905b8d212b391808d6ffcfab95fe	Roger that. Hey, Coro! Divert resources\nto the inertial cancelers! Henri and I will\ntake on a bit more of the fire control\nload!	machine
+2103_220_40	d624b86b39c910317e19589fe13d321d33acee1e	Based on the remaining Crest reactions\nin the surrounding space, we don't have\nmuch time to spend on close-quarters\ncombat.	machine
 2103_220_41	0bbdfacf49df850e6ffbfc885c445fff506e5158	Miss Tika won't be able to\neliminate them all in time on\nher own! Captain!	machine
 2103_220_43	80fdee6e603a33c3666a4c60cf4bd23208ed54cb	Of course! Let's go too!	machine
 2103_220_44	536431103cbcf8f92ca110b8142f6ff793225db0	Finally, my turn! There's no way\nwe're letting Tika go alone!	machine
@@ -480,14 +480,14 @@ message_id	ja_sha1	en	source
 2103_230_01	d3058aad0dcef457c9fd8f83f19d4282218db175	Captain! Coro! Mastima!	machine
 2103_230_03	8e9c94a4f05d732d5657e3774704853d76a4ac95	I've confirmed a massive Gem\nreaction over the waters of\nDaftine! Asyl has surfaced\nonce again!	machine
 2103_230_04	686269fd4121a1277ebda623c89f4d84a7f13ff3	Hehehe, Coro, you're ready,\naren't you!	machine
-2103_230_05	0b40350194a85eafc73dd8266dc8c34fd99bcb4e	B-but, while the main cannons\nare firing, the ship's inertia\ncancel function is halved! It'll\nbe dangerous for Tika and the\nothers!	machine
+2103_230_05	0b40350194a85eafc73dd8266dc8c34fd99bcb4e	B-but, while the main cannons are firing,\nthe ship's inertia cancel function is\nhalved! It'll be dangerous for Tika and\nthe others!	machine
 2103_230_06	67bcc19f41c40cc2b55d221c6d5e6e8251d226a6	...Did you hear that, Tika! Hurry\nup and dispose of the\nnuisances on board and get\nback here!	machine
 2103_230_07	396ec7802cefd3cb26a63197a2105a44ea0e776d	Good grief, she really just says\nwhatever she wants.	machine
 2103_230_08	a849754dee1f09523f1b8f719dc8dd2ae0cf45b5	It's okay! We've fought them\nbefore, and with Big Brother\nEuwin and the others, we'll be\ndone in no time!	machine
 2103_230_09	f2aac5d171f870ce5c39e0aa26ec2a91e99ddf8e	Come on, let's get this over\nwith quickly!	machine
 2103_230_10	105a400d72dc42b174d480402aa399eeddddf7be	If this were Rekoro from a little\nwhile ago, they'd probably have\nfainted just hearing that!	machine
 2103_230_11	1850178b201db85f2c801f633e8b1d253b5349cc	...I can hear them. Just beyond\nthis door! It seems our guests\nare dissatisfied with the ride\non this ship.	machine
-2103_230_12	4de7c09ed15f3a99fa0233c27d05bea6287d6f2c	Stowaways acting all high and\nmighty! I'm gonna shove you\ninto some kind of\nshimmy-thingy and turn you\ninto a pouch!	machine
+2103_230_12	4de7c09ed15f3a99fa0233c27d05bea6287d6f2c	Stowaways acting all high and mighty!\nI'm gonna shove you into some kind of\nshimmy-thingy and turn you into a\npouch!	machine
 2103_230_13	5b0da3b3f44850d06d72c386d995401cb713a470	True. It wouldn't be an\nexaggeration to say that\nwhether we can end the Holy\nWar depends on this battle.	machine
 2103_230_14	2d45c147c739134c52e1871cc1abff65222eee93	We can't afford to be held up\nhere if we want Coro to\ndestroy Asyl as soon as\npossible!	machine
 2103_230_15	48a8aa5c1097eddd8f400c16edd4881da587a346	Once the door opens, I'll push\nstraight through! The simulator\nis just past the main gate!	machine
@@ -516,7 +516,7 @@ message_id	ja_sha1	en	source
 2103_240_24	d98b847b34c144121c7ae29e4a1fcd452b0e56ee	What now... what's happening\nthis time?!	machine
 2103_250_01	37db55c7d2681b454b4b4c8f805f0a6ef22f616c	Haha... we did it! Asyl is\ncompletely wiped out!	machine
 2103_250_02	4bafd461d64d3632ce0edb953b446e3a3ad60ee5	The ones in our path are\nvanishing one after another as\nwell!	machine
-2103_250_04	4239949b82fae29a2e1c1f7990de25be7225b51b	Yes! I've confirmed the\ndisappearance of Asyl and all\ncrest reactions within! The\ndestruction of Asyl was a\nsuccess!	machine
+2103_250_04	4239949b82fae29a2e1c1f7990de25be7225b51b	Yes! I've confirmed the disappearance\nof Asyl and all crest reactions within!\nThe destruction of Asyl was a success!	machine
 2103_250_05	51272dd3e8fb770a2a170ac757cafb48581523bc	...With that, the first phase of\nthe operation is complete.	machine
 2103_250_06	6971b10cde71a425f3836468e841fa3ec81e74bf	Now, all that's left is Givel...	machine
 2103_250_07	9cfec1388c25f3d0480d709ca60a1bc988c97e16	W-what is this reaction!?	machine
@@ -544,7 +544,7 @@ message_id	ja_sha1	en	source
 2103_250_30	f48d4b90eb06e4d78cfa34c0204d3e2f0dbaf16e	Could this be the Giverese's\ntrue objective...?	machine
 2103_250_31	3bc6d6c7b53a239619625da7fbfc31dcee4a81f0	Some of the humans who have\nturned into Thornite are\nshowing signs of extreme\naggression!	machine
 2103_250_32	1f42b4d85d2541e27dc0f5f1030ba7c16149d929	Some of them are attacking\nthe people around them who\nhaven't turned into Thornite!	machine
-2103_250_33	4da8180d9cacae27d2aeb7b82de4b48261ffe659	What the hell is he trying to\ndo?! If he needs a mass of\npeople with glowing stakes in\nthem, the Beast Witch could've\njust mass-produced them!	machine
+2103_250_33	4da8180d9cacae27d2aeb7b82de4b48261ffe659	What the hell is he trying to do?! If he\nneeds a mass of people with glowing\nstakes in them, the Beast Witch\ncould've just mass-produced them!	machine
 2103_250_34	21d1cd6e1e23115ba177db23b78e206e39354717	And... something's strange.\nAren't most of the\nThornite-transformed people...\nlooking at the sky?	machine
 2103_250_35	91bca760d9c5710d9ec4331aa463aa864ac999ad	The sky? They're looking at\nthe sky?	machine
 2103_250_36	e22e669fd037735cac54550e86ef32f64a7256c5	This is just like...!	machine
@@ -553,26 +553,26 @@ message_id	ja_sha1	en	source
 2103_250_39	052b3f21ccc2d49f26df4676fc5b594db0a7bc7d	...It doesn't matter! Captain!\nCoro! Charge! We cannot\nsimply leave things as they are!	machine
 2103_250_40	d4758d3efd35cdb46484949f334cd33f296b9d80	Head directly for the skies\nabove Baschen!	machine
 2103_250_42	134dfcd69a6a78643cc5c0c986049c59e6513daf	Understood. There's no more\ntime for hesitation!	machine
-2103_250_43	40e06458a2212a500a94e7d057b20df8fc0ed9b2	Tika, everyone, get ready!\nWe're heading into\nclose-quarters combat under\nfar more eerie circumstances\nthan we first anticipated!	machine
+2103_250_43	40e06458a2212a500a94e7d057b20df8fc0ed9b2	Tika, everyone, get ready! We're\nheading into close-quarters combat\nunder far more eerie circumstances\nthan we first anticipated!	machine
 2103_250_44	c7dd6bef776febbbc3d5b58066ebbb9f8654397f	Here we go!	machine
 2104_260_01	553350d5a9445da531d9b6733350adb8db0d3d93	This is... What on earth did you\ndo...?	machine
 2104_260_02	4fd9b83951edca6f71dd2b1d2737d4c6538b8d9f	I haven't done a thing.	machine
 2104_260_03	3815bf239be265f699b7e7b7526f3aaafee519d5	This is... let's see.	machine
 2104_260_04	bb79450338a42686fab489d74634ff058d996419	To borrow the words of these\ncreatures, it is the "laws of\nnature."	machine
 2104_260_05	94b1050ce5acfa1c6ecf33837c92a07138ddd138	Nature...? What are you talking\nabout...?	machine
-2104_260_06	bcdb74bc3fc148f19825ed3e14ed07ca42b7596d	Just a moment ago, the holy\nland of Asyl was destroyed. I\nassume your comrades did\nsomething under Mastima's\nguidance.	machine
+2104_260_06	bcdb74bc3fc148f19825ed3e14ed07ca42b7596d	Just a moment ago, the holy land of\nAsyl was destroyed. I assume your\ncomrades did something under\nMastima's guidance.	machine
 2104_260_07	1a476f9f6f439d4a542ab597f75f685d940aa525	And at that exact moment,\nthese things appeared.	machine
 2104_260_08	3f2f1aedfafefca2362e051391038a831aa3d27e	In other words, you could say\nthis whole situation is the fault\nof your comrades who tried to\nsave you, Evelysse.	machine
 2104_260_09	0f7ab58ab9c83aad000e1e3b86bacff3d9998494	You... you absolute...\nAAAAAHH!!	machine
 2104_260_10	77316014cf2979963063fc3d444c586467c587c1	Glaring at me like that won't\nchange anything.	machine
-2104_260_11	158f0189807ffe11487dc2291523f91d43007e34	If Asyl were destroyed without\nchanging Daftine's current\nsituation, this would have\nhappened regardless of who\nwas responsible.	machine
+2104_260_11	158f0189807ffe11487dc2291523f91d43007e34	If Asyl were destroyed without\nchanging Daftine's current situation,\nthis would have happened regardless of\nwho was responsible.	machine
 2104_260_12	5cdb4f38f2a9cee7299a0f81c734050986a6b721	It just so happens that this\ntime, your comrades were the\nones who pulled the trigger.	machine
 2104_260_13	6a13dd90665700b6b079b7191fc99ca921ea57c0	I will say it once more: this is\nthe "law of nature."	machine
 2104_260_14	de8acd64ef71e8477ef17b8285e1c2c4dd7e1d38	Stop it! Just stop it! Humans\nturning into Thornite... that's\njust...!	machine
 2104_260_15	74272ed093e62e36748c67df53ca5448ba219bf6	Those things you call Thornite...	machine
 2104_260_16	cc241db9c24b4ea679a9014641e5bae3ecb41e29	Have you ever wondered what\nthat light piercing their bodies\nactually is?	machine
 2104_260_17	3dc060f067155a8d6274828555821ba1be587226	...What?	machine
-2104_260_18	c49ae6d5504b7cecf21035d85878c7dafef5a7a1	<font color=blue>Givel</font>: Despite piercing the\nflesh, there is no physical\ndamage, nor any effect on\ngenes or Gem power, as one\nwould imagine from its optical\nappearance.	machine
+2104_260_18	c49ae6d5504b7cecf21035d85878c7dafef5a7a1	<font color=blue>Givel</font>: Despite piercing the flesh, there\nis no physical damage, nor any effect\non genes or Gem power, as one would\nimagine from its optical appearance.	machine
 2104_260_19	78d1217d5f657988b58fd3a809696e7e4d6dbf1f	The true nature of that light,\nwhich drastically enhances\nphysical abilities in exchange\nfor a bit of ferocity...	machine
 2104_260_20	2fd1af323a800fbca461d3ee9344450cea70384b	Do you not wish to know?	machine
 2104_260_21	e80a908875b8c134def800bc9215d0cbb5a023cb	<font color=blue>Eve</font>: ...W-why would you know\nsomething like that...!	machine
@@ -593,7 +593,7 @@ message_id	ja_sha1	en	source
 2104_260_36	9b3c5d2647d70fcd11ce64f45cb3b6f0cd936f03	<font color=blue>Eve</font> ...!	machine
 2104_260_37	f76180f8331d2274bc42ce1c7df5a2f837f4ef4e	<font color=blue>Givel</font> Detecting and repairing\nspace-time rifts.	machine
 2104_260_38	2e04f927899ed768b82ae0a24dd0951b8c24b697	This is a perfectly clear\nexample.	machine
-2104_260_39	a280e8291141dbb9bd632eb90910b56d0dc0659d	Thanks to the Moonshadow\nLadder, this planet is an\nenvironment where those\nthings appear with particular\nease.	machine
+2104_260_39	a280e8291141dbb9bd632eb90910b56d0dc0659d	Thanks to the Moonshadow Ladder,\nthis planet is an environment where\nthose things appear with particular\nease.	machine
 2104_260_40	e3a57d411da9dff34b811eca4b7e17e026659337	Especially now, since Asyl has\nlet go of Mastima's Gems...	machine
 2104_260_41	2900c1a03b77ded83c0c216c68a97d348a358f4f	They shall become Daftine's\nstars in the sky, serving as a\nprecious sacrifice to stabilize\nthe space-time of this world.	machine
 2104_260_42	8ab3594316dad49e7e0a2e873d64b4d162f773cd	You...! How can you be so\nindifferent!	machine
@@ -727,8 +727,8 @@ message_id	ja_sha1	en	source
 2105_300_05	845df8c564bb3244ed9983e1320961c6fcad0467	Everything here is something\nI've never seen, yet it feels like\nI've seen it all before... It's\ncreepy.	machine
 2105_300_06	80f382c71cdc74585bd62132b37edf1577502017	What is this place?	machine
 2105_300_07	64258eb02915a9ca06b8ec8271bd4783c19a7806	It projects the consciousness\nof those who traverse the gap\nto change its form.	machine
-2105_300_08	76479155b0c65be916171f103a2f62762613b3be	Since Givel is the one who\nopened this gap, he is\ncurrently the master, and his\nimage is being strongly\nprojected here.	machine
-2105_300_09	a7ec0637da43445509806d23a2e66ee9b81c9008	We must hurry. If he escapes\nthe gap, this makeshift Eye of\nTruth won't be enough to keep\nthe space-time rupture fixed.\nWe'll be left behind.	machine
+2105_300_08	76479155b0c65be916171f103a2f62762613b3be	Since Givel is the one who opened this\ngap, he is currently the master, and his\nimage is being strongly projected here.	machine
+2105_300_09	a7ec0637da43445509806d23a2e66ee9b81c9008	We must hurry. If he escapes the gap,\nthis makeshift Eye of Truth won't be\nenough to keep the space-time rupture\nfixed. We'll be left behind.	machine
 2105_310_01	3b0491c2c47499b81793b8d96097d34061cfdd1e	<font color=blue>Ricardo</font> But how the hell is it\nso convenient that they built\nsomething that lets us just\nbarge in here?	machine
 2105_310_02	952fcfb7d7458067d5a565e093601df0d0befe83	<font color=blue>Mastima</font> I told you about this\nbefore.	machine
 2105_310_03	f26eeb080feab37ca27d04a8289330db902632ce	That facilities similar to Asyl...\nor rather, equipment like that,\nexists throughout the universe.	machine
@@ -745,13 +745,13 @@ message_id	ja_sha1	en	source
 2105_310_14	47a2a83d919ccfe38d22f289895eaa99d8e7fc2c	He must have a specific goal in\nmind for bringing it forth.	machine
 2105_310_15	80f42b820d812b10af0ce922c7922880a228efe2	<font color=blue>Mastima</font> Once I realized that, it\ndidn't take much effort to\nguess the rest.	machine
 2105_310_16	f3cf30c041d08a9a2e8485fd60fc9f518dcf3b87	The reason he was so\nobsessed with Evelysse and\nKarlyn Kayson ultimately came\ndown to summoning sigil arts.	machine
-2105_310_17	36aa7da8b3768e75a7b3310b72f0312afafbcc88	And the "summoned targets"\ncalled forth by existing\nsummoning sigil arts are, in\nmost cases, known to be\nsummoned from a specific\nplace.	machine
+2105_310_17	36aa7da8b3768e75a7b3310b72f0312afafbcc88	And the "summoned targets" called\nforth by existing summoning sigil arts\nare, in most cases, known to be\nsummoned from a specific place.	machine
 2105_310_18	5af173fd0c64d83eea790d64073e7bbfe04db709	<font color=blue>Karlyn</font> A specific place?	machine
 2105_310_19	f5defa1d9fbe1f0668424822edc887f131c6eef7	<font color=blue>Mastima</font> A place called the\nDemon Realm.	machine
 2105_310_20	64ecf8950a95ff5b7e118f055ff3761b5b3ddffe	<font color=blue>Welch</font> The Demon Realm... this\nisn't some children's picture\nbook...	machine
 2105_310_21	ed4e4abadf6ebaf7e49f0cfaaab00e89e5ac76de	<font color=blue>Mastima</font> But it is a fact. The\nsigil arts of the well-known\nGremlin Lear, for instance,\nhave been analyzed as such.	machine
-2105_310_22	ca27873ed929ceb1c88cb6adbddecfb008755127	<font color=blue>Valka</font> Come to think of it... I've\nheard that one of my father's\ntraveling companions was a\nsigil user who could summon\nbeasts from the Demon Realm.	machine
-2105_310_23	cd2af85a9d25a75e1ac86f90f6ad06c1f35334bc	<font color=blue>Mastima</font> The Demon Realm...\nthis is merely my speculation,\nbut among the countless\nparallel worlds, it is a universe\nthat followed an exceptionally\ndark path.	machine
+2105_310_22	ca27873ed929ceb1c88cb6adbddecfb008755127	<font color=blue>Valka</font> Come to think of it... I've heard\nthat one of my father's traveling\ncompanions was a sigil user who could\nsummon beasts from the Demon Realm.	machine
+2105_310_23	cd2af85a9d25a75e1ac86f90f6ad06c1f35334bc	<font color=blue>Mastima</font> The Demon Realm... this is\nmerely my speculation, but among the\ncountless parallel worlds, it is a\nuniverse that followed an exceptionally\ndark path.	machine
 2105_310_24	d1d32b9593867d258cb93d79ba4363388ee0ef5d	Original summoning sigil arts\nare techniques used to call\nsomething forth from such a\nparallel universe.	machine
 2105_310_25	a927fad724646377d6f25e9e1cf395c418d4da52	<font color=blue>Karlyn</font> But the "beasts" I\nsummoned were all creatures\nfrom Daftes, weren't they?	machine
 2105_310_26	046a19bcb79ddc11255c341cf0a1d2a659b22c2c	<font color=blue>Mastima</font> Perhaps they came\nfrom a version of "Daftes"\ndifferent from the one you\nknow.	machine
@@ -784,7 +784,7 @@ message_id	ja_sha1	en	source
 2105_320_24	330ee579d1c648b69c4fb1130d34cc91e8db4452	<font color=blue>Valka</font> What does this mean!\nWho on earth...!	machine
 2105_320_25	20bca0f51aeca53977537f055ee98debed322b04	<font color=blue>Givel</font> I merely released a few\nCrest Creatures...	machine
 2105_320_26	c978b46724eb023f2a90382d068229ec0a014104	But the people of Daftine, who\nrefused to lower the\n"Exorciser" for Evelysse,	machine
-2105_320_27	e50f84ea9f96947cbe99bc0fc6e390de568ee54f	The people of Daftine, who\nfailed to lower the "Exorciser"\nfor Iblis, have completely\nmutated and reached Ex Giva,\nwhere they are now rampaging\ntoward the new Crest you\ncreated.	machine
+2105_320_27	e50f84ea9f96947cbe99bc0fc6e390de568ee54f	The people of Daftine, who failed to\nlower the "Exorciser" for Iblis, have\ncompletely mutated and reached Ex\nGiva, where they are now rampaging\ntoward the new Crest you created.	machine
 2105_320_28	b6da71e7a2ec0a559dab16927863224c671a54f1	Of course, this is an event\nbeyond my control. It is merely\na conjecture.	machine
 2105_320_29	6f665a9428afe657571f07b2f46e628c71f4e80f	<font color=blue>Tika</font> N-no...! Cosmo City is...!!	machine
 2105_320_30	555c997326396b070b2eb1ddc18e52315f202236	<font color=blue>Mastima</font> ....	machine
@@ -841,7 +841,7 @@ message_id	ja_sha1	en	source
 2105_330_18	8257f4b428cab25c6f66a03edc97c07361d18d1d	Wait... what?	machine
 2105_330_19	fd50394f1e2fab305d9e49843e2716786619cec3	Who are you? And "Big Sister\nEve"...?	machine
 2105_330_21	ccc18eb8d3c1b609b32c0a406408a9a10f638cc2	What!? Tika!? This person!?\nCaptain, what are you talking\nabout!?	machine
-2105_330_22	81805d393182c600b9fa506e76f2b83292b5ddb5	A lot has happened, and Tika\nhas grown up! Under the\nguidance of Mastima over\nthere! We'll explain the details\nlater!	machine
+2105_330_22	81805d393182c600b9fa506e76f2b83292b5ddb5	A lot has happened, and Tika has\ngrown up! Under the guidance of\nMastima over there! We'll explain the\ndetails later!	machine
 2105_330_23	f6d90dc2f028977690abdf4f33e5ec9ca60b5a55	That person is Mastima...!	machine
 2105_330_24	9be89433fd8ef3aa1b7133da23ac56296bd6c8c1	Fine! But in exchange, you'd\nbetter tell me everything that\nhappened while I was gone!	machine
 2105_330_25	cf152b36f53fc203fee620940115c6c1e48ffb4f	Of course!	machine

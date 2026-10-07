@@ -744,7 +744,14 @@ bool story_finish(const Advances& f, const U& en, const U& ja, int budget, std::
     U e = unesc(en);
     e = fold_u(f, e);
     e = strip(e);
-    e = rebreak_u(f, e, budget, true);
+    // english_text.story_break: the fewest n whose break at story_budget(n) takes at most n lines
+    U r;
+    for (int n = 1; n < 25; n++) {
+        int b = n <= kStoryLines ? budget : budget * (40 * n - 10) / (40 * kStoryLines - 10);
+        r = rebreak_u(f, e, b, true);
+        if ((int)std::count(r.begin(), r.end(), U'\n') + 1 <= n) break;
+    }
+    e = r;
     Problems p = check(f, ja, e, false);
     auto ts = tags(e);
     bool bad = false;

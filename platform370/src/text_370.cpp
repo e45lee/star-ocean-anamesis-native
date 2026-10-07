@@ -489,6 +489,9 @@ void fit_talk(u64 label) {
     if (out != s) set_text(label, out);
 }
 
+void story_draw(u64 label);  // (E13, below)
+void story_forget(u64 label);
+
 // ---- E10 (b): the label wrap ---------------------------------------------------------------------
 // The story message window's labels are E13's (the data breaks their lines, the window scales its
 // font): the wrap leaves them alone, so a text revealed a character at a time is never broken
@@ -496,11 +499,12 @@ void fit_talk(u64 label) {
 void maybe_wrap(u64 label) {
     CCocosLabel* l = as_label(label);
     if (is_talk_text(l)) return fit_talk(label);
+    if (l->name() == "AppendMessage") return;
+    if (text::label_states().is_story(label)) return story_draw(label);
     std::string_view s = l->text();
     if (s.size() < 12 || l->m_tagMode || !l->m_renderer) return;
     bool space = s.find(' ') != std::string_view::npos;
     if (!space && s.find('\n') == std::string_view::npos) return;
-    if (l->name() == "AppendMessage" || text::label_states().is_story(label)) return;
     std::string src;
     if (!text::label_states().original_of(label, s, &src)) {
         if (!space) return;
@@ -533,6 +537,11 @@ void maybe_wrap(u64 label) {
     set_text(label, out);
 }
 
+void forget_label(u64 label) {
+    text::label_states().forget(label);
+    story_forget(label);
+}
+
 // bool CCocosLabel::DrawSelf(): x0 label.
 void h_draw_self(Cpu& c) {
     u64 label = c.x(0);
@@ -544,13 +553,13 @@ void h_draw_self(Cpu& c) {
 // CCocosLabel::~CCocosLabel (D1, and D0, which frees): the label's state goes with it.
 void h_label_d1(Cpu& c) {
     u64 label = c.x(0);
-    text::label_states().forget(label);
+    forget_label(label);
     u64 ints[1] = {label};
     c.set_x(0, guest_call_raw(g_d1, ints, 1, nullptr, 0, 0).x0);
 }
 void h_label_d0(Cpu& c) {
     u64 label = c.x(0);
-    text::label_states().forget(label);
+    forget_label(label);
     u64 ints[1] = {label};
     c.set_x(0, guest_call_raw(g_d0, ints, 1, nullptr, 0, 0).x0);
 }
@@ -675,6 +684,52 @@ void set_font(CCocosLabel* l, float font, float spacing) {
     l->m_flags |= cocos::kFontFlags;
 }
 
+// The whole message the window's label shows, per label, until its scale is set (the label gets its
+// renderer only when it is first drawn: Change may come before that).
+std::mutex g_story_mu;
+std::unordered_map<u64, std::string> g_story_pending;
+
+// The label's font for `whole` (Show's font times the scale); false when it can't be measured yet.
+bool fit_story(u64 label, const std::string& whole) {
+    CCocosLabel* l = as_label(label);
+    double k = 1;
+    if (!has_japanese(whole)) {
+        std::string drawn = drawn_message(whole, player_name());
+        if (!g_story_scales.get(drawn, &k)) {
+            if (!l->m_renderer) return false;
+            set_font(l, kStoryFont, kStorySpacing);  // measured at Show's font
+            double box_h = lines_height(l, kStoryLines);
+            k = text::story_scale(drawn, label_measure(l), kStoryBoxW, box_h);
+            g_story_scales.put(drawn, k);
+            if (k < 1 && first_time("\x03" + drawn)) {
+                std::string shown = drawn;
+                for (size_t p = 0; (p = shown.find('\n', p)) != std::string::npos; p += 3) shown.replace(p, 1, " | ");
+                LOGI("p370", "lang: shrank a story message to %.0f%% (font %.1f) to fit %.0fx%.0f: \"%.100s\"", k * 100, kStoryFont * k,
+                     kStoryBoxW, box_h, shown.c_str());
+            }
+        }
+    }
+    set_font(l, (float)(kStoryFont * k), (float)(kStorySpacing * k));
+    return true;
+}
+
+// The window's label is drawn: a message Change couldn't measure yet is fitted now.
+void story_draw(u64 label) {
+    std::string whole;
+    {
+        std::lock_guard<std::mutex> lk(g_story_mu);
+        auto it = g_story_pending.find(label);
+        if (it == g_story_pending.end()) return;
+        whole = std::move(it->second);
+        g_story_pending.erase(it);
+    }
+    fit_story(label, whole);
+}
+void story_forget(u64 label) {
+    std::lock_guard<std::mutex> lk(g_story_mu);
+    g_story_pending.erase(label);
+}
+
 // bool CEventScenarioMessageWindow::Change(const char* text, const char* name, const char* voice).
 void h_window_change(Cpu& c) {
     u64 win = c.x(0), text_p = c.x(1);
@@ -685,25 +740,16 @@ void h_window_change(Cpu& c) {
     }
     u64 label = *(const u64*)(win + 0x80);
     if (label && text_p) {
-        CCocosLabel* l = as_label(label);
         text::label_states().mark_story(label);
         std::string seg = unescape_breaks((const char*)text_p), whole;
         if (!test.empty() || !g_story_message.get(seg, &whole)) whole = seg;
-        double k = 1;
-        if (l->m_renderer && !has_japanese(whole)) {
-            std::string drawn = drawn_message(whole, player_name());
-            std::string key = drawn;
-            if (!g_story_scales.get(key, &k)) {
-                set_font(l, kStoryFont, kStorySpacing);  // measured at Show's font
-                double box_h = lines_height(l, kStoryLines);
-                k = text::story_scale(drawn, label_measure(l), kStoryBoxW, box_h);
-                g_story_scales.put(key, k);
-                if (k < 1 && first_time("\x03" + drawn))
-                    LOGI("p370", "lang: shrank a story message to %.0f%% (font %.1f) to fit %.0fx%.0f: \"%.80s\"", k * 100, kStoryFont * k,
-                         kStoryBoxW, box_h, drawn.c_str());
-            }
+        if (fit_story(label, whole)) {
+            story_forget(label);
+        } else {
+            set_font(as_label(label), kStoryFont, kStorySpacing);
+            std::lock_guard<std::mutex> lk(g_story_mu);
+            g_story_pending[label] = whole;
         }
-        set_font(l, (float)(kStoryFont * k), (float)(kStorySpacing * k));
     }
     u64 ints[4] = {win, text_p, c.x(2), c.x(3)};
     c.set_x(0, guest_call_raw(g_change, ints, 4, nullptr, 0, 0).x0);

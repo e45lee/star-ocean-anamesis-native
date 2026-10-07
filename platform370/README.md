@@ -126,7 +126,7 @@ run_initializers(*lib);
   
   So with natives on, the native must apply the rule itself: return `""` when `platform370::hides_global_key(key)`. Or the host leaves that native out while `patch` is on. With `--no-native`, `install_patches` works as in `soa-emu`.
   
-  **Settled (P1):** `soa` calls `install_patches` before `install_native_functions`, and the port's native (`native/params/parameter_utility.cpp`, `h_find_global_string`) answers a hidden key with the not-found string itself. With `--natives route` (the P1 default) the native isn't installed and the patch has the function.
+  **Settled (P1):** `soa` calls `install_patches` before `install_native_functions`. No native replaces `FindGlobalStringWithKey` today, so the patch has the function with any `--natives`; a native of it must answer a hidden key with the not-found string itself.
 - **`app_version`:** `install` sets "3.7.0"; a host must not set it again afterwards (or pass `app_version = ""` and set it itself). `soa` doesn't set it (P1).
 - **The port's own JVM overrides** (e.g. `webview_local.cpp`'s `ShowWebView`, from a static initializer) run before platform370's. platform370 touches only `AskaActivity` methods, so they don't overlap today.
 - **The port's in-process mode needs the name mapping and the HTTP client, not sockets** (since P1: the CDN; since branch `port/p1b-inproc-nosocket`: in memory through the HTTP backend, where it was a loopback port before).

@@ -57,7 +57,7 @@ target_link_libraries(soa PRIVATE
   unofficial::sqlite3::sqlite3
   OpenSSL::Crypto
   # Static, for the host-library natives (the game's zlib, libjpeg 9b, SQLite, libVorbis + libogg,
-  # zstd: port/PLAN.md, N); nothing uses them yet, so nothing of them is linked in.
+  # zstd: native/lib_*/; each subsystem.cmake may add its own).
   Vorbis::vorbis
   Ogg::ogg
   soa::jpeg9

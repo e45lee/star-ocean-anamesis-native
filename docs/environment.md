@@ -38,7 +38,7 @@ recommendations) is [`docs/history/environment-audit-2026-10-03.md`](history/env
 | `SOA_STANDIN_ASSETS` | `--standin-assets DIR\|off` | soa, soa-server |
 | `SOA_GUEST_CPUS` | `--guest-cpus N\|host` | soa, soa-emu, soa-viewer |
 | `SOA_HEADLESS` | `--headless` / `--windowed` (`--windowed` new in soa-emu and soa-viewer) | soa, soa-emu, soa-viewer |
-| `SOA_NATIVES` | `--natives route\|none` | soa |
+| `SOA_NATIVES` | `--natives all\|route\|none` | soa |
 | `SOA_FAKE_SERVER` | none: `--fake-server DIR` was removed on 2026-10-05 with the canned responses (`docs/unimplemented-apis.md` step 9); the warning names `--server inproc` (the default), which turns the route on | soa |
 | `SOA_FAKE_SERVER_SCHEMA` | `--fake-server-schema FILE` (new) | soa |
 | `SOA_MEMSTATS` | `--memstats [S]` (new) | soa |

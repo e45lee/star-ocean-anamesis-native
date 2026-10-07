@@ -80,6 +80,8 @@ Diagnostics and test switches, by library (the programs that link it read them):
 `SOA_SELFTEST_SKIP`, `SOA_SELFTEST_REPEAT` (1..10000), `SOA_TEST_HOOKS_SKIP`,
 `SOA_STUB_TRACE`, `SOA_WIRE_DUMP`, `SOA_PARAMS_CORPUS`, `SOA_YAYOI_TEST_TRACE`. Documented in [`port/README.md`](../port/README.md) "Environment".
 
+**platform370** (soa, soa-emu; `--lang en` only): `SOA_TEST_TALK_IDS`, documented in [`port/README.md`](../port/README.md) "Environment".
+
 **The server library** (soa, soa-server): `SOA_NOTICE_HTML_DUMP` (the self-test `player/notice`
 writes the page there). **The web view** (soa, soa-webview-render): `SOA_WEBVIEW_DUMP_CSS`.
 

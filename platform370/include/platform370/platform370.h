@@ -139,11 +139,28 @@ bool english_for(std::string_view s, const Lookup& lookup, std::string* out);
 // The client's own StringDB::Get(id) (--lang en only; false before --lang en's install or when the
 // master has no such row).
 bool master_text(const char* id, std::string* out);
+// Kana, kanji, CJK punctuation or full-width forms in `s`.
+bool has_japanese(std::string_view s);
 // The width of one line.
 using Measure = std::function<float(std::string_view line)>;
 // `text` with each line wider than `budget` broken at spaces (greedily); lines with Japanese (kana,
 // kanji, full-width forms) or without a space stay, and so does a word wider than the budget.
 std::string wrap(std::string_view text, float budget, const Measure& measure);
+// The size of a whole (multi-line) text, as CDirectAofTextRenderer::CalcStringRect gives it.
+struct Extent {
+    float w, h;
+};
+using MeasureText = std::function<Extent(std::string_view text)>;
+// A text laid out for a fixed box that shrinks its text to fit (the home's speech box, E12): the
+// text with its line breaks collapsed to spaces and re-broken at spaces, and the scale DrawSelf's
+// shrink then gives it (min(1, w / text w, h / text h)). The break width is the box's width over
+// the scale of the fewest lines whose height fits (n lines at scale min(1, h / height of n lines)),
+// so the shrunk text uses the whole width; no minimum: a text that needs a tiny font gets it.
+struct BoxFit {
+    std::string text;
+    float scale;
+};
+BoxFit fit_box(std::string_view text, float box_w, float box_h, const MeasureText& measure);
 }  // namespace text
 
 // The patch's rule, for a host that replaces CParameterUtility::FindGlobalStringWithKey itself

@@ -36,6 +36,11 @@
 //     runs off the screen.
 // Lines with Japanese (kana, kanji, full-width forms) are left alone, as is a single word wider than
 // the room, tag-mode labels (+0x281; their <font> markup) and texts without a space.
+//
+// E12, the home's speech box (talk_menu_gp|talk_menu_talkmode/talk_frame/talk_text): instead of the
+// wrap above, an English line is fitted to the box the Japanese was written for (480 x two lines):
+// breaks collapsed, re-broken at the box's width, shrunk by DrawSelf's own fit (fit_talk below;
+// english.md 7.11).
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -45,6 +50,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+#include <soa/env.h>
 
 #include "core/cpu.h"
 #include "core/loader.h"
@@ -122,7 +129,6 @@ bool english_for(std::string_view s, const Lookup& lookup, std::string* out) {
 }
 
 // ---- E10 (b): the wrap ---------------------------------------------------------------------------
-namespace {
 // Kana, kanji, CJK punctuation, full-width forms: a Japanese line (left as the original lays it out).
 bool has_japanese(std::string_view s) {
     for (size_t i = 0; i < s.size(); i++) {
@@ -133,7 +139,6 @@ bool has_japanese(std::string_view s) {
     }
     return false;
 }
-}  // namespace
 
 std::string wrap(std::string_view text, float budget, const Measure& measure) {
     std::string out;
@@ -171,6 +176,46 @@ std::string wrap(std::string_view text, float budget, const Measure& measure) {
         start = nl + 1;
     }
     return out;
+}
+
+namespace {
+// Each run of white space that holds a line break becomes one space; the ends are trimmed.
+std::string collapse_breaks(std::string_view text) {
+    std::string out;
+    size_t i = 0;
+    while (i < text.size()) {
+        if (text[i] == ' ' || text[i] == '\n' || text[i] == '\t' || text[i] == '\r') {
+            size_t j = i;
+            bool nl = false;
+            while (j < text.size() && (text[j] == ' ' || text[j] == '\n' || text[j] == '\t' || text[j] == '\r')) nl |= text[j++] == '\n';
+            if (!out.empty() && j < text.size()) out.append(nl ? std::string_view(" ") : text.substr(i, j - i));
+            i = j;
+        } else {
+            out += text[i++];
+        }
+    }
+    return out;
+}
+}  // namespace
+
+BoxFit fit_box(std::string_view text, float box_w, float box_h, const MeasureText& measure) {
+    std::string flat = collapse_breaks(text);
+    auto width = [&](std::string_view line) { return measure(line).w; };
+    auto scale_of = [&](Extent e) {
+        float k = 1;
+        if (e.w > box_w && e.w > 0) k = box_w / e.w;
+        if (e.h > box_h && e.h > 0 && box_h / e.h < k) k = box_h / e.h;
+        return k;
+    };
+    std::string probe = "Ag", wrapped = flat;
+    for (int n = 1; n <= 24; n++, probe += "\nAg") {
+        float hn = measure(probe).h;
+        float k = hn > box_h && hn > 0 ? box_h / hn : 1.f;
+        wrapped = wrap(flat, box_w / k, width);
+        Extent e = measure(wrapped);
+        if (e.h <= box_h / k * 1.001f) return {wrapped, scale_of(e)};
+    }
+    return {wrapped, scale_of(measure(wrapped))};
 }
 
 }  // namespace text
@@ -338,8 +383,140 @@ struct Set {
 };
 std::unordered_map<u64, Set> g_set;
 
+// ---- E12: the home's speech box ------------------------------------------------------------------
+// CHome::PlayTalk (@01aef4e8) writes the home and Talk Mode lines into talk_menu_gp/talk_frame/
+// talk_text and talk_menu_talkmode/talk_frame/talk_text of UI/etc2/home.csf (the only code that
+// names them): FontSize 24, no IsCustomSize, so the label takes its text's size and English lines of
+// 3-7 lines run out of the 540x120 frame over the home's buttons (english.md 7.11). For these two
+// labels only, an English text is laid out for the box the Japanese was written for: its line breaks
+// collapsed, re-broken at the box's width and shrunk by DrawSelf's own fit (IsCustomSize +0x280 and
+// shrink +0x282 switched on, the box at +0x94/+0x98) so it stays inside. A Japanese text (a row
+// without English) gets the label's own fields back.
+// The box: 480 wide, the placeholder's width in home.csf (20 full-width characters at FontSize 24;
+// (b) client evidence, the layout data), and two lines high, as CalcStringRect measures two lines
+// of the label's font (every Japanese home line is written for two lines; 7.11).
+constexpr u64 kNodeParent = 0x08, kNodeName = 0x28;  // CCocosNode (SearchByName_Child, DrawSelf)
+constexpr float kTalkBoxW = 480.f;
+// The label's dirty bits PlayTalk sets after SetText (re-layout on the next DrawSelf).
+constexpr u32 kRelayout = 0x9e000;
+constexpr u64 kFlags = 0xcc;
+
+bool is_talk_text(u64 label) {
+    auto name = [](u64 node) { return node ? guest_string(node + kNodeName) : std::string_view(); };
+    if (name(label) != "talk_text") return false;
+    u64 frame = *(const u64*)(label + kNodeParent);
+    if (name(frame) != "talk_frame") return false;
+    u64 menu = frame ? *(const u64*)(frame + kNodeParent) : 0;
+    std::string_view m = name(menu);
+    return m == "talk_menu_gp" || m == "talk_menu_talkmode";
+}
+
+// The label's own fields, kept while the box is switched on.
+struct OwnBox {
+    u8 custom, shrink;
+    float w, h;
+};
+std::unordered_map<u64, OwnBox> g_own;
+std::unordered_map<std::string, std::string> g_fitted;  // talk text + box height -> its fitted text
+
+void set_box(u64 label, const OwnBox& b) {
+    u8* l = (u8*)label;
+    if (l[kCustomSize] == b.custom && l[kShrink] == b.shrink && *(float*)(l + kWidth) == b.w && *(float*)(l + kHeight) == b.h) return;
+    l[kCustomSize] = b.custom, l[kShrink] = b.shrink;
+    *(float*)(l + kWidth) = b.w, *(float*)(l + kHeight) = b.h;
+    *(u32*)(l + kFlags) |= kRelayout;
+}
+
+// SOA_TEST_TALK_IDS=id,id,..: a test switch for the proof shots (docs/environment.md): each new line
+// the game writes into the box is replaced by the master text of the next of these message ids
+// (in turn, from the first again after the last), so a run shows chosen lines.
+std::string test_talk_line() {
+    static const std::vector<std::string> ids = soa::env::env_list("SOA_TEST_TALK_IDS");
+    static size_t next = 0;
+    if (ids.empty()) return {};
+    std::string id = ids[next++ % ids.size()], v;
+    if (!lookup_cached(id.c_str(), &v)) LOGW("p370", "lang: SOA_TEST_TALK_IDS: no master text %s", id.c_str());
+    else LOGI("p370", "lang: SOA_TEST_TALK_IDS: the home talk line is %s", id.c_str());
+    return v;
+}
+
+void fit_talk(u64 label) {
+    u8* l = (u8*)label;
+    std::string_view s = guest_string(label + kText);
+    std::string src;
+    bool ours;
+    {
+        std::lock_guard<std::mutex> lk(g_mu);
+        auto it = g_set.find(label);
+        ours = it != g_set.end() && it->second.produced == s;
+        src = ours ? it->second.original : std::string(s);
+    }
+    if (!ours && !src.empty()) {
+        std::string t = test_talk_line();
+        if (!t.empty()) src = t;
+    }
+    u64 renderer = *(const u64*)(l + kRenderer);
+    if (!renderer || l[kTagMode] || src.empty() || text::has_japanese(src)) {
+        std::lock_guard<std::mutex> lk(g_mu);
+        auto it = g_own.find(label);
+        if (it != g_own.end()) set_box(label, it->second), g_own.erase(it);
+        g_set.erase(label);
+        return;
+    }
+    float font = *(const float*)(l + kFontSize), spacing = *(const float*)(l + kSpacing);
+    auto m = [&](std::string_view t) {
+        Size z = measure(renderer, font, spacing, t);
+        return text::Extent{z.w, z.h};
+    };
+    float box_h;  // two lines of "１" at the label's font, cached per (font, spacing)
+    {
+        static std::unordered_map<u64, float> heights;
+        u64 key = (u64)*(const u32*)(l + kFontSize) << 32 | *(const u32*)(l + kSpacing);
+        std::unique_lock<std::mutex> lk(g_mu);
+        auto it = heights.find(key);
+        if (it != heights.end()) {
+            box_h = it->second;
+        } else {
+            lk.unlock();
+            box_h = m("\xef\xbc\x91\n\xef\xbc\x91").h;
+            lk.lock();
+            heights[key] = box_h;
+        }
+    }
+    std::string out;
+    {
+        std::lock_guard<std::mutex> lk(g_mu);
+        auto it = g_fitted.find(src + '\x01' + std::to_string(box_h));
+        if (it != g_fitted.end()) out = it->second;
+    }
+    if (out.empty()) {
+        text::BoxFit f = text::fit_box(src, kTalkBoxW, box_h, m);
+        out = f.text;
+        std::lock_guard<std::mutex> lk(g_mu);
+        if (g_fitted.size() > 4096) g_fitted.clear();
+        g_fitted[src + '\x01' + std::to_string(box_h)] = out;
+        if (g_logged.insert("\x02" + src).second) {
+            std::string shown = out;  // the lines as laid out, " | " between them
+            for (size_t p = 0; (p = shown.find('\n', p)) != std::string::npos; p += 3) shown.replace(p, 1, " | ");
+            LOGI("p370", "lang: fitted a home talk line to %.0fx%.0f at %.0f%% (font %.1f): \"%s\"", kTalkBoxW, box_h, f.scale * 100,
+                 font * f.scale, shown.c_str());
+        }
+    }
+    {
+        std::lock_guard<std::mutex> lk(g_mu);
+        if (!g_own.count(label)) g_own[label] = {l[kCustomSize], l[kShrink], *(const float*)(l + kWidth), *(const float*)(l + kHeight)};
+        g_set[label] = {out, src};  // (kept when out == src too: SOA_TEST_TALK_IDS tells its lines from the game's)
+    }
+    set_box(label, {1, 1, kTalkBoxW, box_h});
+    if (out == s) return;
+    TempGuestString t(out);
+    u64 ints[2] = {label, t.addr()};
+    guest_call_raw(g_set_text, ints, 2, nullptr, 0, 0);
+}
+
 void maybe_wrap(u64 label) {
     const u8* l = (const u8*)label;
+    if (is_talk_text(label)) return fit_talk(label);
     std::string_view s = guest_string(label + kText);
     if (s.size() < 12 || l[kTagMode]) return;
     bool space = s.find(' ') != std::string_view::npos;

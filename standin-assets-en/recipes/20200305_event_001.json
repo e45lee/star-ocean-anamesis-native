@@ -1,0 +1,212 @@
+{
+ "note": "The hot springs event's banner (raid boss, Misery 2 & 3 added).",
+ "source": "Image/etc2/20200305_event_001.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "イベント",
+   "text": "Event",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    56,
+    54,
+    120,
+    40
+   ],
+   "cover": [
+    56,
+    54,
+    120,
+    40
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "大討伐",
+   "text": "Raid Boss",
+   "box": [
+    60,
+    56,
+    112,
+    36
+   ],
+   "style": "gold",
+   "cover": [
+    56,
+    54,
+    120,
+    40
+   ],
+   "size": 20
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    228,
+    26,
+    228,
+    76
+   ],
+   "cover": [
+    228,
+    26,
+    228,
+    76
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "温泉と悪戯好きの雪の魔物",
+   "text": "Hot Springs and the\nMischievous Snow Monsters",
+   "box": [
+    232,
+    28,
+    220,
+    72
+   ],
+   "style": "gold",
+   "cover": [
+    228,
+    26,
+    228,
+    76
+   ],
+   "size": 18
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    258,
+    102,
+    186,
+    16
+   ],
+   "cover": [
+    258,
+    102,
+    186,
+    16
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "滅級・絶級追加",
+   "text": "Misery 2 & 3 added",
+   "box": [
+    262,
+    104,
+    178,
+    12
+   ],
+   "style": "gold",
+   "cover": [
+    258,
+    102,
+    186,
+    16
+   ],
+   "size": 12
+  }
+ ]
+}

@@ -1,0 +1,145 @@
+{
+ "note": "The July 2020 apology character gacha's banner.",
+ "source": "Image/etc2/20200716_chara_002.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    60,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    42,
+    13
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    112,
+    48,
+    288,
+    44
+   ],
+   "cover": [
+    112,
+    48,
+    288,
+    44
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "お詫びキャラガチャ",
+   "text": "Apology Character Draws",
+   "box": [
+    100,
+    50,
+    310,
+    40
+   ],
+   "style": "blue",
+   "cover": [
+    112,
+    48,
+    288,
+    44
+   ],
+   "size": 24
+  },
+  {
+   "jp": "2020年7月",
+   "text": "July 2020",
+   "box": [
+    372,
+    94,
+    80,
+    18
+   ],
+   "style": "blue_s",
+   "cover": [
+    370,
+    93,
+    84,
+    20
+   ],
+   "clear": "inpaint",
+   "align": "right"
+  }
+ ]
+}

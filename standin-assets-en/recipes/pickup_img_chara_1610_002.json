@@ -1,0 +1,110 @@
+{
+ "note": "The standard character gacha's panel (Global's 10-chain).",
+ "source": "Image/etc2/pickup_img_chara_1610_002.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "gold": {
+   "size": 44,
+   "bold": 3,
+   "fill": "#ffeab0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "white": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "teal_t": {
+   "size": 56,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a4a5a",
+   "outline_width": 4,
+   "glow": "#40ffffa0",
+   "glow_radius": 3,
+   "clear": "none"
+  },
+  "teal": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a4a",
+   "outline_width": 3,
+   "align": "left",
+   "leading": 10,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    150,
+    322,
+    720,
+    170
+   ],
+   "style": "erase",
+   "cover": [
+    150,
+    322,
+    720,
+    170
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    150,
+    322,
+    720,
+    170
+   ],
+   "style": "band",
+   "cover": [
+    150,
+    322,
+    720,
+    170
+   ]
+  },
+  {
+   "jp": "10連で★4以上のキャラが1体確定!",
+   "text": "10-chain: 1 ★4+ character\nguaranteed!",
+   "box": [
+    170,
+    326,
+    680,
+    120
+   ],
+   "style": "gold",
+   "size": 40
+  },
+  {
+   "jp": "一部のキャラをご紹介>>",
+   "text": "Some of the characters >>",
+   "box": [
+    470,
+    446,
+    380,
+    34
+   ],
+   "style": "white",
+   "size": 24,
+   "align": "right"
+  }
+ ]
+}

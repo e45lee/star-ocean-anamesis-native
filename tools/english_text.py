@@ -530,6 +530,8 @@ def story_finish(ctx, glossary, source, en, ja):
     probs = C.check(ja, e, font, glossary if source not in DERIVED else None, tags="strict")
     tags = C.TAG.findall(e)
     bad = [t for t in tags if not C.STORY_TAG.fullmatch(t)]
+    if source == "machine" and C.runaway(ja, e):
+        probs["runaway"] = len(e)  # an engine stuck repeating a sound ("CAPTAIIII...", "ka-ka-ka-...")
     if bad:
         probs["story_tag"] = bad  # an unknown tag likely crashes ParseMessage (english.md 3.3)
     elif source != "machine" and "tags" in probs:

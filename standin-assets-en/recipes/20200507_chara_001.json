@@ -1,0 +1,159 @@
+{
+ "note": "The SO5 Memorial pick-up gacha's banner.",
+ "source": "Image/etc2/20200507_chara_001.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "お負け付き",
+   "text": "Bonus",
+   "box": [
+    58,
+    31,
+    50,
+    11
+   ],
+   "style": "omake",
+   "cover": [
+    57,
+    31,
+    48,
+    11
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    262,
+    20,
+    194,
+    98
+   ],
+   "cover": [
+    262,
+    20,
+    194,
+    98
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "SO5メモリアル ピックアップキャラガチャ ピックアップは期間限定キャラのみ!",
+   "text": "SO5 Memorial\nPick-up Character Draws\nLimited characters only!",
+   "box": [
+    266,
+    22,
+    186,
+    94
+   ],
+   "style": "gold_r",
+   "cover": [
+    262,
+    20,
+    194,
+    98
+   ],
+   "size": 18
+  }
+ ]
+}

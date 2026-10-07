@@ -73,7 +73,8 @@ bool style_key(Style& st, const std::string& k, const json& v, const std::string
     else if (k == "shadow_dy") st.shadow_dy = as_int(v, w);
     else if (k == "clear") {
         st.cover = as_string(v, w);
-        if (st.cover != "inpaint" && st.cover != "fill" && st.cover != "none") throw Fail{w + ": inpaint, fill or none"};
+        if (st.cover != "inpaint" && st.cover != "fill" && st.cover != "shade" && st.cover != "none")
+            throw Fail{w + ": inpaint, fill, shade or none"};
     } else if (k == "clear_color") st.cover_color = as_color(v, w);
     else if (k == "align") {
         st.align = as_string(v, w);

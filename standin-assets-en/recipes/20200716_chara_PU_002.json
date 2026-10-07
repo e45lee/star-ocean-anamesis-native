@@ -1,0 +1,105 @@
+{
+ "note": "The July 2020 apology gacha's notice panel.",
+ "source": "Image/etc2/20200716_chara_PU_002.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "gold": {
+   "size": 44,
+   "bold": 3,
+   "fill": "#ffeab0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "white": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "teal_t": {
+   "size": 56,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a4a5a",
+   "outline_width": 4,
+   "glow": "#40ffffa0",
+   "glow_radius": 3,
+   "clear": "none"
+  },
+  "teal": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a4a",
+   "outline_width": 3,
+   "align": "left",
+   "leading": 10,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    196,
+    40,
+    704,
+    420
+   ],
+   "style": "erase",
+   "cover": [
+    196,
+    40,
+    704,
+    420
+   ]
+  },
+  {
+   "jp": "お詫びキャラガチャ",
+   "text": "Apology Character Draws",
+   "box": [
+    220,
+    50,
+    600,
+    80
+   ],
+   "style": "teal_t",
+   "size": 50
+  },
+  {
+   "jp": "※10連特典枠はございません。…",
+   "text": "* No 10-chain bonus slot.\n* No character chips.\n* Characters appear before enhancement\n   (evolution, awakening, etc.).",
+   "box": [
+    290,
+    150,
+    560,
+    230
+   ],
+   "style": "teal",
+   "size": 28
+  },
+  {
+   "jp": "2020年7月",
+   "text": "July 2020",
+   "box": [
+    690,
+    410,
+    190,
+    40
+   ],
+   "style": "teal",
+   "size": 30,
+   "align": "right"
+  }
+ ]
+}

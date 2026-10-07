@@ -1,0 +1,182 @@
+{
+ "note": "A box gacha's featured-items panel (Spirit of Renewal).",
+ "source": "Image/etc2/20200106_event_PU_001.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#1a0a28c0"
+  },
+  "band_g": {
+   "clear": "shade",
+   "clear_color": "#200400c8"
+  },
+  "name": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#3a0a50",
+   "outline_width": 4,
+   "glow": "#ff80ffa0",
+   "glow_radius": 3,
+   "clear": "none"
+  },
+  "role": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#5a0010",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "tag": {
+   "size": 36,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#2a0a40",
+   "outline_width": 3,
+   "glow": "#c080ffa0",
+   "glow_radius": 2,
+   "align": "left",
+   "clear": "none"
+  },
+  "wname": {
+   "size": 34,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "none"
+  },
+  "wtype": {
+   "size": 22,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#3a0000",
+   "outline_width": 2,
+   "align": "left",
+   "clear": "none"
+  },
+  "gold": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#3a0800",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "head": {
+   "size": 34,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#0a1a5a",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "small": {
+   "size": 18,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1a5a",
+   "outline_width": 2,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    450,
+    10,
+    420,
+    90
+   ],
+   "style": "erase",
+   "cover": [
+    450,
+    10,
+    420,
+    90
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    450,
+    10,
+    420,
+    90
+   ],
+   "style": "band",
+   "cover": [
+    450,
+    10,
+    420,
+    90
+   ]
+  },
+  {
+   "jp": "",
+   "text": "Box Draws: Featured Items",
+   "box": [
+    454,
+    14,
+    412,
+    64
+   ],
+   "style": "head",
+   "size": 30
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    214,
+    22,
+    226,
+    56
+   ],
+   "style": "erase",
+   "cover": [
+    214,
+    22,
+    226,
+    56
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    214,
+    22,
+    226,
+    56
+   ],
+   "style": "band",
+   "cover": [
+    214,
+    22,
+    226,
+    56
+   ]
+  },
+  {
+   "jp": "",
+   "text": "Spirit of Renewal\n3 types",
+   "box": [
+    218,
+    24,
+    218,
+    52
+   ],
+   "style": "small",
+   "size": 16
+  }
+ ]
+}

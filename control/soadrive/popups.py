@@ -276,7 +276,10 @@ def name_entry(fifo_path, log, name, typed_shot, alive=None):
         _note("retry %d: no CreatePlayer yet" % (n + 2))
     if line is None:
         raise Failed("決定 never sent CreatePlayer")
+    # the arguments as the packet log prints them (server/net/packet_log, both hosts): the name, then
+    # the uuid argument (empty here): the first is the name
     sent = cp.search(line).group(1).strip()
-    if sent != '"%s"' % name:
+    first = re.match(r'"((?:[^"\\]|\\.)*)"', sent)
+    if first is None or first.group(1) != name:
         raise Failed('CreatePlayer sent the name %s, not "%s"' % (sent, name))
     return 'ok CreatePlayer "%s"' % name

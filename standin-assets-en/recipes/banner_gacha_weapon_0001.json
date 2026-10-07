@@ -1,0 +1,178 @@
+{
+ "note": "The standard weapon gacha's banner.",
+ "source": "Image/etc2/banner_gacha_weapon_0001.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    60,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    42,
+    13
+   ]
+  },
+  {
+   "jp": "武器ガチャ",
+   "text": "Weapons Draw",
+   "box": [
+    190,
+    15,
+    140,
+    16
+   ],
+   "style": "blue_s",
+   "cover": [
+    188,
+    15,
+    144,
+    15
+   ],
+   "clear": "inpaint"
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    58,
+    32,
+    112,
+    36
+   ],
+   "cover": [
+    58,
+    32,
+    112,
+    36
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "10連で",
+   "text": "10-chain",
+   "box": [
+    58,
+    34,
+    120,
+    32
+   ],
+   "style": "gold",
+   "cover": [
+    58,
+    32,
+    112,
+    36
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    100,
+    82,
+    270,
+    32
+   ],
+   "cover": [
+    100,
+    82,
+    270,
+    32
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "★4以上の武器が1本確定!!",
+   "text": "1 ★4+ weapon guaranteed!!",
+   "box": [
+    104,
+    86,
+    260,
+    26
+   ],
+   "style": "gold",
+   "cover": [
+    100,
+    82,
+    270,
+    32
+   ],
+   "size": 20
+  }
+ ]
+}
